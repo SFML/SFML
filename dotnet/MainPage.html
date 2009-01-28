@@ -1,0 +1,71 @@
+<h2>Welcome</h2>
+<p>
+Welcome to the official SFML.Net documentation. Here you will find a detailed
+description of all the SFML.Net classes. <br/>
+If you are looking for tutorials, help or whatever, you can visit the official website
+at <a href="http://www.sfml-dev.org/">www.sfml-dev.org</a>.
+</p>
+
+<h2>Short example</h2>
+<p>
+Here is a short example in C#, to show you how simple it is to use SFML.Net :
+</p>
+
+<pre style="background-color:#F0F0F0">
+<span style="color:blue">using</span> System;
+<span style="color:blue">using</span> SFML.Audio;
+<span style="color:blue">using</span> SFML.Window;
+<span style="color:blue">using</span> SFML.Graphics;
+
+<span style="color:blue">namespace</span> Example
+{
+    <span style="color:blue">class</span> <span style="color:#2B91AF">Program</span>
+    {
+        <span style="color:blue">static void</span> OnClose(<span style="color:blue">object</span> sender, <span style="color:#2B91AF">EventArgs</span> e)
+        {
+            <span style="color:#008000">// Close the window when OnClose event is received</span>
+            <span style="color:#2B91AF">RenderWindow</span> window = (<span style="color:#2B91AF">RenderWindow</span>)sender;
+            window.Close();
+        }
+
+        <span style="color:blue">static void</span> Main(<span style="color:blue">string</span>[] args)
+        {
+            <span style="color:#008000">// Create the main window</span>
+            <span style="color:#2B91AF">RenderWindow</span> app = <span style="color:blue">new</span> <span style="color:#2B91AF">RenderWindow</span>(<span style="color:blue">new</span> <span style="color:#2B91AF">VideoMode</span>(800, 600), <span style="color:#A31515">"SFML window"</span>);
+            app.Closed += <span style="color:blue">new</span> <span style="color:#2B91AF">EventHandler</span>(OnClose);
+
+            <span style="color:#008000">// Load a sprite to display</span>
+            <span style="color:#2B91AF">Image</span>  image  = <span style="color:blue">new</span> <span style="color:#2B91AF">Image</span>(<span style="color:#A31515">"cute_image.jpg"</span>);
+            <span style="color:#2B91AF">Sprite</span> sprite = <span style="color:blue">new</span> <span style="color:#2B91AF">Sprite</span>(image);
+
+            <span style="color:#008000">// Create a graphical string to display</span>
+            <span style="color:#2B91AF">Font</span>     arial = <span style="color:blue">new</span> <span style="color:#2B91AF">Font</span>(<span style="color:#A31515">"arial.ttf"</span>);
+            <span style="color:#2B91AF">String2D</span> text  = <span style="color:blue">new</span> <span style="color:#2B91AF">String2D</span>(<span style="color:#A31515">"Hello SFML.Net"</span>, arial);
+
+            <span style="color:#008000">// Load a music to play</span>
+            <span style="color:#2B91AF">Music</span> music = <span style="color:blue">new</span> Music(<span style="color:#A31515">"nice_music.ogg"</span>);
+            music.Play();
+
+            <span style="color:#008000">// Start the game loop</span>
+            <span style="color:blue">while</span> (app.IsOpened())
+            {
+                <span style="color:#008000">// Process events</span>
+                app.DispatchEvents();
+
+                <span style="color:#008000">// Clear screen</span>
+                app.Clear();
+
+                <span style="color:#008000">// Draw the sprite</span>
+                app.Draw(sprite);
+
+                <span style="color:#008000">// Draw the string</span>
+                app.Draw(text);
+
+                <span style="color:#008000">// Update the window</span>
+                app.Display();
+            }
+        }
+    }
+}
+</pre>
+

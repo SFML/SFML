@@ -1,0 +1,6 @@
+{
+	FilesToMacroExpand = (
+		"Info.plist",
+	);
+	Description = "This project builds a SFML application linked against the System and Window packages, and written in C++.";
+}

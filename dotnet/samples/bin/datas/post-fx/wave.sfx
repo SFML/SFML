@@ -1,0 +1,12 @@
+texture framebuffer
+texture wave
+vec2 offset
+
+effect
+{
+	vec2 texoffset = wave(_in * offset).xy;
+	texoffset -= vec2(0.5, 0.5);
+	texoffset *= 0.05;
+
+	_out = framebuffer(_in + texoffset);
+}

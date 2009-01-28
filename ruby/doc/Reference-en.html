@@ -1,0 +1,431 @@
+<html>
+<title>RubySFML Documentation</title>
+<style type="text/css">
+h4,h5,ul {margin: 5px}
+pre {background: #F0F0F0}
+.comment {color: #8080FF}
+.text {color: green}
+.keyword {color: purple}
+</style>
+<head>
+</head>
+<body>
+	<h1>Introduction</h1>
+	<p>I apologize for how limited this documentation is, but as this extension is primarily a simple wrapper around SFML's C++ classes, I will rely on SFML's documentation to explain more detail about the classes and methods. This documentation is simply meant to explain which classes and methods are available in Ruby, as well as what changes have been made during the translation from C++ to Ruby.</p>
+	<p>As Ruby doesn't support native threading and has its own networking classes, I only exposed certain classes in the system, window, graphics, and audio libraries. For most exposed classes, the only changes I made were to make the methods start with a lower-case letter. For classes with simple Get/Set methods, I often drop the Get and Set to allow you to use sprite.left and sprite.left=. I also added a few to_i, to_f, and to_s methods where it seemed appropriate. Last but not least, I added an each iterator to VideoMode.</p>
+	<p>In addition to the C++ classes I exposed, I also added two helper classes in RubySFML.rb, one for rendering tiled sprites, and the other for dealing with sprites that use 2D velocity/accelerate calculations (TSprite and VSprite respectively).</p>
+	<h3>Tips for Windows Users</h3>
+	<p>For the Windows users out there, I apologize for not being compatible with the one-click installer, but it's being built with Visual Studio 6.0, which is ridiculously old and not compatible with any of the SFML libraries. There's a free version of Visual Studio 2005 available, and the Ruby source compiles very smoothly with it, so I can't think of a good excuse for the one-click installer to still be using 6.0.</p>
+	<p>On the bright side, you can distribute your game in a self-sufficient package by zipping it up with the bin and lib folders that come with the Windows binary version of this extension. Add a simple installer that creates a program group icon that runs "%install_path%\bin\ruby.exe %install_path%\my_game.rb", and you're all set. Oh yeah, OpenAL needs to be installed on any machine running this. Fortunately it is a very small/simple install, and it should be easy for you to either bundle it with your distribution or provide a link for your users to download it. All of this keeps your users from having to download/run the one-click installer, install all the necessary extensions, worry about compatibility issues, etc. It is likely that very few Windows users will ever play your game if you don't provide them everything they need to run it, so it's probably better this way.</p>
+	<p><b>Note:</b> This custom build of Ruby does have gems and zlib (which is required by gems), but no other extensions are installed. Feel free to install any other gems/extensions you need (native mswin32 gems compiled with Visual Studio 6.0 may not work). Keep in mind that many gems often have large doc, examples, and test folders. Deleting these unnecessary folders, along with the gem cache folder, can significantly shrink the size of the file you're distributing.</p>
+
+	<h3>RubySFML Sample Code</h3>
+	<pre>
+<span class="comment"># Include the RubySFML extension</span>
+<span class="keyword">require</span> "<span class="text">RubySFML</span>"
+<span class="keyword">include</span> SFML
+
+<span class="comment"># Create the main window</span>
+mode = VideoMode.new 800, 600, 32
+window = RenderWindow.new mode, "<span class="text">RubySFML Test</span>", false
+
+<span class="comment"># Load a sprite to display</span>
+image = Image.new "<span class="text">cute_image.jpg</span>"
+sprite = Sprite.new image
+ 
+<span class="comment"># Create a graphical string to display</span>
+text = Text.new "<span class="text">Hello SFML</span>", "<span class="text">arial.ttf</span>", 50
+ 
+<span class="comment"># Load a music and start playing it</span>
+music = Music.new "<span class="text">nice_music.ogg</span>"
+music.play
+ 
+<span class="comment"># Start the game loop</span>
+running = true
+<span class="keyword">while</span> running
+	<span class="keyword">while</span> event = window.getEvent
+		running = false <span class="keyword">if</span> event.type == Event::Close
+	<span class="keyword">end</span>
+ 
+	<span class="comment"># Draw the sprite, then the text, and update the window</span>
+	window.draw sprite
+	window.draw text
+	window.display
+<span class="keyword">end</span>
+	</pre>
+
+	<h3>RubySFML Modules</h3>
+	<ul>
+		<li><b><a href="#global">SFML</a</b> - Contains all SFML classes, modules, and global methods.</li>
+		<li><b>SFML::Event</b> - Contains constants for all of the SFML enumerated event types.</li>
+		<li><b>SFML::Key</b> - Contains constants for all of the SFML enumerated key codes.</li>
+		<li><b>SFML::Mouse</b> - Contains constants for all of the SFML enumerated mouse button codes.</li>
+	</ul>
+
+	<h3>RubySFML Classes</h3>
+	<ul>
+		<li><a href="#clock">SFML::Clock</a> - A system clock using high-performance timers where available</li>
+		<li><a href="#color">SFML::Color</a> - A simple RGBA color class</li>
+		<li><a href="#drawable">SFML::Drawable</a> - A pure virtual class representing 2D objects to use with RenderWindow</li>
+		<li><a href="#event">SFML::Event</a> - A class representing various system events (like keyboard and mouse events)</li>
+		<li><a href="#floatrect">SFML::FloatRect</a> - A simple rectangle made of 4 floats</li>
+		<li><a href="#image">SFML::Image</a> - A class for managing image files and textures</li>
+		<li><a href="#input">SFML::Input</a> - A class for checking the current state of various input devices</li>
+		<li><a href="#intrect">SFML::IntRect</a> - A simple rectangle made of 4 ints</li>
+		<li><a href="#music">SFML::Music</a> - A class for playing streaming music files</li>
+		<li><a href="#postfx">SFML::PostFX</a> - A class for mananging post-rendering shaders</li>
+		<li><a href="#renderwindow">SFML::RenderWindow</a> - A sub-class of Window which makes it easy to draw 2D sprites and text</li>
+		<li><a href="#sound">SFML::Sound</a> - A class for playing sound clips</li>
+		<li><a href="#soundbuffer">SFML::SoundBuffer</a> - A class for managing sound clips and sound files</li>
+		<li><a href="#soundbufferrecorder">SFML::SoundBufferRecorder</a> - A class for recording sound from a capture device, like a microphone</li>
+		<li><a href="#sprite">SFML::Sprite</a> - A class for managing/drawing 2D sprites</li>
+		<li><a href="#text">SFML::Text</a> - A class for managing/drawing 2D text (using ttf fonts)</li>
+		<li><a href="#videomode">SFML::VideoMode</a> - A class for managing video modes and window sizes</li>
+		<li><a href="#view">SFML::View</a> - A class for managing the 2D camera in RenderWindow</li>
+		<li><a href="#window">SFML::Window</a> - A class for creating/managing a suitable window for custom OpenGL rendering (also handles all input and events)</li>
+	</ul>
+
+	<h3>RubySFML Methods (by module/class)</h3>
+	<hr/>
+	<h4><a name="global">SFML</a></h4>
+	<ul>
+		<li><b>checkExtension(str)</b> - Returns true if the specifed OpenGL extension is supported.</li>
+		<li><b>getMaxTextureSize</b> - Returns the max texture size for the current display hardware.</li>
+		<li><b>getMaxTextureUnits</b> - Returns the max number of texture units for the current display hardware.</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="clock">SFML::Clock</a></h4>
+	<ul>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>reset</b> - Resets the clock</li>
+		<li><b>elapsedTime,to_f</b> - Returns the elapsed time since the last reset</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="color">SFML::Color</a></h4>
+	<ul>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>initialize(n)</b> - Builds the color from a 32-bit unsigned RGBA value (0x12345678 is r=0x78, g=0x56, b=0x34, a=0x12)</li>
+		<li><b>initialize(r, g, b, a=255)</b> - Builds the color from its separate components</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>r, g, b, a</b> - Returns the r, g, b, and a values (respectively)</li>
+		<li><b>r=, g=, b=, a=</b> - Sets the r, g, b, and a values (respectively)</li>
+		<li><b>toRGBA</b> - Returns the 4 components as a 32-bit unsigned value (0x12345678 is r=0x78, g=0x56, b=0x34, a=0x12)</li>
+		<li><b>to_i</b> - Alias for toRGBA</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="drawable">SFML::Drawable</a></h4>
+	<ul>
+		<li><b>initialize(left=0, top=0, scale=1, rotation=0, color=Color.White)</b> - Initializes various members (scale can be a number or an array of two numbers)</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>left, left=</b> - Gets/sets the left x position</li>
+		<li><b>top, top=</b> - Gets/sets the top y position</li>
+		<li><b>scale, scale=</b> - Gets/sets the scale of this object (get returns an array, set takes a num or an array</li>
+		<li><b>color, color=</b> - Gets/sets the base color of this object</li>
+		<li><b>rotation, rotation=</b> - Gets/sets the angle of rotation (in degrees)</li>
+		<li><b>upVector</b> - Gets this object's up vector (based on its angle of rotation)</li>
+		<li><b>rightVector</b> - Gets this object's right vector (based on its angle of rotation)</li>
+		<li><b>setRotationCenter(x, y)</b> - Sets the center of rotation for this object</li>
+		<li><b>move(x, y)</b> - Adds an offset to the left and top members</li>
+		<li><b>rotate(a)</b> - Adds an offset to the rotation member</li>
+		<li><b>render(window)</b> - (virtual) Override to add custom rendering code</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="event">SFML::Event</a></h4>
+	<h5>For all event types</h5>
+	<ul>
+		<li><b>initialize</b> - Takes no parameters</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>type</b> - Returns the event type</li>
+	</ul>
+	<h5>For the Event::TextEntered event type</h5>
+	<ul>
+		<li><b>char</b> - Returns the character typed (only for Event::TextEntered events)</li>
+	</ul>
+	<h5>For Event::KeyPressed and Event::KeyReleased event types</h5>
+	<ul>
+		<li><b>code</b> - Returns the character code (only for Event::KeyPressed and Event::KeyReleased events)</li>
+		<li><b>alt</b> - Returns true if an Alt key is down (only for Event::KeyPressed and Event::KeyReleased events)</li>
+		<li><b>control</b> - Returns true if a Ctrl key is down (only for Event::KeyPressed and Event::KeyReleased events)</li>
+		<li><b>shift</b> - Returns true if a Shift key is down (only for Event::KeyPressed and Event::KeyReleased events)</li>
+	</ul>
+	<h5>For mouse and joystick event types</h5>
+	<ul>
+		<li><b>delta</b> - Returns the scroll wheel offset (only for Event::MouseWheelMoved events)</li>
+		<li><b>buttons</b> - Returns the state of the mouse buttons (only for mouse events)</li>
+		<li><b>button</b> - Returns the state of the joystick buttons (only for joystick events)</li>
+		<li><b>x</b> - Returns the x position (for mouse and joystick events)</li>
+		<li><b>y</b> - Returns the y position (for mouse and joystick events)</li>
+		<li><b>z</b> - Returns the z position (for joystick events)</li>
+	</ul>
+	<h5>For the Event::Resize event type</h5>
+	<ul>
+		<li><b>width</b> - Returns the new window width (only for Event::Resize events)</li>
+		<li><b>height</b> - Returns the new window height (only for Event::Resize events)</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="floatrect">SFML::FloatRect</a></h4>
+	<ul>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>initialize(left, top, right, bottom)</b> - Initialize the rectangle's members</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>left, l</b> - Gets the left x position</li>
+		<li><b>left=, l=</b> - Sets the left x position</li>
+		<li><b>top, t</b> - Gets the top y position</li>
+		<li><b>top=, t=</b> - Sets the top y position</li>
+		<li><b>right, r</b> - Gets the right x position</li>
+		<li><b>right=, r=</b> - Sets the right x position</li>
+		<li><b>bottom, b</b> - Gets the bottom y position</li>
+		<li><b>bottom=, b=</b> - Sets the bottom y position</li>
+		<li><b>width, w</b> - Gets the rectangle width</li>
+		<li><b>height, h</b> - Gets the rectangle height</li>
+		<li><b>contains(x, y)</b> - Returns true if the x, y position is inside the rectangle</li>
+		<li><b>intersects(rect)</b> - Returns the intersection of two rectangles (nil if there is no intersection)</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="image">SFML::Image</a></h4>
+	<ul>
+		<li><b>initialize</b> - Creates an empty image</li>
+		<li><b>initialize(image)</b> - Creates a copy of an image</li>
+		<li><b>initialize(path)</b> - Loads an image file using the specified path (raises a RuntimeError on failure)</li>
+		<li><b>initialize(w, h, c=Color.Black)</b> - Creates a blank image using the specified width, height, and color</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>getValidTextureSize(s)</b> - (static) Returns the valid nearest texture size &gt;= s</li>
+		<li><b>width, w</b> - Gets the image width</li>
+		<li><b>height, h</b> - Gets the image height</li>
+		<li><b>smooth=, setSmooth(bool)</b> - Sets the OpenGL texture parameter to linear interpolation for true or nearest for false</li>
+		<li><b>repeat=, setRepeat(bool)</b> - Sets the OpenGL texture parameter to repeat for true or clip for false</li>
+		<li><b>loadFromFile(path)</b> - Loads a file image using the specified path</li>
+		<li><b>saveToFile(path)</b> - Saves the image to a file using the specified path</li>
+		<li><b>create(w, h, c=Color.Black)</b> - Creates an empty image with the specified width, height, and color</li>
+		<li><b>createMaskFromColor(color, a=0)</b> - Scans the image for pixels of the specified color, and sets the alpha value of those pixels to a.</li>
+		<li><b>resize(w, h, c=Color.Black)</b> - Resizes the image. If the image grows, sets new pixels to the specified color.</li>
+		<li><b>getPixel(x, y), [x,y]</b> - Returns the color of the specified pixel.</li>
+		<li><b>setPixel(x, y, c), [x,y]=</b> - Sets the color of the specified pixel to c.</li>
+		<li><b>update</b> - Updates the image in video memory (call after manually setting pixels).</li>
+		<li><b>bind</b> - Bind the image for rendering (call if you're using this image with raw OpenGL calls).</li>
+		<li><b>getTexCoords(rect)</b> - Converts an IntRect representing pixel positions to a FloatRect representing texture coordinates.</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="input">SFML::Input</a></h4>
+	<ul>
+		<li><b>initialize</b> - Default constructor</li>
+		<li><b>isKeyDown(key)</b> - Returns true if the specified key is down</li>
+		<li><b>isMouseButtonDown(button)</b> - Returns true if the specified mouse button is down</li>
+		<li><b>isJoystickButtonDown(n, button)</b> - Returns true if the specified button on joystick n is down</li>
+		<li><b>getMouseX</b> - Returns the current x position of the mouse</li>
+		<li><b>getMouseY</b> - Returns the current y position of the mouse</li>
+		<li><b>getJoystickX(n)</b> - Returns the current x position of joystick n</li>
+		<li><b>getJoystickY(n)</b> - Returns the current y position of joystick n</li>
+		<li><b>getJoystickZ(n)</b> - Returns the current z position of joystick n</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="intrect">SFML::IntRect</a></h4>
+	<ul>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>initialize(left, top, right, bottom)</b> - Initialize the rectangle's members</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>left, l</b> - Gets the left x position</li>
+		<li><b>left=, l=</b> - Sets the left x position</li>
+		<li><b>top, t</b> - Gets the top y position</li>
+		<li><b>top=, t=</b> - Sets the top y position</li>
+		<li><b>right, r</b> - Gets the right x position</li>
+		<li><b>right=, r=</b> - Sets the right x position</li>
+		<li><b>bottom, b</b> - Gets the bottom y position</li>
+		<li><b>bottom=, b=</b> - Sets the bottom y position</li>
+		<li><b>width, w</b> - Gets the rectangle width</li>
+		<li><b>height, h</b> - Gets the rectangle height</li>
+		<li><b>contains(x, y)</b> - Returns true if the x, y position is inside the rectangle</li>
+		<li><b>intersects(rect)</b> - Returns the intersection of two rectangles (nil if there is no intersection)</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="music">SFML::Music</a></h4>
+	<ul>
+		<li><b>initialize(bufSize=44100)</b> - Allows you to specify the buffer size.</li>
+		<li><b>initialize(path)</b> - Opens a music file using the specified path (raises a RuntimeError on failure).</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>loop, loop=</b> - Gets/sets a boolean indicating whether the music should loop back to the beginning when it's finished playing.</li>
+		<li><b>duration</b> - Gets the duration of the sound stream.</li>
+		<li><b>channels</b> - Gets the number of channels in the sound stream (1=mono, 2=stereo).</li>
+		<li><b>sampleRate</b> - Gets the sample rate of the sound stream (44100 = CD quality).</li>
+		<li><b>status</b> - Gets the status of the music object (Sound::Stopped, Sound::Paused, Sound::Playing).</li>
+		<li><b>open(path)</b> - Opens a music file using the specified path (returns false on failure).</li>
+		<li><b>play</b> - Start the music.</li>
+		<li><b>stop</b> - Stop the music.</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="postfx">SFML::PostFX</a></h4>
+	<ul>
+		<li>(Inherits all methods from <a href="#drawable">SFML::Drawable</a>)</li>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>initialize(path)</b> - Loads an effect file using the specified path.</li>
+		<li><b>initialize(postFX)</b> - Makes a copy of a PostFX object.</li>
+		<li><b>loadFromFile(path)</b> - Loads an effect file using the specified path (returns false on failure).</li>
+		<li><b>setParameter(name, x, y=nil, z=nil, w=nil)</b> - Sets the named parameter to an array of 1, 2, 3, or 4 floats.</li>
+		<li><b>setTexture(name, image)</b> - Sets a named texture parameter.</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="renderwindow">SFML::RenderWindow</a></h4>
+	<ul>
+		<li><b>initialize(mode, title, style=Window::Resizable, antialias=0)</b> - Creates a 2D render window using the specified VideoMode, title, and style</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>width, w</b> - Gets the width of the window</li>
+		<li><b>height, h</b> - Gets the height of the window</li>
+		<li><b>input</b> - Gets the <a href="#input">SFML::Input</a> object for this window</li>
+		<li><b>frameTime</b> - Gets the amount of time it took to render the previous frame</li>
+		<li><b>stencilBits</b> - Gets the number of bits used in the stencil buffer</li>
+		<li><b>depthBits</b> - Gets the number of bits used in the back buffer</li>
+		<li><b>view, view=</b> - Gets/sets the <a href="#view">SFML::View</a> into the 2D world (2D camera position)</li>
+		<li><b>backgroundColor=</b> - Sets the background color for the whole window</li>
+		<li><b>getEvent</b> - Returns the next event in the window's event queue (or nil if the queue is empty)</li>
+		<li><b>useVerticalSync(bool)</b> - Use to enable/disable vsync</li>
+		<li><b>showMouseCursor(bool)</b> - Use to show/hide the operating system's mouse cursor</li>
+		<li><b>display</b> - Call to swap the front and back buffers to display the frame</li>
+		<li><b>beginOpenGL</b> - Call to save the OpenGL state before you call raw OpenGL methods</li>
+		<li><b>endOpenGL</b> - Call to restore the OpenGL state after you call raw OpenGL methods</li>
+		<li><b>capture</b> - Take a screenshot and return it as an image</li>
+		<li><b>draw(obj)</b> - Call to draw any object derived from <a href="#drawable">SFML::Drawable</a></li>
+		<li><b>setFramerateLimit</b> - Set a fixed framerate (use 0 to disable it)</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="sound">SFML::Sound</a></h4>
+	<ul>
+		<li><b>initialize(sound)</b> - Creates a copy of a Sound object</li>
+		<li><b>initialize(buffer=nil, loop=false, pitch=1, volume=100, x=0, y=0, z=0)</b> - Creates a Sound object using the specified sound buffer and other parameters</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>buffer, buffer=</b> - Gets/sets this sound object's <a href="#soundbuffer">SFML::SoundBuffer</a>.</li>
+		<li><b>loop, loop=</b> - Gets/sets the loop flag for this sound object.</li>
+		<li><b>pitch, pitch=</b> - Gets/sets the pitch for this sound object.</li>
+		<li><b>volume, volume=</b> - Gets/sets the volume for this sound object.</li>
+		<li><b>position, position=</b> - Gets/sets the position for this sound object (using an array of 3 numbers).</li>
+		<li><b>status</b> - Gets the status of this sound object (Sound::Stopped, Sound::Paused, Sound::Playing).</li>
+		<li><b>playingOffset</b> - Gets the current playing position of the sound (in seconds).</li>
+		<li><b>play</b> - Starts playing the sound.</li>
+		<li><b>pause</b> - Pauses the sound.</li>
+		<li><b>stop</b> - Stops playing the sound.</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="soundbuffer">SFML::SoundBuffer</a></h4>
+	<ul>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>initialize(soundBuffer)</b> - Creates a copy of a SoundBuffer object.</li>
+		<li><b>initialize(path)</b> - Loads a sound file using the specified path (raises a RuntimeError on failure).</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>samples</b> - Gets the raw (binary) samples as a Ruby string.</li>
+		<li><b>samplesCount</b> - Gets the total number of samples (shorts) returned by the samples call.</li>
+		<li><b>samplesRate</b> - Gets the sample rate (or number of samples per second for each channel).</li>
+		<li><b>channels</b> - Gets the number of channels (1=mono, 2=stereo).</li>
+		<li><b>duration</b> - Gets the duration of the sound buffer (in seconds).</li>
+		<li><b>loadFromFile(path)</b> - Loads a sound file using the specified path (returns false on failure).</li>
+		<li><b>saveToFile(path)</b> - Saves a sound file to the specified path (returns false on failure).</li>
+		<li><b>loadFromMemory(samples, samplesCount, channels, sampleRate)</b> - Builds a SoundBuffer from raw (binary) samples.</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="soundbufferrecorder">SFML::SoundBufferRecorder</a></h4>
+	<ul>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>canCapture</b> - (static) Returns true if the current system is capable of sound capture</li>
+		<li><b>start(sampleRate=44100)</b> - Starts the sound capture</li>
+		<li><b>stop</b> - Stops the sound capture</li>
+		<li><b>buffer</b> - Gets the SoundBuffer object containing the captured audio</li>
+		<li><b>sampleRate</b> - Gets the current sample rate</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="sprite">SFML::Sprite</a></h4>
+	<ul>
+		<li>(Inherits all methods from <a href="#drawable">SFML::Drawable</a>)</li>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>initialize(image, left=0, top=0, scale=1, rotation=0, c=Color.White)</b> - Builds a Sprite object with the specified image and other options (scale can take one number or an array of two numbers)</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>width, w</b> - Gets the sprite's width (affected by subRect and scale)</li>
+		<li><b>height, h</b> - Gets the sprite's height (affected by subRect and scale)</li>
+		<li><b>right, right=</b> - Gets/sets the right x position</li>
+		<li><b>bottom, bottom=</b> - Gets/sets the bottom y position</li>
+		<li><b>x, x=</b> - Gets/sets the center x position</li>
+		<li><b>y, y=</b> - Gets/sets the center y position</li>
+		<li><b>image, image=</b> - Gets/sets the image to use for this sprite</li>
+		<li><b>subRect, subRect=</b> - Gets/sets a rectangle within the image to use (generally used for tiled images)</li>
+		<li><b>getPixel(x,y), [x,y]</b> - Gets the color of a pixel within the sprite's subRect of the sprite's image ([0,0] would be the top-left pixel of the subRect)</li>
+		<li><b>radius</b> - Gets the bounding radius of the sprite (based on height and width)</li>
+		<li><b>distance(sprite)</b> - Gets the distance between the center positions of two sprites</li>
+		<li><b>render(window)</b> - (virtual) Override to add custom rendering code</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="text">SFML::Text</a></h4>
+	<ul>
+		<li>(Inherits all methods from <a href="#drawable">SFML::Drawable</a>)</li>
+		<li><b>initialize(str="", font="", size=32)</b> - Initialize the Text object to the specified string, font, and font size.</li>
+		<li><b>preloadFont(font, size)</b> - (static) Call this to force the font to be loaded before the first time it gets rendered.</li>
+		
+		<li><b>text, text=</b> - Gets/sets the current text string.</li>
+		<li><b>font, font=</b> - Gets/sets the current font.</li>
+		<li><b>size, size=</b> - Gets/sets the current font size.</li>
+		<li><b>getRect</b> - Gets the current screen rectangle.</li>
+		<li><b>render(window)</b> - (virtual) Override to add custom rendering code</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="videomode">SFML::VideoMode</a></h4>
+	<ul>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>initialize(w, h, bpp=32)</b> - Creates a VideoMode with the specified width, height, and bits-per-pixel.</li>
+		<li><b>desktop</b> - (static) Returns the VideoMode for the current desktop.</li>
+		<li><b>each</b> - (static) Iterates through all valid full-screen video modes.</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>width, w, width=, w=</b> - Gets/sets the current width of this VideoMode.</li>
+		<li><b>height, h, height=, h=</b> - Gets/sets the current height of this VideoMode.</li>
+		<li><b>bitsPerPixel, bpp, bitsPerPixel=, bpp=</b> - Gets/sets the current bits-per-pixel of this VideoMode.</li>
+		<li><b>isValid</b> - Returns true if the current VideoMode is a valid full-screen mode.</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="view">SFML::View</a></h4>
+	<ul>
+		<li><b>initialize()</b> - Default constructor</li>
+		<li><b>initialize(left, top, width, height, zoom=1)</b> - Initializes all View members</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>left, l, left=, l=</b> - Gets/sets the left x position for the view</li>
+		<li><b>top, t, top=, t=</b> - Gets/sets the top y position for the view</li>
+		<li><b>width, w, width=, w=</b> - Gets/sets the width for the view</li>
+		<li><b>height, h, height=, h=</b> - Gets/sets the height for the view</li>
+		<li><b>zoom, zoom=</b> - Gets/sets the zoom factor for the view</li>
+	</ul>
+
+	<hr/>
+	<h4><a name="window">SFML::Window</a></h4>
+	<ul>
+		<li><b>initialize(mode, title, style=Window::Resizable, antialias=0)</b> - Creates a window using the specified VideoMode, title, and style</li>
+		<li><b>to_s</b> - Returns a formatted string representing this object (for debugging purposes)</li>
+		<li><b>width, w</b> - Gets the width of the window</li>
+		<li><b>height, h</b> - Gets the height of the window</li>
+		<li><b>input</b> - Gets the <a href="#input">SFML::Input</a> object for this window</li>
+		<li><b>frameTime</b> - Gets the amount of time it took to render the previous frame</li>
+		<li><b>stencilBits</b> - Gets the number of bits used in the stencil buffer</li>
+		<li><b>depthBits</b> - Gets the number of bits used in the back buffer</li>
+		<li><b>getEvent</b> - Returns the next event in the window's event queue (or nil if the queue is empty)</li>
+		<li><b>useVerticalSync(bool)</b> - Use to enable/disable vsync</li>
+		<li><b>showMouseCursor(bool)</b> - Use to show/hide the operating system's mouse cursor</li>
+		<li><b>display</b> - Call to swap the front and back buffers to display the frame</li>
+		<li><b>setCurrent</b> - Sets this window as the current target for rendering</li>
+		<li><b>setFramerateLimit</b> - Set a fixed framerate (use 0 to disable it)</li>
+	</ul>
+
+</body>
+</html>
+

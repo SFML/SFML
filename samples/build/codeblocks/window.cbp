@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="window" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug_Win32">
+				<Option output="..\..\bin\window-d.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\..\Temp\window\Debug_Win32" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\..\lib\mingw\libsfml-main-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-window-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-system-s-d.a" />
+					<Add library="opengl32" />
+					<Add library="glu32" />
+				</Linker>
+			</Target>
+			<Target title="Release_Win32">
+				<Option output="..\..\bin\window.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\..\Temp\window\Release_Win32" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\..\lib\mingw\libsfml-main.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-window-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-system-s.a" />
+					<Add library="opengl32" />
+					<Add library="glu32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="..\..\..\include" />
+		</Compiler>
+		<Unit filename="..\..\window\Window.cpp" />
+		<Extensions>
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="CSFML workspace">
+		<Project filename="csfml-system.cbp" active="1" />
+		<Project filename="csfml-window.cbp" />
+		<Project filename="csfml-graphics.cbp" />
+		<Project filename="csfml-network.cbp" />
+		<Project filename="csfml-audio.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

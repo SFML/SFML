@@ -1,0 +1,96 @@
+div#logo
+{
+    margin-bottom : 1em;
+    background    : url("http://www.sfml-dev.org/images/logo-bg.jpg") repeat-x;
+}
+
+div#logo a
+{
+    display : block;
+}
+
+div.class_desc
+{
+	margin-left:10px;
+	font-weight: bolder;
+	color:#168;
+}
+
+div.base_class
+{
+	margin-top:8px;
+	margin-left:10px;
+	font-weight: bold;
+	color:#168;
+}
+
+div.attr_name
+{
+	margin-top:20px;
+	margin-left:10px;
+	font-weight: bolder;
+}
+
+div.inherited
+{
+	margin-left:20px;
+    font-size: smaller;
+}
+
+div.desc
+{
+	margin-left:20px;
+}
+
+div.event_member
+{
+	margin-left:30px;
+	font-weight: lighter;
+}
+
+p#footer
+{
+    text-decoration : overline;
+    color           : #606060;
+    padding-top     : 1em;
+    text-align      : center;
+    font-size       : smaller;
+}
+
+p#footer a
+{
+    color           : #007298;
+    text-decoration : none;
+}
+
+H1 {
+    text-align    : center;
+    margin-top    : 0px;
+    color         : #2090B0;
+    font-size     : 160%;
+}
+H2 {
+       font-size: 120%;
+}
+H3 {
+       font-size: 100%;
+}
+
+a {
+	color: #2090B0;
+}
+a:visited {
+	color: #2090B0;
+}
+HR { height: 1px;
+     border: none;
+     border-top: 1px solid black;
+}
+
+BODY,H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+}
+BODY,TD {
+       font-size: 90%;
+}
+

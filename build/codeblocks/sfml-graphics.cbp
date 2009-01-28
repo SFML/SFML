@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sfml-graphics" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug DLL_Win32">
+				<Option output="..\..\lib\mingw\sfml-graphics-d.dll" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\Temp\sfml-graphics\Debug DLL_Win32" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DSFML_DYNAMIC" />
+					<Add option="-DGLEW_STATIC" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+					<Add directory="..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\lib\mingw\libsfml-window-d.a" />
+					<Add library="..\..\lib\mingw\libsfml-system-d.a" />
+					<Add library="..\..\extlibs\libs-mingw\libfreetype.a" />
+					<Add library="libopengl32.a" />
+					<Add directory="..\..\extlibs" />
+				</Linker>
+			</Target>
+			<Target title="Release DLL_Win32">
+				<Option output="..\..\lib\mingw\sfml-graphics.dll" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\Temp\sfml-graphics\Release DLL_Win32" />
+				<Option external_deps="..\..\lib\mingw\libsfml-window.a;..\lib\mingw\libsfml-system.a;" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DSFML_DYNAMIC" />
+					<Add option="-DGLEW_STATIC" />
+					<Add option="-DSTBI_FAILURE_USERMSG" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+					<Add directory="..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\lib\mingw\libsfml-window.a" />
+					<Add library="..\..\lib\mingw\libsfml-system.a" />
+					<Add library="..\..\extlibs\libs-mingw\libfreetype.a" />
+					<Add library="libopengl32.a" />
+					<Add directory="..\..\extlibs" />
+				</Linker>
+			</Target>
+			<Target title="Debug static_Win32">
+				<Option output="..\..\lib\mingw\libsfml-graphics-s-d.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\Temp\sfml-graphics\Debug static_Win32" />
+				<Option external_deps="..\..\lib\mingw\libsfml-window-s-d.a;..\lib\mingw\libsfml-system-s-d.a;" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DGLEW_STATIC" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+					<Add directory="..\..\extlibs" />
+				</ResourceCompiler>
+			</Target>
+			<Target title="Release static_Win32">
+				<Option output="..\..\lib\mingw\libsfml-graphics-s.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\Temp\sfml-graphics\Release static_Win32" />
+				<Option external_deps="..\..\lib\mingw\libsfml-window-s.a;..\lib\mingw\libsfml-system-s.a;" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DGLEW_STATIC" />
+					<Add option="-DSTBI_FAILURE_USERMSG" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+					<Add directory="..\..\extlibs" />
+				</ResourceCompiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="..\..\src" />
+			<Add directory="..\..\extlibs\headers" />
+			<Add directory="..\..\include" />
+		</Compiler>
+		<Unit filename="..\..\include\SFML\Graphics\Color.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Drawable.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Font.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Glyph.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Image.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Matrix3.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Matrix3.inl" />
+		<Unit filename="..\..\include\SFML\Graphics\PostFX.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Rect.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Rect.inl" />
+		<Unit filename="..\..\include\SFML\Graphics\RenderTarget.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\RenderWindow.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Shape.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Sprite.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\String.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\View.hpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Color.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Drawable.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Font.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\FontLoader.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\FontLoader.hpp" />
+		<Unit filename="..\..\src\SFML\Graphics\GLEW\glew.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\GLEW\glew.h" />
+		<Unit filename="..\..\src\SFML\Graphics\GLEW\glxew.h" />
+		<Unit filename="..\..\src\SFML\Graphics\GLEW\wglew.h" />
+		<Unit filename="..\..\src\SFML\Graphics\GraphicsContext.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\GraphicsContext.hpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Image.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\ImageLoader.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\ImageLoader.hpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Matrix3.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\OpenGL\RendererOpenGL.hpp" />
+		<Unit filename="..\..\src\SFML\Graphics\PostFX.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderTarget.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderWindow.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\SOIL\SOIL.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\SOIL\SOIL.h" />
+		<Unit filename="..\..\src\SFML\Graphics\SOIL\image_DXT.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\SOIL\image_DXT.h" />
+		<Unit filename="..\..\src\SFML\Graphics\SOIL\stb_image_aug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\SOIL\stb_image_aug.h" />
+		<Unit filename="..\..\src\SFML\Graphics\SOIL\stbi_DDS_aug.h" />
+		<Unit filename="..\..\src\SFML\Graphics\SOIL\stbi_DDS_aug_c.h" />
+		<Unit filename="..\..\src\SFML\Graphics\Shape.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Sprite.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\String.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\View.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\cderror.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcapimin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcapistd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jccoefct.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jccolor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcdctmgr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jchuff.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jchuff.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcinit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcmainct.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcmarker.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcmaster.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcomapi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jconfig.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcparam.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcphuff.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcprepct.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcsample.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jctrans.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdapimin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdapistd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdatadst.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdatasrc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdcoefct.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdcolor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdct.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jddctmgr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdhuff.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdhuff.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdinput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdmainct.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdmarker.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdmaster.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdmerge.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdphuff.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdpostct.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdsample.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jdtrans.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jerror.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jerror.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jfdctflt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jfdctfst.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jfdctint.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jidctflt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jidctfst.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jidctint.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jidctred.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jinclude.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jmemmgr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jmemnobs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jmemsys.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jmorecfg.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jpegint.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jpeglib.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jquant1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jquant2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jutils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jversion.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libpng\png.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\png.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngconf.h" />
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngerror.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pnggccrd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngget.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngmem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngpread.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngread.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngrio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngrtran.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngrutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngset.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngtrans.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngvcrd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngwio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngwrite.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngwtran.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\libpng\pngwutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\adler32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\compress.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\crc32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\crc32.h" />
+		<Unit filename="..\..\src\SFML\Graphics\zlib\deflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\deflate.h" />
+		<Unit filename="..\..\src\SFML\Graphics\zlib\inffast.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\inffast.h" />
+		<Unit filename="..\..\src\SFML\Graphics\zlib\inffixed.h" />
+		<Unit filename="..\..\src\SFML\Graphics\zlib\inflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\inflate.h" />
+		<Unit filename="..\..\src\SFML\Graphics\zlib\inftrees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\inftrees.h" />
+		<Unit filename="..\..\src\SFML\Graphics\zlib\trees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\trees.h" />
+		<Unit filename="..\..\src\SFML\Graphics\zlib\uncompr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\zconf.h" />
+		<Unit filename="..\..\src\SFML\Graphics\zlib\zlib.h" />
+		<Unit filename="..\..\src\SFML\Graphics\zlib\zutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Graphics\zlib\zutil.h" />
+		<Extensions>
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

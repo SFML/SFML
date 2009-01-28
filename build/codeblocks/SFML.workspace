@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="SFML workspace">
+		<Project filename="sfml-system.cbp" active="1" />
+		<Project filename="sfml-window.cbp" />
+		<Project filename="sfml-network.cbp" />
+		<Project filename="sfml-graphics.cbp" />
+		<Project filename="sfml-audio.cbp" />
+		<Project filename="sfml-main.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\ftp.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\opengl.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\pong.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\qt.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\wxwidgets.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\postfx.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\sockets.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\sound.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\sound-capture.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\voip.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\win32.cbp" />
+		<Project filename="..\..\samples\build\codeblocks\window.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

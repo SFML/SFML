@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sfml-network" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug DLL_Win32">
+				<Option output="..\..\lib\mingw\sfml-network-d.dll" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\Temp\sfml-network\Debug DLL_Win32" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DSFML_DYNAMIC" />
+					<Add option="-D_CRT_SECURE_NO_DEPRECATE" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="ws2_32" />
+					<Add directory="..\..\bin\static" />
+				</Linker>
+			</Target>
+			<Target title="Release DLL_Win32">
+				<Option output="..\..\lib\mingw\sfml-network.dll" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\Temp\sfml-network\Release DLL_Win32" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DSFML_DYNAMIC" />
+					<Add option="-D_CRT_SECURE_NO_DEPRECATE" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="ws2_32" />
+					<Add directory="..\..\bin\static" />
+				</Linker>
+			</Target>
+			<Target title="Debug static_Win32">
+				<Option output="..\..\lib\mingw\libsfml-network-s-d.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\Temp\sfml-network\Debug static_Win32" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-D_CRT_SECURE_NO_DEPRECATE" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+			<Target title="Release static_Win32">
+				<Option output="..\..\lib\mingw\libsfml-network-s.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\Temp\sfml-network\Release static_Win32" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-D_CRT_SECURE_NO_DEPRECATE" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="..\..\src" />
+			<Add directory="..\..\include" />
+		</Compiler>
+		<Unit filename="..\..\include\SFML\Network\Ftp.hpp" />
+		<Unit filename="..\..\include\SFML\Network\Http.hpp" />
+		<Unit filename="..\..\include\SFML\Network\IPAddress.hpp" />
+		<Unit filename="..\..\include\SFML\Network\Packet.hpp" />
+		<Unit filename="..\..\include\SFML\Network\Selector.hpp" />
+		<Unit filename="..\..\include\SFML\Network\Selector.inl" />
+		<Unit filename="..\..\include\SFML\Network\SelectorBase.hpp" />
+		<Unit filename="..\..\include\SFML\Network\SocketHelper.hpp" />
+		<Unit filename="..\..\include\SFML\Network\SocketTCP.hpp" />
+		<Unit filename="..\..\include\SFML\Network\SocketUDP.hpp" />
+		<Unit filename="..\..\include\SFML\Network\Sockets.hpp" />
+		<Unit filename="..\..\include\SFML\Network\Win32\SocketHelper.hpp" />
+		<Unit filename="..\..\src\SFML\Network\Ftp.cpp" />
+		<Unit filename="..\..\src\SFML\Network\Http.cpp" />
+		<Unit filename="..\..\src\SFML\Network\IPAddress.cpp" />
+		<Unit filename="..\..\src\SFML\Network\Packet.cpp" />
+		<Unit filename="..\..\src\SFML\Network\SelectorBase.cpp" />
+		<Unit filename="..\..\src\SFML\Network\SocketTCP.cpp" />
+		<Unit filename="..\..\src\SFML\Network\SocketUDP.cpp" />
+		<Unit filename="..\..\src\SFML\Network\Win32\SocketHelper.cpp" />
+		<Extensions>
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

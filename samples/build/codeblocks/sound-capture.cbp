@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sound-capture" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug_Win32">
+				<Option output="..\..\bin\sound-capture-d.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\..\Temp\sound-capture\Debug_Win32" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\include" />
+					<Add directory="..\..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\..\lib\mingw\libsfml-audio-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-system-s-d.a" />
+				</Linker>
+			</Target>
+			<Target title="Release_Win32">
+				<Option output="..\..\bin\sound-capture.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\..\Temp\sound-capture\Release_Win32" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\include" />
+					<Add directory="..\..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\..\lib\mingw\libsfml-audio-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-system-s.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="..\..\..\include" />
+		</Compiler>
+		<Unit filename="..\..\sound_capture\SoundCapture.cpp" />
+		<Extensions>
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,844 @@
+////////////////////////////////////////////////////////////
+//
+// PySFML - Python binding for SFML (Simple and Fast Multimedia Library)
+// Copyright (C) 2007, 2008 Rémi Koenig (remi.k2620@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+////////////////////////////////////////////////////////////
+
+#include "Event.hpp"
+
+
+////////////////////////////////
+// Text Events Parameters 
+////////////////////////////////
+
+PyMemberDef PySfEventText_members[] = {
+	{(char *)"Unicode", T_USHORT, offsetof(PySfEventText, Unicode), RO, (char *)""},
+	{NULL}  /* Sentinel */
+};
+
+static PyObject *
+PySfEventText_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfEventText *self;
+
+	self = (PySfEventText *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->Unicode = 0;
+	}
+
+	return (PyObject *)self;
+}
+
+int
+PySfEventText_init(PySfEventText *self, PyObject *args, PyObject *kwds)
+{
+	return 0;
+}
+
+void
+PySfEventText_dealloc(PySfEventText* self)
+{
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+PyTypeObject PySfEventTextType = {
+	PyObject_HEAD_INIT(NULL)
+	0,						/*ob_size*/
+	"Event.Text",			/*tp_name*/
+	sizeof(PySfEventText),	/*tp_basicsize*/
+	0,						/*tp_itemsize*/
+	(destructor)PySfEventText_dealloc, /*tp_dealloc*/
+	0,						/*tp_print*/
+	0,						/*tp_getattr*/
+	0,						/*tp_setattr*/
+	0,						/*tp_compare*/
+	0,						/*tp_repr*/
+	0,						/*tp_as_number*/
+	0,						/*tp_as_sequence*/
+	0,						/*tp_as_mapping*/
+	0,						/*tp_hash */
+	0,						/*tp_call*/
+	0,						/*tp_str*/
+	0,						/*tp_getattro*/
+	0,						/*tp_setattro*/
+	0,						/*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
+	"Text Events Parameters", /* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	0,						/* tp_methods */
+	PySfEventText_members,	/* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)PySfEventText_init, /* tp_init */
+	0,						/* tp_alloc */
+	PySfEventText_new,		/* tp_new */
+};
+
+
+
+/////////////////////////////////////
+// Keyboard Events Parameters
+/////////////////////////////////////
+
+static PyObject *
+PySfEventKey_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfEventKey *self;
+
+	self = (PySfEventKey *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		Py_INCREF(Py_False);
+		self->Alt = Py_False;
+		Py_INCREF(Py_False);
+		self->Control = Py_False;
+		Py_INCREF(Py_False);
+		self->Shift = Py_False;
+	}
+
+	return (PyObject *)self;
+}
+
+int
+PySfEventKey_init(PySfEventKey *self, PyObject *args, PyObject *kwds)
+{
+	return 0;
+}
+
+void
+PySfEventKey_dealloc(PySfEventKey* self)
+{
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+PyMemberDef PySfEventKey_members[] = {
+	{(char *)"Alt", T_OBJECT, offsetof(PySfEventKey, Alt), RO, (char *)""},
+	{(char *)"Control", T_OBJECT, offsetof(PySfEventKey, Control), RO, (char *)""},
+	{(char *)"Shift", T_OBJECT, offsetof(PySfEventKey, Shift), RO, (char *)""},
+	{(char *)"Code", T_UINT, offsetof(PySfEventKey, Code), RO, (char *)""},
+	{NULL}  /* Sentinel */
+};
+
+PyTypeObject PySfEventKeyType = {
+	PyObject_HEAD_INIT(NULL)
+	0,						/*ob_size*/
+	"Event.Key",			/*tp_name*/
+	sizeof(PySfEventKey),	/*tp_basicsize*/
+	0,						/*tp_itemsize*/
+	(destructor)PySfEventKey_dealloc, /*tp_dealloc*/
+	0,						/*tp_print*/
+	0,						/*tp_getattr*/
+	0,						/*tp_setattr*/
+	0,						/*tp_compare*/
+	0,						/*tp_repr*/
+	0,						/*tp_as_number*/
+	0,						/*tp_as_sequence*/
+	0,						/*tp_as_mapping*/
+	0,						/*tp_hash */
+	0,						/*tp_call*/
+	0,						/*tp_str*/
+	0,						/*tp_getattro*/
+	0,						/*tp_setattro*/
+	0,						/*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
+	"Key Events Parameters", /* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	0,						/* tp_methods */
+	PySfEventKey_members,	/* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)PySfEventKey_init, /* tp_init */
+	0,						/* tp_alloc */
+	PySfEventKey_new,		/* tp_new */
+};
+
+
+////////////////////////////////////
+// MouseMove Events Parameters
+////////////////////////////////////
+
+static PyObject *
+PySfEventMouseMove_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfEventMouseMove *self;
+
+	self = (PySfEventMouseMove *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->X = 0;
+		self->Y = 0;
+	}
+
+	return (PyObject *)self;
+}
+
+int
+PySfEventMouseMove_init(PySfEventMouseMove *self, PyObject *args, PyObject *kwds)
+{
+	return 0;
+}
+
+void
+PySfEventMouseMove_dealloc(PySfEventMouseMove *self)
+{
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+
+PyMemberDef PySfEventMouseMove_members[] = {
+	{(char *)"X", T_INT, offsetof(PySfEventMouseMove, X), RO, (char *)""},
+	{(char *)"Y", T_INT, offsetof(PySfEventMouseMove, Y), RO, (char *)""},
+	{NULL}  /* Sentinel */
+};
+
+PyTypeObject PySfEventMouseMoveType = {
+	PyObject_HEAD_INIT(NULL)
+	0,						/*ob_size*/
+	"Event.MouseMove",		/*tp_name*/
+	sizeof(PySfEventMouseMove), /*tp_basicsize*/
+	0,						/*tp_itemsize*/
+	(destructor)PySfEventMouseMove_dealloc, /*tp_dealloc*/
+	0,						/*tp_print*/
+	0,						/*tp_getattr*/
+	0,						/*tp_setattr*/
+	0,						/*tp_compare*/
+	0,						/*tp_repr*/
+	0,						/*tp_as_number*/
+	0,						/*tp_as_sequence*/
+	0,						/*tp_as_mapping*/
+	0,						/*tp_hash */
+	0,						/*tp_call*/
+	0,						/*tp_str*/
+	0,						/*tp_getattro*/
+	0,						/*tp_setattro*/
+	0,						/*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
+	"MouseMove Events Parameters", /* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	0,						/* tp_methods */
+	PySfEventMouseMove_members,	/* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)PySfEventMouseMove_init, /* tp_init */
+	0,						/* tp_alloc */
+	PySfEventMouseMove_new,	/* tp_new */
+};
+
+
+////////////////////////////////////
+// MouseButton Events Parameters
+////////////////////////////////////
+
+static PyObject *
+PySfEventMouseButton_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfEventMouseButton *self;
+
+	self = (PySfEventMouseButton *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->Button = 0;
+		self->X = 0;
+		self->Y = 0;
+	}
+
+	return (PyObject *)self;
+}
+
+int
+PySfEventMouseButton_init(PySfEventMouseButton *self, PyObject *args, PyObject *kwds)
+{
+	return 0;
+}
+
+void
+PySfEventMouseButton_dealloc(PySfEventMouseButton* self)
+{
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+
+PyMemberDef PySfEventMouseButton_members[] = {
+	{(char *)"Button", T_UINT, offsetof(PySfEventMouseButton, Button), RO, (char *)""},
+	{(char *)"X", T_INT, offsetof(PySfEventMouseButton, X), RO, (char *)""},
+	{(char *)"Y", T_INT, offsetof(PySfEventMouseButton, Y), RO, (char *)""},
+	{NULL}  /* Sentinel */
+};
+
+PyTypeObject PySfEventMouseButtonType = {
+	PyObject_HEAD_INIT(NULL)
+	0,						/*ob_size*/
+	"Event.MouseButton",	/*tp_name*/
+	sizeof(PySfEventMouseButton), /*tp_basicsize*/
+	0,						/*tp_itemsize*/
+	(destructor)PySfEventMouseButton_dealloc, /*tp_dealloc*/
+	0,						/*tp_print*/
+	0,						/*tp_getattr*/
+	0,						/*tp_setattr*/
+	0,						/*tp_compare*/
+	0,						/*tp_repr*/
+	0,						/*tp_as_number*/
+	0,						/*tp_as_sequence*/
+	0,						/*tp_as_mapping*/
+	0,						/*tp_hash */
+	0,						/*tp_call*/
+	0,						/*tp_str*/
+	0,						/*tp_getattro*/
+	0,						/*tp_setattro*/
+	0,						/*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
+	"MouseButton Events Parameters", /* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	0,						/* tp_methods */
+	PySfEventMouseButton_members, /* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)PySfEventMouseButton_init, /* tp_init */
+	0,						/* tp_alloc */
+	PySfEventMouseButton_new, /* tp_new */
+};
+
+
+////////////////////////////////
+// MouseWheel Events Parameters 
+////////////////////////////////
+
+static PyObject *
+PySfEventMouseWheel_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfEventMouseWheel *self;
+
+	self = (PySfEventMouseWheel *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->Delta = 0;
+	}
+
+	return (PyObject *)self;
+}
+
+int
+PySfEventMouseWheel_init(PySfEventMouseWheel *self, PyObject *args, PyObject *kwds)
+{
+	return 0;
+}
+
+void
+PySfEventMouseWheel_dealloc(PySfEventMouseWheel* self)
+{
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+PyMemberDef PySfEventMouseWheel_members[] = {
+	{(char *)"Delta", T_INT, offsetof(PySfEventMouseWheel,Delta), RO, (char *)""},
+	{NULL}  /* Sentinel */
+};
+
+PyTypeObject PySfEventMouseWheelType = {
+	PyObject_HEAD_INIT(NULL)
+	0,						/*ob_size*/
+	"Event.MouseWheel",		/*tp_name*/
+	sizeof(PySfEventMouseWheel), /*tp_basicsize*/
+	0,						/*tp_itemsize*/
+	(destructor)PySfEventMouseWheel_dealloc, /*tp_dealloc*/
+	0,						/*tp_print*/
+	0,						/*tp_getattr*/
+	0,						/*tp_setattr*/
+	0,						/*tp_compare*/
+	0,						/*tp_repr*/
+	0,						/*tp_as_number*/
+	0,						/*tp_as_sequence*/
+	0,						/*tp_as_mapping*/
+	0,						/*tp_hash */
+	0,						/*tp_call*/
+	0,						/*tp_str*/
+	0,						/*tp_getattro*/
+	0,						/*tp_setattro*/
+	0,						/*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
+	"MouseWheel Events Parameters", /* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	0,						/* tp_methods */
+	PySfEventMouseWheel_members, /* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)PySfEventMouseWheel_init,	/* tp_init */
+	0,						/* tp_alloc */
+	PySfEventMouseWheel_new, /* tp_new */
+};
+
+
+////////////////////////////////////
+// JoyMove Events Parameters
+////////////////////////////////////
+
+static PyObject *
+PySfEventJoyMove_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfEventJoyMove *self;
+
+	self = (PySfEventJoyMove *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->JoystickId = 0;
+		self->Axis = 0;
+		self->Position = 0.f;
+	}
+
+	return (PyObject *)self;
+}
+
+int
+PySfEventJoyMove_init(PySfEventJoyMove *self, PyObject *args, PyObject *kwds)
+{
+	return 0;
+}
+
+void
+PySfEventJoyMove_dealloc(PySfEventJoyMove* self)
+{
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+
+PyMemberDef PySfEventJoyMove_members[] = {
+	{(char *)"JoystickId", T_UINT, offsetof(PySfEventJoyMove,JoystickId), RO, (char *)""},
+	{(char *)"Axis", T_UINT, offsetof(PySfEventJoyMove,Axis), RO, (char *)""},
+	{(char *)"Position", T_FLOAT, offsetof(PySfEventJoyMove,Position), RO, (char *)""},
+	{NULL}  /* Sentinel */
+};
+
+PyTypeObject PySfEventJoyMoveType = {
+	PyObject_HEAD_INIT(NULL)
+	0,						/*ob_size*/
+	"Event.JoyMove",		/*tp_name*/
+	sizeof(PySfEventJoyMove), /*tp_basicsize*/
+	0,						/*tp_itemsize*/
+	(destructor)PySfEventJoyMove_dealloc, /*tp_dealloc*/
+	0,						/*tp_print*/
+	0,						/*tp_getattr*/
+	0,						/*tp_setattr*/
+	0,						/*tp_compare*/
+	0,						/*tp_repr*/
+	0,						/*tp_as_number*/
+	0,						/*tp_as_sequence*/
+	0,						/*tp_as_mapping*/
+	0,						/*tp_hash */
+	0,						/*tp_call*/
+	0,						/*tp_str*/
+	0,						/*tp_getattro*/
+	0,						/*tp_setattro*/
+	0,						/*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
+	"JoyMove Events Parameters", /* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	0,						/* tp_methods */
+	PySfEventJoyMove_members, /* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)PySfEventJoyMove_init, /* tp_init */
+	0,						/* tp_alloc */
+	PySfEventJoyMove_new,	/* tp_new */
+};
+
+
+////////////////////////////////////
+// JoyButton Events Parameters
+////////////////////////////////////
+
+static PyObject *
+PySfEventJoyButton_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfEventJoyButton *self;
+
+	self = (PySfEventJoyButton *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->JoystickId = 0;
+		self->Button = 0;
+	}
+
+	return (PyObject *)self;
+}
+
+int
+PySfEventJoyButton_init(PySfEventJoyButton *self, PyObject *args, PyObject *kwds)
+{
+	return 0;
+}
+
+void
+PySfEventJoyButton_dealloc(PySfEventJoyButton* self)
+{
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+
+PyMemberDef PySfEventJoyButton_members[] = {
+	{(char *)"JoystickId", T_UINT, offsetof(PySfEventJoyButton, JoystickId), RO, (char *)""},
+	{(char *)"Button", T_UINT, offsetof(PySfEventJoyButton, Button), RO, (char *)""},
+	{NULL}  /* Sentinel */
+};
+
+PyTypeObject PySfEventJoyButtonType = {
+	PyObject_HEAD_INIT(NULL)
+	0,						/*ob_size*/
+	"Event.JoyButton",		/*tp_name*/
+	sizeof(PySfEventJoyButton),	/*tp_basicsize*/
+	0,						/*tp_itemsize*/
+	(destructor)PySfEventJoyButton_dealloc, /*tp_dealloc*/
+	0,						/*tp_print*/
+	0,						/*tp_getattr*/
+	0,						/*tp_setattr*/
+	0,						/*tp_compare*/
+	0,						/*tp_repr*/
+	0,						/*tp_as_number*/
+	0,						/*tp_as_sequence*/
+	0,						/*tp_as_mapping*/
+	0,						/*tp_hash */
+	0,						/*tp_call*/
+	0,						/*tp_str*/
+	0,						/*tp_getattro*/
+	0,						/*tp_setattro*/
+	0,						/*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
+	"JoyButton Events Parameters", /* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	0,						/* tp_methods */
+	PySfEventJoyButton_members, /* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)PySfEventJoyButton_init, /* tp_init */
+	0,						/* tp_alloc */
+	PySfEventJoyButton_new,	/* tp_new */
+};
+
+
+////////////////////////////////////
+// Size Events Parameters
+////////////////////////////////////
+
+static PyObject *
+PySfEventSize_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfEventSize *self;
+
+	self = (PySfEventSize *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->Width = 0;
+		self->Height = 0;
+	}
+
+	return (PyObject *)self;
+}
+
+int
+PySfEventSize_init(PySfEventSize *self, PyObject *args, PyObject *kwds)
+{
+	return 0;
+}
+
+void
+PySfEventSize_dealloc(PySfEventSize* self)
+{
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+PyMemberDef PySfEventSize_members[] = {
+	{(char *)"Width", T_UINT, offsetof(PySfEventSize, Width), RO, (char *)""},
+	{(char *)"Height", T_UINT, offsetof(PySfEventSize, Height), RO, (char *)""},
+	{NULL}  /* Sentinel */
+};
+
+PyTypeObject PySfEventSizeType = {
+	PyObject_HEAD_INIT(NULL)
+	0,						/*ob_size*/
+	"Event.Size",			/*tp_name*/
+	sizeof(PySfEventSize),	/*tp_basicsize*/
+	0,						/*tp_itemsize*/
+	(destructor)PySfEventSize_dealloc, /*tp_dealloc*/
+	0,						/*tp_print*/
+	0,						/*tp_getattr*/
+	0,						/*tp_setattr*/
+	0,						/*tp_compare*/
+	0,						/*tp_repr*/
+	0,						/*tp_as_number*/
+	0,						/*tp_as_sequence*/
+	0,						/*tp_as_mapping*/
+	0,						/*tp_hash */
+	0,						/*tp_call*/
+	0,						/*tp_str*/
+	0,						/*tp_getattro*/
+	0,						/*tp_setattro*/
+	0,						/*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
+	"Size Events Parameters", /* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	0,						/* tp_methods */
+	PySfEventSize_members,	/* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)PySfEventSize_init, /* tp_init */
+	0,						/* tp_alloc */
+	PySfEventSize_new,		/* tp_new */
+};
+
+
+
+
+
+
+////////////////////////////////////
+// sf.Event
+////////////////////////////////////
+
+
+static int
+PySfEvent_init(PySfEvent *self, PyObject *args, PyObject *kwds)
+{
+	self->obj = new sf::Event();
+	return 0;
+}
+
+static PyObject *
+PySfEvent_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfEvent *self;
+
+	self = (PySfEvent *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->Text = (PySfEventText *)PySfEventText_new(&PySfEventTextType, NULL, NULL);
+		self->Key = (PySfEventKey *)PySfEventKey_new(&PySfEventKeyType, NULL, NULL);
+		self->MouseMove = (PySfEventMouseMove *)PySfEventMouseMove_new(&PySfEventMouseMoveType, NULL, NULL);
+		self->MouseButton = (PySfEventMouseButton *)PySfEventMouseButton_new(&PySfEventMouseButtonType, NULL, NULL);
+		self->MouseWheel = (PySfEventMouseWheel *)PySfEventMouseWheel_new(&PySfEventMouseWheelType, NULL, NULL);
+		self->JoyMove = (PySfEventJoyMove *)PySfEventJoyMove_new(&PySfEventJoyMoveType, NULL, NULL);
+		self->JoyButton = (PySfEventJoyButton *)PySfEventJoyButton_new(&PySfEventJoyButtonType, NULL, NULL);
+		self->Size = (PySfEventSize *)PySfEventSize_new(&PySfEventSizeType, NULL, NULL);
+	}
+
+	return (PyObject *)self;
+}
+
+static void
+PySfEvent_dealloc(PySfEvent* self)
+{
+	Py_DECREF(self->Text);
+	Py_DECREF(self->Key);
+	Py_DECREF(self->MouseMove);
+	Py_DECREF(self->MouseButton);
+	Py_DECREF(self->MouseWheel);
+	Py_DECREF(self->JoyMove);
+	Py_DECREF(self->JoyButton);
+	Py_DECREF(self->Size);
+	delete self->obj;
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+static PyMemberDef PySfEvent_members[] = {
+	{(char *)"Text", T_OBJECT, offsetof(PySfEvent, Text), RO, (char *)"Text Events Parameters"},
+	{(char *)"Key", T_OBJECT, offsetof(PySfEvent, Key), RO, (char *)"Keyboard Events Parameters"},
+	{(char *)"MouseMove", T_OBJECT, offsetof(PySfEvent, MouseMove), RO, (char *)"MouseMove Events Parameters"},
+	{(char *)"MouseButton", T_OBJECT, offsetof(PySfEvent, MouseButton), RO, (char *)"MouseButton Events Parameters"},
+	{(char *)"MouseWheel", T_OBJECT, offsetof(PySfEvent, MouseWheel), RO, (char *)"MouseWheel Events Parameters"},
+	{(char *)"JoyMove", T_OBJECT, offsetof(PySfEvent, JoyMove), RO, (char *)"JoyMove Events Parameters"},
+	{(char *)"JoyButton", T_OBJECT, offsetof(PySfEvent, JoyButton), RO, (char *)"JoyButton Events Parameters"},
+	{(char *)"Size", T_OBJECT, offsetof(PySfEvent, Size), RO, (char *)"Size Events Parameters"},
+	{(char *)"Type", T_UINT, offsetof(PySfEvent, Type), RO, (char *)"Type Events Parameters"},
+	{NULL}  /* Sentinel */
+};
+
+static PyMethodDef PySfEvent_methods[] = {
+	{NULL}  /* Sentinel */
+};
+
+PyTypeObject PySfEventType = {
+	PyObject_HEAD_INIT(NULL)
+	0,						/*ob_size*/
+	"Event",				/*tp_name*/
+	sizeof(PySfEvent),		/*tp_basicsize*/
+	0,						/*tp_itemsize*/
+	(destructor)PySfEvent_dealloc, /*tp_dealloc*/
+	0,						/*tp_print*/
+	0,						/*tp_getattr*/
+	0,						/*tp_setattr*/
+	0,						/*tp_compare*/
+	0,						/*tp_repr*/
+	0,						/*tp_as_number*/
+	0,						/*tp_as_sequence*/
+	0,						/*tp_as_mapping*/
+	0,						/*tp_hash */
+	0,						/*tp_call*/
+	0,						/*tp_str*/
+	0,						/*tp_getattro*/
+	0,						/*tp_setattro*/
+	0,						/*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
+	"sf.Event defines a system event and its parameters", /* tp_doc */
+	0,						/* tp_traverse */
+	0,						/* tp_clear */
+	0,						/* tp_richcompare */
+	0,						/* tp_weaklistoffset */
+	0,						/* tp_iter */
+	0,						/* tp_iternext */
+	PySfEvent_methods,		/* tp_methods */
+	PySfEvent_members,		/* tp_members */
+	0,						/* tp_getset */
+	0,						/* tp_base */
+	0,						/* tp_dict */
+	0,						/* tp_descr_get */
+	0,						/* tp_descr_set */
+	0,						/* tp_dictoffset */
+	(initproc)PySfEvent_init, /* tp_init */
+	0,						/* tp_alloc */
+	PySfEvent_new,			/* tp_new */
+};
+
+
+void
+PySfEvent_InitConst()
+{
+	PyObject *obj;
+	obj = PyInt_FromLong(sf::Event::KeyReleased);
+	PyDict_SetItemString(PySfEventType.tp_dict, "KeyReleased", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::LostFocus);
+	PyDict_SetItemString(PySfEventType.tp_dict, "LostFocus", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::GainedFocus);
+	PyDict_SetItemString(PySfEventType.tp_dict, "GainedFocus", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::KeyPressed);
+	PyDict_SetItemString(PySfEventType.tp_dict, "KeyPressed", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::MouseWheelMoved);
+	PyDict_SetItemString(PySfEventType.tp_dict, "MouseWheelMoved", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::TextEntered);
+	PyDict_SetItemString(PySfEventType.tp_dict, "TextEntered", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::MouseMoved);
+	PyDict_SetItemString(PySfEventType.tp_dict, "MouseMoved", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::JoyButtonPressed);
+	PyDict_SetItemString(PySfEventType.tp_dict, "JoyButtonPressed", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::MouseButtonReleased);
+	PyDict_SetItemString(PySfEventType.tp_dict, "MouseButtonReleased", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::Closed);
+	PyDict_SetItemString(PySfEventType.tp_dict, "Closed", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::MouseButtonPressed);
+	PyDict_SetItemString(PySfEventType.tp_dict, "MouseButtonPressed", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::JoyMoved);
+	PyDict_SetItemString(PySfEventType.tp_dict, "JoyMoved", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::JoyButtonReleased);
+	PyDict_SetItemString(PySfEventType.tp_dict, "JoyButtonReleased", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::Resized);
+	PyDict_SetItemString(PySfEventType.tp_dict, "Resized", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::MouseEntered);
+	PyDict_SetItemString(PySfEventType.tp_dict, "MouseEntered", obj);
+	Py_DECREF(obj);
+	obj = PyInt_FromLong(sf::Event::MouseLeft);
+	PyDict_SetItemString(PySfEventType.tp_dict, "MouseLeft", obj);
+	Py_DECREF(obj);
+}
+

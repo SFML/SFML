@@ -1,0 +1,16 @@
+texture framebuffer
+float offset
+
+effect
+{
+	vec2 offx = vec2(offset, 0.0);
+	vec2 offy = vec2(0.0, offset);
+
+	vec4 c0 = framebuffer(_in);
+	vec4 c1 = framebuffer(_in - offy);
+	vec4 c2 = framebuffer(_in + offy);
+	vec4 c3 = framebuffer(_in - offx);
+	vec4 c4 = framebuffer(_in + offx);
+
+	_out = c0 * 0.2 + c1 * 0.2 + c2 * 0.2 + c3 * 0.2 + c4 * 0.2;
+}

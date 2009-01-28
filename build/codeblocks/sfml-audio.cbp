@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sfml-audio" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug DLL_Win32">
+				<Option output="..\..\lib\mingw\sfml-audio-d.dll" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\Temp\sfml-audio\Debug DLL_Win32" />
+				<Option external_deps="..\..\lib\mingw\libsfml-system-d.a;" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DSFML_DYNAMIC" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+					<Add directory="..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\lib\mingw\libsfml-system-d.a" />
+					<Add library="..\..\extlibs\libs-mingw\libopenal32.a" />
+					<Add library="..\..\extlibs\libs-mingw\libsndfile.a" />
+					<Add directory="..\..\extlibs" />
+				</Linker>
+			</Target>
+			<Target title="Release DLL_Win32">
+				<Option output="..\..\lib\mingw\sfml-audio.dll" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\Temp\sfml-audio\Release DLL_Win32" />
+				<Option external_deps="..\..\lib\mingw\libsfml-system.a;" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DSFML_DYNAMIC" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+					<Add directory="..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\lib\mingw\libsfml-system.a" />
+					<Add library="..\..\extlibs\libs-mingw\libopenal32.a" />
+					<Add library="..\..\extlibs\libs-mingw\libsndfile.a" />
+					<Add directory="..\..\extlibs" />
+				</Linker>
+			</Target>
+			<Target title="Debug static_Win32">
+				<Option output="..\..\lib\mingw\libsfml-audio-s-d.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\Temp\sfml-audio\Debug static_Win32" />
+				<Option external_deps="..\..\lib\mingw\libsfml-system-s-d.a;" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+					<Add directory="..\..\extlibs" />
+				</ResourceCompiler>
+			</Target>
+			<Target title="Release static_Win32">
+				<Option output="..\..\lib\mingw\libsfml-audio-s.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\Temp\sfml-audio\Release static_Win32" />
+				<Option external_deps="..\..\lib\mingw\libsfml-system-s.a;" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+					<Add directory="..\..\extlibs" />
+				</ResourceCompiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="..\..\extlibs\headers" />
+			<Add directory="..\..\src" />
+			<Add directory="..\..\include" />
+		</Compiler>
+		<Unit filename="..\..\include\SFML\Audio\AudioResource.hpp" />
+		<Unit filename="..\..\include\SFML\Audio\Listener.hpp" />
+		<Unit filename="..\..\include\SFML\Audio\Music.hpp" />
+		<Unit filename="..\..\include\SFML\Audio\Sound.hpp" />
+		<Unit filename="..\..\include\SFML\Audio\SoundBuffer.hpp" />
+		<Unit filename="..\..\include\SFML\Audio\SoundBufferRecorder.hpp" />
+		<Unit filename="..\..\include\SFML\Audio\SoundRecorder.hpp" />
+		<Unit filename="..\..\include\SFML\Audio\SoundStream.hpp" />
+		<Unit filename="..\..\src\SFML\Audio\AudioDevice.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\AudioDevice.hpp" />
+		<Unit filename="..\..\src\SFML\Audio\AudioResource.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\Listener.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\Music.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\OpenAL.hpp" />
+		<Unit filename="..\..\src\SFML\Audio\Sound.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundBuffer.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundBufferRecorder.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundFile.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundFile.hpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundFileDefault.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundFileDefault.hpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundFileOgg.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundFileOgg.hpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundRecorder.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundStream.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\stb_vorbis\stb_vorbis.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\src\SFML\Audio\stb_vorbis\stb_vorbis.h" />
+		<Extensions>
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

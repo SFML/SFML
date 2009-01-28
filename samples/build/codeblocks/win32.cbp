@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="win32" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug_Win32">
+				<Option output="..\..\bin\win32-d.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\..\Temp\win32\Debug_Win32" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\include" />
+					<Add directory="..\..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\..\lib\mingw\libsfml-graphics-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-window-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-system-s-d.a" />
+				</Linker>
+			</Target>
+			<Target title="Release_Win32">
+				<Option output="..\..\bin\win32.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\..\Temp\win32\Release_Win32" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\include" />
+					<Add directory="..\..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\..\lib\mingw\libsfml-graphics-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-window-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-system-s.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="..\..\..\include" />
+		</Compiler>
+		<Unit filename="..\..\win32\Win32.cpp" />
+		<Extensions>
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

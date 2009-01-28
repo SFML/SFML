@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sfml-system" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug DLL_Win32">
+				<Option output="..\..\lib\mingw\sfml-system-d.dll" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\Temp\sfml-system\Debug DLL_Win32" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DSFML_DYNAMIC" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+				</ResourceCompiler>
+			</Target>
+			<Target title="Release DLL_Win32">
+				<Option output="..\..\lib\mingw\sfml-system.dll" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\Temp\sfml-system\Release DLL_Win32" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+					<Add option="-DSFML_DYNAMIC" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+				</ResourceCompiler>
+			</Target>
+			<Target title="Debug static_Win32">
+				<Option output="..\..\lib\mingw\libsfml-system-s-d.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\Temp\sfml-system\Debug static_Win32" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+				</ResourceCompiler>
+			</Target>
+			<Target title="Release static_Win32">
+				<Option output="..\..\lib\mingw\libsfml-system-s.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\Temp\sfml-system\Release static_Win32" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DSFML_EXPORTS" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\src" />
+				</ResourceCompiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="..\..\src" />
+			<Add directory="..\..\include" />
+		</Compiler>
+		<Unit filename="..\..\include\SFML\System\Clock.hpp" />
+		<Unit filename="..\..\include\SFML\System\Lock.hpp" />
+		<Unit filename="..\..\include\SFML\System\Mutex.hpp" />
+		<Unit filename="..\..\include\SFML\System\NonCopyable.hpp" />
+		<Unit filename="..\..\include\SFML\System\Randomizer.hpp" />
+		<Unit filename="..\..\include\SFML\System\Resource.hpp" />
+		<Unit filename="..\..\include\SFML\System\Resource.inl" />
+		<Unit filename="..\..\include\SFML\System\ResourcePtr.inl" />
+		<Unit filename="..\..\include\SFML\System\Sleep.hpp" />
+		<Unit filename="..\..\include\SFML\System\Thread.hpp" />
+		<Unit filename="..\..\include\SFML\System\Unicode.hpp" />
+		<Unit filename="..\..\include\SFML\System\Unicode.inl" />
+		<Unit filename="..\..\include\SFML\System\Vector2.hpp" />
+		<Unit filename="..\..\include\SFML\System\Vector2.inl" />
+		<Unit filename="..\..\include\SFML\System\Vector3.hpp" />
+		<Unit filename="..\..\include\SFML\System\Vector3.inl" />
+		<Unit filename="..\..\include\SFML\System\Win32\Mutex.hpp" />
+		<Unit filename="..\..\include\SFML\System\Win32\Thread.hpp" />
+		<Unit filename="..\..\src\SFML\System\Clock.cpp" />
+		<Unit filename="..\..\src\SFML\System\Lock.cpp" />
+		<Unit filename="..\..\src\SFML\System\Platform.hpp" />
+		<Unit filename="..\..\src\SFML\System\Randomizer.cpp" />
+		<Unit filename="..\..\src\SFML\System\Sleep.cpp" />
+		<Unit filename="..\..\src\SFML\System\Unicode.cpp" />
+		<Unit filename="..\..\src\SFML\System\Win32\Mutex.cpp" />
+		<Unit filename="..\..\src\SFML\System\Win32\Platform.cpp" />
+		<Unit filename="..\..\src\SFML\System\Win32\Platform.hpp" />
+		<Unit filename="..\..\src\SFML\System\Win32\Thread.cpp" />
+		<Extensions>
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
