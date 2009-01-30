@@ -109,6 +109,12 @@ public :
     void RemoveListener(WindowListener* Listener);
 
     ////////////////////////////////////////////////////////////
+    /// Initialize window's states that can't be done at construction
+    ///
+    ////////////////////////////////////////////////////////////
+    void Initialize();
+
+    ////////////////////////////////////////////////////////////
     /// Get the client width of the window
     ///
     /// \return Width of the window in pixels

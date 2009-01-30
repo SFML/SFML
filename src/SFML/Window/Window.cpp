@@ -43,8 +43,8 @@ myWindow        (NULL),
 myLastFrameTime (0.f),
 myIsExternal    (false),
 myFramerateLimit(0),
-mySetCursorPosX (-1),
-mySetCursorPosY (-1)
+mySetCursorPosX (0xFFFF),
+mySetCursorPosY (0xFFFF)
 {
 
 }
@@ -73,8 +73,8 @@ myWindow        (NULL),
 myLastFrameTime (0.f),
 myIsExternal    (true),
 myFramerateLimit(0),
-mySetCursorPosX (-1),
-mySetCursorPosY (-1)
+mySetCursorPosX (0xFFFF),
+mySetCursorPosY (0xFFFF)
 {
     Create(Handle, Params);
 }
@@ -413,11 +413,12 @@ void Window::OnEvent(const Event& EventReceived)
 ////////////////////////////////////////////////////////////
 void Window::Initialize(priv::WindowImpl* Window)
 {
-    // Assign new window and listen to its events
+    // Assign and initialize the new window
     myWindow = Window;
-    myWindow->AddListener(this);
+    myWindow->Initialize();
 
-    // Attach input to the window
+    // Listen to events from the new window
+    myWindow->AddListener(this);
     myWindow->AddListener(&myInput);
 
     // Setup default behaviours (to get a consistent behaviour across different implementations)

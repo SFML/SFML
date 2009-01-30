@@ -88,12 +88,6 @@ myWidth       (0),
 myHeight      (0),
 myJoyThreshold(0.1f)
 {
-    // Initialize the joysticks
-    for (unsigned int i = 0; i < JoysticksCount; ++i)
-    {
-        myJoysticks[i].Initialize(i);
-        myJoyStates[i] = myJoysticks[i].UpdateState();
-    }
 }
 
 
@@ -122,6 +116,20 @@ void WindowImpl::AddListener(WindowListener* Listener)
 void WindowImpl::RemoveListener(WindowListener* Listener)
 {
     myListeners.erase(Listener);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Initialize window's states that can't be done at construction
+////////////////////////////////////////////////////////////
+void WindowImpl::Initialize()
+{
+    // Initialize the joysticks
+    for (unsigned int i = 0; i < JoysticksCount; ++i)
+    {
+        myJoysticks[i].Initialize(i);
+        myJoyStates[i] = myJoysticks[i].UpdateState();
+    }
 }
 
 
