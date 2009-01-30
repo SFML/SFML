@@ -396,6 +396,10 @@
 			RelativePath="..\include\SFML\Network\SocketUDP.h"
 			>
 		</File>
+		<File
+			RelativePath="..\include\SFML\Network\Types.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

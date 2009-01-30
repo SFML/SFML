@@ -31,14 +31,8 @@
 #include <SFML/Config.h>
 #include <SFML/Graphics/BlendMode.h>
 #include <SFML/Graphics/Color.h>
-#include <SFML/Graphics/Font.h>
 #include <SFML/Graphics/Rect.h>
-
-
-////////////////////////////////////////////////////////////
-/// sfString defines a graphical 2D text, that can be drawn on screen
-////////////////////////////////////////////////////////////
-typedef struct sfString sfString;
+#include <SFML/Graphics/Types.h>
 
 
 ////////////////////////////////////////////////////////////

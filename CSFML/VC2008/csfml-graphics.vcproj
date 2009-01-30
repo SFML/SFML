@@ -432,6 +432,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\include\SFML\Graphics\Types.h"
+			>
+		</File>
+		<File
 			RelativePath="..\src\SFML\Graphics\View.cpp"
 			>
 		</File>

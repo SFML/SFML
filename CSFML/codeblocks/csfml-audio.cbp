@@ -123,6 +123,7 @@
 		<Unit filename="..\include\SFML\Audio\SoundRecorder.h" />
 		<Unit filename="..\include\SFML\Audio\SoundStatus.h" />
 		<Unit filename="..\include\SFML\Audio\SoundStream.h" />
+		<Unit filename="..\include\SFML\Audio\Types.h" />
 		<Unit filename="..\src\SFML\Audio\Listener.cpp" />
 		<Unit filename="..\src\SFML\Audio\Music.cpp" />
 		<Unit filename="..\src\SFML\Audio\Sound.cpp" />

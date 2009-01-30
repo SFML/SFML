@@ -31,15 +31,8 @@
 #include <SFML/Config.h>
 #include <SFML/Graphics/BlendMode.h>
 #include <SFML/Graphics/Color.h>
-#include <SFML/Graphics/Image.h>
 #include <SFML/Graphics/Rect.h>
-
-
-////////////////////////////////////////////////////////////
-/// sfSprite defines a sprite : texture, transformations,
-/// color, and draw on screen
-////////////////////////////////////////////////////////////
-typedef struct sfSprite sfSprite;
+#include <SFML/Graphics/Types.h>
 
 
 ////////////////////////////////////////////////////////////

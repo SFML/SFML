@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.h>
 #include <SFML/Network/IPAddress.h>
+#include <SFML/Network/Types.h>
 
 
 ////////////////////////////////////////////////////////////
@@ -111,16 +112,6 @@ enum sfFtpStatus
 
 
 ////////////////////////////////////////////////////////////
-/// sfFtpListingResponse wraps a FTP directory listing response,
-/// which is basically :
-/// - a status code
-/// - a message
-/// - a list of directory and files
-////////////////////////////////////////////////////////////
-typedef struct sfFtpListingResponse sfFtpListingResponse;
-
-
-////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp listing response
 ///
 /// \param FtpResponse : Ftp listing response to destroy
@@ -180,16 +171,6 @@ CSFML_API size_t sfFtpListingResponse_GetCount(sfFtpListingResponse* FtpListingR
 ////////////////////////////////////////////////////////////
 CSFML_API const char* sfFtpListingResponse_GetFilename(sfFtpListingResponse* FtpListingResponse, size_t Index);
 
-
-////////////////////////////////////////////////////////////
-/// sfFtpDirectoryResponse wraps a FTP directory response, which is basically :
-/// - a status code
-/// - a message
-/// - a directory name
-////////////////////////////////////////////////////////////
-typedef struct sfFtpDirectoryResponse sfFtpDirectoryResponse;
-
-
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp directory response
 ///
@@ -241,14 +222,6 @@ CSFML_API const char* sfFtpDirectoryResponse_GetDirectory(sfFtpDirectoryResponse
 
 
 ////////////////////////////////////////////////////////////
-/// sfFtpResponse wraps a FTP response, which is basically :
-/// - a status code
-/// - a message
-////////////////////////////////////////////////////////////
-typedef struct sfFtpResponse sfFtpResponse;
-
-
-////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp response
 ///
 /// \param FtpResponse : Ftp response to destroy
@@ -286,16 +259,6 @@ CSFML_API sfFtpStatus sfFtpResponse_GetStatus(sfFtpResponse* FtpResponse);
 ///
 ////////////////////////////////////////////////////////////
 CSFML_API const char* sfFtpResponse_GetMessage(sfFtpResponse* FtpResponse);
-
-
-////////////////////////////////////////////////////////////
-/// sfFtp provides methods for manipulating the FTP
-/// protocol (described in RFC 959).
-/// It provides easy access and transfers to remote
-/// directories and files on a FTP server
-////////////////////////////////////////////////////////////
-typedef struct sfFtp sfFtp;
-
 
 ////////////////////////////////////////////////////////////
 /// Construct a new Ftp

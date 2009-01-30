@@ -104,6 +104,7 @@
 		<Unit filename="..\include\SFML\System\Randomizer.h" />
 		<Unit filename="..\include\SFML\System\Sleep.h" />
 		<Unit filename="..\include\SFML\System\Thread.h" />
+		<Unit filename="..\include\SFML\System\Types.h" />
 		<Unit filename="..\src\SFML\System\Clock.cpp" />
 		<Unit filename="..\src\SFML\System\Mutex.cpp" />
 		<Unit filename="..\src\SFML\System\Randomizer.cpp" />

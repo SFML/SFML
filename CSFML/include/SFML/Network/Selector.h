@@ -29,16 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.h>
-#include <SFML/Network/SocketTCP.h>
-#include <SFML/Network/SocketUDP.h>
-
-
-////////////////////////////////////////////////////////////
-/// sfSelectorTCP and sfSelectorUDP allow reading from multiple sockets
-/// without blocking. It's a kind of multiplexer
-////////////////////////////////////////////////////////////
-typedef struct sfSelectorTCP sfSelectorTCP;
-typedef struct sfSelectorUDP sfSelectorUDP;
+#include <SFML/Network/Types.h>
 
 
 ////////////////////////////////////////////////////////////

@@ -22,40 +22,18 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONTEXT_H
-#define SFML_CONTEXT_H
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Config.h>
-#include <SFML/Window/Types.h>
+#ifndef SFML_GRAPHICS_TYPES_H
+#define SFML_GRAPHICS_TYPES_H
 
 
-////////////////////////////////////////////////////////////
-/// Construct a new context
-///
-/// \return New context
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfContext* sfContext_Create();
-
-////////////////////////////////////////////////////////////
-/// Destroy an existing context
-///
-/// \param Context : Context to destroy
-///
-////////////////////////////////////////////////////////////
-CSFML_API void sfContext_Destroy(sfContext* Context);
-
-////////////////////////////////////////////////////////////
-/// Activate or deactivate a context
-///
-/// \param Context : Context to activate or deactivate
-/// \param Active :  sfTrue to activate, sfFalse to deactivate
-///
-////////////////////////////////////////////////////////////
-CSFML_API void sfContext_SetActive(sfContext* Context, sfBool Active);
+typedef struct sfFont sfFont;
+typedef struct sfImage sfImage;
+typedef struct sfPostFX sfPostFX;
+typedef struct sfRenderWindow sfRenderWindow;
+typedef struct sfShape sfShape;
+typedef struct sfSprite sfSprite;
+typedef struct sfString sfString;
+typedef struct sfView sfView;
 
 
-#endif // SFML_CONTEXT_H
+#endif // SFML_GRAPHICS_TYPES_H

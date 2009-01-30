@@ -362,6 +362,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\include\SFML\Window\Types.h"
+			>
+		</File>
+		<File
 			RelativePath="..\src\SFML\Window\VideoMode.cpp"
 			>
 		</File>

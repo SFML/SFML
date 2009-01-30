@@ -377,6 +377,10 @@
 			RelativePath="..\include\SFML\System\Thread.h"
 			>
 		</File>
+		<File
+			RelativePath="..\include\SFML\System\Types.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

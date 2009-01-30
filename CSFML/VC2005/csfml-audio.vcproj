@@ -401,6 +401,10 @@
 			RelativePath="..\include\SFML\Audio\SoundStream.h"
 			>
 		</File>
+		<File
+			RelativePath="..\include\SFML\Audio\Types.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

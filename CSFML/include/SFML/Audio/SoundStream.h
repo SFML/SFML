@@ -30,15 +30,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.h>
 #include <SFML/Audio/SoundStatus.h>
+#include <SFML/Audio/Types.h>
 
-
-////////////////////////////////////////////////////////////
-/// sfSoundStream is a streamed sound, ie samples are acquired
-/// while the sound is playing. Use it for big sound that would
-/// require hundreds of MB in memory (see sfMusic),
-/// or for streaming sound from the network
-////////////////////////////////////////////////////////////
-typedef struct sfSoundStream sfSoundStream;
 
 ////////////////////////////////////////////////////////////
 /// sfSoundStreamChunk defines the data to fill by the

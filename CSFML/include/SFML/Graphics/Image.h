@@ -31,16 +31,7 @@
 #include <SFML/Config.h>
 #include <SFML/Graphics/Color.h>
 #include <SFML/Graphics/Rect.h>
-
-
-typedef struct sfRenderWindow sfRenderWindow;
-
-
-////////////////////////////////////////////////////////////
-/// sfImage is the low-level class for loading and
-/// manipulating images
-////////////////////////////////////////////////////////////
-typedef struct sfImage sfImage;
+#include <SFML/Graphics/Types.h>
 
 
 ////////////////////////////////////////////////////////////

@@ -114,6 +114,7 @@
 		<Unit filename="..\include\SFML\Network\SocketStatus.h" />
 		<Unit filename="..\include\SFML\Network\SocketTCP.h" />
 		<Unit filename="..\include\SFML\Network\SocketUDP.h" />
+		<Unit filename="..\include\SFML\Network\Types.h" />
 		<Unit filename="..\src\SFML\Network\Ftp.cpp" />
 		<Unit filename="..\src\SFML\Network\Http.cpp" />
 		<Unit filename="..\src\SFML\Network\IPAddress.cpp" />
