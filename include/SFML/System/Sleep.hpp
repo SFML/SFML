@@ -36,7 +36,7 @@ namespace sf
     ////////////////////////////////////////////////////////////
     /// Make the current thread sleep for a given time
     ///
-    /// \param Duration : Time to sleep, in seconds
+    /// \param Duration : Time to sleep, in seconds (must be >= 0)
     ///
     ////////////////////////////////////////////////////////////
     void SFML_API Sleep(float Duration);

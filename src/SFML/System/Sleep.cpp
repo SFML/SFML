@@ -36,7 +36,8 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void Sleep(float Duration)
 {
-    priv::Platform::Sleep(Duration);
+    if (Duration >= 0)
+        priv::Platform::Sleep(Duration);
 }
 
 } // namespace sf
