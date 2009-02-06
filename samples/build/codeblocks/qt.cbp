@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_Win32">
-				<Option output="..\..\bin\qt-d.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\qt-d" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\qt\Debug_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -44,7 +44,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release_Win32">
-				<Option output="..\..\bin\qt.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\qt" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\qt\Release_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -89,6 +89,8 @@
 		<Unit filename="..\..\qt\QSFMLCanvas.hpp" />
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

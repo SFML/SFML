@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_Win32">
-				<Option output="..\..\bin\postfx-d.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\postfx-d" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\postfx\Debug_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -31,7 +31,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release_Win32">
-				<Option output="..\..\bin\postfx.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\postfx" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\postfx\Release_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -60,6 +60,8 @@
 		<Unit filename="..\..\post-fx\PostFX.cpp" />
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_Win32">
-				<Option output="..\..\bin\pong-d.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\pong-d" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\opengl\Debug_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -34,7 +34,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release_Win32">
-				<Option output="..\..\bin\pong.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\pong" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\opengl\Release_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -66,6 +66,8 @@
 		<Unit filename="..\..\pong\Pong.cpp" />
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

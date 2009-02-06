@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_Win32">
-				<Option output="..\..\bin\wxwidgets-d.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\wxwidgets-d" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\wxwidgets\Debug_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -42,7 +42,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release_Win32">
-				<Option output="..\..\bin\wxwidgets.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\wxwidgets" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\wxwidgets\Release_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -84,6 +84,8 @@
 		<Unit filename="..\..\wxwidgets\wxSFMLCanvas.hpp" />
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_Win32">
-				<Option output="..\..\lib\mingw\libsfml-main-d.a" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\lib\mingw\libsfml-main-d" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="..\..\Temp\sfml-main\Debug_Win32" />
 				<Option type="2" />
@@ -23,7 +23,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release_Win32">
-				<Option output="..\..\lib\mingw\libsfml-main.a" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\lib\mingw\libsfml-main" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="..\..\Temp\sfml-main\Release_Win32" />
 				<Option type="2" />
@@ -41,6 +41,8 @@
 		<Unit filename="..\..\src\SFML\Main\SFML_Main.cpp" />
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

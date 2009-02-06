@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_Win32">
-				<Option output="..\..\bin\win32-d.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\win32-d" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\win32\Debug_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -30,7 +30,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release_Win32">
-				<Option output="..\..\bin\win32.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\win32" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\win32\Release_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -58,6 +58,8 @@
 		<Unit filename="..\..\win32\Win32.cpp" />
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

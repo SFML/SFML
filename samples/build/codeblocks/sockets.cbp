@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_Win32">
-				<Option output="..\..\bin\sockets-d.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\sockets-d" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\sockets\Debug_Win32" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -28,7 +28,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release_Win32">
-				<Option output="..\..\bin\sockets.exe" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\bin\sockets" prefix_auto="1" extension_auto="1" />
 				<Option object_output="..\..\..\Temp\sockets\Release_Win32" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -56,6 +56,8 @@
 		<Unit filename="..\..\sockets\UDP.cpp" />
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
