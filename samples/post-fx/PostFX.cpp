@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 #include <map>
+#include <math.h>
 
 void DisplayError();
 
@@ -26,11 +27,17 @@ int main()
     // Create the main window
     sf::RenderWindow App(sf::VideoMode(800, 600), "SFML PostFX");
 
-    // Load a cute background image to display :)
+    // Load a background image to display
     sf::Image BackgroundImage;
     if (!BackgroundImage.LoadFromFile("datas/post-fx/background.jpg"))
         return EXIT_FAILURE;
     sf::Sprite Background(BackgroundImage);
+
+    // Load a sprite which we'll move into the scene
+    sf::Image EntityImage;
+    if (!EntityImage.LoadFromFile("datas/post-fx/sprite.png"))
+        return EXIT_FAILURE;
+    sf::Sprite Entity(EntityImage);
 
     // Load the text font
     sf::Font Cheeseburger;
@@ -49,6 +56,7 @@ int main()
     if (!Effects["colorize"].LoadFromFile("datas/post-fx/colorize.sfx")) return EXIT_FAILURE;
     if (!Effects["fisheye"].LoadFromFile("datas/post-fx/fisheye.sfx"))   return EXIT_FAILURE;
     if (!Effects["wave"].LoadFromFile("datas/post-fx/wave.sfx"))         return EXIT_FAILURE;
+    if (!Effects["pixelate"].LoadFromFile("datas/post-fx/pixelate.sfx")) return EXIT_FAILURE;
     std::map<std::string, sf::PostFX>::iterator CurrentEffect = Effects.find("nothing");
 
     // Do specific initializations
@@ -60,12 +68,14 @@ int main()
     Effects["fisheye"].SetTexture("framebuffer", NULL);
     Effects["wave"].SetTexture("framebuffer", NULL);
     Effects["wave"].SetTexture("wave", &WaveImage);
+    Effects["pixelate"].SetTexture("framebuffer", NULL);
 
     // Define a string for displaying current effect description
     sf::String CurFXStr;
     CurFXStr.SetText("Current effect is \"" + CurrentEffect->first + "\"");
     CurFXStr.SetFont(Cheeseburger);
     CurFXStr.SetPosition(20.f, 0.f);
+    CurFXStr.SetColor(sf::Color(150, 70, 110));
 
     // Define a string for displaying help
     sf::String InfoStr;
@@ -73,6 +83,9 @@ int main()
     InfoStr.SetFont(Cheeseburger);
     InfoStr.SetPosition(20.f, 460.f);
     InfoStr.SetColor(sf::Color(200, 100, 150));
+
+    // Create a clock to measure the total time elapsed
+    sf::Clock Clock;
 
     // Start the game loop
     while (App.IsOpened())
@@ -116,16 +129,24 @@ int main()
         float Y = App.GetInput().GetMouseY() / static_cast<float>(App.GetHeight());
 
         // Update the current effect
-        if      (CurrentEffect->first == "blur")     CurrentEffect->second.SetParameter("offset", X * Y * 0.1f);
+        if      (CurrentEffect->first == "blur")     CurrentEffect->second.SetParameter("offset", X * Y * 0.05f);
         else if (CurrentEffect->first == "colorize") CurrentEffect->second.SetParameter("color", 0.3f, X, Y);
         else if (CurrentEffect->first == "fisheye")  CurrentEffect->second.SetParameter("mouse", X, 1.f - Y);
         else if (CurrentEffect->first == "wave")     CurrentEffect->second.SetParameter("offset", X, Y);
+        else if (CurrentEffect->first == "pixelate") CurrentEffect->second.SetParameter("mouse", X, Y);
+
+        // Animate the sprite
+        float EntityX = (cos(Clock.GetElapsedTime() * 1.3f) + 1.2f) * 300;
+        float EntityY = (cos(Clock.GetElapsedTime() * 0.8f) + 1.2f) * 200;
+        Entity.SetPosition(EntityX, EntityY);
+        Entity.Rotate(App.GetFrameTime() * 100);
 
         // Clear the window
         App.Clear();
 
-        // Draw background and apply the post-fx
+        // Draw background, sprite and apply the post-fx
         App.Draw(Background);
+        App.Draw(Entity);
         App.Draw(CurrentEffect->second);
 
         // Draw interface strings

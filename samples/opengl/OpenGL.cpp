@@ -26,7 +26,7 @@ int main()
 
     // Load an OpenGL texture.
     // We could directly use a sf::Image as an OpenGL texture (with its Bind() member function),
-    // but here we want more control on it (generate mipmaps, ...) so we create a new one
+    // but here we want more control on it (generate mipmaps, ...) so we create a new one from the image pixels
     GLuint Texture = 0;
     {
         sf::Image Image;
@@ -83,53 +83,58 @@ int main()
         // Clear depth buffer
         glClear(GL_DEPTH_BUFFER_BIT);
 
+        // We get the position of the mouse cursor, so that we can move the box accordingly
+        float CursorX =  App.GetInput().GetMouseX() * 200.f / App.GetWidth()  - 100.f;
+        float CursorY = -App.GetInput().GetMouseY() * 200.f / App.GetHeight() + 100.f;
+
         // Apply some transformations
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        glTranslatef(0.f, 0.f, -200.f);
+        glTranslatef(CursorX, CursorY, -100.f);
         glRotatef(Clock.GetElapsedTime() * 50, 1.f, 0.f, 0.f);
         glRotatef(Clock.GetElapsedTime() * 30, 0.f, 1.f, 0.f);
         glRotatef(Clock.GetElapsedTime() * 90, 0.f, 0.f, 1.f);
 
         // Draw a cube
+        float Size = 20.f;
         glBegin(GL_QUADS);
 
-            glTexCoord2f(0, 0); glVertex3f(-50.f, -50.f, -50.f);
-            glTexCoord2f(0, 1); glVertex3f(-50.f,  50.f, -50.f);
-            glTexCoord2f(1, 1); glVertex3f( 50.f,  50.f, -50.f);
-            glTexCoord2f(1, 0); glVertex3f( 50.f, -50.f, -50.f);
+            glTexCoord2f(0, 0); glVertex3f(-Size, -Size, -Size);
+            glTexCoord2f(0, 1); glVertex3f(-Size,  Size, -Size);
+            glTexCoord2f(1, 1); glVertex3f( Size,  Size, -Size);
+            glTexCoord2f(1, 0); glVertex3f( Size, -Size, -Size);
 
-            glTexCoord2f(0, 0); glVertex3f(-50.f, -50.f, 50.f);
-            glTexCoord2f(0, 1); glVertex3f(-50.f,  50.f, 50.f);
-            glTexCoord2f(1, 1); glVertex3f( 50.f,  50.f, 50.f);
-            glTexCoord2f(1, 0); glVertex3f( 50.f, -50.f, 50.f);
+            glTexCoord2f(0, 0); glVertex3f(-Size, -Size, Size);
+            glTexCoord2f(0, 1); glVertex3f(-Size,  Size, Size);
+            glTexCoord2f(1, 1); glVertex3f( Size,  Size, Size);
+            glTexCoord2f(1, 0); glVertex3f( Size, -Size, Size);
 
-            glTexCoord2f(0, 0); glVertex3f(-50.f, -50.f, -50.f);
-            glTexCoord2f(0, 1); glVertex3f(-50.f,  50.f, -50.f);
-            glTexCoord2f(1, 1); glVertex3f(-50.f,  50.f,  50.f);
-            glTexCoord2f(1, 0); glVertex3f(-50.f, -50.f,  50.f);
+            glTexCoord2f(0, 0); glVertex3f(-Size, -Size, -Size);
+            glTexCoord2f(0, 1); glVertex3f(-Size,  Size, -Size);
+            glTexCoord2f(1, 1); glVertex3f(-Size,  Size,  Size);
+            glTexCoord2f(1, 0); glVertex3f(-Size, -Size,  Size);
 
-            glTexCoord2f(0, 0); glVertex3f(50.f, -50.f, -50.f);
-            glTexCoord2f(0, 1); glVertex3f(50.f,  50.f, -50.f);
-            glTexCoord2f(1, 1); glVertex3f(50.f,  50.f,  50.f);
-            glTexCoord2f(1, 0); glVertex3f(50.f, -50.f,  50.f);
+            glTexCoord2f(0, 0); glVertex3f(Size, -Size, -Size);
+            glTexCoord2f(0, 1); glVertex3f(Size,  Size, -Size);
+            glTexCoord2f(1, 1); glVertex3f(Size,  Size,  Size);
+            glTexCoord2f(1, 0); glVertex3f(Size, -Size,  Size);
 
-            glTexCoord2f(0, 1); glVertex3f(-50.f, -50.f,  50.f);
-            glTexCoord2f(0, 0); glVertex3f(-50.f, -50.f, -50.f);
-            glTexCoord2f(1, 0); glVertex3f( 50.f, -50.f, -50.f);
-            glTexCoord2f(1, 1); glVertex3f( 50.f, -50.f,  50.f);
+            glTexCoord2f(0, 1); glVertex3f(-Size, -Size,  Size);
+            glTexCoord2f(0, 0); glVertex3f(-Size, -Size, -Size);
+            glTexCoord2f(1, 0); glVertex3f( Size, -Size, -Size);
+            glTexCoord2f(1, 1); glVertex3f( Size, -Size,  Size);
 
-            glTexCoord2f(0, 1); glVertex3f(-50.f, 50.f,  50.f);
-            glTexCoord2f(0, 0); glVertex3f(-50.f, 50.f, -50.f);
-            glTexCoord2f(1, 0); glVertex3f( 50.f, 50.f, -50.f);
-            glTexCoord2f(1, 1); glVertex3f( 50.f, 50.f,  50.f);
+            glTexCoord2f(0, 1); glVertex3f(-Size, Size,  Size);
+            glTexCoord2f(0, 0); glVertex3f(-Size, Size, -Size);
+            glTexCoord2f(1, 0); glVertex3f( Size, Size, -Size);
+            glTexCoord2f(1, 1); glVertex3f( Size, Size,  Size);
 
         glEnd();
 
         // Draw some text on top of our OpenGL object
-        sf::String Text("This is a rotating cube");
-        Text.SetPosition(250.f, 300.f);
-        Text.SetColor(sf::Color(128, 0, 128));
+        sf::String Text("SFML / OpenGL demo");
+        Text.SetPosition(250.f, 450.f);
+        Text.SetColor(sf::Color(255, 255, 255, 170));
         App.Draw(Text);
 
         // Finally, display the rendered frame on screen

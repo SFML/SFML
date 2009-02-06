@@ -31,8 +31,11 @@ namespace sample_postfx
                 return;
             }
 
-            // Load a cute background image to display :)
+            // Load a background image to display
             Sprite Background = new Sprite(new Image("datas/post-fx/background.jpg"));
+
+            // Load a sprite which we'll move into the scene
+            Sprite Entity = new Sprite(new Image("datas/post-fx/sprite.png"));
 
             // Load the text font
             Font Cheeseburger = new Font("datas/post-fx/cheeseburger.ttf");
@@ -47,6 +50,7 @@ namespace sample_postfx
             Effects["colorize"] = new PostFx("datas/post-fx/colorize.sfx");
             Effects["fisheye"]  = new PostFx("datas/post-fx/fisheye.sfx");
             Effects["wave"]     = new PostFx("datas/post-fx/wave.sfx");
+            Effects["pixelate"] = new PostFx("datas/post-fx/pixelate.sfx");
             CurrentEffect = Effects.GetEnumerator();
             CurrentEffect.MoveNext();
 
@@ -59,12 +63,14 @@ namespace sample_postfx
             Effects["fisheye"].SetTexture("framebuffer", null);
             Effects["wave"].SetTexture("framebuffer", null);
             Effects["wave"].SetTexture("wave", WaveImage);
+            Effects["pixelate"].SetTexture("framebuffer", null);
 
             // Define a string for displaying current effect description
             CurFXStr = new String2D();
             CurFXStr.Text = "Current effect is \"" + CurrentEffect.Current.Key + "\"";
             CurFXStr.Font = Cheeseburger;
             CurFXStr.Position = new Vector2(20.0F, 0.0F);
+            CurFXStr.Color = new Color(150, 70, 110);
 
             // Define a string for displaying help
             String2D InfoStr = new String2D();
@@ -74,6 +80,7 @@ namespace sample_postfx
             InfoStr.Color = new Color(200, 100, 150);
 
             // Start the game loop
+            float AppTime = 0.0F;
             while (App.IsOpened())
             {
                 // Process events
@@ -88,12 +95,21 @@ namespace sample_postfx
                 else if (CurrentEffect.Current.Key == "colorize") CurrentEffect.Current.Value.SetParameter("color", 0.3f, X, Y);
                 else if (CurrentEffect.Current.Key == "fisheye")  CurrentEffect.Current.Value.SetParameter("mouse", X, 1.0F - Y);
                 else if (CurrentEffect.Current.Key == "wave")     CurrentEffect.Current.Value.SetParameter("offset", X, Y);
+                else if (CurrentEffect.Current.Key == "pixelate") CurrentEffect.Current.Value.SetParameter("mouse", X, Y);
+
+                // Animate the sprite
+                AppTime += App.GetFrameTime();
+                float EntityX = (float)(Math.Cos(AppTime * 1.3) + 1.2) * 300;
+                float EntityY = (float)(Math.Cos(AppTime * 0.8) + 1.2) * 200;
+                Entity.Position = new Vector2(EntityX, EntityY);
+                Entity.Rotation = AppTime * 100;
 
                 // Clear the window
                 App.Clear();
 
-                // Draw background and apply the post-fx
+                // Draw background, the sprite and apply the post-fx
                 App.Draw(Background);
+                App.Draw(Entity);
                 App.Draw(CurrentEffect.Current.Value);
 
                 // Draw interface strings

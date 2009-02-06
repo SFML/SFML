@@ -95,10 +95,10 @@
 
     #define CSFML_CALL_PTR(Object, Function) (Object->This->Function);
 
-    #define CSFML_CHECK_RETURN(Object, Default)
+    #define CSFML_CHECK_RETURN(Object, Default) (void)Default;
 
-    #define CSFML_CALL_RETURN(Object, Function, Default) return (Object->This.Function);
+    #define CSFML_CALL_RETURN(Object, Function, Default) (void)Default; return (Object->This.Function);
 
-    #define CSFML_CALL_PTR_RETURN(Object, Function, Default) return (Object->This->Function);
+    #define CSFML_CALL_PTR_RETURN(Object, Function, Default) (void)Default; return (Object->This->Function);
 
 #endif

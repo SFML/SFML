@@ -1,0 +1,11 @@
+texture framebuffer
+vec2 mouse
+
+effect
+{
+	float factor = 5 + 100 * length(mouse);
+
+	vec2 pos = floor(_in * factor) / factor;
+
+	_out = framebuffer(pos);	
+}

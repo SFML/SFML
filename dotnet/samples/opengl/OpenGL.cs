@@ -28,8 +28,8 @@ namespace sample_opengl
 
             // Create a text to display
             String2D Text = new String2D("This is a rotating cube");
-            Text.Position = new Vector2(250.0F, 300.0F);
-            Text.Color = new Color(128, 0, 128);
+            Text.Position = new Vector2(250.0F, 450.0F);
+            Text.Color = new Color(255, 255, 255, 170);
 
             // Load an OpenGL texture.
             // We could directly use a sf::Image as an OpenGL texture (with its Bind() member function),
@@ -76,47 +76,52 @@ namespace sample_opengl
                 // Clear depth buffer
                 Gl.glClear(Gl.GL_DEPTH_BUFFER_BIT);
 
+                // We get the position of the mouse cursor, so that we can move the box accordingly
+                float CursorX =  App.Input.GetMouseX() * 200.0F / App.Width  - 100.0F;
+                float CursorY = -App.Input.GetMouseY() * 200.0F / App.Height + 100.0F;
+
                 // Apply some transformations
                 Time += App.GetFrameTime();
                 Gl.glMatrixMode(Gl.GL_MODELVIEW);
                 Gl.glLoadIdentity();
-                Gl.glTranslatef(0.0F, 0.0F, -200.0F);
+                Gl.glTranslatef(CursorX, CursorY, -100.0F);
                 Gl.glRotatef(Time * 50, 1.0F, 0.0F, 0.0F);
                 Gl.glRotatef(Time * 30, 0.0F, 1.0F, 0.0F);
                 Gl.glRotatef(Time * 90, 0.0F, 0.0F, 1.0F);
 
                 // Draw a cube
+                float Size = 20.0F;
                 Gl.glBegin(Gl.GL_QUADS);
 
-                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-50.0F, -50.0F, -50.0F);
-                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-50.0F,  50.0F, -50.0F);
-                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f( 50.0F,  50.0F, -50.0F);
-                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f( 50.0F, -50.0F, -50.0F);
+                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-Size, -Size, -Size);
+                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-Size,  Size, -Size);
+                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f( Size,  Size, -Size);
+                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f( Size, -Size, -Size);
 
-                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-50.0F, -50.0F, 50.0F);
-                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-50.0F,  50.0F, 50.0F);
-                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f( 50.0F,  50.0F, 50.0F);
-                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f( 50.0F, -50.0F, 50.0F);
+                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-Size, -Size, Size);
+                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-Size,  Size, Size);
+                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f( Size,  Size, Size);
+                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f( Size, -Size, Size);
 
-                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-50.0F, -50.0F, -50.0F);
-                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-50.0F,  50.0F, -50.0F);
-                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f(-50.0F,  50.0F,  50.0F);
-                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f(-50.0F, -50.0F,  50.0F);
+                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-Size, -Size, -Size);
+                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-Size,  Size, -Size);
+                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f(-Size,  Size,  Size);
+                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f(-Size, -Size,  Size);
 
-                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(50.0F, -50.0F, -50.0F);
-                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(50.0F,  50.0F, -50.0F);
-                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f(50.0F,  50.0F,  50.0F);
-                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f(50.0F, -50.0F,  50.0F);
+                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(Size, -Size, -Size);
+                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(Size,  Size, -Size);
+                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f(Size,  Size,  Size);
+                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f(Size, -Size,  Size);
 
-                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-50.0F, -50.0F,  50.0F);
-                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-50.0F, -50.0F, -50.0F);
-                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f( 50.0F, -50.0F, -50.0F);
-                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f( 50.0F, -50.0F,  50.0F);
+                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-Size, -Size,  Size);
+                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-Size, -Size, -Size);
+                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f( Size, -Size, -Size);
+                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f( Size, -Size,  Size);
 
-                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-50.0F, 50.0F,  50.0F);
-                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-50.0F, 50.0F, -50.0F);
-                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f( 50.0F, 50.0F, -50.0F);
-                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f( 50.0F, 50.0F,  50.0F);
+                    Gl.glTexCoord2f(0, 1); Gl.glVertex3f(-Size, Size,  Size);
+                    Gl.glTexCoord2f(0, 0); Gl.glVertex3f(-Size, Size, -Size);
+                    Gl.glTexCoord2f(1, 0); Gl.glVertex3f( Size, Size, -Size);
+                    Gl.glTexCoord2f(1, 1); Gl.glVertex3f( Size, Size,  Size);
 
                 Gl.glEnd();
 
