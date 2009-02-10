@@ -267,7 +267,7 @@ void Image::CreateMaskFromColor(Color ColorKey, Uint8 Alpha)
 /// This function does a slow pixel copy and should only
 /// be used at initialization time
 ////////////////////////////////////////////////////////////
-void Image::Copy(const Image& Source, unsigned int DestX, unsigned int DestY, const IntRect& SourceRect)
+void Image::Copy(const Image& Source, unsigned int DestX, unsigned int DestY, const IntRect& SourceRect, bool ApplyAlpha)
 {
     // Make sure both images are valid
     if ((Source.myWidth == 0) || (Source.myHeight == 0) || (myWidth == 0) || (myHeight == 0))
@@ -313,11 +313,37 @@ void Image::Copy(const Image& Source, unsigned int DestX, unsigned int DestY, co
     Uint8*       DstPixels = reinterpret_cast<Uint8*>(&myPixels[0]) + (DestX + DestY * myWidth) * 4;
 
     // Copy the pixels
-    for (int i = 0; i < Rows; ++i)
+    if (ApplyAlpha)
     {
-        memcpy(DstPixels, SrcPixels, Pitch);
-        SrcPixels += SrcStride;
-        DstPixels += DstStride;
+        // Interpolation using alpha values, pixel by pixel (slower)
+        for (int i = 0; i < Rows; ++i)
+        {
+            for (int j = 0; j < Width; ++j)
+            {
+                // Get a direct pointer to the components of the current pixel
+                const Uint8* Src   = SrcPixels + j * 4;
+                Uint8*       Dst   = DstPixels + j * 4;
+
+                // Interpolate RGB components using the alpha value of the source pixel
+                Uint8 Alpha = Src[3];
+                Dst[0] = (Src[0] * Alpha + Dst[0] * (255 - Alpha)) / 255;
+                Dst[1] = (Src[1] * Alpha + Dst[1] * (255 - Alpha)) / 255;
+                Dst[2] = (Src[2] * Alpha + Dst[2] * (255 - Alpha)) / 255;
+            }
+
+            SrcPixels += SrcStride;
+            DstPixels += DstStride;
+        }
+    }
+    else
+    {
+        // Optimized copy ignoring alpha values, row by row (faster)
+        for (int i = 0; i < Rows; ++i)
+        {
+            memcpy(DstPixels, SrcPixels, Pitch);
+            SrcPixels += SrcStride;
+            DstPixels += DstStride;
+        }
     }
 
     // The texture will need an update
