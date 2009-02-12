@@ -150,9 +150,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sfml-system-s.lib"
-				OutputFile="$(SolutionDir)..\lib\vc2005\$(ProjectName).dll"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(SolutionDir)..\..\lib\vc2005\"
+				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
 				ModuleDefinitionFile="$(SolutionDir)/csfml-system.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
