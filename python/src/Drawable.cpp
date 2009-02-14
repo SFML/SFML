@@ -302,4 +302,10 @@ PyTypeObject PySfDrawableType = {
 	PySfDrawable_new,		/* tp_new */
 };
 
+PySfDrawable *
+GetNewPySfDrawable()
+{
+	return (PySfDrawable *)PySfDrawable_new(&PySfDrawableType, NULL, NULL);
+}
+
 

@@ -425,13 +425,13 @@ PySfFloatRectUpdateSelf(PySfFloatRect *self)
 PySfIntRect *
 GetNewPySfIntRect()
 {
-	return PyObject_New(PySfIntRect, &PySfIntRectType);
+	return (PySfIntRect *)PySfIntRect_new(&PySfIntRectType, NULL, NULL);
 }
 
 PySfFloatRect *
 GetNewPySfFloatRect()
 {
-	return PyObject_New(PySfFloatRect, &PySfFloatRectType);
+	return (PySfFloatRect *)PySfFloatRect_new(&PySfFloatRectType, NULL, NULL);
 }
 
 

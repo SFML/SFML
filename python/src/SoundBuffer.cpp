@@ -213,6 +213,6 @@ PySfSoundBuffer_init(PySfSoundBuffer *self, PyObject *args, PyObject *kwds)
 PySfSoundBuffer *
 GetNewPySfSoundBuffer()
 {
-	return PyObject_New(PySfSoundBuffer, &PySfSoundBufferType);
+	return (PySfSoundBuffer *)PySfSoundBuffer_new(&PySfSoundBufferType, NULL, NULL);
 }
 

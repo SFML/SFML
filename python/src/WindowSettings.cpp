@@ -126,6 +126,6 @@ PyTypeObject PySfWindowSettingsType = {
 PySfWindowSettings *
 GetNewPySfWindowSettings()
 {
-	return PyObject_New(PySfWindowSettings, &PySfWindowSettingsType);
+	return (PySfWindowSettings *)PySfWindowSettings_new(&PySfWindowSettingsType, NULL, NULL);
 }
 

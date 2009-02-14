@@ -145,7 +145,7 @@ PyTypeObject PySfColorType = {
 PySfColor *
 GetNewPySfColor()
 {
-	return PyObject_New(PySfColor, &PySfColorType);
+	return (PySfColor *)PySfColor_new(&PySfColorType, NULL, NULL);
 }
 
 void

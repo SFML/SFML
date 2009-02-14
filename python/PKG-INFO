@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: PySFML
-Version: 1.4
+Version: 1.5
 Summary: Python binding for SFML (Simple and Fast Multimedia Library)
 Home-page: http://sfml.sourceforge.net/
 Author: Rémi Koenig

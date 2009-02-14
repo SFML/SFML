@@ -391,6 +391,6 @@ PyTypeObject PySfShapeType = {
 PySfShape *
 GetNewPySfShape()
 {
-	return PyObject_New(PySfShape, &PySfShapeType);
+	return (PySfShape *)PySfShape_new(&PySfShapeType, NULL, NULL);
 }
 

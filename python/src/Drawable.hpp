@@ -50,5 +50,8 @@ typedef struct {
 	CustomDrawable *obj;
 } PySfDrawable;
 
+PySfDrawable *
+GetNewPySfDrawable();
+
 #endif
 

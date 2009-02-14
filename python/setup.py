@@ -4,7 +4,7 @@
 from distutils.core import setup, Extension
 
 setup(name='PySFML',
-	version='1.4',
+	version='1.5',
 	description='Python binding for SFML (Simple and Fast Multimedia Library)',
 	author='Rémi Koenig',
 	author_email='remi.k2620@gmail.com',

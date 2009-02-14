@@ -414,6 +414,6 @@ PySfImage_Copy(PySfImage* self, PyObject *args)
 PySfImage *
 GetNewPySfImage()
 {
-	return PyObject_New(PySfImage, &PySfImageType);
+	return (PySfImage *)PySfImage_new(&PySfImageType, NULL, NULL);
 }
 

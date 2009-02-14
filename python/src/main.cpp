@@ -260,7 +260,7 @@ initsf(void)
 	Py_INCREF(&PySfListenerType);
 	PyModule_AddObject(m, "Listener", (PyObject *)&PySfListenerType);
 
-	PyModule_AddStringConstant(m, "Version", "1.4");
+	PyModule_AddStringConstant(m, "Version", "1.5");
 
 	PySfColor_InitConst();
 	PySfKey_InitConst();

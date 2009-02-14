@@ -162,6 +162,6 @@ PyTypeObject PySfInputType = {
 PySfInput *
 GetNewPySfInput()
 {
-	return PyObject_New(PySfInput, &PySfInputType);
+	return (PySfInput *)PySfInput_new(&PySfInputType, NULL, NULL);
 }
 
