@@ -355,6 +355,13 @@ void WindowImplWin32::SetPosition(int Left, int Top)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::SetSize(unsigned int Width, unsigned int Height)
 {
+    // SetWindowPos wants the total size of the window (including title bar and borders),
+    // so we have to compute it
+    RECT Rect = {0, 0, Width, Height};
+    AdjustWindowRect(&Rect, GetWindowLong(myHandle, GWL_STYLE), false);
+    Width  = Rect.right - Rect.left;
+    Height = Rect.bottom - Rect.top;
+
     SetWindowPos(myHandle, NULL, 0, 0, Width, Height, SWP_NOMOVE | SWP_NOZORDER);
 }
 
