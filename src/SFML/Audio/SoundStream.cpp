@@ -191,6 +191,7 @@ void SoundStream::Run()
 {
     // Create buffers
     ALCheck(alGenBuffers(BuffersCount, myBuffers));
+    unsigned int EndBuffer = 0xFFFF;
 
     // Fill the queue
     bool RequestStop = FillQueue();
@@ -203,37 +204,15 @@ void SoundStream::Run()
         // The stream has been interrupted !
         if (Sound::GetStatus() == Stopped)
         {
-            // User requested to stop
-            if (RequestStop)
+            if (!RequestStop)
             {
-                if (myLoop)
-                {
-                    // The stream is in loop mode : restart it
-                    if (OnStart())
-                    {
-                        mySamplesProcessed = 0;
-                        ClearQueue();
-                        RequestStop = FillQueue();
-                        Sound::Play();
-                    }
-                    else
-                    {
-                        // Restart failed : finish the streaming loop
-                        myIsStreaming = false;
-                        break;
-                    }
-                }
-                else
-                {
-                    // The stream is not in loop mode : finish the streaming loop
-                    myIsStreaming = false;
-                    break;
-                }
+                // Just continue
+                Sound::Play();
             }
             else
             {
-                // Streaming is not completed : restart the sound
-                Sound::Play();
+                // End streaming
+                myIsStreaming = false;
             }
         }
 
@@ -241,20 +220,45 @@ void SoundStream::Run()
         ALint NbProcessed;
         ALCheck(alGetSourcei(Sound::mySource, AL_BUFFERS_PROCESSED, &NbProcessed));
 
-        while (NbProcessed-- && !RequestStop)
+        while (NbProcessed--)
         {
             // Pop the first unused buffer from the queue
             ALuint Buffer;
             ALCheck(alSourceUnqueueBuffers(Sound::mySource, 1, &Buffer));
 
             // Retrieve its size and add it to the samples count
-            ALint Size;
-            ALCheck(alGetBufferi(Buffer, AL_SIZE, &Size));
-            mySamplesProcessed += Size / sizeof(Int16);
+            if (Buffer == EndBuffer)
+            {
+                // This was the last buffer: reset the sample count
+                mySamplesProcessed = 0;
+                EndBuffer = 0xFFFF;
+            }
+            else
+            {
+                ALint Size;
+                ALCheck(alGetBufferi(Buffer, AL_SIZE, &Size));
+                mySamplesProcessed += Size / sizeof(Int16);
+            }
 
             // Fill it and push it back into the playing queue
-            if (FillAndPushBuffer(Buffer))
-                RequestStop = true;
+            if (!RequestStop)
+            {
+                if (FillAndPushBuffer(Buffer))
+                {
+                    // User requested to stop: check if we must loop or really stop
+                    if (myLoop && OnStart())
+                    {
+                        // Looping: mark the current buffer as the last one
+                        // (to know when to reset the sample count)
+                        EndBuffer = Buffer;
+                    }
+                    else
+                    {
+                        // Not looping or restart failed: request stop
+                        RequestStop = true;
+                    }
+                }
+            }
         }
 
         // Leave some time for the other threads if the stream is still playing

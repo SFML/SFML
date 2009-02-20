@@ -64,11 +64,11 @@ void PlayMusic()
     // Loop while the music is playing
     while (Music.GetStatus() == sf::Music::Playing)
     {
-        // Display the playing position
-        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << Music.GetPlayingOffset() << " sec   ";
-
         // Leave some CPU time for other processes
         sf::Sleep(0.1f);
+
+        // Display the playing position
+        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << Music.GetPlayingOffset() << " sec   ";
     }
     std::cout << std::endl;
 }
