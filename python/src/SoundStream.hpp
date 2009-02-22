@@ -25,11 +25,11 @@
 #ifndef __PYSOUNDSTREAM_HPP
 #define __PYSOUNDSTREAM_HPP
 
-#include <SFML/Audio/SoundStream.hpp>
-#include <iostream>
-
 #include <Python.h>
 #include <structmember.h>
+
+#include <SFML/Audio/SoundStream.hpp>
+#include <iostream>
 
 class CustomSoundStream : public sf::SoundStream
 {

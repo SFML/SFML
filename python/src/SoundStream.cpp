@@ -38,6 +38,7 @@ bool CustomSoundStream::OnGetData(Chunk& Data)
 	if (PyObject_HasAttrString(SoundStream, "OnGetData"))
 	{
 		PyObject *PyData=NULL;
+		Data.NbSamples = 0;
 		if ((PyData = PyObject_CallFunction(PyObject_GetAttrString(SoundStream, "OnGetData"), NULL)))
 		{
 			if (PyArg_Parse(PyData, "s#", &(Data.Samples), &(Data.NbSamples)))

@@ -293,7 +293,8 @@ Copy pixels from another image onto this one. This function does a slow pixel co
 	Source :     Source image to copy\n\
 	DestX :      X coordinate of the destination position\n\
 	DestY :      Y coordinate of the destination position\n\
-	SourceRect : Sub-rectangle of the source image to copy (empty by default - entire image)"},
+	SourceRect : Sub-rectangle of the source image to copy (empty by default - entire image)\n\
+	ApplyAlpha : Should the copy take in account the source transparency? (false by default)"},
 	{"Create", (PyCFunction)PySfImage_Create, METH_VARARGS, "Create(Width=0, Height=0, Color=sf.Color.Black)\n\
 Create an empty image.\n\
 	Width 	: Image width\n\
@@ -397,16 +398,21 @@ PySfImage_Copy(PySfImage* self, PyObject *args)
 	PySfIntRect *SourceRect = NULL;
 	PySfImage *Source = NULL;
 	unsigned int DestX, DestY;
-	if (! PyArg_ParseTuple(args, "O!II|O!", &PySfImageType, &Source, &DestX, &DestY, &PySfIntRectType, &SourceRect))
+	PyObject *PyApplyAlpha;
+	bool ApplyAlpha = false;
+	if (! PyArg_ParseTuple(args, "O!II|O!O", &PySfImageType, &Source, &DestX, &DestY, &PySfIntRectType, &SourceRect, &PyApplyAlpha))
 		return NULL;
+
+	if (PyObject_IsTrue(PyApplyAlpha))
+		ApplyAlpha = true;
 
 	if (SourceRect)
 	{
 		PySfIntRectUpdateObj(SourceRect);
-		self->obj->Copy(*(Source->obj), DestX, DestY, *(SourceRect->obj));
+		self->obj->Copy(*(Source->obj), DestX, DestY, *(SourceRect->obj), ApplyAlpha);
 	}
 	else
-		self->obj->Copy(*(Source->obj), DestX, DestY);
+		self->obj->Copy(*(Source->obj), DestX, DestY, sf::IntRect(0, 0, 0, 0), ApplyAlpha);
 
 	Py_RETURN_NONE;
 }
