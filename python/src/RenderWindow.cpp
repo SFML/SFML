@@ -44,6 +44,8 @@ extern PyTypeObject PySfWindowSettingsType;
 extern PyTypeObject PySfVideoModeType;
 extern PyTypeObject PySfDrawableType;
 
+extern PyTypeObject PySfRenderTargetType;
+
 static PyMemberDef PySfRenderWindow_members[] = {
 	{NULL}  /* Sentinel */
 };
@@ -159,70 +161,7 @@ PySfRenderWindow_Draw(PySfRenderWindow *self, PyObject *args)
 	Py_RETURN_NONE;
 }
 
-static PyObject *
-PySfRenderWindow_GetDefaultView(PySfRenderWindow *self)
-{
-	PySfView *View;
-
-	View = GetNewPySfView();
-	View->Owner = false;
-	View->obj = &(self->obj->GetDefaultView());
-
-	return (PyObject *)View;
-}
-
-static PyObject *
-PySfRenderWindow_GetView(PySfRenderWindow *self)
-{
-	PySfView *View;
-
-	View = GetNewPySfView();
-	View->obj = new sf::View(self->obj->GetView());
-
-	return (PyObject *)View;
-}
-
-static PyObject *
-PySfRenderWindow_PreserveOpenGLStates(PySfRenderWindow *self, PyObject *args)
-{
-	bool Optimize = false;
-	if (PyObject_IsTrue(args))
-		Optimize = true;
-	self->obj->PreserveOpenGLStates(Optimize);
-	Py_RETURN_NONE;
-}
-
-static PyObject *
-PySfRenderWindow_SetView(PySfRenderWindow* self, PyObject *args)
-{
-	PySfView *View = (PySfView *)args;
-	if (! PyObject_TypeCheck(View, &PySfViewType))
-	{
-		PyErr_SetString(PyExc_TypeError, "Argument is not a sfView");
-		return NULL;
-	}
-	self->obj->SetView( *(View->obj));
-	Py_RETURN_NONE;
-}
-
-static PyObject *
-PySfRenderWindow_Clear(PySfRenderWindow* self, PyObject *args)
-{
-	PySfColor *Color = (PySfColor *)args;
-	if (! PyObject_TypeCheck(Color, &PySfColorType))
-	{
-		PyErr_SetString(PyExc_TypeError, "Argument is not a sfColor");
-		return NULL;
-	}
-	PySfColorUpdate(Color);
-	self->obj->Clear(*(Color->obj));
-	Py_RETURN_NONE;
-}
-
 static PyMethodDef PySfRenderWindow_methods[] = {
-	{"Clear", (PyCFunction)PySfRenderWindow_Clear, METH_O, "Clear(FillColor)\n\
-Clear the entire target with a single color.\n\
-	FillColor : Color to use to clear the render target."},
 	{"Capture", (PyCFunction)PySfRenderWindow_Capture, METH_NOARGS, "Capture()\n\
 Save the content of the window to an image. Returns a sf.Image object."},
 	{"ConvertCoords", (PyCFunction)PySfRenderWindow_ConvertCoords, METH_VARARGS, "ConvertCoords(WindowX, WindowY, TargetView)\n\
@@ -232,15 +171,6 @@ Convert a point in window coordinates into view coordinates. Returns a tuple of 
 	TargetView : Target view to convert the point to (NULL by default -- uses the current view)."},
 	{"Draw", (PyCFunction)PySfRenderWindow_Draw, METH_O, "Draw(Drawable)\n\
 Draw something on the window. The argument can be a drawable or any object supporting the iterator protocol and containing drawables (for example a tuple of drawables)."},
-	{"GetDefaultView", (PyCFunction)PySfRenderWindow_GetDefaultView, METH_NOARGS, "GetDefaultView()\n\
-Get the default view of the window for read / write (returns a sf.View instance)."},
-	{"GetView", (PyCFunction)PySfRenderWindow_GetView, METH_NOARGS, "GetView()\n\
-Get the current view rectangle (returns a sf.View instance)."},
-	{"PreserveOpenGLStates", (PyCFunction)PySfRenderWindow_PreserveOpenGLStates, METH_O, "PreserveOpenGLStates(Preserve)\n\
-Tell SFML to preserve external OpenGL states, at the expense of more CPU charge. Use this function if you don't want SFML to mess up your own OpenGL states (if any). Don't enable state preservation if not needed, as it will allow SFML to do internal optimizations and improve performances. This parameter is false by default\n\
-	Preserve : True to preserve OpenGL states, false to let SFML optimize"},
-	{"SetView", (PyCFunction)PySfRenderWindow_SetView, METH_O, "SetView(View)\n\
-Change the current active view. View must be a sf.View instance."},
 	{NULL}  /* Sentinel */
 };
 
@@ -276,7 +206,7 @@ PyTypeObject PySfRenderWindowType = {
 	PySfRenderWindow_methods, /* tp_methods */
 	PySfRenderWindow_members, /* tp_members */
 	0,						/* tp_getset */
-	&PySfWindowType,		/* tp_base */
+	0,						/* tp_base */
 	0,						/* tp_dict */
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
@@ -284,6 +214,9 @@ PyTypeObject PySfRenderWindowType = {
 	(initproc)PySfRenderWindow_init, /* tp_init */
 	0,						/* tp_alloc */
 	PySfRenderWindow_new,	/* tp_new */
+	0,						/* tp_free */
+	0,						/* tp_is_gc */
+	Py_BuildValue("(OO)", &PySfWindowType, &PySfRenderTargetType) /* tp_bases */
 };
 
 

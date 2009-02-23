@@ -12,8 +12,8 @@ setup(name='PySFML',
 	license='zlib/png',
 	ext_modules=[ Extension('PySFML.sf', \
 		['src/Clock.cpp', 'src/Color.cpp', 'src/Drawable.cpp', \
-		'src/Event.cpp', 'src/Image.cpp', 'src/Input.cpp', 'src/Key.cpp', 'src/main.cpp', \
-		'src/Music.cpp', 'src/PostFX.cpp', 'src/Rect.cpp', 'src/RenderWindow.cpp', 'src/Sleep.cpp', \
+		'src/Event.cpp', 'src/Image.cpp', 'src/Input.cpp', 'src/Key.cpp', 'src/main.cpp', 'src/Music.cpp', \
+		'src/PostFX.cpp', 'src/Rect.cpp', 'src/RenderTarget.cpp', 'src/RenderWindow.cpp', 'src/Sleep.cpp', \
 		'src/Sprite.cpp', 'src/String.cpp', 'src/VideoMode.cpp', 'src/View.cpp', 'src/Window.cpp', \
 		'src/Joy.cpp', 'src/Mouse.cpp', 'src/WindowStyle.cpp', 'src/Blend.cpp', 'src/Sound.cpp', \
 		'src/SoundBuffer.cpp', 'src/Listener.cpp', 'src/SoundRecorder.cpp', 'src/SoundBufferRecorder.cpp', \

@@ -55,6 +55,7 @@ extern PyTypeObject PySfWindowType;
 extern PyTypeObject PySfWindowSettingsType;
 extern PyTypeObject PySfStyleType;
 extern PyTypeObject PySfRenderWindowType;
+extern PyTypeObject PySfRenderTargetType;
 extern PyTypeObject PySfViewType;
 extern PyTypeObject PySfInputType;
 
@@ -105,6 +106,8 @@ initsf(void)
 	if (PyType_Ready(&PySfWindowSettingsType) < 0)
 		return;
 	if (PyType_Ready(&PySfStyleType) < 0)
+		return;
+	if (PyType_Ready(&PySfRenderTargetType) < 0)
 		return;
 	if (PyType_Ready(&PySfRenderWindowType) < 0)
 		return;
