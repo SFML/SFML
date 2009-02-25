@@ -169,7 +169,8 @@ PySfWindow_init(PySfWindow *self, PyObject *args, PyObject *kwds)
 {
 	self->obj = new sf::Window();
 	if (PyTuple_Size(args) > 0)
-		PySfWindow_Create(self, args, kwds);
+		if (PySfWindow_Create(self, args, kwds) == NULL)
+			return -1;
 	return 0;
 }
 

@@ -22,16 +22,21 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef __PYPOSTFX_HPP
-#define __PYPOSTFX_HPP
+#ifndef __PYCOMPAT_HPP
+#define __PYCOMPAT_HPP
 
-#include <Python.h>
+#if PY_MAJOR_VERSION >= 3
+#define IS_PY3K
+#define head_init	PyVarObject_HEAD_INIT(NULL, 0)
+#else
+#define Py_TYPE(a)	a->ob_type
+#define head_init	PyObject_HEAD_INIT(NULL) 0,
+#define PyBytes_FromStringAndSize	PyString_FromStringAndSize
+#endif
 
-#include <SFML/Graphics/PostFX.hpp>
+#define free_object(a)	Py_TYPE(a)->tp_free((PyObject*)a)
 
-typedef struct {
-	PyObject_HEAD
-	sf::PostFX *obj;
-} PySfPostFX;
+#define PyBool_AsBool(a)	((PyObject_IsTrue(a))?true:false)
 
 #endif
+

@@ -25,12 +25,9 @@
 #ifndef __PYRENDERTARGET_H
 #define __PYRENDERTARGET_H
 
-#include <SFML/Graphics/RenderTarget.hpp>
-
 #include <Python.h>
-#include <structmember.h>
 
-#include <iostream>
+#include <SFML/Graphics/RenderTarget.hpp>
 
 typedef struct {
 	PyObject_HEAD

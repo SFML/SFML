@@ -25,12 +25,9 @@
 #ifndef __PYEVENT_HPP
 #define __PYEVENT_HPP
 
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <iostream>
-
 #include <Python.h>
-#include <structmember.h>
+
+#include <SFML/Window/Event.hpp>
 
 typedef struct
 {

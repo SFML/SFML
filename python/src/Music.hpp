@@ -25,13 +25,9 @@
 #ifndef __PYMUSIC_HPP
 #define __PYMUSIC_HPP
 
-#include <SFML/Audio/Music.hpp>
-#include <iostream>
-
 #include <Python.h>
-#include <structmember.h>
 
-
+#include <SFML/Audio/Music.hpp>
 
 typedef struct {
 	PyObject_HEAD

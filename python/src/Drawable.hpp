@@ -25,13 +25,10 @@
 #ifndef __PYDRAWABLE_H
 #define __PYDRAWABLE_H
 
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-
 #include <Python.h>
-#include <structmember.h>
 
-#include "Color.hpp"
+#include <SFML/Graphics/Drawable.hpp>
+
 #include "RenderWindow.hpp"
 
 

@@ -25,14 +25,9 @@
 #ifndef __PYRECT_HPP
 #define __PYRECT_HPP
 
+#include <Python.h>
 
 #include <SFML/Graphics/Rect.hpp>
-#include <iostream>
-
-#include <Python.h>
-#include <structmember.h>
-
-#include "offsetof.hpp"
 
 typedef struct {
 	PyObject_HEAD

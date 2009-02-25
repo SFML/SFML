@@ -26,32 +26,25 @@
 #include "Color.hpp"
 #include "View.hpp"
 
+#include "compat.hpp"
+
+
 extern PyTypeObject PySfColorType;
 extern PyTypeObject PySfViewType;
-
-static PyMemberDef PySfRenderTarget_members[] = {
-	{NULL}  /* Sentinel */
-};
 
 
 static void
 PySfRenderTarget_dealloc(PySfRenderTarget *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfRenderTarget_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfRenderTarget *self;
-
 	self = (PySfRenderTarget *)type->tp_alloc(type, 0);
-
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -62,11 +55,8 @@ PySfRenderTarget_Clear(PySfRenderTarget *self, PyObject *args)
 	int size = PyTuple_Size(args);
 	if (size == 1)
 	{
-		if (! PyArg_ParseTuple(args, "O!", &PySfColorType, &Color))
-		{
-			PyErr_SetString(PyExc_TypeError, "Argument is not a sf.Color");
+		if (!PyArg_ParseTuple(args, "O!:RenderTarget.Clear", &PySfColorType, &Color))
 			return NULL;
-		}
 		PySfColorUpdate(Color);
 		self->obj->Clear(*(Color->obj));
 	}
@@ -97,9 +87,7 @@ PySfRenderTarget_GetView(PySfRenderTarget *self)
 static PyObject *
 PySfRenderTarget_PreserveOpenGLStates(PySfRenderTarget *self, PyObject *args)
 {
-	bool Optimize = false;
-	if (PyObject_IsTrue(args))
-		Optimize = true;
+	bool Optimize = PyBool_AsBool(args);
 	self->obj->PreserveOpenGLStates(Optimize);
 	Py_RETURN_NONE;
 }
@@ -108,9 +96,9 @@ static PyObject *
 PySfRenderTarget_SetView(PySfRenderTarget* self, PyObject *args)
 {
 	PySfView *View = (PySfView *)args;
-	if (! PyObject_TypeCheck(View, &PySfViewType))
+	if (!PyObject_TypeCheck(View, &PySfViewType))
 	{
-		PyErr_SetString(PyExc_TypeError, "Argument is not a sf.View");
+		PyErr_SetString(PyExc_TypeError, "RenderTarget.SetView() Argument is not a sf.View");
 		return NULL;
 	}
 	self->obj->SetView( *(View->obj));
@@ -146,8 +134,7 @@ Change the current active view. View must be a sf.View instance."},
 };
 
 PyTypeObject PySfRenderTargetType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"RenderTarget",			/*tp_name*/
 	sizeof(PySfRenderTarget), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -175,14 +162,14 @@ PyTypeObject PySfRenderTargetType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfRenderTarget_methods, /* tp_methods */
-	PySfRenderTarget_members, /* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	0, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfRenderTarget_new,	/* tp_new */
 };

@@ -23,6 +23,13 @@
 ////////////////////////////////////////////////////////////
 
 #include "Drawable.hpp"
+#include "Color.hpp"
+
+#include "compat.hpp"
+
+
+extern PyTypeObject PySfColorType;
+
 
 void CustomDrawable::Render (sf::RenderTarget& Target) const
 {
@@ -30,20 +37,11 @@ void CustomDrawable::Render (sf::RenderTarget& Target) const
 		PyObject_CallFunction(RenderFunction, (char *)"O", RenderWindow);
 }
 
-
-extern PyTypeObject PySfColorType;
-
-static PyMemberDef PySfDrawable_members[] = {
-	{NULL}  /* Sentinel */
-};
-
-
-
 static void
 PySfDrawable_dealloc(PySfDrawable *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
@@ -261,8 +259,7 @@ Transform a point from local coordinates into global coordinates (ie it applies 
 };
 
 PyTypeObject PySfDrawableType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Drawable",				/*tp_name*/
 	sizeof(PySfDrawable),	/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -290,7 +287,7 @@ PyTypeObject PySfDrawableType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfDrawable_methods,	/* tp_methods */
-	PySfDrawable_members,	/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */

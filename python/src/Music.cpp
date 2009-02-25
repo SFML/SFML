@@ -24,32 +24,24 @@
 
 #include "Music.hpp"
 
+#include "compat.hpp"
+
 
 extern PyTypeObject PySfSoundStreamType;
-
-
-static PyMemberDef PySfMusic_members[] = {
-	{NULL}  /* Sentinel */
-};
 
 
 static void
 PySfMusic_dealloc(PySfMusic *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfMusic_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfMusic *self;
-
 	self = (PySfMusic *)type->tp_alloc(type, 0);
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -58,10 +50,15 @@ static int
 PySfMusic_init(PySfMusic *self, PyObject *args, PyObject *kwds)
 {
 	unsigned int BufferSize=44100;
-	if (PyTuple_Size(args) == 1)
+	int size = PyTuple_Size(args);
+	if (size == 1)
 	{
-		if ( !PyArg_ParseTuple(args, "I", &BufferSize))
+		if ( !PyArg_ParseTuple(args, "I:Music.Init", &BufferSize))
 			return -1;
+	}
+	else if (size > 1)
+	{
+		PyErr_SetString(PyExc_TypeError, "Music.__init__() takes at most one argument");
 	}
 	self->obj = new sf::Music(BufferSize);
 	return 0;
@@ -73,23 +70,29 @@ PySfMusic_OpenFromMemory(PySfMusic *self, PyObject *args)
 	unsigned int SizeInBytes;
 	char *Data;
 
-	if (! PyArg_ParseTuple(args, "s#", &Data, &SizeInBytes))
+	if (! PyArg_ParseTuple(args, "s#:Music.OpenFromMemory", &Data, &SizeInBytes))
 		return NULL; 
 
-	if (self->obj->OpenFromMemory(Data, (std::size_t) SizeInBytes))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(self->obj->OpenFromMemory(Data, (std::size_t) SizeInBytes));
 }
 
 static PyObject*
 PySfMusic_OpenFromFile(PySfMusic *self, PyObject *args)
 {
-	char *path = PyString_AsString(args);
-	if (self->obj->OpenFromFile(path))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	char *path;
+#ifdef IS_PY3K
+	PyObject *string = PyUnicode_AsUTF8String(args);
+	if (string == NULL)
+		return NULL;
+	path = PyBytes_AsString(string);
+#else
+	path = PyString_AsString(args);
+#endif
+	bool result = self->obj->OpenFromFile(path);
+#ifdef IS_PY3K
+	Py_DECREF(string);
+#endif
+	return PyBool_FromLong(result);
 }
 
 static PyObject*
@@ -108,8 +111,7 @@ static PyMethodDef PySfMusic_methods[] = {
 
 
 PyTypeObject PySfMusicType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Music",				/*tp_name*/
 	sizeof(PySfMusic),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -129,7 +131,9 @@ PyTypeObject PySfMusicType = {
 	0,						/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-	"sf.Music defines a big sound played using streaming, so usually what we call a music :)",           /* tp_doc */
+	"sf.Music defines a big sound played using streaming, so usually what we call a music :).\n\
+Constructor: sf.Music(BufferSize=44100)\n\
+BufferSize : Size of the internal buffer, expressed in number of samples (ie. size taken by the music in memory) (44100 by default)", /* tp_doc */
 	0,						/* tp_traverse */
 	0,						/* tp_clear */
 	0,						/* tp_richcompare */
@@ -137,7 +141,7 @@ PyTypeObject PySfMusicType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfMusic_methods,		/* tp_methods */
-	PySfMusic_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	&PySfSoundStreamType,	/* tp_base */
 	0,						/* tp_dict */

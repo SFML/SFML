@@ -23,7 +23,6 @@
 ////////////////////////////////////////////////////////////
 
 #include "RenderWindow.hpp"
-
 #include "Event.hpp"
 #include "VideoMode.hpp"
 #include "Drawable.hpp"
@@ -32,8 +31,11 @@
 #include "View.hpp"
 #include "Image.hpp"
 #include "Window.hpp"
+#include "WindowSettings.hpp"
 
-#include "SFML/Window/WindowStyle.hpp"
+#include "compat.hpp"
+
+#include <SFML/Window/WindowStyle.hpp>
 
 
 extern PyTypeObject PySfEventType;
@@ -43,31 +45,21 @@ extern PyTypeObject PySfWindowType;
 extern PyTypeObject PySfWindowSettingsType;
 extern PyTypeObject PySfVideoModeType;
 extern PyTypeObject PySfDrawableType;
-
 extern PyTypeObject PySfRenderTargetType;
-
-static PyMemberDef PySfRenderWindow_members[] = {
-	{NULL}  /* Sentinel */
-};
 
 
 static void
 PySfRenderWindow_dealloc(PySfRenderWindow* self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfRenderWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfRenderWindow *self;
-
 	self = (PySfRenderWindow *)type->tp_alloc(type, 0);
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -76,7 +68,8 @@ PySfRenderWindow_init(PySfRenderWindow *self, PyObject *args, PyObject *kwds)
 {
 	self->obj = new sf::RenderWindow();
 	if (PyTuple_Size(args) > 0)
-		PySfWindow_Create((PySfWindow *)self, args, kwds);
+		if (PySfWindow_Create((PySfWindow *)self, args, kwds) == NULL)
+			return -1;
 	return 0;
 }
 
@@ -98,7 +91,7 @@ PySfRenderWindow_ConvertCoords(PySfRenderWindow *self, PyObject *args)
 	sf::View *TargetView = NULL;
 	sf::Vector2f Vect;
 
-	if (! PyArg_ParseTuple(args, "II|O!", &WindowX, &WindowY, &PySfViewType, &PyTargetView))
+	if (!PyArg_ParseTuple(args, "II|O!:RenderWindow.ConvertCoords", &WindowX, &WindowY, &PySfViewType, &PyTargetView))
 		return NULL;
 
 	if (PyTargetView)
@@ -154,9 +147,8 @@ PySfRenderWindow_Draw(PySfRenderWindow *self, PyObject *args)
 
 		Py_DECREF(iterator);
 
-		if (PyErr_Occurred()) {
+		if (PyErr_Occurred())
 			return NULL;
-		}
 	}
 	Py_RETURN_NONE;
 }
@@ -175,8 +167,7 @@ Draw something on the window. The argument can be a drawable or any object suppo
 };
 
 PyTypeObject PySfRenderWindowType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"RenderWindow",			/*tp_name*/
 	sizeof(PySfRenderWindow), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -196,7 +187,14 @@ PyTypeObject PySfRenderWindowType = {
 	0,						/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-	"Simple wrapper for sf.Window that allows easy 2D rendering.", /* tp_doc */
+	"Simple wrapper for sf.Window that allows easy 2D rendering.\n\
+Default constructor : sf.RenderWindow()\n\
+Other constructor : sf.RenderWindow(Mode, Title, Style::Resize|Style::Close, Params = WindowSettings())\n\
+Parameters:\n\
+	Mode 	: Video mode to use\n\
+	Title 	: Title of the window\n\
+	WindowStyle 	: Window style (Resize | Close by default)\n\
+	Params 	: Creation parameters (see default constructor for default values)", /* tp_doc */
 	0,						/* tp_traverse */
 	0,						/* tp_clear */
 	0,						/* tp_richcompare */
@@ -204,7 +202,7 @@ PyTypeObject PySfRenderWindowType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfRenderWindow_methods, /* tp_methods */
-	PySfRenderWindow_members, /* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
