@@ -25,10 +25,7 @@
 #include "Font.hpp"
 #include "Glyph.hpp"
 
-static PyMemberDef PySfFont_members[] = {
-	{NULL}  /* Sentinel */
-};
-
+#include "compat.hpp"
 
 
 static void
@@ -36,21 +33,16 @@ PySfFont_dealloc(PySfFont *self)
 {
 	if (self->Owner)
 		delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfFont_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfFont *self;
-
 	self = (PySfFont *)type->tp_alloc(type, 0);
-
 	if (self != NULL)
-	{
 		self->Owner = true;
-	}
-
 	return (PyObject *)self;
 }
 
@@ -71,7 +63,7 @@ PySfFont_LoadFromFile(PySfFont* self, PyObject *args, PyObject *kwds)
 	int CharsetSize;
 	bool Result;
 
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "s|Is#", (char **)kwlist, &Filename, &Charsize, &CharsetTmp, &CharsetSize))
+	if (! PyArg_ParseTupleAndKeywords(args, kwds, "s|Is#:Font.LoadFromFile", (char **)kwlist, &Filename, &Charsize, &CharsetTmp, &CharsetSize))
 		return NULL;
 
 	if (CharsetTmp)
@@ -100,7 +92,7 @@ PySfFont_LoadFromMemory(PySfFont* self, PyObject *args, PyObject *kwds)
 	int CharsetSize;
 	bool Result;
 
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "s#|Is#", (char **)kwlist, &Data, &Size, &Charsize, &CharsetTmp, &CharsetSize))
+	if (! PyArg_ParseTupleAndKeywords(args, kwds, "s#|Is#:Font.LoadFromMemory", (char **)kwlist, &Data, &Size, &Charsize, &CharsetTmp, &CharsetSize))
 		return NULL;
 
 	if (CharsetTmp)
@@ -169,8 +161,7 @@ Get the description of a glyph (character) given by its unicode value. Returns g
 
 
 PyTypeObject PySfFontType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Font",					/*tp_name*/
 	sizeof(PySfFont),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -198,7 +189,7 @@ PyTypeObject PySfFontType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfFont_methods,		/* tp_methods */
-	PySfFont_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */

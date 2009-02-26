@@ -23,12 +23,13 @@
 ////////////////////////////////////////////////////////////
 
 #include "View.hpp"
+#include "Rect.hpp"
+
+#include "offsetof.hpp"
+#include "compat.hpp"
+
 
 extern PyTypeObject PySfFloatRectType;
-
-static PyMemberDef PySfView_members[] = {
-	{NULL}  /* Sentinel */
-};
 
 
 static void
@@ -36,7 +37,7 @@ PySfView_dealloc(PySfView *self)
 {
 	if (self->Owner)
 		delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
@@ -57,7 +58,7 @@ static int
 PySfView_init(PySfView *self, PyObject *args, PyObject *kwds)
 {
 	PySfFloatRect *Rect=NULL;
-	if (! PyArg_ParseTuple(args, "|O!", &PySfFloatRectType, &Rect))
+	if (!PyArg_ParseTuple(args, "|O!:View.__init__", &PySfFloatRectType, &Rect))
 		return -1;
 
 	if (Rect != NULL)
@@ -98,7 +99,7 @@ static PyObject *
 PySfView_Move(PySfView* self, PyObject *args)
 {
 	float x, y;
-	if ( !PyArg_ParseTuple(args, "ff", &x, &y) )
+	if (!PyArg_ParseTuple(args, "ff:View.Move", &x, &y) )
 		return NULL;
 	self->obj->Move(x, y);
 	Py_RETURN_NONE;
@@ -108,7 +109,7 @@ static PyObject *
 PySfView_SetCenter(PySfView* self, PyObject *args)
 {
 	float x, y;
-	if ( !PyArg_ParseTuple(args, "ff", &x, &y) )
+	if (!PyArg_ParseTuple(args, "ff:View.SetCenter", &x, &y) )
 		return NULL;
 	self->obj->SetCenter(x, y);
 	Py_RETURN_NONE;
@@ -118,7 +119,7 @@ static PyObject *
 PySfView_SetHalfSize(PySfView* self, PyObject *args)
 {
 	float x, y;
-	if ( !PyArg_ParseTuple(args, "ff", &x, &y) )
+	if (!PyArg_ParseTuple(args, "ff:View.SetHalfSize", &x, &y) )
 		return NULL;
 	self->obj->SetHalfSize(x, y);
 	Py_RETURN_NONE;
@@ -145,8 +146,7 @@ static PyMethodDef PySfView_methods[] = {
 };
 
 PyTypeObject PySfViewType = {
-	PyObject_HEAD_INIT(NULL)
-	0,					/*ob_size*/
+	head_init
 	"View",				/*tp_name*/
 	sizeof(PySfView),	/*tp_basicsize*/
 	0,					/*tp_itemsize*/
@@ -174,7 +174,7 @@ PyTypeObject PySfViewType = {
 	0,					/* tp_iter */
 	0,					/* tp_iternext */
 	PySfView_methods,	/* tp_methods */
-	PySfView_members,	/* tp_members */
+	0,					/* tp_members */
 	0,					/* tp_getset */
 	0,					/* tp_base */
 	0,					/* tp_dict */

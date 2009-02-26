@@ -26,15 +26,14 @@
 #define __PYSOUNDSTREAM_HPP
 
 #include <Python.h>
-#include <structmember.h>
 
 #include <SFML/Audio/SoundStream.hpp>
-#include <iostream>
 
 class CustomSoundStream : public sf::SoundStream
 {
 public :
 	PyObject *SoundStream;
+	PyObject *PyData;
     virtual bool OnStart();
     virtual bool OnGetData(Chunk& Data);
 	void Init(unsigned int ChannelsCount, unsigned int SampleRate);

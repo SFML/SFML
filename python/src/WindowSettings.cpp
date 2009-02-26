@@ -24,6 +24,11 @@
 
 #include "WindowSettings.hpp"
 
+#include <structmember.h>
+
+#include "offsetof.hpp"
+#include "compat.hpp"
+
 static PyMemberDef PySfWindowSettings_members[] = {
 	{(char *)"DepthBits", T_UINT, offsetof(PySfWindowSettings, DepthBits), 0, (char *)"Depth buffer bits (24 by default)"},
 	{(char *)"StencilBits", T_UINT, offsetof(PySfWindowSettings, StencilBits), 0, (char *)"Stencil buffer bits (8 by default)"},
@@ -36,7 +41,7 @@ static void
 PySfWindowSettings_dealloc(PySfWindowSettings *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 void
@@ -51,16 +56,13 @@ static PyObject *
 PySfWindowSettings_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfWindowSettings *self;
-
 	self = (PySfWindowSettings *)type->tp_alloc(type, 0);
-
 	if (self != NULL)
 	{
 		self->DepthBits = 24;
 		self->StencilBits = 8;
 		self->AntialiasingLevel = 0;
 	}
-
 	return (PyObject *)self;
 }
 
@@ -69,21 +71,16 @@ static int
 PySfWindowSettings_init(PySfWindowSettings *self, PyObject *args, PyObject *kwds)
 {
 	const char *kwlist[] = {"DepthBits", "StencilBits", "AntialiasingLevel", NULL};
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "|III", (char **)kwlist, &(self->DepthBits), &(self->StencilBits), &(self->AntialiasingLevel)))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|III:WindowSettings.__init__", (char **)kwlist, &(self->DepthBits), &(self->StencilBits), &(self->AntialiasingLevel)))
 		return -1;
 	self->obj = new sf::WindowSettings(self->DepthBits, self->StencilBits, self->AntialiasingLevel);
 
 	return 0;
 }
 
-static PyMethodDef PySfWindowSettings_methods[] = {
-	{NULL}  /* Sentinel */
-};
-
 
 PyTypeObject PySfWindowSettingsType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"WindowSettings",		/*tp_name*/
 	sizeof(PySfWindowSettings), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -110,7 +107,7 @@ PyTypeObject PySfWindowSettingsType = {
 	0,						/* tp_weaklistoffset */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
-	PySfWindowSettings_methods,	/* tp_methods */
+	0,						/* tp_methods */
 	PySfWindowSettings_members,	/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */

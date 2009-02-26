@@ -24,13 +24,18 @@
 
 #include "Glyph.hpp"
 
+#include <structmember.h>
+
+#include "offsetof.hpp"
+#include "compat.hpp"
+
+
 static PyMemberDef PySfGlyph_members[] = {
 	{(char *)"Advance", T_INT, offsetof(PySfGlyph, Advance), 0, (char *)"Offset to move horizontically to the next character."},
 	{(char *)"Rectangle", T_OBJECT, offsetof(PySfGlyph, Rectangle), 0, (char *)"Bounding rectangle of the glyph, in relative coordinates."},
 	{(char *)"TexCoords", T_OBJECT, offsetof(PySfGlyph, TexCoords), 0, (char *)"Texture coordinates of the glyph inside the bitmap font."},
 	{NULL}  /* Sentinel */
 };
-
 
 
 static void
@@ -41,7 +46,7 @@ PySfGlyph_dealloc(PySfGlyph *self)
 	self->TexCoords->obj = new sf::FloatRect(self->obj->TexCoords);
 	Py_DECREF(self->TexCoords);
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 void
@@ -80,16 +85,13 @@ static PyObject *
 PySfGlyph_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfGlyph *self;
-
 	self = (PySfGlyph *)type->tp_alloc(type, 0);
-
 	if (self != NULL)
 	{
 		self->Advance = 0;
 		self->Rectangle = GetNewPySfIntRect();
 		self->TexCoords = GetNewPySfFloatRect();
 	}
-
 	return (PyObject *)self;
 }
 
@@ -103,14 +105,9 @@ PySfGlyph_init(PySfGlyph *self, PyObject *args, PyObject *kwds)
 	return 0;
 }
 
-static PyMethodDef PySfGlyph_methods[] = {
-	{NULL}  /* Sentinel */
-};
-
 
 PyTypeObject PySfGlyphType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Glyph",				/*tp_name*/
 	sizeof(PySfGlyph),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -137,7 +134,7 @@ PyTypeObject PySfGlyphType = {
 	0,						/* tp_weaklistoffset */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
-	PySfGlyph_methods,		/* tp_methods */
+	0,						/* tp_methods */
 	PySfGlyph_members,		/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */

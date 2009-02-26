@@ -25,6 +25,14 @@
 #ifndef __PYJOY_HPP
 #define __PYJOY_HPP
 
+#include <Python.h>
+
+#include <SFML/Window/Event.hpp>
+
+typedef struct {
+	PyObject_HEAD
+} PySfJoy;
+
 void
 PySfJoy_InitConst();
 

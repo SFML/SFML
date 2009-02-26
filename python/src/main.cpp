@@ -69,8 +69,7 @@ extern PyTypeObject PySfGlyphType;
 extern PyTypeObject PySfStringType;
 extern PyTypeObject PySfPostFXType;
 
-extern PyTypeObject PySfImageType;
-
+extern PyTypeObject PySfImageType;
 extern PyTypeObject PySfColorType;
 
 extern PyTypeObject PySfShapeType;
@@ -96,8 +95,8 @@ static PyMethodDef module_methods[] = {
 #define INITERROR return NULL
 static PyModuleDef module_def = {
     PyModuleDef_HEAD_INIT,
-    "noddy",
-    "Example module that creates an extension type.",
+    "sf",
+    "Python binding for sfml (Simple Fast Media Library)",
     -1,
     module_methods, NULL, NULL, NULL, NULL
 };

@@ -196,39 +196,13 @@ PySfImage_GetPixels(PySfImage *self)
 static PyObject *
 PySfImage_LoadFromFile (PySfImage *self, PyObject *args)
 {
-	char *path;
-#ifdef IS_PY3K
-	PyObject *string = PyUnicode_AsUTF8String(args);
-	if (string == NULL)
-		return NULL;
-	path = PyBytes_AsString(string);
-#else
-	path = PyString_AsString(args);
-#endif
-	bool result = self->obj->LoadFromFile(path);
-#ifdef IS_PY3K
-	Py_DECREF(string);
-#endif
-	return PyBool_FromLong(result);
+	load_from_file(self, args);
 }
 
 static PyObject *
 PySfImage_SaveToFile (PySfImage *self, PyObject *args)
 {
-	char *path;
-#ifdef IS_PY3K
-	PyObject *string = PyUnicode_AsUTF8String(args);
-	if (string == NULL)
-		return NULL;
-	path = PyBytes_AsString(string);
-#else
-	path = PyString_AsString(args);
-#endif
-	bool result = self->obj->SaveToFile(path);
-#ifdef IS_PY3K
-	Py_DECREF(string);
-#endif
-	return PyBool_FromLong(result);
+	save_to_file(self, args);
 }
 
 static int
@@ -390,6 +364,7 @@ PySfImage_init(PySfImage *self, PyObject *args, PyObject *kwds)
 			self->obj = new sf::Image(*(Image->obj));
 			return 0;
 		}
+		else PyErr_Clear();
 	}
 	self->obj = new sf::Image();
 	if (PyTuple_Size(args) > 0)
@@ -400,6 +375,7 @@ PySfImage_init(PySfImage *self, PyObject *args, PyObject *kwds)
 				return -1;
 			else if (PySfImage_LoadFromPixels(self, args) == NULL)
 				return -1;
+			else PyErr_Clear();
 		}
 	}
 	return 0;

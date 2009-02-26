@@ -27,36 +27,27 @@
 #include "Color.hpp"
 #include "Rect.hpp"
 
+#include "compat.hpp"
+
 
 extern PyTypeObject PySfColorType;
 extern PyTypeObject PySfImageType;
 extern PyTypeObject PySfDrawableType;
 extern PyTypeObject PySfFontType;
 
-static PyMemberDef PySfString_members[] = {
-    {NULL}  /* Sentinel */
-};
-
-
 
 static void
 PySfString_dealloc(PySfString *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfString_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfString *self;
-
 	self = (PySfString *)type->tp_alloc(type, 0);
-
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -121,7 +112,7 @@ PySfString_SetFont(PySfString* self, PyObject *args)
 {
 	PySfFont *Font = (PySfFont *)args;
 	if (!PyObject_TypeCheck(Font, &PySfFontType))
-		PyErr_SetString(PyExc_ValueError, "Argument must be a sf.Font");
+		PyErr_SetString(PyExc_ValueError, "String.SetFont() Argument must be a sf.Font");
 	self->obj->SetFont(*(Font->obj));
 	Py_RETURN_NONE;
 }
@@ -155,7 +146,12 @@ PySfString_GetStyle(PySfString* self)
 static PyObject *
 PySfString_GetText(PySfString* self)
 {
-	return PyString_FromString((std::string(self->obj->GetText())).c_str());
+	std::string Text = (std::string(self->obj->GetText()));
+#ifdef IS_PY3K
+	return PyUnicode_DecodeUTF8(Text.c_str(), (Py_ssize_t)Text.length(), "replace");
+#else
+	return PyString_FromString(Text.c_str());
+#endif
 }
 
 static PyObject *
@@ -206,8 +202,7 @@ Return the visual position (a tuple of two floats) of the Index-th character of 
 };
 
 PyTypeObject PySfStringType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"String",				/*tp_name*/
 	sizeof(PySfString),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -236,7 +231,7 @@ Default constructor : String ()\nConstruct the string from a utf-8 or a utf-16 s
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfString_methods,		/* tp_methods */
-	PySfString_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	&PySfDrawableType,		/* tp_base */
 	0,						/* tp_dict */
@@ -253,16 +248,16 @@ Default constructor : String ()\nConstruct the string from a utf-8 or a utf-16 s
 void PySfString_InitConst()
 {
 	PyObject *obj;
-	obj = PyInt_FromLong(sf::String::Regular);
+	obj = PyLong_FromLong(sf::String::Regular);
 	PyDict_SetItemString(PySfStringType.tp_dict, "Regular", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::String::Bold);
+	obj = PyLong_FromLong(sf::String::Bold);
 	PyDict_SetItemString(PySfStringType.tp_dict, "Bold", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::String::Italic);
+	obj = PyLong_FromLong(sf::String::Italic);
 	PyDict_SetItemString(PySfStringType.tp_dict, "Italic", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::String::Underlined);
+	obj = PyLong_FromLong(sf::String::Underlined);
 	PyDict_SetItemString(PySfStringType.tp_dict, "Underlined", obj);
 	Py_DECREF(obj);
 }

@@ -27,33 +27,24 @@
 #include <SFML/Graphics/Color.hpp>
 #include "Color.hpp"
 
+#include "compat.hpp"
+
 extern PyTypeObject PySfColorType;
 extern PyTypeObject PySfDrawableType;
-
-static PyMemberDef PySfShape_members[] = {
-    {NULL}  /* Sentinel */
-};
-
 
 
 static void
 PySfShape_dealloc(PySfShape* self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfShape_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfShape *self;
-
 	self = (PySfShape *)type->tp_alloc(type, 0);
-
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -64,7 +55,6 @@ PySfShape_init(PySfShape *self, PyObject *args)
 	return 0;
 }
 
-
 // void AddPoint(float X, float Y, const Color& Col = Color(255, 255, 255), const Color& OutlineCol = Color(0, 0, 0));
 static PyObject *
 PySfShape_AddPoint(PySfShape* self, PyObject *args, PyObject *kwds)
@@ -73,7 +63,7 @@ PySfShape_AddPoint(PySfShape* self, PyObject *args, PyObject *kwds)
 	float X, Y;
 	sf::Color *Col, *OutlineCol;
 	PySfColor *ColTmp=NULL, *OutlineColTmp=NULL;
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ff|O!O!", (char **)kwlist, &X, &Y, &PySfColorType, &ColTmp, &PySfColorType, &OutlineColTmp))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ff|O!O!:Shape.AddPoint", (char **)kwlist, &X, &Y, &PySfColorType, &ColTmp, &PySfColorType, &OutlineColTmp))
 		return NULL;
 
 	if (ColTmp)
@@ -119,7 +109,7 @@ PySfShape_Line(PySfShape* self, PyObject *args, PyObject *kwds)
 	float X0, Y0, X1, Y1, Thickness, Outline = 0.f;
 	sf::Color *OutlineCol;
 	PySfColor *ColTmp, *OutlineColTmp=NULL;
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "fffffO!|fO!", (char **)kwlist, &X0, &Y0, &X1, &Y1, &Thickness, &PySfColorType, &ColTmp, &Outline, &PySfColorType, &OutlineColTmp))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "fffffO!|fO!:Shape.Line", (char **)kwlist, &X0, &Y0, &X1, &Y1, &Thickness, &PySfColorType, &ColTmp, &Outline, &PySfColorType, &OutlineColTmp))
 		return NULL;
 	if (OutlineColTmp)
 	{
@@ -143,7 +133,7 @@ PySfShape_Rectangle(PySfShape* self, PyObject *args, PyObject *kwds)
 	float X0, Y0, X1, Y1, Outline = 0.f;
 	sf::Color *OutlineCol;
 	PySfColor *ColTmp, *OutlineColTmp=NULL;
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ffffO!|fO!", (char **)kwlist, &X0, &Y0, &X1, &Y1, &PySfColorType, &ColTmp, &Outline, &PySfColorType, &OutlineColTmp))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ffffO!|fO!:Shape.Rectangle", (char **)kwlist, &X0, &Y0, &X1, &Y1, &PySfColorType, &ColTmp, &Outline, &PySfColorType, &OutlineColTmp))
 		return NULL;
 	if (OutlineColTmp)
 	{
@@ -167,7 +157,7 @@ PySfShape_Circle(PySfShape* self, PyObject *args, PyObject *kwds)
 	float X, Y, Radius, Outline = 0.f;
 	sf::Color *OutlineCol;
 	PySfColor *ColTmp, *OutlineColTmp=NULL;
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "fffO!|fO!", (char **)kwlist, &X, &Y, &Radius, &PySfColorType, &ColTmp, &Outline, &PySfColorType, &OutlineColTmp))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "fffO!|fO!:Shape.Circle", (char **)kwlist, &X, &Y, &Radius, &PySfColorType, &ColTmp, &Outline, &PySfColorType, &OutlineColTmp))
 		return NULL;
 	if (OutlineColTmp)
 	{
@@ -218,7 +208,7 @@ PySfShape_SetPointPosition(PySfShape* self, PyObject *args)
 {
 	unsigned int Index;
 	float X, Y;
-	if (!PyArg_ParseTuple(args, "Iff", &Index, &X, &Y))
+	if (!PyArg_ParseTuple(args, "Iff:Shape.SetPointPosition", &Index, &X, &Y))
 		return NULL;
 	self->obj->SetPointPosition(Index, X, Y);
 	Py_RETURN_NONE;
@@ -229,7 +219,7 @@ PySfShape_SetPointColor(PySfShape* self, PyObject *args)
 {
 	unsigned int Index;
 	PySfColor *Color;
-	if (!PyArg_ParseTuple(args, "IO!", &Index, &PySfColorType, &Color))
+	if (!PyArg_ParseTuple(args, "IO!:Shape.SetPointColor", &Index, &PySfColorType, &Color))
 		return NULL;
 	PySfColorUpdate(Color);
 	self->obj->SetPointColor(Index, *(Color->obj));
@@ -241,7 +231,7 @@ PySfShape_SetPointOutlineColor(PySfShape* self, PyObject *args)
 {
 	unsigned int Index;
 	PySfColor *Color;
-	if (!PyArg_ParseTuple(args, "IO!", &Index, &PySfColorType, &Color))
+	if (!PyArg_ParseTuple(args, "IO!:Shape:SetPointOutlineColor", &Index, &PySfColorType, &Color))
 		return NULL;
 	PySfColorUpdate(Color);
 	self->obj->SetPointOutlineColor(Index, *(Color->obj));
@@ -257,20 +247,14 @@ PySfShape_GetNbPoints(PySfShape* self, PyObject *args)
 static PyObject *
 PySfShape_EnableFill(PySfShape* self, PyObject *args)
 {
-	if (PyObject_IsTrue(args))
-		self->obj->EnableFill(true);
-	else
-		self->obj->EnableFill(false);
+	self->obj->EnableFill(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
 static PyObject *
 PySfShape_EnableOutline(PySfShape* self, PyObject *args)
 {
-	if (PyObject_IsTrue(args))
-		self->obj->EnableOutline(true);
-	else
-		self->obj->EnableOutline(false);
+	self->obj->EnableOutline(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
@@ -346,8 +330,7 @@ Create a shape made of a single circle.\n\
 
 
 PyTypeObject PySfShapeType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Shape",				/*tp_name*/
 	sizeof(PySfShape),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -375,7 +358,7 @@ PyTypeObject PySfShapeType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfShape_methods,		/* tp_methods */
-	PySfShape_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	&PySfDrawableType,		/* tp_base */
 	0,						/* tp_dict */

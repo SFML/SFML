@@ -26,17 +26,44 @@
 #define __PYCOMPAT_HPP
 
 #if PY_MAJOR_VERSION >= 3
+
 #define IS_PY3K
 #define head_init	PyVarObject_HEAD_INIT(NULL, 0)
+
+#define save_to_file(self, args) \
+	PyObject *string = PyUnicode_AsUTF8String(args); \
+	if (string == NULL) return NULL; \
+	char *path = PyBytes_AsString(string); \
+	bool result = self->obj->SaveToFile(path); \
+	Py_DECREF(string); \
+	return PyBool_FromLong(result)
+
+#define load_from_file(self, args) \
+	PyObject *string = PyUnicode_AsUTF8String(args); \
+	if (string == NULL) return NULL; \
+	char *path = PyBytes_AsString(string); \
+	bool result = self->obj->LoadFromFile(path); \
+	Py_DECREF(string); \
+	return PyBool_FromLong(result)
+
 #else
+
+#define save_to_file(self, args) \
+	return PyBool_FromLong(self->obj->SaveToFile(PyString_AsString(args)))
+#define load_from_file(self, args) \
+	return PyBool_FromLong(self->obj->LoadFromFile(PyString_AsString(args)))
+
 #define Py_TYPE(a)	a->ob_type
 #define head_init	PyObject_HEAD_INIT(NULL) 0,
 #define PyBytes_FromStringAndSize	PyString_FromStringAndSize
+
 #endif
 
 #define free_object(a)	Py_TYPE(a)->tp_free((PyObject*)a)
 
 #define PyBool_AsBool(a)	((PyObject_IsTrue(a))?true:false)
+
+
 
 #endif
 

@@ -22,62 +22,26 @@
 //
 ////////////////////////////////////////////////////////////
 
-#include <SFML/Graphics/Drawable.hpp>
-
-#include <Python.h>
-#include <structmember.h>
-
 #include "Blend.hpp"
 
+#include "compat.hpp"
 
-typedef struct {
-	PyObject_HEAD
-} PySfBlend;
-
-
-
-static PyMemberDef PySfBlend_members[] = {
-	{NULL}  /* Sentinel */
-};
-
-
-static void
-PySfBlend_dealloc(PySfBlend *self)
-{
-	self->ob_type->tp_free((PyObject*)self);
-}
 
 static PyObject *
 PySfBlend_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfBlend *self;
-
 	self = (PySfBlend *)type->tp_alloc(type, 0);
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
 
-static int
-PySfBlend_init(PySfBlend *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
-}
-
-static PyMethodDef PySfBlend_methods[] = {
-	{NULL}  /* Sentinel */
-};
-
 PyTypeObject PySfBlendType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Blend",				/*tp_name*/
 	sizeof(PySfBlend),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
-	(destructor)PySfBlend_dealloc, /*tp_dealloc*/
+	0,						/*tp_dealloc*/
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
@@ -104,15 +68,15 @@ None     No blending.",		/* tp_doc */
 	0,						/* tp_weaklistoffset */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
-	PySfBlend_methods,		/* tp_methods */
-	PySfBlend_members,		/* tp_members */
+	0,						/* tp_methods */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfBlend_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfBlend_new,			/* tp_new */
 };
@@ -120,16 +84,16 @@ None     No blending.",		/* tp_doc */
 void PySfBlend_InitConst()
 {
 	PyObject *obj;
-	obj = PyInt_FromLong(sf::Blend::Alpha);
+	obj = PyLong_FromLong(sf::Blend::Alpha);
 	PyDict_SetItemString(PySfBlendType.tp_dict, "Alpha", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::Blend::Add);
+	obj = PyLong_FromLong(sf::Blend::Add);
 	PyDict_SetItemString(PySfBlendType.tp_dict, "Add", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::Blend::Multiply);
+	obj = PyLong_FromLong(sf::Blend::Multiply);
 	PyDict_SetItemString(PySfBlendType.tp_dict, "Multiply", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::Blend::None);
+	obj = PyLong_FromLong(sf::Blend::None);
 	PyDict_SetItemString(PySfBlendType.tp_dict, "None", obj);
 	Py_DECREF(obj);
 }

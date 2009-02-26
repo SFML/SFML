@@ -51,35 +51,22 @@ PySfPostFX_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static PyObject *
 PySfPostFX_LoadFromFile (PySfPostFX *self, PyObject *args)
 {
-	char *path;
-#ifdef IS_PY3K
-	PyObject *string = PyUnicode_AsUTF8String(args);
-	if (string == NULL)
-		return NULL;
-	path = PyBytes_AsString(string);
-#else
-	path = PyString_AsString(args);
-#endif
-	bool result = self->obj->LoadFromFile(path);
-#ifdef IS_PY3K
-	Py_DECREF(string);
-#endif
-	return PyBool_FromLong(result);
+	load_from_file(self, args);
 }
 
 static PyObject *
 PySfPostFX_LoadFromMemory (PySfPostFX *self, PyObject *args)
 {
-	char *path;
+	char *effect;
 #ifdef IS_PY3K
 	PyObject *string = PyUnicode_AsUTF8String(args);
 	if (string == NULL)
 		return NULL;
-	path = PyBytes_AsString(string);
+	effect = PyBytes_AsString(string);
 #else
-	path = PyString_AsString(args);
+	effect = PyString_AsString(args);
 #endif
-	bool result = self->obj->LoadFromMemory(path);
+	bool result = self->obj->LoadFromMemory(effect);
 #ifdef IS_PY3K
 	Py_DECREF(string);
 #endif

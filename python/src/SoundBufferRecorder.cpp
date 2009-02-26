@@ -23,35 +23,26 @@
 ////////////////////////////////////////////////////////////
 
 #include "SoundBufferRecorder.hpp"
-
 #include "SoundBuffer.hpp"
 
+#include "compat.hpp"
+
+
 extern PyTypeObject PySfSoundRecorderType;
-
-static PyMemberDef PySfSoundBufferRecorder_members[] = {
-    {NULL}  /* Sentinel */
-};
-
 
 
 static void
 PySfSoundBufferRecorder_dealloc(PySfSoundBufferRecorder *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfSoundBufferRecorder_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfSoundBufferRecorder *self;
-
 	self = (PySfSoundBufferRecorder *)type->tp_alloc(type, 0);
-
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -66,7 +57,7 @@ static PyObject *
 PySfSoundBufferRecorder_GetBuffer(PySfSoundBufferRecorder* self)
 {
 	PySfSoundBuffer *SoundBuffer = GetNewPySfSoundBuffer();
-	SoundBuffer->obj = new sf::SoundBuffer( self->obj->GetBuffer() );
+	SoundBuffer->obj = new sf::SoundBuffer(self->obj->GetBuffer());
 	return (PyObject *)SoundBuffer;
 }
 
@@ -77,8 +68,7 @@ static PyMethodDef PySfSoundBufferRecorder_methods[] = {
 };
 
 PyTypeObject PySfSoundBufferRecorderType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"SoundBufferRecorder",	/*tp_name*/
 	sizeof(PySfSoundBufferRecorder), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -106,7 +96,7 @@ PyTypeObject PySfSoundBufferRecorderType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfSoundBufferRecorder_methods, /* tp_methods */
-	PySfSoundBufferRecorder_members, /* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	&PySfSoundRecorderType, /* tp_base */
 	0,						/* tp_dict */
