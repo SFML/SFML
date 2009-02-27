@@ -38,12 +38,8 @@
 #include <SFML/Window/WindowStyle.hpp>
 
 
-extern PyTypeObject PySfEventType;
 extern PyTypeObject PySfViewType;
-extern PyTypeObject PySfColorType;
 extern PyTypeObject PySfWindowType;
-extern PyTypeObject PySfWindowSettingsType;
-extern PyTypeObject PySfVideoModeType;
 extern PyTypeObject PySfDrawableType;
 extern PyTypeObject PySfRenderTargetType;
 
@@ -108,7 +104,9 @@ PySfRenderWindow_DrawObject(PySfRenderWindow *RenderWindow, PySfDrawable *Obj)
 	{
 		if (PyObject_HasAttrString((PyObject *)Obj, "Render"))
 		{
-			Obj->obj->RenderWindow = RenderWindow;
+			Py_DECREF(Obj->obj->RenderTarget);
+			Obj->obj->RenderTarget = (PySfRenderTarget *)RenderWindow;
+			Py_DECREF(Obj->obj->RenderFunction);
 			Obj->obj->RenderFunction = PyObject_GetAttrString((PyObject *)Obj, "Render");
 		}
 		RenderWindow->obj->Draw( *(Obj->obj) );
@@ -120,21 +118,18 @@ PySfRenderWindow_DrawObject(PySfRenderWindow *RenderWindow, PySfDrawable *Obj)
 static PyObject *
 PySfRenderWindow_Draw(PySfRenderWindow *self, PyObject *args)
 {
-	if (!args)
+	if (args == NULL)
 		return NULL;
-
-
 	if (!PySfRenderWindow_DrawObject(self, (PySfDrawable *)args))
 	{
 		PyObject *iterator = PyObject_GetIter(args);
 		PyObject *item;
-
+		PyErr_Clear();
 		if (iterator == NULL)
 		{
 			PyErr_SetString(PyExc_TypeError, "Argument to Draw method is neither a Drawable nor an iterable.");
 			return NULL;
 		}
-
 		while ((item = PyIter_Next(iterator)))
 		{
 			if (!PySfRenderWindow_DrawObject(self, (PySfDrawable *)item))
@@ -144,16 +139,24 @@ PySfRenderWindow_Draw(PySfRenderWindow *self, PyObject *args)
 			}
 			Py_DECREF(item);
 		}
-
 		Py_DECREF(iterator);
-
-		if (PyErr_Occurred())
-			return NULL;
 	}
+	if (PyErr_Occurred())
+		return NULL;
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+PySfRenderWindow_PreserveOpenGLStates(PySfRenderWindow *self, PyObject *args)
+{
+	self->obj->PreserveOpenGLStates(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
 static PyMethodDef PySfRenderWindow_methods[] = {
+	{"PreserveOpenGLStates", (PyCFunction)PySfRenderWindow_PreserveOpenGLStates, METH_O, "PreserveOpenGLStates(Preserve)\n\
+Tell SFML to preserve external OpenGL states, at the expense of more CPU charge. Use this function if you don't want SFML to mess up your own OpenGL states (if any). Don't enable state preservation if not needed, as it will allow SFML to do internal optimizations and improve performances. This parameter is false by default\n\
+	Preserve : True to preserve OpenGL states, false to let SFML optimize"},
 	{"Capture", (PyCFunction)PySfRenderWindow_Capture, METH_NOARGS, "Capture()\n\
 Save the content of the window to an image. Returns a sf.Image object."},
 	{"ConvertCoords", (PyCFunction)PySfRenderWindow_ConvertCoords, METH_VARARGS, "ConvertCoords(WindowX, WindowY, TargetView)\n\

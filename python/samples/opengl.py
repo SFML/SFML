@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from PySFML import *
+from PySFML import sf
 
 from OpenGL.GL import *
 from OpenGL.GLUT import *

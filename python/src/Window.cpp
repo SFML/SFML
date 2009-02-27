@@ -287,7 +287,7 @@ Create a window.\n\
 	Mode : Video mode to use (sf.VideoMode instance)\n\
 	Title : Title of the window\n\
 	WindowStyle : Window style (Resize | Close by default)\n\
-	Params : Creation parameters (see default constructor for default values)\n"},
+	Params : Creation parameters (see default constructor for default values)"},
 	{"Display", (PyCFunction)PySfWindow_Display, METH_NOARGS, "Display()\nDisplay the window on screen."},
 	{"EnableKeyRepeat", (PyCFunction)PySfWindow_EnableKeyRepeat, METH_O, "EnableKeyRepeat(Enable)\nEnable or disable automatic key-repeat. Automatic key-repeat is enabled by default.\n	Enabled : True to enable, false to disable"},
 	{"GetEvent", (PyCFunction)PySfWindow_GetEvent, METH_O, "GetEvent(Event)\nGet the event on top of events stack, if any, and pop it. Returns True if an event was returned, False if events stack was empty.\n	EventReceived : Event to fill, if any."},

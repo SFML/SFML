@@ -101,7 +101,7 @@ static PyModuleDef module_def = {
     module_methods, NULL, NULL, NULL, NULL
 };
 
-PyObject *
+PyMODINIT_FUNC
 PyInit_sf(void)
 #else
 #define INITERROR return

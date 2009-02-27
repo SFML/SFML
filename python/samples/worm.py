@@ -44,7 +44,8 @@ class Apple(sf.Sprite):
 	def __init__(self):
 		apple_img = sf.Image() # Apple's image
 		if not apple_img.LoadFromFile("./data/apple.png"):
-			print "Could not load data/apple.png"
+			pass
+			# print "Could not load data/apple.png"
 		sf.Sprite.__init__(self, apple_img)
 		self.SetCenter(apple_img.GetWidth()/2, apple_img.GetHeight()/2)
 		self.size = apple_img.GetWidth()
@@ -109,7 +110,8 @@ class Worm(list):
 		self.rond = sf.Image()
 		self.level_completed = False
 		if not self.rond.LoadFromFile("./data/rond2.png"):
-			print "Could not load data/rond2.png"
+			pass
+			# print "Could not load data/rond2.png"
 
 	def reset(self, arena):
 		self.targeted_length, self.angle, self.direction = 30, 0, 0

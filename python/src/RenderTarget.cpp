@@ -33,21 +33,6 @@ extern PyTypeObject PySfColorType;
 extern PyTypeObject PySfViewType;
 
 
-static void
-PySfRenderTarget_dealloc(PySfRenderTarget *self)
-{
-	delete self->obj;
-	free_object(self);
-}
-
-static PyObject *
-PySfRenderTarget_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-	PySfRenderTarget *self;
-	self = (PySfRenderTarget *)type->tp_alloc(type, 0);
-	return (PyObject *)self;
-}
-
 static PyObject *
 PySfRenderTarget_Clear(PySfRenderTarget *self, PyObject *args)
 {
@@ -87,8 +72,7 @@ PySfRenderTarget_GetView(PySfRenderTarget *self)
 static PyObject *
 PySfRenderTarget_PreserveOpenGLStates(PySfRenderTarget *self, PyObject *args)
 {
-	bool Optimize = PyBool_AsBool(args);
-	self->obj->PreserveOpenGLStates(Optimize);
+	self->obj->PreserveOpenGLStates(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
@@ -138,7 +122,7 @@ PyTypeObject PySfRenderTargetType = {
 	"RenderTarget",			/*tp_name*/
 	sizeof(PySfRenderTarget), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
-	(destructor)PySfRenderTarget_dealloc, /*tp_dealloc*/
+	0,						/*tp_dealloc*/
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
@@ -162,16 +146,6 @@ PyTypeObject PySfRenderTargetType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfRenderTarget_methods, /* tp_methods */
-	0,						/* tp_members */
-	0,						/* tp_getset */
-	0,						/* tp_base */
-	0,						/* tp_dict */
-	0,						/* tp_descr_get */
-	0,						/* tp_descr_set */
-	0,						/* tp_dictoffset */
-	0,						/* tp_init */
-	0,						/* tp_alloc */
-	PySfRenderTarget_new,	/* tp_new */
 };
 
 
