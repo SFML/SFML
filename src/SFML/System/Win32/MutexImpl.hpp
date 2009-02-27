@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_MUTEXWIN32_HPP
-#define SFML_MUTEXWIN32_HPP
+#ifndef SFML_MUTEXIMPL_HPP
+#define SFML_MUTEXIMPL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -34,15 +34,12 @@
 
 namespace sf
 {
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// Mutex defines a mutex (MUTual EXclusion) object,
-/// that allows a thread to lock critical instructions
-/// to avoid simultaneous access with other threads.
-/// The Win32 version uses critical sections, as it is
-/// faster than mutexes.<br/>
-/// See Lock for an efficient way of using it.
+/// Windows implementation of mutexes
 ////////////////////////////////////////////////////////////
-class SFML_API Mutex : NonCopyable
+class MutexImpl : NonCopyable
 {
 public :
 
@@ -50,13 +47,13 @@ public :
     /// Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    Mutex();
+    MutexImpl();
 
     ////////////////////////////////////////////////////////////
     /// Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~Mutex();
+    ~MutexImpl();
 
     ////////////////////////////////////////////////////////////
     /// Lock the mutex
@@ -75,10 +72,12 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    CRITICAL_SECTION myHandle; ///< Win32 handle of the mutex
+    CRITICAL_SECTION myMutex; ///< Win32 handle of the mutex
 };
+
+} // namespace priv
 
 } // namespace sf
 
 
-#endif // SFML_MUTEXWIN32_HPP
+#endif // SFML_MUTEXIMPL_HPP

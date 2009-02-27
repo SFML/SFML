@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_MUTEXUNIX_HPP
-#define SFML_MUTEXUNIX_HPP
+#ifndef SFML_MUTEXIMPL_HPP
+#define SFML_MUTEXIMPL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -34,13 +34,12 @@
 
 namespace sf
 {
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// Mutex defines a mutex (MUTual EXclusion) object,
-/// that allows a thread to lock critical instructions
-/// to avoid simultaneous access with other threads.
-/// See Lock for an efficient way of using it.
+/// Unix implementation of mutexes
 ////////////////////////////////////////////////////////////
-class SFML_API Mutex : NonCopyable
+class MutexImpl : NonCopyable
 {
 public :
 
@@ -48,13 +47,13 @@ public :
     /// Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    Mutex();
+    MutexImpl();
 
     ////////////////////////////////////////////////////////////
     /// Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~Mutex();
+    ~MutexImpl();
 
     ////////////////////////////////////////////////////////////
     /// Lock the mutex
@@ -73,10 +72,12 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    pthread_mutex_t myMutex; ///< pthread instance of the mutex
+    pthread_mutex_t myMutex; ///< pthread handle of the mutex
 };
+
+} // namespace priv
 
 } // namespace sf
 
 
-#endif // SFML_MUTEXUNIX_HPP
+#endif // SFML_MUTEXIMPL_HPP

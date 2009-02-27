@@ -33,23 +33,20 @@
 namespace
 {
     // Set the random numbers sequence seed with the current system time, so that it is always different
-    unsigned int SetRandomSeed()
+    unsigned int InitializeSeed()
     {
         unsigned int Seed = static_cast<unsigned int>(sf::priv::Platform::GetSystemTime() * 1000);
         srand(Seed);
         return Seed;
     }
+
+    // Global storing the current seed
+    unsigned int GlobalSeed = InitializeSeed();
 }
 
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-// Static member variables
-////////////////////////////////////////////////////////////
-unsigned int Randomizer::ourSeed = SetRandomSeed();
-
-
 ////////////////////////////////////////////////////////////
 /// Set the seed for the generator. Using a known seed
 /// allows you to reproduce the same sequence of random number
@@ -57,7 +54,7 @@ unsigned int Randomizer::ourSeed = SetRandomSeed();
 void Randomizer::SetSeed(unsigned int Seed)
 {
     srand(Seed);
-    ourSeed = Seed;
+    GlobalSeed = Seed;
 }
 
 
@@ -66,7 +63,7 @@ void Randomizer::SetSeed(unsigned int Seed)
 ////////////////////////////////////////////////////////////
 unsigned int Randomizer::GetSeed()
 {
-    return ourSeed;
+    return GlobalSeed;
 }
 
 

@@ -335,11 +335,11 @@
 			Name="Win32"
 			>
 			<File
-				RelativePath="..\..\src\SFML\System\Win32\Mutex.cpp"
+				RelativePath="..\..\src\SFML\System\Win32\MutexImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\System\Win32\Mutex.hpp"
+				RelativePath="..\..\src\SFML\System\Win32\MutexImpl.hpp"
 				>
 			</File>
 			<File
@@ -351,11 +351,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\System\Win32\Thread.cpp"
+				RelativePath="..\..\src\SFML\System\Win32\ThreadImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\System\Win32\Thread.hpp"
+				RelativePath="..\..\src\SFML\System\Win32\ThreadImpl.hpp"
 				>
 			</File>
 		</Filter>
@@ -373,6 +373,10 @@
 		</File>
 		<File
 			RelativePath="..\..\src\SFML\System\Lock.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\System\Mutex.cpp"
 			>
 		</File>
 		<File
@@ -413,6 +417,10 @@
 		</File>
 		<File
 			RelativePath="..\..\src\SFML\System\Sleep.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\System\Thread.cpp"
 			>
 		</File>
 		<File

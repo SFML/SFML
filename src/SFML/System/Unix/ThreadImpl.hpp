@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_THREADUNIX_HPP
-#define SFML_THREADUNIX_HPP
+#ifndef SFML_THREADIMPL_HPP
+#define SFML_THREADIMPL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -34,39 +34,24 @@
 
 namespace sf
 {
+class Thread;
+
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// Thread defines a thread.
-/// There is two ways to use Thread :
-/// - Inherit from it and override the Run() virtual function
-/// - Construct a sfThread instance and pass it a function
-/// pointer to call
+/// Unix implementation of threads
 ////////////////////////////////////////////////////////////
-class SFML_API Thread : NonCopyable
+class ThreadImpl : NonCopyable
 {
 public :
 
-    typedef void (*FuncType)(void*);
-
     ////////////////////////////////////////////////////////////
-    /// Construct the thread from a function pointer
+    /// Default constructor, launch the thread
     ///
-    /// \param Function : Entry point of the thread
-    /// \param UserData : Data to pass to the thread function (NULL by default)
+    /// \param Owner : Owner Thread instance to run
     ///
     ////////////////////////////////////////////////////////////
-    Thread(FuncType Function, void* UserData = NULL);
-
-    ////////////////////////////////////////////////////////////
-    /// Virtual destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual ~Thread();
-
-    ////////////////////////////////////////////////////////////
-    /// Create and run the thread
-    ///
-    ////////////////////////////////////////////////////////////
-    void Launch();
+    ThreadImpl(Thread* Owner);
 
     ////////////////////////////////////////////////////////////
     /// Wait until the thread finishes
@@ -83,42 +68,28 @@ public :
     ////////////////////////////////////////////////////////////
     void Terminate();
 
-protected :
-
-    ////////////////////////////////////////////////////////////
-    /// Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    Thread();
-
 private :
 
     ////////////////////////////////////////////////////////////
-    /// Function called as the thread entry point
+    /// Global entry point for all threads
     ///
-    ////////////////////////////////////////////////////////////
-    virtual void Run();
-
-    ////////////////////////////////////////////////////////////
-    /// Actual thread entry point, dispatches to instances
-    ///
-    /// \param UserData : Data to pass to the thread function
+    /// \param UserData : User-defined data (contains the Thread instance)
     ///
     /// \return Error code
     ///
     ////////////////////////////////////////////////////////////
-    static void* ThreadFunc(void* UserData);
+    static void* EntryPoint(void* UserData);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    pthread_t myThread;   ///< Unix thread instance
+    pthread_t myThread;   ///< pthread thread instance
     bool      myIsActive; ///< Thread state (active or inactive)
-    FuncType  myFunction; ///< Function to call as the thread entry point
-    void*     myUserData; ///< Data to pass to the thread function
 };
+
+} // namespace priv
 
 } // namespace sf
 
 
-#endif // SFML_THREADUNIX_HPP
+#endif // SFML_THREADIMPL_HPP

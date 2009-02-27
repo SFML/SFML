@@ -35,7 +35,7 @@
 
     #include <SFML/System/Win32/Platform.hpp>
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_MACOS) || defined(SFML_SYSTEM_FREEBSD)
+#else
 
     #include <SFML/System/Unix/Platform.hpp>
 

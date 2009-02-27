@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,78 +25,35 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Unix/Thread.hpp>
+#include <SFML/System/Unix/ThreadImpl.hpp>
+#include <SFML/System/Thread.hpp>
 #include <iostream>
 
 
 namespace sf
 {
+namespace priv
+{
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-Thread::Thread() :
-myIsActive(false),
-myFunction(NULL),
-myUserData(NULL)
+ThreadImpl::ThreadImpl(Thread* Owner) :
+myIsActive(true)
 {
+    myIsActive = pthread_create(&myThread, NULL, &ThreadFunc, Owner) == 0;
 
-}
-
-
-////////////////////////////////////////////////////////////
-/// Construct the thread from a function pointer
-////////////////////////////////////////////////////////////
-Thread::Thread(Thread::FuncType Function, void* UserData) :
-myIsActive(false),
-myFunction(Function),
-myUserData(UserData)
-{
-
-}
-
-
-////////////////////////////////////////////////////////////
-/// Virtual destructor
-////////////////////////////////////////////////////////////
-Thread::~Thread()
-{
-    // Wait for the thread to finish before destroying the instance
-    if (myIsActive)
-        Wait();
-}
-
-
-////////////////////////////////////////////////////////////
-/// Create and run the thread
-////////////////////////////////////////////////////////////
-void Thread::Launch()
-{
-    // Create the thread
-    myIsActive = true;
-    int Error = pthread_create(&myThread, NULL, &Thread::ThreadFunc, this);
-
-    // Error ?
-    if (Error != 0)
-    {
+    if (!myIsActive)
         std::cerr << "Failed to create thread" << std::endl;
-        myIsActive = false;
-    }
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Wait until the thread finishes
 ////////////////////////////////////////////////////////////
-void Thread::Wait()
+void ThreadImpl::Wait()
 {
     if (myIsActive)
-    {
-        // Wait for the thread to finish, no timeout
         pthread_join(myThread, NULL);
-
-        // Reset the thread state
-        myIsActive = false;
-    }
 }
 
 
@@ -106,41 +63,30 @@ void Thread::Wait()
 /// you should rather try to make the thread function
 /// terminate by itself
 ////////////////////////////////////////////////////////////
-void Thread::Terminate()
+void ThreadImpl::Terminate()
 {
     if (myIsActive)
-    {
         pthread_cancel(myThread);
-        myIsActive = false;
-    }
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Function called as the thread entry point
+/// Global entry point for all threads
 ////////////////////////////////////////////////////////////
-void Thread::Run()
+void* ThreadFunc(void* UserData)
 {
-    if (myFunction)
-        myFunction(myUserData);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Actual thread entry point, dispatches to instances
-////////////////////////////////////////////////////////////
-void* Thread::ThreadFunc(void* UserData)
-{
-    // The sfThread instance is stored in the user data
-    Thread* ThreadToRun = reinterpret_cast<Thread*>(UserData);
+    // The Thread instance is stored in the user data
+    Thread* Owner = static_cast<Thread*>(UserData);
 
     // Tell the thread to handle cancel requests immediatly
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
-    // Forward to the instance
-    ThreadToRun->Run();
+    // Forward to the owner
+    Owner->Run();
 
     return NULL;
 }
+
+} // namespace priv
 
 } // namespace sf

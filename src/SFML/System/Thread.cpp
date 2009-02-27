@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,7 +25,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Unix/Mutex.hpp>
+#include <SFML/System/Thread.hpp>
+
+
+#if defined(SFML_SYSTEM_WINDOWS)
+
+    #include <SFML/System/Win32/ThreadImpl.hpp>
+
+#else
+
+    #include <SFML/System/Unix/ThreadImpl.hpp>
+
+#endif
 
 
 namespace sf
@@ -33,36 +44,80 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-Mutex::Mutex()
+Thread::Thread() :
+myThreadImpl(NULL),
+myFunction  (NULL),
+myUserData  (NULL)
 {
-    pthread_mutex_init(&myMutex, NULL);
+
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor
+/// Construct the thread from a function pointer
 ////////////////////////////////////////////////////////////
-Mutex::~Mutex()
+Thread::Thread(Thread::FuncType Function, void* UserData) :
+myThreadImpl(NULL),
+myFunction  (Function),
+myUserData  (UserData)
 {
-    pthread_mutex_destroy(&myMutex);
+
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Lock the mutex
+/// Virtual destructor
 ////////////////////////////////////////////////////////////
-void Mutex::Lock()
+Thread::~Thread()
 {
-    pthread_mutex_lock(&myMutex);
+    // Wait for the thread to finish before destroying the instance
+    Wait();
+
+    // Destroy the implementation
+    delete myThreadImpl;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Unlock the mutex
+/// Create and run the thread
 ////////////////////////////////////////////////////////////
-void Mutex::Unlock()
+void Thread::Launch()
 {
-    pthread_mutex_unlock(&myMutex);
+    delete myThreadImpl;
+    myThreadImpl = new priv::ThreadImpl(this);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Wait until the thread finishes
+////////////////////////////////////////////////////////////
+void Thread::Wait()
+{
+    if (myThreadImpl)
+        myThreadImpl->Wait();
+}
+
+
+////////////////////////////////////////////////////////////
+/// Terminate the thread
+/// Terminating a thread with this function is not safe,
+/// you should rather try to make the thread function
+/// terminate by itself
+////////////////////////////////////////////////////////////
+void Thread::Terminate()
+{
+    if (myThreadImpl)
+        myThreadImpl->Terminate();
+}
+
+
+////////////////////////////////////////////////////////////
+/// Function called as the thread entry point
+////////////////////////////////////////////////////////////
+void Thread::Run()
+{
+    if (myFunction)
+        myFunction(myUserData);
 }
 
 } // namespace sf

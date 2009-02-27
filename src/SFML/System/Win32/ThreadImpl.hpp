@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_THREADWIN32_HPP
-#define SFML_THREADWIN32_HPP
+#ifndef SFML_THREADIMPL_HPP
+#define SFML_THREADIMPL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -34,39 +34,30 @@
 
 namespace sf
 {
+class Thread;
+
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// Thread defines an easy way to manipulate a thread.
-/// There are two ways to use Thread :
-/// - Inherit from it and override the Run() virtual function
-/// - Construct a Thread instance and pass it a function
-/// pointer to call
+/// Windows implementation of threads
 ////////////////////////////////////////////////////////////
-class SFML_API Thread : NonCopyable
+class ThreadImpl : NonCopyable
 {
 public :
 
-    typedef void (*FuncType)(void*);
+    ////////////////////////////////////////////////////////////
+    /// Default constructor, launch the thread
+    ///
+    /// \param Owner : Owner Thread instance to run
+    ///
+    ////////////////////////////////////////////////////////////
+    ThreadImpl(Thread* Owner);
 
     ////////////////////////////////////////////////////////////
-    /// Construct the thread from a function pointer
-    ///
-    /// \param Function : Entry point of the thread
-    /// \param UserData : Data to pass to the thread function (NULL by default)
+    /// Destructor
     ///
     ////////////////////////////////////////////////////////////
-    Thread(FuncType Function, void* UserData = NULL);
-
-    ////////////////////////////////////////////////////////////
-    /// Virtual destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual ~Thread();
-
-    ////////////////////////////////////////////////////////////
-    /// Create and run the thread
-    ///
-    ////////////////////////////////////////////////////////////
-    void Launch();
+    ~ThreadImpl();
 
     ////////////////////////////////////////////////////////////
     /// Wait until the thread finishes
@@ -83,41 +74,27 @@ public :
     ////////////////////////////////////////////////////////////
     void Terminate();
 
-protected :
-
-    ////////////////////////////////////////////////////////////
-    /// Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    Thread();
-
 private :
 
     ////////////////////////////////////////////////////////////
-    /// Function called as the thread entry point
+    /// Global entry point for all threads
     ///
-    ////////////////////////////////////////////////////////////
-    virtual void Run();
-
-    ////////////////////////////////////////////////////////////
-    /// Actual thread entry point, dispatches to instances
-    ///
-    /// \param UserData : Data to pass to the thread function
+    /// \param UserData : User-defined data (contains the Thread instance)
     ///
     /// \return Error code
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int __stdcall ThreadFunc(void* UserData);
+    static unsigned int __stdcall EntryPoint(void* UserData);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HANDLE   myHandle;   ///< Win32 thread handle
-    FuncType myFunction; ///< Function to call as the thread entry point
-    void*    myUserData; ///< Data to pass to the thread function
+    HANDLE myThread; ///< Win32 thread handle
 };
+
+} // namespace priv
 
 } // namespace sf
 
 
-#endif // SFML_THREADWIN32_HPP
+#endif // SFML_THREADIMPL_HPP

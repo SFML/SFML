@@ -25,76 +25,45 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Win32/Thread.hpp>
+#include <SFML/System/Win32/ThreadImpl.hpp>
+#include <SFML/System/Thread.hpp>
 #include <process.h>
 #include <iostream>
 
 
 namespace sf
 {
+namespace priv
+{
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-Thread::Thread() :
-myHandle  (NULL),
-myFunction(NULL),
-myUserData(NULL)
+ThreadImpl::ThreadImpl(Thread* Owner)
 {
+    myThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, Owner, 0, NULL));
 
-}
-
-
-////////////////////////////////////////////////////////////
-/// Construct the thread from a function pointer
-////////////////////////////////////////////////////////////
-Thread::Thread(Thread::FuncType Function, void* UserData) :
-myHandle  (NULL),
-myFunction(Function),
-myUserData(UserData)
-{
-
-}
-
-
-////////////////////////////////////////////////////////////
-/// Virtual destructor
-////////////////////////////////////////////////////////////
-Thread::~Thread()
-{
-    // Wait for the thread to finish before destroying the instance
-    if (myHandle)
-        Wait();
-}
-
-
-////////////////////////////////////////////////////////////
-/// Create and run the thread
-////////////////////////////////////////////////////////////
-void Thread::Launch()
-{
-    // Create the thread
-    myHandle = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &Thread::ThreadFunc, this, 0, NULL));
-
-    // Error ?
-    if (myHandle == NULL)
+    if (!myThread)
         std::cerr << "Failed to create thread" << std::endl;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Destructor
+////////////////////////////////////////////////////////////
+ThreadImpl::~ThreadImpl()
+{
+    if (myThread)
+        CloseHandle(myThread);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Wait until the thread finishes
 ////////////////////////////////////////////////////////////
-void Thread::Wait()
+void ThreadImpl::Wait()
 {
-    if (myHandle)
-    {
-        // Wait for the thread to finish, no timeout
-        WaitForSingleObject(myHandle, INFINITE);
-
-        // Don't forget to close the thread handle (__endthreadex doesn't do it)
-        CloseHandle(myHandle);
-        myHandle = NULL;
-    }
+    if (myThread)
+        WaitForSingleObject(myThread, INFINITE);
 }
 
 
@@ -104,41 +73,30 @@ void Thread::Wait()
 /// you should rather try to make the thread function
 /// terminate by itself
 ////////////////////////////////////////////////////////////
-void Thread::Terminate()
+void ThreadImpl::Terminate()
 {
-    if (myHandle)
-    {
-        TerminateThread(myHandle, 0);
-        myHandle = NULL;
-    }
+    if (myThread)
+        TerminateThread(myThread, 0);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Function called as the thread entry point
+/// Global entry point for all threads
 ////////////////////////////////////////////////////////////
-void Thread::Run()
-{
-    if (myFunction)
-        myFunction(myUserData);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Actual thread entry point, dispatches to instances
-////////////////////////////////////////////////////////////
-unsigned int __stdcall Thread::ThreadFunc(void* UserData)
+unsigned int __stdcall ThreadImpl::EntryPoint(void* UserData)
 {
     // The Thread instance is stored in the user data
-    Thread* ThreadInstance = reinterpret_cast<Thread*>(UserData);
+    Thread* Owner = static_cast<Thread*>(UserData);
 
-    // Forward to the instance
-    ThreadInstance->Run();
+    // Forward to the owner
+    Owner->Run();
 
     // Optional, but it is cleaner
     _endthreadex(0);
 
     return 0;
 }
+
+} // namespace priv
 
 } // namespace sf

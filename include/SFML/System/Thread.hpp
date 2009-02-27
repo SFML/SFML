@@ -29,17 +29,93 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <SFML/System/NonCopyable.hpp>
+#include <cstdlib>
 
 
-#ifdef SFML_SYSTEM_WINDOWS
+namespace sf
+{
+namespace priv
+{
+    class ThreadImpl;
+}
 
-    #include <SFML/System/Win32/Thread.hpp>
+////////////////////////////////////////////////////////////
+/// Thread defines an easy way to manipulate a thread.
+/// There are two ways to use Thread :
+/// - Inherit from it and override the Run() virtual function
+/// - Construct a Thread instance and pass it a function
+/// pointer to call
+////////////////////////////////////////////////////////////
+class SFML_API Thread : NonCopyable
+{
+public :
 
-#else
+    typedef void (*FuncType)(void*);
 
-    #include <SFML/System/Unix/Thread.hpp>
+    ////////////////////////////////////////////////////////////
+    /// Construct the thread from a function pointer
+    ///
+    /// \param Function : Entry point of the thread
+    /// \param UserData : Data to pass to the thread function (NULL by default)
+    ///
+    ////////////////////////////////////////////////////////////
+    Thread(FuncType Function, void* UserData = NULL);
 
-#endif
+    ////////////////////////////////////////////////////////////
+    /// Virtual destructor
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual ~Thread();
+
+    ////////////////////////////////////////////////////////////
+    /// Create and run the thread
+    ///
+    ////////////////////////////////////////////////////////////
+    void Launch();
+
+    ////////////////////////////////////////////////////////////
+    /// Wait until the thread finishes
+    ///
+    ////////////////////////////////////////////////////////////
+    void Wait();
+
+    ////////////////////////////////////////////////////////////
+    /// Terminate the thread
+    /// Terminating a thread with this function is not safe,
+    /// you should rather try to make the thread function
+    /// terminate by itself
+    ///
+    ////////////////////////////////////////////////////////////
+    void Terminate();
+
+protected :
+
+    ////////////////////////////////////////////////////////////
+    /// Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Thread();
+
+private :
+
+    friend class priv::ThreadImpl;
+
+    ////////////////////////////////////////////////////////////
+    /// Function called as the thread entry point
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void Run();
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    priv::ThreadImpl* myThreadImpl; ///< OS-specific implementation of the thread
+    FuncType          myFunction;   ///< Function to call as the thread entry point
+    void*             myUserData;   ///< Data to pass to the thread function
+};
+
+} // namespace sf
 
 
 #endif // SFML_THREAD_HPP
