@@ -31,10 +31,10 @@
 extern PyTypeObject PySfColorType;
 
 
-void CustomDrawable::Render (sf::RenderTarget& Target) const
+void CustomDrawable::Render(sf::RenderTarget& Target) const
 {
 	if (RenderFunction)
-		PyObject_CallFunction(RenderFunction, (char *)"O", RenderTarget);
+		PyObject_CallFunction(RenderFunction, (char *)"O", RenderWindow);
 	else
 		PyErr_SetString(PyExc_RuntimeError, "Custom drawables must have a render method defined");
 }
@@ -59,7 +59,7 @@ PySfDrawable_init(PySfDrawable *self, PyObject *args, PyObject *kwds)
 {
 	self->obj = new CustomDrawable();
 	self->obj->RenderFunction = NULL;
-	self->obj->RenderTarget = NULL;
+	self->obj->RenderWindow = NULL;
 	return 0;
 }
 

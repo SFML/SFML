@@ -29,7 +29,7 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 
-#include "RenderTarget.hpp"
+#include "RenderWindow.hpp"
 
 
 class CustomDrawable : public sf::Drawable
@@ -37,7 +37,7 @@ class CustomDrawable : public sf::Drawable
 protected :
 	virtual void Render(sf::RenderTarget& Target) const;
 public :
-	PySfRenderTarget *RenderTarget;
+	PySfRenderWindow *RenderWindow;
 	PyObject *RenderFunction;
 };
 
