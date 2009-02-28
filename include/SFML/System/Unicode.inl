@@ -104,7 +104,7 @@ inline Out Unicode::UTF8ToUTF16(In Begin, In End, Out Output, Uint16 Replacement
     while (Begin < End)
     {
         Uint32 c = 0;
-        int TrailingBytes = UTF8TrailingBytes[*Begin];
+        int TrailingBytes = UTF8TrailingBytes[static_cast<int>(*Begin)];
         if (Begin + TrailingBytes < End)
         {
             // First decode the UTF-8 character
@@ -165,7 +165,7 @@ inline Out Unicode::UTF8ToUTF32(In Begin, In End, Out Output, Uint32 Replacement
     while (Begin < End)
     {
         Uint32 c = 0;
-        int TrailingBytes = UTF8TrailingBytes[*Begin];
+        int TrailingBytes = UTF8TrailingBytes[static_cast<int>(*Begin)];
         if (Begin + TrailingBytes < End)
         {
             // First decode the UTF-8 character
@@ -424,7 +424,7 @@ inline std::size_t Unicode::GetUTF8Length(In Begin, In End)
     std::size_t Length = 0;
     while (Begin < End)
     {
-        int NbBytes = UTF8TrailingBytes[*Begin];
+        int NbBytes = UTF8TrailingBytes[static_cast<int>(*Begin)];
         if (Begin + NbBytes < End)
             ++Length;
 

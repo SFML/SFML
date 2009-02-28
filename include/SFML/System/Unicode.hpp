@@ -277,7 +277,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const char   UTF8TrailingBytes[256]; ///< Lookup table to find the length of an UTF-8 sequence
+    static const int    UTF8TrailingBytes[256]; ///< Lookup table to find the length of an UTF-8 sequence
     static const Uint32 UTF8Offsets[6];         ///< Magic values to subtract during UTF-8 conversions
     static const Uint8  UTF8FirstBytes[7];      ///< First bytes for UTF-8 sequences
 };
