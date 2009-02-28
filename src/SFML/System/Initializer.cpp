@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2008 Lucas Soltic (elmerod@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Lucas Soltic (elmerod@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,10 +35,8 @@
 
 namespace sf
 {
-
 namespace priv
 {
-
 ////////////////////////////////////////////////////////////
 /// Under Mac OS X, when launching an application from the Finder,
 /// the default working directory is the user home directory ;
@@ -49,60 +47,59 @@ namespace priv
 /// The "constructor" attribute forces the function to be called
 /// at library loading time.
 ////////////////////////////////////////////////////////////
-	
-void working_directory_initializer(void) __attribute__ ((constructor));
-void working_directory_initializer(void)
+void InitializeWorkingDirectory(void) __attribute__ ((constructor));
+void InitializeWorkingDirectory(void)
 {
-	char pathBuffer[4096];
+	char PathBuffer[4096];
 	
 	// Get the application bundle
-	CFBundleRef mainBundle = CFBundleGetMainBundle();
+	CFBundleRef MainBundle = CFBundleGetMainBundle();
 	
-	if (!mainBundle)
+	if (!MainBundle)
 	{
-		std::cerr << "*** SFML: error getting the application main bundle" << std::endl;
+		std::cerr << "Error getting the application main bundle" << std::endl;
 		return;
 	}
 	
 	// Get the resource directory URL
-	CFURLRef resourceDirectory = CFBundleCopyResourcesDirectoryURL(mainBundle);
+	CFURLRef ResourceDirectory = CFBundleCopyResourcesDirectoryURL(MainBundle);
 	
-	if (!resourceDirectory)
+	if (!ResourceDirectory)
 	{
-		std::cerr << "*** SFML: error getting the resource directory of the main bundle" << std::endl;
+		std::cerr << "Error getting the resource directory of the main bundle" << std::endl;
 		return;
 	}
 	
 	// Convert it as absolute URL
-	CFURLRef absoluteURL = CFURLCopyAbsoluteURL(resourceDirectory);
+	CFURLRef AbsoluteURL = CFURLCopyAbsoluteURL(ResourceDirectory);
 	
-	if (!absoluteURL)
+	if (!AbsoluteURL)
 	{
-		std::cerr << "*** SFML: error gettint the resource directory as an absolute URL" << std::endl;
-		CFRelease(resourceDirectory);
+		std::cerr << "Error getting the resource directory as an absolute URL" << std::endl;
+		CFRelease(ResourceDirectory);
 		return;
 	}
 	
 	// Get the POSIX style path
-	CFStringRef absolutePath = CFURLCopyFileSystemPath(absoluteURL, kCFURLPOSIXPathStyle);
+	CFStringRef AbsolutePath = CFURLCopyFileSystemPath(AbsoluteURL, kCFURLPOSIXPathStyle);
 	
-	if (!absolutePath)
+	if (!AbsolutePath)
 	{
-		std::cerr << "*** SFML: error converting the resource directory URL as a POSIX path" << std::endl;
-		CFRelease(absoluteURL);
-		CFRelease(resourceDirectory);
+		std::cerr << "Error converting the resource directory URL as a POSIX path" << std::endl;
+		CFRelease(AbsoluteURL);
+		CFRelease(ResourceDirectory);
 		return;
 	}
 	
 	// Get the path as C string and set it
-	if (CFStringGetCString(absolutePath, pathBuffer, 4096, kCFStringEncodingASCII))
-		chdir(pathBuffer);
+	if (CFStringGetCString(AbsolutePath, PathBuffer, 4096, kCFStringEncodingASCII))
+		chdir(PathBuffer);
 	else
-		std::cerr << "*** SFML: error copying the resource directory path in the C buffer" << std::endl;
+		std::cerr << "Error copying the resource directory path in the C buffer" << std::endl;
 	
-	CFRelease(absolutePath);
-	CFRelease(absoluteURL);
-	CFRelease(resourceDirectory);
+	CFRelease(AbsolutePath);
+	CFRelease(AbsoluteURL);
+	CFRelease(ResourceDirectory);
 }
 
 } // namespace priv
