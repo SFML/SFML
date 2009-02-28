@@ -328,7 +328,7 @@ bool SoundStream::FillQueue()
 void SoundStream::ClearQueue()
 {
     // Get the number of buffers still in the queue
-    ALint  NbQueued;
+    ALint NbQueued;
     ALCheck(alGetSourcei(Sound::mySource, AL_BUFFERS_QUEUED, &NbQueued));
 
     // Unqueue them all

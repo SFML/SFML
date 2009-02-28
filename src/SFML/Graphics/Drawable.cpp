@@ -382,7 +382,7 @@ void Drawable::Draw(RenderTarget& Target) const
         switch (myBlendMode)
         {
             case Blend::Alpha :    GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); break;
-            case Blend::Add :      GLCheck(glBlendFunc(GL_ONE,       GL_ONE));                 break;
+            case Blend::Add :      GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));                 break;
             case Blend::Multiply : GLCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));                break;
             default :                                                                          break;
         }
