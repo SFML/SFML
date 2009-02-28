@@ -33,7 +33,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <iostream>
 
-namespace
+namespace sf
+{
+
+namespace priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -102,7 +105,10 @@ void working_directory_initializer(void)
 	CFRelease(resourceDirectory);
 }
 
-} // anonymous namespace
+} // namespace priv
+
+} // namespace sf
+
 
 #endif // SFML_SYSTEM_MACOS
 
