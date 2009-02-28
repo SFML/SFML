@@ -54,48 +54,23 @@ void InitializeWorkingDirectory(void)
 	
 	// Get the application bundle
 	CFBundleRef MainBundle = CFBundleGetMainBundle();
-	
-	if (!MainBundle)
-	{
-		std::cerr << "Error getting the application main bundle" << std::endl;
-		return;
-	}
+	assert(MainBundle != NULL);
 	
 	// Get the resource directory URL
 	CFURLRef ResourceDirectory = CFBundleCopyResourcesDirectoryURL(MainBundle);
-	
-	if (!ResourceDirectory)
-	{
-		std::cerr << "Error getting the resource directory of the main bundle" << std::endl;
-		return;
-	}
+	assert(ResourceDirectory != NULL);
 	
 	// Convert it as absolute URL
 	CFURLRef AbsoluteURL = CFURLCopyAbsoluteURL(ResourceDirectory);
-	
-	if (!AbsoluteURL)
-	{
-		std::cerr << "Error getting the resource directory as an absolute URL" << std::endl;
-		CFRelease(ResourceDirectory);
-		return;
-	}
+	assert(AbsoluteURL != NULL);
 	
 	// Get the POSIX style path
 	CFStringRef AbsolutePath = CFURLCopyFileSystemPath(AbsoluteURL, kCFURLPOSIXPathStyle);
-	
-	if (!AbsolutePath)
-	{
-		std::cerr << "Error converting the resource directory URL as a POSIX path" << std::endl;
-		CFRelease(AbsoluteURL);
-		CFRelease(ResourceDirectory);
-		return;
-	}
+	assert(AbsolutePath != NULL);
 	
 	// Get the path as C string and set it
-	if (CFStringGetCString(AbsolutePath, PathBuffer, 4096, kCFStringEncodingASCII))
-		chdir(PathBuffer);
-	else
-		std::cerr << "Error copying the resource directory path in the C buffer" << std::endl;
+	assert(CFStringGetCString(AbsolutePath, PathBuffer, 4096, kCFStringEncodingASCII) == true);
+	assert(chdir(PathBuffer) == 0);
 	
 	CFRelease(AbsolutePath);
 	CFRelease(AbsoluteURL);
