@@ -26,7 +26,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundStream.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/OpenAL.hpp>
 #include <SFML/System/Sleep.hpp>
