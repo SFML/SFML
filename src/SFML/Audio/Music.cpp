@@ -51,6 +51,9 @@ mySamples (BufferSize)
 ////////////////////////////////////////////////////////////
 Music::~Music()
 {
+    // We must stop before destroying the file :)
+    Stop();
+
     delete myFile;
 }
 
@@ -60,6 +63,9 @@ Music::~Music()
 ////////////////////////////////////////////////////////////
 bool Music::OpenFromFile(const std::string& Filename)
 {
+    // First stop the music if it was already running
+    Stop();
+
     // Create the sound file implementation, and open it in read mode
     delete myFile;
     myFile = priv::SoundFile::CreateRead(Filename);
@@ -84,6 +90,9 @@ bool Music::OpenFromFile(const std::string& Filename)
 ////////////////////////////////////////////////////////////
 bool Music::OpenFromMemory(const char* Data, std::size_t SizeInBytes)
 {
+    // First stop the music if it was already running
+    Stop();
+
     // Create the sound file implementation, and open it in read mode
     delete myFile;
     myFile = priv::SoundFile::CreateRead(Data, SizeInBytes);
@@ -108,7 +117,7 @@ bool Music::OpenFromMemory(const char* Data, std::size_t SizeInBytes)
 ////////////////////////////////////////////////////////////
 bool Music::OnStart()
 {
-    return myFile->Restart();
+    return myFile && myFile->Restart();
 }
 
 
@@ -117,12 +126,19 @@ bool Music::OnStart()
 ////////////////////////////////////////////////////////////
 bool Music::OnGetData(SoundStream::Chunk& Data)
 {
-    // Fill the chunk parameters
-    Data.Samples   = &mySamples[0];
-    Data.NbSamples = myFile->Read(&mySamples[0], mySamples.size());
+    if (myFile)
+    {
+        // Fill the chunk parameters
+        Data.Samples   = &mySamples[0];
+        Data.NbSamples = myFile->Read(&mySamples[0], mySamples.size());
 
-    // Check if we have reached the end of the audio file
-    return Data.NbSamples == mySamples.size();
+        // Check if we have reached the end of the audio file
+        return Data.NbSamples == mySamples.size();
+    }
+    else
+    {
+        return false;
+    }
 }
 
 
