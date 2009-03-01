@@ -32,6 +32,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <iostream>
+#include <cstdio>
 
 namespace sf
 {
@@ -51,6 +52,7 @@ void InitializeWorkingDirectory(void) __attribute__ ((constructor));
 void InitializeWorkingDirectory(void)
 {
 	char PathBuffer[4096];
+	bool Encoded = false;
 	
 	// Get the application bundle
 	CFBundleRef MainBundle = CFBundleGetMainBundle();
@@ -64,15 +66,13 @@ void InitializeWorkingDirectory(void)
 	CFURLRef AbsoluteURL = CFURLCopyAbsoluteURL(ResourceDirectory);
 	assert(AbsoluteURL != NULL);
 	
-	// Get the POSIX style path
-	CFStringRef AbsolutePath = CFURLCopyFileSystemPath(AbsoluteURL, kCFURLPOSIXPathStyle);
-	assert(AbsolutePath != NULL);
+	// Get the path as C string
+	Encoded = CFURLGetFileSystemRepresentation(AbsoluteURL, true, (UInt8 *)PathBuffer, 4096);
+	assert(Encoded);
 	
-	// Get the path as C string and set it
-	assert(CFStringGetCString(AbsolutePath, PathBuffer, 4096, kCFStringEncodingASCII) == true);
-	assert(chdir(PathBuffer) == 0);
+	// Set the working directory
+	chdir(PathBuffer);
 	
-	CFRelease(AbsolutePath);
 	CFRelease(AbsoluteURL);
 	CFRelease(ResourceDirectory);
 }
