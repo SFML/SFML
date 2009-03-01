@@ -70,11 +70,7 @@ myUserData  (UserData)
 ////////////////////////////////////////////////////////////
 Thread::~Thread()
 {
-    // Wait for the thread to finish before destroying the instance
     Wait();
-
-    // Destroy the implementation
-    delete myThreadImpl;
 }
 
 
@@ -94,7 +90,11 @@ void Thread::Launch()
 void Thread::Wait()
 {
     if (myThreadImpl)
+    {
         myThreadImpl->Wait();
+        delete myThreadImpl;
+        myThreadImpl = NULL;
+    }
 }
 
 
@@ -107,7 +107,11 @@ void Thread::Wait()
 void Thread::Terminate()
 {
     if (myThreadImpl)
+    {
         myThreadImpl->Terminate();
+        delete myThreadImpl;
+        myThreadImpl = NULL;
+    }
 }
 
 
