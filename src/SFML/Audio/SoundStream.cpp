@@ -272,6 +272,7 @@ void SoundStream::Run()
     ClearQueue();
 
     // Delete the buffers
+    ALCheck(alSourcei(Sound::mySource, AL_BUFFER, 0));
     ALCheck(alDeleteBuffers(BuffersCount, myBuffers));
 }
 
