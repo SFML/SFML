@@ -144,7 +144,10 @@ PySfString_SetFont(PySfString* self, PyObject *args)
 {
 	PySfFont *Font = (PySfFont *)args;
 	if (!PyObject_TypeCheck(Font, &PySfFontType))
+	{
 		PyErr_SetString(PyExc_ValueError, "String.SetFont() Argument must be a sf.Font");
+		return NULL;
+	}
 	self->obj->SetFont(*(Font->obj));
 	Py_RETURN_NONE;
 }

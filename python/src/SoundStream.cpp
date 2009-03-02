@@ -38,19 +38,22 @@ bool CustomSoundStream::OnStart()
 		Py_DECREF(OnStart);
 		Py_DECREF(Result);
 	}
+	if (PyErr_Occurred())
+	{
+		PyErr_Print();
+		return false;
+	}
     return result;
 }
 
 bool CustomSoundStream::OnGetData(Chunk& Data)
 {
 	bool result = false;
-	if (PyData != NULL) {
-		Py_DECREF(PyData);
-	}
+	Py_XDECREF(PyData);
+	PyData = NULL;
 	if (PyObject_HasAttrString(SoundStream, "OnGetData"))
 	{
 		PyObject *Function = PyObject_GetAttrString(SoundStream, "OnGetData");
-		Data.NbSamples = 0;
 		PyData = PyObject_CallFunction(Function, NULL);
 		if (PyData != NULL)
 		{
@@ -62,6 +65,13 @@ bool CustomSoundStream::OnGetData(Chunk& Data)
 			}
 		}
 		Py_DECREF(Function);
+	}
+	if (PyErr_Occurred())
+	{
+		PyErr_Print();
+		Py_XDECREF(PyData);
+		PyData = NULL;
+		return false;
 	}
     return result;
 }

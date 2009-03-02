@@ -63,7 +63,7 @@ PySfFont_LoadFromFile(PySfFont* self, PyObject *args, PyObject *kwds)
 	int Length;
 	bool result;
 	std::string Encoding;
-	if (PyArg_ParseTupleAndKeywords(args, kwds, "s|I:Font.LoadFromFile", (char **)kwlist, &Filename, &Charsize))
+	if (PyArg_ParseTuple(args, "s|I:Font.LoadFromFile", &Filename, &Charsize))
 		result = self->obj->LoadFromFile(Filename, Charsize);
 	else if (PyArg_ParseTupleAndKeywords(args, kwds, "s|Iu:Font.LoadFromFile", (char **)kwlist, &Filename, &Charsize, &Charset))
 	{
@@ -113,7 +113,7 @@ PySfFont_LoadFromMemory(PySfFont* self, PyObject *args, PyObject *kwds)
 	int Length;
 	bool result;
 	std::string Encoding;
-	if (PyArg_ParseTupleAndKeywords(args, kwds, "s#|I:Font.LoadFromMemory", (char **)kwlist, &Data, &Size, &Charsize))
+	if (PyArg_ParseTuple(args, "s#|I:Font.LoadFromMemory", &Data, &Size, &Charsize))
 		result = self->obj->LoadFromMemory(Data, Size, Charsize);
 	else if (PyArg_ParseTupleAndKeywords(args, kwds, "s#|Iu:Font.LoadFromMemory", (char **)kwlist, &Data, &Size, &Charsize, &Charset))
 	{
