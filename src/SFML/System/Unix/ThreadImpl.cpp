@@ -40,7 +40,7 @@ namespace priv
 ThreadImpl::ThreadImpl(Thread* Owner) :
 myIsActive(true)
 {
-    myIsActive = pthread_create(&myThread, NULL, &ThreadFunc, Owner) == 0;
+    myIsActive = pthread_create(&myThread, NULL, &ThreadImpl::EntryPoint, Owner) == 0;
 
     if (!myIsActive)
         std::cerr << "Failed to create thread" << std::endl;
@@ -73,7 +73,7 @@ void ThreadImpl::Terminate()
 ////////////////////////////////////////////////////////////
 /// Global entry point for all threads
 ////////////////////////////////////////////////////////////
-void* ThreadFunc(void* UserData)
+void* ThreadImpl::EntryPoint(void* UserData)
 {
     // The Thread instance is stored in the user data
     Thread* Owner = static_cast<Thread*>(UserData);
