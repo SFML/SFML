@@ -201,18 +201,6 @@ private :
     void CleanUp();
 
     ////////////////////////////////////////////////////////////
-    /// Filter the received events
-    /// (only allow those matching a specific window)
-    ///
-    /// \param Event :    Event to filter
-    /// \param UserData : Data passed to the function (here : the window to compare)
-    ///
-    /// \return True if the event belongs to the specified window
-    ///
-    ////////////////////////////////////////////////////////////
-    static Bool CheckEvent(::Display*, XEvent* Event, XPointer UserData);
-
-    ////////////////////////////////////////////////////////////
     /// Process an incoming event from the window
     ///
     /// \param WinEvent : Event which has been received
@@ -259,14 +247,15 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Window   myWindow;       ///< X11 structure defining our window
-    bool       myIsExternal;   ///< Tell whether the window has been created externally or by SFML
-    GLXContext myGLContext;    ///< OpenGL context attached to the window
-    Atom       myAtomClose;    ///< Atom used to identify the close event
-    int        myOldVideoMode; ///< Video mode in use before we switch to fullscreen
-    Cursor     myHiddenCursor; ///< As X11 doesn't provide cursor hidding, we must create a transparent one
-    XIC        myInputContext; ///< Input context used to get unicode input in our window
-    bool       myKeyRepeat;    ///< Is the KeyRepeat feature enabled ?
+    ::Window   myWindow;              ///< X11 structure defining our window
+    bool       myIsExternal;          ///< Tell whether the window has been created externally or by SFML
+    GLXContext myGLContext;           ///< OpenGL context attached to the window
+    Atom       myAtomClose;           ///< Atom used to identify the close event
+    int        myOldVideoMode;        ///< Video mode in use before we switch to fullscreen
+    Cursor     myHiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
+    XIC        myInputContext;        ///< Input context used to get unicode input in our window
+    bool       myKeyRepeat;           ///< Is the KeyRepeat feature enabled ?
+    XEvent     myLastKeyReleaseEvent; ///< Last key release event we received (needed for discarding repeated key events)
 };
 
 } // namespace priv

@@ -362,30 +362,53 @@ void WindowImplX11::Display()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::ProcessEvents()
 {
+    // This function implements a workaround to properly discard
+    // repeated key events when necessary. The problem is that the
+    // system's key events policy doesn't match SFML's one: X server will generate
+    // both repeated KeyPress and KeyRelease events when maintaining a key down, while
+    // SFML only wants repeated KeyPress events. Thus, we have to:
+    // - Discard duplicated KeyRelease events when EnableKeyRepeat is true
+    // - Discard both duplicated KeyPress and KeyRelease events when EnableKeyRepeat is false
+
+
     // Process any event in the queue matching our window
     XEvent Event;
-    while (XCheckIfEvent(ourDisplay, &Event, &WindowImplX11::CheckEvent, reinterpret_cast<XPointer>(myWindow)))
+    while (XCheckWindowEvent(ourDisplay, myWindow, ourEventMask, &Event))
     {
-        // Filter repeated key events
-        if (Event.type == KeyRelease)
+        // Detect repeated key events
+        if ((Event.type == KeyPress) || (Event.type == KeyRelease))
         {
-            if (XPending(ourDisplay))
+            if (Event.xkey.keycode < 256)
             {
-                XEvent NextEvent;
-                XPeekEvent(ourDisplay, &NextEvent);
-                if ((NextEvent.type         == KeyPress)           &&
-                    (NextEvent.xkey.keycode == Event.xkey.keycode) &&
-                    (NextEvent.xkey.time    == Event.xkey.time))
+                // To detect if it is a repeated key event, we check the current state of the key.
+                // - If the state is "down", KeyReleased events must obviously be discarded.
+                // - KeyPress events are a little bit harder to handle: they depend on the EnableKeyRepeat state,
+                //   and we need to properly forward the first one.
+                char Keys[32];
+                XQueryKeymap(ourDisplay, Keys);
+                if (Keys[Event.xkey.keycode >> 3] & (1 << (Event.xkey.keycode % 8)))
                 {
-                    if (!myKeyRepeat)
-                        XNextEvent(ourDisplay, &NextEvent);
-                    continue;
+                    // KeyRelease event + key down = repeated event --> discard
+                    if (Event.type == KeyRelease)
+                    {
+                        myLastKeyReleaseEvent = Event;
+                        continue;
+                    }
+
+                    // KeyPress event + key repeat disabled + matching KeyRelease event = repeated event --> discard
+                    if ((Event.type == KeyPress) && !myKeyRepeat &&
+                        (myLastKeyReleaseEvent.xkey.keycode == Event.xkey.keycode) &&
+                        (myLastKeyReleaseEvent.xkey.time == Event.xkey.time))
+                    {
+                        continue;
+                    }
                 }
             }
         }
 
+        // Process the event
         ProcessEvent(Event);
-    }
+   }
 }
 
 
@@ -709,6 +732,9 @@ bool WindowImplX11::CreateContext(const VideoMode& Mode, XVisualInfo& ChosenVisu
 ////////////////////////////////////////////////////////////
 void WindowImplX11::Initialize()
 {
+    // Make sure the "last key release" is initialized with invalid values
+    myLastKeyReleaseEvent.type = -1;
+
     // Get the atom defining the close event
     myAtomClose = XInternAtom(ourDisplay, "WM_DELETE_WINDOW", false);
     XSetWMProtocols(ourDisplay, myWindow, &myAtomClose, 1);
@@ -799,17 +825,6 @@ void WindowImplX11::CleanUp()
         glXDestroyContext(ourDisplay, myGLContext);
         myGLContext = NULL;
     }
-}
-
-
-////////////////////////////////////////////////////////////
-/// Filter the received events
-/// (only allow those matching a specific window)
-////////////////////////////////////////////////////////////
-Bool WindowImplX11::CheckEvent(::Display*, XEvent* Event, XPointer UserData)
-{
-    // Just check if the event matches our window
-    return Event->xany.window == reinterpret_cast< ::Window >(UserData);
 }
 
 
