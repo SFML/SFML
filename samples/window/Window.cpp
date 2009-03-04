@@ -5,6 +5,7 @@
 #include <SFML/Window.hpp>
 #include <fstream>
 
+#include <iostream>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -16,7 +17,7 @@ int main()
 {
     // Create the main window
     sf::Window App(sf::VideoMode(640, 480, 32), "SFML Window");
- 
+
     // Create a clock for measuring the time elapsed
     sf::Clock Clock;
 
@@ -51,7 +52,7 @@ int main()
             // Resize event : adjust viewport
             if (Event.Type == sf::Event::Resized)
                 glViewport(0, 0, Event.Size.Width, Event.Size.Height);
-        }
+       }
 
         // Set the active window before using OpenGL commands
         // It's useless here because the active window is always the same,
