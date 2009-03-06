@@ -32,11 +32,19 @@
 #include <iostream>
 
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    const sf::Window* FullscreenWindow = NULL;
+}
+
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 /// Default constructor
-///
 ////////////////////////////////////////////////////////////
 Window::Window() :
 myWindow        (NULL),
@@ -95,19 +103,35 @@ Window::~Window()
 ////////////////////////////////////////////////////////////
 void Window::Create(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const WindowSettings& Params)
 {
-    // Check validity of video mode
-    if ((WindowStyle & Style::Fullscreen) && !Mode.IsValid())
+    // Destroy the previous window implementation
+    Close();
+
+    // Fullscreen style requires some tests
+    if (WindowStyle & Style::Fullscreen)
     {
-        std::cerr << "The requested video mode is not available, switching to a valid mode" << std::endl;
-        Mode = VideoMode::GetMode(0);
+        // Make sure there's not already a fullscreen window (only one is allowed)
+        if (FullscreenWindow)
+        {
+            std::cerr << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
+            WindowStyle &= ~Style::Fullscreen;
+        }
+        else
+        {
+            // Make sure the chosen video mode is compatible
+            if (!Mode.IsValid())
+            {
+                std::cerr << "The requested video mode is not available, switching to a valid mode" << std::endl;
+                Mode = VideoMode::GetMode(0);
+            }
+
+            // Update the fullscreen window
+            FullscreenWindow = this;
+        }
     }
 
     // Check validity of style
     if ((WindowStyle & Style::Close) || (WindowStyle & Style::Resize))
         WindowStyle |= Style::Titlebar;
-
-    // Destroy the previous window implementation
-    delete myWindow;
 
     // Activate the global context
     Context::GetGlobal().SetActive(true);
@@ -123,7 +147,7 @@ void Window::Create(VideoMode Mode, const std::string& Title, unsigned long Wind
 void Window::Create(WindowHandle Handle, const WindowSettings& Params)
 {
     // Destroy the previous window implementation
-    delete myWindow;
+    Close();
 
     // Activate the global context
     Context::GetGlobal().SetActive(true);
@@ -143,6 +167,10 @@ void Window::Close()
     // Delete the window implementation
     delete myWindow;
     myWindow = NULL;
+
+    // Update the fullscreen window
+    if (this == FullscreenWindow)
+        FullscreenWindow = NULL;
 }
 
 
