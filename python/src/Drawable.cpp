@@ -233,13 +233,22 @@ PySfDrawable_TransformToGlobal(PySfDrawable* self, PyObject *args)
 
 int PySfDrawable_SetAttr(PyObject* self, PyObject *attr_name, PyObject *v)
 {
+#ifdef IS_PY3K
+	PyObject *string = PyUnicode_AsUTF8String(attr_name);
+	if (string == NULL) return NULL;
+	std::string Name(PyBytes_AsString(string));
+#else
 	std::string Name(PyString_AsString(attr_name));
+#endif
 	if (Name == "Render")
 	{
 		Py_CLEAR(((PySfDrawable*)self)->obj->RenderFunction);
 		Py_INCREF(v);
 		((PySfDrawable*)self)->obj->RenderFunction = v;
 	}
+#ifdef IS_PY3K
+	Py_DECREF(string);
+#endif
 	return PyObject_GenericSetAttr(self, attr_name, v);
 }
 
