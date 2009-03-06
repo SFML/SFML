@@ -58,7 +58,12 @@ static int
 PySfDrawable_init(PySfDrawable *self, PyObject *args, PyObject *kwds)
 {
 	self->obj = new CustomDrawable();
-	self->obj->RenderFunction = NULL;
+	if (PyObject_HasAttrString((PyObject *)self, "Render"))
+	{
+		self->obj->RenderFunction = PyObject_GetAttrString((PyObject *)self, "Render");
+	}
+	else
+		self->obj->RenderFunction = NULL;
 	self->obj->RenderWindow = NULL;
 	return 0;
 }
@@ -226,6 +231,18 @@ PySfDrawable_TransformToGlobal(PySfDrawable* self, PyObject *args)
 	return Py_BuildValue("ff", result.x, result.y);
 }
 
+int PySfDrawable_SetAttr(PyObject* self, PyObject *attr_name, PyObject *v)
+{
+	std::string Name(PyString_AsString(attr_name));
+	if (Name == "Render")
+	{
+		Py_CLEAR(((PySfDrawable*)self)->obj->RenderFunction);
+		Py_INCREF(v);
+		((PySfDrawable*)self)->obj->RenderFunction = v;
+	}
+	return PyObject_GenericSetAttr(self, attr_name, v);
+}
+
 static PyMethodDef PySfDrawable_methods[] = {
 	{"TransformToLocal", (PyCFunction)PySfDrawable_TransformToLocal, METH_VARARGS, "TransformToLocal(X, Y)\n\
 Transform a point from global coordinates into local coordinates (ie it applies the inverse of object's center, translation, rotation and scale to the point). Returns a tuple.\n\
@@ -274,7 +291,7 @@ PyTypeObject PySfDrawableType = {
 	0,						/*tp_call*/
 	0,						/*tp_str*/
 	0,						/*tp_getattro*/
-	0,						/*tp_setattro*/
+	PySfDrawable_SetAttr,	/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
 	"Abstract base class for every object that can be drawn into a render window.", /* tp_doc */

@@ -72,7 +72,7 @@ PySfShape_AddPoint(PySfShape* self, PyObject *args, PyObject *kwds)
 		Col = ColTmp->obj;
 	}
 	else
-		Col = (sf::Color *)&sf::Color::Black;
+		Col = (sf::Color *)&sf::Color::White;
 
 	if (OutlineColTmp)
 	{

@@ -101,10 +101,9 @@ PySfRenderWindow_DrawObject(PySfRenderWindow *RenderWindow, PySfDrawable *Obj)
 	{
 		if (PyObject_HasAttrString((PyObject *)Obj, "Render"))
 		{
-			Py_XDECREF(Obj->obj->RenderWindow);
+			Py_CLEAR(Obj->obj->RenderWindow);
+			Py_INCREF(RenderWindow);
 			Obj->obj->RenderWindow = RenderWindow;
-			Py_XDECREF(Obj->obj->RenderFunction);
-			Obj->obj->RenderFunction = PyObject_GetAttrString((PyObject *)Obj, "Render");
 		}
 		RenderWindow->obj->Draw( *(Obj->obj) );
 		return true;
