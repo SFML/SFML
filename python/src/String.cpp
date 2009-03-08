@@ -30,8 +30,6 @@
 #include "compat.hpp"
 
 
-extern PyTypeObject PySfColorType;
-extern PyTypeObject PySfImageType;
 extern PyTypeObject PySfDrawableType;
 extern PyTypeObject PySfFontType;
 
@@ -39,6 +37,7 @@ extern PyTypeObject PySfFontType;
 static void
 PySfString_dealloc(PySfString *self)
 {
+	Py_CLEAR(self->font);
 	delete self->obj;
 	free_object(self);
 }
@@ -48,6 +47,8 @@ PySfString_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfString *self;
 	self = (PySfString *)type->tp_alloc(type, 0);
+	if (self != NULL)
+		self->font = NULL;
 	return (PyObject *)self;
 }
 
@@ -64,7 +65,11 @@ PySfString_init(PySfString *self, PyObject *args, PyObject *kwds)
 		return -1;
 
 	if (FontTmp)
+	{
 		Font = (FontTmp->obj);
+		Py_INCREF(FontTmp);
+		self->font = FontTmp;
+	}
 	else
 		Font = (sf::Font *)&(sf::Font::GetDefaultFont());
 
@@ -148,6 +153,9 @@ PySfString_SetFont(PySfString* self, PyObject *args)
 		PyErr_SetString(PyExc_ValueError, "String.SetFont() Argument must be a sf.Font");
 		return NULL;
 	}
+	Py_CLEAR(self->font);
+	Py_INCREF(args);
+	self->font = Font;
 	self->obj->SetFont(*(Font->obj));
 	Py_RETURN_NONE;
 }
@@ -192,9 +200,18 @@ PySfString_GetText(PySfString* self)
 static PyObject *
 PySfString_GetFont(PySfString* self)
 {
-	PySfFont *Font = GetNewPySfFont();
-	Font->obj = new sf::Font(self->obj->GetFont());
-	return (PyObject *)Font;
+	if (self->font == NULL)
+	{
+		PySfFont *Font = GetNewPySfFont();
+		Font->obj = (sf::Font *)&(sf::Font::GetDefaultFont());
+		Font->Owner = false;
+		return (PyObject *)Font;
+	}
+	else
+	{
+		Py_INCREF(self->font);
+		return (PyObject *)(self->font);
+	}
 }
 
 static PyObject *
