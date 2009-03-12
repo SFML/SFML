@@ -45,7 +45,7 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& Modes)
     // First, clear array to fill
     Modes.clear();
 
-    // Get the display and screen from sfWindowImplUnix
+    // Get the display and screen from WindowImplUnix
     WindowImplX11::OpenDisplay(false);
     Display* Disp   = WindowImplX11::ourDisplay;
     int      Screen = WindowImplX11::ourScreen;
@@ -73,7 +73,7 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& Modes)
                     {
                         for (int j = 0; j < NbSizes; ++j)
                         {
-                            // Convert to sfVideoMode
+                            // Convert to VideoMode
                             VideoMode Mode(Sizes[j].width, Sizes[j].height, Depths[i]);
         
                             // Add it only if it is not already in the array
@@ -108,7 +108,7 @@ VideoMode VideoModeSupport::GetDesktopVideoMode()
 {
     VideoMode DesktopMode;
 
-    // Get the display and screen from sfWindowImplUnix
+    // Get the display and screen from WindowImplUnix
     WindowImplX11::OpenDisplay(false);
     Display* Disp   = WindowImplX11::ourDisplay;
     int      Screen = WindowImplX11::ourScreen;
