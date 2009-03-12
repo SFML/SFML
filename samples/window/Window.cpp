@@ -5,6 +5,7 @@
 #include <SFML/Window.hpp>
 #include <fstream>
 
+#include <iostream>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -15,7 +16,7 @@
 int main()
 {
     // Create the main window
-    sf::Window App(sf::VideoMode(640, 480, 32), "SFML Window");
+    sf::Window App(sf::VideoMode(640, 480, 1), "SFML Window");
  
     // Create a clock for measuring the time elapsed
     sf::Clock Clock;
