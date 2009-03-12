@@ -659,8 +659,6 @@ bool WindowImplX11::CreateContext(const VideoMode& Mode, XVisualInfo& ChosenVisu
             glXGetConfig(ourDisplay, &Visuals[i], GLX_SAMPLE_BUFFERS_ARB, &MultiSampling);        
             glXGetConfig(ourDisplay, &Visuals[i], GLX_SAMPLES_ARB,        &Samples);
 
-std::cout << "Red = " << Red << " Green = " << Green << " Blue = " << Blue << std::endl;
-
             // First check the mandatory parameters
             if ((RGBA == 0) || (DoubleBuffer == 0))
                 continue;
