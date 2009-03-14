@@ -40,28 +40,16 @@ PySfMusic_dealloc(PySfMusic *self)
 static PyObject *
 PySfMusic_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
+	unsigned int BufferSize=44100;
 	PySfMusic *self;
 	self = (PySfMusic *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		if (!PyArg_ParseTuple(args, "|I:Music.__new__", &BufferSize))
+			return NULL;
+		self->obj = new sf::Music(BufferSize);
+	}
 	return (PyObject *)self;
-}
-
-
-static int
-PySfMusic_init(PySfMusic *self, PyObject *args, PyObject *kwds)
-{
-	unsigned int BufferSize=44100;
-	int size = PyTuple_Size(args);
-	if (size == 1)
-	{
-		if ( !PyArg_ParseTuple(args, "I:Music.Init", &BufferSize))
-			return -1;
-	}
-	else if (size > 1)
-	{
-		PyErr_SetString(PyExc_TypeError, "Music.__init__() takes at most one argument");
-	}
-	self->obj = new sf::Music(BufferSize);
-	return 0;
 }
 
 static PyObject*
@@ -70,7 +58,7 @@ PySfMusic_OpenFromMemory(PySfMusic *self, PyObject *args)
 	unsigned int SizeInBytes;
 	char *Data;
 
-	if (! PyArg_ParseTuple(args, "s#:Music.OpenFromMemory", &Data, &SizeInBytes))
+	if (!PyArg_ParseTuple(args, "s#:Music.OpenFromMemory", &Data, &SizeInBytes))
 		return NULL; 
 
 	return PyBool_FromLong(self->obj->OpenFromMemory(Data, (std::size_t) SizeInBytes));
@@ -148,7 +136,7 @@ BufferSize : Size of the internal buffer, expressed in number of samples (ie. si
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfMusic_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfMusic_new,			/* tp_new */
 };

@@ -81,15 +81,6 @@ void CustomSoundStream::Init(unsigned int ChannelsCount, unsigned int SampleRate
 	Initialize(ChannelsCount, SampleRate);
 }
 
-static int
-PySfSoundStream_init(PySfSoundStream *self, PyObject *args, PyObject *kwds)
-{
-	self->obj = new CustomSoundStream();
-	self->obj->PyData = NULL;
-	self->obj->SoundStream = (PyObject *)self;
-	return 0;
-}
-
 static void
 PySfSoundStream_dealloc(PySfSoundStream *self)
 {
@@ -102,6 +93,12 @@ PySfSoundStream_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfSoundStream *self;
 	self = (PySfSoundStream *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->obj = new CustomSoundStream();
+		self->obj->PyData = NULL;
+		self->obj->SoundStream = (PyObject *)self;
+	}
 	return (PyObject *)self;
 }
 
@@ -310,7 +307,7 @@ or for streaming sound from the network", /* tp_doc */
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfSoundStream_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfSoundStream_new,	/* tp_new */
 };

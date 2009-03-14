@@ -41,12 +41,7 @@ PySfPostFX_dealloc(PySfPostFX *self)
 }
 
 static PyObject *
-PySfPostFX_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-	PySfPostFX *self;
-	self = (PySfPostFX *)type->tp_alloc(type, 0);
-	return (PyObject *)self;
-}
+PySfPostFX_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 static PyObject *
 PySfPostFX_LoadFromFile (PySfPostFX *self, PyObject *args)
@@ -72,10 +67,6 @@ PySfPostFX_LoadFromMemory (PySfPostFX *self, PyObject *args)
 #endif
 	return PyBool_FromLong(result);
 }
-
-static int
-PySfPostFX_init(PySfPostFX *self, PyObject *args);
-
 
 static PyObject *PySfPostFX_SetParameter(PySfPostFX* self, PyObject *args){	char *Name;	float X, Y, Z, W;	int size = PyTuple_Size(args);	if (!PyArg_ParseTuple(args, "sf|fff:PostFX.SetParameter", &Name, &X, &Y, &Z, &W))		return NULL;
 
@@ -179,24 +170,25 @@ Copy constructor : sf.PostFX(Copy) where Copy is a sf.PostFX instance.", /* tp_d
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfPostFX_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfPostFX_new,			/* tp_new */
 };
 
-static int
-PySfPostFX_init(PySfPostFX *self, PyObject *args)
-{
-	if (PyTuple_Size(args) == 1)
-	{
-		PySfPostFX *Copy;
-		if (PyArg_ParseTuple(args, "O!", &PySfPostFXType, &Copy))
-			self->obj = new sf::PostFX(*(Copy->obj));
-		else
-			return -1;
-	}
-	else
-		self->obj = new sf::PostFX();
-	return 0;
-}
 
+static PyObject *
+PySfPostFX_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+	PySfPostFX *self;
+	self = (PySfPostFX *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		PySfPostFX *Copy = NULL;
+		self->IsCustom = false;
+		if (!PyArg_ParseTuple(args, "|O!", &PySfPostFXType, &Copy))
+			return NULL;
+		if (Copy) self->obj = new sf::PostFX(*(Copy->obj));
+		else self->obj = new sf::PostFX();
+	}
+	return (PyObject *)self;
+}

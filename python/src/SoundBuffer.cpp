@@ -35,15 +35,7 @@ PySfSoundBuffer_dealloc(PySfSoundBuffer *self)
 }
 
 static PyObject *
-PySfSoundBuffer_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-	PySfSoundBuffer *self;
-	self = (PySfSoundBuffer *)type->tp_alloc(type, 0);
-	return (PyObject *)self;
-}
-
-static int
-PySfSoundBuffer_init(PySfSoundBuffer *self, PyObject *args, PyObject *kwds);
+PySfSoundBuffer_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 static PyObject*
 PySfSoundBuffer_LoadFromFile(PySfSoundBuffer *self, PyObject *args)
@@ -170,32 +162,33 @@ Copy constructor : SoundBuffer(Copy) where Copy is a sf.SoundBuffer instance.", 
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfSoundBuffer_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfSoundBuffer_new,	/* tp_new */
 };
 
-static int
-PySfSoundBuffer_init(PySfSoundBuffer *self, PyObject *args, PyObject *kwds)
+static PyObject *
+PySfSoundBuffer_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	int size = PyTuple_Size(args);
-	if (size == 1)
+	PySfSoundBuffer *self;
+	self = (PySfSoundBuffer *)type->tp_alloc(type, 0);
+	if (self != NULL)
 	{
-		PySfSoundBuffer *Copy;
-		if (!PyArg_ParseTuple(args, "O!:SoundBuffer.__init__", &PySfSoundBufferType, &Copy))
-			return -1;
-		self->obj = new sf::SoundBuffer(*(Copy->obj));
-	}
-	else if (size == 0)
+		PySfSoundBuffer *Copy=NULL;
+		if (PyArg_ParseTuple(args, "O!:SoundBuffer.__init__", &PySfSoundBufferType, &Copy))
+		{
+			self->obj = new sf::SoundBuffer(*(Copy->obj));
+			return (PyObject *)self;
+		}
+		PyErr_Clear();
 		self->obj = new sf::SoundBuffer();
-	else
-		PyErr_SetString(PyExc_TypeError, "SoundBuffer.__init__() takes 0 or 1 argument");
-	return 0;
+	}
+	return (PyObject *)self;
 }
 
 PySfSoundBuffer *
 GetNewPySfSoundBuffer()
 {
-	return (PySfSoundBuffer *)PySfSoundBuffer_new(&PySfSoundBufferType, NULL, NULL);
+	return PyObject_New(PySfSoundBuffer, &PySfSoundBufferType);
 }
 

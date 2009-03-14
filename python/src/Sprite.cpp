@@ -57,6 +57,7 @@ PySfSprite_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	if (self != NULL)
 	{
 		self->Image = NULL;
+		self->IsCustom = false;
 	}
 
 	return (PyObject *)self;

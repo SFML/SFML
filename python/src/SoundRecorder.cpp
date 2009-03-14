@@ -76,15 +76,12 @@ PySfSoundRecorder_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfSoundRecorder *self;
 	self = (PySfSoundRecorder *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->obj = new CustomSoundRecorder();
+		self->obj->SoundRecorder = (PyObject *)self;
+	}
 	return (PyObject *)self;
-}
-
-static int
-PySfSoundRecorder_init(PySfSoundRecorder *self, PyObject *args)
-{
-	self->obj = new CustomSoundRecorder();
-	self->obj->SoundRecorder = (PyObject *)self;
-	return 0;
 }
 
 static PyObject *
@@ -162,7 +159,7 @@ Construct the sound recorder with a callback function for processing captured sa
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfSoundRecorder_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfSoundRecorder_new,	/* tp_new */
 };

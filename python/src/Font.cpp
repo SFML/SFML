@@ -42,15 +42,11 @@ PySfFont_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	PySfFont *self;
 	self = (PySfFont *)type->tp_alloc(type, 0);
 	if (self != NULL)
+	{
 		self->Owner = true;
+		self->obj = new sf::Font();
+	}
 	return (PyObject *)self;
-}
-
-static int
-PySfFont_init(PySfFont *self, PyObject *args, PyObject *kwds)
-{
-	self->obj = new sf::Font();
-	return 0;
 }
 
 static PyObject *
@@ -238,7 +234,7 @@ PyTypeObject PySfFontType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfFont_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfFont_new,			/* tp_new */
 };
@@ -246,7 +242,7 @@ PyTypeObject PySfFontType = {
 PySfFont *
 GetNewPySfFont()
 {
-	return (PySfFont *)PySfFont_new(&PySfFontType, NULL, NULL);
+	return PyObject_New(PySfFont, &PySfFontType);
 }
 
 

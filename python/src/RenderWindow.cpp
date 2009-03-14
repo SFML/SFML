@@ -53,18 +53,10 @@ PySfRenderWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfRenderWindow *self;
 	self = (PySfRenderWindow *)type->tp_alloc(type, 0);
+	if (self != NULL)
+		self->obj = new sf::RenderWindow();
 	return (PyObject *)self;
 }
-
-static int
-PySfRenderWindow_init(PySfRenderWindow *self, PyObject *args, PyObject *kwds)
-{
-	self->obj = new sf::RenderWindow();
-	if (PyTuple_Size(args) > 0)
-		if (PySfWindow_Create((PySfWindow *)self, args, kwds) == NULL)
-			return -1;
-	return 0;
-}
 
 static PyObject *
 PySfRenderWindow_Capture(PySfRenderWindow *self)
@@ -99,13 +91,13 @@ PySfRenderWindow_DrawObject(PySfRenderWindow *RenderWindow, PySfDrawable *Obj)
 {
 	if (PyObject_TypeCheck((PyObject *)Obj, &PySfDrawableType))
 	{
-		if (PyObject_HasAttrString((PyObject *)Obj, "Render"))
+		if (Obj->IsCustom)
 		{
 			Py_CLEAR(Obj->obj->RenderWindow);
 			Py_INCREF(RenderWindow);
 			Obj->obj->RenderWindow = RenderWindow;
 		}
-		RenderWindow->obj->Draw( *(Obj->obj) );
+		RenderWindow->obj->Draw(*(Obj->obj));
 		return true;
 	}
 	return false;
@@ -146,23 +138,14 @@ PySfRenderWindow_Draw(PySfRenderWindow *self, PyObject *args)
 static PyObject *
 PySfRenderWindow_Clear(PySfRenderWindow *self, PyObject *args)
 {
-	PySfColor *Color;
-	int size = PyTuple_Size(args);
-	if (size == 1)
-	{
-		if (!PyArg_ParseTuple(args, "O!:RenderWindow.Clear", &PySfColorType, &Color))
-			return NULL;
-		PySfColorUpdate(Color);
-		self->obj->Clear(*(Color->obj));
-	}
-	else if (size == 0)
-	{
-		self->obj->Clear(sf::Color::Black);
-	}
+	PySfColor *Color = NULL;
+	if (!PyArg_ParseTuple(args, "|O!:RenderWindow.Clear", &PySfColorType, &Color))
+		return NULL;
+	if (Color == NULL) self->obj->Clear(sf::Color::Black);
 	else
 	{
-		PyErr_SetString(PyExc_TypeError, "RenderWindow.Clear() takes one or zero argument");
-		return NULL;
+		PySfColorUpdate(Color);
+		self->obj->Clear(*(Color->obj));
 	}
 	Py_RETURN_NONE;
 }
@@ -281,7 +264,7 @@ Parameters:\n\
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfRenderWindow_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfRenderWindow_new,	/* tp_new */
 };

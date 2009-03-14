@@ -39,23 +39,38 @@ PySfSound_dealloc(PySfSound *self)
 }
 
 static PyObject *
-PySfSound_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-	PySfSound *self;
-	self = (PySfSound *)type->tp_alloc(type, 0);
-	return (PyObject *)self;
-}
-
+PySfSound_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 static int
-PySfSound_init(PySfSound *self, PyObject *args, PyObject *kwds);
+PySfSound_init(PySfSound *self, PyObject *args, PyObject *kwds)
+{
+	const char *kwlist[] = {"Buffer", "Loop", "Pitch", "Volume", "X", "Y", "Z", NULL};
+	PySfSoundBuffer *Buffer=NULL;
+	PyObject *Loop=NULL;
+	float Pitch=1.f, Volume=100.f, X=0.f, Y=0.f, Z=0.f;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O!Offfff:Sound.__new__", (char **)kwlist, &PySfSoundBufferType, &Buffer, &Loop, &Pitch, &Volume, &X, &Y, &Z))
+		return -1;
+	{
+		if (Loop)
+			self->obj->SetLoop(PyBool_AsBool(Loop));
+		if (Buffer)
+			self->obj->SetBuffer(*(Buffer->obj));
+		self->obj->SetPitch(Pitch);
+		self->obj->SetVolume(Volume);
+		self->obj->SetPosition(X, Y, Z);
+	}
+	return 0;
+}
 
 static PyObject*
 PySfSound_SetBuffer(PySfSound *self, PyObject *args)
 {
 	PySfSoundBuffer *Buffer = (PySfSoundBuffer *)args;
 	if (!PyObject_TypeCheck(args, &PySfSoundBufferType))
+	{
 		PyErr_SetString(PyExc_TypeError, "Sound.SetBuffer() The argument must be a sf.SoundBuffer.");
+		return NULL;
+	}
 
 	self->obj->SetBuffer(*(Buffer->obj));
 	Py_RETURN_NONE;
@@ -269,38 +284,26 @@ Copy constructor : Sound(Copy) where Copy is a sf.Sound instance.", /* tp_doc */
 	PySfSound_new,			/* tp_new */
 };
 
-static int
-PySfSound_init(PySfSound *self, PyObject *args, PyObject *kwds)
+static PyObject *
+PySfSound_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	const char *kwlist[] = {"Buffer", "Loop", "Pitch", "Volume", "X", "Y", "Z", NULL};
-	PySfSoundBuffer *Buffer=NULL;
-	bool Loop=false;
-	PyObject *LoopObj=Py_False;
-	float Pitch=1.f, Volume=100.f, X=0.f, Y=0.f, Z=0.f;
-
-	if (PyTuple_Size(args) == 1)
+	PySfSound *self;
+	self = (PySfSound *)type->tp_alloc(type, 0);
+	if (self != NULL)
 	{
-		PySfSound *Copy;
-		if (PyArg_ParseTuple(args, "O!:Sound.__init__", &PySfSoundType, &Copy))
+		if (PyTuple_Size(args) == 1)
 		{
-			self->obj = new sf::Sound(*(Copy->obj));
-			return 0;
+			PySfSound *Copy;
+			if (PyArg_ParseTuple(args, "O!:Sound.__new__", &PySfSoundType, &Copy))
+			{
+				self->obj = new sf::Sound(*(Copy->obj));
+				return (PyObject *)self;
+			}
+			else PyErr_Clear();
 		}
-		else PyErr_Clear();
-	}
-	if (PyTuple_Size(args) > 0)
-	{
-		if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!|Offfff:Sound.__init__", (char **)kwlist, &PySfSoundBufferType, &Buffer, &LoopObj, &Pitch, &Volume, &X, &Y, &Z))
-			return -1;
-		if (PyObject_IsTrue(LoopObj))
-			Loop = true;
-
-		self->obj = new sf::Sound(*(Buffer->obj), Loop, Pitch, Volume, sf::Vector3f(X, Y, Z));
-	}
-	else
 		self->obj = new sf::Sound();
-
-	return 0;
+	}
+	return (PyObject *)self;
 }
 
 void

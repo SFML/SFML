@@ -33,6 +33,7 @@
 
 typedef struct {
 	PyObject_HEAD
+	bool IsCustom;
 	sf::String *obj;
 	PySfFont *font;
 } PySfString;

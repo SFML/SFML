@@ -31,6 +31,7 @@
 
 typedef struct {
 	PyObject_HEAD
+	bool IsCustom;
 	sf::PostFX *obj;
 } PySfPostFX;
 

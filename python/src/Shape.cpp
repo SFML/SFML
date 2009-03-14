@@ -45,14 +45,12 @@ PySfShape_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfShape *self;
 	self = (PySfShape *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->obj = new sf::Shape();
+		self->IsCustom = false;
+	}
 	return (PyObject *)self;
-}
-
-static int
-PySfShape_init(PySfShape *self, PyObject *args)
-{
-	self->obj = new sf::Shape();
-	return 0;
 }
 
 // void AddPoint(float X, float Y, const Color& Col = Color(255, 255, 255), const Color& OutlineCol = Color(0, 0, 0));
@@ -231,7 +229,7 @@ PySfShape_SetPointOutlineColor(PySfShape* self, PyObject *args)
 {
 	unsigned int Index;
 	PySfColor *Color;
-	if (!PyArg_ParseTuple(args, "IO!:Shape:SetPointOutlineColor", &Index, &PySfColorType, &Color))
+	if (!PyArg_ParseTuple(args, "IO!:Shape.SetPointOutlineColor", &Index, &PySfColorType, &Color))
 		return NULL;
 	PySfColorUpdate(Color);
 	self->obj->SetPointOutlineColor(Index, *(Color->obj));
@@ -365,7 +363,7 @@ PyTypeObject PySfShapeType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfShape_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfShape_new,			/* tp_new */
 };
@@ -374,6 +372,8 @@ PyTypeObject PySfShapeType = {
 PySfShape *
 GetNewPySfShape()
 {
-	return (PySfShape *)PySfShape_new(&PySfShapeType, NULL, NULL);
+	PySfShape *Shape = PyObject_New(PySfShape, &PySfShapeType);
+	Shape->IsCustom = false;
+	return Shape;
 }
 

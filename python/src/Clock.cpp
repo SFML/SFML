@@ -41,18 +41,9 @@ PySfClock_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
 	self = (PySfClock *)type->tp_alloc(type, 0);
 	if (self != NULL)
-	{
-	}
+		self->obj = new sf::Clock();
 
 	return (PyObject *)self;
-}
-
-
-static int
-PySfClock_init(PySfClock *self, PyObject *args, PyObject *kwds)
-{
-	self->obj = new sf::Clock();
-	return 0;
 }
 
 
@@ -111,7 +102,7 @@ PyTypeObject PySfClockType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfClock_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfClock_new,			/* tp_new */
 };

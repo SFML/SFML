@@ -48,57 +48,12 @@ PySfString_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	PySfString *self;
 	self = (PySfString *)type->tp_alloc(type, 0);
 	if (self != NULL)
+	{
 		self->font = NULL;
+		self->IsCustom = false;
+		self->obj = new sf::String();
+	}
 	return (PyObject *)self;
-}
-
-static int
-PySfString_init(PySfString *self, PyObject *args, PyObject *kwds)
-{
-	const char *kwlist[] = {"Text", "Font", "Size", NULL};
-	float Size = 30.f;
-	PyObject *Text=NULL;
-	PySfFont *FontTmp = NULL;
-	sf::Font *Font;
-
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OO!f:String.__init__", (char **)kwlist, &Text, &PySfFontType, &FontTmp, &Size))
-		return -1;
-
-	if (FontTmp)
-	{
-		Font = (FontTmp->obj);
-		Py_INCREF(FontTmp);
-		self->font = FontTmp;
-	}
-	else
-		Font = (sf::Font *)&(sf::Font::GetDefaultFont());
-
-	if (Text != NULL)
-	{
-		if (PyUnicode_Check(Text))
-		{
-#if Py_UNICODE_SIZE == 4
-			self->obj = new sf::String((sf::Uint32 *)PyUnicode_AS_UNICODE(Text), *Font, Size);
-#else
-			self->obj = new sf::String((sf::Uint16 *)PyUnicode_AS_UNICODE(Text), *Font, Size);
-#endif
-		}
-#ifdef IS_PY3K
-		else if (PyBytes_Check(Text))
-			self->obj = new sf::String(sf::Unicode::UTF8String((sf::Uint8 *)PyBytes_AsString(Text)), *Font, Size);
-#else
-		else if (PyString_Check(Text))
-			self->obj = new sf::String(sf::Unicode::UTF8String((sf::Uint8 *)PyString_AsString(Text)), *Font, Size);
-#endif
-		else
-		{
-			PyErr_SetString(PyExc_TypeError, "String.__init__() first argument must be str");
-			return -1;
-		}
-	}
-	else
-		self->obj = new sf::String("", *Font, Size);
-	return 0;
 }
 
 static PyObject *
@@ -234,6 +189,44 @@ PySfString_GetCharacterPos(PySfString* self, PyObject *args)
 {
 	sf::Vector2f Pos = self->obj->GetCharacterPos(PyLong_AsUnsignedLong(args));
 	return Py_BuildValue("ff", Pos.x, Pos.y);
+}
+
+static int
+PySfString_init(PySfString *self, PyObject *args, PyObject *kwds)
+{
+	const char *kwlist[] = {"Text", "Font", "Size", NULL};
+	float Size = 30.f;
+	PyObject *Text=NULL;
+	PySfFont *Font = NULL;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OO!f:String.__new__", (char **)kwlist, &Text, &PySfFontType, &Font, &Size))
+		return -1;
+
+	if (Text != NULL)
+	{
+		if (PyUnicode_Check(Text))
+		{
+#if Py_UNICODE_SIZE == 4
+			self->obj->SetText((sf::Uint32 *)PyUnicode_AS_UNICODE(Text));
+#else
+			self->obj->SetText((sf::Uint16 *)PyUnicode_AS_UNICODE(Text));
+#endif
+		}
+#ifdef IS_PY3K
+		else if (PyBytes_Check(Text))
+			self->obj->SetText(sf::Unicode::UTF8String((sf::Uint8 *)PyBytes_AsString(Text)));
+#else
+		else if (PyString_Check(Text))
+			self->obj->SetText(sf::Unicode::UTF8String((sf::Uint8 *)PyString_AsString(Text)));
+#endif
+		else
+		{
+			PyErr_SetString(PyExc_TypeError, "String.__init__() first argument must be str");
+			return -1;
+		}
+	}
+	if (Font) PySfString_SetFont(self, (PyObject *)Font);
+	self->obj->SetSize(Size);
+	return 0;
 }
 
 

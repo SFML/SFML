@@ -57,51 +57,27 @@ static PyObject *
 PySfColor_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfColor *self;
-
 	self = (PySfColor *)type->tp_alloc(type, 0);
-
 	if (self != NULL)
 	{
 		self->r = 0;
 		self->g = 0;
 		self->b = 0;
 		self->a = 255;
+		self->obj = new sf::Color(0, 0, 0, 255);
 	}
-
 	return (PyObject *)self;
 }
-
 
 static int
 PySfColor_init(PySfColor *self, PyObject *args, PyObject *kwds)
 {
 	const char *kwlist[] = {"r", "g", "b", "a", NULL};
-
-	long int rgba=0;
-
-
-	if (PyTuple_Size(args) == 1)
-	{
-		if ( !PyArg_ParseTuple(args, "l", &rgba))
-			return -1;
-		self->r = rgba & 0xff;
-		self->g = rgba>>8 & 0xff;
-		self->b = rgba>>16 & 0xff;
-		self->a = rgba>>24 & 0xff;
-	}
-	else if (PyTuple_Size(args) > 1)
-		if (! PyArg_ParseTupleAndKeywords(args, kwds, "BBB|B", (char **)kwlist, &(self->r), &(self->g), &(self->b), &(self->a)))
-			return -1;
-
-	self->obj = new sf::Color(self->r, self->g, self->b, self->a);
-
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "BBB|B:Color.__init__", (char **)kwlist, &(self->r), &(self->g), &(self->b), &(self->a)))
+		return -1;
+	PySfColorUpdate(self);
 	return 0;
 }
-
-static PyMethodDef PySfColor_methods[] = {
-	{NULL}  /* Sentinel */
-};
-
 
 PyTypeObject PySfColorType = {
 	head_init
@@ -131,7 +107,7 @@ PyTypeObject PySfColorType = {
 	0,						/* tp_weaklistoffset */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
-	PySfColor_methods,		/* tp_methods */
+	0,						/* tp_methods */
 	PySfColor_members,		/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
@@ -147,7 +123,7 @@ PyTypeObject PySfColorType = {
 PySfColor *
 GetNewPySfColor()
 {
-	return (PySfColor *)PySfColor_new(&PySfColorType, NULL, NULL);
+	return PyObject_New(PySfColor, &PySfColorType);
 }
 
 void
@@ -218,16 +194,5 @@ PySfColor_InitConst()
 	Cyan->a = sf::Color::Cyan.a;
 	PyDict_SetItemString(PySfColorType.tp_dict, "Cyan", (PyObject *)Cyan);
 	Py_DECREF(Cyan);
-
-/*
-    static const Color Black;   ///< Black predefined color
-    static const Color White;   ///< White predefined color
-    static const Color Red;     ///< Red predefined color
-    static const Color Green;   ///< Green predefined color
-    static const Color Blue;    ///< Blue predefined color
-    static const Color Yellow;  ///< Yellow predefined color
-    static const Color Magenta; ///< Magenta predefined color
-    static const Color Cyan;    ///< Cyan predefined color
-*/
 }
 

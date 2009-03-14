@@ -36,7 +36,10 @@ void CustomDrawable::Render(sf::RenderTarget& Target) const
 	if (RenderFunction)
 		PyObject_CallFunction(RenderFunction, (char *)"O", RenderWindow);
 	else
+	{
 		PyErr_SetString(PyExc_RuntimeError, "Custom drawables must have a render method defined");
+		PyErr_Print();
+	}
 }
 
 static void
@@ -51,21 +54,17 @@ PySfDrawable_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfDrawable *self;
 	self = (PySfDrawable *)type->tp_alloc(type, 0);
-	return (PyObject *)self;
-}
-
-static int
-PySfDrawable_init(PySfDrawable *self, PyObject *args, PyObject *kwds)
-{
-	self->obj = new CustomDrawable();
-	if (PyObject_HasAttrString((PyObject *)self, "Render"))
+	if (self != NULL)
 	{
-		self->obj->RenderFunction = PyObject_GetAttrString((PyObject *)self, "Render");
+		self->IsCustom = true;
+		self->obj = new CustomDrawable();
+		if (PyObject_HasAttrString((PyObject *)self, "Render"))
+			self->obj->RenderFunction = PyObject_GetAttrString((PyObject *)self, "Render");
+		else
+			self->obj->RenderFunction = NULL;
+		self->obj->RenderWindow = NULL;
 	}
-	else
-		self->obj->RenderFunction = NULL;
-	self->obj->RenderWindow = NULL;
-	return 0;
+	return (PyObject *)self;
 }
 
 static PyObject *
@@ -128,7 +127,7 @@ static PyObject *
 PySfDrawable_SetColor(PySfDrawable* self, PyObject *args)
 {
 	PySfColor *Color = (PySfColor *)args;
-	if (! PyObject_TypeCheck(args, &PySfColorType))
+	if (!PyObject_TypeCheck(args, &PySfColorType))
 	{
 		PyErr_SetString(PyExc_TypeError, "Drawable.SetColor() Argument is not a sf.Color");
 		return NULL;
@@ -318,15 +317,9 @@ PyTypeObject PySfDrawableType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfDrawable_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfDrawable_new,		/* tp_new */
 };
-
-PySfDrawable *
-GetNewPySfDrawable()
-{
-	return (PySfDrawable *)PySfDrawable_new(&PySfDrawableType, NULL, NULL);
-}
 
 

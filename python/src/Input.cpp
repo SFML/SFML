@@ -30,16 +30,8 @@
 static PyObject *
 PySfInput_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	PySfInput *self;
-	self = (PySfInput *)type->tp_alloc(type, 0);
-	return (PyObject *)self;
-}
-
-static int
-PySfInput_init(PySfInput *self, PyObject *args, PyObject *kwds)
-{
 	PyErr_SetString(PyExc_RuntimeError, "You can't create an Input object yourself, because an Input object must always be associated to its window.\nThe only way to get an Input is by creating a window and calling : Input = MyWindow.GetInput().");
-	return -1;
+	return NULL;
 }
 
 static PyObject*
@@ -129,7 +121,7 @@ PyTypeObject PySfInputType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfInput_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfInput_new,			/* tp_new */
 };
@@ -137,6 +129,6 @@ PyTypeObject PySfInputType = {
 PySfInput *
 GetNewPySfInput()
 {
-	return (PySfInput *)PySfInput_new(&PySfInputType, NULL, NULL);
+	return PyObject_New(PySfInput, &PySfInputType);
 }
 

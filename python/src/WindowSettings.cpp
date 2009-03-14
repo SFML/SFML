@@ -55,6 +55,7 @@ PySfWindowSettingsUpdate(PySfWindowSettings *self)
 static PyObject *
 PySfWindowSettings_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
+	const char *kwlist[] = {"DepthBits", "StencilBits", "AntialiasingLevel", NULL};
 	PySfWindowSettings *self;
 	self = (PySfWindowSettings *)type->tp_alloc(type, 0);
 	if (self != NULL)
@@ -62,22 +63,12 @@ PySfWindowSettings_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 		self->DepthBits = 24;
 		self->StencilBits = 8;
 		self->AntialiasingLevel = 0;
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "|III:WindowSettings.__init__", (char **)kwlist, &(self->DepthBits), &(self->StencilBits), &(self->AntialiasingLevel)))
+			return NULL;
+		self->obj = new sf::WindowSettings(self->DepthBits, self->StencilBits, self->AntialiasingLevel);
 	}
 	return (PyObject *)self;
 }
-
-
-static int
-PySfWindowSettings_init(PySfWindowSettings *self, PyObject *args, PyObject *kwds)
-{
-	const char *kwlist[] = {"DepthBits", "StencilBits", "AntialiasingLevel", NULL};
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|III:WindowSettings.__init__", (char **)kwlist, &(self->DepthBits), &(self->StencilBits), &(self->AntialiasingLevel)))
-		return -1;
-	self->obj = new sf::WindowSettings(self->DepthBits, self->StencilBits, self->AntialiasingLevel);
-
-	return 0;
-}
-
 
 PyTypeObject PySfWindowSettingsType = {
 	head_init
@@ -115,7 +106,7 @@ PyTypeObject PySfWindowSettingsType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfWindowSettings_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfWindowSettings_new, /* tp_new */
 };
@@ -123,6 +114,6 @@ PyTypeObject PySfWindowSettingsType = {
 PySfWindowSettings *
 GetNewPySfWindowSettings()
 {
-	return (PySfWindowSettings *)PySfWindowSettings_new(&PySfWindowSettingsType, NULL, NULL);
+	return PyObject_New(PySfWindowSettings, &PySfWindowSettingsType);
 }
 
