@@ -1,0 +1,216 @@
+////////////////////////////////////////////////////////////
+//
+// SFML - Simple and Fast Multimedia Library
+// Copyright (C) 2007-2009 Lucas Soltic (ceylow@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#import <Cocoa/Cocoa.h>
+#import <SFML/Window/Cocoa/WindowImplCocoa.hpp>
+
+
+////////////////////////////////////////////////////////////
+/// Window independant OpenGL context class
+////////////////////////////////////////////////////////////
+@interface GLContext : NSOpenGLContext
+{
+	GLContext *mySharedContext;
+}
+
+////////////////////////////////////////////////////////////
+/// Return the shared OpenGL context instance (making one if needed)
+////////////////////////////////////////////////////////////
++ (id)sharedContext;
+
+////////////////////////////////////////////////////////////
+/// Make a new OpenGL context according to the @attribs settings
+/// and the shared context @context
+////////////////////////////////////////////////////////////
+- (id)initWithAttributes:(sf::WindowSettings&)attribs
+		   sharedContext:(GLContext *)context;
+
+@end
+
+
+////////////////////////////////////////////////////////////
+/// Customized Cocoa OpenGL view
+////////////////////////////////////////////////////////////
+@interface GLView : NSOpenGLView
+{
+	sf::priv::WindowImplCocoa *myDelegate;
+	GLContext *myGLContext;
+}
+
+////////////////////////////////////////////////////////////
+/// Make a new view according the the rect @frame,
+/// the video mode @mode, the window settings @settings
+/// and the sf window delegate @delegate
+/// @delegate must not be null
+////////////////////////////////////////////////////////////
+- (id)initWithFrame:(NSRect)frame
+			   mode:(const sf::VideoMode&)mode
+		   settings:(sf::WindowSettings&)settings
+		   delegate:(sf::priv::WindowImplCocoa *)delegate;
+
+////////////////////////////////////////////////////////////
+/// Finish view setting (after having added it to the window)
+////////////////////////////////////////////////////////////
+- (void)finishInitialization;
+
+////////////////////////////////////////////////////////////
+/// Forward call to en/disable vertical synchronization
+////////////////////////////////////////////////////////////
+- (void)enableVerticalSync:(bool)flag;
+
+////////////////////////////////////////////////////////////
+/// Forward call to set the OpenGL context as active according to @flag
+////////////////////////////////////////////////////////////
+- (void)setActive:(bool)flag;
+
+////////////////////////////////////////////////////////////
+/// Forward call to flush the OpenGL context
+////////////////////////////////////////////////////////////
+- (void)flushBuffer;
+
+@end
+
+////////////////////////////////////////////////////////////
+/// Cocoa window implementation to let fullscreen windows
+/// catch key events
+////////////////////////////////////////////////////////////
+@interface GLWindow : NSWindow
+
+////////////////////////////////////////////////////////////
+/// Technical note: this class must neither contain new members
+/// nor methods. It is used transparently as a NSWindow object
+/// by WindowWrapper. Not following this rule could result
+/// in a segmentation fault or data corruption.
+////////////////////////////////////////////////////////////
+
+@end
+
+////////////////////////////////////////////////////////////
+/// WindowWrapper class : handles both imported and self-built windows
+////////////////////////////////////////////////////////////
+@interface WindowWrapper : NSObject
+{
+	GLWindow *myWindow;
+	GLView *myView;
+	sf::VideoMode myFullscreenMode;
+	bool myIsFullscreen;
+}
+
+////////////////////////////////////////////////////////////
+/// Make a new window wrapper according to the window settings @attribs,
+/// the video mode @mode, the window style @style, the window title @title
+/// and the sf window implementation delegate @delegate
+////////////////////////////////////////////////////////////
+- (id)initWithSettings:(sf::WindowSettings&)attribs
+			 videoMode:(sf::VideoMode&)mode
+				 style:(unsigned long)style
+				 title:(NSString *)title
+			  delegate:(sf::priv::WindowImplCocoa *)delegate;
+
+////////////////////////////////////////////////////////////
+/// Make a new window wrapper by importing @window and according to
+/// the window settings @params and the sf window implementation delegate
+/// @delegate
+/// @window and @delegate must not be null
+////////////////////////////////////////////////////////////
+- (id)initWithWindow:(NSWindow *)window
+			settings:(sf::WindowSettings&)params
+			delegate:(sf::priv::WindowImplCocoa *)delegate;
+
+////////////////////////////////////////////////////////////
+/// Make a new window wrapper by importing @window if it's not null and according to
+/// the window settings @params and the sf window implementation delegate
+/// @delegate; or by creating a new window if @window is null. In this case @title
+/// must therefore not be null and @params must be valid.
+/// @delegate must never be null 
+////////////////////////////////////////////////////////////
+- (id)initWithWindow:(NSWindow *)window
+			settings:(sf::WindowSettings&)params
+		   videoMode:(sf::VideoMode&)mode
+			   style:(unsigned long)style
+			   title:(NSString *)title
+			delegate:(sf::priv::WindowImplCocoa *)delegate;
+
+
+////////////////////////////////////////////////////////////
+/// Finish the window setup (without knowing whether it's a imported
+/// window)
+////////////////////////////////////////////////////////////
+/* - (void)setupGLViewAndWindow; */
+
+////////////////////////////////////////////////////////////
+/// Return a reference to the internal Cocoa window
+////////////////////////////////////////////////////////////
+- (NSWindow *)window;
+
+////////////////////////////////////////////////////////////
+/// Return a reference to the internal Cocoa OpenGL view
+////////////////////////////////////////////////////////////
+- (GLView *)glView;
+
+////////////////////////////////////////////////////////////
+/// Forward call to set the window position on screen
+////////////////////////////////////////////////////////////
+- (void)setPosition:(NSPoint)pos;
+
+////////////////////////////////////////////////////////////
+/// Forward call to set the window size
+////////////////////////////////////////////////////////////
+- (void)setSize:(NSSize)size;
+
+////////////////////////////////////////////////////////////
+/// Return the mouse location relative to the internal window
+////////////////////////////////////////////////////////////
+- (NSPoint)mouseLocation;
+
+////////////////////////////////////////////////////////////
+/// Return whether the mouse is on our window
+////////////////////////////////////////////////////////////
+- (BOOL)mouseInside;
+
+////////////////////////////////////////////////////////////
+/// Close or open the window
+////////////////////////////////////////////////////////////
+- (void)show:(bool)flag;
+
+////////////////////////////////////////////////////////////
+/// Forward call to en/disable the OpenGL view vertical synchronization
+////////////////////////////////////////////////////////////
+- (void)enableVerticalSync:(bool)flag;
+
+////////////////////////////////////////////////////////////
+/// Forward 'setActive' call the the OpenGL view
+////////////////////////////////////////////////////////////
+- (void)setActive:(bool)flag;
+
+////////////////////////////////////////////////////////////
+/// Forward call to flush the OpenGL view
+////////////////////////////////////////////////////////////
+- (void)flushBuffer;
+
+@end
+

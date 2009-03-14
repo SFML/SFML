@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2008 Lucas Soltic (elmerod@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Lucas Soltic (ceylow@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,36 +27,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/Cocoa/WindowImplCocoa.hpp>
-#import <SFML/Window/Cocoa/WindowController.h>
 #import <SFML/Window/Cocoa/AppController.h>
+#import <SFML/Window/Cocoa/GLKit.h>
 #import <SFML/Window/WindowStyle.hpp>
 #import <SFML/System.hpp>
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/gl.h>
-#import <Cocoa/Cocoa.h>
+#import <CoreFoundation/CoreFoundation.h>
 #import <iostream>
-
-
-#pragma mark Notes
-
-// ENABLE_ANTIALIASING macro :
-//
-// I use this to prevent the use of antialiasing
-// as OpenGL context sharing does not allow only one of the
-// shared OpenGL context to be shared. That means
-// antialiasing could not be used without re-compiling
-// the whole sfml-window library.
-//
-// I've no way to fix this for now.
-
-// ENABLE_WINDOWIMPORT macro :
-//
-// I use this to disable the import of Cocoa windows
-// as it does not work fine for now and is not
-// a high priority.
-
-
-
 
 
 namespace sf
@@ -72,81 +50,34 @@ make;\
 __done = 1;\
 } }
 
-// Has the event been used or not ? If not, it must be sent to NSApp
-enum {
-	UsedEvent,
-	UnusedEvent
-};
-
-
-////////////////////////////////////////////////////////////
-/// Structure containing all the members I can't directly put in the class definition
-/// because I would have to hide them in a #ifdef __OBJC__ block and the object
-/// allocator would allocate space for it as it would be called from a C++ code
-/// that wouldn't see these members
-////////////////////////////////////////////////////////////
-struct objc_members {
-	WindowController *controller;
-	SFWindow *window;
-	NSOpenGLContext *context;
-	NSOpenGLView *view;
-};
-
-////////////////////////////////////////////////////////////
-/// Pointer to the shared OpenGL context
-////////////////////////////////////////////////////////////
-static NSOpenGLContext *sharedContext = nil;
-
 
 ////////////////////////////////////////////////////////////
 /// Private function declarations
 ////////////////////////////////////////////////////////////
-static SFWindow *		MakeWindow(WindowSettings& params, unsigned long style, VideoMode& mode, NSString *title);
-static NSOpenGLContext *MakeOpenGLContext(WindowSettings& params);
-static NSOpenGLView	*	MakeOpenGLView(SFWindow *window, NSOpenGLContext *context, WindowSettings& params);
-static void				ConfigureWindow(SFWindow *window, NSOpenGLView *view, WindowController *controller);
 static Key::Code		KeyForVirtualCode(unsigned short vCode);
 static Key::Code		KeyForUnicode(unsigned short uniCode);
 static bool				IsTextEvent(NSEvent *event);
-static bool				MouseInside(SFWindow *window, NSView *view);
-static NSPoint			MouseLocation(SFWindow *window);
 
 
 ////////////////////////////////////////////////////////////
 /// Default constructor
 /// (creates a dummy window to provide a valid OpenGL context)
 ////////////////////////////////////////////////////////////
+	static WindowImplCocoa *globalWin = NULL;
 WindowImplCocoa::WindowImplCocoa() :
-members(NULL),
-useKeyRepeat(false),
-mouseIn(false),
-wheelStatus(0.0f),
-fullscreen(false),
-fullscreenMode(0, 0, 0),
-desktopMode(0, 0, 0)
+myWrapper(nil),
+myUseKeyRepeat(false),
+myMouseIn(false),
+myWheelStatus(0.0f)
 {
-	Initialize();
+	[AppController sharedController];
 	
-    // We just want to have a valid support for an OpenGL context
-	
-	// So we create the OpenGL context
-	WindowSettings params(0, 0, 0);
-	members->context = MakeOpenGLContext(params);
-	
-	if (members->context != nil) {
-		// Increase the reference counter for the shared OpenGL context
-		sharedContext = [members->context retain];
-		
+    // Create the shared OpenGL context
+	if ([GLContext sharedContext]) {
 		// Then we make it the current active OpenGL context
 		SetActive();
-		
-		// And set the current working directory to
-		// the Resources folder is it's a bundled app,
-		// or to the directory containing the executable otherwise
-		chdir([[[NSBundle mainBundle] resourcePath] UTF8String]);
-		
 	} else {
-		std::cerr << "*** SFML: Unable to make the main shared OpenGL context" << std::endl;
+		std::cerr << "Unable to make the main shared OpenGL context" << std::endl;
 	}
 }
 
@@ -155,53 +86,30 @@ desktopMode(0, 0, 0)
 /// Create the window implementation from an existing control
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::WindowImplCocoa(WindowHandle Handle, WindowSettings& params) :
-members(NULL),
-useKeyRepeat(false),
-mouseIn(false),
-wheelStatus(0.0f),
-fullscreen(false),
-fullscreenMode(0, 0, 0),
-desktopMode(0, 0, 0)
+myWrapper(NULL),
+myUseKeyRepeat(false),
+myMouseIn(false),
+myWheelStatus(0.0f)
 {
-	Initialize();
-	
-#if ENABLE_WINDOWIMPORT
-	// Register ourselves for event handling
-	[[AppController sharedController] registerWindow:this];
-	
-	// Make a WindowController to handle notifications
-	members->controller = [[WindowController controllerWithWindow:this] retain];
-	
-	// Use existing window
-	members->window = [static_cast <SFWindow *> (Handle) retain];
-	
-	if (members->window != nil) {		
-		// We make the OpenGL context, associate it to the OpenGL view
-		// and add the view to our window
-		members->context = MakeOpenGLContext(params);
+	if (Handle)
+	{
+		// We create the window according to the given handle
+		myWrapper = [[WindowWrapper alloc] initWithWindow:(NSWindow *)Handle
+												  settings:params
+												  delegate:this];
 		
-		if (members->context != nil) {
-			members->view = MakeOpenGLView(members->window, members->context, params);
+		if (myWrapper)
+		{
+			// initial mouse state
+			myMouseIn = [myWrapper mouseInside];
 			
-			if (members->view != nil) {
-				// initial mouse state
-				mouseIn = MouseInside(members->window, members->view);
-				
-				// Initialize myWidth and myHeight members from base class with the window size
-				myWidth = (unsigned) [members->window frame].size.width;
-				myHeight = (unsigned) [members->window frame].size.height;
-			} else {
-				//error(__FILE__, __LINE__, "failed to make the OpenGL view for the public window");
-			}
+			// We set the myWidth and myHeight members to the correct values
+			myWidth = (int) [[myWrapper glView] frame].size.width;
+			myHeight = (int) [[myWrapper glView] frame].size.height;
 		} else {
-			//error(__FILE__, __LINE__, "failed to make the OpenGL context for the public window");
+			std::cerr << "Failed to make the public window" << std::endl;
 		}
-	} else {
-		//error(__FILE__, __LINE__, "invalid imported window");
 	}
-#else
-	std::cerr << "*** SFML: making a sf::Window from a Cocoa one is not available in this version of the SFML" << std::endl;
-#endif
 }
 
 
@@ -209,65 +117,32 @@ desktopMode(0, 0, 0)
 /// Create the window implementation
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::WindowImplCocoa(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, WindowSettings& params) :
-members(NULL),
-useKeyRepeat(false),
-mouseIn(false),
-wheelStatus(0.0f),
-fullscreen(WindowStyle & Style::Fullscreen),
-fullscreenMode(0, 0, 0),
-desktopMode(0, 0, 0)
+myWrapper(NULL),
+myUseKeyRepeat(false),
+myMouseIn(false),
+myWheelStatus(0.0f)
 {
-	Initialize();
-	
-	// Make a WindowController to handle notifications
-	members->controller = [[WindowController controllerWithWindow:this] retain];
-	
     // Create a new window with given size, title and style
 	// First we define some objects used for our window
-	NSString *title = massert([NSString stringWithUTF8String:Title.c_str()]);
+	NSString *title = [NSString stringWithUTF8String:(Title.c_str()) ? (Title.c_str()) : ""];
 	
 	// We create the window
-	members->window = MakeWindow(params, WindowStyle, Mode, title);
+	myWrapper = [[WindowWrapper alloc] initWithSettings:params
+											   videoMode:Mode
+												   style:WindowStyle
+												   title:title
+												delegate:this];
 	
-	
-	if (members->window != nil) {
-		members->context = MakeOpenGLContext(params);
+	if (myWrapper)
+	{
+		// initial mouse state
+		myMouseIn = [myWrapper mouseInside];
 		
-		if (members->context != nil) {
-			// We make the OpenGL context, associate it to the OpenGL view
-			// and add the view to our window
-			members->view = MakeOpenGLView(members->window, members->context, params);
-			
-			if (members->view != nil) {
-				// Set observers and some window settings
-				ConfigureWindow(members->window, members->view, members->controller);
-				
-				// initial mouse state
-				mouseIn = MouseInside(members->window, members->view);
-				
-				// We set the myWidth and myHeight members to the correct values
-				myWidth = Mode.Width;
-				myHeight = Mode.Height;
-				
-				if (WindowStyle & Style::Fullscreen) {
-					fullscreenMode = Mode;
-					
-					// Using this because full screen window was not always
-					// in front of the other application windows when unhiding app
-					[members->window setLevel:NSFloatingWindowLevel];
-				}
-			} else {
-				std::cerr << "*** SFML: failed to make the OpenGL view for the public window" << std::endl;
-				[members->context release], members->context = nil;
-				[sharedContext release];
-				[members->window release], members->window = nil;
-			}
-		} else {
-			std::cerr << "*** SFML: failed to make the OpenGL context for the public window" << std::endl;
-			[members->window release], members->window = nil;
-		}
+		// We set the myWidth and myHeight members to the correct values
+		myWidth = Mode.Width;
+		myHeight = Mode.Height;
 	} else {
-		std::cerr << "*** SFML: failed to make the public window" << std::endl;
+		std::cerr << "Failed to make the public window" << std::endl;
 	}
 }
 
@@ -277,28 +152,11 @@ desktopMode(0, 0, 0)
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::~WindowImplCocoa()
 {
-
-	// Release the notification receiver
-	if (members) {
-		[[NSNotificationCenter defaultCenter] removeObserver:members->controller];
-		[members->controller release];
-	}
-	
 	// Make sure the window is closed
 	Show(false);
 	
-	// Decrement the shared context counter
-	[sharedContext release];
-	
 	// Release the window objects
-	if (members) {
-		[members->context release];
-		[members->view release];
-		[members->window release];
-	}
-	
-	// Free the private members struct
-	delete members;
+	[myWrapper release];
 }
 
 
@@ -308,63 +166,6 @@ WindowImplCocoa::~WindowImplCocoa()
 bool WindowImplCocoa::IsContextActive()
 {
 	return ([NSOpenGLContext currentContext] != NULL);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Handle a Cocoa NSEvent
-////////////////////////////////////////////////////////////
-void WindowImplCocoa::HandleEvent(void *eventRef)
-{
-	if (eventRef == nil) {
-		std::cerr << "*** SFML: cannot handle a NULL event. Returning." << std::endl;
-		return;
-	}
-	
-	NSEvent *event = static_cast <NSEvent *> (eventRef);
-	int eventStatus = UnusedEvent;
-	
-	switch ([event type]) {
-		case NSKeyDown:
-			eventStatus = HandleKeyDown(eventRef);
-			break;
-			
-		case NSKeyUp:
-			eventStatus = HandleKeyUp(eventRef);
-			break;
-			
-		case NSFlagsChanged:
-			eventStatus = HandleModifierKey(eventRef);
-			break;
-			
-		case NSScrollWheel:
-			eventStatus = HandleMouseWheel(eventRef);
-			break;
-		
-		case NSLeftMouseDown:
-		case NSRightMouseDown:
-			eventStatus = HandleMouseDown(eventRef);
-			break;
-			
-		case NSLeftMouseUp:
-		case NSRightMouseUp:
-			eventStatus = HandleMouseUp(eventRef);
-			break;
-			
-		case NSMouseMoved:
-		case NSLeftMouseDragged:
-		case NSRightMouseDragged:
-		case NSOtherMouseDragged:
-			eventStatus = HandleMouseMove(eventRef);
-			break;
-			
-		default:
-			break;
-	}
-	
-	if (eventStatus == UnusedEvent) {
-		[NSApp sendEvent:event];
-	}
 }
 
 
@@ -393,7 +194,7 @@ void WindowImplCocoa::HandleNotifiedEvent(Event& event)
 ////////////////////////////////////////////////////////////
 /// Handle a key down event (NSEvent)
 ////////////////////////////////////////////////////////////
-int WindowImplCocoa::HandleKeyDown(void *eventRef)
+void WindowImplCocoa::HandleKeyDown(void *eventRef)
 {
 	NSEvent *event = static_cast <NSEvent *> (eventRef);
 	
@@ -409,93 +210,89 @@ int WindowImplCocoa::HandleKeyDown(void *eventRef)
 		if ([[event charactersIgnoringModifiers] length])
 			rawchr = [[event charactersIgnoringModifiers] characterAtIndex:0];
 		
-	}
-	
-	if (mods & NSCommandKeyMask) {
-		// Application commands
-		[NSApp sendEvent:event];
-	}
-	
-	// User events
-	
-	if (!useKeyRepeat && [event isARepeat]) {
-		return UsedEvent;
-	}
-	
+		
+		// Don't handle repeated events if we chose not to send them
+		if (!myUseKeyRepeat && [event isARepeat])
+			return;
+		
 #if 1
-	// Is it also a text event ?
-	if (IsTextEvent(event)) {
-		// buffer for the UTF-8 characters
-		const char *utf8Characters = [[event characters] UTF8String];
-		
-		// buffer for the UTF-32 characters
-		Uint32 utf32Characters[2];
-		
-		// convert the characters
-		const Uint32 *addr = Unicode::UTF8ToUTF32(utf8Characters,
-												  utf8Characters + length,
-												  utf32Characters);
-		
-		// si il y a eu des caracteres convertis ?
-		if (addr > utf32Characters) {
-			sfEvent.Type = Event::TextEntered;
-			sfEvent.Text.Unicode = utf32Characters[0];
+		// Is it also a text event ?
+		if (IsTextEvent(event)) {
+			// buffer for the UTF-32 characters
+			Uint32 utf32Characters[2] = {0};
 			
-			SendEvent(sfEvent);
+			// convert the characters
+			if (!CFStringGetCString ((CFStringRef)[event characters],
+									 (char *)utf32Characters,
+									 sizeof(utf32Characters),
+									 kCFStringEncodingUTF32))
+			{
+				const char *utf8Char = NULL;
+				if ([[event characters] lengthOfBytesUsingEncoding:NSUTF8StringEncoding])
+					utf8Char = [[event characters] UTF8String]; 
+				
+				std::cerr << "Error while converting the character to UTF32 : "
+				<< ((utf8Char) ? utf8Char : "(undefined)") << std::endl;
+			}
+			else
+			{
+				sfEvent.Type = Event::TextEntered;
+				sfEvent.Text.Unicode = utf32Characters[0];
+				
+				SendEvent(sfEvent);
+			}
 		}
-	}
 #else
-	// Is it also a text event ?
-	if (IsTextEvent(event)) {
-		static NSMutableArray *arr = [[NSMutableArray alloc] initWithCapacity:1];
-		
-		sfEvent.Type = Event::TextEntered;
-		sfEvent.Text.Unicode = chr;
-		
-		NSText *field = [members->window fieldEditor:YES forObject:nil];
-		[arr addObject:event];
-		[field interpretKeyEvents:arr];
-		
-		if ([[field string] length]) {
-			unichar unichr = [[field string] characterAtIndex:0];
-			sfEvent.Text.Unicode = unichr;
-			SendEvent(sfEvent);
+		// Is it also a text event ?
+		if (IsTextEvent(event)) {
+			static NSMutableArray *arr = [[NSMutableArray alloc] initWithCapacity:1];
 			
-			unichar str[2] = {unichr, 0};
-			NSLog(@"Char::%@", [NSString stringWithCharacters:str length:2]);
+			sfEvent.Type = Event::TextEntered;
+			sfEvent.Text.Unicode = chr;
 			
-			[field setString:@""];
-			[arr removeAllObjects];
+			NSText *field = [myWindow fieldEditor:YES forObject:nil];
+			[arr addObject:event];
+			[field interpretKeyEvents:arr];
+			
+			if ([[field string] length]) {
+				unichar unichr = [[field string] characterAtIndex:0];
+				sfEvent.Text.Unicode = unichr;
+				SendEvent(sfEvent);
+				
+				unichar str[2] = {unichr, 0};
+				NSLog(@"Char::%@", [NSString stringWithCharacters:str length:2]);
+				
+				[field setString:@""];
+				[arr removeAllObjects];
+			}
+			
+			
+		}
+#endif
+		
+		// Anyway it's also a KeyPressed event
+		sfEvent.Type = Event::KeyPressed;
+		
+		// Get the keys
+		if (Key::Code(0) == (sfEvent.Key.Code = KeyForUnicode(rawchr))) {
+			sfEvent.Key.Code = KeyForVirtualCode([event keyCode]);
 		}
 		
+		// Get the modifiers
+		sfEvent.Key.Alt = mods & NSAlternateKeyMask;
+		sfEvent.Key.Control = mods & NSControlKeyMask;
+		sfEvent.Key.Shift = mods & NSShiftKeyMask;
 		
+		// Send the event
+		SendEvent(sfEvent);
 	}
-#endif
-	
-	// Anyway it's also a KeyPressed event
-	sfEvent.Type = Event::KeyPressed;
-	
-	// Get the keys
-	if (Key::Code(0) == (sfEvent.Key.Code = KeyForUnicode(rawchr))) {
-		sfEvent.Key.Code = KeyForVirtualCode([event keyCode]);
-	}
-	
-	// Get the modifiers
-	sfEvent.Key.Alt = mods & NSAlternateKeyMask;
-	sfEvent.Key.Control = mods & NSControlKeyMask;
-	sfEvent.Key.Shift = mods & NSShiftKeyMask;
-	
-	// Send the event
-	SendEvent(sfEvent);
-	
-	return UsedEvent;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Handle a key up event (NSEvent)
 ////////////////////////////////////////////////////////////
-int WindowImplCocoa::HandleKeyUp(void *eventRef)
+void WindowImplCocoa::HandleKeyUp(void *eventRef)
 {
 	NSEvent *event = static_cast <NSEvent *> (eventRef);
 	
@@ -509,46 +306,47 @@ int WindowImplCocoa::HandleKeyUp(void *eventRef)
 		if ([[event charactersIgnoringModifiers] length])
 			rawchr = [[event charactersIgnoringModifiers] characterAtIndex:0];
 		
+		sfEvent.Type = Event::KeyReleased;
+		
+		// Get the code
+		if (Key::Code(0) == (sfEvent.Key.Code = KeyForUnicode(rawchr))) {
+			sfEvent.Key.Code = KeyForVirtualCode([event keyCode]);
+		}
+		
+		// Get the modifiers
+		sfEvent.Key.Alt = mods & NSAlternateKeyMask;
+		sfEvent.Key.Control = mods & NSControlKeyMask;
+		sfEvent.Key.Shift = mods & NSShiftKeyMask;
+		
+		// Send the event
+		SendEvent(sfEvent);
 	}
-	
-	if (mods & NSCommandKeyMask) {
-		[NSApp sendEvent:event];
-	}
-	
-	sfEvent.Type = Event::KeyReleased;
-	
-	// Get the code
-	if (Key::Code(0) == (sfEvent.Key.Code = KeyForUnicode(rawchr))) {
-		sfEvent.Key.Code = KeyForVirtualCode([event keyCode]);
-	}
-	
-	// Get the modifiers
-	sfEvent.Key.Alt = mods & NSAlternateKeyMask;
-	sfEvent.Key.Control = mods & NSControlKeyMask;
-	sfEvent.Key.Shift = mods & NSShiftKeyMask;
-	
-	SendEvent(sfEvent);
-	
-	return UsedEvent;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Handle a key modifier event [Command, Option, Control, Shift]
 ////////////////////////////////////////////////////////////
-int WindowImplCocoa::HandleModifierKey(void *eventRef)
+void WindowImplCocoa::HandleModifierKey(void *eventRef)
 {
 	NSEvent *event = static_cast <NSEvent *> (eventRef);
 	Event sfEvent;
 	unsigned mods = [event modifierFlags];
 	
 	sfEvent.Type = Event::KeyPressed;
+	
+	// Get the code
 	sfEvent.Key.Code = KeyForVirtualCode([event keyCode]);
 	
+	// Get the modifiers
 	sfEvent.Key.Alt = mods & NSAlternateKeyMask;
 	sfEvent.Key.Control = mods & NSControlKeyMask;
 	sfEvent.Key.Shift = mods & NSShiftKeyMask;
 	
+	// Guess whether it's a pressed or released event
+	// Note: this does not work fine is both left and right modifiers are pressed
+	// I did not find any way to fix this.
+	// TODO: fix handling of modifier flags for use of left and right key at the same time
 	if (!(mods & NSAlternateKeyMask) &&
 		(sfEvent.Key.Code == Key::LAlt || sfEvent.Key.Code == Key::RAlt)) {
 		sfEvent.Type = Event::KeyReleased;
@@ -569,16 +367,15 @@ int WindowImplCocoa::HandleModifierKey(void *eventRef)
 		sfEvent.Type = Event::KeyReleased;
 	}
 	
+	// Send the event
 	SendEvent(sfEvent);
-	
-	return UnusedEvent;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Handle a mouse down event (NSEvent)
 ////////////////////////////////////////////////////////////
-int WindowImplCocoa::HandleMouseDown(void *eventRef)
+void WindowImplCocoa::HandleMouseDown(void *eventRef)
 {
 	NSEvent *event = static_cast <NSEvent *> (eventRef);
 	Event sfEvent;
@@ -589,18 +386,20 @@ int WindowImplCocoa::HandleMouseDown(void *eventRef)
 		case NSLeftMouseDown:
 			sfEvent.Type = Event::MouseButtonPressed;
 			
+			// Guess whether it's a mouse left or mouse right event
 			if (mods & NSControlKeyMask) {
 				sfEvent.MouseButton.Button = Mouse::Right;
 			} else {
 				sfEvent.MouseButton.Button = Mouse::Left;
 			}
 			
-			// Get mouse position
-			loc = MouseLocation(members->window);
+			// Get mouse position relative to the window
+			loc = [myWrapper mouseLocation];
 			
 			sfEvent.MouseButton.X = (int) loc.x;
 			sfEvent.MouseButton.Y = (int) loc.y;
 			
+			// Send the event
 			SendEvent(sfEvent);
 			break;
 			
@@ -608,28 +407,26 @@ int WindowImplCocoa::HandleMouseDown(void *eventRef)
 			sfEvent.Type = Event::MouseButtonPressed;
 			sfEvent.MouseButton.Button = Mouse::Right;
 			
-			// Get mouse position
-			loc = MouseLocation(members->window);
+			// Get mouse position relative to the window
+			loc = [myWrapper mouseLocation];
 			
 			sfEvent.MouseButton.X = (int) loc.x;
 			sfEvent.MouseButton.Y = (int) loc.y;
 			
+			// Send the event
 			SendEvent(sfEvent);
 			break;
 			
 		default:
 			break;
 	}
-	
-	return UnusedEvent;
-	
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Handle a mouse up event (NSEvent)
 ////////////////////////////////////////////////////////////
-int WindowImplCocoa::HandleMouseUp(void *eventRef)
+void WindowImplCocoa::HandleMouseUp(void *eventRef)
 {
 	NSEvent *event = static_cast <NSEvent *> (eventRef);
 	Event sfEvent;
@@ -640,18 +437,20 @@ int WindowImplCocoa::HandleMouseUp(void *eventRef)
 		case NSLeftMouseUp:
 			sfEvent.Type = Event::MouseButtonReleased;
 			
+			// Guess whether it's a mouse left or mouse right event
 			if (mods & NSControlKeyMask) {
 				sfEvent.MouseButton.Button = Mouse::Right;
 			} else {
 				sfEvent.MouseButton.Button = Mouse::Left;
 			}
 			
-			// Get mouse position
-			loc = MouseLocation(members->window);
+			// Get mouse position relative to the window
+			loc = [myWrapper mouseLocation];
 			
 			sfEvent.MouseButton.X = (int) loc.x;
 			sfEvent.MouseButton.Y = (int) loc.y;
 			
+			// Send the event
 			SendEvent(sfEvent);
 			break;
 			
@@ -659,32 +458,31 @@ int WindowImplCocoa::HandleMouseUp(void *eventRef)
 			sfEvent.Type = Event::MouseButtonReleased;
 			sfEvent.MouseButton.Button = Mouse::Right;
 			
-			// Get mouse position
-			loc = MouseLocation(members->window);
+			// Get mouse position relative to the window
+			loc = [myWrapper mouseLocation];
 			
 			sfEvent.MouseButton.X = (int) loc.x;
 			sfEvent.MouseButton.Y = (int) loc.y;
 			
+			// Send the event
 			SendEvent(sfEvent);
 			break;
 			
 		default:
 			break;
 	}
-	
-	return UnusedEvent;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Handle a mouse move event (NSEvent)
 ////////////////////////////////////////////////////////////
-int WindowImplCocoa::HandleMouseMove(void *eventRef)
+void WindowImplCocoa::HandleMouseMove(void *eventRef)
 {
 	Event sfEvent;
 	NSPoint loc = {0, 0};
 	
-	loc = MouseLocation(members->window);
+	loc = [myWrapper mouseLocation];
 	sfEvent.Type = Event::MouseMoved;
 	
 	sfEvent.MouseMove.X = (int) loc.x;
@@ -692,65 +490,55 @@ int WindowImplCocoa::HandleMouseMove(void *eventRef)
 	
 	SendEvent(sfEvent);
 	
-	// MouseEntered and MouseLeft events
-	if (MouseInside(members->window, members->view) && !mouseIn) {
+	if ([myWrapper mouseInside] && !myMouseIn) {
+		// If mouse IS inside but WAS not inside last time
 		sfEvent.Type = Event::MouseEntered;
-		mouseIn = true;
+		myMouseIn = true;
+		
 		SendEvent(sfEvent);
-	} else if (!MouseInside(members->window, members->view) && mouseIn) {
+	} else if (![myWrapper mouseInside] && myMouseIn) {
+		// Is mouse WAS not inside but IS now inside
 		sfEvent.Type = Event::MouseLeft;
-		mouseIn = false;
+		myMouseIn	= false;
+		
 		SendEvent(sfEvent);
 	}
-	
-	return UnusedEvent;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Handle a mouse wheel event (NSEvent)
 ////////////////////////////////////////////////////////////
-int WindowImplCocoa::HandleMouseWheel(void *eventRef)
+void WindowImplCocoa::HandleMouseWheel(void *eventRef)
 {
 	NSEvent *event = static_cast <NSEvent *> (eventRef);
 	
-	wheelStatus += [event deltaY];
+	// SFML uses integer values for delta but Cocoa uses float and it is mostly fewer than 1.0
+	// Therefore I chose to add the float value to a 'wheel status' and
+	// send a sf event only when it's greater than 1.0
+	myWheelStatus += [event deltaY];
 	
-	if (fabs(wheelStatus) > 1.0f) {
+	if (fabs(myWheelStatus) > 1.0f) {
+		// Make the event and send it
 		Event sfEvent;
 		sfEvent.Type = Event::MouseWheelMoved;
-		sfEvent.MouseWheel.Delta = (int) wheelStatus;
+		sfEvent.MouseWheel.Delta = (int) myWheelStatus;
 		SendEvent(sfEvent);
 		
-		wheelStatus -= (int) wheelStatus;
+		// Remove as much integer units as the one that have been put in the event
+		// (was a mistake to set this to 0)
+		myWheelStatus -= (int) myWheelStatus;
 	}
+}
 	
-	return UnusedEvent;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Return a pointer to the SFWindow object
-////////////////////////////////////////////////////////////
-void *WindowImplCocoa::CocoaWindow(void)
-{
-	return static_cast <void *> (members->window);
-}
-
-////////////////////////////////////////////////////////////
-/// Return whether the window is in full screen mode
-////////////////////////////////////////////////////////////
-bool WindowImplCocoa::IsFullscreen(void)
-{
-	return fullscreen;
-}
-
+	
 ////////////////////////////////////////////////////////////
 /// /see sfWindowImpl::Display
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::Display()
 {
-	[members->context flushBuffer];
+	// Forward flush call to the window
+	[myWrapper flushBuffer];
 }
 
 
@@ -759,10 +547,8 @@ void WindowImplCocoa::Display()
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::ProcessEvents()
 {
-	if (![NSApp isRunning])
-		return;
-	
-	[[AppController sharedController] processEvents];
+	// Forward event handling call to the application controller
+	[SharedAppController processEvents];
 }
 
 
@@ -771,13 +557,8 @@ void WindowImplCocoa::ProcessEvents()
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::SetActive(bool Active) const
 {
-	if (Active) {
-		if ([NSOpenGLContext currentContext] != members->context)
-			[members->context makeCurrentContext];
-	} else {
-		if ([NSOpenGLContext currentContext] == members->context)
-			[NSOpenGLContext clearCurrentContext];
-	}
+	// Forward the call to the window
+	[myWrapper setActive:Active];
 }
 
 
@@ -786,8 +567,8 @@ void WindowImplCocoa::SetActive(bool Active) const
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::UseVerticalSync(bool Enabled)
 {
-	GLint enable = (Enabled) ? 1 : 0;
-	[members->context setValues:&enable forParameter:NSOpenGLCPSwapInterval];
+	// Forward the call to the window
+	[myWrapper enableVerticalSync:Enabled];
 }
 
 
@@ -811,24 +592,21 @@ void WindowImplCocoa::SetCursorPosition(unsigned int Left, unsigned int Top)
 {
 	NSPoint pos = NSMakePoint ((float) Left, (float) Top);
 	
-	if (members->window) {
+	if (myWrapper) {
 		// Flip for SFML window coordinate system
-		pos.y = [members->window frame].size.height - pos.y;
+		pos.y = [[myWrapper window] frame].size.height - pos.y;
 		
 		// Adjust for view reference instead of window
-		pos.y -= [members->window frame].size.height - [members->view frame].size.height;
+		pos.y -= [[myWrapper window] frame].size.height - [[myWrapper glView] frame].size.height;
 		
 		// Convert to screen coordinates
-		NSPoint absolute = [members->window convertBaseToScreen:pos];
+		NSPoint absolute = [[myWrapper window] convertBaseToScreen:pos];
 		
 		// Flip screen coodinates
 		absolute.y = [[NSScreen mainScreen] frame].size.height - absolute.y;
 		
 		// Move cursor
 		CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(absolute.x, absolute.y));
-	} else {
-		std::cerr << "*** SFML: uninitialized 'members->window' member (objc_members) in "
-			 << this << " (sf::priv::WindowImplCocoa)" << std::endl;
 	}
 }
 
@@ -838,16 +616,7 @@ void WindowImplCocoa::SetCursorPosition(unsigned int Left, unsigned int Top)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::SetPosition(int Left, int Top)
 {
-	if (members->window) {
-		if (!fullscreen) {
-			// Change the window position
-			Top = (int) [[members->window screen] frame].size.height - Top;
-			[members->window setFrameTopLeftPoint:NSMakePoint(Left, Top)];
-		}
-	} else {
-		std::cerr << "*** SFML: uninitialized 'members->window' member (objc_members) in "
-			 << this << " (sf::priv::WindowImplCocoa)";
-	}
+	[myWrapper setPosition:NSMakePoint(Left, Top)];
 }
 
 
@@ -857,17 +626,7 @@ void WindowImplCocoa::SetPosition(int Left, int Top)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::SetSize(unsigned int Width, unsigned int Height)
 {
-	if (members->window) {
-		if (!fullscreen) {
-			[members->window setFrame:NSMakeRect([members->window frame].origin.x,
-												 [members->window frame].origin.y,
-												 (float) Width, (float) Height)
-			 display:YES];
-		}
-	} else {
-		std::cerr << "*** SFML: uninitialized 'members->window' member (objc_members) in "
-			 << this << " (sf::priv::WindowImplCocoa)" << std::endl;
-	}
+	[myWrapper setSize:NSMakeSize(Width, Height)];
 }
 
 
@@ -876,83 +635,7 @@ void WindowImplCocoa::SetSize(unsigned int Width, unsigned int Height)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::Show(bool State)
 {
-	if (State && ![members->window isVisible]) {
-		// Wanna open the closed window
-		
-		// Register ourselves for event handling
-		[[AppController sharedController] registerWindow:this];
-		
-		if (fullscreen) {
-			desktopMode = VideoMode::GetDesktopMode();
-			
-			CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
-																		  fullscreenMode.BitsPerPixel,
-																		  fullscreenMode.Width,
-																		  fullscreenMode.Height,
-																		  NULL);
-			
-			CGDisplayFadeReservationToken token = kCGDisplayFadeReservationInvalidToken;
-			
-			// Fade to a black screen
-			[SharedAppController doFadeOperation:FillScreen time:0.5f sync:true token:&token];
-			[NSMenu setMenuBarVisible:NO];
-			
-			// Switch to the wished display mode
-			CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
-			
-			// Open the window
-			[members->window makeKeyAndOrderFront:nil];
-			[members->window center];
-			
-			// Fade to normal screen
-			[SharedAppController doFadeOperation:CleanScreen time:0.2f sync:false token:&token];
-			
-		} else {
-			// Show the window
-			// Note: using these two lines instead of -[NSWindow makeKeyAndOrderFront:]
-			// in order to prevent the standard window buttons from not displaying
-			// the "mouse over" icons
-			[members->window orderFront:nil];
-			[members->window makeKeyWindow];
-			
-		}
-	} else if (!State && [members->window isVisible]) {
-		// Wanna close the opened window
-		
-		if (fullscreen) {
-			CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
-																		  desktopMode.BitsPerPixel,
-																		  desktopMode.Width,
-																		  desktopMode.Height,
-																		  NULL);
-			
-			CGDisplayFadeReservationToken token = kCGDisplayFadeReservationInvalidToken;
-			
-			// Fade to black screen
-			[SharedAppController doFadeOperation:FillScreen time:0.2f sync:true token:&token];
-			
-			// Switch to the wished display mode
-			CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
-			
-			// Close the window
-			[members->window close];
-			[NSMenu setMenuBarVisible:YES];
-			
-			// Fade to normal screen
-			[SharedAppController doFadeOperation:CleanScreen time:0.5f sync:false token:&token];
-			
-			// Do not sync but sleep so that the Dock and the Finder desktop go back to normal
-			// state before the end of the fade operation
-			sf::Sleep(0.5f);
-		} else {
-			// Close the window
-			[members->window close];
-			
-		}
-		
-		// Unregister ourselves from the event handler
-		[[AppController sharedController] unregisterWindow:this];
-	}
+	[myWrapper show:State];
 }
 
 
@@ -961,7 +644,7 @@ void WindowImplCocoa::Show(bool State)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::EnableKeyRepeat(bool Enabled)
 {
-	useKeyRepeat = Enabled;
+	myUseKeyRepeat = Enabled;
 }
 
 
@@ -971,270 +654,6 @@ void WindowImplCocoa::EnableKeyRepeat(bool Enabled)
 void WindowImplCocoa::SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixels)
 {
 	// Nothing to do
-}
-
-
-////////////////////////////////////////////////////////////
-/// Make some allocations and initializations
-////////////////////////////////////////////////////////////
-void WindowImplCocoa::Initialize(void)
-{
-	// Allocate mem for the private objc members
-	members = new objc_members;
-	bzero(members, sizeof(*members));
-	
-	// Needed to always have an autorelease pool as soon as application is launched
-	ONCE([SharedAppController resetPool]);
-	
-	// Register application if needed and launch it
-	ONCE([SharedAppController runApplication]);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Make the window
-////////////////////////////////////////////////////////////
-static SFWindow *MakeWindow(WindowSettings& params, unsigned long style, VideoMode& mode, NSString *title)
-{
-	SFWindow *window = nil;
-	
-	NSRect frame = NSMakeRect (0.0f, 0.0f, (float) mode.Width, (float) mode.Height);
-	unsigned int mask = 0;
-	
-	// We grab options from WindowStyle and add them to our window mask
-	if (style & Style::None || style & Style::Fullscreen) {
-		mask |= NSBorderlessWindowMask;
-		
-		if (style & Style::Fullscreen) {
-			// Check display mode and put new values in 'mode' if needed
-			boolean_t exact = true;
-			CFDictionaryRef properties = CGDisplayBestModeForParameters(kCGDirectMainDisplay, mode.BitsPerPixel,
-																		mode.Width, mode.Height, &exact);
-			
-			if (!properties) {
-				std::cerr << "*** SFML: unable to get a display mode with the given parameters" << std::endl; 
-				return nil;
-			}
-			
-			if (exact == false) {
-				CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayWidth),
-								 kCFNumberIntType, &mode.Width);
-				
-				CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayHeight),
-								 kCFNumberIntType, &mode.Height);
-				
-				CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayBitsPerPixel),
-								 kCFNumberIntType, &mode.BitsPerPixel);
-			}
-		}
-		
-	} else {
-		if (style & Style::Titlebar) {
-			mask |= NSTitledWindowMask;
-			mask |= NSMiniaturizableWindowMask;
-		}
-		
-		if (style & Style::Resize) {
-			mask |= NSTitledWindowMask;
-			mask |= NSMiniaturizableWindowMask;
-			mask |= NSResizableWindowMask;
-		}
-		
-		if (style & Style::Close) {
-			mask |= NSTitledWindowMask;
-			mask |= NSClosableWindowMask;
-			mask |= NSMiniaturizableWindowMask;
-		}
-	}
-	
-	// Now we make the window with the values we got
-	// Note: defer flag set to NO to be able to use OpenGL in our window
-	window =[massert([SFWindow alloc]) initWithContentRect:frame
-												  styleMask:mask
-													backing:NSBackingStoreBuffered
-													  defer:NO];
-	
-	if (window != nil) {
-		// We set title and window position
-		[window setTitle:title];
-		[window center];
-	}
-	
-	return window;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Make the OpenGL pixel format from the given attributes
-////////////////////////////////////////////////////////////
-static NSOpenGLContext *MakeOpenGLContext(WindowSettings& params)
-{
-	NSOpenGLPixelFormat *pixFormat = nil;
-	NSOpenGLContext *context = nil;
-	unsigned idx = 0;
-#if ENABLE_ANTIALIASING
-	unsigned samplesIdx = 0;
-#endif
-	
-	// Attributes list
-	NSOpenGLPixelFormatAttribute attribs[15] = {(NSOpenGLPixelFormatAttribute) 0};
-	
-	// Accelerated, double buffered
-	attribs[idx++] = NSOpenGLPFAClosestPolicy;
-	attribs[idx++] = NSOpenGLPFADoubleBuffer;
-	attribs[idx++] = NSOpenGLPFAAccelerated;
-	
-	// windowed context
-	attribs[idx++] = NSOpenGLPFAWindow;
-	
-	// Color size ; usually 32 bits per pixel
-	attribs[idx++] = NSOpenGLPFAColorSize;
-	attribs[idx++] = (NSOpenGLPixelFormatAttribute) VideoMode::GetDesktopMode().BitsPerPixel;
-	
-	// Z-buffer size
-	attribs[idx++] = NSOpenGLPFADepthSize;
-	attribs[idx++] = (NSOpenGLPixelFormatAttribute) params.DepthBits;
-	
-	// Stencil bits (I don't really know what's that...)
-	attribs[idx++] = NSOpenGLPFAStencilSize;
-	attribs[idx++] = (NSOpenGLPixelFormatAttribute) params.StencilBits;
-	
-#if ENABLE_ANTIALIASING
-	// Antialiasing settings
-	if (params.AntialiasingLevel) {
-		samplesIdx = idx;
-		
-		attribs[idx++] = NSOpenGLPFASamples;
-		attribs[idx++] = (NSOpenGLPixelFormatAttribute) params.AntialiasingLevel;
-		
-		attribs[idx++] = NSOpenGLPFASampleBuffers;
-		attribs[idx++] = (NSOpenGLPixelFormatAttribute) GL_TRUE;
-	}
-#endif
-	
-	pixFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
-	
-#if ENABLE_ANTIALIASING
-	// If pixel format creation fails and antialiasing level is
-	// greater than 2, we set it to 2.
-	if (pixFormat == nil && params.AntialiasingLevel > 2) {
-		std::cerr << "Failed to find a pixel format supporting " << params.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
-		params.AntialiasingLevel = attribs[samplesIdx + 1] = (NSOpenGLPixelFormatAttribute) 2;
-		
-		pixFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
-	}
-	
-	// If pixel format creation fails and antialiasing is enabled,
-	// we disable it.
-	if (pixFormat == nil && params.AntialiasingLevel > 0) {
-		std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
-		attribs[samplesIdx] = (NSOpenGLPixelFormatAttribute) nil;
-		
-		pixFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
-	}
-#endif
-	
-	if (pixFormat) {
-		context = [[NSOpenGLContext alloc] initWithFormat:pixFormat
-											 shareContext:[sharedContext retain]];
-		
-		// Get the effective properties from our OpenGL context
-		GLint tmpDepthSize = 0, tmpStencilBits = 0, tmpAntialiasingLevel = 0;
-		
-		if (context) {
-			[pixFormat getValues:&tmpDepthSize
-					forAttribute:NSOpenGLPFADepthSize
-				forVirtualScreen:[context currentVirtualScreen]];
-			
-			[pixFormat getValues:&tmpStencilBits
-					forAttribute:NSOpenGLPFAStencilSize
-				forVirtualScreen:[context currentVirtualScreen]];
-			
-			[pixFormat getValues:&tmpAntialiasingLevel
-					forAttribute:NSOpenGLPFASamples
-				forVirtualScreen:[context currentVirtualScreen]];
-		}
-		
-		
-		params.DepthBits = (unsigned) tmpDepthSize;
-		params.StencilBits = (unsigned) tmpStencilBits;
-		params.AntialiasingLevel = (unsigned) tmpAntialiasingLevel;
-		
-		[pixFormat release];
-	}
-	
-	return context;
-}
-
-
-static NSOpenGLView	* MakeOpenGLView(SFWindow *window, NSOpenGLContext *context, WindowSettings& params)
-{
-	assert(window != nil);
-	assert(context != nil);
-	
-	NSOpenGLView *view = nil;
-	
-	
-	// We make the NSOpenGLView
-	view = [[NSOpenGLView alloc] initWithFrame:[[window contentView] bounds]
-								   pixelFormat:nil];
-	
-	if (view) {
-		// We add the NSOpenGLView to the window
-		[[window contentView] addSubview:view];
-		
-		[view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-		[view clearGLContext];
-		[view setOpenGLContext:context];
-		[context setView:view];
-	}
-	
-	return view;
-}
-
-
-static void ConfigureWindow(SFWindow *window, NSOpenGLView *view, WindowController *controller)
-{
-	assert(window != nil);
-	assert(view != nil);
-	assert(controller != nil);
-	
-	// We need to update the OpenGL view when it changes
-	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-	[nc addObserver:controller
-		   selector:@selector(viewFrameDidChange:)
-			   name:NSViewFrameDidChangeNotification
-			 object:view];
-	
-	// We want to know when our window got the focus
-	[nc addObserver:controller
-		   selector:@selector(windowDidBecomeMain:)
-			   name:NSWindowDidBecomeMainNotification
-			 object:window];
-	
-	// We want to know when our window lost the focus
-	[nc addObserver:controller
-		   selector:@selector(windowDidResignMain:)
-			   name:NSWindowDidResignMainNotification
-			 object:window];
-	
-	// We want to know when the user closes the window
-	[nc addObserver:controller
-		   selector:@selector(windowWillClose:)
-			   name:NSWindowWillCloseNotification
-			 object:window];
-	
-	// I want to re-center the window if it's a full screen one and moved by Spaces
-	[nc addObserver:controller
-		   selector:@selector(windowDidMove:)
-			   name:NSWindowDidMoveNotification
-			 object:window];
-	
-	
-	// Needed not to make application crash when releasing the window in our destructor
-	// (I prefer to take control of everything :P)
-	[window setReleasedWhenClosed:NO];
-	[window setAcceptsMouseMovedEvents:YES];
 }
 
 
@@ -1295,7 +714,7 @@ static Key::Code KeyForVirtualCode(unsigned short vCode)
 		{0x36, Key::RSystem},	//< Right Command
 		{0x3C, Key::RShift},	//< Right Shift
 		
-		{0x39, Key::Code(0)}	//< Caps Lock
+		{0x39, Key::Code(0)}	//< Caps Lock (not handled by SFML for now)
 	};
 	
 	Key::Code result = Key::Code(0);
@@ -1316,6 +735,7 @@ static Key::Code KeyForVirtualCode(unsigned short vCode)
 ////////////////////////////////////////////////////////////
 static Key::Code KeyForUnicode(unsigned short uniCode)
 {
+	// TODO: find a better way to get the language independant key
 	static struct {
 		unsigned short character;
 		Key::Code sfKey;
@@ -1415,43 +835,6 @@ static bool IsTextEvent(NSEvent *event)
 	return res;
 }
 
-	
-////////////////////////////////////////////////////////////
-/// Return whether the mouse is on our OpenGL view
-////////////////////////////////////////////////////////////
-static bool MouseInside(SFWindow *window, NSView *view)
-{
-	bool res = false;
-	
-	if (window && view && [window isVisible]) {
-		NSPoint relativeToWindow = [window mouseLocationOutsideOfEventStream];
-		NSPoint relativeToView = [view convertPoint:relativeToWindow fromView:nil];
-		
-		if (NSPointInRect (relativeToView, [view bounds]))
-			res = true;
-	}
-	
-	return res;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Return the mouse location in the SFML coordinates according to 'window'
-////////////////////////////////////////////////////////////
-static NSPoint MouseLocation(SFWindow *window)
-{
-	NSPoint location = [NSEvent mouseLocation];
-	NSPoint	relativeLocation = {0, 0};
-	
-	if (window) {
-		relativeLocation = [window convertScreenToBase:location];
-		relativeLocation.y = [[window contentView] frame].size.height - relativeLocation.y;
-	} else {
-		std::cerr << "*** SFML: tried to get mouse location from no window" << std::endl;
-	}
-	
-	return relativeLocation;
-}
 
 } // namespace priv
 

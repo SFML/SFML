@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2008 Lucas Soltic (elmerod@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Lucas Soltic (ceylow@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,14 +27,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/Cocoa/AppController.h>
-#import <SFML/Window/Cocoa/WindowController.h>
-#import <SFML/Window/Cocoa/WindowImplCocoa.hpp>
+#import <SFML/Window/Cocoa/GLKit.h>
 #import <SFML/System.hpp>
 #import <ApplicationServices/ApplicationServices.h>
 #import <iostream>
 
 
-// AppController singleton
+// AppController singleton object
 static AppController *shared = nil;
 
 
@@ -61,160 +60,120 @@ static AppController *shared = nil;
 
 @implementation AppController
 
+
+////////////////////////////////////////////////////////////
+/// Return an initialized AppController instance
+/// Save the desktop mode
+/// Make the main autorelease pool
+/// Set the application observer
+////////////////////////////////////////////////////////////
 - (id)init
 {
 	self = [super init];
 	
 	if (self != nil) {
-		windows = new std::vector <sf::priv::WindowImplCocoa *>;
-		cleaner = new sf::Clock;
+		myOwningEventLoop = NO;
+		
+		// Save the desktop mode
+		myDesktopMode = sf::VideoMode::GetDesktopMode();
+		myPrevMode = myDesktopMode;
+		
+		// Make the app autorelease pool
+		myMainPool = [[NSAutoreleasePool alloc] init];
+		
+		// Don't go on if the user handles the app
+		if (![NSApp isRunning])
+		{
+			// Force our application to appear in the Dock and make it able
+			// to get focus (even when it's a raw executable)
+			ProcessSerialNumber psn;
+			
+			if (!GetCurrentProcess(&psn)) {
+				TransformProcessType(&psn, kProcessTransformToForegroundApplication);
+				SetFrontProcess(&psn);
+			}
+			
+			// Make the app
+			[NSApplication sharedApplication];
+			
+			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+			// I want to go back to the desktop mode
+			// if we've a fullscreen window when hiding
+			[nc addObserver:self
+				   selector:@selector(applicationWillHide:)
+					   name:NSApplicationWillHideNotification
+					 object:NSApp];
+			
+			// And restore de fullscreen mode when unhiding
+			[nc addObserver:self
+				   selector:@selector(applicationWillUnhide:)
+					   name:NSApplicationWillUnhideNotification
+					 object:NSApp];
+			
+			// Go back to desktop mode before exit
+			[nc addObserver:self
+				   selector:@selector(applicationWillTerminate:)
+					   name:NSApplicationWillTerminateNotification
+					 object:NSApp];
+			
+			if ([NSApp mainMenu] == nil) {
+				[self makeMenuBar];
+			}
+		}
 	}
 	
 	return self;
 }
 
 
+////////////////////////////////////////////////////////////
+/// Clean the controller
+////////////////////////////////////////////////////////////
 - (void)dealloc
 {
-	delete windows;
-	delete cleaner;
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[myFullscreenWrapper release];
 	[super dealloc];
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Return the shared AppController object. Makes one if needed
+/// Return the shared AppController instance. Make one if needed.
 ////////////////////////////////////////////////////////////
 + (AppController *)sharedController
 {
-	if (nil == shared) {
-		shared = [massert([AppController alloc]) init];
-	}
+	if (nil == shared)
+		shared = [[AppController alloc] init];
 	
 	return shared;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Reallocate main pool to release autoreleased objects
-////////////////////////////////////////////////////////////
-- (void)resetPool
-{
-	[mainPool release];
-	
-	mainPool = [massert([NSAutoreleasePool alloc]) init];
-}
-
-
-////////////////////////////////////////////////////////////
-/// Register our application and launch it if needed
-////////////////////////////////////////////////////////////
-- (void)runApplication
-{
-	if ([NSApp isRunning])
-		return;
-	
-	// We want our application to appear in the Dock and be able
-	// to get focus
-	ProcessSerialNumber psn;
-	
-    if (!GetCurrentProcess(&psn)) {
-        TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-        SetFrontProcess(&psn);
-    }
-	
-    if (NSApp == nil) {
-        massert([NSApplication sharedApplication]);
-    }
-	
-	if ([NSApp mainMenu] == nil) {
-		[self makeMenuBar];
-	}
-	
-	[NSApp finishLaunching];
-    [NSApp setRunning:YES];
-	[NSApp setDelegate:self];
-	
-	desktopMode = sf::VideoMode::GetDesktopMode();
-}
-
-
-////////////////////////////////////////////////////////////
-/// Terminate the current running application
-////////////////////////////////////////////////////////////
-- (void)quitApplication:(id)sender
-{
-	// Close all windows
-	// SFML user has to detect when all windows are closed
-	NSWindow *current = nil;
-	sf::priv::WindowImplCocoa *priv = NULL;
-	
-	while (windows->size()) {
-		priv = windows->at(0);
-		current = static_cast <NSWindow *> (priv->CocoaWindow());
-		[current close];
-		windows->erase(windows->begin());
-	}
-}
-
-
-////////////////////////////////////////////////////////////
-/// Returns the first full screen window found or nil
-////////////////////////////////////////////////////////////
-- (SFWindow *)fullscreenWindow
-{
-	SFWindow *window = nil;
-	std::vector<sf::priv::WindowImplCocoa *>::size_type sz = windows->size();
-	std::vector<sf::priv::WindowImplCocoa *>::size_type idx;
-	
-	for (idx = 0; idx < sz; idx++) {
-		sf::priv::WindowImplCocoa *win = windows->at(idx);
-		if (win && win->IsFullscreen()) {
-			window = static_cast <SFWindow *> (win->CocoaWindow());
-			break;
-		}
-	}
-	
-	return window;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Hide all the fullscreen windows and switch to desktop display mode
+/// Hide all the fullscreen windows and switch back to the desktop display mode
 ////////////////////////////////////////////////////////////
 - (void)applicationWillHide:(NSNotification *)aNotification
 {
-	if ([self isUsingFullscreen]) {
-		prevMode = sf::VideoMode::GetDesktopMode();
+	if (myFullscreenWrapper) {
+		myPrevMode = sf::VideoMode::GetDesktopMode();
 		
 		CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
-																	  desktopMode.BitsPerPixel,
-																	  desktopMode.Width,
-																	  desktopMode.Height,
+																	  myDesktopMode.BitsPerPixel,
+																	  myDesktopMode.Width,
+																	  myDesktopMode.Height,
 																	  NULL);
 		
-		CGDisplayFadeReservationToken token = kCGDisplayFadeReservationInvalidToken;
-		
 		// Fade to black screen
-		[SharedAppController doFadeOperation:FillScreen time:0.2f sync:true token:&token];
+		[self doFadeOperation:FillScreen time:0.2f sync:true];
 		
-		// Make all the full screen SFML windows unvisible
-		std::vector<sf::priv::WindowImplCocoa *>::size_type sz = windows->size();
-		std::vector<sf::priv::WindowImplCocoa *>::size_type idx;
-		
-		for (idx = 0; idx < sz; idx++) {
-			sf::priv::WindowImplCocoa *win = windows->at(idx);
-			
-			if (win->IsFullscreen()) {
-				[static_cast <SFWindow *> (win->CocoaWindow()) setAlphaValue:0.0f];
-			}
-		}
+		// Make the full screen window unvisible
+		[[myFullscreenWrapper window] setAlphaValue:0.0f];
 		
 		// Switch to the wished display mode
 		CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
 		
 		// Fade to normal screen
-		[SharedAppController doFadeOperation:CleanScreen time:0.5f sync:false token:&token];
+		[self doFadeOperation:CleanScreen time:0.5f sync:false];
 	}
 }
 
@@ -224,40 +183,42 @@ static AppController *shared = nil;
 ////////////////////////////////////////////////////////////
 - (void)applicationWillUnhide:(NSNotification *)aNotification
 {
-	if ([self isUsingFullscreen]) {
+	if (myFullscreenWrapper) {
 		CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
-																	  prevMode.BitsPerPixel,
-																	  prevMode.Width,
-																	  prevMode.Height,
+																	  myPrevMode.BitsPerPixel,
+																	  myPrevMode.Width,
+																	  myPrevMode.Height,
 																	  NULL);
 		
-		CGDisplayFadeReservationToken token = kCGDisplayFadeReservationInvalidToken;
-		
 		// Fade to a black screen
-		[SharedAppController doFadeOperation:FillScreen time:0.5f sync:true token:&token];
+		[self doFadeOperation:FillScreen time:0.5f sync:true];
 		[NSMenu setMenuBarVisible:NO];
 		
 		// Switch to the wished display mode
 		CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
 		
-		// Make all the SFML windows visible
-		std::vector<sf::priv::WindowImplCocoa *>::size_type sz = windows->size();
-		std::vector<sf::priv::WindowImplCocoa *>::size_type idx;
-		
-		for (idx = 0; idx < sz; idx++) {
-			sf::priv::WindowImplCocoa *win = windows->at(idx);
-			
-			if (win->IsFullscreen()) {
-				[static_cast <SFWindow *> (win->CocoaWindow()) setAlphaValue:1.0f];
-				[static_cast <SFWindow *> (win->CocoaWindow()) center];
-			}
+		// Show the fullscreen window if existing
+		if (myFullscreenWrapper)
+		{
+				[[myFullscreenWrapper window] setAlphaValue:1.0f];
+				[[myFullscreenWrapper window] center];
 		}
 		
 		// Fade to normal screen
-		[SharedAppController doFadeOperation:CleanScreen time:0.5f sync:false token:&token];
+		[self doFadeOperation:CleanScreen time:0.5f sync:false];
 	}
 }
 
+
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
+	if (myFullscreenWrapper)
+		[self setFullscreenWindow:nil mode:NULL];
+	
+	// FIXME: should I really do this ? what about the user owned windows ?
+	// And is this really useful as the application is about to exit ?
+	[NSApp makeWindowsPerform:@selector(close) inOrder:NO];
+}
 
 ////////////////////////////////////////////////////////////
 /// Make menu bar
@@ -282,10 +243,10 @@ static AppController *shared = nil;
 	
 	
 	// Create the main menu bar
-	[NSApp setMainMenu:[massert([NSMenu alloc]) init]];
+	[NSApp setMainMenu:[[NSMenu alloc] init]];
 	
 	// Create the application menu
-	appleMenu = [massert([NSMenu alloc]) initWithTitle:@""];
+	appleMenu = [[NSMenu alloc] initWithTitle:@""];
 	
 	// Put menu items
 	// + 'About' menu item
@@ -317,15 +278,15 @@ static AppController *shared = nil;
 	
 	// + 'Quit' menu item
 	title = [@"Quit " stringByAppendingString:appName];
-	quitMenuItem = [[massert([NSMenuItem alloc])
+	quitMenuItem = [[[NSMenuItem alloc]
 					 initWithTitle:title 
-					 action:@selector(quitApplication:)
+					 action:@selector(terminate:)
 					 keyEquivalent:@"q"] autorelease];
-	[quitMenuItem setTarget:self];
+	//[quitMenuItem setTarget:self];
 	[appleMenu addItem:quitMenuItem];
 	
 	// Put the menu into the menubar
-	menuItem = [massert([NSMenuItem alloc])
+	menuItem = [[NSMenuItem alloc]
 				initWithTitle:@""
 				action:nil
 				keyEquivalent:@""];
@@ -338,11 +299,11 @@ static AppController *shared = nil;
 	[appleMenu release];
 	
 	// 'File' menu
-	fileMenu = [massert([NSMenu alloc])
+	fileMenu = [[NSMenu alloc]
 				initWithTitle:@"File"];
 	
 	// + 'Close' menu item
-	menuItem = [massert([NSMenuItem alloc]) 
+	menuItem = [[NSMenuItem alloc]
 				initWithTitle:@"Close"
 				action:@selector(performClose:)
 				keyEquivalent:@"w"];
@@ -350,7 +311,7 @@ static AppController *shared = nil;
 	[menuItem release];
 	
 	// + 'File' menu item (head)
-	menuItem = [massert([NSMenuItem alloc])
+	menuItem = [[NSMenuItem alloc]
 				initWithTitle:@"File"
 				action:nil
 				keyEquivalent:@""];
@@ -359,11 +320,11 @@ static AppController *shared = nil;
 	[menuItem release];
 	
 	// 'Window' menu
-	windowMenu = [massert([NSMenu alloc])
+	windowMenu = [[NSMenu alloc]
 				  initWithTitle:@"Window"];
 	
 	// + 'Minimize' menu item
-	menuItem = [massert([NSMenuItem alloc])
+	menuItem = [[NSMenuItem alloc]
 				initWithTitle:@"Minimize"
 				action:@selector(performMiniaturize:)
 				keyEquivalent:@"m"];
@@ -371,7 +332,7 @@ static AppController *shared = nil;
 	[menuItem release];
 	
 	// + 'Window' menu item (head)
-	menuItem = [massert([NSMenuItem alloc])
+	menuItem = [[NSMenuItem alloc]
 				initWithTitle:@"Window"
 				action:nil keyEquivalent:@""];
 	[menuItem setSubmenu:windowMenu];
@@ -385,127 +346,109 @@ static AppController *shared = nil;
 
 
 ////////////////////////////////////////////////////////////
-/// Delegate method in order to prevent usual -terminate:
-////////////////////////////////////////////////////////////
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
-{
-	[self quitApplication:nil];
-	return NSTerminateCancel;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Get the events and put them into an array for each window
+/// Process all the events and send them to the application
+/// No event is processed if the AppController instance is
+/// not the owner of the event loop (ie: user made his own loop)
 ////////////////////////////////////////////////////////////
 - (void)processEvents
 {
-	// Release the main autorelease pool every second
-	if (cleaner->GetElapsedTime() > 1.0f) {
-		cleaner->Reset();
-		[self resetPool];
+	// Check there is a run loop
+	if (![NSApp isRunning])
+	{
+		// Get the ownershipt of event handling if not and run
+		[NSApp finishLaunching];
+		[NSApp setRunning:YES];
+		myOwningEventLoop = YES;
 	}
+	
+	// Clean the autorelease pool
+	[myMainPool release];
+	myMainPool = [[NSAutoreleasePool alloc] init];
 	
 	NSEvent *event = nil;
 	
-	while (nil != (event = [NSApp nextEventMatchingMask:NSAnyEventMask
-											  untilDate:nil
-												 inMode:NSEventTrackingRunLoopMode
-												dequeue:YES])) {
-		NSWindow *keyWindow = [NSApp keyWindow];
-		
-		if (keyWindow == nil) {
-			// Is there a fullscreen WindowImpl object ?
+	if (myOwningEventLoop)
+	{
+		// Minimal event loop
+		while (nil != (event = [NSApp nextEventMatchingMask:NSAnyEventMask
+												  untilDate:nil
+													 inMode:NSEventTrackingRunLoopMode
+													dequeue:YES]))
+		{
 			[NSApp sendEvent:event];
-		} else {
-			
-			std::vector<sf::priv::WindowImplCocoa *>::size_type cnt = windows->size();
-			std::vector<sf::priv::WindowImplCocoa *>::size_type idx;
-			
-			// is the key window a SFML window ?
-			for (idx = 0;idx < cnt; idx++) {
-				sf::priv::WindowImplCocoa *ptr = windows->at(idx);;
-				
-				if (ptr->CocoaWindow() == keyWindow) {
-					// yup, it is
-					ptr->HandleEvent(static_cast <void *> (event));
-					break;
-				}
-			}
-			
-			// nop, it isn't
-			if (idx == cnt) {
-				[NSApp sendEvent:event];
-			}
 		}
 	}
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Add the 'windowImplObj' object to the list of known windows
+/// Set @window as the current fullscreen window
+/// Change the screen resolution if needed according to @window and @fullscreenMode
 ////////////////////////////////////////////////////////////
-- (void)registerWindow:(sf::priv::WindowImplCocoa *)windowImplObj
+- (void)setFullscreenWindow:(WindowWrapper *)aWrapper mode:(sf::VideoMode *)fullscreenMode
 {
-	
-	if (windowImplObj != NULL) {
-		std::vector<sf::priv::WindowImplCocoa *>::size_type sz = windows->size();
-		std::vector<sf::priv::WindowImplCocoa *>::size_type idx;
+	// If we have a fullscreen window and want to remove it
+	if (myFullscreenWrapper && aWrapper == nil)
+	{
+		// Get the CoreGraphics display mode according to the desktop mode
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
+																	  myDesktopMode.BitsPerPixel,
+																	  myDesktopMode.Width,
+																	  myDesktopMode.Height,
+																	  NULL);
 		
-		for (idx = 0; idx < sz; idx++) {
-			if (windows->at(idx) == windowImplObj) {
-				break;
-			}
-		}
+		// Fade to black screen
+		[self doFadeOperation:FillScreen time:0.2f sync:true];
 		
+		// Switch to the desktop display mode
+		CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
 		
-		// Register window only if not already registered
-		if (sz == idx) {
-			windows->push_back(windowImplObj);
-		}
+		// Close the window
+		[[myFullscreenWrapper window] close];
+		
+		// Show the menu bar
+		[NSMenu setMenuBarVisible:YES];
+		
+		// Fade to normal screen
+		[self doFadeOperation:CleanScreen time:0.5f sync:true];
+		
+		// Release the saved window wrapper
+		[myFullscreenWrapper release], myFullscreenWrapper = nil;
 	}
-}
-
-
-////////////////////////////////////////////////////////////
-/// Remove the 'windowImplObj' object from the list of known windows
-////////////////////////////////////////////////////////////
-- (void)unregisterWindow:(sf::priv::WindowImplCocoa *)windowImplObj
-{
-	if (windowImplObj != NULL) {
-		std::vector<sf::priv::WindowImplCocoa *>::size_type sz = windows->size();
-		std::vector<sf::priv::WindowImplCocoa *>::size_type idx;
+	else if (myFullscreenWrapper == nil && aWrapper)
+	{
+		assert(fullscreenMode != NULL);
 		
-		for (idx = 0; idx < sz; idx++) {
-			if (windows->at(idx) == windowImplObj) {
-				break;
-			}
-		}
+		// Get the CoreGraphics display mode according to the given sf mode
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
+																	  fullscreenMode->BitsPerPixel,
+																	  fullscreenMode->Width,
+																	  fullscreenMode->Height,
+																	  NULL);
 		
-		if (idx < sz) {
-			windows->erase(windows->begin() + idx);
-		}
+		// Fade to a black screen
+		[self doFadeOperation:FillScreen time:0.5f sync:true];
+		
+		// Hide to the main menu bar
+		[NSMenu setMenuBarVisible:NO];
+		
+		// Switch to the wished display mode
+		CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
+		
+		// Open and center the window
+		[[aWrapper window] makeKeyAndOrderFront:nil];
+		[[aWrapper window] center];
+		
+		// Fade to normal screen
+		[self doFadeOperation:CleanScreen time:0.2f sync:false];
+		
+		// Save the fullscreen wrapper
+		myFullscreenWrapper = [aWrapper retain];
 	}
-}
-
-
-////////////////////////////////////////////////////////////
-/// Return true is one of the registered window is a full screen one
-////////////////////////////////////////////////////////////
-- (bool)isUsingFullscreen
-{
-	bool isUsing = false;
-	std::vector<sf::priv::WindowImplCocoa *>::size_type sz = windows->size();
-	std::vector<sf::priv::WindowImplCocoa *>::size_type idx;
-	
-	for (idx = 0; idx < sz; idx++) {
-		sf::priv::WindowImplCocoa *win = windows->at(idx);
-		if (win && win->IsFullscreen()) {
-			isUsing = true;
-			break;
-		}
+	else
+	{
+		std::cerr << "Inconcistency error for arguments given to -[AppController setFullscreenWindow:mode:]" << std::endl;
 	}
-	
-	return isUsing;
 }
 
 
@@ -517,11 +460,10 @@ static AppController *shared = nil;
 /// using this method for the first time. This lets the method release some
 /// resources when doing CleanScreen operation.
 ////////////////////////////////////////////////////////////
-- (void) doFadeOperation:(int)operation time:(float)time sync:(bool)sync token:(CGDisplayFadeReservationToken *)prevToken
+- (void) doFadeOperation:(int)operation time:(float)time sync:(bool)sync
 {
-	CGDisplayFadeReservationToken token = kCGDisplayFadeReservationInvalidToken;
-	if (prevToken)
-		token = *prevToken;
+	static CGDisplayFadeReservationToken prevToken = kCGDisplayFadeReservationInvalidToken;
+	CGDisplayFadeReservationToken token = prevToken;
 	
 	CGError result = 0, capture = 0;
 	
@@ -539,7 +481,7 @@ static AppController *shared = nil;
 				CGDisplayFade(token, time,
 							  kCGDisplayBlendNormal,
 							  kCGDisplayBlendSolidColor,
-							  0.0, 0.0, 0.0, sync);
+							  0.0f, 0.0f, 0.0f, sync);
 				
 				// Now, release the non black-filling capture
 				CGDisplayRelease(kCGDirectMainDisplay);
@@ -549,8 +491,7 @@ static AppController *shared = nil;
 				CGDisplayCaptureWithOptions(kCGDirectMainDisplay, kCGCaptureNoOptions);
 			}
 			
-			if (prevToken)
-				*prevToken = token;
+			prevToken = token;
 		}
 	} else if (operation == CleanScreen) {
 		// Get access for the fade operation
@@ -569,14 +510,13 @@ static AppController *shared = nil;
 				CGDisplayFade(token, time,
 							  kCGDisplayBlendSolidColor,
 							  kCGDisplayBlendNormal,
-							  0.0, 0.0, 0.0, sync);
+							  0.0f, 0.0f, 0.0f, sync);
 				
 				// Release the fade operation token
 				CGReleaseDisplayFadeReservation(token);
 				
 				// Invalidate the given token
-				if (prevToken)
-					*prevToken = kCGDisplayFadeReservationInvalidToken;
+				prevToken = kCGDisplayFadeReservationInvalidToken;
 			}
 			
 			// Release the captured display
@@ -585,15 +525,14 @@ static AppController *shared = nil;
 	}
 }
 
+
+////////////////////////////////////////////////////////////
+/// Return the desktop video mode (made at the instance initialization)
+////////////////////////////////////////////////////////////
+- (const sf::VideoMode&)desktopMode
+{
+	return myDesktopMode;
+}
+
 @end
 
-
-template <typename T>
-T *massert(T *ptr)
-{
-	if (NULL == ptr) {
-		throw std::bad_alloc();
-	}
-	
-	return ptr;
-}
