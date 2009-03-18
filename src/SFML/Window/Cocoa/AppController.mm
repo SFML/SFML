@@ -372,7 +372,7 @@ static AppController *shared = nil;
 		// Minimal event loop
 		while (nil != (event = [NSApp nextEventMatchingMask:NSAnyEventMask
 												  untilDate:nil
-													 inMode:NSEventTrackingRunLoopMode
+													 inMode:NSDefaultRunLoopMode
 													dequeue:YES]))
 		{
 			[NSApp sendEvent:event];
