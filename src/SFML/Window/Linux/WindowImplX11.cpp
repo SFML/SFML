@@ -37,6 +37,19 @@
 #include <vector>
 
 
+namespace
+{
+    ////////////////////////////////////////////////////////////
+    /// Filter the events received by windows
+    /// (only allow those matching a specific window)
+    ////////////////////////////////////////////////////////////
+    Bool CheckEvent(::Display*, XEvent* Event, XPointer UserData)
+    {
+        // Just check if the event matches the window
+        return Event->xany.window == reinterpret_cast< ::Window >(UserData);
+    }
+}
+
 namespace sf
 {
 namespace priv
@@ -340,7 +353,16 @@ WindowImplX11::~WindowImplX11()
 
 ////////////////////////////////////////////////////////////
 /// Check if there's an active context on the current thread
+////////////////////
 ////////////////////////////////////////////////////////////
+/// Filter the received events
+/// (only allow those matching a specific window)
+////////////////////////////////////////////////////////////
+Bool CheckEvent(::Display*, XEvent* Event, XPointer UserData)
+{
+    // Just check if the event matches our window
+    return Event->xany.window == reinterpret_cast< ::Window >(UserData);
+}////////////////////////////////////////
 bool WindowImplX11::IsContextActive()
 {
     return glXGetCurrentContext() != NULL;
@@ -373,7 +395,7 @@ void WindowImplX11::ProcessEvents()
 
     // Process any event in the queue matching our window
     XEvent Event;
-    while (XCheckWindowEvent(ourDisplay, myWindow, ourEventMask, &Event))
+    while (XCheckIfEvent(ourDisplay, &Event, &CheckEvent, reinterpret_cast<XPointer>(myWindow)))
     {
         // Detect repeated key events
         if ((Event.type == KeyPress) || (Event.type == KeyRelease))
