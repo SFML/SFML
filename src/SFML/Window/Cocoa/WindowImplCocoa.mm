@@ -152,10 +152,7 @@ myWheelStatus(0.0f)
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::~WindowImplCocoa()
 {
-	// Make sure the window is closed
-	Show(false);
-	
-	// Release the window objects
+	// Release the window wrapper
 	[myWrapper release];
 }
 
