@@ -199,6 +199,17 @@ void sfMusic_SetPosition(sfMusic* Music, float X, float Y, float Z)
 
 
 ////////////////////////////////////////////////////////////
+/// Make the music's position relative to the listener's
+/// position, or absolute.
+/// The default value is false (absolute)
+////////////////////////////////////////////////////////////
+void sfMusic_SetRelativeToListener(sfMusic* music, sfBool Relative)
+{
+    CSFML_CALL(music, SetRelativeToListener(Relative == sfTrue));
+}
+
+
+////////////////////////////////////////////////////////////
 /// Set the minimum distance - closer than this distance,
 /// the listener will hear the music at its maximum volume.
 /// The default minimum distance is 1.0
@@ -252,6 +263,16 @@ void sfMusic_GetPosition(sfMusic* Music, float* X, float* Y, float* Z)
         *Y = Position.y;
         *Z = Position.z;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+/// Tell if the music's position is relative to the listener's
+/// position, or if it's absolute
+////////////////////////////////////////////////////////////
+CSFML_API sfBool sfMusic_IsRelativeToListener(sfMusic* Music)
+{
+    CSFML_CALL_RETURN(Music, IsRelativeToListener(), sfFalse);
 }
 
 

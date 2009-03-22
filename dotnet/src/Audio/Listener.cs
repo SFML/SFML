@@ -20,7 +20,7 @@ namespace SFML
             /// Global volume of all sounds, in range [0 .. 100] (default is 100)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            static float GlobalVolume
+            public static float GlobalVolume
             {
                 get {return sfListener_GetGlobalVolume();}
                 set {sfListener_SetGlobalVolume(value);}
@@ -31,7 +31,7 @@ namespace SFML
             /// 3D position of the listener (default is (0, 0, 0))
             /// </summary>
             ////////////////////////////////////////////////////////////
-            static Vector3 Position
+            public static Vector3 Position
             {
                 get {Vector3 v; sfListener_GetPosition(out v.X, out v.Y, out v.Z); return v;}
                 set {sfListener_SetPosition(value.X, value.Y, value.Z);}
@@ -43,7 +43,7 @@ namespace SFML
             /// (default is (0, 0, -1))
             /// </summary>
             ////////////////////////////////////////////////////////////
-            static Vector3 Target
+            public static Vector3 Target
             {
                 get {Vector3 v; sfListener_GetTarget(out v.X, out v.Y, out v.Z); return v;}
                 set {sfListener_SetTarget(value.X, value.Y, value.Z);}

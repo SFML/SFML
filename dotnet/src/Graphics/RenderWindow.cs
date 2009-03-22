@@ -519,7 +519,7 @@ namespace SFML
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_EnableKeyRepeat(IntPtr This, bool Enable);
 
-            [DllImport("csfml-graphics")]
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             unsafe static extern void sfRenderWindow_SetIcon(IntPtr This, uint Width, uint Height, byte* Pixels);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]

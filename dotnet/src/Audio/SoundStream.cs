@@ -132,6 +132,19 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Is the sound stream's position relative to the listener's position,
+            /// or is it absolute?
+            /// Default value is false (absolute)
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public bool RelativeToListener
+            {
+                get {return sfSoundStream_IsRelativeToListener(This);}
+                set {sfSoundStream_SetRelativeToListener(This, value);}
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Minimum distance of the sound stream. Closer than this distance,
             /// the listener will hear the sound at its maximum volume.
             /// The default value is 1
@@ -275,64 +288,70 @@ namespace SFML
             private short[]             myTempBuffer;
 
             #region Imports
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfSoundStream_Create(StartCallbackType OnStart, GetDataCallbackType OnGetData, uint ChannelsCount, uint SampleRate, IntPtr UserData);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_Destroy(IntPtr SoundStreamStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_Play(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_Pause(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_Stop(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern SoundStatus sfSoundStream_GetStatus(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern uint sfSoundStream_GetChannelsCount(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern uint sfSoundStream_GetSampleRate(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_SetLoop(IntPtr SoundStream, bool Loop);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_SetPitch(IntPtr SoundStream, float Pitch);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_SetVolume(IntPtr SoundStream, float Volume);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_SetPosition(IntPtr SoundStream, float X, float Y, float Z);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
+            static extern void sfSoundStream_SetRelativeToListener(IntPtr SoundStream, bool Relative);
+
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_SetMinDistance(IntPtr SoundStream, float MinDistance);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_SetAttenuation(IntPtr SoundStream, float Attenuation);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern bool sfSoundStream_GetLoop(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern float sfSoundStream_GetPitch(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern float sfSoundStream_GetVolume(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_GetPosition(IntPtr SoundStream, out float X, out float Y, out float Z);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
+            static extern bool sfSoundStream_IsRelativeToListener(IntPtr SoundStream);
+
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern float sfSoundStream_GetMinDistance(IntPtr SoundStream);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern float sfSoundStream_GetAttenuation(IntPtr SoundStream);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]

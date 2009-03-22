@@ -160,6 +160,16 @@ public :
     void SetPosition(const Vector3f& Position);
 
     ////////////////////////////////////////////////////////////
+    /// Make the sound's position relative to the listener's
+    /// position, or absolute.
+    /// The default value is false (absolute)
+    ///
+    /// \param Relative : True to set the position relative, false to set it absolute
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetRelativeToListener(bool Relative);
+
+    ////////////////////////////////////////////////////////////
     /// Set the minimum distance - closer than this distance,
     /// the listener will hear the sound at its maximum volume.
     /// The default minimum distance is 1.0
@@ -226,6 +236,15 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     Vector3f GetPosition() const;
+
+    ////////////////////////////////////////////////////////////
+    /// Tell if the sound's position is relative to the listener's
+    /// position, or if it's absolute
+    ///
+    /// \return True if the position is relative, false if it's absolute
+    ///
+    ////////////////////////////////////////////////////////////
+    bool IsRelativeToListener() const;
 
     ////////////////////////////////////////////////////////////
     /// Get the minimum distance
