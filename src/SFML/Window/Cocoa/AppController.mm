@@ -264,7 +264,7 @@ static AppController *shared = nil;
 				  keyEquivalent:@"h"];
 	
 	// + 'Hide other' menu item
-	menuItem = static_cast <NSMenuItem *> ([appleMenu addItemWithTitle:@"Hide Others"
+	menuItem = reinterpret_cast <NSMenuItem *> ([appleMenu addItemWithTitle:@"Hide Others"
 																action:@selector(hideOtherApplications:)
 														 keyEquivalent:@"h"]);
 	[menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
