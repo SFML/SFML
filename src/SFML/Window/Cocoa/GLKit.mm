@@ -278,58 +278,16 @@ static GLContext *sharedCtx = nil;
 
 
 ////////////////////////////////////////////////////////////
-/// Notification method receiver when the window gains focus
-////////////////////////////////////////////////////////////
-- (void)windowDidBecomeMain:(NSNotification *)notification
-{
-	sf::Event ev;
-	ev.Type = sf::Event::GainedFocus;
-	
-	[self pushEvent:ev];
-}
-
-
-////////////////////////////////////////////////////////////
-/// Notification method receiver when the window loses focus
-////////////////////////////////////////////////////////////
-- (void)windowDidResignMain:(NSNotification *)notification
-{
-	sf::Event ev;
-	ev.Type = sf::Event::LostFocus;
-	
-	[self pushEvent:ev];
-}
-
-
-////////////////////////////////////////////////////////////
-/// Notification method receiver when the window closes
-////////////////////////////////////////////////////////////
-- (void)windowWillClose:(NSNotification *)notification
-{
-	sf::Event ev;
-	ev.Type = sf::Event::Closed;
-	
-	[self pushEvent:ev];
-}
-
-////////////////////////////////////////////////////////////
-/// Notification method receiver when the window finish moving
-////////////////////////////////////////////////////////////
-- (void)windowDidMove:(NSNotification *)notification
-{
-	NSWindow *sender = [notification object];
-	
-	if (!([sender styleMask] & NSTitledWindowMask))
-		[sender center];
-}
-
-
-////////////////////////////////////////////////////////////
 /// Receiver method called when a key is pressed
 ////////////////////////////////////////////////////////////
 - (void)keyDown:(NSEvent *)theEvent
 {
 	assert(myDelegate != NULL);
+	
+	NSText *field = [[self window] fieldEditor:YES forObject:nil];
+	[field interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+	[field setString:@""];
+	
 	myDelegate->HandleKeyDown(theEvent);
 }
 
@@ -672,7 +630,7 @@ static GLContext *sharedCtx = nil;
 	
 	if (self)
 	{
-		if (myWindow) {
+		if (window) {
 			myWindow = (GLWindow *)[window retain];
 		} else {
 			assert(title != nil);
@@ -764,25 +722,25 @@ static GLContext *sharedCtx = nil;
 			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 			
 			// We want to know when our window got the focus
-			[nc addObserver:myView
+			[nc addObserver:self
 				   selector:@selector(windowDidBecomeMain:)
 					   name:NSWindowDidBecomeMainNotification
 					 object:myWindow];
 			
 			// We want to know when our window lost the focus
-			[nc addObserver:myView
+			[nc addObserver:self
 				   selector:@selector(windowDidResignMain:)
 					   name:NSWindowDidResignMainNotification
 					 object:myWindow];
 			
 			// We want to know when the user closes the window
-			[nc addObserver:myView
+			[nc addObserver:self
 				   selector:@selector(windowWillClose:)
 					   name:NSWindowWillCloseNotification
 					 object:myWindow];
 			
 			// I want to re-center the window if it's a full screen one and moved by Spaces
-			[nc addObserver:myView
+			[nc addObserver:self
 				   selector:@selector(windowDidMove:)
 					   name:NSWindowDidMoveNotification
 					 object:myWindow];
@@ -857,6 +815,7 @@ static GLContext *sharedCtx = nil;
 	// Remove the notification observer
 	if (myView)
 		[[NSNotificationCenter defaultCenter] removeObserver:myView];
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	// Close the window
 	[self show:false];
@@ -1011,6 +970,54 @@ static GLContext *sharedCtx = nil;
 {
 	assert(myView != nil);
 	[myView flushBuffer];
+}
+
+
+////////////////////////////////////////////////////////////
+/// Notification method receiver when the window gains focus
+////////////////////////////////////////////////////////////
+- (void)windowDidBecomeMain:(NSNotification *)notification
+{
+	sf::Event ev;
+	ev.Type = sf::Event::GainedFocus;
+	
+	[myView pushEvent:ev];
+}
+
+
+////////////////////////////////////////////////////////////
+/// Notification method receiver when the window loses focus
+////////////////////////////////////////////////////////////
+- (void)windowDidResignMain:(NSNotification *)notification
+{
+	sf::Event ev;
+	ev.Type = sf::Event::LostFocus;
+	
+	[myView pushEvent:ev];
+}
+
+
+////////////////////////////////////////////////////////////
+/// Notification method receiver when the window closes
+////////////////////////////////////////////////////////////
+- (void)windowWillClose:(NSNotification *)notification
+{
+	sf::Event ev;
+	ev.Type = sf::Event::Closed;
+	
+	[myView pushEvent:ev];
+}
+
+
+////////////////////////////////////////////////////////////
+/// Notification method receiver when the window finish moving
+////////////////////////////////////////////////////////////
+- (void)windowDidMove:(NSNotification *)notification
+{
+	NSWindow *sender = [notification object];
+	
+	if (!([sender styleMask] & NSTitledWindowMask))
+		[sender center];
 }
 
 @end

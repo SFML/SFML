@@ -193,7 +193,7 @@ void WindowImplCocoa::HandleNotifiedEvent(Event& event)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::HandleKeyDown(void *eventRef)
 {
-	NSEvent *event = static_cast <NSEvent *> (eventRef);
+	NSEvent *event = reinterpret_cast <NSEvent *> (eventRef);
 	
 	Event sfEvent;
 	unichar chr = 0, rawchr = 0;
@@ -212,13 +212,14 @@ void WindowImplCocoa::HandleKeyDown(void *eventRef)
 		if (!myUseKeyRepeat && [event isARepeat])
 			return;
 		
-#if 1
 		// Is it also a text event ?
 		if (IsTextEvent(event)) {
 			// buffer for the UTF-32 characters
 			Uint32 utf32Characters[2] = {0};
 			
 			// convert the characters
+			// note: using CFString in order to keep compatibility with Mac OS X 10.4
+			// (NSUTF32StringEncoding only defined since Mac OS X 10.5)
 			if (!CFStringGetCString ((CFStringRef)[event characters],
 									 (char *)utf32Characters,
 									 sizeof(utf32Characters),
@@ -228,7 +229,7 @@ void WindowImplCocoa::HandleKeyDown(void *eventRef)
 				if ([[event characters] lengthOfBytesUsingEncoding:NSUTF8StringEncoding])
 					utf8Char = [[event characters] UTF8String]; 
 				
-				std::cerr << "Error while converting the character to UTF32 : "
+				std::cerr << "Error while converting character to UTF32 : "
 				<< ((utf8Char) ? utf8Char : "(undefined)") << std::endl;
 			}
 			else
@@ -239,33 +240,6 @@ void WindowImplCocoa::HandleKeyDown(void *eventRef)
 				SendEvent(sfEvent);
 			}
 		}
-#else
-		// Is it also a text event ?
-		if (IsTextEvent(event)) {
-			static NSMutableArray *arr = [[NSMutableArray alloc] initWithCapacity:1];
-			
-			sfEvent.Type = Event::TextEntered;
-			sfEvent.Text.Unicode = chr;
-			
-			NSText *field = [myWindow fieldEditor:YES forObject:nil];
-			[arr addObject:event];
-			[field interpretKeyEvents:arr];
-			
-			if ([[field string] length]) {
-				unichar unichr = [[field string] characterAtIndex:0];
-				sfEvent.Text.Unicode = unichr;
-				SendEvent(sfEvent);
-				
-				unichar str[2] = {unichr, 0};
-				NSLog(@"Char::%@", [NSString stringWithCharacters:str length:2]);
-				
-				[field setString:@""];
-				[arr removeAllObjects];
-			}
-			
-			
-		}
-#endif
 		
 		// Anyway it's also a KeyPressed event
 		sfEvent.Type = Event::KeyPressed;
@@ -291,7 +265,7 @@ void WindowImplCocoa::HandleKeyDown(void *eventRef)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::HandleKeyUp(void *eventRef)
 {
-	NSEvent *event = static_cast <NSEvent *> (eventRef);
+	NSEvent *event = reinterpret_cast <NSEvent *> (eventRef);
 	
 	Event sfEvent;
 	unsigned mods = [event modifierFlags];
@@ -326,7 +300,7 @@ void WindowImplCocoa::HandleKeyUp(void *eventRef)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::HandleModifierKey(void *eventRef)
 {
-	NSEvent *event = static_cast <NSEvent *> (eventRef);
+	NSEvent *event = reinterpret_cast <NSEvent *> (eventRef);
 	Event sfEvent;
 	unsigned mods = [event modifierFlags];
 	
@@ -374,7 +348,7 @@ void WindowImplCocoa::HandleModifierKey(void *eventRef)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::HandleMouseDown(void *eventRef)
 {
-	NSEvent *event = static_cast <NSEvent *> (eventRef);
+	NSEvent *event = reinterpret_cast <NSEvent *> (eventRef);
 	Event sfEvent;
 	NSPoint loc = {0, 0};
 	unsigned mods = [event modifierFlags];
@@ -425,7 +399,7 @@ void WindowImplCocoa::HandleMouseDown(void *eventRef)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::HandleMouseUp(void *eventRef)
 {
-	NSEvent *event = static_cast <NSEvent *> (eventRef);
+	NSEvent *event = reinterpret_cast <NSEvent *> (eventRef);
 	Event sfEvent;
 	NSPoint loc = {0, 0};
 	unsigned mods = [event modifierFlags];
@@ -508,7 +482,7 @@ void WindowImplCocoa::HandleMouseMove(void *eventRef)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::HandleMouseWheel(void *eventRef)
 {
-	NSEvent *event = static_cast <NSEvent *> (eventRef);
+	NSEvent *event = reinterpret_cast <NSEvent *> (eventRef);
 	
 	// SFML uses integer values for delta but Cocoa uses float and it is mostly fewer than 1.0
 	// Therefore I chose to add the float value to a 'wheel status' and
