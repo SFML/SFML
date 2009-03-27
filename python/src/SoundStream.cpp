@@ -49,11 +49,10 @@ bool CustomSoundStream::OnStart()
 bool CustomSoundStream::OnGetData(Chunk& Data)
 {
 	bool result = false;
-	Py_XDECREF(PyData);
-	PyData = NULL;
-	if (PyObject_HasAttrString(SoundStream, "OnGetData"))
+	Py_CLEAR(PyData);
+	PyObject *Function = PyObject_GetAttrString(SoundStream, "OnGetData");
+	if (Function != NULL)
 	{
-		PyObject *Function = PyObject_GetAttrString(SoundStream, "OnGetData");
 		PyData = PyObject_CallFunction(Function, NULL);
 		if (PyData != NULL)
 		{
@@ -69,8 +68,7 @@ bool CustomSoundStream::OnGetData(Chunk& Data)
 	if (PyErr_Occurred())
 	{
 		PyErr_Print();
-		Py_XDECREF(PyData);
-		PyData = NULL;
+		Py_CLEAR(PyData);
 		return false;
 	}
     return result;
@@ -239,7 +237,22 @@ PySfSoundStream_GetPlayingOffset(PySfSoundStream *self)
 	return PyFloat_FromDouble(self->obj->GetPlayingOffset());
 }
 
+static PyObject*
+PySfSoundStream_SetRelativeToListener(PySfSoundStream *self, PyObject *args)
+{
+	self->obj->SetRelativeToListener(PyBool_AsBool(args));
+	Py_RETURN_NONE;
+}
+
+static PyObject*
+PySfSoundStream_IsRelativeToListener(PySfSoundStream *self)
+{
+	return PyBool_FromLong(self->obj->IsRelativeToListener());
+}
+
 static PyMethodDef PySfSoundStream_methods[] = {
+	{"SetRelativeToListener", (PyCFunction)PySfSoundStream_SetRelativeToListener, METH_O, "SetRelativeToListener(Relative)\nMake the sound's position relative to the listener's position, or absolute. The default value is false (absolute)\n	Relative : True to set the position relative, false to set it absolute"},
+	{"IsRelativeToListener", (PyCFunction)PySfSoundStream_IsRelativeToListener, METH_NOARGS, "IsRelativeToListener()\nTell if the sound's position is relative to the listener's position, or if it's absolute."},
 	{"Initialize", (PyCFunction)PySfSoundStream_Initialize, METH_VARARGS, "Initialize(ChannelsCount, SampleRate)\n\
 Set the audio stream parameters, you must call it before Play()\n\
 	ChannelsCount : Number of channels\n\

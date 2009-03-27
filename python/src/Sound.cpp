@@ -84,6 +84,19 @@ PySfSound_SetLoop(PySfSound *self, PyObject *args)
 }
 
 static PyObject*
+PySfSound_SetRelativeToListener(PySfSound *self, PyObject *args)
+{
+	self->obj->SetRelativeToListener(PyBool_AsBool(args));
+	Py_RETURN_NONE;
+}
+
+static PyObject*
+PySfSound_IsRelativeToListener(PySfSound *self)
+{
+	return PyBool_FromLong(self->obj->IsRelativeToListener());
+}
+
+static PyObject*
 PySfSound_SetPitch(PySfSound *self, PyObject *args)
 {
 	self->obj->SetPitch(PyFloat_AsDouble(args));
@@ -210,6 +223,8 @@ PySfSound_SetPlayingOffset(PySfSound *self, PyObject *args)
 }
 
 static PyMethodDef PySfSound_methods[] = {
+	{"SetRelativeToListener", (PyCFunction)PySfSound_SetRelativeToListener, METH_O, "SetRelativeToListener(Relative)\nMake the sound's position relative to the listener's position, or absolute. The default value is false (absolute)\n	Relative : True to set the position relative, false to set it absolute"},
+	{"IsRelativeToListener", (PyCFunction)PySfSound_IsRelativeToListener, METH_NOARGS, "IsRelativeToListener()\nTell if the sound's position is relative to the listener's position, or if it's absolute."},
 	{"SetPlayingOffset", (PyCFunction)PySfSound_SetPlayingOffset, METH_O, "SetPlayingOffset(TimeOffset)\nSet the current playing position of the sound.\n	TimeOffset : New playing position, expressed in seconds"},
 	{"SetLoop", (PyCFunction)PySfSound_SetLoop, METH_O, "SetLoop(Loop)\nSet the Sound loop state.\n	Loop : True to play in loop, false to play once"},
 	{"SetBuffer", (PyCFunction)PySfSound_SetBuffer, METH_O, "SetBuffer(Buffer)\nSet the source buffer.\n	Buffer : New sound buffer to bind to the sound "},
