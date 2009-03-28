@@ -109,26 +109,12 @@ private :
     void CreateContext(ContextGLX* Shared, unsigned int BitsPerPixel, const ContextSettings& Settings);
 
     ////////////////////////////////////////////////////////////
-    /// Create the OpenGL rendering context
-    ///
-    /// \param Mode :         Video mode to use
-    /// \param ChosenVisual : Visual that has been chosen for creating the contexte
-    /// \param Params :       Creation parameters
-    /// \param Template :     Visual infos to match
-    /// \param Mask :         Visual attributes to check in Template
-    ///
-    /// \return True on success, false on error
-    ///
-    ////////////////////////////////////////////////////////////
-    //bool CreateContext(XVisualInfo& ChosenVisual, WindowSettings& Params, XVisualInfo Template = XVisualInfo(), unsigned long Mask = 0);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     DisplayRef myDisplay;    ///< Connection to the X server
     ::Window   myWindow;     ///< Window to which the context is attached
     GLXContext myContext;    ///< OpenGL context
-    //bool       myOwnsWindow; ///< Did we create the host window?
+    bool       myOwnsWindow; ///< Do we own the window associated to the context?
 };
 
 } // namespace priv

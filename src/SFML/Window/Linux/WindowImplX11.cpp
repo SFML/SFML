@@ -28,6 +28,7 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Linux/WindowImplX11.hpp>
 #include <SFML/System/Unicode.hpp>
+#include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
 #include <iostream>
@@ -40,10 +41,10 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    WindowImplX11* FullscreenWindow = NULL;
-    unsigned long  EventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
-                                      PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
-                                      EnterWindowMask | LeaveWindowMask;
+    sf::priv::WindowImplX11* FullscreenWindow = NULL;
+    unsigned long            EventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
+                                                PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
+                                                EnterWindowMask | LeaveWindowMask;
 
     ////////////////////////////////////////////////////////////
     /// Filter the events received by windows
@@ -107,13 +108,16 @@ myKeyRepeat   (true)
 WindowImplX11::WindowImplX11(VideoMode Mode, const std::string& Title, unsigned long WindowStyle) :
 myWindow      (0),
 myIsExternal  (false),
-myGLContext   (NULL),
 myAtomClose   (0),
 myOldVideoMode(-1),
 myHiddenCursor(0),
 myInputContext(NULL),
 myKeyRepeat   (true)
 {
+    // Get the display and screen
+    myDisplay = myDisplayRef.GetDisplay();
+    myScreen  = DefaultScreen(myDisplay);
+
     // Compute position and size
     int Left, Top;
     bool Fullscreen = (WindowStyle & Style::Fullscreen) != 0;
@@ -145,10 +149,10 @@ myKeyRepeat   (true)
                              Left, Top,
                              Width, Height,
                              0,
-                             Visual.depth,
+                             DefaultDepth(myDisplay, myScreen),
                              InputOutput,
-                             Visual.visual,
-                             CWEventMask | CWColormap | CWOverrideRedirect, &Attributes);
+                             DefaultVisual(myDisplay, myScreen),
+                             CWEventMask | CWOverrideRedirect, &Attributes);
     if (!myWindow)
     {
         std::cerr << "Failed to create window" << std::endl;
@@ -257,6 +261,15 @@ WindowImplX11::~WindowImplX11()
         XDestroyWindow(myDisplay, myWindow);
         XFlush(myDisplay);
     }
+}
+
+
+////////////////////////////////////////////////////////////
+/// /see WindowImpl::GetHandle
+////////////////////////////////////////////////////////////
+WindowHandle WindowImplX11::GetHandle() const
+{
+    return myWindow;
 }
 
 

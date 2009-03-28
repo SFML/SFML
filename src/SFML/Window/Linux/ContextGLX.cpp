@@ -41,41 +41,34 @@ namespace priv
 /// Create a new context, not associated to a window
 ////////////////////////////////////////////////////////////
 ContextGLX::ContextGLX(ContextGLX* Shared) :
-myWindow    (NULL),
-myContext   (NULL)/*,
-myOwnsWindow(true)*/
+myWindow    (0),
+myContext   (NULL),
+myOwnsWindow(true)
 {
-    // Create the rendering context
-    XVisualInfo Visual;
-    CreateContext(Shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
-
-    // Create a new color map with the chosen visual
-    /*Colormap ColMap = XCreateColormap(ourDisplay, RootWindow(ourDisplay, ourScreen), Visual.visual, AllocNone);
-
-    // Define the window attributes
-    XSetWindowAttributes Attributes;
-    Attributes.colormap = ColMap;
-
     // Create a dummy window (disabled and hidden)
-    myWindow = XCreateWindow(ourDisplay,
-                             RootWindow(ourDisplay, ourScreen),
+    int Screen = DefaultScreen(myDisplay.GetDisplay());
+    myWindow = XCreateWindow(myDisplay.GetDisplay(),
+                             RootWindow(myDisplay.GetDisplay(), Screen),
                              0, 0,
-                             myWidth, myHeight,
+                             1, 1,
                              0,
-                             Visual.depth,
+                             DefaultDepth(myDisplay.GetDisplay(), Screen),
                              InputOutput,
-                             Visual.visual,
-                             CWColormap, &Attributes);*/
+                             DefaultVisual(myDisplay.GetDisplay(), Screen),
+                             0, NULL);
+
+    // Create the context
+    CreateContext(Shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new context attached to a window
 ////////////////////////////////////////////////////////////
-ContextGLX::ContextGLX(ContextWGL* Shared, const WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings) :
-myWindow    (NULL),
-myContext   (NULL),/*
-myOwnsWindow(false)*/
+ContextGLX::ContextGLX(ContextGLX* Shared, const WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings) :
+myWindow    (0),
+myContext   (NULL),
+myOwnsWindow(false)
 {
     // Get the owner window and its device context
     myWindow = static_cast<Window>(Owner->GetHandle());
@@ -91,20 +84,20 @@ myOwnsWindow(false)*/
 ////////////////////////////////////////////////////////////
 ContextGLX::~ContextGLX()
 {
-    // Destroy the OpenGL context
+    // Destroy the context
     if (myContext)
     {
         if (glXGetCurrentContext() == myContext)
             glXMakeCurrent(myDisplay.GetDisplay(), None, NULL);
-        glXDestroyContext(myContext);
+        glXDestroyContext(myDisplay.GetDisplay(), myContext);
     }
-
+    
     // Destroy the window if we own it
-    /*if (myWindow && myOwnsWindow)
+    if (myWindow && myOwnsWindow)
     {
         XDestroyWindow(myDisplay.GetDisplay(), myWindow);
         XFlush(myDisplay.GetDisplay());
-    }*/
+    }
 }
 
 
@@ -115,7 +108,7 @@ bool ContextGLX::MakeCurrent(bool Active)
 {
     if (Active)
     {
-        if (myWindow && myContext)
+        if (myContext)
         {
             if (glXGetCurrentContext() != myContext)
                 return glXMakeCurrent(myDisplay.GetDisplay(), myWindow, myContext) != 0;
@@ -130,7 +123,7 @@ bool ContextGLX::MakeCurrent(bool Active)
     else
     {
         if (glXGetCurrentContext() == myContext)
-            return wglMakeCurrent(myDisplay.GetDisplay(), None, NULL) != 0;
+            return glXMakeCurrent(myDisplay.GetDisplay(), None, NULL) != 0;
         else
             return true;
     }
@@ -173,22 +166,22 @@ bool ContextGLX::IsContextActive()
 ////////////////////////////////////////////////////////////
 void ContextGLX::CreateContext(ContextGLX* Shared, unsigned int BitsPerPixel, const ContextSettings& Settings)
 {
-    XVisualInfo Template;
-    Template.screen = DefaultScreen(myDisplayRef.GetDisplay());
-    if (myWindow)
-    {
-        // Get the attributes of the target window
-        XWindowAttributes WindowAttributes;
-        if (XGetWindowAttributes(myDisplayRef.GetDisplay(), myWindow, &WindowAttributes) == 0)
-        {
-            std::cerr << "Failed to get the window attributes" << std::endl;
-            return;
-        }
+    // Save the creation settings
+    mySettings = Settings;
 
-        // Setup the visual infos to match
-        Template.depth    = WindowAttributes.depth;
-        Template.visualid = XVisualIDFromVisual(WindowAttributes.visual);
+    // Get the attributes of the target window
+    XWindowAttributes WindowAttributes;
+    if (XGetWindowAttributes(myDisplay.GetDisplay(), myWindow, &WindowAttributes) == 0)
+    {
+        std::cerr << "Failed to get the window attributes" << std::endl;
+        return;
     }
+
+    // Setup the visual infos to match
+    XVisualInfo Template;
+    Template.depth    = WindowAttributes.depth;
+    Template.visualid = XVisualIDFromVisual(WindowAttributes.visual);
+    Template.screen   = DefaultScreen(myDisplay.GetDisplay());
 
     // Get all the visuals matching the template
     int NbVisuals = 0;
@@ -210,16 +203,16 @@ void ContextGLX::CreateContext(ContextGLX* Shared, unsigned int BitsPerPixel, co
         {
             // Get the current visual attributes
             int RGBA, DoubleBuffer, Red, Green, Blue, Alpha, Depth, Stencil, MultiSampling, Samples;
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_RGBA,               &RGBA);
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_DOUBLEBUFFER,       &DoubleBuffer); 
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_RED_SIZE,           &Red);
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_GREEN_SIZE,         &Green); 
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_BLUE_SIZE,          &Blue); 
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_ALPHA_SIZE,         &Alpha); 
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_DEPTH_SIZE,         &Depth);        
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_STENCIL_SIZE,       &Stencil);
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_SAMPLE_BUFFERS_ARB, &MultiSampling);        
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_SAMPLES_ARB,        &Samples);
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_RGBA,               &RGBA);
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_DOUBLEBUFFER,       &DoubleBuffer); 
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_RED_SIZE,           &Red);
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_GREEN_SIZE,         &Green); 
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_BLUE_SIZE,          &Blue); 
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_ALPHA_SIZE,         &Alpha); 
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_DEPTH_SIZE,         &Depth);        
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_STENCIL_SIZE,       &Stencil);
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_SAMPLE_BUFFERS_ARB, &MultiSampling);        
+            glXGetConfig(myDisplay.GetDisplay(), &Visuals[i], GLX_SAMPLES_ARB,        &Samples);
 
             // First check the mandatory parameters
             if ((RGBA == 0) || (DoubleBuffer == 0))
@@ -240,16 +233,16 @@ void ContextGLX::CreateContext(ContextGLX* Shared, unsigned int BitsPerPixel, co
         // If no visual has been found, try a lower level of antialiasing
         if (!BestVisual)
         {
-            if (Params.AntialiasingLevel > 2)
+            if (mySettings.AntialiasingLevel > 2)
             {
                 std::cerr << "Failed to find a pixel format supporting "
-                          << Params.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
-                Params.AntialiasingLevel = 2;
+                          << mySettings.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
+                mySettings.AntialiasingLevel = 2;
             }
-            else if (Params.AntialiasingLevel > 0)
+            else if (mySettings.AntialiasingLevel > 0)
             {
                 std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
-                Params.AntialiasingLevel = 0;
+                mySettings.AntialiasingLevel = 0;
             }
             else
             {
@@ -278,12 +271,9 @@ void ContextGLX::CreateContext(ContextGLX* Shared, unsigned int BitsPerPixel, co
     mySettings.StencilBits = static_cast<unsigned int>(Stencil);
 
     // Change the target window's colormap so that it matches the context's one
-    if (myWindow)
-    {
-        ::Window Root = RootWindow(myDisplay.GetDisplay(), DefaultScreen(myDisplay.GetDisplay()))
-        Colormap ColMap = XCreateColormap(myDisplay.GetDisplay(), Root, BestVisual->visual, AllocNone);
-        XSetWindowColormap(myDisplay.GetDisplay(), myWindow, ColMap);
-    }
+    ::Window Root = RootWindow(myDisplay.GetDisplay(), DefaultScreen(myDisplay.GetDisplay()));
+    Colormap ColMap = XCreateColormap(myDisplay.GetDisplay(), Root, BestVisual->visual, AllocNone);
+    XSetWindowColormap(myDisplay.GetDisplay(), myWindow, ColMap);
 
     // Free the temporary visuals array
     XFree(Visuals);
