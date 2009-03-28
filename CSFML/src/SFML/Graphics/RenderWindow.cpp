@@ -86,14 +86,14 @@ struct sfRenderWindow
 ////////////////////////////////////////////////////////////
 /// Construct a new renderwindow
 ////////////////////////////////////////////////////////////
-sfRenderWindow* sfRenderWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfWindowSettings Params)
+sfRenderWindow* sfRenderWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfContextSettings Params)
 {
     // Convert video mode
     sf::VideoMode VideoMode(Mode.Width, Mode.Height, Mode.BitsPerPixel);
 
     // Create the window
     sfRenderWindow* RenderWindow = new sfRenderWindow;
-    sf::WindowSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
+    sf::ContextSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
     RenderWindow->This.Create(VideoMode, Title, Style, Settings);
     RenderWindow->Input.This       = &RenderWindow->This.GetInput();
     RenderWindow->DefaultView.This = &RenderWindow->This.GetDefaultView();
@@ -106,10 +106,10 @@ sfRenderWindow* sfRenderWindow_Create(sfVideoMode Mode, const char* Title, unsig
 ////////////////////////////////////////////////////////////
 /// Construct a renderwindow from an existing control
 ////////////////////////////////////////////////////////////
-sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle Handle, sfWindowSettings Params)
+sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle Handle, sfContextSettings Params)
 {
     sfRenderWindow* RenderWindow = new sfRenderWindow;
-    sf::WindowSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
+    sf::ContextSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
     RenderWindow->This.Create(Handle, Settings);
     RenderWindow->Input.This       = &RenderWindow->This.GetInput();
     RenderWindow->DefaultView.This = &RenderWindow->This.GetDefaultView();
@@ -166,12 +166,12 @@ unsigned int sfRenderWindow_GetHeight(sfRenderWindow* RenderWindow)
 ////////////////////////////////////////////////////////////
 /// Get the creation settings of a window
 ////////////////////////////////////////////////////////////
-sfWindowSettings sfRenderWindow_GetSettings(sfRenderWindow* RenderWindow)
+sfContextSettings sfRenderWindow_GetSettings(sfRenderWindow* RenderWindow)
 {
-    sfWindowSettings Settings = {0, 0, 0};
+    sfContextSettings Settings = {0, 0, 0};
     CSFML_CHECK_RETURN(RenderWindow, Settings);
 
-    const sf::WindowSettings& Params = RenderWindow->This.GetSettings();
+    const sf::ContextSettings& Params = RenderWindow->This.GetSettings();
     Settings.DepthBits         = Params.DepthBits;
     Settings.StencilBits       = Params.StencilBits;
     Settings.AntialiasingLevel = Params.AntialiasingLevel;

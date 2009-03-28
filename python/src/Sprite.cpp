@@ -23,6 +23,11 @@
 ////////////////////////////////////////////////////////////
 
 #include "Sprite.hpp"
+#include "Drawable.hpp"
+#include "Rect.hpp"
+#include "Color.hpp"
+
+#include "compat.hpp"
 
 
 extern PyTypeObject PySfColorType;
@@ -30,19 +35,16 @@ extern PyTypeObject PySfImageType;
 extern PyTypeObject PySfIntRectType;
 extern PyTypeObject PySfDrawableType;
 
-static PyMemberDef PySfSprite_members[] = {
-	{NULL}  /* Sentinel */
-};
-
-
 
 static void
 PySfSprite_dealloc(PySfSprite *self)
 {
 	if (self->Image != NULL)
+	{
 		Py_DECREF(self->Image);
+	}
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
@@ -69,7 +71,7 @@ PySfSprite_init(PySfSprite *self, PyObject *args, PyObject *kwds)
 	PySfImage *Image=NULL;
 	PySfColor *Color=NULL;
 
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "O!|fffffO!", (char **)kwlist, &PySfImageType, &Image, &X, &Y, &ScaleX, &ScaleY, &Rotation, &PySfColorType, &Color))
+	if (! PyArg_ParseTupleAndKeywords(args, kwds, "O!|fffffO!:Sprite.__init__", (char **)kwlist, &PySfImageType, &Image, &X, &Y, &ScaleX, &ScaleY, &Rotation, &PySfColorType, &Color))
 		return -1;
 
 	Py_INCREF(Image);
@@ -78,7 +80,6 @@ PySfSprite_init(PySfSprite *self, PyObject *args, PyObject *kwds)
 		self->obj = new sf::Sprite(*(Image->obj), sf::Vector2f(X, Y), sf::Vector2f(ScaleX, ScaleY), Rotation, *(Color->obj));
 	else
 		self->obj = new sf::Sprite(*(Image->obj), sf::Vector2f(X, Y), sf::Vector2f(ScaleX, ScaleY), Rotation);
-
 
 	return 0;
 }
@@ -91,7 +92,7 @@ PySfSprite_SetImage(PySfSprite* self, PyObject *args)
 	PySfImage *Image = (PySfImage *)args;
 	if (! PyObject_TypeCheck(Image, &PySfImageType))
 	{
-		PyErr_SetString(PyExc_TypeError, "Argument is not a sfImage");
+		PyErr_SetString(PyExc_TypeError, "Sprite.SetImage() Argument is not a sf.Image");
 		return NULL;
 	}
 	Py_DECREF(self->Image);
@@ -114,8 +115,7 @@ PySfSprite_GetPixel(PySfSprite* self, PyObject *args)
 	PySfColor *Color;
 	unsigned int x=0, y=0;
 
-
-	if (! PyArg_ParseTuple(args, "II", &x, &y))
+	if (!PyArg_ParseTuple(args, "II:Sprite.GetPixel", &x, &y))
 		return NULL; 
 
 	Color = GetNewPySfColor();
@@ -133,7 +133,7 @@ PySfSprite_Resize(PySfSprite* self, PyObject *args)
 {
 	float W=0, H=0;
 
-	if (! PyArg_ParseTuple(args, "ff", &W, &H))
+	if (! PyArg_ParseTuple(args, "ff:Sprite.Resize", &W, &H))
 		return NULL; 
 
 	self->obj->Resize(W,H);
@@ -161,7 +161,7 @@ PySfSprite_SetSubRect(PySfSprite* self, PyObject *args)
 	PySfIntRect *Rect = (PySfIntRect *)args;
 	if (! PyObject_TypeCheck(Rect, &PySfIntRectType))
 	{
-		PyErr_SetString(PyExc_TypeError, "Argument is not a sf.IntRect instance");
+		PyErr_SetString(PyExc_TypeError, "Sprite.SetSubRect() Argument is not a sf.IntRect instance");
 		return NULL;
 	}
 	self->obj->SetSubRect(*(Rect->obj));
@@ -171,20 +171,14 @@ PySfSprite_SetSubRect(PySfSprite* self, PyObject *args)
 static PyObject *
 PySfSprite_FlipX(PySfSprite* self, PyObject *args)
 {
-	bool Flip = false;
-	if (PyObject_IsTrue(args))
-		Flip = true;
-	self->obj->FlipX(Flip);
+	self->obj->FlipX(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
 static PyObject *
 PySfSprite_FlipY(PySfSprite* self, PyObject *args)
 {
-	bool Flip = false;
-	if (PyObject_IsTrue(args))
-		Flip = true;
-	self->obj->FlipY(Flip);
+	self->obj->FlipY(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
@@ -211,8 +205,7 @@ static PyMethodDef PySfSprite_methods[] = {
 };
 
 PyTypeObject PySfSpriteType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Sprite",				/*tp_name*/
 	sizeof(PySfSprite),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -240,7 +233,7 @@ PyTypeObject PySfSpriteType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfSprite_methods,		/* tp_methods */
-	PySfSprite_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	&PySfDrawableType,		/* tp_base */
 	0,						/* tp_dict */

@@ -40,6 +40,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Window::Window() :
 myWindow        (NULL),
+myContext       (NULL),
 myLastFrameTime (0.f),
 myIsExternal    (false),
 myFramerateLimit(0),
@@ -53,30 +54,32 @@ mySetCursorPosY (0xFFFF)
 ////////////////////////////////////////////////////////////
 /// Construct a new window
 ////////////////////////////////////////////////////////////
-Window::Window(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const WindowSettings& Params) :
+Window::Window(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const ContextSettings& Settings) :
 myWindow        (NULL),
+myContext       (NULL),
 myLastFrameTime (0.f),
 myIsExternal    (false),
 myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
 {
-    Create(Mode, Title, WindowStyle, Params);
+    Create(Mode, Title, WindowStyle, Settings);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Construct the window from an existing control
 ////////////////////////////////////////////////////////////
-Window::Window(WindowHandle Handle, const WindowSettings& Params) :
+Window::Window(WindowHandle Handle, const ContextSettings& Settings) :
 myWindow        (NULL),
+myContext       (NULL),
 myLastFrameTime (0.f),
 myIsExternal    (true),
 myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
 {
-    Create(Handle, Params);
+    Create(Handle, Settings);
 }
 
 
@@ -85,7 +88,6 @@ mySetCursorPosY (0xFFFF)
 ////////////////////////////////////////////////////////////
 Window::~Window()
 {
-    // Close the window
     Close();
 }
 
@@ -93,7 +95,7 @@ Window::~Window()
 ////////////////////////////////////////////////////////////
 /// Create the window
 ////////////////////////////////////////////////////////////
-void Window::Create(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const WindowSettings& Params)
+void Window::Create(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const ContextSettings& Settings)
 {
     // Check validity of video mode
     if ((WindowStyle & Style::Fullscreen) && !Mode.IsValid())
@@ -106,30 +108,42 @@ void Window::Create(VideoMode Mode, const std::string& Title, unsigned long Wind
     if ((WindowStyle & Style::Close) || (WindowStyle & Style::Resize))
         WindowStyle |= Style::Titlebar;
 
-    // Destroy the previous window implementation
+    // Recreate the window implementation
     delete myWindow;
+    myWindow = priv::WindowImpl::New(Mode, Title, WindowStyle);
 
-    // Activate the global context
-    Context::GetGlobal().SetActive(true);
+    // Make sure another context is bound, so that:
+    // - the context creation can request OpenGL extensions if necessary
+    // - myContext can safely be destroyed (it's no longer bound)
+    Context::GetDefault().SetActive(true);
 
-    mySettings = Params;
-    Initialize(priv::WindowImpl::New(Mode, Title, WindowStyle, mySettings));
+    // Recreate the context
+    delete myContext;
+    myContext = Context::New(myWindow, Mode.BitsPerPixel, Settings);
+
+    Initialize();
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create the window from an existing control
 ////////////////////////////////////////////////////////////
-void Window::Create(WindowHandle Handle, const WindowSettings& Params)
+void Window::Create(WindowHandle Handle, const ContextSettings& Settings)
 {
-    // Destroy the previous window implementation
+    // Recreate the window implementation
     delete myWindow;
+    myWindow = priv::WindowImpl::New(Handle);
 
-    // Activate the global context
-    Context::GetGlobal().SetActive(true);
+    // Make sure another context is bound, so that:
+    // - the context creation can request OpenGL extensions if necessary
+    // - myContext can safely be destroyed (it's no longer bound)
+    Context::GetDefault().SetActive(true);
 
-    mySettings = Params;
-    Initialize(priv::WindowImpl::New(Handle, mySettings));
+    // Recreate the context
+    delete myContext;
+    myContext = Context::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, Settings);
+
+    Initialize();
 }
 
 
@@ -140,9 +154,22 @@ void Window::Create(WindowHandle Handle, const WindowSettings& Params)
 ////////////////////////////////////////////////////////////
 void Window::Close()
 {
-    // Delete the window implementation
-    delete myWindow;
-    myWindow = NULL;
+    if (myContext)
+    {
+        // Make sure that our context is no longer bound
+        Context::GetDefault().SetActive(true);
+
+        // Delete the context
+        delete myContext;
+        myContext = NULL;
+    }
+
+    if (myWindow)
+    {
+        // Delete the window implementation
+        delete myWindow;
+        myWindow = NULL;
+    }
 }
 
 
@@ -178,9 +205,11 @@ unsigned int Window::GetHeight() const
 ////////////////////////////////////////////////////////////
 /// Get the creation settings of the window
 ////////////////////////////////////////////////////////////
-const WindowSettings& Window::GetSettings() const
+const ContextSettings& Window::GetSettings() const
 {
-    return mySettings;
+    static ContextSettings EmptySettings(0, 0, 0);
+
+    return myContext ? myContext->GetSettings() : EmptySettings;
 }
 
 
@@ -212,7 +241,7 @@ bool Window::GetEvent(Event& EventReceived)
 void Window::UseVerticalSync(bool Enabled)
 {
     if (SetActive())
-        myWindow->UseVerticalSync(Enabled);
+        myContext->UseVerticalSync(Enabled);
 }
 
 
@@ -247,15 +276,8 @@ void Window::SetCursorPosition(unsigned int Left, unsigned int Top)
 ////////////////////////////////////////////////////////////
 void Window::SetPosition(int Left, int Top)
 {
-    if (!myIsExternal)
-    {
-        if (myWindow)
-            myWindow->SetPosition(Left, Top);
-    }
-    else
-    {
-        std::cerr << "Warning : trying to change the position of an external SFML window, which is not allowed" << std::endl;
-    }
+    if (myWindow)
+        myWindow->SetPosition(Left, Top);
 }
 
 
@@ -274,11 +296,8 @@ void Window::SetSize(unsigned int Width, unsigned int Height)
 ////////////////////////////////////////////////////////////
 void Window::Show(bool State)
 {
-    if (!myIsExternal)
-    {
-        if (myWindow)
-            myWindow->Show(State);
-    }
+    if (myWindow)
+        myWindow->Show(State);
 }
 
 
@@ -304,18 +323,27 @@ void Window::SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixel
 
 
 ////////////////////////////////////////////////////////////
-/// Activate of deactivate the window as the current target
+/// Activate or deactivate the window as the current target
 /// for rendering
 ////////////////////////////////////////////////////////////
 bool Window::SetActive(bool Active) const
 {
-    if (myWindow)
+    if (myContext)
     {
-        myWindow->SetActive(Active);
-        return true;
+        if (myContext->SetActive(Active))
+        {
+            return true;
+        }
+        else
+        {
+            std::cerr << "Failed to activate the window's context" << std::endl;
+            return false;
+        }
     }
-
-    return false;
+    else
+    {
+        return false;
+    }
 }
 
 
@@ -338,7 +366,7 @@ void Window::Display()
 
     // Display the backbuffer on screen
     if (SetActive())
-        myWindow->Display();
+        myContext->Display();
 }
 
 
@@ -409,14 +437,10 @@ void Window::OnEvent(const Event& EventReceived)
 
 
 ////////////////////////////////////////////////////////////
-/// Initialize internal window
+/// Do some common internal initializations
 ////////////////////////////////////////////////////////////
-void Window::Initialize(priv::WindowImpl* Window)
+void Window::Initialize()
 {
-    // Assign and initialize the new window
-    myWindow = Window;
-    myWindow->Initialize();
-
     // Listen to events from the new window
     myWindow->AddListener(this);
     myWindow->AddListener(&myInput);

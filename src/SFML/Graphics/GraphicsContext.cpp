@@ -65,7 +65,7 @@ GraphicsContext::GraphicsContext()
     // Activate the global context
     if (!Context::IsContextActive())
     {
-        Context::GetGlobal().SetActive(true);
+        Context::GetDefault().SetActive(true);
         myActivated = true;
     }
     else
@@ -86,7 +86,7 @@ GraphicsContext::~GraphicsContext()
 {
     // Deactivate the global context
     if (myActivated)
-        Context::GetGlobal().SetActive(false);
+        Context::GetDefault().SetActive(false);
 }
 
 } // namespace priv

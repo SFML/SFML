@@ -24,6 +24,9 @@
 
 #include "Color.hpp"
 
+#include "offsetof.hpp"
+#include "compat.hpp"
+
 static PyMemberDef PySfColor_members[] = {
 	{(char *)"r", T_UBYTE, offsetof(PySfColor, r), 0, (char *)"Red component."},
 	{(char *)"g", T_UBYTE, offsetof(PySfColor, g), 0, (char *)"Green component."},
@@ -38,7 +41,7 @@ static void
 PySfColor_dealloc(PySfColor *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 void
@@ -101,8 +104,7 @@ static PyMethodDef PySfColor_methods[] = {
 
 
 PyTypeObject PySfColorType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Color",				/*tp_name*/
 	sizeof(PySfColor),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -145,7 +147,7 @@ PyTypeObject PySfColorType = {
 PySfColor *
 GetNewPySfColor()
 {
-	return PyObject_New(PySfColor, &PySfColorType);
+	return (PySfColor *)PySfColor_new(&PySfColorType, NULL, NULL);
 }
 
 void

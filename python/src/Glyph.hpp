@@ -25,13 +25,9 @@
 #ifndef __PYGLYPH_HPP
 #define __PYGLYPH_HPP
 
-#include <SFML/Graphics/Glyph.hpp>
-#include <iostream>
-
 #include <Python.h>
-#include <structmember.h>
 
-#include "offsetof.hpp"
+#include <SFML/Graphics/Glyph.hpp>
 
 #include "Rect.hpp"
 

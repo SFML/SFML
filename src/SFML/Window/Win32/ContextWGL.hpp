@@ -22,114 +22,101 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERWINDOW_HPP
-#define SFML_RENDERWINDOW_HPP
+#ifndef SFML_CONTEXTWGL_HPP
+#define SFML_CONTEXTWGL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Window/Window.hpp>
-#include <string>
+#include <SFML/Window/Context.hpp>
+#include <windows.h>
 
 
 namespace sf
 {
-class Drawable;
-
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// Simple wrapper for sf::Window that allows easy
-/// 2D rendering
+/// Windows (WGL) implementation of OpenGL contexts
 ////////////////////////////////////////////////////////////
-class SFML_API RenderWindow : public Window, public RenderTarget
+class ContextWGL : public Context
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// Create a new context, not associated to a window
+    ///
+    /// \param Shared : Context to share the new one with (can be NULL)
     ///
     ////////////////////////////////////////////////////////////
-    RenderWindow();
+    ContextWGL(ContextWGL* Shared);
 
     ////////////////////////////////////////////////////////////
-    /// Construct the window
+    /// Create a new context attached to a window
     ///
-    /// \param Mode :        Video mode to use
-    /// \param Title :       Title of the window
-    /// \param WindowStyle : Window style (Resize | Close by default)
-    /// \param Settings :    Additional settings for the underlying OpenGL context (see default constructor for default values)
-    ///
-    ////////////////////////////////////////////////////////////
-    RenderWindow(VideoMode Mode, const std::string& Title, unsigned long WindowStyle = Style::Resize | Style::Close, const ContextSettings& Settings = ContextSettings());
-
-    ////////////////////////////////////////////////////////////
-    /// Construct the window from an existing control
-    ///
-    /// \param Handle :   Platform-specific handle of the control
-    /// \param Settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param Shared :       Context to share the new one with (can be NULL)
+    /// \param Owner :        Pointer to the owner window
+    /// \param BitsPerPixel : Pixel depth (in bits per pixel)
+    /// \param Settings :     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    RenderWindow(WindowHandle Handle, const ContextSettings& Settings = ContextSettings());
+    ContextWGL(ContextWGL* Shared, const WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~RenderWindow();
+    ~ContextWGL();
 
     ////////////////////////////////////////////////////////////
-    /// Get the width of the rendering region of the window
-    ///
-    /// \return Width in pixels
+    /// \see Context::MakeCurrent
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetWidth() const;
+    virtual bool MakeCurrent(bool Active);
 
     ////////////////////////////////////////////////////////////
-    /// Get the height of the rendering region of the window
-    ///
-    /// \return Height in pixels
+    /// \see Context::Display
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetHeight() const;
+    virtual void Display();
 
     ////////////////////////////////////////////////////////////
-    /// Save the content of the window to an image
-    ///
-    /// \return Image instance containing the contents of the screen
+    /// \see Context::UseVerticalSync
     ///
     ////////////////////////////////////////////////////////////
-    Image Capture() const;
+    virtual void UseVerticalSync(bool Enabled);
 
     ////////////////////////////////////////////////////////////
-    /// Convert a point in window coordinates into view coordinates
+    /// Check if a context is active on the current thread
     ///
-    /// \param WindowX :    X coordinate of the point to convert, relative to the window
-    /// \param WindowY :    Y coordinate of the point to convert, relative to the window
-    /// \param TargetView : Target view to convert the point to (NULL by default -- uses the current view)
-    ///
-    /// \return Converted point
+    /// \return True if there's an active context, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f ConvertCoords(unsigned int WindowX, unsigned int WindowY, const View* TargetView = NULL) const;
+    static bool IsContextActive();
 
 private :
 
     ////////////////////////////////////////////////////////////
-    /// /see Window::OnCreate
+    /// Create the context
+    ///
+    /// \param Shared :       Context to share the new one with (can be NULL)
+    /// \param BitsPerPixel : Pixel depth, in bits per pixel
+    /// \param Settings :     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnCreate();
+    void CreateContext(ContextWGL* Shared, unsigned int BitsPerPixel, const ContextSettings& Settings);
 
     ////////////////////////////////////////////////////////////
-    /// /see RenderTarget::Activate
-    ///
+    // Member data
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool Active);
+    HWND  myWindow;     ///< Window to which the context is attached
+    HDC   myDC;         ///< Device context of the window
+    HGLRC myContext;    ///< OpenGL context
+    bool  myOwnsWindow; ///< Did we create the host window?
 };
+
+} // namespace priv
 
 } // namespace sf
 
-
-#endif // SFML_RENDERWINDOW_HPP
+#endif // SFML_CONTEXTWGL_HPP

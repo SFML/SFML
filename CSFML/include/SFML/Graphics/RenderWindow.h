@@ -47,7 +47,7 @@
 /// \param Params : Creation settings
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfRenderWindow* sfRenderWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfWindowSettings Params);
+CSFML_API sfRenderWindow* sfRenderWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfContextSettings Params);
 
 ////////////////////////////////////////////////////////////
 /// Construct a renderwindow from an existing control
@@ -56,7 +56,7 @@ CSFML_API sfRenderWindow* sfRenderWindow_Create(sfVideoMode Mode, const char* Ti
 /// \param Params : Creation settings
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle Handle, sfWindowSettings Params);
+CSFML_API sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle Handle, sfContextSettings Params);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing renderwindow
@@ -110,7 +110,7 @@ CSFML_API unsigned int sfRenderWindow_GetHeight(sfRenderWindow* RenderWindow);
 /// \return Settings used to create the window
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindowSettings sfRenderWindow_GetSettings(sfRenderWindow* RenderWindow);
+CSFML_API sfContextSettings sfRenderWindow_GetSettings(sfRenderWindow* RenderWindow);
 
 ////////////////////////////////////////////////////////////
 /// Get the event on top of events stack of a window, if any, and pop it

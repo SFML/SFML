@@ -37,7 +37,6 @@
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/WindowListener.hpp>
 #include <SFML/Window/WindowStyle.hpp>
-#include <SFML/Window/OpenGL.hpp>
 
 
 #endif // SFML_SFML_WINDOW_HPP

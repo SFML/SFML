@@ -35,6 +35,8 @@
 #include "String.hpp"
 #include "SoundStream.hpp"
 
+#include "compat.hpp"
+
 extern PyTypeObject PySfClockType;
 
 extern PyTypeObject PySfEventType;
@@ -66,8 +68,7 @@ extern PyTypeObject PySfGlyphType;
 extern PyTypeObject PySfStringType;
 extern PyTypeObject PySfPostFXType;
 
-extern PyTypeObject PySfImageType;
-
+extern PyTypeObject PySfImageType;
 extern PyTypeObject PySfColorType;
 
 extern PyTypeObject PySfShapeType;
@@ -89,105 +90,125 @@ static PyMethodDef module_methods[] = {
 	{NULL}  /* Sentinel */
 };
 
+#ifdef IS_PY3K
+#define INITERROR return NULL
+static PyModuleDef module_def = {
+    PyModuleDef_HEAD_INIT,
+    "sf",
+    "Python binding for sfml (Simple Fast Media Library)",
+    -1,
+    module_methods, NULL, NULL, NULL, NULL
+};
+
+PyMODINIT_FUNC
+PyInit_sf(void)
+#else
+#define INITERROR return
+
 #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
 #define PyMODINIT_FUNC void
 #endif
 PyMODINIT_FUNC
-initsf(void) 
+initsf(void)
+#endif
 {
     PyObject *m;
 
 	if (PyType_Ready(&PySfClockType) < 0)
-		return;
+		INITERROR;
 
 	if (PyType_Ready(&PySfWindowType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfWindowSettingsType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfStyleType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfRenderWindowType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfVideoModeType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfViewType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfInputType) < 0)
-		return;
+		INITERROR;
 
 	if (PyType_Ready(&PySfEventType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfEventTextType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfEventKeyType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfEventMouseMoveType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfEventMouseButtonType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfEventMouseWheelType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfEventJoyMoveType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfEventJoyButtonType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfEventSizeType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfKeyType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfJoyType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfMouseType) < 0)
-		return;
+		INITERROR;
 
 	if (PyType_Ready(&PySfDrawableType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfBlendType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfSpriteType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfFontType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfGlyphType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfStringType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfPostFXType) < 0)
-		return;
+		INITERROR;
 
 	if (PyType_Ready(&PySfImageType) < 0)
-		return;
+		INITERROR;
 
 	if (PyType_Ready(&PySfShapeType) < 0)
-		return;
+		INITERROR;
 
 	if (PyType_Ready(&PySfColorType) < 0)
-		return;
+		INITERROR;
 
 	if (PyType_Ready(&PySfIntRectType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfFloatRectType) < 0)
-		return;
+		INITERROR;
 
 	if (PyType_Ready(&PySfMusicType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfSoundType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfSoundBufferType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfSoundBufferRecorderType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfSoundRecorderType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfSoundStreamType) < 0)
-		return;
+		INITERROR;
 	if (PyType_Ready(&PySfListenerType) < 0)
-		return;
+		INITERROR;
 
+#ifdef IS_PY3K
+	m = PyModule_Create(&module_def);
+#else
 	m = Py_InitModule3("sf", module_methods, "Python binding for sfml (Simple Fast Media Library)");
+#endif
 
 	if (m == NULL)
-		return;
+		INITERROR;
 
 	Py_INCREF(&PySfClockType);
 	PyModule_AddObject(m, "Clock", (PyObject *)&PySfClockType);
@@ -260,7 +281,7 @@ initsf(void)
 	Py_INCREF(&PySfListenerType);
 	PyModule_AddObject(m, "Listener", (PyObject *)&PySfListenerType);
 
-	PyModule_AddStringConstant(m, "Version", "1.4");
+	PyModule_AddStringConstant(m, "Version", "1.5");
 
 	PySfColor_InitConst();
 	PySfKey_InitConst();
@@ -272,5 +293,9 @@ initsf(void)
 	PySfSound_InitConst();
 	PySfSoundStream_InitConst();
 	PySfString_InitConst();
+
+#ifdef IS_PY3K
+	return m;
+#endif
 }
 

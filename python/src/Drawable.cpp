@@ -23,50 +23,46 @@
 ////////////////////////////////////////////////////////////
 
 #include "Drawable.hpp"
+#include "Color.hpp"
 
-void CustomDrawable::Render (sf::RenderTarget& Target) const
-{
-	if (RenderFunction)
-		PyObject_CallFunction(RenderFunction, (char *)"O", RenderWindow);
-}
+#include "compat.hpp"
 
 
 extern PyTypeObject PySfColorType;
 
-static PyMemberDef PySfDrawable_members[] = {
-	{NULL}  /* Sentinel */
-};
 
-
+void CustomDrawable::Render(sf::RenderTarget& Target) const
+{
+	if (RenderFunction)
+		PyObject_CallFunction(RenderFunction, (char *)"O", RenderWindow);
+	else
+		PyErr_SetString(PyExc_RuntimeError, "Custom drawables must have a render method defined");
+}
 
 static void
 PySfDrawable_dealloc(PySfDrawable *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfDrawable_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfDrawable *self;
-
 	self = (PySfDrawable *)type->tp_alloc(type, 0);
-
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
-
 
 static int
 PySfDrawable_init(PySfDrawable *self, PyObject *args, PyObject *kwds)
 {
 	self->obj = new CustomDrawable();
+	self->obj->RenderFunction = NULL;
+	self->obj->RenderWindow = NULL;
 	return 0;
 }
+
 static PyObject *
 PySfDrawable_SetX(PySfDrawable* self, PyObject *args)
 {
@@ -83,7 +79,7 @@ static PyObject *
 PySfDrawable_SetScale(PySfDrawable* self, PyObject *args)
 {
 	float ScaleX, ScaleY;
-	if ( !PyArg_ParseTuple(args, "ff", &ScaleX, &ScaleY) )
+	if (!PyArg_ParseTuple(args, "ff:Drawable.SetScale", &ScaleX, &ScaleY) )
 		return NULL;
 	self->obj->SetScale(ScaleX, ScaleY);
 	Py_RETURN_NONE;
@@ -111,7 +107,7 @@ static PyObject *
 PySfDrawable_SetCenter(PySfDrawable* self, PyObject *args)
 {
 	float x, y;
-	if ( !PyArg_ParseTuple(args, "ff", &x, &y) )
+	if (!PyArg_ParseTuple(args, "ff:Drawable.SetCenter", &x, &y) )
 		return NULL;
 	self->obj->SetCenter(x, y);
 	Py_RETURN_NONE;
@@ -129,7 +125,7 @@ PySfDrawable_SetColor(PySfDrawable* self, PyObject *args)
 	PySfColor *Color = (PySfColor *)args;
 	if (! PyObject_TypeCheck(args, &PySfColorType))
 	{
-		PyErr_SetString(PyExc_TypeError, "Argument is not a sfColor");
+		PyErr_SetString(PyExc_TypeError, "Drawable.SetColor() Argument is not a sf.Color");
 		return NULL;
 	}
 	PySfColorUpdate(Color);
@@ -172,7 +168,7 @@ static PyObject *
 PySfDrawable_Move(PySfDrawable* self, PyObject *args)
 {
 	float x, y;
-	if ( !PyArg_ParseTuple(args, "ff", &x, &y) )
+	if (!PyArg_ParseTuple(args, "ff:Drawable.Move", &x, &y) )
 		return NULL;
 	self->obj->Move(x, y);
 	Py_RETURN_NONE;
@@ -187,7 +183,7 @@ static PyObject *
 PySfDrawable_Scale(PySfDrawable* self, PyObject *args)
 {
 	float FactorX, FactorY;
-	if ( !PyArg_ParseTuple(args, "ff", &FactorX, &FactorY) )
+	if (!PyArg_ParseTuple(args, "ff:Drawable.Scale", &FactorX, &FactorY) )
 		return NULL;
 	self->obj->Scale(FactorX, FactorY);
 	Py_RETURN_NONE;
@@ -204,7 +200,7 @@ static PyObject *
 PySfDrawable_SetPosition(PySfDrawable* self, PyObject *args)
 {
 	float Left, Top;
-	if ( !PyArg_ParseTuple(args, "ff", &Left, &Top) )
+	if (!PyArg_ParseTuple(args, "ff:Drawable.SetPosition", &Left, &Top) )
 		return NULL;
 	self->obj->SetPosition(Left, Top);
 	Py_RETURN_NONE;
@@ -214,7 +210,7 @@ static PyObject *
 PySfDrawable_TransformToLocal(PySfDrawable* self, PyObject *args)
 {
 	float X, Y;
-	if ( !PyArg_ParseTuple(args, "ff", &X, &Y) )
+	if (!PyArg_ParseTuple(args, "ff:Drawable.TransformToLocal", &X, &Y) )
 		return NULL;
 	sf::Vector2f result = self->obj->TransformToLocal(sf::Vector2f(X, Y));
 	return Py_BuildValue("ff", result.x, result.y);
@@ -224,7 +220,7 @@ static PyObject *
 PySfDrawable_TransformToGlobal(PySfDrawable* self, PyObject *args)
 {
 	float X, Y;
-	if ( !PyArg_ParseTuple(args, "ff", &X, &Y) )
+	if (!PyArg_ParseTuple(args, "ff:Drawable.TransformToGlobal", &X, &Y) )
 		return NULL;
 	sf::Vector2f result = self->obj->TransformToGlobal(sf::Vector2f(X, Y));
 	return Py_BuildValue("ff", result.x, result.y);
@@ -261,8 +257,7 @@ Transform a point from local coordinates into global coordinates (ie it applies 
 };
 
 PyTypeObject PySfDrawableType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Drawable",				/*tp_name*/
 	sizeof(PySfDrawable),	/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -290,7 +285,7 @@ PyTypeObject PySfDrawableType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfDrawable_methods,	/* tp_methods */
-	PySfDrawable_members,	/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
@@ -301,5 +296,11 @@ PyTypeObject PySfDrawableType = {
 	0,						/* tp_alloc */
 	PySfDrawable_new,		/* tp_new */
 };
+
+PySfDrawable *
+GetNewPySfDrawable()
+{
+	return (PySfDrawable *)PySfDrawable_new(&PySfDrawableType, NULL, NULL);
+}
 
 

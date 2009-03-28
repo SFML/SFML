@@ -25,12 +25,9 @@
 #ifndef __PYINPUT_HPP
 #define __PYINPUT_HPP
 
-#include <SFML/Window/Input.hpp>
-#include <SFML/Window/Event.hpp>
-#include <iostream>
-
 #include <Python.h>
-#include <structmember.h>
+
+#include <SFML/Window/Input.hpp>
 
 typedef struct {
 	PyObject_HEAD

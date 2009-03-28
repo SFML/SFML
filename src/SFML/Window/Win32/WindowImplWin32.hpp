@@ -46,20 +46,12 @@ class WindowImplWin32 : public WindowImpl
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
-    /// (creates a dummy window to provide a valid OpenGL context)
-    ///
-    ////////////////////////////////////////////////////////////
-    WindowImplWin32();
-
-    ////////////////////////////////////////////////////////////
     /// Construct the window implementation from an existing control
     ///
     /// \param Handle : Platform-specific handle of the control
-    /// \param Params : Creation settings
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplWin32(WindowHandle Handle, WindowSettings& Params);
+    WindowImplWin32(WindowHandle Handle);
 
     ////////////////////////////////////////////////////////////
     /// Create the window implementation
@@ -67,10 +59,9 @@ public :
     /// \param Mode :        Video mode to use
     /// \param Title :       Title of the window
     /// \param WindowStyle : Window style
-    /// \param Params :      Creation settings
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplWin32(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, WindowSettings& Params);
+    WindowImplWin32(VideoMode Mode, const std::string& Title, unsigned long WindowStyle);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -78,39 +69,19 @@ public :
     ////////////////////////////////////////////////////////////
     ~WindowImplWin32();
 
-    ////////////////////////////////////////////////////////////
-    /// Check if there's an active context on the current thread
-    ///
-    /// \return True if there's a context bound to the current thread
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool IsContextActive();
-
 private :
+
+    ////////////////////////////////////////////////////////////
+    /// /see WindowImpl::GetHandle
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual WindowHandle GetHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::ProcessEvents
     ///
     ////////////////////////////////////////////////////////////
     virtual void ProcessEvents();
-
-    ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::Display
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void Display();
-
-    ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::SetActive
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void SetActive(bool Active = true) const;
-
-    ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::UseVerticalSync
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void UseVerticalSync(bool Enabled);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::ShowMouseCursor
@@ -167,15 +138,6 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     void SwitchToFullscreen(const VideoMode& Mode);
-
-    ////////////////////////////////////////////////////////////
-    /// Construct the context from graphics settings
-    ///
-    /// \param Mode :   Video mode
-    /// \param Params : Creation settings
-    ///
-    ////////////////////////////////////////////////////////////
-    void CreateContext(const VideoMode& Mode, WindowSettings& Params);
 
     ////////////////////////////////////////////////////////////
     /// Free all the graphical resources attached to the window
@@ -249,14 +211,12 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HWND          myHandle;           ///< Win32 handle of the window
-    long          myCallback;         ///< Stores the original event callback function of the control
-    HCURSOR       myCursor;           ///< The system cursor to display into the window
-    HICON         myIcon;             ///< Custom icon assigned to the window
-    bool          myKeyRepeatEnabled; ///< Automatic key-repeat state for keydown events
-    bool          myIsCursorIn;       ///< Is the mouse cursor in the window's area ?
-    HDC           myDeviceContext;    ///< HDC associated to the window
-    HGLRC         myGLContext;        ///< OpenGL rendering context associated to the HDC
+    HWND    myHandle;           ///< Win32 handle of the window
+    long    myCallback;         ///< Stores the original event callback function of the control
+    HCURSOR myCursor;           ///< The system cursor to display into the window
+    HICON   myIcon;             ///< Custom icon assigned to the window
+    bool    myKeyRepeatEnabled; ///< Automatic key-repeat state for keydown events
+    bool    myIsCursorIn;       ///< Is the mouse cursor in the window's area ?
 };
 
 } // namespace priv

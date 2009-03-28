@@ -23,49 +23,36 @@
 ////////////////////////////////////////////////////////////
 
 #include "RenderWindow.hpp"
-
-#include "Event.hpp"
-#include "VideoMode.hpp"
-#include "Drawable.hpp"
-#include "Color.hpp"
-#include "Rect.hpp"
 #include "View.hpp"
 #include "Image.hpp"
 #include "Window.hpp"
+#include "Color.hpp"
+#include "Drawable.hpp"
 
-#include "SFML/Window/WindowStyle.hpp"
+#include "compat.hpp"
+
+#include <SFML/Window/WindowStyle.hpp>
 
 
-extern PyTypeObject PySfEventType;
 extern PyTypeObject PySfViewType;
-extern PyTypeObject PySfColorType;
 extern PyTypeObject PySfWindowType;
-extern PyTypeObject PySfWindowSettingsType;
-extern PyTypeObject PySfVideoModeType;
+extern PyTypeObject PySfRenderWindowType;
+extern PyTypeObject PySfColorType;
 extern PyTypeObject PySfDrawableType;
-
-static PyMemberDef PySfRenderWindow_members[] = {
-	{NULL}  /* Sentinel */
-};
 
 
 static void
 PySfRenderWindow_dealloc(PySfRenderWindow* self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfRenderWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfRenderWindow *self;
-
 	self = (PySfRenderWindow *)type->tp_alloc(type, 0);
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -74,7 +61,8 @@ PySfRenderWindow_init(PySfRenderWindow *self, PyObject *args, PyObject *kwds)
 {
 	self->obj = new sf::RenderWindow();
 	if (PyTuple_Size(args) > 0)
-		PySfWindow_Create((PySfWindow *)self, args, kwds);
+		if (PySfWindow_Create((PySfWindow *)self, args, kwds) == NULL)
+			return -1;
 	return 0;
 }
 
@@ -96,7 +84,7 @@ PySfRenderWindow_ConvertCoords(PySfRenderWindow *self, PyObject *args)
 	sf::View *TargetView = NULL;
 	sf::Vector2f Vect;
 
-	if (! PyArg_ParseTuple(args, "II|O!", &WindowX, &WindowY, &PySfViewType, &PyTargetView))
+	if (!PyArg_ParseTuple(args, "II|O!:RenderWindow.ConvertCoords", &WindowX, &WindowY, &PySfViewType, &PyTargetView))
 		return NULL;
 
 	if (PyTargetView)
@@ -113,7 +101,9 @@ PySfRenderWindow_DrawObject(PySfRenderWindow *RenderWindow, PySfDrawable *Obj)
 	{
 		if (PyObject_HasAttrString((PyObject *)Obj, "Render"))
 		{
+			Py_XDECREF(Obj->obj->RenderWindow);
 			Obj->obj->RenderWindow = RenderWindow;
+			Py_XDECREF(Obj->obj->RenderFunction);
 			Obj->obj->RenderFunction = PyObject_GetAttrString((PyObject *)Obj, "Render");
 		}
 		RenderWindow->obj->Draw( *(Obj->obj) );
@@ -125,21 +115,18 @@ PySfRenderWindow_DrawObject(PySfRenderWindow *RenderWindow, PySfDrawable *Obj)
 static PyObject *
 PySfRenderWindow_Draw(PySfRenderWindow *self, PyObject *args)
 {
-	if (!args)
+	if (args == NULL)
 		return NULL;
-
-
 	if (!PySfRenderWindow_DrawObject(self, (PySfDrawable *)args))
 	{
 		PyObject *iterator = PyObject_GetIter(args);
 		PyObject *item;
-
+		PyErr_Clear();
 		if (iterator == NULL)
 		{
 			PyErr_SetString(PyExc_TypeError, "Argument to Draw method is neither a Drawable nor an iterable.");
 			return NULL;
 		}
-
 		while ((item = PyIter_Next(iterator)))
 		{
 			if (!PySfRenderWindow_DrawObject(self, (PySfDrawable *)item))
@@ -149,26 +136,36 @@ PySfRenderWindow_Draw(PySfRenderWindow *self, PyObject *args)
 			}
 			Py_DECREF(item);
 		}
-
 		Py_DECREF(iterator);
-
-		if (PyErr_Occurred()) {
-			return NULL;
-		}
 	}
+	if (PyErr_Occurred())
+		return NULL;
 	Py_RETURN_NONE;
 }
 
+
 static PyObject *
-PySfRenderWindow_GetDefaultView(PySfRenderWindow *self)
+PySfRenderWindow_Clear(PySfRenderWindow *self, PyObject *args)
 {
-	PySfView *View;
-
-	View = GetNewPySfView();
-	View->Owner = false;
-	View->obj = &(self->obj->GetDefaultView());
-
-	return (PyObject *)View;
+	PySfColor *Color;
+	int size = PyTuple_Size(args);
+	if (size == 1)
+	{
+		if (!PyArg_ParseTuple(args, "O!:RenderWindow.Clear", &PySfColorType, &Color))
+			return NULL;
+		PySfColorUpdate(Color);
+		self->obj->Clear(*(Color->obj));
+	}
+	else if (size == 0)
+	{
+		self->obj->Clear(sf::Color::Black);
+	}
+	else
+	{
+		PyErr_SetString(PyExc_TypeError, "RenderWindow.Clear() takes one or zero argument");
+		return NULL;
+	}
+	Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -185,10 +182,7 @@ PySfRenderWindow_GetView(PySfRenderWindow *self)
 static PyObject *
 PySfRenderWindow_PreserveOpenGLStates(PySfRenderWindow *self, PyObject *args)
 {
-	bool Optimize = false;
-	if (PyObject_IsTrue(args))
-		Optimize = true;
-	self->obj->PreserveOpenGLStates(Optimize);
+	self->obj->PreserveOpenGLStates(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
@@ -196,9 +190,9 @@ static PyObject *
 PySfRenderWindow_SetView(PySfRenderWindow* self, PyObject *args)
 {
 	PySfView *View = (PySfView *)args;
-	if (! PyObject_TypeCheck(View, &PySfViewType))
+	if (!PyObject_TypeCheck(View, &PySfViewType))
 	{
-		PyErr_SetString(PyExc_TypeError, "Argument is not a sfView");
+		PyErr_SetString(PyExc_TypeError, "RenderWindow.SetView() Argument is not a sf.View");
 		return NULL;
 	}
 	self->obj->SetView( *(View->obj));
@@ -206,32 +200,21 @@ PySfRenderWindow_SetView(PySfRenderWindow* self, PyObject *args)
 }
 
 static PyObject *
-PySfRenderWindow_Clear(PySfRenderWindow* self, PyObject *args)
+PySfRenderWindow_GetDefaultView(PySfRenderWindow *self)
 {
-	PySfColor *Color = (PySfColor *)args;
-	if (! PyObject_TypeCheck(Color, &PySfColorType))
-	{
-		PyErr_SetString(PyExc_TypeError, "Argument is not a sfColor");
-		return NULL;
-	}
-	PySfColorUpdate(Color);
-	self->obj->Clear(*(Color->obj));
-	Py_RETURN_NONE;
+	PySfView *View;
+
+	View = GetNewPySfView();
+	View->Owner = false;
+	View->obj = &(self->obj->GetDefaultView());
+
+	return (PyObject *)View;
 }
 
 static PyMethodDef PySfRenderWindow_methods[] = {
-	{"Clear", (PyCFunction)PySfRenderWindow_Clear, METH_O, "Clear(FillColor)\n\
+	{"Clear", (PyCFunction)PySfRenderWindow_Clear, METH_VARARGS, "Clear(FillColor)\n\
 Clear the entire target with a single color.\n\
 	FillColor : Color to use to clear the render target."},
-	{"Capture", (PyCFunction)PySfRenderWindow_Capture, METH_NOARGS, "Capture()\n\
-Save the content of the window to an image. Returns a sf.Image object."},
-	{"ConvertCoords", (PyCFunction)PySfRenderWindow_ConvertCoords, METH_VARARGS, "ConvertCoords(WindowX, WindowY, TargetView)\n\
-Convert a point in window coordinates into view coordinates. Returns a tuple of two floats.\n\
-	WindowX :    X coordinate of the point to convert, relative to the window\n\
-	WindowY :    Y coordinate of the point to convert, relative to the window\n\
-	TargetView : Target view to convert the point to (NULL by default -- uses the current view)."},
-	{"Draw", (PyCFunction)PySfRenderWindow_Draw, METH_O, "Draw(Drawable)\n\
-Draw something on the window. The argument can be a drawable or any object supporting the iterator protocol and containing drawables (for example a tuple of drawables)."},
 	{"GetDefaultView", (PyCFunction)PySfRenderWindow_GetDefaultView, METH_NOARGS, "GetDefaultView()\n\
 Get the default view of the window for read / write (returns a sf.View instance)."},
 	{"GetView", (PyCFunction)PySfRenderWindow_GetView, METH_NOARGS, "GetView()\n\
@@ -241,12 +224,23 @@ Tell SFML to preserve external OpenGL states, at the expense of more CPU charge.
 	Preserve : True to preserve OpenGL states, false to let SFML optimize"},
 	{"SetView", (PyCFunction)PySfRenderWindow_SetView, METH_O, "SetView(View)\n\
 Change the current active view. View must be a sf.View instance."},
+	{"Draw", (PyCFunction)PySfRenderWindow_Draw, METH_O, "Draw(Drawable)\n\
+Draw something on the window. The argument can be a drawable or any object supporting the iterator protocol and containing drawables (for example a tuple of drawables)."},
+	{"PreserveOpenGLStates", (PyCFunction)PySfRenderWindow_PreserveOpenGLStates, METH_O, "PreserveOpenGLStates(Preserve)\n\
+Tell SFML to preserve external OpenGL states, at the expense of more CPU charge. Use this function if you don't want SFML to mess up your own OpenGL states (if any). Don't enable state preservation if not needed, as it will allow SFML to do internal optimizations and improve performances. This parameter is false by default\n\
+	Preserve : True to preserve OpenGL states, false to let SFML optimize"},
+	{"Capture", (PyCFunction)PySfRenderWindow_Capture, METH_NOARGS, "Capture()\n\
+Save the content of the window to an image. Returns a sf.Image object."},
+	{"ConvertCoords", (PyCFunction)PySfRenderWindow_ConvertCoords, METH_VARARGS, "ConvertCoords(WindowX, WindowY, TargetView)\n\
+Convert a point in window coordinates into view coordinates. Returns a tuple of two floats.\n\
+	WindowX :    X coordinate of the point to convert, relative to the window\n\
+	WindowY :    Y coordinate of the point to convert, relative to the window\n\
+	TargetView : Target view to convert the point to (NULL by default -- uses the current view)."},
 	{NULL}  /* Sentinel */
 };
 
 PyTypeObject PySfRenderWindowType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"RenderWindow",			/*tp_name*/
 	sizeof(PySfRenderWindow), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -266,7 +260,14 @@ PyTypeObject PySfRenderWindowType = {
 	0,						/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-	"Simple wrapper for sf.Window that allows easy 2D rendering.", /* tp_doc */
+	"Simple wrapper for sf.Window that allows easy 2D rendering.\n\
+Default constructor : sf.RenderWindow()\n\
+Other constructor : sf.RenderWindow(Mode, Title, Style::Resize|Style::Close, Params = WindowSettings())\n\
+Parameters:\n\
+	Mode 	: Video mode to use\n\
+	Title 	: Title of the window\n\
+	WindowStyle 	: Window style (Resize | Close by default)\n\
+	Params 	: Creation parameters (see default constructor for default values)", /* tp_doc */
 	0,						/* tp_traverse */
 	0,						/* tp_clear */
 	0,						/* tp_richcompare */
@@ -274,7 +275,7 @@ PyTypeObject PySfRenderWindowType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfRenderWindow_methods, /* tp_methods */
-	PySfRenderWindow_members, /* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	&PySfWindowType,		/* tp_base */
 	0,						/* tp_dict */

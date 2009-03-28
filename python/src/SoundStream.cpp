@@ -24,31 +24,46 @@
 
 #include "SoundStream.hpp"
 
+#include "compat.hpp"
+
 
 bool CustomSoundStream::OnStart()
 {
+	bool result = false;
 	if (PyObject_HasAttrString(SoundStream, "OnStart"))
-		if (PyObject_IsTrue(PyObject_CallFunction(PyObject_GetAttrString(SoundStream, "OnStart"), NULL)))
-			return true;
-    return false;
+	{
+		PyObject *OnStart = PyObject_GetAttrString(SoundStream, "OnStart");
+		PyObject *Result = PyObject_CallFunction(OnStart, NULL);
+		result = PyBool_AsBool(Result);
+		Py_DECREF(OnStart);
+		Py_DECREF(Result);
+	}
+    return result;
 }
 
 bool CustomSoundStream::OnGetData(Chunk& Data)
 {
+	bool result = false;
+	if (PyData != NULL) {
+		Py_DECREF(PyData);
+	}
 	if (PyObject_HasAttrString(SoundStream, "OnGetData"))
 	{
-		PyObject *PyData=NULL;
-		if ((PyData = PyObject_CallFunction(PyObject_GetAttrString(SoundStream, "OnGetData"), NULL)))
+		PyObject *Function = PyObject_GetAttrString(SoundStream, "OnGetData");
+		Data.NbSamples = 0;
+		PyData = PyObject_CallFunction(Function, NULL);
+		if (PyData != NULL)
 		{
 			if (PyArg_Parse(PyData, "s#", &(Data.Samples), &(Data.NbSamples)))
 			{
 				Data.NbSamples /= 2;
 				if (Data.NbSamples > 0)
-					return true;
+					result = true;
 			}
 		}
+		Py_DECREF(Function);
 	}
-    return false;
+    return result;
 }
 
 void CustomSoundStream::Init(unsigned int ChannelsCount, unsigned int SampleRate)
@@ -56,16 +71,11 @@ void CustomSoundStream::Init(unsigned int ChannelsCount, unsigned int SampleRate
 	Initialize(ChannelsCount, SampleRate);
 }
 
-
-static PyMemberDef PySfSoundStream_members[] = {
-	{NULL}  /* Sentinel */
-};
-
-
 static int
 PySfSoundStream_init(PySfSoundStream *self, PyObject *args, PyObject *kwds)
 {
 	self->obj = new CustomSoundStream();
+	self->obj->PyData = NULL;
 	self->obj->SoundStream = (PyObject *)self;
 	return 0;
 }
@@ -74,7 +84,7 @@ static void
 PySfSoundStream_dealloc(PySfSoundStream *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
@@ -89,7 +99,7 @@ static PyObject *
 PySfSoundStream_Initialize(PySfSoundStream *self, PyObject *args)
 {
 	unsigned int ChannelsCount, SampleRate;
-	if (!PyArg_ParseTuple(args, "II", &ChannelsCount, &SampleRate))
+	if (!PyArg_ParseTuple(args, "II:SoundStream.Initialize", &ChannelsCount, &SampleRate))
 		return NULL;
 	self->obj->Init(ChannelsCount, SampleRate);
 	Py_RETURN_NONE;
@@ -191,7 +201,7 @@ static PyObject*
 PySfSoundStream_SetPosition(PySfSoundStream *self, PyObject *args)
 {
 	float X, Y, Z;
-	if (! PyArg_ParseTuple(args, "fff", &X, &Y, &Z))
+	if (!PyArg_ParseTuple(args, "fff:SoundStream.SetPosition", &X, &Y, &Z))
 		return NULL; 
 	self->obj->SetPosition(X, Y, Z);
 	Py_RETURN_NONE;
@@ -206,20 +216,14 @@ PySfSoundStream_GetStatus(PySfSoundStream *self)
 static PyObject*
 PySfSoundStream_SetLoop(PySfSoundStream *self, PyObject *args)
 {
-	if (PyObject_IsTrue(args))
-		self->obj->SetLoop(true);
-	else
-		self->obj->SetLoop(false);
+	self->obj->SetLoop(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
 static PyObject*
 PySfSoundStream_GetLoop(PySfSoundStream *self)
 {
-	if (self->obj->GetLoop())
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(self->obj->GetLoop());
 }
 
 static PyObject*
@@ -258,8 +262,7 @@ Set the audio stream parameters, you must call it before Play()\n\
 
 
 PyTypeObject PySfSoundStreamType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"SoundStream",			/*tp_name*/
 	sizeof(PySfSoundStream), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -290,7 +293,7 @@ or for streaming sound from the network", /* tp_doc */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfSoundStream_methods, /* tp_methods */
-	PySfSoundStream_members, /* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
@@ -307,13 +310,13 @@ void
 PySfSoundStream_InitConst()
 {
 	PyObject *obj;
-	obj = PyInt_FromLong(sf::SoundStream::Stopped);
+	obj = PyLong_FromLong(sf::SoundStream::Stopped);
 	PyDict_SetItemString(PySfSoundStreamType.tp_dict, "Stopped", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::SoundStream::Paused);
+	obj = PyLong_FromLong(sf::SoundStream::Paused);
 	PyDict_SetItemString(PySfSoundStreamType.tp_dict, "Paused", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::SoundStream::Playing);
+	obj = PyLong_FromLong(sf::SoundStream::Playing);
 	PyDict_SetItemString(PySfSoundStreamType.tp_dict, "Playing", obj);
 	Py_DECREF(obj);
 }

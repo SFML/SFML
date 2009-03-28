@@ -1,11 +1,44 @@
+/*
+#include <SFML/Window.hpp>
+
+void f(void*)
+{
+    sf::Context context;
+}
+
+int main()
+{
+    {
+        sf::Thread t(&f);
+        t.Launch();
+    }
+
+    {
+        sf::Window window(sf::VideoMode(640, 480), "Test");
+
+        {
+            sf::Thread t(&f);
+            t.Launch();
+        }
+    }
+
+    {
+        sf::Thread t(&f);
+        t.Launch();
+    }
+
+    return 0;
+}
+*/
+    
+
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
-#include <fstream>
+#include <SFML/OpenGL.hpp>
 
-#include <iostream>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -117,3 +150,4 @@ int main()
 
     return EXIT_SUCCESS;
 }
+

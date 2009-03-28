@@ -24,36 +24,35 @@
 
 #include "Window.hpp"
 
-#include "SFML/Window/WindowStyle.hpp"
+#include "Event.hpp"
+#include "VideoMode.hpp"
+#include "Input.hpp"
+#include "WindowSettings.hpp"
+
+#include <SFML/Window/WindowStyle.hpp>
+
+#include "compat.hpp"
+
 
 extern PyTypeObject PySfEventType;
 extern PyTypeObject PySfWindowSettingsType;
 extern PyTypeObject PySfVideoModeType;
 
-static PyMemberDef PySfWindow_members[] = {
-	{NULL}  /* Sentinel */
-};
 
 static void
 PySfWindow_dealloc(PySfWindow* self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfWindow *self;
-
 	self = (PySfWindow *)type->tp_alloc(type, 0);
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
-
 
 
 static PyObject*
@@ -63,7 +62,7 @@ PySfWindow_GetEvent(PySfWindow *self, PyObject *args)
 
 	if (! PyObject_TypeCheck(PyEvent, &PySfEventType))
 	{
-		PyErr_SetString(PyExc_TypeError, "Argument is not a sfEvent");
+		PyErr_SetString(PyExc_TypeError, "Window.GetEvent() Argument is not a sfEvent");
 		return NULL;
 	}
 
@@ -72,42 +71,12 @@ PySfWindow_GetEvent(PySfWindow *self, PyObject *args)
 		PyEvent->Type = PyEvent->obj->Type;
 		PyEvent->Text->Unicode = PyEvent->obj->Text.Unicode;
 		PyEvent->Key->Code = PyEvent->obj->Key.Code;
-		if (PyEvent->obj->Key.Alt && PyEvent->Key->Alt == Py_False)
-		{
-			Py_DECREF(Py_False);
-			Py_INCREF(Py_True);
-			PyEvent->Key->Alt = Py_True;
-		}
-		else if (PyEvent->Key->Alt == Py_True)
-		{
-			Py_DECREF(Py_True);
-			Py_INCREF(Py_False);
-			PyEvent->Key->Alt = Py_False;
-		}
-		if (PyEvent->obj->Key.Control && PyEvent->Key->Control == Py_False)
-		{
-			Py_DECREF(Py_False);
-			Py_INCREF(Py_True);
-			PyEvent->Key->Control = Py_True;
-		}
-		else if (PyEvent->Key->Control == Py_True)
-		{
-			Py_DECREF(Py_True);
-			Py_INCREF(Py_False);
-			PyEvent->Key->Control = Py_False;
-		}
-		if (PyEvent->obj->Key.Shift && PyEvent->Key->Shift == Py_False)
-		{
-			Py_DECREF(Py_False);
-			Py_INCREF(Py_True);
-			PyEvent->Key->Shift = Py_True;
-		}
-		else if (PyEvent->Key->Shift == Py_True)
-		{
-			Py_DECREF(Py_True);
-			Py_INCREF(Py_False);
-			PyEvent->Key->Shift = Py_False;
-		}
+		Py_DECREF(PyEvent->Key->Alt);
+		PyEvent->Key->Alt = PyBool_FromLong(PyEvent->obj->Key.Alt);
+		Py_DECREF(PyEvent->Key->Control);
+		PyEvent->Key->Control = PyBool_FromLong(PyEvent->obj->Key.Control);
+		Py_DECREF(PyEvent->Key->Shift);
+		PyEvent->Key->Shift = PyBool_FromLong(PyEvent->obj->Key.Shift);
 		PyEvent->MouseButton->Button = PyEvent->obj->MouseButton.Button;
 		PyEvent->MouseButton->X = PyEvent->obj->MouseButton.X;
 		PyEvent->MouseButton->Y = PyEvent->obj->MouseButton.Y;
@@ -136,30 +105,23 @@ PySfWindow_Create(PySfWindow* self, PyObject *args, PyObject *kwds)
 	sf::VideoMode *VideoMode;
 	char *Title=NULL;
 	unsigned long WindowStyle = sf::Style::Resize | sf::Style::Close;
-	PySfWindowSettings *ParamsTmp=NULL;
-	sf::WindowSettings *Params = NULL;
+	PySfWindowSettings *Params=NULL;
 
 	const char *kwlist[] = {"VideoMode", "Title", "WindowStyle", "Params", NULL};
 
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "O!s|IO!", (char **)kwlist, &PySfVideoModeType, &VideoModeTmp, &Title, &WindowStyle, &PySfWindowSettingsType, &ParamsTmp))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!s|IO!:Window.Create", (char **)kwlist, &PySfVideoModeType, &VideoModeTmp, &Title, &WindowStyle, &PySfWindowSettingsType, &Params))
 		return NULL; 
 
-	if (VideoModeTmp) {
-		VideoMode = ((PySfVideoMode *)VideoModeTmp)->obj;
-		PySfVideoModeUpdate((PySfVideoMode *)VideoModeTmp);
-	}
-	else
-		return NULL;
+	VideoMode = ((PySfVideoMode *)VideoModeTmp)->obj;
+	PySfVideoModeUpdate((PySfVideoMode *)VideoModeTmp);
 
-	if (ParamsTmp)
+	if (Params)
 	{
-		PySfWindowSettingsUpdate(ParamsTmp);
-		Params = ParamsTmp->obj;
+		PySfWindowSettingsUpdate(Params);
+		self->obj->Create(*VideoMode, Title, WindowStyle, *(Params->obj));
 	}
 	else
-		Params = new sf::WindowSettings();
-
-	self->obj->Create(*VideoMode, Title, WindowStyle, *Params);
+		self->obj->Create(*VideoMode, Title, WindowStyle);
 
 	Py_RETURN_NONE;
 }
@@ -169,7 +131,8 @@ PySfWindow_init(PySfWindow *self, PyObject *args, PyObject *kwds)
 {
 	self->obj = new sf::Window();
 	if (PyTuple_Size(args) > 0)
-		PySfWindow_Create(self, args, kwds);
+		if (PySfWindow_Create(self, args, kwds) == NULL)
+			return -1;
 	return 0;
 }
 
@@ -182,10 +145,7 @@ PySfWindow_Close(PySfWindow *self)
 static PyObject *
 PySfWindow_IsOpened(PySfWindow *self)
 {
-	if (self->obj->IsOpened())
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_NONE;
+	return PyBool_FromLong(self->obj->IsOpened());
 }
 static PyObject *
 PySfWindow_GetWidth(PySfWindow *self)
@@ -201,32 +161,20 @@ PySfWindow_GetHeight(PySfWindow *self)
 static PyObject *
 PySfWindow_UseVerticalSync(PySfWindow *self, PyObject *args)
 {
-	bool Enabled = false;
-	if (PyObject_IsTrue(args))
-		Enabled = true;
-	self->obj->UseVerticalSync(Enabled);
+	self->obj->UseVerticalSync(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 static PyObject *
 PySfWindow_ShowMouseCursor(PySfWindow *self, PyObject *args)
 {
-	bool Show = false;
-	if (PyObject_IsTrue(args))
-		Show = true;
-	self->obj->ShowMouseCursor(Show);
+	self->obj->ShowMouseCursor(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
 static PyObject *
 PySfWindow_SetActive(PySfWindow *self, PyObject *args)
 {
-	bool Active = false;
-	if (PyObject_IsTrue(args))
-		Active = true;
-	if (self->obj->SetActive(Active))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(self->obj->SetActive(PyBool_AsBool(args)));
 }
 static PyObject *
 PySfWindow_Display(PySfWindow *self)
@@ -265,9 +213,8 @@ static PyObject *
 PySfWindow_SetPosition(PySfWindow* self, PyObject *args)
 {
 	int Left=0, Top=0;
-	if (! PyArg_ParseTuple(args, "ii", &Left, &Top))
+	if (!PyArg_ParseTuple(args, "ii:Window.SetPosition", &Left, &Top))
 		return NULL; 
-
 	self->obj->SetPosition(Left,Top);
 	Py_RETURN_NONE;
 }
@@ -282,20 +229,14 @@ PySfWindow_SetFramerateLimit(PySfWindow *self, PyObject *args)
 static PyObject *
 PySfWindow_Show(PySfWindow *self, PyObject *args)
 {
-	if (PyObject_IsTrue(args))
-		self->obj->Show(true);
-	else
-		self->obj->Show(false);
+	self->obj->Show(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
 static PyObject *
 PySfWindow_EnableKeyRepeat(PySfWindow *self, PyObject *args)
 {
-	if (PyObject_IsTrue(args))
-		self->obj->EnableKeyRepeat(true);
-	else
-		self->obj->EnableKeyRepeat(false);
+	self->obj->EnableKeyRepeat(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
@@ -303,9 +244,8 @@ static PyObject *
 PySfWindow_SetCursorPosition(PySfWindow* self, PyObject *args)
 {
 	unsigned int Left=0, Top=0;
-	if (! PyArg_ParseTuple(args, "II", &Left, &Top))
+	if (!PyArg_ParseTuple(args, "II:Window.SetCursorPosition", &Left, &Top))
 		return NULL; 
-
 	self->obj->SetCursorPosition(Left,Top);
 	Py_RETURN_NONE;
 }
@@ -314,9 +254,8 @@ static PyObject *
 PySfWindow_SetSize(PySfWindow* self, PyObject *args)
 {
 	unsigned int Width=0, Height=0;
-	if (! PyArg_ParseTuple(args, "II", &Width, &Height))
+	if (!PyArg_ParseTuple(args, "II:Window.SetSize", &Width, &Height))
 		return NULL; 
-
 	self->obj->SetSize(Width, Height);
 	Py_RETURN_NONE;
 }
@@ -334,7 +273,7 @@ PySfWindow_SetIcon(PySfWindow* self, PyObject *args)
 	unsigned int Width, Height, Size;
 	char *Data;
 
-	if (! PyArg_ParseTuple(args, "IIs#", &Width, &Height, &Data, &Size))
+	if (! PyArg_ParseTuple(args, "IIs#:Window.SetIcon", &Width, &Height, &Data, &Size))
 		return NULL; 
 
 	self->obj->SetIcon(Width, Height, (sf::Uint8*) Data);
@@ -348,7 +287,7 @@ Create a window.\n\
 	Mode : Video mode to use (sf.VideoMode instance)\n\
 	Title : Title of the window\n\
 	WindowStyle : Window style (Resize | Close by default)\n\
-	Params : Creation parameters (see default constructor for default values)\n"},
+	Params : Creation parameters (see default constructor for default values)"},
 	{"Display", (PyCFunction)PySfWindow_Display, METH_NOARGS, "Display()\nDisplay the window on screen."},
 	{"EnableKeyRepeat", (PyCFunction)PySfWindow_EnableKeyRepeat, METH_O, "EnableKeyRepeat(Enable)\nEnable or disable automatic key-repeat. Automatic key-repeat is enabled by default.\n	Enabled : True to enable, false to disable"},
 	{"GetEvent", (PyCFunction)PySfWindow_GetEvent, METH_O, "GetEvent(Event)\nGet the event on top of events stack, if any, and pop it. Returns True if an event was returned, False if events stack was empty.\n	EventReceived : Event to fill, if any."},
@@ -377,8 +316,7 @@ Change the window's icon.\n\
 };
 
 PyTypeObject PySfWindowType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Window",				/*tp_name*/
 	sizeof(PySfWindow),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -413,7 +351,7 @@ Construct a new window : sf.Window(Mode, Title, sf.Style.Resize | sf.Style.Close
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfWindow_methods,		/* tp_methods */
-	PySfWindow_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */

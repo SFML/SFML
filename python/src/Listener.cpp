@@ -24,39 +24,16 @@
 
 #include "Listener.hpp"
 
+#include "compat.hpp"
 
-static PyMemberDef PySfListener_members[] = {
-    {NULL}  /* Sentinel */
-};
-
-
-
-static void
-PySfListener_dealloc(PySfListener* self)
-{
-	self->ob_type->tp_free((PyObject*)self);
-}
 
 static PyObject *
 PySfListener_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfListener *self;
-
 	self = (PySfListener *)type->tp_alloc(type, 0);
-
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
-
-static int
-PySfListener_init(PySfListener *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
-}
-
 
 static PyObject *
 PySfListener_SetGlobalVolume(PySfListener* self, PyObject *args)
@@ -75,7 +52,7 @@ static PyObject *
 PySfListener_SetPosition(PySfListener* self, PyObject *args)
 {
 	float X, Y, Z;
-	if (! PyArg_ParseTuple(args, "fff", &X, &Y, &Z))
+	if (!PyArg_ParseTuple(args, "fff:Listener.SetPosition", &X, &Y, &Z))
 		return NULL; 
 	sf::Listener::SetPosition(X, Y, Z);
 	Py_RETURN_NONE;
@@ -92,7 +69,7 @@ static PyObject *
 PySfListener_SetTarget(PySfListener* self, PyObject *args)
 {
 	float X, Y, Z;
-	if (! PyArg_ParseTuple(args, "fff", &X, &Y, &Z))
+	if (!PyArg_ParseTuple(args, "fff:Listener.SetTarget", &X, &Y, &Z))
 		return NULL; 
 	sf::Listener::SetTarget(X, Y, Z);
 	Py_RETURN_NONE;
@@ -116,12 +93,11 @@ static PyMethodDef PySfListener_methods[] = {
 };
 
 PyTypeObject PySfListenerType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Listener",             /*tp_name*/
 	sizeof(PySfListener),	/*tp_basicsize*/
 	0,						/*tp_itemsize*/
-	(destructor)PySfListener_dealloc, /*tp_dealloc*/
+	0,						/*tp_dealloc*/
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
@@ -145,14 +121,14 @@ PyTypeObject PySfListenerType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfListener_methods,	/* tp_methods */
-	PySfListener_members,	/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfListener_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfListener_new,		/* tp_new */
 };

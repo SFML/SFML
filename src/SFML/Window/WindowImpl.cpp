@@ -56,27 +56,18 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// Create a new window depending on the current OS
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::New()
+WindowImpl* WindowImpl::New(VideoMode Mode, const std::string& Title, unsigned long WindowStyle)
 {
-    return new WindowImplType();
+    return new WindowImplType(Mode, Title, WindowStyle);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new window depending on the current OS
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::New(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, WindowSettings& Params)
+WindowImpl* WindowImpl::New(WindowHandle Handle)
 {
-    return new WindowImplType(Mode, Title, WindowStyle, Params);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Create a new window depending on the current OS
-////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::New(WindowHandle Handle, WindowSettings& Params)
-{
-    return new WindowImplType(Handle, Params);
+    return new WindowImplType(Handle);
 }
 
 
@@ -88,6 +79,12 @@ myWidth       (0),
 myHeight      (0),
 myJoyThreshold(0.1f)
 {
+    // Initialize the joysticks
+    for (unsigned int i = 0; i < JoysticksCount; ++i)
+    {
+        myJoysticks[i].Initialize(i);
+        myJoyStates[i] = myJoysticks[i].UpdateState();
+    }
 }
 
 
@@ -116,20 +113,6 @@ void WindowImpl::AddListener(WindowListener* Listener)
 void WindowImpl::RemoveListener(WindowListener* Listener)
 {
     myListeners.erase(Listener);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Initialize window's states that can't be done at construction
-////////////////////////////////////////////////////////////
-void WindowImpl::Initialize()
-{
-    // Initialize the joysticks
-    for (unsigned int i = 0; i < JoysticksCount; ++i)
-    {
-        myJoysticks[i].Initialize(i);
-        myJoyStates[i] = myJoysticks[i].UpdateState();
-    }
 }
 
 
@@ -175,15 +158,6 @@ void WindowImpl::DoEvents()
 
 
 ////////////////////////////////////////////////////////////
-/// Check if there's an active context on the current thread
-////////////////////////////////////////////////////////////
-bool WindowImpl::IsContextActive()
-{
-    return WindowImplType::IsContextActive();
-}
-
-
-////////////////////////////////////////////////////////////
 /// Send an event to listeners
 ////////////////////////////////////////////////////////////
 void WindowImpl::SendEvent(const Event& EventToSend)
@@ -192,20 +166,6 @@ void WindowImpl::SendEvent(const Event& EventToSend)
     {
         (*i)->OnEvent(EventToSend);
     }
-}
-
-
-////////////////////////////////////////////////////////////
-/// Evaluate a pixel format configuration.
-/// This functions can be used by implementations that have
-/// several valid formats and want to get the best one
-////////////////////////////////////////////////////////////
-int WindowImpl::EvaluateConfig(const VideoMode& Mode, const WindowSettings& Settings, int ColorBits, int DepthBits, int StencilBits, int Antialiasing)
-{
-    return abs(static_cast<int>(Mode.BitsPerPixel          - ColorBits))   +
-           abs(static_cast<int>(Settings.DepthBits         - DepthBits))   +
-           abs(static_cast<int>(Settings.StencilBits       - StencilBits)) +
-           abs(static_cast<int>(Settings.AntialiasingLevel - Antialiasing));
 }
 
 

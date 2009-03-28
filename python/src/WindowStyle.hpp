@@ -25,6 +25,14 @@
 #ifndef __PYWINDOWSTYLE_HPP
 #define __PYWINDOWSTYLE_HPP
 
+#include <Python.h>
+
+#include <SFML/Window/WindowStyle.hpp>
+
+typedef struct {
+	PyObject_HEAD
+} PySfStyle;
+
 void
 PySfStyle_InitConst();
 

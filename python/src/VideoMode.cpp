@@ -24,6 +24,10 @@
 
 #include "VideoMode.hpp"
 
+#include <structmember.h>
+
+#include "offsetof.hpp"
+#include "compat.hpp"
 
 
 static PyMemberDef PySfVideoMode_members[] = {
@@ -34,12 +38,11 @@ static PyMemberDef PySfVideoMode_members[] = {
 };
 
 
-
 static void
 PySfVideoMode_dealloc(PySfVideoMode* self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
@@ -72,7 +75,7 @@ PySfVideoMode_init(PySfVideoMode *self, PyObject *args, PyObject *kwds)
 {
 	const char *kwlist[] = {"Width", "Height", "BitsPerPixel", NULL};
 
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "II|I", (char **)kwlist, &self->Width, &self->Height, &self->BitsPerPixel))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "II|I:VideoMode.__init__", (char **)kwlist, &self->Width, &self->Height, &self->BitsPerPixel))
 		return -1;
 
 	self->obj = new sf::VideoMode(self->Width, self->Height, self->BitsPerPixel);
@@ -111,7 +114,7 @@ PySfVideoMode_GetMode(PySfVideoMode* self, PyObject *args)
 	std::size_t index;
 	PySfVideoMode *VideoMode;
 
-	index = (std::size_t)PyInt_AsLong(args);
+	index = (std::size_t)PyLong_AsLong(args);
 
 	VideoMode = GetNewPySfVideoMode();
 	VideoMode->obj = new sf::VideoMode ( sf::VideoMode::GetMode(index) );
@@ -125,7 +128,7 @@ PySfVideoMode_GetMode(PySfVideoMode* self, PyObject *args)
 static PyObject *
 PySfVideoMode_GetModesCount(PySfVideoMode* self)
 {
-	return PyInt_FromLong(sf::VideoMode::GetModesCount());
+	return PyLong_FromLong(sf::VideoMode::GetModesCount());
 }
 
 
@@ -150,8 +153,7 @@ int PySfVideoMode_Compare(PyObject *o1, PyObject *o2)
 
 
 PyTypeObject PySfVideoModeType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"VideoMode",			/*tp_name*/
 	sizeof(PySfVideoMode),	/*tp_basicsize*/
 	0,						/*tp_itemsize*/

@@ -46,14 +46,14 @@ struct sfWindow
 ////////////////////////////////////////////////////////////
 /// Construct a new window
 ////////////////////////////////////////////////////////////
-sfWindow* sfWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfWindowSettings Params)
+sfWindow* sfWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfContextSettings Params)
 {
     // Convert video mode
     sf::VideoMode VideoMode(Mode.Width, Mode.Height, Mode.BitsPerPixel);
 
     // Create the window
     sfWindow* Window = new sfWindow;
-    sf::WindowSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
+    sf::ContextSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
     Window->This.Create(VideoMode, Title, Style, Settings);
     Window->Input.This = &Window->This.GetInput();
 
@@ -64,10 +64,10 @@ sfWindow* sfWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Sty
 ////////////////////////////////////////////////////////////
 /// Construct a window from an existing control
 ////////////////////////////////////////////////////////////
-sfWindow* sfWindow_CreateFromHandle(sfWindowHandle Handle, sfWindowSettings Params)
+sfWindow* sfWindow_CreateFromHandle(sfWindowHandle Handle, sfContextSettings Params)
 {
     sfWindow* Window = new sfWindow;
-    sf::WindowSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
+    sf::ContextSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
     Window->This.Create(Handle, Settings);
     Window->Input.This = &Window->This.GetInput();
 
@@ -122,12 +122,12 @@ unsigned int sfWindow_GetHeight(sfWindow* Window)
 ////////////////////////////////////////////////////////////
 /// Get the creation settings of a window
 ////////////////////////////////////////////////////////////
-sfWindowSettings sfWindow_GetSettings(sfWindow* Window)
+sfContextSettings sfWindow_GetSettings(sfWindow* Window)
 {
-    sfWindowSettings Settings = {0, 0, 0};
+    sfContextSettings Settings = {0, 0, 0};
     CSFML_CHECK_RETURN(Window, Settings);
 
-    const sf::WindowSettings& Params = Window->This.GetSettings();
+    const sf::ContextSettings& Params = Window->This.GetSettings();
     Settings.DepthBits         = Params.DepthBits;
     Settings.StencilBits       = Params.StencilBits;
     Settings.AntialiasingLevel = Params.AntialiasingLevel;

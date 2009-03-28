@@ -22,16 +22,17 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWSETTINGS_HPP
-#define SFML_WINDOWSETTINGS_HPP
+#ifndef SFML_CONTEXTSETTINGS_HPP
+#define SFML_CONTEXTSETTINGS_HPP
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Structure defining the creation settings of windows
+/// Structure defining the settings of the OpenGL
+/// context attached to a window
 ////////////////////////////////////////////////////////////
-struct WindowSettings
+struct ContextSettings
 {
     ////////////////////////////////////////////////////////////
     /// Default constructor
@@ -41,7 +42,7 @@ struct WindowSettings
     /// \param Antialiasing : Antialiasing level (0 by default)
     ///
     ////////////////////////////////////////////////////////////
-    explicit WindowSettings(unsigned int Depth = 24, unsigned int Stencil = 8, unsigned int Antialiasing = 0) :
+    explicit ContextSettings(unsigned int Depth = 24, unsigned int Stencil = 8, unsigned int Antialiasing = 0) :
     DepthBits        (Depth),
     StencilBits      (Stencil),
     AntialiasingLevel(Antialiasing)
@@ -59,4 +60,4 @@ struct WindowSettings
 } // namespace sf
 
 
-#endif // SFML_WINDOWSETTINGS_HPP
+#endif // SFML_CONTEXTSETTINGS_HPP

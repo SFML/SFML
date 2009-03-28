@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from PySFML import *
+from PySFML import sf
 
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -30,11 +30,7 @@ def main():
 	Texture = glGenTextures(1) # instead of glGenTextures(1, &Texture);
 	glBindTexture(GL_TEXTURE_2D, Texture)
 	# It is almost the same line there, except in C++, the last argument was Image.GetPixelsPtr().
-	# With GetPixelsPtr, PySFML returns a PyCObject: "an opaque value, useful for C extension
-	# modules who need to pass an opaque value (as a void* pointer) through Python code to other C code".
-	# However, gluBuild2DMipmaps' python version takes a string as last argument (which is normally a
-	# pointer to pixels data). This is why Image.GetPixelsPtr is replaced by Image.GetPixelsString.
-	# This function (that doesn't exist in C++ SFML) returns a string that contains the pixels data.
+	# In python, GetPixels simply returns a string.
 	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, Image.GetWidth(), Image.GetHeight(), GL_RGBA, GL_UNSIGNED_BYTE, Image.GetPixels())
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
@@ -73,7 +69,7 @@ def main():
 
 			# Adjust the viewport when the window is resized
 			if Event.Type == sf.Event.Resized:
-				glViewport(0, 0, Event.Size.Width, Event.Size.Height);
+				glViewport(0, 0, Event.Size.Width, Event.Size.Height)
 
 		# Draw background
 		App.Draw(Background)
@@ -81,7 +77,7 @@ def main():
 		# Clear depth buffer
 		glClear(GL_DEPTH_BUFFER_BIT)
 
-		# Apply some transf.ormations
+		# Apply some transformations
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
 		glTranslatef(0, 0, -200)

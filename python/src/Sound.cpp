@@ -23,33 +23,26 @@
 ////////////////////////////////////////////////////////////
 
 #include "Sound.hpp"
-
 #include "SoundBuffer.hpp"
 
-extern PyTypeObject PySfSoundBufferType;
+#include "compat.hpp"
 
-static PyMemberDef PySfSound_members[] = {
-	{NULL}  /* Sentinel */
-};
+
+extern PyTypeObject PySfSoundBufferType;
 
 
 static void
 PySfSound_dealloc(PySfSound *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfSound_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfSound *self;
-
 	self = (PySfSound *)type->tp_alloc(type, 0);
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -61,21 +54,17 @@ static PyObject*
 PySfSound_SetBuffer(PySfSound *self, PyObject *args)
 {
 	PySfSoundBuffer *Buffer = (PySfSoundBuffer *)args;
-	if ( ! PyObject_TypeCheck(args, &PySfSoundBufferType))
-		PyErr_SetString(PyExc_TypeError, "The argument must be a sfSoundBuffer.");
+	if (!PyObject_TypeCheck(args, &PySfSoundBufferType))
+		PyErr_SetString(PyExc_TypeError, "Sound.SetBuffer() The argument must be a sf.SoundBuffer.");
 
 	self->obj->SetBuffer(*(Buffer->obj));
-
 	Py_RETURN_NONE;
 }
 
 static PyObject*
 PySfSound_SetLoop(PySfSound *self, PyObject *args)
 {
-	if (PyObject_IsTrue(args))
-		self->obj->SetLoop(true);
-	else
-		self->obj->SetLoop(false);
+	self->obj->SetLoop(PyBool_AsBool(args));
 	Py_RETURN_NONE;
 }
 
@@ -147,10 +136,7 @@ PySfSound_GetPlayingOffset(PySfSound *self)
 static PyObject*
 PySfSound_GetLoop(PySfSound *self)
 {
-	if (self->obj->GetLoop())
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(self->obj->GetLoop());
 }
 
 static PyObject*
@@ -184,7 +170,7 @@ static PyObject*
 PySfSound_SetPosition(PySfSound *self, PyObject *args)
 {
 	float X, Y, Z;
-	if (! PyArg_ParseTuple(args, "fff", &X, &Y, &Z))
+	if (!PyArg_ParseTuple(args, "fff:Sound.SetPosition", &X, &Y, &Z))
 		return NULL; 
 	self->obj->SetPosition(X, Y, Z);
 	Py_RETURN_NONE;
@@ -233,8 +219,7 @@ static PyMethodDef PySfSound_methods[] = {
 };
 
 PyTypeObject PySfSoundType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Sound",				/*tp_name*/
 	sizeof(PySfSound),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -272,7 +257,7 @@ Copy constructor : Sound(Copy) where Copy is a sf.Sound instance.", /* tp_doc */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfSound_methods,		/* tp_methods */
-	PySfSound_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
@@ -287,8 +272,6 @@ Copy constructor : Sound(Copy) where Copy is a sf.Sound instance.", /* tp_doc */
 static int
 PySfSound_init(PySfSound *self, PyObject *args, PyObject *kwds)
 {
-//  Sound(const SoundBuffer& Buffer, bool Loop = false, float Pitch = 1.f, float Volume = 100.f, float X = 0.f, float Y = 0.f, float Z = 0.f);
-
 	const char *kwlist[] = {"Buffer", "Loop", "Pitch", "Volume", "X", "Y", "Z", NULL};
 	PySfSoundBuffer *Buffer=NULL;
 	bool Loop=false;
@@ -298,19 +281,17 @@ PySfSound_init(PySfSound *self, PyObject *args, PyObject *kwds)
 	if (PyTuple_Size(args) == 1)
 	{
 		PySfSound *Copy;
-		if (PyArg_ParseTuple(args, "O!", &PySfSoundType, &Copy))
+		if (PyArg_ParseTuple(args, "O!:Sound.__init__", &PySfSoundType, &Copy))
 		{
 			self->obj = new sf::Sound(*(Copy->obj));
 			return 0;
 		}
-		else
-			PyErr_Clear();
+		else PyErr_Clear();
 	}
 	if (PyTuple_Size(args) > 0)
 	{
-		if ( !PyArg_ParseTupleAndKeywords(args, kwds, "O!|Offfff", (char **)kwlist, &PySfSoundBufferType, &Buffer, &LoopObj, &Pitch, &Volume, &X, &Y, &Z))
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!|Offfff:Sound.__init__", (char **)kwlist, &PySfSoundBufferType, &Buffer, &LoopObj, &Pitch, &Volume, &X, &Y, &Z))
 			return -1;
-
 		if (PyObject_IsTrue(LoopObj))
 			Loop = true;
 
@@ -326,13 +307,13 @@ void
 PySfSound_InitConst()
 {
 	PyObject *obj;
-	obj = PyInt_FromLong(sf::Sound::Stopped);
+	obj = PyLong_FromLong(sf::Sound::Stopped);
 	PyDict_SetItemString(PySfSoundType.tp_dict, "Stopped", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::Sound::Paused);
+	obj = PyLong_FromLong(sf::Sound::Paused);
 	PyDict_SetItemString(PySfSoundType.tp_dict, "Paused", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::Sound::Playing);
+	obj = PyLong_FromLong(sf::Sound::Playing);
 	PyDict_SetItemString(PySfSoundType.tp_dict, "Playing", obj);
 	Py_DECREF(obj);
 }

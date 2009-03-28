@@ -25,10 +25,7 @@
 #include "Font.hpp"
 #include "Glyph.hpp"
 
-static PyMemberDef PySfFont_members[] = {
-	{NULL}  /* Sentinel */
-};
-
+#include "compat.hpp"
 
 
 static void
@@ -36,21 +33,16 @@ PySfFont_dealloc(PySfFont *self)
 {
 	if (self->Owner)
 		delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfFont_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfFont *self;
-
 	self = (PySfFont *)type->tp_alloc(type, 0);
-
 	if (self != NULL)
-	{
 		self->Owner = true;
-	}
-
 	return (PyObject *)self;
 }
 
@@ -67,27 +59,48 @@ PySfFont_LoadFromFile(PySfFont* self, PyObject *args, PyObject *kwds)
 	const char *kwlist[] = {"Filename", "Charsize", "Charset", NULL};
 	unsigned int Charsize=30;
 	char *Filename;
-	char *CharsetTmp = NULL;
-	int CharsetSize;
-	bool Result;
-
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "s|Is#", (char **)kwlist, &Filename, &Charsize, &CharsetTmp, &CharsetSize))
-		return NULL;
-
-	if (CharsetTmp)
+	char *Charset=NULL, *EncodingStr;
+	int Length;
+	bool result;
+	std::string Encoding;
+	if (PyArg_ParseTupleAndKeywords(args, kwds, "s|I:Font.LoadFromFile", (char **)kwlist, &Filename, &Charsize))
+		result = self->obj->LoadFromFile(Filename, Charsize);
+	else if (PyArg_ParseTupleAndKeywords(args, kwds, "s|Iu:Font.LoadFromFile", (char **)kwlist, &Filename, &Charsize, &Charset))
 	{
-		if ((unsigned char)CharsetTmp[0] == 0xff && (unsigned char)CharsetTmp[1] == 0xfe)
-			Result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::Text((const sf::Uint16 *)(CharsetTmp+2)));
+		PyErr_Clear();
+#if Py_UNICODE_SIZE == 4
+		result = self->obj->LoadFromFile(Filename, Charsize, (sf::Uint32 *)Charset);
+#else
+		result = self->obj->LoadFromFile(Filename, Charsize, (sf::Uint16 *)Charset);
+#endif
+	}
+	else if (PyArg_ParseTupleAndKeywords(args, kwds, "s|Is#s:Font.LoadFromFile", (char **)kwlist, &Filename, &Charsize, &Charset, &Length, &EncodingStr))
+	{
+		PyErr_Clear();
+		if (EncodingStr == NULL)
+			result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::UTF8String((sf::Uint8 *)Charset));
 		else
-			Result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::Text((const sf::Uint8 *)CharsetTmp));
+		{
+			Encoding.assign(EncodingStr);
+			if (Encoding == "utf8" || Encoding == "")
+				result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::UTF8String((sf::Uint8 *)Charset));
+			else if (Encoding == "utf16")
+				result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::UTF16String((sf::Uint16 *)(Charset+2)));
+			else if (Encoding == "utf32")
+				result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::UTF32String((sf::Uint32 *)(Charset+4)));
+			else
+			{
+				PyErr_Format(PyExc_TypeError, "Font.LoadFromFile() Encoding %s not supported", EncodingStr);
+				return NULL;
+			}
+		}
 	}
 	else
-		Result = self->obj->LoadFromFile(Filename, Charsize);
-
-	if (Result)
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	{
+		PyErr_BadArgument();
+		return NULL;
+	}
+	return PyBool_FromLong(result);
 }
 
 static PyObject *
@@ -96,27 +109,48 @@ PySfFont_LoadFromMemory(PySfFont* self, PyObject *args, PyObject *kwds)
 	const char *kwlist[] = {"Data", "Charsize", "Charset", NULL};
 	unsigned int Charsize=30, Size;
 	char *Data;
-	char *CharsetTmp = NULL;
-	int CharsetSize;
-	bool Result;
-
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "s#|Is#", (char **)kwlist, &Data, &Size, &Charsize, &CharsetTmp, &CharsetSize))
-		return NULL;
-
-	if (CharsetTmp)
+	char *Charset=NULL, *EncodingStr;
+	int Length;
+	bool result;
+	std::string Encoding;
+	if (PyArg_ParseTupleAndKeywords(args, kwds, "s#|I:Font.LoadFromMemory", (char **)kwlist, &Data, &Size, &Charsize))
+		result = self->obj->LoadFromMemory(Data, Size, Charsize);
+	else if (PyArg_ParseTupleAndKeywords(args, kwds, "s#|Iu:Font.LoadFromMemory", (char **)kwlist, &Data, &Size, &Charsize, &Charset))
 	{
-		if ((unsigned char)CharsetTmp[0] == 0xff && (unsigned char)CharsetTmp[1] == 0xfe)
-			Result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::Text((const sf::Uint16 *)(CharsetTmp+2)));
+		PyErr_Clear();
+#if Py_UNICODE_SIZE == 4
+		result = self->obj->LoadFromMemory(Data, Size, Charsize, (sf::Uint32 *)Charset);
+#else
+		result = self->obj->LoadFromMemory(Data, Size, Charsize, (sf::Uint16 *)Charset);
+#endif
+	}
+	else if (PyArg_ParseTupleAndKeywords(args, kwds, "s#|Is#s:Font.LoadFromMemory", (char **)kwlist, &Data, &Size, &Charsize, &Charset, &Length, &EncodingStr))
+	{
+		PyErr_Clear();
+		if (EncodingStr == NULL)
+			result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::UTF8String((sf::Uint8 *)Charset));
 		else
-			Result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::Text((const sf::Uint8 *)CharsetTmp));
+		{
+			Encoding.assign(EncodingStr);
+			if (Encoding == "utf8")
+				result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::UTF8String((sf::Uint8 *)Charset));
+			else if (Encoding == "utf16")
+				result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::UTF16String((sf::Uint16 *)(Charset+2)));
+			else if (Encoding == "utf32")
+				result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::UTF32String((sf::Uint32 *)(Charset+4)));
+			else
+			{
+				PyErr_Format(PyExc_TypeError, "Font.LoadFromMemory() Encoding %s not supported", EncodingStr);
+				return NULL;
+			}
+		}
 	}
 	else
-		Result = self->obj->LoadFromMemory(Data, Size, Charsize);
-
-	if (Result)
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	{
+		PyErr_BadArgument();
+		return NULL;
+	}
+	return PyBool_FromLong(result);
 }
 
 static PyObject *
@@ -147,16 +181,16 @@ PySfFont_GetGlyph(PySfFont* self, PyObject *args)
 }
 
 static PyMethodDef PySfFont_methods[] = {
-	{"LoadFromFile", (PyCFunction)PySfFont_LoadFromFile, METH_VARARGS | METH_KEYWORDS, "LoadFromFile(Filename, CharSize, Charset)\n\
+	{"LoadFromFile", (PyCFunction)PySfFont_LoadFromFile, METH_VARARGS | METH_KEYWORDS, "LoadFromFile(Filename, CharSize, UnicodeCharset) or LoadFromFile(Filename, CharSize, Charset, Encoding='utf8')\n\
 Load the font from a file. Returns True if loading was successful.\n\
 	Filename : Font file to load\n\
 	CharSize : Size of characters in bitmap - the bigger, the higher quality (30 by default)\n\
-	Charset :  Characters set to generate (empty by default - takes the ASCII range [31, 255])"},
-	{"LoadFromMemory", (PyCFunction)PySfFont_LoadFromMemory, METH_VARARGS | METH_KEYWORDS, "LoadFromMemory(Data, CharSize, Charset)\n\
+	Charset : Characters set to generate (by default, contains the ISO-8859-1 printable characters)"},
+	{"LoadFromMemory", (PyCFunction)PySfFont_LoadFromMemory, METH_VARARGS | METH_KEYWORDS, "LoadFromMemory(Data, CharSize, UnicodeCharset) or LoadFromMemory(Data, CharSize, Charset, Encoding='utf8')\n\
 Load the font from a file in memory. Returns True if loading was successful.\n\
 	Data : data to load\n\
 	CharSize : Size of characters in bitmap - the bigger, the higher quality (30 by default)\n\
-	Charset : Characters set to generate (empty by default - takes the ASCII range [31, 255])"},
+	Charset : Characters set to generate (by default, contains the ISO-8859-1 printable characters)"},
 	{"GetDefaultFont", (PyCFunction)PySfFont_GetDefaultFont, METH_NOARGS | METH_STATIC, "GetDefaultFont()\n\
 Get the SFML default built-in font (Arial)."},
 	{"GetCharacterSize", (PyCFunction)PySfFont_GetCharacterSize, METH_NOARGS, "GetCharacterSize()\n\
@@ -169,8 +203,7 @@ Get the description of a glyph (character) given by its unicode value. Returns g
 
 
 PyTypeObject PySfFontType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Font",					/*tp_name*/
 	sizeof(PySfFont),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -198,7 +231,7 @@ PyTypeObject PySfFontType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfFont_methods,		/* tp_methods */
-	PySfFont_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */

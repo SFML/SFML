@@ -25,15 +25,9 @@
 #ifndef __PYVIDEOMODE_HPP
 #define __PYVIDEOMODE_HPP
 
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <iostream>
+#include <SFML/Window/VideoMode.hpp>
 
 #include <Python.h>
-#include <structmember.h>
-
-#include "offsetof.hpp"
-
 
 typedef struct {
 	PyObject_HEAD

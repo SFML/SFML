@@ -25,11 +25,13 @@
 #ifndef __PYCLOCK_HPP
 #define __PYCLOCK_HPP
 
+#include <Python.h>
 
 #include <SFML/System/Clock.hpp>
-#include <iostream>
 
-#include <Python.h>
-#include <structmember.h>
+typedef struct {
+	PyObject_HEAD
+	sf::Clock *obj;
+} PySfClock;
 
 #endif

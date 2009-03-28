@@ -24,85 +24,61 @@
 
 #include "Input.hpp"
 
+#include "compat.hpp"
 
-static PyMemberDef PySfInput_members[] = {
-	{NULL}  /* Sentinel */
-};
-
-
-static void
-PySfInput_dealloc(PySfInput *self)
-{
-	self->ob_type->tp_free((PyObject*)self);
-}
 
 static PyObject *
 PySfInput_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfInput *self;
-
 	self = (PySfInput *)type->tp_alloc(type, 0);
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
-
 
 static int
 PySfInput_init(PySfInput *self, PyObject *args, PyObject *kwds)
 {
-	PyErr_SetString(PyExc_StandardError, "You can't create an Input object yourself, because an Input object must always be associated to its window.\nThe only way to get an Input is by creating a window and calling : Input = MyWindow.GetInput().");
+	PyErr_SetString(PyExc_RuntimeError, "You can't create an Input object yourself, because an Input object must always be associated to its window.\nThe only way to get an Input is by creating a window and calling : Input = MyWindow.GetInput().");
 	return -1;
 }
 
 static PyObject*
 PySfInput_IsKeyDown(PySfInput *self, PyObject *args)
 {
-	if (self->obj->IsKeyDown( (sf::Key::Code) PyInt_AsLong(args) ))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(self->obj->IsKeyDown( (sf::Key::Code) PyLong_AsLong(args) ));
 }
 
 static PyObject*
 PySfInput_IsMouseButtonDown(PySfInput *self, PyObject *args)
 {
-	if (self->obj->IsMouseButtonDown( (sf::Mouse::Button) PyInt_AsLong(args) ))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(self->obj->IsMouseButtonDown( (sf::Mouse::Button) PyLong_AsLong(args) ));
 }
 
 static PyObject*
 PySfInput_IsJoystickButtonDown(PySfInput *self, PyObject *args)
 {
 	unsigned int JoyId, Button;
-	if (! PyArg_ParseTuple (args, "II", &JoyId, &Button))
+	if (! PyArg_ParseTuple (args, "II:Input.IsJoystickButtonDown", &JoyId, &Button))
 		return NULL;
-	if (self->obj->IsJoystickButtonDown(JoyId, Button))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(self->obj->IsJoystickButtonDown(JoyId, Button));
 }
 
 static PyObject*
 PySfInput_GetMouseX(PySfInput *self)
 {
-	return PyInt_FromLong(self->obj->GetMouseX());
+	return PyLong_FromLong(self->obj->GetMouseX());
 }
 static PyObject*
 PySfInput_GetMouseY(PySfInput *self)
 {
-	return PyInt_FromLong(self->obj->GetMouseY());
+	return PyLong_FromLong(self->obj->GetMouseY());
 }
 
 static PyObject*
 PySfInput_GetJoystickAxis(PySfInput *self, PyObject *args)
 {
 	unsigned int JoyId, Axis;
-	if (! PyArg_ParseTuple (args, "II", &JoyId, &Axis))
+	if (! PyArg_ParseTuple (args, "II:Input.GetJoystickAxis", &JoyId, &Axis))
 		return NULL;
 	return PyFloat_FromDouble(self->obj->GetJoystickAxis(JoyId, (sf::Joy::Axis) Axis));
 }
@@ -118,12 +94,11 @@ static PyMethodDef PySfInput_methods[] = {
 };
 
 PyTypeObject PySfInputType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Input",				/*tp_name*/
 	sizeof(PySfInput),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
-	(destructor)PySfInput_dealloc, /*tp_dealloc*/
+	0,						/*tp_dealloc*/
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
@@ -147,7 +122,7 @@ PyTypeObject PySfInputType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfInput_methods,		/* tp_methods */
-	PySfInput_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
@@ -162,6 +137,6 @@ PyTypeObject PySfInputType = {
 PySfInput *
 GetNewPySfInput()
 {
-	return PyObject_New(PySfInput, &PySfInputType);
+	return (PySfInput *)PySfInput_new(&PySfInputType, NULL, NULL);
 }
 

@@ -33,7 +33,6 @@
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/WindowSettings.hpp>
 #include <set>
 #include <string>
 
@@ -55,34 +54,24 @@ public :
     ////////////////////////////////////////////////////////////
     /// Create a new window depending on the current OS
     ///
-    /// \return Pointer to the created window
-    ///
-    ////////////////////////////////////////////////////////////
-    static WindowImpl* New();
-
-    ////////////////////////////////////////////////////////////
-    /// Create a new window depending on the current OS
-    ///
     /// \param Mode :        Video mode to use
     /// \param Title :       Title of the window
     /// \param WindowStyle : Window style
-    /// \param Params :      Creation parameters
     ///
     /// \return Pointer to the created window
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* New(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, WindowSettings& Params);
+    static WindowImpl* New(VideoMode Mode, const std::string& Title, unsigned long WindowStyle);
 
     ////////////////////////////////////////////////////////////
     /// Create a new window depending on to the current OS
     ///
     /// \param Handle : Platform-specific handle of the control
-    /// \param Params : Creation parameters
     ///
     /// \return Pointer to the created window
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* New(WindowHandle Handle, WindowSettings& Params);
+    static WindowImpl* New(WindowHandle Handle);
 
 public :
 
@@ -109,12 +98,6 @@ public :
     void RemoveListener(WindowListener* Listener);
 
     ////////////////////////////////////////////////////////////
-    /// Initialize window's states that can't be done at construction
-    ///
-    ////////////////////////////////////////////////////////////
-    void Initialize();
-
-    ////////////////////////////////////////////////////////////
     /// Get the client width of the window
     ///
     /// \return Width of the window in pixels
@@ -129,15 +112,6 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     unsigned int GetHeight() const;
-
-    ////////////////////////////////////////////////////////////
-    /// Activate of deactivate the window as the current target
-    /// for rendering
-    ///
-    /// \param Active : True to activate, false to deactivate (true by default)
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void SetActive(bool Active = true) const = 0;
 
     ////////////////////////////////////////////////////////////
     /// Change the joystick threshold, ie. the value below which
@@ -155,26 +129,12 @@ public :
     void DoEvents();
 
     ////////////////////////////////////////////////////////////
-    /// Check if there's an active context on the current thread
+    /// Get the OS-specific handle of the window
     ///
-    /// \return True if there's a context bound to the current thread
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool IsContextActive();
-
-    ////////////////////////////////////////////////////////////
-    /// Display the window on screen
+    /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Display() = 0;
-
-    ////////////////////////////////////////////////////////////
-    /// Enable / disable vertical synchronization
-    ///
-    /// \param Enabled : True to enable v-sync, false to deactivate
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void UseVerticalSync(bool Enabled) = 0;
+    virtual WindowHandle GetHandle() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// Show or hide the mouse cursor
@@ -252,23 +212,6 @@ protected :
     ///
     ////////////////////////////////////////////////////////////
     void SendEvent(const Event& EventToSend);
-
-    ////////////////////////////////////////////////////////////
-    /// Evaluate a pixel format configuration.
-    /// This functions can be used by implementations that have
-    /// several valid formats and want to get the best one
-    ///
-    /// \param Mode :         Requested video mode
-    /// \param Settings :     Requested additionnal settings
-    /// \param ColorBits :    Color bits of the configuration to evaluate
-    /// \param DepthBits :    Depth bits of the configuration to evaluate
-    /// \param StencilBits :  Stencil bits of the configuration to evaluate
-    /// \param Antialiasing : Antialiasing level of the configuration to evaluate
-    ///
-    /// \return Score of the configuration : the lower the better
-    ///
-    ////////////////////////////////////////////////////////////
-    static int EvaluateConfig(const VideoMode& Mode, const WindowSettings& Settings, int ColorBits, int DepthBits, int StencilBits, int Antialiasing);
 
     ////////////////////////////////////////////////////////////
     // Member data

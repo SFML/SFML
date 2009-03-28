@@ -25,13 +25,9 @@
 #ifndef __PYWINDOWSETTINGS_HPP
 #define __PYWINDOWSETTINGS_HPP
 
-#include <SFML/Window/WindowSettings.hpp>
-#include <iostream>
-
 #include <Python.h>
-#include <structmember.h>
 
-#include "offsetof.hpp"
+#include <SFML/Window/WindowSettings.hpp>
 
 
 typedef struct {

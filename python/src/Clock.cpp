@@ -24,24 +24,14 @@
 
 #include "Clock.hpp"
 
-
-typedef struct {
-	PyObject_HEAD
-	sf::Clock *obj;
-} PySfClock;
-
-
-
-static PyMemberDef PySfClock_members[] = {
-	{NULL}  /* Sentinel */
-};
+#include "compat.hpp"
 
 
 static void
 PySfClock_dealloc(PySfClock *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
@@ -86,8 +76,7 @@ static PyMethodDef PySfClock_methods[] = {
 };
 
 PyTypeObject PySfClockType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Clock",				/*tp_name*/
 	sizeof(PySfClock),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -95,7 +84,7 @@ PyTypeObject PySfClockType = {
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
-	0,						/*tp_compare*/
+	0,						/*tp_compare (tp_reserved in py3k)*/
 	0,						/*tp_repr*/
 	0,						/*tp_as_number*/
 	0,						/*tp_as_sequence*/
@@ -115,7 +104,7 @@ PyTypeObject PySfClockType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfClock_methods,		/* tp_methods */
-	PySfClock_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */

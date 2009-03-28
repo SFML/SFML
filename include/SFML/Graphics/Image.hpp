@@ -161,9 +161,10 @@ public :
     /// \param DestX :      X coordinate of the destination position
     /// \param DestY :      Y coordinate of the destination position
     /// \param SourceRect : Sub-rectangle of the source image to copy (empty by default - entire image)
+    /// \param ApplyAlpha : Should the copy take in account the source transparency? (false by default)
     ///
     ////////////////////////////////////////////////////////////
-    void Copy(const Image& Source, unsigned int DestX, unsigned int DestY, const IntRect& SourceRect = IntRect(0, 0, 0, 0));
+    void Copy(const Image& Source, unsigned int DestX, unsigned int DestY, const IntRect& SourceRect = IntRect(0, 0, 0, 0), bool ApplyAlpha = false);
 
     ////////////////////////////////////////////////////////////
     /// Create the image from the current contents of the

@@ -22,62 +22,25 @@
 //
 ////////////////////////////////////////////////////////////
 
-#include <SFML/Window/WindowStyle.hpp>
-
-#include <Python.h>
-#include <structmember.h>
-
 #include "WindowStyle.hpp"
 
+#include "compat.hpp"
 
-typedef struct {
-	PyObject_HEAD
-} PySfStyle;
-
-
-
-static PyMemberDef PySfStyle_members[] = {
-	{NULL}  /* Sentinel */
-};
-
-
-static void
-PySfStyle_dealloc(PySfStyle *self)
-{
-	self->ob_type->tp_free((PyObject*)self);
-}
 
 static PyObject *
 PySfStyle_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfStyle *self;
-
 	self = (PySfStyle *)type->tp_alloc(type, 0);
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
-
-static int
-PySfStyle_init(PySfStyle *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
-}
-
-static PyMethodDef PySfStyle_methods[] = {
-	{NULL}  /* Sentinel */
-};
-
 PyTypeObject PySfStyleType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"Style",				/*tp_name*/
 	sizeof(PySfStyle),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
-	(destructor)PySfStyle_dealloc, /*tp_dealloc*/
+	0,						/*tp_dealloc*/
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
@@ -105,15 +68,15 @@ Fullscreen Fullscreen mode (this flag and all others are mutually exclusive).", 
 	0,						/* tp_weaklistoffset */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
-	PySfStyle_methods,		/* tp_methods */
-	PySfStyle_members,		/* tp_members */
+	0,						/* tp_methods */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfStyle_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfStyle_new,			/* tp_new */
 };
@@ -121,19 +84,19 @@ Fullscreen Fullscreen mode (this flag and all others are mutually exclusive).", 
 void PySfStyle_InitConst()
 {
 	PyObject *obj;
-	obj = PyInt_FromLong(sf::Style::None);
+	obj = PyLong_FromLong(sf::Style::None);
 	PyDict_SetItemString(PySfStyleType.tp_dict, "None", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::Style::Titlebar);
+	obj = PyLong_FromLong(sf::Style::Titlebar);
 	PyDict_SetItemString(PySfStyleType.tp_dict, "Titlebar", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::Style::Resize);
+	obj = PyLong_FromLong(sf::Style::Resize);
 	PyDict_SetItemString(PySfStyleType.tp_dict, "Resize", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::Style::Close);
+	obj = PyLong_FromLong(sf::Style::Close);
 	PyDict_SetItemString(PySfStyleType.tp_dict, "Close", obj);
 	Py_DECREF(obj);
-	obj = PyInt_FromLong(sf::Style::Fullscreen);
+	obj = PyLong_FromLong(sf::Style::Fullscreen);
 	PyDict_SetItemString(PySfStyleType.tp_dict, "Fullscreen", obj);
 	Py_DECREF(obj);
 }

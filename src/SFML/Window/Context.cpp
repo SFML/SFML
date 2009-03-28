@@ -26,62 +26,125 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Context.hpp>
-#include <SFML/Window/WindowImpl.hpp>
+#include <SFML/OpenGL.hpp>
+#include <SFML/Window/glext/glext.h>
+#include <stdlib.h>
 
 
-namespace
-{
-    // Make sure the dummy context is created at global startup
-    sf::Context& Dummy = sf::Context::GetGlobal();
-}
+#if defined(SFML_SYSTEM_WINDOWS)
+
+    #include <SFML/Window/Win32/ContextWGL.hpp>
+    typedef sf::priv::ContextWGL ContextType;
+
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+
+    #include <SFML/Window/Linux/ContextGLX.hpp>
+    typedef sf::priv::ContextGLX ContextType;
+
+#elif defined(SFML_SYSTEM_MACOS)
+
+	#include <SFML/Window/Cocoa/ContextAGL.hpp>
+	typedef sf::priv::ContextAGL ContextType;
+
+#endif
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor, create the context
+/// Create a new context, not associated to a window
 ////////////////////////////////////////////////////////////
-Context::Context()
+Context* Context::New()
 {
-    myDummyWindow = priv::WindowImpl::New();
+    ContextType* Shared = static_cast<ContextType*>(&GetDefault());
+    return new ContextType(Shared);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor, destroy the context
+/// Create a new context attached to a window
 ////////////////////////////////////////////////////////////
-Context::~Context()
+Context* Context::New(const priv::WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings)
 {
-    delete myDummyWindow;
+    ContextType* Shared = static_cast<ContextType*>(&GetDefault());
+    ContextType* NewContext = new ContextType(Shared, Owner, BitsPerPixel, Settings);
+
+    // Enable antialiasing if needed
+    if (NewContext->GetSettings().AntialiasingLevel > 0)
+        glEnable(GL_MULTISAMPLE_ARB);
+
+    return NewContext;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Activate or deactivate the context
-////////////////////////////////////////////////////////////
-void Context::SetActive(bool Active)
-{
-    myDummyWindow->SetActive(Active);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Check if there's a context bound to the current thread
+/// Check if a context is active on the current thread
 ////////////////////////////////////////////////////////////
 bool Context::IsContextActive()
 {
-    return priv::WindowImpl::IsContextActive();
+    return ContextType::IsContextActive();
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the global context
+/// Return the default context
 ////////////////////////////////////////////////////////////
-Context& Context::GetGlobal()
+Context& Context::GetDefault()
 {
-    static Context* GlobalContext = new Context; // Never deleted, on purpose
+    static ContextType DefaultContext(NULL);
 
-    return *GlobalContext;
+    return DefaultContext;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Destructor
+////////////////////////////////////////////////////////////
+Context::~Context()
+{
+    // Nothing to do
+}
+
+
+////////////////////////////////////////////////////////////
+/// Get the settings of the context
+////////////////////////////////////////////////////////////
+const ContextSettings& Context::GetSettings() const
+{
+    return mySettings;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Activate or deactivate the context as the current target
+/// for rendering
+////////////////////////////////////////////////////////////
+bool Context::SetActive(bool Active)
+{
+    return MakeCurrent(Active);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Default constructor
+////////////////////////////////////////////////////////////
+Context::Context()
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+/// Evaluate a pixel format configuration.
+/// This functions can be used by implementations that have
+/// several valid formats and want to get the best one
+////////////////////////////////////////////////////////////
+int Context::EvaluateFormat(unsigned int BitsPerPixel, const ContextSettings& Settings, int ColorBits, int DepthBits, int StencilBits, int Antialiasing)
+{
+    return abs(static_cast<int>(BitsPerPixel               - ColorBits))   +
+           abs(static_cast<int>(Settings.DepthBits         - DepthBits))   +
+           abs(static_cast<int>(Settings.StencilBits       - StencilBits)) +
+           abs(static_cast<int>(Settings.AntialiasingLevel - Antialiasing));
 }
 
 } // namespace sf

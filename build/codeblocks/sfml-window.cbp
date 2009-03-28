@@ -109,14 +109,13 @@
 			<Add library="libgdi32.a" />
 		</Linker>
 		<Unit filename="..\..\include\SFML\Window\Context.hpp" />
+		<Unit filename="..\..\include\SFML\Window\ContextSettings.hpp" />
 		<Unit filename="..\..\include\SFML\Window\Event.hpp" />
 		<Unit filename="..\..\include\SFML\Window\Input.hpp" />
-		<Unit filename="..\..\include\SFML\Window\OpenGL.hpp" />
 		<Unit filename="..\..\include\SFML\Window\VideoMode.hpp" />
 		<Unit filename="..\..\include\SFML\Window\Window.hpp" />
 		<Unit filename="..\..\include\SFML\Window\WindowHandle.hpp" />
 		<Unit filename="..\..\include\SFML\Window\WindowListener.hpp" />
-		<Unit filename="..\..\include\SFML\Window\WindowSettings.hpp" />
 		<Unit filename="..\..\include\SFML\Window\WindowStyle.hpp" />
 		<Unit filename="..\..\include\SFML\Window\glew\glew.h" />
 		<Unit filename="..\..\src\SFML\Window\Context.cpp" />
@@ -124,6 +123,8 @@
 		<Unit filename="..\..\src\SFML\Window\Joystick.hpp" />
 		<Unit filename="..\..\src\SFML\Window\VideoMode.cpp" />
 		<Unit filename="..\..\src\SFML\Window\VideoModeSupport.hpp" />
+		<Unit filename="..\..\src\SFML\Window\Win32\ContextWGL.cpp" />
+		<Unit filename="..\..\src\SFML\Window\Win32\ContextWGL.hpp" />
 		<Unit filename="..\..\src\SFML\Window\Win32\Joystick.cpp" />
 		<Unit filename="..\..\src\SFML\Window\Win32\Joystick.hpp" />
 		<Unit filename="..\..\src\SFML\Window\Win32\VideoModeSupport.cpp" />

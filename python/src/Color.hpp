@@ -25,13 +25,10 @@
 #ifndef __PYCOLOR_HPP
 #define __PYCOLOR_HPP
 
-#include <SFML/Graphics/Color.hpp>
-#include <iostream>
-
 #include <Python.h>
 #include <structmember.h>
 
-#include "offsetof.hpp"
+#include <SFML/Graphics/Color.hpp>
 
 
 typedef struct {

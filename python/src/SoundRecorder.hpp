@@ -25,13 +25,9 @@
 #ifndef __PYSOUNDRECORDER_HPP
 #define __PYSOUNDRECORDER_HPP
 
-#include <SFML/Audio/SoundRecorder.hpp>
-#include <iostream>
-
 #include <Python.h>
-#include <structmember.h>
 
-#include "offsetof.hpp"
+#include <SFML/Audio/SoundRecorder.hpp>
 
 class CustomSoundRecorder : public sf::SoundRecorder
 {

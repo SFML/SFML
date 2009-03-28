@@ -25,11 +25,9 @@
 #ifndef __PYSOUNDBUFFER_HPP
 #define __PYSOUNDBUFFER_HPP
 
-#include <SFML/Audio/SoundBuffer.hpp>
-#include <iostream>
-
 #include <Python.h>
-#include <structmember.h>
+
+#include <SFML/Audio/SoundBuffer.hpp>
 
 typedef struct {
 	PyObject_HEAD

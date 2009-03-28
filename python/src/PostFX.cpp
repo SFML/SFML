@@ -23,68 +23,61 @@
 ////////////////////////////////////////////////////////////
 
 #include "PostFX.hpp"
+#include "Drawable.hpp"
+#include "Image.hpp"
+
+#include "compat.hpp"
 
 
 extern PyTypeObject PySfImageType;
 extern PyTypeObject PySfDrawableType;
-
-static PyMemberDef PySfPostFX_members[] = {
-    {NULL}  /* Sentinel */
-};
-
 
 
 static void
 PySfPostFX_dealloc(PySfPostFX *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfPostFX_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfPostFX *self;
-
 	self = (PySfPostFX *)type->tp_alloc(type, 0);
-
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
 static PyObject *
 PySfPostFX_LoadFromFile (PySfPostFX *self, PyObject *args)
 {
-	if (self->obj->LoadFromFile(PyString_AsString(args)))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	load_from_file(self, args);
 }
 
 static PyObject *
 PySfPostFX_LoadFromMemory (PySfPostFX *self, PyObject *args)
 {
-	if (self->obj->LoadFromMemory(PyString_AsString(args)))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	char *effect;
+#ifdef IS_PY3K
+	PyObject *string = PyUnicode_AsUTF8String(args);
+	if (string == NULL)
+		return NULL;
+	effect = PyBytes_AsString(string);
+#else
+	effect = PyString_AsString(args);
+#endif
+	bool result = self->obj->LoadFromMemory(effect);
+#ifdef IS_PY3K
+	Py_DECREF(string);
+#endif
+	return PyBool_FromLong(result);
 }
 
 static int
 PySfPostFX_init(PySfPostFX *self, PyObject *args);
 
 
-static PyObject *
-PySfPostFX_SetParameter(PySfPostFX* self, PyObject *args)
-{
-	char *Name;
-	float X, Y, Z, W;
-	int size = PyTuple_Size(args);
-	if (! PyArg_ParseTuple(args, "sf|fff", &Name, &X, &Y, &Z, &W))
-		return NULL;
+static PyObject *PySfPostFX_SetParameter(PySfPostFX* self, PyObject *args){	char *Name;	float X, Y, Z, W;	int size = PyTuple_Size(args);	if (!PyArg_ParseTuple(args, "sf|fff:PostFX.SetParameter", &Name, &X, &Y, &Z, &W))		return NULL;
 
 	switch (size)
 	{
@@ -120,7 +113,7 @@ PySfPostFX_SetTexture(PySfPostFX* self, PyObject *args)
 	{
 		if (!PyObject_TypeCheck(Image, &PySfImageType))
 		{
-			PyErr_SetString(PyExc_TypeError, "Argument 2, if specified, must be a sf.Image instance or None.");
+			PyErr_SetString(PyExc_TypeError, "PostFX.SetTexture() Argument 2, if specified, must be a sf.Image instance or None.");
 			return NULL;
 		}
 		self->obj->SetTexture(Name, Image->obj);
@@ -131,10 +124,7 @@ PySfPostFX_SetTexture(PySfPostFX* self, PyObject *args)
 static PyObject *
 PySfPostFX_CanUsePostFX(PySfPostFX* self, PyObject *args)
 {
-	if (sf::PostFX::CanUsePostFX())
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(sf::PostFX::CanUsePostFX());
 }
 
 
@@ -152,8 +142,7 @@ static PyMethodDef PySfPostFX_methods[] = {
 };
 
 PyTypeObject PySfPostFXType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"PostFX",				/*tp_name*/
 	sizeof(PySfPostFX),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -173,7 +162,9 @@ PyTypeObject PySfPostFXType = {
 	0,						/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-	"sf.PostFX is used to apply a post effect to a window. ", /* tp_doc */
+	"sf.PostFX is used to apply a post effect to a window.\n\
+Default constructor : sf.PostFX()\n\
+Copy constructor : sf.PostFX(Copy) where Copy is a sf.PostFX instance.", /* tp_doc */
 	0,						/* tp_traverse */
 	0,						/* tp_clear */
 	0,						/* tp_richcompare */
@@ -181,7 +172,7 @@ PyTypeObject PySfPostFXType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfPostFX_methods,		/* tp_methods */
-	PySfPostFX_members,		/* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	&PySfDrawableType,		/* tp_base */
 	0,						/* tp_dict */

@@ -25,6 +25,14 @@
 #ifndef __PYKEY_HPP
 #define __PYKEY_HPP
 
+#include <Python.h>
+
+#include <SFML/Window/Event.hpp>
+
+typedef struct {
+	PyObject_HEAD
+} PySfKey;
+
 void
 PySfKey_InitConst();
 

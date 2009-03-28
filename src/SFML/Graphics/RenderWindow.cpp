@@ -46,18 +46,18 @@ RenderWindow::RenderWindow()
 ////////////////////////////////////////////////////////////
 /// Construct the window
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const WindowSettings& Params)
+RenderWindow::RenderWindow(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const ContextSettings& Settings)
 {
-    Create(Mode, Title, WindowStyle, Params);
+    Create(Mode, Title, WindowStyle, Settings);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Construct the window from an existing control
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(WindowHandle Handle, const WindowSettings& Params)
+RenderWindow::RenderWindow(WindowHandle Handle, const ContextSettings& Settings)
 {
-    Create(Handle, Params);
+    Create(Handle, Settings);
 }
 
 

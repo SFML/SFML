@@ -24,57 +24,58 @@
 
 #include "SoundRecorder.hpp"
 
-
-
-static PyMemberDef PySfSoundRecorder_members[] = {
-    {NULL}  /* Sentinel */
-};
-
+#include "compat.hpp"
 
 bool CustomSoundRecorder::OnStart()
 {
+	bool result = false;
 	if (PyObject_HasAttrString(SoundRecorder, "OnStart"))
-		if (PyObject_IsTrue(PyObject_CallFunction(PyObject_GetAttrString(SoundRecorder, "OnStart"), NULL)))
-			return true;
-    return false;
+	{
+		PyObject *OnStart = PyObject_GetAttrString(SoundRecorder, "OnStart");
+		PyObject *Result = PyObject_CallFunction(OnStart, NULL);
+		result = PyBool_AsBool(Result);
+		Py_DECREF(OnStart);
+		Py_DECREF(Result);
+	}
+    return result;
 }
 
 bool CustomSoundRecorder::OnProcessSamples(const sf::Int16* Samples, std::size_t SamplesCount)
 {
+	bool result = false;
 	if (PyObject_HasAttrString(SoundRecorder, "OnGetData"))
 	{
-		if (PyObject_IsTrue(PyObject_CallFunction(PyObject_GetAttrString(SoundRecorder, "OnGetData"), (char *)"#s", (char *)Samples, SamplesCount*2)))
-		{
-			return true;
-		}
+		PyObject *OnGetData = PyObject_GetAttrString(SoundRecorder, "OnGetData");
+		PyObject *Result = PyObject_CallFunction(OnGetData, (char *)"#s", (char *)Samples, SamplesCount*2);
+		result = PyBool_AsBool(Result);
+		Py_DECREF(OnGetData);
+		Py_DECREF(Result);
 	}
-    return false;
+    return result;
 }
 
 void CustomSoundRecorder::OnStop()
 {
 	if (PyObject_HasAttrString(SoundRecorder, "OnStop"))
-		PyObject_CallFunction(PyObject_GetAttrString(SoundRecorder, "OnStop"), NULL);
+	{
+		PyObject *OnStop = PyObject_GetAttrString(SoundRecorder, "OnStop");
+		PyObject_CallFunction(OnStop, NULL);
+		Py_DECREF(OnStop);
+	}
 }
 
 static void
 PySfSoundRecorder_dealloc(PySfSoundRecorder* self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfSoundRecorder_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfSoundRecorder *self;
-
 	self = (PySfSoundRecorder *)type->tp_alloc(type, 0);
-
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -86,11 +87,10 @@ PySfSoundRecorder_init(PySfSoundRecorder *self, PyObject *args)
 	return 0;
 }
 
-
 static PyObject *
 PySfSoundRecorder_Start(PySfSoundRecorder* self, PyObject *args)
 {
-	self->obj->Start( PyInt_AsLong(args) );
+	self->obj->Start(PyLong_AsLong(args));
 	Py_RETURN_NONE;
 }
 
@@ -104,18 +104,14 @@ PySfSoundRecorder_Stop(PySfSoundRecorder* self)
 static PyObject *
 PySfSoundRecorder_GetSampleRate(PySfSoundRecorder* self)
 {
-	return PyInt_FromLong(self->obj->GetSampleRate());
+	return PyLong_FromLong(self->obj->GetSampleRate());
 }
 
 static PyObject *
 PySfSoundRecorder_CanCapture(PySfSoundRecorder* self)
 {
-	if (sf::SoundRecorder::CanCapture())
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(sf::SoundRecorder::CanCapture());
 }
-
 
 
 static PyMethodDef PySfSoundRecorder_methods[] = {
@@ -128,8 +124,7 @@ static PyMethodDef PySfSoundRecorder_methods[] = {
 
 
 PyTypeObject PySfSoundRecorderType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"SoundRecorder",		/*tp_name*/
 	sizeof(PySfSoundRecorder), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -160,7 +155,7 @@ Construct the sound recorder with a callback function for processing captured sa
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfSoundRecorder_methods, /* tp_methods */
-	PySfSoundRecorder_members, /* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */

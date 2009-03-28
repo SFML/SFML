@@ -32,7 +32,11 @@
 
 struct sfContext
 {
-    sf::Context This;
+    sfContext() : This(sf::Context::New()) {}
+
+    ~sfContext() {delete This;}
+
+    sf::Context* This;
 };
 
 
@@ -59,5 +63,5 @@ void sfContext_Destroy(sfContext* Context)
 ////////////////////////////////////////////////////////////
 void sfContext_SetActive(sfContext* Context, sfBool Active)
 {
-    CSFML_CALL(Context, SetActive(Active == sfTrue))
+    CSFML_CALL_PTR(Context, SetActive(Active == sfTrue))
 }

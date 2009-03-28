@@ -25,6 +25,14 @@
 #ifndef __PYMOUSE_HPP
 #define __PYMOUSE_HPP
 
+#include <Python.h>
+
+#include <SFML/Window/Event.hpp>
+
+typedef struct {
+	PyObject_HEAD
+} PySfMouse;
+
 void
 PySfMouse_InitConst();
 

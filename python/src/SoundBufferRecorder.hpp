@@ -25,13 +25,9 @@
 #ifndef __PYSOUNDBUFFERRECORDER_HPP
 #define __PYSOUNDBUFFERRECORDER_HPP
 
-#include <SFML/Audio/SoundBufferRecorder.hpp>
-#include <iostream>
-
 #include <Python.h>
-#include <structmember.h>
 
-#include "offsetof.hpp"
+#include <SFML/Audio/SoundBufferRecorder.hpp>
 
 typedef struct {
 	PyObject_HEAD

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
 
@@ -36,62 +37,132 @@ namespace sf
 {
 namespace priv
 {
-    class WindowImpl;
+class WindowImpl;
 }
 
 ////////////////////////////////////////////////////////////
-/// Class wrapping an OpenGL context.
-/// All SFML windows already have their own context, so
-/// this class is more a helper for specific issues involving
-/// OpenGL and multi-threading.
-/// It's meant to be used internally.
+/// Abstract class representing an OpenGL context
 ////////////////////////////////////////////////////////////
 class SFML_API Context : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor, create the context
+    /// Create a new context, not associated to a window
+    ///
+    /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    Context();
+    static Context* New();
 
     ////////////////////////////////////////////////////////////
-    /// Destructor, destroy the context
+    /// Create a new context attached to a window
+    ///
+    /// \param Owner :        Pointer to the owner window
+    /// \param BitsPerPixel : Pixel depth (in bits per pixel)
+    /// \param Settings :     Creation parameters
+    ///
+    /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    ~Context();
+    static Context* New(const priv::WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings);
 
     ////////////////////////////////////////////////////////////
-    /// Activate or deactivate the context
+    /// Check if a context is active on the current thread
     ///
-    /// \param Active : True to activate the context, false to deactivate it
-    ///
-    ////////////////////////////////////////////////////////////
-    void SetActive(bool Active);
-
-    ////////////////////////////////////////////////////////////
-    /// Check if there's a context bound to the current thread
-    ///
-    /// \return True if there's a context bound to the current thread
+    /// \return True if there's an active context, false otherwise
     ///
     ////////////////////////////////////////////////////////////
     static bool IsContextActive();
 
     ////////////////////////////////////////////////////////////
-    /// Get the global context
+    /// Return the default context
     ///
-    /// \return Reference to the global context
+    /// \return Reference to the default context
     ///
     ////////////////////////////////////////////////////////////
-    static Context& GetGlobal();
+    static Context& GetDefault();
 
-private :
+public :
+
+    ////////////////////////////////////////////////////////////
+    /// Virtual destructor
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual ~Context();
+
+    ////////////////////////////////////////////////////////////
+    /// Get the settings of the context
+    ///
+    /// \return Structure containing the settings
+    ///
+    ////////////////////////////////////////////////////////////
+    const ContextSettings& GetSettings() const;
+
+    ////////////////////////////////////////////////////////////
+    /// Activate or deactivate the context as the current target
+    /// for rendering
+    ///
+    /// \param Active : True to activate, false to deactivate
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool SetActive(bool Active);
+
+    ////////////////////////////////////////////////////////////
+    /// Display the contents of the context
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void Display() = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// Enable / disable vertical synchronization
+    ///
+    /// \param Enabled : True to enable v-sync, false to deactivate
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void UseVerticalSync(bool Enabled) = 0;
+
+protected :
+
+    ////////////////////////////////////////////////////////////
+    /// Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Context();
+
+    ////////////////////////////////////////////////////////////
+    /// Make this context the current one
+    ///
+    /// \param Active : True to activate, false to deactivate
+    ///
+    /// \return True on success, false if any error happened
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool MakeCurrent(bool Active) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// Evaluate a pixel format configuration.
+    /// This functions can be used by implementations that have
+    /// several valid formats and want to get the best one
+    ///
+    /// \param BitsPerPixel : Requested pixel depth (bits per pixel)
+    /// \param Settings :     Requested additionnal settings
+    /// \param ColorBits :    Color bits of the configuration to evaluate
+    /// \param DepthBits :    Depth bits of the configuration to evaluate
+    /// \param StencilBits :  Stencil bits of the configuration to evaluate
+    /// \param Antialiasing : Antialiasing level of the configuration to evaluate
+    ///
+    /// \return Score of the configuration : the lower the better
+    ///
+    ////////////////////////////////////////////////////////////
+    static int EvaluateFormat(unsigned int BitsPerPixel, const ContextSettings& Settings, int ColorBits, int DepthBits, int StencilBits, int Antialiasing);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::WindowImpl* myDummyWindow; ///< Dummy window holding the context
+    ContextSettings mySettings; ///< Creation settings of the context
 };
 
 } // namespace sf

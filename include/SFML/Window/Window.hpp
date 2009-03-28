@@ -33,7 +33,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowListener.hpp>
-#include <SFML/Window/WindowSettings.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/NonCopyable.hpp>
@@ -47,6 +47,8 @@ namespace priv
 {
     class WindowImpl;
 }
+
+class Context;
 
 ////////////////////////////////////////////////////////////
 /// Window is a rendering window ; it can create a new window
@@ -68,19 +70,19 @@ public :
     /// \param Mode :        Video mode to use
     /// \param Title :       Title of the window
     /// \param WindowStyle : Window style (Resize | Close by default)
-    /// \param Params :      Creation parameters (see default constructor for default values)
+    /// \param Settings :    Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    Window(VideoMode Mode, const std::string& Title, unsigned long WindowStyle = Style::Resize | Style::Close, const WindowSettings& Params = WindowSettings());
+    Window(VideoMode Mode, const std::string& Title, unsigned long WindowStyle = Style::Resize | Style::Close, const ContextSettings& Settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Construct the window from an existing control
     ///
-    /// \param Handle : Platform-specific handle of the control
-    /// \param Params : Creation parameters (see default constructor for default values)
+    /// \param Handle :   Platform-specific handle of the control
+    /// \param Settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    Window(WindowHandle Handle, const WindowSettings& Params = WindowSettings());
+    Window(WindowHandle Handle, const ContextSettings& Settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -94,19 +96,19 @@ public :
     /// \param Mode :        Video mode to use
     /// \param Title :       Title of the window
     /// \param WindowStyle : Window style (Resize | Close by default)
-    /// \param Params :      Creation parameters (see default constructor for default values)
+    /// \param Settings :    Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    void Create(VideoMode Mode, const std::string& Title, unsigned long WindowStyle = Style::Resize | Style::Close, const WindowSettings& Params = WindowSettings());
+    void Create(VideoMode Mode, const std::string& Title, unsigned long WindowStyle = Style::Resize | Style::Close, const ContextSettings& Settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Create (or recreate) the window from an existing control
     ///
-    /// \param Handle : Platform-specific handle of the control
-    /// \param Params : Creation parameters (see default constructor for default values)
+    /// \param Handle :   Platform-specific handle of the control
+    /// \param Settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    void Create(WindowHandle Handle, const WindowSettings& Params = WindowSettings());
+    void Create(WindowHandle Handle, const ContextSettings& Settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Close (destroy) the window.
@@ -143,12 +145,12 @@ public :
     unsigned int GetHeight() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the creation settings of the window
+    /// Get the settinsg of the OpenGL context of the window
     ///
-    /// \return Structure containing the creation settings
+    /// \return Structure containing the context settings
     ///
     ////////////////////////////////////////////////////////////
-    const WindowSettings& GetSettings() const;
+    const ContextSettings& GetSettings() const;
 
     ////////////////////////////////////////////////////////////
     /// Get the event on top of events stack, if any, and pop it
@@ -232,7 +234,7 @@ public :
     void SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixels);
 
     ////////////////////////////////////////////////////////////
-    /// Activate of deactivate the window as the current target
+    /// Activate or deactivate the window as the current target
     /// for rendering
     ///
     /// \param Active : True to activate, false to deactivate (true by default)
@@ -298,21 +300,19 @@ private :
     virtual void OnEvent(const Event& EventReceived);
 
     ////////////////////////////////////////////////////////////
-    /// Initialize internal window
-    ///
-    /// \param Impl : New internal window implementation
+    /// Do some common internal initializations
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize(priv::WindowImpl* Impl);
+    void Initialize();
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::WindowImpl* myWindow;         ///< Platform-specific implementation of window
+    priv::WindowImpl* myWindow;         ///< Platform-specific implementation of the window
+    Context*          myContext;        ///< Platform-specific implementation of the OpenGL context
     std::queue<Event> myEvents;         ///< Queue of received events
     Input             myInput;          ///< Input manager connected to window
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
-    WindowSettings    mySettings;       ///< Creation settings of the window
     float             myLastFrameTime;  ///< Time elapsed since last frame
     bool              myIsExternal;     ///< Tell whether the window is internal or external (created by SFML or not)
     unsigned int      myFramerateLimit; ///< Current framerate limit

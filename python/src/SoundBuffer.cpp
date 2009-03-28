@@ -24,29 +24,21 @@
 
 #include "SoundBuffer.hpp"
 
-
-static PyMemberDef PySfSoundBuffer_members[] = {
-	{NULL}  /* Sentinel */
-};
+#include "compat.hpp"
 
 
 static void
 PySfSoundBuffer_dealloc(PySfSoundBuffer *self)
 {
 	delete self->obj;
-	self->ob_type->tp_free((PyObject*)self);
+	free_object(self);
 }
 
 static PyObject *
 PySfSoundBuffer_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfSoundBuffer *self;
-
 	self = (PySfSoundBuffer *)type->tp_alloc(type, 0);
-	if (self != NULL)
-	{
-	}
-
 	return (PyObject *)self;
 }
 
@@ -56,11 +48,7 @@ PySfSoundBuffer_init(PySfSoundBuffer *self, PyObject *args, PyObject *kwds);
 static PyObject*
 PySfSoundBuffer_LoadFromFile(PySfSoundBuffer *self, PyObject *args)
 {
-	char *path = PyString_AsString(args);
-	if (self->obj->LoadFromFile(path))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	load_from_file(self, args);
 }
 
 static PyObject *
@@ -69,13 +57,10 @@ PySfSoundBuffer_LoadFromMemory(PySfSoundBuffer* self, PyObject *args)
 	unsigned int SizeInBytes;
 	char *Data;
 
-	if (! PyArg_ParseTuple(args, "s#", &Data, &SizeInBytes))
+	if (!PyArg_ParseTuple(args, "s#:SoundBuffer.LoadFromMemory", &Data, &SizeInBytes))
 		return NULL; 
 
-	if (self->obj->LoadFromMemory(Data, (std::size_t) SizeInBytes))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(self->obj->LoadFromMemory(Data, (std::size_t) SizeInBytes));
 }
 
 static PyObject *
@@ -84,29 +69,26 @@ PySfSoundBuffer_LoadFromSamples(PySfSoundBuffer* self, PyObject *args)
 	unsigned int SizeInBytes, ChannelsCount, SampleRate;
 	char *Data;
 
-	if (! PyArg_ParseTuple(args, "s#II", &Data, &SizeInBytes, &ChannelsCount, &SampleRate))
+	if (!PyArg_ParseTuple(args, "s#II:SoundBuffer.LoadFromSamples", &Data, &SizeInBytes, &ChannelsCount, &SampleRate))
 		return NULL; 
 
-	if (self->obj->LoadFromSamples((const sf::Int16*)Data, (std::size_t) SizeInBytes/2, ChannelsCount, SampleRate))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	return PyBool_FromLong(self->obj->LoadFromSamples((const sf::Int16*)Data, (std::size_t) SizeInBytes/2, ChannelsCount, SampleRate));
 }
 
 static PyObject*
 PySfSoundBuffer_GetSamples(PySfSoundBuffer *self)
 {
+#ifdef IS_PY3K
+	return PyBytes_FromStringAndSize((const char *)(self->obj->GetSamples()), self->obj->GetSamplesCount()*2);
+#else
 	return PyString_FromStringAndSize((const char *)(self->obj->GetSamples()), self->obj->GetSamplesCount()*2);
+#endif
 }
 
 static PyObject*
 PySfSoundBuffer_SaveToFile(PySfSoundBuffer *self, PyObject *args)
 {
-	char *path = PyString_AsString(args);
-	if (self->obj->SaveToFile(path))
-		Py_RETURN_TRUE;
-	else
-		Py_RETURN_FALSE;
+	save_to_file(self, args);
 }
 
 static PyObject*
@@ -151,8 +133,7 @@ static PyMethodDef PySfSoundBuffer_methods[] = {
 };
 
 PyTypeObject PySfSoundBufferType = {
-	PyObject_HEAD_INIT(NULL)
-	0,						/*ob_size*/
+	head_init
 	"SoundBuffer",			/*tp_name*/
 	sizeof(PySfSoundBuffer), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
@@ -182,7 +163,7 @@ Copy constructor : SoundBuffer(Copy) where Copy is a sf.SoundBuffer instance.", 
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	PySfSoundBuffer_methods, /* tp_methods */
-	PySfSoundBuffer_members, /* tp_members */
+	0,						/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
@@ -197,22 +178,24 @@ Copy constructor : SoundBuffer(Copy) where Copy is a sf.SoundBuffer instance.", 
 static int
 PySfSoundBuffer_init(PySfSoundBuffer *self, PyObject *args, PyObject *kwds)
 {
-	if (PyTuple_Size(args) == 1)
+	int size = PyTuple_Size(args);
+	if (size == 1)
 	{
 		PySfSoundBuffer *Copy;
-		if (PyArg_ParseTuple(args, "O!", &PySfSoundBufferType, &Copy))
-			self->obj = new sf::SoundBuffer(*(Copy->obj));
-		else
+		if (!PyArg_ParseTuple(args, "O!:SoundBuffer.__init__", &PySfSoundBufferType, &Copy))
 			return -1;
+		self->obj = new sf::SoundBuffer(*(Copy->obj));
 	}
-	else
+	else if (size == 0)
 		self->obj = new sf::SoundBuffer();
+	else
+		PyErr_SetString(PyExc_TypeError, "SoundBuffer.__init__() takes 0 or 1 argument");
 	return 0;
 }
 
 PySfSoundBuffer *
 GetNewPySfSoundBuffer()
 {
-	return PyObject_New(PySfSoundBuffer, &PySfSoundBufferType);
+	return (PySfSoundBuffer *)PySfSoundBuffer_new(&PySfSoundBufferType, NULL, NULL);
 }
 

@@ -28,7 +28,6 @@
 #define _WIN32_WINDOWS 0x0501
 #define _WIN32_WINNT   0x0501
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
-#include <SFML/Window/WindowSettings.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <GL/gl.h>
 #include <SFML/Window/glext/wglext.h>
@@ -59,52 +58,9 @@ WindowImplWin32* WindowImplWin32::ourFullscreenWindow = NULL;
 
 
 ////////////////////////////////////////////////////////////
-/// Default constructor
-/// (creates a dummy window to provide a valid OpenGL context)
-////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32() :
-myHandle          (NULL),
-myCallback        (0),
-myCursor          (NULL),
-myIcon            (NULL),
-myKeyRepeatEnabled(true),
-myIsCursorIn      (false)
-{
-    // Register the window class at first call
-    if (ourWindowCount == 0)
-        RegisterWindowClass();
-
-    // Use small dimensions
-    myWidth  = 1;
-    myHeight = 1;
-
-    // Create a dummy window (disabled and hidden)
-    if (HasUnicodeSupport())
-    {
-        myHandle = CreateWindowW(ourClassNameW, L"", WS_POPUP | WS_DISABLED, 0, 0, myWidth, myHeight, NULL, NULL, GetModuleHandle(NULL), NULL);
-    }
-    else
-    {
-        myHandle = CreateWindowA(ourClassNameA, "", WS_POPUP | WS_DISABLED, 0, 0, myWidth, myHeight, NULL, NULL, GetModuleHandle(NULL), NULL);
-    }
-    ShowWindow(myHandle, SW_HIDE);
-
-    // Create the rendering context
-    if (myHandle)
-    {
-        WindowSettings Params(0, 0, 0);
-        CreateContext(VideoMode(myWidth, myHeight, 32), Params);
-
-        // Don't activate by default
-        SetActive(false);
-    }
-}
-
-
-////////////////////////////////////////////////////////////
 /// Create the window implementation from an existing control
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(WindowHandle Handle, WindowSettings& Params) :
+WindowImplWin32::WindowImplWin32(WindowHandle Handle) :
 myHandle          (NULL),
 myCallback        (0),
 myCursor          (NULL),
@@ -123,10 +79,6 @@ myIsCursorIn      (false)
         myWidth  = Rect.right - Rect.left;
         myHeight = Rect.bottom - Rect.top;
 
-        // Create the rendering context
-        VideoMode Mode(myWidth, myHeight, VideoMode::GetDesktopMode().BitsPerPixel);
-        CreateContext(Mode, Params);
-
         // We change the event procedure of the control (it is important to save the old one)
         SetWindowLongPtr(myHandle, GWLP_USERDATA, reinterpret_cast<long>(this));
         myCallback = SetWindowLongPtr(myHandle, GWLP_WNDPROC, reinterpret_cast<long>(&WindowImplWin32::GlobalOnEvent));
@@ -137,7 +89,7 @@ myIsCursorIn      (false)
 ////////////////////////////////////////////////////////////
 /// Create the window implementation
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, WindowSettings& Params) :
+WindowImplWin32::WindowImplWin32(VideoMode Mode, const std::string& Title, unsigned long WindowStyle) :
 myHandle          (NULL),
 myCallback        (0),
 myCursor          (NULL),
@@ -195,10 +147,6 @@ myIsCursorIn      (false)
     if (Fullscreen)
         SwitchToFullscreen(Mode);
 
-    // Create the rendering context
-    if (myHandle)
-        CreateContext(Mode, Params);
-
     // Increment window count
     ourWindowCount++;
 
@@ -251,11 +199,11 @@ WindowImplWin32::~WindowImplWin32()
 
 
 ////////////////////////////////////////////////////////////
-/// Check if there's an active context on the current thread
+/// /see WindowImpl::GetHandle
 ////////////////////////////////////////////////////////////
-bool WindowImplWin32::IsContextActive()
+WindowHandle WindowImplWin32::GetHandle() const
 {
-    return wglGetCurrentContext() != NULL;
+    return myHandle;
 }
 
 
@@ -274,45 +222,6 @@ void WindowImplWin32::ProcessEvents()
             DispatchMessage(&Message);
         }
     }
-}
-
-
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::Display
-////////////////////////////////////////////////////////////
-void WindowImplWin32::Display()
-{
-    if (myDeviceContext && myGLContext)
-        SwapBuffers(myDeviceContext);
-}
-
-
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::SetActive
-////////////////////////////////////////////////////////////
-void WindowImplWin32::SetActive(bool Active) const
-{
-    if (Active)
-    {
-        if (myDeviceContext && myGLContext && (wglGetCurrentContext() != myGLContext))
-            wglMakeCurrent(myDeviceContext, myGLContext);
-    }
-    else
-    {
-        if (wglGetCurrentContext() == myGLContext)
-            wglMakeCurrent(NULL, NULL);
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::UseVerticalSync
-////////////////////////////////////////////////////////////
-void WindowImplWin32::UseVerticalSync(bool Enabled)
-{
-    PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
-    if (wglSwapIntervalEXT)
-        wglSwapIntervalEXT(Enabled ? 1 : 0);
 }
 
 
@@ -355,6 +264,13 @@ void WindowImplWin32::SetPosition(int Left, int Top)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::SetSize(unsigned int Width, unsigned int Height)
 {
+    // SetWindowPos wants the total size of the window (including title bar and borders),
+    // so we have to compute it
+    RECT Rect = {0, 0, Width, Height};
+    AdjustWindowRect(&Rect, GetWindowLong(myHandle, GWL_STYLE), false);
+    Width  = Rect.right - Rect.left;
+    Height = Rect.bottom - Rect.top;
+
     SetWindowPos(myHandle, NULL, 0, 0, Width, Height, SWP_NOMOVE | SWP_NOZORDER);
 }
 
@@ -487,150 +403,6 @@ void WindowImplWin32::SwitchToFullscreen(const VideoMode& Mode)
 
 
 ////////////////////////////////////////////////////////////
-/// Construct the context from graphics settings
-////////////////////////////////////////////////////////////
-void WindowImplWin32::CreateContext(const VideoMode& Mode, WindowSettings& Params)
-{
-    // Get the device context attached to the window
-    myDeviceContext = GetDC(myHandle);
-    if (myDeviceContext == NULL)
-    {
-        std::cerr << "Failed to get device context of window -- cannot create OpenGL context" << std::endl;
-        return;
-    }
-
-    // Let's find a suitable pixel format -- first try with antialiasing
-    int BestFormat = 0;
-    if (Params.AntialiasingLevel > 0)
-    {
-        // Get the wglChoosePixelFormatARB function (it is an extension)
-        PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
-
-        // Define the basic attributes we want for our window
-        int IntAttributes[] =
-        {
-            WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-		    WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-		    WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
-		    WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
-            WGL_SAMPLE_BUFFERS_ARB, (Params.AntialiasingLevel ? GL_TRUE : GL_FALSE),
-		    WGL_SAMPLES_ARB,        Params.AntialiasingLevel,
-		    0,                      0
-        };
-
-        // Let's check how many formats are supporting our requirements
-        int   Formats[128];
-	    UINT  NbFormats;
-	    float FloatAttributes[] = {0, 0};
-	    bool  IsValid = wglChoosePixelFormatARB(myDeviceContext, IntAttributes, FloatAttributes, sizeof(Formats) / sizeof(*Formats), Formats, &NbFormats) != 0;
-        if (!IsValid || (NbFormats == 0))
-        {
-            if (Params.AntialiasingLevel > 2)
-            {
-                // No format matching our needs : reduce the multisampling level
-                std::cerr << "Failed to find a pixel format supporting "
-                          << Params.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
-
-                Params.AntialiasingLevel = IntAttributes[1] = 2;
-	            IsValid = wglChoosePixelFormatARB(myDeviceContext, IntAttributes, FloatAttributes, sizeof(Formats) / sizeof(*Formats), Formats, &NbFormats) != 0;
-            }
-
-            if (!IsValid || (NbFormats == 0))
-            {
-                // Cannot find any pixel format supporting multisampling ; disabling antialiasing
-                std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
-                Params.AntialiasingLevel = 0;
-            }
-        }
-
-        // Get the best format among the returned ones
-        if (IsValid && (NbFormats > 0))
-        {
-            int BestScore = 0xFFFF;
-            for (UINT i = 0; i < NbFormats; ++i)
-            {
-                // Get the current format's attributes
-                PIXELFORMATDESCRIPTOR Attribs;
-                Attribs.nSize    = sizeof(PIXELFORMATDESCRIPTOR);
-                Attribs.nVersion = 1;
-                DescribePixelFormat(myDeviceContext, Formats[i], sizeof(PIXELFORMATDESCRIPTOR), &Attribs);
-
-                // Evaluate the current configuration
-                int Color = Attribs.cRedBits + Attribs.cGreenBits + Attribs.cBlueBits + Attribs.cAlphaBits;
-                int Score = EvaluateConfig(Mode, Params, Color, Attribs.cDepthBits, Attribs.cStencilBits, Params.AntialiasingLevel);
-
-                // Keep it if it's better than the current best
-                if (Score < BestScore)
-                {
-                    BestScore  = Score;
-                    BestFormat = Formats[i];
-                }
-            }
-        }
-    }
-
-    // Find a pixel format with no antialiasing, if not needed or not supported
-    if (BestFormat == 0)
-    {
-        // Setup a pixel format descriptor from the rendering settings
-        PIXELFORMATDESCRIPTOR PixelDescriptor;
-        ZeroMemory(&PixelDescriptor, sizeof(PIXELFORMATDESCRIPTOR));
-        PixelDescriptor.nSize        = sizeof(PIXELFORMATDESCRIPTOR);
-        PixelDescriptor.nVersion     = 1;
-        PixelDescriptor.iLayerType   = PFD_MAIN_PLANE;
-        PixelDescriptor.dwFlags      = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-        PixelDescriptor.iPixelType   = PFD_TYPE_RGBA;
-        PixelDescriptor.cColorBits   = static_cast<BYTE>(Mode.BitsPerPixel);
-        PixelDescriptor.cDepthBits   = static_cast<BYTE>(Params.DepthBits);
-        PixelDescriptor.cStencilBits = static_cast<BYTE>(Params.StencilBits);
-
-        // Get the pixel format that best matches our requirements
-        BestFormat = ChoosePixelFormat(myDeviceContext, &PixelDescriptor);
-        if (BestFormat == 0)
-        {
-            std::cerr << "Failed to find a suitable pixel format for device context -- cannot create OpenGL context" << std::endl;
-            return;
-        }
-    }
-
-    // Extract the depth and stencil bits from the chosen format
-    PIXELFORMATDESCRIPTOR ActualFormat;
-    ActualFormat.nSize    = sizeof(PIXELFORMATDESCRIPTOR);
-    ActualFormat.nVersion = 1;
-    DescribePixelFormat(myDeviceContext, BestFormat, sizeof(PIXELFORMATDESCRIPTOR), &ActualFormat);
-    Params.DepthBits   = ActualFormat.cDepthBits;
-    Params.StencilBits = ActualFormat.cStencilBits;
-
-    // Set the chosen pixel format
-    if (!SetPixelFormat(myDeviceContext, BestFormat, &ActualFormat))
-    {
-        std::cerr << "Failed to set pixel format for device context -- cannot create OpenGL context" << std::endl;
-        return;
-    }
-
-    // Create the OpenGL context from the device context
-    myGLContext = wglCreateContext(myDeviceContext);
-    if (myGLContext == NULL)
-    {
-        std::cerr << "Failed to create an OpenGL context for this window" << std::endl;
-        return;
-    }
-
-    // Share display lists with other contexts
-    HGLRC CurrentContext = wglGetCurrentContext();
-    if (CurrentContext)
-        wglShareLists(CurrentContext, myGLContext);
-
-    // Activate the context
-    SetActive(true);
-
-    // Enable multisampling
-    if (Params.AntialiasingLevel > 0)
-        glEnable(GL_MULTISAMPLE_ARB);
-}
-
-
-////////////////////////////////////////////////////////////
 /// Free all the graphical resources attached to the window
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::Cleanup()
@@ -644,21 +416,6 @@ void WindowImplWin32::Cleanup()
 
     // Unhide the mouse cursor (in case it was hidden)
     ShowMouseCursor(true);
-
-    // Destroy the OpenGL context
-    if (myGLContext)
-    {
-        // Unbind the context before destroying it
-        SetActive(false);
-
-        wglDeleteContext(myGLContext);
-        myGLContext = NULL;
-    }
-    if (myDeviceContext)
-    {
-        ReleaseDC(myHandle, myDeviceContext);
-        myDeviceContext = NULL;
-    }
 }
 
 

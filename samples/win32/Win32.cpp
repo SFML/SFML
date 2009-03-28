@@ -3,6 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
+#include <windows.h>
 #include <cmath>
 
 HWND Button;

@@ -57,7 +57,7 @@ typedef struct
     unsigned int DepthBits;         ///< Bits of the depth buffer
     unsigned int StencilBits;       ///< Bits of the stencil buffer
     unsigned int AntialiasingLevel; ///< Level of antialiasing
-} sfWindowSettings;
+} sfContextSettings;
 
 
 ////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ typedef struct
 /// \param Params : Creation settings
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindow* sfWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfWindowSettings Params);
+CSFML_API sfWindow* sfWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfContextSettings Params);
 
 ////////////////////////////////////////////////////////////
 /// Construct a window from an existing control
@@ -78,7 +78,7 @@ CSFML_API sfWindow* sfWindow_Create(sfVideoMode Mode, const char* Title, unsigne
 /// \param Params : Creation settings
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindow* sfWindow_CreateFromHandle(sfWindowHandle Handle, sfWindowSettings Params);
+CSFML_API sfWindow* sfWindow_CreateFromHandle(sfWindowHandle Handle, sfContextSettings Params);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing window
@@ -132,7 +132,7 @@ CSFML_API unsigned int sfWindow_GetHeight(sfWindow* Window);
 /// \return Settings used to create the window
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindowSettings sfWindow_GetSettings(sfWindow* Window);
+CSFML_API sfContextSettings sfWindow_GetSettings(sfWindow* Window);
 
 ////////////////////////////////////////////////////////////
 /// Get the event on top of events stack of a window, if any, and pop it

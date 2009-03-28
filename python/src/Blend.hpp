@@ -25,6 +25,14 @@
 #ifndef __PYBLEND_HPP
 #define __PYBLEND_HPP
 
+#include <Python.h>
+
+#include <SFML/Graphics/Drawable.hpp>
+
+typedef struct {
+	PyObject_HEAD
+} PySfBlend;
+
 void
 PySfBlend_InitConst();
 
