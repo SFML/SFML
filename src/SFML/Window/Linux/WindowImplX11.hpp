@@ -30,8 +30,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+#include <SFML/Window/Linux/DisplayRef.hpp>
 #include <X11/Xlib.h>
-#include <GL/glx.h>
 #include <set>
 #include <string>
 
@@ -40,8 +40,6 @@ namespace sf
 {
 namespace priv
 {
-class VideoModeSupport;
-
 ////////////////////////////////////////////////////////////
 /// WindowImplX11 is the Linux (X11) implementation of WindowImpl
 ////////////////////////////////////////////////////////////
@@ -50,20 +48,12 @@ class WindowImplX11 : public WindowImpl
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
-    /// (creates a dummy window to provide a valid OpenGL context)
-    ///
-    ////////////////////////////////////////////////////////////
-    WindowImplX11();
-
-    ////////////////////////////////////////////////////////////
     /// Construct the window implementation from an existing control
     ///
     /// \param Handle : Platform-specific handle of the control
-    /// \param Params : Creation settings
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplX11(WindowHandle Handle, WindowSettings& Params);
+    WindowImplX11(WindowHandle Handle);
 
     ////////////////////////////////////////////////////////////
     /// Create the window implementation
@@ -71,10 +61,9 @@ public :
     /// \param Mode :        Video mode to use
     /// \param Title :       Title of the window
     /// \param WindowStyle : Window style (resizable, fixed, or fullscren)
-    /// \param Params :      Creation settings
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplX11(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, WindowSettings& Params);
+    WindowImplX11(VideoMode Mode, const std::string& Title, unsigned long WindowStyle);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -92,31 +81,11 @@ public :
 
 private :
 
-    friend class VideoModeSupport;
-
-    ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::Display
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void Display();
-
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::ProcessEvents
     ///
     ////////////////////////////////////////////////////////////
     virtual void ProcessEvents();
-
-    ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::SetActive
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void SetActive(bool Active = true) const;
-
-    ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::UseVerticalSync
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void UseVerticalSync(bool Enabled);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::ShowMouseCursor
@@ -169,20 +138,6 @@ private :
     void SwitchToFullscreen(const VideoMode& Mode);
 
     ////////////////////////////////////////////////////////////
-    /// Create the OpenGL rendering context
-    ///
-    /// \param Mode :         Video mode to use
-    /// \param ChosenVisual : Visual that has been chosen for creating the contexte
-    /// \param Params :       Creation parameters
-    /// \param Template :     Visual infos to match
-    /// \param Mask :         Visual attributes to check in Template
-    ///
-    /// \return True on success, false on error
-    ///
-    ////////////////////////////////////////////////////////////
-    bool CreateContext(const VideoMode& Mode, XVisualInfo& ChosenVisual, WindowSettings& Params, XVisualInfo Template = XVisualInfo(), unsigned long Mask = 0);
-
-    ////////////////////////////////////////////////////////////
     /// Do some common initializations after the window has been created
     ///
     ////////////////////////////////////////////////////////////
@@ -231,37 +186,13 @@ private :
     static Key::Code KeysymToSF(KeySym Sym);
 
     ////////////////////////////////////////////////////////////
-    /// Open the display (if not already done)
-    ///
-    /// \param AddWindow : Tell whether or not we must increase the windows count
-    ///
-    /// \return True if the display is properly opened
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool OpenDisplay(bool AddWindow = true);
-
-    ////////////////////////////////////////////////////////////
-    /// Close the display
-    ///
-    ////////////////////////////////////////////////////////////
-    static void CloseDisplay();
-
-    ////////////////////////////////////////////////////////////
-    // Static member data
-    ////////////////////////////////////////////////////////////
-    static ::Display*     ourDisplay;          ///< Current opened display
-    static int            ourScreen;           ///< Default screen on the opened display
-    static WindowImplX11* ourFullscreenWindow; ///< Keep track of the active fullscreen window
-    static unsigned int   ourWindowsCount;     ///< Number of windows created
-    static unsigned long  ourEventMask;        ///< Mask defining the events that will be caught by our windows
-    static XIM            ourInputMethod;      ///< Input object used to get unicode characters from keypress messages
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    DisplayRef myDisplayRef;   ///< Connection to the X server
     ::Window   myWindow;       ///< X11 structure defining our window
+    ::Display* myDisplay;      ///< Pointer to the display
+    int        myScreen;       ///< Screen identifier
     bool       myIsExternal;   ///< Tell whether the window has been created externally or by SFML
-    GLXContext myGLContext;    ///< OpenGL context attached to the window
     Atom       myAtomClose;    ///< Atom used to identify the close event
     int        myOldVideoMode; ///< Video mode in use before we switch to fullscreen
     Cursor     myHiddenCursor; ///< As X11 doesn't provide cursor hidding, we must create a transparent one

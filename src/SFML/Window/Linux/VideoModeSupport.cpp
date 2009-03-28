@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Linux/VideoModeSupport.hpp>
-#include <SFML/Window/Linux/WindowImplX11.hpp>
+#include <SFML/Window/Linux/DisplayRef.hpp>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 #include <algorithm>
@@ -45,17 +45,15 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& Modes)
     // First, clear array to fill
     Modes.clear();
 
-    // Get the display and screen from sfWindowImplUnix
-    WindowImplX11::OpenDisplay(false);
-    Display* Disp   = WindowImplX11::ourDisplay;
-    int      Screen = WindowImplX11::ourScreen;
+    // Get an access to the display
+    DisplayRef Disp;
 
     // Check if the XRandR extension is present
     int Version;
-    if (XQueryExtension(Disp, "RANDR", &Version, &Version, &Version))
+    if (XQueryExtension(Disp.GetDisplay(), "RANDR", &Version, &Version, &Version))
     {
         // Get the current configuration
-        XRRScreenConfiguration* Config = XRRGetScreenInfo(Disp, RootWindow(Disp, Screen));
+        XRRScreenConfiguration* Config = XRRGetScreenInfo(Disp.GetDisplay(), RootWindow(Disp.GetDisplay(), DefaultScreen(Disp.GetDisplay())));
         if (Config)
         {
             // Get the available screen sizes
@@ -99,17 +97,15 @@ VideoMode VideoModeSupport::GetDesktopVideoMode()
 {
     VideoMode DesktopMode;
 
-    // Get the display and screen from sfWindowImplUnix
-    WindowImplX11::OpenDisplay(false);
-    Display* Disp   = WindowImplX11::ourDisplay;
-    int      Screen = WindowImplX11::ourScreen;
+    // Get an access to the display
+    DisplayRef Disp;
 
     // Check if the XRandR extension is present
     int Version;
-    if (XQueryExtension(Disp, "RANDR", &Version, &Version, &Version))
+    if (XQueryExtension(Disp.GetDisplay(), "RANDR", &Version, &Version, &Version))
     {
         // Get the current configuration
-        XRRScreenConfiguration* Config = XRRGetScreenInfo(Disp, RootWindow(Disp, Screen));
+        XRRScreenConfiguration* Config = XRRGetScreenInfo(Disp.GetDisplay(), RootWindow(Disp.GetDisplay(), DefaultScreen(Disp.GetDisplay())));
         if (Config)
         {
             // Get the current video mode

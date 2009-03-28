@@ -53,7 +53,7 @@ myOwnsWindow(true)
 
     // Create the context
     if (myDC)
-        CreateContext(Shared, VideoMode::GetMode(0).BitsPerPixel, ContextSettings(0, 0, 0));
+        CreateContext(Shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
     // ------------ TEMP ------------
 }
 

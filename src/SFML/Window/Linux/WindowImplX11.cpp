@@ -27,8 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Linux/WindowImplX11.hpp>
-#include <SFML/Window/glext/glxext.h>
-#include <SFML/Window/glext/glext.h>
 #include <SFML/System/Unicode.hpp>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
@@ -37,89 +35,37 @@
 #include <vector>
 
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    WindowImplX11* FullscreenWindow = NULL;
+    unsigned long  EventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
+                                      PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
+                                      EnterWindowMask | LeaveWindowMask;
+}
+
+
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-// Static member data
-////////////////////////////////////////////////////////////
-Display*       WindowImplX11::ourDisplay          = NULL;
-int            WindowImplX11::ourScreen           = 0;
-WindowImplX11* WindowImplX11::ourFullscreenWindow = NULL;
-unsigned int   WindowImplX11::ourWindowsCount     = 0;
-XIM            WindowImplX11::ourInputMethod      = NULL;
-unsigned long  WindowImplX11::ourEventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
-                                                    PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
-                                                    EnterWindowMask | LeaveWindowMask;
-
-
-////////////////////////////////////////////////////////////
-/// Default constructor
-/// (creates a dummy window to provide a valid OpenGL context)
-////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11() :
-myWindow      (0),
-myIsExternal  (false),
-myGLContext   (NULL),
-myAtomClose   (0),
-myOldVideoMode(-1),
-myHiddenCursor(0),
-myInputContext(NULL),
-myKeyRepeat   (true)
-{
-    // Open the display at first call
-    if (!OpenDisplay())
-        return;
-
-    // Use small dimensions
-    myWidth  = 1;
-    myHeight = 1;
-
-    // Create the rendering context
-    XVisualInfo Visual;
-    WindowSettings Params(0, 0, 0);
-    if (!CreateContext(VideoMode(myWidth, myHeight, 32), Visual, Params))
-        return;
-
-    // Create a new color map with the chosen visual
-    Colormap ColMap = XCreateColormap(ourDisplay, RootWindow(ourDisplay, ourScreen), Visual.visual, AllocNone);
-
-    // Define the window attributes
-    XSetWindowAttributes Attributes;
-    Attributes.colormap = ColMap;
-
-    // Create a dummy window (disabled and hidden)
-    myWindow = XCreateWindow(ourDisplay,
-                             RootWindow(ourDisplay, ourScreen),
-                             0, 0,
-                             myWidth, myHeight,
-                             0,
-                             Visual.depth,
-                             InputOutput,
-                             Visual.visual,
-                             CWColormap, &Attributes);
-
-    // Don't activate the dummy context by default
-}
-
-
-////////////////////////////////////////////////////////////
 /// Create the window implementation from an existing control
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(WindowHandle Handle, WindowSettings& Params) :
+WindowImplX11::WindowImplX11(WindowHandle Handle) :
 myWindow      (0),
 myIsExternal  (true),
-myGLContext   (NULL),
 myAtomClose   (0),
 myOldVideoMode(-1),
 myHiddenCursor(0),
 myInputContext(NULL),
 myKeyRepeat   (true)
 {
-    // Open the display at first call
-    if (!OpenDisplay())
-        return;
+    // Get the display and screen
+    myDisplay = myDisplayRef.GetDisplay();
+    myScreen  = DefaultScreen(myDisplay);
 
     // Save the window handle
     myWindow = Handle;
@@ -128,7 +74,7 @@ myKeyRepeat   (true)
     {
         // Get the window size
         XWindowAttributes WindowAttributes;
-        if (XGetWindowAttributes(ourDisplay, myWindow, &WindowAttributes) == 0)
+        if (XGetWindowAttributes(myDisplay, myWindow, &WindowAttributes) == 0)
         {
             std::cerr << "Failed to get the window attributes" << std::endl;
             return;
@@ -136,24 +82,8 @@ myKeyRepeat   (true)
         myWidth  = WindowAttributes.width;
         myHeight = WindowAttributes.height;
 
-        // Setup the visual infos to match
-        XVisualInfo Template;
-        Template.depth     = WindowAttributes.depth;
-        Template.visualid  = XVisualIDFromVisual(WindowAttributes.visual);
-        unsigned long Mask = VisualDepthMask | VisualIDMask;
-
-        // Create the rendering context
-        VideoMode Mode(myWidth, myHeight, VideoMode::GetDesktopMode().BitsPerPixel);
-        XVisualInfo Visual;
-        if (!CreateContext(Mode, Visual, Params, Template, Mask))
-            return;
-
-        // Create a new color map with the chosen visual
-        Colormap ColMap = XCreateColormap(ourDisplay, RootWindow(ourDisplay, ourScreen), Visual.visual, AllocNone);
-        XSetWindowColormap(ourDisplay, myWindow, ColMap);
-
         // Make sure the window is listening to all the requiered events
-        XSelectInput(ourDisplay, myWindow, ourEventMask & ~ButtonPressMask);
+        XSelectInput(myDisplay, myWindow, EventMask & ~ButtonPressMask);
 
         // Do some common initializations
         Initialize();
@@ -164,7 +94,7 @@ myKeyRepeat   (true)
 ////////////////////////////////////////////////////////////
 /// Create the window implementation
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, WindowSettings& Params) :
+WindowImplX11::WindowImplX11(VideoMode Mode, const std::string& Title, unsigned long WindowStyle) :
 myWindow      (0),
 myIsExternal  (false),
 myGLContext   (NULL),
@@ -174,17 +104,13 @@ myHiddenCursor(0),
 myInputContext(NULL),
 myKeyRepeat   (true)
 {
-    // Open the display at first call
-    if (!OpenDisplay())
-        return;
-
     // Compute position and size
     int Left, Top;
     bool Fullscreen = (WindowStyle & Style::Fullscreen) != 0;
     if (!Fullscreen)
     {
-        Left = (DisplayWidth(ourDisplay, ourScreen)  - Mode.Width)  / 2;
-        Top  = (DisplayHeight(ourDisplay, ourScreen) - Mode.Height) / 2;
+        Left = (DisplayWidth(myDisplay, myScreen)  - Mode.Width)  / 2;
+        Top  = (DisplayHeight(myDisplay, myScreen) - Mode.Height) / 2;
     }
     else
     {
@@ -198,23 +124,14 @@ myKeyRepeat   (true)
     if (Fullscreen)
         SwitchToFullscreen(Mode);
 
-    // Create the rendering context
-    XVisualInfo Visual;
-    if (!CreateContext(Mode, Visual, Params))
-        return;
-
-    // Create a new color map with the chosen visual
-    Colormap ColMap = XCreateColormap(ourDisplay, RootWindow(ourDisplay, ourScreen), Visual.visual, AllocNone);
-
     // Define the window attributes
     XSetWindowAttributes Attributes;
-    Attributes.event_mask        = ourEventMask;
-    Attributes.colormap          = ColMap;
+    Attributes.event_mask        = EventMask;
     Attributes.override_redirect = Fullscreen;
 
     // Create the window
-    myWindow = XCreateWindow(ourDisplay,
-                             RootWindow(ourDisplay, ourScreen),
+    myWindow = XCreateWindow(myDisplay,
+                             RootWindow(myDisplay, myScreen),
                              Left, Top,
                              Width, Height,
                              0,
@@ -229,12 +146,12 @@ myKeyRepeat   (true)
     }
 
     // Set the window's name
-    XStoreName(ourDisplay, myWindow, Title.c_str());
+    XStoreName(myDisplay, myWindow, Title.c_str());
 
     // Set the window's style (tell the windows manager to change our window's decorations and functions according to the requested style)
     if (!Fullscreen)
     {
-        Atom WMHintsAtom = XInternAtom(ourDisplay, "_MOTIF_WM_HINTS", false);
+        Atom WMHintsAtom = XInternAtom(myDisplay, "_MOTIF_WM_HINTS", false);
         if (WMHintsAtom)
         {
             static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
@@ -286,7 +203,7 @@ myKeyRepeat   (true)
             }
 
             const unsigned char* HintsPtr = reinterpret_cast<const unsigned char*>(&Hints);
-            XChangeProperty(ourDisplay, myWindow, WMHintsAtom, WMHintsAtom, 32, PropModeReplace, HintsPtr, 5);
+            XChangeProperty(myDisplay, myWindow, WMHintsAtom, WMHintsAtom, 32, PropModeReplace, HintsPtr, 5);
         }
 
         // This is a hack to force some windows managers to disable resizing
@@ -296,7 +213,7 @@ myKeyRepeat   (true)
             XSizeHints.flags      = PMinSize | PMaxSize;
             XSizeHints.min_width  = XSizeHints.max_width  = Width;
             XSizeHints.min_height = XSizeHints.max_height = Height;
-            XSetWMNormalHints(ourDisplay, myWindow, &XSizeHints); 
+            XSetWMNormalHints(myDisplay, myWindow, &XSizeHints); 
         }
     }
 
@@ -306,8 +223,8 @@ myKeyRepeat   (true)
     // In fullscreen mode, we must grab keyboard and mouse inputs
     if (Fullscreen)
     {
-        XGrabPointer(ourDisplay, myWindow, true, 0, GrabModeAsync, GrabModeAsync, myWindow, None, CurrentTime);
-        XGrabKeyboard(ourDisplay, myWindow, true, GrabModeAsync, GrabModeAsync, CurrentTime);
+        XGrabPointer(myDisplay, myWindow, true, 0, GrabModeAsync, GrabModeAsync, myWindow, None, CurrentTime);
+        XGrabKeyboard(myDisplay, myWindow, true, GrabModeAsync, GrabModeAsync, CurrentTime);
     }
 }
 
@@ -322,38 +239,14 @@ WindowImplX11::~WindowImplX11()
 
     // Destroy the input context
     if (myInputContext)
-    {
         XDestroyIC(myInputContext);
-    }
 
     // Destroy the window
     if (myWindow && !myIsExternal)
     {
-        XDestroyWindow(ourDisplay, myWindow);
-        XFlush(ourDisplay);
+        XDestroyWindow(myDisplay, myWindow);
+        XFlush(myDisplay);
     }
-
-    // Close the display
-    CloseDisplay();
-}
-
-
-////////////////////////////////////////////////////////////
-/// Check if there's an active context on the current thread
-////////////////////////////////////////////////////////////
-bool WindowImplX11::IsContextActive()
-{
-    return glXGetCurrentContext() != NULL;
-}
-
-
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::Display
-////////////////////////////////////////////////////////////
-void WindowImplX11::Display()
-{
-    if (myWindow && myGLContext)
-        glXSwapBuffers(ourDisplay, myWindow);
 }
 
 
@@ -364,21 +257,21 @@ void WindowImplX11::ProcessEvents()
 {
     // Process any event in the queue matching our window
     XEvent Event;
-    while (XCheckIfEvent(ourDisplay, &Event, &WindowImplX11::CheckEvent, reinterpret_cast<XPointer>(myWindow)))
+    while (XCheckIfEvent(myDisplay, &Event, &WindowImplX11::CheckEvent, reinterpret_cast<XPointer>(myWindow)))
     {
         // Filter repeated key events
         if (Event.type == KeyRelease)
         {
-            if (XPending(ourDisplay))
+            if (XPending(myDisplay))
             {
                 XEvent NextEvent;
-                XPeekEvent(ourDisplay, &NextEvent);
+                XPeekEvent(myDisplay, &NextEvent);
                 if ((NextEvent.type         == KeyPress)           &&
                     (NextEvent.xkey.keycode == Event.xkey.keycode) &&
                     (NextEvent.xkey.time    == Event.xkey.time))
                 {
                     if (!myKeyRepeat)
-                        XNextEvent(ourDisplay, &NextEvent);
+                        XNextEvent(myDisplay, &NextEvent);
                     continue;
                 }
             }
@@ -390,42 +283,12 @@ void WindowImplX11::ProcessEvents()
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::SetActive
-////////////////////////////////////////////////////////////
-void WindowImplX11::SetActive(bool Active) const
-{
-    if (Active)
-    {
-        if (myWindow && myGLContext && (glXGetCurrentContext() != myGLContext))
-            glXMakeCurrent(ourDisplay, myWindow, myGLContext);
-    }
-    else
-    {
-        if (glXGetCurrentContext() == myGLContext)
-            glXMakeCurrent(ourDisplay, None, NULL);
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::UseVerticalSync
-////////////////////////////////////////////////////////////
-void WindowImplX11::UseVerticalSync(bool Enabled)
-{
-    const GLubyte* ProcAddress = reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI");
-    PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress(ProcAddress));
-    if (glXSwapIntervalSGI)
-        glXSwapIntervalSGI(Enabled ? 1 : 0);
-}
-
-
-////////////////////////////////////////////////////////////
 /// /see WindowImpl::ShowMouseCursor
 ////////////////////////////////////////////////////////////
 void WindowImplX11::ShowMouseCursor(bool Show)
 {
-    XDefineCursor(ourDisplay, myWindow, Show ? None : myHiddenCursor);
-    XFlush(ourDisplay);
+    XDefineCursor(myDisplay, myWindow, Show ? None : myHiddenCursor);
+    XFlush(myDisplay);
 }
 
 
@@ -434,8 +297,8 @@ void WindowImplX11::ShowMouseCursor(bool Show)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetCursorPosition(unsigned int Left, unsigned int Top)
 {
-    XWarpPointer(ourDisplay, None, myWindow, 0, 0, 0, 0, Left, Top);
-    XFlush(ourDisplay);
+    XWarpPointer(myDisplay, None, myWindow, 0, 0, 0, 0, Left, Top);
+    XFlush(myDisplay);
 }
 
 
@@ -444,8 +307,8 @@ void WindowImplX11::SetCursorPosition(unsigned int Left, unsigned int Top)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetPosition(int Left, int Top)
 {
-    XMoveWindow(ourDisplay, myWindow, Left, Top);
-    XFlush(ourDisplay);
+    XMoveWindow(myDisplay, myWindow, Left, Top);
+    XFlush(myDisplay);
 }
 
 
@@ -454,8 +317,8 @@ void WindowImplX11::SetPosition(int Left, int Top)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetSize(unsigned int Width, unsigned int Height)
 {
-    XResizeWindow(ourDisplay, myWindow, Width, Height);
-    XFlush(ourDisplay);
+    XResizeWindow(myDisplay, myWindow, Width, Height);
+    XFlush(myDisplay);
 }
 
 
@@ -465,11 +328,11 @@ void WindowImplX11::SetSize(unsigned int Width, unsigned int Height)
 void WindowImplX11::Show(bool State)
 {
     if (State)
-        XMapWindow(ourDisplay, myWindow);
+        XMapWindow(myDisplay, myWindow);
     else
-        XUnmapWindow(ourDisplay, myWindow);
+        XUnmapWindow(myDisplay, myWindow);
 
-    XFlush(ourDisplay);
+    XFlush(myDisplay);
 }
 
 
@@ -499,19 +362,19 @@ void WindowImplX11::SetIcon(unsigned int Width, unsigned int Height, const Uint8
     }
 
     // Create the icon pixmap
-    Visual*      DefVisual = DefaultVisual(ourDisplay, ourScreen);
-    unsigned int DefDepth  = DefaultDepth(ourDisplay, ourScreen);
-    XImage* IconImage = XCreateImage(ourDisplay, DefVisual, DefDepth, ZPixmap, 0, (char*)IconPixels, Width, Height, 32, 0);
+    Visual*      DefVisual = DefaultVisual(myDisplay, myScreen);
+    unsigned int DefDepth  = DefaultDepth(myDisplay, myScreen);
+    XImage* IconImage = XCreateImage(myDisplay, DefVisual, DefDepth, ZPixmap, 0, (char*)IconPixels, Width, Height, 32, 0);
     if (!IconImage)
     {
         std::cerr << "Failed to set the window's icon" << std::endl;
         return;
     }
-    Pixmap IconPixmap = XCreatePixmap(ourDisplay, RootWindow(ourDisplay, ourScreen), Width, Height, DefDepth);
+    Pixmap IconPixmap = XCreatePixmap(myDisplay, RootWindow(myDisplay, myScreen), Width, Height, DefDepth);
     XGCValues Values;
-    GC IconGC = XCreateGC(ourDisplay, IconPixmap, 0, &Values);
-    XPutImage(ourDisplay, IconPixmap, IconGC, IconImage, 0, 0, 0, 0, Width, Height);
-    XFreeGC(ourDisplay, IconGC);
+    GC IconGC = XCreateGC(myDisplay, IconPixmap, 0, &Values);
+    XPutImage(myDisplay, IconPixmap, IconGC, IconImage, 0, 0, 0, 0, Width, Height);
+    XFreeGC(myDisplay, IconGC);
     XDestroyImage(IconImage);
 
     // Create the mask pixmap (must have 1 bit depth)
@@ -531,17 +394,17 @@ void WindowImplX11::SetIcon(unsigned int Width, unsigned int Height, const Uint8
             }
         }
     }
-    Pixmap MaskPixmap = XCreatePixmapFromBitmapData(ourDisplay, myWindow, (char*)&MaskPixels[0], Width, Height, 1, 0, 1);
+    Pixmap MaskPixmap = XCreatePixmapFromBitmapData(myDisplay, myWindow, (char*)&MaskPixels[0], Width, Height, 1, 0, 1);
 
     // Send our new icon to the window through the WMHints
     XWMHints* Hints = XAllocWMHints();
     Hints->flags       = IconPixmapHint | IconMaskHint;
     Hints->icon_pixmap = IconPixmap;
     Hints->icon_mask   = MaskPixmap;
-    XSetWMHints(ourDisplay, myWindow, Hints);
+    XSetWMHints(myDisplay, myWindow, Hints);
     XFree(Hints);
 
-    XFlush(ourDisplay);
+    XFlush(myDisplay);
 }
 
 
@@ -552,10 +415,10 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& Mode)
 {
     // Check if the XRandR extension is present
     int Version;
-    if (XQueryExtension(ourDisplay, "RANDR", &Version, &Version, &Version))
+    if (XQueryExtension(myDisplay, "RANDR", &Version, &Version, &Version))
     {
         // Get the current configuration
-        XRRScreenConfiguration* Config = XRRGetScreenInfo(ourDisplay, RootWindow(ourDisplay, ourScreen));
+        XRRScreenConfiguration* Config = XRRGetScreenInfo(myDisplay, RootWindow(myDisplay, myScreen));
         if (Config)
         {
             // Get the current rotation
@@ -573,10 +436,10 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& Mode)
                     if ((Sizes[i].width == static_cast<int>(Mode.Width)) && (Sizes[i].height == static_cast<int>(Mode.Height)))
                     {
                         // Switch to fullscreen mode
-                        XRRSetScreenConfig(ourDisplay, Config, RootWindow(ourDisplay, ourScreen), i, CurrentRotation, CurrentTime);
+                        XRRSetScreenConfig(myDisplay, Config, RootWindow(myDisplay, myScreen), i, CurrentRotation, CurrentTime);
 
                         // Set "this" as the current fullscreen window
-                        ourFullscreenWindow = this;
+                        FullscreenWindow = this;
                         break;
                     }
                 }
@@ -600,123 +463,19 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& Mode)
 
 
 ////////////////////////////////////////////////////////////
-/// Create the OpenGL rendering context
-////////////////////////////////////////////////////////////
-bool WindowImplX11::CreateContext(const VideoMode& Mode, XVisualInfo& ChosenVisual, WindowSettings& Params, XVisualInfo Template, unsigned long Mask)
-{
-    // Get all the visuals matching the template
-    Template.screen = ourScreen;
-    int NbVisuals = 0;
-    XVisualInfo* Visuals = XGetVisualInfo(ourDisplay, Mask | VisualScreenMask, &Template, &NbVisuals);
-    if (!Visuals || (NbVisuals == 0))
-    {
-        if (Visuals)
-            XFree(Visuals);
-        std::cerr << "There is no valid visual for the selected screen" << std::endl;
-        return false;
-    }
-
-    // Find the best visual
-    int          BestScore  = 0xFFFF;
-    XVisualInfo* BestVisual = NULL;
-    while (!BestVisual)
-    {
-        for (int i = 0; i < NbVisuals; ++i)
-        {
-            // Get the current visual attributes
-            int RGBA, DoubleBuffer, Red, Green, Blue, Alpha, Depth, Stencil, MultiSampling, Samples;
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_RGBA,               &RGBA);
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_DOUBLEBUFFER,       &DoubleBuffer); 
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_RED_SIZE,           &Red);
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_GREEN_SIZE,         &Green); 
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_BLUE_SIZE,          &Blue); 
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_ALPHA_SIZE,         &Alpha); 
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_DEPTH_SIZE,         &Depth);        
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_STENCIL_SIZE,       &Stencil);
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_SAMPLE_BUFFERS_ARB, &MultiSampling);        
-            glXGetConfig(ourDisplay, &Visuals[i], GLX_SAMPLES_ARB,        &Samples);
-
-            // First check the mandatory parameters
-            if ((RGBA == 0) || (DoubleBuffer == 0))
-                continue;
-
-            // Evaluate the current configuration
-            int Color = Red + Green + Blue + Alpha;
-            int Score = EvaluateConfig(Mode, Params, Color, Depth, Stencil, MultiSampling ? Samples : 0);
-
-            // Keep it if it's better than the current best
-            if (Score < BestScore)
-            {
-                BestScore  = Score;
-                BestVisual = &Visuals[i];
-            }
-        }
-
-        // If no visual has been found, try a lower level of antialiasing
-        if (!BestVisual)
-        {
-            if (Params.AntialiasingLevel > 2)
-            {
-                std::cerr << "Failed to find a pixel format supporting "
-                          << Params.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
-                Params.AntialiasingLevel = 2;
-            }
-            else if (Params.AntialiasingLevel > 0)
-            {
-                std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
-                Params.AntialiasingLevel = 0;
-            }
-            else
-            {
-                std::cerr << "Failed to find a suitable pixel format for the window -- cannot create OpenGL context" << std::endl;
-                return false;
-            }
-        }
-    }
-
-    // Create the OpenGL context
-    myGLContext = glXCreateContext(ourDisplay, BestVisual, glXGetCurrentContext(), true);
-    if (myGLContext == NULL)
-    {
-        std::cerr << "Failed to create an OpenGL context for this window" << std::endl;
-        return false;
-    }
-
-    // Update the creation settings from the chosen format
-    int Depth, Stencil;
-    glXGetConfig(ourDisplay, BestVisual, GLX_DEPTH_SIZE,   &Depth);
-    glXGetConfig(ourDisplay, BestVisual, GLX_STENCIL_SIZE, &Stencil);
-    Params.DepthBits   = static_cast<unsigned int>(Depth);
-    Params.StencilBits = static_cast<unsigned int>(Stencil);
-
-    // Assign the chosen visual, and free the temporary visuals array
-    ChosenVisual = *BestVisual;
-    XFree(Visuals);
-
-    // Activate the context
-    SetActive(true);
-
-    // Enable multisampling if needed
-    if (Params.AntialiasingLevel > 0)
-        glEnable(GL_MULTISAMPLE_ARB);
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
 /// Do some common initializations after the window has been created
 ////////////////////////////////////////////////////////////
 void WindowImplX11::Initialize()
 {
     // Get the atom defining the close event
-    myAtomClose = XInternAtom(ourDisplay, "WM_DELETE_WINDOW", false);
-    XSetWMProtocols(ourDisplay, myWindow, &myAtomClose, 1);
+    myAtomClose = XInternAtom(myDisplay, "WM_DELETE_WINDOW", false);
+    XSetWMProtocols(myDisplay, myWindow, &myAtomClose, 1);
 
     // Create the input context
-    if (ourInputMethod)
+    XIM InputMethod = myDisplayRef.GetInputMethod();
+    if (InputMethod)
     {
-        myInputContext = XCreateIC(ourInputMethod,
+        myInputContext = XCreateIC(InputMethod,
                                    XNClientWindow,  myWindow,
                                    XNFocusWindow,   myWindow,
                                    XNInputStyle,    XIMPreeditNothing  | XIMStatusNothing,
@@ -727,17 +486,14 @@ void WindowImplX11::Initialize()
     }
 
     // Show the window
-    XMapWindow(ourDisplay, myWindow);
-    XFlush(ourDisplay);
+    XMapWindow(myDisplay, myWindow);
+    XFlush(myDisplay);
 
     // Create the hiden cursor
     CreateHiddenCursor();
 
-    // Set our context as the current OpenGL context for rendering
-    SetActive();
-
     // Flush the commands queue
-    XFlush(ourDisplay);
+    XFlush(myDisplay);
 }
 
 
@@ -747,19 +503,19 @@ void WindowImplX11::Initialize()
 void WindowImplX11::CreateHiddenCursor()
 {
     // Create the cursor's pixmap (1x1 pixels)
-	Pixmap CursorPixmap = XCreatePixmap(ourDisplay, myWindow, 1, 1, 1);
-    GC GraphicsContext = XCreateGC(ourDisplay, CursorPixmap, 0, NULL);
-    XDrawPoint(ourDisplay, CursorPixmap, GraphicsContext, 0, 0);
-    XFreeGC(ourDisplay, GraphicsContext);
+    Pixmap CursorPixmap = XCreatePixmap(myDisplay, myWindow, 1, 1, 1);
+    GC GraphicsContext = XCreateGC(myDisplay, CursorPixmap, 0, NULL);
+    XDrawPoint(myDisplay, CursorPixmap, GraphicsContext, 0, 0);
+    XFreeGC(myDisplay, GraphicsContext);
 
     // Create the cursor, using the pixmap as both the shape and the mask of the cursor
-	XColor Color;
-	Color.flags = DoRed | DoGreen | DoBlue;
-	Color.red = Color.blue = Color.green = 0;
-    myHiddenCursor = XCreatePixmapCursor(ourDisplay, CursorPixmap, CursorPixmap, &Color, &Color, 0, 0);
+    XColor Color;
+    Color.flags = DoRed | DoGreen | DoBlue;
+    Color.red = Color.blue = Color.green = 0;
+    myHiddenCursor = XCreatePixmapCursor(myDisplay, CursorPixmap, CursorPixmap, &Color, &Color, 0, 0);
 
     // We don't need the pixmap any longer, free it
-	XFreePixmap(ourDisplay, CursorPixmap);
+    XFreePixmap(myDisplay, CursorPixmap);
 }
 
 
@@ -769,10 +525,10 @@ void WindowImplX11::CreateHiddenCursor()
 void WindowImplX11::CleanUp()
 {
     // Restore the previous video mode (in case we were running in fullscreen)
-    if (ourFullscreenWindow == this)
+    if (FullscreenWindow == this)
     {
         // Get current screen info
-        XRRScreenConfiguration* Config = XRRGetScreenInfo(ourDisplay, RootWindow(ourDisplay, ourScreen));
+        XRRScreenConfiguration* Config = XRRGetScreenInfo(myDisplay, RootWindow(myDisplay, myScreen));
         if (Config) 
         {
             // Get the current rotation
@@ -780,25 +536,18 @@ void WindowImplX11::CleanUp()
             XRRConfigCurrentConfiguration(Config, &CurrentRotation);
 
             // Reset the video mode
-            XRRSetScreenConfig(ourDisplay, Config, RootWindow(ourDisplay, ourScreen), myOldVideoMode, CurrentRotation, CurrentTime);
+            XRRSetScreenConfig(myDisplay, Config, RootWindow(myDisplay, myScreen), myOldVideoMode, CurrentRotation, CurrentTime);
 
             // Free the configuration instance
             XRRFreeScreenConfigInfo(Config);
         } 
 
         // Reset the fullscreen window
-        ourFullscreenWindow = NULL;
+        FullscreenWindow = NULL;
     }
 
     // Unhide the mouse cursor (in case it was hidden)
     ShowMouseCursor(true);
-
-    // Destroy the OpenGL context
-    if (myGLContext)
-    {
-        glXDestroyContext(ourDisplay, myGLContext);
-        myGLContext = NULL;
-    }
 }
 
 
@@ -1163,57 +912,6 @@ Key::Code WindowImplX11::KeysymToSF(KeySym Sym)
     }
 
     return Key::Code(0);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Open the display (if not already done)
-////////////////////////////////////////////////////////////
-bool WindowImplX11::OpenDisplay(bool AddWindow)
-{
-    // If no display has been opened yet, open it
-    if (ourDisplay == NULL)
-    {
-        ourDisplay = XOpenDisplay(NULL);
-        if (ourDisplay)
-        {
-            ourScreen = DefaultScreen(ourDisplay);
-
-            // Get the input method (XIM) object
-            ourInputMethod = XOpenIM(ourDisplay, NULL, NULL, NULL);
-        }
-        else
-        {
-            std::cerr << "Failed to open a connection with the X server" << std::endl;
-        }
-    }
-
-    // Increase the number of windows
-    if (AddWindow)
-        ourWindowsCount++;
-
-    return ourDisplay != NULL;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Close the display
-////////////////////////////////////////////////////////////
-void WindowImplX11::CloseDisplay()
-{
-    // Decrease the number of windows
-    ourWindowsCount--;
-
-    // If all windows have been destroyed, then we can close the display
-    if (ourWindowsCount == 0)
-    {
-        // Close the input method object
-        if (ourInputMethod)
-            XCloseIM(ourInputMethod);
-
-        XCloseDisplay(ourDisplay);
-        ourDisplay = NULL;
-    }
 }
 
 } // namespace priv
