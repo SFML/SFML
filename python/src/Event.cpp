@@ -51,12 +51,6 @@ PySfEventText_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	return (PyObject *)self;
 }
 
-int
-PySfEventText_init(PySfEventText *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
-}
-
 void
 PySfEventText_dealloc(PySfEventText* self)
 {
@@ -99,7 +93,7 @@ PyTypeObject PySfEventTextType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfEventText_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfEventText_new,		/* tp_new */
 };
@@ -127,12 +121,6 @@ PySfEventKey_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	}
 
 	return (PyObject *)self;
-}
-
-int
-PySfEventKey_init(PySfEventKey *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
 }
 
 void
@@ -185,7 +173,7 @@ PyTypeObject PySfEventKeyType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfEventKey_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfEventKey_new,		/* tp_new */
 };
@@ -208,12 +196,6 @@ PySfEventMouseMove_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	}
 
 	return (PyObject *)self;
-}
-
-int
-PySfEventMouseMove_init(PySfEventMouseMove *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
 }
 
 void
@@ -265,7 +247,7 @@ PyTypeObject PySfEventMouseMoveType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfEventMouseMove_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfEventMouseMove_new,	/* tp_new */
 };
@@ -289,12 +271,6 @@ PySfEventMouseButton_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	}
 
 	return (PyObject *)self;
-}
-
-int
-PySfEventMouseButton_init(PySfEventMouseButton *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
 }
 
 void
@@ -347,7 +323,7 @@ PyTypeObject PySfEventMouseButtonType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfEventMouseButton_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfEventMouseButton_new, /* tp_new */
 };
@@ -369,12 +345,6 @@ PySfEventMouseWheel_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	}
 
 	return (PyObject *)self;
-}
-
-int
-PySfEventMouseWheel_init(PySfEventMouseWheel *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
 }
 
 void
@@ -424,7 +394,7 @@ PyTypeObject PySfEventMouseWheelType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfEventMouseWheel_init,	/* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfEventMouseWheel_new, /* tp_new */
 };
@@ -448,12 +418,6 @@ PySfEventJoyMove_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	}
 
 	return (PyObject *)self;
-}
-
-int
-PySfEventJoyMove_init(PySfEventJoyMove *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
 }
 
 void
@@ -506,7 +470,7 @@ PyTypeObject PySfEventJoyMoveType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfEventJoyMove_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfEventJoyMove_new,	/* tp_new */
 };
@@ -529,12 +493,6 @@ PySfEventJoyButton_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	}
 
 	return (PyObject *)self;
-}
-
-int
-PySfEventJoyButton_init(PySfEventJoyButton *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
 }
 
 void
@@ -586,7 +544,7 @@ PyTypeObject PySfEventJoyButtonType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfEventJoyButton_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfEventJoyButton_new,	/* tp_new */
 };
@@ -609,12 +567,6 @@ PySfEventSize_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	}
 
 	return (PyObject *)self;
-}
-
-int
-PySfEventSize_init(PySfEventSize *self, PyObject *args, PyObject *kwds)
-{
-	return 0;
 }
 
 void
@@ -665,7 +617,7 @@ PyTypeObject PySfEventSizeType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfEventSize_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfEventSize_new,		/* tp_new */
 };
@@ -679,13 +631,6 @@ PyTypeObject PySfEventSizeType = {
 // sf.Event
 ////////////////////////////////////
 
-
-static int
-PySfEvent_init(PySfEvent *self, PyObject *args, PyObject *kwds)
-{
-	self->obj = new sf::Event();
-	return 0;
-}
 
 static PyObject *
 PySfEvent_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
@@ -703,6 +648,7 @@ PySfEvent_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 		self->JoyMove = (PySfEventJoyMove *)PySfEventJoyMove_new(&PySfEventJoyMoveType, NULL, NULL);
 		self->JoyButton = (PySfEventJoyButton *)PySfEventJoyButton_new(&PySfEventJoyButtonType, NULL, NULL);
 		self->Size = (PySfEventSize *)PySfEventSize_new(&PySfEventSizeType, NULL, NULL);
+		self->obj = new sf::Event();
 	}
 
 	return (PyObject *)self;
@@ -736,10 +682,6 @@ static PyMemberDef PySfEvent_members[] = {
 	{NULL}  /* Sentinel */
 };
 
-static PyMethodDef PySfEvent_methods[] = {
-	{NULL}  /* Sentinel */
-};
-
 PyTypeObject PySfEventType = {
 	head_init
 	"Event",				/*tp_name*/
@@ -768,7 +710,7 @@ PyTypeObject PySfEventType = {
 	0,						/* tp_weaklistoffset */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
-	PySfEvent_methods,		/* tp_methods */
+	0,						/* tp_methods */
 	PySfEvent_members,		/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
@@ -776,7 +718,7 @@ PyTypeObject PySfEventType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfEvent_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfEvent_new,			/* tp_new */
 };

@@ -63,34 +63,31 @@ PySfFloatRect_dealloc(PySfFloatRect* self)
 static PyObject *
 PySfIntRect_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
+	const char *kwlist[] = {"Left", "Top", "Right", "Bottom", NULL};
 	PySfIntRect *self;
 	self = (PySfIntRect *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiii:IntRect.__init__", (char **)kwlist, &(self->Left), &(self->Top), &(self->Right), &(self->Bottom)))
+			return NULL;
+		self->obj = new sf::IntRect(self->Left, self->Top, self->Right, self->Bottom);
+	}
 	return (PyObject *)self;
 }
 
 static PyObject *
 PySfFloatRect_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
+	const char *kwlist[] = {"Left", "Top", "Right", "Bottom", NULL};
 	PySfFloatRect *self;
 	self = (PySfFloatRect *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "ffff:FloatRect.__init__", (char **)kwlist, &(self->Left), &(self->Top), &(self->Right), &(self->Bottom)))
+			return NULL;
+		self->obj = new sf::FloatRect(self->Left, self->Top, self->Right, self->Bottom);
+	}
 	return (PyObject *)self;
-}
-
-static int
-PySfIntRect_init(PySfIntRect *self, PyObject *args, PyObject *kwds)
-{
-	const char *kwlist[] = {"Left", "Top", "Right", "Bottom", NULL};
-	int Left, Top, Right, Bottom;
-
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiii:IntRect.__init__", (char **)kwlist, &Left, &Top, &Right, &Bottom))
-		return -1;
-
-	self->Left = Left;
-	self->Top = Top;
-	self->Right = Right;
-	self->Bottom = Bottom;
-	self->obj = new sf::IntRect(Left, Top, Right, Bottom);
-	return 0;
 }
 
 static PyObject *
@@ -132,24 +129,6 @@ PySfFloatRect_Contains(PySfFloatRect* self, PyObject *args);
 
 static PyObject *
 PySfFloatRect_Intersects(PySfFloatRect* self, PyObject *args);
-
-static int
-PySfFloatRect_init(PySfFloatRect *self, PyObject *args, PyObject *kwds)
-{
-	const char *kwlist[] = {"Left", "Top", "Right", "Bottom", NULL};
-	float Left, Top, Right, Bottom;
-
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ffff:FloatRect.__init__", (char **)kwlist, &Left, &Top, &Right, &Bottom))
-		return -1;
-
-	self->Left = Left;
-	self->Top = Top;
-	self->Right = Right;
-	self->Bottom = Bottom;
-	self->obj = new sf::FloatRect(Left, Top, Right, Bottom);
-	return 0;
-}
-
 
 static PyObject *
 PySfIntRect_Offset(PySfIntRect* self, PyObject *args)
@@ -259,7 +238,7 @@ PyTypeObject PySfIntRectType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfIntRect_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfIntRect_new,		/* tp_new */
 };
@@ -301,7 +280,7 @@ PyTypeObject PySfFloatRectType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfFloatRect_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfFloatRect_new,		/* tp_new */
 };
@@ -406,13 +385,13 @@ PySfFloatRectUpdateSelf(PySfFloatRect *self)
 PySfIntRect *
 GetNewPySfIntRect()
 {
-	return (PySfIntRect *)PySfIntRect_new(&PySfIntRectType, NULL, NULL);
+	return PyObject_New(PySfIntRect, &PySfIntRectType);
 }
 
 PySfFloatRect *
 GetNewPySfFloatRect()
 {
-	return (PySfFloatRect *)PySfFloatRect_new(&PySfFloatRectType, NULL, NULL);
+	return PyObject_New(PySfFloatRect, &PySfFloatRectType);
 }
 
 

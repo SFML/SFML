@@ -2037,7 +2037,6 @@ void dct_iv_slow(float *buffer, int n)
          //acc += x[j] * cos(M_PI / n * (i + 0.5) * (j + 0.5));
       buffer[i] = acc;
    }
-   free(x);
 }
 
 void inverse_mdct_slow(float *buffer, int n, vorb *f, int blocktype)
@@ -3504,8 +3503,8 @@ static int start_decoder(vorb *f)
             #else
             for (j=0; j < (int) c->lookup_values; ++j)
                c->multiplicands[j] = mults[j] * c->delta_value + c->minimum_value;
-            setup_temp_free(f, mults,sizeof(mults[0])*c->lookup_values);
             #endif
+            setup_temp_free(f, mults,sizeof(mults[0])*c->lookup_values);
          }
         skip:;
 
@@ -3812,6 +3811,7 @@ static void vorbis_deinit(stb_vorbis *p)
       setup_free(p, p->B[i]);
       setup_free(p, p->C[i]);
       setup_free(p, p->window[i]);
+       setup_free(p, p->bit_reverse[i]);
    }
    #ifndef STB_VORBIS_NO_STDIO
    if (p->close_on_free) fclose(p->f);

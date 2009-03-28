@@ -30,8 +30,6 @@
 #include "compat.hpp"
 
 
-extern PyTypeObject PySfColorType;
-extern PyTypeObject PySfImageType;
 extern PyTypeObject PySfDrawableType;
 extern PyTypeObject PySfFontType;
 
@@ -39,6 +37,7 @@ extern PyTypeObject PySfFontType;
 static void
 PySfString_dealloc(PySfString *self)
 {
+	Py_CLEAR(self->font);
 	delete self->obj;
 	free_object(self);
 }
@@ -48,52 +47,13 @@ PySfString_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfString *self;
 	self = (PySfString *)type->tp_alloc(type, 0);
-	return (PyObject *)self;
-}
-
-static int
-PySfString_init(PySfString *self, PyObject *args, PyObject *kwds)
-{
-	const char *kwlist[] = {"Text", "Font", "Size", NULL};
-	float Size = 30.f;
-	PyObject *Text=NULL;
-	PySfFont *FontTmp = NULL;
-	sf::Font *Font;
-
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OO!f:String.__init__", (char **)kwlist, &Text, &PySfFontType, &FontTmp, &Size))
-		return -1;
-
-	if (FontTmp)
-		Font = (FontTmp->obj);
-	else
-		Font = (sf::Font *)&(sf::Font::GetDefaultFont());
-
-	if (Text != NULL)
+	if (self != NULL)
 	{
-		if (PyUnicode_Check(Text))
-		{
-#if Py_UNICODE_SIZE == 4
-			self->obj = new sf::String((sf::Uint32 *)PyUnicode_AS_UNICODE(Text), *Font, Size);
-#else
-			self->obj = new sf::String((sf::Uint16 *)PyUnicode_AS_UNICODE(Text), *Font, Size);
-#endif
-		}
-#ifdef IS_PY3K
-		else if (PyBytes_Check(Text))
-			self->obj = new sf::String(sf::Unicode::UTF8String((sf::Uint8 *)PyBytes_AsString(Text)), *Font, Size);
-#else
-		else if (PyString_Check(Text))
-			self->obj = new sf::String(sf::Unicode::UTF8String((sf::Uint8 *)PyString_AsString(Text)), *Font, Size);
-#endif
-		else
-		{
-			PyErr_SetString(PyExc_TypeError, "String.__init__() first argument must be str");
-			return -1;
-		}
+		self->font = NULL;
+		self->IsCustom = false;
+		self->obj = new sf::String();
 	}
-	else
-		self->obj = new sf::String("", *Font, Size);
-	return 0;
+	return (PyObject *)self;
 }
 
 static PyObject *
@@ -144,7 +104,13 @@ PySfString_SetFont(PySfString* self, PyObject *args)
 {
 	PySfFont *Font = (PySfFont *)args;
 	if (!PyObject_TypeCheck(Font, &PySfFontType))
+	{
 		PyErr_SetString(PyExc_ValueError, "String.SetFont() Argument must be a sf.Font");
+		return NULL;
+	}
+	Py_CLEAR(self->font);
+	Py_INCREF(args);
+	self->font = Font;
 	self->obj->SetFont(*(Font->obj));
 	Py_RETURN_NONE;
 }
@@ -189,9 +155,18 @@ PySfString_GetText(PySfString* self)
 static PyObject *
 PySfString_GetFont(PySfString* self)
 {
-	PySfFont *Font = GetNewPySfFont();
-	Font->obj = new sf::Font(self->obj->GetFont());
-	return (PyObject *)Font;
+	if (self->font == NULL)
+	{
+		PySfFont *Font = GetNewPySfFont();
+		Font->obj = (sf::Font *)&(sf::Font::GetDefaultFont());
+		Font->Owner = false;
+		return (PyObject *)Font;
+	}
+	else
+	{
+		Py_INCREF(self->font);
+		return (PyObject *)(self->font);
+	}
 }
 
 static PyObject *
@@ -214,6 +189,44 @@ PySfString_GetCharacterPos(PySfString* self, PyObject *args)
 {
 	sf::Vector2f Pos = self->obj->GetCharacterPos(PyLong_AsUnsignedLong(args));
 	return Py_BuildValue("ff", Pos.x, Pos.y);
+}
+
+static int
+PySfString_init(PySfString *self, PyObject *args, PyObject *kwds)
+{
+	const char *kwlist[] = {"Text", "Font", "Size", NULL};
+	float Size = 30.f;
+	PyObject *Text=NULL;
+	PySfFont *Font = NULL;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OO!f:String.__new__", (char **)kwlist, &Text, &PySfFontType, &Font, &Size))
+		return -1;
+
+	if (Text != NULL)
+	{
+		if (PyUnicode_Check(Text))
+		{
+#if Py_UNICODE_SIZE == 4
+			self->obj->SetText((sf::Uint32 *)PyUnicode_AS_UNICODE(Text));
+#else
+			self->obj->SetText((sf::Uint16 *)PyUnicode_AS_UNICODE(Text));
+#endif
+		}
+#ifdef IS_PY3K
+		else if (PyBytes_Check(Text))
+			self->obj->SetText(sf::Unicode::UTF8String((sf::Uint8 *)PyBytes_AsString(Text)));
+#else
+		else if (PyString_Check(Text))
+			self->obj->SetText(sf::Unicode::UTF8String((sf::Uint8 *)PyString_AsString(Text)));
+#endif
+		else
+		{
+			PyErr_SetString(PyExc_TypeError, "String.__init__() first argument must be str");
+			return -1;
+		}
+	}
+	if (Font) PySfString_SetFont(self, (PyObject *)Font);
+	self->obj->SetSize(Size);
+	return 0;
 }
 
 

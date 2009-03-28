@@ -25,12 +25,14 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		A011E8070F65B35400FAE48D /* GLKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = A011E8060F65B35400FAE48D /* GLKit.mm */; };
 		A018A2AF0EA21A2C005FFAC3 /* Http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A018A2AD0EA21A2C005FFAC3 /* Http.cpp */; };
 		A018A2B00EA21A2C005FFAC3 /* Ftp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A018A2AE0EA21A2C005FFAC3 /* Ftp.cpp */; };
+		A01BEF080F6BF0140095262C /* Initializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A01BEF070F6BF0140095262C /* Initializer.cpp */; };
+		A01BEF0C0F6BF0550095262C /* sndfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF0B0F6BF0550095262C /* sndfile.framework */; };
 		A04C5A9D0EDDD88B00935061 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = A04C5A940EDDD88B00935061 /* AppController.mm */; };
 		A04C5A9E0EDDD88B00935061 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A04C5A950EDDD88B00935061 /* Joystick.cpp */; };
 		A04C5A9F0EDDD88B00935061 /* VideoModeSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A04C5A970EDDD88B00935061 /* VideoModeSupport.cpp */; };
-		A04C5AA00EDDD88B00935061 /* WindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = A04C5A9A0EDDD88B00935061 /* WindowController.mm */; };
 		A04C5AA10EDDD88B00935061 /* WindowImplCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A04C5A9C0EDDD88B00935061 /* WindowImplCocoa.mm */; };
 		A0660EBA0E89051400D39DEB /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0660EA90E89051400D39DEB /* Clock.cpp */; };
 		A0660EBC0E89051400D39DEB /* Lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0660EAB0E89051400D39DEB /* Lock.cpp */; };
@@ -197,21 +199,23 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A01269660E6318C000B96A5D /* libsfml-system.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-system.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A012696F0E6318FE00B96A5D /* libsfml-network.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-network.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A01269760E63190F00B96A5D /* libsfml-audio.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-audio.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A012697D0E63192000B96A5D /* libsfml-window.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-window.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A01269840E63192B00B96A5D /* libsfml-graphics.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-graphics.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A011E8050F65B35400FAE48D /* GLKit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GLKit.h; sourceTree = "<group>"; };
+		A011E8060F65B35400FAE48D /* GLKit.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = GLKit.mm; sourceTree = "<group>"; };
+		A01269660E6318C000B96A5D /* libsfml-system-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-system-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A012696F0E6318FE00B96A5D /* libsfml-network-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-network-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01269760E63190F00B96A5D /* libsfml-audio-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-audio-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A012697D0E63192000B96A5D /* libsfml-window-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-window-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-graphics-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A018A2AD0EA21A2C005FFAC3 /* Http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Http.cpp; path = ../../src/SFML/Network/Http.cpp; sourceTree = SOURCE_ROOT; };
 		A018A2AE0EA21A2C005FFAC3 /* Ftp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ftp.cpp; path = ../../src/SFML/Network/Ftp.cpp; sourceTree = SOURCE_ROOT; };
+		A01BEF070F6BF0140095262C /* Initializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Initializer.cpp; path = ../../src/SFML/System/Initializer.cpp; sourceTree = SOURCE_ROOT; };
+		A01BEF0B0F6BF0550095262C /* sndfile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sndfile.framework; path = "../../extlibs/libs-xcode/sndfile.framework"; sourceTree = SOURCE_ROOT; };
 		A04C5A930EDDD88B00935061 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ../../src/SFML/Window/Cocoa/AppController.h; sourceTree = SOURCE_ROOT; };
 		A04C5A940EDDD88B00935061 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = AppController.mm; path = ../../src/SFML/Window/Cocoa/AppController.mm; sourceTree = SOURCE_ROOT; };
 		A04C5A950EDDD88B00935061 /* Joystick.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Joystick.cpp; path = ../../src/SFML/Window/Cocoa/Joystick.cpp; sourceTree = SOURCE_ROOT; };
 		A04C5A960EDDD88B00935061 /* Joystick.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Joystick.hpp; path = ../../src/SFML/Window/Cocoa/Joystick.hpp; sourceTree = SOURCE_ROOT; };
 		A04C5A970EDDD88B00935061 /* VideoModeSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VideoModeSupport.cpp; path = ../../src/SFML/Window/Cocoa/VideoModeSupport.cpp; sourceTree = SOURCE_ROOT; };
 		A04C5A980EDDD88B00935061 /* VideoModeSupport.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VideoModeSupport.hpp; path = ../../src/SFML/Window/Cocoa/VideoModeSupport.hpp; sourceTree = SOURCE_ROOT; };
-		A04C5A990EDDD88B00935061 /* WindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WindowController.h; path = ../../src/SFML/Window/Cocoa/WindowController.h; sourceTree = SOURCE_ROOT; };
-		A04C5A9A0EDDD88B00935061 /* WindowController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = WindowController.mm; path = ../../src/SFML/Window/Cocoa/WindowController.mm; sourceTree = SOURCE_ROOT; };
 		A04C5A9B0EDDD88B00935061 /* WindowImplCocoa.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WindowImplCocoa.hpp; path = ../../src/SFML/Window/Cocoa/WindowImplCocoa.hpp; sourceTree = SOURCE_ROOT; };
 		A04C5A9C0EDDD88B00935061 /* WindowImplCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = WindowImplCocoa.mm; path = ../../src/SFML/Window/Cocoa/WindowImplCocoa.mm; sourceTree = SOURCE_ROOT; };
 		A0660EA90E89051400D39DEB /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Clock.cpp; path = ../../src/SFML/System/Clock.cpp; sourceTree = SOURCE_ROOT; };
@@ -406,6 +410,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A01BEF0C0F6BF0550095262C /* sndfile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,11 +446,11 @@
 		A01269670E6318C000B96A5D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A01269660E6318C000B96A5D /* libsfml-system.dylib */,
-				A012696F0E6318FE00B96A5D /* libsfml-network.dylib */,
-				A01269760E63190F00B96A5D /* libsfml-audio.dylib */,
-				A012697D0E63192000B96A5D /* libsfml-window.dylib */,
-				A01269840E63192B00B96A5D /* libsfml-graphics.dylib */,
+				A01269660E6318C000B96A5D /* libsfml-system-d.dylib */,
+				A012696F0E6318FE00B96A5D /* libsfml-network-d.dylib */,
+				A01269760E63190F00B96A5D /* libsfml-audio-d.dylib */,
+				A012697D0E63192000B96A5D /* libsfml-window-d.dylib */,
+				A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -453,6 +458,7 @@
 		A01269870E63193B00B96A5D /* sfml-system */ = {
 			isa = PBXGroup;
 			children = (
+				A01BEF070F6BF0140095262C /* Initializer.cpp */,
 				A0660EA90E89051400D39DEB /* Clock.cpp */,
 				A0660EAA0E89051400D39DEB /* Platform.hpp */,
 				A0660EAB0E89051400D39DEB /* Lock.cpp */,
@@ -482,6 +488,7 @@
 		A012698D0E63194600B96A5D /* sfml-audio */ = {
 			isa = PBXGroup;
 			children = (
+				A01BEF0B0F6BF0550095262C /* sndfile.framework */,
 				A0660EDB0E89054E00D39DEB /* AudioDevice.cpp */,
 				A0660EDC0E89054E00D39DEB /* AudioDevice.hpp */,
 				A0660EDD0E89054E00D39DEB /* AudioResource.cpp */,
@@ -554,14 +561,14 @@
 		A04C5A920EDDD88B00935061 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				A011E8050F65B35400FAE48D /* GLKit.h */,
+				A011E8060F65B35400FAE48D /* GLKit.mm */,
 				A04C5A930EDDD88B00935061 /* AppController.h */,
 				A04C5A940EDDD88B00935061 /* AppController.mm */,
 				A04C5A950EDDD88B00935061 /* Joystick.cpp */,
 				A04C5A960EDDD88B00935061 /* Joystick.hpp */,
 				A04C5A970EDDD88B00935061 /* VideoModeSupport.cpp */,
 				A04C5A980EDDD88B00935061 /* VideoModeSupport.hpp */,
-				A04C5A990EDDD88B00935061 /* WindowController.h */,
-				A04C5A9A0EDDD88B00935061 /* WindowController.mm */,
 				A04C5A9B0EDDD88B00935061 /* WindowImplCocoa.hpp */,
 				A04C5A9C0EDDD88B00935061 /* WindowImplCocoa.mm */,
 			);
@@ -765,7 +772,7 @@
 			);
 			name = "sfml-system";
 			productName = "sfml-system";
-			productReference = A01269660E6318C000B96A5D /* libsfml-system.dylib */;
+			productReference = A01269660E6318C000B96A5D /* libsfml-system-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A012696E0E6318FE00B96A5D /* sfml-network */ = {
@@ -781,7 +788,7 @@
 			);
 			name = "sfml-network";
 			productName = "sfml-network";
-			productReference = A012696F0E6318FE00B96A5D /* libsfml-network.dylib */;
+			productReference = A012696F0E6318FE00B96A5D /* libsfml-network-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A01269750E63190F00B96A5D /* sfml-audio */ = {
@@ -797,7 +804,7 @@
 			);
 			name = "sfml-audio";
 			productName = "sfml-audio";
-			productReference = A01269760E63190F00B96A5D /* libsfml-audio.dylib */;
+			productReference = A01269760E63190F00B96A5D /* libsfml-audio-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A012697C0E63192000B96A5D /* sfml-window */ = {
@@ -813,7 +820,7 @@
 			);
 			name = "sfml-window";
 			productName = "sfml-window";
-			productReference = A012697D0E63192000B96A5D /* libsfml-window.dylib */;
+			productReference = A012697D0E63192000B96A5D /* libsfml-window-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A01269830E63192B00B96A5D /* sfml-graphics */ = {
@@ -829,7 +836,7 @@
 			);
 			name = "sfml-graphics";
 			productName = "sfml-graphics";
-			productReference = A01269840E63192B00B96A5D /* libsfml-graphics.dylib */;
+			productReference = A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -868,6 +875,7 @@
 				A0660EC00E89051400D39DEB /* Platform.cpp in Sources */,
 				A0660EC20E89051400D39DEB /* Thread.cpp in Sources */,
 				A0660EC40E89051400D39DEB /* Sleep.cpp in Sources */,
+				A01BEF080F6BF0140095262C /* Initializer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -918,8 +926,8 @@
 				A04C5A9D0EDDD88B00935061 /* AppController.mm in Sources */,
 				A04C5A9E0EDDD88B00935061 /* Joystick.cpp in Sources */,
 				A04C5A9F0EDDD88B00935061 /* VideoModeSupport.cpp in Sources */,
-				A04C5AA00EDDD88B00935061 /* WindowController.mm in Sources */,
 				A04C5AA10EDDD88B00935061 /* WindowImplCocoa.mm in Sources */,
+				A011E8070F65B35400FAE48D /* GLKit.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1104,6 +1112,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					CoreFoundation,
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "sfml-system-d";
 			};
@@ -1119,6 +1131,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					CoreFoundation,
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "sfml-system";
 				ZERO_LINK = NO;
@@ -1161,6 +1177,11 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -1168,7 +1189,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
-					"$(SRCROOT)/../../extlibs/libs-xcode/libsndfile.a",
 					"-lsfml-system-d",
 				);
 				PREBINDING = NO;
@@ -1183,12 +1203,16 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
-					"$(SRCROOT)/../../extlibs/libs-xcode/libsndfile.a",
 					"-lsfml-system",
 				);
 				PREBINDING = NO;

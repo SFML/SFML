@@ -44,6 +44,16 @@ namespace
     unsigned long  EventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
                                       PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
                                       EnterWindowMask | LeaveWindowMask;
+
+    ////////////////////////////////////////////////////////////
+    /// Filter the events received by windows
+    /// (only allow those matching a specific window)
+    ////////////////////////////////////////////////////////////
+    Bool CheckEvent(::Display*, XEvent* Event, XPointer UserData)
+    {
+        // Just check if the event matches the window
+        return Event->xany.window == reinterpret_cast< ::Window >(UserData);
+    }
 }
 
 
@@ -255,30 +265,53 @@ WindowImplX11::~WindowImplX11()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::ProcessEvents()
 {
+    // This function implements a workaround to properly discard
+    // repeated key events when necessary. The problem is that the
+    // system's key events policy doesn't match SFML's one: X server will generate
+    // both repeated KeyPress and KeyRelease events when maintaining a key down, while
+    // SFML only wants repeated KeyPress events. Thus, we have to:
+    // - Discard duplicated KeyRelease events when EnableKeyRepeat is true
+    // - Discard both duplicated KeyPress and KeyRelease events when EnableKeyRepeat is false
+
+
     // Process any event in the queue matching our window
     XEvent Event;
-    while (XCheckIfEvent(myDisplay, &Event, &WindowImplX11::CheckEvent, reinterpret_cast<XPointer>(myWindow)))
+    while (XCheckIfEvent(myDisplay, &Event, &CheckEvent, reinterpret_cast<XPointer>(myWindow)))
     {
-        // Filter repeated key events
-        if (Event.type == KeyRelease)
+        // Detect repeated key events
+        if ((Event.type == KeyPress) || (Event.type == KeyRelease))
         {
-            if (XPending(myDisplay))
+            if (Event.xkey.keycode < 256)
             {
-                XEvent NextEvent;
-                XPeekEvent(myDisplay, &NextEvent);
-                if ((NextEvent.type         == KeyPress)           &&
-                    (NextEvent.xkey.keycode == Event.xkey.keycode) &&
-                    (NextEvent.xkey.time    == Event.xkey.time))
+                // To detect if it is a repeated key event, we check the current state of the key.
+                // - If the state is "down", KeyReleased events must obviously be discarded.
+                // - KeyPress events are a little bit harder to handle: they depend on the EnableKeyRepeat state,
+                //   and we need to properly forward the first one.
+                char Keys[32];
+                XQueryKeymap(myDisplay, Keys);
+                if (Keys[Event.xkey.keycode >> 3] & (1 << (Event.xkey.keycode % 8)))
                 {
-                    if (!myKeyRepeat)
-                        XNextEvent(myDisplay, &NextEvent);
-                    continue;
+                    // KeyRelease event + key down = repeated event --> discard
+                    if (Event.type == KeyRelease)
+                    {
+                        myLastKeyReleaseEvent = Event;
+                        continue;
+                    }
+
+                    // KeyPress event + key repeat disabled + matching KeyRelease event = repeated event --> discard
+                    if ((Event.type == KeyPress) && !myKeyRepeat &&
+                        (myLastKeyReleaseEvent.xkey.keycode == Event.xkey.keycode) &&
+                        (myLastKeyReleaseEvent.xkey.time == Event.xkey.time))
+                    {
+                        continue;
+                    }
                 }
             }
         }
 
+        // Process the event
         ProcessEvent(Event);
-    }
+   }
 }
 
 
@@ -467,6 +500,9 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& Mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::Initialize()
 {
+    // Make sure the "last key release" is initialized with invalid values
+    myLastKeyReleaseEvent.type = -1;
+
     // Get the atom defining the close event
     myAtomClose = XInternAtom(myDisplay, "WM_DELETE_WINDOW", false);
     XSetWMProtocols(myDisplay, myWindow, &myAtomClose, 1);
@@ -548,17 +584,6 @@ void WindowImplX11::CleanUp()
 
     // Unhide the mouse cursor (in case it was hidden)
     ShowMouseCursor(true);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Filter the received events
-/// (only allow those matching a specific window)
-////////////////////////////////////////////////////////////
-Bool WindowImplX11::CheckEvent(::Display*, XEvent* Event, XPointer UserData)
-{
-    // Just check if the event matches our window
-    return Event->xany.window == reinterpret_cast< ::Window >(UserData);
 }
 
 

@@ -21,11 +21,13 @@ EXPORTS
 	sfMusic_SetPitch
 	sfMusic_SetVolume
 	sfMusic_SetPosition
+	sfMusic_SetRelativeToListener
 	sfMusic_SetMinDistance
 	sfMusic_SetAttenuation
 	sfMusic_GetPitch
 	sfMusic_GetVolume
 	sfMusic_GetPosition
+	sfMusic_IsRelativeToListener
 	sfMusic_GetMinDistance
 	sfMusic_GetAttenuation
 	sfMusic_GetPlayingOffset
@@ -42,12 +44,14 @@ EXPORTS
 	sfSound_SetPitch
 	sfSound_SetVolume
 	sfSound_SetPosition
+	sfSound_SetRelativeToListener
 	sfSound_SetMinDistance
 	sfSound_SetAttenuation
 	sfSound_SetPlayingOffset
 	sfSound_GetPitch
 	sfSound_GetVolume
 	sfSound_GetPosition
+	sfSound_IsRelativeToListener
 	sfSound_GetPlayingOffset
 	sfSound_GetMinDistance
 	sfSound_GetAttenuation
@@ -84,12 +88,14 @@ EXPORTS
 	sfSoundStream_SetPitch
 	sfSoundStream_SetVolume
 	sfSoundStream_SetPosition
+	sfSoundStream_SetRelativeToListener
 	sfSoundStream_SetMinDistance
 	sfSoundStream_SetAttenuation
 	sfSoundStream_SetLoop
 	sfSoundStream_GetPitch
 	sfSoundStream_GetVolume
 	sfSoundStream_GetPosition
+	sfSoundStream_IsRelativeToListener
 	sfSoundStream_GetMinDistance
 	sfSoundStream_GetAttenuation
 	sfSoundStream_GetLoop

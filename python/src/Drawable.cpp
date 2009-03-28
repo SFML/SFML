@@ -36,7 +36,10 @@ void CustomDrawable::Render(sf::RenderTarget& Target) const
 	if (RenderFunction)
 		PyObject_CallFunction(RenderFunction, (char *)"O", RenderWindow);
 	else
+	{
 		PyErr_SetString(PyExc_RuntimeError, "Custom drawables must have a render method defined");
+		PyErr_Print();
+	}
 }
 
 static void
@@ -51,16 +54,17 @@ PySfDrawable_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfDrawable *self;
 	self = (PySfDrawable *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->IsCustom = true;
+		self->obj = new CustomDrawable();
+		if (PyObject_HasAttrString((PyObject *)self, "Render"))
+			self->obj->RenderFunction = PyObject_GetAttrString((PyObject *)self, "Render");
+		else
+			self->obj->RenderFunction = NULL;
+		self->obj->RenderWindow = NULL;
+	}
 	return (PyObject *)self;
-}
-
-static int
-PySfDrawable_init(PySfDrawable *self, PyObject *args, PyObject *kwds)
-{
-	self->obj = new CustomDrawable();
-	self->obj->RenderFunction = NULL;
-	self->obj->RenderWindow = NULL;
-	return 0;
 }
 
 static PyObject *
@@ -123,7 +127,7 @@ static PyObject *
 PySfDrawable_SetColor(PySfDrawable* self, PyObject *args)
 {
 	PySfColor *Color = (PySfColor *)args;
-	if (! PyObject_TypeCheck(args, &PySfColorType))
+	if (!PyObject_TypeCheck(args, &PySfColorType))
 	{
 		PyErr_SetString(PyExc_TypeError, "Drawable.SetColor() Argument is not a sf.Color");
 		return NULL;
@@ -226,6 +230,27 @@ PySfDrawable_TransformToGlobal(PySfDrawable* self, PyObject *args)
 	return Py_BuildValue("ff", result.x, result.y);
 }
 
+int PySfDrawable_SetAttr(PyObject* self, PyObject *attr_name, PyObject *v)
+{
+#ifdef IS_PY3K
+	PyObject *string = PyUnicode_AsUTF8String(attr_name);
+	if (string == NULL) return NULL;
+	std::string Name(PyBytes_AsString(string));
+#else
+	std::string Name(PyString_AsString(attr_name));
+#endif
+	if (Name == "Render")
+	{
+		Py_CLEAR(((PySfDrawable*)self)->obj->RenderFunction);
+		Py_INCREF(v);
+		((PySfDrawable*)self)->obj->RenderFunction = v;
+	}
+#ifdef IS_PY3K
+	Py_DECREF(string);
+#endif
+	return PyObject_GenericSetAttr(self, attr_name, v);
+}
+
 static PyMethodDef PySfDrawable_methods[] = {
 	{"TransformToLocal", (PyCFunction)PySfDrawable_TransformToLocal, METH_VARARGS, "TransformToLocal(X, Y)\n\
 Transform a point from global coordinates into local coordinates (ie it applies the inverse of object's center, translation, rotation and scale to the point). Returns a tuple.\n\
@@ -274,7 +299,7 @@ PyTypeObject PySfDrawableType = {
 	0,						/*tp_call*/
 	0,						/*tp_str*/
 	0,						/*tp_getattro*/
-	0,						/*tp_setattro*/
+	PySfDrawable_SetAttr,	/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
 	"Abstract base class for every object that can be drawn into a render window.", /* tp_doc */
@@ -292,15 +317,9 @@ PyTypeObject PySfDrawableType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfDrawable_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfDrawable_new,		/* tp_new */
 };
-
-PySfDrawable *
-GetNewPySfDrawable()
-{
-	return (PySfDrawable *)PySfDrawable_new(&PySfDrawableType, NULL, NULL);
-}
 
 

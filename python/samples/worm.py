@@ -234,14 +234,9 @@ class Main:
 			while self.win.GetEvent(event): # Event Handler
 				if event.Type == sf.Event.Closed:
 					self.win.Close()
-				elif event.Type == sf.Event.KeyPressed:
-					for key in self.keys:
-						if event.Key.Code == key:
-							self.keys[key](True)
-				elif event.Type == sf.Event.KeyReleased:
-					for key in self.keys:
-						if event.Key.Code == key:
-							self.keys[key](False)
+				elif event.Type == sf.Event.KeyPressed or event.Type == sf.Event.KeyReleased:
+					if event.Key.Code in self.keys:
+						self.keys[event.Key.Code](event.Type == sf.Event.KeyPressed)
 			self.win.Display()
 			self.win.Clear(background_color)
 			self.next_frame(self.win)

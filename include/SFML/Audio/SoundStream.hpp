@@ -53,11 +53,13 @@ public :
     using Sound::SetPitch;
     using Sound::SetVolume;
     using Sound::SetPosition;
+    using Sound::SetRelativeToListener;
     using Sound::SetMinDistance;
     using Sound::SetAttenuation;
     using Sound::GetPitch;
     using Sound::GetVolume;
     using Sound::GetPosition;
+    using Sound::IsRelativeToListener;
     using Sound::GetMinDistance;
     using Sound::GetAttenuation;
 

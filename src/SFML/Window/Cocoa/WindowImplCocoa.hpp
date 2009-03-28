@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2008 Lucas Soltic (elmerod@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Lucas Soltic (ceylow@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,12 +32,15 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <string>
 
+#ifdef __OBJC__
+#import <Cocoa/Cocoa.h>
+@class WindowWrapper;
+#endif
+
 namespace sf
 {
 namespace priv
 {
-
-typedef struct objc_members objc_members;
 
 ////////////////////////////////////////////////////////////
 /// WindowImplCocoa is the Cocoa implementation of WindowImpl
@@ -89,24 +92,22 @@ public :
     static bool IsContextActive();
 	
 	////////////////////////////////////////////////////////////
-	/// Handle Cocoa NSEvent
-	////////////////////////////////////////////////////////////
-	void HandleEvent(void *eventRef);
-	
-	////////////////////////////////////////////////////////////
 	/// Handle an event sent by the default NSNotificationCenter
 	////////////////////////////////////////////////////////////
 	void HandleNotifiedEvent(Event& eventRef);
 	
 	////////////////////////////////////////////////////////////
-	/// Return a pointer to the NSWindow (objc->windowHandle) object
+	/// Event handling for every event type.
+	/// 'eventRef' is a NSEvent.
 	////////////////////////////////////////////////////////////
-	void *CocoaWindow(void);
+	void HandleKeyDown(void *eventRef);
+	void HandleKeyUp(void *eventRef);
+	void HandleModifierKey(void *eventRef);
+	void HandleMouseDown(void *eventRef);
+	void HandleMouseUp(void *eventRef);
+	void HandleMouseMove(void *eventRef);
+	void HandleMouseWheel(void *eventRef);
 	
-	////////////////////////////////////////////////////////////
-	/// Return whether the window is in full screen mode
-	////////////////////////////////////////////////////////////
-	bool IsFullscreen(void);
 private :
 
     ////////////////////////////////////////////////////////////
@@ -183,37 +184,18 @@ private :
 	
 	
 	////////////////////////////////////////////////////////////
-	/// Event handling for every event type.
-	/// 'eventRef' is a NSEvent.
-	////////////////////////////////////////////////////////////
-	int HandleKeyDown(void *eventRef);
-	int HandleKeyUp(void *eventRef);
-	int HandleModifierKey(void *eventRef);
-	int HandleMouseDown(void *eventRef);
-	int HandleMouseUp(void *eventRef);
-	int HandleMouseMove(void *eventRef);
-	int HandleMouseWheel(void *eventRef);
-	
-	////////////////////////////////////////////////////////////
-	/// Make some allocations and initializations
-	////////////////////////////////////////////////////////////
-	void Initialize(void);
-	
-	
-	////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
 	
-	// An opaque structure that contains all obj-C objects
-	objc_members *members;
+#ifdef __OBJC__
+	WindowWrapper *myWrapper;
+#else
+	void *myWrapper;
+#endif
 	
-	bool useKeyRepeat;
-	bool mouseIn;
-	float wheelStatus;
-	
-	bool fullscreen;
-	VideoMode fullscreenMode;
-	VideoMode desktopMode;
+	bool myUseKeyRepeat;
+	bool myMouseIn;
+	float myWheelStatus;
 };
 
 } // namespace priv

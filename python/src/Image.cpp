@@ -41,13 +41,7 @@ PySfImage_dealloc(PySfImage* self)
 }
 
 static PyObject *
-PySfImage_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-	PySfImage *self;
-	self = (PySfImage *)type->tp_alloc(type, 0);
-	return (PyObject *)self;
-}
-
+PySfImage_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 static PyObject *
 PySfImage_Create(PySfImage* self, PyObject *args, PyObject *kwds)
@@ -57,7 +51,7 @@ PySfImage_Create(PySfImage* self, PyObject *args, PyObject *kwds)
 	unsigned int Width=0, Height=0;
 	const char *kwlist[] = {"Width", "Height", "Color", NULL};
 
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "|IIO!:Image.Create", (char **)kwlist, &Width, &Height, &PySfColorType, &ColorTmp))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|IIO!:Image.Create", (char **)kwlist, &Width, &Height, &PySfColorType, &ColorTmp))
 		return NULL; 
 
 	if (ColorTmp)
@@ -79,7 +73,7 @@ PySfImage_CopyScreen(PySfImage* self, PyObject *args)
 	PySfIntRect *SourceRect=NULL;
 	bool Result;
 
-	if (! PyArg_ParseTuple(args, "O!|O!:Image.CopyScreen", &PySfRenderWindowType, &RenderWindow, &PySfIntRectType, &SourceRect))
+	if (!PyArg_ParseTuple(args, "O!|O!:Image.CopyScreen", &PySfRenderWindowType, &RenderWindow, &PySfIntRectType, &SourceRect))
 		return NULL; 
 
 
@@ -164,7 +158,7 @@ PySfImage_LoadFromMemory(PySfImage* self, PyObject *args)
 	unsigned int SizeInBytes;
 	char *Data;
 
-	if (! PyArg_ParseTuple(args, "s#:Image.LoadFromMemory", &Data, &SizeInBytes))
+	if (!PyArg_ParseTuple(args, "s#:Image.LoadFromMemory", &Data, &SizeInBytes))
 		return NULL; 
 
 	return PyBool_FromLong(self->obj->LoadFromMemory(Data, (std::size_t) SizeInBytes));
@@ -204,9 +198,6 @@ PySfImage_SaveToFile (PySfImage *self, PyObject *args)
 {
 	save_to_file(self, args);
 }
-
-static int
-PySfImage_init(PySfImage *self, PyObject *args, PyObject *kwds);
 
 static PyObject *
 PySfImage_Bind(PySfImage *self)
@@ -248,7 +239,7 @@ PySfImage_GetTexCoords(PySfImage* self, PyObject *args)
 	bool Adjust = false;
 	PyObject *AdjustObj = NULL;
 
-	if (! PyArg_ParseTuple(args, "O!|O", &PySfIntRectType, &RectArg, &AdjustObj))
+	if (!PyArg_ParseTuple(args, "O!|O:Image.GetTextCoords", &PySfIntRectType, &RectArg, &AdjustObj))
 		return NULL;
 
 	if (AdjustObj)
@@ -258,7 +249,7 @@ PySfImage_GetTexCoords(PySfImage* self, PyObject *args)
 	PySfFloatRect *Rect;
 
 	Rect = GetNewPySfFloatRect();
-	Rect->obj = new sf::FloatRect ( self->obj->GetTexCoords(*(RectArg->obj), Adjust) );
+	Rect->obj = new sf::FloatRect(self->obj->GetTexCoords(*(RectArg->obj), Adjust));
 	Rect->Left = Rect->obj->Left;
 	Rect->Top = Rect->obj->Top;
 	Rect->Right = Rect->obj->Right;
@@ -267,8 +258,26 @@ PySfImage_GetTexCoords(PySfImage* self, PyObject *args)
 	return (PyObject *)Rect;
 }
 
+static int
+PySfImage_init(PySfImage *self, PyObject *args, PyObject *kwds)
+{
+	int size = PyTuple_Size(args);
+	if (size > 0)
+	{
+		if (PySfImage_Create(self, args, kwds) == NULL)
+		{
+			if (size != 3)
+				return -1;
+			else if (PySfImage_LoadFromPixels(self, args) == NULL)
+				return -1;
+			else PyErr_Clear();
+		}
+	}
+	return 0;
+}
+
 static PyObject *
-PySfImage_Copy(PySfImage* self, PyObject *args);
+PySfImage_Copy(PySfImage* self, PyObject *args, PyObject *kwds);
 
 static PyMethodDef PySfImage_methods[] = {
 	{"Copy", (PyCFunction)PySfImage_Copy, METH_VARARGS, "Copy(Source, DestX, DestY, SourceRect = sf.IntRect(0,0,0,0))\n\
@@ -352,44 +361,38 @@ Copy constructor : sf.Image(Copy) where Copy is a sf.Image instance.", /* tp_doc
 	PySfImage_new,			/* tp_new */
 };
 
-static int
-PySfImage_init(PySfImage *self, PyObject *args, PyObject *kwds)
+static PyObject *
+PySfImage_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	int size = PyTuple_Size(args);
-	if (size == 1)
+	PySfImage *self;
+	self = (PySfImage *)type->tp_alloc(type, 0);
+	if (self != NULL)
 	{
-		PySfImage *Image;
-		if (PyArg_ParseTuple(args, "O!", &PySfImageType, &Image))
+		if (PyTuple_Size(args) == 1)
 		{
-			self->obj = new sf::Image(*(Image->obj));
-			return 0;
-		}
-		else PyErr_Clear();
-	}
-	self->obj = new sf::Image();
-	if (PyTuple_Size(args) > 0)
-	{
-		if (PySfImage_Create(self, args, kwds) == NULL)
-		{
-			if (size != 3)
-				return -1;
-			else if (PySfImage_LoadFromPixels(self, args) == NULL)
-				return -1;
+			PySfImage *Image;
+			if (PyArg_ParseTuple(args, "O!", &PySfImageType, &Image))
+			{
+				self->obj = new sf::Image(*(Image->obj));
+			}
 			else PyErr_Clear();
 		}
+		else self->obj = new sf::Image();
 	}
-	return 0;
+	return (PyObject *)self;
 }
 
 static PyObject *
-PySfImage_Copy(PySfImage* self, PyObject *args)
+PySfImage_Copy(PySfImage* self, PyObject *args, PyObject *kwds)
 {
+	const char *kwlist[] = {"Source", "DestX", "DestY", "SourceRect", "ApplyAlpha", NULL};
 	PySfIntRect *SourceRect = NULL;
 	PySfImage *Source = NULL;
 	unsigned int DestX, DestY;
-	PyObject *PyApplyAlpha;
+	PyObject *PyApplyAlpha = NULL;
 	bool ApplyAlpha = false;
-	if (! PyArg_ParseTuple(args, "O!II|O!O:Image.Copy", &PySfImageType, &Source, &DestX, &DestY, &PySfIntRectType, &SourceRect, &PyApplyAlpha))
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!II|O!O:Image.Copy", (char **)kwlist, &PySfImageType, &Source, &DestX, &DestY, &PySfIntRectType, &SourceRect, &PyApplyAlpha))
 		return NULL;
 
 	if (PyApplyAlpha)
@@ -410,6 +413,6 @@ PySfImage_Copy(PySfImage* self, PyObject *args)
 PySfImage *
 GetNewPySfImage()
 {
-	return (PySfImage *)PySfImage_new(&PySfImageType, NULL, NULL);
+	return PyObject_New(PySfImage, &PySfImageType);
 }
 

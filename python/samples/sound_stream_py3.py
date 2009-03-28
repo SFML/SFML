@@ -24,7 +24,7 @@ class MyCustomStream(sf.SoundStream):
 		# Check if there is enough data to stream
 		if self.myOffset > len(self.myBuffer):
 			# Returning something else than a string means that we want to stop playing the stream
-			return False
+			return ""
 		# Data contains the string of samples we will return
 		if self.myOffset + self.myBufferSize >= len(self.myBuffer):
 			print("End of audio data reached")

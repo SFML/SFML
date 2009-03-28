@@ -51,6 +51,8 @@ PySfWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfWindow *self;
 	self = (PySfWindow *)type->tp_alloc(type, 0);
+	if (self != NULL)
+		self->obj = new sf::Window();
 	return (PyObject *)self;
 }
 
@@ -129,8 +131,7 @@ PySfWindow_Create(PySfWindow* self, PyObject *args, PyObject *kwds)
 static int
 PySfWindow_init(PySfWindow *self, PyObject *args, PyObject *kwds)
 {
-	self->obj = new sf::Window();
-	if (PyTuple_Size(args) > 0)
+	if (args != NULL)
 		if (PySfWindow_Create(self, args, kwds) == NULL)
 			return -1;
 	return 0;

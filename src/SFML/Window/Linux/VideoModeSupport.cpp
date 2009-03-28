@@ -61,15 +61,24 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& Modes)
             XRRScreenSize* Sizes = XRRConfigSizes(Config, &NbSizes);
             if (Sizes && (NbSizes > 0))
             {
-                // Add them to the video modes array
-                for (int i = 0; i < NbSizes; ++i)
+                // Get the list of supported depths
+                int NbDepths = 0;
+                int* Depths = XListDepths(Disp, Screen, &NbDepths);
+                if (Depths && (NbDepths > 0))
                 {
-                    // Convert to sfVideoMode
-                    VideoMode Mode(Sizes[i].width, Sizes[i].height, 32);
-
-                    // Add it only if it is not already in the array
-                    if (std::find(Modes.begin(), Modes.end(), Mode) == Modes.end())
-                        Modes.push_back(Mode);
+                    // Combine depths and sizes to fill the array of supported modes
+                    for (int i = 0; i < NbDepths; ++i)
+                    {
+                        for (int j = 0; j < NbSizes; ++j)
+                        {
+                            // Convert to VideoMode
+                            VideoMode Mode(Sizes[j].width, Sizes[j].height, Depths[i]);
+        
+                            // Add it only if it is not already in the array
+                            if (std::find(Modes.begin(), Modes.end(), Mode) == Modes.end())
+                                Modes.push_back(Mode);
+                        }
+                    }
                 }
             }
 
@@ -116,7 +125,7 @@ VideoMode VideoModeSupport::GetDesktopVideoMode()
             int NbSizes;
             XRRScreenSize* Sizes = XRRConfigSizes(Config, &NbSizes);
             if (Sizes && (NbSizes > 0))
-                DesktopMode = VideoMode(Sizes[CurrentMode].width, Sizes[CurrentMode].height, 32);
+                DesktopMode = VideoMode(Sizes[CurrentMode].width, Sizes[CurrentMode].height, DefaultDepth(Disp, Screen));
 
             // Free the configuration instance
             XRRFreeScreenConfigInfo(Config);

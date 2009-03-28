@@ -43,14 +43,9 @@ PySfSoundBufferRecorder_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfSoundBufferRecorder *self;
 	self = (PySfSoundBufferRecorder *)type->tp_alloc(type, 0);
+	if (self != NULL)
+		self->obj = new sf::SoundBufferRecorder();
 	return (PyObject *)self;
-}
-
-static int
-PySfSoundBufferRecorder_init(PySfSoundBufferRecorder *self, PyObject *args)
-{
-	self->obj = new sf::SoundBufferRecorder();
-	return 0;
 }
 
 static PyObject *
@@ -103,7 +98,7 @@ PyTypeObject PySfSoundBufferRecorderType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfSoundBufferRecorder_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfSoundBufferRecorder_new, /* tp_new */
 };

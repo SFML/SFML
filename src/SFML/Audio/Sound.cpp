@@ -176,6 +176,17 @@ void Sound::SetPosition(const Vector3f& Position)
 
 
 ////////////////////////////////////////////////////////////
+/// Make the sound's position relative to the listener's
+/// position, or absolute.
+/// The default value is false (absolute)
+////////////////////////////////////////////////////////////
+void Sound::SetRelativeToListener(bool Relative)
+{
+    ALCheck(alSourcei(mySource, AL_SOURCE_RELATIVE, Relative));
+}
+
+
+////////////////////////////////////////////////////////////
 /// Set the minimum distance - closer than this distance,
 /// the listener will hear the sound at its maximum volume.
 /// The default minimum distance is 1.0
@@ -260,6 +271,19 @@ Vector3f Sound::GetPosition() const
     ALCheck(alGetSource3f(mySource, AL_POSITION, &Position.x, &Position.y, &Position.z));
 
     return Position;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Tell if the sound's position is relative to the listener's
+/// position, or if it's absolute
+////////////////////////////////////////////////////////////
+bool Sound::IsRelativeToListener() const
+{
+    ALint Relative;
+    ALCheck(alGetSourcei(mySource, AL_SOURCE_RELATIVE, &Relative));
+
+    return Relative != 0;
 }
 
 

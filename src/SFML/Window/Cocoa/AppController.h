@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2008 Lucas Soltic (elmerod@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Lucas Soltic (ceylow@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,12 +26,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/Cocoa/WindowImplCocoa.hpp>
 #import <SFML/Window/VideoMode.hpp>
-#import <SFML/System/Clock.hpp>
 #import <Cocoa/Cocoa.h>
-#import <vector>
-#import <iostream>
 
 
 #define SharedAppController [AppController sharedController]
@@ -42,80 +38,50 @@ enum {
 	CleanScreen
 };
 
-
+@class WindowWrapper;
 @interface AppController : NSObject {
-	// Note: objc allocation doesn't call C++ constructor
-	std::vector <sf::priv::WindowImplCocoa *> *windows;
-	
-	NSAutoreleasePool *mainPool;
-	sf::Clock *cleaner;
-	sf::VideoMode desktopMode;
-	sf::VideoMode prevMode;
+	BOOL myOwningEventLoop;
+	WindowWrapper *myFullscreenWrapper;
+	NSAutoreleasePool *myMainPool;
+	sf::VideoMode myDesktopMode;
+	sf::VideoMode myPrevMode;
 }
 
 ////////////////////////////////////////////////////////////
-/// Return the shared AppController object. Makes one if needed
+/// Return the shared AppController instance. Make one if needed.
 ////////////////////////////////////////////////////////////
 + (AppController *)sharedController;
 
 ////////////////////////////////////////////////////////////
-/// Reallocate main pool to release autoreleased objects
-////////////////////////////////////////////////////////////
-- (void)resetPool;
-
-////////////////////////////////////////////////////////////
-/// Register our application and launch it if needed
-////////////////////////////////////////////////////////////
-- (void)runApplication;
-
-////////////////////////////////////////////////////////////
-/// Terminate the current running application
-////////////////////////////////////////////////////////////
-- (void)quitApplication:(id)sender;
-
-////////////////////////////////////////////////////////////
-/// Make menu bar
+/// Make the menu bar
 ////////////////////////////////////////////////////////////
 - (void)makeMenuBar;
 
 ////////////////////////////////////////////////////////////
-/// Get the events and put them into an array for each window
+/// Process all the events and send them to the application
+/// No event is processed if the AppController instance is
+/// not the owner of the event loop (ie: user made his own loop)
 ////////////////////////////////////////////////////////////
 - (void)processEvents;
 
 ////////////////////////////////////////////////////////////
-/// Add the 'windowImplObj' object to the list of known windows
+/// Set @window as the current fullscreen window
+/// Change the screen resolution if needed according to @window and @fullscreenMode
 ////////////////////////////////////////////////////////////
-- (void)registerWindow:(sf::priv::WindowImplCocoa *)windowImplObj;
-
-////////////////////////////////////////////////////////////
-/// Remove the 'windowImplObj' object from the list of known windows
-////////////////////////////////////////////////////////////
-- (void)unregisterWindow:(sf::priv::WindowImplCocoa *)windowImplObj;
-
-////////////////////////////////////////////////////////////
-/// Return true is one of the registered window is a full screen one
-////////////////////////////////////////////////////////////
-- (bool)isUsingFullscreen;
+- (void)setFullscreenWindow:(WindowWrapper *)window mode:(sf::VideoMode *)fullscreenMode;
 
 ////////////////////////////////////////////////////////////
 /// Perform fade operation where 'operation' is one of { FillScreen, CleanScreen}
 /// and 'time' is the time during which you wish the operation to be performed.
 /// Set 'sync' to true if you do not want the method to end before the end
-/// of the fade operation. Pass the last used token or a new one if you are
-/// using this method for the first time. This lets the method release some
-/// resources when doing CleanScreen operation.
+/// of the fade operation.
 ////////////////////////////////////////////////////////////
-- (void)doFadeOperation:(int)operation time:(float)time sync:(bool)sync token:(CGDisplayFadeReservationToken *)prevToken;
+- (void)doFadeOperation:(int)operation time:(float)time sync:(bool)sync;
+
+////////////////////////////////////////////////////////////
+/// Return the desktop video mode (made at the instance initialization)
+////////////////////////////////////////////////////////////
+- (const sf::VideoMode&)desktopMode;
 
 @end
-
-
-////////////////////////////////////////////////////////////
-/// check that ptr is valid, otherwise print msg in
-/// std::cerr and throw std::bad_alloc.
-/// Must be used to check alloc results
-////////////////////////////////////////////////////////////
-template <typename T>
-T *massert(T *ptr);
 

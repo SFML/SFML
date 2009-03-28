@@ -29,9 +29,13 @@
 
 #include <SFML/Graphics/String.hpp>
 
+#include "Font.hpp"
+
 typedef struct {
 	PyObject_HEAD
+	bool IsCustom;
 	sf::String *obj;
+	PySfFont *font;
 } PySfString;
 
 void PySfString_InitConst();

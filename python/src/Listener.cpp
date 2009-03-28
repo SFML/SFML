@@ -28,14 +28,6 @@
 
 
 static PyObject *
-PySfListener_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-	PySfListener *self;
-	self = (PySfListener *)type->tp_alloc(type, 0);
-	return (PyObject *)self;
-}
-
-static PyObject *
 PySfListener_SetGlobalVolume(PySfListener* self, PyObject *args)
 {
 	sf::Listener::SetGlobalVolume(PyFloat_AsDouble(args));
@@ -130,7 +122,7 @@ PyTypeObject PySfListenerType = {
 	0,						/* tp_dictoffset */
 	0,						/* tp_init */
 	0,						/* tp_alloc */
-	PySfListener_new,		/* tp_new */
+	0,						/* tp_new */
 };
 
 

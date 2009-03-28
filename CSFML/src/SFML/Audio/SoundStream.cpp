@@ -196,6 +196,17 @@ void sfSoundStream_SetPosition(sfSoundStream* SoundStream, float X, float Y, flo
 
 
 ////////////////////////////////////////////////////////////
+/// Make the sound stream's position relative to the listener's
+/// position, or absolute.
+/// The default value is false (absolute)
+////////////////////////////////////////////////////////////
+void sfSoundStream_SetRelativeToListener(sfSoundStream* SoundStream, sfBool Relative)
+{
+    CSFML_CALL(SoundStream, SetRelativeToListener(Relative == sfTrue));
+}
+
+
+////////////////////////////////////////////////////////////
 /// Set the minimum distance - closer than this distance,
 /// the listener will hear the sound stream at its maximum volume.
 /// The default minimum distance is 1.0
@@ -255,6 +266,16 @@ void sfSoundStream_GetPosition(sfSoundStream* SoundStream, float* X, float* Y, f
     if (X) *X = Position.x;
     if (Y) *Y = Position.y;
     if (Z) *Z = Position.z;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Tell if the sound stream's position is relative to the listener's
+/// position, or if it's absolute
+////////////////////////////////////////////////////////////
+CSFML_API sfBool sfSoundStream_IsRelativeToListener(sfSoundStream* SoundStream)
+{
+    CSFML_CALL_RETURN(SoundStream, IsRelativeToListener(), sfFalse);
 }
 
 

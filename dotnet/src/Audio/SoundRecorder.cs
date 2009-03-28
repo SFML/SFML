@@ -157,22 +157,22 @@ namespace SFML
             private StopCallback    myStopCallback;
 
             #region Imports
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfSoundRecorder_Create(StartCallback OnStart, ProcessCallback OnProcess, StopCallback OnStop, IntPtr UserData);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundRecorder_Destroy(IntPtr SoundRecorder);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundRecorder_Start(IntPtr SoundRecorder, uint SampleRate);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundRecorder_Stop(IntPtr SoundRecorder);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern uint sfSoundRecorder_GetSampleRate(IntPtr SoundRecorder);
 
-            [DllImport("csfml-audio")]
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern bool sfSoundRecorder_CanCapture();
             #endregion
         }

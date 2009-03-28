@@ -54,13 +54,11 @@
 		A04C59B20EDDBA9C00935061 /* Joystick.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A04C59A80EDDBA9C00935061 /* Joystick.hpp */; };
 		A04C59B30EDDBA9C00935061 /* VideoModeSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A04C59A90EDDBA9C00935061 /* VideoModeSupport.cpp */; };
 		A04C59B40EDDBA9C00935061 /* VideoModeSupport.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A04C59AA0EDDBA9C00935061 /* VideoModeSupport.hpp */; };
-		A04C59B50EDDBA9C00935061 /* WindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = A04C59AB0EDDBA9C00935061 /* WindowController.h */; };
-		A04C59B60EDDBA9C00935061 /* WindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = A04C59AC0EDDBA9C00935061 /* WindowController.mm */; };
 		A04C59B70EDDBA9C00935061 /* WindowImplCocoa.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A04C59AD0EDDBA9C00935061 /* WindowImplCocoa.hpp */; };
 		A04C59B80EDDBA9C00935061 /* WindowImplCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A04C59AE0EDDBA9C00935061 /* WindowImplCocoa.mm */; };
-		A05EEF700E5CF18F00572B7E /* sfml-window.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */; };
+		A05EEF700E5CF18F00572B7E /* sfml-window-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0C93EB40D9A9CA000B9E0C8 /* sfml-window-d.framework */; };
 		A093E3D00D8BF918002236B4 /* dummy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A093E3CF0D8BF918002236B4 /* dummy.cpp */; };
-		A093E5480D8BFEAE002236B4 /* sfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system.framework */; };
+		A093E5480D8BFEAE002236B4 /* sfml-system-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */; };
 		A09EEBF70D8C19BF00F6C625 /* Platform.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A09EEBED0D8C19BF00F6C625 /* Platform.hpp */; };
 		A09EEBF80D8C19BF00F6C625 /* Randomizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBEE0D8C19BF00F6C625 /* Randomizer.cpp */; };
 		A09EEBF90D8C19BF00F6C625 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF00D8C19BF00F6C625 /* Mutex.cpp */; };
@@ -70,8 +68,13 @@
 		A09EEBFD0D8C19BF00F6C625 /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF40D8C19BF00F6C625 /* Clock.cpp */; };
 		A09EEBFE0D8C19BF00F6C625 /* Lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF50D8C19BF00F6C625 /* Lock.cpp */; };
 		A09EEBFF0D8C19BF00F6C625 /* Sleep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF60D8C19BF00F6C625 /* Sleep.cpp */; };
-		A0BE1A200D917332007D4CAD /* sfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system.framework */; };
-		A0C93F930D9AA9FA00B9E0C8 /* sfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system.framework */; };
+		A0B617730F66936F005E0970 /* sndfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0B617720F66936F005E0970 /* sndfile.framework */; };
+		A0B617780F66938D005E0970 /* sndfile.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A0B617720F66936F005E0970 /* sndfile.framework */; };
+		A0BE1A200D917332007D4CAD /* sfml-system-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */; };
+		A0C93F930D9AA9FA00B9E0C8 /* sfml-system-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */; };
+		A0CE9FE70F46F72500FD00CE /* GLKit.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CE9FE50F46F72500FD00CE /* GLKit.h */; };
+		A0CE9FE80F46F72500FD00CE /* GLKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9FE60F46F72500FD00CE /* GLKit.mm */; };
+		A0EEDE990F59D49C0023A7F7 /* Initializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0EEDE980F59D49C0023A7F7 /* Initializer.cpp */; };
 		A0F1E68A0E75440800778F12 /* IPAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0F1E6800E75440800778F12 /* IPAddress.cpp */; };
 		A0F1E68C0E75440800778F12 /* Packet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0F1E6820E75440800778F12 /* Packet.cpp */; };
 		A0F1E68D0E75440800778F12 /* SelectorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0F1E6830E75440800778F12 /* SelectorBase.cpp */; };
@@ -306,6 +309,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		A0B617500F66926C005E0970 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A0B617780F66938D005E0970 /* sndfile.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		A018A2790EA21866005FFAC3 /* Http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Http.cpp; path = ../../src/SFML/Network/Http.cpp; sourceTree = SOURCE_ROOT; };
 		A018A27A0EA21866005FFAC3 /* Ftp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ftp.cpp; path = ../../src/SFML/Network/Ftp.cpp; sourceTree = SOURCE_ROOT; };
@@ -406,20 +422,18 @@
 		A04C59A80EDDBA9C00935061 /* Joystick.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Joystick.hpp; path = ../../src/SFML/Window/Cocoa/Joystick.hpp; sourceTree = SOURCE_ROOT; };
 		A04C59A90EDDBA9C00935061 /* VideoModeSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VideoModeSupport.cpp; path = ../../src/SFML/Window/Cocoa/VideoModeSupport.cpp; sourceTree = SOURCE_ROOT; };
 		A04C59AA0EDDBA9C00935061 /* VideoModeSupport.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VideoModeSupport.hpp; path = ../../src/SFML/Window/Cocoa/VideoModeSupport.hpp; sourceTree = SOURCE_ROOT; };
-		A04C59AB0EDDBA9C00935061 /* WindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WindowController.h; path = ../../src/SFML/Window/Cocoa/WindowController.h; sourceTree = SOURCE_ROOT; };
-		A04C59AC0EDDBA9C00935061 /* WindowController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = WindowController.mm; path = ../../src/SFML/Window/Cocoa/WindowController.mm; sourceTree = SOURCE_ROOT; };
 		A04C59AD0EDDBA9C00935061 /* WindowImplCocoa.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WindowImplCocoa.hpp; path = ../../src/SFML/Window/Cocoa/WindowImplCocoa.hpp; sourceTree = SOURCE_ROOT; };
 		A04C59AE0EDDBA9C00935061 /* WindowImplCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = WindowImplCocoa.mm; path = ../../src/SFML/Window/Cocoa/WindowImplCocoa.mm; sourceTree = SOURCE_ROOT; };
 		A093E3750D8BF86E002236B4 /* SFML.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SFML.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E3770D8BF86E002236B4 /* SFML-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SFML-Info.plist"; sourceTree = SOURCE_ROOT; };
-		A093E37F0D8BF87A002236B4 /* sfml-system.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-system.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-system-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E3800D8BF87A002236B4 /* sfml-system-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-system-Info.plist"; sourceTree = SOURCE_ROOT; };
-		A093E3880D8BF885002236B4 /* sfml-network.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-network.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A093E3880D8BF885002236B4 /* sfml-network-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-network-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E3890D8BF885002236B4 /* sfml-network-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-network-Info.plist"; sourceTree = SOURCE_ROOT; };
 		A093E3920D8BF892002236B4 /* sfml-window-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-window-Info.plist"; sourceTree = SOURCE_ROOT; };
-		A093E39A0D8BF89B002236B4 /* sfml-audio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-audio.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A093E39A0D8BF89B002236B4 /* sfml-audio-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-audio-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E39B0D8BF89B002236B4 /* sfml-audio-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-audio-Info.plist"; sourceTree = SOURCE_ROOT; };
-		A093E3A30D8BF8A2002236B4 /* sfml-graphics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-graphics.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A093E3A30D8BF8A2002236B4 /* sfml-graphics-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-graphics-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E3A40D8BF8A2002236B4 /* sfml-graphics-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-graphics-Info.plist"; sourceTree = SOURCE_ROOT; };
 		A093E3CF0D8BF918002236B4 /* dummy.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dummy.cpp; sourceTree = SOURCE_ROOT; };
 		A09EEBED0D8C19BF00F6C625 /* Platform.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Platform.hpp; path = ../../src/SFML/System/Platform.hpp; sourceTree = SOURCE_ROOT; };
@@ -431,7 +445,11 @@
 		A09EEBF40D8C19BF00F6C625 /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Clock.cpp; path = ../../src/SFML/System/Clock.cpp; sourceTree = SOURCE_ROOT; };
 		A09EEBF50D8C19BF00F6C625 /* Lock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Lock.cpp; path = ../../src/SFML/System/Lock.cpp; sourceTree = SOURCE_ROOT; };
 		A09EEBF60D8C19BF00F6C625 /* Sleep.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Sleep.cpp; path = ../../src/SFML/System/Sleep.cpp; sourceTree = SOURCE_ROOT; };
-		A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-window.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0B617720F66936F005E0970 /* sndfile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sndfile.framework; path = "../../extlibs/libs-xcode/sndfile.framework"; sourceTree = SOURCE_ROOT; };
+		A0C93EB40D9A9CA000B9E0C8 /* sfml-window-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-window-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0CE9FE50F46F72500FD00CE /* GLKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLKit.h; sourceTree = "<group>"; };
+		A0CE9FE60F46F72500FD00CE /* GLKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLKit.mm; sourceTree = "<group>"; };
+		A0EEDE980F59D49C0023A7F7 /* Initializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Initializer.cpp; path = ../../src/SFML/System/Initializer.cpp; sourceTree = SOURCE_ROOT; };
 		A0F1E6800E75440800778F12 /* IPAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IPAddress.cpp; path = ../../src/SFML/Network/IPAddress.cpp; sourceTree = SOURCE_ROOT; };
 		A0F1E6820E75440800778F12 /* Packet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Packet.cpp; path = ../../src/SFML/Network/Packet.cpp; sourceTree = SOURCE_ROOT; };
 		A0F1E6830E75440800778F12 /* SelectorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SelectorBase.cpp; path = ../../src/SFML/Network/SelectorBase.cpp; sourceTree = SOURCE_ROOT; };
@@ -600,7 +618,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A093E5480D8BFEAE002236B4 /* sfml-system.framework in Frameworks */,
+				A093E5480D8BFEAE002236B4 /* sfml-system-d.framework in Frameworks */,
+				A0B617730F66936F005E0970 /* sndfile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -608,8 +627,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0BE1A200D917332007D4CAD /* sfml-system.framework in Frameworks */,
-				A05EEF700E5CF18F00572B7E /* sfml-window.framework in Frameworks */,
+				A0BE1A200D917332007D4CAD /* sfml-system-d.framework in Frameworks */,
+				A05EEF700E5CF18F00572B7E /* sfml-window-d.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -617,7 +636,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0C93F930D9AA9FA00B9E0C8 /* sfml-system.framework in Frameworks */,
+				A0C93F930D9AA9FA00B9E0C8 /* sfml-system-d.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -820,10 +839,10 @@
 				A04C59A70EDDBA9C00935061 /* Joystick.cpp */,
 				A04C59AA0EDDBA9C00935061 /* VideoModeSupport.hpp */,
 				A04C59A90EDDBA9C00935061 /* VideoModeSupport.cpp */,
-				A04C59AB0EDDBA9C00935061 /* WindowController.h */,
-				A04C59AC0EDDBA9C00935061 /* WindowController.mm */,
 				A04C59AD0EDDBA9C00935061 /* WindowImplCocoa.hpp */,
 				A04C59AE0EDDBA9C00935061 /* WindowImplCocoa.mm */,
+				A0CE9FE50F46F72500FD00CE /* GLKit.h */,
+				A0CE9FE60F46F72500FD00CE /* GLKit.mm */,
 			);
 			name = Cocoa;
 			path = ../../src/SFML/Window/Cocoa;
@@ -846,11 +865,11 @@
 			isa = PBXGroup;
 			children = (
 				A093E3750D8BF86E002236B4 /* SFML.framework */,
-				A093E37F0D8BF87A002236B4 /* sfml-system.framework */,
-				A093E3880D8BF885002236B4 /* sfml-network.framework */,
-				A093E39A0D8BF89B002236B4 /* sfml-audio.framework */,
-				A093E3A30D8BF8A2002236B4 /* sfml-graphics.framework */,
-				A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */,
+				A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */,
+				A093E3880D8BF885002236B4 /* sfml-network-d.framework */,
+				A093E39A0D8BF89B002236B4 /* sfml-audio-d.framework */,
+				A093E3A30D8BF8A2002236B4 /* sfml-graphics-d.framework */,
+				A0C93EB40D9A9CA000B9E0C8 /* sfml-window-d.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -895,6 +914,7 @@
 		A093E3B90D8BF8C2002236B4 /* sfml-audio */ = {
 			isa = PBXGroup;
 			children = (
+				A0B617720F66936F005E0970 /* sndfile.framework */,
 				A01A3AD70E75181300D0BA9B /* Sources */,
 				A093E39B0D8BF89B002236B4 /* sfml-audio-Info.plist */,
 			);
@@ -920,6 +940,7 @@
 				A09EEBF40D8C19BF00F6C625 /* Clock.cpp */,
 				A09EEBF50D8C19BF00F6C625 /* Lock.cpp */,
 				A09EEBF60D8C19BF00F6C625 /* Sleep.cpp */,
+				A0EEDE980F59D49C0023A7F7 /* Initializer.cpp */,
 			);
 			name = Sources;
 			sourceTree = SOURCE_ROOT;
@@ -1247,8 +1268,8 @@
 				A04C59AF0EDDBA9C00935061 /* AppController.h in Headers */,
 				A04C59B20EDDBA9C00935061 /* Joystick.hpp in Headers */,
 				A04C59B40EDDBA9C00935061 /* VideoModeSupport.hpp in Headers */,
-				A04C59B50EDDBA9C00935061 /* WindowController.h in Headers */,
 				A04C59B70EDDBA9C00935061 /* WindowImplCocoa.hpp in Headers */,
+				A0CE9FE70F46F72500FD00CE /* GLKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1290,7 +1311,7 @@
 			);
 			name = "sfml-system";
 			productName = "sfml-system";
-			productReference = A093E37F0D8BF87A002236B4 /* sfml-system.framework */;
+			productReference = A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A093E3870D8BF885002236B4 /* sfml-network */ = {
@@ -1309,7 +1330,7 @@
 			);
 			name = "sfml-network";
 			productName = "sfml-network";
-			productReference = A093E3880D8BF885002236B4 /* sfml-network.framework */;
+			productReference = A093E3880D8BF885002236B4 /* sfml-network-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A093E3990D8BF89B002236B4 /* sfml-audio */ = {
@@ -1320,6 +1341,7 @@
 				A093E3960D8BF89B002236B4 /* Resources */,
 				A093E3970D8BF89B002236B4 /* Sources */,
 				A093E3980D8BF89B002236B4 /* Frameworks */,
+				A0B617500F66926C005E0970 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1328,7 +1350,7 @@
 			);
 			name = "sfml-audio";
 			productName = "sfml-audio";
-			productReference = A093E39A0D8BF89B002236B4 /* sfml-audio.framework */;
+			productReference = A093E39A0D8BF89B002236B4 /* sfml-audio-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A093E3A20D8BF8A2002236B4 /* sfml-graphics */ = {
@@ -1348,7 +1370,7 @@
 			);
 			name = "sfml-graphics";
 			productName = "sfml-graphics";
-			productReference = A093E3A30D8BF8A2002236B4 /* sfml-graphics.framework */;
+			productReference = A093E3A30D8BF8A2002236B4 /* sfml-graphics-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A0C93EB30D9A9CA000B9E0C8 /* sfml-window */ = {
@@ -1367,7 +1389,7 @@
 			);
 			name = "sfml-window";
 			productName = "sfml-window";
-			productReference = A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */;
+			productReference = A0C93EB40D9A9CA000B9E0C8 /* sfml-window-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -1476,6 +1498,7 @@
 				A09EEBFE0D8C19BF00F6C625 /* Lock.cpp in Sources */,
 				A09EEBFF0D8C19BF00F6C625 /* Sleep.cpp in Sources */,
 				A01C69C90E3E63CE00ED3F04 /* Unicode.cpp in Sources */,
+				A0EEDE990F59D49C0023A7F7 /* Initializer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1625,8 +1648,8 @@
 				A04C59B00EDDBA9C00935061 /* AppController.mm in Sources */,
 				A04C59B10EDDBA9C00935061 /* Joystick.cpp in Sources */,
 				A04C59B30EDDBA9C00935061 /* VideoModeSupport.cpp in Sources */,
-				A04C59B60EDDBA9C00935061 /* WindowController.mm in Sources */,
 				A04C59B80EDDBA9C00935061 /* WindowImplCocoa.mm in Sources */,
+				A0CE9FE80F46F72500FD00CE /* GLKit.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1715,7 +1738,7 @@
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SYMROOT = ../../lib/xcode;
+				SYMROOT = ../../lib;
 			};
 			name = Debug;
 		};
@@ -1742,7 +1765,7 @@
 				);
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
-				SYMROOT = ../../lib/xcode;
+				SYMROOT = ../../lib;
 			};
 			name = Release;
 		};
@@ -1800,6 +1823,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SFML;
 				SECTORDER_FLAGS = "";
+				SYMROOT = ../../lib;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -1828,6 +1852,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SFML;
 				SECTORDER_FLAGS = "";
+				SYMROOT = ../../lib;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -1842,6 +1867,11 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -1854,7 +1884,6 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"$(SRCROOT)/../../extlibs/libs-xcode/libsndfile.a",
 					"-framework",
 					OpenAL,
 				);
@@ -1875,6 +1904,11 @@
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -1886,7 +1920,6 @@
 				INFOPLIST_FILE = "sfml-audio-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
-					"$(SRCROOT)/../../extlibs/libs-xcode/libsndfile.a",
 					"-framework",
 					OpenAL,
 				);
@@ -2041,7 +2074,10 @@
 				INFOPLIST_FILE = "sfml-system-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					CoreFoundation,
+				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-system-d";
 				SECTORDER_FLAGS = "";
@@ -2069,7 +2105,10 @@
 				INFOPLIST_FILE = "sfml-system-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					CoreFoundation,
+				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-system";
 				SECTORDER_FLAGS = "";
@@ -2157,21 +2196,29 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH)";
+				CONFIGURATION_BUILD_DIR = ../../lib;
 				COPY_PHASE_STRIP = NO;
+				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
 				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = "-g3";
 				SDKROOT = "";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SYMROOT = build;
+				SYMROOT = ../../lib;
 			};
 			name = Development;
 		};
@@ -2226,6 +2273,11 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -2238,7 +2290,6 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"$(SRCROOT)/../../extlibs/libs-xcode/libsndfile.a",
 					"-framework",
 					OpenAL,
 				);
@@ -2324,6 +2375,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/../../src",
 					"${SRCROOT}/../../include",
@@ -2331,7 +2383,10 @@
 				INFOPLIST_FILE = "sfml-system-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					CoreFoundation,
+				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-system-d";
 				SECTORDER_FLAGS = "";
@@ -2385,9 +2440,9 @@
 		A02679DD0E5CDB03008D4C81 /* Build configuration list for PBXProject "SFML" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0C9DDC80E8BE5D10084CFD8 /* Development */,
 				A02679C20E5CDB03008D4C81 /* Debug */,
 				A02679C30E5CDB03008D4C81 /* Release */,
+				A0C9DDC80E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2395,9 +2450,9 @@
 		A02679DE0E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "SFML" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0C9DDCA0E8BE5D10084CFD8 /* Development */,
 				A02679C80E5CDB03008D4C81 /* Debug */,
 				A02679C90E5CDB03008D4C81 /* Release */,
+				A0C9DDCA0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2405,9 +2460,9 @@
 		A02679DF0E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-system" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0C9DDCE0E8BE5D10084CFD8 /* Development */,
 				A02679D40E5CDB03008D4C81 /* Debug */,
 				A02679D50E5CDB03008D4C81 /* Release */,
+				A0C9DDCE0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2415,9 +2470,9 @@
 		A02679E00E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-network" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0C9DDCD0E8BE5D10084CFD8 /* Development */,
 				A02679D10E5CDB03008D4C81 /* Debug */,
 				A02679D20E5CDB03008D4C81 /* Release */,
+				A0C9DDCD0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2425,9 +2480,9 @@
 		A02679E10E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-audio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0C9DDCB0E8BE5D10084CFD8 /* Development */,
 				A02679CB0E5CDB03008D4C81 /* Debug */,
 				A02679CC0E5CDB03008D4C81 /* Release */,
+				A0C9DDCB0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2435,9 +2490,9 @@
 		A02679E20E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-window" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0C9DDCF0E8BE5D10084CFD8 /* Development */,
 				A02679D70E5CDB03008D4C81 /* Debug */,
 				A02679D80E5CDB03008D4C81 /* Release */,
+				A0C9DDCF0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2445,9 +2500,9 @@
 		A02679E30E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-graphics" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0C9DDCC0E8BE5D10084CFD8 /* Development */,
 				A02679CE0E5CDB03008D4C81 /* Debug */,
 				A02679CF0E5CDB03008D4C81 /* Release */,
+				A0C9DDCC0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -2455,9 +2510,9 @@
 		A02679E40E5CDB03008D4C81 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0C9DDC90E8BE5D10084CFD8 /* Development */,
 				A02679C50E5CDB03008D4C81 /* Debug */,
 				A02679C60E5CDB03008D4C81 /* Release */,
+				A0C9DDC90E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

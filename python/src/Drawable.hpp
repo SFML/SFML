@@ -44,11 +44,9 @@ public :
 
 typedef struct {
 	PyObject_HEAD
+	bool IsCustom;
 	CustomDrawable *obj;
 } PySfDrawable;
-
-PySfDrawable *
-GetNewPySfDrawable();
 
 #endif
 

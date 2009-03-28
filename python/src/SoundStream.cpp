@@ -38,19 +38,21 @@ bool CustomSoundStream::OnStart()
 		Py_DECREF(OnStart);
 		Py_DECREF(Result);
 	}
+	if (PyErr_Occurred())
+	{
+		PyErr_Print();
+		return false;
+	}
     return result;
 }
 
 bool CustomSoundStream::OnGetData(Chunk& Data)
 {
 	bool result = false;
-	if (PyData != NULL) {
-		Py_DECREF(PyData);
-	}
-	if (PyObject_HasAttrString(SoundStream, "OnGetData"))
+	Py_CLEAR(PyData);
+	PyObject *Function = PyObject_GetAttrString(SoundStream, "OnGetData");
+	if (Function != NULL)
 	{
-		PyObject *Function = PyObject_GetAttrString(SoundStream, "OnGetData");
-		Data.NbSamples = 0;
 		PyData = PyObject_CallFunction(Function, NULL);
 		if (PyData != NULL)
 		{
@@ -63,21 +65,18 @@ bool CustomSoundStream::OnGetData(Chunk& Data)
 		}
 		Py_DECREF(Function);
 	}
+	if (PyErr_Occurred())
+	{
+		PyErr_Print();
+		Py_CLEAR(PyData);
+		return false;
+	}
     return result;
 }
 
 void CustomSoundStream::Init(unsigned int ChannelsCount, unsigned int SampleRate)
 {
 	Initialize(ChannelsCount, SampleRate);
-}
-
-static int
-PySfSoundStream_init(PySfSoundStream *self, PyObject *args, PyObject *kwds)
-{
-	self->obj = new CustomSoundStream();
-	self->obj->PyData = NULL;
-	self->obj->SoundStream = (PyObject *)self;
-	return 0;
 }
 
 static void
@@ -92,6 +91,12 @@ PySfSoundStream_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PySfSoundStream *self;
 	self = (PySfSoundStream *)type->tp_alloc(type, 0);
+	if (self != NULL)
+	{
+		self->obj = new CustomSoundStream();
+		self->obj->PyData = NULL;
+		self->obj->SoundStream = (PyObject *)self;
+	}
 	return (PyObject *)self;
 }
 
@@ -232,7 +237,22 @@ PySfSoundStream_GetPlayingOffset(PySfSoundStream *self)
 	return PyFloat_FromDouble(self->obj->GetPlayingOffset());
 }
 
+static PyObject*
+PySfSoundStream_SetRelativeToListener(PySfSoundStream *self, PyObject *args)
+{
+	self->obj->SetRelativeToListener(PyBool_AsBool(args));
+	Py_RETURN_NONE;
+}
+
+static PyObject*
+PySfSoundStream_IsRelativeToListener(PySfSoundStream *self)
+{
+	return PyBool_FromLong(self->obj->IsRelativeToListener());
+}
+
 static PyMethodDef PySfSoundStream_methods[] = {
+	{"SetRelativeToListener", (PyCFunction)PySfSoundStream_SetRelativeToListener, METH_O, "SetRelativeToListener(Relative)\nMake the sound's position relative to the listener's position, or absolute. The default value is false (absolute)\n	Relative : True to set the position relative, false to set it absolute"},
+	{"IsRelativeToListener", (PyCFunction)PySfSoundStream_IsRelativeToListener, METH_NOARGS, "IsRelativeToListener()\nTell if the sound's position is relative to the listener's position, or if it's absolute."},
 	{"Initialize", (PyCFunction)PySfSoundStream_Initialize, METH_VARARGS, "Initialize(ChannelsCount, SampleRate)\n\
 Set the audio stream parameters, you must call it before Play()\n\
 	ChannelsCount : Number of channels\n\
@@ -300,7 +320,7 @@ or for streaming sound from the network", /* tp_doc */
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfSoundStream_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfSoundStream_new,	/* tp_new */
 };

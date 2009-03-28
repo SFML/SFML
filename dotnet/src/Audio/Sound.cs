@@ -161,6 +161,19 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Is the sound's position relative to the listener's position,
+            /// or is it absolute?
+            /// Default value is false (absolute)
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public bool RelativeToListener
+            {
+                get {return sfSound_IsRelativeToListener(This);}
+                set {sfSound_SetRelativeToListener(This, value);}
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Minimum distance of the sound. Closer than this distance,
             /// the listener will hear the sound at its maximum volume.
             /// The default value is 1
@@ -239,6 +252,9 @@ namespace SFML
             static extern void sfSound_SetPosition(IntPtr Sound, float X, float Y, float Z);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
+            static extern void sfSound_SetRelativeToListener(IntPtr Sound, bool Relative);
+
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSound_SetMinDistance(IntPtr Sound, float MinDistance);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
@@ -255,6 +271,9 @@ namespace SFML
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSound_GetPosition(IntPtr Sound, out float X, out float Y, out float Z);
+
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
+            static extern bool sfSound_IsRelativeToListener(IntPtr Sound);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern float sfSound_GetMinDistance(IntPtr Sound);

@@ -91,20 +91,12 @@ PySfGlyph_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 		self->Advance = 0;
 		self->Rectangle = GetNewPySfIntRect();
 		self->TexCoords = GetNewPySfFloatRect();
+		self->obj = new sf::Glyph();
+		self->Rectangle->obj = &(self->obj->Rectangle);
+		self->TexCoords->obj = &(self->obj->TexCoords);
 	}
 	return (PyObject *)self;
 }
-
-
-static int
-PySfGlyph_init(PySfGlyph *self, PyObject *args, PyObject *kwds)
-{
-	self->obj = new sf::Glyph();
-	self->Rectangle->obj = &(self->obj->Rectangle);
-	self->TexCoords->obj = &(self->obj->TexCoords);
-	return 0;
-}
-
 
 PyTypeObject PySfGlyphType = {
 	head_init
@@ -142,7 +134,7 @@ PyTypeObject PySfGlyphType = {
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfGlyph_init, /* tp_init */
+	0,						/* tp_init */
 	0,						/* tp_alloc */
 	PySfGlyph_new,			/* tp_new */
 };
@@ -150,6 +142,6 @@ PyTypeObject PySfGlyphType = {
 PySfGlyph *
 GetNewPySfGlyph()
 {
-	return (PySfGlyph *)PySfGlyph_new(&PySfGlyphType, NULL, NULL);
+	return PyObject_New(PySfGlyph, &PySfGlyphType);
 }
 

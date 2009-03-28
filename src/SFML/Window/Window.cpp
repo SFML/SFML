@@ -32,11 +32,19 @@
 #include <iostream>
 
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    const sf::Window* FullscreenWindow = NULL;
+}
+
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 /// Default constructor
-///
 ////////////////////////////////////////////////////////////
 Window::Window() :
 myWindow        (NULL),
@@ -97,11 +105,30 @@ Window::~Window()
 ////////////////////////////////////////////////////////////
 void Window::Create(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const ContextSettings& Settings)
 {
-    // Check validity of video mode
-    if ((WindowStyle & Style::Fullscreen) && !Mode.IsValid())
+    // Destroy the previous window implementation
+    Close();
+
+    // Fullscreen style requires some tests
+    if (WindowStyle & Style::Fullscreen)
     {
-        std::cerr << "The requested video mode is not available, switching to a valid mode" << std::endl;
-        Mode = VideoMode::GetMode(0);
+        // Make sure there's not already a fullscreen window (only one is allowed)
+        if (FullscreenWindow)
+        {
+            std::cerr << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
+            WindowStyle &= ~Style::Fullscreen;
+        }
+        else
+        {
+            // Make sure the chosen video mode is compatible
+            if (!Mode.IsValid())
+            {
+                std::cerr << "The requested video mode is not available, switching to a valid mode" << std::endl;
+                Mode = VideoMode::GetMode(0);
+            }
+
+            // Update the fullscreen window
+            FullscreenWindow = this;
+        }
     }
 
     // Check validity of style
@@ -131,7 +158,7 @@ void Window::Create(VideoMode Mode, const std::string& Title, unsigned long Wind
 void Window::Create(WindowHandle Handle, const ContextSettings& Settings)
 {
     // Recreate the window implementation
-    delete myWindow;
+    Close();
     myWindow = priv::WindowImpl::New(Handle);
 
     // Make sure another context is bound, so that:
@@ -170,6 +197,10 @@ void Window::Close()
         delete myWindow;
         myWindow = NULL;
     }
+
+    // Update the fullscreen window
+    if (this == FullscreenWindow)
+        FullscreenWindow = NULL;
 }
 
 
