@@ -244,11 +244,13 @@ PyTypeObject PySfRenderWindowType = {
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
 	"Simple wrapper for sf.Window that allows easy 2D rendering.\n\
 Default constructor : sf.RenderWindow()\n\
-Other constructor : sf.RenderWindow(Mode, Title, Style::Resize|Style::Close, Params = WindowSettings())\n\
-Parameters:\n\
+Construct a new window : sf.RenderWindow(Mode, Title, Style::Resize|Style::Close, Params = WindowSettings())\n\
 	Mode 	: Video mode to use\n\
 	Title 	: Title of the window\n\
 	WindowStyle 	: Window style (Resize | Close by default)\n\
+	Params 	: Creation parameters (see default constructor for default values)\n\
+Construct the window from an existing control : sf.RenderWindow(Handle, Params)\n\
+	Handle 	: handle of the control (long integer)\n\
 	Params 	: Creation parameters (see default constructor for default values)", /* tp_doc */
 	0,						/* tp_traverse */
 	0,						/* tp_clear */
