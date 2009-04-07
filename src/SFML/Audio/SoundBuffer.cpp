@@ -80,37 +80,29 @@ SoundBuffer::~SoundBuffer()
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::LoadFromFile(const std::string& Filename)
 {
-    // Create the sound file
-    std::auto_ptr<priv::SoundFile> File(priv::SoundFile::CreateRead(Filename));
-
     // Open the sound file
-    if (File.get())
+    priv::SoundFile File;
+    if (File.OpenRead(Filename))
     {
         // Get the sound parameters
-        std::size_t  NbSamples     = File->GetSamplesCount();
-        unsigned int ChannelsCount = File->GetChannelsCount();
-        unsigned int SampleRate    = File->GetSampleRate();
+        std::size_t  NbSamples     = File.GetSamplesCount();
+        unsigned int ChannelsCount = File.GetChannelsCount();
+        unsigned int SampleRate    = File.GetSampleRate();
 
         // Read the samples from the opened file
         mySamples.resize(NbSamples);
-        if (File->Read(&mySamples[0], NbSamples) == NbSamples)
+        if (File.Read(&mySamples[0], NbSamples) == NbSamples)
         {
             // Update the internal buffer with the new samples
             return Update(ChannelsCount, SampleRate);
         }
         else
         {
-            // Error...
-            std::cerr << "Failed to read audio data from file \"" << Filename << "\"" << std::endl;
-
             return false;
         }
     }
     else
     {
-        // Error...
-        std::cerr << "Failed to load sound buffer from file \"" << Filename << "\"" << std::endl;
-
         return false;
     }
 }
@@ -121,37 +113,29 @@ bool SoundBuffer::LoadFromFile(const std::string& Filename)
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::LoadFromMemory(const char* Data, std::size_t SizeInBytes)
 {
-    // Create the sound file
-    std::auto_ptr<priv::SoundFile> File(priv::SoundFile::CreateRead(Data, SizeInBytes));
-
     // Open the sound file
-    if (File.get())
+    priv::SoundFile File;
+    if (File.OpenRead(Data, SizeInBytes))
     {
         // Get the sound parameters
-        std::size_t  NbSamples     = File->GetSamplesCount();
-        unsigned int ChannelsCount = File->GetChannelsCount();
-        unsigned int SampleRate    = File->GetSampleRate();
+        std::size_t  NbSamples     = File.GetSamplesCount();
+        unsigned int ChannelsCount = File.GetChannelsCount();
+        unsigned int SampleRate    = File.GetSampleRate();
 
         // Read the samples from the opened file
         mySamples.resize(NbSamples);
-        if (File->Read(&mySamples[0], NbSamples) == NbSamples)
+        if (File.Read(&mySamples[0], NbSamples) == NbSamples)
         {
             // Update the internal buffer with the new samples
             return Update(ChannelsCount, SampleRate);
         }
         else
         {
-            // Error...
-            std::cerr << "Failed to read audio data from file in memory" << std::endl;
-
             return false;
         }
     }
     else
     {
-        // Error...
-        std::cerr << "Failed to load sound buffer from file in memory" << std::endl;
-
         return false;
     }
 }
@@ -192,19 +176,16 @@ bool SoundBuffer::LoadFromSamples(const Int16* Samples, std::size_t SamplesCount
 bool SoundBuffer::SaveToFile(const std::string& Filename) const
 {
     // Create the sound file in write mode
-    std::auto_ptr<priv::SoundFile> File(priv::SoundFile::CreateWrite(Filename, GetChannelsCount(), GetSampleRate()));
-    if (File.get())
+    priv::SoundFile File;
+    if (File.OpenWrite(Filename, GetChannelsCount(), GetSampleRate()))
     {
         // Write the samples to the opened file
-        File->Write(&mySamples[0], mySamples.size());
+        File.Write(&mySamples[0], mySamples.size());
 
         return true;
     }
     else
     {
-        // Error...
-        std::cerr << "Failed to save sound buffer to file \"" << Filename << "\"" << std::endl;
-
         return false;
     }
 }

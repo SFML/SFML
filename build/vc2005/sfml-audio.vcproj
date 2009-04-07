@@ -343,52 +343,6 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="stb_vorbis"
-			>
-			<File
-				RelativePath="..\..\src\SFML\Audio\stb_vorbis\stb_vorbis.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="3"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="3"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Audio\stb_vorbis\stb_vorbis.h"
-				>
-			</File>
-		</Filter>
 		<File
 			RelativePath="..\..\src\SFML\Audio\AudioDevice.cpp"
 			>
@@ -455,22 +409,6 @@
 		</File>
 		<File
 			RelativePath="..\..\src\SFML\Audio\SoundFile.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Audio\SoundFileDefault.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Audio\SoundFileDefault.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Audio\SoundFileOgg.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Audio\SoundFileOgg.hpp"
 			>
 		</File>
 		<File

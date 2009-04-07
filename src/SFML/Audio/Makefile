@@ -1,7 +1,5 @@
-SRC       = $(wildcard *.cpp)
-SRCVORBIS = $(wildcard ./stb_vorbis/*.c)
-OBJ       = $(SRC:.cpp=.o)
-OBJVORBIS = $(SRCVORBIS:.c=.o)
+SRC = $(wildcard *.cpp)
+OBJ = $(SRC:.cpp=.o)
 
 ifeq ($(STATIC), yes)
     LIB     = libsfml-audio-s.a
@@ -15,22 +13,19 @@ endif
 
 all: $(LIB)
 
-libsfml-audio-s.a: $(OBJ) $(OBJVORBIS)
-	$(AR) $(ARFLAGS) $(LIBNAME) $(OBJ) $(OBJVORBIS)
+libsfml-audio-s.a: $(OBJ)
+	$(AR) $(ARFLAGS) $(LIBNAME) $(OBJ)
 
 libsfml-audio.so: $(OBJ) $(OBJVORBIS)
-	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIB).$(VERSION) -o $(LIBNAME) $(OBJ) $(OBJVORBIS) -lsndfile -lopenal
+	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIB).$(VERSION) -o $(LIBNAME) $(OBJ) -lsndfile -lopenal
 
 $(OBJ): %.o: %.cpp
 	$(CPP) -o $@ -c $< $(CFLAGS)
 
-$(OBJVORBIS): %.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGSEXT)
-
 .PHONY: clean mrproper
 
 clean:
-	@rm -rf $(OBJ) $(OBJVORBIS)
+	@rm -rf $(OBJ)
 
 mrproper: clean
 	@rm -rf $(LIBNAME)

@@ -129,16 +129,8 @@
 		<Unit filename="..\..\src\SFML\Audio\SoundBufferRecorder.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundFile.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundFile.hpp" />
-		<Unit filename="..\..\src\SFML\Audio\SoundFileDefault.cpp" />
-		<Unit filename="..\..\src\SFML\Audio\SoundFileDefault.hpp" />
-		<Unit filename="..\..\src\SFML\Audio\SoundFileOgg.cpp" />
-		<Unit filename="..\..\src\SFML\Audio\SoundFileOgg.hpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundRecorder.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundStream.cpp" />
-		<Unit filename="..\..\src\SFML\Audio\stb_vorbis\stb_vorbis.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\src\SFML\Audio\stb_vorbis\stb_vorbis.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -38,7 +38,7 @@ namespace sf
 /// Construct the music with a buffer size
 ////////////////////////////////////////////////////////////
 Music::Music(std::size_t BufferSize) :
-myFile    (NULL),
+myFile    (new priv::SoundFile),
 myDuration(0.f),
 mySamples (BufferSize)
 {
@@ -67,9 +67,7 @@ bool Music::OpenFromFile(const std::string& Filename)
     Stop();
 
     // Create the sound file implementation, and open it in read mode
-    delete myFile;
-    myFile = priv::SoundFile::CreateRead(Filename);
-    if (!myFile)
+    if (!myFile->OpenRead(Filename))
     {
         std::cerr << "Failed to open \"" << Filename << "\" for reading" << std::endl;
         return false;
@@ -94,9 +92,7 @@ bool Music::OpenFromMemory(const char* Data, std::size_t SizeInBytes)
     Stop();
 
     // Create the sound file implementation, and open it in read mode
-    delete myFile;
-    myFile = priv::SoundFile::CreateRead(Data, SizeInBytes);
-    if (!myFile)
+    if (!myFile->OpenRead(Data, SizeInBytes))
     {
         std::cerr << "Failed to open music from memory for reading" << std::endl;
         return false;
