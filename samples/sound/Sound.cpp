@@ -18,8 +18,6 @@ void PlaySound()
     if (!Buffer.LoadFromFile("datas/sound/footsteps.wav"))
         return;
 
-    sf::SoundBuffer b2 = Buffer;
-
     // Display sound informations
     std::cout << "footsteps.wav :" << std::endl;
     std::cout << " " << Buffer.GetDuration()      << " sec"           << std::endl;
@@ -27,7 +25,7 @@ void PlaySound()
     std::cout << " " << Buffer.GetChannelsCount() << " channels"      << std::endl;
 
     // Create a sound instance and play it
-    sf::Sound Sound(b2);
+    sf::Sound Sound(Buffer);
     Sound.Play();
 
     // Loop while the sound is playing
