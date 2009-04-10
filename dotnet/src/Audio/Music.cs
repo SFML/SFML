@@ -212,6 +212,7 @@ namespace SFML
             public float PlayingOffset
             {
                 get {return sfMusic_GetPlayingOffset(This);}
+                set {sfMusic_SetPlayingOffset(This, value);}
             }
 
             ////////////////////////////////////////////////////////////
@@ -276,6 +277,9 @@ namespace SFML
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfMusic_SetAttenuation(IntPtr Music, float Attenuation);
+            
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
+            static extern void sfMusic_SetPlayingOffset(IntPtr Music, float TimeOffset);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern bool sfMusic_GetLoop(IntPtr Music);

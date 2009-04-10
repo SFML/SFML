@@ -82,14 +82,6 @@ public :
     unsigned int GetSampleRate() const;
 
     ////////////////////////////////////////////////////////////
-    /// Restart the sound from the beginning
-    ///
-    /// \return True if restart was successful
-    ///
-    ////////////////////////////////////////////////////////////
-    bool Restart();
-
-    ////////////////////////////////////////////////////////////
     /// Open the sound file for reading
     ///
     /// \param Filename : Path of sound file to load
@@ -142,6 +134,14 @@ public :
     ////////////////////////////////////////////////////////////
     void Write(const Int16* Data, std::size_t NbSamples);
 
+    ////////////////////////////////////////////////////////////
+    /// Move the current reading position in the file
+    ///
+    /// \param TimeOffset : New position, expressed in seconds
+    ///
+    ////////////////////////////////////////////////////////////
+    void Seek(float TimeOffset);
+
 private :
 
     ////////////////////////////////////////////////////////////
@@ -183,9 +183,6 @@ private :
     std::size_t  myNbSamples;     ///< Total number of samples in the file
     unsigned int myChannelsCount; ///< Number of channels used by the sound
     unsigned int mySampleRate;    ///< Number of samples per second
-    std::string  myFilename;      ///< Path of the file (valid if loaded from a file)
-    const char*  myData;          ///< Pointer to the file in memory (valid if loaded from memory)
-    std::size_t  mySize;          ///< Size of the file in memory  (valid if loaded from memory)
 };
 
 } // namespace priv

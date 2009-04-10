@@ -115,6 +115,14 @@ public :
     Status GetStatus() const;
 
     ////////////////////////////////////////////////////////////
+    /// Set the current playing position of the stream
+    ///
+    /// \param TimeOffset : New playing position, expressed in seconds
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetPlayingOffset(float TimeOffset);
+
+    ////////////////////////////////////////////////////////////
     /// Get the current playing position of the stream
     ///
     /// \return Current playing position, expressed in seconds
@@ -165,14 +173,6 @@ private :
     virtual void Run();
 
     ////////////////////////////////////////////////////////////
-    /// Called when the sound restarts
-    ///
-    /// \return If false is returned, the playback is aborted
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual bool OnStart();
-
-    ////////////////////////////////////////////////////////////
     /// Called each time new audio data is needed to feed the stream
     ///
     /// \param Data : New chunk of data to stream
@@ -181,6 +181,14 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     virtual bool OnGetData(Chunk& Data) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// Called to move the current reading position
+    ///
+    /// \param TimeOffset : New read position, expressed in seconds
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void OnSeek(float TimeOffset) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Fill a new buffer with audio data, and push it to the

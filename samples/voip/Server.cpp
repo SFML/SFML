@@ -77,29 +77,17 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// /see SoundStream::OnStart
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual bool OnStart()
-    {
-        // Reset the playing offset
-        myOffset = 0;
-
-        return true;
-    }
-
-    ////////////////////////////////////////////////////////////
     /// /see SoundStream::OnGetData
     ///
     ////////////////////////////////////////////////////////////
     virtual bool OnGetData(sf::SoundStream::Chunk& Data)
     {
         // We have reached the end of the buffer and all audio data have been played : we can stop playback
-        if ((myOffset == mySamples.size()) && myHasFinished)
+        if ((myOffset >= mySamples.size()) && myHasFinished)
             return false;
 
         // No new data has arrived since last update : wait until we get some
-        while ((myOffset == mySamples.size()) && !myHasFinished)
+        while ((myOffset >= mySamples.size()) && !myHasFinished)
             sf::Sleep(0.01f);
 
         // Copy samples into a local buffer to avoid synchronization problems
@@ -117,6 +105,15 @@ private :
         myOffset += myTempBuffer.size();
 
         return true;
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// /see SoundStream::OnSeek
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void OnSeek(float TimeOffset)
+    {
+        myOffset = static_cast<std::size_t>(TimeOffset * GetSampleRate() * GetChannelsCount());
     }
 
     ////////////////////////////////////////////////////////////

@@ -43,15 +43,15 @@ typedef struct
     unsigned int NbSamples; ///< Number of samples pointed by Samples
 } sfSoundStreamChunk;
 
-typedef sfBool (*sfSoundStreamStartCallback)(void*);                        ///< Type of the callback used to start a sound stream
 typedef sfBool (*sfSoundStreamGetDataCallback)(sfSoundStreamChunk*, void*); ///< Type of the callback used to get a sound stream data
+typedef void   (*sfSoundStreamSeekCallback)(float, void*);                  ///< Type of the callback used to seek in a sound stream
 
 
 ////////////////////////////////////////////////////////////
 /// Construct a new sound stream
 ///
-/// \param OnStart :       Function called when the stream starts (can be NULL)
 /// \param OnGetData :     Function called when the stream needs more data (can't be NULL)
+/// \param OnSeek :        Function called when the stream seeks (can't be NULL)
 /// \param ChannelsCount : Number of channels to use (1 = mono, 2 = stereo)
 /// \param SampleRate :    Sample rate of the sound (44100 = CD quality)
 /// \param UserData :      Data to pass to the callback functions
@@ -59,8 +59,8 @@ typedef sfBool (*sfSoundStreamGetDataCallback)(sfSoundStreamChunk*, void*); ///<
 /// \return A new sfSoundStream object (NULL if failed)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundStream* sfSoundStream_Create(sfSoundStreamStartCallback   OnStart,
-                                              sfSoundStreamGetDataCallback OnGetData,
+CSFML_API sfSoundStream* sfSoundStream_Create(sfSoundStreamGetDataCallback OnGetData,
+                                              sfSoundStreamSeekCallback    OnSeek,
                                               unsigned int                 ChannelsCount,
                                               unsigned int                 SampleRate,
                                               void*                        UserData);
@@ -189,6 +189,15 @@ CSFML_API void sfSoundStream_SetMinDistance(sfSoundStream* SoundStream, float Mi
 ///
 ////////////////////////////////////////////////////////////
 CSFML_API void sfSoundStream_SetAttenuation(sfSoundStream* SoundStream, float Attenuation);
+
+////////////////////////////////////////////////////////////
+/// Set the current playing position of a stream
+///
+/// \param SoundStream : Sound stream to modify
+/// \param TimeOffset :  New playing position, expressed in seconds
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfSoundStream_SetPlayingOffset(sfSoundStream* SoundStream, float TimeOffset);
 
 ////////////////////////////////////////////////////////////
 /// Set a stream loop state

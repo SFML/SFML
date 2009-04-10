@@ -85,30 +85,6 @@ unsigned int SoundFile::GetSampleRate() const
 
 
 ////////////////////////////////////////////////////////////
-/// Restart the sound from the beginning
-////////////////////////////////////////////////////////////
-bool SoundFile::Restart()
-{
-    if (myData)
-    {
-        // Reopen from memory
-        return OpenRead(myData, mySize);
-    }
-    else if (myFilename != "")
-    {
-        // Reopen from file
-        return OpenRead(myFilename);
-    }
-    else
-    {
-        // Trying to reopen a file opened in write mode... error
-        std::cerr << "Warning : trying to restart a sound opened in write mode, which is not allowed" << std::endl;
-        return false;
-    }
-}
-
-
-////////////////////////////////////////////////////////////
 /// Open the sound file for reading
 ////////////////////////////////////////////////////////////
 bool SoundFile::OpenRead(const std::string& Filename)
@@ -130,9 +106,6 @@ bool SoundFile::OpenRead(const std::string& Filename)
     myChannelsCount = FileInfos.channels;
     mySampleRate    = FileInfos.samplerate;
     myNbSamples     = static_cast<std::size_t>(FileInfos.frames) * myChannelsCount;
-    myFilename      = Filename;
-    myData          = NULL;
-    mySize          = 0;
 
     return true;
 }
@@ -173,9 +146,6 @@ bool SoundFile::OpenRead(const char* Data, std::size_t SizeInBytes)
     myChannelsCount = FileInfos.channels;
     mySampleRate    = FileInfos.samplerate;
     myNbSamples     = static_cast<std::size_t>(FileInfos.frames) * myChannelsCount;
-    myFilename      = "";
-    myData          = Data;
-    mySize          = SizeInBytes;
 
     return true;
 }
@@ -217,9 +187,6 @@ bool SoundFile::OpenWrite(const std::string& Filename, unsigned int ChannelsCoun
     myChannelsCount = ChannelsCount;
     mySampleRate    = SampleRate;
     myNbSamples     = 0;
-    myFilename      = "";
-    myData          = NULL;
-    mySize          = 0;
 
     return true;
 }
@@ -253,6 +220,19 @@ void SoundFile::Write(const Int16* Data, std::size_t NbSamples)
             Data += Count;
             NbSamples -= Count;
         }
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+/// Move the current reading position in the file
+////////////////////////////////////////////////////////////
+void SoundFile::Seek(float TimeOffset)
+{
+    if (myFile)
+    {
+        sf_count_t FrameOffset = static_cast<sf_count_t>(TimeOffset * mySampleRate);
+        sf_seek(myFile, FrameOffset, SEEK_SET);
     }
 }
 

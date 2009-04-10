@@ -34,27 +34,19 @@ class sfSoundStreamImpl : public sf::SoundStream
 {
 public :
 
-    sfSoundStreamImpl(sfSoundStreamStartCallback   OnStart,
-                      sfSoundStreamGetDataCallback OnGetData,
+    sfSoundStreamImpl(sfSoundStreamGetDataCallback OnGetData,
+                      sfSoundStreamSeekCallback    OnSeek,
                       unsigned int                 ChannelsCount,
                       unsigned int                 SampleRate,
                       void*                        UserData) :
-    myStartCallback  (OnStart),
     myGetDataCallback(OnGetData),
+    mySeekCallback   (OnSeek),
     myUserData       (UserData)
     {
         Initialize(ChannelsCount, SampleRate);
     }
 
 private :
-
-    virtual bool OnStart()
-    {
-        if (myStartCallback)
-            return myStartCallback(myUserData) == sfTrue;
-        else
-            return true;
-    }
 
     virtual bool OnGetData(Chunk& Data)
     {
@@ -67,21 +59,26 @@ private :
         return Continue;
     }
 
-    sfSoundStreamStartCallback   myStartCallback;
+    virtual void OnSeek(float TimeOffset)
+    {
+        if (mySeekCallback)
+            mySeekCallback(TimeOffset, myUserData);
+    }
+
     sfSoundStreamGetDataCallback myGetDataCallback;
+    sfSoundStreamSeekCallback    mySeekCallback;
     void*                        myUserData;
 };
 
 
 struct sfSoundStream
 {
-
-    sfSoundStream(sfSoundStreamStartCallback   OnStart,
-                  sfSoundStreamGetDataCallback OnGetData,
+    sfSoundStream(sfSoundStreamGetDataCallback OnGetData,
+                  sfSoundStreamSeekCallback    OnSeek,
                   unsigned int                 ChannelsCount,
                   unsigned int                 SampleRate,
                   void*                        UserData) :
-    This(OnStart, OnGetData, ChannelsCount, SampleRate, UserData)
+    This(OnGetData, OnSeek, ChannelsCount, SampleRate, UserData)
     {
     }
 
@@ -92,13 +89,13 @@ struct sfSoundStream
 ////////////////////////////////////////////////////////////
 /// Construct a new sound stream
 ////////////////////////////////////////////////////////////
-sfSoundStream* sfSoundStream_Create(sfSoundStreamStartCallback   OnStart,
-                                    sfSoundStreamGetDataCallback OnGetData,
+sfSoundStream* sfSoundStream_Create(sfSoundStreamGetDataCallback OnGetData,
+                                    sfSoundStreamSeekCallback    OnSeek,
                                     unsigned int                 ChannelsCount,
                                     unsigned int                 SampleRate,
                                     void*                        UserData)
 {
-    return new sfSoundStream(OnStart, OnGetData, ChannelsCount, SampleRate, UserData);
+    return new sfSoundStream(OnGetData, OnSeek, ChannelsCount, SampleRate, UserData);
 }
 
 
@@ -225,6 +222,15 @@ void sfSoundStream_SetMinDistance(sfSoundStream* SoundStream, float MinDistance)
 void sfSoundStream_SetAttenuation(sfSoundStream* SoundStream, float Attenuation)
 {
     CSFML_CALL(SoundStream, SetAttenuation(Attenuation));
+}
+
+
+////////////////////////////////////////////////////////////
+/// Set the current playing position of a stream
+////////////////////////////////////////////////////////////
+void sfSoundStream_SetPlayingOffset(sfSoundStream* SoundStream, float TimeOffset)
+{
+    CSFML_CALL(SoundStream, SetPlayingOffset(TimeOffset));
 }
 
 

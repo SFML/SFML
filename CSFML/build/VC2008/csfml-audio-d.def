@@ -24,6 +24,7 @@ EXPORTS
 	sfMusic_SetRelativeToListener
 	sfMusic_SetMinDistance
 	sfMusic_SetAttenuation
+	sfMusic_SetPlayingOffset
 	sfMusic_GetPitch
 	sfMusic_GetVolume
 	sfMusic_GetPosition
@@ -91,6 +92,7 @@ EXPORTS
 	sfSoundStream_SetRelativeToListener
 	sfSoundStream_SetMinDistance
 	sfSoundStream_SetAttenuation
+	sfSoundStream_SetPlayingOffset
 	sfSoundStream_SetLoop
 	sfSoundStream_GetPitch
 	sfSoundStream_GetVolume

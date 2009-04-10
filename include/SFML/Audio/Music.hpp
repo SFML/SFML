@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundStream.hpp>
+#include <SFML/System/Mutex.hpp>
 #include <string>
 #include <vector>
 
@@ -95,16 +96,16 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// /see SoundStream::OnStart
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual bool OnStart();
-
-    ////////////////////////////////////////////////////////////
     /// /see SoundStream::OnGetData
     ///
     ////////////////////////////////////////////////////////////
     virtual bool OnGetData(Chunk& Data);
+
+    ////////////////////////////////////////////////////////////
+    /// /see SoundStream::OnSeek
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void OnSeek(float TimeOffset);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -112,6 +113,7 @@ private :
     priv::SoundFile*   myFile;     ///< Sound file
     float              myDuration; ///< Music duration, in seconds
     std::vector<Int16> mySamples;  ///< Temporary buffer of samples
+    Mutex              myMutex;    ///< Mutex protecting the data
 };
 
 } // namespace sf

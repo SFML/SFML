@@ -177,6 +177,7 @@ namespace SFML
             public float PlayingOffset
             {
                 get {return sfSoundStream_GetPlayingOffset(This);}
+                set {sfSoundStream_SetPlayingOffset(This, value);}
             }
 
             ////////////////////////////////////////////////////////////
@@ -188,21 +189,9 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             protected void Initialize(uint channelsCount, uint sampleRate)
             {
-                myStartCallback   = new StartCallbackType(Start);
                 myGetDataCallback = new GetDataCallbackType(GetData);
-                SetThis(sfSoundStream_Create(myStartCallback, myGetDataCallback, channelsCount, sampleRate, IntPtr.Zero));
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Virtual function called when the stream restarts
-            /// </summary>
-            /// <returns>If false is returned, the playback is aborted</returns>
-            ////////////////////////////////////////////////////////////
-            protected virtual bool OnStart()
-            {
-                // Does nothing by default
-                return true;
+                mySeekCallback    = new SeekCallbackType(Seek);
+                SetThis(sfSoundStream_Create(myGetDataCallback, mySeekCallback, channelsCount, sampleRate, IntPtr.Zero));
             }
 
             ////////////////////////////////////////////////////////////
@@ -213,6 +202,14 @@ namespace SFML
             /// <returns>True to continue playback, false to stop</returns>
             ////////////////////////////////////////////////////////////
             protected abstract bool OnGetData(out short[] samples);
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Virtual function called to seek into the stream
+            /// </summary>
+            /// <param name="timeOffset">New position, expressed in seconds</param>
+            ////////////////////////////////////////////////////////////
+            protected abstract void OnSeek(float timeOffset);
 
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -235,18 +232,6 @@ namespace SFML
             {
                 unsafe public short* samplesPtr;
                 public uint          samplesCount;
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Called when the stream restarts
-            /// </summary>
-            /// <param name="userData">User data -- unused</param>
-            /// <returns>If false is returned, the playback is aborted</returns>
-            ////////////////////////////////////////////////////////////
-            private bool Start(IntPtr userData)
-            {
-                return OnStart();
             }
 
             ////////////////////////////////////////////////////////////
@@ -277,19 +262,33 @@ namespace SFML
                     return false;
                 }
             }
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            private delegate bool StartCallbackType(IntPtr UserData);
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Called to seek in the stream
+            /// </summary>
+            /// <param name="timeOffset">New position, expressed in seconds</param>
+            /// <param name="userData">User data -- unused</param>
+            /// <returns>If false is returned, the playback is aborted</returns>
+            ////////////////////////////////////////////////////////////
+            private void Seek(float timeOffset, IntPtr userData)
+            {
+                OnSeek(timeOffset);
+            }
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             private delegate bool GetDataCallbackType(ref Chunk dataChunk, IntPtr UserData);
 
-            private StartCallbackType   myStartCallback;
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            private delegate void SeekCallbackType(float timeOffset, IntPtr UserData);
+
             private GetDataCallbackType myGetDataCallback;
+            private SeekCallbackType    mySeekCallback;
             private short[]             myTempBuffer;
 
             #region Imports
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfSoundStream_Create(StartCallbackType OnStart, GetDataCallbackType OnGetData, uint ChannelsCount, uint SampleRate, IntPtr UserData);
+            static extern IntPtr sfSoundStream_Create(GetDataCallbackType OnGetData, SeekCallbackType OnSeek, uint ChannelsCount, uint SampleRate, IntPtr UserData);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_Destroy(IntPtr SoundStreamStream);
@@ -332,6 +331,9 @@ namespace SFML
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundStream_SetAttenuation(IntPtr SoundStream, float Attenuation);
+            
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
+            static extern void sfSoundStream_SetPlayingOffset(IntPtr SoundStream, float TimeOffset);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern bool sfSoundStream_GetLoop(IntPtr SoundStream);

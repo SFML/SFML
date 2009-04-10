@@ -98,14 +98,13 @@ void SoundStream::Play()
         return;
     }
 
-    // Notify the derived class
-    if (OnStart())
-    {
-        // Start updating the stream in a separate thread to avoid blocking the application
-        mySamplesProcessed = 0;
-        myIsStreaming = true;
-        Launch();
-    }
+    // Move to the beginning
+    OnSeek(0);
+
+    // Start updating the stream in a separate thread to avoid blocking the application
+    mySamplesProcessed = 0;
+    myIsStreaming = true;
+    Launch();
 }
 
 
@@ -150,6 +149,24 @@ Sound::Status SoundStream::GetStatus() const
         Status = Playing;
 
     return Status;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Set the current playing position of the stream
+////////////////////////////////////////////////////////////
+void SoundStream::SetPlayingOffset(float TimeOffset)
+{
+    // Stop the stream
+    Stop();
+
+    // Let the derived class update the current position
+    OnSeek(TimeOffset);
+
+    // Restart streaming
+    mySamplesProcessed = static_cast<unsigned int>(TimeOffset * mySampleRate * myChannelsCount);
+    myIsStreaming = true;
+    Launch();
 }
 
 
@@ -245,15 +262,16 @@ void SoundStream::Run()
                 if (FillAndPushBuffer(Buffer))
                 {
                     // User requested to stop: check if we must loop or really stop
-                    if (myLoop && OnStart())
+                    if (myLoop)
                     {
-                        // Looping: mark the current buffer as the last one
+                        // Looping: restart and mark the current buffer as the last one
                         // (to know when to reset the sample count)
+                        OnSeek(0);
                         EndBuffer = Buffer;
                     }
                     else
                     {
-                        // Not looping or restart failed: request stop
+                        // Not looping: request stop
                         RequestStop = true;
                     }
                 }
@@ -335,17 +353,6 @@ void SoundStream::ClearQueue()
     ALuint Buffer;
     for (ALint i = 0; i < NbQueued; ++i)
         ALCheck(alSourceUnqueueBuffers(Sound::mySource, 1, &Buffer));
-}
-
-
-////////////////////////////////////////////////////////////
-/// Called when the sound restarts
-////////////////////////////////////////////////////////////
-bool SoundStream::OnStart()
-{
-    // Does nothing by default
-
-    return true;
 }
 
 } // namespace sf

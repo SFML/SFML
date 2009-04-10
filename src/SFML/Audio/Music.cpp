@@ -28,6 +28,7 @@
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/OpenAL.hpp>
 #include <SFML/Audio/SoundFile.hpp>
+#include <SFML/System/Lock.hpp>
 #include <fstream>
 #include <iostream>
 
@@ -109,11 +110,11 @@ bool Music::OpenFromMemory(const char* Data, std::size_t SizeInBytes)
 
 
 ////////////////////////////////////////////////////////////
-/// /see SoundStream::OnStart
+/// Get the sound duration
 ////////////////////////////////////////////////////////////
-bool Music::OnStart()
+float Music::GetDuration() const
 {
-    return myFile && myFile->Restart();
+    return myDuration;
 }
 
 
@@ -122,28 +123,25 @@ bool Music::OnStart()
 ////////////////////////////////////////////////////////////
 bool Music::OnGetData(SoundStream::Chunk& Data)
 {
-    if (myFile)
-    {
-        // Fill the chunk parameters
-        Data.Samples   = &mySamples[0];
-        Data.NbSamples = myFile->Read(&mySamples[0], mySamples.size());
+    sf::Lock Lock(myMutex);
 
-        // Check if we have reached the end of the audio file
-        return Data.NbSamples == mySamples.size();
-    }
-    else
-    {
-        return false;
-    }
+    // Fill the chunk parameters
+    Data.Samples   = &mySamples[0];
+    Data.NbSamples = myFile->Read(&mySamples[0], mySamples.size());
+
+    // Check if we have reached the end of the audio file
+    return Data.NbSamples == mySamples.size();
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the sound duration
+/// /see SoundStream::OnSeek
 ////////////////////////////////////////////////////////////
-float Music::GetDuration() const
+void Music::OnSeek(float TimeOffset)
 {
-    return myDuration;
+    sf::Lock Lock(myMutex);
+
+    myFile->Seek(TimeOffset);
 }
 
 } // namespace sf

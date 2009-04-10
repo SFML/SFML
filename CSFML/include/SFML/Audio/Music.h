@@ -211,11 +211,20 @@ CSFML_API void sfMusic_SetMinDistance(sfMusic* Music, float MinDistance);
 /// more the sound will be attenuated with distance from listener.
 /// The default attenuation factor 1.0
 ///
-/// \param Sound :       Sound to modify
+/// \param Music :       Music to modify
 /// \param Attenuation : New attenuation factor for the sound
 ///
 ////////////////////////////////////////////////////////////
 CSFML_API void sfMusic_SetAttenuation(sfMusic* Music, float Attenuation);
+
+////////////////////////////////////////////////////////////
+/// Set the current playing position of a music
+///
+/// \param Music :      Music to modify
+/// \param TimeOffset : New playing position, expressed in seconds
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfMusic_SetPlayingOffset(sfMusic* Music, float TimeOffset);
 
 ////////////////////////////////////////////////////////////
 /// Get the pitch of a music
