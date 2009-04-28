@@ -245,10 +245,10 @@
 		A011E5E70F65786600FAE48D /* zlib.h in Headers */ = {isa = PBXBuildFile; fileRef = A011E5660F65786600FAE48D /* zlib.h */; };
 		A011E5E80F65786600FAE48D /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = A011E5670F65786600FAE48D /* zutil.c */; };
 		A011E5E90F65786600FAE48D /* zutil.h in Headers */ = {isa = PBXBuildFile; fileRef = A011E5680F65786600FAE48D /* zutil.h */; };
-		A011E5FB0F65791B00FAE48D /* libcsfml-system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A011E3720F65749300FAE48D /* libcsfml-system.dylib */; };
-		A011E6060F65797100FAE48D /* libcsfml-system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A011E3720F65749300FAE48D /* libcsfml-system.dylib */; };
-		A011E6140F6579CA00FAE48D /* libcsfml-window.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A011E38F0F6574B500FAE48D /* libcsfml-window.dylib */; };
-		A011E6170F6579D100FAE48D /* libcsfml-system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A011E3720F65749300FAE48D /* libcsfml-system.dylib */; };
+		A011E5FB0F65791B00FAE48D /* libcsfml-system-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A011E3720F65749300FAE48D /* libcsfml-system-d.dylib */; };
+		A011E6060F65797100FAE48D /* libcsfml-system-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A011E3720F65749300FAE48D /* libcsfml-system-d.dylib */; };
+		A011E6140F6579CA00FAE48D /* libcsfml-window-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A011E38F0F6574B500FAE48D /* libcsfml-window-d.dylib */; };
+		A011E6170F6579D100FAE48D /* libcsfml-system-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A011E3720F65749300FAE48D /* libcsfml-system-d.dylib */; };
 		A01BEF370F6BF2490095262C /* sndfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF360F6BF2490095262C /* sndfile.framework */; };
 /* End PBXBuildFile section */
 
@@ -291,11 +291,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A011E3720F65749300FAE48D /* libcsfml-system.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-system.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A011E37D0F65749F00FAE48D /* libcsfml-network.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-network.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A011E3860F6574AC00FAE48D /* libcsfml-audio.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-audio.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A011E38F0F6574B500FAE48D /* libcsfml-window.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-window.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A011E3980F6574BE00FAE48D /* libcsfml-graphics.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-graphics.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A011E3720F65749300FAE48D /* libcsfml-system-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-system-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A011E37D0F65749F00FAE48D /* libcsfml-network-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-network-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A011E3860F6574AC00FAE48D /* libcsfml-audio-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-audio-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A011E38F0F6574B500FAE48D /* libcsfml-window-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-window-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A011E3980F6574BE00FAE48D /* libcsfml-graphics-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libcsfml-graphics-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A011E3A40F6574E400FAE48D /* SFML-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SFML-Info.plist"; sourceTree = "<group>"; };
 		A011E3DE0F65776B00FAE48D /* Sleep.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Sleep.cpp; path = ../src/SFML/System/Sleep.cpp; sourceTree = SOURCE_ROOT; };
 		A011E3DF0F65776B00FAE48D /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Thread.cpp; path = ../src/SFML/System/Thread.cpp; sourceTree = SOURCE_ROOT; };
@@ -539,7 +539,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A011E5FB0F65791B00FAE48D /* libcsfml-system.dylib in Frameworks */,
+				A011E5FB0F65791B00FAE48D /* libcsfml-system-d.dylib in Frameworks */,
 				A01BEF370F6BF2490095262C /* sndfile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -548,7 +548,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A011E6060F65797100FAE48D /* libcsfml-system.dylib in Frameworks */,
+				A011E6060F65797100FAE48D /* libcsfml-system-d.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,8 +556,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A011E6140F6579CA00FAE48D /* libcsfml-window.dylib in Frameworks */,
-				A011E6170F6579D100FAE48D /* libcsfml-system.dylib in Frameworks */,
+				A011E6140F6579CA00FAE48D /* libcsfml-window-d.dylib in Frameworks */,
+				A011E6170F6579D100FAE48D /* libcsfml-system-d.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -581,11 +581,11 @@
 		A011E3730F65749300FAE48D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A011E3720F65749300FAE48D /* libcsfml-system.dylib */,
-				A011E37D0F65749F00FAE48D /* libcsfml-network.dylib */,
-				A011E3860F6574AC00FAE48D /* libcsfml-audio.dylib */,
-				A011E38F0F6574B500FAE48D /* libcsfml-window.dylib */,
-				A011E3980F6574BE00FAE48D /* libcsfml-graphics.dylib */,
+				A011E3720F65749300FAE48D /* libcsfml-system-d.dylib */,
+				A011E37D0F65749F00FAE48D /* libcsfml-network-d.dylib */,
+				A011E3860F6574AC00FAE48D /* libcsfml-audio-d.dylib */,
+				A011E38F0F6574B500FAE48D /* libcsfml-window-d.dylib */,
+				A011E3980F6574BE00FAE48D /* libcsfml-graphics-d.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1088,7 +1088,7 @@
 			);
 			name = "csfml-system";
 			productName = "csfml-system";
-			productReference = A011E3720F65749300FAE48D /* libcsfml-system.dylib */;
+			productReference = A011E3720F65749300FAE48D /* libcsfml-system-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A011E37C0F65749F00FAE48D /* csfml-network */ = {
@@ -1105,7 +1105,7 @@
 			);
 			name = "csfml-network";
 			productName = "csfml-network";
-			productReference = A011E37D0F65749F00FAE48D /* libcsfml-network.dylib */;
+			productReference = A011E37D0F65749F00FAE48D /* libcsfml-network-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A011E3850F6574AC00FAE48D /* csfml-audio */ = {
@@ -1122,7 +1122,7 @@
 			);
 			name = "csfml-audio";
 			productName = "csfml-audio";
-			productReference = A011E3860F6574AC00FAE48D /* libcsfml-audio.dylib */;
+			productReference = A011E3860F6574AC00FAE48D /* libcsfml-audio-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A011E38E0F6574B500FAE48D /* csfml-window */ = {
@@ -1139,7 +1139,7 @@
 			);
 			name = "csfml-window";
 			productName = "csfml-window";
-			productReference = A011E38F0F6574B500FAE48D /* libcsfml-window.dylib */;
+			productReference = A011E38F0F6574B500FAE48D /* libcsfml-window-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A011E3970F6574BE00FAE48D /* csfml-graphics */ = {
@@ -1156,7 +1156,7 @@
 			);
 			name = "csfml-graphics";
 			productName = "csfml-graphics";
-			productReference = A011E3980F6574BE00FAE48D /* libcsfml-graphics.dylib */;
+			productReference = A011E3980F6574BE00FAE48D /* libcsfml-graphics-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -1442,6 +1442,7 @@
 					"$(SRCROOT)/../../include",
 					"$(SRCROOT)/../../src",
 				);
+				INSTALL_PATH = "@executable_path";
 				OBJROOT = "$(SRCROOT)/build";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SYMROOT = "$(SRCROOT)/../../lib";
@@ -1462,6 +1463,7 @@
 					"$(SRCROOT)/../../include",
 					"$(SRCROOT)/../../src",
 				);
+				INSTALL_PATH = "@executable_path";
 				OBJROOT = "$(SRCROOT)/build";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SYMROOT = "$(SRCROOT)/../../lib";
@@ -1478,7 +1480,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					CoreFoundation,
@@ -1497,7 +1498,6 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					CoreFoundation,
@@ -1518,7 +1518,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = "csfml-network-d";
 			};
@@ -1533,7 +1532,6 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = "csfml-network";
 				ZERO_LINK = NO;
@@ -1546,11 +1544,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = lib;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -1562,7 +1556,6 @@
 					"$(SRCROOT)/../../src",
 					"$(SRCROOT)/../../extlibs/headers",
 				);
-				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
@@ -1579,11 +1572,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
@@ -1593,14 +1582,12 @@
 					"$(SRCROOT)/../../src",
 					"$(SRCROOT)/../../extlibs/headers",
 				);
-				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "csfml-audio";
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -1614,7 +1601,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
@@ -1633,7 +1619,6 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
@@ -1661,7 +1646,6 @@
 					"$(SRCROOT)/../../src",
 					"$(SRCROOT)/../../extlibs/headers",
 				);
-				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenGL,
@@ -1688,7 +1672,6 @@
 					"$(SRCROOT)/../../src",
 					"$(SRCROOT)/../../extlibs/headers",
 				);
-				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenGL,
