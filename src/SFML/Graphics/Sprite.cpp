@@ -173,7 +173,7 @@ Color Sprite::GetPixel(unsigned int X, unsigned int Y) const
 
 
 ////////////////////////////////////////////////////////////
-/// /see sfDrawable::Render
+/// /see Drawable::Render
 ////////////////////////////////////////////////////////////
 void Sprite::Render(RenderTarget&) const
 {
