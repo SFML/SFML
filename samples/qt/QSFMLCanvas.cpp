@@ -20,6 +20,7 @@ myInitialized (false)
 {
     // Setup some states to allow direct rendering into the widget
     setAttribute(Qt::WA_PaintOnScreen);
+    setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
 
     // Set strong focus to enable keyboard events to be received
@@ -60,6 +61,15 @@ void QSFMLCanvas::OnInit()
 void QSFMLCanvas::OnUpdate()
 {
     // Nothing to do by default...
+}
+
+
+////////////////////////////////////////////////////////////
+/// Return the paint engine used by the widget to draw itself
+////////////////////////////////////////////////////////////
+QPaintEngine* QSFMLCanvas::paintEngine() const
+{
+    return 0;
 }
 
 
