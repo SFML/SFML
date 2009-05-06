@@ -477,10 +477,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Window\OpenGL.hpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\SFML\Window\VideoMode.cpp"
 			>
 		</File>

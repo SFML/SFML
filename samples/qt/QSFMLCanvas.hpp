@@ -51,6 +51,12 @@ private :
     virtual void OnUpdate();
 
     ////////////////////////////////////////////////////////////
+    /// Return the paint engine used by the widget to draw itself
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual QPaintEngine* paintEngine() const;
+
+    ////////////////////////////////////////////////////////////
     /// Called when the widget is shown ;
     /// we use it to initialize our SFML window
     ///

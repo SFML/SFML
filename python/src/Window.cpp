@@ -49,10 +49,28 @@ PySfWindow_dealloc(PySfWindow* self)
 static PyObject *
 PySfWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
+	long Handle;
+	PySfWindowSettings *Params=NULL;
 	PySfWindow *self;
 	self = (PySfWindow *)type->tp_alloc(type, 0);
 	if (self != NULL)
-		self->obj = new sf::Window();
+	{
+		if (PyArg_ParseTuple(args, "l|O!:Window.__new__", &Handle, &PySfWindowSettingsType, &Params))
+		{
+			if (Params)
+			{
+				PySfWindowSettingsUpdate(Params);
+				self->obj = new sf::Window((sf::WindowHandle)Handle, *(Params->obj));
+			}
+			else
+				self->obj = new sf::Window((sf::WindowHandle)Handle);
+		}
+		else
+		{
+			PyErr_Clear();
+			self->obj = new sf::Window();
+		}
+	}
 	return (PyObject *)self;
 }
 
@@ -99,7 +117,6 @@ PySfWindow_GetEvent(PySfWindow *self, PyObject *args)
 }
 
 
-
 PyObject*
 PySfWindow_Create(PySfWindow* self, PyObject *args, PyObject *kwds)
 {
@@ -131,9 +148,17 @@ PySfWindow_Create(PySfWindow* self, PyObject *args, PyObject *kwds)
 static int
 PySfWindow_init(PySfWindow *self, PyObject *args, PyObject *kwds)
 {
+	long Handle;
+	PySfWindowSettings *Params;
+
 	if (args != NULL)
+	{
+		if (PyArg_ParseTuple(args, "l|O!:Window.__new__", &Handle, &PySfWindowSettingsType, &Params))
+			return 0;
+		PyErr_Clear();
 		if (PySfWindow_Create(self, args, kwds) == NULL)
 			return -1;
+	}
 	return 0;
 }
 
@@ -344,7 +369,9 @@ Construct a new window : sf.Window(Mode, Title, sf.Style.Resize | sf.Style.Close
 	Title : Title of the window\n\
 	WindowStyle : Window style (Resize | Close by default)\n\
 	Params : Creation parameters (see default constructor for default values)\n\
-", /* tp_doc */
+Construct the window from an existing control : sf.Window(Handle, Params)\n\
+	Handle 	: Platform-specific handle of the control\n\
+	Params 	: Creation parameters (see default constructor for default values)", /* tp_doc */
 	0,						/* tp_traverse */
 	0,						/* tp_clear */
 	0,						/* tp_richcompare */

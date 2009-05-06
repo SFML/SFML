@@ -205,31 +205,17 @@ IPAddress IPAddress::GetPublicAddress(float Timeout)
 {
     // The trick here is more complicated, because the only way
     // to get our public IP address is to get it from a distant computer.
-    // Here we get the web page from http://www.whatismyip.org
+    // Here we get the web page from http://www.sfml-dev.org/ip-provider.php
     // and parse the result to extract our IP address
     // (not very hard : the web page contains only our IP address).
-    // If the server is not responding, we use a fallback server which
-    // is stored on the SFML website.
 
-    // First try: www.whatismyip.org
-    {
-        Http Server("www.whatismyip.org");
-        Http::Request Request(Http::Request::Get, "/");
-        Http::Response Page = Server.SendRequest(Request, Timeout / 2);
-        if (Page.GetStatus() == Http::Response::Ok)
-            return IPAddress(Page.GetBody());
-    }
+    Http Server("www.sfml-dev.org");
+    Http::Request Request(Http::Request::Get, "/ip-provider.php");
+    Http::Response Page = Server.SendRequest(Request, Timeout);
+    if (Page.GetStatus() == Http::Response::Ok)
+        return IPAddress(Page.GetBody());
 
-    // Fallback: www.sfml-dev.org/ip-provider.php
-    {
-        Http Server("www.sfml-dev.org");
-        Http::Request Request(Http::Request::Get, "/ip-provider.php");
-        Http::Response Page = Server.SendRequest(Request, Timeout / 2);
-        if (Page.GetStatus() == Http::Response::Ok)
-            return IPAddress(Page.GetBody());
-    }
-
-    // Everything failed: return an invalid address
+    // Something failed: return an invalid address
     return IPAddress();
 }
 

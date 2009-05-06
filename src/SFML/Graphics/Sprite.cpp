@@ -49,12 +49,11 @@ myIsFlippedY(false)
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Image& Img, const Vector2f& Position, const Vector2f& Scale, float Rotation, const Color& Col) :
 Drawable    (Position, Scale, Rotation, Col),
-myImage     (&Img),
-mySubRect   (0, 0, Img.GetWidth(), Img.GetHeight()),
+mySubRect   (0, 0, 1, 1),
 myIsFlippedX(false),
 myIsFlippedY(false)
 {
-
+    SetImage(Img);
 }
 
 
@@ -63,9 +62,11 @@ myIsFlippedY(false)
 ////////////////////////////////////////////////////////////
 void Sprite::SetImage(const Image& Img)
 {
-    // If there was no source image before, adjust the rectangle
-    if (!myImage)
+    // If there was no source image before and the new image is valid, adjust the source rectangle
+    if (!myImage && (Img.GetWidth() > 0) && (Img.GetHeight() > 0))
+    {
         SetSubRect(IntRect(0, 0, Img.GetWidth(), Img.GetHeight()));
+    }
 
     // Assign the new image
     myImage = &Img;
@@ -87,10 +88,11 @@ void Sprite::SetSubRect(const IntRect& SubRect)
 ////////////////////////////////////////////////////////////
 void Sprite::Resize(float Width, float Height)
 {
-    if ((mySubRect.GetWidth() > 0) && (mySubRect.GetHeight() > 0))
-    {
-        SetScale(Width / mySubRect.GetWidth(), Height / mySubRect.GetHeight());
-    }
+    int LocalWidth  = mySubRect.GetWidth();
+    int LocalHeight = mySubRect.GetHeight();
+
+    if ((LocalWidth > 0) && (LocalHeight > 0))
+        SetScale(Width / LocalWidth, Height / LocalHeight);
 }
 
 
@@ -182,9 +184,9 @@ void Sprite::Render(RenderTarget&) const
     float Height = static_cast<float>(mySubRect.GetHeight());
 
     // Check if the image is valid
-    if (myImage)
+    if (myImage && (myImage->GetWidth() > 0) && (myImage->GetHeight() > 0))
     {
-        // Set the texture
+        // Bind the texture
         myImage->Bind();
 
         // Calculate the texture coordinates
