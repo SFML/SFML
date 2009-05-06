@@ -28,10 +28,8 @@ it freely, subject to the following restrictions:
 External libraries used by SFML
 -------------------------------
 
-* GLEW is under the BSD license, the SGI license or the GLX license
 * OpenAL-Soft is under the LGPL license
 * libsndfile is under the LGPL license
-* stb_vorbis is public domain
 * libjpeg is public domain
 * libpng is under the zlib/png license
 * zlib is under the zlib/png license
