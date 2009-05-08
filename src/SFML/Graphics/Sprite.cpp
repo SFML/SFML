@@ -162,8 +162,8 @@ Color Sprite::GetPixel(unsigned int X, unsigned int Y) const
         unsigned int ImageX = mySubRect.Left + X;
         unsigned int ImageY = mySubRect.Top  + Y;
 
-        if (myIsFlippedX) ImageX = mySubRect.GetWidth()  - ImageX;
-        if (myIsFlippedY) ImageY = mySubRect.GetHeight() - ImageY;
+        if (myIsFlippedX) ImageX = mySubRect.GetWidth()  - ImageX - 1;
+        if (myIsFlippedY) ImageY = mySubRect.GetHeight() - ImageY - 1;
 
         return myImage->GetPixel(ImageX, ImageY) * GetColor();
     }
