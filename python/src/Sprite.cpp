@@ -39,10 +39,7 @@ extern PyTypeObject PySfDrawableType;
 static void
 PySfSprite_dealloc(PySfSprite *self)
 {
-	if (self->Image != NULL)
-	{
-		Py_DECREF(self->Image);
-	}
+	Py_XDECREF(self->Image);
 	delete self->obj;
 	free_object(self);
 }
@@ -96,7 +93,7 @@ PySfSprite_SetImage(PySfSprite* self, PyObject *args)
 		PyErr_SetString(PyExc_TypeError, "Sprite.SetImage() Argument is not a sf.Image");
 		return NULL;
 	}
-	Py_DECREF(self->Image);
+	Py_CLEAR(self->Image);
 	Py_INCREF(Image);
 	self->Image = Image;
 	self->obj->SetImage(*(Image->obj));

@@ -53,10 +53,13 @@
 #define load_from_file(self, args) \
 	return PyBool_FromLong(self->obj->LoadFromFile(PyString_AsString(args)))
 
-#define Py_TYPE(a)	a->ob_type
 #define head_init	PyObject_HEAD_INIT(NULL) 0,
 #define PyBytes_FromStringAndSize	PyString_FromStringAndSize
 
+#endif
+
+#ifndef Py_TYPE
+#define Py_TYPE(a)	a->ob_type
 #endif
 
 #define free_object(a)	Py_TYPE(a)->tp_free((PyObject*)a)
