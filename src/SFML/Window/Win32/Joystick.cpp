@@ -49,6 +49,8 @@ void Joystick::Initialize(unsigned int Index)
     // Get the Index-th connected joystick
     MMRESULT Error;
     JOYINFOEX JoyInfo;
+    JoyInfo.dwSize = sizeof(JoyInfo);
+    JoyInfo.dwFlags = JOY_RETURNALL;
     for (unsigned int NbFound = 0; (Error = joyGetPosEx(myIndex, &JoyInfo)) != JOYERR_PARMS; myIndex++)
     {
         // Check if the current joystick is connected
