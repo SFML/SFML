@@ -24,7 +24,6 @@
 
 #include "Sprite.hpp"
 #include "Drawable.hpp"
-#include "Rect.hpp"
 #include "Color.hpp"
 
 #include "compat.hpp"
@@ -39,7 +38,8 @@ extern PyTypeObject PySfDrawableType;
 static void
 PySfSprite_dealloc(PySfSprite *self)
 {
-	Py_XDECREF(self->Image);
+	Py_CLEAR(self->Image);
+	Py_CLEAR(self->SubRect);
 	delete self->obj;
 	free_object(self);
 }
@@ -54,6 +54,7 @@ PySfSprite_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	if (self != NULL)
 	{
 		self->Image = NULL;
+		self->SubRect = NULL;
 		self->IsCustom = false;
 	}
 
@@ -141,27 +142,36 @@ PySfSprite_Resize(PySfSprite* self, PyObject *args)
 static PyObject *
 PySfSprite_GetSubRect(PySfSprite* self)
 {
-	PySfIntRect *Rect;
-
-	Rect = GetNewPySfIntRect();
-	Rect->obj = new sf::IntRect(self->obj->GetSubRect());
-	Rect->Left = Rect->obj->Left;
-	Rect->Top = Rect->obj->Top;
-	Rect->Right = Rect->obj->Right;
-	Rect->Bottom = Rect->obj->Bottom;
-
-	return (PyObject *)Rect;
+	if (self->SubRect != NULL)
+	{
+		Py_INCREF(self->SubRect);
+		return (PyObject *)(self->SubRect);
+	}
+	else
+	{
+		PySfIntRect *Rect;
+		Rect = GetNewPySfIntRect();
+		Rect->Owner = false;
+		Rect->obj = (sf::IntRect *) &(self->obj->GetSubRect());
+		PySfIntRectUpdateSelf(Rect);
+		Py_INCREF(Rect);
+		self->SubRect = Rect;
+		return (PyObject *)Rect;
+	}
 }
 
 static PyObject *
 PySfSprite_SetSubRect(PySfSprite* self, PyObject *args)
 {
 	PySfIntRect *Rect = (PySfIntRect *)args;
-	if (! PyObject_TypeCheck(Rect, &PySfIntRectType))
+	if (!PyObject_TypeCheck(Rect, &PySfIntRectType))
 	{
 		PyErr_SetString(PyExc_TypeError, "Sprite.SetSubRect() Argument is not a sf.IntRect instance");
 		return NULL;
 	}
+	Py_CLEAR(self->SubRect);
+	Py_INCREF(Rect);
+	self->SubRect = Rect;
 	self->obj->SetSubRect(*(Rect->obj));
 	Py_RETURN_NONE;
 }

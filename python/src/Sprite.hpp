@@ -30,12 +30,14 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "Image.hpp"
+#include "Rect.hpp"
 
 typedef struct {
 	PyObject_HEAD
 	bool IsCustom;
 	sf::Sprite *obj;
 	PySfImage *Image;
+	PySfIntRect *SubRect;
 } PySfSprite;
 
 #endif

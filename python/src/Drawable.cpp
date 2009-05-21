@@ -230,7 +230,7 @@ PySfDrawable_TransformToGlobal(PySfDrawable* self, PyObject *args)
 	return Py_BuildValue("ff", result.x, result.y);
 }
 
-int PySfDrawable_SetAttr(PyObject* self, PyObject *attr_name, PyObject *v)
+int PySfDrawable_setattro(PyObject* self, PyObject *attr_name, PyObject *v)
 {
 #ifdef IS_PY3K
 	PyObject *string = PyUnicode_AsUTF8String(attr_name);
@@ -299,7 +299,7 @@ PyTypeObject PySfDrawableType = {
 	0,						/*tp_call*/
 	0,						/*tp_str*/
 	0,						/*tp_getattro*/
-	PySfDrawable_SetAttr,	/*tp_setattro*/
+	PySfDrawable_setattro,	/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
 	"Abstract base class for every object that can be drawn into a render window.", /* tp_doc */

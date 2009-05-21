@@ -34,6 +34,7 @@
 
 typedef struct {
 	PyObject_HEAD
+	bool Owner;
 	int Advance;
 	PySfIntRect *Rectangle;
 	PySfFloatRect *TexCoords;

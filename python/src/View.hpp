@@ -29,6 +29,8 @@
 
 #include <SFML/Graphics/View.hpp>
 
+#include "Rect.hpp"
+
 typedef struct {
 	PyObject_HEAD
 	bool Owner;

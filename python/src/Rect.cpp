@@ -49,14 +49,16 @@ static PyMemberDef PySfFloatRect_members[] = {
 static void
 PySfIntRect_dealloc(PySfIntRect* self)
 {
-	delete self->obj;
+	if (self->Owner)
+		delete self->obj;
 	free_object(self);
 }
 
 static void
 PySfFloatRect_dealloc(PySfFloatRect* self)
 {
-	delete self->obj;
+	if (self->Owner)
+		delete self->obj;
 	free_object(self);
 }
 
@@ -68,7 +70,8 @@ PySfIntRect_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	self = (PySfIntRect *)type->tp_alloc(type, 0);
 	if (self != NULL)
 	{
-		if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiii:IntRect.__init__", (char **)kwlist, &(self->Left), &(self->Top), &(self->Right), &(self->Bottom)))
+		self->Owner = true;
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiii:IntRect.__new__", (char **)kwlist, &(self->Left), &(self->Top), &(self->Right), &(self->Bottom)))
 			return NULL;
 		self->obj = new sf::IntRect(self->Left, self->Top, self->Right, self->Bottom);
 	}
@@ -83,7 +86,8 @@ PySfFloatRect_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	self = (PySfFloatRect *)type->tp_alloc(type, 0);
 	if (self != NULL)
 	{
-		if (!PyArg_ParseTupleAndKeywords(args, kwds, "ffff:FloatRect.__init__", (char **)kwlist, &(self->Left), &(self->Top), &(self->Right), &(self->Bottom)))
+		self->Owner = true;
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "ffff:FloatRect.__new__", (char **)kwlist, &(self->Left), &(self->Top), &(self->Right), &(self->Bottom)))
 			return NULL;
 		self->obj = new sf::FloatRect(self->Left, self->Top, self->Right, self->Bottom);
 	}
@@ -93,14 +97,12 @@ PySfFloatRect_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static PyObject *
 PySfIntRect_GetWidth(PySfIntRect *self)
 {
-	PySfIntRectUpdateObj(self);
 	return PyLong_FromLong(self->obj->GetWidth());
 }
 
 static PyObject *
 PySfIntRect_GetHeight(PySfIntRect *self)
 {
-	PySfIntRectUpdateObj(self);
 	return PyLong_FromLong(self->obj->GetHeight());
 }
 
@@ -113,14 +115,12 @@ PySfIntRect_Intersects(PySfIntRect* self, PyObject *args);
 static PyObject *
 PySfFloatRect_GetWidth(PySfFloatRect *self)
 {
-	PySfFloatRectUpdateObj(self);
 	return PyFloat_FromDouble(self->obj->GetWidth());
 }
 
 static PyObject *
 PySfFloatRect_GetHeight(PySfFloatRect *self)
 {
-	PySfFloatRectUpdateObj(self);
 	return PyFloat_FromDouble(self->obj->GetHeight());
 }
 
@@ -138,7 +138,6 @@ PySfIntRect_Offset(PySfIntRect* self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "ii:IntRect.Offset", &OffsetX, &OffsetY))
 		return NULL; 
 
-	PySfIntRectUpdateObj(self);
 	self->obj->Offset(OffsetX, OffsetY);
 	PySfIntRectUpdateSelf(self);
 	Py_RETURN_NONE;
@@ -152,7 +151,6 @@ PySfFloatRect_Offset(PySfFloatRect* self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "ff:FloatRect.Offset", &OffsetX, &OffsetY))
 		return NULL; 
 
-	PySfFloatRectUpdateObj(self);
 	self->obj->Offset(OffsetX, OffsetY);
 	PySfFloatRectUpdateSelf(self);
 	Py_RETURN_NONE;
@@ -202,6 +200,24 @@ Check intersection between two rectangles.\n\
 	{NULL}  /* Sentinel */
 };
 
+int
+PySfIntRect_setattro(PyObject* self, PyObject *attr_name, PyObject *v)
+{
+	int result = PyObject_GenericSetAttr(self, attr_name, v);
+	PySfIntRect *Rect = (PySfIntRect *)self;
+	PySfIntRectUpdateObj(Rect);
+	return result;
+}
+
+int
+PySfFloatRect_setattro(PyObject* self, PyObject *attr_name, PyObject *v)
+{
+	int result = PyObject_GenericSetAttr(self, attr_name, v);
+	PySfFloatRect *Rect = (PySfFloatRect *)self;
+	PySfFloatRectUpdateObj(Rect);
+	return result;
+}
+
 PyTypeObject PySfIntRectType = {
 	head_init
 	"IntRect",				/*tp_name*/
@@ -220,7 +236,7 @@ PyTypeObject PySfIntRectType = {
 	0,						/*tp_call*/
 	0,						/*tp_str*/
 	0,						/*tp_getattro*/
-	0,						/*tp_setattro*/
+	PySfIntRect_setattro,	/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
 	"sf.IntRect is an utility class for manipulating rectangles.", /* tp_doc */
@@ -262,7 +278,7 @@ PyTypeObject PySfFloatRectType = {
 	0,						/*tp_call*/
 	0,						/*tp_str*/
 	0,						/*tp_getattro*/
-	0,						/*tp_setattro*/
+	PySfFloatRect_setattro,	/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
 	"sf.FloatRect is an utility class for manipulating rectangles.", /* tp_doc */
@@ -294,7 +310,6 @@ PySfFloatRect_Contains(PySfFloatRect* self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "ff:FloatRect.Contains", &x, &y))
 		return NULL; 
 
-	PySfFloatRectUpdateObj(self);
 	return PyBool_FromLong(self->obj->Contains(x,y));
 }
 
@@ -307,7 +322,6 @@ PySfFloatRect_Intersects(PySfFloatRect* self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "O!|O!:FloatRect.Intersects", &PySfFloatRectType, &Rect, &PySfFloatRectType, &OverlappingRect))
 		return NULL; 
 
-	PySfFloatRectUpdateObj(self);
 	if (OverlappingRect)
 		result = self->obj->Intersects(*(Rect->obj), (OverlappingRect->obj));
 	else
@@ -322,7 +336,6 @@ PySfIntRect_Contains(PySfIntRect* self, PyObject *args)
 {
 	unsigned int x=0, y=0;
 
-	PySfIntRectUpdateObj(self);
 	if (!PyArg_ParseTuple(args, "II:IntRect.Contains",  &x, &y))
 		return NULL;
 
@@ -335,7 +348,6 @@ PySfIntRect_Intersects(PySfIntRect* self, PyObject *args)
 	PySfIntRect *Rect=NULL, *OverlappingRect=NULL;
 	bool result;
 
-	PySfIntRectUpdateObj(self);
 	if (!PyArg_ParseTuple(args, "O!|O!:IntRect.Intersects", &PySfIntRectType, &Rect, &PySfIntRectType, &OverlappingRect))
 		return NULL; 
 
@@ -364,6 +376,7 @@ PySfFloatRectUpdateObj(PySfFloatRect *self)
 	self->obj->Top = self->Top;
 	self->obj->Bottom = self->Bottom;
 }
+
 void
 PySfIntRectUpdateSelf(PySfIntRect *self)
 {

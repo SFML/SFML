@@ -41,10 +41,8 @@ static PyMemberDef PySfGlyph_members[] = {
 static void
 PySfGlyph_dealloc(PySfGlyph *self)
 {
-	self->Rectangle->obj = new sf::IntRect(self->obj->Rectangle);
-	Py_DECREF(self->Rectangle);
-	self->TexCoords->obj = new sf::FloatRect(self->obj->TexCoords);
-	Py_DECREF(self->TexCoords);
+	Py_CLEAR(self->Rectangle);
+	Py_CLEAR(self->TexCoords);
 	delete self->obj;
 	free_object(self);
 }
@@ -53,30 +51,14 @@ void
 PySfGlyphUpdateObj(PySfGlyph *self)
 {
 	self->obj->Advance = self->Advance;
-	PySfIntRectUpdateObj(self->Rectangle);
-	PySfFloatRectUpdateObj(self->TexCoords);
-	self->obj->Rectangle.Left = self->Rectangle->Left;
-	self->obj->Rectangle.Top = self->Rectangle->Top;
-	self->obj->Rectangle.Right = self->Rectangle->Right;
-	self->obj->Rectangle.Bottom = self->Rectangle->Bottom;
-	self->obj->TexCoords.Left = self->TexCoords->Left;
-	self->obj->TexCoords.Top = self->TexCoords->Top;
-	self->obj->TexCoords.Right = self->TexCoords->Right;
-	self->obj->TexCoords.Bottom = self->TexCoords->Bottom;
+	PySfIntRectUpdateSelf(self->Rectangle);
+	PySfFloatRectUpdateSelf(self->TexCoords);
 }
 
 void
 PySfGlyphUpdateSelf(PySfGlyph *self)
 {
 	self->Advance = self->obj->Advance;
-	self->Rectangle->Left = self->obj->Rectangle.Left;
-	self->Rectangle->Top = self->obj->Rectangle.Top;
-	self->Rectangle->Right = self->obj->Rectangle.Right;
-	self->Rectangle->Bottom = self->obj->Rectangle.Bottom;
-	self->TexCoords->Left = self->obj->TexCoords.Left;
-	self->TexCoords->Top = self->obj->TexCoords.Top;
-	self->TexCoords->Right = self->obj->TexCoords.Right;
-	self->TexCoords->Bottom = self->obj->TexCoords.Bottom;
 	PySfIntRectUpdateObj(self->Rectangle);
 	PySfFloatRectUpdateObj(self->TexCoords);
 }
@@ -88,14 +70,30 @@ PySfGlyph_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	self = (PySfGlyph *)type->tp_alloc(type, 0);
 	if (self != NULL)
 	{
-		self->Advance = 0;
 		self->Rectangle = GetNewPySfIntRect();
+		self->Rectangle->Owner = false;
 		self->TexCoords = GetNewPySfFloatRect();
+		self->TexCoords->Owner = false;
 		self->obj = new sf::Glyph();
+		self->Owner = true;
+		self->Advance = self->obj->Advance;
 		self->Rectangle->obj = &(self->obj->Rectangle);
 		self->TexCoords->obj = &(self->obj->TexCoords);
+		PySfIntRectUpdateSelf(self->Rectangle);
+		PySfFloatRectUpdateSelf(self->TexCoords);
 	}
 	return (PyObject *)self;
+}
+
+int
+PySfGlyph_setattro(PyObject* self, PyObject *attr_name, PyObject *v)
+{
+	int result = PyObject_GenericSetAttr(self, attr_name, v);
+	PySfGlyph *Glyph = (PySfGlyph *)self;
+	Glyph->obj->Rectangle = *(Glyph->Rectangle->obj);
+	Glyph->obj->TexCoords = *(Glyph->TexCoords->obj);
+	Glyph->obj->Advance = Glyph->Advance;
+	return result;
 }
 
 PyTypeObject PySfGlyphType = {

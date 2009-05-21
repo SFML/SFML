@@ -23,7 +23,6 @@
 ////////////////////////////////////////////////////////////
 
 #include "RenderWindow.hpp"
-#include "View.hpp"
 #include "Image.hpp"
 #include "Window.hpp"
 #include "Color.hpp"
@@ -44,6 +43,7 @@ extern PyTypeObject PySfDrawableType;
 static void
 PySfRenderWindow_dealloc(PySfRenderWindow* self)
 {
+	Py_CLEAR(self->View);
 	delete self->obj;
 	free_object(self);
 }
@@ -54,7 +54,10 @@ PySfRenderWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	PySfRenderWindow *self;
 	self = (PySfRenderWindow *)type->tp_alloc(type, 0);
 	if (self != NULL)
+	{
 		self->obj = new sf::RenderWindow();
+		self->View = NULL;
+	}
 	return (PyObject *)self;
 }
 
@@ -153,12 +156,22 @@ PySfRenderWindow_Clear(PySfRenderWindow *self, PyObject *args)
 static PyObject *
 PySfRenderWindow_GetView(PySfRenderWindow *self)
 {
-	PySfView *View;
+	if (self->View != NULL)
+	{
+		Py_INCREF(self->View);
+		return (PyObject *)(self->View);
+	}
+	else
+	{
+		PySfView *View;
 
-	View = GetNewPySfView();
-	View->obj = new sf::View(self->obj->GetView());
-
-	return (PyObject *)View;
+		View = GetNewPySfView();
+		View->Owner = false;
+		View->obj = (sf::View *)&(self->obj->GetView());
+		Py_INCREF(View);
+		self->View = View;
+		return (PyObject *)View;
+	}
 }
 
 static PyObject *
@@ -177,7 +190,10 @@ PySfRenderWindow_SetView(PySfRenderWindow* self, PyObject *args)
 		PyErr_SetString(PyExc_TypeError, "RenderWindow.SetView() Argument is not a sf.View");
 		return NULL;
 	}
-	self->obj->SetView( *(View->obj));
+	Py_CLEAR(self->View);
+	Py_INCREF(View);
+	self->View = View;
+	self->obj->SetView(*(View->obj));
 	Py_RETURN_NONE;
 }
 

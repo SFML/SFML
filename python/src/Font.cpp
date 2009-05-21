@@ -167,13 +167,17 @@ PySfFont_GetCharacterSize(PySfFont* self)
 static PyObject *
 PySfFont_GetGlyph(PySfFont* self, PyObject *args)
 {
-	PySfGlyph *PyGlyph = GetNewPySfGlyph();
-	sf::Glyph *Glyph = new sf::Glyph(self->obj->GetGlyph(PyLong_AsUnsignedLong(args)));
-	PyGlyph->obj = Glyph;
-	PyGlyph->Rectangle->obj = &(PyGlyph->obj->Rectangle);
-	PyGlyph->TexCoords->obj = &(PyGlyph->obj->TexCoords);
-	PySfGlyphUpdateSelf(PyGlyph);
-	return (PyObject *)PyGlyph;
+	PySfGlyph *Glyph = GetNewPySfGlyph();
+	Glyph->Owner = false;
+	Glyph->Rectangle = GetNewPySfIntRect();
+	Glyph->Rectangle->Owner = false;
+	Glyph->TexCoords = GetNewPySfFloatRect();
+	Glyph->TexCoords->Owner = false;
+	Glyph->obj = (sf::Glyph *) &(self->obj->GetGlyph(PyLong_AsUnsignedLong(args)));
+	Glyph->Rectangle->obj = &(Glyph->obj->Rectangle);
+	Glyph->TexCoords->obj = &(Glyph->obj->TexCoords);
+	PySfGlyphUpdateSelf(Glyph);
+	return (PyObject *)Glyph;
 }
 
 static PyMethodDef PySfFont_methods[] = {
