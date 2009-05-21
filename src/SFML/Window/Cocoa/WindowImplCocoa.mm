@@ -93,21 +93,30 @@ myWheelStatus(0.0f)
 {
 	if (Handle)
 	{
-		// We create the window according to the given handle
-		myWrapper = [[WindowWrapper alloc] initWithWindow:(NSWindow *)Handle
-												  settings:params
-												  delegate:this];
-		
-		if (myWrapper)
+		if (![(NSWindow *)Handle isKindOfClass:[NSWindow class]])
+			std::cerr << "Cannot import this Window Handle because it is not a <NSWindow *> object"
+			<< "(or one of its subclasses). You gave a <" 
+			<< [[(NSWindow *)Handle className] UTF8String]
+			<< "> object." << std::endl;
+		else
 		{
-			// initial mouse state
-			myMouseIn = [myWrapper mouseInside];
 			
-			// We set the myWidth and myHeight members to the correct values
-			myWidth = (int) [[myWrapper glView] frame].size.width;
-			myHeight = (int) [[myWrapper glView] frame].size.height;
-		} else {
-			std::cerr << "Failed to make the public window" << std::endl;
+			// We create the window according to the given handle
+			myWrapper = [[WindowWrapper alloc] initWithWindow:(NSWindow *)Handle
+													 settings:params
+													 delegate:this];
+			
+			if (myWrapper)
+			{
+				// initial mouse state
+				myMouseIn = [myWrapper mouseInside];
+				
+				// We set the myWidth and myHeight members to the correct values
+				myWidth = (int) [[myWrapper glView] frame].size.width;
+				myHeight = (int) [[myWrapper glView] frame].size.height;
+			} else {
+				std::cerr << "Failed to make the public window" << std::endl;
+			}
 		}
 	}
 }

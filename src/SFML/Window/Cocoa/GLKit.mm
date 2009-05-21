@@ -502,37 +502,39 @@ static GLContext *sharedCtx = nil;
 			NSRect frame = NSMakeRect (0.0f, 0.0f, (float) mode.Width, (float) mode.Height);
 			unsigned int mask = 0;
 			
+			if (style & sf::Style::Fullscreen) {
+				myIsFullscreen = true;
+				
+				// Check display mode and put new values in 'mode' if needed
+				boolean_t exact = true;
+				
+				CFDictionaryRef properties = CGDisplayBestModeForParameters(kCGDirectMainDisplay, mode.BitsPerPixel,
+																			mode.Width, mode.Height, &exact);
+				
+				if (!properties) {
+					std::cerr << "Unable to get a display mode with the given parameters" << std::endl;
+					[self autorelease];
+					return nil;
+				}
+				
+				if (exact == false) {
+					CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayWidth),
+									 kCFNumberIntType, &mode.Width);
+					
+					CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayHeight),
+									 kCFNumberIntType, &mode.Height);
+					
+					CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayBitsPerPixel),
+									 kCFNumberIntType, &mode.BitsPerPixel);
+					
+				}
+			}
+			
 			// We grab options from WindowStyle and add them to our window mask
 			if (style & sf::Style::None || style & sf::Style::Fullscreen) {
 				mask |= NSBorderlessWindowMask;
 				
-				if (style & sf::Style::Fullscreen) {
-					myIsFullscreen = true;
-					
-					// Check display mode and put new values in 'mode' if needed
-					boolean_t exact = true;
-					
-					CFDictionaryRef properties = CGDisplayBestModeForParameters(kCGDirectMainDisplay, mode.BitsPerPixel,
-																				mode.Width, mode.Height, &exact);
-					
-					if (!properties) {
-						std::cerr << "Unable to get a display mode with the given parameters" << std::endl;
-						[self autorelease];
-						return nil;
-					}
-					
-					if (exact == false) {
-						CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayWidth),
-										 kCFNumberIntType, &mode.Width);
-						
-						CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayHeight),
-										 kCFNumberIntType, &mode.Height);
-						
-						CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayBitsPerPixel),
-										 kCFNumberIntType, &mode.BitsPerPixel);
-						
-					}
-				}
+				
 				
 			} else {
 				if (style & sf::Style::Titlebar) {
@@ -638,9 +640,8 @@ static GLContext *sharedCtx = nil;
 ////////////////////////////////////////////////////////////
 - (void)dealloc
 {
+	
 	// Remove the notification observer
-	if (myView)
-		[[NSNotificationCenter defaultCenter] removeObserver:myView];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	// Close the window
