@@ -33,7 +33,6 @@ class CustomSoundStream : public sf::SoundStream
 {
 public :
 	PyObject *SoundStream;
-	PyObject *PyData;
     virtual bool OnStart();
     virtual bool OnGetData(Chunk& Data);
 	void Init(unsigned int ChannelsCount, unsigned int SampleRate);

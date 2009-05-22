@@ -54,25 +54,16 @@ PySfVideoMode_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	if (self != NULL)
 	{
 		self->BitsPerPixel = 32;
-		if (!PyArg_ParseTupleAndKeywords(args, kwds, "II|I:VideoMode.__init__", (char **)kwlist, &self->Width, &self->Height, &self->BitsPerPixel))
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "II|I:VideoMode.__new__", (char **)kwlist, &self->Width, &self->Height, &self->BitsPerPixel))
 			return NULL;
 		self->obj = new sf::VideoMode(self->Width, self->Height, self->BitsPerPixel);
 	}
 	return (PyObject *)self;
 }
 
-void
-PySfVideoModeUpdate(PySfVideoMode *self)
-{
-	self->obj->Width = self->Width;
-	self->obj->Height = self->Height;
-	self->obj->BitsPerPixel = self->BitsPerPixel;
-}
-
 static PyObject *
 PySfVideoMode_IsValid(PySfVideoMode* self)
 {
-	PySfVideoModeUpdate(self);
 	return PyBool_FromLong(self->obj->IsValid());
 }
 
@@ -122,16 +113,37 @@ static PyMethodDef PySfVideoMode_methods[] = {
 	{NULL}  /* Sentinel */
 };
 
-int PySfVideoMode_Compare(PyObject *o1, PyObject *o2)
+PyObject *
+PySfVideoMode_richcompare(PyObject *o1, PyObject *o2, int op)
 {
-	PySfVideoModeUpdate((PySfVideoMode *)o1);
-	PySfVideoModeUpdate((PySfVideoMode *)o2);
 	if (*(((PySfVideoMode *)o1)->obj) == *(((PySfVideoMode *)o2)->obj))
-		return 0;
+	{
+		if (op==Py_EQ)
+			Py_RETURN_TRUE;
+		if (op==Py_NE)
+			Py_RETURN_FALSE;
+	}
 	else
-		return 1;
+	{
+		if (op==Py_EQ)
+			Py_RETURN_FALSE;
+		if (op==Py_NE)
+			Py_RETURN_TRUE;
+	}
+	PyErr_SetString(PyExc_TypeError, "VideoMode comparison : only == and != make sens.");
+	return NULL;
 }
 
+int
+PySfVideoMode_setattro(PyObject* self, PyObject *attr_name, PyObject *v)
+{
+	int result = PyObject_GenericSetAttr(self, attr_name, v);
+	PySfVideoMode *Mode = (PySfVideoMode *)self;
+	Mode->obj->Width = Mode->Width;
+	Mode->obj->Height = Mode->Height;
+	Mode->obj->BitsPerPixel = Mode->BitsPerPixel;
+	return result;
+}
 
 PyTypeObject PySfVideoModeType = {
 	head_init
@@ -142,7 +154,7 @@ PyTypeObject PySfVideoModeType = {
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
-	PySfVideoMode_Compare,	/*tp_compare*/
+	0,						/*tp_compare*/
 	0,						/*tp_repr*/
 	0,						/*tp_as_number*/
 	0,						/*tp_as_sequence*/
@@ -159,7 +171,7 @@ Default constructor : VideoMode()\n\
 Construct the video mode with its attributes : VideoMode(ModeWidth, ModeHeight, ModeBpp = 32)\n	ModeWidth  : Width in pixels\n	ModeHeight : Height in pixels\n	ModeBpp    : Pixel depths in bits per pixel (32 by default)", /* tp_doc */
 	0,						/* tp_traverse */
 	0,						/* tp_clear */
-	0,						/* tp_richcompare */
+	PySfVideoMode_richcompare, /* tp_richcompare */
 	0,						/* tp_weaklistoffset */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */

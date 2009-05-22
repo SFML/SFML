@@ -37,9 +37,6 @@ typedef struct {
 	sf::VideoMode *obj;
 } PySfVideoMode;
 
-void
-PySfVideoModeUpdate(PySfVideoMode *self);
-
 PySfVideoMode *
 GetNewPySfVideoMode();
 

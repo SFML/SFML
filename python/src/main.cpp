@@ -294,6 +294,8 @@ initsf(void)
 	PySfSoundStream_InitConst();
 	PySfString_InitConst();
 
+	PyEval_InitThreads();
+
 #ifdef IS_PY3K
 	return m;
 #endif

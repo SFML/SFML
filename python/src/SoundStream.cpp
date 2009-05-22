@@ -29,28 +29,39 @@
 
 bool CustomSoundStream::OnStart()
 {
+	PyGILState_STATE gstate;
 	bool result = false;
+	gstate = PyGILState_Ensure();
 	if (PyObject_HasAttrString(SoundStream, "OnStart"))
 	{
 		PyObject *OnStart = PyObject_GetAttrString(SoundStream, "OnStart");
-		PyObject *Result = PyObject_CallFunction(OnStart, NULL);
-		result = PyBool_AsBool(Result);
-		Py_DECREF(OnStart);
-		Py_DECREF(Result);
+		if (OnStart != NULL)
+		{
+			PyObject *Result = PyObject_CallFunction(OnStart, NULL);
+			if (Result != NULL)
+			{
+				result = PyBool_AsBool(Result);
+				Py_CLEAR(Result);
+			}
+			Py_CLEAR(OnStart);
+		}
 	}
 	if (PyErr_Occurred())
 	{
 		PyErr_Print();
-		return false;
+		result = false;
 	}
+	PyGILState_Release(gstate);
     return result;
 }
 
 bool CustomSoundStream::OnGetData(Chunk& Data)
 {
+	PyGILState_STATE gstate;
 	bool result = false;
-	Py_CLEAR(PyData);
-	PyObject *Function = PyObject_GetAttrString(SoundStream, "OnGetData");
+	PyObject *Function, *PyData;
+	gstate = PyGILState_Ensure();
+	Function = PyObject_GetAttrString(SoundStream, "OnGetData");
 	if (Function != NULL)
 	{
 		PyData = PyObject_CallFunction(Function, NULL);
@@ -62,15 +73,16 @@ bool CustomSoundStream::OnGetData(Chunk& Data)
 				if (Data.NbSamples > 0)
 					result = true;
 			}
+			Py_CLEAR(PyData);
 		}
-		Py_DECREF(Function);
+		Py_CLEAR(Function);
 	}
 	if (PyErr_Occurred())
 	{
 		PyErr_Print();
-		Py_CLEAR(PyData);
-		return false;
+		result = false;
 	}
+	PyGILState_Release(gstate);
     return result;
 }
 
@@ -94,7 +106,6 @@ PySfSoundStream_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	if (self != NULL)
 	{
 		self->obj = new CustomSoundStream();
-		self->obj->PyData = NULL;
 		self->obj->SoundStream = (PyObject *)self;
 	}
 	return (PyObject *)self;
