@@ -240,7 +240,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = A011E3570F65738800FAE48D /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A0DE008D0FCB1D8D00DA0132 /* SFML */;
+			remoteGlobalIDString = A0DE008D0FCB1D8D00DA0132;
 			remoteInfo = SFML;
 		};
 /* End PBXContainerItemProxy section */
@@ -480,6 +480,56 @@
 		A01BEFA80F6BF4510095262C /* csfml-graphics-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "csfml-graphics-Info.plist"; sourceTree = "<group>"; };
 		A0DE008E0FCB1D8D00DA0132 /* SFML.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SFML.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0DE00990FCB1EC500DA0132 /* dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dummy.c; sourceTree = "<group>"; };
+		A0DE018D0FCB433100DA0132 /* Listener.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Listener.h; sourceTree = "<group>"; };
+		A0DE018E0FCB433100DA0132 /* Music.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Music.h; sourceTree = "<group>"; };
+		A0DE018F0FCB433100DA0132 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
+		A0DE01900FCB433100DA0132 /* SoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SoundBuffer.h; sourceTree = "<group>"; };
+		A0DE01910FCB433100DA0132 /* SoundBufferRecorder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SoundBufferRecorder.h; sourceTree = "<group>"; };
+		A0DE01920FCB433100DA0132 /* SoundRecorder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SoundRecorder.h; sourceTree = "<group>"; };
+		A0DE01930FCB433100DA0132 /* SoundStatus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SoundStatus.h; sourceTree = "<group>"; };
+		A0DE01940FCB433100DA0132 /* SoundStream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SoundStream.h; sourceTree = "<group>"; };
+		A0DE01950FCB433100DA0132 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		A0DE01960FCB433100DA0132 /* Audio.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Audio.h; path = ../include/SFML/Audio.h; sourceTree = SOURCE_ROOT; };
+		A0DE01970FCB433100DA0132 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Config.h; path = ../include/SFML/Config.h; sourceTree = SOURCE_ROOT; };
+		A0DE01990FCB433100DA0132 /* BlendMode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BlendMode.h; sourceTree = "<group>"; };
+		A0DE019A0FCB433100DA0132 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
+		A0DE019B0FCB433100DA0132 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
+		A0DE019C0FCB433100DA0132 /* Glyph.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Glyph.h; sourceTree = "<group>"; };
+		A0DE019D0FCB433100DA0132 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
+		A0DE019E0FCB433100DA0132 /* PostFX.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PostFX.h; sourceTree = "<group>"; };
+		A0DE019F0FCB433100DA0132 /* Rect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Rect.h; sourceTree = "<group>"; };
+		A0DE01A00FCB433100DA0132 /* RenderWindow.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderWindow.h; sourceTree = "<group>"; };
+		A0DE01A10FCB433100DA0132 /* Shape.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Shape.h; sourceTree = "<group>"; };
+		A0DE01A20FCB433100DA0132 /* Sprite.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Sprite.h; sourceTree = "<group>"; };
+		A0DE01A30FCB433100DA0132 /* String.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = String.h; sourceTree = "<group>"; };
+		A0DE01A40FCB433100DA0132 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		A0DE01A50FCB433100DA0132 /* View.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = View.h; sourceTree = "<group>"; };
+		A0DE01A60FCB433100DA0132 /* Graphics.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Graphics.h; path = ../include/SFML/Graphics.h; sourceTree = SOURCE_ROOT; };
+		A0DE01A80FCB433100DA0132 /* Ftp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Ftp.h; sourceTree = "<group>"; };
+		A0DE01A90FCB433100DA0132 /* Http.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Http.h; sourceTree = "<group>"; };
+		A0DE01AA0FCB433100DA0132 /* IPAddress.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IPAddress.h; sourceTree = "<group>"; };
+		A0DE01AB0FCB433100DA0132 /* Packet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Packet.h; sourceTree = "<group>"; };
+		A0DE01AC0FCB433100DA0132 /* Selector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Selector.h; sourceTree = "<group>"; };
+		A0DE01AD0FCB433100DA0132 /* SocketStatus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SocketStatus.h; sourceTree = "<group>"; };
+		A0DE01AE0FCB433100DA0132 /* SocketTCP.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SocketTCP.h; sourceTree = "<group>"; };
+		A0DE01AF0FCB433100DA0132 /* SocketUDP.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SocketUDP.h; sourceTree = "<group>"; };
+		A0DE01B00FCB433100DA0132 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		A0DE01B10FCB433100DA0132 /* Network.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Network.h; path = ../include/SFML/Network.h; sourceTree = SOURCE_ROOT; };
+		A0DE01B30FCB433100DA0132 /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
+		A0DE01B40FCB433100DA0132 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Mutex.h; sourceTree = "<group>"; };
+		A0DE01B50FCB433100DA0132 /* Randomizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Randomizer.h; sourceTree = "<group>"; };
+		A0DE01B60FCB433100DA0132 /* Sleep.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Sleep.h; sourceTree = "<group>"; };
+		A0DE01B70FCB433100DA0132 /* Thread.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Thread.h; sourceTree = "<group>"; };
+		A0DE01B80FCB433100DA0132 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		A0DE01B90FCB433100DA0132 /* System.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = System.h; path = ../include/SFML/System.h; sourceTree = SOURCE_ROOT; };
+		A0DE01BB0FCB433100DA0132 /* Context.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Context.h; sourceTree = "<group>"; };
+		A0DE01BC0FCB433100DA0132 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
+		A0DE01BD0FCB433100DA0132 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
+		A0DE01BE0FCB433100DA0132 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		A0DE01BF0FCB433100DA0132 /* VideoMode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VideoMode.h; sourceTree = "<group>"; };
+		A0DE01C00FCB433100DA0132 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
+		A0DE01C10FCB433100DA0132 /* WindowHandle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WindowHandle.h; sourceTree = "<group>"; };
+		A0DE01C20FCB433100DA0132 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Window.h; path = ../include/SFML/Window.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -562,6 +612,7 @@
 		A011E3C10F6575B300FAE48D /* SFML */ = {
 			isa = PBXGroup;
 			children = (
+				A0DE02120FCB454300DA0132 /* Headers */,
 				A011E3A40F6574E400FAE48D /* SFML-Info.plist */,
 				A0DE00990FCB1EC500DA0132 /* dummy.c */,
 			);
@@ -952,6 +1003,108 @@
 				A011E5680F65786600FAE48D /* zutil.h */,
 			);
 			path = zlib;
+			sourceTree = "<group>";
+		};
+		A0DE018C0FCB433100DA0132 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				A0DE018D0FCB433100DA0132 /* Listener.h */,
+				A0DE018E0FCB433100DA0132 /* Music.h */,
+				A0DE018F0FCB433100DA0132 /* Sound.h */,
+				A0DE01900FCB433100DA0132 /* SoundBuffer.h */,
+				A0DE01910FCB433100DA0132 /* SoundBufferRecorder.h */,
+				A0DE01920FCB433100DA0132 /* SoundRecorder.h */,
+				A0DE01930FCB433100DA0132 /* SoundStatus.h */,
+				A0DE01940FCB433100DA0132 /* SoundStream.h */,
+				A0DE01950FCB433100DA0132 /* Types.h */,
+			);
+			name = Audio;
+			path = ../include/SFML/Audio;
+			sourceTree = SOURCE_ROOT;
+		};
+		A0DE01980FCB433100DA0132 /* Graphics */ = {
+			isa = PBXGroup;
+			children = (
+				A0DE01990FCB433100DA0132 /* BlendMode.h */,
+				A0DE019A0FCB433100DA0132 /* Color.h */,
+				A0DE019B0FCB433100DA0132 /* Font.h */,
+				A0DE019C0FCB433100DA0132 /* Glyph.h */,
+				A0DE019D0FCB433100DA0132 /* Image.h */,
+				A0DE019E0FCB433100DA0132 /* PostFX.h */,
+				A0DE019F0FCB433100DA0132 /* Rect.h */,
+				A0DE01A00FCB433100DA0132 /* RenderWindow.h */,
+				A0DE01A10FCB433100DA0132 /* Shape.h */,
+				A0DE01A20FCB433100DA0132 /* Sprite.h */,
+				A0DE01A30FCB433100DA0132 /* String.h */,
+				A0DE01A40FCB433100DA0132 /* Types.h */,
+				A0DE01A50FCB433100DA0132 /* View.h */,
+			);
+			name = Graphics;
+			path = ../include/SFML/Graphics;
+			sourceTree = SOURCE_ROOT;
+		};
+		A0DE01A70FCB433100DA0132 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				A0DE01A80FCB433100DA0132 /* Ftp.h */,
+				A0DE01A90FCB433100DA0132 /* Http.h */,
+				A0DE01AA0FCB433100DA0132 /* IPAddress.h */,
+				A0DE01AB0FCB433100DA0132 /* Packet.h */,
+				A0DE01AC0FCB433100DA0132 /* Selector.h */,
+				A0DE01AD0FCB433100DA0132 /* SocketStatus.h */,
+				A0DE01AE0FCB433100DA0132 /* SocketTCP.h */,
+				A0DE01AF0FCB433100DA0132 /* SocketUDP.h */,
+				A0DE01B00FCB433100DA0132 /* Types.h */,
+			);
+			name = Network;
+			path = ../include/SFML/Network;
+			sourceTree = SOURCE_ROOT;
+		};
+		A0DE01B20FCB433100DA0132 /* System */ = {
+			isa = PBXGroup;
+			children = (
+				A0DE01B30FCB433100DA0132 /* Clock.h */,
+				A0DE01B40FCB433100DA0132 /* Mutex.h */,
+				A0DE01B50FCB433100DA0132 /* Randomizer.h */,
+				A0DE01B60FCB433100DA0132 /* Sleep.h */,
+				A0DE01B70FCB433100DA0132 /* Thread.h */,
+				A0DE01B80FCB433100DA0132 /* Types.h */,
+			);
+			name = System;
+			path = ../include/SFML/System;
+			sourceTree = SOURCE_ROOT;
+		};
+		A0DE01BA0FCB433100DA0132 /* Window */ = {
+			isa = PBXGroup;
+			children = (
+				A0DE01BB0FCB433100DA0132 /* Context.h */,
+				A0DE01BC0FCB433100DA0132 /* Event.h */,
+				A0DE01BD0FCB433100DA0132 /* Input.h */,
+				A0DE01BE0FCB433100DA0132 /* Types.h */,
+				A0DE01BF0FCB433100DA0132 /* VideoMode.h */,
+				A0DE01C00FCB433100DA0132 /* Window.h */,
+				A0DE01C10FCB433100DA0132 /* WindowHandle.h */,
+			);
+			name = Window;
+			path = ../include/SFML/Window;
+			sourceTree = SOURCE_ROOT;
+		};
+		A0DE02120FCB454300DA0132 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				A0DE018C0FCB433100DA0132 /* Audio */,
+				A0DE01960FCB433100DA0132 /* Audio.h */,
+				A0DE01970FCB433100DA0132 /* Config.h */,
+				A0DE01980FCB433100DA0132 /* Graphics */,
+				A0DE01A60FCB433100DA0132 /* Graphics.h */,
+				A0DE01A70FCB433100DA0132 /* Network */,
+				A0DE01B10FCB433100DA0132 /* Network.h */,
+				A0DE01B20FCB433100DA0132 /* System */,
+				A0DE01B90FCB433100DA0132 /* System.h */,
+				A0DE01BA0FCB433100DA0132 /* Window */,
+				A0DE01C20FCB433100DA0132 /* Window.h */,
+			);
+			name = Headers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1450,6 +1603,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib";
 				COPY_PHASE_STRIP = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = CSFML_EXPORTS;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
@@ -1485,6 +1639,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib";
 				COPY_PHASE_STRIP = YES;
 				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = CSFML_EXPORTS;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
 					"$(SRCROOT)/../include",
