@@ -1350,8 +1350,8 @@
 		A012695C0E63189C00B96A5D /* Build configuration list for PBXProject "SFML-bare" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A012695A0E63189C00B96A5D /* Debug */,
 				A012695B0E63189C00B96A5D /* Release */,
+				A012695A0E63189C00B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1359,8 +1359,8 @@
 		A012696A0E6318C000B96A5D /* Build configuration list for PBXNativeTarget "sfml-system" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A01269680E6318C000B96A5D /* Debug */,
 				A01269690E6318C000B96A5D /* Release */,
+				A01269680E6318C000B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1368,8 +1368,8 @@
 		A01269880E63193B00B96A5D /* Build configuration list for PBXNativeTarget "sfml-network" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A01269700E6318FF00B96A5D /* Debug */,
 				A01269710E6318FF00B96A5D /* Release */,
+				A01269700E6318FF00B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1377,8 +1377,8 @@
 		A01269890E63193B00B96A5D /* Build configuration list for PBXNativeTarget "sfml-audio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A01269770E63190F00B96A5D /* Debug */,
 				A01269780E63190F00B96A5D /* Release */,
+				A01269770E63190F00B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1386,8 +1386,8 @@
 		A012698A0E63193B00B96A5D /* Build configuration list for PBXNativeTarget "sfml-window" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A012697E0E63192000B96A5D /* Debug */,
 				A012697F0E63192000B96A5D /* Release */,
+				A012697E0E63192000B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1395,8 +1395,8 @@
 		A012698B0E63193B00B96A5D /* Build configuration list for PBXNativeTarget "sfml-graphics" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A01269850E63192B00B96A5D /* Debug */,
 				A01269860E63192B00B96A5D /* Release */,
+				A01269850E63192B00B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1404,8 +1404,8 @@
 		A0AD0A460E766415006E7E0D /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0AD0A310E7663E1006E7E0D /* Debug */,
 				A0AD0A320E7663E1006E7E0D /* Release */,
+				A0AD0A310E7663E1006E7E0D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

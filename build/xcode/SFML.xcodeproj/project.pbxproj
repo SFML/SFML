@@ -2410,8 +2410,8 @@
 		A02679DD0E5CDB03008D4C81 /* Build configuration list for PBXProject "SFML" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679C20E5CDB03008D4C81 /* Debug */,
 				A02679C30E5CDB03008D4C81 /* Release */,
+				A02679C20E5CDB03008D4C81 /* Debug */,
 				A0C9DDC80E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2420,8 +2420,8 @@
 		A02679DE0E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "SFML" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679C80E5CDB03008D4C81 /* Debug */,
 				A02679C90E5CDB03008D4C81 /* Release */,
+				A02679C80E5CDB03008D4C81 /* Debug */,
 				A0C9DDCA0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2430,8 +2430,8 @@
 		A02679DF0E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-system" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679D40E5CDB03008D4C81 /* Debug */,
 				A02679D50E5CDB03008D4C81 /* Release */,
+				A02679D40E5CDB03008D4C81 /* Debug */,
 				A0C9DDCE0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2440,8 +2440,8 @@
 		A02679E00E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-network" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679D10E5CDB03008D4C81 /* Debug */,
 				A02679D20E5CDB03008D4C81 /* Release */,
+				A02679D10E5CDB03008D4C81 /* Debug */,
 				A0C9DDCD0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2450,8 +2450,8 @@
 		A02679E10E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-audio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679CB0E5CDB03008D4C81 /* Debug */,
 				A02679CC0E5CDB03008D4C81 /* Release */,
+				A02679CB0E5CDB03008D4C81 /* Debug */,
 				A0C9DDCB0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2460,8 +2460,8 @@
 		A02679E20E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-window" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679D70E5CDB03008D4C81 /* Debug */,
 				A02679D80E5CDB03008D4C81 /* Release */,
+				A02679D70E5CDB03008D4C81 /* Debug */,
 				A0C9DDCF0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2470,8 +2470,8 @@
 		A02679E30E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-graphics" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679CE0E5CDB03008D4C81 /* Debug */,
 				A02679CF0E5CDB03008D4C81 /* Release */,
+				A02679CE0E5CDB03008D4C81 /* Debug */,
 				A0C9DDCC0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2480,8 +2480,8 @@
 		A02679E40E5CDB03008D4C81 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679C50E5CDB03008D4C81 /* Debug */,
 				A02679C60E5CDB03008D4C81 /* Release */,
+				A02679C50E5CDB03008D4C81 /* Debug */,
 				A0C9DDC90E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
