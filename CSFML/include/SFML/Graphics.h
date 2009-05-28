@@ -35,6 +35,7 @@
 #include <SFML/Graphics/PostFX.h>
 #include <SFML/Graphics/Rect.h>
 #include <SFML/Graphics/RenderWindow.h>
+#include <SFML/Graphics/Shape.h>
 #include <SFML/Graphics/Sprite.h>
 #include <SFML/Graphics/String.h>
 #include <SFML/Graphics/View.h>
