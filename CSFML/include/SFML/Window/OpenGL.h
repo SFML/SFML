@@ -36,18 +36,18 @@
 /// This file just includes the OpenGL (GL and GLU) headers,
 /// which have actually different paths on each system
 ////////////////////////////////////////////////////////////
-#if defined(SFML_SYSTEM_WINDOWS)
+#if defined(CSFML_SYSTEM_WINDOWS)
 
     #include <windows.h>
     #include <GL/gl.h>
     #include <GL/glu.h>
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+#elif defined(CSFML_SYSTEM_LINUX) || defined(CSFML_SYSTEM_FREEBSD)
 
     #include <GL/gl.h>
     #include <GL/glu.h>
 
-#elif defined(SFML_SYSTEM_MACOS)
+#elif defined(CSFML_SYSTEM_MACOS)
 
     #include <OpenGL/gl.h>
     #include <OpenGL/glu.h>
