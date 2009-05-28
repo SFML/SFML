@@ -56,9 +56,9 @@
 		A04C59B40EDDBA9C00935061 /* VideoModeSupport.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A04C59AA0EDDBA9C00935061 /* VideoModeSupport.hpp */; };
 		A04C59B70EDDBA9C00935061 /* WindowImplCocoa.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A04C59AD0EDDBA9C00935061 /* WindowImplCocoa.hpp */; };
 		A04C59B80EDDBA9C00935061 /* WindowImplCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A04C59AE0EDDBA9C00935061 /* WindowImplCocoa.mm */; };
-		A05EEF700E5CF18F00572B7E /* sfml-window.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */; };
+		A05EEF700E5CF18F00572B7E /* sfml-window-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0C93EB40D9A9CA000B9E0C8 /* sfml-window-d.framework */; };
 		A093E3D00D8BF918002236B4 /* dummy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A093E3CF0D8BF918002236B4 /* dummy.cpp */; };
-		A093E5480D8BFEAE002236B4 /* sfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system.framework */; };
+		A093E5480D8BFEAE002236B4 /* sfml-system-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */; };
 		A09EEBF70D8C19BF00F6C625 /* Platform.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A09EEBED0D8C19BF00F6C625 /* Platform.hpp */; };
 		A09EEBF80D8C19BF00F6C625 /* Randomizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBEE0D8C19BF00F6C625 /* Randomizer.cpp */; };
 		A09EEBF90D8C19BF00F6C625 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF00D8C19BF00F6C625 /* Mutex.cpp */; };
@@ -69,8 +69,8 @@
 		A09EEBFE0D8C19BF00F6C625 /* Lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF50D8C19BF00F6C625 /* Lock.cpp */; };
 		A09EEBFF0D8C19BF00F6C625 /* Sleep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF60D8C19BF00F6C625 /* Sleep.cpp */; };
 		A0B617730F66936F005E0970 /* sndfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0B617720F66936F005E0970 /* sndfile.framework */; };
-		A0BE1A200D917332007D4CAD /* sfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system.framework */; };
-		A0C93F930D9AA9FA00B9E0C8 /* sfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system.framework */; };
+		A0BE1A200D917332007D4CAD /* sfml-system-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */; };
+		A0C93F930D9AA9FA00B9E0C8 /* sfml-system-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */; };
 		A0CE9FE70F46F72500FD00CE /* GLKit.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CE9FE50F46F72500FD00CE /* GLKit.h */; };
 		A0CE9FE80F46F72500FD00CE /* GLKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9FE60F46F72500FD00CE /* GLKit.mm */; };
 		A0EEDE990F59D49C0023A7F7 /* Initializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0EEDE980F59D49C0023A7F7 /* Initializer.cpp */; };
@@ -412,14 +412,14 @@
 		A04C59AE0EDDBA9C00935061 /* WindowImplCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = WindowImplCocoa.mm; path = ../../src/SFML/Window/Cocoa/WindowImplCocoa.mm; sourceTree = SOURCE_ROOT; };
 		A093E3750D8BF86E002236B4 /* SFML.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SFML.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E3770D8BF86E002236B4 /* SFML-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SFML-Info.plist"; sourceTree = SOURCE_ROOT; };
-		A093E37F0D8BF87A002236B4 /* sfml-system.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-system.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-system-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E3800D8BF87A002236B4 /* sfml-system-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-system-Info.plist"; sourceTree = SOURCE_ROOT; };
-		A093E3880D8BF885002236B4 /* sfml-network.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-network.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A093E3880D8BF885002236B4 /* sfml-network-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-network-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E3890D8BF885002236B4 /* sfml-network-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-network-Info.plist"; sourceTree = SOURCE_ROOT; };
 		A093E3920D8BF892002236B4 /* sfml-window-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-window-Info.plist"; sourceTree = SOURCE_ROOT; };
-		A093E39A0D8BF89B002236B4 /* sfml-audio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-audio.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A093E39A0D8BF89B002236B4 /* sfml-audio-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-audio-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E39B0D8BF89B002236B4 /* sfml-audio-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-audio-Info.plist"; sourceTree = SOURCE_ROOT; };
-		A093E3A30D8BF8A2002236B4 /* sfml-graphics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-graphics.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A093E3A30D8BF8A2002236B4 /* sfml-graphics-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-graphics-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A093E3A40D8BF8A2002236B4 /* sfml-graphics-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sfml-graphics-Info.plist"; sourceTree = SOURCE_ROOT; };
 		A093E3CF0D8BF918002236B4 /* dummy.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dummy.cpp; sourceTree = SOURCE_ROOT; };
 		A09EEBED0D8C19BF00F6C625 /* Platform.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Platform.hpp; path = ../../src/SFML/System/Platform.hpp; sourceTree = SOURCE_ROOT; };
@@ -432,7 +432,7 @@
 		A09EEBF50D8C19BF00F6C625 /* Lock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Lock.cpp; path = ../../src/SFML/System/Lock.cpp; sourceTree = SOURCE_ROOT; };
 		A09EEBF60D8C19BF00F6C625 /* Sleep.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Sleep.cpp; path = ../../src/SFML/System/Sleep.cpp; sourceTree = SOURCE_ROOT; };
 		A0B617720F66936F005E0970 /* sndfile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sndfile.framework; path = "../../extlibs/libs-xcode/sndfile.framework"; sourceTree = SOURCE_ROOT; };
-		A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-window.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0C93EB40D9A9CA000B9E0C8 /* sfml-window-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-window-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0CE9FE50F46F72500FD00CE /* GLKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLKit.h; sourceTree = "<group>"; };
 		A0CE9FE60F46F72500FD00CE /* GLKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLKit.mm; sourceTree = "<group>"; };
 		A0EEDE980F59D49C0023A7F7 /* Initializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Initializer.cpp; path = ../../src/SFML/System/Initializer.cpp; sourceTree = SOURCE_ROOT; };
@@ -604,7 +604,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A093E5480D8BFEAE002236B4 /* sfml-system.framework in Frameworks */,
+				A093E5480D8BFEAE002236B4 /* sfml-system-d.framework in Frameworks */,
 				A0B617730F66936F005E0970 /* sndfile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -613,8 +613,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0BE1A200D917332007D4CAD /* sfml-system.framework in Frameworks */,
-				A05EEF700E5CF18F00572B7E /* sfml-window.framework in Frameworks */,
+				A0BE1A200D917332007D4CAD /* sfml-system-d.framework in Frameworks */,
+				A05EEF700E5CF18F00572B7E /* sfml-window-d.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -622,7 +622,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0C93F930D9AA9FA00B9E0C8 /* sfml-system.framework in Frameworks */,
+				A0C93F930D9AA9FA00B9E0C8 /* sfml-system-d.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -851,11 +851,11 @@
 			isa = PBXGroup;
 			children = (
 				A093E3750D8BF86E002236B4 /* SFML.framework */,
-				A093E37F0D8BF87A002236B4 /* sfml-system.framework */,
-				A093E3880D8BF885002236B4 /* sfml-network.framework */,
-				A093E39A0D8BF89B002236B4 /* sfml-audio.framework */,
-				A093E3A30D8BF8A2002236B4 /* sfml-graphics.framework */,
-				A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */,
+				A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */,
+				A093E3880D8BF885002236B4 /* sfml-network-d.framework */,
+				A093E39A0D8BF89B002236B4 /* sfml-audio-d.framework */,
+				A093E3A30D8BF8A2002236B4 /* sfml-graphics-d.framework */,
+				A0C93EB40D9A9CA000B9E0C8 /* sfml-window-d.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1297,7 +1297,7 @@
 			);
 			name = "sfml-system";
 			productName = "sfml-system";
-			productReference = A093E37F0D8BF87A002236B4 /* sfml-system.framework */;
+			productReference = A093E37F0D8BF87A002236B4 /* sfml-system-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A093E3870D8BF885002236B4 /* sfml-network */ = {
@@ -1316,7 +1316,7 @@
 			);
 			name = "sfml-network";
 			productName = "sfml-network";
-			productReference = A093E3880D8BF885002236B4 /* sfml-network.framework */;
+			productReference = A093E3880D8BF885002236B4 /* sfml-network-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A093E3990D8BF89B002236B4 /* sfml-audio */ = {
@@ -1335,7 +1335,7 @@
 			);
 			name = "sfml-audio";
 			productName = "sfml-audio";
-			productReference = A093E39A0D8BF89B002236B4 /* sfml-audio.framework */;
+			productReference = A093E39A0D8BF89B002236B4 /* sfml-audio-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A093E3A20D8BF8A2002236B4 /* sfml-graphics */ = {
@@ -1355,7 +1355,7 @@
 			);
 			name = "sfml-graphics";
 			productName = "sfml-graphics";
-			productReference = A093E3A30D8BF8A2002236B4 /* sfml-graphics.framework */;
+			productReference = A093E3A30D8BF8A2002236B4 /* sfml-graphics-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A0C93EB30D9A9CA000B9E0C8 /* sfml-window */ = {
@@ -1374,7 +1374,7 @@
 			);
 			name = "sfml-window";
 			productName = "sfml-window";
-			productReference = A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */;
+			productReference = A0C93EB40D9A9CA000B9E0C8 /* sfml-window-d.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -2415,7 +2415,7 @@
 				A0C9DDC80E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679DE0E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "SFML" */ = {
 			isa = XCConfigurationList;
@@ -2425,7 +2425,7 @@
 				A0C9DDCA0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679DF0E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-system" */ = {
 			isa = XCConfigurationList;
@@ -2435,7 +2435,7 @@
 				A0C9DDCE0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E00E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-network" */ = {
 			isa = XCConfigurationList;
@@ -2445,7 +2445,7 @@
 				A0C9DDCD0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E10E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-audio" */ = {
 			isa = XCConfigurationList;
@@ -2455,7 +2455,7 @@
 				A0C9DDCB0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E20E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-window" */ = {
 			isa = XCConfigurationList;
@@ -2465,7 +2465,7 @@
 				A0C9DDCF0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E30E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-graphics" */ = {
 			isa = XCConfigurationList;
@@ -2475,7 +2475,7 @@
 				A0C9DDCC0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E40E5CDB03008D4C81 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
@@ -2485,7 +2485,7 @@
 				A0C9DDC90E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
