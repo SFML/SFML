@@ -77,6 +77,9 @@ static GLContext *sharedCtx = nil;
 	//
 	// I've no way to fix this for now.
 	
+	if (attribs.AntialiasingLevel)
+		std::cerr << "Warning: antialiasing settings are inhibited under Mac OS X for technical reasons" << std::endl;
+	
 	NSOpenGLPixelFormat *myPixelFormat = nil;
 	unsigned idx = 0;
 	
