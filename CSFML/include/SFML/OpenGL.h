@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,23 +22,37 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GRAPHICS_H
-#define SFML_GRAPHICS_H
+#ifndef SFML_OPENGL_H
+#define SFML_OPENGL_H
+
 
 ////////////////////////////////////////////////////////////
-// Headers
+/// Headers
 ////////////////////////////////////////////////////////////
-
-#include <SFML/Window.h>
-#include <SFML/Graphics/Color.h>
-#include <SFML/Graphics/Image.h>
-#include <SFML/Graphics/PostFX.h>
-#include <SFML/Graphics/Rect.h>
-#include <SFML/Graphics/RenderWindow.h>
-#include <SFML/Graphics/Shape.h>
-#include <SFML/Graphics/Sprite.h>
-#include <SFML/Graphics/String.h>
-#include <SFML/Graphics/View.h>
+#include <SFML/Config.h>
 
 
-#endif // SFML_GRAPHICS_H
+////////////////////////////////////////////////////////////
+/// This file just includes the OpenGL (GL and GLU) headers,
+/// which have actually different paths on each system
+////////////////////////////////////////////////////////////
+#if defined(SFML_SYSTEM_WINDOWS)
+
+    #include <windows.h>
+    #include <GL/gl.h>
+    #include <GL/glu.h>
+
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+
+    #include <GL/gl.h>
+    #include <GL/glu.h>
+
+#elif defined(SFML_SYSTEM_MACOS)
+
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+
+#endif
+
+
+#endif // SFML_OPENGL_H
