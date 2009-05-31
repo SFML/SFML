@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Context.hpp>
+#include <SFML/Window/ContextGL.hpp>
 #include <SFML/Window/Linux/DisplayRef.hpp>
 #include <X11/Xlib.h>
 #include <GL/glx.h>
@@ -41,7 +41,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// Linux (GLX) implementation of OpenGL contexts
 ////////////////////////////////////////////////////////////
-class ContextGLX : public Context
+class ContextGLX : public ContextGL
 {
 public :
 
