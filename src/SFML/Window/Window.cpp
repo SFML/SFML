@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Window.hpp>
+#include <SFML/Window/ContextGL.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Sleep.hpp>
@@ -142,11 +143,11 @@ void Window::Create(VideoMode Mode, const std::string& Title, unsigned long Wind
     // Make sure another context is bound, so that:
     // - the context creation can request OpenGL extensions if necessary
     // - myContext can safely be destroyed (it's no longer bound)
-    Context::GetDefault().SetActive(true);
+    Context Ctx;
 
     // Recreate the context
     delete myContext;
-    myContext = Context::New(myWindow, Mode.BitsPerPixel, Settings);
+    myContext = priv::ContextGL::New(myWindow, Mode.BitsPerPixel, Settings);
 
     Initialize();
 }
@@ -164,11 +165,11 @@ void Window::Create(WindowHandle Handle, const ContextSettings& Settings)
     // Make sure another context is bound, so that:
     // - the context creation can request OpenGL extensions if necessary
     // - myContext can safely be destroyed (it's no longer bound)
-    Context::GetDefault().SetActive(true);
+    Context Ctx;
 
     // Recreate the context
     delete myContext;
-    myContext = Context::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, Settings);
+    myContext = priv::ContextGL::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, Settings);
 
     Initialize();
 }
@@ -183,9 +184,6 @@ void Window::Close()
 {
     if (myContext)
     {
-        // Make sure that our context is no longer bound
-        Context::GetDefault().SetActive(true);
-
         // Delete the context
         delete myContext;
         myContext = NULL;

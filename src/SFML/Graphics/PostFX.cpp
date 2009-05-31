@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/PostFX.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/GraphicsContext.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 #include <fstream>
 #include <iostream>
 #include <set>
@@ -43,6 +43,9 @@ namespace sf
 PostFX::PostFX() :
 myShaderProgram(0)
 {
+    // Make sure that GLEW is initialized
+    EnsureGlewInit();
+
     // No filtering on frame buffer
     myFrameBuffer.SetSmooth(false);
 }
@@ -74,12 +77,7 @@ PostFX::~PostFX()
 {
     // Destroy effect program
     if (myShaderProgram)
-    {
-        // Make sure we have a valid context
-        priv::GraphicsContext Ctx;
-
         GLCheck(glDeleteObjectARB(myShaderProgram));
-    }
 }
 
 
@@ -264,8 +262,8 @@ PostFX& PostFX::operator =(const PostFX& Other)
 ////////////////////////////////////////////////////////////
 bool PostFX::CanUsePostFX()
 {
-    // Make sure we have a valid context
-    priv::GraphicsContext Ctx;
+    // Make sure that GLEW is initialized
+    EnsureGlewInit();
 
     return glewIsSupported("GL_ARB_shading_language_100") != 0 &&
            glewIsSupported("GL_ARB_shader_objects")       != 0 &&
@@ -411,9 +409,6 @@ std::string PostFX::PreprocessEffect(std::istream& File)
 ////////////////////////////////////////////////////////////
 void PostFX::CreateProgram()
 {
-    // Make sure we have a valid context
-    priv::GraphicsContext Ctx;
-
     // Check that we can use post-FX !
     if (!CanUsePostFX())
     {

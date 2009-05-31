@@ -22,42 +22,68 @@
 //
 ////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Window/Context.h>
-#include <SFML/Window/Context.hpp>
-#include <SFML/Internal.h>
 
-
-struct sfContext
+namespace sf
 {
-    sf::Context This;
-};
-
-
 ////////////////////////////////////////////////////////////
-/// Construct a new context
+/// Default constructor
 ////////////////////////////////////////////////////////////
-sfContext* sfContext_Create()
+template <typename T>
+ThreadLocalPtr<T>::ThreadLocalPtr(T* Value) :
+ThreadLocal(Value)
 {
-    return new sfContext;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Destroy an existing context
+/// Operator * overload to return a reference to the variable
 ////////////////////////////////////////////////////////////
-void sfContext_Destroy(sfContext* Context)
+template <typename T>
+T& ThreadLocalPtr<T>::operator *() const
 {
-    delete Context;
+    return *static_cast<T*>(GetValue());
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Activate or deactivate a context
+/// Operator -> overload to return a pointer to the variable
 ////////////////////////////////////////////////////////////
-void sfContext_SetActive(sfContext* Context, sfBool Active)
+template <typename T>
+T* ThreadLocalPtr<T>::operator ->() const
 {
-    CSFML_CALL(Context, SetActive(Active == sfTrue))
+    return static_cast<T*>(GetValue());
 }
+
+
+////////////////////////////////////////////////////////////
+/// Implicit cast operator to T*
+////////////////////////////////////////////////////////////
+template <typename T>
+ThreadLocalPtr<T>::operator T*() const
+{
+    return static_cast<T*>(GetValue());
+}
+
+
+////////////////////////////////////////////////////////////
+/// Assignment operator
+////////////////////////////////////////////////////////////
+template <typename T>
+ThreadLocalPtr<T>& ThreadLocalPtr<T>::operator =(T* Value)
+{
+    SetValue(Value);
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Assignment operator
+////////////////////////////////////////////////////////////
+template <typename T>
+ThreadLocalPtr<T>& ThreadLocalPtr<T>::operator =(const ThreadLocalPtr<T>& Other)
+{
+    SetValue(Other.GetValue());
+    return *this;
+}
+
+} // namespace sf

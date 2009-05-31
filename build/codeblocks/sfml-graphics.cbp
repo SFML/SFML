@@ -138,14 +138,14 @@
 		<Unit filename="..\..\src\SFML\Graphics\Font.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\FontLoader.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\FontLoader.hpp" />
+		<Unit filename="..\..\src\SFML\Graphics\GLCheck.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\GLCheck.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\GLEW\glew.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\src\SFML\Graphics\GLEW\glew.h" />
 		<Unit filename="..\..\src\SFML\Graphics\GLEW\glxew.h" />
 		<Unit filename="..\..\src\SFML\Graphics\GLEW\wglew.h" />
-		<Unit filename="..\..\src\SFML\Graphics\GraphicsContext.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\GraphicsContext.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Image.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\ImageLoader.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\ImageLoader.hpp" />

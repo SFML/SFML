@@ -25,39 +25,56 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Context.h>
-#include <SFML/Window/Context.hpp>
-#include <SFML/Internal.h>
+#include <SFML/System/ThreadLocal.hpp>
 
 
-struct sfContext
+#if defined(SFML_SYSTEM_WINDOWS)
+
+    #include <SFML/System/Win32/ThreadLocalImpl.hpp>
+
+#else
+
+    #include <SFML/System/Unix/ThreadLocalImpl.hpp>
+
+#endif
+
+
+namespace sf
 {
-    sf::Context This;
-};
-
-
 ////////////////////////////////////////////////////////////
-/// Construct a new context
+/// Default constructor
 ////////////////////////////////////////////////////////////
-sfContext* sfContext_Create()
+ThreadLocal::ThreadLocal(void* Value)
 {
-    return new sfContext;
+    myImpl = new priv::ThreadLocalImpl;
+    SetValue(Value);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Destroy an existing context
+/// Destructor
 ////////////////////////////////////////////////////////////
-void sfContext_Destroy(sfContext* Context)
+ThreadLocal::~ThreadLocal()
 {
-    delete Context;
+    delete myImpl;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Activate or deactivate a context
+/// Set the thread-specific value of the variable
 ////////////////////////////////////////////////////////////
-void sfContext_SetActive(sfContext* Context, sfBool Active)
+void ThreadLocal::SetValue(void* Value)
 {
-    CSFML_CALL(Context, SetActive(Active == sfTrue))
+    myImpl->SetValue(Value);
 }
+
+
+////////////////////////////////////////////////////////////
+/// Retrieve the thread-specific value of the variable
+////////////////////////////////////////////////////////////
+void* ThreadLocal::GetValue() const
+{
+    return myImpl->GetValue();
+}
+
+} // namespace sf

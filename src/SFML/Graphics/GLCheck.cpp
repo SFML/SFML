@@ -22,84 +22,19 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GRAPHICSCONTEXT_HPP
-#define SFML_GRAPHICSCONTEXT_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/Graphics/GLEW/glew.h>
+#include <SFML/Graphics/GLCheck.hpp>
 #include <iostream>
-#include <string>
 
 
 namespace sf
 {
-class Context;
-
-namespace priv
-{
-////////////////////////////////////////////////////////////
-/// RAII class ensuring a valid shared OpenGL context is bound
-/// to the current thread for all the lifetime of the instance.
-/// It also ensures all third party libraries (like GLEW)
-/// are properly initialized
-/// This class is for internal use only, it is required
-/// to solve tricky problems involving multi-threading
-////////////////////////////////////////////////////////////
-class GraphicsContext : NonCopyable
-{
-public :
-
-    ////////////////////////////////////////////////////////////
-    /// Default constructor, activate the global context
-    /// if no other context is bound to the current thread
-    ///
-    ////////////////////////////////////////////////////////////
-    GraphicsContext();
-
-    ////////////////////////////////////////////////////////////
-    /// Destructor, deactivate the global context
-    /// if no other context was previously bound to the current thread
-    ///
-    ////////////////////////////////////////////////////////////
-    ~GraphicsContext();
-
-private :
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    bool myActivated; ///< Keep track of the activation state of the global context
-};
-
-} // namespace priv
-
-
-////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenGL
-/// API calls
-////////////////////////////////////////////////////////////
-#ifdef SFML_DEBUG
-
-    // In debug mode, perform a test on every OpenGL call
-    #define GLCheck(Func) ((Func), GLCheckError(__FILE__, __LINE__))
-
-#else
-
-    // Else, we don't add any overhead
-    #define GLCheck(Func) (Func)
-
-#endif
-
-
 ////////////////////////////////////////////////////////////
 /// Check the last OpenGL error
-///
 ////////////////////////////////////////////////////////////
-inline void GLCheckError(const std::string& File, unsigned int Line)
+void GLCheckError(const std::string& File, unsigned int Line)
 {
     // Get the last error
     GLenum ErrorCode = glGetError();
@@ -170,7 +105,18 @@ inline void GLCheckError(const std::string& File, unsigned int Line)
     }
 }
 
+
+////////////////////////////////////////////////////////////
+/// Make sure that GLEW is initialized
+////////////////////////////////////////////////////////////
+void EnsureGlewInit()
+{
+    static bool Initialized = false;
+    if (!Initialized)
+    {
+        glewInit();
+        Initialized = true;
+    }
+}
+
 } // namespace sf
-
-
-#endif // SFML_GRAPHICSCONTEXT_HPP

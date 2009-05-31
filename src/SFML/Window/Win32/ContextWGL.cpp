@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/ContextWGL.hpp>
 #include <SFML/Window/WindowImpl.hpp>
-#include <GL/gl.h>
+#include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/wglext.h>
 #include <iostream>
 
@@ -45,7 +45,8 @@ myDC        (NULL),
 myContext   (NULL),
 myOwnsWindow(true)
 {
-    // ------------ TEMP ------------
+    // TODO : try to create a bitmap in memory instead of a dummy window
+
     // Create a dummy window (disabled and hidden)
     myWindow = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, 1, 1, NULL, NULL, GetModuleHandle(NULL), NULL);
     ShowWindow(myWindow, SW_HIDE);
@@ -54,7 +55,10 @@ myOwnsWindow(true)
     // Create the context
     if (myDC)
         CreateContext(Shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
-    // ------------ TEMP ------------
+
+    // Activate the context
+    if (Shared)
+        SetActive(true);
 }
 
 
@@ -74,6 +78,10 @@ myOwnsWindow(false)
     // Create the context
     if (myDC)
         CreateContext(Shared, BitsPerPixel, Settings);
+
+    // Activate the context
+    if (Shared)
+        SetActive(true);
 }
 
 
@@ -304,7 +312,10 @@ void ContextWGL::CreateContext(ContextWGL* Shared, unsigned int BitsPerPixel, co
 
         // Share this context with others
         if (SharedContext)
-            wglShareLists(SharedContext, myContext);
+        {
+            if (!wglShareLists(SharedContext, myContext))
+                std::cerr << "Failed to share the OpenGL context" << std::endl;
+        }
     }
 }
 

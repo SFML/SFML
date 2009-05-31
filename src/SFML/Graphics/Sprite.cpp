@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/GraphicsContext.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 
 
 namespace sf

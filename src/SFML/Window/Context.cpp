@@ -26,125 +26,38 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Context.hpp>
-#include <SFML/OpenGL.hpp>
-#include <SFML/Window/glext/glext.h>
-#include <stdlib.h>
-
-
-#if defined(SFML_SYSTEM_WINDOWS)
-
-    #include <SFML/Window/Win32/ContextWGL.hpp>
-    typedef sf::priv::ContextWGL ContextType;
-
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
-
-    #include <SFML/Window/Linux/ContextGLX.hpp>
-    typedef sf::priv::ContextGLX ContextType;
-
-#elif defined(SFML_SYSTEM_MACOS)
-
-	#include <SFML/Window/Cocoa/ContextAGL.hpp>
-	typedef sf::priv::ContextAGL ContextType;
-
-#endif
+#include <SFML/Window/ContextGL.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Create a new context, not associated to a window
-////////////////////////////////////////////////////////////
-Context* Context::New()
-{
-    ContextType* Shared = static_cast<ContextType*>(&GetDefault());
-    return new ContextType(Shared);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Create a new context attached to a window
-////////////////////////////////////////////////////////////
-Context* Context::New(const priv::WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings)
-{
-    ContextType* Shared = static_cast<ContextType*>(&GetDefault());
-    ContextType* NewContext = new ContextType(Shared, Owner, BitsPerPixel, Settings);
-
-    // Enable antialiasing if needed
-    if (NewContext->GetSettings().AntialiasingLevel > 0)
-        glEnable(GL_MULTISAMPLE_ARB);
-
-    return NewContext;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Check if a context is active on the current thread
-////////////////////////////////////////////////////////////
-bool Context::IsContextActive()
-{
-    return ContextType::IsContextActive();
-}
-
-
-////////////////////////////////////////////////////////////
-/// Return the default context
-////////////////////////////////////////////////////////////
-Context& Context::GetDefault()
-{
-    static ContextType DefaultContext(NULL);
-
-    return DefaultContext;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Destructor
-////////////////////////////////////////////////////////////
-Context::~Context()
-{
-    // Nothing to do
-}
-
-
-////////////////////////////////////////////////////////////
-/// Get the settings of the context
-////////////////////////////////////////////////////////////
-const ContextSettings& Context::GetSettings() const
-{
-    return mySettings;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Activate or deactivate the context as the current target
-/// for rendering
-////////////////////////////////////////////////////////////
-bool Context::SetActive(bool Active)
-{
-    return MakeCurrent(Active);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Default constructor
+/// Default constructor -- creates and activates the context
 ////////////////////////////////////////////////////////////
 Context::Context()
 {
-
+    myContext = priv::ContextGL::New();
+    SetActive(true);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Evaluate a pixel format configuration.
-/// This functions can be used by implementations that have
-/// several valid formats and want to get the best one
+/// Destructor -- deactivates and destroys the context
 ////////////////////////////////////////////////////////////
-int Context::EvaluateFormat(unsigned int BitsPerPixel, const ContextSettings& Settings, int ColorBits, int DepthBits, int StencilBits, int Antialiasing)
+Context::~Context()
 {
-    return abs(static_cast<int>(BitsPerPixel               - ColorBits))   +
-           abs(static_cast<int>(Settings.DepthBits         - DepthBits))   +
-           abs(static_cast<int>(Settings.StencilBits       - StencilBits)) +
-           abs(static_cast<int>(Settings.AntialiasingLevel - Antialiasing));
+    SetActive(false);
+    delete myContext;
 }
+
+
+////////////////////////////////////////////////////////////
+/// Activate or deactivate explicitely the context
+////////////////////////////////////////////////////////////
+void Context::SetActive(bool Active)
+{
+    myContext->SetActive(Active);
+}
+
 
 } // namespace sf

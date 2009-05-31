@@ -29,7 +29,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/GraphicsContext.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 #include FT_GLYPH_H
 #include <iostream>
 #include <map>
@@ -163,9 +163,6 @@ bool FontLoader::LoadFontFromMemory(const char* Data, std::size_t SizeInBytes, u
 ////////////////////////////////////////////////////////////
 FT_Error FontLoader::CreateBitmapFont(FT_Face FontFace, unsigned int CharSize, const Unicode::UTF32String& Charset, Font& LoadedFont)
 {
-    // Make sure we have a valid context
-    priv::GraphicsContext Ctx;
-
     // Let's find how many characters to put in each row to make them fit into a squared texture
     GLint MaxSize;
     GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxSize));

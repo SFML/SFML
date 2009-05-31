@@ -25,31 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/GraphicsContext.hpp>
-#include <SFML/Window/Context.hpp>
-
-
-namespace
-{
-    ////////////////////////////////////////////////////////////
-    // One time initialization of 3rd party libraries.
-    // We use a global function with a static boolean rather
-    // than directly a global boolean, to avoid the randomness
-    // of global variables initializations across compile units.
-    ////////////////////////////////////////////////////////////
-    void InitGraphicsLibs()
-    {
-        static bool InitDone = false;
-        if (!InitDone)
-        {
-            // Initialize GLEW
-            glewInit();
-
-            InitDone = true;
-        }
-    }
-
-}
+#include <SFML/System/Win32/ThreadLocalImpl.hpp>
 
 
 namespace sf
@@ -57,36 +33,38 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor, activate the global context
-/// if no other context is bound to the current thread
+/// Default constructor -- allocate the storage
 ////////////////////////////////////////////////////////////
-GraphicsContext::GraphicsContext()
+ThreadLocalImpl::ThreadLocalImpl()
 {
-    // Activate the global context
-    if (!Context::IsContextActive())
-    {
-        Context::GetDefault().SetActive(true);
-        myActivated = true;
-    }
-    else
-    {
-        myActivated = false;
-    }
-
-    // Make sure third party libraries are initialized
-    InitGraphicsLibs();
+    myIndex = TlsAlloc();
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor, deactivate the global context
-/// if no other context was previously bound to the current thread
+/// Destructor -- free the storage
 ////////////////////////////////////////////////////////////
-GraphicsContext::~GraphicsContext()
+ThreadLocalImpl::~ThreadLocalImpl()
 {
-    // Deactivate the global context
-    if (myActivated)
-        Context::GetDefault().SetActive(false);
+    TlsFree(myIndex);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Set the thread-specific value of the variable
+////////////////////////////////////////////////////////////
+void ThreadLocalImpl::SetValue(void* Value)
+{
+    TlsSetValue(myIndex, Value);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Retrieve the thread-specific value of the variable
+////////////////////////////////////////////////////////////
+void* ThreadLocalImpl::GetValue() const
+{
+    return TlsGetValue(myIndex);
 }
 
 } // namespace priv

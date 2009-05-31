@@ -22,101 +22,81 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONTEXTWGL_HPP
-#define SFML_CONTEXTWGL_HPP
+#ifndef SFML_THREADLOCALPTR_HPP
+#define SFML_THREADLOCALPTR_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/ContextGL.hpp>
-#include <windows.h>
+#include <SFML/System/ThreadLocal.hpp>
 
 
 namespace sf
 {
-namespace priv
-{
 ////////////////////////////////////////////////////////////
-/// Windows (WGL) implementation of OpenGL contexts
+/// Type-safe wrapper for thread local pointer variables
 ////////////////////////////////////////////////////////////
-class ContextWGL : public ContextGL
+template <typename T>
+class ThreadLocalPtr : private ThreadLocal
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Create a new context, not associated to a window
+    /// Default constructor
     ///
-    /// \param Shared : Context to share the new one with (can be NULL)
+    /// \param Value : Optional value to initalize the variable (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
-    ContextWGL(ContextWGL* Shared);
+    ThreadLocalPtr(T* Value = NULL);
 
     ////////////////////////////////////////////////////////////
-    /// Create a new context attached to a window
+    /// Operator * overload to return a reference to the variable
     ///
-    /// \param Shared :       Context to share the new one with (can be NULL)
-    /// \param Owner :        Pointer to the owner window
-    /// \param BitsPerPixel : Pixel depth (in bits per pixel)
-    /// \param Settings :     Creation parameters
+    /// \return Reference to the thread-local value of the variable
     ///
     ////////////////////////////////////////////////////////////
-    ContextWGL(ContextWGL* Shared, const WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings);
+    T& operator *() const;
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// Operator -> overload to return a pointer to the variable
+    ///
+    /// \return Pointer to the thread-local value of the variable
     ///
     ////////////////////////////////////////////////////////////
-    ~ContextWGL();
+    T* operator ->() const;
 
     ////////////////////////////////////////////////////////////
-    /// \see Context::MakeCurrent
+    /// Implicit cast operator to T*
+    ///
+    /// \return Value of the pointer for this thread
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent(bool Active);
+    operator T*() const;
 
     ////////////////////////////////////////////////////////////
-    /// \see Context::Display
+    /// Assignment operator
+    ///
+    /// \param Value : New pointer value to assign for this thread
+    ///
+    /// \return Reference to this
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Display();
+    ThreadLocalPtr<T>& operator =(T* Value);
 
     ////////////////////////////////////////////////////////////
-    /// \see Context::UseVerticalSync
+    /// Assignment operator
+    ///
+    /// \param Other : Other thread-local pointer value to assign
+    ///
+    /// \return Reference to this
     ///
     ////////////////////////////////////////////////////////////
-    virtual void UseVerticalSync(bool Enabled);
-
-    ////////////////////////////////////////////////////////////
-    /// Check if a context is active on the current thread
-    ///
-    /// \return True if there's an active context, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool IsContextActive();
-
-private :
-
-    ////////////////////////////////////////////////////////////
-    /// Create the context
-    ///
-    /// \param Shared :       Context to share the new one with (can be NULL)
-    /// \param BitsPerPixel : Pixel depth, in bits per pixel
-    /// \param Settings :     Creation parameters
-    ///
-    ////////////////////////////////////////////////////////////
-    void CreateContext(ContextWGL* Shared, unsigned int BitsPerPixel, const ContextSettings& Settings);
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    HWND  myWindow;     ///< Window to which the context is attached
-    HDC   myDC;         ///< Device context of the window
-    HGLRC myContext;    ///< OpenGL context
-    bool  myOwnsWindow; ///< Did we create the host window?
+    ThreadLocalPtr<T>& operator =(const ThreadLocalPtr<T>& Other);
 };
-
-} // namespace priv
 
 } // namespace sf
 
-#endif // SFML_CONTEXTWGL_HPP
+#include <SFML/System/ThreadLocalPtr.inl>
+
+
+#endif // SFML_THREADLOCALPTR_HPP

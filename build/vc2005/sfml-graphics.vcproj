@@ -3315,15 +3315,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Graphics\GLCheck.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\GLCheck.hpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\SFML\Graphics\Glyph.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\GraphicsContext.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\GraphicsContext.hpp"
 			>
 		</File>
 		<File

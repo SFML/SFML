@@ -119,6 +119,8 @@
 		<Unit filename="..\..\include\SFML\Window\WindowStyle.hpp" />
 		<Unit filename="..\..\include\SFML\Window\glew\glew.h" />
 		<Unit filename="..\..\src\SFML\Window\Context.cpp" />
+		<Unit filename="..\..\src\SFML\Window\ContextGL.cpp" />
+		<Unit filename="..\..\src\SFML\Window\ContextGL.hpp" />
 		<Unit filename="..\..\src\SFML\Window\Input.cpp" />
 		<Unit filename="..\..\src\SFML\Window\Joystick.hpp" />
 		<Unit filename="..\..\src\SFML\Window\VideoMode.cpp" />

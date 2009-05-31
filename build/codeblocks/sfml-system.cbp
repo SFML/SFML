@@ -99,6 +99,9 @@
 		<Unit filename="..\..\include\SFML\System\ResourcePtr.inl" />
 		<Unit filename="..\..\include\SFML\System\Sleep.hpp" />
 		<Unit filename="..\..\include\SFML\System\Thread.hpp" />
+		<Unit filename="..\..\include\SFML\System\ThreadLocal.hpp" />
+		<Unit filename="..\..\include\SFML\System\ThreadLocalPtr.hpp" />
+		<Unit filename="..\..\include\SFML\System\ThreadLocalPtr.inl" />
 		<Unit filename="..\..\include\SFML\System\Unicode.hpp" />
 		<Unit filename="..\..\include\SFML\System\Unicode.inl" />
 		<Unit filename="..\..\include\SFML\System\Vector2.hpp" />
@@ -112,6 +115,7 @@
 		<Unit filename="..\..\src\SFML\System\Randomizer.cpp" />
 		<Unit filename="..\..\src\SFML\System\Sleep.cpp" />
 		<Unit filename="..\..\src\SFML\System\Thread.cpp" />
+		<Unit filename="..\..\src\SFML\System\ThreadLocal.cpp" />
 		<Unit filename="..\..\src\SFML\System\Unicode.cpp" />
 		<Unit filename="..\..\src\SFML\System\Win32\MutexImpl.cpp" />
 		<Unit filename="..\..\src\SFML\System\Win32\MutexImpl.hpp" />
@@ -119,6 +123,8 @@
 		<Unit filename="..\..\src\SFML\System\Win32\Platform.hpp" />
 		<Unit filename="..\..\src\SFML\System\Win32\ThreadImpl.cpp" />
 		<Unit filename="..\..\src\SFML\System\Win32\ThreadImpl.hpp" />
+		<Unit filename="..\..\src\SFML\System\Win32\ThreadLocalImpl.cpp" />
+		<Unit filename="..\..\src\SFML\System\Win32\ThreadLocalImpl.hpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

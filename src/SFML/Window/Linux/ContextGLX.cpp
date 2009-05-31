@@ -27,9 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Linux/ContextGLX.hpp>
 #include <SFML/Window/WindowImpl.hpp>
-#include <GL/gl.h>
+#include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/glxext.h>
-#include <SFML/Window/glext/glext.h>
 #include <iostream>
 
 
@@ -59,6 +58,10 @@ myOwnsWindow(true)
 
     // Create the context
     CreateContext(Shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
+
+    // Activate the context
+    if (Shared)
+        SetActive(true);
 }
 
 
@@ -76,6 +79,10 @@ myOwnsWindow(false)
     // Create the context
     if (myWindow)
         CreateContext(Shared, BitsPerPixel, Settings);
+
+    // Activate the context
+    if (Shared)
+        SetActive(true);
 }
 
 

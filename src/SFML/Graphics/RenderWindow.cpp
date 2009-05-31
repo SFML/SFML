@@ -28,7 +28,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/GraphicsContext.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 #include <iostream>
 
 
@@ -113,9 +113,6 @@ Image RenderWindow::Capture() const
     // Set our window as the current target for rendering
     if (SetActive())
     {
-        // Make sure we have a valid context
-        priv::GraphicsContext Ctx;
-
         // Get pixels from the backbuffer
         std::vector<Uint8> Pixels(Width * Height * 4);
         Uint8* PixelsPtr = &Pixels[0];

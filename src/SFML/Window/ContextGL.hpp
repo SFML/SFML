@@ -22,101 +22,135 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONTEXTWGL_HPP
-#define SFML_CONTEXTWGL_HPP
+#ifndef SFML_CONTEXTGL_HPP
+#define SFML_CONTEXTGL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/ContextGL.hpp>
-#include <windows.h>
+#include <SFML/Config.hpp>
+#include <SFML/Window/ContextSettings.hpp>
+#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
 {
 namespace priv
 {
+class WindowImpl;
+
 ////////////////////////////////////////////////////////////
-/// Windows (WGL) implementation of OpenGL contexts
+/// Abstract class representing an OpenGL context
 ////////////////////////////////////////////////////////////
-class ContextWGL : public ContextGL
+class ContextGL : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
     /// Create a new context, not associated to a window
     ///
-    /// \param Shared : Context to share the new one with (can be NULL)
+    /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    ContextWGL(ContextWGL* Shared);
+    static ContextGL* New();
 
     ////////////////////////////////////////////////////////////
     /// Create a new context attached to a window
     ///
-    /// \param Shared :       Context to share the new one with (can be NULL)
     /// \param Owner :        Pointer to the owner window
     /// \param BitsPerPixel : Pixel depth (in bits per pixel)
     /// \param Settings :     Creation parameters
     ///
+    /// \return Pointer to the created context
+    ///
     ////////////////////////////////////////////////////////////
-    ContextWGL(ContextWGL* Shared, const WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings);
+    static ContextGL* New(const WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings);
+
+public :
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~ContextWGL();
+    virtual ~ContextGL();
 
     ////////////////////////////////////////////////////////////
-    /// \see Context::MakeCurrent
+    /// Get the settings of the context
+    ///
+    /// \return Structure containing the settings
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent(bool Active);
+    const ContextSettings& GetSettings() const;
 
     ////////////////////////////////////////////////////////////
-    /// \see Context::Display
+    /// Activate or deactivate the context as the current target
+    /// for rendering
+    ///
+    /// \param Active : True to activate, false to deactivate
+    ///
+    /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Display();
+    bool SetActive(bool Active);
 
     ////////////////////////////////////////////////////////////
-    /// \see Context::UseVerticalSync
+    /// Display the contents of the context
     ///
     ////////////////////////////////////////////////////////////
-    virtual void UseVerticalSync(bool Enabled);
+    virtual void Display() = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Check if a context is active on the current thread
+    /// Enable / disable vertical synchronization
     ///
-    /// \return True if there's an active context, false otherwise
+    /// \param Enabled : True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsContextActive();
+    virtual void UseVerticalSync(bool Enabled) = 0;
 
-private :
+protected :
 
     ////////////////////////////////////////////////////////////
-    /// Create the context
-    ///
-    /// \param Shared :       Context to share the new one with (can be NULL)
-    /// \param BitsPerPixel : Pixel depth, in bits per pixel
-    /// \param Settings :     Creation parameters
+    /// Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    void CreateContext(ContextWGL* Shared, unsigned int BitsPerPixel, const ContextSettings& Settings);
+    ContextGL();
+
+    ////////////////////////////////////////////////////////////
+    /// Make this context the current one
+    ///
+    /// \param Active : True to activate, false to deactivate
+    ///
+    /// \return True on success, false if any error happened
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool MakeCurrent(bool Active) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// Evaluate a pixel format configuration.
+    /// This functions can be used by implementations that have
+    /// several valid formats and want to get the best one
+    ///
+    /// \param BitsPerPixel : Requested pixel depth (bits per pixel)
+    /// \param Settings :     Requested additionnal settings
+    /// \param ColorBits :    Color bits of the configuration to evaluate
+    /// \param DepthBits :    Depth bits of the configuration to evaluate
+    /// \param StencilBits :  Stencil bits of the configuration to evaluate
+    /// \param Antialiasing : Antialiasing level of the configuration to evaluate
+    ///
+    /// \return Score of the configuration : the lower the better
+    ///
+    ////////////////////////////////////////////////////////////
+    static int EvaluateFormat(unsigned int BitsPerPixel, const ContextSettings& Settings, int ColorBits, int DepthBits, int StencilBits, int Antialiasing);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HWND  myWindow;     ///< Window to which the context is attached
-    HDC   myDC;         ///< Device context of the window
-    HGLRC myContext;    ///< OpenGL context
-    bool  myOwnsWindow; ///< Did we create the host window?
+    ContextSettings mySettings; ///< Creation settings of the context
 };
 
 } // namespace priv
 
 } // namespace sf
 
-#endif // SFML_CONTEXTWGL_HPP
+
+#endif // SFML_CONTEXTGL_HPP

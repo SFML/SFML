@@ -25,39 +25,48 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Context.h>
-#include <SFML/Window/Context.hpp>
-#include <SFML/Internal.h>
+#include <SFML/System/Win32/ThreadLocalImpl.hpp>
 
 
-struct sfContext
+namespace sf
 {
-    sf::Context This;
-};
-
-
-////////////////////////////////////////////////////////////
-/// Construct a new context
-////////////////////////////////////////////////////////////
-sfContext* sfContext_Create()
+namespace priv
 {
-    return new sfContext;
+////////////////////////////////////////////////////////////
+/// Default constructor -- allocate the storage
+////////////////////////////////////////////////////////////
+ThreadLocalImpl::ThreadLocalImpl()
+{
+    pthread_key_create(&myKey, NULL);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Destroy an existing context
+/// Destructor -- free the storage
 ////////////////////////////////////////////////////////////
-void sfContext_Destroy(sfContext* Context)
+ThreadLocalImpl::~ThreadLocalImpl()
 {
-    delete Context;
+    pthread_key_delete(myKey);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Activate or deactivate a context
+/// Set the thread-specific value of the variable
 ////////////////////////////////////////////////////////////
-void sfContext_SetActive(sfContext* Context, sfBool Active)
+void ThreadLocalImpl::SetValue(void* Value)
 {
-    CSFML_CALL(Context, SetActive(Active == sfTrue))
+    pthread_setspecific(myKey, Value);
 }
+
+
+////////////////////////////////////////////////////////////
+/// Retrieve the thread-specific value of the variable
+////////////////////////////////////////////////////////////
+void* ThreadLocalImpl::GetValue() const
+{
+    return pthread_getspecific(myKey);
+}
+
+} // namespace priv
+
+} // namespace sf

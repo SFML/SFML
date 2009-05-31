@@ -28,7 +28,7 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/ImageLoader.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/GraphicsContext.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 #include <algorithm>
 #include <iostream>
 #include <vector>
@@ -495,9 +495,6 @@ void Image::SetSmooth(bool Smooth)
 
         if (myTexture)
         {
-            // Make sure we have a valid context
-            priv::GraphicsContext Ctx;
-
             GLint PreviousTexture;
             GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &PreviousTexture));
 
@@ -569,8 +566,8 @@ FloatRect Image::GetTexCoords(const IntRect& Rect, bool Adjust) const
 ////////////////////////////////////////////////////////////
 unsigned int Image::GetValidTextureSize(unsigned int Size)
 {
-    // Make sure we have a valid context
-    priv::GraphicsContext Ctx;
+    // Make sure that GLEW is initialized
+    EnsureGlewInit();
 
     if (glewIsSupported("GL_ARB_texture_non_power_of_two") != 0)
     {
@@ -618,9 +615,6 @@ bool Image::CreateTexture()
     // Check if texture parameters are valid before creating it
     if (!myWidth || !myHeight)
         return false;
-
-    // Make sure we have a valid context
-    priv::GraphicsContext Ctx;
 
     // Adjust internal texture dimensions depending on NPOT textures support
     unsigned int TextureWidth  = GetValidTextureSize(myWidth);
@@ -772,9 +766,6 @@ void Image::DestroyTexture()
     // Destroy the internal texture
     if (myTexture)
     {
-        // Make sure we have a valid context
-        priv::GraphicsContext Ctx;
-
         GLuint Texture = static_cast<GLuint>(myTexture);
         GLCheck(glDeleteTextures(1, &Texture));
         myTexture           = 0;

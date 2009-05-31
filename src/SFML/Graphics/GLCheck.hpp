@@ -22,42 +22,52 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_GLCHECK_HPP
+#define SFML_GLCHECK_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Context.h>
-#include <SFML/Window/Context.hpp>
-#include <SFML/Internal.h>
+#include <SFML/Config.hpp>
+#include <SFML/Graphics/GLEW/glew.h>
+#include <string>
 
 
-struct sfContext
+namespace sf
 {
-    sf::Context This;
-};
+////////////////////////////////////////////////////////////
+/// Let's define a macro to quickly check every OpenGL
+/// API calls
+////////////////////////////////////////////////////////////
+#ifdef SFML_DEBUG
+
+    // In debug mode, perform a test on every OpenGL call
+    #define GLCheck(Func) ((Func), GLCheckError(__FILE__, __LINE__))
+
+#else
+
+    // Else, we don't add any overhead
+    #define GLCheck(Func) (Func)
+
+#endif
 
 
 ////////////////////////////////////////////////////////////
-/// Construct a new context
+/// Check the last OpenGL error
+///
+/// \param File Source file where the call is located
+/// \param Line Line number of the source file where the call is located
+///
 ////////////////////////////////////////////////////////////
-sfContext* sfContext_Create()
-{
-    return new sfContext;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Destroy an existing context
-////////////////////////////////////////////////////////////
-void sfContext_Destroy(sfContext* Context)
-{
-    delete Context;
-}
-
+void GLCheckError(const std::string& File, unsigned int Line);
 
 ////////////////////////////////////////////////////////////
-/// Activate or deactivate a context
+/// Make sure that GLEW is initialized
+///
 ////////////////////////////////////////////////////////////
-void sfContext_SetActive(sfContext* Context, sfBool Active)
-{
-    CSFML_CALL(Context, SetActive(Active == sfTrue))
-}
+void EnsureGlewInit();
+
+} // namespace sf
+
+
+#endif // SFML_GLCHECK_HPP

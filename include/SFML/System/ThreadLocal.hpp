@@ -22,87 +22,74 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONTEXT_HPP
-#define SFML_CONTEXT_HPP
+#ifndef SFML_THREADLOCAL_HPP
+#define SFML_THREADLOCAL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <cstdlib>
 
 
 namespace sf
 {
 namespace priv
 {
-    class ContextGL;
+    class ThreadLocalImpl;
 }
 
 ////////////////////////////////////////////////////////////
-/// Class holding a valid drawing context
-///
-/// If you need to make OpenGL / graphics calls without
-/// having an active window (like in a thread), you can use
-/// an instance of this class to get a valid context.
-///
-/// Having a valid context is necessary for *every* OpenGL call,
-/// and for most of the classes from the Graphics package.
-///
-/// Note that a context is only active in its current thread,
-/// if you create a new thread it will have no valid context
-/// by default.
-///
-/// \code
-/// void ThreadedFunc(void*)
-/// {
-///    sf::Context Ctx;
-///    // from now on, you have a valid context
-///
-///    // you can make OpenGL calls
-///    glClear(GL_DEPTH_BUFFER_BIT);
-///
-///    // as well as using objects from the graphics package
-///    sf::Image Img;
-///    Img.LoadFromFile("image.png");
-/// }
-/// // the context is automatically deactivated and destroyed
-/// // by the sf::Context destructor
-/// \endcode
+/// Wrapper to handle variables that are local to threads.
+/// This means that the same ThreadLocalStorage variable will
+/// hold a different value for each different thread.
+/// For a more strongly-typed interface, use the ThreadLocal
+/// template class.
 ////////////////////////////////////////////////////////////
-class SFML_API Context : NonCopyable
+class SFML_API ThreadLocal : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor -- creates and activates the context
+    /// Default constructor
+    ///
+    /// \param Value : Optional value to initalize the variable (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
-    Context();
+    ThreadLocal(void* Value = NULL);
 
     ////////////////////////////////////////////////////////////
-    /// Destructor -- deactivates and destroys the context
+    /// Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~Context();
+    ~ThreadLocal();
 
     ////////////////////////////////////////////////////////////
-    /// Activate or deactivate explicitely the context
+    /// Set the thread-specific value of the variable
     ///
-    /// \param Active True to activate, false to deactivate
+    /// \param Value : Value of the variable for this thread
     ///
     ////////////////////////////////////////////////////////////
-    void SetActive(bool Active);
+    void SetValue(void* Value);
+
+    ////////////////////////////////////////////////////////////
+    /// Retrieve the thread-specific value of the variable
+    ///
+    /// \return Value of the variable for this thread
+    ///
+    ////////////////////////////////////////////////////////////
+    void* GetValue() const;
 
 private :
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::ContextGL* myContext; ///< Internal OpenGL context
+    priv::ThreadLocalImpl* myImpl; ///< Pointer to the OS specific implementation
 };
 
 } // namespace sf
 
 
-#endif // SFML_CONTEXT_HPP
+#endif // SFML_THREADLOCAL_HPP

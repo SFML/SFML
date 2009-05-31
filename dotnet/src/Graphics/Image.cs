@@ -70,7 +70,7 @@ namespace SFML
             {
                 if (This == IntPtr.Zero)
                     throw new LoadingFailedException("image", filename);
-           }
+            }
 
             ////////////////////////////////////////////////////////////
             /// <summary>

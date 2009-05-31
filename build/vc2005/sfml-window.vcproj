@@ -457,6 +457,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Window\ContextGL.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Window\ContextGL.hpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\SFML\Window\ContextSettings.hpp"
 			>
 		</File>

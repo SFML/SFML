@@ -358,6 +358,14 @@
 				RelativePath="..\..\src\SFML\System\Win32\ThreadImpl.hpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\SFML\System\Win32\ThreadLocalImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\System\Win32\ThreadLocalImpl.hpp"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\src\SFML\System\Clock.cpp"
@@ -425,6 +433,22 @@
 		</File>
 		<File
 			RelativePath="..\..\src\SFML\System\Thread.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\System\ThreadLocal.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\System\ThreadLocal.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\System\ThreadLocalPtr.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\System\ThreadLocalPtr.inl"
 			>
 		</File>
 		<File

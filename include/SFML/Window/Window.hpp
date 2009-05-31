@@ -46,9 +46,8 @@ namespace sf
 namespace priv
 {
     class WindowImpl;
+    class ContextGL;
 }
-
-class Context;
 
 ////////////////////////////////////////////////////////////
 /// Window is a rendering window ; it can create a new window
@@ -309,7 +308,7 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     priv::WindowImpl* myWindow;         ///< Platform-specific implementation of the window
-    Context*          myContext;        ///< Platform-specific implementation of the OpenGL context
+    priv::ContextGL*  myContext;        ///< Platform-specific implementation of the OpenGL context
     std::queue<Event> myEvents;         ///< Queue of received events
     Input             myInput;          ///< Input manager connected to window
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
