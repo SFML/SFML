@@ -24,6 +24,7 @@
 
 #include "Font.hpp"
 #include "Glyph.hpp"
+#include "Image.hpp"
 
 #include "compat.hpp"
 
@@ -180,6 +181,15 @@ PySfFont_GetGlyph(PySfFont* self, PyObject *args)
 	return (PyObject *)Glyph;
 }
 
+static PyObject *
+PySfFont_GetImage(PySfFont* self)
+{
+	PySfImage *Image;
+	Image = GetNewPySfImage();
+	Image->obj = new sf::Image(self->obj->GetImage());
+	return (PyObject *)Image;
+}
+
 static PyMethodDef PySfFont_methods[] = {
 	{"LoadFromFile", (PyCFunction)PySfFont_LoadFromFile, METH_VARARGS | METH_KEYWORDS, "LoadFromFile(Filename, CharSize, UnicodeCharset) or LoadFromFile(Filename, CharSize, Charset, Encoding='utf8')\n\
 Load the font from a file. Returns True if loading was successful.\n\
@@ -193,6 +203,8 @@ Load the font from a file in memory. Returns True if loading was successful.\n\
 	Charset : Characters set to generate (by default, contains the ISO-8859-1 printable characters)"},
 	{"GetDefaultFont", (PyCFunction)PySfFont_GetDefaultFont, METH_NOARGS | METH_STATIC, "GetDefaultFont()\n\
 Get the SFML default built-in font (Arial)."},
+	{"GetImage", (PyCFunction)PySfFont_GetImage, METH_NOARGS, "GetImage()\n\
+Get the image containing the rendered characters (glyphs)."},
 	{"GetCharacterSize", (PyCFunction)PySfFont_GetCharacterSize, METH_NOARGS, "GetCharacterSize()\n\
 Get the base size of characters in the font; All glyphs dimensions are based on this value"},
 	{"GetGlyph", (PyCFunction)PySfFont_GetGlyph, METH_O, "GetGlyph(CodePoint)\n\

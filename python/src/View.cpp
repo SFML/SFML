@@ -86,6 +86,19 @@ PySfView_GetRect(PySfView* self)
 }
 
 static PyObject *
+PySfView_SetFromRect(PySfView* self, PyObject *args)
+{
+	PySfFloatRect *Rect = (PySfFloatRect *)args;
+	if (!PyObject_TypeCheck(Rect, &PySfFloatRectType))
+	{
+		PyErr_SetString(PyExc_TypeError, "View.SetFromRect() Argument is not a sf.FloatRect instance");
+		return NULL;
+	}
+	self->obj->SetFromRect(*(Rect->obj));
+	Py_RETURN_NONE;
+}
+
+static PyObject *
 PySfView_Move(PySfView* self, PyObject *args)
 {
 	float x, y;
@@ -129,6 +142,7 @@ static PyMethodDef PySfView_methods[] = {
 	{"Move", (PyCFunction)PySfView_Move, METH_VARARGS, "Move(OffsetX, OffsetY)\nMove the view.\n\
 	OffsetX 	: Offset to move the view, on X axis\n\
 	OffsetY 	: Offset to move the view, on Y axis"},
+	{"SetFromRect", (PyCFunction)PySfView_SetFromRect, METH_O, "SetFromRect(ViewRect)\nRebuild the view from a rectangle.\n	ViewRect : Rectangle defining the position and size of the view."},
 	{"SetCenter", (PyCFunction)PySfView_SetCenter, METH_VARARGS, "SetCenter(X, Y)\nChange the center of the view."},
 	{"SetHalfSize", (PyCFunction)PySfView_SetHalfSize, METH_VARARGS, "SetHalfSize(HalfWidth, HalfHeight)\nChange the half-size of the view."},
 	{"Zoom", (PyCFunction)PySfView_Zoom, METH_O, "Zoom(Factor)\nResize the view rectangle to simulate a zoom / unzoom effect."},
