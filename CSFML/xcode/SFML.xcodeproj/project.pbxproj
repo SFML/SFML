@@ -62,7 +62,6 @@
 		A01BF0020F6BF5CF0095262C /* Listener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A011E4620F65783900FAE48D /* Listener.cpp */; };
 		A01BF0030F6BF5CF0095262C /* Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A011E3F90F65778600FAE48D /* Music.cpp */; };
 		A01BF0040F6BF5D00095262C /* Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A011E4640F65783900FAE48D /* Music.cpp */; };
-		A01BF0050F6BF5D30095262C /* sndfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF360F6BF2490095262C /* sndfile.framework */; };
 		A01BF0060F6BF5D40095262C /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A011E4660F65783900FAE48D /* Sound.cpp */; };
 		A01BF0070F6BF5D40095262C /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A011E3FA0F65778600FAE48D /* Sound.cpp */; };
 		A01BF0080F6BF5D50095262C /* SoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A011E3FB0F65778600FAE48D /* SoundBuffer.cpp */; };
@@ -193,10 +192,10 @@
 		A01BF0900F6BF6860095262C /* Sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A011E5510F65786600FAE48D /* Sprite.cpp */; };
 		A01BF0910F6BF6870095262C /* PostFX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A011E4110F6577A500FAE48D /* PostFX.cpp */; };
 		A01BF0920F6BF6870095262C /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A011E4120F6577A500FAE48D /* Rect.cpp */; };
-		A01BF0B50F6BF7DC0095262C /* csfml-system-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF7F0F6BF42D0095262C /* csfml-system-d.framework */; };
-		A01BF0BE0F6BF8070095262C /* csfml-system-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF7F0F6BF42D0095262C /* csfml-system-d.framework */; };
-		A01BF0C70F6BF8370095262C /* csfml-window-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF9D0F6BF4490095262C /* csfml-window-d.framework */; };
-		A01BF0CA0F6BF8460095262C /* csfml-system-d.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF7F0F6BF42D0095262C /* csfml-system-d.framework */; };
+		A01BF0B50F6BF7DC0095262C /* csfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF7F0F6BF42D0095262C /* csfml-system.framework */; };
+		A01BF0BE0F6BF8070095262C /* csfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF7F0F6BF42D0095262C /* csfml-system.framework */; };
+		A01BF0C70F6BF8370095262C /* csfml-window.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF9D0F6BF4490095262C /* csfml-window.framework */; };
+		A01BF0CA0F6BF8460095262C /* csfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF7F0F6BF42D0095262C /* csfml-system.framework */; };
 		A0DE009A0FCB1EC500DA0132 /* dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = A0DE00990FCB1EC500DA0132 /* dummy.c */; };
 /* End PBXBuildFile section */
 
@@ -467,16 +466,15 @@
 		A011E5660F65786600FAE48D /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
 		A011E5670F65786600FAE48D /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
 		A011E5680F65786600FAE48D /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
-		A01BEF360F6BF2490095262C /* sndfile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sndfile.framework; path = "../../extlibs/libs-xcode/sndfile.framework"; sourceTree = SOURCE_ROOT; };
-		A01BEF7F0F6BF42D0095262C /* csfml-system-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-system-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01BEF7F0F6BF42D0095262C /* csfml-system.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-system.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A01BEF800F6BF42D0095262C /* csfml-system-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "csfml-system-Info.plist"; sourceTree = "<group>"; };
-		A01BEF890F6BF4360095262C /* csfml-network-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-network-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01BEF890F6BF4360095262C /* csfml-network.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-network.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A01BEF8A0F6BF4360095262C /* csfml-network-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "csfml-network-Info.plist"; sourceTree = "<group>"; };
-		A01BEF930F6BF4400095262C /* csfml-audio-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-audio-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01BEF930F6BF4400095262C /* csfml-audio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-audio.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A01BEF940F6BF4400095262C /* csfml-audio-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "csfml-audio-Info.plist"; sourceTree = "<group>"; };
-		A01BEF9D0F6BF4490095262C /* csfml-window-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-window-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01BEF9D0F6BF4490095262C /* csfml-window.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-window.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A01BEF9E0F6BF4490095262C /* csfml-window-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "csfml-window-Info.plist"; sourceTree = "<group>"; };
-		A01BEFA70F6BF4510095262C /* csfml-graphics-d.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-graphics-d.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01BEFA70F6BF4510095262C /* csfml-graphics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "csfml-graphics.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A01BEFA80F6BF4510095262C /* csfml-graphics-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "csfml-graphics-Info.plist"; sourceTree = "<group>"; };
 		A0DE008E0FCB1D8D00DA0132 /* SFML.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SFML.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0DE00990FCB1EC500DA0132 /* dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dummy.c; sourceTree = "<group>"; };
@@ -551,8 +549,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A01BF0050F6BF5D30095262C /* sndfile.framework in Frameworks */,
-				A01BF0B50F6BF7DC0095262C /* csfml-system-d.framework in Frameworks */,
+				A01BF0B50F6BF7DC0095262C /* csfml-system.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,7 +557,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A01BF0BE0F6BF8070095262C /* csfml-system-d.framework in Frameworks */,
+				A01BF0BE0F6BF8070095262C /* csfml-system.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -568,8 +565,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A01BF0C70F6BF8370095262C /* csfml-window-d.framework in Frameworks */,
-				A01BF0CA0F6BF8460095262C /* csfml-system-d.framework in Frameworks */,
+				A01BF0C70F6BF8370095262C /* csfml-window.framework in Frameworks */,
+				A01BF0CA0F6BF8460095262C /* csfml-system.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,11 +596,11 @@
 		A011E3730F65749300FAE48D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A01BEF7F0F6BF42D0095262C /* csfml-system-d.framework */,
-				A01BEF890F6BF4360095262C /* csfml-network-d.framework */,
-				A01BEF930F6BF4400095262C /* csfml-audio-d.framework */,
-				A01BEF9D0F6BF4490095262C /* csfml-window-d.framework */,
-				A01BEFA70F6BF4510095262C /* csfml-graphics-d.framework */,
+				A01BEF7F0F6BF42D0095262C /* csfml-system.framework */,
+				A01BEF890F6BF4360095262C /* csfml-network.framework */,
+				A01BEF930F6BF4400095262C /* csfml-audio.framework */,
+				A01BEF9D0F6BF4490095262C /* csfml-window.framework */,
+				A01BEFA70F6BF4510095262C /* csfml-graphics.framework */,
 				A0DE008E0FCB1D8D00DA0132 /* SFML.framework */,
 			);
 			name = Products;
@@ -655,7 +652,6 @@
 			isa = PBXGroup;
 			children = (
 				A01BEF940F6BF4400095262C /* csfml-audio-Info.plist */,
-				A01BEF360F6BF2490095262C /* sndfile.framework */,
 				A011E45E0F65783900FAE48D /* Audio */,
 				A011E3F80F65778600FAE48D /* Listener.cpp */,
 				A011E3F90F65778600FAE48D /* Music.cpp */,
@@ -1170,7 +1166,7 @@
 			);
 			name = "csfml-system";
 			productName = "csfml-system";
-			productReference = A01BEF7F0F6BF42D0095262C /* csfml-system-d.framework */;
+			productReference = A01BEF7F0F6BF42D0095262C /* csfml-system.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A01BEF880F6BF4360095262C /* csfml-network */ = {
@@ -1188,7 +1184,7 @@
 			);
 			name = "csfml-network";
 			productName = "csfml-network";
-			productReference = A01BEF890F6BF4360095262C /* csfml-network-d.framework */;
+			productReference = A01BEF890F6BF4360095262C /* csfml-network.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A01BEF920F6BF4400095262C /* csfml-audio */ = {
@@ -1206,7 +1202,7 @@
 			);
 			name = "csfml-audio";
 			productName = "csfml-audio";
-			productReference = A01BEF930F6BF4400095262C /* csfml-audio-d.framework */;
+			productReference = A01BEF930F6BF4400095262C /* csfml-audio.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A01BEF9C0F6BF4490095262C /* csfml-window */ = {
@@ -1224,7 +1220,7 @@
 			);
 			name = "csfml-window";
 			productName = "csfml-window";
-			productReference = A01BEF9D0F6BF4490095262C /* csfml-window-d.framework */;
+			productReference = A01BEF9D0F6BF4490095262C /* csfml-window.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A01BEFA60F6BF4510095262C /* csfml-graphics */ = {
@@ -1242,7 +1238,7 @@
 			);
 			name = "csfml-graphics";
 			productName = "csfml-graphics";
-			productReference = A01BEFA70F6BF4510095262C /* csfml-graphics-d.framework */;
+			productReference = A01BEFA70F6BF4510095262C /* csfml-graphics.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A0DE008D0FCB1D8D00DA0132 /* SFML */ = {
@@ -1598,10 +1594,16 @@
 		A011E3580F65738800FAE48D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../lib";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/../../lib",
+					"$(SRCROOT)/../lib",
+					"$(SRCROOT)/../../extlibs/bin",
+				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = CSFML_EXPORTS;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1623,21 +1625,33 @@
 					"$(SRCROOT)/../include",
 					"$(SRCROOT)/../../include",
 					"$(SRCROOT)/../../src",
+					"$(SRCROOT)/../../extlibs/headers",
 				);
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/../../lib",
+					"$(SRCROOT)/../lib",
+					"$(SRCROOT)/../../extlibs/libs-xcode",
+				);
 				OBJROOT = "$(SRCROOT)/build";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SYMROOT = "$(SRCROOT)/../../lib";
+				SYMROOT = "$(SRCROOT)/../lib";
 			};
 			name = Debug;
 		};
 		A011E3590F65738800FAE48D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../lib";
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/../../lib",
+					"$(SRCROOT)/../lib",
+					"$(SRCROOT)/../../extlibs/bin",
+				);
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = CSFML_EXPORTS;
 				HEADER_SEARCH_PATHS = (
@@ -1645,11 +1659,17 @@
 					"$(SRCROOT)/../include",
 					"$(SRCROOT)/../../include",
 					"$(SRCROOT)/../../src",
+					"$(SRCROOT)/../../extlibs/headers",
 				);
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/../../lib",
+					"$(SRCROOT)/../lib",
+					"$(SRCROOT)/../../extlibs/libs-xcode",
+				);
 				OBJROOT = "$(SRCROOT)/build";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SYMROOT = "$(SRCROOT)/../../lib";
+				SYMROOT = "$(SRCROOT)/../lib";
 			};
 			name = Release;
 		};
@@ -1677,7 +1697,6 @@
 		A01BEF810F6BF42D0095262C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1699,7 +1718,6 @@
 		A01BEF820F6BF42D0095262C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1721,15 +1739,9 @@
 		A01BEF8B0F6BF4370095262C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1744,16 +1756,10 @@
 		A01BEF8C0F6BF4370095262C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
@@ -1767,31 +1773,20 @@
 		A01BEF950F6BF4410095262C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../src",
-					"$(SRCROOT)/../include",
-					"$(SRCROOT)/../../include",
-					"$(SRCROOT)/../../src",
-					"$(SRCROOT)/../../extlibs/headers",
-				);
 				INFOPLIST_FILE = "csfml-audio-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
+					"-framework",
+					sndfile,
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "csfml-audio-d";
@@ -1801,30 +1796,19 @@
 		A01BEF960F6BF4410095262C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../src",
-					"$(SRCROOT)/../include",
-					"$(SRCROOT)/../../include",
-					"$(SRCROOT)/../../src",
-					"$(SRCROOT)/../../extlibs/headers",
-				);
 				INFOPLIST_FILE = "csfml-audio-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
+					"-framework",
+					sndfile,
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "csfml-audio";
@@ -1835,7 +1819,6 @@
 		A01BEF9F0F6BF4490095262C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1857,7 +1840,6 @@
 		A01BEFA00F6BF4490095262C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1879,7 +1861,6 @@
 		A01BEFA90F6BF4520095262C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1888,13 +1869,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../src",
-					"$(SRCROOT)/../include",
-					"$(SRCROOT)/../../include",
-					"$(SRCROOT)/../../src",
-					"$(SRCROOT)/../../extlibs/headers",
-				);
 				INFOPLIST_FILE = "csfml-graphics-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1909,7 +1883,6 @@
 		A01BEFAA0F6BF4520095262C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1917,13 +1890,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../src",
-					"$(SRCROOT)/../include",
-					"$(SRCROOT)/../../include",
-					"$(SRCROOT)/../../src",
-					"$(SRCROOT)/../../extlibs/headers",
-				);
 				INFOPLIST_FILE = "csfml-graphics-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
