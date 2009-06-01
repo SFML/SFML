@@ -15,15 +15,15 @@
 ////////////////////////////////////////////////////////////
 int main()
 {
+    // Create main window
+    sf::RenderWindow App(sf::VideoMode(800, 600), "SFML OpenGL");
+    App.PreserveOpenGLStates(true);
+
     // Create a sprite for the background
     sf::Image BackgroundImage;
     if (!BackgroundImage.LoadFromFile("datas/opengl/background.jpg"))
         return EXIT_FAILURE;
     sf::Sprite Background(BackgroundImage);
-
-    // Create main window
-    sf::RenderWindow App(sf::VideoMode(800, 600), "SFML OpenGL");
-    App.PreserveOpenGLStates(true);
 
     // Load an OpenGL texture.
     // We could directly use a sf::Image as an OpenGL texture (with its Bind() member function),

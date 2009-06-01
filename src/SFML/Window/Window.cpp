@@ -140,16 +140,21 @@ void Window::Create(VideoMode Mode, const std::string& Title, unsigned long Wind
     delete myWindow;
     myWindow = priv::WindowImpl::New(Mode, Title, WindowStyle);
 
-    // Make sure another context is bound, so that:
-    // - the context creation can request OpenGL extensions if necessary
-    // - myContext can safely be destroyed (it's no longer bound)
-    Context Ctx;
+    {
+        // Make sure another context is bound, so that:
+        // - the context creation can request OpenGL extensions if necessary
+        // - myContext can safely be destroyed (it's no longer bound)
+        Context Ctx;
 
-    // Recreate the context
-    delete myContext;
-    myContext = priv::ContextGL::New(myWindow, Mode.BitsPerPixel, Settings);
+        // Recreate the context
+        delete myContext;
+        myContext = priv::ContextGL::New(myWindow, Mode.BitsPerPixel, Settings);
 
-    Initialize();
+        Initialize();
+    }
+
+    // Activate the window's context
+    SetActive();
 }
 
 
@@ -162,16 +167,21 @@ void Window::Create(WindowHandle Handle, const ContextSettings& Settings)
     Close();
     myWindow = priv::WindowImpl::New(Handle);
 
-    // Make sure another context is bound, so that:
-    // - the context creation can request OpenGL extensions if necessary
-    // - myContext can safely be destroyed (it's no longer bound)
-    Context Ctx;
+    {
+        // Make sure another context is bound, so that:
+        // - the context creation can request OpenGL extensions if necessary
+        // - myContext can safely be destroyed (it's no longer bound)
+        Context Ctx;
 
-    // Recreate the context
-    delete myContext;
-    myContext = priv::ContextGL::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, Settings);
+        // Recreate the context
+        delete myContext;
+        myContext = priv::ContextGL::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, Settings);
 
-    Initialize();
+        Initialize();
+    }
+
+    // Activate the window's context
+    SetActive();
 }
 
 

@@ -55,7 +55,7 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    // This thread-local variable will hold the "gloabl" context for each thread
+    // This thread-local variable will hold the "global" context for each thread
     sf::ThreadLocalPtr<sf::priv::ContextGL> ThreadContext(NULL);
 
     // Now we create two global contexts.
