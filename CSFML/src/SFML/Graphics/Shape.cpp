@@ -161,12 +161,12 @@ void sfShape_SetRotation(sfShape* Shape, float Rotation)
 
 
 ////////////////////////////////////////////////////////////
-/// Set the center of a shape, in coordinates
+/// Set the local origin of a shape, in coordinates
 /// relative to its left-top corner
 ////////////////////////////////////////////////////////////
-void sfShape_SetCenter(sfShape* Shape, float X, float Y)
+void sfShape_SetOrigin(sfShape* Shape, float X, float Y)
 {
-    CSFML_CALL(Shape, SetCenter(sf::Vector2f(X, Y)))
+    CSFML_CALL(Shape, SetOrigin(sf::Vector2f(X, Y)))
 }
 
 
@@ -234,20 +234,20 @@ float sfShape_GetRotation(sfShape* Shape)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the X position of the center a shape
+/// Get the X position of the origin a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetCenterX(sfShape* Shape)
+float sfShape_GetOriginX(sfShape* Shape)
 {
-    CSFML_CALL_RETURN(Shape, GetCenter().x, 0.f)
+    CSFML_CALL_RETURN(Shape, GetOrigin().x, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the Y position of the center a shape
+/// Get the Y position of the origin a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetCenterY(sfShape* Shape)
+float sfShape_GetOriginY(sfShape* Shape)
 {
-    CSFML_CALL_RETURN(Shape, GetCenter().y, 0.f)
+    CSFML_CALL_RETURN(Shape, GetOrigin().y, 0.f)
 }
 
 
@@ -304,7 +304,7 @@ void sfShape_Rotate(sfShape* Shape, float Angle)
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from global coordinates into the shape's local coordinates
-/// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+/// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
 void sfShape_TransformToLocal(sfShape* Shape, float PointX, float PointY, float* X, float* Y)
 {
@@ -318,7 +318,7 @@ void sfShape_TransformToLocal(sfShape* Shape, float PointX, float PointY, float*
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from the shape's local coordinates into global coordinates
-/// (ie it applies the object's center, translation, rotation and scale to the point)
+/// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
 void sfShape_TransformToGlobal(sfShape* Shape, float PointX, float PointY, float* X, float* Y)
 {

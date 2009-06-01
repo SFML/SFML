@@ -143,25 +143,25 @@ public :
     void SetScaleY(float FactorY);
 
     ////////////////////////////////////////////////////////////
-    /// Set the center of the object, in coordinates relative to the
+    /// Set the local origin of the object, in coordinates relative to the
     /// top-left of the object (take 2 values).
-    /// The default center is (0, 0)
+    /// The default origin is (0, 0)
     ///
-    /// \param CenterX : X coordinate of the center
-    /// \param CenterY : Y coordinate of the center
+    /// \param OriginX : X coordinate of the origin
+    /// \param OriginY : Y coordinate of the origin
     ///
     ////////////////////////////////////////////////////////////
-    void SetCenter(float CenterX, float CenterY);
+    void SetOrigin(float OriginX, float OriginY);
 
     ////////////////////////////////////////////////////////////
-    /// Set the center of the object, in coordinates relative to the
+    /// Set the local origin of the object, in coordinates relative to the
     /// top-left of the object (take a 2D vector).
-    /// The default center is (0, 0)
+    /// The default origin is (0, 0)
     ///
-    /// \param Center : New center
+    /// \param Origin : New origin
     ///
     ////////////////////////////////////////////////////////////
-    void SetCenter(const Vector2f& Center);
+    void SetOrigin(const Vector2f& Origin);
 
     ////////////////////////////////////////////////////////////
     /// Set the orientation of the object
@@ -206,12 +206,12 @@ public :
     const Vector2f& GetScale() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the center of the object
+    /// Get the local origin of the object
     ///
-    /// \return Current position of the center
+    /// \return Current position of the origin
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& GetCenter() const;
+    const Vector2f& GetOrigin() const;
 
     ////////////////////////////////////////////////////////////
     /// Get the orientation of the object.
@@ -282,7 +282,7 @@ public :
 
     ////////////////////////////////////////////////////////////
     /// Transform a point from global coordinates into local coordinates
-    /// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+    /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
     ///
     /// \param Point : Point to transform
     ///
@@ -293,7 +293,7 @@ public :
 
     ////////////////////////////////////////////////////////////
     /// Transform a point from local coordinates into global coordinates
-    /// (ie it applies the object's center, translation, rotation and scale to the point)
+    /// (ie it applies the object's origin, translation, rotation and scale to the point)
     ///
     /// \param Point : Point to transform
     ///
@@ -345,7 +345,7 @@ private :
     ////////////////////////////////////////////////////////////
     Vector2f        myPosition;      ///< Position of the object on screen
     Vector2f        myScale;         ///< Scale of the object
-    Vector2f        myCenter;        ///< Origin of translation / rotation / scaling of the object
+    Vector2f        myOrigin;        ///< Origin of translation / rotation / scaling of the object
     float           myRotation;      ///< Orientation of the object, in degrees
     Color           myColor;         ///< Overlay color of the object
     Blend::Mode     myBlendMode;     ///< Blending mode

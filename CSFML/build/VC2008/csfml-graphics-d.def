@@ -57,7 +57,7 @@ EXPORTS
 	sfShape_SetScaleY
 	sfShape_SetScale
 	sfShape_SetRotation
-	sfShape_SetCenter
+	sfShape_SetOrigin
 	sfShape_SetColor
 	sfShape_SetBlendMode
 	sfShape_GetX
@@ -65,8 +65,8 @@ EXPORTS
 	sfShape_GetScaleX
 	sfShape_GetScaleY
 	sfShape_GetRotation
-	sfShape_GetCenterX
-	sfShape_GetCenterY
+	sfShape_GetOriginX
+	sfShape_GetOriginY
 	sfShape_GetColor
 	sfShape_GetBlendMode
 	sfShape_Move
@@ -95,7 +95,7 @@ EXPORTS
 	sfSprite_SetScaleY
 	sfSprite_SetScale
 	sfSprite_SetRotation
-	sfSprite_SetCenter
+	sfSprite_SetOrigin
 	sfSprite_SetColor
 	sfSprite_SetBlendMode
 	sfSprite_GetX
@@ -103,8 +103,8 @@ EXPORTS
 	sfSprite_GetScaleX
 	sfSprite_GetScaleY
 	sfSprite_GetRotation
-	sfSprite_GetCenterX
-	sfSprite_GetCenterY
+	sfSprite_GetOriginX
+	sfSprite_GetOriginY
 	sfSprite_GetColor
 	sfSprite_GetBlendMode
 	sfSprite_Move
@@ -137,7 +137,7 @@ EXPORTS
 	sfString_SetScaleY
 	sfString_SetScale
 	sfString_SetRotation
-	sfString_SetCenter
+	sfString_SetOrigin
 	sfString_SetColor
 	sfString_SetBlendMode
 	sfString_GetX
@@ -145,8 +145,8 @@ EXPORTS
 	sfString_GetScaleX
 	sfString_GetScaleY
 	sfString_GetRotation
-	sfString_GetCenterX
-	sfString_GetCenterY
+	sfString_GetOriginX
+	sfString_GetOriginY
 	sfString_GetColor
 	sfString_GetBlendMode
 	sfString_Move

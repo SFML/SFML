@@ -56,11 +56,11 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Center of the transformation of the object
+            /// Origin of the transformation of the object
             /// (center of translation, rotation and scale)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public abstract Vector2 Center {get; set;}
+            public abstract Vector2 Origin {get; set;}
 
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -79,7 +79,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             /// <summary>
             /// Transform a point from global coordinates into local coordinates
-            /// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+            /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
             /// </summary>
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
@@ -89,7 +89,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             /// <summary>
             /// Transform a point from local coordinates into global coordinates
-            /// (ie it applies the object's center, translation, rotation and scale to the point)
+            /// (ie it applies the object's origin, translation, rotation and scale to the point)
             /// </summary>
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>

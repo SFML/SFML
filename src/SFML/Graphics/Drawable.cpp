@@ -39,7 +39,7 @@ namespace sf
 Drawable::Drawable(const Vector2f& Position, const Vector2f& Scale, float Rotation, const Color& Col) :
 myPosition     (Position),
 myScale        (Scale),
-myCenter       (0, 0),
+myOrigin       (0, 0),
 myRotation     (Rotation),
 myColor        (Col),
 myBlendMode    (Blend::Alpha),
@@ -150,27 +150,27 @@ void Drawable::SetScaleY(float FactorY)
 
 
 ////////////////////////////////////////////////////////////
-/// Set the center of the object, in coordinates relative to the
+/// Set the local origin of the object, in coordinates relative to the
 /// top-left of the object (take 2 values).
-/// The default center is (0, 0)
+/// The default origin is (0, 0)
 ////////////////////////////////////////////////////////////
-void Drawable::SetCenter(float CenterX, float CenterY)
+void Drawable::SetOrigin(float OriginX, float OriginY)
 {
-    myCenter.x      = CenterX;
-    myCenter.y      = CenterY;
+    myOrigin.x      = OriginX;
+    myOrigin.y      = OriginY;
     myNeedUpdate    = true;
     myInvNeedUpdate = true;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Set the center of the object, in coordinates relative to the
+/// Set the local origin of the object, in coordinates relative to the
 /// top-left of the object (take a 2D vector).
-/// The default center is (0, 0)
+/// The default origin is (0, 0)
 ////////////////////////////////////////////////////////////
-void Drawable::SetCenter(const Vector2f& Center)
+void Drawable::SetOrigin(const Vector2f& Origin)
 {
-    SetCenter(Center.x, Center.y);
+    SetOrigin(Origin.x, Origin.y);
 }
 
 
@@ -226,11 +226,11 @@ const Vector2f& Drawable::GetScale() const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the center of the object
+/// Get the origin of the object
 ////////////////////////////////////////////////////////////
-const Vector2f& Drawable::GetCenter() const
+const Vector2f& Drawable::GetOrigin() const
 {
-    return myCenter;
+    return myOrigin;
 }
 
 
@@ -311,7 +311,7 @@ void Drawable::Rotate(float Angle)
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from global coordinates into local coordinates
-/// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+/// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
 sf::Vector2f Drawable::TransformToLocal(const sf::Vector2f& Point) const
 {
@@ -320,7 +320,7 @@ sf::Vector2f Drawable::TransformToLocal(const sf::Vector2f& Point) const
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from local coordinates into global coordinates
-/// (ie it applies the object's center, translation, rotation and scale to the point)
+/// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
 sf::Vector2f Drawable::TransformToGlobal(const sf::Vector2f& Point) const
 {
@@ -336,7 +336,7 @@ const Matrix3& Drawable::GetMatrix() const
     // First recompute it if needed
     if (myNeedUpdate)
     {
-        myMatrix.SetFromTransformations(myCenter, myPosition, myRotation, myScale);
+        myMatrix.SetFromTransformations(myOrigin, myPosition, myRotation, myScale);
         myNeedUpdate = false;
     }
 

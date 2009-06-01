@@ -23,7 +23,7 @@ public :
         // Load an image and assign it to our sprite
         myImage.LoadFromFile("datas/wxwidgets/sfml.png");
         mySprite.SetImage(myImage);
-        mySprite.SetCenter(mySprite.GetSize() / 2.f);
+        mySprite.SetOrigin(mySprite.GetSize() / 2.f);
 
         // Catch the mouse move event
         Connect(wxEVT_MOTION, wxMouseEventHandler(MyCanvas::OnMouseMove));

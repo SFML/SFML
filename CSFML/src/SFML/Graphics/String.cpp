@@ -133,12 +133,12 @@ void sfString_SetRotation(sfString* String, float Rotation)
 
 
 ////////////////////////////////////////////////////////////
-/// Set the center of a string, in coordinates
+/// Set the local origin of a string, in coordinates
 /// relative to its left-top corner
 ////////////////////////////////////////////////////////////
-void sfString_SetCenter(sfString* String, float X, float Y)
+void sfString_SetOrigin(sfString* String, float X, float Y)
 {
-    CSFML_CALL(String, SetCenter(sf::Vector2f(X, Y)))
+    CSFML_CALL(String, SetOrigin(sf::Vector2f(X, Y)))
 }
 
 
@@ -206,20 +206,20 @@ float sfString_GetRotation(sfString* String)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the X position of the center a string
+/// Get the X position of the origin a string
 ////////////////////////////////////////////////////////////
-float sfString_GetCenterX(sfString* String)
+float sfString_GetOriginX(sfString* String)
 {
-    CSFML_CALL_RETURN(String, GetCenter().x, 0.f)
+    CSFML_CALL_RETURN(String, GetOrigin().x, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the top Y of the center of a string
+/// Get the top Y of the origin of a string
 ////////////////////////////////////////////////////////////
-float sfString_GetCenterY(sfString* String)
+float sfString_GetOriginY(sfString* String)
 {
-    CSFML_CALL_RETURN(String, GetCenter().y, 0.f)
+    CSFML_CALL_RETURN(String, GetOrigin().y, 0.f)
 }
 
 
@@ -276,7 +276,7 @@ void sfString_Rotate(sfString* String, float Angle)
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from global coordinates into the string's local coordinates
-/// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+/// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
 void sfString_TransformToLocal(sfString* String, float PointX, float PointY, float* X, float* Y)
 {
@@ -290,7 +290,7 @@ void sfString_TransformToLocal(sfString* String, float PointX, float PointY, flo
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from the string's local coordinates into global coordinates
-/// (ie it applies the object's center, translation, rotation and scale to the point)
+/// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
 void sfString_TransformToGlobal(sfString* String, float PointX, float PointY, float* X, float* Y)
 {
@@ -407,7 +407,7 @@ unsigned long sfString_GetStyle(sfString* String)
 ////////////////////////////////////////////////////////////
 /// Return the visual position of the Index-th character of the string,
 /// in coordinates relative to the string
-/// (note : translation, center, rotation and scale are not applied)
+/// (note : translation, origin, rotation and scale are not applied)
 ////////////////////////////////////////////////////////////
 void sfString_GetCharacterPos(sfString* String, size_t Index, float* X, float* Y)
 {

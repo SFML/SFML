@@ -134,12 +134,12 @@ void sfSprite_SetRotation(sfSprite* Sprite, float Rotation)
 
 
 ////////////////////////////////////////////////////////////
-/// Set the center of a sprite, in coordinates
+/// Set the local origin of a sprite, in coordinates
 /// relative to its left-top corner
 ////////////////////////////////////////////////////////////
-void sfSprite_SetCenter(sfSprite* Sprite, float X, float Y)
+void sfSprite_SetOrigin(sfSprite* Sprite, float X, float Y)
 {
-    CSFML_CALL(Sprite, SetCenter(sf::Vector2f(X, Y)))
+    CSFML_CALL(Sprite, SetOrigin(sf::Vector2f(X, Y)))
 }
 
 
@@ -207,20 +207,20 @@ float sfSprite_GetRotation(sfSprite* Sprite)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the X position of the center a sprite
+/// Get the X position of the origin a sprite
 ////////////////////////////////////////////////////////////
-float sfSprite_GetCenterX(sfSprite* Sprite)
+float sfSprite_GetOriginX(sfSprite* Sprite)
 {
-    CSFML_CALL_RETURN(Sprite, GetCenter().x, 0.f)
+    CSFML_CALL_RETURN(Sprite, GetOrigin().x, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the Y position of the center a sprite
+/// Get the Y position of the origin a sprite
 ////////////////////////////////////////////////////////////
-float sfSprite_GetCenterY(sfSprite* Sprite)
+float sfSprite_GetOriginY(sfSprite* Sprite)
 {
-    CSFML_CALL_RETURN(Sprite, GetCenter().y, 0.f)
+    CSFML_CALL_RETURN(Sprite, GetOrigin().y, 0.f)
 }
 
 
@@ -277,7 +277,7 @@ void sfSprite_Rotate(sfSprite* Sprite, float Angle)
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from global coordinates into the sprite's local coordinates
-/// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+/// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
 void sfSprite_TransformToLocal(sfSprite* Sprite, float PointX, float PointY, float* X, float* Y)
 {
@@ -291,7 +291,7 @@ void sfSprite_TransformToLocal(sfSprite* Sprite, float PointX, float PointY, flo
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from the sprite's local coordinates into global coordinates
-/// (ie it applies the object's center, translation, rotation and scale to the point)
+/// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
 void sfSprite_TransformToGlobal(sfSprite* Sprite, float PointX, float PointY, float* X, float* Y)
 {

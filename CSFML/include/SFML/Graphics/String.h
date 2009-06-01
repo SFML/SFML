@@ -129,15 +129,15 @@ CSFML_API void sfString_SetScale(sfString* String, float ScaleX, float ScaleY);
 CSFML_API void sfString_SetRotation(sfString* String, float Rotation);
 
 ////////////////////////////////////////////////////////////
-/// Set the center of a string, in coordinates
+/// Set the local origin of a string, in coordinates
 /// relative to its left-top corner
 ///
 /// \param String : String to modify
-/// \param X :      X coordinate of the center
-/// \param Y :      Y coordinate of the center
+/// \param X :      X coordinate of the origin
+/// \param Y :      Y coordinate of the origin
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfString_SetCenter(sfString* String, float X, float Y);
+CSFML_API void sfString_SetOrigin(sfString* String, float X, float Y);
 
 ////////////////////////////////////////////////////////////
 /// Set the color of a string
@@ -208,24 +208,24 @@ CSFML_API float sfString_GetScaleY(sfString* String);
 CSFML_API float sfString_GetRotation(sfString* String);
 
 ////////////////////////////////////////////////////////////
-/// Get the X position of the center a string
+/// Get the X position of the origin a string
 ///
 /// \param String : String to read
 ///
-/// \return Current X center position
+/// \return Current X origin position
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfString_GetCenterX(sfString* String);
+CSFML_API float sfString_GetOriginX(sfString* String);
 
 ////////////////////////////////////////////////////////////
-/// Get the top Y of the center of a string
+/// Get the top Y of the origin of a string
 ///
 /// \param String : String to read
 ///
-/// \return Current Y center position
+/// \return Current Y origin position
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfString_GetCenterY(sfString* String);
+CSFML_API float sfString_GetOriginY(sfString* String);
 
 ////////////////////////////////////////////////////////////
 /// Get the color of a string
@@ -278,7 +278,7 @@ CSFML_API void sfString_Rotate(sfString* String, float Angle);
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from global coordinates into the string's local coordinates
-/// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+/// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ///
 /// \param String : String object
 /// \param PointX : X coordinate of the point to transform
@@ -291,7 +291,7 @@ CSFML_API void sfString_TransformToLocal(sfString* String, float PointX, float P
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from the string's local coordinates into global coordinates
-/// (ie it applies the object's center, translation, rotation and scale to the point)
+/// (ie it applies the object's origin, translation, rotation and scale to the point)
 ///
 /// \param String : String object
 /// \param PointX : X coordinate of the point to transform
@@ -400,7 +400,7 @@ CSFML_API unsigned long sfString_GetStyle(sfString* String);
 ////////////////////////////////////////////////////////////
 /// Return the visual position of the Index-th character of the string,
 /// in coordinates relative to the string
-/// (note : translation, center, rotation and scale are not applied)
+/// (note : translation, origin, rotation and scale are not applied)
 ///
 /// \param String : String to read
 /// \param Index :  Index of the character

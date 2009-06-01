@@ -81,7 +81,7 @@ INT WINAPI WinMain(HINSTANCE Instance, HINSTANCE, LPSTR, INT)
         return EXIT_FAILURE;
     sf::Sprite Sprite1(Image1);
     sf::Sprite Sprite2(Image2);
-    Sprite1.SetCenter(Sprite1.GetSize() / 2.f);
+    Sprite1.SetOrigin(Sprite1.GetSize() / 2.f);
 
     // Create a clock for measuring elapsed time
     sf::Clock Clock;

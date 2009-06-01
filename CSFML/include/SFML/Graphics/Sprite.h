@@ -117,15 +117,15 @@ CSFML_API void sfSprite_SetScale(sfSprite* Sprite, float ScaleX, float ScaleY);
 CSFML_API void sfSprite_SetRotation(sfSprite* Sprite, float Rotation);
 
 ////////////////////////////////////////////////////////////
-/// Set the center of a sprite, in coordinates relative to
+/// Set the local origin of a sprite, in coordinates relative to
 /// its left-top corner
 ///
 /// \param Sprite : Sprite to modify
-/// \param X :      X coordinate of the center
-/// \param Y :      Y coordinate of the center
+/// \param X :      X coordinate of the origin
+/// \param Y :      Y coordinate of the origin
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSprite_SetCenter(sfSprite* Sprite, float X, float Y);
+CSFML_API void sfSprite_SetOrigin(sfSprite* Sprite, float X, float Y);
 
 ////////////////////////////////////////////////////////////
 /// Set the color of a sprite
@@ -196,24 +196,24 @@ CSFML_API float sfSprite_GetScaleY(sfSprite* Sprite);
 CSFML_API float sfSprite_GetRotation(sfSprite* Sprite);
 
 ////////////////////////////////////////////////////////////
-/// Get the X position of the center a sprite
+/// Get the X position of the origin a sprite
 ///
 /// \param Sprite : Sprite to read
 ///
-/// \return Current X center
+/// \return Current X origin
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSprite_GetCenterX(sfSprite* Sprite);
+CSFML_API float sfSprite_GetOriginX(sfSprite* Sprite);
 
 ////////////////////////////////////////////////////////////
-/// Get the Y position of the center a sprite
+/// Get the Y position of the origin a sprite
 ///
 /// \param Sprite : Sprite to read
 ///
-/// \return Current Y center
+/// \return Current Y origin
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSprite_GetCenterY(sfSprite* Sprite);
+CSFML_API float sfSprite_GetOriginY(sfSprite* Sprite);
 
 ////////////////////////////////////////////////////////////
 /// Get the color of a sprite
@@ -266,7 +266,7 @@ CSFML_API void sfSprite_Rotate(sfSprite* Sprite, float Angle);
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from global coordinates into the sprite's local coordinates
-/// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+/// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ///
 /// \param Sprite : Sprite object
 /// \param PointX : X coordinate of the point to transform
@@ -279,7 +279,7 @@ CSFML_API void sfSprite_TransformToLocal(sfSprite* Sprite, float PointX, float P
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from the sprite's local coordinates into global coordinates
-/// (ie it applies the object's center, translation, rotation and scale to the point)
+/// (ie it applies the object's origin, translation, rotation and scale to the point)
 ///
 /// \param Sprite : Sprite object
 /// \param PointX : X coordinate of the point to transform

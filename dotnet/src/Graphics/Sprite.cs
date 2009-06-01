@@ -71,14 +71,14 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Center of the transformation of the object
+            /// Origin of the transformation of the object
             /// (center of translation, rotation and scale)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Center
+            public override Vector2 Origin
             {
-                get { return new Vector2(sfSprite_GetCenterX(This), sfSprite_GetCenterY(This)); }
-                set { sfSprite_SetCenter(This, value.X, value.Y); }
+                get { return new Vector2(sfSprite_GetOriginX(This), sfSprite_GetOriginY(This)); }
+                set { sfSprite_SetOrigin(This, value.X, value.Y); }
             }
 
             ////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             /// <summary>
             /// Transform a point from global coordinates into local coordinates
-            /// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+            /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
             /// </summary>
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
@@ -122,7 +122,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             /// <summary>
             /// Transform a point from local coordinates into global coordinates
-            /// (ie it applies the object's center, translation, rotation and scale to the point)
+            /// (ie it applies the object's origin, translation, rotation and scale to the point)
             /// </summary>
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
@@ -271,13 +271,13 @@ namespace SFML
             static extern float sfSprite_GetScaleY(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern void sfSprite_SetCenter(IntPtr This, float X, float Y);
+            static extern void sfSprite_SetOrigin(IntPtr This, float X, float Y);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern float sfSprite_GetCenterX(IntPtr This);
+            static extern float sfSprite_GetOriginX(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern float sfSprite_GetCenterY(IntPtr This);
+            static extern float sfSprite_GetOriginY(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetColor(IntPtr This, Color Color);

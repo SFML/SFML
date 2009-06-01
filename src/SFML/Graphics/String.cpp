@@ -198,10 +198,10 @@ FloatRect String::GetRect() const
         const_cast<String*>(this)->RecomputeRect();
 
     FloatRect Rect;
-    Rect.Left   = (myBaseRect.Left   - GetCenter().x) * GetScale().x + GetPosition().x;
-    Rect.Top    = (myBaseRect.Top    - GetCenter().y) * GetScale().y + GetPosition().y;
-    Rect.Right  = (myBaseRect.Right  - GetCenter().x) * GetScale().x + GetPosition().x;
-    Rect.Bottom = (myBaseRect.Bottom - GetCenter().y) * GetScale().y + GetPosition().y;
+    Rect.Left   = (myBaseRect.Left   - GetOrigin().x) * GetScale().x + GetPosition().x;
+    Rect.Top    = (myBaseRect.Top    - GetOrigin().y) * GetScale().y + GetPosition().y;
+    Rect.Right  = (myBaseRect.Right  - GetOrigin().x) * GetScale().x + GetPosition().x;
+    Rect.Bottom = (myBaseRect.Bottom - GetOrigin().y) * GetScale().y + GetPosition().y;
 
     return Rect;
 }

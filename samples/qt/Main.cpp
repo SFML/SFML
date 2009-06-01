@@ -39,7 +39,7 @@ private :
 
         // Setup the sprite
         mySprite.SetImage(myImage);
-        mySprite.SetCenter(mySprite.GetSize() / 2.f);
+        mySprite.SetOrigin(mySprite.GetSize() / 2.f);
     }
 
     ////////////////////////////////////////////////////////////

@@ -153,15 +153,15 @@ CSFML_API void sfShape_SetScale(sfShape* Shape, float ScaleX, float ScaleY);
 CSFML_API void sfShape_SetRotation(sfShape* Shape, float Rotation);
 
 ////////////////////////////////////////////////////////////
-/// Set the center of a shape, in coordinates relative to
+/// Set the local origin of a shape, in coordinates relative to
 /// its left-top corner
 ///
 /// \param Shape : Shape to modify
-/// \param X :     X coordinate of the center
-/// \param Y :     Y coordinate of the center
+/// \param X :     X coordinate of the origin
+/// \param Y :     Y coordinate of the origin
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfShape_SetCenter(sfShape* Shape, float X, float Y);
+CSFML_API void sfShape_SetOrigin(sfShape* Shape, float X, float Y);
 
 ////////////////////////////////////////////////////////////
 /// Set the color of a shape
@@ -232,24 +232,24 @@ CSFML_API float sfShape_GetScaleY(sfShape* Shape);
 CSFML_API float sfShape_GetRotation(sfShape* Shape);
 
 ////////////////////////////////////////////////////////////
-/// Get the X position of the center a shape
+/// Get the X position of the origin a shape
 ///
 /// \param Shape : Shape to read
 ///
-/// \return Current X center
+/// \return Current X origin
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfShape_GetCenterX(sfShape* Shape);
+CSFML_API float sfShape_GetOriginX(sfShape* Shape);
 
 ////////////////////////////////////////////////////////////
-/// Get the Y position of the center a shape
+/// Get the Y position of the origin a shape
 ///
 /// \param Shape : Shape to read
 ///
-/// \return Current Y center
+/// \return Current Y origin
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfShape_GetCenterY(sfShape* Shape);
+CSFML_API float sfShape_GetOriginY(sfShape* Shape);
 
 ////////////////////////////////////////////////////////////
 /// Get the color of a shape
@@ -302,7 +302,7 @@ CSFML_API void sfShape_Rotate(sfShape* Shape, float Angle);
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from global coordinates into the shape's local coordinates
-/// (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+/// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ///
 /// \param Shape :  Shape object
 /// \param PointX : X coordinate of the point to transform
@@ -315,7 +315,7 @@ CSFML_API void sfShape_TransformToLocal(sfShape* Shape, float PointX, float Poin
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from the shape's local coordinates into global coordinates
-/// (ie it applies the object's center, translation, rotation and scale to the point)
+/// (ie it applies the object's origin, translation, rotation and scale to the point)
 ///
 /// \param Shape :  Shape object
 /// \param PointX : X coordinate of the point to transform
