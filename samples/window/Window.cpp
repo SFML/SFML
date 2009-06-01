@@ -1,37 +1,3 @@
-/*
-#include <SFML/Window.hpp>
-
-void f(void*)
-{
-    sf::Context context;
-}
-
-int main()
-{
-    {
-        sf::Thread t(&f);
-        t.Launch();
-    }
-
-    {
-        sf::Window window(sf::VideoMode(640, 480), "Test");
-
-        {
-            sf::Thread t(&f);
-            t.Launch();
-        }
-    }
-
-    {
-        sf::Thread t(&f);
-        t.Launch();
-    }
-
-    return 0;
-}
-*/
-    
-
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -150,4 +116,3 @@ int main()
 
     return EXIT_SUCCESS;
 }
-
