@@ -1,10 +1,5 @@
 graft src
 graft scripts
-include doc/style.css
-include samples/opengl.py
-include samples/sound.py
-include samples/sound_capture.py
-include samples/sound_stream.py
-include samples/worm.py
-graft samples/data
+graft doc
+graft samples
 
