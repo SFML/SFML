@@ -44,6 +44,8 @@ static AppController *shared = nil;
 @end
 #endif
 
+#define ENABLE_FADE_OPERATIONS 1
+
 @implementation NSApplication (SFML)
 
 - (void)setRunning:(BOOL)flag
@@ -388,7 +390,7 @@ static AppController *shared = nil;
 - (void)setFullscreenWindow:(WindowWrapper *)aWrapper mode:(sf::VideoMode *)fullscreenMode
 {
 	// If we have a fullscreen window and want to remove it
-	if (myFullscreenWrapper && aWrapper == nil)
+	if (aWrapper == nil && myFullscreenWrapper)
 	{
 		// Get the CoreGraphics display mode according to the desktop mode
 		CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
@@ -397,8 +399,10 @@ static AppController *shared = nil;
 																	  myDesktopMode.Height,
 																	  NULL);
 		
+#if ENABLE_FADE_OPERATIONS
 		// Fade to black screen
 		[self doFadeOperation:FillScreen time:0.2f sync:true];
+#endif
 		
 		// Switch to the desktop display mode
 		CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
@@ -409,13 +413,15 @@ static AppController *shared = nil;
 		// Show the menu bar
 		[NSMenu setMenuBarVisible:YES];
 		
+#if ENABLE_FADE_OPERATIONS
 		// Fade to normal screen
 		[self doFadeOperation:CleanScreen time:0.5f sync:true];
+#endif
 		
 		// Release the saved window wrapper
-		[myFullscreenWrapper release], myFullscreenWrapper = nil;
+		myFullscreenWrapper = nil;
 	}
-	else if (myFullscreenWrapper == nil && aWrapper)
+	else if (aWrapper)
 	{
 		assert(fullscreenMode != NULL);
 		
@@ -426,24 +432,39 @@ static AppController *shared = nil;
 																	  fullscreenMode->Height,
 																	  NULL);
 		
+#if ENABLE_FADE_OPERATIONS
 		// Fade to a black screen
 		[self doFadeOperation:FillScreen time:0.5f sync:true];
+#endif
 		
-		// Hide to the main menu bar
-		[NSMenu setMenuBarVisible:NO];
+		if (!myFullscreenWrapper)
+		{
+			// Hide the main menu bar
+			[NSMenu setMenuBarVisible:NO];
+		}
 		
-		// Switch to the wished display mode
-		CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
+		if (myPrevMode != *fullscreenMode)
+		{
+			// Switch to the wished display mode
+			CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
+		}
+		
+		if (myFullscreenWrapper)
+		{
+			[[myFullscreenWrapper window] close];
+		}
 		
 		// Open and center the window
 		[[aWrapper window] makeKeyAndOrderFront:nil];
 		[[aWrapper window] center];
 		
+#if ENABLE_FADE_OPERATIONS
 		// Fade to normal screen
 		[self doFadeOperation:CleanScreen time:0.2f sync:false];
+#endif
 		
 		// Save the fullscreen wrapper
-		myFullscreenWrapper = [aWrapper retain];
+		myFullscreenWrapper = aWrapper;
 	}
 	else
 	{
@@ -453,7 +474,7 @@ static AppController *shared = nil;
 
 
 ////////////////////////////////////////////////////////////
-/// Perform fade operation where 'operation' is one of { FillScreen, CleanScreen}
+/// Perform fade operation where 'operation' is one of {FillScreen, CleanScreen}
 /// and 'time' is the time during which you wish the operation to be performed.
 /// Set 'sync' to true if you do not want the method to end before the end
 /// of the fade operation. Pass the last used token or a new one if you are

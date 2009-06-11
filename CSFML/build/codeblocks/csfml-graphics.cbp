@@ -69,14 +69,24 @@
 		<Unit filename="..\..\include\SFML\Graphics\View.h" />
 		<Unit filename="..\..\src\SFML\Graphics\Color.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Font.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\FontStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\Image.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\ImageStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\PostFX.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\PostFXStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\Rect.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderImage.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderImageStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderWindow.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderWindowStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\Shape.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\ShapeStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\Sprite.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\SpriteStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\String.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\StringStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\View.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\ViewStruct.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

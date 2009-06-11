@@ -23,7 +23,6 @@
 ////////////////////////////////////////////////////////////
 
 #include "View.hpp"
-#include "Rect.hpp"
 
 #include "offsetof.hpp"
 #include "compat.hpp"
@@ -49,24 +48,17 @@ PySfView_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 	if (self != NULL)
 	{
 		self->Owner = true;
+		PySfFloatRect *Rect = NULL;
+		if (!PyArg_ParseTuple(args, "|O!:View.__new__", &PySfFloatRectType, &Rect))
+			return NULL;
+
+		if (Rect != NULL)
+			self->obj = new sf::View( (const sf::FloatRect) *(Rect->obj));
+		else
+			self->obj = new sf::View();
 	}
 
 	return (PyObject *)self;
-}
-
-static int
-PySfView_init(PySfView *self, PyObject *args, PyObject *kwds)
-{
-	PySfFloatRect *Rect=NULL;
-	if (!PyArg_ParseTuple(args, "|O!:View.__init__", &PySfFloatRectType, &Rect))
-		return -1;
-
-	if (Rect != NULL)
-		self->obj = new sf::View( (const sf::FloatRect) *(Rect->obj));
-	else
-		self->obj = new sf::View();
-
-	return 0;
 }
 
 static PyObject *
@@ -87,12 +79,23 @@ static PyObject *
 PySfView_GetRect(PySfView* self)
 {
 	PySfFloatRect *Rect = GetNewPySfFloatRect();
-	Rect->obj = new sf::FloatRect(self->obj->GetRect());
-	Rect->Left = Rect->obj->Left;
-	Rect->Right = Rect->obj->Right;
-	Rect->Top = Rect->obj->Top;
-	Rect->Bottom = Rect->obj->Bottom;
+	Rect->Owner = false;
+	Rect->obj = (sf::FloatRect *) &(self->obj->GetRect());
+	PySfFloatRectUpdateSelf(Rect);
 	return (PyObject *)Rect;
+}
+
+static PyObject *
+PySfView_SetFromRect(PySfView* self, PyObject *args)
+{
+	PySfFloatRect *Rect = (PySfFloatRect *)args;
+	if (!PyObject_TypeCheck(Rect, &PySfFloatRectType))
+	{
+		PyErr_SetString(PyExc_TypeError, "View.SetFromRect() Argument is not a sf.FloatRect instance");
+		return NULL;
+	}
+	self->obj->SetFromRect(*(Rect->obj));
+	Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -139,6 +142,7 @@ static PyMethodDef PySfView_methods[] = {
 	{"Move", (PyCFunction)PySfView_Move, METH_VARARGS, "Move(OffsetX, OffsetY)\nMove the view.\n\
 	OffsetX 	: Offset to move the view, on X axis\n\
 	OffsetY 	: Offset to move the view, on Y axis"},
+	{"SetFromRect", (PyCFunction)PySfView_SetFromRect, METH_O, "SetFromRect(ViewRect)\nRebuild the view from a rectangle.\n	ViewRect : Rectangle defining the position and size of the view."},
 	{"SetCenter", (PyCFunction)PySfView_SetCenter, METH_VARARGS, "SetCenter(X, Y)\nChange the center of the view."},
 	{"SetHalfSize", (PyCFunction)PySfView_SetHalfSize, METH_VARARGS, "SetHalfSize(HalfWidth, HalfHeight)\nChange the half-size of the view."},
 	{"Zoom", (PyCFunction)PySfView_Zoom, METH_O, "Zoom(Factor)\nResize the view rectangle to simulate a zoom / unzoom effect."},
@@ -181,7 +185,7 @@ PyTypeObject PySfViewType = {
 	0,					/* tp_descr_get */
 	0,					/* tp_descr_set */
 	0,					/* tp_dictoffset */
-	(initproc)PySfView_init, /* tp_init */
+	0,					/* tp_init */
 	0,					/* tp_alloc */
 	PySfView_new,		/* tp_new */
 };
@@ -189,6 +193,6 @@ PyTypeObject PySfViewType = {
 PySfView *
 GetNewPySfView()
 {
-	return (PySfView *)PySfView_new(&PySfViewType, NULL, NULL);
+	return PyObject_New(PySfView, &PySfViewType);
 }
 

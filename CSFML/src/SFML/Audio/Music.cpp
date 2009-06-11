@@ -26,14 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Music.h>
-#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/MusicStruct.h>
 #include <SFML/Internal.h>
-
-
-struct sfMusic
-{
-    sf::Music This;
-};
 
 
 ////////////////////////////////////////////////////////////

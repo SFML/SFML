@@ -27,7 +27,7 @@ namespace sample_opengl
             Sprite Background = new Sprite(BackgroundImage);
 
             // Create a text to display
-            String2D Text = new String2D("This is a rotating cube");
+            String2D Text = new String2D("SFML / OpenGL demo");
             Text.Position = new Vector2(250.0F, 450.0F);
             Text.Color = new Color(255, 255, 255, 170);
 

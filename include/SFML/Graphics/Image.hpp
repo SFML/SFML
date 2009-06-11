@@ -296,13 +296,23 @@ private :
     /// Make sure the texture in video memory is updated with the
     /// array of pixels
     ////////////////////////////////////////////////////////////
-    void EnsureTextureUpdate() const;
+    void EnsureTextureUpdate();
 
     ////////////////////////////////////////////////////////////
     /// Make sure the array of pixels is updated with the
     /// texture in video memory
     ////////////////////////////////////////////////////////////
-    void EnsureArrayUpdate() const;
+    void EnsureArrayUpdate();
+
+    ////////////////////////////////////////////////////////////
+    /// Notify the image that an external source has modified
+    /// its content.
+    /// For internal use only (see RenderImage class).
+    ///
+    /// \param Source : RenderImage that will update the image
+    ///
+    ////////////////////////////////////////////////////////////
+    void ExternalUpdate(RenderImage& Source);
 
     ////////////////////////////////////////////////////////////
     /// Reset the image attributes
@@ -319,15 +329,17 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int               myWidth;             ///< Image width
-    unsigned int               myHeight;            ///< Image Height
-    unsigned int               myTextureWidth;      ///< Actual texture width (can be greater than image width because of padding)
-    unsigned int               myTextureHeight;     ///< Actual texture height (can be greater than image height because of padding)
-    unsigned int               myTexture;           ///< Internal texture identifier
-    bool                       myIsSmooth;          ///< Status of the smooth filter
-    mutable std::vector<Color> myPixels;            ///< Pixels of the image
-    mutable bool               myNeedTextureUpdate; ///< Status of synchronization between pixels in central memory and the internal texture un video memory
-    mutable bool               myNeedArrayUpdate;   ///< Status of synchronization between pixels in central memory and the internal texture un video memory
+    unsigned int       myWidth;             ///< Image width
+    unsigned int       myHeight;            ///< Image Height
+    unsigned int       myTextureWidth;      ///< Actual texture width (can be greater than image width because of padding)
+    unsigned int       myTextureHeight;     ///< Actual texture height (can be greater than image height because of padding)
+    unsigned int       myTexture;           ///< Internal texture identifier
+    bool               myIsSmooth;          ///< Status of the smooth filter
+    std::vector<Color> myPixels;            ///< Pixels of the image
+    bool               myNeedTextureUpdate; ///< Status of synchronization between pixels in central memory and the internal texture un video memory
+    bool               myNeedArrayUpdate;   ///< Status of synchronization between pixels in central memory and the internal texture un video memory
+    RenderImage*       myUpdateSource;      ///< If not null, the image will use it as a source to update its texture
+    bool               myPixelsFlipped;     ///< To work around the inconsistency in Y orientation
 };
 
 } // namespace sf

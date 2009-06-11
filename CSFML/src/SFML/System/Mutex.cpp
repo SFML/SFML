@@ -26,14 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Mutex.h>
-#include <SFML/System/Mutex.hpp>
+#include <SFML/System/MutexStruct.h>
 #include <SFML/Internal.h>
-
-
-struct sfMutex
-{
-    sf::Mutex This;
-};
 
 
 ////////////////////////////////////////////////////////////

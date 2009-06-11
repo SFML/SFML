@@ -157,7 +157,7 @@ sf::Vector2f RenderWindow::ConvertCoords(unsigned int WindowX, unsigned int Wind
 ////////////////////////////////////////////////////////////
 void RenderWindow::OnCreate()
 {
-    // We can now initialize the render target part
+    // Just initialize the render target part
     RenderTarget::Initialize();
 }
 

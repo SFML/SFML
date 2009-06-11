@@ -26,19 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/PostFX.h>
-#include <SFML/Graphics/PostFX.hpp>
+#include <SFML/Graphics/PostFXStruct.h>
+#include <SFML/Graphics/ImageStruct.h>
 #include <SFML/Internal.h>
-
-
-// WARNING : this structure must always be the SAME as in Graphics/Image.h
-struct sfImage
-{
-    sf::Image This;
-};
-struct sfPostFX
-{
-    sf::PostFX This;
-};
 
 
 ////////////////////////////////////////////////////////////
@@ -125,7 +115,7 @@ void sfPostFX_SetParameter4(sfPostFX* PostFX, const char* Name, float X, float Y
 ////////////////////////////////////////////////////////////
 void sfPostFX_SetTexture(sfPostFX* PostFX, const char* Name, sfImage* Texture)
 {
-    CSFML_CALL(PostFX, SetTexture(Name, Texture ? &Texture->This : NULL))
+    CSFML_CALL(PostFX, SetTexture(Name, Texture ? Texture->This : NULL))
 }
 
 

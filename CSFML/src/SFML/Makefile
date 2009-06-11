@@ -3,7 +3,8 @@ export CPP        = g++
 export CFLAGS     = -W -Wall -pedantic -fPIC -Wno-unused -I../.. -I../../../include -DNDEBUG -DCSFML_EXPORTS -O2
 export LDFLAGS    = -shared
 export LIBPATH    = ../../../lib
-export VERSION    = 2.0export CP         = cp
+export VERSION    = 2.0
+export CP         = cp
 export LN         = ln
 export LNFLAGS    = -s -f
 export DESTDIR    = /usr

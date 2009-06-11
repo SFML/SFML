@@ -29,7 +29,6 @@
 		A018A2AF0EA21A2C005FFAC3 /* Http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A018A2AD0EA21A2C005FFAC3 /* Http.cpp */; };
 		A018A2B00EA21A2C005FFAC3 /* Ftp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A018A2AE0EA21A2C005FFAC3 /* Ftp.cpp */; };
 		A01BEF080F6BF0140095262C /* Initializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A01BEF070F6BF0140095262C /* Initializer.cpp */; };
-		A01BEF0C0F6BF0550095262C /* sndfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A01BEF0B0F6BF0550095262C /* sndfile.framework */; };
 		A04C5A9D0EDDD88B00935061 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = A04C5A940EDDD88B00935061 /* AppController.mm */; };
 		A04C5A9E0EDDD88B00935061 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A04C5A950EDDD88B00935061 /* Joystick.cpp */; };
 		A04C5A9F0EDDD88B00935061 /* VideoModeSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A04C5A970EDDD88B00935061 /* VideoModeSupport.cpp */; };
@@ -158,6 +157,7 @@
 		A066106A0E89058900D39DEB /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = A0660FE90E89058900D39DEB /* trees.c */; };
 		A066106C0E89058900D39DEB /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = A0660FEB0E89058900D39DEB /* uncompr.c */; };
 		A066106F0E89058900D39DEB /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = A0660FEE0E89058900D39DEB /* zutil.c */; };
+		A0ABBD570FD46A2200D528E9 /* libsfml-system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A01269660E6318C000B96A5D /* libsfml-system.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,15 +201,14 @@
 /* Begin PBXFileReference section */
 		A011E8050F65B35400FAE48D /* GLKit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GLKit.h; sourceTree = "<group>"; };
 		A011E8060F65B35400FAE48D /* GLKit.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = GLKit.mm; sourceTree = "<group>"; };
-		A01269660E6318C000B96A5D /* libsfml-system-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-system-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A012696F0E6318FE00B96A5D /* libsfml-network-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-network-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A01269760E63190F00B96A5D /* libsfml-audio-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-audio-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A012697D0E63192000B96A5D /* libsfml-window-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-window-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-graphics-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01269660E6318C000B96A5D /* libsfml-system.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-system.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A012696F0E6318FE00B96A5D /* libsfml-network.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-network.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01269760E63190F00B96A5D /* libsfml-audio.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-audio.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A012697D0E63192000B96A5D /* libsfml-window.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-window.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01269840E63192B00B96A5D /* libsfml-graphics.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-graphics.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A018A2AD0EA21A2C005FFAC3 /* Http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Http.cpp; path = ../../src/SFML/Network/Http.cpp; sourceTree = SOURCE_ROOT; };
 		A018A2AE0EA21A2C005FFAC3 /* Ftp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ftp.cpp; path = ../../src/SFML/Network/Ftp.cpp; sourceTree = SOURCE_ROOT; };
 		A01BEF070F6BF0140095262C /* Initializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Initializer.cpp; path = ../../src/SFML/System/Initializer.cpp; sourceTree = SOURCE_ROOT; };
-		A01BEF0B0F6BF0550095262C /* sndfile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sndfile.framework; path = "../../extlibs/libs-xcode/sndfile.framework"; sourceTree = SOURCE_ROOT; };
 		A04C5A930EDDD88B00935061 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ../../src/SFML/Window/Cocoa/AppController.h; sourceTree = SOURCE_ROOT; };
 		A04C5A940EDDD88B00935061 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = AppController.mm; path = ../../src/SFML/Window/Cocoa/AppController.mm; sourceTree = SOURCE_ROOT; };
 		A04C5A950EDDD88B00935061 /* Joystick.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Joystick.cpp; path = ../../src/SFML/Window/Cocoa/Joystick.cpp; sourceTree = SOURCE_ROOT; };
@@ -410,7 +409,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A01BEF0C0F6BF0550095262C /* sndfile.framework in Frameworks */,
+				A0ABBD570FD46A2200D528E9 /* libsfml-system.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,11 +445,11 @@
 		A01269670E6318C000B96A5D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A01269660E6318C000B96A5D /* libsfml-system-d.dylib */,
-				A012696F0E6318FE00B96A5D /* libsfml-network-d.dylib */,
-				A01269760E63190F00B96A5D /* libsfml-audio-d.dylib */,
-				A012697D0E63192000B96A5D /* libsfml-window-d.dylib */,
-				A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */,
+				A01269660E6318C000B96A5D /* libsfml-system.dylib */,
+				A012696F0E6318FE00B96A5D /* libsfml-network.dylib */,
+				A01269760E63190F00B96A5D /* libsfml-audio.dylib */,
+				A012697D0E63192000B96A5D /* libsfml-window.dylib */,
+				A01269840E63192B00B96A5D /* libsfml-graphics.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -488,7 +487,6 @@
 		A012698D0E63194600B96A5D /* sfml-audio */ = {
 			isa = PBXGroup;
 			children = (
-				A01BEF0B0F6BF0550095262C /* sndfile.framework */,
 				A0660EDB0E89054E00D39DEB /* AudioDevice.cpp */,
 				A0660EDC0E89054E00D39DEB /* AudioDevice.hpp */,
 				A0660EDD0E89054E00D39DEB /* AudioResource.cpp */,
@@ -772,7 +770,7 @@
 			);
 			name = "sfml-system";
 			productName = "sfml-system";
-			productReference = A01269660E6318C000B96A5D /* libsfml-system-d.dylib */;
+			productReference = A01269660E6318C000B96A5D /* libsfml-system.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A012696E0E6318FE00B96A5D /* sfml-network */ = {
@@ -788,7 +786,7 @@
 			);
 			name = "sfml-network";
 			productName = "sfml-network";
-			productReference = A012696F0E6318FE00B96A5D /* libsfml-network-d.dylib */;
+			productReference = A012696F0E6318FE00B96A5D /* libsfml-network.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A01269750E63190F00B96A5D /* sfml-audio */ = {
@@ -804,7 +802,7 @@
 			);
 			name = "sfml-audio";
 			productName = "sfml-audio";
-			productReference = A01269760E63190F00B96A5D /* libsfml-audio-d.dylib */;
+			productReference = A01269760E63190F00B96A5D /* libsfml-audio.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A012697C0E63192000B96A5D /* sfml-window */ = {
@@ -820,7 +818,7 @@
 			);
 			name = "sfml-window";
 			productName = "sfml-window";
-			productReference = A012697D0E63192000B96A5D /* libsfml-window-d.dylib */;
+			productReference = A012697D0E63192000B96A5D /* libsfml-window.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A01269830E63192B00B96A5D /* sfml-graphics */ = {
@@ -836,7 +834,7 @@
 			);
 			name = "sfml-graphics";
 			productName = "sfml-graphics";
-			productReference = A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */;
+			productReference = A01269840E63192B00B96A5D /* libsfml-graphics.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -1068,16 +1066,17 @@
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/bin";
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../src",
-					"$(SRCROOT)/../../include",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"${SRCROOT}/../../src",
+					"${SRCROOT}/../../include",
+					"$(SRCROOT)/../../extlibs/headers",
 				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SRCROOT)/../../extlibs/headers\"";
 				INSTALL_PATH = "@executable_path";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
 				OBJROOT = build;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SYMROOT = ../../lib/xcode;
+				SYMROOT = ../../lib;
 			};
 			name = Debug;
 		};
@@ -1088,17 +1087,18 @@
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/bin";
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../src",
-					"$(SRCROOT)/../../include",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"${SRCROOT}/../../src",
+					"${SRCROOT}/../../include",
+					"$(SRCROOT)/../../extlibs/headers",
 				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SRCROOT)/../../extlibs/headers\"";
 				INSTALL_PATH = "@executable_path";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
 				OBJROOT = build;
 				OTHER_CFLAGS = "-DNDEBUG";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SYMROOT = ../../lib/xcode;
+				SYMROOT = ../../lib;
 			};
 			name = Release;
 		};
@@ -1177,11 +1177,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = lib;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -1189,7 +1184,8 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
-					"-lsfml-system-d",
+					"-framework",
+					sndfile,
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "sfml-audio-d";
@@ -1203,17 +1199,13 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/libs-xcode\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
-					"-lsfml-system",
+					"-framework",
+					sndfile,
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "sfml-audio";
@@ -1277,12 +1269,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../src",
-					"$(SRCROOT)/../../include",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/headers\"";
 				OTHER_LDFLAGS = (
 					"$(SRCROOT)/../../extlibs/libs-xcode/libfreetype.a",
 					"-framework",
@@ -1304,12 +1290,6 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../src",
-					"$(SRCROOT)/../../include",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/headers\"";
 				OTHER_LDFLAGS = (
 					"$(SRCROOT)/../../extlibs/libs-xcode/libfreetype.a",
 					"-framework",
@@ -1350,8 +1330,8 @@
 		A012695C0E63189C00B96A5D /* Build configuration list for PBXProject "SFML-bare" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A012695A0E63189C00B96A5D /* Debug */,
 				A012695B0E63189C00B96A5D /* Release */,
+				A012695A0E63189C00B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1359,8 +1339,8 @@
 		A012696A0E6318C000B96A5D /* Build configuration list for PBXNativeTarget "sfml-system" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A01269680E6318C000B96A5D /* Debug */,
 				A01269690E6318C000B96A5D /* Release */,
+				A01269680E6318C000B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1368,8 +1348,8 @@
 		A01269880E63193B00B96A5D /* Build configuration list for PBXNativeTarget "sfml-network" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A01269700E6318FF00B96A5D /* Debug */,
 				A01269710E6318FF00B96A5D /* Release */,
+				A01269700E6318FF00B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1377,8 +1357,8 @@
 		A01269890E63193B00B96A5D /* Build configuration list for PBXNativeTarget "sfml-audio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A01269770E63190F00B96A5D /* Debug */,
 				A01269780E63190F00B96A5D /* Release */,
+				A01269770E63190F00B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1386,8 +1366,8 @@
 		A012698A0E63193B00B96A5D /* Build configuration list for PBXNativeTarget "sfml-window" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A012697E0E63192000B96A5D /* Debug */,
 				A012697F0E63192000B96A5D /* Release */,
+				A012697E0E63192000B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1395,8 +1375,8 @@
 		A012698B0E63193B00B96A5D /* Build configuration list for PBXNativeTarget "sfml-graphics" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A01269850E63192B00B96A5D /* Debug */,
 				A01269860E63192B00B96A5D /* Release */,
+				A01269850E63192B00B96A5D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1404,8 +1384,8 @@
 		A0AD0A460E766415006E7E0D /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A0AD0A310E7663E1006E7E0D /* Debug */,
 				A0AD0A320E7663E1006E7E0D /* Release */,
+				A0AD0A310E7663E1006E7E0D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

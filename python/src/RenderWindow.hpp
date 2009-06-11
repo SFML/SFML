@@ -29,9 +29,12 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "View.hpp"
+
 typedef struct {
 	PyObject_HEAD
 	sf::RenderWindow *obj;
+	PySfView *View;
 } PySfRenderWindow;
 
 

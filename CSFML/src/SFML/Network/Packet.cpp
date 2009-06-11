@@ -26,14 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Packet.h>
-#include <SFML/Network/Packet.hpp>
+#include <SFML/Network/PacketStruct.h>
 #include <SFML/Internal.h>
-
-
-struct sfPacket
-{
-    sf::Packet This;
-};
 
 
 namespace

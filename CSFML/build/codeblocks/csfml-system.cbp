@@ -58,10 +58,13 @@
 		<Unit filename="..\..\include\SFML\System\Thread.h" />
 		<Unit filename="..\..\include\SFML\System\Types.h" />
 		<Unit filename="..\..\src\SFML\System\Clock.cpp" />
+		<Unit filename="..\..\src\SFML\System\ClockStruct.h" />
 		<Unit filename="..\..\src\SFML\System\Mutex.cpp" />
+		<Unit filename="..\..\src\SFML\System\MutexStruct.h" />
 		<Unit filename="..\..\src\SFML\System\Randomizer.cpp" />
 		<Unit filename="..\..\src\SFML\System\Sleep.cpp" />
 		<Unit filename="..\..\src\SFML\System\Thread.cpp" />
+		<Unit filename="..\..\src\SFML\System\ThreadStruct.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

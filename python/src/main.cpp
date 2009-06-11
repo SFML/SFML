@@ -281,7 +281,7 @@ initsf(void)
 	Py_INCREF(&PySfListenerType);
 	PyModule_AddObject(m, "Listener", (PyObject *)&PySfListenerType);
 
-	PyModule_AddStringConstant(m, "Version", "1.5");
+	PyModule_AddStringConstant(m, "Version", "1.6");
 
 	PySfColor_InitConst();
 	PySfKey_InitConst();
@@ -293,6 +293,8 @@ initsf(void)
 	PySfSound_InitConst();
 	PySfSoundStream_InitConst();
 	PySfString_InitConst();
+
+	PyEval_InitThreads();
 
 #ifdef IS_PY3K
 	return m;

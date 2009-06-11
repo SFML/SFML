@@ -169,12 +169,17 @@ void RenderTarget::PreserveOpenGLStates(bool Preserve)
 ////////////////////////////////////////////////////////////
 void RenderTarget::Initialize()
 {
-    // Set the default rendering states
-    SetRenderStates();
+    if (Activate(true))
+    {
+        // Set the default rendering states
+        SetRenderStates();
 
-    // Setup the default view
-    myDefaultView.SetFromRect(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
-    SetView(myDefaultView);
+        // Setup the default view
+        myDefaultView.SetFromRect(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
+        SetView(myDefaultView);
+
+        Activate(false);
+    }
 }
 
 
@@ -185,7 +190,7 @@ void RenderTarget::SetRenderStates()
 {
     GLCheck(glDisable(GL_ALPHA_TEST));
     GLCheck(glDisable(GL_DEPTH_TEST));
-    GLCheck(glDisable(GL_LIGHTING)); 
+    GLCheck(glDisable(GL_LIGHTING));
 }
 
 } // namespace sf

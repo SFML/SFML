@@ -26,14 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.h>
-#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/FontStruct.h>
 #include <SFML/Internal.h>
-
-
-struct sfFont
-{
-    sf::Font This;
-};
 
 
 ////////////////////////////////////////////////////////////

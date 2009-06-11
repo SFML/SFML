@@ -198,6 +198,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\System\ClockStruct.h"
+			>
+		</File>
+		<File
 			RelativePath=".\csfml-system-d.def"
 			>
 		</File>
@@ -211,6 +215,10 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\System\Mutex.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\System\MutexStruct.h"
 			>
 		</File>
 		<File
@@ -235,6 +243,10 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\System\Thread.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\System\ThreadStruct.h"
 			>
 		</File>
 		<File

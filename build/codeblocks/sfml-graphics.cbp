@@ -127,6 +127,7 @@
 		<Unit filename="..\..\include\SFML\Graphics\PostFX.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Rect.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Rect.inl" />
+		<Unit filename="..\..\include\SFML\Graphics\RenderImage.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderTarget.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderWindow.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Shape.hpp" />
@@ -152,6 +153,12 @@
 		<Unit filename="..\..\src\SFML\Graphics\Matrix3.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\OpenGL\RendererOpenGL.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\PostFX.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderImage.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderImageImpl.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderImageImpl.hpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderImageImplFBO.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderImageImplFBO.hpp" />
+		<Unit filename="..\..\src\SFML\Graphics\RenderImageImplPBuffer.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderTarget.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderWindow.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\SOIL\SOIL.c">
@@ -172,6 +179,8 @@
 		<Unit filename="..\..\src\SFML\Graphics\Sprite.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\String.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\View.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\libjpeg\cderror.h" />
 		<Unit filename="..\..\src\SFML\Graphics\libjpeg\jcapimin.c">
 			<Option compilerVar="CC" />

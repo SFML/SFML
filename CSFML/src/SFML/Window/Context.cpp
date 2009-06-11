@@ -26,14 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Context.h>
-#include <SFML/Window/Context.hpp>
+#include <SFML/Window/ContextStruct.h>
 #include <SFML/Internal.h>
-
-
-struct sfContext
-{
-    sf::Context This;
-};
 
 
 ////////////////////////////////////////////////////////////

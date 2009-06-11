@@ -207,11 +207,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Network\FtpStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Network\Http.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Network\Http.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Network\HttpStruct.h"
 			>
 		</File>
 		<File
@@ -231,11 +239,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Network\PacketStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Network\Selector.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Network\Selector.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Network\SelectorStruct.h"
 			>
 		</File>
 		<File
@@ -251,11 +267,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Network\SocketTCPStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Network\SocketUDP.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Network\SocketUDP.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Network\SocketUDPStruct.h"
 			>
 		</File>
 		<File

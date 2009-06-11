@@ -365,11 +365,22 @@ namespace SFML
             /// <summary>
             /// Render the object into the given render window
             /// </summary>
-            /// <param name="window">Target window</param>
+            /// <param name="target">Target render window</param>
             ////////////////////////////////////////////////////////////
-            internal override void Render(RenderWindow window)
+            internal override void Render(RenderWindow target)
             {
-                sfRenderWindow_DrawShape(window.This, This);
+                sfRenderWindow_DrawShape(target.This, This);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Render the object into the given render image
+            /// </summary>
+            /// <param name="target">Target render image</param>
+            ////////////////////////////////////////////////////////////
+            internal override void Render(RenderImage target)
+            {
+                sfRenderImage_DrawShape(target.This, This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -454,6 +465,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawShape(IntPtr This, IntPtr Shape);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern void sfRenderImage_DrawShape(IntPtr This, IntPtr Shape);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfShape_CreateLine(float P1X, float P1Y, float P2X, float P2Y, float Thickness, Color Col, float Outline, Color OutlineCol);

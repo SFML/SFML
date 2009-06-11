@@ -363,2924 +363,2940 @@
 	</References>
 	<Files>
 		<Filter
-			Name="zlib"
+			Name="Win32"
 			>
 			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\adler32.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\compress.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\crc32.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\crc32.h"
+				RelativePath="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\deflate.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\deflate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\inffast.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\inffast.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\inffixed.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\inflate.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\inflate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\inftrees.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\inftrees.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\trees.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\trees.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\uncompr.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\zconf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\zlib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\zutil.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\zlib\zutil.h"
+				RelativePath="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.hpp"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="libpng"
+			Name="External libs"
 			>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\png.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\png.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngconf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngerror.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pnggccrd.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngget.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngmem.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngpread.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngread.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngrio.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngrtran.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngrutil.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngset.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngtrans.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngvcrd.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngwio.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngwrite.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngwtran.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libpng\pngwutil.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="SOIL"
-			>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\SOIL\image_DXT.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\SOIL\image_DXT.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\SOIL\SOIL.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\SOIL\SOIL.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\SOIL\stb_image_aug.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\SOIL\stb_image_aug.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\SOIL\stbi_DDS_aug.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\SOIL\stbi_DDS_aug_c.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="libjpeg"
-			>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\cderror.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcapimin.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcapistd.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jccoefct.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jccolor.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcdctmgr.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jchuff.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jchuff.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcinit.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcmainct.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcmarker.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcmaster.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcomapi.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jconfig.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcparam.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcphuff.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcprepct.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jcsample.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jctrans.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdapimin.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdapistd.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdatadst.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdatasrc.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdcoefct.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdcolor.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdct.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jddctmgr.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdhuff.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdhuff.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdinput.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdmainct.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdmarker.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdmaster.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdmerge.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdphuff.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdpostct.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdsample.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jdtrans.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jerror.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jerror.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jfdctflt.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jfdctfst.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jfdctint.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jidctflt.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jidctfst.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jidctint.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jidctred.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jinclude.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jmemmgr.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jmemnobs.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jmemsys.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jmorecfg.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jpegint.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jpeglib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jquant1.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jquant2.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jutils.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="2"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\libjpeg\jversion.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="GLEW"
-			>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GLEW\glew.c"
-				>
-				<FileConfiguration
-					Name="Debug DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release DLL|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GLEW\glew.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GLEW\glxew.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GLEW\wglew.h"
-				>
-			</File>
+			<Filter
+				Name="GLEW"
+				>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\GLEW\glew.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="1"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="1"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="1"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="1"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\GLEW\glew.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\GLEW\glxew.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\GLEW\wglew.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="libpng"
+				>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\png.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\png.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngconf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngerror.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pnggccrd.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngget.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngmem.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngpread.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngread.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngrio.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngrtran.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngrutil.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngset.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngtrans.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngvcrd.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngwio.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngwrite.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngwtran.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libpng\pngwutil.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="libjpeg"
+				>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\cderror.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcapimin.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcapistd.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jccoefct.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jccolor.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcdctmgr.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jchuff.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jchuff.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcinit.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcmainct.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcmarker.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcmaster.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcomapi.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jconfig.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcparam.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcphuff.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcprepct.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jcsample.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jctrans.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdapimin.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdapistd.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdatadst.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdatasrc.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdcoefct.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdcolor.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdct.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jddctmgr.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdhuff.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdhuff.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdinput.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdmainct.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdmarker.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdmaster.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdmerge.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdphuff.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdpostct.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdsample.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jdtrans.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jerror.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jerror.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jfdctflt.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jfdctfst.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jfdctint.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jidctflt.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jidctfst.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jidctint.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jidctred.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jinclude.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jmemmgr.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jmemnobs.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jmemsys.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jmorecfg.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jpegint.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jpeglib.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jquant1.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jquant2.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jutils.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\libjpeg\jversion.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="SOIL"
+				>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\SOIL\image_DXT.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\SOIL\image_DXT.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\SOIL\SOIL.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\SOIL\SOIL.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\SOIL\stb_image_aug.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\SOIL\stb_image_aug.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\SOIL\stbi_DDS_aug.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\SOIL\stbi_DDS_aug_c.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="zlib"
+				>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\adler32.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\compress.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\crc32.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\crc32.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\deflate.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\deflate.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\inffast.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\inffast.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\inffixed.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\inflate.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\inflate.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\inftrees.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\inftrees.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\trees.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\trees.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\uncompr.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\zconf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\zlib.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\zutil.c"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WarningLevel="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\zlib\zutil.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\src\SFML\Graphics\Color.cpp"
@@ -3400,6 +3416,34 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\Rect.inl"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\RenderImage.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Graphics\RenderImage.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\RenderImageImpl.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\RenderImageImpl.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\RenderImageImplFBO.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\RenderImageImplFBO.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\RenderImageImplPBuffer.hpp"
 			>
 		</File>
 		<File

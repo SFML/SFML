@@ -26,35 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Image.h>
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Window/Input.hpp>
+#include <SFML/Graphics/ImageStruct.h>
+#include <SFML/Graphics/RenderWindowStruct.h>
 #include <SFML/Internal.h>
-
-
-// WARNING : this structure must always be the SAME as in Window/Input.h
-struct sfInput
-{
-    const sf::Input* This;
-};
-// WARNING : this structure must always be the SAME as in Graphics/View.h
-struct sfView
-{
-    sf::View* This;
-};
-// WARNING : this structure must always be the SAME as in Graphics/RenderWindow.h
-struct sfRenderWindow
-{
-    sf::RenderWindow This;
-    sfInput          Input;
-    sfView           DefaultView;
-    sfView*          CurrentView;
-};
-
-struct sfImage
-{
-    sf::Image This;
-};
 
 
 ////////////////////////////////////////////////////////////
@@ -73,7 +47,7 @@ sfImage* sfImage_CreateFromColor(unsigned int Width, unsigned int Height, sfColo
 {
     sfImage* Image = new sfImage;
 
-    if (!Image->This.Create(Width, Height, sf::Color(Color.r, Color.g, Color.b, Color.a)))
+    if (!Image->This->Create(Width, Height, sf::Color(Color.r, Color.g, Color.b, Color.a)))
     {
         delete Image;
         Image = NULL;
@@ -90,7 +64,7 @@ sfImage* sfImage_CreateFromPixels(unsigned int Width, unsigned int Height, const
 {
     sfImage* Image = new sfImage;
 
-    if (!Image->This.LoadFromPixels(Width, Height, Data))
+    if (!Image->This->LoadFromPixels(Width, Height, Data))
     {
         delete Image;
         Image = NULL;
@@ -107,7 +81,7 @@ sfImage* sfImage_CreateFromFile(const char* Filename)
 {
     sfImage* Image = new sfImage;
 
-    if (!Image->This.LoadFromFile(Filename))
+    if (!Image->This->LoadFromFile(Filename))
     {
         delete Image;
         Image = NULL;
@@ -124,7 +98,7 @@ sfImage* sfImage_CreateFromMemory(const char* Data, size_t SizeInBytes)
 {
     sfImage* Image = new sfImage;
 
-    if (!Image->This.LoadFromMemory(Data, SizeInBytes))
+    if (!Image->This->LoadFromMemory(Data, SizeInBytes))
     {
         delete Image;
         Image = NULL;
@@ -148,7 +122,7 @@ void sfImage_Destroy(sfImage* Image)
 ////////////////////////////////////////////////////////////
 sfBool sfImage_SaveToFile(sfImage* Image, const char* Filename)
 {
-    CSFML_CALL_RETURN(Image, SaveToFile(Filename), sfFalse);
+    CSFML_CALL_PTR_RETURN(Image, SaveToFile(Filename), sfFalse);
 }
 
 
@@ -158,7 +132,7 @@ sfBool sfImage_SaveToFile(sfImage* Image, const char* Filename)
 void sfImage_CreateMaskFromColor(sfImage* Image, sfColor ColorKey, sfUint8 Alpha)
 {
     sf::Color SFMLColor(ColorKey.r, ColorKey.g, ColorKey.b, ColorKey.a);
-    CSFML_CALL(Image, CreateMaskFromColor(SFMLColor, Alpha));
+    CSFML_CALL_PTR(Image, CreateMaskFromColor(SFMLColor, Alpha));
 }
 
 
@@ -171,7 +145,7 @@ void sfImage_Copy(sfImage* Image, sfImage* Source, unsigned int DestX, unsigned 
 {
     CSFML_CHECK(Source);
     sf::IntRect SFMLRect(SourceRect.Left, SourceRect.Top, SourceRect.Right, SourceRect.Bottom);
-    CSFML_CALL(Image, Copy(Source->This, DestX, DestY, SFMLRect));
+    CSFML_CALL_PTR(Image, Copy(*Source->This, DestX, DestY, SFMLRect));
 }
 
 
@@ -183,7 +157,7 @@ CSFML_API sfBool sfImage_CopyScreen(sfImage* Image, sfRenderWindow* Window, sfIn
 {
     CSFML_CHECK_RETURN(Window, sfFalse);
     sf::IntRect SFMLRect(SourceRect.Left, SourceRect.Top, SourceRect.Right, SourceRect.Bottom);
-    CSFML_CALL_RETURN(Image, CopyScreen(Window->This, SFMLRect), sfFalse);
+    CSFML_CALL_PTR_RETURN(Image, CopyScreen(Window->This, SFMLRect), sfFalse);
 }
 
 
@@ -194,7 +168,7 @@ CSFML_API sfBool sfImage_CopyScreen(sfImage* Image, sfRenderWindow* Window, sfIn
 void sfImage_SetPixel(sfImage* Image, unsigned int X, unsigned int Y, sfColor Color)
 {
     sf::Color SFMLColor(Color.r, Color.g, Color.b, Color.a);
-    CSFML_CALL(Image, SetPixel(X, Y, SFMLColor));
+    CSFML_CALL_PTR(Image, SetPixel(X, Y, SFMLColor));
 }
 
 
@@ -206,7 +180,7 @@ sfColor sfImage_GetPixel(sfImage* Image, unsigned int X, unsigned int Y)
     sfColor Color = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(Image, Color);
 
-    sf::Color SFMLColor = Image->This.GetPixel(X, Y);
+    sf::Color SFMLColor = Image->This->GetPixel(X, Y);
 
     return sfColor_FromRGBA(SFMLColor.r, SFMLColor.g, SFMLColor.b, SFMLColor.a);
 }
@@ -219,7 +193,7 @@ sfColor sfImage_GetPixel(sfImage* Image, unsigned int X, unsigned int Y)
 ////////////////////////////////////////////////////////////
 const sfUint8* sfImage_GetPixelsPtr(sfImage* Image)
 {
-    CSFML_CALL_RETURN(Image, GetPixelsPtr(), NULL);
+    CSFML_CALL_PTR_RETURN(Image, GetPixelsPtr(), NULL);
 }
 
 
@@ -228,7 +202,7 @@ const sfUint8* sfImage_GetPixelsPtr(sfImage* Image)
 ////////////////////////////////////////////////////////////
 void sfImage_Bind(sfImage* Image)
 {
-    CSFML_CALL(Image, Bind());
+    CSFML_CALL_PTR(Image, Bind());
 }
 
 
@@ -237,7 +211,7 @@ void sfImage_Bind(sfImage* Image)
 ////////////////////////////////////////////////////////////
 void sfImage_SetSmooth(sfImage* Image, sfBool Smooth)
 {
-    CSFML_CALL(Image, SetSmooth(Smooth == sfTrue));
+    CSFML_CALL_PTR(Image, SetSmooth(Smooth == sfTrue));
 }
 
 
@@ -246,7 +220,7 @@ void sfImage_SetSmooth(sfImage* Image, sfBool Smooth)
 ////////////////////////////////////////////////////////////
 unsigned int sfImage_GetWidth(sfImage* Image)
 {
-    CSFML_CALL_RETURN(Image, GetWidth(), 0);
+    CSFML_CALL_PTR_RETURN(Image, GetWidth(), 0);
 }
 
 
@@ -255,7 +229,7 @@ unsigned int sfImage_GetWidth(sfImage* Image)
 ////////////////////////////////////////////////////////////
 unsigned int sfImage_GetHeight(sfImage* Image)
 {
-    CSFML_CALL_RETURN(Image, GetHeight(), 0);
+    CSFML_CALL_PTR_RETURN(Image, GetHeight(), 0);
 }
 
 
@@ -264,5 +238,5 @@ unsigned int sfImage_GetHeight(sfImage* Image)
 ////////////////////////////////////////////////////////////
 sfBool sfImage_IsSmooth(sfImage* Image)
 {
-    CSFML_CALL_RETURN(Image, IsSmooth(), sfFalse);
+    CSFML_CALL_PTR_RETURN(Image, IsSmooth(), sfFalse);
 }

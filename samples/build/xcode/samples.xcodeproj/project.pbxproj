@@ -798,6 +798,8 @@
 		A07D7D540EE82B1A006712A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				CONFIGURATION_BUILD_DIR = ../../bin;
 				COPY_PHASE_STRIP = NO;
 				OBJROOT = build;
@@ -809,6 +811,8 @@
 		A07D7D550EE82B1A006712A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				CONFIGURATION_BUILD_DIR = ../../bin;
 				COPY_PHASE_STRIP = YES;
 				OBJROOT = build;

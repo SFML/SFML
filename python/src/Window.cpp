@@ -132,7 +132,6 @@ PySfWindow_Create(PySfWindow* self, PyObject *args, PyObject *kwds)
 		return NULL; 
 
 	VideoMode = ((PySfVideoMode *)VideoModeTmp)->obj;
-	PySfVideoModeUpdate((PySfVideoMode *)VideoModeTmp);
 
 	if (Params)
 	{

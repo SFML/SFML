@@ -26,17 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Ftp.h>
-#include <SFML/Network/Ftp.hpp>
+#include <SFML/Network/FtpStruct.h>
 #include <SFML/Network/IPAddress.hpp>
 #include <SFML/Internal.h>
-
-
-struct sfFtpListingResponse
-{
-    sfFtpListingResponse(const sf::Ftp::ListingResponse& Response) : This(Response) {}
-
-    sf::Ftp::ListingResponse This;
-};
 
 
 ////////////////////////////////////////////////////////////
@@ -95,14 +87,6 @@ const char* sfFtpListingResponse_GetFilename(sfFtpListingResponse* FtpListingRes
 }
 
 
-struct sfFtpDirectoryResponse
-{
-    sfFtpDirectoryResponse(const sf::Ftp::DirectoryResponse& Response) : This(Response) {}
-
-    sf::Ftp::DirectoryResponse This;
-};
-
-
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp directory response
 ////////////////////////////////////////////////////////////
@@ -151,14 +135,6 @@ const char* sfFtpDirectoryResponse_GetDirectory(sfFtpDirectoryResponse* FtpDirec
 }
 
 
-struct sfFtpResponse
-{
-    sfFtpResponse(const sf::Ftp::Response& Response) : This(Response) {}
-
-    sf::Ftp::Response This;
-};
-
-
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp response
 ////////////////////////////////////////////////////////////
@@ -198,12 +174,6 @@ const char* sfFtpResponse_GetMessage(sfFtpResponse* FtpResponse)
 
     return FtpResponse->This.GetMessage().c_str();
 }
-
-
-struct sfFtp
-{
-    sf::Ftp This;
-};
 
 
 ////////////////////////////////////////////////////////////

@@ -29,6 +29,7 @@
 typedef struct sfFont sfFont;
 typedef struct sfImage sfImage;
 typedef struct sfPostFX sfPostFX;
+typedef struct sfRenderImage sfRenderImage;
 typedef struct sfRenderWindow sfRenderWindow;
 typedef struct sfShape sfShape;
 typedef struct sfSprite sfSprite;

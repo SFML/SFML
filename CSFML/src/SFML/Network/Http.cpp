@@ -26,14 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Http.h>
-#include <SFML/Network/Http.hpp>
+#include <SFML/Network/HttpStruct.h>
 #include <SFML/Internal.h>
-
-
-struct sfHttpRequest
-{
-    sf::Http::Request This;
-};
 
 
 ////////////////////////////////////////////////////////////
@@ -106,12 +100,6 @@ void sfHttpRequest_SetBody(sfHttpRequest* HttpRequest, const char* Body)
 }
 
 
-struct sfHttpResponse
-{
-    sf::Http::Response This;
-};
-
-
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Http response
 ////////////////////////////////////////////////////////////
@@ -176,12 +164,6 @@ const char* sfHttpResponse_GetBody(sfHttpResponse* HttpResponse)
 
     return HttpResponse->This.GetBody().c_str();
 }
-
-
-struct sfHttp
-{
-    sf::Http This;
-};
 
 
 ////////////////////////////////////////////////////////////

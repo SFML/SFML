@@ -26,19 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/View.h>
-#include <SFML/Graphics/View.hpp>
-#include <SFML/Graphics/Rect.h>
+#include <SFML/Graphics/ViewStruct.h>
 #include <SFML/Internal.h>
-
-
-struct sfView
-{
-    sfView() :                 This(new sf::View) {}
-    sfView(sfFloatRect Rect) : This(new sf::View(sf::FloatRect(Rect.Left, Rect.Top, Rect.Right, Rect.Bottom))) {}
-    ~sfView() {delete This;}
-
-    sf::View* This; // pointer needed for RenderView
-};
 
 
 ////////////////////////////////////////////////////////////

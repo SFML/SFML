@@ -63,9 +63,12 @@
 		<Unit filename="..\..\include\SFML\Window\Window.h" />
 		<Unit filename="..\..\include\SFML\Window\WindowHandle.h" />
 		<Unit filename="..\..\src\SFML\Window\Context.cpp" />
+		<Unit filename="..\..\src\SFML\Window\ContextStruct.h" />
 		<Unit filename="..\..\src\SFML\Window\Input.cpp" />
+		<Unit filename="..\..\src\SFML\Window\InputStruct.h" />
 		<Unit filename="..\..\src\SFML\Window\VideoMode.cpp" />
 		<Unit filename="..\..\src\SFML\Window\Window.cpp" />
+		<Unit filename="..\..\src\SFML\Window\WindowStruct.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

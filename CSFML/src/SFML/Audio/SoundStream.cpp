@@ -26,64 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundStream.h>
-#include <SFML/Audio/SoundStream.hpp>
+#include <SFML/Audio/SoundStreamStruct.h>
 #include <SFML/Internal.h>
-
-
-class sfSoundStreamImpl : public sf::SoundStream
-{
-public :
-
-    sfSoundStreamImpl(sfSoundStreamGetDataCallback OnGetData,
-                      sfSoundStreamSeekCallback    OnSeek,
-                      unsigned int                 ChannelsCount,
-                      unsigned int                 SampleRate,
-                      void*                        UserData) :
-    myGetDataCallback(OnGetData),
-    mySeekCallback   (OnSeek),
-    myUserData       (UserData)
-    {
-        Initialize(ChannelsCount, SampleRate);
-    }
-
-private :
-
-    virtual bool OnGetData(Chunk& Data)
-    {
-        sfSoundStreamChunk Chunk = {NULL, 0};
-        bool Continue = (myGetDataCallback(&Chunk, myUserData) == sfTrue);
-
-        Data.Samples   = Chunk.Samples;
-        Data.NbSamples = Chunk.NbSamples;
-
-        return Continue;
-    }
-
-    virtual void OnSeek(float TimeOffset)
-    {
-        if (mySeekCallback)
-            mySeekCallback(TimeOffset, myUserData);
-    }
-
-    sfSoundStreamGetDataCallback myGetDataCallback;
-    sfSoundStreamSeekCallback    mySeekCallback;
-    void*                        myUserData;
-};
-
-
-struct sfSoundStream
-{
-    sfSoundStream(sfSoundStreamGetDataCallback OnGetData,
-                  sfSoundStreamSeekCallback    OnSeek,
-                  unsigned int                 ChannelsCount,
-                  unsigned int                 SampleRate,
-                  void*                        UserData) :
-    This(OnGetData, OnSeek, ChannelsCount, SampleRate, UserData)
-    {
-    }
-
-    sfSoundStreamImpl This;
-};
 
 
 ////////////////////////////////////////////////////////////

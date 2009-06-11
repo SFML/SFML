@@ -24,6 +24,7 @@
 
 #include "Font.hpp"
 #include "Glyph.hpp"
+#include "Image.hpp"
 
 #include "compat.hpp"
 
@@ -167,13 +168,26 @@ PySfFont_GetCharacterSize(PySfFont* self)
 static PyObject *
 PySfFont_GetGlyph(PySfFont* self, PyObject *args)
 {
-	PySfGlyph *PyGlyph = GetNewPySfGlyph();
-	sf::Glyph *Glyph = new sf::Glyph(self->obj->GetGlyph(PyLong_AsUnsignedLong(args)));
-	PyGlyph->obj = Glyph;
-	PyGlyph->Rectangle->obj = &(PyGlyph->obj->Rectangle);
-	PyGlyph->TexCoords->obj = &(PyGlyph->obj->TexCoords);
-	PySfGlyphUpdateSelf(PyGlyph);
-	return (PyObject *)PyGlyph;
+	PySfGlyph *Glyph = GetNewPySfGlyph();
+	Glyph->Owner = false;
+	Glyph->Rectangle = GetNewPySfIntRect();
+	Glyph->Rectangle->Owner = false;
+	Glyph->TexCoords = GetNewPySfFloatRect();
+	Glyph->TexCoords->Owner = false;
+	Glyph->obj = (sf::Glyph *) &(self->obj->GetGlyph(PyLong_AsUnsignedLong(args)));
+	Glyph->Rectangle->obj = &(Glyph->obj->Rectangle);
+	Glyph->TexCoords->obj = &(Glyph->obj->TexCoords);
+	PySfGlyphUpdateSelf(Glyph);
+	return (PyObject *)Glyph;
+}
+
+static PyObject *
+PySfFont_GetImage(PySfFont* self)
+{
+	PySfImage *Image;
+	Image = GetNewPySfImage();
+	Image->obj = new sf::Image(self->obj->GetImage());
+	return (PyObject *)Image;
 }
 
 static PyMethodDef PySfFont_methods[] = {
@@ -189,6 +203,8 @@ Load the font from a file in memory. Returns True if loading was successful.\n\
 	Charset : Characters set to generate (by default, contains the ISO-8859-1 printable characters)"},
 	{"GetDefaultFont", (PyCFunction)PySfFont_GetDefaultFont, METH_NOARGS | METH_STATIC, "GetDefaultFont()\n\
 Get the SFML default built-in font (Arial)."},
+	{"GetImage", (PyCFunction)PySfFont_GetImage, METH_NOARGS, "GetImage()\n\
+Get the image containing the rendered characters (glyphs)."},
 	{"GetCharacterSize", (PyCFunction)PySfFont_GetCharacterSize, METH_NOARGS, "GetCharacterSize()\n\
 Get the base size of characters in the font; All glyphs dimensions are based on this value"},
 	{"GetGlyph", (PyCFunction)PySfFont_GetGlyph, METH_O, "GetGlyph(CodePoint)\n\

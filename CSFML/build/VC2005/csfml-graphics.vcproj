@@ -230,6 +230,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Graphics\FontStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\SFML\Graphics\Glyph.h"
 			>
 		</File>
@@ -242,11 +246,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Graphics\ImageStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Graphics\PostFX.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\PostFX.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\PostFXStruct.h"
 			>
 		</File>
 		<File
@@ -258,11 +270,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Graphics\RenderImage.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Graphics\RenderImage.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\RenderImageStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Graphics\RenderWindow.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\RenderWindow.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\RenderWindowStruct.h"
 			>
 		</File>
 		<File
@@ -274,6 +302,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Graphics\ShapeStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Graphics\Sprite.cpp"
 			>
 		</File>
@@ -282,11 +314,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Graphics\SpriteStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Graphics\String.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\String.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\StringStruct.h"
 			>
 		</File>
 		<File
@@ -299,6 +339,10 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\View.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\ViewStruct.h"
 			>
 		</File>
 	</Files>

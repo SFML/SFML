@@ -219,11 +219,22 @@ namespace SFML
             /// <summary>
             /// Render the object into the given render window
             /// </summary>
-            /// <param name="window">Target window</param>
+            /// <param name="target">Target render window</param>
             ////////////////////////////////////////////////////////////
-            internal override void Render(RenderWindow window)
+            internal override void Render(RenderWindow target)
             {
-                sfRenderWindow_DrawSprite(window.This, This);
+                sfRenderWindow_DrawSprite(target.This, This);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Render the object into the given render image
+            /// </summary>
+            /// <param name="target">Target render image</param>
+            ////////////////////////////////////////////////////////////
+            internal override void Render(RenderImage target)
+            {
+                sfRenderImage_DrawSprite(target.This, This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -299,6 +310,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawSprite(IntPtr This, IntPtr Sprite);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern void sfRenderImage_DrawSprite(IntPtr This, IntPtr Sprite);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_Resize(IntPtr This, float Width, float Height);

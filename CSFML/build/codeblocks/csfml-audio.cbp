@@ -64,11 +64,17 @@
 		<Unit filename="..\..\include\SFML\Audio\Types.h" />
 		<Unit filename="..\..\src\SFML\Audio\Listener.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\Music.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\MusicStruct.h" />
 		<Unit filename="..\..\src\SFML\Audio\Sound.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundBuffer.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundBufferRecorder.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundBufferRecorderStruct.h" />
+		<Unit filename="..\..\src\SFML\Audio\SoundBufferStruct.h" />
 		<Unit filename="..\..\src\SFML\Audio\SoundRecorder.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundRecorderStruct.h" />
 		<Unit filename="..\..\src\SFML\Audio\SoundStream.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundStreamStruct.h" />
+		<Unit filename="..\..\src\SFML\Audio\SoundStruct.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

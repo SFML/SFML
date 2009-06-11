@@ -26,23 +26,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/SocketTCP.h>
-#include <SFML/Network/SocketTCP.hpp>
+#include <SFML/Network/SocketTCPStruct.h>
+#include <SFML/Network/PacketStruct.h>
 #include <SFML/Network/IPAddress.hpp>
-#include <SFML/Network/Packet.hpp>
 #include <SFML/Internal.h>
 #include <string.h>
-
-
-// WARNING : this structure must always be the SAME as in Network/Packet.h
-struct sfPacket
-{
-    sf::Packet This;
-};
-
-struct sfSocketTCP
-{
-    sf::SocketTCP This;
-};
 
 
 ////////////////////////////////////////////////////////////

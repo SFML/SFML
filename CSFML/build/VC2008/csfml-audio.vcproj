@@ -240,11 +240,23 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Audio\SoundBufferRecorderStruct.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Audio\SoundBufferStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Audio\SoundRecorder.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Audio\SoundRecorder.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Audio\SoundRecorderStruct.h"
 			>
 		</File>
 		<File
@@ -257,6 +269,14 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Audio\SoundStream.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Audio\SoundStreamStruct.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Audio\SoundStruct.h"
 			>
 		</File>
 		<File

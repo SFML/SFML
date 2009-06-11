@@ -166,6 +166,22 @@ EXPORTS
 	sfString_GetStyle
 	sfString_GetCharacterPos
 	sfString_GetRect
+	sfRenderImage_Create
+	sfRenderImage_Destroy
+	sfRenderImage_GetWidth
+	sfRenderImage_GetHeight
+	sfRenderImage_SetActive
+	sfRenderImage_DrawPostFX
+	sfRenderImage_DrawSprite
+	sfRenderImage_DrawShape
+	sfRenderImage_DrawString
+	sfRenderImage_Clear
+	sfRenderImage_SetView
+	sfRenderImage_GetView
+	sfRenderImage_GetDefaultView
+	sfRenderImage_PreserveOpenGLStates
+	sfRenderImage_GetImage
+	sfRenderImage_CanUseRenderImage
 	sfRenderWindow_Create
 	sfRenderWindow_CreateFromHandle
 	sfRenderWindow_Destroy

@@ -26,23 +26,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Sprite.h>
-#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/SpriteStruct.h>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Internal.h>
-
-
-// WARNING : this structure must always be the SAME as in Graphics/Image.h
-struct sfImage
-{
-    sf::Image This;
-};
-struct sfSprite
-{
-    sf::Sprite This;
-    sfImage*   Image;
-    sfIntRect  SubRect;
-};
 
 
 ////////////////////////////////////////////////////////////
@@ -310,7 +297,7 @@ void sfSprite_SetImage(sfSprite* Sprite, sfImage* Image)
 {
     if (Image)
     {
-        CSFML_CALL(Sprite, SetImage(Image->This))
+        CSFML_CALL(Sprite, SetImage(*Image->This))
         Sprite->Image = Image;
     }
 }

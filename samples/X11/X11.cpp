@@ -115,19 +115,6 @@ int main()
     if (!Disp)
         return EXIT_FAILURE;
 
-    // Setup OpenGL states
-    // Set color and depth clear value
-    glClearDepth(1.f);
-    glClearColor(0.f, 0.5f, 0.5f, 0.f);
-
-    // Enable Z-buffer read and write
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-
-    // Setup a perspective projection
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(90.f, 1.f, 1.f, 500.f);
     // Get the default screen
     int Screen = DefaultScreen(Disp);
 

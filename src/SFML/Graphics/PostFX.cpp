@@ -306,10 +306,10 @@ void PostFX::Render(RenderTarget& Target) const
     // Render a fullscreen quad using the effect on our framebuffer
     FloatRect Screen = Target.GetView().GetRect();
     glBegin(GL_QUADS);
-         glTexCoord2f(TexCoords.Left,  TexCoords.Top);    glVertex2f(Screen.Left,  Screen.Bottom);
-         glTexCoord2f(TexCoords.Right, TexCoords.Top);    glVertex2f(Screen.Right, Screen.Bottom);
-         glTexCoord2f(TexCoords.Right, TexCoords.Bottom); glVertex2f(Screen.Right, Screen.Top);
-         glTexCoord2f(TexCoords.Left,  TexCoords.Bottom); glVertex2f(Screen.Left,  Screen.Top);
+         glTexCoord2f(TexCoords.Left,  TexCoords.Top);    glVertex2f(Screen.Left,  Screen.Top);
+         glTexCoord2f(TexCoords.Right, TexCoords.Top);    glVertex2f(Screen.Right, Screen.Top);
+         glTexCoord2f(TexCoords.Right, TexCoords.Bottom); glVertex2f(Screen.Right, Screen.Bottom);
+         glTexCoord2f(TexCoords.Left,  TexCoords.Bottom); glVertex2f(Screen.Left,  Screen.Bottom);
     glEnd();
 
     // Disable program

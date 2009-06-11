@@ -26,16 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Thread.h>
-#include <SFML/System/Thread.hpp>
+#include <SFML/System/ThreadStruct.h>
 #include <SFML/Internal.h>
-
-
-struct sfThread
-{
-    sfThread(void (*Function)(void*), void* UserData) : This(Function, UserData) {}
-
-    sf::Thread This;
-};
 
 
 ////////////////////////////////////////////////////////////

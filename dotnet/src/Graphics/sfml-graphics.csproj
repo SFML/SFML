@@ -50,6 +50,8 @@
     <Compile Include="Image.cs" />
     <Compile Include="PostFx.cs" />
     <Compile Include="Rect.cs" />
+    <Compile Include="RenderImage.cs" />
+    <Compile Include="RenderTarget.cs" />
     <Compile Include="RenderWindow.cs" />
     <Compile Include="Shape.cs" />
     <Compile Include="Sprite.cs" />

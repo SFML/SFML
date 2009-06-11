@@ -63,12 +63,18 @@
 		<Unit filename="..\..\include\SFML\Network\SocketUDP.h" />
 		<Unit filename="..\..\include\SFML\Network\Types.h" />
 		<Unit filename="..\..\src\SFML\Network\Ftp.cpp" />
+		<Unit filename="..\..\src\SFML\Network\FtpStruct.h" />
 		<Unit filename="..\..\src\SFML\Network\Http.cpp" />
+		<Unit filename="..\..\src\SFML\Network\HttpStruct.h" />
 		<Unit filename="..\..\src\SFML\Network\IPAddress.cpp" />
 		<Unit filename="..\..\src\SFML\Network\Packet.cpp" />
+		<Unit filename="..\..\src\SFML\Network\PacketStruct.h" />
 		<Unit filename="..\..\src\SFML\Network\Selector.cpp" />
+		<Unit filename="..\..\src\SFML\Network\SelectorStruct.h" />
 		<Unit filename="..\..\src\SFML\Network\SocketTCP.cpp" />
+		<Unit filename="..\..\src\SFML\Network\SocketTCPStruct.h" />
 		<Unit filename="..\..\src\SFML\Network\SocketUDP.cpp" />
+		<Unit filename="..\..\src\SFML\Network\SocketUDPStruct.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

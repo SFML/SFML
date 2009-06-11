@@ -175,11 +175,9 @@ PySfString_GetRect(PySfString* self)
 	PySfFloatRect *Rect;
 
 	Rect = GetNewPySfFloatRect();
+	Rect->Owner = true;
 	Rect->obj = new sf::FloatRect (self->obj->GetRect());
-	Rect->Left = Rect->obj->Left;
-	Rect->Top = Rect->obj->Top;
-	Rect->Right = Rect->obj->Right;
-	Rect->Bottom = Rect->obj->Bottom;
+	PySfFloatRectUpdateSelf(Rect);
 
 	return (PyObject *)Rect;
 }

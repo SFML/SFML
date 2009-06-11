@@ -26,26 +26,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/String.h>
+#include <SFML/Graphics/StringStruct.h>
 #include <SFML/Graphics/Font.h>
-#include <SFML/Graphics/String.hpp>
 #include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Internal.h>
-
-
-// WARNING : this structure must always be the SAME as in Graphics/Font.h
-struct sfFont
-{
-    sf::Font This;
-};
-
-struct sfString
-{
-    sf::String  This;
-    std::string Text;
-    sfFont*     Font;
-    sfFloatRect Rect;
-};
 
 
 ////////////////////////////////////////////////////////////

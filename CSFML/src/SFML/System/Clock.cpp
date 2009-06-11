@@ -26,14 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Clock.h>
-#include <SFML/System/Clock.hpp>
+#include <SFML/System/ClockStruct.h>
 #include <SFML/Internal.h>
-
-
-struct sfClock
-{
-    sf::Clock This;
-};
 
 
 ////////////////////////////////////////////////////////////

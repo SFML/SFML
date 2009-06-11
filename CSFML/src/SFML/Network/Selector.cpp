@@ -26,32 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Selector.h>
-#include <SFML/Network/Selector.hpp>
+#include <SFML/Network/SelectorStruct.h>
 #include <SFML/Internal.h>
-#include <map>
-
-
-// WARNING : this structure must always be the SAME as in Network/SocketTCP.h
-struct sfSocketTCP
-{
-    sf::SocketTCP This;
-};
-// WARNING : this structure must always be the SAME as in Network/SocketUDP.h
-struct sfSocketUDP
-{
-    sf::SocketUDP This;
-};
-struct sfSelectorTCP
-{
-    sf::SelectorTCP                       This;
-    std::map<sf::SocketTCP, sfSocketTCP*> Sockets;
-};
-struct sfSelectorUDP
-{
-    sf::SelectorUDP                       This;
-    std::map<sf::SocketUDP, sfSocketUDP*> Sockets;
-};
-
 
 
 ////////////////////////////////////////////////////////////

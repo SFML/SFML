@@ -200,6 +200,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Window\ContextStruct.h"
+			>
+		</File>
+		<File
 			RelativePath=".\csfml-window-d.def"
 			>
 		</File>
@@ -217,6 +221,10 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Window\Input.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Window\InputStruct.h"
 			>
 		</File>
 		<File
@@ -241,6 +249,10 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Window\WindowHandle.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Window\WindowStruct.h"
 			>
 		</File>
 	</Files>

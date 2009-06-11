@@ -26,68 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundRecorder.h>
-#include <SFML/Audio/SoundRecorder.hpp>
+#include <SFML/Audio/SoundRecorderStruct.h>
 #include <SFML/Internal.h>
-
-
-class sfSoundRecorderImpl : public sf::SoundRecorder
-{
-public :
-
-    sfSoundRecorderImpl(sfSoundRecorderStartCallback   OnStart,
-                        sfSoundRecorderProcessCallback OnProcess,
-                        sfSoundRecorderStopCallback    OnStop,
-                        void*                          UserData) :
-    myStartCallback  (OnStart),
-    myProcessCallback(OnProcess),
-    myStopCallback   (OnStop),
-    myUserData       (UserData)
-    {
-    }
-
-private :
-
-    virtual bool OnStart()
-    {
-        if (myStartCallback)
-            return myStartCallback(myUserData) == sfTrue;
-        else
-            return true;
-    }
-
-    virtual bool OnProcessSamples(const sf::Int16* Samples, std::size_t SamplesCount)
-    {
-        if (myProcessCallback)
-            return myProcessCallback(Samples, SamplesCount, myUserData) == sfTrue;
-        else
-            return true;
-    }
-
-    virtual void OnStop()
-    {
-        if (myStopCallback)
-            myStopCallback(myUserData);
-    }
-
-    sfSoundRecorderStartCallback   myStartCallback;
-    sfSoundRecorderProcessCallback myProcessCallback;
-    sfSoundRecorderStopCallback    myStopCallback;
-    void*                          myUserData;
-};
-
-
-struct sfSoundRecorder
-{
-    sfSoundRecorder(sfSoundRecorderStartCallback   OnStart,
-                    sfSoundRecorderProcessCallback OnProcess,
-                    sfSoundRecorderStopCallback    OnStop,
-                    void*                          UserData) :
-    This(OnStart, OnProcess, OnStop, UserData)
-    {
-    }
-
-    sfSoundRecorderImpl This;
-};
 
 
 ////////////////////////////////////////////////////////////

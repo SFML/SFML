@@ -26,61 +26,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderWindow.h>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Shape.hpp>
-#include <SFML/Graphics/PostFX.hpp>
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/String.hpp>
-#include <SFML/Graphics/View.hpp>
+#include <SFML/Graphics/RenderWindowStruct.h>
+#include <SFML/Graphics/ShapeStruct.h>
+#include <SFML/Graphics/PostFXStruct.h>
+#include <SFML/Graphics/ImageStruct.h>
+#include <SFML/Graphics/SpriteStruct.h>
+#include <SFML/Graphics/StringStruct.h>
 #include <SFML/Internal.h>
-
-
-// WARNING : this structure must always be the SAME as in Graphics/PostFX.h
-struct sfPostFX
-{
-    sf::PostFX This;
-};
-// WARNING : this structure must always be the SAME as in Graphics/Shape.h
-struct sfShape
-{
-    sf::Shape This;
-};
-// WARNING : this structure must always be the SAME as in Graphics/Sprite.h
-struct sfSprite
-{
-    sf::Sprite This;
-    sfImage*   Image;
-    sfIntRect  SubRect;
-};
-// WARNING : this structure must always be the SAME as in Graphics/String.h
-struct sfString
-{
-    sf::String  This;
-    std::string Text;
-};
-// WARNING : this structure must always be the SAME as in Graphics/Image.h
-struct sfImage
-{
-    sf::Image This;
-};
-// WARNING : this structure must always be the SAME as in Window/Input.h
-struct sfInput
-{
-    const sf::Input* This;
-};
-// WARNING : this structure must always be the SAME as in Graphics/View.h
-struct sfView
-{
-    sf::View* This;
-};
-struct sfRenderWindow
-{
-    sf::RenderWindow This;
-    sfInput          Input;
-    sfView           DefaultView;
-    sfView*          CurrentView;
-};
 
 
 ////////////////////////////////////////////////////////////
@@ -95,9 +47,9 @@ sfRenderWindow* sfRenderWindow_Create(sfVideoMode Mode, const char* Title, unsig
     sfRenderWindow* RenderWindow = new sfRenderWindow;
     sf::ContextSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
     RenderWindow->This.Create(VideoMode, Title, Style, Settings);
-    RenderWindow->Input.This       = &RenderWindow->This.GetInput();
-    RenderWindow->DefaultView.This = &RenderWindow->This.GetDefaultView();
-    RenderWindow->CurrentView      = &RenderWindow->DefaultView;
+    RenderWindow->Input.This  = &RenderWindow->This.GetInput();
+    RenderWindow->DefaultView = new sfView(const_cast<sf::View*>(&RenderWindow->This.GetDefaultView()));
+    RenderWindow->CurrentView = RenderWindow->DefaultView;
 
     return RenderWindow;
 }
@@ -111,9 +63,9 @@ sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle Handle, sfContext
     sfRenderWindow* RenderWindow = new sfRenderWindow;
     sf::ContextSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
     RenderWindow->This.Create(Handle, Settings);
-    RenderWindow->Input.This       = &RenderWindow->This.GetInput();
-    RenderWindow->DefaultView.This = &RenderWindow->This.GetDefaultView();
-    RenderWindow->CurrentView      = &RenderWindow->DefaultView;
+    RenderWindow->Input.This  = &RenderWindow->This.GetInput();
+    RenderWindow->DefaultView = new sfView(const_cast<sf::View*>(&RenderWindow->This.GetDefaultView()));
+    RenderWindow->CurrentView = RenderWindow->DefaultView;
 
     return RenderWindow;
 }
@@ -124,6 +76,7 @@ sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle Handle, sfContext
 ////////////////////////////////////////////////////////////
 void sfRenderWindow_Destroy(sfRenderWindow* RenderWindow)
 {
+    delete RenderWindow->DefaultView;
     delete RenderWindow;
 }
 
@@ -420,7 +373,7 @@ sfImage* sfRenderWindow_Capture(sfRenderWindow* RenderWindow)
     CSFML_CHECK_RETURN(RenderWindow, NULL);
 
     sfImage* Image = new sfImage;
-    Image->This = RenderWindow->This.Capture();
+    *Image->This = RenderWindow->This.Capture();
 
     return Image;
 }
@@ -465,7 +418,7 @@ sfView* sfRenderWindow_GetDefaultView(sfRenderWindow* RenderWindow)
 {
     CSFML_CHECK_RETURN(RenderWindow, NULL);
 
-    return &RenderWindow->DefaultView;
+    return RenderWindow->DefaultView;
 }
 
 

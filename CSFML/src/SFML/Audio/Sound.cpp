@@ -26,21 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Sound.h>
-#include <SFML/Audio/Sound.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Audio/SoundStruct.h>
 #include <SFML/Internal.h>
-
-
-// WARNING : this structure must always be the SAME as in Audio/SoundBuffer.h
-struct sfSoundBuffer
-{
-    sf::SoundBuffer This;
-};
-struct sfSound
-{
-    sf::Sound      This;
-    sfSoundBuffer* Buffer;
-};
 
 
 ////////////////////////////////////////////////////////////

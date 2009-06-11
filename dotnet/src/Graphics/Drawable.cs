@@ -100,9 +100,17 @@ namespace SFML
             /// <summary>
             /// Render the object into the given render window
             /// </summary>
-            /// <param name="window">Target window</param>
+            /// <param name="target">Target render window</param>
             ////////////////////////////////////////////////////////////
-            internal abstract void Render(RenderWindow window);
+            internal abstract void Render(RenderWindow target);
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Render the object into the given render image
+            /// </summary>
+            /// <param name="target">Target render image</param>
+            ////////////////////////////////////////////////////////////
+            internal abstract void Render(RenderImage target);
 
             ////////////////////////////////////////////////////////////
             /// <summary>

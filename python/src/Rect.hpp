@@ -31,6 +31,7 @@
 
 typedef struct {
 	PyObject_HEAD
+	bool Owner;
 	int Left;
 	int Right;
 	int Top;
@@ -40,6 +41,7 @@ typedef struct {
 
 typedef struct {
 	PyObject_HEAD
+	bool Owner;
 	float Left;
 	float Right;
 	float Top;

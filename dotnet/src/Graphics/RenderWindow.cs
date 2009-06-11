@@ -15,7 +15,7 @@ namespace SFML
         /// 2D rendering
         /// </summary>
         ////////////////////////////////////////////////////////////
-        public class RenderWindow : SFML.Window.Window
+        public class RenderWindow : SFML.Window.Window, RenderTarget
         {
             ////////////////////////////////////////////////////////////
             /// <summary>

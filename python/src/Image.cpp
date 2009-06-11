@@ -78,10 +78,7 @@ PySfImage_CopyScreen(PySfImage* self, PyObject *args)
 
 
 	if (SourceRect)
-	{
-		PySfIntRectUpdateObj(SourceRect);
 		Result = self->obj->CopyScreen(*(RenderWindow->obj), *(SourceRect->obj));
-	}
 	else
 		Result = self->obj->CopyScreen(*(RenderWindow->obj));
 	if (Result)
@@ -242,18 +239,15 @@ PySfImage_GetTexCoords(PySfImage* self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "O!|O:Image.GetTextCoords", &PySfIntRectType, &RectArg, &AdjustObj))
 		return NULL;
 
-	if (AdjustObj)
-		if (PyObject_IsTrue(AdjustObj))
-			Adjust = true;
+	if (AdjustObj != NULL)
+		Adjust = PyBool_AsBool(AdjustObj);
 
 	PySfFloatRect *Rect;
 
 	Rect = GetNewPySfFloatRect();
+	Rect->Owner = true;
 	Rect->obj = new sf::FloatRect(self->obj->GetTexCoords(*(RectArg->obj), Adjust));
-	Rect->Left = Rect->obj->Left;
-	Rect->Top = Rect->obj->Top;
-	Rect->Right = Rect->obj->Right;
-	Rect->Bottom = Rect->obj->Bottom;
+	PySfFloatRectUpdateSelf(Rect);
 
 	return (PyObject *)Rect;
 }
@@ -400,10 +394,7 @@ PySfImage_Copy(PySfImage* self, PyObject *args, PyObject *kwds)
 			ApplyAlpha = true;
 
 	if (SourceRect)
-	{
-		PySfIntRectUpdateObj(SourceRect);
 		self->obj->Copy(*(Source->obj), DestX, DestY, *(SourceRect->obj), ApplyAlpha);
-	}
 	else
 		self->obj->Copy(*(Source->obj), DestX, DestY, sf::IntRect(0, 0, 0, 0), ApplyAlpha);
 

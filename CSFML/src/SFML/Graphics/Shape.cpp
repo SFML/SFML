@@ -26,16 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shape.h>
-#include <SFML/Graphics/Shape.hpp>
+#include <SFML/Graphics/ShapeStruct.h>
 #include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Image.hpp>
 #include <SFML/Internal.h>
-
-
-struct sfShape
-{
-    sf::Shape This;
-};
 
 
 ////////////////////////////////////////////////////////////
@@ -45,6 +38,7 @@ sfShape* sfShape_Create()
 {
     return new sfShape;
 }
+
 
 ////////////////////////////////////////////////////////////
 /// Create a new shape made of a single line

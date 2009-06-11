@@ -68,7 +68,6 @@
 		A09EEBFD0D8C19BF00F6C625 /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF40D8C19BF00F6C625 /* Clock.cpp */; };
 		A09EEBFE0D8C19BF00F6C625 /* Lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF50D8C19BF00F6C625 /* Lock.cpp */; };
 		A09EEBFF0D8C19BF00F6C625 /* Sleep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A09EEBF60D8C19BF00F6C625 /* Sleep.cpp */; };
-		A0B617730F66936F005E0970 /* sndfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0B617720F66936F005E0970 /* sndfile.framework */; };
 		A0BE1A200D917332007D4CAD /* sfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system.framework */; };
 		A0C93F930D9AA9FA00B9E0C8 /* sfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A093E37F0D8BF87A002236B4 /* sfml-system.framework */; };
 		A0CE9FE70F46F72500FD00CE /* GLKit.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CE9FE50F46F72500FD00CE /* GLKit.h */; };
@@ -431,7 +430,6 @@
 		A09EEBF40D8C19BF00F6C625 /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Clock.cpp; path = ../../src/SFML/System/Clock.cpp; sourceTree = SOURCE_ROOT; };
 		A09EEBF50D8C19BF00F6C625 /* Lock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Lock.cpp; path = ../../src/SFML/System/Lock.cpp; sourceTree = SOURCE_ROOT; };
 		A09EEBF60D8C19BF00F6C625 /* Sleep.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Sleep.cpp; path = ../../src/SFML/System/Sleep.cpp; sourceTree = SOURCE_ROOT; };
-		A0B617720F66936F005E0970 /* sndfile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sndfile.framework; path = "../../extlibs/libs-xcode/sndfile.framework"; sourceTree = SOURCE_ROOT; };
 		A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-window.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0CE9FE50F46F72500FD00CE /* GLKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLKit.h; sourceTree = "<group>"; };
 		A0CE9FE60F46F72500FD00CE /* GLKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLKit.mm; sourceTree = "<group>"; };
@@ -605,7 +603,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A093E5480D8BFEAE002236B4 /* sfml-system.framework in Frameworks */,
-				A0B617730F66936F005E0970 /* sndfile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -900,7 +897,6 @@
 		A093E3B90D8BF8C2002236B4 /* sfml-audio */ = {
 			isa = PBXGroup;
 			children = (
-				A0B617720F66936F005E0970 /* sndfile.framework */,
 				A01A3AD70E75181300D0BA9B /* Sources */,
 				A093E39B0D8BF89B002236B4 /* sfml-audio-Info.plist */,
 			);
@@ -1706,6 +1702,7 @@
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/bin";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
@@ -1718,6 +1715,12 @@
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/../../src",
+					"${SRCROOT}/../../include",
+					"$(SRCROOT)/../../extlibs/headers",
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
 				OBJROOT = build;
 				OTHER_CFLAGS = "";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -1733,6 +1736,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/bin";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
@@ -1742,6 +1746,12 @@
 				GCC_WARN_SHADOW = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/../../src",
+					"${SRCROOT}/../../include",
+					"$(SRCROOT)/../../extlibs/headers",
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
 				OBJROOT = build;
 				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = (
@@ -1797,10 +1807,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../src",
-					"${SRCROOT}/../include",
-				);
 				INFOPLIST_FILE = "SFML-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -1826,10 +1832,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../src",
-					"${SRCROOT}/../include",
-				);
 				INFOPLIST_FILE = "SFML-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -1852,21 +1854,17 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-					"$(SRCROOT)/../../extlibs/headers",
-				);
 				INFOPLIST_FILE = "sfml-audio-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
+					"-framework",
+					sndfile,
 				);
 				PRODUCT_NAME = "sfml-audio-d";
 				SECTORDER_FLAGS = "";
@@ -1884,20 +1882,16 @@
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-					"$(SRCROOT)/../../extlibs/headers",
-				);
 				INFOPLIST_FILE = "sfml-audio-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
+					"-framework",
+					sndfile,
 				);
 				PRODUCT_NAME = "sfml-audio";
 				SECTORDER_FLAGS = "";
@@ -1918,12 +1912,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/headers\"";
 				INFOPLIST_FILE = "sfml-graphics-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -1952,12 +1940,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/headers\"";
 				INFOPLIST_FILE = "sfml-graphics-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -1986,10 +1968,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-				);
 				INFOPLIST_FILE = "sfml-network-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2014,10 +1992,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-				);
 				INFOPLIST_FILE = "sfml-network-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2042,10 +2016,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-				);
 				INFOPLIST_FILE = "sfml-system-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2073,10 +2043,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-				);
 				INFOPLIST_FILE = "sfml-system-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2104,10 +2070,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../include",
-					"${SRCROOT}/../../src",
-				);
 				INFOPLIST_FILE = "sfml-window-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2140,10 +2102,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../include",
-					"${SRCROOT}/../../src",
-				);
 				INFOPLIST_FILE = "sfml-window-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2173,6 +2131,7 @@
 				ARCHS = "$(NATIVE_ARCH)";
 				CONFIGURATION_BUILD_DIR = ../../lib;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/bin";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = "";
@@ -2190,6 +2149,13 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/../../src",
+					"${SRCROOT}/../../include",
+					"$(SRCROOT)/../../extlibs/headers",
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
+				OBJROOT = build;
 				OTHER_CFLAGS = "-g3";
 				SDKROOT = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2223,10 +2189,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../src",
-					"${SRCROOT}/../include",
-				);
 				INFOPLIST_FILE = "SFML-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2248,21 +2210,17 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/libs-xcode";
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-					"$(SRCROOT)/../../extlibs/headers",
-				);
 				INFOPLIST_FILE = "sfml-audio-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenAL,
+					"-framework",
+					sndfile,
 				);
 				PRODUCT_NAME = "sfml-audio-d";
 				SECTORDER_FLAGS = "";
@@ -2283,12 +2241,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../extlibs/headers\"";
 				INFOPLIST_FILE = "sfml-graphics-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2317,10 +2269,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-				);
 				INFOPLIST_FILE = "sfml-network-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2346,10 +2294,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_VERSION = 4.2;
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../src",
-					"${SRCROOT}/../../include",
-				);
 				INFOPLIST_FILE = "sfml-system-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2377,10 +2321,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/../../include",
-					"${SRCROOT}/../../src",
-				);
 				INFOPLIST_FILE = "sfml-window-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -2410,82 +2350,82 @@
 		A02679DD0E5CDB03008D4C81 /* Build configuration list for PBXProject "SFML" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679C20E5CDB03008D4C81 /* Debug */,
 				A02679C30E5CDB03008D4C81 /* Release */,
+				A02679C20E5CDB03008D4C81 /* Debug */,
 				A0C9DDC80E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679DE0E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "SFML" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679C80E5CDB03008D4C81 /* Debug */,
 				A02679C90E5CDB03008D4C81 /* Release */,
+				A02679C80E5CDB03008D4C81 /* Debug */,
 				A0C9DDCA0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679DF0E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-system" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679D40E5CDB03008D4C81 /* Debug */,
 				A02679D50E5CDB03008D4C81 /* Release */,
+				A02679D40E5CDB03008D4C81 /* Debug */,
 				A0C9DDCE0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E00E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-network" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679D10E5CDB03008D4C81 /* Debug */,
 				A02679D20E5CDB03008D4C81 /* Release */,
+				A02679D10E5CDB03008D4C81 /* Debug */,
 				A0C9DDCD0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E10E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-audio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679CB0E5CDB03008D4C81 /* Debug */,
 				A02679CC0E5CDB03008D4C81 /* Release */,
+				A02679CB0E5CDB03008D4C81 /* Debug */,
 				A0C9DDCB0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E20E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-window" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679D70E5CDB03008D4C81 /* Debug */,
 				A02679D80E5CDB03008D4C81 /* Release */,
+				A02679D70E5CDB03008D4C81 /* Debug */,
 				A0C9DDCF0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E30E5CDB03008D4C81 /* Build configuration list for PBXNativeTarget "sfml-graphics" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679CE0E5CDB03008D4C81 /* Debug */,
 				A02679CF0E5CDB03008D4C81 /* Release */,
+				A02679CE0E5CDB03008D4C81 /* Debug */,
 				A0C9DDCC0E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A02679E40E5CDB03008D4C81 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A02679C50E5CDB03008D4C81 /* Debug */,
 				A02679C60E5CDB03008D4C81 /* Release */,
+				A02679C50E5CDB03008D4C81 /* Debug */,
 				A0C9DDC90E8BE5D10084CFD8 /* Development */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

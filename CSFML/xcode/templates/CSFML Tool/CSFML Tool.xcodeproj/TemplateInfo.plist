@@ -1,0 +1,3 @@
+{
+	Description = "This project builds a SFML executable linked against the System package, and written in C.";
+}
