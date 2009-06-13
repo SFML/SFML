@@ -379,12 +379,22 @@ void Drawable::Draw(RenderTarget& Target) const
     {
         GLCheck(glEnable(GL_BLEND));
 
+        // We have to use glBlendFuncSeparate so that the resulting alpha is
+        // not alpha², which is incorrect and would cause problems when rendering
+        // alpha pixels to a RenderImage that would be in turn rendered to another render target
         switch (myBlendMode)
         {
-            case Blend::Alpha :    GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); break;
-            case Blend::Add :      GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));                 break;
-            case Blend::Multiply : GLCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));                break;
-            default :                                                                          break;
+            case Blend::Alpha :
+                GLCheck(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+                break;
+            case Blend::Add :
+                GLCheck(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+                break;
+            case Blend::Multiply :
+                GLCheck(glBlendFuncSeparate(GL_DST_COLOR, GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+                break;
+            default :
+                break;
         }
     }
 
