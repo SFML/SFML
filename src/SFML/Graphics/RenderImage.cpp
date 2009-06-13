@@ -72,6 +72,9 @@ bool RenderImage::Create(unsigned int Width, unsigned int Height, bool DepthBuff
         return false;
     }
 
+    // Disable smoothing -- we don't want to alter the original rendering
+    myImage.SetSmooth(false);
+
     // Create the implementation
     delete myRenderImage;
     if (priv::RenderImageImplFBO::IsSupported())
