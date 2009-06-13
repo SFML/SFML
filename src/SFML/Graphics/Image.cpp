@@ -288,7 +288,7 @@ void Image::Copy(const Image& Source, unsigned int DestX, unsigned int DestY, co
 
     // Adjust the source rectangle
     IntRect SrcRect = SourceRect;
-    if (SrcRect.GetWidth() == 0 || (SrcRect.GetHeight() == 0))
+    if (SrcRect.GetSize().x == 0 || (SrcRect.GetSize().y == 0))
     {
         SrcRect.Left   = 0;
         SrcRect.Top    = 0;
@@ -304,8 +304,8 @@ void Image::Copy(const Image& Source, unsigned int DestX, unsigned int DestY, co
     }
 
     // Then find the valid bounds of the destination rectangle
-    int Width  = SrcRect.GetWidth();
-    int Height = SrcRect.GetHeight();
+    int Width  = SrcRect.GetSize().x;
+    int Height = SrcRect.GetSize().y;
     if (DestX + Width  > myWidth)  Width  = myWidth  - DestX;
     if (DestY + Height > myHeight) Height = myHeight - DestY;
 
@@ -368,7 +368,7 @@ bool Image::CopyScreen(RenderWindow& Window, const IntRect& SourceRect)
 {
     // Adjust the source rectangle
     IntRect SrcRect = SourceRect;
-    if (SrcRect.GetWidth() == 0 || (SrcRect.GetHeight() == 0))
+    if (SrcRect.GetSize().x == 0 || (SrcRect.GetSize().y == 0))
     {
         SrcRect.Left   = 0;
         SrcRect.Top    = 0;
@@ -384,8 +384,8 @@ bool Image::CopyScreen(RenderWindow& Window, const IntRect& SourceRect)
     }
 
     // Store the texture dimensions
-    myWidth  = SrcRect.GetWidth();
-    myHeight = SrcRect.GetHeight();
+    myWidth  = SrcRect.GetSize().x;
+    myHeight = SrcRect.GetSize().y;
 
     // We can then create the texture
     if (Window.SetActive() && CreateTexture())

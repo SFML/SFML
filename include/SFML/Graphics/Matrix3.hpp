@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <math.h>
 
 
@@ -67,6 +68,14 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void SetFromTransformations(const Vector2f& Center, const Vector2f& Translation, float Rotation, const Vector2f& Scale);
+
+    ////////////////////////////////////////////////////////////
+    /// Build a matrix from a projection
+    ///
+    /// \param Rectangle : Rectangle defining the region to project
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetFromProjection(const FloatRect& Rectangle);
 
     ////////////////////////////////////////////////////////////
     /// Transform a point by the matrix

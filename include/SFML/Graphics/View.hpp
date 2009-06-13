@@ -36,10 +36,8 @@
 
 namespace sf
 {
-class RenderTarget;
-
 ////////////////////////////////////////////////////////////
-/// This class defines a view (position, size, etc.) ;
+/// This class defines a view (position, size, etc.);
 /// you can consider it as a 2D camera
 ////////////////////////////////////////////////////////////
 class SFML_API View
@@ -55,13 +53,30 @@ public :
     explicit View(const FloatRect& ViewRect = FloatRect(0, 0, 1000, 1000));
 
     ////////////////////////////////////////////////////////////
-    /// Construct the view from its center and half-size
+    /// Construct the view from its center and size
     ///
     /// \param Center :   Center of the view
-    /// \param HalfSize : Half-size of the view (from center to corner)
+    /// \param HalfSize : Size of the view
     ///
     ////////////////////////////////////////////////////////////
-    View(const sf::Vector2f& Center, const sf::Vector2f& HalfSize);
+    View(const Vector2f& Center, const Vector2f& Size);
+
+    ////////////////////////////////////////////////////////////
+    /// Set the rectangle defining the view by its center and size
+    ///
+    /// \param Center : Center of the view rectangle
+    /// \param Size :   Size of the view rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetRect(const Vector2f& Center, const Vector2f& Size);
+
+    ////////////////////////////////////////////////////////////
+    /// Set the rectangle defining the view
+    ///
+    /// \param Rect : Rectangle defining the center and size of the view
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetRect(const FloatRect& Rect);
 
     ////////////////////////////////////////////////////////////
     /// Change the center of the view (take 2 values)
@@ -78,32 +93,33 @@ public :
     /// \param Center : New center
     ///
     ////////////////////////////////////////////////////////////
-    void SetCenter(const sf::Vector2f& Center);
+    void SetCenter(const Vector2f& Center);
 
     ////////////////////////////////////////////////////////////
-    /// Change the half-size of the view (take 2 values)
+    /// Change the size of the view (take 2 values)
     ///
-    /// \param HalfWidth :  New half-width
-    /// \param HalfHeight : New half-height
+    /// \param Width :  New width
+    /// \param Height : New height
     ///
     ////////////////////////////////////////////////////////////
-    void SetHalfSize(float HalfWidth, float HalfHeight);
+    void SetSize(float Width, float Height);
 
     ////////////////////////////////////////////////////////////
-    /// Change the half-size of the view (take a vector)
+    /// Change the size of the view (take a vector)
     ///
     /// \param HalfSize : New half-size
     ///
     ////////////////////////////////////////////////////////////
-    void SetHalfSize(const sf::Vector2f& HalfSize);
+    void SetSize(const Vector2f& Size);
 
     ////////////////////////////////////////////////////////////
-    /// Rebuild the view from a rectangle
+    /// Get the rectangle defining the view,
+    /// which is the combined center and size.
     ///
-    /// \param ViewRect : Rectangle defining the position and size of the view
+    /// \return View rectangle
     ///
     ////////////////////////////////////////////////////////////
-    void SetFromRect(const FloatRect& ViewRect);
+    FloatRect GetRect() const;
 
     ////////////////////////////////////////////////////////////
     /// Get the center of the view
@@ -111,23 +127,15 @@ public :
     /// \return Center of the view
     ///
     ////////////////////////////////////////////////////////////
-    const sf::Vector2f& GetCenter() const;
+    const Vector2f& GetCenter() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the half-size of the view
+    /// Get the size of the view
     ///
-    /// \return Half-size of the view
-    ///
-    ////////////////////////////////////////////////////////////
-    const sf::Vector2f& GetHalfSize() const;
-
-    ////////////////////////////////////////////////////////////
-    /// Get the bounding rectangle of the view
-    ///
-    /// \return Bounding rectangle of the view
+    /// \return Size of the view
     ///
     ////////////////////////////////////////////////////////////
-    const sf::FloatRect& GetRect() const;
+    const Vector2f& GetSize() const;
 
     ////////////////////////////////////////////////////////////
     /// Move the view (take 2 values)
@@ -144,7 +152,7 @@ public :
     /// \param Offset : Offset to move the view
     ///
     ////////////////////////////////////////////////////////////
-    void Move(const sf::Vector2f& Offset);
+    void Move(const Vector2f& Offset);
 
     ////////////////////////////////////////////////////////////
     /// Resize the view rectangle to simulate a zoom / unzoom effect
@@ -154,32 +162,33 @@ public :
     ////////////////////////////////////////////////////////////
     void Zoom(float Factor);
 
-private :
-
-    friend class RenderTarget;
-
     ////////////////////////////////////////////////////////////
     /// Get the projection matrix of the view
     ///
-    /// \return Projection matrix containing the view settings
+    /// \return Projection matrix
     ///
     ////////////////////////////////////////////////////////////
     const Matrix3& GetMatrix() const;
 
     ////////////////////////////////////////////////////////////
-    /// Recompute the view rectangle and the projection matrix
+    /// Get the inverse projection matrix of the view
+    ///
+    /// \return Inverse projection matrix
     ///
     ////////////////////////////////////////////////////////////
-    void RecomputeMatrix();
+    const Matrix3& GetInverseMatrix() const;
+
+private :
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::Vector2f myCenter;     ///< Center of the view
-    sf::Vector2f myHalfSize;   ///< Half-size of the view
-    FloatRect    myRect;       ///< Rectangle defining the bounds of the view
-    Matrix3      myMatrix;     ///< Precomputed projection matrix corresponding to the view
-    bool         myNeedUpdate; ///< Internal state telling if the matrix needs to be updated
+    sf::Vector2f    myCenter;        ///< Center of the view
+    sf::Vector2f    mySize;          ///< Size of the view
+    mutable Matrix3 myMatrix;        ///< Precomputed projection matrix corresponding to the view
+    mutable Matrix3 myInverseMatrix; ///< Precomputed inverse projection matrix corresponding to the view
+    mutable bool    myNeedUpdate;    ///< Internal state telling if the matrix needs to be updated
+    mutable bool    myNeedInvUpdate; ///< Internal state telling if the matrix needs to be updated
 };
 
 } // namespace sf

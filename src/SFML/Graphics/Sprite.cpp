@@ -88,8 +88,8 @@ void Sprite::SetSubRect(const IntRect& SubRect)
 ////////////////////////////////////////////////////////////
 void Sprite::Resize(float Width, float Height)
 {
-    int LocalWidth  = mySubRect.GetWidth();
-    int LocalHeight = mySubRect.GetHeight();
+    int LocalWidth  = mySubRect.GetSize().x;
+    int LocalHeight = mySubRect.GetSize().y;
 
     if ((LocalWidth > 0) && (LocalHeight > 0))
         SetScale(Width / LocalWidth, Height / LocalHeight);
@@ -147,7 +147,7 @@ const IntRect& Sprite::GetSubRect() const
 ////////////////////////////////////////////////////////////
 Vector2f Sprite::GetSize() const
 {
-    return Vector2f(mySubRect.GetWidth() * GetScale().x, mySubRect.GetHeight() * GetScale().y);
+    return Vector2f(mySubRect.GetSize().x * GetScale().x, mySubRect.GetSize().y * GetScale().y);
 }
 
 
@@ -162,8 +162,8 @@ Color Sprite::GetPixel(unsigned int X, unsigned int Y) const
         unsigned int ImageX = mySubRect.Left + X;
         unsigned int ImageY = mySubRect.Top  + Y;
 
-        if (myIsFlippedX) ImageX = mySubRect.GetWidth()  - ImageX - 1;
-        if (myIsFlippedY) ImageY = mySubRect.GetHeight() - ImageY - 1;
+        if (myIsFlippedX) ImageX = mySubRect.GetSize().x - ImageX - 1;
+        if (myIsFlippedY) ImageY = mySubRect.GetSize().y - ImageY - 1;
 
         return myImage->GetPixel(ImageX, ImageY) * GetColor();
     }
@@ -180,8 +180,8 @@ Color Sprite::GetPixel(unsigned int X, unsigned int Y) const
 void Sprite::Render(RenderTarget&) const
 {
     // Get the sprite size
-    float Width  = static_cast<float>(mySubRect.GetWidth());
-    float Height = static_cast<float>(mySubRect.GetHeight());
+    float Width  = static_cast<float>(mySubRect.GetSize().x);
+    float Height = static_cast<float>(mySubRect.GetSize().y);
 
     // Check if the image is valid
     if (myImage && (myImage->GetWidth() > 0) && (myImage->GetHeight() > 0))

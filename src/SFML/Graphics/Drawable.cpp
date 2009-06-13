@@ -381,7 +381,7 @@ void Drawable::Draw(RenderTarget& Target) const
 
         // We have to use glBlendFuncSeparate so that the resulting alpha is
         // not alpha², which is incorrect and would cause problems when rendering
-        // alpha pixels to a RenderImage that would be in turn rendered to another render target
+        // alpha pixels to a RenderImage that would be in turn be rendered to another render target
         switch (myBlendMode)
         {
             case Blend::Alpha :

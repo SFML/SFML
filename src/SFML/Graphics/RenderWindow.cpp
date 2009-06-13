@@ -142,13 +142,15 @@ sf::Vector2f RenderWindow::ConvertCoords(unsigned int WindowX, unsigned int Wind
     if (!TargetView)
         TargetView = &GetView();
 
-    float Left   = TargetView->GetCenter().x - TargetView->GetHalfSize().x;
-    float Top    = TargetView->GetCenter().y - TargetView->GetHalfSize().y;
-    float Right  = TargetView->GetCenter().x + TargetView->GetHalfSize().x;
-    float Bottom = TargetView->GetCenter().y + TargetView->GetHalfSize().y;
+    // First, convert from viewport coordinates to homogeneous coordinates:
+    // --> [0, Width]  to [-1, 1]
+    // --> [0, Height] to [1, -1]
+    Vector2f Coords;
+    Coords.x = -1.f + 2.f * WindowX / GetWidth();
+    Coords.y =  1.f - 2.f * WindowY / GetHeight();
 
-    return sf::Vector2f(Left + WindowX * (Right - Left) / GetWidth(),
-                        Top  + WindowY * (Bottom - Top) / GetHeight());
+    // Then transform by the inverse of the view matrix
+    return TargetView->GetInverseMatrix().Transform(Coords);
 }
 
 

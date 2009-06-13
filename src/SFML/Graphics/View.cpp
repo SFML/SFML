@@ -26,7 +26,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/View.hpp>
-#include <algorithm>
 
 
 namespace sf
@@ -34,21 +33,43 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Construct the view from a rectangle
 ////////////////////////////////////////////////////////////
-View::View(const FloatRect& ViewRect)
+View::View(const FloatRect& Rect)
 {
-    SetFromRect(ViewRect);
+    SetRect(Rect);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Construct the view from its center and half-size
+/// Construct the view from its center and size
 ////////////////////////////////////////////////////////////
-View::View(const sf::Vector2f& Center, const sf::Vector2f& HalfSize) :
-myCenter    (Center),
-myHalfSize  (HalfSize),
-myNeedUpdate(true)
+View::View(const Vector2f& Center, const Vector2f& Size) :
+myCenter       (Center),
+mySize         (Size),
+myNeedUpdate   (true),
+myNeedInvUpdate(true)
 {
 
+}
+
+
+////////////////////////////////////////////////////////////
+/// Set the rectangle defining the view by its center and size
+////////////////////////////////////////////////////////////
+void View::SetRect(const Vector2f& Center, const Vector2f& Size)
+{
+    myCenter        = Center;
+    mySize          = Size;
+    myNeedUpdate    = true;
+    myNeedInvUpdate = true;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Set the rectangle defining the view
+////////////////////////////////////////////////////////////
+void View::SetRect(const FloatRect& Rect)
+{
+    SetRect(Rect.GetCenter(), Rect.GetSize());
 }
 
 
@@ -57,79 +78,71 @@ myNeedUpdate(true)
 ////////////////////////////////////////////////////////////
 void View::SetCenter(float X, float Y)
 {
-    myCenter.x   = X;
-    myCenter.y   = Y;
-    myNeedUpdate = true;
+    myCenter.x      = X;
+    myCenter.y      = Y;
+    myNeedUpdate    = true;
+    myNeedInvUpdate = true;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the center of the view (take a vector)
 ////////////////////////////////////////////////////////////
-void View::SetCenter(const sf::Vector2f& Center)
+void View::SetCenter(const Vector2f& Center)
 {
     SetCenter(Center.x, Center.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Change the half-size of the view (take 2 values)
+/// Change the size of the view (take 2 values)
 ////////////////////////////////////////////////////////////
-void View::SetHalfSize(float HalfWidth, float HalfHeight)
+void View::SetSize(float Width, float Height)
 {
-    myHalfSize.x = HalfWidth;
-    myHalfSize.y = HalfHeight;
-    myNeedUpdate = true;
+    mySize.x        = Width;
+    mySize.y        = Height;
+    myNeedUpdate    = true;
+    myNeedInvUpdate = true;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Change the half-size of the view (take a vector)
+/// Change the size of the view (take a vector)
 ////////////////////////////////////////////////////////////
-void View::SetHalfSize(const sf::Vector2f& HalfSize)
+void View::SetSize(const Vector2f& Size)
 {
-    SetHalfSize(HalfSize.x, HalfSize.y);
+    SetSize(Size.x, Size.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Rebuild the view from a rectangle
+/// Get the rectangle defining the view,
+/// which is the combined center and size.
 ////////////////////////////////////////////////////////////
-void View::SetFromRect(const FloatRect& ViewRect)
+FloatRect View::GetRect() const
 {
-    SetCenter(  (ViewRect.Right + ViewRect.Left) / 2, (ViewRect.Bottom + ViewRect.Top) / 2);
-    SetHalfSize((ViewRect.Right - ViewRect.Left) / 2, (ViewRect.Bottom - ViewRect.Top) / 2);
+    return FloatRect(myCenter.x - mySize.x / 2,
+                     myCenter.y - mySize.y / 2,
+                     myCenter.x + mySize.x / 2,
+                     myCenter.y + mySize.y / 2);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the center of the view
 ////////////////////////////////////////////////////////////
-const sf::Vector2f& View::GetCenter() const
+const Vector2f& View::GetCenter() const
 {
     return myCenter;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the half-size of the view
+/// Get the size of the view
 ////////////////////////////////////////////////////////////
-const sf::Vector2f& View::GetHalfSize() const
+const Vector2f& View::GetSize() const
 {
-    return myHalfSize;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Get the bounding rectangle of the view
-////////////////////////////////////////////////////////////
-const sf::FloatRect& View::GetRect() const
-{
-    // Recompute it if needed
-    if (myNeedUpdate)
-        const_cast<View*>(this)->RecomputeMatrix();
-
-    return myRect;
+    return mySize;
 }
 
 
@@ -138,16 +151,17 @@ const sf::FloatRect& View::GetRect() const
 ////////////////////////////////////////////////////////////
 void View::Move(float OffsetX, float OffsetY)
 {
-    myCenter.x  += OffsetX;
-    myCenter.y  += OffsetY;
-    myNeedUpdate = true;
+    myCenter.x     += OffsetX;
+    myCenter.y     += OffsetY;
+    myNeedUpdate    = true;
+    myNeedInvUpdate = true;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Move the view (take a vector)
 ////////////////////////////////////////////////////////////
-void View::Move(const sf::Vector2f& Offset)
+void View::Move(const Vector2f& Offset)
 {
     Move(Offset.x, Offset.y);
 }
@@ -160,8 +174,9 @@ void View::Zoom(float Factor)
 {
     if (Factor != 0)
     {
-        myHalfSize  /= Factor;
-        myNeedUpdate = true;
+        mySize /= Factor;
+        myNeedUpdate    = true;
+        myNeedInvUpdate = true;
     }
 }
 
@@ -173,36 +188,28 @@ const Matrix3& View::GetMatrix() const
 {
     // Recompute the matrix if needed
     if (myNeedUpdate)
-        const_cast<View*>(this)->RecomputeMatrix();
+    {
+        myMatrix.SetFromProjection(GetRect());
+        myNeedUpdate = false;
+    }
 
     return myMatrix;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Recompute the view rectangle and the projection matrix
+/// Get the inverse projection matrix of the view
 ////////////////////////////////////////////////////////////
-void View::RecomputeMatrix()
+const Matrix3& View::GetInverseMatrix() const
 {
-    // Compute the 4 corners of the view
-    float Left   = myCenter.x - myHalfSize.x;
-    float Top    = myCenter.y - myHalfSize.y;
-    float Right  = myCenter.x + myHalfSize.x;
-    float Bottom = myCenter.y + myHalfSize.y;
+    // Recompute the matrix if needed
+    if (myNeedInvUpdate)
+    {
+        myInverseMatrix = GetMatrix().GetInverse();
+        myNeedInvUpdate = false;
+    }
 
-    // Update the view rectangle - be careful, reversed views are allowed !
-    myRect.Left   = std::min(Left, Right);
-    myRect.Top    = std::min(Top, Bottom);
-    myRect.Right  = std::max(Left, Right);
-    myRect.Bottom = std::max(Top, Bottom);
-
-    // Update the projection matrix
-    myMatrix(0, 0) = 2.f / (Right - Left);
-    myMatrix(1, 1) = 2.f / (Top - Bottom);
-    myMatrix(0, 2) = (Left + Right) / (Left - Right);
-    myMatrix(1, 2) = (Bottom + Top) / (Bottom - Top);
-
-    myNeedUpdate = false;
+    return myInverseMatrix;
 }
 
 } // namespace sf

@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Vector2.hpp>
 #include <algorithm>
 
 
@@ -60,20 +61,20 @@ public :
     Rect(T LeftCoord, T TopCoord, T RightCoord, T BottomCoord);
 
     ////////////////////////////////////////////////////////////
-    /// Get the width of the rectangle
+    /// Get the size of the rectangle
     ///
-    /// \return Width of rectangle
+    /// \return Size of rectangle
     ///
     ////////////////////////////////////////////////////////////
-    T GetWidth() const;
+    Vector2<T> GetSize() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the height of the rectangle
+    /// Get the center of the rectangle
     ///
-    /// \return Height of rectangle
+    /// \return Center of rectangle
     ///
     ////////////////////////////////////////////////////////////
-    T GetHeight() const;
+    Vector2<T> GetCenter() const;
 
     ////////////////////////////////////////////////////////////
     /// Move the whole rectangle by the given offset
@@ -83,6 +84,14 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void Offset(T OffsetX, T OffsetY);
+
+    ////////////////////////////////////////////////////////////
+    /// Move the whole rectangle by the given offset
+    ///
+    /// \param Off : Offset to apply to the current position
+    ///
+    ////////////////////////////////////////////////////////////
+    void Offset(const Vector2<T>& Off);
 
     ////////////////////////////////////////////////////////////
     /// Check if a point is inside the rectangle's area
@@ -96,15 +105,36 @@ public :
     bool Contains(T X, T Y) const;
 
     ////////////////////////////////////////////////////////////
+    /// Check if a point is inside the rectangle's area
+    ///
+    /// \param Point : Point to test
+    ///
+    /// \return True if the point is inside
+    ///
+    ////////////////////////////////////////////////////////////
+    bool Contains(const Vector2<T>& Point) const;
+
+    ////////////////////////////////////////////////////////////
     /// Check intersection between two rectangles
     ///
-    /// \param Rectangle :       Rectangle to test
-    /// \param OverlappingRect : Rectangle to be filled with overlapping rect (NULL by default)
+    /// \param Rectangle : Rectangle to test
     ///
     /// \return True if rectangles overlap
     ///
     ////////////////////////////////////////////////////////////
-    bool Intersects(const Rect<T>& Rectangle, Rect<T>* OverlappingRect = NULL) const;
+    bool Intersects(const Rect<T>& Rectangle) const;
+
+    ////////////////////////////////////////////////////////////
+    /// Check intersection between two rectangles and return the
+    /// resulting rectangle
+    ///
+    /// \param Rectangle :       Rectangle to test
+    /// \param OverlappingRect : Rectangle to be filled with the overlapping rect
+    ///
+    /// \return True if rectangles overlap
+    ///
+    ////////////////////////////////////////////////////////////
+    bool Intersects(const Rect<T>& Rectangle, Rect<T>& OverlappingRect) const;
 
     ////////////////////////////////////////////////////////////
     // Member data

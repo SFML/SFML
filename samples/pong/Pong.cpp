@@ -57,9 +57,9 @@ int main()
     sf::Sprite RightPaddle(RightPaddleImage);
     sf::Sprite Ball(BallImage);
 
-    LeftPaddle.Move(10, (App.GetView().GetRect().GetHeight() - LeftPaddle.GetSize().y) / 2);
-    RightPaddle.Move(App.GetView().GetRect().GetWidth() - RightPaddle.GetSize().x - 10, (App.GetView().GetRect().GetHeight() - RightPaddle.GetSize().y) / 2);
-    Ball.Move((App.GetView().GetRect().GetWidth() - Ball.GetSize().x) / 2, (App.GetView().GetRect().GetHeight() - Ball.GetSize().y) / 2);
+    LeftPaddle.Move(10, (App.GetView().GetSize().y - LeftPaddle.GetSize().y) / 2);
+    RightPaddle.Move(App.GetView().GetSize().x - RightPaddle.GetSize().x - 10, (App.GetView().GetSize().y - RightPaddle.GetSize().y) / 2);
+    Ball.Move((App.GetView().GetSize().x - Ball.GetSize().x) / 2, (App.GetView().GetSize().y - Ball.GetSize().y) / 2);
 
     // Define the paddles properties
     sf::Clock AITimer;
@@ -97,12 +97,12 @@ int main()
 			// Move the player's paddle
             if (App.GetInput().IsKeyDown(sf::Key::Up) && (LeftPaddle.GetPosition().y > 5.f))
 				LeftPaddle.Move(0.f, -LeftPaddleSpeed * App.GetFrameTime());
-            if (App.GetInput().IsKeyDown(sf::Key::Down) && (LeftPaddle.GetPosition().y < App.GetView().GetRect().GetHeight() - LeftPaddle.GetSize().y - 5.f))
+            if (App.GetInput().IsKeyDown(sf::Key::Down) && (LeftPaddle.GetPosition().y < App.GetView().GetSize().y - LeftPaddle.GetSize().y - 5.f))
 				LeftPaddle.Move(0.f, LeftPaddleSpeed * App.GetFrameTime());
 
 			// Move the computer's paddle
             if (((RightPaddleSpeed < 0.f) && (RightPaddle.GetPosition().y > 5.f)) ||
-                ((RightPaddleSpeed > 0.f) && (RightPaddle.GetPosition().y < App.GetView().GetRect().GetHeight() - RightPaddle.GetSize().y - 5.f)))
+                ((RightPaddleSpeed > 0.f) && (RightPaddle.GetPosition().y < App.GetView().GetSize().y - RightPaddle.GetSize().y - 5.f)))
             {
                 RightPaddle.Move(0.f, RightPaddleSpeed * App.GetFrameTime());
             }
@@ -127,7 +127,7 @@ int main()
 				IsPlaying = false;
 				End.SetText("You lost !\n(press escape to exit)");
 			}
-			if (Ball.GetPosition().x + Ball.GetSize().x > App.GetView().GetRect().GetWidth())
+			if (Ball.GetPosition().x + Ball.GetSize().x > App.GetView().GetSize().x)
 			{
 				IsPlaying = false;
 				End.SetText("You won !\n(press escape to exit)");
@@ -138,11 +138,11 @@ int main()
 				BallAngle = -BallAngle;
 				Ball.SetY(0.1f);
 			}
-			if (Ball.GetPosition().y + Ball.GetSize().y > App.GetView().GetRect().GetHeight())
+			if (Ball.GetPosition().y + Ball.GetSize().y > App.GetView().GetSize().y)
 			{
 				BallSound.Play();
 				BallAngle = -BallAngle;
-				Ball.SetY(App.GetView().GetRect().GetHeight() - Ball.GetSize().y - 0.1f);
+				Ball.SetY(App.GetView().GetSize().y - Ball.GetSize().y - 0.1f);
 			}
 
 			// Check the collisions between the ball and the paddles
