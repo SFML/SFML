@@ -54,8 +54,7 @@ private :
             // Stick the sprite to the mouse cursor
             if (Event.Type == sf::Event::MouseMoved)
             {
-                mySprite.SetX(Event.MouseMove.X);
-                mySprite.SetY(Event.MouseMove.Y);
+                mySprite.SetPosition(ConvertCoords(Event.MouseMove.X, Event.MouseMove.Y));
             }
         }
 
@@ -102,6 +101,6 @@ int main(int argc, char **argv)
     // Create a SFML view inside the main frame
     MyCanvas* SFMLView = new MyCanvas(MainFrame, QPoint(20, 60), QSize(360, 320));
     SFMLView->show();
-        
+
     return App.exec();
 }

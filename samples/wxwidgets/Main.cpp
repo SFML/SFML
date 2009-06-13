@@ -55,8 +55,7 @@ private :
     void OnMouseMove(wxMouseEvent& Event)
     {
         // Make the sprite follow the mouse cursor
-        mySprite.SetX(Event.GetX());
-        mySprite.SetY(Event.GetY());
+        mySprite.SetPosition(ConvertCoords(Event.GetX(), Event.GetY()));
     }
 
     ////////////////////////////////////////////////////////////
