@@ -287,9 +287,12 @@ static GLContext *sharedCtx = nil;
 {
 	assert(myDelegate != NULL);
 	
-	NSText *field = [[self window] fieldEditor:YES forObject:nil];
-	[field interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-	[field setString:@""];
+	if (sf::priv::WindowImplCocoa::IsTextEvent((void *)theEvent))
+	{
+		NSText *field = [[self window] fieldEditor:YES forObject:nil];
+		[field interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+		[field setString:@""];
+	}
 	
 	myDelegate->HandleKeyDown(theEvent);
 }
