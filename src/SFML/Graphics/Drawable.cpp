@@ -46,7 +46,8 @@ myBlendMode    (Blend::Alpha),
 myNeedUpdate   (true),
 myInvNeedUpdate(true)
 {
-
+    // Make sure that GLEW is initialized (for glBlendFuncSeparate)
+    EnsureGlewInit();
 }
 
 
