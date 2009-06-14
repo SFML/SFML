@@ -217,7 +217,7 @@ void PostFX::SetParameter(const std::string& Name, float X, float Y, float Z, fl
 ////////////////////////////////////////////////////////////
 /// Set a texture parameter
 ////////////////////////////////////////////////////////////
-void PostFX::SetTexture(const std::string& Name, Image* Texture)
+void PostFX::SetTexture(const std::string& Name, const Image* Texture)
 {
     // Check that the current texture unit is available
     GLint MaxUnits;

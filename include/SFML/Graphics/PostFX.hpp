@@ -127,7 +127,7 @@ public :
     /// \param Texture : Image to set (pass NULL to use content of current framebuffer)
     ///
     ////////////////////////////////////////////////////////////
-    void SetTexture(const std::string& Name, Image* Texture);
+    void SetTexture(const std::string& Name, const Image* Texture);
 
     ////////////////////////////////////////////////////////////
     /// Assignment operator
