@@ -406,7 +406,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Audio\Listener.hpp"
+			RelativePath="..\..\include\SFML\Audio\Listener.hpp"
 			>
 		</File>
 		<File

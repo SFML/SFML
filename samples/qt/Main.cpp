@@ -3,10 +3,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "QSFMLCanvas.hpp"
-#include <Qt/qapplication.h>
-#include <Qt/qframe.h>
-#include <Qt/qlabel.h>
-#include <Qt/qevent.h>
+#include <QApplication>
+#include <QVBoxLayout>
+#include <QFrame>
+#include <QLabel>
 
 
 ////////////////////////////////////////////////////////////
@@ -20,8 +20,8 @@ public :
     /// Construct the canvas
     ///
     ////////////////////////////////////////////////////////////
-    MyCanvas(QWidget* Parent, const QPoint& Position, const QSize& Size) :
-    QSFMLCanvas(Parent, Position, Size)
+    MyCanvas(QWidget* Parent = NULL) :
+    QSFMLCanvas(QSize(100, 100), 0, Parent)
     {
 
     }
@@ -54,8 +54,13 @@ private :
             // Stick the sprite to the mouse cursor
             if (Event.Type == sf::Event::MouseMoved)
             {
-                mySprite.SetX(Event.MouseMove.X);
-                mySprite.SetY(Event.MouseMove.Y);
+                mySprite.SetPosition(ConvertCoords(Event.MouseMove.X, Event.MouseMove.Y));
+            }
+
+            // Adjust the size of the default view when the widget is resized
+            if (Event.Type == sf::Event::Resized)
+            {
+                GetDefaultView().SetHalfSize(Event.Size.Width / 2.f, Event.Size.Height / 2.f);
             }
         }
 
@@ -95,13 +100,16 @@ int main(int argc, char **argv)
 
     // Create a label for showing some text
     QLabel* Label = new QLabel("This is a SFML window\nembedded into a Qt frame :", MainFrame);
-    Label->move(20, 10);
     Label->setFont(QFont("courier new", 14, 1, false));
-    Label->show();
 
     // Create a SFML view inside the main frame
-    MyCanvas* SFMLView = new MyCanvas(MainFrame, QPoint(20, 60), QSize(360, 320));
-    SFMLView->show();
-        
+    MyCanvas* SFMLView = new MyCanvas(MainFrame);
+
+    // Create the main layout
+    QVBoxLayout* Layout = new QVBoxLayout;
+    Layout->addWidget(Label, 0);
+    Layout->addWidget(SFMLView, 1);
+    MainFrame->setLayout(Layout);
+
     return App.exec();
 }
