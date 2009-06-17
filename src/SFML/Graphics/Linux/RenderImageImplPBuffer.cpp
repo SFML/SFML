@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/Win32/RenderImageImplPBuffer.hpp>
+#include <SFML/Graphics/Linux/RenderImageImplPBuffer.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
 #include <iostream>
@@ -39,13 +39,12 @@ namespace priv
 /// Default constructor
 ////////////////////////////////////////////////////////////
 RenderImageImplPBuffer::RenderImageImplPBuffer() :
-myPBuffer      (NULL),
-myDeviceContext(NULL),
-myContext      (NULL),
-myWidth        (0),
-myHeight       (0)
+myPBuffer(NULL),
+myContext(NULL),
+myWidth  (0),
+myHeight (0)
 {
-
+    myDisplay = XOpenDisplay(NULL);
 }
 
 
@@ -55,15 +54,12 @@ myHeight       (0)
 RenderImageImplPBuffer::~RenderImageImplPBuffer()
 {
     if (myContext)
-    {
-        wglDeleteContext(myContext);
-    }
+        glXDestroyContext(myDisplay, myContext);
 
-    if (myPBuffer && myDeviceContext)
-    {
-        wglReleasePbufferDCARB(myPBuffer, myDeviceContext);
-        wglDestroyPbufferARB(myPBuffer);
-    }
+    if (myPBuffer)
+        glXDestroyGLXPbufferSGIX(myDisplay, myPBuffer);
+
+    XCloseDisplay(myDisplay);
 
     // This is to make sure that another valid context is made
     // active after we destroy the P-Buffer's one
@@ -79,8 +75,7 @@ bool RenderImageImplPBuffer::IsSupported()
     // Make sure that GLEW is initialized
     EnsureGlewInit();
 
-    return wglewIsSupported("WGL_ARB_pbuffer") &&
-           wglewIsSupported("WGL_ARB_pixel_format");
+    return false; //glxewIsSupported("GLX_SGIX_pbuffer");
 }
 
 
@@ -93,68 +88,81 @@ bool RenderImageImplPBuffer::Create(unsigned int Width, unsigned int Height, uns
     myWidth = Width;
     myHeight = Height;
 
-    // Get the current HDC
-    HDC CurrentDeviceContext = wglGetCurrentDC();
-
-    // Define the minimum PBuffer attributes
-    int Attributes[] =
+    // Define the PBuffer attributes
+    int VisualAttributes[] =
     {
-        WGL_SUPPORT_OPENGL_ARB,  GL_TRUE,
-        WGL_DRAW_TO_PBUFFER_ARB, GL_TRUE,
-        WGL_RED_BITS_ARB,        8,
-        WGL_GREEN_BITS_ARB,      8,
-        WGL_BLUE_BITS_ARB,       8,
-        WGL_ALPHA_BITS_ARB,      8,
-        WGL_DEPTH_BITS_ARB,      (DepthBuffer ? 24 : 0),
-        WGL_DOUBLE_BUFFER_ARB,   GL_FALSE,
+        GLX_RENDER_TYPE,   GLX_RGBA_BIT,
+        GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
+        GLX_RED_SIZE,      8,
+        GLX_GREEN_SIZE,    8,
+        GLX_BLUE_SIZE,     8,
+        GLX_ALPHA_SIZE,    8,
+        GLX_DEPTH_SIZE,    (DepthBuffer ? 24 : 0),
+        0
+    };
+    int PBufferAttributes[] =
+    {
+        GLX_PBUFFER_WIDTH, 	Width,
+        GLX_PBUFFER_HEIGHT, Height,
         0
     };
 
-    // Select the best pixel format for our attributes
-	unsigned int NbFormats = 0;
-	int PixelFormat = -1;
-	wglChoosePixelFormatARB(CurrentDeviceContext, Attributes, NULL, 1, &PixelFormat, &NbFormats);
-
-    // Make sure that one pixel format has been found
-    if (NbFormats == 0)
+    // Get the available FB configurations
+    int NbConfigs = 0;
+    GLXFBConfig* Configs = glXChooseFBConfigSGIX(myDisplay, DefaultScreen(myDisplay), VisualAttributes, &NbConfigs);
+    if (!Configs || !NbConfigs)
     {
         std::cerr << "Impossible to create render image (failed to find a suitable pixel format for PBuffer)" << std::endl;
         return false;
     }
 
-    // Create the P-Buffer and its OpenGL context
-    myPBuffer       = wglCreatePbufferARB(CurrentDeviceContext, PixelFormat, Width, Height, NULL);
-    myDeviceContext = wglGetPbufferDCARB(myPBuffer);
-    myContext       = wglCreateContext(myDeviceContext);
-
-    // Check errors
-    if (!myPBuffer || !myDeviceContext || !myContext)
+    // Create the P-Buffer
+    myPBuffer = glXCreateGLXPbufferSGIX(myDisplay, Configs[0], Width, Height, PBufferAttributes);
+    if (!myPBuffer)
     {
-        std::cerr << "Impossible to create render image (failed to create PBuffer)" << std::endl;
+        std::cerr << "Impossible to create render image (failed to create the OpenGL PBuffer)" << std::endl;
+        XFree(Configs);
         return false;
     }
 
     // Check the actual size of the P-Buffer
-    int ActualWidth, ActualHeight;
-    wglQueryPbufferARB(myPBuffer, WGL_PBUFFER_WIDTH_ARB, &ActualWidth);
-    wglQueryPbufferARB(myPBuffer, WGL_PBUFFER_HEIGHT_ARB, &ActualHeight);
-    if ((ActualWidth != static_cast<int>(Width)) || (ActualHeight != static_cast<int>(Height)))
+    unsigned int ActualWidth, ActualHeight;
+    glXQueryGLXPbufferSGIX(myDisplay, myPBuffer, GLX_WIDTH_SGIX, &ActualWidth);
+    glXQueryGLXPbufferSGIX(myDisplay, myPBuffer, GLX_HEIGHT_SGIX, &ActualHeight);
+    if ((ActualWidth != Width) || (ActualHeight != Height))
     {
         std::cerr << "Impossible to create render image (failed to match the requested size). "
                   << "Size: " << ActualWidth << "x" << ActualHeight << " - "
                   << "Requested: " << Width << "x" << Height
                   << std::endl;
+        XFree(Configs);
         return false;
     }
 
-    // Share the P-Buffer context with the current context
-    HGLRC CurrentContext = wglGetCurrentContext();
+    // We'll have to share the P-Buffer context with the current context
+    GLXDrawable CurrentDrawable = glXGetCurrentDrawable();
+    GLXContext CurrentContext = glXGetCurrentContext();
     if (CurrentContext)
+        glXMakeCurrent(myDisplay, NULL, NULL);
+
+    // Create the context
+    XVisualInfo* Visual = glXGetVisualFromFBConfig(myDisplay, Configs[0]);
+    myContext = glXCreateContext(myDisplay, Visual, CurrentContext, true);
+    if (!myContext)
     {
-        wglMakeCurrent(NULL, NULL);
-        wglShareLists(CurrentContext, myContext);
-        wglMakeCurrent(CurrentDeviceContext, CurrentContext);
+        std::cerr << "Impossible to create render image (failed to create the OpenGL context)" << std::endl;
+        XFree(Configs);
+        XFree(Visual);
+        return false;
     }
+ 
+    // Restore the previous active context
+    if (CurrentContext)
+        glXMakeCurrent(myDisplay, CurrentDrawable, CurrentContext);
+ 
+    // Cleanup resources
+    XFree(Configs);
+    XFree(Visual);
 
     return true;
 }
@@ -167,10 +175,10 @@ bool RenderImageImplPBuffer::Activate(bool Active)
 {
     if (Active)
     {
-        if (myDeviceContext && myContext && (wglGetCurrentContext() != myContext))
+        if (myPBuffer && myContext && (glXGetCurrentContext() != myContext))
         {
             // Bind the OpenGL context of the P-Buffer
-            if (!wglMakeCurrent(myDeviceContext, myContext))
+            if (!glXMakeCurrent(myDisplay, myPBuffer, myContext))
             {
                 std::cout << "Failed to activate render image" << std::endl;
                 return false;
@@ -192,8 +200,8 @@ bool RenderImageImplPBuffer::Activate(bool Active)
 bool RenderImageImplPBuffer::UpdateTexture(unsigned int TextureId)
 {
     // Store the current active context
-    HDC CurrentDeviceContext = wglGetCurrentDC();
-    HGLRC CurrentContext = wglGetCurrentContext();
+    GLXDrawable CurrentDrawable = glXGetCurrentDrawable();
+    GLXContext CurrentContext = glXGetCurrentContext();
 
     if (Activate(true))
     {
@@ -205,7 +213,7 @@ bool RenderImageImplPBuffer::UpdateTexture(unsigned int TextureId)
         GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
 
         // Restore the previous context
-        wglMakeCurrent(CurrentDeviceContext, CurrentContext);
+        glXMakeCurrent(myDisplay, CurrentDrawable, CurrentContext);
 
         return true;
     }

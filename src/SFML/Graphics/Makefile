@@ -1,4 +1,4 @@
-SRC     = $(wildcard *.cpp)
+SRC     = $(wildcard *.cpp ./Linux/*.cpp)
 SRCGLEW = $(wildcard ./GLEW/*.c)
 SRCJPEG = $(wildcard ./libjpeg/*.c)
 SRCPNG  = $(wildcard ./libpng/*.c)
