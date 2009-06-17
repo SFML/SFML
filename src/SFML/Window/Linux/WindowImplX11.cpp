@@ -353,16 +353,7 @@ WindowImplX11::~WindowImplX11()
 
 ////////////////////////////////////////////////////////////
 /// Check if there's an active context on the current thread
-////////////////////
 ////////////////////////////////////////////////////////////
-/// Filter the received events
-/// (only allow those matching a specific window)
-////////////////////////////////////////////////////////////
-Bool CheckEvent(::Display*, XEvent* Event, XPointer UserData)
-{
-    // Just check if the event matches our window
-    return Event->xany.window == reinterpret_cast< ::Window >(UserData);
-}////////////////////////////////////////
 bool WindowImplX11::IsContextActive()
 {
     return glXGetCurrentContext() != NULL;
