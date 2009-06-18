@@ -386,6 +386,10 @@ Http::Response Http::SendRequest(const Http::Request& Req, float Timeout)
         Out << ToSend.myBody.size();
         ToSend.SetField("Content-Length", Out.str());
     }
+    if ((ToSend.myMethod == Request::Post) && !ToSend.HasField("Content-Type"))
+    {
+        ToSend.SetField("Content-Type", "application/x-www-form-urlencoded");
+    }
 
     // Prepare the response
     Response Received;
