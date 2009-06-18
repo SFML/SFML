@@ -390,6 +390,10 @@ Http::Response Http::SendRequest(const Http::Request& Req, float Timeout)
     {
         ToSend.SetField("Content-Type", "application/x-www-form-urlencoded");
     }
+    if ((ToSend.myMajorVersion * 10 + ToSend.myMinorVersion >= 11) && !ToSend.HasField("Connection"))
+    {
+        ToSend.SetField("Connection", "close");
+    }
 
     // Prepare the response
     Response Received;
