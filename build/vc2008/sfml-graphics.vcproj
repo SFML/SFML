@@ -3281,7 +3281,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\Color.hpp"
+			RelativePath="..\..\include\SFML\Graphics\Color.hpp"
 			>
 		</File>
 		<File
@@ -3289,7 +3289,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\Drawable.hpp"
+			RelativePath="..\..\include\SFML\Graphics\Drawable.hpp"
 			>
 		</File>
 		<File
@@ -3325,7 +3325,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\Image.hpp"
+			RelativePath="..\..\include\SFML\Graphics\Image.hpp"
 			>
 		</File>
 		<File
@@ -3381,23 +3381,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\OpenGL.hpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\SFML\Graphics\PostFX.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\PostFX.hpp"
+			RelativePath="..\..\include\SFML\Graphics\PostFX.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\Rect.hpp"
+			RelativePath="..\..\include\SFML\Graphics\Rect.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\Rect.inl"
+			RelativePath="..\..\include\SFML\Graphics\Rect.inl"
 			>
 		</File>
 		<File
@@ -3413,7 +3409,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\RenderWindow.hpp"
+			RelativePath="..\..\include\SFML\Graphics\RenderWindow.hpp"
 			>
 		</File>
 		<File
@@ -3429,7 +3425,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\Sprite.hpp"
+			RelativePath="..\..\include\SFML\Graphics\Sprite.hpp"
 			>
 		</File>
 		<File
@@ -3437,7 +3433,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\String.hpp"
+			RelativePath="..\..\include\SFML\Graphics\String.hpp"
 			>
 		</File>
 		<File
@@ -3445,7 +3441,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\View.hpp"
+			RelativePath="..\..\include\SFML\Graphics\View.hpp"
 			>
 		</File>
 	</Files>

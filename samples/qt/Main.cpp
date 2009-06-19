@@ -60,7 +60,7 @@ private :
             // Adjust the size of the default view when the widget is resized
             if (Event.Type == sf::Event::Resized)
             {
-                GetDefaultView().SetHalfSize(Event.Size.Width / 2.f, Event.Size.Height / 2.f);
+                GetDefaultView().SetFromRect(sf::FloatRect(0, 0, Event.Size.Width, Event.Size.Height));
             }
         }
 
