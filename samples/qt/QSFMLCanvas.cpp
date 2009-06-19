@@ -3,6 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "QSFMLCanvas.hpp"
+#include <QEvent>
 
 // Platform-specific headers
 #ifdef Q_WS_X11
@@ -14,10 +15,12 @@
 ////////////////////////////////////////////////////////////
 /// Construct the QSFMLCanvas
 ////////////////////////////////////////////////////////////
-QSFMLCanvas::QSFMLCanvas(QWidget* Parent, const QPoint& Position, const QSize& Size, unsigned int FrameTime) :
-QWidget       (Parent),
-myInitialized (false)
+QSFMLCanvas::QSFMLCanvas(const QSize& Size, unsigned int FrameTime, QWidget* Parent) :
+QWidget(Parent)
 {
+    // Resize the widget
+    resize(Size);
+
     // Setup some states to allow direct rendering into the widget
     setAttribute(Qt::WA_PaintOnScreen);
     setAttribute(Qt::WA_OpaquePaintEvent);
@@ -25,10 +28,6 @@ myInitialized (false)
 
     // Set strong focus to enable keyboard events to be received
     setFocusPolicy(Qt::StrongFocus);
-
-    // Setup the widget geometry
-    move(Position);
-    resize(Size);
 
     // Setup the timer
     myTimer.setInterval(FrameTime);
@@ -74,12 +73,13 @@ QPaintEngine* QSFMLCanvas::paintEngine() const
 
 
 ////////////////////////////////////////////////////////////
-/// Called when the widget is shown ;
-/// we use it to initialize our SFML window
+/// Called each time an event is received by the widget ;
+/// we use it to catch the Polish event and initialize
+/// our SFML window
 ////////////////////////////////////////////////////////////
-void QSFMLCanvas::showEvent(QShowEvent*)
+bool QSFMLCanvas::event(QEvent* Event)
 {
-    if (!myInitialized)
+    if (Event->type() == QEvent::Polish)
     {
         // Under X11, we need to flush the commands sent to the server to ensure that
         // SFML will get an updated view of the windows
@@ -96,9 +96,9 @@ void QSFMLCanvas::showEvent(QShowEvent*)
         // Setup the timer to trigger a refresh at specified framerate
         connect(&myTimer, SIGNAL(timeout()), this, SLOT(repaint()));
         myTimer.start();
-
-        myInitialized = true;
     }
+
+    return QWidget::event(Event);
 }
 
 

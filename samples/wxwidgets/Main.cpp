@@ -78,13 +78,8 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     MyFrame() :
-    wxFrame(NULL, wxID_ANY, wxT("SFML wxWidgets"), wxDefaultPosition, wxSize(680, 280))
+    wxFrame(NULL, wxID_ANY, wxT("SFML wxWidgets"), wxDefaultPosition, wxSize(440, 280))
     {
-        // Error log text box
-        wxTextCtrl* ErrorLog = new wxTextCtrl(this, wxID_ANY, wxT(""), wxPoint(440, 20), wxSize(200, 200), wxTE_MULTILINE | wxTE_READONLY | wxHSCROLL);
-        std::cerr.rdbuf(ErrorLog);
-        std::cerr << "-- This is the error log --" << std::endl;
-
         // Let's create a SFML view
         new MyCanvas(this, wxID_ANY, wxPoint(20, 20), wxSize(400, 200));
     }

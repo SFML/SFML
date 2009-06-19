@@ -511,6 +511,25 @@ void WindowImplCocoa::HandleMouseWheel(void *eventRef)
 	}
 }
 	
+////////////////////////////////////////////////////////////
+/// Return whether 'ev' must be considered as a TextEntered event
+////////////////////////////////////////////////////////////
+bool WindowImplCocoa::IsTextEvent(void *eventRef)
+{
+	NSEvent *event = (NSEvent *)eventRef;
+	bool res = false;
+	
+	if (event && [event type] == NSKeyDown && [[event characters] length]) {
+		unichar code = [[event characters] characterAtIndex:0];
+		
+		// Codes from 0xF700 to 0xF8FF are non text keys (see NSEvent.h)
+		// 0x35 is the Escape key
+		if ([event keyCode] != 0x35 && (code < 0xF700 || code > 0xF8FF))
+			res = true;
+	}
+	
+	return res;
+}
 	
 ////////////////////////////////////////////////////////////
 /// /see sfWindowImpl::Display
@@ -794,25 +813,6 @@ static Key::Code KeyForUnicode(unsigned short uniCode)
 	}
 	
 	return result;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Return whether 'ev' must be considered as a TextEntered event
-////////////////////////////////////////////////////////////
-static bool IsTextEvent(NSEvent *event)
-{
-	bool res = false;
-	
-	if (event && [event type] == NSKeyDown && [[event characters] length]) {
-		unichar code = [[event characters] characterAtIndex:0];
-		
-		// Codes from 0xF700 to 0xF8FF are non text keys (see NSEvent.h)
-		if (code < 0xF700 || code > 0xF8FF)
-			res = true;
-	}
-	
-	return res;
 }
 
 

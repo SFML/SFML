@@ -6,9 +6,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
-#include <Qt/qwidget.h>
-#include <Qt/qtimer.h>
+#include <QWidget>
+#include <QTimer>
 
+
+class QEvent;
 
 ////////////////////////////////////////////////////////////
 /// QSFMLCanvas allows to run SFML in a Qt control
@@ -20,13 +22,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the QSFMLCanvas
     ///
-    /// \param Parent :    Parent of the widget
-    /// \param Position :  Position of the widget
-    /// \param Size :      Size of the widget
+    /// \param Size :      Initial size of the widget
     /// \param FrameTime : Frame duration, in milliseconds (0 by default)
+    /// \param Parent :    Parent of the widget (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
-    QSFMLCanvas(QWidget* Parent, const QPoint& Position, const QSize& Size, unsigned int FrameTime = 0);
+    QSFMLCanvas(const QSize& Size, unsigned int FrameTime = 0, QWidget* Parent = NULL);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -57,11 +58,12 @@ private :
     virtual QPaintEngine* paintEngine() const;
 
     ////////////////////////////////////////////////////////////
-    /// Called when the widget is shown ;
-    /// we use it to initialize our SFML window
+    /// Called each time an event is received by the widget ;
+    /// we use it to catch the Polish event and initialize
+    /// our SFML window
     ///
     ////////////////////////////////////////////////////////////
-    virtual void showEvent(QShowEvent*);
+    virtual bool event(QEvent* Event);
 
     ////////////////////////////////////////////////////////////
     /// Called when the widget needs to be painted ;
@@ -73,8 +75,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    QTimer myTimer;       ///< Timer used to update the view
-    bool   myInitialized; ///< Tell whether the SFML window has been initialized or not
+    QTimer myTimer; ///< Timer used to update the view
 };
 
 
