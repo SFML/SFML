@@ -76,19 +76,26 @@ inline void Matrix3::SetFromTransformations(const Vector2f& Center, const Vector
 ////////////////////////////////////////////////////////////
 /// Build a matrix from a projection
 ////////////////////////////////////////////////////////////
-inline void Matrix3::SetFromProjection(const FloatRect& Rectangle)
+inline void Matrix3::SetFromProjection(const Vector2f& Center, const Vector2f& Size, float Rotation)
 {
+    // Rotation components
+    float Angle = Rotation * 3.141592654f / 180.f;
+    float Cos   = static_cast<float>(cos(Angle));
+    float Sin   = static_cast<float>(sin(Angle));
+    float Tx    = -Center.x * Cos - Center.y * Sin + Center.x;
+    float Ty    =  Center.x * Sin - Center.y * Cos + Center.y;
+
     // Projection components
-    float A =  2.f / Rectangle.GetSize().x;
-    float B = -2.f / Rectangle.GetSize().y;
-    float C = -(Rectangle.Left + Rectangle.Right) / Rectangle.GetSize().x;
-    float D =  (Rectangle.Bottom + Rectangle.Top) / Rectangle.GetSize().y;
+    float A =  2.f / Size.x;
+    float B = -2.f / Size.y;
+    float C = -A * Center.x;
+    float D = -B * Center.y;
 
     // Rebuild the projection matrix
-    myData[0] = A;   myData[4] = 0.f; myData[8]  = 0.f; myData[12] = C;
-    myData[1] = 0.f; myData[5] = B;   myData[9]  = 0.f; myData[13] = D;
-    myData[2] = 0.f; myData[6] = 0.f; myData[10] = 1.f; myData[14] = 0.f;
-    myData[3] = 0.f; myData[7] = 0.f; myData[11] = 0.f; myData[15] = 1.f;
+    myData[0] =  A * Cos; myData[4] = A * Sin; myData[8]  = 0.f; myData[12] = A * Tx + C;
+    myData[1] = -B * Sin; myData[5] = B * Cos; myData[9]  = 0.f; myData[13] = B * Ty + D;
+    myData[2] = 0.f;      myData[6] = 0.f;     myData[10] = 1.f; myData[14] = 0.f;
+    myData[3] = 0.f;      myData[7] = 0.f;     myData[11] = 0.f; myData[15] = 1.f;
 }
 
 

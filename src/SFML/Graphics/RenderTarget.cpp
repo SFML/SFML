@@ -175,7 +175,7 @@ void RenderTarget::Initialize()
         SetRenderStates();
 
         // Setup the default view
-        myDefaultView.SetRect(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
+        myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
         SetView(myDefaultView);
 
         Activate(false);

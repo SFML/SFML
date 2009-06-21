@@ -72,10 +72,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// Build a matrix from a projection
     ///
-    /// \param Rectangle : Rectangle defining the region to project
+    /// \param Center :   Center of the view
+    /// \param Size :     Size of the view
+    /// \param Rotation : Angle of rotation of the view rectangle, in degrees
     ///
     ////////////////////////////////////////////////////////////
-    void SetFromProjection(const FloatRect& Rectangle);
+    void SetFromProjection(const Vector2f& Center, const Vector2f& Size, float Rotation);
 
     ////////////////////////////////////////////////////////////
     /// Transform a point by the matrix
