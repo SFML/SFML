@@ -80,7 +80,7 @@ sfBool sfFloatRect_Intersects(sfFloatRect* Rect1, sfFloatRect* Rect2, sfFloatRec
     if (OverlappingRect)
     {
         sf::FloatRect Overlap;
-        bool Intersect = SFMLRect1.Intersects(SFMLRect2, &Overlap);
+        bool Intersect = SFMLRect1.Intersects(SFMLRect2, Overlap);
 
         OverlappingRect->Left   = Overlap.Left;
         OverlappingRect->Top    = Overlap.Top;
@@ -105,7 +105,7 @@ sfBool sfIntRect_Intersects(sfIntRect* Rect1, sfIntRect* Rect2, sfIntRect* Overl
     if (OverlappingRect)
     {
         sf::IntRect Overlap;
-        bool Intersect = SFMLRect1.Intersects(SFMLRect2, &Overlap);
+        bool Intersect = SFMLRect1.Intersects(SFMLRect2, Overlap);
 
         OverlappingRect->Left   = Overlap.Left;
         OverlappingRect->Top    = Overlap.Top;

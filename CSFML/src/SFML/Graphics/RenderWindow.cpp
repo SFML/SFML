@@ -429,7 +429,11 @@ void sfRenderWindow_ConvertCoords(sfRenderWindow* RenderWindow, unsigned int Win
 {
     CSFML_CHECK(RenderWindow);
 
-    sf::Vector2f Point = RenderWindow->This.ConvertCoords(WindowX, WindowY, TargetView ? TargetView->This : NULL);
+    sf::Vector2f Point;
+    if (TargetView)
+        Point = RenderWindow->This.ConvertCoords(WindowX, WindowY, *TargetView->This);
+    else
+        Point = RenderWindow->This.ConvertCoords(WindowX, WindowY);
 
     if (ViewX) *ViewX = Point.x;
     if (ViewY) *ViewY = Point.y;

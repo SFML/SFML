@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C# Express 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sfml-window", "..\..\src\Window\sfml-window.csproj", "{D17DE83D-A592-461F-8AF2-53F9E22E1D0F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sfml-graphics", "..\..\src\Graphics\sfml-graphics.csproj", "{46786269-57B9-48E7-AA4F-8F4D84609FE6}"

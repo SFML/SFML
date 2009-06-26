@@ -104,15 +104,28 @@ public :
 
     ////////////////////////////////////////////////////////////
     /// Convert a point in window coordinates into view coordinates
+    /// This version uses the current view of the window
     ///
-    /// \param WindowX :    X coordinate of the point to convert, relative to the window
-    /// \param WindowY :    Y coordinate of the point to convert, relative to the window
-    /// \param TargetView : Target view to convert the point to (NULL by default -- uses the current view)
+    /// \param WindowX : X coordinate of the point to convert, relative to the window
+    /// \param WindowY : Y coordinate of the point to convert, relative to the window
     ///
     /// \return Converted point
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f ConvertCoords(unsigned int WindowX, unsigned int WindowY, const View* TargetView = NULL) const;
+    sf::Vector2f ConvertCoords(unsigned int WindowX, unsigned int WindowY) const;
+
+    ////////////////////////////////////////////////////////////
+    /// Convert a point in window coordinates into view coordinates
+    /// This version uses the given view
+    ///
+    /// \param WindowX :    X coordinate of the point to convert, relative to the window
+    /// \param WindowY :    Y coordinate of the point to convert, relative to the window
+    /// \param TargetView : Target view to convert the point to
+    ///
+    /// \return Converted point
+    ///
+    ////////////////////////////////////////////////////////////
+    sf::Vector2f ConvertCoords(unsigned int WindowX, unsigned int WindowY, const View& TargetView) const;
 
 private :
 

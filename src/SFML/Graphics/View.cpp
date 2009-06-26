@@ -38,6 +38,7 @@ View::View() :
 myCenter       (),
 mySize         (),
 myRotation     (0),
+myViewport     (0, 0, 1, 1),
 myNeedUpdate   (true),
 myNeedInvUpdate(true)
 {
@@ -52,6 +53,7 @@ View::View(const FloatRect& Rectangle) :
 myCenter       (),
 mySize         (),
 myRotation     (0),
+myViewport     (0, 0, 1, 1),
 myNeedUpdate   (true),
 myNeedInvUpdate(true)
 {
@@ -66,6 +68,7 @@ View::View(const Vector2f& Center, const Vector2f& Size) :
 myCenter       (Center),
 mySize         (Size),
 myRotation     (0),
+myViewport     (0, 0, 1, 1),
 myNeedUpdate   (true),
 myNeedInvUpdate(true)
 {
@@ -126,6 +129,15 @@ void View::SetRotation(float Angle)
 
 
 ////////////////////////////////////////////////////////////
+/// Set the target viewport
+////////////////////////////////////////////////////////////
+void View::SetViewport(const FloatRect& Viewport)
+{
+    myViewport = Viewport;
+}
+
+
+////////////////////////////////////////////////////////////
 /// Reset the view to the given rectangle
 ////////////////////////////////////////////////////////////
 void View::Reset(const FloatRect& Rectangle)
@@ -152,6 +164,24 @@ const Vector2f& View::GetCenter() const
 const Vector2f& View::GetSize() const
 {
     return mySize;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Get the current rotation
+////////////////////////////////////////////////////////////
+float View::GetRotation() const
+{
+    return myRotation;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Get the target viewport
+////////////////////////////////////////////////////////////
+const FloatRect& View::GetViewport() const
+{
+    return myViewport;
 }
 
 

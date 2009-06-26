@@ -135,22 +135,33 @@ Image RenderWindow::Capture() const
 
 ////////////////////////////////////////////////////////////
 /// Convert a point in window coordinates into view coordinates
+/// This version uses the current view of the window
 ////////////////////////////////////////////////////////////
-sf::Vector2f RenderWindow::ConvertCoords(unsigned int WindowX, unsigned int WindowY, const View* TargetView) const
+sf::Vector2f RenderWindow::ConvertCoords(unsigned int WindowX, unsigned int WindowY) const
 {
-    // Use the current view if none has been passed
-    if (!TargetView)
-        TargetView = &GetView();
+    return ConvertCoords(WindowX, WindowY, GetView());
+}
 
-    // First, convert from viewport coordinates to homogeneous coordinates:
-    // --> [0, Width]  to [-1, 1]
-    // --> [0, Height] to [1, -1]
+
+////////////////////////////////////////////////////////////
+/// Convert a point in window coordinates into view coordinates
+/// This version uses the given view
+////////////////////////////////////////////////////////////
+sf::Vector2f RenderWindow::ConvertCoords(unsigned int WindowX, unsigned int WindowY, const View& TargetView) const
+{
+    // First, convert from viewport coordinates to homogeneous coordinates
+    const FloatRect& Viewport = TargetView.GetViewport();
+    int Left   = static_cast<int>(0.5f + GetWidth()  * Viewport.Left);
+    int Top    = static_cast<int>(0.5f + GetHeight() * Viewport.Top);
+    int Width  = static_cast<int>(0.5f + GetWidth()  * Viewport.GetSize().x);
+    int Height = static_cast<int>(0.5f + GetHeight() * Viewport.GetSize().y);
+
     Vector2f Coords;
-    Coords.x = -1.f + 2.f * WindowX / GetWidth();
-    Coords.y =  1.f - 2.f * WindowY / GetHeight();
+    Coords.x = -1.f + 2.f * (static_cast<int>(WindowX) - Left) / Width;
+    Coords.y =  1.f - 2.f * (static_cast<int>(WindowY) - Top) / Height;
 
     // Then transform by the inverse of the view matrix
-    return TargetView->GetInverseMatrix().Transform(Coords);
+    return TargetView.GetInverseMatrix().Transform(Coords);
 }
 
 

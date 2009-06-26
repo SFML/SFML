@@ -67,20 +67,39 @@ void sfView_SetCenter(sfView* View, float X, float Y)
 
 
 ////////////////////////////////////////////////////////////
-/// Change the half-size of a view
+/// Change the size of a view
 ////////////////////////////////////////////////////////////
-void sfView_SetHalfSize(sfView* View, float HalfWidth, float HalfHeight)
+void sfView_SetSize(sfView* View, float Width, float Height)
 {
-    CSFML_CALL_PTR(View, SetHalfSize(HalfWidth, HalfHeight));
+    CSFML_CALL_PTR(View, SetSize(Width, Height));
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Rebuild a view from a rectangle
+/// Set the angle of rotation of a view
 ////////////////////////////////////////////////////////////
-void sfView_SetFromRect(sfView* View, sfFloatRect ViewRect)
+void sfView_SetRotation(sfView* View, float Angle)
 {
-    CSFML_CALL_PTR(View, SetFromRect(sf::FloatRect(ViewRect.Left, ViewRect.Top, ViewRect.Right, ViewRect.Bottom)));
+    CSFML_CALL_PTR(View, SetRotation(Angle));
+}
+
+
+////////////////////////////////////////////////////////////
+/// Set the target viewport of a view
+////////////////////////////////////////////////////////////
+void sfView_SetViewport(sfView* View, sfFloatRect Viewport)
+{
+    CSFML_CALL_PTR(View, SetViewport(sf::FloatRect(Viewport.Left, Viewport.Top, Viewport.Right, Viewport.Bottom)));
+}
+
+
+////////////////////////////////////////////////////////////
+/// Reset a view to the given rectangle.
+/// Note: this function resets the rotation angle to 0.
+////////////////////////////////////////////////////////////
+void sfView_Reset(sfView* View, sfFloatRect Rectangle)
+{
+    CSFML_CALL_PTR(View, Reset(sf::FloatRect(Rectangle.Left, Rectangle.Top, Rectangle.Right, Rectangle.Bottom)));
 }
 
 
@@ -107,36 +126,45 @@ float sfView_GetCenterY(sfView* View)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the half-width of the view
+/// Get the width of the view
 ////////////////////////////////////////////////////////////
-float sfView_GetHalfSizeY(sfView* View)
+float sfView_GetWidth(sfView* View)
 {
     CSFML_CHECK_RETURN(View, 0.f);
 
-    return View->This->GetHalfSize().x;
+    return View->This->GetSize().x;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the half-height of the view
+/// Get the height of the view
 ////////////////////////////////////////////////////////////
-float sfView_GetHalfSizeX(sfView* View)
+float sfView_GetHeight(sfView* View)
 {
     CSFML_CHECK_RETURN(View, 0.f);
 
-    return View->This->GetHalfSize().y;
+    return View->This->GetSize().y;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the bounding rectangle of a view
+/// Get the current rotation of a view
 ////////////////////////////////////////////////////////////
-sfFloatRect sfView_GetRect(sfView* View)
+float sfView_GetRotation(sfView* View)
+{
+    CSFML_CALL_PTR_RETURN(View, GetRotation(), 0.f);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Get the target viewport of a view
+////////////////////////////////////////////////////////////
+sfFloatRect sfView_GetViewport(sfView* View)
 {
     sfFloatRect Rect = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(View, Rect);
 
-    sf::FloatRect SFMLRect = View->This->GetRect();
+    sf::FloatRect SFMLRect = View->This->GetViewport();
     Rect.Left   = SFMLRect.Left;
     Rect.Top    = SFMLRect.Top;
     Rect.Right  = SFMLRect.Right;
@@ -152,6 +180,15 @@ sfFloatRect sfView_GetRect(sfView* View)
 void sfView_Move(sfView* View, float OffsetX, float OffsetY)
 {
     CSFML_CALL_PTR(View, Move(OffsetX, OffsetY));
+}
+
+
+////////////////////////////////////////////////////////////
+/// Rotate a view
+////////////////////////////////////////////////////////////
+void sfView_Rotate(sfView* View, float Angle)
+{
+    CSFML_CALL_PTR(View, Rotate(Angle));
 }
 
 

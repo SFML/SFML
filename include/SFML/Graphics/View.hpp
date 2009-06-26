@@ -117,6 +117,21 @@ public :
     void SetRotation(float Angle);
 
     ////////////////////////////////////////////////////////////
+    /// Set the target viewport
+    ///
+    /// The viewport is the rectangle into which the contents of the
+    /// view are displayed, expressed as a factor (between 0 and 1)
+    /// of the size of the RenderTarget to which the view is applied.
+    ///
+    /// For example, a view which takes the left side of the target would
+    /// be defined with View.SetViewport(sf::FloatRect(0, 0, 0.5, 1)).
+    ///
+    /// \param Viewport : New viewport
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetViewport(const FloatRect& Viewport);
+
+    ////////////////////////////////////////////////////////////
     /// Reset the view to the given rectangle.
     /// Note: this function resets the rotation angle to 0.
     ///
@@ -140,6 +155,22 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     const Vector2f& GetSize() const;
+
+    ////////////////////////////////////////////////////////////
+    /// Get the current rotation
+    ///
+    /// \return Rotation of the view, in degrees
+    ///
+    ////////////////////////////////////////////////////////////
+    float GetRotation() const;
+
+    ////////////////////////////////////////////////////////////
+    /// Get the target viewport
+    ///
+    /// \return Viewport rectangle, expressed as a factor of the target size
+    ///
+    ////////////////////////////////////////////////////////////
+    const FloatRect& GetViewport() const;
 
     ////////////////////////////////////////////////////////////
     /// Move the view
@@ -198,6 +229,7 @@ private :
     Vector2f        myCenter;        ///< Center of the view, in scene coordinates
     Vector2f        mySize;          ///< Size of the view, in scene coordinates
     float           myRotation;      ///< Angle of rotation of the view rectangle, in degrees
+    FloatRect       myViewport;      ///< Viewport rectangle, expressed as a factor of the render-target's size
     mutable Matrix3 myMatrix;        ///< Precomputed projection matrix corresponding to the view
     mutable Matrix3 myInverseMatrix; ///< Precomputed inverse projection matrix corresponding to the view
     mutable bool    myNeedUpdate;    ///< Internal state telling if the matrix needs to be updated

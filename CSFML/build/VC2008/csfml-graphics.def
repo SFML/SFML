@@ -220,12 +220,15 @@ EXPORTS
 	sfView_CreateFromRect
 	sfView_Destroy
 	sfView_SetCenter
-	sfView_SetHalfSize
-	sfView_SetFromRect
+	sfView_SetSize
+	sfView_SetRotation
+	sfView_SetViewport
+	sfView_Reset
 	sfView_GetCenterX
 	sfView_GetCenterY
-	sfView_GetHalfSizeX
-	sfView_GetHalfSizeY
-	sfView_GetRect
+	sfView_GetWidth
+	sfView_GetHeight
+	sfView_GetViewport
 	sfView_Move
+	sfView_Rotate
 	sfView_Zoom

@@ -93,10 +93,19 @@ void RenderTarget::Draw(const Drawable& Object)
                 SetRenderStates();
             }
 
-            // Set the window viewport and transform matrices
-            GLCheck(glViewport(0, 0, GetWidth(), GetHeight()));
-            GLCheck(glMatrixMode(GL_PROJECTION)); GLCheck(glLoadMatrixf(myCurrentView->GetMatrix().Get4x4Elements()));
-            GLCheck(glMatrixMode(GL_MODELVIEW));  GLCheck(glLoadIdentity());
+            // Setup the viewport
+            const FloatRect& Viewport = myCurrentView->GetViewport();
+            int Left   = static_cast<int>(0.5f + GetWidth()  * Viewport.Left);
+            int Top    = static_cast<int>(0.5f + GetHeight() * (1.f - Viewport.Bottom));
+            int Width  = static_cast<int>(0.5f + GetWidth()  * Viewport.GetSize().x);
+            int Height = static_cast<int>(0.5f + GetHeight() * Viewport.GetSize().y);
+            GLCheck(glViewport(Left, Top, Width, Height));
+
+            // Setup the transform matrices
+            GLCheck(glMatrixMode(GL_PROJECTION));
+            GLCheck(glLoadMatrixf(myCurrentView->GetMatrix().Get4x4Elements()));
+            GLCheck(glMatrixMode(GL_MODELVIEW));
+            GLCheck(glLoadIdentity());
 
             // Let the object draw itself
             Object.Draw(*this);
