@@ -49,10 +49,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;SFML_EXPORTS;SFML_DYNAMIC;GLEW_STATIC"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -136,6 +137,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -230,10 +232,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;SFML_EXPORTS;GLEW_STATIC"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -304,6 +307,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
