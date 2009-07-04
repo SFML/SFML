@@ -542,25 +542,15 @@ bool Image::IsSmooth() const
 /// Convert a subrect expressed in pixels, into float
 /// texture coordinates
 ////////////////////////////////////////////////////////////
-FloatRect Image::GetTexCoords(const IntRect& Rect, bool Adjust) const
+FloatRect Image::GetTexCoords(const IntRect& Rect) const
 {
     float Width  = static_cast<float>(myTextureWidth);
     float Height = static_cast<float>(myTextureHeight);
 
-    if (Adjust && myIsSmooth)
-    {
-        return FloatRect((Rect.Left   + 0.5f) / Width,
-                         (Rect.Top    + 0.5f) / Height,
-                         (Rect.Right  - 0.5f) / Width,
-                         (Rect.Bottom - 0.5f) / Height);
-    }
-    else
-    {
-        return FloatRect(Rect.Left   / Width,
-                         Rect.Top    / Height,
-                         Rect.Right  / Width,
-                         Rect.Bottom / Height);
-    }
+    return FloatRect(Rect.Left   / Width,
+                     Rect.Top    / Height,
+                     Rect.Right  / Width,
+                     Rect.Bottom / Height);
 }
 
 
