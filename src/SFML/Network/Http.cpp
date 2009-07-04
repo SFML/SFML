@@ -51,14 +51,12 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-Http::Request::Request(Method RequestMethod, const std::string& URI, const std::string& Body) :
-myMethod      (RequestMethod),
-myURI         (URI),
-myMajorVersion(1),
-myMinorVersion(0),
-myBody        (Body)
+Http::Request::Request(Method RequestMethod, const std::string& URI, const std::string& Body)
 {
-
+    SetMethod(RequestMethod);
+    SetURI(URI);
+    SetHttpVersion(1, 0);
+    SetBody(Body);
 }
 
 
