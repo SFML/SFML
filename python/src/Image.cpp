@@ -233,20 +233,15 @@ static PyObject *
 PySfImage_GetTexCoords(PySfImage* self, PyObject *args)
 {
 	PySfIntRect *RectArg = NULL;
-	bool Adjust = false;
-	PyObject *AdjustObj = NULL;
 
-	if (!PyArg_ParseTuple(args, "O!|O:Image.GetTextCoords", &PySfIntRectType, &RectArg, &AdjustObj))
+	if (!PyArg_ParseTuple(args, "O!:Image.GetTextCoords", &PySfIntRectType, &RectArg))
 		return NULL;
-
-	if (AdjustObj != NULL)
-		Adjust = PyBool_AsBool(AdjustObj);
 
 	PySfFloatRect *Rect;
 
 	Rect = GetNewPySfFloatRect();
 	Rect->Owner = true;
-	Rect->obj = new sf::FloatRect(self->obj->GetTexCoords(*(RectArg->obj), Adjust));
+	Rect->obj = new sf::FloatRect(self->obj->GetTexCoords(*(RectArg->obj)));
 	PySfFloatRectUpdateSelf(Rect);
 
 	return (PyObject *)Rect;
@@ -303,9 +298,8 @@ Create the image from the current contents of the given window. Return True if c
 	{"SetSmooth", (PyCFunction)PySfImage_SetSmooth, METH_VARARGS, "SetSmooth(Smooth)\nEnable or disable image smooth filter."},
 	{"GetWidth", (PyCFunction)PySfImage_GetWidth, METH_NOARGS, "GetWidth()\nReturn the width of the image."},
 	{"GetHeight", (PyCFunction)PySfImage_GetHeight, METH_NOARGS, "GetHeight()\nReturn the height of the image."},
-	{"GetTexCoords", (PyCFunction)PySfImage_GetTexCoords, METH_VARARGS, "GetTexCoords(Rect, Adjust=True)\nConvert a subrect expressed in pixels, into float texture coordinates. Returns texture coordinates corresponding to the sub-rectangle (sf.FloatRect instance)\n\
-	Rect 	: Sub-rectangle of image to convert\n\
-	Adjust 	: Pass true to apply the half-texel adjustment"},
+	{"GetTexCoords", (PyCFunction)PySfImage_GetTexCoords, METH_VARARGS, "GetTexCoords(Rect)\nConvert a subrect expressed in pixels, into float texture coordinates. Returns texture coordinates corresponding to the sub-rectangle (sf.FloatRect instance)\n\
+	Rect 	: Sub-rectangle of image to convert"},
 	{"GetValidTextureSize", (PyCFunction)PySfImage_GetValidTextureSize, METH_STATIC | METH_O, "GetValidTextureSize(Size)\nGet a valid texture size according to hardware support. Returns valid nearest size (greater than or equal to specified size).\n\
 	Size 	: Size to convert"},
 	{NULL}  /* Sentinel */
