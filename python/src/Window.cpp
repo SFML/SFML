@@ -227,7 +227,7 @@ PySfWindow_GetSettings(PySfWindow *self)
 {
 	PySfWindowSettings *Settings;
 	Settings = GetNewPySfWindowSettings();
-	Settings->obj = (sf::WindowSettings *)&self->obj->GetSettings();
+	Settings->obj = new sf::WindowSettings(self->obj->GetSettings());
 	Settings->DepthBits = Settings->obj->DepthBits;
 	Settings->StencilBits = Settings->obj->StencilBits;
 	Settings->AntialiasingLevel = Settings->obj->AntialiasingLevel;
