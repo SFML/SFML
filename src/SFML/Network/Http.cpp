@@ -178,7 +178,7 @@ myMinorVersion(0)
 ////////////////////////////////////////////////////////////
 const std::string& Http::Response::GetField(const std::string& Field) const
 {
-    FieldTable::const_iterator It = myFields.find(Field);
+    FieldTable::const_iterator It = myFields.find(ToLower(Field));
     if (It != myFields.end())
     {
         return It->second;
