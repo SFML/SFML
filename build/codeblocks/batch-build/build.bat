@@ -1,11 +1,11 @@
 @echo off
 
 REM Retrieve the SFML path
-set SFML=%CD%\..\..\..
-set TMP=%CD%\temp
+set SFML="%CD%\..\..\.."
+set TMP="%CD%\temp"
 
 REM Add the Code::Blocks path to the PATH
-set PATH=%PATH%;%CD%
+set PATH=%PATH%;"%CD%"
 
 REM Compile the SFML libraries
 cd %SFML%\build\codeblocks
@@ -49,16 +49,16 @@ cd %TMP%
 
 REM Add external libraries to sfml-window
 echo Adding external libraries to libsfml-window-s...
-ar x %SFML%\build\codeblocks\build-static-libs\libgdi32.a
-ar x %SFML%\build\codeblocks\build-static-libs\libopengl32.a
-ar x %SFML%\build\codeblocks\build-static-libs\libwinmm.a
+ar x %SFML%\build\codeblocks\batch-build\libgdi32.a
+ar x %SFML%\build\codeblocks\batch-build\libopengl32.a
+ar x %SFML%\build\codeblocks\batch-build\libwinmm.a
 ar rs libsfml-window-s.a *.o
 ar rs libsfml-window-s-d.a *.o
 del *.o /f /q
 
 REM Add external libraries to sfml-network
 echo Adding external libraries to libsfml-network-s...
-ar x %SFML%\build\codeblocks\build-static-libs\libws2_32.a
+ar x %SFML%\build\codeblocks\batch-build\libws2_32.a
 ar rs libsfml-network-s.a *.o
 ar rs libsfml-network-s-d.a *.o
 del *.o /f /q
