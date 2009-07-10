@@ -57,7 +57,7 @@ public :
     ///
     /// \param Mode :        Video mode to use
     /// \param Title :       Title of the window
-    /// \param WindowStyle : Window style (Resize | Close by default)
+    /// \param WindowStyle : Window style, see sf::Style (Resize | Close by default)
     /// \param Params :      Creation parameters (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
