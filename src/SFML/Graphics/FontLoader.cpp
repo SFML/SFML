@@ -210,10 +210,6 @@ FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const
         FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, 0, 1);
         FT_BitmapGlyph bitmapGlyph = (FT_BitmapGlyph)glyph;
 
-        // Should we handle other pixel modes ?
-        if (bitmapGlyph->bitmap.pixel_mode != FT_PIXEL_MODE_GRAY)
-            return FT_Err_Cannot_Render_Glyph;
-
         // Add it to the sorted table of glyphs
         glyphs.insert(std::make_pair(bitmapGlyph, charset[i]));
     }
@@ -290,7 +286,7 @@ FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const
     for (std::size_t i = 0; i < charset.size(); ++i)
     {
         Uint32 curChar = charset[i];
-        font.myGlyphs[curChar].TexCoords = font.myTexture.GetTexCoords(coords[curChar], false);
+        font.myGlyphs[curChar].TexCoords = font.myTexture.GetTexCoords(coords[curChar]);
     }
 
     // Update the character size (it may have been changed by the function)

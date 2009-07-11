@@ -50,14 +50,12 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-Http::Request::Request(Method method, const std::string& URI, const std::string& body) :
-myMethod      (method),
-myURI         (URI),
-myMajorVersion(1),
-myMinorVersion(0),
-myBody        (body)
+Http::Request::Request(Method method, const std::string& URI, const std::string& body)
 {
-
+    SetMethod(method);
+    SetURI(URI);
+    SetHttpVersion(1, 0);
+    SetBody(body);
 }
 
 
@@ -179,7 +177,7 @@ myMinorVersion(0)
 ////////////////////////////////////////////////////////////
 const std::string& Http::Response::GetField(const std::string& field) const
 {
-    FieldTable::const_iterator it = myFields.find(field);
+    FieldTable::const_iterator it = myFields.find(ToLower(field));
     if (it != myFields.end())
     {
         return it->second;

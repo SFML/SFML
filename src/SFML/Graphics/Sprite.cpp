@@ -186,6 +186,10 @@ void Sprite::Render(RenderTarget&) const
     // Check if the image is valid
     if (myImage && (myImage->GetWidth() > 0) && (myImage->GetHeight() > 0))
     {
+        // Use the "offset trick" to get pixel-perfect rendering
+        // see http://www.opengl.org/resources/faq/technical/transformations.htm#tran0030
+        GLCheck(glTranslatef(0.375f, 0.375f, 0.f));
+
         // Bind the texture
         myImage->Bind();
 

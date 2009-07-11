@@ -36,9 +36,9 @@ namespace
     /// Helper function to read a variable from a packet
     ////////////////////////////////////////////////////////////
     template <typename T>
-    T PacketRead(sfPacket* packet, T def = 0)
+    T PacketRead(sfPacket* packet)
     {
-        CSFML_CHECK_RETURN(packet, def);
+        CSFML_CHECK_RETURN(packet, 0);
 
         T value;
         packet->This >> value;

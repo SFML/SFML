@@ -549,26 +549,16 @@ bool Image::IsSmooth() const
 /// Convert a subrect expressed in pixels, into float
 /// texture coordinates
 ////////////////////////////////////////////////////////////
-FloatRect Image::GetTexCoords(const IntRect& rect, bool adjust) const
+FloatRect Image::GetTexCoords(const IntRect& rect) const
 {
     float width  = static_cast<float>(myTextureWidth);
     float height = static_cast<float>(myTextureHeight);
 
     FloatRect coords;
-    if (adjust && myIsSmooth)
-    {
-        coords.Left   = (rect.Left   + 0.5f) / width;
-        coords.Top    = (rect.Top    + 0.5f) / height;
-        coords.Right  = (rect.Right  - 0.5f) / width;
-        coords.Bottom = (rect.Bottom - 0.5f) / height;
-    }
-    else
-    {
-        coords.Left   = rect.Left   / width;
-        coords.Top    = rect.Top    / height;
-        coords.Right  = rect.Right  / width;
-        coords.Bottom = rect.Bottom / height;
-    }
+    coords.Left   = rect.Left   / width;
+    coords.Top    = rect.Top    / height;
+    coords.Right  = rect.Right  / width;
+    coords.Bottom = rect.Bottom / height;
 
     if (myPixelsFlipped)
         std::swap(coords.Top, coords.Bottom);

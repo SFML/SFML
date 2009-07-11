@@ -253,12 +253,11 @@ public :
     /// texture coordinates
     ///
     /// \param rectangle : Sub-rectangle of image to convert
-    /// \param adjust :    Pass true to apply the half-texel adjustment (true by default)
     ///
     /// \return Texture coordinates corresponding to the sub-rectangle
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect GetTexCoords(const IntRect& rectangle, bool adjust = true) const;
+    FloatRect GetTexCoords(const IntRect& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// Get a valid texture size according to hardware support
