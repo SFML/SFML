@@ -73,19 +73,19 @@ public :
         ////////////////////////////////////////////////////////////
         /// Construct the unicode text from any type of string
         ///
-        /// \param Str : String to convert
+        /// \param str : String to convert
         ///
         ////////////////////////////////////////////////////////////
-        Text(const char*                 Str);
-        Text(const wchar_t*              Str);
-        Text(const Uint8*                Str);
-        Text(const Uint16*               Str);
-        Text(const Uint32*               Str);
-        Text(const std::string&          Str);
-        Text(const std::wstring&         Str);
-        Text(const Unicode::UTF8String&  Str);
-        Text(const Unicode::UTF16String& Str);
-        Text(const Unicode::UTF32String& Str);
+        Text(const char*                 str);
+        Text(const wchar_t*              str);
+        Text(const Uint8*                str);
+        Text(const Uint16*               str);
+        Text(const Uint32*               str);
+        Text(const std::string&          str);
+        Text(const std::wstring&         str);
+        Text(const Unicode::UTF8String&  str);
+        Text(const Unicode::UTF16String& str);
+        Text(const Unicode::UTF32String& str);
 
         ////////////////////////////////////////////////////////////
         /// Operator to cast the text to any type of string
@@ -111,158 +111,158 @@ public :
     /// Generic function to convert an UTF-32 characters range
     /// to an ANSI characters range, using the given locale
     ///
-    /// \param Begin :       Iterator pointing to the beginning of the input sequence
-    /// \param End :         Iterator pointing to the end of the input sequence
-    /// \param Output :      Iterator pointing to the beginning of the output sequence
-    /// \param Replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
-    /// \param Locale :      Locale to use for conversion (uses the current one by default)
+    /// \param begin :       Iterator pointing to the beginning of the input sequence
+    /// \param end :         Iterator pointing to the end of the input sequence
+    /// \param output :      Iterator pointing to the beginning of the output sequence
+    /// \param replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
+    /// \param locale :      Locale to use for conversion (uses the current one by default)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out UTF32ToANSI(In Begin, In End, Out Output, char Replacement = '?', const std::locale& Locale = GetDefaultLocale());
+    static Out UTF32ToANSI(In begin, In end, Out output, char replacement = '?', const std::locale& locale = GetDefaultLocale());
 
     ////////////////////////////////////////////////////////////
     /// Generic function to convert an ANSI characters range
     /// to an UTF-32 characters range, using the given locale
     ///
-    /// \param Begin :  Iterator pointing to the beginning of the input sequence
-    /// \param End :    Iterator pointing to the end of the input sequence
-    /// \param Output : Iterator pointing to the beginning of the output sequence
-    /// \param Locale : Locale to use for conversion (uses the current one by default)
+    /// \param begin :  Iterator pointing to the beginning of the input sequence
+    /// \param end :    Iterator pointing to the end of the input sequence
+    /// \param output : Iterator pointing to the beginning of the output sequence
+    /// \param locale : Locale to use for conversion (uses the current one by default)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out ANSIToUTF32(In Begin, In End, Out Output, const std::locale& Locale = GetDefaultLocale());
+    static Out ANSIToUTF32(In begin, In end, Out output, const std::locale& locale = GetDefaultLocale());
 
     ////////////////////////////////////////////////////////////
     /// Generic function to convert an UTF-8 characters range
     /// to an UTF-16 characters range, using the given locale
     ///
-    /// \param Begin :       Iterator pointing to the beginning of the input sequence
-    /// \param End :         Iterator pointing to the end of the input sequence
-    /// \param Output :      Iterator pointing to the beginning of the output sequence
-    /// \param Replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
+    /// \param begin :       Iterator pointing to the beginning of the input sequence
+    /// \param end :         Iterator pointing to the end of the input sequence
+    /// \param output :      Iterator pointing to the beginning of the output sequence
+    /// \param replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out UTF8ToUTF16(In Begin, In End, Out Output, Uint16 Replacement = '?');
+    static Out UTF8ToUTF16(In begin, In end, Out output, Uint16 replacement = '?');
 
     ////////////////////////////////////////////////////////////
     /// Generic function to convert an UTF-8 characters range
     /// to an UTF-32 characters range, using the given locale
     ///
-    /// \param Begin :       Iterator pointing to the beginning of the input sequence
-    /// \param End :         Iterator pointing to the end of the input sequence
-    /// \param Output :      Iterator pointing to the beginning of the output sequence
-    /// \param Replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
+    /// \param begin :       Iterator pointing to the beginning of the input sequence
+    /// \param end :         Iterator pointing to the end of the input sequence
+    /// \param output :      Iterator pointing to the beginning of the output sequence
+    /// \param replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out UTF8ToUTF32(In Begin, In End, Out Output, Uint32 Replacement = '?');
+    static Out UTF8ToUTF32(In begin, In end, Out output, Uint32 replacement = '?');
 
     ////////////////////////////////////////////////////////////
     /// Generic function to convert an UTF-16 characters range
     /// to an UTF-8 characters range, using the given locale
     ///
-    /// \param Begin :       Iterator pointing to the beginning of the input sequence
-    /// \param End :         Iterator pointing to the end of the input sequence
-    /// \param Output :      Iterator pointing to the beginning of the output sequence
-    /// \param Replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
+    /// \param begin :       Iterator pointing to the beginning of the input sequence
+    /// \param end :         Iterator pointing to the end of the input sequence
+    /// \param output :      Iterator pointing to the beginning of the output sequence
+    /// \param replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out UTF16ToUTF8(In Begin, In End, Out Output, Uint8 Replacement = '?');
+    static Out UTF16ToUTF8(In begin, In end, Out output, Uint8 replacement = '?');
 
     ////////////////////////////////////////////////////////////
     /// Generic function to convert an UTF-16 characters range
     /// to an UTF-32 characters range, using the given locale
     ///
-    /// \param Begin :       Iterator pointing to the beginning of the input sequence
-    /// \param End :         Iterator pointing to the end of the input sequence
-    /// \param Output :      Iterator pointing to the beginning of the output sequence
-    /// \param Replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
+    /// \param begin :       Iterator pointing to the beginning of the input sequence
+    /// \param end :         Iterator pointing to the end of the input sequence
+    /// \param output :      Iterator pointing to the beginning of the output sequence
+    /// \param replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out UTF16ToUTF32(In Begin, In End, Out Output, Uint32 Replacement = '?');
+    static Out UTF16ToUTF32(In begin, In end, Out output, Uint32 replacement = '?');
 
     ////////////////////////////////////////////////////////////
     /// Generic function to convert an UTF-32 characters range
     /// to an UTF-8 characters range, using the given locale
     ///
-    /// \param Begin :       Iterator pointing to the beginning of the input sequence
-    /// \param End :         Iterator pointing to the end of the input sequence
-    /// \param Output :      Iterator pointing to the beginning of the output sequence
-    /// \param Replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
+    /// \param begin :       Iterator pointing to the beginning of the input sequence
+    /// \param end :         Iterator pointing to the end of the input sequence
+    /// \param output :      Iterator pointing to the beginning of the output sequence
+    /// \param replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out UTF32ToUTF8(In Begin, In End, Out Output, Uint8 Replacement = '?');
+    static Out UTF32ToUTF8(In begin, In end, Out output, Uint8 replacement = '?');
 
     ////////////////////////////////////////////////////////////
     /// Generic function to convert an UTF-32 characters range
     /// to an UTF-16 characters range, using the given locale
     ///
-    /// \param Begin :       Iterator pointing to the beginning of the input sequence
-    /// \param End :         Iterator pointing to the end of the input sequence
-    /// \param Output :      Iterator pointing to the beginning of the output sequence
-    /// \param Replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
+    /// \param begin :       Iterator pointing to the beginning of the input sequence
+    /// \param end :         Iterator pointing to the end of the input sequence
+    /// \param output :      Iterator pointing to the beginning of the output sequence
+    /// \param replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out UTF32ToUTF16(In Begin, In End, Out Output, Uint16 Replacement = '?');
+    static Out UTF32ToUTF16(In begin, In end, Out output, Uint16 replacement = '?');
 
     ////////////////////////////////////////////////////////////
     /// Get the number of characters composing an UTF-8 string
     ///
-    /// \param Begin : Iterator pointing to the beginning of the input sequence
-    /// \param End :   Iterator pointing to the end of the input sequence
+    /// \param begin : Iterator pointing to the beginning of the input sequence
+    /// \param end :   Iterator pointing to the end of the input sequence
     ///
     /// \return Count of the characters in the string
     ///
     ////////////////////////////////////////////////////////////
     template <typename In>
-    static std::size_t GetUTF8Length(In Begin, In End);
+    static std::size_t GetUTF8Length(In begin, In end);
 
     ////////////////////////////////////////////////////////////
     /// Get the number of characters composing an UTF-16 string
     ///
-    /// \param Begin : Iterator pointing to the beginning of the input sequence
-    /// \param End :   Iterator pointing to the end of the input sequence
+    /// \param begin : Iterator pointing to the beginning of the input sequence
+    /// \param end :   Iterator pointing to the end of the input sequence
     ///
     /// \return Count of the characters in the string
     ///
     ////////////////////////////////////////////////////////////
     template <typename In>
-    static std::size_t GetUTF16Length(In Begin, In End);
+    static std::size_t GetUTF16Length(In begin, In end);
 
     ////////////////////////////////////////////////////////////
     /// Get the number of characters composing an UTF-32 string
     ///
-    /// \param Begin : Iterator pointing to the beginning of the input sequence
-    /// \param End :   Iterator pointing to the end of the input sequence
+    /// \param begin : Iterator pointing to the beginning of the input sequence
+    /// \param end :   Iterator pointing to the end of the input sequence
     ///
     /// \return Count of the characters in the string
     ///
     ////////////////////////////////////////////////////////////
     template <typename In>
-    static std::size_t GetUTF32Length(In Begin, In End);
+    static std::size_t GetUTF32Length(In begin, In end);
 
 private :
 

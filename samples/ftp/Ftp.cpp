@@ -11,9 +11,9 @@
 /// Print a FTP response into a standard output stream
 ///
 ////////////////////////////////////////////////////////////
-std::ostream& operator <<(std::ostream& Stream, const sf::Ftp::Response& Response)
+std::ostream& operator <<(std::ostream& stream, const sf::Ftp::Response& response)
 {
-    return Stream << Response.GetStatus() << Response.GetMessage();
+    return stream << response.GetStatus() << response.GetMessage();
 }
 
 
@@ -26,36 +26,36 @@ std::ostream& operator <<(std::ostream& Stream, const sf::Ftp::Response& Respons
 int main()
 {
     // Choose the server address
-    sf::IPAddress Address;
+    sf::IPAddress address;
     do
     {
         std::cout << "Enter the FTP server address : ";
-        std::cin  >> Address;
+        std::cin  >> address;
     }
-    while (!Address.IsValid());
+    while (!address.IsValid());
 
     // Connect to the server
-    sf::Ftp Server;
-    sf::Ftp::Response ConnectResponse = Server.Connect(Address);
-    std::cout << ConnectResponse << std::endl;
-    if (!ConnectResponse.IsOk())
+    sf::Ftp server;
+    sf::Ftp::Response connectResponse = server.Connect(address);
+    std::cout << connectResponse << std::endl;
+    if (!connectResponse.IsOk())
         return EXIT_FAILURE;
 
     // Ask for user name and password
-    std::string UserName, Password;
+    std::string user, password;
     std::cout << "User name : ";
-    std::cin  >> UserName;
+    std::cin  >> user;
     std::cout << "Password : ";
-    std::cin  >> Password;
+    std::cin  >> password;
 
     // Login to the server
-    sf::Ftp::Response LoginResponse = Server.Login(UserName, Password);
-    std::cout << LoginResponse << std::endl;
-    if (!LoginResponse.IsOk())
+    sf::Ftp::Response loginResponse = server.Login(user, password);
+    std::cout << loginResponse << std::endl;
+    if (!loginResponse.IsOk())
         return EXIT_FAILURE;
 
     // Main menu
-    int Choice = 0;
+    int choice = 0;
     do
     {
         // Main FTP menu
@@ -74,10 +74,10 @@ int main()
         std::cout << std::endl;
 
         std::cout << "Your choice: ";
-        std::cin  >> Choice;
+        std::cin  >> choice;
         std::cout << std::endl;
 
-        switch (Choice)
+        switch (choice)
         {
             default :
             {
@@ -91,95 +91,95 @@ int main()
             case 1 :
             {
                 // Print current server directory
-                sf::Ftp::DirectoryResponse Response = Server.GetWorkingDirectory();
-                std::cout << Response << std::endl;
-                std::cout << "Current directory is " << Response.GetDirectory() << std::endl;
+                sf::Ftp::DirectoryResponse response = server.GetWorkingDirectory();
+                std::cout << response << std::endl;
+                std::cout << "Current directory is " << response.GetDirectory() << std::endl;
                 break;
             }
 
             case 2 :
             {
                 // Print content of current server directory
-                sf::Ftp::ListingResponse Response = Server.GetDirectoryListing();
-                std::cout << Response << std::endl;
-                for (std::size_t i = 0; i < Response.GetCount(); ++i)
-                    std::cout << Response.GetFilename(i) << std::endl;
+                sf::Ftp::ListingResponse response = server.GetDirectoryListing();
+                std::cout << response << std::endl;
+                for (std::size_t i = 0; i < response.GetCount(); ++i)
+                    std::cout << response.GetFilename(i) << std::endl;
                 break;
             }
 
             case 3 :
             {
                 // Change the current directory
-                std::string Directory;
+                std::string directory;
                 std::cout << "Choose a directory: ";
-                std::cin  >> Directory;
-                std::cout << Server.ChangeDirectory(Directory) << std::endl;
+                std::cin  >> directory;
+                std::cout << server.ChangeDirectory(directory) << std::endl;
                 break;
             }
 
             case 4 :
             {
                 // Create a new directory
-                std::string Directory;
+                std::string directory;
                 std::cout << "Name of the directory to create: ";
-                std::cin  >> Directory;
-                std::cout << Server.MakeDirectory(Directory) << std::endl;
+                std::cin  >> directory;
+                std::cout << server.MakeDirectory(directory) << std::endl;
                 break;
             }
 
             case 5 :
             {
                 // Remove an existing directory
-                std::string Directory;
+                std::string directory;
                 std::cout << "Name of the directory to remove: ";
-                std::cin  >> Directory;
-                std::cout << Server.DeleteDirectory(Directory) << std::endl;
+                std::cin  >> directory;
+                std::cout << server.DeleteDirectory(directory) << std::endl;
                 break;
             }
 
             case 6 :
             {
                 // Rename a file
-                std::string SrcFilename, DstFilename;
+                std::string source, destination;
                 std::cout << "Name of the file to rename: ";
-                std::cin  >> SrcFilename;
+                std::cin  >> source;
                 std::cout << "New name: ";
-                std::cin  >> DstFilename;
-                std::cout << Server.RenameFile(SrcFilename, DstFilename) << std::endl;
+                std::cin  >> destination;
+                std::cout << server.RenameFile(source, destination) << std::endl;
                 break;
             }
 
             case 7 :
             {
                 // Remove an existing directory
-                std::string Filename;
+                std::string filename;
                 std::cout << "Name of the file to remove: ";
-                std::cin  >> Filename;
-                std::cout << Server.DeleteFile(Filename) << std::endl;
+                std::cin  >> filename;
+                std::cout << server.DeleteFile(filename) << std::endl;
                 break;
             }
 
             case 8 :
             {
                 // Download a file from server
-                std::string Filename, Directory;
-                std::cout << "Path of the file to download (relative to current directory): ";
-                std::cin  >> Filename;
+                std::string filename, directory;
+                std::cout << "filename of the file to download (relative to current directory): ";
+                std::cin  >> filename;
                 std::cout << "Directory to download the file to: ";
-                std::cin  >> Directory;
-                std::cout << Server.Download(Filename, Directory) << std::endl;
+                std::cin  >> directory;
+                std::cout << server.Download(filename, directory) << std::endl;
                 break;
             }
 
             case 9 :
             {
                 // Upload a file to server
-                std::string Filename, Directory;
+                std::string filename, directory;
                 std::cout << "Path of the file to upload (absolute or relative to working directory): ";
-                std::cin  >> Filename;
+                std::cin  >> filename;
                 std::cout << "Directory to upload the file to (relative to current directory): ";
-                std::cin  >> Directory;
-                std::cout << Server.Upload(Filename, Directory) << std::endl;
+                std::cin  >> directory;
+                std::cout << server.Upload(filename, directory) << std::endl;
                 break;
             }
 
@@ -190,11 +190,11 @@ int main()
             }
         }
 
-    } while (Choice != 0);
+    } while (choice != 0);
 
     // Disconnect from the server
     std::cout << "Disconnecting from server..." << std::endl;
-    std::cout << Server.Disconnect() << std::endl;
+    std::cout << server.Disconnect() << std::endl;
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;

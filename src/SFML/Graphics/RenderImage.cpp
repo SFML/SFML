@@ -56,7 +56,7 @@ RenderImage::~RenderImage()
 ////////////////////////////////////////////////////////////
 /// Create the render image from its dimensions
 ////////////////////////////////////////////////////////////
-bool RenderImage::Create(unsigned int Width, unsigned int Height, bool DepthBuffer)
+bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuffer)
 {
     // Make sure that render-images are supported
     if (!CanUseRenderImage())
@@ -66,7 +66,7 @@ bool RenderImage::Create(unsigned int Width, unsigned int Height, bool DepthBuff
     }
 
     // Create the image
-    if (!myImage.Create(Width, Height))
+    if (!myImage.Create(width, height))
     {
         std::cerr << "Impossible to create render image (failed to create the target image)" << std::endl;
         return false;
@@ -89,7 +89,7 @@ bool RenderImage::Create(unsigned int Width, unsigned int Height, bool DepthBuff
     }
 
     // Initialize the render image
-    if (!myRenderImage->Create(Width, Height, myImage.myTexture, DepthBuffer))
+    if (!myRenderImage->Create(width, height, myImage.myTexture, depthBuffer))
         return false;
 
     // We can now initialize the render target part
@@ -103,13 +103,13 @@ bool RenderImage::Create(unsigned int Width, unsigned int Height, bool DepthBuff
 /// Activate of deactivate the render-image as the current target
 /// for rendering
 ////////////////////////////////////////////////////////////
-bool RenderImage::SetActive(bool Active)
+bool RenderImage::SetActive(bool active)
 {
-    if (myRenderImage && myRenderImage->Activate(Active))
+    if (myRenderImage && myRenderImage->Activate(active))
     {
         // After the RenderImage has been modified, we have to notify
         // the underlying image that its pixels have changed
-        if (!Active)
+        if (!active)
             myImage.ExternalUpdate(*this);
 
         return true;
@@ -163,18 +163,18 @@ bool RenderImage::CanUseRenderImage()
 /// This function is called automatically by the image when it
 /// needs to update its pixels, and is only meant for internal use.
 ////////////////////////////////////////////////////////////
-bool RenderImage::UpdateImage(Image& Target)
+bool RenderImage::UpdateImage(Image& target)
 {
-    return myRenderImage && myRenderImage->UpdateTexture(Target.myTexture);
+    return myRenderImage && myRenderImage->UpdateTexture(target.myTexture);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Activate / deactivate the render image for rendering
 ////////////////////////////////////////////////////////////
-bool RenderImage::Activate(bool Active)
+bool RenderImage::Activate(bool active)
 {
-    return SetActive(Active);
+    return SetActive(active);
 }
 
 } // namespace sf

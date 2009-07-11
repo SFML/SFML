@@ -42,25 +42,25 @@ sfClock* sfClock_Create()
 ////////////////////////////////////////////////////////////
 /// Destroy an existing clock
 ////////////////////////////////////////////////////////////
-void sfClock_Destroy(sfClock* Clock)
+void sfClock_Destroy(sfClock* clock)
 {
-    delete Clock;
+    delete clock;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the time elapsed for a clock
 ////////////////////////////////////////////////////////////
-float sfClock_GetTime(sfClock* Clock)
+float sfClock_GetTime(sfClock* clock)
 {
-    CSFML_CALL_RETURN(Clock, GetElapsedTime(), 0.f)
+    CSFML_CALL_RETURN(clock, GetElapsedTime(), 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Restart a clock
 ////////////////////////////////////////////////////////////
-void sfClock_Reset(sfClock* Clock)
+void sfClock_Reset(sfClock* clock)
 {
-    CSFML_CALL(Clock, Reset())
+    CSFML_CALL(clock, Reset())
 }

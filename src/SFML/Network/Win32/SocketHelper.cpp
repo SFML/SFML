@@ -42,19 +42,19 @@ SocketHelper::SocketType SocketHelper::InvalidSocket()
 ////////////////////////////////////////////////////////////
 /// Close / destroy a socket
 ////////////////////////////////////////////////////////////
-bool SocketHelper::Close(SocketHelper::SocketType Socket)
+bool SocketHelper::Close(SocketHelper::SocketType socket)
 {
-    return closesocket(Socket) != -1;
+    return closesocket(socket) != -1;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set a socket as blocking or non-blocking
 ////////////////////////////////////////////////////////////
-void SocketHelper::SetBlocking(SocketHelper::SocketType Socket, bool Block)
+void SocketHelper::SetBlocking(SocketHelper::SocketType socket, bool block)
 {
-    unsigned long Blocking = Block ? 0 : 1;
-    ioctlsocket(Socket, FIONBIO, &Blocking);
+    unsigned long blocking = block ? 0 : 1;
+    ioctlsocket(socket, FIONBIO, &blocking);
 }
 
 
@@ -85,8 +85,8 @@ struct SocketInitializer
 {
     SocketInitializer()
     {
-        WSADATA InitData;
-        WSAStartup(MAKEWORD(2,2), &InitData);
+        WSADATA init;
+        WSAStartup(MAKEWORD(2,2), &init);
     }
 
     ~SocketInitializer()
@@ -95,6 +95,6 @@ struct SocketInitializer
     }
 };
 
-SocketInitializer GlobalInitializer;
+SocketInitializer globalInitializer;
 
 } // namespace sf

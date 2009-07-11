@@ -53,9 +53,9 @@ ThreadLocalImpl::~ThreadLocalImpl()
 ////////////////////////////////////////////////////////////
 /// Set the thread-specific value of the variable
 ////////////////////////////////////////////////////////////
-void ThreadLocalImpl::SetValue(void* Value)
+void ThreadLocalImpl::SetValue(void* value)
 {
-    pthread_setspecific(myKey, Value);
+    pthread_setspecific(myKey, value);
 }
 
 

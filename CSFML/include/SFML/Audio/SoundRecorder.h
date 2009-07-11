@@ -41,54 +41,54 @@ typedef void   (*sfSoundRecorderStopCallback)(void*);                           
 /// Construct a new sound recorder with callback functions
 /// for processing captured samples
 ///
-/// \param OnStart :   Callback function which will be called when a new capture starts (can be NULL)
-/// \param OnProcess : Callback function which will be called each time there's audio data to process
-/// \param OnStop :    Callback function which will be called when the current capture stops (can be NULL)
-/// \param UserData :  Data to pass to the callback function (can be NULL)
+/// \param onStart :   Callback function which will be called when a new capture starts (can be NULL)
+/// \param onProcess : Callback function which will be called each time there's audio data to process
+/// \param onStop :    Callback function which will be called when the current capture stops (can be NULL)
+/// \param userData :  Data to pass to the callback function (can be NULL)
 ///
 /// \return A new sfSoundRecorder object (NULL if failed)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundRecorder* sfSoundRecorder_Create(sfSoundRecorderStartCallback   OnStart,
-                                                  sfSoundRecorderProcessCallback OnProcess,
-                                                  sfSoundRecorderStopCallback    OnStop,
-                                                  void*                          UserData);
+CSFML_API sfSoundRecorder* sfSoundRecorder_Create(sfSoundRecorderStartCallback   onStart,
+                                                  sfSoundRecorderProcessCallback onProcess,
+                                                  sfSoundRecorderStopCallback    onStop,
+                                                  void*                          userData);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing sound recorder
 ///
-/// \param SoundRecorder : Sound recorder to delete
+/// \param soundRecorder : Sound recorder to delete
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSoundRecorder_Destroy(sfSoundRecorder* SoundRecorder);
+CSFML_API void sfSoundRecorder_Destroy(sfSoundRecorder* soundRecorder);
 
 ////////////////////////////////////////////////////////////
 /// Start the capture.
 /// Warning : only one capture can happen at the same time
 ///
-/// \param SoundRecorder : Sound recorder to start
-/// \param SampleRate :    Sound frequency (the more samples, the higher the quality)
+/// \param soundRecorder : Sound recorder to start
+/// \param sampleRate :    Sound frequency (the more samples, the higher the quality)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSoundRecorder_Start(sfSoundRecorder* SoundRecorder, unsigned int SampleRate);
+CSFML_API void sfSoundRecorder_Start(sfSoundRecorder* soundRecorder, unsigned int sampleRate);
 
 ////////////////////////////////////////////////////////////
 /// Stop the capture
 ///
-/// \param SoundRecorder : Sound recorder to stop
+/// \param soundRecorder : Sound recorder to stop
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSoundRecorder_Stop(sfSoundRecorder* SoundRecorder);
+CSFML_API void sfSoundRecorder_Stop(sfSoundRecorder* soundRecorder);
 
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound recorder
 ///
-/// \param SoundRecorder : Sound recorder to get sample rate from
+/// \param soundRecorder : Sound recorder to get sample rate from
 ///
 /// \return Frequency, in samples per second
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfSoundRecorder_GetSampleRate(sfSoundRecorder* SoundRecorder);
+CSFML_API unsigned int sfSoundRecorder_GetSampleRate(sfSoundRecorder* soundRecorder);
 
 ////////////////////////////////////////////////////////////
 /// Tell if the system supports sound capture.

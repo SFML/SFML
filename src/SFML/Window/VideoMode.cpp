@@ -37,25 +37,37 @@
 namespace
 {
     // Global array of supported video modes
-    std::vector<sf::VideoMode> SupportedModes;
+    std::vector<sf::VideoMode> supportedModes;
 
     // Functor for sorting modes from highest to lowest
     struct CompareModes
     {
-        bool operator ()(const sf::VideoMode& v1, const sf::VideoMode& v2) const
+        bool operator ()(const sf::VideoMode& left, const sf::VideoMode& right) const
         {
-            if (v1.BitsPerPixel > v2.BitsPerPixel)
+            if (left.BitsPerPixel > right.BitsPerPixel)
                 return true;
-            else if (v1.BitsPerPixel < v2.BitsPerPixel)
+            else if (left.BitsPerPixel < right.BitsPerPixel)
                 return false;
-            else if (v1.Width > v2.Width)
+            else if (left.Width > right.Width)
                 return true;
-            else if (v1.Width < v2.Width)
+            else if (left.Width < right.Width)
                 return false;
             else
-                return (v1.Height > v2.Height);
+                return (left.Height > right.Height);
         }
     };
+
+    ////////////////////////////////////////////////////////////
+    /// Get and sort valid video modes
+    ////////////////////////////////////////////////////////////
+    static void InitializeModes()
+    {
+        // We request the array of valid modes
+        sf::priv::VideoModeSupport::GetSupportedVideoModes(supportedModes);
+
+        // And we sort them from highest to lowest (so that number 0 is the best)
+        std::sort(supportedModes.begin(), supportedModes.end(), CompareModes());
+    }
 }
 
 
@@ -76,10 +88,10 @@ BitsPerPixel(0)
 ////////////////////////////////////////////////////////////
 /// Construct the video mode with its attributes
 ////////////////////////////////////////////////////////////
-VideoMode::VideoMode(unsigned int ModeWidth, unsigned int ModeHeight, unsigned int ModeBpp) :
-Width       (ModeWidth),
-Height      (ModeHeight),
-BitsPerPixel(ModeBpp)
+VideoMode::VideoMode(unsigned int width, unsigned int height, unsigned int bitsPerPixel) :
+Width       (width),
+Height      (height),
+BitsPerPixel(bitsPerPixel)
 {
 
 }
@@ -99,13 +111,13 @@ VideoMode VideoMode::GetDesktopMode()
 /// Get a valid video mode
 /// Index must be in range [0, GetModesCount()[
 ////////////////////////////////////////////////////////////
-VideoMode VideoMode::GetMode(std::size_t Index)
+VideoMode VideoMode::GetMode(std::size_t index)
 {
-    if (SupportedModes.empty())
+    if (supportedModes.empty())
         InitializeModes();
 
-    if (Index < GetModesCount())
-        return SupportedModes[Index];
+    if (index < GetModesCount())
+        return supportedModes[index];
     else
         return VideoMode();
 }
@@ -116,10 +128,10 @@ VideoMode VideoMode::GetMode(std::size_t Index)
 ////////////////////////////////////////////////////////////
 std::size_t VideoMode::GetModesCount()
 {
-    if (SupportedModes.empty())
+    if (supportedModes.empty())
         InitializeModes();
 
-    return SupportedModes.size();
+    return supportedModes.size();
 }
 
 
@@ -128,43 +140,30 @@ std::size_t VideoMode::GetModesCount()
 ////////////////////////////////////////////////////////////
 bool VideoMode::IsValid() const
 {
-    if (SupportedModes.empty())
+    if (supportedModes.empty())
         InitializeModes();
 
-    return std::find(SupportedModes.begin(), SupportedModes.end(), *this) != SupportedModes.end();
+    return std::find(supportedModes.begin(), supportedModes.end(), *this) != supportedModes.end();
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Comparison operator overload -- tell if two video modes are equal
 ////////////////////////////////////////////////////////////
-bool VideoMode::operator ==(const VideoMode& Other) const
+bool VideoMode::operator ==(const VideoMode& other) const
 {
-    return (Width        == Other.Width)        &&
-           (Height       == Other.Height)       &&
-           (BitsPerPixel == Other.BitsPerPixel);
+    return (Width        == other.Width)        &&
+           (Height       == other.Height)       &&
+           (BitsPerPixel == other.BitsPerPixel);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Comparison operator overload -- tell if two video modes are different
 ////////////////////////////////////////////////////////////
-bool VideoMode::operator !=(const VideoMode& Other) const
+bool VideoMode::operator !=(const VideoMode& other) const
 {
-    return !(*this == Other);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Get and sort valid video modes
-////////////////////////////////////////////////////////////
-void VideoMode::InitializeModes()
-{
-    // We request the array of valid modes
-    priv::VideoModeSupport::GetSupportedVideoModes(SupportedModes);
-
-    // And we sort them from highest to lowest (so that number 0 is the best)
-    std::sort(SupportedModes.begin(), SupportedModes.end(), CompareModes());
+    return !(*this == other);
 }
 
 } // namespace sf

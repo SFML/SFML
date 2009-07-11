@@ -147,16 +147,10 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="Sources Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hp"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+		<File
+			RelativePath="..\..\src\SFML\Main\SFML_Main.cpp"
 			>
-			<File
-				RelativePath="..\..\src\SFML\Main\SFML_Main.cpp"
-				>
-			</File>
-		</Filter>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

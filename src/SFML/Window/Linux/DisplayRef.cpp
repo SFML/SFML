@@ -34,9 +34,9 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    ::Display* TheDisplay     = NULL;
-    XIM        TheInputMethod = NULL;
-    int        RefCount       = 0;
+    ::Display* theDisplay     = NULL;
+    XIM        theInputMethod = NULL;
+    int        refCount       = 0;
 }
 
 
@@ -50,13 +50,13 @@ namespace priv
 DisplayRef::DisplayRef()
 {
     // If the display hasn't been opened yet, open it
-    if (TheDisplay == NULL)
+    if (theDisplay == NULL)
     {
-        TheDisplay = XOpenDisplay(NULL);
-        if (TheDisplay)
+        theDisplay = XOpenDisplay(NULL);
+        if (theDisplay)
         {
             // Create the input method object
-            TheInputMethod = XOpenIM(TheDisplay, NULL, NULL, NULL);
+            theInputMethod = XOpenIM(theDisplay, NULL, NULL, NULL);
         }
         else
         {
@@ -65,17 +65,17 @@ DisplayRef::DisplayRef()
     }
 
     // Increase the number of references
-    RefCount++;
+    refCount++;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Copy constructor
 ////////////////////////////////////////////////////////////
-DisplayRef::DisplayRef(const DisplayRef& Copy)
+DisplayRef::DisplayRef(const DisplayRef&)
 {
     // Increase the number of references
-    RefCount++;
+    refCount++;
 }
 
 
@@ -85,17 +85,17 @@ DisplayRef::DisplayRef(const DisplayRef& Copy)
 DisplayRef::~DisplayRef()
 {
     // Decrease the number of references
-    RefCount--;
+    refCount--;
 
     // If all references have been destroyed, we can close the display
-    if (RefCount == 0)
+    if (refCount == 0)
     {
         // Destroy the input method object
-        if (TheInputMethod)
-            XCloseIM(TheInputMethod);
+        if (theInputMethod)
+            XCloseIM(theInputMethod);
 
         // Close the display
-        XCloseDisplay(TheDisplay);
+        XCloseDisplay(theDisplay);
     }
 }
 
@@ -105,7 +105,7 @@ DisplayRef::~DisplayRef()
 ////////////////////////////////////////////////////////////
 ::Display* DisplayRef::GetDisplay() const
 {
-    return TheDisplay;
+    return theDisplay;
 }
 
 
@@ -114,7 +114,7 @@ DisplayRef::~DisplayRef()
 ////////////////////////////////////////////////////////////
 XIM DisplayRef::GetInputMethod() const
 {
-    return TheInputMethod;
+    return theInputMethod;
 }
 
 } // namespace priv

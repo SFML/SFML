@@ -26,17 +26,17 @@ END_EVENT_TABLE()
 ////////////////////////////////////////////////////////////
 /// Construct the wxSFMLCanvas
 ////////////////////////////////////////////////////////////
-wxSFMLCanvas::wxSFMLCanvas(wxWindow* Parent, wxWindowID Id, const wxPoint& Position, const wxSize& Size, long Style) :
-wxControl(Parent, Id, Position, Size, Style)
+wxSFMLCanvas::wxSFMLCanvas(wxWindow* parent, wxWindowID id, const wxPoint& position, const wxSize& size, long style) :
+wxControl(parent, id, position, size, style)
 {
     #ifdef __WXGTK__
 
         // GTK implementation requires to go deeper to find the low-level X11 identifier of the widget
         gtk_widget_realize(m_wxwindow);
         gtk_widget_set_double_buffered(m_wxwindow, false);
-        GdkWindow* Win = GTK_PIZZA(m_wxwindow)->bin_window;
-        XFlush(GDK_WINDOW_XDISPLAY(Win));
-        sf::RenderWindow::Create(GDK_WINDOW_XWINDOW(Win));
+        GdkWindow* window = GTK_PIZZA(m_wxwindow)->bin_window;
+        XFlush(GDK_WINDOW_XDISPLAY(window));
+        sf::RenderWindow::Create(GDK_WINDOW_XWINDOW(window));
 
     #else
 
@@ -84,7 +84,7 @@ void wxSFMLCanvas::OnIdle(wxIdleEvent&)
 void wxSFMLCanvas::OnPaint(wxPaintEvent&)
 {
     // Make sure the control is able to be repainted
-    wxPaintDC Dc(this);
+    wxPaintDC dc(this);
 
     // Let the derived class do its specific stuff
     OnUpdate();

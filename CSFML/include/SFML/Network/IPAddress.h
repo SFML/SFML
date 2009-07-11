@@ -43,62 +43,62 @@ typedef struct
 ////////////////////////////////////////////////////////////
 /// Construct an address from a string
 ///
-/// \param String :  IP address ("xxx.xxx.xxx.xxx") or network name
+/// \param string : IP address ("xxx.xxx.xxx.xxx") or network name
 ///
 /// \return Resulting address
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfIPAddress sfIPAddress_FromString(const char* String);
+CSFML_API sfIPAddress sfIPAddress_FromString(const char* string);
 
 ////////////////////////////////////////////////////////////
 /// Construct an address from 4 bytes
 ///
-/// \param Byte0 :   First byte of the address
-/// \param Byte1 :   Second byte of the address
-/// \param Byte2 :   Third byte of the address
-/// \param Byte3 :   Fourth byte of the address
+/// \param byte0 : First byte of the address
+/// \param byte1 : Second byte of the address
+/// \param byte2 : Third byte of the address
+/// \param byte3 : Fourth byte of the address
 ///
 /// \return Resulting address
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfIPAddress sfIPAddress_FromBytes(sfUint8 Byte0, sfUint8 Byte1, sfUint8 Byte2, sfUint8 Byte3);
+CSFML_API sfIPAddress sfIPAddress_FromBytes(sfUint8 byte0, sfUint8 byte1, sfUint8 byte2, sfUint8 byte3);
 
 ////////////////////////////////////////////////////////////
 /// Construct the address from a 32-bits integer
 ///
-/// \param Address : 4 bytes of the address packed into a 32-bits integer
+/// \param address : 4 bytes of the address packed into a 32-bits integer
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfIPAddress sfIPAddress_FromInteger(sfUint32 Address);
+CSFML_API sfIPAddress sfIPAddress_FromInteger(sfUint32 address);
 
 ////////////////////////////////////////////////////////////
 /// Tell if an address is a valid one
 ///
-/// \param Address : Address to check
+/// \param address : Address to check
 ///
 /// \return sfTrue if address has a valid syntax
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfIPAddress_IsValid(sfIPAddress Address);
+CSFML_API sfBool sfIPAddress_IsValid(sfIPAddress address);
 
 ////////////////////////////////////////////////////////////
 /// Get a string representation of an address
 ///
-/// \param Address : Address to convert
-/// \param String :  Char array to fill (size must be >= 16)
+/// \param address : Address to convert
+/// \param string :  Char array to fill (size must be >= 16)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfIPAddress_ToString(sfIPAddress Address, char* String);
+CSFML_API void sfIPAddress_ToString(sfIPAddress address, char* string);
 
 ////////////////////////////////////////////////////////////
 /// Get an integer representation of the address
 ///
-/// \param Address : Address to convert
+/// \param address : Address to convert
 ///
 /// \return 32-bits integer containing the 4 bytes of the address, in system endianness
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfUint32 sfIPAddress_ToInteger(sfIPAddress Address);
+CSFML_API sfUint32 sfIPAddress_ToInteger(sfIPAddress address);
 
 ////////////////////////////////////////////////////////////
 /// Get the computer's local IP address (from the LAN point of view)
@@ -114,12 +114,12 @@ CSFML_API sfIPAddress sfIPAddress_GetLocalAddress();
 /// distant website ; as a consequence, this function may be
 /// very slow -- use it as few as possible !
 ///
-/// \param Timeout : Maximum time to wait, in seconds (use 0 for no timeout)
+/// \param timeout : Maximum time to wait, in seconds (use 0 for no timeout)
 ///
 /// \return Public IP address
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfIPAddress sfIPAddress_GetPublicAddress(float Timeout);
+CSFML_API sfIPAddress sfIPAddress_GetPublicAddress(float timeout);
 
 ////////////////////////////////////////////////////////////
 /// Get the computer's loopback address

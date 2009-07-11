@@ -52,11 +52,11 @@ public :
     /// Start the capture.
     /// Warning : only one capture can happen at the same time
     ///
-    /// \param SampleRate : Sound frequency (the more samples, the higher the quality)
+    /// \param sampleRate : Sound frequency (the more samples, the higher the quality)
     ///                    (44100 by default = CD quality)
     ///
     ////////////////////////////////////////////////////////////
-    void Start(unsigned int SampleRate = 44100);
+    void Start(unsigned int sampleRate = 44100);
 
     ////////////////////////////////////////////////////////////
     /// Stop the capture
@@ -102,13 +102,13 @@ private :
     ////////////////////////////////////////////////////////////
     /// Process a new chunk of recorded samples
     ///
-    /// \param Samples :      Pointer to the new chunk of recorded samples
-    /// \param SamplesCount : Number of samples pointed by Samples
+    /// \param samples :      Pointer to the new chunk of recorded samples
+    /// \param samplesCount : Number of samples pointed by Samples
     ///
     /// \return False to stop recording audio data, true to continue
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnProcessSamples(const Int16* Samples, std::size_t SamplesCount) = 0;
+    virtual bool OnProcessSamples(const Int16* samples, std::size_t samplesCount) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Stop recording audio data

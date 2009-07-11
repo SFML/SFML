@@ -27,12 +27,12 @@
 /// Add a socket to watch
 ////////////////////////////////////////////////////////////
 template <typename Type>
-void Selector<Type>::Add(Type Socket)
+void Selector<Type>::Add(Type socket)
 {
-    if (Socket.IsValid())
+    if (socket.IsValid())
     {
-        SelectorBase::Add(Socket.mySocket);
-        mySockets[Socket.mySocket] = Socket;
+        SelectorBase::Add(socket.mySocket);
+        mySockets[socket.mySocket] = socket;
     }
 }
 
@@ -41,13 +41,13 @@ void Selector<Type>::Add(Type Socket)
 /// Remove a socket
 ////////////////////////////////////////////////////////////
 template <typename Type>
-void Selector<Type>::Remove(Type Socket)
+void Selector<Type>::Remove(Type socket)
 {
-    typename SocketTable::iterator It = mySockets.find(Socket.mySocket);
-    if (It != mySockets.end())
+    typename SocketTable::iterator it = mySockets.find(socket.mySocket);
+    if (it != mySockets.end())
     {
-        SelectorBase::Remove(Socket.mySocket);
-        mySockets.erase(It);
+        SelectorBase::Remove(socket.mySocket);
+        mySockets.erase(it);
     }
 }
 
@@ -69,13 +69,13 @@ void Selector<Type>::Clear()
 /// is ready, or when the given time is out
 ////////////////////////////////////////////////////////////
 template <typename Type>
-unsigned int Selector<Type>::Wait(float Timeout)
+unsigned int Selector<Type>::Wait(float timeout)
 {
     // No socket in the selector : return 0
     if (mySockets.empty())
         return 0;
 
-    return SelectorBase::Wait(Timeout);
+    return SelectorBase::Wait(timeout);
 }
 
 
@@ -85,13 +85,13 @@ unsigned int Selector<Type>::Wait(float Timeout)
 /// is the integer returned by the previous call to Wait()
 ////////////////////////////////////////////////////////////
 template <typename Type>
-Type Selector<Type>::GetSocketReady(unsigned int Index)
+Type Selector<Type>::GetSocketReady(unsigned int index)
 {
-    SocketHelper::SocketType Socket = SelectorBase::GetSocketReady(Index);
+    SocketHelper::SocketType socket = SelectorBase::GetSocketReady(index);
 
-    typename SocketTable::const_iterator It = mySockets.find(Socket);
-    if (It != mySockets.end())
-        return It->second;
+    typename SocketTable::const_iterator it = mySockets.find(socket);
+    if (it != mySockets.end())
+        return it->second;
     else
-        return Type(Socket);
+        return Type(socket);
 }

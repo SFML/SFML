@@ -60,28 +60,28 @@ myMouseY(0)
 ////////////////////////////////////////////////////////////
 /// Get the state of a key
 ////////////////////////////////////////////////////////////
-bool Input::IsKeyDown(Key::Code KeyCode) const
+bool Input::IsKeyDown(Key::Code key) const
 {
-    return myKeys[KeyCode];
+    return myKeys[key];
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the state of a mouse button
 ////////////////////////////////////////////////////////////
-bool Input::IsMouseButtonDown(Mouse::Button Button) const
+bool Input::IsMouseButtonDown(Mouse::Button button) const
 {
-    return myMouseButtons[Button];
+    return myMouseButtons[button];
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the state of a joystick button
 ////////////////////////////////////////////////////////////
-bool Input::IsJoystickButtonDown(unsigned int JoyId, unsigned int Button) const
+bool Input::IsJoystickButtonDown(unsigned int joystick, unsigned int button) const
 {
-    if ((JoyId < 2) && (Button < 16))
-        return myJoystickButtons[JoyId][Button];
+    if ((joystick < 2) && (button < 16))
+        return myJoystickButtons[joystick][button];
     else
         return false;
 }
@@ -108,40 +108,40 @@ int Input::GetMouseY() const
 ////////////////////////////////////////////////////////////
 /// Get a joystick axis position
 ////////////////////////////////////////////////////////////
-float Input::GetJoystickAxis(unsigned int JoyId, Joy::Axis Axis) const
+float Input::GetJoystickAxis(unsigned int joystick, Joy::Axis axis) const
 {
-    return myJoystickAxis[JoyId][Axis];
+    return myJoystickAxis[joystick][axis];
 }
 
 
 ////////////////////////////////////////////////////////////
 /// /see WindowListener::OnEvent
 ////////////////////////////////////////////////////////////
-void Input::OnEvent(const Event& EventReceived)
+void Input::OnEvent(const Event& event)
 {
-    switch (EventReceived.Type)
+    switch (event.Type)
     {
         // Key events
-        case Event::KeyPressed :  myKeys[EventReceived.Key.Code] = true;  break;
-        case Event::KeyReleased : myKeys[EventReceived.Key.Code] = false; break;
+        case Event::KeyPressed :  myKeys[event.Key.Code] = true;  break;
+        case Event::KeyReleased : myKeys[event.Key.Code] = false; break;
 
         // Mouse event
-        case Event::MouseButtonPressed :  myMouseButtons[EventReceived.MouseButton.Button] = true;  break;
-        case Event::MouseButtonReleased : myMouseButtons[EventReceived.MouseButton.Button] = false; break;
+        case Event::MouseButtonPressed :  myMouseButtons[event.MouseButton.Button] = true;  break;
+        case Event::MouseButtonReleased : myMouseButtons[event.MouseButton.Button] = false; break;
 
         // Mouse move event
         case Event::MouseMoved :
-            myMouseX = EventReceived.MouseMove.X;
-            myMouseY = EventReceived.MouseMove.Y;
+            myMouseX = event.MouseMove.X;
+            myMouseY = event.MouseMove.Y;
             break;
 
         // Joystick button events
-        case Event::JoyButtonPressed :  myJoystickButtons[EventReceived.JoyButton.JoystickId][EventReceived.JoyButton.Button] = true;  break;
-        case Event::JoyButtonReleased : myJoystickButtons[EventReceived.JoyButton.JoystickId][EventReceived.JoyButton.Button] = false; break;
+        case Event::JoyButtonPressed :  myJoystickButtons[event.JoyButton.JoystickId][event.JoyButton.Button] = true;  break;
+        case Event::JoyButtonReleased : myJoystickButtons[event.JoyButton.JoystickId][event.JoyButton.Button] = false; break;
 
         // Joystick move event
         case Event::JoyMoved :
-            myJoystickAxis[EventReceived.JoyMove.JoystickId][EventReceived.JoyMove.Axis] = EventReceived.JoyMove.Position;
+            myJoystickAxis[event.JoyMove.JoystickId][event.JoyMove.Axis] = event.JoyMove.Position;
             break;
 
         // Lost focus event : we must reset all persistent states

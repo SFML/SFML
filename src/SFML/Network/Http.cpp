@@ -35,13 +35,12 @@ namespace
     ////////////////////////////////////////////////////////////
     // Convenience function to convert a string to lower case
     ////////////////////////////////////////////////////////////
-    std::string ToLower(const std::string& Str)
+    std::string ToLower(std::string str)
     {
-        std::string Ret = Str;
-        for (std::string::iterator i = Ret.begin(); i != Ret.end(); ++i)
+        for (std::string::iterator i = str.begin(); i != str.end(); ++i)
             *i = static_cast<char>(tolower(*i));
 
-        return Ret;
+        return str;
     }
 }
 
@@ -51,12 +50,12 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-Http::Request::Request(Method RequestMethod, const std::string& URI, const std::string& Body) :
-myMethod      (RequestMethod),
+Http::Request::Request(Method method, const std::string& URI, const std::string& body) :
+myMethod      (method),
 myURI         (URI),
 myMajorVersion(1),
 myMinorVersion(0),
-myBody        (Body)
+myBody        (body)
 {
 
 }
@@ -65,9 +64,9 @@ myBody        (Body)
 ////////////////////////////////////////////////////////////
 /// Set the value of a field; the field is added if it doesn't exist
 ////////////////////////////////////////////////////////////
-void Http::Request::SetField(const std::string& Field, const std::string& Value)
+void Http::Request::SetField(const std::string& field, const std::string& value)
 {
-    myFields[ToLower(Field)] = Value;
+    myFields[ToLower(field)] = value;
 }
 
 
@@ -75,9 +74,9 @@ void Http::Request::SetField(const std::string& Field, const std::string& Value)
 /// Set the request method.
 /// This parameter is Get by default
 ////////////////////////////////////////////////////////////
-void Http::Request::SetMethod(Http::Request::Method RequestMethod)
+void Http::Request::SetMethod(Http::Request::Method method)
 {
-    myMethod = RequestMethod;
+    myMethod = method;
 }
 
 
@@ -99,10 +98,10 @@ void Http::Request::SetURI(const std::string& URI)
 /// Set the HTTP version of the request.
 /// This parameter is 1.0 by default
 ////////////////////////////////////////////////////////////
-void Http::Request::SetHttpVersion(unsigned int Major, unsigned int Minor)
+void Http::Request::SetHttpVersion(unsigned int major, unsigned int minor)
 {
-    myMajorVersion = Major;
-    myMinorVersion = Minor;
+    myMajorVersion = major;
+    myMinorVersion = minor;
 }
 
 
@@ -111,9 +110,9 @@ void Http::Request::SetHttpVersion(unsigned int Major, unsigned int Minor)
 /// makes sense only for POST requests.
 /// This parameter is empty by default
 ////////////////////////////////////////////////////////////
-void Http::Request::SetBody(const std::string& Body)
+void Http::Request::SetBody(const std::string& body)
 {
-    myBody = Body;
+    myBody = body;
 }
 
 
@@ -122,44 +121,44 @@ void Http::Request::SetBody(const std::string& Body)
 ////////////////////////////////////////////////////////////
 std::string Http::Request::ToString() const
 {
-    std::ostringstream Out;
+    std::ostringstream out;
 
     // Convert the method to its string representation
-    std::string RequestMethod;
+    std::string method;
     switch (myMethod)
     {
         default :
-        case Get :  RequestMethod = "GET";  break;
-        case Post : RequestMethod = "POST"; break;
-        case Head : RequestMethod = "HEAD"; break;
+        case Get :  method = "GET";  break;
+        case Post : method = "POST"; break;
+        case Head : method = "HEAD"; break;
     }
 
     // Write the first line containing the request type
-    Out << RequestMethod << " " << myURI << " ";
-    Out << "HTTP/" << myMajorVersion << "." << myMinorVersion << "\r\n";
+    out << method << " " << myURI << " ";
+    out << "HTTP/" << myMajorVersion << "." << myMinorVersion << "\r\n";
 
     // Write fields
     for (FieldTable::const_iterator i = myFields.begin(); i != myFields.end(); ++i)
     {
-        Out << i->first << ": " << i->second << "\r\n";
+        out << i->first << ": " << i->second << "\r\n";
     }
 
     // Use an extra \r\n to separate the header from the body
-    Out << "\r\n";
+    out << "\r\n";
 
     // Add the body
-    Out << myBody;
+    out << myBody;
 
-    return Out.str();
+    return out.str();
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Check if the given field has been defined
 ////////////////////////////////////////////////////////////
-bool Http::Request::HasField(const std::string& Field) const
+bool Http::Request::HasField(const std::string& field) const
 {
-    return myFields.find(Field) != myFields.end();
+    return myFields.find(field) != myFields.end();
 }
 
 
@@ -178,17 +177,17 @@ myMinorVersion(0)
 ////////////////////////////////////////////////////////////
 /// Get the value of a field
 ////////////////////////////////////////////////////////////
-const std::string& Http::Response::GetField(const std::string& Field) const
+const std::string& Http::Response::GetField(const std::string& field) const
 {
-    FieldTable::const_iterator It = myFields.find(Field);
-    if (It != myFields.end())
+    FieldTable::const_iterator it = myFields.find(field);
+    if (it != myFields.end())
     {
-        return It->second;
+        return it->second;
     }
     else
     {
-        static const std::string Empty = "";
-        return Empty;
+        static const std::string empty = "";
+        return empty;
     }
 }
 
@@ -236,20 +235,20 @@ const std::string& Http::Response::GetBody() const
 ////////////////////////////////////////////////////////////
 /// Construct the header from a response string
 ////////////////////////////////////////////////////////////
-void Http::Response::FromString(const std::string& Data)
+void Http::Response::FromString(const std::string& data)
 {
-    std::istringstream In(Data);
+    std::istringstream in(data);
 
     // Extract the HTTP version from the first line
-    std::string Version;
-    if (In >> Version)
+    std::string version;
+    if (in >> version)
     {
-        if ((Version.size() >= 8) && (Version[6] == '.') &&
-            (ToLower(Version.substr(0, 5)) == "http/")   &&
-             isdigit(Version[5]) && isdigit(Version[7]))
+        if ((version.size() >= 8) && (version[6] == '.') &&
+            (ToLower(version.substr(0, 5)) == "http/")   &&
+             isdigit(version[5]) && isdigit(version[7]))
         {
-            myMajorVersion = Version[5] - '0';
-            myMinorVersion = Version[7] - '0';
+            myMajorVersion = version[5] - '0';
+            myMinorVersion = version[7] - '0';
         }
         else
         {
@@ -260,10 +259,10 @@ void Http::Response::FromString(const std::string& Data)
     }
 
     // Extract the status code from the first line
-    int StatusCode;
-    if (In >> StatusCode)
+    int status;
+    if (in >> status)
     {
-        myStatus = static_cast<Status>(StatusCode);
+        myStatus = static_cast<Status>(status);
     }
     else
     {
@@ -273,32 +272,32 @@ void Http::Response::FromString(const std::string& Data)
     }
 
     // Ignore the end of the first line
-    In.ignore(10000, '\n');
+    in.ignore(10000, '\n');
 
     // Parse the other lines, which contain fields, one by one
-    std::string Line;
-    while (std::getline(In, Line) && (Line.size() > 2))
+    std::string line;
+    while (std::getline(in, line) && (line.size() > 2))
     {
-        std::string::size_type Pos = Line.find(": ");
-        if (Pos != std::string::npos)
+        std::string::size_type pos = line.find(": ");
+        if (pos != std::string::npos)
         {
             // Extract the field name and its value
-            std::string Field = Line.substr(0, Pos);
-            std::string Value = Line.substr(Pos + 2);
+            std::string field = line.substr(0, pos);
+            std::string value = line.substr(pos + 2);
 
             // Remove any trailing \r
-            if (!Value.empty() && (*Value.rbegin() == '\r'))
-                Value.erase(Value.size() - 1);
+            if (!value.empty() && (*value.rbegin() == '\r'))
+                value.erase(value.size() - 1);
 
             // Add the field
-            myFields[ToLower(Field)] = Value;
+            myFields[ToLower(field)] = value;
         }
     }
 
     // Finally extract the body
     myBody.clear();
-    while (std::getline(In, Line))
-        myBody += Line + "\n";
+    while (std::getline(in, line))
+        myBody += line + "\n";
 }
 
 

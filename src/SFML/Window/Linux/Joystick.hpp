@@ -44,10 +44,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Initialize the instance and bind it to a physical joystick
     ///
-    /// \param Index : Index of the physical joystick to bind to
+    /// \param index : Index of the physical joystick to bind to
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize(unsigned int Index);
+    void Initialize(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// Update the current joystick and return its new state

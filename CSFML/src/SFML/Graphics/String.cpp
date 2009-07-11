@@ -37,82 +37,82 @@
 ////////////////////////////////////////////////////////////
 sfString* sfString_Create()
 {
-    sfString* String = new sfString;
-    String->Font = sfFont_GetDefaultFont();
+    sfString* string = new sfString;
+    string->Font = sfFont_GetDefaultFont();
 
-    return String;
+    return string;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing string
 ////////////////////////////////////////////////////////////
-void sfString_Destroy(sfString* String)
+void sfString_Destroy(sfString* string)
 {
-    delete String;
+    delete string;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the X position of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetX(sfString* String, float X)
+void sfString_SetX(sfString* string, float x)
 {
-    CSFML_CALL(String, SetX(X))
+    CSFML_CALL(string, SetX(x))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the Y position of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetY(sfString* String, float Y)
+void sfString_SetY(sfString* string, float y)
 {
-    CSFML_CALL(String, SetY(Y))
+    CSFML_CALL(string, SetY(y))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the position of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetPosition(sfString* String, float X, float Y)
+void sfString_SetPosition(sfString* string, float x, float y)
 {
-    CSFML_CALL(String, SetPosition(sf::Vector2f(X, Y)))
+    CSFML_CALL(string, SetPosition(sf::Vector2f(x, y)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the horizontal scale of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetScaleX(sfString* String, float Scale)
+void sfString_SetScaleX(sfString* string, float scale)
 {
-    CSFML_CALL(String, SetScaleX(Scale))
+    CSFML_CALL(string, SetScaleX(scale))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the vertical scale of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetScaleY(sfString* String, float Scale)
+void sfString_SetScaleY(sfString* string, float scale)
 {
-    CSFML_CALL(String, SetScaleY(Scale))
+    CSFML_CALL(string, SetScaleY(scale))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the scale of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetScale(sfString* String, float ScaleX, float ScaleY)
+void sfString_SetScale(sfString* string, float scaleX, float scaleY)
 {
-    CSFML_CALL(String, SetScale(sf::Vector2f(ScaleX, ScaleY)))
+    CSFML_CALL(string, SetScale(sf::Vector2f(scaleX, scaleY)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the orientation of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetRotation(sfString* String, float Rotation)
+void sfString_SetRotation(sfString* string, float rotation)
 {
-    CSFML_CALL(String, SetRotation(Rotation))
+    CSFML_CALL(string, SetRotation(rotation))
 }
 
 
@@ -120,102 +120,102 @@ void sfString_SetRotation(sfString* String, float Rotation)
 /// Set the local origin of a string, in coordinates
 /// relative to its left-top corner
 ////////////////////////////////////////////////////////////
-void sfString_SetOrigin(sfString* String, float X, float Y)
+void sfString_SetOrigin(sfString* string, float x, float y)
 {
-    CSFML_CALL(String, SetOrigin(sf::Vector2f(X, Y)))
+    CSFML_CALL(string, SetOrigin(sf::Vector2f(x, y)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the color of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetColor(sfString* String, sfColor Color)
+void sfString_SetColor(sfString* string, sfColor color)
 {
-    CSFML_CALL(String, SetColor(sf::Color(Color.r, Color.g, Color.b, Color.a)))
+    CSFML_CALL(string, SetColor(sf::Color(color.r, color.g, color.b, color.a)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the blending mode for a string
 ////////////////////////////////////////////////////////////
-void sfString_SetBlendMode(sfString* String, sfBlendMode Mode)
+void sfString_SetBlendMode(sfString* string, sfBlendMode mode)
 {
-    CSFML_CALL(String, SetBlendMode(static_cast<sf::Blend::Mode>(Mode)))
+    CSFML_CALL(string, SetBlendMode(static_cast<sf::Blend::Mode>(mode)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the X position of a string
 ////////////////////////////////////////////////////////////
-float sfString_GetX(sfString* String)
+float sfString_GetX(sfString* string)
 {
-    CSFML_CALL_RETURN(String, GetPosition().x, 0.f)
+    CSFML_CALL_RETURN(string, GetPosition().x, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the Y position of a string
 ////////////////////////////////////////////////////////////
-float sfString_GetY(sfString* String)
+float sfString_GetY(sfString* string)
 {
-    CSFML_CALL_RETURN(String, GetPosition().y, 0.f)
+    CSFML_CALL_RETURN(string, GetPosition().y, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the horizontal scale of a string
 ////////////////////////////////////////////////////////////
-float sfString_GetScaleX(sfString* String)
+float sfString_GetScaleX(sfString* string)
 {
-    CSFML_CALL_RETURN(String, GetScale().x, 0.f)
+    CSFML_CALL_RETURN(string, GetScale().x, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the vertical scale of a string
 ////////////////////////////////////////////////////////////
-float sfString_GetScaleY(sfString* String)
+float sfString_GetScaleY(sfString* string)
 {
-    CSFML_CALL_RETURN(String, GetScale().y, 0.f)
+    CSFML_CALL_RETURN(string, GetScale().y, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the orientation of a string
 ////////////////////////////////////////////////////////////
-float sfString_GetRotation(sfString* String)
+float sfString_GetRotation(sfString* string)
 {
-    CSFML_CALL_RETURN(String, GetRotation(), 0.f)
+    CSFML_CALL_RETURN(string, GetRotation(), 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the X position of the origin a string
 ////////////////////////////////////////////////////////////
-float sfString_GetOriginX(sfString* String)
+float sfString_GetOriginX(sfString* string)
 {
-    CSFML_CALL_RETURN(String, GetOrigin().x, 0.f)
+    CSFML_CALL_RETURN(string, GetOrigin().x, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the top Y of the origin of a string
 ////////////////////////////////////////////////////////////
-float sfString_GetOriginY(sfString* String)
+float sfString_GetOriginY(sfString* string)
 {
-    CSFML_CALL_RETURN(String, GetOrigin().y, 0.f)
+    CSFML_CALL_RETURN(string, GetOrigin().y, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the color of a string
 ////////////////////////////////////////////////////////////
-sfColor sfString_GetColor(sfString* String)
+sfColor sfString_GetColor(sfString* string)
 {
-    sfColor Color = {0, 0, 0, 0};
-    CSFML_CHECK_RETURN(String, Color)
+    sfColor color = {0, 0, 0, 0};
+    CSFML_CHECK_RETURN(string, color)
 
-    sf::Color SFMLColor = String->This.GetColor();
+    sf::Color SFMLColor = string->This.GetColor();
     return sfColor_FromRGBA(SFMLColor.r, SFMLColor.g, SFMLColor.b, SFMLColor.a);
 }
 
@@ -223,38 +223,38 @@ sfColor sfString_GetColor(sfString* String)
 ////////////////////////////////////////////////////////////
 /// Get the current blending mode of a string
 ////////////////////////////////////////////////////////////
-sfBlendMode sfString_GetBlendMode(sfString* String)
+sfBlendMode sfString_GetBlendMode(sfString* string)
 {
-    CSFML_CHECK_RETURN(String, sfBlendNone)
+    CSFML_CHECK_RETURN(string, sfBlendNone)
 
-    return static_cast<sfBlendMode>(String->This.GetBlendMode());
+    return static_cast<sfBlendMode>(string->This.GetBlendMode());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Move a string
 ////////////////////////////////////////////////////////////
-void sfString_Move(sfString* String, float OffsetX, float OffsetY)
+void sfString_Move(sfString* string, float offsetX, float offsetY)
 {
-    CSFML_CALL(String, Move(sf::Vector2f(OffsetX, OffsetY)))
+    CSFML_CALL(string, Move(sf::Vector2f(offsetX, offsetY)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Scale a string
 ////////////////////////////////////////////////////////////
-void sfString_Scale(sfString* String, float FactorX, float FactorY)
+void sfString_Scale(sfString* string, float factorX, float factorY)
 {
-    CSFML_CALL(String, Scale(sf::Vector2f(FactorX, FactorY)))
+    CSFML_CALL(string, Scale(sf::Vector2f(factorX, factorY)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Rotate a string
 ////////////////////////////////////////////////////////////
-void sfString_Rotate(sfString* String, float Angle)
+void sfString_Rotate(sfString* string, float angle)
 {
-    CSFML_CALL(String, Rotate(Angle))
+    CSFML_CALL(string, Rotate(angle))
 }
 
 
@@ -262,13 +262,13 @@ void sfString_Rotate(sfString* String, float Angle)
 /// Transform a point from global coordinates into the string's local coordinates
 /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-void sfString_TransformToLocal(sfString* String, float PointX, float PointY, float* X, float* Y)
+void sfString_TransformToLocal(sfString* string, float pointX, float pointY, float* x, float* y)
 {
-    CSFML_CHECK(String)
+    CSFML_CHECK(string)
 
-    sf::Vector2f Point = String->This.TransformToLocal(sf::Vector2f(PointX, PointY));
-    if (X) *X = Point.x;
-    if (Y) *Y = Point.y;
+    sf::Vector2f point = string->This.TransformToLocal(sf::Vector2f(pointX, pointY));
+    if (x) *x = point.x;
+    if (y) *y = point.y;
 }
 
 
@@ -276,115 +276,115 @@ void sfString_TransformToLocal(sfString* String, float PointX, float PointY, flo
 /// Transform a point from the string's local coordinates into global coordinates
 /// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-void sfString_TransformToGlobal(sfString* String, float PointX, float PointY, float* X, float* Y)
+void sfString_TransformToGlobal(sfString* string, float pointX, float pointY, float* x, float* y)
 {
-    CSFML_CHECK(String)
+    CSFML_CHECK(string)
 
-    sf::Vector2f Point = String->This.TransformToGlobal(sf::Vector2f(PointX, PointY));
-    if (X) *X = Point.x;
-    if (Y) *Y = Point.y;
+    sf::Vector2f point = string->This.TransformToGlobal(sf::Vector2f(pointX, pointY));
+    if (x) *x = point.x;
+    if (y) *y = point.y;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the text of a string (from a multibyte string)
 ////////////////////////////////////////////////////////////
-void sfString_SetText(sfString* String, const char* Text)
+void sfString_SetText(sfString* string, const char* text)
 {
-    CSFML_CALL(String, SetText(Text))
+    CSFML_CALL(string, SetText(text))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the text of a string (from a unicode string)
 ////////////////////////////////////////////////////////////
-void sfString_SetUnicodeText(sfString* String, const sfUint32* Text)
+void sfString_SetUnicodeText(sfString* string, const sfUint32* text)
 {
-    sf::Unicode::UTF32String UTF32Text = Text;
-    CSFML_CALL(String, SetText(UTF32Text))
+    sf::Unicode::UTF32String UTF32Text = text;
+    CSFML_CALL(string, SetText(UTF32Text))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the font of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetFont(sfString* String, sfFont* Font)
+void sfString_SetFont(sfString* string, sfFont* font)
 {
-    CSFML_CHECK(Font);
+    CSFML_CHECK(font);
 
-    CSFML_CALL(String, SetFont(Font->This))
-    String->Font = Font;
+    CSFML_CALL(string, SetFont(font->This))
+    string->Font = font;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the size of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetSize(sfString* String, float Size)
+void sfString_SetSize(sfString* string, float size)
 {
-    CSFML_CALL(String, SetSize(Size))
+    CSFML_CALL(string, SetSize(size))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the style of a string
 ////////////////////////////////////////////////////////////
-void sfString_SetStyle(sfString* String, unsigned long Style)
+void sfString_SetStyle(sfString* string, unsigned long style)
 {
-    CSFML_CALL(String, SetStyle(Style))
+    CSFML_CALL(string, SetStyle(style))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the text of a string (returns a unicode string)
 ////////////////////////////////////////////////////////////
-const sfUint32* sfString_GetUnicodeText(sfString* String)
+const sfUint32* sfString_GetUnicodeText(sfString* string)
 {
-    CSFML_CHECK_RETURN(String, NULL)
+    CSFML_CHECK_RETURN(string, NULL)
 
-    return static_cast<const sf::Unicode::UTF32String&>(String->This.GetText()).c_str();
+    return static_cast<const sf::Unicode::UTF32String&>(string->This.GetText()).c_str();
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the text of a string (returns an ANSI string)
 ////////////////////////////////////////////////////////////
-const char* sfString_GetText(sfString* String)
+const char* sfString_GetText(sfString* string)
 {
-    CSFML_CHECK_RETURN(String, NULL)
+    CSFML_CHECK_RETURN(string, NULL)
 
-    String->Text = String->This.GetText();
+    string->Text = string->This.GetText();
 
-    return String->Text.c_str();
+    return string->Text.c_str();
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the font used by a string
 ////////////////////////////////////////////////////////////
-sfFont* sfString_GetFont(sfString* String)
+sfFont* sfString_GetFont(sfString* string)
 {
-    CSFML_CHECK_RETURN(String, NULL)
+    CSFML_CHECK_RETURN(string, NULL)
 
-    return String->Font;
+    return string->Font;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the size of the characters of a string
 ////////////////////////////////////////////////////////////
-float sfString_GetSize(sfString* String)
+float sfString_GetSize(sfString* string)
 {
-    CSFML_CALL_RETURN(String, GetSize(), 0.f)
+    CSFML_CALL_RETURN(string, GetSize(), 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the style of a string
 ////////////////////////////////////////////////////////////
-unsigned long sfString_GetStyle(sfString* String)
+unsigned long sfString_GetStyle(sfString* string)
 {
-    CSFML_CALL_RETURN(String, GetStyle(), 0)
+    CSFML_CALL_RETURN(string, GetStyle(), 0)
 }
 
 
@@ -393,29 +393,29 @@ unsigned long sfString_GetStyle(sfString* String)
 /// in coordinates relative to the string
 /// (note : translation, origin, rotation and scale are not applied)
 ////////////////////////////////////////////////////////////
-void sfString_GetCharacterPos(sfString* String, size_t Index, float* X, float* Y)
+void sfString_GetCharacterPos(sfString* string, size_t index, float* x, float* y)
 {
-    CSFML_CHECK(String);
+    CSFML_CHECK(string);
 
-    sf::Vector2f Pos = String->This.GetCharacterPos(Index);
-    if (X) *X = Pos.x;
-    if (Y) *Y = Pos.y;
+    sf::Vector2f pos = string->This.GetCharacterPos(index);
+    if (x) *x = pos.x;
+    if (y) *y = pos.y;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the bounding rectangle of a string on screen
 ////////////////////////////////////////////////////////////
-sfFloatRect sfString_GetRect(sfString* String)
+sfFloatRect sfString_GetRect(sfString* string)
 {
-    sfFloatRect Rect = {0.f, 0.f, 0.f, 0.f};
-    CSFML_CHECK_RETURN(String, Rect)
+    sfFloatRect rect = {0.f, 0.f, 0.f, 0.f};
+    CSFML_CHECK_RETURN(string, rect)
 
-    sf::FloatRect SFMLRect = String->This.GetRect();
-    String->Rect.Left   = SFMLRect.Left;
-    String->Rect.Top    = SFMLRect.Top;
-    String->Rect.Right  = SFMLRect.Right;
-    String->Rect.Bottom = SFMLRect.Bottom;
+    sf::FloatRect SFMLRect = string->This.GetRect();
+    string->Rect.Left   = SFMLRect.Left;
+    string->Rect.Top    = SFMLRect.Top;
+    string->Rect.Right  = SFMLRect.Right;
+    string->Rect.Bottom = SFMLRect.Bottom;
 
-    return String->Rect;
+    return string->Rect;
 }

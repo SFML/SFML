@@ -33,86 +33,86 @@
 ////////////////////////////////////////////////////////////
 /// Move a rectangle by the given offset
 ////////////////////////////////////////////////////////////
-void sfFloatRect_Offset(sfFloatRect* Rect, float OffsetX, float OffsetY)
+void sfFloatRect_Offset(sfFloatRect* rect, float offsetX, float offsetY)
 {
-    CSFML_CHECK(Rect)
-    Rect->Left   += OffsetX;
-    Rect->Right  += OffsetX;
-    Rect->Top    += OffsetY;
-    Rect->Bottom += OffsetY;
+    CSFML_CHECK(rect)
+    rect->Left   += offsetX;
+    rect->Right  += offsetX;
+    rect->Top    += offsetY;
+    rect->Bottom += offsetY;
 }
-void sfIntRect_Offset(sfIntRect* Rect, int OffsetX, int OffsetY)
+void sfIntRect_Offset(sfIntRect* rect, int offsetX, int offsetY)
 {
-    CSFML_CHECK(Rect)
-    Rect->Left   += OffsetX;
-    Rect->Right  += OffsetX;
-    Rect->Top    += OffsetY;
-    Rect->Bottom += OffsetY;
+    CSFML_CHECK(rect)
+    rect->Left   += offsetX;
+    rect->Right  += offsetX;
+    rect->Top    += offsetY;
+    rect->Bottom += offsetY;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Check if a point is inside a rectangle's area
 ////////////////////////////////////////////////////////////
-sfBool sfFloatRect_Contains(sfFloatRect* Rect, float X, float Y)
+sfBool sfFloatRect_Contains(sfFloatRect* rect, float x, float y)
 {
-    CSFML_CHECK_RETURN(Rect, sfFalse)
-    return sf::FloatRect(Rect->Left, Rect->Top, Rect->Right, Rect->Bottom).Contains(X, Y);
+    CSFML_CHECK_RETURN(rect, sfFalse)
+    return sf::FloatRect(rect->Left, rect->Top, rect->Right, rect->Bottom).Contains(x, y);
 }
-sfBool sfIntRect_Contains(sfIntRect* Rect, int X, int Y)
+sfBool sfIntRect_Contains(sfIntRect* rect, int x, int y)
 {
-    CSFML_CHECK_RETURN(Rect, sfFalse)
-    return sf::IntRect(Rect->Left, Rect->Top, Rect->Right, Rect->Bottom).Contains(X, Y);
+    CSFML_CHECK_RETURN(rect, sfFalse)
+    return sf::IntRect(rect->Left, rect->Top, rect->Right, rect->Bottom).Contains(x, y);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Check intersection between two rectangles
 ////////////////////////////////////////////////////////////
-sfBool sfFloatRect_Intersects(sfFloatRect* Rect1, sfFloatRect* Rect2, sfFloatRect* OverlappingRect)
+sfBool sfFloatRect_Intersects(sfFloatRect* rect1, sfFloatRect* rect2, sfFloatRect* intersection)
 {
-    CSFML_CHECK_RETURN(Rect1, sfFalse)
-    CSFML_CHECK_RETURN(Rect2, sfFalse)
+    CSFML_CHECK_RETURN(rect1, sfFalse)
+    CSFML_CHECK_RETURN(rect2, sfFalse)
 
-    sf::FloatRect SFMLRect1(Rect1->Left, Rect1->Top, Rect1->Right, Rect1->Bottom);
-    sf::FloatRect SFMLRect2(Rect2->Left, Rect2->Top, Rect2->Right, Rect2->Bottom);
+    sf::FloatRect SFMLRect1(rect1->Left, rect1->Top, rect1->Right, rect1->Bottom);
+    sf::FloatRect SFMLRect2(rect2->Left, rect2->Top, rect2->Right, rect2->Bottom);
 
-    if (OverlappingRect)
+    if (intersection)
     {
-        sf::FloatRect Overlap;
-        bool Intersect = SFMLRect1.Intersects(SFMLRect2, Overlap);
+        sf::FloatRect overlap;
+        bool intersects = SFMLRect1.Intersects(SFMLRect2, overlap);
 
-        OverlappingRect->Left   = Overlap.Left;
-        OverlappingRect->Top    = Overlap.Top;
-        OverlappingRect->Right  = Overlap.Right;
-        OverlappingRect->Bottom = Overlap.Bottom;
+        intersection->Left   = overlap.Left;
+        intersection->Top    = overlap.Top;
+        intersection->Right  = overlap.Right;
+        intersection->Bottom = overlap.Bottom;
 
-        return Intersect;
+        return intersects;
     }
     else
     {
         return SFMLRect1.Intersects(SFMLRect2);
     }
 }
-sfBool sfIntRect_Intersects(sfIntRect* Rect1, sfIntRect* Rect2, sfIntRect* OverlappingRect)
+sfBool sfIntRect_Intersects(sfIntRect* rect1, sfIntRect* rect2, sfIntRect* intersection)
 {
-    CSFML_CHECK_RETURN(Rect1, sfFalse)
-    CSFML_CHECK_RETURN(Rect2, sfFalse)
+    CSFML_CHECK_RETURN(rect1, sfFalse)
+    CSFML_CHECK_RETURN(rect2, sfFalse)
 
-    sf::IntRect SFMLRect1(Rect1->Left, Rect1->Top, Rect1->Right, Rect1->Bottom);
-    sf::IntRect SFMLRect2(Rect2->Left, Rect2->Top, Rect2->Right, Rect2->Bottom);
+    sf::IntRect SFMLRect1(rect1->Left, rect1->Top, rect1->Right, rect1->Bottom);
+    sf::IntRect SFMLRect2(rect2->Left, rect2->Top, rect2->Right, rect2->Bottom);
 
-    if (OverlappingRect)
+    if (intersection)
     {
-        sf::IntRect Overlap;
-        bool Intersect = SFMLRect1.Intersects(SFMLRect2, Overlap);
+        sf::IntRect overlap;
+        bool intersects = SFMLRect1.Intersects(SFMLRect2, overlap);
 
-        OverlappingRect->Left   = Overlap.Left;
-        OverlappingRect->Top    = Overlap.Top;
-        OverlappingRect->Right  = Overlap.Right;
-        OverlappingRect->Bottom = Overlap.Bottom;
+        intersection->Left   = overlap.Left;
+        intersection->Top    = overlap.Top;
+        intersection->Right  = overlap.Right;
+        intersection->Bottom = overlap.Bottom;
 
-        return Intersect;
+        return intersects;
     }
     else
     {

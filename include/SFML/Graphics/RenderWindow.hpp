@@ -55,22 +55,22 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the window
     ///
-    /// \param Mode :        Video mode to use
-    /// \param Title :       Title of the window
-    /// \param WindowStyle : Window style (Resize | Close by default)
-    /// \param Settings :    Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param mode :     Video mode to use
+    /// \param title :    Title of the window
+    /// \param style :    Window style (Resize | Close by default)
+    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    RenderWindow(VideoMode Mode, const std::string& Title, unsigned long WindowStyle = Style::Resize | Style::Close, const ContextSettings& Settings = ContextSettings());
+    RenderWindow(VideoMode mode, const std::string& title, unsigned long style = Style::Resize | Style::Close, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Construct the window from an existing control
     ///
-    /// \param Handle :   Platform-specific handle of the control
-    /// \param Settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param handle :   Platform-specific handle of the control
+    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    RenderWindow(WindowHandle Handle, const ContextSettings& Settings = ContextSettings());
+    RenderWindow(WindowHandle handle, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -106,26 +106,26 @@ public :
     /// Convert a point in window coordinates into view coordinates
     /// This version uses the current view of the window
     ///
-    /// \param WindowX : X coordinate of the point to convert, relative to the window
-    /// \param WindowY : Y coordinate of the point to convert, relative to the window
+    /// \param x : X coordinate of the point to convert, relative to the window
+    /// \param y : Y coordinate of the point to convert, relative to the window
     ///
     /// \return Converted point
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f ConvertCoords(unsigned int WindowX, unsigned int WindowY) const;
+    sf::Vector2f ConvertCoords(unsigned int x, unsigned int y) const;
 
     ////////////////////////////////////////////////////////////
     /// Convert a point in window coordinates into view coordinates
     /// This version uses the given view
     ///
-    /// \param WindowX :    X coordinate of the point to convert, relative to the window
-    /// \param WindowY :    Y coordinate of the point to convert, relative to the window
-    /// \param TargetView : Target view to convert the point to
+    /// \param x :    X coordinate of the point to convert, relative to the window
+    /// \param y :    Y coordinate of the point to convert, relative to the window
+    /// \param view : Target view to convert the point to
     ///
     /// \return Converted point
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f ConvertCoords(unsigned int WindowX, unsigned int WindowY, const View& TargetView) const;
+    sf::Vector2f ConvertCoords(unsigned int x, unsigned int y, const View& view) const;
 
 private :
 
@@ -139,7 +139,7 @@ private :
     /// /see RenderTarget::Activate
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool Active);
+    virtual bool Activate(bool active);
 };
 
 } // namespace sf

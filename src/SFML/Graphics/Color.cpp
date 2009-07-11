@@ -60,83 +60,76 @@ a(255)
 ////////////////////////////////////////////////////////////
 /// Construct the color from its 4 RGBA components
 ////////////////////////////////////////////////////////////
-Color::Color(Uint8 R, Uint8 G, Uint8 B, Uint8 A) :
-r(R),
-g(G),
-b(B),
-a(A)
+Color::Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha) :
+r(red),
+g(green),
+b(blue),
+a(alpha)
 {
 
-}
-
-
-////////////////////////////////////////////////////////////
-/// Operator += overload to add a color
-////////////////////////////////////////////////////////////
-Color& Color::operator +=(const Color& Other)
-{
-    r = static_cast<Uint8>(std::min(r + Other.r, 255));
-    g = static_cast<Uint8>(std::min(g + Other.g, 255));
-    b = static_cast<Uint8>(std::min(b + Other.b, 255));
-    a = static_cast<Uint8>(std::min(a + Other.a, 255));
-
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Operator *= overload to modulate a color
-////////////////////////////////////////////////////////////
-Color& Color::operator *=(const Color& Other)
-{
-    r = static_cast<Uint8>(r * Other.r / 255);
-    g = static_cast<Uint8>(g * Other.g / 255);
-    b = static_cast<Uint8>(b * Other.b / 255);
-    a = static_cast<Uint8>(a * Other.a / 255);
-
-    return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Compare two colors (for equality)
 ////////////////////////////////////////////////////////////
-bool Color::operator ==(const Color& Other) const
+bool operator ==(const Color& left, const Color& right)
 {
-    return (r == Other.r) && (g == Other.g) && (b == Other.b) && (a == Other.a);
+    return (left.r == right.r) &&
+           (left.g == right.g) &&
+           (left.b == right.b) &&
+           (left.a == right.a);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Compare two colors (for difference)
 ////////////////////////////////////////////////////////////
-bool Color::operator !=(const Color& Other) const
+bool operator !=(const Color& left, const Color& right)
 {
-    return (r != Other.r) || (g != Other.g) || (b != Other.b) || (a != Other.a);
+    return !(left == right);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Operator + overload to add two colors
 ////////////////////////////////////////////////////////////
-Color operator +(const Color& Color1, const Color& Color2)
+Color operator +(const Color& left, const Color& right)
 {
-    Color c = Color1;
-    c += Color2;
-
-    return c;
+    return Color(static_cast<Uint8>(std::min(left.r + right.r, 255)),
+                 static_cast<Uint8>(std::min(left.g + right.g, 255)),
+                 static_cast<Uint8>(std::min(left.b + right.b, 255)),
+                 static_cast<Uint8>(std::min(left.a + right.a, 255)));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Operator * overload to modulate two colors
 ////////////////////////////////////////////////////////////
-Color operator *(const Color& Color1, const Color& Color2)
+Color operator *(const Color& left, const Color& right)
 {
-    Color c = Color1;
-    c *= Color2;
+    return Color(static_cast<Uint8>(left.r * right.r / 255),
+                 static_cast<Uint8>(left.g * right.g / 255),
+                 static_cast<Uint8>(left.b * right.b / 255),
+                 static_cast<Uint8>(left.a * right.a / 255));
+}
 
-    return c;
+
+////////////////////////////////////////////////////////////
+/// Operator += overload to add a color
+////////////////////////////////////////////////////////////
+Color& operator +=(Color& left, const Color& right)
+{
+    return left = left + right;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Operator *= overload to modulate a color
+////////////////////////////////////////////////////////////
+Color& operator *=(Color& left, const Color& right)
+{
+    return left = left * right;
 }
 
 } // namespace sf

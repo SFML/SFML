@@ -46,9 +46,9 @@ bool SoundBufferRecorder::OnStart()
 ////////////////////////////////////////////////////////////
 /// /see SoundBuffer::OnProcessSamples
 ////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::OnProcessSamples(const Int16* Samples, std::size_t SamplesCount)
+bool SoundBufferRecorder::OnProcessSamples(const Int16* samples, std::size_t samplesCount)
 {
-    std::copy(Samples, Samples + SamplesCount, std::back_inserter(mySamples));
+    std::copy(samples, samples + samplesCount, std::back_inserter(mySamples));
 
     return true;
 }

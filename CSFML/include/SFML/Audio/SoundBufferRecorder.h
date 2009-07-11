@@ -43,49 +43,49 @@ CSFML_API sfSoundBufferRecorder* sfSoundBufferRecorder_Create();
 ////////////////////////////////////////////////////////////
 /// Destroy an existing sound buffer recorder
 ///
-/// \param SoundBufferRecorder : Sound buffer recorder to delete
+/// \param soundBufferRecorder : Sound buffer recorder to delete
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSoundBufferRecorder_Destroy(sfSoundBufferRecorder* SoundBufferRecorder);
+CSFML_API void sfSoundBufferRecorder_Destroy(sfSoundBufferRecorder* soundBufferRecorder);
 
 ////////////////////////////////////////////////////////////
 /// Start the capture.
 /// Warning : only one capture can happen at the same time
 ///
-/// \param SoundBufferRecorder : Sound bufferrecorder to start
-/// \param SampleRate :          Sound frequency (the more samples, the higher the quality)
+/// \param soundBufferRecorder : Sound buffer recorder to start
+/// \param sampleRate :          Sound frequency (the more samples, the higher the quality)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSoundBufferRecorder_Start(sfSoundBufferRecorder* SoundBufferRecorder, unsigned int SampleRate);
+CSFML_API void sfSoundBufferRecorder_Start(sfSoundBufferRecorder* soundBufferRecorder, unsigned int sampleRate);
 
 ////////////////////////////////////////////////////////////
 /// Stop the capture
 ///
-/// \param SoundBufferRecorder : Sound buffer recorder to stop
+/// \param soundBufferRecorder : Sound buffer recorder to stop
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSoundBufferRecorder_Stop(sfSoundBufferRecorder* SoundBufferRecorder);
+CSFML_API void sfSoundBufferRecorder_Stop(sfSoundBufferRecorder* soundBufferRecorder);
 
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound buffer recorder
 ///
-/// \param SoundBufferRecorder : Sound buffer recorder to get sample rate from
+/// \param soundBufferRecorder : Sound buffer recorder to get sample rate from
 ///
 /// \return Frequency, in samples per second
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfSoundBufferRecorder_GetSampleRate(sfSoundBufferRecorder* SoundBufferRecorder);
+CSFML_API unsigned int sfSoundBufferRecorder_GetSampleRate(sfSoundBufferRecorder* soundBufferRecorder);
 
 ////////////////////////////////////////////////////////////
 /// Get the sound buffer containing the captured audio data
 /// of a sound buffer recorder
 ///
-/// \param SoundBufferRecorder : Sound buffer recorder to get the sound buffer from
+/// \param soundBufferRecorder : Sound buffer recorder to get the sound buffer from
 ///
 /// \return Pointer to the sound buffer (you don't need to destroy it after use)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundBuffer* sfSoundBufferRecorder_GetBuffer(sfSoundBufferRecorder* SoundBufferRecorder);
+CSFML_API sfSoundBuffer* sfSoundBufferRecorder_GetBuffer(sfSoundBufferRecorder* soundBufferRecorder);
 
 
 #endif // SFML_SOUNDBUFFERRECORDER_H

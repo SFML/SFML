@@ -42,16 +42,16 @@ sfContext* sfContext_Create()
 ////////////////////////////////////////////////////////////
 /// Destroy an existing context
 ////////////////////////////////////////////////////////////
-void sfContext_Destroy(sfContext* Context)
+void sfContext_Destroy(sfContext* context)
 {
-    delete Context;
+    delete context;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Activate or deactivate a context
 ////////////////////////////////////////////////////////////
-void sfContext_SetActive(sfContext* Context, sfBool Active)
+void sfContext_SetActive(sfContext* context, sfBool active)
 {
-    CSFML_CALL(Context, SetActive(Active == sfTrue))
+    CSFML_CALL(context, SetActive(active == sfTrue))
 }

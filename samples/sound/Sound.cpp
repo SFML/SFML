@@ -14,28 +14,28 @@
 void PlaySound()
 {
     // Load a sound buffer from a wav file
-    sf::SoundBuffer Buffer;
-    if (!Buffer.LoadFromFile("datas/sound/footsteps.wav"))
+    sf::SoundBuffer buffer;
+    if (!buffer.LoadFromFile("datas/sound/footsteps.wav"))
         return;
 
     // Display sound informations
     std::cout << "footsteps.wav :" << std::endl;
-    std::cout << " " << Buffer.GetDuration()      << " sec"           << std::endl;
-    std::cout << " " << Buffer.GetSampleRate()    << " samples / sec" << std::endl;
-    std::cout << " " << Buffer.GetChannelsCount() << " channels"      << std::endl;
+    std::cout << " " << buffer.GetDuration()      << " sec"           << std::endl;
+    std::cout << " " << buffer.GetSampleRate()    << " samples / sec" << std::endl;
+    std::cout << " " << buffer.GetChannelsCount() << " channels"      << std::endl;
 
     // Create a sound instance and play it
-    sf::Sound Sound(Buffer);
-    Sound.Play();
+    sf::Sound sound(buffer);
+    sound.Play();
 
     // Loop while the sound is playing
-    while (Sound.GetStatus() == sf::Sound::Playing)
+    while (sound.GetStatus() == sf::Sound::Playing)
     {
         // Leave some CPU time for other processes
         sf::Sleep(0.1f);
 
         // Display the playing position
-        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << Sound.GetPlayingOffset() << " sec   ";
+        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.GetPlayingOffset() << " sec   ";
     }
     std::cout << std::endl << std::endl;
 }
@@ -48,27 +48,27 @@ void PlaySound()
 void PlayMusic()
 {
     // Load an ogg music file
-    sf::Music Music;
-    if (!Music.OpenFromFile("datas/sound/lepidoptera.ogg"))
+    sf::Music music;
+    if (!music.OpenFromFile("datas/sound/lepidoptera.ogg"))
         return;
 
     // Display music informations
     std::cout << "lepidoptera.ogg :" << std::endl;
-    std::cout << " " << Music.GetDuration()      << " sec"           << std::endl;
-    std::cout << " " << Music.GetSampleRate()    << " samples / sec" << std::endl;
-    std::cout << " " << Music.GetChannelsCount() << " channels"      << std::endl;
+    std::cout << " " << music.GetDuration()      << " sec"           << std::endl;
+    std::cout << " " << music.GetSampleRate()    << " samples / sec" << std::endl;
+    std::cout << " " << music.GetChannelsCount() << " channels"      << std::endl;
 
     // Play it
-    Music.Play();
+    music.Play();
 
     // Loop while the music is playing
-    while (Music.GetStatus() == sf::Music::Playing)
+    while (music.GetStatus() == sf::Music::Playing)
     {
         // Leave some CPU time for other processes
         sf::Sleep(0.1f);
 
         // Display the playing position
-        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << Music.GetPlayingOffset() << " sec   ";
+        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << music.GetPlayingOffset() << " sec   ";
     }
     std::cout << std::endl;
 }

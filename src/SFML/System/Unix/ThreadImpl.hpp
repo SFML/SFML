@@ -48,10 +48,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Default constructor, launch the thread
     ///
-    /// \param Owner : Owner Thread instance to run
+    /// \param owner : Owner Thread instance to run
     ///
     ////////////////////////////////////////////////////////////
-    ThreadImpl(Thread* Owner);
+    ThreadImpl(Thread* owner);
 
     ////////////////////////////////////////////////////////////
     /// Wait until the thread finishes
@@ -73,12 +73,12 @@ private :
     ////////////////////////////////////////////////////////////
     /// Global entry point for all threads
     ///
-    /// \param UserData : User-defined data (contains the Thread instance)
+    /// \param userData : User-defined data (contains the Thread instance)
     ///
     /// \return Error code
     ///
     ////////////////////////////////////////////////////////////
-    static void* EntryPoint(void* UserData);
+    static void* EntryPoint(void* userData);
 
     ////////////////////////////////////////////////////////////
     // Member data

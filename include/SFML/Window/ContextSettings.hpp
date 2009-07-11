@@ -37,15 +37,15 @@ struct ContextSettings
     ////////////////////////////////////////////////////////////
     /// Default constructor
     ///
-    /// \param Depth :        Depth buffer bits (24 by default)
-    /// \param Stencil :      Stencil buffer bits (8 by default)
-    /// \param Antialiasing : Antialiasing level (0 by default)
+    /// \param depth :        Depth buffer bits (24 by default)
+    /// \param stencil :      Stencil buffer bits (8 by default)
+    /// \param antialiasing : Antialiasing level (0 by default)
     ///
     ////////////////////////////////////////////////////////////
-    explicit ContextSettings(unsigned int Depth = 24, unsigned int Stencil = 8, unsigned int Antialiasing = 0) :
-    DepthBits        (Depth),
-    StencilBits      (Stencil),
-    AntialiasingLevel(Antialiasing)
+    explicit ContextSettings(unsigned int depth = 24, unsigned int stencil = 8, unsigned int antialiasing = 0) :
+    DepthBits        (depth),
+    StencilBits      (stencil),
+    AntialiasingLevel(antialiasing)
     {
     }
 

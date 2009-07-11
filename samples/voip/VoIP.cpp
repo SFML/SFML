@@ -11,8 +11,8 @@
 // Function prototypes
 // (I'm too lazy to put them into separate headers...)
 ////////////////////////////////////////////////////////////
-void DoClient(unsigned short Port);
-void DoServer(unsigned short Port);
+void DoClient(unsigned short port);
+void DoServer(unsigned short port);
 
 
 ////////////////////////////////////////////////////////////
@@ -24,22 +24,22 @@ void DoServer(unsigned short Port);
 int main()
 {
     // Choose a random port for opening sockets (ports < 1024 are reserved)
-    const unsigned short Port = 2435;
+    const unsigned short port = 2435;
 
     // Client or server ?
-    char Who;
+    char who;
     std::cout << "Do you want to be a server ('s') or a client ('c') ? ";
-    std::cin  >> Who;
+    std::cin  >> who;
 
-    if (Who == 's')
+    if (who == 's')
     {
         // Run as a server
-        DoServer(Port);
+        DoServer(port);
     }
     else
     {
         // Run as a client
-        DoClient(Port);
+        DoClient(port);
     }
 
     // Wait until the user presses 'enter' key

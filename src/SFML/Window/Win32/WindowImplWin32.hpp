@@ -48,20 +48,20 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the window implementation from an existing control
     ///
-    /// \param Handle : Platform-specific handle of the control
+    /// \param handle : Platform-specific handle of the control
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplWin32(WindowHandle Handle);
+    WindowImplWin32(WindowHandle handle);
 
     ////////////////////////////////////////////////////////////
     /// Create the window implementation
     ///
-    /// \param Mode :        Video mode to use
-    /// \param Title :       Title of the window
-    /// \param WindowStyle : Window style
+    /// \param mode :  Video mode to use
+    /// \param title : Title of the window
+    /// \param style : Window style
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplWin32(VideoMode Mode, const std::string& Title, unsigned long WindowStyle);
+    WindowImplWin32(VideoMode mode, const std::string& title, unsigned long style);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -87,43 +87,43 @@ private :
     /// /see WindowImpl::ShowMouseCursor
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ShowMouseCursor(bool Show);
+    virtual void ShowMouseCursor(bool show);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::SetCursorPosition
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetCursorPosition(unsigned int Left, unsigned int Top);
+    virtual void SetCursorPosition(unsigned int left, unsigned int top);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::SetPosition
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(int Left, int Top);
+    virtual void SetPosition(int left, int top);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::SetSize
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(unsigned int Width, unsigned int Height);
+    virtual void SetSize(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::Show
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Show(bool State);
+    virtual void Show(bool show);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::EnableKeyRepeat
     ///
     ////////////////////////////////////////////////////////////
-    virtual void EnableKeyRepeat(bool Enabled);
+    virtual void EnableKeyRepeat(bool enabled);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::SetIcon
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixels);
+    virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// Register the window class
@@ -134,10 +134,10 @@ private :
     ////////////////////////////////////////////////////////////
     /// Switch to fullscreen mode
     ///
-    /// \param Mode : video mode to switch to
+    /// \param mode : video mode to switch to
     ///
     ////////////////////////////////////////////////////////////
-    void SwitchToFullscreen(const VideoMode& Mode);
+    void SwitchToFullscreen(const VideoMode& mode);
 
     ////////////////////////////////////////////////////////////
     /// Free all the graphical resources attached to the window
@@ -148,34 +148,34 @@ private :
     ////////////////////////////////////////////////////////////
     /// Process a Win32 event
     ///
-    /// \param Message : Message to process
-    /// \param WParam :  First parameter of the event
-    /// \param LParam :  Second parameter of the event
+    /// \param message : Message to process
+    /// \param wParam :  First parameter of the event
+    /// \param lParam :  Second parameter of the event
     ///
     ////////////////////////////////////////////////////////////
-    void ProcessEvent(UINT Message, WPARAM WParam, LPARAM LParam);
+    void ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam);
 
     ////////////////////////////////////////////////////////////
     /// Check the state of the shift keys on a key event,
     /// and return the corresponding SF key code
     ///
-    /// \param KeyDown : True for a keydown event, false for a keyup event
+    /// \param keyDown : True for a keydown event, false for a keyup event
     ///
     /// \return SFML key code corresponding to the shift key
     ///
     ////////////////////////////////////////////////////////////
-    static Key::Code GetShiftState(bool KeyDown);
+    static Key::Code GetShiftState(bool keyDown);
 
     ////////////////////////////////////////////////////////////
     /// Convert a Win32 virtual key code to a SFML key code
     ///
-    /// \param VirtualKey : Virtual key code to convert
-    /// \param Flags :      Additional flags
+    /// \param key :   Virtual key code to convert
+    /// \param flags : Additional flags
     ///
-    /// \return SFML key code corresponding to VirtualKey
+    /// \return SFML key code corresponding to the key
     ///
     ////////////////////////////////////////////////////////////
-    static Key::Code VirtualKeyCodeToSF(WPARAM VirtualKey, LPARAM Flags);
+    static Key::Code VirtualKeyCodeToSF(WPARAM key, LPARAM flags);
 
     ////////////////////////////////////////////////////////////
     /// Check if the current version of the OS supports unicode
@@ -190,15 +190,15 @@ private :
     ////////////////////////////////////////////////////////////
     /// Function called whenever one of our windows receives a message
     ///
-    /// \param Handle :  Win32 handle of the window
-    /// \param Message : Message received
-    /// \param WParam :  First parameter of the message
-    /// \param LParam :  Second parameter of the message
+    /// \param handle :  Win32 handle of the window
+    /// \param message : Message received
+    /// \param wParam :  First parameter of the message
+    /// \param lParam :  Second parameter of the message
     ///
     /// \return Something...
     ///
     ////////////////////////////////////////////////////////////
-    static LRESULT CALLBACK GlobalOnEvent(HWND Handle, UINT Message, WPARAM WParam, LPARAM LParam);
+    static LRESULT CALLBACK GlobalOnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
     ////////////////////////////////////////////////////////////
     // Static member data

@@ -72,9 +72,9 @@ Resource<T>& Resource<T>::operator =(const Resource<T>&)
 /// Connect a ResourcePtr to this resource
 ////////////////////////////////////////////////////////////
 template <typename T>
-void Resource<T>::Connect(ResourcePtr<T>& Observer) const
+void Resource<T>::Connect(ResourcePtr<T>& observer) const
 {
-    myObservers.insert(&Observer);
+    myObservers.insert(&observer);
 }
 
 
@@ -82,7 +82,7 @@ void Resource<T>::Connect(ResourcePtr<T>& Observer) const
 /// Disconnect a ResourcePtr from this resource
 ////////////////////////////////////////////////////////////
 template <typename T>
-void Resource<T>::Disconnect(ResourcePtr<T>& Observer) const
+void Resource<T>::Disconnect(ResourcePtr<T>& observer) const
 {
-    myObservers.erase(&Observer);
+    myObservers.erase(&observer);
 }

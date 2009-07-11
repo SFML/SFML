@@ -45,111 +45,111 @@ CSFML_API sfSocketUDP* sfSocketUDP_Create();
 ////////////////////////////////////////////////////////////
 /// Destroy an existing UDP socket
 ///
-/// \param Socket : Socket to destroy
+/// \param socket : Socket to destroy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSocketUDP_Destroy(sfSocketUDP* Socket);
+CSFML_API void sfSocketUDP_Destroy(sfSocketUDP* socket);
 
 ////////////////////////////////////////////////////////////
 /// Change the blocking state of a UDP socket.
 /// The default behaviour of a socket is blocking
 ///
-/// \param Socket :   Socket to modify
-/// \param Blocking : Pass sfTrue to set the socket as blocking, or false for non-blocking
+/// \param socket :   Socket to modify
+/// \param blocking : Pass sfTrue to set the socket as blocking, or false for non-blocking
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSocketUDP_SetBlocking(sfSocketUDP* Socket, sfBool Blocking);
+CSFML_API void sfSocketUDP_SetBlocking(sfSocketUDP* socket, sfBool blocking);
 
 ////////////////////////////////////////////////////////////
 /// Bind a socket to a specific port
 ///
-/// \param Socket : Socket to bind
-/// \param Port :   Port to bind the socket to
+/// \param socket : Socket to bind
+/// \param port :   Port to bind the socket to
 ///
 /// \return True if operation has been successful
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketUDP_Bind(sfSocketUDP* Socket, unsigned short Port);
+CSFML_API sfBool sfSocketUDP_Bind(sfSocketUDP* socket, unsigned short port);
 
 ////////////////////////////////////////////////////////////
 /// Unbind a socket from its previous port, if any
 ///
-/// \param Socket : Socket to unbind
+/// \param socket : Socket to unbind
 ///
 /// \return sfTrue if operation has been successful
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketUDP_Unbind(sfSocketUDP* Socket);
+CSFML_API sfBool sfSocketUDP_Unbind(sfSocketUDP* socket);
 
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes
 ///
-/// \param Socket :  Socket to use for sending
-/// \param Data :    Pointer to the bytes to send
-/// \param Size :    Number of bytes to send
-/// \param Address : Address of the computer to send the packet to
-/// \param Port :    Port to use for communication
+/// \param socket :  Socket to use for sending
+/// \param data :    Pointer to the bytes to send
+/// \param size :    Number of bytes to send
+/// \param address : Address of the computer to send the packet to
+/// \param port :    Port to use for communication
 ///
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_Send(sfSocketUDP* Socket, const char* Data, size_t Size, sfIPAddress Address, unsigned short Port);
+CSFML_API sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data, size_t size, sfIPAddress address, unsigned short port);
 
 ////////////////////////////////////////////////////////////
 /// Receive an array of bytes.
 /// This function is blocking, ie. it won't return before some
 /// bytes have been received
 ///
-/// \param Socket :       Socket to use for receiving
-/// \param Data :         Pointer to a byte array to fill (make sure it is big enough)
-/// \param MaxSize :      Maximum number of bytes to read
-/// \param SizeReceived : Number of bytes received
-/// \param Address :      Address of the computer which sent the data
-/// \param Port :         Port on which the remote computer sent the data
+/// \param socket :       Socket to use for receiving
+/// \param data :         Pointer to a byte array to fill (make sure it is big enough)
+/// \param maxSize :      Maximum number of bytes to read
+/// \param sizeReceived : Number of bytes received
+/// \param address :      Address of the computer which sent the data
+/// \param port :         Port on which the remote computer sent the data
 ///
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* Socket, char* Data, size_t MaxSize, size_t* SizeReceived, sfIPAddress* Address, unsigned short* Port);
+CSFML_API sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, size_t maxSize, size_t* sizeReceived, sfIPAddress* address, unsigned short* port);
 
 ////////////////////////////////////////////////////////////
 /// Send a packet of data
 ///
-/// \param Socket :  Socket to use for sending
-/// \param Packet :  Packet to send
-/// \param Address : Address of the computer to send the packet to
-/// \param Port :    Port to use for communication
+/// \param socket :  Socket to use for sending
+/// \param packet :  Packet to send
+/// \param address : Address of the computer to send the packet to
+/// \param port :    Port to use for communication
 ///
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* Socket, sfPacket* Packet, sfIPAddress Address, unsigned short Port);
+CSFML_API sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* packet, sfIPAddress address, unsigned short port);
 
 ////////////////////////////////////////////////////////////
 /// Receive a packet.
 /// This function is blocking, ie. it won't return before a
 /// packet is received
 ///
-/// \param Socket :  Socket to use for receiving
-/// \param Packet :  Packet to fill with received data
-/// \param Address : Address of the computer which sent the packet
-/// \param Port :    Port on which the remote computer sent the data
+/// \param socket :  Socket to use for receiving
+/// \param packet :  Packet to fill with received data
+/// \param address : Address of the computer which sent the packet
+/// \param port :    Port on which the remote computer sent the data
 ///
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_ReceivePacket(sfSocketUDP* Socket, sfPacket* Packet, sfIPAddress* Address, unsigned short* Port);
+CSFML_API sfSocketStatus sfSocketUDP_ReceivePacket(sfSocketUDP* socket, sfPacket* packet, sfIPAddress* address, unsigned short* port);
 
 ////////////////////////////////////////////////////////////
 /// Check if a socket is in a valid state ; this function
 /// can be called any time to check if the socket is OK
 ///
-/// \param Socket : Socket to check
+/// \param socket : Socket to check
 ///
 /// \return sfTrue if the socket is valid
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketUDP_IsValid(sfSocketUDP* Socket);
+CSFML_API sfBool sfSocketUDP_IsValid(sfSocketUDP* socket);
 
 
 #endif // SFML_SOCKETUDP_H

@@ -56,89 +56,89 @@ public :
     /// Change the blocking state of the socket.
     /// The default behaviour of a socket is blocking
     ///
-    /// \param Blocking : Pass true to set the socket as blocking, or false for non-blocking
+    /// \param blocking : Pass true to set the socket as blocking, or false for non-blocking
     ///
     ////////////////////////////////////////////////////////////
-    void SetBlocking(bool Blocking);
+    void SetBlocking(bool blocking);
 
     ////////////////////////////////////////////////////////////
     /// Connect to another computer on a specified port
     ///
-    /// \param Port :        Port to use for transfers (warning : ports < 1024 are reserved)
-    /// \param HostAddress : IP Address of the host to connect to
-    /// \param Timeout :     Maximum time to wait, in seconds (0 by default : no timeout) (this parameter is ignored for non-blocking sockets)
+    /// \param port :    Port to use for transfers (warning : ports < 1024 are reserved)
+    /// \param host :    IP Address of the host to connect to
+    /// \param timeout : Maximum time to wait, in seconds (0 by default : no timeout) (this parameter is ignored for non-blocking sockets)
     ///
     /// \return True if operation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Connect(unsigned short Port, const IPAddress& HostAddress, float Timeout = 0.f);
+    Socket::Status Connect(unsigned short port, const IPAddress& host, float timeout = 0.f);
 
     ////////////////////////////////////////////////////////////
     /// Listen to a specified port for incoming data or connections
     ///
-    /// \param Port : Port to listen to
+    /// \param port : Port to listen to
     ///
     /// \return True if operation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool Listen(unsigned short Port);
+    bool Listen(unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// Wait for a connection (must be listening to a port).
     /// This function will block if the socket is blocking
     ///
-    /// \param Connected : Socket containing the connection with the connected client
-    /// \param Address :   Pointer to an address to fill with client infos (NULL by default)
+    /// \param connected : Socket containing the connection with the connected client
+    /// \param address :   Pointer to an address to fill with client infos (NULL by default)
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Accept(SocketTCP& Connected, IPAddress* Address = NULL);
+    Socket::Status Accept(SocketTCP& connected, IPAddress* address = NULL);
 
     ////////////////////////////////////////////////////////////
     /// Send an array of bytes to the host (must be connected first)
     ///
-    /// \param Data : Pointer to the bytes to send
-    /// \param Size : Number of bytes to send
+    /// \param data : Pointer to the bytes to send
+    /// \param size : Number of bytes to send
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Send(const char* Data, std::size_t Size);
+    Socket::Status Send(const char* data, std::size_t size);
 
     ////////////////////////////////////////////////////////////
     /// Receive an array of bytes from the host (must be connected first).
     /// This function will block if the socket is blocking
     ///
-    /// \param Data :         Pointer to a byte array to fill (make sure it is big enough)
-    /// \param MaxSize :      Maximum number of bytes to read
-    /// \param SizeReceived : Number of bytes received
+    /// \param data :         Pointer to a byte array to fill (make sure it is big enough)
+    /// \param maxSize :      Maximum number of bytes to read
+    /// \param sizeReceived : Number of bytes received
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Receive(char* Data, std::size_t MaxSize, std::size_t& SizeReceived);
+    Socket::Status Receive(char* data, std::size_t maxSize, std::size_t& sizeReceived);
 
     ////////////////////////////////////////////////////////////
     /// Send a packet of data to the host (must be connected first)
     ///
-    /// \param PacketToSend : Packet to send
+    /// \param packet : Packet to send
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Send(Packet& PacketToSend);
+    Socket::Status Send(Packet& packet);
 
     ////////////////////////////////////////////////////////////
     /// Receive a packet from the host (must be connected first).
     /// This function will block if the socket is blocking
     ///
-    /// \param PacketToReceive : Packet to fill with received data
+    /// \param packet : Packet to fill with received data
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Receive(Packet& PacketToReceive);
+    Socket::Status Receive(Packet& packet);
 
     ////////////////////////////////////////////////////////////
     /// Close the socket
@@ -160,34 +160,34 @@ public :
     ////////////////////////////////////////////////////////////
     /// Comparison operator ==
     ///
-    /// \param Other : Socket to compare
+    /// \param other : Socket to compare
     ///
-    /// \return True if *this == Other
+    /// \return True if *this == other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator ==(const SocketTCP& Other) const;
+    bool operator ==(const SocketTCP& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator !=
     ///
-    /// \param Other : Socket to compare
+    /// \param other : Socket to compare
     ///
-    /// \return True if *this != Other
+    /// \return True if *this != other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator !=(const SocketTCP& Other) const;
+    bool operator !=(const SocketTCP& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator <.
     /// Provided for compatibility with standard containers, as
     /// comparing two sockets doesn't make much sense...
     ///
-    /// \param Other : Socket to compare
+    /// \param other : Socket to compare
     ///
-    /// \return True if *this < Other
+    /// \return True if *this < other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator <(const SocketTCP& Other) const;
+    bool operator <(const SocketTCP& other) const;
 
 private :
 
@@ -197,18 +197,18 @@ private :
     /// Construct the socket from a socket descriptor
     /// (for internal use only)
     ///
-    /// \param Descriptor : Socket descriptor
+    /// \param descriptor : Socket descriptor
     ///
     ////////////////////////////////////////////////////////////
-    SocketTCP(SocketHelper::SocketType Descriptor);
+    SocketTCP(SocketHelper::SocketType descriptor);
 
     ////////////////////////////////////////////////////////////
     /// Create the socket
     ///
-    /// \param Descriptor : System socket descriptor to use (0 by default -- create a new socket)
+    /// \param descriptor : System socket descriptor to use (0 by default -- create a new socket)
     ///
     ////////////////////////////////////////////////////////////
-    void Create(SocketHelper::SocketType Descriptor = 0);
+    void Create(SocketHelper::SocketType descriptor = 0);
 
     ////////////////////////////////////////////////////////////
     // Member data

@@ -44,10 +44,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Default constructor
     ///
-    /// \param Value : Optional value to initalize the variable (NULL by default)
+    /// \param value : Optional value to initalize the variable (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
-    ThreadLocalPtr(T* Value = NULL);
+    ThreadLocalPtr(T* value = NULL);
 
     ////////////////////////////////////////////////////////////
     /// Operator * overload to return a reference to the variable
@@ -76,22 +76,22 @@ public :
     ////////////////////////////////////////////////////////////
     /// Assignment operator
     ///
-    /// \param Value : New pointer value to assign for this thread
+    /// \param value : New pointer value to assign for this thread
     ///
     /// \return Reference to this
     ///
     ////////////////////////////////////////////////////////////
-    ThreadLocalPtr<T>& operator =(T* Value);
+    ThreadLocalPtr<T>& operator =(T* value);
 
     ////////////////////////////////////////////////////////////
     /// Assignment operator
     ///
-    /// \param Other : Other thread-local pointer value to assign
+    /// \param other : Other thread-local pointer value to assign
     ///
     /// \return Reference to this
     ///
     ////////////////////////////////////////////////////////////
-    ThreadLocalPtr<T>& operator =(const ThreadLocalPtr<T>& Other);
+    ThreadLocalPtr<T>& operator =(const ThreadLocalPtr<T>& other);
 };
 
 } // namespace sf

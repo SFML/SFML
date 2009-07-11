@@ -59,49 +59,49 @@ CSFML_API sfColor sfCyan;
 ////////////////////////////////////////////////////////////
 /// Construct a color from its 3 RGB components
 ///
-/// \param R : Red component   (0 .. 255)
-/// \param G : Green component (0 .. 255)
-/// \param B : Blue component  (0 .. 255)
+/// \param red :   Red component   (0 .. 255)
+/// \param green : Green component (0 .. 255)
+/// \param blue :  Blue component  (0 .. 255)
 ///
 /// \return sfColor constructed from the components
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfColor sfColor_FromRGB(sfUint8 R, sfUint8 G, sfUint8 B);
+CSFML_API sfColor sfColor_FromRGB(sfUint8 red, sfUint8 green, sfUint8 blue);
 
 ////////////////////////////////////////////////////////////
 /// Construct a color from its 4 RGBA components
 ///
-/// \param R : Red component   (0 .. 255)
-/// \param G : Green component (0 .. 255)
-/// \param B : Blue component  (0 .. 255)
-/// \param A : Alpha component (0 .. 255)
+/// \param red :   Red component   (0 .. 255)
+/// \param green : Green component (0 .. 255)
+/// \param blue :  Blue component  (0 .. 255)
+/// \param alpha : Alpha component (0 .. 255)
 ///
 /// \return sfColor constructed from the components
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfColor sfColor_FromRGBA(sfUint8 R, sfUint8 G, sfUint8 B, sfUint8 A);
+CSFML_API sfColor sfColor_FromRGBA(sfUint8 red, sfUint8 green, sfUint8 blue, sfUint8 alpha);
 
 ////////////////////////////////////////////////////////////
 /// Add two colors
 ///
-/// \param Color1 : First color
-/// \param Color2 : Second color
+/// \param color1 : First color
+/// \param color2 : Second color
 ///
 /// \return Component-wise saturated addition of the two colors
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfColor sfColor_Add(sfColor Color1, sfColor Color2);
+CSFML_API sfColor sfColor_Add(sfColor color1, sfColor color2);
 
 ////////////////////////////////////////////////////////////
 /// Modulate two colors
 ///
-/// \param Color1 : First color
-/// \param Color2 : Second color
+/// \param color1 : First color
+/// \param color2 : Second color
 ///
 /// \return Component-wise multiplication of the two colors
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfColor sfColor_Modulate(sfColor Color1, sfColor Color2);
+CSFML_API sfColor sfColor_Modulate(sfColor color1, sfColor color2);
 
 
 #endif // SFML_COLOR_H

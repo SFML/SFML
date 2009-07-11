@@ -57,11 +57,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// Append data to the end of the packet
     ///
-    /// \param Data :        Pointer to the bytes to append
-    /// \param SizeInBytes : Number of bytes to append
+    /// \param data :        Pointer to the bytes to append
+    /// \param sizeInBytes : Number of bytes to append
     ///
     ////////////////////////////////////////////////////////////
-    void Append(const void* Data, std::size_t SizeInBytes);
+    void Append(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// Clear the packet data
@@ -107,37 +107,37 @@ public :
     /// Operator >> overloads to extract data from the packet
     ///
     ////////////////////////////////////////////////////////////
-    Packet& operator >>(bool&         Data);
-    Packet& operator >>(Int8&         Data);
-    Packet& operator >>(Uint8&        Data);
-    Packet& operator >>(Int16&        Data);
-    Packet& operator >>(Uint16&       Data);
-    Packet& operator >>(Int32&        Data);
-    Packet& operator >>(Uint32&       Data);
-    Packet& operator >>(float&        Data);
-    Packet& operator >>(double&       Data);
-    Packet& operator >>(char*         Data);
-    Packet& operator >>(std::string&  Data);
-    Packet& operator >>(wchar_t*      Data);
-    Packet& operator >>(std::wstring& Data);
+    Packet& operator >>(bool&         data);
+    Packet& operator >>(Int8&         data);
+    Packet& operator >>(Uint8&        data);
+    Packet& operator >>(Int16&        data);
+    Packet& operator >>(Uint16&       data);
+    Packet& operator >>(Int32&        data);
+    Packet& operator >>(Uint32&       data);
+    Packet& operator >>(float&        data);
+    Packet& operator >>(double&       data);
+    Packet& operator >>(char*         data);
+    Packet& operator >>(std::string&  data);
+    Packet& operator >>(wchar_t*      data);
+    Packet& operator >>(std::wstring& data);
 
     ////////////////////////////////////////////////////////////
     /// Operator << overloads to put data into the packet
     ///
     ////////////////////////////////////////////////////////////
-    Packet& operator <<(bool                Data);
-    Packet& operator <<(Int8                Data);
-    Packet& operator <<(Uint8               Data);
-    Packet& operator <<(Int16               Data);
-    Packet& operator <<(Uint16              Data);
-    Packet& operator <<(Int32               Data);
-    Packet& operator <<(Uint32              Data);
-    Packet& operator <<(float               Data);
-    Packet& operator <<(double              Data);
-    Packet& operator <<(const char*         Data);
-    Packet& operator <<(const std::string&  Data);
-    Packet& operator <<(const wchar_t*      Data);
-    Packet& operator <<(const std::wstring& Data);
+    Packet& operator <<(bool                data);
+    Packet& operator <<(Int8                data);
+    Packet& operator <<(Uint8               data);
+    Packet& operator <<(Int16               data);
+    Packet& operator <<(Uint16              data);
+    Packet& operator <<(Int32               data);
+    Packet& operator <<(Uint32              data);
+    Packet& operator <<(float               data);
+    Packet& operator <<(double              data);
+    Packet& operator <<(const char*         data);
+    Packet& operator <<(const std::string&  data);
+    Packet& operator <<(const wchar_t*      data);
+    Packet& operator <<(const std::wstring& data);
 
 private :
 
@@ -147,31 +147,31 @@ private :
     ////////////////////////////////////////////////////////////
     /// Check if the packet can extract a given size of bytes
     ///
-    /// \param Size : Size to check
+    /// \param size : Size to check
     ///
     /// \return True if Size bytes can be read from the packet's data
     ///
     ////////////////////////////////////////////////////////////
-    bool CheckSize(std::size_t Size);
+    bool CheckSize(std::size_t size);
 
     ////////////////////////////////////////////////////////////
     /// Called before the packet is sent to the network
     ///
-    /// \param DataSize : Variable to fill with the size of data to send
+    /// \param dataSize : Variable to fill with the size of data to send
     ///
     /// \return Pointer to the array of bytes to send
     ///
     ////////////////////////////////////////////////////////////
-    virtual const char* OnSend(std::size_t& DataSize);
+    virtual const char* OnSend(std::size_t& dataSize);
 
     ////////////////////////////////////////////////////////////
     /// Called after the packet has been received from the network
     ///
-    /// \param Data :     Pointer to the array of received bytes
-    /// \param DataSize : Size of the array of bytes
+    /// \param data :     Pointer to the array of received bytes
+    /// \param dataSize : Size of the array of bytes
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnReceive(const char* Data, std::size_t DataSize);
+    virtual void OnReceive(const char* data, std::size_t dataSize);
 
     ////////////////////////////////////////////////////////////
     // Member data

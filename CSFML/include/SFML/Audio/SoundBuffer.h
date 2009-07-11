@@ -35,107 +35,107 @@
 ////////////////////////////////////////////////////////////
 /// Create a new sound buffer and load it from a file
 ///
-/// \param Filename : Path of the music file to open
+/// \param filename : Path of the music file to open
 ///
 /// \return A new sfSoundBuffer object (NULL if failed)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromFile(const char* Filename);
+CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromFile(const char* filename);
 
 ////////////////////////////////////////////////////////////
 /// Create a new sound buffer and load it from a file in memory
 ///
-/// \param Data :        Pointer to the file data in memory
-/// \param SizeInBytes : Size of the data to load, in bytes
+/// \param data :        Pointer to the file data in memory
+/// \param sizeInBytes : Size of the data to load, in bytes
 ///
 /// \return A new sfSoundBuffer object (NULL if failed)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const char* Data, size_t SizeInBytes);
+CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const char* data, size_t sizeInBytes);
 
 ////////////////////////////////////////////////////////////
 /// Create a new sound buffer and load it from an array of
 /// samples in memory - assumed format for samples is
 /// 16 bits signed integer
 ///
-/// \param Samples :       Pointer to the samples in memory
-/// \param SamplesCount :  Number of samples pointed by Samples
-/// \param ChannelsCount : Number of channels (1 = mono, 2 = stereo, ...)
-/// \param SampleRate :    Frequency (number of samples to play per second)
+/// \param samples :       Pointer to the samples in memory
+/// \param samplesCount :  Number of samples pointed by Samples
+/// \param channelsCount : Number of channels (1 = mono, 2 = stereo, ...)
+/// \param sampleRate :    Frequency (number of samples to play per second)
 ///
 /// \return A new sfSoundBuffer object (NULL if failed)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromSamples(const sfInt16* Samples, size_t SamplesCount, unsigned int ChannelsCount, unsigned int SampleRate);
+CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromSamples(const sfInt16* samples, size_t samplesCount, unsigned int channelsCount, unsigned int sampleRate);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing sound buffer
 ///
-/// \param SoundBuffer : Sound buffer to delete
+/// \param soundBuffer : Sound buffer to delete
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSoundBuffer_Destroy(sfSoundBuffer* SoundBuffer);
+CSFML_API void sfSoundBuffer_Destroy(sfSoundBuffer* soundBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Save a sound buffer to a file
 ///
-/// \param SoundBuffer : Sound buffer to save
-/// \param Filename :    Path of the sound file to write
+/// \param soundBuffer : Sound buffer to save
+/// \param filename :    Path of the sound file to write
 ///
 /// \return sfTrue if saving has been successful
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSoundBuffer_SaveToFile(sfSoundBuffer* SoundBuffer, const char* Filename);
+CSFML_API sfBool sfSoundBuffer_SaveToFile(sfSoundBuffer* soundBuffer, const char* filename);
 
 ////////////////////////////////////////////////////////////
 /// Return the samples contained in a sound buffer
 ///
-/// \param SoundBuffer : Sound buffer to get samples from
+/// \param soundBuffer : Sound buffer to get samples from
 ///
 /// \return Pointer to the array of sound samples, in 16 bits signed integer format
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const sfInt16* sfSoundBuffer_GetSamples(sfSoundBuffer* SoundBuffer);
+CSFML_API const sfInt16* sfSoundBuffer_GetSamples(sfSoundBuffer* soundBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Return the number of samples contained in a sound buffer
 ///
-/// \param SoundBuffer : Sound buffer to get samples count from
+/// \param soundBuffer : Sound buffer to get samples count from
 ///
 /// \return Number of samples
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API size_t sfSoundBuffer_GetSamplesCount(sfSoundBuffer* SoundBuffer);
+CSFML_API size_t sfSoundBuffer_GetSamplesCount(sfSoundBuffer* soundBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound buffer
 ///
-/// \param SoundBuffer : Sound buffer to get sample rate from
+/// \param soundBuffer : Sound buffer to get sample rate from
 ///
 /// \return Sound frequency (number of samples per second)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfSoundBuffer_GetSampleRate(sfSoundBuffer* SoundBuffer);
+CSFML_API unsigned int sfSoundBuffer_GetSampleRate(sfSoundBuffer* soundBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Return the number of channels of a sound buffer (1 = mono, 2 = stereo, ...)
 ///
-/// \param SoundBuffer : Sound buffer to get channels count from
+/// \param soundBuffer : Sound buffer to get channels count from
 ///
 /// \return Number of channels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfSoundBuffer_GetChannelsCount(sfSoundBuffer* SoundBuffer);
+CSFML_API unsigned int sfSoundBuffer_GetChannelsCount(sfSoundBuffer* soundBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Get the duration of a sound buffer
 ///
-/// \param SoundBuffer : Sound buffer to get duration from
+/// \param soundBuffer : Sound buffer to get duration from
 ///
 /// \return Sound duration, in seconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSoundBuffer_GetDuration(sfSoundBuffer* SoundBuffer);
+CSFML_API float sfSoundBuffer_GetDuration(sfSoundBuffer* soundBuffer);
 
 
 #endif // SFML_SOUNDBUFFER_H

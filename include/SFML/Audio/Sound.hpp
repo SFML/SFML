@@ -28,9 +28,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Config.hpp>
 #include <SFML/System/Resource.hpp>
 #include <SFML/System/Vector3.hpp>
-#include <SFML/Audio/AudioResource.hpp>
 #include <cstdlib>
 
 
@@ -42,7 +42,7 @@ class SoundBuffer;
 /// Sound defines the properties of a sound such as position,
 /// volume, pitch, etc.
 ////////////////////////////////////////////////////////////
-class SFML_API Sound : public AudioResource
+class SFML_API Sound
 {
 public :
 
@@ -65,22 +65,22 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the sound from its parameters
     ///
-    /// \param Buffer :   Sound buffer to play (NULL by default)
-    /// \param Loop :     Loop flag (false by default)
-    /// \param Pitch :    Value of the pitch (1 by default)
-    /// \param Volume :   Volume (100 by default)
-    /// \param Position : Position (0, 0, 0 by default)
+    /// \param buffer :   Sound buffer to play (NULL by default)
+    /// \param loop :     Loop flag (false by default)
+    /// \param pitch :    Value of the pitch (1 by default)
+    /// \param volume :   Volume (100 by default)
+    /// \param position : Position (0, 0, 0 by default)
     ///
     ////////////////////////////////////////////////////////////
-    Sound(const SoundBuffer& Buffer, bool Loop = false, float Pitch = 1.f, float Volume = 100.f, const Vector3f& Position = Vector3f(0, 0, 0));
+    Sound(const SoundBuffer& buffer, bool loop = false, float pitch = 1.f, float volume = 100.f, const Vector3f& position = Vector3f(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Copy constructor
     ///
-    /// \param Copy : Instance to copy
+    /// \param copy : Instance to copy
     ///
     ////////////////////////////////////////////////////////////
-    Sound(const Sound& Copy);
+    Sound(const Sound& copy);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -109,93 +109,93 @@ public :
     ////////////////////////////////////////////////////////////
     /// Set the source buffer
     ///
-    /// \param Buffer : New sound buffer to bind to the sound
+    /// \param buffer : New sound buffer to bind to the sound
     ///
     ////////////////////////////////////////////////////////////
-    void SetBuffer(const SoundBuffer& Buffer);
+    void SetBuffer(const SoundBuffer& buffer);
 
     ////////////////////////////////////////////////////////////
     /// Set the sound loop state.
     /// This parameter is disabled by default
     ///
-    /// \param Loop : True to play in loop, false to play once
+    /// \param loop : True to play in loop, false to play once
     ///
     ////////////////////////////////////////////////////////////
-    void SetLoop(bool Loop);
+    void SetLoop(bool loop);
 
     ////////////////////////////////////////////////////////////
     /// Set the sound pitch.
     /// The default pitch is 1
     ///
-    /// \param Pitch : New pitch
+    /// \param pitch : New pitch
     ///
     ////////////////////////////////////////////////////////////
-    void SetPitch(float Pitch);
+    void SetPitch(float pitch);
 
     ////////////////////////////////////////////////////////////
     /// Set the sound volume.
     /// The default volume is 100
     ///
-    /// \param Volume : Volume (in range [0, 100])
+    /// \param volume : Volume (in range [0, 100])
     ///
     ////////////////////////////////////////////////////////////
-    void SetVolume(float Volume);
+    void SetVolume(float volume);
 
     ////////////////////////////////////////////////////////////
     /// Set the sound position (take 3 values).
     /// The default position is (0, 0, 0)
     ///
-    /// \param X, Y, Z : Position of the sound in the world
+    /// \param x, y, z : Position of the sound in the world
     ///
     ////////////////////////////////////////////////////////////
-    void SetPosition(float X, float Y, float Z);
+    void SetPosition(float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
     /// Set the sound position (take a 3D vector).
     /// The default position is (0, 0, 0)
     ///
-    /// \param Position : Position of the sound in the world
+    /// \param position : Position of the sound in the world
     ///
     ////////////////////////////////////////////////////////////
-    void SetPosition(const Vector3f& Position);
+    void SetPosition(const Vector3f& position);
 
     ////////////////////////////////////////////////////////////
     /// Make the sound's position relative to the listener's
     /// position, or absolute.
     /// The default value is false (absolute)
     ///
-    /// \param Relative : True to set the position relative, false to set it absolute
+    /// \param relative : True to set the position relative, false to set it absolute
     ///
     ////////////////////////////////////////////////////////////
-    void SetRelativeToListener(bool Relative);
+    void SetRelativeToListener(bool relative);
 
     ////////////////////////////////////////////////////////////
     /// Set the minimum distance - closer than this distance,
     /// the listener will hear the sound at its maximum volume.
     /// The default minimum distance is 1.0
     ///
-    /// \param MinDistance : New minimum distance for the sound
+    /// \param distance : New minimum distance for the sound
     ///
     ////////////////////////////////////////////////////////////
-    void SetMinDistance(float MinDistance);
+    void SetMinDistance(float distance);
 
     ////////////////////////////////////////////////////////////
     /// Set the attenuation factor - the higher the attenuation, the
     /// more the sound will be attenuated with distance from listener.
     /// The default attenuation factor 1.0
     ///
-    /// \param Attenuation : New attenuation factor for the sound
+    /// \param attenuation : New attenuation factor for the sound
     ///
     ////////////////////////////////////////////////////////////
-    void SetAttenuation(float Attenuation);
+    void SetAttenuation(float attenuation);
 
     ////////////////////////////////////////////////////////////
     /// Set the current playing position of the sound
     ///
-    /// \param TimeOffset : New playing position, expressed in seconds
+    /// \param timeOffset : New playing position, expressed in seconds
     ///
     ////////////////////////////////////////////////////////////
-    void SetPlayingOffset(float TimeOffset);
+    void SetPlayingOffset(float timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// Get the source buffer
@@ -286,7 +286,7 @@ public :
     /// \return Reference to the sound
     ///
     ////////////////////////////////////////////////////////////
-    Sound& operator =(const Sound& Other);
+    Sound& operator =(const Sound& other);
 
 private :
 

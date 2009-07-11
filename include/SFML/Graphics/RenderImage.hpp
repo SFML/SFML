@@ -63,25 +63,25 @@ public :
     ////////////////////////////////////////////////////////////
     /// Create the render image from its dimensions
     ///
-    /// \param Width :       Width of the render image
-    /// \param Height :      Height of the render image
-    /// \param DepthBuffer : Do you want a depth buffer attached? (false by default)
+    /// \param width :       Width of the render image
+    /// \param height :      Height of the render image
+    /// \param depthBuffer : Do you want a depth buffer attached? (false by default)
     ///
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool Create(unsigned int Width, unsigned int Height, bool DepthBuffer = false);
+    bool Create(unsigned int width, unsigned int height, bool depthBuffer = false);
 
     ////////////////////////////////////////////////////////////
     /// Activate of deactivate the render-image as the current target
     /// for rendering
     ///
-    /// \param Active : True to activate, false to deactivate (true by default)
+    /// \param active : True to activate, false to deactivate (true by default)
     ///
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool SetActive(bool Active = true);
+    bool SetActive(bool active = true);
 
     ////////////////////////////////////////////////////////////
     /// Get the width of the rendering region of the image
@@ -123,19 +123,19 @@ private :
     /// /see RenderTarget::Activate
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool Active);
+    virtual bool Activate(bool active);
 
     ////////////////////////////////////////////////////////////
     /// Update the pixels of the target image.
     /// This function is called automatically by the image when it
     /// needs to update its pixels, and is only meant for internal use.
     ///
-    /// \param Target : Target image to update
+    /// \param target : Target image to update
     ///
     /// \return True if the new pixels are flipped vertically
     ///
     ////////////////////////////////////////////////////////////
-    bool UpdateImage(Image& Target);
+    bool UpdateImage(Image& target);
 
     ////////////////////////////////////////////////////////////
     // Member data

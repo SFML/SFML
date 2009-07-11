@@ -34,10 +34,10 @@
 ////////////////////////////////////////////////////////////
 /// Change the global volume of all the sounds
 ///
-/// \param Volume : New global volume, in the range [0, 100]
+/// \param volume : New global volume, in the range [0, 100]
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfListener_SetGlobalVolume(float Volume);
+CSFML_API void sfListener_SetGlobalVolume(float volume);
 
 ////////////////////////////////////////////////////////////
 /// Get the current value of the global volume of all the sounds
@@ -50,44 +50,44 @@ CSFML_API float sfListener_GetGlobalVolume();
 ////////////////////////////////////////////////////////////
 /// Change the position of the listener
 ///
-/// \param PosX : X position of the listener in the world
-/// \param PosY : Y position of the listener in the world
-/// \param PosZ : Z position of the listener in the world
+/// \param x : X position of the listener in the world
+/// \param y : Y position of the listener in the world
+/// \param z : Z position of the listener in the world
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfListener_SetPosition(float PosX, float PosY, float PosZ);
+CSFML_API void sfListener_SetPosition(float x, float y, float z);
 
 ////////////////////////////////////////////////////////////
 /// Get the current position of the listener
 ///
-/// \param PosX : X position of the listener in the world
-/// \param PosY : Y position of the listener in the world
-/// \param PosZ : Z position of the listener in the world
+/// \param x : X position of the listener in the world
+/// \param y : Y position of the listener in the world
+/// \param z : Z position of the listener in the world
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfListener_GetPosition(float* PosX, float* PosY, float* PosZ);
+CSFML_API void sfListener_GetPosition(float* x, float* y, float* z);
 
 ////////////////////////////////////////////////////////////
 /// Change the orientation of the listener (the point
 /// he must look at)
 ///
-/// \param TargetX : X position of the point the listener must look at
-/// \param TargetY : X position of the point the listener must look at
-/// \param TargetZ : X position of the point the listener must look at
+/// \param x : X position of the point the listener must look at
+/// \param y : X position of the point the listener must look at
+/// \param z : X position of the point the listener must look at
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfListener_SetTarget(float TargetX, float TargetY, float TargetZ);
+CSFML_API void sfListener_SetTarget(float x, float y, float z);
 
 ////////////////////////////////////////////////////////////
 /// Get the current orientation of the listener (the point
 /// he's looking at)
 ///
-/// \param TargetX : X position of the point the listener is looking at
-/// \param TargetY : X position of the point the listener is looking at
-/// \param TargetZ : X position of the point the listener is looking at
+/// \param x : X position of the point the listener is looking at
+/// \param y : X position of the point the listener is looking at
+/// \param z : X position of the point the listener is looking at
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfListener_GetTarget(float* TargetX, float* TargetY, float* TargetZ);
+CSFML_API void sfListener_GetTarget(float* x, float* y, float* z);
 
 
 #endif // SFML_LISTENER_H

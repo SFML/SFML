@@ -45,10 +45,10 @@ public :
     /// Set the seed for the generator. Using a known seed
     /// allows you to reproduce the same sequence of random number
     ///
-    /// \param Seed : Number to use as the seed
+    /// \param seed : Number to use as the seed
     ///
     ////////////////////////////////////////////////////////////
-    static void SetSeed(unsigned int Seed);
+    static void SetSeed(unsigned int seed);
 
     ////////////////////////////////////////////////////////////
     /// Get the seed used to generate random numbers the generator.
@@ -61,24 +61,24 @@ public :
     ////////////////////////////////////////////////////////////
     /// Get a random float number in a given range
     ///
-    /// \return Start : Start of the range
-    /// \return End :   End of the range
+    /// \return begin : Beginning of the range
+    /// \return end :   End of the range
     ///
-    /// \return Random number in [Begin, End]
+    /// \return Random number in [begin, end]
     ///
     ////////////////////////////////////////////////////////////
-    static float Random(float Begin, float End);
+    static float Random(float begin, float end);
 
     ////////////////////////////////////////////////////////////
     /// Get a random integer number in a given range
     ///
-    /// \return Start : Start of the range
-    /// \return End :   End of the range
+    /// \return begin : Beginning of the range
+    /// \return end :   End of the range
     ///
-    /// \return Random number in [Begin, End]
+    /// \return Random number in [begin, end]
     ///
     ////////////////////////////////////////////////////////////
-    static int Random(int Begin, int End);
+    static int Random(int begin, int end);
 };
 
 } // namespace sf

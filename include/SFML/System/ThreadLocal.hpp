@@ -54,10 +54,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Default constructor
     ///
-    /// \param Value : Optional value to initalize the variable (NULL by default)
+    /// \param value : Optional value to initalize the variable (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
-    ThreadLocal(void* Value = NULL);
+    ThreadLocal(void* value = NULL);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -71,7 +71,7 @@ public :
     /// \param Value : Value of the variable for this thread
     ///
     ////////////////////////////////////////////////////////////
-    void SetValue(void* Value);
+    void SetValue(void* value);
 
     ////////////////////////////////////////////////////////////
     /// Retrieve the thread-specific value of the variable

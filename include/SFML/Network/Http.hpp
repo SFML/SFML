@@ -68,30 +68,30 @@ public :
         ////////////////////////////////////////////////////////////
         /// Default constructor
         ///
-        /// \param RequestMethod : Method to use for the request (Get by default)
-        /// \param URI :           Target URI ("/" by default -- index page)
-        /// \param Body :          Content of the request's body (empty by default)
+        /// \param method : Method to use for the request (Get by default)
+        /// \param URI :    Target URI ("/" by default -- index page)
+        /// \param body :   Content of the request's body (empty by default)
         ///
         ////////////////////////////////////////////////////////////
-        Request(Method RequestMethod = Get, const std::string& URI = "/", const std::string& Body = "");
+        Request(Method method = Get, const std::string& URI = "/", const std::string& body = "");
 
         ////////////////////////////////////////////////////////////
         /// Set the value of a field; the field is added if it doesn't exist
         ///
-        /// \param Field : Name of the field to set (case-insensitive)
-        /// \param Value : Value of the field
+        /// \param field : Name of the field to set (case-insensitive)
+        /// \param value : Value of the field
         ///
         ////////////////////////////////////////////////////////////
-        void SetField(const std::string& Field, const std::string& Value);
+        void SetField(const std::string& field, const std::string& value);
 
         ////////////////////////////////////////////////////////////
         /// Set the request method.
         /// This parameter is Http::Request::Get by default
         ///
-        /// \param RequestMethod : Method to use for the request
+        /// \param method : Method to use for the request
         ///
         ////////////////////////////////////////////////////////////
-        void SetMethod(Method RequestMethod);
+        void SetMethod(Method method);
 
         ////////////////////////////////////////////////////////////
         /// Set the target URI of the request.
@@ -106,21 +106,21 @@ public :
         /// Set the HTTP version of the request.
         /// This parameter is 1.0 by default
         ///
-        /// \param Major : Major version number
-        /// \param Minor : Minor version number
+        /// \param major : Major version number
+        /// \param minor : Minor version number
         ///
         ////////////////////////////////////////////////////////////
-        void SetHttpVersion(unsigned int Major, unsigned int Minor);
+        void SetHttpVersion(unsigned int major, unsigned int minor);
 
         ////////////////////////////////////////////////////////////
         /// Set the body of the request. This parameter is optional and
         /// makes sense only for POST requests.
         /// This parameter is empty by default
         ///
-        /// \param Body : Content of the request body
+        /// \param body : Content of the request body
         ///
         ////////////////////////////////////////////////////////////
-        void SetBody(const std::string& Body);
+        void SetBody(const std::string& body);
 
     private :
 
@@ -137,12 +137,12 @@ public :
         ////////////////////////////////////////////////////////////
         /// Check if the given field has been defined
         ///
-        /// \param Field : Name of the field to check (case-insensitive)
+        /// \param field : Name of the field to check (case-insensitive)
         ///
         /// \return True if the field exists
         ///
         ////////////////////////////////////////////////////////////
-        bool HasField(const std::string& Field) const;
+        bool HasField(const std::string& field) const;
 
         ////////////////////////////////////////////////////////////
         // Types
@@ -213,12 +213,12 @@ public :
         ////////////////////////////////////////////////////////////
         /// Get the value of a field
         ///
-        /// \param Field : Name of the field to get (case-insensitive)
+        /// \param field : Name of the field to get (case-insensitive)
         ///
         /// \return Value of the field, or empty string if not found
         ///
         ////////////////////////////////////////////////////////////
-        const std::string& GetField(const std::string& Field) const;
+        const std::string& GetField(const std::string& field) const;
 
         ////////////////////////////////////////////////////////////
         /// Get the header's status code
@@ -263,10 +263,10 @@ public :
         ////////////////////////////////////////////////////////////
         /// Construct the header from a response string
         ///
-        /// \param Data : Content of the response's header to parse
+        /// \param data : Content of the response's header to parse
         ///
         ////////////////////////////////////////////////////////////
-        void FromString(const std::string& Data);
+        void FromString(const std::string& data);
 
         ////////////////////////////////////////////////////////////
         // Types
@@ -292,20 +292,20 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the Http instance with the target host
     ///
-    /// \param Host : Web server to connect to
-    /// \param Port : Port to use for connection (0 by default -- use the standard port of the protocol used)
+    /// \param host : Web server to connect to
+    /// \param port : Port to use for connection (0 by default -- use the standard port of the protocol used)
     ///
     ////////////////////////////////////////////////////////////
-    Http(const std::string& Host, unsigned short Port = 0);
+    Http(const std::string& host, unsigned short port = 0);
 
     ////////////////////////////////////////////////////////////
     /// Set the target host
     ///
-    /// \param Host : Web server to connect to
-    /// \param Port : Port to use for connection (0 by default -- use the standard port of the protocol used)
+    /// \param host : Web server to connect to
+    /// \param port : Port to use for connection (0 by default -- use the standard port of the protocol used)
     ///
     ////////////////////////////////////////////////////////////
-    void SetHost(const std::string& Host, unsigned short Port = 0);
+    void SetHost(const std::string& host, unsigned short port = 0);
 
     ////////////////////////////////////////////////////////////
     /// Send a HTTP request and return the server's response.
@@ -315,13 +315,13 @@ public :
     /// not return instantly; use a thread if you don't want to block your
     /// application.
     ///
-    /// \param Req :     Request to send
-    /// \param Timeout : Maximum time to wait, in seconds (0 by default, means no timeout)
+    /// \param request : Request to send
+    /// \param timeout : Maximum time to wait, in seconds (0 by default, means no timeout)
     ///
     /// \return Server's response
     ///
     ////////////////////////////////////////////////////////////
-    Response SendRequest(const Request& Req, float Timeout = 0.f);
+    Response SendRequest(const Request& request, float timeout = 0.f);
 
 private :
 

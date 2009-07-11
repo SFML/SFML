@@ -44,10 +44,10 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-ThreadLocal::ThreadLocal(void* Value)
+ThreadLocal::ThreadLocal(void* value)
 {
     myImpl = new priv::ThreadLocalImpl;
-    SetValue(Value);
+    SetValue(value);
 }
 
 
@@ -63,9 +63,9 @@ ThreadLocal::~ThreadLocal()
 ////////////////////////////////////////////////////////////
 /// Set the thread-specific value of the variable
 ////////////////////////////////////////////////////////////
-void ThreadLocal::SetValue(void* Value)
+void ThreadLocal::SetValue(void* value)
 {
-    myImpl->SetValue(Value);
+    myImpl->SetValue(value);
 }
 
 

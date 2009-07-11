@@ -35,20 +35,20 @@ namespace
     ////////////////////////////////////////////////////////////
     /// Helper function for converting a SFML address to a CSFML one
     ////////////////////////////////////////////////////////////
-    sfIPAddress FromSFMLAddress(sf::IPAddress Address)
+    sfIPAddress FromSFMLAddress(sf::IPAddress address)
     {
-        sfIPAddress Result;
-        strncpy(Result.Address, Address.ToString().c_str(), 16);
+        sfIPAddress result;
+        strncpy(result.Address, address.ToString().c_str(), 16);
 
-        return Result;
+        return result;
     }
 
     ////////////////////////////////////////////////////////////
     /// Helper function for converting a CSFML address to a SFML one
     ////////////////////////////////////////////////////////////
-    sf::IPAddress ToSFMLAddress(sfIPAddress Address)
+    sf::IPAddress ToSFMLAddress(sfIPAddress address)
     {
-        return sf::IPAddress(Address.Address);
+        return sf::IPAddress(address.Address);
     }
 }
 
@@ -56,55 +56,55 @@ namespace
 ////////////////////////////////////////////////////////////
 /// Construct an address from a string
 ////////////////////////////////////////////////////////////
-sfIPAddress sfIPAddress_FromString(const char* String)
+sfIPAddress sfIPAddress_FromString(const char* string)
 {
-    return FromSFMLAddress(sf::IPAddress(String));
+    return FromSFMLAddress(sf::IPAddress(string));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Construct an address from 4 bytes
 ////////////////////////////////////////////////////////////
-sfIPAddress sfIPAddress_FromBytes(sfUint8 Byte0, sfUint8 Byte1, sfUint8 Byte2, sfUint8 Byte3)
+sfIPAddress sfIPAddress_FromBytes(sfUint8 byte0, sfUint8 byte1, sfUint8 byte2, sfUint8 byte3)
 {
-    return FromSFMLAddress(sf::IPAddress(Byte0, Byte1, Byte2, Byte3));
+    return FromSFMLAddress(sf::IPAddress(byte0, byte1, byte2, byte3));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Construct the address from a 32-bits integer
 ////////////////////////////////////////////////////////////
-sfIPAddress sfIPAddress_FromInteger(sfUint32 Address)
+sfIPAddress sfIPAddress_FromInteger(sfUint32 address)
 {
-    return FromSFMLAddress(sf::IPAddress(Address));
+    return FromSFMLAddress(sf::IPAddress(address));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Tell if an address is a valid one
 ////////////////////////////////////////////////////////////
-sfBool sfIPAddress_IsValid(sfIPAddress Address)
+sfBool sfIPAddress_IsValid(sfIPAddress address)
 {
-    return ToSFMLAddress(Address).IsValid() ? sfTrue : sfFalse;
+    return ToSFMLAddress(address).IsValid() ? sfTrue : sfFalse;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get a string representation of an address
 ////////////////////////////////////////////////////////////
-void sfIPAddress_ToString(sfIPAddress Address, char* String)
+void sfIPAddress_ToString(sfIPAddress address, char* string)
 {
-    if (String)
-        strcpy(String, Address.Address);
+    if (string)
+        strcpy(string, address.Address);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get an integer representation of the address
 ////////////////////////////////////////////////////////////
-sfUint32 sfIPAddress_ToInteger(sfIPAddress Address)
+sfUint32 sfIPAddress_ToInteger(sfIPAddress address)
 {
-    return ToSFMLAddress(Address).ToInteger();
+    return ToSFMLAddress(address).ToInteger();
 }
 
 
@@ -123,9 +123,9 @@ sfIPAddress sfIPAddress_GetLocalAddress()
 /// distant website ; as a consequence, this function may be
 /// very slow -- use it as few as possible !
 ////////////////////////////////////////////////////////////
-sfIPAddress sfIPAddress_GetPublicAddress(float Timeout)
+sfIPAddress sfIPAddress_GetPublicAddress(float timeout)
 {
-    return FromSFMLAddress(sf::IPAddress::GetPublicAddress(Timeout));
+    return FromSFMLAddress(sf::IPAddress::GetPublicAddress(timeout));
 }
 
 

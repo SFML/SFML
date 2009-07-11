@@ -36,12 +36,12 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-Drawable::Drawable(const Vector2f& Position, const Vector2f& Scale, float Rotation, const Color& Col) :
-myPosition     (Position),
-myScale        (Scale),
+Drawable::Drawable(const Vector2f& position, const Vector2f& scale, float rotation, const Color& color) :
+myPosition     (position),
+myScale        (scale),
 myOrigin       (0, 0),
-myRotation     (Rotation),
-myColor        (Col),
+myRotation     (rotation),
+myColor        (color),
 myBlendMode    (Blend::Alpha),
 myNeedUpdate   (true),
 myInvNeedUpdate(true)
@@ -63,29 +63,29 @@ Drawable::~Drawable()
 ////////////////////////////////////////////////////////////
 /// Set the position of the object (take 2 values)
 ////////////////////////////////////////////////////////////
-void Drawable::SetPosition(float X, float Y)
+void Drawable::SetPosition(float x, float y)
 {
-    SetX(X);
-    SetY(Y);
+    SetX(x);
+    SetY(y);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the position of the object (take a 2D vector)
 ////////////////////////////////////////////////////////////
-void Drawable::SetPosition(const Vector2f& Position)
+void Drawable::SetPosition(const Vector2f& position)
 {
-    SetX(Position.x);
-    SetY(Position.y);
+    SetX(position.x);
+    SetY(position.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the X position of the object
 ////////////////////////////////////////////////////////////
-void Drawable::SetX(float X)
+void Drawable::SetX(float x)
 {
-    myPosition.x    = X;
+    myPosition.x    = x;
     myNeedUpdate    = true;
     myInvNeedUpdate = true;
 }
@@ -94,9 +94,9 @@ void Drawable::SetX(float X)
 ////////////////////////////////////////////////////////////
 /// Set the Y position of the object
 ////////////////////////////////////////////////////////////
-void Drawable::SetY(float Y)
+void Drawable::SetY(float y)
 {
-    myPosition.y    = Y;
+    myPosition.y    = y;
     myNeedUpdate    = true;
     myInvNeedUpdate = true;
 }
@@ -105,31 +105,31 @@ void Drawable::SetY(float Y)
 ////////////////////////////////////////////////////////////
 /// Set the scale of the object (take 2 values)
 ////////////////////////////////////////////////////////////
-void Drawable::SetScale(float ScaleX, float ScaleY)
+void Drawable::SetScale(float factorX, float factorY)
 {
-    SetScaleX(ScaleX);
-    SetScaleY(ScaleY);
+    SetScaleX(factorX);
+    SetScaleY(factorY);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the scale of the object (take a 2D vector)
 ////////////////////////////////////////////////////////////
-void Drawable::SetScale(const Vector2f& Scale)
+void Drawable::SetScale(const Vector2f& scale)
 {
-    SetScaleX(Scale.x);
-    SetScaleY(Scale.y);
+    SetScaleX(scale.x);
+    SetScaleY(scale.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the X scale factor of the object
 ////////////////////////////////////////////////////////////
-void Drawable::SetScaleX(float FactorX)
+void Drawable::SetScaleX(float factor)
 {
-    if (FactorX > 0)
+    if (factor > 0)
     {
-        myScale.x       = FactorX;
+        myScale.x       = factor;
         myNeedUpdate    = true;
         myInvNeedUpdate = true;
     }
@@ -139,11 +139,11 @@ void Drawable::SetScaleX(float FactorX)
 ////////////////////////////////////////////////////////////
 /// Set the Y scale factor of the object
 ////////////////////////////////////////////////////////////
-void Drawable::SetScaleY(float FactorY)
+void Drawable::SetScaleY(float factor)
 {
-    if (FactorY > 0)
+    if (factor > 0)
     {
-        myScale.y       = FactorY;
+        myScale.y       = factor;
         myNeedUpdate    = true;
         myInvNeedUpdate = true;
     }
@@ -155,10 +155,10 @@ void Drawable::SetScaleY(float FactorY)
 /// top-left of the object (take 2 values).
 /// The default origin is (0, 0)
 ////////////////////////////////////////////////////////////
-void Drawable::SetOrigin(float OriginX, float OriginY)
+void Drawable::SetOrigin(float x, float y)
 {
-    myOrigin.x      = OriginX;
-    myOrigin.y      = OriginY;
+    myOrigin.x      = x;
+    myOrigin.y      = y;
     myNeedUpdate    = true;
     myInvNeedUpdate = true;
 }
@@ -169,18 +169,18 @@ void Drawable::SetOrigin(float OriginX, float OriginY)
 /// top-left of the object (take a 2D vector).
 /// The default origin is (0, 0)
 ////////////////////////////////////////////////////////////
-void Drawable::SetOrigin(const Vector2f& Origin)
+void Drawable::SetOrigin(const Vector2f& origin)
 {
-    SetOrigin(Origin.x, Origin.y);
+    SetOrigin(origin.x, origin.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the orientation of the object
 ////////////////////////////////////////////////////////////
-void Drawable::SetRotation(float Rotation)
+void Drawable::SetRotation(float angle)
 {
-    myRotation = static_cast<float>(fmod(Rotation, 360));
+    myRotation = static_cast<float>(fmod(angle, 360));
     if (myRotation < 0)
         myRotation += 360.f;
     myNeedUpdate    = true;
@@ -192,9 +192,9 @@ void Drawable::SetRotation(float Rotation)
 /// Set the color of the object.
 /// The default color is white
 ////////////////////////////////////////////////////////////
-void Drawable::SetColor(const Color& Col)
+void Drawable::SetColor(const Color& color)
 {
-    myColor = Col;
+    myColor = color;
 }
 
 
@@ -202,9 +202,9 @@ void Drawable::SetColor(const Color& Col)
 /// Set the blending mode for the object.
 /// The default blend mode is Blend::Alpha
 ////////////////////////////////////////////////////////////
-void Drawable::SetBlendMode(Blend::Mode Mode)
+void Drawable::SetBlendMode(Blend::Mode mode)
 {
-    myBlendMode = Mode;
+    myBlendMode = mode;
 }
 
 
@@ -266,47 +266,45 @@ Blend::Mode Drawable::GetBlendMode() const
 /// Move the object of a given offset (take 2 values)
 ///
 ////////////////////////////////////////////////////////////
-void Drawable::Move(float OffsetX, float OffsetY)
+void Drawable::Move(float offsetX, float offsetY)
 {
-    SetX(myPosition.x + OffsetX);
-    SetY(myPosition.y + OffsetY);
+    SetPosition(myPosition.x + offsetX, myPosition.y + offsetY);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Move the object of a given offset (take a 2D vector)
 ////////////////////////////////////////////////////////////
-void Drawable::Move(const Vector2f& Offset)
+void Drawable::Move(const Vector2f& offset)
 {
-    Move(Offset.x, Offset.y);
+    SetPosition(myPosition + offset);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Scale the object (take 2 values)
 ////////////////////////////////////////////////////////////
-void Drawable::Scale(float FactorX, float FactorY)
+void Drawable::Scale(float factorX, float factorY)
 {
-    SetScaleX(myScale.x * FactorX);
-    SetScaleY(myScale.y * FactorY);
+    SetScale(myScale.x * factorX, myScale.y * factorY);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Scale the object (take a 2D vector)
 ////////////////////////////////////////////////////////////
-void Drawable::Scale(const Vector2f& Factor)
+void Drawable::Scale(const Vector2f& factor)
 {
-    Scale(Factor.x, Factor.y);
+    SetScale(myScale.x * factor.x, myScale.y * factor.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Rotate the object
 ////////////////////////////////////////////////////////////
-void Drawable::Rotate(float Angle)
+void Drawable::Rotate(float angle)
 {
-    SetRotation(myRotation + Angle);
+    SetRotation(myRotation + angle);
 }
 
 
@@ -314,18 +312,18 @@ void Drawable::Rotate(float Angle)
 /// Transform a point from global coordinates into local coordinates
 /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-sf::Vector2f Drawable::TransformToLocal(const sf::Vector2f& Point) const
+sf::Vector2f Drawable::TransformToLocal(const sf::Vector2f& point) const
 {
-    return GetInverseMatrix().Transform(Point);
+    return GetInverseMatrix().Transform(point);
 }
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from local coordinates into global coordinates
 /// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-sf::Vector2f Drawable::TransformToGlobal(const sf::Vector2f& Point) const
+sf::Vector2f Drawable::TransformToGlobal(const sf::Vector2f& point) const
 {
-    return GetMatrix().Transform(Point);
+    return GetMatrix().Transform(point);
 }
 
 
@@ -364,7 +362,7 @@ const Matrix3& Drawable::GetInverseMatrix() const
 ////////////////////////////////////////////////////////////
 /// Draw the object into the specified window
 ////////////////////////////////////////////////////////////
-void Drawable::Draw(RenderTarget& Target) const
+void Drawable::Draw(RenderTarget& target) const
 {
     // Save the current modelview matrix and set the new one
     GLCheck(glMatrixMode(GL_MODELVIEW));
@@ -382,7 +380,7 @@ void Drawable::Draw(RenderTarget& Target) const
 
         // We have to use glBlendFuncSeparate so that the resulting alpha is
         // not alpha², which is incorrect and would cause problems when rendering
-        // alpha pixels to a RenderImage that would be in turn be rendered to another render target
+        // alpha pixels to a RenderImage that would be in turn rendered to another render target
         switch (myBlendMode)
         {
             case Blend::Alpha :
@@ -403,7 +401,7 @@ void Drawable::Draw(RenderTarget& Target) const
     GLCheck(glColor4f(myColor.r / 255.f, myColor.g / 255.f, myColor.b / 255.f, myColor.a / 255.f));
 
     // Let the derived class render the object geometry
-    Render(Target);
+    Render(target);
 
     // Restore the previous modelview matrix
     GLCheck(glMatrixMode(GL_MODELVIEW));

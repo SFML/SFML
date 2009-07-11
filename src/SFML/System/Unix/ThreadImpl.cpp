@@ -37,10 +37,10 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-ThreadImpl::ThreadImpl(Thread* Owner) :
+ThreadImpl::ThreadImpl(Thread* owner) :
 myIsActive(true)
 {
-    myIsActive = pthread_create(&myThread, NULL, &ThreadImpl::EntryPoint, Owner) == 0;
+    myIsActive = pthread_create(&myThread, NULL, &ThreadImpl::EntryPoint, owner) == 0;
 
     if (!myIsActive)
         std::cerr << "Failed to create thread" << std::endl;
@@ -73,16 +73,16 @@ void ThreadImpl::Terminate()
 ////////////////////////////////////////////////////////////
 /// Global entry point for all threads
 ////////////////////////////////////////////////////////////
-void* ThreadImpl::EntryPoint(void* UserData)
+void* ThreadImpl::EntryPoint(void* userData)
 {
     // The Thread instance is stored in the user data
-    Thread* Owner = static_cast<Thread*>(UserData);
+    Thread* owner = static_cast<Thread*>(userData);
 
     // Tell the thread to handle cancel requests immediatly
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
     // Forward to the owner
-    Owner->Run();
+    owner->Run();
 
     return NULL;
 }

@@ -25,136 +25,136 @@ int main()
     }
 
     // Create the main window
-    sf::RenderWindow App(sf::VideoMode(800, 600), "SFML PostFX");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML PostFX");
 
     // Load a background image to display
-    sf::Image BackgroundImage;
-    if (!BackgroundImage.LoadFromFile("datas/post-fx/background.jpg"))
+    sf::Image backgroundImage;
+    if (!backgroundImage.LoadFromFile("datas/post-fx/background.jpg"))
         return EXIT_FAILURE;
-    sf::Sprite Background(BackgroundImage);
+    sf::Sprite background(backgroundImage);
 
     // Load a sprite which we'll move into the scene
-    sf::Image EntityImage;
-    if (!EntityImage.LoadFromFile("datas/post-fx/sprite.png"))
+    sf::Image entityImage;
+    if (!entityImage.LoadFromFile("datas/post-fx/sprite.png"))
         return EXIT_FAILURE;
-    sf::Sprite Entity(EntityImage);
+    sf::Sprite entity(entityImage);
 
     // Load the text font
-    sf::Font Cheeseburger;
-    if (!Cheeseburger.LoadFromFile("datas/post-fx/cheeseburger.ttf"))
+    sf::Font font;
+    if (!font.LoadFromFile("datas/post-fx/cheeseburger.ttf"))
         return EXIT_FAILURE;
 
     // Load the image needed for the wave effect
-    sf::Image WaveImage;
-    if (!WaveImage.LoadFromFile("datas/post-fx/wave.jpg"))
+    sf::Image waveImage;
+    if (!waveImage.LoadFromFile("datas/post-fx/wave.jpg"))
         return EXIT_FAILURE;
 
     // Load all effects
-    std::map<std::string, sf::PostFX> Effects;
-    if (!Effects["nothing"].LoadFromFile("datas/post-fx/nothing.sfx"))   return EXIT_FAILURE;
-    if (!Effects["blur"].LoadFromFile("datas/post-fx/blur.sfx"))         return EXIT_FAILURE;
-    if (!Effects["colorize"].LoadFromFile("datas/post-fx/colorize.sfx")) return EXIT_FAILURE;
-    if (!Effects["fisheye"].LoadFromFile("datas/post-fx/fisheye.sfx"))   return EXIT_FAILURE;
-    if (!Effects["wave"].LoadFromFile("datas/post-fx/wave.sfx"))         return EXIT_FAILURE;
-    if (!Effects["pixelate"].LoadFromFile("datas/post-fx/pixelate.sfx")) return EXIT_FAILURE;
-    std::map<std::string, sf::PostFX>::iterator CurrentEffect = Effects.find("nothing");
+    std::map<std::string, sf::PostFX> effects;
+    if (!effects["nothing"].LoadFromFile("datas/post-fx/nothing.sfx"))   return EXIT_FAILURE;
+    if (!effects["blur"].LoadFromFile("datas/post-fx/blur.sfx"))         return EXIT_FAILURE;
+    if (!effects["colorize"].LoadFromFile("datas/post-fx/colorize.sfx")) return EXIT_FAILURE;
+    if (!effects["fisheye"].LoadFromFile("datas/post-fx/fisheye.sfx"))   return EXIT_FAILURE;
+    if (!effects["wave"].LoadFromFile("datas/post-fx/wave.sfx"))         return EXIT_FAILURE;
+    if (!effects["pixelate"].LoadFromFile("datas/post-fx/pixelate.sfx")) return EXIT_FAILURE;
+    std::map<std::string, sf::PostFX>::iterator currentEffect = effects.find("nothing");
 
     // Do specific initializations
-    Effects["nothing"].SetTexture("framebuffer", NULL);
-    Effects["blur"].SetTexture("framebuffer", NULL);
-    Effects["blur"].SetParameter("offset", 0.f);
-    Effects["colorize"].SetTexture("framebuffer", NULL);
-    Effects["colorize"].SetParameter("color", 1.f, 1.f, 1.f);
-    Effects["fisheye"].SetTexture("framebuffer", NULL);
-    Effects["wave"].SetTexture("framebuffer", NULL);
-    Effects["wave"].SetTexture("wave", &WaveImage);
-    Effects["pixelate"].SetTexture("framebuffer", NULL);
+    effects["nothing"].SetTexture("framebuffer", NULL);
+    effects["blur"].SetTexture("framebuffer", NULL);
+    effects["blur"].SetParameter("offset", 0.f);
+    effects["colorize"].SetTexture("framebuffer", NULL);
+    effects["colorize"].SetParameter("color", 1.f, 1.f, 1.f);
+    effects["fisheye"].SetTexture("framebuffer", NULL);
+    effects["wave"].SetTexture("framebuffer", NULL);
+    effects["wave"].SetTexture("wave", &waveImage);
+    effects["pixelate"].SetTexture("framebuffer", NULL);
 
     // Define a string for displaying current effect description
-    sf::String CurFXStr;
-    CurFXStr.SetText("Current effect is \"" + CurrentEffect->first + "\"");
-    CurFXStr.SetFont(Cheeseburger);
-    CurFXStr.SetPosition(20.f, 0.f);
-    CurFXStr.SetColor(sf::Color(150, 70, 110));
+    sf::String curFXStr;
+    curFXStr.SetText("Current effect is \"" + currentEffect->first + "\"");
+    curFXStr.SetFont(font);
+    curFXStr.SetPosition(20.f, 0.f);
+    curFXStr.SetColor(sf::Color(150, 70, 110));
 
     // Define a string for displaying help
-    sf::String InfoStr;
-    InfoStr.SetText("Move your mouse to change the effect parameters\nPress numpad + and - to change effect\nWarning : some effects may not work\ndepending on your graphics card");
-    InfoStr.SetFont(Cheeseburger);
-    InfoStr.SetPosition(20.f, 460.f);
-    InfoStr.SetColor(sf::Color(200, 100, 150));
+    sf::String infoStr;
+    infoStr.SetText("Move your mouse to change the effect parameters\nPress numpad + and - to change effect\nWarning : some effects may not work\ndepending on your graphics card");
+    infoStr.SetFont(font);
+    infoStr.SetPosition(20.f, 460.f);
+    infoStr.SetColor(sf::Color(200, 100, 150));
 
     // Create a clock to measure the total time elapsed
-    sf::Clock Clock;
+    sf::Clock clock;
 
     // Start the game loop
-    while (App.IsOpened())
+    while (window.IsOpened())
     {
         // Process events
-        sf::Event Event;
-        while (App.GetEvent(Event))
+        sf::Event event;
+        while (window.GetEvent(event))
         {
             // Close window : exit
-            if (Event.Type == sf::Event::Closed)
-                App.Close();
+            if (event.Type == sf::Event::Closed)
+                window.Close();
 
-            if (Event.Type == sf::Event::KeyPressed)
+            if (event.Type == sf::Event::KeyPressed)
             {
                 // Escape key : exit
-                if (Event.Key.Code == sf::Key::Escape)
-                    App.Close();
+                if (event.Key.Code == sf::Key::Escape)
+                    window.Close();
 
                 // Add key : next effect
-                if (Event.Key.Code == sf::Key::Add)
+                if (event.Key.Code == sf::Key::Add)
                 {
-                    CurrentEffect++;
-                    if (CurrentEffect == Effects.end())
-                        CurrentEffect = Effects.begin();
-                    CurFXStr.SetText("Current effect is \"" + CurrentEffect->first + "\"");
+                    currentEffect++;
+                    if (currentEffect == effects.end())
+                        currentEffect = effects.begin();
+                    curFXStr.SetText("Current effect is \"" + currentEffect->first + "\"");
                 }
 
                 // Subtract key : previous effect
-                if (Event.Key.Code == sf::Key::Subtract)
+                if (event.Key.Code == sf::Key::Subtract)
                 {
-                    if (CurrentEffect == Effects.begin())
-                        CurrentEffect = Effects.end();
-                    CurrentEffect--;
-                    CurFXStr.SetText("Current effect is \"" + CurrentEffect->first + "\"");
+                    if (currentEffect == effects.begin())
+                        currentEffect = effects.end();
+                    currentEffect--;
+                    curFXStr.SetText("Current effect is \"" + currentEffect->first + "\"");
                 }
             }
         }
 
         // Get the mouse position in the range [0, 1]
-        float X = App.GetInput().GetMouseX() / static_cast<float>(App.GetWidth());
-        float Y = App.GetInput().GetMouseY() / static_cast<float>(App.GetHeight());
+        float mouseX = window.GetInput().GetMouseX() / static_cast<float>(window.GetWidth());
+        float mouseY = window.GetInput().GetMouseY() / static_cast<float>(window.GetHeight());
 
         // Update the current effect
-        if      (CurrentEffect->first == "blur")     CurrentEffect->second.SetParameter("offset", X * Y * 0.05f);
-        else if (CurrentEffect->first == "colorize") CurrentEffect->second.SetParameter("color", 0.3f, X, Y);
-        else if (CurrentEffect->first == "fisheye")  CurrentEffect->second.SetParameter("mouse", X, 1.f - Y);
-        else if (CurrentEffect->first == "wave")     CurrentEffect->second.SetParameter("offset", X, Y);
-        else if (CurrentEffect->first == "pixelate") CurrentEffect->second.SetParameter("mouse", X, Y);
+        if      (currentEffect->first == "blur")     currentEffect->second.SetParameter("offset", mouseX * mouseY * 0.05f);
+        else if (currentEffect->first == "colorize") currentEffect->second.SetParameter("color", 0.3f, mouseX, mouseY);
+        else if (currentEffect->first == "fisheye")  currentEffect->second.SetParameter("mouse", mouseX, 1.f - mouseY);
+        else if (currentEffect->first == "wave")     currentEffect->second.SetParameter("offset", mouseX, mouseY);
+        else if (currentEffect->first == "pixelate") currentEffect->second.SetParameter("mouse", mouseX, mouseY);
 
         // Animate the sprite
-        float EntityX = (cos(Clock.GetElapsedTime() * 1.3f) + 1.2f) * 300;
-        float EntityY = (cos(Clock.GetElapsedTime() * 0.8f) + 1.2f) * 200;
-        Entity.SetPosition(EntityX, EntityY);
-        Entity.Rotate(App.GetFrameTime() * 100);
+        float entityX = (cos(clock.GetElapsedTime() * 1.3f) + 1.2f) * 300;
+        float entityY = (cos(clock.GetElapsedTime() * 0.8f) + 1.2f) * 200;
+        entity.SetPosition(entityX, entityY);
+        entity.Rotate(window.GetFrameTime() * 100);
 
         // Clear the window
-        App.Clear();
+        window.Clear();
 
         // Draw background, sprite and apply the post-fx
-        App.Draw(Background);
-        App.Draw(Entity);
-        App.Draw(CurrentEffect->second);
+        window.Draw(background);
+        window.Draw(entity);
+        window.Draw(currentEffect->second);
 
         // Draw interface strings
-        App.Draw(CurFXStr);
-        App.Draw(InfoStr);
+        window.Draw(curFXStr);
+        window.Draw(infoStr);
 
         // Finally, display the rendered frame on screen
-        App.Display();
+        window.Display();
     }
 
     return EXIT_SUCCESS;
@@ -169,37 +169,36 @@ int main()
 void DisplayError()
 {
     // Create the main window
-    sf::RenderWindow App(sf::VideoMode(800, 600), "SFML PostFX");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML PostFX");
 
     // Define a string for displaying the error message
-    sf::String ErrorStr("Sorry, your system doesn't support post-effects");
-    ErrorStr.SetPosition(100.f, 250.f);
-    ErrorStr.SetColor(sf::Color(200, 100, 150));
+    sf::String error("Sorry, your system doesn't support post-effects");
+    error.SetPosition(100.f, 250.f);
+    error.SetColor(sf::Color(200, 100, 150));
 
     // Start the game loop
-    bool Running = true;
-    while (Running)
+    while (window.IsOpened())
     {
         // Process events
-        sf::Event Event;
-        while (App.GetEvent(Event))
+        sf::Event event;
+        while (window.GetEvent(event))
         {
             // Close window : exit
-            if (Event.Type == sf::Event::Closed)
-                Running = false;
+            if (event.Type == sf::Event::Closed)
+                window.Close();
 
             // Escape key : exit
-            if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
-                Running = false;
+            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Key::Escape))
+                window.Close();
         }
 
         // Clear the window
-        App.Clear();
+        window.Clear();
 
         // Draw the error message
-        App.Draw(ErrorStr);
+        window.Draw(error);
 
         // Finally, display the rendered frame on screen
-        App.Display();
+        window.Display();
     }
 }

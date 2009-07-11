@@ -54,9 +54,9 @@ namespace priv
 /// by default.
 ///
 /// \code
-/// void ThreadedFunc(void*)
+/// void ThreadFunction(void*)
 /// {
-///    sf::Context Ctx;
+///    sf::Context context;
 ///    // from now on, you have a valid context
 ///
 ///    // you can make OpenGL calls
@@ -89,10 +89,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Activate or deactivate explicitely the context
     ///
-    /// \param Active True to activate, false to deactivate
+    /// \param active : True to activate, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    void SetActive(bool Active);
+    void SetActive(bool active);
 
 private :
 

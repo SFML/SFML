@@ -38,8 +38,8 @@ myResource(NULL)
 /// Construct from a raw resource
 ////////////////////////////////////////////////////////////
 template <typename T>
-ResourcePtr<T>::ResourcePtr(const T* Resource) :
-myResource(Resource)
+ResourcePtr<T>::ResourcePtr(const T* resource) :
+myResource(resource)
 {
     if (myResource)
         myResource->Connect(*this);
@@ -50,8 +50,8 @@ myResource(Resource)
 /// Copy constructor
 ////////////////////////////////////////////////////////////
 template <typename T>
-ResourcePtr<T>::ResourcePtr(const ResourcePtr<T>& Copy) :
-myResource(Copy.myResource)
+ResourcePtr<T>::ResourcePtr(const ResourcePtr<T>& copy) :
+myResource(copy.myResource)
 {
     if (myResource)
         myResource->Connect(*this);
@@ -73,12 +73,12 @@ ResourcePtr<T>::~ResourcePtr()
 /// Assignment operator from another ResourcePtr
 ////////////////////////////////////////////////////////////
 template <typename T>
-ResourcePtr<T>& ResourcePtr<T>::operator =(const ResourcePtr<T>& Other)
+ResourcePtr<T>& ResourcePtr<T>::operator =(const ResourcePtr<T>& other)
 {
     if (myResource)
         myResource->Disconnect(*this);
 
-    myResource = Other.myResource;
+    myResource = other.myResource;
 
     if (myResource)
         myResource->Connect(*this);
@@ -91,12 +91,12 @@ ResourcePtr<T>& ResourcePtr<T>::operator =(const ResourcePtr<T>& Other)
 /// Assignment operator from a raw resource
 ////////////////////////////////////////////////////////////
 template <typename T>
-ResourcePtr<T>& ResourcePtr<T>::operator =(const T* Resource)
+ResourcePtr<T>& ResourcePtr<T>::operator =(const T* resource)
 {
     if (myResource)
         myResource->Disconnect(*this);
 
-    myResource = Resource;
+    myResource = resource;
 
     if (myResource)
         myResource->Connect(*this);

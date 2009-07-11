@@ -47,10 +47,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Get supported video modes
     ///
-    /// \param Modes : Array to fill with available video modes
+    /// \param modes : Array to fill with available video modes
     ///
     ////////////////////////////////////////////////////////////
-    static void GetSupportedVideoModes(std::vector<VideoMode>& Modes);
+    static void GetSupportedVideoModes(std::vector<VideoMode>& modes);
 
     ////////////////////////////////////////////////////////////
     /// Get current desktop video mode

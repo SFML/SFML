@@ -56,20 +56,20 @@ public :
     /// Change the blocking state of the socket.
     /// The default behaviour of a socket is blocking
     ///
-    /// \param Blocking : Pass true to set the socket as blocking, or false for non-blocking
+    /// \param blocking : Pass true to set the socket as blocking, or false for non-blocking
     ///
     ////////////////////////////////////////////////////////////
-    void SetBlocking(bool Blocking);
+    void SetBlocking(bool blocking);
 
     ////////////////////////////////////////////////////////////
     /// Bind the socket to a specific port
     ///
-    /// \param Port : Port to bind the socket to
+    /// \param port : Port to bind the socket to
     ///
     /// \return True if operation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool Bind(unsigned short Port);
+    bool Bind(unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// Unbind the socket from its previous port, if any
@@ -82,55 +82,55 @@ public :
     ////////////////////////////////////////////////////////////
     /// Send an array of bytes
     ///
-    /// \param Data :    Pointer to the bytes to send
-    /// \param Size :    Number of bytes to send
-    /// \param Address : Address of the computer to send the packet to
-    /// \param Port :    Port to send the data to
+    /// \param data :    Pointer to the bytes to send
+    /// \param size :    Number of bytes to send
+    /// \param address : Address of the computer to send the packet to
+    /// \param port :    Port to send the data to
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Send(const char* Data, std::size_t Size, const IPAddress& Address, unsigned short Port);
+    Socket::Status Send(const char* data, std::size_t size, const IPAddress& address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// Receive an array of bytes.
     /// This function will block if the socket is blocking
     ///
-    /// \param Data :         Pointer to a byte array to fill (make sure it is big enough)
-    /// \param MaxSize :      Maximum number of bytes to read
-    /// \param SizeReceived : Number of bytes received
-    /// \param Address :      Address of the computer which sent the data
-    /// \param Port :         Port on which the remote computer sent the data
+    /// \param data :         Pointer to a byte array to fill (make sure it is big enough)
+    /// \param maxSize :      Maximum number of bytes to read
+    /// \param sizeReceived : Number of bytes received
+    /// \param address :      Address of the computer which sent the data
+    /// \param port :         Port on which the remote computer sent the data
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Receive(char* Data, std::size_t MaxSize, std::size_t& SizeReceived, IPAddress& Address, unsigned short& Port);
+    Socket::Status Receive(char* data, std::size_t maxSize, std::size_t& sizeReceived, IPAddress& address, unsigned short& port);
 
     ////////////////////////////////////////////////////////////
     /// Send a packet of data
     ///
-    /// \param PacketToSend : Packet to send
-    /// \param Address :      Address of the computer to send the packet to
-    /// \param Port :         Port to send the data to
+    /// \param packet :  Packet to send
+    /// \param address : Address of the computer to send the packet to
+    /// \param port :    Port to send the data to
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Send(Packet& PacketToSend, const IPAddress& Address, unsigned short Port);
+    Socket::Status Send(Packet& packet, const IPAddress& address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// Receive a packet.
     /// This function will block if the socket is blocking
     ///
-    /// \param PacketToReceive : Packet to fill with received data
-    /// \param Address :         Address of the computer which sent the packet
-    /// \param Port :            Port on which the remote computer sent the data
+    /// \param packet :  Packet to fill with received data
+    /// \param Address : Address of the computer which sent the packet
+    /// \param Port :    Port on which the remote computer sent the data
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Receive(Packet& PacketToReceive, IPAddress& Address, unsigned short& Port);
+    Socket::Status Receive(Packet& packet, IPAddress& address, unsigned short& port);
 
     ////////////////////////////////////////////////////////////
     /// Close the socket
@@ -160,34 +160,34 @@ public :
     ////////////////////////////////////////////////////////////
     /// Comparison operator ==
     ///
-    /// \param Other : Socket to compare
+    /// \param other : Socket to compare
     ///
-    /// \return True if *this == Other
+    /// \return True if *this == other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator ==(const SocketUDP& Other) const;
+    bool operator ==(const SocketUDP& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator !=
     ///
-    /// \param Other : Socket to compare
+    /// \param other : Socket to compare
     ///
-    /// \return True if *this != Other
+    /// \return True if *this != other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator !=(const SocketUDP& Other) const;
+    bool operator !=(const SocketUDP& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator <.
     /// Provided for compatibility with standard containers, as
     /// comparing two sockets doesn't make much sense...
     ///
-    /// \param Other : Socket to compare
+    /// \param other : Socket to compare
     ///
-    /// \return True if *this < Other
+    /// \return True if *this < other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator <(const SocketUDP& Other) const;
+    bool operator <(const SocketUDP& other) const;
 
 private :
 
@@ -197,18 +197,18 @@ private :
     /// Construct the socket from a socket descriptor
     /// (for internal use only)
     ///
-    /// \param Descriptor : Socket descriptor
+    /// \param descriptor : Socket descriptor
     ///
     ////////////////////////////////////////////////////////////
-    SocketUDP(SocketHelper::SocketType Descriptor);
+    SocketUDP(SocketHelper::SocketType descriptor);
 
     ////////////////////////////////////////////////////////////
     /// Create the socket
     ///
-    /// \param Descriptor : System socket descriptor to use (0 by default -- create a new socket)
+    /// \param descriptor : System socket descriptor to use (0 by default -- create a new socket)
     ///
     ////////////////////////////////////////////////////////////
-    void Create(SocketHelper::SocketType Descriptor = 0);
+    void Create(SocketHelper::SocketType descriptor = 0);
 
     ////////////////////////////////////////////////////////////
     // Member data

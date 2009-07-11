@@ -60,10 +60,10 @@ protected :
     ////////////////////////////////////////////////////////////
     /// Copy constructor
     ///
-    /// \param Copy : Resource to copy
+    /// \param copy : Resource to copy
     ///
     ////////////////////////////////////////////////////////////
-    Resource(const Resource<T>& Copy);
+    Resource(const Resource<T>& copy);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -74,12 +74,12 @@ protected :
     ////////////////////////////////////////////////////////////
     /// Assignment operator
     ///
-    /// \param Other : Resource to copy
+    /// \param other : Resource to copy
     ///
     /// \return Reference to this
     ///
     ////////////////////////////////////////////////////////////
-    Resource<T>& operator =(const Resource<T>& Other);
+    Resource<T>& operator =(const Resource<T>& other);
 
 private :
 
@@ -88,18 +88,18 @@ private :
     ////////////////////////////////////////////////////////////
     /// Connect a ResourcePtr to this resource
     ///
-    /// \param Observer : Observer to add
+    /// \param observer : Observer to add
     ///
     ////////////////////////////////////////////////////////////
-    void Connect(ResourcePtr<T>& Observer) const;
+    void Connect(ResourcePtr<T>& observer) const;
 
     ////////////////////////////////////////////////////////////
     /// Disconnect a ResourcePtr from this resource
     ///
-    /// \param Observer : Observer to remove
+    /// \param observer : Observer to remove
     ///
     ////////////////////////////////////////////////////////////
-    void Disconnect(ResourcePtr<T>& Observer) const;
+    void Disconnect(ResourcePtr<T>& observer) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -126,18 +126,18 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct from a raw resource
     ///
-    /// \param Resource : Internal resource
+    /// \param resource : Internal resource
     ///
     ////////////////////////////////////////////////////////////
-    ResourcePtr(const T* Resource);
+    ResourcePtr(const T* resource);
 
     ////////////////////////////////////////////////////////////
     /// Copy constructor
     ///
-    /// \param Copy : Instance to copy
+    /// \param copy : Instance to copy
     ///
     ////////////////////////////////////////////////////////////
-    ResourcePtr(const ResourcePtr<T>& Copy);
+    ResourcePtr(const ResourcePtr<T>& copy);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -148,22 +148,22 @@ public :
     ////////////////////////////////////////////////////////////
     /// Assignment operator from another ResourcePtr
     ///
-    /// \param Other : Resource pointer to assign
+    /// \param other : Resource pointer to assign
     ///
     /// \return Reference to this
     ///
     ////////////////////////////////////////////////////////////
-    ResourcePtr<T>& operator =(const ResourcePtr<T>& Other);
+    ResourcePtr<T>& operator =(const ResourcePtr<T>& other);
 
     ////////////////////////////////////////////////////////////
     /// Assignment operator from a raw resource
     ///
-    /// \param Resource : Resource to assign
+    /// \param resource : Resource to assign
     ///
     /// \return Reference to this
     ///
     ////////////////////////////////////////////////////////////
-    ResourcePtr<T>& operator =(const T* Resource);
+    ResourcePtr<T>& operator =(const T* resource);
 
     ////////////////////////////////////////////////////////////
     /// Cast operator to implicitely convert the resource pointer to

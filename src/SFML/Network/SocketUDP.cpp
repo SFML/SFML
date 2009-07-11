@@ -47,48 +47,48 @@ SocketUDP::SocketUDP()
 ////////////////////////////////////////////////////////////
 /// Change the blocking state of the socket
 ////////////////////////////////////////////////////////////
-void SocketUDP::SetBlocking(bool Blocking)
+void SocketUDP::SetBlocking(bool blocking)
 {
     // Make sure our socket is valid
     if (!IsValid())
         Create();
 
-    SocketHelper::SetBlocking(mySocket, Blocking);
-    myIsBlocking = Blocking;
+    SocketHelper::SetBlocking(mySocket, blocking);
+    myIsBlocking = blocking;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Bind the socket to a specific port
 ////////////////////////////////////////////////////////////
-bool SocketUDP::Bind(unsigned short Port)
+bool SocketUDP::Bind(unsigned short port)
 {
     // Check if the socket is already bound to the specified port
-    if (myPort != Port)
+    if (myPort != port)
     {
         // If the socket was previously bound to another port, we need to unbind it first
         Unbind();
 
-        if (Port != 0)
+        if (port != 0)
         {
             // Build an address with the specified port
-            sockaddr_in Addr;
-            Addr.sin_family      = AF_INET;
-            Addr.sin_port        = htons(Port);
-            Addr.sin_addr.s_addr = INADDR_ANY;
-            memset(Addr.sin_zero, 0, sizeof(Addr.sin_zero));
+            sockaddr_in sockAddr;
+            sockAddr.sin_family      = AF_INET;
+            sockAddr.sin_port        = htons(port);
+            sockAddr.sin_addr.s_addr = INADDR_ANY;
+            memset(sockAddr.sin_zero, 0, sizeof(sockAddr.sin_zero));
 
             // Bind the socket to the port
-            if (bind(mySocket, reinterpret_cast<sockaddr*>(&Addr), sizeof(Addr)) == -1)
+            if (bind(mySocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr)) == -1)
             {
-                std::cerr << "Failed to bind the socket to port " << Port << std::endl;
+                std::cerr << "Failed to bind the socket to port " << port << std::endl;
                 myPort = 0;
                 return false;
             }
         }
 
         // Save the new port
-        myPort = Port;
+        myPort = port;
     }
 
     return true;
@@ -115,32 +115,32 @@ bool SocketUDP::Unbind()
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes
 ////////////////////////////////////////////////////////////
-Socket::Status SocketUDP::Send(const char* Data, std::size_t Size, const IPAddress& Address, unsigned short Port)
+Socket::Status SocketUDP::Send(const char* data, std::size_t size, const IPAddress& address, unsigned short port)
 {
     // Make sure the socket is valid
     if (!IsValid())
         Create();
 
     // Check parameters
-    if (Data && Size)
+    if (data && size)
     {
         // Build the target address
-        sockaddr_in Target;
-        Target.sin_family      = AF_INET;
-        Target.sin_port        = htons(Port);
-        Target.sin_addr.s_addr = inet_addr(Address.ToString().c_str());
-        memset(Target.sin_zero, 0, sizeof(Target.sin_zero));
+        sockaddr_in sockAddr;
+        sockAddr.sin_family      = AF_INET;
+        sockAddr.sin_port        = htons(port);
+        sockAddr.sin_addr.s_addr = inet_addr(address.ToString().c_str());
+        memset(sockAddr.sin_zero, 0, sizeof(sockAddr.sin_zero));
 
         // Loop until every byte has been sent
-        int Sent = 0;
-        int SizeToSend = static_cast<int>(Size);
-        for (int Length = 0; Length < SizeToSend; Length += Sent)
+        int sent = 0;
+        int sizeToSend = static_cast<int>(size);
+        for (int length = 0; length < sizeToSend; length += sent)
         {
             // Send a chunk of data
-            Sent = sendto(mySocket, Data + Length, SizeToSend - Length, 0, reinterpret_cast<sockaddr*>(&Target), sizeof(Target));
+            sent = sendto(mySocket, data + length, sizeToSend - length, 0, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr));
 
             // Check errors
-            if (Sent <= 0)
+            if (sent <= 0)
                 return SocketHelper::GetErrorStatus();
         }
 
@@ -159,10 +159,10 @@ Socket::Status SocketUDP::Send(const char* Data, std::size_t Size, const IPAddre
 /// Receive an array of bytes.
 /// This function will block if the socket is blocking
 ////////////////////////////////////////////////////////////
-Socket::Status SocketUDP::Receive(char* Data, std::size_t MaxSize, std::size_t& SizeReceived, IPAddress& Address, unsigned short& Port)
+Socket::Status SocketUDP::Receive(char* data, std::size_t maxSize, std::size_t& sizeReceived, IPAddress& address, unsigned short& port)
 {
     // First clear the size received
-    SizeReceived = 0;
+    sizeReceived = 0;
 
     // Make sure the socket is bound to a port
     if (myPort == 0)
@@ -176,32 +176,32 @@ Socket::Status SocketUDP::Receive(char* Data, std::size_t MaxSize, std::size_t& 
         Create();
 
     // Check parameters
-    if (Data && MaxSize)
+    if (data && maxSize)
     {
         // Data that will be filled with the other computer's address
-        sockaddr_in Sender;
-        Sender.sin_family      = AF_INET;
-        Sender.sin_port        = 0;
-        Sender.sin_addr.s_addr = INADDR_ANY;
-        memset(Sender.sin_zero, 0, sizeof(Sender.sin_zero));
-        SocketHelper::LengthType SenderSize = sizeof(Sender);
+        sockaddr_in sockAddr;
+        sockAddr.sin_family      = AF_INET;
+        sockAddr.sin_port        = 0;
+        sockAddr.sin_addr.s_addr = INADDR_ANY;
+        memset(sockAddr.sin_zero, 0, sizeof(sockAddr.sin_zero));
+        SocketHelper::LengthType sockAddrSize = sizeof(sockAddr);
 
         // Receive a chunk of bytes
-        int Received = recvfrom(mySocket, Data, static_cast<int>(MaxSize), 0, reinterpret_cast<sockaddr*>(&Sender), &SenderSize);
+        int received = recvfrom(mySocket, data, static_cast<int>(maxSize), 0, reinterpret_cast<sockaddr*>(&sockAddr), &sockAddrSize);
 
         // Check the number of bytes received
-        if (Received > 0)
+        if (received > 0)
         {
-            Address = IPAddress(inet_ntoa(Sender.sin_addr));
-            Port = ntohs(Sender.sin_port);
-            SizeReceived = static_cast<std::size_t>(Received);
+            address = IPAddress(inet_ntoa(sockAddr.sin_addr));
+            port = ntohs(sockAddr.sin_port);
+            sizeReceived = static_cast<std::size_t>(received);
             return Socket::Done;
         }
         else
         {
-            Address = IPAddress();
-            Port = 0;
-            return Received == 0 ? Socket::Disconnected : SocketHelper::GetErrorStatus();
+            address = IPAddress();
+            port = 0;
+            return received == 0 ? Socket::Disconnected : SocketHelper::GetErrorStatus();
         }
     }
     else
@@ -216,20 +216,20 @@ Socket::Status SocketUDP::Receive(char* Data, std::size_t MaxSize, std::size_t& 
 ////////////////////////////////////////////////////////////
 /// Send a packet of data
 ////////////////////////////////////////////////////////////
-Socket::Status SocketUDP::Send(Packet& PacketToSend, const IPAddress& Address, unsigned short Port)
+Socket::Status SocketUDP::Send(Packet& packet, const IPAddress& address, unsigned short port)
 {
     // Get the data to send from the packet
-    std::size_t DataSize = 0;
-    const char* Data = PacketToSend.OnSend(DataSize);
+    std::size_t dataSize = 0;
+    const char* data = packet.OnSend(dataSize);
 
     // Send the packet size
-    Uint32 PacketSize = htonl(static_cast<unsigned long>(DataSize));
-    Send(reinterpret_cast<const char*>(&PacketSize), sizeof(PacketSize), Address, Port);
+    Uint32 packetSize = htonl(static_cast<unsigned long>(dataSize));
+    Send(reinterpret_cast<const char*>(&packetSize), sizeof(packetSize), address, port);
 
     // Send the packet data
-    if (PacketSize > 0)
+    if (packetSize > 0)
     {
-        return Send(Data, DataSize, Address, Port);
+        return Send(data, dataSize, address, port);
     }
     else
     {
@@ -242,65 +242,65 @@ Socket::Status SocketUDP::Send(Packet& PacketToSend, const IPAddress& Address, u
 /// Receive a packet.
 /// This function will block if the socket is blocking
 ////////////////////////////////////////////////////////////
-Socket::Status SocketUDP::Receive(Packet& PacketToReceive, IPAddress& Address, unsigned short& Port)
+Socket::Status SocketUDP::Receive(Packet& packet, IPAddress& address, unsigned short& port)
 {
     // This is not safe at all, as data can be lost, duplicated, or arrive in a different order.
     // So if a packet is split into more than one chunk, nobody knows what could happen...
     // Conclusion : we shouldn't use packets with UDP, unless we build a more complex protocol on top of it.
 
     // We start by getting the size of the incoming packet
-    Uint32      PacketSize = 0;
-    std::size_t Received   = 0;
+    Uint32      packetSize = 0;
+    std::size_t received   = 0;
     if (myPendingPacketSize < 0)
     {
-        Socket::Status Status = Receive(reinterpret_cast<char*>(&PacketSize), sizeof(PacketSize), Received, Address, Port);
-        if (Status != Socket::Done)
-            return Status;
+        Socket::Status status = Receive(reinterpret_cast<char*>(&packetSize), sizeof(packetSize), received, address, port);
+        if (status != Socket::Done)
+            return status;
 
-        PacketSize = ntohl(PacketSize);
+        packetSize = ntohl(packetSize);
     }
     else
     {
         // There is a pending packet : we already know its size
-        PacketSize = myPendingPacketSize;
+        packetSize = myPendingPacketSize;
     }
 
     // Clear the user packet
-    PacketToReceive.Clear();
+    packet.Clear();
 
     // Use another address instance for receiving the packet data ;
     // chunks of data coming from a different sender will be discarded (and lost...)
-    IPAddress Sender;
-    unsigned short SenderPort;
+    IPAddress sender;
+    unsigned short senderPort;
 
     // Then loop until we receive all the packet data
-    char Buffer[1024];
-    while (myPendingPacket.size() < PacketSize)
+    char buffer[1024];
+    while (myPendingPacket.size() < packetSize)
     {
         // Receive a chunk of data
-        std::size_t SizeToGet = std::min(static_cast<std::size_t>(PacketSize - myPendingPacket.size()), sizeof(Buffer));
-        Socket::Status Status = Receive(Buffer, SizeToGet, Received, Sender, SenderPort);
-        if (Status != Socket::Done)
+        std::size_t sizeToGet = std::min(static_cast<std::size_t>(packetSize - myPendingPacket.size()), sizeof(buffer));
+        Socket::Status status = Receive(buffer, sizeToGet, received, sender, senderPort);
+        if (status != Socket::Done)
         {
             // We must save the size of the pending packet until we can receive its content
-            if (Status == Socket::NotReady)
-                myPendingPacketSize = PacketSize;
-            return Status;
+            if (status == Socket::NotReady)
+                myPendingPacketSize = packetSize;
+            return status;
         }
 
         // Append it into the packet
-        if ((Sender == Address) && (SenderPort == Port) && (Received > 0))
+        if ((sender == address) && (senderPort == port) && (received > 0))
         {
-            myPendingPacket.resize(myPendingPacket.size() + Received);
-            char* Begin = &myPendingPacket[0] + myPendingPacket.size() - Received;
-            memcpy(Begin, Buffer, Received);
+            myPendingPacket.resize(myPendingPacket.size() + received);
+            char* begin = &myPendingPacket[0] + myPendingPacket.size() - received;
+            memcpy(begin, buffer, received);
         }
     }
 
     // We have received all the datas : we can copy it to the user packet, and clear our internal packet
-    PacketToReceive.Clear();
+    packet.Clear();
     if (!myPendingPacket.empty())
-        PacketToReceive.OnReceive(&myPendingPacket[0], myPendingPacket.size());
+        packet.OnReceive(&myPendingPacket[0], myPendingPacket.size());
     myPendingPacket.clear();
     myPendingPacketSize = -1;
 
@@ -353,18 +353,18 @@ unsigned short SocketUDP::GetPort() const
 ////////////////////////////////////////////////////////////
 /// Comparison operator ==
 ////////////////////////////////////////////////////////////
-bool SocketUDP::operator ==(const SocketUDP& Other) const
+bool SocketUDP::operator ==(const SocketUDP& other) const
 {
-    return mySocket == Other.mySocket;
+    return mySocket == other.mySocket;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Comparison operator !=
 ////////////////////////////////////////////////////////////
-bool SocketUDP::operator !=(const SocketUDP& Other) const
+bool SocketUDP::operator !=(const SocketUDP& other) const
 {
-    return mySocket != Other.mySocket;
+    return mySocket != other.mySocket;
 }
 
 
@@ -373,9 +373,9 @@ bool SocketUDP::operator !=(const SocketUDP& Other) const
 /// Provided for compatibility with standard containers, as
 /// comparing two sockets doesn't make much sense...
 ////////////////////////////////////////////////////////////
-bool SocketUDP::operator <(const SocketUDP& Other) const
+bool SocketUDP::operator <(const SocketUDP& other) const
 {
-    return mySocket < Other.mySocket;
+    return mySocket < other.mySocket;
 }
 
 
@@ -383,19 +383,19 @@ bool SocketUDP::operator <(const SocketUDP& Other) const
 /// Construct the socket from a socket descriptor
 /// (for internal use only)
 ////////////////////////////////////////////////////////////
-SocketUDP::SocketUDP(SocketHelper::SocketType Descriptor)
+SocketUDP::SocketUDP(SocketHelper::SocketType descriptor)
 {
-    Create(Descriptor);
+    Create(descriptor);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create the socket
 ////////////////////////////////////////////////////////////
-void SocketUDP::Create(SocketHelper::SocketType Descriptor)
+void SocketUDP::Create(SocketHelper::SocketType descriptor)
 {
     // Use the given socket descriptor, or get a new one
-    mySocket = Descriptor ? Descriptor : socket(PF_INET, SOCK_DGRAM, 0);
+    mySocket = descriptor ? descriptor : socket(PF_INET, SOCK_DGRAM, 0);
     myIsBlocking = true;
 
     // Clear the last port used
@@ -409,15 +409,15 @@ void SocketUDP::Create(SocketHelper::SocketType Descriptor)
     if (IsValid())
     {
         // To avoid the "Address already in use" error message when trying to bind to the same port
-        int Yes = 1;
-        if (setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&Yes), sizeof(Yes)) == -1)
+        int yes = 1;
+        if (setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
         {
             std::cerr << "Failed to set socket option \"reuse address\" ; "
                       << "binding to a same port may fail if too fast" << std::endl;
         }
 
         // Enable broadcast by default
-        if (setsockopt(mySocket, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<char*>(&Yes), sizeof(Yes)) == -1)
+        if (setsockopt(mySocket, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
         {
             std::cerr << "Failed to enable broadcast on UDP socket" << std::endl;
         }

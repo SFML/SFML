@@ -44,22 +44,22 @@ SocketHelper::SocketType SocketHelper::InvalidSocket()
 ////////////////////////////////////////////////////////////
 /// Close / destroy a socket
 ////////////////////////////////////////////////////////////
-bool SocketHelper::Close(SocketHelper::SocketType Socket)
+bool SocketHelper::Close(SocketHelper::SocketType socket)
 {
-    return close(Socket) != -1;
+    return close(socket) != -1;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set a socket as blocking or non-blocking
 ////////////////////////////////////////////////////////////
-void SocketHelper::SetBlocking(SocketHelper::SocketType Socket, bool Block)
+void SocketHelper::SetBlocking(SocketHelper::SocketType sock, bool block)
 {
-    int Status = fcntl(Socket, F_GETFL);
-    if (Block)
-        fcntl(Socket, F_SETFL, Status & ~O_NONBLOCK);
+    int status = fcntl(sock, F_GETFL);
+    if (block)
+        fcntl(sock, F_SETFL, status & ~O_NONBLOCK);
     else
-        fcntl(Socket, F_SETFL, Status | O_NONBLOCK);
+        fcntl(sock, F_SETFL, status | O_NONBLOCK);
 }
 
 

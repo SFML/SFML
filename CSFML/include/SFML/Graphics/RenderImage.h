@@ -37,101 +37,101 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new renderimage
 ///
-/// \param Width :       Width of the renderimage
-/// \param Height :      Height of the renderimage
-/// \param DepthBuffer : Do you want a depth-buffer attached? (useful only if you're doing 3D OpenGL on the renderimage)
+/// \param width :       Width of the renderimage
+/// \param height :      Height of the renderimage
+/// \param depthBuffer : Do you want a depth-buffer attached? (useful only if you're doing 3D OpenGL on the renderimage)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfRenderImage* sfRenderImage_Create(unsigned int Width, unsigned int Height, sfBool DepthBuffer);
+CSFML_API sfRenderImage* sfRenderImage_Create(unsigned int width, unsigned int height, sfBool depthBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing renderimage
 ///
-/// \param RenderImage : renderimage to destroy
+/// \param renderImage : renderimage to destroy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfRenderImage_Destroy(sfRenderImage* RenderImage);
+CSFML_API void sfRenderImage_Destroy(sfRenderImage* renderImage);
 
 ////////////////////////////////////////////////////////////
 /// Get the width of the rendering region of a renderimage
 ///
-/// \param RenderImage : Renderimage object
+/// \param renderImage : Renderimage object
 ///
 /// \return Width in pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfRenderImage_GetWidth(sfRenderImage* RenderImage);
+CSFML_API unsigned int sfRenderImage_GetWidth(sfRenderImage* renderImage);
 
 ////////////////////////////////////////////////////////////
 /// Get the height of the rendering region of a renderimage
 ///
-/// \param RenderImage : Renderimage object
+/// \param renderImage : Renderimage object
 ///
 /// \return Height in pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfRenderImage_GetHeight(sfRenderImage* RenderImage);
+CSFML_API unsigned int sfRenderImage_GetHeight(sfRenderImage* renderImage);
 
 ////////////////////////////////////////////////////////////
 /// Activate or deactivate a renderimage as the current target for rendering
 ///
-/// \param RenderImage : Renderimage object
-/// \param Active :      sfTrue to activate, sfFalse to deactivate
+/// \param renderImage : Renderimage object
+/// \param active :      sfTrue to activate, sfFalse to deactivate
 ///
 /// \return True if operation was successful, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfRenderImage_SetActive(sfRenderImage* RenderImage, sfBool Active);
+CSFML_API sfBool sfRenderImage_SetActive(sfRenderImage* renderImage, sfBool active);
 
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderimage
 ///
-/// \param RenderImage :                      Renderimage to draw in
-/// \param PostFX / Sprite / String / shape : Object to draw
+/// \param renderImage :                      Renderimage to draw in
+/// \param postFX / sprite / string / shape : Object to draw
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfRenderImage_DrawPostFX(sfRenderImage* RenderImage, sfPostFX* PostFX);
-CSFML_API void sfRenderImage_DrawSprite(sfRenderImage* RenderImage, sfSprite* Sprite);
-CSFML_API void sfRenderImage_DrawShape (sfRenderImage* RenderImage, sfShape*  Shape);
-CSFML_API void sfRenderImage_DrawString(sfRenderImage* RenderImage, sfString* String);
+CSFML_API void sfRenderImage_DrawPostFX(sfRenderImage* renderImage, sfPostFX* postFX);
+CSFML_API void sfRenderImage_DrawSprite(sfRenderImage* renderImage, sfSprite* sprite);
+CSFML_API void sfRenderImage_DrawShape (sfRenderImage* renderImage, sfShape*  shape);
+CSFML_API void sfRenderImage_DrawString(sfRenderImage* renderImage, sfString* string);
 
 ////////////////////////////////////////////////////////////
 /// Clear the renderimage with the given color
 ///
-/// \param RenderImage : Renderimage to modify
-/// \param Color :       Fill color
+/// \param renderImage : Renderimage to modify
+/// \param color :       Fill color
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfRenderImage_Clear(sfRenderImage* RenderImage, sfColor Color);
+CSFML_API void sfRenderImage_Clear(sfRenderImage* renderImage, sfColor color);
 
 ////////////////////////////////////////////////////////////
 /// Change the current active view of a renderimage
 ///
-/// \param RenderImage : Renderimage to modify
-/// \param NewView :     Pointer to the new view
+/// \param renderImage : Renderimage to modify
+/// \param view :        Pointer to the new view
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfRenderImage_SetView(sfRenderImage* RenderImage, sfView* View);
+CSFML_API void sfRenderImage_SetView(sfRenderImage* renderImage, sfView* view);
 
 ////////////////////////////////////////////////////////////
 /// Get the current active view of a renderimage
 ///
-/// \param RenderImage : Renderimage
+/// \param renderImage : Renderimage
 ///
 /// \return Current active view
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const sfView* sfRenderImage_GetView(sfRenderImage* RenderImage);
+CSFML_API const sfView* sfRenderImage_GetView(sfRenderImage* renderImage);
 
 ////////////////////////////////////////////////////////////
 /// Get the default view of a renderimage
 ///
-/// \param RenderImage : Renderimage
+/// \param renderImage : Renderimage
 ///
 /// \return Default view of the renderimage
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfView* sfRenderImage_GetDefaultView(sfRenderImage* RenderImage);
+CSFML_API sfView* sfRenderImage_GetDefaultView(sfRenderImage* renderImage);
 
 ////////////////////////////////////////////////////////////
 /// Tell SFML to preserve external OpenGL states, at the expense of
@@ -141,21 +141,21 @@ CSFML_API sfView* sfRenderImage_GetDefaultView(sfRenderImage* RenderImage);
 /// SFML to do internal optimizations and improve performances.
 /// This parameter is false by default
 ///
-/// \param RenderImage : Target renderimage
-/// \param Preserve :    True to preserve OpenGL states, false to let SFML optimize
+/// \param renderImage : Target renderimage
+/// \param preserve :    True to preserve OpenGL states, false to let SFML optimize
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfRenderImage_PreserveOpenGLStates(sfRenderImage* RenderImage, sfBool Preserve);
+CSFML_API void sfRenderImage_PreserveOpenGLStates(sfRenderImage* renderImage, sfBool preserve);
 
 ////////////////////////////////////////////////////////////
 /// Get the target image
 ///
-/// \param RenderImage : Renderimage object
+/// \param renderImage : Renderimage object
 ///
 /// \return Pointer to the target image
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfImage* sfRenderImage_GetImage(sfRenderImage* RenderImage);
+CSFML_API sfImage* sfRenderImage_GetImage(sfRenderImage* renderImage);
 
 ////////////////////////////////////////////////////////////
 /// Check whether the system supports render images or not

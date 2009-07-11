@@ -34,9 +34,9 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Change the global volume of all the sounds
 ////////////////////////////////////////////////////////////
-void Listener::SetGlobalVolume(float Volume)
+void Listener::SetGlobalVolume(float volume)
 {
-    ALCheck(alListenerf(AL_GAIN, Volume * 0.01f));
+    ALCheck(alListenerf(AL_GAIN, volume * 0.01f));
 }
 
 
@@ -45,28 +45,28 @@ void Listener::SetGlobalVolume(float Volume)
 ////////////////////////////////////////////////////////////
 float Listener::GetGlobalVolume()
 {
-    float Volume = 0.f;
-    ALCheck(alGetListenerf(AL_GAIN, &Volume));
+    float volume = 0.f;
+    ALCheck(alGetListenerf(AL_GAIN, &volume));
 
-    return Volume;
+    return volume;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the position of the listener (take 3 values)
 ////////////////////////////////////////////////////////////
-void Listener::SetPosition(float X, float Y, float Z)
+void Listener::SetPosition(float x, float y, float z)
 {
-    ALCheck(alListener3f(AL_POSITION, X, Y, Z));
+    ALCheck(alListener3f(AL_POSITION, x, y, z));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the position of the listener (take a 3D vector)
 ////////////////////////////////////////////////////////////
-void Listener::SetPosition(const Vector3f& Position)
+void Listener::SetPosition(const Vector3f& position)
 {
-    SetPosition(Position.x, Position.y, Position.z);
+    SetPosition(position.x, position.y, position.z);
 }
 
 
@@ -75,10 +75,10 @@ void Listener::SetPosition(const Vector3f& Position)
 ////////////////////////////////////////////////////////////
 Vector3f Listener::GetPosition()
 {
-    Vector3f Position;
-    ALCheck(alGetListener3f(AL_POSITION, &Position.x, &Position.y, &Position.z));
+    Vector3f position;
+    ALCheck(alGetListener3f(AL_POSITION, &position.x, &position.y, &position.z));
 
-    return Position;
+    return position;
 }
 
 
@@ -86,10 +86,10 @@ Vector3f Listener::GetPosition()
 /// Change the orientation of the listener (the point
 /// he must look at) (take 3 values)
 ////////////////////////////////////////////////////////////
-void Listener::SetTarget(float X, float Y, float Z)
+void Listener::SetTarget(float x, float y, float z)
 {
-    float Orientation[] = {X, Y, Z, 0.f, 1.f, 0.f};
-    ALCheck(alListenerfv(AL_ORIENTATION, Orientation));
+    float orientation[] = {x, y, z, 0.f, 1.f, 0.f};
+    ALCheck(alListenerfv(AL_ORIENTATION, orientation));
 }
 
 
@@ -97,9 +97,9 @@ void Listener::SetTarget(float X, float Y, float Z)
 /// Change the orientation of the listener (the point
 /// he must look at) (take a 3D vector)
 ////////////////////////////////////////////////////////////
-void Listener::SetTarget(const Vector3f& Target)
+void Listener::SetTarget(const Vector3f& target)
 {
-    SetTarget(Target.x, Target.y, Target.z);
+    SetTarget(target.x, target.y, target.z);
 }
 
 
@@ -109,10 +109,10 @@ void Listener::SetTarget(const Vector3f& Target)
 ////////////////////////////////////////////////////////////
 Vector3f Listener::GetTarget()
 {
-    float Orientation[6];
-    ALCheck(alGetListenerfv(AL_ORIENTATION, Orientation));
+    float orientation[6];
+    ALCheck(alGetListenerfv(AL_ORIENTATION, orientation));
 
-    return Vector3f(Orientation[0], Orientation[1], Orientation[2]);
+    return Vector3f(orientation[0], orientation[1], orientation[2]);
 }
 
 } // namespace sf

@@ -34,10 +34,10 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Make the current thread sleep for a given time
 ////////////////////////////////////////////////////////////
-void Sleep(float Duration)
+void Sleep(float duration)
 {
-    if (Duration >= 0)
-        priv::Platform::Sleep(Duration);
+    if (duration >= 0)
+        priv::Platform::Sleep(duration);
 }
 
 } // namespace sf

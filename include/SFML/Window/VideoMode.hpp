@@ -52,12 +52,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the video mode with its attributes
     ///
-    /// \param ModeWidth :  Width in pixels
-    /// \param ModeHeight : Height in pixels
-    /// \param ModeBpp :    Pixel depths in bits per pixel (32 by default)
+    /// \param width :        Width in pixels
+    /// \param height :       Height in pixels
+    /// \param bitsPerPixel : Pixel depths in bits per pixel (32 by default)
     ///
     ////////////////////////////////////////////////////////////
-    VideoMode(unsigned int ModeWidth, unsigned int ModeHeight, unsigned int ModeBpp = 32);
+    VideoMode(unsigned int width, unsigned int height, unsigned int bitsPerPixel = 32);
 
     ////////////////////////////////////////////////////////////
     /// Get the current desktop video mode
@@ -72,12 +72,12 @@ public :
     /// Index must be in range [0, GetModesCount()[
     /// Modes are sorted from best to worst
     ///
-    /// \param Index : Index of video mode to get
+    /// \param index : Index of video mode to get
     ///
     /// \return Corresponding video mode (invalid mode if index is out of range)
     ///
     ////////////////////////////////////////////////////////////
-    static VideoMode GetMode(std::size_t Index);
+    static VideoMode GetMode(std::size_t index);
 
     ////////////////////////////////////////////////////////////
     /// Get valid video modes count
@@ -98,22 +98,22 @@ public :
     ////////////////////////////////////////////////////////////
     /// Comparison operator overload -- tell if two video modes are equal
     ///
-    /// \param Other : Video mode to compare
+    /// \param other : Video mode to compare
     ///
     /// \return True if modes are equal
     ///
     ////////////////////////////////////////////////////////////
-    bool operator ==(const VideoMode& Other) const;
+    bool operator ==(const VideoMode& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator overload -- tell if two video modes are different
     ///
-    /// \param Other : Video mode to compare
+    /// \param other : Video mode to compare
     ///
     /// \return True if modes are different
     ///
     ////////////////////////////////////////////////////////////
-    bool operator !=(const VideoMode& Other) const;
+    bool operator !=(const VideoMode& other) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -121,13 +121,6 @@ public :
     unsigned int Width;        ///< Video mode width, in pixels
     unsigned int Height;       ///< Video mode height, in pixels
     unsigned int BitsPerPixel; ///< Video mode pixel depth, in bits per pixels
-
-private :
-
-    ////////////////////////////////////////////////////////////
-    /// Get and sort valid video modes
-    ////////////////////////////////////////////////////////////
-    static void InitializeModes();
 };
 
 } // namespace sf

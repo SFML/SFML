@@ -71,45 +71,45 @@ myCharSize(0)
 ////////////////////////////////////////////////////////////
 /// Load the font from a file
 ////////////////////////////////////////////////////////////
-bool Font::LoadFromFile(const std::string& Filename, unsigned int CharSize, const Unicode::Text& Charset)
+bool Font::LoadFromFile(const std::string& filename, unsigned int charSize, const Unicode::Text& charset)
 {
     // Clear the previous character map
     myGlyphs.clear();
 
     // Always add these special characters
-    Unicode::UTF32String UTFCharset = Charset;
+    Unicode::UTF32String UTFCharset = charset;
     if (UTFCharset.find(L' ')  != Unicode::UTF32String::npos) UTFCharset += L' ';
     if (UTFCharset.find(L'\n') != Unicode::UTF32String::npos) UTFCharset += L'\n';
     if (UTFCharset.find(L'\v') != Unicode::UTF32String::npos) UTFCharset += L'\v';
     if (UTFCharset.find(L'\t') != Unicode::UTF32String::npos) UTFCharset += L'\t';
 
-    return priv::FontLoader::GetInstance().LoadFontFromFile(Filename, CharSize, UTFCharset, *this);
+    return priv::FontLoader::GetInstance().LoadFontFromFile(filename, charSize, UTFCharset, *this);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Load the font from a file in memory
 ////////////////////////////////////////////////////////////
-bool Font::LoadFromMemory(const char* Data, std::size_t SizeInBytes, unsigned int CharSize, const Unicode::Text& Charset)
+bool Font::LoadFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const Unicode::Text& charset)
 {
     // Clear the previous character map
     myGlyphs.clear();
 
     // Check parameters
-    if (!Data || (SizeInBytes == 0))
+    if (!data || (sizeInBytes == 0))
     {
         std::cerr << "Failed to load font from memory, no data provided" << std::endl;
         return false;
     }
 
     // Always add these special characters
-    Unicode::UTF32String UTFCharset = Charset;
+    Unicode::UTF32String UTFCharset = charset;
     if (UTFCharset.find(L' ')  != Unicode::UTF32String::npos) UTFCharset += L' ';
     if (UTFCharset.find(L'\n') != Unicode::UTF32String::npos) UTFCharset += L'\n';
     if (UTFCharset.find(L'\v') != Unicode::UTF32String::npos) UTFCharset += L'\v';
     if (UTFCharset.find(L'\t') != Unicode::UTF32String::npos) UTFCharset += L'\t';
 
-    return priv::FontLoader::GetInstance().LoadFontFromMemory(Data, SizeInBytes, CharSize, UTFCharset, *this);
+    return priv::FontLoader::GetInstance().LoadFontFromMemory(data, sizeInBytes, charSize, UTFCharset, *this);
 }
 
 
@@ -127,19 +127,19 @@ unsigned int Font::GetCharacterSize() const
 /// Get the description of a glyph (character)
 /// given by its unicode value
 ////////////////////////////////////////////////////////////
-const Glyph& Font::GetGlyph(Uint32 CodePoint) const
+const Glyph& Font::GetGlyph(Uint32 codePoint) const
 {
-    std::map<Uint32, Glyph>::const_iterator It = myGlyphs.find(CodePoint);
-    if (It != myGlyphs.end())
+    std::map<Uint32, Glyph>::const_iterator it = myGlyphs.find(codePoint);
+    if (it != myGlyphs.end())
     {
         // Valid glyph
-        return It->second;
+        return it->second;
     }
     else
     {
         // Invalid glyph -- return an invalid glyph
-        static const Glyph InvalidGlyph;
-        return InvalidGlyph;
+        static const Glyph invalid;
+        return invalid;
     }
 }
 
@@ -158,21 +158,21 @@ const Image& Font::GetImage() const
 ////////////////////////////////////////////////////////////
 const Font& Font::GetDefaultFont()
 {
-    static Font       DefaultFont;
-    static bool       DefaultFontLoaded = false;
-    static const char DefaultFontData[] =
+    static Font       defaultFont;
+    static bool       defaultFontLoaded = false;
+    static const char defaultFontData[] =
     {
         #include <SFML/Graphics/Arial.hpp>
     };
 
     // Load the default font on first call
-    if (!DefaultFontLoaded)
+    if (!defaultFontLoaded)
     {
-        DefaultFont.LoadFromMemory(DefaultFontData, sizeof(DefaultFontData), 30);
-        DefaultFontLoaded = true;
+        defaultFont.LoadFromMemory(defaultFontData, sizeof(defaultFontData), 30);
+        defaultFontLoaded = true;
     }
 
-    return DefaultFont;
+    return defaultFont;
 }
 
 } // namespace sf

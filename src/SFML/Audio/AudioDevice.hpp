@@ -35,8 +35,6 @@
 
 namespace sf
 {
-class AudioResource;
-
 namespace priv
 {
 
@@ -48,46 +46,6 @@ namespace priv
 class AudioDevice
 {
 public :
-
-    ////////////////////////////////////////////////////////////
-    /// Get the unique instance of the class
-    ///
-    /// \return Unique instance of the class
-    ///
-    ////////////////////////////////////////////////////////////
-    static AudioDevice& GetInstance();
-
-    ////////////////////////////////////////////////////////////
-    /// Add a reference to the audio device
-    ///
-    ////////////////////////////////////////////////////////////
-    static void AddReference();
-
-    ////////////////////////////////////////////////////////////
-    /// Remove a reference to the audio device
-    ///
-    ////////////////////////////////////////////////////////////
-    static void RemoveReference();
-
-    ////////////////////////////////////////////////////////////
-    /// Get the OpenAL audio device
-    ///
-    /// \return OpenAL device (cannot be NULL)
-    ///
-    ////////////////////////////////////////////////////////////
-    ALCdevice* GetDevice() const;
-
-    ////////////////////////////////////////////////////////////
-    /// Get the OpenAL format that matches the given number of channels
-    ///
-    /// \param ChannelsCount : Number of channels
-    ///
-    /// \return OpenAL device (cannot be NULL)
-    ///
-    ////////////////////////////////////////////////////////////
-    ALenum GetFormatFromChannelsCount(unsigned int ChannelsCount) const;
-
-private :
 
     ////////////////////////////////////////////////////////////
     /// Default constructor
@@ -102,16 +60,38 @@ private :
     ~AudioDevice();
 
     ////////////////////////////////////////////////////////////
-    // Static member data
+    /// Get the unique instance of the class
+    ///
+    /// \return Unique instance of the class
+    ///
     ////////////////////////////////////////////////////////////
-    static AudioDevice* ourInstance; ///< Unique instance of the audio device
+    static AudioDevice& GetInstance();
+
+    ////////////////////////////////////////////////////////////
+    /// Get the OpenAL audio device
+    ///
+    /// \return OpenAL device (cannot be NULL)
+    ///
+    ////////////////////////////////////////////////////////////
+    ALCdevice* GetDevice() const;
+
+    ////////////////////////////////////////////////////////////
+    /// Get the OpenAL format that matches the given number of channels
+    ///
+    /// \param channelsCount : Number of channels
+    ///
+    /// \return Corresponding format
+    ///
+    ////////////////////////////////////////////////////////////
+    ALenum GetFormatFromChannelsCount(unsigned int channelsCount) const;
+
+private :
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ALCdevice*   myDevice;   ///< Audio device
-    ALCcontext*  myContext;  ///< Audio context
-    unsigned int myRefCount; ///< References count
+    ALCdevice*  myDevice;  ///< Audio device
+    ALCcontext* myContext; ///< Audio context
 };
 
 } // namespace priv

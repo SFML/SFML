@@ -43,26 +43,26 @@ CSFML_API sfClock* sfClock_Create();
 ////////////////////////////////////////////////////////////
 /// Destroy an existing clock
 ///
-/// \param Clock : Clock to delete
+/// \param clock : Clock to delete
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfClock_Destroy(sfClock* Clock);
+CSFML_API void sfClock_Destroy(sfClock* clock);
 
 ////////////////////////////////////////////////////////////
 /// Get the time elapsed for a clock
 ///
-/// \param Clock : Clock to get time from
+/// \param clock : Clock to get time from
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfClock_GetTime(sfClock* Clock);
+CSFML_API float sfClock_GetTime(sfClock* clock);
 
 ////////////////////////////////////////////////////////////
 /// Restart a clock
 ///
-/// \param Clock : Clock to restart
+/// \param clock : Clock to restart
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfClock_Reset(sfClock* Clock);
+CSFML_API void sfClock_Reset(sfClock* clock);
 
 
 #endif // SFML_CLOCK_H

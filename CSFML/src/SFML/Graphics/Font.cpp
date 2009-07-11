@@ -42,55 +42,55 @@ sfFont* sfFont_Create()
 ////////////////////////////////////////////////////////////
 /// Create a new font from a file
 ////////////////////////////////////////////////////////////
-sfFont* sfFont_CreateFromFile(const char* Filename, unsigned int CharSize, const sfUint32* Charset)
+sfFont* sfFont_CreateFromFile(const char* filename, unsigned int charSize, const sfUint32* charset)
 {
-    sfFont* Font = new sfFont;
+    sfFont* font = new sfFont;
 
-    bool bSucceeded = false;
-    if (Charset)
-        bSucceeded = Font->This.LoadFromFile(Filename, CharSize, Charset);
+    bool success = false;
+    if (charset)
+        success = font->This.LoadFromFile(filename, charSize, charset);
     else
-        bSucceeded = Font->This.LoadFromFile(Filename, CharSize);
+        success = font->This.LoadFromFile(filename, charSize);
 
-    if (!bSucceeded)
+    if (!success)
     {
-        delete Font;
-        Font = NULL;
+        delete font;
+        font = NULL;
     }
 
-    return Font;
+    return font;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new font from a file in memory
 ////////////////////////////////////////////////////////////
-sfFont* sfFont_CreateFromMemory(const char* Data, size_t SizeInBytes, unsigned int CharSize, const sfUint32* Charset)
+sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes, unsigned int charSize, const sfUint32* charset)
 {
-    sfFont* Font = new sfFont;
+    sfFont* font = new sfFont;
 
-    bool bSucceeded = false;
-    if (Charset)
-        bSucceeded = Font->This.LoadFromMemory(Data, SizeInBytes, CharSize, Charset);
+    bool success = false;
+    if (charset)
+        success = font->This.LoadFromMemory(data, sizeInBytes, charSize, charset);
     else
-        bSucceeded = Font->This.LoadFromMemory(Data, SizeInBytes, CharSize);
+        success = font->This.LoadFromMemory(data, sizeInBytes, charSize);
 
-    if (!bSucceeded)
+    if (!success)
     {
-        delete Font;
-        Font = NULL;
+        delete font;
+        font = NULL;
     }
 
-    return Font;
+    return font;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing font
 ////////////////////////////////////////////////////////////
-void sfFont_Destroy(sfFont* Font)
+void sfFont_Destroy(sfFont* font)
 {
-    delete Font;
+    delete font;
 }
 
 
@@ -98,9 +98,9 @@ void sfFont_Destroy(sfFont* Font)
 /// Get the base size of characters in a font;
 /// All glyphs dimensions are based on this value
 ////////////////////////////////////////////////////////////
-unsigned int sfFont_GetCharacterSize(sfFont* Font)
+unsigned int sfFont_GetCharacterSize(sfFont* font)
 {
-    CSFML_CALL_RETURN(Font, GetCharacterSize(), 0);
+    CSFML_CALL_RETURN(font, GetCharacterSize(), 0);
 }
 
 
@@ -109,7 +109,7 @@ unsigned int sfFont_GetCharacterSize(sfFont* Font)
 ////////////////////////////////////////////////////////////
 sfFont* sfFont_GetDefaultFont()
 {
-    static sfFont DefaultFont = {sf::Font::GetDefaultFont()};
+    static sfFont defaultFont = {sf::Font::GetDefaultFont()};
 
-    return &DefaultFont;
+    return &defaultFont;
 }

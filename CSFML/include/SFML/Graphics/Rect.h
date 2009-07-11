@@ -55,39 +55,39 @@ typedef struct
 ////////////////////////////////////////////////////////////
 /// Move a rectangle by the given offset
 ///
-/// \param Rect :    Rectangle to move
-/// \param OffsetX : Horizontal offset
-/// \param OffsetY : Vertical offset
+/// \param rect :    Rectangle to move
+/// \param offsetX : Horizontal offset
+/// \param offsetY : Vertical offset
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfFloatRect_Offset(sfFloatRect* Rect, float OffsetX, float OffsetY);
-CSFML_API void sfIntRect_Offset(sfIntRect* Rect, int OffsetX, int OffsetY);
+CSFML_API void sfFloatRect_Offset(sfFloatRect* rect, float offsetX, float offsetY);
+CSFML_API void sfIntRect_Offset(sfIntRect* rect, int offsetX, int offsetY);
 
 ////////////////////////////////////////////////////////////
 /// Check if a point is inside a rectangle's area
 ///
-/// \param Rect : Rectangle to test
-/// \param X :    X coordinate of the point to test
-/// \param Y :    Y coordinate of the point to test
+/// \param rect : Rectangle to test
+/// \param x :    X coordinate of the point to test
+/// \param y :    Y coordinate of the point to test
 ///
 /// \return sfTrue if the point is inside
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfFloatRect_Contains(sfFloatRect* Rect, float X, float Y);
-CSFML_API sfBool sfIntRect_Contains(sfIntRect* Rect, int X, int Y);
+CSFML_API sfBool sfFloatRect_Contains(sfFloatRect* rect, float x, float y);
+CSFML_API sfBool sfIntRect_Contains(sfIntRect* rect, int x, int y);
 
 ////////////////////////////////////////////////////////////
 /// Check intersection between two rectangles
 ///
-/// \param Rect1 :           First rectangle to test
-/// \param Rect2 :           Second rectangle to test
-/// \param OverlappingRect : Rectangle to be filled with overlapping rect (can be NULL)
+/// \param rect1 :        First rectangle to test
+/// \param rect2 :        Second rectangle to test
+/// \param intersection : Rectangle to be filled with overlapping rect (can be NULL)
 ///
 /// \return sfTrue if rectangles overlap
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfFloatRect_Intersects(sfFloatRect* Rect1, sfFloatRect* Rect2, sfFloatRect* OverlappingRect);
-CSFML_API sfBool sfIntRect_Intersects(sfIntRect* Rect1, sfIntRect* Rect2, sfIntRect* OverlappingRect);
+CSFML_API sfBool sfFloatRect_Intersects(sfFloatRect* rect1, sfFloatRect* rect2, sfFloatRect* intersection);
+CSFML_API sfBool sfIntRect_Intersects(sfIntRect* rect1, sfIntRect* rect2, sfIntRect* intersection);
 
 
 #endif // SFML_RECT_H

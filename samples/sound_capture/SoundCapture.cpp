@@ -23,9 +23,9 @@ int main()
     }
 
     // Choose the sample rate
-    unsigned int SampleRate;
+    unsigned int sampleRate;
     std::cout << "Please choose the sample rate for sound capture (44100 is CD quality) : ";
-    std::cin  >> SampleRate;
+    std::cin  >> sampleRate;
     std::cin.ignore(10000, '\n');
 
     // Wait for user input...
@@ -33,50 +33,50 @@ int main()
     std::cin.ignore(10000, '\n');
 
     // Here we'll use an integrated custom recorder, which saves the captured data into a SoundBuffer
-    sf::SoundBufferRecorder Recorder;
+    sf::SoundBufferRecorder recorder;
 
     // Audio capture is done in a separate thread, so we can block the main thread while it is capturing
-    Recorder.Start(SampleRate);
+    recorder.Start(sampleRate);
     std::cout << "Recording... press enter to stop";
     std::cin.ignore(10000, '\n');
-    Recorder.Stop();
+    recorder.Stop();
 
     // Get the buffer containing the captured data
-    const sf::SoundBuffer& Buffer = Recorder.GetBuffer();
+    const sf::SoundBuffer& buffer = recorder.GetBuffer();
 
     // Display captured sound informations
     std::cout << "Sound information :" << std::endl;
-    std::cout << " " << Buffer.GetDuration()      << " seconds"           << std::endl;
-    std::cout << " " << Buffer.GetSampleRate()    << " samples / seconds" << std::endl;
-    std::cout << " " << Buffer.GetChannelsCount() << " channels"          << std::endl;
+    std::cout << " " << buffer.GetDuration()      << " seconds"           << std::endl;
+    std::cout << " " << buffer.GetSampleRate()    << " samples / seconds" << std::endl;
+    std::cout << " " << buffer.GetChannelsCount() << " channels"          << std::endl;
 
     // Choose what to do with the recorded sound data
-    char Choice;
+    char choice;
     std::cout << "What do you want to do with captured sound (p = play, s = save) ? ";
-    std::cin  >> Choice;
+    std::cin  >> choice;
     std::cin.ignore(10000, '\n');
 
-    if (Choice == 's')
+    if (choice == 's')
     {
         // Choose the filename
-        std::string Filename;
+        std::string filename;
         std::cout << "Choose the file to create : ";
-        std::getline(std::cin, Filename);
+        std::getline(std::cin, filename);
 
         // Save the buffer
-        Buffer.SaveToFile(Filename);
+        buffer.SaveToFile(filename);
     }
     else
     {
         // Create a sound instance and play it
-        sf::Sound Sound(Buffer);
-        Sound.Play();
+        sf::Sound sound(buffer);
+        sound.Play();
 
         // Wait until finished
-        while (Sound.GetStatus() == sf::Sound::Playing)
+        while (sound.GetStatus() == sf::Sound::Playing)
         {
             // Display the playing position
-            std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << Sound.GetPlayingOffset() << " sec";
+            std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.GetPlayingOffset() << " sec";
 
             // Leave some CPU time for other threads
             sf::Sleep(0.1f);

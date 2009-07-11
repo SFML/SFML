@@ -59,29 +59,29 @@ public :
     ////////////////////////////////////////////////////////////
     /// Load a font from a file
     ///
-    /// \param Filename :   Path of the font file to load
-    /// \param CharSize :   Size of characters in bitmap - the bigger, the higher quality
-    /// \param Charset :    Characters set to generate
-    /// \param LoadedFont : Font object to fill up
+    /// \param filename : Path of the font file to load
+    /// \param charSize : Size of characters in bitmap - the bigger, the higher quality
+    /// \param charset :  Characters set to generate
+    /// \param font :     Font object to fill up
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFontFromFile(const std::string& Filename, unsigned int CharSize, const Unicode::UTF32String& Charset, Font& LoadedFont);
+    bool LoadFontFromFile(const std::string& filename, unsigned int charSize, const Unicode::UTF32String& charset, Font& font);
 
     ////////////////////////////////////////////////////////////
     /// Load the font from a file in memory
     ///
-    /// \param Data :        Pointer to the data to load
-    /// \param SizeInBytes : Size of the data, in bytes
-    /// \param CharSize :    Size of characters in bitmap - the bigger, the higher quality
-    /// \param Charset :     Characters set to generate
-    /// \param LoadedFont :  Font object to fill up
+    /// \param data :        Pointer to the data to load
+    /// \param sizeInBytes : Size of the data, in bytes
+    /// \param charSize :    Size of characters in bitmap - the bigger, the higher quality
+    /// \param charset :     Characters set to generate
+    /// \param font :  Font object to fill up
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFontFromMemory(const char* Data, std::size_t SizeInBytes, unsigned int CharSize, const Unicode::UTF32String& Charset, Font& LoadedFont);
+    bool LoadFontFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const Unicode::UTF32String& charset, Font& font);
 
 private :
 
@@ -100,23 +100,23 @@ private :
     ////////////////////////////////////////////////////////////
     /// Create a bitmap font from a font face and a characters set
     ///
-    /// \param FontFace :   Font face containing the loaded font
-    /// \param CharSize :   Size of characters in bitmap
-    /// \param Charset :    Characters set to generate
-    /// \param LoadedFont : Font object to fill up
+    /// \param face :     Font face containing the loaded font
+    /// \param charSize : Size of characters in bitmap
+    /// \param charset :  Characters set to generate
+    /// \param font :     Font object to fill up
     ///
     ////////////////////////////////////////////////////////////
-    FT_Error CreateBitmapFont(FT_Face FontFace, unsigned int CharSize, const Unicode::UTF32String& Charset, Font& LoadedFont);
+    FT_Error CreateBitmapFont(FT_Face face, unsigned int charSize, const Unicode::UTF32String& charset, Font& font);
 
     ////////////////////////////////////////////////////////////
     /// Get a description from a FT error code
     ///
-    /// \param Error : FreeType error code
+    /// \param error : FreeType error code
     ///
     /// \return Error description
     ///
     ////////////////////////////////////////////////////////////
-    static std::string GetErrorDesc(FT_Error Error);
+    static std::string GetErrorDesc(FT_Error error);
 
     ////////////////////////////////////////////////////////////
     // Member data

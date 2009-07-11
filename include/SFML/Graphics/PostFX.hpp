@@ -53,10 +53,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Copy constructor
     ///
-    /// \param Copy : Instance to copy
+    /// \param copy : Instance to copy
     ///
     ////////////////////////////////////////////////////////////
-    PostFX(const PostFX& Copy);
+    PostFX(const PostFX& copy);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -67,77 +67,77 @@ public :
     ////////////////////////////////////////////////////////////
     /// Load the effect from a file
     ///
-    /// \param Filename : Path of the effect file to load
+    /// \param filename : Path of the effect file to load
     ///
     /// \return True on success
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& Filename);
+    bool LoadFromFile(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// Load the effect from a text in memory
     ///
-    /// \param Effect : String containing the effect code
+    /// \param effect : String containing the code of the effect
     ///
     /// \return True on success
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const std::string& Effect);
+    bool LoadFromMemory(const std::string& effect);
 
     ////////////////////////////////////////////////////////////
     /// Change a parameter of the effect (1 float)
     ///
-    /// \param Name : Parameter name in the effect
-    /// \param X :    Value to assign
+    /// \param name : Name of the parameter in the effect
+    /// \param x :    Value to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& Name, float X);
+    void SetParameter(const std::string& name, float x);
 
     ////////////////////////////////////////////////////////////
     /// Change a parameter of the effect (2 floats)
     ///
-    /// \param Name : Parameter name in the effect
-    /// \param X, Y : Values to assign
+    /// \param name : Name of the parameter in the effect
+    /// \param x, y : Values to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& Name, float X, float Y);
+    void SetParameter(const std::string& Name, float x, float y);
 
     ////////////////////////////////////////////////////////////
     /// Change a parameter of the effect (3 floats)
     ///
-    /// \param Name :    Parameter name in the effect
-    /// \param X, Y, Z : Values to assign
+    /// \param name :    Name of the parameter in the effect
+    /// \param x, y, z : Values to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& Name, float X, float Y, float Z);
+    void SetParameter(const std::string& Name, float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
     /// Change a parameter of the effect (4 floats)
     ///
-    /// \param Name :       Parameter name in the effect
-    /// \param X, Y, Z, W : Values to assign
+    /// \param name :       Name of the parameter in the effect
+    /// \param x, y, z, w : Values to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& Name, float X, float Y, float Z, float W);
+    void SetParameter(const std::string& Name, float x, float y, float Z, float w);
 
     ////////////////////////////////////////////////////////////
     /// Set a texture parameter
     ///
-    /// \param Name :    Texture name in the effect
-    /// \param Texture : Image to set (pass NULL to use content of current framebuffer)
+    /// \param name :    Name of the texture in the effect
+    /// \param texture : Image to set (pass NULL to use content of current framebuffer)
     ///
     ////////////////////////////////////////////////////////////
-    void SetTexture(const std::string& Name, const Image* Texture);
+    void SetTexture(const std::string& name, const Image* texture);
 
     ////////////////////////////////////////////////////////////
     /// Assignment operator
     ///
-    /// \param Other : Instance to assign
+    /// \param other : Instance to assign
     ///
     /// \return Reference to the post-effect
     ///
     ////////////////////////////////////////////////////////////
-    PostFX& operator =(const PostFX& Other);
+    PostFX& operator =(const PostFX& other);
 
     ////////////////////////////////////////////////////////////
     /// Tell whether or not the system supports post-effects
@@ -153,7 +153,7 @@ protected :
     /// /see Drawable::Render
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Render(RenderTarget& Target) const;
+    virtual void Render(RenderTarget& target) const;
 
 private :
 
@@ -161,12 +161,12 @@ private :
     /// Preprocess a SFML effect file
     /// to convert it to a valid GLSL fragment shader
     ///
-    /// \param File : Stream containing the code to process
+    /// \param file : Stream containing the code to process
     ///
     /// \return Valid fragment shader source code
     ///
     ////////////////////////////////////////////////////////////
-    static std::string PreprocessEffect(std::istream& File);
+    static std::string PreprocessEffect(std::istream& file);
 
     ////////////////////////////////////////////////////////////
     /// Create the program and attach the shaders

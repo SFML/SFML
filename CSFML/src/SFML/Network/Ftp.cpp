@@ -34,113 +34,113 @@
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp directory response
 ////////////////////////////////////////////////////////////
-void sfFtpListingResponse_Destroy(sfFtpListingResponse* FtpListingResponse)
+void sfFtpListingResponse_Destroy(sfFtpListingResponse* ftpListingResponse)
 {
-    delete FtpListingResponse;
+    delete ftpListingResponse;
 }
 
 ////////////////////////////////////////////////////////////
 /// Convenience function to check if the response status code
 /// means a success
 ////////////////////////////////////////////////////////////
-sfBool sfFtpListingResponse_IsOk(sfFtpListingResponse* FtpListingResponse)
+sfBool sfFtpListingResponse_IsOk(sfFtpListingResponse* ftpListingResponse)
 {
-    CSFML_CALL_RETURN(FtpListingResponse, IsOk(), sfFalse);
+    CSFML_CALL_RETURN(ftpListingResponse, IsOk(), sfFalse);
 }
 
 ////////////////////////////////////////////////////////////
 /// Get the response status code
 ////////////////////////////////////////////////////////////
-sfFtpStatus sfFtpListingResponse_GetStatus(sfFtpListingResponse* FtpListingResponse)
+sfFtpStatus sfFtpListingResponse_GetStatus(sfFtpListingResponse* ftpListingResponse)
 {
-    CSFML_CHECK_RETURN(FtpListingResponse, sfFtpInvalidResponse);
+    CSFML_CHECK_RETURN(ftpListingResponse, sfFtpInvalidResponse);
 
-    return static_cast<sfFtpStatus>(FtpListingResponse->This.GetStatus());
+    return static_cast<sfFtpStatus>(ftpListingResponse->This.GetStatus());
 }
 
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
 ////////////////////////////////////////////////////////////
-const char* sfFtpListingResponse_GetMessage(sfFtpListingResponse* FtpListingResponse)
+const char* sfFtpListingResponse_GetMessage(sfFtpListingResponse* ftpListingResponse)
 {
-    CSFML_CHECK_RETURN(FtpListingResponse, NULL);
+    CSFML_CHECK_RETURN(ftpListingResponse, NULL);
 
-    return FtpListingResponse->This.GetMessage().c_str();
+    return ftpListingResponse->This.GetMessage().c_str();
 }
 
 ////////////////////////////////////////////////////////////
 /// Get the number of filenames in the listing
 ////////////////////////////////////////////////////////////
-size_t sfFtpListingResponse_GetCount(sfFtpListingResponse* FtpListingResponse)
+size_t sfFtpListingResponse_GetCount(sfFtpListingResponse* ftpListingResponse)
 {
-    CSFML_CALL_RETURN(FtpListingResponse, GetCount(), 0);
+    CSFML_CALL_RETURN(ftpListingResponse, GetCount(), 0);
 }
 
 ////////////////////////////////////////////////////////////
 /// Get the Index-th filename in the directory
 ////////////////////////////////////////////////////////////
-const char* sfFtpListingResponse_GetFilename(sfFtpListingResponse* FtpListingResponse, size_t Index)
+const char* sfFtpListingResponse_GetFilename(sfFtpListingResponse* ftpListingResponse, size_t index)
 {
-    CSFML_CHECK_RETURN(FtpListingResponse, NULL);
+    CSFML_CHECK_RETURN(ftpListingResponse, NULL);
 
-    return FtpListingResponse->This.GetFilename(Index).c_str();
+    return ftpListingResponse->This.GetFilename(index).c_str();
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp directory response
 ////////////////////////////////////////////////////////////
-void sfFtpDirectoryResponse_Destroy(sfFtpDirectoryResponse* FtpDirectoryResponse)
+void sfFtpDirectoryResponse_Destroy(sfFtpDirectoryResponse* ftpDirectoryResponse)
 {
-    delete FtpDirectoryResponse;
+    delete ftpDirectoryResponse;
 }
 
 ////////////////////////////////////////////////////////////
 /// Convenience function to check if the response status code
 /// means a success
 ////////////////////////////////////////////////////////////
-sfBool sfFtpDirectoryResponse_IsOk(sfFtpDirectoryResponse* FtpDirectoryResponse)
+sfBool sfFtpDirectoryResponse_IsOk(sfFtpDirectoryResponse* ftpDirectoryResponse)
 {
-    CSFML_CALL_RETURN(FtpDirectoryResponse, IsOk(), sfFalse);
+    CSFML_CALL_RETURN(ftpDirectoryResponse, IsOk(), sfFalse);
 }
 
 ////////////////////////////////////////////////////////////
 /// Get the response status code
 ////////////////////////////////////////////////////////////
-sfFtpStatus sfFtpDirectoryResponse_GetStatus(sfFtpDirectoryResponse* FtpDirectoryResponse)
+sfFtpStatus sfFtpDirectoryResponse_GetStatus(sfFtpDirectoryResponse* ftpDirectoryResponse)
 {
-    CSFML_CHECK_RETURN(FtpDirectoryResponse, sfFtpInvalidResponse);
+    CSFML_CHECK_RETURN(ftpDirectoryResponse, sfFtpInvalidResponse);
 
-    return static_cast<sfFtpStatus>(FtpDirectoryResponse->This.GetStatus());
+    return static_cast<sfFtpStatus>(ftpDirectoryResponse->This.GetStatus());
 }
 
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
 ////////////////////////////////////////////////////////////
-const char* sfFtpDirectoryResponse_GetMessage(sfFtpDirectoryResponse* FtpDirectoryResponse)
+const char* sfFtpDirectoryResponse_GetMessage(sfFtpDirectoryResponse* ftpDirectoryResponse)
 {
-    CSFML_CHECK_RETURN(FtpDirectoryResponse, NULL);
+    CSFML_CHECK_RETURN(ftpDirectoryResponse, NULL);
 
-    return FtpDirectoryResponse->This.GetMessage().c_str();
+    return ftpDirectoryResponse->This.GetMessage().c_str();
 }
 
 ////////////////////////////////////////////////////////////
 /// Get the directory returned in the response
 ////////////////////////////////////////////////////////////
-const char* sfFtpDirectoryResponse_GetDirectory(sfFtpDirectoryResponse* FtpDirectoryResponse)
+const char* sfFtpDirectoryResponse_GetDirectory(sfFtpDirectoryResponse* ftpDirectoryResponse)
 {
-    CSFML_CHECK_RETURN(FtpDirectoryResponse, NULL);
+    CSFML_CHECK_RETURN(ftpDirectoryResponse, NULL);
 
-    return FtpDirectoryResponse->This.GetDirectory().c_str();
+    return ftpDirectoryResponse->This.GetDirectory().c_str();
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp response
 ////////////////////////////////////////////////////////////
-void sfFtpResponse_Destroy(sfFtpResponse* FtpResponse)
+void sfFtpResponse_Destroy(sfFtpResponse* ftpResponse)
 {
-    delete FtpResponse;
+    delete ftpResponse;
 }
 
 
@@ -148,31 +148,31 @@ void sfFtpResponse_Destroy(sfFtpResponse* FtpResponse)
 /// Convenience function to check if the response status code
 /// means a success
 ////////////////////////////////////////////////////////////
-sfBool sfFtpResponse_IsOk(sfFtpResponse* FtpResponse)
+sfBool sfFtpResponse_IsOk(sfFtpResponse* ftpResponse)
 {
-    CSFML_CALL_RETURN(FtpResponse, IsOk(), sfFalse);
+    CSFML_CALL_RETURN(ftpResponse, IsOk(), sfFalse);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the response status code
 ////////////////////////////////////////////////////////////
-sfFtpStatus sfFtpResponse_GetStatus(sfFtpResponse* FtpResponse)
+sfFtpStatus sfFtpResponse_GetStatus(sfFtpResponse* ftpResponse)
 {
-    CSFML_CHECK_RETURN(FtpResponse, sfFtpInvalidResponse);
+    CSFML_CHECK_RETURN(ftpResponse, sfFtpInvalidResponse);
 
-    return static_cast<sfFtpStatus>(FtpResponse->This.GetStatus());
+    return static_cast<sfFtpStatus>(ftpResponse->This.GetStatus());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
 ////////////////////////////////////////////////////////////
-const char* sfFtpResponse_GetMessage(sfFtpResponse* FtpResponse)
+const char* sfFtpResponse_GetMessage(sfFtpResponse* ftpResponse)
 {
-    CSFML_CHECK_RETURN(FtpResponse, NULL);
+    CSFML_CHECK_RETURN(ftpResponse, NULL);
 
-    return FtpResponse->This.GetMessage().c_str();
+    return ftpResponse->This.GetMessage().c_str();
 }
 
 
@@ -188,77 +188,77 @@ sfFtp* sfFtp_Create()
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp
 ////////////////////////////////////////////////////////////
-void sfFtp_Destroy(sfFtp* Ftp)
+void sfFtp_Destroy(sfFtp* ftp)
 {
-    delete Ftp;
+    delete ftp;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Connect to the specified FTP server
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_Connect(sfFtp* Ftp, sfIPAddress Server, unsigned short Port, float Timeout)
+sfFtpResponse* sfFtp_Connect(sfFtp* ftp, sfIPAddress server, unsigned short port, float timeout)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    sf::IPAddress SFMLServer(Server.Address);
+    sf::IPAddress SFMLServer(server.Address);
 
-    return new sfFtpResponse(Ftp->This.Connect(SFMLServer, Port, Timeout));
+    return new sfFtpResponse(ftp->This.Connect(SFMLServer, port, timeout));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Log in using anonymous account
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_LoginAnonymous(sfFtp* Ftp)
+sfFtpResponse* sfFtp_LoginAnonymous(sfFtp* ftp)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.Login());
+    return new sfFtpResponse(ftp->This.Login());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Log in using a username and a password
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_Login(sfFtp* Ftp, const char* UserName, const char* Password)
+sfFtpResponse* sfFtp_Login(sfFtp* ftp, const char* userName, const char* password)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.Login(UserName ? UserName : "", Password ? Password : ""));
+    return new sfFtpResponse(ftp->This.Login(userName ? userName : "", password ? password : ""));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Close the connection with FTP server
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_Disconnect(sfFtp* Ftp)
+sfFtpResponse* sfFtp_Disconnect(sfFtp* ftp)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.Disconnect());
+    return new sfFtpResponse(ftp->This.Disconnect());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Send a null command just to prevent from being disconnected
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_KeepAlive(sfFtp* Ftp)
+sfFtpResponse* sfFtp_KeepAlive(sfFtp* ftp)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.KeepAlive());
+    return new sfFtpResponse(ftp->This.KeepAlive());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the current working directory
 ////////////////////////////////////////////////////////////
-sfFtpDirectoryResponse* sfFtp_GetWorkingDirectory(sfFtp* Ftp)
+sfFtpDirectoryResponse* sfFtp_GetWorkingDirectory(sfFtp* ftp)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpDirectoryResponse(Ftp->This.GetWorkingDirectory());
+    return new sfFtpDirectoryResponse(ftp->This.GetWorkingDirectory());
 }
 
 
@@ -266,101 +266,101 @@ sfFtpDirectoryResponse* sfFtp_GetWorkingDirectory(sfFtp* Ftp)
 /// Get the contents of the given directory
 /// (subdirectories and files)
 ////////////////////////////////////////////////////////////
-sfFtpListingResponse* sfFtp_GetDirectoryListing(sfFtp* Ftp, const char* Directory)
+sfFtpListingResponse* sfFtp_GetDirectoryListing(sfFtp* ftp, const char* directory)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpListingResponse(Ftp->This.GetDirectoryListing(Directory ? Directory : ""));
+    return new sfFtpListingResponse(ftp->This.GetDirectoryListing(directory ? directory : ""));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the current working directory
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_ChangeDirectory(sfFtp* Ftp, const char* Directory)
+sfFtpResponse* sfFtp_ChangeDirectory(sfFtp* ftp, const char* directory)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.ChangeDirectory(Directory ? Directory : ""));
+    return new sfFtpResponse(ftp->This.ChangeDirectory(directory ? directory : ""));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Go to the parent directory of the current one
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_ParentDirectory(sfFtp* Ftp)
+sfFtpResponse* sfFtp_ParentDirectory(sfFtp* ftp)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.ParentDirectory());
+    return new sfFtpResponse(ftp->This.ParentDirectory());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new directory
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_MakeDirectory(sfFtp* Ftp, const char* Name)
+sfFtpResponse* sfFtp_MakeDirectory(sfFtp* ftp, const char* name)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.MakeDirectory(Name ? Name : ""));
+    return new sfFtpResponse(ftp->This.MakeDirectory(name ? name : ""));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Remove an existing directory
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_DeleteDirectory(sfFtp* Ftp, const char* Name)
+sfFtpResponse* sfFtp_DeleteDirectory(sfFtp* ftp, const char* name)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.DeleteDirectory(Name ? Name : ""));
+    return new sfFtpResponse(ftp->This.DeleteDirectory(name ? name : ""));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Rename a file
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_RenameFile(sfFtp* Ftp, const char* File, const char* NewName)
+sfFtpResponse* sfFtp_RenameFile(sfFtp* ftp, const char* file, const char* newName)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.RenameFile(File ? File : "", NewName ? NewName : ""));
+    return new sfFtpResponse(ftp->This.RenameFile(file ? file : "", newName ? newName : ""));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Remove an existing file
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_DeleteFile(sfFtp* Ftp, const char* Name)
+sfFtpResponse* sfFtp_DeleteFile(sfFtp* ftp, const char* name)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.DeleteFile(Name ? Name : ""));
+    return new sfFtpResponse(ftp->This.DeleteFile(name ? name : ""));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Download a file from the server
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_Download(sfFtp* Ftp, const char* DistantFile, const char* DestPath, sfFtpTransferMode Mode)
+sfFtpResponse* sfFtp_Download(sfFtp* ftp, const char* distantFile, const char* destPath, sfFtpTransferMode mode)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.Download(DistantFile ? DistantFile : "",
-                                                DestPath ? DestPath : "",
-                                                static_cast<sf::Ftp::TransferMode>(Mode)));
+    return new sfFtpResponse(ftp->This.Download(distantFile ? distantFile : "",
+                                                destPath ? destPath : "",
+                                                static_cast<sf::Ftp::TransferMode>(mode)));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Upload a file to the server
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_Upload(sfFtp* Ftp, const char* LocalFile, const char* DestPath, sfFtpTransferMode Mode)
+sfFtpResponse* sfFtp_Upload(sfFtp* ftp, const char* localFile, const char* destPath, sfFtpTransferMode mode)
 {
-    CSFML_CHECK_RETURN(Ftp, NULL);
+    CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(Ftp->This.Upload(LocalFile ? LocalFile : "",
-                                              DestPath ? DestPath : "",
-                                              static_cast<sf::Ftp::TransferMode>(Mode)));
+    return new sfFtpResponse(ftp->This.Upload(localFile ? localFile : "",
+                                              destPath ? destPath : "",
+                                              static_cast<sf::Ftp::TransferMode>(mode)));
 }

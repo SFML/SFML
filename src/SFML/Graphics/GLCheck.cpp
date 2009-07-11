@@ -34,73 +34,73 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Check the last OpenGL error
 ////////////////////////////////////////////////////////////
-void GLCheckError(const std::string& File, unsigned int Line)
+void GLCheckError(const std::string& file, unsigned int line)
 {
     // Get the last error
-    GLenum ErrorCode = glGetError();
+    GLenum errorCode = glGetError();
 
-    if (ErrorCode != GL_NO_ERROR)
+    if (errorCode != GL_NO_ERROR)
     {
-        std::string Error = "unknown error";
-        std::string Desc  = "no description";
+        std::string error = "unknown error";
+        std::string description  = "no description";
 
         // Decode the error code
-        switch (ErrorCode)
+        switch (errorCode)
         {
             case GL_INVALID_ENUM :
             {
-                Error = "GL_INVALID_ENUM";
-                Desc  = "an unacceptable value has been specified for an enumerated argument";
+                error = "GL_INVALID_ENUM";
+                description = "an unacceptable value has been specified for an enumerated argument";
                 break;
             }
 
             case GL_INVALID_VALUE :
             {
-                Error = "GL_INVALID_VALUE";
-                Desc  = "a numeric argument is out of range";
+                error = "GL_INVALID_VALUE";
+                description = "a numeric argument is out of range";
                 break;
             }
 
             case GL_INVALID_OPERATION :
             {
-                Error = "GL_INVALID_OPERATION";
-                Desc  = "the specified operation is not allowed in the current state";
+                error = "GL_INVALID_OPERATION";
+                description = "the specified operation is not allowed in the current state";
                 break;
             }
 
             case GL_STACK_OVERFLOW :
             {
-                Error = "GL_STACK_OVERFLOW";
-                Desc  = "this command would cause a stack overflow";
+                error = "GL_STACK_OVERFLOW";
+                description = "this command would cause a stack overflow";
                 break;
             }
 
             case GL_STACK_UNDERFLOW :
             {
-                Error = "GL_STACK_UNDERFLOW";
-                Desc  = "this command would cause a stack underflow";
+                error = "GL_STACK_UNDERFLOW";
+                description = "this command would cause a stack underflow";
                 break;
             }
 
             case GL_OUT_OF_MEMORY :
             {
-                Error = "GL_OUT_OF_MEMORY";
-                Desc  = "there is not enough memory left to execute the command";
+                error = "GL_OUT_OF_MEMORY";
+                description = "there is not enough memory left to execute the command";
                 break;
             }
 
             case GL_INVALID_FRAMEBUFFER_OPERATION_EXT :
             {
-                Error = "GL_INVALID_FRAMEBUFFER_OPERATION_EXT";
-                Desc  = "the object bound to FRAMEBUFFER_BINDING_EXT is not \"framebuffer complete\"";
+                error = "GL_INVALID_FRAMEBUFFER_OPERATION_EXT";
+                description = "the object bound to FRAMEBUFFER_BINDING_EXT is not \"framebuffer complete\"";
                 break;
             }
         }
 
         // Log the error
         std::cerr << "An internal OpenGL call failed in "
-                  << File.substr(File.find_last_of("\\/") + 1) << " (" << Line << ") : "
-                  << Error << ", " << Desc
+                  << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
+                  << error << ", " << description
                   << std::endl;
     }
 }
@@ -111,11 +111,11 @@ void GLCheckError(const std::string& File, unsigned int Line)
 ////////////////////////////////////////////////////////////
 void EnsureGlewInit()
 {
-    static bool Initialized = false;
-    if (!Initialized)
+    static bool initialized = false;
+    if (!initialized)
     {
         glewInit();
-        Initialized = true;
+        initialized = true;
     }
 }
 

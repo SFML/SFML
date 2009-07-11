@@ -90,111 +90,111 @@ CSFML_API sfHttpRequest* sfHttpRequest_Create();
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Http request
 ///
-/// \param HttpRequest : Http request to destroy
+/// \param httpRequest : Http request to destroy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttpRequest_Destroy(sfHttpRequest* HttpRequest);
+CSFML_API void sfHttpRequest_Destroy(sfHttpRequest* httpRequest);
 
 ////////////////////////////////////////////////////////////
 /// Set the value of a field; the field is added if it doesn't exist
 ///
-/// \param HttpRequest : Http request to modify
-/// \param Field :       Name of the field to set (case-insensitive)
-/// \param Value :       Value of the field
+/// \param httpRequest : Http request to modify
+/// \param field :       Name of the field to set (case-insensitive)
+/// \param value :       Value of the field
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttpRequest_SetField(sfHttpRequest* HttpRequest, const char* Field, const char* Value);
+CSFML_API void sfHttpRequest_SetField(sfHttpRequest* httpRequest, const char* field, const char* value);
 
 ////////////////////////////////////////////////////////////
 /// Set the request method.
 /// This parameter is sfHttpGet by default
 ///
-/// \param HttpRequest :   Http request to modify
-/// \param RequestMethod : Method to use for the request
+/// \param httpRequest : Http request to modify
+/// \param method :      Method to use for the request
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttpRequest_SetMethod(sfHttpRequest* HttpRequest, sfHttpMethod Method);
+CSFML_API void sfHttpRequest_SetMethod(sfHttpRequest* httpRequest, sfHttpMethod method);
 
 ////////////////////////////////////////////////////////////
 /// Set the target URI of the request.
 /// This parameter is "/" by default
 ///
-/// \param HttpRequest : Http request to modify
+/// \param httpRequest : Http request to modify
 /// \param URI :         URI to request, local to the host
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttpRequest_SetURI(sfHttpRequest* HttpRequest, const char* URI);
+CSFML_API void sfHttpRequest_SetURI(sfHttpRequest* httpRequest, const char* URI);
 
 ////////////////////////////////////////////////////////////
 /// Set the HTTP version of the request.
 /// This parameter is 1.0 by default
 ///
-/// \param HttpRequest : Http request to modify
-/// \param Major :       Major version number
-/// \param Minor :       Minor version number
+/// \param httpRequest : Http request to modify
+/// \param major :       Major version number
+/// \param minor :       Minor version number
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttpRequest_SetHttpVersion(sfHttpRequest* HttpRequest, unsigned int Major, unsigned int Minor);
+CSFML_API void sfHttpRequest_SetHttpVersion(sfHttpRequest* httpRequest, unsigned int major, unsigned int minor);
 
 ////////////////////////////////////////////////////////////
 /// Set the body of the request. This parameter is optional and
 /// makes sense only for POST requests.
 /// This parameter is empty by default
 ///
-/// \param HttpRequest : Http request to modify
-/// \param Body :        Content of the request body
+/// \param httpRequest : Http request to modify
+/// \param body :        Content of the request body
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttpRequest_SetBody(sfHttpRequest* HttpRequest, const char* Body);
+CSFML_API void sfHttpRequest_SetBody(sfHttpRequest* httpRequest, const char* body);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Http response
 ///
-/// \param HttpResponse : Http response to destroy
+/// \param httpResponse : Http response to destroy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttpResponse_Destroy(sfHttpResponse* HttpResponse);
+CSFML_API void sfHttpResponse_Destroy(sfHttpResponse* httpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the value of a field; returns NULL if the field doesn't exist
 ///
-/// \param HttpResponse : Http response
-/// \param Field :        Field to get
+/// \param httpResponse : Http response
+/// \param field :        Field to get
 ///
 /// \return Value of the field (NULL if it doesn't exist)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfHttpResponse_GetField(sfHttpResponse* HttpResponse, const char* Field);
+CSFML_API const char* sfHttpResponse_GetField(sfHttpResponse* httpResponse, const char* field);
 
 ////////////////////////////////////////////////////////////
 /// Get the status of a response
 ///
-/// \param HttpResponse : Http response
+/// \param httpResponse : Http response
 ///
 /// \return Status of the response
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfHttpStatus sfHttpResponse_GetStatus(sfHttpResponse* HttpResponse);
+CSFML_API sfHttpStatus sfHttpResponse_GetStatus(sfHttpResponse* httpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the major HTTP version of a response
 ///
-/// \param HttpResponse : Http response
+/// \param httpResponse : Http response
 ///
 /// \return HTTP major version of the response
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfHttpResponse_GetMajorVersion(sfHttpResponse* HttpResponse);
+CSFML_API unsigned int sfHttpResponse_GetMajorVersion(sfHttpResponse* httpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the minor HTTP version of a response
 ///
-/// \param HttpResponse : Http response
+/// \param httpResponse : Http response
 ///
 /// \return HTTP minor version of the response
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfHttpResponse_GetMinorVersion(sfHttpResponse* HttpResponse);
+CSFML_API unsigned int sfHttpResponse_GetMinorVersion(sfHttpResponse* httpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the body of the response. The body can contain :
@@ -203,12 +203,12 @@ CSFML_API unsigned int sfHttpResponse_GetMinorVersion(sfHttpResponse* HttpRespon
 /// - nothing (for HEAD requests)
 /// - an error message (in case of an error)
 ///
-/// \param HttpResponse : Http response
+/// \param httpResponse : Http response
 ///
 /// \return Body of the response (empty string if no body)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfHttpResponse_GetBody(sfHttpResponse* HttpResponse);
+CSFML_API const char* sfHttpResponse_GetBody(sfHttpResponse* httpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Construct a new Http object
@@ -224,17 +224,17 @@ CSFML_API sfHttp* sfHttp_Create();
 /// \param Http : Http to destroy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttp_Destroy(sfHttp* Http);
+CSFML_API void sfHttp_Destroy(sfHttp* http);
 
 ////////////////////////////////////////////////////////////
 /// Set the target host of a Http server
 ///
-/// \param Http : Http object
-/// \param Host : Web server to connect to
-/// \param Port : Port to use for connection (0 to use the standard port of the protocol used)
+/// \param http : Http object
+/// \param host : Web server to connect to
+/// \param port : Port to use for connection (0 to use the standard port of the protocol used)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttp_SetHost(sfHttp* Http, const char* Host, unsigned short Port);
+CSFML_API void sfHttp_SetHost(sfHttp* http, const char* host, unsigned short port);
 
 ////////////////////////////////////////////////////////////
 /// Send a HTTP request and return the server's response.
@@ -244,14 +244,14 @@ CSFML_API void sfHttp_SetHost(sfHttp* Http, const char* Host, unsigned short Por
 /// not return instantly; use a thread if you don't want to block your
 /// application.
 ///
-/// \param Http :    Http object
-/// \param Request : Request to send
-/// \param Timeout : Maximum time to wait (0 to use no timeout)
+/// \param http :    Http object
+/// \param request : Request to send
+/// \param timeout : Maximum time to wait (0 to use no timeout)
 ///
 /// \return Server's response, or NULL if request is invalid
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfHttpResponse* sfHttp_SendRequest(sfHttp* Http, sfHttpRequest* Request, float Timeout);
+CSFML_API sfHttpResponse* sfHttp_SendRequest(sfHttp* http, sfHttpRequest* request, float timeout);
 
 
 #endif // SFML_HTTP_H

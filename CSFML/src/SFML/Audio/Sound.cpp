@@ -42,48 +42,48 @@ sfSound* sfSound_Create()
 ////////////////////////////////////////////////////////////
 /// Destroy an existing sound
 ////////////////////////////////////////////////////////////
-void sfSound_Destroy(sfSound* Sound)
+void sfSound_Destroy(sfSound* sound)
 {
-    delete Sound;
+    delete sound;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Start playing a sound
 ////////////////////////////////////////////////////////////
-void sfSound_Play(sfSound* Sound)
+void sfSound_Play(sfSound* sound)
 {
-    CSFML_CALL(Sound, Play())
+    CSFML_CALL(sound, Play())
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Pause a sound
 ////////////////////////////////////////////////////////////
-void sfSound_Pause(sfSound* Sound)
+void sfSound_Pause(sfSound* sound)
 {
-    CSFML_CALL(Sound, Pause())
+    CSFML_CALL(sound, Pause())
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Stop playing a sound
 ////////////////////////////////////////////////////////////
-void sfSound_Stop(sfSound* Sound)
+void sfSound_Stop(sfSound* sound)
 {
-    CSFML_CALL(Sound, Stop())
+    CSFML_CALL(sound, Stop())
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Bind a sound buffer to a sound
 ////////////////////////////////////////////////////////////
-void sfSound_SetBuffer(sfSound* Sound, sfSoundBuffer* Buffer)
+void sfSound_SetBuffer(sfSound* sound, sfSoundBuffer* buffer)
 {
-    if (Buffer)
+    if (buffer)
     {
-        CSFML_CALL(Sound, SetBuffer(Buffer->This))
-        Sound->Buffer = Buffer;
+        CSFML_CALL(sound, SetBuffer(buffer->This))
+        sound->Buffer = buffer;
     }
 }
 
@@ -91,67 +91,67 @@ void sfSound_SetBuffer(sfSound* Sound, sfSoundBuffer* Buffer)
 ////////////////////////////////////////////////////////////
 /// Get the sound buffer bound to a sound
 ////////////////////////////////////////////////////////////
-sfSoundBuffer* sfSound_GetBuffer(sfSound* Sound)
+sfSoundBuffer* sfSound_GetBuffer(sfSound* sound)
 {
-    CSFML_CHECK_RETURN(Sound, NULL)
+    CSFML_CHECK_RETURN(sound, NULL)
 
-    return Sound->Buffer;
+    return sound->Buffer;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set a sound loop state
 ////////////////////////////////////////////////////////////
-void sfSound_SetLoop(sfSound* Sound, sfBool Loop)
+void sfSound_SetLoop(sfSound* sound, sfBool loop)
 {
-    CSFML_CALL(Sound, SetLoop(Loop == sfTrue))
+    CSFML_CALL(sound, SetLoop(loop == sfTrue))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Tell whether or not a sound is looping
 ////////////////////////////////////////////////////////////
-sfBool sfSound_GetLoop(sfSound* Sound)
+sfBool sfSound_GetLoop(sfSound* sound)
 {
-    CSFML_CALL_RETURN(Sound, GetLoop(), sfFalse)
+    CSFML_CALL_RETURN(sound, GetLoop(), sfFalse)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the status of a sound (stopped, paused, playing)
 ////////////////////////////////////////////////////////////
-sfSoundStatus sfSound_GetStatus(sfSound* Sound)
+sfSoundStatus sfSound_GetStatus(sfSound* sound)
 {
-    CSFML_CHECK_RETURN(Sound, sfStopped);
+    CSFML_CHECK_RETURN(sound, sfStopped);
 
-    return static_cast<sfSoundStatus>(Sound->This.GetStatus());
+    return static_cast<sfSoundStatus>(sound->This.GetStatus());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the pitch of a sound
 ////////////////////////////////////////////////////////////
-void sfSound_SetPitch(sfSound* Sound, float Pitch)
+void sfSound_SetPitch(sfSound* sound, float pitch)
 {
-    CSFML_CALL(Sound, SetPitch(Pitch))
+    CSFML_CALL(sound, SetPitch(pitch))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the volume of a sound
 ////////////////////////////////////////////////////////////
-void sfSound_SetVolume(sfSound* Sound, float Volume)
+void sfSound_SetVolume(sfSound* sound, float volume)
 {
-    CSFML_CALL(Sound, SetVolume(Volume))
+    CSFML_CALL(sound, SetVolume(volume))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the position of a sound
 ////////////////////////////////////////////////////////////
-void sfSound_SetPosition(sfSound* Sound, float X, float Y, float Z)
+void sfSound_SetPosition(sfSound* sound, float x, float y, float z)
 {
-    CSFML_CALL(Sound, SetPosition(sf::Vector3f(X, Y, Z)))
+    CSFML_CALL(sound, SetPosition(sf::Vector3f(x, y, z)))
 }
 
 
@@ -160,9 +160,9 @@ void sfSound_SetPosition(sfSound* Sound, float X, float Y, float Z)
 /// position, or absolute.
 /// The default value is false (absolute)
 ////////////////////////////////////////////////////////////
-void sfSound_SetRelativeToListener(sfSound* Sound, sfBool Relative)
+void sfSound_SetRelativeToListener(sfSound* sound, sfBool relative)
 {
-    CSFML_CALL(Sound, SetRelativeToListener(Relative == sfTrue));
+    CSFML_CALL(sound, SetRelativeToListener(relative == sfTrue));
 }
 
 
@@ -171,9 +171,9 @@ void sfSound_SetRelativeToListener(sfSound* Sound, sfBool Relative)
 /// the listener will hear the sound at its maximum volume.
 /// The default minimum distance is 1.0
 ////////////////////////////////////////////////////////////
-void sfSound_SetMinDistance(sfSound* Sound, float MinDistance)
+void sfSound_SetMinDistance(sfSound* sound, float distance)
 {
-    CSFML_CALL(Sound, SetMinDistance(MinDistance));
+    CSFML_CALL(sound, SetMinDistance(distance));
 }
 
 
@@ -182,50 +182,50 @@ void sfSound_SetMinDistance(sfSound* Sound, float MinDistance)
 /// more the sound will be attenuated with distance from listener.
 /// The default attenuation factor is 1.0
 ////////////////////////////////////////////////////////////
-void sfSound_SetAttenuation(sfSound* Sound, float Attenuation)
+void sfSound_SetAttenuation(sfSound* sound, float attenuation)
 {
-    CSFML_CALL(Sound, SetAttenuation(Attenuation));
+    CSFML_CALL(sound, SetAttenuation(attenuation));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the current playing position of a sound
 ////////////////////////////////////////////////////////////
-void sfSound_SetPlayingOffset(sfSound* Sound, float TimeOffset)
+void sfSound_SetPlayingOffset(sfSound* sound, float timeOffset)
 {
-    CSFML_CALL(Sound, SetPlayingOffset(TimeOffset));
+    CSFML_CALL(sound, SetPlayingOffset(timeOffset));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the pitch of a sound
 ////////////////////////////////////////////////////////////
-float sfSound_GetPitch(sfSound* Sound)
+float sfSound_GetPitch(sfSound* sound)
 {
-    CSFML_CALL_RETURN(Sound, GetPitch(), 0.f)
+    CSFML_CALL_RETURN(sound, GetPitch(), 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the volume of a sound
 ////////////////////////////////////////////////////////////
-float sfSound_GetVolume(sfSound* Sound)
+float sfSound_GetVolume(sfSound* sound)
 {
-    CSFML_CALL_RETURN(Sound, GetVolume(), 0.f)
+    CSFML_CALL_RETURN(sound, GetVolume(), 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the position of a sound
 ////////////////////////////////////////////////////////////
-void sfSound_GetPosition(sfSound* Sound, float* X, float* Y, float* Z)
+void sfSound_GetPosition(sfSound* sound, float* x, float* y, float* z)
 {
-    CSFML_CHECK(Sound);
+    CSFML_CHECK(sound);
 
-    sf::Vector3f Position = Sound->This.GetPosition();
-    if (X) *X = Position.x;
-    if (Y) *Y = Position.y;
-    if (Z) *Z = Position.z;
+    sf::Vector3f position = sound->This.GetPosition();
+    if (x) *x = position.x;
+    if (y) *y = position.y;
+    if (z) *z = position.z;
 }
 
 
@@ -233,34 +233,34 @@ void sfSound_GetPosition(sfSound* Sound, float* X, float* Y, float* Z)
 /// Tell if the sound's position is relative to the listener's
 /// position, or if it's absolute
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSound_IsRelativeToListener(sfSound* Sound)
+CSFML_API sfBool sfSound_IsRelativeToListener(sfSound* sound)
 {
-    CSFML_CALL_RETURN(Sound, IsRelativeToListener(), sfFalse);
+    CSFML_CALL_RETURN(sound, IsRelativeToListener(), sfFalse);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the minimum distance of a sound
 ////////////////////////////////////////////////////////////
-float sfSound_GetMinDistance(sfSound* Sound)
+float sfSound_GetMinDistance(sfSound* sound)
 {
-    CSFML_CALL_RETURN(Sound, GetMinDistance(), 0.f);
+    CSFML_CALL_RETURN(sound, GetMinDistance(), 0.f);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the attenuation factor of a sound
 ////////////////////////////////////////////////////////////
-float sfSound_GetAttenuation(sfSound* Sound)
+float sfSound_GetAttenuation(sfSound* sound)
 {
-    CSFML_CALL_RETURN(Sound, GetAttenuation(), 0.f);
+    CSFML_CALL_RETURN(sound, GetAttenuation(), 0.f);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the current playing position of a sound
 ////////////////////////////////////////////////////////////
-float sfSound_GetPlayingOffset(sfSound* Sound)
+float sfSound_GetPlayingOffset(sfSound* sound)
 {
-    CSFML_CALL_RETURN(Sound, GetPlayingOffset(), 0.f)
+    CSFML_CALL_RETURN(sound, GetPlayingOffset(), 0.f)
 }

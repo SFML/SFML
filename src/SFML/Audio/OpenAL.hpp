@@ -29,17 +29,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-
-#if defined(SFML_SYSTEM_MACOS)
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#else
-#include <AL/al.h>
-#include <AL/alc.h>
-#endif
-
 #include <iostream>
 #include <string>
+
+#if defined(SFML_SYSTEM_MACOS)
+    #include <OpenAL/al.h>
+    #include <OpenAL/alc.h>
+#else
+    #include <AL/al.h>
+    #include <AL/alc.h>
+#endif
 
 
 namespace sf
@@ -68,58 +67,58 @@ namespace priv
 /// Check last OpenAL error
 ///
 ////////////////////////////////////////////////////////////
-inline void ALCheckError(const std::string& File, unsigned int Line)
+inline void ALCheckError(const std::string& file, unsigned int line)
 {
     // Get the last error
-    ALenum ErrorCode = alGetError();
+    ALenum errorCode = alGetError();
 
-    if (ErrorCode != AL_NO_ERROR)
+    if (errorCode != AL_NO_ERROR)
     {
-        std::string Error, Desc;
+        std::string error, description;
 
         // Decode the error code
-        switch (ErrorCode)
+        switch (errorCode)
         {
             case AL_INVALID_NAME :
             {
-                Error = "AL_INVALID_NAME";
-                Desc  = "an unacceptable name has been specified";
+                error = "AL_INVALID_NAME";
+                description = "an unacceptable name has been specified";
                 break;
             }
 
             case AL_INVALID_ENUM :
             {
-                Error = "AL_INVALID_ENUM";
-                Desc  = "an unacceptable value has been specified for an enumerated argument";
+                error = "AL_INVALID_ENUM";
+                description = "an unacceptable value has been specified for an enumerated argument";
                 break;
             }
 
             case AL_INVALID_VALUE :
             {
-                Error = "AL_INVALID_VALUE";
-                Desc  = "a numeric argument is out of range";
+                error = "AL_INVALID_VALUE";
+                description = "a numeric argument is out of range";
                 break;
             }
 
             case AL_INVALID_OPERATION :
             {
-                Error = "AL_INVALID_OPERATION";
-                Desc  = "the specified operation is not allowed in the current state";
+                error = "AL_INVALID_OPERATION";
+                description = "the specified operation is not allowed in the current state";
                 break;
             }
 
             case AL_OUT_OF_MEMORY :
             {
-                Error = "AL_OUT_OF_MEMORY";
-                Desc  = "there is not enough memory left to execute the command";
+                error = "AL_OUT_OF_MEMORY";
+                description = "there is not enough memory left to execute the command";
                 break;
             }
         }
 
         // Log the error
         std::cerr << "An internal OpenAL call failed in "
-                  << File.substr(File.find_last_of("\\/") + 1) << " (" << Line << ") : "
-                  << Error << ", " << Desc
+                  << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
+                  << error << ", " << description
                   << std::endl;
     }
 }

@@ -41,8 +41,8 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    sf::priv::WindowImplX11* FullscreenWindow = NULL;
-    unsigned long            EventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
+    sf::priv::WindowImplX11* fullscreenWindow = NULL;
+    unsigned long            eventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
                                                 PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
                                                 EnterWindowMask | LeaveWindowMask;
 
@@ -50,10 +50,10 @@ namespace
     /// Filter the events received by windows
     /// (only allow those matching a specific window)
     ////////////////////////////////////////////////////////////
-    Bool CheckEvent(::Display*, XEvent* Event, XPointer UserData)
+    Bool CheckEvent(::Display*, XEvent* event, XPointer userData)
     {
         // Just check if the event matches the window
-        return Event->xany.window == reinterpret_cast< ::Window >(UserData);
+        return event->xany.window == reinterpret_cast< ::Window >(userData);
     }
 }
 
@@ -65,7 +65,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// Create the window implementation from an existing control
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(WindowHandle Handle) :
+WindowImplX11::WindowImplX11(WindowHandle handle) :
 myWindow      (0),
 myIsExternal  (true),
 myAtomClose   (0),
@@ -79,19 +79,19 @@ myKeyRepeat   (true)
     myScreen  = DefaultScreen(myDisplay);
 
     // Save the window handle
-    myWindow = Handle;
+    myWindow = handle;
 
     if (myWindow)
     {
         // Get the window size
-        XWindowAttributes WindowAttributes;
-        if (XGetWindowAttributes(myDisplay, myWindow, &WindowAttributes) == 0)
+        XWindowAttributes windowAttributes;
+        if (XGetWindowAttributes(myDisplay, myWindow, &windowAttributes) == 0)
         {
             std::cerr << "Failed to get the window attributes" << std::endl;
             return;
         }
-        myWidth  = WindowAttributes.width;
-        myHeight = WindowAttributes.height;
+        myWidth  = windowAttributes.width;
+        myHeight = windowAttributes.height;
 
         // Make sure the window is listening to all the requiered events
         XSelectInput(myDisplay, myWindow, EventMask & ~ButtonPressMask);
@@ -105,7 +105,7 @@ myKeyRepeat   (true)
 ////////////////////////////////////////////////////////////
 /// Create the window implementation
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(VideoMode Mode, const std::string& Title, unsigned long WindowStyle) :
+WindowImplX11::WindowImplX11(VideoMode mode, const std::string& title, unsigned long style) :
 myWindow      (0),
 myIsExternal  (false),
 myAtomClose   (0),
@@ -119,40 +119,40 @@ myKeyRepeat   (true)
     myScreen  = DefaultScreen(myDisplay);
 
     // Compute position and size
-    int Left, Top;
-    bool Fullscreen = (WindowStyle & Style::Fullscreen) != 0;
-    if (!Fullscreen)
+    int left, top;
+    bool fullscreen = (style & Style::Fullscreen) != 0;
+    if (!fullscreen)
     {
-        Left = (DisplayWidth(myDisplay, myScreen)  - Mode.Width)  / 2;
-        Top  = (DisplayHeight(myDisplay, myScreen) - Mode.Height) / 2;
+        left = (DisplayWidth(myDisplay, myScreen)  - mode.Width)  / 2;
+        top  = (DisplayHeight(myDisplay, myScreen) - mode.Height) / 2;
     }
     else
     {
-        Left = 0;
-        Top  = 0;
+        left = 0;
+        top  = 0;
     }
-    int Width  = myWidth  = Mode.Width;
-    int Height = myHeight = Mode.Height;
+    int width  = myWidth  = mode.Width;
+    int height = myHeight = mode.Height;
 
     // Switch to fullscreen if necessary
-    if (Fullscreen)
-        SwitchToFullscreen(Mode);
+    if (fullscreen)
+        SwitchToFullscreen(mode);
 
     // Define the window attributes
-    XSetWindowAttributes Attributes;
-    Attributes.event_mask        = EventMask;
-    Attributes.override_redirect = Fullscreen;
+    XSetWindowAttributes attributes;
+    attributes.event_mask        = eventMask;
+    attributes.override_redirect = fullscreen;
 
     // Create the window
     myWindow = XCreateWindow(myDisplay,
                              RootWindow(myDisplay, myScreen),
-                             Left, Top,
-                             Width, Height,
+                             left, top,
+                             width, height,
                              0,
                              DefaultDepth(myDisplay, myScreen),
                              InputOutput,
                              DefaultVisual(myDisplay, myScreen),
-                             CWEventMask | CWOverrideRedirect, &Attributes);
+                             CWEventMask | CWOverrideRedirect, &attributes);
     if (!myWindow)
     {
         std::cerr << "Failed to create window" << std::endl;
@@ -160,10 +160,10 @@ myKeyRepeat   (true)
     }
 
     // Set the window's name
-    XStoreName(myDisplay, myWindow, Title.c_str());
+    XStoreName(myDisplay, myWindow, title.c_str());
 
     // Set the window's style (tell the windows manager to change our window's decorations and functions according to the requested style)
-    if (!Fullscreen)
+    if (!fullscreen)
     {
         Atom WMHintsAtom = XInternAtom(myDisplay, "_MOTIF_WM_HINTS", false);
         if (WMHintsAtom)
@@ -195,39 +195,39 @@ myKeyRepeat   (true)
                 unsigned long State;
             };
     
-            WMHints Hints;
-            Hints.Flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-            Hints.Decorations = 0;
-            Hints.Functions   = 0;
+            WMHints hints;
+            hints.Flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+            hints.Decorations = 0;
+            hints.Functions   = 0;
 
-            if (WindowStyle & Style::Titlebar)
+            if (style & Style::Titlebar)
             {
-                Hints.Decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
-                Hints.Functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
+                hints.Decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
+                hints.Functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
             }
-            if (WindowStyle & Style::Resize)
+            if (style & Style::Resize)
             {
-                Hints.Decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
-                Hints.Functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
+                hints.Decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
+                hints.Functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
             }
-            if (WindowStyle & Style::Close)
+            if (style & Style::Close)
             {
-                Hints.Decorations |= 0;
-                Hints.Functions   |= MWM_FUNC_CLOSE;
+                hints.Decorations |= 0;
+                hints.Functions   |= MWM_FUNC_CLOSE;
             }
 
-            const unsigned char* HintsPtr = reinterpret_cast<const unsigned char*>(&Hints);
-            XChangeProperty(myDisplay, myWindow, WMHintsAtom, WMHintsAtom, 32, PropModeReplace, HintsPtr, 5);
+            const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&hints);
+            XChangeProperty(myDisplay, myWindow, WMHintsAtom, WMHintsAtom, 32, PropModeReplace, ptr, 5);
         }
 
         // This is a hack to force some windows managers to disable resizing
-        if (!(WindowStyle & Style::Resize))
+        if (!(style & Style::Resize))
         {
-            XSizeHints XSizeHints;
-            XSizeHints.flags      = PMinSize | PMaxSize;
-            XSizeHints.min_width  = XSizeHints.max_width  = Width;
-            XSizeHints.min_height = XSizeHints.max_height = Height;
-            XSetWMNormalHints(myDisplay, myWindow, &XSizeHints); 
+            XSizeHints sizeHints;
+            sizeHints.flags      = PMinSize | PMaxSize;
+            sizeHints.min_width  = sizeHints.max_width  = width;
+            sizeHints.min_height = sizeHints.max_height = height;
+            XSetWMNormalHints(myDisplay, myWindow, &sizeHints); 
         }
     }
 
@@ -235,7 +235,7 @@ myKeyRepeat   (true)
     Initialize();
 
     // In fullscreen mode, we must grab keyboard and mouse inputs
-    if (Fullscreen)
+    if (fullscreen)
     {
         XGrabPointer(myDisplay, myWindow, true, 0, GrabModeAsync, GrabModeAsync, myWindow, None, CurrentTime);
         XGrabKeyboard(myDisplay, myWindow, true, GrabModeAsync, GrabModeAsync, CurrentTime);
@@ -288,33 +288,33 @@ void WindowImplX11::ProcessEvents()
 
 
     // Process any event in the queue matching our window
-    XEvent Event;
-    while (XCheckIfEvent(myDisplay, &Event, &CheckEvent, reinterpret_cast<XPointer>(myWindow)))
+    XEvent event;
+    while (XCheckIfEvent(myDisplay, &event, &CheckEvent, reinterpret_cast<XPointer>(myWindow)))
     {
         // Detect repeated key events
-        if ((Event.type == KeyPress) || (Event.type == KeyRelease))
+        if ((event.type == KeyPress) || (event.type == KeyRelease))
         {
-            if (Event.xkey.keycode < 256)
+            if (event.xkey.keycode < 256)
             {
                 // To detect if it is a repeated key event, we check the current state of the key.
                 // - If the state is "down", KeyReleased events must obviously be discarded.
                 // - KeyPress events are a little bit harder to handle: they depend on the EnableKeyRepeat state,
                 //   and we need to properly forward the first one.
-                char Keys[32];
-                XQueryKeymap(myDisplay, Keys);
-                if (Keys[Event.xkey.keycode >> 3] & (1 << (Event.xkey.keycode % 8)))
+                char keys[32];
+                XQueryKeymap(myDisplay, keys);
+                if (keys[event.xkey.keycode >> 3] & (1 << (event.xkey.keycode % 8)))
                 {
                     // KeyRelease event + key down = repeated event --> discard
-                    if (Event.type == KeyRelease)
+                    if (event.type == KeyRelease)
                     {
-                        myLastKeyReleaseEvent = Event;
+                        myLastKeyReleaseEvent = event;
                         continue;
                     }
 
                     // KeyPress event + key repeat disabled + matching KeyRelease event = repeated event --> discard
-                    if ((Event.type == KeyPress) && !myKeyRepeat &&
-                        (myLastKeyReleaseEvent.xkey.keycode == Event.xkey.keycode) &&
-                        (myLastKeyReleaseEvent.xkey.time == Event.xkey.time))
+                    if ((event.type == KeyPress) && !myKeyRepeat &&
+                        (myLastKeyReleaseEvent.xkey.keycode == event.xkey.keycode) &&
+                        (myLastKeyReleaseEvent.xkey.time == event.xkey.time))
                     {
                         continue;
                     }
@@ -323,7 +323,7 @@ void WindowImplX11::ProcessEvents()
         }
 
         // Process the event
-        ProcessEvent(Event);
+        ProcessEvent(event);
    }
 }
 
@@ -331,9 +331,9 @@ void WindowImplX11::ProcessEvents()
 ////////////////////////////////////////////////////////////
 /// /see WindowImpl::ShowMouseCursor
 ////////////////////////////////////////////////////////////
-void WindowImplX11::ShowMouseCursor(bool Show)
+void WindowImplX11::ShowMouseCursor(bool show)
 {
-    XDefineCursor(myDisplay, myWindow, Show ? None : myHiddenCursor);
+    XDefineCursor(myDisplay, myWindow, show ? None : myHiddenCursor);
     XFlush(myDisplay);
 }
 
@@ -341,9 +341,9 @@ void WindowImplX11::ShowMouseCursor(bool Show)
 ////////////////////////////////////////////////////////////
 /// /see sfWindowImpl::SetCursorPosition
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetCursorPosition(unsigned int Left, unsigned int Top)
+void WindowImplX11::SetCursorPosition(unsigned int left, unsigned int top)
 {
-    XWarpPointer(myDisplay, None, myWindow, 0, 0, 0, 0, Left, Top);
+    XWarpPointer(myDisplay, None, myWindow, 0, 0, 0, 0, left, top);
     XFlush(myDisplay);
 }
 
@@ -351,9 +351,9 @@ void WindowImplX11::SetCursorPosition(unsigned int Left, unsigned int Top)
 ////////////////////////////////////////////////////////////
 /// /see sfWindowImpl::SetPosition
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetPosition(int Left, int Top)
+void WindowImplX11::SetPosition(int left, int top)
 {
-    XMoveWindow(myDisplay, myWindow, Left, Top);
+    XMoveWindow(myDisplay, myWindow, left, top);
     XFlush(myDisplay);
 }
 
@@ -361,9 +361,9 @@ void WindowImplX11::SetPosition(int Left, int Top)
 ////////////////////////////////////////////////////////////
 /// /see WindowImpl::SetSize
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetSize(unsigned int Width, unsigned int Height)
+void WindowImplX11::SetSize(unsigned int width, unsigned int height)
 {
-    XResizeWindow(myDisplay, myWindow, Width, Height);
+    XResizeWindow(myDisplay, myWindow, width, height);
     XFlush(myDisplay);
 }
 
@@ -371,9 +371,9 @@ void WindowImplX11::SetSize(unsigned int Width, unsigned int Height)
 ////////////////////////////////////////////////////////////
 /// /see sfWindowImpl::Show
 ////////////////////////////////////////////////////////////
-void WindowImplX11::Show(bool State)
+void WindowImplX11::Show(bool show)
 {
-    if (State)
+    if (show)
         XMapWindow(myDisplay, myWindow);
     else
         XUnmapWindow(myDisplay, myWindow);
@@ -385,70 +385,70 @@ void WindowImplX11::Show(bool State)
 ////////////////////////////////////////////////////////////
 /// /see sfWindowImpl::EnableKeyRepeat
 ////////////////////////////////////////////////////////////
-void WindowImplX11::EnableKeyRepeat(bool Enabled)
+void WindowImplX11::EnableKeyRepeat(bool enabled)
 {
-    myKeyRepeat = Enabled;
+    myKeyRepeat = enabled;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// /see WindowImpl::SetIcon
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixels)
+void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     // X11 wants BGRA pixels : swap red and blue channels
     // Note : this memory will never be freed, but it seems to cause a bug on exit if I do so
-    Uint8* IconPixels = new Uint8[Width * Height * 4];
-    for (std::size_t i = 0; i < Width * Height; ++i)
+    Uint8* iconPixels = new Uint8[width * height * 4];
+    for (std::size_t i = 0; i < width * height; ++i)
     {
-        IconPixels[i * 4 + 0] = Pixels[i * 4 + 2];
-        IconPixels[i * 4 + 1] = Pixels[i * 4 + 1];
-        IconPixels[i * 4 + 2] = Pixels[i * 4 + 0];
-        IconPixels[i * 4 + 3] = Pixels[i * 4 + 3];
+        iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
+        iconPixels[i * 4 + 1] = pixels[i * 4 + 1];
+        iconPixels[i * 4 + 2] = pixels[i * 4 + 0];
+        iconPixels[i * 4 + 3] = pixels[i * 4 + 3];
     }
 
     // Create the icon pixmap
-    Visual*      DefVisual = DefaultVisual(myDisplay, myScreen);
-    unsigned int DefDepth  = DefaultDepth(myDisplay, myScreen);
-    XImage* IconImage = XCreateImage(myDisplay, DefVisual, DefDepth, ZPixmap, 0, (char*)IconPixels, Width, Height, 32, 0);
-    if (!IconImage)
+    Visual*      defVisual = DefaultVisual(myDisplay, myScreen);
+    unsigned int defDepth  = DefaultDepth(myDisplay, myScreen);
+    XImage* iconImage = XCreateImage(myDisplay, defVisual, defDepth, ZPixmap, 0, (char*)iconPixels, width, height, 32, 0);
+    if (!iconImage)
     {
         std::cerr << "Failed to set the window's icon" << std::endl;
         return;
     }
-    Pixmap IconPixmap = XCreatePixmap(myDisplay, RootWindow(myDisplay, myScreen), Width, Height, DefDepth);
-    XGCValues Values;
-    GC IconGC = XCreateGC(myDisplay, IconPixmap, 0, &Values);
-    XPutImage(myDisplay, IconPixmap, IconGC, IconImage, 0, 0, 0, 0, Width, Height);
-    XFreeGC(myDisplay, IconGC);
-    XDestroyImage(IconImage);
+    Pixmap iconPixmap = XCreatePixmap(myDisplay, RootWindow(myDisplay, myScreen), width, height, defDepth);
+    XGCValues values;
+    GC iconGC = XCreateGC(myDisplay, iconPixmap, 0, &values);
+    XPutImage(myDisplay, iconPixmap, iconGC, iconImage, 0, 0, 0, 0, width, height);
+    XFreeGC(myDisplay, iconGC);
+    XDestroyImage(iconImage);
 
     // Create the mask pixmap (must have 1 bit depth)
-    std::size_t Pitch = (Width + 7) / 8;
-    static std::vector<Uint8> MaskPixels(Pitch * Height, 0);
-    for (std::size_t j = 0; j < Height; ++j)
+    std::size_t pitch = (width + 7) / 8;
+    static std::vector<Uint8> maskPixels(pitch * height, 0);
+    for (std::size_t j = 0; j < height; ++j)
     {
-        for (std::size_t i = 0; i < Pitch; ++i)
+        for (std::size_t i = 0; i < pitch; ++i)
         {
             for (std::size_t k = 0; k < 8; ++k)
             {
-                if (i * 8 + k < Width)
+                if (i * 8 + k < width)
                 {
-                    Uint8 Opacity = (Pixels[(i * 8 + k + j * Width) * 4 + 3] > 0) ? 1 : 0;
-                    MaskPixels[i + j * Pitch] |= (Opacity << k);                    
+                    Uint8 opacity = (pixels[(i * 8 + k + j * width) * 4 + 3] > 0) ? 1 : 0;
+                    maskPixels[i + j * pitch] |= (opacity << k);                    
                 }
             }
         }
     }
-    Pixmap MaskPixmap = XCreatePixmapFromBitmapData(myDisplay, myWindow, (char*)&MaskPixels[0], Width, Height, 1, 0, 1);
+    Pixmap maskPixmap = XCreatePixmapFromBitmapData(myDisplay, myWindow, (char*)&maskPixels[0], width, height, 1, 0, 1);
 
     // Send our new icon to the window through the WMHints
-    XWMHints* Hints = XAllocWMHints();
-    Hints->flags       = IconPixmapHint | IconMaskHint;
-    Hints->icon_pixmap = IconPixmap;
-    Hints->icon_mask   = MaskPixmap;
-    XSetWMHints(myDisplay, myWindow, Hints);
-    XFree(Hints);
+    XWMHints* hints = XAllocWMHints();
+    hints->flags       = IconPixmapHint | IconMaskHint;
+    hints->icon_pixmap = iconPixmap;
+    hints->icon_mask   = maskPixmap;
+    XSetWMHints(myDisplay, myWindow, hints);
+    XFree(hints);
 
     XFlush(myDisplay);
 }
@@ -457,42 +457,42 @@ void WindowImplX11::SetIcon(unsigned int Width, unsigned int Height, const Uint8
 ////////////////////////////////////////////////////////////
 /// Switch to fullscreen mode
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SwitchToFullscreen(const VideoMode& Mode)
+void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
 {
     // Check if the XRandR extension is present
-    int Version;
-    if (XQueryExtension(myDisplay, "RANDR", &Version, &Version, &Version))
+    int version;
+    if (XQueryExtension(myDisplay, "RANDR", &version, &version, &version))
     {
         // Get the current configuration
-        XRRScreenConfiguration* Config = XRRGetScreenInfo(myDisplay, RootWindow(myDisplay, myScreen));
-        if (Config)
+        XRRScreenConfiguration* config = XRRGetScreenInfo(myDisplay, RootWindow(myDisplay, myScreen));
+        if (config)
         {
             // Get the current rotation
-            Rotation CurrentRotation;
-            myOldVideoMode = XRRConfigCurrentConfiguration(Config, &CurrentRotation);
+            Rotation currentRotation;
+            myOldVideoMode = XRRConfigCurrentConfiguration(config, &currentRotation);
 
             // Get the available screen sizes
-            int NbSizes;
-            XRRScreenSize* Sizes = XRRConfigSizes(Config, &NbSizes);
-            if (Sizes && (NbSizes > 0))
+            int nbSizes;
+            XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
+            if (sizes && (nbSizes > 0))
             {
                 // Search a matching size
-                for (int i = 0; i < NbSizes; ++i)
+                for (int i = 0; i < nbSizes; ++i)
                 {
-                    if ((Sizes[i].width == static_cast<int>(Mode.Width)) && (Sizes[i].height == static_cast<int>(Mode.Height)))
+                    if ((sizes[i].width == static_cast<int>(mode.Width)) && (sizes[i].height == static_cast<int>(mode.Height)))
                     {
                         // Switch to fullscreen mode
-                        XRRSetScreenConfig(myDisplay, Config, RootWindow(myDisplay, myScreen), i, CurrentRotation, CurrentTime);
+                        XRRSetScreenConfig(myDisplay, config, RootWindow(myDisplay, myScreen), i, currentRotation, CurrentTime);
 
                         // Set "this" as the current fullscreen window
-                        FullscreenWindow = this;
+                        fullscreenWindow = this;
                         break;
                     }
                 }
             }
 
             // Free the configuration instance
-            XRRFreeScreenConfigInfo(Config);
+            XRRFreeScreenConfigInfo(config);
         }
         else
         {
@@ -521,13 +521,13 @@ void WindowImplX11::Initialize()
     XSetWMProtocols(myDisplay, myWindow, &myAtomClose, 1);
 
     // Create the input context
-    XIM InputMethod = myDisplayRef.GetInputMethod();
-    if (InputMethod)
+    XIM inputMethod = myDisplayRef.GetInputMethod();
+    if (inputMethod)
     {
-        myInputContext = XCreateIC(InputMethod,
-                                   XNClientWindow,  myWindow,
-                                   XNFocusWindow,   myWindow,
-                                   XNInputStyle,    XIMPreeditNothing  | XIMStatusNothing,
+        myInputContext = XCreateIC(inputMethod,
+                                   XNClientWindow, myWindow,
+                                   XNFocusWindow,  myWindow,
+                                   XNInputStyle,   XIMPreeditNothing  | XIMStatusNothing,
                                    NULL);
         
         if (!myInputContext)
@@ -552,19 +552,19 @@ void WindowImplX11::Initialize()
 void WindowImplX11::CreateHiddenCursor()
 {
     // Create the cursor's pixmap (1x1 pixels)
-    Pixmap CursorPixmap = XCreatePixmap(myDisplay, myWindow, 1, 1, 1);
-    GC GraphicsContext = XCreateGC(myDisplay, CursorPixmap, 0, NULL);
-    XDrawPoint(myDisplay, CursorPixmap, GraphicsContext, 0, 0);
-    XFreeGC(myDisplay, GraphicsContext);
+    Pixmap cursorPixmap = XCreatePixmap(myDisplay, myWindow, 1, 1, 1);
+    GC graphicsContext = XCreateGC(myDisplay, cursorPixmap, 0, NULL);
+    XDrawPoint(myDisplay, cursorPixmap, graphicsContext, 0, 0);
+    XFreeGC(myDisplay, graphicsContext);
 
     // Create the cursor, using the pixmap as both the shape and the mask of the cursor
-    XColor Color;
-    Color.flags = DoRed | DoGreen | DoBlue;
-    Color.red = Color.blue = Color.green = 0;
-    myHiddenCursor = XCreatePixmapCursor(myDisplay, CursorPixmap, CursorPixmap, &Color, &Color, 0, 0);
+    XColor color;
+    color.flags = DoRed | DoGreen | DoBlue;
+    color.red = Color.blue = Color.green = 0;
+    myHiddenCursor = XCreatePixmapCursor(myDisplay, cursorPixmap, cursorPixmap, &color, &color, 0, 0);
 
     // We don't need the pixmap any longer, free it
-    XFreePixmap(myDisplay, CursorPixmap);
+    XFreePixmap(myDisplay, cursorPixmap);
 }
 
 
@@ -574,25 +574,25 @@ void WindowImplX11::CreateHiddenCursor()
 void WindowImplX11::CleanUp()
 {
     // Restore the previous video mode (in case we were running in fullscreen)
-    if (FullscreenWindow == this)
+    if (fullscreenWindow == this)
     {
         // Get current screen info
-        XRRScreenConfiguration* Config = XRRGetScreenInfo(myDisplay, RootWindow(myDisplay, myScreen));
-        if (Config) 
+        XRRScreenConfiguration* config = XRRGetScreenInfo(myDisplay, RootWindow(myDisplay, myScreen));
+        if (config) 
         {
             // Get the current rotation
-            Rotation CurrentRotation;
-            XRRConfigCurrentConfiguration(Config, &CurrentRotation);
+            Rotation currentRotation;
+            XRRConfigCurrentConfiguration(config, &currentRotation);
 
             // Reset the video mode
-            XRRSetScreenConfig(myDisplay, Config, RootWindow(myDisplay, myScreen), myOldVideoMode, CurrentRotation, CurrentTime);
+            XRRSetScreenConfig(myDisplay, config, RootWindow(myDisplay, myScreen), myOldVideoMode, currentRotation, CurrentTime);
 
             // Free the configuration instance
-            XRRFreeScreenConfigInfo(Config);
+            XRRFreeScreenConfigInfo(config);
         } 
 
         // Reset the fullscreen window
-        FullscreenWindow = NULL;
+        fullscreenWindow = NULL;
     }
 
     // Unhide the mouse cursor (in case it was hidden)
@@ -603,9 +603,9 @@ void WindowImplX11::CleanUp()
 ////////////////////////////////////////////////////////////
 /// Process an incoming event from the window
 ////////////////////////////////////////////////////////////
-void WindowImplX11::ProcessEvent(XEvent WinEvent)
+void WindowImplX11::ProcessEvent(XEvent windowEvent)
 {
-    switch (WinEvent.type)
+    switch (windowEvent.type)
     {
         // Destroy event
         case DestroyNotify :
@@ -622,9 +622,9 @@ void WindowImplX11::ProcessEvent(XEvent WinEvent)
             if (myInputContext)
                 XSetICFocus(myInputContext);
 
-            Event Evt;
-            Evt.Type = Event::GainedFocus;
-            SendEvent(Evt);
+            Event event;
+            event.Type = Event::GainedFocus;
+            SendEvent(event);
             break;
         }
 
@@ -635,25 +635,25 @@ void WindowImplX11::ProcessEvent(XEvent WinEvent)
             if (myInputContext)
                 XUnsetICFocus(myInputContext);
 
-            Event Evt;
-            Evt.Type = Event::LostFocus;
-            SendEvent(Evt);
+            Event event;
+            event.Type = Event::LostFocus;
+            SendEvent(event);
             break;
         }
 
         // Resize event
         case ConfigureNotify :
         {
-            if ((WinEvent.xconfigure.width != static_cast<int>(myWidth)) || (WinEvent.xconfigure.height != static_cast<int>(myHeight)))
+            if ((windowEvent.xconfigure.width != static_cast<int>(myWidth)) || (windowEvent.xconfigure.height != static_cast<int>(myHeight)))
             {
-                myWidth  = WinEvent.xconfigure.width;
-                myHeight = WinEvent.xconfigure.height;
+                myWidth  = windowEvent.xconfigure.width;
+                myHeight = windowEvent.xconfigure.height;
 
-                Event Evt;
-                Evt.Type        = Event::Resized;
-                Evt.Size.Width  = myWidth;
-                Evt.Size.Height = myHeight;
-                SendEvent(Evt);
+                Event event;
+                event.Type        = Event::Resized;
+                event.Size.Width  = myWidth;
+                event.Size.Height = myHeight;
+                SendEvent(event);
             }
             break;
         }
@@ -661,11 +661,11 @@ void WindowImplX11::ProcessEvent(XEvent WinEvent)
         // Close event
         case ClientMessage :
         {
-            if ((WinEvent.xclient.format == 32) && (WinEvent.xclient.data.l[0]) == static_cast<long>(myAtomClose))  
+            if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(myAtomClose))  
             {
-                Event Evt;
-                Evt.Type = Event::Closed;
-                SendEvent(Evt);
+                Event event;
+                event.Type = Event::Closed;
+                SendEvent(event);
             }
             break;
         }
@@ -674,54 +674,54 @@ void WindowImplX11::ProcessEvent(XEvent WinEvent)
         case KeyPress :
         {
             // Get the keysym of the key that has been pressed
-            static XComposeStatus KeyboardStatus;
-            char Buffer[32];
-            KeySym Sym;
-            XLookupString(&WinEvent.xkey, Buffer, sizeof(Buffer), &Sym, &KeyboardStatus);
+            static XComposeStatus keyboard;
+            char buffer[32];
+            KeySym symbol;
+            XLookupString(&windowEvent.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
 
             // Fill the event parameters
-            Event Evt;
-            Evt.Type        = Event::KeyPressed;
-            Evt.Key.Code    = KeysymToSF(Sym);
-            Evt.Key.Alt     = WinEvent.xkey.state & Mod1Mask;
-            Evt.Key.Control = WinEvent.xkey.state & ControlMask;
-            Evt.Key.Shift   = WinEvent.xkey.state & ShiftMask;
-            SendEvent(Evt);
+            Event event;
+            event.Type        = Event::KeyPressed;
+            event.Key.Code    = KeysymToSF(symbol);
+            event.Key.Alt     = windowEvent.xkey.state & Mod1Mask;
+            event.Key.Control = windowEvent.xkey.state & ControlMask;
+            event.Key.Shift   = windowEvent.xkey.state & ShiftMask;
+            SendEvent(event);
 
             // Generate a TextEntered event
-            if (!XFilterEvent(&WinEvent, None))
+            if (!XFilterEvent(&windowEvent, None))
             {
                 #ifdef X_HAVE_UTF8_STRING
                 if (myInputContext)
                 {
-                    Status ReturnedStatus;
-                    Uint8  KeyBuffer[16];
-                    int Length = Xutf8LookupString(myInputContext, &WinEvent.xkey, reinterpret_cast<char*>(KeyBuffer), sizeof(KeyBuffer), NULL, &ReturnedStatus);
-                    if (Length > 0)
+                    Status status;
+                    Uint8  keyBuffer[16];
+                    int length = Xutf8LookupString(myInputContext, &windowEvent.xkey, reinterpret_cast<char*>(keyBuffer), sizeof(keyBuffer), NULL, &status);
+                    if (length > 0)
                     {
-                        Uint32 Unicode[2]; // just in case, but 1 character should be enough
-                        const Uint32* End = Unicode::UTF8ToUTF32(KeyBuffer, KeyBuffer + Length, Unicode);
+                        Uint32 unicode[2]; // just in case, but 1 character should be enough
+                        const Uint32* end = Unicode::UTF8ToUTF32(keyBuffer, keyBuffer + length, unicode);
 
-                        if (End > Unicode)
+                        if (end > unicode)
                         {
-                            Event TextEvt;
-                            TextEvt.Type         = Event::TextEntered;
-                            TextEvt.Text.Unicode = Unicode[0];
-                            SendEvent(TextEvt);
+                            Event textEvent;
+                            textEvent.Type         = Event::TextEntered;
+                            textEvent.Text.Unicode = unicode[0];
+                            SendEvent(textEvent);
                         }
                     }
                 }
                 else
                 #endif
                 {
-                    static XComposeStatus ComposeStatus;
-                    char KeyBuffer[16];
-                    if (XLookupString(&WinEvent.xkey, KeyBuffer, sizeof(KeyBuffer), NULL, &ComposeStatus))
+                    static XComposeStatus status;
+                    char keyBuffer[16];
+                    if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
                     {
-                        Event TextEvt;
-                        TextEvt.Type         = Event::TextEntered;
-                        TextEvt.Text.Unicode = static_cast<Uint32>(KeyBuffer[0]);
-                        SendEvent(TextEvt);
+                        Event textEvent;
+                        textEvent.Type         = Event::TextEntered;
+                        textEvent.Text.Unicode = static_cast<Uint32>(keyBuffer[0]);
+                        SendEvent(textEvent);
                     }
                 }
             }
@@ -733,41 +733,41 @@ void WindowImplX11::ProcessEvent(XEvent WinEvent)
         case KeyRelease :
         {
             // Get the keysym of the key that has been pressed
-            char Buffer[32];
-            KeySym Sym;
-            XLookupString(&WinEvent.xkey, Buffer, 32, &Sym, NULL);
+            char buffer[32];
+            KeySym symbol;
+            XLookupString(&windowEvent.xkey, buffer, 32, &symbol, NULL);
 
             // Fill the event parameters
-            Event Evt;
-            Evt.Type        = Event::KeyReleased;
-            Evt.Key.Code    = KeysymToSF(Sym);
-            Evt.Key.Alt     = WinEvent.xkey.state & Mod1Mask;
-            Evt.Key.Control = WinEvent.xkey.state & ControlMask;
-            Evt.Key.Shift   = WinEvent.xkey.state & ShiftMask;
+            Event event;
+            event.Type        = Event::KeyReleased;
+            event.Key.Code    = KeysymToSF(symbol);
+            event.Key.Alt     = windowEvent.xkey.state & Mod1Mask;
+            event.Key.Control = windowEvent.xkey.state & ControlMask;
+            event.Key.Shift   = windowEvent.xkey.state & ShiftMask;
+            SendEvent(event);
 
-            SendEvent(Evt);
             break;
         }
 
         // Mouse button pressed
         case ButtonPress :
         {
-            unsigned int Button = WinEvent.xbutton.button;
-            if ((Button == Button1) || (Button == Button2) || (Button == Button3) || (Button == 8) || (Button == 9))
+            unsigned int button = windowEvent.xbutton.button;
+            if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
-                Event Evt;
-                Evt.Type          = Event::MouseButtonPressed;
-                Evt.MouseButton.X = WinEvent.xbutton.x;
-                Evt.MouseButton.Y = WinEvent.xbutton.y;
+                Event event;
+                event.Type          = Event::MouseButtonPressed;
+                event.MouseButton.X = windowEvent.xbutton.x;
+                event.MouseButton.Y = windowEvent.xbutton.y;
                 switch (Button)
                 {
-                    case Button1 : Evt.MouseButton.Button = Mouse::Left;     break;
-                    case Button2 : Evt.MouseButton.Button = Mouse::Middle;   break;
-                    case Button3 : Evt.MouseButton.Button = Mouse::Right;    break;
-                    case 8 :       Evt.MouseButton.Button = Mouse::XButton1; break;
-                    case 9 :       Evt.MouseButton.Button = Mouse::XButton2; break;            
+                    case Button1 : event.MouseButton.Button = Mouse::Left;     break;
+                    case Button2 : event.MouseButton.Button = Mouse::Middle;   break;
+                    case Button3 : event.MouseButton.Button = Mouse::Right;    break;
+                    case 8 :       event.MouseButton.Button = Mouse::XButton1; break;
+                    case 9 :       event.MouseButton.Button = Mouse::XButton2; break;            
                 }
-                SendEvent(Evt);
+                SendEvent(event);
             }
             break;
         }
@@ -775,29 +775,29 @@ void WindowImplX11::ProcessEvent(XEvent WinEvent)
         // Mouse button released
         case ButtonRelease :
         {
-            unsigned int Button = WinEvent.xbutton.button;
-            if ((Button == Button1) || (Button == Button2) || (Button == Button3) || (Button == 8) || (Button == 9))
+            unsigned int button = windowEvent.xbutton.button;
+            if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
-                Event Evt;
-                Evt.Type          = Event::MouseButtonReleased;
-                Evt.MouseButton.X = WinEvent.xbutton.x;
-                Evt.MouseButton.Y = WinEvent.xbutton.y;
+                Event event;
+                event.Type          = Event::MouseButtonReleased;
+                event.MouseButton.X = windowEvent.xbutton.x;
+                event.MouseButton.Y = windowEvent.xbutton.y;
                 switch (Button)
                 {
-                    case Button1 : Evt.MouseButton.Button = Mouse::Left;     break;
-                    case Button2 : Evt.MouseButton.Button = Mouse::Middle;   break;
-                    case Button3 : Evt.MouseButton.Button = Mouse::Right;    break;
-                    case 8 :       Evt.MouseButton.Button = Mouse::XButton1; break;
-                    case 9 :       Evt.MouseButton.Button = Mouse::XButton2; break;            
+                    case Button1 : event.MouseButton.Button = Mouse::Left;     break;
+                    case Button2 : event.MouseButton.Button = Mouse::Middle;   break;
+                    case Button3 : event.MouseButton.Button = Mouse::Right;    break;
+                    case 8 :       event.MouseButton.Button = Mouse::XButton1; break;
+                    case 9 :       event.MouseButton.Button = Mouse::XButton2; break;            
                 }
-                SendEvent(Evt);
+                SendEvent(event);
             }
-            else if ((Button == Button4) || (Button == Button5))
+            else if ((button == Button4) || (button == Button5))
             {
-                Event Evt;
-                Evt.Type             = Event::MouseWheelMoved;
-                Evt.MouseWheel.Delta = WinEvent.xbutton.button == Button4 ? 1 : -1;
-                SendEvent(Evt);
+                Event event;
+                event.Type             = Event::MouseWheelMoved;
+                event.MouseWheel.Delta = windowEvent.xbutton.button == Button4 ? 1 : -1;
+                SendEvent(event);
             }
             break;
         }
@@ -805,29 +805,29 @@ void WindowImplX11::ProcessEvent(XEvent WinEvent)
         // Mouse moved
         case MotionNotify :
         {
-            Event Evt;
-            Evt.Type        = Event::MouseMoved;
-            Evt.MouseMove.X = WinEvent.xmotion.x;
-            Evt.MouseMove.Y = WinEvent.xmotion.y;
-            SendEvent(Evt);
+            Event event;
+            event.Type        = Event::MouseMoved;
+            event.MouseMove.X = windowEvent.xmotion.x;
+            event.MouseMove.Y = windowEvent.xmotion.y;
+            SendEvent(event);
             break;
         }
 
         // Mouse entered
         case EnterNotify :
         {
-            Event Evt;
-            Evt.Type = Event::MouseEntered;
-            SendEvent(Evt);
+            Event event;
+            event.Type = Event::MouseEntered;
+            SendEvent(event);
             break;
         }
 
         // Mouse left
         case LeaveNotify :
         {
-            Event Evt;
-            Evt.Type = Event::MouseLeft;
-            SendEvent(Evt);
+            Event event;
+            event.Type = Event::MouseLeft;
+            SendEvent(event);
             break;
         }
     }
@@ -837,13 +837,13 @@ void WindowImplX11::ProcessEvent(XEvent WinEvent)
 ////////////////////////////////////////////////////////////
 /// Convert a X11 keysym to SFML key code
 ////////////////////////////////////////////////////////////
-Key::Code WindowImplX11::KeysymToSF(KeySym Sym)
+Key::Code WindowImplX11::KeysymToSF(KeySym symbol)
 {
     // First convert to uppercase (to avoid dealing with two different keysyms for the same key)
-    KeySym Lower, Key;
-    XConvertCase(Sym, &Lower, &Key);
+    KeySym lower, key;
+    XConvertCase(symbol, &lower, &key);
 
-    switch (Key)
+    switch (key)
     {
         case XK_Shift_L :      return Key::LShift;
         case XK_Shift_R :      return Key::RShift;

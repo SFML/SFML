@@ -48,18 +48,18 @@ public :
     ////////////////////////////////////////////////////////////
     /// Add a socket to watch
     ///
-    /// \param Socket : Socket to add
+    /// \param socket : Socket to add
     ///
     ////////////////////////////////////////////////////////////
-    void Add(Type Socket);
+    void Add(Type socket);
 
     ////////////////////////////////////////////////////////////
     /// Remove a socket
     ///
-    /// \param Socket : Socket to remove
+    /// \param socket : Socket to remove
     ///
     ////////////////////////////////////////////////////////////
-    void Remove(Type Socket);
+    void Remove(Type socket);
 
     ////////////////////////////////////////////////////////////
     /// Remove all sockets
@@ -72,24 +72,24 @@ public :
     /// This functions will return either when at least one socket
     /// is ready, or when the given time is out
     ///
-    /// \param Timeout : Timeout, in seconds (0 by default : no timeout)
+    /// \param timeout : Timeout, in seconds (0 by default : no timeout)
     ///
     /// \return Number of sockets ready to be read
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int Wait(float Timeout = 0.f);
+    unsigned int Wait(float timeout = 0.f);
 
     ////////////////////////////////////////////////////////////
     /// After a call to Wait(), get the Index-th socket which is
     /// ready for reading. The total number of sockets ready
     /// is the integer returned by the previous call to Wait()
     ///
-    /// \param Index : Index of the socket to get
+    /// \param index : Index of the socket to get
     ///
-    /// \return The Index-th socket
+    /// \return The index-th socket
     ///
     ////////////////////////////////////////////////////////////
-    Type GetSocketReady(unsigned int Index);
+    Type GetSocketReady(unsigned int index);
 
 private :
 

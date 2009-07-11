@@ -38,9 +38,9 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-ThreadImpl::ThreadImpl(Thread* Owner)
+ThreadImpl::ThreadImpl(Thread* owner)
 {
-    myThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, Owner, 0, NULL));
+    myThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, owner, 0, NULL));
 
     if (!myThread)
         std::cerr << "Failed to create thread" << std::endl;
@@ -83,13 +83,13 @@ void ThreadImpl::Terminate()
 ////////////////////////////////////////////////////////////
 /// Global entry point for all threads
 ////////////////////////////////////////////////////////////
-unsigned int __stdcall ThreadImpl::EntryPoint(void* UserData)
+unsigned int __stdcall ThreadImpl::EntryPoint(void* userData)
 {
     // The Thread instance is stored in the user data
-    Thread* Owner = static_cast<Thread*>(UserData);
+    Thread* owner = static_cast<Thread*>(userData);
 
     // Forward to the owner
-    Owner->Run();
+    owner->Run();
 
     // Optional, but it is cleaner
     _endthreadex(0);

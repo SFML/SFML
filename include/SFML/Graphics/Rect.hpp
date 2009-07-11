@@ -52,13 +52,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the rectangle from its coordinates
     ///
-    /// \param LeftCoord :   Left coordinate of the rectangle
-    /// \param TopCoord :    Top coordinate of the rectangle
-    /// \param RightCoord :  Right coordinate of the rectangle
-    /// \param BottomCoord : Bottom coordinate of the rectangle
+    /// \param left :   Left coordinate of the rectangle
+    /// \param top :    Top coordinate of the rectangle
+    /// \param right :  Right coordinate of the rectangle
+    /// \param bottom : Bottom coordinate of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    Rect(T LeftCoord, T TopCoord, T RightCoord, T BottomCoord);
+    Rect(T left, T top, T right, T bottom);
 
     ////////////////////////////////////////////////////////////
     /// Get the size of the rectangle
@@ -79,62 +79,62 @@ public :
     ////////////////////////////////////////////////////////////
     /// Move the whole rectangle by the given offset
     ///
-    /// \param OffsetX : Horizontal offset
-    /// \param OffsetY : Vertical offset
+    /// \param offsetX : Horizontal offset
+    /// \param offsetY : Vertical offset
     ///
     ////////////////////////////////////////////////////////////
-    void Offset(T OffsetX, T OffsetY);
+    void Offset(T offsetX, T offsetY);
 
     ////////////////////////////////////////////////////////////
     /// Move the whole rectangle by the given offset
     ///
-    /// \param Off : Offset to apply to the current position
+    /// \param offset : Offset to apply to the current position
     ///
     ////////////////////////////////////////////////////////////
-    void Offset(const Vector2<T>& Off);
+    void Offset(const Vector2<T>& offset);
 
     ////////////////////////////////////////////////////////////
     /// Check if a point is inside the rectangle's area
     ///
-    /// \param X : X coordinate of the point to test
-    /// \param Y : Y coordinate of the point to test
+    /// \param x : X coordinate of the point to test
+    /// \param y : Y coordinate of the point to test
     ///
     /// \return True if the point is inside
     ///
     ////////////////////////////////////////////////////////////
-    bool Contains(T X, T Y) const;
+    bool Contains(T x, T y) const;
 
     ////////////////////////////////////////////////////////////
     /// Check if a point is inside the rectangle's area
     ///
-    /// \param Point : Point to test
+    /// \param point : Point to test
     ///
     /// \return True if the point is inside
     ///
     ////////////////////////////////////////////////////////////
-    bool Contains(const Vector2<T>& Point) const;
+    bool Contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
     /// Check intersection between two rectangles
     ///
-    /// \param Rectangle : Rectangle to test
+    /// \param rectangle : Rectangle to test
     ///
     /// \return True if rectangles overlap
     ///
     ////////////////////////////////////////////////////////////
-    bool Intersects(const Rect<T>& Rectangle) const;
+    bool Intersects(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// Check intersection between two rectangles and return the
     /// resulting rectangle
     ///
-    /// \param Rectangle :       Rectangle to test
-    /// \param OverlappingRect : Rectangle to be filled with the overlapping rect
+    /// \param rectangle :    Rectangle to test
+    /// \param intersection : Rectangle to be filled with the intersection of both rectangles
     ///
     /// \return True if rectangles overlap
     ///
     ////////////////////////////////////////////////////////////
-    bool Intersects(const Rect<T>& Rectangle, Rect<T>& OverlappingRect) const;
+    bool Intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
 
     ////////////////////////////////////////////////////////////
     // Member data

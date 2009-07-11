@@ -45,12 +45,12 @@ sfSocketTCP* sfSocketTCP_Create()
 ////////////////////////////////////////////////////////////
 /// Destroy an existing TCP socket
 ////////////////////////////////////////////////////////////
-void sfSocketTCP_Destroy(sfSocketTCP* Socket)
+void sfSocketTCP_Destroy(sfSocketTCP* socket)
 {
-    if (Socket)
+    if (socket)
     {
-        Socket->This.Close();
-        delete Socket;
+        socket->This.Close();
+        delete socket;
     }
 }
 
@@ -59,31 +59,31 @@ void sfSocketTCP_Destroy(sfSocketTCP* Socket)
 /// Change the blocking state of a TCP socket.
 /// The default behaviour of a socket is blocking
 ////////////////////////////////////////////////////////////
-void sfSocketTCP_SetBlocking(sfSocketTCP* Socket, sfBool Blocking)
+void sfSocketTCP_SetBlocking(sfSocketTCP* socket, sfBool blocking)
 {
-    CSFML_CALL(Socket, SetBlocking(Blocking == sfTrue));
+    CSFML_CALL(socket, SetBlocking(blocking == sfTrue));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Connect a TCP socket to another computer on a specified port
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketTCP_Connect(sfSocketTCP* Socket, unsigned short Port, sfIPAddress HostAddress, float Timeout)
+sfSocketStatus sfSocketTCP_Connect(sfSocketTCP* socket, unsigned short port, sfIPAddress host, float timeout)
 {
-    sf::IPAddress Address(HostAddress.Address);
+    sf::IPAddress address(host.Address);
 
-    CSFML_CHECK_RETURN(Socket, sfSocketError);
+    CSFML_CHECK_RETURN(socket, sfSocketError);
 
-    return static_cast<sfSocketStatus>(Socket->This.Connect(Port, Address, Timeout));
+    return static_cast<sfSocketStatus>(socket->This.Connect(port, address, timeout));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Listen to a specified port for incoming data or connections
 ////////////////////////////////////////////////////////////
-sfBool sfSocketTCP_Listen(sfSocketTCP* Socket, unsigned short Port)
+sfBool sfSocketTCP_Listen(sfSocketTCP* socket, unsigned short port)
 {
-    CSFML_CALL_RETURN(Socket, Listen(Port), sfFalse);
+    CSFML_CALL_RETURN(socket, Listen(port), sfFalse);
 }
 
 
@@ -92,25 +92,25 @@ sfBool sfSocketTCP_Listen(sfSocketTCP* Socket, unsigned short Port)
 /// This function is blocking, ie. it won't return before
 /// a connection has been accepted
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketTCP_Accept(sfSocketTCP* Socket, sfSocketTCP** Connected, sfIPAddress* Address)
+sfSocketStatus sfSocketTCP_Accept(sfSocketTCP* socket, sfSocketTCP** connected, sfIPAddress* address)
 {
-    CSFML_CHECK_RETURN(Socket,    sfSocketError);
-    CSFML_CHECK_RETURN(Connected, sfSocketError);
+    CSFML_CHECK_RETURN(socket,    sfSocketError);
+    CSFML_CHECK_RETURN(connected, sfSocketError);
 
     // Call SFML internal function
-    sf::IPAddress ClientAddress;
-    sf::SocketTCP Client;
-    sf::Socket::Status Status = Socket->This.Accept(Client, &ClientAddress);
-    if (Status != sf::Socket::Done)
-        return static_cast<sfSocketStatus>(Status);
+    sf::IPAddress clientAddress;
+    sf::SocketTCP client;
+    sf::Socket::Status status = socket->This.Accept(client, &clientAddress);
+    if (status != sf::Socket::Done)
+        return static_cast<sfSocketStatus>(status);
 
     // Convert the client socket returned
-    *Connected = sfSocketTCP_Create();
-    (*Connected)->This = Client;
+    *connected = sfSocketTCP_Create();
+    (*connected)->This = client;
 
     // Convert the address if needed
-    if (Address)
-        strncpy(Address->Address, ClientAddress.ToString().c_str(), 16);
+    if (address)
+        strncpy(address->Address, clientAddress.ToString().c_str(), 16);
 
     return sfSocketDone;
 }
@@ -119,29 +119,29 @@ sfSocketStatus sfSocketTCP_Accept(sfSocketTCP* Socket, sfSocketTCP** Connected, 
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes to the host (must be connected first)
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketTCP_Send(sfSocketTCP* Socket, const char* Data, size_t Size)
+sfSocketStatus sfSocketTCP_Send(sfSocketTCP* socket, const char* data, size_t size)
 {
-    CSFML_CHECK_RETURN(Socket, sfSocketError);
+    CSFML_CHECK_RETURN(socket, sfSocketError);
 
-    return static_cast<sfSocketStatus>(Socket->This.Send(Data, Size));
+    return static_cast<sfSocketStatus>(socket->This.Send(data, size));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Receive an array of bytes from the host (must be connected first)
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketTCP_Receive(sfSocketTCP* Socket, char* Data, size_t MaxSize, size_t* SizeReceived)
+sfSocketStatus sfSocketTCP_Receive(sfSocketTCP* socket, char* data, size_t maxSize, size_t* sizeReceived)
 {
-    CSFML_CHECK_RETURN(Socket, sfSocketError);
+    CSFML_CHECK_RETURN(socket, sfSocketError);
 
-    if (SizeReceived)
+    if (sizeReceived)
     {
-        return static_cast<sfSocketStatus>(Socket->This.Receive(Data, MaxSize, *SizeReceived));
+        return static_cast<sfSocketStatus>(socket->This.Receive(data, maxSize, *sizeReceived));
     }
     else
     {
-        std::size_t Size = 0;
-        return static_cast<sfSocketStatus>(Socket->This.Receive(Data, MaxSize, Size));
+        std::size_t size = 0;
+        return static_cast<sfSocketStatus>(socket->This.Receive(data, maxSize, size));
     }
 }
 
@@ -149,24 +149,24 @@ sfSocketStatus sfSocketTCP_Receive(sfSocketTCP* Socket, char* Data, size_t MaxSi
 ////////////////////////////////////////////////////////////
 /// Send a packet of data to the host (must be connected first)
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketTCP_SendPacket(sfSocketTCP* Socket, sfPacket* Packet)
+sfSocketStatus sfSocketTCP_SendPacket(sfSocketTCP* socket, sfPacket* packet)
 {
-    CSFML_CHECK_RETURN(Socket, sfSocketError);
-    CSFML_CHECK_RETURN(Packet, sfSocketError);
+    CSFML_CHECK_RETURN(socket, sfSocketError);
+    CSFML_CHECK_RETURN(packet, sfSocketError);
 
-    return static_cast<sfSocketStatus>(Socket->This.Send(Packet->This));
+    return static_cast<sfSocketStatus>(socket->This.Send(packet->This));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Receive a packet from the host (must be connected first)
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketTCP_ReceivePacket(sfSocketTCP* Socket, sfPacket* Packet)
+sfSocketStatus sfSocketTCP_ReceivePacket(sfSocketTCP* socket, sfPacket* packet)
 {
-    CSFML_CHECK_RETURN(Socket, sfSocketError);
-    CSFML_CHECK_RETURN(Packet, sfSocketError);
+    CSFML_CHECK_RETURN(socket, sfSocketError);
+    CSFML_CHECK_RETURN(packet, sfSocketError);
 
-    return static_cast<sfSocketStatus>(Socket->This.Receive(Packet->This));
+    return static_cast<sfSocketStatus>(socket->This.Receive(packet->This));
 }
 
 
@@ -174,7 +174,7 @@ sfSocketStatus sfSocketTCP_ReceivePacket(sfSocketTCP* Socket, sfPacket* Packet)
 /// Check if a socket is in a valid state ; this function
 /// can be called any time to check if the socket is OK
 ////////////////////////////////////////////////////////////
-sfBool sfSocketTCP_IsValid(sfSocketTCP* Socket)
+sfBool sfSocketTCP_IsValid(sfSocketTCP* socket)
 {
-    CSFML_CALL_RETURN(Socket, IsValid(), sfFalse);
+    CSFML_CALL_RETURN(socket, IsValid(), sfFalse);
 }

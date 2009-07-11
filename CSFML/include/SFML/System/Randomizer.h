@@ -35,10 +35,10 @@
 /// Set the seed for the random numbers generator. Using a known seed
 /// allows you to reproduce the same sequence of random numbers
 ///
-/// \param Seed : Number to use as the seed
+/// \param seed : Number to use as the seed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfRandom_SetSeed(unsigned int Seed);
+CSFML_API void sfRandom_SetSeed(unsigned int seed);
 
 ////////////////////////////////////////////////////////////
 /// Get the seed used to generate random numbers the generator
@@ -51,24 +51,24 @@ CSFML_API unsigned int sfRandom_GetSeed();
 ////////////////////////////////////////////////////////////
 /// Get a random float number in a given range
 ///
-/// \return Start : Start of the range
-/// \return End :   End of the range
+/// \return begin : Start of the range
+/// \return end :   End of the range
 ///
-/// \return Random number in [Begin, End]
+/// \return Random number in [begin, end]
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfRandom_Float(float Begin, float End);
+CSFML_API float sfRandom_Float(float begin, float end);
 
 ////////////////////////////////////////////////////////////
 /// Get a random integer number in a given range
 ///
-/// \return Start : Start of the range
-/// \return End :   End of the range
+/// \return begin : Start of the range
+/// \return end :   End of the range
 ///
-/// \return Random number in [Begin, End]
+/// \return Random number in [begin, end]
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API int sfRandom_Int(int Begin, int End);
+CSFML_API int sfRandom_Int(int begin, int end);
 
 
 #endif // SFML_RANDOMIZER_H

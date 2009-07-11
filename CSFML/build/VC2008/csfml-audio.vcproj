@@ -216,6 +216,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Audio\MusicStruct.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Audio\Sound.cpp"
 			>
 		</File>

@@ -50,53 +50,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the color from its 4 RGBA components
     ///
-    /// \param R : Red component   (0 .. 255)
-    /// \param G : Green component (0 .. 255)
-    /// \param B : Blue component  (0 .. 255)
-    /// \param A : Alpha component (0 .. 255) (255 by default)
+    /// \param red :   Red component   (0 .. 255)
+    /// \param green : Green component (0 .. 255)
+    /// \param blue :  Blue component  (0 .. 255)
+    /// \param alpha : Alpha (opacity) component (0 .. 255) (255 by default)
     ///
     ////////////////////////////////////////////////////////////
-    Color(Uint8 R, Uint8 G, Uint8 B, Uint8 A = 255);
-
-    ////////////////////////////////////////////////////////////
-    /// Operator += overload to add a color
-    ///
-    /// \param Other : Color to add
-    ///
-    /// \return Component-wise saturated addition of the two colors
-    ///
-    ////////////////////////////////////////////////////////////
-    Color& operator +=(const Color& Other);
-
-    ////////////////////////////////////////////////////////////
-    /// Operator *= overload to modulate a color
-    ///
-    /// \param Other : Color to modulate
-    ///
-    /// \return Component-wise multiplication of the two colors
-    ///
-    ////////////////////////////////////////////////////////////
-    Color& operator *=(const Color& Other);
-
-    ////////////////////////////////////////////////////////////
-    /// Compare two colors (for equality)
-    ///
-    /// \param Other : Color to compare
-    ///
-    /// \return True if colors are equal
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator ==(const Color& Other) const;
-
-    ////////////////////////////////////////////////////////////
-    /// Compare two colors (for difference)
-    ///
-    /// \param Other : Color to compare
-    ///
-    /// \return True if colors are different
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator !=(const Color& Other) const;
+    Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255);
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -120,26 +80,70 @@ public :
 };
 
 ////////////////////////////////////////////////////////////
+/// Compare two colors (for equality)
+///
+/// \param left :  Left operand
+/// \param right : Right operand
+///
+/// \return True if colors are equal
+///
+////////////////////////////////////////////////////////////
+bool operator ==(const Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
+/// Compare two colors (for difference)
+///
+/// \param left :  Left operand
+/// \param right : Right operand
+///
+/// \return True if colors are different
+///
+////////////////////////////////////////////////////////////
+bool operator !=(const Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
 /// Operator + overload to add two colors
 ///
-/// \param Color1 : First color
-/// \param Color2 : Second color
+/// \param left :  Left operand
+/// \param right : Right operand
 ///
 /// \return Component-wise saturated addition of the two colors
 ///
 ////////////////////////////////////////////////////////////
-SFML_API Color operator +(const Color& Color1, const Color& Color2);
+SFML_API Color operator +(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// Operator * overload to modulate two colors
 ///
-/// \param Color1 : First color
-/// \param Color2 : Second color
+/// \param left :  Left operand
+/// \param right : Right operand
 ///
 /// \return Component-wise multiplication of the two colors
 ///
 ////////////////////////////////////////////////////////////
-SFML_API Color operator *(const Color& Color1, const Color& Color2);
+SFML_API Color operator *(const Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
+/// Operator += overload to add a color
+///
+/// \param left :  Left operand
+/// \param right : Right operand
+///
+/// \return Component-wise saturated addition of the two colors
+///
+////////////////////////////////////////////////////////////
+Color& operator +=(Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
+/// Operator *= overload to modulate a color
+///
+/// \param left :  Left operand
+/// \param right : Right operand
+///
+/// \return Component-wise multiplication of the two colors
+///
+////////////////////////////////////////////////////////////
+Color& operator *=(Color& left, const Color& right);
 
 } // namespace sf
 

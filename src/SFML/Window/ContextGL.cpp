@@ -56,15 +56,15 @@
 namespace
 {
     // This thread-local variable will hold the "global" context for each thread
-    sf::ThreadLocalPtr<sf::priv::ContextGL> ThreadContext(NULL);
+    sf::ThreadLocalPtr<sf::priv::ContextGL> threadContext(NULL);
 
     // Now we create two global contexts.
     // The first one is the reference context: it will be shared with every other
-    // context, and he can't be activated if we want the sharing operation to always succeed.
-    // That why we need the second context: this one will be activated and used
+    // context, and it can't be activated if we want the sharing operation to always succeed.
+    // That's why we need the second context: this one will be activated and used
     // in the main thread whenever there's no other context (window) active.
-    ContextType ReferenceContext(NULL);
-    ContextType DefaultContext(&ReferenceContext);
+    ContextType referenceContext(NULL);
+    ContextType defaultContext(&referenceContext);
 }
 
 
@@ -77,22 +77,22 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ContextGL* ContextGL::New()
 {
-    return new ContextType(&ReferenceContext);
+    return new ContextType(&referenceContext);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new context attached to a window
 ////////////////////////////////////////////////////////////
-ContextGL* ContextGL::New(const WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings)
+ContextGL* ContextGL::New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    ContextType* Context = new ContextType(&ReferenceContext, Owner, BitsPerPixel, Settings);
+    ContextType* context = new ContextType(&referenceContext, owner, bitsPerPixel, settings);
 
     // Enable antialiasing if needed
-    if (Context->GetSettings().AntialiasingLevel > 0)
+    if (context->GetSettings().AntialiasingLevel > 0)
         glEnable(GL_MULTISAMPLE_ARB);
 
-    return Context;
+    return context;
 }
 
 
@@ -101,13 +101,13 @@ ContextGL* ContextGL::New(const WindowImpl* Owner, unsigned int BitsPerPixel, co
 ////////////////////////////////////////////////////////////
 ContextGL::~ContextGL()
 {
-    if (ThreadContext == this)
+    if (threadContext == this)
     {
-        ThreadContext = NULL;
+        threadContext = NULL;
     }
-    else if (ThreadContext != NULL)
+    else if (threadContext != NULL)
     {
-        ThreadContext->SetActive(true);
+        threadContext->SetActive(true);
     }
 }
 
@@ -125,21 +125,21 @@ const ContextSettings& ContextGL::GetSettings() const
 /// Activate or deactivate the context as the current target
 /// for rendering
 ////////////////////////////////////////////////////////////
-bool ContextGL::SetActive(bool Active)
+bool ContextGL::SetActive(bool active)
 {
-    if (MakeCurrent(Active))
+    if (MakeCurrent(active))
     {
-        if (Active && (ThreadContext == NULL))
+        if (active && (threadContext == 0))
         {
             // If this is the first context to be activated on this thread, make
             // it the reference context for the whole thread
-            ThreadContext = this;
+            threadContext = this;
         }
-        else if (!Active && (ThreadContext != NULL) && (ThreadContext != this))
+        else if (!active && (threadContext != NULL) && (threadContext != this))
         {
             // Activate the reference context for this thread to ensure
             // that there is always an active context for subsequent graphics operations
-            ThreadContext->SetActive(true);
+            threadContext->SetActive(true);
         }
 
         return true;
@@ -165,12 +165,12 @@ ContextGL::ContextGL()
 /// This functions can be used by implementations that have
 /// several valid formats and want to get the best one
 ////////////////////////////////////////////////////////////
-int ContextGL::EvaluateFormat(unsigned int BitsPerPixel, const ContextSettings& Settings, int ColorBits, int DepthBits, int StencilBits, int Antialiasing)
+int ContextGL::EvaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing)
 {
-    return abs(static_cast<int>(BitsPerPixel               - ColorBits))   +
-           abs(static_cast<int>(Settings.DepthBits         - DepthBits))   +
-           abs(static_cast<int>(Settings.StencilBits       - StencilBits)) +
-           abs(static_cast<int>(Settings.AntialiasingLevel - Antialiasing));
+    return abs(static_cast<int>(bitsPerPixel               - colorBits))   +
+           abs(static_cast<int>(settings.DepthBits         - depthBits))   +
+           abs(static_cast<int>(settings.StencilBits       - stencilBits)) +
+           abs(static_cast<int>(settings.AntialiasingLevel - antialiasing));
 }
 
 } // namespace priv

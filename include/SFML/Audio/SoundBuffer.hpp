@@ -28,8 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Config.hpp>
 #include <SFML/System/Resource.hpp>
-#include <SFML/Audio/AudioResource.hpp>
 #include <string>
 #include <vector>
 
@@ -40,7 +40,7 @@ namespace sf
 /// SoundBuffer is the low-level for loading and manipulating
 /// sound buffers
 ////////////////////////////////////////////////////////////
-class SFML_API SoundBuffer : public AudioResource, public Resource<SoundBuffer>
+class SFML_API SoundBuffer : public Resource<SoundBuffer>
 {
 public :
 
@@ -53,10 +53,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Copy constructor
     ///
-    /// \param Copy : Instance to copy
+    /// \param copy : Instance to copy
     ///
     ////////////////////////////////////////////////////////////
-    SoundBuffer(const SoundBuffer& Copy);
+    SoundBuffer(const SoundBuffer& copy);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -67,47 +67,47 @@ public :
     ////////////////////////////////////////////////////////////
     /// Load the sound buffer from a file
     ///
-    /// \param Filename : Path of the sound file to load
+    /// \param filename : Path of the sound file to load
     ///
     /// \return True if loading has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& Filename);
+    bool LoadFromFile(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// Load the sound buffer from a file in memory
     ///
-    /// \param Data :        Pointer to the file data in memory
-    /// \param SizeInBytes : Size of the data to load, in bytes
+    /// \param data :        Pointer to the file data in memory
+    /// \param sizeInBytes : Size of the data to load, in bytes
     ///
     /// \return True if loading has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const char* Data, std::size_t SizeInBytes);
+    bool LoadFromMemory(const char* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// Load the sound buffer from an array of samples - assumed format for
     /// samples is 16 bits signed integer
     ///
-    /// \param Samples :       Pointer to the samples in memory
-    /// \param SamplesCount :  Number of samples pointed by Samples
-    /// \param ChannelsCount : Number of channels (1 = mono, 2 = stereo, ...)
-    /// \param SampleRate :    Frequency (number of samples to play per second)
+    /// \param samples :       Pointer to the samples in memory
+    /// \param samplesCount :  Number of samples pointed by Samples
+    /// \param channelsCount : Number of channels (1 = mono, 2 = stereo, ...)
+    /// \param sampleRate :    Frequency (number of samples to play per second)
     ///
     /// \return True if loading has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromSamples(const Int16* Samples, std::size_t SamplesCount, unsigned int ChannelsCount, unsigned int SampleRate);
+    bool LoadFromSamples(const Int16* samples, std::size_t samplesCount, unsigned int channelsCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// Save the sound buffer to a file
     ///
-    /// \param Filename : Path of the sound file to write
+    /// \param filename : Path of the sound file to write
     ///
     /// \return True if saving has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool SaveToFile(const std::string& Filename) const;
+    bool SaveToFile(const std::string& filename) const;
 
     ////////////////////////////////////////////////////////////
     /// Return the sound samples
@@ -152,12 +152,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// Assignment operator
     ///
-    /// \param Other : Instance to assign
+    /// \param other : Instance to assign
     ///
     /// \return Reference to the sound buffer
     ///
     ////////////////////////////////////////////////////////////
-    SoundBuffer& operator =(const SoundBuffer& Other);
+    SoundBuffer& operator =(const SoundBuffer& other);
 
 private :
 
@@ -166,13 +166,13 @@ private :
     ////////////////////////////////////////////////////////////
     /// Update the internal buffer with the audio samples
     ///
-    /// \param ChannelsCount : Number of channels
-    /// \param SampleRate :    Sample rate
+    /// \param channelsCount : Number of channels
+    /// \param sampleRate :    Sample rate
     ///
     /// \return True on success
     ///
     ////////////////////////////////////////////////////////////
-    bool Update(unsigned int ChannelsCount, unsigned int SampleRate);
+    bool Update(unsigned int channelsCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     // Member data

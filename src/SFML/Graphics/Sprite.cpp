@@ -47,38 +47,38 @@ myIsFlippedY(false)
 ////////////////////////////////////////////////////////////
 /// Construct the sprite from a source image
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Image& Img, const Vector2f& Position, const Vector2f& Scale, float Rotation, const Color& Col) :
-Drawable    (Position, Scale, Rotation, Col),
+Sprite::Sprite(const Image& image, const Vector2f& position, const Vector2f& scale, float rotation, const Color& color) :
+Drawable    (position, scale, rotation, color),
 mySubRect   (0, 0, 1, 1),
 myIsFlippedX(false),
 myIsFlippedY(false)
 {
-    SetImage(Img);
+    SetImage(image);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the image of the sprite
 ////////////////////////////////////////////////////////////
-void Sprite::SetImage(const Image& Img)
+void Sprite::SetImage(const Image& image)
 {
     // If there was no source image before and the new image is valid, adjust the source rectangle
-    if (!myImage && (Img.GetWidth() > 0) && (Img.GetHeight() > 0))
+    if (!myImage && (image.GetWidth() > 0) && (image.GetHeight() > 0))
     {
-        SetSubRect(IntRect(0, 0, Img.GetWidth(), Img.GetHeight()));
+        SetSubRect(IntRect(0, 0, image.GetWidth(), image.GetHeight()));
     }
 
     // Assign the new image
-    myImage = &Img;
+    myImage = &image;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the sub-rectangle of the sprite inside the source image
 ////////////////////////////////////////////////////////////
-void Sprite::SetSubRect(const IntRect& SubRect)
+void Sprite::SetSubRect(const IntRect& rectangle)
 {
-    mySubRect = SubRect;
+    mySubRect = rectangle;
 }
 
 
@@ -86,13 +86,13 @@ void Sprite::SetSubRect(const IntRect& SubRect)
 /// Resize the sprite (by changing its scale factors) (take 2 values).
 /// The default size is defined by the subrect
 ////////////////////////////////////////////////////////////
-void Sprite::Resize(float Width, float Height)
+void Sprite::Resize(float width, float height)
 {
-    int LocalWidth  = mySubRect.GetSize().x;
-    int LocalHeight = mySubRect.GetSize().y;
+    int localWidth  = mySubRect.GetSize().x;
+    int localHeight = mySubRect.GetSize().y;
 
-    if ((LocalWidth > 0) && (LocalHeight > 0))
-        SetScale(Width / LocalWidth, Height / LocalHeight);
+    if ((localWidth > 0) && (localHeight > 0))
+        SetScale(width / localWidth, height / localHeight);
 }
 
 
@@ -100,27 +100,27 @@ void Sprite::Resize(float Width, float Height)
 /// Resize the object (by changing its scale factors) (take a 2D vector)
 /// The default size is defined by the subrect
 ////////////////////////////////////////////////////////////
-void Sprite::Resize(const Vector2f& Size)
+void Sprite::Resize(const Vector2f& size)
 {
-    Resize(Size.x, Size.y);
+    Resize(size.x, size.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Flip the sprite horizontally
 ////////////////////////////////////////////////////////////
-void Sprite::FlipX(bool Flipped)
+void Sprite::FlipX(bool flipped)
 {
-    myIsFlippedX = Flipped;
+    myIsFlippedX = flipped;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Flip the sprite vertically
 ////////////////////////////////////////////////////////////
-void Sprite::FlipY(bool Flipped)
+void Sprite::FlipY(bool flipped)
 {
-    myIsFlippedY = Flipped;
+    myIsFlippedY = flipped;
 }
 
 
@@ -155,17 +155,17 @@ Vector2f Sprite::GetSize() const
 /// Get the color of a given pixel in the sprite
 /// (point is in local coordinates)
 ////////////////////////////////////////////////////////////
-Color Sprite::GetPixel(unsigned int X, unsigned int Y) const
+Color Sprite::GetPixel(unsigned int x, unsigned int y) const
 {
     if (myImage)
     {
-        unsigned int ImageX = mySubRect.Left + X;
-        unsigned int ImageY = mySubRect.Top  + Y;
+        unsigned int imageX = mySubRect.Left + x;
+        unsigned int imageY = mySubRect.Top  + y;
 
-        if (myIsFlippedX) ImageX = mySubRect.GetSize().x - ImageX - 1;
-        if (myIsFlippedY) ImageY = mySubRect.GetSize().y - ImageY - 1;
+        if (myIsFlippedX) imageX = mySubRect.GetSize().x - imageX - 1;
+        if (myIsFlippedY) imageY = mySubRect.GetSize().y - imageY - 1;
 
-        return myImage->GetPixel(ImageX, ImageY) * GetColor();
+        return myImage->GetPixel(imageX, imageY) * GetColor();
     }
     else
     {
@@ -180,8 +180,8 @@ Color Sprite::GetPixel(unsigned int X, unsigned int Y) const
 void Sprite::Render(RenderTarget&) const
 {
     // Get the sprite size
-    float Width  = static_cast<float>(mySubRect.GetSize().x);
-    float Height = static_cast<float>(mySubRect.GetSize().y);
+    float width  = static_cast<float>(mySubRect.GetSize().x);
+    float height = static_cast<float>(mySubRect.GetSize().y);
 
     // Check if the image is valid
     if (myImage && (myImage->GetWidth() > 0) && (myImage->GetHeight() > 0))
@@ -190,18 +190,18 @@ void Sprite::Render(RenderTarget&) const
         myImage->Bind();
 
         // Calculate the texture coordinates
-        FloatRect TexCoords = myImage->GetTexCoords(mySubRect);
-        FloatRect Rect(myIsFlippedX ? TexCoords.Right  : TexCoords.Left,
-                       myIsFlippedY ? TexCoords.Bottom : TexCoords.Top,
-                       myIsFlippedX ? TexCoords.Left   : TexCoords.Right,
-                       myIsFlippedY ? TexCoords.Top    : TexCoords.Bottom);
+        FloatRect texCoords = myImage->GetTexCoords(mySubRect);
+        FloatRect rect(myIsFlippedX ? texCoords.Right  : texCoords.Left,
+                       myIsFlippedY ? texCoords.Bottom : texCoords.Top,
+                       myIsFlippedX ? texCoords.Left   : texCoords.Right,
+                       myIsFlippedY ? texCoords.Top    : texCoords.Bottom);
 
         // Draw the sprite's triangles
         glBegin(GL_QUADS);
-            glTexCoord2f(Rect.Left,  Rect.Top);    glVertex2f(0,     0);
-            glTexCoord2f(Rect.Left,  Rect.Bottom); glVertex2f(0,     Height);
-            glTexCoord2f(Rect.Right, Rect.Bottom); glVertex2f(Width, Height);
-            glTexCoord2f(Rect.Right, Rect.Top);    glVertex2f(Width, 0) ;
+            glTexCoord2f(rect.Left,  rect.Top);    glVertex2f(0,     0);
+            glTexCoord2f(rect.Left,  rect.Bottom); glVertex2f(0,     height);
+            glTexCoord2f(rect.Right, rect.Bottom); glVertex2f(width, height);
+            glTexCoord2f(rect.Right, rect.Top);    glVertex2f(width, 0) ;
         glEnd();
     }
     else
@@ -212,9 +212,9 @@ void Sprite::Render(RenderTarget&) const
         // Draw the sprite's triangles
         glBegin(GL_QUADS);
             glVertex2f(0,     0);
-            glVertex2f(0,     Height);
-            glVertex2f(Width, Height);
-            glVertex2f(Width, 0);
+            glVertex2f(0,     height);
+            glVertex2f(width, height);
+            glVertex2f(width, 0);
         glEnd();
     }
 }

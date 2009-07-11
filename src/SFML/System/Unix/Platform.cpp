@@ -38,19 +38,19 @@ namespace priv
 ////////////////////////////////////////////////////////////
 double Platform::GetSystemTime()
 {
-    timeval Time = {0, 0};
-    gettimeofday(&Time, NULL);
+    timeval time = {0, 0};
+    gettimeofday(&time, NULL);
 
-    return Time.tv_sec + Time.tv_usec / 1000000.;
+    return time.tv_sec + time.tv_usec / 1000000.;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Suspend the execution of the current thread for a specified time
 ////////////////////////////////////////////////////////////
-void Platform::Sleep(float Time)
+void Platform::Sleep(float time)
 {
-    usleep(static_cast<unsigned long>(Time * 1000000));
+    usleep(static_cast<unsigned long>(time * 1000000));
 }
 
 } // namespace priv

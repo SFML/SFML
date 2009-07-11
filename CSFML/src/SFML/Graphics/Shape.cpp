@@ -43,114 +43,114 @@ sfShape* sfShape_Create()
 ////////////////////////////////////////////////////////////
 /// Create a new shape made of a single line
 ////////////////////////////////////////////////////////////
-sfShape* sfShape_CreateLine(float P1X, float P1Y, float P2X, float P2Y, float Thickness, sfColor Col, float Outline, sfColor OutlineCol)
+sfShape* sfShape_CreateLine(float p1x, float p1y, float p2x, float p2y, float thickness, sfColor color, float outline, sfColor outlineColor)
 {
-    sf::Color Color(Col.r, Col.g, Col.b, Col.a);
-    sf::Color OutlineColor(OutlineCol.r, OutlineCol.g, OutlineCol.b, OutlineCol.a);
+    sf::Color SFMLColor(color.r, color.g, color.b, color.a);
+    sf::Color SFMLOutlineColor(outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
 
-    sfShape* Shape = new sfShape;
-    Shape->This = sf::Shape::Line(P1X, P1Y, P2X, P2Y, Thickness, Color, Outline, OutlineColor);
-    return Shape;
+    sfShape* shape = new sfShape;
+    shape->This = sf::Shape::Line(p1x, p1y, p2x, p2y, thickness, SFMLColor, outline, SFMLOutlineColor);
+    return shape;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new shape made of a single rectangle
 ////////////////////////////////////////////////////////////
-sfShape* sfShape_CreateRectangle(float P1X, float P1Y, float P2X, float P2Y, sfColor Col, float Outline, sfColor OutlineCol)
+sfShape* sfShape_CreateRectangle(float p1x, float p1y, float p2x, float p2y, sfColor color, float outline, sfColor outlineColor)
 {
-    sf::Color Color(Col.r, Col.g, Col.b, Col.a);
-    sf::Color OutlineColor(OutlineCol.r, OutlineCol.g, OutlineCol.b, OutlineCol.a);
+    sf::Color SFMLColor(color.r, color.g, color.b, color.a);
+    sf::Color SFMLOutlineColor(outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
 
-    sfShape* Shape = new sfShape;
-    Shape->This = sf::Shape::Rectangle(P1X, P1Y, P2X, P2Y, Color, Outline, OutlineColor);
-    return Shape;
+    sfShape* shape = new sfShape;
+    shape->This = sf::Shape::Rectangle(p1x, p1y, p2x, p2y, SFMLColor, outline, SFMLOutlineColor);
+    return shape;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new shape made of a single circle
 ////////////////////////////////////////////////////////////
-sfShape* sfShape_CreateCircle(float X, float Y, float Radius, sfColor Col, float Outline, sfColor OutlineCol)
+sfShape* sfShape_CreateCircle(float x, float y, float radius, sfColor color, float outline, sfColor outlineColor)
 {
-    sf::Color Color(Col.r, Col.g, Col.b, Col.a);
-    sf::Color OutlineColor(OutlineCol.r, OutlineCol.g, OutlineCol.b, OutlineCol.a);
+    sf::Color SFMLColor(color.r, color.g, color.b, color.a);
+    sf::Color SFMLOutlineColor(outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
 
-    sfShape* Shape = new sfShape;
-    Shape->This = sf::Shape::Circle(X, Y, Radius, Color, Outline, OutlineColor);
-    return Shape;
+    sfShape* shape = new sfShape;
+    shape->This = sf::Shape::Circle(x, y, radius, SFMLColor, outline, SFMLOutlineColor);
+    return shape;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing shape
 ////////////////////////////////////////////////////////////
-void sfShape_Destroy(sfShape* Shape)
+void sfShape_Destroy(sfShape* shape)
 {
-    delete Shape;
+    delete shape;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the X position of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_SetX(sfShape* Shape, float X)
+void sfShape_SetX(sfShape* shape, float x)
 {
-    CSFML_CALL(Shape, SetX(X))
+    CSFML_CALL(shape, SetX(x))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the Y position of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_SetY(sfShape* Shape, float Y)
+void sfShape_SetY(sfShape* shape, float y)
 {
-    CSFML_CALL(Shape, SetY(Y))
+    CSFML_CALL(shape, SetY(y))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the position of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_SetPosition(sfShape* Shape, float X, float Y)
+void sfShape_SetPosition(sfShape* shape, float x, float y)
 {
-    CSFML_CALL(Shape, SetPosition(sf::Vector2f(X, Y)))
+    CSFML_CALL(shape, SetPosition(sf::Vector2f(x, y)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the horizontal scale of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_SetScaleX(sfShape* Shape, float Scale)
+void sfShape_SetScaleX(sfShape* shape, float scale)
 {
-    CSFML_CALL(Shape, SetScaleX(Scale))
+    CSFML_CALL(shape, SetScaleX(scale))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the vertical scale of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_SetScaleY(sfShape* Shape, float Scale)
+void sfShape_SetScaleY(sfShape* shape, float scale)
 {
-    CSFML_CALL(Shape, SetScaleY(Scale))
+    CSFML_CALL(shape, SetScaleY(scale))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the scale of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_SetScale(sfShape* Shape, float ScaleX, float ScaleY)
+void sfShape_SetScale(sfShape* shape, float scaleX, float scaleY)
 {
-    CSFML_CALL(Shape, SetScale(sf::Vector2f(ScaleX, ScaleY)))
+    CSFML_CALL(shape, SetScale(sf::Vector2f(scaleX, scaleY)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the orientation of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_SetRotation(sfShape* Shape, float Rotation)
+void sfShape_SetRotation(sfShape* shape, float rotation)
 {
-    CSFML_CALL(Shape, SetRotation(Rotation))
+    CSFML_CALL(shape, SetRotation(rotation))
 }
 
 
@@ -158,102 +158,102 @@ void sfShape_SetRotation(sfShape* Shape, float Rotation)
 /// Set the local origin of a shape, in coordinates
 /// relative to its left-top corner
 ////////////////////////////////////////////////////////////
-void sfShape_SetOrigin(sfShape* Shape, float X, float Y)
+void sfShape_SetOrigin(sfShape* shape, float x, float y)
 {
-    CSFML_CALL(Shape, SetOrigin(sf::Vector2f(X, Y)))
+    CSFML_CALL(shape, SetOrigin(sf::Vector2f(x, y)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the color of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_SetColor(sfShape* Shape, sfColor Color)
+void sfShape_SetColor(sfShape* shape, sfColor color)
 {
-    CSFML_CALL(Shape, SetColor(sf::Color(Color.r, Color.g, Color.b, Color.a)))
+    CSFML_CALL(shape, SetColor(sf::Color(color.r, color.g, color.b, color.a)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the blending mode for a shape
 ////////////////////////////////////////////////////////////
-void sfShape_SetBlendMode(sfShape* Shape, sfBlendMode Mode)
+void sfShape_SetBlendMode(sfShape* shape, sfBlendMode mode)
 {
-    CSFML_CALL(Shape, SetBlendMode(static_cast<sf::Blend::Mode>(Mode)))
+    CSFML_CALL(shape, SetBlendMode(static_cast<sf::Blend::Mode>(mode)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the X position of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetX(sfShape* Shape)
+float sfShape_GetX(sfShape* shape)
 {
-    CSFML_CALL_RETURN(Shape, GetPosition().x, 0.f)
+    CSFML_CALL_RETURN(shape, GetPosition().x, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the Y position of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetY(sfShape* Shape)
+float sfShape_GetY(sfShape* shape)
 {
-    CSFML_CALL_RETURN(Shape, GetPosition().y, 0.f)
+    CSFML_CALL_RETURN(shape, GetPosition().y, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the horizontal scale of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetScaleX(sfShape* Shape)
+float sfShape_GetScaleX(sfShape* shape)
 {
-    CSFML_CALL_RETURN(Shape, GetScale().x, 0.f)
+    CSFML_CALL_RETURN(shape, GetScale().x, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the vertical scale of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetScaleY(sfShape* Shape)
+float sfShape_GetScaleY(sfShape* shape)
 {
-    CSFML_CALL_RETURN(Shape, GetScale().y, 0.f)
+    CSFML_CALL_RETURN(shape, GetScale().y, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the orientation of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetRotation(sfShape* Shape)
+float sfShape_GetRotation(sfShape* shape)
 {
-    CSFML_CALL_RETURN(Shape, GetRotation(), 0.f)
+    CSFML_CALL_RETURN(shape, GetRotation(), 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the X position of the origin a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetOriginX(sfShape* Shape)
+float sfShape_GetOriginX(sfShape* shape)
 {
-    CSFML_CALL_RETURN(Shape, GetOrigin().x, 0.f)
+    CSFML_CALL_RETURN(shape, GetOrigin().x, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the Y position of the origin a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetOriginY(sfShape* Shape)
+float sfShape_GetOriginY(sfShape* shape)
 {
-    CSFML_CALL_RETURN(Shape, GetOrigin().y, 0.f)
+    CSFML_CALL_RETURN(shape, GetOrigin().y, 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the color of a shape
 ////////////////////////////////////////////////////////////
-sfColor sfShape_GetColor(sfShape* Shape)
+sfColor sfShape_GetColor(sfShape* shape)
 {
-    sfColor Color = {0, 0, 0, 0};
-    CSFML_CHECK_RETURN(Shape, Color)
+    sfColor color = {0, 0, 0, 0};
+    CSFML_CHECK_RETURN(Shape, color)
 
-    sf::Color SFMLColor = Shape->This.GetColor();
+    sf::Color SFMLColor = shape->This.GetColor();
     return sfColor_FromRGBA(SFMLColor.r, SFMLColor.g, SFMLColor.b, SFMLColor.a);
 }
 
@@ -261,38 +261,38 @@ sfColor sfShape_GetColor(sfShape* Shape)
 ////////////////////////////////////////////////////////////
 /// Get the current blending mode of a shape
 ////////////////////////////////////////////////////////////
-sfBlendMode sfShape_GetBlendMode(sfShape* Shape)
+sfBlendMode sfShape_GetBlendMode(sfShape* shape)
 {
-    CSFML_CHECK_RETURN(Shape, sfBlendNone)
+    CSFML_CHECK_RETURN(shape, sfBlendNone)
 
-    return static_cast<sfBlendMode>(Shape->This.GetBlendMode());
+    return static_cast<sfBlendMode>(shape->This.GetBlendMode());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Move a shape
 ////////////////////////////////////////////////////////////
-void sfShape_Move(sfShape* Shape, float OffsetX, float OffsetY)
+void sfShape_Move(sfShape* shape, float offsetX, float offsetY)
 {
-    CSFML_CALL(Shape, Move(sf::Vector2f(OffsetX, OffsetY)))
+    CSFML_CALL(shape, Move(sf::Vector2f(offsetX, offsetY)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Scale a shape
 ////////////////////////////////////////////////////////////
-void sfShape_Scale(sfShape* Shape, float FactorX, float FactorY)
+void sfShape_Scale(sfShape* shape, float factorX, float factorY)
 {
-    CSFML_CALL(Shape, Scale(sf::Vector2f(FactorX, FactorY)))
+    CSFML_CALL(shape, Scale(sf::Vector2f(factorX, factorY)))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Rotate a shape
 ////////////////////////////////////////////////////////////
-void sfShape_Rotate(sfShape* Shape, float Angle)
+void sfShape_Rotate(sfShape* shape, float angle)
 {
-    CSFML_CALL(Shape, Rotate(Angle))
+    CSFML_CALL(shape, Rotate(angle))
 }
 
 
@@ -300,13 +300,13 @@ void sfShape_Rotate(sfShape* Shape, float Angle)
 /// Transform a point from global coordinates into the shape's local coordinates
 /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-void sfShape_TransformToLocal(sfShape* Shape, float PointX, float PointY, float* X, float* Y)
+void sfShape_TransformToLocal(sfShape* shape, float pointX, float pointY, float* x, float* y)
 {
-    CSFML_CHECK(Shape)
+    CSFML_CHECK(shape)
 
-    sf::Vector2f Point = Shape->This.TransformToLocal(sf::Vector2f(PointX, PointY));
-    if (X) *X = Point.x;
-    if (Y) *Y = Point.y;
+    sf::Vector2f point = shape->This.TransformToLocal(sf::Vector2f(pointX, pointY));
+    if (x) *x = point.x;
+    if (y) *y = point.y;
 }
 
 
@@ -314,25 +314,25 @@ void sfShape_TransformToLocal(sfShape* Shape, float PointX, float PointY, float*
 /// Transform a point from the shape's local coordinates into global coordinates
 /// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-void sfShape_TransformToGlobal(sfShape* Shape, float PointX, float PointY, float* X, float* Y)
+void sfShape_TransformToGlobal(sfShape* shape, float pointX, float pointY, float* x, float* y)
 {
-    CSFML_CHECK(Shape)
+    CSFML_CHECK(shape)
 
-    sf::Vector2f Point = Shape->This.TransformToGlobal(sf::Vector2f(PointX, PointY));
-    if (X) *X = Point.x;
-    if (Y) *Y = Point.y;
+    sf::Vector2f point = shape->This.TransformToGlobal(sf::Vector2f(pointX, pointY));
+    if (x) *x = point.x;
+    if (y) *y = point.y;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Add a point to a shape
 ////////////////////////////////////////////////////////////
-void sfShape_AddPoint(sfShape* Shape, float X, float Y, sfColor Col, sfColor OutlineCol)
+void sfShape_AddPoint(sfShape* shape, float x, float y, sfColor color, sfColor outlineColor)
 {
-    sf::Color Color(Col.r, Col.g, Col.b, Col.a);
-    sf::Color OutlineColor(OutlineCol.r, OutlineCol.g, OutlineCol.b, OutlineCol.a);
+    sf::Color SFMLColor(color.r, color.g, color.b, color.a);
+    sf::Color SFMLOutlineColor(outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
 
-    CSFML_CALL(Shape, AddPoint(X, Y, Color, OutlineColor))
+    CSFML_CALL(shape, AddPoint(x, y, SFMLColor, SFMLOutlineColor))
 }
 
 
@@ -340,9 +340,9 @@ void sfShape_AddPoint(sfShape* Shape, float X, float Y, sfColor Col, sfColor Out
 /// Enable or disable filling a shape.
 /// Fill is enabled by default
 ////////////////////////////////////////////////////////////
-void sfShape_EnableFill(sfShape* Shape, sfBool Enable)
+void sfShape_EnableFill(sfShape* shape, sfBool enable)
 {
-    CSFML_CALL(Shape, EnableFill(Enable == sfTrue))
+    CSFML_CALL(shape, EnableFill(enable == sfTrue))
 }
 
 
@@ -350,109 +350,109 @@ void sfShape_EnableFill(sfShape* Shape, sfBool Enable)
 /// Enable or disable drawing a shape outline.
 /// Outline is enabled by default
 ////////////////////////////////////////////////////////////
-void sfShape_EnableOutline(sfShape* Shape, sfBool Enable)
+void sfShape_EnableOutline(sfShape* shape, sfBool enable)
 {
-    CSFML_CALL(Shape, EnableOutline(Enable == sfTrue))
+    CSFML_CALL(shape, EnableOutline(enable == sfTrue))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the width of a shape outline
 ////////////////////////////////////////////////////////////
-void sfShape_SetOutlineWidth(sfShape* Shape, float Width)
+void sfShape_SetOutlineWidth(sfShape* shape, float width)
 {
-    CSFML_CALL(Shape, SetOutlineWidth(Width))
+    CSFML_CALL(shape, SetOutlineWidth(width))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the width of a shape outline
 ////////////////////////////////////////////////////////////
-float sfShape_GetOutlineWidth(sfShape* Shape)
+float sfShape_GetOutlineWidth(sfShape* shape)
 {
-    CSFML_CALL_RETURN(Shape, GetOutlineWidth(), 0.f)
+    CSFML_CALL_RETURN(shape, GetOutlineWidth(), 0.f)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the number of points composing a shape
 ////////////////////////////////////////////////////////////
-unsigned int sfShape_GetNbPoints(sfShape* Shape)
+unsigned int sfShape_GetNbPoints(sfShape* shape)
 {
-    CSFML_CALL_RETURN(Shape, GetNbPoints(), 0)
+    CSFML_CALL_RETURN(shape, GetNbPoints(), 0)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get a point of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_GetPointPosition(sfShape* Shape, unsigned int Index, float* X, float* Y)
+void sfShape_GetPointPosition(sfShape* shape, unsigned int index, float* x, float* y)
 {
-    CSFML_CHECK(Shape)
+    CSFML_CHECK(shape)
 
-    sf::Vector2f Point = Shape->This.GetPointPosition(Index);
-    if (X) *X = Point.x;
-    if (Y) *Y = Point.y;
+    sf::Vector2f point = shape->This.GetPointPosition(index);
+    if (x) *x = point.x;
+    if (y) *y = point.y;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get a the color of a shape's point
 ////////////////////////////////////////////////////////////
-sfColor sfShape_GetPointColor(sfShape* Shape, unsigned int Index)
+sfColor sfShape_GetPointColor(sfShape* shape, unsigned int index)
 {
-    sfColor Color = {255, 255, 255, 255};
-    CSFML_CHECK_RETURN(Shape, Color)
+    sfColor color = {255, 255, 255, 255};
+    CSFML_CHECK_RETURN(Shape, color)
 
-    const sf::Color& SFMLColor = Shape->This.GetPointColor(Index);
-    Color.r = SFMLColor.r;
-    Color.g = SFMLColor.g;
-    Color.b = SFMLColor.b;
-    Color.a = SFMLColor.a;
+    const sf::Color& SFMLColor = shape->This.GetPointColor(index);
+    color.r = SFMLColor.r;
+    color.g = SFMLColor.g;
+    color.b = SFMLColor.b;
+    color.a = SFMLColor.a;
 
-    return Color;
+    return color;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get a the outline color of a shape's point
 ////////////////////////////////////////////////////////////
-sfColor sfShape_GetPointOutlineColor(sfShape* Shape, unsigned int Index)
+sfColor sfShape_GetPointOutlineColor(sfShape* shape, unsigned int index)
 {
-    sfColor Color = {255, 255, 255, 255};
-    CSFML_CHECK_RETURN(Shape, Color)
+    sfColor color = {255, 255, 255, 255};
+    CSFML_CHECK_RETURN(Shape, color)
 
-    const sf::Color& SFMLColor = Shape->This.GetPointOutlineColor(Index);
-    Color.r = SFMLColor.r;
-    Color.g = SFMLColor.g;
-    Color.b = SFMLColor.b;
-    Color.a = SFMLColor.a;
+    const sf::Color& SFMLColor = shape->This.GetPointOutlineColor(index);
+    color.r = SFMLColor.r;
+    color.g = SFMLColor.g;
+    color.b = SFMLColor.b;
+    color.a = SFMLColor.a;
 
-    return Color;
+    return color;
 }
 
 ////////////////////////////////////////////////////////////
 /// Set a the position of a shape's point
 ////////////////////////////////////////////////////////////
-void sfShape_SetPointPosition(sfShape* Shape, unsigned int Index, float X, float Y)
+void sfShape_SetPointPosition(sfShape* shape, unsigned int index, float x, float y)
 {
-    CSFML_CALL(Shape, SetPointPosition(Index, X, Y));
+    CSFML_CALL(shape, SetPointPosition(index, x, y));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set a the color of a shape's point
 ////////////////////////////////////////////////////////////
-void sfShape_SetPointColor(sfShape* Shape, unsigned int Index, sfColor Color)
+void sfShape_SetPointColor(sfShape* shape, unsigned int index, sfColor color)
 {
-    CSFML_CALL(Shape, SetPointColor(Index, sf::Color(Color.r, Color.g, Color.b, Color.a)));
+    CSFML_CALL(shape, SetPointColor(index, sf::Color(color.r, color.g, color.b, color.a)));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set a the outline color of a shape's point
 ////////////////////////////////////////////////////////////
-void sfShape_SetPointOutlineColor(sfShape* Shape, unsigned int Index, sfColor Color)
+void sfShape_SetPointOutlineColor(sfShape* shape, unsigned int index, sfColor color)
 {
-    CSFML_CALL(Shape, SetPointOutlineColor(Index, sf::Color(Color.r, Color.g, Color.b, Color.a)));
+    CSFML_CALL(shape, SetPointOutlineColor(index, sf::Color(color.r, color.g, color.b, color.a)));
 }

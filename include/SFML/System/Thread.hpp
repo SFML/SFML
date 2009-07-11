@@ -56,11 +56,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the thread from a function pointer
     ///
-    /// \param Function : Entry point of the thread
-    /// \param UserData : Data to pass to the thread function (NULL by default)
+    /// \param function : Entry point of the thread
+    /// \param userData : Data to pass to the thread function (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
-    Thread(FuncType Function, void* UserData = NULL);
+    Thread(FuncType function, void* userData = NULL);
 
     ////////////////////////////////////////////////////////////
     /// Virtual destructor

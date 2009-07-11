@@ -60,19 +60,19 @@ myPixelsFlipped    (false)
 ////////////////////////////////////////////////////////////
 /// Copy constructor
 ////////////////////////////////////////////////////////////
-Image::Image(const Image& Copy) :
-Resource<Image>    (Copy),
-myWidth            (Copy.myWidth),
-myHeight           (Copy.myHeight),
-myTextureWidth     (Copy.myTextureWidth),
-myTextureHeight    (Copy.myTextureHeight),
+Image::Image(const Image& copy) :
+Resource<Image>    (copy),
+myWidth            (copy.myWidth),
+myHeight           (copy.myHeight),
+myTextureWidth     (copy.myTextureWidth),
+myTextureHeight    (copy.myTextureHeight),
 myTexture          (0),
-myIsSmooth         (Copy.myIsSmooth),
-myPixels           (Copy.myPixels),
+myIsSmooth         (copy.myIsSmooth),
+myPixels           (copy.myPixels),
 myNeedTextureUpdate(false),
 myNeedArrayUpdate  (false),
-myUpdateSource     (Copy.myUpdateSource),
-myPixelsFlipped    (Copy.myPixelsFlipped)
+myUpdateSource     (copy.myUpdateSource),
+myPixelsFlipped    (copy.myPixelsFlipped)
 {
     CreateTexture();
 }
@@ -81,7 +81,7 @@ myPixelsFlipped    (Copy.myPixelsFlipped)
 ////////////////////////////////////////////////////////////
 /// Construct an empty image
 ////////////////////////////////////////////////////////////
-Image::Image(unsigned int Width, unsigned int Height, const Color& Col) :
+Image::Image(unsigned int width, unsigned int height, const Color& color) :
 myWidth            (0),
 myHeight           (0),
 myTextureWidth     (0),
@@ -93,14 +93,14 @@ myNeedArrayUpdate  (false),
 myUpdateSource     (NULL),
 myPixelsFlipped    (false)
 {
-    Create(Width, Height, Col);
+    Create(width, height, color);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Construct the image from pixels in memory
 ////////////////////////////////////////////////////////////
-Image::Image(unsigned int Width, unsigned int Height, const Uint8* Data) :
+Image::Image(unsigned int width, unsigned int height, const Uint8* data) :
 myWidth            (0),
 myHeight           (0),
 myTextureWidth     (0),
@@ -112,7 +112,7 @@ myNeedArrayUpdate  (false),
 myUpdateSource     (NULL),
 myPixelsFlipped    (false)
 {
-    LoadFromPixels(Width, Height, Data);
+    LoadFromPixels(width, height, data);
 }
 
 
@@ -129,12 +129,12 @@ Image::~Image()
 ////////////////////////////////////////////////////////////
 /// Load the image from a file
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromFile(const std::string& Filename)
+bool Image::LoadFromFile(const std::string& filename)
 {
     // Let the image loader load the image into our pixel array
-    bool Success = priv::ImageLoader::GetInstance().LoadImageFromFile(Filename, myPixels, myWidth, myHeight);
+    bool success = priv::ImageLoader::GetInstance().LoadImageFromFile(filename, myPixels, myWidth, myHeight);
 
-    if (Success)
+    if (success)
     {
         // Loading succeeded : we can create the texture
         if (CreateTexture())
@@ -151,19 +151,19 @@ bool Image::LoadFromFile(const std::string& Filename)
 ////////////////////////////////////////////////////////////
 /// Load the image from a file in memory
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromMemory(const char* Data, std::size_t SizeInBytes)
+bool Image::LoadFromMemory(const char* data, std::size_t sizeInBytes)
 {
     // Check parameters
-    if (!Data || (SizeInBytes == 0))
+    if (!data || (sizeInBytes == 0))
     {
         std::cerr << "Failed to image font from memory, no data provided" << std::endl;
         return false;
     }
 
     // Let the image loader load the image into our pixel array
-    bool Success = priv::ImageLoader::GetInstance().LoadImageFromMemory(Data, SizeInBytes, myPixels, myWidth, myHeight);
+    bool success = priv::ImageLoader::GetInstance().LoadImageFromMemory(data, sizeInBytes, myPixels, myWidth, myHeight);
 
-    if (Success)
+    if (success)
     {
         // Loading succeeded : we can create the texture
         if (CreateTexture())
@@ -180,17 +180,17 @@ bool Image::LoadFromMemory(const char* Data, std::size_t SizeInBytes)
 ////////////////////////////////////////////////////////////
 /// Load the image directly from an array of pixels
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromPixels(unsigned int Width, unsigned int Height, const Uint8* Data)
+bool Image::LoadFromPixels(unsigned int width, unsigned int height, const Uint8* data)
 {
-    if (Data)
+    if (data)
     {
         // Store the texture dimensions
-        myWidth  = Width;
-        myHeight = Height;
+        myWidth  = width;
+        myHeight = height;
 
         // Fill the pixel buffer with the specified raw data
-        const Color* Ptr = reinterpret_cast<const Color*>(Data);
-        myPixels.assign(Ptr, Ptr + Width * Height);
+        const Color* ptr = reinterpret_cast<const Color*>(data);
+        myPixels.assign(ptr, ptr + width * height);
 
         // We can create the texture
         if (CreateTexture())
@@ -207,7 +207,7 @@ bool Image::LoadFromPixels(unsigned int Width, unsigned int Height, const Uint8*
     else
     {
         // No data provided : create a white image
-        return Create(Width, Height, Color(255, 255, 255, 255));
+        return Create(width, height, Color(255, 255, 255));
     }
 }
 
@@ -215,28 +215,28 @@ bool Image::LoadFromPixels(unsigned int Width, unsigned int Height, const Uint8*
 ////////////////////////////////////////////////////////////
 /// Save the content of the image to a file
 ////////////////////////////////////////////////////////////
-bool Image::SaveToFile(const std::string& Filename) const
+bool Image::SaveToFile(const std::string& filename) const
 {
     // Check if the array of pixels needs to be updated
     const_cast<Image*>(this)->EnsureArrayUpdate();
 
     // Let the image loader save our pixel array into the image
-    return priv::ImageLoader::GetInstance().SaveImageToFile(Filename, myPixels, myWidth, myHeight);
+    return priv::ImageLoader::GetInstance().SaveImageToFile(filename, myPixels, myWidth, myHeight);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create an empty image
 ////////////////////////////////////////////////////////////
-bool Image::Create(unsigned int Width, unsigned int Height, Color Col)
+bool Image::Create(unsigned int width, unsigned int height, const Color& color)
 {
     // Store the texture dimensions
-    myWidth  = Width;
-    myHeight = Height;
+    myWidth  = width;
+    myHeight = height;
 
     // Recreate the pixel buffer and fill it with the specified color
     myPixels.clear();
-    myPixels.resize(Width * Height, Col);
+    myPixels.resize(width * height, color);
 
     // We can create the texture
     if (CreateTexture())
@@ -255,16 +255,16 @@ bool Image::Create(unsigned int Width, unsigned int Height, Color Col)
 ////////////////////////////////////////////////////////////
 /// Create transparency mask from a specified colorkey
 ////////////////////////////////////////////////////////////
-void Image::CreateMaskFromColor(Color ColorKey, Uint8 Alpha)
+void Image::CreateMaskFromColor(const Color& transparentColor, Uint8 alpha)
 {
     // Check if the array of pixels needs to be updated
     EnsureArrayUpdate();
 
     // Calculate the new color (old color with no alpha)
-    Color NewColor(ColorKey.r, ColorKey.g, ColorKey.b, Alpha);
+    Color newColor(transparentColor.r, transparentColor.g, transparentColor.b, alpha);
 
-    // Replace the old color by the new one
-    std::replace(myPixels.begin(), myPixels.end(), ColorKey, NewColor);
+    // Replace the old color with the new one
+    std::replace(myPixels.begin(), myPixels.end(), transparentColor, newColor);
 
     // The texture will need to be updated
     myNeedTextureUpdate = true;
@@ -276,82 +276,82 @@ void Image::CreateMaskFromColor(Color ColorKey, Uint8 Alpha)
 /// This function does a slow pixel copy and should only
 /// be used at initialization time
 ////////////////////////////////////////////////////////////
-void Image::Copy(const Image& Source, unsigned int DestX, unsigned int DestY, const IntRect& SourceRect, bool ApplyAlpha)
+void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect, bool applyAlpha)
 {
     // Make sure both images are valid
-    if ((Source.myWidth == 0) || (Source.myHeight == 0) || (myWidth == 0) || (myHeight == 0))
+    if ((source.myWidth == 0) || (source.myHeight == 0) || (myWidth == 0) || (myHeight == 0))
         return;
 
     // Make sure both images have up-to-date arrays
     EnsureArrayUpdate();
-    const_cast<Image&>(Source).EnsureArrayUpdate();
+    const_cast<Image&>(source).EnsureArrayUpdate();
 
     // Adjust the source rectangle
-    IntRect SrcRect = SourceRect;
-    if (SrcRect.GetSize().x == 0 || (SrcRect.GetSize().y == 0))
+    IntRect srcRect = sourceRect;
+    if (srcRect.GetSize().x == 0 || (srcRect.GetSize().y == 0))
     {
-        SrcRect.Left   = 0;
-        SrcRect.Top    = 0;
-        SrcRect.Right  = Source.myWidth;
-        SrcRect.Bottom = Source.myHeight;
+        srcRect.Left   = 0;
+        srcRect.Top    = 0;
+        srcRect.Right  = source.myWidth;
+        srcRect.Bottom = source.myHeight;
     }
     else
     {
-        if (SrcRect.Left   < 0) SrcRect.Left = 0;
-        if (SrcRect.Top    < 0) SrcRect.Top  = 0;
-        if (SrcRect.Right  > static_cast<int>(Source.myWidth))  SrcRect.Right  = Source.myWidth;
-        if (SrcRect.Bottom > static_cast<int>(Source.myHeight)) SrcRect.Bottom = Source.myHeight;
+        if (srcRect.Left   < 0) srcRect.Left = 0;
+        if (srcRect.Top    < 0) srcRect.Top  = 0;
+        if (srcRect.Right  > static_cast<int>(source.myWidth))  srcRect.Right  = source.myWidth;
+        if (srcRect.Bottom > static_cast<int>(source.myHeight)) srcRect.Bottom = source.myHeight;
     }
 
     // Then find the valid bounds of the destination rectangle
-    int Width  = SrcRect.GetSize().x;
-    int Height = SrcRect.GetSize().y;
-    if (DestX + Width  > myWidth)  Width  = myWidth  - DestX;
-    if (DestY + Height > myHeight) Height = myHeight - DestY;
+    int width  = srcRect.GetSize().x;
+    int height = srcRect.GetSize().y;
+    if (destX + width  > myWidth)  width  = myWidth  - destX;
+    if (destY + height > myHeight) height = myHeight - destY;
 
     // Make sure the destination area is valid
-    if ((Width <= 0) || (Height <= 0))
+    if ((width <= 0) || (height <= 0))
         return;
 
     // Precompute as much as possible
-    int          Pitch     = Width * 4;
-    int          Rows      = Height;
-    int          SrcStride = Source.myWidth * 4;
-    int          DstStride = myWidth * 4;
-    const Uint8* SrcPixels = Source.GetPixelsPtr() + (SrcRect.Left + SrcRect.Top * Source.myWidth) * 4;
-    Uint8*       DstPixels = reinterpret_cast<Uint8*>(&myPixels[0]) + (DestX + DestY * myWidth) * 4;
+    int          pitch     = width * 4;
+    int          rows      = height;
+    int          srcStride = source.myWidth * 4;
+    int          dstStride = myWidth * 4;
+    const Uint8* srcPixels = source.GetPixelsPtr() + (srcRect.Left + srcRect.Top * source.myWidth) * 4;
+    Uint8*       dstPixels = reinterpret_cast<Uint8*>(&myPixels[0]) + (destX + destY * myWidth) * 4;
 
     // Copy the pixels
-    if (ApplyAlpha)
+    if (applyAlpha)
     {
         // Interpolation using alpha values, pixel by pixel (slower)
-        for (int i = 0; i < Rows; ++i)
+        for (int i = 0; i < rows; ++i)
         {
-            for (int j = 0; j < Width; ++j)
+            for (int j = 0; j < width; ++j)
             {
                 // Get a direct pointer to the components of the current pixel
-                const Uint8* Src   = SrcPixels + j * 4;
-                Uint8*       Dst   = DstPixels + j * 4;
+                const Uint8* src = srcPixels + j * 4;
+                Uint8*       dst = dstPixels + j * 4;
 
                 // Interpolate RGB components using the alpha value of the source pixel
-                Uint8 Alpha = Src[3];
-                Dst[0] = (Src[0] * Alpha + Dst[0] * (255 - Alpha)) / 255;
-                Dst[1] = (Src[1] * Alpha + Dst[1] * (255 - Alpha)) / 255;
-                Dst[2] = (Src[2] * Alpha + Dst[2] * (255 - Alpha)) / 255;
+                Uint8 alpha = src[3];
+                dst[0] = (src[0] * alpha + dst[0] * (255 - alpha)) / 255;
+                dst[1] = (src[1] * alpha + dst[1] * (255 - alpha)) / 255;
+                dst[2] = (src[2] * alpha + dst[2] * (255 - alpha)) / 255;
             }
 
-            SrcPixels += SrcStride;
-            DstPixels += DstStride;
+            srcPixels += srcStride;
+            dstPixels += dstStride;
         }
     }
     else
     {
         // Optimized copy ignoring alpha values, row by row (faster)
-        for (int i = 0; i < Rows; ++i)
+        for (int i = 0; i < rows; ++i)
         {
-            memcpy(DstPixels, SrcPixels, Pitch);
-            SrcPixels += SrcStride;
-            DstPixels += DstStride;
+            memcpy(dstPixels, srcPixels, pitch);
+            srcPixels += srcStride;
+            dstPixels += dstStride;
         }
     }
 
@@ -364,39 +364,39 @@ void Image::Copy(const Image& Source, unsigned int DestX, unsigned int DestY, co
 /// Create the image from the current contents of the
 /// given window
 ////////////////////////////////////////////////////////////
-bool Image::CopyScreen(RenderWindow& Window, const IntRect& SourceRect)
+bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
 {
     // Adjust the source rectangle
-    IntRect SrcRect = SourceRect;
-    if (SrcRect.GetSize().x == 0 || (SrcRect.GetSize().y == 0))
+    IntRect srcRect = sourceRect;
+    if (srcRect.GetSize().x == 0 || (srcRect.GetSize().y == 0))
     {
-        SrcRect.Left   = 0;
-        SrcRect.Top    = 0;
-        SrcRect.Right  = Window.GetWidth();
-        SrcRect.Bottom = Window.GetHeight();
+        srcRect.Left   = 0;
+        srcRect.Top    = 0;
+        srcRect.Right  = window.GetWidth();
+        srcRect.Bottom = window.GetHeight();
     }
     else
     {
-        if (SrcRect.Left   < 0) SrcRect.Left = 0;
-        if (SrcRect.Top    < 0) SrcRect.Top  = 0;
-        if (SrcRect.Right  > static_cast<int>(Window.GetWidth()))  SrcRect.Right  = Window.GetWidth();
-        if (SrcRect.Bottom > static_cast<int>(Window.GetHeight())) SrcRect.Bottom = Window.GetHeight();
+        if (srcRect.Left   < 0) srcRect.Left = 0;
+        if (srcRect.Top    < 0) srcRect.Top  = 0;
+        if (srcRect.Right  > static_cast<int>(window.GetWidth()))  srcRect.Right  = window.GetWidth();
+        if (srcRect.Bottom > static_cast<int>(window.GetHeight())) srcRect.Bottom = window.GetHeight();
     }
 
     // Store the texture dimensions
-    myWidth  = SrcRect.GetSize().x;
-    myHeight = SrcRect.GetSize().y;
+    myWidth  = srcRect.GetSize().x;
+    myHeight = srcRect.GetSize().y;
 
     // We can then create the texture
-    if (Window.SetActive() && CreateTexture())
+    if (window.SetActive() && CreateTexture())
     {
-        GLint PreviousTexture;
-        GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &PreviousTexture));
+        GLint previous;
+        GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
         GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
-        GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SrcRect.Left, SrcRect.Top, myWidth, myHeight));
+        GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, srcRect.Left, srcRect.Top, myWidth, myHeight));
 
-        GLCheck(glBindTexture(GL_TEXTURE_2D, PreviousTexture));
+        GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
         myNeedTextureUpdate = false;
         myNeedArrayUpdate   = true;
@@ -415,20 +415,20 @@ bool Image::CopyScreen(RenderWindow& Window, const IntRect& SourceRect)
 ////////////////////////////////////////////////////////////
 /// Change the color of a pixel
 ////////////////////////////////////////////////////////////
-void Image::SetPixel(unsigned int X, unsigned int Y, const Color& Col)
+void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
 {
     // First check if the array of pixels needs to be updated
     EnsureArrayUpdate();
 
     // Check if pixel is whithin the image bounds
-    if ((X >= myWidth) || (Y >= myHeight))
+    if ((x >= myWidth) || (y >= myHeight))
     {
-        std::cerr << "Cannot set pixel (" << X << "," << Y << ") for image "
+        std::cerr << "Cannot set pixel (" << x << "," << y << ") for image "
                   << "(width = " << myWidth << ", height = " << myHeight << ")" << std::endl;
         return;
     }
 
-    myPixels[X + Y * myWidth] = Col;
+    myPixels[x + y * myWidth] = color;
 
     // The texture will need to be updated
     myNeedTextureUpdate = true;
@@ -438,20 +438,20 @@ void Image::SetPixel(unsigned int X, unsigned int Y, const Color& Col)
 ////////////////////////////////////////////////////////////
 /// Get a pixel from the image
 ////////////////////////////////////////////////////////////
-const Color& Image::GetPixel(unsigned int X, unsigned int Y) const
+const Color& Image::GetPixel(unsigned int x, unsigned int y) const
 {
     // First check if the array of pixels needs to be updated
     const_cast<Image*>(this)->EnsureArrayUpdate();
 
     // Check if pixel is whithin the image bounds
-    if ((X >= myWidth) || (Y >= myHeight))
+    if ((x >= myWidth) || (y >= myHeight))
     {
-        std::cerr << "Cannot get pixel (" << X << "," << Y << ") for image "
+        std::cerr << "Cannot get pixel (" << x << "," << y << ") for image "
                   << "(width = " << myWidth << ", height = " << myHeight << ")" << std::endl;
         return Color::Black;
     }
 
-    return myPixels[X + Y * myWidth];
+    return myPixels[x + y * myWidth];
 }
 
 
@@ -497,22 +497,22 @@ void Image::Bind() const
 ////////////////////////////////////////////////////////////
 /// Enable or disable image smoothing filter
 ////////////////////////////////////////////////////////////
-void Image::SetSmooth(bool Smooth)
+void Image::SetSmooth(bool smooth)
 {
-    if (Smooth != myIsSmooth)
+    if (smooth != myIsSmooth)
     {
-        myIsSmooth = Smooth;
+        myIsSmooth = smooth;
 
         if (myTexture)
         {
-            GLint PreviousTexture;
-            GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &PreviousTexture));
+            GLint previous;
+            GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
             GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
             GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
 
-            GLCheck(glBindTexture(GL_TEXTURE_2D, PreviousTexture));
+            GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
         }
     }
 }
@@ -549,38 +549,38 @@ bool Image::IsSmooth() const
 /// Convert a subrect expressed in pixels, into float
 /// texture coordinates
 ////////////////////////////////////////////////////////////
-FloatRect Image::GetTexCoords(const IntRect& Rect, bool Adjust) const
+FloatRect Image::GetTexCoords(const IntRect& rect, bool adjust) const
 {
-    float Width  = static_cast<float>(myTextureWidth);
-    float Height = static_cast<float>(myTextureHeight);
+    float width  = static_cast<float>(myTextureWidth);
+    float height = static_cast<float>(myTextureHeight);
 
-    FloatRect Coords;
-    if (Adjust && myIsSmooth)
+    FloatRect coords;
+    if (adjust && myIsSmooth)
     {
-        Coords.Left   = (Rect.Left   + 0.5f) / Width;
-        Coords.Top    = (Rect.Top    + 0.5f) / Height;
-        Coords.Right  = (Rect.Right  - 0.5f) / Width;
-        Coords.Bottom = (Rect.Bottom - 0.5f) / Height;
+        coords.Left   = (rect.Left   + 0.5f) / width;
+        coords.Top    = (rect.Top    + 0.5f) / height;
+        coords.Right  = (rect.Right  - 0.5f) / width;
+        coords.Bottom = (rect.Bottom - 0.5f) / height;
     }
     else
     {
-        Coords.Left   = Rect.Left   / Width;
-        Coords.Top    = Rect.Top    / Height;
-        Coords.Right  = Rect.Right  / Width;
-        Coords.Bottom = Rect.Bottom / Height;
+        coords.Left   = rect.Left   / width;
+        coords.Top    = rect.Top    / height;
+        coords.Right  = rect.Right  / width;
+        coords.Bottom = rect.Bottom / height;
     }
 
     if (myPixelsFlipped)
-        std::swap(Coords.Top, Coords.Bottom);
+        std::swap(coords.Top, coords.Bottom);
 
-    return Coords;
+    return coords;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get a valid texture size according to hardware support
 ////////////////////////////////////////////////////////////
-unsigned int Image::GetValidTextureSize(unsigned int Size)
+unsigned int Image::GetValidTextureSize(unsigned int size)
 {
     // Make sure that GLEW is initialized
     EnsureGlewInit();
@@ -588,16 +588,16 @@ unsigned int Image::GetValidTextureSize(unsigned int Size)
     if (glewIsSupported("GL_ARB_texture_non_power_of_two") != 0)
     {
         // If hardware supports NPOT textures, then just return the unmodified size
-        return Size;
+        return size;
     }
     else
     {
         // If hardware doesn't support NPOT textures, we calculate the nearest power of two
-        unsigned int PowerOfTwo = 1;
-        while (PowerOfTwo < Size)
-            PowerOfTwo *= 2;
+        unsigned int powerOfTwo = 1;
+        while (powerOfTwo < size)
+            powerOfTwo *= 2;
 
-        return PowerOfTwo;
+        return powerOfTwo;
     }
 }
 
@@ -605,21 +605,21 @@ unsigned int Image::GetValidTextureSize(unsigned int Size)
 ////////////////////////////////////////////////////////////
 /// Assignment operator
 ////////////////////////////////////////////////////////////
-Image& Image::operator =(const Image& Other)
+Image& Image::operator =(const Image& other)
 {
-    Image Temp(Other);
+    Image temp(other);
 
-    std::swap(myWidth,             Temp.myWidth);
-    std::swap(myHeight,            Temp.myHeight);
-    std::swap(myTextureWidth,      Temp.myTextureWidth);
-    std::swap(myTextureHeight,     Temp.myTextureHeight);
-    std::swap(myTexture,           Temp.myTexture);
-    std::swap(myIsSmooth,          Temp.myIsSmooth);
-    std::swap(myNeedArrayUpdate,   Temp.myNeedArrayUpdate);
-    std::swap(myNeedTextureUpdate, Temp.myNeedTextureUpdate);
-    std::swap(myUpdateSource,      Temp.myUpdateSource);
-    std::swap(myPixelsFlipped,     Temp.myPixelsFlipped);
-    myPixels.swap(Temp.myPixels);
+    std::swap(myWidth,             temp.myWidth);
+    std::swap(myHeight,            temp.myHeight);
+    std::swap(myTextureWidth,      temp.myTextureWidth);
+    std::swap(myTextureHeight,     temp.myTextureHeight);
+    std::swap(myTexture,           temp.myTexture);
+    std::swap(myIsSmooth,          temp.myIsSmooth);
+    std::swap(myNeedArrayUpdate,   temp.myNeedArrayUpdate);
+    std::swap(myNeedTextureUpdate, temp.myNeedTextureUpdate);
+    std::swap(myUpdateSource,      temp.myUpdateSource);
+    std::swap(myPixelsFlipped,     temp.myPixelsFlipped);
+    myPixels.swap(temp.myPixels);
 
     return *this;
 }
@@ -635,43 +635,43 @@ bool Image::CreateTexture()
         return false;
 
     // Adjust internal texture dimensions depending on NPOT textures support
-    unsigned int TextureWidth  = GetValidTextureSize(myWidth);
-    unsigned int TextureHeight = GetValidTextureSize(myHeight);
+    unsigned int textureWidth  = GetValidTextureSize(myWidth);
+    unsigned int textureHeight = GetValidTextureSize(myHeight);
 
     // Check the maximum texture size
-    GLint MaxSize;
-    GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxSize));
-    if ((TextureWidth > static_cast<unsigned int>(MaxSize)) || (TextureHeight > static_cast<unsigned int>(MaxSize)))
+    GLint maxSize;
+    GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize));
+    if ((textureWidth > static_cast<unsigned int>(maxSize)) || (textureHeight > static_cast<unsigned int>(maxSize)))
     {
-        std::cerr << "Failed to create image, its internal size is too high (" << TextureWidth << "x" << TextureHeight << ")" << std::endl;
+        std::cerr << "Failed to create image, its internal size is too high (" << textureWidth << "x" << textureHeight << ")" << std::endl;
         return false;
     }
 
     // Destroy the previous OpenGL texture if it already exists with another size
-    if ((TextureWidth != myTextureWidth) || (TextureHeight != myTextureHeight))
+    if ((textureWidth != myTextureWidth) || (textureHeight != myTextureHeight))
     {
         DestroyTexture();
-        myTextureWidth  = TextureWidth;
-        myTextureHeight = TextureHeight;
+        myTextureWidth  = textureWidth;
+        myTextureHeight = textureHeight;
     }
 
     // Create the OpenGL texture
     if (!myTexture)
     {
-        GLint PreviousTexture;
-        GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &PreviousTexture));
+        GLint previous;
+        GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
-        GLuint Texture = 0;
-        GLCheck(glGenTextures(1, &Texture));
-        GLCheck(glBindTexture(GL_TEXTURE_2D, Texture));
+        GLuint texture = 0;
+        GLCheck(glGenTextures(1, &texture));
+        GLCheck(glBindTexture(GL_TEXTURE_2D, texture));
         GLCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, myTextureWidth, myTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
         GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP));
         GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP));
         GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
         GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
-        myTexture = static_cast<unsigned int>(Texture);
+        myTexture = static_cast<unsigned int>(texture);
 
-        GLCheck(glBindTexture(GL_TEXTURE_2D, PreviousTexture));
+        GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
     }
 
     myNeedTextureUpdate = true;
@@ -690,8 +690,8 @@ void Image::EnsureTextureUpdate()
     {
         if (myTexture)
         {
-            GLint PreviousTexture;
-            GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &PreviousTexture));
+            GLint previous;
+            GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
             if (myUpdateSource)
             {
@@ -707,7 +707,7 @@ void Image::EnsureTextureUpdate()
                 myPixelsFlipped = false;
             }
 
-            GLCheck(glBindTexture(GL_TEXTURE_2D, PreviousTexture));
+            GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
         }
 
         myNeedTextureUpdate = false;
@@ -728,8 +728,8 @@ void Image::EnsureArrayUpdate()
         EnsureTextureUpdate();
 
         // Save the previous texture
-        GLint PreviousTexture;
-        GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &PreviousTexture));
+        GLint previous;
+        GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
         // Resize the destination array of pixels
         myPixels.resize(myWidth * myHeight);
@@ -747,32 +747,32 @@ void Image::EnsureArrayUpdate()
             // Texture and array don't have the same size, we have to use a slower algorithm
 
             // All the pixels will first be copied to a temporary array
-            std::vector<Color> AllPixels(myTextureWidth * myTextureHeight);
+            std::vector<Color> allPixels(myTextureWidth * myTextureHeight);
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
-            GLCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &AllPixels[0]));
+            GLCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &allPixels[0]));
 
             // The we copy the useful pixels from the temporary array to the final one
-            const Color* Src = &AllPixels[0];
-            Color* Dst = &myPixels[0];
-            int SrcPitch = myTextureWidth;
+            const Color* src = &allPixels[0];
+            Color* dst = &myPixels[0];
+            int srcPitch = myTextureWidth;
 
             // Handle the case where source pixels are flipped vertically
             if (myPixelsFlipped)
             {
-                Src += myTextureWidth * (myHeight - 1);
-                SrcPitch = -SrcPitch;
+                src += myTextureWidth * (myHeight - 1);
+                srcPitch = -srcPitch;
             }
 
             for (unsigned int i = 0; i < myHeight; ++i)
             {
-                std::copy(Src, Src + myWidth, Dst);
-                Src += SrcPitch;
-                Dst += myWidth;
+                std::copy(src, src + myWidth, dst);
+                src += srcPitch;
+                dst += myWidth;
             }
         }
 
         // Restore the previous texture
-        GLCheck(glBindTexture(GL_TEXTURE_2D, PreviousTexture));
+        GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
         myNeedArrayUpdate = false;
     }
@@ -784,11 +784,11 @@ void Image::EnsureArrayUpdate()
 /// its content.
 /// For internal use only (see RenderImage class).
 ////////////////////////////////////////////////////////////
-void Image::ExternalUpdate(RenderImage& Source)
+void Image::ExternalUpdate(RenderImage& source)
 {
     myNeedTextureUpdate = true;
     myNeedArrayUpdate   = true;
-    myUpdateSource      = &Source;
+    myUpdateSource      = &source;
 }
 
 

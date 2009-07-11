@@ -38,10 +38,10 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Construct the music with a buffer size
 ////////////////////////////////////////////////////////////
-Music::Music(std::size_t BufferSize) :
+Music::Music(std::size_t bufferSize) :
 myFile    (new priv::SoundFile),
 myDuration(0.f),
-mySamples (BufferSize)
+mySamples (bufferSize)
 {
 
 }
@@ -62,15 +62,15 @@ Music::~Music()
 ////////////////////////////////////////////////////////////
 /// Open a music file (doesn't play it -- call Play() for that)
 ////////////////////////////////////////////////////////////
-bool Music::OpenFromFile(const std::string& Filename)
+bool Music::OpenFromFile(const std::string& filename)
 {
     // First stop the music if it was already running
     Stop();
 
     // Create the sound file implementation, and open it in read mode
-    if (!myFile->OpenRead(Filename))
+    if (!myFile->OpenRead(filename))
     {
-        std::cerr << "Failed to open \"" << Filename << "\" for reading" << std::endl;
+        std::cerr << "Failed to open \"" << filename << "\" for reading" << std::endl;
         return false;
     }
 
@@ -87,13 +87,13 @@ bool Music::OpenFromFile(const std::string& Filename)
 ////////////////////////////////////////////////////////////
 /// Open a music file from memory (doesn't play it -- call Play() for that)
 ////////////////////////////////////////////////////////////
-bool Music::OpenFromMemory(const char* Data, std::size_t SizeInBytes)
+bool Music::OpenFromMemory(const char* data, std::size_t sizeInBytes)
 {
     // First stop the music if it was already running
     Stop();
 
     // Create the sound file implementation, and open it in read mode
-    if (!myFile->OpenRead(Data, SizeInBytes))
+    if (!myFile->OpenRead(data, sizeInBytes))
     {
         std::cerr << "Failed to open music from memory for reading" << std::endl;
         return false;
@@ -121,27 +121,27 @@ float Music::GetDuration() const
 ////////////////////////////////////////////////////////////
 /// /see SoundStream::OnGetData
 ////////////////////////////////////////////////////////////
-bool Music::OnGetData(SoundStream::Chunk& Data)
+bool Music::OnGetData(SoundStream::Chunk& data)
 {
-    sf::Lock Lock(myMutex);
+    sf::Lock lock(myMutex);
 
     // Fill the chunk parameters
-    Data.Samples   = &mySamples[0];
-    Data.NbSamples = myFile->Read(&mySamples[0], mySamples.size());
+    data.Samples   = &mySamples[0];
+    data.NbSamples = myFile->Read(&mySamples[0], mySamples.size());
 
     // Check if we have reached the end of the audio file
-    return Data.NbSamples == mySamples.size();
+    return data.NbSamples == mySamples.size();
 }
 
 
 ////////////////////////////////////////////////////////////
 /// /see SoundStream::OnSeek
 ////////////////////////////////////////////////////////////
-void Music::OnSeek(float TimeOffset)
+void Music::OnSeek(float timeOffset)
 {
-    sf::Lock Lock(myMutex);
+    sf::Lock lock(myMutex);
 
-    myFile->Seek(TimeOffset);
+    myFile->Seek(timeOffset);
 }
 
 } // namespace sf

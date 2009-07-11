@@ -63,7 +63,7 @@ RenderImageImplPBuffer::~RenderImageImplPBuffer()
 
     // This is to make sure that another valid context is made
     // active after we destroy the P-Buffer's one
-    Context Ctx;
+    Context context;
 }
 
 
@@ -82,14 +82,14 @@ bool RenderImageImplPBuffer::IsSupported()
 ////////////////////////////////////////////////////////////
 /// /see RenderImageImpl::Create
 ////////////////////////////////////////////////////////////
-bool RenderImageImplPBuffer::Create(unsigned int Width, unsigned int Height, unsigned int /*TextureId*/, bool DepthBuffer)
+bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
 {
     // Store the dimensions
-    myWidth = Width;
-    myHeight = Height;
+    myWidth  = width;
+    myHeight = height;
 
     // Define the PBuffer attributes
-    int VisualAttributes[] =
+    int visualAttributes[] =
     {
         GLX_RENDER_TYPE,   GLX_RGBA_BIT,
         GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
@@ -97,72 +97,72 @@ bool RenderImageImplPBuffer::Create(unsigned int Width, unsigned int Height, uns
         GLX_GREEN_SIZE,    8,
         GLX_BLUE_SIZE,     8,
         GLX_ALPHA_SIZE,    8,
-        GLX_DEPTH_SIZE,    (DepthBuffer ? 24 : 0),
+        GLX_DEPTH_SIZE,    (depthBuffer ? 24 : 0),
         0
     };
     int PBufferAttributes[] =
     {
-        GLX_PBUFFER_WIDTH, 	Width,
-        GLX_PBUFFER_HEIGHT, Height,
+        GLX_PBUFFER_WIDTH, 	width,
+        GLX_PBUFFER_HEIGHT, height,
         0
     };
 
     // Get the available FB configurations
-    int NbConfigs = 0;
-    GLXFBConfig* Configs = glXChooseFBConfigSGIX(myDisplay, DefaultScreen(myDisplay), VisualAttributes, &NbConfigs);
-    if (!Configs || !NbConfigs)
+    int nbConfigs = 0;
+    GLXFBConfig* configs = glXChooseFBConfigSGIX(myDisplay, DefaultScreen(myDisplay), visualAttributes, &nbConfigs);
+    if (!configs || !nbConfigs)
     {
         std::cerr << "Impossible to create render image (failed to find a suitable pixel format for PBuffer)" << std::endl;
         return false;
     }
 
     // Create the P-Buffer
-    myPBuffer = glXCreateGLXPbufferSGIX(myDisplay, Configs[0], Width, Height, PBufferAttributes);
+    myPBuffer = glXCreateGLXPbufferSGIX(myDisplay, configs[0], width, height, PBufferAttributes);
     if (!myPBuffer)
     {
         std::cerr << "Impossible to create render image (failed to create the OpenGL PBuffer)" << std::endl;
-        XFree(Configs);
+        XFree(configs);
         return false;
     }
 
     // Check the actual size of the P-Buffer
-    unsigned int ActualWidth, ActualHeight;
-    glXQueryGLXPbufferSGIX(myDisplay, myPBuffer, GLX_WIDTH_SGIX, &ActualWidth);
-    glXQueryGLXPbufferSGIX(myDisplay, myPBuffer, GLX_HEIGHT_SGIX, &ActualHeight);
-    if ((ActualWidth != Width) || (ActualHeight != Height))
+    unsigned int actualWidth, actualHeight;
+    glXQueryGLXPbufferSGIX(myDisplay, myPBuffer, GLX_WIDTH_SGIX, &actualWidth);
+    glXQueryGLXPbufferSGIX(myDisplay, myPBuffer, GLX_HEIGHT_SGIX, &actualHeight);
+    if ((actualWidth != width) || (actualHeight != height))
     {
         std::cerr << "Impossible to create render image (failed to match the requested size). "
-                  << "Size: " << ActualWidth << "x" << ActualHeight << " - "
-                  << "Requested: " << Width << "x" << Height
+                  << "Size: " << actualWidth << "x" << actualHeight << " - "
+                  << "Requested: " << width << "x" << height
                   << std::endl;
-        XFree(Configs);
+        XFree(configs);
         return false;
     }
 
     // We'll have to share the P-Buffer context with the current context
-    GLXDrawable CurrentDrawable = glXGetCurrentDrawable();
-    GLXContext CurrentContext = glXGetCurrentContext();
-    if (CurrentContext)
+    GLXDrawable currentDrawable = glXGetCurrentDrawable();
+    GLXContext currentContext = glXGetCurrentContext();
+    if (currentContext)
         glXMakeCurrent(myDisplay, NULL, NULL);
 
     // Create the context
-    XVisualInfo* Visual = glXGetVisualFromFBConfig(myDisplay, Configs[0]);
-    myContext = glXCreateContext(myDisplay, Visual, CurrentContext, true);
+    XVisualInfo* Visual = glXGetVisualFromFBConfig(myDisplay, configs[0]);
+    myContext = glXCreateContext(myDisplay, visual, currentContext, true);
     if (!myContext)
     {
         std::cerr << "Impossible to create render image (failed to create the OpenGL context)" << std::endl;
-        XFree(Configs);
-        XFree(Visual);
+        XFree(configs);
+        XFree(visual);
         return false;
     }
  
     // Restore the previous active context
-    if (CurrentContext)
-        glXMakeCurrent(myDisplay, CurrentDrawable, CurrentContext);
+    if (currentContext)
+        glXMakeCurrent(myDisplay, currentDrawable, currentContext);
  
     // Cleanup resources
-    XFree(Configs);
-    XFree(Visual);
+    XFree(configs);
+    XFree(visual);
 
     return true;
 }
@@ -171,7 +171,7 @@ bool RenderImageImplPBuffer::Create(unsigned int Width, unsigned int Height, uns
 ////////////////////////////////////////////////////////////
 /// /see RenderImageImpl::Activate
 ////////////////////////////////////////////////////////////
-bool RenderImageImplPBuffer::Activate(bool Active)
+bool RenderImageImplPBuffer::Activate(bool active)
 {
     if (Active)
     {
@@ -197,23 +197,23 @@ bool RenderImageImplPBuffer::Activate(bool Active)
 ////////////////////////////////////////////////////////////
 /// /see RenderImageImpl::UpdateTexture
 ////////////////////////////////////////////////////////////
-bool RenderImageImplPBuffer::UpdateTexture(unsigned int TextureId)
+bool RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
 {
     // Store the current active context
-    GLXDrawable CurrentDrawable = glXGetCurrentDrawable();
-    GLXContext CurrentContext = glXGetCurrentContext();
+    GLXDrawable currentDrawable = glXGetCurrentDrawable();
+    GLXContext currentContext = glXGetCurrentContext();
 
     if (Activate(true))
     {
         // Bind the texture
         GLCheck(glEnable(GL_TEXTURE_2D));
-        GLCheck(glBindTexture(GL_TEXTURE_2D, TextureId));
+        GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
 
         // Copy the rendered pixels to the image
         GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
 
         // Restore the previous context
-        glXMakeCurrent(myDisplay, CurrentDrawable, CurrentContext);
+        glXMakeCurrent(myDisplay, currentDrawable, currentContext);
 
         return true;
     }

@@ -43,19 +43,19 @@ CSFML_API sfContext* sfContext_Create();
 ////////////////////////////////////////////////////////////
 /// Destroy an existing context
 ///
-/// \param Context : Context to destroy
+/// \param context : Context to destroy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfContext_Destroy(sfContext* Context);
+CSFML_API void sfContext_Destroy(sfContext* context);
 
 ////////////////////////////////////////////////////////////
 /// Activate or deactivate a context
 ///
-/// \param Context : Context to activate or deactivate
-/// \param Active :  sfTrue to activate, sfFalse to deactivate
+/// \param context : Context to activate or deactivate
+/// \param active :  sfTrue to activate, sfFalse to deactivate
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfContext_SetActive(sfContext* Context, sfBool Active);
+CSFML_API void sfContext_SetActive(sfContext* context, sfBool active);
 
 
 #endif // SFML_CONTEXT_H

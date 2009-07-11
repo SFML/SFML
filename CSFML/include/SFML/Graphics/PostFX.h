@@ -35,7 +35,7 @@
 ////////////////////////////////////////////////////////////
 /// Create a new post-fx from a file
 ///
-/// \param Filename : File to load
+/// \param filename : File to load
 ///
 /// \return A new sfPostFX object, or NULL if it failed
 ///
@@ -45,70 +45,70 @@ CSFML_API sfPostFX* sfPostFX_CreateFromFile(const char* Filename);
 ////////////////////////////////////////////////////////////
 /// Create a new post-fx from an effect source code
 ///
-/// \param Effect : Source code of the effect
+/// \param effect : Source code of the effect
 ///
 /// \return A new sfPostFX object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfPostFX* sfPostFX_CreateFromMemory(const char* Effect);
+CSFML_API sfPostFX* sfPostFX_CreateFromMemory(const char* effect);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing post-fx
 ///
-/// \param PostFX : PostFX to delete
+/// \param postFX : PostFX to delete
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfPostFX_Destroy(sfPostFX* PostFX);
+CSFML_API void sfPostFX_Destroy(sfPostFX* postFX);
 
 ////////////////////////////////////////////////////////////
 /// Change a parameter of a post-fx (1 float)
 ///
-/// \param PostFX : Post-effect to modify
-/// \param Name :   Parameter name in the effect
-/// \param X :      Value to assign
+/// \param postFX : Post-effect to modify
+/// \param name :   Parameter name in the effect
+/// \param x :      Value to assign
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfPostFX_SetParameter1(sfPostFX* PostFX, const char* Name, float X);
+CSFML_API void sfPostFX_SetParameter1(sfPostFX* postFX, const char* name, float x);
 
 ////////////////////////////////////////////////////////////
 /// Change a parameter of a post-fx (2 floats)
 ///
-/// \param PostFX : Post-effect to modify
-/// \param Name :   Parameter name in the effect
-/// \param X, Y :   Values to assign
+/// \param postFX : Post-effect to modify
+/// \param name :   Parameter name in the effect
+/// \param x, y :   Values to assign
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfPostFX_SetParameter2(sfPostFX* PostFX, const char* Name, float X, float Y);
+CSFML_API void sfPostFX_SetParameter2(sfPostFX* postFX, const char* name, float x, float y);
 
 ////////////////////////////////////////////////////////////
 /// Change a parameter of a post-fx (3 floats)
 ///
-/// \param PostFX :  Post-effect to modify
-/// \param Name :    Parameter name in the effect
-/// \param X, Y, Z : Values to assign
+/// \param postFX :  Post-effect to modify
+/// \param name :    Parameter name in the effect
+/// \param x, y, z : Values to assign
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfPostFX_SetParameter3(sfPostFX* PostFX, const char* Name, float X, float Y, float Z);
+CSFML_API void sfPostFX_SetParameter3(sfPostFX* postFX, const char* name, float x, float y, float z);
 
 ////////////////////////////////////////////////////////////
 /// Change a parameter of a post-fx (4 floats)
 ///
-/// \param PostFX :     Post-effect to modify
-/// \param Name :       Parameter name in the effect
-/// \param X, Y, Z, W : Values to assign
+/// \param postFX :     Post-effect to modify
+/// \param name :       Parameter name in the effect
+/// \param x, y, z, w : Values to assign
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfPostFX_SetParameter4(sfPostFX* PostFX, const char* Name, float X, float Y, float Z, float W);
+CSFML_API void sfPostFX_SetParameter4(sfPostFX* postFX, const char* name, float x, float y, float z, float w);
 
 ////////////////////////////////////////////////////////////
 /// Set a texture parameter in a post-fx
 ///
-/// \param PostFX :  Post-effect to modify
-/// \param Name :    Texture name in the effect
-/// \param Texture : Image to set (pass NULL to use content of current framebuffer)
+/// \param postFX :  Post-effect to modify
+/// \param name :    Texture name in the effect
+/// \param texture : Image to set (pass NULL to use content of current framebuffer)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfPostFX_SetTexture(sfPostFX* PostFX, const char* Name, sfImage* Texture);
+CSFML_API void sfPostFX_SetTexture(sfPostFX* postFX, const char* name, sfImage* texture);
 
 ////////////////////////////////////////////////////////////
 /// Tell whether or not the system supports post-effects

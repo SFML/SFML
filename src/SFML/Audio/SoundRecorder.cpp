@@ -37,7 +37,7 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    ALCdevice* CaptureDevice = NULL;
+    ALCdevice* captureDevice = NULL;
 }
 
 namespace sf
@@ -66,7 +66,7 @@ SoundRecorder::~SoundRecorder()
 /// Start the capture.
 /// Warning : only one capture can happen at the same time
 ////////////////////////////////////////////////////////////
-void SoundRecorder::Start(unsigned int SampleRate)
+void SoundRecorder::Start(unsigned int sampleRate)
 {
     // Check if the device can do audio capture
     if (!CanCapture())
@@ -76,15 +76,15 @@ void SoundRecorder::Start(unsigned int SampleRate)
     }
 
     // Check that another capture is not already running
-    if (CaptureDevice)
+    if (captureDevice)
     {
         std::cerr << "Trying to start audio capture, but another capture is already running" << std::endl;
         return;
     }
 
     // Open the capture device for capturing 16 bits mono samples
-    CaptureDevice = alcCaptureOpenDevice(NULL, SampleRate, AL_FORMAT_MONO16, SampleRate);
-    if (!CaptureDevice)
+    captureDevice = alcCaptureOpenDevice(NULL, sampleRate, AL_FORMAT_MONO16, sampleRate);
+    if (!captureDevice)
     {
         std::cerr << "Failed to open the audio capture device" << std::endl;
         return;
@@ -94,13 +94,13 @@ void SoundRecorder::Start(unsigned int SampleRate)
     mySamples.clear();
 
     // Store the sample rate
-    mySampleRate = SampleRate;
+    mySampleRate = sampleRate;
 
     // Notify derived class
     if (OnStart())
     {
         // Start the capture
-        alcCaptureStart(CaptureDevice);
+        alcCaptureStart(captureDevice);
 
         // Start the capture in a new thread, to avoid blocking the main thread
         myIsCapturing = true;
@@ -135,9 +135,9 @@ unsigned int SoundRecorder::GetSampleRate() const
 ////////////////////////////////////////////////////////////
 bool SoundRecorder::CanCapture()
 {
-    ALCdevice* Device = priv::AudioDevice::GetInstance().GetDevice();
+    ALCdevice* device = priv::AudioDevice::GetInstance().GetDevice();
 
-    return alcIsExtensionPresent(Device, "ALC_EXT_CAPTURE") != AL_FALSE;
+    return alcIsExtensionPresent(device, "ALC_EXT_CAPTURE") != AL_FALSE;
 }
 
 
@@ -188,14 +188,14 @@ void SoundRecorder::Run()
 void SoundRecorder::ProcessCapturedSamples()
 {
     // Get the number of samples available
-    ALCint SamplesAvailable;
-    alcGetIntegerv(CaptureDevice, ALC_CAPTURE_SAMPLES, 1, &SamplesAvailable);
+    ALCint samplesAvailable;
+    alcGetIntegerv(captureDevice, ALC_CAPTURE_SAMPLES, 1, &samplesAvailable);
 
-    if (SamplesAvailable > 0)
+    if (samplesAvailable > 0)
     {
         // Get the recorded samples
-        mySamples.resize(SamplesAvailable);
-        alcCaptureSamples(CaptureDevice, &mySamples[0], SamplesAvailable);
+        mySamples.resize(samplesAvailable);
+        alcCaptureSamples(captureDevice, &mySamples[0], samplesAvailable);
 
         // Forward them to the derived class
         if (!OnProcessSamples(&mySamples[0], mySamples.size()))
@@ -213,14 +213,14 @@ void SoundRecorder::ProcessCapturedSamples()
 void SoundRecorder::CleanUp()
 {
     // Stop the capture
-    alcCaptureStop(CaptureDevice);
+    alcCaptureStop(captureDevice);
 
     // Get the samples left in the buffer
     ProcessCapturedSamples();
 
     // Close the device
-    alcCaptureCloseDevice(CaptureDevice);
-    CaptureDevice = NULL;
+    alcCaptureCloseDevice(captureDevice);
+    captureDevice = NULL;
 }
 
 } // namespace sf

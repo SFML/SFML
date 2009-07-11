@@ -8,8 +8,8 @@
 #include <iostream>
 
 
-const sf::Uint8 AudioData   = 1;
-const sf::Uint8 EndOfStream = 2;
+const sf::Uint8 audioData   = 1;
+const sf::Uint8 endOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////
@@ -47,19 +47,19 @@ public :
     /// Run the server, stream audio data from the client
     ///
     ////////////////////////////////////////////////////////////
-    void Start(unsigned short Port)
+    void Start(unsigned short port)
     {
         if (!myHasFinished)
         {
             // Listen to the given port for incoming connections
-            if (!myListener.Listen(Port))
+            if (!myListener.Listen(port))
                 return;
-            std::cout << "Server is listening to port " << Port << ", waiting for connections... " << std::endl;
+            std::cout << "Server is listening to port " << port << ", waiting for connections... " << std::endl;
 
             // Wait for a connection
-            sf::IPAddress ClientAddress;
-            myListener.Accept(myClient, &ClientAddress);
-            std::cout << "Client connected : " << ClientAddress << std::endl;
+            sf::IPAddress clientAddress;
+            myListener.Accept(myClient, &clientAddress);
+            std::cout << "Client connected : " << clientAddress << std::endl;
 
             // Start playback
             Play();
@@ -80,7 +80,7 @@ private :
     /// /see SoundStream::OnGetData
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnGetData(sf::SoundStream::Chunk& Data)
+    virtual bool OnGetData(sf::SoundStream::Chunk& data)
     {
         // We have reached the end of the buffer and all audio data have been played : we can stop playback
         if ((myOffset >= mySamples.size()) && myHasFinished)
@@ -93,13 +93,13 @@ private :
         // Copy samples into a local buffer to avoid synchronization problems
         // (don't forget that we run in two separate threads)
         {
-            sf::Lock Lock(myMutex);
+            sf::Lock lock(myMutex);
             myTempBuffer.assign(mySamples.begin() + myOffset, mySamples.end());
         }
 
         // Fill audio data to pass to the stream
-        Data.Samples   = &myTempBuffer[0];
-        Data.NbSamples = myTempBuffer.size();
+        data.Samples   = &myTempBuffer[0];
+        data.NbSamples = myTempBuffer.size();
 
         // Update the playing offset
         myOffset += myTempBuffer.size();
@@ -111,9 +111,9 @@ private :
     /// /see SoundStream::OnSeek
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnSeek(float TimeOffset)
+    virtual void OnSeek(float timeOffset)
     {
-        myOffset = static_cast<std::size_t>(TimeOffset * GetSampleRate() * GetChannelsCount());
+        myOffset = static_cast<std::size_t>(timeOffset * GetSampleRate() * GetChannelsCount());
     }
 
     ////////////////////////////////////////////////////////////
@@ -125,28 +125,28 @@ private :
         while (!myHasFinished)
         {
             // Get waiting audio data from the network
-            sf::Packet PacketIn;
-            if (myClient.Receive(PacketIn) != sf::Socket::Done)
+            sf::Packet packet;
+            if (myClient.Receive(packet) != sf::Socket::Done)
                 break;
 
             // Extract the message ID
-            sf::Uint8 Id;
-            PacketIn >> Id;
+            sf::Uint8 id;
+            packet >> id;
 
-            if (Id == AudioData)
+            if (id == audioData)
             {
                 // Extract audio samples from the packet, and append it to our samples buffer
-                const sf::Int16* Samples   = reinterpret_cast<const sf::Int16*>(PacketIn.GetData() + 1);
-                std::size_t      NbSamples = (PacketIn.GetDataSize() - 1) / sizeof(sf::Int16);
+                const sf::Int16* samples   = reinterpret_cast<const sf::Int16*>(packet.GetData() + 1);
+                std::size_t      nbSamples = (packet.GetDataSize() - 1) / sizeof(sf::Int16);
 
                 // Don't forget that the other thread can access the samples array at any time
                 // (so we protect any operation on it with the mutex)
                 {
-                    sf::Lock Lock(myMutex);
-                    std::copy(Samples, Samples + NbSamples, std::back_inserter(mySamples));
+                    sf::Lock lock(myMutex);
+                    std::copy(samples, samples + nbSamples, std::back_inserter(mySamples));
                 }
             }
-            else if (Id == EndOfStream)
+            else if (id == endOfStream)
             {
                 // End of stream reached : we stop receiving audio data
                 std::cout << "Audio data has been 100% received !" << std::endl;
@@ -179,14 +179,14 @@ private :
 /// a connected client
 ///
 ////////////////////////////////////////////////////////////
-void DoServer(unsigned short Port)
+void DoServer(unsigned short port)
 {
     // Build an audio stream to play sound data as it is received through the network
-    NetworkAudioStream AudioStream;
-    AudioStream.Start(Port);
+    NetworkAudioStream audioStream;
+    audioStream.Start(port);
 
     // Loop until the sound playback is finished
-    while (AudioStream.GetStatus() != sf::SoundStream::Stopped)
+    while (audioStream.GetStatus() != sf::SoundStream::Stopped)
     {
         // Leave some CPU time for other threads
         sf::Sleep(0.1f);
@@ -199,10 +199,10 @@ void DoServer(unsigned short Port)
     std::cin.ignore(10000, '\n');
 
     // Replay the sound (just to make sure replaying the received data is OK)
-    AudioStream.Play();
+    audioStream.Play();
 
     // Loop until the sound playback is finished
-    while (AudioStream.GetStatus() != sf::SoundStream::Stopped)
+    while (audioStream.GetStatus() != sf::SoundStream::Stopped)
     {
         // Leave some CPU time for other threads
         sf::Sleep(0.1f);

@@ -46,18 +46,18 @@ RenderWindow::RenderWindow()
 ////////////////////////////////////////////////////////////
 /// Construct the window
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const ContextSettings& Settings)
+RenderWindow::RenderWindow(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings)
 {
-    Create(Mode, Title, WindowStyle, Settings);
+    Create(mode, title, style, settings);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Construct the window from an existing control
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(WindowHandle Handle, const ContextSettings& Settings)
+RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings)
 {
-    Create(Handle, Settings);
+    Create(handle, settings);
 }
 
 
@@ -73,10 +73,10 @@ RenderWindow::~RenderWindow()
 ////////////////////////////////////////////////////////////
 /// /see RenderTarget::Activate
 ////////////////////////////////////////////////////////////
-bool RenderWindow::Activate(bool Active)
+bool RenderWindow::Activate(bool active)
 {
     // For performances and consistency reasons, we only handle activation
-    if (Active)
+    if (active)
         return SetActive();
     else
         return true;
@@ -107,28 +107,28 @@ unsigned int RenderWindow::GetHeight() const
 Image RenderWindow::Capture() const
 {
     // Get the window dimensions
-    const unsigned int Width  = GetWidth();
-    const unsigned int Height = GetHeight();
+    const unsigned int width  = GetWidth();
+    const unsigned int height = GetHeight();
 
     // Set our window as the current target for rendering
     if (SetActive())
     {
         // Get pixels from the backbuffer
-        std::vector<Uint8> Pixels(Width * Height * 4);
-        Uint8* PixelsPtr = &Pixels[0];
-        GLCheck(glReadPixels(0, 0, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, PixelsPtr));
+        std::vector<Uint8> pixels(width * height * 4);
+        Uint8* ptr = &pixels[0];
+        GLCheck(glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
 
         // Flip the pixels
-        unsigned int Pitch = Width * 4;
-        for (unsigned int y = 0; y < Height / 2; ++y)
-            std::swap_ranges(PixelsPtr + y * Pitch, PixelsPtr + (y + 1) * Pitch, PixelsPtr + (Height - y - 1) * Pitch);
+        unsigned int pitch = width * 4;
+        for (unsigned int y = 0; y < height / 2; ++y)
+            std::swap_ranges(ptr + y * pitch, ptr + (y + 1) * pitch, ptr + (height - y - 1) * pitch);
 
         // Create an image from the pixel buffer and return it
-        return Image(Width, Height, PixelsPtr);
+        return Image(width, height, ptr);
     }
     else
     {
-        return Image(Width, Height, Color::White);
+        return Image(width, height, Color::White);
     }
 }
 
@@ -137,9 +137,9 @@ Image RenderWindow::Capture() const
 /// Convert a point in window coordinates into view coordinates
 /// This version uses the current view of the window
 ////////////////////////////////////////////////////////////
-sf::Vector2f RenderWindow::ConvertCoords(unsigned int WindowX, unsigned int WindowY) const
+sf::Vector2f RenderWindow::ConvertCoords(unsigned int x, unsigned int y) const
 {
-    return ConvertCoords(WindowX, WindowY, GetView());
+    return ConvertCoords(x, y, GetView());
 }
 
 
@@ -147,21 +147,21 @@ sf::Vector2f RenderWindow::ConvertCoords(unsigned int WindowX, unsigned int Wind
 /// Convert a point in window coordinates into view coordinates
 /// This version uses the given view
 ////////////////////////////////////////////////////////////
-sf::Vector2f RenderWindow::ConvertCoords(unsigned int WindowX, unsigned int WindowY, const View& TargetView) const
+sf::Vector2f RenderWindow::ConvertCoords(unsigned int x, unsigned int y, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
-    const FloatRect& Viewport = TargetView.GetViewport();
-    int Left   = static_cast<int>(0.5f + GetWidth()  * Viewport.Left);
-    int Top    = static_cast<int>(0.5f + GetHeight() * Viewport.Top);
-    int Width  = static_cast<int>(0.5f + GetWidth()  * Viewport.GetSize().x);
-    int Height = static_cast<int>(0.5f + GetHeight() * Viewport.GetSize().y);
+    const FloatRect& viewport = view.GetViewport();
+    int left   = static_cast<int>(0.5f + GetWidth()  * viewport.Left);
+    int top    = static_cast<int>(0.5f + GetHeight() * viewport.Top);
+    int width  = static_cast<int>(0.5f + GetWidth()  * viewport.GetSize().x);
+    int height = static_cast<int>(0.5f + GetHeight() * viewport.GetSize().y);
 
-    Vector2f Coords;
-    Coords.x = -1.f + 2.f * (static_cast<int>(WindowX) - Left) / Width;
-    Coords.y =  1.f - 2.f * (static_cast<int>(WindowY) - Top) / Height;
+    Vector2f coords;
+    coords.x = -1.f + 2.f * (static_cast<int>(x) - left) / width;
+    coords.y =  1.f - 2.f * (static_cast<int>(y) - top) / height;
 
     // Then transform by the inverse of the view matrix
-    return TargetView.GetInverseMatrix().Transform(Coords);
+    return view.GetInverseMatrix().Transform(coords);
 }
 
 

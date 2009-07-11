@@ -59,21 +59,21 @@ public :
     ////////////////////////////////////////////////////////////
     /// Close / destroy a socket
     ///
-    /// \param Socket : Socket to close
+    /// \param socket : Socket to close
     ///
     /// \return True on success
     ///
     ////////////////////////////////////////////////////////////
-    static bool Close(SocketType Socket);
+    static bool Close(SocketType socket);
 
     ////////////////////////////////////////////////////////////
     /// Set a socket as blocking or non-blocking
     ///
-    /// \param Socket : Socket to modify
-    /// \param Block :  New blocking state of the socket
+    /// \param socket : Socket to modify
+    /// \param block :  New blocking state of the socket
     ///
     ////////////////////////////////////////////////////////////
-    static void SetBlocking(SocketType Socket, bool Block);
+    static void SetBlocking(SocketType socket, bool block);
 
     ////////////////////////////////////////////////////////////
     /// Get the last socket error status

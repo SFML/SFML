@@ -34,21 +34,21 @@
 /// Construct a new sound recorder with callback functions
 /// for processing captured samples
 ////////////////////////////////////////////////////////////
-sfSoundRecorder* sfSoundRecorder_Create(sfSoundRecorderStartCallback   OnStart,
-                                        sfSoundRecorderProcessCallback OnProcess,
-                                        sfSoundRecorderStopCallback    OnStop,
-                                        void*                          UserData)
+sfSoundRecorder* sfSoundRecorder_Create(sfSoundRecorderStartCallback   onStart,
+                                        sfSoundRecorderProcessCallback onProcess,
+                                        sfSoundRecorderStopCallback    onStop,
+                                        void*                          userData)
 {
-    return new sfSoundRecorder(OnStart, OnProcess, OnStop, UserData);
+    return new sfSoundRecorder(onStart, onProcess, onStop, userData);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing sound recorder
 ////////////////////////////////////////////////////////////
-void sfSoundRecorder_Destroy(sfSoundRecorder* SoundRecorder)
+void sfSoundRecorder_Destroy(sfSoundRecorder* soundRecorder)
 {
-    delete SoundRecorder;
+    delete soundRecorder;
 }
 
 
@@ -56,27 +56,27 @@ void sfSoundRecorder_Destroy(sfSoundRecorder* SoundRecorder)
 /// Start the capture.
 /// Warning : only one capture can happen at the same time
 ////////////////////////////////////////////////////////////
-void sfSoundRecorder_Start(sfSoundRecorder* SoundRecorder, unsigned int SampleRate)
+void sfSoundRecorder_Start(sfSoundRecorder* soundRecorder, unsigned int sampleRate)
 {
-    CSFML_CALL(SoundRecorder, Start(SampleRate));
+    CSFML_CALL(soundRecorder, Start(sampleRate));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Stop the capture
 ////////////////////////////////////////////////////////////
-void sfSoundRecorder_Stop(sfSoundRecorder* SoundRecorder)
+void sfSoundRecorder_Stop(sfSoundRecorder* soundRecorder)
 {
-    CSFML_CALL(SoundRecorder, Stop());
+    CSFML_CALL(soundRecorder, Stop());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound recorder
 ////////////////////////////////////////////////////////////
-unsigned int sfSoundRecorder_GetSampleRate(sfSoundRecorder* SoundRecorder)
+unsigned int sfSoundRecorder_GetSampleRate(sfSoundRecorder* soundRecorder)
 {
-    CSFML_CALL_RETURN(SoundRecorder, GetSampleRate(), 0);
+    CSFML_CALL_RETURN(soundRecorder, GetSampleRate(), 0);
 }
 
 

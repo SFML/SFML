@@ -15,11 +15,11 @@
 ////////////////////////////////////////////////////////////
 /// Construct the QSFMLCanvas
 ////////////////////////////////////////////////////////////
-QSFMLCanvas::QSFMLCanvas(const QSize& Size, unsigned int FrameTime, QWidget* Parent) :
-QWidget(Parent)
+QSFMLCanvas::QSFMLCanvas(const QSize& size, unsigned int frameTime, QWidget* parent) :
+QWidget(parent)
 {
     // Resize the widget
-    resize(Size);
+    resize(size);
 
     // Setup some states to allow direct rendering into the widget
     setAttribute(Qt::WA_PaintOnScreen);
@@ -30,7 +30,7 @@ QWidget(Parent)
     setFocusPolicy(Qt::StrongFocus);
 
     // Setup the timer
-    myTimer.setInterval(FrameTime);
+    myTimer.setInterval(frameTime);
 }
 
 
@@ -77,9 +77,9 @@ QPaintEngine* QSFMLCanvas::paintEngine() const
 /// we use it to catch the Polish event and initialize
 /// our SFML window
 ////////////////////////////////////////////////////////////
-bool QSFMLCanvas::event(QEvent* Event)
+bool QSFMLCanvas::event(QEvent* event)
 {
-    if (Event->type() == QEvent::Polish)
+    if (event->type() == QEvent::Polish)
     {
         // Under X11, we need to flush the commands sent to the server to ensure that
         // SFML will get an updated view of the windows
@@ -98,7 +98,7 @@ bool QSFMLCanvas::event(QEvent* Event)
         myTimer.start();
     }
 
-    return QWidget::event(Event);
+    return QWidget::event(event);
 }
 
 

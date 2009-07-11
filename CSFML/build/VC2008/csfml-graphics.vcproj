@@ -269,6 +269,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\SFML\Graphics\RenderImage.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Graphics\RenderImageStruct.h"
 			>
 		</File>

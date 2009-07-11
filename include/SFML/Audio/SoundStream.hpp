@@ -117,10 +117,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Set the current playing position of the stream
     ///
-    /// \param TimeOffset : New playing position, expressed in seconds
+    /// \param timeOffset : New playing position, expressed in seconds
     ///
     ////////////////////////////////////////////////////////////
-    void SetPlayingOffset(float TimeOffset);
+    void SetPlayingOffset(float timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// Get the current playing position of the stream
@@ -134,10 +134,10 @@ public :
     /// Set the stream loop state.
     /// This parameter is disabled by default
     ///
-    /// \param Loop : True to play in loop, false to play once
+    /// \param loop : True to play in loop, false to play once
     ///
     ////////////////////////////////////////////////////////////
-    void SetLoop(bool Loop);
+    void SetLoop(bool loop);
 
     ////////////////////////////////////////////////////////////
     /// Tell whether or not the stream is looping
@@ -158,11 +158,11 @@ protected :
     ////////////////////////////////////////////////////////////
     /// Set the audio stream parameters, you must call it before Play()
     ///
-    /// \param ChannelsCount : Number of channels
-    /// \param SampleRate :    Sample rate
+    /// \param channelsCount : Number of channels
+    /// \param sampleRate :    Sample rate
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize(unsigned int ChannelsCount, unsigned int SampleRate);
+    void Initialize(unsigned int channelsCount, unsigned int sampleRate);
 
 private :
 
@@ -175,31 +175,31 @@ private :
     ////////////////////////////////////////////////////////////
     /// Called each time new audio data is needed to feed the stream
     ///
-    /// \param Data : New chunk of data to stream
+    /// \param data : New chunk of data to stream
     ///
     /// \return True to continue playback, false to stop
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnGetData(Chunk& Data) = 0;
+    virtual bool OnGetData(Chunk& data) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Called to move the current reading position
     ///
-    /// \param TimeOffset : New read position, expressed in seconds
+    /// \param timeOffset : New read position, expressed in seconds
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnSeek(float TimeOffset) = 0;
+    virtual void OnSeek(float timeOffset) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Fill a new buffer with audio data, and push it to the
     /// playing queue
     ///
-    /// \param Buffer : Buffer to fill
+    /// \param buffer : Buffer to fill
     ///
     /// \return True if the derived class has requested to stop
     ///
     ////////////////////////////////////////////////////////////
-    bool FillAndPushBuffer(unsigned int Buffer);
+    bool FillAndPushBuffer(unsigned int buffer);
 
     ////////////////////////////////////////////////////////////
     /// Fill the buffers queue with all available buffers

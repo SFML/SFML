@@ -37,122 +37,122 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new renderimage
 ////////////////////////////////////////////////////////////
-sfRenderImage* sfRenderImage_Create(unsigned int Width, unsigned int Height, sfBool DepthBuffer)
+sfRenderImage* sfRenderImage_Create(unsigned int width, unsigned int height, sfBool depthBuffer)
 {
-    sfRenderImage* RenderImage = new sfRenderImage;
-    RenderImage->This.Create(Width, Height, DepthBuffer == sfTrue);
-    RenderImage->Target      = new sfImage(const_cast<sf::Image*>(&RenderImage->This.GetImage()));
-    RenderImage->DefaultView = new sfView(const_cast<sf::View*>(&RenderImage->This.GetDefaultView()));
-    RenderImage->CurrentView = RenderImage->DefaultView;
+    sfRenderImage* renderImage = new sfRenderImage;
+    renderImage->This.Create(width, height, depthBuffer == sfTrue);
+    renderImage->Target      = new sfImage(const_cast<sf::Image*>(&renderImage->This.GetImage()));
+    renderImage->DefaultView = new sfView(const_cast<sf::View*>(&renderImage->This.GetDefaultView()));
+    renderImage->CurrentView = renderImage->DefaultView;
 
-    return RenderImage;
+    return renderImage;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing renderimage
 ////////////////////////////////////////////////////////////
-void sfRenderImage_Destroy(sfRenderImage* RenderImage)
+void sfRenderImage_Destroy(sfRenderImage* renderImage)
 {
-    delete RenderImage->DefaultView;
-    delete RenderImage->Target;
-    delete RenderImage;
+    delete renderImage->DefaultView;
+    delete renderImage->Target;
+    delete renderImage;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the width of the rendering region of a renderimage
 ////////////////////////////////////////////////////////////
-unsigned int sfRenderImage_GetWidth(sfRenderImage* RenderImage)
+unsigned int sfRenderImage_GetWidth(sfRenderImage* renderImage)
 {
-    CSFML_CALL_RETURN(RenderImage, GetWidth(), 0);
+    CSFML_CALL_RETURN(renderImage, GetWidth(), 0);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the height of the rendering region of a renderimage
 ////////////////////////////////////////////////////////////
-unsigned int sfRenderImage_GetHeight(sfRenderImage* RenderImage)
+unsigned int sfRenderImage_GetHeight(sfRenderImage* renderImage)
 {
-    CSFML_CALL_RETURN(RenderImage, GetHeight(), 0);
+    CSFML_CALL_RETURN(renderImage, GetHeight(), 0);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set a renderimage as the current target for rendering
 ////////////////////////////////////////////////////////////
-sfBool sfRenderImage_SetActive(sfRenderImage* RenderImage, sfBool Active)
+sfBool sfRenderImage_SetActive(sfRenderImage* renderImage, sfBool active)
 {
-    CSFML_CALL_RETURN(RenderImage, SetActive(Active == sfTrue), sfFalse)
+    CSFML_CALL_RETURN(renderImage, SetActive(active == sfTrue), sfFalse)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderimage
 ////////////////////////////////////////////////////////////
-void sfRenderImage_DrawPostFX(sfRenderImage* RenderImage, sfPostFX* PostFX)
+void sfRenderImage_DrawPostFX(sfRenderImage* renderImage, sfPostFX* postFX)
 {
-    CSFML_CHECK(PostFX);
-    CSFML_CALL(RenderImage, Draw(PostFX->This));
+    CSFML_CHECK(postFX);
+    CSFML_CALL(renderImage, Draw(postFX->This));
 }
-void sfRenderImage_DrawShape(sfRenderImage* RenderImage, sfShape* Shape)
+void sfRenderImage_DrawShape(sfRenderImage* renderImage, sfShape* shape)
 {
-    CSFML_CHECK(Shape);
-    CSFML_CALL(RenderImage, Draw(Shape->This));
+    CSFML_CHECK(shape);
+    CSFML_CALL(renderImage, Draw(shape->This));
 }
-void sfRenderImage_DrawSprite(sfRenderImage* RenderImage, sfSprite* Sprite)
+void sfRenderImage_DrawSprite(sfRenderImage* renderImage, sfSprite* sprite)
 {
-    CSFML_CHECK(Sprite);
-    CSFML_CALL(RenderImage, Draw(Sprite->This));
+    CSFML_CHECK(sprite);
+    CSFML_CALL(renderImage, Draw(sprite->This));
 }
-void sfRenderImage_DrawString(sfRenderImage* RenderImage, sfString* String)
+void sfRenderImage_DrawString(sfRenderImage* renderImage, sfString* string)
 {
-    CSFML_CHECK(String);
-    CSFML_CALL(RenderImage, Draw(String->This));
+    CSFML_CHECK(string);
+    CSFML_CALL(renderImage, Draw(string->This));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Clear the renderimage with the given color
 ////////////////////////////////////////////////////////////
-void sfRenderImage_Clear(sfRenderImage* RenderImage, sfColor Color)
+void sfRenderImage_Clear(sfRenderImage* renderImage, sfColor color)
 {
-    sf::Color SFMLColor(Color.r, Color.g, Color.b, Color.a);
+    sf::Color SFMLColor(color.r, color.g, color.b, color.a);
 
-    CSFML_CALL(RenderImage, Clear(SFMLColor));
+    CSFML_CALL(renderImage, Clear(SFMLColor));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the current active view of a renderimage
 ////////////////////////////////////////////////////////////
-void sfRenderImage_SetView(sfRenderImage* RenderImage, sfView* View)
+void sfRenderImage_SetView(sfRenderImage* renderImage, sfView* view)
 {
-    CSFML_CHECK(View);
-    CSFML_CALL(RenderImage, SetView(*View->This));
-    RenderImage->CurrentView = View;
+    CSFML_CHECK(view);
+    CSFML_CALL(renderImage, SetView(*view->This));
+    renderImage->CurrentView = view;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the current active view of a renderimage
 ////////////////////////////////////////////////////////////
-const sfView* sfRenderImage_GetView(sfRenderImage* RenderImage)
+const sfView* sfRenderImage_GetView(sfRenderImage* renderImage)
 {
-    CSFML_CHECK_RETURN(RenderImage, NULL);
+    CSFML_CHECK_RETURN(renderImage, NULL);
 
-    return RenderImage->CurrentView;
+    return renderImage->CurrentView;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the default view of a renderimage
 ////////////////////////////////////////////////////////////
-sfView* sfRenderImage_GetDefaultView(sfRenderImage* RenderImage)
+sfView* sfRenderImage_GetDefaultView(sfRenderImage* renderImage)
 {
-    CSFML_CHECK_RETURN(RenderImage, NULL);
+    CSFML_CHECK_RETURN(renderImage, NULL);
 
-    return RenderImage->DefaultView;
+    return renderImage->DefaultView;
 }
 
 
@@ -164,20 +164,20 @@ sfView* sfRenderImage_GetDefaultView(sfRenderImage* RenderImage)
 /// SFML to do internal optimizations and improve performances.
 /// This parameter is false by default
 ////////////////////////////////////////////////////////////
-void sfRenderImage_PreserveOpenGLStates(sfRenderImage* RenderImage, sfBool Preserve)
+void sfRenderImage_PreserveOpenGLStates(sfRenderImage* renderImage, sfBool preserve)
 {
-    CSFML_CALL(RenderImage, PreserveOpenGLStates(Preserve == sfTrue));
+    CSFML_CALL(renderImage, PreserveOpenGLStates(preserve == sfTrue));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the target image
 ////////////////////////////////////////////////////////////
-sfImage* sfRenderImage_GetImage(sfRenderImage* RenderImage)
+sfImage* sfRenderImage_GetImage(sfRenderImage* renderImage)
 {
-    CSFML_CHECK_RETURN(RenderImage, NULL);
+    CSFML_CHECK_RETURN(renderImage, NULL);
 
-    return RenderImage->Target;
+    return renderImage->Target;
 }
 
 

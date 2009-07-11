@@ -32,21 +32,23 @@
 #include <iostream>
 
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    sf::priv::AudioDevice globalDevice;
+}
+
+
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-// Static member data
-////////////////////////////////////////////////////////////
-AudioDevice* AudioDevice::ourInstance;
-
-
-////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-AudioDevice::AudioDevice() :
-myRefCount(0)
+AudioDevice::AudioDevice()
 {
     // Create the device
     myDevice = alcOpenDevice(NULL);
@@ -98,42 +100,7 @@ AudioDevice::~AudioDevice()
 ////////////////////////////////////////////////////////////
 AudioDevice& AudioDevice::GetInstance()
 {
-    // Create the audio device if it doesn't exist
-    if (!ourInstance)
-        ourInstance = new AudioDevice;
-
-    return *ourInstance;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Add a reference to the audio device
-////////////////////////////////////////////////////////////
-void AudioDevice::AddReference()
-{
-    // Create the audio device if it doesn't exist
-    if (!ourInstance)
-        ourInstance = new AudioDevice;
-
-    // Increase the references count
-    ourInstance->myRefCount++;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Remove a reference to the audio device
-////////////////////////////////////////////////////////////
-void AudioDevice::RemoveReference()
-{
-    // Decrease the references count
-    ourInstance->myRefCount--;
-
-    // Destroy the audio device if the references count reaches 0
-    if (ourInstance->myRefCount == 0)
-    {
-        delete ourInstance;
-        ourInstance = NULL;
-    }
+    return globalDevice;
 }
 
 
@@ -149,10 +116,10 @@ ALCdevice* AudioDevice::GetDevice() const
 ////////////////////////////////////////////////////////////
 /// Get the OpenAL format that matches the given number of channels
 ////////////////////////////////////////////////////////////
-ALenum AudioDevice::GetFormatFromChannelsCount(unsigned int ChannelsCount) const
+ALenum AudioDevice::GetFormatFromChannelsCount(unsigned int channelsCount) const
 {
     // Find the good format according to the number of channels
-    switch (ChannelsCount)
+    switch (channelsCount)
     {
         case 1 : return AL_FORMAT_MONO16;
         case 2 : return AL_FORMAT_STEREO16;

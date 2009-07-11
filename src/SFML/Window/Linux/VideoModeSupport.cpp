@@ -40,51 +40,51 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// Get supported video modes
 ////////////////////////////////////////////////////////////
-void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& Modes)
+void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
 {
     // First, clear array to fill
-    Modes.clear();
+    modes.clear();
 
     // Get an access to the display
-    DisplayRef Disp;
-    int Screen = DefaultScreen(Disp.GetDisplay());
+    DisplayRef disp;
+    int screen = DefaultScreen(disp.GetDisplay());
 
     // Check if the XRandR extension is present
-    int Version;
-    if (XQueryExtension(Disp.GetDisplay(), "RANDR", &Version, &Version, &Version))
+    int version;
+    if (XQueryExtension(Disp.GetDisplay(), "RANDR", &version, &version, &version))
     {
         // Get the current configuration
-        XRRScreenConfiguration* Config = XRRGetScreenInfo(Disp.GetDisplay(), RootWindow(Disp.GetDisplay(), Screen));
-        if (Config)
+        XRRScreenConfiguration* config = XRRGetScreenInfo(disp.GetDisplay(), RootWindow(disp.GetDisplay(), screen));
+        if (config)
         {
             // Get the available screen sizes
-            int NbSizes;
-            XRRScreenSize* Sizes = XRRConfigSizes(Config, &NbSizes);
-            if (Sizes && (NbSizes > 0))
+            int nbSizes;
+            XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
+            if (sizes && (nbSizes > 0))
             {
                 // Get the list of supported depths
-                int NbDepths = 0;
-                int* Depths = XListDepths(Disp.GetDisplay(), Screen, &NbDepths);
-                if (Depths && (NbDepths > 0))
+                int nbDepths = 0;
+                int* depths = XListDepths(disp.GetDisplay(), screen, &nbDepths);
+                if (depths && (nbDepths > 0))
                 {
                     // Combine depths and sizes to fill the array of supported modes
-                    for (int i = 0; i < NbDepths; ++i)
+                    for (int i = 0; i < nbDepths; ++i)
                     {
-                        for (int j = 0; j < NbSizes; ++j)
+                        for (int j = 0; j < nbSizes; ++j)
                         {
                             // Convert to VideoMode
-                            VideoMode Mode(Sizes[j].width, Sizes[j].height, Depths[i]);
+                            VideoMode mode(sizes[j].width, sizes[j].height, depths[i]);
         
                             // Add it only if it is not already in the array
-                            if (std::find(Modes.begin(), Modes.end(), Mode) == Modes.end())
-                                Modes.push_back(Mode);
+                            if (std::find(modes.begin(), modes.end(), mode) == modes.end())
+                                modes.push_back(mode);
                         }
                     }
                 }
             }
 
             // Free the configuration instance
-            XRRFreeScreenConfigInfo(Config);
+            XRRFreeScreenConfigInfo(config);
         }
         else
         {
@@ -105,36 +105,36 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& Modes)
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeSupport::GetDesktopVideoMode()
 {
-    VideoMode DesktopMode;
+    VideoMode desktopMode;
 
     // Get an access to the display
-    DisplayRef Disp;
-    int Screen = DefaultScreen(Disp.GetDisplay());
+    DisplayRef disp;
+    int screen = DefaultScreen(disp.GetDisplay());
 
     // Check if the XRandR extension is present
-    int Version;
-    if (XQueryExtension(Disp.GetDisplay(), "RANDR", &Version, &Version, &Version))
+    int version;
+    if (XQueryExtension(disp.GetDisplay(), "RANDR", &version, &version, &version))
     {
         // Get the current configuration
-        XRRScreenConfiguration* Config = XRRGetScreenInfo(Disp.GetDisplay(), RootWindow(Disp.GetDisplay(), Screen));
-        if (Config)
+        XRRScreenConfiguration* config = XRRGetScreenInfo(disp.GetDisplay(), RootWindow(disp.GetDisplay(), screen));
+        if (config)
         {
             // Get the current video mode
-            Rotation CurrentRotation;
-            int CurrentMode = XRRConfigCurrentConfiguration(Config, &CurrentRotation);
+            Rotation currentRotation;
+            int currentMode = XRRConfigCurrentConfiguration(config, &currentRotation);
 
             // Get the available screen sizes
-            int NbSizes;
-            XRRScreenSize* Sizes = XRRConfigSizes(Config, &NbSizes);
-            if (Sizes && (NbSizes > 0))
-                DesktopMode = VideoMode(Sizes[CurrentMode].width, Sizes[CurrentMode].height, DefaultDepth(Disp.GetDisplay(), Screen));
+            int nbSizes;
+            XRRScreenSize* sizes = XRRConfigSizes(Config, &nbSizes);
+            if (sizes && (nbSizes > 0))
+                desktopMode = VideoMode(sizes[currentMode].width, sizes[currentMode].height, DefaultDepth(disp.GetDisplay(), screen));
 
             // Free the configuration instance
-            XRRFreeScreenConfigInfo(Config);
+            XRRFreeScreenConfigInfo(config);
         }
     }
 
-    return DesktopMode;
+    return desktopMode;
 }
 
 } // namespace priv

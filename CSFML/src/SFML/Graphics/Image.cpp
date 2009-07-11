@@ -43,96 +43,96 @@ sfImage* sfImage_Create()
 ////////////////////////////////////////////////////////////
 /// Create a new image filled with a color
 ////////////////////////////////////////////////////////////
-sfImage* sfImage_CreateFromColor(unsigned int Width, unsigned int Height, sfColor Color)
+sfImage* sfImage_CreateFromColor(unsigned int width, unsigned int height, sfColor color)
 {
-    sfImage* Image = new sfImage;
+    sfImage* image = new sfImage;
 
-    if (!Image->This->Create(Width, Height, sf::Color(Color.r, Color.g, Color.b, Color.a)))
+    if (!image->This->Create(width, height, sf::Color(color.r, color.g, color.b, color.a)))
     {
-        delete Image;
-        Image = NULL;
+        delete image;
+        image = NULL;
     }
 
-    return Image;
+    return image;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new image from an array of pixels in memory
 ////////////////////////////////////////////////////////////
-sfImage* sfImage_CreateFromPixels(unsigned int Width, unsigned int Height, const sfUint8* Data)
+sfImage* sfImage_CreateFromPixels(unsigned int width, unsigned int height, const sfUint8* data)
 {
-    sfImage* Image = new sfImage;
+    sfImage* image = new sfImage;
 
-    if (!Image->This->LoadFromPixels(Width, Height, Data))
+    if (!image->This->LoadFromPixels(width, height, data))
     {
-        delete Image;
-        Image = NULL;
+        delete image;
+        image = NULL;
     }
 
-    return Image;
+    return image;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new image from a file
 ////////////////////////////////////////////////////////////
-sfImage* sfImage_CreateFromFile(const char* Filename)
+sfImage* sfImage_CreateFromFile(const char* filename)
 {
-    sfImage* Image = new sfImage;
+    sfImage* image = new sfImage;
 
-    if (!Image->This->LoadFromFile(Filename))
+    if (!image->This->LoadFromFile(filename))
     {
-        delete Image;
-        Image = NULL;
+        delete image;
+        image = NULL;
     }
 
-    return Image;
+    return image;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new image from a file in memory
 ////////////////////////////////////////////////////////////
-sfImage* sfImage_CreateFromMemory(const char* Data, size_t SizeInBytes)
+sfImage* sfImage_CreateFromMemory(const char* data, size_t sizeInBytes)
 {
-    sfImage* Image = new sfImage;
+    sfImage* image = new sfImage;
 
-    if (!Image->This->LoadFromMemory(Data, SizeInBytes))
+    if (!image->This->LoadFromMemory(data, sizeInBytes))
     {
-        delete Image;
-        Image = NULL;
+        delete image;
+        image = NULL;
     }
 
-    return Image;
+    return image;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing image
 ////////////////////////////////////////////////////////////
-void sfImage_Destroy(sfImage* Image)
+void sfImage_Destroy(sfImage* image)
 {
-    delete Image;
+    delete image;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Save the content of an image to a file
 ////////////////////////////////////////////////////////////
-sfBool sfImage_SaveToFile(sfImage* Image, const char* Filename)
+sfBool sfImage_SaveToFile(sfImage* image, const char* filename)
 {
-    CSFML_CALL_PTR_RETURN(Image, SaveToFile(Filename), sfFalse);
+    CSFML_CALL_PTR_RETURN(image, SaveToFile(filename), sfFalse);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a transparency mask for an image from a specified colorkey
 ////////////////////////////////////////////////////////////
-void sfImage_CreateMaskFromColor(sfImage* Image, sfColor ColorKey, sfUint8 Alpha)
+void sfImage_CreateMaskFromColor(sfImage* image, sfColor colorKey, sfUint8 alpha)
 {
-    sf::Color SFMLColor(ColorKey.r, ColorKey.g, ColorKey.b, ColorKey.a);
-    CSFML_CALL_PTR(Image, CreateMaskFromColor(SFMLColor, Alpha));
+    sf::Color SFMLColor(colorKey.r, colorKey.g, colorKey.b, colorKey.a);
+    CSFML_CALL_PTR(image, CreateMaskFromColor(SFMLColor, alpha));
 }
 
 
@@ -141,11 +141,11 @@ void sfImage_CreateMaskFromColor(sfImage* Image, sfColor ColorKey, sfUint8 Alpha
 /// This function does a slow pixel copy and should only
 /// be used at initialization time
 ////////////////////////////////////////////////////////////
-void sfImage_Copy(sfImage* Image, sfImage* Source, unsigned int DestX, unsigned int DestY, sfIntRect SourceRect)
+void sfImage_Copy(sfImage* image, sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect)
 {
-    CSFML_CHECK(Source);
-    sf::IntRect SFMLRect(SourceRect.Left, SourceRect.Top, SourceRect.Right, SourceRect.Bottom);
-    CSFML_CALL_PTR(Image, Copy(*Source->This, DestX, DestY, SFMLRect));
+    CSFML_CHECK(source);
+    sf::IntRect SFMLRect(sourceRect.Left, sourceRect.Top, sourceRect.Right, sourceRect.Bottom);
+    CSFML_CALL_PTR(image, Copy(*source->This, destX, destY, SFMLRect));
 }
 
 
@@ -153,11 +153,11 @@ void sfImage_Copy(sfImage* Image, sfImage* Source, unsigned int DestX, unsigned 
 /// Create the image from the current contents of the
 /// given window
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfImage_CopyScreen(sfImage* Image, sfRenderWindow* Window, sfIntRect SourceRect)
+CSFML_API sfBool sfImage_CopyScreen(sfImage* image, sfRenderWindow* window, sfIntRect sourceRect)
 {
-    CSFML_CHECK_RETURN(Window, sfFalse);
-    sf::IntRect SFMLRect(SourceRect.Left, SourceRect.Top, SourceRect.Right, SourceRect.Bottom);
-    CSFML_CALL_PTR_RETURN(Image, CopyScreen(Window->This, SFMLRect), sfFalse);
+    CSFML_CHECK_RETURN(window, sfFalse);
+    sf::IntRect SFMLRect(sourceRect.Left, sourceRect.Top, sourceRect.Right, sourceRect.Bottom);
+    CSFML_CALL_PTR_RETURN(image, CopyScreen(window->This, SFMLRect), sfFalse);
 }
 
 
@@ -165,22 +165,22 @@ CSFML_API sfBool sfImage_CopyScreen(sfImage* Image, sfRenderWindow* Window, sfIn
 /// Change the color of a pixel of an image
 /// Don't forget to call Update when you end modifying pixels
 ////////////////////////////////////////////////////////////
-void sfImage_SetPixel(sfImage* Image, unsigned int X, unsigned int Y, sfColor Color)
+void sfImage_SetPixel(sfImage* image, unsigned int x, unsigned int y, sfColor color)
 {
-    sf::Color SFMLColor(Color.r, Color.g, Color.b, Color.a);
-    CSFML_CALL_PTR(Image, SetPixel(X, Y, SFMLColor));
+    sf::Color SFMLColor(color.r, color.g, color.b, color.a);
+    CSFML_CALL_PTR(image, SetPixel(x, y, SFMLColor));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get a pixel from an image
 ////////////////////////////////////////////////////////////
-sfColor sfImage_GetPixel(sfImage* Image, unsigned int X, unsigned int Y)
+sfColor sfImage_GetPixel(sfImage* image, unsigned int x, unsigned int y)
 {
-    sfColor Color = {0, 0, 0, 0};
-    CSFML_CHECK_RETURN(Image, Color);
+    sfColor color = {0, 0, 0, 0};
+    CSFML_CHECK_RETURN(image, color);
 
-    sf::Color SFMLColor = Image->This->GetPixel(X, Y);
+    sf::Color SFMLColor = image->This->GetPixel(x, y);
 
     return sfColor_FromRGBA(SFMLColor.r, SFMLColor.g, SFMLColor.b, SFMLColor.a);
 }
@@ -191,52 +191,52 @@ sfColor sfImage_GetPixel(sfImage* Image, unsigned int X, unsigned int Y)
 /// Array size is sfImage_GetWidth() x sfImage_GetHeight() x 4
 /// This pointer becomes invalid if you reload or resize the image
 ////////////////////////////////////////////////////////////
-const sfUint8* sfImage_GetPixelsPtr(sfImage* Image)
+const sfUint8* sfImage_GetPixelsPtr(sfImage* image)
 {
-    CSFML_CALL_PTR_RETURN(Image, GetPixelsPtr(), NULL);
+    CSFML_CALL_PTR_RETURN(image, GetPixelsPtr(), NULL);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Bind the image for rendering
 ////////////////////////////////////////////////////////////
-void sfImage_Bind(sfImage* Image)
+void sfImage_Bind(sfImage* image)
 {
-    CSFML_CALL_PTR(Image, Bind());
+    CSFML_CALL_PTR(image, Bind());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Enable or disable image smooth filter
 ////////////////////////////////////////////////////////////
-void sfImage_SetSmooth(sfImage* Image, sfBool Smooth)
+void sfImage_SetSmooth(sfImage* image, sfBool smooth)
 {
-    CSFML_CALL_PTR(Image, SetSmooth(Smooth == sfTrue));
+    CSFML_CALL_PTR(image, SetSmooth(smooth == sfTrue));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Return the width of the image
 ////////////////////////////////////////////////////////////
-unsigned int sfImage_GetWidth(sfImage* Image)
+unsigned int sfImage_GetWidth(sfImage* image)
 {
-    CSFML_CALL_PTR_RETURN(Image, GetWidth(), 0);
+    CSFML_CALL_PTR_RETURN(image, GetWidth(), 0);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Return the height of the image
 ////////////////////////////////////////////////////////////
-unsigned int sfImage_GetHeight(sfImage* Image)
+unsigned int sfImage_GetHeight(sfImage* image)
 {
-    CSFML_CALL_PTR_RETURN(Image, GetHeight(), 0);
+    CSFML_CALL_PTR_RETURN(image, GetHeight(), 0);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Tells whether the smoothing filter is enabled or not on an image
 ////////////////////////////////////////////////////////////
-sfBool sfImage_IsSmooth(sfImage* Image)
+sfBool sfImage_IsSmooth(sfImage* image)
 {
-    CSFML_CALL_PTR_RETURN(Image, IsSmooth(), sfFalse);
+    CSFML_CALL_PTR_RETURN(image, IsSmooth(), sfFalse);
 }

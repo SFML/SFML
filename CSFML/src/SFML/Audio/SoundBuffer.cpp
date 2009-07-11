@@ -33,34 +33,34 @@
 ////////////////////////////////////////////////////////////
 /// Create a new sound buffer and load it from a file
 ////////////////////////////////////////////////////////////
-sfSoundBuffer* sfSoundBuffer_CreateFromFile(const char* Filename)
+sfSoundBuffer* sfSoundBuffer_CreateFromFile(const char* filename)
 {
-    sfSoundBuffer* Buffer = new sfSoundBuffer;
+    sfSoundBuffer* buffer = new sfSoundBuffer;
 
-    if (!Buffer->This.LoadFromFile(Filename))
+    if (!buffer->This.LoadFromFile(filename))
     {
-        delete Buffer;
-        Buffer = NULL;
+        delete buffer;
+        buffer = NULL;
     }
 
-    return Buffer;
+    return buffer;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new sound buffer and load it from a file in memory
 ////////////////////////////////////////////////////////////
-sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const char* Data, size_t SizeInBytes)
+sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const char* data, size_t sizeInBytes)
 {
-    sfSoundBuffer* Buffer = new sfSoundBuffer;
+    sfSoundBuffer* buffer = new sfSoundBuffer;
 
-    if (!Buffer->This.LoadFromMemory(Data, SizeInBytes))
+    if (!buffer->This.LoadFromMemory(data, sizeInBytes))
     {
-        delete Buffer;
-        Buffer = NULL;
+        delete buffer;
+        buffer = NULL;
     }
 
-    return Buffer;
+    return buffer;
 }
 
 
@@ -69,78 +69,78 @@ sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const char* Data, size_t SizeInByt
 /// samples in memory - assumed format for samples is
 /// 16 bits signed integer
 ////////////////////////////////////////////////////////////
-sfSoundBuffer* sfSoundBuffer_CreateFromSamples(const sfInt16* Samples, size_t SamplesCount, unsigned int ChannelsCount, unsigned int SampleRate)
+sfSoundBuffer* sfSoundBuffer_CreateFromSamples(const sfInt16* samples, size_t samplesCount, unsigned int channelsCount, unsigned int sampleRate)
 {
-    sfSoundBuffer* Buffer = new sfSoundBuffer;
+    sfSoundBuffer* buffer = new sfSoundBuffer;
 
-    if (!Buffer->This.LoadFromSamples(Samples, SamplesCount, ChannelsCount, SampleRate))
+    if (!buffer->This.LoadFromSamples(samples, samplesCount, channelsCount, sampleRate))
     {
-        delete Buffer;
-        Buffer = NULL;
+        delete buffer;
+        buffer = NULL;
     }
 
-    return Buffer;
+    return buffer;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing sound buffer
 ////////////////////////////////////////////////////////////
-void sfSoundBuffer_Destroy(sfSoundBuffer* SoundBuffer)
+void sfSoundBuffer_Destroy(sfSoundBuffer* soundBuffer)
 {
-    delete SoundBuffer;
+    delete soundBuffer;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Save a sound buffer to a file
 ////////////////////////////////////////////////////////////
-sfBool sfSoundBuffer_SaveToFile(sfSoundBuffer* SoundBuffer, const char* Filename)
+sfBool sfSoundBuffer_SaveToFile(sfSoundBuffer* soundBuffer, const char* filename)
 {
-    CSFML_CALL_RETURN(SoundBuffer, SaveToFile(Filename), sfFalse)
+    CSFML_CALL_RETURN(soundBuffer, SaveToFile(filename), sfFalse)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Return the samples contained in a sound buffer
 ////////////////////////////////////////////////////////////
-const sfInt16* sfSoundBuffer_GetSamples(sfSoundBuffer* SoundBuffer)
+const sfInt16* sfSoundBuffer_GetSamples(sfSoundBuffer* soundBuffer)
 {
-    CSFML_CALL_RETURN(SoundBuffer, GetSamples(), NULL)
+    CSFML_CALL_RETURN(soundBuffer, GetSamples(), NULL)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Return the number of samples contained in a sound buffer
 ////////////////////////////////////////////////////////////
-size_t sfSoundBuffer_GetSamplesCount(sfSoundBuffer* SoundBuffer)
+size_t sfSoundBuffer_GetSamplesCount(sfSoundBuffer* soundBuffer)
 {
-    CSFML_CALL_RETURN(SoundBuffer, GetSamplesCount(), 0)
+    CSFML_CALL_RETURN(soundBuffer, GetSamplesCount(), 0)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound buffer
 ////////////////////////////////////////////////////////////
-unsigned int sfSoundBuffer_GetSampleRate(sfSoundBuffer* SoundBuffer)
+unsigned int sfSoundBuffer_GetSampleRate(sfSoundBuffer* soundBuffer)
 {
-    CSFML_CALL_RETURN(SoundBuffer, GetSampleRate(), 0)
+    CSFML_CALL_RETURN(soundBuffer, GetSampleRate(), 0)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Return the number of channels of a sound buffer (1 = mono, 2 = stereo, ...)
 ////////////////////////////////////////////////////////////
-unsigned int sfSoundBuffer_GetChannelsCount(sfSoundBuffer* SoundBuffer)
+unsigned int sfSoundBuffer_GetChannelsCount(sfSoundBuffer* soundBuffer)
 {
-    CSFML_CALL_RETURN(SoundBuffer, GetChannelsCount(), 0)
+    CSFML_CALL_RETURN(soundBuffer, GetChannelsCount(), 0)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the duration of a sound buffer
 ////////////////////////////////////////////////////////////
-float sfSoundBuffer_GetDuration(sfSoundBuffer* SoundBuffer)
+float sfSoundBuffer_GetDuration(sfSoundBuffer* soundBuffer)
 {
-    CSFML_CALL_RETURN(SoundBuffer, GetDuration(), 0.f)
+    CSFML_CALL_RETURN(soundBuffer, GetDuration(), 0.f)
 }

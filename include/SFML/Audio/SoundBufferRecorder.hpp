@@ -63,7 +63,7 @@ private :
     /// /see SoundBuffer::OnProcessSamples
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnProcessSamples(const Int16* Samples, std::size_t SamplesCount);
+    virtual bool OnProcessSamples(const Int16* samples, std::size_t samplesCount);
 
     ////////////////////////////////////////////////////////////
     /// /see SoundBuffer::OnStop

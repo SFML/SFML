@@ -61,33 +61,33 @@ public :
     ////////////////////////////////////////////////////////////
     /// Build a matrix from a set of transformations
     ///
-    /// \param Center :      Origin for the transformations
-    /// \param Translation : Translation offset
-    /// \param Rotation :    Rotation angle in degrees
-    /// \param Scale :       Scaling factors
+    /// \param origin :      Origin for the transformations
+    /// \param translation : Translation offset
+    /// \param rotation :    Rotation angle in degrees
+    /// \param scale :       Scaling factors
     ///
     ////////////////////////////////////////////////////////////
-    void SetFromTransformations(const Vector2f& Center, const Vector2f& Translation, float Rotation, const Vector2f& Scale);
+    void SetFromTransformations(const Vector2f& origin, const Vector2f& translation, float rotation, const Vector2f& scale);
 
     ////////////////////////////////////////////////////////////
     /// Build a matrix from a projection
     ///
-    /// \param Center :   Center of the view
-    /// \param Size :     Size of the view
-    /// \param Rotation : Angle of rotation of the view rectangle, in degrees
+    /// \param center :   Center of the view
+    /// \param size :     Size of the view
+    /// \param rotation : Angle of rotation of the view rectangle, in degrees
     ///
     ////////////////////////////////////////////////////////////
-    void SetFromProjection(const Vector2f& Center, const Vector2f& Size, float Rotation);
+    void SetFromProjection(const Vector2f& center, const Vector2f& size, float rotation);
 
     ////////////////////////////////////////////////////////////
     /// Transform a point by the matrix
     ///
-    /// \param Point : Point to transform
+    /// \param point : Point to transform
     ///
     /// \return Transformed point
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f Transform(const Vector2f& Point) const;
+    Vector2f Transform(const Vector2f& point) const;
 
     ////////////////////////////////////////////////////////////
     /// Return the inverse of the matrix
@@ -109,34 +109,34 @@ public :
     ////////////////////////////////////////////////////////////
     /// Operator () overloads to access the matrix elements
     ///
-    /// \param Row : Element row (0 based)
-    /// \param Col : Element column (0 based)
+    /// \param row :    Element row (0 based)
+    /// \param column : Element column (0 based)
     ///
     /// \return Matrix element (Row, Col)
     ///
     ////////////////////////////////////////////////////////////
-    float  operator ()(unsigned int Row, unsigned int Col) const;
-    float& operator ()(unsigned int Row, unsigned int Col);
+    float  operator ()(unsigned int row, unsigned int column) const;
+    float& operator ()(unsigned int row, unsigned int column);
 
     ////////////////////////////////////////////////////////////
     /// Operator * overload to multiply two matrices
     ///
-    /// \param Mat : Matrix to multiply
+    /// \param right : Matrix to multiply
     ///
-    /// \return this * Mat
+    /// \return this * right
     ///
     ////////////////////////////////////////////////////////////
-    Matrix3 operator *(const Matrix3& Mat) const;
+    Matrix3 operator *(const Matrix3& right) const;
 
     ////////////////////////////////////////////////////////////
     /// Operator *= overload to multiply-assign two matrices
     ///
-    /// \param Mat : Matrix to multiply
+    /// \param right : Matrix to multiply
     ///
-    /// \return this * Mat
+    /// \return this * right
     ///
     ////////////////////////////////////////////////////////////
-    Matrix3& operator *=(const Matrix3& Mat);
+    Matrix3& operator *=(const Matrix3& right);
 
     ////////////////////////////////////////////////////////////
     // Static member data

@@ -54,24 +54,24 @@ public :
     ////////////////////////////////////////////////////////////
     /// Create a new window depending on the current OS
     ///
-    /// \param Mode :        Video mode to use
-    /// \param Title :       Title of the window
-    /// \param WindowStyle : Window style
+    /// \param mode :  Video mode to use
+    /// \param title : Title of the window
+    /// \param style : Window style
     ///
     /// \return Pointer to the created window
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* New(VideoMode Mode, const std::string& Title, unsigned long WindowStyle);
+    static WindowImpl* New(VideoMode mode, const std::string& title, unsigned long style);
 
     ////////////////////////////////////////////////////////////
     /// Create a new window depending on to the current OS
     ///
-    /// \param Handle : Platform-specific handle of the control
+    /// \param handle : Platform-specific handle of the control
     ///
     /// \return Pointer to the created window
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* New(WindowHandle Handle);
+    static WindowImpl* New(WindowHandle handle);
 
 public :
 
@@ -84,18 +84,18 @@ public :
     ////////////////////////////////////////////////////////////
     /// Add a listener to the window
     ///
-    /// \param Listener : Listener to add
+    /// \param listener : Listener to add
     ///
     ////////////////////////////////////////////////////////////
-    void AddListener(WindowListener* Listener);
+    void AddListener(WindowListener* listener);
 
     ////////////////////////////////////////////////////////////
     /// Remove a listener from the window
     ///
-    /// \param Listener : Listener to remove
+    /// \param listener : Listener to remove
     ///
     ////////////////////////////////////////////////////////////
-    void RemoveListener(WindowListener* Listener);
+    void RemoveListener(WindowListener* listener);
 
     ////////////////////////////////////////////////////////////
     /// Get the client width of the window
@@ -117,10 +117,10 @@ public :
     /// Change the joystick threshold, ie. the value below which
     /// no move event will be generated
     ///
-    /// \param Threshold : New threshold, in range [0, 100]
+    /// \param threshold : New threshold, in range [0, 100]
     ///
     ////////////////////////////////////////////////////////////
-    void SetJoystickThreshold(float Threshold);
+    void SetJoystickThreshold(float threshold);
 
     ////////////////////////////////////////////////////////////
     /// Process incoming events from operating system
@@ -139,63 +139,63 @@ public :
     ////////////////////////////////////////////////////////////
     /// Show or hide the mouse cursor
     ///
-    /// \param Show : True to show, false to hide
+    /// \param show : True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ShowMouseCursor(bool Show) = 0;
+    virtual void ShowMouseCursor(bool show) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Change the position of the mouse cursor
     ///
-    /// \param Left : Left coordinate of the cursor, relative to the window
-    /// \param Top :  Top coordinate of the cursor, relative to the window
+    /// \param left : Left coordinate of the cursor, relative to the window
+    /// \param top :  Top coordinate of the cursor, relative to the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetCursorPosition(unsigned int Left, unsigned int Top) = 0;
+    virtual void SetCursorPosition(unsigned int left, unsigned int top) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Change the position of the window on screen
     ///
-    /// \param Left : Left position
-    /// \param Top :  Top position
+    /// \param left : Left position
+    /// \param top :  Top position
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(int Left, int Top) = 0;
+    virtual void SetPosition(int left, int top) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Change the size of the rendering region of the window
     ///
-    /// \param Width :  New width
-    /// \param Height : New height
+    /// \param width :  New width
+    /// \param height : New height
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(unsigned int Width, unsigned int Height) = 0;
+    virtual void SetSize(unsigned int width, unsigned int height) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Show or hide the window
     ///
-    /// \param State : True to show, false to hide
+    /// \param show : True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Show(bool State) = 0;
+    virtual void Show(bool show) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Enable or disable automatic key-repeat
     ///
-    /// \param Enabled : True to enable, false to disable
+    /// \param enabled : True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    virtual void EnableKeyRepeat(bool Enabled) = 0;
+    virtual void EnableKeyRepeat(bool enabled) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Change the window's icon
     ///
-    /// \param Width :  Icon's width, in pixels
-    /// \param Height : Icon's height, in pixels
-    /// \param Pixels : Pointer to the pixels in memory, format must be RGBA 32 bits
+    /// \param width :  Icon's width, in pixels
+    /// \param height : Icon's height, in pixels
+    /// \param pixels : Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixels) = 0;
+    virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels) = 0;
 
 protected :
 
@@ -208,10 +208,10 @@ protected :
     ////////////////////////////////////////////////////////////
     /// Send an event to listeners (for derived classes only)
     ///
-    /// \param EventToSend : Event to send
+    /// \param event : Event to send
     ///
     ////////////////////////////////////////////////////////////
-    void SendEvent(const Event& EventToSend);
+    void SendEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     // Member data

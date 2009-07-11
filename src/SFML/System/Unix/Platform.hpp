@@ -55,10 +55,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Suspend the execution of the current thread for a specified time
     ///
-    /// \param Time : Time to sleep, in seconds
+    /// \param time : Time to sleep, in seconds
     ///
     ////////////////////////////////////////////////////////////
-    static void Sleep(float Time);
+    static void Sleep(float time);
 };
 
 } // namespace priv

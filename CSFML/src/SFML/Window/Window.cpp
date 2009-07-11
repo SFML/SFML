@@ -33,161 +33,161 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new window
 ////////////////////////////////////////////////////////////
-sfWindow* sfWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfContextSettings Params)
+sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings settings)
 {
     // Convert video mode
-    sf::VideoMode VideoMode(Mode.Width, Mode.Height, Mode.BitsPerPixel);
+    sf::VideoMode videoMode(mode.Width, mode.Height, mode.BitsPerPixel);
 
     // Create the window
-    sfWindow* Window = new sfWindow;
-    sf::ContextSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
-    Window->This.Create(VideoMode, Title, Style, Settings);
-    Window->Input.This = &Window->This.GetInput();
+    sfWindow* window = new sfWindow;
+    sf::ContextSettings params(settings.DepthBits, settings.StencilBits, settings.AntialiasingLevel);
+    window->This.Create(videoMode, title, style, params);
+    window->Input.This = &window->This.GetInput();
 
-    return Window;
+    return window;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Construct a window from an existing control
 ////////////////////////////////////////////////////////////
-sfWindow* sfWindow_CreateFromHandle(sfWindowHandle Handle, sfContextSettings Params)
+sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings settings)
 {
-    sfWindow* Window = new sfWindow;
-    sf::ContextSettings Settings(Params.DepthBits, Params.StencilBits, Params.AntialiasingLevel);
-    Window->This.Create(Handle, Settings);
-    Window->Input.This = &Window->This.GetInput();
+    sfWindow* window = new sfWindow;
+    sf::ContextSettings params(settings.DepthBits, settings.StencilBits, settings.AntialiasingLevel);
+    window->This.Create(handle, params);
+    window->Input.This = &window->This.GetInput();
 
-    return Window;
+    return window;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing window
 ////////////////////////////////////////////////////////////
-void sfWindow_Destroy(sfWindow* Window)
+void sfWindow_Destroy(sfWindow* window)
 {
-    delete Window;
+    delete window;
 }
 
 ////////////////////////////////////////////////////////////
 /// Close a window (but doesn't destroy the internal data)
 ////////////////////////////////////////////////////////////
-void sfWindow_Close(sfWindow* Window)
+void sfWindow_Close(sfWindow* window)
 {
-    CSFML_CALL(Window, Close());
+    CSFML_CALL(window, Close());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Tell whether or not a window is opened
 ////////////////////////////////////////////////////////////
-sfBool sfWindow_IsOpened(sfWindow* Window)
+sfBool sfWindow_IsOpened(sfWindow* window)
 {
-    CSFML_CALL_RETURN(Window, IsOpened(), sfFalse);
+    CSFML_CALL_RETURN(window, IsOpened(), sfFalse);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the width of the rendering region of a window
 ////////////////////////////////////////////////////////////
-unsigned int sfWindow_GetWidth(sfWindow* Window)
+unsigned int sfWindow_GetWidth(sfWindow* window)
 {
-    CSFML_CALL_RETURN(Window, GetWidth(), 0)
+    CSFML_CALL_RETURN(window, GetWidth(), 0)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the height of the rendering region of a window
 ////////////////////////////////////////////////////////////
-unsigned int sfWindow_GetHeight(sfWindow* Window)
+unsigned int sfWindow_GetHeight(sfWindow* window)
 {
-    CSFML_CALL_RETURN(Window, GetHeight(), 0)
+    CSFML_CALL_RETURN(window, GetHeight(), 0)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the creation settings of a window
 ////////////////////////////////////////////////////////////
-sfContextSettings sfWindow_GetSettings(sfWindow* Window)
+sfContextSettings sfWindow_GetSettings(sfWindow* window)
 {
-    sfContextSettings Settings = {0, 0, 0};
-    CSFML_CHECK_RETURN(Window, Settings);
+    sfContextSettings settings = {0, 0, 0};
+    CSFML_CHECK_RETURN(window, settings);
 
-    const sf::ContextSettings& Params = Window->This.GetSettings();
-    Settings.DepthBits         = Params.DepthBits;
-    Settings.StencilBits       = Params.StencilBits;
-    Settings.AntialiasingLevel = Params.AntialiasingLevel;
+    const sf::ContextSettings& params = window->This.GetSettings();
+    settings.DepthBits         = params.DepthBits;
+    settings.StencilBits       = params.StencilBits;
+    settings.AntialiasingLevel = params.AntialiasingLevel;
 
-    return Settings;
+    return settings;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the event on top of events stack of a window, if any, and pop it
 ////////////////////////////////////////////////////////////
-sfBool sfWindow_GetEvent(sfWindow* Window, sfEvent* Event)
+sfBool sfWindow_GetEvent(sfWindow* window, sfEvent* event)
 {
-    CSFML_CHECK_RETURN(Window, sfFalse);
-    CSFML_CHECK_RETURN(Event, sfFalse);
+    CSFML_CHECK_RETURN(window, sfFalse);
+    CSFML_CHECK_RETURN(event, sfFalse);
 
     // Get the event
     sf::Event SFMLEvent;
-    sfBool Ret = Window->This.GetEvent(SFMLEvent);
+    sfBool ret = window->This.GetEvent(SFMLEvent);
 
     // No event, return
-    if (!Ret)
+    if (!ret)
         return sfFalse;
 
     // Convert its type
-    Event->Type = static_cast<sfEventType>(SFMLEvent.Type);
+    event->Type = static_cast<sfEventType>(SFMLEvent.Type);
 
     // Fill its fields
-    switch (Event->Type)
+    switch (event->Type)
     {
         case sfEvtResized :
-            Event->Size.Width  = SFMLEvent.Size.Width;
-            Event->Size.Height = SFMLEvent.Size.Height;
+            event->Size.Width  = SFMLEvent.Size.Width;
+            event->Size.Height = SFMLEvent.Size.Height;
             break;
 
         case sfEvtTextEntered :
-            Event->Text.Unicode = SFMLEvent.Text.Unicode;
+            event->Text.Unicode = SFMLEvent.Text.Unicode;
             break;
 
         case sfEvtKeyReleased :
         case sfEvtKeyPressed :
-            Event->Key.Code    = static_cast<sfKeyCode>(SFMLEvent.Key.Code);
-            Event->Key.Alt     = SFMLEvent.Key.Alt     ? sfTrue : sfFalse;
-            Event->Key.Control = SFMLEvent.Key.Control ? sfTrue : sfFalse;
-            Event->Key.Shift   = SFMLEvent.Key.Shift   ? sfTrue : sfFalse;
+            event->Key.Code    = static_cast<sfKeyCode>(SFMLEvent.Key.Code);
+            event->Key.Alt     = SFMLEvent.Key.Alt     ? sfTrue : sfFalse;
+            event->Key.Control = SFMLEvent.Key.Control ? sfTrue : sfFalse;
+            event->Key.Shift   = SFMLEvent.Key.Shift   ? sfTrue : sfFalse;
             break;
 
         case sfEvtMouseWheelMoved :
-            Event->MouseWheel.Delta = SFMLEvent.MouseWheel.Delta;
+            event->MouseWheel.Delta = SFMLEvent.MouseWheel.Delta;
             break;
 
         case sfEvtMouseButtonPressed :
         case sfEvtMouseButtonReleased :
-            Event->MouseButton.Button = static_cast<sfMouseButton>(SFMLEvent.MouseButton.Button);
-            Event->MouseButton.X      = SFMLEvent.MouseButton.X;
-            Event->MouseButton.Y      = SFMLEvent.MouseButton.Y;
+            event->MouseButton.Button = static_cast<sfMouseButton>(SFMLEvent.MouseButton.Button);
+            event->MouseButton.X      = SFMLEvent.MouseButton.X;
+            event->MouseButton.Y      = SFMLEvent.MouseButton.Y;
             break;
 
         case sfEvtMouseMoved :
-            Event->MouseMove.X = SFMLEvent.MouseMove.X;
-            Event->MouseMove.Y = SFMLEvent.MouseMove.Y;
+            event->MouseMove.X = SFMLEvent.MouseMove.X;
+            event->MouseMove.Y = SFMLEvent.MouseMove.Y;
             break;
 
         case sfEvtJoyButtonPressed :
         case sfEvtJoyButtonReleased :
-            Event->JoyButton.JoystickId = SFMLEvent.JoyButton.JoystickId;
-            Event->JoyButton.Button     = SFMLEvent.JoyButton.Button;
+            event->JoyButton.JoystickId = SFMLEvent.JoyButton.JoystickId;
+            event->JoyButton.Button     = SFMLEvent.JoyButton.Button;
             break;
 
         case sfEvtJoyMoved :
-            Event->JoyMove.JoystickId = SFMLEvent.JoyMove.JoystickId;
-            Event->JoyMove.Axis       = static_cast<sfJoyAxis>(SFMLEvent.JoyMove.Axis);
-            Event->JoyMove.Position   = SFMLEvent.JoyMove.Position;
+            event->JoyMove.JoystickId = SFMLEvent.JoyMove.JoystickId;
+            event->JoyMove.Axis       = static_cast<sfJoyAxis>(SFMLEvent.JoyMove.Axis);
+            event->JoyMove.Position   = SFMLEvent.JoyMove.Position;
             break;
 
         default :
@@ -201,27 +201,27 @@ sfBool sfWindow_GetEvent(sfWindow* Window, sfEvent* Event)
 ////////////////////////////////////////////////////////////
 /// Enable / disable vertical synchronization on a window
 ////////////////////////////////////////////////////////////
-void sfWindow_UseVerticalSync(sfWindow* Window, sfBool Enabled)
+void sfWindow_UseVerticalSync(sfWindow* window, sfBool enabled)
 {
-    CSFML_CALL(Window, UseVerticalSync(Enabled == sfTrue))
+    CSFML_CALL(window, UseVerticalSync(enabled == sfTrue))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Show or hide the mouse cursor on a window
 ////////////////////////////////////////////////////////////
-void sfWindow_ShowMouseCursor(sfWindow* Window, sfBool Show)
+void sfWindow_ShowMouseCursor(sfWindow* window, sfBool show)
 {
-    CSFML_CALL(Window, ShowMouseCursor(Show == sfTrue))
+    CSFML_CALL(window, ShowMouseCursor(show == sfTrue))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the position of the mouse cursor on a window
 ////////////////////////////////////////////////////////////
-void sfWindow_SetCursorPosition(sfWindow* Window, unsigned int Left, unsigned int Top)
+void sfWindow_SetCursorPosition(sfWindow* window, unsigned int left, unsigned int top)
 {
-    CSFML_CALL(Window, SetCursorPosition(Left, Top))
+    CSFML_CALL(window, SetCursorPosition(left, top))
 }
 
 
@@ -229,27 +229,27 @@ void sfWindow_SetCursorPosition(sfWindow* Window, unsigned int Left, unsigned in
 /// Change the position of a window on screen.
 /// Only works for top-level windows
 ////////////////////////////////////////////////////////////
-void sfWindow_SetPosition(sfWindow* Window, int Left, int Top)
+void sfWindow_SetPosition(sfWindow* window, int left, int top)
 {
-    CSFML_CALL(Window, SetPosition(Left, Top))
+    CSFML_CALL(window, SetPosition(left, top))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the size of the rendering region of a window
 ////////////////////////////////////////////////////////////
-void sfWindow_SetSize(sfWindow* Window, unsigned int Width, unsigned int Height)
+void sfWindow_SetSize(sfWindow* window, unsigned int width, unsigned int height)
 {
-    CSFML_CALL(Window, SetSize(Width, Height))
+    CSFML_CALL(window, SetSize(width, height))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Show or hide a window
 ////////////////////////////////////////////////////////////
-void sfWindow_Show(sfWindow* Window, sfBool State)
+void sfWindow_Show(sfWindow* window, sfBool show)
 {
-    CSFML_CALL(Window, Show(State == sfTrue))
+    CSFML_CALL(window, Show(show == sfTrue))
 }
 
 
@@ -257,75 +257,72 @@ void sfWindow_Show(sfWindow* Window, sfBool State)
 /// Enable or disable automatic key-repeat for keydown events.
 /// Automatic key-repeat is enabled by default
 ////////////////////////////////////////////////////////////
-void sfWindow_EnableKeyRepeat(sfWindow* Window, sfBool Enabled)
+void sfWindow_EnableKeyRepeat(sfWindow* window, sfBool enabled)
 {
-    CSFML_CALL(Window, EnableKeyRepeat(Enabled == sfTrue))
+    CSFML_CALL(window, EnableKeyRepeat(enabled == sfTrue))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the window's icon
 ////////////////////////////////////////////////////////////
-void sfWindow_SetIcon(sfWindow* Window, unsigned int Width, unsigned int Height, sfUint8* Pixels)
+void sfWindow_SetIcon(sfWindow* window, unsigned int width, unsigned int height, sfUint8* pixels)
 {
-    CSFML_CALL(Window, SetIcon(Width, Height, Pixels))
+    CSFML_CALL(window, SetIcon(width, height, pixels))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Activate or deactivate a window as the current target for rendering
 ////////////////////////////////////////////////////////////
-sfBool sfWindow_SetActive(sfWindow* Window, sfBool Active)
+sfBool sfWindow_SetActive(sfWindow* window, sfBool active)
 {
-    CSFML_CALL_RETURN(Window, SetActive(Active == sfTrue), sfFalse)
+    CSFML_CALL_RETURN(window, SetActive(active == sfTrue), sfFalse)
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Display a window on screen
 ////////////////////////////////////////////////////////////
-void sfWindow_Display(sfWindow* Window)
+void sfWindow_Display(sfWindow* window)
 {
-    CSFML_CALL(Window, Display())
+    CSFML_CALL(window, Display())
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the input manager of a window
 ////////////////////////////////////////////////////////////
-sfInput* sfWindow_GetInput(sfWindow* Window)
+sfInput* sfWindow_GetInput(sfWindow* window)
 {
-    CSFML_CHECK_RETURN(Window, NULL);
+    CSFML_CHECK_RETURN(window, NULL);
 
-    return &Window->Input;
+    return &window->Input;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Limit the framerate to a maximum fixed frequency for a window
 ////////////////////////////////////////////////////////////
-void sfWindow_SetFramerateLimit(sfWindow* Window, unsigned int Limit)
+void sfWindow_SetFramerateLimit(sfWindow* window, unsigned int limit)
 {
-    CSFML_CALL(Window, SetFramerateLimit(Limit))
+    CSFML_CALL(window, SetFramerateLimit(limit))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get time elapsed since last frame of a window
 ////////////////////////////////////////////////////////////
-float sfWindow_GetFrameTime(sfWindow* Window)
+float sfWindow_GetFrameTime(sfWindow* window)
 {
-    CSFML_CALL_RETURN(Window, GetFrameTime(), 0.f)
+    CSFML_CALL_RETURN(window, GetFrameTime(), 0.f)
 }
 
 ////////////////////////////////////////////////////////////
 /// Change the joystick threshold, ie. the value below which
 /// no move event will be generated
-///
-/// \param Threshold : New threshold, in range [0, 100]
-///
 ////////////////////////////////////////////////////////////
-void sfWindow_SetJoystickThreshold(sfWindow* Window, float Threshold)
+void sfWindow_SetJoystickThreshold(sfWindow* window, float threshold)
 {
-    CSFML_CALL(Window, SetJoystickThreshold(Threshold))
+    CSFML_CALL(window, SetJoystickThreshold(threshold))
 }

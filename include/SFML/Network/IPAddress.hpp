@@ -52,38 +52,38 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the address from a string
     ///
-    /// \param Address : IP address ("xxx.xxx.xxx.xxx") or network name
+    /// \param address : IP address ("xxx.xxx.xxx.xxx") or network name
     ///
     ////////////////////////////////////////////////////////////
-    IPAddress(const std::string& Address);
+    IPAddress(const std::string& address);
 
     ////////////////////////////////////////////////////////////
     /// Construct the address from a C-style string ;
     /// Needed for implicit conversions from literal strings to IPAddress to work
     ///
-    /// \param Address : IP address ("xxx.xxx.xxx.xxx") or network name
+    /// \param address : IP address ("xxx.xxx.xxx.xxx") or network name
     ///
     ////////////////////////////////////////////////////////////
-    IPAddress(const char* Address);
+    IPAddress(const char* address);
 
     ////////////////////////////////////////////////////////////
     /// Construct the address from 4 bytes
     ///
-    /// \param Byte0 : First byte of the address
-    /// \param Byte1 : Second byte of the address
-    /// \param Byte2 : Third byte of the address
-    /// \param Byte3 : Fourth byte of the address
+    /// \param byte0 : First byte of the address
+    /// \param byte1 : Second byte of the address
+    /// \param byte2 : Third byte of the address
+    /// \param byte3 : Fourth byte of the address
     ///
     ////////////////////////////////////////////////////////////
-    IPAddress(Uint8 Byte0, Uint8 Byte1, Uint8 Byte2, Uint8 Byte3);
+    IPAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3);
 
     ////////////////////////////////////////////////////////////
     /// Construct the address from a 32-bits integer
     ///
-    /// \param Address : 4 bytes of the address packed into a 32-bits integer
+    /// \param address : 4 bytes of the address packed into a 32-bits integer
     ///
     ////////////////////////////////////////////////////////////
-    IPAddress(Uint32 Address);
+    IPAddress(Uint32 address);
 
     ////////////////////////////////////////////////////////////
     /// Tell if the address is a valid one
@@ -123,72 +123,72 @@ public :
     /// distant website ; as a consequence, this function may be
     /// very slow -- use it as few as possible !
     ///
-    /// \param Timeout : Maximum time to wait, in seconds (0 by default : no timeout)
+    /// \param timeout : Maximum time to wait, in seconds (0 by default : no timeout)
     ///
     /// \return Public IP address
     ///
     ////////////////////////////////////////////////////////////
-    static IPAddress GetPublicAddress(float Timeout = 0.f);
+    static IPAddress GetPublicAddress(float timeout = 0.f);
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator ==
     ///
-    /// \param Other : Address to compare
+    /// \param other : Address to compare
     ///
-    /// \return True if *this == Other
+    /// \return True if *this == other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator ==(const IPAddress& Other) const;
+    bool operator ==(const IPAddress& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator !=
     ///
-    /// \param Other : Address to compare
+    /// \param other : Address to compare
     ///
-    /// \return True if *this != Other
+    /// \return True if *this != other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator !=(const IPAddress& Other) const;
+    bool operator !=(const IPAddress& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator <
     ///
-    /// \param Other : Address to compare
+    /// \param other : Address to compare
     ///
-    /// \return True if *this < Other
+    /// \return True if *this < other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator <(const IPAddress& Other) const;
+    bool operator <(const IPAddress& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator >
     ///
-    /// \param Other : Address to compare
+    /// \param other : Address to compare
     ///
-    /// \return True if *this > Other
+    /// \return True if *this > other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator >(const IPAddress& Other) const;
+    bool operator >(const IPAddress& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator <=
     ///
-    /// \param Other : Address to compare
+    /// \param other : Address to compare
     ///
-    /// \return True if *this <= Other
+    /// \return True if *this <= other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator <=(const IPAddress& Other) const;
+    bool operator <=(const IPAddress& other) const;
 
     ////////////////////////////////////////////////////////////
     /// Comparison operator >=
     ///
-    /// \param Other : Address to compare
+    /// \param other : Address to compare
     ///
-    /// \return True if *this >= Other
+    /// \return True if *this >= other
     ///
     ////////////////////////////////////////////////////////////
-    bool operator >=(const IPAddress& Other) const;
+    bool operator >=(const IPAddress& other) const;
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -212,7 +212,7 @@ private :
 /// \return Reference to the input stream
 ///
 ////////////////////////////////////////////////////////////
-SFML_API std::istream& operator >>(std::istream& Stream, IPAddress& Address);
+SFML_API std::istream& operator >>(std::istream& stream, IPAddress& address);
 
 ////////////////////////////////////////////////////////////
 /// Operator << overload to print an address to an output stream
@@ -223,7 +223,7 @@ SFML_API std::istream& operator >>(std::istream& Stream, IPAddress& Address);
 /// \return Reference to the output stream
 ///
 ////////////////////////////////////////////////////////////
-SFML_API std::ostream& operator <<(std::ostream& Stream, const IPAddress& Address);
+SFML_API std::ostream& operator <<(std::ostream& stream, const IPAddress& address);
 
 } // namespace sf
 

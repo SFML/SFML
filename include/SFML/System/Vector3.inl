@@ -53,9 +53,9 @@ z(Z)
 /// Operator - overload ; returns the opposite of a vector
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator -(const Vector3<T>& V)
+Vector3<T> operator -(const Vector3<T>& left)
 {
-    return Vector3<T>(-V.x, -V.y, -V.z);
+    return Vector3<T>(-left.x, -left.y, -left.z);
 }
 
 
@@ -63,13 +63,13 @@ Vector3<T> operator -(const Vector3<T>& V)
 /// Operator += overload ; add two vectors and assign to the first op
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T>& operator +=(Vector3<T>& V1, const Vector3<T>& V2)
+Vector3<T>& operator +=(Vector3<T>& left, const Vector3<T>& right)
 {
-    V1.x += V2.x;
-    V1.y += V2.y;
-    V1.z += V2.z;
+    left.x += right.x;
+    left.y += right.y;
+    left.z += right.z;
 
-    return V1;
+    return left;
 }
 
 
@@ -77,13 +77,13 @@ Vector3<T>& operator +=(Vector3<T>& V1, const Vector3<T>& V2)
 /// Operator -= overload ; subtract two vectors and assign to the first op
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T>& operator -=(Vector3<T>& V1, const Vector3<T>& V2)
+Vector3<T>& operator -=(Vector3<T>& left, const Vector3<T>& right)
 {
-    V1.x -= V2.x;
-    V1.y -= V2.y;
-    V1.z -= V2.z;
+    left.x -= right.x;
+    left.y -= right.y;
+    left.z -= right.z;
 
-    return V1;
+    return left;
 }
 
 
@@ -91,9 +91,9 @@ Vector3<T>& operator -=(Vector3<T>& V1, const Vector3<T>& V2)
 /// Operator + overload ; adds two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator +(const Vector3<T>& V1, const Vector3<T>& V2)
+Vector3<T> operator +(const Vector3<T>& left, const Vector3<T>& right)
 {
-    return Vector3<T>(V1.x + V2.x, V1.y + V2.y, V1.z + V2.z);
+    return Vector3<T>(left.x + right.x, left.y + right.y, left.z + right.z);
 }
 
 
@@ -101,9 +101,9 @@ Vector3<T> operator +(const Vector3<T>& V1, const Vector3<T>& V2)
 /// Operator - overload ; subtracts two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator -(const Vector3<T>& V1, const Vector3<T>& V2)
+Vector3<T> operator -(const Vector3<T>& left, const Vector3<T>& right)
 {
-    return Vector3<T>(V1.x - V2.x, V1.y - V2.y, V1.z - V2.z);
+    return Vector3<T>(left.x - right.x, left.y - right.y, left.z - right.z);
 }
 
 
@@ -111,9 +111,9 @@ Vector3<T> operator -(const Vector3<T>& V1, const Vector3<T>& V2)
 /// Operator * overload ; multiply a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator *(const Vector3<T>& V, T X)
+Vector3<T> operator *(const Vector3<T>& left, T right)
 {
-    return Vector3<T>(V.x * X, V.y * X, V.z * X);
+    return Vector3<T>(left.x * right, left.y * right, left.z * right);
 }
 
 
@@ -121,9 +121,9 @@ Vector3<T> operator *(const Vector3<T>& V, T X)
 /// Operator * overload ; multiply a scalar value by a vector
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator *(T X, const Vector3<T>& V)
+Vector3<T> operator *(T left, const Vector3<T>& right)
 {
-    return Vector3<T>(V.x * X, V.y * X, V.z * X);
+    return Vector3<T>(right.x * left, right.y * left, right.z * left);
 }
 
 
@@ -131,13 +131,13 @@ Vector3<T> operator *(T X, const Vector3<T>& V)
 /// Operator *= overload ; multiply-assign a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T>& operator *=(Vector3<T>& V, T X)
+Vector3<T>& operator *=(Vector3<T>& left, T right)
 {
-    V.x *= X;
-    V.y *= X;
-    V.z *= X;
+    left.x *= right;
+    left.y *= right;
+    left.z *= right;
 
-    return V;
+    return left;
 }
 
 
@@ -145,9 +145,9 @@ Vector3<T>& operator *=(Vector3<T>& V, T X)
 /// Operator / overload ; divide a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator /(const Vector3<T>& V, T X)
+Vector3<T> operator /(const Vector3<T>& left, T right)
 {
-    return Vector3<T>(V.x / X, V.y / X, V.z / X);
+    return Vector3<T>(left.x / right, left.y / right, left.z / right);
 }
 
 
@@ -155,13 +155,13 @@ Vector3<T> operator /(const Vector3<T>& V, T X)
 /// Operator /= overload ; divide-assign a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T>& operator /=(Vector3<T>& V, T X)
+Vector3<T>& operator /=(Vector3<T>& left, T right)
 {
-    V.x /= X;
-    V.y /= X;
-    V.z /= X;
+    left.x /= right;
+    left.y /= right;
+    left.z /= right;
 
-    return V;
+    return left;
 }
 
 
@@ -169,9 +169,9 @@ Vector3<T>& operator /=(Vector3<T>& V, T X)
 /// Operator == overload ; compares the equality of two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator ==(const Vector3<T>& V1, const Vector3<T>& V2)
+bool operator ==(const Vector3<T>& left, const Vector3<T>& V2)
 {
-    return (V1.x == V2.x) && (V1.y == V2.y) && (V1.z == V2.z);
+    return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);
 }
 
 
@@ -179,7 +179,7 @@ bool operator ==(const Vector3<T>& V1, const Vector3<T>& V2)
 /// Operator != overload ; compares the difference of two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator !=(const Vector3<T>& V1, const Vector3<T>& V2)
+bool operator !=(const Vector3<T>& left, const Vector3<T>& right)
 {
-    return (V1.x != V2.x) || (V1.y != V2.y) || (V1.z != V2.z);
+    return (left.x != right.x) || (left.y != right.y) || (left.z != right.z);
 }

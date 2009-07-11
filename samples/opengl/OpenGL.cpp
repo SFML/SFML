@@ -16,26 +16,26 @@
 int main()
 {
     // Create main window
-    sf::RenderWindow App(sf::VideoMode(800, 600), "SFML OpenGL");
-    App.PreserveOpenGLStates(true);
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL");
+    window.PreserveOpenGLStates(true);
 
     // Create a sprite for the background
-    sf::Image BackgroundImage;
-    if (!BackgroundImage.LoadFromFile("datas/opengl/background.jpg"))
+    sf::Image backgroundImage;
+    if (!backgroundImage.LoadFromFile("datas/opengl/background.jpg"))
         return EXIT_FAILURE;
-    sf::Sprite Background(BackgroundImage);
+    sf::Sprite background(backgroundImage);
 
     // Load an OpenGL texture.
     // We could directly use a sf::Image as an OpenGL texture (with its Bind() member function),
     // but here we want more control on it (generate mipmaps, ...) so we create a new one from the image pixels
-    GLuint Texture = 0;
+    GLuint texture = 0;
     {
-        sf::Image Image;
-        if (!Image.LoadFromFile("datas/opengl/texture.jpg"))
+        sf::Image image;
+        if (!image.LoadFromFile("datas/opengl/texture.jpg"))
             return EXIT_FAILURE;
-        glGenTextures(1, &Texture);
-        glBindTexture(GL_TEXTURE_2D, Texture);
-        gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, Image.GetWidth(), Image.GetHeight(), GL_RGBA, GL_UNSIGNED_BYTE, Image.GetPixelsPtr());
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image.GetWidth(), image.GetHeight(), GL_RGBA, GL_UNSIGNED_BYTE, image.GetPixelsPtr());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     }
@@ -52,98 +52,98 @@ int main()
 
     // Bind our texture
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, Texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
     glColor4f(1.f, 1.f, 1.f, 1.f);
 
     // Create a clock for measuring the time elapsed
-    sf::Clock Clock;
+    sf::Clock clock;
 
     // Start game loop
-    while (App.IsOpened())
+    while (window.IsOpened())
     {
         // Process events
-        sf::Event Event;
-        while (App.GetEvent(Event))
+        sf::Event event;
+        while (window.GetEvent(event))
         {
             // Close window : exit
-            if (Event.Type == sf::Event::Closed)
-                App.Close();
+            if (event.Type == sf::Event::Closed)
+                window.Close();
 
             // Escape key : exit
-            if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
-                App.Close();
+            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Key::Escape))
+                window.Close();
 
             // Adjust the viewport when the window is resized
-            if (Event.Type == sf::Event::Resized)
-                glViewport(0, 0, Event.Size.Width, Event.Size.Height);
+            if (event.Type == sf::Event::Resized)
+                glViewport(0, 0, event.Size.Width, event.Size.Height);
          }
 
         // Draw background
-        App.Draw(Background);
+        window.Draw(background);
 
         // Clear depth buffer
         glClear(GL_DEPTH_BUFFER_BIT);
 
         // We get the position of the mouse cursor, so that we can move the box accordingly
-        float CursorX =  App.GetInput().GetMouseX() * 200.f / App.GetWidth()  - 100.f;
-        float CursorY = -App.GetInput().GetMouseY() * 200.f / App.GetHeight() + 100.f;
+        float x =  window.GetInput().GetMouseX() * 200.f / window.GetWidth()  - 100.f;
+        float y = -window.GetInput().GetMouseY() * 200.f / window.GetHeight() + 100.f;
 
         // Apply some transformations
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        glTranslatef(CursorX, CursorY, -100.f);
-        glRotatef(Clock.GetElapsedTime() * 50, 1.f, 0.f, 0.f);
-        glRotatef(Clock.GetElapsedTime() * 30, 0.f, 1.f, 0.f);
-        glRotatef(Clock.GetElapsedTime() * 90, 0.f, 0.f, 1.f);
+        glTranslatef(x, y, -100.f);
+        glRotatef(clock.GetElapsedTime() * 50, 1.f, 0.f, 0.f);
+        glRotatef(clock.GetElapsedTime() * 30, 0.f, 1.f, 0.f);
+        glRotatef(clock.GetElapsedTime() * 90, 0.f, 0.f, 1.f);
 
         // Draw a cube
-        float Size = 20.f;
+        float size = 20.f;
         glBegin(GL_QUADS);
 
-            glTexCoord2f(0, 0); glVertex3f(-Size, -Size, -Size);
-            glTexCoord2f(0, 1); glVertex3f(-Size,  Size, -Size);
-            glTexCoord2f(1, 1); glVertex3f( Size,  Size, -Size);
-            glTexCoord2f(1, 0); glVertex3f( Size, -Size, -Size);
+            glTexCoord2f(0, 0); glVertex3f(-size, -size, -size);
+            glTexCoord2f(0, 1); glVertex3f(-size,  size, -size);
+            glTexCoord2f(1, 1); glVertex3f( size,  size, -size);
+            glTexCoord2f(1, 0); glVertex3f( size, -size, -size);
 
-            glTexCoord2f(0, 0); glVertex3f(-Size, -Size, Size);
-            glTexCoord2f(0, 1); glVertex3f(-Size,  Size, Size);
-            glTexCoord2f(1, 1); glVertex3f( Size,  Size, Size);
-            glTexCoord2f(1, 0); glVertex3f( Size, -Size, Size);
+            glTexCoord2f(0, 0); glVertex3f(-size, -size, size);
+            glTexCoord2f(0, 1); glVertex3f(-size,  size, size);
+            glTexCoord2f(1, 1); glVertex3f( size,  size, size);
+            glTexCoord2f(1, 0); glVertex3f( size, -size, size);
 
-            glTexCoord2f(0, 0); glVertex3f(-Size, -Size, -Size);
-            glTexCoord2f(0, 1); glVertex3f(-Size,  Size, -Size);
-            glTexCoord2f(1, 1); glVertex3f(-Size,  Size,  Size);
-            glTexCoord2f(1, 0); glVertex3f(-Size, -Size,  Size);
+            glTexCoord2f(0, 0); glVertex3f(-size, -size, -size);
+            glTexCoord2f(0, 1); glVertex3f(-size,  size, -size);
+            glTexCoord2f(1, 1); glVertex3f(-size,  size,  size);
+            glTexCoord2f(1, 0); glVertex3f(-size, -size,  size);
 
-            glTexCoord2f(0, 0); glVertex3f(Size, -Size, -Size);
-            glTexCoord2f(0, 1); glVertex3f(Size,  Size, -Size);
-            glTexCoord2f(1, 1); glVertex3f(Size,  Size,  Size);
-            glTexCoord2f(1, 0); glVertex3f(Size, -Size,  Size);
+            glTexCoord2f(0, 0); glVertex3f(size, -size, -size);
+            glTexCoord2f(0, 1); glVertex3f(size,  size, -size);
+            glTexCoord2f(1, 1); glVertex3f(size,  size,  size);
+            glTexCoord2f(1, 0); glVertex3f(size, -size,  size);
 
-            glTexCoord2f(0, 1); glVertex3f(-Size, -Size,  Size);
-            glTexCoord2f(0, 0); glVertex3f(-Size, -Size, -Size);
-            glTexCoord2f(1, 0); glVertex3f( Size, -Size, -Size);
-            glTexCoord2f(1, 1); glVertex3f( Size, -Size,  Size);
+            glTexCoord2f(0, 1); glVertex3f(-size, -size,  size);
+            glTexCoord2f(0, 0); glVertex3f(-size, -size, -size);
+            glTexCoord2f(1, 0); glVertex3f( size, -size, -size);
+            glTexCoord2f(1, 1); glVertex3f( size, -size,  size);
 
-            glTexCoord2f(0, 1); glVertex3f(-Size, Size,  Size);
-            glTexCoord2f(0, 0); glVertex3f(-Size, Size, -Size);
-            glTexCoord2f(1, 0); glVertex3f( Size, Size, -Size);
-            glTexCoord2f(1, 1); glVertex3f( Size, Size,  Size);
+            glTexCoord2f(0, 1); glVertex3f(-size, size,  size);
+            glTexCoord2f(0, 0); glVertex3f(-size, size, -size);
+            glTexCoord2f(1, 0); glVertex3f( size, size, -size);
+            glTexCoord2f(1, 1); glVertex3f( size, size,  size);
 
         glEnd();
 
         // Draw some text on top of our OpenGL object
-        sf::String Text("SFML / OpenGL demo");
-        Text.SetPosition(250.f, 450.f);
-        Text.SetColor(sf::Color(255, 255, 255, 170));
-        App.Draw(Text);
+        sf::String text("SFML / OpenGL demo");
+        text.SetPosition(250.f, 450.f);
+        text.SetColor(sf::Color(255, 255, 255, 170));
+        window.Draw(text);
 
         // Finally, display the rendered frame on screen
-        App.Display();
+        window.Display();
     }
 
     // Don't forget to destroy our texture
-    glDeleteTextures(1, &Texture);
+    glDeleteTextures(1, &texture);
 
     return EXIT_SUCCESS;
 }

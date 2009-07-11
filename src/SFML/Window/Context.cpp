@@ -54,9 +54,9 @@ Context::~Context()
 ////////////////////////////////////////////////////////////
 /// Activate or deactivate explicitely the context
 ////////////////////////////////////////////////////////////
-void Context::SetActive(bool Active)
+void Context::SetActive(bool active)
 {
-    myContext->SetActive(Active);
+    myContext->SetActive(active);
 }
 
 

@@ -35,13 +35,13 @@ namespace
     // Set the random numbers sequence seed with the current system time, so that it is always different
     unsigned int InitializeSeed()
     {
-        unsigned int Seed = static_cast<unsigned int>(sf::priv::Platform::GetSystemTime() * 1000);
-        srand(Seed);
-        return Seed;
+        unsigned int seed = static_cast<unsigned int>(sf::priv::Platform::GetSystemTime() * 1000);
+        srand(seed);
+        return seed;
     }
 
-    // Global storing the current seed
-    unsigned int GlobalSeed = InitializeSeed();
+    // Global variable storing the current seed
+    unsigned int globalSeed = InitializeSeed();
 }
 
 
@@ -51,10 +51,10 @@ namespace sf
 /// Set the seed for the generator. Using a known seed
 /// allows you to reproduce the same sequence of random number
 ////////////////////////////////////////////////////////////
-void Randomizer::SetSeed(unsigned int Seed)
+void Randomizer::SetSeed(unsigned int seed)
 {
-    srand(Seed);
-    GlobalSeed = Seed;
+    srand(seed);
+    globalSeed = seed;
 }
 
 
@@ -63,31 +63,31 @@ void Randomizer::SetSeed(unsigned int Seed)
 ////////////////////////////////////////////////////////////
 unsigned int Randomizer::GetSeed()
 {
-    return GlobalSeed;
+    return globalSeed;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get a random float number in a given range
 ////////////////////////////////////////////////////////////
-float Randomizer::Random(float Begin, float End)
+float Randomizer::Random(float begin, float end)
 {
     // This is not the best algorithm, but it is fast and will be enough in most cases
     // (see Google for best approaches)
 
-    return static_cast<float>(rand()) / RAND_MAX * (End - Begin) + Begin;
+    return static_cast<float>(rand()) / RAND_MAX * (end - begin) + begin;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get a random integer number in a given range
 ////////////////////////////////////////////////////////////
-int Randomizer::Random(int Begin, int End)
+int Randomizer::Random(int begin, int end)
 {
     // This is not the best algorithm, but it is fast and will be enough in most cases
     // (see Google for best approaches)
 
-    return rand() % (End - Begin + 1) + Begin;
+    return rand() % (end - begin + 1) + begin;
 }
 
 } // namespace sf

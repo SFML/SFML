@@ -50,34 +50,26 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the window implementation from an existing control
     ///
-    /// \param Handle : Platform-specific handle of the control
+    /// \param handle : Platform-specific handle of the control
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplX11(WindowHandle Handle);
+    WindowImplX11(WindowHandle handle);
 
     ////////////////////////////////////////////////////////////
     /// Create the window implementation
     ///
-    /// \param Mode :        Video mode to use
-    /// \param Title :       Title of the window
-    /// \param WindowStyle : Window style (resizable, fixed, or fullscren)
+    /// \param mode :  Video mode to use
+    /// \param title : Title of the window
+    /// \param style : Window style (resizable, fixed, or fullscren)
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplX11(VideoMode Mode, const std::string& Title, unsigned long WindowStyle);
+    WindowImplX11(VideoMode mode, const std::string& title, unsigned long style);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~WindowImplX11();
-
-    ////////////////////////////////////////////////////////////
-    /// Check if there's an active context on the current thread
-    ///
-    /// \return True if there's a context bound to the current thread
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool IsContextActive();
 
 private :
 
@@ -97,43 +89,43 @@ private :
     /// /see WindowImpl::ShowMouseCursor
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ShowMouseCursor(bool Show);
+    virtual void ShowMouseCursor(bool show);
 
     ////////////////////////////////////////////////////////////
     /// /see sfWindowImpl::SetCursorPosition
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetCursorPosition(unsigned int Left, unsigned int Top);
+    virtual void SetCursorPosition(unsigned int left, unsigned int top);
 
     ////////////////////////////////////////////////////////////
     /// /see sfWindowImpl::SetPosition
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(int Left, int Top);
+    virtual void SetPosition(int left, int top);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::SetSize
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(unsigned int Width, unsigned int Height);
+    virtual void SetSize(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// /see sfWindowImpl::Show
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Show(bool State);
+    virtual void Show(bool show);
 
     ////////////////////////////////////////////////////////////
     /// /see sfWindowImpl::EnableKeyRepeat
     ///
     ////////////////////////////////////////////////////////////
-    virtual void EnableKeyRepeat(bool Enabled);
+    virtual void EnableKeyRepeat(bool enabled);
 
     ////////////////////////////////////////////////////////////
     /// /see WindowImpl::SetIcon
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixels);
+    virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// Switch to fullscreen mode
@@ -141,7 +133,7 @@ private :
     /// \param Mode : video mode to switch to
     ///
     ////////////////////////////////////////////////////////////
-    void SwitchToFullscreen(const VideoMode& Mode);
+    void SwitchToFullscreen(const VideoMode& mode);
 
     ////////////////////////////////////////////////////////////
     /// Do some common initializations after the window has been created
@@ -164,20 +156,20 @@ private :
     ////////////////////////////////////////////////////////////
     /// Process an incoming event from the window
     ///
-    /// \param WinEvent : Event which has been received
+    /// \param windowEvent : Event which has been received
     ///
     ////////////////////////////////////////////////////////////
-    void ProcessEvent(XEvent WinEvent);
+    void ProcessEvent(XEvent windowEvent);
 
     ////////////////////////////////////////////////////////////
     /// Convert a X11 keysym to SFML key code
     ///
-    /// \param Sym : keysym to convert
+    /// \param symbol : keysym to convert
     ///
     /// \return Corrsponding SFML key code
     ///
     ////////////////////////////////////////////////////////////
-    static Key::Code KeysymToSF(KeySym Sym);
+    static Key::Code KeysymToSF(KeySym symbol);
 
     ////////////////////////////////////////////////////////////
     // Member data

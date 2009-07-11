@@ -56,10 +56,10 @@ myUserData  (NULL)
 ////////////////////////////////////////////////////////////
 /// Construct the thread from a function pointer
 ////////////////////////////////////////////////////////////
-Thread::Thread(Thread::FuncType Function, void* UserData) :
+Thread::Thread(Thread::FuncType function, void* userData) :
 myThreadImpl(NULL),
-myFunction  (Function),
-myUserData  (UserData)
+myFunction  (function),
+myUserData  (userData)
 {
 
 }

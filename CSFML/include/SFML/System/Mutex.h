@@ -43,26 +43,26 @@ CSFML_API sfMutex* sfMutex_Create();
 ////////////////////////////////////////////////////////////
 /// Destroy an existing mutex
 ///
-/// \param Mutex : Mutex to delete
+/// \param mutex : Mutex to delete
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfMutex_Destroy(sfMutex* Mutex);
+CSFML_API void sfMutex_Destroy(sfMutex* mutex);
 
 ////////////////////////////////////////////////////////////
 /// Lock a mutex
 ///
-/// \param Mutex : Mutex to lock
+/// \param mutex : Mutex to lock
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfMutex_Lock(sfMutex* Mutex);
+CSFML_API void sfMutex_Lock(sfMutex* mutex);
 
 ////////////////////////////////////////////////////////////
 /// Unlock a mutex
 ///
-/// \param Mutex : Mutex to unlock
+/// \param mutex : Mutex to unlock
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfMutex_Unlock(sfMutex* Mutex);
+CSFML_API void sfMutex_Unlock(sfMutex* mutex);
 
 
 #endif // SFML_MUTEX_H

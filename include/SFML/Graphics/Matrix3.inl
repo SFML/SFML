@@ -52,22 +52,22 @@ inline Matrix3::Matrix3(float a00, float a01, float a02,
 ////////////////////////////////////////////////////////////
 /// Build a matrix from a set of transformations
 ////////////////////////////////////////////////////////////
-inline void Matrix3::SetFromTransformations(const Vector2f& Center, const Vector2f& Translation, float Rotation, const Vector2f& Scale)
+inline void Matrix3::SetFromTransformations(const Vector2f& origin, const Vector2f& translation, float rotation, const Vector2f& scale)
 {
     // Combine the transformations
-    float Angle = Rotation * 3.141592654f / 180.f;
-    float Cos   = static_cast<float>(cos(Angle));
-    float Sin   = static_cast<float>(sin(Angle));
-    float SxCos = Scale.x * Cos;
-    float SyCos = Scale.y * Cos;
-    float SxSin = Scale.x * Sin;
-    float SySin = Scale.y * Sin;
-    float Tx    = -Center.x * SxCos - Center.y * SySin + Translation.x;
-    float Ty    =  Center.x * SxSin - Center.y * SyCos + Translation.y;
+    float angle  = rotation * 3.141592654f / 180.f;
+    float cosine = static_cast<float>(cos(angle));
+    float sine   = static_cast<float>(sin(angle));
+    float sxCos  = scale.x * cosine;
+    float syCos  = scale.y * cosine;
+    float sxSin  = scale.x * sine;
+    float sySin  = scale.y * sine;
+    float tx     = -origin.x * sxCos - origin.y * sySin + translation.x;
+    float ty     =  origin.x * sxSin - origin.y * syCos + translation.y;
 
     // Rebuild the matrix
-    myData[0] =  SxCos; myData[4] = SySin; myData[8]  = 0.f; myData[12] = Tx;
-    myData[1] = -SxSin; myData[5] = SyCos; myData[9]  = 0.f; myData[13] = Ty;
+    myData[0] =  sxCos; myData[4] = sySin; myData[8]  = 0.f; myData[12] = tx;
+    myData[1] = -sxSin; myData[5] = syCos; myData[9]  = 0.f; myData[13] = ty;
     myData[2] =  0.f;   myData[6] = 0.f;   myData[10] = 1.f; myData[14] = 0.f;
     myData[3] =  0.f;   myData[7] = 0.f;   myData[11] = 0.f; myData[15] = 1.f;
 }
@@ -76,36 +76,36 @@ inline void Matrix3::SetFromTransformations(const Vector2f& Center, const Vector
 ////////////////////////////////////////////////////////////
 /// Build a matrix from a projection
 ////////////////////////////////////////////////////////////
-inline void Matrix3::SetFromProjection(const Vector2f& Center, const Vector2f& Size, float Rotation)
+inline void Matrix3::SetFromProjection(const Vector2f& center, const Vector2f& size, float rotation)
 {
     // Rotation components
-    float Angle = Rotation * 3.141592654f / 180.f;
-    float Cos   = static_cast<float>(cos(Angle));
-    float Sin   = static_cast<float>(sin(Angle));
-    float Tx    = -Center.x * Cos - Center.y * Sin + Center.x;
-    float Ty    =  Center.x * Sin - Center.y * Cos + Center.y;
+    float angle  = rotation * 3.141592654f / 180.f;
+    float cosine = static_cast<float>(cos(angle));
+    float sine   = static_cast<float>(sin(angle));
+    float tx     = -center.x * cosine - center.y * sine + center.x;
+    float ty     =  center.x * sine - center.y * cosine + center.y;
 
     // Projection components
-    float A =  2.f / Size.x;
-    float B = -2.f / Size.y;
-    float C = -A * Center.x;
-    float D = -B * Center.y;
+    float a =  2.f / size.x;
+    float b = -2.f / size.y;
+    float c = -a * center.x;
+    float d = -b * center.y;
 
     // Rebuild the projection matrix
-    myData[0] =  A * Cos; myData[4] = A * Sin; myData[8]  = 0.f; myData[12] = A * Tx + C;
-    myData[1] = -B * Sin; myData[5] = B * Cos; myData[9]  = 0.f; myData[13] = B * Ty + D;
-    myData[2] = 0.f;      myData[6] = 0.f;     myData[10] = 1.f; myData[14] = 0.f;
-    myData[3] = 0.f;      myData[7] = 0.f;     myData[11] = 0.f; myData[15] = 1.f;
+    myData[0] =  a * cosine; myData[4] = a * sine;   myData[8]  = 0.f; myData[12] = a * tx + c;
+    myData[1] = -b * sine;   myData[5] = b * cosine; myData[9]  = 0.f; myData[13] = b * ty + d;
+    myData[2] = 0.f;         myData[6] = 0.f;        myData[10] = 1.f; myData[14] = 0.f;
+    myData[3] = 0.f;         myData[7] = 0.f;        myData[11] = 0.f; myData[15] = 1.f;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Transform a point by the matrix
 ////////////////////////////////////////////////////////////
-inline Vector2f Matrix3::Transform(const Vector2f& Point) const
+inline Vector2f Matrix3::Transform(const Vector2f& point) const
 {
-    return Vector2f(myData[0] * Point.x + myData[4] * Point.y + myData[12],
-                    myData[1] * Point.x + myData[5] * Point.y + myData[13]);
+    return Vector2f(myData[0] * point.x + myData[4] * point.y + myData[12],
+                    myData[1] * point.x + myData[5] * point.y + myData[13]);
 }
 
 
@@ -115,22 +115,22 @@ inline Vector2f Matrix3::Transform(const Vector2f& Point) const
 inline Matrix3 Matrix3::GetInverse() const
 {
     // Compute the determinant
-    float Det = myData[0] * (myData[15] * myData[5] - myData[7] * myData[13]) -
+    float det = myData[0] * (myData[15] * myData[5] - myData[7] * myData[13]) -
                 myData[1] * (myData[15] * myData[4] - myData[7] * myData[12]) +
                 myData[3] * (myData[13] * myData[4] - myData[5] * myData[12]);
 
     // Compute the inverse if determinant is not zero
-    if ((Det < -1E-7f) || (Det > 1E-7f))
+    if ((det < -1E-7f) || (det > 1E-7f))
     {
-        return Matrix3( (myData[15] * myData[5] - myData[7] * myData[13]) / Det,
-                       -(myData[15] * myData[4] - myData[7] * myData[12]) / Det,
-                        (myData[13] * myData[4] - myData[5] * myData[12]) / Det,
-                       -(myData[15] * myData[1] - myData[3] * myData[13]) / Det,
-                        (myData[15] * myData[0] - myData[3] * myData[12]) / Det,
-                       -(myData[13] * myData[0] - myData[1] * myData[12]) / Det,
-                        (myData[7]  * myData[1] - myData[3] * myData[5])  / Det,
-                       -(myData[7]  * myData[0] - myData[3] * myData[4])  / Det,
-                        (myData[5]  * myData[0] - myData[1] * myData[4])  / Det);
+        return Matrix3( (myData[15] * myData[5] - myData[7] * myData[13]) / det,
+                       -(myData[15] * myData[4] - myData[7] * myData[12]) / det,
+                        (myData[13] * myData[4] - myData[5] * myData[12]) / det,
+                       -(myData[15] * myData[1] - myData[3] * myData[13]) / det,
+                        (myData[15] * myData[0] - myData[3] * myData[12]) / det,
+                       -(myData[13] * myData[0] - myData[1] * myData[12]) / det,
+                        (myData[7]  * myData[1] - myData[3] * myData[5])  / det,
+                       -(myData[7]  * myData[0] - myData[3] * myData[4])  / det,
+                        (myData[5]  * myData[0] - myData[1] * myData[4])  / det);
     }
     else
     {
@@ -152,9 +152,9 @@ inline const float* Matrix3::Get4x4Elements() const
 ////////////////////////////////////////////////////////////
 /// Operator () overloads to access the matrix elements
 ////////////////////////////////////////////////////////////
-inline float Matrix3::operator ()(unsigned int Row, unsigned int Col) const
+inline float Matrix3::operator ()(unsigned int row, unsigned int column) const
 {
-    switch (Row + Col * 3)
+    switch (row + column * 3)
     {
         case 0 : return myData[0];
         case 1 : return myData[1];
@@ -169,9 +169,9 @@ inline float Matrix3::operator ()(unsigned int Row, unsigned int Col) const
         default : return myData[0];
     }
 }
-inline float& Matrix3::operator ()(unsigned int Row, unsigned int Col)
+inline float& Matrix3::operator ()(unsigned int row, unsigned int column)
 {
-    switch (Row + Col * 3)
+    switch (row + column * 3)
     {
         case 0 : return myData[0];
         case 1 : return myData[1];
@@ -191,24 +191,24 @@ inline float& Matrix3::operator ()(unsigned int Row, unsigned int Col)
 ////////////////////////////////////////////////////////////
 /// Operator * overload to multiply two matrices
 ////////////////////////////////////////////////////////////
-inline Matrix3 Matrix3::operator *(const Matrix3& Mat) const
+inline Matrix3 Matrix3::operator *(const Matrix3& right) const
 {
-    return Matrix3(myData[0] * Mat.myData[0]  + myData[4] * Mat.myData[1]  + myData[12] * Mat.myData[3],
-                   myData[0] * Mat.myData[4]  + myData[4] * Mat.myData[5]  + myData[12] * Mat.myData[7],
-                   myData[0] * Mat.myData[12] + myData[4] * Mat.myData[13] + myData[12] * Mat.myData[15],
-                   myData[1] * Mat.myData[0]  + myData[5] * Mat.myData[1]  + myData[13] * Mat.myData[3],
-                   myData[1] * Mat.myData[4]  + myData[5] * Mat.myData[5]  + myData[13] * Mat.myData[7],
-                   myData[1] * Mat.myData[12] + myData[5] * Mat.myData[13] + myData[13] * Mat.myData[15],
-                   myData[3] * Mat.myData[0]  + myData[7] * Mat.myData[1]  + myData[15] * Mat.myData[3],
-                   myData[3] * Mat.myData[4]  + myData[7] * Mat.myData[5]  + myData[15] * Mat.myData[7],
-                   myData[3] * Mat.myData[12] + myData[7] * Mat.myData[13] + myData[15] * Mat.myData[15]);
+    return Matrix3(myData[0] * right.myData[0]  + myData[4] * right.myData[1]  + myData[12] * right.myData[3],
+                   myData[0] * right.myData[4]  + myData[4] * right.myData[5]  + myData[12] * right.myData[7],
+                   myData[0] * right.myData[12] + myData[4] * right.myData[13] + myData[12] * right.myData[15],
+                   myData[1] * right.myData[0]  + myData[5] * right.myData[1]  + myData[13] * right.myData[3],
+                   myData[1] * right.myData[4]  + myData[5] * right.myData[5]  + myData[13] * right.myData[7],
+                   myData[1] * right.myData[12] + myData[5] * right.myData[13] + myData[13] * right.myData[15],
+                   myData[3] * right.myData[0]  + myData[7] * right.myData[1]  + myData[15] * right.myData[3],
+                   myData[3] * right.myData[4]  + myData[7] * right.myData[5]  + myData[15] * right.myData[7],
+                   myData[3] * right.myData[12] + myData[7] * right.myData[13] + myData[15] * right.myData[15]);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Operator *= overload to multiply-assign two matrices
 ////////////////////////////////////////////////////////////
-inline Matrix3& Matrix3::operator *=(const Matrix3& Mat)
+inline Matrix3& Matrix3::operator *=(const Matrix3& right)
 {
-    return *this = *this * Mat;
+    return *this = *this * right;
 }

@@ -25,33 +25,33 @@ void DoServerUDP(unsigned short Port);
 int main()
 {
     // Choose a random port for opening sockets (ports < 1024 are reserved)
-    const unsigned short Port = 2435;
+    const unsigned short port = 2435;
 
     // TCP or UDP ?
-    char Protocol;
+    char protocol;
     std::cout << "Do you want to use TCP ('t') or UDP ('u') ? ";
-    std::cin  >> Protocol;
+    std::cin  >> protocol;
 
     // Client or server ?
-    char Who;
+    char who;
     std::cout << "Do you want to be a server ('s') or a client ('c') ? ";
-    std::cin  >> Who;
+    std::cin  >> who;
 
-    if (Who == 's')
+    if (who == 's')
     {
         // Run as a server
-        if (Protocol == 't')
-            DoServerTCP(Port);
+        if (protocol == 't')
+            DoServerTCP(port);
         else
-            DoServerUDP(Port);
+            DoServerUDP(port);
     }
     else
     {
         // Run as a client
-        if (Protocol == 't')
-            DoClientTCP(Port);
+        if (protocol == 't')
+            DoClientTCP(port);
         else
-            DoClientUDP(Port);
+            DoClientUDP(port);
     }
 
     // Wait until the user presses 'enter' key

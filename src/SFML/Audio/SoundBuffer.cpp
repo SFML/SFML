@@ -50,18 +50,17 @@ myDuration(0.f)
 ////////////////////////////////////////////////////////////
 /// Copy constructor
 ////////////////////////////////////////////////////////////
-SoundBuffer::SoundBuffer(const SoundBuffer& Copy) :
-AudioResource        (Copy),
-Resource<SoundBuffer>(Copy),
+SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
+Resource<SoundBuffer>(copy),
 myBuffer             (0),
-mySamples            (Copy.mySamples),
-myDuration           (Copy.myDuration)
+mySamples            (copy.mySamples),
+myDuration           (copy.myDuration)
 {
     // Create the buffer
     ALCheck(alGenBuffers(1, &myBuffer));
 
     // Update the internal buffer with the new samples
-    Update(Copy.GetChannelsCount(), Copy.GetSampleRate());
+    Update(copy.GetChannelsCount(), copy.GetSampleRate());
 }
 
 
@@ -78,23 +77,23 @@ SoundBuffer::~SoundBuffer()
 ////////////////////////////////////////////////////////////
 /// Load the sound buffer from a file
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::LoadFromFile(const std::string& Filename)
+bool SoundBuffer::LoadFromFile(const std::string& filename)
 {
     // Open the sound file
-    priv::SoundFile File;
-    if (File.OpenRead(Filename))
+    priv::SoundFile file;
+    if (file.OpenRead(filename))
     {
         // Get the sound parameters
-        std::size_t  NbSamples     = File.GetSamplesCount();
-        unsigned int ChannelsCount = File.GetChannelsCount();
-        unsigned int SampleRate    = File.GetSampleRate();
+        std::size_t  nbSamples     = file.GetSamplesCount();
+        unsigned int channelsCount = file.GetChannelsCount();
+        unsigned int sampleRate    = file.GetSampleRate();
 
         // Read the samples from the opened file
-        mySamples.resize(NbSamples);
-        if (File.Read(&mySamples[0], NbSamples) == NbSamples)
+        mySamples.resize(nbSamples);
+        if (file.Read(&mySamples[0], nbSamples) == nbSamples)
         {
             // Update the internal buffer with the new samples
-            return Update(ChannelsCount, SampleRate);
+            return Update(channelsCount, sampleRate);
         }
         else
         {
@@ -111,23 +110,23 @@ bool SoundBuffer::LoadFromFile(const std::string& Filename)
 ////////////////////////////////////////////////////////////
 /// Load the sound buffer from a file in memory
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::LoadFromMemory(const char* Data, std::size_t SizeInBytes)
+bool SoundBuffer::LoadFromMemory(const char* data, std::size_t sizeInBytes)
 {
     // Open the sound file
-    priv::SoundFile File;
-    if (File.OpenRead(Data, SizeInBytes))
+    priv::SoundFile file;
+    if (file.OpenRead(data, sizeInBytes))
     {
         // Get the sound parameters
-        std::size_t  NbSamples     = File.GetSamplesCount();
-        unsigned int ChannelsCount = File.GetChannelsCount();
-        unsigned int SampleRate    = File.GetSampleRate();
+        std::size_t  nbSamples     = file.GetSamplesCount();
+        unsigned int channelsCount = file.GetChannelsCount();
+        unsigned int sampleRate    = file.GetSampleRate();
 
         // Read the samples from the opened file
-        mySamples.resize(NbSamples);
-        if (File.Read(&mySamples[0], NbSamples) == NbSamples)
+        mySamples.resize(nbSamples);
+        if (file.Read(&mySamples[0], nbSamples) == nbSamples)
         {
             // Update the internal buffer with the new samples
-            return Update(ChannelsCount, SampleRate);
+            return Update(channelsCount, sampleRate);
         }
         else
         {
@@ -145,24 +144,24 @@ bool SoundBuffer::LoadFromMemory(const char* Data, std::size_t SizeInBytes)
 /// Load the sound buffer from an array of samples  - assumed format for
 /// samples is 16 bits signed integer
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::LoadFromSamples(const Int16* Samples, std::size_t SamplesCount, unsigned int ChannelsCount, unsigned int SampleRate)
+bool SoundBuffer::LoadFromSamples(const Int16* samples, std::size_t samplesCount, unsigned int channelsCount, unsigned int sampleRate)
 {
-    if (Samples && SamplesCount && ChannelsCount && SampleRate)
+    if (samples && samplesCount && channelsCount && sampleRate)
     {
         // Copy the new audio samples
-        mySamples.assign(Samples, Samples + SamplesCount);
+        mySamples.assign(samples, samples + samplesCount);
 
         // Update the internal buffer with the new samples
-        return Update(ChannelsCount, SampleRate);
+        return Update(channelsCount, sampleRate);
     }
     else
     {
         // Error...
         std::cerr << "Failed to load sound buffer from memory ("
-                  << "Samples : "        << Samples       << ", "
-                  << "Samples count : "  << SamplesCount  << ", "
-                  << "Channels count : " << ChannelsCount << ", "
-                  << "Sample rate : "    << SampleRate    << ")"
+                  << "Samples : "        << samples       << ", "
+                  << "Samples count : "  << samplesCount  << ", "
+                  << "Channels count : " << channelsCount << ", "
+                  << "Sample rate : "    << sampleRate    << ")"
                   << std::endl;
 
         return false;
@@ -173,14 +172,14 @@ bool SoundBuffer::LoadFromSamples(const Int16* Samples, std::size_t SamplesCount
 ////////////////////////////////////////////////////////////
 /// Save the sound buffer to a file
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::SaveToFile(const std::string& Filename) const
+bool SoundBuffer::SaveToFile(const std::string& filename) const
 {
     // Create the sound file in write mode
-    priv::SoundFile File;
-    if (File.OpenWrite(Filename, GetChannelsCount(), GetSampleRate()))
+    priv::SoundFile file;
+    if (file.OpenWrite(filename, GetChannelsCount(), GetSampleRate()))
     {
         // Write the samples to the opened file
-        File.Write(&mySamples[0], mySamples.size());
+        file.Write(&mySamples[0], mySamples.size());
 
         return true;
     }
@@ -214,10 +213,10 @@ std::size_t SoundBuffer::GetSamplesCount() const
 ////////////////////////////////////////////////////////////
 unsigned int SoundBuffer::GetSampleRate() const
 {
-    ALint SampleRate;
-    ALCheck(alGetBufferi(myBuffer, AL_FREQUENCY, &SampleRate));
+    ALint sampleRate;
+    ALCheck(alGetBufferi(myBuffer, AL_FREQUENCY, &sampleRate));
 
-    return SampleRate;
+    return sampleRate;
 }
 
 
@@ -226,10 +225,10 @@ unsigned int SoundBuffer::GetSampleRate() const
 ////////////////////////////////////////////////////////////
 unsigned int SoundBuffer::GetChannelsCount() const
 {
-    ALint ChannelsCount;
-    ALCheck(alGetBufferi(myBuffer, AL_CHANNELS, &ChannelsCount));
+    ALint channelsCount;
+    ALCheck(alGetBufferi(myBuffer, AL_CHANNELS, &channelsCount));
 
-    return ChannelsCount;
+    return channelsCount;
 }
 
 
@@ -245,13 +244,13 @@ float SoundBuffer::GetDuration() const
 ////////////////////////////////////////////////////////////
 /// Assignment operator
 ////////////////////////////////////////////////////////////
-SoundBuffer& SoundBuffer::operator =(const SoundBuffer& Other)
+SoundBuffer& SoundBuffer::operator =(const SoundBuffer& other)
 {
-    SoundBuffer Temp(Other);
+    SoundBuffer temp(other);
 
-    mySamples.swap(Temp.mySamples);
-    std::swap(myBuffer,   Temp.myBuffer);
-    std::swap(myDuration, Temp.myDuration);
+    mySamples.swap(temp.mySamples);
+    std::swap(myBuffer,   temp.myBuffer);
+    std::swap(myDuration, temp.myDuration);
 
     return *this;
 }
@@ -260,28 +259,28 @@ SoundBuffer& SoundBuffer::operator =(const SoundBuffer& Other)
 ////////////////////////////////////////////////////////////
 /// Update the internal buffer with the audio samples
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::Update(unsigned int ChannelsCount, unsigned int SampleRate)
+bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
 {
     // Check parameters
-    if (!SampleRate || !ChannelsCount || mySamples.empty())
+    if (!channelsCount || !sampleRate || mySamples.empty())
         return false;
 
     // Find the good format according to the number of channels
-    ALenum Format = priv::AudioDevice::GetInstance().GetFormatFromChannelsCount(ChannelsCount);
+    ALenum format = priv::AudioDevice::GetInstance().GetFormatFromChannelsCount(channelsCount);
 
     // Check if the format is valid
-    if (Format == 0)
+    if (format == 0)
     {
-        std::cerr << "Unsupported number of channels (" << ChannelsCount << ")" << std::endl;
+        std::cerr << "Unsupported number of channels (" << channelsCount << ")" << std::endl;
         return false;
     }
 
     // Fill the buffer
-    ALsizei Size = static_cast<ALsizei>(mySamples.size()) * sizeof(Int16);
-    ALCheck(alBufferData(myBuffer, Format, &mySamples[0], Size, SampleRate));
+    ALsizei size = static_cast<ALsizei>(mySamples.size()) * sizeof(Int16);
+    ALCheck(alBufferData(myBuffer, format, &mySamples[0], size, sampleRate));
 
     // Compute the duration
-    myDuration = static_cast<float>(mySamples.size()) / SampleRate / ChannelsCount;
+    myDuration = static_cast<float>(mySamples.size()) / sampleRate / channelsCount;
 
     return true;
 }

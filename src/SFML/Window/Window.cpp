@@ -38,7 +38,7 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    const sf::Window* FullscreenWindow = NULL;
+    const sf::Window* fullscreenWindow = NULL;
 }
 
 
@@ -63,7 +63,7 @@ mySetCursorPosY (0xFFFF)
 ////////////////////////////////////////////////////////////
 /// Construct a new window
 ////////////////////////////////////////////////////////////
-Window::Window(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const ContextSettings& Settings) :
+Window::Window(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings) :
 myWindow        (NULL),
 myContext       (NULL),
 myLastFrameTime (0.f),
@@ -72,14 +72,14 @@ myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
 {
-    Create(Mode, Title, WindowStyle, Settings);
+    Create(mode, title, style, settings);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Construct the window from an existing control
 ////////////////////////////////////////////////////////////
-Window::Window(WindowHandle Handle, const ContextSettings& Settings) :
+Window::Window(WindowHandle handle, const ContextSettings& settings) :
 myWindow        (NULL),
 myContext       (NULL),
 myLastFrameTime (0.f),
@@ -88,7 +88,7 @@ myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
 {
-    Create(Handle, Settings);
+    Create(handle, settings);
 }
 
 
@@ -104,51 +104,51 @@ Window::~Window()
 ////////////////////////////////////////////////////////////
 /// Create the window
 ////////////////////////////////////////////////////////////
-void Window::Create(VideoMode Mode, const std::string& Title, unsigned long WindowStyle, const ContextSettings& Settings)
+void Window::Create(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings)
 {
     // Destroy the previous window implementation
     Close();
 
     // Fullscreen style requires some tests
-    if (WindowStyle & Style::Fullscreen)
+    if (style & Style::Fullscreen)
     {
         // Make sure there's not already a fullscreen window (only one is allowed)
-        if (FullscreenWindow)
+        if (fullscreenWindow)
         {
             std::cerr << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
-            WindowStyle &= ~Style::Fullscreen;
+            style &= ~Style::Fullscreen;
         }
         else
         {
             // Make sure the chosen video mode is compatible
-            if (!Mode.IsValid())
+            if (!mode.IsValid())
             {
                 std::cerr << "The requested video mode is not available, switching to a valid mode" << std::endl;
-                Mode = VideoMode::GetMode(0);
+                mode = VideoMode::GetMode(0);
             }
 
             // Update the fullscreen window
-            FullscreenWindow = this;
+            fullscreenWindow = this;
         }
     }
 
     // Check validity of style
-    if ((WindowStyle & Style::Close) || (WindowStyle & Style::Resize))
-        WindowStyle |= Style::Titlebar;
+    if ((style & Style::Close) || (style & Style::Resize))
+        style |= Style::Titlebar;
 
     // Recreate the window implementation
     delete myWindow;
-    myWindow = priv::WindowImpl::New(Mode, Title, WindowStyle);
+    myWindow = priv::WindowImpl::New(mode, title, style);
 
     {
         // Make sure another context is bound, so that:
         // - the context creation can request OpenGL extensions if necessary
         // - myContext can safely be destroyed (it's no longer bound)
-        Context Ctx;
+        Context context;
 
         // Recreate the context
         delete myContext;
-        myContext = priv::ContextGL::New(myWindow, Mode.BitsPerPixel, Settings);
+        myContext = priv::ContextGL::New(myWindow, mode.BitsPerPixel, settings);
 
         Initialize();
     }
@@ -161,21 +161,21 @@ void Window::Create(VideoMode Mode, const std::string& Title, unsigned long Wind
 ////////////////////////////////////////////////////////////
 /// Create the window from an existing control
 ////////////////////////////////////////////////////////////
-void Window::Create(WindowHandle Handle, const ContextSettings& Settings)
+void Window::Create(WindowHandle handle, const ContextSettings& settings)
 {
     // Recreate the window implementation
     Close();
-    myWindow = priv::WindowImpl::New(Handle);
+    myWindow = priv::WindowImpl::New(handle);
 
     {
         // Make sure another context is bound, so that:
         // - the context creation can request OpenGL extensions if necessary
         // - myContext can safely be destroyed (it's no longer bound)
-        Context Ctx;
+        Context context;
 
         // Recreate the context
         delete myContext;
-        myContext = priv::ContextGL::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, Settings);
+        myContext = priv::ContextGL::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, settings);
 
         Initialize();
     }
@@ -207,8 +207,8 @@ void Window::Close()
     }
 
     // Update the fullscreen window
-    if (this == FullscreenWindow)
-        FullscreenWindow = NULL;
+    if (this == fullscreenWindow)
+        fullscreenWindow = NULL;
 }
 
 
@@ -246,16 +246,16 @@ unsigned int Window::GetHeight() const
 ////////////////////////////////////////////////////////////
 const ContextSettings& Window::GetSettings() const
 {
-    static ContextSettings EmptySettings(0, 0, 0);
+    static const ContextSettings empty(0, 0, 0);
 
-    return myContext ? myContext->GetSettings() : EmptySettings;
+    return myContext ? myContext->GetSettings() : empty;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the event on top of events stack, if any
 ////////////////////////////////////////////////////////////
-bool Window::GetEvent(Event& EventReceived)
+bool Window::GetEvent(Event& event)
 {
     // Let the window implementation process incoming events if the events queue is empty
     if (myWindow && myEvents.empty())
@@ -264,7 +264,7 @@ bool Window::GetEvent(Event& EventReceived)
     // Pop first event of queue, if not empty
     if (!myEvents.empty())
     {
-        EventReceived = myEvents.front();
+        event = myEvents.front();
         myEvents.pop();
 
         return true;
@@ -277,35 +277,35 @@ bool Window::GetEvent(Event& EventReceived)
 ////////////////////////////////////////////////////////////
 /// Enable / disable vertical synchronization
 ////////////////////////////////////////////////////////////
-void Window::UseVerticalSync(bool Enabled)
+void Window::UseVerticalSync(bool enabled)
 {
     if (SetActive())
-        myContext->UseVerticalSync(Enabled);
+        myContext->UseVerticalSync(enabled);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Show or hide the mouse cursor
 ////////////////////////////////////////////////////////////
-void Window::ShowMouseCursor(bool Show)
+void Window::ShowMouseCursor(bool show)
 {
     if (myWindow)
-        myWindow->ShowMouseCursor(Show);
+        myWindow->ShowMouseCursor(show);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the position of the mouse cursor
 ////////////////////////////////////////////////////////////
-void Window::SetCursorPosition(unsigned int Left, unsigned int Top)
+void Window::SetCursorPosition(unsigned int left, unsigned int top)
 {
     if (myWindow)
     {
         // Keep coordinates for later checking (to reject the generated MouseMoved event)
-        mySetCursorPosX = Left;
-        mySetCursorPosY = Top;
+        mySetCursorPosX = left;
+        mySetCursorPosY = top;
 
-        myWindow->SetCursorPosition(Left, Top);
+        myWindow->SetCursorPosition(left, top);
     }
 }
 
@@ -313,30 +313,30 @@ void Window::SetCursorPosition(unsigned int Left, unsigned int Top)
 ////////////////////////////////////////////////////////////
 /// Change the position of the window on screen
 ////////////////////////////////////////////////////////////
-void Window::SetPosition(int Left, int Top)
+void Window::SetPosition(int left, int top)
 {
     if (myWindow)
-        myWindow->SetPosition(Left, Top);
+        myWindow->SetPosition(left, top);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the size of the rendering region of the window
 ////////////////////////////////////////////////////////////
-void Window::SetSize(unsigned int Width, unsigned int Height)
+void Window::SetSize(unsigned int width, unsigned int height)
 {
     if (myWindow)
-        myWindow->SetSize(Width, Height);
+        myWindow->SetSize(width, height);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Show or hide the window
 ////////////////////////////////////////////////////////////
-void Window::Show(bool State)
+void Window::Show(bool show)
 {
     if (myWindow)
-        myWindow->Show(State);
+        myWindow->Show(show);
 }
 
 
@@ -344,20 +344,20 @@ void Window::Show(bool State)
 /// Enable or disable automatic key-repeat.
 /// Automatic key-repeat is enabled by default
 ////////////////////////////////////////////////////////////
-void Window::EnableKeyRepeat(bool Enabled)
+void Window::EnableKeyRepeat(bool enabled)
 {
     if (myWindow)
-        myWindow->EnableKeyRepeat(Enabled);
+        myWindow->EnableKeyRepeat(enabled);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the window's icon
 ////////////////////////////////////////////////////////////
-void Window::SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixels)
+void Window::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     if (myWindow)
-        myWindow->SetIcon(Width, Height, Pixels);
+        myWindow->SetIcon(width, height, pixels);
 }
 
 
@@ -365,11 +365,11 @@ void Window::SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixel
 /// Activate or deactivate the window as the current target
 /// for rendering
 ////////////////////////////////////////////////////////////
-bool Window::SetActive(bool Active) const
+bool Window::SetActive(bool active) const
 {
     if (myContext)
     {
-        if (myContext->SetActive(Active))
+        if (myContext->SetActive(active))
         {
             return true;
         }
@@ -394,9 +394,9 @@ void Window::Display()
     // Limit the framerate if needed
     if (myFramerateLimit > 0)
     {
-        float RemainingTime = 1.f / myFramerateLimit - myClock.GetElapsedTime();
-        if (RemainingTime > 0)
-            Sleep(RemainingTime);
+        float remainingTime = 1.f / myFramerateLimit - myClock.GetElapsedTime();
+        if (remainingTime > 0)
+            Sleep(remainingTime);
     }
 
     // Measure the time elapsed since last frame
@@ -421,9 +421,9 @@ const Input& Window::GetInput() const
 ////////////////////////////////////////////////////////////
 /// Set the framerate at a fixed frequency
 ////////////////////////////////////////////////////////////
-void Window::SetFramerateLimit(unsigned int Limit)
+void Window::SetFramerateLimit(unsigned int limit)
 {
-    myFramerateLimit = Limit;
+    myFramerateLimit = limit;
 }
 
 
@@ -440,10 +440,10 @@ float Window::GetFrameTime() const
 /// Change the joystick threshold, ie. the value below which
 /// no move event will be generated
 ////////////////////////////////////////////////////////////
-void Window::SetJoystickThreshold(float Threshold)
+void Window::SetJoystickThreshold(float threshold)
 {
     if (myWindow)
-        myWindow->SetJoystickThreshold(Threshold);
+        myWindow->SetJoystickThreshold(threshold);
 }
 
 
@@ -459,19 +459,19 @@ void Window::OnCreate()
 ////////////////////////////////////////////////////////////
 /// Receive an event from window
 ////////////////////////////////////////////////////////////
-void Window::OnEvent(const Event& EventReceived)
+void Window::OnEvent(const Event& event)
 {
     // Discard MouseMove events generated by SetCursorPosition
-    if ((EventReceived.Type        == Event::MouseMoved) &&
-        (EventReceived.MouseMove.X == mySetCursorPosX)   &&
-        (EventReceived.MouseMove.Y == mySetCursorPosY))
+    if ((event.Type        == Event::MouseMoved) &&
+        (event.MouseMove.X == mySetCursorPosX)   &&
+        (event.MouseMove.Y == mySetCursorPosY))
     {
         mySetCursorPosX = 0xFFFF;
         mySetCursorPosY = 0xFFFF;
         return;
     }
 
-    myEvents.push(EventReceived);
+    myEvents.push(event);
 }
 
 

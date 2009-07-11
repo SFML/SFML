@@ -49,18 +49,18 @@ myIsCompiled      (false)
 ////////////////////////////////////////////////////////////
 /// Add a point to the shape
 ////////////////////////////////////////////////////////////
-void Shape::AddPoint(float X, float Y, const Color& Col, const Color& OutlineCol)
+void Shape::AddPoint(float x, float y, const Color& color, const Color& outlineColor)
 {
-    AddPoint(Vector2f(X, Y), Col, OutlineCol);
+    AddPoint(Vector2f(x, y), color, outlineColor);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Add a point to the shape
 ////////////////////////////////////////////////////////////
-void Shape::AddPoint(const Vector2f& Position, const Color& Col, const Color& OutlineCol)
+void Shape::AddPoint(const Vector2f& position, const Color& color, const Color& outlineColor)
 {
-    myPoints.push_back(Point(Position, Col, OutlineCol));
+    myPoints.push_back(Point(position, color, outlineColor));
     myIsCompiled = false;
 }
 
@@ -78,9 +78,9 @@ unsigned int Shape::GetNbPoints() const
 /// Enable or disable filling the shape.
 /// Fill is enabled by default
 ////////////////////////////////////////////////////////////
-void Shape::EnableFill(bool Enable)
+void Shape::EnableFill(bool enable)
 {
-    myIsFillEnabled = Enable;
+    myIsFillEnabled = enable;
 }
 
 
@@ -88,18 +88,18 @@ void Shape::EnableFill(bool Enable)
 /// Enable or disable drawing the shape outline.
 /// Outline is enabled by default
 ////////////////////////////////////////////////////////////
-void Shape::EnableOutline(bool Enable)
+void Shape::EnableOutline(bool enable)
 {
-    myIsOutlineEnabled = Enable;
+    myIsOutlineEnabled = enable;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the position of a point
 ////////////////////////////////////////////////////////////
-void Shape::SetPointPosition(unsigned int Index, const Vector2f& Position)
+void Shape::SetPointPosition(unsigned int index, const Vector2f& position)
 {
-    myPoints[Index + 1].Position = Position;
+    myPoints[index + 1].Position = position;
     myIsCompiled = false;
 }
 
@@ -107,18 +107,18 @@ void Shape::SetPointPosition(unsigned int Index, const Vector2f& Position)
 ////////////////////////////////////////////////////////////
 /// Set the position of a point
 ////////////////////////////////////////////////////////////
-void Shape::SetPointPosition(unsigned int Index, float X, float Y)
+void Shape::SetPointPosition(unsigned int index, float x, float y)
 {
-    SetPointPosition(Index, Vector2f(X, Y));
+    SetPointPosition(index, Vector2f(x, y));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the color of a point
 ////////////////////////////////////////////////////////////
-void Shape::SetPointColor(unsigned int Index, const Color& Col)
+void Shape::SetPointColor(unsigned int index, const Color& color)
 {
-    myPoints[Index + 1].Col = Col;
+    myPoints[index + 1].Col = color;
     myIsCompiled = false;
 }
 
@@ -126,9 +126,9 @@ void Shape::SetPointColor(unsigned int Index, const Color& Col)
 ////////////////////////////////////////////////////////////
 /// Set the outline color of a point
 ////////////////////////////////////////////////////////////
-void Shape::SetPointOutlineColor(unsigned int Index, const Color& OutlineCol)
+void Shape::SetPointOutlineColor(unsigned int index, const Color& outlineColor)
 {
-    myPoints[Index + 1].OutlineCol = OutlineCol;
+    myPoints[index + 1].OutlineCol = outlineColor;
     myIsCompiled = false;
 }
 
@@ -136,36 +136,36 @@ void Shape::SetPointOutlineColor(unsigned int Index, const Color& OutlineCol)
 ////////////////////////////////////////////////////////////
 /// Change the width of the shape outline
 ////////////////////////////////////////////////////////////
-void Shape::SetOutlineWidth(float Width)
+void Shape::SetOutlineWidth(float width)
 {
-    myOutline = Width;
+    myOutline = width;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the position of a point
 ////////////////////////////////////////////////////////////
-const Vector2f& Shape::GetPointPosition(unsigned int Index) const
+const Vector2f& Shape::GetPointPosition(unsigned int index) const
 {
-    return myPoints[Index + 1].Position;
+    return myPoints[index + 1].Position;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the color of a point
 ////////////////////////////////////////////////////////////
-const Color& Shape::GetPointColor(unsigned int Index) const
+const Color& Shape::GetPointColor(unsigned int index) const
 {
-    return myPoints[Index + 1].Col;
+    return myPoints[index + 1].Col;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the outline color of a point
 ////////////////////////////////////////////////////////////
-const Color& Shape::GetPointOutlineColor(unsigned int Index) const
+const Color& Shape::GetPointOutlineColor(unsigned int index) const
 {
-    return myPoints[Index + 1].OutlineCol;
+    return myPoints[index + 1].OutlineCol;
 }
 
 
@@ -181,101 +181,100 @@ float Shape::GetOutlineWidth() const
 ////////////////////////////////////////////////////////////
 /// Create a shape made of a single line
 ////////////////////////////////////////////////////////////
-Shape Shape::Line(float P1X, float P1Y, float P2X, float P2Y, float Thickness, const Color& Col, float Outline, const Color& OutlineCol)
+Shape Shape::Line(float p1x, float p1y, float p2x, float p2y, float thickness, const Color& color, float outline, const Color& outlineColor)
 {
-    Vector2f P1(P1X, P1Y);
-    Vector2f P2(P2X, P2Y);
+    Vector2f p1(p1x, p1y);
+    Vector2f p2(p2x, p2y);
 
-    // Compute the extrusion direction
-    Vector2f Normal;
-    ComputeNormal(P1, P2, Normal);
-    Normal *= Thickness / 2;
-
-    // Create the shape's points
-    Shape S;
-    S.AddPoint(P1 - Normal, Col, OutlineCol);
-    S.AddPoint(P2 - Normal, Col, OutlineCol);
-    S.AddPoint(P2 + Normal, Col, OutlineCol);
-    S.AddPoint(P1 + Normal, Col, OutlineCol);
-    S.SetOutlineWidth(Outline);
-
-    // Compile it
-    S.Compile();
-
-    return S;
+    return Shape::Line(p1, p2, thickness, color, outline, outlineColor);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a shape made of a single line (use vectors)
 ////////////////////////////////////////////////////////////
-Shape Shape::Line(const Vector2f& P1, const Vector2f& P2, float Thickness, const Color& Col, float Outline, const Color& OutlineCol)
+Shape Shape::Line(const Vector2f& p1, const Vector2f& p2, float thickness, const Color& color, float outline, const Color& outlineColor)
 {
-    return Shape::Line(P1.x, P1.y, P2.x, P2.y, Thickness, Col, Outline, OutlineCol);
+    // Compute the extrusion direction
+    Vector2f normal;
+    ComputeNormal(p1, p2, normal);
+    normal *= thickness / 2;
+
+    // Create the shape's points
+    Shape shape;
+    shape.AddPoint(p1 - normal, color, outlineColor);
+    shape.AddPoint(p2 - normal, color, outlineColor);
+    shape.AddPoint(p2 + normal, color, outlineColor);
+    shape.AddPoint(p1 + normal, color, outlineColor);
+    shape.SetOutlineWidth(outline);
+
+    // Compile it
+    shape.Compile();
+
+    return shape;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a shape made of a single rectangle
 ////////////////////////////////////////////////////////////
-Shape Shape::Rectangle(float P1X, float P1Y, float P2X, float P2Y, const Color& Col, float Outline, const Color& OutlineCol)
+Shape Shape::Rectangle(float p1x, float p1y, float p2x, float p2y, const Color& color, float outline, const Color& outlineColor)
 {
     // Create the shape's points
-    Shape S;
-    S.AddPoint(Vector2f(P1X, P1Y), Col, OutlineCol);
-    S.AddPoint(Vector2f(P2X, P1Y), Col, OutlineCol);
-    S.AddPoint(Vector2f(P2X, P2Y), Col, OutlineCol);
-    S.AddPoint(Vector2f(P1X, P2Y), Col, OutlineCol);
-    S.SetOutlineWidth(Outline);
+    Shape shape;
+    shape.AddPoint(Vector2f(p1x, p1y), color, outlineColor);
+    shape.AddPoint(Vector2f(p2x, p1y), color, outlineColor);
+    shape.AddPoint(Vector2f(p2x, p2y), color, outlineColor);
+    shape.AddPoint(Vector2f(p1x, p2y), color, outlineColor);
+    shape.SetOutlineWidth(outline);
 
     // Compile it
-    S.Compile();
+    shape.Compile();
 
-    return S;
+    return shape;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a shape made of a single rectangle (use vectors)
 ////////////////////////////////////////////////////////////
-Shape Shape::Rectangle(const Vector2f& P1, const Vector2f& P2, const Color& Col, float Outline, const Color& OutlineCol)
+Shape Shape::Rectangle(const Vector2f& p1, const Vector2f& p2, const Color& color, float outline, const Color& outlineColor)
 {
-    return Shape::Rectangle(P1.x, P1.y, P2.x, P2.y, Col, Outline, OutlineCol);
+    return Shape::Rectangle(p1.x, p1.y, p2.x, p2.y, color, outline, outlineColor);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a shape made of a single circle
 ////////////////////////////////////////////////////////////
-Shape Shape::Circle(float X, float Y, float Radius, const Color& Col, float Outline, const Color& OutlineCol)
+Shape Shape::Circle(float x, float y, float radius, const Color& color, float outline, const Color& outlineColor)
 {
-    static const int NbSegments = 40;
-
-    // Create the points set
-    Shape S;
-    Vector2f Center(X, Y);
-    for (int i = 0; i < NbSegments; ++i)
-    {
-        float Angle = i * 2 * 3.141592654f / NbSegments;
-        Vector2f Offset(cos(Angle), sin(Angle));
-
-        S.AddPoint(Center + Offset * Radius, Col, OutlineCol);
-    }
-
-    // Compile it
-    S.SetOutlineWidth(Outline);
-    S.Compile();
-
-    return S;
+    return Shape::Circle(Vector2f(x, y), radius, color, outline, outlineColor);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a shape made of a single circle (use vectors)
 ////////////////////////////////////////////////////////////
-Shape Shape::Circle(const Vector2f& Center, float Radius, const Color& Col, float Outline, const Color& OutlineCol)
+Shape Shape::Circle(const Vector2f& center, float radius, const Color& color, float outline, const Color& outlineColor)
 {
-    return Shape::Circle(Center.x, Center.y, Radius, Col, Outline, OutlineCol);
+    static const int nbSegments = 40;
+
+    // Create the points set
+    Shape shape;
+    for (int i = 0; i < nbSegments; ++i)
+    {
+        float angle = i * 2 * 3.141592654f / nbSegments;
+        Vector2f offset(cos(angle), sin(angle));
+
+        shape.AddPoint(center + offset * radius, color, outlineColor);
+    }
+
+    // Compile it
+    shape.SetOutlineWidth(outline);
+    shape.Compile();
+
+    return shape;
 }
 
 
@@ -302,14 +301,14 @@ void Shape::Render(RenderTarget&) const
         {
             for (std::vector<Point>::const_iterator i = myPoints.begin(); i != myPoints.end(); ++i)
             {
-                Color PointColor = i->Col * GetColor();
-                glColor4f(PointColor.r / 255.f, PointColor.g / 255.f, PointColor.b / 255.f, PointColor.a / 255.f);
+                Color color = i->Col * GetColor();
+                glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
                 glVertex2f(i->Position.x, i->Position.y);
             }
 
             // Close the shape by duplicating the first point at the end
-            Color PointColor = myPoints[1].Col * GetColor();
-            glColor4f(PointColor.r / 255.f, PointColor.g / 255.f, PointColor.b / 255.f, PointColor.a / 255.f);
+            Color color = myPoints[1].Col * GetColor();
+            glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
             glVertex2f(myPoints[1].Position.x, myPoints[1].Position.y);
         }
         glEnd();
@@ -322,18 +321,18 @@ void Shape::Render(RenderTarget&) const
         {
             for (std::size_t i = 1; i < myPoints.size(); ++i)
             {
-                Color PointColor = myPoints[i].OutlineCol * GetColor();
-                glColor4f(PointColor.r / 255.f, PointColor.g / 255.f, PointColor.b / 255.f, PointColor.a / 255.f);
+                Color color = myPoints[i].OutlineCol * GetColor();
+                glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
                 glVertex2f(myPoints[i].Position.x, myPoints[i].Position.y);
-                glColor4f(PointColor.r / 255.f, PointColor.g / 255.f, PointColor.b / 255.f, PointColor.a / 255.f);
+                glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
                 glVertex2f(myPoints[i].Position.x + myPoints[i].Normal.x * myOutline, myPoints[i].Position.y + myPoints[i].Normal.y * myOutline);
             }
 
             // Close the shape by duplicating the first point at the end
-            Color PointColor = myPoints[1].OutlineCol * GetColor();
-            glColor4f(PointColor.r / 255.f, PointColor.g / 255.f, PointColor.b / 255.f, PointColor.a / 255.f);
+            Color color = myPoints[1].OutlineCol * GetColor();
+            glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
             glVertex2f(myPoints[1].Position.x, myPoints[1].Position.y);
-            glColor4f(PointColor.r / 255.f, PointColor.g / 255.f, PointColor.b / 255.f, PointColor.a / 255.f);
+            glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
             glVertex2f(myPoints[1].Position.x + myPoints[1].Normal.x * myOutline, myPoints[1].Position.y + myPoints[1].Normal.y * myOutline);
         }
         glEnd();
@@ -347,44 +346,44 @@ void Shape::Render(RenderTarget&) const
 void Shape::Compile()
 {
     // Compute the center
-    float NbPoints = static_cast<float>(myPoints.size() - 1);
-    float R = 0, G = 0, B = 0, A = 0;
-    Point Center(Vector2f(0, 0), Color(0, 0, 0, 0));
+    float nbPoints = static_cast<float>(myPoints.size() - 1);
+    float r = 0, g = 0, b = 0, a = 0;
+    Point center(Vector2f(0, 0), Color(0, 0, 0, 0));
     for (std::size_t i = 1; i < myPoints.size(); ++i)
     {
-        Center.Position += myPoints[i].Position / NbPoints;
-        R += myPoints[i].Col.r / NbPoints;
-        G += myPoints[i].Col.g / NbPoints;
-        B += myPoints[i].Col.b / NbPoints;
-        A += myPoints[i].Col.a / NbPoints;
+        center.Position += myPoints[i].Position / nbPoints;
+        r += myPoints[i].Col.r / nbPoints;
+        g += myPoints[i].Col.g / nbPoints;
+        b += myPoints[i].Col.b / nbPoints;
+        a += myPoints[i].Col.a / nbPoints;
     }
-    Center.Col.r = static_cast<Uint8>(R);
-    Center.Col.g = static_cast<Uint8>(G);
-    Center.Col.b = static_cast<Uint8>(B);
-    Center.Col.a = static_cast<Uint8>(A);
-    myPoints[0] = Center;
+    center.Col.r = static_cast<Uint8>(r);
+    center.Col.g = static_cast<Uint8>(g);
+    center.Col.b = static_cast<Uint8>(b);
+    center.Col.a = static_cast<Uint8>(a);
+    myPoints[0] = center;
 
     // Compute the outline
     for (std::size_t i = 1; i < myPoints.size(); ++i)
     {
         // Get the two segments shared by the current point
-        Point& P0 = (i == 1) ? myPoints[myPoints.size() - 1] : myPoints[i - 1];
-        Point& P1 = myPoints[i];
-        Point& P2 = (i == myPoints.size() - 1) ? myPoints[1] : myPoints[i + 1];
+        Point& p0 = (i == 1) ? myPoints[myPoints.size() - 1] : myPoints[i - 1];
+        Point& p1 = myPoints[i];
+        Point& p2 = (i == myPoints.size() - 1) ? myPoints[1] : myPoints[i + 1];
 
         // Compute their normal
-        Vector2f Normal1, Normal2;
-        if (!ComputeNormal(P0.Position, P1.Position, Normal1) || !ComputeNormal(P1.Position, P2.Position, Normal2))
+        Vector2f normal1, normal2;
+        if (!ComputeNormal(p0.Position, p1.Position, normal1) || !ComputeNormal(p1.Position, p2.Position, normal2))
             continue;
 
         // Add them to get the extrusion direction
-        float Factor = 1.f + (Normal1.x * Normal2.x + Normal1.y * Normal2.y);
-        P1.Normal = (Normal1 + Normal2) / Factor;
+        float factor = 1.f + (normal1.x * normal2.x + normal1.y * normal2.y);
+        p1.Normal = (normal1 + normal2) / factor;
 
         // Make sure it points towards the outside of the shape
-        float Dot = (P1.Position.x - Center.Position.x) * P1.Normal.x + (P1.Position.y - Center.Position.y) * P1.Normal.y;
-        if (Dot < 0)
-            P1.Normal = -P1.Normal;
+        float dot = (p1.Position.x - center.Position.x) * p1.Normal.x + (p1.Position.y - center.Position.y) * p1.Normal.y;
+        if (dot < 0)
+            p1.Normal = -p1.Normal;
     }
 
     myIsCompiled = true;
@@ -394,17 +393,17 @@ void Shape::Compile()
 ////////////////////////////////////////////////////////////
 /// Compute the normal of a given 2D segment
 ////////////////////////////////////////////////////////////
-bool Shape::ComputeNormal(const Vector2f& P1, const Vector2f& P2, Vector2f& Normal)
+bool Shape::ComputeNormal(const Vector2f& p1, const Vector2f& p2, Vector2f& normal)
 {
-    Normal.x = P1.y - P2.y;
-    Normal.y = P2.x - P1.x;
+    normal.x = p1.y - p2.y;
+    normal.y = p2.x - p1.x;
 
-    float Len = sqrt(Normal.x * Normal.x + Normal.y * Normal.y);
-    if (Len == 0.f)
+    float len = sqrt(normal.x * normal.x + normal.y * normal.y);
+    if (len == 0.f)
         return false;
 
-    Normal.x /= Len;
-    Normal.y /= Len;
+    normal.x /= len;
+    normal.y /= len;
 
     return true;
 }
@@ -413,11 +412,11 @@ bool Shape::ComputeNormal(const Vector2f& P1, const Vector2f& P2, Vector2f& Norm
 ////////////////////////////////////////////////////////////
 /// Default constructor for Point
 ////////////////////////////////////////////////////////////
-Shape::Point::Point(const Vector2f& Pos, const Color& C, const Color& OutlineC) :
-Position  (Pos),
+Shape::Point::Point(const Vector2f& position, const Color& color, const Color& outlineColor) :
+Position  (position),
 Normal    (0.f, 0.f),
-Col       (C),
-OutlineCol(OutlineC)
+Col       (color),
+OutlineCol(outlineColor)
 {
 
 }

@@ -36,13 +36,13 @@
 ////////////////////////////////////////////////////////////
 sfVideoMode sfVideoMode_GetDesktopMode()
 {
-    sf::VideoMode Desktop = sf::VideoMode::GetDesktopMode();
-    sfVideoMode Ret;
-    Ret.Width        = Desktop.Width;
-    Ret.Height       = Desktop.Height;
-    Ret.BitsPerPixel = Desktop.BitsPerPixel;
+    sf::VideoMode desktop = sf::VideoMode::GetDesktopMode();
+    sfVideoMode ret;
+    ret.Width        = desktop.Width;
+    ret.Height       = desktop.Height;
+    ret.BitsPerPixel = desktop.BitsPerPixel;
 
-    return Ret;
+    return ret;
 }
 
 
@@ -51,15 +51,15 @@ sfVideoMode sfVideoMode_GetDesktopMode()
 /// Index must be in range [0, GetModesCount()[
 /// Modes are sorted from best to worst
 ////////////////////////////////////////////////////////////
-sfVideoMode sfVideoMode_GetMode(size_t Index)
+sfVideoMode sfVideoMode_GetMode(size_t index)
 {
-    sf::VideoMode Mode = sf::VideoMode::GetMode(Index);
-    sfVideoMode Ret;
-    Ret.Width        = Mode.Width;
-    Ret.Height       = Mode.Height;
-    Ret.BitsPerPixel = Mode.BitsPerPixel;
+    sf::VideoMode mode = sf::VideoMode::GetMode(index);
+    sfVideoMode ret;
+    ret.Width        = mode.Width;
+    ret.Height       = mode.Height;
+    ret.BitsPerPixel = mode.BitsPerPixel;
 
-    return Ret;
+    return ret;
 }
 
 
@@ -75,8 +75,8 @@ size_t sfVideoMode_GetModesCount()
 ////////////////////////////////////////////////////////////
 /// Tell whether or not a video mode is supported
 ////////////////////////////////////////////////////////////
-sfBool sfVideoMode_IsValid(sfVideoMode Mode)
+sfBool sfVideoMode_IsValid(sfVideoMode mode)
 {
-    sf::VideoMode VideoMode(Mode.Width, Mode.Height, Mode.BitsPerPixel);
-    return VideoMode.IsValid() ? sfTrue : sfFalse;
+    sf::VideoMode videoMode(mode.Width, mode.Height, mode.BitsPerPixel);
+    return videoMode.IsValid() ? sfTrue : sfFalse;
 }

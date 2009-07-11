@@ -28,34 +28,34 @@
 /// to an ANSI characters range, using the given locale
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-inline Out Unicode::UTF32ToANSI(In Begin, In End, Out Output, char Replacement, const std::locale& Locale)
+inline Out Unicode::UTF32ToANSI(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
     #ifdef __MINGW32__
 
         // MinGW has a almost no support for unicode stuff
         // As a consequence, the MinGW version of this function can only use the default locale
         // and ignores the one passed as parameter
-        while (Begin < End)
+        while (begin < end)
         {
-            char Char = 0;
-            if (wctomb(&Char, static_cast<wchar_t>(*Begin++)) >= 0)
-                *Output++ = Char;
-            else if (Replacement)
-                *Output++ = Replacement;
+            char character = 0;
+            if (wctomb(&character, static_cast<wchar_t>(*begin++)) >= 0)
+                *output++ = character;
+            else if (replacement)
+                *output++ = replacement;
         }
 
     #else
 
         // Get the facet of the locale which deals with character conversion
-        const std::ctype<wchar_t>& Facet = std::use_facet< std::ctype<wchar_t> >(Locale);
+        const std::ctype<wchar_t>& facet = std::use_facet< std::ctype<wchar_t> >(locale);
 
         // Use the facet to convert each character of the input string
-        while (Begin < End)
-            *Output++ = Facet.narrow(static_cast<wchar_t>(*Begin++), Replacement);
+        while (begin < end)
+            *output++ = facet.narrow(static_cast<wchar_t>(*begin++), replacement);
 
     #endif
 
-    return Output;
+    return output;
 }
 
 
@@ -64,33 +64,33 @@ inline Out Unicode::UTF32ToANSI(In Begin, In End, Out Output, char Replacement, 
 /// to an UTF-32 characters range, using the given locale
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-inline Out Unicode::ANSIToUTF32(In Begin, In End, Out Output, const std::locale& Locale)
+inline Out Unicode::ANSIToUTF32(In begin, In end, Out output, const std::locale& locale)
 {
     #ifdef __MINGW32__
 
         // MinGW has a almost no support for unicode stuff
         // As a consequence, the MinGW version of this function can only use the default locale
         // and ignores the one passed as parameter
-        while (Begin < End)
+        while (begin < end)
         {
-            wchar_t Char = 0;
-            mbtowc(&Char, &*Begin, 1);
+            wchar_t character = 0;
+            mbtowc(&character, &*begin, 1);
             Begin++;
-            *Output++ = static_cast<Uint32>(Char);
+            *output++ = static_cast<Uint32>(character);
         }
 
     #else
 
         // Get the facet of the locale which deals with character conversion
-        const std::ctype<wchar_t>& Facet = std::use_facet< std::ctype<wchar_t> >(Locale);
+        const std::ctype<wchar_t>& facet = std::use_facet< std::ctype<wchar_t> >(locale);
 
         // Use the facet to convert each character of the input string
-        while (Begin < End)
-            *Output++ = static_cast<Uint32>(Facet.widen(*Begin++));
+        while (begin < end)
+            *output++ = static_cast<Uint32>(facet.widen(*begin++));
 
     #endif
 
-    return Output;
+    return output;
 }
 
 
@@ -99,59 +99,59 @@ inline Out Unicode::ANSIToUTF32(In Begin, In End, Out Output, const std::locale&
 /// to an UTF-16 characters range, using the given locale
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-inline Out Unicode::UTF8ToUTF16(In Begin, In End, Out Output, Uint16 Replacement)
+inline Out Unicode::UTF8ToUTF16(In begin, In end, Out output, Uint16 replacement)
 {
-    while (Begin < End)
+    while (begin < end)
     {
-        Uint32 c = 0;
-        int TrailingBytes = UTF8TrailingBytes[static_cast<int>(*Begin)];
-        if (Begin + TrailingBytes < End)
+        Uint32 character = 0;
+        int trailingBytes = UTF8TrailingBytes[static_cast<int>(*begin)];
+        if (begin + trailingBytes < end)
         {
             // First decode the UTF-8 character
-            switch (TrailingBytes)
+            switch (trailingBytes)
             {
-                case 5 : c += *Begin++; c <<= 6;
-                case 4 : c += *Begin++; c <<= 6;
-                case 3 : c += *Begin++; c <<= 6;
-                case 2 : c += *Begin++; c <<= 6;
-                case 1 : c += *Begin++; c <<= 6;
-                case 0 : c += *Begin++;
+                case 5 : character += *begin++; character <<= 6;
+                case 4 : character += *begin++; character <<= 6;
+                case 3 : character += *begin++; character <<= 6;
+                case 2 : character += *begin++; character <<= 6;
+                case 1 : character += *begin++; character <<= 6;
+                case 0 : character += *begin++;
             }
-	        c -= UTF8Offsets[TrailingBytes];
+	        character -= UTF8Offsets[trailingBytes];
 
             // Then encode it in UTF-16
-            if (c < 0xFFFF)
+            if (character < 0xFFFF)
             {
                 // Character can be converted directly to 16 bits, just need to check it's in the valid range
-                if ((c >= 0xD800) && (c <= 0xDFFF))
+                if ((character >= 0xD800) && (character <= 0xDFFF))
                 {
                     // Invalid character (this range is reserved)
-                    if (Replacement)
-                        *Output++ = Replacement;
+                    if (replacement)
+                        *output++ = replacement;
                 }
                 else
                 {
                     // Valid character directly convertible to 16 bits
-                    *Output++ = static_cast<Uint16>(c);
+                    *Output++ = static_cast<Uint16>(character);
                 }
             }
-            else if (c > 0x0010FFFF)
+            else if (character > 0x0010FFFF)
             {
                 // Invalid character (greater than the maximum unicode value)
-                if (Replacement)
-                    *Output++ = Replacement;
+                if (replacement)
+                    *output++ = replacement;
             }
             else
             {
                 // Character will be converted to 2 UTF-16 elements
-                c -= 0x0010000;
-                *Output++ = static_cast<Uint16>((c >> 10)     + 0xD800);
-                *Output++ = static_cast<Uint16>((c & 0x3FFUL) + 0xDC00);
+                character -= 0x0010000;
+                *output++ = static_cast<Uint16>((character >> 10)     + 0xD800);
+                *output++ = static_cast<Uint16>((character & 0x3FFUL) + 0xDC00);
             }
         }
     }
 
-    return Output;
+    return output;
 }
 
 
@@ -160,42 +160,42 @@ inline Out Unicode::UTF8ToUTF16(In Begin, In End, Out Output, Uint16 Replacement
 /// to an UTF-32 characters range, using the given locale
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-inline Out Unicode::UTF8ToUTF32(In Begin, In End, Out Output, Uint32 Replacement)
+inline Out Unicode::UTF8ToUTF32(In begin, In end, Out output, Uint32 replacement)
 {
-    while (Begin < End)
+    while (begin < end)
     {
-        Uint32 c = 0;
-        int TrailingBytes = UTF8TrailingBytes[static_cast<int>(*Begin)];
-        if (Begin + TrailingBytes < End)
+        Uint32 character = 0;
+        int trailingBytes = UTF8TrailingBytes[static_cast<int>(*begin)];
+        if (begin + trailingBytes < end)
         {
             // First decode the UTF-8 character
-            switch (TrailingBytes)
+            switch (trailingBytes)
             {
-                case 5 : c += *Begin++; c <<= 6;
-                case 4 : c += *Begin++; c <<= 6;
-                case 3 : c += *Begin++; c <<= 6;
-                case 2 : c += *Begin++; c <<= 6;
-                case 1 : c += *Begin++; c <<= 6;
-                case 0 : c += *Begin++;
+                case 5 : character += *begin++; character <<= 6;
+                case 4 : character += *begin++; character <<= 6;
+                case 3 : character += *begin++; character <<= 6;
+                case 2 : character += *begin++; character <<= 6;
+                case 1 : character += *begin++; character <<= 6;
+                case 0 : character += *begin++;
             }
-	        c -= UTF8Offsets[TrailingBytes];
+	        character -= UTF8Offsets[trailingBytes];
 
             // Then write it if valid
-            if ((c < 0xD800) || (c > 0xDFFF))
+            if ((character < 0xD800) || (character > 0xDFFF))
             {
                 // Valid UTF-32 character
-                *Output++ = c;
+                *output++ = character;
             }
             else
             {
                 // Invalid UTF-32 character
-                if (Replacement)
-                    *Output++ = Replacement;
+                if (replacement)
+                    *output++ = replacement;
             }
         }
     }
 
-    return Output;
+    return output;
 }
 
 
@@ -204,71 +204,71 @@ inline Out Unicode::UTF8ToUTF32(In Begin, In End, Out Output, Uint32 Replacement
 /// to an UTF-8 characters range, using the given locale
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-inline Out Unicode::UTF16ToUTF8(In Begin, In End, Out Output, Uint8 Replacement)
+inline Out Unicode::UTF16ToUTF8(In begin, In end, Out output, Uint8 replacement)
 {
-    while (Begin < End)
+    while (begin < end)
     {
-        Uint32 c = *Begin++;
+        Uint32 character = *begin++;
 
         // If it's a surrogate pair, first convert to a single UTF-32 character
-        if ((c >= 0xD800) && (c <= 0xDBFF))
+        if ((character >= 0xD800) && (character <= 0xDBFF))
         {
-            if (Begin < End)
+            if (begin < end)
             {
                 // The second element is valid : convert the two elements to a UTF-32 character
-                Uint32 d = *Begin++;
+                Uint32 d = *begin++;
                 if ((d >= 0xDC00) && (d <= 0xDFFF))
-                    c = static_cast<Uint32>(((c - 0xD800) << 10) + (d - 0xDC00) + 0x0010000);
+                    character = static_cast<Uint32>(((character - 0xD800) << 10) + (d - 0xDC00) + 0x0010000);
             }
             else
             {
                 // Invalid second element
-                if (Replacement)
-                    *Output++ = Replacement;
+                if (replacement)
+                    *output++ = replacement;
             }
         }
 
         // Then convert to UTF-8
-        if (c > 0x0010FFFF)
+        if (character > 0x0010FFFF)
         {
             // Invalid character (greater than the maximum unicode value)
-            if (Replacement)
-                *Output++ = Replacement;
+            if (replacement)
+                *output++ = replacement;
         }
         else
         {
             // Valid character
 
             // Get number of bytes to write
-            int BytesToWrite = 1;
-            if      (c <  0x80)       BytesToWrite = 1;
-            else if (c <  0x800)      BytesToWrite = 2;
-            else if (c <  0x10000)    BytesToWrite = 3;
-            else if (c <= 0x0010FFFF) BytesToWrite = 4;
+            int bytesToWrite = 1;
+            if      (character <  0x80)       bytesToWrite = 1;
+            else if (character <  0x800)      bytesToWrite = 2;
+            else if (character <  0x10000)    bytesToWrite = 3;
+            else if (character <= 0x0010FFFF) bytesToWrite = 4;
 
             // Extract bytes to write
-            Uint8 Bytes[4];
-            switch (BytesToWrite)
+            Uint8 bytes[4];
+            switch (bytesToWrite)
             {
-                case 4 : Bytes[3] = static_cast<Uint8>((c | 0x80) & 0xBF); c >>= 6;
-                case 3 : Bytes[2] = static_cast<Uint8>((c | 0x80) & 0xBF); c >>= 6;
-                case 2 : Bytes[1] = static_cast<Uint8>((c | 0x80) & 0xBF); c >>= 6;
-                case 1 : Bytes[0] = static_cast<Uint8> (c | UTF8FirstBytes[BytesToWrite]);
+                case 4 : bytes[3] = static_cast<Uint8>((character | 0x80) & 0xBF); character >>= 6;
+                case 3 : bytes[2] = static_cast<Uint8>((character | 0x80) & 0xBF); character >>= 6;
+                case 2 : bytes[1] = static_cast<Uint8>((character | 0x80) & 0xBF); character >>= 6;
+                case 1 : bytes[0] = static_cast<Uint8> (character | UTF8FirstBytes[bytesToWrite]);
             }
 
             // Add them to the output
-            const Uint8* CurByte = Bytes;
-            switch (BytesToWrite)
+            const Uint8* currentByte = bytes;
+            switch (bytesToWrite)
             {
-                case 4 : *Output++ = *CurByte++;
-                case 3 : *Output++ = *CurByte++;
-                case 2 : *Output++ = *CurByte++;
-                case 1 : *Output++ = *CurByte++;
+                case 4 : *output++ = *currentByte++;
+                case 3 : *output++ = *currentByte++;
+                case 2 : *output++ = *currentByte++;
+                case 1 : *output++ = *currentByte++;
             }
         }
     }
 
-    return Output;
+    return output;
 }
 
 
@@ -277,44 +277,44 @@ inline Out Unicode::UTF16ToUTF8(In Begin, In End, Out Output, Uint8 Replacement)
 /// to an UTF-32 characters range, using the given locale
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-inline Out Unicode::UTF16ToUTF32(In Begin, In End, Out Output, Uint32 Replacement)
+inline Out Unicode::UTF16ToUTF32(In begin, In end, Out output, Uint32 replacement)
 {
-    while (Begin < End)
+    while (begin < end)
     {
-        Uint16 c = *Begin++;
-        if ((c >= 0xD800) && (c <= 0xDBFF))
+        Uint16 character = *begin++;
+        if ((character >= 0xD800) && (character <= 0xDBFF))
         {
             // We have a surrogate pair, ie. a character composed of two elements
-            if (Begin < End)
+            if (begin < end)
             {
-                Uint16 d = *Begin++;
+                Uint16 d = *begin++;
                 if ((d >= 0xDC00) && (d <= 0xDFFF))
                 {
                     // The second element is valid : convert the two elements to a UTF-32 character
-                    *Output++ = static_cast<Uint32>(((c - 0xD800) << 10) + (d - 0xDC00) + 0x0010000);
+                    *output++ = static_cast<Uint32>(((character - 0xD800) << 10) + (d - 0xDC00) + 0x0010000);
                 }
                 else
                 {
                     // Invalid second element
-                    if (Replacement)
-                        *Output++ = Replacement;
+                    if (replacement)
+                        *output++ = replacement;
                 }
             }
         }
-        else if ((c >= 0xDC00) && (c <= 0xDFFF))
+        else if ((character >= 0xDC00) && (character <= 0xDFFF))
         {
             // Invalid character
-            if (Replacement)
-                *Output++ = Replacement;
+            if (replacement)
+                *output++ = replacement;
         }
         else
         {
             // Valid character directly convertible to UTF-32
-            *Output++ = static_cast<Uint32>(c);
+            *output++ = static_cast<Uint32>(character);
         }
     }
 
-    return Output;
+    return output;
 }
 
 
@@ -323,51 +323,51 @@ inline Out Unicode::UTF16ToUTF32(In Begin, In End, Out Output, Uint32 Replacemen
 /// to an UTF-8 characters range, using the given locale
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-inline Out Unicode::UTF32ToUTF8(In Begin, In End, Out Output, Uint8 Replacement)
+inline Out Unicode::UTF32ToUTF8(In begin, In end, Out output, Uint8 replacement)
 {
-    while (Begin < End)
+    while (begin < end)
     {
-        Uint32 c = *Begin++;
-        if (c > 0x0010FFFF)
+        Uint32 character = *begin++;
+        if (character > 0x0010FFFF)
         {
             // Invalid character (greater than the maximum unicode value)
-            if (Replacement)
-                *Output++ = Replacement;
+            if (replacement)
+                *output++ = replacement;
         }
         else
         {
             // Valid character
 
             // Get number of bytes to write
-            int BytesToWrite = 1;
-            if      (c <  0x80)       BytesToWrite = 1;
-            else if (c <  0x800)      BytesToWrite = 2;
-            else if (c <  0x10000)    BytesToWrite = 3;
-            else if (c <= 0x0010FFFF) BytesToWrite = 4;
+            int bytesToWrite = 1;
+            if      (character <  0x80)       bytesToWrite = 1;
+            else if (character <  0x800)      bytesToWrite = 2;
+            else if (character <  0x10000)    bytesToWrite = 3;
+            else if (character <= 0x0010FFFF) bytesToWrite = 4;
 
             // Extract bytes to write
-            Uint8 Bytes[4];
-            switch (BytesToWrite)
+            Uint8 bytes[4];
+            switch (bytesToWrite)
             {
-                case 4 : Bytes[3] = static_cast<Uint8>((c | 0x80) & 0xBF); c >>= 6;
-                case 3 : Bytes[2] = static_cast<Uint8>((c | 0x80) & 0xBF); c >>= 6;
-                case 2 : Bytes[1] = static_cast<Uint8>((c | 0x80) & 0xBF); c >>= 6;
-                case 1 : Bytes[0] = static_cast<Uint8> (c | UTF8FirstBytes[BytesToWrite]);
+                case 4 : bytes[3] = static_cast<Uint8>((character | 0x80) & 0xBF); character >>= 6;
+                case 3 : bytes[2] = static_cast<Uint8>((character | 0x80) & 0xBF); character >>= 6;
+                case 2 : bytes[1] = static_cast<Uint8>((character | 0x80) & 0xBF); character >>= 6;
+                case 1 : bytes[0] = static_cast<Uint8> (character | UTF8FirstBytes[bytesToWrite]);
             }
 
             // Add them to the output
-            const Uint8* CurByte = Bytes;
-            switch (BytesToWrite)
+            const Uint8* currentByte = bytes;
+            switch (bytesToWrite)
             {
-                case 4 : *Output++ = *CurByte++;
-                case 3 : *Output++ = *CurByte++;
-                case 2 : *Output++ = *CurByte++;
-                case 1 : *Output++ = *CurByte++;
+                case 4 : *output++ = *currentByte++;
+                case 3 : *output++ = *currentByte++;
+                case 2 : *output++ = *currentByte++;
+                case 1 : *output++ = *currentByte++;
             }
         }
     }
 
-    return Output;
+    return output;
 }
 
 
@@ -376,42 +376,42 @@ inline Out Unicode::UTF32ToUTF8(In Begin, In End, Out Output, Uint8 Replacement)
 /// to an UTF-16 characters range, using the given locale
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-inline Out Unicode::UTF32ToUTF16(In Begin, In End, Out Output, Uint16 Replacement)
+inline Out Unicode::UTF32ToUTF16(In begin, In end, Out output, Uint16 replacement)
 {
-    while (Begin < End)
+    while (begin < end)
     {
-        Uint32 c = *Begin++;
-        if (c < 0xFFFF)
+        Uint32 character = *begin++;
+        if (character < 0xFFFF)
         {
             // Character can be converted directly to 16 bits, just need to check it's in the valid range
-            if ((c >= 0xD800) && (c <= 0xDFFF))
+            if ((character >= 0xD800) && (character <= 0xDFFF))
             {
                 // Invalid character (this range is reserved)
-                if (Replacement)
-                    *Output++ = Replacement;
+                if (replacement)
+                    *output++ = replacement;
             }
             else
             {
                 // Valid character directly convertible to 16 bits
-                *Output++ = static_cast<Uint16>(c);
+                *output++ = static_cast<Uint16>(character);
             }
         }
-        else if (c > 0x0010FFFF)
+        else if (character > 0x0010FFFF)
         {
             // Invalid character (greater than the maximum unicode value)
-            if (Replacement)
-                *Output++ = Replacement;
+            if (replacement)
+                *output++ = replacement;
         }
         else
         {
             // Character will be converted to 2 UTF-16 elements
-            c -= 0x0010000;
-            *Output++ = static_cast<Uint16>((c >> 10)     + 0xD800);
-            *Output++ = static_cast<Uint16>((c & 0x3FFUL) + 0xDC00);
+            character -= 0x0010000;
+            *output++ = static_cast<Uint16>((character >> 10)     + 0xD800);
+            *output++ = static_cast<Uint16>((character & 0x3FFUL) + 0xDC00);
         }
     }
 
-    return Output;
+    return output;
 }
 
 
@@ -419,19 +419,19 @@ inline Out Unicode::UTF32ToUTF16(In Begin, In End, Out Output, Uint16 Replacemen
 /// Get the number of characters composing an UTF-8 string
 ////////////////////////////////////////////////////////////
 template <typename In>
-inline std::size_t Unicode::GetUTF8Length(In Begin, In End)
+inline std::size_t Unicode::GetUTF8Length(In begin, In end)
 {
-    std::size_t Length = 0;
-    while (Begin < End)
+    std::size_t length = 0;
+    while (begin < end)
     {
-        int NbBytes = UTF8TrailingBytes[static_cast<int>(*Begin)];
-        if (Begin + NbBytes < End)
-            ++Length;
+        int nbBytes = UTF8TrailingBytes[static_cast<int>(*begin)];
+        if (begin + nbBytes < end)
+            ++length;
 
-        Begin += NbBytes + 1;
+        begin += nbBytes + 1;
     }
 
-    return Length;
+    return length;
 }
 
 
@@ -439,28 +439,28 @@ inline std::size_t Unicode::GetUTF8Length(In Begin, In End)
 /// Get the number of characters composing an UTF-16 string
 ////////////////////////////////////////////////////////////
 template <typename In>
-inline std::size_t Unicode::GetUTF16Length(In Begin, In End)
+inline std::size_t Unicode::GetUTF16Length(In begin, In end)
 {
-    std::size_t Length = 0;
-    while (Begin < End)
+    std::size_t length = 0;
+    while (begin < end)
     {
-        if ((*Begin >= 0xD800) && (*Begin <= 0xDBFF))
+        if ((*begin >= 0xD800) && (*begin <= 0xDBFF))
         {
-            ++Begin;
-            if ((Begin < End) && ((*Begin >= 0xDC00) && (*Begin <= 0xDFFF)))
+            ++begin;
+            if ((begin < end) && ((*begin >= 0xDC00) && (*begin <= 0xDFFF)))
             {
-                ++Length;
+                ++length;
             }
         }
         else
         {
-            ++Length;
+            ++length;
         }
 
-        ++Begin;
+        ++begin;
     }
 
-    return Length;
+    return length;
 }
 
 
@@ -468,7 +468,7 @@ inline std::size_t Unicode::GetUTF16Length(In Begin, In End)
 /// Get the number of characters composing an UTF-32 string
 ////////////////////////////////////////////////////////////
 template <typename In>
-inline std::size_t Unicode::GetUTF32Length(In Begin, In End)
+inline std::size_t Unicode::GetUTF32Length(In begin, In end)
 {
-    return End - Begin;
+    return end - begin;
 }

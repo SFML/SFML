@@ -34,8 +34,8 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Construct the lock with a target mutex (lock it)
 ////////////////////////////////////////////////////////////
-Lock::Lock(Mutex& Mutex) :
-myMutex(Mutex)
+Lock::Lock(Mutex& mutex) :
+myMutex(mutex)
 {
     myMutex.Lock();
 }

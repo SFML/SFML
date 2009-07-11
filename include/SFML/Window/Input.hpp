@@ -54,33 +54,33 @@ public :
     ////////////////////////////////////////////////////////////
     /// Get the state of a key
     ///
-    /// \param KeyCode : Key to check
+    /// \param key : Key to check
     ///
     /// \return True if key is down, false if key is up
     ///
     ////////////////////////////////////////////////////////////
-    bool IsKeyDown(Key::Code KeyCode) const;
+    bool IsKeyDown(Key::Code key) const;
 
     ////////////////////////////////////////////////////////////
     /// Get the state of a mouse button
     ///
-    /// \param Button : Button to check
+    /// \param button : Button to check
     ///
     /// \return True if button is down, false if button is up
     ///
     ////////////////////////////////////////////////////////////
-    bool IsMouseButtonDown(Mouse::Button Button) const;
+    bool IsMouseButtonDown(Mouse::Button button) const;
 
     ////////////////////////////////////////////////////////////
     /// Get the state of a joystick button
     ///
-    /// \param JoyId :  Identifier of the joystick to check (0 or 1)
-    /// \param Button : Button to check
+    /// \param joystick : Identifier of the joystick to check (0 or 1)
+    /// \param button :   Button to check
     ///
     /// \return True if button is down, false if button is up
     ///
     ////////////////////////////////////////////////////////////
-    bool IsJoystickButtonDown(unsigned int JoyId, unsigned int Button) const;
+    bool IsJoystickButtonDown(unsigned int joystick, unsigned int button) const;
 
     ////////////////////////////////////////////////////////////
     /// Get the mouse X position
@@ -101,13 +101,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// Get a joystick axis position
     ///
-    /// \param JoyId : Identifier of the joystick to check (0 or 1)
-    /// \param Axis :  Axis to get
+    /// \param joystick : Identifier of the joystick to check (0 or 1)
+    /// \param axis :     Axis to get
     ///
     /// \return Current axis position, in the range [-100, 100] (except for POV, which is [0, 360])
     ///
     ////////////////////////////////////////////////////////////
-    float GetJoystickAxis(unsigned int JoyId, Joy::Axis Axis) const;
+    float GetJoystickAxis(unsigned int joystick, Joy::Axis axis) const;
 
 private :
 
@@ -115,7 +115,7 @@ private :
     /// /see WindowListener::OnEvent
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnEvent(const Event& EventReceived);
+    virtual void OnEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     // Member data

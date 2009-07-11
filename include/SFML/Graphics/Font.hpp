@@ -64,27 +64,27 @@ public :
     ////////////////////////////////////////////////////////////
     /// Load the font from a file
     ///
-    /// \param Filename : Font file to load
-    /// \param CharSize : Size of characters in bitmap - the bigger, the higher quality (30 by default)
-    /// \param Charset :  Characters set to generate (by default, contains the ISO-8859-1 printable characters)
+    /// \param filename : Font file to load
+    /// \param charSize : Size of characters in bitmap - the bigger, the higher quality (30 by default)
+    /// \param charset :  Characters set to generate (by default, contains the ISO-8859-1 printable characters)
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& Filename, unsigned int CharSize = 30, const Unicode::Text& Charset = ourDefaultCharset);
+    bool LoadFromFile(const std::string& filename, unsigned int charSize = 30, const Unicode::Text& charset = ourDefaultCharset);
 
     ////////////////////////////////////////////////////////////
     /// Load the font from a file in memory
     ///
-    /// \param Data :        Pointer to the data to load
-    /// \param SizeInBytes : Size of the data, in bytes
-    /// \param CharSize :    Size of characters in bitmap - the bigger, the higher quality (30 by default)
-    /// \param Charset :     Characters set to generate (by default, contains the ISO-8859-1 printable characters)
+    /// \param data :        Pointer to the data to load
+    /// \param sizeInBytes : Size of the data, in bytes
+    /// \param charSize :    Size of characters in bitmap - the bigger, the higher quality (30 by default)
+    /// \param charset :     Characters set to generate (by default, contains the ISO-8859-1 printable characters)
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const char* Data, std::size_t SizeInBytes, unsigned int CharSize = 30, const Unicode::Text& Charset = ourDefaultCharset);
+    bool LoadFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize = 30, const Unicode::Text& charset = ourDefaultCharset);
 
     ////////////////////////////////////////////////////////////
     /// Get the base size of characters in the font;
@@ -99,12 +99,12 @@ public :
     /// Get the description of a glyph (character)
     /// given by its unicode value
     ///
-    /// \param CodePoint : Unicode value of the character to get
+    /// \param codePoint : Unicode value of the character to get
     ///
     /// \return Glyph's visual settings, or an invalid glyph if character not found
     ///
     ////////////////////////////////////////////////////////////
-    const Glyph& GetGlyph(Uint32 CodePoint) const;
+    const Glyph& GetGlyph(Uint32 codePoint) const;
 
     ////////////////////////////////////////////////////////////
     /// Get the image containing the rendered characters (glyphs)

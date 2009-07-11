@@ -22,12 +22,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the QSFMLCanvas
     ///
-    /// \param Size :      Initial size of the widget
-    /// \param FrameTime : Frame duration, in milliseconds (0 by default)
-    /// \param Parent :    Parent of the widget (NULL by default)
+    /// \param size :      Initial size of the widget
+    /// \param frameTime : Frame duration, in milliseconds (0 by default)
+    /// \param parent :    Parent of the widget (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
-    QSFMLCanvas(const QSize& Size, unsigned int FrameTime = 0, QWidget* Parent = NULL);
+    QSFMLCanvas(const QSize& size, unsigned int frameTime = 0, QWidget* parent = NULL);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -62,8 +62,10 @@ private :
     /// we use it to catch the Polish event and initialize
     /// our SFML window
     ///
+    /// \param event : Event's attributes
+    ///
     ////////////////////////////////////////////////////////////
-    virtual bool event(QEvent* Event);
+    virtual bool event(QEvent* event);
 
     ////////////////////////////////////////////////////////////
     /// Called when the widget needs to be painted ;

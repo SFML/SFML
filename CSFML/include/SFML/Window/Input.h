@@ -35,68 +35,68 @@
 ////////////////////////////////////////////////////////////
 /// Get the state of a key
 ///
-/// \param Input :   Input object
-/// \param KeyCode : Key to check
+/// \param input : Input object
+/// \param code :  Key to check
 ///
 /// \return sfTrue if key is down, sfFalse if key is up
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfInput_IsKeyDown(sfInput* Input, sfKeyCode KeyCode);
+CSFML_API sfBool sfInput_IsKeyDown(sfInput* input, sfKeyCode code);
 
 ////////////////////////////////////////////////////////////
 /// Get the state of a mouse button
 ///
-/// \param Input :  Input object
-/// \param Button : Button to check
+/// \param input :  Input object
+/// \param button : Button to check
 ///
 /// \return sfTrue if button is down, sfFalse if button is up
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfInput_IsMouseButtonDown(sfInput* Input, sfMouseButton Button);
+CSFML_API sfBool sfInput_IsMouseButtonDown(sfInput* input, sfMouseButton button);
 
 ////////////////////////////////////////////////////////////
 /// Get the state of a joystick button
 ///
-/// \param Input :  Input object
-/// \param JoyId :  Identifier of the joystick to check (0 or 1)
-/// \param Button : Button to check
+/// \param input :  Input object
+/// \param joyId :  Identifier of the joystick to check (0 or 1)
+/// \param button : Button to check
 ///
 /// \return sfTrue if button is down, sfFalse if button is up
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfInput_IsJoystickButtonDown(sfInput* Input, unsigned int JoyId, unsigned int Button);
+CSFML_API sfBool sfInput_IsJoystickButtonDown(sfInput* input, unsigned int joyId, unsigned int button);
 
 ////////////////////////////////////////////////////////////
 /// Get the mouse X position
 ///
-/// \param Input : Input object
+/// \param input : Input object
 ///
 /// \return Current mouse left position, relative to owner window
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API int sfInput_GetMouseX(sfInput* Input);
+CSFML_API int sfInput_GetMouseX(sfInput* input);
 
 ////////////////////////////////////////////////////////////
 /// Get the mouse Y position
 ///
-/// \param Input : Input object
+/// \param input : Input object
 ///
 /// \return Current mouse top position, relative to owner window
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API int sfInput_GetMouseY(sfInput* Input);
+CSFML_API int sfInput_GetMouseY(sfInput* input);
 
 ////////////////////////////////////////////////////////////
 /// Get the joystick position on a given axis
 ///
-/// \param Input : Input object
-/// \param JoyId : Identifier of the joystick to check (0 or 1)
-/// \param Axis :  Identifier of the axis to read
+/// \param input : Input object
+/// \param joyId : Identifier of the joystick to check (0 or 1)
+/// \param axis :  Identifier of the axis to read
 ///
 /// \return Current joystick position, in the range [-100, 100]
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfInput_GetJoystickAxis(sfInput* Input, unsigned int JoyId, sfJoyAxis Axis);
+CSFML_API float sfInput_GetJoystickAxis(sfInput* input, unsigned int joyId, sfJoyAxis axis);
 
 
 #endif // SFML_INPUT_H

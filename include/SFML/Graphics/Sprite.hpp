@@ -54,66 +54,66 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the sprite from a source image
     ///
-    /// \param Img :      Image of the sprite
-    /// \param Position : Position of the sprite (0, 0 by default)
-    /// \param Scale :    Scale factor (1, 1 by default)
-    /// \param Rotation : Orientation, in degrees (0 by default)
-    /// \param Col :      Color of the sprite (white by default)
+    /// \param image :    Image of the sprite
+    /// \param position : Position of the sprite (0, 0 by default)
+    /// \param scale :    Scale factor (1, 1 by default)
+    /// \param rotation : Orientation, in degrees (0 by default)
+    /// \param color :    Color of the sprite (white by default)
     ///
     ////////////////////////////////////////////////////////////
-    Sprite(const Image& Img, const Vector2f& Position = Vector2f(0, 0), const Vector2f& Scale = Vector2f(1, 1), float Rotation = 0.f, const Color& Col = Color(255, 255, 255, 255));
+    Sprite(const Image& image, const Vector2f& position = Vector2f(0, 0), const Vector2f& scale = Vector2f(1, 1), float rotation = 0.f, const Color& color = Color(255, 255, 255, 255));
 
     ////////////////////////////////////////////////////////////
     /// Change the image of the sprite
     ///
-    /// \param Img : New image
+    /// \param image : New image
     ///
     ////////////////////////////////////////////////////////////
-    void SetImage(const Image& Img);
+    void SetImage(const Image& image);
 
     ////////////////////////////////////////////////////////////
     /// Set the sub-rectangle of the sprite inside the source image.
     /// By default, the subrect covers the entire source image
     ///
-    /// \param SubRect : New sub-rectangle
+    /// \param rectangle : New sub-rectangle
     ///
     ////////////////////////////////////////////////////////////
-    void SetSubRect(const IntRect& SubRect);
+    void SetSubRect(const IntRect& rectangle);
 
     ////////////////////////////////////////////////////////////
     /// Resize the sprite (by changing its scale factors) (take 2 values).
     /// The default size is defined by the subrect
     ///
-    /// \param Width :  New width (must be strictly positive)
-    /// \param Height : New height (must be strictly positive)
+    /// \param width :  New width (must be strictly positive)
+    /// \param height : New height (must be strictly positive)
     ///
     ////////////////////////////////////////////////////////////
-    void Resize(float Width, float Height);
+    void Resize(float width, float height);
 
     ////////////////////////////////////////////////////////////
     /// Resize the sprite (by changing its scale factors) (take a 2D vector).
     /// The default size is defined by the subrect
     ///
-    /// \param Size : New size (both coordinates must be strictly positive)
+    /// \param size : New size (both coordinates must be strictly positive)
     ///
     ////////////////////////////////////////////////////////////
-    void Resize(const Vector2f& Size);
+    void Resize(const Vector2f& size);
 
     ////////////////////////////////////////////////////////////
     /// Flip the sprite horizontally
     ///
-    /// \param Flipped : True to flip the sprite
+    /// \param flipped : True to flip the sprite
     ///
     ////////////////////////////////////////////////////////////
-    void FlipX(bool Flipped);
+    void FlipX(bool flipped);
 
     ////////////////////////////////////////////////////////////
     /// Flip the sprite vertically
     ///
-    /// \param Flipped : True to flip the sprite
+    /// \param flipped : True to flip the sprite
     ///
     ////////////////////////////////////////////////////////////
-    void FlipY(bool Flipped);
+    void FlipY(bool flipped);
 
     ////////////////////////////////////////////////////////////
     /// Get the source image of the sprite
@@ -143,13 +143,13 @@ public :
     /// Get the color of a given pixel in the sprite
     /// (point is in local coordinates)
     ///
-    /// \param X : X coordinate of the pixel to get
-    /// \param Y : Y coordinate of the pixel to get
+    /// \param x : X coordinate of the pixel to get
+    /// \param y : Y coordinate of the pixel to get
     ///
-    /// \return Color of pixel (X, Y)
+    /// \return Color of pixel (x, y)
     ///
     ////////////////////////////////////////////////////////////
-    Color GetPixel(unsigned int X, unsigned int Y) const;
+    Color GetPixel(unsigned int x, unsigned int y) const;
 
 protected :
 
@@ -157,7 +157,7 @@ protected :
     /// /see Drawable::Render
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Render(RenderTarget& Target) const;
+    virtual void Render(RenderTarget& target) const;
 
 private :
 

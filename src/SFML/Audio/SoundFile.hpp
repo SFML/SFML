@@ -84,63 +84,63 @@ public :
     ////////////////////////////////////////////////////////////
     /// Open the sound file for reading
     ///
-    /// \param Filename : Path of sound file to load
+    /// \param filename : Path of sound file to load
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenRead(const std::string& Filename);
+    bool OpenRead(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// Open the sound file in memory for reading
     ///
-    /// \param Data :        Pointer to the file data in memory
-    /// \param SizeInBytes : Size of the data to load, in bytes
+    /// \param data :        Pointer to the file data in memory
+    /// \param sizeInBytes : Size of the data to load, in bytes
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenRead(const char* Data, std::size_t SizeInBytes);
+    bool OpenRead(const char* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// Open the sound file for writing
     ///
-    /// \param Filename :      Path of sound file to write
-    /// \param ChannelsCount : Number of channels in the sound
-    /// \param SampleRate :    Sample rate of the sound
+    /// \param filename :      Path of sound file to write
+    /// \param channelsCount : Number of channels in the sound
+    /// \param sampleRate :    Sample rate of the sound
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenWrite(const std::string& Filename, unsigned int ChannelsCount, unsigned int SampleRate);
+    bool OpenWrite(const std::string& filename, unsigned int channelsCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// Read samples from the loaded sound
     ///
-    /// \param Data :      Pointer to the samples array to fill
-    /// \param NbSamples : Number of samples to read
+    /// \param data :      Pointer to the samples array to fill
+    /// \param nbSamples : Number of samples to read
     ///
     /// \return Number of samples read
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t Read(Int16* Data, std::size_t NbSamples);
+    std::size_t Read(Int16* data, std::size_t nbSamples);
 
     ////////////////////////////////////////////////////////////
     /// Write samples to the file
     ///
-    /// \param Data :      Pointer to the samples array to write
-    /// \param NbSamples : Number of samples to write
+    /// \param data :      Pointer to the samples array to write
+    /// \param nbSamples : Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    void Write(const Int16* Data, std::size_t NbSamples);
+    void Write(const Int16* data, std::size_t nbSamples);
 
     ////////////////////////////////////////////////////////////
     /// Move the current reading position in the file
     ///
-    /// \param TimeOffset : New position, expressed in seconds
+    /// \param timeOffset : New position, expressed in seconds
     ///
     ////////////////////////////////////////////////////////////
-    void Seek(float TimeOffset);
+    void Seek(float timeOffset);
 
 private :
 
@@ -148,12 +148,12 @@ private :
     /// Get the internal format of an audio file according to
     /// its filename extension
     ///
-    /// \param Filename : Filename to check
+    /// \param filename : Filename to check
     ///
     /// \return Internal format matching the filename (-1 if no match)
     ///
     ////////////////////////////////////////////////////////////
-    static int GetFormatFromFilename(const std::string& Filename);
+    static int GetFormatFromFilename(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// Functions for implementing custom read and write to memory files

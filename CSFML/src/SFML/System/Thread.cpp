@@ -33,36 +33,36 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new thread from a function pointer
 ////////////////////////////////////////////////////////////
-sfThread* sfThread_Create(void (*Function)(void*), void* UserData)
+sfThread* sfThread_Create(void (*function)(void*), void* userData)
 {
-    return new sfThread(Function, UserData);
+    return new sfThread(function, userData);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing thread
 ////////////////////////////////////////////////////////////
-void sfThread_Destroy(sfThread* Thread)
+void sfThread_Destroy(sfThread* thread)
 {
-    delete Thread;
+    delete thread;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Run a thread
 ////////////////////////////////////////////////////////////
-void sfThread_Launch(sfThread* Thread)
+void sfThread_Launch(sfThread* thread)
 {
-    CSFML_CALL(Thread, Launch());
+    CSFML_CALL(thread, Launch());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Wait until a thread finishes
 ////////////////////////////////////////////////////////////
-void sfThread_Wait(sfThread* Thread)
+void sfThread_Wait(sfThread* thread)
 {
-    CSFML_CALL(Thread, Wait());
+    CSFML_CALL(thread, Wait());
 }
 
 
@@ -72,7 +72,7 @@ void sfThread_Wait(sfThread* Thread)
 /// you should rather try to make the thread function
 /// terminate by itself
 ////////////////////////////////////////////////////////////
-void sfThread_Terminate(sfThread* Thread)
+void sfThread_Terminate(sfThread* thread)
 {
-    CSFML_CALL(Thread, Terminate());
+    CSFML_CALL(thread, Terminate());
 }

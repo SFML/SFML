@@ -66,22 +66,22 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct a new window
     ///
-    /// \param Mode :        Video mode to use
-    /// \param Title :       Title of the window
-    /// \param WindowStyle : Window style (Resize | Close by default)
-    /// \param Settings :    Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param mode :     Video mode to use
+    /// \param title :    Title of the window
+    /// \param style :    Window style (Resize | Close by default)
+    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    Window(VideoMode Mode, const std::string& Title, unsigned long WindowStyle = Style::Resize | Style::Close, const ContextSettings& Settings = ContextSettings());
+    Window(VideoMode mode, const std::string& title, unsigned long style = Style::Resize | Style::Close, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Construct the window from an existing control
     ///
-    /// \param Handle :   Platform-specific handle of the control
-    /// \param Settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param handle :   Platform-specific handle of the control
+    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    Window(WindowHandle Handle, const ContextSettings& Settings = ContextSettings());
+    Window(WindowHandle handle, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -92,22 +92,22 @@ public :
     ////////////////////////////////////////////////////////////
     /// Create (or recreate) the window
     ///
-    /// \param Mode :        Video mode to use
-    /// \param Title :       Title of the window
-    /// \param WindowStyle : Window style (Resize | Close by default)
-    /// \param Settings :    Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param mode :     Video mode to use
+    /// \param title :    Title of the window
+    /// \param style :    Window style (Resize | Close by default)
+    /// \param Settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    void Create(VideoMode Mode, const std::string& Title, unsigned long WindowStyle = Style::Resize | Style::Close, const ContextSettings& Settings = ContextSettings());
+    void Create(VideoMode mode, const std::string& title, unsigned long style = Style::Resize | Style::Close, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Create (or recreate) the window from an existing control
     ///
-    /// \param Handle :   Platform-specific handle of the control
-    /// \param Settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param handle :   Platform-specific handle of the control
+    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
     ///
     ////////////////////////////////////////////////////////////
-    void Create(WindowHandle Handle, const ContextSettings& Settings = ContextSettings());
+    void Create(WindowHandle handle, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// Close (destroy) the window.
@@ -154,64 +154,64 @@ public :
     ////////////////////////////////////////////////////////////
     /// Get the event on top of events stack, if any, and pop it
     ///
-    /// \param EventReceived : Event to fill, if any
+    /// \param event : Event to fill, if any
     ///
     /// \return True if an event was returned, false if events stack was empty
     ///
     ////////////////////////////////////////////////////////////
-    bool GetEvent(Event& EventReceived);
+    bool GetEvent(Event& event);
 
     ////////////////////////////////////////////////////////////
     /// Enable / disable vertical synchronization
     ///
-    /// \param Enabled : True to enable v-sync, false to deactivate
+    /// \param enabled : True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    void UseVerticalSync(bool Enabled);
+    void UseVerticalSync(bool enabled);
 
     ////////////////////////////////////////////////////////////
     /// Show or hide the mouse cursor
     ///
-    /// \param Show : True to show, false to hide
+    /// \param show : True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    void ShowMouseCursor(bool Show);
+    void ShowMouseCursor(bool show);
 
     ////////////////////////////////////////////////////////////
     /// Change the position of the mouse cursor
     ///
-    /// \param Left : Left coordinate of the cursor, relative to the window
-    /// \param Top :  Top coordinate of the cursor, relative to the window
+    /// \param left : Left coordinate of the cursor, relative to the window
+    /// \param top :  Top coordinate of the cursor, relative to the window
     ///
     ////////////////////////////////////////////////////////////
-    void SetCursorPosition(unsigned int Left, unsigned int Top);
+    void SetCursorPosition(unsigned int left, unsigned int top);
 
     ////////////////////////////////////////////////////////////
     /// Change the position of the window on screen.
     /// Only works for top-level windows
     ///
-    /// \param Left : Left position
-    /// \param Top :  Top position
+    /// \param left : Left position
+    /// \param top :  Top position
     ///
     ////////////////////////////////////////////////////////////
-    void SetPosition(int Left, int Top);
+    void SetPosition(int left, int top);
 
     ////////////////////////////////////////////////////////////
     /// Change the size of the rendering region of the window
     ///
-    /// \param Width :  New width
-    /// \param Height : New height
+    /// \param width :  New width
+    /// \param height : New height
     ///
     ////////////////////////////////////////////////////////////
-    void SetSize(unsigned int Width, unsigned int Height);
+    void SetSize(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// Show or hide the window
     ///
-    /// \param State : True to show, false to hide
+    /// \param show : True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    void Show(bool State);
+    void Show(bool show);
 
     ////////////////////////////////////////////////////////////
     /// Enable or disable automatic key-repeat.
@@ -225,23 +225,23 @@ public :
     ////////////////////////////////////////////////////////////
     /// Change the window's icon
     ///
-    /// \param Width :  Icon's width, in pixels
-    /// \param Height : Icon's height, in pixels
-    /// \param Pixels : Pointer to the pixels in memory, format must be RGBA 32 bits
+    /// \param width :  Icon's width, in pixels
+    /// \param height : Icon's height, in pixels
+    /// \param pixels : Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    void SetIcon(unsigned int Width, unsigned int Height, const Uint8* Pixels);
+    void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// Activate or deactivate the window as the current target
     /// for rendering
     ///
-    /// \param Active : True to activate, false to deactivate (true by default)
+    /// \param active : True to activate, false to deactivate (true by default)
     ///
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool SetActive(bool Active = true) const;
+    bool SetActive(bool active = true) const;
 
     ////////////////////////////////////////////////////////////
     /// Display the window on screen
@@ -260,10 +260,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Limit the framerate to a maximum fixed frequency
     ///
-    /// \param Limit : Framerate limit, in frames per seconds (use 0 to disable limit)
+    /// \param limit : Framerate limit, in frames per seconds (use 0 to disable limit)
     ///
     ////////////////////////////////////////////////////////////
-    void SetFramerateLimit(unsigned int Limit);
+    void SetFramerateLimit(unsigned int limit);
 
     ////////////////////////////////////////////////////////////
     /// Get time elapsed since last frame
@@ -277,10 +277,10 @@ public :
     /// Change the joystick threshold, ie. the value below which
     /// no move event will be generated
     ///
-    /// \param Threshold : New threshold, in range [0, 100]
+    /// \param threshold : New threshold, in range [0, 100]
     ///
     ////////////////////////////////////////////////////////////
-    void SetJoystickThreshold(float Threshold);
+    void SetJoystickThreshold(float threshold);
 
 private :
 
@@ -293,10 +293,10 @@ private :
     ////////////////////////////////////////////////////////////
     /// /see WindowListener::OnEvent
     ///
-    /// \param EventReceived : Event received
+    /// \param event : Event received
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnEvent(const Event& EventReceived);
+    virtual void OnEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     /// Do some common internal initializations

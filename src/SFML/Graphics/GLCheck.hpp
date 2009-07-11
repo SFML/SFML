@@ -42,12 +42,12 @@ namespace sf
 #ifdef SFML_DEBUG
 
     // In debug mode, perform a test on every OpenGL call
-    #define GLCheck(Func) ((Func), GLCheckError(__FILE__, __LINE__))
+    #define GLCheck(call) ((call), GLCheckError(__FILE__, __LINE__))
 
 #else
 
     // Else, we don't add any overhead
-    #define GLCheck(Func) (Func)
+    #define GLCheck(call) (call)
 
 #endif
 
@@ -55,11 +55,11 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Check the last OpenGL error
 ///
-/// \param File Source file where the call is located
-/// \param Line Line number of the source file where the call is located
+/// \param file : Source file where the call is located
+/// \param line : Line number of the source file where the call is located
 ///
 ////////////////////////////////////////////////////////////
-void GLCheckError(const std::string& File, unsigned int Line);
+void GLCheckError(const std::string& file, unsigned int line);
 
 ////////////////////////////////////////////////////////////
 /// Make sure that GLEW is initialized

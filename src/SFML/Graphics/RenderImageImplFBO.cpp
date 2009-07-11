@@ -54,15 +54,15 @@ RenderImageImplFBO::~RenderImageImplFBO()
     // Destroy the depth buffer
     if (myDepthBuffer)
     {
-        GLuint DepthBuffer = static_cast<GLuint>(myDepthBuffer);
-        GLCheck(glDeleteFramebuffersEXT(1, &DepthBuffer));
+        GLuint depthBuffer = static_cast<GLuint>(myDepthBuffer);
+        GLCheck(glDeleteFramebuffersEXT(1, &depthBuffer));
     }
 
     // Destroy the frame buffer
     if (myFrameBuffer)
     {
-        GLuint FrameBuffer = static_cast<GLuint>(myFrameBuffer);
-        GLCheck(glDeleteFramebuffersEXT(1, &FrameBuffer));
+        GLuint frameBuffer = static_cast<GLuint>(myFrameBuffer);
+        GLCheck(glDeleteFramebuffersEXT(1, &frameBuffer));
     }
 }
 
@@ -82,14 +82,14 @@ bool RenderImageImplFBO::IsSupported()
 ////////////////////////////////////////////////////////////
 /// /see RenderImageImpl::Create
 ////////////////////////////////////////////////////////////
-bool RenderImageImplFBO::Create(unsigned int Width, unsigned int Height, unsigned int TextureId, bool DepthBuffer)
+bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
     // Create the framebuffer object if not already done
     if (!myFrameBuffer)
     {
-        GLuint FrameBuffer = 0;
-        GLCheck(glGenFramebuffersEXT(1, &FrameBuffer));
-        myFrameBuffer = static_cast<unsigned int>(FrameBuffer);
+        GLuint frameBuffer = 0;
+        GLCheck(glGenFramebuffersEXT(1, &frameBuffer));
+        myFrameBuffer = static_cast<unsigned int>(frameBuffer);
         if (!myFrameBuffer)
         {
             std::cerr << "Impossible to create render image (failed to create the frame buffer object)" << std::endl;
@@ -103,26 +103,26 @@ bool RenderImageImplFBO::Create(unsigned int Width, unsigned int Height, unsigne
     // Create the depth buffer
     if (myDepthBuffer)
     {
-        GLuint DepthBuffer = static_cast<GLuint>(myDepthBuffer);
-        GLCheck(glDeleteRenderbuffersEXT(1, &DepthBuffer));
+        GLuint depth = static_cast<GLuint>(myDepthBuffer);
+        GLCheck(glDeleteRenderbuffersEXT(1, &depth));
     }
-    if (DepthBuffer)
+    if (depthBuffer)
     {
-        GLuint DepthBuffer = 0;
-        GLCheck(glGenRenderbuffersEXT(1, &DepthBuffer));
-        myDepthBuffer = static_cast<unsigned int>(DepthBuffer);
+        GLuint depth = 0;
+        GLCheck(glGenRenderbuffersEXT(1, &depth));
+        myDepthBuffer = static_cast<unsigned int>(depth);
         if (!myDepthBuffer)
         {
             std::cerr << "Impossible to create render image (failed to create the attached depth buffer)" << std::endl;
             return false;
         }
         GLCheck(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, myDepthBuffer));
-        GLCheck(glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, Width, Height));
+        GLCheck(glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height));
         GLCheck(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, myDepthBuffer));
     }
 
     // Link the image to the frame buffer
-    GLCheck(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, TextureId, 0));
+    GLCheck(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, textureId, 0));
 
     // A final check, just to be sure...
     if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT)
@@ -142,9 +142,9 @@ bool RenderImageImplFBO::Create(unsigned int Width, unsigned int Height, unsigne
 ////////////////////////////////////////////////////////////
 /// /see RenderImageImpl::Activate
 ////////////////////////////////////////////////////////////
-bool RenderImageImplFBO::Activate(bool Active)
+bool RenderImageImplFBO::Activate(bool active)
 {
-    if (Active)
+    if (active)
     {
         // Bind the buffers
         GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, myFrameBuffer));
@@ -164,7 +164,7 @@ bool RenderImageImplFBO::Activate(bool Active)
 ////////////////////////////////////////////////////////////
 /// /see RenderImageImpl::UpdateTexture
 ////////////////////////////////////////////////////////////
-bool RenderImageImplFBO::UpdateTexture(unsigned int /*TextureId*/)
+bool RenderImageImplFBO::UpdateTexture(unsigned int)
 {
     // Nothing to do: the FBO draws directly into the target image
     return true;

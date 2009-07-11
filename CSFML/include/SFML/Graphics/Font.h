@@ -43,46 +43,46 @@ CSFML_API sfFont* sfFont_Create();
 ////////////////////////////////////////////////////////////
 /// Create a new font from a file
 ///
-/// \param Filename : Path of the font file to load
-/// \param CharSize : Size of characters in bitmap - the bigger, the higher quality
-/// \param Charset :  Characters set to generate (just pass NULL to get the default charset)
+/// \param filename : Path of the font file to load
+/// \param charSize : Size of characters in bitmap - the bigger, the higher quality
+/// \param charset :  Characters set to generate (just pass NULL to get the default charset)
 ///
 /// \return A new sfFont object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFont* sfFont_CreateFromFile(const char* Filename, unsigned int CharSize, const sfUint32* Charset);
+CSFML_API sfFont* sfFont_CreateFromFile(const char* filename, unsigned int charSize, const sfUint32* charset);
 
 ////////////////////////////////////////////////////////////
 /// Create a new image font a file in memory
 ///
-/// \param Data :        Pointer to the file data in memory
-/// \param SizeInBytes : Size of the data to load, in bytes
-/// \param CharSize :    Size of characters in bitmap - the bigger, the higher quality
-/// \param Charset :     Characters set to generate (just pass NULL to get the default charset)
+/// \param data :        Pointer to the file data in memory
+/// \param sizeInBytes : Size of the data to load, in bytes
+/// \param charSize :    Size of characters in bitmap - the bigger, the higher quality
+/// \param charset :     Characters set to generate (just pass NULL to get the default charset)
 ///
 /// \return A new sfFont object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFont* sfFont_CreateFromMemory(const char* Data, size_t SizeInBytes, unsigned int CharSize, const sfUint32* Charset);
+CSFML_API sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes, unsigned int charSize, const sfUint32* charset);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing font
 ///
-/// \param Font : Font to delete
+/// \param font : Font to delete
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfFont_Destroy(sfFont* Font);
+CSFML_API void sfFont_Destroy(sfFont* font);
 
 ////////////////////////////////////////////////////////////
 /// Get the base size of characters in a font;
 /// All glyphs dimensions are based on this value
 ///
-/// \param Font : Font object
+/// \param font : Font object
 ///
 /// \return Base size of characters
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfFont_GetCharacterSize(sfFont* Font);
+CSFML_API unsigned int sfFont_GetCharacterSize(sfFont* font);
 
 ////////////////////////////////////////////////////////////
 /// Get the built-in default font (Arial)

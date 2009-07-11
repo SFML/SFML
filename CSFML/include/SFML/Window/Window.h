@@ -63,225 +63,224 @@ typedef struct
 ////////////////////////////////////////////////////////////
 /// Construct a new window
 ///
-/// \param Mode :   Video mode to use
-/// \param Title :  Title of the window
-/// \param Style :  Window style
-/// \param Params : Creation settings
+/// \param mode :     Video mode to use
+/// \param title :    Title of the window
+/// \param style :    Window style
+/// \param settings : Creation settings
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindow* sfWindow_Create(sfVideoMode Mode, const char* Title, unsigned long Style, sfContextSettings Params);
+CSFML_API sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings settings);
 
 ////////////////////////////////////////////////////////////
 /// Construct a window from an existing control
 ///
-/// \param Handle : Platform-specific handle of the control
-/// \param Params : Creation settings
+/// \param handle :   Platform-specific handle of the control
+/// \param settings : Creation settings
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindow* sfWindow_CreateFromHandle(sfWindowHandle Handle, sfContextSettings Params);
+CSFML_API sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings settings);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing window
 ///
-/// \param Window : Window to destroy
+/// \param window : Window to destroy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_Destroy(sfWindow* Window);
+CSFML_API void sfWindow_Destroy(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Close a window (but doesn't destroy the internal data)
 ///
-/// \param Window : Window to close
+/// \param window : Window to close
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_Close(sfWindow* Window);
+CSFML_API void sfWindow_Close(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Tell whether or not a window is opened
 ///
-/// \param Window : Window object
+/// \param window : Window object
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfWindow_IsOpened(sfWindow* Window);
+CSFML_API sfBool sfWindow_IsOpened(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Get the width of the rendering region of a window
 ///
-/// \param Window : Window object
+/// \param window : Window object
 ///
 /// \return Width in pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfWindow_GetWidth(sfWindow* Window);
+CSFML_API unsigned int sfWindow_GetWidth(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Get the height of the rendering region of a window
 ///
-/// \param Window : Window object
+/// \param window : Window object
 ///
 /// \return Height in pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfWindow_GetHeight(sfWindow* Window);
+CSFML_API unsigned int sfWindow_GetHeight(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Get the creation settings of a window
 ///
-/// \param Window : Window object
+/// \param window : Window object
 ///
 /// \return Settings used to create the window
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfContextSettings sfWindow_GetSettings(sfWindow* Window);
+CSFML_API sfContextSettings sfWindow_GetSettings(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Get the event on top of events stack of a window, if any, and pop it
 ///
-/// \param Window : Window object
-/// \param Event :  Event to fill, if any
+/// \param window : Window object
+/// \param event :  Event to fill, if any
 ///
 /// \return sfTrue if an event was returned, sfFalse if events stack was empty
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfWindow_GetEvent(sfWindow* Window, sfEvent* Event);
+CSFML_API sfBool sfWindow_GetEvent(sfWindow* window, sfEvent* event);
 
 ////////////////////////////////////////////////////////////
 /// Enable / disable vertical synchronization on a window
 ///
-/// \param Window :  Window object
-/// \param Enabled : sfTrue to enable v-sync, sfFalse to deactivate
+/// \param window :  Window object
+/// \param enabled : sfTrue to enable v-sync, sfFalse to deactivate
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_UseVerticalSync(sfWindow* Window, sfBool Enabled);
+CSFML_API void sfWindow_UseVerticalSync(sfWindow* window, sfBool enabled);
 
 ////////////////////////////////////////////////////////////
 /// Show or hide the mouse cursor on a window
 ///
-/// \param Window : Window object
-/// \param Show :   sfTrue to show, sfFalse to hide
+/// \param window : Window object
+/// \param show :   sfTrue to show, sfFalse to hide
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_ShowMouseCursor(sfWindow* Window, sfBool Show);
+CSFML_API void sfWindow_ShowMouseCursor(sfWindow* window, sfBool show);
 
 ////////////////////////////////////////////////////////////
 /// Change the position of the mouse cursor on a window
 ///
-/// \param Window : Window object
-/// \param Left :   Left coordinate of the cursor, relative to the window
-/// \param Top :    Top coordinate of the cursor, relative to the window
+/// \param window : Window object
+/// \param left :   Left coordinate of the cursor, relative to the window
+/// \param top :    Top coordinate of the cursor, relative to the window
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_SetCursorPosition(sfWindow* Window, unsigned int Left, unsigned int Top);
+CSFML_API void sfWindow_SetCursorPosition(sfWindow* window, unsigned int left, unsigned int Top);
 
 ////////////////////////////////////////////////////////////
 /// Change the position of a window on screen.
 /// Only works for top-level windows
 ///
-/// \param Window : Window object
-/// \param Left :   Left position
-/// \param Top :    Top position
+/// \param window : Window object
+/// \param left :   Left position
+/// \param top :    Top position
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_SetPosition(sfWindow* Window, int Left, int Top);
+CSFML_API void sfWindow_SetPosition(sfWindow* window, int left, int top);
 
 ////////////////////////////////////////////////////////////
 /// Change the size of the rendering region of a window
 ///
-/// \param Window : Window object
-/// \param Width :  New Width
-/// \param Height : New Height
+/// \param window : Window object
+/// \param width :  New Width
+/// \param height : New Height
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_SetSize(sfWindow* Window, unsigned int Width, unsigned int Height);
+CSFML_API void sfWindow_SetSize(sfWindow* window, unsigned int width, unsigned int height);
 
 ////////////////////////////////////////////////////////////
 /// Show or hide a window
 ///
-/// \param Window : Window object
-/// \param State :  sfTrue to show, sfFalse to hide
+/// \param window : Window object
+/// \param show :   sfTrue to show, sfFalse to hide
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_Show(sfWindow* Window, sfBool State);
+CSFML_API void sfWindow_Show(sfWindow* window, sfBool show);
 
 ////////////////////////////////////////////////////////////
 /// Enable or disable automatic key-repeat for keydown events.
 /// Automatic key-repeat is enabled by default
 ///
-/// \param Window :  Window object
-/// \param Enabled : sfTrue to enable, sfFalse to disable
+/// \param window :  Window object
+/// \param enabled : sfTrue to enable, sfFalse to disable
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_EnableKeyRepeat(sfWindow* Window, sfBool Enabled);
+CSFML_API void sfWindow_EnableKeyRepeat(sfWindow* window, sfBool enabled);
 
 ////////////////////////////////////////////////////////////
 /// Change the window's icon
 ///
-/// \param Window : Window object
-/// \param Width :  Icon's width, in pixels
-/// \param Height : Icon's height, in pixels
-/// \param Pixels : Pointer to the pixels in memory, format must be RGBA 32 bits
+/// \param window : Window object
+/// \param width :  Icon's width, in pixels
+/// \param height : Icon's height, in pixels
+/// \param pixels : Pointer to the pixels in memory, format must be RGBA 32 bits
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_SetIcon(sfWindow* Window, unsigned int Width, unsigned int Height, sfUint8* Pixels);
+CSFML_API void sfWindow_SetIcon(sfWindow* window, unsigned int width, unsigned int height, sfUint8* pixels);
 
 ////////////////////////////////////////////////////////////
 /// Activate or deactivate a window as the current target for rendering
 ///
-/// \param Window : Window object
-/// \param Active : sfTrue to activate, sfFalse to deactivate
+/// \param window : Window object
+/// \param active : sfTrue to activate, sfFalse to deactivate
 ///
 /// \return True if operation was successful, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfWindow_SetActive(sfWindow* Window, sfBool Active);
+CSFML_API sfBool sfWindow_SetActive(sfWindow* window, sfBool active);
 
 ////////////////////////////////////////////////////////////
 /// Display a window on screen
 ///
-/// \param Window : Window object
+/// \param window : Window object
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_Display(sfWindow* Window);
+CSFML_API void sfWindow_Display(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Get the input manager of a window
 ///
-/// \param Window : Window object
+/// \param window : Window object
 ///
 /// \return Reference to the input
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfInput* sfWindow_GetInput(sfWindow* Window);
+CSFML_API sfInput* sfWindow_GetInput(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Limit the framerate to a maximum fixed frequency for a window
 ///
-/// \param Window : Window object
-///
-/// \param Limit : Framerate limit, in frames per seconds (use 0 to disable limit)
+/// \param window : Window object
+/// \param limit :  Framerate limit, in frames per seconds (use 0 to disable limit)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_SetFramerateLimit(sfWindow* Window, unsigned int Limit);
+CSFML_API void sfWindow_SetFramerateLimit(sfWindow* window, unsigned int limit);
 
 ////////////////////////////////////////////////////////////
 /// Get time elapsed since last frame of a window
 ///
-/// \param Window : Window object
+/// \param window : Window object
 ///
 /// \return Time elapsed, in seconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfWindow_GetFrameTime(sfWindow* Window);
+CSFML_API float sfWindow_GetFrameTime(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Change the joystick threshold, ie. the value below which
 /// no move event will be generated
 ///
-/// \param Window :    Window object
-/// \param Threshold : New threshold, in range [0, 100]
+/// \param window :    Window object
+/// \param threshold : New threshold, in range [0, 100]
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_SetJoystickThreshold(sfWindow* Window, float Threshold);
+CSFML_API void sfWindow_SetJoystickThreshold(sfWindow* window, float threshold);
 
 
 #endif // SFML_WINDOW_H

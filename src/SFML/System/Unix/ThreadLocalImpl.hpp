@@ -58,10 +58,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Set the thread-specific value of the variable
     ///
-    /// \param Value : Value of the variable for this thread
+    /// \param value : Value of the variable for this thread
     ///
     ////////////////////////////////////////////////////////////
-    void SetValue(void* Value);
+    void SetValue(void* value);
 
     ////////////////////////////////////////////////////////////
     /// Retrieve the thread-specific value of the variable

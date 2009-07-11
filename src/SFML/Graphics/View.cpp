@@ -49,7 +49,7 @@ myNeedInvUpdate(true)
 ////////////////////////////////////////////////////////////
 /// Construct the view from a rectangle
 ////////////////////////////////////////////////////////////
-View::View(const FloatRect& Rectangle) :
+View::View(const FloatRect& rectangle) :
 myCenter       (),
 mySize         (),
 myRotation     (0),
@@ -57,16 +57,16 @@ myViewport     (0, 0, 1, 1),
 myNeedUpdate   (true),
 myNeedInvUpdate(true)
 {
-    Reset(Rectangle);
+    Reset(rectangle);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Construct the view from its center and size
 ////////////////////////////////////////////////////////////
-View::View(const Vector2f& Center, const Vector2f& Size) :
-myCenter       (Center),
-mySize         (Size),
+View::View(const Vector2f& center, const Vector2f& size) :
+myCenter       (center),
+mySize         (size),
 myRotation     (0),
 myViewport     (0, 0, 1, 1),
 myNeedUpdate   (true),
@@ -78,10 +78,10 @@ myNeedInvUpdate(true)
 ////////////////////////////////////////////////////////////
 /// Change the center of the view
 ////////////////////////////////////////////////////////////
-void View::SetCenter(float X, float Y)
+void View::SetCenter(float x, float y)
 {
-    myCenter.x      = X;
-    myCenter.y      = Y;
+    myCenter.x      = x;
+    myCenter.y      = y;
     myNeedUpdate    = true;
     myNeedInvUpdate = true;
 }
@@ -90,19 +90,19 @@ void View::SetCenter(float X, float Y)
 ////////////////////////////////////////////////////////////
 /// Change the center of the view
 ////////////////////////////////////////////////////////////
-void View::SetCenter(const Vector2f& Center)
+void View::SetCenter(const Vector2f& center)
 {
-    SetCenter(Center.x, Center.y);
+    SetCenter(center.x, center.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change the size of the view
 ////////////////////////////////////////////////////////////
-void View::SetSize(float Width, float Height)
+void View::SetSize(float width, float height)
 {
-    mySize.x        = Width;
-    mySize.y        = Height;
+    mySize.x        = width;
+    mySize.y        = height;
     myNeedUpdate    = true;
     myNeedInvUpdate = true;
 }
@@ -111,18 +111,20 @@ void View::SetSize(float Width, float Height)
 ////////////////////////////////////////////////////////////
 /// Change the size of the view
 ////////////////////////////////////////////////////////////
-void View::SetSize(const Vector2f& Size)
+void View::SetSize(const Vector2f& size)
 {
-    SetSize(Size.x, Size.y);
+    SetSize(size.x, size.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the angle of rotation of the view
 ////////////////////////////////////////////////////////////
-void View::SetRotation(float Angle)
+void View::SetRotation(float angle)
 {
-    myRotation      = Angle;
+    myRotation = static_cast<float>(fmod(angle, 360));
+    if (myRotation < 0)
+        myRotation += 360.f;
     myNeedUpdate    = true;
     myNeedInvUpdate = true;
 }
@@ -131,19 +133,19 @@ void View::SetRotation(float Angle)
 ////////////////////////////////////////////////////////////
 /// Set the target viewport
 ////////////////////////////////////////////////////////////
-void View::SetViewport(const FloatRect& Viewport)
+void View::SetViewport(const FloatRect& viewport)
 {
-    myViewport = Viewport;
+    myViewport = viewport;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Reset the view to the given rectangle
 ////////////////////////////////////////////////////////////
-void View::Reset(const FloatRect& Rectangle)
+void View::Reset(const FloatRect& rectangle)
 {
-    myCenter        = Rectangle.GetCenter();
-    mySize          = Rectangle.GetSize();
+    myCenter        = rectangle.GetCenter();
+    mySize          = rectangle.GetSize();
     myNeedUpdate    = true;
     myNeedInvUpdate = true;
 }
@@ -188,44 +190,36 @@ const FloatRect& View::GetViewport() const
 ////////////////////////////////////////////////////////////
 /// Move the view
 ////////////////////////////////////////////////////////////
-void View::Move(float OffsetX, float OffsetY)
+void View::Move(float offsetX, float offsetY)
 {
-    myCenter.x     += OffsetX;
-    myCenter.y     += OffsetY;
-    myNeedUpdate    = true;
-    myNeedInvUpdate = true;
+    SetCenter(myCenter.x + offsetX, myCenter.y + offsetY);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Move the view
 ////////////////////////////////////////////////////////////
-void View::Move(const Vector2f& Offset)
+void View::Move(const Vector2f& offset)
 {
-    Move(Offset.x, Offset.y);
+    SetCenter(myCenter + offset);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Rotate the view
 ////////////////////////////////////////////////////////////
-void View::Rotate(float Angle)
+void View::Rotate(float angle)
 {
-    myRotation     += Angle;
-    myNeedUpdate    = true;
-    myNeedInvUpdate = true;
+    SetRotation(myRotation + angle);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Resize the view rectangle to simulate a zoom / unzoom effect
 ////////////////////////////////////////////////////////////
-void View::Zoom(float Factor)
+void View::Zoom(float factor)
 {
-    mySize.x       *= Factor;
-    mySize.y       *= Factor;
-    myNeedUpdate    = true;
-    myNeedInvUpdate = true;
+    SetSize(mySize.x * factor, mySize.y * factor);
 }
 
 

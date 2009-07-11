@@ -65,46 +65,46 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the string from any kind of text
     ///
-    /// \param Text : Text assigned to the string
-    /// \param Font : Font used to draw the string (SFML built-in font by default)
-    /// \param Size : Characters size (30 by default)
+    /// \param text : Text assigned to the string
+    /// \param font : Font used to draw the string (SFML built-in font by default)
+    /// \param size : Characters size (30 by default)
     ///
     ////////////////////////////////////////////////////////////
-    explicit String(const Unicode::Text& Text, const Font& CharFont = Font::GetDefaultFont(), float Size = 30.f);
+    explicit String(const Unicode::Text& text, const Font& font = Font::GetDefaultFont(), float size = 30.f);
 
     ////////////////////////////////////////////////////////////
     /// Set the text (from any kind of string)
     ///
-    /// \param Text : New text
+    /// \param text : New text
     ///
     ////////////////////////////////////////////////////////////
-    void SetText(const Unicode::Text& Text);
+    void SetText(const Unicode::Text& text);
 
     ////////////////////////////////////////////////////////////
     /// Set the font of the string
     ///
-    /// \param Font : Font to use
+    /// \param font : Font to use
     ///
     ////////////////////////////////////////////////////////////
-    void SetFont(const Font& CharFont);
+    void SetFont(const Font& font);
 
     ////////////////////////////////////////////////////////////
     /// Set the size of the string
     /// The default size is 30
     ///
-    /// \param Size : New size, in pixels
+    /// \param size : New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    void SetSize(float Size);
+    void SetSize(float size);
 
     ////////////////////////////////////////////////////////////
     /// Set the style of the text
     /// The default style is Regular
     ///
-    /// \param TextStyle : New text style, (combination of Style enum values)
+    /// \param style : New text style (combination of Style enum values)
     ///
     ////////////////////////////////////////////////////////////
-    void SetStyle(unsigned long TextStyle);
+    void SetStyle(unsigned long style);
 
     ////////////////////////////////////////////////////////////
     /// Get the text (the returned text can be converted implicitely to any kind of string)
@@ -143,12 +143,12 @@ public :
     /// in coordinates relative to the string
     /// (note : translation, center, rotation and scale are not applied)
     ///
-    /// \param Index : Index of the character
+    /// \param index : Index of the character
     ///
-    /// \return Position of the Index-th character (end of string if Index is out of range)
+    /// \return Position of the index-th character (end of string if Index is out of range)
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f GetCharacterPos(std::size_t Index) const;
+    sf::Vector2f GetCharacterPos(std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
     /// Get the string rectangle on screen
@@ -164,7 +164,7 @@ protected :
     /// /see Drawable::Render
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Render(RenderTarget& Target) const;
+    virtual void Render(RenderTarget& target) const;
 
 private :
 

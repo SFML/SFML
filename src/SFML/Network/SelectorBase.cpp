@@ -47,22 +47,22 @@ myMaxSocket(0)
 ////////////////////////////////////////////////////////////
 /// Add a socket to watch
 ////////////////////////////////////////////////////////////
-void SelectorBase::Add(SocketHelper::SocketType Socket)
+void SelectorBase::Add(SocketHelper::SocketType socket)
 {
-    FD_SET(Socket, &mySet);
+    FD_SET(socket, &mySet);
 
-    int Size = static_cast<int>(Socket);
-    if (Size > myMaxSocket)
-        myMaxSocket = Size;
+    int size = static_cast<int>(socket);
+    if (size > myMaxSocket)
+        myMaxSocket = size;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Remove a socket
 ////////////////////////////////////////////////////////////
-void SelectorBase::Remove(SocketHelper::SocketType Socket)
+void SelectorBase::Remove(SocketHelper::SocketType socket)
 {
-    FD_CLR(Socket, &mySet);
+    FD_CLR(socket, &mySet);
 }
 
 
@@ -83,20 +83,20 @@ void SelectorBase::Clear()
 /// This functions will return either when at least one socket
 /// is ready, or when the given time is out
 ////////////////////////////////////////////////////////////
-unsigned int SelectorBase::Wait(float Timeout)
+unsigned int SelectorBase::Wait(float timeout)
 {
     // Setup the timeout structure
-    timeval Time;
-    Time.tv_sec  = static_cast<long>(Timeout);
-    Time.tv_usec = (static_cast<long>(Timeout * 1000) % 1000) * 1000;
+    timeval time;
+    time.tv_sec  = static_cast<long>(timeout);
+    time.tv_usec = (static_cast<long>(timeout * 1000) % 1000) * 1000;
 
     // Prepare the set of sockets to return
     mySetReady = mySet;
 
     // Wait until one of the sockets is ready for reading, or timeout is reached
-    int NbSockets = select(myMaxSocket + 1, &mySetReady, NULL, NULL, Timeout > 0 ? &Time : NULL);
+    int nbSockets = select(myMaxSocket + 1, &mySetReady, NULL, NULL, timeout > 0 ? &time : NULL);
 
-    return NbSockets >= 0 ? static_cast<unsigned int>(NbSockets) : 0;
+    return nbSockets >= 0 ? static_cast<unsigned int>(nbSockets) : 0;
 }
 
 
@@ -105,7 +105,7 @@ unsigned int SelectorBase::Wait(float Timeout)
 /// ready for reading. The total number of sockets ready
 /// is the integer returned by the previous call to Wait()
 ////////////////////////////////////////////////////////////
-SocketHelper::SocketType SelectorBase::GetSocketReady(unsigned int Index)
+SocketHelper::SocketType SelectorBase::GetSocketReady(unsigned int index)
 {
     // The standard FD_xxx interface doesn't define a direct access,
     // so we must go through the whole set to find the socket we're looking for
@@ -113,10 +113,10 @@ SocketHelper::SocketType SelectorBase::GetSocketReady(unsigned int Index)
     {
         if (FD_ISSET(i, &mySetReady))
         {
-            // Current socket is ready, but is it the Index-th one ?
-            if (Index > 0)
+            // Current socket is ready, but is it the index-th one ?
+            if (index > 0)
             {
-                Index--;
+                index--;
             }
             else
             {

@@ -46,10 +46,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Called each time an event is received from attached window
     ///
-    /// \param EventReceived : Event received
+    /// \param event : Event received
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnEvent(const Event& EventReceived) = 0;
+    virtual void OnEvent(const Event& event) = 0;
 
 protected :
 

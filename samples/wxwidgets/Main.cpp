@@ -17,8 +17,8 @@ public :
     /// Construct the canvas
     ///
     ////////////////////////////////////////////////////////////
-    MyCanvas(wxWindow* Parent, wxWindowID Id, const wxPoint& Position, const wxSize& Size, long Style = 0) :
-    wxSFMLCanvas(Parent, Id, Position, Size, Style)
+    MyCanvas(wxWindow* parent, wxWindowID id, const wxPoint& position, const wxSize& size, long style = 0) :
+    wxSFMLCanvas(parent, id, position, size, style)
     {
         // Load an image and assign it to our sprite
         myImage.LoadFromFile("datas/wxwidgets/sfml.png");
@@ -52,10 +52,10 @@ private :
     /// Function called when the mouse cursor moves
     ///
     ////////////////////////////////////////////////////////////
-    void OnMouseMove(wxMouseEvent& Event)
+    void OnMouseMove(wxMouseEvent& event)
     {
         // Make the sprite follow the mouse cursor
-        mySprite.SetPosition(ConvertCoords(Event.GetX(), Event.GetY()));
+        mySprite.SetPosition(ConvertCoords(event.GetX(), event.GetY()));
     }
 
     ////////////////////////////////////////////////////////////
@@ -100,8 +100,8 @@ private :
     virtual bool OnInit()
     {
         // Create the main window
-        MyFrame* MainFrame = new MyFrame;
-        MainFrame->Show();
+        MyFrame* mainFrame = new MyFrame;
+        mainFrame->Show();
 
         return true;
     }

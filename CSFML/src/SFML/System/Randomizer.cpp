@@ -34,9 +34,9 @@
 /// Set the seed for the random numbers generator. Using a known seed
 /// allows you to reproduce the same sequence of random numbers
 ////////////////////////////////////////////////////////////
-void sfRandom_SetSeed(unsigned int Seed)
+void sfRandom_SetSeed(unsigned int seed)
 {
-    sf::Randomizer::SetSeed(Seed);
+    sf::Randomizer::SetSeed(seed);
 }
 
 
@@ -52,16 +52,16 @@ unsigned int sfRandom_GetSeed()
 ////////////////////////////////////////////////////////////
 /// Get a random float number in a given range
 ////////////////////////////////////////////////////////////
-float sfRandom_Float(float Begin, float End)
+float sfRandom_Float(float begin, float end)
 {
-    return sf::Randomizer::Random(Begin, End);
+    return sf::Randomizer::Random(begin, end);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get a random integer number in a given range
 ////////////////////////////////////////////////////////////
-int sfRandom_Int(int Begin, int End)
+int sfRandom_Int(int begin, int end)
 {
-    return sf::Randomizer::Random(Begin, End);
+    return sf::Randomizer::Random(begin, end);
 }

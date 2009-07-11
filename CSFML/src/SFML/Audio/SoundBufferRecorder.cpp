@@ -42,9 +42,9 @@ sfSoundBufferRecorder* sfSoundBufferRecorder_Create()
 ////////////////////////////////////////////////////////////
 /// Destroy an existing sound buffer recorder
 ////////////////////////////////////////////////////////////
-void sfSoundBufferRecorder_Destroy(sfSoundBufferRecorder* SoundBufferRecorder)
+void sfSoundBufferRecorder_Destroy(sfSoundBufferRecorder* soundBufferRecorder)
 {
-    delete SoundBufferRecorder;
+    delete soundBufferRecorder;
 }
 
 
@@ -52,27 +52,27 @@ void sfSoundBufferRecorder_Destroy(sfSoundBufferRecorder* SoundBufferRecorder)
 /// Start the capture.
 /// Warning : only one capture can happen at the same time
 ////////////////////////////////////////////////////////////
-void sfSoundBufferRecorder_Start(sfSoundBufferRecorder* SoundBufferRecorder, unsigned int SampleRate)
+void sfSoundBufferRecorder_Start(sfSoundBufferRecorder* soundBufferRecorder, unsigned int sampleRate)
 {
-    CSFML_CALL(SoundBufferRecorder, Start(SampleRate));
+    CSFML_CALL(soundBufferRecorder, Start(sampleRate));
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Stop the capture
 ////////////////////////////////////////////////////////////
-void sfSoundBufferRecorder_Stop(sfSoundBufferRecorder* SoundBufferRecorder)
+void sfSoundBufferRecorder_Stop(sfSoundBufferRecorder* soundBufferRecorder)
 {
-    CSFML_CALL(SoundBufferRecorder, Stop());
+    CSFML_CALL(soundBufferRecorder, Stop());
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound buffer recorder
 ////////////////////////////////////////////////////////////
-unsigned int sfSoundBufferRecorder_GetSampleRate(sfSoundBufferRecorder* SoundBufferRecorder)
+unsigned int sfSoundBufferRecorder_GetSampleRate(sfSoundBufferRecorder* soundBufferRecorder)
 {
-    CSFML_CALL_RETURN(SoundBufferRecorder, GetSampleRate(), 0);
+    CSFML_CALL_RETURN(soundBufferRecorder, GetSampleRate(), 0);
 }
 
 
@@ -80,11 +80,11 @@ unsigned int sfSoundBufferRecorder_GetSampleRate(sfSoundBufferRecorder* SoundBuf
 /// Get the sound buffer containing the captured audio data
 /// of a sound buffer recorder
 ////////////////////////////////////////////////////////////
-sfSoundBuffer* sfSoundBufferRecorder_GetBuffer(sfSoundBufferRecorder* SoundBufferRecorder)
+sfSoundBuffer* sfSoundBufferRecorder_GetBuffer(sfSoundBufferRecorder* soundBufferRecorder)
 {
-    CSFML_CHECK_RETURN(SoundBufferRecorder, NULL);
+    CSFML_CHECK_RETURN(soundBufferRecorder, NULL);
 
-    SoundBufferRecorder->SoundBuffer.This = SoundBufferRecorder->This.GetBuffer();
+    soundBufferRecorder->SoundBuffer.This = soundBufferRecorder->This.GetBuffer();
 
-    return &SoundBufferRecorder->SoundBuffer;
+    return &soundBufferRecorder->SoundBuffer;
 }

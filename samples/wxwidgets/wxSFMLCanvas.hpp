@@ -19,14 +19,14 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the wxSFMLCanvas
     ///
-    /// \param Parent :   Parent of the control (NULL by default)
-    /// \param Id :       Identifier of the control (-1 by default)
-    /// \param Position : Position of the control (wxDefaultPosition by default)
-    /// \param Size :     Size of the control (wxDefaultSize by default)
-    /// \param Style :    Style of the control (0 by default)
+    /// \param parent :   Parent of the control (NULL by default)
+    /// \param id :       Identifier of the control (-1 by default)
+    /// \param position : Position of the control (wxDefaultPosition by default)
+    /// \param size :     Size of the control (wxDefaultSize by default)
+    /// \param style :    Style of the control (0 by default)
     ///
     ////////////////////////////////////////////////////////////
-    wxSFMLCanvas(wxWindow* Parent = NULL, wxWindowID Id = -1, const wxPoint& Position = wxDefaultPosition, const wxSize& Size = wxDefaultSize, long Style = 0);
+    wxSFMLCanvas(wxWindow* parent = NULL, wxWindowID id = -1, const wxPoint& position = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 
     ////////////////////////////////////////////////////////////
     /// Destructor

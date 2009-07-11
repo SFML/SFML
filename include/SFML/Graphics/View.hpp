@@ -60,61 +60,61 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the view from a rectangle
     ///
-    /// \param Rectangle : Rectangle defining the view
+    /// \param rectangle : Rectangle defining the view
     ///
     ////////////////////////////////////////////////////////////
-    explicit View(const FloatRect& Rectangle);
+    explicit View(const FloatRect& rectangle);
 
     ////////////////////////////////////////////////////////////
     /// Construct the view from its center and size
     ///
-    /// \param Center :   Center of the view
-    /// \param HalfSize : Size of the view
+    /// \param center : Center of the view
+    /// \param size :   Size of the view
     ///
     ////////////////////////////////////////////////////////////
-    View(const Vector2f& Center, const Vector2f& Size);
+    View(const Vector2f& center, const Vector2f& size);
 
     ////////////////////////////////////////////////////////////
     /// Change the center of the view
     ///
-    /// \param X : X coordinate of the new center
-    /// \param Y : Y coordinate of the new center
+    /// \param x : X coordinate of the new center
+    /// \param y : Y coordinate of the new center
     ///
     ////////////////////////////////////////////////////////////
-    void SetCenter(float X, float Y);
+    void SetCenter(float x, float y);
 
     ////////////////////////////////////////////////////////////
     /// Change the center of the view
     ///
-    /// \param Center : New center
+    /// \param center : New center
     ///
     ////////////////////////////////////////////////////////////
-    void SetCenter(const Vector2f& Center);
+    void SetCenter(const Vector2f& center);
 
     ////////////////////////////////////////////////////////////
     /// Change the size of the view
     ///
-    /// \param Width :  New width
-    /// \param Height : New height
+    /// \param width :  New width
+    /// \param height : New height
     ///
     ////////////////////////////////////////////////////////////
-    void SetSize(float Width, float Height);
+    void SetSize(float width, float height);
 
     ////////////////////////////////////////////////////////////
     /// Change the size of the view
     ///
-    /// \param HalfSize : New half-size
+    /// \param size : New half-size
     ///
     ////////////////////////////////////////////////////////////
-    void SetSize(const Vector2f& Size);
+    void SetSize(const Vector2f& size);
 
     ////////////////////////////////////////////////////////////
     /// Set the angle of rotation of the view
     ///
-    /// \param Angle : New angle, in degrees
+    /// \param angle : New angle, in degrees
     ///
     ////////////////////////////////////////////////////////////
-    void SetRotation(float Angle);
+    void SetRotation(float angle);
 
     ////////////////////////////////////////////////////////////
     /// Set the target viewport
@@ -126,19 +126,19 @@ public :
     /// For example, a view which takes the left side of the target would
     /// be defined with View.SetViewport(sf::FloatRect(0, 0, 0.5, 1)).
     ///
-    /// \param Viewport : New viewport
+    /// \param viewport : New viewport
     ///
     ////////////////////////////////////////////////////////////
-    void SetViewport(const FloatRect& Viewport);
+    void SetViewport(const FloatRect& viewport);
 
     ////////////////////////////////////////////////////////////
     /// Reset the view to the given rectangle.
     /// Note: this function resets the rotation angle to 0.
     ///
-    /// \param Rectangle : Rectangle defining the view
+    /// \param rectangle : Rectangle defining the view
     ///
     ////////////////////////////////////////////////////////////
-    void Reset(const FloatRect& Rectangle);
+    void Reset(const FloatRect& rectangle);
 
     ////////////////////////////////////////////////////////////
     /// Get the center of the view
@@ -175,35 +175,35 @@ public :
     ////////////////////////////////////////////////////////////
     /// Move the view
     ///
-    /// \param OffsetX : Offset to move the view, on X axis
-    /// \param OffsetY : Offset to move the view, on Y axis
+    /// \param offsetX : Offset to move the view, on X axis
+    /// \param offsetY : Offset to move the view, on Y axis
     ///
     ////////////////////////////////////////////////////////////
-    void Move(float OffsetX, float OffsetY);
+    void Move(float offsetX, float offsetY);
 
     ////////////////////////////////////////////////////////////
     /// Move the view
     ///
-    /// \param Offset : Offset to move the view
+    /// \param offset : Offset to move the view
     ///
     ////////////////////////////////////////////////////////////
-    void Move(const Vector2f& Offset);
+    void Move(const Vector2f& offset);
 
     ////////////////////////////////////////////////////////////
     /// Rotate the view
     ///
-    /// \param Angle : Angle to rotate, in degrees
+    /// \param angle : Angle to rotate, in degrees
     ///
     ////////////////////////////////////////////////////////////
-    void Rotate(float Angle);
+    void Rotate(float angle);
 
     ////////////////////////////////////////////////////////////
     /// Resize the view rectangle to simulate a zoom / unzoom effect
     ///
-    /// \param Factor : Zoom factor to apply, relative to the current size
+    /// \param factor : Zoom factor to apply, relative to the current size
     ///
     ////////////////////////////////////////////////////////////
-    void Zoom(float Factor);
+    void Zoom(float factor);
 
     ////////////////////////////////////////////////////////////
     /// Get the projection matrix of the view

@@ -49,35 +49,35 @@ myNeedRectUpdate(true)
 ////////////////////////////////////////////////////////////
 /// Construct the string from any kind of text
 ////////////////////////////////////////////////////////////
-String::String(const Unicode::Text& Text, const Font& CharFont, float Size) :
-myFont          (&CharFont),
-mySize          (Size),
+String::String(const Unicode::Text& text, const Font& font, float size) :
+myFont          (&font),
+mySize          (size),
 myStyle         (Regular),
 myNeedRectUpdate(true)
 {
-    SetText(Text);
+    SetText(text);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the text (from any kind of string)
 ////////////////////////////////////////////////////////////
-void String::SetText(const Unicode::Text& Text)
+void String::SetText(const Unicode::Text& text)
 {
     myNeedRectUpdate = true;
-    myText = Text;
+    myText = text;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the font of the string
 ////////////////////////////////////////////////////////////
-void String::SetFont(const Font& CharFont)
+void String::SetFont(const Font& font)
 {
-    if (myFont != &CharFont)
+    if (myFont != &font)
     {
         myNeedRectUpdate = true;
-        myFont = &CharFont;
+        myFont = &font;
     }
 }
 
@@ -85,12 +85,12 @@ void String::SetFont(const Font& CharFont)
 ////////////////////////////////////////////////////////////
 /// Set the size of the string
 ////////////////////////////////////////////////////////////
-void String::SetSize(float Size)
+void String::SetSize(float size)
 {
-    if (mySize != Size)
+    if (mySize != size)
     {
         myNeedRectUpdate = true;
-        mySize = Size;
+        mySize = size;
     }
 }
 
@@ -99,12 +99,12 @@ void String::SetSize(float Size)
 /// Set the style of the text
 /// The default style is Regular
 ////////////////////////////////////////////////////////////
-void String::SetStyle(unsigned long TextStyle)
+void String::SetStyle(unsigned long style)
 {
-    if (myStyle != TextStyle)
+    if (myStyle != style)
     {
         myNeedRectUpdate = true;
-        myStyle = TextStyle;
+        myStyle = style;
     }
 }
 
@@ -150,42 +150,42 @@ unsigned long String::GetStyle() const
 /// in coordinates relative to the string
 /// (note : translation, center, rotation and scale are not applied)
 ////////////////////////////////////////////////////////////
-sf::Vector2f String::GetCharacterPos(std::size_t Index) const
+sf::Vector2f String::GetCharacterPos(std::size_t index) const
 {
     // First get the UTF32 representation of the text
-    const Unicode::UTF32String& Text = myText;
+    const Unicode::UTF32String& text = myText;
 
     // Adjust the index if it's out of range
-    if (Index > Text.length())
-        Index = Text.length();
+    if (index > text.length())
+        index = text.length();
 
     // The final size is based on the text size
-    float FactorX  = mySize / myFont->GetCharacterSize();
-    float AdvanceY = mySize;
+    float factor   = mySize / myFont->GetCharacterSize();
+    float advanceY = mySize;
 
     // Compute the position
-    sf::Vector2f Position;
-    for (std::size_t i = 0; i < Index; ++i)
+    sf::Vector2f position;
+    for (std::size_t i = 0; i < index; ++i)
     {
         // Get the current character and its corresponding glyph
-        Uint32       CurChar  = Text[i];
-        const Glyph& CurGlyph = myFont->GetGlyph(CurChar);
-        float        AdvanceX = CurGlyph.Advance * FactorX;
+        Uint32       curChar  = text[i];
+        const Glyph& curGlyph = myFont->GetGlyph(curChar);
+        float        advanceX = curGlyph.Advance * factor;
 
-        switch (CurChar)
+        switch (curChar)
         {
             // Handle special characters
-            case L' ' :  Position.x += AdvanceX;                 break;
-            case L'\t' : Position.x += AdvanceX * 4;             break;
-            case L'\v' : Position.y += AdvanceY * 4;             break;
-            case L'\n' : Position.y += AdvanceY; Position.x = 0; break;
+            case L' ' :  position.x += advanceX;                 break;
+            case L'\t' : position.x += advanceX * 4;             break;
+            case L'\v' : position.y += advanceY * 4;             break;
+            case L'\n' : position.y += advanceY; position.x = 0; break;
 
             // Regular character : just add its advance value
-            default : Position.x += AdvanceX; break;
+            default : position.x += advanceX; break;
         }
     }
 
-    return Position;
+    return position;
 }
 
 
@@ -197,13 +197,13 @@ FloatRect String::GetRect() const
     if (myNeedRectUpdate)
         const_cast<String*>(this)->RecomputeRect();
 
-    FloatRect Rect;
-    Rect.Left   = (myBaseRect.Left   - GetOrigin().x) * GetScale().x + GetPosition().x;
-    Rect.Top    = (myBaseRect.Top    - GetOrigin().y) * GetScale().y + GetPosition().y;
-    Rect.Right  = (myBaseRect.Right  - GetOrigin().x) * GetScale().x + GetPosition().x;
-    Rect.Bottom = (myBaseRect.Bottom - GetOrigin().y) * GetScale().y + GetPosition().y;
+    FloatRect rect;
+    rect.Left   = (myBaseRect.Left   - GetOrigin().x) * GetScale().x + GetPosition().x;
+    rect.Top    = (myBaseRect.Top    - GetOrigin().y) * GetScale().y + GetPosition().y;
+    rect.Right  = (myBaseRect.Right  - GetOrigin().x) * GetScale().x + GetPosition().x;
+    rect.Bottom = (myBaseRect.Bottom - GetOrigin().y) * GetScale().y + GetPosition().y;
 
-    return Rect;
+    return rect;
 }
 
 
@@ -213,83 +213,83 @@ FloatRect String::GetRect() const
 void String::Render(RenderTarget&) const
 {
     // First get the internal UTF-32 string of the text
-    const Unicode::UTF32String& Text = myText;
+    const Unicode::UTF32String& text = myText;
 
     // No text, no rendering :)
-    if (Text.empty())
+    if (text.empty())
         return;
 
     // Set the scaling factor to get the actual size
-    float CharSize =  static_cast<float>(myFont->GetCharacterSize());
-    float Factor   = mySize / CharSize;
-    GLCheck(glScalef(Factor, Factor, 1.f));
+    float charSize =  static_cast<float>(myFont->GetCharacterSize());
+    float factor   = mySize / charSize;
+    GLCheck(glScalef(factor, factor, 1.f));
 
     // Bind the font texture
     myFont->GetImage().Bind();
 
     // Initialize the rendering coordinates
-    float X = 0.f;
-    float Y = CharSize;
+    float x = 0.f;
+    float y = charSize;
 
     // Holds the lines to draw later, for underlined style
-    std::vector<float> UnderlineCoords;
-    UnderlineCoords.reserve(16);
+    std::vector<float> underlineCoords;
+    underlineCoords.reserve(16);
 
     // Compute the shearing to apply if we're using the italic style
-    float ItalicCoeff = (myStyle & Italic) ? 0.208f : 0.f; // 12 degrees
+    float italicCoeff = (myStyle & Italic) ? 0.208f : 0.f; // 12 degrees
 
     // Draw one quad for each character
     glBegin(GL_QUADS);
-    for (std::size_t i = 0; i < Text.size(); ++i)
+    for (std::size_t i = 0; i < text.size(); ++i)
     {
         // Get the current character and its corresponding glyph
-        Uint32           CurChar  = Text[i];
-        const Glyph&     CurGlyph = myFont->GetGlyph(CurChar);
-        int              Advance  = CurGlyph.Advance;
-        const IntRect&   Rect     = CurGlyph.Rectangle;
-        const FloatRect& Coord    = CurGlyph.TexCoords;
+        Uint32           curChar  = text[i];
+        const Glyph&     curGlyph = myFont->GetGlyph(curChar);
+        int              advance  = curGlyph.Advance;
+        const IntRect&   rect     = curGlyph.Rectangle;
+        const FloatRect& coord    = curGlyph.TexCoords;
 
         // If we're using the underlined style and there's a new line,
         // we keep track of the previous line to draw it later
-        if ((CurChar == L'\n') && (myStyle & Underlined))
+        if ((curChar == L'\n') && (myStyle & Underlined))
         {
-            UnderlineCoords.push_back(X);
-            UnderlineCoords.push_back(Y + 2);
+            underlineCoords.push_back(x);
+            underlineCoords.push_back(y + 2);
         }
 
         // Handle special characters
-        switch (CurChar)
+        switch (curChar)
         {
-            case L' ' :  X += Advance;         continue;
-            case L'\n' : Y += CharSize; X = 0; continue;
-            case L'\t' : X += Advance  * 4;    continue;
-            case L'\v' : Y += CharSize * 4;    continue;
+            case L' ' :  x += advance;         continue;
+            case L'\n' : y += charSize; x = 0; continue;
+            case L'\t' : x += advance  * 4;    continue;
+            case L'\v' : y += charSize * 4;    continue;
         }
 
         // Draw a textured quad for the current character
-        glTexCoord2f(Coord.Left,  Coord.Top);    glVertex2f(X + Rect.Left  - ItalicCoeff * Rect.Top,    Y + Rect.Top);
-        glTexCoord2f(Coord.Left,  Coord.Bottom); glVertex2f(X + Rect.Left  - ItalicCoeff * Rect.Bottom, Y + Rect.Bottom);
-        glTexCoord2f(Coord.Right, Coord.Bottom); glVertex2f(X + Rect.Right - ItalicCoeff * Rect.Bottom, Y + Rect.Bottom);
-        glTexCoord2f(Coord.Right, Coord.Top);    glVertex2f(X + Rect.Right - ItalicCoeff * Rect.Top,    Y + Rect.Top);
+        glTexCoord2f(coord.Left,  coord.Top);    glVertex2f(x + rect.Left  - italicCoeff * rect.Top,    y + rect.Top);
+        glTexCoord2f(coord.Left,  coord.Bottom); glVertex2f(x + rect.Left  - italicCoeff * rect.Bottom, y + rect.Bottom);
+        glTexCoord2f(coord.Right, coord.Bottom); glVertex2f(x + rect.Right - italicCoeff * rect.Bottom, y + rect.Bottom);
+        glTexCoord2f(coord.Right, coord.Top);    glVertex2f(x + rect.Right - italicCoeff * rect.Top,    y + rect.Top);
 
         // If we're using the bold style, we must render the character 4 more times,
         // slightly offseted, to simulate a higher weight
         if (myStyle & Bold)
         {
-            static const float OffsetsX[] = {-0.5f, 0.5f, 0.f, 0.f};
-            static const float OffsetsY[] = {0.f, 0.f, -0.5f, 0.5f};
+            static const float offsetsX[] = {-0.5f, 0.5f, 0.f, 0.f};
+            static const float offsetsY[] = {0.f, 0.f, -0.5f, 0.5f};
 
             for (int j = 0; j < 4; ++j)
             {
-                glTexCoord2f(Coord.Left,  Coord.Top);    glVertex2f(X + OffsetsX[j] + Rect.Left  - ItalicCoeff * Rect.Top,    Y + OffsetsY[j] + Rect.Top);
-                glTexCoord2f(Coord.Left,  Coord.Bottom); glVertex2f(X + OffsetsX[j] + Rect.Left  - ItalicCoeff * Rect.Bottom, Y + OffsetsY[j] + Rect.Bottom);
-                glTexCoord2f(Coord.Right, Coord.Bottom); glVertex2f(X + OffsetsX[j] + Rect.Right - ItalicCoeff * Rect.Bottom, Y + OffsetsY[j] + Rect.Bottom);
-                glTexCoord2f(Coord.Right, Coord.Top);    glVertex2f(X + OffsetsX[j] + Rect.Right - ItalicCoeff * Rect.Top,    Y + OffsetsY[j] + Rect.Top);
+                glTexCoord2f(coord.Left,  coord.Top);    glVertex2f(x + offsetsX[j] + rect.Left  - italicCoeff * rect.Top,    y + offsetsY[j] + rect.Top);
+                glTexCoord2f(coord.Left,  coord.Bottom); glVertex2f(x + offsetsX[j] + rect.Left  - italicCoeff * rect.Bottom, y + offsetsY[j] + rect.Bottom);
+                glTexCoord2f(coord.Right, coord.Bottom); glVertex2f(x + offsetsX[j] + rect.Right - italicCoeff * rect.Bottom, y + offsetsY[j] + rect.Bottom);
+                glTexCoord2f(coord.Right, coord.Top);    glVertex2f(x + offsetsX[j] + rect.Right - italicCoeff * rect.Top,    y + offsetsY[j] + rect.Top);
             }
         }
 
         // Advance to the next character
-        X += Advance;
+        x += advance;
     }
     glEnd();
 
@@ -297,21 +297,21 @@ void String::Render(RenderTarget&) const
     if (myStyle & Underlined)
     {
         // Compute the line thickness
-        float Thickness = (myStyle & Bold) ? 3.f : 2.f;
+        float thickness = (myStyle & Bold) ? 3.f : 2.f;
 
         // Add the last line (which was not finished with a \n)
-        UnderlineCoords.push_back(X);
-        UnderlineCoords.push_back(Y + 2);
+        underlineCoords.push_back(x);
+        underlineCoords.push_back(y + 2);
 
         // Draw the underlines as quads
         GLCheck(glDisable(GL_TEXTURE_2D));
         glBegin(GL_QUADS);
-        for (std::size_t i = 0; i < UnderlineCoords.size(); i += 2)
+        for (std::size_t i = 0; i < underlineCoords.size(); i += 2)
         {
-            glVertex2f(0,                  UnderlineCoords[i + 1]);
-            glVertex2f(0,                  UnderlineCoords[i + 1] + Thickness);
-            glVertex2f(UnderlineCoords[i], UnderlineCoords[i + 1] + Thickness);
-            glVertex2f(UnderlineCoords[i], UnderlineCoords[i + 1]);
+            glVertex2f(0,                  underlineCoords[i + 1]);
+            glVertex2f(0,                  underlineCoords[i + 1] + thickness);
+            glVertex2f(underlineCoords[i], underlineCoords[i + 1] + thickness);
+            glVertex2f(underlineCoords[i], underlineCoords[i + 1]);
         }
         glEnd();
     }
@@ -324,89 +324,89 @@ void String::Render(RenderTarget&) const
 void String::RecomputeRect()
 {
     // First get the internal UTF-32 string of the text
-    const Unicode::UTF32String& Text = myText;
+    const Unicode::UTF32String& text = myText;
 
     // Reset the "need update" state
     myNeedRectUpdate = false;
 
     // No text, empty box :)
-    if (Text.empty())
+    if (text.empty())
     {
         myBaseRect = FloatRect(0, 0, 0, 0);
         return;
     }
 
     // Initial values
-    float CurWidth  = 0;
-    float CurHeight = 0;
-    float Width     = 0;
-    float Height    = 0;
-    float Factor    = mySize / myFont->GetCharacterSize();
+    float curWidth  = 0;
+    float curHeight = 0;
+    float width     = 0;
+    float height    = 0;
+    float factor    = mySize / myFont->GetCharacterSize();
 
     // Go through each character
-    for (std::size_t i = 0; i < Text.size(); ++i)
+    for (std::size_t i = 0; i < text.size(); ++i)
     {
         // Get the current character and its corresponding glyph
-        Uint32         CurChar  = Text[i];
-        const Glyph&   CurGlyph = myFont->GetGlyph(CurChar);
-        float          Advance  = CurGlyph.Advance * Factor;
-        const IntRect& Rect     = CurGlyph.Rectangle;
+        Uint32         curChar  = text[i];
+        const Glyph&   curGlyph = myFont->GetGlyph(curChar);
+        float          advance  = curGlyph.Advance * factor;
+        const IntRect& rect     = curGlyph.Rectangle;
 
         // Handle special characters
-        switch (CurChar)
+        switch (curChar)
         {
-            case L' ' :  CurWidth += Advance;                    continue;
-            case L'\t' : CurWidth += Advance * 4;                continue;
-            case L'\v' : Height   += mySize  * 4; CurHeight = 0; continue;
+            case L' ' :  curWidth += advance;                    continue;
+            case L'\t' : curWidth += advance * 4;                continue;
+            case L'\v' : height   += mySize  * 4; curHeight = 0; continue;
 
             case L'\n' :
-                Height += mySize;
-                CurHeight = 0;
-                if (CurWidth > Width)
-                    Width = CurWidth;
-                CurWidth = 0;
+                height += mySize;
+                curHeight = 0;
+                if (curWidth > width)
+                    width = curWidth;
+                curWidth = 0;
                 continue;
         }
 
         // Advance to the next character
-        CurWidth += Advance;
+        curWidth += advance;
 
         // Update the maximum height
-        float CharHeight = (myFont->GetCharacterSize() + Rect.Bottom) * Factor;
-        if (CharHeight > CurHeight)
-            CurHeight = CharHeight;
+        float charHeight = (myFont->GetCharacterSize() + rect.Bottom) * factor;
+        if (charHeight > curHeight)
+            curHeight = charHeight;
     }
 
     // Update the last line
-    if (CurWidth > Width)
-        Width = CurWidth;
-    Height += CurHeight;
+    if (curWidth > width)
+        width = curWidth;
+    height += curHeight;
 
     // Add a slight width / height if we're using the bold style
     if (myStyle & Bold)
     {
-        Width  += 1 * Factor;
-        Height += 1 * Factor;
+        width  += 1 * factor;
+        height += 1 * factor;
     }
 
     // Add a slight width if we're using the italic style
     if (myStyle & Italic)
     {
-        Width += 0.208f * mySize;
+        width += 0.208f * mySize;
     }
 
     // Add a slight height if we're using the underlined style
     if (myStyle & Underlined)
     {
-        if (CurHeight < mySize + 4 * Factor)
-            Height += 4 * Factor;
+        if (curHeight < mySize + 4 * factor)
+            height += 4 * factor;
     }
 
     // Finally update the rectangle
     myBaseRect.Left   = 0;
     myBaseRect.Top    = 0;
-    myBaseRect.Right  = Width;
-    myBaseRect.Bottom = Height;
+    myBaseRect.Right  = width;
+    myBaseRect.Bottom = height;
 }
 
 } // namespace sf

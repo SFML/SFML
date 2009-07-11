@@ -53,18 +53,18 @@ public :
     ////////////////////////////////////////////////////////////
     /// Clear the entire target with a single color
     ///
-    /// \param FillColor : Color to use to clear the render target
+    /// \param color : Color to use to clear the render target
     ///
     ////////////////////////////////////////////////////////////
-    void Clear(const Color& FillColor = Color(0, 0, 0));
+    void Clear(const Color& color = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Draw something into the target
     ///
-    /// \param Object : Object to draw
+    /// \param object : Object to draw
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw(const Drawable& Object);
+    virtual void Draw(const Drawable& object);
 
     ////////////////////////////////////////////////////////////
     /// Get the width of the rendering region of the target
@@ -85,10 +85,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Change the current active view.
     ///
-    /// \param NewView : New view to use (pass GetDefaultView() to set the default view)
+    /// \param view : New view to use (pass GetDefaultView() to set the default view)
     ///
     ////////////////////////////////////////////////////////////
-    void SetView(const View& NewView);
+    void SetView(const View& view);
 
     ////////////////////////////////////////////////////////////
     /// Get the current view
@@ -114,10 +114,10 @@ public :
     /// SFML to do internal optimizations and improve performances.
     /// This parameter is false by default
     ///
-    /// \param Preserve : True to preserve OpenGL states, false to let SFML optimize
+    /// \param preserve : True to preserve OpenGL states, false to let SFML optimize
     ///
     ////////////////////////////////////////////////////////////
-    void PreserveOpenGLStates(bool Preserve);
+    void PreserveOpenGLStates(bool preserve);
 
 protected :
 
@@ -138,12 +138,12 @@ private :
     ////////////////////////////////////////////////////////////
     /// Activate the target for rendering
     ///
-    /// \param Active : True to activate rendering, false to deactivate
+    /// \param active : True to activate rendering, false to deactivate
     ///
     /// \return True if activation succeeded
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool Active) = 0;
+    virtual bool Activate(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Set the OpenGL render states needed for the SFML rendering

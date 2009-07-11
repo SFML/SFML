@@ -54,18 +54,18 @@ myShaderProgram(0)
 ////////////////////////////////////////////////////////////
 /// Copy constructor
 ////////////////////////////////////////////////////////////
-PostFX::PostFX(const PostFX& Copy) :
-Drawable        (Copy),
+PostFX::PostFX(const PostFX& copy) :
+Drawable        (copy),
 myShaderProgram (0),
-myTextures      (Copy.myTextures),
-myFragmentShader(Copy.myFragmentShader),
-myFrameBuffer   (Copy.myFrameBuffer)
+myTextures      (copy.myTextures),
+myFragmentShader(copy.myFragmentShader),
+myFrameBuffer   (copy.myFrameBuffer)
 {
     // No filtering on frame buffer
     myFrameBuffer.SetSmooth(false);
 
     // Create the shaders and the program
-    if (Copy.myShaderProgram)
+    if (copy.myShaderProgram)
         CreateProgram();
 }
 
@@ -84,18 +84,18 @@ PostFX::~PostFX()
 ////////////////////////////////////////////////////////////
 /// Load the effect from a file
 ////////////////////////////////////////////////////////////
-bool PostFX::LoadFromFile(const std::string& Filename)
+bool PostFX::LoadFromFile(const std::string& filename)
 {
     // Open the file
-    std::ifstream File(Filename.c_str());
-    if (!File)
+    std::ifstream file(filename.c_str());
+    if (!file)
     {
-        std::cerr << "Failed to open effect file \"" << Filename << "\"" << std::endl;
+        std::cerr << "Failed to open effect file \"" << filename << "\"" << std::endl;
         return false;
     }
 
     // Apply the preprocessing pass to the fragment shader code
-    myFragmentShader = PreprocessEffect(File);
+    myFragmentShader = PreprocessEffect(file);
 
     // Create the shaders and the program
     CreateProgram();
@@ -107,13 +107,13 @@ bool PostFX::LoadFromFile(const std::string& Filename)
 ////////////////////////////////////////////////////////////
 /// Load the effect from a text in memory
 ////////////////////////////////////////////////////////////
-bool PostFX::LoadFromMemory(const std::string& Effect)
+bool PostFX::LoadFromMemory(const std::string& effect)
 {
     // Open a stream and copy the effect code
-    std::istringstream Stream(Effect.c_str());
+    std::istringstream stream(effect.c_str());
 
     // Apply the preprocessing pass to the fragment shader code
-    myFragmentShader = PreprocessEffect(Stream);
+    myFragmentShader = PreprocessEffect(stream);
 
     // Create the shaders and the program
     CreateProgram();
@@ -125,7 +125,7 @@ bool PostFX::LoadFromMemory(const std::string& Effect)
 ////////////////////////////////////////////////////////////
 /// Change a parameter of the effect (1 float)
 ////////////////////////////////////////////////////////////
-void PostFX::SetParameter(const std::string& Name, float X)
+void PostFX::SetParameter(const std::string& name, float x)
 {
     if (myShaderProgram)
     {
@@ -133,11 +133,11 @@ void PostFX::SetParameter(const std::string& Name, float X)
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
         // Get parameter location and assign it new values
-        GLint Location = glGetUniformLocationARB(myShaderProgram, Name.c_str());
-        if (Location != -1)
-            GLCheck(glUniform1fARB(Location, X));
+        GLint location = glGetUniformLocationARB(myShaderProgram, name.c_str());
+        if (location != -1)
+            GLCheck(glUniform1fARB(location, x));
         else
-            std::cerr << "Parameter \"" << Name << "\" not found in post-effect" << std::endl;
+            std::cerr << "Parameter \"" << name << "\" not found in post-effect" << std::endl;
 
         // Disable program
         GLCheck(glUseProgramObjectARB(0));
@@ -148,7 +148,7 @@ void PostFX::SetParameter(const std::string& Name, float X)
 ////////////////////////////////////////////////////////////
 /// Change a parameter of the effect (2 floats)
 ////////////////////////////////////////////////////////////
-void PostFX::SetParameter(const std::string& Name, float X, float Y)
+void PostFX::SetParameter(const std::string& name, float x, float y)
 {
     if (myShaderProgram)
     {
@@ -156,11 +156,11 @@ void PostFX::SetParameter(const std::string& Name, float X, float Y)
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
         // Get parameter location and assign it new values
-        GLint Location = glGetUniformLocationARB(myShaderProgram, Name.c_str());
-        if (Location != -1)
-            GLCheck(glUniform2fARB(Location, X, Y));
+        GLint location = glGetUniformLocationARB(myShaderProgram, name.c_str());
+        if (location != -1)
+            GLCheck(glUniform2fARB(location, x, y));
         else
-            std::cerr << "Parameter \"" << Name << "\" not found in post-effect" << std::endl;
+            std::cerr << "Parameter \"" << name << "\" not found in post-effect" << std::endl;
 
         // Disable program
         GLCheck(glUseProgramObjectARB(0));
@@ -171,7 +171,7 @@ void PostFX::SetParameter(const std::string& Name, float X, float Y)
 ////////////////////////////////////////////////////////////
 /// Change a parameter of the effect (3 floats)
 ////////////////////////////////////////////////////////////
-void PostFX::SetParameter(const std::string& Name, float X, float Y, float Z)
+void PostFX::SetParameter(const std::string& name, float x, float y, float z)
 {
     if (myShaderProgram)
     {
@@ -179,11 +179,11 @@ void PostFX::SetParameter(const std::string& Name, float X, float Y, float Z)
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
         // Get parameter location and assign it new values
-        GLint Location = glGetUniformLocationARB(myShaderProgram, Name.c_str());
-        if (Location != -1)
-            GLCheck(glUniform3fARB(Location, X, Y, Z));
+        GLint location = glGetUniformLocationARB(myShaderProgram, name.c_str());
+        if (location != -1)
+            GLCheck(glUniform3fARB(location, x, y, z));
         else
-            std::cerr << "Parameter \"" << Name << "\" not found in post-effect" << std::endl;
+            std::cerr << "Parameter \"" << name << "\" not found in post-effect" << std::endl;
 
         // Disable program
         GLCheck(glUseProgramObjectARB(0));
@@ -194,7 +194,7 @@ void PostFX::SetParameter(const std::string& Name, float X, float Y, float Z)
 ////////////////////////////////////////////////////////////
 /// Change a parameter of the effect (4 floats)
 ////////////////////////////////////////////////////////////
-void PostFX::SetParameter(const std::string& Name, float X, float Y, float Z, float W)
+void PostFX::SetParameter(const std::string& name, float x, float y, float z, float w)
 {
     if (myShaderProgram)
     {
@@ -202,11 +202,11 @@ void PostFX::SetParameter(const std::string& Name, float X, float Y, float Z, fl
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
         // Get parameter location and assign it new values
-        GLint Location = glGetUniformLocationARB(myShaderProgram, Name.c_str());
-        if (Location != -1)
-            GLCheck(glUniform4fARB(Location, X, Y, Z, W));
+        GLint location = glGetUniformLocationARB(myShaderProgram, name.c_str());
+        if (location != -1)
+            GLCheck(glUniform4fARB(location, x, y, z, w));
         else
-            std::cerr << "Parameter \"" << Name << "\" not found in post-effect" << std::endl;
+            std::cerr << "Parameter \"" << name << "\" not found in post-effect" << std::endl;
 
         // Disable program
         GLCheck(glUseProgramObjectARB(0));
@@ -217,41 +217,41 @@ void PostFX::SetParameter(const std::string& Name, float X, float Y, float Z, fl
 ////////////////////////////////////////////////////////////
 /// Set a texture parameter
 ////////////////////////////////////////////////////////////
-void PostFX::SetTexture(const std::string& Name, const Image* Texture)
+void PostFX::SetTexture(const std::string& name, const Image* texture)
 {
     // Check that the current texture unit is available
-    GLint MaxUnits;
-    GLCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &MaxUnits));
-    if (myTextures.size() >= static_cast<std::size_t>(MaxUnits))
+    GLint maxUnits;
+    GLCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
+    if (myTextures.size() >= static_cast<std::size_t>(maxUnits))
     {
-        std::cerr << "Impossible to use texture \"" << Name << "\" for post-effect : all available texture units are used" << std::endl;
+        std::cerr << "Impossible to use texture \"" << name << "\" for post-effect : all available texture units are used" << std::endl;
         return;
     }
 
     // Make sure the given name is a valid variable in the effect
-    int Location = glGetUniformLocationARB(myShaderProgram, Name.c_str());
-    if (Location == -1)
+    int location = glGetUniformLocationARB(myShaderProgram, name.c_str());
+    if (location == -1)
     {
-        std::cerr << "Texture \"" << Name << "\" not found in post-effect" << std::endl;
+        std::cerr << "Texture \"" << name << "\" not found in post-effect" << std::endl;
         return;
     }
 
     // Store the texture for later use
-    myTextures[Name] = Texture ? Texture : &myFrameBuffer;
+    myTextures[name] = texture ? texture : &myFrameBuffer;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Assignment operator
 ////////////////////////////////////////////////////////////
-PostFX& PostFX::operator =(const PostFX& Other)
+PostFX& PostFX::operator =(const PostFX& other)
 {
-    PostFX Temp(Other);
+    PostFX temp(other);
 
-    std::swap(myShaderProgram,  Temp.myShaderProgram);
-    std::swap(myTextures,       Temp.myTextures);
-    std::swap(myFragmentShader, Temp.myFragmentShader);
-    std::swap(myFrameBuffer,    Temp.myFrameBuffer);
+    std::swap(myShaderProgram,  temp.myShaderProgram);
+    std::swap(myTextures,       temp.myTextures);
+    std::swap(myFragmentShader, temp.myFragmentShader);
+    std::swap(myFrameBuffer,    temp.myFrameBuffer);
 
     return *this;
 }
@@ -275,7 +275,7 @@ bool PostFX::CanUsePostFX()
 ////////////////////////////////////////////////////////////
 /// /see Drawable::Render
 ////////////////////////////////////////////////////////////
-void PostFX::Render(RenderTarget& Target) const
+void PostFX::Render(RenderTarget& target) const
 {
     // Check that we have a valid program
     if (!myShaderProgram)
@@ -283,25 +283,25 @@ void PostFX::Render(RenderTarget& Target) const
 
     // Copy the current framebuffer pixels to our frame buffer texture
     // The ugly cast is temporary until PostFx are rewritten :)
-    myFrameBuffer.CopyScreen((RenderWindow&)Target);
+    myFrameBuffer.CopyScreen((RenderWindow&)target);
 
     // Enable program
     GLCheck(glUseProgramObjectARB(myShaderProgram));
 
     // Bind textures
-    TextureTable::const_iterator ItTex = myTextures.begin();
+    TextureTable::const_iterator it = myTextures.begin();
     for (std::size_t i = 0; i < myTextures.size(); ++i)
     {
-        int Location = glGetUniformLocationARB(myShaderProgram, ItTex->first.c_str());
-        GLCheck(glUniform1iARB(Location, static_cast<GLint>(i)));
+        int location = glGetUniformLocationARB(myShaderProgram, it->first.c_str());
+        GLCheck(glUniform1iARB(location, static_cast<GLint>(i)));
         GLCheck(glActiveTextureARB(static_cast<GLenum>(GL_TEXTURE0_ARB + i)));
-        ItTex->second->Bind();
-        ItTex++;
+        it->second->Bind();
+        it++;
     }
 
     // Compute the texture coordinates (in case the texture is larger than the screen, or flipped)
-    IntRect FrameBufferRect(0, 0, myFrameBuffer.GetWidth(), myFrameBuffer.GetHeight());
-    FloatRect TexCoords = myFrameBuffer.GetTexCoords(FrameBufferRect);
+    IntRect frameBufferRect(0, 0, myFrameBuffer.GetWidth(), myFrameBuffer.GetHeight());
+    FloatRect texCoords = myFrameBuffer.GetTexCoords(frameBufferRect);
 
     // Set the projection matrix to the identity so that the screen coordinates are in the range [-1, 1]
     GLCheck(glMatrixMode(GL_PROJECTION));
@@ -309,10 +309,10 @@ void PostFX::Render(RenderTarget& Target) const
 
     // Render a fullscreen quad using the effect on our framebuffer
     glBegin(GL_QUADS);
-         glTexCoord2f(TexCoords.Left,  TexCoords.Top);    glVertex2f(-1,  1);
-         glTexCoord2f(TexCoords.Right, TexCoords.Top);    glVertex2f( 1,  1);
-         glTexCoord2f(TexCoords.Right, TexCoords.Bottom); glVertex2f( 1, -1);
-         glTexCoord2f(TexCoords.Left,  TexCoords.Bottom); glVertex2f(-1, -1);
+         glTexCoord2f(texCoords.Left,  texCoords.Top);    glVertex2f(-1,  1);
+         glTexCoord2f(texCoords.Right, texCoords.Top);    glVertex2f( 1,  1);
+         glTexCoord2f(texCoords.Right, texCoords.Bottom); glVertex2f( 1, -1);
+         glTexCoord2f(texCoords.Left,  texCoords.Bottom); glVertex2f(-1, -1);
     glEnd();
 
     // Disable program
@@ -332,78 +332,78 @@ void PostFX::Render(RenderTarget& Target) const
 /// Preprocess a SFML effect file
 /// to convert it to a valid GLSL fragment shader
 ////////////////////////////////////////////////////////////
-std::string PostFX::PreprocessEffect(std::istream& File)
+std::string PostFX::PreprocessEffect(std::istream& file)
 {
     // Initialize output string
-    std::set<std::string> myTextures;
-    std::string Out = "";
+    std::set<std::string> textures;
+    std::string out = "";
 
     // Variable declarations
-    std::string Line;
-    while (std::getline(File, Line) && (Line.substr(0, 6) != "effect"))
+    std::string line;
+    while (std::getline(file, line) && (line.substr(0, 6) != "effect"))
     {
         // Remove the ending '\r', if any
-        if (!Line.empty() && (Line[Line.size() - 1] == '\r'))
-            Line.erase(Line.size() - 1);
+        if (!line.empty() && (line[line.size() - 1] == '\r'))
+            line.erase(line.size() - 1);
 
         // Skip empty lines
-        if (Line == "")
+        if (line == "")
             continue;
 
         // Extract variables type and name and convert them
-        std::string Type, Name;
-        std::istringstream iss(Line);
-        if (!(iss >> Type >> Name))
+        std::string type, name;
+        std::istringstream iss(line);
+        if (!(iss >> type >> name))
         {
             std::cerr << "Post-effect error : invalid declaration (should be \"[type][name]\")" << std::endl
-                      << "> " << Line << std::endl;
+                      << "> " << line << std::endl;
             return "";
         }
 
-        if (Type == "texture")
+        if (type == "texture")
         {
             // Textures need some checking and conversion
-            if (myTextures.find(Name) != myTextures.end())
+            if (textures.find(name) != textures.end())
             {
-                std::cerr << "Post-effect error : texture \"" << Name << "\" already exists" << std::endl;
+                std::cerr << "Post-effect error : texture \"" << name << "\" already exists" << std::endl;
                 return "";
             }
 
-            Out += "uniform sampler2D " + Name + ";\n";
-            myTextures.insert(Name);
+            out += "uniform sampler2D " + name + ";\n";
+            textures.insert(name);
         }
         else
         {
             // Other types are just copied to output with "uniform" prefix
-            Out += "uniform " + Type + " " + Name + ";\n";
+            out += "uniform " + type + " " + name + ";\n";
         }
     }
 
     // Effect code
-    Out += "void main()\n";
-    while (std::getline(File, Line))
+    out += "void main()\n";
+    while (std::getline(file, line))
     {
         // Replace any texture lookup "T(" by "texture2D(T, "
-        for (std::set<std::string>::const_iterator i = myTextures.begin(); i != myTextures.end(); ++i)
+        for (std::set<std::string>::const_iterator it = textures.begin(); it != textures.end(); ++it)
         {
-            std::string::size_type Pos = Line.find(*i);
-            if (Pos != std::string::npos)
-                Line.replace(Pos, i->size() + 1, "texture2D(" + *i + ", ");
+            std::string::size_type pos = line.find(*it);
+            if (pos != std::string::npos)
+                line.replace(pos, it->size() + 1, "texture2D(" + *it + ", ");
         }
 
         // Replace "_in" by "gl_TexCoord[0].xy"
-        for (std::string::size_type Pos = Line.find("_in"); Pos != std::string::npos; Pos = Line.find("_in"))
-            Line.replace(Pos, 3, "gl_TexCoord[0].xy");
+        for (std::string::size_type pos = line.find("_in"); pos != std::string::npos; pos = line.find("_in"))
+            line.replace(pos, 3, "gl_TexCoord[0].xy");
 
         // Replace "_out" by "gl_FragColor"
-        for (std::string::size_type Pos = Line.find("_out"); Pos != std::string::npos; Pos = Line.find("_out"))
-            Line.replace(Pos, 4, "gl_FragColor");
+        for (std::string::size_type pos = line.find("_out"); pos != std::string::npos; pos = line.find("_out"))
+            line.replace(pos, 4, "gl_FragColor");
 
         // Write modified line to output string
-        Out += Line + "\n";
+        out += line + "\n";
     }
 
-    return Out;
+    return out;
 }
 
 
@@ -424,7 +424,7 @@ void PostFX::CreateProgram()
         GLCheck(glDeleteObjectARB(myShaderProgram));
 
     // Define vertex shader source (we provide it directly as it doesn't have to change)
-    static const std::string VertexShaderSrc =
+    static const std::string vertexShaderSrc =
         "void main()"
         "{"
         "    gl_TexCoord[0] = gl_MultiTexCoord0;"
@@ -435,66 +435,66 @@ void PostFX::CreateProgram()
     myShaderProgram = glCreateProgramObjectARB();
 
     // Create the shaders
-    GLhandleARB VertexShader   = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    GLhandleARB FragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+    GLhandleARB vertexShader   = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    GLhandleARB fragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
     // Compile them
-    const char* VertexSrc   = VertexShaderSrc.c_str();
-    const char* FragmentSrc = myFragmentShader.c_str();
-    GLCheck(glShaderSourceARB(VertexShader,   1, &VertexSrc,   NULL));
-    GLCheck(glShaderSourceARB(FragmentShader, 1, &FragmentSrc, NULL));
-    GLCheck(glCompileShaderARB(VertexShader));
-    GLCheck(glCompileShaderARB(FragmentShader));
+    const char* vertexSrc   = vertexShaderSrc.c_str();
+    const char* fragmentSrc = myFragmentShader.c_str();
+    GLCheck(glShaderSourceARB(vertexShader,   1, &vertexSrc,   NULL));
+    GLCheck(glShaderSourceARB(fragmentShader, 1, &fragmentSrc, NULL));
+    GLCheck(glCompileShaderARB(vertexShader));
+    GLCheck(glCompileShaderARB(fragmentShader));
 
     // Check the compile logs
-    GLint Success;
-    GLCheck(glGetObjectParameterivARB(VertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &Success));
-    if (Success == GL_FALSE)
+    GLint success;
+    GLCheck(glGetObjectParameterivARB(vertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &success));
+    if (success == GL_FALSE)
     {
-        char CompileLog[1024];
-        GLCheck(glGetInfoLogARB(VertexShader, sizeof(CompileLog), 0, CompileLog));
+        char log[1024];
+        GLCheck(glGetInfoLogARB(vertexShader, sizeof(log), 0, log));
         std::cerr << "Failed to compile post-effect :" << std::endl
-                  << CompileLog << std::endl;
-        GLCheck(glDeleteObjectARB(VertexShader));
-        GLCheck(glDeleteObjectARB(FragmentShader));
+                  << log << std::endl;
+        GLCheck(glDeleteObjectARB(vertexShader));
+        GLCheck(glDeleteObjectARB(fragmentShader));
         GLCheck(glDeleteObjectARB(myShaderProgram));
         myShaderProgram = 0;
         return;
     }
-    GLCheck(glGetObjectParameterivARB(FragmentShader, GL_OBJECT_COMPILE_STATUS_ARB, &Success));
-    if (Success == GL_FALSE)
+    GLCheck(glGetObjectParameterivARB(fragmentShader, GL_OBJECT_COMPILE_STATUS_ARB, &success));
+    if (success == GL_FALSE)
     {
-        char CompileLog[1024];
-        GLCheck(glGetInfoLogARB(FragmentShader, sizeof(CompileLog), 0, CompileLog));
+        char log[1024];
+        GLCheck(glGetInfoLogARB(fragmentShader, sizeof(log), 0, log));
         std::cerr << "Failed to compile post-effect :" << std::endl
-                  << CompileLog << std::endl;
-        GLCheck(glDeleteObjectARB(VertexShader));
-        GLCheck(glDeleteObjectARB(FragmentShader));
+                  << log << std::endl;
+        GLCheck(glDeleteObjectARB(vertexShader));
+        GLCheck(glDeleteObjectARB(fragmentShader));
         GLCheck(glDeleteObjectARB(myShaderProgram));
         myShaderProgram = 0;
         return;
     }
 
     // Attach the shaders to the program
-    GLCheck(glAttachObjectARB(myShaderProgram, VertexShader));
-    GLCheck(glAttachObjectARB(myShaderProgram, FragmentShader));
+    GLCheck(glAttachObjectARB(myShaderProgram, vertexShader));
+    GLCheck(glAttachObjectARB(myShaderProgram, fragmentShader));
 
     // We can now delete the shaders
-    GLCheck(glDeleteObjectARB(VertexShader));
-    GLCheck(glDeleteObjectARB(FragmentShader));
+    GLCheck(glDeleteObjectARB(vertexShader));
+    GLCheck(glDeleteObjectARB(fragmentShader));
 
     // Link the program
     GLCheck(glLinkProgramARB(myShaderProgram));
 
     // Get link log
-    GLCheck(glGetObjectParameterivARB(myShaderProgram, GL_OBJECT_LINK_STATUS_ARB, &Success));
-    if (Success == GL_FALSE)
+    GLCheck(glGetObjectParameterivARB(myShaderProgram, GL_OBJECT_LINK_STATUS_ARB, &success));
+    if (success == GL_FALSE)
     {
         // Oops... link errors
-        char LinkLog[1024];
-        GLCheck(glGetInfoLogARB(myShaderProgram, sizeof(LinkLog), 0, LinkLog));
+        char log[1024];
+        GLCheck(glGetInfoLogARB(myShaderProgram, sizeof(log), 0, log));
         std::cerr << "Failed to link post-effect :" << std::endl
-                  << LinkLog << std::endl;
+                  << log << std::endl;
         GLCheck(glDeleteObjectARB(myShaderProgram));
         myShaderProgram = 0;
         return;

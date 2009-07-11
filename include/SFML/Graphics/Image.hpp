@@ -57,30 +57,30 @@ public :
     ////////////////////////////////////////////////////////////
     /// Copy constructor
     ///
-    /// \param Copy : instance to copy
+    /// \param copy : instance to copy
     ///
     ////////////////////////////////////////////////////////////
-    Image(const Image& Copy);
+    Image(const Image& copy);
 
     ////////////////////////////////////////////////////////////
     /// Construct an empty image
     ///
-    /// \param Width :  Image width
-    /// \param Height : Image height
-    /// \param Col :    Image color (black by default)
+    /// \param width :  Image width
+    /// \param height : Image height
+    /// \param color :  Image color (black by default)
     ///
     ////////////////////////////////////////////////////////////
-    Image(unsigned int Width, unsigned int Height, const Color& Col = Color(0, 0, 0, 255));
+    Image(unsigned int width, unsigned int height, const Color& color = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Construct the image from pixels in memory
     ///
-    /// \param Width :  Image width
-    /// \param Height : Image height
-    /// \param Data :   Pointer to the pixels in memory (assumed format is RGBA)
+    /// \param width :  Image width
+    /// \param height : Image height
+    /// \param pixels : Pointer to the pixels in memory (assumed format is RGBA)
     ///
     ////////////////////////////////////////////////////////////
-    Image(unsigned int Width, unsigned int Height, const Uint8* Data);
+    Image(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -96,108 +96,108 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& Filename);
+    bool LoadFromFile(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// Load the image from a file in memory
     ///
-    /// \param Data :        Pointer to the file data in memory
-    /// \param SizeInBytes : Size of the data to load, in bytes
+    /// \param data :        Pointer to the file data in memory
+    /// \param sizeInBytes : Size of the data to load, in bytes
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const char* Data, std::size_t SizeInBytes);
+    bool LoadFromMemory(const char* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// Load the image directly from an array of pixels
     ///
-    /// \param Width :  Image width
-    /// \param Height : Image height
-    /// \param Data :   Pointer to the pixels in memory (assumed format is RGBA)
+    /// \param width :  Image width
+    /// \param height : Image height
+    /// \param pixels : Pointer to the pixels in memory (assumed format is RGBA)
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromPixels(unsigned int Width, unsigned int Height, const Uint8* Data);
+    bool LoadFromPixels(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// Save the content of the image to a file
     ///
-    /// \param Filename : Path of the file to save (overwritten if already exist)
+    /// \param filename : Path of the file to save (overwritten if already exist)
     ///
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool SaveToFile(const std::string& Filename) const;
+    bool SaveToFile(const std::string& filename) const;
 
     ////////////////////////////////////////////////////////////
     /// Create an empty image
     ///
-    /// \param Width :  Image width
-    /// \param Height : Image height
-    /// \param Col :    Image color (black by default)
+    /// \param width :  Image width
+    /// \param height : Image height
+    /// \param color :  Image color (black by default)
     ///
     /// \return True if creation was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool Create(unsigned int Width, unsigned int Height, Color Col = Color(0, 0, 0, 255));
+    bool Create(unsigned int width, unsigned int height, const Color& color = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Create transparency mask from a specified colorkey
     ///
-    /// \param ColorKey : Color to become transparent
-    /// \param Alpha :    Alpha value to use for transparent pixels (0 by default)
+    /// \param transparentColor : Color to become transparent
+    /// \param alpha :            Alpha value to assign to transparent pixels (0 by default)
     ///
     ////////////////////////////////////////////////////////////
-    void CreateMaskFromColor(Color ColorKey, Uint8 Alpha = 0);
+    void CreateMaskFromColor(const Color& transparentColor, Uint8 alpha = 0);
 
     ////////////////////////////////////////////////////////////
     /// Copy pixels from another image onto this one.
     /// This function does a slow pixel copy and should only
     /// be used at initialization time
     ///
-    /// \param Source :     Source image to copy
-    /// \param DestX :      X coordinate of the destination position
-    /// \param DestY :      Y coordinate of the destination position
-    /// \param SourceRect : Sub-rectangle of the source image to copy (empty by default - entire image)
-    /// \param ApplyAlpha : Should the copy take in account the source transparency? (false by default)
+    /// \param source :     Source image to copy
+    /// \param destX :      X coordinate of the destination position
+    /// \param destY :      Y coordinate of the destination position
+    /// \param sourceRect : Sub-rectangle of the source image to copy (empty by default - entire image)
+    /// \param applyAlpha : Should the copy take in account the source transparency? (false by default)
     ///
     ////////////////////////////////////////////////////////////
-    void Copy(const Image& Source, unsigned int DestX, unsigned int DestY, const IntRect& SourceRect = IntRect(0, 0, 0, 0), bool ApplyAlpha = false);
+    void Copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect = IntRect(0, 0, 0, 0), bool applyAlpha = false);
 
     ////////////////////////////////////////////////////////////
     /// Create the image from the current contents of the
     /// given window
     ///
-    /// \param Window :     Window to capture
-    /// \param SourceRect : Sub-rectangle of the screen to copy (empty by default - entire image)
+    /// \param window :     Window to capture
+    /// \param sourceRect : Sub-rectangle of the screen to copy (empty by default - entire image)
     ///
     /// \return True if copy was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool CopyScreen(RenderWindow& Window, const IntRect& SourceRect = IntRect(0, 0, 0, 0));
+    bool CopyScreen(RenderWindow& window, const IntRect& sourceRect = IntRect(0, 0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Change the color of a pixel
     ///
-    /// \param X :   X coordinate of pixel in the image
-    /// \param Y :   Y coordinate of pixel in the image
-    /// \param Col : New color for pixel (X, Y)
+    /// \param x :     X coordinate of pixel in the image
+    /// \param y :     Y coordinate of pixel in the image
+    /// \param color : New color for pixel (x, y)
     ///
     ////////////////////////////////////////////////////////////
-    void SetPixel(unsigned int X, unsigned int Y, const Color& Col);
+    void SetPixel(unsigned int x, unsigned int y, const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// Get a pixel from the image
     ///
-    /// \param X : X coordinate of pixel in the image
-    /// \param Y : Y coordinate of pixel in the image
+    /// \param x : X coordinate of pixel in the image
+    /// \param y : Y coordinate of pixel in the image
     ///
-    /// \return Color of pixel (X, Y)
+    /// \return Color of pixel (x, y)
     ///
     ////////////////////////////////////////////////////////////
-    const Color& GetPixel(unsigned int X, unsigned int Y) const;
+    const Color& GetPixel(unsigned int x, unsigned int y) const;
 
     ////////////////////////////////////////////////////////////
     /// Get a read-only pointer to the array of pixels (RGBA 8 bits integers components)
@@ -219,10 +219,10 @@ public :
     /// Enable or disable image smooth filter.
     /// This parameter is enabled by default
     ///
-    /// \param Smooth : True to enable smoothing filter, false to disable it
+    /// \param smooth : True to enable smoothing filter, false to disable it
     ///
     ////////////////////////////////////////////////////////////
-    void SetSmooth(bool Smooth);
+    void SetSmooth(bool smooth);
 
     ////////////////////////////////////////////////////////////
     /// Return the width of the image
@@ -252,33 +252,33 @@ public :
     /// Convert a subrect expressed in pixels, into float
     /// texture coordinates
     ///
-    /// \param Rect :   Sub-rectangle of image to convert
-    /// \param Adjust : Pass true to apply the half-texel adjustment
+    /// \param rectangle : Sub-rectangle of image to convert
+    /// \param adjust :    Pass true to apply the half-texel adjustment (true by default)
     ///
     /// \return Texture coordinates corresponding to the sub-rectangle
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect GetTexCoords(const IntRect& Rect, bool Adjust = true) const;
+    FloatRect GetTexCoords(const IntRect& rectangle, bool adjust = true) const;
 
     ////////////////////////////////////////////////////////////
     /// Get a valid texture size according to hardware support
     ///
-    /// \param Size : Size to convert
+    /// \param Size : size to convert
     ///
     /// \return Valid nearest size (greater than or equal to specified size)
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int GetValidTextureSize(unsigned int Size);
+    static unsigned int GetValidTextureSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
     /// Assignment operator
     ///
-    /// \param Other : instance to assign
+    /// \param other : instance to assign
     ///
     /// \return Reference to the image
     ///
     ////////////////////////////////////////////////////////////
-    Image& operator =(const Image& Other);
+    Image& operator =(const Image& other);
 
 private :
 
@@ -309,10 +309,10 @@ private :
     /// its content.
     /// For internal use only (see RenderImage class).
     ///
-    /// \param Source : RenderImage that will update the image
+    /// \param source : RenderImage that will update the image
     ///
     ////////////////////////////////////////////////////////////
-    void ExternalUpdate(RenderImage& Source);
+    void ExternalUpdate(RenderImage& source);
 
     ////////////////////////////////////////////////////////////
     /// Reset the image attributes

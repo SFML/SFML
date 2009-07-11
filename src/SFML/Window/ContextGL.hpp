@@ -57,14 +57,14 @@ public :
     ////////////////////////////////////////////////////////////
     /// Create a new context attached to a window
     ///
-    /// \param Owner :        Pointer to the owner window
-    /// \param BitsPerPixel : Pixel depth (in bits per pixel)
-    /// \param Settings :     Creation parameters
+    /// \param owner :        Pointer to the owner window
+    /// \param bitsPerPixel : Pixel depth (in bits per pixel)
+    /// \param settings :     Creation parameters
     ///
     /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    static ContextGL* New(const WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings);
+    static ContextGL* New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
 
 public :
 
@@ -86,12 +86,12 @@ public :
     /// Activate or deactivate the context as the current target
     /// for rendering
     ///
-    /// \param Active : True to activate, false to deactivate
+    /// \param active : True to activate, false to deactivate
     ///
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool SetActive(bool Active);
+    bool SetActive(bool active);
 
     ////////////////////////////////////////////////////////////
     /// Display the contents of the context
@@ -102,10 +102,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Enable / disable vertical synchronization
     ///
-    /// \param Enabled : True to enable v-sync, false to deactivate
+    /// \param enabled : True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void UseVerticalSync(bool Enabled) = 0;
+    virtual void UseVerticalSync(bool enabled) = 0;
 
 protected :
 
@@ -118,29 +118,29 @@ protected :
     ////////////////////////////////////////////////////////////
     /// Make this context the current one
     ///
-    /// \param Active : True to activate, false to deactivate
+    /// \param active : True to activate, false to deactivate
     ///
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent(bool Active) = 0;
+    virtual bool MakeCurrent(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Evaluate a pixel format configuration.
     /// This functions can be used by implementations that have
     /// several valid formats and want to get the best one
     ///
-    /// \param BitsPerPixel : Requested pixel depth (bits per pixel)
-    /// \param Settings :     Requested additionnal settings
-    /// \param ColorBits :    Color bits of the configuration to evaluate
-    /// \param DepthBits :    Depth bits of the configuration to evaluate
-    /// \param StencilBits :  Stencil bits of the configuration to evaluate
-    /// \param Antialiasing : Antialiasing level of the configuration to evaluate
+    /// \param bitsPerPixel : Requested pixel depth (bits per pixel)
+    /// \param settings :     Requested additionnal settings
+    /// \param colorBits :    Color bits of the configuration to evaluate
+    /// \param depthBits :    Depth bits of the configuration to evaluate
+    /// \param stencilBits :  Stencil bits of the configuration to evaluate
+    /// \param antialiasing : Antialiasing level of the configuration to evaluate
     ///
     /// \return Score of the configuration : the lower the better
     ///
     ////////////////////////////////////////////////////////////
-    static int EvaluateFormat(unsigned int BitsPerPixel, const ContextSettings& Settings, int ColorBits, int DepthBits, int StencilBits, int Antialiasing);
+    static int EvaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing);
 
     ////////////////////////////////////////////////////////////
     // Member data

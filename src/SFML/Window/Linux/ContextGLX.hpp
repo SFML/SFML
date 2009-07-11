@@ -48,21 +48,21 @@ public :
     ////////////////////////////////////////////////////////////
     /// Create a new context, not associated to a window
     ///
-    /// \param Shared : Context to share the new one with (can be NULL)
+    /// \param shared : Context to share the new one with (can be NULL)
     ///
     ////////////////////////////////////////////////////////////
-    ContextGLX(ContextGLX* Shared);
+    ContextGLX(ContextGLX* shared);
 
     ////////////////////////////////////////////////////////////
     /// Create a new context attached to a window
     ///
-    /// \param Shared :       Context to share the new one with (can be NULL)
-    /// \param Owner :        Pointer to the owner window
-    /// \param BitsPerPixel : Pixel depth (in bits per pixel)
-    /// \param Settings :     Creation parameters
+    /// \param shared :       Context to share the new one with (can be NULL)
+    /// \param owner :        Pointer to the owner window
+    /// \param bitsPerPixel : Pixel depth (in bits per pixel)
+    /// \param settings :     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    ContextGLX(ContextGLX* Shared, const WindowImpl* Owner, unsigned int BitsPerPixel, const ContextSettings& Settings);
+    ContextGLX(ContextGLX* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// Destructor
@@ -74,7 +74,7 @@ public :
     /// \see Context::MakeCurrent
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent(bool Active);
+    virtual bool MakeCurrent(bool active);
 
     ////////////////////////////////////////////////////////////
     /// \see Context::Display
@@ -86,7 +86,7 @@ public :
     /// \see Context::UseVerticalSync
     ///
     ////////////////////////////////////////////////////////////
-    virtual void UseVerticalSync(bool Enabled);
+    virtual void UseVerticalSync(bool enabled);
 
     ////////////////////////////////////////////////////////////
     /// Check if a context is active on the current thread
@@ -101,12 +101,12 @@ private :
     ////////////////////////////////////////////////////////////
     /// Create the context
     ///
-    /// \param Shared :       Context to share the new one with (can be NULL)
-    /// \param BitsPerPixel : Pixel depth, in bits per pixel
-    /// \param Settings :     Creation parameters
+    /// \param shared :       Context to share the new one with (can be NULL)
+    /// \param bitsPerPixel : Pixel depth, in bits per pixel
+    /// \param settings :     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void CreateContext(ContextGLX* Shared, unsigned int BitsPerPixel, const ContextSettings& Settings);
+    void CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     // Member data

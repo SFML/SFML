@@ -20,8 +20,8 @@ public :
     /// Construct the canvas
     ///
     ////////////////////////////////////////////////////////////
-    MyCanvas(QWidget* Parent = NULL) :
-    QSFMLCanvas(QSize(100, 100), 0, Parent)
+    MyCanvas(QWidget* parent = NULL) :
+    QSFMLCanvas(QSize(100, 100), 0, parent)
     {
 
     }
@@ -48,19 +48,19 @@ private :
     ////////////////////////////////////////////////////////////
     virtual void OnUpdate()
     {
-        sf::Event Event;
-        while (GetEvent(Event))
+        sf::Event event;
+        while (GetEvent(event))
         {
             // Stick the sprite to the mouse cursor
-            if (Event.Type == sf::Event::MouseMoved)
+            if (event.Type == sf::Event::MouseMoved)
             {
-                mySprite.SetPosition(ConvertCoords(Event.MouseMove.X, Event.MouseMove.Y));
+                mySprite.SetPosition(ConvertCoords(event.MouseMove.X, event.MouseMove.Y));
             }
 
             // Adjust the size of the default view when the widget is resized
-            if (Event.Type == sf::Event::Resized)
+            if (event.Type == sf::Event::Resized)
             {
-                GetDefaultView().Reset(sf::FloatRect(0, 0, Event.Size.Width, Event.Size.Height));
+                GetDefaultView().Reset(sf::FloatRect(0, 0, event.Size.Width, event.Size.Height));
             }
         }
 
@@ -90,26 +90,26 @@ private :
 ////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
-    QApplication App(argc, argv);
+    QApplication application(argc, argv);
 
     // Create the main frame
-    QFrame* MainFrame = new QFrame;
-    MainFrame->setWindowTitle("Qt SFML");
-    MainFrame->resize(400, 400);
-    MainFrame->show();
+    QFrame* mainFrame = new QFrame;
+    mainFrame->setWindowTitle("Qt SFML");
+    mainFrame->resize(400, 400);
+    mainFrame->show();
 
     // Create a label for showing some text
-    QLabel* Label = new QLabel("This is a SFML window\nembedded into a Qt frame :", MainFrame);
-    Label->setFont(QFont("courier new", 14, 1, false));
+    QLabel* label = new QLabel("This is a SFML window\nembedded into a Qt frame :", mainFrame);
+    label->setFont(QFont("courier new", 14, 1, false));
 
     // Create a SFML view inside the main frame
-    MyCanvas* SFMLView = new MyCanvas(MainFrame);
+    MyCanvas* SFMLView = new MyCanvas(mainFrame);
 
     // Create the main layout
-    QVBoxLayout* Layout = new QVBoxLayout;
-    Layout->addWidget(Label, 0);
-    Layout->addWidget(SFMLView, 1);
-    MainFrame->setLayout(Layout);
+    QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget(label, 0);
+    layout->addWidget(SFMLView, 1);
+    mainFrame->setLayout(layout);
 
-    return App.exec();
+    return application.exec();
 }

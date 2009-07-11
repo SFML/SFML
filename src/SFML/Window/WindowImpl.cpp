@@ -56,18 +56,18 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// Create a new window depending on the current OS
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::New(VideoMode Mode, const std::string& Title, unsigned long WindowStyle)
+WindowImpl* WindowImpl::New(VideoMode mode, const std::string& title, unsigned long style)
 {
-    return new WindowImplType(Mode, Title, WindowStyle);
+    return new WindowImplType(mode, title, style);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new window depending on the current OS
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::New(WindowHandle Handle)
+WindowImpl* WindowImpl::New(WindowHandle handle)
 {
-    return new WindowImplType(Handle);
+    return new WindowImplType(handle);
 }
 
 
@@ -100,19 +100,19 @@ WindowImpl::~WindowImpl()
 ////////////////////////////////////////////////////////////
 /// Add a listener to the window
 ////////////////////////////////////////////////////////////
-void WindowImpl::AddListener(WindowListener* Listener)
+void WindowImpl::AddListener(WindowListener* listener)
 {
-    if (Listener)
-        myListeners.insert(Listener);
+    if (listener)
+        myListeners.insert(listener);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Remove a listener from the window
 ////////////////////////////////////////////////////////////
-void WindowImpl::RemoveListener(WindowListener* Listener)
+void WindowImpl::RemoveListener(WindowListener* listener)
 {
-    myListeners.erase(Listener);
+    myListeners.erase(listener);
 }
 
 
@@ -138,9 +138,9 @@ unsigned int WindowImpl::GetHeight() const
 /// Change the joystick threshold, ie. the value below which
 /// no move event will be generated
 ////////////////////////////////////////////////////////////
-void WindowImpl::SetJoystickThreshold(float Threshold)
+void WindowImpl::SetJoystickThreshold(float threshold)
 {
-    myJoyThreshold = Threshold;
+    myJoyThreshold = threshold;
 }
 
 
@@ -160,11 +160,11 @@ void WindowImpl::DoEvents()
 ////////////////////////////////////////////////////////////
 /// Send an event to listeners
 ////////////////////////////////////////////////////////////
-void WindowImpl::SendEvent(const Event& EventToSend)
+void WindowImpl::SendEvent(const Event& event)
 {
     for (std::set<WindowListener*>::iterator i = myListeners.begin(); i != myListeners.end(); ++i)
     {
-        (*i)->OnEvent(EventToSend);
+        (*i)->OnEvent(event);
     }
 }
 
@@ -177,38 +177,38 @@ void WindowImpl::ProcessJoystickEvents()
     for (unsigned int i = 0; i < JoysticksCount; ++i)
     {
         // Copy the previous state of the joystick and get the new one
-        JoystickState PreviousState = myJoyStates[i];
+        JoystickState previousState = myJoyStates[i];
         myJoyStates[i] = myJoysticks[i].UpdateState();
 
         // Axis
         for (unsigned int j = 0; j < myJoysticks[i].GetAxesCount(); ++j)
         {
-            float PrevPos = PreviousState.Axis[j];
-            float CurrPos = myJoyStates[i].Axis[j];
-            if (fabs(CurrPos - PrevPos) >= myJoyThreshold)
+            float prevPos = previousState.Axis[j];
+            float currPos = myJoyStates[i].Axis[j];
+            if (fabs(currPos - prevPos) >= myJoyThreshold)
             {
-                Event Event;
-                Event.Type               = Event::JoyMoved;
-                Event.JoyMove.JoystickId = i;
-                Event.JoyMove.Axis       = static_cast<Joy::Axis>(j);
-                Event.JoyMove.Position   = CurrPos;
-                SendEvent(Event);
+                Event event;
+                event.Type               = Event::JoyMoved;
+                event.JoyMove.JoystickId = i;
+                event.JoyMove.Axis       = static_cast<Joy::Axis>(j);
+                event.JoyMove.Position   = currPos;
+                SendEvent(event);
             }
         }
 
         // Buttons
         for (unsigned int j = 0; j < myJoysticks[i].GetButtonsCount(); ++j)
         {
-            bool PrevPressed = PreviousState.Buttons[j];
-            bool CurrPressed = myJoyStates[i].Buttons[j];
+            bool prevPressed = previousState.Buttons[j];
+            bool currPressed = myJoyStates[i].Buttons[j];
 
-            if ((!PrevPressed && CurrPressed) || (PrevPressed && !CurrPressed))
+            if ((!prevPressed && currPressed) || (prevPressed && !currPressed))
             {
-                Event Event;
-                Event.Type                 = CurrPressed ? Event::JoyButtonPressed : Event::JoyButtonReleased;
-                Event.JoyButton.JoystickId = i;
-                Event.JoyButton.Button     = j;
-                SendEvent(Event);
+                Event event;
+                event.Type                 = currPressed ? Event::JoyButtonPressed : Event::JoyButtonReleased;
+                event.JoyButton.JoystickId = i;
+                event.JoyButton.Button     = j;
+                SendEvent(event);
             }
         }
     }

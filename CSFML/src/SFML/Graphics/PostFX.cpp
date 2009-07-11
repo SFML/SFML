@@ -34,88 +34,88 @@
 ////////////////////////////////////////////////////////////
 /// Create a new post-fx from a file
 ////////////////////////////////////////////////////////////
-sfPostFX* sfPostFX_CreateFromFile(const char* Filename)
+sfPostFX* sfPostFX_CreateFromFile(const char* filename)
 {
-    sfPostFX* PostFX = new sfPostFX;
+    sfPostFX* postFX = new sfPostFX;
 
-    if (!PostFX->This.LoadFromFile(Filename))
+    if (!postFX->This.LoadFromFile(filename))
     {
-        delete PostFX;
-        PostFX = NULL;
+        delete postFX;
+        postFX = NULL;
     }
 
-    return PostFX;
+    return postFX;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create a new post-fx from an effect source code
 ////////////////////////////////////////////////////////////
-sfPostFX* sfPostFX_CreateFromMemory(const char* Effect)
+sfPostFX* sfPostFX_CreateFromMemory(const char* effect)
 {
-    sfPostFX* PostFX = new sfPostFX;
+    sfPostFX* postFX = new sfPostFX;
 
-    if (!PostFX->This.LoadFromMemory(Effect))
+    if (!postFX->This.LoadFromMemory(effect))
     {
-        delete PostFX;
-        PostFX = NULL;
+        delete postFX;
+        postFX = NULL;
     }
 
-    return PostFX;
+    return postFX;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing post-fx
 ////////////////////////////////////////////////////////////
-void sfPostFX_Destroy(sfPostFX* PostFX)
+void sfPostFX_Destroy(sfPostFX* postFX)
 {
-    delete PostFX;
+    delete postFX;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change a parameter of a post-fx (1 float)
 ////////////////////////////////////////////////////////////
-void sfPostFX_SetParameter1(sfPostFX* PostFX, const char* Name, float X)
+void sfPostFX_SetParameter1(sfPostFX* postFX, const char* name, float x)
 {
-    CSFML_CALL(PostFX, SetParameter(Name, X))
+    CSFML_CALL(postFX, SetParameter(name, x))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change a parameter of a post-fx (2 floats)
 ////////////////////////////////////////////////////////////
-void sfPostFX_SetParameter2(sfPostFX* PostFX, const char* Name, float X, float Y)
+void sfPostFX_SetParameter2(sfPostFX* postFX, const char* name, float x, float y)
 {
-    CSFML_CALL(PostFX, SetParameter(Name, X, Y))
+    CSFML_CALL(postFX, SetParameter(name, x, y))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change a parameter of a post-fx (3 floats)
 ////////////////////////////////////////////////////////////
-void sfPostFX_SetParameter3(sfPostFX* PostFX, const char* Name, float X, float Y, float Z)
+void sfPostFX_SetParameter3(sfPostFX* postFX, const char* name, float x, float y, float z)
 {
-    CSFML_CALL(PostFX, SetParameter(Name, X, Y, Z))
+    CSFML_CALL(postFX, SetParameter(name, x, y, z))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Change a parameter of a post-fx (4 floats)
 ////////////////////////////////////////////////////////////
-void sfPostFX_SetParameter4(sfPostFX* PostFX, const char* Name, float X, float Y, float Z, float W)
+void sfPostFX_SetParameter4(sfPostFX* postFX, const char* name, float x, float y, float z, float w)
 {
-    CSFML_CALL(PostFX, SetParameter(Name, X, Y, Z, W))
+    CSFML_CALL(postFX, SetParameter(name, x, y, z, w))
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set a texture parameter in a post-fx
 ////////////////////////////////////////////////////////////
-void sfPostFX_SetTexture(sfPostFX* PostFX, const char* Name, sfImage* Texture)
+void sfPostFX_SetTexture(sfPostFX* postFX, const char* name, sfImage* texture)
 {
-    CSFML_CALL(PostFX, SetTexture(Name, Texture ? Texture->This : NULL))
+    CSFML_CALL(postFX, SetTexture(name, texture ? texture->This : NULL))
 }
 
 

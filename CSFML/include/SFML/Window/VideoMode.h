@@ -56,12 +56,12 @@ CSFML_API sfVideoMode sfVideoMode_GetDesktopMode();
 /// Index must be in range [0, GetModesCount()[
 /// Modes are sorted from best to worst
 ///
-/// \param Index : Index of video mode to get
+/// \param index : Index of video mode to get
 ///
 /// \return Corresponding video mode (invalid mode if index is out of range)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfVideoMode sfVideoMode_GetMode(size_t Index);
+CSFML_API sfVideoMode sfVideoMode_GetMode(size_t index);
 
 ////////////////////////////////////////////////////////////
 /// Get valid video modes count
@@ -74,13 +74,13 @@ CSFML_API size_t sfVideoMode_GetModesCount();
 ////////////////////////////////////////////////////////////
 /// Tell whether or not a video mode is supported
 ///
-/// \param Mode : Video mode to check
+/// \param mode : Video mode to check
 ///
 ///
 /// \return True if video mode is supported, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfVideoMode_IsValid(sfVideoMode Mode);
+CSFML_API sfBool sfVideoMode_IsValid(sfVideoMode mode);
 
 
 #endif // SFML_VIDEOMODE_H

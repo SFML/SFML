@@ -57,42 +57,42 @@ public :
     ////////////////////////////////////////////////////////////
     /// Load pixels from an image file
     ///
-    /// \param Filename : Path of image file to load
-    /// \param Pixels :   Array of pixels to fill with loaded image
-    /// \param Width :    Width of loaded image, in pixels
-    /// \param Height :   Height of loaded image, in pixels
+    /// \param filename : Path of image file to load
+    /// \param pixels :   Array of pixels to fill with loaded image
+    /// \param width :    Width of loaded image, in pixels
+    /// \param height :   Height of loaded image, in pixels
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadImageFromFile(const std::string& Filename, std::vector<Color>& Pixels, unsigned int& Width, unsigned int& Height);
+    bool LoadImageFromFile(const std::string& filename, std::vector<Color>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
     /// Load pixels from an image file in memory
     ///
-    /// \param Data :        Pointer to the file data in memory
-    /// \param SizeInBytes : Size of the data to load, in bytes
-    /// \param Pixels :      Array of pixels to fill with loaded image
-    /// \param Width :       Width of loaded image, in pixels
-    /// \param Height :      Height of loaded image, in pixels
+    /// \param data :        Pointer to the file data in memory
+    /// \param sizeInBytes : Size of the data to load, in bytes
+    /// \param pixels :      Array of pixels to fill with loaded image
+    /// \param width :       Width of loaded image, in pixels
+    /// \param height :      Height of loaded image, in pixels
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadImageFromMemory(const char* Data, std::size_t SizeInBytes, std::vector<Color>& Pixels, unsigned int& Width, unsigned int& Height);
+    bool LoadImageFromMemory(const char* data, std::size_t sizeInBytes, std::vector<Color>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
     /// Save pixels to an image file
     ///
-    /// \param Filename : Path of image file to save
-    /// \param Pixels :   Array of pixels to save to image
-    /// \param Width :    Width of image to save, in pixels
-    /// \param Height :   Height of image to save, in pixels
+    /// \param filename : Path of image file to save
+    /// \param pixels :   Array of pixels to save to image
+    /// \param width :    Width of image to save, in pixels
+    /// \param height :   Height of image to save, in pixels
     ///
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool SaveImageToFile(const std::string& Filename, const std::vector<Color>& Pixels, unsigned int Width, unsigned int Height);
+    bool SaveImageToFile(const std::string& filename, const std::vector<Color>& pixels, unsigned int width, unsigned int height);
 
 private :
 
@@ -111,28 +111,28 @@ private :
     ////////////////////////////////////////////////////////////
     /// Save a JPG image file
     ///
-    /// \param Filename : Path of image file to save
-    /// \param Pixels :   Array of pixels to save to image
-    /// \param Width :    Width of image to save, in pixels
-    /// \param Height :   Height of image to save, in pixels
+    /// \param filename : Path of image file to save
+    /// \param pixels :   Array of pixels to save to image
+    /// \param width :    Width of image to save, in pixels
+    /// \param height :   Height of image to save, in pixels
     ///
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool WriteJpg(const std::string& Filename, const std::vector<Color>& Pixels, unsigned int Width, unsigned int Height);
+    bool WriteJpg(const std::string& filename, const std::vector<Color>& pixels, unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// Save a PNG image file
     ///
-    /// \param Filename : Path of image file to save
-    /// \param Pixels :   Array of pixels to save to image
-    /// \param Width :    Width of image to save, in pixels
-    /// \param Height :   Height of image to save, in pixels
+    /// \param filename : Path of image file to save
+    /// \param pixels :   Array of pixels to save to image
+    /// \param width :    Width of image to save, in pixels
+    /// \param height :   Height of image to save, in pixels
     ///
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool WritePng(const std::string& Filename, const std::vector<Color>& Pixels, unsigned int Width, unsigned int Height);
+    bool WritePng(const std::string& filename, const std::vector<Color>& pixels, unsigned int width, unsigned int height);
 };
 
 } // namespace priv

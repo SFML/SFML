@@ -35,35 +35,35 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new thread from a function pointer
 ///
-/// \param Function : Entry point of the thread
-/// \param UserData : Data to pass to the thread function
+/// \param function : Entry point of the thread
+/// \param userData : Data to pass to the thread function
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfThread* sfThread_Create(void (*Function)(void*), void* UserData);
+CSFML_API sfThread* sfThread_Create(void (*function)(void*), void* userData);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing thread
 ///
-/// \param Thread : Thread to delete
+/// \param thread : Thread to delete
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfThread_Destroy(sfThread* Thread);
+CSFML_API void sfThread_Destroy(sfThread* thread);
 
 ////////////////////////////////////////////////////////////
 /// Run a thread
 ///
-/// \param Thread : Thread to launch
+/// \param thread : Thread to launch
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfThread_Launch(sfThread* Thread);
+CSFML_API void sfThread_Launch(sfThread* thread);
 
 ////////////////////////////////////////////////////////////
 /// Wait until a thread finishes
 ///
-/// \param Thread : Thread to wait for
+/// \param thread : Thread to wait for
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfThread_Wait(sfThread* Thread);
+CSFML_API void sfThread_Wait(sfThread* thread);
 
 ////////////////////////////////////////////////////////////
 /// Terminate a thread
@@ -71,10 +71,10 @@ CSFML_API void sfThread_Wait(sfThread* Thread);
 /// you should rather try to make the thread function
 /// terminate by itself
 ///
-/// \param Thread : Thread to terminate
+/// \param thread : Thread to terminate
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfThread_Terminate(sfThread* Thread);
+CSFML_API void sfThread_Terminate(sfThread* thread);
 
 
 #endif // SFML_THREAD_H

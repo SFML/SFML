@@ -51,33 +51,33 @@ public :
     ////////////////////////////////////////////////////////////
     /// Create the render image
     ///
-    /// \param Width :       Width of the image to render to
-    /// \param Height :      Height of the image to render to
-    /// \param TextureId :   OpenGL texture identifier of the target image
-    /// \param DepthBuffer : Do you want a depth buffer attached ?
+    /// \param width :       Width of the image to render to
+    /// \param height :      Height of the image to render to
+    /// \param textureId :   OpenGL texture identifier of the target image
+    /// \param depthBuffer : Do you want a depth buffer attached ?
     ///
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Create(unsigned int Width, unsigned int Height, unsigned int TextureId, bool DepthBuffer) = 0;
+    virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Activate / deactivate the render image for rendering
     ///
-    /// \param Active : True to activate, false to deactivate
+    /// \param active : True to activate, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool Active) = 0;
+    virtual bool Activate(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
     /// Update the pixels of the target texture
     ///
-    /// \param TextureId : OpenGL identifier of the target texture
+    /// \param textureId : OpenGL identifier of the target texture
     ///
     /// \return True if the new pixels are flipped vertically
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool UpdateTexture(unsigned int TextureId) = 0;
+    virtual bool UpdateTexture(unsigned int textureId) = 0;
 };
 
 } // namespace priv

@@ -57,12 +57,12 @@ RenderTarget::~RenderTarget()
 ////////////////////////////////////////////////////////////
 /// Clear the entire target with a single color
 ////////////////////////////////////////////////////////////
-void RenderTarget::Clear(const Color& FillColor)
+void RenderTarget::Clear(const Color& color)
 {
     if (Activate(true))
     {
         // Clear the frame buffer
-        GLCheck(glClearColor(FillColor.r / 255.f, FillColor.g / 255.f, FillColor.b / 255.f, FillColor.a / 255.f));
+        GLCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         GLCheck(glClear(GL_COLOR_BUFFER_BIT));
 
         Activate(false);
@@ -73,7 +73,7 @@ void RenderTarget::Clear(const Color& FillColor)
 ////////////////////////////////////////////////////////////
 /// Draw something on the window
 ////////////////////////////////////////////////////////////
-void RenderTarget::Draw(const Drawable& Object)
+void RenderTarget::Draw(const Drawable& object)
 {
     // Check whether we are called from the outside or from a previous call to Draw
     if (!myIsDrawing)
@@ -94,12 +94,12 @@ void RenderTarget::Draw(const Drawable& Object)
             }
 
             // Setup the viewport
-            const FloatRect& Viewport = myCurrentView->GetViewport();
-            int Left   = static_cast<int>(0.5f + GetWidth()  * Viewport.Left);
-            int Top    = static_cast<int>(0.5f + GetHeight() * (1.f - Viewport.Bottom));
-            int Width  = static_cast<int>(0.5f + GetWidth()  * Viewport.GetSize().x);
-            int Height = static_cast<int>(0.5f + GetHeight() * Viewport.GetSize().y);
-            GLCheck(glViewport(Left, Top, Width, Height));
+            const FloatRect& viewport = myCurrentView->GetViewport();
+            int left   = static_cast<int>(0.5f + GetWidth()  * viewport.Left);
+            int top    = static_cast<int>(0.5f + GetHeight() * (1.f - viewport.Bottom));
+            int width  = static_cast<int>(0.5f + GetWidth()  * viewport.GetSize().x);
+            int height = static_cast<int>(0.5f + GetHeight() * viewport.GetSize().y);
+            GLCheck(glViewport(left, top, width, height));
 
             // Setup the transform matrices
             GLCheck(glMatrixMode(GL_PROJECTION));
@@ -108,7 +108,7 @@ void RenderTarget::Draw(const Drawable& Object)
             GLCheck(glLoadIdentity());
 
             // Let the object draw itself
-            Object.Draw(*this);
+            object.Draw(*this);
 
             // Restore render states
             if (myPreserveStates)
@@ -127,7 +127,7 @@ void RenderTarget::Draw(const Drawable& Object)
     else
     {
         // We are already called from a previous Draw : we don't need to set the states again, just draw the object
-        Object.Draw(*this);
+        object.Draw(*this);
     }
 }
 
@@ -135,9 +135,9 @@ void RenderTarget::Draw(const Drawable& Object)
 ////////////////////////////////////////////////////////////
 /// Change the current active view
 ////////////////////////////////////////////////////////////
-void RenderTarget::SetView(const View& NewView)
+void RenderTarget::SetView(const View& view)
 {
-    myCurrentView = &NewView;
+    myCurrentView = &view;
 }
 
 
@@ -167,9 +167,9 @@ View& RenderTarget::GetDefaultView()
 /// SFML to do internal optimizations and improve performances.
 /// This parameter is false by default
 ////////////////////////////////////////////////////////////
-void RenderTarget::PreserveOpenGLStates(bool Preserve)
+void RenderTarget::PreserveOpenGLStates(bool preserve)
 {
-    myPreserveStates = Preserve;
+    myPreserveStates = preserve;
 }
 
 

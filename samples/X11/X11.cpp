@@ -15,10 +15,10 @@
 /// \param Window : Target window to initialize
 ///
 ////////////////////////////////////////////////////////////
-void Initialize(sf::Window& Window)
+void Initialize(sf::Window& window)
 {
     // Activate the window
-    Window.SetActive();
+    window.SetActive();
 
     // Setup OpenGL states
     // Set color and depth clear value
@@ -43,10 +43,10 @@ void Initialize(sf::Window& Window)
 /// \param ElapsedTime : Time elapsed since the last draw
 ///
 ////////////////////////////////////////////////////////////
-void Draw(sf::Window& Window, float ElapsedTime)
+void Draw(sf::Window& window, float elapsedTime)
 {
     // Activate the window
-    Window.SetActive();
+    window.SetActive();
 
     // Clear color and depth buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -55,9 +55,9 @@ void Draw(sf::Window& Window, float ElapsedTime)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(0.f, 0.f, -200.f);
-    glRotatef(ElapsedTime * 50, 1.f, 0.f, 0.f);
-    glRotatef(ElapsedTime * 30, 0.f, 1.f, 0.f);
-    glRotatef(ElapsedTime * 90, 0.f, 0.f, 1.f);
+    glRotatef(elapsedTime * 50, 1.f, 0.f, 0.f);
+    glRotatef(elapsedTime * 30, 0.f, 1.f, 0.f);
+    glRotatef(elapsedTime * 90, 0.f, 0.f, 1.f);
 
     // Draw a cube
     glBegin(GL_QUADS);
@@ -111,81 +111,81 @@ void Draw(sf::Window& Window, float ElapsedTime)
 int main()
 {
     // Open a connection with the X server
-    Display* Disp = XOpenDisplay(NULL);
-    if (!Disp)
+    Display* display = XOpenDisplay(NULL);
+    if (!display)
         return EXIT_FAILURE;
 
     // Get the default screen
-    int Screen = DefaultScreen(Disp);
+    int screen = DefaultScreen(display);
 
     // Let's create the main window
-    XSetWindowAttributes Attributes;
-    Attributes.background_pixel = BlackPixel(Disp, Screen);
-    Attributes.event_mask       = KeyPressMask;
-    Window Win = XCreateWindow(Disp, RootWindow(Disp, Screen),
+    XSetWindowAttributes attributes;
+    attributes.background_pixel = BlackPixel(display, screen);
+    attributes.event_mask       = KeyPressMask;
+    Window window = XCreateWindow(Disp, RootWindow(display, screen),
                                0, 0, 650, 330, 0,
-                               DefaultDepth(Disp, Screen),
+                               DefaultDepth(display, screen),
                                InputOutput,
-                               DefaultVisual(Disp, Screen),
-                               CWBackPixel | CWEventMask, &Attributes);
-    if (!Win)
+                               DefaultVisual(display, screen),
+                               CWBackPixel | CWEventMask, &attributes);
+    if (!window)
         return EXIT_FAILURE;
 
     // Set the window's name
-    XStoreName(Disp, Win, "SFML Window");
+    XStoreName(display, window , "SFML Window");
 
     // Let's create the windows which will serve as containers for our SFML views
-    Window View1 = XCreateWindow(Disp, Win,
+    Window view1 = XCreateWindow(display, window,
                                  10, 10, 310, 310, 0,
-                                 DefaultDepth(Disp, Screen),
+                                 DefaultDepth(display, screen),
                                  InputOutput,
-                                 DefaultVisual(Disp, Screen),
+                                 DefaultVisual(display, screen),
                                  0, NULL);
-    Window View2 = XCreateWindow(Disp, Win,
+    Window view2 = XCreateWindow(display, window,
                                  330, 10, 310, 310, 0,
-                                 DefaultDepth(Disp, Screen),
+                                 DefaultDepth(display, screen),
                                  InputOutput,
-                                 DefaultVisual(Disp, Screen),
+                                 DefaultVisual(display, screen),
                                  0, NULL);
 
     // Show our windows
-    XMapWindow(Disp, Win);
-    XFlush(Disp);
+    XMapWindow(display, window);
+    XFlush(display);
 
     // Create our SFML views
-    sf::Window SFMLView1(View1);
-    sf::Window SFMLView2(View2);
+    sf::Window SFMLView1(view1);
+    sf::Window SFMLView2(view2);
 
     // Create a clock for measuring elapsed time
-    sf::Clock Clock;
+    sf::Clock clock;
 
     // Initialize our views
     Initialize(SFMLView1);
     Initialize(SFMLView2);
 
     // Start the event loop
-    bool IsRunning = true;
-    while (IsRunning)
+    bool running = true;
+    while (running)
     {
-        while (XPending(Disp))
+        while (XPending(display))
         {
             // Get the next pending event
-            XEvent Event;
-            XNextEvent(Disp, &Event);
+            XEvent event;
+            XNextEvent(display, &event);
 
             // Process it
-            switch (Event.type)
+            switch (event.type)
             {
                 // Any key is pressed : quit
                 case KeyPress :
-                    IsRunning = false;
+                    running = false;
                     break;
             }
         }
 
         // Draw something into our views
-        Draw(SFMLView1, Clock.GetElapsedTime());
-        Draw(SFMLView2, Clock.GetElapsedTime() * 0.3f);
+        Draw(SFMLView1, clock.GetElapsedTime());
+        Draw(SFMLView2, clock.GetElapsedTime() * 0.3f);
 
         // Display the views on screen
         SFMLView1.Display();
@@ -193,7 +193,7 @@ int main()
     }
 
     // Close the display
-    XCloseDisplay(Disp);
+    XCloseDisplay(display);
 
     return EXIT_SUCCESS;
 }

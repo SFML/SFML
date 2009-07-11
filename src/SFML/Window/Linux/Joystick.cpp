@@ -45,7 +45,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// Initialize the instance and bind it to a physical joystick
 ////////////////////////////////////////////////////////////
-void Joystick::Initialize(unsigned int Index)
+void Joystick::Initialize(unsigned int index)
 {
     // Initial state
     myNbAxes    = 0;
@@ -57,7 +57,7 @@ void Joystick::Initialize(unsigned int Index)
 
     // Open the joystick handle
     std::ostringstream oss;
-    oss << "/dev/input/js" << Index;
+    oss << "/dev/input/js" << index;
     myDescriptor = open(oss.str().c_str(), O_RDONLY);
     if (myDescriptor > 0)
     {
@@ -65,11 +65,11 @@ void Joystick::Initialize(unsigned int Index)
         fcntl(myDescriptor, F_SETFL, O_NONBLOCK);
         
         // Get number of axes and buttons
-        char NbAxes, NbButtons;
-        ioctl(myDescriptor, JSIOCGAXES,    &NbAxes);
-        ioctl(myDescriptor, JSIOCGBUTTONS, &NbButtons);
-        myNbAxes    = NbAxes;
-        myNbButtons = NbButtons;
+        char nbAxes, nbButtons;
+        ioctl(myDescriptor, JSIOCGAXES,    &nbAxes);
+        ioctl(myDescriptor, JSIOCGBUTTONS, &nbButtons);
+        myNbAxes    = nbAxes;
+        myNbButtons = nbButtons;
     }
 }
 
@@ -81,24 +81,24 @@ JoystickState Joystick::UpdateState()
 {
     if (myDescriptor > 0)
     {
-        js_event JoyState;
-        while (read(myDescriptor, &JoyState, sizeof(JoyState)) > 0)
+        js_event joyState;
+        while (read(myDescriptor, &joyState, sizeof(joyState)) > 0)
         {
-            switch (JoyState.type & ~JS_EVENT_INIT)
+            switch (joyState.type & ~JS_EVENT_INIT)
             {
                 // An axis has been moved
                 case JS_EVENT_AXIS :
                 {
-                    if (JoyState.number < Joy::Count)
-                        myState.Axis[JoyState.number] = JoyState.value * 100.f / 32767.f;
+                    if (joyState.number < Joy::Count)
+                        myState.Axis[joyState.number] = joyState.value * 100.f / 32767.f;
                     break;
                 }
     
                 // A button has been pressed
                 case JS_EVENT_BUTTON :
                 {
-                    if (JoyState.number < GetButtonsCount())
-                        myState.Buttons[JoyState.number] = (JoyState.value != 0);
+                    if (joyState.number < GetButtonsCount())
+                        myState.Buttons[joyState.number] = (joyState.value != 0);
                     break;
                 }
             }
@@ -133,7 +133,7 @@ unsigned int Joystick::GetButtonsCount() const
 ////////////////////////////////////////////////////////////
 /// Initialize the instance and bind it to a physical joystick
 ////////////////////////////////////////////////////////////
-void Joystick::Initialize(unsigned int Index)
+void Joystick::Initialize(unsigned int index)
 {
 }
 

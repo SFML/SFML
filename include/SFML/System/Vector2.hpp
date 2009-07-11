@@ -63,145 +63,145 @@ public :
 ////////////////////////////////////////////////////////////
 /// Operator - overload ; returns the opposite of a vector
 ///
-/// \param V : Vector to negate
+/// \param left : Vector to negate
 ///
-/// \return -V
+/// \return -left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator -(const Vector2<T>& V);
+Vector2<T> operator -(const Vector2<T>& left);
 
 ////////////////////////////////////////////////////////////
 /// Operator += overload ; add two vectors and assign to the first op
 ///
-/// \param V1 : First vector
-/// \param V2 : Second vector
+/// \param left :  First vector
+/// \param right : Second vector
 ///
-/// \return V1 + V2
+/// \return left + right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator +=(Vector2<T>& V1, const Vector2<T>& V2);
+Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// Operator -= overload ; subtract two vectors and assign to the first op
 ///
-/// \param V1 : First vector
-/// \param V2 : Second vector
+/// \param left :  First vector
+/// \param right : Second vector
 ///
-/// \return V1 - V2
+/// \return left - right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator -=(Vector2<T>& V1, const Vector2<T>& V2);
+Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// Operator + overload ; adds two vectors
 ///
-/// \param V1 : First vector
-/// \param V2 : Second vector
+/// \param left :  First vector
+/// \param right : Second vector
 ///
-/// \return V1 + V2
+/// \return left + right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator +(const Vector2<T>& V1, const Vector2<T>& V2);
+Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// Operator - overload ; subtracts two vectors
 ///
-/// \param V1 : First vector
-/// \param V2 : Second vector
+/// \param left :  First vector
+/// \param right : Second vector
 ///
-/// \return V1 - V2
+/// \return left - right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator -(const Vector2<T>& V1, const Vector2<T>& V2);
+Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// Operator * overload ; multiply a vector by a scalar value
 ///
-/// \param V : Vector
-/// \param X : Scalar value
+/// \param left :  Vector
+/// \param right : Scalar value
 ///
-/// \return V * X
+/// \return left * right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator *(const Vector2<T>& V, T X);
+Vector2<T> operator *(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// Operator * overload ; multiply a scalar value by a vector
 ///
-/// \param X : Scalar value
-/// \param V : Vector
+/// \param left :  Scalar value
+/// \param right : Vector
 ///
-/// \return X * V
+/// \return left * right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator *(T X, const Vector2<T>& V);
+Vector2<T> operator *(T left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// Operator *= overload ; multiply-assign a vector by a scalar value
 ///
-/// \param V : Vector
-/// \param X : Scalar value
+/// \param left :  Vector
+/// \param right : Scalar value
 ///
-/// \return V * X
+/// \return left * right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator *=(Vector2<T>& V, T X);
+Vector2<T>& operator *=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// Operator / overload ; divide a vector by a scalar value
 ///
-/// \param V : Vector
-/// \param X : Scalar value
+/// \param left :  Vector
+/// \param right : Scalar value
 ///
-/// \return V / X
+/// \return left / right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator /(const Vector2<T>& V, T X);
+Vector2<T> operator /(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// Operator /= overload ; divide-assign a vector by a scalar value
 ///
-/// \param V : Vector
-/// \param X : Scalar value
+/// \param left :  Vector
+/// \param right : Scalar value
 ///
-/// \return V / X
+/// \return left / right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator /=(Vector2<T>& V, T X);
+Vector2<T>& operator /=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// Operator == overload ; compares the equality of two vectors
 ///
-/// \param V1 : First vector
-/// \param V2 : Second vector
+/// \param left :  First vector
+/// \param right : Second vector
 ///
-/// \return True if V1 is equal to V2
+/// \return True if left is equal to right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator ==(const Vector2<T>& V1, const Vector2<T>& V2);
+bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// Operator != overload ; compares the difference of two vectors
 ///
-/// \param V1 : First vector
-/// \param V2 : Second vector
+/// \param left :  First vector
+/// \param right : Second vector
 ///
-/// \return True if V1 is different than V2
+/// \return True if left is different than right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator !=(const Vector2<T>& V1, const Vector2<T>& V2);
+bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
 #include <SFML/System/Vector2.inl>
 

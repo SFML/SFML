@@ -53,38 +53,38 @@ SocketTCP::SocketTCP()
 ////////////////////////////////////////////////////////////
 /// Change the blocking state of the socket
 ////////////////////////////////////////////////////////////
-void SocketTCP::SetBlocking(bool Blocking)
+void SocketTCP::SetBlocking(bool blocking)
 {
     // Make sure our socket is valid
     if (!IsValid())
         Create();
 
-    SocketHelper::SetBlocking(mySocket, Blocking);
-    myIsBlocking = Blocking;
+    SocketHelper::SetBlocking(mySocket, blocking);
+    myIsBlocking = blocking;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Connect to another computer on a specified port
 ////////////////////////////////////////////////////////////
-Socket::Status SocketTCP::Connect(unsigned short Port, const IPAddress& HostAddress, float Timeout)
+Socket::Status SocketTCP::Connect(unsigned short port, const IPAddress& host, float timeout)
 {
     // Make sure our socket is valid
     if (!IsValid())
         Create();
 
     // Build the host address
-    sockaddr_in SockAddr;
-    memset(SockAddr.sin_zero, 0, sizeof(SockAddr.sin_zero));
-    SockAddr.sin_addr.s_addr = inet_addr(HostAddress.ToString().c_str());
-    SockAddr.sin_family      = AF_INET;
-    SockAddr.sin_port        = htons(Port);
+    sockaddr_in sockAddr;
+    memset(sockAddr.sin_zero, 0, sizeof(sockAddr.sin_zero));
+    sockAddr.sin_addr.s_addr = inet_addr(host.ToString().c_str());
+    sockAddr.sin_family      = AF_INET;
+    sockAddr.sin_port        = htons(port);
 
-    if (Timeout <= 0)
+    if (timeout <= 0)
     {
         // ----- We're not using a timeout : just try to connect -----
 
-        if (connect(mySocket, reinterpret_cast<sockaddr*>(&SockAddr), sizeof(SockAddr)) == -1)
+        if (connect(mySocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr)) == -1)
         {
             // Failed to connect
             return SocketHelper::GetErrorStatus();
@@ -98,56 +98,56 @@ Socket::Status SocketTCP::Connect(unsigned short Port, const IPAddress& HostAddr
         // ----- We're using a timeout : we'll need a few tricks to make it work -----
 
         // Save the previous blocking state
-        bool IsBlocking = myIsBlocking;
+        bool blocking = myIsBlocking;
 
         // Switch to non-blocking to enable our connection timeout
-        if (IsBlocking)
+        if (blocking)
             SetBlocking(false);
 
         // Try to connect to host
-        if (connect(mySocket, reinterpret_cast<sockaddr*>(&SockAddr), sizeof(SockAddr)) >= 0)
+        if (connect(mySocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr)) >= 0)
         {
             // We got instantly connected! (it may no happen a lot...)
             return Socket::Done;
         }
 
         // Get the error status
-        Socket::Status Status = SocketHelper::GetErrorStatus();
+        Socket::Status status = SocketHelper::GetErrorStatus();
 
         // If we were in non-blocking mode, return immediatly
-        if (!IsBlocking)
-            return Status;
+        if (!blocking)
+            return status;
 
         // Otherwise, wait until something happens to our socket (success, timeout or error)
-        if (Status == Socket::NotReady)
+        if (status == Socket::NotReady)
         {
             // Setup the selector
-            fd_set Selector;
-            FD_ZERO(&Selector);
-            FD_SET(mySocket, &Selector);
+            fd_set selector;
+            FD_ZERO(&selector);
+            FD_SET(mySocket, &selector);
 
             // Setup the timeout
-            timeval Time;
-            Time.tv_sec  = static_cast<long>(Timeout);
-            Time.tv_usec = (static_cast<long>(Timeout * 1000) % 1000) * 1000;
+            timeval time;
+            time.tv_sec  = static_cast<long>(timeout);
+            time.tv_usec = (static_cast<long>(timeout * 1000) % 1000) * 1000;
 
             // Wait for something to write on our socket (would mean the connection has been accepted)
-            if (select(static_cast<int>(mySocket + 1), NULL, &Selector, NULL, &Time) > 0)
+            if (select(static_cast<int>(mySocket + 1), NULL, &selector, NULL, &time) > 0)
             {
                 // Connection succeeded
-                Status = Socket::Done;
+                status = Socket::Done;
             }
             else
             {
                 // Failed to connect before timeout is over
-                Status = SocketHelper::GetErrorStatus();
+                status = SocketHelper::GetErrorStatus();
             }
         }
 
         // Switch back to blocking mode
         SetBlocking(true);
 
-        return Status;
+        return status;
     }
 }
 
@@ -155,24 +155,24 @@ Socket::Status SocketTCP::Connect(unsigned short Port, const IPAddress& HostAddr
 ////////////////////////////////////////////////////////////
 /// Listen to a specified port for incoming data or connections
 ////////////////////////////////////////////////////////////
-bool SocketTCP::Listen(unsigned short Port)
+bool SocketTCP::Listen(unsigned short port)
 {
     // Make sure our socket is valid
     if (!IsValid())
         Create();
 
     // Build the address
-    sockaddr_in SockAddr;
-    memset(SockAddr.sin_zero, 0, sizeof(SockAddr.sin_zero));
-    SockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    SockAddr.sin_family      = AF_INET;
-    SockAddr.sin_port        = htons(Port);
+    sockaddr_in sockAddr;
+    memset(sockAddr.sin_zero, 0, sizeof(sockAddr.sin_zero));
+    sockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    sockAddr.sin_family      = AF_INET;
+    sockAddr.sin_port        = htons(port);
 
     // Bind the socket to the specified port
-    if (bind(mySocket, reinterpret_cast<sockaddr*>(&SockAddr), sizeof(SockAddr)) == -1)
+    if (bind(mySocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr)) == -1)
     {
         // Not likely to happen, but...
-        std::cerr << "Failed to bind socket to port " << Port << std::endl;
+        std::cerr << "Failed to bind socket to port " << port << std::endl;
         return false;
     }
 
@@ -180,7 +180,7 @@ bool SocketTCP::Listen(unsigned short Port)
     if (listen(mySocket, 0) == -1)
     {
         // Oops, socket is deaf
-        std::cerr << "Failed to listen to port " << Port << std::endl;
+        std::cerr << "Failed to listen to port " << port << std::endl;
         return false;
     }
 
@@ -192,27 +192,27 @@ bool SocketTCP::Listen(unsigned short Port)
 /// Wait for a connection (must be listening to a port).
 /// This function will block if the socket is blocking
 ////////////////////////////////////////////////////////////
-Socket::Status SocketTCP::Accept(SocketTCP& Connected, IPAddress* Address)
+Socket::Status SocketTCP::Accept(SocketTCP& connected, IPAddress* address)
 {
     // Address that will be filled with client informations
-    sockaddr_in ClientAddress;
-    SocketHelper::LengthType Length = sizeof(ClientAddress);
+    sockaddr_in clientAddress;
+    SocketHelper::LengthType length = sizeof(clientAddress);
 
     // Accept a new connection
-    Connected = accept(mySocket, reinterpret_cast<sockaddr*>(&ClientAddress), &Length);
+    connected = accept(mySocket, reinterpret_cast<sockaddr*>(&clientAddress), &length);
 
     // Check errors
-    if (!Connected.IsValid())
+    if (!connected.IsValid())
     {
-        if (Address)
-            *Address = IPAddress();
+        if (address)
+            *address = IPAddress();
 
         return SocketHelper::GetErrorStatus();
     }
 
     // Fill address if requested
-    if (Address)
-        *Address = IPAddress(inet_ntoa(ClientAddress.sin_addr));
+    if (address)
+        *address = IPAddress(inet_ntoa(clientAddress.sin_addr));
 
     return Socket::Done;
 }
@@ -221,25 +221,25 @@ Socket::Status SocketTCP::Accept(SocketTCP& Connected, IPAddress* Address)
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes to the host (must be connected first)
 ////////////////////////////////////////////////////////////
-Socket::Status SocketTCP::Send(const char* Data, std::size_t Size)
+Socket::Status SocketTCP::Send(const char* data, std::size_t size)
 {
     // First check that socket is valid
     if (!IsValid())
         return Socket::Error;
 
     // Check parameters
-    if (Data && Size)
+    if (data && size)
     {
         // Loop until every byte has been sent
-        int Sent = 0;
-        int SizeToSend = static_cast<int>(Size);
-        for (int Length = 0; Length < SizeToSend; Length += Sent)
+        int sent = 0;
+        int sizeToSend = static_cast<int>(size);
+        for (int length = 0; length < sizeToSend; length += sent)
         {
             // Send a chunk of data
-            Sent = send(mySocket, Data + Length, SizeToSend - Length, 0);
+            sent = send(mySocket, data + length, sizeToSend - length, 0);
 
             // Check if an error occured
-            if (Sent <= 0)
+            if (sent <= 0)
                 return SocketHelper::GetErrorStatus();
         }
 
@@ -258,28 +258,28 @@ Socket::Status SocketTCP::Send(const char* Data, std::size_t Size)
 /// Receive an array of bytes from the host (must be connected first).
 /// This function will block if the socket is blocking
 ////////////////////////////////////////////////////////////
-Socket::Status SocketTCP::Receive(char* Data, std::size_t MaxSize, std::size_t& SizeReceived)
+Socket::Status SocketTCP::Receive(char* data, std::size_t maxSize, std::size_t& sizeReceived)
 {
     // First clear the size received
-    SizeReceived = 0;
+    sizeReceived = 0;
 
     // Check that socket is valid
     if (!IsValid())
         return Socket::Error;
 
     // Check parameters
-    if (Data && MaxSize)
+    if (data && maxSize)
     {
         // Receive a chunk of bytes
-        int Received = recv(mySocket, Data, static_cast<int>(MaxSize), 0);
+        int received = recv(mySocket, data, static_cast<int>(maxSize), 0);
 
         // Check the number of bytes received
-        if (Received > 0)
+        if (received > 0)
         {
-            SizeReceived = static_cast<std::size_t>(Received);
+            sizeReceived = static_cast<std::size_t>(received);
             return Socket::Done;
         }
-        else if (Received == 0)
+        else if (received == 0)
         {
             return Socket::Disconnected;
         }
@@ -300,20 +300,20 @@ Socket::Status SocketTCP::Receive(char* Data, std::size_t MaxSize, std::size_t& 
 ////////////////////////////////////////////////////////////
 /// Send a packet of data to the host (must be connected first)
 ////////////////////////////////////////////////////////////
-Socket::Status SocketTCP::Send(Packet& PacketToSend)
+Socket::Status SocketTCP::Send(Packet& packet)
 {
     // Get the data to send from the packet
-    std::size_t DataSize = 0;
-    const char* Data = PacketToSend.OnSend(DataSize);
+    std::size_t dataSize = 0;
+    const char* data = packet.OnSend(dataSize);
 
     // Send the packet size
-    Uint32 PacketSize = htonl(static_cast<unsigned long>(DataSize));
-    Send(reinterpret_cast<const char*>(&PacketSize), sizeof(PacketSize));
+    Uint32 packetSize = htonl(static_cast<unsigned long>(dataSize));
+    Send(reinterpret_cast<const char*>(&packetSize), sizeof(packetSize));
 
     // Send the packet data
-    if (PacketSize > 0)
+    if (packetSize > 0)
     {
-        return Send(Data, DataSize);
+        return Send(data, dataSize);
     }
     else
     {
@@ -326,53 +326,53 @@ Socket::Status SocketTCP::Send(Packet& PacketToSend)
 /// Receive a packet from the host (must be connected first).
 /// This function will block if the socket is blocking
 ////////////////////////////////////////////////////////////
-Socket::Status SocketTCP::Receive(Packet& PacketToReceive)
+Socket::Status SocketTCP::Receive(Packet& packet)
 {
     // We start by getting the size of the incoming packet
-    Uint32      PacketSize = 0;
-    std::size_t Received   = 0;
+    Uint32      packetSize = 0;
+    std::size_t received   = 0;
     if (myPendingPacketSize < 0)
     {
-        Socket::Status Status = Receive(reinterpret_cast<char*>(&PacketSize), sizeof(PacketSize), Received);
-        if (Status != Socket::Done)
-            return Status;
+        Socket::Status status = Receive(reinterpret_cast<char*>(&packetSize), sizeof(packetSize), received);
+        if (status != Socket::Done)
+            return status;
 
-        PacketSize = ntohl(PacketSize);
+        packetSize = ntohl(packetSize);
     }
     else
     {
         // There is a pending packet : we already know its size
-        PacketSize = myPendingPacketSize;
+        packetSize = myPendingPacketSize;
     }
 
     // Then loop until we receive all the packet data
-    char Buffer[1024];
-    while (myPendingPacket.size() < PacketSize)
+    char buffer[1024];
+    while (myPendingPacket.size() < packetSize)
     {
         // Receive a chunk of data
-        std::size_t SizeToGet = std::min(static_cast<std::size_t>(PacketSize - myPendingPacket.size()), sizeof(Buffer));
-        Socket::Status Status = Receive(Buffer, SizeToGet, Received);
-        if (Status != Socket::Done)
+        std::size_t sizeToGet = std::min(static_cast<std::size_t>(packetSize - myPendingPacket.size()), sizeof(buffer));
+        Socket::Status status = Receive(buffer, sizeToGet, received);
+        if (status != Socket::Done)
         {
             // We must save the size of the pending packet until we can receive its content
-            if (Status == Socket::NotReady)
-                myPendingPacketSize = PacketSize;
-            return Status;
+            if (status == Socket::NotReady)
+                myPendingPacketSize = packetSize;
+            return status;
         }
 
         // Append it into the packet
-        if (Received > 0)
+        if (received > 0)
         {
-            myPendingPacket.resize(myPendingPacket.size() + Received);
-            char* Begin = &myPendingPacket[0] + myPendingPacket.size() - Received;
-            memcpy(Begin, Buffer, Received);
+            myPendingPacket.resize(myPendingPacket.size() + received);
+            char* begin = &myPendingPacket[0] + myPendingPacket.size() - received;
+            memcpy(begin, buffer, received);
         }
     }
 
     // We have received all the datas : we can copy it to the user packet, and clear our internal packet
-    PacketToReceive.Clear();
+    packet.Clear();
     if (!myPendingPacket.empty())
-        PacketToReceive.OnReceive(&myPendingPacket[0], myPendingPacket.size());
+        packet.OnReceive(&myPendingPacket[0], myPendingPacket.size());
     myPendingPacket.clear();
     myPendingPacketSize = -1;
 
@@ -415,18 +415,18 @@ bool SocketTCP::IsValid() const
 ////////////////////////////////////////////////////////////
 /// Comparison operator ==
 ////////////////////////////////////////////////////////////
-bool SocketTCP::operator ==(const SocketTCP& Other) const
+bool SocketTCP::operator ==(const SocketTCP& other) const
 {
-    return mySocket == Other.mySocket;
+    return mySocket == other.mySocket;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Comparison operator !=
 ////////////////////////////////////////////////////////////
-bool SocketTCP::operator !=(const SocketTCP& Other) const
+bool SocketTCP::operator !=(const SocketTCP& other) const
 {
-    return mySocket != Other.mySocket;
+    return mySocket != other.mySocket;
 }
 
 
@@ -435,9 +435,9 @@ bool SocketTCP::operator !=(const SocketTCP& Other) const
 /// Provided for compatibility with standard containers, as
 /// comparing two sockets doesn't make much sense...
 ////////////////////////////////////////////////////////////
-bool SocketTCP::operator <(const SocketTCP& Other) const
+bool SocketTCP::operator <(const SocketTCP& other) const
 {
-    return mySocket < Other.mySocket;
+    return mySocket < other.mySocket;
 }
 
 
@@ -445,19 +445,19 @@ bool SocketTCP::operator <(const SocketTCP& Other) const
 /// Construct the socket from a socket descriptor
 /// (for internal use only)
 ////////////////////////////////////////////////////////////
-SocketTCP::SocketTCP(SocketHelper::SocketType Descriptor)
+SocketTCP::SocketTCP(SocketHelper::SocketType descriptor)
 {
-    Create(Descriptor);
+    Create(descriptor);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Create the socket
 ////////////////////////////////////////////////////////////
-void SocketTCP::Create(SocketHelper::SocketType Descriptor)
+void SocketTCP::Create(SocketHelper::SocketType descriptor)
 {
     // Use the given socket descriptor, or get a new one
-    mySocket = Descriptor ? Descriptor : socket(PF_INET, SOCK_STREAM, 0);
+    mySocket = descriptor ? descriptor : socket(PF_INET, SOCK_STREAM, 0);
     myIsBlocking = true;
 
     // Reset the pending packet
@@ -468,15 +468,15 @@ void SocketTCP::Create(SocketHelper::SocketType Descriptor)
     if (IsValid())
     {
         // To avoid the "Address already in use" error message when trying to bind to the same port
-        int Yes = 1;
-        if (setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&Yes), sizeof(Yes)) == -1)
+        int yes = 1;
+        if (setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
         {
             std::cerr << "Failed to set socket option \"SO_REUSEADDR\" ; "
                       << "binding to a same port may fail if too fast" << std::endl;
         }
 
         // Disable the Nagle algorithm (ie. removes buffering of TCP packets)
-        if (setsockopt(mySocket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&Yes), sizeof(Yes)) == -1)
+        if (setsockopt(mySocket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
         {
             std::cerr << "Failed to set socket option \"TCP_NODELAY\" ; "
                       << "all your TCP packets will be buffered" << std::endl;

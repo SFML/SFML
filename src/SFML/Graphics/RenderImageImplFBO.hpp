@@ -69,19 +69,19 @@ private :
     /// /see RenderImageImpl::Create
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Create(unsigned int Width, unsigned int Height, unsigned int TextureId, bool DepthBuffer);
+    virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
 
     ////////////////////////////////////////////////////////////
     /// /see RenderImageImpl::Activate
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool Active);
+    virtual bool Activate(bool active);
 
     ////////////////////////////////////////////////////////////
     /// /see RenderImageImpl::UpdateTexture
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool UpdateTexture(unsigned TextureId);
+    virtual bool UpdateTexture(unsigned textureId);
 
     ////////////////////////////////////////////////////////////
     // Member data

@@ -37,22 +37,22 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// Get supported video modes
 ////////////////////////////////////////////////////////////
-void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& Modes)
+void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
 {
     // First, clear array to fill
-    Modes.clear();
+    modes.clear();
 
     // Enumerate all available video modes for primary display adapter
-    DEVMODE Win32Mode;
-    Win32Mode.dmSize = sizeof(DEVMODE);
-    for (int Count = 0; EnumDisplaySettings(NULL, Count, &Win32Mode); ++Count)
+    DEVMODE win32Mode;
+    win32Mode.dmSize = sizeof(win32Mode);
+    for (int count = 0; EnumDisplaySettings(NULL, count, &win32Mode); ++count)
     {
         // Convert to sfVideoMode
-        VideoMode Mode(Win32Mode.dmPelsWidth, Win32Mode.dmPelsHeight, Win32Mode.dmBitsPerPel);
+        VideoMode mode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
 
         // Add it only if it is not already in the array
-        if (std::find(Modes.begin(), Modes.end(), Mode) == Modes.end())
-            Modes.push_back(Mode);
+        if (std::find(modes.begin(), modes.end(), mode) == modes.end())
+            modes.push_back(mode);
     }
 }
 
@@ -62,11 +62,11 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& Modes)
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeSupport::GetDesktopVideoMode()
 {
-    DEVMODE Win32Mode;
-    Win32Mode.dmSize = sizeof(DEVMODE);
-    EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &Win32Mode);
+    DEVMODE win32Mode;
+    win32Mode.dmSize = sizeof(win32Mode);
+    EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &win32Mode);
 
-    return VideoMode(Win32Mode.dmPelsWidth, Win32Mode.dmPelsHeight, Win32Mode.dmBitsPerPel);
+    return VideoMode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
 }
 
 } // namespace priv

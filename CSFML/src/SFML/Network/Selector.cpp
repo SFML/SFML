@@ -40,37 +40,37 @@ sfSelectorUDP* sfSelectorUDP_Create() {return new sfSelectorUDP;}
 ////////////////////////////////////////////////////////////
 /// Destroy an existing selector
 ////////////////////////////////////////////////////////////
-void sfSelectorTCP_Destroy(sfSelectorTCP* Selector) {delete Selector;}
-void sfSelectorUDP_Destroy(sfSelectorUDP* Selector) {delete Selector;}
+void sfSelectorTCP_Destroy(sfSelectorTCP* selector) {delete selector;}
+void sfSelectorUDP_Destroy(sfSelectorUDP* selector) {delete selector;}
 
 
 ////////////////////////////////////////////////////////////
 /// Add a socket to watch to a selector
 ////////////////////////////////////////////////////////////
-void sfSelectorTCP_Add(sfSelectorTCP* Selector, sfSocketTCP* Socket) {CSFML_CALL(Selector, Add(Socket->This)); Selector->Sockets[Socket->This] = Socket;}
-void sfSelectorUDP_Add(sfSelectorUDP* Selector, sfSocketUDP* Socket) {CSFML_CALL(Selector, Add(Socket->This)); Selector->Sockets[Socket->This] = Socket;}
+void sfSelectorTCP_Add(sfSelectorTCP* selector, sfSocketTCP* socket) {CSFML_CALL(selector, Add(socket->This)); selector->Sockets[socket->This] = socket;}
+void sfSelectorUDP_Add(sfSelectorUDP* selector, sfSocketUDP* socket) {CSFML_CALL(selector, Add(socket->This)); selector->Sockets[socket->This] = socket;}
 
 
 ////////////////////////////////////////////////////////////
 /// Remove a socket from a selector
 ////////////////////////////////////////////////////////////
-void sfSelectorTCP_Remove(sfSelectorTCP* Selector, sfSocketTCP* Socket) {CSFML_CALL(Selector, Remove(Socket->This)); Selector->Sockets.erase(Socket->This);}
-void sfSelectorUDP_Remove(sfSelectorUDP* Selector, sfSocketUDP* Socket) {CSFML_CALL(Selector, Remove(Socket->This)); Selector->Sockets.erase(Socket->This);}
+void sfSelectorTCP_Remove(sfSelectorTCP* selector, sfSocketTCP* socket) {CSFML_CALL(selector, Remove(socket->This)); selector->Sockets.erase(socket->This);}
+void sfSelectorUDP_Remove(sfSelectorUDP* selector, sfSocketUDP* socket) {CSFML_CALL(selector, Remove(socket->This)); selector->Sockets.erase(socket->This);}
 
 
 ////////////////////////////////////////////////////////////
 /// Remove all sockets from a selector
 ////////////////////////////////////////////////////////////
-void sfSelectorTCP_Clear(sfSelectorTCP* Selector) {CSFML_CALL(Selector, Clear()); Selector->Sockets.clear();}
-void sfSelectorUDP_Clear(sfSelectorUDP* Selector) {CSFML_CALL(Selector, Clear()); Selector->Sockets.clear();}
+void sfSelectorTCP_Clear(sfSelectorTCP* selector) {CSFML_CALL(selector, Clear()); selector->Sockets.clear();}
+void sfSelectorUDP_Clear(sfSelectorUDP* selector) {CSFML_CALL(selector, Clear()); selector->Sockets.clear();}
 
 ////////////////////////////////////////////////////////////
 /// Wait and collect sockets which are ready for reading.
 /// This functions will return either when at least one socket
 /// is ready, or when the given time is out
 ////////////////////////////////////////////////////////////
-unsigned int sfSelectorTCP_Wait(sfSelectorTCP* Selector, float Timeout) {CSFML_CALL_RETURN(Selector, Wait(Timeout), 0);}
-unsigned int sfSelectorUDP_Wait(sfSelectorUDP* Selector, float Timeout) {CSFML_CALL_RETURN(Selector, Wait(Timeout), 0);}
+unsigned int sfSelectorTCP_Wait(sfSelectorTCP* selector, float timeout) {CSFML_CALL_RETURN(selector, Wait(timeout), 0);}
+unsigned int sfSelectorUDP_Wait(sfSelectorUDP* selector, float timeout) {CSFML_CALL_RETURN(selector, Wait(timeout), 0);}
 
 
 ////////////////////////////////////////////////////////////
@@ -78,13 +78,13 @@ unsigned int sfSelectorUDP_Wait(sfSelectorUDP* Selector, float Timeout) {CSFML_C
 /// ready for reading. The total number of sockets ready
 /// is the integer returned by the previous call to Wait()
 ////////////////////////////////////////////////////////////
-sfSocketTCP* sfSelectorTCP_GetSocketReady(sfSelectorTCP* Selector, unsigned int Index)
+sfSocketTCP* sfSelectorTCP_GetSocketReady(sfSelectorTCP* selector, unsigned int index)
 {
-    CSFML_CHECK_RETURN(Selector, NULL);
-    return Selector->Sockets[Selector->This.GetSocketReady(Index)];
+    CSFML_CHECK_RETURN(selector, NULL);
+    return selector->Sockets[selector->This.GetSocketReady(index)];
 }
-sfSocketUDP* sfSelectorUDP_GetSocketReady(sfSelectorUDP* Selector, unsigned int Index)
+sfSocketUDP* sfSelectorUDP_GetSocketReady(sfSelectorUDP* selector, unsigned int index)
 {
-    CSFML_CHECK_RETURN(Selector, NULL);
-    return Selector->Sockets[Selector->This.GetSocketReady(Index)];
+    CSFML_CHECK_RETURN(selector, NULL);
+    return selector->Sockets[selector->This.GetSocketReady(index)];
 }
