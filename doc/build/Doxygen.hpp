@@ -19,51 +19,51 @@
 /// int main()
 /// {
 ///     // Create the main window
-///     sf::RenderWindow App(sf::VideoMode(800, 600), "SFML window");
+///     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
 /// 
 ///     // Load a sprite to display
-///     sf::Image Image;
-///     if (!Image.LoadFromFile("cute_image.jpg"))
+///     sf::Image image;
+///     if (!image.LoadFromFile("cute_image.jpg"))
 ///         return EXIT_FAILURE;
-///     sf::Sprite Sprite(Image);
+///     sf::Sprite sprite(image);
 /// 
 ///     // Create a graphical string to display
-///     sf::Font Arial;
-///     if (!Arial.LoadFromFile("arial.ttf"))
+///     sf::Font font;
+///     if (!font.LoadFromFile("arial.ttf"))
 ///         return EXIT_FAILURE;
-///     sf::String Text("Hello SFML", Arial, 50);
+///     sf::String text("Hello SFML", font, 50);
 /// 
 ///     // Load a music to play
-///     sf::Music Music;
-///     if (!Music.OpenFromFile("nice_music.ogg"))
+///     sf::Music music;
+///     if (!music.OpenFromFile("nice_music.ogg"))
 ///         return EXIT_FAILURE;
 ///
 ///     // Play the music
-///     Music.Play();
+///     music.Play();
 /// 
 ///     // Start the game loop
-///     while (App.IsOpened())
+///     while (window.IsOpened())
 ///     {
 ///         // Process events
-///         sf::Event Event;
-///         while (App.GetEvent(Event))
+///         sf::Event event;
+///         while (window.GetEvent(event))
 ///         {
 ///             // Close window : exit
-///             if (Event.Type == sf::Event::Closed)
-///                 App.Close();
+///             if (event.Type == sf::Event::Closed)
+///                 window.Close();
 ///         }
 /// 
 ///         // Clear screen
-///         App.Clear();
+///         window.Clear();
 /// 
 ///         // Draw the sprite
-///         App.Draw(Sprite);
+///         window.Draw(sprite);
 /// 
 ///         // Draw the string
-///         App.Draw(Text);
+///         window.Draw(text);
 /// 
 ///         // Update the window
-///         App.Display();
+///         window.Display();
 ///     }
 /// 
 ///     return EXIT_SUCCESS;
