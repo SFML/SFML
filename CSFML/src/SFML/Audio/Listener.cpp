@@ -51,9 +51,9 @@ float sfListener_GetGlobalVolume()
 ////////////////////////////////////////////////////////////
 /// Change the position of the listener
 ////////////////////////////////////////////////////////////
-void sfListener_SetPosition(float x, float y, float PosZ)
+void sfListener_SetPosition(float x, float y, float z)
 {
-    sf::Listener::SetPosition(sf::Vector3f(x, y, PosZ));
+    sf::Listener::SetPosition(x, y, z);
 }
 
 
@@ -73,26 +73,24 @@ void sfListener_GetPosition(float* x, float* y, float* z)
 
 
 ////////////////////////////////////////////////////////////
-/// Change the orientation of the listener (the point
-/// he must look at)
+/// Change the orientation of the listener
 ////////////////////////////////////////////////////////////
-void sfListener_SetTarget(float x, float y, float z)
+void sfListener_SetDirection(float x, float y, float z)
 {
-    sf::Listener::SetTarget(sf::Vector3f(x, y, z));
+    sf::Listener::SetDirection(x, y, z);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the current orientation of the listener (the point
-/// he's looking at)
+/// Get the current orientation of the listener
 ////////////////////////////////////////////////////////////
-void sfListener_GetTarget(float* x, float* y, float* z)
+void sfListener_GetDirection(float* x, float* y, float* z)
 {
     if (x && y && z)
     {
-        sf::Vector3f target = sf::Listener::GetTarget();
-        *x = target.x;
-        *y = target.y;
-        *z = target.z;
+        sf::Vector3f direction = sf::Listener::GetDirection();
+        *x = direction.x;
+        *y = direction.y;
+        *z = direction.z;
     }
 }

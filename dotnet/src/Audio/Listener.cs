@@ -39,14 +39,13 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// 3D position of the target, ie. the point the listener is looking at
-            /// (default is (0, 0, -1))
+            /// 3D direction of the listener (default is (0, 0, -1))
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public static Vector3 Target
+            public static Vector3 Direction
             {
-                get {Vector3 v; sfListener_GetTarget(out v.X, out v.Y, out v.Z); return v;}
-                set {sfListener_SetTarget(value.X, value.Y, value.Z);}
+                get {Vector3 v; sfListener_GetDirection(out v.X, out v.Y, out v.Z); return v;}
+                set {sfListener_SetDirection(value.X, value.Y, value.Z);}
             }
 
             #region Imports
@@ -57,16 +56,16 @@ namespace SFML
             static extern float sfListener_GetGlobalVolume();
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
-            static extern void sfListener_SetPosition(float PosX, float PosY, float PosZ);
+            static extern void sfListener_SetPosition(float X, float Y, float Z);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
-            static extern void sfListener_GetPosition(out float PosX, out float PosY, out float PosZ);
+            static extern void sfListener_GetPosition(out float X, out float Y, out float Z);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
-            static extern void sfListener_SetTarget(float TargetX, float TargetY, float TargetZ);
+            static extern void sfListener_GetDirection(float X, float Y, float Z);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
-            static extern void sfListener_GetTarget(out float TargetX, out float TargetY, out float TargetZ);
+            static extern void sfListener_SetDirection(out float X, out float Y, out float Z);
             #endregion
         }
     }

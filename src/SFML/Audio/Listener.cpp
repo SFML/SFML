@@ -83,10 +83,9 @@ Vector3f Listener::GetPosition()
 
 
 ////////////////////////////////////////////////////////////
-/// Change the orientation of the listener (the point
-/// he must look at) (take 3 values)
+/// Change the orientation of the listener (take 3 values)
 ////////////////////////////////////////////////////////////
-void Listener::SetTarget(float x, float y, float z)
+void Listener::SetDirection(float x, float y, float z)
 {
     float orientation[] = {x, y, z, 0.f, 1.f, 0.f};
     ALCheck(alListenerfv(AL_ORIENTATION, orientation));
@@ -94,20 +93,18 @@ void Listener::SetTarget(float x, float y, float z)
 
 
 ////////////////////////////////////////////////////////////
-/// Change the orientation of the listener (the point
-/// he must look at) (take a 3D vector)
+/// Change the orientation of the listener (take a 3D vector)
 ////////////////////////////////////////////////////////////
-void Listener::SetTarget(const Vector3f& target)
+void Listener::SetDirection(const Vector3f& direction)
 {
-    SetTarget(target.x, target.y, target.z);
+    SetDirection(direction.x, direction.y, direction.z);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the current orientation of the listener (the point
-/// he's looking at)
+    /// Get the current orientation of the listener.
 ////////////////////////////////////////////////////////////
-Vector3f Listener::GetTarget()
+Vector3f Listener::GetDirection()
 {
     float orientation[6];
     ALCheck(alGetListenerfv(AL_ORIENTATION, orientation));

@@ -87,33 +87,32 @@ public :
     static Vector3f GetPosition();
 
     ////////////////////////////////////////////////////////////
-    /// Change the orientation of the listener (the point
-    /// he must look at) (take 3 values).
-    /// The default target is (0, 0, -1)
+    /// Change the orientation of the listener (take 3 values);
+    /// the direction does not need to be normalized.
+    /// The default direction is (0, 0, -1)
     ///
-    /// \param x, y, z : Position of the point the listener must look at
+    /// \param x, y, z : Orientation of the listener
     ///
     ////////////////////////////////////////////////////////////
-    static void SetTarget(float x, float y, float z);
+    static void SetDirection(float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
-    /// Change the orientation of the listener (the point
-    /// he must look at) (take a 3D vector).
-    /// The default target is (0, 0, -1)
+    /// Change the orientation of the listener (take a 3D vector);
+    /// the direction does not need to be normalized.
+    /// The default direction is (0, 0, -1)
     ///
-    /// \param target : Position of the point the listener must look at
+    /// \param direction : Orientation of the listener
     ///
     ////////////////////////////////////////////////////////////
-    static void SetTarget(const Vector3f& target);
+    static void SetDirection(const Vector3f& direction);
 
     ////////////////////////////////////////////////////////////
-    /// Get the current orientation of the listener (the point
-    /// he's looking at)
+    /// Get the current orientation of the listener.
     ///
-    /// \return : Position of the point the listener is looking at
+    /// \return Current direction of the listener
     ///
     ////////////////////////////////////////////////////////////
-    static Vector3f GetTarget();
+    static Vector3f GetDirection();
 };
 
 } // namespace sf

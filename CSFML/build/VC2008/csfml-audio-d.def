@@ -4,8 +4,8 @@ EXPORTS
 	sfListener_GetGlobalVolume
 	sfListener_SetPosition
 	sfListener_GetPosition
-	sfListener_SetTarget
-	sfListener_GetTarget
+	sfListener_SetDirection
+	sfListener_GetDirection
 	sfMusic_CreateFromFile
 	sfMusic_CreateFromMemory
 	sfMusic_Destroy

@@ -68,26 +68,24 @@ CSFML_API void sfListener_SetPosition(float x, float y, float z);
 CSFML_API void sfListener_GetPosition(float* x, float* y, float* z);
 
 ////////////////////////////////////////////////////////////
-/// Change the orientation of the listener (the point
-/// he must look at)
+/// Change the orientation of the listener
 ///
-/// \param x : X position of the point the listener must look at
-/// \param y : X position of the point the listener must look at
-/// \param z : X position of the point the listener must look at
+/// \param x : X component of the listener's direction
+/// \param y : Y component of the listener's direction
+/// \param z : Z component of the listener's direction
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfListener_SetTarget(float x, float y, float z);
+CSFML_API void sfListener_SetDirection(float x, float y, float z);
 
 ////////////////////////////////////////////////////////////
-/// Get the current orientation of the listener (the point
-/// he's looking at)
+/// Get the current orientation of the listener
 ///
-/// \param x : X position of the point the listener is looking at
-/// \param y : X position of the point the listener is looking at
-/// \param z : X position of the point the listener is looking at
+/// \param x : X component of the listener's direction
+/// \param y : Y component of the listener's direction
+/// \param z : Z component of the listener's direction
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfListener_GetTarget(float* x, float* y, float* z);
+CSFML_API void sfListener_GetDirection(float* x, float* y, float* z);
 
 
 #endif // SFML_LISTENER_H

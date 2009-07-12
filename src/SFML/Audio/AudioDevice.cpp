@@ -65,7 +65,7 @@ AudioDevice::AudioDevice()
 
             // Initialize the listener, located at the origin and looking along the Z axis
             Listener::SetPosition(0.f, 0.f, 0.f);
-            Listener::SetTarget(0.f, 0.f, -1.f);
+            Listener::SetDirection(0.f, 0.f, -1.f);
         }
         else
         {
