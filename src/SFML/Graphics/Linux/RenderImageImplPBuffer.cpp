@@ -75,7 +75,7 @@ bool RenderImageImplPBuffer::IsSupported()
     // Make sure that GLEW is initialized
     EnsureGlewInit();
 
-    return false; //glxewIsSupported("GLX_SGIX_pbuffer");
+    return glxewIsSupported("GLX_SGIX_pbuffer");
 }
 
 
