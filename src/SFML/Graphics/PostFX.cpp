@@ -299,7 +299,7 @@ void PostFX::Render(RenderTarget& target) const
         it++;
     }
 
-    // Compute the texture coordinates (in case the texture is larger than the screen, or flipped)
+    // Compute the texture coordinates (it may not be (0, 0, 1, 1) if the texture is padded or flipped)
     IntRect frameBufferRect(0, 0, myFrameBuffer.GetWidth(), myFrameBuffer.GetHeight());
     FloatRect texCoords = myFrameBuffer.GetTexCoords(frameBufferRect);
 

@@ -302,13 +302,13 @@ void Shape::Render(RenderTarget&) const
             for (std::vector<Point>::const_iterator i = myPoints.begin(); i != myPoints.end(); ++i)
             {
                 Color color = i->Col * GetColor();
-                glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+                glColor4ub(color.r, color.g, color.b, color.a);
                 glVertex2f(i->Position.x, i->Position.y);
             }
 
             // Close the shape by duplicating the first point at the end
             Color color = myPoints[1].Col * GetColor();
-            glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+            glColor4ub(color.r, color.g, color.b, color.a);
             glVertex2f(myPoints[1].Position.x, myPoints[1].Position.y);
         }
         glEnd();
@@ -322,17 +322,17 @@ void Shape::Render(RenderTarget&) const
             for (std::size_t i = 1; i < myPoints.size(); ++i)
             {
                 Color color = myPoints[i].OutlineCol * GetColor();
-                glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+                glColor4ub(color.r, color.g, color.b, color.a);
                 glVertex2f(myPoints[i].Position.x, myPoints[i].Position.y);
-                glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+                glColor4ub(color.r, color.g, color.b, color.a);
                 glVertex2f(myPoints[i].Position.x + myPoints[i].Normal.x * myOutline, myPoints[i].Position.y + myPoints[i].Normal.y * myOutline);
             }
 
             // Close the shape by duplicating the first point at the end
             Color color = myPoints[1].OutlineCol * GetColor();
-            glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+            glColor4ub(color.r, color.g, color.b, color.a);
             glVertex2f(myPoints[1].Position.x, myPoints[1].Position.y);
-            glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+            glColor4ub(color.r, color.g, color.b, color.a);
             glVertex2f(myPoints[1].Position.x + myPoints[1].Normal.x * myOutline, myPoints[1].Position.y + myPoints[1].Normal.y * myOutline);
         }
         glEnd();

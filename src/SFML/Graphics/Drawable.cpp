@@ -388,7 +388,7 @@ void Drawable::Draw(RenderTarget& target) const
     }
 
     // Set color
-    GLCheck(glColor4f(myColor.r / 255.f, myColor.g / 255.f, myColor.b / 255.f, myColor.a / 255.f));
+    GLCheck(glColor4ub(myColor.r, myColor.g, myColor.b, myColor.a));
 
     // Let the derived class render the object geometry
     Render(target);
