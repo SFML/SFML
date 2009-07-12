@@ -146,7 +146,7 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
         glXMakeCurrent(myDisplay, NULL, NULL);
 
     // Create the context
-    XVisualInfo* Visual = glXGetVisualFromFBConfig(myDisplay, configs[0]);
+    XVisualInfo* visual = glXGetVisualFromFBConfig(myDisplay, configs[0]);
     myContext = glXCreateContext(myDisplay, visual, currentContext, true);
     if (!myContext)
     {
@@ -173,7 +173,7 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
 ////////////////////////////////////////////////////////////
 bool RenderImageImplPBuffer::Activate(bool active)
 {
-    if (Active)
+    if (active)
     {
         if (myPBuffer && myContext && (glXGetCurrentContext() != myContext))
         {

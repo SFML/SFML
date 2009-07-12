@@ -169,7 +169,7 @@ Vector3<T>& operator /=(Vector3<T>& left, T right)
 /// Operator == overload ; compares the equality of two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator ==(const Vector3<T>& left, const Vector3<T>& V2)
+bool operator ==(const Vector3<T>& left, const Vector3<T>& right)
 {
     return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);
 }

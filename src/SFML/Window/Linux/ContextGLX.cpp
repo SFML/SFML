@@ -193,10 +193,10 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     // Get all the visuals matching the template
     int nbVisuals = 0;
     XVisualInfo* visuals = XGetVisualInfo(myDisplay.GetDisplay(), VisualDepthMask | VisualIDMask | VisualScreenMask, &tpl, &nbVisuals);
-    if (!Visuals || (NbVisuals == 0))
+    if (!visuals || (nbVisuals == 0))
     {
-        if (Visuals)
-            XFree(Visuals);
+        if (visuals)
+            XFree(visuals);
         std::cerr << "There is no valid visual for the selected screen" << std::endl;
         return;
     }

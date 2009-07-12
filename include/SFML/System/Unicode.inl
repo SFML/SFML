@@ -132,7 +132,7 @@ inline Out Unicode::UTF8ToUTF16(In begin, In end, Out output, Uint16 replacement
                 else
                 {
                     // Valid character directly convertible to 16 bits
-                    *Output++ = static_cast<Uint16>(character);
+                    *output++ = static_cast<Uint16>(character);
                 }
             }
             else if (character > 0x0010FFFF)

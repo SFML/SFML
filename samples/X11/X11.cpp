@@ -122,7 +122,7 @@ int main()
     XSetWindowAttributes attributes;
     attributes.background_pixel = BlackPixel(display, screen);
     attributes.event_mask       = KeyPressMask;
-    Window window = XCreateWindow(Disp, RootWindow(display, screen),
+    Window window = XCreateWindow(display, RootWindow(display, screen),
                                0, 0, 650, 330, 0,
                                DefaultDepth(display, screen),
                                InputOutput,

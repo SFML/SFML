@@ -94,7 +94,7 @@ myKeyRepeat   (true)
         myHeight = windowAttributes.height;
 
         // Make sure the window is listening to all the requiered events
-        XSelectInput(myDisplay, myWindow, EventMask & ~ButtonPressMask);
+        XSelectInput(myDisplay, myWindow, eventMask & ~ButtonPressMask);
 
         // Do some common initializations
         Initialize();
@@ -560,7 +560,7 @@ void WindowImplX11::CreateHiddenCursor()
     // Create the cursor, using the pixmap as both the shape and the mask of the cursor
     XColor color;
     color.flags = DoRed | DoGreen | DoBlue;
-    color.red = Color.blue = Color.green = 0;
+    color.red = color.blue = color.green = 0;
     myHiddenCursor = XCreatePixmapCursor(myDisplay, cursorPixmap, cursorPixmap, &color, &color, 0, 0);
 
     // We don't need the pixmap any longer, free it
@@ -759,7 +759,7 @@ void WindowImplX11::ProcessEvent(XEvent windowEvent)
                 event.Type          = Event::MouseButtonPressed;
                 event.MouseButton.X = windowEvent.xbutton.x;
                 event.MouseButton.Y = windowEvent.xbutton.y;
-                switch (Button)
+                switch (button)
                 {
                     case Button1 : event.MouseButton.Button = Mouse::Left;     break;
                     case Button2 : event.MouseButton.Button = Mouse::Middle;   break;
@@ -782,7 +782,7 @@ void WindowImplX11::ProcessEvent(XEvent windowEvent)
                 event.Type          = Event::MouseButtonReleased;
                 event.MouseButton.X = windowEvent.xbutton.x;
                 event.MouseButton.Y = windowEvent.xbutton.y;
-                switch (Button)
+                switch (button)
                 {
                     case Button1 : event.MouseButton.Button = Mouse::Left;     break;
                     case Button2 : event.MouseButton.Button = Mouse::Middle;   break;

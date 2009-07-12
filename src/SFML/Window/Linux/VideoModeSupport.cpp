@@ -51,7 +51,7 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
 
     // Check if the XRandR extension is present
     int version;
-    if (XQueryExtension(Disp.GetDisplay(), "RANDR", &version, &version, &version))
+    if (XQueryExtension(disp.GetDisplay(), "RANDR", &version, &version, &version))
     {
         // Get the current configuration
         XRRScreenConfiguration* config = XRRGetScreenInfo(disp.GetDisplay(), RootWindow(disp.GetDisplay(), screen));
@@ -125,7 +125,7 @@ VideoMode VideoModeSupport::GetDesktopVideoMode()
 
             // Get the available screen sizes
             int nbSizes;
-            XRRScreenSize* sizes = XRRConfigSizes(Config, &nbSizes);
+            XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
             if (sizes && (nbSizes > 0))
                 desktopMode = VideoMode(sizes[currentMode].width, sizes[currentMode].height, DefaultDepth(disp.GetDisplay(), screen));
 
