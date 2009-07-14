@@ -62,10 +62,10 @@ namespace SFML
             static extern void sfListener_GetPosition(out float X, out float Y, out float Z);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
-            static extern void sfListener_GetDirection(float X, float Y, float Z);
+            static extern void sfListener_SetDirection(float X, float Y, float Z);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
-            static extern void sfListener_SetDirection(out float X, out float Y, out float Z);
+            static extern void sfListener_GetDirection(out float X, out float Y, out float Z);
             #endregion
         }
     }
