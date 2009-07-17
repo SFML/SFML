@@ -20,9 +20,9 @@ namespace SFML
             public KeyEventArgs(KeyEvent e)
             {
                 Code    = e.Code;
-                Alt     = e.Alt;
-                Control = e.Control;
-                Shift   = e.Shift;
+                Alt     = e.Alt != 0;
+                Control = e.Control != 0;
+                Shift   = e.Shift != 0;
             }
 
             /// <summary>Code of the key (see KeyCode enum)</summary>

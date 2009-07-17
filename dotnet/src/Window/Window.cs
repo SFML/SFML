@@ -105,25 +105,6 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Return the list of window's events which happened since last call
-            /// </summary>
-            /// <returns>Array of events</returns>
-            ////////////////////////////////////////////////////////////
-            public Event[] Events
-            {
-                get
-                {
-                    Event Evt;
-                    List<Event> Evts = new List<Event>();
-                    while (GetEvent(out Evt))
-                        Evts.Add(Evt);
-
-                    return Evts.ToArray();
-                }
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
             /// Input manager of the window
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -365,7 +346,8 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public void DispatchEvents()
             {
-                foreach (Event e in Events)
+                Event e;
+                while (GetEvent(out e))
                 {
                     switch (e.Type)
                     {
