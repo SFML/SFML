@@ -25,7 +25,7 @@ namespace SFML
             /// <param name="title">Title of the window</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title) :
-                this(mode, title, Styles.Resize | Styles.Close, new WindowSettings(24, 8, 0))
+                this(mode, title, Styles.Resize | Styles.Close, new ContextSettings(24, 8, 0))
             {
             }
 
@@ -38,7 +38,7 @@ namespace SFML
             /// <param name="style">Window style (Resize | Close by default)</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title, Styles style) :
-                this(mode, title, style, new WindowSettings(24, 8, 0))
+                this(mode, title, style, new ContextSettings(24, 8, 0))
             {
             }
 
@@ -51,7 +51,7 @@ namespace SFML
             /// <param name="style">Window style (Resize | Close by default)</param>
             /// <param name="settings">Creation parameters</param>
             ////////////////////////////////////////////////////////////
-            public RenderWindow(VideoMode mode, string title, Styles style, WindowSettings settings) :
+            public RenderWindow(VideoMode mode, string title, Styles style, ContextSettings settings) :
                 base(sfRenderWindow_Create(mode, title, style, settings), 0)
             {
                 Initialize();
@@ -64,7 +64,7 @@ namespace SFML
             /// <param name="handle">Platform-specific handle of the control</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(IntPtr handle) :
-                this(handle, new WindowSettings(24, 8, 0))
+                this(handle, new ContextSettings(24, 8, 0))
             {
             }
 
@@ -75,7 +75,7 @@ namespace SFML
             /// <param name="handle">Platform-specific handle of the control</param>
             /// <param name="settings">Creation parameters</param>
             ////////////////////////////////////////////////////////////
-            public RenderWindow(IntPtr handle, WindowSettings settings) :
+            public RenderWindow(IntPtr handle, ContextSettings settings) :
                 base(sfRenderWindow_CreateFromHandle(handle, settings), 0)
             {
                 Initialize();
@@ -141,7 +141,7 @@ namespace SFML
             /// Creation settings of the window
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override WindowSettings Settings
+            public override ContextSettings Settings
             {
                 get {return sfRenderWindow_GetSettings(This);}
             }
@@ -460,10 +460,10 @@ namespace SFML
 
             #region Imports
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfRenderWindow_Create(VideoMode Mode, string Title, Styles Style, WindowSettings Params);
+            static extern IntPtr sfRenderWindow_Create(VideoMode Mode, string Title, Styles Style, ContextSettings Params);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfRenderWindow_CreateFromHandle(IntPtr Handle, WindowSettings Params);
+            static extern IntPtr sfRenderWindow_CreateFromHandle(IntPtr Handle, ContextSettings Params);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_Destroy(IntPtr This);
@@ -496,7 +496,7 @@ namespace SFML
             static extern uint sfRenderWindow_GetHeight(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern WindowSettings sfRenderWindow_GetSettings(IntPtr This);
+            static extern ContextSettings sfRenderWindow_GetSettings(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_UseVerticalSync(IntPtr This, bool Enable);

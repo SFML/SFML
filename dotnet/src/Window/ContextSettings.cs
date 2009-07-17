@@ -7,11 +7,11 @@ namespace SFML
     {
         ////////////////////////////////////////////////////////////
         /// <summary>
-        /// Structure defining the creation settings of windows
+        /// Structure defining the creation settings of OpenGL contexts
         /// </summary>
         ////////////////////////////////////////////////////////////
         [StructLayout(LayoutKind.Sequential)]
-        public struct WindowSettings
+        public struct ContextSettings
         {
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -20,7 +20,7 @@ namespace SFML
             /// <param name="depthBits">Depth buffer bits</param>
             /// <param name="stencilBits">Stencil buffer bits</param>
             ////////////////////////////////////////////////////////////
-            public WindowSettings(uint depthBits, uint stencilBits) :
+            public ContextSettings(uint depthBits, uint stencilBits) :
                 this(depthBits, stencilBits, 0)
             {
             }
@@ -33,7 +33,7 @@ namespace SFML
             /// <param name="stencilBits">Stencil buffer bits</param>
             /// <param name="antialiasingLevel">Antialiasing level</param>
             ////////////////////////////////////////////////////////////
-            public WindowSettings(uint depthBits, uint stencilBits, uint antialiasingLevel)
+            public ContextSettings(uint depthBits, uint stencilBits, uint antialiasingLevel)
             {
                 DepthBits         = depthBits;
                 StencilBits       = stencilBits;

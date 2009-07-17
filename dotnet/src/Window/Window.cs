@@ -47,7 +47,7 @@ namespace SFML
             /// <param name="title">Title of the window</param>
             ////////////////////////////////////////////////////////////
             public Window(VideoMode mode, string title) :
-                this(mode, title, Styles.Resize | Styles.Close, new WindowSettings(24, 8, 0))
+                this(mode, title, Styles.Resize | Styles.Close, new ContextSettings(24, 8, 0))
             {
             }
 
@@ -60,7 +60,7 @@ namespace SFML
             /// <param name="style">Window style (Resize | Close by default)</param>
             ////////////////////////////////////////////////////////////
             public Window(VideoMode mode, string title, Styles style) :
-                this(mode, title, style, new WindowSettings(24, 8, 0))
+                this(mode, title, style, new ContextSettings(24, 8, 0))
             {
             }
 
@@ -73,7 +73,7 @@ namespace SFML
             /// <param name="style">Window style (Resize | Close by default)</param>
             /// <param name="settings">Creation parameters</param>
             ////////////////////////////////////////////////////////////
-            public Window(VideoMode mode, string title, Styles style, WindowSettings settings) :
+            public Window(VideoMode mode, string title, Styles style, ContextSettings settings) :
                 base(sfWindow_Create(mode, title, style, settings))
             {
                 myInput = new Input(sfWindow_GetInput(This));
@@ -86,7 +86,7 @@ namespace SFML
             /// <param name="handle">Platform-specific handle of the control</param>
             ////////////////////////////////////////////////////////////
             public Window(IntPtr handle) :
-                this(handle, new WindowSettings(24, 8, 0))
+                this(handle, new ContextSettings(24, 8, 0))
             {
             }
 
@@ -97,29 +97,10 @@ namespace SFML
             /// <param name="Handle">Platform-specific handle of the control</param>
             /// <param name="settings">Creation parameters</param>
             ////////////////////////////////////////////////////////////
-            public Window(IntPtr Handle, WindowSettings settings) :
+            public Window(IntPtr Handle, ContextSettings settings) :
                 base(sfWindow_CreateFromHandle(Handle, settings))
             {
                 myInput = new Input(sfWindow_GetInput(This));
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Return the list of window's events which happened since last call
-            /// </summary>
-            /// <returns>Array of events</returns>
-            ////////////////////////////////////////////////////////////
-            public Event[] Events
-            {
-                get
-                {
-                    Event Evt;
-                    List<Event> Evts = new List<Event>();
-                    while (GetEvent(out Evt))
-                        Evts.Add(Evt);
-
-                    return Evts.ToArray();
-                }
             }
 
             ////////////////////////////////////////////////////////////
@@ -192,7 +173,7 @@ namespace SFML
             /// Creation settings of the window
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public virtual WindowSettings Settings
+            public virtual ContextSettings Settings
             {
                 get { return sfWindow_GetSettings(This); }
             }
@@ -360,12 +341,12 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             /// <summary>
             /// Call the event handlers for each pending event.
-            /// Use of this function is exclusive with the Events property (use one or the other)
             /// </summary>
             ////////////////////////////////////////////////////////////
             public void DispatchEvents()
             {
-                foreach (Event e in Events)
+                Event e;
+                while (GetEvent(out e))
                 {
                     switch (e.Type)
                     {
@@ -540,10 +521,10 @@ namespace SFML
 
             #region Imports
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfWindow_Create(VideoMode Mode, string Title, Styles Style, WindowSettings Params);
+            static extern IntPtr sfWindow_Create(VideoMode Mode, string Title, Styles Style, ContextSettings Params);
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfWindow_CreateFromHandle(IntPtr Handle, WindowSettings Params);
+            static extern IntPtr sfWindow_CreateFromHandle(IntPtr Handle, ContextSettings Params);
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Destroy(IntPtr This);
@@ -570,7 +551,7 @@ namespace SFML
             static extern uint sfWindow_GetHeight(IntPtr This);
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
-            static extern WindowSettings sfWindow_GetSettings(IntPtr This);
+            static extern ContextSettings sfWindow_GetSettings(IntPtr This);
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_UseVerticalSync(IntPtr This, bool Enable);

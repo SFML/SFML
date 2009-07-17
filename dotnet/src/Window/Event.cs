@@ -234,13 +234,13 @@ namespace SFML
             public KeyCode Code;
 
             /// <summary>Is the Alt modifier pressed?</summary>
-            public bool Alt;
+            public int Alt;
 
             /// <summary>Is the Control modifier pressed?</summary>
-            public bool Control;
+            public int Control;
 
             /// <summary>Is the Shift modifier pressed?</summary>
-            public bool Shift;
+            public int Shift;
         }
 
         ////////////////////////////////////////////////////////////
