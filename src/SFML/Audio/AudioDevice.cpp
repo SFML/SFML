@@ -26,7 +26,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/AudioResource.hpp>
 #include <SFML/Audio/Listener.hpp>
 #include <algorithm>
 #include <iostream>

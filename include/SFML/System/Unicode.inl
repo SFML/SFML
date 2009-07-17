@@ -75,7 +75,7 @@ inline Out Unicode::ANSIToUTF32(In begin, In end, Out output, const std::locale&
         {
             wchar_t character = 0;
             mbtowc(&character, &*begin, 1);
-            Begin++;
+            begin++;
             *output++ = static_cast<Uint32>(character);
         }
 
