@@ -110,7 +110,6 @@
 			<Add directory="..\..\src" />
 			<Add directory="..\..\include" />
 		</Compiler>
-		<Unit filename="..\..\include\SFML\Audio\AudioResource.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\Listener.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\Music.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\Sound.hpp" />
