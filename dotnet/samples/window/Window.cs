@@ -13,12 +13,12 @@ namespace sample_window
         static void Main()
         {
             // Create the main window
-            Window App = new Window(new VideoMode(640, 480, 32), "SFML.Net Window");
+            Window window = new Window(new VideoMode(640, 480, 32), "SFML.Net Window");
 
             // Setup event handlers
-            App.Closed     += new EventHandler(OnClosed);
-            App.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
-            App.Resized    += new EventHandler<SizeEventArgs>(OnResized);
+            window.Closed     += new EventHandler(OnClosed);
+            window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
+            window.Resized    += new EventHandler<SizeEventArgs>(OnResized);
 
             // Set the color and depth clear values
             Gl.glClearDepth(1.0F);
@@ -33,30 +33,30 @@ namespace sample_window
             Gl.glLoadIdentity();
             Glu.gluPerspective(90.0F, 1.0F, 1.0F, 500.0F);
 
-            float Time = 0.0F;
+            float time = 0.0F;
 
             // Start the game loop
-            while (App.IsOpened())
+            while (window.IsOpened())
             {
                 // Process events
-                App.DispatchEvents();
+                window.DispatchEvents();
 
                 // Set the active window before using OpenGL commands
                 // It's useless here because the active window is always the same,
                 // but don't forget it if you use multiple windows
-                App.SetActive();
+                window.SetActive();
 
                 // Clear color and depth buffer
                 Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
 
                 // Apply some transformations
-                Time += App.GetFrameTime();
+                time += window.GetFrameTime();
                 Gl.glMatrixMode(Gl.GL_MODELVIEW);
                 Gl.glLoadIdentity();
                 Gl.glTranslatef(0.0F, 0.0F, -200.0F);
-                Gl.glRotatef(Time * 50, 1.0F, 0.0F, 0.0F);
-                Gl.glRotatef(Time * 30, 0.0F, 1.0F, 0.0F);
-                Gl.glRotatef(Time * 90, 0.0F, 0.0F, 1.0F);
+                Gl.glRotatef(time * 50, 1.0F, 0.0F, 0.0F);
+                Gl.glRotatef(time * 30, 0.0F, 1.0F, 0.0F);
+                Gl.glRotatef(time * 90, 0.0F, 0.0F, 1.0F);
 
                 // Draw a cube
                 Gl.glBegin(Gl.GL_QUADS);
@@ -100,7 +100,7 @@ namespace sample_window
                 Gl.glEnd();
 
                 // Finally, display the rendered frame on screen
-                App.Display();
+                window.Display();
             }
         }
 

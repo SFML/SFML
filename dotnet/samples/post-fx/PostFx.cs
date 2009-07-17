@@ -8,9 +8,9 @@ namespace sample_postfx
 {
     static class Program
     {
-        private static Dictionary<string, PostFx>            Effects;
-        private static Dictionary<string, PostFx>.Enumerator CurrentEffect;
-        private static String2D                              CurFXStr;
+        private static Dictionary<string, PostFx>            effects;
+        private static Dictionary<string, PostFx>.Enumerator currentEffect;
+        private static String2D                              curFXStr;
 
         /// <summary>
         /// The main entry point for the application.
@@ -18,106 +18,106 @@ namespace sample_postfx
         static void Main()
         {
             // Create the main window
-            RenderWindow App = new RenderWindow(new VideoMode(800, 600), "SFML.Net PostFX");
+            RenderWindow window = new RenderWindow(new VideoMode(800, 600), "SFML.Net PostFX");
 
             // Setup event handlers
-            App.Closed     += new EventHandler(OnClosed);
-            App.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
+            window.Closed     += new EventHandler(OnClosed);
+            window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
 
             // Check that the system can use post effects
             if (PostFx.CanUsePostFX == false)
             {
-                DisplayError(App);
+                DisplayError(window);
                 return;
             }
 
             // Load a background image to display
-            Sprite Background = new Sprite(new Image("datas/post-fx/background.jpg"));
+            Sprite background = new Sprite(new Image("datas/post-fx/background.jpg"));
 
             // Load a sprite which we'll move into the scene
-            Sprite Entity = new Sprite(new Image("datas/post-fx/sprite.png"));
+            Sprite entity = new Sprite(new Image("datas/post-fx/sprite.png"));
 
             // Load the text font
-            Font Cheeseburger = new Font("datas/post-fx/cheeseburger.ttf");
+            Font cheeseburger = new Font("datas/post-fx/cheeseburger.ttf");
 
             // Load the image needed for the wave effect
-            Image WaveImage = new Image("datas/post-fx/wave.jpg");
+            Image waveImage = new Image("datas/post-fx/wave.jpg");
 
             // Load all effects
-            Effects = new Dictionary<string, PostFx>();
-            Effects["nothing"]  = new PostFx("datas/post-fx/nothing.sfx");
-            Effects["blur"]     = new PostFx("datas/post-fx/blur.sfx");
-            Effects["colorize"] = new PostFx("datas/post-fx/colorize.sfx");
-            Effects["fisheye"]  = new PostFx("datas/post-fx/fisheye.sfx");
-            Effects["wave"]     = new PostFx("datas/post-fx/wave.sfx");
-            Effects["pixelate"] = new PostFx("datas/post-fx/pixelate.sfx");
-            CurrentEffect = Effects.GetEnumerator();
-            CurrentEffect.MoveNext();
+            effects = new Dictionary<string, PostFx>();
+            effects["nothing"]  = new PostFx("datas/post-fx/nothing.sfx");
+            effects["blur"]     = new PostFx("datas/post-fx/blur.sfx");
+            effects["colorize"] = new PostFx("datas/post-fx/colorize.sfx");
+            effects["fisheye"]  = new PostFx("datas/post-fx/fisheye.sfx");
+            effects["wave"]     = new PostFx("datas/post-fx/wave.sfx");
+            effects["pixelate"] = new PostFx("datas/post-fx/pixelate.sfx");
+            currentEffect = effects.GetEnumerator();
+            currentEffect.MoveNext();
 
             // Do specific initializations
-            Effects["nothing"].SetTexture("framebuffer", null);
-            Effects["blur"].SetTexture("framebuffer", null);
-            Effects["blur"].SetParameter("offset", 0.0F);
-            Effects["colorize"].SetTexture("framebuffer", null);
-            Effects["colorize"].SetParameter("color", 1.0F, 1.0F, 1.0F);
-            Effects["fisheye"].SetTexture("framebuffer", null);
-            Effects["wave"].SetTexture("framebuffer", null);
-            Effects["wave"].SetTexture("wave", WaveImage);
-            Effects["pixelate"].SetTexture("framebuffer", null);
+            effects["nothing"].SetTexture("framebuffer", null);
+            effects["blur"].SetTexture("framebuffer", null);
+            effects["blur"].SetParameter("offset", 0.0F);
+            effects["colorize"].SetTexture("framebuffer", null);
+            effects["colorize"].SetParameter("color", 1.0F, 1.0F, 1.0F);
+            effects["fisheye"].SetTexture("framebuffer", null);
+            effects["wave"].SetTexture("framebuffer", null);
+            effects["wave"].SetTexture("wave", waveImage);
+            effects["pixelate"].SetTexture("framebuffer", null);
 
             // Define a string for displaying current effect description
-            CurFXStr = new String2D();
-            CurFXStr.Text = "Current effect is \"" + CurrentEffect.Current.Key + "\"";
-            CurFXStr.Font = Cheeseburger;
-            CurFXStr.Position = new Vector2(20.0F, 0.0F);
-            CurFXStr.Color = new Color(150, 70, 110);
+            curFXStr = new String2D();
+            curFXStr.Text = "Current effect is \"" + currentEffect.Current.Key + "\"";
+            curFXStr.Font = cheeseburger;
+            curFXStr.Position = new Vector2(20.0F, 0.0F);
+            curFXStr.Color = new Color(150, 70, 110);
 
             // Define a string for displaying help
-            String2D InfoStr = new String2D();
-            InfoStr.Text = "Move your mouse to change the effect parameters\nPress numpad + to change effect\nWarning : some effects may not work\ndepending on your graphics card";
-            InfoStr.Font = Cheeseburger;
-            InfoStr.Position = new Vector2(20.0F, 460.0F);
-            InfoStr.Color = new Color(200, 100, 150);
+            String2D infoStr = new String2D();
+            infoStr.Text = "Move your mouse to change the effect parameters\nPress numpad + to change effect\nWarning : some effects may not work\ndepending on your graphics card";
+            infoStr.Font = cheeseburger;
+            infoStr.Position = new Vector2(20.0F, 460.0F);
+            infoStr.Color = new Color(200, 100, 150);
 
             // Start the game loop
-            float AppTime = 0.0F;
-            while (App.IsOpened())
+            float time = 0.0F;
+            while (window.IsOpened())
             {
                 // Process events
-                App.DispatchEvents();
+                window.DispatchEvents();
 
                 // Get the mouse position in the range [0, 1]
-                float X = App.Input.GetMouseX() / (float)App.Width;
-                float Y = App.Input.GetMouseY() / (float)App.Height;
+                float x = window.Input.GetMouseX() / (float)window.Width;
+                float y = window.Input.GetMouseY() / (float)window.Height;
 
                 // Update the current effect
-                if      (CurrentEffect.Current.Key == "blur")     CurrentEffect.Current.Value.SetParameter("offset", X * Y * 0.1f);
-                else if (CurrentEffect.Current.Key == "colorize") CurrentEffect.Current.Value.SetParameter("color", 0.3f, X, Y);
-                else if (CurrentEffect.Current.Key == "fisheye")  CurrentEffect.Current.Value.SetParameter("mouse", X, 1.0F - Y);
-                else if (CurrentEffect.Current.Key == "wave")     CurrentEffect.Current.Value.SetParameter("offset", X, Y);
-                else if (CurrentEffect.Current.Key == "pixelate") CurrentEffect.Current.Value.SetParameter("mouse", X, Y);
+                if      (currentEffect.Current.Key == "blur")     currentEffect.Current.Value.SetParameter("offset", x * y * 0.1f);
+                else if (currentEffect.Current.Key == "colorize") currentEffect.Current.Value.SetParameter("color", 0.3f, x, y);
+                else if (currentEffect.Current.Key == "fisheye")  currentEffect.Current.Value.SetParameter("mouse", x, 1.0F - y);
+                else if (currentEffect.Current.Key == "wave")     currentEffect.Current.Value.SetParameter("offset", x, y);
+                else if (currentEffect.Current.Key == "pixelate") currentEffect.Current.Value.SetParameter("mouse", x, y);
 
                 // Animate the sprite
-                AppTime += App.GetFrameTime();
-                float EntityX = (float)(Math.Cos(AppTime * 1.3) + 1.2) * 300;
-                float EntityY = (float)(Math.Cos(AppTime * 0.8) + 1.2) * 200;
-                Entity.Position = new Vector2(EntityX, EntityY);
-                Entity.Rotation = AppTime * 100;
+                time += window.GetFrameTime();
+                float entityX = (float)(Math.Cos(time * 1.3) + 1.2) * 300;
+                float entityY = (float)(Math.Cos(time * 0.8) + 1.2) * 200;
+                entity.Position = new Vector2(entityX, entityY);
+                entity.Rotation = time * 100;
 
                 // Clear the window
-                App.Clear();
+                window.Clear();
 
                 // Draw background, the sprite and apply the post-fx
-                App.Draw(Background);
-                App.Draw(Entity);
-                App.Draw(CurrentEffect.Current.Value);
+                window.Draw(background);
+                window.Draw(entity);
+                window.Draw(currentEffect.Current.Value);
 
                 // Draw interface strings
-                App.Draw(CurFXStr);
-                App.Draw(InfoStr);
+                window.Draw(curFXStr);
+                window.Draw(infoStr);
 
                 // Finally, display the rendered frame on screen
-                App.Display();
+                window.Display();
             }
         }
 
@@ -125,27 +125,27 @@ namespace sample_postfx
         /// Fonction called when the post-effects are not supported ;
         /// Display an error message and wait until the user exits
         /// </summary>
-        private static void DisplayError(RenderWindow App)
+        private static void DisplayError(RenderWindow window)
         {
             // Define a string for displaying the error message
-            String2D ErrorStr = new String2D("Sorry, your system doesn't support post-effects");
-            ErrorStr.Position = new Vector2(100.0F, 250.0F);
-            ErrorStr.Color = new Color(200, 100, 150);
+            String2D errorStr = new String2D("Sorry, your system doesn't support post-effects");
+            errorStr.Position = new Vector2(100.0F, 250.0F);
+            errorStr.Color = new Color(200, 100, 150);
 
             // Start the game loop
-            while (App.IsOpened())
+            while (window.IsOpened())
             {
                 // Process events
-                App.DispatchEvents();
+                window.DispatchEvents();
 
                 // Clear the window
-                App.Clear();
+                window.Clear();
 
                 // Draw the error message
-                App.Draw(ErrorStr);
+                window.Draw(errorStr);
 
                 // Finally, display the rendered frame on screen
-                App.Display();
+                window.Display();
             }
         }
 
@@ -172,12 +172,12 @@ namespace sample_postfx
             else if (e.Code == KeyCode.Add)
             {
                 // Advance to the next effect
-                if (CurrentEffect.MoveNext() == false)
+                if (currentEffect.MoveNext() == false)
                 {
-                    CurrentEffect = Effects.GetEnumerator();
-                    CurrentEffect.MoveNext();
+                    currentEffect = effects.GetEnumerator();
+                    currentEffect.MoveNext();
                 }
-                CurFXStr.Text = "Current effect is \"" + CurrentEffect.Current.Key + "\"";
+                curFXStr.Text = "Current effect is \"" + currentEffect.Current.Key + "\"";
             }
         }
     }
