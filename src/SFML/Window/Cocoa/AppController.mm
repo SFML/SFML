@@ -33,9 +33,6 @@
 #import <iostream>
 
 
-// AppController singleton object
-static AppController *shared = nil;
-
 
 /* setAppleMenu disappeared from the headers in 10.4 */
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -83,6 +80,11 @@ static AppController *shared = nil;
 		// Make the app autorelease pool
 		myMainPool = [[NSAutoreleasePool alloc] init];
 		
+		if (!myMainPool) {
+			[self release];
+			throw std::bad_alloc();
+		}
+		
 		// Don't go on if the user handles the app
 		if (![NSApp isRunning])
 		{
@@ -96,7 +98,10 @@ static AppController *shared = nil;
 			}
 			
 			// Make the app
-			[NSApplication sharedApplication];
+			if (![NSApplication sharedApplication]) {
+				[self release];
+				throw std::bad_alloc();
+			}
 			
 			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 			// I want to go back to the desktop mode
@@ -134,7 +139,7 @@ static AppController *shared = nil;
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[myFullscreenWrapper release];
+	[myMainPool release];
 	[super dealloc];
 }
 
@@ -144,9 +149,8 @@ static AppController *shared = nil;
 ////////////////////////////////////////////////////////////
 + (AppController *)sharedController
 {
-	if (nil == shared)
-		shared = [[AppController alloc] init];
-	
+	// AppController singleton object
+	static AppController *shared = [[AppController alloc] init];
 	return shared;
 }
 
@@ -216,10 +220,6 @@ static AppController *shared = nil;
 {
 	if (myFullscreenWrapper)
 		[self setFullscreenWindow:nil mode:NULL];
-	
-	// FIXME: should I really do this ? what about the user owned windows ?
-	// And is this really useful as the application is about to exit ?
-	[NSApp makeWindowsPerform:@selector(close) inOrder:NO];
 }
 
 ////////////////////////////////////////////////////////////
@@ -266,10 +266,10 @@ static AppController *shared = nil;
 				  keyEquivalent:@"h"];
 	
 	// + 'Hide other' menu item
-	menuItem = reinterpret_cast <NSMenuItem *> ([appleMenu addItemWithTitle:@"Hide Others"
-																action:@selector(hideOtherApplications:)
-														 keyEquivalent:@"h"]);
-	[menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
+	menuItem = (NSMenuItem *)[appleMenu addItemWithTitle:@"Hide Others"
+												  action:@selector(hideOtherApplications:)
+										   keyEquivalent:@"h"];
+	[menuItem setKeyEquivalentModifierMask:NSAlternateKeyMask | NSCommandKeyMask];
 	
 	// + 'Show all' menu item
 	[appleMenu addItemWithTitle:@"Show All"

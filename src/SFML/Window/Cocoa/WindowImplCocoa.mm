@@ -31,9 +31,6 @@
 #import <SFML/Window/Cocoa/GLKit.h>
 #import <SFML/Window/WindowStyle.hpp>
 #import <SFML/System.hpp>
-#import <OpenGL/OpenGL.h>
-#import <OpenGL/gl.h>
-#import <CoreFoundation/CoreFoundation.h>
 #import <iostream>
 
 
@@ -54,16 +51,16 @@ __done = 1;\
 ////////////////////////////////////////////////////////////
 /// Private function declarations
 ////////////////////////////////////////////////////////////
-static Key::Code		KeyForVirtualCode(unsigned short vCode);
-static Key::Code		KeyForUnicode(unsigned short uniCode);
-static bool				IsTextEvent(NSEvent *event);
+namespace {
+	Key::Code		KeyForVirtualCode(unsigned short vCode);
+	Key::Code		KeyForUnicode(unsigned short uniCode);
+} // anonymous namespace
 
 
 ////////////////////////////////////////////////////////////
 /// Default constructor
 /// (creates a dummy window to provide a valid OpenGL context)
 ////////////////////////////////////////////////////////////
-	static WindowImplCocoa *globalWin = NULL;
 WindowImplCocoa::WindowImplCocoa() :
 myWrapper(nil),
 myUseKeyRepeat(false),
@@ -133,7 +130,8 @@ myWheelStatus(0.0f)
 {
     // Create a new window with given size, title and style
 	// First we define some objects used for our window
-	NSString *title = [NSString stringWithUTF8String:(Title.c_str()) ? (Title.c_str()) : ""];
+	NSString *title = [NSString stringWithCString:(Title.c_str()) ? (Title.c_str()) : ""
+										 encoding:NSASCIIStringEncoding];
 	
 	// We create the window
 	myWrapper = [[WindowWrapper alloc] initWithSettings:params
@@ -228,18 +226,20 @@ void WindowImplCocoa::HandleKeyDown(void *eventRef)
 			
 			// convert the characters
 			// note: using CFString in order to keep compatibility with Mac OS X 10.4
-			// (NSUTF32StringEncoding only defined since Mac OS X 10.5)
+			// (as NSUTF32StringEncoding is only being defined in Mac OS X 10.5 and later)
 			if (!CFStringGetCString ((CFStringRef)[event characters],
 									 (char *)utf32Characters,
 									 sizeof(utf32Characters),
 									 kCFStringEncodingUTF32))
 			{
-				const char *utf8Char = NULL;
-				if ([[event characters] lengthOfBytesUsingEncoding:NSUTF8StringEncoding])
-					utf8Char = [[event characters] UTF8String]; 
+				char asciiChar[3] = {0};
+				if ([[event characters] lengthOfBytesUsingEncoding:NSASCIIStringEncoding])
+					[[event characters] getCString:asciiChar
+										 maxLength:3
+										  encoding:NSASCIIStringEncoding];
 				
-				std::cerr << "Error while converting character to UTF32 : "
-				<< ((utf8Char) ? utf8Char : "(undefined)") << std::endl;
+				std::cerr << "Error while converting character to UTF32 : \""
+				<< asciiChar << "\"" << std::endl;
 			}
 			else
 			{
@@ -359,7 +359,9 @@ void WindowImplCocoa::HandleMouseDown(void *eventRef)
 {
 	NSEvent *event = reinterpret_cast <NSEvent *> (eventRef);
 	Event sfEvent;
-	NSPoint loc = {0, 0};
+	
+	// Get mouse position relative to the window
+	NSPoint loc = [myWrapper mouseLocation];
 	unsigned mods = [event modifierFlags];
 	
 	switch ([event type]) {
@@ -373,9 +375,6 @@ void WindowImplCocoa::HandleMouseDown(void *eventRef)
 				sfEvent.MouseButton.Button = Mouse::Left;
 			}
 			
-			// Get mouse position relative to the window
-			loc = [myWrapper mouseLocation];
-			
 			sfEvent.MouseButton.X = (int) loc.x;
 			sfEvent.MouseButton.Y = (int) loc.y;
 			
@@ -386,9 +385,6 @@ void WindowImplCocoa::HandleMouseDown(void *eventRef)
 		case NSRightMouseDown:
 			sfEvent.Type = Event::MouseButtonPressed;
 			sfEvent.MouseButton.Button = Mouse::Right;
-			
-			// Get mouse position relative to the window
-			loc = [myWrapper mouseLocation];
 			
 			sfEvent.MouseButton.X = (int) loc.x;
 			sfEvent.MouseButton.Y = (int) loc.y;
@@ -410,7 +406,9 @@ void WindowImplCocoa::HandleMouseUp(void *eventRef)
 {
 	NSEvent *event = reinterpret_cast <NSEvent *> (eventRef);
 	Event sfEvent;
-	NSPoint loc = {0, 0};
+	
+	// Get mouse position relative to the window
+	NSPoint loc = [myWrapper mouseLocation];
 	unsigned mods = [event modifierFlags];
 	
 	switch ([event type]) {
@@ -424,9 +422,6 @@ void WindowImplCocoa::HandleMouseUp(void *eventRef)
 				sfEvent.MouseButton.Button = Mouse::Left;
 			}
 			
-			// Get mouse position relative to the window
-			loc = [myWrapper mouseLocation];
-			
 			sfEvent.MouseButton.X = (int) loc.x;
 			sfEvent.MouseButton.Y = (int) loc.y;
 			
@@ -437,9 +432,6 @@ void WindowImplCocoa::HandleMouseUp(void *eventRef)
 		case NSRightMouseUp:
 			sfEvent.Type = Event::MouseButtonReleased;
 			sfEvent.MouseButton.Button = Mouse::Right;
-			
-			// Get mouse position relative to the window
-			loc = [myWrapper mouseLocation];
 			
 			sfEvent.MouseButton.X = (int) loc.x;
 			sfEvent.MouseButton.Y = (int) loc.y;
@@ -460,9 +452,7 @@ void WindowImplCocoa::HandleMouseUp(void *eventRef)
 void WindowImplCocoa::HandleMouseMove(void *eventRef)
 {
 	Event sfEvent;
-	NSPoint loc = {0, 0};
-	
-	loc = [myWrapper mouseLocation];
+	NSPoint loc = [myWrapper mouseLocation];
 	sfEvent.Type = Event::MouseMoved;
 	
 	sfEvent.MouseMove.X = (int) loc.x;
@@ -547,7 +537,7 @@ void WindowImplCocoa::Display()
 void WindowImplCocoa::ProcessEvents()
 {
 	// Forward event handling call to the application controller
-	[SharedAppController processEvents];
+	[[AppController sharedController] processEvents];
 }
 
 
@@ -557,7 +547,18 @@ void WindowImplCocoa::ProcessEvents()
 void WindowImplCocoa::SetActive(bool Active) const
 {
 	// Forward the call to the window
-	[myWrapper setActive:Active];
+	if (myWrapper)
+		[myWrapper setActive:Active];
+	else {
+		// Or directly activate the shared OpenGL context if we're not using a window
+		if (Active) {
+			if ([NSOpenGLContext currentContext] != [GLContext sharedContext])
+				[[GLContext sharedContext] makeCurrentContext];
+		} else {
+			if ([NSOpenGLContext currentContext] == [GLContext sharedContext])
+				[NSOpenGLContext clearCurrentContext];
+		}
+	}
 }
 
 
@@ -656,164 +657,167 @@ void WindowImplCocoa::SetIcon(unsigned int Width, unsigned int Height, const Uin
 }
 
 
-////////////////////////////////////////////////////////////
-/// Return the SFML key corresponding to a key code
-////////////////////////////////////////////////////////////
-static Key::Code KeyForVirtualCode(unsigned short vCode)
-{
-	static struct {
-		unsigned short code;
-		Key::Code sfKey;
-	} virtualTable[] =
+namespace {
+	////////////////////////////////////////////////////////////
+	/// Return the SFML key corresponding to a key code
+	////////////////////////////////////////////////////////////
+	Key::Code KeyForVirtualCode(unsigned short vCode)
 	{
-		{0x35, Key::Escape},
-		{0x31, Key::Space},
-		{0x24, Key::Return},	// main Return key
-		{0x4C, Key::Return},	// pav Return key
-		{0x33, Key::Back},
-		{0x30, Key::Tab},
-		{0x74, Key::PageUp},
-		{0x79, Key::PageDown},
-		{0x77, Key::End},
-		{0x73, Key::Home},
-		{0x72, Key::Insert},
-		{0x75, Key::Delete},
-		{0x45, Key::Add},
-		{0x4E, Key::Subtract},
-		{0x43, Key::Multiply},
-		{0x4B, Key::Divide},
+		static struct {
+			unsigned short code;
+			Key::Code sfKey;
+		} virtualTable[] =
+		{
+			{0x35, Key::Escape},
+			{0x31, Key::Space},
+			{0x24, Key::Return},	// main Return key
+			{0x4C, Key::Return},	// pav Return key
+			{0x33, Key::Back},
+			{0x30, Key::Tab},
+			{0x74, Key::PageUp},
+			{0x79, Key::PageDown},
+			{0x77, Key::End},
+			{0x73, Key::Home},
+			{0x72, Key::Insert},
+			{0x75, Key::Delete},
+			{0x45, Key::Add},
+			{0x4E, Key::Subtract},
+			{0x43, Key::Multiply},
+			{0x4B, Key::Divide},
+			
+			{0x7A, Key::F1}, {0x78, Key::F2}, {0x63, Key::F3},
+			{0x76, Key::F4}, {0x60, Key::F5}, {0x61, Key::F6},
+			{0x62, Key::F7}, {0x64, Key::F8}, {0x65, Key::F9},
+			{0x6D, Key::F10}, {0x67, Key::F11}, {0x6F, Key::F12},
+			{0x69, Key::F13}, {0x6B, Key::F14}, {0x71, Key::F15},
+			
+			{0x7B, Key::Left},
+			{0x7C, Key::Right},
+			{0x7E, Key::Up},
+			{0x7D, Key::Down},
+			
+			{0x52, Key::Numpad0}, {0x53, Key::Numpad1}, {0x54, Key::Numpad2},
+			{0x55, Key::Numpad3}, {0x56, Key::Numpad4}, {0x57, Key::Numpad5},
+			{0x58, Key::Numpad6}, {0x59, Key::Numpad7}, {0x5B, Key::Numpad8},
+			{0x5C, Key::Numpad9},
+			
+			{0x1D, Key::Num0}, {0x12, Key::Num1}, {0x13, Key::Num2},
+			{0x14, Key::Num3}, {0x15, Key::Num4}, {0x17, Key::Num5},
+			{0x16, Key::Num6}, {0x1A, Key::Num7}, {0x1C, Key::Num8},
+			{0x19, Key::Num9},
+			
+			{0x3B, Key::LControl},	//< Left Ctrl
+			{0x3A, Key::LAlt},		//< Left Option/Alt
+			{0x37, Key::LSystem},	//< Left Command
+			{0x38, Key::LShift},	//< Left Shift
+			{0x3E, Key::RControl},	//< Right Ctrl
+			{0x3D, Key::RAlt},		//< Right Option/Alt
+			{0x36, Key::RSystem},	//< Right Command
+			{0x3C, Key::RShift},	//< Right Shift
+			
+			{0x39, Key::Code(0)}	//< Caps Lock (not handled by SFML for now)
+		};
 		
-		{0x7A, Key::F1}, {0x78, Key::F2}, {0x63, Key::F3},
-		{0x76, Key::F4}, {0x60, Key::F5}, {0x61, Key::F6},
-		{0x62, Key::F7}, {0x64, Key::F8}, {0x65, Key::F9},
-		{0x6D, Key::F10}, {0x67, Key::F11}, {0x6F, Key::F12},
-		{0x69, Key::F13}, {0x6B, Key::F14}, {0x71, Key::F15},
+		Key::Code result = Key::Code(0);
 		
-		{0x7B, Key::Left},
-		{0x7C, Key::Right},
-		{0x7E, Key::Up},
-		{0x7D, Key::Down},
-		
-		{0x52, Key::Numpad0}, {0x53, Key::Numpad1}, {0x54, Key::Numpad2},
-		{0x55, Key::Numpad3}, {0x56, Key::Numpad4}, {0x57, Key::Numpad5},
-		{0x58, Key::Numpad6}, {0x59, Key::Numpad7}, {0x5B, Key::Numpad8},
-		{0x5C, Key::Numpad9},
-		
-		{0x1D, Key::Num0}, {0x12, Key::Num1}, {0x13, Key::Num2},
-		{0x14, Key::Num3}, {0x15, Key::Num4}, {0x17, Key::Num5},
-		{0x16, Key::Num6}, {0x1A, Key::Num7}, {0x1C, Key::Num8},
-		{0x19, Key::Num9},
-		
-		{0x3B, Key::LControl},	//< Left Ctrl
-		{0x3A, Key::LAlt},		//< Left Option/Alt
-		{0x37, Key::LSystem},	//< Left Command
-		{0x38, Key::LShift},	//< Left Shift
-		{0x3E, Key::RControl},	//< Right Ctrl
-		{0x3D, Key::RAlt},		//< Right Option/Alt
-		{0x36, Key::RSystem},	//< Right Command
-		{0x3C, Key::RShift},	//< Right Shift
-		
-		{0x39, Key::Code(0)}	//< Caps Lock (not handled by SFML for now)
-	};
-	
-	Key::Code result = Key::Code(0);
-	
-	for (unsigned i = 0;virtualTable[i].code;i++) {
-		if (virtualTable[i].code == vCode) {
-			result = virtualTable[i].sfKey;
-			break;
+		for (unsigned i = 0;virtualTable[i].code;i++) {
+			if (virtualTable[i].code == vCode) {
+				result = virtualTable[i].sfKey;
+				break;
+			}
 		}
+		
+		return result;
 	}
 	
-	return result;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Return the SFML key corresponding to a unicode code
-////////////////////////////////////////////////////////////
-static Key::Code KeyForUnicode(unsigned short uniCode)
-{
-	// TODO: find a better way to get the language independant key
-	static struct {
-		unsigned short character;
-		Key::Code sfKey;
-	} unicodeTable[] =
+	
+	////////////////////////////////////////////////////////////
+	/// Return the SFML key corresponding to a unicode code
+	////////////////////////////////////////////////////////////
+	Key::Code KeyForUnicode(unsigned short uniCode)
 	{
-		{'!', Key::Code(0)}, //< No Key for this code
-		{'"', Key::Code(0)}, //< No Key for this code
-		{'#', Key::Code(0)}, //< No Key for this code
-		{'$', Key::Code(0)}, //< No Key for this code
-		{'%', Key::Code(0)}, //< No Key for this code
-		{'&', Key::Code(0)}, //< No Key for this code
-		{'\'', Key::Quote},
-		{'(', Key::Code(0)}, //< No Key for this code
-		{')', Key::Code(0)}, //< No Key for this code
-		{'*', Key::Multiply},
-		{'+', Key::Add},
-		{',', Key::Comma},
-		{'-', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'.', Key::Period},
-		{'/', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'0', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'1', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'2', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'3', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'4', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'5', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'6', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'7', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'8', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{'9', Key::Code(0)}, //< Handled by KeyForVirtualCode()
-		{':', Key::Code(0)}, //< No Key for this code
-		{';', Key::SemiColon},
-		{'<', Key::Code(0)}, //< No Key for this code
-		{'=', Key::Equal},
-		{'>', Key::Code(0)}, //< No Key for this code
-		{'?', Key::Code(0)}, //< No Key for this code
-		{'@', Key::Code(0)}, //< No Key for this code
-		{'A', Key::A}, {'B', Key::B}, {'C', Key::C},
-		{'D', Key::D}, {'E', Key::E}, {'F', Key::F},
-		{'G', Key::G}, {'H', Key::H}, {'I', Key::I},
-		{'J', Key::J}, {'K', Key::K}, {'L', Key::L},
-		{'M', Key::M}, {'N', Key::N}, {'O', Key::O},
-		{'P', Key::P}, {'Q', Key::Q}, {'R', Key::R},
-		{'S', Key::S}, {'T', Key::T}, {'U', Key::U},
-		{'V', Key::V}, {'W', Key::W}, {'X', Key::X},
-		{'Y', Key::Y}, {'Z', Key::Z},
-		{'[', Key::LBracket},
-		{'\\', Key::BackSlash},
-		{']', Key::RBracket},
-		{'^', Key::Code(0)}, //< No Key for this code
-		{'_', Key::Code(0)}, //< No Key for this code
-		{'`', Key::Code(0)}, //< No Key for this code
-		{'a', Key::A}, {'b', Key::B}, {'c', Key::C},
-		{'d', Key::D}, {'e', Key::E}, {'f', Key::F},
-		{'g', Key::G}, {'h', Key::H}, {'i', Key::I},
-		{'j', Key::J}, {'k', Key::K}, {'l', Key::L},
-		{'m', Key::M}, {'n', Key::N}, {'o', Key::O},
-		{'p', Key::P}, {'q', Key::Q}, {'r', Key::R},
-		{'s', Key::S}, {'t', Key::T}, {'u', Key::U},
-		{'v', Key::V}, {'w', Key::W}, {'x', Key::X},
-		{'y', Key::Y}, {'z', Key::Z},
-		{'{', Key::Code(0)}, //< No Key for this code
-		{'|', Key::Code(0)}, //< No Key for this code
-		{'}', Key::Code(0)}, //< No Key for this code
-		{'~', Key::Tilde},
-		{0, Key::Code(0)}
-	};
-	
-	Key::Code result = Key::Code(0);
-	
-	for (unsigned i = 0;unicodeTable[i].character;i++) {
-		if (unicodeTable[i].character == uniCode) {
-			result = unicodeTable[i].sfKey;
-			break;
+		// TODO: find a better way to get the language independant key
+		static struct {
+			unsigned short character;
+			Key::Code sfKey;
+		} unicodeTable[] =
+		{
+			{'!', Key::Code(0)}, //< No Key for this code
+			{'"', Key::Code(0)}, //< No Key for this code
+			{'#', Key::Code(0)}, //< No Key for this code
+			{'$', Key::Code(0)}, //< No Key for this code
+			{'%', Key::Code(0)}, //< No Key for this code
+			{'&', Key::Code(0)}, //< No Key for this code
+			{'\'', Key::Quote},
+			{'(', Key::Code(0)}, //< No Key for this code
+			{')', Key::Code(0)}, //< No Key for this code
+			{'*', Key::Multiply},
+			{'+', Key::Add},
+			{',', Key::Comma},
+			{'-', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'.', Key::Period},
+			{'/', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'0', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'1', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'2', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'3', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'4', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'5', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'6', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'7', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'8', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{'9', Key::Code(0)}, //< Handled by KeyForVirtualCode()
+			{':', Key::Code(0)}, //< No Key for this code
+			{';', Key::SemiColon},
+			{'<', Key::Code(0)}, //< No Key for this code
+			{'=', Key::Equal},
+			{'>', Key::Code(0)}, //< No Key for this code
+			{'?', Key::Code(0)}, //< No Key for this code
+			{'@', Key::Code(0)}, //< No Key for this code
+			{'A', Key::A}, {'B', Key::B}, {'C', Key::C},
+			{'D', Key::D}, {'E', Key::E}, {'F', Key::F},
+			{'G', Key::G}, {'H', Key::H}, {'I', Key::I},
+			{'J', Key::J}, {'K', Key::K}, {'L', Key::L},
+			{'M', Key::M}, {'N', Key::N}, {'O', Key::O},
+			{'P', Key::P}, {'Q', Key::Q}, {'R', Key::R},
+			{'S', Key::S}, {'T', Key::T}, {'U', Key::U},
+			{'V', Key::V}, {'W', Key::W}, {'X', Key::X},
+			{'Y', Key::Y}, {'Z', Key::Z},
+			{'[', Key::LBracket},
+			{'\\', Key::BackSlash},
+			{']', Key::RBracket},
+			{'^', Key::Code(0)}, //< No Key for this code
+			{'_', Key::Code(0)}, //< No Key for this code
+			{'`', Key::Code(0)}, //< No Key for this code
+			{'a', Key::A}, {'b', Key::B}, {'c', Key::C},
+			{'d', Key::D}, {'e', Key::E}, {'f', Key::F},
+			{'g', Key::G}, {'h', Key::H}, {'i', Key::I},
+			{'j', Key::J}, {'k', Key::K}, {'l', Key::L},
+			{'m', Key::M}, {'n', Key::N}, {'o', Key::O},
+			{'p', Key::P}, {'q', Key::Q}, {'r', Key::R},
+			{'s', Key::S}, {'t', Key::T}, {'u', Key::U},
+			{'v', Key::V}, {'w', Key::W}, {'x', Key::X},
+			{'y', Key::Y}, {'z', Key::Z},
+			{'{', Key::Code(0)}, //< No Key for this code
+			{'|', Key::Code(0)}, //< No Key for this code
+			{'}', Key::Code(0)}, //< No Key for this code
+			{'~', Key::Tilde},
+			{0, Key::Code(0)}
+		};
+		
+		Key::Code result = Key::Code(0);
+		
+		for (unsigned i = 0;unicodeTable[i].character;i++) {
+			if (unicodeTable[i].character == uniCode) {
+				result = unicodeTable[i].sfKey;
+				break;
+			}
 		}
+		
+		return result;
 	}
 	
-	return result;
-}
+} // anonymous namespace
 
 
 } // namespace priv

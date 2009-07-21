@@ -33,8 +33,10 @@
 #include <string>
 
 #ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
 @class WindowWrapper;
+typedef WindowWrapper* WindowWrapperRef;
+#else
+typedef void* WindowWrapperRef;
 #endif
 
 namespace sf
@@ -190,13 +192,7 @@ private :
 	////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-	
-#ifdef __OBJC__
-	WindowWrapper *myWrapper;
-#else
-	void *myWrapper;
-#endif
-	
+	WindowWrapperRef myWrapper;	
 	bool myUseKeyRepeat;
 	bool myMouseIn;
 	float myWheelStatus;
