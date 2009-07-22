@@ -70,6 +70,13 @@ print_usage()
 # Checks that the user computer can run this script
 check_config()
 {
+    os=`uname -s`
+    if [ $os != "Darwin" ]
+      then
+        echo "You're not running Mac OS X !"
+        exit 1
+    fi
+    
     if ! test -f "/Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp"
       then
         echo "Missing tool pbxcp needed by this script (should be located at /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp). Make sure Apple Developer Tools are correctly installed."
