@@ -1,0 +1,68 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf460
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11320\viewh10660\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ri1080\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 \
+
+\b\fs28 Notes de version pour SFML 1.5
+\b0\fs24 \
+\
+Voici un r\'e9sum\'e9 de ce qui reste \'e0 effectuer, des probl\'e8mes actuellement connus ainsi que quelques informations techniques afin de tirer le meilleur partir du portage pour Mac OS X.\
+\
+\
+
+\b \'c0 faire :
+\b0 \
+    - la gestion des joysticks\
+\
+\
+
+\b Probl\'e8mes connus :
+\b0 \
+    - certaines touches ne sont pas ind\'e9pendantes de la configuration du clavier (voici les touches que vous pouvez utiliser sans risque : '*+,-./:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz\{|\}~ ). Seuls les \'e9v\'e9nements sf::Event::KeyPressed et sf::Event::KeyReleased sont concern\'e9s par ce probl\'e8me, pas les \'e9v\'e9nements sf::Event::TextEntered.\
+    - les touches Control, Option (Alt), Shift et Command ne produisent pas d'\'e9v\'e9nement de r\'e9p\'e9tition lorsqu'elles sont maintenues enfonc\'e9es\
+    - \'e9tant donn\'e9 qu'un clavier Mac est diff\'e9rent de celui d'un PC, certains codes sf::Key ne sont pas utilis\'e9s, et d'autres sont manquants\
+    - l'anticr\'e9n\'e9lage OpenGL est d\'e9sactiv\'e9\
+\
+\
+
+\b\fs26 Notes techniques :
+\b0\fs24 \
+\
+
+\b Les touches Control, Option [...] :\
+
+\b0 Mac OS X avertit l'application uniquement lorsque l'\'e9tat d'une de ces touches particuli\'e8res est modifi\'e9, pas lorsqu'elles sont maintenues enfonc\'e9es. De plus, ces touches sont consid\'e9r\'e9es comme des "modifiers" et ne doivent donc pas \'eatre utilis\'e9es seules comme raccourci pour d\'e9clencher une action (ex: Control + E convient mais pas Control tout seul).\
+\
+\
+
+\b Ind\'e9pendance vis \'e0 vis des configurations de claviers :
+\b0 \
+Lorsque SFML obtient un \'e9v\'e9nement clavier, elle obtient un code correspondant \'e0 cette touche. Cependant ce code repr\'e9sente la touche elle-m\'eame, et non pas ce qui est imprim\'e9 sur votre clavier, donc des claviers anglais et fran\'e7ais produiront \'97 en consid\'e9rant que vous pressez la touche plac\'e9e exactement au m\'eame endroit \'96 le m\'eame code, quelque soit la configuration de clavier que vous utilisez. Afin de contourner en partie le probl\'e8me, certaines touches sont devin\'e9es \'e0 partir du champ "text" de l'\'e9v\'e9nement et non pas \'e0 partir du code de la touche. Ce n'est pas une solution pleinement satisfaisante mais je n'ai trouv\'e9 aucune meilleure solution jusqu'\'e0 ce jour (davantage de recherches me sont n\'e9cessaires). Si vous voulez \'eatre s\'fbr que l'\'e9v\'e9nement re\'e7u est bien le caract\'e8re que vous voulez, vous devriez uniquement utiliser les \'e9v\'e9nements sf::TextEntered (non concern\'e9s par le probl\'e8me).\
+Notez qu'\'e9tant donn\'e9 que le code repr\'e9sente les touches du clavier anglais, les utilisateurs anglophones n'ont pas \'e0 se pr\'e9occuper de ce probl\'e8me.\
+\
+
+\b Le chargement des ressources :\
+
+\b0 1. Lorsqu'une application SFML est lanc\'e9e, elle d\'e9signe le dossier Resources (<votre application.app>/Contents/Resources) comme \'e9tant le r\'e9pertoire actuel de travail. Si votre logiciel n'est pas une application paquet, SFML d\'e9signera le dossier contenant votre programme comme \'e9tant le r\'e9pertoire de travail. Par cons\'e9quent, si vous souhaitez charger des ressources, vous pouvez utiliser sans risque des adresses relatives aux dossiers indiqu\'e9s ci-dessus.\
+\
+2. La d\'e9signation du r\'e9pertoire de travail est effectu\'e9e au moment du chargement du programme avant d'entrer dans la fonction main(). Cependant, si vous d\'e9finissez des variables globales (comme par exemple des objets de type sf::Image) et que vous essayez de charger l'image au moment de la construction de l'objet (donc par l'interm\'e9diaire du constructeur), rien ne vous garantie que le r\'e9pertoire de travail est d\'e9j\'e0 valide. Vous devez donc charger toutes vos ressources apr\'e8s \'eatre entr\'e9 dans la fonction main().\
+\
+
+\b \
+Les attributs du contexte OpenGL :\
+
+\b0 SFML utilises le partage de contexte OpenGL afin d'\'e9viter de charger plusieurs fois la m\'eame ressource, m\'eame si vous avez plusieurs fen\'eatres SFML. Cela permet d'\'e9conomiser \'e0 la fois de la m\'e9moire et tu temps de traitement, mais cela implique aussi une restriction importante (qui semble \'eatre propre \'e0 Mac OS X) : les contextes partag\'e9s doivent avoir des attributs compatibles. Un point sur lequel je vais m'attarger est le niveau d'anticr\'e9n\'e9lage : vous ne pouvez pas utilisez diff\'e9rents contextes partag\'e9s entre eux avec un niveau d'anticr\'e9n\'e9lage diff\'e9rent. Il faut noter que SFML d\'e9finit un contexte globale partag\'e9, donc si je choisis de ne pas utiliser d'anticr\'e9n\'e9lage pour ce contexte, l'anticr\'e9n\'e9lage ne pourra \'eatre utilis\'e9 pour aucun autre contexte OpenGL (et fen\'eatre SFML). D'un autre c\'f4t\'e9, je pourrais d\'e9finir 2 (ou n'importe quelle autre valeur) niveaux d'anticr\'e9n\'e9lage, mais tous les autres contextes seraient oblig\'e9s d'utiliser aussi le m\'eame niveau de lissage. \'c9tant donn\'e9 que l'anticr\'e9n\'e9lage n'est pas une op\'e9ration l\'e9g\'e8re pour l'unit\'e9 de calcul graphique, il a \'e9t\'e9 d\'e9sactiv\'e9. \'c9carter cette fonctionnalit\'e9 me semble \'eatre une meilleure solution que forcer l'utiliser \'e0 l'utiliser.\
+En ce qui concerne les autres attributs, il semblerait qu'ils puissent \'eatre diff\'e9rents. Je ne les ai pas tous test\'e9s mais j'ai pu constater que certains \'e9taient automatiquement modifi\'e9s \'e0 cause de valeurs choisies trop hautes.\
+\
+\
+
+\b OpenAL :\
+
+\b0 Vous pouvez remarquer la pr\'e9sence du framework OpenAL dans l'image de disque, mais vous savez aussi peut-\'eatre que Mac OS X inclut d\'e9j\'e0 OpenAL (voir /Syst\'e8me/Biblioth\'e8que/Frameworks). Ce framework a \'e9t\'e9 ajout\'e9 au paquet afin de corriger des probl\'e8mes caus\'e9s par celui pr\'e9sent par d\'e9faut. En cons\'e9quence, il est inutile de fournir ce framework si vous n'avez pas l'intention de distribuer votre application pour Mac OS X 10.4.\
+\
+Pour toutes les questions, rendez-vous sur le forum SFML : http://www.sfml-dev.org/forum-fr/\
+\
+}

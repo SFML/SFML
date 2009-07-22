@@ -1,0 +1,73 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf460
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11320\viewh10660\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ri1080\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 \
+
+\b\fs28 SFML 1.5 Release Notes
+\b0\fs24 \
+\
+Here is a summary of what needs to be done, the currently known problems and some technical informations in order to make the best of the Mac OS X port.\
+\
+\
+
+\b What is still to be done:
+\b0 \
+    - joystick handling\
+\
+\
+
+\b Known issues:
+\b0 \
+    - not all of the keys are keyboard layout independent (the "safe" characters are: '*+,-./:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz\{|\}~ ). Only sf::Event::KeyPressed and sf::Event::KeyReleased events are affected. This issue does not concern sf::Event::TextEntered events.\
+    - the Control, Option (Alt), Shift and Command keys do not produce repeated events when held\
+    - since a Mac keyboard is different from a PC's one, some sf::Key codes are not used, and some other are missing\
+    - OpenGL antialiasing is disabled\
+\
+\
+
+\b\fs26 Technical notes:
+\b0\fs24 \
+\
+
+\b Control, Option [...] keys:\
+
+\b0 Mac OS X only notifies the application when the state of one of these keys changes, not when they are kept down. Besides, these keys are considered as key modifiers and should therefore not be used as a shorcut for a user action without another real key (ie. Control + E is fine, but not Control alone).\
+\
+\
+
+\b Layout independant keys:
+\b0 \
+When SFML catches the key events, it gets a code corresponding to the key. But this code represents the key itself, not what's printed on, so a French and an English keyboard will produce \'97 considering you press a key located exactly at the same place \'97 the same key code, whichever your keyboard layout is. In order to get part of the thing work, some keys are guessed from the "text" field of the event and not from the key code. This is not quite a satisfying solution but nothing better has been found till now (need to do more research on this). If you want to be positive the received event is the right character, you should only use sf::TextEntered events.\
+Note that since the key code originally represents the English keyboard layout, English user may not have to worry about this issue.
+\b \
+
+\b0 \
+\
+
+\b Resources' loading:\
+
+\b0 1. When launched, any SFML application sets the current working directory to its Resources folder (<yourapp.app>/Contents/Resources). If your software is not a bundled application, the working directory is set to the directory containing your program. Therefore if you wish to load resources, you can safely use relative paths according to the previously described specifications.\
+\
+2. Setting the current working directory is done at executable loading time, before entering the main() function. However, if you define global variables like sf::Image objects and try to load the image at the object construction time, you can't know whether the working directory has already been set. Therefore you must load every resources after entering the main() function.\
+\
+\
+
+\b OpenGL context attributes (settings):
+\b0 \
+SFML uses OpenGL context sharing in order to avoid loading the same resources more than once even if you have several SFML windows. This saves both memory and processing time but involves one major restriction (that seems to be particular to Mac OS X): shared contexts must have compatible attributes. One thing I'm going to focus on is the antialiasing level: you can't share contexts with different antialiasing levels. The point is SFML defines a global shared context, so if I choose to set no antialiasing for this context, antialiasing won't be usable for any other OpenGL context (and SFML window). On the other hand, I could define 2 (or whatever you want) antialiasing levels, but therefore every other contexts should use the same amount of antialiasing levels. As antialiasing is not a slight process for the graphic unit, it has been disabled. Dropping this feature seems to be a better solution than force its use.\
+\
+As far as the other attributes are concerned, it looks like they can be different. I did not test all of them, but I found out that some of them were altered because of too high values.\
+\
+\
+
+\b OpenAL:\
+
+\b0 You may notice that the package includes an OpenAL framework, but you may also know that Mac OS X already includes OpenAL (see /System/Library/Frameworks). This framework has been added in order to fix troubles caused by the OpenAL framework provided on Mac OS X 10.4. Since then, it is absolutely unnecessary to put it in your application bundle if you don't plan to distribute your software for Mac OS X 10.4.\
+\
+\
+If you have any question, you can ask on the SFML forum: http://www.sfml-dev.org/forum/\
+\
+}
