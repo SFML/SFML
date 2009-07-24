@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/ContextGL.hpp>
-#include <SFML/Window/Linux/DisplayRef.hpp>
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 
@@ -111,7 +110,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    DisplayRef myDisplay;    ///< Connection to the X server
+    ::Display* myDisplay;    ///< Connection to the X server
     ::Window   myWindow;     ///< Window to which the context is attached
     GLXContext myContext;    ///< OpenGL context
     bool       myOwnsWindow; ///< Do we own the window associated to the context?
