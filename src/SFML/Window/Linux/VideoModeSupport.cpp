@@ -26,7 +26,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Linux/VideoModeSupport.hpp>
-#include <SFML/Window/Linux/DisplayRef.hpp>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 #include <algorithm>
@@ -45,57 +44,69 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
     // First, clear array to fill
     modes.clear();
 
-    // Get an access to the display
-    DisplayRef disp;
-    int screen = DefaultScreen(disp.GetDisplay());
-
-    // Check if the XRandR extension is present
-    int version;
-    if (XQueryExtension(disp.GetDisplay(), "RANDR", &version, &version, &version))
+    // Open a connection with the X server
+    Display* disp = XOpenDisplay(NULL);
+    if (disp)
     {
-        // Get the current configuration
-        XRRScreenConfiguration* config = XRRGetScreenInfo(disp.GetDisplay(), RootWindow(disp.GetDisplay(), screen));
-        if (config)
+        // Retrieve the default screen number
+        int screen = DefaultScreen(disp);
+
+        // Check if the XRandR extension is present
+        int version;
+        if (XQueryExtension(disp, "RANDR", &version, &version, &version))
         {
-            // Get the available screen sizes
-            int nbSizes;
-            XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
-            if (sizes && (nbSizes > 0))
+            // Get the current configuration
+            XRRScreenConfiguration* config = XRRGetScreenInfo(disp, RootWindow(disp, screen));
+            if (config)
             {
-                // Get the list of supported depths
-                int nbDepths = 0;
-                int* depths = XListDepths(disp.GetDisplay(), screen, &nbDepths);
-                if (depths && (nbDepths > 0))
+                // Get the available screen sizes
+                int nbSizes;
+                XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
+                if (sizes && (nbSizes > 0))
                 {
-                    // Combine depths and sizes to fill the array of supported modes
-                    for (int i = 0; i < nbDepths; ++i)
+                    // Get the list of supported depths
+                    int nbDepths = 0;
+                    int* depths = XListDepths(disp, screen, &nbDepths);
+                    if (depths && (nbDepths > 0))
                     {
-                        for (int j = 0; j < nbSizes; ++j)
+                        // Combine depths and sizes to fill the array of supported modes
+                        for (int i = 0; i < nbDepths; ++i)
                         {
-                            // Convert to VideoMode
-                            VideoMode mode(sizes[j].width, sizes[j].height, depths[i]);
-        
-                            // Add it only if it is not already in the array
-                            if (std::find(modes.begin(), modes.end(), mode) == modes.end())
-                                modes.push_back(mode);
+                            for (int j = 0; j < nbSizes; ++j)
+                            {
+                                // Convert to VideoMode
+                                VideoMode mode(sizes[j].width, sizes[j].height, depths[i]);
+            
+                                // Add it only if it is not already in the array
+                                if (std::find(modes.begin(), modes.end(), mode) == modes.end())
+                                    modes.push_back(mode);
+                            }
                         }
                     }
                 }
-            }
 
-            // Free the configuration instance
-            XRRFreeScreenConfigInfo(config);
+                // Free the configuration instance
+                XRRFreeScreenConfigInfo(config);
+            }
+            else
+            {
+                // Failed to get the screen configuration
+                std::cerr << "Failed to retrieve the screen configuration while trying to get the supported video modes" << std::endl;
+            }
         }
         else
         {
-            // Failed to get the screen configuration
-            std::cerr << "Failed to get the list of available video modes" << std::endl;
+            // XRandr extension is not supported : we cannot get the video modes
+            std::cerr << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
         }
+
+        // Close the connection with the X server
+        XCloseDisplay(disp);
     }
     else
     {
-        // XRandr extension is not supported : we cannot get the video modes
-        std::cerr << "Failed to get the list of available video modes" << std::endl;
+        // We couldn't connect to the X server
+        std::cerr << "Failed to connect to the X server while trying to get the supported video modes" << std::endl;
     }
 }
 
@@ -107,31 +118,53 @@ VideoMode VideoModeSupport::GetDesktopVideoMode()
 {
     VideoMode desktopMode;
 
-    // Get an access to the display
-    DisplayRef disp;
-    int screen = DefaultScreen(disp.GetDisplay());
-
-    // Check if the XRandR extension is present
-    int version;
-    if (XQueryExtension(disp.GetDisplay(), "RANDR", &version, &version, &version))
+    // Open a connection with the X server
+    Display* disp = XOpenDisplay(NULL);
+    if (disp)
     {
-        // Get the current configuration
-        XRRScreenConfiguration* config = XRRGetScreenInfo(disp.GetDisplay(), RootWindow(disp.GetDisplay(), screen));
-        if (config)
+        // Retrieve the default screen number
+        int screen = DefaultScreen(disp);
+
+        // Check if the XRandR extension is present
+        int version;
+        if (XQueryExtension(disp, "RANDR", &version, &version, &version))
         {
-            // Get the current video mode
-            Rotation currentRotation;
-            int currentMode = XRRConfigCurrentConfiguration(config, &currentRotation);
+            // Get the current configuration
+            XRRScreenConfiguration* config = XRRGetScreenInfo(disp, RootWindow(disp, screen));
+            if (config)
+            {
+                // Get the current video mode
+                Rotation currentRotation;
+                int currentMode = XRRConfigCurrentConfiguration(config, &currentRotation);
 
-            // Get the available screen sizes
-            int nbSizes;
-            XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
-            if (sizes && (nbSizes > 0))
-                desktopMode = VideoMode(sizes[currentMode].width, sizes[currentMode].height, DefaultDepth(disp.GetDisplay(), screen));
+                // Get the available screen sizes
+                int nbSizes;
+                XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
+                if (sizes && (nbSizes > 0))
+                    desktopMode = VideoMode(sizes[currentMode].width, sizes[currentMode].height, DefaultDepth(disp, screen));
 
-            // Free the configuration instance
-            XRRFreeScreenConfigInfo(config);
+                // Free the configuration instance
+                XRRFreeScreenConfigInfo(config);
+            }
+            else
+            {
+                // Failed to get the screen configuration
+                std::cerr << "Failed to retrieve the screen configuration while trying to get the desktop video modes" << std::endl;
+            }
         }
+        else
+        {
+            // XRandr extension is not supported : we cannot get the video modes
+            std::cerr << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
+        }
+
+        // Close the connection with the X server
+        XCloseDisplay(disp);
+    }
+    else
+    {
+        // We couldn't connect to the X server
+        std::cerr << "Failed to connect to the X server while trying to get the desktop video modes" << std::endl;
     }
 
     return desktopMode;
