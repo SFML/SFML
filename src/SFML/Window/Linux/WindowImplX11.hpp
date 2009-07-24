@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
-#include <SFML/Window/Linux/DisplayRef.hpp>
 #include <X11/Xlib.h>
 #include <set>
 #include <string>
@@ -183,15 +182,15 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    DisplayRef myDisplayRef;          ///< Connection to the X server
     ::Window   myWindow;              ///< X11 structure defining our window
     ::Display* myDisplay;             ///< Pointer to the display
     int        myScreen;              ///< Screen identifier
+    XIM        myInputMethod;         ///< Input method linked to the X display
+    XIC        myInputContext;        ///< Input context used to get unicode input in our window
     bool       myIsExternal;          ///< Tell whether the window has been created externally or by SFML
     Atom       myAtomClose;           ///< Atom used to identify the close event
     int        myOldVideoMode;        ///< Video mode in use before we switch to fullscreen
     Cursor     myHiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
-    XIC        myInputContext;        ///< Input context used to get unicode input in our window
     bool       myKeyRepeat;           ///< Is the KeyRepeat feature enabled ?
     XEvent     myLastKeyReleaseEvent; ///< Last key release event we received (needed for discarding repeated key events)
 };

@@ -67,15 +67,16 @@ namespace priv
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(WindowHandle handle) :
 myWindow      (0),
+myInputMethod (NULL),
+myInputContext(NULL),
 myIsExternal  (true),
 myAtomClose   (0),
 myOldVideoMode(-1),
 myHiddenCursor(0),
-myInputContext(NULL),
 myKeyRepeat   (true)
 {
-    // Get the display and screen
-    myDisplay = myDisplayRef.GetDisplay();
+    // Open a connection with the X server
+    myDisplay = XOpenDisplay(NULL);
     myScreen  = DefaultScreen(myDisplay);
 
     // Save the window handle
@@ -107,15 +108,16 @@ myKeyRepeat   (true)
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const std::string& title, unsigned long style) :
 myWindow      (0),
+myInputMethod (NULL),
+myInputContext(NULL),
 myIsExternal  (false),
 myAtomClose   (0),
 myOldVideoMode(-1),
 myHiddenCursor(0),
-myInputContext(NULL),
 myKeyRepeat   (true)
 {
-    // Get the display and screen
-    myDisplay = myDisplayRef.GetDisplay();
+    // Open a connection with the X server
+    myDisplay = XOpenDisplay(NULL);
     myScreen  = DefaultScreen(myDisplay);
 
     // Compute position and size
@@ -261,6 +263,13 @@ WindowImplX11::~WindowImplX11()
         XDestroyWindow(myDisplay, myWindow);
         XFlush(myDisplay);
     }
+
+    // Close the input method
+    if (myInputMethod)
+        XCloseIM(myInputMethod);
+
+    // Close the connection with the X server
+    XCloseDisplay(myDisplay);
 }
 
 
@@ -507,7 +516,7 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
         else
         {
             // Failed to get the screen configuration
-            std::cerr << "Failed to get the current screen configuration for fullscreen mode, switching to windiw mode" << std::endl;
+            std::cerr << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
         }
     }
     else
@@ -531,18 +540,21 @@ void WindowImplX11::Initialize()
     XSetWMProtocols(myDisplay, myWindow, &myAtomClose, 1);
 
     // Create the input context
-    XIM inputMethod = myDisplayRef.GetInputMethod();
-    if (inputMethod)
+    myInputMethod = XOpenIM(myDisplay, NULL, NULL, NULL);
+    if (myInputMethod)
     {
-        myInputContext = XCreateIC(inputMethod,
+        myInputContext = XCreateIC(myInputMethod,
                                    XNClientWindow, myWindow,
                                    XNFocusWindow,  myWindow,
                                    XNInputStyle,   XIMPreeditNothing  | XIMStatusNothing,
                                    NULL);
-        
-        if (!myInputContext)
-            std::cerr << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
     }
+    else
+    {
+        myInputContext = NULL;
+    }
+    if (!myInputContext)
+        std::cerr << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
 
     // Show the window
     XMapWindow(myDisplay, myWindow);
