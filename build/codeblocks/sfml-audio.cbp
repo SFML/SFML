@@ -119,7 +119,6 @@
 		<Unit filename="..\..\include\SFML\Audio\SoundStream.hpp" />
 		<Unit filename="..\..\src\SFML\Audio\AudioDevice.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\AudioDevice.hpp" />
-		<Unit filename="..\..\src\SFML\Audio\AudioResource.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\Listener.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\Music.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\OpenAL.hpp" />
