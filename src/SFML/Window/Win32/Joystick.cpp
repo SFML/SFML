@@ -42,9 +42,10 @@ namespace priv
 void Joystick::Initialize(unsigned int Index)
 {
     // Reset state
-    myIndex     = JOYSTICKID1;
-    myNbAxes    = 0;
-    myNbButtons = 0;
+    myIndex       = JOYSTICKID1;
+    myNbAxes      = 0;
+    myNbButtons   = 0;
+    myIsConnected = false;
 
     // Get the Index-th connected joystick
     MMRESULT Error;
@@ -60,6 +61,7 @@ void Joystick::Initialize(unsigned int Index)
             if (NbFound == Index)
             {
                 // Ok : store its parameters and return
+                myIsConnected = true;
                 JOYCAPS Caps;
                 joyGetDevCaps(myIndex, &Caps, sizeof(Caps));
                 myNbAxes    = Caps.wNumAxes;
@@ -84,30 +86,33 @@ JoystickState Joystick::UpdateState()
 {
     JoystickState State = {0};
 
-    // Get the joystick caps (for range conversions)
-    JOYCAPS Caps;
-    if (joyGetDevCaps(myIndex, &Caps, sizeof(Caps)) == JOYERR_NOERROR)
+    if (myIsConnected)
     {
-        // Get the current joystick state
-        JOYINFOEX Pos;
-        Pos.dwFlags = JOY_RETURNALL;
-        Pos.dwSize  = sizeof(JOYINFOEX);
-        if (joyGetPosEx(myIndex, &Pos) == JOYERR_NOERROR)
+        // Get the joystick caps (for range conversions)
+        JOYCAPS Caps;
+        if (joyGetDevCaps(myIndex, &Caps, sizeof(Caps)) == JOYERR_NOERROR)
         {
-            // Axes
-            State.Axis[Joy::AxisX] = (Pos.dwXpos - (Caps.wXmax + Caps.wXmin) / 2.f) * 200.f / (Caps.wXmax - Caps.wXmin);
-            State.Axis[Joy::AxisY] = (Pos.dwYpos - (Caps.wYmax + Caps.wYmin) / 2.f) * 200.f / (Caps.wYmax - Caps.wYmin);
-            State.Axis[Joy::AxisZ] = (Pos.dwZpos - (Caps.wZmax + Caps.wZmin) / 2.f) * 200.f / (Caps.wZmax - Caps.wZmin);
-            State.Axis[Joy::AxisR] = (Pos.dwRpos - (Caps.wRmax + Caps.wRmin) / 2.f) * 200.f / (Caps.wRmax - Caps.wRmin);
-            State.Axis[Joy::AxisU] = (Pos.dwUpos - (Caps.wUmax + Caps.wUmin) / 2.f) * 200.f / (Caps.wUmax - Caps.wUmin);
-            State.Axis[Joy::AxisV] = (Pos.dwVpos - (Caps.wVmax + Caps.wVmin) / 2.f) * 200.f / (Caps.wVmax - Caps.wVmin);
+            // Get the current joystick state
+            JOYINFOEX Pos;
+            Pos.dwFlags = JOY_RETURNALL;
+            Pos.dwSize  = sizeof(JOYINFOEX);
+            if (joyGetPosEx(myIndex, &Pos) == JOYERR_NOERROR)
+            {
+                // Axes
+                State.Axis[Joy::AxisX] = (Pos.dwXpos - (Caps.wXmax + Caps.wXmin) / 2.f) * 200.f / (Caps.wXmax - Caps.wXmin);
+                State.Axis[Joy::AxisY] = (Pos.dwYpos - (Caps.wYmax + Caps.wYmin) / 2.f) * 200.f / (Caps.wYmax - Caps.wYmin);
+                State.Axis[Joy::AxisZ] = (Pos.dwZpos - (Caps.wZmax + Caps.wZmin) / 2.f) * 200.f / (Caps.wZmax - Caps.wZmin);
+                State.Axis[Joy::AxisR] = (Pos.dwRpos - (Caps.wRmax + Caps.wRmin) / 2.f) * 200.f / (Caps.wRmax - Caps.wRmin);
+                State.Axis[Joy::AxisU] = (Pos.dwUpos - (Caps.wUmax + Caps.wUmin) / 2.f) * 200.f / (Caps.wUmax - Caps.wUmin);
+                State.Axis[Joy::AxisV] = (Pos.dwVpos - (Caps.wVmax + Caps.wVmin) / 2.f) * 200.f / (Caps.wVmax - Caps.wVmin);
 
-            // POV
-            State.Axis[Joy::AxisPOV] = Pos.dwPOV / 100.f;
+                // POV
+                State.Axis[Joy::AxisPOV] = Pos.dwPOV / 100.f;
 
-            // Buttons
-            for (unsigned int i = 0; i < GetButtonsCount(); ++i)
-                State.Buttons[i] = (Pos.dwButtons & (1 << i)) != 0;
+                // Buttons
+                for (unsigned int i = 0; i < GetButtonsCount(); ++i)
+                    State.Buttons[i] = (Pos.dwButtons & (1 << i)) != 0;
+            }
         }
     }
 
