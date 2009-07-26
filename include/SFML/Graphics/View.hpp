@@ -103,7 +103,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Change the size of the view
     ///
-    /// \param size : New half-size
+    /// \param size : New size
     ///
     ////////////////////////////////////////////////////////////
     void SetSize(const Vector2f& size);
