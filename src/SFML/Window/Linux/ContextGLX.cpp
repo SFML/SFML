@@ -274,12 +274,38 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     // Get the context to share display lists with
     GLXContext toShare = shared ? shared->myContext : NULL;
 
-    // Create the context
-    myContext = glXCreateContext(myDisplay, bestVisual, toShare, true);
+    // Create the context -- first try an OpenGL 3.0 context if it is supported
+    /*const GLubyte* name = reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB");
+    PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = reinterpret_cast<PFNGLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(name));
+    if (glXCreateContextAttribsARB)
+    {
+        int nbConfigs = 0;
+        GLXFBConfig* configs = glXChooseFBConfig(myDisplay, DefaultScreen(myDisplay), NULL, &nbConfigs);
+        if (!configs || !nbConfigs)
+        {
+            std::cerr << "Failed to retrieve the framebuffer configuration" << std::endl;
+            return;
+        }
+
+        // Create the context
+        int attributes[] =
+        {
+            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+            GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+            0, 0
+        };
+        myContext = glXCreateContextAttribsARB(myDisplay, configs[0], toShare, true, attributes);
+    }*/
+
+    // If the OpenGL 3.0 context failed, create a regular OpenGL 1.x context
     if (!myContext)
     {
-        std::cerr << "Failed to create an OpenGL context for this window" << std::endl;
-        return;
+        myContext = glXCreateContext(myDisplay, bestVisual, toShare, true);
+        if (!myContext)
+        {
+            std::cerr << "Failed to create an OpenGL context for this window" << std::endl;
+            return;
+        }
     }
 
     // Update the creation settings from the chosen format
