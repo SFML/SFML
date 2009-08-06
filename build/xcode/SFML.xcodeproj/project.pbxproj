@@ -401,6 +401,12 @@
 		A01A3AEB0E75181300D0BA9B /* stb_vorbis.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = stb_vorbis.c; path = ../../src/SFML/Audio/stb_vorbis/stb_vorbis.c; sourceTree = SOURCE_ROOT; };
 		A01A3AEC0E75181300D0BA9B /* stb_vorbis.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = stb_vorbis.h; path = ../../src/SFML/Audio/stb_vorbis/stb_vorbis.h; sourceTree = SOURCE_ROOT; };
 		A01C69C80E3E63CE00ED3F04 /* Unicode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Unicode.cpp; path = ../../src/SFML/System/Unicode.cpp; sourceTree = SOURCE_ROOT; };
+		A02C68B1102BA16300A77DF4 /* autogen.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; path = autogen.sh; sourceTree = "<group>"; };
+		A02C68B2102BA16300A77DF4 /* license.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
+		A02C68B3102BA16300A77DF4 /* Lisez-moi.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "Lisez-moi.rtf"; sourceTree = "<group>"; };
+		A02C68B4102BA16300A77DF4 /* Notes de version.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "Notes de version.rtf"; sourceTree = "<group>"; };
+		A02C68B5102BA16300A77DF4 /* Read Me.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "Read Me.rtf"; sourceTree = "<group>"; };
+		A02C68B6102BA16300A77DF4 /* Release Notes.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "Release Notes.rtf"; sourceTree = "<group>"; };
 		A04C59A50EDDBA9C00935061 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ../../src/SFML/Window/Cocoa/AppController.h; sourceTree = SOURCE_ROOT; };
 		A04C59A60EDDBA9C00935061 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = AppController.mm; path = ../../src/SFML/Window/Cocoa/AppController.mm; sourceTree = SOURCE_ROOT; };
 		A04C59A70EDDBA9C00935061 /* Joystick.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Joystick.cpp; path = ../../src/SFML/Window/Cocoa/Joystick.cpp; sourceTree = SOURCE_ROOT; };
@@ -813,6 +819,19 @@
 			path = ../../src/SFML/Audio/stb_vorbis;
 			sourceTree = SOURCE_ROOT;
 		};
+		A02C68B0102BA16300A77DF4 /* dist */ = {
+			isa = PBXGroup;
+			children = (
+				A02C68B1102BA16300A77DF4 /* autogen.sh */,
+				A02C68B2102BA16300A77DF4 /* license.txt */,
+				A02C68B3102BA16300A77DF4 /* Lisez-moi.rtf */,
+				A02C68B4102BA16300A77DF4 /* Notes de version.rtf */,
+				A02C68B5102BA16300A77DF4 /* Read Me.rtf */,
+				A02C68B6102BA16300A77DF4 /* Release Notes.rtf */,
+			);
+			path = dist;
+			sourceTree = "<group>";
+		};
 		A04C59A40EDDBA9C00935061 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -834,6 +853,7 @@
 		A093E3660D8BF860002236B4 = {
 			isa = PBXGroup;
 			children = (
+				A02C68B0102BA16300A77DF4 /* dist */,
 				A093E3AD0D8BF8AD002236B4 /* SFML */,
 				A093E3B90D8BF8C2002236B4 /* sfml-audio */,
 				A093E3BC0D8BF8C7002236B4 /* sfml-graphics */,
