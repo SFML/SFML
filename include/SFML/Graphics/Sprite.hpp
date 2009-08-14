@@ -66,10 +66,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// Change the image of the sprite
     ///
-    /// \param image : New image
+    /// \param image :           New image
+    /// \param adjustToNewSize : If true, the SubRect of the sprite will be adjusted to the size of the new image (false by default)
     ///
     ////////////////////////////////////////////////////////////
-    void SetImage(const Image& image);
+    void SetImage(const Image& image, bool adjustToNewSize = false);
 
     ////////////////////////////////////////////////////////////
     /// Set the sub-rectangle of the sprite inside the source image.

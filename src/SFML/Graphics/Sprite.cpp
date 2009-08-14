@@ -60,10 +60,14 @@ myIsFlippedY(false)
 ////////////////////////////////////////////////////////////
 /// Set the image of the sprite
 ////////////////////////////////////////////////////////////
-void Sprite::SetImage(const Image& image)
+void Sprite::SetImage(const Image& image, bool adjustToNewSize)
 {
-    // If there was no source image before and the new image is valid, adjust the source rectangle
-    if (!myImage && (image.GetWidth() > 0) && (image.GetHeight() > 0))
+    // If there was no valid image before, force adjusting to the new image size
+    if (!myImage)
+        adjustToNewSize = true;
+
+    // If we want to adjust the size and the new image is valid, we adjust the source rectangle
+    if (adjustToNewSize && (image.GetWidth() > 0) && (image.GetHeight() > 0))
     {
         SetSubRect(IntRect(0, 0, image.GetWidth(), image.GetHeight()));
     }
