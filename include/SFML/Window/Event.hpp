@@ -142,7 +142,7 @@ namespace Key
         F15,
         Pause,
 
-        Count // For internal use
+        Count // Keep last -- total number of keyboard keys
     };
 }
 
@@ -160,7 +160,7 @@ namespace Mouse
         XButton1,
         XButton2,
 
-        Count // For internal use
+        Count // Keep last -- total number of mouse buttons
     };
 }
 
@@ -180,7 +180,7 @@ namespace Joy
         AxisV,
         AxisPOV,
 
-        Count // For internal use
+        Count // Keep last -- total number of joystick axis
     };
 }
 
@@ -286,7 +286,9 @@ public :
         MouseLeft,
         JoyButtonPressed,
         JoyButtonReleased,
-        JoyMoved
+        JoyMoved,
+
+        Count // Keep last -- total number of event types
     };
 
     ////////////////////////////////////////////////////////////
