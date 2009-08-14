@@ -34,24 +34,25 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Randomizer is an utility class for generating pseudo-random
-/// numbers
+/// \brief Utility class for generating pseudo-random numbers
 ////////////////////////////////////////////////////////////
 class SFML_API Randomizer
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Set the seed for the generator. Using a known seed
-    /// allows you to reproduce the same sequence of random number
+    /// \brief Set a new seed for the generator
     ///
-    /// \param seed : Number to use as the seed
+    /// Using a known seed allows you to reproduce the same
+    /// sequence of random numbers.
+    ///
+    /// \param seed Number to use as the seed
     ///
     ////////////////////////////////////////////////////////////
     static void SetSeed(unsigned int seed);
 
     ////////////////////////////////////////////////////////////
-    /// Get the seed used to generate random numbers the generator.
+    /// \brief Get the current seed of the generator
     ///
     /// \return Current seed
     ///
@@ -59,10 +60,10 @@ public :
     static unsigned int GetSeed();
 
     ////////////////////////////////////////////////////////////
-    /// Get a random float number in a given range
+    /// \brief Get a random float number in a given range
     ///
-    /// \return begin : Beginning of the range
-    /// \return end :   End of the range
+    /// \param begin Beginning of the range
+    /// \param end   End of the range
     ///
     /// \return Random number in [begin, end]
     ///
@@ -70,10 +71,10 @@ public :
     static float Random(float begin, float end);
 
     ////////////////////////////////////////////////////////////
-    /// Get a random integer number in a given range
+    /// \brief Get a random integer number in a given range
     ///
-    /// \return begin : Beginning of the range
-    /// \return end :   End of the range
+    /// \param begin Beginning of the range
+    /// \param end   End of the range
     ///
     /// \return Random number in [begin, end]
     ///
@@ -85,3 +86,34 @@ public :
 
 
 #endif // SFML_RANDOMIZER_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Randomizer
+///
+/// sf::Randomizer generates pseudo-random numbers using the
+/// standard library.
+///
+/// Usage example:
+/// \code
+/// int x1 = sf::Randomizer::Random(0, 6);
+/// float x2 = sf::Randomizer::Random(0.f, 1.f);
+/// \endcode
+///
+/// Note that, unlike the standard rand() function, you don't
+/// have to initialize the seed before using this class. SFML does
+/// it for you, so that you will automatically get different results
+/// for every execution of the program.
+///
+/// The SetSeed and GetSeed functions are provided mainly for being
+/// able to reproduce the same set of numbers in a recorded
+/// sequence. This is useful when implementing replays, for example.
+///
+/// The technique used by sf::Randomizer for getting random numbers
+/// is not the most accurate: some numbers may have a slightly higher
+/// probability than others, under certain circumstancies.
+/// This doesn't matter in 99.9% of situations, but if you really
+/// need a generator which is mathematically more robust
+/// you should use another library for that part (see boost.random).
+///
+////////////////////////////////////////////////////////////

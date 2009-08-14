@@ -37,15 +37,15 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Win32 implementation of Platform.
-/// Gives access to various global system functions
+/// \brief Gives access to some system-specific low-level functions
+///
 ////////////////////////////////////////////////////////////
 class Platform
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Get the current system time
+    /// \brief Get the current system time
     ///
     /// \return System time, in seconds
     ///
@@ -53,9 +53,9 @@ public :
     static double GetSystemTime();
 
     ////////////////////////////////////////////////////////////
-    /// Suspend the execution of the current thread for a specified time
+    /// \brief Suspend the execution of the current thread for a specified time
     ///
-    /// \param time : Time to sleep, in seconds
+    /// \param time Time to sleep, in seconds
     ///
     ////////////////////////////////////////////////////////////
     static void Sleep(float time);

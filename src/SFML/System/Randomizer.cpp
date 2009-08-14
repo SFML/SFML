@@ -30,9 +30,13 @@
 #include <cstdlib>
 
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
 namespace
 {
-    // Set the random numbers sequence seed with the current system time, so that it is always different
+    // Initialize the generator's seed with the current system time
+    // in milliseconds, so that it is always different
     unsigned int InitializeSeed()
     {
         unsigned int seed = static_cast<unsigned int>(sf::priv::Platform::GetSystemTime() * 1000);
@@ -48,9 +52,6 @@ namespace
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Set the seed for the generator. Using a known seed
-/// allows you to reproduce the same sequence of random number
-////////////////////////////////////////////////////////////
 void Randomizer::SetSeed(unsigned int seed)
 {
     srand(seed);
@@ -59,8 +60,6 @@ void Randomizer::SetSeed(unsigned int seed)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the seed used to generate random numbers the generator.
-////////////////////////////////////////////////////////////
 unsigned int Randomizer::GetSeed()
 {
     return globalSeed;
@@ -68,12 +67,9 @@ unsigned int Randomizer::GetSeed()
 
 
 ////////////////////////////////////////////////////////////
-/// Get a random float number in a given range
-////////////////////////////////////////////////////////////
 float Randomizer::Random(float begin, float end)
 {
     // This is not the best algorithm, but it is fast and will be enough in most cases
-    // (see Google for best approaches)
 
     return static_cast<float>(rand()) / RAND_MAX * (end - begin) + begin;
 }
@@ -85,7 +81,6 @@ float Randomizer::Random(float begin, float end)
 int Randomizer::Random(int begin, int end)
 {
     // This is not the best algorithm, but it is fast and will be enough in most cases
-    // (see Google for best approaches)
 
     return rand() % (end - begin + 1) + begin;
 }

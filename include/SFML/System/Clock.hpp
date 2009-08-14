@@ -34,20 +34,27 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Clock is an utility class for manipulating time
+/// \brief Utility class for manipulating time
+///
 ////////////////////////////////////////////////////////////
 class SFML_API Clock
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
+    ///
+    /// The clock starts automatically after being constructed.
     ///
     ////////////////////////////////////////////////////////////
     Clock();
 
     ////////////////////////////////////////////////////////////
-    /// Get the time elapsed since last reset
+    /// \brief Get the time elapsed
+    ///
+    /// This function returns the time elapsed since the last call
+    /// to Reset() (or the construction of the instance if Reset()
+    /// has not been called) in seconds.
     ///
     /// \return Time elapsed, in seconds
     ///
@@ -55,7 +62,9 @@ public :
     float GetElapsedTime() const;
 
     ////////////////////////////////////////////////////////////
-    /// Restart the timer
+    /// \brief Restart the timer
+    ///
+    /// This function puts the time counter back to zero.
     ///
     ////////////////////////////////////////////////////////////
     void Reset();
@@ -72,3 +81,23 @@ private :
 
 
 #endif // SFML_CLOCK_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Clock
+///
+/// sf::Clock is a lightweight class for measuring time.
+/// Its accuray depends on the underlying OS, but you can generally
+/// expect a 1 ms precision.
+///
+/// Usage example:
+/// \code
+/// sf::Clock clock;
+/// ...
+/// float time1 = clock.GetElapsedTime();
+/// clock.Reset();
+/// ...
+/// float time2 = clock.GetElapsedTime();
+/// \endcode
+///
+////////////////////////////////////////////////////////////

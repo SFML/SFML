@@ -39,37 +39,34 @@ class Thread;
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Windows implementation of threads
+/// \brief Windows implementation of threads
 ////////////////////////////////////////////////////////////
 class ThreadImpl : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor, launch the thread
+    /// \brief Default constructor, launch the thread
     ///
-    /// \param owner : Owner Thread instance to run
+    /// \param owner The Thread instance to run
     ///
     ////////////////////////////////////////////////////////////
     ThreadImpl(Thread* owner);
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~ThreadImpl();
 
     ////////////////////////////////////////////////////////////
-    /// Wait until the thread finishes
+    /// \brief Wait until the thread finishes
     ///
     ////////////////////////////////////////////////////////////
     void Wait();
 
     ////////////////////////////////////////////////////////////
-    /// Terminate the thread
-    /// Terminating a thread with this function is not safe,
-    /// you should rather try to make the thread function
-    /// terminate by itself
+    /// \brief Terminate the thread
     ///
     ////////////////////////////////////////////////////////////
     void Terminate();
@@ -77,11 +74,11 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// Global entry point for all threads
+    /// \brief Global entry point for all threads
     ///
-    /// \param userData : User-defined data (contains the Thread instance)
+    /// \param userData User-defined data (contains the Thread instance)
     ///
-    /// \return Error code
+    /// \return OS specific error code
     ///
     ////////////////////////////////////////////////////////////
     static unsigned int __stdcall EntryPoint(void* userData);

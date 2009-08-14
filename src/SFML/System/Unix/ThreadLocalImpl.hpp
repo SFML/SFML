@@ -37,34 +37,34 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Unix implementation of thread-local storage
+/// \brief Unix implementation of thread-local storage
 ////////////////////////////////////////////////////////////
 class ThreadLocalImpl : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor -- allocate the storage
+    /// \brief Default constructor -- allocate the storage
     ///
     ////////////////////////////////////////////////////////////
     ThreadLocalImpl();
 
     ////////////////////////////////////////////////////////////
-    /// Destructor -- free the storage
+    /// \brief Destructor -- free the storage
     ///
     ////////////////////////////////////////////////////////////
     ~ThreadLocalImpl();
 
     ////////////////////////////////////////////////////////////
-    /// Set the thread-specific value of the variable
+    /// \brief Set the thread-specific value of the variable
     ///
-    /// \param value : Value of the variable for this thread
+    /// \param value Value of the variable for this thread
     ///
     ////////////////////////////////////////////////////////////
     void SetValue(void* value);
 
     ////////////////////////////////////////////////////////////
-    /// Retrieve the thread-specific value of the variable
+    /// \brief Retrieve the thread-specific value of the variable
     ///
     /// \return Value of the variable for this thread
     ///
