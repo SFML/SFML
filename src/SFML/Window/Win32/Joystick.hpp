@@ -78,9 +78,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int myIndex;     ///< Windows ID of the joystick
-    unsigned int myNbAxes;    ///< Number of axis supported by the joystick
-    unsigned int myNbButtons; ///< Number of buttons supported by the joystick
+    bool         myIsConnected; ///< Is there a joystick connected?
+    unsigned int myIndex;       ///< Windows ID of the joystick
+    unsigned int myNbAxes;      ///< Number of axis supported by the joystick
+    unsigned int myNbButtons;   ///< Number of buttons supported by the joystick
 };
 
 } // namespace priv

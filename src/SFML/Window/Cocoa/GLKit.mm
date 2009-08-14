@@ -29,7 +29,6 @@
 #import <SFML/Window/Cocoa/AppController.h>
 #import <SFML/Window/VideoMode.hpp>
 #import <SFML/Window/WindowStyle.hpp>
-#import <SFML/System/Sleep.hpp>
 #import <OpenGL/gl.h>
 #import <iostream>
 
@@ -39,26 +38,21 @@
 ////////////////////////////////////////////////////////////
 @implementation GLContext
 
-static GLContext *sharedCtx = nil;
 
 ////////////////////////////////////////////////////////////
 /// Return the shared OpenGL context instance (making one if needed)
 ////////////////////////////////////////////////////////////
 + (id)sharedContext
 {
-	if (sharedCtx == nil)
-	{
-		// Make a new context with the default parameters
-		sf::WindowSettings params(0, 0, 0);
-		sharedCtx = [[GLContext alloc] initWithAttributes:params sharedContext:nil];
-	}
-	
+	// Make a new context with the default parameters
+	sf::WindowSettings params;
+	static GLContext *sharedCtx = [[GLContext alloc] initWithAttributes:params sharedContext:nil];
 	return sharedCtx;
 }
 
 - (void)dealloc
 {
-	[mySharedContext release];
+	[[GLContext sharedContext] release];
 	[super dealloc];
 }
 
@@ -66,7 +60,7 @@ static GLContext *sharedCtx = nil;
 /// Make a new OpenGL context according to the @attribs settings
 /// and the shared context @context
 ////////////////////////////////////////////////////////////
-- (id)initWithAttributes:(sf::WindowSettings&)attribs sharedContext:(GLContext *)context
+- (id)initWithAttributes:(sf::WindowSettings&)attribs sharedContext:(GLContext *)sharedContext
 {
 	// Note about antialiasing and other context attributes :
 	// OpenGL context sharing does not allow the shared contexts to use different attributes.
@@ -94,15 +88,15 @@ static GLContext *sharedCtx = nil;
 	// windowed context (even fullscreen mode uses a window)
 	ctxtAttribs[idx++] = NSOpenGLPFAWindow;
 	
-	// Color size ; usually 32 bits per pixel
+	// Color buffer bits ; usually 32 bits per pixel
 	ctxtAttribs[idx++] = NSOpenGLPFAColorSize;
 	ctxtAttribs[idx++] = (NSOpenGLPixelFormatAttribute) sf::VideoMode::GetDesktopMode().BitsPerPixel;
 	
-	// Z-buffer size
+	// Depth buffer size
 	ctxtAttribs[idx++] = NSOpenGLPFADepthSize;
 	ctxtAttribs[idx++] = (NSOpenGLPixelFormatAttribute) attribs.DepthBits;
 	
-	// Stencil bits (I don't really know what's that...)
+	// Stencil buffer bits
 	ctxtAttribs[idx++] = NSOpenGLPFAStencilSize;
 	ctxtAttribs[idx++] = (NSOpenGLPixelFormatAttribute) attribs.StencilBits;
 	
@@ -110,9 +104,7 @@ static GLContext *sharedCtx = nil;
 	
 	if (myPixelFormat) {
 		self = [super initWithFormat:myPixelFormat
-									shareContext:context];
-		
-		mySharedContext = [context retain];
+						shareContext:[sharedContext retain]];
 		
 		// Get the effective properties from our OpenGL context
 		GLint tmpDepthSize = 0, tmpStencilBits = 0, tmpAntialiasingLevel = 0;
@@ -172,7 +164,13 @@ static GLContext *sharedCtx = nil;
 		[self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 		
 		// make the OpenGL context
-		myGLContext = [[GLContext alloc] initWithAttributes:settings sharedContext:sharedCtx];
+		myGLContext = [[GLContext alloc] initWithAttributes:settings
+											  sharedContext:[GLContext sharedContext]];
+		
+		if (!myGLContext) {
+			[self release];
+			return nil;
+		}
 		
 		// We need to update the OpenGL view when it's resized
 		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -417,10 +415,10 @@ static GLContext *sharedCtx = nil;
 
 
 ////////////////////////////////////////////////////////////
-/// Cocoa window implementation to let fullscreen windows
+/// Cocoa window category to let fullscreen windows
 /// catch key events
 ////////////////////////////////////////////////////////////
-@implementation GLWindow
+@implementation NSWindow (GLWindow)
 
 - (BOOL)canBecomeKeyWindow
 {
@@ -501,7 +499,7 @@ static GLContext *sharedCtx = nil;
 	if (self)
 	{
 		if (window) {
-			myWindow = (GLWindow *)[window retain];
+			myWindow = [window retain];
 		} else {
 			assert(title != nil);
 			
@@ -563,7 +561,7 @@ static GLContext *sharedCtx = nil;
 			
 			// Now we make the window with the values we got
 			// Note: defer flag set to NO to be able to use OpenGL in our window
-			myWindow = [[GLWindow alloc] initWithContentRect:frame
+			myWindow = [[NSWindow alloc] initWithContentRect:frame
 												   styleMask:mask
 													 backing:NSBackingStoreBuffered
 													   defer:NO];
@@ -646,7 +644,7 @@ static GLContext *sharedCtx = nil;
 ////////////////////////////////////////////////////////////
 - (void)dealloc
 {
-	
+	NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
 	// Remove the notification observer
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
@@ -654,10 +652,13 @@ static GLContext *sharedCtx = nil;
 	[self show:false];
 	
 	// Release the window and view
+	[myView removeFromSuperviewWithoutNeedingDisplay];
+	
 	[myView release];
 	[myWindow release];
 	
 	[super dealloc];
+	[localPool release];
 }
 
 
@@ -758,7 +759,7 @@ static GLContext *sharedCtx = nil;
 		// Wanna open the closed window
 		
 		if (myIsFullscreen) {
-			[SharedAppController setFullscreenWindow:self mode:&myFullscreenMode];
+			[[AppController sharedController] setFullscreenWindow:self mode:&myFullscreenMode];
 		} else {
 			// Show the window
 			[myWindow makeKeyAndOrderFront:nil];
@@ -767,7 +768,7 @@ static GLContext *sharedCtx = nil;
 		// Wanna close the opened window
 		
 		if (myIsFullscreen) {
-			[SharedAppController setFullscreenWindow:nil mode:NULL];
+			[[AppController sharedController] setFullscreenWindow:nil mode:NULL];
 		} else {
 			// Close the window
 			[myWindow close];
@@ -849,7 +850,7 @@ static GLContext *sharedCtx = nil;
 {
 	NSWindow *sender = [notification object];
 	
-	if (!([sender styleMask] & NSTitledWindowMask))
+	if (myIsFullscreen)
 		[sender center];
 }
 

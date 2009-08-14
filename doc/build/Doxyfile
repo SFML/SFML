@@ -604,7 +604,6 @@ FILE_PATTERNS          = *.c \
                          *.ipp \
                          *.i++ \
                          *.inl \
-                         *.h \
                          *.hh \
                          *.hxx \
                          *.hpp \
@@ -615,8 +614,6 @@ FILE_PATTERNS          = *.c \
                          *.php \
                          *.php3 \
                          *.inc \
-                         *.m \
-                         *.mm \
                          *.dox \
                          *.py
 

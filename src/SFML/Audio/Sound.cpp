@@ -46,15 +46,15 @@ Sound::Sound()
 /// Construct the sound from its parameters
 ////////////////////////////////////////////////////////////
 Sound::Sound(const SoundBuffer& buffer, bool loop, float pitch, float volume, const Vector3f& position) :
-myBuffer(&buffer)
+myBuffer(NULL)
 {
     ALCheck(alGenSources(1, &mySource));
 
-    ALCheck(alSourcei (mySource, AL_BUFFER,   buffer.myBuffer));
-    ALCheck(alSourcei (mySource, AL_LOOPING,  loop));
-    ALCheck(alSourcef (mySource, AL_PITCH,    pitch));
-    ALCheck(alSourcef (mySource, AL_GAIN,     volume * 0.01f));
-    ALCheck(alSource3f(mySource, AL_POSITION, position.x, position.y, position.z));
+    SetBuffer(buffer);
+    SetLoop(loop);
+    SetPitch(pitch);
+    SetVolume(volume);
+    SetPosition(position);
 }
 
 
@@ -62,15 +62,19 @@ myBuffer(&buffer)
 /// Copy constructor
 ////////////////////////////////////////////////////////////
 Sound::Sound(const Sound& copy) :
-myBuffer(copy.myBuffer)
+myBuffer(NULL)
 {
     ALCheck(alGenSources(1, &mySource));
 
-    ALCheck(alSourcei (mySource, AL_BUFFER,   myBuffer ? myBuffer->myBuffer : 0));
-    ALCheck(alSourcei (mySource, AL_LOOPING,  copy.GetLoop()));
-    ALCheck(alSourcef (mySource, AL_PITCH,    copy.GetPitch()));
-    ALCheck(alSourcef (mySource, AL_GAIN,     copy.GetVolume() * 0.01f));
-    ALCheck(alSource3f(mySource, AL_POSITION, copy.GetPosition().x, copy.GetPosition().y, copy.GetPosition().z));
+    if (copy.myBuffer)
+        SetBuffer(*copy.myBuffer);
+    SetLoop(copy.GetLoop());
+    SetPitch(copy.GetPitch());
+    SetVolume(copy.GetVolume());
+    SetPosition(copy.GetPosition());
+    SetRelativeToListener(copy.IsRelativeToListener());
+    SetMinDistance(copy.GetMinDistance());
+    SetAttenuation(copy.GetAttenuation());
 }
 
 

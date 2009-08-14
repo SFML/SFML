@@ -30,8 +30,6 @@
 #import <Cocoa/Cocoa.h>
 
 
-#define SharedAppController [AppController sharedController]
-
 // Fade operations
 enum {
 	FillScreen,
