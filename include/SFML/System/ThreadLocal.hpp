@@ -41,42 +41,39 @@ namespace priv
 }
 
 ////////////////////////////////////////////////////////////
-/// Wrapper to handle variables that are local to threads.
-/// This means that the same ThreadLocalStorage variable will
-/// hold a different value for each different thread.
-/// For a more strongly-typed interface, use the ThreadLocal
-/// template class.
+/// \brief Defines variables with thread-local storage
+///
 ////////////////////////////////////////////////////////////
 class SFML_API ThreadLocal : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
-    /// \param value : Optional value to initalize the variable (NULL by default)
+    /// \param value Optional value to initalize the variable (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
     ThreadLocal(void* value = NULL);
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~ThreadLocal();
 
     ////////////////////////////////////////////////////////////
-    /// Set the thread-specific value of the variable
+    /// \brief Set the thread-specific value of the variable
     ///
-    /// \param Value : Value of the variable for this thread
+    /// \param value Value of the variable for the current thread
     ///
     ////////////////////////////////////////////////////////////
     void SetValue(void* value);
 
     ////////////////////////////////////////////////////////////
-    /// Retrieve the thread-specific value of the variable
+    /// \brief Retrieve the thread-specific value of the variable
     ///
-    /// \return Value of the variable for this thread
+    /// \return Value of the variable for the current thread
     ///
     ////////////////////////////////////////////////////////////
     void* GetValue() const;
@@ -93,3 +90,13 @@ private :
 
 
 #endif // SFML_THREADLOCAL_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::ThreadLocal
+///
+/// This class manipulates void* parameters and thus is not
+/// appropriate for strongly-typed variables. You should rather
+/// use the sf::ThreadLocalPtr template class.
+///
+////////////////////////////////////////////////////////////

@@ -41,11 +41,7 @@ namespace priv
 }
 
 ////////////////////////////////////////////////////////////
-/// Thread defines an easy way to manipulate a thread.
-/// There are two ways to use Thread :
-/// - Inherit from it and override the Run() virtual function
-/// - Construct a Thread instance and pass it a function
-/// pointer to call
+/// \brief Utility class to manipulate threads
 ////////////////////////////////////////////////////////////
 class SFML_API Thread : NonCopyable
 {
@@ -54,37 +50,47 @@ public :
     typedef void (*FuncType)(void*);
 
     ////////////////////////////////////////////////////////////
-    /// Construct the thread from a function pointer
+    /// \brief Construct the thread from a function pointer
     ///
-    /// \param function : Entry point of the thread
-    /// \param userData : Data to pass to the thread function (NULL by default)
+    /// \param function Entry point of the thread
+    /// \param userData Data to pass to the thread function (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
     Thread(FuncType function, void* userData = NULL);
 
     ////////////////////////////////////////////////////////////
-    /// Virtual destructor
+    /// \brief Virtual destructor
+    ///
+    /// This destructor calls Wait(), so that the thread cannot
+    /// survive when its sf::Thread instance is destroyed.
     ///
     ////////////////////////////////////////////////////////////
     virtual ~Thread();
 
     ////////////////////////////////////////////////////////////
-    /// Create and run the thread
+    /// \brief Run the thread
     ///
     ////////////////////////////////////////////////////////////
     void Launch();
 
     ////////////////////////////////////////////////////////////
-    /// Wait until the thread finishes
+    /// \brief Wait until the thread finishes
+    ///
+    /// This function will block the execution until the
+    /// thread's function ends.
     ///
     ////////////////////////////////////////////////////////////
     void Wait();
 
     ////////////////////////////////////////////////////////////
-    /// Terminate the thread
+    /// \brief Terminate the thread
+    ///
+    /// This function immediately stops the thread, without waiting
+    /// for its function to finish.
     /// Terminating a thread with this function is not safe,
-    /// you should rather try to make the thread function
-    /// terminate by itself
+    /// and can lead to local variables not being destroyed
+    /// on some operating systems. You should rather try to make
+    /// the thread function terminate by itself.
     ///
     ////////////////////////////////////////////////////////////
     void Terminate();
@@ -92,7 +98,9 @@ public :
 protected :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
+    ///
+    /// This constructor is only accessible from derived classes
     ///
     ////////////////////////////////////////////////////////////
     Thread();
@@ -102,7 +110,10 @@ private :
     friend class priv::ThreadImpl;
 
     ////////////////////////////////////////////////////////////
-    /// Function called as the thread entry point
+    /// \brief Function called as the entry point of the thread
+    ///
+    /// You must override this function when inheriting from
+    /// sf::Thread.
     ///
     ////////////////////////////////////////////////////////////
     virtual void Run();
@@ -119,3 +130,68 @@ private :
 
 
 #endif // SFML_THREAD_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Thread
+///
+/// Threads provide a way to run multiple parts of the code
+/// in parallel. When you launch a new thread, the execution
+/// is split and both the new thread and the caller run
+/// in parallel.
+///
+/// There are two ways to use sf::Thread. The first (and
+/// preferred) way of using it is to created derived classes.
+/// When inheriting from sf::Thread, the virtual function
+/// Run() has to be overriden, and defines the entry point
+/// of the thread. The thread automatically stops when
+/// this function ends.
+///
+/// Usage example:
+/// \code
+/// class MyThread : public sf::Thread
+/// {
+/// private :
+/// 
+///     virtual void Run()
+///     {
+///         // beginning of the thread
+///         ...
+///         // end of the thread
+///     }
+/// };
+///
+/// MyThread mythread;
+/// mythread.Launch(); // start the thread (internally calls thread.Run())
+///
+/// // from now on, both mythread and the main thread run in parallel
+/// \endcode
+///
+/// The second way of using sf::Thread uses a non-member function
+/// as the entry point and thus doesn't involve creating
+/// a new class. However, this method is only provided for
+/// compatibility with C-style code or for fast prototyping;
+/// you are strongly encouraged to use the first method.
+///
+/// Usage example:
+/// \code
+/// void ThreadFunc(void* data)
+/// {
+///     // beginning of the thread
+///     ...
+///     // end of the thread
+/// }
+///
+/// sf::Thread mythread(&ThreadFunc, NULL);
+/// mythread.Launch(); // start the thread (internally calls ThreadFunc(NULL))
+///
+/// // from now on, both mythread and the main thread run in parallel
+/// \endcode
+///
+/// Creating parallel threads of execution can be dangerous:
+/// all threads inside the same process share the same memory space,
+/// which means that you may end up accessing the same variable
+/// from multiple threads at the same time. To prevent this
+/// kind of situations, you can use mutexes (see sf::Mutex).
+///
+////////////////////////////////////////////////////////////

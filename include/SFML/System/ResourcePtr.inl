@@ -24,8 +24,6 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 template <typename T>
 ResourcePtr<T>::ResourcePtr() :
 myResource(NULL)
@@ -34,8 +32,6 @@ myResource(NULL)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Construct from a raw resource
 ////////////////////////////////////////////////////////////
 template <typename T>
 ResourcePtr<T>::ResourcePtr(const T* resource) :
@@ -47,8 +43,6 @@ myResource(resource)
 
 
 ////////////////////////////////////////////////////////////
-/// Copy constructor
-////////////////////////////////////////////////////////////
 template <typename T>
 ResourcePtr<T>::ResourcePtr(const ResourcePtr<T>& copy) :
 myResource(copy.myResource)
@@ -59,8 +53,6 @@ myResource(copy.myResource)
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor
-////////////////////////////////////////////////////////////
 template <typename T>
 ResourcePtr<T>::~ResourcePtr()
 {
@@ -69,8 +61,6 @@ ResourcePtr<T>::~ResourcePtr()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Assignment operator from another ResourcePtr
 ////////////////////////////////////////////////////////////
 template <typename T>
 ResourcePtr<T>& ResourcePtr<T>::operator =(const ResourcePtr<T>& other)
@@ -88,8 +78,6 @@ ResourcePtr<T>& ResourcePtr<T>::operator =(const ResourcePtr<T>& other)
 
 
 ////////////////////////////////////////////////////////////
-/// Assignment operator from a raw resource
-////////////////////////////////////////////////////////////
 template <typename T>
 ResourcePtr<T>& ResourcePtr<T>::operator =(const T* resource)
 {
@@ -106,11 +94,6 @@ ResourcePtr<T>& ResourcePtr<T>::operator =(const T* resource)
 
 
 ////////////////////////////////////////////////////////////
-/// Cast operator to implicitely convert the resource pointer to
-/// its raw pointer type.
-/// This might be dangerous in the general case, but in this context
-/// it is safe enough to define this operator
-////////////////////////////////////////////////////////////
 template <typename T>
 ResourcePtr<T>::operator const T*() const
 {
@@ -118,8 +101,6 @@ ResourcePtr<T>::operator const T*() const
 }
 
 
-////////////////////////////////////////////////////////////
-/// Operator * overload to return a reference to the actual resource
 ////////////////////////////////////////////////////////////
 template <typename T>
 const T& ResourcePtr<T>::operator *() const
@@ -129,8 +110,6 @@ const T& ResourcePtr<T>::operator *() const
 
 
 ////////////////////////////////////////////////////////////
-/// Operator -> overload to return a pointer to the actual resource
-////////////////////////////////////////////////////////////
 template <typename T>
 const T* ResourcePtr<T>::operator ->() const
 {
@@ -138,9 +117,6 @@ const T* ResourcePtr<T>::operator ->() const
 }
 
 
-////////////////////////////////////////////////////////////
-/// Function called when the observed resource is about to be
-/// destroyed
 ////////////////////////////////////////////////////////////
 template <typename T>
 void ResourcePtr<T>::OnResourceDestroyed()

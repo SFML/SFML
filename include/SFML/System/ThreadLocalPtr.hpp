@@ -34,7 +34,8 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Type-safe wrapper for thread local pointer variables
+/// \brief Pointer to a thread-local variable
+///
 ////////////////////////////////////////////////////////////
 template <typename T>
 class ThreadLocalPtr : private ThreadLocal
@@ -42,53 +43,60 @@ class ThreadLocalPtr : private ThreadLocal
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
-    /// \param value : Optional value to initalize the variable (NULL by default)
+    /// \param value Optional value to initalize the variable (NULL by default)
     ///
     ////////////////////////////////////////////////////////////
     ThreadLocalPtr(T* value = NULL);
 
     ////////////////////////////////////////////////////////////
-    /// Operator * overload to return a reference to the variable
+    /// \brief Overload of unary operator *
     ///
-    /// \return Reference to the thread-local value of the variable
+    /// Like raw pointers, applying the * operator returns a
+    /// reference to the pointed object.
+    ///
+    /// \return Reference to the pointed object
     ///
     ////////////////////////////////////////////////////////////
     T& operator *() const;
 
     ////////////////////////////////////////////////////////////
-    /// Operator -> overload to return a pointer to the variable
+    /// \brief Overload of operator ->
     ///
-    /// \return Pointer to the thread-local value of the variable
+    /// Like raw pointers, applying the -> operator returns the
+    /// pointed object.
+    ///
+    /// \return Pointed object
     ///
     ////////////////////////////////////////////////////////////
     T* operator ->() const;
 
     ////////////////////////////////////////////////////////////
-    /// Implicit cast operator to T*
+    /// \brief Cast operator to implicitely convert the
+    ///        pointer to its raw pointer type (T*)
     ///
-    /// \return Value of the pointer for this thread
+    /// \return Pointer to the actual object
     ///
     ////////////////////////////////////////////////////////////
     operator T*() const;
 
     ////////////////////////////////////////////////////////////
-    /// Assignment operator
+    /// \brief Assignment operator for a raw pointer parameter
     ///
-    /// \param value : New pointer value to assign for this thread
+    /// \param resource Pointer to assign
     ///
-    /// \return Reference to this
+    /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
     ThreadLocalPtr<T>& operator =(T* value);
 
     ////////////////////////////////////////////////////////////
-    /// Assignment operator
+    /// \brief Assignment operator for a ThreadLocalPtr parameter
     ///
-    /// \param other : Other thread-local pointer value to assign
+    /// \param other ThreadLocalPtr to assign
     ///
-    /// \return Reference to this
+    /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
     ThreadLocalPtr<T>& operator =(const ThreadLocalPtr<T>& other);
@@ -100,3 +108,50 @@ public :
 
 
 #endif // SFML_THREADLOCALPTR_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::ThreadLocalPtr
+///
+/// sf::ThreadLocalPtr is a type-safe wrapper for storing
+/// pointers to thread-local variables. A thread-local
+/// variable holds a different value for each different
+/// thread, unlike normal variable that are shared.
+///
+/// Its usage is completely transparent, so that it is similar
+/// to manipulating the raw pointer directly (like any smart pointer).
+///
+/// Usage example:
+/// \code
+/// MyClass object1;
+/// MyClass object2;
+/// sf::ThreadLocalPtr<MyClass> objectPtr;
+///
+/// void Thread1(void*)
+/// {
+///     objectPtr = &object1; // doesn't impact Thread2
+///     ...
+/// }
+///
+/// void Thread1(void*)
+/// {
+///     objectPtr = &object2; // doesn't impact Thread1
+///     ...
+/// }
+///
+/// int main()
+/// {
+///     // Create and launch the two threads
+///     sf::Thread thread1(&Thread1);
+///     sf::Thread thread2(&Thread2);
+///     thread1.Launch();
+///     thread2.Launch();
+///
+///     return 0;
+/// }
+/// \endcode
+///
+/// ThreadLocalPtr is designed for internal use; however you
+/// can use it if you feel like it fits well your implementation.
+///
+////////////////////////////////////////////////////////////
