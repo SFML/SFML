@@ -803,6 +803,7 @@
 				CONFIGURATION_BUILD_DIR = ../../bin;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../../lib\"";
+				GCC_VERSION = 4.0;
 				OBJROOT = build;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SYMROOT = ../../bin;
@@ -817,6 +818,7 @@
 				CONFIGURATION_BUILD_DIR = ../../bin;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../../lib\"";
+				GCC_VERSION = 4.0;
 				OBJROOT = build;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SYMROOT = ../../bin;

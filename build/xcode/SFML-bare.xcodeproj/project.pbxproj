@@ -157,7 +157,7 @@
 		A066106A0E89058900D39DEB /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = A0660FE90E89058900D39DEB /* trees.c */; };
 		A066106C0E89058900D39DEB /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = A0660FEB0E89058900D39DEB /* uncompr.c */; };
 		A066106F0E89058900D39DEB /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = A0660FEE0E89058900D39DEB /* zutil.c */; };
-		A0ABBD570FD46A2200D528E9 /* libsfml-system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A01269660E6318C000B96A5D /* libsfml-system.dylib */; };
+		A0ABBD570FD46A2200D528E9 /* libsfml-system-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A01269660E6318C000B96A5D /* libsfml-system-d.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,11 +201,11 @@
 /* Begin PBXFileReference section */
 		A011E8050F65B35400FAE48D /* GLKit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GLKit.h; sourceTree = "<group>"; };
 		A011E8060F65B35400FAE48D /* GLKit.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = GLKit.mm; sourceTree = "<group>"; };
-		A01269660E6318C000B96A5D /* libsfml-system.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-system.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A012696F0E6318FE00B96A5D /* libsfml-network.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-network.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A01269760E63190F00B96A5D /* libsfml-audio.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-audio.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A012697D0E63192000B96A5D /* libsfml-window.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-window.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A01269840E63192B00B96A5D /* libsfml-graphics.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-graphics.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01269660E6318C000B96A5D /* libsfml-system-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-system-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A012696F0E6318FE00B96A5D /* libsfml-network-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-network-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01269760E63190F00B96A5D /* libsfml-audio-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-audio-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A012697D0E63192000B96A5D /* libsfml-window-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-window-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-graphics-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A018A2AD0EA21A2C005FFAC3 /* Http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Http.cpp; path = ../../src/SFML/Network/Http.cpp; sourceTree = SOURCE_ROOT; };
 		A018A2AE0EA21A2C005FFAC3 /* Ftp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ftp.cpp; path = ../../src/SFML/Network/Ftp.cpp; sourceTree = SOURCE_ROOT; };
 		A01BEF070F6BF0140095262C /* Initializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Initializer.cpp; path = ../../src/SFML/System/Initializer.cpp; sourceTree = SOURCE_ROOT; };
@@ -409,7 +409,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0ABBD570FD46A2200D528E9 /* libsfml-system.dylib in Frameworks */,
+				A0ABBD570FD46A2200D528E9 /* libsfml-system-d.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,11 +445,11 @@
 		A01269670E6318C000B96A5D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A01269660E6318C000B96A5D /* libsfml-system.dylib */,
-				A012696F0E6318FE00B96A5D /* libsfml-network.dylib */,
-				A01269760E63190F00B96A5D /* libsfml-audio.dylib */,
-				A012697D0E63192000B96A5D /* libsfml-window.dylib */,
-				A01269840E63192B00B96A5D /* libsfml-graphics.dylib */,
+				A01269660E6318C000B96A5D /* libsfml-system-d.dylib */,
+				A012696F0E6318FE00B96A5D /* libsfml-network-d.dylib */,
+				A01269760E63190F00B96A5D /* libsfml-audio-d.dylib */,
+				A012697D0E63192000B96A5D /* libsfml-window-d.dylib */,
+				A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -770,7 +770,7 @@
 			);
 			name = "sfml-system";
 			productName = "sfml-system";
-			productReference = A01269660E6318C000B96A5D /* libsfml-system.dylib */;
+			productReference = A01269660E6318C000B96A5D /* libsfml-system-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A012696E0E6318FE00B96A5D /* sfml-network */ = {
@@ -786,7 +786,7 @@
 			);
 			name = "sfml-network";
 			productName = "sfml-network";
-			productReference = A012696F0E6318FE00B96A5D /* libsfml-network.dylib */;
+			productReference = A012696F0E6318FE00B96A5D /* libsfml-network-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A01269750E63190F00B96A5D /* sfml-audio */ = {
@@ -802,7 +802,7 @@
 			);
 			name = "sfml-audio";
 			productName = "sfml-audio";
-			productReference = A01269760E63190F00B96A5D /* libsfml-audio.dylib */;
+			productReference = A01269760E63190F00B96A5D /* libsfml-audio-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A012697C0E63192000B96A5D /* sfml-window */ = {
@@ -818,7 +818,7 @@
 			);
 			name = "sfml-window";
 			productName = "sfml-window";
-			productReference = A012697D0E63192000B96A5D /* libsfml-window.dylib */;
+			productReference = A012697D0E63192000B96A5D /* libsfml-window-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		A01269830E63192B00B96A5D /* sfml-graphics */ = {
@@ -834,7 +834,7 @@
 			);
 			name = "sfml-graphics";
 			productName = "sfml-graphics";
-			productReference = A01269840E63192B00B96A5D /* libsfml-graphics.dylib */;
+			productReference = A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -1067,6 +1067,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/bin";
+				GCC_VERSION = 4.0;
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/../../src",
 					"${SRCROOT}/../../include",
@@ -1088,6 +1089,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../extlibs/bin";
+				GCC_VERSION = 4.0;
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/../../src",
 					"${SRCROOT}/../../include",
