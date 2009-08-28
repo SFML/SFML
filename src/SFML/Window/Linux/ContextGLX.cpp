@@ -275,7 +275,7 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     GLXContext toShare = shared ? shared->myContext : NULL;
 
     // Create the context -- first try an OpenGL 3.0 context if it is supported
-    /*const GLubyte* name = reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB");
+    const GLubyte* name = reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB");
     PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = reinterpret_cast<PFNGLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(name));
     if (glXCreateContextAttribsARB)
     {
@@ -295,7 +295,7 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
             0, 0
         };
         myContext = glXCreateContextAttribsARB(myDisplay, configs[0], toShare, true, attributes);
-    }*/
+    }
 
     // If the OpenGL 3.0 context failed, create a regular OpenGL 1.x context
     if (!myContext)
