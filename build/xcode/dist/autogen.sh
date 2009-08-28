@@ -367,7 +367,7 @@ build_packages()
     # Build the C++ SDK package
     if [ "$SHOULD_CONSIDER_CXX" == "yes" ]
       then
-        echo "Building C++ SDK package..."
+        printf "Building C++ SDK package..."
         make_dir "$CXX_SDK_PACKAGE_DIR"
         for dir in "${CXX_SDK_DIRS[@]}"
           do
@@ -393,7 +393,7 @@ build_packages()
         check_last_process " done"
         
         # Build the C++ Dev package
-        echo "Building C++ Development package..."
+        printf "Building C++ Development package..."
         make_dir "$CXX_DEV_PACKAGE_DIR"
         for dir in "${CXX_DEV_DIRS[@]}"
           do
@@ -429,7 +429,7 @@ build_packages()
     # Build the C SDK package
     if [ "$SHOULD_CONSIDER_C" == "yes" ]
       then
-        echo "Building C SDK package..."
+        printf "Building C SDK package..."
         make_dir "$C_SDK_PACKAGE_DIR"
         for dir in "${C_SDK_DIRS[@]}"
           do
@@ -451,7 +451,7 @@ build_packages()
         check_last_process " done"
         
         # Build the C Development package
-        echo "Building C Development package..."
+        printf "Building C Development package..."
         make_dir "$C_DEV_PACKAGE_DIR"
         for dir in "${C_DEV_DIRS[@]}"
           do
