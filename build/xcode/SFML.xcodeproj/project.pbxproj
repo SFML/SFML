@@ -439,7 +439,7 @@
 		A0C93EB40D9A9CA000B9E0C8 /* sfml-window.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "sfml-window.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0CE9FE50F46F72500FD00CE /* GLKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLKit.h; sourceTree = "<group>"; };
 		A0CE9FE60F46F72500FD00CE /* GLKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLKit.mm; sourceTree = "<group>"; };
-		A0EEDE980F59D49C0023A7F7 /* Initializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Initializer.cpp; path = ../../src/SFML/System/Initializer.cpp; sourceTree = SOURCE_ROOT; };
+		A0EEDE980F59D49C0023A7F7 /* Initializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Initializer.cpp; sourceTree = "<group>"; };
 		A0F1E6800E75440800778F12 /* IPAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IPAddress.cpp; path = ../../src/SFML/Network/IPAddress.cpp; sourceTree = SOURCE_ROOT; };
 		A0F1E6820E75440800778F12 /* Packet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Packet.cpp; path = ../../src/SFML/Network/Packet.cpp; sourceTree = SOURCE_ROOT; };
 		A0F1E6830E75440800778F12 /* SelectorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SelectorBase.cpp; path = ../../src/SFML/Network/SelectorBase.cpp; sourceTree = SOURCE_ROOT; };
@@ -942,7 +942,6 @@
 				A09EEBF40D8C19BF00F6C625 /* Clock.cpp */,
 				A09EEBF50D8C19BF00F6C625 /* Lock.cpp */,
 				A09EEBF60D8C19BF00F6C625 /* Sleep.cpp */,
-				A0EEDE980F59D49C0023A7F7 /* Initializer.cpp */,
 			);
 			name = Sources;
 			sourceTree = SOURCE_ROOT;
@@ -950,6 +949,7 @@
 		A09EEBEF0D8C19BF00F6C625 /* Unix */ = {
 			isa = PBXGroup;
 			children = (
+				A0EEDE980F59D49C0023A7F7 /* Initializer.cpp */,
 				A09EEBF00D8C19BF00F6C625 /* Mutex.cpp */,
 				A09EEBF10D8C19BF00F6C625 /* Platform.cpp */,
 				A09EEBF20D8C19BF00F6C625 /* Platform.hpp */,

@@ -208,7 +208,7 @@
 		A01269840E63192B00B96A5D /* libsfml-graphics-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libsfml-graphics-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A018A2AD0EA21A2C005FFAC3 /* Http.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Http.cpp; path = ../../src/SFML/Network/Http.cpp; sourceTree = SOURCE_ROOT; };
 		A018A2AE0EA21A2C005FFAC3 /* Ftp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ftp.cpp; path = ../../src/SFML/Network/Ftp.cpp; sourceTree = SOURCE_ROOT; };
-		A01BEF070F6BF0140095262C /* Initializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Initializer.cpp; path = ../../src/SFML/System/Initializer.cpp; sourceTree = SOURCE_ROOT; };
+		A01BEF070F6BF0140095262C /* Initializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Initializer.cpp; sourceTree = "<group>"; };
 		A04C5A930EDDD88B00935061 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ../../src/SFML/Window/Cocoa/AppController.h; sourceTree = SOURCE_ROOT; };
 		A04C5A940EDDD88B00935061 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = AppController.mm; path = ../../src/SFML/Window/Cocoa/AppController.mm; sourceTree = SOURCE_ROOT; };
 		A04C5A950EDDD88B00935061 /* Joystick.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Joystick.cpp; path = ../../src/SFML/Window/Cocoa/Joystick.cpp; sourceTree = SOURCE_ROOT; };
@@ -457,7 +457,6 @@
 		A01269870E63193B00B96A5D /* sfml-system */ = {
 			isa = PBXGroup;
 			children = (
-				A01BEF070F6BF0140095262C /* Initializer.cpp */,
 				A0660EA90E89051400D39DEB /* Clock.cpp */,
 				A0660EAA0E89051400D39DEB /* Platform.hpp */,
 				A0660EAB0E89051400D39DEB /* Lock.cpp */,
@@ -577,6 +576,7 @@
 		A0660EAE0E89051400D39DEB /* Unix */ = {
 			isa = PBXGroup;
 			children = (
+				A01BEF070F6BF0140095262C /* Initializer.cpp */,
 				A0660EAF0E89051400D39DEB /* Mutex.cpp */,
 				A0660EB00E89051400D39DEB /* Platform.cpp */,
 				A0660EB10E89051400D39DEB /* Platform.hpp */,

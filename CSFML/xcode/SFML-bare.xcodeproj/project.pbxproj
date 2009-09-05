@@ -663,7 +663,6 @@
 			isa = PBXGroup;
 			children = (
 				A011E4250F65780E00FAE48D /* Clock.cpp */,
-				A011E4260F65780E00FAE48D /* Initializer.cpp */,
 				A011E4270F65780E00FAE48D /* Lock.cpp */,
 				A011E4290F65780E00FAE48D /* Platform.hpp */,
 				A011E42A0F65780E00FAE48D /* Randomizer.cpp */,
@@ -678,6 +677,7 @@
 		A011E42D0F65780E00FAE48D /* Unix */ = {
 			isa = PBXGroup;
 			children = (
+				A011E4260F65780E00FAE48D /* Initializer.cpp */,
 				A011E42E0F65780E00FAE48D /* Mutex.cpp */,
 				A011E42F0F65780E00FAE48D /* Platform.cpp */,
 				A011E4300F65780E00FAE48D /* Platform.hpp */,
