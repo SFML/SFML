@@ -20,4 +20,4 @@ mrproper: clean
 	@rm -rf $(LIBNAME)
 
 install:
-	@($(CP) $(LIBNAME) $(DESTLIBDIR) && $(LN) $(LNFLAGS) $(DESTLIBDIR)/$(LIB).$(VERSION) $(DESTLIBDIR)/$(LIB))
+	@($(CP) $(LIBNAME) $(DESTLIBDIR) && $(LN) $(LNFLAGS) $(LIB).$(VERSION) $(DESTLIBDIR)/$(LIB))
