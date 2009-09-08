@@ -88,7 +88,7 @@ public :
 /// \return True if colors are equal
 ///
 ////////////////////////////////////////////////////////////
-bool operator ==(const Color& left, const Color& right);
+SFML_API bool operator ==(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// Compare two colors (for difference)
@@ -99,7 +99,7 @@ bool operator ==(const Color& left, const Color& right);
 /// \return True if colors are different
 ///
 ////////////////////////////////////////////////////////////
-bool operator !=(const Color& left, const Color& right);
+SFML_API bool operator !=(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// Operator + overload to add two colors
@@ -132,7 +132,7 @@ SFML_API Color operator *(const Color& left, const Color& right);
 /// \return Component-wise saturated addition of the two colors
 ///
 ////////////////////////////////////////////////////////////
-Color& operator +=(Color& left, const Color& right);
+SFML_API Color& operator +=(Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// Operator *= overload to modulate a color
@@ -143,7 +143,7 @@ Color& operator +=(Color& left, const Color& right);
 /// \return Component-wise multiplication of the two colors
 ///
 ////////////////////////////////////////////////////////////
-Color& operator *=(Color& left, const Color& right);
+SFML_API Color& operator *=(Color& left, const Color& right);
 
 } // namespace sf
 
