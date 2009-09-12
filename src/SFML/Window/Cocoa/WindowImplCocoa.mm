@@ -606,7 +606,7 @@ void WindowImplCocoa::SetCursorPosition(unsigned int Left, unsigned int Top)
 		absolute.y = [[NSScreen mainScreen] frame].size.height - absolute.y;
 		
 		// Move cursor
-		CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(absolute.x, absolute.y));
+		CGDisplayMoveCursorToPoint([AppController primaryScreen], CGPointMake(absolute.x, absolute.y));
 	}
 }
 

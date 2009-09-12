@@ -85,6 +85,10 @@
 	ctxtAttribs[idx++] = NSOpenGLPFADoubleBuffer;
 	ctxtAttribs[idx++] = NSOpenGLPFAAccelerated;
 	
+	// Force use of first screen
+	//ctxtAttribs[idx++] = NSOpenGLPFAScreenMask;
+	//ctxtAttribs[idx++] = CGDisplayIDToOpenGLDisplayMask([AppController primaryScreen]);
+	
 	// windowed context (even fullscreen mode uses a window)
 	ctxtAttribs[idx++] = NSOpenGLPFAWindow;
 	
@@ -512,7 +516,7 @@
 				// Check display mode and put new values in 'mode' if needed
 				boolean_t exact = true;
 				
-				CFDictionaryRef properties = CGDisplayBestModeForParameters(kCGDirectMainDisplay, mode.BitsPerPixel,
+				CFDictionaryRef properties = CGDisplayBestModeForParameters([AppController primaryScreen], mode.BitsPerPixel,
 																			mode.Width, mode.Height, &exact);
 				
 				if (!properties) {

@@ -103,25 +103,7 @@
 				throw std::bad_alloc();
 			}
 			
-			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-			// I want to go back to the desktop mode
-			// if we've a fullscreen window when hiding
-			[nc addObserver:self
-				   selector:@selector(applicationWillHide:)
-					   name:NSApplicationWillHideNotification
-					 object:NSApp];
-			
-			// And restore de fullscreen mode when unhiding
-			[nc addObserver:self
-				   selector:@selector(applicationWillUnhide:)
-					   name:NSApplicationWillUnhideNotification
-					 object:NSApp];
-			
-			// Go back to desktop mode before exit
-			[nc addObserver:self
-				   selector:@selector(applicationWillTerminate:)
-					   name:NSApplicationWillTerminateNotification
-					 object:NSApp];
+			[self setNotifications];
 			
 			if ([NSApp mainMenu] == nil) {
 				[self makeMenuBar];
@@ -156,30 +138,71 @@
 
 
 ////////////////////////////////////////////////////////////
+/// Returns the primay computer's screen
+////////////////////////////////////////////////////////////
++ (CGDirectDisplayID)primaryScreen
+{
+	static BOOL firstTime = YES;
+	static CGDirectDisplayID screen = kCGNullDirectDisplay;
+	
+	if (firstTime) {
+		CGDisplayCount numScr;
+		CGDisplayErr err = CGGetDisplaysWithPoint(CGPointMake(0, 0), 1, &screen, &numScr);
+		
+		if (err != kCGErrorSuccess || numScr < 1) {
+			std::cerr << "Unable to get primary screen (error code " << err 
+			<< " ). Using the main screen.";
+			screen = CGMainDisplayID();
+		}
+		firstTime = NO;
+	}
+	
+	return screen;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Reset notifictions about application focus
+////////////////////////////////////////////////////////////
+- (void)setNotifications
+{
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+	[nc addObserver:self
+		   selector:@selector(applicationWillDeactivate:)
+			   name:NSApplicationWillResignActiveNotification
+			 object:NSApp];
+	[nc addObserver:self
+		   selector:@selector(applicationWillActivate:)
+			   name:NSApplicationWillBecomeActiveNotification
+			 object:NSApp];
+
+	[nc addObserver:self
+		   selector:@selector(applicationWillTerminate:)
+			   name:NSApplicationWillTerminateNotification
+			 object:NSApp];
+}
+
+
+////////////////////////////////////////////////////////////
 /// Hide all the fullscreen windows and switch back to the desktop display mode
 ////////////////////////////////////////////////////////////
-- (void)applicationWillHide:(NSNotification *)aNotification
+- (void)applicationWillDeactivate:(NSNotification *)aNotification
 {
+	// Note: not using fading because it produces reactivation issues
 	if (myFullscreenWrapper) {
 		myPrevMode = sf::VideoMode::GetDesktopMode();
 		
-		CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([AppController primaryScreen],
 																	  myDesktopMode.BitsPerPixel,
 																	  myDesktopMode.Width,
 																	  myDesktopMode.Height,
 																	  NULL);
 		
-		// Fade to black screen
-		[self doFadeOperation:FillScreen time:0.2f sync:true];
-		
 		// Make the full screen window unvisible
 		[[myFullscreenWrapper window] setAlphaValue:0.0f];
 		
 		// Switch to the wished display mode
-		CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
-		
-		// Fade to normal screen
-		[self doFadeOperation:CleanScreen time:0.5f sync:false];
+		CGDisplaySwitchToMode([AppController primaryScreen], displayMode);
 	}
 }
 
@@ -187,31 +210,26 @@
 ////////////////////////////////////////////////////////////
 /// Unhide all the fullscreen windows and switch to full screen display mode
 ////////////////////////////////////////////////////////////
-- (void)applicationWillUnhide:(NSNotification *)aNotification
+- (void)applicationWillActivate:(NSNotification *)aNotification
 {
 	if (myFullscreenWrapper) {
-		CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([AppController primaryScreen],
 																	  myPrevMode.BitsPerPixel,
 																	  myPrevMode.Width,
 																	  myPrevMode.Height,
 																	  NULL);
-		
-		// Fade to a black screen
-		[self doFadeOperation:FillScreen time:0.5f sync:true];
 		[NSMenu setMenuBarVisible:NO];
 		
 		// Switch to the wished display mode
-		CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
+		CGDisplaySwitchToMode([AppController primaryScreen], displayMode);
 		
 		// Show the fullscreen window if existing
 		if (myFullscreenWrapper)
 		{
-				[[myFullscreenWrapper window] setAlphaValue:1.0f];
-				[[myFullscreenWrapper window] center];
+			[[myFullscreenWrapper window] setAlphaValue:1.0f];
+			[[myFullscreenWrapper window] center];
+			[[myFullscreenWrapper window] makeKeyAndOrderFront:self];
 		}
-		
-		// Fade to normal screen
-		[self doFadeOperation:CleanScreen time:0.5f sync:false];
 	}
 }
 
@@ -228,7 +246,6 @@
 - (void)makeMenuBar
 {
 	// Source taken from SDL 1.3
-	
 	NSString *appName = nil;
 	NSString *title = nil;
 	NSMenu *appleMenu = nil;
@@ -393,7 +410,7 @@
 	if (aWrapper == nil && myFullscreenWrapper)
 	{
 		// Get the CoreGraphics display mode according to the desktop mode
-		CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([AppController primaryScreen],
 																	  myDesktopMode.BitsPerPixel,
 																	  myDesktopMode.Width,
 																	  myDesktopMode.Height,
@@ -405,7 +422,7 @@
 #endif
 		
 		// Switch to the desktop display mode
-		CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
+		CGDisplaySwitchToMode([AppController primaryScreen], displayMode);
 		
 		// Close the window
 		[[myFullscreenWrapper window] close];
@@ -423,10 +440,11 @@
 	}
 	else if (aWrapper)
 	{
+		// else if we want to SET fullscreen
 		assert(fullscreenMode != NULL);
 		
 		// Get the CoreGraphics display mode according to the given sf mode
-		CFDictionaryRef displayMode = CGDisplayBestModeForParameters (kCGDirectMainDisplay,
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([AppController primaryScreen],
 																	  fullscreenMode->BitsPerPixel,
 																	  fullscreenMode->Width,
 																	  fullscreenMode->Height,
@@ -446,7 +464,8 @@
 		if (myPrevMode != *fullscreenMode)
 		{
 			// Switch to the wished display mode
-			CGDisplaySwitchToMode(kCGDirectMainDisplay, displayMode);
+			myPrevMode = *fullscreenMode;
+			CGDisplaySwitchToMode([AppController primaryScreen], displayMode);
 		}
 		
 		if (myFullscreenWrapper)
@@ -495,7 +514,7 @@
 		if (!result) {
 			// Capture display but do not fill the screen with black
 			// so that we can see the fade operation
-			capture = CGDisplayCaptureWithOptions(kCGDirectMainDisplay, kCGCaptureNoFill);
+			capture = CGDisplayCaptureWithOptions([AppController primaryScreen], kCGCaptureNoFill);
 			
 			if (!capture) {
 				// Do the increasing fade operation
@@ -505,11 +524,11 @@
 							  0.0f, 0.0f, 0.0f, sync);
 				
 				// Now, release the non black-filling capture
-				CGDisplayRelease(kCGDirectMainDisplay);
+				CGDisplayRelease([AppController primaryScreen]);
 				
 				// And capture with filling
 				// so that we don't see the switching in the meantime
-				CGDisplayCaptureWithOptions(kCGDirectMainDisplay, kCGCaptureNoOptions);
+				CGDisplayCaptureWithOptions([AppController primaryScreen], kCGCaptureNoOptions);
 			}
 			
 			prevToken = token;
@@ -522,10 +541,10 @@
 		if (!result) {
 			if (!capture) {
 				// Release the black-filling capture
-				CGDisplayRelease(kCGDirectMainDisplay);
+				CGDisplayRelease([AppController primaryScreen]);
 				
 				// Capture the display but do not fill with black (still for the fade operation)
-				CGDisplayCaptureWithOptions(kCGDirectMainDisplay, kCGCaptureNoFill);
+				CGDisplayCaptureWithOptions([AppController primaryScreen], kCGCaptureNoFill);
 				
 				// Do the decreasing fading
 				CGDisplayFade(token, time,
@@ -541,7 +560,7 @@
 			}
 			
 			// Release the captured display
-			CGDisplayRelease(kCGDirectMainDisplay);
+			CGDisplayRelease([AppController primaryScreen]);
 		}
 	}
 }
