@@ -27,7 +27,7 @@
 /// Default constructor
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>::Vector2() :
+inline Vector2<T>::Vector2() :
 x(0),
 y(0)
 {
@@ -39,7 +39,7 @@ y(0)
 /// Construct the color from its coordinates
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>::Vector2(T X, T Y) :
+inline Vector2<T>::Vector2(T X, T Y) :
 x(X),
 y(Y)
 {
@@ -51,7 +51,7 @@ y(Y)
 /// Operator - overload ; returns the opposite of a vector
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator -(const Vector2<T>& left)
+inline Vector2<T> operator -(const Vector2<T>& left)
 {
     return Vector2<T>(-left.x, -left.y);
 }
@@ -61,7 +61,7 @@ Vector2<T> operator -(const Vector2<T>& left)
 /// Operator += overload ; add two vectors and assign to the first op
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right)
+inline Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right)
 {
     left.x += right.x;
     left.y += right.y;
@@ -74,7 +74,7 @@ Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right)
 /// Operator -= overload ; subtract two vectors and assign to the first op
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right)
+inline Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right)
 {
     left.x -= right.x;
     left.y -= right.y;
@@ -87,7 +87,7 @@ Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right)
 /// Operator + overload ; adds two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right)
+inline Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right)
 {
     return Vector2<T>(left.x + right.x, left.y + right.y);
 }
@@ -97,7 +97,7 @@ Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right)
 /// Operator - overload ; subtracts two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right)
+inline Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right)
 {
     return Vector2<T>(left.x - right.x, left.y - right.y);
 }
@@ -107,7 +107,7 @@ Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right)
 /// Operator * overload ; multiply a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator *(const Vector2<T>& left, T right)
+inline Vector2<T> operator *(const Vector2<T>& left, T right)
 {
     return Vector2<T>(left.x * right, left.y * right);
 }
@@ -117,7 +117,7 @@ Vector2<T> operator *(const Vector2<T>& left, T right)
 /// Operator * overload ; multiply a scalar value by a vector
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator *(T left, const Vector2<T>& right)
+inline Vector2<T> operator *(T left, const Vector2<T>& right)
 {
     return Vector2<T>(right.x * left, right.y * left);
 }
@@ -127,7 +127,7 @@ Vector2<T> operator *(T left, const Vector2<T>& right)
 /// Operator *= overload ; multiply-assign a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator *=(Vector2<T>& left, T right)
+inline Vector2<T>& operator *=(Vector2<T>& left, T right)
 {
     left.x *= right;
     left.y *= right;
@@ -140,7 +140,7 @@ Vector2<T>& operator *=(Vector2<T>& left, T right)
 /// Operator / overload ; divide a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator /(const Vector2<T>& left, T right)
+inline Vector2<T> operator /(const Vector2<T>& left, T right)
 {
     return Vector2<T>(left.x / right, left.y / right);
 }
@@ -150,7 +150,7 @@ Vector2<T> operator /(const Vector2<T>& left, T right)
 /// Operator /= overload ; divide-assign a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator /=(Vector2<T>& left, T right)
+inline Vector2<T>& operator /=(Vector2<T>& left, T right)
 {
     left.x /= right;
     left.y /= right;
@@ -163,7 +163,7 @@ Vector2<T>& operator /=(Vector2<T>& left, T right)
 /// Operator == overload ; compares the equality of two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator ==(const Vector2<T>& left, const Vector2<T>& right)
+inline bool operator ==(const Vector2<T>& left, const Vector2<T>& right)
 {
     return (left.x == right.x) && (left.y == right.y);
 }
@@ -173,7 +173,7 @@ bool operator ==(const Vector2<T>& left, const Vector2<T>& right)
 /// Operator != overload ; compares the difference of two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
+inline bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
 {
     return (left.x != right.x) || (left.y != right.y);
 }
