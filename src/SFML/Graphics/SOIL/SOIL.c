@@ -13,18 +13,6 @@
 	* everybody at gamedev.net
 */
 
-#define SOIL_CHECK_FOR_GL_ERRORS 0
-
-#ifdef WIN32
-	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>
-	#include <wingdi.h>
-#elif defined(__APPLE__) || defined(__APPLE_CC__)
-	/*	I can't test this Apple stuff!	*/
-	#define APIENTRY
-#else
-#endif
-
 #include "SOIL.h"
 #include "stb_image_aug.h"
 #include "image_DXT.h"
@@ -35,7 +23,6 @@
 /*	error reporting	*/
 char *result_string_pointer = "SOIL initialized";
 
-
 unsigned char*
 	SOIL_load_image
 	(
@@ -44,7 +31,7 @@ unsigned char*
 		int force_channels
 	)
 {
-	unsigned char *result = stbi_load( (char*)filename,
+	unsigned char *result = stbi_load( filename,
 			width, height, channels, force_channels );
 	if( result == NULL )
 	{
@@ -66,7 +53,7 @@ unsigned char*
 	)
 {
 	unsigned char *result = stbi_load_from_memory(
-				(stbi_uc *)buffer, buffer_length,
+				buffer, buffer_length,
 				width, height, channels,
 				force_channels );
 	if( result == NULL )
@@ -100,17 +87,17 @@ int
 	}
 	if( image_type == SOIL_SAVE_TYPE_BMP )
 	{
-		save_result = stbi_write_bmp( (char*)filename,
+		save_result = stbi_write_bmp( filename,
 				width, height, channels, (void*)data );
 	} else
 	if( image_type == SOIL_SAVE_TYPE_TGA )
 	{
-		save_result = stbi_write_tga( (char*)filename,
+		save_result = stbi_write_tga( filename,
 				width, height, channels, (void*)data );
 	} else
 	if( image_type == SOIL_SAVE_TYPE_DDS )
 	{
-		save_result = save_image_as_DDS( (const char*)filename,
+		save_result = save_image_as_DDS( filename,
 				width, height, channels, (const unsigned char *const)data );
 	} else
 	{

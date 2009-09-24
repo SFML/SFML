@@ -73,7 +73,6 @@ enum
 	SOIL_SAVE_TYPE_BMP = 1,
 	SOIL_SAVE_TYPE_DDS = 2
 };
-
 /**
 	Loads an image from disk into an array of unsigned chars.
 	Note that *channels return the original channel count of the

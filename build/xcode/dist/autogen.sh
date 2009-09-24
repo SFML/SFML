@@ -1,4 +1,30 @@
 #!/bin/sh
+
+############################################################
+#
+#  SFML - Simple and Fast Multimedia Library
+#  Copyright (C) 2007-2009 Lucas Soltic (ceylow@gmail.com) and Laurent Gomila (laurent.gom@gmail.com)
+#
+#  This software is provided 'as-is', without any express or implied warranty.
+#  In no event will the authors be held liable for any damages arising from the use of this software.
+#
+#  Permission is granted to anyone to use this software for any purpose,
+#  including commercial applications, and to alter it and redistribute it freely,
+#  subject to the following restrictions:
+#
+#  1. The origin of this software must not be misrepresented;
+#     you must not claim that you wrote the original software.
+#     If you use this software in a product, an acknowledgment
+#     in the product documentation would be appreciated but is not required.
+#
+#  2. Altered source versions must be plainly marked as such,
+#     and must not be misrepresented as being the original software.
+#
+#  3. This notice may not be removed or altered from any source distribution.
+#
+############################################################
+
+
 cd ../../../
 
 SFML_VERSION="1.6"
@@ -43,6 +69,8 @@ SHOULD_CONSIDER_CXX="yes"
 SHOULD_CONSIDER_C="yes"
 SHOULD_CONSIDER_SAMPLES="yes"
 
+VERBOSE_OUTPUT="/dev/null"
+
 # Checks that last command ended normally. Prints an error message and exists if not.
 check_last_process()
 {
@@ -61,15 +89,20 @@ check_last_process()
 # User help
 print_usage()
 {
-    echo "Usage: $0 [clean | build | build-samples | build-pkg | all]"
-    echo "    Default shows this help"
+    echo "Usage: $0 [clean | build | build-samples | build-pkg | all [--verbose]]"
     echo
+    echo "Commands:"
     echo "    clean\t\tdeletes the C and C++ frameworks, object files and packages"
     echo "    build\t\tcompiles all the C and C++ SFML frameworks"
     echo "    build-samples\tcompiles the SFML samples"
     echo "    build-pkg\t\tbuilds the packages to be distributed"
     echo "    all\t\t\tdoes build, build-samples and build-pkg"
+    echo "    help (default)\tshows this usage information"
     echo
+    echo "Options:"
+    echo "    --verbose\t\tdo not hide standard ouput, errors are still shown"
+    echo
+    echo "Contents summary:"
     echo "    Found C++ project : $SHOULD_CONSIDER_CXX"
     echo "    Found C project : $SHOULD_CONSIDER_C"
     echo "    Found samples project : $SHOULD_CONSIDER_SAMPLES"
@@ -135,7 +168,7 @@ remove_dir()
 {
     if test -d "$1"
       then
-        rm -rfv "$1" > /dev/null
+        rm -rfv "$1" > "$VERBOSE_OUTPUT"
     fi
 }
 
@@ -144,7 +177,7 @@ remove_file()
 {
     if test -f "$1"
       then
-        rm -f "$1" > /dev/null
+        rm -f "$1" > "$VERBOSE_OUTPUT"
     fi
 }
 
@@ -176,7 +209,7 @@ clean_all()
         if test -d "$XCODE_CXX_ROOT_DIR/$XCODE_FRAMEWORKS_PROJECT"
           then
             cd "$XCODE_CXX_ROOT_DIR"
-            xcodebuild -project "$XCODE_FRAMEWORKS_PROJECT" -target "All" -configuration "$XCODE_BUILD_STYLE" clean > /dev/null
+            xcodebuild -project "$XCODE_FRAMEWORKS_PROJECT" -target "All" -configuration "$XCODE_BUILD_STYLE" clean > "$VERBOSE_OUTPUT"
             check_last_process " done"
         else
             if test -d "$XCODE_CXX_ROOT_DIR"
@@ -189,6 +222,7 @@ clean_all()
         fi
     fi
     
+    
     # Process cleaning for C project
     if [ "$SHOULD_CONSIDER_C" == "yes" ]
       then
@@ -196,7 +230,7 @@ clean_all()
         if test -d "$XCODE_C_ROOT_DIR/$XCODE_FRAMEWORKS_PROJECT"
           then
             cd "$XCODE_C_ROOT_DIR"
-            xcodebuild -project "$XCODE_FRAMEWORKS_PROJECT" -target "All" -configuration "$XCODE_BUILD_STYLE" clean > /dev/null
+            xcodebuild -project "$XCODE_FRAMEWORKS_PROJECT" -target "All" -configuration "$XCODE_BUILD_STYLE" clean > "$VERBOSE_OUTPUT"
             check_last_process " done"
         else
             # Do not produce error if the package does no contain the C stuff
@@ -217,7 +251,7 @@ clean_all()
         if test -d "$XCODE_SAMPLES_ROOT_DIR/$XCODE_SAMPLES_PROJECT"
           then
             cd "$XCODE_SAMPLES_ROOT_DIR"
-            xcodebuild -project "$XCODE_SAMPLES_PROJECT" -target "All" -configuration "$XCODE_BUILD_STYLE" clean > /dev/null
+            xcodebuild -project "$XCODE_SAMPLES_PROJECT" -target "All" -configuration "$XCODE_BUILD_STYLE" clean > "$VERBOSE_OUTPUT"
             check_last_process " done"
         else
             # Do not produce error if the package does not contain the samples
@@ -253,7 +287,7 @@ build_frameworks()
             for target in "${XCODE_CXX_TARGETS[@]}"
               do
                 printf "Building $target framework..."
-                xcodebuild -project "$XCODE_FRAMEWORKS_PROJECT" -target "$target" -parallelizeTargets -configuration "$XCODE_BUILD_STYLE" build > /dev/null
+                xcodebuild -project "$XCODE_FRAMEWORKS_PROJECT" -target "$target" -parallelizeTargets -configuration "$XCODE_BUILD_STYLE" build > "$VERBOSE_OUTPUT"
                 check_last_process " done"
             done
             
@@ -277,7 +311,7 @@ build_frameworks()
             for target in "${XCODE_C_TARGETS[@]}"
               do
                 printf "Building $target framework..."
-                xcodebuild -project "$XCODE_FRAMEWORKS_PROJECT" -target "$target" -parallelizeTargets -configuration "$XCODE_BUILD_STYLE" build > /dev/null
+                xcodebuild -project "$XCODE_FRAMEWORKS_PROJECT" -target "$target" -parallelizeTargets -configuration "$XCODE_BUILD_STYLE" build > "$VERBOSE_OUTPUT"
                 check_last_process " done"
             done
             
@@ -302,7 +336,7 @@ build_samples()
         if test -d "$XCODE_SAMPLES_ROOT_DIR/$XCODE_SAMPLES_PROJECT"
           then
             # Build the samples
-            xcodebuild -project "$XCODE_SAMPLES_PROJECT" -target "All" -parallelizeTargets -configuration "$XCODE_BUILD_STYLE" build > /dev/null
+            xcodebuild -project "$XCODE_SAMPLES_PROJECT" -target "All" -parallelizeTargets -configuration "$XCODE_BUILD_STYLE" build > "$VERBOSE_OUTPUT"
             check_last_process " done"
             echo "In order to run the samples, the SFML frameworks (located in \"lib\") must be copied in the /Library/Frameworks directory." > "$CXX_SAMPLES_DIR/README"
             check_last_process
@@ -323,7 +357,7 @@ copy_info_files()
     done
 }
 
-# Build the disk image files of the C and C++ Dev and SDK packages
+# Build the archives of the C and C++ Dev and SDK packages
 build_packages()
 {
     cd "$ROOT_DIR"
@@ -333,7 +367,7 @@ build_packages()
     # Build the C++ SDK package
     if [ "$SHOULD_CONSIDER_CXX" == "yes" ]
       then
-        echo "Building C++ SDK package..."
+        printf "Building C++ SDK package..."
         make_dir "$CXX_SDK_PACKAGE_DIR"
         for dir in "${CXX_SDK_DIRS[@]}"
           do
@@ -341,7 +375,7 @@ build_packages()
                 "doc")
                     if ! test -f "$ROOT_DIR/$dir/html/index.htm"
                       then
-                        echo "$ROOT_DIR/$dir/html/index.htm not found. Make sure the documentation has been built."
+                        echo "*** $ROOT_DIR/$dir/html/index.htm not found. Make sure the documentation has been built."
                         exit 1
                       fi
                       ;;
@@ -353,14 +387,13 @@ build_packages()
         copy_info_files "$CXX_SDK_PACKAGE_DIR"
 		check_last_process
         
-        # Build the disk image file
-        printf "Made final folder, building Disk Image File..."
-        remove_file "$PACKAGES_ROOT_DIR/$CXX_SDK_PACKAGE.dmg"
-        hdiutil create -format UDBZ -volname "$CXX_SDK_PACKAGE" -srcfolder "$CXX_SDK_PACKAGE_DIR" "$PACKAGES_ROOT_DIR/$CXX_SDK_PACKAGE.dmg" > /dev/null
+        # Build the archive
+        cd "$PACKAGES_ROOT_DIR"
+        tar -cjlf "$PACKAGES_ROOT_DIR/$CXX_SDK_PACKAGE.tar.bz2" "$CXX_SDK_PACKAGE" > "$VERBOSE_OUTPUT"
         check_last_process " done"
         
         # Build the C++ Dev package
-        echo "Building C++ Development package..."
+        printf "Building C++ Development package..."
         make_dir "$CXX_DEV_PACKAGE_DIR"
         for dir in "${CXX_DEV_DIRS[@]}"
           do
@@ -386,10 +419,9 @@ build_packages()
         done
         copy_info_files "$CXX_DEV_PACKAGE_DIR"
         
-        # Build the disk image file
-        printf "Made final folder, building Disk Image File..."
-        remove_file "$PACKAGES_ROOT_DIR/$CXX_DEV_PACKAGE.dmg"
-        hdiutil create -format UDBZ -volname "$CXX_DEV_PACKAGE" -srcfolder "$CXX_DEV_PACKAGE_DIR" "$PACKAGES_ROOT_DIR/$CXX_DEV_PACKAGE.dmg" > /dev/null
+        # Build the archive
+        cd "$PACKAGES_ROOT_DIR"
+        tar -cjlf "$PACKAGES_ROOT_DIR/$CXX_DEV_PACKAGE.tar.bz2" "$CXX_DEV_PACKAGE" > "$VERBOSE_OUTPUT"
         check_last_process " done"
     fi # SHOULD_CONSIDER_CXX
     
@@ -397,7 +429,7 @@ build_packages()
     # Build the C SDK package
     if [ "$SHOULD_CONSIDER_C" == "yes" ]
       then
-        echo "Building C SDK package..."
+        printf "Building C SDK package..."
         make_dir "$C_SDK_PACKAGE_DIR"
         for dir in "${C_SDK_DIRS[@]}"
           do
@@ -413,14 +445,13 @@ build_packages()
         done
         copy_info_files "$C_SDK_PACKAGE_DIR"
         
-        # Build the disk image file
-        printf "Made final folder, building Disk Image File..."
-        remove_file "$PACKAGES_ROOT_DIR/$C_SDK_PACKAGE.dmg"
-        hdiutil create -format UDBZ -volname "$C_SDK_PACKAGE" -srcfolder "$C_SDK_PACKAGE_DIR" "$PACKAGES_ROOT_DIR/$C_SDK_PACKAGE.dmg" > /dev/null
+        # Build the archive
+        cd "$PACKAGES_ROOT_DIR"
+        tar -cjlf "$PACKAGES_ROOT_DIR/$C_SDK_PACKAGE.tar.bz2" "$C_SDK_PACKAGE" > "$VERBOSE_OUTPUT"
         check_last_process " done"
         
         # Build the C Development package
-        echo "Building C Development package..."
+        printf "Building C Development package..."
         make_dir "$C_DEV_PACKAGE_DIR"
         for dir in "${C_DEV_DIRS[@]}"
           do
@@ -454,10 +485,9 @@ build_packages()
         done
         copy_info_files "$C_DEV_PACKAGE_DIR"
         
-        # Build the disk image file
-        printf "Made final folder, building Disk Image File..."
-        remove_file "$PACKAGES_ROOT_DIR/$C_DEV_PACKAGE.dmg"
-        hdiutil create -format UDBZ -volname "$C_DEV_PACKAGE" -srcfolder "$C_DEV_PACKAGE_DIR" "$PACKAGES_ROOT_DIR/$C_DEV_PACKAGE.dmg" > /dev/null
+        # Build the archive
+        cd "$PACKAGES_ROOT_DIR"
+        tar -cjlf "$PACKAGES_ROOT_DIR/$C_DEV_PACKAGE.tar.bz2" "$C_DEV_PACKAGE" > "$VERBOSE_OUTPUT"
         check_last_process " done"
     fi
     
@@ -475,6 +505,14 @@ main()
       then
         action="$1"
     fi
+    
+    for flag in $*
+      do
+        if [ "$flag" == "--verbose" ]
+          then
+            VERBOSE_OUTPUT="/dev/stdout"
+        fi
+    done
     
     case $action in
         "clean")
@@ -502,6 +540,9 @@ main()
             ;;
          "help")
             print_usage $*
+            ;;
+          "--verbose")
+            echo "--verbose option cannot be used alone. See usage."
             ;;
         *)
             echo "Unknow action $action."
