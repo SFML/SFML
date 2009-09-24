@@ -179,7 +179,8 @@ bool RenderImageImplPBuffer::Activate(bool active)
     }
     else
     {
-        // We don't actually unbind the P-Buffer, for performances reasons
+        // We don't actually unbind the P-Buffer,
+        // for performances and consistency reasons
     }
 
     return true;

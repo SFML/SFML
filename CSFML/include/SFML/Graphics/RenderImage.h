@@ -134,18 +134,28 @@ CSFML_API const sfView* sfRenderImage_GetView(sfRenderImage* renderImage);
 CSFML_API sfView* sfRenderImage_GetDefaultView(sfRenderImage* renderImage);
 
 ////////////////////////////////////////////////////////////
-/// Tell SFML to preserve external OpenGL states, at the expense of
-/// more CPU charge. Use this function if you don't want SFML
-/// to mess up your own OpenGL states (if any).
-/// Don't enable state preservation if not needed, as it will allow
-/// SFML to do internal optimizations and improve performances.
-/// This parameter is false by default
+/// Get the viewport of a view applied to this target
 ///
-/// \param renderImage : Target renderimage
-/// \param preserve :    True to preserve OpenGL states, false to let SFML optimize
+/// \param renderImage : Renderimage object
+/// \param view :        Target view
+///
+/// \return Viewport rectangle, expressed in pixels in the current target
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfRenderImage_PreserveOpenGLStates(sfRenderImage* renderImage, sfBool preserve);
+CSFML_API sfIntRect sfRenderImage_GetViewport(sfRenderImage* renderImage, sfView* view);
+
+////////////////////////////////////////////////////////////
+/// Convert a point in image coordinates into view coordinates
+///
+/// \param renderImage : Renderimage object
+/// \param windowX :     X coordinate of the point to convert, relative to the image
+/// \param windowY :     Y coordinate of the point to convert, relative to the image
+/// \param viewX :       Pointer to fill with the X coordinate of the converted point
+/// \param viewY :       Pointer to fill with the Y coordinate of the converted point
+/// \param targetView :  Target view to convert the point to (pass NULL to use the current view)
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfRenderImage_ConvertCoords(sfRenderImage* renderImage, unsigned int windowX, unsigned int windowY, float* viewX, float* viewY, sfView* targetView);
 
 ////////////////////////////////////////////////////////////
 /// Get the target image

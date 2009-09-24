@@ -25,6 +25,7 @@
 #ifndef SFML_CONFIG_HPP
 #define SFML_CONFIG_HPP
 
+
 ////////////////////////////////////////////////////////////
 // Identify the operating system
 ////////////////////////////////////////////////////////////
@@ -58,6 +59,23 @@
 
     // Unsupported system
     #error This operating system is not supported by SFML library
+
+#endif
+
+
+////////////////////////////////////////////////////////////
+// Identify the endianess
+////////////////////////////////////////////////////////////
+#if defined(__m68k__) || defined(mc68000) || defined(_M_M68K) || (defined(__MIPS__) && defined(__MISPEB__)) || \
+    defined(__ppc__) || defined(__POWERPC__) || defined(_M_PPC) || defined(__sparc__) || defined(__hppa__)
+
+    // Big endian
+    #define SFML_ENDIAN_BIG
+
+#else
+
+    // Little endian
+    #define SFML_ENDIAN_LITTLE
 
 #endif
 

@@ -44,16 +44,37 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Tell SFML to preserve external OpenGL states, at the expense of
-            /// more CPU charge. Use this function if you don't want SFML
-            /// to mess up your own OpenGL states (if any).
-            /// Don't enable state preservation if not needed, as it will allow
-            /// SFML to do internal optimizations and improve performances.
-            /// This parameter is false by default
+            /// Get the viewport of a view applied to this target
             /// </summary>
-            /// <param name="preserve">True to preserve OpenGL states, false to let SFML optimize</param>
+            /// <param name="view">Target view</param>
+            /// <returns>Viewport rectangle, expressed in pixels in the current target</returns>
             ////////////////////////////////////////////////////////////
-            void PreserveOpenGLStates(bool preserve);
+            IntRect GetViewport(View view);
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Convert a point in target coordinates into view coordinates
+            /// This version uses the current view of the window
+            /// </summary>
+            /// <param name="x">X coordinate of the point to convert, relative to the target</param>
+            /// <param name="y">Y coordinate of the point to convert, relative to the target</param>
+            /// <returns>Converted point</returns>
+            ///
+            ////////////////////////////////////////////////////////////
+            Vector2 ConvertCoords(uint x, uint y);
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Convert a point in target coordinates into view coordinates
+            /// This version uses the given view
+            /// </summary>
+            /// <param name="x">X coordinate of the point to convert, relative to the target</param>
+            /// <param name="y">Y coordinate of the point to convert, relative to the target</param>
+            /// <param name="view">Target view to convert the point to</param>
+            /// <returns>Converted point</returns>
+            ///
+            ////////////////////////////////////////////////////////////
+            Vector2 ConvertCoords(uint x, uint y, View view);
 
             ////////////////////////////////////////////////////////////
             /// <summary>

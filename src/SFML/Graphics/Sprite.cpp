@@ -27,7 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/RenderQueue.hpp>
+#include <utility>
 
 
 namespace sf
@@ -181,50 +182,32 @@ Color Sprite::GetPixel(unsigned int x, unsigned int y) const
 ////////////////////////////////////////////////////////////
 /// /see Drawable::Render
 ////////////////////////////////////////////////////////////
-void Sprite::Render(RenderTarget&) const
+void Sprite::Render(RenderTarget&, RenderQueue& queue) const
 {
     // Get the sprite size
     float width  = static_cast<float>(mySubRect.GetSize().x);
     float height = static_cast<float>(mySubRect.GetSize().y);
 
-    // Check if the image is valid
+    // Check if the image is valid, and calculate the texture coordinates
+    FloatRect coords;
     if (myImage && (myImage->GetWidth() > 0) && (myImage->GetHeight() > 0))
     {
-        // Use the "offset trick" to get pixel-perfect rendering
-        // see http://www.opengl.org/resources/faq/technical/transformations.htm#tran0030
-        GLCheck(glTranslatef(0.375f, 0.375f, 0.f));
-
-        // Bind the texture
-        myImage->Bind();
-
-        // Calculate the texture coordinates
-        FloatRect texCoords = myImage->GetTexCoords(mySubRect);
-        FloatRect rect(myIsFlippedX ? texCoords.Right  : texCoords.Left,
-                       myIsFlippedY ? texCoords.Bottom : texCoords.Top,
-                       myIsFlippedX ? texCoords.Left   : texCoords.Right,
-                       myIsFlippedY ? texCoords.Top    : texCoords.Bottom);
-
-        // Draw the sprite's triangles
-        glBegin(GL_QUADS);
-            glTexCoord2f(rect.Left,  rect.Top);    glVertex2f(0,     0);
-            glTexCoord2f(rect.Left,  rect.Bottom); glVertex2f(0,     height);
-            glTexCoord2f(rect.Right, rect.Bottom); glVertex2f(width, height);
-            glTexCoord2f(rect.Right, rect.Top);    glVertex2f(width, 0) ;
-        glEnd();
+        coords = myImage->GetTexCoords(mySubRect);
+        if (myIsFlippedX) std::swap(coords.Left, coords.Right);
+        if (myIsFlippedY) std::swap(coords.Top, coords.Bottom);
     }
-    else
-    {
-        // Disable texturing
-        GLCheck(glDisable(GL_TEXTURE_2D));
 
-        // Draw the sprite's triangles
-        glBegin(GL_QUADS);
-            glVertex2f(0,     0);
-            glVertex2f(0,     height);
-            glVertex2f(width, height);
-            glVertex2f(width, 0);
-        glEnd();
-    }
+    // Bind the texture
+    queue.SetTexture(myImage);
+
+    // Draw the sprite's geometry
+    queue.BeginBatch();
+    queue.AddVertex(0,     0,      coords.Left,  coords.Top);
+    queue.AddVertex(0,     height, coords.Left,  coords.Bottom);
+    queue.AddVertex(width, height, coords.Right, coords.Bottom);
+    queue.AddVertex(width, 0,      coords.Right, coords.Top);
+    queue.AddTriangle(0, 1, 3);
+    queue.AddTriangle(3, 1, 2);
 }
 
 } // namespace sf

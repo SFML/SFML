@@ -27,8 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/String.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
-#include <locale>
+#include <SFML/Graphics/RenderQueue.hpp>
 
 
 namespace sf
@@ -210,7 +209,7 @@ FloatRect String::GetRect() const
 ////////////////////////////////////////////////////////////
 /// /see sfDrawable::Render
 ////////////////////////////////////////////////////////////
-void String::Render(RenderTarget&) const
+void String::Render(RenderTarget&, RenderQueue& queue) const
 {
     // First get the internal UTF-32 string of the text
     const Unicode::UTF32String& text = myText;
@@ -222,10 +221,9 @@ void String::Render(RenderTarget&) const
     // Set the scaling factor to get the actual size
     float charSize =  static_cast<float>(myFont->GetCharacterSize());
     float factor   = mySize / charSize;
-    GLCheck(glScalef(factor, factor, 1.f));
 
     // Bind the font texture
-    myFont->GetImage().Bind();
+    queue.SetTexture(&myFont->GetImage());
 
     // Initialize the rendering coordinates
     float x = 0.f;
@@ -239,7 +237,8 @@ void String::Render(RenderTarget&) const
     float italicCoeff = (myStyle & Italic) ? 0.208f : 0.f; // 12 degrees
 
     // Draw one quad for each character
-    glBegin(GL_QUADS);
+    unsigned int index = 0;
+    queue.BeginBatch();
     for (std::size_t i = 0; i < text.size(); ++i)
     {
         // Get the current character and its corresponding glyph
@@ -267,31 +266,67 @@ void String::Render(RenderTarget&) const
         }
 
         // Draw a textured quad for the current character
-        glTexCoord2f(coord.Left,  coord.Top);    glVertex2f(x + rect.Left  - italicCoeff * rect.Top,    y + rect.Top);
-        glTexCoord2f(coord.Left,  coord.Bottom); glVertex2f(x + rect.Left  - italicCoeff * rect.Bottom, y + rect.Bottom);
-        glTexCoord2f(coord.Right, coord.Bottom); glVertex2f(x + rect.Right - italicCoeff * rect.Bottom, y + rect.Bottom);
-        glTexCoord2f(coord.Right, coord.Top);    glVertex2f(x + rect.Right - italicCoeff * rect.Top,    y + rect.Top);
+        queue.AddVertex(factor * (x + rect.Left  - italicCoeff * rect.Top),    factor * (y + rect.Top),    coord.Left,  coord.Top);
+        queue.AddVertex(factor * (x + rect.Left  - italicCoeff * rect.Bottom), factor * (y + rect.Bottom), coord.Left,  coord.Bottom);
+        queue.AddVertex(factor * (x + rect.Right - italicCoeff * rect.Bottom), factor * (y + rect.Bottom), coord.Right, coord.Bottom);
+        queue.AddVertex(factor * (x + rect.Right - italicCoeff * rect.Top),    factor * (y + rect.Top),    coord.Right, coord.Top);
 
-        // If we're using the bold style, we must render the character 4 more times,
-        // slightly offseted, to simulate a higher weight
-        if (myStyle & Bold)
-        {
-            static const float offsetsX[] = {-0.5f, 0.5f, 0.f, 0.f};
-            static const float offsetsY[] = {0.f, 0.f, -0.5f, 0.5f};
-
-            for (int j = 0; j < 4; ++j)
-            {
-                glTexCoord2f(coord.Left,  coord.Top);    glVertex2f(x + offsetsX[j] + rect.Left  - italicCoeff * rect.Top,    y + offsetsY[j] + rect.Top);
-                glTexCoord2f(coord.Left,  coord.Bottom); glVertex2f(x + offsetsX[j] + rect.Left  - italicCoeff * rect.Bottom, y + offsetsY[j] + rect.Bottom);
-                glTexCoord2f(coord.Right, coord.Bottom); glVertex2f(x + offsetsX[j] + rect.Right - italicCoeff * rect.Bottom, y + offsetsY[j] + rect.Bottom);
-                glTexCoord2f(coord.Right, coord.Top);    glVertex2f(x + offsetsX[j] + rect.Right - italicCoeff * rect.Top,    y + offsetsY[j] + rect.Top);
-            }
-        }
+        queue.AddTriangle(index + 0, index + 1, index + 3);
+        queue.AddTriangle(index + 3, index + 1, index + 2);
+        index += 4;
 
         // Advance to the next character
         x += advance;
     }
-    glEnd();
+
+    // If we're using the bold style, we must render the string 4 more times,
+    // slightly offseted, to simulate a higher weight
+    if (myStyle & Bold)
+    {
+        float offset = mySize * 0.02f;
+        static const float offsetsX[] = {-offset, offset, 0.f, 0.f};
+        static const float offsetsY[] = {0.f, 0.f, -offset, offset};
+
+        for (int j = 0; j < 4; ++j)
+        {
+            index = 0;
+            x = 0.f;
+            y = charSize;
+
+            queue.BeginBatch();
+            for (std::size_t i = 0; i < text.size(); ++i)
+            {
+                // Get the current character and its corresponding glyph
+                Uint32           curChar  = text[i];
+                const Glyph&     curGlyph = myFont->GetGlyph(curChar);
+                int              advance  = curGlyph.Advance;
+                const IntRect&   rect     = curGlyph.Rectangle;
+                const FloatRect& coord    = curGlyph.TexCoords;
+
+                // Handle special characters
+                switch (curChar)
+                {
+                    case L' ' :  x += advance;         continue;
+                    case L'\n' : y += charSize; x = 0; continue;
+                    case L'\t' : x += advance  * 4;    continue;
+                    case L'\v' : y += charSize * 4;    continue;
+                }
+
+                // Draw a textured quad for the current character
+                queue.AddVertex(factor * (x + offsetsX[j] + rect.Left  - italicCoeff * rect.Top),    factor * (y + offsetsY[j] + rect.Top),    coord.Left,  coord.Top);
+                queue.AddVertex(factor * (x + offsetsX[j] + rect.Left  - italicCoeff * rect.Bottom), factor * (y + offsetsY[j] + rect.Bottom), coord.Left,  coord.Bottom);
+                queue.AddVertex(factor * (x + offsetsX[j] + rect.Right - italicCoeff * rect.Bottom), factor * (y + offsetsY[j] + rect.Bottom), coord.Right, coord.Bottom);
+                queue.AddVertex(factor * (x + offsetsX[j] + rect.Right - italicCoeff * rect.Top),    factor * (y + offsetsY[j] + rect.Top),    coord.Right, coord.Top);
+
+                queue.AddTriangle(index + 0, index + 1, index + 3);
+                queue.AddTriangle(index + 3, index + 1, index + 2);
+                index += 4;
+
+                // Advance to the next character
+                x += advance;
+            }
+        }
+    }
 
     // Draw the underlines if needed
     if (myStyle & Underlined)
@@ -304,16 +339,20 @@ void String::Render(RenderTarget&) const
         underlineCoords.push_back(y + 2);
 
         // Draw the underlines as quads
-        GLCheck(glDisable(GL_TEXTURE_2D));
-        glBegin(GL_QUADS);
+        index = 0;
+        queue.SetTexture(NULL);
+        queue.BeginBatch();
         for (std::size_t i = 0; i < underlineCoords.size(); i += 2)
         {
-            glVertex2f(0,                  underlineCoords[i + 1]);
-            glVertex2f(0,                  underlineCoords[i + 1] + thickness);
-            glVertex2f(underlineCoords[i], underlineCoords[i + 1] + thickness);
-            glVertex2f(underlineCoords[i], underlineCoords[i + 1]);
+            queue.AddVertex(factor * (0),                  factor * (underlineCoords[i + 1]));
+            queue.AddVertex(factor * (0),                  factor * (underlineCoords[i + 1] + thickness));
+            queue.AddVertex(factor * (underlineCoords[i]), factor * (underlineCoords[i + 1] + thickness));
+            queue.AddVertex(factor * (underlineCoords[i]), factor * (underlineCoords[i + 1]));
+
+            queue.AddTriangle(index + 0, index + 1, index + 3);
+            queue.AddTriangle(index + 3, index + 1, index + 2);
+            index += 4;
         }
-        glEnd();
     }
 }
 

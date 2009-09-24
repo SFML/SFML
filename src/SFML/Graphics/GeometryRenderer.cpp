@@ -22,26 +22,47 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GRAPHICS_HPP
-#define SFML_GRAPHICS_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
-#include <SFML/Window.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Glyph.hpp>
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/PostFX.hpp>
-#include <SFML/Graphics/RenderImage.hpp>
-#include <SFML/Graphics/RenderQueue.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Shape.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/String.hpp>
-#include <SFML/Graphics/View.hpp>
+#include <SFML/Graphics/GeometryRenderer.hpp>
+#include <SFML/Graphics/GeometryRendererVBO.hpp>
+#include <SFML/Graphics/GeometryRendererVA.hpp>
+#include <SFML/Graphics/GeometryRendererIM.hpp>
 
 
-#endif // SFML_GRAPHICS_HPP
+namespace sf
+{
+namespace priv
+{
+////////////////////////////////////////////////////////////
+GeometryRenderer* GeometryRenderer::New()
+{
+    // Choose the best implementation according to the graphics card's capabilities
+    if (priv::GeometryRendererVBO::IsSupported())
+    {
+        // Use Vertex Buffer Objects
+        return new priv::GeometryRendererVBO;
+    }
+    else if (priv::GeometryRendererVA::IsSupported())
+    {
+        // Use Vertex Arrays
+        return new priv::GeometryRendererVA;
+    }
+    else
+    {
+        // Use Immediate Mode
+        return new priv::GeometryRendererIM;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+GeometryRenderer::~GeometryRenderer()
+{
+    // Nothing to do
+}
+
+} // namespace priv
+
+} // namespace sf

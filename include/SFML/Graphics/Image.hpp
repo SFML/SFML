@@ -304,16 +304,6 @@ private :
     void EnsureArrayUpdate();
 
     ////////////////////////////////////////////////////////////
-    /// Notify the image that an external source has modified
-    /// its content.
-    /// For internal use only (see RenderImage class).
-    ///
-    /// \param source : RenderImage that will update the image
-    ///
-    ////////////////////////////////////////////////////////////
-    void ExternalUpdate(RenderImage& source);
-
-    ////////////////////////////////////////////////////////////
     /// Reset the image attributes
     ///
     ////////////////////////////////////////////////////////////
@@ -337,7 +327,6 @@ private :
     std::vector<Color> myPixels;            ///< Pixels of the image
     bool               myNeedTextureUpdate; ///< Status of synchronization between pixels in central memory and the internal texture un video memory
     bool               myNeedArrayUpdate;   ///< Status of synchronization between pixels in central memory and the internal texture un video memory
-    RenderImage*       myUpdateSource;      ///< If not null, the image will use it as a source to update its texture
     bool               myPixelsFlipped;     ///< To work around the inconsistency in Y orientation
 };
 

@@ -317,49 +317,48 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Convert a point in window coordinates into view coordinates
-            /// using the current view of the window
+            /// Get the viewport of a view applied to this target
             /// </summary>
-            /// <param name="windowX">X coordinate of the point to convert, relative to the window</param>
-            /// <param name="windowY">Y coordinate of the point to convert, relative to the window</param>
-            /// <returns>Converted point</returns>
+            /// <param name="view">Target view</param>
+            /// <returns>Viewport rectangle, expressed in pixels in the current target</returns>
             ////////////////////////////////////////////////////////////
-            public Vector2 ConvertCoords(uint windowX, uint windowY)
+            public IntRect GetViewport(View view)
             {
-                return ConvertCoords(windowX, windowY, myCurrentView);
+                return sfRenderWindow_GetViewport(This, view.This);
             }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Convert a point in window coordinates into view coordinates
+            /// Convert a point in target coordinates into view coordinates
+            /// This version uses the current view of the window
             /// </summary>
-            /// <param name="windowX">X coordinate of the point to convert, relative to the window</param>
-            /// <param name="windowY">Y coordinate of the point to convert, relative to the window</param>
-            /// <param name="targetView">Target view to convert the point to</param>
+            /// <param name="x">X coordinate of the point to convert, relative to the target</param>
+            /// <param name="y">Y coordinate of the point to convert, relative to the target</param>
             /// <returns>Converted point</returns>
+            ///
             ////////////////////////////////////////////////////////////
-            public Vector2 ConvertCoords(uint windowX, uint windowY, View targetView)
+            public Vector2 ConvertCoords(uint x, uint y)
             {
-                Vector2 Point;
-                sfRenderWindow_ConvertCoords(This, windowX, windowY, out Point.X, out Point.Y, targetView.This);
-
-                return Point;
+                return ConvertCoords(x, y, CurrentView);
             }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Tell SFML to preserve external OpenGL states, at the expense of
-            /// more CPU charge. Use this function if you don't want SFML
-            /// to mess up your own OpenGL states (if any).
-            /// Don't enable state preservation if not needed, as it will allow
-            /// SFML to do internal optimizations and improve performances.
-            /// This parameter is false by default
+            /// Convert a point in target coordinates into view coordinates
+            /// This version uses the given view
             /// </summary>
-            /// <param name="preserve">True to preserve OpenGL states, false to let SFML optimize</param>
+            /// <param name="x">X coordinate of the point to convert, relative to the target</param>
+            /// <param name="y">Y coordinate of the point to convert, relative to the target</param>
+            /// <param name="view">Target view to convert the point to</param>
+            /// <returns>Converted point</returns>
+            ///
             ////////////////////////////////////////////////////////////
-            public void PreserveOpenGLStates(bool preserve)
+            public Vector2 ConvertCoords(uint x, uint y, View view)
             {
-                sfRenderWindow_PreserveOpenGLStates(This, preserve);
+                Vector2 point;
+                sfRenderWindow_ConvertCoords(This, x, y, out point.X, out point.Y, view.This);
+
+                return point;
             }
 
             ////////////////////////////////////////////////////////////
@@ -544,10 +543,10 @@ namespace SFML
             static extern IntPtr sfRenderWindow_GetDefaultView(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderWindow_ConvertCoords(IntPtr This, uint WindowX, uint WindowY, out float ViewX, out float ViewY, IntPtr TargetView);
+            static extern IntRect sfRenderWindow_GetViewport(IntPtr This, IntPtr TargetView);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderWindow_PreserveOpenGLStates(IntPtr This, bool Preserve);
+            static extern void sfRenderWindow_ConvertCoords(IntPtr This, uint WindowX, uint WindowY, out float ViewX, out float ViewY, IntPtr TargetView);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawPostFX(IntPtr This, IntPtr PostFx);

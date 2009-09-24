@@ -321,6 +321,17 @@ CSFML_API const sfView* sfRenderWindow_GetView(sfRenderWindow* renderWindow);
 CSFML_API sfView* sfRenderWindow_GetDefaultView(sfRenderWindow* renderWindow);
 
 ////////////////////////////////////////////////////////////
+/// Get the viewport of a view applied to this target
+///
+/// \param renderWindow : Renderwindow
+/// \param view :         Target view
+///
+/// \return Viewport rectangle, expressed in pixels in the current target
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfIntRect sfRenderWindow_GetViewport(sfRenderWindow* renderWindow, sfView* view);
+
+////////////////////////////////////////////////////////////
 /// Convert a point in window coordinates into view coordinates
 ///
 /// \param renderWindow : Target Renderwindow
@@ -332,20 +343,6 @@ CSFML_API sfView* sfRenderWindow_GetDefaultView(sfRenderWindow* renderWindow);
 ///
 ////////////////////////////////////////////////////////////
 CSFML_API void sfRenderWindow_ConvertCoords(sfRenderWindow* renderWindow, unsigned int windowX, unsigned int windowY, float* viewX, float* viewY, sfView* targetView);
-
-////////////////////////////////////////////////////////////
-/// Tell SFML to preserve external OpenGL states, at the expense of
-/// more CPU charge. Use this function if you don't want SFML
-/// to mess up your own OpenGL states (if any).
-/// Don't enable state preservation if not needed, as it will allow
-/// SFML to do internal optimizations and improve performances.
-/// This parameter is false by default
-///
-/// \param renderWindow : Target Renderwindow
-/// \param preserve :     True to preserve OpenGL states, false to let SFML optimize
-///
-////////////////////////////////////////////////////////////
-CSFML_API void sfRenderWindow_PreserveOpenGLStates(sfRenderWindow* renderWindow, sfBool preserve);
 
 
 #endif // SFML_RENDERWINDOW_H

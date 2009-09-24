@@ -15,9 +15,11 @@
 ////////////////////////////////////////////////////////////
 int main()
 {
-    // Create main window
+    // Create the main window and activate it
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL");
-    window.PreserveOpenGLStates(true);
+
+    // Activate it as the target for OpenGL calls
+    window.SetActive();
 
     // Create a sprite for the background
     sf::Image backgroundImage;
@@ -75,13 +77,23 @@ int main()
 
             // Adjust the viewport when the window is resized
             if (event.Type == sf::Event::Resized)
+            {
+                window.SetActive();
                 glViewport(0, 0, event.Size.Width, event.Size.Height);
-         }
+            }
+        }
 
-        // Draw background
+        // Draw the background
         window.Draw(background);
 
-        // Clear depth buffer
+        // Flush the window, to make sure that our OpenGL cube
+        // will be rendered on top of the background sprite
+        window.Flush();
+
+        // Activate the window
+        window.SetActive();
+
+        // Clear the depth buffer
         glClear(GL_DEPTH_BUFFER_BIT);
 
         // We get the position of the mouse cursor, so that we can move the box accordingly

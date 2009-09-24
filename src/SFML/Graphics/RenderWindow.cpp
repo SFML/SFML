@@ -75,11 +75,7 @@ RenderWindow::~RenderWindow()
 ////////////////////////////////////////////////////////////
 bool RenderWindow::Activate(bool active)
 {
-    // For performances and consistency reasons, we only handle activation
-    if (active)
-        return SetActive();
-    else
-        return true;
+    return SetActive(active);
 }
 
 
@@ -102,76 +98,22 @@ unsigned int RenderWindow::GetHeight() const
 
 
 ////////////////////////////////////////////////////////////
-/// Save the content of the window to an image
-////////////////////////////////////////////////////////////
-Image RenderWindow::Capture() const
-{
-    // Get the window dimensions
-    const unsigned int width  = GetWidth();
-    const unsigned int height = GetHeight();
-
-    // Set our window as the current target for rendering
-    if (SetActive())
-    {
-        // Get pixels from the backbuffer
-        std::vector<Uint8> pixels(width * height * 4);
-        Uint8* ptr = &pixels[0];
-        GLCheck(glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
-
-        // Flip the pixels
-        unsigned int pitch = width * 4;
-        for (unsigned int y = 0; y < height / 2; ++y)
-            std::swap_ranges(ptr + y * pitch, ptr + (y + 1) * pitch, ptr + (height - y - 1) * pitch);
-
-        // Create an image from the pixel buffer and return it
-        return Image(width, height, ptr);
-    }
-    else
-    {
-        return Image(width, height, Color::White);
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-/// Convert a point in window coordinates into view coordinates
-/// This version uses the current view of the window
-////////////////////////////////////////////////////////////
-sf::Vector2f RenderWindow::ConvertCoords(unsigned int x, unsigned int y) const
-{
-    return ConvertCoords(x, y, GetView());
-}
-
-
-////////////////////////////////////////////////////////////
-/// Convert a point in window coordinates into view coordinates
-/// This version uses the given view
-////////////////////////////////////////////////////////////
-sf::Vector2f RenderWindow::ConvertCoords(unsigned int x, unsigned int y, const View& view) const
-{
-    // First, convert from viewport coordinates to homogeneous coordinates
-    const FloatRect& viewport = view.GetViewport();
-    int left   = static_cast<int>(0.5f + GetWidth()  * viewport.Left);
-    int top    = static_cast<int>(0.5f + GetHeight() * viewport.Top);
-    int width  = static_cast<int>(0.5f + GetWidth()  * viewport.GetSize().x);
-    int height = static_cast<int>(0.5f + GetHeight() * viewport.GetSize().y);
-
-    Vector2f coords;
-    coords.x = -1.f + 2.f * (static_cast<int>(x) - left) / width;
-    coords.y =  1.f - 2.f * (static_cast<int>(y) - top) / height;
-
-    // Then transform by the inverse of the view matrix
-    return view.GetInverseMatrix().Transform(coords);
-}
-
-
-////////////////////////////////////////////////////////////
 /// Called after the window has been created
 ////////////////////////////////////////////////////////////
 void RenderWindow::OnCreate()
 {
     // Just initialize the render target part
     RenderTarget::Initialize();
+}
+
+
+////////////////////////////////////////////////////////////
+/// Called before the window has been displayed
+////////////////////////////////////////////////////////////
+void RenderWindow::OnDisplay()
+{
+    // Render the drawables drawn so far
+    Flush();
 }
 
 } // namespace sf

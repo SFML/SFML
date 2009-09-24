@@ -22,121 +22,104 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERIMAGE_HPP
-#define SFML_RENDERIMAGE_HPP
+#ifndef SFML_BATCH_HPP
+#define SFML_BATCH_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <vector>
 
 
 namespace sf
 {
+class Image;
+
 namespace priv
 {
-    class RenderImageImpl;
-}
-
 ////////////////////////////////////////////////////////////
-/// Target for 2D rendering into an image that can be reused
-/// in a sprite
+/// \brief Batch of geometry / render states to render
+///
 ////////////////////////////////////////////////////////////
-class SFML_API RenderImage : public RenderTarget, NonCopyable
+class Batch
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Construct the batch with its render states
+    ///
+    /// \param texture Texture to use
+    /// \param blendMode Blending mode
+    /// \param viewport Target viewport
     ///
     ////////////////////////////////////////////////////////////
-    RenderImage();
+    Batch(const Image* texture = NULL, Blend::Mode blendMode = Blend::Alpha, const IntRect& viewport = IntRect());
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Check if the batch matches a set of render states
+    ///
+    /// \param texture Texture to use
+    /// \param blendMode Blending mode
+    /// \param viewport Target viewport
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~RenderImage();
+    bool Matches(const Image* texture, Blend::Mode blendMode, const IntRect& viewport) const;
 
     ////////////////////////////////////////////////////////////
-    /// Create the render image from its dimensions
+    /// \brief Setup the start index of the batch
     ///
-    /// \param width :       Width of the render image
-    /// \param height :      Height of the render image
-    /// \param depthBuffer : Do you want this render image to have a depth buffer?
-    ///
-    /// \return True if creation has been successful
+    /// \param index Start index
     ///
     ////////////////////////////////////////////////////////////
-    bool Create(unsigned int width, unsigned int height, bool depthBuffer = false);
+    void Begin(std::size_t index);
 
     ////////////////////////////////////////////////////////////
-    /// Activate of deactivate the render-image as the current target
-    /// for rendering
+    /// \brief Setup the end index of the batch
     ///
-    /// \param active : True to activate, false to deactivate (true by default)
-    ///
-    /// \return True if operation was successful, false otherwise
+    /// \param index End index
     ///
     ////////////////////////////////////////////////////////////
-    bool SetActive(bool active = true);
+    void End(std::size_t index);
 
     ////////////////////////////////////////////////////////////
-    /// Update the contents of the target image
+    /// \brief Return the start index of the batch
+    ///
+    /// \return Start index
     ///
     ////////////////////////////////////////////////////////////
-    void Display();
+    std::size_t GetStartIndex() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the width of the rendering region of the image
+    /// \brief Return the number of indices to render with this batch
     ///
-    /// \return Width in pixels
+    /// \return Index count
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetWidth() const;
+    std::size_t GetIndexCount() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the height of the rendering region of the image
-    ///
-    /// \return Height in pixels
+    /// \brief Apply the render states of the batch
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetHeight() const;
-
-    ////////////////////////////////////////////////////////////
-    /// Get the target image
-    ///
-    /// \return Target image
-    ///
-    ////////////////////////////////////////////////////////////
-    const Image& GetImage() const;
-
-    ////////////////////////////////////////////////////////////
-    /// Check whether the system supports render images or not
-    ///
-    /// \return True if the RenderImage class can be used
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool CanUseRenderImage();
+    void ApplyStates() const;
 
 private :
 
     ////////////////////////////////////////////////////////////
-    /// /see RenderTarget::Activate
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool active);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Image                  myImage;       ///< Target image to draw on
-    priv::RenderImageImpl* myRenderImage; ///< Platform / hardware specific implementation
+    const Image* myTexture;   ///< Texture used by the batch
+    Blend::Mode  myBlendMode; ///< Blending mode used by the batch
+    IntRect      myViewport;  ///< Target viewport for the batch
+    std::size_t  myStart;     ///< Index of the first index to render with this batch
+    std::size_t  myCount;     ///< Number of indices to render with this batch
 };
+
+} // namespace priv
 
 } // namespace sf
 
 
-#endif // SFML_RENDERIMAGE_HPP
+#endif // SFML_BATCH_HPP

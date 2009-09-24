@@ -22,100 +22,96 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERWINDOW_HPP
-#define SFML_RENDERWINDOW_HPP
+#ifndef SFML_GEOMETRYRENDERERVBO_HPP
+#define SFML_GEOMETRYRENDERERVBO_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Window/Window.hpp>
-#include <string>
+#include <SFML/Graphics/GeometryRenderer.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 
 
 namespace sf
 {
-class Drawable;
-
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// Simple wrapper for sf::Window that allows easy
-/// 2D rendering
+/// \brief Geometry renderer using vertex buffer objects
+///
 ////////////////////////////////////////////////////////////
-class SFML_API RenderWindow : public Window, public RenderTarget
+class GeometryRendererVBO : public GeometryRenderer
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Check if this implementation is supported by the system
+    ///
+    /// \return True if the vertex buffer objects renderer is supported
     ///
     ////////////////////////////////////////////////////////////
-    RenderWindow();
+    static bool IsSupported();
 
     ////////////////////////////////////////////////////////////
-    /// Construct the window
-    ///
-    /// \param mode :     Video mode to use
-    /// \param title :    Title of the window
-    /// \param style :    Window style (Resize | Close by default)
-    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    RenderWindow(VideoMode mode, const std::string& title, unsigned long style = Style::Resize | Style::Close, const ContextSettings& settings = ContextSettings());
+    GeometryRendererVBO();
 
     ////////////////////////////////////////////////////////////
-    /// Construct the window from an existing control
-    ///
-    /// \param handle :   Platform-specific handle of the control
-    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    RenderWindow(WindowHandle handle, const ContextSettings& settings = ContextSettings());
+    ~GeometryRendererVBO();
+
+public :
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Prepare the geometry for rendering
+    ///
+    /// This function is called once before all the triangles
+    /// are rendered.
+    ///
+    /// \param vertices Pointer to the vertex array
+    /// \param verticesCount Number of vertices to render
+    /// \param indices Pointer to the index array
+    /// \param indicesCount Number of indices to render
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~RenderWindow();
+    virtual void Begin(const float* vertices, std::size_t verticesCount, const unsigned int* indices, std::size_t indicesCount);
 
     ////////////////////////////////////////////////////////////
-    /// Get the width of the rendering region of the window
+    /// \brief Stop rendering geometry
     ///
-    /// \return Width in pixels
+    /// This function is called once after all the triangles
+    /// have been rendered.
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetWidth() const;
+    virtual void End();
 
     ////////////////////////////////////////////////////////////
-    /// Get the height of the rendering region of the window
+    /// \brief Render a chunk of triangles
     ///
-    /// \return Height in pixels
+    /// The primitives are rendered as a list of triangles (no strip or fan).
     ///
-    ////////////////////////////////////////////////////////////
-    virtual unsigned int GetHeight() const;
-
-private :
-
-    ////////////////////////////////////////////////////////////
-    /// /see Window::OnCreate
+    /// \param start Index in the indices array of the first index to be rendered
+    /// \param count Number of indices to be rendered
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnCreate();
+    virtual void RenderTriangles(std::size_t start, std::size_t count);
 
     ////////////////////////////////////////////////////////////
-    /// /see Window::OnDisplay
-    ///
+    // Member data
     ////////////////////////////////////////////////////////////
-    virtual void OnDisplay();
-
-    ////////////////////////////////////////////////////////////
-    /// /see RenderTarget::Activate
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool active);
+    GLuint      myVertexBuffer;
+    GLuint      myIndexBuffer;
+    std::size_t myVertexBufferSize;
+    std::size_t myIndexBufferSize;
 };
+
+} // namespace priv
 
 } // namespace sf
 
 
-#endif // SFML_RENDERWINDOW_HPP
+#endif // SFML_GEOMETRYRENDERERVBO_HPP

@@ -157,16 +157,39 @@ sfView* sfRenderImage_GetDefaultView(sfRenderImage* renderImage)
 
 
 ////////////////////////////////////////////////////////////
-/// Tell SFML to preserve external OpenGL states, at the expense of
-/// more CPU charge. Use this function if you don't want SFML
-/// to mess up your own OpenGL states (if any).
-/// Don't enable state preservation if not needed, as it will allow
-/// SFML to do internal optimizations and improve performances.
-/// This parameter is false by default
+/// Get the viewport of a view applied to this target
 ////////////////////////////////////////////////////////////
-void sfRenderImage_PreserveOpenGLStates(sfRenderImage* renderImage, sfBool preserve)
+sfIntRect sfRenderImage_GetViewport(sfRenderImage* renderImage, sfView* view)
 {
-    CSFML_CALL(renderImage, PreserveOpenGLStates(preserve == sfTrue));
+    sfIntRect rect = {0, 0, 0, 0};
+    CSFML_CHECK_RETURN(view, rect);
+    CSFML_CHECK_RETURN(renderImage, rect);
+
+    sf::IntRect SFMLrect = renderImage->This.GetViewport(*view->This);
+    rect.Left   = SFMLrect.Left;
+    rect.Top    = SFMLrect.Top;
+    rect.Right  = SFMLrect.Right;
+    rect.Bottom = SFMLrect.Bottom;
+
+    return rect;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Convert a point in image coordinates into view coordinates
+////////////////////////////////////////////////////////////
+void sfRenderImage_ConvertCoords(sfRenderImage* renderImage, unsigned int imageX, unsigned int imageY, float* viewX, float* viewY, sfView* targetView)
+{
+    CSFML_CHECK(renderImage);
+
+    sf::Vector2f point;
+    if (targetView)
+        point = renderImage->This.ConvertCoords(imageX, imageY, *targetView->This);
+    else
+        point = renderImage->This.ConvertCoords(imageX, imageY);
+
+    if (viewX) *viewX = point.x;
+    if (viewY) *viewY = point.y;
 }
 
 

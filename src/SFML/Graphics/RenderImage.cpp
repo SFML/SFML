@@ -105,18 +105,24 @@ bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuff
 ////////////////////////////////////////////////////////////
 bool RenderImage::SetActive(bool active)
 {
-    if (myRenderImage && myRenderImage->Activate(active))
-    {
-        // After the RenderImage has been modified, we have to notify
-        // the underlying image that its pixels have changed
-        if (!active)
-            myImage.ExternalUpdate(*this);
+    return myRenderImage && myRenderImage->Activate(active);
+}
 
-        return true;
-    }
-    else
+
+////////////////////////////////////////////////////////////
+/// Update the contents of the target
+////////////////////////////////////////////////////////////
+void RenderImage::Display()
+{
+    // Render everything that has been drawn so far
+    Flush();
+
+    // Update the target image
+    if (myRenderImage)
     {
-        return false;
+        bool pixelsFlipped = myRenderImage->UpdateTexture(myImage.myTexture);
+        myImage.myPixelsFlipped = pixelsFlipped;
+        myImage.myNeedArrayUpdate = true;
     }
 }
 
@@ -155,17 +161,6 @@ bool RenderImage::CanUseRenderImage()
 {
     return priv::RenderImageImplFBO::IsSupported() ||
            priv::RenderImageImplPBuffer::IsSupported();
-}
-
-
-////////////////////////////////////////////////////////////
-/// Update the pixels of the target image.
-/// This function is called automatically by the image when it
-/// needs to update its pixels, and is only meant for internal use.
-////////////////////////////////////////////////////////////
-bool RenderImage::UpdateImage(Image& target)
-{
-    return myRenderImage && myRenderImage->UpdateTexture(target.myTexture);
 }
 
 

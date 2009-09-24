@@ -140,21 +140,17 @@ void Window::Create(VideoMode mode, const std::string& title, unsigned long styl
     delete myWindow;
     myWindow = priv::WindowImpl::New(mode, title, style);
 
-    {
-        // Make sure another context is bound, so that:
-        // - the context creation can request OpenGL extensions if necessary
-        // - myContext can safely be destroyed (it's no longer bound)
-        Context context;
+    // Make sure another context is bound, so that:
+    // - the context creation can request OpenGL extensions if necessary
+    // - myContext can safely be destroyed (it's no longer bound)
+    Context context;
 
-        // Recreate the context
-        delete myContext;
-        myContext = priv::ContextGL::New(myWindow, mode.BitsPerPixel, settings);
+    // Recreate the context
+    delete myContext;
+    myContext = priv::ContextGL::New(myWindow, mode.BitsPerPixel, settings);
 
-        Initialize();
-    }
-
-    // Activate the window's context
-    SetActive();
+    // Perform common initializations
+    Initialize();
 }
 
 
@@ -167,21 +163,17 @@ void Window::Create(WindowHandle handle, const ContextSettings& settings)
     Close();
     myWindow = priv::WindowImpl::New(handle);
 
-    {
-        // Make sure another context is bound, so that:
-        // - the context creation can request OpenGL extensions if necessary
-        // - myContext can safely be destroyed (it's no longer bound)
-        Context context;
+    // Make sure another context is bound, so that:
+    // - the context creation can request OpenGL extensions if necessary
+    // - myContext can safely be destroyed (it's no longer bound)
+    Context context;
 
-        // Recreate the context
-        delete myContext;
-        myContext = priv::ContextGL::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, settings);
+    // Recreate the context
+    delete myContext;
+    myContext = priv::ContextGL::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, settings);
 
-        Initialize();
-    }
-
-    // Activate the window's context
-    SetActive();
+    // Perform common initializations
+    Initialize();
 }
 
 
@@ -391,6 +383,9 @@ bool Window::SetActive(bool active) const
 ////////////////////////////////////////////////////////////
 void Window::Display()
 {
+    // Notify the derived class
+    OnDisplay();
+
     // Limit the framerate if needed
     if (myFramerateLimit > 0)
     {
@@ -404,8 +399,11 @@ void Window::Display()
     myClock.Reset();
 
     // Display the backbuffer on screen
-    if (SetActive())
+    if (SetActive(true))
+    {
         myContext->Display();
+        SetActive(false);
+    }
 }
 
 
@@ -451,6 +449,15 @@ void Window::SetJoystickThreshold(float threshold)
 /// Called after the window has been created
 ////////////////////////////////////////////////////////////
 void Window::OnCreate()
+{
+    // Nothing by default
+}
+
+
+////////////////////////////////////////////////////////////
+/// Called before the window has been displayed
+////////////////////////////////////////////////////////////
+void Window::OnDisplay()
 {
     // Nothing by default
 }

@@ -259,7 +259,7 @@ protected :
     /// /see Drawable::Render
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Render(RenderTarget& target) const;
+    virtual void Render(RenderTarget& target, RenderQueue& queue) const;
 
 private :
 

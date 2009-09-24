@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/Window/Window.hpp>
+#include <SFML/Graphics/RenderQueue.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <math.h>
 
 
@@ -358,44 +358,21 @@ const Matrix3& Drawable::GetInverseMatrix() const
 
 
 ////////////////////////////////////////////////////////////
-/// Draw the object into the specified window
+/// Draw the object into the specified render target
 ////////////////////////////////////////////////////////////
-void Drawable::Draw(RenderTarget& target) const
+void Drawable::Draw(RenderTarget& target, RenderQueue& queue) const
 {
-    // Save the current modelview matrix and set the new one
-    GLCheck(glMatrixMode(GL_MODELVIEW));
-    GLCheck(glPushMatrix());
-    GLCheck(glMultMatrixf(GetMatrix().Get4x4Elements()));
+    // Set the current model-view matrix
+    queue.ApplyModelView(GetMatrix());
 
-    // Setup alpha-blending
-    if (myBlendMode == Blend::None)
-    {
-        GLCheck(glDisable(GL_BLEND));
-    }
-    else
-    {
-        GLCheck(glEnable(GL_BLEND));
+    // Set the current global color
+    queue.ApplyColor(myColor);
 
-        // @todo the resulting alpha may not be correct, which matters when target is a RenderImage.
-        //       find a fix for this (glBlendFuncSeparate -- but not supported by every graphics card)
-        switch (myBlendMode)
-        {
-            case Blend::Alpha :    GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); break;
-            case Blend::Add :      GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE)); break;
-            case Blend::Multiply : GLCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO)); break;
-            default : break;
-        }
-    }
-
-    // Set color
-    GLCheck(glColor4ub(myColor.r, myColor.g, myColor.b, myColor.a));
+    // Set the current alpha-blending mode
+    queue.SetBlendMode(myBlendMode);
 
     // Let the derived class render the object geometry
-    Render(target);
-
-    // Restore the previous modelview matrix
-    GLCheck(glMatrixMode(GL_MODELVIEW));
-    GLCheck(glPopMatrix());
+    Render(target, queue);
 }
 
 } // namespace sf

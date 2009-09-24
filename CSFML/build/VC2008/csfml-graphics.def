@@ -179,7 +179,8 @@ EXPORTS
 	sfRenderImage_SetView
 	sfRenderImage_GetView
 	sfRenderImage_GetDefaultView
-	sfRenderImage_PreserveOpenGLStates
+	sfRenderImage_GetViewport
+	sfRenderImage_ConvertCoords
 	sfRenderImage_GetImage
 	sfRenderImage_CanUseRenderImage
 	sfRenderWindow_Create
@@ -214,8 +215,8 @@ EXPORTS
 	sfRenderWindow_SetView
 	sfRenderWindow_GetView
 	sfRenderWindow_GetDefaultView
+	sfRenderWindow_GetViewport
 	sfRenderWindow_ConvertCoords
-	sfRenderWindow_PreserveOpenGLStates
 	sfView_Create
 	sfView_CreateFromRect
 	sfView_Destroy

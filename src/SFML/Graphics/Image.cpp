@@ -50,7 +50,6 @@ myTexture          (0),
 myIsSmooth         (true),
 myNeedTextureUpdate(false),
 myNeedArrayUpdate  (false),
-myUpdateSource     (NULL),
 myPixelsFlipped    (false)
 {
 
@@ -71,7 +70,6 @@ myIsSmooth         (copy.myIsSmooth),
 myPixels           (copy.myPixels),
 myNeedTextureUpdate(false),
 myNeedArrayUpdate  (false),
-myUpdateSource     (copy.myUpdateSource),
 myPixelsFlipped    (copy.myPixelsFlipped)
 {
     CreateTexture();
@@ -90,7 +88,6 @@ myTexture          (0),
 myIsSmooth         (true),
 myNeedTextureUpdate(false),
 myNeedArrayUpdate  (false),
-myUpdateSource     (NULL),
 myPixelsFlipped    (false)
 {
     Create(width, height, color);
@@ -109,7 +106,6 @@ myTexture          (0),
 myIsSmooth         (true),
 myNeedTextureUpdate(false),
 myNeedArrayUpdate  (false),
-myUpdateSource     (NULL),
 myPixelsFlipped    (false)
 {
     LoadFromPixels(width, height, data);
@@ -387,6 +383,9 @@ bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
     myWidth  = srcRect.GetSize().x;
     myHeight = srcRect.GetSize().y;
 
+    // Make sure that pending drawables are rendered on the target window
+    window.Flush();
+
     // We can then create the texture
     if (window.SetActive() && CreateTexture())
     {
@@ -401,6 +400,8 @@ bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
         myNeedTextureUpdate = false;
         myNeedArrayUpdate   = true;
         myPixelsFlipped     = true;
+
+        window.SetActive(false);
 
         return true;
     }
@@ -553,12 +554,13 @@ FloatRect Image::GetTexCoords(const IntRect& rect) const
 {
     float width  = static_cast<float>(myTextureWidth);
     float height = static_cast<float>(myTextureHeight);
+    float offset = myIsSmooth ? 0.5f : 0.0f;
 
     FloatRect coords;
-    coords.Left   = rect.Left   / width;
-    coords.Top    = rect.Top    / height;
-    coords.Right  = rect.Right  / width;
-    coords.Bottom = rect.Bottom / height;
+    coords.Left   = (rect.Left   + offset) / width;
+    coords.Top    = (rect.Top    + offset) / height;
+    coords.Right  = (rect.Right  - offset) / width;
+    coords.Bottom = (rect.Bottom - offset) / height;
 
     if (myPixelsFlipped)
         std::swap(coords.Top, coords.Bottom);
@@ -607,7 +609,6 @@ Image& Image::operator =(const Image& other)
     std::swap(myIsSmooth,          temp.myIsSmooth);
     std::swap(myNeedArrayUpdate,   temp.myNeedArrayUpdate);
     std::swap(myNeedTextureUpdate, temp.myNeedTextureUpdate);
-    std::swap(myUpdateSource,      temp.myUpdateSource);
     std::swap(myPixelsFlipped,     temp.myPixelsFlipped);
     myPixels.swap(temp.myPixels);
 
@@ -678,24 +679,15 @@ void Image::EnsureTextureUpdate()
 {
     if (myNeedTextureUpdate)
     {
-        if (myTexture)
+        if (myTexture && !myPixels.empty())
         {
             GLint previous;
             GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
-            if (myUpdateSource)
-            {
-                // External update
-                myPixelsFlipped = myUpdateSource->UpdateImage(*this);
-                myUpdateSource = NULL;
-            }
-            else if (!myPixels.empty())
-            {
-                // Update the texture with the pixels array in RAM
-                GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
-                GLCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, myWidth, myHeight, GL_RGBA, GL_UNSIGNED_BYTE, &myPixels[0]));
-                myPixelsFlipped = false;
-            }
+            // Update the texture with the pixels array in RAM
+            GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
+            GLCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, myWidth, myHeight, GL_RGBA, GL_UNSIGNED_BYTE, &myPixels[0]));
+            myPixelsFlipped = false;
 
             GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
         }
@@ -770,19 +762,6 @@ void Image::EnsureArrayUpdate()
 
 
 ////////////////////////////////////////////////////////////
-/// Notify the image that an external source has modified
-/// its content.
-/// For internal use only (see RenderImage class).
-////////////////////////////////////////////////////////////
-void Image::ExternalUpdate(RenderImage& source)
-{
-    myNeedTextureUpdate = true;
-    myNeedArrayUpdate   = true;
-    myUpdateSource      = &source;
-}
-
-
-////////////////////////////////////////////////////////////
 /// Reset the image attributes
 ////////////////////////////////////////////////////////////
 void Image::Reset()
@@ -797,7 +776,6 @@ void Image::Reset()
     myIsSmooth          = true;
     myNeedTextureUpdate = false;
     myNeedArrayUpdate   = false;
-    myUpdateSource      = NULL;
     myPixelsFlipped     = false;
     myPixels.clear();
 }

@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shape.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/RenderQueue.hpp>
 #include <math.h>
 
 
@@ -281,7 +281,7 @@ Shape Shape::Circle(const Vector2f& center, float radius, const Color& color, fl
 ////////////////////////////////////////////////////////////
 /// /see Drawable::Render
 ////////////////////////////////////////////////////////////
-void Shape::Render(RenderTarget&) const
+void Shape::Render(RenderTarget&, RenderQueue& queue) const
 {
     // Make sure the shape has at least 3 points (4 if we count the center)
     if (myPoints.size() < 4)
@@ -292,50 +292,69 @@ void Shape::Render(RenderTarget&) const
         const_cast<Shape*>(this)->Compile();
 
     // Shapes only use color, no texture
-    GLCheck(glDisable(GL_TEXTURE_2D));
+    queue.SetTexture(NULL);
 
     // Draw the shape
     if (myIsFillEnabled)
     {
-        glBegin(GL_TRIANGLE_FAN);
+        if (myPoints.size() == 4)
         {
+            // Special case of a triangle
+            queue.BeginBatch();
+            queue.AddVertex(myPoints[1].Position.x, myPoints[1].Position.y, myPoints[1].Col);
+            queue.AddVertex(myPoints[2].Position.x, myPoints[2].Position.y, myPoints[2].Col);
+            queue.AddVertex(myPoints[3].Position.x, myPoints[3].Position.y, myPoints[3].Col);
+            queue.AddTriangle(0, 1, 2);
+        }
+        else if (myPoints.size() == 5)
+        {
+            // Special case of a quad
+            queue.BeginBatch();
+            queue.AddVertex(myPoints[1].Position.x, myPoints[1].Position.y, myPoints[1].Col);
+            queue.AddVertex(myPoints[2].Position.x, myPoints[2].Position.y, myPoints[2].Col);
+            queue.AddVertex(myPoints[3].Position.x, myPoints[3].Position.y, myPoints[3].Col);
+            queue.AddVertex(myPoints[4].Position.x, myPoints[4].Position.y, myPoints[4].Col);
+            queue.AddTriangle(0, 1, 3);
+            queue.AddTriangle(3, 1, 2);
+        }
+        else
+        {
+            // General case of a convex polygon
+            queue.BeginBatch();
             for (std::vector<Point>::const_iterator i = myPoints.begin(); i != myPoints.end(); ++i)
-            {
-                Color color = i->Col * GetColor();
-                glColor4ub(color.r, color.g, color.b, color.a);
-                glVertex2f(i->Position.x, i->Position.y);
-            }
+                queue.AddVertex(i->Position.x, i->Position.y, i->Col);
+
+            for (std::size_t i = 1; i < myPoints.size() - 1; ++i)
+                queue.AddTriangle(0, i, i + 1);
 
             // Close the shape by duplicating the first point at the end
-            Color color = myPoints[1].Col * GetColor();
-            glColor4ub(color.r, color.g, color.b, color.a);
-            glVertex2f(myPoints[1].Position.x, myPoints[1].Position.y);
+            queue.AddTriangle(0, myPoints.size() - 1, 1);
         }
-        glEnd();
     }
 
     // Draw the outline
-    if (myIsOutlineEnabled)
+    if (myIsOutlineEnabled && (myOutline != 0))
     {
-        glBegin(GL_TRIANGLE_STRIP);
+        queue.BeginBatch();
+        for (std::vector<Point>::const_iterator i = myPoints.begin() + 1; i != myPoints.end(); ++i)
         {
-            for (std::size_t i = 1; i < myPoints.size(); ++i)
-            {
-                Color color = myPoints[i].OutlineCol * GetColor();
-                glColor4ub(color.r, color.g, color.b, color.a);
-                glVertex2f(myPoints[i].Position.x, myPoints[i].Position.y);
-                glColor4ub(color.r, color.g, color.b, color.a);
-                glVertex2f(myPoints[i].Position.x + myPoints[i].Normal.x * myOutline, myPoints[i].Position.y + myPoints[i].Normal.y * myOutline);
-            }
-
-            // Close the shape by duplicating the first point at the end
-            Color color = myPoints[1].OutlineCol * GetColor();
-            glColor4ub(color.r, color.g, color.b, color.a);
-            glVertex2f(myPoints[1].Position.x, myPoints[1].Position.y);
-            glColor4ub(color.r, color.g, color.b, color.a);
-            glVertex2f(myPoints[1].Position.x + myPoints[1].Normal.x * myOutline, myPoints[1].Position.y + myPoints[1].Normal.y * myOutline);
+            Vector2f point1 = i->Position;
+            Vector2f point2 = i->Position + i->Normal * myOutline;
+            queue.AddVertex(point1.x, point1.y, i->OutlineCol);
+            queue.AddVertex(point2.x, point2.y, i->OutlineCol);
         }
-        glEnd();
+
+        for (std::size_t i = 0; i < myPoints.size() - 2; ++i)
+        {
+            queue.AddTriangle(i * 2 + 0, i * 2 + 1, i * 2 + 2);
+            queue.AddTriangle(i * 2 + 2, i * 2 + 1, i * 2 + 3);
+        }
+
+        // Close the shape by duplicating the first point at the end
+        unsigned int begin = 0;
+        unsigned int last = (myPoints.size() - 2) * 2;
+        queue.AddTriangle(last, last + 1, begin);
+        queue.AddTriangle(begin, last + 1, begin + 1);
     }
 }
 
@@ -351,16 +370,17 @@ void Shape::Compile()
     Point center(Vector2f(0, 0), Color(0, 0, 0, 0));
     for (std::size_t i = 1; i < myPoints.size(); ++i)
     {
-        center.Position += myPoints[i].Position / nbPoints;
-        r += myPoints[i].Col.r / nbPoints;
-        g += myPoints[i].Col.g / nbPoints;
-        b += myPoints[i].Col.b / nbPoints;
-        a += myPoints[i].Col.a / nbPoints;
+        center.Position += myPoints[i].Position;
+        r += myPoints[i].Col.r;
+        g += myPoints[i].Col.g;
+        b += myPoints[i].Col.b;
+        a += myPoints[i].Col.a;
     }
-    center.Col.r = static_cast<Uint8>(r);
-    center.Col.g = static_cast<Uint8>(g);
-    center.Col.b = static_cast<Uint8>(b);
-    center.Col.a = static_cast<Uint8>(a);
+    center.Position /= nbPoints;
+    center.Col.r = static_cast<Uint8>(r / nbPoints);
+    center.Col.g = static_cast<Uint8>(g / nbPoints);
+    center.Col.b = static_cast<Uint8>(b / nbPoints);
+    center.Col.a = static_cast<Uint8>(a / nbPoints);
     myPoints[0] = center;
 
     // Compute the outline

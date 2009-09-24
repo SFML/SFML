@@ -324,6 +324,7 @@
 				WarningLevel="4"
 				DebugInformationFormat="0"
 				DisableSpecificWarnings="4996"
+				EnablePREfast="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -361,14 +362,61 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Win32"
+			Name="RenderQueue"
 			>
 			<File
-				RelativePath="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.cpp"
+				RelativePath="..\..\src\SFML\Graphics\Batch.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.hpp"
+				RelativePath="..\..\src\SFML\Graphics\Batch.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\GeometryRenderer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\GeometryRenderer.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\GeometryRendererIM.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\GeometryRendererIM.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\GeometryRendererVA.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\GeometryRendererVA.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\GeometryRendererVBO.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\GeometryRendererVBO.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\RenderQueue.cpp"
+				>
+				<FileConfiguration
+					Name="Release static|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\include\SFML\Graphics\RenderQueue.hpp"
 				>
 			</File>
 		</Filter>
@@ -3296,20 +3344,100 @@
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="RenderImage"
+			>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\RenderImage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\SFML\Graphics\RenderImage.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\RenderImageImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\RenderImageImpl.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\RenderImageImplFBO.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\RenderImageImplFBO.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\RenderImageImplPBuffer.hpp"
+				>
+			</File>
+			<Filter
+				Name="Win32"
+				>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.hpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Drawables"
+			>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\Drawable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\SFML\Graphics\Drawable.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\PostFX.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\SFML\Graphics\PostFX.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\Shape.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\SFML\Graphics\Shape.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\Sprite.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\SFML\Graphics\Sprite.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Graphics\String.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\SFML\Graphics\String.hpp"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\src\SFML\Graphics\Color.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\Color.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\Drawable.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\include\SFML\Graphics\Drawable.hpp"
 			>
 		</File>
 		<File
@@ -3401,47 +3529,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\PostFX.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\include\SFML\Graphics\PostFX.hpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\SFML\Graphics\Rect.hpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\Rect.inl"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\RenderImage.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\include\SFML\Graphics\RenderImage.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\RenderImageImpl.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\RenderImageImpl.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\RenderImageImplFBO.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\RenderImageImplFBO.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\RenderImageImplPBuffer.hpp"
 			>
 		</File>
 		<File
@@ -3458,30 +3550,6 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\RenderWindow.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\Shape.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\include\SFML\Graphics\Shape.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\Sprite.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\include\SFML\Graphics\Sprite.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\String.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\include\SFML\Graphics\String.hpp"
 			>
 		</File>
 		<File

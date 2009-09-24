@@ -275,7 +275,7 @@ bool PostFX::CanUsePostFX()
 ////////////////////////////////////////////////////////////
 /// /see Drawable::Render
 ////////////////////////////////////////////////////////////
-void PostFX::Render(RenderTarget& target) const
+void PostFX::Render(RenderTarget& target, RenderQueue&) const
 {
     // Check that we have a valid program
     if (!myShaderProgram)
@@ -283,7 +283,9 @@ void PostFX::Render(RenderTarget& target) const
 
     // Copy the current framebuffer pixels to our frame buffer texture
     // The ugly cast is temporary until PostFx are rewritten :)
-    myFrameBuffer.CopyScreen((RenderWindow&)target);
+    RenderWindow& window = static_cast<RenderWindow&>(target);
+    myFrameBuffer.CopyScreen(window);
+    window.SetActive();
 
     // Enable program
     GLCheck(glUseProgramObjectARB(myShaderProgram));

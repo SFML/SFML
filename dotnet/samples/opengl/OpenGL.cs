@@ -15,7 +15,6 @@ namespace sample_opengl
         {
             // Create main window
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "SFML.Net OpenGL");
-            window.PreserveOpenGLStates(true);
 
             // Setup event handlers
             window.Closed     += new EventHandler(OnClosed);

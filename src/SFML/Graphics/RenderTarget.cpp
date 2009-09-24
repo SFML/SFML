@@ -37,9 +37,7 @@ namespace sf
 /// Default constructor
 ////////////////////////////////////////////////////////////
 RenderTarget::RenderTarget() :
-myCurrentView   (&myDefaultView),
-myPreserveStates(false),
-myIsDrawing     (false)
+myCurrentView(&myDefaultView)
 {
 
 }
@@ -61,9 +59,12 @@ void RenderTarget::Clear(const Color& color)
 {
     if (Activate(true))
     {
-        // Clear the frame buffer
+        // Clear the color buffer
         GLCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         GLCheck(glClear(GL_COLOR_BUFFER_BIT));
+
+        // Clear the render queue
+        myRenderQueue.Clear();
 
         Activate(false);
     }
@@ -75,59 +76,34 @@ void RenderTarget::Clear(const Color& color)
 ////////////////////////////////////////////////////////////
 void RenderTarget::Draw(const Drawable& object)
 {
-    // Check whether we are called from the outside or from a previous call to Draw
-    if (!myIsDrawing)
+    // Save the current render states
+    myRenderQueue.PushStates();
+
+    // Setup the viewport
+    myRenderQueue.SetViewport(GetViewport(*myCurrentView));
+
+    // Setup the projection matrix
+    myRenderQueue.SetProjection(myCurrentView->GetMatrix());
+
+    // Let the object draw itself
+    object.Draw(*this, myRenderQueue);
+
+    // Restore the previous render states
+    myRenderQueue.PopStates();
+}
+
+
+////////////////////////////////////////////////////////////
+/// Make sure that what has been drawn so far is rendered
+////////////////////////////////////////////////////////////
+void RenderTarget::Flush()
+{
+    if (Activate(true))
     {
-        myIsDrawing = true;
+        // Draw the whole render queue
+        myRenderQueue.Render();
 
-        // Set our target as the current target for rendering
-        if (Activate(true))
-        {
-            // Save the current render states and set the SFML ones
-            if (myPreserveStates)
-            {
-                GLCheck(glMatrixMode(GL_MODELVIEW));  GLCheck(glPushMatrix());
-                GLCheck(glMatrixMode(GL_PROJECTION)); GLCheck(glPushMatrix());
-                GLCheck(glPushAttrib(GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT   | GL_ENABLE_BIT  |
-                                     GL_TEXTURE_BIT      | GL_TRANSFORM_BIT | GL_VIEWPORT_BIT));
-                SetRenderStates();
-            }
-
-            // Setup the viewport
-            const FloatRect& viewport = myCurrentView->GetViewport();
-            int left   = static_cast<int>(0.5f + GetWidth()  * viewport.Left);
-            int top    = static_cast<int>(0.5f + GetHeight() * (1.f - viewport.Bottom));
-            int width  = static_cast<int>(0.5f + GetWidth()  * viewport.GetSize().x);
-            int height = static_cast<int>(0.5f + GetHeight() * viewport.GetSize().y);
-            GLCheck(glViewport(left, top, width, height));
-
-            // Setup the transform matrices
-            GLCheck(glMatrixMode(GL_PROJECTION));
-            GLCheck(glLoadMatrixf(myCurrentView->GetMatrix().Get4x4Elements()));
-            GLCheck(glMatrixMode(GL_MODELVIEW));
-            GLCheck(glLoadIdentity());
-
-            // Let the object draw itself
-            object.Draw(*this);
-
-            // Restore render states
-            if (myPreserveStates)
-            {
-                GLCheck(glMatrixMode(GL_PROJECTION)); GLCheck(glPopMatrix());
-                GLCheck(glMatrixMode(GL_MODELVIEW));  GLCheck(glPopMatrix());
-                GLCheck(glPopAttrib());
-            }
-
-            // Deactivate rendering on this target
-            Activate(false);
-        }
-
-        myIsDrawing = false;
-    }
-    else
-    {
-        // We are already called from a previous Draw : we don't need to set the states again, just draw the object
-        object.Draw(*this);
+        Activate(false);
     }
 }
 
@@ -160,16 +136,48 @@ View& RenderTarget::GetDefaultView()
 
 
 ////////////////////////////////////////////////////////////
-/// Tell SFML to preserve external OpenGL states, at the expense of
-/// more CPU charge. Use this function if you don't want SFML
-/// to mess up your own OpenGL states (if any).
-/// Don't enable state preservation if not needed, as it will allow
-/// SFML to do internal optimizations and improve performances.
-/// This parameter is false by default
+/// Get the viewport of a view applied to this target
 ////////////////////////////////////////////////////////////
-void RenderTarget::PreserveOpenGLStates(bool preserve)
+IntRect RenderTarget::GetViewport(const View& view) const
 {
-    myPreserveStates = preserve;
+    float width  = static_cast<float>(GetWidth());
+    float height = static_cast<float>(GetHeight());
+    const FloatRect& viewport = view.GetViewport();
+
+    IntRect rect;
+    rect.Left   = static_cast<int>(0.5f + width  * viewport.Left);
+    rect.Top    = static_cast<int>(0.5f + height * (1.f - viewport.Bottom));
+    rect.Right  = static_cast<int>(0.5f + width  * viewport.Right);
+    rect.Bottom = static_cast<int>(0.5f + height * (1.f - viewport.Top));
+    
+    return rect;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Convert a point in window coordinates into view coordinates
+/// This version uses the current view of the window
+////////////////////////////////////////////////////////////
+sf::Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y) const
+{
+    return ConvertCoords(x, y, GetView());
+}
+
+
+////////////////////////////////////////////////////////////
+/// Convert a point in window coordinates into view coordinates
+/// This version uses the given view
+////////////////////////////////////////////////////////////
+sf::Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y, const View& view) const
+{
+    // First, convert from viewport coordinates to homogeneous coordinates
+    Vector2f coords;
+    IntRect viewport = GetViewport(view);
+    coords.x = -1.f + 2.f * (static_cast<int>(x) - viewport.Left) / viewport.GetSize().x;
+    coords.y =  1.f - 2.f * (static_cast<int>(y) - viewport.Top)  / viewport.GetSize().y;
+
+    // Then transform by the inverse of the view matrix
+    return view.GetInverseMatrix().Transform(coords);
 }
 
 
@@ -178,28 +186,12 @@ void RenderTarget::PreserveOpenGLStates(bool preserve)
 ////////////////////////////////////////////////////////////
 void RenderTarget::Initialize()
 {
-    if (Activate(true))
-    {
-        // Set the default rendering states
-        SetRenderStates();
+    // Setup the default view
+    myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
+    SetView(myDefaultView);
 
-        // Setup the default view
-        myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
-        SetView(myDefaultView);
-
-        Activate(false);
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-/// Set the OpenGL render states needed for the SFML rendering
-////////////////////////////////////////////////////////////
-void RenderTarget::SetRenderStates()
-{
-    GLCheck(glDisable(GL_ALPHA_TEST));
-    GLCheck(glDisable(GL_DEPTH_TEST));
-    GLCheck(glDisable(GL_LIGHTING));
+    // Clear the render queue
+    myRenderQueue.Clear();
 }
 
 } // namespace sf
