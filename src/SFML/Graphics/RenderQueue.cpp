@@ -39,12 +39,21 @@ namespace
     // Fast float to int conversion
     inline sf::Int32 Round(double value)
     {
-        value += 6755399441055744.0;
+        // Use a union rather than reinterpret_cast, because it doesn't break strict-aliasing
+        // rules and results in a correct behaviour when compiling in optimized mode
+        union DoubleToInt
+        {
+            double d; 
+            sf::Int32 i[2];
+        };
+
+        DoubleToInt u;
+        u.d = value + 6755399441055744.0;
 
         #if defined(SFML_ENDIAN_LITTLE)
-            return (reinterpret_cast<sf::Int32*>(&value))[0];
+            return u.i[0];
         #else
-            return (reinterpret_cast<sf::Int32*>(&value))[1];
+            return u.i[1];
         #endif
     } 
 }
