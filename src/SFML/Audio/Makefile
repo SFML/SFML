@@ -10,7 +10,7 @@ ifeq ($(STATIC), yes)
 else
     LIB     = libsfml-audio.so
     LIBNAME = $(LIBPATH)/$(LIB).$(VERSION)
-    INSTALL = && $(LN) $(LNFLAGS) $(DESTLIBDIR)/$(LIB).$(VERSION) $(DESTLIBDIR)/$(LIB)
+    INSTALL = && $(LN) $(LNFLAGS) $(LIB).$(VERSION) $(DESTLIBDIR)/$(LIB)
 endif
 
 all: $(LIB)

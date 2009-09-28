@@ -27,7 +27,7 @@ export LN         = ln
 export LNFLAGS    = -s -f
 export AR         = ar
 export ARFLAGS    = rcs
-export DESTDIR    = /usr
+export DESTDIR    = /usr/local
 export DESTLIBDIR = $(DESTDIR)/lib
 export DESTINCDIR = $(DESTDIR)/include
 

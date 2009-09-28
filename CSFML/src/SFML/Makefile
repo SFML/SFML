@@ -7,7 +7,7 @@ export VERSION    = 1.6
 export CP         = cp
 export LN         = ln
 export LNFLAGS    = -s -f
-export DESTDIR    = /usr
+export DESTDIR    = /usr/local
 export DESTLIBDIR = $(DESTDIR)/lib
 export DESTINCDIR = $(DESTDIR)/include
 
