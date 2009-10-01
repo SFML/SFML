@@ -407,13 +407,6 @@
 			<File
 				RelativePath="..\..\src\SFML\Graphics\RenderQueue.cpp"
 				>
-				<FileConfiguration
-					Name="Release static|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\include\SFML\Graphics\RenderQueue.hpp"

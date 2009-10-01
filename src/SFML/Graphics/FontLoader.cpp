@@ -216,8 +216,8 @@ FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const
 
     // Leave a small margin around characters, so that filtering doesn't
     // pollute them with pixels from neighbours
-    unsigned int offset = 1;
-    unsigned int margin = offset + 1;
+    unsigned int padding = 1;
+    unsigned int margin = 1;
 
     // Copy the rendered glyphs into the texture
     unsigned int maxHeight = 0;
@@ -230,31 +230,30 @@ FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const
         FT_Bitmap&     bitmap      = bitmapGlyph->bitmap;
 
         // Make sure we don't go over the texture width
-        if (left + bitmap.width + margin >= texWidth)
+        if (left + bitmap.width + 2 * padding + margin >= texWidth)
             left = 0;
 
         // Compute the top coordinate
         top = tops[left];
-        for (unsigned int x = 0; x < bitmap.width + margin; ++x)
+        for (unsigned int x = 0; x < bitmap.width + 2 * padding + margin; ++x)
             top = std::max(top, tops[left + x]);
-        top += margin;
 
         // Make sure we don't go over the texture height -- resize it if we need more space
-        if (top + bitmap.rows + margin >= texHeight)
+        if (top + bitmap.rows + 2 * padding + margin >= texHeight)
         {
             texHeight *= 2;
             glyphsBuffer.resize(texWidth * texHeight * 4);
         }
 
         // Store the character's position and size
-        curGlyph.Rectangle.Left   = bitmapGlyph->left - offset;
-        curGlyph.Rectangle.Top    = -bitmapGlyph->top - offset;
-        curGlyph.Rectangle.Right  = (curGlyph.Rectangle.Left + bitmap.width + offset) / 1;
-        curGlyph.Rectangle.Bottom = bitmap.rows - bitmapGlyph->top + offset;
+        curGlyph.Rectangle.Left   = bitmapGlyph->left - padding;
+        curGlyph.Rectangle.Top    = -bitmapGlyph->top - padding;
+        curGlyph.Rectangle.Right  = bitmapGlyph->left + bitmap.width + padding;
+        curGlyph.Rectangle.Bottom = -bitmapGlyph->top + bitmap.rows + padding;
         curGlyph.Advance          = bitmapGlyph->root.advance.x >> 16;
 
         // Texture size may change, so let the texture coordinates be calculated later
-        coords[i->second] = IntRect(left + offset, top + offset, left + bitmap.width + offset + margin, top + bitmap.rows + offset + margin);
+        coords[i->second] = IntRect(left, top, left + bitmap.width + 2 * padding, top + bitmap.rows + 2 * padding);
 
         // Draw the glyph into our bitmap font
         const Uint8* pixels = bitmap.buffer;
@@ -262,28 +261,31 @@ FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const
         {
             for (int x = 0; x < bitmap.width; ++x)
             {
-                std::size_t index = x + left + margin + (y + top + margin) * texWidth;
+                std::size_t index = x + left + padding + (y + top + padding) * texWidth;
                 glyphsBuffer[index * 4 + 0] = 255;
                 glyphsBuffer[index * 4 + 1] = 255;
                 glyphsBuffer[index * 4 + 2] = 255;
-                glyphsBuffer[index * 4 + 3] = pixels[x] * pixels[x] / 255;
+                glyphsBuffer[index * 4 + 3] = pixels[x];
+
+                // Formula for FT_RENDER_MODE_MONO
+                // glyphsBuffer[index * 4 + 3] = ((pixels[x / 8]) & (1 << (7 - (x % 8)))) ? 255 : 0;
             }
             pixels += bitmap.pitch;
         }
 
         // Update the rendering coordinates
-        for (unsigned int x = 0; x < bitmap.width + margin; ++x)
-            tops[left + x] = top + bitmap.rows;
-        left += bitmap.width + margin;
-        if (top + bitmap.rows > maxHeight)
-            maxHeight = top + bitmap.rows;
+        for (unsigned int x = 0; x < bitmap.width + 2 * padding + margin; ++x)
+            tops[left + x] = top + bitmap.rows + 2 * padding + margin;
+        left += bitmap.width + 2 * padding + margin;
+        if (top + bitmap.rows + 2 * padding > maxHeight)
+            maxHeight = top + bitmap.rows + 2 * padding;
 
         // Delete the glyph
         FT_Done_Glyph((FT_Glyph)bitmapGlyph);
     }
 
     // Create the font's texture
-    texHeight = maxHeight + margin;
+    texHeight = maxHeight;
     glyphsBuffer.resize(texWidth * texHeight * 4);
     font.myTexture.LoadFromPixels(texWidth, texHeight, &glyphsBuffer[0]);
 
@@ -297,6 +299,7 @@ FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const
     // Update the character size (it may have been changed by the function)
     font.myCharSize = charSize;
 
+    font.myTexture.SaveToFile("aaa.png");
     return 0;
 }
 

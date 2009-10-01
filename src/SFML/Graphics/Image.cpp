@@ -554,18 +554,21 @@ FloatRect Image::GetTexCoords(const IntRect& rect) const
 {
     float width  = static_cast<float>(myTextureWidth);
     float height = static_cast<float>(myTextureHeight);
-    float offset = myIsSmooth ? 0.5f : 0.0f;
-
-    FloatRect coords;
-    coords.Left   = (rect.Left   + offset) / width;
-    coords.Top    = (rect.Top    + offset) / height;
-    coords.Right  = (rect.Right  - offset) / width;
-    coords.Bottom = (rect.Bottom - offset) / height;
 
     if (myPixelsFlipped)
-        std::swap(coords.Top, coords.Bottom);
-
-    return coords;
+    {
+        return FloatRect(rect.Left   / width,
+                         rect.Bottom / height,
+                         rect.Right  / width,
+                         rect.Top    / height);
+    }
+    else
+    {
+        return FloatRect(rect.Left   / width,
+                         rect.Top    / height,
+                         rect.Right  / width,
+                         rect.Bottom / height);
+    }
 }
 
 
