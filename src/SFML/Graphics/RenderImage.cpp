@@ -123,6 +123,7 @@ void RenderImage::Display()
         bool pixelsFlipped = myRenderImage->UpdateTexture(myImage.myTexture);
         myImage.myPixelsFlipped = pixelsFlipped;
         myImage.myNeedArrayUpdate = true;
+        myImage.myNeedTextureUpdate = false;
     }
 }
 
