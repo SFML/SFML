@@ -299,7 +299,6 @@ FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const
     // Update the character size (it may have been changed by the function)
     font.myCharSize = charSize;
 
-    font.myTexture.SaveToFile("aaa.png");
     return 0;
 }
 
