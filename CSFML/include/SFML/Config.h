@@ -44,6 +44,11 @@
     // MacOS
     #define CSFML_SYSTEM_MACOS
 
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+
+    // FreeBSD
+    #define CSFML_SYSTEM_FREEBSD
+
 #else
 
     // Unsupported system
