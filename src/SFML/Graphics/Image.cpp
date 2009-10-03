@@ -60,18 +60,24 @@ myPixelsFlipped    (false)
 /// Copy constructor
 ////////////////////////////////////////////////////////////
 Image::Image(const Image& copy) :
-Resource<Image>    (copy),
-myWidth            (copy.myWidth),
-myHeight           (copy.myHeight),
-myTextureWidth     (copy.myTextureWidth),
-myTextureHeight    (copy.myTextureHeight),
-myTexture          (0),
-myIsSmooth         (copy.myIsSmooth),
-myPixels           (copy.myPixels),
-myNeedTextureUpdate(false),
-myNeedArrayUpdate  (false),
-myPixelsFlipped    (copy.myPixelsFlipped)
+Resource<Image>(copy)
 {
+    // First make sure that the source image is up-to-date
+    const_cast<Image&>(copy).EnsureArrayUpdate();
+
+    // Copy all its members
+    myWidth             = copy.myWidth;
+    myHeight            = copy.myHeight;
+    myTextureWidth      = copy.myTextureWidth;
+    myTextureHeight     = copy.myTextureHeight;
+    myTexture           = 0;
+    myIsSmooth          = copy.myIsSmooth;
+    myPixels            = copy.myPixels;
+    myNeedTextureUpdate = false;
+    myNeedArrayUpdate   = false;
+    myPixelsFlipped     = copy.myPixelsFlipped;
+
+    // Create the texture
     CreateTexture();
 }
 
