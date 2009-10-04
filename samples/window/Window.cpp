@@ -56,6 +56,9 @@ int main()
                 glViewport(0, 0, event.Size.Width, event.Size.Height);
        }
 
+        // Activate the window
+        window.SetActive();
+
         // Clear color and depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
