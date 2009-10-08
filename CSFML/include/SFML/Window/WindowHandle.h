@@ -40,7 +40,7 @@
     // Windows defines a void* handle (HWND)
     typedef void* sfWindowHandle;
 
-#elif defined(CSFML_SYSTEM_LINUX)
+#elif defined(CSFML_SYSTEM_LINUX) || defined(CSFML_SYSTEM_FREEBSD)
 
     // Unix - X11 defines an unsigned integer handle (Window)
     typedef unsigned long sfWindowHandle;
