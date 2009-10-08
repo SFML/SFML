@@ -34,18 +34,23 @@ export DESTINCDIR = $(DESTDIR)/include
 all: sfml-system sfml-window sfml-network sfml-graphics sfml-audio
 
 sfml-system:
+	@(mkdir -p ../../lib)
 	@(cd ./System && $(MAKE))
 
 sfml-window:
+	@(mkdir -p ../../lib)
 	@(cd ./Window && $(MAKE))
 
 sfml-network:
+	@(mkdir -p ../../lib)
 	@(cd ./Network && $(MAKE))
 
 sfml-graphics:
+	@(mkdir -p ../../lib)
 	@(cd ./Graphics && $(MAKE))
 
 sfml-audio:
+	@(mkdir -p ../../lib)
 	@(cd ./Audio && $(MAKE))
 
 .PHONY: clean mrproper

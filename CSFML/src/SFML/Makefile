@@ -14,18 +14,23 @@ export DESTINCDIR = $(DESTDIR)/include
 all: csfml-system csfml-window csfml-network csfml-graphics csfml-audio
 
 csfml-system:
+	@(mkdir -p ../../lib)
 	@(cd ./System && $(MAKE))
 
 csfml-window:
+	@(mkdir -p ../../lib)
 	@(cd ./Window && $(MAKE))
 
 csfml-network:
+	@(mkdir -p ../../lib)
 	@(cd ./Network && $(MAKE))
 
 csfml-graphics:
+	@(mkdir -p ../../lib)
 	@(cd ./Graphics && $(MAKE))
 
 csfml-audio:
+	@(mkdir -p ../../lib)
 	@(cd ./Audio && $(MAKE))
 
 .PHONY: clean mrproper
