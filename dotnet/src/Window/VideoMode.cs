@@ -57,7 +57,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             /// <summary>
             /// Get the number of valid video modes
-            /// <summary>
+            /// </summary>
             ////////////////////////////////////////////////////////////
             public static uint ModesCount
             {
@@ -81,7 +81,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             /// <summary>
             /// Get the current desktop video mode
-            /// <summary>
+            /// </summary>
             ////////////////////////////////////////////////////////////
             public static VideoMode DesktopMode
             {

@@ -293,6 +293,26 @@ sfBool sfRenderWindow_SetActive(sfRenderWindow* renderWindow, sfBool active)
 
 
 ////////////////////////////////////////////////////////////
+/// Make sure that what has been drawn so far is rendered
+///
+/// Use this function if you use OpenGL rendering commands,
+/// and you want to make sure that things will appear on top
+/// of all the SFML objects that have been drawn so far.
+/// This is needed because SFML doesn't use immediate rendering,
+/// it first accumulates drawables into a queue and
+/// trigger the actual rendering afterwards.
+///
+/// You don't need to call this function if you're not
+/// dealing with OpenGL directly.
+///
+////////////////////////////////////////////////////////////
+void sfRenderWindow_Flush(sfRenderWindow* renderWindow)
+{
+    CSFML_CALL(renderWindow, Flush())
+}
+
+
+////////////////////////////////////////////////////////////
 /// Display a window on screen
 ////////////////////////////////////////////////////////////
 void sfRenderWindow_Display(sfRenderWindow* renderWindow)
@@ -364,19 +384,6 @@ void sfRenderWindow_DrawString(sfRenderWindow* renderWindow, sfString* string)
     CSFML_CALL(renderWindow, Draw(string->This));
 }
 
-
-////////////////////////////////////////////////////////////
-/// Save the content of a renderwindow to an image
-////////////////////////////////////////////////////////////
-sfImage* sfRenderWindow_Capture(sfRenderWindow* renderWindow)
-{
-    CSFML_CHECK_RETURN(renderWindow, NULL);
-
-    sfImage* image = new sfImage;
-    *image->This = renderWindow->This.Capture();
-
-    return image;
-}
 
 ////////////////////////////////////////////////////////////
 /// Clear the screen with the given color

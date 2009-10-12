@@ -214,6 +214,24 @@ CSFML_API void sfRenderWindow_SetIcon(sfRenderWindow* renderWindow, unsigned int
 CSFML_API sfBool sfRenderWindow_SetActive(sfRenderWindow* renderWindow, sfBool active);
 
 ////////////////////////////////////////////////////////////
+/// Make sure that what has been drawn so far is rendered
+///
+/// Use this function if you use OpenGL rendering commands,
+/// and you want to make sure that things will appear on top
+/// of all the SFML objects that have been drawn so far.
+/// This is needed because SFML doesn't use immediate rendering,
+/// it first accumulates drawables into a queue and
+/// trigger the actual rendering afterwards.
+///
+/// You don't need to call this function if you're not
+/// dealing with OpenGL directly.
+///
+/// \param renderWindow : Renderwindow object
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfRenderWindow_Flush(sfRenderWindow* renderWindow);
+
+////////////////////////////////////////////////////////////
 /// Display a window on screen
 ///
 /// \param renderWindow : Renderwindow object
@@ -271,16 +289,6 @@ CSFML_API void sfRenderWindow_DrawPostFX(sfRenderWindow* renderWindow, sfPostFX*
 CSFML_API void sfRenderWindow_DrawSprite(sfRenderWindow* renderWindow, sfSprite* sprite);
 CSFML_API void sfRenderWindow_DrawShape (sfRenderWindow* renderWindow, sfShape*  shape);
 CSFML_API void sfRenderWindow_DrawString(sfRenderWindow* renderWindow, sfString* string);
-
-////////////////////////////////////////////////////////////
-/// Save the content of a renderwindow to an image
-///
-/// \param renderWindow : Renderwindow to capture
-///
-/// \return Image instance containing the contents of the screen
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfImage* sfRenderWindow_Capture(sfRenderWindow* renderWindow);
 
 ////////////////////////////////////////////////////////////
 /// Clear the screen with the given color

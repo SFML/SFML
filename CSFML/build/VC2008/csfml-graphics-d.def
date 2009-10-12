@@ -171,6 +171,7 @@ EXPORTS
 	sfRenderImage_GetWidth
 	sfRenderImage_GetHeight
 	sfRenderImage_SetActive
+	sfRenderImage_Flush
 	sfRenderImage_DrawPostFX
 	sfRenderImage_DrawSprite
 	sfRenderImage_DrawShape
@@ -200,6 +201,7 @@ EXPORTS
 	sfRenderWindow_EnableKeyRepeat
 	sfRenderWindow_SetIcon
 	sfRenderWindow_SetActive
+	sfRenderWindow_Flush
 	sfRenderWindow_Display
 	sfRenderWindow_GetInput
 	sfRenderWindow_SetFramerateLimit
@@ -209,7 +211,6 @@ EXPORTS
 	sfRenderWindow_DrawSprite
 	sfRenderWindow_DrawString
 	sfRenderWindow_DrawShape
-	sfRenderWindow_Capture
 	sfRenderWindow_Clear
 	sfRenderWindow_SetView
 	sfRenderWindow_GetView

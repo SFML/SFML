@@ -193,6 +193,26 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Make sure that what has been drawn so far is rendered.
+            ///
+            /// Use this function if you use OpenGL rendering commands,
+            /// and you want to make sure that things will appear on top
+            /// of all the SFML objects that have been drawn so far.
+            /// This is needed because SFML doesn't use immediate rendering,
+            /// it first accumulates drawables into a queue and
+            /// trigger the actual rendering afterwards.
+            ///
+            /// You don't need to call this function if you're not
+            /// dealing with OpenGL directly.
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public void Flush()
+            {
+                sfRenderImage_Flush(This);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Target image of the render image
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -256,6 +276,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderImage_SetActive(IntPtr This, bool Active);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern bool sfRenderImage_Flush(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_SetView(IntPtr This, IntPtr View);

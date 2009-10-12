@@ -84,6 +84,24 @@ CSFML_API unsigned int sfRenderImage_GetHeight(sfRenderImage* renderImage);
 CSFML_API sfBool sfRenderImage_SetActive(sfRenderImage* renderImage, sfBool active);
 
 ////////////////////////////////////////////////////////////
+/// Make sure that what has been drawn so far is rendered
+///
+/// Use this function if you use OpenGL rendering commands,
+/// and you want to make sure that things will appear on top
+/// of all the SFML objects that have been drawn so far.
+/// This is needed because SFML doesn't use immediate rendering,
+/// it first accumulates drawables into a queue and
+/// trigger the actual rendering afterwards.
+///
+/// You don't need to call this function if you're not
+/// dealing with OpenGL directly.
+///
+/// \param Renderimage : Renderwindow object
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfRenderImage_Flush(sfRenderImage* renderImage);
+
+////////////////////////////////////////////////////////////
 /// Draw something on a renderimage
 ///
 /// \param renderImage :                      Renderimage to draw in

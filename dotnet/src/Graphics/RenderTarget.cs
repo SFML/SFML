@@ -59,7 +59,6 @@ namespace SFML
             /// <param name="x">X coordinate of the point to convert, relative to the target</param>
             /// <param name="y">Y coordinate of the point to convert, relative to the target</param>
             /// <returns>Converted point</returns>
-            ///
             ////////////////////////////////////////////////////////////
             Vector2 ConvertCoords(uint x, uint y);
 
@@ -72,7 +71,6 @@ namespace SFML
             /// <param name="y">Y coordinate of the point to convert, relative to the target</param>
             /// <param name="view">Target view to convert the point to</param>
             /// <returns>Converted point</returns>
-            ///
             ////////////////////////////////////////////////////////////
             Vector2 ConvertCoords(uint x, uint y, View view);
 
@@ -106,6 +104,23 @@ namespace SFML
             /// <param name="postFx">PostFx to apply</param>
             ////////////////////////////////////////////////////////////
             void Draw(PostFx postFx);
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Make sure that what has been drawn so far is rendered.
+            ///
+            /// Use this function if you use OpenGL rendering commands,
+            /// and you want to make sure that things will appear on top
+            /// of all the SFML objects that have been drawn so far.
+            /// This is needed because SFML doesn't use immediate rendering,
+            /// it first accumulates drawables into a queue and
+            /// trigger the actual rendering afterwards.
+            ///
+            /// You don't need to call this function if you're not
+            /// dealing with OpenGL directly.
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            void Flush();
         }
     }
 }

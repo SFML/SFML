@@ -384,17 +384,6 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Save the content of the window to an image
-            /// </summary>
-            /// <returns>Image instance containing the contents of the screen</returns>
-            ////////////////////////////////////////////////////////////
-            public Image Capture()
-            {
-                return new Image(sfRenderWindow_Capture(This));
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
             /// Draw something into the window
             /// </summary>
             /// <param name="objectToDraw">Object to draw</param>
@@ -413,6 +402,26 @@ namespace SFML
             public void Draw(PostFx postFx)
             {
                 sfRenderWindow_DrawPostFX(This, postFx != null ? postFx.This : IntPtr.Zero);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Make sure that what has been drawn so far is rendered.
+            ///
+            /// Use this function if you use OpenGL rendering commands,
+            /// and you want to make sure that things will appear on top
+            /// of all the SFML objects that have been drawn so far.
+            /// This is needed because SFML doesn't use immediate rendering,
+            /// it first accumulates drawables into a queue and
+            /// trigger the actual rendering afterwards.
+            ///
+            /// You don't need to call this function if you're not
+            /// dealing with OpenGL directly.
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public void Flush()
+            {
+                sfRenderWindow_Flush(This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -523,6 +532,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderWindow_SetActive(IntPtr This, bool Active);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern bool sfRenderWindow_Flush(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_SetFramerateLimit(IntPtr This, uint Limit);
