@@ -489,9 +489,6 @@ namespace SFML
             static extern bool sfRenderWindow_GetEvent(IntPtr This, out Event Evt);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfRenderWindow_Capture(IntPtr This);
-
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_Clear(IntPtr This, Color ClearColor);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
