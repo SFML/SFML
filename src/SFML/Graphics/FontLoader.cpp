@@ -22,6 +22,9 @@
 //
 ////////////////////////////////////////////////////////////
 
+//#define SFML_USE_STBTT
+#ifndef SFML_USE_STBTT
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
@@ -421,3 +424,250 @@ std::string FontLoader::GetErrorDesc(FT_Error error)
 
 } // namespace sf
 
+#else
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/Graphics/FontLoader.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
+#define STB_TRUETYPE_IMPLEMENTATION
+#include <SFML/Graphics/stb_truetype/stb_truetype.h>
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <vector>
+#include <math.h>
+
+
+namespace
+{
+    ////////////////////////////////////////////////////////////
+    // Functor to sort glyphs by size
+    ////////////////////////////////////////////////////////////
+    struct SizeCompare
+    {
+        bool operator ()(const sf::Glyph& left, const sf::Glyph& right) const
+        {
+            return left.Rectangle.GetSize().y < right.Rectangle.GetSize().y;
+        }
+    };
+}
+
+namespace sf
+{
+namespace priv
+{
+////////////////////////////////////////////////////////////
+/// Get the unique instance of the class
+////////////////////////////////////////////////////////////
+FontLoader& FontLoader::GetInstance()
+{
+    static FontLoader instance;
+
+    return instance;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Default constructor
+////////////////////////////////////////////////////////////
+FontLoader::FontLoader()
+{
+}
+
+
+////////////////////////////////////////////////////////////
+/// Destructor
+////////////////////////////////////////////////////////////
+FontLoader::~FontLoader()
+{
+}
+
+
+////////////////////////////////////////////////////////////
+/// Load a font from a file
+////////////////////////////////////////////////////////////
+bool FontLoader::LoadFontFromFile(const std::string& filename, unsigned int charSize, const Unicode::UTF32String& charset, Font& font)
+{
+    // Get the contents of the font file
+    std::ifstream file(filename.c_str(), std::ios_base::binary);
+    if (!file)
+        return false;
+    file.seekg(0, std::ios::end);
+    std::size_t length = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<char> data(length);
+    file.read(&data[0], static_cast<std::streamsize>(length));
+
+    // Load from memory
+    return LoadFontFromMemory(&data[0], data.size(), charSize, charset, font);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Load the font from a file in memory
+////////////////////////////////////////////////////////////
+bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const Unicode::UTF32String& charset, Font& font)
+{
+    // Let's find how many characters to put in each row to make them fit into a squared texture
+    GLint maxSize;
+    GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize));
+    int nbChars = static_cast<int>(sqrt(static_cast<double>(charset.length())) * 0.75);
+
+    // Clamp the character size to make sure we won't create a texture too big
+    if (nbChars * charSize >= static_cast<unsigned int>(maxSize))
+        charSize = maxSize / nbChars;
+
+    // Initialize the dimensions
+    unsigned int left      = 0;
+    unsigned int top       = 0;
+    unsigned int texWidth  = Image::GetValidTextureSize(charSize * nbChars);
+    unsigned int texHeight = charSize * nbChars;
+    std::vector<unsigned int> tops(texWidth, 0);
+
+    // Create a pixel buffer for rendering every glyph
+    std::vector<Uint8> glyphsBuffer(texWidth * texHeight * 4);
+
+    // Load the font
+    stbtt_fontinfo info;
+    int success = stbtt_InitFont(&info, reinterpret_cast<const unsigned char*>(data), 0);
+    if (!success)
+        return false;
+
+    // Compute the global scale to apply to match the character size
+    float scale = stbtt_ScaleForPixelHeight(&info, static_cast<float>(charSize));
+
+    // Render all glyphs and sort them by size to optimize texture space
+    typedef std::multimap<Glyph, Uint32, SizeCompare> GlyphTable;
+    GlyphTable glyphs;
+    for (std::size_t i = 0; i < charset.length(); ++i)
+    {
+        // Load the glyph corresponding to the current character
+        int index = stbtt_FindGlyphIndex(&info, static_cast<int>(charset[i]));
+
+        // Extract the glyph parameters (bounding box, horizontal advance)
+        Glyph glyph;
+        stbtt_GetGlyphHMetrics(&info, index, &glyph.Advance, NULL);
+        stbtt_GetGlyphBitmapBox(&info, index, scale, scale, &glyph.Rectangle.Left, &glyph.Rectangle.Top, &glyph.Rectangle.Right, &glyph.Rectangle.Bottom);
+
+        // Apply the global scale to the horizontal advance
+        glyph.Advance = static_cast<int>(glyph.Advance * scale);
+
+        // Add it to the sorted table of glyphs
+        glyphs.insert(std::make_pair(glyph, charset[i]));
+    }
+
+    // Leave a small margin around characters, so that filtering doesn't
+    // pollute them with pixels from neighbours
+    unsigned int padding = 1;
+    unsigned int margin = 1;
+
+    // Copy the rendered glyphs into the texture
+    unsigned int maxHeight = 0;
+    std::map<Uint32, IntRect> coords;
+    for (GlyphTable::const_iterator i = glyphs.begin(); i != glyphs.end(); ++i)
+    {
+        // Get the bitmap of the current glyph
+        Glyph&          curGlyph    = font.myGlyphs[i->second];
+        const Glyph&    bitmapGlyph = i->first;
+        const Vector2i& glyphSize   = bitmapGlyph.Rectangle.GetSize();
+
+        // Make sure we don't go over the texture width
+        if (left + glyphSize.x + 2 * padding + margin >= texWidth)
+            left = 0;
+
+        // Compute the top coordinate
+        top = tops[left];
+        for (unsigned int x = 0; x < glyphSize.x + 2 * padding + margin; ++x)
+            top = std::max(top, tops[left + x]);
+
+        // Make sure we don't go over the texture height -- resize it if we need more space
+        if (top + glyphSize.x + 2 * padding + margin >= texHeight)
+        {
+            texHeight *= 2;
+            glyphsBuffer.resize(texWidth * texHeight * 4);
+        }
+
+        // Store the character's position and size
+        curGlyph.Rectangle.Left   = bitmapGlyph.Rectangle.Left - padding;
+        curGlyph.Rectangle.Top    = bitmapGlyph.Rectangle.Top - padding;
+        curGlyph.Rectangle.Right  = bitmapGlyph.Rectangle.Right + padding;
+        curGlyph.Rectangle.Bottom = bitmapGlyph.Rectangle.Bottom + padding;
+        curGlyph.Advance          = bitmapGlyph.Advance;
+
+        // Texture size may change, so let the texture coordinates be calculated later
+        coords[i->second] = IntRect(left, top, left + glyphSize.x + 2 * padding, top + glyphSize.y + 2 * padding);
+
+        // Draw the glyph into our bitmap font
+        int width, height;
+        unsigned char* bitmap = stbtt_GetCodepointBitmap(&info, scale, scale, i->second, &width, &height, NULL, NULL);
+        unsigned char* pixels = bitmap;
+        for (int y = 0; y < height; ++y)
+        {
+            for (int x = 0; x < width; ++x)
+            {
+                std::size_t index = x + left + padding + (y + top + padding) * texWidth;
+                glyphsBuffer[index * 4 + 0] = 255;
+                glyphsBuffer[index * 4 + 1] = 255;
+                glyphsBuffer[index * 4 + 2] = 255;
+                glyphsBuffer[index * 4 + 3] = pixels[x];
+            }
+            pixels += width;
+        }
+
+        // Update the rendering coordinates
+        for (unsigned int x = 0; x < width + 2 * padding + margin; ++x)
+            tops[left + x] = top + height + 2 * padding + margin;
+        left += width + 2 * padding + margin;
+        if (top + height + 2 * padding > maxHeight)
+            maxHeight = top + height + 2 * padding;
+
+        // Delete the bitmap
+        stbtt_FreeBitmap(bitmap, NULL);
+    }
+
+    // Create the font's texture
+    texHeight = maxHeight;
+    glyphsBuffer.resize(texWidth * texHeight * 4);
+    font.myTexture.LoadFromPixels(texWidth, texHeight, &glyphsBuffer[0]);
+
+    // Now that the texture is created, we can precompute texture coordinates
+    for (std::size_t i = 0; i < charset.size(); ++i)
+    {
+        Uint32 curChar = charset[i];
+        font.myGlyphs[curChar].TexCoords = font.myTexture.GetTexCoords(coords[curChar]);
+    }
+
+    // Update the character size (it may have been changed by the function)
+    font.myCharSize = charSize;
+
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Create a bitmap font from a font face and a characters set
+////////////////////////////////////////////////////////////
+FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const Unicode::UTF32String& charset, Font& font)
+{
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Get a description from a FT error code
+////////////////////////////////////////////////////////////
+std::string FontLoader::GetErrorDesc(FT_Error error)
+{
+    return "";
+}
+
+} // namespace priv
+
+} // namespace sf
+
+#endif
