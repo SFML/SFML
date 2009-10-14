@@ -24,8 +24,6 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T>::Vector3() :
 x(0),
@@ -36,8 +34,6 @@ z(0)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Construct the color from its coordinates
 ////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T>::Vector3(T X, T Y, T Z) :
@@ -50,8 +46,6 @@ z(Z)
 
 
 ////////////////////////////////////////////////////////////
-/// Operator - overload ; returns the opposite of a vector
-////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T> operator -(const Vector3<T>& left)
 {
@@ -59,8 +53,6 @@ inline Vector3<T> operator -(const Vector3<T>& left)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Operator += overload ; add two vectors and assign to the first op
 ////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T>& operator +=(Vector3<T>& left, const Vector3<T>& right)
@@ -74,8 +66,6 @@ inline Vector3<T>& operator +=(Vector3<T>& left, const Vector3<T>& right)
 
 
 ////////////////////////////////////////////////////////////
-/// Operator -= overload ; subtract two vectors and assign to the first op
-////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T>& operator -=(Vector3<T>& left, const Vector3<T>& right)
 {
@@ -88,8 +78,6 @@ inline Vector3<T>& operator -=(Vector3<T>& left, const Vector3<T>& right)
 
 
 ////////////////////////////////////////////////////////////
-/// Operator + overload ; adds two vectors
-////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T> operator +(const Vector3<T>& left, const Vector3<T>& right)
 {
@@ -97,8 +85,6 @@ inline Vector3<T> operator +(const Vector3<T>& left, const Vector3<T>& right)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Operator - overload ; subtracts two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T> operator -(const Vector3<T>& left, const Vector3<T>& right)
@@ -108,8 +94,6 @@ inline Vector3<T> operator -(const Vector3<T>& left, const Vector3<T>& right)
 
 
 ////////////////////////////////////////////////////////////
-/// Operator * overload ; multiply a vector by a scalar value
-////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T> operator *(const Vector3<T>& left, T right)
 {
@@ -118,8 +102,6 @@ inline Vector3<T> operator *(const Vector3<T>& left, T right)
 
 
 ////////////////////////////////////////////////////////////
-/// Operator * overload ; multiply a scalar value by a vector
-////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T> operator *(T left, const Vector3<T>& right)
 {
@@ -127,8 +109,6 @@ inline Vector3<T> operator *(T left, const Vector3<T>& right)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Operator *= overload ; multiply-assign a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T>& operator *=(Vector3<T>& left, T right)
@@ -142,8 +122,6 @@ inline Vector3<T>& operator *=(Vector3<T>& left, T right)
 
 
 ////////////////////////////////////////////////////////////
-/// Operator / overload ; divide a vector by a scalar value
-////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T> operator /(const Vector3<T>& left, T right)
 {
@@ -151,8 +129,6 @@ inline Vector3<T> operator /(const Vector3<T>& left, T right)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Operator /= overload ; divide-assign a vector by a scalar value
 ////////////////////////////////////////////////////////////
 template <typename T>
 inline Vector3<T>& operator /=(Vector3<T>& left, T right)
@@ -166,8 +142,6 @@ inline Vector3<T>& operator /=(Vector3<T>& left, T right)
 
 
 ////////////////////////////////////////////////////////////
-/// Operator == overload ; compares the equality of two vectors
-////////////////////////////////////////////////////////////
 template <typename T>
 inline bool operator ==(const Vector3<T>& left, const Vector3<T>& right)
 {
@@ -175,8 +149,6 @@ inline bool operator ==(const Vector3<T>& left, const Vector3<T>& right)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Operator != overload ; compares the difference of two vectors
 ////////////////////////////////////////////////////////////
 template <typename T>
 inline bool operator !=(const Vector3<T>& left, const Vector3<T>& right)
