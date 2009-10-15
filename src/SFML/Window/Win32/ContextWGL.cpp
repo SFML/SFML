@@ -37,8 +37,6 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Create a new context, not associated to a window
-////////////////////////////////////////////////////////////
 ContextWGL::ContextWGL(ContextWGL* shared) :
 myWindow    (NULL),
 myDC        (NULL),
@@ -57,13 +55,10 @@ myOwnsWindow(true)
         CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
 
     // Activate the context
-    //if (shared)
-        SetActive(true);
+    SetActive(true);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Create a new context attached to a window
 ////////////////////////////////////////////////////////////
 ContextWGL::ContextWGL(ContextWGL* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings) :
 myWindow    (NULL),
@@ -80,13 +75,10 @@ myOwnsWindow(false)
         CreateContext(shared, bitsPerPixel, settings);
 
     // Activate the context
-    //if (shared)
-        SetActive(true);
+    SetActive(true);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Destructor
 ////////////////////////////////////////////////////////////
 ContextWGL::~ContextWGL()
 {
@@ -108,8 +100,6 @@ ContextWGL::~ContextWGL()
 }
 
 
-////////////////////////////////////////////////////////////
-/// \see Context::MakeCurrent
 ////////////////////////////////////////////////////////////
 bool ContextWGL::MakeCurrent(bool active)
 {
@@ -138,8 +128,6 @@ bool ContextWGL::MakeCurrent(bool active)
 
 
 ////////////////////////////////////////////////////////////
-/// \see Context::Display
-////////////////////////////////////////////////////////////
 void ContextWGL::Display()
 {
     if (myDC && myContext)
@@ -147,8 +135,6 @@ void ContextWGL::Display()
 }
 
 
-////////////////////////////////////////////////////////////
-/// \see Context::UseVerticalSync
 ////////////////////////////////////////////////////////////
 void ContextWGL::UseVerticalSync(bool enabled)
 {
@@ -159,16 +145,12 @@ void ContextWGL::UseVerticalSync(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-/// Check if a context is active on the current thread
-////////////////////////////////////////////////////////////
 bool ContextWGL::IsContextActive()
 {
     return wglGetCurrentContext() != NULL;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Create the context
 ////////////////////////////////////////////////////////////
 void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
 {

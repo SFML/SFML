@@ -40,28 +40,35 @@ namespace priv
 class WindowImpl;
 
 ////////////////////////////////////////////////////////////
-/// Abstract class representing an OpenGL context
+/// \brief Abstract class representing an OpenGL context
+///
 ////////////////////////////////////////////////////////////
 class ContextGL : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Create a new context, not associated to a window
+    /// \brief Create a new context, not associated to a window
     ///
-    /// \return Pointer to the created context
+    /// This function automatically chooses the specialized class
+    /// to use according to the OS.
+    ///
+    /// \return Pointer to the created context (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
     static ContextGL* New();
 
     ////////////////////////////////////////////////////////////
-    /// Create a new context attached to a window
+    /// \brief Create a new context attached to a window
     ///
-    /// \param owner :        Pointer to the owner window
-    /// \param bitsPerPixel : Pixel depth (in bits per pixel)
-    /// \param settings :     Creation parameters
+    /// This function automatically chooses the specialized class
+    /// to use according to the OS.
     ///
-    /// \return Pointer to the created context
+    /// \param owner        Pointer to the owner window
+    /// \param bitsPerPixel Pixel depth (in bits per pixel)
+    /// \param settings     Creation parameters
+    ///
+    /// \return Pointer to the created context (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
     static ContextGL* New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
@@ -69,13 +76,17 @@ public :
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Virtual destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     virtual ~ContextGL();
 
     ////////////////////////////////////////////////////////////
-    /// Get the settings of the context
+    /// \brief Get the settings of the context
+    ///
+    /// Note that these settings may be different than the ones
+    /// passed to the constructor; they are indeed adjusted if the
+    /// original settings are not directly supported by the system.
     ///
     /// \return Structure containing the settings
     ///
@@ -83,10 +94,16 @@ public :
     const ContextSettings& GetSettings() const;
 
     ////////////////////////////////////////////////////////////
-    /// Activate or deactivate the context as the current target
-    /// for rendering
+    /// \brief Activate or deactivate the context as the current target
+    ///        for rendering
     ///
-    /// \param active : True to activate, false to deactivate
+    /// A context is active only on the current thread, if you want to
+    /// make it active on another thread you have to deactivate it
+    /// on the previous thread first if it was active.
+    /// Only one context can be active on a thread at a time, thus
+    /// the context previously active (if any) automatically gets deactivated.
+    ///
+    /// \param active True to activate, false to deactivate
     ///
     /// \return True if operation was successful, false otherwise
     ///
@@ -94,13 +111,18 @@ public :
     bool SetActive(bool active);
 
     ////////////////////////////////////////////////////////////
-    /// Display the contents of the context
+    /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
     virtual void Display() = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Enable / disable vertical synchronization
+    /// \brief Enable or disable vertical synchronization
+    ///
+    /// Activating vertical synchronization will limit the number
+    /// of frames displayed to the refresh rate of the monitor.
+    /// This can avoid some visual artifacts, and limit the framerate
+    /// to a good value (but not constant across different computers).
     ///
     /// \param enabled : True to enable v-sync, false to deactivate
     ///
@@ -110,15 +132,18 @@ public :
 protected :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
+    ///
+    /// This constructor is meant for derived classes only.
     ///
     ////////////////////////////////////////////////////////////
     ContextGL();
 
     ////////////////////////////////////////////////////////////
-    /// Make this context the current one
+    /// \brief Activate or deactivate the context as the current target
+    ///        for rendering
     ///
-    /// \param active : True to activate, false to deactivate
+    /// \param active True to activate, false to deactivate
     ///
     /// \return True on success, false if any error happened
     ///
@@ -126,18 +151,21 @@ protected :
     virtual bool MakeCurrent(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Evaluate a pixel format configuration.
+    /// \brief Evaluate a pixel format configuration
+    ///
     /// This functions can be used by implementations that have
-    /// several valid formats and want to get the best one
+    /// several valid formats and want to get the best one.
+    /// A score is returned for the given configuration: the
+    /// lower the score is, the better the configuration is.
     ///
-    /// \param bitsPerPixel : Requested pixel depth (bits per pixel)
-    /// \param settings :     Requested additionnal settings
-    /// \param colorBits :    Color bits of the configuration to evaluate
-    /// \param depthBits :    Depth bits of the configuration to evaluate
-    /// \param stencilBits :  Stencil bits of the configuration to evaluate
-    /// \param antialiasing : Antialiasing level of the configuration to evaluate
+    /// \param bitsPerPixel Requested pixel depth (bits per pixel)
+    /// \param settings     Requested additionnal settings
+    /// \param colorBits    Color bits of the configuration to evaluate
+    /// \param depthBits    Depth bits of the configuration to evaluate
+    /// \param stencilBits  Stencil bits of the configuration to evaluate
+    /// \param antialiasing Antialiasing level of the configuration to evaluate
     ///
-    /// \return Score of the configuration : the lower the better
+    /// \return Score of the configuration
     ///
     ////////////////////////////////////////////////////////////
     static int EvaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing);

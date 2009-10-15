@@ -23,8 +23,8 @@ public :
     /// Construct the QSFMLCanvas
     ///
     /// \param size :      Initial size of the widget
-    /// \param frameTime : Frame duration, in milliseconds (0 by default)
-    /// \param parent :    Parent of the widget (NULL by default)
+    /// \param frameTime : Frame duration, in milliseconds
+    /// \param parent :    Parent of the widget
     ///
     ////////////////////////////////////////////////////////////
     QSFMLCanvas(const QSize& size, unsigned int frameTime = 0, QWidget* parent = NULL);

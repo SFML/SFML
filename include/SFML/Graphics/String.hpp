@@ -66,8 +66,8 @@ public :
     /// Construct the string from any kind of text
     ///
     /// \param text : Text assigned to the string
-    /// \param font : Font used to draw the string (SFML built-in font by default)
-    /// \param size : Characters size (30 by default)
+    /// \param font : Font used to draw the string
+    /// \param size : Characters size
     ///
     ////////////////////////////////////////////////////////////
     explicit String(const Unicode::Text& text, const Font& font = Font::GetDefaultFont(), float size = 30.f);

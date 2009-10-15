@@ -38,57 +38,70 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Linux (GLX) implementation of OpenGL contexts
+/// \brief Linux (GLX) implementation of OpenGL contexts
+///
 ////////////////////////////////////////////////////////////
 class ContextGLX : public ContextGL
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Create a new context, not associated to a window
+    /// \brief Create a new context, not associated to a window
     ///
-    /// \param shared : Context to share the new one with (can be NULL)
+    /// \param shared Context to share the new one with (can be NULL)
     ///
     ////////////////////////////////////////////////////////////
     ContextGLX(ContextGLX* shared);
 
     ////////////////////////////////////////////////////////////
-    /// Create a new context attached to a window
+    /// \brief Create a new context attached to a window
     ///
-    /// \param shared :       Context to share the new one with (can be NULL)
-    /// \param owner :        Pointer to the owner window
-    /// \param bitsPerPixel : Pixel depth (in bits per pixel)
-    /// \param settings :     Creation parameters
+    /// \param shared       Context to share the new one with (can be NULL)
+    /// \param owner        Pointer to the owner window
+    /// \param bitsPerPixel Pixel depth (in bits per pixel)
+    /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
     ContextGLX(ContextGLX* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~ContextGLX();
 
     ////////////////////////////////////////////////////////////
-    /// \see Context::MakeCurrent
+    /// \brief Activate or deactivate the context as the current target
+    ///        for rendering
+    ///
+    /// \param active True to activate, false to deactivate
+    ///
+    /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
     virtual bool MakeCurrent(bool active);
 
     ////////////////////////////////////////////////////////////
-    /// \see Context::Display
+    /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
     virtual void Display();
 
     ////////////////////////////////////////////////////////////
-    /// \see Context::UseVerticalSync
+    /// \brief Enable or disable vertical synchronization
+    ///
+    /// Activating vertical synchronization will limit the number
+    /// of frames displayed to the refresh rate of the monitor.
+    /// This can avoid some visual artifacts, and limit the framerate
+    /// to a good value (but not constant across different computers).
+    ///
+    /// \param enabled : True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
     virtual void UseVerticalSync(bool enabled);
 
     ////////////////////////////////////////////////////////////
-    /// Check if a context is active on the current thread
+    /// \brief Check if a context is active on the current thread
     ///
     /// \return True if there's an active context, false otherwise
     ///
@@ -98,11 +111,11 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// Create the context
+    /// \brief Create the context
     ///
-    /// \param shared :       Context to share the new one with (can be NULL)
-    /// \param bitsPerPixel : Pixel depth, in bits per pixel
-    /// \param settings :     Creation parameters
+    /// \param shared       Context to share the new one with (can be NULL)
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
+    /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
     void CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, const ContextSettings& settings);

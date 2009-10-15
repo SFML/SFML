@@ -53,7 +53,7 @@ public :
     /// \param red :   Red component   (0 .. 255)
     /// \param green : Green component (0 .. 255)
     /// \param blue :  Blue component  (0 .. 255)
-    /// \param alpha : Alpha (opacity) component (0 .. 255) (255 by default)
+    /// \param alpha : Alpha (opacity) component (0 .. 255)
     ///
     ////////////////////////////////////////////////////////////
     Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255);

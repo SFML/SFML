@@ -136,8 +136,8 @@ public :
         ////////////////////////////////////////////////////////////
         /// Default constructor
         ///
-        /// \param code :    Response status code (InvalidResponse by default)
-        /// \param message : Response message (empty by default)
+        /// \param code :    Response status code
+        /// \param message : Response message
         ///
         ////////////////////////////////////////////////////////////
         Response(Status code = InvalidResponse, const std::string& message = "");
@@ -387,7 +387,7 @@ public :
     ///
     /// \param distantFile : Path of the distant file to download
     /// \param destPath :    Where to put to file on the local computer
-    /// \param mode :        Transfer mode (binary by default)
+    /// \param mode :        Transfer mode
     ///
     /// \return Server response to the request
     ///
@@ -399,7 +399,7 @@ public :
     ///
     /// \param localFile : Path of the local file to upload
     /// \param destPath :  Where to put to file on the server
-    /// \param mode :      Transfer mode (binary by default)
+    /// \param mode :      Transfer mode
     ///
     /// \return Server response to the request
     ///
@@ -412,7 +412,7 @@ private :
     /// Send a command to the FTP server
     ///
     /// \param command :   Command to send
-    /// \param parameter : Command parameter ("" by default)
+    /// \param parameter : Command parameter
     ///
     /// \return Server response to the request
     ///

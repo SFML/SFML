@@ -37,23 +37,24 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Win32 implementation of VideoModeSupport 
-/// Give access to video mode related OS-specific functions
+/// \brief Windows implementation of VideoModeSupport;
+///        gives access to video mode related OS-specific functions
+///
 ////////////////////////////////////////////////////////////
 class VideoModeSupport
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Get supported video modes
+    /// \brief Get the list of all the supported video modes
     ///
-    /// \param Modes : Array to fill with available video modes
+    /// \param modes Array to fill with available video modes
     ///
     ////////////////////////////////////////////////////////////
     static void GetSupportedVideoModes(std::vector<VideoMode>& modes);
 
     ////////////////////////////////////////////////////////////
-    /// Get current desktop video mode
+    /// \brief Get the current desktop video mode
     ///
     /// \return Current desktop video mode
     ///

@@ -44,21 +44,21 @@
 #endif
 
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    unsigned int               WindowCount      = 0;
+    const char*                ClassNameA       = "SFML_Window";
+    const wchar_t*             ClassNameW       = L"SFML_Window";
+    sf::priv::WindowImplWin32* FullscreenWindow = NULL;
+}
+
 namespace sf
 {
 namespace priv
 {
-////////////////////////////////////////////////////////////
-// Static member data
-////////////////////////////////////////////////////////////
-unsigned int     WindowImplWin32::ourWindowCount      = 0;
-const char*      WindowImplWin32::ourClassNameA       = "SFML_Window";
-const wchar_t*   WindowImplWin32::ourClassNameW       = L"SFML_Window";
-WindowImplWin32* WindowImplWin32::ourFullscreenWindow = NULL;
-
-
-////////////////////////////////////////////////////////////
-/// Create the window implementation from an existing control
 ////////////////////////////////////////////////////////////
 WindowImplWin32::WindowImplWin32(WindowHandle handle) :
 myHandle          (NULL),
@@ -87,8 +87,6 @@ myIsCursorIn      (false)
 
 
 ////////////////////////////////////////////////////////////
-/// Create the window implementation
-////////////////////////////////////////////////////////////
 WindowImplWin32::WindowImplWin32(VideoMode mode, const std::string& title, unsigned long style) :
 myHandle          (NULL),
 myCallback        (0),
@@ -98,7 +96,7 @@ myKeyRepeatEnabled(true),
 myIsCursorIn      (false)
 {
     // Register the window class at first call
-    if (ourWindowCount == 0)
+    if (WindowCount == 0)
         RegisterWindowClass();
 
     // Compute position and size
@@ -136,11 +134,11 @@ myIsCursorIn      (false)
         wchar_t wTitle[256];
         int count = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, title.c_str(), static_cast<int>(title.size()), wTitle, sizeof(wTitle) / sizeof(*wTitle));
         wTitle[count] = L'\0';
-        myHandle = CreateWindowW(ourClassNameW, wTitle, win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
+        myHandle = CreateWindowW(ClassNameW, wTitle, win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
     }
     else
     {
-        myHandle = CreateWindowA(ourClassNameA, title.c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
+        myHandle = CreateWindowA(ClassNameA, title.c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
     }
 
     // Switch to fullscreen if requested
@@ -148,7 +146,7 @@ myIsCursorIn      (false)
         SwitchToFullscreen(mode);
 
     // Increment window count
-    ourWindowCount++;
+    WindowCount++;
 
     // Get the actual size of the window, which can be smaller even after the call to AdjustWindowRect
     // This happens when the window is bigger than the desktop
@@ -159,8 +157,6 @@ myIsCursorIn      (false)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Destructor
 ////////////////////////////////////////////////////////////
 WindowImplWin32::~WindowImplWin32()
 {
@@ -175,18 +171,18 @@ WindowImplWin32::~WindowImplWin32()
             DestroyWindow(myHandle);
 
         // Decrement the window count
-        ourWindowCount--;
+        WindowCount--;
 
         // Unregister window class if we were the last window
-        if (ourWindowCount == 0)
+        if (WindowCount == 0)
         {
             if (HasUnicodeSupport())
             {
-                UnregisterClassW(ourClassNameW, GetModuleHandle(NULL));
+                UnregisterClassW(ClassNameW, GetModuleHandle(NULL));
             }
             else
             {
-                UnregisterClassA(ourClassNameA, GetModuleHandle(NULL));
+                UnregisterClassA(ClassNameA, GetModuleHandle(NULL));
             }
         }
     }
@@ -199,16 +195,12 @@ WindowImplWin32::~WindowImplWin32()
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::GetHandle
-////////////////////////////////////////////////////////////
 WindowHandle WindowImplWin32::GetHandle() const
 {
     return myHandle;
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::ProcessEvents
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::ProcessEvents()
 {
@@ -226,8 +218,6 @@ void WindowImplWin32::ProcessEvents()
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::ShowMouseCursor
-////////////////////////////////////////////////////////////
 void WindowImplWin32::ShowMouseCursor(bool show)
 {
     if (show)
@@ -240,8 +230,6 @@ void WindowImplWin32::ShowMouseCursor(bool show)
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::SetCursorPosition
-////////////////////////////////////////////////////////////
 void WindowImplWin32::SetCursorPosition(unsigned int left, unsigned int top)
 {
     POINT position = {left, top};
@@ -251,16 +239,12 @@ void WindowImplWin32::SetCursorPosition(unsigned int left, unsigned int top)
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::SetPosition
-////////////////////////////////////////////////////////////
 void WindowImplWin32::SetPosition(int left, int top)
 {
     SetWindowPos(myHandle, NULL, left, top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::SetSize
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::SetSize(unsigned int width, unsigned int height)
 {
@@ -276,8 +260,6 @@ void WindowImplWin32::SetSize(unsigned int width, unsigned int height)
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::Show
-////////////////////////////////////////////////////////////
 void WindowImplWin32::Show(bool show)
 {
     ShowWindow(myHandle, show ? SW_SHOW : SW_HIDE);
@@ -285,16 +267,12 @@ void WindowImplWin32::Show(bool show)
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::EnableKeyRepeat
-////////////////////////////////////////////////////////////
 void WindowImplWin32::EnableKeyRepeat(bool enabled)
 {
     myKeyRepeatEnabled = enabled;
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::SetIcon
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
@@ -329,8 +307,6 @@ void WindowImplWin32::SetIcon(unsigned int width, unsigned int height, const Uin
 
 
 ////////////////////////////////////////////////////////////
-/// Register the window class
-////////////////////////////////////////////////////////////
 void WindowImplWin32::RegisterWindowClass()
 {
     if (HasUnicodeSupport())
@@ -345,7 +321,7 @@ void WindowImplWin32::RegisterWindowClass()
         WindowClass.hCursor       = 0;
         WindowClass.hbrBackground = 0;
         WindowClass.lpszMenuName  = NULL;
-        WindowClass.lpszClassName = ourClassNameW;
+        WindowClass.lpszClassName = ClassNameW;
         RegisterClassW(&WindowClass);
     }
     else
@@ -360,14 +336,12 @@ void WindowImplWin32::RegisterWindowClass()
         WindowClass.hCursor       = 0;
         WindowClass.hbrBackground = 0;
         WindowClass.lpszMenuName  = NULL;
-        WindowClass.lpszClassName = ourClassNameA;
+        WindowClass.lpszClassName = ClassNameA;
         RegisterClassA(&WindowClass);
     }
 }
 
 
-////////////////////////////////////////////////////////////
-/// Switch to fullscreen mode
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::SwitchToFullscreen(const VideoMode& mode)
 {
@@ -394,7 +368,7 @@ void WindowImplWin32::SwitchToFullscreen(const VideoMode& mode)
     ShowWindow(myHandle, SW_SHOW);
 
     // Set "this" as the current fullscreen window
-    ourFullscreenWindow = this;
+    FullscreenWindow = this;
 
     // SetPixelFormat can fail (really ?) if window style doesn't contain these flags
     long style = GetWindowLong(myHandle, GWL_STYLE);
@@ -403,15 +377,13 @@ void WindowImplWin32::SwitchToFullscreen(const VideoMode& mode)
 
 
 ////////////////////////////////////////////////////////////
-/// Free all the graphical resources attached to the window
-////////////////////////////////////////////////////////////
 void WindowImplWin32::Cleanup()
 {
     // Restore the previous video mode (in case we were running in fullscreen)
-    if (ourFullscreenWindow == this)
+    if (FullscreenWindow == this)
     {
         ChangeDisplaySettings(NULL, 0);
-        ourFullscreenWindow = NULL;
+        FullscreenWindow = NULL;
     }
 
     // Unhide the mouse cursor (in case it was hidden)
@@ -419,8 +391,6 @@ void WindowImplWin32::Cleanup()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Process a Win32 event
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -704,9 +674,6 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
 
 ////////////////////////////////////////////////////////////
-/// Check the state of the shift keys on a key event,
-/// and return the corresponding SF key code
-////////////////////////////////////////////////////////////
 Key::Code WindowImplWin32::GetShiftState(bool keyDown)
 {
     static bool lShiftPrevDown = false;
@@ -734,8 +701,6 @@ Key::Code WindowImplWin32::GetShiftState(bool keyDown)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Convert a Win32 virtual key code to a SFML key code
 ////////////////////////////////////////////////////////////
 Key::Code WindowImplWin32::VirtualKeyCodeToSF(WPARAM key, LPARAM flags)
 {
@@ -846,10 +811,6 @@ Key::Code WindowImplWin32::VirtualKeyCodeToSF(WPARAM key, LPARAM flags)
 
 
 ////////////////////////////////////////////////////////////
-/// Check if the current version of the OS supports unicode
-/// messages and functions ; Windows 95/98/Me may not support
-/// it, whereas Windows NT/2000/XP/Vista will
-////////////////////////////////////////////////////////////
 bool WindowImplWin32::HasUnicodeSupport()
 {
     OSVERSIONINFO version;
@@ -867,8 +828,6 @@ bool WindowImplWin32::HasUnicodeSupport()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Function called whenever one of our windows receives a message
 ////////////////////////////////////////////////////////////
 LRESULT CALLBACK WindowImplWin32::GlobalOnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
 {

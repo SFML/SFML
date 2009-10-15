@@ -68,9 +68,9 @@ public :
         ////////////////////////////////////////////////////////////
         /// Default constructor
         ///
-        /// \param method : Method to use for the request (Get by default)
-        /// \param URI :    Target URI ("/" by default -- index page)
-        /// \param body :   Content of the request's body (empty by default)
+        /// \param method : Method to use for the request
+        /// \param URI :    Target URI
+        /// \param body :   Content of the request's body
         ///
         ////////////////////////////////////////////////////////////
         Request(Method method = Get, const std::string& URI = "/", const std::string& body = "");

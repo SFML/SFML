@@ -35,19 +35,17 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Get supported video modes
-////////////////////////////////////////////////////////////
 void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
 {
     // First, clear array to fill
     modes.clear();
 
-    // Enumerate all available video modes for primary display adapter
+    // Enumerate all available video modes for the primary display adapter
     DEVMODE win32Mode;
     win32Mode.dmSize = sizeof(win32Mode);
     for (int count = 0; EnumDisplaySettings(NULL, count, &win32Mode); ++count)
     {
-        // Convert to sfVideoMode
+        // Convert to sf::VideoMode
         VideoMode mode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
 
         // Add it only if it is not already in the array
@@ -57,8 +55,6 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get current desktop video mode
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeSupport::GetDesktopVideoMode()
 {

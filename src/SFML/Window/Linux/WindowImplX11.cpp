@@ -46,10 +46,8 @@ namespace
                                                 PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
                                                 EnterWindowMask | LeaveWindowMask;
 
-    ////////////////////////////////////////////////////////////
     /// Filter the events received by windows
     /// (only allow those matching a specific window)
-    ////////////////////////////////////////////////////////////
     Bool CheckEvent(::Display*, XEvent* event, XPointer userData)
     {
         // Just check if the event matches the window
@@ -62,8 +60,6 @@ namespace sf
 {
 namespace priv
 {
-////////////////////////////////////////////////////////////
-/// Create the window implementation from an existing control
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(WindowHandle handle) :
 myWindow      (0),
@@ -103,8 +99,6 @@ myKeyRepeat   (true)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Create the window implementation
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const std::string& title, unsigned long style) :
 myWindow      (0),
@@ -246,8 +240,6 @@ myKeyRepeat   (true)
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor
-////////////////////////////////////////////////////////////
 WindowImplX11::~WindowImplX11()
 {
     // Cleanup graphical resources
@@ -274,9 +266,6 @@ WindowImplX11::~WindowImplX11()
 
 
 ////////////////////////////////////////////////////////////
-/// Get the display used by the window.
-/// This functions is meant to be used internally by ContextGLX.
-////////////////////////////////////////////////////////////
 ::Display* WindowImplX11::GetDisplay() const
 {
     return myDisplay;
@@ -284,16 +273,12 @@ WindowImplX11::~WindowImplX11()
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::GetHandle
-////////////////////////////////////////////////////////////
 WindowHandle WindowImplX11::GetHandle() const
 {
     return myWindow;
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::ProcessEvents
 ////////////////////////////////////////////////////////////
 void WindowImplX11::ProcessEvents()
 {
@@ -348,8 +333,6 @@ void WindowImplX11::ProcessEvents()
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::ShowMouseCursor
-////////////////////////////////////////////////////////////
 void WindowImplX11::ShowMouseCursor(bool show)
 {
     XDefineCursor(myDisplay, myWindow, show ? None : myHiddenCursor);
@@ -357,8 +340,6 @@ void WindowImplX11::ShowMouseCursor(bool show)
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see sfWindowImpl::SetCursorPosition
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetCursorPosition(unsigned int left, unsigned int top)
 {
@@ -368,8 +349,6 @@ void WindowImplX11::SetCursorPosition(unsigned int left, unsigned int top)
 
 
 ////////////////////////////////////////////////////////////
-/// /see sfWindowImpl::SetPosition
-////////////////////////////////////////////////////////////
 void WindowImplX11::SetPosition(int left, int top)
 {
     XMoveWindow(myDisplay, myWindow, left, top);
@@ -378,8 +357,6 @@ void WindowImplX11::SetPosition(int left, int top)
 
 
 ////////////////////////////////////////////////////////////
-/// /see WindowImpl::SetSize
-////////////////////////////////////////////////////////////
 void WindowImplX11::SetSize(unsigned int width, unsigned int height)
 {
     XResizeWindow(myDisplay, myWindow, width, height);
@@ -387,8 +364,6 @@ void WindowImplX11::SetSize(unsigned int width, unsigned int height)
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see sfWindowImpl::Show
 ////////////////////////////////////////////////////////////
 void WindowImplX11::Show(bool show)
 {
@@ -402,16 +377,12 @@ void WindowImplX11::Show(bool show)
 
 
 ////////////////////////////////////////////////////////////
-/// /see sfWindowImpl::EnableKeyRepeat
-////////////////////////////////////////////////////////////
 void WindowImplX11::EnableKeyRepeat(bool enabled)
 {
     myKeyRepeat = enabled;
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see WindowImpl::SetIcon
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
@@ -474,8 +445,6 @@ void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8
 
 
 ////////////////////////////////////////////////////////////
-/// Switch to fullscreen mode
-////////////////////////////////////////////////////////////
 void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
 {
     // Check if the XRandR extension is present
@@ -528,8 +497,6 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
 
 
 ////////////////////////////////////////////////////////////
-/// Do some common initializations after the window has been created
-////////////////////////////////////////////////////////////
 void WindowImplX11::Initialize()
 {
     // Make sure the "last key release" is initialized with invalid values
@@ -569,8 +536,6 @@ void WindowImplX11::Initialize()
 
 
 ////////////////////////////////////////////////////////////
-/// Create a transparent mouse cursor
-////////////////////////////////////////////////////////////
 void WindowImplX11::CreateHiddenCursor()
 {
     // Create the cursor's pixmap (1x1 pixels)
@@ -590,8 +555,6 @@ void WindowImplX11::CreateHiddenCursor()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Cleanup graphical resources attached to the window
 ////////////////////////////////////////////////////////////
 void WindowImplX11::CleanUp()
 {
@@ -622,8 +585,6 @@ void WindowImplX11::CleanUp()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Process an incoming event from the window
 ////////////////////////////////////////////////////////////
 void WindowImplX11::ProcessEvent(XEvent windowEvent)
 {
@@ -856,8 +817,6 @@ void WindowImplX11::ProcessEvent(XEvent windowEvent)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Convert a X11 keysym to SFML key code
 ////////////////////////////////////////////////////////////
 Key::Code WindowImplX11::KeysymToSF(KeySym symbol)
 {

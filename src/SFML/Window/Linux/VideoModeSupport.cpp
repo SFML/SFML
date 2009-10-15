@@ -37,8 +37,6 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Get supported video modes
-////////////////////////////////////////////////////////////
 void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
 {
     // First, clear array to fill
@@ -111,8 +109,6 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get current desktop video mode
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeSupport::GetDesktopVideoMode()
 {

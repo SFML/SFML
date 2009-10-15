@@ -29,17 +29,17 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Structure defining the settings of the OpenGL
-/// context attached to a window
+/// \brief Structure defining the settings of the OpenGL
+///        context attached to a window
 ////////////////////////////////////////////////////////////
 struct ContextSettings
 {
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
-    /// \param depth :        Depth buffer bits (24 by default)
-    /// \param stencil :      Stencil buffer bits (8 by default)
-    /// \param antialiasing : Antialiasing level (0 by default)
+    /// \param depth        Depth buffer bits
+    /// \param stencil      Stencil buffer bits
+    /// \param antialiasing Antialiasing level
     ///
     ////////////////////////////////////////////////////////////
     explicit ContextSettings(unsigned int depth = 24, unsigned int stencil = 8, unsigned int antialiasing = 0) :

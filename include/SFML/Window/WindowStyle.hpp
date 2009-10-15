@@ -28,9 +28,9 @@
 
 namespace sf
 {
-
 ////////////////////////////////////////////////////////////
-/// Enumeration of window creation styles
+/// \brief Enumeration of the window styles
+///
 ////////////////////////////////////////////////////////////
 namespace Style
 {
@@ -43,7 +43,6 @@ namespace Style
         Fullscreen = 1 << 3  ///< Fullscreen mode (this flag and all others are mutually exclusive)
     };
 }
-
 
 } // namespace sf
 

@@ -54,8 +54,8 @@ public :
     /// Add a point to the shape
     ///
     /// \param x, y :         Position of the point
-    /// \param color :        Color of the point (white by default)
-    /// \param outlineColor : Outline color of the point (black by default)
+    /// \param color :        Color of the point
+    /// \param outlineColor : Outline color of the point
     ///
     ////////////////////////////////////////////////////////////
     void AddPoint(float x, float y, const Color& color = Color(255, 255, 255), const Color& outlineColor = Color(0, 0, 0));
@@ -64,8 +64,8 @@ public :
     /// Add a point to the shape
     ///
     /// \param position :     Position of the point
-    /// \param color :        Color of the point (white by default)
-    /// \param outlineColor : Outline color of the point (black by default)
+    /// \param color :        Color of the point
+    /// \param outlineColor : Outline color of the point
     ///
     ////////////////////////////////////////////////////////////
     void AddPoint(const Vector2f& position, const Color& color = Color(255, 255, 255), const Color& outlineColor = Color(0, 0, 0));
@@ -186,8 +186,8 @@ public :
     /// \param p2x, p2y :     Position second point
     /// \param thickness :    Line thickness
     /// \param color :        Color used to draw the line
-    /// \param outline :      Outline width (0 by default)
-    /// \param outlineColor : Color used to draw the outline (black by default)
+    /// \param outline :      Outline width
+    /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
     static Shape Line(float p1x, float p1y, float p2x, float p2y, float thickness, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
@@ -199,8 +199,8 @@ public :
     /// \param p2 :           Position second point
     /// \param thickness :    Line thickness
     /// \param color :        Color used to draw the line
-    /// \param outline :      Outline width (0 by default)
-    /// \param outlineColor : Color used to draw the outline (black by default)
+    /// \param outline :      Outline width
+    /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
     static Shape Line(const Vector2f& p1, const Vector2f& p2, float thickness, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
@@ -211,8 +211,8 @@ public :
     /// \param p1x, p1y :     Position of the first point
     /// \param p2x, p2y :     Position second point
     /// \param color :        Color used to fill the rectangle
-    /// \param outline :      Outline width (0 by default)
-    /// \param outlineColor : Color used to draw the outline (black by default)
+    /// \param outline :      Outline width
+    /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
     static Shape Rectangle(float p1x, float p1y, float p2x, float p2y, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
@@ -223,8 +223,8 @@ public :
     /// \param p1 :           Position of the first point
     /// \param p2 :           Position second point
     /// \param color :        Color used to fill the rectangle
-    /// \param outline :      Outline width (0 by default)
-    /// \param outlineColor : Color used to draw the outline (black by default)
+    /// \param outline :      Outline width
+    /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
     static Shape Rectangle(const Vector2f& p1, const Vector2f& p2, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
@@ -235,8 +235,8 @@ public :
     /// \param x, y :         Position of the center
     /// \param radius :       Radius
     /// \param color :        Color used to fill the circle
-    /// \param outline :      Outline width (0 by default)
-    /// \param outlineColor : Color used to draw the outline (black by default)
+    /// \param outline :      Outline width
+    /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
     static Shape Circle(float x, float y, float radius, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
@@ -247,8 +247,8 @@ public :
     /// \param center :       Position of the center
     /// \param radius :       Radius
     /// \param color :        Color used to fill the circle
-    /// \param outline :      Outline width (0 by default)
-    /// \param outlineColor : Color used to draw the outline (black by default)
+    /// \param outline :      Outline width
+    /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
     static Shape Circle(const Vector2f& center, float radius, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));

@@ -36,17 +36,17 @@ namespace sf
 class Event;
 
 ////////////////////////////////////////////////////////////
-/// Base class for classes that want to receive events
-/// from a window (for internal use only)
+/// \brief Base class for classes that want to receive events
+///        from a window (for internal use only)
 ////////////////////////////////////////////////////////////
 class SFML_API WindowListener
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Called each time an event is received from attached window
+    /// \brief Called each time an event is received from the attached window
     ///
-    /// \param event : Event received
+    /// \param event Event received
     ///
     ////////////////////////////////////////////////////////////
     virtual void OnEvent(const Event& event) = 0;
@@ -54,7 +54,7 @@ public :
 protected :
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     virtual ~WindowListener() {}

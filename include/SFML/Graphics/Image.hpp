@@ -67,7 +67,7 @@ public :
     ///
     /// \param width :  Image width
     /// \param height : Image height
-    /// \param color :  Image color (black by default)
+    /// \param color :  Image color
     ///
     ////////////////////////////////////////////////////////////
     Image(unsigned int width, unsigned int height, const Color& color = Color(0, 0, 0));
@@ -136,7 +136,7 @@ public :
     ///
     /// \param width :  Image width
     /// \param height : Image height
-    /// \param color :  Image color (black by default)
+    /// \param color :  Image color
     ///
     /// \return True if creation was successful
     ///
@@ -147,7 +147,7 @@ public :
     /// Create transparency mask from a specified colorkey
     ///
     /// \param transparentColor : Color to become transparent
-    /// \param alpha :            Alpha value to assign to transparent pixels (0 by default)
+    /// \param alpha :            Alpha value to assign to transparent pixels
     ///
     ////////////////////////////////////////////////////////////
     void CreateMaskFromColor(const Color& transparentColor, Uint8 alpha = 0);
@@ -160,8 +160,8 @@ public :
     /// \param source :     Source image to copy
     /// \param destX :      X coordinate of the destination position
     /// \param destY :      Y coordinate of the destination position
-    /// \param sourceRect : Sub-rectangle of the source image to copy (empty by default - entire image)
-    /// \param applyAlpha : Should the copy take in account the source transparency? (false by default)
+    /// \param sourceRect : Sub-rectangle of the source image to copy
+    /// \param applyAlpha : Should the copy take in account the source transparency?
     ///
     ////////////////////////////////////////////////////////////
     void Copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect = IntRect(0, 0, 0, 0), bool applyAlpha = false);

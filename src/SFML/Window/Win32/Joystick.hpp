@@ -35,22 +35,23 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Win32 implementation of Joystick
+/// \brief Windows implementation of Joystick
+///
 ////////////////////////////////////////////////////////////
 class Joystick
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Initialize the instance and bind it to a physical joystick
+    /// \brief Initialize the instance and bind it to a physical joystick
     ///
-    /// \param index : Index of the physical joystick to bind to
+    /// \param index Index of the physical joystick to bind to
     ///
     ////////////////////////////////////////////////////////////
     void Initialize(unsigned int index);
 
     ////////////////////////////////////////////////////////////
-    /// Update the current joystick and return its new state
+    /// \brief Update the current joystick and return its new state
     ///
     /// \return Current state of the joystick
     ///
@@ -58,7 +59,7 @@ public :
     JoystickState UpdateState();
 
     ////////////////////////////////////////////////////////////
-    /// Get the number of axes supported by the joystick
+    /// \brief Get the number of axes supported by the joystick
     ///
     /// \return Number of axis
     ///
@@ -66,7 +67,7 @@ public :
     unsigned int GetAxesCount() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the number of buttons supported by the joystick
+    /// \brief Get the number of buttons supported by the joystick
     ///
     /// \return Number of buttons
     ///

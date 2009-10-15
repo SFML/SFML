@@ -57,8 +57,8 @@ public :
     ///
     /// \param mode :     Video mode to use
     /// \param title :    Title of the window
-    /// \param style :    Window style (Resize | Close by default)
-    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param style :    Window style
+    /// \param settings : Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
     RenderWindow(VideoMode mode, const std::string& title, unsigned long style = Style::Resize | Style::Close, const ContextSettings& settings = ContextSettings());

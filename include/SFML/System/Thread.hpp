@@ -53,7 +53,7 @@ public :
     /// \brief Construct the thread from a function pointer
     ///
     /// \param function Entry point of the thread
-    /// \param userData Data to pass to the thread function (NULL by default)
+    /// \param userData Data to pass to the thread function
     ///
     ////////////////////////////////////////////////////////////
     Thread(FuncType function, void* userData = NULL);

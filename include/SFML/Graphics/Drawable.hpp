@@ -63,10 +63,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// Default constructor
     ///
-    /// \param position : Position of the object ((0, 0) by default)
-    /// \param scale :    Scale factor ((1, 1) by default)
-    /// \param rotation : Orientation, in degrees (0 by default)
-    /// \param color :    Color of the object (white by default)
+    /// \param position : Position of the object
+    /// \param scale :    Scale factor
+    /// \param rotation : Orientation, in degrees
+    /// \param color :    Color of the object
     ///
     ////////////////////////////////////////////////////////////
     Drawable(const Vector2f& position = Vector2f(0, 0), const Vector2f& scale = Vector2f(1, 1), float rotation = 0.f, const Color& color = Color(255, 255, 255));

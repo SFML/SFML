@@ -88,7 +88,7 @@ public :
     /// This function will block if the socket is blocking
     ///
     /// \param connected : Socket containing the connection with the connected client
-    /// \param address :   Pointer to an address to fill with client infos (NULL by default)
+    /// \param address :   Pointer to an address to fill with client infos
     ///
     /// \return Status code
     ///

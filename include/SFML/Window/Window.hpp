@@ -68,8 +68,8 @@ public :
     ///
     /// \param mode :     Video mode to use
     /// \param title :    Title of the window
-    /// \param style :    Window style (Resize | Close by default)
-    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param style :    Window style
+    /// \param settings : Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
     Window(VideoMode mode, const std::string& title, unsigned long style = Style::Resize | Style::Close, const ContextSettings& settings = ContextSettings());
@@ -78,7 +78,7 @@ public :
     /// Construct the window from an existing control
     ///
     /// \param handle :   Platform-specific handle of the control
-    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param settings : Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
     Window(WindowHandle handle, const ContextSettings& settings = ContextSettings());
@@ -94,8 +94,8 @@ public :
     ///
     /// \param mode :     Video mode to use
     /// \param title :    Title of the window
-    /// \param style :    Window style (Resize | Close by default)
-    /// \param Settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param style :    Window style
+    /// \param Settings : Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
     void Create(VideoMode mode, const std::string& title, unsigned long style = Style::Resize | Style::Close, const ContextSettings& settings = ContextSettings());
@@ -104,7 +104,7 @@ public :
     /// Create (or recreate) the window from an existing control
     ///
     /// \param handle :   Platform-specific handle of the control
-    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// \param settings : Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
     void Create(WindowHandle handle, const ContextSettings& settings = ContextSettings());
@@ -236,7 +236,7 @@ public :
     /// Activate or deactivate the window as the current target
     /// for rendering
     ///
-    /// \param active : True to activate, false to deactivate (true by default)
+    /// \param active : True to activate, false to deactivate
     ///
     /// \return True if operation was successful, false otherwise
     ///

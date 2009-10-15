@@ -53,7 +53,7 @@ public :
     /// Construct the music with a buffer size
     ///
     /// \param bufferSize : Size of the internal buffer, expressed in number of samples
-    ///                     (ie. size taken by the music in memory) (44100 by default)
+    ///                     (ie. size taken by the music in memory)
     ///
     ////////////////////////////////////////////////////////////
     Music(std::size_t bufferSize = 44100);

@@ -76,7 +76,7 @@ public :
     /// Activate of deactivate the render-image as the current target
     /// for rendering
     ///
-    /// \param active : True to activate, false to deactivate (true by default)
+    /// \param active : True to activate, false to deactivate
     ///
     /// \return True if operation was successful, false otherwise
     ///

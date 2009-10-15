@@ -45,30 +45,31 @@ class WindowListener;
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Abstract base class for OS-specific window implementation
+/// \brief Abstract base class for OS-specific window implementation
+///
 ////////////////////////////////////////////////////////////
 class WindowImpl : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Create a new window depending on the current OS
+    /// \brief Create a new window depending on the current OS
     ///
-    /// \param mode :  Video mode to use
-    /// \param title : Title of the window
-    /// \param style : Window style
+    /// \param mode  Video mode to use
+    /// \param title Title of the window
+    /// \param style Window style
     ///
-    /// \return Pointer to the created window
+    /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
     static WindowImpl* New(VideoMode mode, const std::string& title, unsigned long style);
 
     ////////////////////////////////////////////////////////////
-    /// Create a new window depending on to the current OS
+    /// \brief Create a new window depending on to the current OS
     ///
-    /// \param handle : Platform-specific handle of the control
+    /// \param handle Platform-specific handle of the control
     ///
-    /// \return Pointer to the created window
+    /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
     static WindowImpl* New(WindowHandle handle);
@@ -76,29 +77,29 @@ public :
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     virtual ~WindowImpl();
 
     ////////////////////////////////////////////////////////////
-    /// Add a listener to the window
+    /// \brief Add a listener to the window
     ///
-    /// \param listener : Listener to add
+    /// \param listener Listener to add
     ///
     ////////////////////////////////////////////////////////////
     void AddListener(WindowListener* listener);
 
     ////////////////////////////////////////////////////////////
-    /// Remove a listener from the window
+    /// \brief Remove a listener from the window
     ///
-    /// \param listener : Listener to remove
+    /// \param listener Listener to remove
     ///
     ////////////////////////////////////////////////////////////
     void RemoveListener(WindowListener* listener);
 
     ////////////////////////////////////////////////////////////
-    /// Get the client width of the window
+    /// \brief Get the client width of the window
     ///
     /// \return Width of the window in pixels
     ///
@@ -106,7 +107,7 @@ public :
     unsigned int GetWidth() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the client height of the window
+    /// \brief Get the client height of the window
     ///
     /// \return Height of the window in pixels
     ///
@@ -114,8 +115,8 @@ public :
     unsigned int GetHeight() const;
 
     ////////////////////////////////////////////////////////////
-    /// Change the joystick threshold, ie. the value below which
-    /// no move event will be generated
+    /// \brief Change the joystick threshold, ie. the value below which
+    ///        no move event will be generated
     ///
     /// \param threshold : New threshold, in range [0, 100]
     ///
@@ -123,13 +124,13 @@ public :
     void SetJoystickThreshold(float threshold);
 
     ////////////////////////////////////////////////////////////
-    /// Process incoming events from operating system
+    /// \brief Process incoming events from operating system
     ///
     ////////////////////////////////////////////////////////////
     void DoEvents();
 
     ////////////////////////////////////////////////////////////
-    /// Get the OS-specific handle of the window
+    /// \brief Get the OS-specific handle of the window
     ///
     /// \return Handle of the window
     ///
@@ -137,62 +138,62 @@ public :
     virtual WindowHandle GetHandle() const = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Show or hide the mouse cursor
+    /// \brief Show or hide the mouse cursor
     ///
-    /// \param show : True to show, false to hide
+    /// \param show True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
     virtual void ShowMouseCursor(bool show) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Change the position of the mouse cursor
+    /// \brief Change the position of the mouse cursor
     ///
-    /// \param left : Left coordinate of the cursor, relative to the window
-    /// \param top :  Top coordinate of the cursor, relative to the window
+    /// \param left Left coordinate of the cursor, relative to the window
+    /// \param top  Top coordinate of the cursor, relative to the window
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetCursorPosition(unsigned int left, unsigned int top) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Change the position of the window on screen
+    /// \brief Change the position of the window on screen
     ///
-    /// \param left : Left position
-    /// \param top :  Top position
+    /// \param left Left position
+    /// \param top  Top position
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetPosition(int left, int top) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Change the size of the rendering region of the window
+    /// \brief Change the size of the rendering region of the window
     ///
-    /// \param width :  New width
-    /// \param height : New height
+    /// \param width  New width
+    /// \param height New height
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetSize(unsigned int width, unsigned int height) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Show or hide the window
+    /// \brief Show or hide the window
     ///
-    /// \param show : True to show, false to hide
+    /// \param show True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
     virtual void Show(bool show) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Enable or disable automatic key-repeat
+    /// \brief Enable or disable automatic key-repeat
     ///
-    /// \param enabled : True to enable, false to disable
+    /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
     virtual void EnableKeyRepeat(bool enabled) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Change the window's icon
+    /// \brief Change the window's icon
     ///
-    /// \param width :  Icon's width, in pixels
-    /// \param height : Icon's height, in pixels
-    /// \param pixels : Pointer to the pixels in memory, format must be RGBA 32 bits
+    /// \param width  Icon's width, in pixels
+    /// \param height Icon's height, in pixels
+    /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels) = 0;
@@ -200,15 +201,15 @@ public :
 protected :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
     WindowImpl();
 
     ////////////////////////////////////////////////////////////
-    /// Send an event to listeners (for derived classes only)
+    /// \brief Send an event to listeners (for derived classes only)
     ///
-    /// \param event : Event to send
+    /// \param event Event to send
     ///
     ////////////////////////////////////////////////////////////
     void SendEvent(const Event& event);
@@ -222,13 +223,13 @@ protected :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// Read the joysticks state and generate the appropriate events
+    /// \brief Read the joysticks state and generate the appropriate events
     ///
     ////////////////////////////////////////////////////////////
     void ProcessJoystickEvents();
 
     ////////////////////////////////////////////////////////////
-    /// Process incoming events from operating system
+    /// \brief Process incoming events from operating system
     ///
     ////////////////////////////////////////////////////////////
     virtual void ProcessEvents() = 0;

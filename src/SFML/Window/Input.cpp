@@ -31,8 +31,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 Input::Input() :
 myMouseX(0),
 myMouseY(0)
@@ -43,7 +41,7 @@ myMouseY(0)
     for (int i = 0; i < Mouse::Count; ++i)
         myMouseButtons[i] = false;
 
-    for (int i = 0; i < 16; ++i)
+    for (int i = 0; i < 32; ++i)
     {
         myJoystickButtons[0][i] = false;
         myJoystickButtons[1][i] = false;
@@ -58,16 +56,12 @@ myMouseY(0)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the state of a key
-////////////////////////////////////////////////////////////
 bool Input::IsKeyDown(Key::Code key) const
 {
     return myKeys[key];
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the state of a mouse button
 ////////////////////////////////////////////////////////////
 bool Input::IsMouseButtonDown(Mouse::Button button) const
 {
@@ -76,19 +70,15 @@ bool Input::IsMouseButtonDown(Mouse::Button button) const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the state of a joystick button
-////////////////////////////////////////////////////////////
 bool Input::IsJoystickButtonDown(unsigned int joystick, unsigned int button) const
 {
-    if ((joystick < 2) && (button < 16))
+    if ((joystick < 2) && (button < 32))
         return myJoystickButtons[joystick][button];
     else
         return false;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the mouse left position
 ////////////////////////////////////////////////////////////
 int Input::GetMouseX() const
 {
@@ -97,8 +87,6 @@ int Input::GetMouseX() const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the mouse top position
-////////////////////////////////////////////////////////////
 int Input::GetMouseY() const
 {
     return myMouseY;
@@ -106,16 +94,12 @@ int Input::GetMouseY() const
 
 
 ////////////////////////////////////////////////////////////
-/// Get a joystick axis position
-////////////////////////////////////////////////////////////
 float Input::GetJoystickAxis(unsigned int joystick, Joy::Axis axis) const
 {
     return myJoystickAxis[joystick][axis];
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see WindowListener::OnEvent
 ////////////////////////////////////////////////////////////
 void Input::OnEvent(const Event& event)
 {
@@ -153,7 +137,7 @@ void Input::OnEvent(const Event& event)
             for (int i = 0; i < Mouse::Count; ++i)
                 myMouseButtons[i] = false;
 
-            for (int i = 0; i < 16; ++i)
+            for (int i = 0; i < 32; ++i)
             {
                 myJoystickButtons[0][i] = false;
                 myJoystickButtons[1][i] = false;

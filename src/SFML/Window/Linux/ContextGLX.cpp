@@ -37,8 +37,6 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Create a new context, not associated to a window
-////////////////////////////////////////////////////////////
 ContextGLX::ContextGLX(ContextGLX* shared) :
 myWindow    (0),
 myContext   (NULL),
@@ -63,13 +61,10 @@ myOwnsWindow(true)
     CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
 
     // Activate the context
-    //if (shared)
-        SetActive(true);
+    SetActive(true);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Create a new context attached to a window
 ////////////////////////////////////////////////////////////
 ContextGLX::ContextGLX(ContextGLX* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings) :
 myWindow    (0),
@@ -87,13 +82,10 @@ myOwnsWindow(false)
         CreateContext(shared, bitsPerPixel, settings);
 
     // Activate the context
-    //if (shared)
-        SetActive(true);
+    SetActive(true);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Destructor
 ////////////////////////////////////////////////////////////
 ContextGLX::~ContextGLX()
 {
@@ -120,8 +112,6 @@ ContextGLX::~ContextGLX()
 }
 
 
-////////////////////////////////////////////////////////////
-/// \see Context::MakeCurrent
 ////////////////////////////////////////////////////////////
 bool ContextGLX::MakeCurrent(bool active)
 {
@@ -150,8 +140,6 @@ bool ContextGLX::MakeCurrent(bool active)
 
 
 ////////////////////////////////////////////////////////////
-/// \see Context::Display
-////////////////////////////////////////////////////////////
 void ContextGLX::Display()
 {
     if (myWindow)
@@ -159,8 +147,6 @@ void ContextGLX::Display()
 }
 
 
-////////////////////////////////////////////////////////////
-/// \see Context::UseVerticalSync
 ////////////////////////////////////////////////////////////
 void ContextGLX::UseVerticalSync(bool enabled)
 {
@@ -172,16 +158,12 @@ void ContextGLX::UseVerticalSync(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-/// Check if a context is active on the current thread
-////////////////////////////////////////////////////////////
 bool ContextGLX::IsContextActive()
 {
     return glXGetCurrentContext() != NULL;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Create the context
 ////////////////////////////////////////////////////////////
 void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
 {

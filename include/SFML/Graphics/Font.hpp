@@ -65,7 +65,7 @@ public :
     /// Load the font from a file
     ///
     /// \param filename : Font file to load
-    /// \param charSize : Size of characters in bitmap - the bigger, the higher quality (30 by default)
+    /// \param charSize : Size of characters in bitmap - the bigger, the higher quality
     /// \param charset :  Characters set to generate (by default, contains the ISO-8859-1 printable characters)
     ///
     /// \return True if loading was successful
@@ -78,7 +78,7 @@ public :
     ///
     /// \param data :        Pointer to the data to load
     /// \param sizeInBytes : Size of the data, in bytes
-    /// \param charSize :    Size of characters in bitmap - the bigger, the higher quality (30 by default)
+    /// \param charSize :    Size of characters in bitmap - the bigger, the higher quality
     /// \param charset :     Characters set to generate (by default, contains the ISO-8859-1 printable characters)
     ///
     /// \return True if loading was successful

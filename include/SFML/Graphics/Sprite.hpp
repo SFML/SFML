@@ -55,10 +55,10 @@ public :
     /// Construct the sprite from a source image
     ///
     /// \param image :    Image of the sprite
-    /// \param position : Position of the sprite (0, 0 by default)
-    /// \param scale :    Scale factor (1, 1 by default)
-    /// \param rotation : Orientation, in degrees (0 by default)
-    /// \param color :    Color of the sprite (white by default)
+    /// \param position : Position of the sprite
+    /// \param scale :    Scale factor
+    /// \param rotation : Orientation, in degrees
+    /// \param color :    Color of the sprite
     ///
     ////////////////////////////////////////////////////////////
     Sprite(const Image& image, const Vector2f& position = Vector2f(0, 0), const Vector2f& scale = Vector2f(1, 1), float rotation = 0.f, const Color& color = Color(255, 255, 255, 255));
@@ -67,7 +67,7 @@ public :
     /// Change the image of the sprite
     ///
     /// \param image :           New image
-    /// \param adjustToNewSize : If true, the SubRect of the sprite will be adjusted to the size of the new image (false by default)
+    /// \param adjustToNewSize : If true, the SubRect of the sprite will be adjusted to the size of the new image
     ///
     ////////////////////////////////////////////////////////////
     void SetImage(const Image& image, bool adjustToNewSize = false);

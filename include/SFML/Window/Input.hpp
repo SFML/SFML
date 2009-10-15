@@ -37,24 +37,24 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Input handles real-time input from keyboard and mouse.
-/// Use it instead of events to handle continuous moves and more
-/// game-friendly inputs
+/// \brief Give access to the real-time states of keyboard,
+///        mouse and joysticks
+///
 ////////////////////////////////////////////////////////////
 class SFML_API Input : public WindowListener, NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
     Input();
 
     ////////////////////////////////////////////////////////////
-    /// Get the state of a key
+    /// \brief Get the current state of a key (pressed or released)
     ///
-    /// \param key : Key to check
+    /// \param key Code of the key to test
     ///
     /// \return True if key is down, false if key is up
     ///
@@ -62,9 +62,9 @@ public :
     bool IsKeyDown(Key::Code key) const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the state of a mouse button
+    /// \brief Get the current state of a mouse button (pressed or released)
     ///
-    /// \param button : Button to check
+    /// \param button Code of the mouse button to check
     ///
     /// \return True if button is down, false if button is up
     ///
@@ -72,10 +72,10 @@ public :
     bool IsMouseButtonDown(Mouse::Button button) const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the state of a joystick button
+    /// \brief Get the current state of a joystick button (pressed or released)
     ///
-    /// \param joystick : Identifier of the joystick to check (0 or 1)
-    /// \param button :   Button to check
+    /// \param joystick Index of the joystick to test (0 or 1)
+    /// \param button   Index of the button to test
     ///
     /// \return True if button is down, false if button is up
     ///
@@ -83,28 +83,37 @@ public :
     bool IsJoystickButtonDown(unsigned int joystick, unsigned int button) const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the mouse X position
+    /// \brief Get the current mouse X position
     ///
-    /// \return Current mouse left position, relative to owner window
+    /// The returned position is relative to the left border
+    /// of the owner window.
+    ///
+    /// \return Current mouse left position
     ///
     ////////////////////////////////////////////////////////////
     int GetMouseX() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the mouse Y position
+    /// \brief Get the current mouse Y position
     ///
-    /// \return Current mouse top position, relative to owner window
+    /// The returned position is relative to the top border
+    /// of the owner window.
+    ///
+    /// \return Current mouse top position
     ///
     ////////////////////////////////////////////////////////////
     int GetMouseY() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get a joystick axis position
+    /// \brief Get the current position of a joystick axis
     ///
-    /// \param joystick : Identifier of the joystick to check (0 or 1)
-    /// \param axis :     Axis to get
+    /// The returned position is in the range [-100, 100], except
+    /// the POV which is an angle and is thus defined in [0, 360].
     ///
-    /// \return Current axis position, in the range [-100, 100] (except for POV, which is [0, 360])
+    /// \param joystick Index of the joystick to test (0 or 1)
+    /// \param axis     Axis to test
+    ///
+    /// \return Current axis position
     ///
     ////////////////////////////////////////////////////////////
     float GetJoystickAxis(unsigned int joystick, Joy::Axis axis) const;
@@ -112,7 +121,9 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// /see WindowListener::OnEvent
+    /// \brief Called each time an event is received from the attached window
+    ///
+    /// \param event Event received
     ///
     ////////////////////////////////////////////////////////////
     virtual void OnEvent(const Event& event);
@@ -122,7 +133,7 @@ private :
     ////////////////////////////////////////////////////////////
     bool  myKeys[Key::Count];            ///< Array containing the state of all keyboard keys
     bool  myMouseButtons[Mouse::Count];  ///< Array containing the state of all mouse buttons
-    bool  myJoystickButtons[2][16];      ///< Array containing the state of all joysticks buttons
+    bool  myJoystickButtons[2][32];      ///< Array containing the state of all joysticks buttons
     int   myMouseX;                      ///< Mouse position on X
     int   myMouseY;                      ///< Mouse position on Y
     float myJoystickAxis[2][Joy::Count]; ///< Joysticks position on each axis
@@ -132,3 +143,43 @@ private :
 
 
 #endif // SFML_INPUT_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Input
+///
+/// sf::Input provides a way to access the state of keys,
+/// mouse buttons, mouse position, joystick buttons and
+/// jostick axis.
+///
+/// sf::Input provides the same informations as the event
+/// system, but these informations can be accessed at any time,
+/// which is more convenient in many situations.
+///
+/// For example, to move an entity you can decide to catch the
+/// sf::Event::KeyPressed event on arrow keys. But if you do so,
+/// you will only receive one event when the key gets pressed
+/// (or repeated events if you activated this feature), thus the
+/// entity will not move smoothly. The best solution here is to
+/// use sf::Input::IsKeyDown so that you can update your entity's
+/// position at every iteration of your game loop, not only when you
+/// catch a KeyPressed event.
+///
+/// Note that instances of sf::Input cannot be created directly,
+/// they must be retrieved from a window (sf::Window) with its
+/// GetInput() function.
+///
+/// Usage example:
+/// \code
+/// // Retrieve the input object attached to our window
+/// const sf::Input& input = window.GetInput();
+///
+/// // Move an entity according to the current keys state
+/// float offset = 5 * window.GetFrameTime(); // 5 pixels/sec
+/// if (input.IsKeyDown(sf::Key::Left))  entity.Move(-offset, 0);
+/// if (input.IsKeyDown(sf::Key::Right)) entity.Move( offset, 0);
+/// if (input.IsKeyDown(sf::Key::Up))    entity.Move(0, -offset);
+/// if (input.IsKeyDown(sf::Key::Down))  entity.Move(0,  offset);
+/// \endcode
+///
+////////////////////////////////////////////////////////////

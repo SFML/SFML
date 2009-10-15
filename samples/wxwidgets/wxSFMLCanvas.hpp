@@ -19,11 +19,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the wxSFMLCanvas
     ///
-    /// \param parent :   Parent of the control (NULL by default)
-    /// \param id :       Identifier of the control (-1 by default)
-    /// \param position : Position of the control (wxDefaultPosition by default)
-    /// \param size :     Size of the control (wxDefaultSize by default)
-    /// \param style :    Style of the control (0 by default)
+    /// \param parent :   Parent of the control 
+    /// \param id :       Identifier of the control
+    /// \param position : Position of the control
+    /// \param size :     Size of the control
+    /// \param style :    Style of the control
     ///
     ////////////////////////////////////////////////////////////
     wxSFMLCanvas(wxWindow* parent = NULL, wxWindowID id = -1, const wxPoint& position = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);

@@ -65,11 +65,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the sound from its parameters
     ///
-    /// \param buffer :   Sound buffer to play (NULL by default)
-    /// \param loop :     Loop flag (false by default)
-    /// \param pitch :    Value of the pitch (1 by default)
-    /// \param volume :   Volume (100 by default)
-    /// \param position : Position (0, 0, 0 by default)
+    /// \param buffer :   Sound buffer to play
+    /// \param loop :     Loop flag
+    /// \param pitch :    Value of the pitch
+    /// \param volume :   Volume
+    /// \param position : Position
     ///
     ////////////////////////////////////////////////////////////
     Sound(const SoundBuffer& buffer, bool loop = false, float pitch = 1.f, float volume = 100.f, const Vector3f& position = Vector3f(0, 0, 0));

@@ -115,7 +115,7 @@ public :
     /// \param end :         Iterator pointing to the end of the input sequence
     /// \param output :      Iterator pointing to the beginning of the output sequence
     /// \param replacement : Replacement character for characters not convertible to output encoding ('?' by default -- use 0 to use no replacement character)
-    /// \param locale :      Locale to use for conversion (uses the current one by default)
+    /// \param locale :      Locale to use for conversion
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
@@ -130,7 +130,7 @@ public :
     /// \param begin :  Iterator pointing to the beginning of the input sequence
     /// \param end :    Iterator pointing to the end of the input sequence
     /// \param output : Iterator pointing to the beginning of the output sequence
-    /// \param locale : Locale to use for conversion (uses the current one by default)
+    /// \param locale : Locale to use for conversion
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///

@@ -51,7 +51,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// \param value Optional value to initalize the variable (NULL by default)
+    /// \param value Optional value to initalize the variable
     ///
     ////////////////////////////////////////////////////////////
     ThreadLocal(void* value = NULL);

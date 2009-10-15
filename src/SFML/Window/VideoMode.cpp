@@ -32,7 +32,7 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Internal data
+/// Private data
 ////////////////////////////////////////////////////////////
 namespace
 {
@@ -57,9 +57,7 @@ namespace
         }
     };
 
-    ////////////////////////////////////////////////////////////
-    /// Get and sort valid video modes
-    ////////////////////////////////////////////////////////////
+    // Get and sort valid video modes
     static void InitializeModes()
     {
         // We request the array of valid modes
@@ -74,8 +72,6 @@ namespace
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 VideoMode::VideoMode() :
 Width       (0),
 Height      (0),
@@ -85,8 +81,6 @@ BitsPerPixel(0)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Construct the video mode with its attributes
 ////////////////////////////////////////////////////////////
 VideoMode::VideoMode(unsigned int width, unsigned int height, unsigned int bitsPerPixel) :
 Width       (width),
@@ -98,8 +92,6 @@ BitsPerPixel(bitsPerPixel)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the current desktop video mode
-////////////////////////////////////////////////////////////
 VideoMode VideoMode::GetDesktopMode()
 {
     // Directly forward to the video mode support
@@ -108,11 +100,9 @@ VideoMode VideoMode::GetDesktopMode()
 
 
 ////////////////////////////////////////////////////////////
-/// Get a valid video mode
-/// Index must be in range [0, GetModesCount()[
-////////////////////////////////////////////////////////////
 VideoMode VideoMode::GetMode(std::size_t index)
 {
+    // Build and cache the list of valid modes on first call
     if (supportedModes.empty())
         InitializeModes();
 
@@ -124,10 +114,9 @@ VideoMode VideoMode::GetMode(std::size_t index)
 
 
 ////////////////////////////////////////////////////////////
-/// Get valid video modes count
-////////////////////////////////////////////////////////////
 std::size_t VideoMode::GetModesCount()
 {
+    // Build and cache the list of valid modes on first call
     if (supportedModes.empty())
         InitializeModes();
 
@@ -136,10 +125,9 @@ std::size_t VideoMode::GetModesCount()
 
 
 ////////////////////////////////////////////////////////////
-/// Tell whether or not the video mode is supported
-////////////////////////////////////////////////////////////
 bool VideoMode::IsValid() const
 {
+    // Build and cache the list of valid modes on first call
     if (supportedModes.empty())
         InitializeModes();
 
@@ -148,22 +136,18 @@ bool VideoMode::IsValid() const
 
 
 ////////////////////////////////////////////////////////////
-/// Comparison operator overload -- tell if two video modes are equal
-////////////////////////////////////////////////////////////
-bool VideoMode::operator ==(const VideoMode& other) const
+bool operator ==(const VideoMode& left, const VideoMode& right)
 {
-    return (Width        == other.Width)        &&
-           (Height       == other.Height)       &&
-           (BitsPerPixel == other.BitsPerPixel);
+    return (left.Width        == right.Width)        &&
+           (left.Height       == right.Height)       &&
+           (left.BitsPerPixel == right.BitsPerPixel);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Comparison operator overload -- tell if two video modes are different
-////////////////////////////////////////////////////////////
-bool VideoMode::operator !=(const VideoMode& other) const
+bool operator !=(const VideoMode& left, const VideoMode& right)
 {
-    return !(*this == other);
+    return !(left == right);
 }
 
 } // namespace sf

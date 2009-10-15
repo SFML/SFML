@@ -40,38 +40,40 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// WindowImplX11 is the Linux (X11) implementation of WindowImpl
+/// \brief Linux (X11) implementation of WindowImpl
+///
 ////////////////////////////////////////////////////////////
 class WindowImplX11 : public WindowImpl
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Construct the window implementation from an existing control
+    /// \brief Construct the window implementation from an existing control
     ///
-    /// \param handle : Platform-specific handle of the control
+    /// \param handle Platform-specific handle of the control
     ///
     ////////////////////////////////////////////////////////////
     WindowImplX11(WindowHandle handle);
 
     ////////////////////////////////////////////////////////////
-    /// Create the window implementation
+    /// \brief Create the window implementation
     ///
-    /// \param mode :  Video mode to use
-    /// \param title : Title of the window
-    /// \param style : Window style (resizable, fixed, or fullscren)
+    /// \param mode  Video mode to use
+    /// \param title Title of the window
+    /// \param style Window style (resizable, fixed, or fullscren)
     ///
     ////////////////////////////////////////////////////////////
     WindowImplX11(VideoMode mode, const std::string& title, unsigned long style);
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~WindowImplX11();
 
     ////////////////////////////////////////////////////////////
-    /// Get the display used by the window.
+    /// \brief Get the display used by the window
+    ///
     /// This functions is meant to be used internally by ContextGLX.
     ///
     /// \return Pointer to the X display of the window
@@ -82,97 +84,118 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::GetHandle
+    /// \brief Get the OS-specific handle of the window
+    ///
+    /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
     virtual WindowHandle GetHandle() const;
 
     ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::ProcessEvents
+    /// \brief Process incoming events from operating system
     ///
     ////////////////////////////////////////////////////////////
     virtual void ProcessEvents();
 
     ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::ShowMouseCursor
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// \param show True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
     virtual void ShowMouseCursor(bool show);
 
     ////////////////////////////////////////////////////////////
-    /// /see sfWindowImpl::SetCursorPosition
+    /// \brief Change the position of the mouse cursor
+    ///
+    /// \param left Left coordinate of the cursor, relative to the window
+    /// \param top  Top coordinate of the cursor, relative to the window
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetCursorPosition(unsigned int left, unsigned int top);
 
     ////////////////////////////////////////////////////////////
-    /// /see sfWindowImpl::SetPosition
+    /// \brief Change the position of the window on screen
+    ///
+    /// \param left Left position
+    /// \param top  Top position
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetPosition(int left, int top);
 
     ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::SetSize
+    /// \brief Change the size of the rendering region of the window
+    ///
+    /// \param width  New width
+    /// \param height New height
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetSize(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
-    /// /see sfWindowImpl::Show
+    /// \brief Show or hide the window
+    ///
+    /// \param show True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
     virtual void Show(bool show);
 
     ////////////////////////////////////////////////////////////
-    /// /see sfWindowImpl::EnableKeyRepeat
+    /// \brief Enable or disable automatic key-repeat
+    ///
+    /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
     virtual void EnableKeyRepeat(bool enabled);
 
     ////////////////////////////////////////////////////////////
-    /// /see WindowImpl::SetIcon
+    /// \brief Change the window's icon
+    ///
+    /// \param width  Icon's width, in pixels
+    /// \param height Icon's height, in pixels
+    /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
-    /// Switch to fullscreen mode
+    /// \brief Switch to fullscreen mode
     ///
-    /// \param Mode : video mode to switch to
+    /// \param Mode video mode to switch to
     ///
     ////////////////////////////////////////////////////////////
     void SwitchToFullscreen(const VideoMode& mode);
 
     ////////////////////////////////////////////////////////////
-    /// Do some common initializations after the window has been created
+    /// \brief Do some common initializations after the window has been created
     ///
     ////////////////////////////////////////////////////////////
     void Initialize();
 
     ////////////////////////////////////////////////////////////
-    /// Create a transparent mouse cursor
+    /// \brief Create a transparent mouse cursor
     ///
     ////////////////////////////////////////////////////////////
     void CreateHiddenCursor();
 
     ////////////////////////////////////////////////////////////
-    /// Cleanup graphical resources attached to the window
+    /// \brief Cleanup graphical resources attached to the window
     ///
     ////////////////////////////////////////////////////////////
     void CleanUp();
 
     ////////////////////////////////////////////////////////////
-    /// Process an incoming event from the window
+    /// \brief Process an incoming event from the window
     ///
-    /// \param windowEvent : Event which has been received
+    /// \param windowEvent Event which has been received
     ///
     ////////////////////////////////////////////////////////////
     void ProcessEvent(XEvent windowEvent);
 
     ////////////////////////////////////////////////////////////
-    /// Convert a X11 keysym to SFML key code
+    /// \brief Convert a X11 keysym to SFML key code
     ///
-    /// \param symbol : keysym to convert
+    /// \param symbol Key symbol to convert
     ///
     /// \return Corrsponding SFML key code
     ///

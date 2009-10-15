@@ -37,7 +37,8 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Structure holding the joystick state's parameters
+/// \brief Structure holding the joystick state's parameters
+///
 ////////////////////////////////////////////////////////////
 struct JoystickState
 {
