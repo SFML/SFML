@@ -365,6 +365,7 @@ const Input& Window::GetInput() const
 
 
 ////////////////////////////////////////////////////////////
+void Window::SetFramerateLimit(unsigned int limit)
 {
     myFramerateLimit = limit;
 }
