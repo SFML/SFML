@@ -27,8 +27,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 template <typename T>
-ThreadLocalPtr<T>::ThreadLocalPtr(T* Value) :
-ThreadLocal(Value)
+ThreadLocalPtr<T>::ThreadLocalPtr(T* value) :
+ThreadLocal(value)
 {
 }
 
@@ -59,18 +59,18 @@ ThreadLocalPtr<T>::operator T*() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-ThreadLocalPtr<T>& ThreadLocalPtr<T>::operator =(T* Value)
+ThreadLocalPtr<T>& ThreadLocalPtr<T>::operator =(T* value)
 {
-    SetValue(Value);
+    SetValue(value);
     return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-ThreadLocalPtr<T>& ThreadLocalPtr<T>::operator =(const ThreadLocalPtr<T>& Other)
+ThreadLocalPtr<T>& ThreadLocalPtr<T>::operator =(const ThreadLocalPtr<T>& right)
 {
-    SetValue(Other.GetValue());
+    SetValue(right.GetValue());
     return *this;
 }
 

@@ -84,7 +84,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Assignment operator for a raw pointer parameter
     ///
-    /// \param resource Pointer to assign
+    /// \param value Pointer to assign
     ///
     /// \return Reference to self
     ///
@@ -94,12 +94,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Assignment operator for a ThreadLocalPtr parameter
     ///
-    /// \param other ThreadLocalPtr to assign
+    /// \param right ThreadLocalPtr to assign
     ///
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    ThreadLocalPtr<T>& operator =(const ThreadLocalPtr<T>& other);
+    ThreadLocalPtr<T>& operator =(const ThreadLocalPtr<T>& right);
 };
 
 } // namespace sf

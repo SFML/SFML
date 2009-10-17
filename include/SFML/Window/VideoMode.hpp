@@ -71,7 +71,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get a valid video mode
     ///
-    /// The parameter \index must be in the range [0, GetModesCount()[.
+    /// The parameter \a index must be in the range [0, GetModesCount()[.
     /// Modes are sorted from best to worst, so that
     /// sf::VideoMode::GetMode(0) will always give the best.
     ///

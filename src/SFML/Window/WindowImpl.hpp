@@ -166,8 +166,8 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
     ///
-    /// \param width  New width
-    /// \param height New height
+    /// \param width  New width, in pixels
+    /// \param height New height, in pixels
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetSize(unsigned int width, unsigned int height) = 0;

@@ -124,7 +124,7 @@ public :
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled : True to enable v-sync, false to deactivate
+    /// \param enabled True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
     virtual void UseVerticalSync(bool enabled) = 0;
