@@ -213,6 +213,16 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Update the contents of the target image
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public void Display()
+            {
+                sfRenderImage_Display(This);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Target image of the render image
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -279,6 +289,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderImage_Flush(IntPtr This);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern bool sfRenderImage_Display(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_SetView(IntPtr This, IntPtr View);

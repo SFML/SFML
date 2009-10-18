@@ -172,6 +172,7 @@ EXPORTS
 	sfRenderImage_GetHeight
 	sfRenderImage_SetActive
 	sfRenderImage_Flush
+	sfRenderImage_Display
 	sfRenderImage_DrawPostFX
 	sfRenderImage_DrawSprite
 	sfRenderImage_DrawShape

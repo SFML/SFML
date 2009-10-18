@@ -99,13 +99,19 @@ sfBool sfRenderImage_SetActive(sfRenderImage* renderImage, sfBool active)
 ///
 /// You don't need to call this function if you're not
 /// dealing with OpenGL directly.
-///
-/// \param Renderimage : Renderwindow object
-///
 ////////////////////////////////////////////////////////////
 void sfRenderImage_Flush(sfRenderImage* renderImage)
 {
     CSFML_CALL(renderImage, Flush())
+}
+
+
+////////////////////////////////////////////////////////////
+/// Update the contents of the target image
+////////////////////////////////////////////////////////////
+void sfRenderImage_Display(sfRenderImage* renderImage)
+{
+    CSFML_CALL(renderImage, Display())
 }
 
 
