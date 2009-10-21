@@ -230,6 +230,7 @@ EXPORTS
 	sfView_GetCenterY
 	sfView_GetWidth
 	sfView_GetHeight
+	sfView_GetRotation
 	sfView_GetViewport
 	sfView_Move
 	sfView_Rotate
