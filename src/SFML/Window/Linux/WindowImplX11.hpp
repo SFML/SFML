@@ -191,8 +191,10 @@ private :
     ///
     /// \param windowEvent Event which has been received
     ///
+    /// \return True if the event was processed, false if it was discarded
+    ///
     ////////////////////////////////////////////////////////////
-    void ProcessEvent(XEvent windowEvent);
+    bool ProcessEvent(XEvent windowEvent);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a X11 keysym to SFML key code
