@@ -37,30 +37,30 @@ namespace sf
 {
 namespace priv
 {
-
 ////////////////////////////////////////////////////////////
-/// AudioDevice is the high-level wrapper around the audio API,
-/// it manages creation and destruction of the audio device and context
-/// and stores the device capabilities
+/// \brief High-level wrapper around the audio API, it manages
+///        the creation and destruction of the audio device and
+///        context and stores the device capabilities
+///
 ////////////////////////////////////////////////////////////
 class AudioDevice
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
     AudioDevice();
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~AudioDevice();
 
     ////////////////////////////////////////////////////////////
-    /// Get the unique instance of the class
+    /// \brief Get the unique instance of the class
     ///
     /// \return Unique instance of the class
     ///
@@ -68,7 +68,7 @@ public :
     static AudioDevice& GetInstance();
 
     ////////////////////////////////////////////////////////////
-    /// Get the OpenAL audio device
+    /// \brief Get the OpenAL audio device
     ///
     /// \return OpenAL device (cannot be NULL)
     ///
@@ -76,9 +76,9 @@ public :
     ALCdevice* GetDevice() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the OpenAL format that matches the given number of channels
+    /// \brief Get the OpenAL format that matches the given number of channels
     ///
-    /// \param channelsCount : Number of channels
+    /// \param channelsCount Number of channels
     ///
     /// \return Corresponding format
     ///

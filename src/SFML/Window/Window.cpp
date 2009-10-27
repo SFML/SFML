@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/ContextGL.hpp>
-#include <SFML/Window/Context.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <iostream>
@@ -127,16 +126,9 @@ void Window::Create(VideoMode mode, const std::string& title, unsigned long styl
         style |= Style::Titlebar;
 
     // Recreate the window implementation
-    delete myWindow;
     myWindow = priv::WindowImpl::New(mode, title, style);
 
-    // Make sure another context is bound, so that:
-    // - the context creation can request OpenGL extensions if necessary
-    // - myContext can safely be destroyed (it's no longer bound)
-    Context context;
-
     // Recreate the context
-    delete myContext;
     myContext = priv::ContextGL::New(myWindow, mode.BitsPerPixel, settings);
 
     // Perform common initializations
@@ -147,17 +139,13 @@ void Window::Create(VideoMode mode, const std::string& title, unsigned long styl
 ////////////////////////////////////////////////////////////
 void Window::Create(WindowHandle handle, const ContextSettings& settings)
 {
-    // Recreate the window implementation
+    // Destroy the previous window implementation
     Close();
+
+    // Recreate the window implementation
     myWindow = priv::WindowImpl::New(handle);
 
-    // Make sure another context is bound, so that:
-    // - the context creation can request OpenGL extensions if necessary
-    // - myContext can safely be destroyed (it's no longer bound)
-    Context context;
-
     // Recreate the context
-    delete myContext;
     myContext = priv::ContextGL::New(myWindow, VideoMode::GetDesktopMode().BitsPerPixel, settings);
 
     // Perform common initializations
@@ -325,6 +313,7 @@ bool Window::SetActive(bool active) const
     }
     else
     {
+        std::cerr << "Trying to activate the window, but it doesn't have a valid context" << std::endl;
         return false;
     }
 }
@@ -349,11 +338,8 @@ void Window::Display()
     myClock.Reset();
 
     // Display the backbuffer on screen
-    if (SetActive(true))
-    {
+    if (SetActive())
         myContext->Display();
-        SetActive(false);
-    }
 }
 
 
@@ -435,7 +421,7 @@ void Window::Initialize()
     myLastFrameTime = 0.f;
 
     // Activate the window
-    SetActive(true);
+    SetActive();
 
     // Notify the derived class
     OnCreate();

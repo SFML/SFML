@@ -54,4 +54,11 @@ void Context::SetActive(bool active)
 }
 
 
+////////////////////////////////////////////////////////////
+bool Context::SetReferenceActive()
+{
+    return priv::ContextGL::SetReferenceActive();
+}
+
+
 } // namespace sf

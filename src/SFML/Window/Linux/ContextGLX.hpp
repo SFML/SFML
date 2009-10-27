@@ -71,15 +71,13 @@ public :
     ~ContextGLX();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate or deactivate the context as the current target
+    /// \brief Activate the context as the current target
     ///        for rendering
-    ///
-    /// \param active True to activate, false to deactivate
     ///
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent(bool active);
+    virtual bool MakeCurrent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far

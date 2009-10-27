@@ -15,9 +15,6 @@ namespace sample_window
             // Create the main window
             Window window = new Window(new VideoMode(640, 480, 32), "SFML.Net Window");
 
-            // Activate it as the target for OpenGL calls
-            window.SetActive();
-
             // Setup event handlers
             window.Closed     += new EventHandler(OnClosed);
             window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
@@ -44,7 +41,9 @@ namespace sample_window
                 // Process events
                 window.DispatchEvents();
 
-                // Set the active window before using OpenGL commands
+                // Activate the window before using OpenGL commands.
+                // This is useless here because we have only one window which is
+                // always the active one, but don't forget it if you use multiple windows
                 window.SetActive();
 
                 // Clear color and depth buffer
@@ -129,8 +128,6 @@ namespace sample_window
         /// </summary>
         static void OnResized(object sender, SizeEventArgs e)
         {
-            Window window = (Window)sender;
-            window.SetActive();
             Gl.glViewport(0, 0, (int)e.Width, (int)e.Height);
         }
     }

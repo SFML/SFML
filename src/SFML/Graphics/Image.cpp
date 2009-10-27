@@ -407,8 +407,6 @@ bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
         myNeedArrayUpdate   = true;
         myPixelsFlipped     = true;
 
-        window.SetActive(false);
-
         return true;
     }
     else

@@ -63,7 +63,7 @@ RenderImageImplPBuffer::~RenderImageImplPBuffer()
 
     // This is to make sure that another valid context is made
     // active after we destroy the P-Buffer's one
-    Context context;
+    Context::SetReferenceActive();
 }
 
 
@@ -175,22 +175,25 @@ bool RenderImageImplPBuffer::Activate(bool active)
 {
     if (active)
     {
-        if (myPBuffer && myContext && (glXGetCurrentContext() != myContext))
+        if (myPBuffer && myContext)
         {
-            // Bind the OpenGL context of the P-Buffer
-            if (!glXMakeCurrent(myDisplay, myPBuffer, myContext))
-            {
-                std::cout << "Failed to activate render image" << std::endl;
-                return false;
-            }
+            if (glXGetCurrentContext() != myContext)
+                return glXMakeCurrent(myDisplay, myPBuffer, myContext) != 0;
+            else
+                return true;
+        }
+        else
+        {
+            return false;
         }
     }
     else
     {
-        // We don't actually unbind the P-Buffer, for performances reasons
+        // To deactivate the P-Buffer's context, we actually activate
+        // another one so that we make sure that there is always an
+        // active context for subsequent graphics operations
+        return Context::SetReferenceActive();
     }
-
-    return true;
 }
 
 
@@ -199,10 +202,6 @@ bool RenderImageImplPBuffer::Activate(bool active)
 ////////////////////////////////////////////////////////////
 bool RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
 {
-    // Store the current active context
-    GLXDrawable currentDrawable = glXGetCurrentDrawable();
-    GLXContext currentContext = glXGetCurrentContext();
-
     if (Activate(true))
     {
         // Bind the texture
@@ -212,8 +211,8 @@ bool RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
         // Copy the rendered pixels to the image
         GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
 
-        // Restore the previous context
-        glXMakeCurrent(myDisplay, currentDrawable, currentContext);
+        // Deactivate the P-Buffer
+        Activate(false);
 
         return true;
     }

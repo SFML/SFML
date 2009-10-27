@@ -17,9 +17,6 @@ int main()
     // Create the main window
     sf::Window window(sf::VideoMode(640, 480, 32), "SFML Window");
 
-    // Activate it as the target for OpenGL calls
-    window.SetActive();
-
     // Create a clock for measuring the time elapsed
     sf::Clock clock;
 
@@ -56,7 +53,9 @@ int main()
                 glViewport(0, 0, event.Size.Width, event.Size.Height);
        }
 
-        // Activate the window
+        // Activate the window before using OpenGL commands.
+        // This is useless here because we have only one window which is
+        // always the active one, but don't forget it if you use multiple windows
         window.SetActive();
 
         // Clear color and depth buffer

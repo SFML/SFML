@@ -129,6 +129,18 @@ public :
     ////////////////////////////////////////////////////////////
     virtual void UseVerticalSync(bool enabled) = 0;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Make the current thread's reference context active
+    ///
+    /// This function is meant to be called internally; it is used
+    /// to deactivate the current context by activating another one
+    /// (so that we still have an active context on the current thread).
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool SetReferenceActive();
+
 protected :
 
     ////////////////////////////////////////////////////////////
@@ -140,15 +152,13 @@ protected :
     ContextGL();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate or deactivate the context as the current target
+    /// \brief Activate the context as the current target
     ///        for rendering
-    ///
-    /// \param active True to activate, false to deactivate
     ///
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent(bool active) = 0;
+    virtual bool MakeCurrent() = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Evaluate a pixel format configuration

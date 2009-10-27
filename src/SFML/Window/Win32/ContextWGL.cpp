@@ -29,6 +29,8 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/wglext.h>
+#include <SFML/System/Lock.hpp>
+#include <SFML/System/Mutex.hpp>
 #include <iostream>
 
 
@@ -38,20 +40,20 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 ContextWGL::ContextWGL(ContextWGL* shared) :
-myWindow    (NULL),
-myDC        (NULL),
-myContext   (NULL),
-myOwnsWindow(true)
+myWindow       (NULL),
+myDeviceContext(NULL),
+myContext      (NULL),
+myOwnsWindow   (true)
 {
     // TODO : try to create a bitmap in memory instead of a dummy window
 
     // Create a dummy window (disabled and hidden)
     myWindow = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, 1, 1, NULL, NULL, GetModuleHandle(NULL), NULL);
     ShowWindow(myWindow, SW_HIDE);
-    myDC = GetDC(myWindow);
+    myDeviceContext = GetDC(myWindow);
 
     // Create the context
-    if (myDC)
+    if (myDeviceContext)
         CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
 
     // Activate the context
@@ -61,17 +63,17 @@ myOwnsWindow(true)
 
 ////////////////////////////////////////////////////////////
 ContextWGL::ContextWGL(ContextWGL* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings) :
-myWindow    (NULL),
-myDC        (NULL),
-myContext   (NULL),
-myOwnsWindow(false)
+myWindow       (NULL),
+myDeviceContext(NULL),
+myContext      (NULL),
+myOwnsWindow   (false)
 {
     // Get the owner window and its device context
     myWindow = static_cast<HWND>(owner->GetHandle());
-    myDC = GetDC(myWindow);
+    myDeviceContext = GetDC(myWindow);
 
     // Create the context
-    if (myDC)
+    if (myDeviceContext)
         CreateContext(shared, bitsPerPixel, settings);
 
     // Activate the context
@@ -91,8 +93,8 @@ ContextWGL::~ContextWGL()
     }
 
     // Release the DC
-    if (myWindow && myDC)
-        ReleaseDC(myWindow, myDC);
+    if (myWindow && myDeviceContext)
+        ReleaseDC(myWindow, myDeviceContext);
 
     // Destroy the window if we own it
     if (myWindow && myOwnsWindow)
@@ -101,28 +103,18 @@ ContextWGL::~ContextWGL()
 
 
 ////////////////////////////////////////////////////////////
-bool ContextWGL::MakeCurrent(bool active)
+bool ContextWGL::MakeCurrent()
 {
-    if (active)
+    if (myDeviceContext && myContext)
     {
-        if (myDC && myContext)
-        {
-            if (wglGetCurrentContext() != myContext)
-                return wglMakeCurrent(myDC, myContext) != 0;
-            else
-                return true;
-        }
+        if (wglGetCurrentContext() != myContext)
+            return wglMakeCurrent(myDeviceContext, myContext) != 0;
         else
-        {
-            return false;
-        }
+            return true;
     }
     else
     {
-        if (wglGetCurrentContext() == myContext)
-            return wglMakeCurrent(NULL, NULL) != 0;
-        else
-            return true;
+        return false;
     }
 }
 
@@ -130,8 +122,8 @@ bool ContextWGL::MakeCurrent(bool active)
 ////////////////////////////////////////////////////////////
 void ContextWGL::Display()
 {
-    if (myDC && myContext)
-        SwapBuffers(myDC);
+    if (myDeviceContext && myContext)
+        SwapBuffers(myDeviceContext);
 }
 
 
@@ -180,7 +172,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
         int   formats[128];
 	    UINT  nbFormats;
 	    float floatAttributes[] = {0, 0};
-	    bool  isValid = wglChoosePixelFormatARB(myDC, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
+	    bool  isValid = wglChoosePixelFormatARB(myDeviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
         if (!isValid || (nbFormats == 0))
         {
             if (mySettings.AntialiasingLevel > 2)
@@ -190,7 +182,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
                           << mySettings.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
 
                 mySettings.AntialiasingLevel = intAttributes[1] = 2;
-	            isValid = wglChoosePixelFormatARB(myDC, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
+	            isValid = wglChoosePixelFormatARB(myDeviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
             }
 
             if (!isValid || (nbFormats == 0))
@@ -211,7 +203,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
                 PIXELFORMATDESCRIPTOR attributes;
                 attributes.nSize    = sizeof(attributes);
                 attributes.nVersion = 1;
-                DescribePixelFormat(myDC, formats[i], sizeof(attributes), &attributes);
+                DescribePixelFormat(myDeviceContext, formats[i], sizeof(attributes), &attributes);
 
                 // Evaluate the current configuration
                 int color = attributes.cRedBits + attributes.cGreenBits + attributes.cBlueBits + attributes.cAlphaBits;
@@ -243,7 +235,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
         descriptor.cStencilBits = static_cast<BYTE>(mySettings.StencilBits);
 
         // Get the pixel format that best matches our requirements
-        bestFormat = ChoosePixelFormat(myDC, &descriptor);
+        bestFormat = ChoosePixelFormat(myDeviceContext, &descriptor);
         if (bestFormat == 0)
         {
             std::cerr << "Failed to find a suitable pixel format for device context -- cannot create OpenGL context" << std::endl;
@@ -255,12 +247,12 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
     PIXELFORMATDESCRIPTOR actualFormat;
     actualFormat.nSize    = sizeof(actualFormat);
     actualFormat.nVersion = 1;
-    DescribePixelFormat(myDC, bestFormat, sizeof(actualFormat), &actualFormat);
+    DescribePixelFormat(myDeviceContext, bestFormat, sizeof(actualFormat), &actualFormat);
     mySettings.DepthBits   = actualFormat.cDepthBits;
     mySettings.StencilBits = actualFormat.cStencilBits;
 
     // Set the chosen pixel format
-    if (!SetPixelFormat(myDC, bestFormat, &actualFormat))
+    if (!SetPixelFormat(myDeviceContext, bestFormat, &actualFormat))
     {
         std::cerr << "Failed to set pixel format for device context -- cannot create OpenGL context" << std::endl;
         return;
@@ -279,13 +271,13 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
             WGL_CONTEXT_MINOR_VERSION_ARB, 0,
             0, 0
         };
-        myContext = wglCreateContextAttribsARB(myDC, sharedContext, attributes);
+        myContext = wglCreateContextAttribsARB(myDeviceContext, sharedContext, attributes);
     }
 
     // If the OpenGL 3.0 context failed, create a regular OpenGL 1.x context
     if (!myContext)
     {
-        myContext = wglCreateContext(myDC);
+        myContext = wglCreateContext(myDeviceContext);
         if (!myContext)
         {
             std::cerr << "Failed to create an OpenGL context for this window" << std::endl;
@@ -295,6 +287,10 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
         // Share this context with others
         if (sharedContext)
         {
+            // wglShareLists doesn't seem to be thread-safe
+            static Mutex mutex;
+            Lock lock(mutex);
+
             if (!wglShareLists(sharedContext, myContext))
                 std::cerr << "Failed to share the OpenGL context" << std::endl;
         }

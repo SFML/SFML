@@ -70,15 +70,13 @@ public :
     ~ContextWGL();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate or deactivate the context as the current target
+    /// \brief Activate the context as the current target
     ///        for rendering
-    ///
-    /// \param active True to activate, false to deactivate
     ///
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent(bool active);
+    virtual bool MakeCurrent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
@@ -122,10 +120,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HWND  myWindow;     ///< Window to which the context is attached
-    HDC   myDC;         ///< Device context of the window
-    HGLRC myContext;    ///< OpenGL context
-    bool  myOwnsWindow; ///< Did we create the host window?
+    HWND  myWindow;        ///< Window to which the context is attached
+    HDC   myDeviceContext; ///< Device context of the window
+    HGLRC myContext;       ///< OpenGL context
+    bool  myOwnsWindow;    ///< Did we create the host window?
 };
 
 } // namespace priv

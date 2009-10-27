@@ -16,9 +16,6 @@ namespace sample_opengl
             // Create main window
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "SFML.Net OpenGL");
 
-            // Activate it as the target for OpenGL calls
-            window.SetActive();
-
             // Setup event handlers
             window.Closed     += new EventHandler(OnClosed);
             window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
@@ -79,7 +76,9 @@ namespace sample_opengl
                 // will be rendered on top of the background sprite
                 window.Flush();
 
-                // Activate the window for OpenGL calls
+                // Activate the window before using OpenGL commands.
+                // This is useless here because we have only one window which is
+                // always the active one, but don't forget it if you use multiple windows
                 window.SetActive();
 
                 // Clear depth buffer
@@ -169,8 +168,6 @@ namespace sample_opengl
         /// </summary>
         static void OnResized(object sender, SizeEventArgs e)
         {
-            RenderWindow window = (RenderWindow)sender;
-            window.SetActive();
             Gl.glViewport(0, 0, (int)e.Width, (int)e.Height);
         }
     }

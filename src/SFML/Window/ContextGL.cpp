@@ -99,8 +99,9 @@ ContextGL::~ContextGL()
     {
         threadContext = NULL;
     }
-    else if (threadContext != NULL)
+    else if (threadContext)
     {
+        // Don't call this->SetActive(false), it would lead to a pure virtual function call
         threadContext->SetActive(true);
     }
 }
@@ -116,27 +117,41 @@ const ContextSettings& ContextGL::GetSettings() const
 ////////////////////////////////////////////////////////////
 bool ContextGL::SetActive(bool active)
 {
-    if (MakeCurrent(active))
+    if (active)
     {
-        if (active && (threadContext == 0))
+        // Activate the context
+        if (MakeCurrent())
         {
             // If this is the first context to be activated on this thread, make
             // it the reference context for the whole thread
-            threadContext = this;
-        }
-        else if (!active && (threadContext != NULL) && (threadContext != this))
-        {
-            // Activate the reference context for this thread to ensure
-            // that there is always an active context for subsequent graphics operations
-            threadContext->SetActive(true);
-        }
+            if (!threadContext)
+                threadContext = this;
 
-        return true;
+            return true;
+        }
     }
     else
     {
-        return false;
+        // Deactivate the context
+        if (threadContext && (threadContext != this))
+        {
+            // To deactivate the context, we actually activate another one
+            // so that we make sure that there is always an active context
+            // for subsequent graphics operations
+            return threadContext->SetActive(true);
+        }
     }
+
+    // If we got there then something failed
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool ContextGL::SetReferenceActive()
+{
+    if (threadContext)
+        return threadContext->SetActive(true);
 }
 
 

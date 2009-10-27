@@ -71,6 +71,18 @@ public :
     ////////////////////////////////////////////////////////////
     void SetActive(bool active);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Make the current thread's reference context active
+    ///
+    /// This function is meant to be called internally; it is used
+    /// to deactivate the current context by activating another one
+    /// (so that we still have an active context on the current thread).
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool SetReferenceActive();
+
 private :
 
     ////////////////////////////////////////////////////////////
