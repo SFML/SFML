@@ -202,11 +202,14 @@ WindowHandle WindowImplWin32::GetHandle() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::ProcessEvents()
+void WindowImplWin32::ProcessEvents(bool block)
 {
-    // We update the window only if we own it
+    // We process the window events only if we own it
     if (!myCallback)
     {
+        if (block)
+            WaitMessage();
+
         MSG message;
         while (PeekMessage(&message, myHandle, 0, 0, PM_REMOVE))
         {

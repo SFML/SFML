@@ -194,6 +194,7 @@ EXPORTS
 	sfRenderWindow_GetHeight
 	sfRenderWindow_GetSettings
 	sfRenderWindow_GetEvent
+	sfRenderWindow_WaitEvent
 	sfRenderWindow_UseVerticalSync
 	sfRenderWindow_ShowMouseCursor
 	sfRenderWindow_SetCursorPosition

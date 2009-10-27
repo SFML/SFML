@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,6 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_INTERNAL_H
+#define SFML_INTERNAL_H
 
 ////////////////////////////////////////////////////////////
 // Define macros to check the validity of CSFML objects
@@ -102,3 +104,5 @@
     #define CSFML_CALL_PTR_RETURN(Object, Function, Default) (void)Default; return (Object->This->Function);
 
 #endif
+
+#endif // SFML_INTERNAL_H

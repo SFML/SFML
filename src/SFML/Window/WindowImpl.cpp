@@ -126,13 +126,13 @@ void WindowImpl::SetJoystickThreshold(float threshold)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImpl::DoEvents()
+void WindowImpl::DoEvents(bool block)
 {
     // Read the joysticks state and generate the appropriate events
     ProcessJoystickEvents();
 
     // Let the derived class process other events
-    ProcessEvents();
+    ProcessEvents(block);
 }
 
 

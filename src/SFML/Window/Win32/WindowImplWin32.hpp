@@ -81,10 +81,12 @@ private :
     virtual WindowHandle GetHandle() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Process incoming events from operating system
+    /// \brief Process incoming events from the operating system
+    ///
+    /// \param block Use true to block the thread until an event arrives
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents();
+    virtual void ProcessEvents(bool block);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor

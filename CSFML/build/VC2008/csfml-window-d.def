@@ -19,6 +19,7 @@ EXPORTS
 	sfWindow_GetHeight
 	sfWindow_GetSettings
 	sfWindow_GetEvent
+	sfWindow_WaitEvent
 	sfWindow_UseVerticalSync
 	sfWindow_ShowMouseCursor
 	sfWindow_SetCursorPosition

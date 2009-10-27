@@ -280,7 +280,7 @@ WindowHandle WindowImplX11::GetHandle() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::ProcessEvents()
+void WindowImplX11::ProcessEvents(bool block)
 {
     // This function implements a workaround to properly discard
     // repeated key events when necessary. The problem is that the

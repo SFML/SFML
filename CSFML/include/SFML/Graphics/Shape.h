@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_Shape_H
-#define SFML_Shape_H
+#ifndef SFML_SHAPE_H
+#define SFML_SHAPE_H
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -451,4 +451,4 @@ CSFML_API void sfShape_SetPointColor(sfShape* shape, unsigned int index, sfColor
 CSFML_API void sfShape_SetPointOutlineColor(sfShape* shape, unsigned int index, sfColor color);
 
 
-#endif // SFML_Shape_H
+#endif // SFML_SHAPE_H

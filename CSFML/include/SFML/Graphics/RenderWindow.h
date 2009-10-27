@@ -124,6 +124,17 @@ CSFML_API sfContextSettings sfRenderWindow_GetSettings(sfRenderWindow* renderWin
 CSFML_API sfBool sfRenderWindow_GetEvent(sfRenderWindow* renderWindow, sfEvent* event);
 
 ////////////////////////////////////////////////////////////
+/// Wait for an event and return it
+///
+/// \param renderWindow : Renderwindow object
+/// \param event :        Event to fill
+///
+/// \return sfFalse if an error occured
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfBool sfRenderWindow_WaitEvent(sfRenderWindow* renderWindow, sfEvent* event);
+
+////////////////////////////////////////////////////////////
 /// Enable / disable vertical synchronization on a window
 ///
 /// \param renderWindow : Renderwindow object

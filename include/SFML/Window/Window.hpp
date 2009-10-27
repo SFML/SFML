@@ -192,7 +192,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Pop the event on top of events stack, if any, and return it
     ///
-    /// This function is not blocking, if there's no pending event then
+    /// This function is not blocking: if there's no pending event then
     /// it will return false and leave \a event unmodified.
     /// Note that more than event may be present in the events stack,
     /// thus you should always call this function in a loop
@@ -211,6 +211,31 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool GetEvent(Event& event);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Wait for an event and return it
+    ///
+    /// This function is blocking: if there's no pending event then
+    /// it will wait until an event is received.
+    /// After this function returns (and no error occured),
+    /// the \a event object is always valid and filled properly.
+    /// This function is typically used when you have a thread that
+    /// is dedicated to events handling: you want to make this thread
+    /// sleep as long as no new event is received.
+    /// \code
+    /// sf::Event event;
+    /// if (window.WaitEvent(event))
+    /// {
+    ///    // process event...
+    /// }
+    /// \endcode
+    ///
+    /// \param event Event to be returned
+    ///
+    /// \return False if any error occured
+    ///
+    ////////////////////////////////////////////////////////////
+    bool WaitEvent(Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization

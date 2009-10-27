@@ -124,10 +124,12 @@ public :
     void SetJoystickThreshold(float threshold);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Process incoming events from operating system
+    /// \brief Process incoming events from the operating system
+    ///
+    /// \param block Use true to block the thread until an event arrives
     ///
     ////////////////////////////////////////////////////////////
-    void DoEvents();
+    void DoEvents(bool block);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -229,10 +231,12 @@ private :
     void ProcessJoystickEvents();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Process incoming events from operating system
+    /// \brief Process incoming events from the operating system
+    ///
+    /// \param block Use true to block the thread until an event arrives
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents() = 0;
+    virtual void ProcessEvents(bool block) = 0;
 
     ////////////////////////////////////////////////////////////
     // Total number of joysticks supported

@@ -438,6 +438,18 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Internal function to get the next event (blocking)
+            /// </summary>
+            /// <param name="eventToFill">Variable to fill with the raw pointer to the event structure</param>
+            /// <returns>False if any error occured</returns>
+            ////////////////////////////////////////////////////////////
+            protected override bool WaitEvent(out Event eventToFill)
+            {
+                return sfRenderWindow_WaitEvent(This, out eventToFill);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Handle the destruction of the object
             /// </summary>
             /// <param name="disposing">Is the GC disposing the object, or is it an explicit call ?</param>
@@ -487,6 +499,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderWindow_GetEvent(IntPtr This, out Event Evt);
+            
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern bool sfRenderWindow_WaitEvent(IntPtr This, out Event Evt);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_Clear(IntPtr This, Color ClearColor);

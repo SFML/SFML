@@ -340,97 +340,27 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Call the event handlers for each pending event.
+            /// Wait for a new event and dispatch it to the corresponding
+            /// event handler
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public void WaitAndDispatchEvents()
+            {
+                Event e;
+                if (WaitEvent(out e))
+                    CallEventHandler(e);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Call the event handlers for each pending event
             /// </summary>
             ////////////////////////////////////////////////////////////
             public void DispatchEvents()
             {
                 Event e;
                 while (GetEvent(out e))
-                {
-                    switch (e.Type)
-                    {
-                        case EventType.Closed :
-                            if (Closed != null)
-                                Closed(this, EventArgs.Empty);
-                            break;
-
-                        case EventType.GainedFocus :
-                            if (GainedFocus != null)
-                                GainedFocus(this, EventArgs.Empty);
-                            break;
-
-                        case EventType.JoyButtonPressed :
-                            if (JoyButtonPressed != null)
-                                JoyButtonPressed(this, new JoyButtonEventArgs(e.JoyButton));
-                            break;
-
-                        case EventType.JoyButtonReleased :
-                            if (JoyButtonReleased != null)
-                                JoyButtonReleased(this, new JoyButtonEventArgs(e.JoyButton));
-                            break;
-
-                        case EventType.JoyMoved :
-                            if (JoyMoved != null)
-                                JoyMoved(this, new JoyMoveEventArgs(e.JoyMove));
-                            break;
-
-                        case EventType.KeyPressed :
-                            if (KeyPressed != null)
-                                KeyPressed(this, new KeyEventArgs(e.Key));
-                            break;
-
-                        case EventType.KeyReleased :
-                            if (KeyReleased != null)
-                                KeyReleased(this, new KeyEventArgs(e.Key));
-                            break;
-
-                        case EventType.LostFocus :
-                            if (LostFocus != null)
-                                LostFocus(this, EventArgs.Empty);
-                            break;
-
-                        case EventType.MouseButtonPressed :
-                            if (MouseButtonPressed != null)
-                                MouseButtonPressed(this, new MouseButtonEventArgs(e.MouseButton));
-                            break;
-
-                        case EventType.MouseButtonReleased :
-                            if (MouseButtonReleased != null)
-                                MouseButtonReleased(this, new MouseButtonEventArgs(e.MouseButton));
-                            break;
-
-                        case EventType.MouseEntered :
-                            if (MouseEntered != null)
-                                MouseEntered(this, EventArgs.Empty);
-                            break;
-
-                        case EventType.MouseLeft :
-                            if (MouseLeft != null)
-                                MouseLeft(this, EventArgs.Empty);
-                            break;
-
-                        case EventType.MouseMoved :
-                            if (MouseMoved != null)
-                                MouseMoved(this, new MouseMoveEventArgs(e.MouseMove));
-                            break;
-
-                        case EventType.MouseWheelMoved :
-                            if (MouseWheelMoved != null)
-                                MouseWheelMoved(this, new MouseWheelEventArgs(e.MouseWheel));
-                            break;
-
-                        case EventType.Resized :
-                            if (Resized != null)
-                                Resized(this, new SizeEventArgs(e.Size));
-                            break;
-
-                        case EventType.TextEntered :
-                            if (TextEntered != null)
-                                TextEntered(this, new TextEventArgs(e.Text));
-                            break;
-                    }
-                }
+                    CallEventHandler(e);
             }
 
             ////////////////////////////////////////////////////////////
@@ -448,7 +378,7 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Internal function to get the next event
+            /// Internal function to get the next event (non-blocking)
             /// </summary>
             /// <param name="eventToFill">Variable to fill with the raw pointer to the event structure</param>
             /// <returns>True if there was an event, false otherwise</returns>
@@ -460,6 +390,18 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Internal function to get the next event (blocking)
+            /// </summary>
+            /// <param name="eventToFill">Variable to fill with the raw pointer to the event structure</param>
+            /// <returns>False if any error occured</returns>
+            ////////////////////////////////////////////////////////////
+            protected virtual bool WaitEvent(out Event eventToFill)
+            {
+                return sfWindow_WaitEvent(This, out eventToFill);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Handle the destruction of the object
             /// </summary>
             /// <param name="disposing">Is the GC disposing the object, or is it an explicit call ?</param>
@@ -467,6 +409,98 @@ namespace SFML
             protected override void Destroy(bool disposing)
             {
                 sfWindow_Destroy(This);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Call the event handler for the given event
+            /// </summary>
+            /// <param name="e">Event to dispatch</param>
+            ////////////////////////////////////////////////////////////
+            private void CallEventHandler(Event e)
+            {
+                switch (e.Type)
+                {
+                    case EventType.Closed :
+                        if (Closed != null)
+                            Closed(this, EventArgs.Empty);
+                        break;
+
+                    case EventType.GainedFocus :
+                        if (GainedFocus != null)
+                            GainedFocus(this, EventArgs.Empty);
+                        break;
+
+                    case EventType.JoyButtonPressed :
+                        if (JoyButtonPressed != null)
+                            JoyButtonPressed(this, new JoyButtonEventArgs(e.JoyButton));
+                        break;
+
+                    case EventType.JoyButtonReleased :
+                        if (JoyButtonReleased != null)
+                            JoyButtonReleased(this, new JoyButtonEventArgs(e.JoyButton));
+                        break;
+
+                    case EventType.JoyMoved :
+                        if (JoyMoved != null)
+                            JoyMoved(this, new JoyMoveEventArgs(e.JoyMove));
+                        break;
+
+                    case EventType.KeyPressed :
+                        if (KeyPressed != null)
+                            KeyPressed(this, new KeyEventArgs(e.Key));
+                        break;
+
+                    case EventType.KeyReleased :
+                        if (KeyReleased != null)
+                            KeyReleased(this, new KeyEventArgs(e.Key));
+                        break;
+
+                    case EventType.LostFocus :
+                        if (LostFocus != null)
+                            LostFocus(this, EventArgs.Empty);
+                        break;
+
+                    case EventType.MouseButtonPressed :
+                        if (MouseButtonPressed != null)
+                            MouseButtonPressed(this, new MouseButtonEventArgs(e.MouseButton));
+                        break;
+
+                    case EventType.MouseButtonReleased :
+                        if (MouseButtonReleased != null)
+                            MouseButtonReleased(this, new MouseButtonEventArgs(e.MouseButton));
+                        break;
+
+                    case EventType.MouseEntered :
+                        if (MouseEntered != null)
+                            MouseEntered(this, EventArgs.Empty);
+                        break;
+
+                    case EventType.MouseLeft :
+                        if (MouseLeft != null)
+                            MouseLeft(this, EventArgs.Empty);
+                        break;
+
+                    case EventType.MouseMoved :
+                        if (MouseMoved != null)
+                            MouseMoved(this, new MouseMoveEventArgs(e.MouseMove));
+                        break;
+
+                    case EventType.MouseWheelMoved :
+                        if (MouseWheelMoved != null)
+                            MouseWheelMoved(this, new MouseWheelEventArgs(e.MouseWheel));
+                        break;
+
+                    case EventType.Resized :
+                        if (Resized != null)
+                            Resized(this, new SizeEventArgs(e.Size));
+                        break;
+
+                    case EventType.TextEntered :
+                        if (TextEntered != null)
+                            TextEntered(this, new TextEventArgs(e.Text));
+                        break;
+                }
             }
 
             /// <summary>Event handler for the Closed event</summary>
@@ -540,6 +574,9 @@ namespace SFML
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
             static extern bool sfWindow_GetEvent(IntPtr This, out Event Evt);
+
+            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            static extern bool sfWindow_WaitEvent(IntPtr This, out Event Evt);
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Display(IntPtr This);

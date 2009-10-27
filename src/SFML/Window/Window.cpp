@@ -211,9 +211,29 @@ bool Window::GetEvent(Event& event)
 {
     // Let the window implementation process incoming events if the events queue is empty
     if (myWindow && myEvents.empty())
-        myWindow->DoEvents();
+        myWindow->DoEvents(false);
 
-    // Pop first event of queue, if not empty
+    // Pop the first event of the queue, if it is not empty
+    if (!myEvents.empty())
+    {
+        event = myEvents.front();
+        myEvents.pop();
+
+        return true;
+    }
+
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Window::WaitEvent(Event& event)
+{
+    // Let the window implementation process incoming events if the events queue is empty
+    if (myWindow && myEvents.empty())
+        myWindow->DoEvents(true);
+
+    // Pop the first event of the queue, if it is not empty
     if (!myEvents.empty())
     {
         event = myEvents.front();

@@ -146,6 +146,17 @@ CSFML_API sfContextSettings sfWindow_GetSettings(sfWindow* window);
 CSFML_API sfBool sfWindow_GetEvent(sfWindow* window, sfEvent* event);
 
 ////////////////////////////////////////////////////////////
+/// Wait for an event and return it
+///
+/// \param window : Window object
+/// \param event :  Event to fill
+///
+/// \return sfFalse if an error occured
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfBool sfWindow_WaitEvent(sfWindow* window, sfEvent* event);
+
+////////////////////////////////////////////////////////////
 /// Enable / disable vertical synchronization on a window
 ///
 /// \param window :  Window object
