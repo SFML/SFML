@@ -294,6 +294,12 @@ namespace SFML
         {
             /// <summary>Scroll amount</summary>
             public int Delta;
+
+            /// <summary>X coordinate of the mouse cursor</summary>
+            public int X;
+
+            /// <summary>Y coordinate of the mouse cursor</summary>
+            public int Y;
         }
 
         ////////////////////////////////////////////////////////////

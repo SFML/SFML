@@ -242,6 +242,8 @@ struct sfMouseWheelEvent
 {
     sfEventType Type;
     int         Delta;
+    int         X;
+    int         Y;
 };
 
 ////////////////////////////////////////////////////////////

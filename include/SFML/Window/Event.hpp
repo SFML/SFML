@@ -223,8 +223,8 @@ public :
     ////////////////////////////////////////////////////////////
     struct MouseMoveEvent
     {
-        int X; ///< X position of the mouse, relative to the left of the owner window
-        int Y; ///< Y position of the mouse, relative to the top of the owner window
+        int X; ///< X position of the mouse pointer, relative to the left of the owner window
+        int Y; ///< Y position of the mouse pointer, relative to the top of the owner window
     };
 
     ////////////////////////////////////////////////////////////
@@ -235,8 +235,8 @@ public :
     struct MouseButtonEvent
     {
         Mouse::Button Button; ///< Code of the button that has been pressed
-        int           X;      ///< X position of the mouse, relative to the left of the owner window
-        int           Y;      ///< Y position of the mouse, relative to the top of the owner window
+        int           X;      ///< X position of the mouse pointer, relative to the left of the owner window
+        int           Y;      ///< Y position of the mouse pointer, relative to the top of the owner window
     };
 
     ////////////////////////////////////////////////////////////
@@ -246,6 +246,8 @@ public :
     struct MouseWheelEvent
     {
         int Delta; ///< Number of ticks the wheel has moved (positive is up, negative is down)
+        int X;     ///< X position of the mouse pointer, relative to the left of the owner window
+        int Y;     ///< Y position of the mouse pointer, relative to the top of the owner window
     };
 
     ////////////////////////////////////////////////////////////

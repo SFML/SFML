@@ -532,9 +532,17 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse wheel event
         case WM_MOUSEWHEEL :
         {
+            // Mouse position is in screen coordinates, convert it to window coordinates
+            POINT position;
+            position.x = LOWORD(lParam);
+            position.y = HIWORD(lParam);
+            ScreenToClient(myHandle, &position);
+
             Event event;
             event.Type = Event::MouseWheelMoved;
             event.MouseWheel.Delta = static_cast<Int16>(HIWORD(wParam)) / 120;
+            event.MouseButton.X    = position.x;
+            event.MouseButton.Y    = position.y;
             SendEvent(event);
             break;
         }

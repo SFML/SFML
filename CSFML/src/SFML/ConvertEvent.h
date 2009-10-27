@@ -62,6 +62,8 @@ inline void ConvertEvent(const sf::Event& SFMLEvent, sfEvent* event)
 
         case sfEvtMouseWheelMoved :
             event->MouseWheel.Delta = SFMLEvent.MouseWheel.Delta;
+            event->MouseWheel.X     = SFMLEvent.MouseWheel.X;
+            event->MouseWheel.Y     = SFMLEvent.MouseWheel.Y;
             break;
 
         case sfEvtMouseButtonPressed :
