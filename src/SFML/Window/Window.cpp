@@ -313,7 +313,6 @@ bool Window::SetActive(bool active) const
     }
     else
     {
-        std::cerr << "Trying to activate the window, but it doesn't have a valid context" << std::endl;
         return false;
     }
 }
