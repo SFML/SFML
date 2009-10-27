@@ -792,6 +792,8 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                 Event event;
                 event.Type             = Event::MouseWheelMoved;
                 event.MouseWheel.Delta = windowEvent.xbutton.button == Button4 ? 1 : -1;
+                event.MouseWheel.X     = windowEvent.xbutton.x;
+                event.MouseWheel.Y     = windowEvent.xbutton.y;
                 SendEvent(event);
             }
             break;
