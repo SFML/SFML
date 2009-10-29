@@ -582,7 +582,7 @@ FloatRect Image::GetTexCoords(const IntRect& rect) const
 unsigned int Image::GetValidTextureSize(unsigned int size)
 {
     // Make sure that GLEW is initialized
-    EnsureGlewInit();
+    priv::EnsureGlewInit();
 
     if (glewIsSupported("GL_ARB_texture_non_power_of_two") != 0)
     {
@@ -740,7 +740,7 @@ void Image::EnsureArrayUpdate()
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
             GLCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &allPixels[0]));
 
-            // The we copy the useful pixels from the temporary array to the final one
+            // Then we copy the useful pixels from the temporary array to the final one
             const Color* src = &allPixels[0];
             Color* dst = &myPixels[0];
             int srcPitch = myTextureWidth;

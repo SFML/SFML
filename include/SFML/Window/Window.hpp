@@ -209,6 +209,8 @@ public :
     ///
     /// \return True if an event was returned, or false if the events stack was empty
     ///
+    /// \see WaitEvent
+    ///
     ////////////////////////////////////////////////////////////
     bool GetEvent(Event& event);
 
@@ -233,6 +235,8 @@ public :
     /// \param event Event to be returned
     ///
     /// \return False if any error occured
+    ///
+    /// \see GetEvent
     ///
     ////////////////////////////////////////////////////////////
     bool WaitEvent(Event& event);

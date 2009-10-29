@@ -28,7 +28,7 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/SoundFile.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/OpenAL.hpp>
+#include <SFML/Audio/ALCheck.hpp>
 #include <iostream>
 #include <memory>
 

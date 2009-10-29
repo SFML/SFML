@@ -36,17 +36,23 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Specialized SoundRecorder which saves the captured
-/// audio data into a sound buffer
+/// \brief Specialized SoundRecorder which stores the captured
+///        audio data into a sound buffer
+///
 ////////////////////////////////////////////////////////////
 class SFML_API SoundBufferRecorder : public SoundRecorder
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Get the sound buffer containing the captured audio data
+    /// \brief Get the sound buffer containing the captured audio data
     ///
-    /// \return Constant reference to the sound buffer
+    /// The sound buffer is valid only after the capture has ended.
+    /// This function provides a read-only access to the internal
+    /// sound buffer, but it can be copied if you need to
+    /// make any modification to it.
+    ///
+    /// \return Read-only access to the sound buffer
     ///
     ////////////////////////////////////////////////////////////
     const SoundBuffer& GetBuffer() const;
@@ -54,19 +60,26 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// /see SoundBuffer::OnStart
+    /// \brief Start capturing audio data
+    ///
+    /// \return True to start the capture, or false to abort it
     ///
     ////////////////////////////////////////////////////////////
     virtual bool OnStart();
 
     ////////////////////////////////////////////////////////////
-    /// /see SoundBuffer::OnProcessSamples
+    /// \brief Process a new chunk of recorded samples
+    ///
+    /// \param samples      Pointer to the new chunk of recorded samples
+    /// \param samplesCount Number of samples pointed by \a samples
+    ///
+    /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
     virtual bool OnProcessSamples(const Int16* samples, std::size_t samplesCount);
 
     ////////////////////////////////////////////////////////////
-    /// /see SoundBuffer::OnStop
+    /// \brief Stop capturing audio data
     ///
     ////////////////////////////////////////////////////////////
     virtual void OnStop();
@@ -81,3 +94,41 @@ private :
 } // namespace sf
 
 #endif // SFML_SOUNDBUFFERRECORDER_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::SoundBufferRecorder
+///
+/// sf::SoundBufferRecorder allows to access a recorded sound
+/// through a sf::SoundBuffer, so that it can be played, saved
+/// to a file, etc.
+///
+/// It has the same simple interface as its base class (Start(), Stop())
+/// and adds a function to retrieve the recorded sound buffer
+/// (GetBuffer()).
+///
+/// As usual, don't forget to call the CanCapture() function
+/// before using this class (see sf::SoundRecorder for more details
+/// about this).
+///
+/// Usage example:
+/// \code
+/// if (SoundBufferRecorder::CanCapture())
+/// {
+///     // Record some audio data
+///     SoundBufferRecorder recorder;
+///     recorder.Start();
+///     ...
+///     recorder.Stop();
+///
+///     // Get the buffer containing the captured audio data
+///     const sf::SoundBuffer& buffer = recorder.GetBuffer();
+///
+///     // Save it to a file (for example...)
+///     buffer.SaveToFile("my_record.ogg");
+/// }
+/// \endcode
+///
+/// \see sf::SoundRecorder
+///
+////////////////////////////////////////////////////////////

@@ -344,6 +344,14 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\src\SFML\Audio\ALCheck.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Audio\ALCheck.hpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Audio\AudioDevice.cpp"
 			>
 		</File>
@@ -365,10 +373,6 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Audio\Music.hpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Audio\OpenAL.hpp"
 			>
 		</File>
 		<File

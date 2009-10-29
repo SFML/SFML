@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Music.hpp>
-#include <SFML/Audio/OpenAL.hpp>
+#include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/SoundFile.hpp>
 #include <SFML/System/Lock.hpp>
 #include <fstream>

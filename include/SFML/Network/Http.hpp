@@ -176,10 +176,12 @@ public :
         enum Status
         {
             // 2xx: success
-            Ok        = 200, ///< Most common code returned when operation was successful
-            Created   = 201, ///< The resource has successfully been created
-            Accepted  = 202, ///< The request has been accepted, but will be processed later by the server
-            NoContent = 204, ///< Sent when the server didn't send any data in return
+            Ok             = 200, ///< Most common code returned when operation was successful
+            Created        = 201, ///< The resource has successfully been created
+            Accepted       = 202, ///< The request has been accepted, but will be processed later by the server
+            NoContent      = 204, ///< The server didn't send any data in return
+            ResetContent   = 205, ///< The server informs the client that it should clear the view (form) that caused the request to be sent
+            PartialContent = 206, ///< The server has sent a part of the resource, as a response to a partial GET request
 
             // 3xx: redirection
             MultipleChoices  = 300, ///< The requested page can be accessed from several locations
@@ -188,16 +190,19 @@ public :
             NotModified      = 304, ///< For conditionnal requests, means the requested page hasn't changed and doesn't need to be refreshed
 
             // 4xx: client error
-            BadRequest   = 400, ///< The server couldn't understand the request (syntax error)
-            Unauthorized = 401, ///< The requested page needs an authentification to be accessed
-            Forbidden    = 403, ///< The requested page cannot be accessed at all, even with authentification
-            NotFound     = 404, ///< The requested page doesn't exist
+            BadRequest          = 400, ///< The server couldn't understand the request (syntax error)
+            Unauthorized        = 401, ///< The requested page needs an authentification to be accessed
+            Forbidden           = 403, ///< The requested page cannot be accessed at all, even with authentification
+            NotFound            = 404, ///< The requested page doesn't exist
+            RangeNotSatisfiable = 407, ///< The server can't satisfy the partial GET request (with a "Range" header field)
 
             // 5xx: server error
             InternalServerError = 500, ///< The server encountered an unexpected error
             NotImplemented      = 501, ///< The server doesn't implement a requested feature
             BadGateway          = 502, ///< The gateway server has received an error from the source server
             ServiceNotAvailable = 503, ///< The server is temporarily unavailable (overloaded, in maintenance, ...)
+            GatewayTimeout      = 504, ///< The gateway server couldn't receive a response from the source server
+            VersionNotSupported = 505, ///< The server doesn't support the requested HTTP version
 
             // 10xx: SFML custom codes
             InvalidResponse  = 1000, ///< Response is not a valid HTTP one

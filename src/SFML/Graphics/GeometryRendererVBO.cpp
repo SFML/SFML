@@ -35,7 +35,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool GeometryRendererVBO::IsSupported()
 {
-    EnsureGlewInit();
+    priv::EnsureGlewInit();
 
     return glewIsSupported("GL_ARB_vertex_buffer_object") != 0;
 }
@@ -46,7 +46,7 @@ GeometryRendererVBO::GeometryRendererVBO() :
 myVertexBufferSize(0),
 myIndexBufferSize (0)
 {
-    EnsureGlewInit();
+    priv::EnsureGlewInit();
 
     // Create the buffers
     GLCheck(glGenBuffersARB(1, &myVertexBuffer));

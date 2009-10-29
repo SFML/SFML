@@ -313,43 +313,43 @@ myPort(0)
 ////////////////////////////////////////////////////////////
 /// Construct the Http instance with the target host
 ////////////////////////////////////////////////////////////
-Http::Http(const std::string& Host, unsigned short Port)
+Http::Http(const std::string& host, unsigned short port)
 {
-    SetHost(Host, Port);
+    SetHost(host, port);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the target host
 ////////////////////////////////////////////////////////////
-void Http::SetHost(const std::string& Host, unsigned short Port)
+void Http::SetHost(const std::string& host, unsigned short port)
 {
     // Detect the protocol used
-    std::string Protocol = ToLower(Host.substr(0, 8));
-    if (Protocol.substr(0, 7) == "http://")
+    std::string protocol = ToLower(host.substr(0, 8));
+    if (protocol.substr(0, 7) == "http://")
     {
         // HTTP protocol
-        myHostName = Host.substr(7);
-        myPort     = (Port != 0 ? Port : 80);
+        myHostName = host.substr(7);
+        myPort     = (port != 0 ? port : 80);
     }
-    else if (Protocol == "https://")
+    else if (protocol == "https://")
     {
         // HTTPS protocol
-        myHostName = Host.substr(8);
-        myPort     = (Port != 0 ? Port : 443);
+        myHostName = host.substr(8);
+        myPort     = (port != 0 ? port : 443);
     }
     else
     {
         // Undefined protocol - use HTTP
-        myHostName = Host;
-        myPort     = (Port != 0 ? Port : 80);
+        myHostName = host;
+        myPort     = (port != 0 ? port : 80);
     }
 
     // Remove any trailing '/' from the host name
     if (!myHostName.empty() && (*myHostName.rbegin() == '/'))
         myHostName.erase(myHostName.size() - 1);
 
-    myHost = sf::IPAddress(myHostName);
+    myHost = IPAddress(myHostName);
 }
 
 
@@ -361,62 +361,62 @@ void Http::SetHost(const std::string& Host, unsigned short Port)
 /// not return instantly; use a thread if you don't want to block your
 /// application.
 ////////////////////////////////////////////////////////////
-Http::Response Http::SendRequest(const Http::Request& Req, float Timeout)
+Http::Response Http::SendRequest(const Http::Request& request, float timeout)
 {
     // First make sure the request is valid -- add missing mandatory fields
-    Request ToSend(Req);
-    if (!ToSend.HasField("From"))
+    Request toSend(request);
+    if (!toSend.HasField("From"))
     {
-        ToSend.SetField("From", "user@sfml-dev.org");
+        toSend.SetField("From", "user@sfml-dev.org");
     }
-    if (!ToSend.HasField("User-Agent"))
+    if (!toSend.HasField("User-Agent"))
     {
-        ToSend.SetField("User-Agent", "libsfml-network/1.x");
+        toSend.SetField("User-Agent", "libsfml-network/2.x");
     }
-    if (!ToSend.HasField("Host"))
+    if (!toSend.HasField("Host"))
     {
-        ToSend.SetField("Host", myHostName);
+        toSend.SetField("Host", myHostName);
     }
-    if (!ToSend.HasField("Content-Length"))
+    if (!toSend.HasField("Content-Length"))
     {
-        std::ostringstream Out;
-        Out << ToSend.myBody.size();
-        ToSend.SetField("Content-Length", Out.str());
+        std::ostringstream out;
+        out << toSend.myBody.size();
+        toSend.SetField("Content-Length", out.str());
     }
-    if ((ToSend.myMethod == Request::Post) && !ToSend.HasField("Content-Type"))
+    if ((toSend.myMethod == Request::Post) && !toSend.HasField("Content-Type"))
     {
-        ToSend.SetField("Content-Type", "application/x-www-form-urlencoded");
+        toSend.SetField("Content-Type", "application/x-www-form-urlencoded");
     }
-    if ((ToSend.myMajorVersion * 10 + ToSend.myMinorVersion >= 11) && !ToSend.HasField("Connection"))
+    if ((toSend.myMajorVersion * 10 + toSend.myMinorVersion >= 11) && !toSend.HasField("Connection"))
     {
-        ToSend.SetField("Connection", "close");
+        toSend.SetField("Connection", "close");
     }
 
     // Prepare the response
-    Response Received;
+    Response received;
 
     // Connect the socket to the host
-    if (myConnection.Connect(myPort, myHost, Timeout) == Socket::Done)
+    if (myConnection.Connect(myPort, myHost, timeout) == Socket::Done)
     {
         // Convert the request to string and send it through the connected socket
-        std::string RequestStr = ToSend.ToString();
+        std::string requestStr = toSend.ToString();
 
-        if (!RequestStr.empty())
+        if (!requestStr.empty())
         {
             // Send it through the socket
-            if (myConnection.Send(RequestStr.c_str(), RequestStr.size()) == sf::Socket::Done)
+            if (myConnection.Send(requestStr.c_str(), requestStr.size()) == sf::Socket::Done)
             {
                 // Wait for the server's response
-                std::string ReceivedStr;
-                std::size_t Size = 0;
-                char Buffer[1024];
-                while (myConnection.Receive(Buffer, sizeof(Buffer), Size) == sf::Socket::Done)
+                std::string receivedStr;
+                std::size_t size = 0;
+                char buffer[1024];
+                while (myConnection.Receive(buffer, sizeof(buffer), size) == sf::Socket::Done)
                 {
-                    ReceivedStr.append(Buffer, Buffer + Size);
+                    receivedStr.append(buffer, buffer + size);
                 }
 
                 // Build the Response object from the received data
-                Received.FromString(ReceivedStr);
+                received.FromString(receivedStr);
             }
         }
 
@@ -424,7 +424,7 @@ Http::Response Http::SendRequest(const Http::Request& Req, float Timeout)
         myConnection.Close();
     }
 
-    return Received;
+    return received;
 }
 
 } // namespace sf

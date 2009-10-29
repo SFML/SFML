@@ -26,13 +26,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Listener.hpp>
-#include <SFML/Audio/OpenAL.hpp>
+#include <SFML/Audio/ALCheck.hpp>
 
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-/// Change the global volume of all the sounds
 ////////////////////////////////////////////////////////////
 void Listener::SetGlobalVolume(float volume)
 {
@@ -40,8 +38,6 @@ void Listener::SetGlobalVolume(float volume)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the current value of the global volume of all the sounds
 ////////////////////////////////////////////////////////////
 float Listener::GetGlobalVolume()
 {
@@ -53,8 +49,6 @@ float Listener::GetGlobalVolume()
 
 
 ////////////////////////////////////////////////////////////
-/// Change the position of the listener (take 3 values)
-////////////////////////////////////////////////////////////
 void Listener::SetPosition(float x, float y, float z)
 {
     ALCheck(alListener3f(AL_POSITION, x, y, z));
@@ -62,16 +56,12 @@ void Listener::SetPosition(float x, float y, float z)
 
 
 ////////////////////////////////////////////////////////////
-/// Change the position of the listener (take a 3D vector)
-////////////////////////////////////////////////////////////
 void Listener::SetPosition(const Vector3f& position)
 {
     SetPosition(position.x, position.y, position.z);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the current position of the listener
 ////////////////////////////////////////////////////////////
 Vector3f Listener::GetPosition()
 {
@@ -83,8 +73,6 @@ Vector3f Listener::GetPosition()
 
 
 ////////////////////////////////////////////////////////////
-/// Change the orientation of the listener (take 3 values)
-////////////////////////////////////////////////////////////
 void Listener::SetDirection(float x, float y, float z)
 {
     float orientation[] = {x, y, z, 0.f, 1.f, 0.f};
@@ -93,16 +81,12 @@ void Listener::SetDirection(float x, float y, float z)
 
 
 ////////////////////////////////////////////////////////////
-/// Change the orientation of the listener (take a 3D vector)
-////////////////////////////////////////////////////////////
 void Listener::SetDirection(const Vector3f& direction)
 {
     SetDirection(direction.x, direction.y, direction.z);
 }
 
 
-////////////////////////////////////////////////////////////
-    /// Get the current orientation of the listener.
 ////////////////////////////////////////////////////////////
 Vector3f Listener::GetDirection()
 {

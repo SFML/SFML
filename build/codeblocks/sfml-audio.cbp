@@ -117,11 +117,12 @@
 		<Unit filename="..\..\include\SFML\Audio\SoundBufferRecorder.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\SoundRecorder.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\SoundStream.hpp" />
+		<Unit filename="..\..\src\SFML\Audio\ALCheck.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\ALCheck.hpp" />
 		<Unit filename="..\..\src\SFML\Audio\AudioDevice.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\AudioDevice.hpp" />
 		<Unit filename="..\..\src\SFML\Audio\Listener.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\Music.cpp" />
-		<Unit filename="..\..\src\SFML\Audio\OpenAL.hpp" />
 		<Unit filename="..\..\src\SFML\Audio\Sound.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundBuffer.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundBufferRecorder.cpp" />

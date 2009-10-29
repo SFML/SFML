@@ -22,23 +22,10 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_OPENAL_HPP
-#define SFML_OPENAL_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-#include <iostream>
-#include <string>
-
-#if defined(SFML_SYSTEM_MACOS)
-    #include <OpenAL/al.h>
-    #include <OpenAL/alc.h>
-#else
-    #include <AL/al.h>
-    #include <AL/alc.h>
-#endif
+#include <SFML/Audio/ALCheck.hpp>
 
 
 namespace sf
@@ -46,28 +33,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenAL
-/// API calls
-///
-////////////////////////////////////////////////////////////
-#ifdef SFML_DEBUG
-
-    // If in debug mode, perform a test on every call
-    #define ALCheck(Func) ((Func), priv::ALCheckError(__FILE__, __LINE__))
-
-#else
-
-    // Else, we don't add any overhead
-    #define ALCheck(Func) (Func)
-
-#endif
-
-
-////////////////////////////////////////////////////////////
-/// Check last OpenAL error
-///
-////////////////////////////////////////////////////////////
-inline void ALCheckError(const std::string& file, unsigned int line)
+void ALCheckError(const std::string& file, unsigned int line)
 {
     // Get the last error
     ALenum errorCode = alGetError();
@@ -126,6 +92,3 @@ inline void ALCheckError(const std::string& file, unsigned int line)
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_OPENAL_HPP

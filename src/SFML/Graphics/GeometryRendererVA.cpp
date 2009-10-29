@@ -36,7 +36,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool GeometryRendererVA::IsSupported()
 {
-    EnsureGlewInit();
+    priv::EnsureGlewInit();
 
     return glewIsSupported("GL_EXT_vertex_array") != 0;
 }
@@ -46,7 +46,7 @@ bool GeometryRendererVA::IsSupported()
 GeometryRendererVA::GeometryRendererVA() :
 myIndices(NULL)
 {
-    EnsureGlewInit();
+    priv::EnsureGlewInit();
 
     myCanLock = glewIsSupported("GL_EXT_compiled_vertex_array") != 0;
 }

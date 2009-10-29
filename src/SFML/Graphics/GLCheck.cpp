@@ -31,6 +31,8 @@
 
 namespace sf
 {
+namespace priv
+{
 ////////////////////////////////////////////////////////////
 /// Check the last OpenGL error
 ////////////////////////////////////////////////////////////
@@ -118,5 +120,7 @@ void EnsureGlewInit()
         initialized = true;
     }
 }
+
+} // namespace priv
 
 } // namespace sf

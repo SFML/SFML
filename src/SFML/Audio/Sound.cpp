@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/Audio/OpenAL.hpp>
+#include <SFML/Audio/ALCheck.hpp>
 
 
 namespace sf

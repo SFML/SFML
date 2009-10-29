@@ -44,7 +44,7 @@ PostFX::PostFX() :
 myShaderProgram(0)
 {
     // Make sure that GLEW is initialized
-    EnsureGlewInit();
+    priv::EnsureGlewInit();
 
     // No filtering on frame buffer
     myFrameBuffer.SetSmooth(false);
@@ -263,7 +263,7 @@ PostFX& PostFX::operator =(const PostFX& other)
 bool PostFX::CanUsePostFX()
 {
     // Make sure that GLEW is initialized
-    EnsureGlewInit();
+    priv::EnsureGlewInit();
 
     return glewIsSupported("GL_ARB_shading_language_100") != 0 &&
            glewIsSupported("GL_ARB_shader_objects")       != 0 &&

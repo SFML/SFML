@@ -22,15 +22,23 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GLCHECK_HPP
-#define SFML_GLCHECK_HPP
+#ifndef SFML_ALCHECK_HPP
+#define SFML_ALCHECK_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <SFML/Graphics/GLEW/glew.h>
+#include <iostream>
 #include <string>
+
+#if defined(SFML_SYSTEM_MACOS)
+    #include <OpenAL/al.h>
+    #include <OpenAL/alc.h>
+#else
+    #include <AL/al.h>
+    #include <AL/alc.h>
+#endif
 
 
 namespace sf
@@ -38,39 +46,34 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenGL
+/// Let's define a macro to quickly check every OpenAL
 /// API calls
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 
-    // In debug mode, perform a test on every OpenGL call
-    #define GLCheck(call) ((call), priv::GLCheckError(__FILE__, __LINE__))
+    // If in debug mode, perform a test on every call
+    #define ALCheck(Func) ((Func), priv::ALCheckError(__FILE__, __LINE__))
 
 #else
 
     // Else, we don't add any overhead
-    #define GLCheck(call) (call)
+    #define ALCheck(Func) (Func)
 
 #endif
 
-////////////////////////////////////////////////////////////
-/// Check the last OpenGL error
-///
-/// \param file : Source file where the call is located
-/// \param line : Line number of the source file where the call is located
-///
-////////////////////////////////////////////////////////////
-void GLCheckError(const std::string& file, unsigned int line);
 
 ////////////////////////////////////////////////////////////
-/// Make sure that GLEW is initialized
+/// Check the last OpenAL error
+///
+/// \param file Source file where the call is located
+/// \param line Line number of the source file where the call is located
 ///
 ////////////////////////////////////////////////////////////
-void EnsureGlewInit();
+void ALCheckError(const std::string& file, unsigned int line);
 
 } // namespace priv
 
 } // namespace sf
 
 
-#endif // SFML_GLCHECK_HPP
+#endif // SFML_ALCHECK_HPP

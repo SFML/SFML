@@ -35,8 +35,6 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 SoundFile::SoundFile() :
 myFile         (NULL),
 myNbSamples    (0),
@@ -48,8 +46,6 @@ mySampleRate   (0)
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor
-////////////////////////////////////////////////////////////
 SoundFile::~SoundFile()
 {
     if (myFile)
@@ -58,16 +54,12 @@ SoundFile::~SoundFile()
 
 
 ////////////////////////////////////////////////////////////
-/// Get the total number of samples in the file
-////////////////////////////////////////////////////////////
 std::size_t SoundFile::GetSamplesCount() const
 {
     return myNbSamples;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the number of channels used by the sound
 ////////////////////////////////////////////////////////////
 unsigned int SoundFile::GetChannelsCount() const
 {
@@ -76,16 +68,12 @@ unsigned int SoundFile::GetChannelsCount() const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the sample rate of the sound
-////////////////////////////////////////////////////////////
 unsigned int SoundFile::GetSampleRate() const
 {
     return mySampleRate;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Open the sound file for reading
 ////////////////////////////////////////////////////////////
 bool SoundFile::OpenRead(const std::string& filename)
 {
@@ -112,30 +100,18 @@ bool SoundFile::OpenRead(const std::string& filename)
 
 
 ////////////////////////////////////////////////////////////
-/// Open the sound file in memory for reading
-////////////////////////////////////////////////////////////
 bool SoundFile::OpenRead(const char* data, std::size_t sizeInBytes)
 {
     // If the file is already opened, first close it
     if (myFile)
         sf_close(myFile);
 
-    // Define the I/O custom functions for reading from memory
-    SF_VIRTUAL_IO io;
-    io.get_filelen = &SoundFile::MemoryGetLength;
-    io.read        = &SoundFile::MemoryRead;
-    io.seek        = &SoundFile::MemorySeek;
-    io.tell        = &SoundFile::MemoryTell;
-    io.write       = &SoundFile::MemoryWrite;
-
-    // Initialize the memory data
-    myMemory.DataStart = data;
-    myMemory.DataPtr   = data;
-    myMemory.TotalSize = sizeInBytes;
+    // Prepare the memory I/O structure
+    SF_VIRTUAL_IO io = myMemoryIO.Prepare(data, sizeInBytes);
 
     // Open the sound file
     SF_INFO fileInfos;
-    myFile = sf_open_virtual(&io, SFM_READ, &fileInfos, &myMemory);
+    myFile = sf_open_virtual(&io, SFM_READ, &fileInfos, &myMemoryIO);
     if (!myFile)
     {
         std::cerr << "Failed to read sound file from memory (" << sf_strerror(myFile) << ")" << std::endl;
@@ -151,8 +127,6 @@ bool SoundFile::OpenRead(const char* data, std::size_t sizeInBytes)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Open the sound file for writing
 ////////////////////////////////////////////////////////////
 bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelsCount, unsigned int sampleRate)
 {
@@ -193,8 +167,6 @@ bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelsCoun
 
 
 ////////////////////////////////////////////////////////////
-/// Read samples from the loaded sound
-////////////////////////////////////////////////////////////
 std::size_t SoundFile::Read(Int16* data, std::size_t nbSamples)
 {
     if (myFile && data && nbSamples)
@@ -204,8 +176,6 @@ std::size_t SoundFile::Read(Int16* data, std::size_t nbSamples)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Write samples to the file
 ////////////////////////////////////////////////////////////
 void SoundFile::Write(const Int16* data, std::size_t nbSamples)
 {
@@ -225,8 +195,6 @@ void SoundFile::Write(const Int16* data, std::size_t nbSamples)
 
 
 ////////////////////////////////////////////////////////////
-/// Move the current reading position in the file
-////////////////////////////////////////////////////////////
 void SoundFile::Seek(float timeOffset)
 {
     if (myFile)
@@ -237,9 +205,6 @@ void SoundFile::Seek(float timeOffset)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the internal format of an audio file according to
-/// its filename extension
 ////////////////////////////////////////////////////////////
 int SoundFile::GetFormatFromFilename(const std::string& filename)
 {
@@ -281,65 +246,87 @@ int SoundFile::GetFormatFromFilename(const std::string& filename)
 
 
 ////////////////////////////////////////////////////////////
-/// Functions for implementing custom read and write to memory files
-////////////////////////////////////////////////////////////
-sf_count_t SoundFile::MemoryGetLength(void* userData)
+SF_VIRTUAL_IO SoundFile::MemoryIO::Prepare(const char* data, std::size_t sizeInBytes)
 {
-    MemoryInfos* memory = static_cast<MemoryInfos*>(userData);
+    // Setup the I/O functions
+    SF_VIRTUAL_IO io;
+    io.get_filelen = &SoundFile::MemoryIO::GetLength;
+    io.read        = &SoundFile::MemoryIO::Read;
+    io.seek        = &SoundFile::MemoryIO::Seek;
+    io.tell        = &SoundFile::MemoryIO::Tell;
+    io.write       = &SoundFile::MemoryIO::Write;
 
-    return memory->TotalSize;
+    // Initialize the memory data
+    myDataStart = data;
+    myDataPtr   = data;
+    myTotalSize = sizeInBytes;
+
+    return io;
 }
-sf_count_t SoundFile::MemoryRead(void* ptr, sf_count_t count, void* userData)
+
+
+////////////////////////////////////////////////////////////
+sf_count_t SoundFile::MemoryIO::GetLength(void* userData)
 {
-    MemoryInfos* memory = static_cast<MemoryInfos*>(userData);
+    MemoryIO* self = static_cast<MemoryIO*>(userData);
 
-    sf_count_t position = memory->DataPtr - memory->DataStart;
-    if (position + count >= memory->TotalSize)
-        count = memory->TotalSize - position;
+    return self->myTotalSize;
+}
 
-    memcpy(ptr, memory->DataPtr, static_cast<std::size_t>(count));
 
-    memory->DataPtr += count;
+////////////////////////////////////////////////////////////
+sf_count_t SoundFile::MemoryIO::Read(void* ptr, sf_count_t count, void* userData)
+{
+    MemoryIO* self = static_cast<MemoryIO*>(userData);
+
+    sf_count_t position = self->myDataPtr - self->myDataStart;
+    if (position + count >= self->myTotalSize)
+        count = self->myTotalSize - position;
+
+    memcpy(ptr, self->myDataPtr, static_cast<std::size_t>(count));
+
+    self->myDataPtr += count;
 
     return count;
 }
-sf_count_t SoundFile::MemorySeek(sf_count_t offset, int whence, void* userData)
+
+
+////////////////////////////////////////////////////////////
+sf_count_t SoundFile::MemoryIO::Seek(sf_count_t offset, int whence, void* userData)
 {
-    MemoryInfos* memory = static_cast<MemoryInfos*>(userData);
+    MemoryIO* self = static_cast<MemoryIO*>(userData);
 
     sf_count_t position = 0;
     switch (whence)
     {
-        case SEEK_SET :
-            position = offset;
-            break;
-        case SEEK_CUR :
-            position = memory->DataPtr - memory->DataStart + offset;
-            break;
-        case SEEK_END :
-            position = memory->TotalSize - offset;
-            break;
-        default :
-            position = 0;
-            break;
+        case SEEK_SET : position = offset;                                       break;
+        case SEEK_CUR : position = self->myDataPtr - self->myDataStart + offset; break;
+        case SEEK_END : position = self->myTotalSize - offset;                   break;
+        default       : position = 0;                                            break;
     }
 
-    if (position >= memory->TotalSize)
-        position = memory->TotalSize - 1;
+    if (position >= self->myTotalSize)
+        position = self->myTotalSize - 1;
     else if (position < 0)
         position = 0;
 
-    memory->DataPtr = memory->DataStart + position;
+    self->myDataPtr = self->myDataStart + position;
 
     return position;
 }
-sf_count_t SoundFile::MemoryTell(void* userData)
-{
-    MemoryInfos* memory = static_cast<MemoryInfos*>(userData);
 
-    return memory->DataPtr - memory->DataStart;
+
+////////////////////////////////////////////////////////////
+sf_count_t SoundFile::MemoryIO::Tell(void* userData)
+{
+    MemoryIO* self = static_cast<MemoryIO*>(userData);
+
+    return self->myDataPtr - self->myDataStart;
 }
-sf_count_t SoundFile::MemoryWrite(const void*, sf_count_t, void*)
+
+
+////////////////////////////////////////////////////////////
+sf_count_t SoundFile::MemoryIO::Write(const void*, sf_count_t, void*)
 {
     return 0;
 }
