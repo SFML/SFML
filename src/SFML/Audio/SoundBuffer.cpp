@@ -36,8 +36,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer() :
 myBuffer  (0),
 myDuration(0.f)
@@ -47,8 +45,6 @@ myDuration(0.f)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Copy constructor
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
 Resource<SoundBuffer>(copy),
@@ -65,8 +61,6 @@ myDuration           (copy.myDuration)
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor
-////////////////////////////////////////////////////////////
 SoundBuffer::~SoundBuffer()
 {
     if (myBuffer)
@@ -74,8 +68,6 @@ SoundBuffer::~SoundBuffer()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Load the sound buffer from a file
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::LoadFromFile(const std::string& filename)
 {
@@ -108,8 +100,6 @@ bool SoundBuffer::LoadFromFile(const std::string& filename)
 
 
 ////////////////////////////////////////////////////////////
-/// Load the sound buffer from a file in memory
-////////////////////////////////////////////////////////////
 bool SoundBuffer::LoadFromMemory(const char* data, std::size_t sizeInBytes)
 {
     // Open the sound file
@@ -141,9 +131,6 @@ bool SoundBuffer::LoadFromMemory(const char* data, std::size_t sizeInBytes)
 
 
 ////////////////////////////////////////////////////////////
-/// Load the sound buffer from an array of samples  - assumed format for
-/// samples is 16 bits signed integer
-////////////////////////////////////////////////////////////
 bool SoundBuffer::LoadFromSamples(const Int16* samples, std::size_t samplesCount, unsigned int channelsCount, unsigned int sampleRate)
 {
     if (samples && samplesCount && channelsCount && sampleRate)
@@ -170,8 +157,6 @@ bool SoundBuffer::LoadFromSamples(const Int16* samples, std::size_t samplesCount
 
 
 ////////////////////////////////////////////////////////////
-/// Save the sound buffer to a file
-////////////////////////////////////////////////////////////
 bool SoundBuffer::SaveToFile(const std::string& filename) const
 {
     // Create the sound file in write mode
@@ -191,8 +176,6 @@ bool SoundBuffer::SaveToFile(const std::string& filename) const
 
 
 ////////////////////////////////////////////////////////////
-/// Return the sound samples
-////////////////////////////////////////////////////////////
 const Int16* SoundBuffer::GetSamples() const
 {
     return mySamples.empty() ? NULL : &mySamples[0];
@@ -200,16 +183,12 @@ const Int16* SoundBuffer::GetSamples() const
 
 
 ////////////////////////////////////////////////////////////
-/// Return the samples count
-////////////////////////////////////////////////////////////
 std::size_t SoundBuffer::GetSamplesCount() const
 {
     return mySamples.size();
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the sample rate
 ////////////////////////////////////////////////////////////
 unsigned int SoundBuffer::GetSampleRate() const
 {
@@ -221,8 +200,6 @@ unsigned int SoundBuffer::GetSampleRate() const
 
 
 ////////////////////////////////////////////////////////////
-/// Return the number of channels (1 = mono, 2 = stereo, ...)
-////////////////////////////////////////////////////////////
 unsigned int SoundBuffer::GetChannelsCount() const
 {
     ALint channelsCount;
@@ -233,16 +210,12 @@ unsigned int SoundBuffer::GetChannelsCount() const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the sound duration
-////////////////////////////////////////////////////////////
 float SoundBuffer::GetDuration() const
 {
     return myDuration;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Assignment operator
 ////////////////////////////////////////////////////////////
 SoundBuffer& SoundBuffer::operator =(const SoundBuffer& other)
 {
@@ -256,8 +229,6 @@ SoundBuffer& SoundBuffer::operator =(const SoundBuffer& other)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Update the internal buffer with the audio samples
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
 {

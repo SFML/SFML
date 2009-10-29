@@ -36,19 +36,14 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Construct the music with a buffer size
-////////////////////////////////////////////////////////////
-Music::Music(std::size_t bufferSize) :
+Music::Music() :
 myFile    (new priv::SoundFile),
-myDuration(0.f),
-mySamples (bufferSize)
+myDuration(0.f)
 {
 
 }
 
 
-////////////////////////////////////////////////////////////
-/// Destructor
 ////////////////////////////////////////////////////////////
 Music::~Music()
 {
@@ -59,8 +54,6 @@ Music::~Music()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Open a music file (doesn't play it -- call Play() for that)
 ////////////////////////////////////////////////////////////
 bool Music::OpenFromFile(const std::string& filename)
 {
@@ -77,6 +70,9 @@ bool Music::OpenFromFile(const std::string& filename)
     // Compute the duration
     myDuration = static_cast<float>(myFile->GetSamplesCount()) / myFile->GetSampleRate() / myFile->GetChannelsCount();
 
+    // Resize the internal buffer so that it can contain 1 second of audio samples
+    mySamples.resize(myFile->GetSampleRate());
+
     // Initialize the stream
     Initialize(myFile->GetChannelsCount(), myFile->GetSampleRate());
 
@@ -84,8 +80,6 @@ bool Music::OpenFromFile(const std::string& filename)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Open a music file from memory (doesn't play it -- call Play() for that)
 ////////////////////////////////////////////////////////////
 bool Music::OpenFromMemory(const char* data, std::size_t sizeInBytes)
 {
@@ -100,7 +94,10 @@ bool Music::OpenFromMemory(const char* data, std::size_t sizeInBytes)
     }
 
     // Compute the duration
-    myDuration = static_cast<float>(myFile->GetSamplesCount()) / myFile->GetSampleRate();
+    myDuration = static_cast<float>(myFile->GetSamplesCount()) / myFile->GetSampleRate() / myFile->GetChannelsCount();
+
+    // Resize the internal buffer so that it can contain 1 second of audio samples
+    mySamples.resize(myFile->GetSampleRate());
 
     // Initialize the stream
     Initialize(myFile->GetChannelsCount(), myFile->GetSampleRate());
@@ -110,16 +107,12 @@ bool Music::OpenFromMemory(const char* data, std::size_t sizeInBytes)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the sound duration
-////////////////////////////////////////////////////////////
 float Music::GetDuration() const
 {
     return myDuration;
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see SoundStream::OnGetData
 ////////////////////////////////////////////////////////////
 bool Music::OnGetData(SoundStream::Chunk& data)
 {

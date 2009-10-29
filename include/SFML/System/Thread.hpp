@@ -42,12 +42,13 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 /// \brief Utility class to manipulate threads
+///
 ////////////////////////////////////////////////////////////
 class SFML_API Thread : NonCopyable
 {
 public :
 
-    typedef void (*FuncType)(void*); ///< Type of functions that can be used as thread entry points
+    typedef void (*FuncType)(void*); // Type of functions that can be used as thread entry points
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the thread from a function pointer
@@ -193,5 +194,7 @@ private :
 /// which means that you may end up accessing the same variable
 /// from multiple threads at the same time. To prevent this
 /// kind of situations, you can use mutexes (see sf::Mutex).
+///
+/// \see sf::Mutex
 ///
 ////////////////////////////////////////////////////////////
