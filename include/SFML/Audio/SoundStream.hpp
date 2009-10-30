@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundSource.hpp>
 #include <SFML/System/Thread.hpp>
 #include <cstdlib>
 
@@ -39,27 +39,9 @@ namespace sf
 /// \brief Abstract base class for streamed audio sources
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API SoundStream : private Thread, private Sound
+class SFML_API SoundStream : public SoundSource, private Thread
 {
 public :
-
-    using Sound::Status;
-    using Sound::Stopped;
-    using Sound::Paused;
-    using Sound::Playing;
-    using Sound::Pause;
-    using Sound::SetPitch;
-    using Sound::SetVolume;
-    using Sound::SetPosition;
-    using Sound::SetRelativeToListener;
-    using Sound::SetMinDistance;
-    using Sound::SetAttenuation;
-    using Sound::GetPitch;
-    using Sound::GetVolume;
-    using Sound::GetPosition;
-    using Sound::IsRelativeToListener;
-    using Sound::GetMinDistance;
-    using Sound::GetAttenuation;
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a chunk of audio data to stream
@@ -89,6 +71,17 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void Play();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Pause the audio stream
+    ///
+    /// This function pauses the stream if it was playing,
+    /// otherwise (stream already paused or stopped) it has no effect.
+    ///
+    /// \see Play, Stop
+    ///
+    ////////////////////////////////////////////////////////////
+    void Pause();
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop playing the audio stream
@@ -172,7 +165,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the stream is in loop mode
     ///
-    /// \return True if the music is looping, false otherwise
+    /// \return True if the stream is looping, false otherwise
     ///
     /// \see SetLoop
     ///

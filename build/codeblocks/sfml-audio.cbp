@@ -116,6 +116,7 @@
 		<Unit filename="..\..\include\SFML\Audio\SoundBuffer.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\SoundBufferRecorder.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\SoundRecorder.hpp" />
+		<Unit filename="..\..\include\SFML\Audio\SoundSource.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\SoundStream.hpp" />
 		<Unit filename="..\..\src\SFML\Audio\ALCheck.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\ALCheck.hpp" />
@@ -129,6 +130,7 @@
 		<Unit filename="..\..\src\SFML\Audio\SoundFile.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundFile.hpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundRecorder.cpp" />
+		<Unit filename="..\..\src\SFML\Audio\SoundSource.cpp" />
 		<Unit filename="..\..\src\SFML\Audio\SoundStream.cpp" />
 		<Extensions>
 			<code_completion />

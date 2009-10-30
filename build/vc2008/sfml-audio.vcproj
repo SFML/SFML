@@ -416,6 +416,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\Audio\SoundSource.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Audio\SoundSource.hpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Audio\SoundStream.cpp"
 			>
 		</File>

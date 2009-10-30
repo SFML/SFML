@@ -91,34 +91,29 @@ AudioDevice::~AudioDevice()
 
 
 ////////////////////////////////////////////////////////////
-AudioDevice& AudioDevice::GetInstance()
+bool AudioDevice::IsExtensionSupported(const std::string& extension)
 {
-    return globalDevice;
+    if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
+        return alcIsExtensionPresent(globalDevice.myDevice, extension.c_str()) != AL_FALSE;
+    else
+        return alIsExtensionPresent(extension.c_str()) != AL_FALSE;
 }
 
 
 ////////////////////////////////////////////////////////////
-ALCdevice* AudioDevice::GetDevice() const
-{
-    return myDevice;
-}
-
-
-////////////////////////////////////////////////////////////
-ALenum AudioDevice::GetFormatFromChannelsCount(unsigned int channelsCount) const
+ALenum AudioDevice::GetFormatFromChannelsCount(unsigned int channelsCount)
 {
     // Find the good format according to the number of channels
     switch (channelsCount)
     {
-        case 1 : return AL_FORMAT_MONO16;
-        case 2 : return AL_FORMAT_STEREO16;
-        case 4 : return alGetEnumValue("AL_FORMAT_QUAD16");
-        case 6 : return alGetEnumValue("AL_FORMAT_51CHN16");
-        case 7 : return alGetEnumValue("AL_FORMAT_61CHN16");
-        case 8 : return alGetEnumValue("AL_FORMAT_71CHN16");
+        case 1  : return AL_FORMAT_MONO16;
+        case 2  : return AL_FORMAT_STEREO16;
+        case 4  : return alGetEnumValue("AL_FORMAT_QUAD16");
+        case 6  : return alGetEnumValue("AL_FORMAT_51CHN16");
+        case 7  : return alGetEnumValue("AL_FORMAT_61CHN16");
+        case 8  : return alGetEnumValue("AL_FORMAT_71CHN16");
+        default : return 0;
     }
-
-    return 0;
 }
 
 } // namespace priv

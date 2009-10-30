@@ -167,11 +167,11 @@ private :
 
     private :
 
-        static sf_count_t GetLength(void* UserData);
-        static sf_count_t Read(void* Ptr, sf_count_t Count, void* UserData);
-        static sf_count_t Seek(sf_count_t Offset, int Whence, void* UserData);
-        static sf_count_t Tell(void* UserData);
-        static sf_count_t Write(const void* Ptr, sf_count_t Count, void* UserData);
+        static sf_count_t GetLength(void* userData);
+        static sf_count_t Read(void* ptr, sf_count_t count, void* userData);
+        static sf_count_t Seek(sf_count_t offset, int whence, void* userData);
+        static sf_count_t Tell(void* userData);
+        static sf_count_t Write(const void* ptr, sf_count_t count, void* userData);
 
         const char* myDataStart;
         const char* myDataPtr;

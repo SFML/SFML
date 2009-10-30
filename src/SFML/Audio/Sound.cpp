@@ -35,8 +35,6 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Sound::Sound()
 {
-    ALCheck(alGenSources(1, &mySource));
-    ALCheck(alSourcei(mySource, AL_BUFFER, 0));
 }
 
 
@@ -44,8 +42,6 @@ Sound::Sound()
 Sound::Sound(const SoundBuffer& buffer, bool loop, float pitch, float volume, const Vector3f& position) :
 myBuffer(NULL)
 {
-    ALCheck(alGenSources(1, &mySource));
-
     SetBuffer(buffer);
     SetLoop(loop);
     SetPitch(pitch);
@@ -56,34 +52,19 @@ myBuffer(NULL)
 
 ////////////////////////////////////////////////////////////
 Sound::Sound(const Sound& copy) :
-myBuffer(NULL)
+SoundSource(copy),
+myBuffer   (NULL)
 {
-    ALCheck(alGenSources(1, &mySource));
-
     if (copy.myBuffer)
         SetBuffer(*copy.myBuffer);
     SetLoop(copy.GetLoop());
-    SetPitch(copy.GetPitch());
-    SetVolume(copy.GetVolume());
-    SetPosition(copy.GetPosition());
-    SetRelativeToListener(copy.IsRelativeToListener());
-    SetMinDistance(copy.GetMinDistance());
-    SetAttenuation(copy.GetAttenuation());
 }
 
 
 ////////////////////////////////////////////////////////////
 Sound::~Sound()
 {
-    if (mySource)
-    {
-        if (myBuffer)
-        {
-            Stop();
-            ALCheck(alSourcei(mySource, AL_BUFFER, 0));
-        }
-        ALCheck(alDeleteSources(1, &mySource));
-    }
+    Stop();
 }
 
 
@@ -124,54 +105,6 @@ void Sound::SetLoop(bool Loop)
 
 
 ////////////////////////////////////////////////////////////
-void Sound::SetPitch(float pitch)
-{
-    ALCheck(alSourcef(mySource, AL_PITCH, pitch));
-}
-
-
-////////////////////////////////////////////////////////////
-void Sound::SetVolume(float volume)
-{
-    ALCheck(alSourcef(mySource, AL_GAIN, volume * 0.01f));
-}
-
-////////////////////////////////////////////////////////////
-void Sound::SetPosition(float x, float y, float z)
-{
-    ALCheck(alSource3f(mySource, AL_POSITION, x, y, z));
-}
-
-
-////////////////////////////////////////////////////////////
-void Sound::SetPosition(const Vector3f& position)
-{
-    SetPosition(position.x, position.y, position.z);
-}
-
-
-////////////////////////////////////////////////////////////
-void Sound::SetRelativeToListener(bool relative)
-{
-    ALCheck(alSourcei(mySource, AL_SOURCE_RELATIVE, relative));
-}
-
-
-////////////////////////////////////////////////////////////
-void Sound::SetMinDistance(float distance)
-{
-    ALCheck(alSourcef(mySource, AL_REFERENCE_DISTANCE, distance));
-}
-
-
-////////////////////////////////////////////////////////////
-void Sound::SetAttenuation(float attenuation)
-{
-    ALCheck(alSourcef(mySource, AL_ROLLOFF_FACTOR, attenuation));
-}
-
-
-////////////////////////////////////////////////////////////
 void Sound::SetPlayingOffset(float timeOffset)
 {
     ALCheck(alSourcef(mySource, AL_SEC_OFFSET, timeOffset));
@@ -196,66 +129,6 @@ bool Sound::GetLoop() const
 
 
 ////////////////////////////////////////////////////////////
-float Sound::GetPitch() const
-{
-    ALfloat pitch;
-    ALCheck(alGetSourcef(mySource, AL_PITCH, &pitch));
-
-    return pitch;
-}
-
-
-////////////////////////////////////////////////////////////
-float Sound::GetVolume() const
-{
-    ALfloat gain;
-    ALCheck(alGetSourcef(mySource, AL_GAIN, &gain));
-
-    return gain * 100.f;
-}
-
-
-////////////////////////////////////////////////////////////
-Vector3f Sound::GetPosition() const
-{
-    Vector3f position;
-    ALCheck(alGetSource3f(mySource, AL_POSITION, &position.x, &position.y, &position.z));
-
-    return position;
-}
-
-
-////////////////////////////////////////////////////////////
-bool Sound::IsRelativeToListener() const
-{
-    ALint relative;
-    ALCheck(alGetSourcei(mySource, AL_SOURCE_RELATIVE, &relative));
-
-    return relative != 0;
-}
-
-
-////////////////////////////////////////////////////////////
-float Sound::GetMinDistance() const
-{
-    ALfloat distance;
-    ALCheck(alGetSourcef(mySource, AL_REFERENCE_DISTANCE, &distance));
-
-    return distance;
-}
-
-
-////////////////////////////////////////////////////////////
-float Sound::GetAttenuation() const
-{
-    ALfloat attenuation;
-    ALCheck(alGetSourcef(mySource, AL_ROLLOFF_FACTOR, &attenuation));
-
-    return attenuation;
-}
-
-
-////////////////////////////////////////////////////////////
 float Sound::GetPlayingOffset() const
 {
     ALfloat seconds = 0.f;
@@ -268,25 +141,14 @@ float Sound::GetPlayingOffset() const
 ////////////////////////////////////////////////////////////
 Sound::Status Sound::GetStatus() const
 {
-    ALint status;
-    ALCheck(alGetSourcei(mySource, AL_SOURCE_STATE, &status));
-
-    switch (status)
-    {
-        case AL_INITIAL :
-        case AL_STOPPED : return Stopped;
-        case AL_PAUSED :  return Paused;
-        case AL_PLAYING : return Playing;
-    }
-
-    return Stopped;
+    return SoundSource::GetStatus();
 }
 
 
 ////////////////////////////////////////////////////////////
-Sound& Sound::operator =(const Sound& other)
+Sound& Sound::operator =(const Sound& right)
 {
-    Sound temp(other);
+    Sound temp(right);
 
     std::swap(mySource, temp.mySource);
     std::swap(myBuffer, temp.myBuffer);

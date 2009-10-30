@@ -237,7 +237,7 @@ bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
         return false;
 
     // Find the good format according to the number of channels
-    ALenum format = priv::AudioDevice::GetInstance().GetFormatFromChannelsCount(channelsCount);
+    ALenum format = priv::AudioDevice::GetFormatFromChannelsCount(channelsCount);
 
     // Check if the format is valid
     if (format == 0)

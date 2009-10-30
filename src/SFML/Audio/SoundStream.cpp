@@ -61,7 +61,7 @@ void SoundStream::Initialize(unsigned int channelsCount, unsigned int sampleRate
     mySampleRate    = sampleRate;
 
     // Deduce the format from the number of channels
-    myFormat = priv::AudioDevice::GetInstance().GetFormatFromChannelsCount(channelsCount);
+    myFormat = priv::AudioDevice::GetFormatFromChannelsCount(channelsCount);
 
     // Check if the format is valid
     if (myFormat == 0)
@@ -79,14 +79,14 @@ void SoundStream::Play()
     // Check if the sound parameters have been set
     if (myFormat == 0)
     {
-        std::cerr << "Failed to play audio stream : sound parameters have not been initialized (call Initialize first)" << std::endl;
+        std::cerr << "Failed to play audio stream: sound parameters have not been initialized (call Initialize first)" << std::endl;
         return;
     }
 
     // If the sound is already playing (probably paused), just resume it
     if (myIsStreaming)
     {
-        Sound::Play();
+        ALCheck(alSourcePlay(mySource));
         return;
     }
 
@@ -97,6 +97,13 @@ void SoundStream::Play()
     mySamplesProcessed = 0;
     myIsStreaming = true;
     Launch();
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundStream::Pause()
+{
+    ALCheck(alSourcePause(mySource));
 }
 
 
@@ -124,9 +131,9 @@ unsigned int SoundStream::GetSampleRate() const
 
 
 ////////////////////////////////////////////////////////////
-Sound::Status SoundStream::GetStatus() const
+SoundStream::Status SoundStream::GetStatus() const
 {
-    Status status = Sound::GetStatus();
+    Status status = SoundSource::GetStatus();
 
     // To compensate for the lag between Play() and alSourcePlay()
     if ((status == Stopped) && myIsStreaming)
@@ -155,7 +162,10 @@ void SoundStream::SetPlayingOffset(float timeOffset)
 ////////////////////////////////////////////////////////////
 float SoundStream::GetPlayingOffset() const
 {
-    return Sound::GetPlayingOffset() + static_cast<float>(mySamplesProcessed) / mySampleRate / myChannelsCount;
+    ALfloat seconds = 0.f;
+    ALCheck(alGetSourcef(mySource, AL_SEC_OFFSET, &seconds));
+
+    return seconds + static_cast<float>(mySamplesProcessed) / mySampleRate / myChannelsCount;
 }
 
 
@@ -184,17 +194,17 @@ void SoundStream::Run()
     bool requestStop = FillQueue();
 
     // Play the sound
-    Sound::Play();
+    ALCheck(alSourcePlay(mySource));
 
     while (myIsStreaming)
     {
-        // The stream has been interrupted !
-        if (Sound::GetStatus() == Stopped)
+        // The stream has been interrupted!
+        if (SoundSource::GetStatus() == Stopped)
         {
             if (!requestStop)
             {
                 // Just continue
-                Sound::Play();
+                ALCheck(alSourcePlay(mySource));
             }
             else
             {
@@ -205,13 +215,13 @@ void SoundStream::Run()
 
         // Get the number of buffers that have been processed (ie. ready for reuse)
         ALint nbProcessed;
-        ALCheck(alGetSourcei(Sound::mySource, AL_BUFFERS_PROCESSED, &nbProcessed));
+        ALCheck(alGetSourcei(mySource, AL_BUFFERS_PROCESSED, &nbProcessed));
 
         while (nbProcessed--)
         {
             // Pop the first unused buffer from the queue
             ALuint buffer;
-            ALCheck(alSourceUnqueueBuffers(Sound::mySource, 1, &buffer));
+            ALCheck(alSourceUnqueueBuffers(mySource, 1, &buffer));
 
             // Retrieve its size and add it to the samples count
             if (buffer == endBuffer)
@@ -250,18 +260,18 @@ void SoundStream::Run()
         }
 
         // Leave some time for the other threads if the stream is still playing
-        if (Sound::GetStatus() != Stopped)
+        if (SoundSource::GetStatus() != Stopped)
             Sleep(0.1f);
     }
 
     // Stop the playback
-    Sound::Stop();
+    ALCheck(alSourceStop(mySource));
 
     // Unqueue any buffer left in the queue
     ClearQueue();
 
     // Delete the buffers
-    ALCheck(alSourcei(Sound::mySource, AL_BUFFER, 0));
+    ALCheck(alSourcei(mySource, AL_BUFFER, 0));
     ALCheck(alDeleteBuffers(BuffersCount, myBuffers));
 }
 
@@ -284,7 +294,7 @@ bool SoundStream::FillAndPushBuffer(unsigned int buffer)
         ALCheck(alBufferData(buffer, myFormat, data.Samples, size, mySampleRate));
 
         // Push it into the sound queue
-        ALCheck(alSourceQueueBuffers(Sound::mySource, 1, &buffer));
+        ALCheck(alSourceQueueBuffers(mySource, 1, &buffer));
     }
 
     return requestStop;
@@ -311,12 +321,12 @@ void SoundStream::ClearQueue()
 {
     // Get the number of buffers still in the queue
     ALint nbQueued;
-    ALCheck(alGetSourcei(Sound::mySource, AL_BUFFERS_QUEUED, &nbQueued));
+    ALCheck(alGetSourcei(mySource, AL_BUFFERS_QUEUED, &nbQueued));
 
     // Unqueue them all
     ALuint buffer;
     for (ALint i = 0; i < nbQueued; ++i)
-        ALCheck(alSourceUnqueueBuffers(Sound::mySource, 1, &buffer));
+        ALCheck(alSourceUnqueueBuffers(mySource, 1, &buffer));
 }
 
 } // namespace sf

@@ -60,20 +60,18 @@ public :
     ~AudioDevice();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the unique instance of the class
+    /// \brief Check if an OpenAL extension is supported
     ///
-    /// \return Unique instance of the class
+    /// This functions automatically finds whether it
+    /// is an AL or ALC extension, and calls the corresponding
+    /// function.
     ///
-    ////////////////////////////////////////////////////////////
-    static AudioDevice& GetInstance();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the OpenAL audio device
+    /// \param extension Name of the extension to test
     ///
-    /// \return OpenAL device (cannot be NULL)
+    /// \return True if the extension is supported, false if not
     ///
     ////////////////////////////////////////////////////////////
-    ALCdevice* GetDevice() const;
+    static bool IsExtensionSupported(const std::string& extension);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OpenAL format that matches the given number of channels
@@ -83,7 +81,7 @@ public :
     /// \return Corresponding format
     ///
     ////////////////////////////////////////////////////////////
-    ALenum GetFormatFromChannelsCount(unsigned int channelsCount) const;
+    static ALenum GetFormatFromChannelsCount(unsigned int channelsCount);
 
 private :
 

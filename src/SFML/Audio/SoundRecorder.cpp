@@ -83,7 +83,7 @@ void SoundRecorder::Start(unsigned int sampleRate)
         return;
     }
 
-    // Clear the sample array
+    // Clear the array of samples
     mySamples.clear();
 
     // Store the sample rate
@@ -121,9 +121,7 @@ unsigned int SoundRecorder::GetSampleRate() const
 ////////////////////////////////////////////////////////////
 bool SoundRecorder::CanCapture()
 {
-    ALCdevice* device = priv::AudioDevice::GetInstance().GetDevice();
-
-    return alcIsExtensionPresent(device, "ALC_EXT_CAPTURE") != AL_FALSE;
+    return priv::AudioDevice::IsExtensionSupported("ALC_EXT_CAPTURE");
 }
 
 
