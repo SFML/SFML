@@ -468,10 +468,13 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Text event
         case WM_CHAR :
         {
-            Event event;
-            event.Type = Event::TextEntered;
-            event.Text.Unicode = static_cast<Uint32>(wParam);
-            SendEvent(event);
+            if (myKeyRepeatEnabled || ((lParam & (1 << 30)) == 0))
+            {
+                Event event;
+                event.Type = Event::TextEntered;
+                event.Text.Unicode = static_cast<Uint32>(wParam);
+                SendEvent(event);
+            }
             break;
         }
 
