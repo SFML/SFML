@@ -745,10 +745,13 @@ void WindowImplWin32::ProcessEvent(UINT Message, WPARAM WParam, LPARAM LParam)
         // Text event
         case WM_CHAR :
         {
-            Event Evt;
-            Evt.Type = Event::TextEntered;
-            Evt.Text.Unicode = static_cast<Uint32>(WParam);
-            SendEvent(Evt);
+            if (myKeyRepeatEnabled || ((LParam & (1 << 30)) == 0))
+            {
+                Event Evt;
+                Evt.Type = Event::TextEntered;
+                Evt.Text.Unicode = static_cast<Uint32>(WParam);
+                SendEvent(Evt);
+            }
             break;
         }
 
