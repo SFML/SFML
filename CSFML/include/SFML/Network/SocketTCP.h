@@ -146,6 +146,16 @@ CSFML_API sfSocketStatus sfSocketTCP_SendPacket(sfSocketTCP* socket, sfPacket* p
 CSFML_API sfSocketStatus sfSocketTCP_ReceivePacket(sfSocketTCP* socket, sfPacket* packet);
 
 ////////////////////////////////////////////////////////////
+/// Close the socket
+///
+/// \param socket : Socket to close
+///
+/// \return True if the socket was successfully closed
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfBool sfSocketTCP_Close(sfSocketTCP* socket);
+
+////////////////////////////////////////////////////////////
 /// Check if a socket is in a valid state ; this function
 /// can be called any time to check if the socket is OK
 ///

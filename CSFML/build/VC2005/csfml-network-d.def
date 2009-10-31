@@ -68,6 +68,7 @@ EXPORTS
 	sfSocketTCP_Receive
 	sfSocketTCP_SendPacket
 	sfSocketTCP_ReceivePacket
+	sfSocketTCP_Close
 	sfSocketTCP_IsValid
 	sfSocketUDP_Create
 	sfSocketUDP_Destroy
@@ -78,6 +79,7 @@ EXPORTS
 	sfSocketUDP_Receive
 	sfSocketUDP_SendPacket
 	sfSocketUDP_ReceivePacket
+	sfSocketUDP_Close
 	sfSocketUDP_IsValid
 	sfPacket_Create
 	sfPacket_Destroy

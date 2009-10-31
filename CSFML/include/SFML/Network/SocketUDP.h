@@ -141,6 +141,16 @@ CSFML_API sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* p
 CSFML_API sfSocketStatus sfSocketUDP_ReceivePacket(sfSocketUDP* socket, sfPacket* packet, sfIPAddress* address, unsigned short* port);
 
 ////////////////////////////////////////////////////////////
+/// Close the socket
+///
+/// \param socket : Socket to close
+///
+/// \return True if the socket was successfully closed
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfBool sfSocketUDP_Close(sfSocketUDP* socket);
+
+////////////////////////////////////////////////////////////
 /// Check if a socket is in a valid state ; this function
 /// can be called any time to check if the socket is OK
 ///
