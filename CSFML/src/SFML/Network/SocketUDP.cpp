@@ -100,7 +100,7 @@ sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data, size_t si
 ////////////////////////////////////////////////////////////
 sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, size_t maxSize, size_t* sizeReceived, sfIPAddress* address, unsigned short* port)
 {
-    CSFML_CHECK_RETURN(Socket, sfSocketError);
+    CSFML_CHECK_RETURN(socket, sfSocketError);
 
     // Call SFML internal function
     sf::IPAddress sender;
