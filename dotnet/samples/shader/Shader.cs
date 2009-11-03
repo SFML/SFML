@@ -149,6 +149,7 @@ namespace sample_shader
                 // Process events
                 window.DispatchEvents();
 
+                // TOFIX -- using window.Input together with image.Draw apparently causes a memory corruption
                 // Get the mouse position in the range [0, 1]
                 //float x = window.Input.GetMouseX() / (float)window.Width;
                 //float y = window.Input.GetMouseY() / (float)window.Height;

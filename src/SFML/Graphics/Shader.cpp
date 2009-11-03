@@ -319,10 +319,11 @@ bool Shader::IsAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::CompileProgram()
 {
-    // First make sure that we can use shaders!
+    // First make sure that we can use shaders
     if (!IsAvailable())
     {
-        std::cerr << "Failed to create a shader: your system doesn't support shaders" << std::endl;
+        std::cerr << "Failed to create a shader: your system doesn't support shaders "
+                  << "(you should test Shader::IsAvailable() before trying to use the Shader class)" << std::endl;
         return false;
     }
 
@@ -331,7 +332,7 @@ bool Shader::CompileProgram()
         GLCheck(glDeleteObjectARB(myShaderProgram));
 
     // Define the vertex shader source (we provide it directly as it doesn't have to change)
-    static const std::string vertexShaderSrc =
+    static const char* vertexSrc =
         "void main()"
         "{"
         "    gl_TexCoord[0] = gl_MultiTexCoord0;"
@@ -347,7 +348,6 @@ bool Shader::CompileProgram()
     GLhandleARB fragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
     // Compile them
-    const char* vertexSrc   = vertexShaderSrc.c_str();
     const char* fragmentSrc = myFragmentShader.c_str();
     GLCheck(glShaderSourceARB(vertexShader,   1, &vertexSrc,   NULL));
     GLCheck(glShaderSourceARB(fragmentShader, 1, &fragmentSrc, NULL));
