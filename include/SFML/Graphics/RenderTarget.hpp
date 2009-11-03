@@ -37,6 +37,7 @@
 namespace sf
 {
 class Drawable;
+class Shader;
 
 ////////////////////////////////////////////////////////////
 /// Base class for all render targets (window, image, ...)
@@ -65,7 +66,16 @@ public :
     /// \param object : Object to draw
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw(const Drawable& object);
+    void Draw(const Drawable& object);
+
+    ////////////////////////////////////////////////////////////
+    /// Draw something into the target with a shader
+    ///
+    /// \param object : Object to draw
+    /// \param shader : Shader to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void Draw(const Drawable& object, const Shader& shader);
 
     ////////////////////////////////////////////////////////////
     /// Make sure that what has been drawn so far is rendered

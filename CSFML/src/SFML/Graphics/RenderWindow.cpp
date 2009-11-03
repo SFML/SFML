@@ -28,7 +28,7 @@
 #include <SFML/Graphics/RenderWindow.h>
 #include <SFML/Graphics/RenderWindowStruct.h>
 #include <SFML/Graphics/ShapeStruct.h>
-#include <SFML/Graphics/PostFXStruct.h>
+#include <SFML/Graphics/ShaderStruct.h>
 #include <SFML/Graphics/ImageStruct.h>
 #include <SFML/Graphics/SpriteStruct.h>
 #include <SFML/Graphics/StringStruct.h>
@@ -335,25 +335,43 @@ void sfRenderWindow_SetJoystickThreshold(sfRenderWindow* renderWindow, float thr
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderwindow
 ////////////////////////////////////////////////////////////
-void sfRenderWindow_DrawPostFX(sfRenderWindow* renderWindow, sfPostFX* postFX)
+void sfRenderWindow_DrawSprite(sfRenderWindow* renderWindow, sfSprite* sprite)
 {
-    CSFML_CHECK(postFX);
-    CSFML_CALL(renderWindow, Draw(postFX->This));
+    CSFML_CHECK(sprite);
+    CSFML_CALL(renderWindow, Draw(sprite->This));
 }
 void sfRenderWindow_DrawShape(sfRenderWindow* renderWindow, sfShape* shape)
 {
     CSFML_CHECK(shape);
     CSFML_CALL(renderWindow, Draw(shape->This));
 }
-void sfRenderWindow_DrawSprite(sfRenderWindow* renderWindow, sfSprite* sprite)
-{
-    CSFML_CHECK(sprite);
-    CSFML_CALL(renderWindow, Draw(sprite->This));
-}
 void sfRenderWindow_DrawString(sfRenderWindow* renderWindow, sfString* string)
 {
     CSFML_CHECK(string);
     CSFML_CALL(renderWindow, Draw(string->This));
+}
+
+
+////////////////////////////////////////////////////////////
+/// Draw something on a renderwindow with a shader
+////////////////////////////////////////////////////////////
+void sfRenderWindow_DrawSpriteWithShader(sfRenderWindow* renderWindow, sfSprite* sprite, sfShader* shader)
+{
+    CSFML_CHECK(sprite);
+    CSFML_CHECK(shader);
+    CSFML_CALL(renderWindow, Draw(sprite->This, shader->This));
+}
+void sfRenderWindow_DrawShapeWithShader(sfRenderWindow* renderWindow, sfShape* shape, sfShader* shader)
+{
+    CSFML_CHECK(shape);
+    CSFML_CHECK(shader);
+    CSFML_CALL(renderWindow, Draw(shape->This, shader->This));
+}
+void sfRenderWindow_DrawStringWithShader(sfRenderWindow* renderWindow, sfString* string, sfShader* shader)
+{
+    CSFML_CHECK(string);
+    CSFML_CHECK(shader);
+    CSFML_CALL(renderWindow, Draw(string->This, shader->This));
 }
 
 

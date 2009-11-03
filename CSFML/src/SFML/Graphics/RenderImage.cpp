@@ -28,7 +28,7 @@
 #include <SFML/Graphics/RenderImage.h>
 #include <SFML/Graphics/RenderImageStruct.h>
 #include <SFML/Graphics/ShapeStruct.h>
-#include <SFML/Graphics/PostFXStruct.h>
+#include <SFML/Graphics/ShaderStruct.h>
 #include <SFML/Graphics/SpriteStruct.h>
 #include <SFML/Graphics/StringStruct.h>
 #include <SFML/Internal.h>
@@ -118,25 +118,43 @@ void sfRenderImage_Display(sfRenderImage* renderImage)
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderimage
 ////////////////////////////////////////////////////////////
-void sfRenderImage_DrawPostFX(sfRenderImage* renderImage, sfPostFX* postFX)
+void sfRenderImage_DrawSprite(sfRenderImage* renderImage, sfSprite* sprite)
 {
-    CSFML_CHECK(postFX);
-    CSFML_CALL(renderImage, Draw(postFX->This));
+    CSFML_CHECK(sprite);
+    CSFML_CALL(renderImage, Draw(sprite->This));
 }
 void sfRenderImage_DrawShape(sfRenderImage* renderImage, sfShape* shape)
 {
     CSFML_CHECK(shape);
     CSFML_CALL(renderImage, Draw(shape->This));
 }
-void sfRenderImage_DrawSprite(sfRenderImage* renderImage, sfSprite* sprite)
-{
-    CSFML_CHECK(sprite);
-    CSFML_CALL(renderImage, Draw(sprite->This));
-}
 void sfRenderImage_DrawString(sfRenderImage* renderImage, sfString* string)
 {
     CSFML_CHECK(string);
     CSFML_CALL(renderImage, Draw(string->This));
+}
+
+
+////////////////////////////////////////////////////////////
+/// Draw something on a renderimage with a shader
+////////////////////////////////////////////////////////////
+void sfRenderImage_DrawSpriteWithShader(sfRenderImage* renderImage, sfSprite* sprite, sfShader* shader)
+{
+    CSFML_CHECK(sprite);
+    CSFML_CHECK(shader);
+    CSFML_CALL(renderImage, Draw(sprite->This, shader->This));
+}
+void sfRenderImage_DrawShapeWithShader(sfRenderImage* renderImage, sfShape* shape, sfShader* shader)
+{
+    CSFML_CHECK(shape);
+    CSFML_CHECK(shader);
+    CSFML_CALL(renderImage, Draw(shape->This, shader->This));
+}
+void sfRenderImage_DrawStringWithShader(sfRenderImage* renderImage, sfString* string, sfShader* shader)
+{
+    CSFML_CHECK(string);
+    CSFML_CHECK(shader);
+    CSFML_CALL(renderImage, Draw(string->This, shader->This));
 }
 
 
@@ -235,7 +253,7 @@ sfImage* sfRenderImage_GetImage(sfRenderImage* renderImage)
 ////////////////////////////////////////////////////////////
 /// Check whether the system supports render images or not
 ////////////////////////////////////////////////////////////
-sfBool sfRenderImage_CanUseRenderImage()
+sfBool sfRenderImage_IsAvailable()
 {
-    return sf::RenderImage::CanUseRenderImage();
+    return sf::RenderImage::IsAvailable() ? sfTrue : sfFalse;
 }

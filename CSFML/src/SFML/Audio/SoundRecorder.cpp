@@ -84,7 +84,7 @@ unsigned int sfSoundRecorder_GetSampleRate(sfSoundRecorder* soundRecorder)
 /// Tell if the system supports sound capture.
 /// If not, this class won't be usable
 ////////////////////////////////////////////////////////////
-sfBool sfSoundRecorder_CanCapture()
+sfBool sfSoundRecorder_IsAvailable()
 {
-    return sf::SoundRecorder::CanCapture() ? sfTrue : sfFalse;
+    return sf::SoundRecorder::IsAvailable() ? sfTrue : sfFalse;
 }

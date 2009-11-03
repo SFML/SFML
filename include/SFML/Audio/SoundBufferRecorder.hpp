@@ -107,13 +107,13 @@ private :
 /// and adds a function to retrieve the recorded sound buffer
 /// (GetBuffer()).
 ///
-/// As usual, don't forget to call the CanCapture() function
+/// As usual, don't forget to call the IsAvailable() function
 /// before using this class (see sf::SoundRecorder for more details
 /// about this).
 ///
 /// Usage example:
 /// \code
-/// if (SoundBufferRecorder::CanCapture())
+/// if (SoundBufferRecorder::IsAvailable())
 /// {
 ///     // Record some audio data
 ///     SoundBufferRecorder recorder;

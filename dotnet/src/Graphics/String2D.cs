@@ -261,10 +261,14 @@ namespace SFML
             /// Render the object into the given render window
             /// </summary>
             /// <param name="target">Target render window</param>
+            /// <param name="shader">Shader to apply</param>
             ////////////////////////////////////////////////////////////
-            internal override void Render(RenderWindow target)
+            internal override void Render(RenderWindow target, Shader shader)
             {
-                sfRenderWindow_DrawString(target.This, This);
+                if (shader == null)
+                    sfRenderWindow_DrawString(target.This, This);
+                else
+                    sfRenderWindow_DrawStringWithShader(target.This, This, shader.This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -272,10 +276,14 @@ namespace SFML
             /// Render the object into the given render image
             /// </summary>
             /// <param name="target">Target render image</param>
+            /// <param name="shader">Shader to apply</param>
             ////////////////////////////////////////////////////////////
-            internal override void Render(RenderImage target)
+            internal override void Render(RenderImage target, Shader shader)
             {
-                sfRenderImage_DrawString(target.This, This);
+                if (shader == null)
+                    sfRenderImage_DrawString(target.This, This);
+                else
+                    sfRenderImage_DrawStringWithShader(target.This, This, shader.This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -353,7 +361,13 @@ namespace SFML
             static extern void sfRenderWindow_DrawString(IntPtr This, IntPtr String);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern void sfRenderWindow_DrawStringWithShader(IntPtr This, IntPtr String, IntPtr Shader);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_DrawString(IntPtr This, IntPtr String);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern void sfRenderImage_DrawStringWithShader(IntPtr This, IntPtr String, IntPtr Shader);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern float sfString_GetWidth(IntPtr This);

@@ -63,7 +63,7 @@ private :
 void DoClient(unsigned short port)
 {
     // Check that the device can capture audio
-    if (sf::SoundRecorder::CanCapture() == false)
+    if (sf::SoundRecorder::IsAvailable() == false)
     {
         std::cout << "Sorry, audio capture is not supported by your system" << std::endl;
         return;

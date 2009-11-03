@@ -119,7 +119,7 @@ public :
     /// \return True if the RenderImage class can be used
     ///
     ////////////////////////////////////////////////////////////
-    static bool CanUseRenderImage();
+    static bool IsAvailable();
 
 private :
 

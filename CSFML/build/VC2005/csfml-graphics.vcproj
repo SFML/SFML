@@ -75,7 +75,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
-				ModuleDefinitionFile="$(SolutionDir)/csfml-graphics-d.def"
+				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Graphics/csfml-graphics-d.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -164,7 +164,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
-				ModuleDefinitionFile="$(SolutionDir)/csfml-graphics.def"
+				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Graphics/csfml-graphics.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -214,11 +214,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\csfml-graphics-d.def"
+			RelativePath="..\..\src\SFML\Graphics\csfml-graphics-d.def"
 			>
 		</File>
 		<File
-			RelativePath=".\csfml-graphics.def"
+			RelativePath="..\..\src\SFML\Graphics\csfml-graphics.def"
 			>
 		</File>
 		<File
@@ -247,18 +247,6 @@
 		</File>
 		<File
 			RelativePath="..\..\src\SFML\Graphics\ImageStruct.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\PostFX.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\include\SFML\Graphics\PostFX.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\PostFXStruct.h"
 			>
 		</File>
 		<File
@@ -291,6 +279,18 @@
 		</File>
 		<File
 			RelativePath="..\..\src\SFML\Graphics\RenderWindowStruct.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\Shader.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Graphics\Shader.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\ShaderStruct.h"
 			>
 		</File>
 		<File

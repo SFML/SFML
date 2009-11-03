@@ -366,10 +366,14 @@ namespace SFML
             /// Render the object into the given render window
             /// </summary>
             /// <param name="target">Target render window</param>
+            /// <param name="shader">Shader to apply</param>
             ////////////////////////////////////////////////////////////
-            internal override void Render(RenderWindow target)
+            internal override void Render(RenderWindow target, Shader shader)
             {
-                sfRenderWindow_DrawShape(target.This, This);
+                if (shader == null)
+                    sfRenderWindow_DrawShape(target.This, This);
+                else
+                    sfRenderWindow_DrawShapeWithShader(target.This, This, shader.This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -377,10 +381,14 @@ namespace SFML
             /// Render the object into the given render image
             /// </summary>
             /// <param name="target">Target render image</param>
+            /// <param name="shader">Shader to apply</param>
             ////////////////////////////////////////////////////////////
-            internal override void Render(RenderImage target)
+            internal override void Render(RenderImage target, Shader shader)
             {
-                sfRenderImage_DrawShape(target.This, This);
+                if (shader == null)
+                    sfRenderImage_DrawShape(target.This, This);
+                else
+                    sfRenderImage_DrawShapeWithShader(target.This, This, shader.This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -467,7 +475,13 @@ namespace SFML
             static extern void sfRenderWindow_DrawShape(IntPtr This, IntPtr Shape);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern void sfRenderWindow_DrawShapeWithShader(IntPtr This, IntPtr Shape, IntPtr Shader);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_DrawShape(IntPtr This, IntPtr Shape);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern void sfRenderImage_DrawShapeWithShader(IntPtr This, IntPtr Shape, IntPtr Shader);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfShape_CreateLine(float P1X, float P1Y, float P2X, float P2Y, float Thickness, Color Col, float Outline, Color OutlineCol);

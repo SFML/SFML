@@ -59,7 +59,7 @@ RenderImage::~RenderImage()
 bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuffer)
 {
     // Make sure that render-images are supported
-    if (!CanUseRenderImage())
+    if (!IsAvailable())
     {
         std::cerr << "Impossible to create render image (your system doesn't support this feature)" << std::endl;
         return false;
@@ -158,7 +158,7 @@ const Image& RenderImage::GetImage() const
 ////////////////////////////////////////////////////////////
 /// Check whether the system supports render images or not
 ////////////////////////////////////////////////////////////
-bool RenderImage::CanUseRenderImage()
+bool RenderImage::IsAvailable()
 {
     return priv::RenderImageImplFBO::IsSupported() ||
            priv::RenderImageImplPBuffer::IsSupported();

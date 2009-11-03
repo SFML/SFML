@@ -1,0 +1,10 @@
+uniform sampler2D texture;
+uniform vec2 mouse;
+
+void main()
+{
+	float factor = 5 + 100 * length(mouse);
+	vec2 pos = floor(gl_TexCoord[0].xy * factor + 0.5) / factor;
+
+	gl_FragColor = texture2D(texture, pos) * gl_Color;	
+}

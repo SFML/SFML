@@ -251,7 +251,7 @@ float sfShape_GetOriginY(sfShape* shape)
 sfColor sfShape_GetColor(sfShape* shape)
 {
     sfColor color = {0, 0, 0, 0};
-    CSFML_CHECK_RETURN(Shape, color)
+    CSFML_CHECK_RETURN(shape, color)
 
     sf::Color SFMLColor = shape->This.GetColor();
     return sfColor_FromRGBA(SFMLColor.r, SFMLColor.g, SFMLColor.b, SFMLColor.a);
@@ -402,7 +402,7 @@ void sfShape_GetPointPosition(sfShape* shape, unsigned int index, float* x, floa
 sfColor sfShape_GetPointColor(sfShape* shape, unsigned int index)
 {
     sfColor color = {255, 255, 255, 255};
-    CSFML_CHECK_RETURN(Shape, color)
+    CSFML_CHECK_RETURN(shape, color)
 
     const sf::Color& SFMLColor = shape->This.GetPointColor(index);
     color.r = SFMLColor.r;
@@ -420,7 +420,7 @@ sfColor sfShape_GetPointColor(sfShape* shape, unsigned int index)
 sfColor sfShape_GetPointOutlineColor(sfShape* shape, unsigned int index)
 {
     sfColor color = {255, 255, 255, 255};
-    CSFML_CHECK_RETURN(Shape, color)
+    CSFML_CHECK_RETURN(shape, color)
 
     const sf::Color& SFMLColor = shape->This.GetPointOutlineColor(index);
     color.r = SFMLColor.r;

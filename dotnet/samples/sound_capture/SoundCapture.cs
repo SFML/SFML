@@ -13,7 +13,7 @@ namespace sample_soundcapture
         static void Main(string[] args)
         {
             // Check that the device can capture audio
-            if (SoundRecorder.CanCapture == false)
+            if (SoundRecorder.IsAvailable == false)
             {
                 Console.WriteLine("Sorry, audio capture is not supported by your system");
                 return;

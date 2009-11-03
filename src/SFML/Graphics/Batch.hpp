@@ -36,9 +36,12 @@
 namespace sf
 {
 class Image;
+class Shader;
 
 namespace priv
 {
+class GeometryRenderer;
+
 ////////////////////////////////////////////////////////////
 /// \brief Batch of geometry / render states to render
 ///
@@ -50,22 +53,24 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Construct the batch with its render states
     ///
-    /// \param texture Texture to use
+    /// \param texture   Texture to use
+    /// \param shader    Pixel shader
     /// \param blendMode Blending mode
-    /// \param viewport Target viewport
+    /// \param viewport  Target viewport
     ///
     ////////////////////////////////////////////////////////////
-    Batch(const Image* texture = NULL, Blend::Mode blendMode = Blend::Alpha, const IntRect& viewport = IntRect());
+    Batch(const Image* texture, const Shader* shader, Blend::Mode blendMode, const IntRect& viewport);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if the batch matches a set of render states
     ///
-    /// \param texture Texture to use
+    /// \param texture   Texture to use
+    /// \param shader    Pixel shader
     /// \param blendMode Blending mode
-    /// \param viewport Target viewport
+    /// \param viewport  Target viewport
     ///
     ////////////////////////////////////////////////////////////
-    bool Matches(const Image* texture, Blend::Mode blendMode, const IntRect& viewport) const;
+    bool Matches(const Image* texture, const Shader* shader, Blend::Mode blendMode, const IntRect& viewport) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Setup the start index of the batch
@@ -84,37 +89,24 @@ public :
     void End(std::size_t index);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return the start index of the batch
+    /// \brief Render the contents of the batch
     ///
-    /// \return Start index
-    ///
-    ////////////////////////////////////////////////////////////
-    std::size_t GetStartIndex() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the number of indices to render with this batch
-    ///
-    /// \return Index count
+    /// \param renderer Renderer to use for rendering
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t GetIndexCount() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Apply the render states of the batch
-    ///
-    ////////////////////////////////////////////////////////////
-    void ApplyStates() const;
+    void Render(GeometryRenderer& renderer) const;
 
 private :
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const Image* myTexture;   ///< Texture used by the batch
-    Blend::Mode  myBlendMode; ///< Blending mode used by the batch
-    IntRect      myViewport;  ///< Target viewport for the batch
-    std::size_t  myStart;     ///< Index of the first index to render with this batch
-    std::size_t  myCount;     ///< Number of indices to render with this batch
+    const Image*  myTexture;   ///< Texture used by the batch
+    const Shader* myShader;    ///< Pixel shader used by the batch
+    Blend::Mode   myBlendMode; ///< Blending mode used by the batch
+    IntRect       myViewport;  ///< Target viewport for the batch
+    std::size_t   myStart;     ///< Index of the first index to render with this batch
+    std::size_t   myCount;     ///< Number of indices to render with this batch
 };
 
 } // namespace priv

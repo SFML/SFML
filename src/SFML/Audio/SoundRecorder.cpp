@@ -62,7 +62,7 @@ SoundRecorder::~SoundRecorder()
 void SoundRecorder::Start(unsigned int sampleRate)
 {
     // Check if the device can do audio capture
-    if (!CanCapture())
+    if (!IsAvailable())
     {
         std::cerr << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::CanCapture to check it)" << std::endl;
         return;
@@ -119,7 +119,7 @@ unsigned int SoundRecorder::GetSampleRate() const
 
 
 ////////////////////////////////////////////////////////////
-bool SoundRecorder::CanCapture()
+bool SoundRecorder::IsAvailable()
 {
     return priv::AudioDevice::IsExtensionSupported("ALC_EXT_CAPTURE");
 }

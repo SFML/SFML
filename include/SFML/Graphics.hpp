@@ -34,10 +34,10 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Glyph.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/PostFX.hpp>
 #include <SFML/Graphics/RenderImage.hpp>
 #include <SFML/Graphics/RenderQueue.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/String.hpp>

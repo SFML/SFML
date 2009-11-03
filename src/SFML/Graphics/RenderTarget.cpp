@@ -85,6 +85,34 @@ void RenderTarget::Draw(const Drawable& object)
     // Setup the projection matrix
     myRenderQueue.SetProjection(myCurrentView->GetMatrix());
 
+    // Setup the shader
+    myRenderQueue.SetShader(NULL);
+
+    // Let the object draw itself
+    object.Draw(*this, myRenderQueue);
+
+    // Restore the previous render states
+    myRenderQueue.PopStates();
+}
+
+
+////////////////////////////////////////////////////////////
+/// Draw something into the target with a shader
+////////////////////////////////////////////////////////////
+void RenderTarget::Draw(const Drawable& object, const Shader& shader)
+{
+    // Save the current render states
+    myRenderQueue.PushStates();
+
+    // Setup the viewport
+    myRenderQueue.SetViewport(GetViewport(*myCurrentView));
+
+    // Setup the projection matrix
+    myRenderQueue.SetProjection(myCurrentView->GetMatrix());
+
+    // Setup the shader
+    myRenderQueue.SetShader(&shader);
+
     // Let the object draw itself
     object.Draw(*this, myRenderQueue);
 

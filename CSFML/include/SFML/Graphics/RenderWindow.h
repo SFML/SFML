@@ -292,14 +292,25 @@ CSFML_API void sfRenderWindow_SetJoystickThreshold(sfRenderWindow* renderWindow,
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderwindow
 ///
-/// \param renderWindow :                     Renderwindow to draw in
-/// \param postFX / sprite / string / shape : Object to draw
+/// \param renderWindow :            Renderwindow to draw in
+/// \param sprite / string / shape : Object to draw
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfRenderWindow_DrawPostFX(sfRenderWindow* renderWindow, sfPostFX* postFX);
 CSFML_API void sfRenderWindow_DrawSprite(sfRenderWindow* renderWindow, sfSprite* sprite);
 CSFML_API void sfRenderWindow_DrawShape (sfRenderWindow* renderWindow, sfShape*  shape);
 CSFML_API void sfRenderWindow_DrawString(sfRenderWindow* renderWindow, sfString* string);
+
+////////////////////////////////////////////////////////////
+/// Draw something on a renderwindow with a shader
+///
+/// \param renderWindow :            Renderwindow to draw in
+/// \param sprite / string / shape : Object to draw
+/// \param shader :                  Shader to use
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfRenderWindow_DrawSpriteWithShader(sfRenderWindow* renderWindow, sfSprite* sprite, sfShader* shader);
+CSFML_API void sfRenderWindow_DrawShapeWithShader (sfRenderWindow* renderWindow, sfShape*  shape,  sfShader* shader);
+CSFML_API void sfRenderWindow_DrawStringWithShader(sfRenderWindow* renderWindow, sfString* string, sfShader* shader);
 
 ////////////////////////////////////////////////////////////
 /// Clear the screen with the given color

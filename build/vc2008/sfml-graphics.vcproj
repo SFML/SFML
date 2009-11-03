@@ -3393,14 +3393,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\Graphics\PostFX.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\SFML\Graphics\PostFX.hpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\SFML\Graphics\Shape.cpp"
 				>
 			</File>
@@ -3543,6 +3535,14 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\RenderWindow.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\Shader.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Graphics\Shader.hpp"
 			>
 		</File>
 		<File

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{46786269-57B9-48E7-AA4F-8F4D84609FE6}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -53,11 +53,11 @@
     <Compile Include="Drawable.cs" />
     <Compile Include="Font.cs" />
     <Compile Include="Image.cs" />
-    <Compile Include="PostFx.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="RenderImage.cs" />
     <Compile Include="RenderTarget.cs" />
     <Compile Include="RenderWindow.cs" />
+    <Compile Include="Shader.cs" />
     <Compile Include="Shape.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="String2D.cs" />

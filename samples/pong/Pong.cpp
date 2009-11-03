@@ -41,7 +41,7 @@ int main()
 
     // Load the text font
     sf::Font font;
-    if (!font.LoadFromFile("datas/post-fx/cheeseburger.ttf"))
+    if (!font.LoadFromFile("datas/pong/cheeseburger.ttf"))
         return EXIT_FAILURE;
 
     // Initialize the end text

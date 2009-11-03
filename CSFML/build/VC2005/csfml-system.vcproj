@@ -68,7 +68,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
-				ModuleDefinitionFile="$(SolutionDir)/csfml-system-d.def"
+				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/System/csfml-system-d.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -153,7 +153,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
-				ModuleDefinitionFile="$(SolutionDir)/csfml-system.def"
+				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/System/csfml-system.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -203,11 +203,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\csfml-system-d.def"
+			RelativePath="..\..\src\SFML\System\csfml-system-d.def"
 			>
 		</File>
 		<File
-			RelativePath=".\csfml-system.def"
+			RelativePath="..\..\src\SFML\System\csfml-system.def"
 			>
 		</File>
 		<File

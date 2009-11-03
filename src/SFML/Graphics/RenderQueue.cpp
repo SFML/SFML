@@ -166,17 +166,24 @@ void RenderQueue::SetTexture(const Image* texture)
 
 
 ////////////////////////////////////////////////////////////
+void RenderQueue::SetShader(const Shader* shader)
+{
+    myCurrentShader = shader;
+}
+
+
+////////////////////////////////////////////////////////////
 void RenderQueue::BeginBatch()
 {
     // Check if the current batch differs from the new render states
-    if (!myCurrentBatch || !myCurrentBatch->Matches(myCurrentTexture, myCurrentBlendMode, myCurrentViewport))
+    if (!myCurrentBatch || !myCurrentBatch->Matches(myCurrentTexture, myCurrentShader, myCurrentBlendMode, myCurrentViewport))
     {
         // Close the current batch
         if (myCurrentBatch)
             myCurrentBatch->End(myCurrentIndexCount);
 
         // Create a new one
-        priv::Batch batch(myCurrentTexture, myCurrentBlendMode, myCurrentViewport);
+        priv::Batch batch(myCurrentTexture, myCurrentShader, myCurrentBlendMode, myCurrentViewport);
         myBatches.push_back(batch);
         myCurrentBatch = &myBatches.back();
         myCurrentBatch->Begin(myCurrentIndexCount);
@@ -300,10 +307,7 @@ void RenderQueue::Render()
 
         // Render the batches in order
         for (BatchArray::const_iterator it = myBatches.begin(); it != myBatches.end(); ++it)
-        {
-            it->ApplyStates();
-            myRenderer->RenderTriangles(it->GetStartIndex(), it->GetIndexCount());
-        }
+            it->Render(*myRenderer);
 
         // Stop rendering
         myRenderer->End();
@@ -325,13 +329,10 @@ void RenderQueue::Render()
 ////////////////////////////////////////////////////////////
 void RenderQueue::Clear()
 {
-    // Reset the vertex and index counts
-    myCurrentVertexCount = 0;
-    myCurrentIndexCount = 0;
-
-    // Clear the batches
     myBatches.clear();
     myCurrentBatch = NULL;
+    myCurrentVertexCount = 0;
+    myCurrentIndexCount = 0;
 }
 
 } // namespace sf

@@ -31,10 +31,12 @@
 
 #include <SFML/Window.h>
 #include <SFML/Graphics/Color.h>
+#include <SFML/Graphics/Font.h>
 #include <SFML/Graphics/Image.h>
-#include <SFML/Graphics/PostFX.h>
 #include <SFML/Graphics/Rect.h>
 #include <SFML/Graphics/RenderWindow.h>
+#include <SFML/Graphics/RenderImage.h>
+#include <SFML/Graphics/Shader.h>
 #include <SFML/Graphics/Shape.h>
 #include <SFML/Graphics/Sprite.h>
 #include <SFML/Graphics/String.h>

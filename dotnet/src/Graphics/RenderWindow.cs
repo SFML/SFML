@@ -390,18 +390,19 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public void Draw(Drawable objectToDraw)
             {
-                objectToDraw.Render(this);
+                objectToDraw.Render(this, null);
             }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Apply a post-fx to the window
+            /// Draw something into the window with a shader
             /// </summary>
-            /// <param name="postFx">PostFx to apply</param>
+            /// <param name="objectToDraw">Object to draw</param>
+            /// <param name="shader">Shader to apply</param>
             ////////////////////////////////////////////////////////////
-            public void Draw(PostFx postFx)
+            public void Draw(Drawable objectToDraw, Shader shader)
             {
-                sfRenderWindow_DrawPostFX(This, postFx != null ? postFx.This : IntPtr.Zero);
+                objectToDraw.Render(this, shader);
             }
 
             ////////////////////////////////////////////////////////////
@@ -571,9 +572,6 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_ConvertCoords(IntPtr This, uint WindowX, uint WindowY, out float ViewX, out float ViewY, IntPtr TargetView);
-
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderWindow_DrawPostFX(IntPtr This, IntPtr PostFx);
 
             #endregion
         }

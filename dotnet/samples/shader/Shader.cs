@@ -1,0 +1,249 @@
+using System;
+using System.Collections.Generic;
+using SFML;
+using SFML.Graphics;
+using SFML.Window;
+
+namespace sample_shader
+{
+    /// <summary>
+    /// A class to simplify shader selection
+    /// </summary>
+    class ShaderSelector
+    {
+        // Constructor
+        public ShaderSelector(Dictionary<string, Shader> owner)
+        {
+            myOwner = owner;
+            myIterator = owner.GetEnumerator();
+            myIterator.MoveNext();
+        }
+
+        // Select the next shader
+        public void GotoNext()
+        {
+            if (myIterator.MoveNext() == false)
+            {
+                myIterator = myOwner.GetEnumerator();
+                myIterator.MoveNext();
+            }
+        }
+
+        // Update the shader parameters
+        public void Update(float x, float y)
+        {
+            if      (myIterator.Current.Key == "blur")     myIterator.Current.Value.SetParameter("offset", x * y * 0.05f);
+            else if (myIterator.Current.Key == "colorize") myIterator.Current.Value.SetParameter("color", 0.3f, x, y);
+            else if (myIterator.Current.Key == "fisheye")  myIterator.Current.Value.SetParameter("mouse", x, y);
+            else if (myIterator.Current.Key == "wave")     myIterator.Current.Value.SetParameter("offset", x, y);
+            else if (myIterator.Current.Key == "pixelate") myIterator.Current.Value.SetParameter("mouse", x, y);
+        }
+
+        // Get the name of the current shader
+        public string Name
+        {
+            get {return myIterator.Current.Key;}
+        }
+
+        // Get the current shader
+        public Shader Shader
+        {
+            get {return myIterator.Current.Value;}
+        }
+
+        private Dictionary<string, Shader> myOwner;
+        private Dictionary<string, Shader>.Enumerator myIterator;
+    };
+
+    static class Program
+    {
+        private static Dictionary<string, Shader> shaders;
+        private static ShaderSelector             backgroundShader;
+        private static ShaderSelector             entityShader;
+        private static ShaderSelector             globalShader;
+        private static String2D                   shaderStr;
+
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        static void Main()
+        {
+            // Create the main window
+            RenderWindow window = new RenderWindow(new VideoMode(800, 600), "SFML.Net Shader");
+
+            // Setup event handlers
+            window.Closed     += new EventHandler(OnClosed);
+            window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
+
+            // Check that the system can use shaders
+            if (Shader.IsAvailable == false)
+            {
+                DisplayError(window);
+                return;
+            }
+
+            // Create the render image
+            RenderImage image = new RenderImage(window.Width, window.Height);
+
+            // Load a background image to display
+            Sprite background = new Sprite(new Image("datas/shader/background.jpg"));
+            background.Image.Smooth = false;
+
+            // Load a sprite which we'll move into the scene
+            Sprite entity = new Sprite(new Image("datas/shader/sprite.png"));
+
+            // Load the text font
+            Font font = new Font("datas/shader/arial.ttf", 20);
+
+            // Load the image needed for the wave effect
+            Image waveImage = new Image("datas/shader/wave.jpg");
+
+            // Load all effects
+            shaders = new Dictionary<string, Shader>();
+            shaders["nothing"]  = new Shader("datas/shader/nothing.sfx");
+            shaders["blur"]     = new Shader("datas/shader/blur.sfx");
+            shaders["colorize"] = new Shader("datas/shader/colorize.sfx");
+            shaders["fisheye"]  = new Shader("datas/shader/fisheye.sfx");
+            shaders["wave"]     = new Shader("datas/shader/wave.sfx");
+            shaders["pixelate"] = new Shader("datas/shader/pixelate.sfx");
+            backgroundShader = new ShaderSelector(shaders);
+            entityShader     = new ShaderSelector(shaders);
+            globalShader     = new ShaderSelector(shaders);
+
+            // Do specific initializations
+            shaders["nothing"].SetTexture("texture", Shader.CurrentTexture);
+            shaders["blur"].SetTexture("texture", Shader.CurrentTexture);
+            shaders["blur"].SetParameter("offset", 0.0F);
+            shaders["colorize"].SetTexture("texture", Shader.CurrentTexture);
+            shaders["colorize"].SetParameter("color", 1.0F, 1.0F, 1.0F);
+            shaders["fisheye"].SetTexture("texture", Shader.CurrentTexture);
+            shaders["wave"].SetTexture("texture", Shader.CurrentTexture);
+            shaders["wave"].SetTexture("wave", waveImage);
+            shaders["pixelate"].SetTexture("texture", Shader.CurrentTexture);
+
+            // Define a string for displaying current effect description
+            shaderStr = new String2D();
+            shaderStr.Font = font;
+            shaderStr.Size = 20;
+            shaderStr.Position = new Vector2(5.0F, 0.0F);
+            shaderStr.Color = new Color(250, 100, 30);
+            shaderStr.Text = "Background shader: \"" + backgroundShader.Name + "\"\n" +
+                             "Flower shader: \"" + entityShader.Name + "\"\n" +
+                             "Global shader: \"" + globalShader.Name + "\"\n";
+
+            // Define a string for displaying help
+            String2D infoStr = new String2D();
+            infoStr.Font = font;
+            infoStr.Size = 20;
+            infoStr.Position = new Vector2(5.0F, 510.0F);
+            infoStr.Color = new Color(250, 100, 30);
+            infoStr.Text = "Move your mouse to change the shaders' parameters\n" +
+                           "Press numpad 1 to change the background shader\n" +
+                           "Press numpad 2 to change the flower shader\n" +
+                           "Press numpad 3 to change the global shader";
+
+            // Start the game loop
+            float time = 0.0F;
+            while (window.IsOpened())
+            {
+                // Process events
+                window.DispatchEvents();
+
+                // Get the mouse position in the range [0, 1]
+                //float x = window.Input.GetMouseX() / (float)window.Width;
+                //float y = window.Input.GetMouseY() / (float)window.Height;
+                float x = (float)(Math.Cos(time * 1.3) + 1) * 0.5F;
+                float y = (float)(Math.Sin(time * 0.8) + 1) * 0.5F;
+
+                // Update the shaders
+                backgroundShader.Update(x, y);
+                entityShader.Update(x, y);
+                globalShader.Update(x, y);
+
+                // Animate the sprite
+                time += window.GetFrameTime();
+                float entityX = (float)(Math.Cos(time * 1.3) + 1.2) * 300;
+                float entityY = (float)(Math.Cos(time * 0.8) + 1.2) * 200;
+                entity.Position = new Vector2(entityX, entityY);
+                entity.Rotation = time * 100;
+
+                // Draw the background and the moving entity to the render image
+                image.Draw(background, backgroundShader.Shader);
+                image.Draw(entity, entityShader.Shader);
+                image.Display();
+
+                // Draw the contents of the render image to the window
+                window.Draw(new Sprite(image.Image), globalShader.Shader);
+
+                // Draw interface strings
+                window.Draw(shaderStr);
+                window.Draw(infoStr);
+
+                // Finally, display the rendered frame on screen
+                window.Display();
+            }
+        }
+
+        /// <summary>
+        /// Fonction called when the post-effects are not supported ;
+        /// Display an error message and wait until the user exits
+        /// </summary>
+        private static void DisplayError(RenderWindow window)
+        {
+            // Define a string for displaying the error message
+            String2D errorStr = new String2D("Sorry, your system doesn't support shaders");
+            errorStr.Position = new Vector2(100.0F, 250.0F);
+            errorStr.Color = new Color(200, 100, 150);
+
+            // Start the game loop
+            while (window.IsOpened())
+            {
+                // Process events
+                window.DispatchEvents();
+
+                // Clear the window
+                window.Clear();
+
+                // Draw the error message
+                window.Draw(errorStr);
+
+                // Finally, display the rendered frame on screen
+                window.Display();
+            }
+        }
+
+        /// <summary>
+        /// Function called when the window is closed
+        /// </summary>
+        static void OnClosed(object sender, EventArgs e)
+        {
+            RenderWindow window = (RenderWindow)sender;
+            window.Close();
+        }
+
+        /// <summary>
+        /// Function called when a key is pressed
+        /// </summary>
+        static void OnKeyPressed(object sender, KeyEventArgs e)
+        {
+            RenderWindow window = (RenderWindow)sender;
+
+            // Escape key : exit
+            if (e.Code == KeyCode.Escape)
+                window.Close();
+
+            // Numpad : switch effect
+            switch (e.Code)
+            {
+                case KeyCode.Numpad1 : backgroundShader.GotoNext(); break;
+                case KeyCode.Numpad2 : entityShader.GotoNext();     break;
+                case KeyCode.Numpad3 : globalShader.GotoNext();     break;
+            }
+
+            // Update the text
+            shaderStr.Text = "Background shader: \"" + backgroundShader.Name + "\"\n" +
+                             "Flower shader: \"" + entityShader.Name + "\"\n" +
+                             "Global shader: \"" + globalShader.Name + "\"\n";
+        }
+    }
+}

@@ -31,7 +31,6 @@
 #include <SFML/Config.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Matrix3.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <vector>
@@ -44,6 +43,9 @@ namespace priv
     class Batch;
     class GeometryRenderer;
 }
+
+class Image;
+class Shader;
 
 ////////////////////////////////////////////////////////////
 /// \brief Implements a queue of rendering commands
@@ -195,6 +197,17 @@ public :
     void SetTexture(const Image* texture);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the current shader
+    ///
+    /// Note: any call to this function after a call to BeginBatch
+    /// will be ignored, and delayed until BeginBatch is called again.
+    ///
+    /// \param shader New Shader
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetShader(const Shader* shader);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Begin a new geometry batch
     ///
     /// This function starts storing geometry and associates it
@@ -326,6 +339,7 @@ private :
     RenderStates*           myCurrentStates;       ///< Current set of render states
     Matrix3                 myCurrentTransform;    ///< Current combined projection-model-view matrix
     const Image*            myCurrentTexture;      ///< Current texture
+    const Shader*           myCurrentShader;       ///< Current pixel shader
     Blend::Mode             myCurrentBlendMode;    ///< Current blending mode
     IntRect                 myCurrentViewport;     ///< Current target viewport
     Vector2f                myCurrentViewportSize; ///< Size of the current viewport (for vertex calculations)
@@ -358,10 +372,8 @@ private :
 ///
 /// Usage example:
 /// \begincode
-/// void MyDrawable::Render(sf::RenderTarget& target)
+/// void MyDrawable::Render(sf::RenderTarget& target, sf::RenderQueue& queue)
 /// {
-///    RenderQueue& queue = target.GetRenderQueue();
-///
 ///    queue.SetTexture(myImage);
 ///    queue.BeginBatch();
 ///    {

@@ -1,6 +1,0 @@
-texture framebuffer
-
-effect
-{
-	_out = framebuffer(_in);
-}

@@ -69,10 +69,10 @@ public :
     /// This function is called once before all the triangles
     /// are rendered.
     ///
-    /// \param vertices Pointer to the vertex array
+    /// \param vertices      Pointer to the vertex array
     /// \param verticesCount Number of vertices to render
-    /// \param indices Pointer to the index array
-    /// \param indicesCount Number of indices to render
+    /// \param indices       Pointer to the index array
+    /// \param indicesCount  Number of indices to render
     ///
     ////////////////////////////////////////////////////////////
     virtual void Begin(const float* vertices, std::size_t verticesCount, const unsigned int* indices, std::size_t indicesCount) = 0;

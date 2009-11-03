@@ -59,7 +59,7 @@
 		<Unit filename="..\..\include\SFML\Graphics\Color.h" />
 		<Unit filename="..\..\include\SFML\Graphics\Font.h" />
 		<Unit filename="..\..\include\SFML\Graphics\Image.h" />
-		<Unit filename="..\..\include\SFML\Graphics\PostFX.h" />
+		<Unit filename="..\..\include\SFML\Graphics\Shader.h" />
 		<Unit filename="..\..\include\SFML\Graphics\Rect.h" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderWindow.h" />
 		<Unit filename="..\..\include\SFML\Graphics\Shape.h" />
@@ -72,8 +72,8 @@
 		<Unit filename="..\..\src\SFML\Graphics\FontStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\Image.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\ImageStruct.h" />
-		<Unit filename="..\..\src\SFML\Graphics\PostFX.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\PostFXStruct.h" />
+		<Unit filename="..\..\src\SFML\Graphics\Shader.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\ShaderStruct.h" />
 		<Unit filename="..\..\src\SFML\Graphics\Rect.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderImage.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderImageStruct.h" />

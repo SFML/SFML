@@ -36,14 +36,14 @@ namespace SFML
             /// </summary>
             /// <param name="width">Width of the render image</param>
             /// <param name="height">Height of the render image</param>
-            /// <param name="depthBuffer">Do you wxant a depth-buffer attached?</param>
+            /// <param name="depthBuffer">Do you want a depth-buffer attached?</param>
             ////////////////////////////////////////////////////////////
             public RenderImage(uint width, uint height, bool depthBuffer) :
                 base(sfRenderImage_Create(width, height, depthBuffer))
             {
                 myDefaultView = new View(sfRenderImage_GetDefaultView(This));
-                myCurrentView = myDefaultView;
                 myImage       = new Image(sfRenderImage_GetImage(This));
+                myCurrentView = myDefaultView;
                 GC.SuppressFinalize(myDefaultView);
                 GC.SuppressFinalize(myImage);
             }
@@ -177,18 +177,19 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public void Draw(Drawable objectToDraw)
             {
-                objectToDraw.Render(this);
+                objectToDraw.Render(this, null);
             }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Apply a post-fx to the render image
+            /// Draw something into the render image with a shader
             /// </summary>
-            /// <param name="postFx">PostFx to apply</param>
+            /// <param name="objectToDraw">Object to draw</param>
+            /// <param name="shader">Shader to apply</param>
             ////////////////////////////////////////////////////////////
-            public void Draw(PostFx postFx)
+            public void Draw(Drawable objectToDraw, Shader shader)
             {
-                sfRenderImage_DrawPostFX(This, postFx != null ? postFx.This : IntPtr.Zero);
+                objectToDraw.Render(this, shader);
             }
 
             ////////////////////////////////////////////////////////////
@@ -236,9 +237,9 @@ namespace SFML
             /// Tell whether or not the system supports render images
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public static bool CanUseRenderImage
+            public static bool IsAvailable
             {
-                get {return sfRenderImage_CanUseRenderImage();}
+                get {return sfRenderImage_IsAvailable();}
             }
 
             ////////////////////////////////////////////////////////////
@@ -309,13 +310,10 @@ namespace SFML
             static extern void sfRenderImage_ConvertCoords(IntPtr This, uint WindowX, uint WindowY, out float ViewX, out float ViewY, IntPtr TargetView);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderImage_DrawPostFX(IntPtr This, IntPtr PostFx);
-
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfRenderImage_GetImage(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern bool sfRenderImage_CanUseRenderImage();
+            static extern bool sfRenderImage_IsAvailable();
 
             #endregion
         }

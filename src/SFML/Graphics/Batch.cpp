@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Batch.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/GeometryRenderer.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 
 
@@ -35,8 +37,9 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-Batch::Batch(const Image* texture, Blend::Mode blendMode, const IntRect& viewport) :
+Batch::Batch(const Image* texture, const Shader* shader, Blend::Mode blendMode, const IntRect& viewport) :
 myTexture  (texture),
+myShader   (shader),
 myBlendMode(blendMode),
 myViewport (viewport),
 myStart    (0),
@@ -46,9 +49,10 @@ myCount    (0)
 
 
 ////////////////////////////////////////////////////////////
-bool Batch::Matches(const Image* texture, Blend::Mode blendMode, const IntRect& viewport) const
+bool Batch::Matches(const Image* texture, const Shader* shader, Blend::Mode blendMode, const IntRect& viewport) const
 {
     return myTexture         == texture         &&
+           myShader          == shader          &&
            myBlendMode       == blendMode       &&
            myViewport.Left   == viewport.Left   &&
            myViewport.Top    == viewport.Top    &&
@@ -72,21 +76,7 @@ void Batch::End(std::size_t index)
 
 
 ////////////////////////////////////////////////////////////
-std::size_t Batch::GetStartIndex() const
-{
-    return myStart;
-}
-
-
-////////////////////////////////////////////////////////////
-std::size_t Batch::GetIndexCount() const
-{
-    return myCount;
-}
-
-
-////////////////////////////////////////////////////////////
-void Batch::ApplyStates() const
+void Batch::Render(GeometryRenderer& renderer) const
 {
     // Set the viewport
     GLCheck(glViewport(myViewport.Left, myViewport.Top, myViewport.GetSize().x, myViewport.GetSize().y));
@@ -116,6 +106,17 @@ void Batch::ApplyStates() const
         myTexture->Bind();
     else
         GLCheck(glDisable(GL_TEXTURE_2D));
+
+    // Bind the pixel shader
+    if (myShader)
+        myShader->Bind();
+
+    // Render the triangles
+    renderer.RenderTriangles(myStart, myCount);
+
+    // Disable the pixel shader
+    if (myShader)
+        myShader->Unbind();
 }
 
 } // namespace priv

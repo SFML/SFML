@@ -68,7 +68,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
-				ModuleDefinitionFile="$(SolutionDir)/csfml-network-d.def"
+				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Network/csfml-network-d.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -153,7 +153,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
-				ModuleDefinitionFile="$(SolutionDir)/csfml-network.def"
+				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Network/csfml-network.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -191,11 +191,11 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\csfml-network-d.def"
+			RelativePath="..\..\src\SFML\Network\csfml-network-d.def"
 			>
 		</File>
 		<File
-			RelativePath=".\csfml-network.def"
+			RelativePath="..\..\src\SFML\Network\csfml-network.def"
 			>
 		</File>
 		<File

@@ -99,11 +99,12 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Apply a post-fx to the window
+            /// Draw something into the render image with a shader
             /// </summary>
-            /// <param name="postFx">PostFx to apply</param>
+            /// <param name="objectToDraw">Object to draw</param>
+            /// <param name="shader">Shader to apply</param>
             ////////////////////////////////////////////////////////////
-            void Draw(PostFx postFx);
+            void Draw(Drawable objectToDraw, Shader shader);
 
             ////////////////////////////////////////////////////////////
             /// <summary>

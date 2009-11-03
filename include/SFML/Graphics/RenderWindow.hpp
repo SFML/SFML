@@ -36,8 +36,6 @@
 
 namespace sf
 {
-class Drawable;
-
 ////////////////////////////////////////////////////////////
 /// Simple wrapper for sf::Window that allows easy
 /// 2D rendering

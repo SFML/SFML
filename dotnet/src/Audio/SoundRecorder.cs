@@ -78,9 +78,9 @@ namespace SFML
             /// If not, this class won't be usable
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public static bool CanCapture
+            public static bool IsAvailable
             {
-                get {return sfSoundRecorder_CanCapture();}
+                get {return sfSoundRecorder_IsAvailable();}
             }
 
             ////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ namespace SFML
             static extern uint sfSoundRecorder_GetSampleRate(IntPtr SoundRecorder);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
-            static extern bool sfSoundRecorder_CanCapture();
+            static extern bool sfSoundRecorder_IsAvailable();
             #endregion
         }
     }

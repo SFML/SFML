@@ -70,7 +70,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName)-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2008\"
-				ModuleDefinitionFile="$(SolutionDir)/csfml-window-d.def"
+				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Window/csfml-window-d.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -155,7 +155,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2008\"
-				ModuleDefinitionFile="$(SolutionDir)/csfml-window.def"
+				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Window/csfml-window.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -204,11 +204,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\csfml-window-d.def"
+			RelativePath="..\..\src\SFML\Window\csfml-window-d.def"
 			>
 		</File>
 		<File
-			RelativePath=".\csfml-window.def"
+			RelativePath="..\..\src\SFML\Window\csfml-window.def"
 			>
 		</File>
 		<File
