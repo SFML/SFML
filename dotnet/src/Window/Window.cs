@@ -47,7 +47,7 @@ namespace SFML
             /// <param name="title">Title of the window</param>
             ////////////////////////////////////////////////////////////
             public Window(VideoMode mode, string title) :
-                this(mode, title, Styles.Resize | Styles.Close, new ContextSettings(24, 8, 0))
+                this(mode, title, Styles.Resize | Styles.Close, new ContextSettings(24, 8))
             {
             }
 
@@ -60,7 +60,7 @@ namespace SFML
             /// <param name="style">Window style (Resize | Close by default)</param>
             ////////////////////////////////////////////////////////////
             public Window(VideoMode mode, string title, Styles style) :
-                this(mode, title, style, new ContextSettings(24, 8, 0))
+                this(mode, title, style, new ContextSettings(24, 8))
             {
             }
 
@@ -74,7 +74,7 @@ namespace SFML
             /// <param name="settings">Creation parameters</param>
             ////////////////////////////////////////////////////////////
             public Window(VideoMode mode, string title, Styles style, ContextSettings settings) :
-                base(sfWindow_Create(mode, title, style, settings))
+                base(sfWindow_Create(mode, title, style, ref settings))
             {
                 myInput = new Input(sfWindow_GetInput(This));
             }
@@ -86,7 +86,7 @@ namespace SFML
             /// <param name="handle">Platform-specific handle of the control</param>
             ////////////////////////////////////////////////////////////
             public Window(IntPtr handle) :
-                this(handle, new ContextSettings(24, 8, 0))
+                this(handle, new ContextSettings(24, 8))
             {
             }
 
@@ -98,7 +98,7 @@ namespace SFML
             /// <param name="settings">Creation parameters</param>
             ////////////////////////////////////////////////////////////
             public Window(IntPtr Handle, ContextSettings settings) :
-                base(sfWindow_CreateFromHandle(Handle, settings))
+                base(sfWindow_CreateFromHandle(Handle, ref settings))
             {
                 myInput = new Input(sfWindow_GetInput(This));
             }
@@ -155,7 +155,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public virtual uint Width
             {
-                get { return sfWindow_GetWidth(This); }
+                get {return sfWindow_GetWidth(This);}
             }
 
             ////////////////////////////////////////////////////////////
@@ -165,7 +165,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public virtual uint Height
             {
-                get { return sfWindow_GetHeight(This); }
+                get {return sfWindow_GetHeight(This);}
             }
 
             ////////////////////////////////////////////////////////////
@@ -175,7 +175,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public virtual ContextSettings Settings
             {
-                get { return sfWindow_GetSettings(This); }
+                get {return sfWindow_GetSettings(This);}
             }
 
             ////////////////////////////////////////////////////////////
@@ -555,10 +555,10 @@ namespace SFML
 
             #region Imports
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfWindow_Create(VideoMode Mode, string Title, Styles Style, ContextSettings Params);
+            static extern IntPtr sfWindow_Create(VideoMode Mode, string Title, Styles Style, ref ContextSettings Params);
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfWindow_CreateFromHandle(IntPtr Handle, ContextSettings Params);
+            static extern IntPtr sfWindow_CreateFromHandle(IntPtr Handle, ref ContextSettings Params);
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Destroy(IntPtr This);

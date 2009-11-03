@@ -33,11 +33,28 @@ namespace SFML
             /// <param name="stencilBits">Stencil buffer bits</param>
             /// <param name="antialiasingLevel">Antialiasing level</param>
             ////////////////////////////////////////////////////////////
-            public ContextSettings(uint depthBits, uint stencilBits, uint antialiasingLevel)
+            public ContextSettings(uint depthBits, uint stencilBits, uint antialiasingLevel) :
+                this(depthBits, stencilBits, antialiasingLevel, 2, 0)
+            {
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Construct the settings from depth / stencil bits and antialiasing level
+            /// </summary>
+            /// <param name="depthBits">Depth buffer bits</param>
+            /// <param name="stencilBits">Stencil buffer bits</param>
+            /// <param name="antialiasingLevel">Antialiasing level</param>
+            /// <param name="majorVersion">Major number of the context version</param>
+            /// <param name="minorVersion">Minor number of the context version</param>
+            ////////////////////////////////////////////////////////////
+            public ContextSettings(uint depthBits, uint stencilBits, uint antialiasingLevel, uint majorVersion, uint minorVersion)
             {
                 DepthBits         = depthBits;
                 StencilBits       = stencilBits;
                 AntialiasingLevel = antialiasingLevel;
+                MajorVersion      = majorVersion;
+                MinorVersion      = minorVersion;
             }
 
             /// <summary>Depth buffer bits (0 is disabled)</summary>
@@ -48,6 +65,12 @@ namespace SFML
 
             /// <summary>Antialiasing level (0 is disabled)</summary>
             public uint AntialiasingLevel;
+
+            /// <summary>Major number of the context version</summary>
+            public uint MajorVersion;
+
+            /// <summary>Minor number of the context version</summary>
+            public uint MinorVersion;
         }
     }
 }

@@ -57,6 +57,8 @@ typedef struct
     unsigned int DepthBits;         ///< Bits of the depth buffer
     unsigned int StencilBits;       ///< Bits of the stencil buffer
     unsigned int AntialiasingLevel; ///< Level of antialiasing
+    unsigned int MajorVersion;      ///< Major number of the context version to create
+    unsigned int MinorVersion;      ///< Minor number of the context version to create
 } sfContextSettings;
 
 
@@ -66,19 +68,19 @@ typedef struct
 /// \param mode :     Video mode to use
 /// \param title :    Title of the window
 /// \param style :    Window style
-/// \param settings : Creation settings
+/// \param settings : Creation settings (pass NULL to use default values)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings settings);
+CSFML_API sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings* settings);
 
 ////////////////////////////////////////////////////////////
 /// Construct a window from an existing control
 ///
 /// \param handle :   Platform-specific handle of the control
-/// \param settings : Creation settings
+/// \param settings : Creation settings (pass NULL to use default values)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings settings);
+CSFML_API sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings* settings);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing window

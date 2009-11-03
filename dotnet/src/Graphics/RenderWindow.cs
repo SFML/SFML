@@ -25,7 +25,7 @@ namespace SFML
             /// <param name="title">Title of the window</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title) :
-                this(mode, title, Styles.Resize | Styles.Close, new ContextSettings(24, 8, 0))
+                this(mode, title, Styles.Resize | Styles.Close, new ContextSettings(24, 8))
             {
             }
 
@@ -38,7 +38,7 @@ namespace SFML
             /// <param name="style">Window style (Resize | Close by default)</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title, Styles style) :
-                this(mode, title, style, new ContextSettings(24, 8, 0))
+                this(mode, title, style, new ContextSettings(24, 8))
             {
             }
 
@@ -52,7 +52,7 @@ namespace SFML
             /// <param name="settings">Creation parameters</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title, Styles style, ContextSettings settings) :
-                base(sfRenderWindow_Create(mode, title, style, settings), 0)
+                base(sfRenderWindow_Create(mode, title, style, ref settings), 0)
             {
                 Initialize();
             }
@@ -64,7 +64,7 @@ namespace SFML
             /// <param name="handle">Platform-specific handle of the control</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(IntPtr handle) :
-                this(handle, new ContextSettings(24, 8, 0))
+                this(handle, new ContextSettings(24, 8))
             {
             }
 
@@ -76,7 +76,7 @@ namespace SFML
             /// <param name="settings">Creation parameters</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(IntPtr handle, ContextSettings settings) :
-                base(sfRenderWindow_CreateFromHandle(handle, settings), 0)
+                base(sfRenderWindow_CreateFromHandle(handle, ref settings), 0)
             {
                 Initialize();
             }
@@ -481,10 +481,10 @@ namespace SFML
 
             #region Imports
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfRenderWindow_Create(VideoMode Mode, string Title, Styles Style, ContextSettings Params);
+            static extern IntPtr sfRenderWindow_Create(VideoMode Mode, string Title, Styles Style, ref ContextSettings Params);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfRenderWindow_CreateFromHandle(IntPtr Handle, ContextSettings Params);
+            static extern IntPtr sfRenderWindow_CreateFromHandle(IntPtr Handle, ref ContextSettings Params);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_Destroy(IntPtr This);

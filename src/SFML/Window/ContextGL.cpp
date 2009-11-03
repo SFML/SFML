@@ -152,6 +152,8 @@ bool ContextGL::SetReferenceActive()
 {
     if (threadContext)
         return threadContext->SetActive(true);
+    else
+        return false;
 }
 
 

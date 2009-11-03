@@ -18,7 +18,6 @@
 /// 
 /// int main()
 /// {
-///     sfWindowSettings settings = {24, 8, 0};
 ///     sfVideoMode mode = {800, 600, 32};
 ///     sfRenderWindow* window;
 ///     sfImage* image;
@@ -29,7 +28,7 @@
 ///     sfEvent event;
 ///
 ///     /* Create the main window */
-///     window = sfRenderWindow_Create(mode, "SFML window", sfResize | sfClose, settings);
+///     window = sfRenderWindow_Create(mode, "SFML window", sfResize | sfClose, NULL);
 ///     if (!window)
 ///         return EXIT_FAILURE;
 ///

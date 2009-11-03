@@ -261,20 +261,30 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
     // Get the context to share display lists with
     HGLRC sharedContext = shared ? shared->myContext : NULL;
 
-    // Create the OpenGL context -- first try an OpenGL 3.0 context if it is supported
-    PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
-    if (wglCreateContextAttribsARB)
+    // Create the OpenGL context -- first try an OpenGL 3.0 context if it is requested
+    if (settings.MajorVersion >= 3)
     {
-        int attributes[] =
+        PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
+        if (wglCreateContextAttribsARB)
         {
-            WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-            WGL_CONTEXT_MINOR_VERSION_ARB, 0,
-            0, 0
-        };
-        myContext = wglCreateContextAttribsARB(myDeviceContext, sharedContext, attributes);
+            int attributes[] =
+            {
+                WGL_CONTEXT_MAJOR_VERSION_ARB, settings.MajorVersion,
+                WGL_CONTEXT_MINOR_VERSION_ARB, settings.MinorVersion,
+                0, 0
+            };
+            myContext = wglCreateContextAttribsARB(myDeviceContext, sharedContext, attributes);
+        }
+
+        // If we couldn't create an OpenGL 3 context, adjust the settings
+        if (!myContext)
+        {
+            mySettings.MajorVersion = 2;
+            mySettings.MinorVersion = 0;
+        }
     }
 
-    // If the OpenGL 3.0 context failed, create a regular OpenGL 1.x context
+    // If the OpenGL 3.0 context failed or if we don't want one, create a regular OpenGL 1.x/2.x context
     if (!myContext)
     {
         myContext = wglCreateContext(myDeviceContext);

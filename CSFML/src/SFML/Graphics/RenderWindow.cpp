@@ -39,15 +39,25 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new renderwindow
 ////////////////////////////////////////////////////////////
-sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings params)
+sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings* settings)
 {
     // Convert video mode
     sf::VideoMode videoMode(mode.Width, mode.Height, mode.BitsPerPixel);
 
+    // Convert context settings
+    sf::ContextSettings params;
+    if (settings)
+    {
+        params.DepthBits         = settings->DepthBits;
+        params.StencilBits       = settings->StencilBits;
+        params.AntialiasingLevel = settings->AntialiasingLevel;
+        params.MajorVersion      = settings->MajorVersion;
+        params.MinorVersion      = settings->MinorVersion;
+    }
+
     // Create the window
     sfRenderWindow* renderWindow = new sfRenderWindow;
-    sf::ContextSettings settings(params.DepthBits, params.StencilBits, params.AntialiasingLevel);
-    renderWindow->This.Create(videoMode, title, style, settings);
+    renderWindow->This.Create(videoMode, title, style, params);
     renderWindow->Input.This  = &renderWindow->This.GetInput();
     renderWindow->DefaultView = new sfView(const_cast<sf::View*>(&renderWindow->This.GetDefaultView()));
     renderWindow->CurrentView = renderWindow->DefaultView;
@@ -59,11 +69,22 @@ sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsig
 ////////////////////////////////////////////////////////////
 /// Construct a renderwindow from an existing control
 ////////////////////////////////////////////////////////////
-sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings params)
+sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings* settings)
 {
+    // Convert context settings
+    sf::ContextSettings params;
+    if (settings)
+    {
+        params.DepthBits         = settings->DepthBits;
+        params.StencilBits       = settings->StencilBits;
+        params.AntialiasingLevel = settings->AntialiasingLevel;
+        params.MajorVersion      = settings->MajorVersion;
+        params.MinorVersion      = settings->MinorVersion;
+    }
+
+    // Create the window
     sfRenderWindow* renderWindow = new sfRenderWindow;
-    sf::ContextSettings settings(params.DepthBits, params.StencilBits, params.AntialiasingLevel);
-    renderWindow->This.Create(handle, settings);
+    renderWindow->This.Create(handle, params);
     renderWindow->Input.This  = &renderWindow->This.GetInput();
     renderWindow->DefaultView = new sfView(const_cast<sf::View*>(&renderWindow->This.GetDefaultView()));
     renderWindow->CurrentView = renderWindow->DefaultView;

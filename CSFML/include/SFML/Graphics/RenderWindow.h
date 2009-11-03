@@ -44,19 +44,19 @@
 /// \param mode :     Video mode to use
 /// \param title :    Title of the window
 /// \param style :    Window style
-/// \param settings : Creation settings
+/// \param settings : Creation settings (pass NULL to use default values)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings settings);
+CSFML_API sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings* settings);
 
 ////////////////////////////////////////////////////////////
 /// Construct a renderwindow from an existing control
 ///
 /// \param handle :   Platform-specific handle of the control
-/// \param settings : Creation settings
+/// \param settings : Creation settings (pass NULL to use default values)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings settings);
+CSFML_API sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings* settings);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing renderwindow

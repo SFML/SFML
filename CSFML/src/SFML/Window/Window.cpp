@@ -34,14 +34,24 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new window
 ////////////////////////////////////////////////////////////
-sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings settings)
+sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings* settings)
 {
     // Convert video mode
     sf::VideoMode videoMode(mode.Width, mode.Height, mode.BitsPerPixel);
 
+    // Convert context settings
+    sf::ContextSettings params;
+    if (settings)
+    {
+        params.DepthBits         = settings->DepthBits;
+        params.StencilBits       = settings->StencilBits;
+        params.AntialiasingLevel = settings->AntialiasingLevel;
+        params.MajorVersion      = settings->MajorVersion;
+        params.MinorVersion      = settings->MinorVersion;
+    }
+
     // Create the window
     sfWindow* window = new sfWindow;
-    sf::ContextSettings params(settings.DepthBits, settings.StencilBits, settings.AntialiasingLevel);
     window->This.Create(videoMode, title, style, params);
     window->Input.This = &window->This.GetInput();
 
@@ -52,10 +62,21 @@ sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long sty
 ////////////////////////////////////////////////////////////
 /// Construct a window from an existing control
 ////////////////////////////////////////////////////////////
-sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings settings)
+sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings* settings)
 {
+    // Convert context settings
+    sf::ContextSettings params;
+    if (settings)
+    {
+        params.DepthBits         = settings->DepthBits;
+        params.StencilBits       = settings->StencilBits;
+        params.AntialiasingLevel = settings->AntialiasingLevel;
+        params.MajorVersion      = settings->MajorVersion;
+        params.MinorVersion      = settings->MinorVersion;
+    }
+
+    // Create the window
     sfWindow* window = new sfWindow;
-    sf::ContextSettings params(settings.DepthBits, settings.StencilBits, settings.AntialiasingLevel);
     window->This.Create(handle, params);
     window->Input.This = &window->This.GetInput();
 
