@@ -249,29 +249,6 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     // Create the OpenGL context -- first try an OpenGL 3.0 context if it is requested
     if (settings.MajorVersion >= 3)
     {
-        PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
-        if (wglCreateContextAttribsARB)
-        {
-            int attributes[] =
-            {
-                WGL_CONTEXT_MAJOR_VERSION_ARB, settings.MajorVersion,
-                WGL_CONTEXT_MINOR_VERSION_ARB, settings.MinorVersion,
-                0, 0
-            };
-            myContext = wglCreateContextAttribsARB(myDeviceContext, sharedContext, attributes);
-        }
-
-        // If we couldn't create an OpenGL 3 context, adjust the settings
-        if (!myContext)
-        {
-            mySettings.MajorVersion = 2;
-            mySettings.MinorVersion = 0;
-        }
-    }
-
-    // Create the OpenGL context -- first try an OpenGL 3.0 context if it is requested
-    if (settings.MajorVersion >= 3)
-    {
         const GLubyte* name = reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB");
         PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = reinterpret_cast<PFNGLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(name));
         if (glXCreateContextAttribsARB)
