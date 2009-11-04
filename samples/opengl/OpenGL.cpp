@@ -15,11 +15,8 @@
 ////////////////////////////////////////////////////////////
 int main()
 {
-    // Create the main window and activate it
+    // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL");
-
-    // Activate it as the target for OpenGL calls
-    window.SetActive();
 
     // Create a sprite for the background
     sf::Image backgroundImage;
@@ -77,10 +74,7 @@ int main()
 
             // Adjust the viewport when the window is resized
             if (event.Type == sf::Event::Resized)
-            {
-                window.SetActive();
                 glViewport(0, 0, event.Size.Width, event.Size.Height);
-            }
         }
 
         // Draw the background
@@ -90,7 +84,9 @@ int main()
         // will be rendered on top of the background sprite
         window.Flush();
 
-        // Activate the window
+        // Activate the window before using OpenGL commands.
+        // This is useless here because we have only one window which is
+        // always the active one, but don't forget it if you use multiple windows
         window.SetActive();
 
         // Clear the depth buffer
