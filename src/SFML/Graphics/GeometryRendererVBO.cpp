@@ -37,7 +37,7 @@ bool GeometryRendererVBO::IsSupported()
 {
     priv::EnsureGlewInit();
 
-    return glewIsSupported("GL_ARB_vertex_buffer_object") != 0;
+    return GLEW_ARB_vertex_buffer_object != 0;
 }
 
 

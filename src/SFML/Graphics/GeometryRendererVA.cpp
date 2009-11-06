@@ -38,7 +38,7 @@ bool GeometryRendererVA::IsSupported()
 {
     priv::EnsureGlewInit();
 
-    return glewIsSupported("GL_EXT_vertex_array") != 0;
+    return GLEW_EXT_vertex_array != 0;
 }
 
 
@@ -47,8 +47,6 @@ GeometryRendererVA::GeometryRendererVA() :
 myIndices(NULL)
 {
     priv::EnsureGlewInit();
-
-    myCanLock = glewIsSupported("GL_EXT_compiled_vertex_array") != 0;
 }
 
 
@@ -71,7 +69,7 @@ void GeometryRendererVA::Begin(const float* vertices, std::size_t verticesCount,
     GLCheck(glTexCoordPointer(2, GL_FLOAT, stride, vertices + 6));
 
     // Lock (compile) the vertex array if supported
-    if (myCanLock)
+    if (GLEW_EXT_compiled_vertex_array)
         GLCheck(glLockArraysEXT(0, verticesCount / 8));
 
     // Store indices for later use
@@ -83,7 +81,7 @@ void GeometryRendererVA::Begin(const float* vertices, std::size_t verticesCount,
 void GeometryRendererVA::End()
 {
     // Unlock the vertex array if it was locked
-    if (myCanLock)
+    if (GLEW_EXT_compiled_vertex_array)
         GLCheck(glUnlockArraysEXT());
 }
 

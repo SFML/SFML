@@ -90,14 +90,28 @@ void Batch::Render(GeometryRenderer& renderer) const
     {
         GLCheck(glEnable(GL_BLEND));
 
-        // @todo the resulting alpha may not be correct, which matters when target is a RenderImage.
-        //       find a fix for this (glBlendFuncSeparate -- but not supported by every graphics card)
         switch (myBlendMode)
         {
+            // Alpha blending
+            // glBlendFuncSeparateEXT is used when available to avoid an incorrect alpha value when the target
+            // is a RenderImage -- in this case the alpha value must be written directly to the target buffer
             default :
-            case Blend::Alpha :    GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); break;
-            case Blend::Add :      GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));                 break;
-            case Blend::Multiply : GLCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));                break;
+            case Blend::Alpha :
+                if (GLEW_EXT_blend_func_separate)
+                    GLCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO));
+                else
+                    GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+                break;
+
+            // Additive blending
+            case Blend::Add :
+                GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
+                break;
+
+            // Multiplicative blending
+            case Blend::Multiply :
+                GLCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));
+                break;
         }
     }
 

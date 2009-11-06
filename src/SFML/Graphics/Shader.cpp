@@ -309,10 +309,10 @@ bool Shader::IsAvailable()
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
 
-    return glewIsSupported("GL_ARB_shading_language_100") != 0 &&
-           glewIsSupported("GL_ARB_shader_objects")       != 0 &&
-           glewIsSupported("GL_ARB_vertex_shader")        != 0 &&
-           glewIsSupported("GL_ARB_fragment_shader")      != 0;
+    return GLEW_ARB_shading_language_100 &&
+           GLEW_ARB_shader_objects       &&
+           GLEW_ARB_vertex_shader        &&
+           GLEW_ARB_fragment_shader;
 }
 
 

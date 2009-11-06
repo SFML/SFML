@@ -79,8 +79,7 @@ bool RenderImageImplPBuffer::IsSupported()
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
 
-    return wglewIsSupported("WGL_ARB_pbuffer") &&
-           wglewIsSupported("WGL_ARB_pixel_format");
+    return WGLEW_ARB_pbuffer && WGLEW_ARB_pixel_format;
 }
 
 

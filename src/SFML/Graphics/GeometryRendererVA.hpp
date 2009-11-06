@@ -96,7 +96,6 @@ public :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool                myCanLock; ///< Is geometry locking supported?
     const unsigned int* myIndices; ///< Pointer to the indices to render
 };
 

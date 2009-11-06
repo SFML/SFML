@@ -584,7 +584,7 @@ unsigned int Image::GetValidTextureSize(unsigned int size)
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
 
-    if (glewIsSupported("GL_ARB_texture_non_power_of_two") != 0)
+    if (GLEW_ARB_texture_non_power_of_two)
     {
         // If hardware supports NPOT textures, then just return the unmodified size
         return size;

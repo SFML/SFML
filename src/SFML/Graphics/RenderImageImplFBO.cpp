@@ -75,7 +75,7 @@ bool RenderImageImplFBO::IsSupported()
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
 
-    return glewIsSupported("GL_EXT_framebuffer_object") != 0;
+    return GLEW_EXT_framebuffer_object != 0;
 }
 
 
