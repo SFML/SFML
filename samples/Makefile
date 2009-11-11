@@ -10,7 +10,7 @@ export CFLAGS   = -W -Wall -ansi -I../../include $(DEBUGFLAGS)
 export LDFLAGS  = 
 export EXECPATH = ../bin
 
-all: ftp-sample opengl-sample pong-sample shader-sample qt-sample sockets-sample sound-sample sound_capture-sample voip-sample window-sample wxwidgets-sample X11-sample
+all: ftp-sample opengl-sample pong-sample qt-sample shader-sample sockets-sample sound-sample sound_capture-sample voip-sample window-sample wxwidgets-sample X11-sample
 
 ftp-sample:
 	@(mkdir -p bin)

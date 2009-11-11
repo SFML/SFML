@@ -188,6 +188,7 @@ int main()
                     case sf::Key::Numpad5 : entityShader.GotoNext();         break;
                     case sf::Key::Numpad3 : globalShader.GotoPrevious();     break;
                     case sf::Key::Numpad6 : globalShader.GotoNext();         break;
+                    default :                                                break;
                 }
 
                 // Update the text

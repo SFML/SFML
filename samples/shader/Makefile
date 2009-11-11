@@ -3,7 +3,7 @@ OBJ  = Shader.o
 
 all: $(EXEC)
 
-post-fx: $(OBJ)
+shader: $(OBJ)
 	$(CC) $(LDFLAGS) -o $(EXECPATH)/$@ $(OBJ) -lsfml-graphics -lsfml-window -lsfml-system
 
 %.o: %.cpp
