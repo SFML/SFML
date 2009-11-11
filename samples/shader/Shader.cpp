@@ -43,8 +43,9 @@ public :
     // Update the shader parameters
     void Update(float x, float y)
     {
-        if      (myIterator->first == "blur")     myIterator->second.SetParameter("offset", x * y * 0.05f);
+        if      (myIterator->first == "blur")     myIterator->second.SetParameter("offset", x * y * 0.03f);
         else if (myIterator->first == "colorize") myIterator->second.SetParameter("color", 0.3f, x, y);
+        else if (myIterator->first == "edge")     myIterator->second.SetParameter("threshold", x * y);
         else if (myIterator->first == "fisheye")  myIterator->second.SetParameter("mouse", x, y);
         else if (myIterator->first == "wave")     myIterator->second.SetParameter("offset", x, y);
         else if (myIterator->first == "pixelate") myIterator->second.SetParameter("mouse", x, y);
@@ -120,6 +121,7 @@ int main()
     if (!shaders["nothing"].LoadFromFile("datas/shader/nothing.sfx"))   return EXIT_FAILURE;
     if (!shaders["blur"].LoadFromFile("datas/shader/blur.sfx"))         return EXIT_FAILURE;
     if (!shaders["colorize"].LoadFromFile("datas/shader/colorize.sfx")) return EXIT_FAILURE;
+    if (!shaders["edge"].LoadFromFile("datas/shader/edge.sfx"))         return EXIT_FAILURE;
     if (!shaders["fisheye"].LoadFromFile("datas/shader/fisheye.sfx"))   return EXIT_FAILURE;
     if (!shaders["wave"].LoadFromFile("datas/shader/wave.sfx"))         return EXIT_FAILURE;
     if (!shaders["pixelate"].LoadFromFile("datas/shader/pixelate.sfx")) return EXIT_FAILURE;
@@ -133,6 +135,7 @@ int main()
     shaders["blur"].SetParameter("offset", 0.f);
     shaders["colorize"].SetTexture("texture", sf::Shader::CurrentTexture);
     shaders["colorize"].SetParameter("color", 1.f, 1.f, 1.f);
+    shaders["edge"].SetTexture("texture", sf::Shader::CurrentTexture);
     shaders["fisheye"].SetTexture("texture", sf::Shader::CurrentTexture);
     shaders["wave"].SetTexture("texture", sf::Shader::CurrentTexture);
     shaders["wave"].SetTexture("wave", waveImage);
