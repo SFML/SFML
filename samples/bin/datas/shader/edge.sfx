@@ -1,0 +1,30 @@
+uniform sampler2D texture;
+uniform float threshold;
+
+void main()
+{
+    const float offset = 1.0 / 512.0;
+	vec2 offx = vec2(offset, 0.0);
+	vec2 offy = vec2(0.0, offset);
+
+	vec4 hEdge = texture2D(texture, gl_TexCoord[0].xy - offy)        * -2.0 +
+                 texture2D(texture, gl_TexCoord[0].xy + offy)        *  2.0 +
+                 texture2D(texture, gl_TexCoord[0].xy - offx - offy) * -1.0 +
+                 texture2D(texture, gl_TexCoord[0].xy - offx + offy) *  1.0 +
+                 texture2D(texture, gl_TexCoord[0].xy + offx - offy) * -1.0 +
+                 texture2D(texture, gl_TexCoord[0].xy + offx + offy) *  1.0;
+
+	vec4 vEdge = texture2D(texture, gl_TexCoord[0].xy - offx)        *  2.0 +
+                 texture2D(texture, gl_TexCoord[0].xy + offx)        * -2.0 +
+                 texture2D(texture, gl_TexCoord[0].xy - offx - offy) *  1.0 +
+                 texture2D(texture, gl_TexCoord[0].xy - offx + offy) * -1.0 +
+                 texture2D(texture, gl_TexCoord[0].xy + offx - offy) *  1.0 +
+                 texture2D(texture, gl_TexCoord[0].xy + offx + offy) * -1.0;
+
+    float edge = sqrt(hEdge.rgb * hEdge.rgb + vEdge.rgb * vEdge.rgb);
+    if (edge > threshold)
+        gl_FragColor.rgb = vec3(0, 0, 0);
+    else
+        gl_FragColor.rgb = vec3(1, 1, 1);
+	gl_FragColor.a = gl_Color.a * texture2D(texture, gl_TexCoord[0].xy).a;
+}
