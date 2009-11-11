@@ -10,7 +10,7 @@ export CFLAGS   = -W -Wall -ansi -I../../include $(DEBUGFLAGS)
 export LDFLAGS  = 
 export EXECPATH = ../bin
 
-all: ftp-sample opengl-sample pong-sample post-fx-sample qt-sample sockets-sample sound-sample sound_capture-sample voip-sample window-sample wxwidgets-sample X11-sample
+all: ftp-sample opengl-sample pong-sample shader-sample qt-sample sockets-sample sound-sample sound_capture-sample voip-sample window-sample wxwidgets-sample X11-sample
 
 ftp-sample:
 	@(mkdir -p bin)
@@ -24,9 +24,9 @@ pong-sample:
 	@(mkdir -p bin)
 	@(cd ./pong && $(MAKE))
 
-post-fx-sample:
+shader-sample:
 	@(mkdir -p bin)
-	@(cd ./post-fx && $(MAKE))
+	@(cd ./shader && $(MAKE))
 
 qt-sample:
 	@(mkdir -p bin)
@@ -66,8 +66,8 @@ clean:
 	@(cd  ./ftp           && $(MAKE) $@ && \
 	  cd ../opengl        && $(MAKE) $@ && \
 	  cd ../pong          && $(MAKE) $@ && \
-	  cd ../post-fx       && $(MAKE) $@ && \
 	  cd ../qt            && $(MAKE) $@ && \
+	  cd ../shader        && $(MAKE) $@ && \
 	  cd ../sockets       && $(MAKE) $@ && \
 	  cd ../sound         && $(MAKE) $@ && \
 	  cd ../sound_capture && $(MAKE) $@ && \
@@ -80,8 +80,8 @@ mrproper: clean
 	@(cd  ./ftp           && $(MAKE) $@ && \
 	  cd ../opengl        && $(MAKE) $@ && \
 	  cd ../pong          && $(MAKE) $@ && \
-	  cd ../post-fx       && $(MAKE) $@ && \
 	  cd ../qt            && $(MAKE) $@ && \
+	  cd ../shader        && $(MAKE) $@ && \
 	  cd ../sockets       && $(MAKE) $@ && \
 	  cd ../sound         && $(MAKE) $@ && \
 	  cd ../sound_capture && $(MAKE) $@ && \
