@@ -163,7 +163,7 @@ int main()
             {
                 // Download a file from server
                 std::string filename, directory;
-                std::cout << "filename of the file to download (relative to current directory): ";
+                std::cout << "Filename of the file to download (relative to current directory): ";
                 std::cin  >> filename;
                 std::cout << "Directory to download the file to: ";
                 std::cin  >> directory;

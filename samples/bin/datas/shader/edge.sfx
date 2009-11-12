@@ -21,7 +21,8 @@ void main()
                  texture2D(texture, gl_TexCoord[0].xy + offx - offy) *  1.0 +
                  texture2D(texture, gl_TexCoord[0].xy + offx + offy) * -1.0;
 
-    float edge = sqrt(hEdge.rgb * hEdge.rgb + vEdge.rgb * vEdge.rgb);
+    vec3 result = sqrt(hEdge.rgb * hEdge.rgb + vEdge.rgb * vEdge.rgb);
+    float edge = length(result);
     if (edge > threshold)
         gl_FragColor.rgb = vec3(0, 0, 0);
     else
