@@ -124,13 +124,13 @@
 		<Unit filename="..\..\include\SFML\Graphics\Image.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Matrix3.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Matrix3.inl" />
-		<Unit filename="..\..\include\SFML\Graphics\PostFX.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Rect.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Rect.inl" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderImage.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderQueue.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderTarget.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderWindow.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Shader.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Shape.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Sprite.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\String.hpp" />
@@ -163,7 +163,6 @@
 		<Unit filename="..\..\src\SFML\Graphics\ImageLoader.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Matrix3.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\OpenGL\RendererOpenGL.hpp" />
-		<Unit filename="..\..\src\SFML\Graphics\PostFX.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderImage.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderImageImpl.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderImageImpl.hpp" />
@@ -187,6 +186,7 @@
 		<Unit filename="..\..\src\SFML\Graphics\SOIL\stb_image_aug.h" />
 		<Unit filename="..\..\src\SFML\Graphics\SOIL\stbi_DDS_aug.h" />
 		<Unit filename="..\..\src\SFML\Graphics\SOIL\stbi_DDS_aug_c.h" />
+		<Unit filename="..\..\src\SFML\Graphics\Shader.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Shape.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Sprite.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\String.cpp" />
