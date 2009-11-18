@@ -538,7 +538,7 @@ void WindowImplWin32::CreateContext(const VideoMode& Mode, WindowSettings& Param
                 std::cerr << "Failed to find a pixel format supporting "
                           << Params.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
 
-                Params.AntialiasingLevel = IntAttributes[1] = 2;
+                Params.AntialiasingLevel = IntAttributes[11] = 2;
 	            IsValid = wglChoosePixelFormatARB(myDeviceContext, IntAttributes, FloatAttributes, sizeof(Formats) / sizeof(*Formats), Formats, &NbFormats) != 0;
             }
 
