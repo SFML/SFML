@@ -181,7 +181,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
                 std::cerr << "Failed to find a pixel format supporting "
                           << mySettings.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
 
-                mySettings.AntialiasingLevel = intAttributes[1] = 2;
+                mySettings.AntialiasingLevel = intAttributes[11] = 2;
 	            isValid = wglChoosePixelFormatARB(myDeviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
             }
 
