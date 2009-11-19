@@ -1,12 +1,5 @@
-export DEBUGBUILD = no
-ifeq ($(DEBUGBUILD), yes)
-    DEBUGFLAGS = -g -DDEBUG
-else
-    DEBUGFLAGS = -O2 -DNDEBUG
-endif
-
 export CC       = g++
-export CFLAGS   = -W -Wall -ansi -I../../include $(DEBUGFLAGS)
+export CFLAGS   = -W -Wall -ansi -g -O2 -DNDEBUG -I../../include
 export LDFLAGS  = 
 export EXECPATH = ../bin
 

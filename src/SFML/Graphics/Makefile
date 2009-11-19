@@ -11,29 +11,24 @@ OBJPNG  = $(SRCPNG:.c=.o)
 OBJSOIL = $(SRCSOIL:.c=.o)
 OBJZLIB = $(SRCZLIB:.c=.o)
 
-ifeq ($(STATIC), yes)
-    LIB     = libsfml-graphics-s.a
-    LIBNAME = $(LIBPATH)/$(LIB)
-    INSTALL = 
-else
-    LIB     = libsfml-graphics.so
-    LIBNAME = $(LIBPATH)/$(LIB).$(VERSION)
-    INSTALL = && $(LN) $(LNFLAGS) $(LIB).$(VERSION) $(DESTLIBDIR)/$(LIB)
-endif
+LIB         = libsfml-graphics.so
+LIBNAME     = $(LIB).$(VERSION)
+FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
+LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
-libsfml-graphics-s.a: $(OBJ) $(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB)
-	$(AR) $(ARFLAGS) $(LIBNAME) $(OBJ) $(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB)
-
 libsfml-graphics.so: $(OBJ) $(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB)
-	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIB).$(VERSION) -o $(LIBNAME) $(OBJ) $(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB) -lfreetype -lX11 -lGL
+	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) $(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB) -lfreetype -lX11 -lGL
 
 $(OBJ): %.o: %.cpp
 	$(CPP) -o $@ -c $< $(CFLAGS) -I/usr/include/freetype2
 
-$(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB): %.o: %.c
+$(OBJSOIL): %.o: %.c
 	$(CC) -o $@ -c $< $(CFLAGSEXT) -DSTBI_FAILURE_USERMSG
+
+$(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJZLIB): %.o: %.c
+	$(CC) -o $@ -c $< $(CFLAGSEXT)
 
 .PHONY: clean mrproper
 
@@ -41,7 +36,9 @@ clean:
 	@rm -rf $(OBJ) $(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB)
 
 mrproper: clean
-	@rm -rf $(LIBNAME)
+	@rm -rf $(FULLLIBNAME)
 
 install:
-	@($(CP) $(LIBNAME) $(DESTLIBDIR) $(INSTALL))
+	objcopy --only-keep-debug $(FULLLIBNAME) $(DESTDBGDIR)/$(LIBNAME)
+	objcopy --strip-unneeded  $(FULLLIBNAME) $(DESTLIBDIR)/$(LIBNAME)
+	$(LINK)

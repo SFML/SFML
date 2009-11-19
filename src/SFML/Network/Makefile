@@ -1,23 +1,15 @@
 SRC = $(wildcard *.cpp ./Unix/*.cpp)
 OBJ = $(SRC:.cpp=.o)
 
-ifeq ($(STATIC), yes)
-    LIB     = libsfml-network-s.a
-    LIBNAME = $(LIBPATH)/$(LIB)
-    INSTALL = 
-else
-    LIB     = libsfml-network.so
-    LIBNAME = $(LIBPATH)/$(LIB).$(VERSION)
-    INSTALL = && $(LN) $(LNFLAGS) $(LIB).$(VERSION) $(DESTLIBDIR)/$(LIB)
-endif
+LIB         = libsfml-network.so
+LIBNAME     = $(LIB).$(VERSION)
+FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
+LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
-libsfml-network-s.a: $(OBJ)
-	$(AR) $(ARFLAGS) $(LIBNAME) $(OBJ)
-
 libsfml-network.so: $(OBJ)
-	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIB).$(VERSION) -o $(LIBNAME) $(OBJ)
+	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ)
 
 $(OBJ): %.o: %.cpp
 	$(CPP) -o $@ -c $< $(CFLAGS)
@@ -28,7 +20,9 @@ clean:
 	@rm -rf $(OBJ)
 
 mrproper: clean
-	@rm -rf $(LIBNAME)
+	@rm -rf $(FULLLIBNAME)
 
 install:
-	@($(CP) $(LIBNAME) $(DESTLIBDIR) $(INSTALL))
+	objcopy --only-keep-debug $(FULLLIBNAME) $(DESTDBGDIR)/$(LIBNAME)
+	objcopy --strip-unneeded  $(FULLLIBNAME) $(DESTLIBDIR)/$(LIBNAME)
+	$(LINK)

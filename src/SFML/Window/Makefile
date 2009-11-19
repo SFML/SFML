@@ -1,35 +1,28 @@
-SRC     = $(wildcard *.cpp ./Linux/*.cpp)
-OBJ     = $(SRC:.cpp=.o)
-OBJGLEW = $(SRCGLEW:.c=.o)
+SRC = $(wildcard *.cpp ./Linux/*.cpp)
+OBJ = $(SRC:.cpp=.o)
 
-ifeq ($(STATIC), yes)
-    LIB     = libsfml-window-s.a
-    LIBNAME = $(LIBPATH)/$(LIB)
-    INSTALL = 
-else
-    LIB     = libsfml-window.so
-    LIBNAME = $(LIBPATH)/$(LIB).$(VERSION)
-    INSTALL = && $(LN) $(LNFLAGS) $(LIB).$(VERSION) $(DESTLIBDIR)/$(LIB)
-endif
+LIB         = libsfml-window.so
+LIBNAME     = $(LIB).$(VERSION)
+FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
+LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
-libsfml-window-s.a: $(OBJ)
-	$(AR) $(ARFLAGS) $(LIBNAME) $(OBJ)
-
 libsfml-window.so: $(OBJ)
-	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIB).$(VERSION) -o $(LIBNAME) $(OBJ) $(OBJGLEW) -lX11 -lXrandr -lGL
+	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lX11 -lXrandr -lGL
 
 $(OBJ): %.o: %.cpp
 	$(CPP) -o $@ -c $< $(CFLAGS)
-
+	
 .PHONY: clean mrproper
 
 clean:
 	@rm -rf $(OBJ)
 
 mrproper: clean
-	@rm -rf $(LIBNAME)
+	@rm -rf $(FULLLIBNAME)
 
 install:
-	@($(CP) $(LIBNAME) $(DESTLIBDIR) $(INSTALL))
+	objcopy --only-keep-debug $(FULLLIBNAME) $(DESTDBGDIR)/$(LIBNAME)
+	objcopy --strip-unneeded  $(FULLLIBNAME) $(DESTLIBDIR)/$(LIBNAME)
+	$(LINK)
