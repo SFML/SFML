@@ -100,10 +100,12 @@ myIsCursorIn      (false)
         RegisterWindowClass();
 
     // Compute position and size
-    int left   = (GetDeviceCaps(GetDC(NULL), HORZRES) - mode.Width)  / 2;
-    int top    = (GetDeviceCaps(GetDC(NULL), VERTRES) - mode.Height) / 2;
+    HDC screenDC = GetDC(NULL);
+    int left   = (GetDeviceCaps(screenDC, HORZRES) - mode.Width)  / 2;
+    int top    = (GetDeviceCaps(screenDC, VERTRES) - mode.Height) / 2;
     int width  = myWidth  = mode.Width;
     int height = myHeight = mode.Height;
+    ReleaseDC(NULL, screenDC);
 
     // Choose the window style according to the Style parameter
     DWORD win32Style = WS_VISIBLE;

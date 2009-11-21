@@ -36,29 +36,29 @@ namespace priv
 ////////////////////////////////////////////////////////////
 double Platform::GetSystemTime()
 {
-    static LARGE_INTEGER Frequency;
-    static BOOL          UseHighPerformanceTimer = QueryPerformanceFrequency(&Frequency);
+    static LARGE_INTEGER frequency;
+    static BOOL          useHighPerformanceTimer = QueryPerformanceFrequency(&frequency);
 
-    if (UseHighPerformanceTimer)
+    if (useHighPerformanceTimer)
     {
         // High performance counter available : use it
-        LARGE_INTEGER CurrentTime;
-        QueryPerformanceCounter(&CurrentTime);
+        LARGE_INTEGER currentTime;
+        QueryPerformanceCounter(&currentTime);
 
-        return static_cast<double>(CurrentTime.QuadPart) / Frequency.QuadPart;
+        return static_cast<double>(currentTime.QuadPart) / frequency.QuadPart;
     }
     else
     {
-        // High performance counter not available : use GetTickCount (less accurate)
+        // High performance counter not available: use GetTickCount (less accurate)
         return GetTickCount() * 0.001;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Platform::Sleep(float Time)
+void Platform::Sleep(float time)
 {
-    ::Sleep(static_cast<DWORD>(Time * 1000));
+    ::Sleep(static_cast<DWORD>(time * 1000));
 }
 
 } // namespace priv
