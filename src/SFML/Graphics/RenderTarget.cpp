@@ -118,6 +118,10 @@ void RenderTarget::Draw(const Drawable& object, const Shader& shader)
 
     // Restore the previous render states
     myRenderQueue.PopStates();
+
+    // For now, drawing with a shader cannot be batched because of the shader's parameters
+    // @todo Find a better solution!
+    Flush();
 }
 
 
