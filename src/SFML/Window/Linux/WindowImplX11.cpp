@@ -245,6 +245,10 @@ WindowImplX11::~WindowImplX11()
     // Cleanup graphical resources
     CleanUp();
 
+    // Destroy the cursor
+    if (myHiddenCursor)
+        XFreeCursor(myDisplay, myHiddenCursor);
+
     // Destroy the input context
     if (myInputContext)
         XDestroyIC(myInputContext);
