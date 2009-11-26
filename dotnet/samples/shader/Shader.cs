@@ -61,7 +61,7 @@ namespace sample_shader
         private static ShaderSelector             backgroundShader;
         private static ShaderSelector             entityShader;
         private static ShaderSelector             globalShader;
-        private static String2D                   shaderStr;
+        private static Text                       shaderText;
 
         /// <summary>
         /// The main entry point for the application.
@@ -122,25 +122,25 @@ namespace sample_shader
             shaders["pixelate"].SetTexture("texture", Shader.CurrentTexture);
 
             // Define a string for displaying current effect description
-            shaderStr = new String2D();
-            shaderStr.Font = font;
-            shaderStr.Size = 20;
-            shaderStr.Position = new Vector2(5.0F, 0.0F);
-            shaderStr.Color = new Color(250, 100, 30);
-            shaderStr.Text = "Background shader: \"" + backgroundShader.Name + "\"\n" +
-                             "Flower shader: \"" + entityShader.Name + "\"\n" +
-                             "Global shader: \"" + globalShader.Name + "\"\n";
+            shaderText = new Text();
+            shaderText.Font = font;
+            shaderText.Size = 20;
+            shaderText.Position = new Vector2(5.0F, 0.0F);
+            shaderText.Color = new Color(250, 100, 30);
+            shaderText.DisplayedString = "Background shader: \"" + backgroundShader.Name + "\"\n" +
+                                         "Flower shader: \"" + entityShader.Name + "\"\n" +
+                                         "Global shader: \"" + globalShader.Name + "\"\n";
 
             // Define a string for displaying help
-            String2D infoStr = new String2D();
-            infoStr.Font = font;
-            infoStr.Size = 20;
-            infoStr.Position = new Vector2(5.0F, 510.0F);
-            infoStr.Color = new Color(250, 100, 30);
-            infoStr.Text = "Move your mouse to change the shaders' parameters\n" +
-                           "Press numpad 1 to change the background shader\n" +
-                           "Press numpad 2 to change the flower shader\n" +
-                           "Press numpad 3 to change the global shader";
+            Text infoText = new Text();
+            infoText.Font = font;
+            infoText.Size = 20;
+            infoText.Position = new Vector2(5.0F, 510.0F);
+            infoText.Color = new Color(250, 100, 30);
+            infoText.DisplayedString = "Move your mouse to change the shaders' parameters\n" +
+                                       "Press numpad 1 to change the background shader\n" +
+                                       "Press numpad 2 to change the flower shader\n" +
+                                       "Press numpad 3 to change the global shader";
 
             // Start the game loop
             float time = 0.0F;
@@ -176,9 +176,9 @@ namespace sample_shader
                 // Draw the contents of the render image to the window
                 window.Draw(new Sprite(image.Image), globalShader.Shader);
 
-                // Draw interface strings
-                window.Draw(shaderStr);
-                window.Draw(infoStr);
+                // Draw interface texts
+                window.Draw(shaderText);
+                window.Draw(infoText);
 
                 // Finally, display the rendered frame on screen
                 window.Display();
@@ -192,9 +192,9 @@ namespace sample_shader
         private static void DisplayError(RenderWindow window)
         {
             // Define a string for displaying the error message
-            String2D errorStr = new String2D("Sorry, your system doesn't support shaders");
-            errorStr.Position = new Vector2(100.0F, 250.0F);
-            errorStr.Color = new Color(200, 100, 150);
+            Text error = new Text("Sorry, your system doesn't support shaders");
+            error.Position = new Vector2(100.0F, 250.0F);
+            error.Color = new Color(200, 100, 150);
 
             // Start the game loop
             while (window.IsOpened())
@@ -206,7 +206,7 @@ namespace sample_shader
                 window.Clear();
 
                 // Draw the error message
-                window.Draw(errorStr);
+                window.Draw(error);
 
                 // Finally, display the rendered frame on screen
                 window.Display();
@@ -242,9 +242,9 @@ namespace sample_shader
             }
 
             // Update the text
-            shaderStr.Text = "Background shader: \"" + backgroundShader.Name + "\"\n" +
-                             "Flower shader: \"" + entityShader.Name + "\"\n" +
-                             "Global shader: \"" + globalShader.Name + "\"\n";
+            shaderText.DisplayedString = "Background shader: \"" + backgroundShader.Name + "\"\n" +
+                                         "Flower shader: \"" + entityShader.Name + "\"\n" +
+                                         "Global shader: \"" + globalShader.Name + "\"\n";
         }
     }
 }

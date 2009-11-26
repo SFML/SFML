@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Resource.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <SFML/System/Unicode.hpp>
+#include <SFML/System/String.hpp>
 #include <SFML/Graphics/Glyph.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -40,16 +40,15 @@
 
 namespace sf
 {
-class String;
-
 namespace priv
 {
 class FontLoader;
 }
+
 ////////////////////////////////////////////////////////////
 /// Font is the low-level class for loading and
 /// manipulating character fonts. This class is meant to
-/// be used by sf::String
+/// be used by sf::Text
 ////////////////////////////////////////////////////////////
 class SFML_API Font : public Resource<Font>
 {
@@ -71,7 +70,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& filename, unsigned int charSize = 30, const Unicode::Text& charset = ourDefaultCharset);
+    bool LoadFromFile(const std::string& filename, unsigned int charSize = 30, String charset = ourDefaultCharset);
 
     ////////////////////////////////////////////////////////////
     /// Load the font from a file in memory
@@ -84,7 +83,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize = 30, const Unicode::Text& charset = ourDefaultCharset);
+    bool LoadFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize = 30, String charset = ourDefaultCharset);
 
     ////////////////////////////////////////////////////////////
     /// Get the base size of characters in the font;

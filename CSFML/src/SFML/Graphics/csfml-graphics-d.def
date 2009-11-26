@@ -130,44 +130,44 @@ EXPORTS
 	sfFont_Destroy
 	sfFont_GetCharacterSize
 	sfFont_GetDefaultFont
-	sfString_Create
-	sfString_Destroy
-	sfString_SetX
-	sfString_SetY
-	sfString_SetPosition
-	sfString_SetScaleX
-	sfString_SetScaleY
-	sfString_SetScale
-	sfString_SetRotation
-	sfString_SetOrigin
-	sfString_SetColor
-	sfString_SetBlendMode
-	sfString_GetX
-	sfString_GetY
-	sfString_GetScaleX
-	sfString_GetScaleY
-	sfString_GetRotation
-	sfString_GetOriginX
-	sfString_GetOriginY
-	sfString_GetColor
-	sfString_GetBlendMode
-	sfString_Move
-	sfString_Scale
-	sfString_Rotate
-	sfString_TransformToLocal
-	sfString_TransformToGlobal
-	sfString_SetText
-	sfString_SetUnicodeText
-	sfString_SetFont
-	sfString_SetSize
-	sfString_SetStyle
-	sfString_GetUnicodeText
-	sfString_GetText
-	sfString_GetFont
-	sfString_GetSize
-	sfString_GetStyle
-	sfString_GetCharacterPos
-	sfString_GetRect
+	sfText_Create
+	sfText_Destroy
+	sfText_SetX
+	sfText_SetY
+	sfText_SetPosition
+	sfText_SetScaleX
+	sfText_SetScaleY
+	sfText_SetScale
+	sfText_SetRotation
+	sfText_SetOrigin
+	sfText_SetColor
+	sfText_SetBlendMode
+	sfText_GetX
+	sfText_GetY
+	sfText_GetScaleX
+	sfText_GetScaleY
+	sfText_GetRotation
+	sfText_GetOriginX
+	sfText_GetOriginY
+	sfText_GetColor
+	sfText_GetBlendMode
+	sfText_Move
+	sfText_Scale
+	sfText_Rotate
+	sfText_TransformToLocal
+	sfText_TransformToGlobal
+	sfText_SetString
+	sfText_SetUnicodeString
+	sfText_SetFont
+	sfText_SetSize
+	sfText_SetStyle
+	sfText_GetUnicodeString
+	sfText_GetString
+	sfText_GetFont
+	sfText_GetSize
+	sfText_GetStyle
+	sfText_GetCharacterPos
+	sfText_GetRect
 	sfRenderImage_Create
 	sfRenderImage_Destroy
 	sfRenderImage_GetWidth
@@ -177,10 +177,10 @@ EXPORTS
 	sfRenderImage_Display
 	sfRenderImage_DrawSprite
 	sfRenderImage_DrawShape
-	sfRenderImage_DrawString
+	sfRenderImage_DrawText
 	sfRenderImage_DrawSpriteWithShader
 	sfRenderImage_DrawShapeWithShader
-	sfRenderImage_DrawStringWithShader
+	sfRenderImage_DrawTextWithShader
 	sfRenderImage_Clear
 	sfRenderImage_SetView
 	sfRenderImage_GetView
@@ -213,10 +213,10 @@ EXPORTS
 	sfRenderWindow_GetFrameTime
 	sfRenderWindow_SetJoystickThreshold
 	sfRenderWindow_DrawSprite
-	sfRenderWindow_DrawString
+	sfRenderWindow_DrawText
 	sfRenderWindow_DrawShape
 	sfRenderWindow_DrawSpriteWithShader
-	sfRenderWindow_DrawStringWithShader
+	sfRenderWindow_DrawTextWithShader
 	sfRenderWindow_DrawShapeWithShader
 	sfRenderWindow_Clear
 	sfRenderWindow_SetView

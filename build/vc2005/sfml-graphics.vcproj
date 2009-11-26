@@ -3314,11 +3314,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\Graphics\String.cpp"
+				RelativePath="..\..\src\SFML\Graphics\Text.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\SFML\Graphics\String.hpp"
+				RelativePath="..\..\include\SFML\Graphics\Text.hpp"
 				>
 			</File>
 		</Filter>

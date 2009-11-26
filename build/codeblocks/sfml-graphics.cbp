@@ -133,7 +133,7 @@
 		<Unit filename="..\..\include\SFML\Graphics\Shader.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Shape.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Sprite.hpp" />
-		<Unit filename="..\..\include\SFML\Graphics\String.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Text.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\View.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Batch.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Batch.hpp" />
@@ -189,7 +189,7 @@
 		<Unit filename="..\..\src\SFML\Graphics\Shader.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Shape.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Sprite.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\String.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Text.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\View.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Win32\RenderImageImplPBuffer.hpp" />

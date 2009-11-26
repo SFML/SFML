@@ -112,25 +112,25 @@ CSFML_API void sfRenderImage_Display(sfRenderImage* renderImage);
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderimage
 ///
-/// \param renderImage :             Renderimage to draw in
-/// \param sprite / string / shape : Object to draw
+/// \param renderImage :           Renderimage to draw in
+/// \param sprite / text / shape : Object to draw
 ///
 ////////////////////////////////////////////////////////////
 CSFML_API void sfRenderImage_DrawSprite(sfRenderImage* renderImage, sfSprite* sprite);
 CSFML_API void sfRenderImage_DrawShape (sfRenderImage* renderImage, sfShape*  shape);
-CSFML_API void sfRenderImage_DrawString(sfRenderImage* renderImage, sfString* string);
+CSFML_API void sfRenderImage_DrawText  (sfRenderImage* renderImage, sfText*   text);
 
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderimage with a shader
 ///
-/// \param renderImage :             Renderimage to draw in
-/// \param sprite / string / shape : Object to draw
-/// \param shader :                  Shader to use
+/// \param renderImage :           Renderimage to draw in
+/// \param sprite / text / shape : Object to draw
+/// \param shader :                Shader to use
 ///
 ////////////////////////////////////////////////////////////
 CSFML_API void sfRenderImage_DrawSpriteWithShader(sfRenderImage* renderImage, sfSprite* sprite, sfShader* shader);
 CSFML_API void sfRenderImage_DrawShapeWithShader (sfRenderImage* renderImage, sfShape*  shape,  sfShader* shader);
-CSFML_API void sfRenderImage_DrawStringWithShader(sfRenderImage* renderImage, sfString* string, sfShader* shader);
+CSFML_API void sfRenderImage_DrawTextWithShader  (sfRenderImage* renderImage, sfText*   text, sfShader* shader);
 
 ////////////////////////////////////////////////////////////
 /// Clear the renderimage with the given color

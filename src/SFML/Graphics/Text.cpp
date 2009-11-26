@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/String.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderQueue.hpp>
 
@@ -35,7 +35,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Default constructor
 ////////////////////////////////////////////////////////////
-String::String() :
+Text::Text() :
 myFont          (&Font::GetDefaultFont()),
 mySize          (30.f),
 myStyle         (Regular),
@@ -48,30 +48,30 @@ myNeedRectUpdate(true)
 ////////////////////////////////////////////////////////////
 /// Construct the string from any kind of text
 ////////////////////////////////////////////////////////////
-String::String(const Unicode::Text& text, const Font& font, float size) :
+Text::Text(const String& string, const Font& font, float size) :
 myFont          (&font),
 mySize          (size),
 myStyle         (Regular),
 myNeedRectUpdate(true)
 {
-    SetText(text);
+    SetString(string);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the text (from any kind of string)
 ////////////////////////////////////////////////////////////
-void String::SetText(const Unicode::Text& text)
+void Text::SetString(const String& string)
 {
     myNeedRectUpdate = true;
-    myText = text;
+    myString = string;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Set the font of the string
 ////////////////////////////////////////////////////////////
-void String::SetFont(const Font& font)
+void Text::SetFont(const Font& font)
 {
     if (myFont != &font)
     {
@@ -84,7 +84,7 @@ void String::SetFont(const Font& font)
 ////////////////////////////////////////////////////////////
 /// Set the size of the string
 ////////////////////////////////////////////////////////////
-void String::SetSize(float size)
+void Text::SetSize(float size)
 {
     if (mySize != size)
     {
@@ -98,7 +98,7 @@ void String::SetSize(float size)
 /// Set the style of the text
 /// The default style is Regular
 ////////////////////////////////////////////////////////////
-void String::SetStyle(unsigned long style)
+void Text::SetStyle(unsigned long style)
 {
     if (myStyle != style)
     {
@@ -111,16 +111,16 @@ void String::SetStyle(unsigned long style)
 ////////////////////////////////////////////////////////////
 /// Get the text (the returned text can be converted implicitely to any kind of string)
 ////////////////////////////////////////////////////////////
-const Unicode::Text& String::GetText() const
+const String& Text::GetString() const
 {
-    return myText;
+    return myString;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the font used by the string
 ////////////////////////////////////////////////////////////
-const Font& String::GetFont() const
+const Font& Text::GetFont() const
 {
     return *myFont;
 }
@@ -129,7 +129,7 @@ const Font& String::GetFont() const
 ////////////////////////////////////////////////////////////
 /// Get the size of the characters
 ////////////////////////////////////////////////////////////
-float String::GetSize() const
+float Text::GetSize() const
 {
     return mySize;
 }
@@ -138,7 +138,7 @@ float String::GetSize() const
 ////////////////////////////////////////////////////////////
 /// Get the style of the text
 ////////////////////////////////////////////////////////////
-unsigned long String::GetStyle() const
+unsigned long Text::GetStyle() const
 {
     return myStyle;
 }
@@ -149,14 +149,11 @@ unsigned long String::GetStyle() const
 /// in coordinates relative to the string
 /// (note : translation, center, rotation and scale are not applied)
 ////////////////////////////////////////////////////////////
-sf::Vector2f String::GetCharacterPos(std::size_t index) const
+sf::Vector2f Text::GetCharacterPos(std::size_t index) const
 {
-    // First get the UTF32 representation of the text
-    const Unicode::UTF32String& text = myText;
-
     // Adjust the index if it's out of range
-    if (index > text.length())
-        index = text.length();
+    if (index > myString.GetSize())
+        index = myString.GetSize();
 
     // The final size is based on the text size
     float factor   = mySize / myFont->GetCharacterSize();
@@ -167,7 +164,7 @@ sf::Vector2f String::GetCharacterPos(std::size_t index) const
     for (std::size_t i = 0; i < index; ++i)
     {
         // Get the current character and its corresponding glyph
-        Uint32       curChar  = text[i];
+        Uint32       curChar  = myString[i];
         const Glyph& curGlyph = myFont->GetGlyph(curChar);
         float        advanceX = curGlyph.Advance * factor;
 
@@ -191,10 +188,10 @@ sf::Vector2f String::GetCharacterPos(std::size_t index) const
 ////////////////////////////////////////////////////////////
 /// Get the string rectangle on screen
 ////////////////////////////////////////////////////////////
-FloatRect String::GetRect() const
+FloatRect Text::GetRect() const
 {
     if (myNeedRectUpdate)
-        const_cast<String*>(this)->RecomputeRect();
+        const_cast<Text*>(this)->RecomputeRect();
 
     FloatRect rect;
     rect.Left   = (myBaseRect.Left   - GetOrigin().x) * GetScale().x + GetPosition().x;
@@ -209,13 +206,10 @@ FloatRect String::GetRect() const
 ////////////////////////////////////////////////////////////
 /// /see sfDrawable::Render
 ////////////////////////////////////////////////////////////
-void String::Render(RenderTarget&, RenderQueue& queue) const
+void Text::Render(RenderTarget&, RenderQueue& queue) const
 {
-    // First get the internal UTF-32 string of the text
-    const Unicode::UTF32String& text = myText;
-
     // No text, no rendering :)
-    if (text.empty())
+    if (myString.IsEmpty())
         return;
 
     // Set the scaling factor to get the actual size
@@ -239,10 +233,10 @@ void String::Render(RenderTarget&, RenderQueue& queue) const
     // Draw one quad for each character
     unsigned int index = 0;
     queue.BeginBatch();
-    for (std::size_t i = 0; i < text.size(); ++i)
+    for (std::size_t i = 0; i < myString.GetSize(); ++i)
     {
         // Get the current character and its corresponding glyph
-        Uint32           curChar  = text[i];
+        Uint32           curChar  = myString[i];
         const Glyph&     curGlyph = myFont->GetGlyph(curChar);
         int              advance  = curGlyph.Advance;
         const IntRect&   rect     = curGlyph.Rectangle;
@@ -294,10 +288,10 @@ void String::Render(RenderTarget&, RenderQueue& queue) const
             y = charSize;
 
             queue.BeginBatch();
-            for (std::size_t i = 0; i < text.size(); ++i)
+            for (std::size_t i = 0; i < myString.GetSize(); ++i)
             {
                 // Get the current character and its corresponding glyph
-                Uint32           curChar  = text[i];
+                Uint32           curChar  = myString[i];
                 const Glyph&     curGlyph = myFont->GetGlyph(curChar);
                 int              advance  = curGlyph.Advance;
                 const IntRect&   rect     = curGlyph.Rectangle;
@@ -360,16 +354,13 @@ void String::Render(RenderTarget&, RenderQueue& queue) const
 ////////////////////////////////////////////////////////////
 /// Recompute the bounding rectangle of the text
 ////////////////////////////////////////////////////////////
-void String::RecomputeRect()
+void Text::RecomputeRect()
 {
-    // First get the internal UTF-32 string of the text
-    const Unicode::UTF32String& text = myText;
-
     // Reset the "need update" state
     myNeedRectUpdate = false;
 
     // No text, empty box :)
-    if (text.empty())
+    if (myString.IsEmpty())
     {
         myBaseRect = FloatRect(0, 0, 0, 0);
         return;
@@ -383,10 +374,10 @@ void String::RecomputeRect()
     float factor    = mySize / myFont->GetCharacterSize();
 
     // Go through each character
-    for (std::size_t i = 0; i < text.size(); ++i)
+    for (std::size_t i = 0; i < myString.GetSize(); ++i)
     {
         // Get the current character and its corresponding glyph
-        Uint32         curChar  = text[i];
+        Uint32         curChar  = myString[i];
         const Glyph&   curGlyph = myFont->GetGlyph(curChar);
         float          advance  = curGlyph.Advance * factor;
         const IntRect& rect     = curGlyph.Rectangle;

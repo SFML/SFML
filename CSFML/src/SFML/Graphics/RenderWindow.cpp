@@ -31,7 +31,7 @@
 #include <SFML/Graphics/ShaderStruct.h>
 #include <SFML/Graphics/ImageStruct.h>
 #include <SFML/Graphics/SpriteStruct.h>
-#include <SFML/Graphics/StringStruct.h>
+#include <SFML/Graphics/TextStruct.h>
 #include <SFML/Internal.h>
 #include <SFML/ConvertEvent.h>
 
@@ -366,10 +366,10 @@ void sfRenderWindow_DrawShape(sfRenderWindow* renderWindow, sfShape* shape)
     CSFML_CHECK(shape);
     CSFML_CALL(renderWindow, Draw(shape->This));
 }
-void sfRenderWindow_DrawString(sfRenderWindow* renderWindow, sfString* string)
+void sfRenderWindow_DrawText(sfRenderWindow* renderWindow, sfText* text)
 {
-    CSFML_CHECK(string);
-    CSFML_CALL(renderWindow, Draw(string->This));
+    CSFML_CHECK(text);
+    CSFML_CALL(renderWindow, Draw(text->This));
 }
 
 
@@ -388,11 +388,11 @@ void sfRenderWindow_DrawShapeWithShader(sfRenderWindow* renderWindow, sfShape* s
     CSFML_CHECK(shader);
     CSFML_CALL(renderWindow, Draw(shape->This, shader->This));
 }
-void sfRenderWindow_DrawStringWithShader(sfRenderWindow* renderWindow, sfString* string, sfShader* shader)
+void sfRenderWindow_DrawTextWithShader(sfRenderWindow* renderWindow, sfText* text, sfShader* shader)
 {
-    CSFML_CHECK(string);
+    CSFML_CHECK(text);
     CSFML_CHECK(shader);
-    CSFML_CALL(renderWindow, Draw(string->This, shader->This));
+    CSFML_CALL(renderWindow, Draw(text->This, shader->This));
 }
 
 

@@ -45,7 +45,7 @@ int main()
         return EXIT_FAILURE;
 
     // Initialize the end text
-    sf::String end;
+    sf::Text end;
     end.SetFont(font);
     end.SetSize(60.f);
     end.Move(150.f, 200.f);
@@ -125,12 +125,12 @@ int main()
             if (ball.GetPosition().x < 0.f)
             {
                 isPlaying = false;
-                end.SetText("You lost !\n(press escape to exit)");
+                end.SetString("You lost !\n(press escape to exit)");
             }
             if (ball.GetPosition().x + ball.GetSize().x > window.GetView().GetSize().x)
             {
                 isPlaying = false;
-                end.SetText("You won !\n(press escape to exit)");
+                end.SetString("You won !\n(press escape to exit)");
             }
             if (ball.GetPosition().y < 0.f)
             {

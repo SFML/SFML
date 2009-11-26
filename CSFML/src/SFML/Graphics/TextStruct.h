@@ -22,25 +22,28 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SYSTEM_HPP
-#define SFML_SYSTEM_HPP
+#ifndef SFML_TEXTSTRUCT_H
+#define SFML_TEXTSTRUCT_H
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/FontStruct.h>
+#include <SFML/Graphics/Rect.h>
+#include <string>
 
-#include <SFML/Config.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/Lock.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Randomizer.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/String.hpp>
-#include <SFML/System/Thread.hpp>
-#include <SFML/System/ThreadLocal.hpp>
-#include <SFML/System/ThreadLocalPtr.hpp>
-#include <SFML/System/Utf.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
 
-#endif // SFML_SYSTEM_HPP
+////////////////////////////////////////////////////////////
+// Internal structure of sfText
+////////////////////////////////////////////////////////////
+struct sfText
+{
+    sf::Text    This;
+    std::string String;
+    sfFont*     Font;
+    sfFloatRect Rect;
+};
+
+
+#endif // SFML_TEXTSTRUCT_H

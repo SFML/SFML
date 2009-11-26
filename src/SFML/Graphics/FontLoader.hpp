@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/Unicode.hpp>
+#include <SFML/System/String.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <string>
@@ -67,7 +67,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFontFromFile(const std::string& filename, unsigned int charSize, const Unicode::UTF32String& charset, Font& font);
+    bool LoadFontFromFile(const std::string& filename, unsigned int charSize, const String& charset, Font& font);
 
     ////////////////////////////////////////////////////////////
     /// Load the font from a file in memory
@@ -81,7 +81,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFontFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const Unicode::UTF32String& charset, Font& font);
+    bool LoadFontFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const String& charset, Font& font);
 
 private :
 
@@ -106,7 +106,7 @@ private :
     /// \param font :     Font object to fill up
     ///
     ////////////////////////////////////////////////////////////
-    FT_Error CreateBitmapFont(FT_Face face, unsigned int charSize, const Unicode::UTF32String& charset, Font& font);
+    FT_Error CreateBitmapFont(FT_Face face, unsigned int charSize, const String& charset, Font& font);
 
     ////////////////////////////////////////////////////////////
     /// Get a description from a FT error code

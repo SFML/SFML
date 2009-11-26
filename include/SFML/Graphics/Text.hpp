@@ -22,14 +22,14 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_STRING_HPP
-#define SFML_STRING_HPP
+#ifndef SFML_TEXT_HPP
+#define SFML_TEXT_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Resource.hpp>
-#include <SFML/System/Unicode.hpp>
+#include <SFML/System/String.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -39,9 +39,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// String defines a graphical 2D text, that can be drawn on screen
+/// Text defines a graphical 2D text, that can be drawn on screen
 ////////////////////////////////////////////////////////////
-class SFML_API String : public Drawable
+class SFML_API Text : public Drawable
 {
 public :
 
@@ -60,25 +60,25 @@ public :
     /// Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    String();
+    Text();
 
     ////////////////////////////////////////////////////////////
     /// Construct the string from any kind of text
     ///
-    /// \param text : Text assigned to the string
-    /// \param font : Font used to draw the string
-    /// \param size : Characters size
+    /// \param string : Text assigned to the string
+    /// \param font :   Font used to draw the string
+    /// \param size :   Characters size
     ///
     ////////////////////////////////////////////////////////////
-    explicit String(const Unicode::Text& text, const Font& font = Font::GetDefaultFont(), float size = 30.f);
+    explicit Text(const String& string, const Font& font = Font::GetDefaultFont(), float size = 30.f);
 
     ////////////////////////////////////////////////////////////
     /// Set the text (from any kind of string)
     ///
-    /// \param text : New text
+    /// \param string : New text
     ///
     ////////////////////////////////////////////////////////////
-    void SetText(const Unicode::Text& text);
+    void SetString(const String& string);
 
     ////////////////////////////////////////////////////////////
     /// Set the font of the string
@@ -112,7 +112,7 @@ public :
     /// \return String's text
     ///
     ////////////////////////////////////////////////////////////
-    const Unicode::Text& GetText() const;
+    const String& GetString() const;
 
     ////////////////////////////////////////////////////////////
     /// Get the font used by the string
@@ -177,7 +177,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Unicode::Text     myText;           ///< Text to display
+    String            myString;         ///< String to display
     ResourcePtr<Font> myFont;           ///< Font used to display the string
     float             mySize;           ///< Size of the characters
     unsigned long     myStyle;          ///< Text style (see Style enum)
@@ -188,4 +188,4 @@ private :
 } // namespace sf
 
 
-#endif // SFML_STRING_HPP
+#endif // SFML_TEXT_HPP

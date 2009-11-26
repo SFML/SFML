@@ -60,7 +60,7 @@
     <Compile Include="Shader.cs" />
     <Compile Include="Shape.cs" />
     <Compile Include="Sprite.cs" />
-    <Compile Include="String2D.cs" />
+    <Compile Include="Text.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="View.cs" />
   </ItemGroup>

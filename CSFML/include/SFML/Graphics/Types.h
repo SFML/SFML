@@ -33,7 +33,7 @@ typedef struct sfRenderImage sfRenderImage;
 typedef struct sfRenderWindow sfRenderWindow;
 typedef struct sfShape sfShape;
 typedef struct sfSprite sfSprite;
-typedef struct sfString sfString;
+typedef struct sfText sfText;
 typedef struct sfView sfView;
 
 

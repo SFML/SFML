@@ -698,14 +698,13 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                     int length = Xutf8LookupString(myInputContext, &windowEvent.xkey, reinterpret_cast<char*>(keyBuffer), sizeof(keyBuffer), NULL, &status);
                     if (length > 0)
                     {
-                        Uint32 unicode[2]; // just in case, but 1 character should be enough
-                        const Uint32* end = Unicode::UTF8ToUTF32(keyBuffer, keyBuffer + length, unicode);
-
-                        if (end > unicode)
+                        Uint32 unicode = 0;
+                        Utf8::Decode(keyBuffer, keyBuffer + length, unicode, 0);
+                        if (unicode != 0)
                         {
                             Event textEvent;
                             textEvent.Type         = Event::TextEntered;
-                            textEvent.Text.Unicode = unicode[0];
+                            textEvent.Text.Unicode = unicode;
                             SendEvent(textEvent);
                         }
                     }

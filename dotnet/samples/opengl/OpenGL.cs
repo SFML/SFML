@@ -26,7 +26,7 @@ namespace sample_opengl
             Sprite background = new Sprite(backgroundImage);
 
             // Create a text to display
-            String2D text = new String2D("SFML / OpenGL demo");
+            Text text = new Text("SFML / OpenGL demo");
             text.Position = new Vector2(250.0F, 450.0F);
             text.Color = new Color(255, 255, 255, 170);
 

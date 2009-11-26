@@ -30,7 +30,7 @@
 #include <SFML/Graphics/ShapeStruct.h>
 #include <SFML/Graphics/ShaderStruct.h>
 #include <SFML/Graphics/SpriteStruct.h>
-#include <SFML/Graphics/StringStruct.h>
+#include <SFML/Graphics/TextStruct.h>
 #include <SFML/Internal.h>
 
 
@@ -128,10 +128,10 @@ void sfRenderImage_DrawShape(sfRenderImage* renderImage, sfShape* shape)
     CSFML_CHECK(shape);
     CSFML_CALL(renderImage, Draw(shape->This));
 }
-void sfRenderImage_DrawString(sfRenderImage* renderImage, sfString* string)
+void sfRenderImage_DrawText(sfRenderImage* renderImage, sfText* text)
 {
-    CSFML_CHECK(string);
-    CSFML_CALL(renderImage, Draw(string->This));
+    CSFML_CHECK(text);
+    CSFML_CALL(renderImage, Draw(text->This));
 }
 
 
@@ -150,11 +150,11 @@ void sfRenderImage_DrawShapeWithShader(sfRenderImage* renderImage, sfShape* shap
     CSFML_CHECK(shader);
     CSFML_CALL(renderImage, Draw(shape->This, shader->This));
 }
-void sfRenderImage_DrawStringWithShader(sfRenderImage* renderImage, sfString* string, sfShader* shader)
+void sfRenderImage_DrawTextWithShader(sfRenderImage* renderImage, sfText* text, sfShader* shader)
 {
-    CSFML_CHECK(string);
+    CSFML_CHECK(text);
     CSFML_CHECK(shader);
-    CSFML_CALL(renderImage, Draw(string->This, shader->This));
+    CSFML_CALL(renderImage, Draw(text->This, shader->This));
 }
 
 

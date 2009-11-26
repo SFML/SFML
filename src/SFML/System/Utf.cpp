@@ -22,28 +22,58 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_STRINGSTRUCT_H
-#define SFML_STRINGSTRUCT_H
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/String.hpp>
-#include <SFML/Graphics/FontStruct.h>
-#include <SFML/Graphics/Rect.h>
-#include <string>
+#include <SFML/System/Utf.hpp>
+#include <exception>
+#include <string.h>
 
 
 ////////////////////////////////////////////////////////////
-// Internal structure of sfMusic
+// References :
+//
+// http://www.unicode.org/
+// http://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.c
+// http://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.h
+// http://people.w3.org/rishida/scripts/uniview/conversion
+//
 ////////////////////////////////////////////////////////////
-struct sfString
+
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
 {
-    sf::String  This;
-    std::string Text;
-    sfFont*     Font;
-    sfFloatRect Rect;
-};
+    // Get the current global locale
+    std::locale GetCurrentLocale()
+    {
+        try
+        {
+            return std::locale("");
+        }
+        catch (std::exception&)
+        {
+            // It seems that some implementations don't know the "" locale (Mac OS X, MinGW)
+            return std::locale();
+        }
+    }
+}
 
+namespace sf
+{
+////////////////////////////////////////////////////////////
+/// Get the default system locale
+////////////////////////////////////////////////////////////
+const std::locale& GetDefaultLocale()
+{
+    // It seems that getting the default locale is a very expensive operation,
+    // so we only do it once and then store the locale for reuse.
+    // Warning: this code won't be aware of any change of the default locale during runtime.
 
-#endif // SFML_STRINGSTRUCT_H
+    static std::locale locale = GetCurrentLocale();
+
+    return locale;
+}
+
+} // namespace sf

@@ -71,26 +71,25 @@ myCharSize(0)
 ////////////////////////////////////////////////////////////
 /// Load the font from a file
 ////////////////////////////////////////////////////////////
-bool Font::LoadFromFile(const std::string& filename, unsigned int charSize, const Unicode::Text& charset)
+bool Font::LoadFromFile(const std::string& filename, unsigned int charSize, String charset)
 {
     // Clear the previous character map
     myGlyphs.clear();
 
     // Always add these special characters
-    Unicode::UTF32String UTFCharset = charset;
-    if (UTFCharset.find(L' ')  != Unicode::UTF32String::npos) UTFCharset += L' ';
-    if (UTFCharset.find(L'\n') != Unicode::UTF32String::npos) UTFCharset += L'\n';
-    if (UTFCharset.find(L'\v') != Unicode::UTF32String::npos) UTFCharset += L'\v';
-    if (UTFCharset.find(L'\t') != Unicode::UTF32String::npos) UTFCharset += L'\t';
+    if (std::find(charset.Begin(), charset.End(), L' ')  == charset.End()) charset += L' ';
+    if (std::find(charset.Begin(), charset.End(), L'\n') == charset.End()) charset += L'\n';
+    if (std::find(charset.Begin(), charset.End(), L'\v') == charset.End()) charset += L'\v';
+    if (std::find(charset.Begin(), charset.End(), L'\t') == charset.End()) charset += L'\t';
 
-    return priv::FontLoader::GetInstance().LoadFontFromFile(filename, charSize, UTFCharset, *this);
+    return priv::FontLoader::GetInstance().LoadFontFromFile(filename, charSize, charset, *this);
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Load the font from a file in memory
 ////////////////////////////////////////////////////////////
-bool Font::LoadFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const Unicode::Text& charset)
+bool Font::LoadFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, String charset)
 {
     // Clear the previous character map
     myGlyphs.clear();
@@ -103,13 +102,12 @@ bool Font::LoadFromMemory(const char* data, std::size_t sizeInBytes, unsigned in
     }
 
     // Always add these special characters
-    Unicode::UTF32String UTFCharset = charset;
-    if (UTFCharset.find(L' ')  != Unicode::UTF32String::npos) UTFCharset += L' ';
-    if (UTFCharset.find(L'\n') != Unicode::UTF32String::npos) UTFCharset += L'\n';
-    if (UTFCharset.find(L'\v') != Unicode::UTF32String::npos) UTFCharset += L'\v';
-    if (UTFCharset.find(L'\t') != Unicode::UTF32String::npos) UTFCharset += L'\t';
+    if (std::find(charset.Begin(), charset.End(), L' ')  == charset.End()) charset += L' ';
+    if (std::find(charset.Begin(), charset.End(), L'\n') == charset.End()) charset += L'\n';
+    if (std::find(charset.Begin(), charset.End(), L'\v') == charset.End()) charset += L'\v';
+    if (std::find(charset.Begin(), charset.End(), L'\t') == charset.End()) charset += L'\t';
 
-    return priv::FontLoader::GetInstance().LoadFontFromMemory(data, sizeInBytes, charSize, UTFCharset, *this);
+    return priv::FontLoader::GetInstance().LoadFontFromMemory(data, sizeInBytes, charSize, charset, *this);
 }
 
 
@@ -158,21 +156,22 @@ const Image& Font::GetImage() const
 ////////////////////////////////////////////////////////////
 const Font& Font::GetDefaultFont()
 {
-    static Font       defaultFont;
-    static bool       defaultFontLoaded = false;
-    static const char defaultFontData[] =
-    {
-        #include <SFML/Graphics/Arial.hpp>
-    };
+    static Font font;
+    static bool loaded = false;
 
     // Load the default font on first call
-    if (!defaultFontLoaded)
+    if (!loaded)
     {
-        defaultFont.LoadFromMemory(defaultFontData, sizeof(defaultFontData), 30);
-        defaultFontLoaded = true;
+        static const char data[] =
+        {
+            #include <SFML/Graphics/Arial.hpp>
+        };
+
+        font.LoadFromMemory(data, sizeof(data), 30);
+        loaded = true;
     }
 
-    return defaultFont;
+    return font;
 }
 
 } // namespace sf

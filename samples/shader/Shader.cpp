@@ -142,25 +142,25 @@ int main()
     shaders["pixelate"].SetTexture("texture", sf::Shader::CurrentTexture);
 
     // Define a string for displaying the description of the current shader
-    sf::String shaderStr;
+    sf::Text shaderStr;
     shaderStr.SetFont(font);
     shaderStr.SetSize(20);
     shaderStr.SetPosition(5.f, 0.f);
     shaderStr.SetColor(sf::Color(250, 100, 30));
-    shaderStr.SetText("Background shader: \"" + backgroundShader.GetName() + "\"\n"
-                      "Flower shader: \"" + entityShader.GetName() + "\"\n"
-                      "Global shader: \"" + globalShader.GetName() + "\"\n");
+    shaderStr.SetString("Background shader: \"" + backgroundShader.GetName() + "\"\n"
+                        "Flower shader: \"" + entityShader.GetName() + "\"\n"
+                        "Global shader: \"" + globalShader.GetName() + "\"\n");
 
     // Define a string for displaying help
-    sf::String infoStr;
+    sf::Text infoStr;
     infoStr.SetFont(font);
     infoStr.SetSize(20);
     infoStr.SetPosition(5.f, 510.f);
     infoStr.SetColor(sf::Color(250, 100, 30));
-    infoStr.SetText("Move your mouse to change the shaders' parameters\n"
-                    "Press numpad 1/4 to change the background shader\n"
-                    "Press numpad 2/5 to change the flower shader\n"
-                    "Press numpad 3/6 to change the global shader");
+    infoStr.SetString("Move your mouse to change the shaders' parameters\n"
+                      "Press numpad 1/4 to change the background shader\n"
+                      "Press numpad 2/5 to change the flower shader\n"
+                      "Press numpad 3/6 to change the global shader");
 
     // Create a clock to measure the total time elapsed
     sf::Clock clock;
@@ -195,9 +195,9 @@ int main()
                 }
 
                 // Update the text
-                shaderStr.SetText("Background shader: \"" + backgroundShader.GetName() + "\"\n"
-                                  "Entity shader: \"" + entityShader.GetName() + "\"\n"
-                                  "Global shader: \"" + globalShader.GetName() + "\"\n");
+                shaderStr.SetString("Background shader: \"" + backgroundShader.GetName() + "\"\n"
+                                    "Entity shader: \"" + entityShader.GetName() + "\"\n"
+                                    "Global shader: \"" + globalShader.GetName() + "\"\n");
             }
         }
 
@@ -249,7 +249,7 @@ void DisplayError()
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Shader");
 
     // Define a string for displaying the error message
-    sf::String error("Sorry, your system doesn't support shaders");
+    sf::Text error("Sorry, your system doesn't support shaders");
     error.SetPosition(100.f, 250.f);
     error.SetColor(sf::Color(200, 100, 150));
 

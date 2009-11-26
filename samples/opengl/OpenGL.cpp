@@ -141,10 +141,11 @@ int main()
         glEnd();
 
         // Draw some text on top of our OpenGL object
-        sf::String text("SFML / OpenGL demo");
+        sf::Text text("SFML / OpenGL demo");
         text.SetPosition(250.f, 450.f);
         text.SetColor(sf::Color(255, 255, 255, 170));
         window.Draw(text);
+        std::wstring s = text.GetString();
 
         // Finally, display the rendered frame on screen
         window.Display();

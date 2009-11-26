@@ -98,7 +98,7 @@ FontLoader::~FontLoader()
 ////////////////////////////////////////////////////////////
 /// Load a font from a file
 ////////////////////////////////////////////////////////////
-bool FontLoader::LoadFontFromFile(const std::string& filename, unsigned int charSize, const Unicode::UTF32String& charset, Font& font)
+bool FontLoader::LoadFontFromFile(const std::string& filename, unsigned int charSize, const String& charset, Font& font)
 {
     // Check if Freetype is correctly initialized
     if (!myLibrary)
@@ -131,7 +131,7 @@ bool FontLoader::LoadFontFromFile(const std::string& filename, unsigned int char
 ////////////////////////////////////////////////////////////
 /// Load the font from a file in memory
 ////////////////////////////////////////////////////////////
-bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const Unicode::UTF32String& charset, Font& font)
+bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const String& charset, Font& font)
 {
     // Check if Freetype is correctly initialized
     if (!myLibrary)
@@ -164,12 +164,12 @@ bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, u
 ////////////////////////////////////////////////////////////
 /// Create a bitmap font from a font face and a characters set
 ////////////////////////////////////////////////////////////
-FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const Unicode::UTF32String& charset, Font& font)
+FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const String& charset, Font& font)
 {
     // Let's find how many characters to put in each row to make them fit into a squared texture
     GLint maxSize;
     GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize));
-    int nbChars = static_cast<int>(sqrt(static_cast<double>(charset.length())) * 0.75);
+    int nbChars = static_cast<int>(sqrt(static_cast<double>(charset.GetSize())) * 0.75);
 
     // Clamp the character size to make sure we won't create a texture too big
     if (nbChars * charSize >= static_cast<unsigned int>(maxSize))
@@ -198,7 +198,7 @@ FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const
     // Render all glyphs and sort them by size to optimize texture space
     typedef std::multimap<FT_BitmapGlyph, Uint32, SizeCompare> GlyphTable;
     GlyphTable glyphs;
-    for (std::size_t i = 0; i < charset.length(); ++i)
+    for (std::size_t i = 0; i < charset.GetSize(); ++i)
     {
         // Load the glyph corresponding to the current character
         error = FT_Load_Char(face, charset[i], FT_LOAD_TARGET_NORMAL);
@@ -293,7 +293,7 @@ FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const
     font.myTexture.LoadFromPixels(texWidth, texHeight, &glyphsBuffer[0]);
 
     // Now that the texture is created, we can precompute texture coordinates
-    for (std::size_t i = 0; i < charset.size(); ++i)
+    for (std::size_t i = 0; i < charset.GetSize(); ++i)
     {
         Uint32 curChar = charset[i];
         font.myGlyphs[curChar].TexCoords = font.myTexture.GetTexCoords(coords[curChar]);
@@ -491,7 +491,7 @@ FontLoader::~FontLoader()
 ////////////////////////////////////////////////////////////
 /// Load a font from a file
 ////////////////////////////////////////////////////////////
-bool FontLoader::LoadFontFromFile(const std::string& filename, unsigned int charSize, const Unicode::UTF32String& charset, Font& font)
+bool FontLoader::LoadFontFromFile(const std::string& filename, unsigned int charSize, const String& charset, Font& font)
 {
     // Get the contents of the font file
     std::ifstream file(filename.c_str(), std::ios_base::binary);
@@ -511,12 +511,12 @@ bool FontLoader::LoadFontFromFile(const std::string& filename, unsigned int char
 ////////////////////////////////////////////////////////////
 /// Load the font from a file in memory
 ////////////////////////////////////////////////////////////
-bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const Unicode::UTF32String& charset, Font& font)
+bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const String& charset, Font& font)
 {
     // Let's find how many characters to put in each row to make them fit into a squared texture
     GLint maxSize;
     GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize));
-    int nbChars = static_cast<int>(sqrt(static_cast<double>(charset.length())) * 0.75);
+    int nbChars = static_cast<int>(sqrt(static_cast<double>(charset.GetSize())) * 0.75);
 
     // Clamp the character size to make sure we won't create a texture too big
     if (nbChars * charSize >= static_cast<unsigned int>(maxSize))
@@ -544,7 +544,7 @@ bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, u
     // Render all glyphs and sort them by size to optimize texture space
     typedef std::multimap<Glyph, Uint32, SizeCompare> GlyphTable;
     GlyphTable glyphs;
-    for (std::size_t i = 0; i < charset.length(); ++i)
+    for (std::size_t i = 0; i < charset.GetSize(); ++i)
     {
         // Load the glyph corresponding to the current character
         int index = stbtt_FindGlyphIndex(&info, static_cast<int>(charset[i]));
@@ -636,7 +636,7 @@ bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, u
     font.myTexture.LoadFromPixels(texWidth, texHeight, &glyphsBuffer[0]);
 
     // Now that the texture is created, we can precompute texture coordinates
-    for (std::size_t i = 0; i < charset.size(); ++i)
+    for (std::size_t i = 0; i < charset.GetSize(); ++i)
     {
         Uint32 curChar = charset[i];
         font.myGlyphs[curChar].TexCoords = font.myTexture.GetTexCoords(coords[curChar]);
@@ -652,7 +652,7 @@ bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, u
 ////////////////////////////////////////////////////////////
 /// Create a bitmap font from a font face and a characters set
 ////////////////////////////////////////////////////////////
-FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const Unicode::UTF32String& charset, Font& font)
+FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const String& charset, Font& font)
 {
     return 0;
 }

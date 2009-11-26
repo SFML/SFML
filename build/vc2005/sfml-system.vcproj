@@ -471,6 +471,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\System\String.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\System\String.hpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\System\Thread.cpp"
 			>
 		</File>
@@ -495,15 +503,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\System\Unicode.cpp"
+			RelativePath="..\..\src\SFML\System\Utf.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\System\Unicode.hpp"
+			RelativePath="..\..\include\SFML\System\Utf.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\System\Unicode.inl"
+			RelativePath="..\..\include\SFML\System\Utf.inl"
 			>
 		</File>
 		<File
