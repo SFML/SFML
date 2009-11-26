@@ -145,7 +145,6 @@ int main()
         text.SetPosition(250.f, 450.f);
         text.SetColor(sf::Color(255, 255, 255, 170));
         window.Draw(text);
-        std::wstring s = text.GetString();
 
         // Finally, display the rendered frame on screen
         window.Display();

@@ -35,6 +35,8 @@
 
 namespace sf
 {
+class String;
+
 ////////////////////////////////////////////////////////////
 /// Packet wraps data to send / to receive through the network
 ////////////////////////////////////////////////////////////
@@ -120,6 +122,7 @@ public :
     Packet& operator >>(std::string&  data);
     Packet& operator >>(wchar_t*      data);
     Packet& operator >>(std::wstring& data);
+    Packet& operator >>(String&       data);
 
     ////////////////////////////////////////////////////////////
     /// Operator << overloads to put data into the packet
@@ -138,6 +141,7 @@ public :
     Packet& operator <<(const std::string&  data);
     Packet& operator <<(const wchar_t*      data);
     Packet& operator <<(const std::wstring& data);
+    Packet& operator <<(const String&       data);
 
 private :
 

@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/SocketHelper.hpp>
+#include <SFML/System/String.hpp>
 #include <string.h>
 
 
@@ -248,7 +249,7 @@ Packet& Packet::operator >>(wchar_t* data)
     Uint32 length;
     *this >> length;
 
-    if ((length > 0) && CheckSize(length * sizeof(Int32)))
+    if ((length > 0) && CheckSize(length * sizeof(Uint32)))
     {
         // Then extract characters
         for (Uint32 i = 0; i < length; ++i)
@@ -269,7 +270,7 @@ Packet& Packet::operator >>(std::wstring& data)
     *this >> length;
 
     data.clear();
-    if ((length > 0) && CheckSize(length * sizeof(Int32)))
+    if ((length > 0) && CheckSize(length * sizeof(Uint32)))
     {
         // Then extract characters
         for (Uint32 i = 0; i < length; ++i)
@@ -277,6 +278,26 @@ Packet& Packet::operator >>(std::wstring& data)
             Uint32 character;
             *this >> character;
             data += static_cast<wchar_t>(character);
+        }
+    }
+
+    return *this;
+}
+Packet& Packet::operator >>(String& data)
+{
+    // First extract the string length
+    Uint32 length;
+    *this >> length;
+
+    data.Clear();
+    if ((length > 0) && CheckSize(length * sizeof(Uint32)))
+    {
+        // Then extract characters
+        for (Uint32 i = 0; i < length; ++i)
+        {
+            Uint32 character;
+            *this >> character;
+            data += character;
         }
     }
 
@@ -373,7 +394,7 @@ Packet& Packet::operator <<(const wchar_t* data)
 
     // Then insert characters
     for (const wchar_t* c = data; *c != L'\0'; ++c)
-        *this << static_cast<Int32>(*c);
+        *this << static_cast<Uint32>(*c);
 
     return *this;
 }
@@ -387,7 +408,22 @@ Packet& Packet::operator <<(const std::wstring& data)
     if (length > 0)
     {
         for (std::wstring::const_iterator c = data.begin(); c != data.end(); ++c)
-            *this << static_cast<Int32>(*c);
+            *this << static_cast<Uint32>(*c);
+    }
+
+    return *this;
+}
+Packet& Packet::operator <<(const String& data)
+{
+    // First insert the string length
+    Uint32 length = static_cast<Uint32>(data.GetSize());
+    *this << length;
+
+    // Then insert characters
+    if (length > 0)
+    {
+        for (String::ConstIterator c = data.Begin(); c != data.End(); ++c)
+            *this << *c;
     }
 
     return *this;
