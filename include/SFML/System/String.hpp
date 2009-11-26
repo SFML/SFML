@@ -527,4 +527,47 @@ SFML_API String operator +(const String& left, const String& right);
 ////////////////////////////////////////////////////////////
 /// \class sf::String
 ///
+/// sf::String is a utility string class defined mainly for
+/// convenience. It is a Unicode string (implemented using
+/// UTF-32), thus it can store any character in the world
+/// (european, chinese, arabic, hebrew, etc.).
+///
+/// It automatically handles conversions from/to ANSI and
+/// wide strings, so that you can work with standard string
+/// classes and still be compatible with functions taking a
+/// sf::String.
+///
+/// \code
+/// sf::String s;
+///
+/// std::string s1 = s;  // automatically converted to ANSI string
+/// std::wstring s2 = s; // automatically converted to wide string
+/// s = "hello";         // automatically converted from ANSI string
+/// s = L"hello";        // automatically converted from wide string
+/// s += 'a';            // automatically converted from ANSI string
+/// s += L'a';           // automatically converted from wide string
+/// \endcode
+///
+/// Conversions involving ANSI strings use the default user locale. However
+/// it is possible to use a custom locale if necessary:
+/// \code
+/// std::locale locale;
+/// sf::String s;
+/// ...
+/// std::string s1 = s.ToAnsiString(locale);
+/// s = sf::String("hello", locale);
+/// \endcode
+///
+/// sf::String defines the most important functions of the
+/// standard std::string class: removing, random access, iterating,
+/// appending, comparing, etc. However it is a simple class
+/// provided for convenience, and you may have to consider using
+/// a more optimized class if your program requires complex string
+/// handling. The automatic conversion functions will then take
+/// care of converting your string to sf::String whenever SFML
+/// requires it.
+///
+/// Please note that SFML also defines a low-level, generic
+/// interface for Unicode handling, see the sf::Utf classes.
+///
 ////////////////////////////////////////////////////////////

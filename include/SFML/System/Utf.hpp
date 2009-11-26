@@ -45,10 +45,6 @@ namespace sf
 ////////////////////////////////////////////////////////////
 SFML_API const std::locale& GetDefaultLocale();
 
-////////////////////////////////////////////////////////////
-/// \brief Utility class providing generic functions for UTF conversions
-///
-////////////////////////////////////////////////////////////
 template <unsigned int N>
 class Utf;
 
@@ -670,3 +666,24 @@ typedef Utf<32> Utf32;
 
 
 #endif // SFML_UTF_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Utf
+///
+/// Utility class providing generic functions for UTF conversions.
+///
+/// sf::Utf is a low-level, generic interface for counting, iterating,
+/// encoding and decoding Unicode characters and strings. It is able
+/// to handle ANSI, wide, UTF-8, UTF-16 and UTF-32 encodings.
+///
+/// sf::Utf<X> functions are all static, these classes are not meant to
+/// be instanciated. All the functions are template, so that you
+/// can use any character / string type for a given encoding.
+///
+/// It has 3 specializations:
+/// \li sf::Utf<8> (typedef'd to sf::Utf8)
+/// \li sf::Utf<16> (typedef'd to sf::Utf16)
+/// \li sf::Utf<32> (typedef'd to sf::Utf32)
+///
+////////////////////////////////////////////////////////////
