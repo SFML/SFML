@@ -77,7 +77,8 @@ RenderWindow::~RenderWindow()
 ////////////////////////////////////////////////////////////
 bool RenderWindow::Activate(bool active)
 {
-    return SetActive(active);
+    // We only handle activation, for performances and consistency reasons
+    return active ? SetActive(active) : true;
 }
 
 
