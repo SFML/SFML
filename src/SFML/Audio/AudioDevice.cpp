@@ -26,19 +26,19 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/Listener.hpp>
-#include <algorithm>
 #include <iostream>
 
 
 ////////////////////////////////////////////////////////////
 // Private data
 ////////////////////////////////////////////////////////////
-namespace
+namespace 
 {
-    sf::priv::AudioDevice globalDevice;
+    ALCdevice*  audioDevice  = NULL;
+    ALCcontext* audioContext = NULL;
 }
-
 
 namespace sf
 {
@@ -48,17 +48,17 @@ namespace priv
 AudioDevice::AudioDevice()
 {
     // Create the device
-    myDevice = alcOpenDevice(NULL);
+    audioDevice = alcOpenDevice(NULL);
 
-    if (myDevice)
+    if (audioDevice)
     {
         // Create the context
-        myContext = alcCreateContext(myDevice, NULL);
+        audioContext = alcCreateContext(audioDevice, NULL);
 
-        if (myContext)
+        if (audioContext)
         {
             // Set the context as the current one (we'll only need one)
-            alcMakeContextCurrent(myContext);
+            alcMakeContextCurrent(audioContext);
 
             // Initialize the listener, located at the origin and looking along the Z axis
             Listener::SetPosition(0.f, 0.f, 0.f);
@@ -81,28 +81,32 @@ AudioDevice::~AudioDevice()
 {
     // Destroy the context
     alcMakeContextCurrent(NULL);
-    if (myContext)
-        alcDestroyContext(myContext);
+    if (audioContext)
+        alcDestroyContext(audioContext);
     
     // Destroy the device
-    if (myDevice)
-        alcCloseDevice(myDevice);
+    if (audioDevice)
+        alcCloseDevice(audioDevice);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool AudioDevice::IsExtensionSupported(const std::string& extension)
 {
+    EnsureALInit();
+
     if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
-        return alcIsExtensionPresent(globalDevice.myDevice, extension.c_str()) != AL_FALSE;
+        return alcIsExtensionPresent(audioDevice, extension.c_str()) != AL_FALSE;
     else
         return alIsExtensionPresent(extension.c_str()) != AL_FALSE;
 }
 
 
 ////////////////////////////////////////////////////////////
-ALenum AudioDevice::GetFormatFromChannelsCount(unsigned int channelsCount)
+int AudioDevice::GetFormatFromChannelsCount(unsigned int channelsCount)
 {
+    EnsureALInit();
+
     // Find the good format according to the number of channels
     switch (channelsCount)
     {

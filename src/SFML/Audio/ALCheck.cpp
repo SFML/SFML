@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/ALCheck.hpp>
+#include <SFML/Audio/AudioDevice.hpp>
 
 
 namespace sf
@@ -87,6 +88,19 @@ void ALCheckError(const std::string& file, unsigned int line)
                   << error << ", " << description
                   << std::endl;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+/// Make sure that OpenAL is initialized
+////////////////////////////////////////////////////////////
+void EnsureALInit()
+{
+    // The audio device is instanciated on demand rather than at global startup,
+    // which solves a lot of weird crashes and errors.
+    /// It is destroyed at global exit which is fine.
+
+    static AudioDevice globalDevice;
 }
 
 } // namespace priv

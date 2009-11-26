@@ -47,7 +47,7 @@ SoundRecorder::SoundRecorder() :
 mySampleRate (0),
 myIsCapturing(false)
 {
-
+    priv::EnsureALInit();
 }
 
 

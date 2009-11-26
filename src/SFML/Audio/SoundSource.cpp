@@ -34,6 +34,8 @@ namespace sf
 ////////////////////////////////////////////////////////////
 SoundSource::SoundSource()
 {
+    priv::EnsureALInit();
+
     ALCheck(alGenSources(1, &mySource));
     ALCheck(alSourcei(mySource, AL_BUFFER, 0));
 }
@@ -42,6 +44,8 @@ SoundSource::SoundSource()
 ////////////////////////////////////////////////////////////
 SoundSource::SoundSource(const SoundSource& copy)
 {
+    priv::EnsureALInit();
+
     ALCheck(alGenSources(1, &mySource));
     ALCheck(alSourcei(mySource, AL_BUFFER, 0));
 

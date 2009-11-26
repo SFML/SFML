@@ -34,6 +34,8 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void Listener::SetGlobalVolume(float volume)
 {
+    priv::EnsureALInit();
+
     ALCheck(alListenerf(AL_GAIN, volume * 0.01f));
 }
 
@@ -41,6 +43,8 @@ void Listener::SetGlobalVolume(float volume)
 ////////////////////////////////////////////////////////////
 float Listener::GetGlobalVolume()
 {
+    priv::EnsureALInit();
+
     float volume = 0.f;
     ALCheck(alGetListenerf(AL_GAIN, &volume));
 
@@ -51,6 +55,8 @@ float Listener::GetGlobalVolume()
 ////////////////////////////////////////////////////////////
 void Listener::SetPosition(float x, float y, float z)
 {
+    priv::EnsureALInit();
+
     ALCheck(alListener3f(AL_POSITION, x, y, z));
 }
 
@@ -65,6 +71,8 @@ void Listener::SetPosition(const Vector3f& position)
 ////////////////////////////////////////////////////////////
 Vector3f Listener::GetPosition()
 {
+    priv::EnsureALInit();
+
     Vector3f position;
     ALCheck(alGetListener3f(AL_POSITION, &position.x, &position.y, &position.z));
 
@@ -75,6 +83,8 @@ Vector3f Listener::GetPosition()
 ////////////////////////////////////////////////////////////
 void Listener::SetDirection(float x, float y, float z)
 {
+    priv::EnsureALInit();
+
     float orientation[] = {x, y, z, 0.f, 1.f, 0.f};
     ALCheck(alListenerfv(AL_ORIENTATION, orientation));
 }
@@ -90,6 +100,8 @@ void Listener::SetDirection(const Vector3f& direction)
 ////////////////////////////////////////////////////////////
 Vector3f Listener::GetDirection()
 {
+    priv::EnsureALInit();
+
     float orientation[6];
     ALCheck(alGetListenerfv(AL_ORIENTATION, orientation));
 

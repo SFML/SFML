@@ -40,6 +40,8 @@ SoundBuffer::SoundBuffer() :
 myBuffer  (0),
 myDuration(0.f)
 {
+    priv::EnsureALInit();
+
     // Create the buffer
     ALCheck(alGenBuffers(1, &myBuffer));
 }

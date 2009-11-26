@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/ALCheck.hpp>
 #include <set>
 #include <string>
 
@@ -81,15 +80,7 @@ public :
     /// \return Corresponding format
     ///
     ////////////////////////////////////////////////////////////
-    static ALenum GetFormatFromChannelsCount(unsigned int channelsCount);
-
-private :
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    ALCdevice*  myDevice;  ///< Audio device
-    ALCcontext* myContext; ///< Audio context
+    static int GetFormatFromChannelsCount(unsigned int channelsCount);
 };
 
 } // namespace priv
