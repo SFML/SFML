@@ -88,7 +88,7 @@ CSFML_API void sfSoundRecorder_Stop(sfSoundRecorder* soundRecorder);
 /// \return Frequency, in samples per second
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfSoundRecorder_GetSampleRate(sfSoundRecorder* soundRecorder);
+CSFML_API unsigned int sfSoundRecorder_GetSampleRate(const sfSoundRecorder* soundRecorder);
 
 ////////////////////////////////////////////////////////////
 /// Tell if the system supports sound capture.

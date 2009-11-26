@@ -120,7 +120,7 @@ void sfImage_Destroy(sfImage* image)
 ////////////////////////////////////////////////////////////
 /// Save the content of an image to a file
 ////////////////////////////////////////////////////////////
-sfBool sfImage_SaveToFile(sfImage* image, const char* filename)
+sfBool sfImage_SaveToFile(const sfImage* image, const char* filename)
 {
     CSFML_CALL_PTR_RETURN(image, SaveToFile(filename), sfFalse);
 }
@@ -141,7 +141,7 @@ void sfImage_CreateMaskFromColor(sfImage* image, sfColor colorKey, sfUint8 alpha
 /// This function does a slow pixel copy and should only
 /// be used at initialization time
 ////////////////////////////////////////////////////////////
-void sfImage_Copy(sfImage* image, sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect)
+void sfImage_Copy(sfImage* image, const sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect)
 {
     CSFML_CHECK(source);
     sf::IntRect SFMLRect(sourceRect.Left, sourceRect.Top, sourceRect.Right, sourceRect.Bottom);
@@ -175,7 +175,7 @@ void sfImage_SetPixel(sfImage* image, unsigned int x, unsigned int y, sfColor co
 ////////////////////////////////////////////////////////////
 /// Get a pixel from an image
 ////////////////////////////////////////////////////////////
-sfColor sfImage_GetPixel(sfImage* image, unsigned int x, unsigned int y)
+sfColor sfImage_GetPixel(const sfImage* image, unsigned int x, unsigned int y)
 {
     sfColor color = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(image, color);
@@ -191,7 +191,7 @@ sfColor sfImage_GetPixel(sfImage* image, unsigned int x, unsigned int y)
 /// Array size is sfImage_GetWidth() x sfImage_GetHeight() x 4
 /// This pointer becomes invalid if you reload or resize the image
 ////////////////////////////////////////////////////////////
-const sfUint8* sfImage_GetPixelsPtr(sfImage* image)
+const sfUint8* sfImage_GetPixelsPtr(const sfImage* image)
 {
     CSFML_CALL_PTR_RETURN(image, GetPixelsPtr(), NULL);
 }
@@ -200,7 +200,7 @@ const sfUint8* sfImage_GetPixelsPtr(sfImage* image)
 ////////////////////////////////////////////////////////////
 /// Bind the image for rendering
 ////////////////////////////////////////////////////////////
-void sfImage_Bind(sfImage* image)
+void sfImage_Bind(const sfImage* image)
 {
     CSFML_CALL_PTR(image, Bind());
 }
@@ -218,7 +218,7 @@ void sfImage_SetSmooth(sfImage* image, sfBool smooth)
 ////////////////////////////////////////////////////////////
 /// Return the width of the image
 ////////////////////////////////////////////////////////////
-unsigned int sfImage_GetWidth(sfImage* image)
+unsigned int sfImage_GetWidth(const sfImage* image)
 {
     CSFML_CALL_PTR_RETURN(image, GetWidth(), 0);
 }
@@ -227,7 +227,7 @@ unsigned int sfImage_GetWidth(sfImage* image)
 ////////////////////////////////////////////////////////////
 /// Return the height of the image
 ////////////////////////////////////////////////////////////
-unsigned int sfImage_GetHeight(sfImage* image)
+unsigned int sfImage_GetHeight(const sfImage* image)
 {
     CSFML_CALL_PTR_RETURN(image, GetHeight(), 0);
 }
@@ -236,7 +236,7 @@ unsigned int sfImage_GetHeight(sfImage* image)
 ////////////////////////////////////////////////////////////
 /// Tells whether the smoothing filter is enabled or not on an image
 ////////////////////////////////////////////////////////////
-sfBool sfImage_IsSmooth(sfImage* image)
+sfBool sfImage_IsSmooth(const sfImage* image)
 {
     CSFML_CALL_PTR_RETURN(image, IsSmooth(), sfFalse);
 }

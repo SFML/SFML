@@ -39,7 +39,7 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new renderwindow
 ////////////////////////////////////////////////////////////
-sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings* settings)
+sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsigned long style, const sfContextSettings* settings)
 {
     // Convert video mode
     sf::VideoMode videoMode(mode.Width, mode.Height, mode.BitsPerPixel);
@@ -69,7 +69,7 @@ sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsig
 ////////////////////////////////////////////////////////////
 /// Construct a renderwindow from an existing control
 ////////////////////////////////////////////////////////////
-sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings* settings)
+sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle handle, const sfContextSettings* settings)
 {
     // Convert context settings
     sf::ContextSettings params;
@@ -114,7 +114,7 @@ void sfRenderWindow_Close(sfRenderWindow* renderWindow)
 ////////////////////////////////////////////////////////////
 /// Tell whether or not a renderwindow is opened
 ////////////////////////////////////////////////////////////
-sfBool sfRenderWindow_IsOpened(sfRenderWindow* renderWindow)
+sfBool sfRenderWindow_IsOpened(const sfRenderWindow* renderWindow)
 {
     CSFML_CALL_RETURN(renderWindow, IsOpened(), sfFalse);
 }
@@ -123,7 +123,7 @@ sfBool sfRenderWindow_IsOpened(sfRenderWindow* renderWindow)
 ////////////////////////////////////////////////////////////
 /// Get the width of the rendering region of a window
 ////////////////////////////////////////////////////////////
-unsigned int sfRenderWindow_GetWidth(sfRenderWindow* renderWindow)
+unsigned int sfRenderWindow_GetWidth(const sfRenderWindow* renderWindow)
 {
     CSFML_CALL_RETURN(renderWindow, GetWidth(), 0);
 }
@@ -132,7 +132,7 @@ unsigned int sfRenderWindow_GetWidth(sfRenderWindow* renderWindow)
 ////////////////////////////////////////////////////////////
 /// Get the height of the rendering region of a window
 ////////////////////////////////////////////////////////////
-unsigned int sfRenderWindow_GetHeight(sfRenderWindow* renderWindow)
+unsigned int sfRenderWindow_GetHeight(const sfRenderWindow* renderWindow)
 {
     CSFML_CALL_RETURN(renderWindow, GetHeight(), 0);
 }
@@ -141,7 +141,7 @@ unsigned int sfRenderWindow_GetHeight(sfRenderWindow* renderWindow)
 ////////////////////////////////////////////////////////////
 /// Get the creation settings of a window
 ////////////////////////////////////////////////////////////
-sfContextSettings sfRenderWindow_GetSettings(sfRenderWindow* renderWindow)
+sfContextSettings sfRenderWindow_GetSettings(const sfRenderWindow* renderWindow)
 {
     sfContextSettings settings = {0, 0, 0};
     CSFML_CHECK_RETURN(renderWindow, settings);
@@ -270,7 +270,7 @@ void sfRenderWindow_EnableKeyRepeat(sfRenderWindow* renderWindow, sfBool enabled
 ////////////////////////////////////////////////////////////
 /// Change the window's icon
 ////////////////////////////////////////////////////////////
-void sfRenderWindow_SetIcon(sfRenderWindow* renderWindow, unsigned int width, unsigned int height, sfUint8* pixels)
+void sfRenderWindow_SetIcon(sfRenderWindow* renderWindow, unsigned int width, unsigned int height, const sfUint8* pixels)
 {
     CSFML_CALL(renderWindow, SetIcon(width, height, pixels))
 }
@@ -317,7 +317,7 @@ void sfRenderWindow_Display(sfRenderWindow* renderWindow)
 ////////////////////////////////////////////////////////////
 /// Get the input manager of a window
 ////////////////////////////////////////////////////////////
-sfInput* sfRenderWindow_GetInput(sfRenderWindow* renderWindow)
+const sfInput* sfRenderWindow_GetInput(const sfRenderWindow* renderWindow)
 {
     CSFML_CHECK_RETURN(renderWindow, NULL);
 
@@ -337,7 +337,7 @@ void sfRenderWindow_SetFramerateLimit(sfRenderWindow* renderWindow, unsigned int
 ////////////////////////////////////////////////////////////
 /// Get time elapsed since last frame of a window
 ////////////////////////////////////////////////////////////
-float sfRenderWindow_GetFrameTime(sfRenderWindow* renderWindow)
+float sfRenderWindow_GetFrameTime(const sfRenderWindow* renderWindow)
 {
     CSFML_CALL_RETURN(renderWindow, GetFrameTime(), 0.f);
 }
@@ -356,17 +356,17 @@ void sfRenderWindow_SetJoystickThreshold(sfRenderWindow* renderWindow, float thr
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderwindow
 ////////////////////////////////////////////////////////////
-void sfRenderWindow_DrawSprite(sfRenderWindow* renderWindow, sfSprite* sprite)
+void sfRenderWindow_DrawSprite(sfRenderWindow* renderWindow, const sfSprite* sprite)
 {
     CSFML_CHECK(sprite);
     CSFML_CALL(renderWindow, Draw(sprite->This));
 }
-void sfRenderWindow_DrawShape(sfRenderWindow* renderWindow, sfShape* shape)
+void sfRenderWindow_DrawShape(sfRenderWindow* renderWindow, const sfShape* shape)
 {
     CSFML_CHECK(shape);
     CSFML_CALL(renderWindow, Draw(shape->This));
 }
-void sfRenderWindow_DrawText(sfRenderWindow* renderWindow, sfText* text)
+void sfRenderWindow_DrawText(sfRenderWindow* renderWindow, const sfText* text)
 {
     CSFML_CHECK(text);
     CSFML_CALL(renderWindow, Draw(text->This));
@@ -376,19 +376,19 @@ void sfRenderWindow_DrawText(sfRenderWindow* renderWindow, sfText* text)
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderwindow with a shader
 ////////////////////////////////////////////////////////////
-void sfRenderWindow_DrawSpriteWithShader(sfRenderWindow* renderWindow, sfSprite* sprite, sfShader* shader)
+void sfRenderWindow_DrawSpriteWithShader(sfRenderWindow* renderWindow, const sfSprite* sprite, const sfShader* shader)
 {
     CSFML_CHECK(sprite);
     CSFML_CHECK(shader);
     CSFML_CALL(renderWindow, Draw(sprite->This, shader->This));
 }
-void sfRenderWindow_DrawShapeWithShader(sfRenderWindow* renderWindow, sfShape* shape, sfShader* shader)
+void sfRenderWindow_DrawShapeWithShader(sfRenderWindow* renderWindow, const sfShape* shape, const sfShader* shader)
 {
     CSFML_CHECK(shape);
     CSFML_CHECK(shader);
     CSFML_CALL(renderWindow, Draw(shape->This, shader->This));
 }
-void sfRenderWindow_DrawTextWithShader(sfRenderWindow* renderWindow, sfText* text, sfShader* shader)
+void sfRenderWindow_DrawTextWithShader(sfRenderWindow* renderWindow, const sfText* text, const sfShader* shader)
 {
     CSFML_CHECK(text);
     CSFML_CHECK(shader);
@@ -410,7 +410,7 @@ void sfRenderWindow_Clear(sfRenderWindow* renderWindow, sfColor color)
 ////////////////////////////////////////////////////////////
 /// Change the current active view of a renderwindow
 ////////////////////////////////////////////////////////////
-void sfRenderWindow_SetView(sfRenderWindow* renderWindow, sfView* view)
+void sfRenderWindow_SetView(sfRenderWindow* renderWindow, const sfView* view)
 {
     CSFML_CHECK(view);
     CSFML_CALL(renderWindow, SetView(*view->This));
@@ -421,7 +421,7 @@ void sfRenderWindow_SetView(sfRenderWindow* renderWindow, sfView* view)
 ////////////////////////////////////////////////////////////
 /// Get the current active view of a renderwindow
 ////////////////////////////////////////////////////////////
-const sfView* sfRenderWindow_GetView(sfRenderWindow* renderWindow)
+const sfView* sfRenderWindow_GetView(const sfRenderWindow* renderWindow)
 {
     CSFML_CHECK_RETURN(renderWindow, NULL);
 
@@ -443,7 +443,7 @@ sfView* sfRenderWindow_GetDefaultView(sfRenderWindow* renderWindow)
 ////////////////////////////////////////////////////////////
 /// Get the viewport of a view applied to this target
 ////////////////////////////////////////////////////////////
-sfIntRect sfRenderWindow_GetViewport(sfRenderWindow* renderWindow, sfView* view)
+sfIntRect sfRenderWindow_GetViewport(const sfRenderWindow* renderWindow, const sfView* view)
 {
     sfIntRect rect = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(view, rect);
@@ -462,7 +462,7 @@ sfIntRect sfRenderWindow_GetViewport(sfRenderWindow* renderWindow, sfView* view)
 ////////////////////////////////////////////////////////////
 /// Convert a point in window coordinates into view coordinates
 ////////////////////////////////////////////////////////////
-void sfRenderWindow_ConvertCoords(sfRenderWindow* renderWindow, unsigned int windowX, unsigned int windowY, float* viewX, float* viewY, sfView* targetView)
+void sfRenderWindow_ConvertCoords(const sfRenderWindow* renderWindow, unsigned int windowX, unsigned int windowY, float* viewX, float* viewY, const sfView* targetView)
 {
     CSFML_CHECK(renderWindow);
 

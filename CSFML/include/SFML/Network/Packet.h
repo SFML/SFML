@@ -56,7 +56,7 @@ CSFML_API void sfPacket_Destroy(sfPacket* packet);
 /// \param sizeInBytes : Number of bytes to append
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfPacket_Append(sfPacket* packet, void* data, size_t sizeInBytes);
+CSFML_API void sfPacket_Append(sfPacket* packet, const void* data, size_t sizeInBytes);
 
 ////////////////////////////////////////////////////////////
 /// Clear all the data of a packet
@@ -76,7 +76,7 @@ CSFML_API void sfPacket_Clear(sfPacket* packet);
 /// \return Pointer to the data
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfPacket_GetData(sfPacket* packet);
+CSFML_API const char* sfPacket_GetData(const sfPacket* packet);
 
 ////////////////////////////////////////////////////////////
 /// Get the size of the data contained in a packet
@@ -86,7 +86,7 @@ CSFML_API const char* sfPacket_GetData(sfPacket* packet);
 /// \return Data size, in bytes
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API size_t sfPacket_GetDataSize(sfPacket* packet);
+CSFML_API size_t sfPacket_GetDataSize(const sfPacket* packet);
 
 ////////////////////////////////////////////////////////////
 /// Tell if the reading position has reached the end of the packet
@@ -96,7 +96,7 @@ CSFML_API size_t sfPacket_GetDataSize(sfPacket* packet);
 /// \return sfTrue if all data have been read into the packet
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfPacket_EndOfPacket(sfPacket* packet);
+CSFML_API sfBool sfPacket_EndOfPacket(const sfPacket* packet);
 
 ////////////////////////////////////////////////////////////
 /// Return the validity of packet
@@ -106,7 +106,7 @@ CSFML_API sfBool sfPacket_EndOfPacket(sfPacket* packet);
 /// \return sfTrue if last data extraction from packet was successful
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfPacket_CanRead(sfPacket* packet);
+CSFML_API sfBool sfPacket_CanRead(const sfPacket* packet);
 
 ////////////////////////////////////////////////////////////
 /// Functions to extract data from a packet

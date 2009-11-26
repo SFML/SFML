@@ -73,8 +73,8 @@ CSFML_API void sfIntRect_Offset(sfIntRect* rect, int offsetX, int offsetY);
 /// \return sfTrue if the point is inside
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfFloatRect_Contains(sfFloatRect* rect, float x, float y);
-CSFML_API sfBool sfIntRect_Contains(sfIntRect* rect, int x, int y);
+CSFML_API sfBool sfFloatRect_Contains(const sfFloatRect* rect, float x, float y);
+CSFML_API sfBool sfIntRect_Contains(const sfIntRect* rect, int x, int y);
 
 ////////////////////////////////////////////////////////////
 /// Check intersection between two rectangles
@@ -86,8 +86,8 @@ CSFML_API sfBool sfIntRect_Contains(sfIntRect* rect, int x, int y);
 /// \return sfTrue if rectangles overlap
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfFloatRect_Intersects(sfFloatRect* rect1, sfFloatRect* rect2, sfFloatRect* intersection);
-CSFML_API sfBool sfIntRect_Intersects(sfIntRect* rect1, sfIntRect* rect2, sfIntRect* intersection);
+CSFML_API sfBool sfFloatRect_Intersects(const sfFloatRect* rect1, const sfFloatRect* rect2, sfFloatRect* intersection);
+CSFML_API sfBool sfIntRect_Intersects(const sfIntRect* rect1, const sfIntRect* rect2, sfIntRect* intersection);
 
 
 #endif // SFML_RECT_H

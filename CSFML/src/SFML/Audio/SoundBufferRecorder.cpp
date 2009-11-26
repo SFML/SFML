@@ -70,7 +70,7 @@ void sfSoundBufferRecorder_Stop(sfSoundBufferRecorder* soundBufferRecorder)
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound buffer recorder
 ////////////////////////////////////////////////////////////
-unsigned int sfSoundBufferRecorder_GetSampleRate(sfSoundBufferRecorder* soundBufferRecorder)
+unsigned int sfSoundBufferRecorder_GetSampleRate(const sfSoundBufferRecorder* soundBufferRecorder)
 {
     CSFML_CALL_RETURN(soundBufferRecorder, GetSampleRate(), 0);
 }
@@ -80,7 +80,7 @@ unsigned int sfSoundBufferRecorder_GetSampleRate(sfSoundBufferRecorder* soundBuf
 /// Get the sound buffer containing the captured audio data
 /// of a sound buffer recorder
 ////////////////////////////////////////////////////////////
-sfSoundBuffer* sfSoundBufferRecorder_GetBuffer(sfSoundBufferRecorder* soundBufferRecorder)
+const sfSoundBuffer* sfSoundBufferRecorder_GetBuffer(const sfSoundBufferRecorder* soundBufferRecorder)
 {
     CSFML_CHECK_RETURN(soundBufferRecorder, NULL);
 

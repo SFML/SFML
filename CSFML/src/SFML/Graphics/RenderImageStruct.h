@@ -40,9 +40,9 @@
 struct sfRenderImage
 {
     sf::RenderImage This;
-    sfImage*        Target;
+    const sfImage*  Target;
     sfView*         DefaultView;
-    sfView*         CurrentView;
+    const sfView*   CurrentView;
 };
 
 

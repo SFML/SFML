@@ -39,10 +39,10 @@
 ////////////////////////////////////////////////////////////
 struct sfText
 {
-    sf::Text    This;
-    std::string String;
-    sfFont*     Font;
-    sfFloatRect Rect;
+    sf::Text            This;
+    const sfFont*       Font;
+    mutable std::string String;
+    mutable sfFloatRect Rect;
 };
 
 

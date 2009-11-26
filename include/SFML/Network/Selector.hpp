@@ -89,7 +89,7 @@ public :
     /// \return The index-th socket
     ///
     ////////////////////////////////////////////////////////////
-    Type GetSocketReady(unsigned int index);
+    Type GetSocketReady(unsigned int index) const;
 
 private :
 

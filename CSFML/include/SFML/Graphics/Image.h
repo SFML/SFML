@@ -104,7 +104,7 @@ CSFML_API void sfImage_Destroy(sfImage* image);
 /// \return sfTrue if saving was successful
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfImage_SaveToFile(sfImage* image, const char* filename);
+CSFML_API sfBool sfImage_SaveToFile(const sfImage* image, const char* filename);
 
 ////////////////////////////////////////////////////////////
 /// Create a transparency mask for an image from a specified colorkey
@@ -128,7 +128,7 @@ CSFML_API void sfImage_CreateMaskFromColor(sfImage* image, sfColor colorKey, sfU
 /// \param sourceRect : Sub-rectangle of the source image to copy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfImage_Copy(sfImage* image, sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect);
+CSFML_API void sfImage_Copy(sfImage* image, const sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect);
 
 ////////////////////////////////////////////////////////////
 /// Create the image from the current contents of the
@@ -165,7 +165,7 @@ CSFML_API void sfImage_SetPixel(sfImage* image, unsigned int x, unsigned int y, 
 /// \return Color of pixel (x, y)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfColor sfImage_GetPixel(sfImage* image, unsigned int x, unsigned int y);
+CSFML_API sfColor sfImage_GetPixel(const sfImage* image, unsigned int x, unsigned int y);
 
 ////////////////////////////////////////////////////////////
 /// Get a read-only pointer to the array of pixels of an image (8 bits integers RGBA)
@@ -177,7 +177,7 @@ CSFML_API sfColor sfImage_GetPixel(sfImage* image, unsigned int x, unsigned int 
 /// \return Pointer to the array of pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const sfUint8* sfImage_GetPixelsPtr(sfImage* image);
+CSFML_API const sfUint8* sfImage_GetPixelsPtr(const sfImage* image);
 
 ////////////////////////////////////////////////////////////
 /// Bind the image for rendering
@@ -185,7 +185,7 @@ CSFML_API const sfUint8* sfImage_GetPixelsPtr(sfImage* image);
 /// \param image : Image to bind
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfImage_Bind(sfImage* image);
+CSFML_API void sfImage_Bind(const sfImage* image);
 
 ////////////////////////////////////////////////////////////
 /// Enable or disable image smooth filter
@@ -204,7 +204,7 @@ CSFML_API void sfImage_SetSmooth(sfImage* image, sfBool smooth);
 /// \return Width in pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfImage_GetWidth(sfImage* image);
+CSFML_API unsigned int sfImage_GetWidth(const sfImage* image);
 
 ////////////////////////////////////////////////////////////
 /// Return the height of the image
@@ -214,7 +214,7 @@ CSFML_API unsigned int sfImage_GetWidth(sfImage* image);
 /// \return Height in pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfImage_GetHeight(sfImage* image);
+CSFML_API unsigned int sfImage_GetHeight(const sfImage* image);
 
 ////////////////////////////////////////////////////////////
 /// Tells whether the smoothing filter is enabled or not on an image
@@ -224,7 +224,7 @@ CSFML_API unsigned int sfImage_GetHeight(sfImage* image);
 /// \return sfTrue if the smoothing filter is enabled
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfImage_IsSmooth(sfImage* image);
+CSFML_API sfBool sfImage_IsSmooth(const sfImage* image);
 
 
 #endif // SFML_IMAGE_H

@@ -79,7 +79,7 @@ CSFML_API void sfMusic_SetLoop(sfMusic* music, sfBool loop);
 /// \return sfTrue if the music is looping, sfFalse otherwise
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfMusic_GetLoop(sfMusic* music);
+CSFML_API sfBool sfMusic_GetLoop(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Get a music duration
@@ -89,7 +89,7 @@ CSFML_API sfBool sfMusic_GetLoop(sfMusic* music);
 /// \return Music duration, in seconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfMusic_GetDuration(sfMusic* music);
+CSFML_API float sfMusic_GetDuration(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Start playing a music
@@ -123,7 +123,7 @@ CSFML_API void sfMusic_Stop(sfMusic* music);
 /// \return Number of channels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfMusic_GetChannelsCount(sfMusic* music);
+CSFML_API unsigned int sfMusic_GetChannelsCount(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Get the stream sample rate of a music
@@ -133,7 +133,7 @@ CSFML_API unsigned int sfMusic_GetChannelsCount(sfMusic* music);
 /// \return Stream frequency (number of samples per second)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfMusic_GetSampleRate(sfMusic* music);
+CSFML_API unsigned int sfMusic_GetSampleRate(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Get the status of a music (stopped, paused, playing)
@@ -143,7 +143,7 @@ CSFML_API unsigned int sfMusic_GetSampleRate(sfMusic* music);
 /// \return Current status of the sound
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundStatus sfMusic_GetStatus(sfMusic* music);
+CSFML_API sfSoundStatus sfMusic_GetStatus(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Get the current playing position of a music
@@ -153,7 +153,7 @@ CSFML_API sfSoundStatus sfMusic_GetStatus(sfMusic* music);
 /// \return Current playing position, expressed in seconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfMusic_GetPlayingOffset(sfMusic* music);
+CSFML_API float sfMusic_GetPlayingOffset(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Set the pitch of a music
@@ -234,7 +234,7 @@ CSFML_API void sfMusic_SetPlayingOffset(sfMusic* music, float timeOffset);
 /// \return Pitch value
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfMusic_GetPitch(sfMusic* music);
+CSFML_API float sfMusic_GetPitch(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Get the volume of a music
@@ -244,7 +244,7 @@ CSFML_API float sfMusic_GetPitch(sfMusic* music);
 /// \return Volume value (in range [1, 100])
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfMusic_GetVolume(sfMusic* music);
+CSFML_API float sfMusic_GetVolume(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Get the position of a music
@@ -255,7 +255,7 @@ CSFML_API float sfMusic_GetVolume(sfMusic* music);
 /// \param z :     Z position of the sound in the world
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfMusic_GetPosition(sfMusic* music, float* x, float* y, float* z);
+CSFML_API void sfMusic_GetPosition(const sfMusic* music, float* x, float* y, float* z);
 
 ////////////////////////////////////////////////////////////
 /// Tell if the music's position is relative to the listener's
@@ -266,7 +266,7 @@ CSFML_API void sfMusic_GetPosition(sfMusic* music, float* x, float* y, float* z)
 /// \return sfTrue if the position is relative, sfFalse if it's absolute
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfMusic_IsRelativeToListener(sfMusic* music);
+CSFML_API sfBool sfMusic_IsRelativeToListener(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Get the minimum distance of a music
@@ -276,7 +276,7 @@ CSFML_API sfBool sfMusic_IsRelativeToListener(sfMusic* music);
 /// \return Minimum distance for the music
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfMusic_GetMinDistance(sfMusic* music);
+CSFML_API float sfMusic_GetMinDistance(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Get the attenuation factor of a music
@@ -286,7 +286,7 @@ CSFML_API float sfMusic_GetMinDistance(sfMusic* music);
 /// \return Attenuation factor for the a music
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfMusic_GetAttenuation(sfMusic* music);
+CSFML_API float sfMusic_GetAttenuation(const sfMusic* music);
 
 
 #endif // SFML_MUSIC_H

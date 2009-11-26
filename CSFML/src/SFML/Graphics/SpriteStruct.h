@@ -38,9 +38,9 @@
 ////////////////////////////////////////////////////////////
 struct sfSprite
 {
-    sf::Sprite This;
-    sfImage*   Image;
-    sfIntRect  SubRect;
+    sf::Sprite     This;
+    const sfImage* Image;
+    sfIntRect      SubRect;
 };
 
 

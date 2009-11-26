@@ -183,7 +183,7 @@ sfBool sfSocketTCP_Close(sfSocketTCP* socket)
 /// Check if a socket is in a valid state ; this function
 /// can be called any time to check if the socket is OK
 ////////////////////////////////////////////////////////////
-sfBool sfSocketTCP_IsValid(sfSocketTCP* socket)
+sfBool sfSocketTCP_IsValid(const sfSocketTCP* socket)
 {
     CSFML_CALL_RETURN(socket, IsValid(), sfFalse);
 }

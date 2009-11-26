@@ -164,7 +164,7 @@ CSFML_API sfBool sfSocketTCP_Close(sfSocketTCP* socket);
 /// \return True if the socket is valid
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketTCP_IsValid(sfSocketTCP* socket);
+CSFML_API sfBool sfSocketTCP_IsValid(const sfSocketTCP* socket);
 
 
 #endif // SFML_SOCKETTCP_H

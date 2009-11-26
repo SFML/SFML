@@ -41,7 +41,7 @@ struct sfRenderWindow
     sf::RenderWindow This;
     sfInput          Input;
     sfView*          DefaultView;
-    sfView*          CurrentView;
+    const sfView*    CurrentView;
 };
 
 

@@ -78,13 +78,13 @@ unsigned int sfSelectorUDP_Wait(sfSelectorUDP* selector, float timeout) {CSFML_C
 /// ready for reading. The total number of sockets ready
 /// is the integer returned by the previous call to Wait()
 ////////////////////////////////////////////////////////////
-sfSocketTCP* sfSelectorTCP_GetSocketReady(sfSelectorTCP* selector, unsigned int index)
+sfSocketTCP* sfSelectorTCP_GetSocketReady(const sfSelectorTCP* selector, unsigned int index)
 {
     CSFML_CHECK_RETURN(selector, NULL);
-    return selector->Sockets[selector->This.GetSocketReady(index)];
+    return selector->Sockets.find(selector->This.GetSocketReady(index))->second;
 }
-sfSocketUDP* sfSelectorUDP_GetSocketReady(sfSelectorUDP* selector, unsigned int index)
+sfSocketUDP* sfSelectorUDP_GetSocketReady(const sfSelectorUDP* selector, unsigned int index)
 {
     CSFML_CHECK_RETURN(selector, NULL);
-    return selector->Sockets[selector->This.GetSocketReady(index)];
+    return selector->Sockets.find(selector->This.GetSocketReady(index))->second;
 }

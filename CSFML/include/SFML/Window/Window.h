@@ -71,7 +71,7 @@ typedef struct
 /// \param settings : Creation settings (pass NULL to use default values)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings* settings);
+CSFML_API sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, const sfContextSettings* settings);
 
 ////////////////////////////////////////////////////////////
 /// Construct a window from an existing control
@@ -80,7 +80,7 @@ CSFML_API sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigne
 /// \param settings : Creation settings (pass NULL to use default values)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings* settings);
+CSFML_API sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, const sfContextSettings* settings);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing window
@@ -104,7 +104,7 @@ CSFML_API void sfWindow_Close(sfWindow* window);
 /// \param window : Window object
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfWindow_IsOpened(sfWindow* window);
+CSFML_API sfBool sfWindow_IsOpened(const sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Get the width of the rendering region of a window
@@ -114,7 +114,7 @@ CSFML_API sfBool sfWindow_IsOpened(sfWindow* window);
 /// \return Width in pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfWindow_GetWidth(sfWindow* window);
+CSFML_API unsigned int sfWindow_GetWidth(const sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Get the height of the rendering region of a window
@@ -124,7 +124,7 @@ CSFML_API unsigned int sfWindow_GetWidth(sfWindow* window);
 /// \return Height in pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfWindow_GetHeight(sfWindow* window);
+CSFML_API unsigned int sfWindow_GetHeight(const sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Get the creation settings of a window
@@ -134,7 +134,7 @@ CSFML_API unsigned int sfWindow_GetHeight(sfWindow* window);
 /// \return Settings used to create the window
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfContextSettings sfWindow_GetSettings(sfWindow* window);
+CSFML_API sfContextSettings sfWindow_GetSettings(const sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Get the event on top of events stack of a window, if any, and pop it
@@ -235,7 +235,7 @@ CSFML_API void sfWindow_EnableKeyRepeat(sfWindow* window, sfBool enabled);
 /// \param pixels : Pointer to the pixels in memory, format must be RGBA 32 bits
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_SetIcon(sfWindow* window, unsigned int width, unsigned int height, sfUint8* pixels);
+CSFML_API void sfWindow_SetIcon(sfWindow* window, unsigned int width, unsigned int height, const sfUint8* pixels);
 
 ////////////////////////////////////////////////////////////
 /// Activate or deactivate a window as the current target for rendering
@@ -264,7 +264,7 @@ CSFML_API void sfWindow_Display(sfWindow* window);
 /// \return Reference to the input
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfInput* sfWindow_GetInput(sfWindow* window);
+CSFML_API const sfInput* sfWindow_GetInput(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Limit the framerate to a maximum fixed frequency for a window
@@ -283,7 +283,7 @@ CSFML_API void sfWindow_SetFramerateLimit(sfWindow* window, unsigned int limit);
 /// \return Time elapsed, in seconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfWindow_GetFrameTime(sfWindow* window);
+CSFML_API float sfWindow_GetFrameTime(const sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Change the joystick threshold, ie. the value below which

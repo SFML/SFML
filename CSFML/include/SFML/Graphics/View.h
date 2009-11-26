@@ -115,7 +115,7 @@ CSFML_API void sfView_Reset(sfView* view, sfFloatRect rectangle);
 /// \return X coordinate of the center of the view
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfView_GetCenterX(sfView* view);
+CSFML_API float sfView_GetCenterX(const sfView* view);
 
 ////////////////////////////////////////////////////////////
 /// Get the Y coordinate of the center of a view
@@ -125,7 +125,7 @@ CSFML_API float sfView_GetCenterX(sfView* view);
 /// \return Y coordinate of the center of the view
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfView_GetCenterY(sfView* view);
+CSFML_API float sfView_GetCenterY(const sfView* view);
 
 ////////////////////////////////////////////////////////////
 /// Get the width of the view
@@ -135,7 +135,7 @@ CSFML_API float sfView_GetCenterY(sfView* view);
 /// \return Width of the view
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfView_GetWidth(sfView* view);
+CSFML_API float sfView_GetWidth(const sfView* view);
 
 ////////////////////////////////////////////////////////////
 /// Get the height of the view
@@ -145,7 +145,7 @@ CSFML_API float sfView_GetWidth(sfView* view);
 /// \return Height of the view
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfView_GetHeight(sfView* view);
+CSFML_API float sfView_GetHeight(const sfView* view);
 
 ////////////////////////////////////////////////////////////
 /// Get the current rotation of a view
@@ -155,7 +155,7 @@ CSFML_API float sfView_GetHeight(sfView* view);
 /// \return Rotation of the view, in degrees
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfView_GetRotation(sfView* view);
+CSFML_API float sfView_GetRotation(const sfView* view);
 
 ////////////////////////////////////////////////////////////
 /// Get the target viewport of a view
@@ -165,7 +165,7 @@ CSFML_API float sfView_GetRotation(sfView* view);
 /// \return Viewport rectangle, expressed as a factor of the target size
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFloatRect sfView_GetViewport(sfView* view);
+CSFML_API sfFloatRect sfView_GetViewport(const sfView* view);
 
 ////////////////////////////////////////////////////////////
 /// Move a view

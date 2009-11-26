@@ -112,7 +112,7 @@ void sfHttpResponse_Destroy(sfHttpResponse* httpResponse)
 ////////////////////////////////////////////////////////////
 /// Get the value of a field; returns NULL if the field doesn't exist
 ////////////////////////////////////////////////////////////
-const char* sfHttpResponse_GetField(sfHttpResponse* httpResponse, const char* field)
+const char* sfHttpResponse_GetField(const sfHttpResponse* httpResponse, const char* field)
 {
     CSFML_CHECK_RETURN(httpResponse, NULL);
     if (!field)
@@ -125,7 +125,7 @@ const char* sfHttpResponse_GetField(sfHttpResponse* httpResponse, const char* fi
 ////////////////////////////////////////////////////////////
 /// Get the status of a response
 ////////////////////////////////////////////////////////////
-sfHttpStatus sfHttpResponse_GetStatus(sfHttpResponse* httpResponse)
+sfHttpStatus sfHttpResponse_GetStatus(const sfHttpResponse* httpResponse)
 {
     CSFML_CHECK_RETURN(httpResponse, sfHttpInvalidResponse);
 
@@ -136,7 +136,7 @@ sfHttpStatus sfHttpResponse_GetStatus(sfHttpResponse* httpResponse)
 ////////////////////////////////////////////////////////////
 /// Get the major HTTP version of a response
 ////////////////////////////////////////////////////////////
-unsigned int sfHttpResponse_GetMajorVersion(sfHttpResponse* httpResponse)
+unsigned int sfHttpResponse_GetMajorVersion(const sfHttpResponse* httpResponse)
 {
     CSFML_CALL_RETURN(httpResponse, GetMajorHttpVersion(), 0);
 }
@@ -145,7 +145,7 @@ unsigned int sfHttpResponse_GetMajorVersion(sfHttpResponse* httpResponse)
 ////////////////////////////////////////////////////////////
 /// Get the minor HTTP version of a response
 ////////////////////////////////////////////////////////////
-unsigned int sfHttpResponse_GetMinorVersion(sfHttpResponse* httpResponse)
+unsigned int sfHttpResponse_GetMinorVersion(const sfHttpResponse* httpResponse)
 {
     CSFML_CALL_RETURN(httpResponse, GetMinorHttpVersion(), 0);
 }
@@ -158,7 +158,7 @@ unsigned int sfHttpResponse_GetMinorVersion(sfHttpResponse* httpResponse)
 /// - nothing (for HEAD requests)
 /// - an error message (in case of an error)
 ////////////////////////////////////////////////////////////
-const char* sfHttpResponse_GetBody(sfHttpResponse* httpResponse)
+const char* sfHttpResponse_GetBody(const sfHttpResponse* httpResponse)
 {
     CSFML_CHECK_RETURN(httpResponse, NULL);
 
@@ -201,7 +201,7 @@ void sfHttp_SetHost(sfHttp* http, const char* host, unsigned short port)
 /// not return instantly; use a thread if you don't want to block your
 /// application.
 ////////////////////////////////////////////////////////////
-sfHttpResponse* sfHttp_SendRequest(sfHttp* http, sfHttpRequest* request, float timeout)
+sfHttpResponse* sfHttp_SendRequest(sfHttp* http, const sfHttpRequest* request, float timeout)
 {
     CSFML_CHECK_RETURN(http,    NULL);
     CSFML_CHECK_RETURN(request, NULL);

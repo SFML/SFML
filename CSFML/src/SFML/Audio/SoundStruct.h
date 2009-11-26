@@ -37,8 +37,8 @@
 ////////////////////////////////////////////////////////////
 struct sfSound
 {
-    sf::Sound      This;
-    sfSoundBuffer* Buffer;
+    sf::Sound            This;
+    const sfSoundBuffer* Buffer;
 };
 
 

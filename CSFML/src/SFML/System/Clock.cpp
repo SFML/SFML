@@ -51,7 +51,7 @@ void sfClock_Destroy(sfClock* clock)
 ////////////////////////////////////////////////////////////
 /// Get the time elapsed for a clock
 ////////////////////////////////////////////////////////////
-float sfClock_GetTime(sfClock* clock)
+float sfClock_GetTime(const sfClock* clock)
 {
     CSFML_CALL_RETURN(clock, GetElapsedTime(), 0.f)
 }

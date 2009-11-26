@@ -79,7 +79,7 @@ void sfPacket_Destroy(sfPacket* packet)
 ////////////////////////////////////////////////////////////
 /// Append data to the end of a packet
 ////////////////////////////////////////////////////////////
-void sfPacket_Append(sfPacket* packet, void* data, size_t sizeInBytes)
+void sfPacket_Append(sfPacket* packet, const void* data, size_t sizeInBytes)
 {
     CSFML_CALL(packet, Append(data, sizeInBytes));
 }
@@ -99,7 +99,7 @@ void sfPacket_Clear(sfPacket* packet)
 /// Warning : the returned pointer may be invalid after you
 /// append data to the packet
 ////////////////////////////////////////////////////////////
-const char* sfPacket_GetData(sfPacket* packet)
+const char* sfPacket_GetData(const sfPacket* packet)
 {
     CSFML_CALL_RETURN(packet, GetData(), NULL);
 }
@@ -108,7 +108,7 @@ const char* sfPacket_GetData(sfPacket* packet)
 ////////////////////////////////////////////////////////////
 /// Get the size of the data contained in a packet
 ////////////////////////////////////////////////////////////
-size_t sfPacket_GetDataSize(sfPacket* packet)
+size_t sfPacket_GetDataSize(const sfPacket* packet)
 {
     CSFML_CALL_RETURN(packet, GetDataSize(), 0);
 }
@@ -117,7 +117,7 @@ size_t sfPacket_GetDataSize(sfPacket* packet)
 ////////////////////////////////////////////////////////////
 /// Tell if the reading position has reached the end of the packet
 ////////////////////////////////////////////////////////////
-sfBool sfPacket_EndOfPacket(sfPacket* packet)
+sfBool sfPacket_EndOfPacket(const sfPacket* packet)
 {
     CSFML_CALL_RETURN(packet, EndOfPacket(), sfFalse);
 }
@@ -126,7 +126,7 @@ sfBool sfPacket_EndOfPacket(sfPacket* packet)
 ////////////////////////////////////////////////////////////
 /// Check if a packet is in a valid reading state
 ////////////////////////////////////////////////////////////
-sfBool sfPacket_CanRead(sfPacket* packet)
+sfBool sfPacket_CanRead(const sfPacket* packet)
 {
     CSFML_CALL_RETURN(packet, operator bool(), sfFalse);
 }

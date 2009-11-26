@@ -40,7 +40,7 @@
 /// \return A new sfShader object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfShader* sfShader_CreateFromFile(const char* Filename);
+CSFML_API sfShader* sfShader_CreateFromFile(const char* filename);
 
 ////////////////////////////////////////////////////////////
 /// Create a new shader from an effect source code
@@ -108,7 +108,7 @@ CSFML_API void sfShader_SetParameter4(sfShader* shader, const char* name, float 
 /// \param texture : Image to set (pass NULL to use the texture of the object being drawn)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfShader_SetTexture(sfShader* shader, const char* name, sfImage* texture);
+CSFML_API void sfShader_SetTexture(sfShader* shader, const char* name, const sfImage* texture);
 
 ////////////////////////////////////////////////////////////
 /// Bind a shader for rendering
@@ -116,7 +116,7 @@ CSFML_API void sfShader_SetTexture(sfShader* shader, const char* name, sfImage* 
 /// \param shader : Shader to bind
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfShader_Bind(sfShader* shader);
+CSFML_API void sfShader_Bind(const sfShader* shader);
 
 ////////////////////////////////////////////////////////////
 /// Unbind a shader
@@ -124,7 +124,7 @@ CSFML_API void sfShader_Bind(sfShader* shader);
 /// \param shader : Shader to unbind
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfShader_Unbind(sfShader* shader);
+CSFML_API void sfShader_Unbind(const sfShader* shader);
 
 ////////////////////////////////////////////////////////////
 /// Tell whether or not the system supports shaders

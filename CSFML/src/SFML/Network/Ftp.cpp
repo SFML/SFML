@@ -43,7 +43,7 @@ void sfFtpListingResponse_Destroy(sfFtpListingResponse* ftpListingResponse)
 /// Convenience function to check if the response status code
 /// means a success
 ////////////////////////////////////////////////////////////
-sfBool sfFtpListingResponse_IsOk(sfFtpListingResponse* ftpListingResponse)
+sfBool sfFtpListingResponse_IsOk(const sfFtpListingResponse* ftpListingResponse)
 {
     CSFML_CALL_RETURN(ftpListingResponse, IsOk(), sfFalse);
 }
@@ -51,7 +51,7 @@ sfBool sfFtpListingResponse_IsOk(sfFtpListingResponse* ftpListingResponse)
 ////////////////////////////////////////////////////////////
 /// Get the response status code
 ////////////////////////////////////////////////////////////
-sfFtpStatus sfFtpListingResponse_GetStatus(sfFtpListingResponse* ftpListingResponse)
+sfFtpStatus sfFtpListingResponse_GetStatus(const sfFtpListingResponse* ftpListingResponse)
 {
     CSFML_CHECK_RETURN(ftpListingResponse, sfFtpInvalidResponse);
 
@@ -61,7 +61,7 @@ sfFtpStatus sfFtpListingResponse_GetStatus(sfFtpListingResponse* ftpListingRespo
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
 ////////////////////////////////////////////////////////////
-const char* sfFtpListingResponse_GetMessage(sfFtpListingResponse* ftpListingResponse)
+const char* sfFtpListingResponse_GetMessage(const sfFtpListingResponse* ftpListingResponse)
 {
     CSFML_CHECK_RETURN(ftpListingResponse, NULL);
 
@@ -71,7 +71,7 @@ const char* sfFtpListingResponse_GetMessage(sfFtpListingResponse* ftpListingResp
 ////////////////////////////////////////////////////////////
 /// Get the number of filenames in the listing
 ////////////////////////////////////////////////////////////
-size_t sfFtpListingResponse_GetCount(sfFtpListingResponse* ftpListingResponse)
+size_t sfFtpListingResponse_GetCount(const sfFtpListingResponse* ftpListingResponse)
 {
     CSFML_CALL_RETURN(ftpListingResponse, GetCount(), 0);
 }
@@ -79,7 +79,7 @@ size_t sfFtpListingResponse_GetCount(sfFtpListingResponse* ftpListingResponse)
 ////////////////////////////////////////////////////////////
 /// Get the Index-th filename in the directory
 ////////////////////////////////////////////////////////////
-const char* sfFtpListingResponse_GetFilename(sfFtpListingResponse* ftpListingResponse, size_t index)
+const char* sfFtpListingResponse_GetFilename(const sfFtpListingResponse* ftpListingResponse, size_t index)
 {
     CSFML_CHECK_RETURN(ftpListingResponse, NULL);
 
@@ -99,7 +99,7 @@ void sfFtpDirectoryResponse_Destroy(sfFtpDirectoryResponse* ftpDirectoryResponse
 /// Convenience function to check if the response status code
 /// means a success
 ////////////////////////////////////////////////////////////
-sfBool sfFtpDirectoryResponse_IsOk(sfFtpDirectoryResponse* ftpDirectoryResponse)
+sfBool sfFtpDirectoryResponse_IsOk(const sfFtpDirectoryResponse* ftpDirectoryResponse)
 {
     CSFML_CALL_RETURN(ftpDirectoryResponse, IsOk(), sfFalse);
 }
@@ -107,7 +107,7 @@ sfBool sfFtpDirectoryResponse_IsOk(sfFtpDirectoryResponse* ftpDirectoryResponse)
 ////////////////////////////////////////////////////////////
 /// Get the response status code
 ////////////////////////////////////////////////////////////
-sfFtpStatus sfFtpDirectoryResponse_GetStatus(sfFtpDirectoryResponse* ftpDirectoryResponse)
+sfFtpStatus sfFtpDirectoryResponse_GetStatus(const sfFtpDirectoryResponse* ftpDirectoryResponse)
 {
     CSFML_CHECK_RETURN(ftpDirectoryResponse, sfFtpInvalidResponse);
 
@@ -117,7 +117,7 @@ sfFtpStatus sfFtpDirectoryResponse_GetStatus(sfFtpDirectoryResponse* ftpDirector
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
 ////////////////////////////////////////////////////////////
-const char* sfFtpDirectoryResponse_GetMessage(sfFtpDirectoryResponse* ftpDirectoryResponse)
+const char* sfFtpDirectoryResponse_GetMessage(const sfFtpDirectoryResponse* ftpDirectoryResponse)
 {
     CSFML_CHECK_RETURN(ftpDirectoryResponse, NULL);
 
@@ -127,7 +127,7 @@ const char* sfFtpDirectoryResponse_GetMessage(sfFtpDirectoryResponse* ftpDirecto
 ////////////////////////////////////////////////////////////
 /// Get the directory returned in the response
 ////////////////////////////////////////////////////////////
-const char* sfFtpDirectoryResponse_GetDirectory(sfFtpDirectoryResponse* ftpDirectoryResponse)
+const char* sfFtpDirectoryResponse_GetDirectory(const sfFtpDirectoryResponse* ftpDirectoryResponse)
 {
     CSFML_CHECK_RETURN(ftpDirectoryResponse, NULL);
 
@@ -148,7 +148,7 @@ void sfFtpResponse_Destroy(sfFtpResponse* ftpResponse)
 /// Convenience function to check if the response status code
 /// means a success
 ////////////////////////////////////////////////////////////
-sfBool sfFtpResponse_IsOk(sfFtpResponse* ftpResponse)
+sfBool sfFtpResponse_IsOk(const sfFtpResponse* ftpResponse)
 {
     CSFML_CALL_RETURN(ftpResponse, IsOk(), sfFalse);
 }
@@ -157,7 +157,7 @@ sfBool sfFtpResponse_IsOk(sfFtpResponse* ftpResponse)
 ////////////////////////////////////////////////////////////
 /// Get the response status code
 ////////////////////////////////////////////////////////////
-sfFtpStatus sfFtpResponse_GetStatus(sfFtpResponse* ftpResponse)
+sfFtpStatus sfFtpResponse_GetStatus(const sfFtpResponse* ftpResponse)
 {
     CSFML_CHECK_RETURN(ftpResponse, sfFtpInvalidResponse);
 
@@ -168,7 +168,7 @@ sfFtpStatus sfFtpResponse_GetStatus(sfFtpResponse* ftpResponse)
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
 ////////////////////////////////////////////////////////////
-const char* sfFtpResponse_GetMessage(sfFtpResponse* ftpResponse)
+const char* sfFtpResponse_GetMessage(const sfFtpResponse* ftpResponse)
 {
     CSFML_CHECK_RETURN(ftpResponse, NULL);
 

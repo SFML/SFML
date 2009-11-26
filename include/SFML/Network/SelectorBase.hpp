@@ -94,7 +94,7 @@ public :
     /// \return The index-th socket
     ///
     ////////////////////////////////////////////////////////////
-    SocketHelper::SocketType GetSocketReady(unsigned int index);
+    SocketHelper::SocketType GetSocketReady(unsigned int index) const;
 
 private :
 

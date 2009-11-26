@@ -82,7 +82,7 @@ CSFML_API void sfFont_Destroy(sfFont* font);
 /// \return Base size of characters
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfFont_GetCharacterSize(sfFont* font);
+CSFML_API unsigned int sfFont_GetCharacterSize(const sfFont* font);
 
 ////////////////////////////////////////////////////////////
 /// Get the built-in default font (Arial)
@@ -90,7 +90,7 @@ CSFML_API unsigned int sfFont_GetCharacterSize(sfFont* font);
 /// \return Pointer to the default font
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFont* sfFont_GetDefaultFont();
+CSFML_API const sfFont* sfFont_GetDefaultFont();
 
 
 #endif // SFML_IMAGE_H

@@ -165,7 +165,7 @@ CSFML_API void sfText_SetBlendMode(sfText* text, sfBlendMode mode);
 /// \return Current X position
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfText_GetX(sfText* text);
+CSFML_API float sfText_GetX(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the top Y of a text
@@ -175,7 +175,7 @@ CSFML_API float sfText_GetX(sfText* text);
 /// \return Current Y position
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfText_GetY(sfText* text);
+CSFML_API float sfText_GetY(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the horizontal scale of a text
@@ -185,7 +185,7 @@ CSFML_API float sfText_GetY(sfText* text);
 /// \return Current X scale factor (always positive)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfText_GetScaleX(sfText* text);
+CSFML_API float sfText_GetScaleX(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the vertical scale of a text
@@ -195,7 +195,7 @@ CSFML_API float sfText_GetScaleX(sfText* text);
 /// \return Current Y scale factor (always positive)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfText_GetScaleY(sfText* text);
+CSFML_API float sfText_GetScaleY(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the orientation of a text
@@ -205,7 +205,7 @@ CSFML_API float sfText_GetScaleY(sfText* text);
 /// \return Current rotation, in degrees
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfText_GetRotation(sfText* text);
+CSFML_API float sfText_GetRotation(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the X position of the origin a text
@@ -215,7 +215,7 @@ CSFML_API float sfText_GetRotation(sfText* text);
 /// \return Current X origin position
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfText_GetOriginX(sfText* text);
+CSFML_API float sfText_GetOriginX(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the top Y of the origin of a text
@@ -225,7 +225,7 @@ CSFML_API float sfText_GetOriginX(sfText* text);
 /// \return Current Y origin position
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfText_GetOriginY(sfText* text);
+CSFML_API float sfText_GetOriginY(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the color of a text
@@ -235,7 +235,7 @@ CSFML_API float sfText_GetOriginY(sfText* text);
 /// \return Current color
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfColor sfText_GetColor(sfText* text);
+CSFML_API sfColor sfText_GetColor(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the current blending mode of a text
@@ -245,7 +245,7 @@ CSFML_API sfColor sfText_GetColor(sfText* text);
 /// \return Current blending mode
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBlendMode sfText_GetBlendMode(sfText* text);
+CSFML_API sfBlendMode sfText_GetBlendMode(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Move a text
@@ -287,7 +287,7 @@ CSFML_API void sfText_Rotate(sfText* text, float angle);
 /// \param y :      Value to fill with the y coordinate of the converted point
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfText_TransformToLocal(sfText* text, float pointX, float pointY, float* x, float* y);
+CSFML_API void sfText_TransformToLocal(const sfText* text, float pointX, float pointY, float* x, float* y);
 
 ////////////////////////////////////////////////////////////
 /// Transform a point from the string's local coordinates into global coordinates
@@ -300,7 +300,7 @@ CSFML_API void sfText_TransformToLocal(sfText* text, float pointX, float pointY,
 /// \param y :      Value to fill with the y coordinate of the converted point
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfText_TransformToGlobal(sfText* text, float pointX, float pointY, float* X, float* y);
+CSFML_API void sfText_TransformToGlobal(const sfText* text, float pointX, float pointY, float* X, float* y);
 
 ////////////////////////////////////////////////////////////
 /// Set the string of a text (from a multibyte string)
@@ -327,7 +327,7 @@ CSFML_API void sfText_SetUnicodeString(sfText* text, const sfUint32* string);
 /// \param font : Font to use
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfText_SetFont(sfText* text, sfFont* font);
+CSFML_API void sfText_SetFont(sfText* text, const sfFont* font);
 
 ////////////////////////////////////////////////////////////
 /// Set the size of a text
@@ -355,7 +355,7 @@ CSFML_API void sfText_SetStyle(sfText* text, unsigned long style);
 /// \return String as UTF-32
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const sfUint32* sfText_GetUnicodeString(sfText* text);
+CSFML_API const sfUint32* sfText_GetUnicodeString(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the text of a text (returns an ANSI string)
@@ -365,7 +365,7 @@ CSFML_API const sfUint32* sfText_GetUnicodeString(sfText* text);
 /// \return String an a locale-dependant ANSI string
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfText_GetString(sfText* text);
+CSFML_API const char* sfText_GetString(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the font used by a text
@@ -375,7 +375,7 @@ CSFML_API const char* sfText_GetString(sfText* text);
 /// \return Pointer to the font
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFont* sfText_GetFont(sfText* text);
+CSFML_API const sfFont* sfText_GetFont(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the size of the characters of a text
@@ -385,7 +385,7 @@ CSFML_API sfFont* sfText_GetFont(sfText* text);
 /// \return Size of the characters
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfText_GetSize(sfText* text);
+CSFML_API float sfText_GetSize(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the style of a text
@@ -395,7 +395,7 @@ CSFML_API float sfText_GetSize(sfText* text);
 /// \return Current string style (see sfTextStyle enum)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned long sfText_GetStyle(sfText* text);
+CSFML_API unsigned long sfText_GetStyle(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Return the visual position of the Index-th character of the text,
@@ -408,7 +408,7 @@ CSFML_API unsigned long sfText_GetStyle(sfText* text);
 /// \param y :     Value to fill with the y coordinate of the position
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfText_GetCharacterPos(sfText* text, size_t index, float* x, float* y);
+CSFML_API void sfText_GetCharacterPos(const sfText* text, size_t index, float* x, float* y);
 
 ////////////////////////////////////////////////////////////
 /// Get the bounding rectangle of a text on screen
@@ -418,7 +418,7 @@ CSFML_API void sfText_GetCharacterPos(sfText* text, size_t index, float* x, floa
 /// \return Rectangle contaning the string in screen coordinates
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFloatRect sfText_GetRect(sfText* text);
+CSFML_API sfFloatRect sfText_GetRect(const sfText* text);
 
 
 #endif // SFML_TEXT_H

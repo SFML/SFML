@@ -74,7 +74,7 @@ void sfSoundRecorder_Stop(sfSoundRecorder* soundRecorder)
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound recorder
 ////////////////////////////////////////////////////////////
-unsigned int sfSoundRecorder_GetSampleRate(sfSoundRecorder* soundRecorder)
+unsigned int sfSoundRecorder_GetSampleRate(const sfSoundRecorder* soundRecorder)
 {
     CSFML_CALL_RETURN(soundRecorder, GetSampleRate(), 0);
 }

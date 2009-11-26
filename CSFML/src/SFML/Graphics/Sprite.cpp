@@ -151,7 +151,7 @@ void sfSprite_SetBlendMode(sfSprite* sprite, sfBlendMode mode)
 ////////////////////////////////////////////////////////////
 /// Get the X position of a sprite
 ////////////////////////////////////////////////////////////
-float sfSprite_GetX(sfSprite* sprite)
+float sfSprite_GetX(const sfSprite* sprite)
 {
     CSFML_CALL_RETURN(sprite, GetPosition().x, 0.f)
 }
@@ -160,7 +160,7 @@ float sfSprite_GetX(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the Y position of a sprite
 ////////////////////////////////////////////////////////////
-float sfSprite_GetY(sfSprite* sprite)
+float sfSprite_GetY(const sfSprite* sprite)
 {
     CSFML_CALL_RETURN(sprite, GetPosition().y, 0.f)
 }
@@ -169,7 +169,7 @@ float sfSprite_GetY(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the horizontal scale of a sprite
 ////////////////////////////////////////////////////////////
-float sfSprite_GetScaleX(sfSprite* sprite)
+float sfSprite_GetScaleX(const sfSprite* sprite)
 {
     CSFML_CALL_RETURN(sprite, GetScale().x, 0.f)
 }
@@ -178,7 +178,7 @@ float sfSprite_GetScaleX(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the vertical scale of a sprite
 ////////////////////////////////////////////////////////////
-float sfSprite_GetScaleY(sfSprite* sprite)
+float sfSprite_GetScaleY(const sfSprite* sprite)
 {
     CSFML_CALL_RETURN(sprite, GetScale().y, 0.f)
 }
@@ -187,7 +187,7 @@ float sfSprite_GetScaleY(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the orientation of a sprite
 ////////////////////////////////////////////////////////////
-float sfSprite_GetRotation(sfSprite* sprite)
+float sfSprite_GetRotation(const sfSprite* sprite)
 {
     CSFML_CALL_RETURN(sprite, GetRotation(), 0.f)
 }
@@ -196,7 +196,7 @@ float sfSprite_GetRotation(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the X position of the origin a sprite
 ////////////////////////////////////////////////////////////
-float sfSprite_GetOriginX(sfSprite* sprite)
+float sfSprite_GetOriginX(const sfSprite* sprite)
 {
     CSFML_CALL_RETURN(sprite, GetOrigin().x, 0.f)
 }
@@ -205,7 +205,7 @@ float sfSprite_GetOriginX(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the Y position of the origin a sprite
 ////////////////////////////////////////////////////////////
-float sfSprite_GetOriginY(sfSprite* sprite)
+float sfSprite_GetOriginY(const sfSprite* sprite)
 {
     CSFML_CALL_RETURN(sprite, GetOrigin().y, 0.f)
 }
@@ -214,7 +214,7 @@ float sfSprite_GetOriginY(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the color of a sprite
 ////////////////////////////////////////////////////////////
-sfColor sfSprite_GetColor(sfSprite* sprite)
+sfColor sfSprite_GetColor(const sfSprite* sprite)
 {
     sfColor color = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(sprite, color)
@@ -227,7 +227,7 @@ sfColor sfSprite_GetColor(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the current blending mode of a sprite
 ////////////////////////////////////////////////////////////
-sfBlendMode sfSprite_GetBlendMode(sfSprite* sprite)
+sfBlendMode sfSprite_GetBlendMode(const sfSprite* sprite)
 {
     CSFML_CHECK_RETURN(sprite, sfBlendNone)
 
@@ -266,7 +266,7 @@ void sfSprite_Rotate(sfSprite* sprite, float angle)
 /// Transform a point from global coordinates into the sprite's local coordinates
 /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-void sfSprite_TransformToLocal(sfSprite* sprite, float pointX, float pointY, float* x, float* y)
+void sfSprite_TransformToLocal(const sfSprite* sprite, float pointX, float pointY, float* x, float* y)
 {
     CSFML_CHECK(sprite)
 
@@ -280,7 +280,7 @@ void sfSprite_TransformToLocal(sfSprite* sprite, float pointX, float pointY, flo
 /// Transform a point from the sprite's local coordinates into global coordinates
 /// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-void sfSprite_TransformToGlobal(sfSprite* sprite, float pointX, float pointY, float* x, float* y)
+void sfSprite_TransformToGlobal(const sfSprite* sprite, float pointX, float pointY, float* x, float* y)
 {
     CSFML_CHECK(sprite)
 
@@ -293,7 +293,7 @@ void sfSprite_TransformToGlobal(sfSprite* sprite, float pointX, float pointY, fl
 ////////////////////////////////////////////////////////////
 /// Change the image of a sprite
 ////////////////////////////////////////////////////////////
-void sfSprite_SetImage(sfSprite* sprite, sfImage* image)
+void sfSprite_SetImage(sfSprite* sprite, const sfImage* image)
 {
     if (image)
     {
@@ -343,7 +343,7 @@ void sfSprite_FlipY(sfSprite* sprite, sfBool flipped)
 ////////////////////////////////////////////////////////////
 /// Get the source image of a sprite
 ////////////////////////////////////////////////////////////
-sfImage* sfSprite_GetImage(sfSprite* sprite)
+const sfImage* sfSprite_GetImage(const sfSprite* sprite)
 {
     CSFML_CHECK_RETURN(sprite, NULL)
 
@@ -354,7 +354,7 @@ sfImage* sfSprite_GetImage(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the sub-rectangle of a sprite inside the source image
 ////////////////////////////////////////////////////////////
-sfIntRect sfSprite_GetSubRect(sfSprite* sprite)
+sfIntRect sfSprite_GetSubRect(const sfSprite* sprite)
 {
     sfIntRect rect = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(sprite, rect)
@@ -366,7 +366,7 @@ sfIntRect sfSprite_GetSubRect(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get a sprite width
 ////////////////////////////////////////////////////////////
-float sfSprite_GetWidth(sfSprite* sprite)
+float sfSprite_GetWidth(const sfSprite* sprite)
 {
     CSFML_CALL_RETURN(sprite, GetSize().x, 0.f)
 }
@@ -375,7 +375,7 @@ float sfSprite_GetWidth(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get a sprite height
 ////////////////////////////////////////////////////////////
-float sfSprite_GetHeight(sfSprite* sprite)
+float sfSprite_GetHeight(const sfSprite* sprite)
 {
     CSFML_CALL_RETURN(sprite, GetSize().y, 0.f)
 }
@@ -384,7 +384,7 @@ float sfSprite_GetHeight(sfSprite* sprite)
 ////////////////////////////////////////////////////////////
 /// Get the color of a given pixel in a sprite
 ////////////////////////////////////////////////////////////
-sfColor sfSprite_GetPixel(sfSprite* sprite, unsigned int x, unsigned int y)
+sfColor sfSprite_GetPixel(const sfSprite* sprite, unsigned int x, unsigned int y)
 {
     sfColor color = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(sprite, color)

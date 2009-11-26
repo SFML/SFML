@@ -185,7 +185,7 @@ void sfShape_SetBlendMode(sfShape* shape, sfBlendMode mode)
 ////////////////////////////////////////////////////////////
 /// Get the X position of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetX(sfShape* shape)
+float sfShape_GetX(const sfShape* shape)
 {
     CSFML_CALL_RETURN(shape, GetPosition().x, 0.f)
 }
@@ -194,7 +194,7 @@ float sfShape_GetX(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the Y position of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetY(sfShape* shape)
+float sfShape_GetY(const sfShape* shape)
 {
     CSFML_CALL_RETURN(shape, GetPosition().y, 0.f)
 }
@@ -203,7 +203,7 @@ float sfShape_GetY(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the horizontal scale of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetScaleX(sfShape* shape)
+float sfShape_GetScaleX(const sfShape* shape)
 {
     CSFML_CALL_RETURN(shape, GetScale().x, 0.f)
 }
@@ -212,7 +212,7 @@ float sfShape_GetScaleX(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the vertical scale of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetScaleY(sfShape* shape)
+float sfShape_GetScaleY(const sfShape* shape)
 {
     CSFML_CALL_RETURN(shape, GetScale().y, 0.f)
 }
@@ -221,7 +221,7 @@ float sfShape_GetScaleY(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the orientation of a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetRotation(sfShape* shape)
+float sfShape_GetRotation(const sfShape* shape)
 {
     CSFML_CALL_RETURN(shape, GetRotation(), 0.f)
 }
@@ -230,7 +230,7 @@ float sfShape_GetRotation(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the X position of the origin a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetOriginX(sfShape* shape)
+float sfShape_GetOriginX(const sfShape* shape)
 {
     CSFML_CALL_RETURN(shape, GetOrigin().x, 0.f)
 }
@@ -239,7 +239,7 @@ float sfShape_GetOriginX(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the Y position of the origin a shape
 ////////////////////////////////////////////////////////////
-float sfShape_GetOriginY(sfShape* shape)
+float sfShape_GetOriginY(const sfShape* shape)
 {
     CSFML_CALL_RETURN(shape, GetOrigin().y, 0.f)
 }
@@ -248,7 +248,7 @@ float sfShape_GetOriginY(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the color of a shape
 ////////////////////////////////////////////////////////////
-sfColor sfShape_GetColor(sfShape* shape)
+sfColor sfShape_GetColor(const sfShape* shape)
 {
     sfColor color = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(shape, color)
@@ -261,7 +261,7 @@ sfColor sfShape_GetColor(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the current blending mode of a shape
 ////////////////////////////////////////////////////////////
-sfBlendMode sfShape_GetBlendMode(sfShape* shape)
+sfBlendMode sfShape_GetBlendMode(const sfShape* shape)
 {
     CSFML_CHECK_RETURN(shape, sfBlendNone)
 
@@ -300,7 +300,7 @@ void sfShape_Rotate(sfShape* shape, float angle)
 /// Transform a point from global coordinates into the shape's local coordinates
 /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-void sfShape_TransformToLocal(sfShape* shape, float pointX, float pointY, float* x, float* y)
+void sfShape_TransformToLocal(const sfShape* shape, float pointX, float pointY, float* x, float* y)
 {
     CSFML_CHECK(shape)
 
@@ -314,7 +314,7 @@ void sfShape_TransformToLocal(sfShape* shape, float pointX, float pointY, float*
 /// Transform a point from the shape's local coordinates into global coordinates
 /// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-void sfShape_TransformToGlobal(sfShape* shape, float pointX, float pointY, float* x, float* y)
+void sfShape_TransformToGlobal(const sfShape* shape, float pointX, float pointY, float* x, float* y)
 {
     CSFML_CHECK(shape)
 
@@ -368,7 +368,7 @@ void sfShape_SetOutlineWidth(sfShape* shape, float width)
 ////////////////////////////////////////////////////////////
 /// Get the width of a shape outline
 ////////////////////////////////////////////////////////////
-float sfShape_GetOutlineWidth(sfShape* shape)
+float sfShape_GetOutlineWidth(const sfShape* shape)
 {
     CSFML_CALL_RETURN(shape, GetOutlineWidth(), 0.f)
 }
@@ -377,7 +377,7 @@ float sfShape_GetOutlineWidth(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the number of points composing a shape
 ////////////////////////////////////////////////////////////
-unsigned int sfShape_GetNbPoints(sfShape* shape)
+unsigned int sfShape_GetNbPoints(const sfShape* shape)
 {
     CSFML_CALL_RETURN(shape, GetNbPoints(), 0)
 }
@@ -386,7 +386,7 @@ unsigned int sfShape_GetNbPoints(sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get a point of a shape
 ////////////////////////////////////////////////////////////
-void sfShape_GetPointPosition(sfShape* shape, unsigned int index, float* x, float* y)
+void sfShape_GetPointPosition(const sfShape* shape, unsigned int index, float* x, float* y)
 {
     CSFML_CHECK(shape)
 
@@ -399,7 +399,7 @@ void sfShape_GetPointPosition(sfShape* shape, unsigned int index, float* x, floa
 ////////////////////////////////////////////////////////////
 /// Get a the color of a shape's point
 ////////////////////////////////////////////////////////////
-sfColor sfShape_GetPointColor(sfShape* shape, unsigned int index)
+sfColor sfShape_GetPointColor(const sfShape* shape, unsigned int index)
 {
     sfColor color = {255, 255, 255, 255};
     CSFML_CHECK_RETURN(shape, color)
@@ -417,7 +417,7 @@ sfColor sfShape_GetPointColor(sfShape* shape, unsigned int index)
 ////////////////////////////////////////////////////////////
 /// Get a the outline color of a shape's point
 ////////////////////////////////////////////////////////////
-sfColor sfShape_GetPointOutlineColor(sfShape* shape, unsigned int index)
+sfColor sfShape_GetPointOutlineColor(const sfShape* shape, unsigned int index)
 {
     sfColor color = {255, 255, 255, 255};
     CSFML_CHECK_RETURN(shape, color)

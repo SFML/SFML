@@ -113,7 +113,7 @@ void sfShader_SetParameter4(sfShader* shader, const char* name, float x, float y
 ////////////////////////////////////////////////////////////
 /// Set a texture parameter in a shader
 ////////////////////////////////////////////////////////////
-void sfShader_SetTexture(sfShader* shader, const char* name, sfImage* texture)
+void sfShader_SetTexture(sfShader* shader, const char* name, const sfImage* texture)
 {
     CSFML_CALL(shader, SetTexture(name, texture && texture->This ? *texture->This : sf::Shader::CurrentTexture))
 }
@@ -122,7 +122,7 @@ void sfShader_SetTexture(sfShader* shader, const char* name, sfImage* texture)
 ////////////////////////////////////////////////////////////
 /// Bind a shader for rendering
 ////////////////////////////////////////////////////////////
-void sfShader_Bind(sfShader* shader)
+void sfShader_Bind(const sfShader* shader)
 {
     CSFML_CALL(shader, Bind())
 }
@@ -131,7 +131,7 @@ void sfShader_Bind(sfShader* shader)
 ////////////////////////////////////////////////////////////
 /// Unbind a shader
 ////////////////////////////////////////////////////////////
-void sfShader_Unbind(sfShader* shader)
+void sfShader_Unbind(const sfShader* shader)
 {
     CSFML_CALL(shader, Unbind())
 }

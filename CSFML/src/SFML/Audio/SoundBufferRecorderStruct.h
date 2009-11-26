@@ -38,7 +38,7 @@
 struct sfSoundBufferRecorder
 {
     sf::SoundBufferRecorder This;
-    sfSoundBuffer           SoundBuffer;
+    mutable sfSoundBuffer   SoundBuffer;
 };
 
 

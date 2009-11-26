@@ -85,7 +85,7 @@ CSFML_API void sfSoundBuffer_Destroy(sfSoundBuffer* soundBuffer);
 /// \return sfTrue if saving has been successful
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSoundBuffer_SaveToFile(sfSoundBuffer* soundBuffer, const char* filename);
+CSFML_API sfBool sfSoundBuffer_SaveToFile(const sfSoundBuffer* soundBuffer, const char* filename);
 
 ////////////////////////////////////////////////////////////
 /// Return the samples contained in a sound buffer
@@ -95,7 +95,7 @@ CSFML_API sfBool sfSoundBuffer_SaveToFile(sfSoundBuffer* soundBuffer, const char
 /// \return Pointer to the array of sound samples, in 16 bits signed integer format
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const sfInt16* sfSoundBuffer_GetSamples(sfSoundBuffer* soundBuffer);
+CSFML_API const sfInt16* sfSoundBuffer_GetSamples(const sfSoundBuffer* soundBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Return the number of samples contained in a sound buffer
@@ -105,7 +105,7 @@ CSFML_API const sfInt16* sfSoundBuffer_GetSamples(sfSoundBuffer* soundBuffer);
 /// \return Number of samples
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API size_t sfSoundBuffer_GetSamplesCount(sfSoundBuffer* soundBuffer);
+CSFML_API size_t sfSoundBuffer_GetSamplesCount(const sfSoundBuffer* soundBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound buffer
@@ -115,7 +115,7 @@ CSFML_API size_t sfSoundBuffer_GetSamplesCount(sfSoundBuffer* soundBuffer);
 /// \return Sound frequency (number of samples per second)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfSoundBuffer_GetSampleRate(sfSoundBuffer* soundBuffer);
+CSFML_API unsigned int sfSoundBuffer_GetSampleRate(const sfSoundBuffer* soundBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Return the number of channels of a sound buffer (1 = mono, 2 = stereo, ...)
@@ -125,7 +125,7 @@ CSFML_API unsigned int sfSoundBuffer_GetSampleRate(sfSoundBuffer* soundBuffer);
 /// \return Number of channels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfSoundBuffer_GetChannelsCount(sfSoundBuffer* soundBuffer);
+CSFML_API unsigned int sfSoundBuffer_GetChannelsCount(const sfSoundBuffer* soundBuffer);
 
 ////////////////////////////////////////////////////////////
 /// Get the duration of a sound buffer
@@ -135,7 +135,7 @@ CSFML_API unsigned int sfSoundBuffer_GetChannelsCount(sfSoundBuffer* soundBuffer
 /// \return Sound duration, in seconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSoundBuffer_GetDuration(sfSoundBuffer* soundBuffer);
+CSFML_API float sfSoundBuffer_GetDuration(const sfSoundBuffer* soundBuffer);
 
 
 #endif // SFML_SOUNDBUFFER_H

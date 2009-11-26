@@ -47,7 +47,11 @@ sfSocketUDP* sfSocketUDP_Create()
 ////////////////////////////////////////////////////////////
 void sfSocketUDP_Destroy(sfSocketUDP* socket)
 {
-    delete socket;
+    if (socket)
+    {
+        socket->This.Close();
+        delete socket;
+    }
 }
 
 
@@ -178,7 +182,7 @@ sfBool sfSocketUDP_Close(sfSocketUDP* socket)
 /// Check if a socket is in a valid state ; this function
 /// can be called any time to check if the socket is OK
 ////////////////////////////////////////////////////////////
-sfBool sfSocketUDP_IsValid(sfSocketUDP* socket)
+sfBool sfSocketUDP_IsValid(const sfSocketUDP* socket)
 {
     CSFML_CALL_RETURN(socket, IsValid(), sfFalse);
 }

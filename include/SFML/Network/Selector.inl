@@ -85,7 +85,7 @@ unsigned int Selector<Type>::Wait(float timeout)
 /// is the integer returned by the previous call to Wait()
 ////////////////////////////////////////////////////////////
 template <typename Type>
-Type Selector<Type>::GetSocketReady(unsigned int index)
+Type Selector<Type>::GetSocketReady(unsigned int index) const
 {
     SocketHelper::SocketType socket = SelectorBase::GetSocketReady(index);
 

@@ -105,7 +105,7 @@ unsigned int SelectorBase::Wait(float timeout)
 /// ready for reading. The total number of sockets ready
 /// is the integer returned by the previous call to Wait()
 ////////////////////////////////////////////////////////////
-SocketHelper::SocketType SelectorBase::GetSocketReady(unsigned int index)
+SocketHelper::SocketType SelectorBase::GetSocketReady(unsigned int index) const
 {
     // The standard FD_xxx interface doesn't define a direct access,
     // so we must go through the whole set to find the socket we're looking for

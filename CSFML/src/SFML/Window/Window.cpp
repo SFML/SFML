@@ -34,7 +34,7 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new window
 ////////////////////////////////////////////////////////////
-sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, sfContextSettings* settings)
+sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long style, const sfContextSettings* settings)
 {
     // Convert video mode
     sf::VideoMode videoMode(mode.Width, mode.Height, mode.BitsPerPixel);
@@ -62,7 +62,7 @@ sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long sty
 ////////////////////////////////////////////////////////////
 /// Construct a window from an existing control
 ////////////////////////////////////////////////////////////
-sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, sfContextSettings* settings)
+sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, const sfContextSettings* settings)
 {
     // Convert context settings
     sf::ContextSettings params;
@@ -104,7 +104,7 @@ void sfWindow_Close(sfWindow* window)
 ////////////////////////////////////////////////////////////
 /// Tell whether or not a window is opened
 ////////////////////////////////////////////////////////////
-sfBool sfWindow_IsOpened(sfWindow* window)
+sfBool sfWindow_IsOpened(const sfWindow* window)
 {
     CSFML_CALL_RETURN(window, IsOpened(), sfFalse);
 }
@@ -113,7 +113,7 @@ sfBool sfWindow_IsOpened(sfWindow* window)
 ////////////////////////////////////////////////////////////
 /// Get the width of the rendering region of a window
 ////////////////////////////////////////////////////////////
-unsigned int sfWindow_GetWidth(sfWindow* window)
+unsigned int sfWindow_GetWidth(const sfWindow* window)
 {
     CSFML_CALL_RETURN(window, GetWidth(), 0)
 }
@@ -122,7 +122,7 @@ unsigned int sfWindow_GetWidth(sfWindow* window)
 ////////////////////////////////////////////////////////////
 /// Get the height of the rendering region of a window
 ////////////////////////////////////////////////////////////
-unsigned int sfWindow_GetHeight(sfWindow* window)
+unsigned int sfWindow_GetHeight(const sfWindow* window)
 {
     CSFML_CALL_RETURN(window, GetHeight(), 0)
 }
@@ -131,7 +131,7 @@ unsigned int sfWindow_GetHeight(sfWindow* window)
 ////////////////////////////////////////////////////////////
 /// Get the creation settings of a window
 ////////////////////////////////////////////////////////////
-sfContextSettings sfWindow_GetSettings(sfWindow* window)
+sfContextSettings sfWindow_GetSettings(const sfWindow* window)
 {
     sfContextSettings settings = {0, 0, 0};
     CSFML_CHECK_RETURN(window, settings);
@@ -259,7 +259,7 @@ void sfWindow_EnableKeyRepeat(sfWindow* window, sfBool enabled)
 ////////////////////////////////////////////////////////////
 /// Change the window's icon
 ////////////////////////////////////////////////////////////
-void sfWindow_SetIcon(sfWindow* window, unsigned int width, unsigned int height, sfUint8* pixels)
+void sfWindow_SetIcon(sfWindow* window, unsigned int width, unsigned int height, const sfUint8* pixels)
 {
     CSFML_CALL(window, SetIcon(width, height, pixels))
 }
@@ -286,7 +286,7 @@ void sfWindow_Display(sfWindow* window)
 ////////////////////////////////////////////////////////////
 /// Get the input manager of a window
 ////////////////////////////////////////////////////////////
-sfInput* sfWindow_GetInput(sfWindow* window)
+const sfInput* sfWindow_GetInput(sfWindow* window)
 {
     CSFML_CHECK_RETURN(window, NULL);
 
@@ -306,7 +306,7 @@ void sfWindow_SetFramerateLimit(sfWindow* window, unsigned int limit)
 ////////////////////////////////////////////////////////////
 /// Get time elapsed since last frame of a window
 ////////////////////////////////////////////////////////////
-float sfWindow_GetFrameTime(sfWindow* window)
+float sfWindow_GetFrameTime(const sfWindow* window)
 {
     CSFML_CALL_RETURN(window, GetFrameTime(), 0.f)
 }

@@ -128,7 +128,7 @@ CSFML_API void sfFtpListingResponse_Destroy(sfFtpListingResponse* ftpListingResp
 /// \return sfTrue if status is success (code < 400)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfFtpListingResponse_IsOk(sfFtpListingResponse* ftpListingResponse);
+CSFML_API sfBool sfFtpListingResponse_IsOk(const sfFtpListingResponse* ftpListingResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the response status code
@@ -138,7 +138,7 @@ CSFML_API sfBool sfFtpListingResponse_IsOk(sfFtpListingResponse* ftpListingRespo
 /// \return Status code
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFtpStatus sfFtpListingResponse_GetStatus(sfFtpListingResponse* ftpListingResponse);
+CSFML_API sfFtpStatus sfFtpListingResponse_GetStatus(const sfFtpListingResponse* ftpListingResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
@@ -148,7 +148,7 @@ CSFML_API sfFtpStatus sfFtpListingResponse_GetStatus(sfFtpListingResponse* ftpLi
 /// \return The response message
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfFtpListingResponse_GetMessage(sfFtpListingResponse* ftpListingResponse);
+CSFML_API const char* sfFtpListingResponse_GetMessage(const sfFtpListingResponse* ftpListingResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the number of filenames in the listing
@@ -158,7 +158,7 @@ CSFML_API const char* sfFtpListingResponse_GetMessage(sfFtpListingResponse* ftpL
 /// \return Total number of filenames
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API size_t sfFtpListingResponse_GetCount(sfFtpListingResponse* ftpListingResponse);
+CSFML_API size_t sfFtpListingResponse_GetCount(const sfFtpListingResponse* ftpListingResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the Index-th filename in the directory
@@ -169,7 +169,7 @@ CSFML_API size_t sfFtpListingResponse_GetCount(sfFtpListingResponse* ftpListingR
 /// \return Index-th filename
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfFtpListingResponse_GetFilename(sfFtpListingResponse* ftpListingResponse, size_t index);
+CSFML_API const char* sfFtpListingResponse_GetFilename(const sfFtpListingResponse* ftpListingResponse, size_t index);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp directory response
@@ -188,7 +188,7 @@ CSFML_API void sfFtpDirectoryResponse_Destroy(sfFtpDirectoryResponse* ftpDirecto
 /// \return sfTrue if status is success (code < 400)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfFtpDirectoryResponse_IsOk(sfFtpDirectoryResponse* ftpDirectoryResponse);
+CSFML_API sfBool sfFtpDirectoryResponse_IsOk(const sfFtpDirectoryResponse* ftpDirectoryResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the response status code
@@ -198,7 +198,7 @@ CSFML_API sfBool sfFtpDirectoryResponse_IsOk(sfFtpDirectoryResponse* ftpDirector
 /// \return Status code
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFtpStatus sfFtpDirectoryResponse_GetStatus(sfFtpDirectoryResponse* ftpDirectoryResponse);
+CSFML_API sfFtpStatus sfFtpDirectoryResponse_GetStatus(const sfFtpDirectoryResponse* ftpDirectoryResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
@@ -208,7 +208,7 @@ CSFML_API sfFtpStatus sfFtpDirectoryResponse_GetStatus(sfFtpDirectoryResponse* f
 /// \return The response message
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfFtpDirectoryResponse_GetMessage(sfFtpDirectoryResponse* ftpDirectoryResponse);
+CSFML_API const char* sfFtpDirectoryResponse_GetMessage(const sfFtpDirectoryResponse* ftpDirectoryResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the directory returned in the response
@@ -218,7 +218,7 @@ CSFML_API const char* sfFtpDirectoryResponse_GetMessage(sfFtpDirectoryResponse* 
 /// \return Directory name
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfFtpDirectoryResponse_GetDirectory(sfFtpDirectoryResponse* ftpDirectoryResponse);
+CSFML_API const char* sfFtpDirectoryResponse_GetDirectory(const sfFtpDirectoryResponse* ftpDirectoryResponse);
 
 
 ////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ CSFML_API void sfFtpResponse_Destroy(sfFtpResponse* ftpResponse);
 /// \return sfTrue if status is success (code < 400)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfFtpResponse_IsOk(sfFtpResponse* ftpResponse);
+CSFML_API sfBool sfFtpResponse_IsOk(const sfFtpResponse* ftpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the response status code
@@ -248,7 +248,7 @@ CSFML_API sfBool sfFtpResponse_IsOk(sfFtpResponse* ftpResponse);
 /// \return Status code
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFtpStatus sfFtpResponse_GetStatus(sfFtpResponse* ftpResponse);
+CSFML_API sfFtpStatus sfFtpResponse_GetStatus(const sfFtpResponse* ftpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
@@ -258,7 +258,7 @@ CSFML_API sfFtpStatus sfFtpResponse_GetStatus(sfFtpResponse* ftpResponse);
 /// \return The response message
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfFtpResponse_GetMessage(sfFtpResponse* ftpResponse);
+CSFML_API const char* sfFtpResponse_GetMessage(const sfFtpResponse* ftpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Construct a new Ftp

@@ -106,7 +106,7 @@ void sfView_Reset(sfView* View, sfFloatRect Rectangle)
 ////////////////////////////////////////////////////////////
 /// Get the X coordinate of the center of a view
 ////////////////////////////////////////////////////////////
-float sfView_GetCenterX(sfView* View)
+float sfView_GetCenterX(const sfView* View)
 {
     CSFML_CHECK_RETURN(View, 0.f);
 
@@ -117,7 +117,7 @@ float sfView_GetCenterX(sfView* View)
 ////////////////////////////////////////////////////////////
 /// Get the Y coordinate of the center of a view
 ////////////////////////////////////////////////////////////
-float sfView_GetCenterY(sfView* View)
+float sfView_GetCenterY(const sfView* View)
 {
     CSFML_CHECK_RETURN(View, 0.f);
 
@@ -128,7 +128,7 @@ float sfView_GetCenterY(sfView* View)
 ////////////////////////////////////////////////////////////
 /// Get the width of the view
 ////////////////////////////////////////////////////////////
-float sfView_GetWidth(sfView* View)
+float sfView_GetWidth(const sfView* View)
 {
     CSFML_CHECK_RETURN(View, 0.f);
 
@@ -139,7 +139,7 @@ float sfView_GetWidth(sfView* View)
 ////////////////////////////////////////////////////////////
 /// Get the height of the view
 ////////////////////////////////////////////////////////////
-float sfView_GetHeight(sfView* View)
+float sfView_GetHeight(const sfView* View)
 {
     CSFML_CHECK_RETURN(View, 0.f);
 
@@ -150,7 +150,7 @@ float sfView_GetHeight(sfView* View)
 ////////////////////////////////////////////////////////////
 /// Get the current rotation of a view
 ////////////////////////////////////////////////////////////
-float sfView_GetRotation(sfView* View)
+float sfView_GetRotation(const sfView* View)
 {
     CSFML_CALL_PTR_RETURN(View, GetRotation(), 0.f);
 }
@@ -159,7 +159,7 @@ float sfView_GetRotation(sfView* View)
 ////////////////////////////////////////////////////////////
 /// Get the target viewport of a view
 ////////////////////////////////////////////////////////////
-sfFloatRect sfView_GetViewport(sfView* View)
+sfFloatRect sfView_GetViewport(const sfView* View)
 {
     sfFloatRect Rect = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(View, Rect);

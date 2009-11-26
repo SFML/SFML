@@ -98,7 +98,7 @@ void sfFont_Destroy(sfFont* font)
 /// Get the base size of characters in a font;
 /// All glyphs dimensions are based on this value
 ////////////////////////////////////////////////////////////
-unsigned int sfFont_GetCharacterSize(sfFont* font)
+unsigned int sfFont_GetCharacterSize(const sfFont* font)
 {
     CSFML_CALL_RETURN(font, GetCharacterSize(), 0);
 }
@@ -107,7 +107,7 @@ unsigned int sfFont_GetCharacterSize(sfFont* font)
 ////////////////////////////////////////////////////////////
 /// Get the built-in default font (Arial)
 ////////////////////////////////////////////////////////////
-sfFont* sfFont_GetDefaultFont()
+const sfFont* sfFont_GetDefaultFont()
 {
     static sfFont defaultFont = {sf::Font::GetDefaultFont()};
 

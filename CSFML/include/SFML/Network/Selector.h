@@ -104,8 +104,8 @@ CSFML_API unsigned int sfSelectorUDP_Wait(sfSelectorUDP* selector, float timeout
 /// \return The Index-th socket
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketTCP* sfSelectorTCP_GetSocketReady(sfSelectorTCP* selector, unsigned int index);
-CSFML_API sfSocketUDP* sfSelectorUDP_GetSocketReady(sfSelectorUDP* selector, unsigned int index);
+CSFML_API sfSocketTCP* sfSelectorTCP_GetSocketReady(const sfSelectorTCP* selector, unsigned int index);
+CSFML_API sfSocketUDP* sfSelectorUDP_GetSocketReady(const sfSelectorUDP* selector, unsigned int index);
 
 
 #endif // SFML_SELECTOR_H

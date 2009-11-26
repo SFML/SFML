@@ -80,7 +80,7 @@ CSFML_API void sfSound_Stop(sfSound* sound);
 /// \param buffer : Buffer to bind
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSound_SetBuffer(sfSound* sound, sfSoundBuffer* buffer);
+CSFML_API void sfSound_SetBuffer(sfSound* sound, const sfSoundBuffer* buffer);
 
 ////////////////////////////////////////////////////////////
 /// Get the sound buffer bound to a sound
@@ -90,7 +90,7 @@ CSFML_API void sfSound_SetBuffer(sfSound* sound, sfSoundBuffer* buffer);
 /// \return Pointer to the sound's buffer
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundBuffer* sfSound_GetBuffer(sfSound* sound);
+CSFML_API const sfSoundBuffer* sfSound_GetBuffer(const sfSound* sound);
 
 ////////////////////////////////////////////////////////////
 /// Set a sound loop state
@@ -109,7 +109,7 @@ CSFML_API void sfSound_SetLoop(sfSound* sound, sfBool loop);
 /// \return sfTrue if the sound is looping, sfFalse otherwise
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSound_GetLoop(sfSound* sound);
+CSFML_API sfBool sfSound_GetLoop(const sfSound* sound);
 
 ////////////////////////////////////////////////////////////
 /// Get the status of a sound (stopped, paused, playing)
@@ -119,7 +119,7 @@ CSFML_API sfBool sfSound_GetLoop(sfSound* sound);
 /// \return Current status of the sound
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundStatus sfSound_GetStatus(sfSound* sound);
+CSFML_API sfSoundStatus sfSound_GetStatus(const sfSound* sound);
 
 ////////////////////////////////////////////////////////////
 /// Set the pitch of a sound
@@ -200,7 +200,7 @@ CSFML_API void sfSound_SetPlayingOffset(sfSound* sound, float timeOffset);
 /// \return Pitch value
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSound_GetPitch(sfSound* sound);
+CSFML_API float sfSound_GetPitch(const sfSound* sound);
 
 ////////////////////////////////////////////////////////////
 /// Get the volume of a sound
@@ -210,7 +210,7 @@ CSFML_API float sfSound_GetPitch(sfSound* sound);
 /// \return Volume value (in range [1, 100])
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSound_GetVolume(sfSound* sound);
+CSFML_API float sfSound_GetVolume(const sfSound* sound);
 
 ////////////////////////////////////////////////////////////
 /// Get the position of a sound
@@ -221,7 +221,7 @@ CSFML_API float sfSound_GetVolume(sfSound* sound);
 /// \param z :     Z position of the sound in the world
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSound_GetPosition(sfSound* sound, float* x, float* y, float* z);
+CSFML_API void sfSound_GetPosition(const sfSound* sound, float* x, float* y, float* z);
 
 ////////////////////////////////////////////////////////////
 /// Tell if the sound's position is relative to the listener's
@@ -232,7 +232,7 @@ CSFML_API void sfSound_GetPosition(sfSound* sound, float* x, float* y, float* z)
 /// \return sfTrue if the position is relative, sfFalse if it's absolute
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSound_IsRelativeToListener(sfSound* sound);
+CSFML_API sfBool sfSound_IsRelativeToListener(const sfSound* sound);
 
 ////////////////////////////////////////////////////////////
 /// Get the minimum distance of a sound
@@ -242,7 +242,7 @@ CSFML_API sfBool sfSound_IsRelativeToListener(sfSound* sound);
 /// \return Minimum distance for the sound
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSound_GetMinDistance(sfSound* sound);
+CSFML_API float sfSound_GetMinDistance(const sfSound* sound);
 
 ////////////////////////////////////////////////////////////
 /// Get the attenuation factor of a sound
@@ -252,7 +252,7 @@ CSFML_API float sfSound_GetMinDistance(sfSound* sound);
 /// \return Attenuation factor for the sound
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSound_GetAttenuation(sfSound* sound);
+CSFML_API float sfSound_GetAttenuation(const sfSound* sound);
 
 ////////////////////////////////////////////////////////////
 /// Get the current playing position of a sound
@@ -262,7 +262,7 @@ CSFML_API float sfSound_GetAttenuation(sfSound* sound);
 /// \return Current playing position, expressed in seconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSound_GetPlayingOffset(sfSound* sound);
+CSFML_API float sfSound_GetPlayingOffset(const sfSound* sound);
 
 
 #endif // SFML_SOUND_H

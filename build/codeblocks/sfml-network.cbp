@@ -28,6 +28,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add library="ws2_32" />
+					<Add library="..\..\lib\mingw\libsfml-system-d.a" />
 					<Add directory="..\..\bin\static" />
 				</Linker>
 			</Target>
@@ -52,6 +53,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add library="ws2_32" />
+					<Add library="..\..\lib\mingw\libsfml-system.a" />
 					<Add directory="..\..\bin\static" />
 				</Linker>
 			</Target>

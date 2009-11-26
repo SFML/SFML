@@ -82,7 +82,7 @@ void sfSoundStream_Stop(sfSoundStream* soundStream)
 ////////////////////////////////////////////////////////////
 /// Get the status of a sound stream (stopped, paused, playing)
 ////////////////////////////////////////////////////////////
-sfSoundStatus sfSoundStream_GetStatus(sfSoundStream* soundStream)
+sfSoundStatus sfSoundStream_GetStatus(const sfSoundStream* soundStream)
 {
     CSFML_CHECK_RETURN(soundStream, sfStopped);
 
@@ -94,7 +94,7 @@ sfSoundStatus sfSoundStream_GetStatus(sfSoundStream* soundStream)
 /// Return the number of channels of a sound stream
 /// (1 = mono, 2 = stereo)
 ////////////////////////////////////////////////////////////
-unsigned int sfSoundStream_GetChannelsCount(sfSoundStream* soundStream)
+unsigned int sfSoundStream_GetChannelsCount(const sfSoundStream* soundStream)
 {
     CSFML_CALL_RETURN(soundStream, GetChannelsCount(), 0);
 }
@@ -103,7 +103,7 @@ unsigned int sfSoundStream_GetChannelsCount(sfSoundStream* soundStream)
 ////////////////////////////////////////////////////////////
 /// Get the sample rate of a sound stream
 ////////////////////////////////////////////////////////////
-unsigned int sfSoundStream_GetSampleRate(sfSoundStream* soundStream)
+unsigned int sfSoundStream_GetSampleRate(const sfSoundStream* soundStream)
 {
     CSFML_CALL_RETURN(soundStream, GetSampleRate(), 0);
 }
@@ -190,7 +190,7 @@ void sfSoundStream_SetLoop(sfSoundStream* soundStream, sfBool loop)
 ////////////////////////////////////////////////////////////
 /// Get the pitch of a sound stream
 ////////////////////////////////////////////////////////////
-float sfSoundStream_GetPitch(sfSoundStream* soundStream)
+float sfSoundStream_GetPitch(const sfSoundStream* soundStream)
 {
     CSFML_CALL_RETURN(soundStream, GetPitch(), 0.f);
 }
@@ -199,7 +199,7 @@ float sfSoundStream_GetPitch(sfSoundStream* soundStream)
 ////////////////////////////////////////////////////////////
 /// Get the volume of a sound stream
 ////////////////////////////////////////////////////////////
-float sfSoundStream_GetVolume(sfSoundStream* soundStream)
+float sfSoundStream_GetVolume(const sfSoundStream* soundStream)
 {
     CSFML_CALL_RETURN(soundStream, GetVolume(), 0.f);
 }
@@ -208,7 +208,7 @@ float sfSoundStream_GetVolume(sfSoundStream* soundStream)
 ////////////////////////////////////////////////////////////
 /// Get the position of a sound stream
 ////////////////////////////////////////////////////////////
-void sfSoundStream_GetPosition(sfSoundStream* soundStream, float* x, float* y, float* z)
+void sfSoundStream_GetPosition(const sfSoundStream* soundStream, float* x, float* y, float* z)
 {
     CSFML_CHECK(soundStream);
 
@@ -223,7 +223,7 @@ void sfSoundStream_GetPosition(sfSoundStream* soundStream, float* x, float* y, f
 /// Tell if the sound stream's position is relative to the listener's
 /// position, or if it's absolute
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSoundStream_IsRelativeToListener(sfSoundStream* soundStream)
+CSFML_API sfBool sfSoundStream_IsRelativeToListener(const sfSoundStream* soundStream)
 {
     CSFML_CALL_RETURN(soundStream, IsRelativeToListener(), sfFalse);
 }
@@ -232,7 +232,7 @@ CSFML_API sfBool sfSoundStream_IsRelativeToListener(sfSoundStream* soundStream)
 ////////////////////////////////////////////////////////////
 /// Get the minimum distance of a sound stream
 ////////////////////////////////////////////////////////////
-float sfSoundStream_GetMinDistance(sfSoundStream* soundStream)
+float sfSoundStream_GetMinDistance(const sfSoundStream* soundStream)
 {
     CSFML_CALL_RETURN(soundStream, GetMinDistance(), 0.f);
 }
@@ -241,7 +241,7 @@ float sfSoundStream_GetMinDistance(sfSoundStream* soundStream)
 ////////////////////////////////////////////////////////////
 /// Get the attenuation factor of a sound stream
 ////////////////////////////////////////////////////////////
-float sfSoundStream_GetAttenuation(sfSoundStream* soundStream)
+float sfSoundStream_GetAttenuation(const sfSoundStream* soundStream)
 {
     CSFML_CALL_RETURN(soundStream, GetAttenuation(), 0.f);
 }
@@ -250,7 +250,7 @@ float sfSoundStream_GetAttenuation(sfSoundStream* soundStream)
 ////////////////////////////////////////////////////////////
 /// Tell whether or not a stream is looping
 ////////////////////////////////////////////////////////////
-sfBool sfSoundStream_GetLoop(sfSoundStream* soundStream)
+sfBool sfSoundStream_GetLoop(const sfSoundStream* soundStream)
 {
     CSFML_CALL_RETURN(soundStream, GetLoop(), sfFalse);
 }
@@ -259,7 +259,7 @@ sfBool sfSoundStream_GetLoop(sfSoundStream* soundStream)
 ////////////////////////////////////////////////////////////
 /// Get the current playing position of a sound stream
 ////////////////////////////////////////////////////////////
-float sfSoundStream_GetPlayingOffset(sfSoundStream* soundStream)
+float sfSoundStream_GetPlayingOffset(const sfSoundStream* soundStream)
 {
     CSFML_CALL_RETURN(soundStream, GetPlayingOffset(), 0.f);
 }

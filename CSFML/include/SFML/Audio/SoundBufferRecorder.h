@@ -74,7 +74,7 @@ CSFML_API void sfSoundBufferRecorder_Stop(sfSoundBufferRecorder* soundBufferReco
 /// \return Frequency, in samples per second
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfSoundBufferRecorder_GetSampleRate(sfSoundBufferRecorder* soundBufferRecorder);
+CSFML_API unsigned int sfSoundBufferRecorder_GetSampleRate(const sfSoundBufferRecorder* soundBufferRecorder);
 
 ////////////////////////////////////////////////////////////
 /// Get the sound buffer containing the captured audio data
@@ -85,7 +85,7 @@ CSFML_API unsigned int sfSoundBufferRecorder_GetSampleRate(sfSoundBufferRecorder
 /// \return Pointer to the sound buffer (you don't need to destroy it after use)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundBuffer* sfSoundBufferRecorder_GetBuffer(sfSoundBufferRecorder* soundBufferRecorder);
+CSFML_API const sfSoundBuffer* sfSoundBufferRecorder_GetBuffer(const sfSoundBufferRecorder* soundBufferRecorder);
 
 
 #endif // SFML_SOUNDBUFFERRECORDER_H

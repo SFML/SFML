@@ -63,7 +63,7 @@ void sfRenderImage_Destroy(sfRenderImage* renderImage)
 ////////////////////////////////////////////////////////////
 /// Get the width of the rendering region of a renderimage
 ////////////////////////////////////////////////////////////
-unsigned int sfRenderImage_GetWidth(sfRenderImage* renderImage)
+unsigned int sfRenderImage_GetWidth(const sfRenderImage* renderImage)
 {
     CSFML_CALL_RETURN(renderImage, GetWidth(), 0);
 }
@@ -72,7 +72,7 @@ unsigned int sfRenderImage_GetWidth(sfRenderImage* renderImage)
 ////////////////////////////////////////////////////////////
 /// Get the height of the rendering region of a renderimage
 ////////////////////////////////////////////////////////////
-unsigned int sfRenderImage_GetHeight(sfRenderImage* renderImage)
+unsigned int sfRenderImage_GetHeight(const sfRenderImage* renderImage)
 {
     CSFML_CALL_RETURN(renderImage, GetHeight(), 0);
 }
@@ -118,17 +118,17 @@ void sfRenderImage_Display(sfRenderImage* renderImage)
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderimage
 ////////////////////////////////////////////////////////////
-void sfRenderImage_DrawSprite(sfRenderImage* renderImage, sfSprite* sprite)
+void sfRenderImage_DrawSprite(sfRenderImage* renderImage, const sfSprite* sprite)
 {
     CSFML_CHECK(sprite);
     CSFML_CALL(renderImage, Draw(sprite->This));
 }
-void sfRenderImage_DrawShape(sfRenderImage* renderImage, sfShape* shape)
+void sfRenderImage_DrawShape(sfRenderImage* renderImage, const sfShape* shape)
 {
     CSFML_CHECK(shape);
     CSFML_CALL(renderImage, Draw(shape->This));
 }
-void sfRenderImage_DrawText(sfRenderImage* renderImage, sfText* text)
+void sfRenderImage_DrawText(sfRenderImage* renderImage, const sfText* text)
 {
     CSFML_CHECK(text);
     CSFML_CALL(renderImage, Draw(text->This));
@@ -138,19 +138,19 @@ void sfRenderImage_DrawText(sfRenderImage* renderImage, sfText* text)
 ////////////////////////////////////////////////////////////
 /// Draw something on a renderimage with a shader
 ////////////////////////////////////////////////////////////
-void sfRenderImage_DrawSpriteWithShader(sfRenderImage* renderImage, sfSprite* sprite, sfShader* shader)
+void sfRenderImage_DrawSpriteWithShader(sfRenderImage* renderImage, const sfSprite* sprite, const sfShader* shader)
 {
     CSFML_CHECK(sprite);
     CSFML_CHECK(shader);
     CSFML_CALL(renderImage, Draw(sprite->This, shader->This));
 }
-void sfRenderImage_DrawShapeWithShader(sfRenderImage* renderImage, sfShape* shape, sfShader* shader)
+void sfRenderImage_DrawShapeWithShader(sfRenderImage* renderImage, const sfShape* shape, const sfShader* shader)
 {
     CSFML_CHECK(shape);
     CSFML_CHECK(shader);
     CSFML_CALL(renderImage, Draw(shape->This, shader->This));
 }
-void sfRenderImage_DrawTextWithShader(sfRenderImage* renderImage, sfText* text, sfShader* shader)
+void sfRenderImage_DrawTextWithShader(sfRenderImage* renderImage, const sfText* text, const sfShader* shader)
 {
     CSFML_CHECK(text);
     CSFML_CHECK(shader);
@@ -172,7 +172,7 @@ void sfRenderImage_Clear(sfRenderImage* renderImage, sfColor color)
 ////////////////////////////////////////////////////////////
 /// Change the current active view of a renderimage
 ////////////////////////////////////////////////////////////
-void sfRenderImage_SetView(sfRenderImage* renderImage, sfView* view)
+void sfRenderImage_SetView(sfRenderImage* renderImage, const sfView* view)
 {
     CSFML_CHECK(view);
     CSFML_CALL(renderImage, SetView(*view->This));
@@ -183,7 +183,7 @@ void sfRenderImage_SetView(sfRenderImage* renderImage, sfView* view)
 ////////////////////////////////////////////////////////////
 /// Get the current active view of a renderimage
 ////////////////////////////////////////////////////////////
-const sfView* sfRenderImage_GetView(sfRenderImage* renderImage)
+const sfView* sfRenderImage_GetView(const sfRenderImage* renderImage)
 {
     CSFML_CHECK_RETURN(renderImage, NULL);
 
@@ -205,7 +205,7 @@ sfView* sfRenderImage_GetDefaultView(sfRenderImage* renderImage)
 ////////////////////////////////////////////////////////////
 /// Get the viewport of a view applied to this target
 ////////////////////////////////////////////////////////////
-sfIntRect sfRenderImage_GetViewport(sfRenderImage* renderImage, sfView* view)
+sfIntRect sfRenderImage_GetViewport(const sfRenderImage* renderImage, const sfView* view)
 {
     sfIntRect rect = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(view, rect);
@@ -224,7 +224,7 @@ sfIntRect sfRenderImage_GetViewport(sfRenderImage* renderImage, sfView* view)
 ////////////////////////////////////////////////////////////
 /// Convert a point in image coordinates into view coordinates
 ////////////////////////////////////////////////////////////
-void sfRenderImage_ConvertCoords(sfRenderImage* renderImage, unsigned int imageX, unsigned int imageY, float* viewX, float* viewY, sfView* targetView)
+void sfRenderImage_ConvertCoords(const sfRenderImage* renderImage, unsigned int imageX, unsigned int imageY, float* viewX, float* viewY, const sfView* targetView)
 {
     CSFML_CHECK(renderImage);
 
@@ -242,7 +242,7 @@ void sfRenderImage_ConvertCoords(sfRenderImage* renderImage, unsigned int imageX
 ////////////////////////////////////////////////////////////
 /// Get the target image
 ////////////////////////////////////////////////////////////
-sfImage* sfRenderImage_GetImage(sfRenderImage* renderImage)
+const sfImage* sfRenderImage_GetImage(const sfRenderImage* renderImage)
 {
     CSFML_CHECK_RETURN(renderImage, NULL);
 

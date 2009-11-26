@@ -164,7 +164,7 @@ CSFML_API void sfHttpResponse_Destroy(sfHttpResponse* httpResponse);
 /// \return Value of the field (NULL if it doesn't exist)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfHttpResponse_GetField(sfHttpResponse* httpResponse, const char* field);
+CSFML_API const char* sfHttpResponse_GetField(const sfHttpResponse* httpResponse, const char* field);
 
 ////////////////////////////////////////////////////////////
 /// Get the status of a response
@@ -174,7 +174,7 @@ CSFML_API const char* sfHttpResponse_GetField(sfHttpResponse* httpResponse, cons
 /// \return Status of the response
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfHttpStatus sfHttpResponse_GetStatus(sfHttpResponse* httpResponse);
+CSFML_API sfHttpStatus sfHttpResponse_GetStatus(const sfHttpResponse* httpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the major HTTP version of a response
@@ -184,7 +184,7 @@ CSFML_API sfHttpStatus sfHttpResponse_GetStatus(sfHttpResponse* httpResponse);
 /// \return HTTP major version of the response
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfHttpResponse_GetMajorVersion(sfHttpResponse* httpResponse);
+CSFML_API unsigned int sfHttpResponse_GetMajorVersion(const sfHttpResponse* httpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the minor HTTP version of a response
@@ -194,7 +194,7 @@ CSFML_API unsigned int sfHttpResponse_GetMajorVersion(sfHttpResponse* httpRespon
 /// \return HTTP minor version of the response
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfHttpResponse_GetMinorVersion(sfHttpResponse* httpResponse);
+CSFML_API unsigned int sfHttpResponse_GetMinorVersion(const sfHttpResponse* httpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Get the body of the response. The body can contain :
@@ -208,7 +208,7 @@ CSFML_API unsigned int sfHttpResponse_GetMinorVersion(sfHttpResponse* httpRespon
 /// \return Body of the response (empty string if no body)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const char* sfHttpResponse_GetBody(sfHttpResponse* httpResponse);
+CSFML_API const char* sfHttpResponse_GetBody(const sfHttpResponse* httpResponse);
 
 ////////////////////////////////////////////////////////////
 /// Construct a new Http object
@@ -251,7 +251,7 @@ CSFML_API void sfHttp_SetHost(sfHttp* http, const char* host, unsigned short por
 /// \return Server's response, or NULL if request is invalid
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfHttpResponse* sfHttp_SendRequest(sfHttp* http, sfHttpRequest* request, float timeout);
+CSFML_API sfHttpResponse* sfHttp_SendRequest(sfHttp* http, const sfHttpRequest* request, float timeout);
 
 
 #endif // SFML_HTTP_H

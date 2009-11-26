@@ -54,12 +54,12 @@ void sfIntRect_Offset(sfIntRect* rect, int offsetX, int offsetY)
 ////////////////////////////////////////////////////////////
 /// Check if a point is inside a rectangle's area
 ////////////////////////////////////////////////////////////
-sfBool sfFloatRect_Contains(sfFloatRect* rect, float x, float y)
+sfBool sfFloatRect_Contains(const sfFloatRect* rect, float x, float y)
 {
     CSFML_CHECK_RETURN(rect, sfFalse)
     return sf::FloatRect(rect->Left, rect->Top, rect->Right, rect->Bottom).Contains(x, y);
 }
-sfBool sfIntRect_Contains(sfIntRect* rect, int x, int y)
+sfBool sfIntRect_Contains(const sfIntRect* rect, int x, int y)
 {
     CSFML_CHECK_RETURN(rect, sfFalse)
     return sf::IntRect(rect->Left, rect->Top, rect->Right, rect->Bottom).Contains(x, y);
@@ -69,7 +69,7 @@ sfBool sfIntRect_Contains(sfIntRect* rect, int x, int y)
 ////////////////////////////////////////////////////////////
 /// Check intersection between two rectangles
 ////////////////////////////////////////////////////////////
-sfBool sfFloatRect_Intersects(sfFloatRect* rect1, sfFloatRect* rect2, sfFloatRect* intersection)
+sfBool sfFloatRect_Intersects(const sfFloatRect* rect1, const sfFloatRect* rect2, sfFloatRect* intersection)
 {
     CSFML_CHECK_RETURN(rect1, sfFalse)
     CSFML_CHECK_RETURN(rect2, sfFalse)
@@ -94,7 +94,7 @@ sfBool sfFloatRect_Intersects(sfFloatRect* rect1, sfFloatRect* rect2, sfFloatRec
         return SFMLRect1.Intersects(SFMLRect2);
     }
 }
-sfBool sfIntRect_Intersects(sfIntRect* rect1, sfIntRect* rect2, sfIntRect* intersection)
+sfBool sfIntRect_Intersects(const sfIntRect* rect1, const sfIntRect* rect2, sfIntRect* intersection)
 {
     CSFML_CHECK_RETURN(rect1, sfFalse)
     CSFML_CHECK_RETURN(rect2, sfFalse)
