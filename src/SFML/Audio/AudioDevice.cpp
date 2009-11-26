@@ -59,10 +59,6 @@ AudioDevice::AudioDevice()
         {
             // Set the context as the current one (we'll only need one)
             alcMakeContextCurrent(audioContext);
-
-            // Initialize the listener, located at the origin and looking along the Z axis
-            Listener::SetPosition(0.f, 0.f, 0.f);
-            Listener::SetDirection(0.f, 0.f, -1.f);
         }
         else
         {
