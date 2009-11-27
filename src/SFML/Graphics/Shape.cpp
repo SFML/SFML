@@ -351,8 +351,8 @@ void Shape::Render(RenderTarget&, RenderQueue& queue) const
         }
 
         // Close the shape by duplicating the first point at the end
-        unsigned int begin = 0;
-        unsigned int last = (myPoints.size() - 2) * 2;
+        std::size_t begin = 0;
+        std::size_t last = (myPoints.size() - 2) * 2;
         queue.AddTriangle(last, last + 1, begin);
         queue.AddTriangle(begin, last + 1, begin + 1);
     }

@@ -51,7 +51,7 @@ myIndices (NULL)
 
 
 ////////////////////////////////////////////////////////////
-void GeometryRendererIM::Begin(const float* vertices, std::size_t, const unsigned int* indices, std::size_t)
+void GeometryRendererIM::Begin(const float* vertices, std::size_t, const std::size_t* indices, std::size_t)
 {
     // Store the geometry informations for later rendering
     myVertices = vertices;
@@ -70,14 +70,14 @@ void GeometryRendererIM::End()
 void GeometryRendererIM::RenderTriangles(std::size_t start, std::size_t count)
 {
     // Caculate the bounds of the geometry range to render
-    const unsigned int* begin = myIndices + start;
-    const unsigned int* end = begin + count;
+    const std::size_t* begin = myIndices + start;
+    const std::size_t* end = begin + count;
 
     // Begin rendering
     glBegin(GL_TRIANGLES);
 
     // Send the vertices one by one
-    for (const unsigned int* index = begin; index != end; index++)
+    for (const std::size_t* index = begin; index != end; index++)
     {
         const float* vertex = myVertices + *index * 8;
 

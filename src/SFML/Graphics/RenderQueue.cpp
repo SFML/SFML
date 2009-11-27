@@ -259,7 +259,7 @@ void RenderQueue::AddVertex(float x, float y, float u, float v, const Color& col
 
 
 ////////////////////////////////////////////////////////////
-void RenderQueue::AddTriangle(unsigned int index0, unsigned int index1, unsigned int index2)
+void RenderQueue::AddTriangle(std::size_t index0, std::size_t index1, std::size_t index2)
 {
     // Here we choose not to rely on vector::clear and vector::push_back,
     // and to handle resizing and appending manually, for performances reasons

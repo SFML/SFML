@@ -292,7 +292,7 @@ public :
     /// \param index2 Index of the third vertex of the triangle
     ///
     ////////////////////////////////////////////////////////////
-    void AddTriangle(unsigned int index0, unsigned int index1, unsigned int index2);
+	void AddTriangle(std::size_t index0, std::size_t index1, std::size_t index2);
 
     ////////////////////////////////////////////////////////////
     /// \brief Render the content of the whole queue
@@ -330,7 +330,7 @@ private :
     ////////////////////////////////////////////////////////////
     typedef std::vector<priv::Batch>  BatchArray;
     typedef std::vector<float>        VertexArray;
-    typedef std::vector<unsigned int> IndexArray;
+    typedef std::vector<std::size_t>  IndexArray;
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -343,7 +343,7 @@ private :
     Blend::Mode             myCurrentBlendMode;    ///< Current blending mode
     IntRect                 myCurrentViewport;     ///< Current target viewport
     Vector2f                myCurrentViewportSize; ///< Size of the current viewport (for vertex calculations)
-    unsigned int            myBaseIndex;           ///< Base vertex index for the current batch
+    std::size_t             myBaseIndex;           ///< Base vertex index for the current batch
     priv::GeometryRenderer* myRenderer;            ///< Optimized geometry renderer
     priv::Batch*            myCurrentBatch;        ///< Current geometry block
     BatchArray              myBatches;             ///< Blocks of geometry to render

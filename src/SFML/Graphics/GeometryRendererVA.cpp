@@ -51,7 +51,7 @@ myIndices(NULL)
 
 
 ////////////////////////////////////////////////////////////
-void GeometryRendererVA::Begin(const float* vertices, std::size_t verticesCount, const unsigned int* indices, std::size_t)
+void GeometryRendererVA::Begin(const float* vertices, std::size_t verticesCount, const std::size_t* indices, std::size_t)
 {
     static const GLsizei stride = 8 * sizeof(float);
 
@@ -70,7 +70,7 @@ void GeometryRendererVA::Begin(const float* vertices, std::size_t verticesCount,
 
     // Lock (compile) the vertex array if supported
     if (GLEW_EXT_compiled_vertex_array)
-        GLCheck(glLockArraysEXT(0, verticesCount / 8));
+        GLCheck(glLockArraysEXT(0, static_cast<GLsizei>(verticesCount) / 8));
 
     // Store indices for later use
     myIndices = indices;
@@ -89,7 +89,7 @@ void GeometryRendererVA::End()
 ////////////////////////////////////////////////////////////
 void GeometryRendererVA::RenderTriangles(std::size_t start, std::size_t count)
 {
-    GLCheck(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, myIndices + start));
+    GLCheck(glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, myIndices + start));
 }
 
 } // namespace priv

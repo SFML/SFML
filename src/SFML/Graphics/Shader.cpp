@@ -249,7 +249,7 @@ void Shader::Bind() const
     TextureTable::const_iterator it = myTextures.begin();
     for (std::size_t i = 0; i < myTextures.size(); ++i)
     {
-        GLint index = i + 1;
+        GLint index = static_cast<GLsizei>(i + 1);
         GLCheck(glUniform1iARB(it->first, index));
         GLCheck(glActiveTextureARB(GL_TEXTURE0_ARB + index));
         it->second->Bind();
@@ -279,7 +279,7 @@ void Shader::Unbind() const
     // Disable texture units
     for (std::size_t i = 0; i < myTextures.size(); ++i)
     {
-        GLint index = i + 1;
+        GLint index = static_cast<GLsizei>(i + 1);
         GLCheck(glActiveTextureARB(GL_TEXTURE0_ARB + index));
         GLCheck(glBindTexture(GL_TEXTURE_2D, 0));
     }

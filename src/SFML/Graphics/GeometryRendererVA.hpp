@@ -71,7 +71,7 @@ public :
     /// \param indicesCount Number of indices to render
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Begin(const float* vertices, std::size_t verticesCount, const unsigned int* indices, std::size_t indicesCount);
+    virtual void Begin(const float* vertices, std::size_t verticesCount, const std::size_t* indices, std::size_t indicesCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop rendering geometry
@@ -96,7 +96,7 @@ public :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const unsigned int* myIndices; ///< Pointer to the indices to render
+    const std::size_t* myIndices; ///< Pointer to the indices to render
 };
 
 } // namespace priv
