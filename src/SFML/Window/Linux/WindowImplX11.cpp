@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Linux/WindowImplX11.hpp>
-#include <SFML/System/Unicode.hpp>
+#include <SFML/System/Utf.hpp>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
