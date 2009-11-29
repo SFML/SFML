@@ -188,9 +188,6 @@ namespace SFML
 
             #region Imports
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfFont_Create();
-
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfFont_CreateFromFile(string Filename, uint CharSize, IntPtr Charset);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]

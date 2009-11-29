@@ -369,12 +369,6 @@ namespace SFML
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_DrawTextWithShader(IntPtr This, IntPtr String, IntPtr Shader);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern float sfText_GetWidth(IntPtr This);
-
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern float sfText_GetHeight(IntPtr This);
-
             [DllImport("csfml-graphics", CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
             static extern void sfText_SetString(IntPtr This, string Text);
 

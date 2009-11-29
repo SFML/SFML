@@ -124,7 +124,6 @@ EXPORTS
 	sfSprite_GetWidth
 	sfSprite_GetHeight
 	sfSprite_GetPixel
-	sfFont_Create
 	sfFont_CreateFromFile
 	sfFont_CreateFromMemory
 	sfFont_Destroy
