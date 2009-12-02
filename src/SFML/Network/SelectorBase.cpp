@@ -107,11 +107,14 @@ unsigned int SelectorBase::Wait(float timeout)
 ////////////////////////////////////////////////////////////
 SocketHelper::SocketType SelectorBase::GetSocketReady(unsigned int index) const
 {
+    // We have to drop the const for FD_ISSET
+    fd_set* set = const_cast<fd_set*>(&mySetReady);
+
     // The standard FD_xxx interface doesn't define a direct access,
-    // so we must go through the whole set to find the socket we're looking for
+    // so we must iterate through the whole set to find the socket that we're looking for
     for (int i = 0; i < myMaxSocket + 1; ++i)
     {
-        if (FD_ISSET(i, &mySetReady))
+        if (FD_ISSET(i, set))
         {
             // Current socket is ready, but is it the index-th one ?
             if (index > 0)
