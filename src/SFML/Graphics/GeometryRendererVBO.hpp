@@ -103,10 +103,10 @@ public :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint myVertexBuffer;     ///< Identifier of the vertex buffer
-    GLuint myIndexBuffer;      ///< Identifier of the index buffer
-    Uint32 myVertexBufferSize; ///< Size of the vertex buffer
-    Uint32 myIndexBufferSize;  ///< Size of the index buffer
+    GLuint	    myVertexBuffer;     ///< Identifier of the vertex buffer
+    GLuint	    myIndexBuffer;      ///< Identifier of the index buffer
+	std::size_t myVertexBufferSize; ///< Size of the vertex buffer
+    std::size_t myIndexBufferSize;  ///< Size of the index buffer
 };
 
 } // namespace priv

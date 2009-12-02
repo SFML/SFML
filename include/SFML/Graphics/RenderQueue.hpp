@@ -349,8 +349,8 @@ private :
     BatchArray              myBatches;             ///< Blocks of geometry to render
     VertexArray             myVertices;            ///< Geometry to be rendered
     IndexArray              myIndices;             ///< Indices defining the triangles to be rendered
-    std::size_t             myCurrentVertexCount;  ///< Current number of vertices in the vertex array
-    std::size_t             myCurrentIndexCount;   ///< Current number of indices in the index array
+    Uint32					myCurrentVertexCount;  ///< Current number of vertices in the vertex array
+    Uint32					myCurrentIndexCount;   ///< Current number of indices in the index array
 };
 
 } // namespace sf
