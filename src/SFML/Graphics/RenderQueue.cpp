@@ -270,9 +270,9 @@ void RenderQueue::AddTriangle(std::size_t index0, std::size_t index1, std::size_
         myIndices.resize(size + size / 2);
 
     // Copy the index data
-    myIndices[myCurrentIndexCount + 0] = index0 + myBaseIndex;
-    myIndices[myCurrentIndexCount + 1] = index1 + myBaseIndex;
-    myIndices[myCurrentIndexCount + 2] = index2 + myBaseIndex;
+    myIndices[myCurrentIndexCount + 0] = static_cast<Uint32>(index0 + myBaseIndex);
+    myIndices[myCurrentIndexCount + 1] = static_cast<Uint32>(index1 + myBaseIndex);
+    myIndices[myCurrentIndexCount + 2] = static_cast<Uint32>(index2 + myBaseIndex);
 
     // Increase the index count
     myCurrentIndexCount += 3;

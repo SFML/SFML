@@ -62,14 +62,14 @@ bool Batch::Matches(const Image* texture, const Shader* shader, Blend::Mode blen
 
 
 ////////////////////////////////////////////////////////////
-void Batch::Begin(std::size_t index)
+void Batch::Begin(Uint32 index)
 {
     myStart = index;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Batch::End(std::size_t index)
+void Batch::End(Uint32 index)
 {
     myCount = index - myStart;
 }

@@ -75,7 +75,7 @@ public :
     /// \param indicesCount  Number of indices to render
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Begin(const float* vertices, std::size_t verticesCount, const std::size_t* indices, std::size_t indicesCount) = 0;
+    virtual void Begin(const float* vertices, std::size_t verticesCount, const Uint32* indices, std::size_t indicesCount) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop rendering geometry
@@ -95,7 +95,7 @@ public :
     /// \param count Number of indices to be rendered
     ///
     ////////////////////////////////////////////////////////////
-    virtual void RenderTriangles(std::size_t start, std::size_t count) = 0;
+    virtual void RenderTriangles(Uint32 start, Uint32 count) = 0;
 };
 
 } // namespace priv

@@ -78,7 +78,7 @@ public :
     /// \param indicesCount Number of indices to render
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Begin(const float* vertices, std::size_t verticesCount, const std::size_t* indices, std::size_t indicesCount);
+    virtual void Begin(const float* vertices, std::size_t verticesCount, const Uint32* indices, std::size_t indicesCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop rendering geometry
@@ -98,15 +98,15 @@ public :
     /// \param count Number of indices to be rendered
     ///
     ////////////////////////////////////////////////////////////
-    virtual void RenderTriangles(std::size_t start, std::size_t count);
+    virtual void RenderTriangles(Uint32 start, Uint32 count);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint      myVertexBuffer;
-    GLuint      myIndexBuffer;
-    std::size_t myVertexBufferSize;
-    std::size_t myIndexBufferSize;
+    GLuint myVertexBuffer;     ///< Identifier of the vertex buffer
+    GLuint myIndexBuffer;      ///< Identifier of the index buffer
+    Uint32 myVertexBufferSize; ///< Size of the vertex buffer
+    Uint32 myIndexBufferSize;  ///< Size of the index buffer
 };
 
 } // namespace priv

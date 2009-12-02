@@ -64,7 +64,7 @@ GeometryRendererVBO::~GeometryRendererVBO()
 
 
 ////////////////////////////////////////////////////////////
-void GeometryRendererVBO::Begin(const float* vertices, std::size_t verticesCount, const std::size_t* indices, std::size_t indicesCount)
+void GeometryRendererVBO::Begin(const float* vertices, std::size_t verticesCount, const Uint32* indices, std::size_t indicesCount)
 {
     // Update the vertex buffer data (make it grow if it is not large enough)
     GLCheck(glBindBufferARB(GL_ARRAY_BUFFER_ARB, myVertexBuffer));
@@ -82,12 +82,12 @@ void GeometryRendererVBO::Begin(const float* vertices, std::size_t verticesCount
     GLCheck(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, myIndexBuffer));
     if (indicesCount > myIndexBufferSize)
     {
-        GLCheck(glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indicesCount * sizeof(std::size_t), indices, GL_DYNAMIC_DRAW_ARB));
+        GLCheck(glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indicesCount * sizeof(Uint32), indices, GL_DYNAMIC_DRAW_ARB));
         myIndexBufferSize = indicesCount;
     }
     else
     {
-        GLCheck(glBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, indicesCount * sizeof(std::size_t), indices));
+        GLCheck(glBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, indicesCount * sizeof(Uint32), indices));
     }
 
     static const GLsizei stride  = 8 * sizeof(float);
@@ -116,7 +116,7 @@ void GeometryRendererVBO::End()
 
 
 ////////////////////////////////////////////////////////////
-void GeometryRendererVBO::RenderTriangles(std::size_t start, std::size_t count)
+void GeometryRendererVBO::RenderTriangles(Uint32 start, Uint32 count)
 {
     static const std::size_t* pointer = NULL;
     GLCheck(glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, pointer + start));

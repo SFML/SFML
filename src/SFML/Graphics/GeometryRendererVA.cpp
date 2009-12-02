@@ -51,7 +51,7 @@ myIndices(NULL)
 
 
 ////////////////////////////////////////////////////////////
-void GeometryRendererVA::Begin(const float* vertices, std::size_t verticesCount, const std::size_t* indices, std::size_t)
+void GeometryRendererVA::Begin(const float* vertices, std::size_t verticesCount, const Uint32* indices, std::size_t)
 {
     static const GLsizei stride = 8 * sizeof(float);
 
@@ -87,7 +87,7 @@ void GeometryRendererVA::End()
 
 
 ////////////////////////////////////////////////////////////
-void GeometryRendererVA::RenderTriangles(std::size_t start, std::size_t count)
+void GeometryRendererVA::RenderTriangles(Uint32 start, Uint32 count)
 {
     GLCheck(glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, myIndices + start));
 }

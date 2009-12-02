@@ -78,7 +78,7 @@ public :
     /// \param index Start index
     ///
     ////////////////////////////////////////////////////////////
-    void Begin(std::size_t index);
+    void Begin(Uint32 index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Setup the end index of the batch
@@ -86,7 +86,7 @@ public :
     /// \param index End index
     ///
     ////////////////////////////////////////////////////////////
-    void End(std::size_t index);
+    void End(Uint32 index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Render the contents of the batch
@@ -105,8 +105,8 @@ private :
     const Shader* myShader;    ///< Pixel shader used by the batch
     Blend::Mode   myBlendMode; ///< Blending mode used by the batch
     IntRect       myViewport;  ///< Target viewport for the batch
-    std::size_t   myStart;     ///< Index of the first index to render with this batch
-    std::size_t   myCount;     ///< Number of indices to render with this batch
+    Uint32        myStart;     ///< Index of the first index to render with this batch
+    Uint32        myCount;     ///< Number of indices to render with this batch
 };
 
 } // namespace priv
