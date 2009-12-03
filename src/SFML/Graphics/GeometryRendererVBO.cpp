@@ -118,7 +118,7 @@ void GeometryRendererVBO::End()
 ////////////////////////////////////////////////////////////
 void GeometryRendererVBO::RenderTriangles(Uint32 start, Uint32 count)
 {
-    static const std::size_t* pointer = NULL;
+    static const UInt32* pointer = NULL;
     GLCheck(glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, pointer + start));
 }
 
