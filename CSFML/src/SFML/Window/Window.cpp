@@ -133,13 +133,15 @@ unsigned int sfWindow_GetHeight(const sfWindow* window)
 ////////////////////////////////////////////////////////////
 sfContextSettings sfWindow_GetSettings(const sfWindow* window)
 {
-    sfContextSettings settings = {0, 0, 0};
+    sfContextSettings settings = {0, 0, 0, 0, 0};
     CSFML_CHECK_RETURN(window, settings);
 
     const sf::ContextSettings& params = window->This.GetSettings();
     settings.DepthBits         = params.DepthBits;
     settings.StencilBits       = params.StencilBits;
     settings.AntialiasingLevel = params.AntialiasingLevel;
+    settings.MajorVersion      = params.MajorVersion;
+    settings.MinorVersion      = params.MinorVersion;
 
     return settings;
 }

@@ -1,12 +1,14 @@
-LIB     = libcsfml-audio.so
-SRC     = $(wildcard *.cpp)
-OBJ     = $(SRC:.cpp=.o)
-LIBNAME = $(LIBPATH)/$(LIB).$(VERSION)
+LIB         = libcsfml-audio.so
+SRC         = $(wildcard *.cpp)
+OBJ         = $(SRC:.cpp=.o)
+LIBNAME     = $(LIB).$(VERSION)
+FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
+LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
 libcsfml-audio.so: $(OBJ)
-	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIB).$(VERSION) -o $(LIBNAME) $(OBJ) -lsfml-audio
+	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lsfml-audio
 
 $(OBJ): %.o: %.cpp
 	$(CPP) -o $@ -c $< $(CFLAGS)
@@ -17,7 +19,9 @@ clean:
 	@rm -rf $(OBJ)
 
 mrproper: clean
-	@rm -rf $(LIBNAME)
+	@rm -rf $(FULLLIBNAME)
 
 install:
-	@($(CP) $(LIBNAME) $(DESTLIBDIR) && $(LN) $(LNFLAGS) $(LIB).$(VERSION) $(DESTLIBDIR)/$(LIB))
+	objcopy --only-keep-debug $(FULLLIBNAME) $(DESTDBGDIR)/$(LIBNAME)
+	objcopy --strip-unneeded  $(FULLLIBNAME) $(DESTLIBDIR)/$(LIBNAME)
+	$(LINK)

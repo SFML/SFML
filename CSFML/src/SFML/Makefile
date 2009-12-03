@@ -1,6 +1,6 @@
 export CC         = gcc
 export CPP        = g++
-export CFLAGS     = -W -Wall -pedantic -fPIC -Wno-unused -I../.. -I../../../include -DNDEBUG -DCSFML_EXPORTS -O2
+export CFLAGS     = -W -Wall -pedantic -Wno-unused -I../.. -I../../../include -g -O2 -DNDEBUG -fPIC -DCSFML_EXPORTS
 export LDFLAGS    = -shared
 export LIBPATH    = ../../../lib
 export VERSION    = 2.0
@@ -10,6 +10,7 @@ export LNFLAGS    = -s -f
 export DESTDIR    = /usr/local
 export DESTLIBDIR = $(DESTDIR)/lib
 export DESTINCDIR = $(DESTDIR)/include
+export DESTDBGDIR = $(DESTLIBDIR)/debug/$(DESTLIBDIR)
 
 all: csfml-system csfml-window csfml-network csfml-graphics csfml-audio
 
@@ -44,4 +45,4 @@ mrproper: clean
 install:
 	@(mkdir -p $(DESTLIBDIR))
 	@(mkdir -p $(DESTINCDIR))
-	@(cd ./System && $(MAKE) $@	&& cd ../Window && $(MAKE) $@ && cd ../Network && $(MAKE) $@ && cd ../Graphics && $(MAKE) $@ && cd ../Audio && $(MAKE) $@ && $(CP) -r ../../../include/SFML/ $(DESTINCDIR))
+	@(cd ./System && $(MAKE) $@	&& cd ../Window && $(MAKE) $@ && cd ../Network && $(MAKE) $@ && cd ../Graphics && $(MAKE) $@ && cd ../Audio && $(MAKE) $@ && $(CP) -r ../../../include/SFML/ $(DESTINCDIR) && find $(DESTINCDIR)/SFML -name .svn -type d -print0 | xargs -0 /bin/rm -rf)
