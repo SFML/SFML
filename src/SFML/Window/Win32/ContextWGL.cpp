@@ -155,67 +155,75 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
     {
         // Get the wglChoosePixelFormatARB function (it is an extension)
         PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
-
-        // Define the basic attributes we want for our window
-        int intAttributes[] =
+        if (wglChoosePixelFormatARB)
         {
-            WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-		    WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-		    WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
-		    WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
-            WGL_SAMPLE_BUFFERS_ARB, (mySettings.AntialiasingLevel ? GL_TRUE : GL_FALSE),
-		    WGL_SAMPLES_ARB,        mySettings.AntialiasingLevel,
-		    0,                      0
-        };
-
-        // Let's check how many formats are supporting our requirements
-        int   formats[128];
-	    UINT  nbFormats;
-	    float floatAttributes[] = {0, 0};
-	    bool  isValid = wglChoosePixelFormatARB(myDeviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
-        if (!isValid || (nbFormats == 0))
-        {
-            if (mySettings.AntialiasingLevel > 2)
+            // Define the basic attributes we want for our window
+            int intAttributes[] =
             {
-                // No format matching our needs : reduce the multisampling level
-                std::cerr << "Failed to find a pixel format supporting "
-                          << mySettings.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
+                WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+		        WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+		        WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
+		        WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
+                WGL_SAMPLE_BUFFERS_ARB, (mySettings.AntialiasingLevel ? GL_TRUE : GL_FALSE),
+		        WGL_SAMPLES_ARB,        mySettings.AntialiasingLevel,
+		        0,                      0
+            };
 
-                mySettings.AntialiasingLevel = intAttributes[11] = 2;
-	            isValid = wglChoosePixelFormatARB(myDeviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
-            }
-
+            // Let's check how many formats are supporting our requirements
+            int   formats[128];
+	        UINT  nbFormats;
+	        float floatAttributes[] = {0, 0};
+	        bool  isValid = wglChoosePixelFormatARB(myDeviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
             if (!isValid || (nbFormats == 0))
             {
-                // Cannot find any pixel format supporting multisampling ; disabling antialiasing
-                std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
-                mySettings.AntialiasingLevel = 0;
-            }
-        }
-
-        // Get the best format among the returned ones
-        if (isValid && (nbFormats > 0))
-        {
-            int bestScore = 0xFFFF;
-            for (UINT i = 0; i < nbFormats; ++i)
-            {
-                // Get the current format's attributes
-                PIXELFORMATDESCRIPTOR attributes;
-                attributes.nSize    = sizeof(attributes);
-                attributes.nVersion = 1;
-                DescribePixelFormat(myDeviceContext, formats[i], sizeof(attributes), &attributes);
-
-                // Evaluate the current configuration
-                int color = attributes.cRedBits + attributes.cGreenBits + attributes.cBlueBits + attributes.cAlphaBits;
-                int score = EvaluateFormat(bitsPerPixel, mySettings, color, attributes.cDepthBits, attributes.cStencilBits, mySettings.AntialiasingLevel);
-
-                // Keep it if it's better than the current best
-                if (score < bestScore)
+                if (mySettings.AntialiasingLevel > 2)
                 {
-                    bestScore  = score;
-                    bestFormat = formats[i];
+                    // No format matching our needs : reduce the multisampling level
+                    std::cerr << "Failed to find a pixel format supporting "
+                              << mySettings.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
+
+                    mySettings.AntialiasingLevel = intAttributes[11] = 2;
+	                isValid = wglChoosePixelFormatARB(myDeviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
+                }
+
+                if (!isValid || (nbFormats == 0))
+                {
+                    // Cannot find any pixel format supporting multisampling ; disabling antialiasing
+                    std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
+                    mySettings.AntialiasingLevel = 0;
                 }
             }
+
+            // Get the best format among the returned ones
+            if (isValid && (nbFormats > 0))
+            {
+                int bestScore = 0xFFFF;
+                for (UINT i = 0; i < nbFormats; ++i)
+                {
+                    // Get the current format's attributes
+                    PIXELFORMATDESCRIPTOR attributes;
+                    attributes.nSize    = sizeof(attributes);
+                    attributes.nVersion = 1;
+                    DescribePixelFormat(myDeviceContext, formats[i], sizeof(attributes), &attributes);
+
+                    // Evaluate the current configuration
+                    int color = attributes.cRedBits + attributes.cGreenBits + attributes.cBlueBits + attributes.cAlphaBits;
+                    int score = EvaluateFormat(bitsPerPixel, mySettings, color, attributes.cDepthBits, attributes.cStencilBits, mySettings.AntialiasingLevel);
+
+                    // Keep it if it's better than the current best
+                    if (score < bestScore)
+                    {
+                        bestScore  = score;
+                        bestFormat = formats[i];
+                    }
+                }
+            }
+        }
+        else
+        {
+            // wglChoosePixelFormatARB not supported ; disabling antialiasing
+            std::cerr << "Antialiasing is not supported ; it will be disabled" << std::endl;
+            mySettings.AntialiasingLevel = 0;
         }
     }
 
@@ -262,15 +270,15 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
     HGLRC sharedContext = shared ? shared->myContext : NULL;
 
     // Create the OpenGL context -- first try an OpenGL 3.0 context if it is requested
-    if (settings.MajorVersion >= 3)
+    while (mySettings.MajorVersion >= 3)
     {
         PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
         if (wglCreateContextAttribsARB)
         {
             int attributes[] =
             {
-                WGL_CONTEXT_MAJOR_VERSION_ARB, settings.MajorVersion,
-                WGL_CONTEXT_MINOR_VERSION_ARB, settings.MinorVersion,
+                WGL_CONTEXT_MAJOR_VERSION_ARB, mySettings.MajorVersion,
+                WGL_CONTEXT_MINOR_VERSION_ARB, mySettings.MinorVersion,
                 0, 0
             };
             myContext = wglCreateContextAttribsARB(myDeviceContext, sharedContext, attributes);
@@ -279,8 +287,16 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
         // If we couldn't create an OpenGL 3 context, adjust the settings
         if (!myContext)
         {
-            mySettings.MajorVersion = 2;
-            mySettings.MinorVersion = 0;
+            if (mySettings.MinorVersion > 0)
+            {
+                // If the minor version is not 0, we decrease it and try again
+                mySettings.MinorVersion--;
+            }
+            else
+            {
+                // If the minor version is 0, we decrease the major version and stop with 3.x contexts
+                mySettings.MajorVersion = 2;
+            }
         }
     }
 

@@ -247,7 +247,7 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     GLXContext toShare = shared ? shared->myContext : NULL;
 
     // Create the OpenGL context -- first try an OpenGL 3.0 context if it is requested
-    if (settings.MajorVersion >= 3)
+    while (mySettings.MajorVersion >= 3)
     {
         const GLubyte* name = reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB");
         PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = reinterpret_cast<PFNGLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(name));
@@ -260,8 +260,8 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
                 // Create the context
                 int attributes[] =
                 {
-                    GLX_CONTEXT_MAJOR_VERSION_ARB, settings.MajorVersion,
-                    GLX_CONTEXT_MINOR_VERSION_ARB, settings.MinorVersion,
+                    GLX_CONTEXT_MAJOR_VERSION_ARB, mySettings.MajorVersion,
+                    GLX_CONTEXT_MINOR_VERSION_ARB, mySettings.MinorVersion,
                     0, 0
                 };
                 myContext = glXCreateContextAttribsARB(myDisplay, configs[0], toShare, true, attributes);
@@ -271,8 +271,16 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
         // If we couldn't create an OpenGL 3 context, adjust the settings
         if (!myContext)
         {
-            mySettings.MajorVersion = 2;
-            mySettings.MinorVersion = 0;
+            if (mySettings.MinorVersion > 0)
+            {
+                // If the minor version is not 0, we decrease it and try again
+                mySettings.MinorVersion--;
+            }
+            else
+            {
+                // If the minor version is 0, we decrease the major version and stop with 3.x contexts
+                mySettings.MajorVersion = 2;
+            }
         }
     }
 
