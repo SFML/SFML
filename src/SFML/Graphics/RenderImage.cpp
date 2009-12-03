@@ -72,8 +72,8 @@ bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuff
         return false;
     }
 
-    // Disable smoothing -- we don't want to alter the original rendering
-    myImage.SetSmooth(false);
+    // We disable smoothing by default for render images
+    SetSmooth(false);
 
     // Create the implementation
     delete myRenderImage;
@@ -96,6 +96,24 @@ bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuff
     RenderTarget::Initialize();
 
     return true;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Enable or disable image smoothing filter
+////////////////////////////////////////////////////////////
+void RenderImage::SetSmooth(bool smooth)
+{
+    myImage.SetSmooth(smooth);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Tells whether the smooth filtering is enabled or not
+////////////////////////////////////////////////////////////
+bool RenderImage::IsSmooth() const
+{
+    return myImage.IsSmooth();
 }
 
 

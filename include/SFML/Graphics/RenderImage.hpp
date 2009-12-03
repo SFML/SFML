@@ -73,6 +73,23 @@ public :
     bool Create(unsigned int width, unsigned int height, bool depthBuffer = false);
 
     ////////////////////////////////////////////////////////////
+    /// Enable or disable image smooth filter.
+    /// This parameter is enabled by default
+    ///
+    /// \param smooth : True to enable smoothing filter, false to disable it
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetSmooth(bool smooth);
+
+    ////////////////////////////////////////////////////////////
+    /// Tells whether the smooth filtering is enabled or not
+    ///
+    /// \return True if image smoothing is enabled
+    ///
+    ////////////////////////////////////////////////////////////
+    bool IsSmooth() const;
+
+    ////////////////////////////////////////////////////////////
     /// Activate of deactivate the render-image as the current target
     /// for rendering
     ///
