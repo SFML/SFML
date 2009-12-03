@@ -60,16 +60,25 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// This default constructor doesn't create the window,
-    /// you must call Create() to do so.
-    /// If \a style contains Style::Fullscreen, then \a mode
-    /// must be a valid video mode.
+    /// This constructor doesn't actually create the window,
+    /// use the other constructors or call Create to do so.
     ///
     ////////////////////////////////////////////////////////////
     Window();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a new window
+    ///
+    /// This constructor creates the window with the size and pixel
+    /// depth defined in \a mode. An optional style can be passed to
+    /// customize the look and behaviour of the window (borders,
+    /// title bar, resizable, closable, ...). If \a style contains
+    /// Style::Fullscreen, then \a mode must be a valid video mode.
+    ///
+    /// The fourth parameter is an optional structure specifying
+    /// advanced OpenGL context settings such as antialiasing,
+    /// depth-buffer bits, etc. You shouldn't care about these
+    /// parameters for a regular usage of the graphics module.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
@@ -84,6 +93,11 @@ public :
     ///
     /// Use this constructor if you want to create an OpenGL
     /// rendering area into an already existing control.
+    ///
+    /// The fourth parameter is an optional structure specifying
+    /// advanced OpenGL context settings such as antialiasing,
+    /// depth-buffer bits, etc. You shouldn't care about these
+    /// parameters for a regular usage of the graphics module.
     ///
     /// \param handle   Platform-specific handle of the control
     /// \param settings Additional settings for the underlying OpenGL context

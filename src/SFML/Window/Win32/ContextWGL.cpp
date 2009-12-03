@@ -270,7 +270,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
     HGLRC sharedContext = shared ? shared->myContext : NULL;
 
     // Create the OpenGL context -- first try an OpenGL 3.0 context if it is requested
-    while (mySettings.MajorVersion >= 3)
+    while (!myContext && (mySettings.MajorVersion >= 3))
     {
         PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
         if (wglCreateContextAttribsARB)

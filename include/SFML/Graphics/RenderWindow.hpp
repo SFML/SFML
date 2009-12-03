@@ -37,49 +37,77 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Simple wrapper for sf::Window that allows easy
-/// 2D rendering
+/// \brief Window that can serve as a target for 2D drawing
+///
 ////////////////////////////////////////////////////////////
 class SFML_API RenderWindow : public Window, public RenderTarget
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
+    ///
+    /// This constructor doesn't actually create the window,
+    /// use the other constructors or call Create to do so.
     ///
     ////////////////////////////////////////////////////////////
     RenderWindow();
 
     ////////////////////////////////////////////////////////////
-    /// Construct the window
+    /// \brief Construct a new window
     ///
-    /// \param mode :     Video mode to use
-    /// \param title :    Title of the window
-    /// \param style :    Window style
-    /// \param settings : Additional settings for the underlying OpenGL context
+    /// This constructor creates the window with the size and pixel
+    /// depth defined in \a mode. An optional style can be passed to
+    /// customize the look and behaviour of the window (borders,
+    /// title bar, resizable, closable, ...).
+    ///
+    /// The fourth parameter is an optional structure specifying
+    /// advanced OpenGL context settings such as antialiasing,
+    /// depth-buffer bits, etc. You shouldn't care about these
+    /// parameters for a regular usage of the graphics module.
+    ///
+    /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title    Title of the window
+    /// \param style    Window style
+    /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
     RenderWindow(VideoMode mode, const std::string& title, unsigned long style = Style::Resize | Style::Close, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
-    /// Construct the window from an existing control
+    /// \brief Construct the window from an existing control
     ///
-    /// \param handle :   Platform-specific handle of the control
-    /// \param settings : Additional settings for the underlying OpenGL context (see default constructor for default values)
+    /// Use this constructor if you want to create an SFML
+    /// rendering area into an already existing control.
+    ///
+    /// The fourth parameter is an optional structure specifying
+    /// advanced OpenGL context settings such as antialiasing,
+    /// depth-buffer bits, etc. You shouldn't care about these
+    /// parameters for a regular usage of the graphics module.
+    ///
+    /// \param handle   Platform-specific handle of the control
+    /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
     RenderWindow(WindowHandle handle, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
+    ///
+    /// Closes the window and free all the resources attached to it.
     ///
     ////////////////////////////////////////////////////////////
     virtual ~RenderWindow();
 
     ////////////////////////////////////////////////////////////
-    /// Get the width of the rendering region of the window
+    /// \brief Get the width of the rendering region of the window
+    ///
+    /// The width doesn't include the titlebar and borders
+    /// of the window.
     ///
     /// \return Width in pixels
+    ///
+    /// \see GetHeight
     ///
     ////////////////////////////////////////////////////////////
     virtual unsigned int GetWidth() const;
@@ -87,7 +115,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// Get the height of the rendering region of the window
     ///
+    /// The height doesn't include the titlebar and borders
+    /// of the window.
+    ///
     /// \return Height in pixels
+    ///
+    /// \see GetWidth
     ///
     ////////////////////////////////////////////////////////////
     virtual unsigned int GetHeight() const;
@@ -95,19 +128,31 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// /see Window::OnCreate
+    /// \brief Function called after the window has been created
+    ///
+    /// This function is called so that derived classes can
+    /// perform their own specific initialization as soon as
+    /// the window is created.
     ///
     ////////////////////////////////////////////////////////////
     virtual void OnCreate();
 
     ////////////////////////////////////////////////////////////
-    /// /see Window::OnDisplay
+    /// \brief Function called before the window is displayed
+    ///
+    /// This function is called so that derived classes can
+    /// perform their own specific tasks right before the
+    /// rendered contents are displayed on screen.
     ///
     ////////////////////////////////////////////////////////////
     virtual void OnDisplay();
 
     ////////////////////////////////////////////////////////////
-    /// /see RenderTarget::Activate
+    /// \brief Activate the target for rendering
+    ///
+    /// \param active True to activate rendering, false to deactivate
+    ///
+    /// \return True if activation succeeded
     ///
     ////////////////////////////////////////////////////////////
     virtual bool Activate(bool active);
@@ -117,3 +162,115 @@ private :
 
 
 #endif // SFML_RENDERWINDOW_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::RenderWindow
+///
+/// sf::RenderWindow is the main class of the Graphics module.
+/// It defines an OS window that can be painted using the other
+/// classes of the graphics module.
+///
+/// sf::RenderWindow is derived from sf::Window, thus it inherits
+/// all its features: mouse/keyboard/joystick input, events, window
+/// handling, OpenGL rendering, etc. See the documentation of
+/// sf::Window for a more complete description of all these features
+/// and code samples.
+///
+/// On top of that, sf::RenderWindow adds more features related to
+/// 2D drawing with the graphics module, so that you don't need
+/// to use OpenGL to draw things. You can clear the window, and draw
+/// sprites, shapes or text. Here is a typical rendering / event loop
+/// with a sf::RenderWindow:
+///
+/// \code
+/// // Declare and create a new render-window
+/// sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+///
+/// // Limit the framerate to 60 frames per second (this step is optional)
+/// window.SetFramerateLimit(60);
+///
+/// // The main loop - ends as soon as the window is closed
+/// while (window.IsOpened())
+/// {
+///    // Event processing
+///    sf::Event event;
+///    while (window.GetEvent(event))
+///    {
+///        // Request for closing the window
+///        if (event.Type == sf::Event::Closed)
+///            window.Close();
+///    }
+///
+///    // Clear the whole window before rendering a new frame
+///    window.Clear();
+///
+///    // Draw some sprites / shapes / texts
+///    window.Draw(sprite);  // sprite is a sf::Sprite
+///    window.Draw(shape);   // shape is a sf::Shape
+///    window.Draw(text);    // text is a sf::Text
+///
+///    // End the current frame and display its contents on screen
+///    window.Display();
+/// }
+/// \endcode
+///
+/// A sf::RenderWindow is also able to use views (sf::View),
+/// which are a kind of 2D cameras. With views you can scroll,
+/// rotate or zoom everything that is drawn to the window globally,
+/// without having to transform every single entity. See the
+/// documentation of sf::View for more details and sample pieces of
+/// code about this class.
+///
+/// Like sf::Window, sf::RenderWindow is still able to render direct
+/// OpenGL stuff. It is even possible to mix together OpenGL calls
+/// and regular SFML drawing commands. No particular setup is required,
+/// all you have to do is to call Flush() whenever you want to make
+/// sure that your SFML entities (sprites, shapes or texts) are
+/// actually drawn to the window, so that your OpenGL commands will draw
+/// on top of them (otherwise the rendering may be delayed internally by SFML,
+/// and probably happen *after* your OpenGL calls).
+///
+/// \code
+/// // Create the render window
+/// sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL");
+///
+/// // Create a sprite and a text to display
+/// sf::Sprite sprite;
+/// sf::Text text;
+/// ...
+///
+/// // Perform OpenGL initializations
+/// glMatrixMode(GL_PROJECTION);
+/// ...
+///
+/// // Start the rendering loop
+/// while (window.IsOpened())
+/// {
+///     // Process events
+///     ...
+///
+///     // Draw a background sprite
+///     window.Draw(sprite);
+///
+///     // Flush the window, to make sure that the OpenGL object
+///     // will be rendered on top of the background sprite
+///     window.Flush();
+///
+///     // Draw a 3D object using OpenGL
+///     glBegin(GL_QUADS);
+///         glVertex3f(...);
+///         ...
+///     glEnd();
+///
+///     // Draw text on top of the 3D object
+///     window.Draw(text);
+///
+///     // Finally, display the rendered frame on screen
+///     window.Display();
+/// }
+/// \endcode
+///
+/// \see sf::Window, sf::RenderTarget, sf::RenderImage, sf::View
+///
+////////////////////////////////////////////////////////////

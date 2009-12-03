@@ -34,26 +34,29 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Color is an utility class for manipulating
-/// 32-bits RGBA colors
+/// \brief Utility class for manpulating RGBA colors
+///
 ////////////////////////////////////////////////////////////
 class SFML_API Color
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
+    ///
+    /// Constructs an opaque black color. It is equivalent to
+    /// sf::Color(0, 0, 0, 255).
     ///
     ////////////////////////////////////////////////////////////
     Color();
 
     ////////////////////////////////////////////////////////////
-    /// Construct the color from its 4 RGBA components
+    /// \brief Construct the color from its 4 RGBA components
     ///
-    /// \param red :   Red component   (0 .. 255)
-    /// \param green : Green component (0 .. 255)
-    /// \param blue :  Blue component  (0 .. 255)
-    /// \param alpha : Alpha (opacity) component (0 .. 255)
+    /// \param red   Red component (in the range [0, 255])
+    /// \param green Green component (in the range [0, 255])
+    /// \param blue  Blue component (in the range [0, 255])
+    /// \param alpha Alpha (opacity) component (in the range [0, 255])
     ///
     ////////////////////////////////////////////////////////////
     Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255);
@@ -76,71 +79,93 @@ public :
     Uint8 r; ///< Red component
     Uint8 g; ///< Green component
     Uint8 b; ///< Blue component
-    Uint8 a; ///< Alpha (transparency) component
+    Uint8 a; ///< Alpha (opacity) component
 };
 
 ////////////////////////////////////////////////////////////
-/// Compare two colors (for equality)
+/// \brief Overload of the == operator
 ///
-/// \param left :  Left operand
-/// \param right : Right operand
+/// This operator compares two colors and check if they are equal.
 ///
-/// \return True if colors are equal
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return True if colors are equal, false if they are different
 ///
 ////////////////////////////////////////////////////////////
 SFML_API bool operator ==(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
-/// Compare two colors (for difference)
+/// \brief Overload of the != operator
 ///
-/// \param left :  Left operand
-/// \param right : Right operand
+/// This operator compares two colors and check if they are different.
 ///
-/// \return True if colors are different
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return True if colors are different, false if they are equal
 ///
 ////////////////////////////////////////////////////////////
 SFML_API bool operator !=(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
-/// Operator + overload to add two colors
+/// \brief Overload of the binary + operator
 ///
-/// \param left :  Left operand
-/// \param right : Right operand
+/// This operator returns the component-wise sum of two colors.
+/// Components that exceed 255 are clamped to 255.
 ///
-/// \return Component-wise saturated addition of the two colors
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Result of \a left + \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_API Color operator +(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
-/// Operator * overload to modulate two colors
+/// \brief Overload of the binary * operator
 ///
-/// \param left :  Left operand
-/// \param right : Right operand
+/// This operator returns the component-wise multiplication
+/// (also called "modulation") of two colors.
+/// Components are then divided by 255 so that the result is
+/// still in the range [0, 255].
 ///
-/// \return Component-wise multiplication of the two colors
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Result of \a left * \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_API Color operator *(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
-/// Operator += overload to add a color
+/// \brief Overload of the binary += operator
 ///
-/// \param left :  Left operand
-/// \param right : Right operand
+/// This operator computes the component-wise sum of two colors,
+/// and assigns the result to the left operand.
+/// Components that exceed 255 are clamped to 255.
 ///
-/// \return Component-wise saturated addition of the two colors
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Reference to \a left
 ///
 ////////////////////////////////////////////////////////////
 SFML_API Color& operator +=(Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
-/// Operator *= overload to modulate a color
+/// \brief Overload of the binary *= operator
 ///
-/// \param left :  Left operand
-/// \param right : Right operand
+/// This operator returns the component-wise multiplication
+/// (also called "modulation") of two colors, and assigns
+/// the result to the left operand.
+/// Components are then divided by 255 so that the result is
+/// still in the range [0, 255].
 ///
-/// \return Component-wise multiplication of the two colors
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Reference to \a left
 ///
 ////////////////////////////////////////////////////////////
 SFML_API Color& operator *=(Color& left, const Color& right);
@@ -149,3 +174,46 @@ SFML_API Color& operator *=(Color& left, const Color& right);
 
 
 #endif // SFML_COLOR_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Color
+///
+/// sf::Color is a simple color class composed of 4 components:
+/// \li Red
+/// \li Green
+/// \li Blue
+/// \li Alpha (opacity)
+///
+/// Each component is a public member, an unsigned integer in
+/// the range [0, 255]. Thus, colors can be constructed and
+/// manipulated very easily:
+///
+/// \code
+/// sf::Color c1(255, 0, 0); // red
+/// c1.red = 0;              // make it black
+/// c1.blue = 128;           // make it dark blue
+/// \endcode
+///
+/// The fourth component of colors, named "alpha", represents
+/// the opacity of the color. A color with an alpha value of
+/// 255 will be fully opaque, while an alpha value of 0 will
+/// make a color fully transparent, whatever the value of the
+/// other components.
+///
+/// The most common colors are already defined as static variables:
+/// \code
+/// sf::Color black   = sf::Color::Black;
+/// sf::Color white   = sf::Color::White;
+/// sf::Color red     = sf::Color::Red;
+/// sf::Color green   = sf::Color::Green;
+/// sf::Color blue    = sf::Color::Blue;
+/// sf::Color yellow  = sf::Color::Yellow;
+/// sf::Color magenta = sf::Color::Magenta;
+/// sf::Color cyan    = sf::Color::Cyan;
+/// \endcode
+///
+/// Colors can also be added and modulated (multiplied) using the
+/// overloaded operators + and *.
+///
+////////////////////////////////////////////////////////////
