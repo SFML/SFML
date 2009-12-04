@@ -213,7 +213,7 @@ void Text::Render(RenderTarget&, RenderQueue& queue) const
         return;
 
     // Set the scaling factor to get the actual size
-    float charSize =  static_cast<float>(myFont->GetCharacterSize());
+    float charSize = static_cast<float>(myFont->GetCharacterSize());
     float factor   = mySize / charSize;
 
     // Bind the font texture

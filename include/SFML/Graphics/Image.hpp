@@ -260,14 +260,22 @@ public :
     FloatRect GetTexCoords(const IntRect& rectangle) const;
 
     ////////////////////////////////////////////////////////////
-    /// Get a valid texture size according to hardware support
+    /// Get the maximum image size according to hardware support
+    ///
+    /// \return Maximum size allowed for images, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    static unsigned int GetMaximumSize();
+
+    ////////////////////////////////////////////////////////////
+    /// Get a valid image size according to hardware support
     ///
     /// \param Size : size to convert
     ///
     /// \return Valid nearest size (greater than or equal to specified size)
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int GetValidTextureSize(unsigned int size);
+    static unsigned int GetValidSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
     /// Assignment operator

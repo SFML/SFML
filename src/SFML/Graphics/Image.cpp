@@ -577,9 +577,21 @@ FloatRect Image::GetTexCoords(const IntRect& rect) const
 
 
 ////////////////////////////////////////////////////////////
-/// Get a valid texture size according to hardware support
+/// Get the maximum image size according to hardware support
 ////////////////////////////////////////////////////////////
-unsigned int Image::GetValidTextureSize(unsigned int size)
+unsigned int Image::GetMaximumSize()
+{
+    GLint size;
+    GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
+
+    return static_cast<unsigned int>(size);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Get a valid image size according to hardware support
+////////////////////////////////////////////////////////////
+unsigned int Image::GetValidSize(unsigned int size)
 {
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
@@ -633,15 +645,17 @@ bool Image::CreateTexture()
         return false;
 
     // Adjust internal texture dimensions depending on NPOT textures support
-    unsigned int textureWidth  = GetValidTextureSize(myWidth);
-    unsigned int textureHeight = GetValidTextureSize(myHeight);
+    unsigned int textureWidth  = GetValidSize(myWidth);
+    unsigned int textureHeight = GetValidSize(myHeight);
 
     // Check the maximum texture size
-    GLint maxSize;
-    GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize));
-    if ((textureWidth > static_cast<unsigned int>(maxSize)) || (textureHeight > static_cast<unsigned int>(maxSize)))
+    unsigned int maxSize = GetMaximumSize();
+    if ((textureWidth > maxSize) || (textureHeight > maxSize))
     {
-        std::cerr << "Failed to create image, its internal size is too high (" << textureWidth << "x" << textureHeight << ")" << std::endl;
+        std::cerr << "Failed to create image, its internal size is too high "
+                  << "(" << textureWidth << "x" << textureHeight << ", "
+                  << "maximum is " << maxSize << "x" << maxSize << ")"
+                  << std::endl;
         return false;
     }
 

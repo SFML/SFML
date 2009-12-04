@@ -167,18 +167,17 @@ bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, u
 FT_Error FontLoader::CreateBitmapFont(FT_Face face, unsigned int charSize, const String& charset, Font& font)
 {
     // Let's find how many characters to put in each row to make them fit into a squared texture
-    GLint maxSize;
-    GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize));
+    unsigned int maxSize = Image::GetMaximumSize();
     int nbChars = static_cast<int>(sqrt(static_cast<double>(charset.GetSize())) * 0.75);
 
     // Clamp the character size to make sure we won't create a texture too big
-    if (nbChars * charSize >= static_cast<unsigned int>(maxSize))
+    if (nbChars * charSize >= maxSize)
         charSize = maxSize / nbChars;
 
     // Initialize the dimensions
     unsigned int left      = 0;
     unsigned int top       = 0;
-    unsigned int texWidth  = Image::GetValidTextureSize(charSize * nbChars);
+    unsigned int texWidth  = Image::GetValidSize(charSize * nbChars);
     unsigned int texHeight = charSize * nbChars;
     std::vector<unsigned int> tops(texWidth, 0);
 
@@ -514,18 +513,17 @@ bool FontLoader::LoadFontFromFile(const std::string& filename, unsigned int char
 bool FontLoader::LoadFontFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, const String& charset, Font& font)
 {
     // Let's find how many characters to put in each row to make them fit into a squared texture
-    GLint maxSize;
-    GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize));
+    unsigned int maxSize = Image::GetMaximumSize();
     int nbChars = static_cast<int>(sqrt(static_cast<double>(charset.GetSize())) * 0.75);
 
     // Clamp the character size to make sure we won't create a texture too big
-    if (nbChars * charSize >= static_cast<unsigned int>(maxSize))
+    if (nbChars * charSize >= maxSize)
         charSize = maxSize / nbChars;
 
     // Initialize the dimensions
     unsigned int left      = 0;
     unsigned int top       = 0;
-    unsigned int texWidth  = Image::GetValidTextureSize(charSize * nbChars);
+    unsigned int texWidth  = Image::GetValidSize(charSize * nbChars);
     unsigned int texHeight = charSize * nbChars;
     std::vector<unsigned int> tops(texWidth, 0);
 
