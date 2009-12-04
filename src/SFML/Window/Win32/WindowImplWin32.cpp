@@ -514,67 +514,75 @@ void WindowImplWin32::CreateContext(const VideoMode& Mode, WindowSettings& Param
     {
         // Get the wglChoosePixelFormatARB function (it is an extension)
         PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
-
-        // Define the basic attributes we want for our window
-        int IntAttributes[] =
+        if (wglChoosePixelFormatARB)
         {
-            WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-		    WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-		    WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
-		    WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
-            WGL_SAMPLE_BUFFERS_ARB, (Params.AntialiasingLevel ? GL_TRUE : GL_FALSE),
-		    WGL_SAMPLES_ARB,        Params.AntialiasingLevel,
-		    0,                      0
-        };
-
-        // Let's check how many formats are supporting our requirements
-        int   Formats[128];
-	    UINT  NbFormats;
-	    float FloatAttributes[] = {0, 0};
-	    bool  IsValid = wglChoosePixelFormatARB(myDeviceContext, IntAttributes, FloatAttributes, sizeof(Formats) / sizeof(*Formats), Formats, &NbFormats) != 0;
-        if (!IsValid || (NbFormats == 0))
-        {
-            if (Params.AntialiasingLevel > 2)
+            // Define the basic attributes we want for our window
+            int IntAttributes[] =
             {
-                // No format matching our needs : reduce the multisampling level
-                std::cerr << "Failed to find a pixel format supporting "
-                          << Params.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
+                WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+		        WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+		        WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
+		        WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
+                WGL_SAMPLE_BUFFERS_ARB, (Params.AntialiasingLevel ? GL_TRUE : GL_FALSE),
+		        WGL_SAMPLES_ARB,        Params.AntialiasingLevel,
+		        0,                      0
+            };
 
-                Params.AntialiasingLevel = IntAttributes[11] = 2;
-	            IsValid = wglChoosePixelFormatARB(myDeviceContext, IntAttributes, FloatAttributes, sizeof(Formats) / sizeof(*Formats), Formats, &NbFormats) != 0;
-            }
-
+            // Let's check how many formats are supporting our requirements
+            int   Formats[128];
+	        UINT  NbFormats;
+	        float FloatAttributes[] = {0, 0};
+	        bool  IsValid = wglChoosePixelFormatARB(myDeviceContext, IntAttributes, FloatAttributes, sizeof(Formats) / sizeof(*Formats), Formats, &NbFormats) != 0;
             if (!IsValid || (NbFormats == 0))
             {
-                // Cannot find any pixel format supporting multisampling ; disabling antialiasing
-                std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
-                Params.AntialiasingLevel = 0;
-            }
-        }
-
-        // Get the best format among the returned ones
-        if (IsValid && (NbFormats > 0))
-        {
-            int BestScore = 0xFFFF;
-            for (UINT i = 0; i < NbFormats; ++i)
-            {
-                // Get the current format's attributes
-                PIXELFORMATDESCRIPTOR Attribs;
-                Attribs.nSize    = sizeof(PIXELFORMATDESCRIPTOR);
-                Attribs.nVersion = 1;
-                DescribePixelFormat(myDeviceContext, Formats[i], sizeof(PIXELFORMATDESCRIPTOR), &Attribs);
-
-                // Evaluate the current configuration
-                int Color = Attribs.cRedBits + Attribs.cGreenBits + Attribs.cBlueBits + Attribs.cAlphaBits;
-                int Score = EvaluateConfig(Mode, Params, Color, Attribs.cDepthBits, Attribs.cStencilBits, Params.AntialiasingLevel);
-
-                // Keep it if it's better than the current best
-                if (Score < BestScore)
+                if (Params.AntialiasingLevel > 2)
                 {
-                    BestScore  = Score;
-                    BestFormat = Formats[i];
+                    // No format matching our needs : reduce the multisampling level
+                    std::cerr << "Failed to find a pixel format supporting "
+                              << Params.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
+
+                    Params.AntialiasingLevel = IntAttributes[11] = 2;
+	                IsValid = wglChoosePixelFormatARB(myDeviceContext, IntAttributes, FloatAttributes, sizeof(Formats) / sizeof(*Formats), Formats, &NbFormats) != 0;
+                }
+
+                if (!IsValid || (NbFormats == 0))
+                {
+                    // Cannot find any pixel format supporting multisampling ; disabling antialiasing
+                    std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
+                    Params.AntialiasingLevel = 0;
                 }
             }
+
+            // Get the best format among the returned ones
+            if (IsValid && (NbFormats > 0))
+            {
+                int BestScore = 0xFFFF;
+                for (UINT i = 0; i < NbFormats; ++i)
+                {
+                    // Get the current format's attributes
+                    PIXELFORMATDESCRIPTOR Attribs;
+                    Attribs.nSize    = sizeof(PIXELFORMATDESCRIPTOR);
+                    Attribs.nVersion = 1;
+                    DescribePixelFormat(myDeviceContext, Formats[i], sizeof(PIXELFORMATDESCRIPTOR), &Attribs);
+
+                    // Evaluate the current configuration
+                    int Color = Attribs.cRedBits + Attribs.cGreenBits + Attribs.cBlueBits + Attribs.cAlphaBits;
+                    int Score = EvaluateConfig(Mode, Params, Color, Attribs.cDepthBits, Attribs.cStencilBits, Params.AntialiasingLevel);
+
+                    // Keep it if it's better than the current best
+                    if (Score < BestScore)
+                    {
+                        BestScore  = Score;
+                        BestFormat = Formats[i];
+                    }
+                }
+            }
+        }
+        else
+        {
+            // wglChoosePixelFormatARB not supported ; disabling antialiasing
+            std::cerr << "Antialiasing is not supported ; it will be disabled" << std::endl;
+            Params.AntialiasingLevel = 0;
         }
     }
 
