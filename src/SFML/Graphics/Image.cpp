@@ -83,42 +83,6 @@ Resource<Image>(copy)
 
 
 ////////////////////////////////////////////////////////////
-/// Construct an empty image
-////////////////////////////////////////////////////////////
-Image::Image(unsigned int width, unsigned int height, const Color& color) :
-myWidth            (0),
-myHeight           (0),
-myTextureWidth     (0),
-myTextureHeight    (0),
-myTexture          (0),
-myIsSmooth         (true),
-myNeedTextureUpdate(false),
-myNeedArrayUpdate  (false),
-myPixelsFlipped    (false)
-{
-    Create(width, height, color);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Construct the image from pixels in memory
-////////////////////////////////////////////////////////////
-Image::Image(unsigned int width, unsigned int height, const Uint8* data) :
-myWidth            (0),
-myHeight           (0),
-myTextureWidth     (0),
-myTextureHeight    (0),
-myTexture          (0),
-myIsSmooth         (true),
-myNeedTextureUpdate(false),
-myNeedArrayUpdate  (false),
-myPixelsFlipped    (false)
-{
-    LoadFromPixels(width, height, data);
-}
-
-
-////////////////////////////////////////////////////////////
 /// Destructor
 ////////////////////////////////////////////////////////////
 Image::~Image()
@@ -479,6 +443,47 @@ const Uint8* Image::GetPixelsPtr() const
         std::cerr << "Trying to access the pixels of an empty image" << std::endl;
         return NULL;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+/// Update the whole image from an array of pixels
+////////////////////////////////////////////////////////////
+void Image::UpdatePixels(const Uint8* pixels)
+{
+    GLint previous;
+    GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
+
+    // Update the texture from the array of pixels
+    GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
+    GLCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, myWidth, myHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+
+    GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
+
+    myNeedArrayUpdate   = true;
+    myNeedTextureUpdate = false;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Update a sub-rectangle of the image from an array of pixels
+////////////////////////////////////////////////////////////
+void Image::UpdatePixels(const Uint8* pixels, const IntRect& rectangle)
+{
+    // Make sure that the texture is up-to-date
+    EnsureTextureUpdate();
+
+    GLint previous;
+    GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
+
+    // Update the texture from the array of pixels
+    GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
+    GLCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, rectangle.Left, rectangle.Top, rectangle.GetSize().x, rectangle.GetSize().y, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+
+    GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
+
+    // The pixel cache is no longer up-to-date
+    myNeedArrayUpdate = true;
 }
 
 

@@ -63,26 +63,6 @@ public :
     Image(const Image& copy);
 
     ////////////////////////////////////////////////////////////
-    /// Construct an empty image
-    ///
-    /// \param width :  Image width
-    /// \param height : Image height
-    /// \param color :  Image color
-    ///
-    ////////////////////////////////////////////////////////////
-    Image(unsigned int width, unsigned int height, const Color& color = Color(0, 0, 0));
-
-    ////////////////////////////////////////////////////////////
-    /// Construct the image from pixels in memory
-    ///
-    /// \param width :  Image width
-    /// \param height : Image height
-    /// \param pixels : Pointer to the pixels in memory (assumed format is RGBA)
-    ///
-    ////////////////////////////////////////////////////////////
-    Image(unsigned int width, unsigned int height, const Uint8* pixels);
-
-    ////////////////////////////////////////////////////////////
     /// Destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -210,6 +190,28 @@ public :
     const Uint8* GetPixelsPtr() const;
 
     ////////////////////////////////////////////////////////////
+    /// Update the whole image from an array of pixels
+    ///
+    /// \param pixels : Array of pixels to write to the image
+    ///
+    ////////////////////////////////////////////////////////////
+    void UpdatePixels(const Uint8* pixels);
+
+    ////////////////////////////////////////////////////////////
+    /// Update a sub-rectangle of the image from an array of pixels
+    ///
+    /// Warning: for performances reasons, this function doesn't
+    /// perform any check; thus you're responsible of ensuring that
+    /// \a rectangle does not exceed the image size, and that
+    /// \a pixels contain enough elements.
+    ///
+    /// \param rectangle : Sub-rectangle of the image to update
+    /// \param pixels :    Array of pixels to write to the image
+    ///
+    ////////////////////////////////////////////////////////////
+    void UpdatePixels(const Uint8* pixels, const IntRect& rectangle);
+
+    ////////////////////////////////////////////////////////////
     /// Bind the image for rendering
     ///
     ////////////////////////////////////////////////////////////
@@ -302,12 +304,14 @@ private :
     ////////////////////////////////////////////////////////////
     /// Make sure the texture in video memory is updated with the
     /// array of pixels
+    ///
     ////////////////////////////////////////////////////////////
     void EnsureTextureUpdate();
 
     ////////////////////////////////////////////////////////////
     /// Make sure the array of pixels is updated with the
     /// texture in video memory
+    ///
     ////////////////////////////////////////////////////////////
     void EnsureArrayUpdate();
 
