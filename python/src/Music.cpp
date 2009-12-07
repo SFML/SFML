@@ -40,14 +40,11 @@ PySfMusic_dealloc(PySfMusic *self)
 static PyObject *
 PySfMusic_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	unsigned int BufferSize=44100;
 	PySfMusic *self;
 	self = (PySfMusic *)type->tp_alloc(type, 0);
 	if (self != NULL)
 	{
-		if (!PyArg_ParseTuple(args, "|I:Music.__new__", &BufferSize))
-			return NULL;
-		self->obj = new sf::Music(BufferSize);
+		self->obj = new sf::Music();
 	}
 	return (PyObject *)self;
 }
@@ -120,8 +117,7 @@ PyTypeObject PySfMusicType = {
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
 	"sf.Music defines a big sound played using streaming, so usually what we call a music :).\n\
-Constructor: sf.Music(BufferSize=44100)\n\
-BufferSize : Size of the internal buffer, expressed in number of samples (ie. size taken by the music in memory) (44100 by default)", /* tp_doc */
+Constructor: sf.Music()", /* tp_doc */
 	0,						/* tp_traverse */
 	0,						/* tp_clear */
 	0,						/* tp_richcompare */

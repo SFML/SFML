@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // PySFML - Python binding for SFML (Simple and Fast Multimedia Library)
-// Copyright (C) 2007, 2008 Rémi Koenig (remi.k2620@gmail.com)
+// Copyright (C) 2007-2009 Rémi Koenig (remi.k2620@gmail.com)
+// Stefan "Tank" Schindler <stefan@boxbox.org>
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,30 +23,18 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef __PYSOUNDSTREAM_HPP
-#define __PYSOUNDSTREAM_HPP
+#ifndef __PYRENDERQUEUE_H
+#define __PYRENDERQUEUE_H
 
 #include <Python.h>
 
-#include <SFML/Audio/SoundStream.hpp>
+#include <SFML/Graphics/RenderQueue.hpp>
 
-class CustomSoundStream : public sf::SoundStream
-{
-public :
-	PyObject *SoundStream;
-	virtual void OnSeek(float TimeOffset);
-	virtual bool OnGetData(Chunk& Data);
-	void Init(unsigned int ChannelsCount, unsigned int SampleRate);
+struct PySfRenderQueue {
+	PyObject_HEAD
+	sf::RenderQueue* obj;
 };
 
-
-typedef struct {
-	PyObject_HEAD
-	CustomSoundStream *obj;
-} PySfSoundStream;
-
-void
-PySfSoundStream_InitConst();
+PySfRenderQueue* GetNewPySfRenderQueue();
 
 #endif
-

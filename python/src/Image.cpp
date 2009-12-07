@@ -223,10 +223,10 @@ PySfImage_GetHeight(PySfImage *self)
 }
 
 static PyObject *
-PySfImage_GetValidTextureSize(PySfImage* self, PyObject *args)
+PySfImage_GetValidSize(PySfImage* self, PyObject *args)
 {
 	unsigned long S = PyLong_AsUnsignedLong(args);
-	return PyLong_FromUnsignedLong(sf::Image::GetValidTextureSize(S));
+	return PyLong_FromUnsignedLong(sf::Image::GetValidSize(S));
 }
 
 static PyObject *
@@ -300,7 +300,7 @@ Create the image from the current contents of the given window. Return True if c
 	{"GetHeight", (PyCFunction)PySfImage_GetHeight, METH_NOARGS, "GetHeight()\nReturn the height of the image."},
 	{"GetTexCoords", (PyCFunction)PySfImage_GetTexCoords, METH_VARARGS, "GetTexCoords(Rect)\nConvert a subrect expressed in pixels, into float texture coordinates. Returns texture coordinates corresponding to the sub-rectangle (sf.FloatRect instance)\n\
 	Rect 	: Sub-rectangle of image to convert"},
-	{"GetValidTextureSize", (PyCFunction)PySfImage_GetValidTextureSize, METH_STATIC | METH_O, "GetValidTextureSize(Size)\nGet a valid texture size according to hardware support. Returns valid nearest size (greater than or equal to specified size).\n\
+	{"GetValidSize", (PyCFunction)PySfImage_GetValidSize, METH_STATIC | METH_O, "GetValidSize(Size)\nGet a valid texture size according to hardware support. Returns valid nearest size (greater than or equal to specified size).\n\
 	Size 	: Size to convert"},
 	{NULL}  /* Sentinel */
 };

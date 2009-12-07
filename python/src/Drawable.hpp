@@ -28,14 +28,15 @@
 #include <Python.h>
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/RenderQueue.hpp>
 
 #include "RenderWindow.hpp"
-
+#include "RenderQueue.hpp"
 
 class CustomDrawable : public sf::Drawable
 {
 protected :
-	virtual void Render(sf::RenderTarget& Target) const;
+	virtual void Render(sf::RenderTarget& Target, sf::RenderQueue& Queue) const;
 public :
 	PySfRenderWindow *RenderWindow;
 	PyObject *RenderFunction;

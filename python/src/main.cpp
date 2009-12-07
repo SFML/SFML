@@ -30,9 +30,10 @@
 #include "Event.hpp"
 #include "Mouse.hpp"
 #include "WindowStyle.hpp"
+#include "ContextSettings.hpp"
 #include "Blend.hpp"
 #include "Sound.hpp"
-#include "String.hpp"
+#include "Text.hpp"
 #include "SoundStream.hpp"
 
 #include "compat.hpp"
@@ -54,8 +55,8 @@ extern PyTypeObject PySfMouseType;
 
 extern PyTypeObject PySfVideoModeType;
 extern PyTypeObject PySfWindowType;
-extern PyTypeObject PySfWindowSettingsType;
 extern PyTypeObject PySfStyleType;
+extern PyTypeObject PySfContextSettingsType;
 extern PyTypeObject PySfRenderWindowType;
 extern PyTypeObject PySfViewType;
 extern PyTypeObject PySfInputType;
@@ -65,8 +66,8 @@ extern PyTypeObject PySfBlendType;
 extern PyTypeObject PySfSpriteType;
 extern PyTypeObject PySfFontType;
 extern PyTypeObject PySfGlyphType;
-extern PyTypeObject PySfStringType;
-extern PyTypeObject PySfPostFXType;
+extern PyTypeObject PySfTextType;
+//extern PyTypeObject PySfPostFXType;
 
 extern PyTypeObject PySfImageType;
 extern PyTypeObject PySfColorType;
@@ -119,9 +120,9 @@ initsf(void)
 
 	if (PyType_Ready(&PySfWindowType) < 0)
 		INITERROR;
-	if (PyType_Ready(&PySfWindowSettingsType) < 0)
-		INITERROR;
 	if (PyType_Ready(&PySfStyleType) < 0)
+		INITERROR;
+	if (PyType_Ready(&PySfContextSettingsType) < 0)
 		INITERROR;
 	if (PyType_Ready(&PySfRenderWindowType) < 0)
 		INITERROR;
@@ -167,10 +168,10 @@ initsf(void)
 		INITERROR;
 	if (PyType_Ready(&PySfGlyphType) < 0)
 		INITERROR;
-	if (PyType_Ready(&PySfStringType) < 0)
+	if (PyType_Ready(&PySfTextType) < 0)
 		INITERROR;
-	if (PyType_Ready(&PySfPostFXType) < 0)
-		INITERROR;
+	/*if (PyType_Ready(&PySfPostFXType) < 0)
+		INITERROR;*/
 
 	if (PyType_Ready(&PySfImageType) < 0)
 		INITERROR;
@@ -215,10 +216,10 @@ initsf(void)
 
 	Py_INCREF(&PySfWindowType);
 	PyModule_AddObject(m, "Window", (PyObject *)&PySfWindowType);
-	Py_INCREF(&PySfWindowSettingsType);
-	PyModule_AddObject(m, "WindowSettings", (PyObject *)&PySfWindowSettingsType);
 	Py_INCREF(&PySfStyleType);
 	PyModule_AddObject(m, "Style", (PyObject *)&PySfStyleType);
+	Py_INCREF(&PySfContextSettingsType);
+	PyModule_AddObject(m, "ContextSettings", (PyObject *)&PySfContextSettingsType);
 	Py_INCREF(&PySfRenderWindowType);
 	PyModule_AddObject(m, "RenderWindow", (PyObject *)&PySfRenderWindowType);
 	Py_INCREF(&PySfVideoModeType);
@@ -238,10 +239,10 @@ initsf(void)
 	PyModule_AddObject(m, "Font", (PyObject *)&PySfFontType);
 	Py_INCREF(&PySfGlyphType);
 	PyModule_AddObject(m, "Glyph", (PyObject *)&PySfGlyphType);
-	Py_INCREF(&PySfStringType);
-	PyModule_AddObject(m, "String", (PyObject *)&PySfStringType);
-	Py_INCREF(&PySfPostFXType);
-	PyModule_AddObject(m, "PostFX", (PyObject *)&PySfPostFXType);
+	Py_INCREF(&PySfTextType);
+	PyModule_AddObject(m, "Text", (PyObject *)&PySfTextType);
+	/*Py_INCREF(&PySfPostFXType);
+	PyModule_AddObject(m, "PostFX", (PyObject *)&PySfPostFXType);*/
 
 	Py_INCREF(&PySfEventType);
 	PyModule_AddObject(m, "Event", (PyObject *)&PySfEventType);
@@ -292,7 +293,7 @@ initsf(void)
 	PySfBlend_InitConst();
 	PySfSound_InitConst();
 	PySfSoundStream_InitConst();
-	PySfString_InitConst();
+	PySfText_InitConst();
 
 	PyEval_InitThreads();
 

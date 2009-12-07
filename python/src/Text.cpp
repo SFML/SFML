@@ -22,7 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#include "String.hpp"
+#include "Text.hpp"
 #include "Font.hpp"
 #include "Color.hpp"
 #include "Rect.hpp"
@@ -35,7 +35,7 @@ extern PyTypeObject PySfFontType;
 
 
 static void
-PySfString_dealloc(PySfString *self)
+PySfText_dealloc(PySfText *self)
 {
 	Py_CLEAR(self->font);
 	delete self->obj;
@@ -43,50 +43,50 @@ PySfString_dealloc(PySfString *self)
 }
 
 static PyObject *
-PySfString_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+PySfText_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	PySfString *self;
-	self = (PySfString *)type->tp_alloc(type, 0);
+	PySfText *self;
+	self = (PySfText *)type->tp_alloc(type, 0);
 	if (self != NULL)
 	{
 		self->font = NULL;
 		self->IsCustom = false;
-		self->obj = new sf::String();
+		self->obj = new sf::Text();
 	}
 	return (PyObject *)self;
 }
 
 static PyObject *
-PySfString_SetText(PySfString* self, PyObject *args)
+PySfText_SetString(PySfText* self, PyObject *args)
 {
 	char *Text, *EncodingStr=NULL;
 	int Length;
 	std::string Encoding;
-	if (PyArg_ParseTuple(args, "u:String.SetText", &Text))
+	if (PyArg_ParseTuple(args, "u:Text.SetString", &Text))
 	{
 #if Py_UNICODE_SIZE == 4
-		self->obj->SetText((sf::Uint32 *)Text);
+		self->obj->SetString((sf::Uint32 *)Text);
 #else
-		self->obj->SetText((sf::Uint16 *)Text);
+		self->obj->SetString((sf::Uint16 *)Text);
 #endif
 	}
-	else if (PyArg_ParseTuple(args, "s|#s:String.SetText", &Text, &Length, &EncodingStr))
+	else if (PyArg_ParseTuple(args, "s|#s:Text.SetString", &Text, &Length, &EncodingStr))
 	{
 		PyErr_Clear();
 		if (EncodingStr == NULL)
-			self->obj->SetText(sf::Unicode::UTF8String((sf::Uint8 *)Text));
+			self->obj->SetString(Text);
 		else
 		{
 			Encoding.assign(EncodingStr);
 			if (Encoding == "utf8")
-				self->obj->SetText(sf::Unicode::UTF8String((sf::Uint8 *)Text));
+				self->obj->SetString(Text);
 			else if (Encoding == "utf16")
-				self->obj->SetText(sf::Unicode::UTF16String((sf::Uint16 *)(Text+2)));
+				self->obj->SetString(Text+2);
 			else if (Encoding == "utf32")
-				self->obj->SetText(sf::Unicode::UTF32String((sf::Uint32 *)(Text+4)));
+				self->obj->SetString(Text+4);
 			else
 			{
-				PyErr_Format(PyExc_TypeError, "String.SetText() Encoding %s not supported", EncodingStr);
+				PyErr_Format(PyExc_TypeError, "Text.SetString() Encoding %s not supported", EncodingStr);
 				return NULL;
 			}
 		}
@@ -100,12 +100,12 @@ PySfString_SetText(PySfString* self, PyObject *args)
 }
 
 static PyObject *
-PySfString_SetFont(PySfString* self, PyObject *args)
+PySfText_SetFont(PySfText* self, PyObject *args)
 {
 	PySfFont *Font = (PySfFont *)args;
 	if (!PyObject_TypeCheck(Font, &PySfFontType))
 	{
-		PyErr_SetString(PyExc_ValueError, "String.SetFont() Argument must be a sf.Font");
+		PyErr_SetString(PyExc_ValueError, "Text.SetFont() Argument must be a sf.Font");
 		return NULL;
 	}
 	Py_CLEAR(self->font);
@@ -116,44 +116,44 @@ PySfString_SetFont(PySfString* self, PyObject *args)
 }
 
 static PyObject *
-PySfString_SetSize(PySfString* self, PyObject *args)
+PySfText_SetSize(PySfText* self, PyObject *args)
 {
 	self->obj->SetSize(PyFloat_AsDouble(args));
 	Py_RETURN_NONE;
 }
 
 static PyObject *
-PySfString_GetSize(PySfString* self)
+PySfText_GetSize(PySfText* self)
 {
 	return PyFloat_FromDouble(self->obj->GetSize());
 }
 
 static PyObject *
-PySfString_SetStyle(PySfString* self, PyObject *args)
+PySfText_SetStyle(PySfText* self, PyObject *args)
 {
 	self->obj->SetStyle(PyLong_AsUnsignedLong(args));
 	Py_RETURN_NONE;
 }
 
 static PyObject *
-PySfString_GetStyle(PySfString* self)
+PySfText_GetStyle(PySfText* self)
 {
 	return PyLong_FromUnsignedLong(self->obj->GetStyle());
 }
 
 static PyObject *
-PySfString_GetText(PySfString* self)
+PySfText_GetString(PySfText* self)
 {
 #if Py_UNICODE_SIZE == 4
-	sf::Unicode::UTF32String Text(self->obj->GetText());
+	const sf::String& Text(self->obj->GetString());
 #else
-	sf::Unicode::UTF16String Text(self->obj->GetText());
+	const sf::String& Text(self->obj->GetString());
 #endif
-	return PyUnicode_FromUnicode((const Py_UNICODE*)Text.c_str(), Text.length());
+	return PyUnicode_FromUnicode((const Py_UNICODE*)Text.ToAnsiString().c_str(), Text.GetSize());
 }
 
 static PyObject *
-PySfString_GetFont(PySfString* self)
+PySfText_GetFont(PySfText* self)
 {
 	if (self->font == NULL)
 	{
@@ -170,7 +170,7 @@ PySfString_GetFont(PySfString* self)
 }
 
 static PyObject *
-PySfString_GetRect(PySfString* self)
+PySfText_GetRect(PySfText* self)
 {
 	PySfFloatRect *Rect;
 
@@ -183,20 +183,20 @@ PySfString_GetRect(PySfString* self)
 }
 
 static PyObject *
-PySfString_GetCharacterPos(PySfString* self, PyObject *args)
+PySfText_GetCharacterPos(PySfText* self, PyObject *args)
 {
 	sf::Vector2f Pos = self->obj->GetCharacterPos(PyLong_AsUnsignedLong(args));
 	return Py_BuildValue("ff", Pos.x, Pos.y);
 }
 
 static int
-PySfString_init(PySfString *self, PyObject *args, PyObject *kwds)
+PySfText_init(PySfText *self, PyObject *args, PyObject *kwds)
 {
 	const char *kwlist[] = {"Text", "Font", "Size", NULL};
 	float Size = 30.f;
 	PyObject *Text=NULL;
 	PySfFont *Font = NULL;
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OO!f:String.__new__", (char **)kwlist, &Text, &PySfFontType, &Font, &Size))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OO!f:Text.__new__", (char **)kwlist, &Text, &PySfFontType, &Font, &Size))
 		return -1;
 
 	if (Text != NULL)
@@ -204,52 +204,52 @@ PySfString_init(PySfString *self, PyObject *args, PyObject *kwds)
 		if (PyUnicode_Check(Text))
 		{
 #if Py_UNICODE_SIZE == 4
-			self->obj->SetText((sf::Uint32 *)PyUnicode_AS_UNICODE(Text));
+			self->obj->SetString((sf::Uint32 *)PyUnicode_AS_UNICODE(Text));
 #else
-			self->obj->SetText((sf::Uint16 *)PyUnicode_AS_UNICODE(Text));
+			self->obj->SetString((sf::Uint16 *)PyUnicode_AS_UNICODE(Text));
 #endif
 		}
 #ifdef IS_PY3K
 		else if (PyBytes_Check(Text))
-			self->obj->SetText(sf::Unicode::UTF8String((sf::Uint8 *)PyBytes_AsString(Text)));
+			self->obj->SetString(PyBytes_AsString(Text));
 #else
 		else if (PyString_Check(Text))
-			self->obj->SetText(sf::Unicode::UTF8String((sf::Uint8 *)PyString_AsString(Text)));
+			self->obj->SetString(PyString_AsString(Text));
 #endif
 		else
 		{
-			PyErr_SetString(PyExc_TypeError, "String.__init__() first argument must be str");
+			PyErr_SetString(PyExc_TypeError, "Text.__init__() first argument must be str");
 			return -1;
 		}
 	}
-	if (Font) PySfString_SetFont(self, (PyObject *)Font);
+	if (Font) PySfText_SetFont(self, (PyObject *)Font);
 	self->obj->SetSize(Size);
 	return 0;
 }
 
 
-static PyMethodDef PySfString_methods[] = {
-	{"GetCharacterPos", (PyCFunction)PySfString_GetCharacterPos, METH_O, "GetCharacterPos(Index)\n\
+static PyMethodDef PySfText_methods[] = {
+	{"GetCharacterPos", (PyCFunction)PySfText_GetCharacterPos, METH_O, "GetCharacterPos(Index)\n\
 Return the visual position (a tuple of two floats) of the Index-th character of the string, in coordinates relative to the string (note : translation, center, rotation and scale are not applied)\n\
 	Index : Index of the character"},
-	{"SetText", (PyCFunction)PySfString_SetText, METH_VARARGS, "SetText(UnicodeText) or SetText(Text, Encoding='utf8')\nSet the text. Valid encodings are 'utf8', 'utf16' and 'utf32'.\n	Text : New text"},
-	{"GetText", (PyCFunction)PySfString_GetText, METH_NOARGS, "GetText()\nGet the text as an unicode string."},
-	{"SetFont", (PyCFunction)PySfString_SetFont, METH_O, "SetFont(Font)\nSet the font of the string.\n	Font : font to use"},
-	{"GetFont", (PyCFunction)PySfString_GetFont, METH_NOARGS, "GetFont()\nGet the font used by the string."},
-	{"SetSize", (PyCFunction)PySfString_SetSize, METH_O, "SetSize(Size)\nSet the size of the string.\n	Size : New size, in pixels"},
-	{"GetSize", (PyCFunction)PySfString_GetSize, METH_NOARGS, "GetSize()\nGet the size of the characters."},
-	{"SetStyle", (PyCFunction)PySfString_SetStyle, METH_O, "SetStyle(TextSize)\nSet the style of the text. The default style is Regular.\n	TextSize : New text style, (combination of Style values)"},
-	{"GetStyle", (PyCFunction)PySfString_GetStyle, METH_NOARGS, "GetStyle()\nGet the style of the text."},
-	{"GetRect", (PyCFunction)PySfString_GetRect, METH_NOARGS, "GetRect()\nGet the string rectangle on screen."},
+	{"SetString", (PyCFunction)PySfText_SetString, METH_VARARGS, "SetString(UnicodeText) or SetString(Text, Encoding='utf8')\nSet the text. Valid encodings are 'utf8', 'utf16' and 'utf32'.\n	Text : New text"},
+	{"GetString", (PyCFunction)PySfText_GetString, METH_NOARGS, "GetString()\nGet the text as an unicode string."},
+	{"SetFont", (PyCFunction)PySfText_SetFont, METH_O, "SetFont(Font)\nSet the font of the string.\n	Font : font to use"},
+	{"GetFont", (PyCFunction)PySfText_GetFont, METH_NOARGS, "GetFont()\nGet the font used by the string."},
+	{"SetSize", (PyCFunction)PySfText_SetSize, METH_O, "SetSize(Size)\nSet the size of the string.\n	Size : New size, in pixels"},
+	{"GetSize", (PyCFunction)PySfText_GetSize, METH_NOARGS, "GetSize()\nGet the size of the characters."},
+	{"SetStyle", (PyCFunction)PySfText_SetStyle, METH_O, "SetStyle(TextSize)\nSet the style of the text. The default style is Regular.\n	TextSize : New text style, (combination of Style values)"},
+	{"GetStyle", (PyCFunction)PySfText_GetStyle, METH_NOARGS, "GetStyle()\nGet the style of the text."},
+	{"GetRect", (PyCFunction)PySfText_GetRect, METH_NOARGS, "GetRect()\nGet the string rectangle on screen."},
 	{NULL}  /* Sentinel */
 };
 
-PyTypeObject PySfStringType = {
+PyTypeObject PySfTextType = {
 	head_init
-	"String",				/*tp_name*/
-	sizeof(PySfString),		/*tp_basicsize*/
+	"Text",				/*tp_name*/
+	sizeof(PySfText),		/*tp_basicsize*/
 	0,						/*tp_itemsize*/
-	(destructor)PySfString_dealloc, /*tp_dealloc*/
+	(destructor)PySfText_dealloc, /*tp_dealloc*/
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
@@ -265,15 +265,15 @@ PyTypeObject PySfStringType = {
 	0,						/*tp_setattro*/
 	0,						/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-	"sf.String defines a graphical 2D text, that can be drawn on screen.\n\
-Default constructor : String ()\nConstruct the string from an unicode or an ascii string : String(Text, Font=sf.Font.GetDefaultFont(), Size=30.)\n	Text : Text assigned to the string\n	Font : Font used to draw the string (SFML built-in font by default)\n	Size : Characters size (30 by default)", /* tp_doc */
+	"sf.Text defines a graphical 2D text, that can be drawn on screen.\n\
+Default constructor : Text ()\nConstruct the string from an unicode or an ascii string : Text(Text, Font=sf.Font.GetDefaultFont(), Size=30.)\n	Text : Text assigned to the string\n	Font : Font used to draw the string (SFML built-in font by default)\n	Size : Characters size (30 by default)", /* tp_doc */
 	0,						/* tp_traverse */
 	0,						/* tp_clear */
 	0,						/* tp_richcompare */
 	0,						/* tp_weaklistoffset */
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
-	PySfString_methods,		/* tp_methods */
+	PySfText_methods,		/* tp_methods */
 	0,						/* tp_members */
 	0,						/* tp_getset */
 	&PySfDrawableType,		/* tp_base */
@@ -281,27 +281,27 @@ Default constructor : String ()\nConstruct the string from an unicode or an asci
 	0,						/* tp_descr_get */
 	0,						/* tp_descr_set */
 	0,						/* tp_dictoffset */
-	(initproc)PySfString_init, /* tp_init */
+	(initproc)PySfText_init, /* tp_init */
 	0,						/* tp_alloc */
-	PySfString_new,			/* tp_new */
+	PySfText_new,			/* tp_new */
 };
 
 
 
-void PySfString_InitConst()
+void PySfText_InitConst()
 {
 	PyObject *obj;
-	obj = PyLong_FromLong(sf::String::Regular);
-	PyDict_SetItemString(PySfStringType.tp_dict, "Regular", obj);
+	obj = PyLong_FromLong(sf::Text::Regular);
+	PyDict_SetItemString(PySfTextType.tp_dict, "Regular", obj);
 	Py_DECREF(obj);
-	obj = PyLong_FromLong(sf::String::Bold);
-	PyDict_SetItemString(PySfStringType.tp_dict, "Bold", obj);
+	obj = PyLong_FromLong(sf::Text::Bold);
+	PyDict_SetItemString(PySfTextType.tp_dict, "Bold", obj);
 	Py_DECREF(obj);
-	obj = PyLong_FromLong(sf::String::Italic);
-	PyDict_SetItemString(PySfStringType.tp_dict, "Italic", obj);
+	obj = PyLong_FromLong(sf::Text::Italic);
+	PyDict_SetItemString(PySfTextType.tp_dict, "Italic", obj);
 	Py_DECREF(obj);
-	obj = PyLong_FromLong(sf::String::Underlined);
-	PyDict_SetItemString(PySfStringType.tp_dict, "Underlined", obj);
+	obj = PyLong_FromLong(sf::Text::Underlined);
+	PyDict_SetItemString(PySfTextType.tp_dict, "Underlined", obj);
 	Py_DECREF(obj);
 }
 

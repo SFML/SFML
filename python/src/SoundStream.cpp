@@ -27,32 +27,24 @@
 #include "compat.hpp"
 
 
-bool CustomSoundStream::OnStart()
+void CustomSoundStream::OnSeek(float TimeOffset)
 {
 	PyGILState_STATE gstate;
-	bool result = false;
 	gstate = PyGILState_Ensure();
-	if (PyObject_HasAttrString(SoundStream, "OnStart"))
+	if (PyObject_HasAttrString(SoundStream, "OnSeek"))
 	{
-		PyObject *OnStart = PyObject_GetAttrString(SoundStream, "OnStart");
-		if (OnStart != NULL)
+		PyObject *OnSeek = PyObject_GetAttrString(SoundStream, "OnSeek");
+		if (OnSeek != NULL)
 		{
-			PyObject *Result = PyObject_CallFunction(OnStart, NULL);
-			if (Result != NULL)
-			{
-				result = PyBool_AsBool(Result);
-				Py_CLEAR(Result);
-			}
-			Py_CLEAR(OnStart);
+			PyObject_CallFunction(OnSeek, const_cast<char*>( "f" ), TimeOffset);
+			Py_CLEAR(OnSeek);
 		}
 	}
 	if (PyErr_Occurred())
 	{
 		PyErr_Print();
-		result = false;
 	}
 	PyGILState_Release(gstate);
-    return result;
 }
 
 bool CustomSoundStream::OnGetData(Chunk& Data)

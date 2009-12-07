@@ -27,7 +27,7 @@
 #include "Event.hpp"
 #include "VideoMode.hpp"
 #include "Input.hpp"
-#include "WindowSettings.hpp"
+#include "ContextSettings.hpp"
 
 #include <SFML/Window/WindowStyle.hpp>
 
@@ -35,7 +35,7 @@
 
 
 extern PyTypeObject PySfEventType;
-extern PyTypeObject PySfWindowSettingsType;
+extern PyTypeObject PySfContextSettingsType;
 extern PyTypeObject PySfVideoModeType;
 
 
@@ -50,16 +50,16 @@ static PyObject *
 PySfWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	long Handle;
-	PySfWindowSettings *Params=NULL;
+	PySfContextSettings *Params=NULL;
 	PySfWindow *self;
 	self = (PySfWindow *)type->tp_alloc(type, 0);
 	if (self != NULL)
 	{
-		if (PyArg_ParseTuple(args, "l|O!:Window.__new__", &Handle, &PySfWindowSettingsType, &Params))
+		if (PyArg_ParseTuple(args, "l|O!:Window.__new__", &Handle, &PySfContextSettingsType, &Params))
 		{
 			if (Params)
 			{
-				PySfWindowSettingsUpdate(Params);
+				PySfContextSettingsUpdate(Params);
 				self->obj = new sf::Window((sf::WindowHandle)Handle, *(Params->obj));
 			}
 			else
@@ -124,18 +124,18 @@ PySfWindow_Create(PySfWindow* self, PyObject *args, PyObject *kwds)
 	sf::VideoMode *VideoMode;
 	char *Title=NULL;
 	unsigned long WindowStyle = sf::Style::Resize | sf::Style::Close;
-	PySfWindowSettings *Params=NULL;
+	PySfContextSettings *Params=NULL;
 
 	const char *kwlist[] = {"VideoMode", "Title", "WindowStyle", "Params", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!s|IO!:Window.Create", (char **)kwlist, &PySfVideoModeType, &VideoModeTmp, &Title, &WindowStyle, &PySfWindowSettingsType, &Params))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!s|IO!:Window.Create", (char **)kwlist, &PySfVideoModeType, &VideoModeTmp, &Title, &WindowStyle, &PySfContextSettingsType, &Params))
 		return NULL; 
 
 	VideoMode = ((PySfVideoMode *)VideoModeTmp)->obj;
 
 	if (Params)
 	{
-		PySfWindowSettingsUpdate(Params);
+		PySfContextSettingsUpdate(Params);
 		self->obj->Create(*VideoMode, Title, WindowStyle, *(Params->obj));
 	}
 	else
@@ -148,11 +148,11 @@ static int
 PySfWindow_init(PySfWindow *self, PyObject *args, PyObject *kwds)
 {
 	long Handle;
-	PySfWindowSettings *Params;
+	PySfContextSettings *Params;
 
 	if (args != NULL)
 	{
-		if (PyArg_ParseTuple(args, "l|O!:Window.__new__", &Handle, &PySfWindowSettingsType, &Params))
+		if (PyArg_ParseTuple(args, "l|O!:Window.__new__", &Handle, &PySfContextSettingsType, &Params))
 			return 0;
 		PyErr_Clear();
 		if (PySfWindow_Create(self, args, kwds) == NULL)
@@ -225,9 +225,9 @@ PySfWindow_GetInput(PySfWindow *self)
 static PyObject *
 PySfWindow_GetSettings(PySfWindow *self)
 {
-	PySfWindowSettings *Settings;
-	Settings = GetNewPySfWindowSettings();
-	Settings->obj = new sf::WindowSettings(self->obj->GetSettings());
+	PySfContextSettings *Settings;
+	Settings = GetNewPySfContextSettings();
+	Settings->obj = new sf::ContextSettings(self->obj->GetSettings());
 	Settings->DepthBits = Settings->obj->DepthBits;
 	Settings->StencilBits = Settings->obj->StencilBits;
 	Settings->AntialiasingLevel = Settings->obj->AntialiasingLevel;
@@ -307,7 +307,7 @@ PySfWindow_SetIcon(PySfWindow* self, PyObject *args)
 
 static PyMethodDef PySfWindow_methods[] = {
 	{"Close", (PyCFunction)PySfWindow_Close, METH_NOARGS, "Close()\nClose (destroy) the window. The sf.Window instance remains valid and you can call Create to recreate the window."},
-	{"Create", (PyCFunction)PySfWindow_Create, METH_VARARGS | METH_KEYWORDS, "Create(Mode, Title, sf.Style.Resize | sf.Style.Close, Params = sf.WindowSettings())\n\
+	{"Create", (PyCFunction)PySfWindow_Create, METH_VARARGS | METH_KEYWORDS, "Create(Mode, Title, sf.Style.Resize | sf.Style.Close, Params = sf.ContextSettings())\n\
 Create a window.\n\
 	Mode : Video mode to use (sf.VideoMode instance)\n\
 	Title : Title of the window\n\
@@ -363,7 +363,7 @@ PyTypeObject PySfWindowType = {
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
 	"sf.Window is a rendering window ; it can create a new window or connect to an existing one.\n\
 Default constructor : sf.Window()\n\
-Construct a new window : sf.Window(Mode, Title, sf.Style.Resize | sf.Style.Close, Params = sf.WindowSettings())\n\
+Construct a new window : sf.Window(Mode, Title, sf.Style.Resize | sf.Style.Close, Params = sf.ContextSettings())\n\
 	Mode : Video mode to use (sf.VideoMode instance)\n\
 	Title : Title of the window\n\
 	WindowStyle : Window style (Resize | Close by default)\n\

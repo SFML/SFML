@@ -95,15 +95,10 @@ PySfFloatRect_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 static PyObject *
-PySfIntRect_GetWidth(PySfIntRect *self)
+PySfIntRect_GetSize(PySfIntRect *self)
 {
-	return PyLong_FromLong(self->obj->GetWidth());
-}
-
-static PyObject *
-PySfIntRect_GetHeight(PySfIntRect *self)
-{
-	return PyLong_FromLong(self->obj->GetHeight());
+	sf::Vector2i  size( self->obj->GetSize() );
+	return Py_BuildValue( "ii", size.x, size.y );
 }
 
 static PyObject *
@@ -113,15 +108,10 @@ static PyObject *
 PySfIntRect_Intersects(PySfIntRect* self, PyObject *args);
 
 static PyObject *
-PySfFloatRect_GetWidth(PySfFloatRect *self)
+PySfFloatRect_GetSize(PySfFloatRect *self)
 {
-	return PyFloat_FromDouble(self->obj->GetWidth());
-}
-
-static PyObject *
-PySfFloatRect_GetHeight(PySfFloatRect *self)
-{
-	return PyFloat_FromDouble(self->obj->GetHeight());
+	sf::Vector2f  size( self->obj->GetSize() );
+	return Py_BuildValue( "ff", size.x, size.y );
 }
 
 static PyObject *
@@ -163,10 +153,7 @@ Move the whole rectangle by the given offset.\n\
 	OffsetX : Horizontal offset\n\
 	OffsetY : Vertical offset\n\
 "},
-	{"GetWidth", (PyCFunction)PySfIntRect_GetWidth, METH_NOARGS, "GetWidth()\n\
-Get the width of the rectangle."},
-	{"GetHeight", (PyCFunction)PySfIntRect_GetHeight, METH_NOARGS, "GetHeight()\n\
-Get the height of the rectangle."},
+	{"GetSize", (PyCFunction)PySfIntRect_GetSize, METH_NOARGS, "GetSize()\nGet the rectangle's size."},
 	{"Contains", (PyCFunction)PySfIntRect_Contains, METH_VARARGS, "Contains(X, Y)\n\
 Check if a point is inside the rectangle's area.\n\
 	X : X coordinate of the point to test\n\
@@ -185,10 +172,7 @@ Move the whole rectangle by the given offset.\n\
 	OffsetX : Horizontal offset\n\
 	OffsetY : Vertical offset\n\
 "},
-	{"GetWidth", (PyCFunction)PySfFloatRect_GetWidth, METH_NOARGS, "GetWidth()\n\
-Get the width of the rectangle."},
-	{"GetHeight", (PyCFunction)PySfFloatRect_GetHeight, METH_NOARGS, "GetHeight()\n\
-Get the height of the rectangle."},
+	{"GetSize", (PyCFunction)PySfFloatRect_GetSize, METH_NOARGS, "GetSize()\nGet the rectangle's size."},
 	{"Contains", (PyCFunction)PySfFloatRect_Contains, METH_VARARGS, "Contains(X, Y)\n\
 Check if a point is inside the rectangle's area.\n\
 	X : X coordinate of the point to test\n\
@@ -316,14 +300,14 @@ PySfFloatRect_Contains(PySfFloatRect* self, PyObject *args)
 static PyObject *
 PySfFloatRect_Intersects(PySfFloatRect* self, PyObject *args)
 {
-	PySfFloatRect *Rect=NULL, *OverlappingRect=NULL;
+	PySfFloatRect *Rect=NULL, *Intersection=NULL;
 	bool result;
 
-	if (!PyArg_ParseTuple(args, "O!|O!:FloatRect.Intersects", &PySfFloatRectType, &Rect, &PySfFloatRectType, &OverlappingRect))
+	if (!PyArg_ParseTuple(args, "O!|O!:FloatRect.Intersects", &PySfFloatRectType, &Rect, &PySfFloatRectType, &Intersection))
 		return NULL; 
 
-	if (OverlappingRect)
-		result = self->obj->Intersects(*(Rect->obj), (OverlappingRect->obj));
+	if (Intersection)
+		result = self->obj->Intersects(*(Rect->obj), *(Intersection->obj));
 	else
 		result = self->obj->Intersects(*(Rect->obj));
 
@@ -345,14 +329,14 @@ PySfIntRect_Contains(PySfIntRect* self, PyObject *args)
 static PyObject *
 PySfIntRect_Intersects(PySfIntRect* self, PyObject *args)
 {
-	PySfIntRect *Rect=NULL, *OverlappingRect=NULL;
+	PySfIntRect *Rect=NULL, *Intersection=NULL;
 	bool result;
 
-	if (!PyArg_ParseTuple(args, "O!|O!:IntRect.Intersects", &PySfIntRectType, &Rect, &PySfIntRectType, &OverlappingRect))
+	if (!PyArg_ParseTuple(args, "O!|O!:IntRect.Intersects", &PySfIntRectType, &Rect, &PySfIntRectType, &Intersection))
 		return NULL; 
 
-	if (OverlappingRect)
-		result = self->obj->Intersects(*(Rect->obj), (OverlappingRect->obj));
+	if (Intersection)
+		result = self->obj->Intersects(*(Rect->obj), *(Intersection->obj));
 	else
 		result = self->obj->Intersects(*(Rect->obj));
 

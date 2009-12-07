@@ -4,7 +4,7 @@ from PySFML import sf
 
 def Main():
 	# Check that the device can capture audio
-	if sf.SoundRecorder.CanCapture() == False:
+	if sf.SoundRecorder.IsAvailable() == False:
 		print "Sorry, audio capture is not supported by your system"
 		return
 

@@ -22,60 +22,66 @@
 //
 ////////////////////////////////////////////////////////////
 
-#include "WindowSettings.hpp"
+#include "ContextSettings.hpp"
 
 #include <structmember.h>
 
 #include "offsetof.hpp"
 #include "compat.hpp"
 
-static PyMemberDef PySfWindowSettings_members[] = {
-	{(char *)"DepthBits", T_UINT, offsetof(PySfWindowSettings, DepthBits), 0, (char *)"Depth buffer bits (24 by default)"},
-	{(char *)"StencilBits", T_UINT, offsetof(PySfWindowSettings, StencilBits), 0, (char *)"Stencil buffer bits (8 by default)"},
-	{(char *)"AntialiasingLevel", T_UINT, offsetof(PySfWindowSettings, AntialiasingLevel), 0, (char *)"Antialiasing level (0 by default)"},
+static PyMemberDef PySfContextSettings_members[] = {
+	{(char *)"DepthBits", T_UINT, offsetof(PySfContextSettings, DepthBits), 0, (char *)"Depth buffer bits (24 by default)"},
+	{(char *)"StencilBits", T_UINT, offsetof(PySfContextSettings, StencilBits), 0, (char *)"Stencil buffer bits (8 by default)"},
+	{(char *)"AntialiasingLevel", T_UINT, offsetof(PySfContextSettings, AntialiasingLevel), 0, (char *)"Antialiasing level (0 by default)"},
+	{(char *)"MajorVersion", T_UINT, offsetof(PySfContextSettings, MajorVersion), 0, (char *)"Major number of the context version to create. (2 by default)"},
+	{(char *)"MinorVersion", T_UINT, offsetof(PySfContextSettings, MinorVersion), 0, (char *)"Minor number of the context version to create. (0 by default)"},
 	{NULL}  /* Sentinel */
 };
 
 
 static void
-PySfWindowSettings_dealloc(PySfWindowSettings *self)
+PySfContextSettings_dealloc(PySfContextSettings *self)
 {
 	delete self->obj;
 	free_object(self);
 }
 
 void
-PySfWindowSettingsUpdate(PySfWindowSettings *self)
+PySfContextSettingsUpdate(PySfContextSettings *self)
 {
 	self->obj->DepthBits = self->DepthBits;
 	self->obj->StencilBits = self->StencilBits;
 	self->obj->AntialiasingLevel = self->AntialiasingLevel;
+	self->obj->MajorVersion = self->MajorVersion;
+	self->obj->MinorVersion = self->MinorVersion;
 }
 
 static PyObject *
-PySfWindowSettings_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+PySfContextSettings_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	const char *kwlist[] = {"DepthBits", "StencilBits", "AntialiasingLevel", NULL};
-	PySfWindowSettings *self;
-	self = (PySfWindowSettings *)type->tp_alloc(type, 0);
+	const char *kwlist[] = {"DepthBits", "StencilBits", "AntialiasingLevel", "MajorVersion", "MinorVersion", NULL};
+	PySfContextSettings *self;
+	self = (PySfContextSettings *)type->tp_alloc(type, 0);
 	if (self != NULL)
 	{
 		self->DepthBits = 24;
 		self->StencilBits = 8;
 		self->AntialiasingLevel = 0;
-		if (!PyArg_ParseTupleAndKeywords(args, kwds, "|III:WindowSettings.__init__", (char **)kwlist, &(self->DepthBits), &(self->StencilBits), &(self->AntialiasingLevel)))
+		self->MajorVersion = 2;
+		self->MinorVersion = 0;
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "|IIIII:ContextSettings.__init__", (char **)kwlist, &(self->DepthBits), &(self->StencilBits), &(self->AntialiasingLevel), &(self->MajorVersion), &(self->MinorVersion)))
 			return NULL;
-		self->obj = new sf::WindowSettings(self->DepthBits, self->StencilBits, self->AntialiasingLevel);
+		self->obj = new sf::ContextSettings(self->DepthBits, self->StencilBits, self->AntialiasingLevel, self->MajorVersion, self->MinorVersion);
 	}
 	return (PyObject *)self;
 }
 
-PyTypeObject PySfWindowSettingsType = {
+PyTypeObject PySfContextSettingsType = {
 	head_init
-	"WindowSettings",		/*tp_name*/
-	sizeof(PySfWindowSettings), /*tp_basicsize*/
+	"ContextSettings",		/*tp_name*/
+	sizeof(PySfContextSettings), /*tp_basicsize*/
 	0,						/*tp_itemsize*/
-	(destructor)PySfWindowSettings_dealloc, /*tp_dealloc*/
+	(destructor)PySfContextSettings_dealloc, /*tp_dealloc*/
 	0,						/*tp_print*/
 	0,						/*tp_getattr*/
 	0,						/*tp_setattr*/
@@ -99,7 +105,7 @@ PyTypeObject PySfWindowSettingsType = {
 	0,						/* tp_iter */
 	0,						/* tp_iternext */
 	0,						/* tp_methods */
-	PySfWindowSettings_members,	/* tp_members */
+	PySfContextSettings_members,	/* tp_members */
 	0,						/* tp_getset */
 	0,						/* tp_base */
 	0,						/* tp_dict */
@@ -108,12 +114,12 @@ PyTypeObject PySfWindowSettingsType = {
 	0,						/* tp_dictoffset */
 	0,						/* tp_init */
 	0,						/* tp_alloc */
-	PySfWindowSettings_new, /* tp_new */
+	PySfContextSettings_new, /* tp_new */
 };
 
-PySfWindowSettings *
-GetNewPySfWindowSettings()
+PySfContextSettings *
+GetNewPySfContextSettings()
 {
-	return PyObject_New(PySfWindowSettings, &PySfWindowSettingsType);
+	return PyObject_New(PySfContextSettings, &PySfContextSettingsType);
 }
 

@@ -22,17 +22,22 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef __PYPOSTFX_HPP
-#define __PYPOSTFX_HPP
+#ifndef __PYSTRING_HPP
+#define __PYSTRING_HPP
 
 #include <Python.h>
 
-#include <SFML/Graphics/PostFX.hpp>
+#include <SFML/Graphics/Text.hpp>
+
+#include "Font.hpp"
 
 typedef struct {
 	PyObject_HEAD
 	bool IsCustom;
-	sf::PostFX *obj;
-} PySfPostFX;
+	sf::Text *obj;
+	PySfFont *font;
+} PySfText;
+
+void PySfText_InitConst();
 
 #endif

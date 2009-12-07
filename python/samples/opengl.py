@@ -11,7 +11,7 @@ def main():
 
 	# Create main window
 	App = sf.RenderWindow(sf.VideoMode(800, 600), "SFML OpenGL")
-	App.PreserveOpenGLStates(True)
+	App.SetActive()
 
 	# Create a sprite for the background
 	BackgroundImage = sf.Image()
@@ -73,6 +73,10 @@ def main():
 
 		# Draw background
 		App.Draw(Background)
+		App.Flush()
+
+		# Active window to be able to perform OpenGL commands.
+		App.SetActive()
 
 		# Clear depth buffer
 		glClear(GL_DEPTH_BUFFER_BIT)
@@ -145,7 +149,7 @@ def main():
 		glEnd()
 
 		# Draw some text on top of our OpenGL object
-		Text = sf.String("This is a rotating cube")
+		Text = sf.Text("This is a rotating cube")
 		Text.SetPosition(230., 300.)
 		Text.SetColor(sf.Color(128, 0, 128))
 		App.Draw(Text)

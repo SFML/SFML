@@ -75,16 +75,16 @@ PySfFont_LoadFromFile(PySfFont* self, PyObject *args, PyObject *kwds)
 	{
 		PyErr_Clear();
 		if (EncodingStr == NULL)
-			result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::UTF8String((sf::Uint8 *)Charset));
+			result = self->obj->LoadFromFile(Filename, Charsize, Charset);
 		else
 		{
 			Encoding.assign(EncodingStr);
 			if (Encoding == "utf8" || Encoding == "")
-				result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::UTF8String((sf::Uint8 *)Charset));
+				result = self->obj->LoadFromFile(Filename, Charsize, Charset);
 			else if (Encoding == "utf16")
-				result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::UTF16String((sf::Uint16 *)(Charset+2)));
+				result = self->obj->LoadFromFile(Filename, Charsize, Charset+2);
 			else if (Encoding == "utf32")
-				result = self->obj->LoadFromFile(Filename, Charsize, sf::Unicode::UTF32String((sf::Uint32 *)(Charset+4)));
+				result = self->obj->LoadFromFile(Filename, Charsize, Charset+4);
 			else
 			{
 				PyErr_Format(PyExc_TypeError, "Font.LoadFromFile() Encoding %s not supported", EncodingStr);
@@ -125,16 +125,16 @@ PySfFont_LoadFromMemory(PySfFont* self, PyObject *args, PyObject *kwds)
 	{
 		PyErr_Clear();
 		if (EncodingStr == NULL)
-			result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::UTF8String((sf::Uint8 *)Charset));
+			result = self->obj->LoadFromMemory(Data, Size, Charsize, Charset);
 		else
 		{
 			Encoding.assign(EncodingStr);
 			if (Encoding == "utf8")
-				result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::UTF8String((sf::Uint8 *)Charset));
+				result = self->obj->LoadFromMemory(Data, Size, Charsize, Charset);
 			else if (Encoding == "utf16")
-				result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::UTF16String((sf::Uint16 *)(Charset+2)));
+				result = self->obj->LoadFromMemory(Data, Size, Charsize, Charset+2);
 			else if (Encoding == "utf32")
-				result = self->obj->LoadFromMemory(Data, Size, Charsize, sf::Unicode::UTF32String((sf::Uint32 *)(Charset+4)));
+				result = self->obj->LoadFromMemory(Data, Size, Charsize, Charset+4);
 			else
 			{
 				PyErr_Format(PyExc_TypeError, "Font.LoadFromMemory() Encoding %s not supported", EncodingStr);

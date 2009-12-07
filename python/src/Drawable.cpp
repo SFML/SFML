@@ -31,10 +31,10 @@
 extern PyTypeObject PySfColorType;
 
 
-void CustomDrawable::Render(sf::RenderTarget& Target) const
+void CustomDrawable::Render(sf::RenderTarget& Target, sf::RenderQueue& Queue) const
 {
 	if (RenderFunction)
-		PyObject_CallFunction(RenderFunction, (char *)"O", RenderWindow);
+		PyObject_CallFunction(RenderFunction, (char *)"OO", RenderWindow, Queue);
 	else
 	{
 		PyErr_SetString(PyExc_RuntimeError, "Custom drawables must have a render method defined");
@@ -108,18 +108,18 @@ PySfDrawable_SetRotation(PySfDrawable* self, PyObject *args)
 	Py_RETURN_NONE;
 }
 static PyObject *
-PySfDrawable_SetCenter(PySfDrawable* self, PyObject *args)
+PySfDrawable_SetOrigin(PySfDrawable* self, PyObject *args)
 {
 	float x, y;
-	if (!PyArg_ParseTuple(args, "ff:Drawable.SetCenter", &x, &y) )
+	if (!PyArg_ParseTuple(args, "ff:Drawable.SetOrigin", &x, &y) )
 		return NULL;
-	self->obj->SetCenter(x, y);
+	self->obj->SetOrigin(x, y);
 	Py_RETURN_NONE;
 }
 static PyObject *
-PySfDrawable_GetCenter(PySfDrawable* self)
+PySfDrawable_GetOrigin(PySfDrawable* self)
 {
-	sf::Vector2f Vect = self->obj->GetCenter();
+	sf::Vector2f Vect = self->obj->GetOrigin();
 	return Py_BuildValue("ff", Vect.x, Vect.y);
 }
 
@@ -253,11 +253,11 @@ int PySfDrawable_setattro(PyObject* self, PyObject *attr_name, PyObject *v)
 
 static PyMethodDef PySfDrawable_methods[] = {
 	{"TransformToLocal", (PyCFunction)PySfDrawable_TransformToLocal, METH_VARARGS, "TransformToLocal(X, Y)\n\
-Transform a point from global coordinates into local coordinates (ie it applies the inverse of object's center, translation, rotation and scale to the point). Returns a tuple.\n\
+Transform a point from global coordinates into local coordinates (ie it applies the inverse of object's origin, translation, rotation and scale to the point). Returns a tuple.\n\
 	X : X coordinate of the point to transform\n\
 	Y : Y coordinate of the point to transform"},
 	{"TransformToGlobal", (PyCFunction)PySfDrawable_TransformToGlobal, METH_VARARGS, "TransformToGlobal(X, Y)\n\
-Transform a point from local coordinates into global coordinates (ie it applies the object's center, translation, rotation and scale to the point). Returns a tuple.\n\
+Transform a point from local coordinates into global coordinates (ie it applies the object's origin, translation, rotation and scale to the point). Returns a tuple.\n\
 	X : X coordinate of the point to transform\n\
 	Y : Y coordinate of the point to transform"},
 	{"SetX", (PyCFunction)PySfDrawable_SetX, METH_O, "SetX(X)\nSet the X position of the object.\n	X : New X coordinate"},
@@ -266,8 +266,8 @@ Transform a point from local coordinates into global coordinates (ie it applies 
 	{"SetScaleX", (PyCFunction)PySfDrawable_SetScaleX, METH_O, "SetScaleX(ScaleX)\nSet the X scale factor of the object.\n	ScaleX 	: New horizontal scale (must be strictly positive)"},
 	{"SetScaleY", (PyCFunction)PySfDrawable_SetScaleY, METH_O, "SetScaleY(ScaleY)\nSet the Y scale factor of the object.\n	ScaleY 	: New vertical scale (must be strictly positive)"},
 	{"SetRotation", (PyCFunction)PySfDrawable_SetRotation, METH_O, "SetRotation(Rotation)\nSet the orientation of the object.\n	Rotation : Angle of rotation, in degrees"},
-	{"SetCenter", (PyCFunction)PySfDrawable_SetCenter, METH_VARARGS, "SetCenter(CenterX, CenterY)\nSet the center of the object, in coordinates relative to the object.\n	CenterX : X coordinate of the center\n	CenterY : Y coordinate of the center"},
-	{"GetCenter", (PyCFunction)PySfDrawable_GetCenter, METH_NOARGS, "GetCenter()\nGet the center of the object, in coordinates relative to the object."},
+	{"SetOrigin", (PyCFunction)PySfDrawable_SetOrigin, METH_VARARGS, "SetOrigin(OriginX, OriginY)\nSet the origin of the object, in coordinates relative to the object.\n	OriginX : X coordinate of the origin\n	OriginY : Y coordinate of the origin"},
+	{"GetOrigin", (PyCFunction)PySfDrawable_GetOrigin, METH_NOARGS, "GetOrigin()\nGet the origin of the object, in coordinates relative to the object."},
 	{"SetColor", (PyCFunction)PySfDrawable_SetColor, METH_O, "SetColor(Color)\nSet the color of the object.\n	Color : New color"},
 	{"GetPosition", (PyCFunction)PySfDrawable_GetPosition, METH_NOARGS, "GetPosition()\nGet the position of the object."},
 	{"GetScale", (PyCFunction)PySfDrawable_GetScale, METH_NOARGS, "GetScale()\nGet the scale of the object."},

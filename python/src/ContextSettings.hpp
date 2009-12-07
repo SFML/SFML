@@ -27,7 +27,7 @@
 
 #include <Python.h>
 
-#include <SFML/Window/WindowSettings.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 
 
 typedef struct {
@@ -35,13 +35,15 @@ typedef struct {
 	unsigned int DepthBits;
 	unsigned int StencilBits;
 	unsigned int AntialiasingLevel;
-	sf::WindowSettings *obj;
-} PySfWindowSettings;
+	unsigned int MajorVersion;
+	unsigned int MinorVersion;
+	sf::ContextSettings *obj;
+} PySfContextSettings;
 
 void
-PySfWindowSettingsUpdate(PySfWindowSettings *self);
+PySfContextSettingsUpdate(PySfContextSettings *self);
 
-PySfWindowSettings *
-GetNewPySfWindowSettings();
+PySfContextSettings *
+GetNewPySfContextSettings();
 
 #endif

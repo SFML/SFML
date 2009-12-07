@@ -62,30 +62,24 @@ PySfRenderWindow_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 static PyObject *
-PySfRenderWindow_Capture(PySfRenderWindow *self)
-{
-	PySfImage *Image;
-
-	Image = GetNewPySfImage();
-	Image->obj = new sf::Image(self->obj->Capture());
-	return (PyObject *)Image;
-}
-
-static PyObject *
 PySfRenderWindow_ConvertCoords(PySfRenderWindow *self, PyObject *args)
 {
 	unsigned int WindowX, WindowY;
 	PySfView *PyTargetView = NULL;
-	sf::View *TargetView = NULL;
 	sf::Vector2f Vect;
 
 	if (!PyArg_ParseTuple(args, "II|O!:RenderWindow.ConvertCoords", &WindowX, &WindowY, &PySfViewType, &PyTargetView))
 		return NULL;
 
 	if (PyTargetView)
-		TargetView = PyTargetView->obj;
+	{
+		Vect = self->obj->ConvertCoords(WindowX, WindowY, *PyTargetView->obj);
+	}
+	else
+	{
+		Vect = self->obj->ConvertCoords(WindowX, WindowY);
+	}
 
-	Vect = self->obj->ConvertCoords(WindowX, WindowY, TargetView);
 	return Py_BuildValue("ff", Vect.x, Vect.y);
 }
 
@@ -154,6 +148,24 @@ PySfRenderWindow_Clear(PySfRenderWindow *self, PyObject *args)
 }
 
 static PyObject *
+PySfRenderWindow_SetActive(PySfRenderWindow *self, PyObject *args)
+{
+	PyObject*  Active( 0 );
+
+	PyArg_ParseTuple( args, "|O", &Active );
+	self->obj->SetActive( Active == 0 ? true : PyBool_AsBool( Active ) );
+
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+PySfRenderWindow_Flush(PySfRenderWindow *self, PyObject *args)
+{
+	self->obj->Flush();
+	Py_RETURN_NONE;
+}
+
+static PyObject *
 PySfRenderWindow_GetView(PySfRenderWindow *self)
 {
 	if (self->View != NULL)
@@ -172,13 +184,6 @@ PySfRenderWindow_GetView(PySfRenderWindow *self)
 		self->View = View;
 		return (PyObject *)View;
 	}
-}
-
-static PyObject *
-PySfRenderWindow_PreserveOpenGLStates(PySfRenderWindow *self, PyObject *args)
-{
-	self->obj->PreserveOpenGLStates(PyBool_AsBool(args));
-	Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -210,6 +215,11 @@ PySfRenderWindow_GetDefaultView(PySfRenderWindow *self)
 }
 
 static PyMethodDef PySfRenderWindow_methods[] = {
+	{"SetActive", (PyCFunction)PySfRenderWindow_SetActive, METH_VARARGS, "SetActive(Active)\n\
+Activate or deactivate the window as the current target for OpenGL rendering.\n\
+	Active : True to activate window. (default: True)"},
+	{"Flush", (PyCFunction)PySfRenderWindow_Flush, METH_VARARGS, "Flush()\n\
+Make sure that what has been drawn so far is rendered."},
 	{"Clear", (PyCFunction)PySfRenderWindow_Clear, METH_VARARGS, "Clear(FillColor)\n\
 Clear the entire target with a single color.\n\
 	FillColor : Color to use to clear the render target."},
@@ -217,18 +227,10 @@ Clear the entire target with a single color.\n\
 Get the default view of the window for read / write (returns a sf.View instance)."},
 	{"GetView", (PyCFunction)PySfRenderWindow_GetView, METH_NOARGS, "GetView()\n\
 Get the current view rectangle (returns a sf.View instance)."},
-	{"PreserveOpenGLStates", (PyCFunction)PySfRenderWindow_PreserveOpenGLStates, METH_O, "PreserveOpenGLStates(Preserve)\n\
-Tell SFML to preserve external OpenGL states, at the expense of more CPU charge. Use this function if you don't want SFML to mess up your own OpenGL states (if any). Don't enable state preservation if not needed, as it will allow SFML to do internal optimizations and improve performances. This parameter is false by default\n\
-	Preserve : True to preserve OpenGL states, false to let SFML optimize"},
 	{"SetView", (PyCFunction)PySfRenderWindow_SetView, METH_O, "SetView(View)\n\
 Change the current active view. View must be a sf.View instance."},
 	{"Draw", (PyCFunction)PySfRenderWindow_Draw, METH_O, "Draw(Drawable)\n\
 Draw something on the window. The argument can be a drawable or any object supporting the iterator protocol and containing drawables (for example a tuple of drawables)."},
-	{"PreserveOpenGLStates", (PyCFunction)PySfRenderWindow_PreserveOpenGLStates, METH_O, "PreserveOpenGLStates(Preserve)\n\
-Tell SFML to preserve external OpenGL states, at the expense of more CPU charge. Use this function if you don't want SFML to mess up your own OpenGL states (if any). Don't enable state preservation if not needed, as it will allow SFML to do internal optimizations and improve performances. This parameter is false by default\n\
-	Preserve : True to preserve OpenGL states, false to let SFML optimize"},
-	{"Capture", (PyCFunction)PySfRenderWindow_Capture, METH_NOARGS, "Capture()\n\
-Save the content of the window to an image. Returns a sf.Image object."},
 	{"ConvertCoords", (PyCFunction)PySfRenderWindow_ConvertCoords, METH_VARARGS, "ConvertCoords(WindowX, WindowY, TargetView)\n\
 Convert a point in window coordinates into view coordinates. Returns a tuple of two floats.\n\
 	WindowX :    X coordinate of the point to convert, relative to the window\n\

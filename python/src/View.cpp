@@ -69,32 +69,15 @@ PySfView_GetCenter(PySfView* self)
 }
 
 static PyObject *
-PySfView_GetHalfSize(PySfView* self)
-{
-	sf::Vector2f Vect = self->obj->GetHalfSize();
-	return Py_BuildValue("ff", Vect.x, Vect.y);
-}
-
-static PyObject *
-PySfView_GetRect(PySfView* self)
-{
-	PySfFloatRect *Rect = GetNewPySfFloatRect();
-	Rect->Owner = false;
-	Rect->obj = (sf::FloatRect *) &(self->obj->GetRect());
-	PySfFloatRectUpdateSelf(Rect);
-	return (PyObject *)Rect;
-}
-
-static PyObject *
-PySfView_SetFromRect(PySfView* self, PyObject *args)
+PySfView_Reset(PySfView* self, PyObject *args)
 {
 	PySfFloatRect *Rect = (PySfFloatRect *)args;
 	if (!PyObject_TypeCheck(Rect, &PySfFloatRectType))
 	{
-		PyErr_SetString(PyExc_TypeError, "View.SetFromRect() Argument is not a sf.FloatRect instance");
+		PyErr_SetString(PyExc_TypeError, "View.Reset() Argument is not a sf.FloatRect instance");
 		return NULL;
 	}
-	self->obj->SetFromRect(*(Rect->obj));
+	self->obj->Reset(*(Rect->obj));
 	Py_RETURN_NONE;
 }
 
@@ -119,16 +102,6 @@ PySfView_SetCenter(PySfView* self, PyObject *args)
 }
 
 static PyObject *
-PySfView_SetHalfSize(PySfView* self, PyObject *args)
-{
-	float x, y;
-	if (!PyArg_ParseTuple(args, "ff:View.SetHalfSize", &x, &y) )
-		return NULL;
-	self->obj->SetHalfSize(x, y);
-	Py_RETURN_NONE;
-}
-
-static PyObject *
 PySfView_Zoom(PySfView* self, PyObject *args)
 {
 	self->obj->Zoom(PyFloat_AsDouble(args));
@@ -137,14 +110,11 @@ PySfView_Zoom(PySfView* self, PyObject *args)
 
 static PyMethodDef PySfView_methods[] = {
 	{"GetCenter", (PyCFunction)PySfView_GetCenter, METH_NOARGS, "GetCenter()\nGet the center of the view."},
-	{"GetHalfSize", (PyCFunction)PySfView_GetHalfSize, METH_NOARGS, "GetHalfSize()\nGet the half-size of the view."},
-	{"GetRect", (PyCFunction)PySfView_GetRect, METH_NOARGS, "GetRect()\nGet the bounding rectangle of the view."},
 	{"Move", (PyCFunction)PySfView_Move, METH_VARARGS, "Move(OffsetX, OffsetY)\nMove the view.\n\
 	OffsetX 	: Offset to move the view, on X axis\n\
 	OffsetY 	: Offset to move the view, on Y axis"},
-	{"SetFromRect", (PyCFunction)PySfView_SetFromRect, METH_O, "SetFromRect(ViewRect)\nRebuild the view from a rectangle.\n	ViewRect : Rectangle defining the position and size of the view."},
+	{"Reset", (PyCFunction)PySfView_Reset, METH_O, "Reset(ViewRect)\nRebuild the view from a rectangle.\n	ViewRect : Rectangle defining the position and size of the view."},
 	{"SetCenter", (PyCFunction)PySfView_SetCenter, METH_VARARGS, "SetCenter(X, Y)\nChange the center of the view."},
-	{"SetHalfSize", (PyCFunction)PySfView_SetHalfSize, METH_VARARGS, "SetHalfSize(HalfWidth, HalfHeight)\nChange the half-size of the view."},
 	{"Zoom", (PyCFunction)PySfView_Zoom, METH_O, "Zoom(Factor)\nResize the view rectangle to simulate a zoom / unzoom effect."},
 	{NULL}  /* Sentinel */
 };

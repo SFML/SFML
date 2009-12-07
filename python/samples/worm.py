@@ -10,7 +10,7 @@ class Menu:
 		text_color = sf.Color(220, 220, 20, 255)
 		self.spacing = screen_height/7
 
-		self.title = sf.String("PyWorm!")
+		self.title = sf.Text("PyWorm!")
 		self.title.SetColor(text_color)
 		self.title.SetPosition(screen_width/2-80., self.spacing)
 
@@ -18,7 +18,7 @@ class Menu:
 		x_align = [-80., -50., -70., -50.]
 		self.strings = []
 		for i in range(0, 4):
-			string = sf.String(levels[i])
+			string = sf.Text(levels[i])
 			string.SetColor(text_color)
 			string.SetPosition(screen_width/2+x_align[i], (2+i)*self.spacing+20)
 			self.strings.append(string)
@@ -47,7 +47,7 @@ class Apple(sf.Sprite):
 			pass
 			# print "Could not load data/apple.png"
 		sf.Sprite.__init__(self, apple_img)
-		self.SetCenter(apple_img.GetWidth()/2, apple_img.GetHeight()/2)
+		self.SetOrigin(apple_img.GetWidth()/2, apple_img.GetHeight()/2)
 		self.size = apple_img.GetWidth()
 
 	def random_move(self, arena):
@@ -62,10 +62,10 @@ class Arena(dict):
 	def __init__(self, window_width, window_height):
 		self.window_width = window_width
 		self.arena_bottom, self.exit_left, self.exit_right = window_height-80, window_width/2 - 50, window_width/2 + 50
-		self['level_str'] = sf.String()
+		self['level_str'] = sf.Text()
 		self['level_str'].SetColor(sf.Color.White)
 		self['level_str'].SetPosition(60., window_height-60)
-		self['score_str'] = sf.String()
+		self['score_str'] = sf.Text()
 		self['score_str'].SetColor(sf.Color.White)
 		self['score_str'].SetPosition(260., window_height-60)
 		self.exit_rect = sf.Shape.Rectangle(self.exit_left, 0, self.exit_right, self.arena_top, sf.Color.Black)
@@ -78,16 +78,16 @@ class Arena(dict):
 	def reset(self):
 		self.level, self.score, self.arena_left, self.arena_right = 1, 0, self.shrink_value, self.window_width-self.shrink_value
 		self.update_arena_rect()
-		self['level_str'].SetText("Level: 1")
-		self['score_str'].SetText("Score: 0")
+		self['level_str'].SetString("Level: 1")
+		self['score_str'].SetString("Score: 0")
 
 	def update_score(self):
 		self.score += 1
-		self['score_str'].SetText("Score: " + str(self.score))
+		self['score_str'].SetString("Score: " + str(self.score))
 
 	def next_level(self):
 		self.level += 1
-		self['level_str'].SetText("Level: " + str(self.level))
+		self['level_str'].SetString("Level: " + str(self.level))
 		self.arena_left += self.shrink_value
 		self.arena_right -= self.shrink_value
 		self.update_arena_rect()
@@ -97,7 +97,7 @@ class Arena(dict):
 class Part(sf.Sprite):
 	def __init__(self, rond, x, y):
 		sf.Sprite.__init__(self, rond)
-		self.SetCenter(rond.GetWidth()/2, rond.GetHeight()/2)
+		self.SetOrigin(rond.GetWidth()/2, rond.GetHeight()/2)
 		self.SetPosition(x, y)
 
 class Worm(list):

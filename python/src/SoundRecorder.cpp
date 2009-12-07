@@ -105,9 +105,9 @@ PySfSoundRecorder_GetSampleRate(PySfSoundRecorder* self)
 }
 
 static PyObject *
-PySfSoundRecorder_CanCapture(PySfSoundRecorder* self)
+PySfSoundRecorder_IsAvailable(PySfSoundRecorder* self)
 {
-	return PyBool_FromLong(sf::SoundRecorder::CanCapture());
+	return PyBool_FromLong(sf::SoundRecorder::IsAvailable());
 }
 
 
@@ -115,7 +115,7 @@ static PyMethodDef PySfSoundRecorder_methods[] = {
 	{"Start", (PyCFunction)PySfSoundRecorder_Start, METH_O, "Start(SampleRate=44100)\nStart the capture. Warning : only one capture can happen at the same time.\n	SampleRate : Sound frequency (the more samples, the higher the quality) (44100 by default = CD quality)."},
 	{"Stop", (PyCFunction)PySfSoundRecorder_Stop, METH_NOARGS, "Stop()\nStop the capture."},
 	{"GetSampleRate", (PyCFunction)PySfSoundRecorder_GetSampleRate, METH_NOARGS, "GetSampleRate()\nGet the sample rate. Returns the frequency, in samples per second."},
-	{"CanCapture", (PyCFunction)PySfSoundRecorder_CanCapture, METH_STATIC | METH_NOARGS, "CanCapture()\nTell if the system supports sound capture. If not, this class won't be usable. Returns True if audio capture is supported."},
+	{"IsAvailable", (PyCFunction)PySfSoundRecorder_IsAvailable, METH_STATIC | METH_NOARGS, "IsAvailable()\nTell if the system supports sound capture. If not, this class won't be usable. Returns True if audio capture is supported."},
 	{NULL}  /* Sentinel */
 };
 

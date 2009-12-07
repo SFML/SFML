@@ -22,22 +22,17 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef __PYSTRING_HPP
-#define __PYSTRING_HPP
+#ifndef __PYPOSTFX_HPP
+#define __PYPOSTFX_HPP
 
 #include <Python.h>
 
-#include <SFML/Graphics/String.hpp>
-
-#include "Font.hpp"
+#include <SFML/Graphics/Shader.hpp>
 
 typedef struct {
 	PyObject_HEAD
 	bool IsCustom;
-	sf::String *obj;
-	PySfFont *font;
-} PySfString;
-
-void PySfString_InitConst();
+	sf::Shader *obj;
+} PySfShader;
 
 #endif
