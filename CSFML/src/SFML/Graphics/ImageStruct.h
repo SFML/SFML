@@ -42,9 +42,9 @@ struct sfImage
         OwnInstance = true;
     }
 
-    sfImage(sf::Image* Image)
+    sfImage(sf::Image* image)
     {
-        This = Image;
+        This = image;
         OwnInstance = false;
     }
 

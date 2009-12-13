@@ -320,9 +320,9 @@ void sfText_SetFont(sfText* text, const sfFont* font)
 ////////////////////////////////////////////////////////////
 /// Set the size of a string
 ////////////////////////////////////////////////////////////
-void sfText_SetSize(sfText* text, float size)
+void sfText_SetCharacterSize(sfText* text, unsigned int size)
 {
-    CSFML_CALL(text, SetSize(size))
+    CSFML_CALL(text, SetCharacterSize(size))
 }
 
 
@@ -373,9 +373,9 @@ const sfFont* sfText_GetFont(const sfText* text)
 ////////////////////////////////////////////////////////////
 /// Get the size of the characters of a text
 ////////////////////////////////////////////////////////////
-float sfText_GetSize(const sfText* text)
+unsigned int sfText_GetCharacterSize(const sfText* text)
 {
-    CSFML_CALL_RETURN(text, GetSize(), 0.f)
+    CSFML_CALL_RETURN(text, GetCharacterSize(), 0.f)
 }
 
 

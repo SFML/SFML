@@ -47,7 +47,7 @@ int main()
     // Initialize the end text
     sf::Text end;
     end.SetFont(font);
-    end.SetSize(60.f);
+    end.SetCharacterSize(60);
     end.Move(150.f, 200.f);
     end.SetColor(sf::Color(50, 50, 250));
 

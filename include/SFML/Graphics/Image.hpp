@@ -203,7 +203,7 @@ public :
     /// Warning: for performances reasons, this function doesn't
     /// perform any check; thus you're responsible of ensuring that
     /// \a rectangle does not exceed the image size, and that
-    /// \a pixels contain enough elements.
+    /// \a pixels contains enough elements.
     ///
     /// \param rectangle : Sub-rectangle of the image to update
     /// \param pixels :    Array of pixels to write to the image

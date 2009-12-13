@@ -140,8 +140,6 @@
 		<Unit filename="..\..\src\SFML\Graphics\Color.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Drawable.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Font.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\FontLoader.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\FontLoader.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\GLCheck.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\GLCheck.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\GLEW\glew.c">

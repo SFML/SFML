@@ -65,12 +65,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// Construct the string from any kind of text
     ///
-    /// \param string : Text assigned to the string
-    /// \param font :   Font used to draw the string
-    /// \param size :   Characters size
+    /// \param string :        Text assigned to the string
+    /// \param font :          Font used to draw the string
+    /// \param characterSize : Base size of characters, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    explicit Text(const String& string, const Font& font = Font::GetDefaultFont(), float size = 30.f);
+    explicit Text(const String& string, const Font& font = Font::GetDefaultFont(), unsigned int characterSize = 30);
 
     ////////////////////////////////////////////////////////////
     /// Set the text (from any kind of string)
@@ -89,13 +89,13 @@ public :
     void SetFont(const Font& font);
 
     ////////////////////////////////////////////////////////////
-    /// Set the size of the string
+    /// Set the base size for the characters.
     /// The default size is 30
     ///
     /// \param size : New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    void SetSize(float size);
+    void SetCharacterSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
     /// Set the style of the text
@@ -123,12 +123,12 @@ public :
     const Font& GetFont() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the size of the characters
+    /// Get the base size of characters
     ///
-    /// \return Size of the characters
+    /// \return Size of the characters, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    float GetSize() const;
+    unsigned int GetCharacterSize() const;
 
     ////////////////////////////////////////////////////////////
     /// Get the style of the text
@@ -148,7 +148,7 @@ public :
     /// \return Position of the index-th character (end of string if Index is out of range)
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f GetCharacterPos(std::size_t index) const;
+    Vector2f GetCharacterPos(std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
     /// Get the string rectangle on screen
@@ -179,7 +179,7 @@ private :
     ////////////////////////////////////////////////////////////
     String            myString;         ///< String to display
     ResourcePtr<Font> myFont;           ///< Font used to display the string
-    float             mySize;           ///< Size of the characters
+    unsigned int      myCharacterSize;  ///< Base size of characters, in pixels
     unsigned long     myStyle;          ///< Text style (see Style enum)
     FloatRect         myBaseRect;       ///< Bounding rectangle of the text in object coordinates
     bool              myNeedRectUpdate; ///< Does the bounding rect need an update ?

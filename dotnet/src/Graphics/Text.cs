@@ -211,10 +211,10 @@ namespace SFML
             /// Base size of characters
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public float Size
+            public uint Size
             {
-                get {return sfText_GetSize(This);}
-                set {sfText_SetSize(This, value);}
+                get {return sfText_GetCharacterSize(This);}
+                set {sfText_SetCharacterSize(This, value);}
             }
 
             ////////////////////////////////////////////////////////////
@@ -376,7 +376,7 @@ namespace SFML
             static extern void sfText_SetFont(IntPtr This, IntPtr Font);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern void sfText_SetSize(IntPtr This, float Size);
+            static extern void sfText_SetCharacterSize(IntPtr This, uint Size);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfText_SetStyle(IntPtr This, Styles Style);
@@ -385,7 +385,7 @@ namespace SFML
             static extern string sfText_GetString(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern float sfText_GetSize(IntPtr This);
+            static extern uint sfText_GetCharacterSize(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern Styles sfText_GetStyle(IntPtr This);

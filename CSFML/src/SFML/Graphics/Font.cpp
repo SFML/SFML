@@ -33,17 +33,10 @@
 ////////////////////////////////////////////////////////////
 /// Create a new font from a file
 ////////////////////////////////////////////////////////////
-sfFont* sfFont_CreateFromFile(const char* filename, unsigned int charSize, const sfUint32* charset)
+sfFont* sfFont_CreateFromFile(const char* filename)
 {
     sfFont* font = new sfFont;
-
-    bool success = false;
-    if (charset)
-        success = font->This.LoadFromFile(filename, charSize, charset);
-    else
-        success = font->This.LoadFromFile(filename, charSize);
-
-    if (!success)
+    if (!font->This.LoadFromFile(filename))
     {
         delete font;
         font = NULL;
@@ -56,17 +49,10 @@ sfFont* sfFont_CreateFromFile(const char* filename, unsigned int charSize, const
 ////////////////////////////////////////////////////////////
 /// Create a new font from a file in memory
 ////////////////////////////////////////////////////////////
-sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes, unsigned int charSize, const sfUint32* charset)
+sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes)
 {
     sfFont* font = new sfFont;
-
-    bool success = false;
-    if (charset)
-        success = font->This.LoadFromMemory(data, sizeInBytes, charSize, charset);
-    else
-        success = font->This.LoadFromMemory(data, sizeInBytes, charSize);
-
-    if (!success)
+    if (!font->This.LoadFromMemory(data, sizeInBytes))
     {
         delete font;
         font = NULL;
@@ -86,12 +72,57 @@ void sfFont_Destroy(sfFont* font)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the base size of characters in a font;
-/// All glyphs dimensions are based on this value
+/// Get a glyph in a font
 ////////////////////////////////////////////////////////////
-unsigned int sfFont_GetCharacterSize(const sfFont* font)
+sfGlyph sfFont_GetGlyph(sfFont* font, sfUint32 codePoint, unsigned int characterSize)
 {
-    CSFML_CALL_RETURN(font, GetCharacterSize(), 0);
+    sfGlyph glyph = {0, {0, 0, 0, 0}, {0, 0, 0, 0}};
+    CSFML_CHECK_RETURN(font, glyph);
+
+    sf::Glyph SFMLGlyph = font->This.GetGlyph(codePoint, characterSize);
+
+    glyph.Advance          = SFMLGlyph.Advance;
+    glyph.Rectangle.Left   = SFMLGlyph.Rectangle.Left;
+    glyph.Rectangle.Top    = SFMLGlyph.Rectangle.Top;
+    glyph.Rectangle.Right  = SFMLGlyph.Rectangle.Right;
+    glyph.Rectangle.Bottom = SFMLGlyph.Rectangle.Bottom;
+    glyph.TexCoords.Left   = SFMLGlyph.TexCoords.Left;
+    glyph.TexCoords.Top    = SFMLGlyph.TexCoords.Top;
+    glyph.TexCoords.Right  = SFMLGlyph.TexCoords.Right;
+    glyph.TexCoords.Bottom = SFMLGlyph.TexCoords.Bottom;
+
+    return glyph;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Get the kerning value corresponding to a given pair of characters in a font
+////////////////////////////////////////////////////////////
+int sfFont_GetKerning(sfFont* font, sfUint32 first, sfUint32 second, unsigned int characterSize)
+{
+    CSFML_CALL_RETURN(font, GetKerning(first, second, characterSize), 0);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Get the line spacing value
+////////////////////////////////////////////////////////////
+int sfFont_GetLineSpacing(sfFont* font, unsigned int characterSize)
+{
+    CSFML_CALL_RETURN(font, GetLineSpacing(characterSize), 0);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Get the image containing the glyphs of a given size in a font
+////////////////////////////////////////////////////////////
+const sfImage* sfFont_GetImage(sfFont* font, unsigned int characterSize)
+{
+    CSFML_CHECK_RETURN(font, NULL);
+
+    *font->Images[characterSize].This = font->This.GetImage(characterSize);
+
+    return &font->Images[characterSize];
 }
 
 

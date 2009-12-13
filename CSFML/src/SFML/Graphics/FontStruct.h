@@ -29,6 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/ImageStruct.h>
+#include <map>
 
 
 ////////////////////////////////////////////////////////////
@@ -37,6 +39,7 @@
 struct sfFont
 {
     sf::Font This;
+    std::map<unsigned int, sfImage> Images;
 };
 
 

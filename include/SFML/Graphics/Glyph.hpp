@@ -51,8 +51,8 @@ public :
     // Member data
     ////////////////////////////////////////////////////////////
     int       Advance;   ///< Offset to move horizontically to the next character
-    IntRect   Rectangle; ///< Bounding rectangle of the glyph, in relative coordinates
-    FloatRect TexCoords; ///< Texture coordinates of the glyph inside the bitmap font
+    IntRect   Rectangle; ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
+    FloatRect TexCoords; ///< Texture coordinates of the glyph inside the font's image
 };
 
 } // namespace sf

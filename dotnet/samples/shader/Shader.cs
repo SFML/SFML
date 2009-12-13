@@ -93,7 +93,7 @@ namespace sample_shader
             Sprite entity = new Sprite(new Image("datas/shader/sprite.png"));
 
             // Load the text font
-            Font font = new Font("datas/shader/arial.ttf", 20);
+            Font font = new Font("datas/shader/arial.ttf");
 
             // Load the image needed for the wave effect
             Image waveImage = new Image("datas/shader/wave.jpg");
@@ -135,7 +135,7 @@ namespace sample_shader
             Text infoText = new Text();
             infoText.Font = font;
             infoText.Size = 20;
-            infoText.Position = new Vector2(5.0F, 510.0F);
+            infoText.Position = new Vector2(5.0F, 500.0F);
             infoText.Color = new Color(250, 100, 30);
             infoText.DisplayedString = "Move your mouse to change the shaders' parameters\n" +
                                        "Press numpad 1 to change the background shader\n" +

@@ -233,6 +233,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\SFML\Graphics\Glyph.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\Graphics\Image.cpp"
 			>
 		</File>

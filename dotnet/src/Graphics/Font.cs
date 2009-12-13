@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.IO;
@@ -7,6 +8,24 @@ namespace SFML
 {
     namespace Graphics
     {
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Structure describing a glyph (a visual character)
+        /// </summary>
+        ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Glyph
+        {
+            /// <summary>Offset to move horizontically to the next character</summary>
+            public int Advance;
+
+            /// <summary>Bounding rectangle of the glyph, in coordinates relative to the baseline</summary>
+            public IntRect Rectangle;
+
+            /// <summary>Texture coordinates of the glyph inside the font's image</summary>
+            public FloatRect TexCoords;
+        }
+
         ////////////////////////////////////////////////////////////
         /// <summary>
         /// Font is the low-level class for loading and
@@ -24,47 +43,8 @@ namespace SFML
             /// <exception cref="LoadingFailedException" />
             ////////////////////////////////////////////////////////////
             public Font(string filename) :
-                this(filename, 30)
+                base(sfFont_CreateFromFile(filename))
             {
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Construct the font from a file, using custom size
-            /// </summary>
-            /// <param name="filename">Font file to load</param>
-            /// <param name="charSize">Character size</param>
-            /// <exception cref="LoadingFailedException" />
-            ////////////////////////////////////////////////////////////
-            public Font(string filename, uint charSize) :
-                this(filename, charSize, "")
-            {
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Construct the font from a file, using custom size and characters set
-            /// </summary>
-            /// <param name="filename">Font file to load</param>
-            /// <param name="charSize">Character size</param>
-            /// <param name="charset">Set of characters to generate</param>
-            /// <exception cref="LoadingFailedException" />
-            ////////////////////////////////////////////////////////////
-            public Font(string filename, uint charSize, string charset) :
-                base(IntPtr.Zero)
-            {
-                unsafe
-                {
-                    IntPtr ptr;
-                    int size;
-                    if (Int32.TryParse(charset, out size))
-                        ptr = new IntPtr(&size);
-                    else
-                        ptr = IntPtr.Zero;
-
-                    SetThis(sfFont_CreateFromFile(filename, charSize, ptr));
-                }
-
                 if (This == IntPtr.Zero)
                     throw new LoadingFailedException("font", filename);
             }
@@ -77,64 +57,73 @@ namespace SFML
             /// <exception cref="LoadingFailedException" />
             ////////////////////////////////////////////////////////////
             public Font(Stream stream) :
-                this(stream, 30)
-            {
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Construct the font from a file in a stream, using custom size
-            /// </summary>
-            /// <param name="stream">Stream containing the file contents</param>
-            /// <param name="charSize">Character size</param>
-            /// <exception cref="LoadingFailedException" />
-            ////////////////////////////////////////////////////////////
-            public Font(Stream stream, uint charSize) :
-                this(stream, charSize, "")
-            {
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Construct the font from a file in a stream
-            /// </summary>
-            /// <param name="stream">Stream containing the file contents</param>
-            /// <param name="charSize">Character size</param>
-            /// <param name="charset">Set of characters to generate</param>
-            /// <exception cref="LoadingFailedException" />
-            ////////////////////////////////////////////////////////////
-            public Font(Stream stream, uint charSize, string charset) :
                 base(IntPtr.Zero)
             {
                 unsafe
                 {
-                    IntPtr ptr;
-                    int size;
-                    if (Int32.TryParse(charset, out size))
-                        ptr = new IntPtr(&size);
-                    else
-                        ptr = IntPtr.Zero;
-
                     stream.Position = 0;
                     byte[] StreamData = new byte[stream.Length];
                     uint Read = (uint)stream.Read(StreamData, 0, StreamData.Length);
                     fixed (byte* dataPtr = StreamData)
                     {
-                        SetThis(sfFont_CreateFromMemory((char*)dataPtr, Read, charSize, ptr));
+                        SetThis(sfFont_CreateFromMemory((char*)dataPtr, Read));
                     }
                 }
+
                 if (This == IntPtr.Zero)
                     throw new LoadingFailedException("font");
             }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Base character size
+            /// Get a glyph in the font
             /// </summary>
+            /// <param name="codePoint">Unicode code point of the character to get</param>
+            /// <param name="characterSize">Character size</param>
+            /// <returns>The glyph corresponding to the character</returns>
             ////////////////////////////////////////////////////////////
-            public uint CharacterSize
+            public Glyph GetGlyph(uint codePoint, uint characterSize)
             {
-                get { return sfFont_GetCharacterSize(This); }
+                return sfFont_GetGlyph(This, codePoint, characterSize);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Get the kerning offset between two glyphs
+            /// </summary>
+            /// <param name="first">Unicode code point of the first character</param>
+            /// <param name="second">Unicode code point of the second character</param>
+            /// <param name="characterSize">Character size</param>
+            /// <returns>Kerning offset, in pixels</returns>
+            ////////////////////////////////////////////////////////////
+            public int GetKerning(uint first, uint second, uint characterSize)
+            {
+                return sfFont_GetKerning(This, first, second, characterSize);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Get spacing between two consecutive lines
+            /// </summary>
+            /// <param name="characterSize">Character size</param>
+            /// <returns>Line spacing, in pixels</returns>
+            ////////////////////////////////////////////////////////////
+            public int GetLineSpacing(uint characterSize)
+            {
+                return sfFont_GetLineSpacing(This, characterSize);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Get the image containing the glyphs of a given size
+            /// </summary>
+            /// <param name="characterSize">Character size</param>
+            /// <returns>Image storing the glyphs for the given size</returns>
+            ////////////////////////////////////////////////////////////
+            public Image GetImage(uint characterSize)
+            {
+                myImages[characterSize] = new Image(sfFont_GetImage(This, characterSize));
+                return myImages[characterSize];
             }
 
             ////////////////////////////////////////////////////////////
@@ -168,6 +157,12 @@ namespace SFML
 
                     sfFont_Destroy(This);
 
+                    if (disposing)
+                    {
+                        foreach (Image image in myImages.Values)
+                            image.Dispose();
+                    }
+
                     if (!disposing)
                         Context.Global.SetActive(false);
                 }
@@ -184,20 +179,30 @@ namespace SFML
             {
             }
 
+            private Dictionary<uint, Image> myImages = new Dictionary<uint, Image>();
             private static Font ourDefaultFont = null;
 
             #region Imports
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfFont_CreateFromFile(string Filename, uint CharSize, IntPtr Charset);
+            static extern IntPtr sfFont_CreateFromFile(string Filename);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            unsafe static extern IntPtr sfFont_CreateFromMemory(char* Data, uint SizeInBytes, uint CharSize, IntPtr Charset);
+            unsafe static extern IntPtr sfFont_CreateFromMemory(char* Data, uint SizeInBytes);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfFont_Destroy(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern uint sfFont_GetCharacterSize(IntPtr This);
+            static extern Glyph sfFont_GetGlyph(IntPtr This, uint codePoint, uint characterSize);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern int sfFont_GetKerning(IntPtr This, uint first, uint second, uint characterSize);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern int sfFont_GetLineSpacing(IntPtr This, uint characterSize);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfFont_GetImage(IntPtr This, uint characterSize);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfFont_GetDefaultFont();

@@ -26,133 +26,213 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/FontLoader.hpp>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
 #include <iostream>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-// Static member data
-////////////////////////////////////////////////////////////
-Uint32 Font::ourDefaultCharset[] =
-{
-    // Printable characters in ASCII range
-    0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
-    0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
-    0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
-    0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F,
-    0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F,
-    0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E,
-
-    // Printable characters in extended ASCII range
-    0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0x2A, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF,
-    0xB0, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE, 0xBF,
-    0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF,
-    0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF,
-    0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF,
-    0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE,
-
-    // To make it a valid string
-    0x00
-};
-
-
-////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 Font::Font() :
-myCharSize(0)
+myLibrary    (NULL),
+myFace       (NULL),
+myRefCount   (NULL),
+myCurrentSize(0)
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Load the font from a file
-////////////////////////////////////////////////////////////
-bool Font::LoadFromFile(const std::string& filename, unsigned int charSize, String charset)
+Font::Font(const Font& copy) :
+myLibrary    (copy.myLibrary),
+myFace       (copy.myFace),
+myRefCount   (copy.myRefCount),
+myPages      (copy.myPages),
+myPixelBuffer(copy.myPixelBuffer),
+myCurrentSize(copy.myCurrentSize)
 {
-    // Clear the previous character map
-    myGlyphs.clear();
+    // Note: as FreeType doesn't provide functions for copying/cloning,
+    // we must share all the FreeType pointers
 
-    // Always add these special characters
-    if (std::find(charset.Begin(), charset.End(), L' ')  == charset.End()) charset += L' ';
-    if (std::find(charset.Begin(), charset.End(), L'\n') == charset.End()) charset += L'\n';
-    if (std::find(charset.Begin(), charset.End(), L'\v') == charset.End()) charset += L'\v';
-    if (std::find(charset.Begin(), charset.End(), L'\t') == charset.End()) charset += L'\t';
-
-    return priv::FontLoader::GetInstance().LoadFontFromFile(filename, charSize, charset, *this);
+    if (myRefCount)
+        (*myRefCount)++;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Load the font from a file in memory
-////////////////////////////////////////////////////////////
-bool Font::LoadFromMemory(const char* data, std::size_t sizeInBytes, unsigned int charSize, String charset)
+Font::~Font()
 {
-    // Clear the previous character map
-    myGlyphs.clear();
+    Cleanup();
+}
 
-    // Check parameters
-    if (!data || (sizeInBytes == 0))
+
+////////////////////////////////////////////////////////////
+bool Font::LoadFromFile(const std::string& filename)
+{
+    // Cleanup the previous resources
+    Cleanup();
+
+    // Initialize FreeType
+    // Note: we initialize FreeType for every font instance in order to avoid having a single
+    // global manager that would create a lot of issues regarding creation and destruction order.
+    FT_Library library;
+    if (FT_Init_FreeType(&library) != 0)
     {
-        std::cerr << "Failed to load font from memory, no data provided" << std::endl;
+        std::cerr << "Failed to load font \"" << filename << "\" (failed to initialize FreeType)" << std::endl;
+        return false;
+    }
+    myLibrary = library;
+
+    // Load the new font face from the specified file
+    FT_Face face;
+    if (FT_New_Face(static_cast<FT_Library>(myLibrary), filename.c_str(), 0, &face) != 0)
+    {
+        std::cerr << "Failed to load font \"" << filename << "\" (failed to create the font face)" << std::endl;
         return false;
     }
 
-    // Always add these special characters
-    if (std::find(charset.Begin(), charset.End(), L' ')  == charset.End()) charset += L' ';
-    if (std::find(charset.Begin(), charset.End(), L'\n') == charset.End()) charset += L'\n';
-    if (std::find(charset.Begin(), charset.End(), L'\v') == charset.End()) charset += L'\v';
-    if (std::find(charset.Begin(), charset.End(), L'\t') == charset.End()) charset += L'\t';
-
-    return priv::FontLoader::GetInstance().LoadFontFromMemory(data, sizeInBytes, charSize, charset, *this);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Get the base size of characters in the font;
-/// All glyphs dimensions are based on this value
-////////////////////////////////////////////////////////////
-unsigned int Font::GetCharacterSize() const
-{
-    return myCharSize;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Get the description of a glyph (character)
-/// given by its unicode value
-////////////////////////////////////////////////////////////
-const Glyph& Font::GetGlyph(Uint32 codePoint) const
-{
-    std::map<Uint32, Glyph>::const_iterator it = myGlyphs.find(codePoint);
-    if (it != myGlyphs.end())
+    // Select the unicode character map
+    if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        // Valid glyph
-        return it->second;
+        std::cerr << "Failed to load font \"" << filename << "\" (failed to set the Unicode character set)" << std::endl;
+        return false;
+    }
+
+    // Store the loaded font in our ugly void* :)
+    myFace = face;
+
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Font::LoadFromMemory(const char* data, std::size_t sizeInBytes)
+{
+    // Cleanup the previous resources
+    Cleanup();
+
+    // Initialize FreeType
+    // Note: we initialize FreeType for every font instance in order to avoid having a single
+    // global manager that would create a lot of issues regarding creation and destruction order.
+    FT_Library library;
+    if (FT_Init_FreeType(&library) != 0)
+    {
+        std::cerr << "Failed to load font from memory (failed to initialize FreeType)" << std::endl;
+        return false;
+    }
+    myLibrary = library;
+
+    // Load the new font face from the specified file
+    FT_Face face;
+    if (FT_New_Memory_Face(static_cast<FT_Library>(myLibrary), reinterpret_cast<const FT_Byte*>(data), static_cast<FT_Long>(sizeInBytes), 0, &face) != 0)
+    {
+        std::cerr << "Failed to load font from memory (failed to create the font face)" << std::endl;
+        return false;
+    }
+
+    // Select the unicode character map
+    if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
+    {
+        std::cerr << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
+        return false;
+    }
+
+    // Store the loaded font in our ugly void* :)
+    myFace = face;
+
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////
+const Glyph& Font::GetGlyph(Uint32 codePoint, unsigned int characterSize) const
+{
+    // Get the page corresponding to the character size
+    GlyphTable& glyphs = myPages[characterSize].Glyphs;
+
+    // Search the glyph into the cache
+    GlyphTable::const_iterator it = glyphs.find(codePoint);
+    if (it != glyphs.end())
+    {
+        // Found: just return it
+        return it->second.GlyphDesc;
     }
     else
     {
-        // Invalid glyph -- return an invalid glyph
-        static const Glyph invalid;
-        return invalid;
+        // Not found: we have to load it
+        GlyphInfo glyph = LoadGlyph(codePoint, characterSize);
+        return glyphs.insert(std::make_pair(codePoint, glyph)).first->second.GlyphDesc;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the image containing the rendered characters (glyphs)
-////////////////////////////////////////////////////////////
-const Image& Font::GetImage() const
+int Font::GetKerning(Uint32 first, Uint32 second, unsigned int characterSize) const
 {
-    return myTexture;
+    FT_Face face = static_cast<FT_Face>(myFace);
+
+    if (face && FT_HAS_KERNING(face) && SetCurrentSize(characterSize))
+    {
+        // Convert the characters to indices
+        FT_UInt index1 = FT_Get_Char_Index(face, first);
+        FT_UInt index2 = FT_Get_Char_Index(face, second);
+
+        // Get the kerning vector
+        FT_Vector kerning;
+        FT_Get_Kerning(face, index1, index2, FT_KERNING_DEFAULT, &kerning);
+
+        // Return the X advance
+        return kerning.x >> 6;
+    }
+    else
+    {
+        // Invalid font, or no kerning
+        return 0;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the SFML default built-in font (Arial)
+int Font::GetLineSpacing(unsigned int characterSize) const
+{
+    FT_Face face = static_cast<FT_Face>(myFace);
+
+    if (face && SetCurrentSize(characterSize))
+    {
+        return (face->size->metrics.height >> 6);
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+const Image& Font::GetImage(unsigned int characterSize) const
+{
+    return myPages[characterSize].Texture;
+}
+
+
+////////////////////////////////////////////////////////////
+Font& Font::operator =(const Font& right)
+{
+    Font temp(right);
+
+    std::swap(myLibrary,     temp.myLibrary);
+    std::swap(myFace,        temp.myFace);
+    std::swap(myPages,       temp.myPages);
+    std::swap(myPixelBuffer, temp.myPixelBuffer);
+    std::swap(myCurrentSize, temp.myCurrentSize);
+
+    return *this;
+}
+
+
 ////////////////////////////////////////////////////////////
 const Font& Font::GetDefaultFont()
 {
@@ -167,11 +247,231 @@ const Font& Font::GetDefaultFont()
             #include <SFML/Graphics/Arial.hpp>
         };
 
-        font.LoadFromMemory(data, sizeof(data), 30);
+        font.LoadFromMemory(data, sizeof(data));
         loaded = true;
     }
 
     return font;
+}
+
+
+////////////////////////////////////////////////////////////
+void Font::Cleanup()
+{
+    // Check if we must destroy the FreeType pointers
+    if (myRefCount)
+    {
+        // Decrease the reference counter
+        (*myRefCount)--;
+
+        // Free the resources only if we are the last owner
+        if (*myRefCount == 0)
+        {
+            // Delete the reference counter
+            delete myRefCount;
+
+            // Destroy the font face
+            if (myFace)
+                FT_Done_Face(static_cast<FT_Face>(myFace));
+
+            // Close the library
+            if (myLibrary)
+                FT_Done_FreeType(static_cast<FT_Library>(myLibrary));
+        }
+    }
+
+    // Reset members
+    myLibrary     = NULL;
+    myFace        = NULL;
+    myRefCount    = NULL;
+    myCurrentSize = 0;
+    myPages.clear();
+    myPixelBuffer.clear();
+}
+
+
+////////////////////////////////////////////////////////////
+Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize) const
+{
+    // The glyph to return
+    GlyphInfo glyphInfo;
+
+    // First, transform our ugly void* to a FT_Face
+    FT_Face face = static_cast<FT_Face>(myFace);
+    if (!face)
+        return glyphInfo;
+
+    // Set the character size
+    if (!SetCurrentSize(characterSize))
+        return glyphInfo;
+
+    // Load the glyph corresponding to the code point
+    if (FT_Load_Char(face, codePoint, FT_LOAD_TARGET_NORMAL) != 0)
+        return glyphInfo;
+
+    // Convert the glyph to a bitmap (i.e. rasterize it)
+    FT_Glyph glyphDesc;
+    if (FT_Get_Glyph(face->glyph, &glyphDesc) != 0)
+        return glyphInfo;
+    FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, 0, 1);
+    FT_BitmapGlyph bitmapGlyph = (FT_BitmapGlyph)glyphDesc;
+    FT_Bitmap& bitmap = bitmapGlyph->bitmap;
+
+    // Compute the glyph's advance offset
+    glyphInfo.GlyphDesc.Advance = bitmapGlyph->root.advance.x >> 16;
+
+    if ((bitmap.width > 0) && (bitmap.rows > 0))
+    {
+        // Leave a small padding around characters, so that filtering doesn't
+        // pollute them with pixels from neighbours
+        const unsigned int padding = 1;
+
+        // Get the glyphs page corresponding to the character size
+        Page& page = myPages[characterSize];
+
+        // Find a good position for the new glyph into the texture
+        glyphInfo.TextureRect = FindGlyphRect(page, bitmap.width + 2 * padding, bitmap.rows + 2 * padding);
+
+        // Compute the glyph's texture coordinates and bounding box
+        glyphInfo.GlyphDesc.TexCoords        = page.Texture.GetTexCoords(glyphInfo.TextureRect);
+        glyphInfo.GlyphDesc.Rectangle.Left   = bitmapGlyph->left - padding;
+        glyphInfo.GlyphDesc.Rectangle.Top    = -bitmapGlyph->top - padding;
+        glyphInfo.GlyphDesc.Rectangle.Right  = bitmapGlyph->left + bitmap.width + padding;
+        glyphInfo.GlyphDesc.Rectangle.Bottom = -bitmapGlyph->top + bitmap.rows + padding;
+
+        // Extract the glyph's pixels from the bitmap
+        myPixelBuffer.resize(bitmap.width * bitmap.rows * 4, 255);
+        const Uint8* pixels = bitmap.buffer;
+        for (int y = 0; y < bitmap.rows; ++y)
+        {
+            for (int x = 0; x < bitmap.width; ++x)
+            {
+                // The color channels remain white, just fill the alpha channel
+                std::size_t index = (x + y * bitmap.width) * 4 + 3;
+                myPixelBuffer[index] = pixels[x];
+
+                // Formula for FT_RENDER_MODE_MONO
+                // myPixelBuffer[index] = ((pixels[x / 8]) & (1 << (7 - (x % 8)))) ? 255 : 0;
+            }
+            pixels += bitmap.pitch;
+        }
+
+        // Write the pixels to the texture
+        IntRect subrect = glyphInfo.TextureRect;
+        subrect.Left   += padding;
+        subrect.Top    += padding;
+        subrect.Right  -= padding;
+        subrect.Bottom -= padding;
+        page.Texture.UpdatePixels(&myPixelBuffer[0], subrect);
+    }
+
+    // Delete the FT glyph
+    FT_Done_Glyph(glyphDesc);
+
+    // Done :)
+    return glyphInfo;
+}
+
+
+////////////////////////////////////////////////////////////
+IntRect Font::FindGlyphRect(Page& page, unsigned int width, unsigned int height) const
+{
+    // Find the line that fits well the glyph
+    Row* row = NULL;
+    float bestRatio = 0;
+    for (std::vector<Row>::iterator it = page.Rows.begin(); it != page.Rows.end() && !row; ++it)
+    {
+        float ratio = static_cast<float>(height) / it->Height;
+
+        // Ignore rows that are either too small or too high
+        if ((ratio < 0.7f) || (ratio > 1.f))
+            continue;
+
+        // Check if there's enough horizontal space left in the row
+        if (width > page.Texture.GetWidth() - it->Width)
+            continue;
+
+        // Make sure that this new row is the best found so far
+        if (ratio < bestRatio)
+            continue;
+
+        // The current row passed all the tests: we can select it
+        row = &*it;
+        bestRatio = ratio;
+    }
+
+    // If we didn't find a matching row, create a new one (10% taller than the glyph)
+    if (!row)
+    {
+        int rowHeight = height + height / 10;
+        if (page.NextRow + rowHeight >= page.Texture.GetHeight())
+        {
+            // Not enough space: resize the texture if possible
+            unsigned int textureWidth  = page.Texture.GetWidth();
+            unsigned int textureHeight = page.Texture.GetHeight();
+            if ((textureWidth * 2 <= Image::GetMaximumSize()) && (textureHeight * 2 <= Image::GetMaximumSize()))
+            {
+                // Make the texture 2 times bigger
+                std::size_t size = textureWidth * textureHeight * 4;
+                std::vector<Uint8> pixels(size);
+                memcpy(&pixels[0], page.Texture.GetPixelsPtr(), size);
+                page.Texture.Create(textureWidth * 2, textureHeight * 2, sf::Color(255, 255, 255, 0));
+                page.Texture.UpdatePixels(&pixels[0], IntRect(0, 0, textureWidth, textureHeight));
+
+                // Adjust the texture coordinates of all the glyphs that are stored in this page
+                for (GlyphTable::iterator it = page.Glyphs.begin(); it != page.Glyphs.end(); ++it)
+                {
+                    it->second.GlyphDesc.TexCoords = page.Texture.GetTexCoords(it->second.TextureRect);
+                }
+            }
+            else
+            {
+                // Oops, we've reached the maximum texture size...
+                std::cerr << "Failed to add a new character to the font: the maximum image size has been reached" << std::endl;
+                return IntRect(0, 0, 2, 2);
+            }
+        }
+
+        // We can now create the new row
+        page.Rows.push_back(Row(page.NextRow, rowHeight));
+        page.NextRow += rowHeight;
+        row = &page.Rows.back();
+    }
+
+    // Find the glyph's rectangle on the selected row
+    IntRect rect(row->Width, row->Top, row->Width + width, row->Top + height);
+
+    // Update the row informations
+    row->Width += width;
+
+    return rect;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Font::SetCurrentSize(unsigned int characterSize) const
+{
+    // FT_Set_Pixel_Sizes is an expensive function, so we must call it
+    // only when necessary to avoid killing performances
+
+    if (myCurrentSize != characterSize)
+    {
+        myCurrentSize = characterSize;
+        return FT_Set_Pixel_Sizes(static_cast<FT_Face>(myFace), characterSize, characterSize) == 0;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+Font::Page::Page() :
+NextRow(0)
+{
+    // Make sure that the texture is initialized by default
+    Texture.Create(128, 128, Color(255, 255, 255, 0));
 }
 
 } // namespace sf

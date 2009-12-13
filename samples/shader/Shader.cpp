@@ -108,7 +108,7 @@ int main()
 
     // Load the text font
     sf::Font font;
-    if (!font.LoadFromFile("datas/shader/arial.ttf", 20))
+    if (!font.LoadFromFile("datas/shader/arial.ttf"))
         return EXIT_FAILURE;
 
     // Load the image needed for the wave shader
@@ -144,7 +144,7 @@ int main()
     // Define a string for displaying the description of the current shader
     sf::Text shaderStr;
     shaderStr.SetFont(font);
-    shaderStr.SetSize(20);
+    shaderStr.SetCharacterSize(20);
     shaderStr.SetPosition(5.f, 0.f);
     shaderStr.SetColor(sf::Color(250, 100, 30));
     shaderStr.SetString("Background shader: \"" + backgroundShader.GetName() + "\"\n"
@@ -154,8 +154,8 @@ int main()
     // Define a string for displaying help
     sf::Text infoStr;
     infoStr.SetFont(font);
-    infoStr.SetSize(20);
-    infoStr.SetPosition(5.f, 510.f);
+    infoStr.SetCharacterSize(20);
+    infoStr.SetPosition(5.f, 500.f);
     infoStr.SetColor(sf::Color(250, 100, 30));
     infoStr.SetString("Move your mouse to change the shaders' parameters\n"
                       "Press numpad 1/4 to change the background shader\n"

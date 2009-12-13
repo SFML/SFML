@@ -3435,14 +3435,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Graphics\FontLoader.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\FontLoader.hpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\SFML\Graphics\GLCheck.cpp"
 			>
 		</File>

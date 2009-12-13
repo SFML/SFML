@@ -14,6 +14,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-main", "sfml-main.vcproj", "{2BD26A09-E1B6-42E2-A0D0-63987B76BB97}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-network", "sfml-network.vcproj", "{823DDC98-42D5-4A38-88CF-9DC06C788AE4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C061A27D-7CA0-4179-9869-672FA04A86A8} = {C061A27D-7CA0-4179-9869-672FA04A86A8}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-system", "sfml-system.vcproj", "{C061A27D-7CA0-4179-9869-672FA04A86A8}"
 EndProject

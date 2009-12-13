@@ -244,10 +244,6 @@ Socket::Status SocketUDP::Send(Packet& packet, const IPAddress& address, unsigne
 ////////////////////////////////////////////////////////////
 Socket::Status SocketUDP::Receive(Packet& packet, IPAddress& address, unsigned short& port)
 {
-    // This is not safe at all, as data can be lost, duplicated, or arrive in a different order.
-    // So if a packet is split into more than one chunk, nobody knows what could happen...
-    // Conclusion : we shouldn't use packets with UDP, unless we build a more complex protocol on top of it.
-
     // We start by getting the size of the incoming packet
     Uint32      packetSize = 0;
     std::size_t received   = 0;

@@ -36,26 +36,22 @@
 /// Create a new font from a file
 ///
 /// \param filename : Path of the font file to load
-/// \param charSize : Size of characters in bitmap - the bigger, the higher quality
-/// \param charset :  Characters set to generate (just pass NULL to get the default charset)
 ///
 /// \return A new sfFont object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFont* sfFont_CreateFromFile(const char* filename, unsigned int charSize, const sfUint32* charset);
+CSFML_API sfFont* sfFont_CreateFromFile(const char* filename);
 
 ////////////////////////////////////////////////////////////
 /// Create a new image font a file in memory
 ///
 /// \param data :        Pointer to the file data in memory
 /// \param sizeInBytes : Size of the data to load, in bytes
-/// \param charSize :    Size of characters in bitmap - the bigger, the higher quality
-/// \param charset :     Characters set to generate (just pass NULL to get the default charset)
 ///
 /// \return A new sfFont object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes, unsigned int charSize, const sfUint32* charset);
+CSFML_API sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing font
@@ -66,15 +62,52 @@ CSFML_API sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes, 
 CSFML_API void sfFont_Destroy(sfFont* font);
 
 ////////////////////////////////////////////////////////////
-/// Get the base size of characters in a font;
-/// All glyphs dimensions are based on this value
+/// Get a glyph in a font
 ///
-/// \param font : Font object
+/// \param font :          Source font
+/// \param codePoint :     Unicode code point of the character to get
+/// \param characterSize : Character size, in pixels
 ///
-/// \return Base size of characters
+/// \return The corresponding glyph
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfFont_GetCharacterSize(const sfFont* font);
+CSFML_API sfGlyph sfFont_GetGlyph(sfFont* font, sfUint32 codePoint, unsigned int characterSize);
+
+////////////////////////////////////////////////////////////
+/// Get the kerning value corresponding to a given pair of characters in a font
+///
+/// \param font :          Source font
+/// \param first :         Unicode code point of the first character
+/// \param second :        Unicode code point of the second character
+/// \param characterSize : Character size, in pixels
+///
+/// \return Kerning offset, in pixels
+///
+////////////////////////////////////////////////////////////
+CSFML_API int sfFont_GetKerning(sfFont* font, sfUint32 first, sfUint32 second, unsigned int characterSize);
+
+////////////////////////////////////////////////////////////
+/// Get the line spacing value
+///
+/// \param font :          Source font
+/// \param codePoint :     Unicode code point of the character to get
+/// \param characterSize : Character size, in pixels
+///
+/// \return Line spacing, in pixels
+///
+////////////////////////////////////////////////////////////
+CSFML_API int sfFont_GetLineSpacing(sfFont* font, unsigned int characterSize);
+
+////////////////////////////////////////////////////////////
+/// Get the image containing the glyphs of a given size in a font
+///
+/// \param font :          Source font
+/// \param characterSize : Character size, in pixels
+///
+/// \return Read-only pointer to the image
+///
+////////////////////////////////////////////////////////////
+CSFML_API const sfImage* sfFont_GetImage(sfFont* font, unsigned int characterSize);
 
 ////////////////////////////////////////////////////////////
 /// Get the built-in default font (Arial)

@@ -336,7 +336,7 @@ CSFML_API void sfText_SetFont(sfText* text, const sfFont* font);
 /// \param size : New size, in pixels
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfText_SetSize(sfText* text, float size);
+CSFML_API void sfText_SetCharacterSize(sfText* text, unsigned int size);
 
 ////////////////////////////////////////////////////////////
 /// Set the style of a text
@@ -385,7 +385,7 @@ CSFML_API const sfFont* sfText_GetFont(const sfText* text);
 /// \return Size of the characters
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfText_GetSize(const sfText* text);
+CSFML_API unsigned int sfText_GetCharacterSize(const sfText* text);
 
 ////////////////////////////////////////////////////////////
 /// Get the style of a text

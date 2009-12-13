@@ -127,7 +127,10 @@ EXPORTS
 	sfFont_CreateFromFile
 	sfFont_CreateFromMemory
 	sfFont_Destroy
-	sfFont_GetCharacterSize
+	sfFont_GetGlyph
+	sfFont_GetKerning
+	sfFont_GetLineSpacing
+	sfFont_GetImage
 	sfFont_GetDefaultFont
 	sfText_Create
 	sfText_Destroy
@@ -158,12 +161,12 @@ EXPORTS
 	sfText_SetString
 	sfText_SetUnicodeString
 	sfText_SetFont
-	sfText_SetSize
+	sfText_SetCharacterSize
 	sfText_SetStyle
 	sfText_GetUnicodeString
 	sfText_GetString
 	sfText_GetFont
-	sfText_GetSize
+	sfText_GetCharacterSize
 	sfText_GetStyle
 	sfText_GetCharacterPos
 	sfText_GetRect
