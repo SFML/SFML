@@ -115,11 +115,12 @@ public :
     ///
     /// \param codePoint     Unicode code point of the character to get
     /// \param characterSize Reference character size
+    /// \param bold          Retrieve the bold version or the regular one?
     ///
     /// \return The glyph corresponding to \a codePoint and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    const Glyph& GetGlyph(Uint32 codePoint, unsigned int characterSize) const;
+    const Glyph& GetGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the kerning offset of two glyphs
@@ -246,11 +247,12 @@ private :
     ///
     /// \param codePoint     Unicode code point of the character to load
     /// \param characterSize Reference character size
+    /// \param bold          Retrieve the bold version or the regular one?
     ///
     /// \return The glyph corresponding to \a codePoint and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    GlyphInfo LoadGlyph(Uint32 codePoint, unsigned int characterSize) const;
+    GlyphInfo LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Find a suitable rectangle within the texture for a glyph

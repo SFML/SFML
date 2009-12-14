@@ -80,11 +80,12 @@ namespace SFML
             /// </summary>
             /// <param name="codePoint">Unicode code point of the character to get</param>
             /// <param name="characterSize">Character size</param>
+            /// <param name="bold">Retrieve the bold version or the regular one?</param>
             /// <returns>The glyph corresponding to the character</returns>
             ////////////////////////////////////////////////////////////
-            public Glyph GetGlyph(uint codePoint, uint characterSize)
+            public Glyph GetGlyph(uint codePoint, uint characterSize, bool bold)
             {
-                return sfFont_GetGlyph(This, codePoint, characterSize);
+                return sfFont_GetGlyph(This, codePoint, characterSize, bold);
             }
 
             ////////////////////////////////////////////////////////////
@@ -193,7 +194,7 @@ namespace SFML
             static extern void sfFont_Destroy(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern Glyph sfFont_GetGlyph(IntPtr This, uint codePoint, uint characterSize);
+            static extern Glyph sfFont_GetGlyph(IntPtr This, uint codePoint, uint characterSize, bool bold);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern int sfFont_GetKerning(IntPtr This, uint first, uint second, uint characterSize);

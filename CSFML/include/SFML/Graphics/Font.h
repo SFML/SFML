@@ -67,11 +67,12 @@ CSFML_API void sfFont_Destroy(sfFont* font);
 /// \param font :          Source font
 /// \param codePoint :     Unicode code point of the character to get
 /// \param characterSize : Character size, in pixels
+/// \param bold            Retrieve the bold version or the regular one?
 ///
 /// \return The corresponding glyph
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfGlyph sfFont_GetGlyph(sfFont* font, sfUint32 codePoint, unsigned int characterSize);
+CSFML_API sfGlyph sfFont_GetGlyph(sfFont* font, sfUint32 codePoint, unsigned int characterSize, sfBool bold);
 
 ////////////////////////////////////////////////////////////
 /// Get the kerning value corresponding to a given pair of characters in a font

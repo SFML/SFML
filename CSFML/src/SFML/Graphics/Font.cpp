@@ -74,12 +74,12 @@ void sfFont_Destroy(sfFont* font)
 ////////////////////////////////////////////////////////////
 /// Get a glyph in a font
 ////////////////////////////////////////////////////////////
-sfGlyph sfFont_GetGlyph(sfFont* font, sfUint32 codePoint, unsigned int characterSize)
+sfGlyph sfFont_GetGlyph(sfFont* font, sfUint32 codePoint, unsigned int characterSize, sfBool bold)
 {
     sfGlyph glyph = {0, {0, 0, 0, 0}, {0, 0, 0, 0}};
     CSFML_CHECK_RETURN(font, glyph);
 
-    sf::Glyph SFMLGlyph = font->This.GetGlyph(codePoint, characterSize);
+    sf::Glyph SFMLGlyph = font->This.GetGlyph(codePoint, characterSize, bold);
 
     glyph.Advance          = SFMLGlyph.Advance;
     glyph.Rectangle.Left   = SFMLGlyph.Rectangle.Left;

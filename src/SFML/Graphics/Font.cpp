@@ -29,6 +29,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
+#include FT_OUTLINE_H
+#include FT_BITMAP_H
 #include <iostream>
 
 
@@ -148,13 +150,16 @@ bool Font::LoadFromMemory(const char* data, std::size_t sizeInBytes)
 
 
 ////////////////////////////////////////////////////////////
-const Glyph& Font::GetGlyph(Uint32 codePoint, unsigned int characterSize) const
+const Glyph& Font::GetGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const
 {
     // Get the page corresponding to the character size
     GlyphTable& glyphs = myPages[characterSize].Glyphs;
 
+    // Build the key by combining the code point and the bold flag
+    Uint32 key = ((bold ? 1 : 0) << 31) | codePoint;
+
     // Search the glyph into the cache
-    GlyphTable::const_iterator it = glyphs.find(codePoint);
+    GlyphTable::const_iterator it = glyphs.find(key);
     if (it != glyphs.end())
     {
         // Found: just return it
@@ -163,8 +168,8 @@ const Glyph& Font::GetGlyph(Uint32 codePoint, unsigned int characterSize) const
     else
     {
         // Not found: we have to load it
-        GlyphInfo glyph = LoadGlyph(codePoint, characterSize);
-        return glyphs.insert(std::make_pair(codePoint, glyph)).first->second.GlyphDesc;
+        GlyphInfo glyph = LoadGlyph(codePoint, characterSize, bold);
+        return glyphs.insert(std::make_pair(key, glyph)).first->second.GlyphDesc;
     }
 }
 
@@ -291,7 +296,7 @@ void Font::Cleanup()
 
 
 ////////////////////////////////////////////////////////////
-Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize) const
+Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const
 {
     // The glyph to return
     GlyphInfo glyphInfo;
@@ -309,16 +314,35 @@ Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize) co
     if (FT_Load_Char(face, codePoint, FT_LOAD_TARGET_NORMAL) != 0)
         return glyphInfo;
 
-    // Convert the glyph to a bitmap (i.e. rasterize it)
+    // Retrieve the glyph
     FT_Glyph glyphDesc;
     if (FT_Get_Glyph(face->glyph, &glyphDesc) != 0)
         return glyphInfo;
+
+    // Apply bold if necessary -- first technique using outline (highest quality)
+    FT_Pos weight = 2 << 6;
+    bool outline = (glyphDesc->format == FT_GLYPH_FORMAT_OUTLINE);
+    if (bold && outline)
+    {
+        FT_OutlineGlyph outlineGlyph = (FT_OutlineGlyph)glyphDesc;
+        FT_Outline_Embolden(&outlineGlyph->outline, weight);
+    }
+
+    // Convert the glyph to a bitmap (i.e. rasterize it)
     FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, 0, 1);
     FT_BitmapGlyph bitmapGlyph = (FT_BitmapGlyph)glyphDesc;
     FT_Bitmap& bitmap = bitmapGlyph->bitmap;
 
+    // Apply bold if necessary -- fallback technique using bitmap (lower quality)
+    if (bold && !outline)
+    {
+        FT_Bitmap_Embolden(static_cast<FT_Library>(myLibrary), &bitmap, weight, weight);
+    }
+
     // Compute the glyph's advance offset
-    glyphInfo.GlyphDesc.Advance = bitmapGlyph->root.advance.x >> 16;
+    glyphInfo.GlyphDesc.Advance = glyphDesc->advance.x >> 16;
+    if (bold)
+        glyphInfo.GlyphDesc.Advance += weight >> 6;
 
     if ((bitmap.width > 0) && (bitmap.rows > 0))
     {
@@ -468,10 +492,15 @@ bool Font::SetCurrentSize(unsigned int characterSize) const
 
 ////////////////////////////////////////////////////////////
 Font::Page::Page() :
-NextRow(0)
+NextRow(2)
 {
     // Make sure that the texture is initialized by default
     Texture.Create(128, 128, Color(255, 255, 255, 0));
+
+    // Reserve a 2x2 white square for texturing underlines
+    for (int x = 0; x < 2; ++x)
+        for (int y = 0; y < 2; ++y)
+            Texture.SetPixel(x, y, Color(255, 255, 255, 255));
 }
 
 } // namespace sf
