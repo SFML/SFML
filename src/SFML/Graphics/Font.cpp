@@ -320,7 +320,7 @@ Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bo
         return glyphInfo;
 
     // Apply bold if necessary -- first technique using outline (highest quality)
-    FT_Pos weight = 2 << 6;
+    FT_Pos weight = 1 << 6;
     bool outline = (glyphDesc->format == FT_GLYPH_FORMAT_OUTLINE);
     if (bold && outline)
     {
@@ -344,7 +344,9 @@ Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bo
     if (bold)
         glyphInfo.GlyphDesc.Advance += weight >> 6;
 
-    if ((bitmap.width > 0) && (bitmap.rows > 0))
+    int width  = bitmap.width;
+    int height = bitmap.rows;
+    if ((width > 0) && (height > 0))
     {
         // Leave a small padding around characters, so that filtering doesn't
         // pollute them with pixels from neighbours
@@ -354,28 +356,28 @@ Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bo
         Page& page = myPages[characterSize];
 
         // Find a good position for the new glyph into the texture
-        glyphInfo.TextureRect = FindGlyphRect(page, bitmap.width + 2 * padding, bitmap.rows + 2 * padding);
+        glyphInfo.TextureRect = FindGlyphRect(page, width + 2 * padding, height + 2 * padding);
 
         // Compute the glyph's texture coordinates and bounding box
         glyphInfo.GlyphDesc.TexCoords        = page.Texture.GetTexCoords(glyphInfo.TextureRect);
         glyphInfo.GlyphDesc.Rectangle.Left   = bitmapGlyph->left - padding;
         glyphInfo.GlyphDesc.Rectangle.Top    = -bitmapGlyph->top - padding;
-        glyphInfo.GlyphDesc.Rectangle.Right  = bitmapGlyph->left + bitmap.width + padding;
-        glyphInfo.GlyphDesc.Rectangle.Bottom = -bitmapGlyph->top + bitmap.rows + padding;
+        glyphInfo.GlyphDesc.Rectangle.Right  = bitmapGlyph->left + width + padding;
+        glyphInfo.GlyphDesc.Rectangle.Bottom = -bitmapGlyph->top + height + padding;
 
         // Extract the glyph's pixels from the bitmap
-        myPixelBuffer.resize(bitmap.width * bitmap.rows * 4, 255);
+        myPixelBuffer.resize(width * height * 4, 255);
         const Uint8* pixels = bitmap.buffer;
-        for (int y = 0; y < bitmap.rows; ++y)
+        for (int y = 0; y < height; ++y)
         {
-            for (int x = 0; x < bitmap.width; ++x)
+            for (int x = 0; x < width; ++x)
             {
                 // The color channels remain white, just fill the alpha channel
-                std::size_t index = (x + y * bitmap.width) * 4 + 3;
+                std::size_t index = (x + y * width) * 4 + 3;
                 myPixelBuffer[index] = pixels[x];
 
                 // Formula for FT_RENDER_MODE_MONO
-                // myPixelBuffer[index] = ((pixels[x / 8]) & (1 << (7 - (x % 8)))) ? 255 : 0;
+                //myPixelBuffer[index] = ((pixels[x / 8]) & (1 << (7 - (x % 8)))) ? 255 : 0;
             }
             pixels += bitmap.pitch;
         }
@@ -481,7 +483,7 @@ bool Font::SetCurrentSize(unsigned int characterSize) const
     if (myCurrentSize != characterSize)
     {
         myCurrentSize = characterSize;
-        return FT_Set_Pixel_Sizes(static_cast<FT_Face>(myFace), characterSize, characterSize) == 0;
+        return FT_Set_Pixel_Sizes(static_cast<FT_Face>(myFace), 0, characterSize) == 0;
     }
     else
     {
