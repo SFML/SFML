@@ -299,11 +299,12 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
                 const Uint8* src = srcPixels + j * 4;
                 Uint8*       dst = dstPixels + j * 4;
 
-                // Interpolate RGB components using the alpha value of the source pixel
+                // Interpolate RGBA components using the alpha value of the source pixel
                 Uint8 alpha = src[3];
                 dst[0] = (src[0] * alpha + dst[0] * (255 - alpha)) / 255;
                 dst[1] = (src[1] * alpha + dst[1] * (255 - alpha)) / 255;
                 dst[2] = (src[2] * alpha + dst[2] * (255 - alpha)) / 255;
+                dst[3] = alpha + dst[3] * (255 - alpha) / 255;
             }
 
             srcPixels += srcStride;
