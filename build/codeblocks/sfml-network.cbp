@@ -119,7 +119,6 @@
 		<Unit filename="..\..\include\SFML\Network\SocketHelper.hpp" />
 		<Unit filename="..\..\include\SFML\Network\SocketTCP.hpp" />
 		<Unit filename="..\..\include\SFML\Network\SocketUDP.hpp" />
-		<Unit filename="..\..\include\SFML\Network\Sockets.hpp" />
 		<Unit filename="..\..\include\SFML\Network\Win32\SocketHelper.hpp" />
 		<Unit filename="..\..\src\SFML\Network\Ftp.cpp" />
 		<Unit filename="..\..\src\SFML\Network\Http.cpp" />

@@ -404,10 +404,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\Sockets.hpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\SFML\Network\SocketTCP.cpp"
 			>
 		</File>
