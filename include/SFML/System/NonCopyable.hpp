@@ -38,7 +38,7 @@ namespace sf
 ///        class non-copyable
 ///
 ////////////////////////////////////////////////////////////
-struct SFML_API NonCopyable
+class SFML_API NonCopyable
 {
 protected :
 
@@ -94,9 +94,11 @@ private :
 /// To create a non-copyable class, simply inherit from
 /// sf::NonCopyable.
 ///
-/// Because sf::NonCopyable is a struct and not a class,
-/// inheritance is public by default so that the syntax for
-/// using it is even shorter (see below).
+/// The type of inheritance (public or private) doesn't matter,
+/// the copy constructor and assignment operator are declared private
+/// in sf::NonCopyable so they will end up being inaccessible in both
+/// cases. Thus you can use a shorter syntax for inheriting from it
+/// see below).
 ///
 /// Usage example:
 /// \code
