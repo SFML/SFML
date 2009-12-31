@@ -126,12 +126,12 @@ public :
     const View& GetView() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the default view of the window for read / write
+    /// Get the default view of the window
     ///
     /// \return Default view
     ///
     ////////////////////////////////////////////////////////////
-    View& GetDefaultView();
+    const View& GetDefaultView() const;
 
     ////////////////////////////////////////////////////////////
     /// Get the viewport of a view applied to this target
@@ -171,12 +171,6 @@ public :
 protected :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    RenderTarget();
-
-    ////////////////////////////////////////////////////////////
     /// Called by the derived class when it's ready to be initialized
     ///
     ////////////////////////////////////////////////////////////
@@ -199,7 +193,7 @@ private :
     ////////////////////////////////////////////////////////////
     RenderQueue myRenderQueue; ///< Rendering queue storing render commands
     View        myDefaultView; ///< Default view
-    const View* myCurrentView; ///< Current active view
+    View        myCurrentView; ///< Current active view
 };
 
 } // namespace sf

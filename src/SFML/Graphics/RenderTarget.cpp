@@ -34,16 +34,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
-RenderTarget::RenderTarget() :
-myCurrentView(&myDefaultView)
-{
-
-}
-
-
-////////////////////////////////////////////////////////////
 /// Destructor
 ////////////////////////////////////////////////////////////
 RenderTarget::~RenderTarget()
@@ -79,12 +69,6 @@ void RenderTarget::Draw(const Drawable& object)
     // Save the current render states
     myRenderQueue.PushStates();
 
-    // Setup the viewport
-    myRenderQueue.SetViewport(GetViewport(*myCurrentView));
-
-    // Setup the projection matrix
-    myRenderQueue.SetProjection(myCurrentView->GetMatrix());
-
     // Setup the shader
     myRenderQueue.SetShader(NULL);
 
@@ -103,12 +87,6 @@ void RenderTarget::Draw(const Drawable& object, const Shader& shader)
 {
     // Save the current render states
     myRenderQueue.PushStates();
-
-    // Setup the viewport
-    myRenderQueue.SetViewport(GetViewport(*myCurrentView));
-
-    // Setup the projection matrix
-    myRenderQueue.SetProjection(myCurrentView->GetMatrix());
 
     // Setup the shader
     myRenderQueue.SetShader(&shader);
@@ -141,7 +119,12 @@ void RenderTarget::Flush()
 ////////////////////////////////////////////////////////////
 void RenderTarget::SetView(const View& view)
 {
-    myCurrentView = &view;
+    // Save it
+    myCurrentView = view;
+
+    // Send the view's viewport and projection matrix to the render queue
+    myRenderQueue.SetViewport(GetViewport(view));
+    myRenderQueue.SetProjection(view.GetMatrix());
 }
 
 
@@ -150,14 +133,14 @@ void RenderTarget::SetView(const View& view)
 ////////////////////////////////////////////////////////////
 const View& RenderTarget::GetView() const
 {
-    return *myCurrentView;
+    return myCurrentView;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the default view of the window for read / write
+/// Get the default view of the window
 ////////////////////////////////////////////////////////////
-View& RenderTarget::GetDefaultView()
+const View& RenderTarget::GetDefaultView() const
 {
     return myDefaultView;
 }
