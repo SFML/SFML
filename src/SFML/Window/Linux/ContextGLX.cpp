@@ -188,59 +188,42 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     // Find the best visual
     int          bestScore  = 0xFFFF;
     XVisualInfo* bestVisual = NULL;
-    while (!bestVisual)
+    for (int i = 0; i < nbVisuals; ++i)
     {
-        for (int i = 0; i < nbVisuals; ++i)
+        // Get the current visual attributes
+        int RGBA, doubleBuffer, red, green, blue, alpha, depth, stencil, multiSampling, samples;
+        glXGetConfig(myDisplay, &visuals[i], GLX_RGBA,               &RGBA);
+        glXGetConfig(myDisplay, &visuals[i], GLX_DOUBLEBUFFER,       &doubleBuffer); 
+        glXGetConfig(myDisplay, &visuals[i], GLX_RED_SIZE,           &red);
+        glXGetConfig(myDisplay, &visuals[i], GLX_GREEN_SIZE,         &green); 
+        glXGetConfig(myDisplay, &visuals[i], GLX_BLUE_SIZE,          &blue); 
+        glXGetConfig(myDisplay, &visuals[i], GLX_ALPHA_SIZE,         &alpha); 
+        glXGetConfig(myDisplay, &visuals[i], GLX_DEPTH_SIZE,         &depth);        
+        glXGetConfig(myDisplay, &visuals[i], GLX_STENCIL_SIZE,       &stencil);
+        glXGetConfig(myDisplay, &visuals[i], GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
+        glXGetConfig(myDisplay, &visuals[i], GLX_SAMPLES_ARB,        &samples);
+
+        // First check the mandatory parameters
+        if ((RGBA == 0) || (doubleBuffer == 0))
+            continue;
+
+        // Evaluate the current configuration
+        int color = red + green + blue + alpha;
+        int score = EvaluateFormat(bitsPerPixel, mySettings, color, depth, stencil, multiSampling ? samples : 0);
+
+        // Keep it if it's better than the current best
+        if (score < bestScore)
         {
-            // Get the current visual attributes
-            int RGBA, doubleBuffer, red, green, blue, alpha, depth, stencil, multiSampling, samples;
-            glXGetConfig(myDisplay, &visuals[i], GLX_RGBA,               &RGBA);
-            glXGetConfig(myDisplay, &visuals[i], GLX_DOUBLEBUFFER,       &doubleBuffer); 
-            glXGetConfig(myDisplay, &visuals[i], GLX_RED_SIZE,           &red);
-            glXGetConfig(myDisplay, &visuals[i], GLX_GREEN_SIZE,         &green); 
-            glXGetConfig(myDisplay, &visuals[i], GLX_BLUE_SIZE,          &blue); 
-            glXGetConfig(myDisplay, &visuals[i], GLX_ALPHA_SIZE,         &alpha); 
-            glXGetConfig(myDisplay, &visuals[i], GLX_DEPTH_SIZE,         &depth);        
-            glXGetConfig(myDisplay, &visuals[i], GLX_STENCIL_SIZE,       &stencil);
-            glXGetConfig(myDisplay, &visuals[i], GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
-            glXGetConfig(myDisplay, &visuals[i], GLX_SAMPLES_ARB,        &samples);
-
-            // First check the mandatory parameters
-            if ((RGBA == 0) || (doubleBuffer == 0))
-                continue;
-
-            // Evaluate the current configuration
-            int color = red + green + blue + alpha;
-            int score = EvaluateFormat(bitsPerPixel, mySettings, color, depth, stencil, multiSampling ? samples : 0);
-
-            // Keep it if it's better than the current best
-            if (score < bestScore)
-            {
-                bestScore  = score;
-                bestVisual = &visuals[i];
-            }
+            bestScore  = score;
+            bestVisual = &visuals[i];
         }
+    }
 
-        // If no visual has been found, try a lower level of antialiasing
-        if (!bestVisual)
-        {
-            if (mySettings.AntialiasingLevel > 2)
-            {
-                std::cerr << "Failed to find a pixel format supporting "
-                          << mySettings.AntialiasingLevel << " antialiasing levels ; trying with 2 levels" << std::endl;
-                mySettings.AntialiasingLevel = 2;
-            }
-            else if (mySettings.AntialiasingLevel > 0)
-            {
-                std::cerr << "Failed to find a pixel format supporting antialiasing ; antialiasing will be disabled" << std::endl;
-                mySettings.AntialiasingLevel = 0;
-            }
-            else
-            {
-                std::cerr << "Failed to find a suitable pixel format for the window -- cannot create OpenGL context" << std::endl;
-                return;
-            }
-        }
+    // Make sure that we have found a visual
+    if (!bestVisual)
+    {
+        std::cerr << "Failed to find a suitable pixel format for the window -- cannot create OpenGL context" << std::endl;
+        return;
     }
 
     // Get the context to share display lists with
@@ -296,11 +279,14 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     }
 
     // Update the creation settings from the chosen format
-    int depth, stencil;
-    glXGetConfig(myDisplay, bestVisual, GLX_DEPTH_SIZE,   &depth);
-    glXGetConfig(myDisplay, bestVisual, GLX_STENCIL_SIZE, &stencil);
-    mySettings.DepthBits   = static_cast<unsigned int>(depth);
-    mySettings.StencilBits = static_cast<unsigned int>(stencil);
+    int depth, stencil, multiSampling, samples;
+    glXGetConfig(myDisplay, bestVisual, GLX_DEPTH_SIZE,         &depth);
+    glXGetConfig(myDisplay, bestVisual, GLX_STENCIL_SIZE,       &stencil);
+    glXGetConfig(myDisplay, bestVisual, GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
+    glXGetConfig(myDisplay, bestVisual, GLX_SAMPLES_ARB,        &samples);
+    mySettings.DepthBits         = static_cast<unsigned int>(depth);
+    mySettings.StencilBits       = static_cast<unsigned int>(stencil);
+    mySettings.AntialiasingLevel = multiSampling ? samples : 0;
 
     // Change the target window's colormap so that it matches the context's one
     ::Window root = RootWindow(myDisplay, DefaultScreen(myDisplay));
