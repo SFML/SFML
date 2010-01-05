@@ -58,12 +58,14 @@ public :
     JoystickState UpdateState();
 
     ////////////////////////////////////////////////////////////
-    /// Get the number of axes supported by the joystick
+    /// Check if the joystick supports the given axis
     ///
-    /// \return Number of axis
+    /// \param Axis : Axis to check
+    ///
+    /// \return True of the axis is supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetAxesCount() const;
+    bool HasAxis(Joy::Axis Axis) const;
 
     ////////////////////////////////////////////////////////////
     /// Get the number of buttons supported by the joystick
@@ -78,10 +80,12 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int           myDescriptor; ///< Linux descriptor of the joystick
-    unsigned int  myNbAxes;     ///< Number of axis supported by the joystick
-    unsigned int  myNbButtons;  ///< Number of buttons supported by the joystick
-    JoystickState myState;      ///< Current state of the joystick
+    int           myDescriptor;       ///< Linux descriptor of the joystick
+    unsigned int  myNbButtons;        ///< Number of buttons supported by the joystick
+    bool          myAxes[Joy::Count]; ///< Supported axes
+    JoystickState myState;            ///< Current state of the joystick
+    int           myPovX;             ///< Last X position of the POV
+    int           myPovY;             ///< Last Y position of the POV
 };
 
 } // namespace priv

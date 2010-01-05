@@ -42,10 +42,12 @@ namespace priv
 void Joystick::Initialize(unsigned int Index)
 {
     // Reset state
-    myIndex       = JOYSTICKID1;
-    myNbAxes      = 0;
-    myNbButtons   = 0;
-    myIsConnected = false;
+    myIndex            = JOYSTICKID1;
+    myNbButtons        = 0;
+    myIsConnected      = false;
+    myHasContinuousPOV = false;
+    for (int i = 0; i < Joy::Count; ++i)
+        myAxes[i] = false;
 
     // Get the Index-th connected joystick
     MMRESULT Error;
@@ -64,10 +66,18 @@ void Joystick::Initialize(unsigned int Index)
                 myIsConnected = true;
                 JOYCAPS Caps;
                 joyGetDevCaps(myIndex, &Caps, sizeof(Caps));
-                myNbAxes    = Caps.wNumAxes;
                 myNbButtons = Caps.wNumButtons;
                 if (myNbButtons > JoystickState::MaxButtons)
                     myNbButtons = JoystickState::MaxButtons;
+
+                myAxes[Joy::AxisX]   = true;
+                myAxes[Joy::AxisY]   = true;
+                myAxes[Joy::AxisZ]   = (Caps.wCaps & JOYCAPS_HASZ) != 0;
+                myAxes[Joy::AxisR]   = (Caps.wCaps & JOYCAPS_HASR) != 0;
+                myAxes[Joy::AxisU]   = (Caps.wCaps & JOYCAPS_HASU) != 0;
+                myAxes[Joy::AxisV]   = (Caps.wCaps & JOYCAPS_HASV) != 0;
+                myAxes[Joy::AxisPOV] = (Caps.wCaps & JOYCAPS_HASPOV) != 0;
+                myHasContinuousPOV   = (Caps.wCaps & JOYCAPS_POVCTS) != 0;
 
                 return;
             }
@@ -94,8 +104,9 @@ JoystickState Joystick::UpdateState()
         {
             // Get the current joystick state
             JOYINFOEX Pos;
-            Pos.dwFlags = JOY_RETURNALL;
-            Pos.dwSize  = sizeof(JOYINFOEX);
+            Pos.dwFlags  = JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR | JOY_RETURNU | JOY_RETURNV | JOY_RETURNBUTTONS;
+            Pos.dwFlags |= myHasContinuousPOV ? JOY_RETURNPOVCTS : JOY_RETURNPOV;
+            Pos.dwSize   = sizeof(JOYINFOEX);
             if (joyGetPosEx(myIndex, &Pos) == JOYERR_NOERROR)
             {
                 // Axes
@@ -121,11 +132,11 @@ JoystickState Joystick::UpdateState()
 
 
 ////////////////////////////////////////////////////////////
-/// Get the number of axes supported by the joystick
+/// Check if the joystick supports the given axis
 ////////////////////////////////////////////////////////////
-unsigned int Joystick::GetAxesCount() const
+bool Joystick::HasAxis(Joy::Axis Axis) const
 {
-    return myNbAxes;
+    return myAxes[Axis];
 }
 
 

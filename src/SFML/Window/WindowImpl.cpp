@@ -221,18 +221,21 @@ void WindowImpl::ProcessJoystickEvents()
         myJoyStates[i] = myJoysticks[i].UpdateState();
 
         // Axis
-        for (unsigned int j = 0; j < myJoysticks[i].GetAxesCount(); ++j)
+        for (unsigned int j = 0; j < Joy::Count; ++j)
         {
-            float PrevPos = PreviousState.Axis[j];
-            float CurrPos = myJoyStates[i].Axis[j];
-            if (fabs(CurrPos - PrevPos) >= myJoyThreshold)
+            if (myJoysticks[i].HasAxis(static_cast<Joy::Axis>(i)))
             {
-                Event Event;
-                Event.Type               = Event::JoyMoved;
-                Event.JoyMove.JoystickId = i;
-                Event.JoyMove.Axis       = static_cast<Joy::Axis>(j);
-                Event.JoyMove.Position   = CurrPos;
-                SendEvent(Event);
+                float PrevPos = PreviousState.Axis[j];
+                float CurrPos = myJoyStates[i].Axis[j];
+                if (fabs(CurrPos - PrevPos) >= myJoyThreshold)
+                {
+                    Event Event;
+                    Event.Type               = Event::JoyMoved;
+                    Event.JoyMove.JoystickId = i;
+                    Event.JoyMove.Axis       = static_cast<Joy::Axis>(j);
+                    Event.JoyMove.Position   = CurrPos;
+                    SendEvent(Event);
+                }
             }
         }
 

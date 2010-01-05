@@ -412,7 +412,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Window\Event.hpp"
+			RelativePath="..\..\include\SFML\Window\Event.hpp"
 			>
 		</File>
 		<File
