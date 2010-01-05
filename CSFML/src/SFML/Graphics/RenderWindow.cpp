@@ -58,9 +58,9 @@ sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsig
     // Create the window
     sfRenderWindow* renderWindow = new sfRenderWindow;
     renderWindow->This.Create(videoMode, title, style, params);
-    renderWindow->Input.This  = &renderWindow->This.GetInput();
-    renderWindow->DefaultView = new sfView(const_cast<sf::View*>(&renderWindow->This.GetDefaultView()));
-    renderWindow->CurrentView = renderWindow->DefaultView;
+    renderWindow->Input.This = &renderWindow->This.GetInput();
+    renderWindow->DefaultView.This = renderWindow->This.GetDefaultView();
+    renderWindow->CurrentView.This = renderWindow->This.GetView();
 
     return renderWindow;
 }
@@ -85,9 +85,9 @@ sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle handle, const sfC
     // Create the window
     sfRenderWindow* renderWindow = new sfRenderWindow;
     renderWindow->This.Create(handle, params);
-    renderWindow->Input.This  = &renderWindow->This.GetInput();
-    renderWindow->DefaultView = new sfView(const_cast<sf::View*>(&renderWindow->This.GetDefaultView()));
-    renderWindow->CurrentView = renderWindow->DefaultView;
+    renderWindow->Input.This = &renderWindow->This.GetInput();
+    renderWindow->DefaultView.This = renderWindow->This.GetDefaultView();
+    renderWindow->CurrentView.This = renderWindow->This.GetView();
 
     return renderWindow;
 }
@@ -98,7 +98,6 @@ sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle handle, const sfC
 ////////////////////////////////////////////////////////////
 void sfRenderWindow_Destroy(sfRenderWindow* renderWindow)
 {
-    delete renderWindow->DefaultView;
     delete renderWindow;
 }
 
@@ -413,8 +412,8 @@ void sfRenderWindow_Clear(sfRenderWindow* renderWindow, sfColor color)
 void sfRenderWindow_SetView(sfRenderWindow* renderWindow, const sfView* view)
 {
     CSFML_CHECK(view);
-    CSFML_CALL(renderWindow, SetView(*view->This));
-    renderWindow->CurrentView = view;
+    CSFML_CALL(renderWindow, SetView(view->This));
+    renderWindow->CurrentView.This = view->This;
 }
 
 
@@ -425,18 +424,18 @@ const sfView* sfRenderWindow_GetView(const sfRenderWindow* renderWindow)
 {
     CSFML_CHECK_RETURN(renderWindow, NULL);
 
-    return renderWindow->CurrentView;
+    return &renderWindow->CurrentView;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the default view of a renderwindow
 ////////////////////////////////////////////////////////////
-sfView* sfRenderWindow_GetDefaultView(sfRenderWindow* renderWindow)
+const sfView* sfRenderWindow_GetDefaultView(const sfRenderWindow* renderWindow)
 {
     CSFML_CHECK_RETURN(renderWindow, NULL);
 
-    return renderWindow->DefaultView;
+    return &renderWindow->DefaultView;
 }
 
 
@@ -449,7 +448,7 @@ sfIntRect sfRenderWindow_GetViewport(const sfRenderWindow* renderWindow, const s
     CSFML_CHECK_RETURN(view, rect);
     CSFML_CHECK_RETURN(renderWindow, rect);
 
-    sf::IntRect SFMLrect = renderWindow->This.GetViewport(*view->This);
+    sf::IntRect SFMLrect = renderWindow->This.GetViewport(view->This);
     rect.Left   = SFMLrect.Left;
     rect.Top    = SFMLrect.Top;
     rect.Right  = SFMLrect.Right;
@@ -468,7 +467,7 @@ void sfRenderWindow_ConvertCoords(const sfRenderWindow* renderWindow, unsigned i
 
     sf::Vector2f point;
     if (targetView)
-        point = renderWindow->This.ConvertCoords(windowX, windowY, *targetView->This);
+        point = renderWindow->This.ConvertCoords(windowX, windowY, targetView->This);
     else
         point = renderWindow->This.ConvertCoords(windowX, windowY);
 

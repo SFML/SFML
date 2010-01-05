@@ -41,9 +41,9 @@ sfRenderImage* sfRenderImage_Create(unsigned int width, unsigned int height, sfB
 {
     sfRenderImage* renderImage = new sfRenderImage;
     renderImage->This.Create(width, height, depthBuffer == sfTrue);
-    renderImage->Target      = new sfImage(const_cast<sf::Image*>(&renderImage->This.GetImage()));
-    renderImage->DefaultView = new sfView(const_cast<sf::View*>(&renderImage->This.GetDefaultView()));
-    renderImage->CurrentView = renderImage->DefaultView;
+    renderImage->Target = new sfImage(const_cast<sf::Image*>(&renderImage->This.GetImage()));
+    renderImage->DefaultView.This = renderImage->This.GetDefaultView();
+    renderImage->CurrentView.This = renderImage->This.GetView();
 
     return renderImage;
 }
@@ -54,7 +54,6 @@ sfRenderImage* sfRenderImage_Create(unsigned int width, unsigned int height, sfB
 ////////////////////////////////////////////////////////////
 void sfRenderImage_Destroy(sfRenderImage* renderImage)
 {
-    delete renderImage->DefaultView;
     delete renderImage->Target;
     delete renderImage;
 }
@@ -175,8 +174,8 @@ void sfRenderImage_Clear(sfRenderImage* renderImage, sfColor color)
 void sfRenderImage_SetView(sfRenderImage* renderImage, const sfView* view)
 {
     CSFML_CHECK(view);
-    CSFML_CALL(renderImage, SetView(*view->This));
-    renderImage->CurrentView = view;
+    CSFML_CALL(renderImage, SetView(view->This));
+    renderImage->CurrentView.This = view->This;
 }
 
 
@@ -187,18 +186,18 @@ const sfView* sfRenderImage_GetView(const sfRenderImage* renderImage)
 {
     CSFML_CHECK_RETURN(renderImage, NULL);
 
-    return renderImage->CurrentView;
+    return &renderImage->CurrentView;
 }
 
 
 ////////////////////////////////////////////////////////////
 /// Get the default view of a renderimage
 ////////////////////////////////////////////////////////////
-sfView* sfRenderImage_GetDefaultView(sfRenderImage* renderImage)
+const sfView* sfRenderImage_GetDefaultView(const sfRenderImage* renderImage)
 {
     CSFML_CHECK_RETURN(renderImage, NULL);
 
-    return renderImage->DefaultView;
+    return &renderImage->DefaultView;
 }
 
 
@@ -211,7 +210,7 @@ sfIntRect sfRenderImage_GetViewport(const sfRenderImage* renderImage, const sfVi
     CSFML_CHECK_RETURN(view, rect);
     CSFML_CHECK_RETURN(renderImage, rect);
 
-    sf::IntRect SFMLrect = renderImage->This.GetViewport(*view->This);
+    sf::IntRect SFMLrect = renderImage->This.GetViewport(view->This);
     rect.Left   = SFMLrect.Left;
     rect.Top    = SFMLrect.Top;
     rect.Right  = SFMLrect.Right;
@@ -230,7 +229,7 @@ void sfRenderImage_ConvertCoords(const sfRenderImage* renderImage, unsigned int 
 
     sf::Vector2f point;
     if (targetView)
-        point = renderImage->This.ConvertCoords(imageX, imageY, *targetView->This);
+        point = renderImage->This.ConvertCoords(imageX, imageY, targetView->This);
     else
         point = renderImage->This.ConvertCoords(imageX, imageY);
 

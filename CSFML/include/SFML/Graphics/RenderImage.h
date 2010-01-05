@@ -168,7 +168,7 @@ CSFML_API const sfView* sfRenderImage_GetView(const sfRenderImage* renderImage);
 /// \return Default view of the renderimage
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfView* sfRenderImage_GetDefaultView(sfRenderImage* renderImage);
+CSFML_API const sfView* sfRenderImage_GetDefaultView(const sfRenderImage* renderImage);
 
 ////////////////////////////////////////////////////////////
 /// Get the viewport of a view applied to this target

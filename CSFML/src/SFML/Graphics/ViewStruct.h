@@ -36,38 +36,7 @@
 ////////////////////////////////////////////////////////////
 struct sfView
 {
-    sfView() :
-        This(new sf::View),
-        OwnInstance(true)
-    {
-    }
-
-    sfView(sfFloatRect Rect) :
-        This(new sf::View(sf::FloatRect(Rect.Left, Rect.Top, Rect.Right, Rect.Bottom))),
-        OwnInstance(true)
-    {
-    }
-
-    sfView(sf::View* View) :
-        This(View),
-        OwnInstance(false)
-    {
-    }
-
-    sfView(const sfView& View) :
-        This(View.This ? new sf::View(*View.This) : NULL),
-        OwnInstance(true)
-    {
-    }
-
-    ~sfView()
-    {
-        if (OwnInstance)
-            delete This;
-    }
-
-    sf::View* This; // pointer needed for RenderWindow
-    bool OwnInstance;
+    sf::View This;
 };
 
 

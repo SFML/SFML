@@ -40,8 +40,8 @@ struct sfRenderWindow
 {
     sf::RenderWindow This;
     sfInput          Input;
-    sfView*          DefaultView;
-    const sfView*    CurrentView;
+    sfView           DefaultView;
+    sfView           CurrentView;
 };
 
 

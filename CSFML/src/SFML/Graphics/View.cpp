@@ -44,7 +44,10 @@ sfView* sfView_Create()
 ////////////////////////////////////////////////////////////
 sfView* sfView_CreateFromRect(sfFloatRect rectangle)
 {
-    return new sfView(rectangle);
+    sfView* view = new sfView;
+    sfView_Reset(view, rectangle);
+
+    return view;
 }
 
 
@@ -73,7 +76,7 @@ void sfView_Destroy(sfView* view)
 ////////////////////////////////////////////////////////////
 void sfView_SetCenter(sfView* view, float x, float y)
 {
-    CSFML_CALL_PTR(view, SetCenter(x, y));
+    CSFML_CALL(view, SetCenter(x, y));
 }
 
 
@@ -82,7 +85,7 @@ void sfView_SetCenter(sfView* view, float x, float y)
 ////////////////////////////////////////////////////////////
 void sfView_SetSize(sfView* view, float width, float height)
 {
-    CSFML_CALL_PTR(view, SetSize(width, height));
+    CSFML_CALL(view, SetSize(width, height));
 }
 
 
@@ -91,7 +94,7 @@ void sfView_SetSize(sfView* view, float width, float height)
 ////////////////////////////////////////////////////////////
 void sfView_SetRotation(sfView* view, float angle)
 {
-    CSFML_CALL_PTR(view, SetRotation(angle));
+    CSFML_CALL(view, SetRotation(angle));
 }
 
 
@@ -100,7 +103,7 @@ void sfView_SetRotation(sfView* view, float angle)
 ////////////////////////////////////////////////////////////
 void sfView_SetViewport(sfView* view, sfFloatRect viewport)
 {
-    CSFML_CALL_PTR(view, SetViewport(sf::FloatRect(viewport.Left, viewport.Top, viewport.Right, viewport.Bottom)));
+    CSFML_CALL(view, SetViewport(sf::FloatRect(viewport.Left, viewport.Top, viewport.Right, viewport.Bottom)));
 }
 
 
@@ -110,7 +113,7 @@ void sfView_SetViewport(sfView* view, sfFloatRect viewport)
 ////////////////////////////////////////////////////////////
 void sfView_Reset(sfView* view, sfFloatRect rectangle)
 {
-    CSFML_CALL_PTR(view, Reset(sf::FloatRect(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom)));
+    CSFML_CALL(view, Reset(sf::FloatRect(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom)));
 }
 
 
@@ -121,7 +124,7 @@ float sfView_GetCenterX(const sfView* view)
 {
     CSFML_CHECK_RETURN(view, 0.f);
 
-    return view->This->GetCenter().x;
+    return view->This.GetCenter().x;
 }
 
 
@@ -132,7 +135,7 @@ float sfView_GetCenterY(const sfView* view)
 {
     CSFML_CHECK_RETURN(view, 0.f);
 
-    return view->This->GetCenter().y;
+    return view->This.GetCenter().y;
 }
 
 
@@ -143,7 +146,7 @@ float sfView_GetWidth(const sfView* view)
 {
     CSFML_CHECK_RETURN(view, 0.f);
 
-    return view->This->GetSize().x;
+    return view->This.GetSize().x;
 }
 
 
@@ -154,7 +157,7 @@ float sfView_GetHeight(const sfView* view)
 {
     CSFML_CHECK_RETURN(view, 0.f);
 
-    return view->This->GetSize().y;
+    return view->This.GetSize().y;
 }
 
 
@@ -163,7 +166,7 @@ float sfView_GetHeight(const sfView* view)
 ////////////////////////////////////////////////////////////
 float sfView_GetRotation(const sfView* view)
 {
-    CSFML_CALL_PTR_RETURN(view, GetRotation(), 0.f);
+    CSFML_CALL_RETURN(view, GetRotation(), 0.f);
 }
 
 
@@ -175,7 +178,7 @@ sfFloatRect sfView_GetViewport(const sfView* view)
     sfFloatRect rect = {0, 0, 0, 0};
     CSFML_CHECK_RETURN(view, rect);
 
-    sf::FloatRect SFMLRect = view->This->GetViewport();
+    sf::FloatRect SFMLRect = view->This.GetViewport();
     rect.Left   = SFMLRect.Left;
     rect.Top    = SFMLRect.Top;
     rect.Right  = SFMLRect.Right;
@@ -190,7 +193,7 @@ sfFloatRect sfView_GetViewport(const sfView* view)
 ////////////////////////////////////////////////////////////
 void sfView_Move(sfView* view, float offsetX, float offsetY)
 {
-    CSFML_CALL_PTR(view, Move(offsetX, offsetY));
+    CSFML_CALL(view, Move(offsetX, offsetY));
 }
 
 
@@ -199,7 +202,7 @@ void sfView_Move(sfView* view, float offsetX, float offsetY)
 ////////////////////////////////////////////////////////////
 void sfView_Rotate(sfView* view, float angle)
 {
-    CSFML_CALL_PTR(view, Rotate(angle));
+    CSFML_CALL(view, Rotate(angle));
 }
 
 
@@ -208,5 +211,5 @@ void sfView_Rotate(sfView* view, float angle)
 ////////////////////////////////////////////////////////////
 void sfView_Zoom(sfView* view, float factor)
 {
-    CSFML_CALL_PTR(view, Zoom(factor));
+    CSFML_CALL(view, Zoom(factor));
 }
