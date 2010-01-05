@@ -45,12 +45,16 @@ myMouseY(0)
     {
         myJoystickButtons[0][i] = false;
         myJoystickButtons[1][i] = false;
+        myJoystickButtons[2][i] = false;
+        myJoystickButtons[3][i] = false;
     }
 
     for (int i = 0; i < Joy::Count; ++i)
     {
         myJoystickAxis[0][i] = 0.f;
         myJoystickAxis[1][i] = 0.f;
+        myJoystickAxis[2][i] = 0.f;
+        myJoystickAxis[3][i] = 0.f;
     }
 }
 
@@ -141,6 +145,8 @@ void Input::OnEvent(const Event& event)
             {
                 myJoystickButtons[0][i] = false;
                 myJoystickButtons[1][i] = false;
+                myJoystickButtons[2][i] = false;
+                myJoystickButtons[3][i] = false;
             }
             break;
         }
