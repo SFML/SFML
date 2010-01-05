@@ -59,6 +59,7 @@ EXPORTS
 	sfIPAddress_GetPublicAddress
 	sfIPAddress_LocalHost
 	sfSocketTCP_Create
+	sfSocketTCP_Copy
 	sfSocketTCP_Destroy
 	sfSocketTCP_SetBlocking
 	sfSocketTCP_Connect
@@ -71,6 +72,7 @@ EXPORTS
 	sfSocketTCP_Close
 	sfSocketTCP_IsValid
 	sfSocketUDP_Create
+	sfSocketUDP_Copy
 	sfSocketUDP_Destroy
 	sfSocketUDP_SetBlocking
 	sfSocketUDP_Bind
@@ -82,6 +84,7 @@ EXPORTS
 	sfSocketUDP_Close
 	sfSocketUDP_IsValid
 	sfPacket_Create
+	sfPacket_Copy
 	sfPacket_Destroy
 	sfPacket_Append
 	sfPacket_Clear
@@ -112,6 +115,7 @@ EXPORTS
 	sfPacket_WriteString
 	sfPacket_WriteWideString
 	sfSelectorTCP_Create
+	sfSelectorTCP_Copy
 	sfSelectorTCP_Destroy
 	sfSelectorTCP_Add
 	sfSelectorTCP_Remove
@@ -119,6 +123,7 @@ EXPORTS
 	sfSelectorTCP_Wait
 	sfSelectorTCP_GetSocketReady
 	sfSelectorUDP_Create
+	sfSelectorUDP_Copy
 	sfSelectorUDP_Destroy
 	sfSelectorUDP_Add
 	sfSelectorUDP_Remove

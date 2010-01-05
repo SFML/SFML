@@ -43,6 +43,16 @@
 CSFML_API sfSocketTCP* sfSocketTCP_Create();
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing TCP socket
+///
+/// \param socket : Socket to copy
+///
+/// \return Copied object
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfSocketTCP* sfSocketTCP_Copy(sfSocketTCP* socket);
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing TCP socket
 ///
 /// \param socket : Socket to destroy

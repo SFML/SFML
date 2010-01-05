@@ -69,6 +69,16 @@ CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const char* data, size_t
 CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromSamples(const sfInt16* samples, size_t samplesCount, unsigned int channelsCount, unsigned int sampleRate);
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing sound buffer
+///
+/// \param soundBuffer : Sound buffer to copy
+///
+/// \return Copied object
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfSoundBuffer* sfSoundBuffer_Copy(sfSoundBuffer* soundBuffer);
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing sound buffer
 ///
 /// \param soundBuffer : Sound buffer to delete

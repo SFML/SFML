@@ -54,6 +54,12 @@ struct sfView
     {
     }
 
+    sfView(const sfView& View) :
+        This(View.This ? new sf::View(*View.This) : NULL),
+        OwnInstance(true)
+    {
+    }
+
     ~sfView()
     {
         if (OwnInstance)

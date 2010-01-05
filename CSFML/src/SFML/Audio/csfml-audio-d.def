@@ -33,6 +33,7 @@ EXPORTS
 	sfMusic_GetAttenuation
 	sfMusic_GetPlayingOffset
 	sfSound_Create
+	sfSound_Copy
 	sfSound_Destroy
 	sfSound_Play
 	sfSound_Pause
@@ -59,6 +60,7 @@ EXPORTS
 	sfSoundBuffer_CreateFromFile
 	sfSoundBuffer_CreateFromMemory
 	sfSoundBuffer_CreateFromSamples
+	sfSoundBuffer_Copy
 	sfSoundBuffer_Destroy
 	sfSoundBuffer_SaveToFile
 	sfSoundBuffer_GetSamples

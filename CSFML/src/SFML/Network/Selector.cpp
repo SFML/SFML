@@ -38,6 +38,13 @@ sfSelectorUDP* sfSelectorUDP_Create() {return new sfSelectorUDP;}
 
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing selector
+////////////////////////////////////////////////////////////
+sfSelectorTCP* sfSelectorTCP_Copy(sfSelectorTCP* selector) {CSFML_CHECK_RETURN(selector, NULL); return new sfSelectorTCP(*selector);}
+sfSelectorUDP* sfSelectorUDP_Copy(sfSelectorUDP* selector) {CSFML_CHECK_RETURN(selector, NULL); return new sfSelectorUDP(*selector);}
+
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing selector
 ////////////////////////////////////////////////////////////
 void sfSelectorTCP_Destroy(sfSelectorTCP* selector) {delete selector;}

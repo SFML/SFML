@@ -48,6 +48,12 @@ struct sfImage
         OwnInstance = false;
     }
 
+    sfImage(const sfImage& image)
+    {
+        This = image.This ? new sf::Image(*image.This) : NULL;
+        OwnInstance = true;
+    }
+
     ~sfImage()
     {
         if (OwnInstance)

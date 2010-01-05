@@ -17,10 +17,11 @@ EXPORTS
 	sfImage_CreateFromPixels
 	sfImage_CreateFromFile
 	sfImage_CreateFromMemory
+	sfImage_Copy
 	sfImage_Destroy
 	sfImage_SaveToFile
 	sfImage_CreateMaskFromColor
-	sfImage_Copy
+	sfImage_CopyImage
 	sfImage_CopyScreen
 	sfImage_SetPixel
 	sfImage_GetPixel
@@ -38,6 +39,7 @@ EXPORTS
 	sfIntRect_Intersects
 	sfShader_CreateFromFile
 	sfShader_CreateFromMemory
+	sfShader_Copy
 	sfShader_Destroy
 	sfShader_SetParameter1
 	sfShader_SetParameter2
@@ -51,6 +53,7 @@ EXPORTS
 	sfShape_CreateLine
 	sfShape_CreateRectangle
 	sfShape_CreateCircle
+	sfShape_Copy
 	sfShape_Destroy
 	sfShape_SetX
 	sfShape_SetY
@@ -89,6 +92,7 @@ EXPORTS
 	sfShape_SetPointColor
 	sfShape_SetPointOutlineColor
 	sfSprite_Create
+	sfSprite_Copy
 	sfSprite_Destroy
 	sfSprite_SetX
 	sfSprite_SetY
@@ -126,6 +130,7 @@ EXPORTS
 	sfSprite_GetPixel
 	sfFont_CreateFromFile
 	sfFont_CreateFromMemory
+	sfFont_Copy
 	sfFont_Destroy
 	sfFont_GetGlyph
 	sfFont_GetKerning
@@ -133,6 +138,7 @@ EXPORTS
 	sfFont_GetImage
 	sfFont_GetDefaultFont
 	sfText_Create
+	sfText_Copy
 	sfText_Destroy
 	sfText_SetX
 	sfText_SetY
@@ -227,6 +233,7 @@ EXPORTS
 	sfRenderWindow_ConvertCoords
 	sfView_Create
 	sfView_CreateFromRect
+	sfView_Copy
 	sfView_Destroy
 	sfView_SetCenter
 	sfView_SetSize

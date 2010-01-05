@@ -84,6 +84,17 @@ sfSoundBuffer* sfSoundBuffer_CreateFromSamples(const sfInt16* samples, size_t sa
 
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing sound buffer
+////////////////////////////////////////////////////////////
+sfSoundBuffer* sfSoundBuffer_Copy(sfSoundBuffer* soundBuffer)
+{
+    CSFML_CHECK_RETURN(soundBuffer, NULL);
+
+    return new sfSoundBuffer(*soundBuffer);
+}
+
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing sound buffer
 ////////////////////////////////////////////////////////////
 void sfSoundBuffer_Destroy(sfSoundBuffer* soundBuffer)

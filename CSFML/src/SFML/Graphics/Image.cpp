@@ -109,6 +109,17 @@ sfImage* sfImage_CreateFromMemory(const char* data, size_t sizeInBytes)
 
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing image
+////////////////////////////////////////////////////////////
+sfImage* sfImage_Copy(sfImage* image)
+{
+    CSFML_CHECK_RETURN(image, NULL);
+
+    return new sfImage(*image);
+}
+
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing image
 ////////////////////////////////////////////////////////////
 void sfImage_Destroy(sfImage* image)
@@ -141,7 +152,7 @@ void sfImage_CreateMaskFromColor(sfImage* image, sfColor colorKey, sfUint8 alpha
 /// This function does a slow pixel copy and should only
 /// be used at initialization time
 ////////////////////////////////////////////////////////////
-void sfImage_Copy(sfImage* image, const sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect)
+void sfImage_CopyImage(sfImage* image, const sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect)
 {
     CSFML_CHECK(source);
     sf::IntRect SFMLRect(sourceRect.Left, sourceRect.Top, sourceRect.Right, sourceRect.Bottom);

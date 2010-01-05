@@ -54,6 +54,16 @@ CSFML_API sfFont* sfFont_CreateFromFile(const char* filename);
 CSFML_API sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes);
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing font
+///
+/// \param font : Font to copy
+///
+/// \return Copied object
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfFont* sfFont_Copy(sfFont* font);
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing font
 ///
 /// \param font : Font to delete

@@ -53,6 +53,16 @@ CSFML_API sfShader* sfShader_CreateFromFile(const char* filename);
 CSFML_API sfShader* sfShader_CreateFromMemory(const char* effect);
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing shader
+///
+/// \param shader : Shader to copy
+///
+/// \return Copied object
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfShader* sfShader_Copy(sfShader* shader);
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing shader
 ///
 /// \param shader : Shader to delete

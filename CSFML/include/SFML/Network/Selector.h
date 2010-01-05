@@ -42,6 +42,17 @@ CSFML_API sfSelectorTCP* sfSelectorTCP_Create();
 CSFML_API sfSelectorUDP* sfSelectorUDP_Create();
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing selector
+///
+/// \param selector : Selector to copy
+///
+/// \return Copied object
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfSelectorTCP* sfSelectorTCP_Copy(sfSelectorTCP* selector);
+CSFML_API sfSelectorUDP* sfSelectorUDP_Copy(sfSelectorUDP* selector);
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing selector
 ///
 /// \param selector : Selector to delete

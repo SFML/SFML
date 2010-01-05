@@ -1,6 +1,7 @@
 LIBRARY csfml-system
 EXPORTS
 	sfClock_Create
+	sfClock_Copy
 	sfClock_Destroy
 	sfClock_GetTime
 	sfClock_Reset

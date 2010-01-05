@@ -88,6 +88,16 @@ CSFML_API sfImage* sfImage_CreateFromFile(const char* filename);
 CSFML_API sfImage* sfImage_CreateFromMemory(const char* data, size_t sizeInBytes);
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing image
+///
+/// \param image : Image to copy
+///
+/// \return Copied object
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfImage* sfImage_Copy(sfImage* image);
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing image
 ///
 /// \param image : Image to delete
@@ -128,7 +138,7 @@ CSFML_API void sfImage_CreateMaskFromColor(sfImage* image, sfColor colorKey, sfU
 /// \param sourceRect : Sub-rectangle of the source image to copy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfImage_Copy(sfImage* image, const sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect);
+CSFML_API void sfImage_CopyImage(sfImage* image, const sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect);
 
 ////////////////////////////////////////////////////////////
 /// Create the image from the current contents of the

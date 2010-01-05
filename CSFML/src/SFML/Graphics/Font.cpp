@@ -63,6 +63,17 @@ sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes)
 
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing font
+////////////////////////////////////////////////////////////
+sfFont* sfFont_Copy(sfFont* font)
+{
+    CSFML_CHECK_RETURN(font, NULL);
+
+    return new sfFont(*font);
+}
+
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing font
 ////////////////////////////////////////////////////////////
 void sfFont_Destroy(sfFont* font)
@@ -79,7 +90,7 @@ sfGlyph sfFont_GetGlyph(sfFont* font, sfUint32 codePoint, unsigned int character
     sfGlyph glyph = {0, {0, 0, 0, 0}, {0, 0, 0, 0}};
     CSFML_CHECK_RETURN(font, glyph);
 
-    sf::Glyph SFMLGlyph = font->This.GetGlyph(codePoint, characterSize, bold);
+    sf::Glyph SFMLGlyph = font->This.GetGlyph(codePoint, characterSize, bold == sfTrue);
 
     glyph.Advance          = SFMLGlyph.Advance;
     glyph.Rectangle.Left   = SFMLGlyph.Rectangle.Left;

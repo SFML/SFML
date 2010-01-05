@@ -48,6 +48,16 @@ CSFML_API sfView* sfView_Create();
 CSFML_API sfView* sfView_CreateFromRect(sfFloatRect rectangle);
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing view
+///
+/// \param view : View to copy
+///
+/// \return Copied object
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfView* sfView_Copy(sfView* view);
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing view
 ///
 /// \param view : View to destroy

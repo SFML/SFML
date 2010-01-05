@@ -80,6 +80,16 @@ CSFML_API sfShape* sfShape_CreateRectangle(float p1x, float p1y, float p2x, floa
 CSFML_API sfShape* sfShape_CreateCircle(float x, float y, float radius, sfColor color, float outline, sfColor outlineColor);
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing shape
+///
+/// \param shape : Shape to copy
+///
+/// \return Copied object
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfShape* sfShape_Copy(sfShape* shape);
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing Shape
 ///
 /// \param Shape : Shape to delete

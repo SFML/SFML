@@ -43,6 +43,16 @@
 CSFML_API sfSocketUDP* sfSocketUDP_Create();
 
 ////////////////////////////////////////////////////////////
+/// Copy an existing UDP socket
+///
+/// \param socket : Socket to copy
+///
+/// \return Copied object
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfSocketUDP* sfSocketUDP_Copy(sfSocketUDP* socket);
+
+////////////////////////////////////////////////////////////
 /// Destroy an existing UDP socket
 ///
 /// \param socket : Socket to destroy
