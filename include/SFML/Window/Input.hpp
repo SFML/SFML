@@ -133,10 +133,10 @@ private :
     ////////////////////////////////////////////////////////////
     bool  myKeys[Key::Count];            ///< Array containing the state of all keyboard keys
     bool  myMouseButtons[Mouse::Count];  ///< Array containing the state of all mouse buttons
-    bool  myJoystickButtons[2][32];      ///< Array containing the state of all joysticks buttons
+    bool  myJoystickButtons[4][32];      ///< Array containing the state of all joysticks buttons
     int   myMouseX;                      ///< Mouse position on X
     int   myMouseY;                      ///< Mouse position on Y
-    float myJoystickAxis[2][Joy::Count]; ///< Joysticks position on each axis
+    float myJoystickAxis[4][Joy::Count]; ///< Joysticks position on each axis
 };
 
 } // namespace sf
