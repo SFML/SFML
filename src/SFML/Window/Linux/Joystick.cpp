@@ -28,13 +28,6 @@
 #include <SFML/Window/Joystick.hpp>
 #include <sstream>
 
-#if defined(SFML_SYSTEM_LINUX)
-    #include <linux/joystick.h>
-    #include <fcntl.h>
-#elif defined(SFML_SYSTEM_FREEBSD)
-    // #include <sys/joystick.h> ?
-#endif
-
 
 namespace sf
 {
@@ -69,7 +62,7 @@ void Joystick::Initialize(unsigned int Index)
     {
         // Use non-blocking mode
         fcntl(myDescriptor, F_SETFL, O_NONBLOCK);
-        
+
         // Get number of buttons
         char NbButtons;
         ioctl(myDescriptor, JSIOCGBUTTONS, &NbButtons);
@@ -78,12 +71,12 @@ void Joystick::Initialize(unsigned int Index)
             myNbButtons = Joy::ButtonCount;
 
         // Get the supported axes
-        char NbAxes, Axes[ABS_MAX + 1];
-        ioctl(myDescriptor, JSIOCGAXES,  &NbAxes);
-        ioctl(myDescriptor, JSIOCGAXMAP, Axes);
+        char NbAxes;
+        ioctl(myDescriptor, JSIOCGAXES, &NbAxes);
+        ioctl(myDescriptor, JSIOCGAXMAP, myAxesMapping);
         for (int i = 0; i < NbAxes; ++i)
         {
-            switch (Axes[i])
+            switch (myAxesMapping[i])
             {
                 case ABS_X :                      myAxes[Joy::AxisX]   = true; break;
                 case ABS_Y :                      myAxes[Joy::AxisY]   = true; break;
@@ -114,7 +107,7 @@ JoystickState Joystick::UpdateState()
                 // An axis has been moved
                 case JS_EVENT_AXIS :
                 {
-                    switch (JoyState.number)
+                    switch (myAxesMapping[JoyState.number])
                     {
                         case ABS_X :                      myState.Axis[Joy::AxisX] = JoyState.value * 100.f / 32767.f; break;
                         case ABS_Y :                      myState.Axis[Joy::AxisY] = JoyState.value * 100.f / 32767.f; break;

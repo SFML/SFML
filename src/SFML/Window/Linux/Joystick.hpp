@@ -28,6 +28,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#if defined(SFML_SYSTEM_LINUX)
+    #include <linux/joystick.h>
+    #include <fcntl.h>
+#elif defined(SFML_SYSTEM_FREEBSD)
+    // #include <sys/joystick.h> ?
+#endif
 
 
 namespace sf
@@ -80,12 +86,13 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int           myDescriptor;           ///< Linux descriptor of the joystick
-    unsigned int  myNbButtons;            ///< Number of buttons supported by the joystick
-    bool          myAxes[Joy::AxisCount]; ///< Supported axes
-    JoystickState myState;                ///< Current state of the joystick
-    int           myPovX;                 ///< Last X position of the POV
-    int           myPovY;                 ///< Last Y position of the POV
+    int           myDescriptor;               ///< Linux descriptor of the joystick
+    unsigned int  myNbButtons;                ///< Number of buttons supported by the joystick
+    bool          myAxes[Joy::AxisCount];     ///< Supported axes
+    JoystickState myState;                    ///< Current state of the joystick
+    int           myPovX;                     ///< Last X position of the POV
+    int           myPovY;                     ///< Last Y position of the POV
+    char          myAxesMapping[ABS_MAX + 1]; ///< Axes mapping (index --> axis id)
 };
 
 } // namespace priv
