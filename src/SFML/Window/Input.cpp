@@ -76,7 +76,7 @@ bool Input::IsMouseButtonDown(Mouse::Button button) const
 ////////////////////////////////////////////////////////////
 bool Input::IsJoystickButtonDown(unsigned int joystick, unsigned int button) const
 {
-    if ((joystick < 2) && (button < 32))
+    if ((joystick < 4) && (button < 32))
         return myJoystickButtons[joystick][button];
     else
         return false;
