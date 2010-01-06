@@ -1,27 +1,27 @@
 /*
-*   DSFML - SFML Library wrapper for the D programming language.
-*   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
-*   Copyright (C) 2010 Andreas Hollandt
+*	DSFML - SFML Library wrapper for the D programming language.
+*	Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*	Copyright (C) 2010 Andreas Hollandt
 *
-*   This software is provided 'as-is', without any express or
-*   implied warranty. In no event will the authors be held
-*   liable for any damages arising from the use of this software.
+*	This software is provided 'as-is', without any express or
+*	implied warranty. In no event will the authors be held
+*	liable for any damages arising from the use of this software.
 *
-*   Permission is granted to anyone to use this software for any purpose,
-*   including commercial applications, and to alter it and redistribute
-*   it freely, subject to the following restrictions:
+*	Permission is granted to anyone to use this software for any purpose,
+*	including commercial applications, and to alter it and redistribute
+*	it freely, subject to the following restrictions:
 *
-*   1.  The origin of this software must not be misrepresented;
-*       you must not claim that you wrote the original software.
-*       If you use this software in a product, an acknowledgment
-*       in the product documentation would be appreciated but
-*       is not required.
+*	1.  The origin of this software must not be misrepresented;
+*		you must not claim that you wrote the original software.
+*		If you use this software in a product, an acknowledgment
+*		in the product documentation would be appreciated but
+*		is not required.
 *
-*   2.  Altered source versions must be plainly marked as such,
-*       and must not be misrepresented as being the original software.
+*	2.  Altered source versions must be plainly marked as such,
+*		and must not be misrepresented as being the original software.
 *
-*   3.  This notice may not be removed or altered from any
-*       source distribution.
+*	3.  This notice may not be removed or altered from any
+*		source distribution.
 */
 
 module dsfml.graphics.view;
@@ -33,8 +33,8 @@ import	dsfml.system.common,
 		dsfml.system.vector2;
 
 /**
-*   This class defines a view (position, size and zoom) ;
-*   you can consider it as a camera
+*	This class defines a view (position, size and zoom) ;
+*	you can consider it as a camera
 */
 class View : DSFMLObject
 {
@@ -43,200 +43,200 @@ private:
 	bool m_isModified = true;
 
 public:
-    /**
-    *   Constructor
-    *   
-    *   Default view (1000 x 1000)        
-    */
-    this()
-    {
-        super(sfView_Create());
-    }
-     
-   /**
-   *   Constructor
-   *   
-   *    Params:
-   *        center = center of the view
-   *        size = size of the view (width, height)            
-   */              
-    this(Vector2f center, Vector2f size)
-    {
-        super(sfView_CreateFromRect(sfFloatRect(center.x - size.x / 2, center.y - size.y / 2, center.x + size.x / 2, center.y + size.y / 2) ));
-    }
-    
-    /**
-    *   Constructor
-    *   
-    *   Params:
-    *       rect = Rectangle defining the position and size of the view                 
-    */        
-    this(FloatRect rect)
-    {
-        super(sfView_CreateFromRect(rect.toCFloatRect()));
-    }
+	/**
+	*	Constructor
+	*	
+	*	Default view (1000 x 1000)		
+	*/
+	this()
+	{
+		super(sfView_Create());
+	}
+	 
+	/**
+	*	Constructor
+	*	
+	*	Params:
+	*		center = center of the view
+	*		size = size of the view (width, height)			
+	*/			  
+	this(Vector2f center, Vector2f size)
+	{
+		super(sfView_CreateFromRect(sfFloatRect(center.x - size.x / 2, center.y - size.y / 2, center.x + size.x / 2, center.y + size.y / 2) ));
+	}
+	
+	/**
+	*	Constructor
+	*	
+	*	Params:
+	*		rect = Rectangle defining the position and size of the view				 
+	*/		
+	this(FloatRect rect)
+	{
+		super(sfView_CreateFromRect(rect.toCFloatRect()));
+	}
 
-    override void dispose()
-    {
-        sfView_Destroy(m_ptr);
-    }
-    
-    /**
-    *   Change the center of the view
-    *   
-    *   Params:
-    *       x = X coordinates of the new center
-    *       y = Y coordinates of the new center                     
-    */        
-    void setCenter(float x, float y)
-    {
-        sfView_SetCenter(m_ptr, x, y);
-        m_isModified = true;
-    }
+	override void dispose()
+	{
+		sfView_Destroy(m_ptr);
+	}
+	
+	/**
+	*	Change the center of the view
+	*	
+	*	Params:
+	*		x = X coordinates of the new center
+	*		y = Y coordinates of the new center					 
+	*/		
+	void setCenter(float x, float y)
+	{
+		sfView_SetCenter(m_ptr, x, y);
+		m_isModified = true;
+	}
 
-    /**
-    *   Change the center of the view
-    *   
-    *   Params:
-    *       center = New center                     
-    */        
-    void setCenter(Vector2f center)
-    {
-        sfView_SetCenter(m_ptr, center.x, center.y);
-        m_isModified = true;
-    }
+	/**
+	*	Change the center of the view
+	*	
+	*	Params:
+	*		center = New center					 
+	*/		
+	void setCenter(Vector2f center)
+	{
+		sfView_SetCenter(m_ptr, center.x, center.y);
+		m_isModified = true;
+	}
 
-    /**
-    *   Change the size of the view (take 2 values)
-    *
-    *   Params:
-    *       width = New width
-    *       height = New height
-    */
-    void setSize(float width, float height)
-    {
-        sfView_SetSize(m_ptr, width, height);
-        m_isModified = true;
-    }
+	/**
+	*	Change the size of the view (take 2 values)
+	*
+	*	Params:
+	*		width = New width
+	*		height = New height
+	*/
+	void setSize(float width, float height)
+	{
+		sfView_SetSize(m_ptr, width, height);
+		m_isModified = true;
+	}
 
-    /**
-    *   Change the size of the view (take 2 values)
-    *
-    *   Params:
-    *       size = New size
-    */
-    void setSize(Vector2f size)
-    {
-        sfView_SetSize(m_ptr, size.x, size.y);
-        m_isModified = true;
-    }
+	/**
+	*	Change the size of the view (take 2 values)
+	*
+	*	Params:
+	*		size = New size
+	*/
+	void setSize(Vector2f size)
+	{
+		sfView_SetSize(m_ptr, size.x, size.y);
+		m_isModified = true;
+	}
 
-    /**
-    * Rebuild the view from a rectangle
-    *
-    * Params:
-    *     viewport : Rectangle defining the position and size of the view
-    */
-    void setViewport(FloatRect viewport)
-    {
-        sfView_SetViewport(m_ptr, viewport.toCFloatRect());
-        m_viewport = viewport;
-    }
+	/**
+	* Rebuild the view from a rectangle
+	*
+	* Params:
+	*	 viewport : Rectangle defining the position and size of the view
+	*/
+	void setViewport(FloatRect viewport)
+	{
+		sfView_SetViewport(m_ptr, viewport.toCFloatRect());
+		m_viewport = viewport;
+	}
 
-    /**
-    *   Get the center of the view
-    *
-    *   Returns: 
-    *       Center of the view
-    */
-    Vector2f GetCenter()
-    {
-        return Vector2f(sfView_GetCenterX(m_ptr), sfView_GetCenterY(m_ptr));
-    }
+	/**
+	*	Get the center of the view
+	*
+	*	Returns: 
+	*		Center of the view
+	*/
+	Vector2f GetCenter()
+	{
+		return Vector2f(sfView_GetCenterX(m_ptr), sfView_GetCenterY(m_ptr));
+	}
 
-    /**
-    *	Get the size of the view
-    *
-    *	Returns: 
-    *		size of the view
-    */
-    Vector2f getSize()
-    {
-    	return Vector2f(sfView_GetWidth(m_ptr), sfView_GetHeight(m_ptr));
-    }
-    
-    /**
-     *	Get the width of the view
-     *
-     *	Returns:
-     *		width of the view
-     */
-    float getWidth()
-    {
-    	return sfView_GetWidth(m_ptr);
-    }
+	/**
+	*	Get the size of the view
+	*
+	*	Returns: 
+	*		size of the view
+	*/
+	Vector2f getSize()
+	{
+		return Vector2f(sfView_GetWidth(m_ptr), sfView_GetHeight(m_ptr));
+	}
+	
+	/**
+	 *	Get the width of the view
+	 *
+	 *	Returns:
+	 *		width of the view
+	 */
+	float getWidth()
+	{
+		return sfView_GetWidth(m_ptr);
+	}
 
-    /**
-     *	Get the height of the view
-     *
-     *	Returns:
-     *		height of the view
-     */
-    float getHeight()
-    {
-    	return sfView_GetHeight(m_ptr);
-    }
-    
-    /**
-    *   Get the bounding retangle of the view
-    */              
-    FloatRect getViewport()
-    {
-        if (m_isModified)
-        {
-            m_isModified = false;
-            sfFloatRect cViewport = sfView_GetViewport(m_ptr);
-            m_viewport = new FloatRect(cViewport.Left, cViewport.Top, cViewport.Right, cViewport.Bottom);
-        }
-        return m_viewport;
-    }
-    
-    /**
-    *   Move the view 
-    *
-    *   Params:
-    *       offsetX = Offset to move the view, on X axis
-    *       offsetY = Offset to move the view, on Y axis
-    */
-    void move(float offsetX, float offsetY)
-    {
-        sfView_Move(m_ptr, offsetX, offsetY);
-        m_isModified = true;
-    }
+	/**
+	 *	Get the height of the view
+	 *
+	 *	Returns:
+	 *		height of the view
+	 */
+	float getHeight()
+	{
+		return sfView_GetHeight(m_ptr);
+	}
+	
+	/**
+	*	Get the bounding retangle of the view
+	*/			  
+	FloatRect getViewport()
+	{
+		if (m_isModified)
+		{
+			m_isModified = false;
+			sfFloatRect cViewport = sfView_GetViewport(m_ptr);
+			m_viewport = new FloatRect(cViewport.Left, cViewport.Top, cViewport.Right, cViewport.Bottom);
+		}
+		return m_viewport;
+	}
+	
+	/**
+	*	Move the view 
+	*
+	*	Params:
+	*		offsetX = Offset to move the view, on X axis
+	*		offsetY = Offset to move the view, on Y axis
+	*/
+	void move(float offsetX, float offsetY)
+	{
+		sfView_Move(m_ptr, offsetX, offsetY);
+		m_isModified = true;
+	}
 
-    /**
-    *   Move the view 
-    *
-    *   Params:
-    *       offset = offsetto move the view
-    */
-    void move(Vector2f offset)
-    {
-        sfView_Move(m_ptr, offset.x, offset.y);
-        m_isModified = true;
-    }
-    
-    /**
-    *   Resize the view rectangle to simulate a zoom / unzoom effect
-    *
-    *   Params:
-    *       factor = Zoom factor to apply, relative to the current zoom
-    */        
-    void zoom(float factor)
-    {
-        sfView_Zoom(m_ptr, factor);
-        m_isModified = true;
-    }
+	/**
+	*	Move the view 
+	*
+	*	Params:
+	*		offset = offsetto move the view
+	*/
+	void move(Vector2f offset)
+	{
+		sfView_Move(m_ptr, offset.x, offset.y);
+		m_isModified = true;
+	}
+	
+	/**
+	*	Resize the view rectangle to simulate a zoom / unzoom effect
+	*
+	*	Params:
+	*		factor = Zoom factor to apply, relative to the current zoom
+	*/		
+	void zoom(float factor)
+	{
+		sfView_Zoom(m_ptr, factor);
+		m_isModified = true;
+	}
 
 	/**
 	 *	Rotate the view relatively to its current orientation.
