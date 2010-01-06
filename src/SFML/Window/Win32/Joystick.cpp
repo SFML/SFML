@@ -118,7 +118,10 @@ JoystickState Joystick::UpdateState()
                 State.Axis[Joy::AxisV] = (Pos.dwVpos - (Caps.wVmax + Caps.wVmin) / 2.f) * 200.f / (Caps.wVmax - Caps.wVmin);
 
                 // POV
-                State.Axis[Joy::AxisPOV] = Pos.dwPOV / 100.f;
+                if (Pos.dwPOV != 0xFFFF)
+                    State.Axis[Joy::AxisPOV] = Pos.dwPOV / 100.f;
+                else
+                    State.Axis[Joy::AxisPOV] = -1.f;
 
                 // Buttons
                 for (unsigned int i = 0; i < GetButtonsCount(); ++i)

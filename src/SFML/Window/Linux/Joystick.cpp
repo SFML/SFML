@@ -145,7 +145,7 @@ JoystickState Joystick::UpdateState()
                     {
                         if      (myPovY == 1)  myState.Axis[Joy::AxisPOV] = 270.f;
                         else if (myPovY == -1) myState.Axis[Joy::AxisPOV] = 90.f;
-                        else                   myState.Axis[Joy::AxisPOV] = 0.f; // what is it supposed to be??
+                        else                   myState.Axis[Joy::AxisPOV] = -1.f;
                     }
                 }
     
