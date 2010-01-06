@@ -420,7 +420,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Window\Input.hpp"
+			RelativePath="..\..\include\SFML\Window\Input.hpp"
 			>
 		</File>
 		<File
@@ -436,7 +436,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Window\VideoMode.hpp"
+			RelativePath="..\..\include\SFML\Window\VideoMode.hpp"
 			>
 		</File>
 		<File
@@ -448,11 +448,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Window\Window.hpp"
+			RelativePath="..\..\include\SFML\Window\Window.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Window\WindowHandle.hpp"
+			RelativePath="..\..\include\SFML\Window\WindowHandle.hpp"
 			>
 		</File>
 		<File
@@ -464,7 +464,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Window\WindowListener.hpp"
+			RelativePath="..\..\include\SFML\Window\WindowListener.hpp"
 			>
 		</File>
 		<File
@@ -472,7 +472,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Window\WindowStyle.hpp"
+			RelativePath="..\..\include\SFML\Window\WindowStyle.hpp"
 			>
 		</File>
 	</Files>
