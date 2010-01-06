@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -172,7 +173,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-audio");
+		debug
+			DllLoader dll = DllLoader.load("csfml-audio-d");
+		else
+			DllLoader dll = DllLoader.load("csfml-audio");
         
         sfListener_SetGlobalVolume = cast(pf_sfListener_SetGlobalVolume)dll.getSymbol("sfListener_SetGlobalVolume");
         sfListener_GetGlobalVolume = cast(pf_sfListener_GetGlobalVolume)dll.getSymbol("sfListener_GetGlobalVolume");

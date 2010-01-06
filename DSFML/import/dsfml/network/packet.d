@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -44,12 +45,12 @@ import dsfml.system.stringutil;
 *   Packet p = new Packet();
 *   
 *   int i = 32, j = 42;
-*   char[] k = hello;
+*   string k = hello;
 *   
 *   p.set(i, k, j); //Set the data in the packet
 *   
 *   int a, b;
-*   char[] c;
+*   string c;
 *   p.get(a, c, b); //Get data from the packet
 *   
 *   //...
@@ -113,13 +114,13 @@ class Packet : DSFMLObject
     *   ----------
     *   Packet p = new Packet();
     *   
-    *   char[] str1 = "Hi";
-    *   char[] str2 = "Hello";
+    *   string str1 = "Hi";
+    *   string str2 = "Hello";
     *   
     *   p.set(str1, str2);
     *   
     *   // Retrieve str1 from packet    
-    *   char[] str3;    
+    *   string str3;    
     *   p.get(str3);
     *   
     *   // Returns an array containing str1 and str2.   
@@ -169,7 +170,7 @@ class Packet : DSFMLObject
     
     /**
     *   Add new variables to the packet
-    *   Accept (u)byte, (u)short, (u)int, float, double, char[] and wchar[] types  
+    *   Accept (u)byte, (u)short, (u)int, float, double, string and wstring types  
     */        
     Packet set(T...)(T t)
     {
@@ -180,7 +181,7 @@ class Packet : DSFMLObject
 
     /**
     *   Retrieve data from the packet
-    *   Accept (u)byte, (u)short, (u)int, float, double, char[] and wchar[] types   
+    *   Accept (u)byte, (u)short, (u)int, float, double, string and wstring types   
     */        
     Packet get(T...)(ref T t)
     {
@@ -250,18 +251,18 @@ private:
     {
         data = sfPacket_ReadDouble(m_ptr);
     }
-    void internalGet(ref char[] data)
+    void internalGet(ref string data)
     {
-        scope char[] temp = new char[sfPacket_GetDataSize(m_ptr)];
+        scope string temp = new char[sfPacket_GetDataSize(m_ptr)];
         sfPacket_ReadString(m_ptr, temp.ptr);
         size_t l = fromStringz(temp.ptr).length;
         data = new char[l];
         data[] = temp[0 .. l];
     }
     
-    void internalGet(ref wchar[] data)
+    void internalGet(ref wstring data)
     {
-        scope wchar[] temp = new wchar[sfPacket_GetDataSize(m_ptr)];
+        scope wstring temp = new wchar[sfPacket_GetDataSize(m_ptr)];
         sfPacket_ReadWideString(m_ptr, temp.ptr);
         size_t l = fromStringz(temp.ptr).length;
         data = new wchar[l];
@@ -304,12 +305,12 @@ private:
     {
         sfPacket_WriteDouble(m_ptr, data);
     }
-    void internalSet(char[] data)
+    void internalSet(string data)
     {
         sfPacket_WriteString(m_ptr, toStringz(data));
     }
 
-    void internalSet(wchar[] data)
+    void internalSet(wstring data)
     {
         sfPacket_WriteWideString(m_ptr, toStringz(data));
     }
@@ -379,7 +380,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-network");
+	debug
+		DllLoader dll = DllLoader.load("csfml-network-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-network");
         
         sfPacket_Append = cast(pf_sfPacket_Append)dll.getSymbol("sfPacket_Append");
         sfPacket_CanRead = cast(pf_sfPacket_CanRead)dll.getSymbol("sfPacket_CanRead");

@@ -1,6 +1,6 @@
 /*
-*   DSFML - SFML Library binding in D language.
-*   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   DSFML - SFML Library wrapper for the D programming language.
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -23,16 +23,37 @@
 *       source distribution.
 */
 
-module dsfml.window.windowstyle;
+module dsfml.window.context;
+
+import dsfml.system.common;
+import dsfml.window.common;
 
 /**
-*   Window style
-*/
-enum Style
+ * 
+ */
+class Context : DSFMLObject
 {
-    NONE       = 0,      /// No border / title bar (this flag and all others are mutually exclusive)
-    TITLEBAR   = 1 << 0, /// Title bar + fixed border
-    RESIZE     = 1 << 1, /// Titlebar + resizable border + maximize button
-    CLOSE      = 1 << 2, /// Titlebar + close button
-    FULLSCREEN = 1 << 3  /// Fullscreen mode (this flag and all others are mutually exclusive)
+	/**
+	 * 
+	 */
+	this()
+	{
+		super(sfContext_Create());
+	}
+	
+	override void dispose()
+	{
+		sfContext_Destroy(m_ptr);
+	}
+	
+	/**
+	 * 
+	 * Params:
+	 *     active =
+	 */
+	void setActive(bool active)
+	{
+		sfContext_SetActive(m_ptr, active);
+	}
 }
+

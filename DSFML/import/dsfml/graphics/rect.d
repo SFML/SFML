@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -71,7 +72,15 @@ else
 
 class Rect (T)
 {
-    static if (!isIntegerType!(T) && !isRealType!(T))
+
+private:
+    T m_Left;   // Left coordinate of the rectangle
+    T m_Top;    // Top coordinate of the rectangle
+    T m_Right;  // Right coordinate of the rectangle
+    T m_Bottom; // Bottom coordinate of the rectangle
+
+public:
+	static if (!isIntegerType!(T) && !isRealType!(T))
     {
         static assert (0, "This type is not supported by Rectangle");
     }
@@ -273,19 +282,9 @@ package:
     {
         return sfIntRect(cast(int)m_Left, cast(int)m_Top, cast(int)m_Right, cast(int)m_Bottom);
     }
-
-private:
-        
-    T m_Left;   // Left coordinate of the rectangle
-    T m_Top;    // Top coordinate of the rectangle
-    T m_Right;  // Right coordinate of the rectangle
-    T m_Bottom; // Bottom coordinate of the rectangle
 }
 
 ///Alias
 alias Rect!(int) IntRect;
 ///ditto
 alias Rect!(float) FloatRect;
-
-
-

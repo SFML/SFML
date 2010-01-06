@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -23,26 +24,27 @@
 *       source distribution.
 */
 
-module dsfml.window.windowsettings;
+module dsfml.window.common;
 
-/**
-* Structure defining the creation settings of windows
-*/
-struct WindowSettings
+import dsfml.system.dllloader;
+
+package extern(C)
 {
-    ///
-    static WindowSettings opCall(uint depth = 24, uint stencil = 8, uint antialiasing = 0)
-    {
-        WindowSettings ret;
-        
-        ret.DepthBits = depth;
-        ret.StencilBits = stencil;
-        ret.AntialiasingLevel = antialiasing;
-        
-        return ret;
-    }
 
-    uint DepthBits;         /// Bits of the depth buffer
-    uint StencilBits;       /// Bits of the stencil buffer
-    uint AntialiasingLevel; /// Level of antialiasing
+void*	function()				sfContext_Create;
+void	function(void*)			sfContext_Destroy;
+void	function(void*, bool)	sfContext_SetActive;
+
+}
+
+static this()
+{
+debug
+	DllLoader dll = DllLoader.load("csfml-window-d");
+else
+	DllLoader dll = DllLoader.load("csfml-window");
+
+	mixin(loadFromSharedLib("sfContext_Create"));
+	mixin(loadFromSharedLib("sfContext_Destroy"));
+	mixin(loadFromSharedLib("sfContext_SetActive"));
 }

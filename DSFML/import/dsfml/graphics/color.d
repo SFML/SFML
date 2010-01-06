@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -31,6 +32,11 @@ module dsfml.graphics.color;
 */
 struct Color
 {
+    ubyte r;            /// Red component
+    ubyte g;            /// Green component
+    ubyte b;            /// Blue component
+    ubyte a = 255;      /// Alpha (transparency) component
+
     /**
     *   Construct the color from its 4 RGBA components
     *   
@@ -40,6 +46,7 @@ struct Color
     *       b = Blue component  (0 .. 255)
     *       a = Alpha component (0 .. 255) (255 by default)
     */
+/*
     static Color opCall(ubyte r, ubyte g, ubyte b, ubyte a = 255)
 	{
 		Color c;
@@ -50,11 +57,11 @@ struct Color
         
         return c;
 	}
-
+*/
     /**
      *  Operator == and != overload to compare two colors    
      */    
-    int opEquals(Color color2)
+    const bool opEquals(ref const(Color) color2)
     {
         return 
             (r == color2.r) 
@@ -67,10 +74,10 @@ struct Color
     */
     Color opAdd(Color color2)
     {
-        ubyte r = this.r + color2.r > 255 ? 255 : this.r + color2.r;
-        ubyte g = this.g + color2.g > 255 ? 255 : this.g + color2.g;
-        ubyte b = this.b + color2.b > 255 ? 255 : this.b + color2.b;
-        ubyte a = this.a + color2.a > 255 ? 255 : this.a + color2.a;
+        ubyte r = this.r + color2.r > 255 ? 255 : cast(ubyte) (this.r + color2.r);
+        ubyte g = this.g + color2.g > 255 ? 255 : cast(ubyte) (this.g + color2.g);
+        ubyte b = this.b + color2.b > 255 ? 255 : cast(ubyte) (this.b + color2.b);
+        ubyte a = this.a + color2.a > 255 ? 255 : cast(ubyte) (this.a + color2.a);
     
         return Color(r, g, b, a);
     }
@@ -80,12 +87,12 @@ struct Color
     */        
     Color opAddAssign(Color color2)
     {
-        this.r = this.r + color2.r > 255 ? 255 : this.r + color2.r;
-        this.g = this.g + color2.g > 255 ? 255 : this.g + color2.g;
-        this.b = this.b + color2.b > 255 ? 255 : this.b + color2.b;
-        this.a = this.a + color2.a > 255 ? 255 : this.a + color2.a;
+        this.r = this.r + color2.r > 255 ? 255 : cast(ubyte) (this.r + color2.r);
+        this.g = this.g + color2.g > 255 ? 255 : cast(ubyte) (this.g + color2.g);
+        this.b = this.b + color2.b > 255 ? 255 : cast(ubyte) (this.b + color2.b);
+        this.a = this.a + color2.a > 255 ? 255 : cast(ubyte) (this.a + color2.a);
         
-        return *this;
+        return this;
     }
 
     /**
@@ -93,10 +100,10 @@ struct Color
     */        
     Color opMul(Color color2)
     {
-        ubyte r = this.r * color2.r / 255;
-        ubyte g = this.g * color2.g / 255;
-        ubyte b = this.b * color2.b / 255;
-        ubyte a = this.a * color2.a / 255;
+        ubyte r = cast(ubyte) (this.r * color2.r / 255);
+        ubyte g = cast(ubyte) (this.g * color2.g / 255);
+        ubyte b = cast(ubyte) (this.b * color2.b / 255);
+        ubyte a = cast(ubyte) (this.a * color2.a / 255);
         
         return Color(r, g, b, a);
     }
@@ -106,19 +113,14 @@ struct Color
     */        
     Color opMulAssign(Color color2)
     {
-        this.r = this.r * color2.r / 255;
-        this.g = this.g * color2.g / 255;
-        this.b = this.b * color2.b / 255;
-        this.a = this.a * color2.a / 255;
+        this.r = cast(ubyte) (this.r * color2.r / 255);
+        this.g = cast(ubyte) (this.g * color2.g / 255);
+        this.b = cast(ubyte) (this.b * color2.b / 255);
+        this.a = cast(ubyte) (this.a * color2.a / 255);
         
-        return *this;
+        return this;
     }
      
-    ubyte r;            /// Red component
-    ubyte g;            /// Green component
-    ubyte b;            /// Blue component
-    ubyte a = 255;      /// Alpha (transparency) component
-    
     static const Color BLACK = {0, 0, 0};           /// Black predefined color
     static const Color WHITE = {255, 255, 255};     /// White predefined color
     static const Color  RED = {255, 0, 0};          /// Red predefined color

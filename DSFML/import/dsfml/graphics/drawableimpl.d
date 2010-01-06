@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -32,13 +33,13 @@ import dsfml.graphics.idrawable;
 import dsfml.graphics.color;
 import dsfml.graphics.blendmode;
 import dsfml.graphics.renderwindow;
-
+import dsfml.graphics.shader;
 
 package
 {
     struct sfSprite{};
     struct sfShape{};
-    struct sfString{};
+    struct sfText{};
 }
 
 /*
@@ -47,6 +48,18 @@ package
 */
 package class Drawableimpl(T) : DSFMLObject, IDrawable
 {
+protected:
+	this()
+	{
+		super(sfDrawable_Create());
+	}
+	
+	this(void* ptr)
+	{
+		super(ptr);
+	}
+
+public:
     void setX(float x)
     {
         sfDrawable_SetX(m_ptr, x);
@@ -91,14 +104,14 @@ package class Drawableimpl(T) : DSFMLObject, IDrawable
             sfDrawable_SetScale(m_ptr, scale.x, scale.y);
     }
 
-    void setCenter(float centerX, float centerY)
+    void setOrigin(float originX, float originY)
     {
-        sfDrawable_SetCenter(m_ptr, centerX, centerY);
+        sfDrawable_SetOrigin(m_ptr, originX, originY);
     }
 
-    void setCenter(Vector2f center)
+    void setOrigin(Vector2f origin)
     {
-        sfDrawable_SetCenter(m_ptr, center.x, center.y);
+        sfDrawable_SetOrigin(m_ptr, origin.x, origin.y);
     }
 
     void setRotation(float angle)
@@ -126,9 +139,9 @@ package class Drawableimpl(T) : DSFMLObject, IDrawable
         return Vector2f(sfDrawable_GetScaleX(m_ptr), sfDrawable_GetScaleY(m_ptr));
     }
 
-    Vector2f getCenter()
+    Vector2f getOrigin()
     {
-        return Vector2f(sfDrawable_GetCenterX(m_ptr),  sfDrawable_GetCenterY(m_ptr));
+        return Vector2f(sfDrawable_GetOriginX(m_ptr),  sfDrawable_GetOriginY(m_ptr));
     }
     
     float getRotation()
@@ -191,23 +204,17 @@ package class Drawableimpl(T) : DSFMLObject, IDrawable
     {
         sfRenderWindow_DrawThis(window.getNativePointer, m_ptr);
     }
+    
+    void renderWithShader(RenderWindow window, Shader shader)
+    {
+    	sfRenderWindow_DrawThisWithShader(window.getNativePointer, m_ptr, shader.getNativePointer);
+    }
 
     override void dispose()
     {
         sfDrawable_Destroy(m_ptr);
     }
 
-protected:
-    this()
-    {
-        super(sfDrawable_Create());
-    }
-
-    this(void* ptr)
-    {
-        super(ptr);
-    }
-    
 private:
 
     extern (C)
@@ -221,7 +228,7 @@ private:
     	typedef void function(void*, float) pf_sfDrawable_SetScaleY;
     	typedef void function(void*, float, float) pf_sfDrawable_SetScale;
     	typedef void function(void*, float) pf_sfDrawable_SetRotation;
-    	typedef void function(void*, float, float) pf_sfDrawable_SetCenter;
+    	typedef void function(void*, float, float) pf_sfDrawable_SetOrigin;
     	typedef void function(void*, Color) pf_sfDrawable_SetColor;
     	typedef void function(void*, BlendMode) pf_sfDrawable_SetBlendMode;
     	typedef float function(void*) pf_sfDrawable_GetX;
@@ -229,8 +236,8 @@ private:
     	typedef float function(void*) pf_sfDrawable_GetScaleX;
     	typedef float function(void*) pf_sfDrawable_GetScaleY;
     	typedef float function(void*) pf_sfDrawable_GetRotation;
-    	typedef float function(void*) pf_sfDrawable_GetCenterX;
-    	typedef float function(void*) pf_sfDrawable_GetCenterY;
+    	typedef float function(void*) pf_sfDrawable_GetOriginX;
+    	typedef float function(void*) pf_sfDrawable_GetOriginY;
     	typedef Color function(void*) pf_sfDrawable_GetColor;
     	typedef BlendMode function(void*) pf_sfDrawable_GetBlendMode;
     	typedef void function(void*, float, float) pf_sfDrawable_Move;
@@ -240,6 +247,7 @@ private:
     	typedef void function(void*, float, float, float*, float*) pf_sfDrawable_TransformToGlobal;
     	
         typedef void function(void*, void*) pf_sfRenderWindow_DrawThis;
+        typedef void function(void*, void*, void*) pf_sfRenderWindow_DrawThisWithShader;
         
     	static pf_sfDrawable_Create sfDrawable_Create;
     	static pf_sfDrawable_Destroy sfDrawable_Destroy;
@@ -250,7 +258,7 @@ private:
     	static pf_sfDrawable_SetScaleY sfDrawable_SetScaleY;
     	static pf_sfDrawable_SetScale sfDrawable_SetScale;
     	static pf_sfDrawable_SetRotation sfDrawable_SetRotation;
-    	static pf_sfDrawable_SetCenter sfDrawable_SetCenter;
+    	static pf_sfDrawable_SetOrigin sfDrawable_SetOrigin;
     	static pf_sfDrawable_SetColor sfDrawable_SetColor;
     	static pf_sfDrawable_SetBlendMode sfDrawable_SetBlendMode;
     	static pf_sfDrawable_GetX sfDrawable_GetX;
@@ -258,8 +266,8 @@ private:
     	static pf_sfDrawable_GetScaleX sfDrawable_GetScaleX;
     	static pf_sfDrawable_GetScaleY sfDrawable_GetScaleY;
     	static pf_sfDrawable_GetRotation sfDrawable_GetRotation;
-    	static pf_sfDrawable_GetCenterX sfDrawable_GetCenterX;
-    	static pf_sfDrawable_GetCenterY sfDrawable_GetCenterY;
+    	static pf_sfDrawable_GetOriginX sfDrawable_GetOriginX;
+    	static pf_sfDrawable_GetOriginY sfDrawable_GetOriginY;
     	static pf_sfDrawable_GetColor sfDrawable_GetColor;
     	static pf_sfDrawable_GetBlendMode sfDrawable_GetBlendMode;
     	static pf_sfDrawable_Move sfDrawable_Move;
@@ -269,23 +277,27 @@ private:
     	static pf_sfDrawable_TransformToGlobal sfDrawable_TransformToGlobal;
     	
     	static pf_sfRenderWindow_DrawThis sfRenderWindow_DrawThis;
+    	static pf_sfRenderWindow_DrawThisWithShader sfRenderWindow_DrawThisWithShader;
     }
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-graphics");
+	debug
+		DllLoader dll = DllLoader.load("csfml-graphics-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-graphics");
         
         static if (is (T : sfSprite))
         {
-            char[] symbol = "sfSprite";
+            string symbol = "sfSprite";
         }
-        else static if (is (T : sfString))
+        else static if (is (T : sfText))
         {
-            char[] symbol = "sfString";
+            string symbol = "sfText";
         }
         else static if (is (T : sfShape))
         {
-            char[] symbol = "sfShape";
+            string symbol = "sfShape";
         }
             
         sfDrawable_Create = cast(pf_sfDrawable_Create)dll.getSymbol(symbol ~ "_Create");
@@ -297,7 +309,7 @@ private:
         sfDrawable_SetScaleY = cast(pf_sfDrawable_SetScaleY)dll.getSymbol(symbol ~ "_SetScaleY");
         sfDrawable_SetScale = cast(pf_sfDrawable_SetScale)dll.getSymbol(symbol ~ "_SetScale");
         sfDrawable_SetRotation = cast(pf_sfDrawable_SetRotation)dll.getSymbol(symbol ~ "_SetRotation");
-        sfDrawable_SetCenter = cast(pf_sfDrawable_SetCenter)dll.getSymbol(symbol ~ "_SetCenter");
+        sfDrawable_SetOrigin = cast(pf_sfDrawable_SetOrigin)dll.getSymbol(symbol ~ "_SetOrigin");
         sfDrawable_SetColor = cast(pf_sfDrawable_SetColor)dll.getSymbol(symbol ~ "_SetColor");
         sfDrawable_SetBlendMode = cast(pf_sfDrawable_SetBlendMode)dll.getSymbol(symbol ~ "_SetBlendMode");
         sfDrawable_GetX = cast(pf_sfDrawable_GetX)dll.getSymbol(symbol ~ "_GetX");
@@ -305,8 +317,8 @@ private:
         sfDrawable_GetScaleX = cast(pf_sfDrawable_GetScaleX)dll.getSymbol(symbol ~ "_GetScaleX");
         sfDrawable_GetScaleY = cast(pf_sfDrawable_GetScaleY)dll.getSymbol(symbol ~ "_GetScaleX");
         sfDrawable_GetRotation = cast(pf_sfDrawable_GetRotation)dll.getSymbol(symbol ~ "_GetRotation");
-        sfDrawable_GetCenterX = cast(pf_sfDrawable_GetCenterX)dll.getSymbol(symbol ~ "_GetCenterX");
-        sfDrawable_GetCenterY = cast(pf_sfDrawable_GetCenterY)dll.getSymbol(symbol ~ "_GetCenterY");
+        sfDrawable_GetOriginX = cast(pf_sfDrawable_GetOriginX)dll.getSymbol(symbol ~ "_GetOriginX");
+        sfDrawable_GetOriginY = cast(pf_sfDrawable_GetOriginY)dll.getSymbol(symbol ~ "_GetOriginY");
         sfDrawable_GetColor = cast(pf_sfDrawable_GetColor)dll.getSymbol(symbol ~ "_GetColor");
         sfDrawable_GetBlendMode = cast(pf_sfDrawable_GetBlendMode)dll.getSymbol(symbol ~ "_GetBlendMode");
         sfDrawable_Move = cast(pf_sfDrawable_Move)dll.getSymbol(symbol ~ "_Move");
@@ -316,5 +328,6 @@ private:
         sfDrawable_TransformToGlobal = cast(pf_sfDrawable_TransformToGlobal)dll.getSymbol(symbol ~ "_TransformToGlobal");
         
         sfRenderWindow_DrawThis = cast(pf_sfRenderWindow_DrawThis)dll.getSymbol("sfRenderWindow_Draw" ~ symbol[2..$]);
+        sfRenderWindow_DrawThisWithShader = cast(pf_sfRenderWindow_DrawThisWithShader)dll.getSymbol("sfRenderWindow_Draw" ~ symbol[2..$] ~ "WithShader");
     }
 }

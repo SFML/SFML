@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -59,16 +60,16 @@ static this()
     }
 }
 
-private void report(char[] msg, char[] lib, char[] symb)
+private void report(string msg, string lib, string symb)
 {
-    char[] str = "Loading error. Reason : " ~ msg ~ " (library : " ~ lib ~ ", symbol : " ~ symb ~ ")";
+    string str = "Loading error. Reason : " ~ msg ~ " (library : " ~ lib ~ ", symbol : " ~ symb ~ ")";
     version (Tango)
     {
         Cerr(str).newline; 
     }
     else
     {
-        fwritefln(stderr, str);
+        stderr.writeln(str);
     }
 }
 
@@ -78,15 +79,15 @@ private void report(char[] msg, char[] lib, char[] symb)
 */
 class DllLoader
 {  
-    static DllLoader load(char[] library)
+    static DllLoader load(string library)
     {
         version (Windows)
         {
-            char[] libraryName = library ~ ".dll";
+            string libraryName = library ~ ".dll";
         }
         version (linux)
         {
-            char[] libraryName = "lib" ~ library ~ ".so";
+            string libraryName = "lib" ~ library ~ ".so";
         }
         
         if (libraryName in alreadyLoaded)
@@ -106,7 +107,7 @@ class DllLoader
         close();
     }
 
-    void* getSymbol(char[] symbolName)
+    void* getSymbol(string symbolName)
     {
         void* symb;
         version (Tango)
@@ -152,7 +153,7 @@ class DllLoader
     }
 
 private:
-    this(char[] libraryPath)
+    this(string libraryPath)
     {
         m_libPath = libraryPath;
         
@@ -184,6 +185,6 @@ private:
         MODULEHANDLE m_lib; 
     }
     
-    static DllLoader[char[]] alreadyLoaded;
-    char[] m_libPath;
+    static DllLoader[string] alreadyLoaded;
+    string m_libPath;
 }

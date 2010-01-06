@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -56,7 +57,7 @@ struct Vector2(T)
     {
         x += other.x;
         y += other.y;
-        return *this;
+        return this;
     }
 
     /// (-=) overload
@@ -64,7 +65,7 @@ struct Vector2(T)
     {
         x -= other.x;
         y -= other.y;
-        return *this;
+        return this;
     }
 
     /// (+) overload
@@ -90,7 +91,7 @@ struct Vector2(T)
     {
         x *= i;
         y *= i;
-        return *this;
+        return this;
     }
 
     /// (/) overload
@@ -104,11 +105,11 @@ struct Vector2(T)
     {
         x /= i;
         y /= i;
-        return *this;
+        return this;
     }
 
     ///
-    int opEquals(Vector2 other)
+    const bool opEquals(ref const(Vector2) other)
     {
         return (x == other.x) && (y == other.y);
     }

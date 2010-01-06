@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -155,7 +156,7 @@ class Ftp : DSFMLObject
         *   Returns: 
         *       The response message     
         */        
-        char[] getMessage()
+        string getMessage()
         {
             return fromStringz(sfFtpResponse_GetMessage(m_ptr));
         }
@@ -206,7 +207,7 @@ class Ftp : DSFMLObject
         *   Returns:
         *       Directory name                        
         */                
-        char[] getDirectory()
+        string getDirectory()
         {
             return fromStringz(sfFtpDirectoryResponse_GetDirectory(m_ptr));
         }
@@ -266,7 +267,7 @@ class Ftp : DSFMLObject
         *   Returns:
         *       Filename                                                
         */                
-        char[] opIndex(size_t index)
+        string opIndex(size_t index)
         {
             return fromStringz(sfFtpListingResponse_GetFilename(m_ptr, index));
         }
@@ -274,7 +275,7 @@ class Ftp : DSFMLObject
         /**
         *   Foreach implementation 
         */                
-        int opApply(int delegate(char[]) dg)
+        int opApply(int delegate(string) dg)
         {
             size_t count = getCount();
             int result;
@@ -366,7 +367,7 @@ class Ftp : DSFMLObject
     *   Returns:
     *       Server response to the request                            
     */        
-    FtpResponse login(char[] username, char[] password)
+    FtpResponse login(string username, string password)
     {
         return new FtpResponse(sfFtp_Login(m_ptr, toStringz(username), toStringz(password)));
     }
@@ -413,7 +414,7 @@ class Ftp : DSFMLObject
     *   Returns:
     *       Server response to the request                        
     */        
-    FtpListingResponse getDirectoryListing(char[] directory = null)
+    FtpListingResponse getDirectoryListing(string directory = null)
     {
         return new FtpListingResponse(sfFtp_GetDirectoryListing(m_ptr, toStringz(directory)));
     }
@@ -427,7 +428,7 @@ class Ftp : DSFMLObject
     *   Returns:
     *       Server response to the request                        
     */        
-    FtpResponse changeDirectory(char[] directory)
+    FtpResponse changeDirectory(string directory)
     {
         return new FtpResponse(sfFtp_ChangeDirectory(m_ptr, toStringz(directory)));
     }
@@ -452,7 +453,7 @@ class Ftp : DSFMLObject
     *   Returns:
     *       Server response to the request                        
     */        
-    FtpResponse makeDirectory(char[] name)
+    FtpResponse makeDirectory(string name)
     {
         return new FtpResponse(sfFtp_MakeDirectory(m_ptr, toStringz(name)));
     }
@@ -466,7 +467,7 @@ class Ftp : DSFMLObject
     *   Returns:
     *       Server response to the request                        
     */        
-    FtpResponse deleteDirectory(char[] name)
+    FtpResponse deleteDirectory(string name)
     {
         return new FtpResponse(sfFtp_DeleteDirectory(m_ptr, toStringz(name)));
     }
@@ -481,7 +482,7 @@ class Ftp : DSFMLObject
     *   Returns:
     *       Server response to the request                            
     */        
-    FtpResponse renameFile(char[] name, char[] newName)
+    FtpResponse renameFile(string name, string newName)
     {
         return new FtpResponse(sfFtp_RenameFile(m_ptr, toStringz(name), toStringz(newName)));
     }
@@ -495,7 +496,7 @@ class Ftp : DSFMLObject
     *   Returns:
     *       Server response to the request                        
     */        
-    FtpResponse deleteFile(char[] name)
+    FtpResponse deleteFile(string name)
     {
         return new FtpResponse(sfFtp_DeleteFile(m_ptr, toStringz(name)));
     }
@@ -511,7 +512,7 @@ class Ftp : DSFMLObject
     *   Returns:
     *       Server response to the request                     
     */        
-    FtpResponse download(char[] distantFile, char[] destFile, FtpTransferMode mode = FtpTransferMode.BINARY)
+    FtpResponse download(string distantFile, string destFile, FtpTransferMode mode = FtpTransferMode.BINARY)
     {
         return new FtpResponse(sfFtp_Download(m_ptr, toStringz(distantFile), toStringz(destFile), mode));
     }
@@ -526,7 +527,7 @@ class Ftp : DSFMLObject
     *   Returns:
     *       Server response to the request                     
     */
-    FtpResponse upload(char[] localFile, char[] destFile, FtpTransferMode mode = FtpTransferMode.BINARY)
+    FtpResponse upload(string localFile, string destFile, FtpTransferMode mode = FtpTransferMode.BINARY)
     {
         return new FtpResponse(sfFtp_Upload(m_ptr, toStringz(localFile), toStringz(destFile), mode));
     }
@@ -575,7 +576,10 @@ private:
     }
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-network");
+	debug
+		DllLoader dll = DllLoader.load("csfml-network-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-network");
         
         sfFtp_Create = cast(pf_sfFtp_Create)dll.getSymbol("sfFtp_Create");
         sfFtp_Destroy = cast(pf_sfFtp_Destroy)dll.getSymbol("sfFtp_Destroy");

@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -25,12 +26,20 @@
 
 module dsfml.system.stringutil;
 
-// version (Tango)
-// {
-//     public import tango.stdc.stringz;
-// }
-// else
-// {
+import std.traits; // for Unqual
+
+/*
+version (Tango)
+{
+	 public import tango.stdc.stringz;
+}
+else
+{
+	public import std.string;
+}
+*/
+
+
     T* toStringz(T)(T[] str)
     {
         if (str is null)
@@ -38,13 +47,14 @@ module dsfml.system.stringutil;
         else if (str.length && str[$ - 1] is T.init)
             return str.ptr;
 
-        T[] ret = new T[str.length + 1];
+        auto ret = new Unqual!(T)[str.length + 1];
         
         ret[0 .. str.length] = str[0 .. $];
         ret[str.length] = 0;
         
-        return ret.ptr;
+        return cast(T*) ret.ptr;
     }
+
 
     size_t stringLength(T)(T* p)
     {
@@ -63,107 +73,10 @@ module dsfml.system.stringutil;
 
     T[] fromStringz(T)(T* ptr)
     {    
-        T[] ret = new T[stringLength(ptr)];
+        auto ret = new Unqual!(T)[stringLength(ptr)];
         ret[0..$] = ptr[0..ret.length];
         
-        return ret;
+        return cast(T[]) ret;
     }
 
-    
-    
-//     /*
-//     *   Tango equivalent functions
-//     *   
-//     *   Author : Keinfarbton    
-//     *   Licence : BSD style        
-//     */    
-//     char* toStringz(char[] s)
-//     {
-//         if (s.ptr)
-//             if (!(s.length && s[$-1] is 0))
-//                    s = s ~ '\0';
-//         return s.ptr;
-//     }
-//     
-//     char[] fromStringz (char* s)
-//     {
-//         size_t i;
-//     
-//         if (s)
-//             while (*(s+i))
-//                 ++i;
-//     
-//         return s ? s[0 .. i] : null;
-//     }
-//     
-//     wchar* toString16z(wchar[] s)
-//     {
-//         if (s.ptr)
-//             if (!(s.length && s[$-1] is 0))
-//                    s = s ~ '\0';
-//         return s.ptr;
-//     }
-//     
-//     wchar[] fromString16z (wchar* s)
-//     {
-//         size_t i;
-//     
-//         if (s)
-//             while (*(s+i))
-//                 ++i;
-//     
-//         return s ? s[0 .. i] : null;
-//     }
-// 
-//     dchar* toString32z (dchar[] s)
-//     {
-//         if (s.ptr)
-//             if (!(s.length && s[$-1] is 0))
-//                    s = s ~ "\0"d;
-//         return s.ptr;
-//     }
-//     
-//     
-//     dchar[] fromString32z (dchar* s)
-//     {
-//         size_t i;
-//     
-//         if (s)
-//             while (*(s+i))
-//                 ++i;
-//     
-//         return s ? s[0 .. i] : null;
-//     }
-// }
-version (UnitTest)
-{
-    void main()
-    {
-        
-    }
-    unittest
-    {
-        char[] str = "Test";
-        char[] espaceStr = "string with espace";
-        
-        dchar[] strW = "Test"d;
-        dchar[] espaceStrW = "string with espace"d;
-        
-        char[] empty = "";
-        dchar[] emptyW = ""d;
-        
-        char[] nullStr = null;
-        dchar[] nullStrW = null;
-        
-        assert(fromStringz(toStringz(str)) == str);
-        assert(fromStringz(toStringz(espaceStr)) == espaceStr);
-        assert(fromStringz(toStringz(strW)) == strW);
-        assert(fromStringz(toStringz(espaceStrW)) == espaceStrW);
-        
-        assert(fromStringz(toStringz(empty)) == empty);
-        assert(fromStringz(toStringz(emptyW)) == emptyW);
-        
-        assert(fromStringz(toStringz(nullStr)) == nullStr);
-        assert(fromStringz(toStringz(nullStrW)) == nullStrW); 
-    }
-}
+  

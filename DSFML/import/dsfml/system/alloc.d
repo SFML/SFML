@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -31,9 +32,10 @@ version (Tango)
 }
 else
 {
-    import std.c.stdlib;
-    import std.gc;
-    
+    public import core.memory;
+}
+
+/*
     struct GC
     {
         static void* malloc(uint size)
@@ -56,7 +58,8 @@ else
             std.gc.removeRange(ptr);
         }
     }
-}
+
+*/
 
 /*
 *   Template for native non-GCed allocation for interaction between C and D threads.

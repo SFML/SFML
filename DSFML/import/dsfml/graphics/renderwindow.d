@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -25,30 +26,38 @@
 
 module dsfml.graphics.renderwindow;
 
-import dsfml.graphics.color;
-import dsfml.graphics.idrawable;
-import dsfml.graphics.image;
-import dsfml.graphics.rect;
-import dsfml.graphics.postfx;
-import dsfml.graphics.view;
+import	dsfml.graphics.common,
+		dsfml.graphics.color,
+		dsfml.graphics.sprite,
+		dsfml.graphics.shape,
+		dsfml.graphics.text,
+		dsfml.graphics.image,
+		dsfml.graphics.rect,
+		dsfml.graphics.shader,
+		dsfml.graphics.view,
+		dsfml.graphics.idrawable;
 
-import dsfml.window.event;
-import dsfml.window.input;
-import dsfml.window.videomode;
-import dsfml.window.window;
-import dsfml.window.windowhandle;
-import dsfml.window.windowsettings;
-import dsfml.window.windowstyle;
+import	dsfml.window.event,
+		dsfml.window.input,
+		dsfml.window.videomode,
+		dsfml.window.window,
+		dsfml.window.windowhandle;
 
-import dsfml.system.common;
-import dsfml.system.stringutil;
-import dsfml.system.vector2;
+import	dsfml.system.common,
+		dsfml.system.stringutil,
+		dsfml.system.vector2;
 
 /**
 *   Simple wrapper for Window that allows easy 2D rendering. 
 */
 class RenderWindow : Window
 {
+private:   
+	View m_view = null;
+	View m_defaultView = null;
+
+public:
+
     /**
     *   Construct the window
     *
@@ -56,11 +65,11 @@ class RenderWindow : Window
     *       mode = Video mode to use
     *       title = Title of the window
     *       windowStyle = Window style (Resize | Close by default)
-    *       settings = Window settings (default is default WindowSettings values)
+    *       settings = Context settings (default is default ContextSettings values)
     */
-    this(VideoMode mode, in char[] title, ulong windowStyle = Style.RESIZE | Style.CLOSE, WindowSettings settings = WindowSettings())
+    this(VideoMode mode, string title, uint windowStyle = Style.RESIZE | Style.CLOSE, ContextSettings settings = ContextSettings())
     {
-        super(sfRenderWindow_Create(mode, toStringz(title), windowStyle, settings));
+        super(sfRenderWindow_Create(mode, toStringz(title), windowStyle, &settings));
         m_input = new Input(sfRenderWindow_GetInput(m_ptr));
     }
 
@@ -69,11 +78,11 @@ class RenderWindow : Window
     *   
     *   Params:       
     *       handle = Platform-specific handle of the control
-    *       settings = Window settings (default is default WindowSettings values)
+    *       settings = Context settings (default is default ContextSettings values)
     */
-    this(WindowHandle handle, WindowSettings settings = WindowSettings())
+    this(WindowHandle handle, ContextSettings settings = ContextSettings())
     {
-        super(sfRenderWindow_CreateFromHandle(handle, settings));
+        super(sfRenderWindow_CreateFromHandle(handle, &settings));
         m_input = new Input(sfRenderWindow_GetInput(m_ptr));
     }
 
@@ -91,15 +100,15 @@ class RenderWindow : Window
     *       mode = Video mode to use
     *       title = Title of the window
     *       windowStyle = Window style (Resize | Close by default)
-    *       settings = Window settings (default is default WindowSettings values)
+    *       settings = Context settings (default is default ContextSettings values)
     *
     */
-    void create(VideoMode mode, char[] title, ulong windowStyle = Style.RESIZE | Style.CLOSE, WindowSettings settings = WindowSettings())
+    void create(VideoMode mode, string title, uint windowStyle = Style.RESIZE | Style.CLOSE, ContextSettings settings = ContextSettings())
     {
         if (m_ptr !is null)
             dispose();
             
-        m_ptr = sfRenderWindow_Create(mode, toStringz(title), windowStyle, settings);
+        m_ptr = sfRenderWindow_Create(mode, toStringz(title), windowStyle, &settings);
         m_input = new Input(sfRenderWindow_GetInput(m_ptr));
     }
 
@@ -110,50 +119,41 @@ class RenderWindow : Window
     *                   
     *   Params:        
     *       handle = Platform-specific handle of the control
-    *       settings = Window settings (default is default WindowSettings values)
+    *       settings = Context settings (default is default ContextSettings values)
     *
     */
-    void create(WindowHandle handle, WindowSettings settings = WindowSettings())
+    void create(WindowHandle handle, ContextSettings settings = ContextSettings())
     {
         if (m_ptr !is null)
             dispose();
 
-        m_ptr = sfRenderWindow_CreateFromHandle(handle, settings);
+        m_ptr = sfRenderWindow_CreateFromHandle(handle, &settings);
         m_input = new Input(sfRenderWindow_GetInput(m_ptr));
     }
     
-    /**
-    *   Draw a PostFX on the window
-    *
-    *   Params:
-    *       postFX = PostFX to draw
-    */
-    void draw(PostFX postFX)
-    {
-        sfRenderWindow_DrawPostFX(m_ptr, postFX.getNativePointer);
-    }
-
-    /**
-    *   Draw a Sprite or a String
+	/**
+	*   Draw a sprite, shape or text on the window with a shader
+	*
+	*   Params:
+	*   	drawable = IDrawable to draw
+	*       shader = Shader to use
+	*/
+	void draw(IDrawable drawable, Shader shader)
+	{
+		drawable.renderWithShader(this, shader);
+	}
+    
+	/**
+    *   Draw a sprite, shape or text
     *   
     *   Params:
-    *       obj = IDrawable object to draw                    
+    *       drawable = IDrawable to draw
     */                
-    void draw(IDrawable obj)
+    void draw(IDrawable drawable)
     {
-        obj.render(this);
-    }   
-    /**
-    *   Save the content of the window to an image
-    *
-    *   Returns:
-    *       Image instance containing the contents of the screen
-    */
-    Image capture()
-    {
-        return new Image(sfRenderWindow_Capture(m_ptr));
+    	drawable.render(this);
     }
-
+    
     /**
     *   Clear the screen with the given color.
     *
@@ -234,73 +234,4 @@ class RenderWindow : Window
         sfRenderWindow_ConvertCoords(m_ptr, windowX, windowY, &vec.x, &vec.y, targetView is null ? null : targetView.getNativePointer);
         return vec;
     }
-
-    /**
-    *   Tell SFML to preserve external OpenGL states, at the expense of
-    *   more CPU charge. Use this function if you don't want SFML
-    *   to mess up your own OpenGL states (if any).
-    *   Don't enable state preservation if not needed, as it will allow
-    *   SFML to do internal optimizations and improve performances.
-    *   This parameter is false by default
-    *
-    *   Params: 
-    *       preserve = True to preserve OpenGL states, false to let SFML optimize
-    *
-    */
-    void preserveOpenGLStates(bool preserve)
-    {
-        sfRenderWindow_PreserveOpenGLStates(m_ptr, preserve);
-    }
-
-private:   
-    View m_view = null;
-    View m_defaultView = null;
-    
-    extern (C)
-    {
-    	typedef void* function(VideoMode, char*, uint, WindowSettings) pf_sfRenderWindow_Create;
-    	typedef void* function(WindowHandle, WindowSettings) pf_sfRenderWindow_CreateFromHandle;
-    	typedef void function(void*) pf_sfRenderWindow_Destroy;
-    	typedef void* function(void*) pf_sfRenderWindow_GetInput;
-    	typedef void function(void*, void*) pf_sfRenderWindow_DrawPostFX;
-    	typedef void* function(void*) pf_sfRenderWindow_Capture;
-    	typedef void function(void*, Color) pf_sfRenderWindow_Clear;
-    	typedef void function(void*, void*) pf_sfRenderWindow_SetView;
-    	typedef void* function(void*) pf_sfRenderWindow_GetView;
-    	typedef void* function (void*) pf_sfRenderWindow_GetDefaultView;
-    	typedef void function(void*, uint, uint, float*, float*, void*) pf_sfRenderWindow_ConvertCoords;
-    	typedef void function(void*, int) pf_sfRenderWindow_PreserveOpenGLStates;
-        
-    	static pf_sfRenderWindow_Create sfRenderWindow_Create;
-    	static pf_sfRenderWindow_CreateFromHandle sfRenderWindow_CreateFromHandle;
-    	static pf_sfRenderWindow_Destroy sfRenderWindow_Destroy;
-    	static pf_sfRenderWindow_GetInput sfRenderWindow_GetInput;
-    	static pf_sfRenderWindow_DrawPostFX sfRenderWindow_DrawPostFX;
-    	static pf_sfRenderWindow_Capture sfRenderWindow_Capture;
-    	static pf_sfRenderWindow_Clear sfRenderWindow_Clear;
-    	static pf_sfRenderWindow_SetView sfRenderWindow_SetView;
-    	static pf_sfRenderWindow_GetView sfRenderWindow_GetView;
-    	static pf_sfRenderWindow_GetDefaultView sfRenderWindow_GetDefaultView;
-    	static pf_sfRenderWindow_ConvertCoords sfRenderWindow_ConvertCoords;
-    	static pf_sfRenderWindow_PreserveOpenGLStates sfRenderWindow_PreserveOpenGLStates;
-    }
-
-    static this()
-    {
-        DllLoader dll = DllLoader.load("csfml-graphics");
-        
-        sfRenderWindow_Create = cast(pf_sfRenderWindow_Create)dll.getSymbol("sfRenderWindow_Create");
-        sfRenderWindow_CreateFromHandle = cast(pf_sfRenderWindow_CreateFromHandle)dll.getSymbol("sfRenderWindow_CreateFromHandle");
-        sfRenderWindow_Destroy = cast(pf_sfRenderWindow_Destroy)dll.getSymbol("sfRenderWindow_Destroy");
-        sfRenderWindow_GetInput = cast(pf_sfRenderWindow_GetInput)dll.getSymbol("sfRenderWindow_GetInput");
-        sfRenderWindow_DrawPostFX = cast(pf_sfRenderWindow_DrawPostFX)dll.getSymbol("sfRenderWindow_DrawPostFX");
-        sfRenderWindow_Capture = cast(pf_sfRenderWindow_Capture)dll.getSymbol("sfRenderWindow_Capture");
-        sfRenderWindow_Clear = cast(pf_sfRenderWindow_Clear)dll.getSymbol("sfRenderWindow_Clear");
-        sfRenderWindow_SetView = cast(pf_sfRenderWindow_SetView)dll.getSymbol("sfRenderWindow_SetView");
-        sfRenderWindow_GetView = cast(pf_sfRenderWindow_GetView)dll.getSymbol("sfRenderWindow_GetView");
-        sfRenderWindow_GetDefaultView = cast(pf_sfRenderWindow_GetDefaultView)dll.getSymbol("sfRenderWindow_GetDefaultView");
-        sfRenderWindow_ConvertCoords = cast(pf_sfRenderWindow_ConvertCoords)dll.getSymbol("sfRenderWindow_ConvertCoords");
-        sfRenderWindow_PreserveOpenGLStates = cast(pf_sfRenderWindow_PreserveOpenGLStates)dll.getSymbol("sfRenderWindow_PreserveOpenGLStates");
-    }
 }
-

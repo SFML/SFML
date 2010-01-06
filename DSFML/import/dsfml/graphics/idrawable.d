@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -27,15 +28,16 @@ module dsfml.graphics.idrawable;
 
 import dsfml.system.vector2;
 
-import dsfml.graphics.color;
-import dsfml.graphics.blendmode;
-import dsfml.graphics.renderwindow;
+import	dsfml.graphics.color,
+		dsfml.graphics.blendmode,
+		dsfml.graphics.renderwindow,
+		dsfml.graphics.shader;
 
 
 /**
 *   Interface for drawable object
 *   
-*   Shape, String and Sprite implement IDrawable
+*   Shape, Text and Sprite implement IDrawable
 */
 interface IDrawable
 {
@@ -107,25 +109,25 @@ interface IDrawable
     void setScale(Vector2f scale);
     
     /**
-    *   Set the center of the object, in coordinates relative to the
+    *   Set the origin of the object, in coordinates relative to the
     *   top-left of the object (take 2 values).
-    *   The default center is (0, 0)
+    *   The default origin is (0, 0)
     *
     *   Params:
-    *       centerX : X coordinate of the center
-    *       centerY : Y coordinate of the center
+    *       originX : X coordinate of the origin
+    *       originY : Y coordinate of the origin
     */
-    void setCenter(float centerX, float centerY);
+    void setOrigin(float originX, float originY);
 
     /**
-    *   Set the center of the object, in coordinates relative to the
+    *   Set the origin of the object, in coordinates relative to the
     *   top-left of the object (take a 2D vector).
-    *   The default center is (0, 0)
+    *   The default origin is (0, 0)
     *
     *   Params:
-    *      center : New center
+    *      origin : New origin
     */
-    void setCenter(Vector2f center);
+    void setOrigin(Vector2f origin);
 
              
     /**
@@ -171,13 +173,13 @@ interface IDrawable
     Vector2f getScale();
     
     /**
-    *   Get the center of the object
+    *   Get the origin of the object
     *
     *   Returns: 
-    *       Current position of the center
+    *       Current position of the origin
     *
     */
-    Vector2f getCenter();
+    Vector2f getOrigin();
     
     /**
     *   Get the rotation angle of the object
@@ -250,7 +252,7 @@ interface IDrawable
     
     /**
     *   Transform a point from global coordinates into local coordinates
-    *   (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+    *   (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
     *
     *   Params: 
     *       point = Point to transform
@@ -262,7 +264,7 @@ interface IDrawable
 
     /**
     *   Transform a point from local coordinates into global coordinates
-    *   (ie it applies the inverse of object's center, translation, rotation and scale to the point)
+    *   (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
     *
     *   Params: 
     *       point = Point to transform
@@ -279,6 +281,13 @@ interface IDrawable
     *       window = Target into which render the object        
     */        
     void render(RenderWindow window);
+    
+    /**
+     * Render the specific geometry of the object with a shader
+     * 
+     * Params:
+     *     window = Render target
+     *     shader = Shader to use
+     */
+    void renderWithShader(RenderWindow window, Shader shader);
 }
-
-

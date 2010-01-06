@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -230,7 +231,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-graphics");
+	debug
+		DllLoader dll = DllLoader.load("csfml-graphics-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-graphics");
         
         sfSprite_SetImage = cast(pf_sfSprite_SetImage)dll.getSymbol("sfSprite_SetImage");
         sfSprite_SetSubRect = cast(pf_sfSprite_SetSubRect)dll.getSymbol("sfSprite_SetSubRect");

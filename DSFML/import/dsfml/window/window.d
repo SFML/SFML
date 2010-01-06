@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -29,11 +30,36 @@ import dsfml.window.event;
 import dsfml.window.input;
 import dsfml.window.videomode;
 import dsfml.window.windowhandle;
-import dsfml.window.windowsettings;
-import dsfml.window.windowstyle;
 
 import dsfml.system.common;
 import dsfml.system.stringutil;
+
+
+/**
+*   Window style
+*/
+enum Style
+{
+    NONE       = 0,      /// No border / title bar (this flag and all others are mutually exclusive)
+    TITLEBAR   = 1 << 0, /// Title bar + fixed border
+    RESIZE     = 1 << 1, /// Titlebar + resizable border + maximize button
+    CLOSE      = 1 << 2, /// Titlebar + close button
+    FULLSCREEN = 1 << 3  /// Fullscreen mode (this flag and all others are mutually exclusive)
+}
+
+
+/**
+* Structure defining the creation settings of windows
+*/
+struct ContextSettings
+{
+    uint DepthBits = 24;		/// Bits of the depth buffer
+    uint StencilBits = 8;		/// Bits of the stencil buffer
+    uint AntialiasingLevel = 0;	/// Level of antialiasing
+	uint MajorVersion = 3;		/// Major number of the context version to create
+	uint MinorVersion = 0;		/// Minor number of the context version to create
+}
+
 
 /**
 *   Window is a rendering window ; it can create a new window
@@ -48,9 +74,9 @@ class Window : DSFMLObject
     *       mode = Video mode to use
     *       title = Title of the window
     *       windowStyle = Window style (Resize | Close by default)
-    *       settings = Window settings (default is default WindowSettings values)
+    *       settings = Context settings (default is default ContextSettings values)
     */
-    this(VideoMode mode, char[] title, Style windowStyle = Style.RESIZE | Style.CLOSE, WindowSettings settings = WindowSettings())
+    this(VideoMode mode, string title, Style windowStyle = Style.RESIZE | Style.CLOSE, ContextSettings settings = ContextSettings())
     {
         super(sfWindow_Create(mode, toStringz(title), windowStyle, settings));
     }
@@ -60,9 +86,9 @@ class Window : DSFMLObject
     *
     *   Params:
     *       handle = Platform-specific handle of the control
-    *       settings = Window settings (default is default WindowSettings values)
+    *       settings = Context settings (default is default ContextSettings values)
     */
-    this(WindowHandle handle, WindowSettings settings = WindowSettings())
+    this(WindowHandle handle, ContextSettings settings = ContextSettings())
     {
         super(sfWindow_CreateFromHandle(handle, settings));
     }
@@ -82,9 +108,9 @@ class Window : DSFMLObject
     *       mode = Video mode to use
     *       title = Title of the window
     *       windowStyle = Window style (Resize | Close by default)
-    *       settings = Window settings (default is default WindowSettings values)
+    *       settings = Context settings (default is default ContextSettings values)
     */
-    void create(VideoMode mode, char[] title, Style windowStyle = Style.RESIZE | Style.CLOSE, WindowSettings settings = WindowSettings())
+    void create(VideoMode mode, string title, Style windowStyle = Style.RESIZE | Style.CLOSE, ContextSettings settings = ContextSettings())
     {
         if (m_ptr !is null)
             dispose();
@@ -99,9 +125,9 @@ class Window : DSFMLObject
     *                
     *   Params:
     *       handle = Platform-specific handle of the control
-    *       settings = Window settings (default is default WindowSettings values)
+    *       settings = Context settings (default is default ContextSettings values)
     */
-    void create(WindowHandle handle, WindowSettings settings = WindowSettings())
+    void create(WindowHandle handle, ContextSettings settings = ContextSettings())
     {
         if (m_ptr !is null)
             dispose();
@@ -126,7 +152,7 @@ class Window : DSFMLObject
     */        
     bool isOpened()
     {
-        return cast(bool)sfWindow_IsOpened(m_ptr);
+        return cast(bool) sfWindow_IsOpened(m_ptr);
     }
     /**
     *   Get the width of the rendering region of the window
@@ -156,7 +182,7 @@ class Window : DSFMLObject
     *   Returns:
     *       Settings used to create the window            
     */
-    WindowSettings getSettings()
+    ContextSettings getSettings()
     {
         return sfWindow_GetSettings(m_ptr);
     }        
@@ -355,14 +381,14 @@ private:
 // External ====================================================================
     extern (C)
     {
-        typedef void* function(VideoMode, char*, uint, WindowSettings) pf_sfWindow_Create;
-    	typedef void* function(WindowHandle, WindowSettings) pf_sfWindow_CreateFromHandle;
+        typedef void* function(VideoMode, cchar*, uint, ContextSettings) pf_sfWindow_Create;
+    	typedef void* function(WindowHandle, ContextSettings) pf_sfWindow_CreateFromHandle;
     	typedef void function(void*) pf_sfWindow_Destroy;
     	typedef void function(void*) pf_sfWindow_Close;
     	typedef int function(void*) pf_sfWindow_IsOpened;
     	typedef uint function(void*) pf_sfWindow_GetWidth;
     	typedef uint function(void*) pf_sfWindow_GetHeight;
-    	typedef WindowSettings function(void* Window) pf_sfWindow_GetSettings;
+    	typedef ContextSettings function(void* Window) pf_sfWindow_GetSettings;
     	typedef int function(void*, Event*) pf_sfWindow_GetEvent;
     	typedef void function(void*, int) pf_sfWindow_UseVerticalSync;
     	typedef void function(void*, int) pf_sfWindow_ShowMouseCursor;
@@ -406,7 +432,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-window");
+        debug
+			DllLoader dll = DllLoader.load("csfml-window-d");
+		else
+			DllLoader dll = DllLoader.load("csfml-window");
         
         sfWindow_Create = cast(pf_sfWindow_Create)dll.getSymbol("sfWindow_Create");
         sfWindow_CreateFromHandle = cast(pf_sfWindow_CreateFromHandle)dll.getSymbol("sfWindow_CreateFromHandle");

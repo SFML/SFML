@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -31,11 +32,11 @@ public import
     dsfml.graphics.font,
     dsfml.graphics.idrawable,
     dsfml.graphics.image,
-    dsfml.graphics.postfx,
+    dsfml.graphics.shader,
     dsfml.graphics.rect,
     dsfml.graphics.renderwindow,
     dsfml.graphics.shape,
     dsfml.graphics.sprite,
-    dsfml.graphics.string,
+    dsfml.graphics.text,
     dsfml.graphics.textstyle,
     dsfml.graphics.view;

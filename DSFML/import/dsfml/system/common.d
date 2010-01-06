@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -27,12 +28,38 @@ module dsfml.system.common;
 
 public import dsfml.system.dllloader;
 
+// type aliases for D2
+package
+{
+	alias const(char) cchar;
+	alias const(wchar) cwchar;
+	alias const(dchar) cdchar;
+	alias immutable(char) ichar;
+	alias immutable(wchar) iwchar;
+	alias immutable(dchar) idchar;
+	alias const(char)[] cstring;
+}
+
+// used to mixin code function
+string loadFromSharedLib(string fname)
+{
+	return fname ~ " = " ~ "cast(typeof(" ~ fname ~ ")) dll.getSymbol(\"" ~ fname ~ "\");";
+}
+
 /**
 *   Base class for all DSFML classes.
 */
 class DSFMLObject
 {
-    this(void* ptr, bool preventDelete = false)
+private:
+	bool m_preventDelete;
+
+protected:
+	void* m_ptr;
+
+public:
+
+	this(void* ptr, bool preventDelete = false)
     {
         m_ptr = ptr;
     }
@@ -61,10 +88,4 @@ class DSFMLObject
     {
         assert(m_ptr !is null, "Problem occurs with a null pointer in " ~ this.toString);
     }
-
-protected:
-    void* m_ptr;
-    
-private:
-    bool m_preventDelete;
 }

@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -33,15 +34,11 @@ import dsfml.system.common;
 *   by the display device
 */
 align(1) struct VideoMode
-{    
-    static VideoMode opCall(uint width, uint height, uint bitsPerPixel = 32)
-    {
-        VideoMode mode;
-        mode.Width = width;
-        mode.Height = height;
-        mode.BitsPerPixel = bitsPerPixel;
-        return mode;
-    }
+{
+	uint Width;				/// Video mode width, in pixels
+	uint Height;			/// Video mode height, in pixels
+	uint BitsPerPixel = 32;	/// Video mode pixel depth, in bits per pixels
+
     /**
     *   Get the current desktop video mode
     *
@@ -88,7 +85,7 @@ align(1) struct VideoMode
     */
     bool isValid()
     {
-        return cast(bool)sfVideoMode_IsValid(*this);
+        return cast(bool)sfVideoMode_IsValid(this);
     }
 
     /**
@@ -100,14 +97,10 @@ align(1) struct VideoMode
     *   Returns:
     *       True if modes are equal
     */
-    bool opEquals(VideoMode other)
+    const bool opEquals(ref const(VideoMode) other)
     {
         return ((other.Width == Width) && (other.Height == Height) && (other.BitsPerPixel == BitsPerPixel));
     }
-    
-    uint Width;        /// Video mode width, in pixels
-    uint Height;       /// Video mode height, in pixels
-    uint BitsPerPixel; /// Video mode pixel depth, in bits per pixels
 }
 
 extern (C)
@@ -125,8 +118,11 @@ extern (C)
 
 static this()
 {
-    DllLoader dll = DllLoader.load("csfml-window");
-    
+	debug
+		DllLoader dll = DllLoader.load("csfml-window-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-window");
+   
     sfVideoMode_GetDesktopMode = cast(pf_sfVideoMode_GetDesktopMode)dll.getSymbol("sfVideoMode_GetDesktopMode");
     sfVideoMode_GetMode = cast(pf_sfVideoMode_GetMode)dll.getSymbol("sfVideoMode_GetMode");
     sfVideoMode_GetModesCount = cast(pf_sfVideoMode_GetModesCount)dll.getSymbol("sfVideoMode_GetModesCount");

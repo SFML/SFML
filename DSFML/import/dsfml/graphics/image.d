@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -24,18 +25,15 @@
 */
 
 
-
-/*
-*   TODO : FIX circular dependency with render window
-*/
 module dsfml.graphics.image;
 
-import dsfml.graphics.color;
-import dsfml.graphics.rect;
+import	dsfml.graphics.common,
+		dsfml.graphics.color,
+		dsfml.graphics.rect;
 
-import dsfml.system.common;
-import dsfml.system.exception;
-import dsfml.system.stringutil;
+import	dsfml.system.common,
+		dsfml.system.exception,
+		dsfml.system.stringutil;
 
 
 /**
@@ -74,7 +72,7 @@ class Image : DSFMLObject
     *   Throws:
     *       LoadingException if filename is empty or null.
     */
-    this(char[] filename)
+    this(string filename)
 	{
 	   if (filename is null || filename.length == 0)
 	       throw new LoadingException("LoadingException : Filename is invalid.");
@@ -90,7 +88,7 @@ class Image : DSFMLObject
     *   Throws:
     *       LoadingException if data is empty or null.
     */
-    this(byte[] data)
+    this(ubyte[] data)
 	{
         if (data is null || data.length == 0)
             throw new LoadingException("LoadingException : Memory stream is invalid.");
@@ -131,7 +129,7 @@ class Image : DSFMLObject
     *   Returns: 
     *       True if saving was successful
     */
-    bool saveToFile(char[] filename)
+    bool saveToFile(string filename)
 	{
 		return cast(bool)sfImage_SaveToFile(m_ptr, toStringz(filename));
 	}
@@ -304,10 +302,10 @@ private:
         typedef void* function() pf_sfImage_Create;
     	typedef void* function(uint, uint, Color) pf_sfImage_CreateFromColor;
     	typedef void* function(uint, uint, ubyte*) pf_sfImage_CreateFromPixels;
-    	typedef void* function(char*) pf_sfImage_CreateFromFile;
-    	typedef void* function(byte* ,size_t) pf_sfImage_CreateFromMemory;
+    	typedef void* function(cchar*) pf_sfImage_CreateFromFile;
+    	typedef void* function(ubyte* ,size_t) pf_sfImage_CreateFromMemory;
     	typedef void function(void*) pf_sfImage_Destroy;
-    	typedef int function(void*, char*) pf_sfImage_SaveToFile;
+    	typedef int function(void*, cchar*) pf_sfImage_SaveToFile;
     	typedef void function(void*, Color, ubyte) pf_sfImage_CreateMaskFromColor;
         typedef int function(void*, void*, sfIntRect) pf_sfImage_CopyScreen;
     	typedef void function(void*, void*, uint, uint, sfIntRect) pf_sfImage_Copy;
@@ -342,7 +340,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-graphics");
+	debug
+		DllLoader dll = DllLoader.load("csfml-graphics-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-graphics");
         
         sfImage_Create = cast(pf_sfImage_Create)dll.getSymbol("sfImage_Create");
         sfImage_CreateFromColor = cast(pf_sfImage_CreateFromColor)dll.getSymbol("sfImage_CreateFromColor");

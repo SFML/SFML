@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -228,7 +229,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-network");
+	debug
+		DllLoader dll = DllLoader.load("csfml-network-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-network");
         
         sfSocketUDP_Bind = cast(pf_sfSocketUDP_Bind)dll.getSymbol("sfSocketUDP_Bind");
         sfSocketUDP_Create = cast(pf_sfSocketUDP_Create)dll.getSymbol("sfSocketUDP_Create");

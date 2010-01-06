@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *   
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -32,7 +33,8 @@ import dsfml.system.linkedlist;
 import dsfml.system.lock;
 import dsfml.system.mutex;
 import dsfml.system.sleep;
-import dsfml.system.thread;
+//import dsfml.system.thread;
+import core.thread;
 
 import dsfml.audio.sound;
 import dsfml.audio.soundstatus;
@@ -87,7 +89,7 @@ abstract class SoundStream : DSFMLObject
         if (getStatus() != SoundStatus.PAUSED)
         {
             m_t = new Thread(&threadPoll);
-            m_t.launch();
+            m_t.start();
         }
     }
     
@@ -106,7 +108,7 @@ abstract class SoundStream : DSFMLObject
     {
         m_flag = false;
         sfSoundStream_Stop(m_ptr);
-        m_t.wait();
+        m_t.join();
         if (m_dummy !is null)
             delete m_dummy;
     }
@@ -323,6 +325,31 @@ abstract class SoundStream : DSFMLObject
         if (m_ptr !is null)
             sfSoundStream_SetLoop(m_ptr, loop);
     }
+    
+	/**
+	 * Make the sound stream's position relative to the listener's position, or absolute.
+	 * The default value is false (absolute)
+	 * 
+	 *	Params:
+	 *		relative = True to set the position relative, false to set it absolute
+	 */
+	void setRelativeToListener(bool relative)
+	{
+		sfSoundStream_SetRelativeToListener(m_ptr, relative);
+	}
+
+	/**
+	 * Tell if the sound stream's position is relative to the listener's
+	 * position, or if it's absolute
+	 * 
+	 *	Returns:
+	 *		true if the position is relative, sfFalse if it's absolute
+	 */
+	bool isRelativeToListener()
+	{
+		return sfSoundStream_IsRelativeToListener(m_ptr);
+	}
+
 protected:
     /**
     *   Protected constructor
@@ -417,7 +444,7 @@ private:
     }
     
     // Managed thread loop
-    void threadPoll(void* dummy)
+    void threadPoll()
     {
         short[] data;
         bool ret = true;
@@ -497,7 +524,10 @@ private:
         typedef int function(void*) pf_sfSoundStream_GetLoop;
         typedef void function(void*, int) pf_sfSoundStream_SetLoop;
 
-        
+        typedef bool function(void*)						pf_sfSoundStream_IsRelativeToListener;
+    	typedef void function(void*, bool)					pf_sfSoundStream_SetRelativeToListener;
+
+
         static pf_sfSoundStream_Create sfSoundStream_Create;
     	static pf_sfSoundStream_Destroy sfSoundStream_Destroy;
         static pf_sfSoundStream_Play sfSoundStream_Play;
@@ -519,11 +549,18 @@ private:
         static pf_sfSoundStream_GetPlayingOffset sfSoundStream_GetPlayingOffset;
         static pf_sfSoundStream_GetLoop sfSoundStream_GetLoop;
         static pf_sfSoundStream_SetLoop sfSoundStream_SetLoop;
+        
+        
+		static pf_sfSoundStream_IsRelativeToListener	sfSoundStream_IsRelativeToListener;
+		static pf_sfSoundStream_SetRelativeToListener	sfSoundStream_SetRelativeToListener;
     }
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-audio");
+	debug
+		DllLoader dll = DllLoader.load("csfml-audio-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-audio");
         
         sfSoundStream_Create = cast(pf_sfSoundStream_Create)dll.getSymbol("sfSoundStream_Create");
         sfSoundStream_Destroy = cast(pf_sfSoundStream_Destroy)dll.getSymbol("sfSoundStream_Destroy");
@@ -546,5 +583,8 @@ private:
         sfSoundStream_GetPlayingOffset = cast(pf_sfSoundStream_GetPlayingOffset)dll.getSymbol("sfSoundStream_GetPlayingOffset");
         sfSoundStream_GetLoop = cast(pf_sfSoundStream_GetLoop)dll.getSymbol("sfSoundStream_GetLoop");
         sfSoundStream_SetLoop = cast(pf_sfSoundStream_SetLoop)dll.getSymbol("sfSoundStream_SetLoop");
+        
+        sfSoundStream_IsRelativeToListener	= cast(pf_sfSoundStream_IsRelativeToListener)	dll.getSymbol("sfSoundStream_IsRelativeToListener");
+        sfSoundStream_SetRelativeToListener	= cast(pf_sfSoundStream_SetRelativeToListener)	dll.getSymbol("sfSoundStream_SetRelativeToListener");
     }
 }

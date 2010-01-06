@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -25,10 +26,11 @@
 
 module dsfml.graphics.view;
 
-import dsfml.graphics.rect;
+import	dsfml.graphics.common,
+		dsfml.graphics.rect;
 
-import dsfml.system.common;
-import dsfml.system.vector2;
+import	dsfml.system.common,
+		dsfml.system.vector2;
 
 /**
 *   This class defines a view (position, size and zoom) ;
@@ -36,6 +38,11 @@ import dsfml.system.vector2;
 */
 class View : DSFMLObject
 {
+private:
+	FloatRect m_viewport;
+	bool m_isModified = true;
+
+public:
     /**
     *   Constructor
     *   
@@ -51,11 +58,11 @@ class View : DSFMLObject
    *   
    *    Params:
    *        center = center of the view
-   *        halfsize = Half-size of the view (from center to corner)            
+   *        size = size of the view (width, height)            
    */              
-    this(Vector2f center, Vector2f halfsize)
+    this(Vector2f center, Vector2f size)
     {
-        super(sfView_CreateFromRect(sfFloatRect(center.x - halfsize.x, center.y - halfsize.y, center.x + halfsize.x, center.y + halfsize.y) ));
+        super(sfView_CreateFromRect(sfFloatRect(center.x - size.x / 2, center.y - size.y / 2, center.x + size.x / 2, center.y + size.y / 2) ));
     }
     
     /**
@@ -100,27 +107,27 @@ class View : DSFMLObject
     }
 
     /**
-    *   Change the half-size of the view (take 2 values)
+    *   Change the size of the view (take 2 values)
     *
     *   Params:
-    *       halfWidth = New half-width
-    *       halfHeight = New half-height
+    *       width = New width
+    *       height = New height
     */
-    void setHalfSize(float halfWidth, float HalfHeight)
+    void setSize(float width, float height)
     {
-        sfView_SetHalfSize(m_ptr, halfWidth, HalfHeight);
+        sfView_SetSize(m_ptr, width, height);
         m_isModified = true;
     }
 
     /**
-    *   Change the half-size of the view (take 2 values)
+    *   Change the size of the view (take 2 values)
     *
     *   Params:
-    *       helfSize = New halfsize
+    *       size = New size
     */
-    void setHalfSize(Vector2f halfSize)
+    void setSize(Vector2f size)
     {
-        sfView_SetHalfSize(m_ptr, halfSize.x, halfSize.y);
+        sfView_SetSize(m_ptr, size.x, size.y);
         m_isModified = true;
     }
 
@@ -128,12 +135,12 @@ class View : DSFMLObject
     * Rebuild the view from a rectangle
     *
     * Params:
-    *     viewRect : Rectangle defining the position and size of the view
+    *     viewport : Rectangle defining the position and size of the view
     */
-    void setFromRect(FloatRect viewRect)
+    void setViewport(FloatRect viewport)
     {
-        sfView_SetFromRect(m_ptr, viewRect.toCFloatRect());
-        m_rect = viewRect;
+        sfView_SetViewport(m_ptr, viewport.toCFloatRect());
+        m_viewport = viewport;
     }
 
     /**
@@ -148,28 +155,50 @@ class View : DSFMLObject
     }
 
     /**
-    *   Get the halfsize of the view
+    *	Get the size of the view
     *
-    *   Returns: 
-    *       Halfsize of the view
+    *	Returns: 
+    *		size of the view
     */
-    Vector2f GetHalfSize()
+    Vector2f getSize()
     {
-        return Vector2f(sfView_GetHalfSizeX(m_ptr), sfView_GetHalfSizeY(m_ptr));
+    	return Vector2f(sfView_GetWidth(m_ptr), sfView_GetHeight(m_ptr));
+    }
+    
+    /**
+     *	Get the width of the view
+     *
+     *	Returns:
+     *		width of the view
+     */
+    float getWidth()
+    {
+    	return sfView_GetWidth(m_ptr);
     }
 
     /**
+     *	Get the height of the view
+     *
+     *	Returns:
+     *		height of the view
+     */
+    float getHeight()
+    {
+    	return sfView_GetHeight(m_ptr);
+    }
+    
+    /**
     *   Get the bounding retangle of the view
     */              
-    FloatRect getRect()
+    FloatRect getViewport()
     {
         if (m_isModified)
         {
             m_isModified = false;
-            sfFloatRect cRect = sfView_GetRect(m_ptr);
-            m_rect = new FloatRect(cRect.Left, cRect.Top, cRect.Right, cRect.Bottom);
+            sfFloatRect cViewport = sfView_GetViewport(m_ptr);
+            m_viewport = new FloatRect(cViewport.Left, cViewport.Top, cViewport.Right, cViewport.Bottom);
         }
-        return m_rect;
+        return m_viewport;
     }
     
     /**
@@ -209,66 +238,44 @@ class View : DSFMLObject
         m_isModified = true;
     }
 
+	/**
+	 *	Rotate the view relatively to its current orientation.
+	 * 
+	 *	Params:
+	 *		angle = Angle to rotate, in degree
+	 */
+	void rotate(float angle)
+	{
+		sfView_Rotate(m_ptr, angle);
+	}
+	
+	/**
+	 *	Set the orientation of the view
+	 *	The default rotation of a view is 0 degree
+	 *
+	 *	Params:
+	 *		angle = New angle, in degrees
+	 */
+	void setRotation(float angle)
+	{
+		sfView_SetRotation(m_ptr, angle);
+	}
+
+	/**
+	 *	Get the current orientation of the view
+	 *
+	 *	Returns:
+	 *		Rotation angle of the view, in degrees
+	 */
+	float getRotation()
+	{
+		return sfView_GetRotation(m_ptr);
+	}
+
 package:
 
-    this(void* ptr, bool preventDelete)
-    {
-        super(ptr, preventDelete);
-    } 
-
-private:
-    FloatRect m_rect;
-    bool m_isModified = true;
-    
-    extern (C)
-    {
-        typedef void* function() pf_sfView_Create;
-        typedef void* function(sfFloatRect) pf_sfView_CreateFromRect;
-        typedef void function(void*) pf_sfView_Destroy;
-        typedef void function(void*, float, float) pf_sfView_SetCenter;
-        typedef void function(void*, float, float) pf_sfView_SetHalfSize;
-        typedef void function(void*, sfFloatRect ViewRect) pf_sfView_SetFromRect;
-        typedef float function(void*) pf_sfView_GetCenterX;
-        typedef float function(void*) pf_sfView_GetCenterY;
-        typedef float function(void*) pf_sfView_GetHalfSizeX;
-        typedef float function(void*) pf_sfView_GetHalfSizeY;
-        typedef sfFloatRect function(void*) pf_sfView_GetRect;
-        typedef void function(void*, float, float) pf_sfView_Move;
-        typedef void function(void*, float) pf_sfView_Zoom;
-
-        static pf_sfView_Create sfView_Create;
-        static pf_sfView_CreateFromRect sfView_CreateFromRect;
-        static pf_sfView_Destroy sfView_Destroy;
-        static pf_sfView_SetCenter sfView_SetCenter;
-        static pf_sfView_SetHalfSize sfView_SetHalfSize;
-        static pf_sfView_SetFromRect sfView_SetFromRect;
-        static pf_sfView_GetCenterX sfView_GetCenterX;
-        static pf_sfView_GetCenterY sfView_GetCenterY;
-        static pf_sfView_GetHalfSizeX sfView_GetHalfSizeX;
-        static pf_sfView_GetHalfSizeY sfView_GetHalfSizeY;
-        static pf_sfView_GetRect sfView_GetRect;
-        static pf_sfView_Move sfView_Move;
-        static pf_sfView_Zoom sfView_Zoom;
-    }
-
-    static this()
-    {
-        DllLoader dll = DllLoader.load("csfml-graphics");
-        
-        sfView_Create = cast(pf_sfView_Create) dll.getSymbol("sfView_Create");
-        sfView_CreateFromRect = cast(pf_sfView_CreateFromRect) dll.getSymbol("sfView_CreateFromRect");
-        sfView_Destroy = cast(pf_sfView_Destroy) dll.getSymbol("sfView_Destroy");
-        sfView_SetCenter = cast(pf_sfView_SetCenter) dll.getSymbol("sfView_SetCenter");
-        sfView_SetHalfSize = cast(pf_sfView_SetHalfSize) dll.getSymbol("sfView_SetHalfSize");
-        sfView_SetFromRect = cast(pf_sfView_SetFromRect) dll.getSymbol("sfView_SetFromRect");
-        sfView_GetCenterX = cast(pf_sfView_GetCenterX) dll.getSymbol("sfView_GetCenterX");
-        sfView_GetCenterY = cast(pf_sfView_GetCenterY) dll.getSymbol("sfView_GetCenterY");
-        sfView_GetHalfSizeX = cast(pf_sfView_GetHalfSizeX) dll.getSymbol("sfView_GetHalfSizeX");
-        sfView_GetHalfSizeY = cast(pf_sfView_GetHalfSizeY) dll.getSymbol("sfView_GetHalfSizeY");
-        sfView_GetRect = cast(pf_sfView_GetRect) dll.getSymbol("sfView_GetRect");
-        sfView_Move = cast(pf_sfView_Move) dll.getSymbol("sfView_Move");
-        sfView_Zoom = cast(pf_sfView_Zoom) dll.getSymbol("sfView_Zoom");
-    }
+	this(void* ptr, bool preventDelete)
+	{
+		super(ptr, preventDelete);
+	}
 }
-
-

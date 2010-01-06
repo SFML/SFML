@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -150,7 +151,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-window");
+		debug
+			DllLoader dll = DllLoader.load("csfml-window-d");
+		else
+			DllLoader dll = DllLoader.load("csfml-window");
         
         sfInput_IsKeyDown = cast(pf_sfInput_IsKeyDown)dll.getSymbol("sfInput_IsKeyDown");
         sfInput_IsMouseButtonDown = cast(pf_sfInput_IsMouseButtonDown)dll.getSymbol("sfInput_IsMouseButtonDown");

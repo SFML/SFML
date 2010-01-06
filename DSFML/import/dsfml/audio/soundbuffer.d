@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -45,7 +46,7 @@ class SoundBuffer : DSFMLObject
     *   Throws:
     *       LoadingException on failure    
     */
-    this(char[] filename)
+    this(string filename)
 	{
 	   if (filename is null || filename.length == 0)
 	       throw new LoadingException("LoadingException : Filename is invalid.");
@@ -106,7 +107,7 @@ class SoundBuffer : DSFMLObject
     *   Returns: 
     *       True if saving has been successful
     */
-    bool saveToFile(char[] filename) 
+    bool saveToFile(string filename) 
     {
 		if (filename !is null && filename.length > 0 )
 		{
@@ -184,11 +185,11 @@ private:
 
     extern (C)
     {
-    	typedef void* function(char*) pf_sfSoundBuffer_CreateFromFile;
+    	typedef void* function(cchar*) pf_sfSoundBuffer_CreateFromFile;
     	typedef void* function(byte*, size_t) pf_sfSoundBuffer_CreateFromMemory;
         typedef void* function(short*, size_t, uint, uint) pf_sfSoundBuffer_CreateFromSamples;
     	typedef void function(void*) pf_sfSoundBuffer_Destroy;
-    	typedef int function(void*, char*) pf_sfSoundBuffer_SaveToFile;
+    	typedef int function(void*, cchar*) pf_sfSoundBuffer_SaveToFile;
     	typedef short* function(void*) pf_sfSoundBuffer_GetSamples;
     	typedef size_t function(void*) pf_sfSoundBuffer_GetSamplesCount;
     	typedef uint function(void*) pf_sfSoundBuffer_GetSampleRate;
@@ -209,7 +210,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-audio");
+	debug
+		DllLoader dll = DllLoader.load("csfml-audio-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-audio");
         
         sfSoundBuffer_CreateFromFile = cast(pf_sfSoundBuffer_CreateFromFile)dll.getSymbol("sfSoundBuffer_CreateFromFile");
         sfSoundBuffer_CreateFromMemory = cast(pf_sfSoundBuffer_CreateFromMemory)dll.getSymbol("sfSoundBuffer_CreateFromMemory");

@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -330,6 +331,30 @@ class Sound : DSFMLObject
 		return sfSound_GetPlayingOffset(m_ptr);
 	}
 
+	/**
+	 * Make the sound's position relative to the listener's position, or absolute.
+	 * The default value is false (absolute)
+	 * 
+	 *	Params:
+	 *		relative = True to set the position relative, false to set it absolute
+	 */
+	void setRelativeToListener(bool relative)
+	{
+		sfSound_SetRelativeToListener(m_ptr, relative);
+	}
+
+	/**
+	 * Tell if the sound's position is relative to the listener's
+	 * position, or if it's absolute
+	 * 
+	 *	Returns:
+	 *		true if the position is relative, sfFalse if it's absolute
+	 */
+	bool isRelativeToListener()
+	{
+		return sfSound_IsRelativeToListener(m_ptr);
+	}
+
 
 private:
 	SoundBuffer m_buffer;
@@ -360,6 +385,9 @@ private:
     	typedef void function(void*, float) pf_sfSound_SetMinDistance;
     	typedef void function(void*, float) pf_sfSound_SetAttenuation;
         typedef void function(void*, float) pf_sfSound_SetPlayingOffset;
+        
+        static void function(void*, bool)				sfSound_SetRelativeToListener;
+        static bool function(void*)						sfSound_IsRelativeToListener;
     	
     	static pf_sfSound_Create sfSound_Create;
     	static pf_sfSound_Destroy sfSound_Destroy;
@@ -387,7 +415,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-audio");
+	debug
+		DllLoader dll = DllLoader.load("csfml-audio-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-audio");
         
         sfSound_Create = cast(pf_sfSound_Create)dll.getSymbol("sfSound_Create");
         sfSound_Destroy = cast(pf_sfSound_Destroy)dll.getSymbol("sfSound_Destroy");
@@ -411,5 +442,9 @@ private:
         sfSound_SetMinDistance = cast(pf_sfSound_SetMinDistance)dll.getSymbol("sfSound_SetMinDistance");
         sfSound_SetAttenuation = cast(pf_sfSound_SetAttenuation)dll.getSymbol("sfSound_SetAttenuation");
         sfSound_SetPlayingOffset = cast(pf_sfSound_SetPlayingOffset)dll.getSymbol("sfSound_SetPlayingOffset");
+        
+    	mixin(loadFromSharedLib("sfSound_SetRelativeToListener"));
+    	mixin(loadFromSharedLib("sfSound_IsRelativeToListener"));
+
     }
 }

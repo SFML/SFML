@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -99,7 +100,7 @@ class Http : DSFMLObject
         *   Returns:
         *       Value of the field, or enpty string if not found        
         */
-        char[] getField(char[] field)
+        string getField(string field)
         {
             return fromStringz(sfHttpResponse_GetField(m_ptr, toStringz(field)));
         }
@@ -147,7 +148,7 @@ class Http : DSFMLObject
         *   Returns:
         *       the response body                        
         */
-        char[] getBody()
+        string getBody()
         {
             return fromStringz(sfHttpResponse_GetBody(m_ptr));
         }
@@ -203,7 +204,7 @@ class Http : DSFMLObject
         *       uri = Target URI ("/" by default -- index page)
         *       requestBody = Content of the request's body (empty by default)                      
         */
-        this(HttpMethod requestMethod = HttpMethod.GET, char[] uri = "/", char[] requestBody = "")
+        this(HttpMethod requestMethod = HttpMethod.GET, string uri = "/", string requestBody = "")
         {
             super(sfHttpRequest_Create());
             sfHttpRequest_SetMethod(m_ptr, requestMethod);
@@ -218,7 +219,7 @@ class Http : DSFMLObject
         *       field = name of the field to set (case-insensitive)
         *       value = value of the field
         */
-        void setField(char[] field, char[] value)
+        void setField(string field, string value)
         {
             sfHttpRequest_SetField(m_ptr, toStringz(field), toStringz(value));
         }
@@ -241,7 +242,7 @@ class Http : DSFMLObject
         *       uri = URI to request, local to the host.
         *   Returns:
         */
-        void setURI(char[] uri)
+        void setURI(string uri)
         {
             sfHttpRequest_SetURI(m_ptr, toStringz(uri));
         }
@@ -265,7 +266,7 @@ class Http : DSFMLObject
         *   Params:
         *       requestBody = Content of the request body.        
         */
-        void setBody(char[] requestBody)
+        void setBody(string requestBody)
         {
             sfHttpRequest_SetBody(m_ptr, toStringz(requestBody));
         }
@@ -321,7 +322,7 @@ class Http : DSFMLObject
     *       host = Web server to connect to
     *       port = port to use for connection (0 by default -- use the standard port of the protocol)        
     */
-    this(char[] host, ushort port = 0)
+    this(string host, ushort port = 0)
     {
         super(sfHttp_Create());
         sfHttp_SetHost(m_ptr, toStringz(host), port);
@@ -339,7 +340,7 @@ class Http : DSFMLObject
     *       host = Web server to connect to
     *       port = port to use for connection (0 by default -- use the standard port of the protocol)                   
     */
-    void setHost(char[] host, ushort port = 0)
+    void setHost(string host, ushort port = 0)
     {
         sfHttp_SetHost(m_ptr, toStringz(host), port);
     }
@@ -384,7 +385,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-network");
+	debug
+		DllLoader dll = DllLoader.load("csfml-network-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-network");
         
         sfHttp_Create = cast(pf_sfHttp_Create)dll.getSymbol("sfHttp_Create");
         sfHttp_Destroy = cast(pf_sfHttp_Destroy)dll.getSymbol("sfHttp_Destroy");

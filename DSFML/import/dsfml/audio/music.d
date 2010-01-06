@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -45,12 +46,12 @@ class Music : DSFMLObject
     *       filename = Path of the file to open
     *       
     */ 
-    this(char[] filename)
+    this(string filename)
     {
-        if (filename is null || filename.length == 0)
-            throw new LoadingException("LoadingException : Filename is invalid.");
-        
-        super(sfMusic_CreateFromFile(toStringz(filename)));
+		if (filename is null || filename.length == 0)
+		    throw new LoadingException("LoadingException : Filename is invalid.");
+		
+		super(sfMusic_CreateFromFile(toStringz(filename)));
     }
 
     /**
@@ -62,15 +63,15 @@ class Music : DSFMLObject
     */
     this(byte[] data)
     {
-        if (data is null || data.length == 0)
-            throw new Exception("LoadingException : Memory stream is invalid.");
-        
-        super(m_ptr = sfMusic_CreateFromMemory(data.ptr, data.length)); 
+		if (data is null || data.length == 0)
+		    throw new Exception("LoadingException : Memory stream is invalid.");
+		
+		super(m_ptr = sfMusic_CreateFromMemory(data.ptr, data.length)); 
     }
 
     override void dispose()
     {
-        sfMusic_Destroy(m_ptr);
+		sfMusic_Destroy(m_ptr);
     }
 
     /**
@@ -78,7 +79,7 @@ class Music : DSFMLObject
     */
     void play()
     {
-        sfMusic_Play(m_ptr);
+		sfMusic_Play(m_ptr);
     }
 
     /**
@@ -86,7 +87,7 @@ class Music : DSFMLObject
     */
     void stop()
     {
-        sfMusic_Stop(m_ptr);
+		sfMusic_Stop(m_ptr);
     }
 
     /**
@@ -94,7 +95,7 @@ class Music : DSFMLObject
     */
     void pause()
     {
-        sfMusic_Pause(m_ptr);
+		sfMusic_Pause(m_ptr);
     }
 
 
@@ -106,7 +107,7 @@ class Music : DSFMLObject
     */
     uint getChannelsCount()
     {
-        return sfMusic_GetChannelsCount(m_ptr);
+		return sfMusic_GetChannelsCount(m_ptr);
     }
 
     /**
@@ -117,7 +118,7 @@ class Music : DSFMLObject
     */
     uint getSampleRate() 
     {
-        return sfMusic_GetSampleRate(m_ptr);
+		return sfMusic_GetSampleRate(m_ptr);
     }
 
 
@@ -129,7 +130,7 @@ class Music : DSFMLObject
     */
     float getDuration() 
     {
-        return sfMusic_GetDuration(m_ptr);
+		return sfMusic_GetDuration(m_ptr);
     }
 
     /**
@@ -140,7 +141,7 @@ class Music : DSFMLObject
     */
     SoundStatus getStatus() 
     {
-        return sfMusic_GetStatus(m_ptr);
+		return sfMusic_GetStatus(m_ptr);
     }
 
 
@@ -152,7 +153,7 @@ class Music : DSFMLObject
     */
     bool getLoop() 
     {
-        return cast(bool)sfMusic_GetLoop(m_ptr);
+		return cast(bool)sfMusic_GetLoop(m_ptr);
     }
 
     /**
@@ -163,7 +164,7 @@ class Music : DSFMLObject
     */
     float getPitch() 
     {
-        return sfMusic_GetPitch(m_ptr);
+		return sfMusic_GetPitch(m_ptr);
     }
 
     /**
@@ -174,20 +175,20 @@ class Music : DSFMLObject
     */
     float getVolume() 
     {
-        return sfMusic_GetVolume(m_ptr);
+		return sfMusic_GetVolume(m_ptr);
     }
 
     /**
     *   Get the sound position
     *
     *   Returns:
-    *       Current position of the music.        
+    *       Current position of the music.
     */
     Vector3f getPosition() 
     {
-        Vector3f ret;
-        sfMusic_GetPosition(m_ptr, &ret.x, &ret.y, &ret.z);
-        return ret;
+		Vector3f ret;
+		sfMusic_GetPosition(m_ptr, &ret.x, &ret.y, &ret.z);
+		return ret;
     }
 
     /**
@@ -198,7 +199,7 @@ class Music : DSFMLObject
     */
     float getMinDistance()
     {
-        return sfMusic_GetMinDistance(m_ptr);
+		return sfMusic_GetMinDistance(m_ptr);
     }
 
     /**
@@ -210,7 +211,7 @@ class Music : DSFMLObject
     */
     float getAttenuation() 
     {
-        return sfMusic_GetAttenuation(m_ptr);
+		return sfMusic_GetAttenuation(m_ptr);
     }
 
 
@@ -223,7 +224,7 @@ class Music : DSFMLObject
     */
     void setLoop(bool loop)
     {
-        sfMusic_SetLoop(m_ptr, loop);
+		sfMusic_SetLoop(m_ptr, loop);
     }
 
     /**
@@ -236,7 +237,7 @@ class Music : DSFMLObject
     */
     void setPitch(float pitch)
     {
-        sfMusic_SetPitch(m_ptr, pitch);
+		sfMusic_SetPitch(m_ptr, pitch);
     }
 
     /**
@@ -250,11 +251,11 @@ class Music : DSFMLObject
     void setVolume(float volume)
     in
     {
-        assert (volume >= 0.f && volume <= 100.f);
+		assert (volume >= 0.f && volume <= 100.f);
     }
     body
     {
-        sfMusic_SetVolume(m_ptr, volume);
+		sfMusic_SetVolume(m_ptr, volume);
     }
 
     /**
@@ -269,7 +270,7 @@ class Music : DSFMLObject
     */
     void setPosition(float x, float y, float z)
     {
-        sfMusic_SetPosition(m_ptr, x, y, z);
+		sfMusic_SetPosition(m_ptr, x, y, z);
     }
 
     /**
@@ -282,9 +283,8 @@ class Music : DSFMLObject
     */
     void setPosition(Vector3f position)
     {
-        sfMusic_SetPosition(m_ptr, position.x, position.y, position.z);
+		sfMusic_SetPosition(m_ptr, position.x, position.y, position.z);
     }
-
 
     /**
     *   Set the minimum distance - closer than thsi distance
@@ -293,10 +293,10 @@ class Music : DSFMLObject
     *   
     *   Params:    
     *       minDistance = new minimum distance for the sound 
-    */        
+    */		
     void setMinDistance(float minDistance)
     {
-        sfMusic_SetMinDistance(m_ptr, minDistance);
+		sfMusic_SetMinDistance(m_ptr, minDistance);
     }
 
     /**
@@ -305,92 +305,101 @@ class Music : DSFMLObject
     *   The default attenuation factor 1.0
     *   
     *   Params:
-    *       attenuation = new attenuation factor for the sound            
-    */        
+    *       attenuation = new attenuation factor for the sound		    
+    */		
     void setAttenuation(float attenuation)
     {
-        sfMusic_SetAttenuation(m_ptr, attenuation);
+		sfMusic_SetAttenuation(m_ptr, attenuation);
     }
 
-private:
+	/**
+	 * Make the music's position relative to the listener's position, or absolute.
+	 * The default value is false (absolute)
+	 * 
+	 *	Params:
+	 *		relative = True to set the position relative, false to set it absolute
+	 */
+	void setRelativeToListener(bool relative)
+	{
+		sfMusic_SetRelativeToListener(m_ptr, relative);
+	}
 
-// External ====================================================================
+	/**
+	 * Tell if the music's position is relative to the listener's
+	 * position, or if it's absolute
+	 * 
+	 *	Returns:
+	 *		true if the position is relative, sfFalse if it's absolute
+	 */
+	bool isRelativeToListener()
+	{
+		return sfMusic_IsRelativeToListener(m_ptr);
+	}
 
-    extern (C)
-    {
-        typedef void* function(char*) pf_sfMusic_CreateFromFile;
-    	typedef void* function(byte*, size_t) pf_sfMusic_CreateFromMemory;
-    	typedef void function(void*) pf_sfMusic_Destroy;
-    	typedef void function(void*, int) pf_sfMusic_SetLoop;
-    	typedef bool function(void*) pf_sfMusic_GetLoop;
-    	typedef float function(void*) pf_sfMusic_GetDuration;
-    	typedef void function(void*) pf_sfMusic_Play;
-    	typedef void function(void*) pf_sfMusic_Pause;
-    	typedef void function(void*) pf_sfMusic_Stop;
-    	typedef uint function(void*) pf_sfMusic_GetChannelsCount;
-    	typedef uint function(void*) pf_sfMusic_GetSampleRate;
-    	typedef SoundStatus function(void*) pf_sfMusic_GetStatus;
-    	typedef void function(void*, float) pf_sfMusic_SetPitch;
-    	typedef void function(void*, float) pf_sfMusic_SetVolume;
-    	typedef void function(void*, float, float, float) pf_sfMusic_SetPosition;
-    	typedef float function(void*) pf_sfMusic_GetPitch;
-    	typedef float function(void*) pf_sfMusic_GetVolume;
-    	typedef void function(void*, float*, float*, float*) pf_sfMusic_GetPosition;
-    	typedef float function(void*) pf_sfMusic_GetMinDistance;
-    	typedef float function(void*) pf_sfMusic_GetAttenuation;
-    	typedef void function(void*, float) pf_sfMusic_SetMinDistance;
-    	typedef void function(void*, float) pf_sfMusic_SetAttenuation;
-    	
-    	static pf_sfMusic_CreateFromFile sfMusic_CreateFromFile;
-    	static pf_sfMusic_CreateFromMemory sfMusic_CreateFromMemory;
-    	static pf_sfMusic_Destroy sfMusic_Destroy;
-    	static pf_sfMusic_SetLoop sfMusic_SetLoop;
-    	static pf_sfMusic_GetLoop sfMusic_GetLoop;
-    	static pf_sfMusic_GetDuration sfMusic_GetDuration;
-    	static pf_sfMusic_Play sfMusic_Play;
-    	static pf_sfMusic_Pause sfMusic_Pause;
-    	static pf_sfMusic_Stop sfMusic_Stop;
-    	static pf_sfMusic_GetChannelsCount sfMusic_GetChannelsCount;
-    	static pf_sfMusic_GetSampleRate sfMusic_GetSampleRate;
-    	static pf_sfMusic_GetStatus sfMusic_GetStatus;
-    	static pf_sfMusic_SetPitch sfMusic_SetPitch;
-    	static pf_sfMusic_SetVolume sfMusic_SetVolume;
-    	static pf_sfMusic_SetPosition sfMusic_SetPosition;
-    	static pf_sfMusic_GetPitch sfMusic_GetPitch;
-    	static pf_sfMusic_GetVolume sfMusic_GetVolume;
-    	static pf_sfMusic_GetPosition sfMusic_GetPosition;
-    	static pf_sfMusic_GetMinDistance sfMusic_GetMinDistance;
-    	static pf_sfMusic_GetAttenuation sfMusic_GetAttenuation;
-    	static pf_sfMusic_SetMinDistance sfMusic_SetMinDistance;
-    	static pf_sfMusic_SetAttenuation sfMusic_SetAttenuation;
-    }
-
-    static this()
-    {
-        DllLoader dll = DllLoader.load("csfml-audio");
-        
-        sfMusic_CreateFromFile = cast(pf_sfMusic_CreateFromFile)dll.getSymbol("sfMusic_CreateFromFile");
-        sfMusic_CreateFromMemory = cast(pf_sfMusic_CreateFromMemory)dll.getSymbol("sfMusic_CreateFromMemory");
-        sfMusic_Destroy = cast(pf_sfMusic_Destroy)dll.getSymbol("sfMusic_Destroy");
-        sfMusic_SetLoop = cast(pf_sfMusic_SetLoop)dll.getSymbol("sfMusic_SetLoop");
-        sfMusic_GetLoop = cast(pf_sfMusic_GetLoop)dll.getSymbol("sfMusic_GetLoop");
-        sfMusic_GetDuration = cast(pf_sfMusic_GetDuration)dll.getSymbol("sfMusic_GetDuration");
-        sfMusic_Play = cast(pf_sfMusic_Play)dll.getSymbol("sfMusic_Play");
-        sfMusic_Pause = cast(pf_sfMusic_Pause)dll.getSymbol("sfMusic_Pause");
-        sfMusic_Stop = cast(pf_sfMusic_Stop)dll.getSymbol("sfMusic_Stop");
-        sfMusic_GetChannelsCount = cast(pf_sfMusic_GetChannelsCount)dll.getSymbol("sfMusic_GetChannelsCount");
-        sfMusic_GetSampleRate = cast(pf_sfMusic_GetSampleRate)dll.getSymbol("sfMusic_GetSampleRate");
-        sfMusic_GetStatus = cast(pf_sfMusic_GetStatus)dll.getSymbol("sfMusic_GetStatus");
-        sfMusic_SetPitch = cast(pf_sfMusic_SetPitch)dll.getSymbol("sfMusic_SetPitch");
-        sfMusic_SetVolume = cast(pf_sfMusic_SetVolume)dll.getSymbol("sfMusic_SetVolume");
-        sfMusic_SetPosition = cast(pf_sfMusic_SetPosition)dll.getSymbol("sfMusic_SetPosition");
-        sfMusic_GetPitch = cast(pf_sfMusic_GetPitch)dll.getSymbol("sfMusic_GetPitch");
-        sfMusic_GetVolume = cast(pf_sfMusic_GetVolume)dll.getSymbol("sfMusic_GetVolume");
-        sfMusic_GetPosition = cast(pf_sfMusic_GetPosition)dll.getSymbol("sfMusic_GetPosition");
-        sfMusic_GetMinDistance = cast(pf_sfMusic_GetMinDistance)dll.getSymbol("sfMusic_GetMinDistance");
-        sfMusic_GetAttenuation = cast(pf_sfMusic_GetAttenuation)dll.getSymbol("sfMusic_GetAttenuation");
-        sfMusic_SetMinDistance = cast(pf_sfMusic_SetMinDistance)dll.getSymbol("sfMusic_SetMinDistance");
-        sfMusic_SetAttenuation = cast(pf_sfMusic_SetAttenuation)dll.getSymbol("sfMusic_SetAttenuation");
-    }
 }
 
+private:
+	
+extern(C)
+{
+void* function(cchar*)						sfMusic_CreateFromFile;
+void* function(byte*, size_t)				sfMusic_CreateFromMemory;
+void function(void*)						sfMusic_Destroy;
+void function(void*, int)					sfMusic_SetLoop;
+bool function(void*)						sfMusic_GetLoop;
+float function(void*)						sfMusic_GetDuration;
+void function(void*)						sfMusic_Play;
+void function(void*)						sfMusic_Pause;
+void function(void*)						sfMusic_Stop;
+uint function(void*)						sfMusic_GetChannelsCount;
+uint function(void*)						sfMusic_GetSampleRate;
+SoundStatus function(void*)					sfMusic_GetStatus;
+void function(void*, float)					sfMusic_SetPitch;
+void function(void*, float)					sfMusic_SetVolume;
+void function(void*, float, float, float)	sfMusic_SetPosition;
+float function(void*)						sfMusic_GetPitch;
+float function(void*)						sfMusic_GetVolume;
+void function(void*, float*, float*, float*)sfMusic_GetPosition;
+float function(void*)						sfMusic_GetMinDistance;
+float function(void*)						sfMusic_GetAttenuation;
+void function(void*, float)					sfMusic_SetMinDistance;
+void function(void*, float)					sfMusic_SetAttenuation;
+
+
+void function(void*, bool)					sfMusic_SetRelativeToListener;
+bool function(void*)						sfMusic_IsRelativeToListener;
+}
+
+static this()
+{
+debug
+	DllLoader dll = DllLoader.load("csfml-audio-d");
+else
+	DllLoader dll = DllLoader.load("csfml-audio");
+
+	mixin(loadFromSharedLib("sfMusic_CreateFromFile"));
+	mixin(loadFromSharedLib("sfMusic_CreateFromMemory"));
+	mixin(loadFromSharedLib("sfMusic_Destroy"));
+	mixin(loadFromSharedLib("sfMusic_SetLoop"));
+	mixin(loadFromSharedLib("sfMusic_GetLoop"));
+	mixin(loadFromSharedLib("sfMusic_GetDuration"));
+	mixin(loadFromSharedLib("sfMusic_Play"));
+	mixin(loadFromSharedLib("sfMusic_Pause"));
+	mixin(loadFromSharedLib("sfMusic_Stop"));
+	mixin(loadFromSharedLib("sfMusic_GetChannelsCount"));
+	mixin(loadFromSharedLib("sfMusic_GetSampleRate"));
+	mixin(loadFromSharedLib("sfMusic_GetStatus"));
+	mixin(loadFromSharedLib("sfMusic_SetPitch"));
+	mixin(loadFromSharedLib("sfMusic_SetVolume"));
+	mixin(loadFromSharedLib("sfMusic_SetPosition"));
+	mixin(loadFromSharedLib("sfMusic_GetPitch"));
+	mixin(loadFromSharedLib("sfMusic_GetVolume"));
+	mixin(loadFromSharedLib("sfMusic_GetPosition"));
+	mixin(loadFromSharedLib("sfMusic_GetMinDistance"));
+	mixin(loadFromSharedLib("sfMusic_GetAttenuation"));
+	mixin(loadFromSharedLib("sfMusic_SetMinDistance"));
+	mixin(loadFromSharedLib("sfMusic_SetAttenuation"));
+
+	mixin(loadFromSharedLib("sfMusic_SetRelativeToListener"));
+	mixin(loadFromSharedLib("sfMusic_IsRelativeToListener"));
+}

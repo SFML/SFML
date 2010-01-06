@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -40,6 +41,6 @@ public import
 	dsfml.system.mutex,
 	dsfml.system.randomizer,
 	dsfml.system.sleep,
-	dsfml.system.thread,
+//	dsfml.system.thread, // thread isn't used anywhere in the library and D threading is nice, so the user can safely use standard threads
 	dsfml.system.vector2,
     dsfml.system.vector3;

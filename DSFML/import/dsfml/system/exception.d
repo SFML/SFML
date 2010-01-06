@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -27,7 +28,7 @@ module dsfml.system.exception;
 
 class LoadingException : Exception
 {
-    this(char[] msg)
+    this(string msg)
     {
         super(msg);
     }
@@ -35,7 +36,7 @@ class LoadingException : Exception
 
 class NullParameterException : Exception
 {
-    this(char[] msg)
+    this(string msg)
     {
         super(msg);
     }

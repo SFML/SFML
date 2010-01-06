@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -33,7 +34,8 @@ import dsfml.system.sleep;
 import dsfml.system.linkedlist;
 import dsfml.system.mutex;
 import dsfml.system.lock;
-import dsfml.system.thread;
+//import dsfml.system.thread;
+import core.thread;
 
 /**
 *   SoundRecorder is an interface for capturing sound data.
@@ -93,7 +95,7 @@ abstract class SoundRecorder : DSFMLObject
     {
         sfSoundRecorder_Start(m_ptr, sampleRate);
         m_t = new Thread(&threadPoll);
-        m_t.launch();
+        m_t.start();
     }
 
     /**
@@ -103,7 +105,7 @@ abstract class SoundRecorder : DSFMLObject
     {
         sfSoundRecorder_Stop(m_ptr);
         m_flag = false;
-        m_t.wait();
+        m_t.join();
         m_t = null;
     }
 
@@ -246,7 +248,7 @@ private:
     /*
     *   Managed thread loop
     */    
-    void threadPoll(void* user)
+    void threadPoll()
     {
         while (m_flag)
         {
@@ -303,7 +305,10 @@ private:
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-audio");
+	debug
+		DllLoader dll = DllLoader.load("csfml-audio-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-audio");
         
         sfSoundRecorder_Create = cast(pf_sfSoundRecorder_Create)dll.getSymbol("sfSoundRecorder_Create");
         sfSoundRecorder_Destroy = cast(pf_sfSoundRecorder_Destroy)dll.getSymbol("sfSoundRecorder_Destroy");

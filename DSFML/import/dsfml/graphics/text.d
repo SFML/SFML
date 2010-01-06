@@ -1,6 +1,7 @@
 /*
-*   DSFML - SFML Library binding in D language.
+*   DSFML - SFML Library wrapper for the D programming language.
 *   Copyright (C) 2008 Julien Dagorn (sirjulio13@gmail.com)
+*   Copyright (C) 2010 Andreas Hollandt
 *
 *   This software is provided 'as-is', without any express or
 *   implied warranty. In no event will the authors be held
@@ -23,7 +24,7 @@
 *       source distribution.
 */
 
-module dsfml.graphics.string;
+module dsfml.graphics.text;
 
 import dsfml.graphics.blendmode;
 import dsfml.graphics.color;
@@ -37,23 +38,23 @@ import dsfml.system.vector2;
 
 
 /**
-*   String defines a graphical 2D text, that can be drawn on screen
+*   Text defines a graphical 2D text, that can be drawn on screen
 *   
 *   All string litterals used must be prefixed with c for utf-8 
 *   and d for utf-32 string.
 *    
 *   Examples :
 *   ---------------------------------------------------------------
-*   String s = new String("Hello"c);
-*   //this(char[], Font, float)
-*   s = new String("Hello"d);
-*   //this(dchar[], Font, float)
+*   Text s = new Text("Hello"c);
+*   //this(string, Font, float)
+*   s = new Text("Hello"d);
+*   //this(dstring, Font, float)
 *   ---------------------------------------------------------------
 *   
 *   See_Also:
 *       IDrawable
 */
-class String : Drawableimpl!(sfString)
+class Text : Drawableimpl!(sfText)
 {
     /**
     *   Construct the string from a text
@@ -65,13 +66,13 @@ class String : Drawableimpl!(sfString)
     *       font = Font used to draw the string (use default font)
     *       size = Characters size, in pixels (32 by default)
     */
-    this(char[] text, Font font = Font.getDefaultFont(), float size = 30.f)
+    this(string text, Font font = Font.getDefaultFont(), uint size = 30)
 	{
 		super();
 		m_font = font;
 		setFont(font);
-		setText(text);
-		setSize(size);
+		setString(text);
+		setCharacterSize(size);
 	}
 
     /**
@@ -84,13 +85,13 @@ class String : Drawableimpl!(sfString)
     *       font = Font used to draw the string (use default font)
     *       size = Characters size, in pixels (32 by default)
     */
-    this(dchar[] text, Font font = Font.getDefaultFont(), float size = 30.f)
+    this(dstring text, Font font = Font.getDefaultFont(), uint size = 30)
 	{
 		super();
 		m_font = font;
 		setFont(font);
-		setText(text);
-		setSize(size);
+		setString(text);
+		setCharacterSize(size);
 	}
 
     /**
@@ -100,9 +101,9 @@ class String : Drawableimpl!(sfString)
     *       text = New text
     *
     */
-    void setText(char[] text)
+    void setString(string text)
 	{
-		sfString_SetText(m_ptr,toStringz(text));
+		sfText_SetString(m_ptr,toStringz(text));
 	}
 
     /**
@@ -111,9 +112,9 @@ class String : Drawableimpl!(sfString)
     *   Params:     
     *       text = New text
     */
-    void setText(dchar[] text)
+    void setString(dstring text)
 	{
-		sfString_SetUnicodeText(m_ptr, toStringz(text));
+		sfText_SetUnicodeString(m_ptr, toStringz(text));
 	}
 
     /**
@@ -125,7 +126,7 @@ class String : Drawableimpl!(sfString)
     void setFont(Font font)
 	{
         m_font = font;
-		sfString_SetFont(m_ptr, font.getNativePointer);
+		sfText_SetFont(m_ptr, font.getNativePointer);
 	}
 
     /**
@@ -134,9 +135,9 @@ class String : Drawableimpl!(sfString)
     *   Params:    
     *       size = New size, in pixels
     */
-    void setSize(float size)
+    void setCharacterSize(uint size)
 	{
-		sfString_SetSize(m_ptr, size);
+		sfText_SetCharacterSize(m_ptr, size);
 	}
 
     /**
@@ -149,7 +150,7 @@ class String : Drawableimpl!(sfString)
     */
     void setStyle(TextStyle style)
     {
-        sfString_SetStyle(m_ptr, style);
+        sfText_SetStyle(m_ptr, style);
     }        
 
     /**
@@ -158,9 +159,9 @@ class String : Drawableimpl!(sfString)
     *   Returns: 
     *       Text
     */
-    dchar[] getUnicodeText()
+    dstring getUnicodeText()
 	{
-		return fromStringz(sfString_GetUnicodeText(m_ptr));
+		return fromStringz(sfText_GetUnicodeString(m_ptr));
 	}
 
     /**
@@ -169,9 +170,9 @@ class String : Drawableimpl!(sfString)
     *   Returns: 
     *       Text
     */
-    char[] getText()
+    string getText()
 	{
-		return fromStringz(sfString_GetText(m_ptr));
+		return fromStringz(sfText_GetString(m_ptr));
 	}
 
     /**
@@ -191,9 +192,9 @@ class String : Drawableimpl!(sfString)
     *   Returns: 
     *       Size of the characters
     */
-    float getSize()
+    uint getCharacterSize()
 	{
-		return sfString_GetSize(m_ptr);
+		return sfText_GetCharacterSize(m_ptr);
 	}
 
     /**
@@ -204,7 +205,7 @@ class String : Drawableimpl!(sfString)
     */
     TextStyle getStyle()
     {
-        return sfString_GetStyle(m_ptr);
+        return sfText_GetStyle(m_ptr);
     }
     
     /**
@@ -221,7 +222,7 @@ class String : Drawableimpl!(sfString)
     Vector2f getCharacterPos(size_t index)
     {
         Vector2f ret;
-        sfString_GetCharacterPos(m_ptr, index, &ret.x, &ret.y);
+        sfText_GetCharacterPos(m_ptr, index, &ret.x, &ret.y);
         return ret;
     }
     
@@ -233,7 +234,7 @@ class String : Drawableimpl!(sfString)
     */
     FloatRect getRect()
 	{
-		sfFloatRect sfRect = sfString_GetRect(m_ptr);
+		sfFloatRect sfRect = sfText_GetRect(m_ptr);
 		
 		return new Rect!(float)(sfRect.Left, sfRect.Top, sfRect.Right, sfRect.Bottom);
 	}
@@ -243,48 +244,51 @@ private:
     
     extern (C)
     {
-        typedef void function(void*, char*) pf_sfString_SetText;
-    	typedef void function(void*, dchar*) pf_sfString_SetUnicodeText;
-    	typedef void function(void*, void*) pf_sfString_SetFont;
-    	typedef void function(void*, float) pf_sfString_SetSize;
-    	typedef void function(void*, TextStyle) pf_sfString_SetStyle;
-    	typedef dchar* function(void*) pf_sfString_GetUnicodeText;
-    	typedef char* function(void*) pf_sfString_GetText;
-    	typedef void* function(void*) pf_sfString_GetFont;
-    	typedef float function(void*) pf_sfString_GetSize;
-    	typedef TextStyle function (void*) pf_sfString_GetStyle;
-    	typedef void function(void*, size_t, float*, float*) pf_sfString_GetCharacterPos;
-    	typedef sfFloatRect function(void*) pf_sfString_GetRect;
+        typedef void function(void*, cchar*) pf_sfText_SetString;
+    	typedef void function(void*, cdchar*) pf_sfText_SetUnicodeString;
+    	typedef void function(void*, void*) pf_sfText_SetFont;
+    	typedef void function(void*, uint) pf_sfText_SetCharacterSize;
+    	typedef void function(void*, TextStyle) pf_sfText_SetStyle;
+    	typedef idchar* function(void*) pf_sfText_GetUnicodeString;
+    	typedef ichar* function(void*) pf_sfText_GetString;
+    	typedef void* function(void*) pf_sfText_GetFont;
+    	typedef uint function(void*) pf_sfText_GetCharacterSize;
+    	typedef TextStyle function (void*) pf_sfText_GetStyle;
+    	typedef void function(void*, size_t, float*, float*) pf_sfText_GetCharacterPos;
+    	typedef sfFloatRect function(void*) pf_sfText_GetRect;
     
-    	static pf_sfString_SetText sfString_SetText;
-    	static pf_sfString_SetUnicodeText sfString_SetUnicodeText;
-    	static pf_sfString_SetFont sfString_SetFont;
-    	static pf_sfString_SetSize sfString_SetSize;
-    	static pf_sfString_SetStyle sfString_SetStyle;
-    	static pf_sfString_GetUnicodeText sfString_GetUnicodeText;
-    	static pf_sfString_GetText sfString_GetText;
-    	static pf_sfString_GetFont sfString_GetFont;
-    	static pf_sfString_GetSize sfString_GetSize;
-    	static pf_sfString_GetStyle sfString_GetStyle;
-    	static pf_sfString_GetCharacterPos sfString_GetCharacterPos;
-    	static pf_sfString_GetRect sfString_GetRect;
+    	static pf_sfText_SetString sfText_SetString;
+    	static pf_sfText_SetUnicodeString sfText_SetUnicodeString;
+    	static pf_sfText_SetFont sfText_SetFont;
+    	static pf_sfText_SetCharacterSize sfText_SetCharacterSize;
+    	static pf_sfText_SetStyle sfText_SetStyle;
+    	static pf_sfText_GetUnicodeString sfText_GetUnicodeString;
+    	static pf_sfText_GetString sfText_GetString;
+    	static pf_sfText_GetFont sfText_GetFont;
+    	static pf_sfText_GetCharacterSize sfText_GetCharacterSize;
+    	static pf_sfText_GetStyle sfText_GetStyle;
+    	static pf_sfText_GetCharacterPos sfText_GetCharacterPos;
+    	static pf_sfText_GetRect sfText_GetRect;
     }
 
     static this()
     {
-        DllLoader dll = DllLoader.load("csfml-graphics");
+	debug
+		DllLoader dll = DllLoader.load("csfml-graphics-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-graphics");
         
-        sfString_SetText = cast(pf_sfString_SetText)dll.getSymbol("sfString_SetText");
-        sfString_SetUnicodeText = cast(pf_sfString_SetUnicodeText)dll.getSymbol("sfString_SetUnicodeText");
-        sfString_SetFont = cast(pf_sfString_SetFont)dll.getSymbol("sfString_SetFont");
-        sfString_SetSize = cast(pf_sfString_SetSize)dll.getSymbol("sfString_SetSize");
-        sfString_SetStyle = cast(pf_sfString_SetStyle)dll.getSymbol("sfString_SetStyle");
-        sfString_GetUnicodeText = cast(pf_sfString_GetUnicodeText)dll.getSymbol("sfString_GetUnicodeText");
-        sfString_GetText = cast(pf_sfString_GetText)dll.getSymbol("sfString_GetText");
-        sfString_GetFont = cast(pf_sfString_GetFont)dll.getSymbol("sfString_GetFont");
-        sfString_GetSize = cast(pf_sfString_GetSize)dll.getSymbol("sfString_GetSize");
-        sfString_GetStyle = cast(pf_sfString_GetStyle)dll.getSymbol("sfString_GetStyle");
-        sfString_GetCharacterPos = cast(pf_sfString_GetCharacterPos)dll.getSymbol("sfString_GetCharacterPos");
-        sfString_GetRect = cast(pf_sfString_GetRect)dll.getSymbol("sfString_GetRect");
+        sfText_SetString = cast(pf_sfText_SetString)dll.getSymbol("sfText_SetString");
+        sfText_SetUnicodeString = cast(pf_sfText_SetUnicodeString)dll.getSymbol("sfText_SetUnicodeString");
+        sfText_SetFont = cast(pf_sfText_SetFont)dll.getSymbol("sfText_SetFont");
+        sfText_SetCharacterSize = cast(pf_sfText_SetCharacterSize)dll.getSymbol("sfText_SetCharacterSize");
+        sfText_SetStyle = cast(pf_sfText_SetStyle)dll.getSymbol("sfText_SetStyle");
+        sfText_GetUnicodeString = cast(pf_sfText_GetUnicodeString)dll.getSymbol("sfText_GetUnicodeString");
+        sfText_GetString = cast(pf_sfText_GetString)dll.getSymbol("sfText_GetString");
+        sfText_GetFont = cast(pf_sfText_GetFont)dll.getSymbol("sfText_GetFont");
+        sfText_GetCharacterSize = cast(pf_sfText_GetCharacterSize)dll.getSymbol("sfText_GetCharacterSize");
+        sfText_GetStyle = cast(pf_sfText_GetStyle)dll.getSymbol("sfText_GetStyle");
+        sfText_GetCharacterPos = cast(pf_sfText_GetCharacterPos)dll.getSymbol("sfText_GetCharacterPos");
+        sfText_GetRect = cast(pf_sfText_GetRect)dll.getSymbol("sfText_GetRect");
     }
 }
