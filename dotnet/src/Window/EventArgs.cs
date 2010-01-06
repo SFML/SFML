@@ -25,6 +25,21 @@ namespace SFML
                 Shift   = e.Shift != 0;
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[KeyEventArgs]" +
+                       " Code = " + Code +
+                       " Alt = " + Alt +
+                       " Control = " + Control +
+                       " Shift = " + Shift;
+            }
+
             /// <summary>Code of the key (see KeyCode enum)</summary>
             public KeyCode Code;
 
@@ -56,6 +71,18 @@ namespace SFML
                 Unicode = Char.ConvertFromUtf32((int)e.Unicode);
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[TextEventArgs]" +
+                       " Unicode = " + Unicode;
+            }
+
             /// <summary>UTF-16 value of the character</summary>
             public string Unicode;
         }
@@ -77,6 +104,19 @@ namespace SFML
             {
                 X = e.X;
                 Y = e.Y;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[MouseMoveEventArgs]" +
+                       " X = " + X +
+                       " Y = " + Y;
             }
 
             /// <summary>X coordinate of the mouse cursor</summary>
@@ -104,6 +144,20 @@ namespace SFML
                 Button = e.Button;
                 X      = e.X;
                 Y      = e.Y;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[MouseButtonEventArgs]" +
+                       " Button = " + Button +
+                       " X = " + X +
+                       " Y = " + Y;
             }
 
             /// <summary>Code of the button (see MouseButton enum)</summary>
@@ -136,6 +190,20 @@ namespace SFML
                 Y     = e.Y;
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[MouseWheelEventArgs]" +
+                       " Delta = " + Delta +
+                       " X = " + X +
+                       " Y = " + Y;
+            }
+
             /// <summary>Scroll amount</summary>
             public int Delta;
 
@@ -164,6 +232,20 @@ namespace SFML
                 JoystickId = e.JoystickId;
                 Axis       = e.Axis;
                 Position   = e.Position;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[JoyMoveEventArgs]" +
+                       " JoystickId = " + JoystickId +
+                       " Axis = " + Axis +
+                       " Position = " + Position;
             }
 
             /// <summary>Index of the joystick which triggered the event</summary>
@@ -195,6 +277,19 @@ namespace SFML
                 Button     = e.Button;
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[JoyButtonEventArgs]" +
+                       " JoystickId = " + JoystickId +
+                       " Button = " + Button;
+            }
+
             /// <summary>Index of the joystick which triggered the event</summary>
             public uint JoystickId;
 
@@ -219,6 +314,19 @@ namespace SFML
             {
                 Width  = e.Width;
                 Height = e.Height;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[SizeEventArgs]" +
+                       " Width = " + Width +
+                       " Height = " + Height;
             }
 
             /// <summary>New width of the window</summary>

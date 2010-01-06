@@ -76,6 +76,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Construct the font from another font
+            /// </summary>
+            /// <param name="copy">Font to copy</param>
+            ////////////////////////////////////////////////////////////
+            public Font(Font copy) :
+                base(sfFont_Copy(copy.This))
+            {
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Get a glyph in the font
             /// </summary>
             /// <param name="codePoint">Unicode code point of the character to get</param>
@@ -145,6 +156,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Font]";
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Handle the destruction of the object
             /// </summary>
             /// <param name="disposing">Is the GC disposing the object, or is it an explicit call ?</param>
@@ -189,6 +211,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             unsafe static extern IntPtr sfFont_CreateFromMemory(char* Data, uint SizeInBytes);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfFont_Copy(IntPtr Font);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfFont_Destroy(IntPtr This);

@@ -125,6 +125,21 @@ namespace SFML
                 }
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[IntRect]" +
+                       " Left = " + Left +
+                       " Top = " + Top +
+                       " Right = " + Right +
+                       " Bottom = " + Bottom;
+            }
+
             /// <summary>Left coordinate of the rectangle</summary>
             public int Left;
 
@@ -256,6 +271,21 @@ namespace SFML
                     overlap.Bottom = 0;
                     return false;
                 }
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[FloatRect]" +
+                       " Left = " + Left +
+                       " Top = " + Top +
+                       " Right = " + Right +
+                       " Bottom = " + Bottom;
             }
 
             /// <summary>Left coordinate of the rectangle</summary>

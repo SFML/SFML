@@ -54,6 +54,21 @@ namespace SFML
             {
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Color]" +
+                       " R = " + R +
+                       " G = " + G +
+                       " B = " + B +
+                       " A = " + A;
+            }
+
             /// <summary>Red component of the color</summary>
             public byte R;
 

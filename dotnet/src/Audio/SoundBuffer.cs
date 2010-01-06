@@ -79,6 +79,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Construct the sound buffer from another sound buffer
+            /// </summary>
+            /// <param name="copy">Sound buffer to copy</param>
+            ////////////////////////////////////////////////////////////
+            public SoundBuffer(SoundBuffer copy) :
+                base(sfSoundBuffer_Copy(copy.This))
+            {
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Save the sound buffer to an audio file
             /// </summary>
             /// <param name="filename">Path of the sound file to write</param>
@@ -136,6 +147,20 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[SoundBuffer]" +
+                       " SampleRate = " + SampleRate +
+                       " ChannelsCount = " + ChannelsCount +
+                       " Duration = " + Duration;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Handle the destruction of the object
             /// </summary>
             /// <param name="disposing">Is the GC disposing the object, or is it an explicit call ?</param>
@@ -154,6 +179,9 @@ namespace SFML
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             unsafe static extern IntPtr sfSoundBuffer_CreateFromSamples(short* Samples, uint SamplesCount, uint ChannelsCount, uint SampleRate);
+
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfSoundBuffer_Copy(IntPtr SoundBuffer);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundBuffer_Destroy(IntPtr SoundBuffer);

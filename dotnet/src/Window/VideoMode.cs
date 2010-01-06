@@ -88,6 +88,20 @@ namespace SFML
                 get {return sfVideoMode_GetDesktopMode();}
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[VideoMode]" +
+                       " Width = " + Width +
+                       " Height = " + Height +
+                       " BitsPerPixel = " + BitsPerPixel;
+            }
+
             /// <summary>Video mode width, in pixels</summary>
             public uint Width;
 

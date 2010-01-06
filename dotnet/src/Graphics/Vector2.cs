@@ -104,6 +104,19 @@ namespace SFML
                 return new Vector2(v.X / x, v.Y / x);
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Vector2]" +
+                       " X = " + X +
+                       " Y = " + Y;
+            }
+
             /// <summary>X (horizontal) component of the vector</summary>
             public float X;
  

@@ -122,6 +122,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Construct the image from another image
+            /// </summary>
+            /// <param name="copy">Image to copy</param>
+            ////////////////////////////////////////////////////////////
+            public Image(Image copy) :
+                base(sfImage_Copy(copy.This))
+            {
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Save the contents of the image to a file
             /// </summary>
             /// <param name="filename">Path of the file to save (overwritten if already exist)</param>
@@ -299,6 +310,20 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Image]" +
+                       " Width = " + Width +
+                       " Height = " + Height +
+                       " Smooth = " + Smooth;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Internal constructor
             /// </summary>
             /// <param name="thisPtr">Pointer to the object in C library</param>
@@ -337,6 +362,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfImage_CreateFromFile(string Filename);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfImage_Copy(IntPtr Image);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             unsafe static extern IntPtr sfImage_CreateFromMemory(char* Data, uint Size);

@@ -217,6 +217,29 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Music]" +
+                       " SampleRate = " + SampleRate +
+                       " ChannelsCount = " + ChannelsCount +
+                       " Status = " + Status +
+                       " Duration = " + Duration +
+                       " Loop = " + Loop +
+                       " Pitch = " + Pitch +
+                       " Volume = " + Volume +
+                       " Position = " + Position +
+                       " RelativeToListener = " + RelativeToListener +
+                       " MinDistance = " + MinDistance +
+                       " Attenuation = " + Attenuation +
+                       " PlayingOffset = " + PlayingOffset;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Handle the destruction of the object
             /// </summary>
             /// <param name="disposing">Is the GC disposing the object, or is it an explicit call ?</param>

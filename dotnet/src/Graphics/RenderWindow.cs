@@ -427,6 +427,22 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[RenderWindow]" +
+                       " Width = " + Width +
+                       " Height = " + Height +
+                       " Settings = " + Settings +
+                       " DefaultView = " + DefaultView +
+                       " CurrentView = " + CurrentView;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Internal function to get the next event
             /// </summary>
             /// <param name="eventToFill">Variable to fill with the raw pointer to the event structure</param>

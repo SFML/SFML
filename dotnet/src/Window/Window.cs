@@ -365,6 +365,20 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Window]" +
+                       " Width = " + Width +
+                       " Height = " + Height +
+                       " Settings = " + Settings;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Constructor for derived classes
             /// </summary>
             /// <param name="thisPtr">Pointer to the internal object</param>

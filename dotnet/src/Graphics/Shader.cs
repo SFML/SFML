@@ -43,6 +43,19 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Construct the shader from another shader
+            /// </summary>
+            /// <param name="copy">Shader to copy</param>
+            ////////////////////////////////////////////////////////////
+            public Shader(Shader copy) :
+                base(sfShader_Copy(copy.This))
+            {
+                foreach (KeyValuePair<string, Image> pair in copy.myTextures)
+                    myTextures[pair.Key] = copy.myTextures[pair.Key];
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Load the shader from a text in memory
             /// </summary>
             /// <param name="shader">String containing the shader code</param>
@@ -177,6 +190,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Shader]";
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Handle the destruction of the object
             /// </summary>
             /// <param name="disposing">Is the GC disposing the object, or is it an explicit call ?</param>
@@ -204,6 +228,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfShader_CreateFromMemory(string Shader);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfShader_Copy(IntPtr Shader);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfShader_Destroy(IntPtr Shader);

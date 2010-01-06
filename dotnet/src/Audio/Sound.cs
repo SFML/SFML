@@ -55,6 +55,18 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Construct the sound from another source
+            /// </summary>
+            /// <param name="copy">Sound to copy</param>
+            ////////////////////////////////////////////////////////////
+            public Sound(Sound copy) :
+                base(sfSound_Copy(copy.This))
+            {
+                SoundBuffer = copy.SoundBuffer;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Play the sound
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -200,6 +212,27 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Sound]" +
+                       " Status = " + Status +
+                       " Loop = " + Loop +
+                       " Pitch = " + Pitch +
+                       " Volume = " + Volume +
+                       " Position = " + Position +
+                       " RelativeToListener = " + RelativeToListener +
+                       " MinDistance = " + MinDistance +
+                       " Attenuation = " + Attenuation +
+                       " PlayingOffset = " + PlayingOffset +
+                       " SoundBuffer = " + SoundBuffer;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Handle the destruction of the object
             /// </summary>
             /// <param name="disposing">Is the GC disposing the object, or is it an explicit call ?</param>
@@ -214,6 +247,9 @@ namespace SFML
             #region Imports
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfSound_Create();
+
+            [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfSound_Copy(IntPtr Sound);
 
             [DllImport("csfml-audio"), SuppressUnmanagedCodeSecurity]
             static extern void sfSound_Destroy(IntPtr Sound);

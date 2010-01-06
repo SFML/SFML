@@ -27,6 +27,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Construct the shape from another shape
+            /// </summary>
+            /// <param name="copy">Shape to copy</param>
+            ////////////////////////////////////////////////////////////
+            public Shape(Shape copy) :
+                base(sfShape_Copy(copy.This))
+            {
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Position of the object on screen
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -363,6 +374,25 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Shape]" +
+                       " Position = " + Position +
+                       " Rotation = " + Rotation +
+                       " Scale = " + Scale +
+                       " Origin = " + Origin +
+                       " Color = " + Color +
+                       " BlendMode = " + BlendMode +
+                       " OutlineWidth = " + OutlineWidth +
+                       " NbPoints = " + NbPoints;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Render the object into the given render window
             /// </summary>
             /// <param name="target">Target render window</param>
@@ -416,6 +446,9 @@ namespace SFML
             #region Imports
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfShape_Create();
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfShape_Copy(IntPtr Shape);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfShape_Destroy(IntPtr This);

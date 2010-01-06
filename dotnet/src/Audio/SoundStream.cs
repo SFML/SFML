@@ -182,6 +182,28 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[SoundStream]" +
+                       " SampleRate = " + SampleRate +
+                       " ChannelsCount = " + ChannelsCount +
+                       " Status = " + Status +
+                       " Loop = " + Loop +
+                       " Pitch = " + Pitch +
+                       " Volume = " + Volume +
+                       " Position = " + Position +
+                       " RelativeToListener = " + RelativeToListener +
+                       " MinDistance = " + MinDistance +
+                       " Attenuation = " + Attenuation +
+                       " PlayingOffset = " + PlayingOffset;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Set the audio stream parameters, you must call it before Play()
             /// </summary>
             /// <param name="sampleRate">Number of channels</param>

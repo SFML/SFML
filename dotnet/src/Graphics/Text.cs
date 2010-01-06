@@ -85,6 +85,18 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Construct the text from another text
+            /// </summary>
+            /// <param name="copy">Text to copy</param>
+            ////////////////////////////////////////////////////////////
+            public Text(Text copy) :
+                base(sfText_Copy(copy.This))
+            {
+                Font = copy.Font;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Position of the object on screen
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -258,6 +270,28 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Text]" +
+                       " Position = " + Position +
+                       " Rotation = " + Rotation +
+                       " Scale = " + Scale +
+                       " Origin = " + Origin +
+                       " Color = " + Color +
+                       " BlendMode = " + BlendMode +
+                       " String = " + DisplayedString +
+                       " Font = " + Font +
+                       " Size = " + Size +
+                       " Style = " + Style +
+                       " Rectangle = " + GetRect();
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Render the object into the given render window
             /// </summary>
             /// <param name="target">Target render window</param>
@@ -302,6 +336,9 @@ namespace SFML
             #region Imports
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfText_Create();
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfText_Copy(IntPtr Text);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfText_Destroy(IntPtr This);

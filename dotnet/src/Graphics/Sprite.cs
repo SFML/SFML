@@ -38,6 +38,18 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Construct the sprite from another sprite
+            /// </summary>
+            /// <param name="copy">Sprite to copy</param>
+            ////////////////////////////////////////////////////////////
+            public Sprite(Sprite copy) :
+                base(sfSprite_Copy(copy.This))
+            {
+                Image = copy.Image;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Position of the object on screen
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -217,6 +229,27 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Sprite]" +
+                       " Position = " + Position +
+                       " Rotation = " + Rotation +
+                       " Scale = " + Scale +
+                       " Origin = " + Origin +
+                       " Color = " + Color +
+                       " BlendMode = " + BlendMode +
+                       " Width = " + Width +
+                       " Height = " + Height +
+                       " SubRect = " + SubRect +
+                       " Image = " + Image;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Render the object into the given render window
             /// </summary>
             /// <param name="target">Target render window</param>
@@ -261,6 +294,9 @@ namespace SFML
             #region Imports
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfSprite_Create();
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfSprite_Copy(IntPtr Sprite);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_Destroy(IntPtr This);

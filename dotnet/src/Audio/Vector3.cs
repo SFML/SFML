@@ -106,6 +106,20 @@ namespace SFML
                 return new Vector3(v.X / x, v.Y / x, v.Z / x);
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Vector3]" +
+                       " X = " + X +
+                       " Y = " + Y +
+                       " Z = " + Z;
+            }
+
             /// <summary>X (horizontal) component of the vector</summary>
             public float X;
  

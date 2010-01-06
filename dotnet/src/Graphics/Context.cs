@@ -61,6 +61,17 @@ namespace SFML
                 }
             }
 
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[Context]";
+            }
+
             private static Context ourGlobalContext = null;
 
             private IntPtr myThis = IntPtr.Zero;

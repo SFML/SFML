@@ -85,6 +85,18 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[SoundRecorder]" +
+                       " SampleRate = " + SampleRate;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Called when a new capture starts
             /// </summary>
             /// <returns>False to abort recording audio data, true to continue</returns>

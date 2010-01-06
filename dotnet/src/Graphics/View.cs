@@ -51,6 +51,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Construct the view from another view
+            /// </summary>
+            /// <param name="copy">View to copy</param>
+            ////////////////////////////////////////////////////////////
+            public View(View copy) :
+                base(sfView_Copy(copy.This))
+            {
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Center of the view
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -140,6 +151,21 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[View]" +
+                       " Center = " + Center +
+                       " Size = " + Size +
+                       " Rotation = " + Rotation +
+                       " Viewport = " + Viewport;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Internal constructor for other classes which need to manipulate raw views
             /// </summary>
             /// <param name="thisPtr">Direct pointer to the view object in the C library</param>
@@ -166,6 +192,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfView_CreateFromRect(FloatRect Rect);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfView_Copy(IntPtr View);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfView_Destroy(IntPtr View);
