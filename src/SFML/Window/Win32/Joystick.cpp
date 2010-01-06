@@ -94,7 +94,7 @@ void Joystick::Initialize(unsigned int Index)
 ////////////////////////////////////////////////////////////
 JoystickState Joystick::UpdateState()
 {
-    JoystickState State = {0};
+    JoystickState State;
 
     if (myIsConnected)
     {

@@ -162,6 +162,7 @@ void Input::ResetStates()
 
         for (int j = 0; j < Joy::AxisCount; ++j)
             myJoystickAxis[i][j] = 0.f;
+        myJoystickAxis[i][Joy::AxisPOV] = -1.f;
     }
 }
 
