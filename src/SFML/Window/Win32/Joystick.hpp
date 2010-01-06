@@ -80,11 +80,11 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool         myIsConnected;      ///< Is there a joystick connected?
-    unsigned int myIndex;            ///< Windows ID of the joystick
-    unsigned int myNbButtons;        ///< Number of buttons supported by the joystick
-    bool         myAxes[Joy::Count]; ///< Supported axes
-    bool         myHasContinuousPOV; ///< True if the driver supports continuous values for the POV
+    bool         myIsConnected;          ///< Is there a joystick connected?
+    unsigned int myIndex;                ///< Windows ID of the joystick
+    unsigned int myNbButtons;            ///< Number of buttons supported by the joystick
+    bool         myAxes[Joy::AxisCount]; ///< Supported axes
+    bool         myHasContinuousPOV;     ///< True if the driver supports continuous values for the POV
 };
 
 } // namespace priv

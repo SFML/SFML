@@ -46,7 +46,7 @@ void Joystick::Initialize(unsigned int Index)
     myNbButtons        = 0;
     myIsConnected      = false;
     myHasContinuousPOV = false;
-    for (int i = 0; i < Joy::Count; ++i)
+    for (int i = 0; i < Joy::AxisCount; ++i)
         myAxes[i] = false;
 
     // Get the Index-th connected joystick
@@ -67,8 +67,8 @@ void Joystick::Initialize(unsigned int Index)
                 JOYCAPS Caps;
                 joyGetDevCaps(myIndex, &Caps, sizeof(Caps));
                 myNbButtons = Caps.wNumButtons;
-                if (myNbButtons > JoystickState::MaxButtons)
-                    myNbButtons = JoystickState::MaxButtons;
+                if (myNbButtons > Joy::ButtonCount)
+                    myNbButtons = Joy::ButtonCount;
 
                 myAxes[Joy::AxisX]   = true;
                 myAxes[Joy::AxisY]   = true;

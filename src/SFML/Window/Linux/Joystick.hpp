@@ -80,12 +80,12 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int           myDescriptor;       ///< Linux descriptor of the joystick
-    unsigned int  myNbButtons;        ///< Number of buttons supported by the joystick
-    bool          myAxes[Joy::Count]; ///< Supported axes
-    JoystickState myState;            ///< Current state of the joystick
-    int           myPovX;             ///< Last X position of the POV
-    int           myPovY;             ///< Last Y position of the POV
+    int           myDescriptor;           ///< Linux descriptor of the joystick
+    unsigned int  myNbButtons;            ///< Number of buttons supported by the joystick
+    bool          myAxes[Joy::AxisCount]; ///< Supported axes
+    JoystickState myState;                ///< Current state of the joystick
+    int           myPovX;                 ///< Last X position of the POV
+    int           myPovY;                 ///< Last Y position of the POV
 };
 
 } // namespace priv

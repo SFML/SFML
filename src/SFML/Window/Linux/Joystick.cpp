@@ -51,11 +51,11 @@ void Joystick::Initialize(unsigned int Index)
     myNbButtons = 0;
     myPovX = 0;
     myPovY = 0;
-    for (int i = 0; i < JoystickState::MaxButtons; ++i)
+    for (int i = 0; i < Joy::ButtonCount; ++i)
     {
         myState.Buttons[i] = false;
     }
-    for (int i = 0; i < Joy::Count; ++i)
+    for (int i = 0; i < Joy::AxisCount; ++i)
     {
         myState.Axis[i] = 0.f;
         myAxes[i] = false;
@@ -74,6 +74,8 @@ void Joystick::Initialize(unsigned int Index)
         char NbButtons;
         ioctl(myDescriptor, JSIOCGBUTTONS, &NbButtons);
         myNbButtons = NbButtons;
+        if (myNbButtons > Joy::ButtonCount)
+            myNbButtons = Joy::ButtonCount;
 
         // Get the supported axes
         char NbAxes, Axes[ABS_MAX + 1];
@@ -120,8 +122,8 @@ JoystickState Joystick::UpdateState()
                         case ABS_RZ: case ABS_RUDDER:     myState.Axis[Joy::AxisR] = JoyState.value * 100.f / 32767.f; break;
                         case ABS_RX :                     myState.Axis[Joy::AxisU] = JoyState.value * 100.f / 32767.f; break;
                         case ABS_RY :                     myState.Axis[Joy::AxisV] = JoyState.value * 100.f / 32767.f; break;
-                        case ABS_HAT0X :                  myPovX = JoyState.value;                                       break;
-                        case ABS_HAT0Y :                  myPovY = JoyState.value;                                       break;
+                        case ABS_HAT0X :                  myPovX = JoyState.value;                                     break;
+                        case ABS_HAT0Y :                  myPovY = JoyState.value;                                     break;
                         default : break;
                     }
                     break;

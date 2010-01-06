@@ -291,17 +291,12 @@ private :
     virtual void ProcessEvents() = 0;
 
     ////////////////////////////////////////////////////////////
-    // Total number of joysticks supported
-    ////////////////////////////////////////////////////////////
-    enum {JoysticksCount = 4};
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::set<WindowListener*> myListeners;                 ///< Array of listeners connected to the window
-    Joystick                  myJoysticks[JoysticksCount]; ///< Joysticks to observe
-    JoystickState             myJoyStates[JoysticksCount]; ///< Current states of the joysticks
-    float                     myJoyThreshold;              ///< Joystick threshold (minimum motion for MOVE event to be generated)
+    std::set<WindowListener*> myListeners;             ///< Array of listeners connected to the window
+    Joystick                  myJoysticks[Joy::Count]; ///< Joysticks to observe
+    JoystickState             myJoyStates[Joy::Count]; ///< Current states of the joysticks
+    float                     myJoyThreshold;          ///< Joystick threshold (minimum motion for MOVE event to be generated)
 };
 
 } // namespace priv

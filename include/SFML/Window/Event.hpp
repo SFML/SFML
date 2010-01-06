@@ -160,7 +160,7 @@ namespace Mouse
         XButton1,
         XButton2,
 
-        Count // Keep last -- total number of mouse buttons
+        ButtonCount // Keep last -- total number of mouse buttons
     };
 }
 
@@ -180,7 +180,13 @@ namespace Joy
         AxisV,
         AxisPOV,
 
-        Count // Keep last -- total number of joystick axis
+        AxisCount // Keep last -- total number of joystick axis
+    };
+
+    enum
+    {
+        Count       = 4, ///< Total number of supported joysticks
+        ButtonCount = 32 ///< Total number of supported joystick buttons
     };
 }
 

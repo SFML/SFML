@@ -125,7 +125,7 @@ void WindowImpl::RemoveListener(WindowListener* Listener)
 void WindowImpl::Initialize()
 {
     // Initialize the joysticks
-    for (unsigned int i = 0; i < JoysticksCount; ++i)
+    for (unsigned int i = 0; i < Joy::Count; ++i)
     {
         myJoysticks[i].Initialize(i);
         myJoyStates[i] = myJoysticks[i].UpdateState();
@@ -214,14 +214,14 @@ int WindowImpl::EvaluateConfig(const VideoMode& Mode, const WindowSettings& Sett
 ////////////////////////////////////////////////////////////
 void WindowImpl::ProcessJoystickEvents()
 {
-    for (unsigned int i = 0; i < JoysticksCount; ++i)
+    for (unsigned int i = 0; i < Joy::Count; ++i)
     {
         // Copy the previous state of the joystick and get the new one
         JoystickState PreviousState = myJoyStates[i];
         myJoyStates[i] = myJoysticks[i].UpdateState();
 
         // Axis
-        for (unsigned int j = 0; j < Joy::Count; ++j)
+        for (unsigned int j = 0; j < Joy::AxisCount; ++j)
         {
             Joy::Axis Axis = static_cast<Joy::Axis>(j);
             if (myJoysticks[i].HasAxis(Axis))

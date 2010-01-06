@@ -124,23 +124,14 @@ private :
     void ResetStates();
 
     ////////////////////////////////////////////////////////////
-    // Joystick limits
-    ////////////////////////////////////////////////////////////
-    enum
-    {
-        NbJoysticks       = 4,
-        NbJoystickButtons = 32
-    };
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool  myKeys[Key::Count];           ///< Array containing the state of all keyboard keys
-    bool  myMouseButtons[Mouse::Count]; ///< Array containing the state of all mouse buttons
-    int   myMouseX;                     ///< Mouse position on X
-    int   myMouseY;                     ///< Mouse position on Y
-    bool  myJoystickButtons[NbJoysticks][NbJoystickButtons]; ///< Array containing the state of all joysticks buttons
-    float myJoystickAxis[NbJoysticks][Joy::Count];           ///< Joysticks position on each axis
+    bool  myKeys[Key::Count];                              ///< Array containing the state of all keyboard keys
+    bool  myMouseButtons[Mouse::ButtonCount];              ///< Array containing the state of all mouse buttons
+    int   myMouseX;                                        ///< Mouse position on X
+    int   myMouseY;                                        ///< Mouse position on Y
+    bool  myJoystickButtons[Joy::Count][Joy::ButtonCount]; ///< Array containing the state of all joysticks buttons
+    float myJoystickAxis[Joy::Count][Joy::AxisCount];      ///< Joysticks position on each axis
 };
 
 } // namespace sf

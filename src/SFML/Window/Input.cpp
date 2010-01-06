@@ -64,7 +64,7 @@ bool Input::IsMouseButtonDown(Mouse::Button Button) const
 ////////////////////////////////////////////////////////////
 bool Input::IsJoystickButtonDown(unsigned int JoyId, unsigned int Button) const
 {
-    if ((JoyId < NbJoysticks) && (Button < NbJoystickButtons))
+    if ((JoyId < Joy::Count) && (Button < Joy::ButtonCount))
         return myJoystickButtons[JoyId][Button];
     else
         return false;
@@ -94,7 +94,7 @@ int Input::GetMouseY() const
 ////////////////////////////////////////////////////////////
 float Input::GetJoystickAxis(unsigned int JoyId, Joy::Axis Axis) const
 {
-    if (JoyId < NbJoysticks)
+    if (JoyId < Joy::Count)
         return myJoystickAxis[JoyId][Axis];
     else
         return 0.f;
@@ -152,15 +152,15 @@ void Input::ResetStates()
     for (int i = 0; i < Key::Count; ++i)
         myKeys[i] = false;
 
-    for (int i = 0; i < Mouse::Count; ++i)
+    for (int i = 0; i < Mouse::ButtonCount; ++i)
         myMouseButtons[i] = false;
 
-    for (int i = 0; i < NbJoysticks; ++i)
+    for (int i = 0; i < Joy::Count; ++i)
     {
-        for (int j = 0; j < NbJoystickButtons; ++j)
+        for (int j = 0; j < Joy::ButtonCount; ++j)
             myJoystickButtons[i][j] = false;
 
-        for (int j = 0; j < Joy::Count; ++j)
+        for (int j = 0; j < Joy::AxisCount; ++j)
             myJoystickAxis[i][j] = 0.f;
     }
 }
