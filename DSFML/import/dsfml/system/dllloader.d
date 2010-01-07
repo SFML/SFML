@@ -60,6 +60,11 @@ static this()
 	}
 }
 
+static ~this()
+{
+//	DllLoader.closeAll();
+}
+
 private void report(string msg, string lib, string symb)
 {
 	string str = "Loading error. Reason : " ~ msg ~ " (library : " ~ lib ~ ", symbol : " ~ symb ~ ")";
@@ -102,11 +107,6 @@ class DllLoader
 		}		
 	}
 	
-	~this()
-	{
-		close();
-	}
-
 	void* getSymbol(string symbolName)
 	{
 		void* symb;
@@ -149,6 +149,14 @@ class DllLoader
 				dlclose(m_lib);
 			}
 			alreadyLoaded.remove(this.m_libPath);
+		}
+	}
+	
+	static void closeAll()
+	{
+		foreach(lib; alreadyLoaded.values)
+		{
+			lib.close();
 		}
 	}
 

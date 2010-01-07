@@ -38,5 +38,4 @@ public import
 	dsfml.graphics.shape,
 	dsfml.graphics.sprite,
 	dsfml.graphics.text,
-	dsfml.graphics.textstyle,
 	dsfml.graphics.view;

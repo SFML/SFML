@@ -30,8 +30,8 @@ import	dsfml.system.common,
 		dsfml.system.exception,
 		dsfml.system.stringutil;
 
-import	dsfml.graphics.common,
-		dsfml.graphics.rect;
+import	dsfml.graphics.rect,
+		dsfml.graphics.image;
 
 
 /// Glyph describes a glyph (a visual character)
@@ -96,11 +96,98 @@ public:
 		sfFont_Destroy(m_ptr);
 	}
 
+	/**
+	 *	get a glyph in a font
+	 *
+	 *	Params:
+	 *	    codePoint = Unicode code point of the character to get
+	 *	    charSize = Reference character size
+	 *	    bold = Retrieve the bold version or the regular one?
+	 *	Returns:
+	 *		The glyph corresponding to codePoint and charSize
+	 */
+	Glyph getGlyph(uint codePoint, uint charSize, bool bold)
+	{
+		return sfFont_GetGlyph(m_ptr, codePoint, charSize, bold);
+	}
+	
+	/**
+	 *	Get the kerning offset of two glyphs
+	 *
+	 *	Params:
+	 *	    first = Unicode code point of the first character
+	 *	    second = Unicode code point of the second character
+	 *	    charSize = Reference character size
+	 *
+	 *	Returns:
+	 *		Kerning value for first and second, in pixels
+	 */
+	int getKerning(uint first, uint second, uint charSize)
+	{
+		return sfFont_GetKerning(m_ptr, first, second, charSize);
+	}
+	
+	/**
+	 *	Get the vertical offset to apply between two consecutive lines of text.
+	 *
+	 *	Params:
+	 *	    charSize = Reference character size
+	 *
+	 *	Returns:
+	 *		Line spacing, in pixels
+	 */
+	int getLineSpacing(uint charSize)
+	{
+		return sfFont_GetLineSpacing(m_ptr, charSize);
+	}
+	
+	Image getImage(uint charSize)
+	{
+		return new Image(sfFont_GetImage(m_ptr, charSize));
+	}
 
 package:
 
 	this(void* ptr)
 	{
 		super(ptr, true);
+	}
+
+private:
+	static extern(C)
+	{
+		// sfFont
+		void*	function()					sfFont_Create;
+		void*	function(cchar*)			sfFont_CreateFromFile;
+		void*	function(ubyte*, size_t)	sfFont_CreateFromMemory;
+		void	function(void*)				sfFont_Destroy;
+		void*	function()					sfFont_GetDefaultFont;
+		
+		// DSFML2
+		Glyph	function(void*, uint, uint, bool)	sfFont_GetGlyph;
+		int		function(void*, uint, uint, uint)	sfFont_GetKerning;
+		int		function(void*, uint)				sfFont_GetLineSpacing;
+		void*	function(void*, uint)				sfFont_GetImage;
+	}
+	
+	static this()
+	{
+	debug
+		DllLoader dll = DllLoader.load("csfml-graphics-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-graphics");
+
+		// sfFont
+		mixin(loadFromSharedLib("sfFont_CreateFromFile"));
+		mixin(loadFromSharedLib("sfFont_CreateFromMemory"));
+		mixin(loadFromSharedLib("sfFont_Destroy"));
+		mixin(loadFromSharedLib("sfFont_GetDefaultFont"));
+		
+		// DSFML2
+		mixin(loadFromSharedLib("sfFont_GetGlyph"));
+		mixin(loadFromSharedLib("sfFont_GetKerning"));
+		mixin(loadFromSharedLib("sfFont_GetLineSpacing"));
+		mixin(loadFromSharedLib("sfFont_GetImage"));
+
 	}
 } 

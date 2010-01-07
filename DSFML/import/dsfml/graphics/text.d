@@ -29,7 +29,6 @@ module dsfml.graphics.text;
 import dsfml.graphics.blendmode;
 import dsfml.graphics.color;
 import dsfml.graphics.font;
-import dsfml.graphics.textstyle;
 import dsfml.graphics.drawableimpl;
 import dsfml.graphics.rect;
 
@@ -65,7 +64,7 @@ enum TextStyle
 *	See_Also:
 *		IDrawable
 */
-class Text : Drawableimpl!(sfText)
+class Text : Drawableimpl!("sfText")
 {
 private:
 	Font m_font;

@@ -36,18 +36,12 @@ import	dsfml.graphics.idrawable,
 		dsfml.graphics.renderimage,
 		dsfml.graphics.shader;
 
-package
-{
-	struct sfSprite{};
-	struct sfShape{};
-	struct sfText{};
-}
 
 /*
 *	Package base class of all drawable.
 *	Provide implementation of IDrawable and functions aliases. 
 */
-package class Drawableimpl(T) : DSFMLObject, IDrawable
+package class Drawableimpl(alias symbol) : DSFMLObject, IDrawable
 {
 protected:
 	this()
@@ -302,19 +296,6 @@ private:
 	else
 		DllLoader dll = DllLoader.load("csfml-graphics");
 		
-		static if (is (T : sfSprite))
-		{
-			string symbol = "sfSprite";
-		}
-		else static if (is (T : sfText))
-		{
-			string symbol = "sfText";
-		}
-		else static if (is (T : sfShape))
-		{
-			string symbol = "sfShape";
-		}
-			
 		sfDrawable_Create			= cast(pf_sfDrawable_Create)dll.getSymbol(symbol ~ "_Create");
 		sfDrawable_Destroy			= cast(pf_sfDrawable_Destroy)dll.getSymbol(symbol ~ "_Destroy");
 		sfDrawable_SetX				= cast(pf_sfDrawable_SetX)dll.getSymbol(symbol ~ "_SetX");

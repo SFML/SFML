@@ -26,8 +26,7 @@
 
 module dsfml.graphics.view;
 
-import	dsfml.graphics.common,
-		dsfml.graphics.rect;
+import	dsfml.graphics.rect;
 
 import	dsfml.system.common,
 		dsfml.system.vector2;
@@ -282,5 +281,57 @@ package:
 	this(void* ptr, bool preventDelete)
 	{
 		super(ptr, preventDelete);
+	}
+	
+private:
+	static extern(C)
+	{
+		void*		function()						sfView_Create;
+		void*		function(FloatRect)				sfView_CreateFromRect;
+		void		function(void*)					sfView_Destroy;
+		void		function(void*, float, float)	sfView_SetCenter;
+		void		function(void*, float, float)	sfView_SetSize;
+		void		function(void*, FloatRect)		sfView_SetViewport;
+		float		function(void*)					sfView_GetCenterX;
+		float		function(void*)					sfView_GetCenterY;
+		float		function(void*)					sfView_GetWidth;
+		float		function(void*)					sfView_GetHeight;
+		FloatRect	function(void*)					sfView_GetViewport;
+		void		function(void*, float, float)	sfView_Move;
+		void		function(void*, float)			sfView_Zoom;
+		
+		// DSFML2
+		void		function(void*, float)			sfView_SetRotation;
+		float		function(void*)					sfView_GetRotation;
+		void		function(void*, float)			sfView_Rotate;
+		void		function(void*, FloatRect)		sfView_Reset;
+	}
+
+	static this()
+	{
+	debug
+		DllLoader dll = DllLoader.load("csfml-graphics-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-graphics");
+		
+		mixin(loadFromSharedLib("sfView_Create"));
+		mixin(loadFromSharedLib("sfView_CreateFromRect"));
+		mixin(loadFromSharedLib("sfView_Destroy"));
+		mixin(loadFromSharedLib("sfView_SetCenter"));
+		mixin(loadFromSharedLib("sfView_SetSize"));
+		mixin(loadFromSharedLib("sfView_SetViewport"));
+		mixin(loadFromSharedLib("sfView_GetCenterX"));
+		mixin(loadFromSharedLib("sfView_GetCenterY"));
+		mixin(loadFromSharedLib("sfView_GetWidth"));
+		mixin(loadFromSharedLib("sfView_GetHeight"));
+		mixin(loadFromSharedLib("sfView_GetViewport"));
+		mixin(loadFromSharedLib("sfView_Move"));
+		mixin(loadFromSharedLib("sfView_Zoom"));
+		
+		// DSFML2
+		mixin(loadFromSharedLib("sfView_SetRotation"));
+		mixin(loadFromSharedLib("sfView_GetRotation"));
+		mixin(loadFromSharedLib("sfView_Rotate"));
+		mixin(loadFromSharedLib("sfView_Reset"));
 	}
 }

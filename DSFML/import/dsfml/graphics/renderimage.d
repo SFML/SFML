@@ -31,8 +31,7 @@ import	dsfml.system.common,
 		dsfml.system.stringutil,
 		dsfml.system.vector2;
 
-import	dsfml.graphics.common,
-		dsfml.graphics.idrawable,
+import	dsfml.graphics.idrawable,
 		dsfml.graphics.image,
 		dsfml.graphics.color,
 		dsfml.graphics.rect,

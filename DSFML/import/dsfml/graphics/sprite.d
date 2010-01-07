@@ -40,7 +40,7 @@ import dsfml.system.vector2;
 *	See_Also:
 *		IDrawable
 */
-class Sprite : Drawableimpl!(sfSprite)
+class Sprite : Drawableimpl!("sfSprite")
 {
 private:
 	Image m_image;	  	//< Image used to draw the sprite

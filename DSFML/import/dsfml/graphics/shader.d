@@ -26,7 +26,6 @@
 
 module dsfml.graphics.shader;
 
-import dsfml.graphics.common;
 import dsfml.graphics.image;
 
 import dsfml.system.common;
@@ -51,6 +50,11 @@ enum LoadingType
 */
 class Shader : DSFMLObject
 {
+private:
+	Image m_texture;
+
+public:
+
 	/**
 	*	construct the effect
 	*
@@ -135,5 +139,39 @@ class Shader : DSFMLObject
 
 
 private:
-	Image m_texture;
+	
+	static extern(C)
+	{
+		void*	function(cchar*)									sfShader_CreateFromFile;
+		void*	function(cchar*)									sfShader_CreateFromMemory;
+		void	function(void*)										sfShader_Destroy;
+		void	function(void*, cchar*, float)						sfShader_SetParameter1;
+		void	function(void*, cchar*, float, float)				sfShader_SetParameter2;
+		void	function(void*, cchar*, float, float, float)		sfShader_SetParameter3;
+		void	function(void*, cchar*, float, float, float, float)	sfShader_SetParameter4;
+		void	function(void*, cchar*, void*)						sfShader_SetTexture;
+		int		function()											sfShader_IsAvailable;
+		void	function(void*)										sfShader_Bind;
+		void	function(void*)										sfShader_Unbind;
+	}
+	
+	static this()
+	{
+	debug
+		DllLoader dll = DllLoader.load("csfml-graphics-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-graphics");
+
+		mixin(loadFromSharedLib("sfShader_CreateFromFile"));
+		mixin(loadFromSharedLib("sfShader_CreateFromMemory"));
+		mixin(loadFromSharedLib("sfShader_Destroy"));
+		mixin(loadFromSharedLib("sfShader_SetParameter1"));
+		mixin(loadFromSharedLib("sfShader_SetParameter2"));
+		mixin(loadFromSharedLib("sfShader_SetParameter3"));
+		mixin(loadFromSharedLib("sfShader_SetParameter4"));
+		mixin(loadFromSharedLib("sfShader_SetTexture"));
+		mixin(loadFromSharedLib("sfShader_IsAvailable"));
+		mixin(loadFromSharedLib("sfShader_Bind"));
+		mixin(loadFromSharedLib("sfShader_Unbind"));
+	}
 }

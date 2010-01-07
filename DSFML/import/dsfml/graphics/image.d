@@ -27,8 +27,7 @@
 
 module dsfml.graphics.image;
 
-import	dsfml.graphics.common,
-		dsfml.graphics.color,
+import	dsfml.graphics.color,
 		dsfml.graphics.rect;
 
 import	dsfml.system.common,

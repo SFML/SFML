@@ -55,5 +55,24 @@ class Context : DSFMLObject
 	{
 		sfContext_SetActive(m_ptr, active);
 	}
-}
 
+private:
+	static extern(C)
+	{
+		void*	function()				sfContext_Create;
+		void	function(void*)			sfContext_Destroy;
+		void	function(void*, bool)	sfContext_SetActive;
+	}
+
+	static this()
+	{
+	debug
+		DllLoader dll = DllLoader.load("csfml-window-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-window");
+
+		mixin(loadFromSharedLib("sfContext_Create"));
+		mixin(loadFromSharedLib("sfContext_Destroy"));
+		mixin(loadFromSharedLib("sfContext_SetActive"));
+	}
+}

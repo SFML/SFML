@@ -26,8 +26,7 @@
 
 module dsfml.graphics.renderwindow;
 
-import	dsfml.graphics.common,
-		dsfml.graphics.color,
+import	dsfml.graphics.color,
 		dsfml.graphics.sprite,
 		dsfml.graphics.shape,
 		dsfml.graphics.text,
@@ -246,5 +245,73 @@ public:
 	void flush()
 	{
 		sfRenderWindow_Flush(m_ptr);
+	}
+
+private:
+	
+	static extern(C)
+	{
+		void*	function(VideoMode, cchar*, uint, ContextSettings*)	sfRenderWindow_Create;
+		void*	function(WindowHandle, ContextSettings*)			sfRenderWindow_CreateFromHandle;
+		void	function(void*)										sfRenderWindow_Destroy;
+		void*	function(void*)										sfRenderWindow_GetInput;
+//		bool	function(void*)										sfRenderWindow_IsOpened; // also in Window
+
+	/*
+		void	function(void*, void*)								sfRenderWindow_DrawSprite;
+		void	function(void*, void*)								sfRenderWindow_DrawShape;
+		void	function(void*, void*)								sfRenderWindow_DrawText;
+
+		void	function(void*, void*, void*)						sfRenderWindow_DrawSpriteWithShader;
+		void	function(void*, void*, void*)						sfRenderWindow_DrawShapeWithShader;
+		void	function(void*, void*, void*)						sfRenderWindow_DrawTextWithShader;
+	*/
+		
+		void*	function(void*)										sfRenderWindow_Capture;
+		void	function(void*, Color)								sfRenderWindow_Clear;
+		void	function(void*, void*)								sfRenderWindow_SetView;
+		void*	function(void*)										sfRenderWindow_GetView;
+		void*	function (void*)									sfRenderWindow_GetDefaultView;
+		void	function(void*, uint, uint, float*, float*, void*)	sfRenderWindow_ConvertCoords;
+		
+		// DSFML2
+		void	function(void*)										sfRenderWindow_Flush;
+	}
+
+	static this()
+	{
+	debug
+		DllLoader dll = DllLoader.load("csfml-graphics-d");
+	else
+		DllLoader dll = DllLoader.load("csfml-graphics");
+
+		mixin(loadFromSharedLib("sfRenderWindow_Create"));
+		mixin(loadFromSharedLib("sfRenderWindow_CreateFromHandle"));
+		mixin(loadFromSharedLib("sfRenderWindow_Destroy"));
+		mixin(loadFromSharedLib("sfRenderWindow_GetInput"));
+
+	/*
+		mixin(loadFromSharedLib("sfRenderWindow_DrawSprite"));
+		mixin(loadFromSharedLib("sfRenderWindow_DrawShape"));
+		mixin(loadFromSharedLib("sfRenderWindow_DrawText"));
+
+		mixin(loadFromSharedLib("sfRenderWindow_DrawSpriteWithShader"));
+		mixin(loadFromSharedLib("sfRenderWindow_DrawShapeWithShader"));
+		mixin(loadFromSharedLib("sfRenderWindow_DrawTextWithShader"));
+	*/
+		
+		mixin(loadFromSharedLib("sfRenderWindow_Clear"));
+		mixin(loadFromSharedLib("sfRenderWindow_SetView"));
+		mixin(loadFromSharedLib("sfRenderWindow_GetView"));
+		mixin(loadFromSharedLib("sfRenderWindow_GetDefaultView"));
+		mixin(loadFromSharedLib("sfRenderWindow_ConvertCoords"));
+		
+		// DSFML2
+		mixin(loadFromSharedLib("sfRenderWindow_Flush"));
+	}
+	
+	static ~this()
+	{
+		
 	}
 }
