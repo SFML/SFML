@@ -29,11 +29,12 @@ module dsfml.graphics.drawableimpl;
 public import dsfml.system.common;
 import dsfml.system.vector2;
 
-import dsfml.graphics.idrawable;
-import dsfml.graphics.color;
-import dsfml.graphics.blendmode;
-import dsfml.graphics.renderwindow;
-import dsfml.graphics.shader;
+import	dsfml.graphics.idrawable,
+		dsfml.graphics.color,
+		dsfml.graphics.blendmode,
+		dsfml.graphics.renderwindow,
+		dsfml.graphics.renderimage,
+		dsfml.graphics.shader;
 
 package
 {
@@ -202,12 +203,22 @@ public:
 
 	void render(RenderWindow window)
 	{
-		sfRenderWindow_DrawThis(window.getNativePointer, m_ptr);
+		sfRenderWindow_DrawThis(window.getNativePointer(), m_ptr);
 	}
 	
 	void renderWithShader(RenderWindow window, Shader shader)
 	{
 		sfRenderWindow_DrawThisWithShader(window.getNativePointer, m_ptr, shader.getNativePointer);
+	}
+
+	void render(RenderImage image)
+	{
+		sfRenderImage_DrawThis(image.getNativePointer(), m_ptr);
+	}
+	
+	void renderWithShader(RenderImage image, Shader shader)
+	{
+		sfRenderImage_DrawThisWithShader(image.getNativePointer, m_ptr, shader.getNativePointer);
 	}
 
 	override void dispose()
@@ -248,6 +259,8 @@ private:
 		
 		typedef void function(void*, void*) pf_sfRenderWindow_DrawThis;
 		typedef void function(void*, void*, void*) pf_sfRenderWindow_DrawThisWithShader;
+		typedef void function(void*, void*) pf_sfRenderImage_DrawThis;
+		typedef void function(void*, void*, void*) pf_sfRenderImage_DrawThisWithShader;
 		
 		static pf_sfDrawable_Create sfDrawable_Create;
 		static pf_sfDrawable_Destroy sfDrawable_Destroy;
@@ -278,6 +291,8 @@ private:
 		
 		static pf_sfRenderWindow_DrawThis sfRenderWindow_DrawThis;
 		static pf_sfRenderWindow_DrawThisWithShader sfRenderWindow_DrawThisWithShader;
+		static pf_sfRenderImage_DrawThis sfRenderImage_DrawThis;
+		static pf_sfRenderImage_DrawThisWithShader sfRenderImage_DrawThisWithShader;
 	}
 
 	static this()
@@ -300,34 +315,36 @@ private:
 			string symbol = "sfShape";
 		}
 			
-		sfDrawable_Create = cast(pf_sfDrawable_Create)dll.getSymbol(symbol ~ "_Create");
-		sfDrawable_Destroy = cast(pf_sfDrawable_Destroy)dll.getSymbol(symbol ~ "_Destroy");
-		sfDrawable_SetX = cast(pf_sfDrawable_SetX)dll.getSymbol(symbol ~ "_SetX");
-		sfDrawable_SetY = cast(pf_sfDrawable_SetY)dll.getSymbol(symbol ~ "_SetY");
-		sfDrawable_SetPosition = cast(pf_sfDrawable_SetPosition)dll.getSymbol(symbol ~ "_SetPosition");
-		sfDrawable_SetScaleX = cast(pf_sfDrawable_SetScaleX)dll.getSymbol(symbol ~ "_SetScaleX");
-		sfDrawable_SetScaleY = cast(pf_sfDrawable_SetScaleY)dll.getSymbol(symbol ~ "_SetScaleY");
-		sfDrawable_SetScale = cast(pf_sfDrawable_SetScale)dll.getSymbol(symbol ~ "_SetScale");
-		sfDrawable_SetRotation = cast(pf_sfDrawable_SetRotation)dll.getSymbol(symbol ~ "_SetRotation");
-		sfDrawable_SetOrigin = cast(pf_sfDrawable_SetOrigin)dll.getSymbol(symbol ~ "_SetOrigin");
-		sfDrawable_SetColor = cast(pf_sfDrawable_SetColor)dll.getSymbol(symbol ~ "_SetColor");
-		sfDrawable_SetBlendMode = cast(pf_sfDrawable_SetBlendMode)dll.getSymbol(symbol ~ "_SetBlendMode");
-		sfDrawable_GetX = cast(pf_sfDrawable_GetX)dll.getSymbol(symbol ~ "_GetX");
-		sfDrawable_GetY = cast(pf_sfDrawable_GetY)dll.getSymbol(symbol ~ "_GetY");
-		sfDrawable_GetScaleX = cast(pf_sfDrawable_GetScaleX)dll.getSymbol(symbol ~ "_GetScaleX");
-		sfDrawable_GetScaleY = cast(pf_sfDrawable_GetScaleY)dll.getSymbol(symbol ~ "_GetScaleX");
-		sfDrawable_GetRotation = cast(pf_sfDrawable_GetRotation)dll.getSymbol(symbol ~ "_GetRotation");
-		sfDrawable_GetOriginX = cast(pf_sfDrawable_GetOriginX)dll.getSymbol(symbol ~ "_GetOriginX");
-		sfDrawable_GetOriginY = cast(pf_sfDrawable_GetOriginY)dll.getSymbol(symbol ~ "_GetOriginY");
-		sfDrawable_GetColor = cast(pf_sfDrawable_GetColor)dll.getSymbol(symbol ~ "_GetColor");
-		sfDrawable_GetBlendMode = cast(pf_sfDrawable_GetBlendMode)dll.getSymbol(symbol ~ "_GetBlendMode");
-		sfDrawable_Move = cast(pf_sfDrawable_Move)dll.getSymbol(symbol ~ "_Move");
-		sfDrawable_Scale = cast(pf_sfDrawable_Scale)dll.getSymbol(symbol ~ "_Scale");
-		sfDrawable_Rotate = cast(pf_sfDrawable_Rotate)dll.getSymbol(symbol ~ "_Rotate");
-		sfDrawable_TransformToLocal = cast(pf_sfDrawable_TransformToLocal)dll.getSymbol(symbol ~ "_TransformToLocal");
-		sfDrawable_TransformToGlobal = cast(pf_sfDrawable_TransformToGlobal)dll.getSymbol(symbol ~ "_TransformToGlobal");
+		sfDrawable_Create			= cast(pf_sfDrawable_Create)dll.getSymbol(symbol ~ "_Create");
+		sfDrawable_Destroy			= cast(pf_sfDrawable_Destroy)dll.getSymbol(symbol ~ "_Destroy");
+		sfDrawable_SetX				= cast(pf_sfDrawable_SetX)dll.getSymbol(symbol ~ "_SetX");
+		sfDrawable_SetY				= cast(pf_sfDrawable_SetY)dll.getSymbol(symbol ~ "_SetY");
+		sfDrawable_SetPosition		= cast(pf_sfDrawable_SetPosition)dll.getSymbol(symbol ~ "_SetPosition");
+		sfDrawable_SetScaleX		= cast(pf_sfDrawable_SetScaleX)dll.getSymbol(symbol ~ "_SetScaleX");
+		sfDrawable_SetScaleY		= cast(pf_sfDrawable_SetScaleY)dll.getSymbol(symbol ~ "_SetScaleY");
+		sfDrawable_SetScale			= cast(pf_sfDrawable_SetScale)dll.getSymbol(symbol ~ "_SetScale");
+		sfDrawable_SetRotation		= cast(pf_sfDrawable_SetRotation)dll.getSymbol(symbol ~ "_SetRotation");
+		sfDrawable_SetOrigin		= cast(pf_sfDrawable_SetOrigin)dll.getSymbol(symbol ~ "_SetOrigin");
+		sfDrawable_SetColor			= cast(pf_sfDrawable_SetColor)dll.getSymbol(symbol ~ "_SetColor");
+		sfDrawable_SetBlendMode		= cast(pf_sfDrawable_SetBlendMode)dll.getSymbol(symbol ~ "_SetBlendMode");
+		sfDrawable_GetX				= cast(pf_sfDrawable_GetX)dll.getSymbol(symbol ~ "_GetX");
+		sfDrawable_GetY				= cast(pf_sfDrawable_GetY)dll.getSymbol(symbol ~ "_GetY");
+		sfDrawable_GetScaleX		= cast(pf_sfDrawable_GetScaleX)dll.getSymbol(symbol ~ "_GetScaleX");
+		sfDrawable_GetScaleY		= cast(pf_sfDrawable_GetScaleY)dll.getSymbol(symbol ~ "_GetScaleX");
+		sfDrawable_GetRotation		= cast(pf_sfDrawable_GetRotation)dll.getSymbol(symbol ~ "_GetRotation");
+		sfDrawable_GetOriginX		= cast(pf_sfDrawable_GetOriginX)dll.getSymbol(symbol ~ "_GetOriginX");
+		sfDrawable_GetOriginY		= cast(pf_sfDrawable_GetOriginY)dll.getSymbol(symbol ~ "_GetOriginY");
+		sfDrawable_GetColor			= cast(pf_sfDrawable_GetColor)dll.getSymbol(symbol ~ "_GetColor");
+		sfDrawable_GetBlendMode		= cast(pf_sfDrawable_GetBlendMode)dll.getSymbol(symbol ~ "_GetBlendMode");
+		sfDrawable_Move				= cast(pf_sfDrawable_Move)dll.getSymbol(symbol ~ "_Move");
+		sfDrawable_Scale			= cast(pf_sfDrawable_Scale)dll.getSymbol(symbol ~ "_Scale");
+		sfDrawable_Rotate			= cast(pf_sfDrawable_Rotate)dll.getSymbol(symbol ~ "_Rotate");
+		sfDrawable_TransformToLocal	= cast(pf_sfDrawable_TransformToLocal)dll.getSymbol(symbol ~ "_TransformToLocal");
+		sfDrawable_TransformToGlobal= cast(pf_sfDrawable_TransformToGlobal)dll.getSymbol(symbol ~ "_TransformToGlobal");
 		
 		sfRenderWindow_DrawThis = cast(pf_sfRenderWindow_DrawThis)dll.getSymbol("sfRenderWindow_Draw" ~ symbol[2..$]);
 		sfRenderWindow_DrawThisWithShader = cast(pf_sfRenderWindow_DrawThisWithShader)dll.getSymbol("sfRenderWindow_Draw" ~ symbol[2..$] ~ "WithShader");
+		sfRenderImage_DrawThis = cast(pf_sfRenderImage_DrawThis)dll.getSymbol("sfRenderImage_Draw" ~ symbol[2..$]);
+		sfRenderImage_DrawThisWithShader = cast(pf_sfRenderImage_DrawThisWithShader)dll.getSymbol("sfRenderImage_Draw" ~ symbol[2..$] ~ "WithShader");
 	}
 }

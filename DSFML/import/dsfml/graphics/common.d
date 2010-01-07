@@ -52,6 +52,7 @@ package extern (C)
 	void*	function(void*)										sfRenderWindow_GetInput;
 //	bool	function(void*)										sfRenderWindow_IsOpened;
 
+/*
 	void	function(void*, void*)								sfRenderWindow_DrawSprite;
 	void	function(void*, void*)								sfRenderWindow_DrawShape;
 	void	function(void*, void*)								sfRenderWindow_DrawText;
@@ -59,13 +60,18 @@ package extern (C)
 	void	function(void*, void*, void*)						sfRenderWindow_DrawSpriteWithShader;
 	void	function(void*, void*, void*)						sfRenderWindow_DrawShapeWithShader;
 	void	function(void*, void*, void*)						sfRenderWindow_DrawTextWithShader;
-
+*/
+	
 	void*	function(void*)										sfRenderWindow_Capture;
 	void	function(void*, Color)								sfRenderWindow_Clear;
 	void	function(void*, void*)								sfRenderWindow_SetView;
 	void*	function(void*)										sfRenderWindow_GetView;
 	void*	function (void*)									sfRenderWindow_GetDefaultView;
 	void	function(void*, uint, uint, float*, float*, void*)	sfRenderWindow_ConvertCoords;
+	
+	// DSFML2
+	
+	void	function(void*)										sfRenderWindow_Flush;
  
 	// sfShader
 	void*	function(cchar*)									sfShader_CreateFromFile;
@@ -82,22 +88,24 @@ package extern (C)
 
 	// sfView
 	void*		function()						sfView_Create;
-	void*		function(sfFloatRect)			sfView_CreateFromRect;
+	void*		function(FloatRect)				sfView_CreateFromRect;
 	void		function(void*)					sfView_Destroy;
 	void		function(void*, float, float)	sfView_SetCenter;
 	void		function(void*, float, float)	sfView_SetSize;
-	void		function(void*, sfFloatRect)	sfView_SetViewport;
+	void		function(void*, FloatRect)		sfView_SetViewport;
 	float		function(void*)					sfView_GetCenterX;
 	float		function(void*)					sfView_GetCenterY;
 	float		function(void*)					sfView_GetWidth;
 	float		function(void*)					sfView_GetHeight;
-	sfFloatRect function(void*)					sfView_GetViewport;
+	FloatRect	function(void*)					sfView_GetViewport;
 	void		function(void*, float, float)	sfView_Move;
 	void		function(void*, float)			sfView_Zoom;
 	
+	// DSFML2
 	void		function(void*, float)			sfView_SetRotation;
 	float		function(void*)					sfView_GetRotation;
 	void		function(void*, float)			sfView_Rotate;
+	void		function(void*, FloatRect)		sfView_Reset;
 }
 
 static this()
@@ -120,6 +128,7 @@ else
 	mixin(loadFromSharedLib("sfRenderWindow_Destroy"));
 	mixin(loadFromSharedLib("sfRenderWindow_GetInput"));
 
+/*
 	mixin(loadFromSharedLib("sfRenderWindow_DrawSprite"));
 	mixin(loadFromSharedLib("sfRenderWindow_DrawShape"));
 	mixin(loadFromSharedLib("sfRenderWindow_DrawText"));
@@ -127,12 +136,16 @@ else
 	mixin(loadFromSharedLib("sfRenderWindow_DrawSpriteWithShader"));
 	mixin(loadFromSharedLib("sfRenderWindow_DrawShapeWithShader"));
 	mixin(loadFromSharedLib("sfRenderWindow_DrawTextWithShader"));
-
+*/
+	
 	mixin(loadFromSharedLib("sfRenderWindow_Clear"));
 	mixin(loadFromSharedLib("sfRenderWindow_SetView"));
 	mixin(loadFromSharedLib("sfRenderWindow_GetView"));
 	mixin(loadFromSharedLib("sfRenderWindow_GetDefaultView"));
 	mixin(loadFromSharedLib("sfRenderWindow_ConvertCoords"));
+	
+	// DSFML2
+	mixin(loadFromSharedLib("sfRenderWindow_Flush"));
 
 	// sfShader
 	mixin(loadFromSharedLib("sfShader_CreateFromFile"));
@@ -162,7 +175,9 @@ else
 	mixin(loadFromSharedLib("sfView_Move"));
 	mixin(loadFromSharedLib("sfView_Zoom"));
 	
+	// DSFML2
 	mixin(loadFromSharedLib("sfView_SetRotation"));
 	mixin(loadFromSharedLib("sfView_GetRotation"));
 	mixin(loadFromSharedLib("sfView_Rotate"));
+	mixin(loadFromSharedLib("sfView_Reset"));
 }

@@ -67,6 +67,15 @@ struct ContextSettings
 */
 class Window : DSFMLObject
 {	
+protected:
+	this(void* ptr)
+	{
+		super(ptr);
+	}
+
+	Input m_input;
+
+public:
 	/**
 	*	Construct a new window
 	*
@@ -197,9 +206,9 @@ class Window : DSFMLObject
 	*	Returns:
 	*		True if an event was returned, false if events stack was empty
 	*/
-	bool getEvent(ref Event eventReceived)
+	bool getEvent(out Event eventReceived)
 	{
-		return cast(bool)sfWindow_GetEvent(m_ptr, &eventReceived);
+		return cast(bool) sfWindow_GetEvent(m_ptr, &eventReceived);
 	}
 
 	/**
@@ -369,65 +378,59 @@ class Window : DSFMLObject
 		sfWindow_SetJoystickThreshold(m_ptr, threshold);
 	}
 
-protected:
-	this(void* ptr)
+	/**
+	 *	Wait for an event and return it
+	 *
+	 *	This function is blocking: if there's no pending event then it will wait until an event is received.
+	 *	After this function returns (and no error occured), the \a event object is always valid and filled properly.
+	 *	This function is typically used when you have a thread that is dedicated to events handling: you want to make this thread
+	 *	sleep as long as no new event is received.
+	 *
+	 *	Params:
+	 *		e Event to be returned
+	 *
+	 *	Returns:
+	 *		false if any error occured
+	 */
+	bool waitEvent(out Event e)
 	{
-		super(ptr);
+		return sfWindow_WaitEvent(m_ptr, &e);
 	}
-
-	Input m_input;
-private:
 	
+private:
+
 // External ====================================================================
 	extern (C)
 	{
-		typedef void* function(VideoMode, cchar*, uint, ContextSettings) pf_sfWindow_Create;
-		typedef void* function(WindowHandle, ContextSettings) pf_sfWindow_CreateFromHandle;
-		typedef void function(void*) pf_sfWindow_Destroy;
-		typedef void function(void*) pf_sfWindow_Close;
-		typedef int function(void*) pf_sfWindow_IsOpened;
-		typedef uint function(void*) pf_sfWindow_GetWidth;
-		typedef uint function(void*) pf_sfWindow_GetHeight;
-		typedef ContextSettings function(void* Window) pf_sfWindow_GetSettings;
-		typedef int function(void*, Event*) pf_sfWindow_GetEvent;
-		typedef void function(void*, int) pf_sfWindow_UseVerticalSync;
-		typedef void function(void*, int) pf_sfWindow_ShowMouseCursor;
-		typedef void function(void*, uint, uint) pf_sfWindow_SetCursorPosition;
-		typedef void function(void*, int, int) pf_sfWindow_SetPosition;
-		typedef void function(void*, uint, uint) pf_sfWindow_SetSize;
-		typedef void function(void*, int) pf_sfWindow_Show;
-		typedef void function(void*, int) pf_sfWindow_EnableKeyRepeat;
-		typedef void function(void*, size_t, size_t, ubyte*) pf_sfWindow_SetIcon;
-		typedef int function(void*, int) pf_sfWindow_SetActive;
-		typedef void function(void*) pf_sfWindow_Display;
-		typedef void* function(void*) pf_sfWindow_GetInput;
-		typedef void function(void*, uint) pf_sfWindow_SetFramerateLimit;
-		typedef float function(void*) pf_sfWindow_GetFrameTime;
-		typedef void function(void*, float) pf_sfWindow_SetJoystickThreshold;
-	
-		static pf_sfWindow_Create sfWindow_Create;
-		static pf_sfWindow_CreateFromHandle sfWindow_CreateFromHandle;
-		static pf_sfWindow_Destroy sfWindow_Destroy;
-		static pf_sfWindow_Close sfWindow_Close;
-		static pf_sfWindow_IsOpened sfWindow_IsOpened;
-		static pf_sfWindow_GetWidth sfWindow_GetWidth;
-		static pf_sfWindow_GetHeight sfWindow_GetHeight;
-		static pf_sfWindow_GetSettings sfWindow_GetSettings;
-		static pf_sfWindow_GetEvent sfWindow_GetEvent;
-		static pf_sfWindow_UseVerticalSync sfWindow_UseVerticalSync;
-		static pf_sfWindow_ShowMouseCursor sfWindow_ShowMouseCursor;
-		static pf_sfWindow_SetCursorPosition sfWindow_SetCursorPosition;
-		static pf_sfWindow_SetPosition sfWindow_SetPosition;
-		static pf_sfWindow_SetSize sfWindow_SetSize;
-		static pf_sfWindow_Show sfWindow_Show;
-		static pf_sfWindow_EnableKeyRepeat sfWindow_EnableKeyRepeat;
-		static pf_sfWindow_SetIcon sfWindow_SetIcon;
-		static pf_sfWindow_SetActive sfWindow_SetActive;
-		static pf_sfWindow_Display sfWindow_Display;
-		static pf_sfWindow_GetInput sfWindow_GetInput;
-		static pf_sfWindow_SetFramerateLimit sfWindow_SetFramerateLimit;
-		static pf_sfWindow_GetFrameTime sfWindow_GetFrameTime;
-		static pf_sfWindow_SetJoystickThreshold sfWindow_SetJoystickThreshold;
+	static
+	{
+		void*			function(VideoMode, cchar*, uint, ContextSettings)	sfWindow_Create;
+		void*			function(WindowHandle, ContextSettings)				sfWindow_CreateFromHandle;
+		void			function(void*)										sfWindow_Destroy;
+		void			function(void*)										sfWindow_Close;
+		int				function(void*)										sfWindow_IsOpened;
+		uint			function(void*)										sfWindow_GetWidth;
+		uint			function(void*)										sfWindow_GetHeight;
+		ContextSettings	function(void* Window)								sfWindow_GetSettings;
+		int				function(void*, Event*)								sfWindow_GetEvent;
+		void			function(void*, int)								sfWindow_UseVerticalSync;
+		void			function(void*, int)								sfWindow_ShowMouseCursor;
+		void			function(void*, uint, uint)							sfWindow_SetCursorPosition;
+		void			function(void*, int, int)							sfWindow_SetPosition;
+		void			function(void*, uint, uint)							sfWindow_SetSize;
+		void			function(void*, int)								sfWindow_Show;
+		void			function(void*, int)								sfWindow_EnableKeyRepeat;
+		void			function(void*, size_t, size_t, ubyte*)				sfWindow_SetIcon;
+		int				function(void*, int)								sfWindow_SetActive;
+		void			function(void*)										sfWindow_Display;
+		void*			function(void*)										sfWindow_GetInput;
+		void			function(void*, uint)								sfWindow_SetFramerateLimit;
+		float			function(void*)										sfWindow_GetFrameTime;
+		void			function(void*, float)								sfWindow_SetJoystickThreshold;
+
+		// DSFML2
+		bool			function(void*, void*)								sfWindow_WaitEvent;
+	}
 	}
 
 	static this()
@@ -437,28 +440,29 @@ private:
 		else
 			DllLoader dll = DllLoader.load("csfml-window");
 		
-		sfWindow_Create = cast(pf_sfWindow_Create)dll.getSymbol("sfWindow_Create");
-		sfWindow_CreateFromHandle = cast(pf_sfWindow_CreateFromHandle)dll.getSymbol("sfWindow_CreateFromHandle");
-		sfWindow_Destroy = cast(pf_sfWindow_Destroy)dll.getSymbol("sfWindow_Destroy");
-		sfWindow_Close = cast(pf_sfWindow_Close)dll.getSymbol("sfWindow_Close");
-		sfWindow_IsOpened = cast(pf_sfWindow_IsOpened)dll.getSymbol("sfWindow_IsOpened");
-		sfWindow_GetWidth = cast(pf_sfWindow_GetWidth)dll.getSymbol("sfWindow_GetWidth");
-		sfWindow_GetHeight = cast(pf_sfWindow_GetHeight)dll.getSymbol("sfWindow_GetHeight");
-		sfWindow_GetSettings = cast(pf_sfWindow_GetSettings)dll.getSymbol("sfWindow_GetSettings");
-		sfWindow_GetEvent = cast(pf_sfWindow_GetEvent)dll.getSymbol("sfWindow_GetEvent");
-		sfWindow_UseVerticalSync = cast(pf_sfWindow_UseVerticalSync)dll.getSymbol("sfWindow_UseVerticalSync");
-		sfWindow_ShowMouseCursor = cast(pf_sfWindow_ShowMouseCursor)dll.getSymbol("sfWindow_ShowMouseCursor");
-		sfWindow_SetCursorPosition = cast(pf_sfWindow_SetCursorPosition)dll.getSymbol("sfWindow_SetCursorPosition");
-		sfWindow_SetPosition = cast(pf_sfWindow_SetPosition)dll.getSymbol("sfWindow_SetPosition");
-		sfWindow_SetSize = cast(pf_sfWindow_SetSize)dll.getSymbol("sfWindow_SetSize");
-		sfWindow_Show = cast(pf_sfWindow_Show)dll.getSymbol("sfWindow_Show");
-		sfWindow_EnableKeyRepeat = cast(pf_sfWindow_EnableKeyRepeat)dll.getSymbol("sfWindow_EnableKeyRepeat");
-		sfWindow_SetIcon = cast(pf_sfWindow_SetIcon)dll.getSymbol("sfWindow_SetIcon");
-		sfWindow_SetActive = cast(pf_sfWindow_SetActive)dll.getSymbol("sfWindow_SetActive");
-		sfWindow_Display = cast(pf_sfWindow_Display)dll.getSymbol("sfWindow_Display");
-		sfWindow_GetInput = cast(pf_sfWindow_GetInput)dll.getSymbol("sfWindow_GetInput");
-		sfWindow_SetFramerateLimit = cast(pf_sfWindow_SetFramerateLimit)dll.getSymbol("sfWindow_SetFramerateLimit");
-		sfWindow_GetFrameTime = cast(pf_sfWindow_GetFrameTime)dll.getSymbol("sfWindow_GetFrameTime");
-		sfWindow_SetJoystickThreshold = cast(pf_sfWindow_SetJoystickThreshold)dll.getSymbol("sfWindow_SetJoystickThreshold");
+		mixin(loadFromSharedLib("sfWindow_Create"));
+		mixin(loadFromSharedLib("sfWindow_CreateFromHandle"));
+		mixin(loadFromSharedLib("sfWindow_Destroy"));
+		mixin(loadFromSharedLib("sfWindow_Close"));
+		mixin(loadFromSharedLib("sfWindow_IsOpened"));
+		mixin(loadFromSharedLib("sfWindow_GetWidth"));
+		mixin(loadFromSharedLib("sfWindow_GetHeight"));
+		mixin(loadFromSharedLib("sfWindow_GetSettings"));
+		mixin(loadFromSharedLib("sfWindow_GetEvent"));
+		mixin(loadFromSharedLib("sfWindow_UseVerticalSync"));
+		mixin(loadFromSharedLib("sfWindow_ShowMouseCursor"));
+		mixin(loadFromSharedLib("sfWindow_SetCursorPosition"));
+		mixin(loadFromSharedLib("sfWindow_SetPosition"));
+		mixin(loadFromSharedLib("sfWindow_SetSize"));
+		mixin(loadFromSharedLib("sfWindow_Show"));
+		mixin(loadFromSharedLib("sfWindow_EnableKeyRepeat"));
+		mixin(loadFromSharedLib("sfWindow_SetIcon"));
+		mixin(loadFromSharedLib("sfWindow_SetActive"));
+		mixin(loadFromSharedLib("sfWindow_Display"));
+		mixin(loadFromSharedLib("sfWindow_GetInput"));
+		mixin(loadFromSharedLib("sfWindow_SetFramerateLimit"));
+		mixin(loadFromSharedLib("sfWindow_GetFrameTime"));
+		mixin(loadFromSharedLib("sfWindow_SetJoystickThreshold"));
+		mixin(loadFromSharedLib("sfWindow_WaitEvent"));
 	}
 }

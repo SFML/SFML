@@ -42,6 +42,14 @@ import	dsfml.system.common,
 */
 class Image : DSFMLObject
 {
+package:
+	this(void* ptr)
+	{
+		super(ptr, true);
+	}
+		
+public:
+
 	/**
 	*	Default constructor
 	*/
@@ -176,7 +184,7 @@ class Image : DSFMLObject
 //	 */
 //	 void copyScreen(RenderWindow window, IntRect sourceRect = new IntRect())
 //	 {
-//		 return cast(bool)sfImage_CopyScreen(m_ptr, window.getNativePointer, sourceRect.toCIntRect());
+//		 return cast(bool)sfImage_CopyScreen(m_ptr, window.getNativePointer, sourceRect);
 //	 }
 	
 	/**
@@ -190,9 +198,9 @@ class Image : DSFMLObject
 	*		destY = Y coordinate of the destination position
 	*		sourceRect = Sub-rectangle of the source image to copy
 	*/
-	void copy(Image source, uint destX, uint destY, IntRect sourceRect = new IntRect())
+	void copy(Image source, uint destX, uint destY, IntRect sourceRect = IntRect())
 	{
-		sfImage_Copy(m_ptr, source.getNativePointer, destX, destY, sourceRect.toCIntRect());
+		sfImage_Copy(m_ptr, source.getNativePointer, destX, destY, sourceRect);
 	} 
 
 	/**
@@ -290,52 +298,30 @@ class Image : DSFMLObject
 		return cast(bool)sfImage_IsSmooth(m_ptr);
 	}
 	
-package:
-	this(void* ptr)
-	{
-		super(ptr);
-	}
-
 private:
 	extern (C)
 	{
-		typedef void* function() pf_sfImage_Create;
-		typedef void* function(uint, uint, Color) pf_sfImage_CreateFromColor;
-		typedef void* function(uint, uint, ubyte*) pf_sfImage_CreateFromPixels;
-		typedef void* function(cchar*) pf_sfImage_CreateFromFile;
-		typedef void* function(ubyte* ,size_t) pf_sfImage_CreateFromMemory;
-		typedef void function(void*) pf_sfImage_Destroy;
-		typedef int function(void*, cchar*) pf_sfImage_SaveToFile;
-		typedef void function(void*, Color, ubyte) pf_sfImage_CreateMaskFromColor;
-		typedef int function(void*, void*, sfIntRect) pf_sfImage_CopyScreen;
-		typedef void function(void*, void*, uint, uint, sfIntRect) pf_sfImage_Copy;
-		typedef void function(void*, uint, uint, Color) pf_sfImage_SetPixel;
-		typedef Color function(void*, uint, uint) pf_sfImage_GetPixel;
-		typedef ubyte* function(void*) pf_sfImage_GetPixelsPtr;
-		typedef void function(void*) pf_sfImage_Bind;
-		typedef void function(void*, int) pf_sfImage_SetSmooth;
-		typedef uint function(void*) pf_sfImage_GetWidth;
-		typedef uint function(void*) pf_sfImage_GetHeight;
-		typedef int function(void*) pf_sfImage_IsSmooth;
-	
-		static pf_sfImage_Create sfImage_Create;
-		static pf_sfImage_CreateFromColor sfImage_CreateFromColor;
-		static pf_sfImage_CreateFromPixels sfImage_CreateFromPixels;
-		static pf_sfImage_CreateFromFile sfImage_CreateFromFile;
-		static pf_sfImage_CreateFromMemory sfImage_CreateFromMemory;
-		static pf_sfImage_Destroy sfImage_Destroy;
-		static pf_sfImage_SaveToFile sfImage_SaveToFile;
-		static pf_sfImage_CreateMaskFromColor sfImage_CreateMaskFromColor;
-		static pf_sfImage_CopyScreen sfImage_CopyScreen;
-		static pf_sfImage_Copy sfImage_Copy;
-		static pf_sfImage_SetPixel sfImage_SetPixel;
-		static pf_sfImage_GetPixel sfImage_GetPixel;
-		static pf_sfImage_GetPixelsPtr sfImage_GetPixelsPtr;
-		static pf_sfImage_Bind sfImage_Bind;
-		static pf_sfImage_SetSmooth sfImage_SetSmooth;
-		static pf_sfImage_GetWidth sfImage_GetWidth;
-		static pf_sfImage_GetHeight sfImage_GetHeight;
-		static pf_sfImage_IsSmooth sfImage_IsSmooth;
+	static
+	{
+		void*	function()									sfImage_Create;
+		void*	function(uint, uint, Color)					sfImage_CreateFromColor;
+		void*	function(uint, uint, ubyte*)				sfImage_CreateFromPixels;
+		void*	function(cchar*)							sfImage_CreateFromFile;
+		void*	function(ubyte* ,size_t)					sfImage_CreateFromMemory;
+		void	function(void*)								sfImage_Destroy;
+		int		function(void*, cchar*)						sfImage_SaveToFile;
+		void	function(void*, Color, ubyte)				sfImage_CreateMaskFromColor;
+		int		function(void*, void*, IntRect)				sfImage_CopyScreen;
+		void	function(void*, void*, uint, uint, IntRect)	sfImage_Copy;
+		void	function(void*, uint, uint, Color)			sfImage_SetPixel;
+		Color	function(void*, uint, uint)					sfImage_GetPixel;
+		ubyte*	function(void*)								sfImage_GetPixelsPtr;
+		void	function(void*)								sfImage_Bind;
+		void	function(void*, int)						sfImage_SetSmooth;
+		uint	function(void*)								sfImage_GetWidth;
+		uint	function(void*)								sfImage_GetHeight;
+		int		function(void*)								sfImage_IsSmooth;
+	}
 	}
 
 	static this()
@@ -345,23 +331,23 @@ private:
 	else
 		DllLoader dll = DllLoader.load("csfml-graphics");
 		
-		sfImage_Create = cast(pf_sfImage_Create)dll.getSymbol("sfImage_Create");
-		sfImage_CreateFromColor = cast(pf_sfImage_CreateFromColor)dll.getSymbol("sfImage_CreateFromColor");
-		sfImage_CreateFromPixels = cast(pf_sfImage_CreateFromPixels)dll.getSymbol("sfImage_CreateFromPixels");
-		sfImage_CreateFromFile = cast(pf_sfImage_CreateFromFile)dll.getSymbol("sfImage_CreateFromFile");
-		sfImage_CreateFromMemory = cast(pf_sfImage_CreateFromMemory)dll.getSymbol("sfImage_CreateFromMemory");
-		sfImage_Destroy = cast(pf_sfImage_Destroy)dll.getSymbol("sfImage_Destroy");
-		sfImage_SaveToFile = cast(pf_sfImage_SaveToFile)dll.getSymbol("sfImage_SaveToFile");
-		sfImage_CreateMaskFromColor = cast(pf_sfImage_CreateMaskFromColor)dll.getSymbol("sfImage_CreateMaskFromColor");
-		sfImage_CopyScreen = cast(pf_sfImage_CopyScreen)dll.getSymbol("sfImage_CopyScreen");
-		sfImage_Copy = cast(pf_sfImage_Copy)dll.getSymbol("sfImage_Copy");
-		sfImage_SetPixel = cast(pf_sfImage_SetPixel)dll.getSymbol("sfImage_SetPixel");
-		sfImage_GetPixel = cast(pf_sfImage_GetPixel)dll.getSymbol("sfImage_GetPixel");
-		sfImage_GetPixelsPtr = cast(pf_sfImage_GetPixelsPtr)dll.getSymbol("sfImage_GetPixelsPtr");
-		sfImage_Bind = cast(pf_sfImage_Bind)dll.getSymbol("sfImage_Bind");
-		sfImage_SetSmooth = cast(pf_sfImage_SetSmooth)dll.getSymbol("sfImage_SetSmooth");
-		sfImage_GetWidth = cast(pf_sfImage_GetWidth)dll.getSymbol("sfImage_GetWidth");
-		sfImage_GetHeight = cast(pf_sfImage_GetHeight)dll.getSymbol("sfImage_GetHeight");
-		sfImage_IsSmooth = cast(pf_sfImage_IsSmooth)dll.getSymbol("sfImage_IsSmooth");
+		mixin(loadFromSharedLib("sfImage_Create"));
+		mixin(loadFromSharedLib("sfImage_CreateFromColor"));
+		mixin(loadFromSharedLib("sfImage_CreateFromPixels"));
+		mixin(loadFromSharedLib("sfImage_CreateFromFile"));
+		mixin(loadFromSharedLib("sfImage_CreateFromMemory"));
+		mixin(loadFromSharedLib("sfImage_Destroy"));
+		mixin(loadFromSharedLib("sfImage_SaveToFile"));
+		mixin(loadFromSharedLib("sfImage_CreateMaskFromColor"));
+		mixin(loadFromSharedLib("sfImage_CopyScreen"));
+		mixin(loadFromSharedLib("sfImage_Copy"));
+		mixin(loadFromSharedLib("sfImage_SetPixel"));
+		mixin(loadFromSharedLib("sfImage_GetPixel"));
+		mixin(loadFromSharedLib("sfImage_GetPixelsPtr"));
+		mixin(loadFromSharedLib("sfImage_Bind"));
+		mixin(loadFromSharedLib("sfImage_SetSmooth"));
+		mixin(loadFromSharedLib("sfImage_GetWidth"));
+		mixin(loadFromSharedLib("sfImage_GetHeight"));
+		mixin(loadFromSharedLib("sfImage_IsSmooth"));
 	}
 }

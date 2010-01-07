@@ -38,6 +38,17 @@ import dsfml.system.vector2;
 
 
 /**
+ *	Enumerate the text drawing styles
+ */
+enum TextStyle
+{
+	REGULAR	= 0,	  /// Regular characters, no style
+	BOLD		= 1 << 0, /// Characters are bold
+	ITALIC	 = 1 << 1, /// Characters are in italic
+	UNDERLINED = 1 << 2  /// Characters are underlined
+}
+
+/**
 *	Text defines a graphical 2D text, that can be drawn on screen
 *	
 *	All string litterals used must be prefixed with c for utf-8 
@@ -56,6 +67,10 @@ import dsfml.system.vector2;
 */
 class Text : Drawableimpl!(sfText)
 {
+private:
+	Font m_font;
+
+public:
 	/**
 	*	Construct the string from a text
 	*	
@@ -99,11 +114,10 @@ class Text : Drawableimpl!(sfText)
 	*
 	*	Params: 
 	*		text = New text
-	*
 	*/
 	void setString(string text)
 	{
-		sfText_SetString(m_ptr,toStringz(text));
+		sfText_SetString(m_ptr, toStringz(text));
 	}
 
 	/**
@@ -234,13 +248,10 @@ class Text : Drawableimpl!(sfText)
 	*/
 	FloatRect getRect()
 	{
-		sfFloatRect sfRect = sfText_GetRect(m_ptr);
-		
-		return new Rect!(float)(sfRect.Left, sfRect.Top, sfRect.Right, sfRect.Bottom);
+		return sfText_GetRect(m_ptr);
 	}
 
 private:
-	Font m_font;
 	
 	extern (C)
 	{
@@ -255,7 +266,7 @@ private:
 		typedef uint function(void*) pf_sfText_GetCharacterSize;
 		typedef TextStyle function (void*) pf_sfText_GetStyle;
 		typedef void function(void*, size_t, float*, float*) pf_sfText_GetCharacterPos;
-		typedef sfFloatRect function(void*) pf_sfText_GetRect;
+		typedef FloatRect function(void*) pf_sfText_GetRect;
 	
 		static pf_sfText_SetString sfText_SetString;
 		static pf_sfText_SetUnicodeString sfText_SetUnicodeString;

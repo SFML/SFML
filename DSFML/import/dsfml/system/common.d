@@ -62,6 +62,7 @@ public:
 	this(void* ptr, bool preventDelete = false)
 	{
 		m_ptr = ptr;
+		m_preventDelete = preventDelete;
 	}
 	
 	~this()

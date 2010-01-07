@@ -26,22 +26,6 @@
 
 module dsfml.graphics.rect;
 
-struct sfFloatRect
-{
-	float Left;
-	float Top;
-	float Right;
-	float Bottom;
-}
-
-struct sfIntRect
-{
-	int Left;
-	int Top;
-	int Right;
-	int Bottom;
-}
-
 version (Tango)
 {
 	import tango.core.Traits;
@@ -64,20 +48,20 @@ else
 			is (T == double) ||
 			is (T == real);
 	}
-}	
+}
+
 /**
 *	Rect is an utility class for manipulating rectangles.
 *	Template parameter defines the type of coordinates (integer float, ...)
 */
-
-class Rect (T)
+struct Rect(T)
 {
 
 private:
-	T m_Left;	// Left coordinate of the rectangle
-	T m_Top;	// Top coordinate of the rectangle
-	T m_Right;  // Right coordinate of the rectangle
-	T m_Bottom; // Bottom coordinate of the rectangle
+	T left;	// Left coordinate of the rectangle
+	T top;	// Top coordinate of the rectangle
+	T right;  // Right coordinate of the rectangle
+	T bottom; // Bottom coordinate of the rectangle
 
 public:
 	static if (!isIntegerType!(T) && !isRealType!(T))
@@ -95,17 +79,7 @@ public:
 		return i > j ? i : j;
 	}
 	
-	/**
-	*	Default constructor
-	*/
-	this()
-	{
-		m_Left = 0;
-		m_Top = 0;
-		m_Right = 0;
-		m_Bottom = 0;
-	}
-
+/+
 	/**
 	*	Construct the rectangle from its coordinates
 	*
@@ -117,11 +91,12 @@ public:
 	*/
 	this(T leftCoord, T topCoord, T rightCoord, T bottomCoord)
 	{
-		m_Left = leftCoord;
-		m_Top = topCoord;
-		m_Right = rightCoord;
-		m_Bottom = bottomCoord;
+		left = leftCoord;
+		top = topCoord;
+		right = rightCoord;
+		bottom = bottomCoord;
 	}
++/
 
 	/**
 	*	Get the width of the rectangle
@@ -131,7 +106,7 @@ public:
 	*/
 	T getWidth() 
 	{
-		return m_Right - m_Left;
+		return right - left;
 	}
 
 	/**
@@ -142,7 +117,7 @@ public:
 	*/
 	T getHeight()
 	{
-		return m_Bottom - m_Top;
+		return bottom - top;
 	}
 
 	/**
@@ -154,10 +129,10 @@ public:
 	*/
 	void offset(T offsetX, T offsetY)
 	{
-		m_Left	+= offsetX;
-		m_Right  += offsetX;
-		m_Top	+= offsetY;
-		m_Bottom += offsetY;
+		left	+= offsetX;
+		right  += offsetX;
+		top	+= offsetY;
+		bottom += offsetY;
 	}
 
 	/**
@@ -172,7 +147,7 @@ public:
 	*/
 	bool contains(T x, T y)
 	{
-		return (x >= m_Left) && (x <= m_Right) && (y >= m_Top) && (y <= m_Bottom);
+		return (x >= left) && (x <= right) && (y >= top) && (y <= bottom);
 	}
 
 	/**
@@ -185,103 +160,30 @@ public:
 	*	Returns:
 	*		True if rectangles overlap
 	*/
-	bool intersects(Rect!(T) rectangle, out Rect!(T) overlappingRect = null)
+	bool intersects(Rect!(T) rectangle, out Rect!(T) overlappingRect = Rect!(T)())
 	{
 		// Compute overlapping rect
-		Rect!(T) overlapping = new Rect!(T)(	
-												max(m_Left,	rectangle.getLeft),
-												max(m_Top,	rectangle.getTop),
-												min(m_Right,  rectangle.getRight),
-												min(m_Bottom, rectangle.getBottom)
-											);
+		auto overlapping = Rect!(T)(	
+										max(left,	rectangle.left),
+										max(top,	rectangle.top),
+										min(right,  rectangle.right),
+										min(bottom, rectangle.bottom)
+									);
 	
 		// If overlapping rect is valid, then there is intersection
-		if ((overlapping.getLeft() < overlapping.getRight() ) && (overlapping.getTop() < overlapping.getBottom()))
+		if ((overlapping.left < overlapping.right) && (overlapping.top < overlapping.bottom))
 		{
 			overlappingRect = overlapping;
 			return true;
 		}
 		else
 		{
-			overlappingRect = new Rect!(T)();
+			overlappingRect = Rect!(T)();
 			return false;
 		}
 	}
 	
-	/**
-	*	Set left Coordinate	
-	*/	 
-	void setLeft(T left)
-	{
-		m_Left = left;
-	}
-
-	/**
-	*	Set top Coordinate	
-	*/
-	void setTop(T top)
-	{
-		m_Top = top;
-	}
-
-	/**
-	*	Set right Coordinate	
-	*/
-	void setRight(T right)
-	{
-		m_Right = right;
-	}
-
-	/**
-	*	Set bottom Coordinate	
-	*/
-	void setBottom(T bottom)
-	{
-		m_Bottom = bottom;
-	}
-
-	/**
-	*	Get left Coordinate	
-	*/
-	T getLeft()
-	{
-		return m_Left;
-	}
-
-	/**
-	*	Get top Coordinate	
-	*/
-	T getTop()
-	{
-		return m_Top;
-	}
-
-	/**
-	*	Get right Coordinate	
-	*/
-	T getRight()
-	{
-		return m_Right;
-	}
-
-	/**
-	*	Get bottom Coordinate	
-	*/
-	T getBottom()
-	{
-		return m_Bottom;
-	}
-
-package:
-	sfFloatRect toCFloatRect()
-	{
-		return sfFloatRect(m_Left, m_Top, m_Right, m_Bottom);
-	}
-	
-	sfIntRect toCIntRect()
-	{
-		return sfIntRect(cast(int)m_Left, cast(int)m_Top, cast(int)m_Right, cast(int)m_Bottom);
-	}
+	//bool opEquals
 }
 
 ///Alias

@@ -38,8 +38,8 @@ import	dsfml.graphics.common,
 struct Glyph
 {
 	int			Advance;	/// Offset to move horizontically to the next character
-	sfIntRect	Rectangle;	/// Bounding rectangle of the glyph, in relative coordinates
-	sfFloatRect	TexCoords;	/// Texture coordinates of the glyph inside the bitmap font
+	IntRect		Rectangle;	/// Bounding rectangle of the glyph, in relative coordinates
+	FloatRect	TexCoords;	/// Texture coordinates of the glyph inside the bitmap font
 }
 
 /**

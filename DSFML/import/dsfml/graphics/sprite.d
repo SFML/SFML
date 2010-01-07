@@ -42,11 +42,18 @@ import dsfml.system.vector2;
 */
 class Sprite : Drawableimpl!(sfSprite)
 {
+private:
+	Image m_image;	  	//< Image used to draw the sprite
+	IntRect m_subRect;	//< Sub-rectangle of source image to assign to the sprite
+	
+public:
+
 	/**
 	*	Default constructor
 	*/
 	this()
 	{
+		super();
 	}
 
 	/**
@@ -63,6 +70,7 @@ class Sprite : Drawableimpl!(sfSprite)
 	*/
 	this(Image img, float left = 0.f, float top = 0.f, float scaleX = 1.f, float scaleY = 1.f, float rotation = 0.f, Color col = Color.WHITE)
 	{
+		super();
 		m_image = img;
 		sfSprite_SetImage(m_ptr, img.getNativePointer);
 		setX(left);
@@ -94,7 +102,7 @@ class Sprite : Drawableimpl!(sfSprite)
 	*/	
 	void setSubRect(IntRect rect)
 	{
-		sfIntRect r = rect.toCIntRect();
+		IntRect r = rect;
 		sfSprite_SetSubRect(m_ptr, &r);
 		m_subRect = rect;
 	}
@@ -168,8 +176,8 @@ class Sprite : Drawableimpl!(sfSprite)
 	*/		
 	IntRect getSubRect()
 	{
-		if (m_subRect is null)
-			m_subRect = new IntRect(0, 0, m_image.getWidth(), m_image.getHeight());
+		if (m_subRect == IntRect())
+			m_subRect = IntRect(0, 0, m_image.getWidth(), m_image.getHeight());
 			
 		return m_subRect;
 	}
@@ -201,13 +209,11 @@ class Sprite : Drawableimpl!(sfSprite)
 	}
 
 private:
-	Image m_image;	  //< Image used to draw the sprite
-	IntRect m_subRect;	//< Sub-rectangle of source image to assign to the sprite
 	
 	extern (C)
 	{
 		typedef void function(void*, void*) pf_sfSprite_SetImage;
-		typedef void function(void*, sfIntRect*) pf_sfSprite_SetSubRect;
+		typedef void function(void*, IntRect*) pf_sfSprite_SetSubRect;
 		typedef void function(void*, float, float) pf_sfSprite_Resize;
 		typedef void function(void*, int) pf_sfSprite_FlipX;
 		typedef void function(void*, int) pf_sfSprite_FlipY;
@@ -246,7 +252,5 @@ private:
 		sfSprite_GetWidth = cast(pf_sfSprite_GetWidth)dll.getSymbol("sfSprite_GetWidth");
 		sfSprite_GetHeight = cast(pf_sfSprite_GetHeight)dll.getSymbol("sfSprite_GetHeight");
 		sfSprite_GetPixel = cast(pf_sfSprite_GetPixel)dll.getSymbol("sfSprite_GetPixel");
-	}
-	
+	}	
 }
-

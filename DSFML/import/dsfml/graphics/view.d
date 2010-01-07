@@ -39,14 +39,15 @@ import	dsfml.system.common,
 class View : DSFMLObject
 {
 private:
-	FloatRect m_viewport;
+	FloatRect	_rect; // a view defines a source area of the scene to display, and a destination area into the rendertarget where to map the source area
+	FloatRect	_viewport; // the viewport is the destination area in the rendertarget
 	bool m_isModified = true;
 
 public:
 	/**
 	*	Constructor
 	*	
-	*	Default view (1000 x 1000)		
+	*	Default view (1000 x 1000)
 	*/
 	this()
 	{
@@ -58,11 +59,11 @@ public:
 	*	
 	*	Params:
 	*		center = center of the view
-	*		size = size of the view (width, height)			
+	*		size = size of the view (width, height)
 	*/			  
 	this(Vector2f center, Vector2f size)
 	{
-		super(sfView_CreateFromRect(sfFloatRect(center.x - size.x / 2, center.y - size.y / 2, center.x + size.x / 2, center.y + size.y / 2) ));
+		super(sfView_CreateFromRect(FloatRect(center.x - size.x / 2, center.y - size.y / 2, center.x + size.x / 2, center.y + size.y / 2) ));
 	}
 	
 	/**
@@ -73,7 +74,7 @@ public:
 	*/		
 	this(FloatRect rect)
 	{
-		super(sfView_CreateFromRect(rect.toCFloatRect()));
+		super(sfView_CreateFromRect(rect));
 	}
 
 	override void dispose()
@@ -139,8 +140,8 @@ public:
 	*/
 	void setViewport(FloatRect viewport)
 	{
-		sfView_SetViewport(m_ptr, viewport.toCFloatRect());
-		m_viewport = viewport;
+		sfView_SetViewport(m_ptr, viewport);
+		_viewport = viewport;
 	}
 
 	/**
@@ -195,10 +196,9 @@ public:
 		if (m_isModified)
 		{
 			m_isModified = false;
-			sfFloatRect cViewport = sfView_GetViewport(m_ptr);
-			m_viewport = new FloatRect(cViewport.Left, cViewport.Top, cViewport.Right, cViewport.Bottom);
+			_viewport = sfView_GetViewport(m_ptr);
 		}
-		return m_viewport;
+		return _viewport;
 	}
 	
 	/**
@@ -272,6 +272,11 @@ public:
 		return sfView_GetRotation(m_ptr);
 	}
 
+	void reset(FloatRect rect)
+	{
+		sfView_Reset(m_ptr, rect);
+		_rect = rect;
+	}
 package:
 
 	this(void* ptr, bool preventDelete)

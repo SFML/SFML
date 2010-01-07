@@ -31,6 +31,7 @@ import dsfml.system.vector2;
 import	dsfml.graphics.color,
 		dsfml.graphics.blendmode,
 		dsfml.graphics.renderwindow,
+		dsfml.graphics.renderimage,
 		dsfml.graphics.shader;
 
 
@@ -290,4 +291,21 @@ interface IDrawable
 	 *	 shader = Shader to use
 	 */
 	void renderWithShader(RenderWindow window, Shader shader);
+
+	/**
+	*	Render the specific geometry of the object
+	*	
+	*	Params:
+	*		image = Target into which render the object		
+	*/		
+	void render(RenderImage image);
+	
+	/**
+	 * Render the specific geometry of the object with a shader
+	 * 
+	 * Params:
+	 *	 image = Render target
+	 *	 shader = Shader to use
+	 */
+	void renderWithShader(RenderImage image, Shader shader);
 }
