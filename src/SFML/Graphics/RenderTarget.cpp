@@ -86,10 +86,10 @@ void RenderTarget::Draw(const Drawable& Object)
             // Save the current render states and set the SFML ones
             if (myPreserveStates)
             {
-                GLCheck(glMatrixMode(GL_MODELVIEW));  GLCheck(glPushMatrix());
-                GLCheck(glMatrixMode(GL_PROJECTION)); GLCheck(glPushMatrix());
                 GLCheck(glPushAttrib(GL_COLOR_BUFFER_BIT | GL_CURRENT_BIT   | GL_ENABLE_BIT  |
                                      GL_TEXTURE_BIT      | GL_TRANSFORM_BIT | GL_VIEWPORT_BIT));
+                GLCheck(glMatrixMode(GL_MODELVIEW));  GLCheck(glPushMatrix());
+                GLCheck(glMatrixMode(GL_PROJECTION)); GLCheck(glPushMatrix());
                 SetRenderStates();
             }
 
