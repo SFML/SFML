@@ -122,23 +122,23 @@ JoystickState Joystick::UpdateState()
                     break;
 
                     // Compute the new POV angle
-                    if (myPovX == 1)
+                    if (myPovX > 0)
                     {
-                        if      (myPovY == 1)  myState.Axis[Joy::AxisPOV] = 315.f;
-                        else if (myPovY == -1) myState.Axis[Joy::AxisPOV] = 45.f;
-                        else                   myState.Axis[Joy::AxisPOV] = 0.f;
+                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 315.f;
+                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 45.f;
+                        else                 myState.Axis[Joy::AxisPOV] = 0.f;
                     }
-                    else if (myPovX == -1)
+                    else if (myPovX < 0)
                     {
-                        if      (myPovY == 1)  myState.Axis[Joy::AxisPOV] = 225.f;
-                        else if (myPovY == -1) myState.Axis[Joy::AxisPOV] = 135.f;
-                        else                   myState.Axis[Joy::AxisPOV] = 180.f;
+                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 225.f;
+                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 135.f;
+                        else                 myState.Axis[Joy::AxisPOV] = 180.f;
                     }
                     else
                     {
-                        if      (myPovY == 1)  myState.Axis[Joy::AxisPOV] = 270.f;
-                        else if (myPovY == -1) myState.Axis[Joy::AxisPOV] = 90.f;
-                        else                   myState.Axis[Joy::AxisPOV] = -1.f;
+                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 270.f;
+                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 90.f;
+                        else                 myState.Axis[Joy::AxisPOV] = -1.f;
                     }
                 }
     
