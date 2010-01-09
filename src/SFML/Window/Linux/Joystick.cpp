@@ -119,29 +119,29 @@ JoystickState Joystick::UpdateState()
                         case ABS_HAT0Y :                  myPovY = JoyState.value;                                     break;
                         default : break;
                     }
-                    break;
 
                     // Compute the new POV angle
                     if (myPovX > 0)
                     {
-                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 315.f;
+                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 135.f;
                         else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 45.f;
-                        else                 myState.Axis[Joy::AxisPOV] = 0.f;
+                        else                 myState.Axis[Joy::AxisPOV] = 90.f;
                     }
                     else if (myPovX < 0)
                     {
                         if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 225.f;
-                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 135.f;
-                        else                 myState.Axis[Joy::AxisPOV] = 180.f;
+                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 315.f;
+                        else                 myState.Axis[Joy::AxisPOV] = 270.f;
                     }
                     else
                     {
-                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 270.f;
-                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 90.f;
+                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 180.f;
+                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 0.f;
                         else                 myState.Axis[Joy::AxisPOV] = -1.f;
                     }
+                    break;
                 }
-    
+
                 // A button has been pressed
                 case JS_EVENT_BUTTON :
                 {
