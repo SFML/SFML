@@ -51,7 +51,7 @@ class Shader;
 /// \brief Implements a queue of rendering commands
 ///
 ////////////////////////////////////////////////////////////
-class RenderQueue : NonCopyable
+class SFML_API RenderQueue : NonCopyable
 {
 public :
 
