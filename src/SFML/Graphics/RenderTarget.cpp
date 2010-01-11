@@ -72,6 +72,9 @@ void RenderTarget::Draw(const Drawable& object)
     // Setup the shader
     myRenderQueue.SetShader(NULL);
 
+    // Setup the viewport
+    myRenderQueue.SetViewport(GetViewport(myCurrentView));
+
     // Let the object draw itself
     object.Draw(*this, myRenderQueue);
 
@@ -90,6 +93,9 @@ void RenderTarget::Draw(const Drawable& object, const Shader& shader)
 
     // Setup the shader
     myRenderQueue.SetShader(&shader);
+
+    // Setup the viewport
+    myRenderQueue.SetViewport(GetViewport(myCurrentView));
 
     // Let the object draw itself
     object.Draw(*this, myRenderQueue);
@@ -122,8 +128,7 @@ void RenderTarget::SetView(const View& view)
     // Save it
     myCurrentView = view;
 
-    // Send the view's viewport and projection matrix to the render queue
-    myRenderQueue.SetViewport(GetViewport(view));
+    // Send the projection matrix to the render queue
     myRenderQueue.SetProjection(view.GetMatrix());
 }
 
