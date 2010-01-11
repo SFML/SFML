@@ -35,7 +35,7 @@ module dsfml.window.event;
 *			* LBRACKET, RBRACKET, SEMICOLON, COMMA, PERIOD, QUOTE, SLASH, BACKSLASH, TILDE, EQUAL, DASH.$(BR)
 *			* SPACE, RETURN, BACK, TAB, PAGEUP, PAGEDOWN, END, HOME, INSERT, DELETE.$(BR)
 *			* ADD, SUBTRACT, MULTIPLY, DIVIDE, LEFT, RIGHT, UP, DOWN.$(BR)
-*			* NUMPAD0, NUMPAD1, NUMPAD2, NUMPAD3, NUMPAD4, NUMPAD5, NUMPAD6, NUMPAD7, NUMPAD8, NUMPAD9.$(BR)
+*			* Numpad0, Numpad1, Numpad2, Numpad3, Numpad4, Numpad5, Numpad6, Numpad7, Numpad8, Numpad9.$(BR)
 *			* F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15.$(BR)
 */
 enum KeyCode
@@ -66,65 +66,65 @@ enum KeyCode
 		X = 'x',
 		Y = 'y',
 		Z = 'z',
-		NUM0 = '0',
-		NUM1 = '1',
-		NUM2 = '2',
-		NUM3 = '3',
-		NUM4 = '4',
-		NUM5 = '5',
-		NUM6 = '6',
-		NUM7 = '7',
-		NUM8 = '8',
-		NUM9 = '9', 
-		ESCAPE = 256,
-		LCONTROL,		 
-		LSHIFT,		 
-		LALT,			
-		LSYSTEM,		
-		RCONTROL,		
-		RSHIFT,		 
-		RALT,			
-		RSYSTEM,		
-		MENU,			
-		LBRACKET,		
-		RBRACKET,		
-		SEMICOLON,	  
-		COMMA,		  
-		PERIOD,		 
-		QUOTE,		  
-		SLASH,		  
-		BACKSLASH,
-		TILDE,		  
-		EQUAL,		  
-		DASH,			
-		SPACE,
-		RETURN,
-		BACK,
-		TAB,
-		PAGEUP,
-		PAGEDOWN,
-		END,
-		HOME,
-		INSERT,
-		DELETE,
-		ADD,			
-		SUBTRACT,		
-		MULTIPLY,	  
-		DIVIDE,		 
-		LEFT,			
-		RIGHT,		  
-		UP,			 
-		DOWN,		  
-		NUMPAD0,		
-		NUMPAD1,		
-		NUMPAD2,		
-		NUMPAD3,		
-		NUMPAD4,		
-		NUMPAD5,		
-		NUMPAD6,		
-		NUMPAD7,		
-		NUMPAD8,		
-		NUMPAD9,		
+		Num0 = '0',
+		Num1 = '1',
+		Num2 = '2',
+		Num3 = '3',
+		Num4 = '4',
+		Num5 = '5',
+		Num6 = '6',
+		Num7 = '7',
+		Num8 = '8',
+		Num9 = '9',
+		Escape = 256,
+		LControl,
+		LShift,
+		LAlt,
+		LSystem,
+		RControl,
+		RShist,
+		RAlt,
+		RSystem,
+		Menu,
+		LBracket,
+		RBracket,
+		Semicolon,
+		Comma,
+		Period,
+		Quote,
+		Slash,
+		Backslash,
+		Tilde,
+		Equal,
+		Dash,
+		Space,
+		Return,
+		Back,
+		Tab,
+		PageUp,
+		PageDown,
+		End,
+		Home,
+		Insert,
+		Delete,
+		Add,
+		Substract,
+		Multiply,
+		Divide,
+		Left,
+		Right,
+		Up,
+		Down,
+		Numpad0,
+		Numpad1,
+		Numpad2,
+		Numpad3,
+		Numpad4,
+		Numpad5,
+		Numpad6,
+		Numpad7,
+		Numpad8,
+		Numpad9,
 		F1,
 		F2,
 		F3,
@@ -140,7 +140,7 @@ enum KeyCode
 		F13,
 		F14,
 		F15,
-		PAUSE,
+		Pause,
 }
 
 
@@ -149,11 +149,11 @@ enum KeyCode
 */
 enum MouseButtons
 {
-	LEFT, ///
-	RIGHT, ///
-	MIDDLE, /// 
-	XBUTTON1, ///
-	XBUTTON2 ///
+	Left, ///
+	Right, ///
+	Middle, /// 
+	XButton1, ///
+	XButton2 ///
 }
 
 
@@ -163,42 +163,43 @@ enum MouseButtons
 */
 enum JoyAxis
 {
-	AXISX, ///
-	AXISY, ///
-	AXISZ, ///
-	AXISR, ///
-	AXISU, ///
-	AXISV, ///
-	AXISPOV ///
+	AxisX, ///
+	AxisY, ///
+	AxisZ, ///
+	AxisR, ///
+	AxisU, ///
+	AxisV, ///
+	AxisPOV ///
 }
 
 
+/// EventType
+enum EventType
+{
+	Closed,
+	Resized,
+	LostFocus,
+	GainedFocus,
+	TextEntered,
+	KeyPressed,
+	KeyReleased,
+	MouseWheelMoved,
+	MouseButtonPressed,
+	MouseButtonReleased,
+	MouseMoved,
+	MouseEntered,
+	MouseLeft,
+	JoyButtonPressed,
+	JoyButtonReleased,
+	JoyMoved
+
+}
 
 /**
 *	Event defines a system event and its parameters
 */
 align(1) struct Event
 {
-	enum EventType
-	{
-		CLOSED,
-		RESIZED,
-		LOSTFOCUS,
-		GAINEDFOCUS,
-		TEXTENTERED,
-		KEYPRESSED,
-		KEYRELEASED,
-		MOUSEWHEELMOVED,
-		MOUSEBUTTONPRESSED,
-		MOUSEBUTTONRELEASED,
-		MOUSEMOVED,
-		MOUSEENTERED,
-		MOUSELEFT,
-		JOYBUTTONPRESSED,
-		JOYBUTTONRELEASED,
-		JOYMOVED
-	}
-
 	/**
 	*	Enumeration of the different types of events. Accessing a value of another event that the one received (e.g. Event.Size.Width when receiving an KEYPRESSED event) will result in undefined behavior.
 	*		$(UL
@@ -324,7 +325,4 @@ align(1) struct Event
 		}
 		SSize Size;
 	}
-} 
-
-
- 
+}

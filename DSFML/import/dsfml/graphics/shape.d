@@ -37,7 +37,7 @@ import dsfml.graphics.drawableimpl;
 *	helper functions to draw simple shapes like
 *	lines, rectangles, circles, etc.
 */
-class Shape : Drawableimpl!("sfShape")
+class Shape : DrawableImpl!("sfShape")
 {
 private:
 	this (void* ptr)

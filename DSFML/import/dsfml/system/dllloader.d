@@ -40,6 +40,7 @@ else
 	version (Windows)
 	{
 		import std.c.windows.windows;
+		import std.windows.syserror; // for error strings
 		alias HMODULE MODULEHANDLE; 
 	}
 	version (linux)
@@ -181,7 +182,13 @@ private:
 			}
 		}
 		if (m_lib is null)
+		{
 			report("Cannot open library", m_libPath, null);
+			version (Windows)
+			{
+				report("Windows error message: " ~ sysErrorString(GetLastError()), m_libPath, null);
+			}
+		}
 	}
 	
 	version (Tango)

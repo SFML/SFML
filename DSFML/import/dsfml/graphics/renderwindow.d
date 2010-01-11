@@ -66,7 +66,7 @@ public:
 	*		windowStyle = Window style (Resize | Close by default)
 	*		settings = Context settings (default is default ContextSettings values)
 	*/
-	this(VideoMode mode, string title, uint windowStyle = Style.RESIZE | Style.CLOSE, ContextSettings settings = ContextSettings())
+	this(VideoMode mode, string title, uint windowStyle = Style.Default, ContextSettings settings = ContextSettings())
 	{
 		super(sfRenderWindow_Create(mode, toStringz(title), windowStyle, &settings));
 		m_input = new Input(sfRenderWindow_GetInput(m_ptr));
@@ -102,7 +102,7 @@ public:
 	*		settings = Context settings (default is default ContextSettings values)
 	*
 	*/
-	void create(VideoMode mode, string title, uint windowStyle = Style.RESIZE | Style.CLOSE, ContextSettings settings = ContextSettings())
+	void create(VideoMode mode, string title, uint windowStyle = Style.Default, ContextSettings settings = ContextSettings())
 	{
 		if (m_ptr !is null)
 			dispose();

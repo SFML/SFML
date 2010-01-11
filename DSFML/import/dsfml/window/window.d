@@ -40,11 +40,13 @@ import dsfml.system.stringutil;
 */
 enum Style
 {
-	NONE		= 0,	  /// No border / title bar (this flag and all others are mutually exclusive)
-	TITLEBAR	= 1 << 0, /// Title bar + fixed border
-	RESIZE	 = 1 << 1, /// Titlebar + resizable border + maximize button
-	CLOSE	  = 1 << 2, /// Titlebar + close button
-	FULLSCREEN = 1 << 3  /// Fullscreen mode (this flag and all others are mutually exclusive)
+	None		= 0,	  /// No border / title bar (this flag and all others are mutually exclusive)
+	Titlebar	= 1 << 0, /// Title bar + fixed border
+	Resize		= 1 << 1, /// Titlebar + resizable border + maximize button
+	Close		= 1 << 2, /// Titlebar + close button
+	Fullscreen	= 1 << 3, /// Fullscreen mode (this flag and all others are mutually exclusive)
+	
+	Default		= Titlebar | Resize | Close /// Default window style
 }
 
 
@@ -85,7 +87,7 @@ public:
 	*		windowStyle = Window style (Resize | Close by default)
 	*		settings = Context settings (default is default ContextSettings values)
 	*/
-	this(VideoMode mode, string title, Style windowStyle = Style.RESIZE | Style.CLOSE, ContextSettings settings = ContextSettings())
+	this(VideoMode mode, string title, Style windowStyle = Style.Default, ContextSettings settings = ContextSettings())
 	{
 		super(sfWindow_Create(mode, toStringz(title), windowStyle, settings));
 	}
@@ -119,7 +121,7 @@ public:
 	*		windowStyle = Window style (Resize | Close by default)
 	*		settings = Context settings (default is default ContextSettings values)
 	*/
-	void create(VideoMode mode, string title, Style windowStyle = Style.RESIZE | Style.CLOSE, ContextSettings settings = ContextSettings())
+	void create(VideoMode mode, string title, Style windowStyle = Style.Default, ContextSettings settings = ContextSettings())
 	{
 		if (m_ptr !is null)
 			dispose();

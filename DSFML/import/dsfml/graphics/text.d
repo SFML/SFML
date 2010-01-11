@@ -64,7 +64,7 @@ enum TextStyle
 *	See_Also:
 *		IDrawable
 */
-class Text : Drawableimpl!("sfText")
+class Text : DrawableImpl!("sfText")
 {
 private:
 	Font m_font;

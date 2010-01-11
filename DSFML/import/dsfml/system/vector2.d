@@ -36,16 +36,6 @@ struct Vector2(T)
 	T x;
 	T y;
 
-	static Vector2 opCall(T x, T y)
-	{
-		Vector2!(T) ret;
-		
-		ret.x = x;
-		ret.y = y;
-		
-		return ret;
-	}
-
 	/// unary (-) overload
 	Vector2 opNeg()
 	{
@@ -71,19 +61,19 @@ struct Vector2(T)
 	/// (+) overload
 	Vector2 opAdd(Vector2 other)
 	{
-		return Vector2!(T)( (x + other.x), (y + other.y) );
+		return Vector2!(T)( cast(T)(x + other.x), cast(T)(y + other.y) );
 	}
 
 	/// (-) overload
 	Vector2 opSub(Vector2 other)
 	{
-		return Vector2!(T) ( (x - other.x), (y - other.y) );
+		return Vector2!(T) ( cast(T)(x - other.x), cast(T)(y - other.y) );
 	}
 	
 	/// (*) overload
 	Vector2 opMul(int i)
 	{
-		return Vector2!(T) ( (x * i), (y * i) );
+		return Vector2!(T) ( cast(T)(x * i), cast(T)(y * i) );
 	}
 
 	/// (*=) overload
@@ -97,7 +87,7 @@ struct Vector2(T)
 	/// (/) overload
 	Vector2 opDiv(int i)
 	{
-		return Vector2!(T) ( (x / i), (y / i));
+		return Vector2!(T) ( cast(T)(x / i), cast(T)(y / i));
 	}
 
 	/// (/=) overload

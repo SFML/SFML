@@ -41,7 +41,7 @@ import	dsfml.graphics.idrawable,
 *	Package base class of all drawable.
 *	Provide implementation of IDrawable and functions aliases. 
 */
-package class Drawableimpl(alias symbol) : DSFMLObject, IDrawable
+package class DrawableImpl(alias symbol) : DSFMLObject, IDrawable
 {
 protected:
 	this()

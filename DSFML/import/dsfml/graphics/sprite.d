@@ -40,7 +40,7 @@ import dsfml.system.vector2;
 *	See_Also:
 *		IDrawable
 */
-class Sprite : Drawableimpl!("sfSprite")
+class Sprite : DrawableImpl!("sfSprite")
 {
 private:
 	Image m_image;	  	//< Image used to draw the sprite
@@ -72,7 +72,7 @@ public:
 	{
 		super();
 		m_image = img;
-		sfSprite_SetImage(m_ptr, img.getNativePointer);
+		sfSprite_SetImage(m_ptr, img.getNativePointer, true);
 		setX(left);
 		setY(top);
 		setScaleX(scaleX);
@@ -86,11 +86,12 @@ public:
 	*
 	*	Params:
 	*		img = New image
+	*		adjustToNewSize = adjust sprite subrect to new image size
 	*/
-	void setImage(Image img)
+	void setImage(Image img, bool adjustToNewSize = false)
 	{
 		assert(img !is null, "Trying to set a null image.");
-		sfSprite_SetImage(m_ptr, img.getNativePointer);
+		sfSprite_SetImage(m_ptr, img.getNativePointer, adjustToNewSize);
 		m_image = img;
 	}
 
@@ -102,8 +103,7 @@ public:
 	*/	
 	void setSubRect(IntRect rect)
 	{
-		IntRect r = rect;
-		sfSprite_SetSubRect(m_ptr, &r);
+		sfSprite_SetSubRect(m_ptr, &rect);
 		m_subRect = rect;
 	}
 
@@ -212,7 +212,7 @@ private:
 	
 	extern (C)
 	{
-		typedef void function(void*, void*) pf_sfSprite_SetImage;
+		typedef void function(void*, void*, bool) pf_sfSprite_SetImage;
 		typedef void function(void*, IntRect*) pf_sfSprite_SetSubRect;
 		typedef void function(void*, float, float) pf_sfSprite_Resize;
 		typedef void function(void*, int) pf_sfSprite_FlipX;
