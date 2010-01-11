@@ -147,6 +147,17 @@ abstract class SoundStream : SoundSource!("sfSoundStream")
 	}
 
 	/**
+	 *	Set the current playing position of a music
+	 *
+	 *	Params:
+	 *	    timeOffset = New playing position, expressed in seconds
+	 */
+	void setPlayingOffset(float timeOffset)
+	{
+		sfSoundStream_SetPlayingOffset(m_ptr, timeOffset);
+	}
+	
+	/**
 	*	Tell whether or not the stream is looping
 	*
 	*	Returns:
@@ -188,7 +199,7 @@ protected:
 		m_channelsCount = channelsCount;
 		m_sampleRate = sampleRate;
 
-		m_ptr = sfSoundStream_Create(&externalOnStart, &externalOnGetData, channelsCount, sampleRate, &m_id); // TODO: hack
+		m_ptr = sfSoundStream_Create(&externalOnGetData, &externalOnSeek, channelsCount, sampleRate, &m_id); // TODO: hack
 
 		m_mutex = new Mutex();
 		
@@ -222,7 +233,8 @@ protected:
 private:
 
 	// Called sync when user calling play()
-	extern(C) static int externalOnStart(void* user)
+	// FIXME: this needs to be transformed from OnStart to OnSeek
+	extern(C) static void externalOnSeek(float t, void* user)
 	{
 		int id;
 		if ((id = *cast(int*) user) in s_instances)
@@ -230,7 +242,7 @@ private:
 			SoundStream temp = s_instances[id];
 			return (temp.m_flag = temp.onStart());
 		}
-		return true;
+//		return true;
 	}
 	
 	// C Thread callback (no allocation can be done)
@@ -324,10 +336,10 @@ private:
 	{
 		struct sfSoundStreamChunk{ short* Samples; uint NbSamples; }
 		
-		alias int function(void*) sfSoundStreamStartCallback;
+		alias void function(float, void*) sfSoundStreamSeekCallback;
 		alias int function (sfSoundStreamChunk*, void*) sfSoundStreamGetDataCallback;
 		
-		alias void* function(sfSoundStreamStartCallback, sfSoundStreamGetDataCallback, uint, uint, void*) pf_sfSoundStream_Create;
+		alias void* function(sfSoundStreamGetDataCallback, sfSoundStreamSeekCallback, uint, uint, void*) pf_sfSoundStream_Create;
 		alias void function(void*) pf_sfSoundStream_Destroy;
 		alias void function(void*) pf_sfSoundStream_Play;
 		alias void function(void*) pf_sfSoundStream_Pause;
@@ -335,6 +347,7 @@ private:
 		alias uint function(void*) pf_sfSoundStream_GetChannelsCount;
 		alias uint function(void*) pf_sfSoundStream_GetSampleRate;
 		alias float function(void*) pf_sfSoundStream_GetPlayingOffset;
+		alias void function(void*, float) pf_sfSoundStream_SetPlayingOffset;
 		alias int function(void*) pf_sfSoundStream_GetLoop;
 		alias void function(void*, int) pf_sfSoundStream_SetLoop;
 
@@ -347,6 +360,7 @@ private:
 		static pf_sfSoundStream_GetChannelsCount sfSoundStream_GetChannelsCount;
 		static pf_sfSoundStream_GetSampleRate sfSoundStream_GetSampleRate;
 		static pf_sfSoundStream_GetPlayingOffset sfSoundStream_GetPlayingOffset;
+		static pf_sfSoundStream_SetPlayingOffset sfSoundStream_SetPlayingOffset;
 		static pf_sfSoundStream_GetLoop sfSoundStream_GetLoop;
 		static pf_sfSoundStream_SetLoop sfSoundStream_SetLoop;
 	}
@@ -366,6 +380,7 @@ private:
 		sfSoundStream_GetChannelsCount = cast(pf_sfSoundStream_GetChannelsCount)dll.getSymbol("sfSoundStream_GetChannelsCount");
 		sfSoundStream_GetSampleRate = cast(pf_sfSoundStream_GetSampleRate)dll.getSymbol("sfSoundStream_GetSampleRate");
 		sfSoundStream_GetPlayingOffset = cast(pf_sfSoundStream_GetPlayingOffset)dll.getSymbol("sfSoundStream_GetPlayingOffset");
+		sfSoundStream_SetPlayingOffset = cast(pf_sfSoundStream_SetPlayingOffset)dll.getSymbol("sfSoundStream_SetPlayingOffset");
 		sfSoundStream_GetLoop = cast(pf_sfSoundStream_GetLoop)dll.getSymbol("sfSoundStream_GetLoop");
 		sfSoundStream_SetLoop = cast(pf_sfSoundStream_SetLoop)dll.getSymbol("sfSoundStream_SetLoop");
 	}

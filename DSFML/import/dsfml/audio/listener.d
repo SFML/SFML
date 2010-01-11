@@ -109,44 +109,41 @@ class Listener
 	}
 
 	/**
-	*	Change the orientation of the listener (the point
-	*	he must look at).
-	*	The default target is (0, 0, -1)
+	*	Change the orientation of the listener
+	*	The default direction is (0, 0, -1)
 	*	
 	*	Params:	
-	*		targetX = X position of the point the listener must look at
-	*		targetY = X position of the point the listener must look at
-	*		targetZ = X position of the point the listener must look at
+	*		directionX = X component of the listener's direction
+	*		directionY = Y component of the listener's direction
+	*		directionZ = Z component of the listener's direction
 	*/
-	static void setTarget(float targetX, float targetY, float targetZ)
+	static void setDirection(float directionX, float directionY, float directionZ)
 	{
-		sfListener_SetTarget(targetX, targetY, targetZ);
+		sfListener_SetDirection(directionX, directionY, directionZ);
 	}
 
 	/**
-	*	Change the orientation of the listener (the point
-	*	he must look at).
-	*	The default target is (0, 0, -1)
+	*	Change the orientation of the listener
+	*	The default direction is (0, 0, -1)
 	*	
 	*	Params:
-	*		target = Position of the point the listener must look at	
+	*		direction = Position of the point the listener must look at	
 	*/
-	static void setTarget(Vector3f position)
+	static void setDirection(Vector3f position)
 	{
-		sfListener_SetTarget(position.x, position.y, position.z);
+		sfListener_SetDirection(position.x, position.y, position.z);
 	}
 
 	/**
-	*	Get the current orientation of the listener (the point
-	*	he's looking at)
+	*	Get the current orientation of the listener
 	*
 	*	Returns:
 	*		Position of the point the listener is looking at	
 	*/
-	static Vector3f getTarget()
+	static Vector3f getDirection()
 	{
 		Vector3f ret;
-		sfListener_GetTarget(&ret.x, &ret.y, &ret.z);
+		sfListener_GetDirection(&ret.x, &ret.y, &ret.z);
 		return ret;
 	}
 
@@ -160,15 +157,15 @@ private:
 		typedef float function() pf_sfListener_GetGlobalVolume;
 		typedef void function(float, float, float) pf_sfListener_SetPosition;
 		typedef void function(float*, float*, float*) pf_sfListener_GetPosition;
-		typedef void function(float, float, float) pf_sfListener_SetTarget;
-		typedef void function(float*, float*, float*) pf_sfListener_GetTarget;
+		typedef void function(float, float, float) pf_sfListener_SetDirection;
+		typedef void function(float*, float*, float*) pf_sfListener_GetDirection;
 		
 		static pf_sfListener_SetGlobalVolume sfListener_SetGlobalVolume;
 		static pf_sfListener_GetGlobalVolume sfListener_GetGlobalVolume;
 		static pf_sfListener_SetPosition sfListener_SetPosition;
 		static pf_sfListener_GetPosition sfListener_GetPosition;
-		static pf_sfListener_SetTarget sfListener_SetTarget;
-		static pf_sfListener_GetTarget sfListener_GetTarget;
+		static pf_sfListener_SetDirection sfListener_SetDirection;
+		static pf_sfListener_GetDirection sfListener_GetDirection;
 	}
 
 	static this()
@@ -182,7 +179,7 @@ private:
 		sfListener_GetGlobalVolume = cast(pf_sfListener_GetGlobalVolume)dll.getSymbol("sfListener_GetGlobalVolume");
 		sfListener_SetPosition = cast(pf_sfListener_SetPosition)dll.getSymbol("sfListener_SetPosition");
 		sfListener_GetPosition = cast(pf_sfListener_GetPosition)dll.getSymbol("sfListener_GetPosition");
-		sfListener_SetTarget = cast(pf_sfListener_SetTarget)dll.getSymbol("sfListener_SetTarget");
-		sfListener_GetTarget = cast(pf_sfListener_GetTarget)dll.getSymbol("sfListener_GetTarget");
+		sfListener_SetDirection = cast(pf_sfListener_SetDirection)dll.getSymbol("sfListener_SetDirection");
+		sfListener_GetDirection = cast(pf_sfListener_GetDirection)dll.getSymbol("sfListener_GetDirection");
 	}
 }
