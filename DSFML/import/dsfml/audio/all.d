@@ -33,5 +33,4 @@ public import
 	dsfml.audio.soundbuffer,
 	dsfml.audio.soundbufferrecorder,
 	dsfml.audio.soundrecorder,
-	dsfml.audio.soundstatus,
 	dsfml.audio.soundstream;

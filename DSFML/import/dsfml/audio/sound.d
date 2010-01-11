@@ -27,7 +27,7 @@
 module dsfml.audio.sound;
 
 import dsfml.audio.soundbuffer;
-import dsfml.audio.soundstatus;
+import dsfml.audio.soundsource;
 
 import dsfml.system.common;
 import dsfml.system.exception;
@@ -37,14 +37,14 @@ import dsfml.system.vector3;
 *	Sound defines the properties of the sound such as position,
 *	volume, pitch, etc.
 */
-class Sound : DSFMLObject
+class Sound : SoundSource!("sfSound")
 {
 	/**
 	*	Default constructor
 	*/
 	this()
 	{
-		super(sfSound_Create());
+		super();
 	}
 
 	/**
@@ -67,19 +67,14 @@ class Sound : DSFMLObject
 		if (buffer is null)
 			throw new NullParameterException("NullParameterException : SoundBuffer is null.");
 			
-		super(sfSound_Create());
+		super();
 		sfSound_SetBuffer(m_ptr, buffer.getNativePointer());
 		sfSound_SetLoop(m_ptr, loop);
-		sfSound_SetPitch(m_ptr, pitch);
-		sfSound_SetVolume(m_ptr, volume);
-		sfSound_SetPosition(m_ptr, x, y, z);
+		setPitch(pitch);
+		setVolume(volume);
+		setPosition(x, y, z);
 	}
 
-
-	override void dispose()
-	{
-		sfSound_Destroy(m_ptr);
-	}
 
 	/**
 	*	Play the sound
@@ -133,87 +128,6 @@ class Sound : DSFMLObject
 	}
 
 	/**
-	*	Set the sound pitch.
-	*	The default pitch is 1
-	*
-	*	Params: 
-	*		pitch = New pitch
-	*/
-	void setPitch(float pitch)
-	{
-		sfSound_SetPitch(m_ptr, pitch);
-	}
-
-	/**
-	*	Set the sound volume.
-	*	The default volume is 100
-	*
-	*	Params: 
-	*		volume = Volume (in range [0, 100])
-	*/
-	void setVolume(float volume)
-	in
-	{
-		assert(volume >= 0 && volume <= 100);
-	}
-	body
-	{
-		sfSound_SetVolume(m_ptr, volume);
-	}
-
-	/**
-	*	Set the sound position.
-	*	The default position is (0, 0, 0)
-	*
-	*	Params: 
-	*		x = X position of the sound in the world
-	*		y = Y position of the sound in the world
-	*		z = Z position of the sound in the world
-	*/
-	void setPosition(float x, float y, float z)
-	{
-		sfSound_SetPosition(m_ptr, x, y, z);
-	}
-
-	/**
-	*	Set the sound position.
-	*	The default position is (0, 0, 0)
-	*	
-	*	Params :
-	*		position = new position				
-	*/		
-	void setPosition(Vector3f position)
-	{
-		sfSound_SetPosition(m_ptr, position.x, position.y, position.z);
-	}
-
-	/**
-	*	Set the minimum distance - closer than this distance
-	*	the listener will hear the sound at its maximum volume.
-	*	The default distance is 1.0
-	*	
-	*	Params:	
-	*		minDistance = new minimum distance for the sound 
-	*/		
-	void setMinDistance(float minDistance)
-	{
-		sfSound_SetMinDistance(m_ptr, minDistance);
-	}
-
-	/**
-	*	Set the attenuation factor - the higher the attenuation, the
-	*	more the sound will be attenuated with distance from listener.
-	*	The default attenuation factor 1.0
-	*	
-	*	Params:
-	*		attenuation = new attenuation factor for the sound			
-	*/		
-	void setAttenuation(float attenuation)
-	{
-		sfSound_SetAttenuation(m_ptr, attenuation);
-	}
-
-	/**
 	*	Set the current playing offset of a sound
 	*	
 	*	Params:
@@ -249,78 +163,6 @@ class Sound : DSFMLObject
 	}
 
 	/**
-	*	Get the pitch
-	*
-	*	Returns: 
-	*		Pitch value
-	*/
-	float getPitch() 
-	{
-		return sfSound_GetPitch(m_ptr);
-	}
-
-	/**
-	*	Get the volume
-	*
-	*	Returns: 
-	*		Volume value (in range [1, 100])
-	*/
-	float getVolume() 
-	{
-		return sfSound_GetVolume(m_ptr);
-	}
-
-	/**
-	*	Get the sound position
-	*
-	*	Params:	
-	*		x = X position of the sound in the world
-	*		y = Y position of the sound in the world
-	*		z = Z position of the sound in the world
-	*/
-	Vector3f getPosition() 
-	{
-		Vector3f ret;
-		sfSound_GetPosition(m_ptr, &ret.x, &ret.y, &ret.z);
-		return ret;
-	}
-
-	/**
-	*	Get the minimum distance
-	*
-	*	Returns:
-	*	  Minimum distance for the sound
-	*/
-	float getMinDistance()
-	{
-		return sfSound_GetMinDistance(m_ptr);
-	}
-
-	/**
-	*	Get the attenuation factor
-	*
-	*	Returns:
-	*		Attenuation factor of the sound
-	*
-	*/
-	float getAttenuation() 
-	{
-		return sfSound_GetAttenuation(m_ptr);
-	}
-
-
-	/**
-	*	Get the status of the sound (stopped, paused, playing)
-	*
-	*	Returns: 
-	*		Current status of the sound
-	*/
-	SoundStatus getStatus() 
-	{
-		return sfSound_GetStatus(m_ptr);
-	}
-
-	/**
 	*	Get the current playing position of the sound
 	*
 	*	Returns:  
@@ -331,31 +173,6 @@ class Sound : DSFMLObject
 		return sfSound_GetPlayingOffset(m_ptr);
 	}
 
-	/**
-	 * Make the sound's position relative to the listener's position, or absolute.
-	 * The default value is false (absolute)
-	 * 
-	 *	Params:
-	 *		relative = True to set the position relative, false to set it absolute
-	 */
-	void setRelativeToListener(bool relative)
-	{
-		sfSound_SetRelativeToListener(m_ptr, relative);
-	}
-
-	/**
-	 * Tell if the sound's position is relative to the listener's
-	 * position, or if it's absolute
-	 * 
-	 *	Returns:
-	 *		true if the position is relative, sfFalse if it's absolute
-	 */
-	bool isRelativeToListener()
-	{
-		return sfSound_IsRelativeToListener(m_ptr);
-	}
-
-
 private:
 	SoundBuffer m_buffer;
 	
@@ -363,8 +180,6 @@ private:
 
 	extern (C)
 	{
-		typedef void* function() pf_sfSound_Create;
-		typedef void function(void*) pf_sfSound_Destroy;
 		typedef void function(void*) pf_sfSound_Play;
 		typedef void function(void*) pf_sfSound_Pause;
 		typedef void function(void*) pf_sfSound_Stop;
@@ -372,25 +187,9 @@ private:
 		typedef void* function(void*) pf_sfSound_GetBuffer;
 		typedef void function(void*, int) pf_sfSound_SetLoop;
 		typedef int function(void*) pf_sfSound_GetLoop;
-		typedef SoundStatus function(void*) pf_sfSound_GetStatus;
-		typedef void function(void*, float) pf_sfSound_SetPitch;
-		typedef void function(void*, float) pf_sfSound_SetVolume;
-		typedef void function(void*, float, float, float) pf_sfSound_SetPosition;
-		typedef float function(void*) pf_sfSound_GetPitch;
-		typedef float function(void*) pf_sfSound_GetVolume;
-		typedef void function(void*, float*, float*, float*) pf_sfSound_GetPosition;
 		typedef float function(void*) pf_sfSound_GetPlayingOffset;
-		typedef float function(void*) pf_sfSound_GetMinDistance;
-		typedef float function(void*) pf_sfSound_GetAttenuation;
-		typedef void function(void*, float) pf_sfSound_SetMinDistance;
-		typedef void function(void*, float) pf_sfSound_SetAttenuation;
 		typedef void function(void*, float) pf_sfSound_SetPlayingOffset;
 		
-		static void function(void*, bool)				sfSound_SetRelativeToListener;
-		static bool function(void*)						sfSound_IsRelativeToListener;
-		
-		static pf_sfSound_Create sfSound_Create;
-		static pf_sfSound_Destroy sfSound_Destroy;
 		static pf_sfSound_Play sfSound_Play;
 		static pf_sfSound_Pause sfSound_Pause;
 		static pf_sfSound_Stop sfSound_Stop;
@@ -398,18 +197,7 @@ private:
 		static pf_sfSound_GetBuffer sfSound_GetBuffer;
 		static pf_sfSound_SetLoop sfSound_SetLoop;
 		static pf_sfSound_GetLoop sfSound_GetLoop;
-		static pf_sfSound_GetStatus sfSound_GetStatus;
-		static pf_sfSound_SetPitch sfSound_SetPitch;
-		static pf_sfSound_SetVolume sfSound_SetVolume;
-		static pf_sfSound_SetPosition sfSound_SetPosition;
-		static pf_sfSound_GetPitch sfSound_GetPitch;
-		static pf_sfSound_GetVolume sfSound_GetVolume;
-		static pf_sfSound_GetPosition sfSound_GetPosition;
 		static pf_sfSound_GetPlayingOffset sfSound_GetPlayingOffset;
-		static pf_sfSound_GetMinDistance sfSound_GetMinDistance;
-		static pf_sfSound_GetAttenuation sfSound_GetAttenuation;
-		static pf_sfSound_SetMinDistance sfSound_SetMinDistance;
-		static pf_sfSound_SetAttenuation sfSound_SetAttenuation;
 		static pf_sfSound_SetPlayingOffset sfSound_SetPlayingOffset;
 	}
 
@@ -420,8 +208,6 @@ private:
 	else
 		DllLoader dll = DllLoader.load("csfml-audio");
 		
-		sfSound_Create = cast(pf_sfSound_Create)dll.getSymbol("sfSound_Create");
-		sfSound_Destroy = cast(pf_sfSound_Destroy)dll.getSymbol("sfSound_Destroy");
 		sfSound_Play = cast(pf_sfSound_Play)dll.getSymbol("sfSound_Play");
 		sfSound_Pause = cast(pf_sfSound_Pause)dll.getSymbol("sfSound_Pause");
 		sfSound_Stop = cast(pf_sfSound_Stop)dll.getSymbol("sfSound_Stop");
@@ -429,22 +215,7 @@ private:
 		sfSound_GetBuffer = cast(pf_sfSound_GetBuffer)dll.getSymbol("sfSound_GetBuffer");
 		sfSound_SetLoop = cast(pf_sfSound_SetLoop)dll.getSymbol("sfSound_SetLoop");
 		sfSound_GetLoop = cast(pf_sfSound_GetLoop)dll.getSymbol("sfSound_GetLoop");
-		sfSound_GetStatus = cast(pf_sfSound_GetStatus)dll.getSymbol("sfSound_GetStatus");
-		sfSound_SetPitch = cast(pf_sfSound_SetPitch)dll.getSymbol("sfSound_SetPitch");
-		sfSound_SetVolume = cast(pf_sfSound_SetVolume)dll.getSymbol("sfSound_SetVolume");
-		sfSound_SetPosition = cast(pf_sfSound_SetPosition)dll.getSymbol("sfSound_SetPosition");
-		sfSound_GetPitch = cast(pf_sfSound_GetPitch)dll.getSymbol("sfSound_GetPitch");
-		sfSound_GetVolume = cast(pf_sfSound_GetVolume)dll.getSymbol("sfSound_GetVolume");
-		sfSound_GetPosition = cast(pf_sfSound_GetPosition)dll.getSymbol("sfSound_GetPosition");
 		sfSound_GetPlayingOffset = cast(pf_sfSound_GetPlayingOffset)dll.getSymbol("sfSound_GetPlayingOffset");
-		sfSound_GetMinDistance = cast(pf_sfSound_GetMinDistance)dll.getSymbol("sfSound_GetMinDistance");
-		sfSound_GetAttenuation = cast(pf_sfSound_GetAttenuation)dll.getSymbol("sfSound_GetAttenuation");
-		sfSound_SetMinDistance = cast(pf_sfSound_SetMinDistance)dll.getSymbol("sfSound_SetMinDistance");
-		sfSound_SetAttenuation = cast(pf_sfSound_SetAttenuation)dll.getSymbol("sfSound_SetAttenuation");
 		sfSound_SetPlayingOffset = cast(pf_sfSound_SetPlayingOffset)dll.getSymbol("sfSound_SetPlayingOffset");
-		
-		mixin(loadFromSharedLib("sfSound_SetRelativeToListener"));
-		mixin(loadFromSharedLib("sfSound_IsRelativeToListener"));
-
 	}
 }

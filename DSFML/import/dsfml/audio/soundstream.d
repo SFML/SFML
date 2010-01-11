@@ -37,7 +37,7 @@ import dsfml.system.sleep;
 import core.thread;
 
 import dsfml.audio.sound;
-import dsfml.audio.soundstatus;
+import dsfml.audio.soundsource;
 
 /**
 *	SoundStream is a streamed sound, ie samples are acquired
@@ -69,7 +69,7 @@ import dsfml.audio.soundstatus;
 *	}
 *	------------------------
 */
-abstract class SoundStream : DSFMLObject
+abstract class SoundStream : SoundSource!("sfSoundStream")
 {
 	override void dispose()
 	{
@@ -86,7 +86,7 @@ abstract class SoundStream : DSFMLObject
 		m_flag = true;			
 		sfSoundStream_Play(m_ptr);
 		
-		if (getStatus() != SoundStatus.PAUSED)
+		if (getStatus() != SoundStatus.Paused)
 		{
 			m_t = new Thread(&threadPoll);
 			m_t.start();
@@ -136,159 +136,6 @@ abstract class SoundStream : DSFMLObject
 	}
 
 	/**
-	*	Get the current status of the stream
-	*	
-	*	Returns:
-	*		Current stream status			
-	*/		
-	SoundStatus getStatus()
-	{
-		return sfSoundStream_GetStatus(m_ptr);
-	}
-	
-	/**
-	*	Set the sound pitch.
-	*	The default pitch is 1
-	*
-	*	Params:
-	*		pitch = New pitch
-	*/
-	void setPitch(float pitch)
-	{
-		sfSoundStream_SetPitch(m_ptr, pitch);
-	}
-
-	/**
-	*	Set the sound volume.
-	*	The default volume is 100
-	*
-	*	Params:
-	*		volume = Volume (in range [0, 100])
-	*/
-	void setVolume(float volume)
-	in
-	{
-		assert(volume >= 0.f && volume <= 100.f);
-	}
-	body
-	{
-		sfSoundStream_SetVolume(m_ptr, volume);
-	}
-
-	/*
-	*	Set the sound position (take 3 values).
-	*	The default position is (0, 0, 0)
-	*
-	*	Params:
-	*	  x, y, z = Position of the sound in the world
-	*/
-
-	void setPosition(float x, float y, float z)
-	{
-		sfSoundStream_SetPosition(m_ptr, x, y, z);
-	}
-
-	/**
-	*	Set the sound position (take 3 values).
-	*	The default position is (0, 0, 0)
-	*
-	*	Params:
-	*	 vec = Position of the sound in the world
-	*
-	*/
-
-	void setPosition(Vector3f vec)
-	{
-		sfSoundStream_SetPosition(m_ptr, vec.x, vec.y, vec.z);
-	}
-
-	/**
-	*	Set the minimum distance - closer than this distance,
-	*	the listener will hear the sound at its maximum volume.
-	*	The default minimum distance is 1.0
-	*
-	*	Params:
-	*		minDistance = New minimum distance for the sound
-	*/
-	void setMinDistance(float minDistance)
-	{
-		sfSoundStream_SetMinDistance(m_ptr, minDistance);
-	}
-
-	/**
-	*	Set the attenuation factor - the higher the attenuation, the
-	*	more the sound will be attenuated with distance from listener.
-	*	The default attenuation factor 1.0
-	*
-	*	Params: 
-	*		attenuation = New attenuation factor for the sound
-	*
-	*/
-	void setAttenuation(float attenuation)
-	{
-		sfSoundStream_SetAttenuation(m_ptr, attenuation);
-	}
-
-	/**
-	*	Get the pitch
-	*
-	*	Returns:
-	*		Pitch value
-	*/
-
-	float getPitch()
-	{
-		return sfSoundStream_GetPitch(m_ptr);
-	}
-	/**
-	*	Get the volume
-	*
-	*	Returns:
-	*		Volume value (in range [1, 100])
-	*
-	*/
-
-	float getVolume()
-	{
-		return sfSoundStream_GetVolume(m_ptr);
-	}
-
-	/**
-	*	Get the sound position
-	*	
-	*	Returns:
-	*		Sound position				
-	*/		
-	Vector3f getPosition()
-	{
-		Vector3f vec;
-		sfSoundStream_GetPosition(m_ptr, &vec.x, &vec.y, &vec.z);
-		return vec;
-	}
-
-	/**
-	*	Get the minimum distance
-	*	
-	*	Returns:
-	*		Get the minimum distance of the sound			
-	*/		
-	float getMinDistance()
-	{
-		return sfSoundStream_GetMinDistance(m_ptr);
-	}
-
-	/**
-	*	Get the attenuation
-	*	
-	*	Returns:
-	*		Get the attenuation of the sound			
-	*/		
-	float getAttenuation()
-	{
-		return sfSoundStream_GetAttenuation(m_ptr);
-	}
-
-	/**
 	*	Get the current playing offset of the stream
 	*	
 	*	Returns:
@@ -326,29 +173,6 @@ abstract class SoundStream : DSFMLObject
 			sfSoundStream_SetLoop(m_ptr, loop);
 	}
 	
-	/**
-	 * Make the sound stream's position relative to the listener's position, or absolute.
-	 * The default value is false (absolute)
-	 * 
-	 *	Params:
-	 *		relative = True to set the position relative, false to set it absolute
-	 */
-	void setRelativeToListener(bool relative)
-	{
-		sfSoundStream_SetRelativeToListener(m_ptr, relative);
-	}
-
-	/**
-	 * Tell if the sound stream's position is relative to the listener's
-	 * position, or if it's absolute
-	 * 
-	 *	Returns:
-	 *		true if the position is relative, sfFalse if it's absolute
-	 */
-	bool isRelativeToListener()
-	{
-		return sfSoundStream_IsRelativeToListener(m_ptr);
-	}
 
 protected:
 	/**
@@ -363,7 +187,8 @@ protected:
 	{
 		m_channelsCount = channelsCount;
 		m_sampleRate = sampleRate;
-		super(sfSoundStream_Create(&externalOnStart, &externalOnGetData, channelsCount, sampleRate, &m_id));
+
+		m_ptr = sfSoundStream_Create(&externalOnStart, &externalOnGetData, channelsCount, sampleRate, &m_id); // TODO: hack
 
 		m_mutex = new Mutex();
 		
@@ -502,30 +327,16 @@ private:
 		alias int function(void*) sfSoundStreamStartCallback;
 		alias int function (sfSoundStreamChunk*, void*) sfSoundStreamGetDataCallback;
 		
-		typedef void* function(sfSoundStreamStartCallback, sfSoundStreamGetDataCallback, uint, uint, void*) pf_sfSoundStream_Create;
-		typedef void function(void*) pf_sfSoundStream_Destroy;
-		typedef void function(void*) pf_sfSoundStream_Play;
-		typedef void function(void*) pf_sfSoundStream_Pause;
-		typedef void function(void*) pf_sfSoundStream_Stop;
-		typedef SoundStatus function(void*) pf_sfSoundStream_GetStatus;		
-		typedef uint function(void*) pf_sfSoundStream_GetChannelsCount;
-		typedef uint function(void*) pf_sfSoundStream_GetSampleRate;
-		typedef void function(void*, float) pf_sfSoundStream_SetPitch;
-		typedef void function(void*, float) pf_sfSoundStream_SetVolume;
-		typedef void function(void*, float, float, float) pf_sfSoundStream_SetPosition;		
-		typedef void function(void*, float) pf_sfSoundStream_SetMinDistance;
-		typedef void function(void*, float) pf_sfSoundStream_SetAttenuation;
-		typedef float function(void*) pf_sfSoundStream_GetPitch;
-		typedef float function(void*) pf_sfSoundStream_GetVolume;
-		typedef void function(void*, float*, float*, float*) pf_sfSoundStream_GetPosition;
-		typedef float function(void*) pf_sfSoundStream_GetMinDistance;
-		typedef float function(void*) pf_sfSoundStream_GetAttenuation;
-		typedef float function(void*) pf_sfSoundStream_GetPlayingOffset;
-		typedef int function(void*) pf_sfSoundStream_GetLoop;
-		typedef void function(void*, int) pf_sfSoundStream_SetLoop;
-
-		typedef bool function(void*)						pf_sfSoundStream_IsRelativeToListener;
-		typedef void function(void*, bool)					pf_sfSoundStream_SetRelativeToListener;
+		alias void* function(sfSoundStreamStartCallback, sfSoundStreamGetDataCallback, uint, uint, void*) pf_sfSoundStream_Create;
+		alias void function(void*) pf_sfSoundStream_Destroy;
+		alias void function(void*) pf_sfSoundStream_Play;
+		alias void function(void*) pf_sfSoundStream_Pause;
+		alias void function(void*) pf_sfSoundStream_Stop;
+		alias uint function(void*) pf_sfSoundStream_GetChannelsCount;
+		alias uint function(void*) pf_sfSoundStream_GetSampleRate;
+		alias float function(void*) pf_sfSoundStream_GetPlayingOffset;
+		alias int function(void*) pf_sfSoundStream_GetLoop;
+		alias void function(void*, int) pf_sfSoundStream_SetLoop;
 
 
 		static pf_sfSoundStream_Create sfSoundStream_Create;
@@ -533,26 +344,11 @@ private:
 		static pf_sfSoundStream_Play sfSoundStream_Play;
 		static pf_sfSoundStream_Pause sfSoundStream_Pause;
 		static pf_sfSoundStream_Stop sfSoundStream_Stop;
-		static pf_sfSoundStream_GetStatus sfSoundStream_GetStatus;	
 		static pf_sfSoundStream_GetChannelsCount sfSoundStream_GetChannelsCount;
 		static pf_sfSoundStream_GetSampleRate sfSoundStream_GetSampleRate;
-		static pf_sfSoundStream_SetPitch sfSoundStream_SetPitch;
-		static pf_sfSoundStream_SetVolume sfSoundStream_SetVolume;
-		static pf_sfSoundStream_SetPosition sfSoundStream_SetPosition;	
-		static pf_sfSoundStream_SetMinDistance sfSoundStream_SetMinDistance;
-		static pf_sfSoundStream_SetAttenuation sfSoundStream_SetAttenuation;
-		static pf_sfSoundStream_GetPitch sfSoundStream_GetPitch;
-		static pf_sfSoundStream_GetVolume sfSoundStream_GetVolume;
-		static pf_sfSoundStream_GetPosition sfSoundStream_GetPosition;
-		static pf_sfSoundStream_GetMinDistance sfSoundStream_GetMinDistance;
-		static pf_sfSoundStream_GetAttenuation sfSoundStream_GetAttenuation;
 		static pf_sfSoundStream_GetPlayingOffset sfSoundStream_GetPlayingOffset;
 		static pf_sfSoundStream_GetLoop sfSoundStream_GetLoop;
 		static pf_sfSoundStream_SetLoop sfSoundStream_SetLoop;
-		
-		
-		static pf_sfSoundStream_IsRelativeToListener	sfSoundStream_IsRelativeToListener;
-		static pf_sfSoundStream_SetRelativeToListener	sfSoundStream_SetRelativeToListener;
 	}
 
 	static this()
@@ -567,24 +363,10 @@ private:
 		sfSoundStream_Play = cast(pf_sfSoundStream_Play)dll.getSymbol("sfSoundStream_Play");
 		sfSoundStream_Pause = cast(pf_sfSoundStream_Pause)dll.getSymbol("sfSoundStream_Pause");
 		sfSoundStream_Stop = cast(pf_sfSoundStream_Stop)dll.getSymbol("sfSoundStream_Stop");
-		sfSoundStream_GetStatus = cast(pf_sfSoundStream_GetStatus)dll.getSymbol("sfSoundStream_GetStatus");
 		sfSoundStream_GetChannelsCount = cast(pf_sfSoundStream_GetChannelsCount)dll.getSymbol("sfSoundStream_GetChannelsCount");
 		sfSoundStream_GetSampleRate = cast(pf_sfSoundStream_GetSampleRate)dll.getSymbol("sfSoundStream_GetSampleRate");
-		sfSoundStream_SetPitch = cast(pf_sfSoundStream_SetPitch)dll.getSymbol("sfSoundStream_SetPitch");
-		sfSoundStream_SetVolume = cast(pf_sfSoundStream_SetVolume)dll.getSymbol("sfSoundStream_SetVolume");
-		sfSoundStream_SetPosition = cast(pf_sfSoundStream_SetPosition)dll.getSymbol("sfSoundStream_SetPosition");
-		sfSoundStream_SetMinDistance = cast(pf_sfSoundStream_SetMinDistance)dll.getSymbol("sfSoundStream_SetMinDistance");
-		sfSoundStream_SetAttenuation = cast(pf_sfSoundStream_SetAttenuation)dll.getSymbol("sfSoundStream_SetAttenuation");
-		sfSoundStream_GetPitch = cast(pf_sfSoundStream_GetPitch)dll.getSymbol("sfSoundStream_GetPitch");
-		sfSoundStream_GetVolume = cast(pf_sfSoundStream_GetVolume)dll.getSymbol("sfSoundStream_GetVolume");
-		sfSoundStream_GetPosition = cast(pf_sfSoundStream_GetPosition)dll.getSymbol("sfSoundStream_GetPosition");
-		sfSoundStream_GetMinDistance = cast(pf_sfSoundStream_GetMinDistance)dll.getSymbol("sfSoundStream_GetMinDistance");
-		sfSoundStream_GetAttenuation = cast(pf_sfSoundStream_GetAttenuation)dll.getSymbol("sfSoundStream_GetAttenuation");
 		sfSoundStream_GetPlayingOffset = cast(pf_sfSoundStream_GetPlayingOffset)dll.getSymbol("sfSoundStream_GetPlayingOffset");
 		sfSoundStream_GetLoop = cast(pf_sfSoundStream_GetLoop)dll.getSymbol("sfSoundStream_GetLoop");
 		sfSoundStream_SetLoop = cast(pf_sfSoundStream_SetLoop)dll.getSymbol("sfSoundStream_SetLoop");
-		
-		sfSoundStream_IsRelativeToListener	= cast(pf_sfSoundStream_IsRelativeToListener)	dll.getSymbol("sfSoundStream_IsRelativeToListener");
-		sfSoundStream_SetRelativeToListener	= cast(pf_sfSoundStream_SetRelativeToListener)	dll.getSymbol("sfSoundStream_SetRelativeToListener");
 	}
 }
