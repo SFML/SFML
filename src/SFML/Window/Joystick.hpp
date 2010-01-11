@@ -42,10 +42,20 @@ namespace priv
 ////////////////////////////////////////////////////////////
 struct JoystickState
 {
-    enum {MaxButtons = 32};
+    JoystickState()
+    {
+        // Default value for axes
+        for (int i = 0; i < Joy::AxisCount; ++i)
+            Axis[i] = 0.f;
+        Axis[Joy::AxisPOV] = -1.f;
 
-    float Axis[Joy::Count];    ///< Position on each axis in range [-100, 100] (except POV which is [0, 360])
-    bool  Buttons[MaxButtons]; ///< Status of each button (true = pressed)
+        // Default value for buttons
+        for (int i = 0; i < Joy::ButtonCount; ++i)
+            Buttons[i] = false;
+    }
+
+    float Axis[Joy::AxisCount];      ///< Position on each axis in range [-100, 100] (except POV which is [0, 360])
+    bool  Buttons[Joy::ButtonCount]; ///< Status of each button (true = pressed)
 };
 
 } // namespace priv

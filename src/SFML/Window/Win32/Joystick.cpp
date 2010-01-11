@@ -40,10 +40,12 @@ namespace priv
 void Joystick::Initialize(unsigned int index)
 {
     // Reset state
-    myIndex       = JOYSTICKID1;
-    myNbAxes      = 0;
-    myNbButtons   = 0;
-    myIsConnected = false;
+    myIndex            = JOYSTICKID1;
+    myNbButtons        = 0;
+    myIsConnected      = false;
+    myHasContinuousPOV = false;
+    for (int i = 0; i < Joy::AxisCount; ++i)
+        myAxes[i] = false;
 
     // Get the Index-th connected joystick
     MMRESULT error;
@@ -62,10 +64,18 @@ void Joystick::Initialize(unsigned int index)
                 myIsConnected = true;
                 JOYCAPS caps;
                 joyGetDevCaps(myIndex, &caps, sizeof(caps));
-                myNbAxes    = caps.wNumAxes;
                 myNbButtons = caps.wNumButtons;
-                if (myNbButtons > JoystickState::MaxButtons)
-                    myNbButtons = JoystickState::MaxButtons;
+                if (myNbButtons > Joy::ButtonCount)
+                    myNbButtons = Joy::ButtonCount;
+
+                myAxes[Joy::AxisX]   = true;
+                myAxes[Joy::AxisY]   = true;
+                myAxes[Joy::AxisZ]   = (caps.wCaps & JOYCAPS_HASZ) != 0;
+                myAxes[Joy::AxisR]   = (caps.wCaps & JOYCAPS_HASR) != 0;
+                myAxes[Joy::AxisU]   = (caps.wCaps & JOYCAPS_HASU) != 0;
+                myAxes[Joy::AxisV]   = (caps.wCaps & JOYCAPS_HASV) != 0;
+                myAxes[Joy::AxisPOV] = (caps.wCaps & JOYCAPS_HASPOV) != 0;
+                myHasContinuousPOV   = (caps.wCaps & JOYCAPS_POVCTS) != 0;
 
                 return;
             }
@@ -80,7 +90,7 @@ void Joystick::Initialize(unsigned int index)
 ////////////////////////////////////////////////////////////
 JoystickState Joystick::UpdateState()
 {
-    JoystickState state = {0};
+    JoystickState state;
 
     if (myIsConnected)
     {
@@ -90,8 +100,9 @@ JoystickState Joystick::UpdateState()
         {
             // Get the current joystick state
             JOYINFOEX pos;
-            pos.dwFlags = JOY_RETURNALL;
-            pos.dwSize  = sizeof(JOYINFOEX);
+            pos.dwFlags  = JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR | JOY_RETURNU | JOY_RETURNV | JOY_RETURNBUTTONS;
+            pos.dwFlags |= myHasContinuousPOV ? JOY_RETURNPOVCTS : JOY_RETURNPOV;
+            pos.dwSize   = sizeof(JOYINFOEX);
             if (joyGetPosEx(myIndex, &pos) == JOYERR_NOERROR)
             {
                 // Axes
@@ -103,7 +114,10 @@ JoystickState Joystick::UpdateState()
                 state.Axis[Joy::AxisV] = (pos.dwVpos - (caps.wVmax + caps.wVmin) / 2.f) * 200.f / (caps.wVmax - caps.wVmin);
 
                 // POV
-                state.Axis[Joy::AxisPOV] = pos.dwPOV / 100.f;
+                if (pos.dwPOV != 0xFFFF)
+                    state.Axis[Joy::AxisPOV] = pos.dwPOV / 100.f;
+                else
+                    state.Axis[Joy::AxisPOV] = -1.f;
 
                 // Buttons
                 for (unsigned int i = 0; i < GetButtonsCount(); ++i)
@@ -117,9 +131,9 @@ JoystickState Joystick::UpdateState()
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Joystick::GetAxesCount() const
+bool Joystick::HasAxis(Joy::Axis Axis) const
 {
-    return myNbAxes;
+    return myAxes[Axis];
 }
 
 

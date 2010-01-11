@@ -28,13 +28,6 @@
 #include <SFML/Window/Joystick.hpp>
 #include <sstream>
 
-#if defined(SFML_SYSTEM_LINUX)
-    #include <linux/joystick.h>
-    #include <fcntl.h>
-#elif defined(SFML_SYSTEM_FREEBSD)
-    // #include <sys/joystick.h> ?
-#endif
-
 
 namespace sf
 {
@@ -46,12 +39,18 @@ namespace priv
 void Joystick::Initialize(unsigned int index)
 {
     // Initial state
-    myNbAxes    = 0;
     myNbButtons = 0;
-    for (int i = 0; i < Joy::Count; ++i)
-        myState.Axis[i] = 0.f;
-    for (int i = 0; i < JoystickState::MaxButtons; ++i)
+    myPovX = 0;
+    myPovY = 0;
+    for (int i = 0; i < Joy::ButtonCount; ++i)
+    {
         myState.Buttons[i] = false;
+    }
+    for (int i = 0; i < Joy::AxisCount; ++i)
+    {
+        myState.Axis[i] = 0.f;
+        myAxes[i] = false;
+    }
 
     // Open the joystick handle
     std::ostringstream oss;
@@ -61,13 +60,32 @@ void Joystick::Initialize(unsigned int index)
     {
         // Use non-blocking mode
         fcntl(myDescriptor, F_SETFL, O_NONBLOCK);
-        
-        // Get number of axes and buttons
-        char nbAxes, nbButtons;
-        ioctl(myDescriptor, JSIOCGAXES,    &nbAxes);
+
+        // Get number of buttons
+        char nbButtons;
         ioctl(myDescriptor, JSIOCGBUTTONS, &nbButtons);
-        myNbAxes    = nbAxes;
         myNbButtons = nbButtons;
+        if (myNbButtons > Joy::ButtonCount)
+            myNbButtons = Joy::ButtonCount;
+
+        // Get the supported axes
+        char nbAxes;
+        ioctl(myDescriptor, JSIOCGAXES, &nbAxes);
+        ioctl(myDescriptor, JSIOCGAXMAP, myAxesMapping);
+        for (int i = 0; i < nbAxes; ++i)
+        {
+            switch (myAxesMapping[i])
+            {
+                case ABS_X :                      myAxes[Joy::AxisX]   = true; break;
+                case ABS_Y :                      myAxes[Joy::AxisY]   = true; break;
+                case ABS_Z : case ABS_THROTTLE :  myAxes[Joy::AxisZ]   = true; break;
+                case ABS_RZ: case ABS_RUDDER:     myAxes[Joy::AxisR]   = true; break;
+                case ABS_RX :                     myAxes[Joy::AxisU]   = true; break;
+                case ABS_RY :                     myAxes[Joy::AxisV]   = true; break;
+                case ABS_HAT0X : case ABS_HAT0Y : myAxes[Joy::AxisPOV] = true; break;
+                default : break;
+            }
+        }
     }
 }
 
@@ -85,11 +103,42 @@ JoystickState Joystick::UpdateState()
                 // An axis has been moved
                 case JS_EVENT_AXIS :
                 {
-                    if (joyState.number < Joy::Count)
-                        myState.Axis[joyState.number] = joyState.value * 100.f / 32767.f;
+                    switch (myAxesMapping[joyState.number])
+                    {
+                        case ABS_X :                      myState.Axis[Joy::AxisX] = joyState.value * 100.f / 32767.f; break;
+                        case ABS_Y :                      myState.Axis[Joy::AxisY] = joyState.value * 100.f / 32767.f; break;
+                        case ABS_Z : case ABS_THROTTLE :  myState.Axis[Joy::AxisZ] = joyState.value * 100.f / 32767.f; break;
+                        case ABS_RZ: case ABS_RUDDER:     myState.Axis[Joy::AxisR] = joyState.value * 100.f / 32767.f; break;
+                        case ABS_RX :                     myState.Axis[Joy::AxisU] = joyState.value * 100.f / 32767.f; break;
+                        case ABS_RY :                     myState.Axis[Joy::AxisV] = joyState.value * 100.f / 32767.f; break;
+                        case ABS_HAT0X :                  myPovX = joyState.value;                                     break;
+                        case ABS_HAT0Y :                  myPovY = joyState.value;                                     break;
+                        default : break;
+                    }
+
+                    // Compute the new POV angle
+                    if (myPovX > 0)
+                    {
+                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 135.f;
+                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 45.f;
+                        else                 myState.Axis[Joy::AxisPOV] = 90.f;
+                    }
+                    else if (myPovX < 0)
+                    {
+                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 225.f;
+                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 315.f;
+                        else                 myState.Axis[Joy::AxisPOV] = 270.f;
+                    }
+                    else
+                    {
+                        if      (myPovY > 0) myState.Axis[Joy::AxisPOV] = 180.f;
+                        else if (myPovY < 0) myState.Axis[Joy::AxisPOV] = 0.f;
+                        else                 myState.Axis[Joy::AxisPOV] = -1.f;
+                    }
+
                     break;
                 }
-    
+
                 // A button has been pressed
                 case JS_EVENT_BUTTON :
                 {
@@ -106,9 +155,9 @@ JoystickState Joystick::UpdateState()
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Joystick::GetAxesCount() const
+bool Joystick::HasAxis(Joy::Axis Axis) const
 {
-    return myNbAxes;
+    return myAxes[Axis];
 }
 
 
@@ -136,9 +185,9 @@ JoystickState Joystick::UpdateState()
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Joystick::GetAxesCount() const
+bool Joystick::HasAxis(Joy::Axis Axis) const
 {
-    return 0;
+    return false;
 }
 
 

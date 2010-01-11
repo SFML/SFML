@@ -35,23 +35,7 @@ Input::Input() :
 myMouseX(0),
 myMouseY(0)
 {
-    for (int i = 0; i < Key::Count; ++i)
-        myKeys[i] = false;
-
-    for (int i = 0; i < Mouse::Count; ++i)
-        myMouseButtons[i] = false;
-
-    for (int i = 0; i < 32; ++i)
-    {
-        myJoystickButtons[0][i] = false;
-        myJoystickButtons[1][i] = false;
-    }
-
-    for (int i = 0; i < Joy::Count; ++i)
-    {
-        myJoystickAxis[0][i] = 0.f;
-        myJoystickAxis[1][i] = 0.f;
-    }
+    ResetStates();
 }
 
 
@@ -72,7 +56,7 @@ bool Input::IsMouseButtonDown(Mouse::Button button) const
 ////////////////////////////////////////////////////////////
 bool Input::IsJoystickButtonDown(unsigned int joystick, unsigned int button) const
 {
-    if ((joystick < 4) && (button < 32))
+    if ((joystick < Joy::Count) && (button < Joy::ButtonCount))
         return myJoystickButtons[joystick][button];
     else
         return false;
@@ -96,7 +80,10 @@ int Input::GetMouseY() const
 ////////////////////////////////////////////////////////////
 float Input::GetJoystickAxis(unsigned int joystick, Joy::Axis axis) const
 {
-    return myJoystickAxis[joystick][axis];
+    if (joystick < Joy::Count)
+        return myJoystickAxis[joystick][axis];
+    else
+        return 0.f;
 }
 
 
@@ -130,23 +117,32 @@ void Input::OnEvent(const Event& event)
 
         // Lost focus event : we must reset all persistent states
         case Event::LostFocus :
-        {
-            for (int i = 0; i < Key::Count; ++i)
-                myKeys[i] = false;
-
-            for (int i = 0; i < Mouse::Count; ++i)
-                myMouseButtons[i] = false;
-
-            for (int i = 0; i < 32; ++i)
-            {
-                myJoystickButtons[0][i] = false;
-                myJoystickButtons[1][i] = false;
-            }
+            ResetStates();
             break;
-        }
 
         default :
             break;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Input::ResetStates()
+{
+    for (int i = 0; i < Key::Count; ++i)
+        myKeys[i] = false;
+
+    for (int i = 0; i < Mouse::ButtonCount; ++i)
+        myMouseButtons[i] = false;
+
+    for (int i = 0; i < Joy::Count; ++i)
+    {
+        for (int j = 0; j < Joy::ButtonCount; ++j)
+            myJoystickButtons[i][j] = false;
+
+        for (int j = 0; j < Joy::AxisCount; ++j)
+            myJoystickAxis[i][j] = 0.f;
+        myJoystickAxis[i][Joy::AxisPOV] = -1.f;
     }
 }
 

@@ -59,12 +59,14 @@ public :
     JoystickState UpdateState();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the number of axes supported by the joystick
+    /// \brief Check if the joystick supports the given axis
     ///
-    /// \return Number of axis
+    /// \param Axis : Axis to check
+    ///
+    /// \return True of the axis is supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetAxesCount() const;
+    bool HasAxis(Joy::Axis Axis) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of buttons supported by the joystick
@@ -79,10 +81,11 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool         myIsConnected; ///< Is there a joystick connected?
-    unsigned int myIndex;       ///< Windows ID of the joystick
-    unsigned int myNbAxes;      ///< Number of axis supported by the joystick
-    unsigned int myNbButtons;   ///< Number of buttons supported by the joystick
+    bool         myIsConnected;          ///< Is there a joystick connected?
+    unsigned int myIndex;                ///< Windows ID of the joystick
+    unsigned int myNbButtons;            ///< Number of buttons supported by the joystick
+    bool         myAxes[Joy::AxisCount]; ///< Supported axes
+    bool         myHasContinuousPOV;     ///< True if the driver supports continuous values for the POV
 };
 
 } // namespace priv

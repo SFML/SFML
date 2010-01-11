@@ -129,14 +129,20 @@ private :
     virtual void OnEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
+    /// Reset all the states
+    ///
+    ////////////////////////////////////////////////////////////
+    void ResetStates();
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool  myKeys[Key::Count];            ///< Array containing the state of all keyboard keys
-    bool  myMouseButtons[Mouse::Count];  ///< Array containing the state of all mouse buttons
-    bool  myJoystickButtons[2][32];      ///< Array containing the state of all joysticks buttons
-    int   myMouseX;                      ///< Mouse position on X
-    int   myMouseY;                      ///< Mouse position on Y
-    float myJoystickAxis[2][Joy::Count]; ///< Joysticks position on each axis
+    bool  myKeys[Key::Count];                              ///< Array containing the state of all keyboard keys
+    bool  myMouseButtons[Mouse::ButtonCount];              ///< Array containing the state of all mouse buttons
+    int   myMouseX;                                        ///< Mouse position on X
+    int   myMouseY;                                        ///< Mouse position on Y
+    bool  myJoystickButtons[Joy::Count][Joy::ButtonCount]; ///< Array containing the state of all joysticks buttons
+    float myJoystickAxis[Joy::Count][Joy::AxisCount];      ///< Joysticks position on each axis
 };
 
 } // namespace sf

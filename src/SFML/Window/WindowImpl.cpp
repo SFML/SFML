@@ -74,7 +74,7 @@ myHeight      (0),
 myJoyThreshold(0.1f)
 {
     // Initialize the joysticks
-    for (unsigned int i = 0; i < JoysticksCount; ++i)
+    for (unsigned int i = 0; i < Joy::Count; ++i)
     {
         myJoysticks[i].Initialize(i);
         myJoyStates[i] = myJoysticks[i].UpdateState();
@@ -149,25 +149,29 @@ void WindowImpl::SendEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 void WindowImpl::ProcessJoystickEvents()
 {
-    for (unsigned int i = 0; i < JoysticksCount; ++i)
+    for (unsigned int i = 0; i < Joy::Count; ++i)
     {
         // Copy the previous state of the joystick and get the new one
         JoystickState previousState = myJoyStates[i];
         myJoyStates[i] = myJoysticks[i].UpdateState();
 
         // Axis
-        for (unsigned int j = 0; j < myJoysticks[i].GetAxesCount(); ++j)
+        for (unsigned int j = 0; j < Joy::AxisCount; ++j)
         {
-            float prevPos = previousState.Axis[j];
-            float currPos = myJoyStates[i].Axis[j];
-            if (fabs(currPos - prevPos) >= myJoyThreshold)
+            Joy::Axis axis = static_cast<Joy::Axis>(j);
+            if (myJoysticks[i].HasAxis(axis))
             {
-                Event event;
-                event.Type               = Event::JoyMoved;
-                event.JoyMove.JoystickId = i;
-                event.JoyMove.Axis       = static_cast<Joy::Axis>(j);
-                event.JoyMove.Position   = currPos;
-                SendEvent(event);
+                float prevPos = previousState.Axis[axis];
+                float currPos = myJoyStates[i].Axis[axis];
+                if (fabs(currPos - prevPos) >= myJoyThreshold)
+                {
+                    Event event;
+                    event.Type               = Event::JoyMoved;
+                    event.JoyMove.JoystickId = i;
+                    event.JoyMove.Axis       = axis;
+                    event.JoyMove.Position   = currPos;
+                    SendEvent(event);
+                }
             }
         }
 

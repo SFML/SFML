@@ -152,6 +152,8 @@ PySfWindow_init(PySfWindow *self, PyObject *args, PyObject *kwds)
 
 	if (args != NULL)
 	{
+		if (PyTuple_Size(args) == 0)
+			return 0;
 		if (PyArg_ParseTuple(args, "l|O!:Window.__new__", &Handle, &PySfContextSettingsType, &Params))
 			return 0;
 		PyErr_Clear();

@@ -55,12 +55,11 @@ JoystickState Joystick::UpdateState()
 
 
 ////////////////////////////////////////////////////////////
-/// Get the number of axes supported by the joystick
+/// Check if the joystick supports the given axis
 ////////////////////////////////////////////////////////////
-unsigned int Joystick::GetAxesCount() const
+bool Joystick::HasAxis(Joy::Axis Axis) const
 {
-    // Return number of supported axes
-	return 0;
+	return false;
 }
 
 
