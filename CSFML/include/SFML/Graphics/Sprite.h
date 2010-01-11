@@ -303,11 +303,12 @@ CSFML_API void sfSprite_TransformToGlobal(const sfSprite* sprite, float pointX, 
 ////////////////////////////////////////////////////////////
 /// Change the image of a sprite
 ///
-/// \param Sprite : Sprite to modify
-/// \param image :  New image
+/// \param sprite :          Sprite to modify
+/// \param image :           New image
+/// \param adjustToNewSize : If true, the SubRect of the sprite will be adjusted to the size of the new image
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSprite_SetImage(sfSprite* sprite, const sfImage* image);
+CSFML_API void sfSprite_SetImage(sfSprite* sprite, const sfImage* image, sfBool adjustToNewSize);
 
 ////////////////////////////////////////////////////////////
 /// Set the sub-rectangle of a sprite inside the source image

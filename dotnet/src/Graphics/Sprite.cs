@@ -177,7 +177,7 @@ namespace SFML
             public Image Image
             {
                 get { return myImage; }
-                set { myImage = value; sfSprite_SetImage(This, value != null ? value.This : IntPtr.Zero); }
+                set { myImage = value; sfSprite_SetImage(This, value != null ? value.This : IntPtr.Zero, false); }
             }
 
             ////////////////////////////////////////////////////////////
@@ -374,7 +374,7 @@ namespace SFML
             static extern float sfSprite_GetHeight(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern void sfSprite_SetImage(IntPtr This, IntPtr Image);
+            static extern void sfSprite_SetImage(IntPtr This, IntPtr Image, bool AdjustToNewSize);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetSubRect(IntPtr This, IntRect Rect);

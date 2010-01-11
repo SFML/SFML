@@ -304,11 +304,11 @@ void sfSprite_TransformToGlobal(const sfSprite* sprite, float pointX, float poin
 ////////////////////////////////////////////////////////////
 /// Change the image of a sprite
 ////////////////////////////////////////////////////////////
-void sfSprite_SetImage(sfSprite* sprite, const sfImage* image)
+void sfSprite_SetImage(sfSprite* sprite, const sfImage* image, sfBool adjustToNewSize)
 {
     if (image)
     {
-        CSFML_CALL(sprite, SetImage(*image->This))
+        CSFML_CALL(sprite, SetImage(*image->This, adjustToNewSize == sfTrue))
         sprite->Image = image;
     }
 }
