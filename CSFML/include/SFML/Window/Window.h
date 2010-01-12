@@ -41,11 +41,12 @@
 ////////////////////////////////////////////////////////////
 enum
 {
-    sfNone       = 0,      ///< No border / title bar (this flag and all others are mutually exclusive)
-    sfTitlebar   = 1 << 0, ///< Title bar + fixed border
-    sfResize     = 1 << 1, ///< Titlebar + resizable border + maximize button
-    sfClose      = 1 << 2, ///< Titlebar + close button
-    sfFullscreen = 1 << 3  ///< Fullscreen mode (this flag and all others are mutually exclusive)
+    sfNone         = 0,      ///< No border / title bar (this flag and all others are mutually exclusive)
+    sfTitlebar     = 1 << 0, ///< Title bar + fixed border
+    sfResize       = 1 << 1, ///< Titlebar + resizable border + maximize button
+    sfClose        = 1 << 2, ///< Titlebar + close button
+    sfFullscreen   = 1 << 3, ///< Fullscreen mode (this flag and all others are mutually exclusive)
+    sfDefaultStyle = sfTitlebar | sfResize | sfClose ///< Default window style
 };
 
 

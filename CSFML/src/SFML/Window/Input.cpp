@@ -33,7 +33,7 @@
 ////////////////////////////////////////////////////////////
 /// Get the state of a key
 ////////////////////////////////////////////////////////////
-sfBool sfInput_IsKeyDown(sfInput* input, sfKeyCode code)
+sfBool sfInput_IsKeyDown(const sfInput* input, sfKeyCode code)
 {
     CSFML_CALL_PTR_RETURN(input, IsKeyDown((sf::Key::Code)code), sfFalse);
 }
@@ -42,7 +42,7 @@ sfBool sfInput_IsKeyDown(sfInput* input, sfKeyCode code)
 ////////////////////////////////////////////////////////////
 /// Get the state of a mouse button
 ////////////////////////////////////////////////////////////
-sfBool sfInput_IsMouseButtonDown(sfInput* input, sfMouseButton button)
+sfBool sfInput_IsMouseButtonDown(const sfInput* input, sfMouseButton button)
 {
     CSFML_CALL_PTR_RETURN(input, IsMouseButtonDown((sf::Mouse::Button)button), sfFalse);
 }
@@ -51,7 +51,7 @@ sfBool sfInput_IsMouseButtonDown(sfInput* input, sfMouseButton button)
 ////////////////////////////////////////////////////////////
 /// Get the state of a joystick button
 ////////////////////////////////////////////////////////////
-sfBool sfInput_IsJoystickButtonDown(sfInput* input, unsigned int joyId, unsigned int button)
+sfBool sfInput_IsJoystickButtonDown(const sfInput* input, unsigned int joyId, unsigned int button)
 {
     CSFML_CALL_PTR_RETURN(input, IsJoystickButtonDown(joyId, button), sfFalse);
 }
@@ -60,7 +60,7 @@ sfBool sfInput_IsJoystickButtonDown(sfInput* input, unsigned int joyId, unsigned
 ////////////////////////////////////////////////////////////
 /// Get the mouse X position
 ////////////////////////////////////////////////////////////
-int sfInput_GetMouseX(sfInput* input)
+int sfInput_GetMouseX(const sfInput* input)
 {
     CSFML_CALL_PTR_RETURN(input, GetMouseX(), 0);
 }
@@ -69,7 +69,7 @@ int sfInput_GetMouseX(sfInput* input)
 ////////////////////////////////////////////////////////////
 /// Get the mouse Y position
 ////////////////////////////////////////////////////////////
-int sfInput_GetMouseY(sfInput* input)
+int sfInput_GetMouseY(const sfInput* input)
 {
     CSFML_CALL_PTR_RETURN(input, GetMouseY(), 0);
 }
@@ -77,7 +77,7 @@ int sfInput_GetMouseY(sfInput* input)
 ////////////////////////////////////////////////////////////
 /// Get the joystick position on a given axis
 ////////////////////////////////////////////////////////////
-float sfInput_GetJoystickAxis(sfInput* input, unsigned int joyId, sfJoyAxis axis)
+float sfInput_GetJoystickAxis(const sfInput* input, unsigned int joyId, sfJoyAxis axis)
 {
     CSFML_CALL_PTR_RETURN(input, GetJoystickAxis(joyId, (sf::Joy::Axis)axis), 0.f);
 }

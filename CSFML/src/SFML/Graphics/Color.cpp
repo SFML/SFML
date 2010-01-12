@@ -33,14 +33,14 @@
 ////////////////////////////////////////////////////////////
 /// Define some common colors
 ////////////////////////////////////////////////////////////
-sfColor sfBlack   = {  0,   0,   0, 255};
-sfColor sfWhite   = {255, 255, 255, 255};
-sfColor sfRed     = {255,   0,   0, 255};
-sfColor sfGreen   = {  0, 255,   0, 255};
-sfColor sfBlue    = {  0,   0, 255, 255};
-sfColor sfYellow  = {255, 255,   0, 255};
-sfColor sfMagenta = {255,   0, 255, 255};
-sfColor sfCyan    = {  0, 255, 255, 255};
+sfColor sfBlack   = sfColor_FromRGB(  0,   0,   0);
+sfColor sfWhite   = sfColor_FromRGB(255, 255, 255);
+sfColor sfRed     = sfColor_FromRGB(255,   0,   0);
+sfColor sfGreen   = sfColor_FromRGB(  0, 255,   0);
+sfColor sfBlue    = sfColor_FromRGB(  0,   0, 255);
+sfColor sfYellow  = sfColor_FromRGB(255, 255,   0);
+sfColor sfMagenta = sfColor_FromRGB(255,   0, 255);
+sfColor sfCyan    = sfColor_FromRGB(  0, 255, 255);
 
 
 ////////////////////////////////////////////////////////////

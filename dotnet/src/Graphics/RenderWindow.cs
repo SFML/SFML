@@ -25,7 +25,7 @@ namespace SFML
             /// <param name="title">Title of the window</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title) :
-                this(mode, title, Styles.Resize | Styles.Close, new ContextSettings(24, 8))
+                this(mode, title, Styles.Default, new ContextSettings(24, 8))
             {
             }
 

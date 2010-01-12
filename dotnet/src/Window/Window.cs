@@ -28,7 +28,10 @@ namespace SFML
             Close = 1 << 2,
 
             /// <summary>Fullscreen mode (this flag and all others are mutually exclusive))</summary>
-            Fullscreen = 1 << 3
+            Fullscreen = 1 << 3,
+
+            /// <summary>Default window style (titlebar + resize + close)</summary>
+            Default = Titlebar | Resize | Close
         }
 
         ////////////////////////////////////////////////////////////
@@ -47,7 +50,7 @@ namespace SFML
             /// <param name="title">Title of the window</param>
             ////////////////////////////////////////////////////////////
             public Window(VideoMode mode, string title) :
-                this(mode, title, Styles.Resize | Styles.Close, new ContextSettings(24, 8))
+                this(mode, title, Styles.Default, new ContextSettings(24, 8))
             {
             }
 
