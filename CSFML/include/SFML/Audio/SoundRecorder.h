@@ -97,7 +97,7 @@ CSFML_API unsigned int sfSoundRecorder_GetSampleRate(const sfSoundRecorder* soun
 /// \return sfTrue if audio capture is supported
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSoundRecorder_CanCapture();
+CSFML_API sfBool sfSoundRecorder_IsAvailable();
 
 
 #endif // SFML_SOUNDRECORDER_H
