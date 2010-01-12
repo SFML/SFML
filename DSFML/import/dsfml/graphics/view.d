@@ -149,7 +149,7 @@ public:
 	*	Returns: 
 	*		Center of the view
 	*/
-	Vector2f GetCenter()
+	Vector2f getCenter()
 	{
 		return Vector2f(sfView_GetCenterX(m_ptr), sfView_GetCenterY(m_ptr));
 	}
@@ -207,10 +207,12 @@ public:
 	*		offsetX = Offset to move the view, on X axis
 	*		offsetY = Offset to move the view, on Y axis
 	*/
-	void move(float offsetX, float offsetY)
+	View move(float offsetX, float offsetY)
 	{
 		sfView_Move(m_ptr, offsetX, offsetY);
 		m_isModified = true;
+		
+		return this;
 	}
 
 	/**
@@ -219,10 +221,12 @@ public:
 	*	Params:
 	*		offset = offsetto move the view
 	*/
-	void move(Vector2f offset)
+	View move(Vector2f offset)
 	{
 		sfView_Move(m_ptr, offset.x, offset.y);
 		m_isModified = true;
+		
+		return this;
 	}
 	
 	/**
@@ -230,11 +234,13 @@ public:
 	*
 	*	Params:
 	*		factor = Zoom factor to apply, relative to the current zoom
-	*/		
-	void zoom(float factor)
+	*/
+	View zoom(float factor)
 	{
 		sfView_Zoom(m_ptr, factor);
 		m_isModified = true;
+		
+		return this;
 	}
 
 	/**
@@ -243,9 +249,11 @@ public:
 	 *	Params:
 	 *		angle = Angle to rotate, in degree
 	 */
-	void rotate(float angle)
+	View rotate(float angle)
 	{
 		sfView_Rotate(m_ptr, angle);
+		
+		return this;
 	}
 	
 	/**
@@ -255,9 +263,11 @@ public:
 	 *	Params:
 	 *		angle = New angle, in degrees
 	 */
-	void setRotation(float angle)
+	View setRotation(float angle)
 	{
 		sfView_SetRotation(m_ptr, angle);
+		
+		return this;
 	}
 
 	/**

@@ -43,7 +43,7 @@ import core.thread;
 *	$(B onProcessSamples and onStop will be called by a different thread, take care of synchronization issues.)
 *	
 *	Examples:
-*	------- 
+*	-------
 *	class MySoundRecorder : SoundRecorder
 *	{
 *		this()
@@ -53,21 +53,21 @@ import core.thread;
 *		
 *		protected bool onStart()
 *		{
-*			return true;	
+*			return true;
 *		}
 *	
 *		protected void onStop()
 *		{
 *			 
-*		}	
+*		}
 *		
 *		protected bool onProcessSamples(out short[])
 *		{
 *			// Process data here
 *			
-*			return true; //return true to continue capture, else return false  
+*			return true; //return true to continue capture, else return false
 *		}
-*	} 
+*	}
 *	-------
 */
 abstract class SoundRecorder : DSFMLObject
@@ -128,9 +128,9 @@ abstract class SoundRecorder : DSFMLObject
 	*		True if audio capture is supported
 	*
 	*/
-	static bool canCapture()
+	static bool isAvailable()
 	{
-		return cast(bool)sfSoundRecorder_CanCapture();
+		return cast(bool) sfSoundRecorder_IsAvailable();
 	}
 
 protected:
@@ -286,38 +286,18 @@ private:
 	
 // External ====================================================================
 
-	extern (C)
+	static extern (C)
 	{
-		typedef void* function(int function(void*), int function(short*, size_t, void*), void function(void*), void*) pf_sfSoundRecorder_Create;
-		typedef void function(void*) pf_sfSoundRecorder_Destroy;
-		typedef void function(void*, uint SampleRate) pf_sfSoundRecorder_Start;
-		typedef void function(void*) pf_sfSoundRecorder_Stop;
-		typedef uint function(void*) pf_sfSoundRecorder_GetSampleRate;
-		typedef int function() pf_sfSoundRecorder_CanCapture;
-	
-		static pf_sfSoundRecorder_Create sfSoundRecorder_Create;
-		static pf_sfSoundRecorder_Destroy sfSoundRecorder_Destroy;
-		static pf_sfSoundRecorder_Start sfSoundRecorder_Start;
-		static pf_sfSoundRecorder_Stop sfSoundRecorder_Stop;
-		static pf_sfSoundRecorder_GetSampleRate sfSoundRecorder_GetSampleRate;
-		static pf_sfSoundRecorder_CanCapture sfSoundRecorder_CanCapture;
+		void*	function(int function(void*), int function(short*, size_t, void*), void function(void*), void*)	sfSoundRecorder_Create;
+		void	function(void*)						sfSoundRecorder_Destroy;
+		void	function(void*, uint SampleRate)	sfSoundRecorder_Start;
+		void	function(void*)						sfSoundRecorder_Stop;
+		uint	function(void*)						sfSoundRecorder_GetSampleRate;
+		int		function()							sfSoundRecorder_IsAvailable;
 	}
 
-	static this()
-	{
-	debug
-		DllLoader dll = DllLoader.load("csfml-audio-d");
-	else
-		DllLoader dll = DllLoader.load("csfml-audio");
-		
-		sfSoundRecorder_Create = cast(pf_sfSoundRecorder_Create)dll.getSymbol("sfSoundRecorder_Create");
-		sfSoundRecorder_Destroy = cast(pf_sfSoundRecorder_Destroy)dll.getSymbol("sfSoundRecorder_Destroy");
-		sfSoundRecorder_Start = cast(pf_sfSoundRecorder_Start)dll.getSymbol("sfSoundRecorder_Start");
-		sfSoundRecorder_Stop = cast(pf_sfSoundRecorder_Stop)dll.getSymbol("sfSoundRecorder_Stop");
-		sfSoundRecorder_GetSampleRate = cast(pf_sfSoundRecorder_GetSampleRate)dll.getSymbol("sfSoundRecorder_GetSampleRate");
-		sfSoundRecorder_CanCapture = cast(pf_sfSoundRecorder_CanCapture)dll.getSymbol("sfSoundRecorder_CanCapture");
-	}
-
+	mixin(loadFromSharedLib2("csfml-audio", "sfSoundRecorder_Create", "sfSoundRecorder_Destroy", "sfSoundRecorder_Start",
+							"sfSoundRecorder_Stop", "sfSoundRecorder_GetSampleRate", "sfSoundRecorder_IsAvailable"));
 }
 
 // Use explicit alloc to allow instaciation by C thread
@@ -334,4 +314,3 @@ private class Samples
 	public short* data;
 	public size_t length;
 }
-

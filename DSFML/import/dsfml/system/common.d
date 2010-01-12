@@ -46,6 +46,30 @@ string loadFromSharedLib(string fname)
 	return fname ~ " = " ~ "cast(typeof(" ~ fname ~ ")) dll.getSymbol(\"" ~ fname ~ "\");";
 }
 
+//used to mixin code function
+string loadFromSharedLib2(S...)(string lib, S fnames)
+{
+	string res = `static this()
+{
+	debug
+		DllLoader dll = DllLoader.load("` ~ lib ~ `-d");
+	else
+		DllLoader dll = DllLoader.load("` ~ lib ~ `");
+
+`;
+
+	foreach(fname; fnames)
+	{
+		res ~= "\t" ~ fname ~ " = " ~ "cast(typeof(" ~ fname ~ ")) dll.getSymbol(\"" ~ fname ~ "\");\n";
+	}
+	return res ~ "}\n";
+}
+
+string loadDerivedFromSharedLib(string base, string fname, string derived)
+{
+	return base ~ "_" ~ fname ~ " = " ~ "cast(typeof(" ~ base ~ "_" ~ fname ~ ")) dll.getSymbol(\"" ~ derived ~ "_" ~ fname ~ "\");";
+}
+
 /**
 *	Base class for all DSFML classes.
 */

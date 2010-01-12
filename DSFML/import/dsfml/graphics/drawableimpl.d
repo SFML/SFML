@@ -51,7 +51,7 @@ protected:
 	
 	this(void* ptr)
 	{
-		super(ptr);
+		super(ptr, true);
 	}
 
 public:

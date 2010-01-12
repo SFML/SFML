@@ -272,13 +272,11 @@ align(1) struct Event
 		
 		struct SKey
 		{
+		align(4): // cause bool is size 1
 			KeyCode Code;
 			bool	Alt;
-			byte[3] Filler1;			
 			bool	Control;
-			byte[3] Filler2;
 			bool	Shift;
-			byte[3] Filler3;
 		}
 		SKey Key;
 	

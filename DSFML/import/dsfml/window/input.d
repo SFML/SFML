@@ -132,21 +132,14 @@ private:
 
 // External ====================================================================
 
-	extern (C)
+	static extern (C)
 	{
-		typedef int function(void*, KeyCode) pf_sfInput_IsKeyDown;
-		typedef int function(void*, MouseButtons) pf_sfInput_IsMouseButtonDown;
-		typedef int function(void*, uint, uint) pf_sfInput_IsJoystickButtonDown;
-		typedef uint function (void*) pf_sfInput_GetMouseX;
-		typedef uint function(void*) pf_sfInput_GetMouseY;
-		typedef float function(void*, uint, JoyAxis) pf_sfInput_GetJoystickAxis;
-	
-		static pf_sfInput_IsKeyDown sfInput_IsKeyDown;
-		static pf_sfInput_IsMouseButtonDown sfInput_IsMouseButtonDown;
-		static pf_sfInput_IsJoystickButtonDown sfInput_IsJoystickButtonDown;
-		static pf_sfInput_GetMouseX sfInput_GetMouseX;
-		static pf_sfInput_GetMouseY sfInput_GetMouseY;
-		static pf_sfInput_GetJoystickAxis sfInput_GetJoystickAxis;
+		int		function(void*, KeyCode)		sfInput_IsKeyDown;
+		int		function(void*, MouseButtons)	sfInput_IsMouseButtonDown;
+		int		function(void*, uint, uint)		sfInput_IsJoystickButtonDown;
+		int		function(void*)					sfInput_GetMouseX;
+		int		function(void*)					sfInput_GetMouseY;
+		float	function(void*, uint, JoyAxis)	sfInput_GetJoystickAxis;
 	}
 
 	static this()
@@ -156,11 +149,11 @@ private:
 		else
 			DllLoader dll = DllLoader.load("csfml-window");
 		
-		sfInput_IsKeyDown = cast(pf_sfInput_IsKeyDown)dll.getSymbol("sfInput_IsKeyDown");
-		sfInput_IsMouseButtonDown = cast(pf_sfInput_IsMouseButtonDown)dll.getSymbol("sfInput_IsMouseButtonDown");
-		sfInput_IsJoystickButtonDown = cast(pf_sfInput_IsJoystickButtonDown)dll.getSymbol("sfInput_IsJoystickButtonDown");
-		sfInput_GetMouseX = cast(pf_sfInput_GetMouseX)dll.getSymbol("sfInput_GetMouseX");
-		sfInput_GetMouseY = cast(pf_sfInput_GetMouseY)dll.getSymbol("sfInput_GetMouseY");
-		sfInput_GetJoystickAxis = cast(pf_sfInput_GetJoystickAxis)dll.getSymbol("sfInput_GetJoystickAxis");
+		mixin(loadFromSharedLib("sfInput_IsKeyDown"));
+		mixin(loadFromSharedLib("sfInput_IsMouseButtonDown"));
+		mixin(loadFromSharedLib("sfInput_IsJoystickButtonDown"));
+		mixin(loadFromSharedLib("sfInput_GetMouseX"));
+		mixin(loadFromSharedLib("sfInput_GetMouseY"));
+		mixin(loadFromSharedLib("sfInput_GetJoystickAxis"));
 	}
 }
