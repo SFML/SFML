@@ -130,7 +130,9 @@ class Packet : DSFMLObject
 	byte[] getData()
 	{
 		if (canRead)
-			return sfPacket_GetData(m_ptr)[0..getDataSize];
+			return sfPacket_GetData(m_ptr)[0..getDataSize()];
+		else
+			return null;
 	}
 
 	
@@ -253,20 +255,18 @@ private:
 	}
 	void internalGet(ref string data)
 	{
-		scope string temp = new char[sfPacket_GetDataSize(m_ptr)];
+		scope char[] temp = new char[sfPacket_GetDataSize(m_ptr)];
 		sfPacket_ReadString(m_ptr, temp.ptr);
 		size_t l = fromStringz(temp.ptr).length;
-		data = new char[l];
-		data[] = temp[0 .. l];
+		data = cast(string) temp[0 .. l];
 	}
 	
 	void internalGet(ref wstring data)
 	{
-		scope wstring temp = new wchar[sfPacket_GetDataSize(m_ptr)];
+		scope wchar[] temp = new wchar[sfPacket_GetDataSize(m_ptr)];
 		sfPacket_ReadWideString(m_ptr, temp.ptr);
 		size_t l = fromStringz(temp.ptr).length;
-		data = new wchar[l];
-		data[] = temp[0 .. l];
+		data = cast(wstring) temp[0 .. l];
 	}
 	
 	void internalSet(bool data)
@@ -345,8 +345,8 @@ private:
 		typedef void function(void*, uint) pf_sfPacket_WriteUint32;
 		typedef void function(void*, float) pf_sfPacket_WriteFloat;
 		typedef void function(void*, double) pf_sfPacket_WriteDouble;
-		typedef void function(void*, char*) pf_sfPacket_WriteString;
-		typedef void function(void*, wchar*) pf_sfPacket_WriteWideString;
+		typedef void function(void*, cchar*) pf_sfPacket_WriteString;
+		typedef void function(void*, cwchar*) pf_sfPacket_WriteWideString;
 	
 		static pf_sfPacket_Create sfPacket_Create;
 		static pf_sfPacket_Destroy sfPacket_Destroy;

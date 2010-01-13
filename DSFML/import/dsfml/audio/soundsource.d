@@ -32,7 +32,7 @@ protected :
 	
 	this(void* ptr)
 	{
-		super(ptr, true);
+		super(ptr);
 	}
 
 	////////////////////////////////////////////////////////////

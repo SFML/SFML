@@ -68,8 +68,8 @@ class Sound : SoundSource!("sfSound")
 			throw new NullParameterException("NullParameterException : SoundBuffer is null.");
 			
 		super();
-		sfSound_SetBuffer(m_ptr, buffer.getNativePointer());
-		sfSound_SetLoop(m_ptr, loop);
+		setBuffer(buffer);
+		setLoop(loop);
 		setPitch(pitch);
 		setVolume(volume);
 		setPosition(x, y, z);

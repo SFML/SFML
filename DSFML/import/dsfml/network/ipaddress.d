@@ -134,7 +134,7 @@ private:
 
 extern (C)
 {
-	typedef IPAddress function(char*) pf_sfIPAddress_FromString;
+	typedef IPAddress function(cchar*) pf_sfIPAddress_FromString;
 	typedef IPAddress function(ubyte, ubyte, ubyte, ubyte) pf_sfIPAddress_FromBytes;
 	typedef IPAddress function(uint) pf_sfIPAddress_FromInteger;
 	typedef int function(IPAddress) pf_sfIPAddress_IsValid;

@@ -162,11 +162,11 @@ class Http : DSFMLObject
 		extern (C)
 		{
 			typedef void function(void*) pf_sfHttpResponse_Destroy; 
-			typedef char* function(void*, char*) pf_sfHttpResponse_GetField;
+			typedef ichar* function(void*, cchar*) pf_sfHttpResponse_GetField;
 			typedef HttpStatus function(void*) pf_sfHttpResponse_GetStatus; 
 			typedef uint function(void*) pf_sfHttpResponse_GetMajorVersion;
 			typedef uint function(void*) pf_sfHttpResponse_GetMinorVersion;
-			typedef char* function(void*) pf_sfHttpResponse_GetBody;
+			typedef ichar* function(void*) pf_sfHttpResponse_GetBody;
 
 			static pf_sfHttpResponse_Destroy sfHttpResponse_Destroy; 
 			static pf_sfHttpResponse_GetField sfHttpResponse_GetField;
@@ -278,11 +278,11 @@ class Http : DSFMLObject
 		{
 			typedef void* function() pf_sfHttpRequest_Create;
 			typedef void function(void*) pf_sfHttpRequest_Destroy;
-			typedef void function(void*, char*, char*) pf_sfHttpRequest_SetField;
+			typedef void function(void*, cchar*, cchar*) pf_sfHttpRequest_SetField;
 			typedef void function(void*, HttpMethod) pf_sfHttpRequest_SetMethod;
-			typedef void function(void*, char*) pf_sfHttpRequest_SetURI;
+			typedef void function(void*, cchar*) pf_sfHttpRequest_SetURI;
 			typedef void function(void*, uint, uint) pf_sfHttpRequest_SetHttpVersion;
-			typedef void function(void*, char*) pf_sfHttpRequest_SetBody;
+			typedef void function(void*, cchar*) pf_sfHttpRequest_SetBody;
 			
 			static pf_sfHttpRequest_Create sfHttpRequest_Create;
 			static pf_sfHttpRequest_Destroy sfHttpRequest_Destroy;
@@ -374,7 +374,7 @@ private:
 	{
 		typedef void* function() pf_sfHttp_Create;
 		typedef void function(void*) pf_sfHttp_Destroy;
-		typedef void function(void*, char*, ushort) pf_sfHttp_SetHost;
+		typedef void function(void*, cchar*, ushort) pf_sfHttp_SetHost;
 		typedef void* function(void*, void*) pf_sfHttp_SendRequest;
 		
 		static pf_sfHttp_Create sfHttp_Create;

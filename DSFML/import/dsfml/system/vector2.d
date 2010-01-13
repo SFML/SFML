@@ -103,6 +103,11 @@ struct Vector2(T)
 	{
 		return (x == other.x) && (y == other.y);
 	}
+	
+	T max()
+	{
+		return (x>y) ? x : y;
+	}
 }
 
 version (UnitTest)

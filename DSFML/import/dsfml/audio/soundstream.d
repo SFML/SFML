@@ -199,7 +199,7 @@ protected:
 		m_channelsCount = channelsCount;
 		m_sampleRate = sampleRate;
 
-		m_ptr = sfSoundStream_Create(&externalOnGetData, &externalOnSeek, channelsCount, sampleRate, &m_id); // TODO: hack
+		super(sfSoundStream_Create(&externalOnGetData, &externalOnSeek, channelsCount, sampleRate, &m_id));
 
 		m_mutex = new Mutex();
 		
@@ -212,12 +212,9 @@ protected:
 	}
 	
 	/**
-	*	Called each time the stream restart
-	*	
-	*	Returns:
-	*		false to abort the playback			
+	*	Called each time the stream is seeked
 	*/		
-	abstract bool onStart();
+	abstract void onSeek();
 	
 	/**
 	*	Called each time the stream needs new data.
@@ -233,16 +230,15 @@ protected:
 private:
 
 	// Called sync when user calling play()
-	// FIXME: this needs to be transformed from OnStart to OnSeek
+	// TODO: check if it's correct that way
 	extern(C) static void externalOnSeek(float t, void* user)
 	{
 		int id;
 		if ((id = *cast(int*) user) in s_instances)
 		{
 			SoundStream temp = s_instances[id];
-			return (temp.m_flag = temp.onStart());
+			return (temp.onSeek());
 		}
-//		return true;
 	}
 	
 	// C Thread callback (no allocation can be done)

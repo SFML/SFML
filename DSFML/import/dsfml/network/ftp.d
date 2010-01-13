@@ -173,7 +173,7 @@ class Ftp : DSFMLObject
 			typedef void function(void*) pf_sfFtpResponse_Destroy;
 			typedef int function(void*) pf_sfFtpResponse_IsOk;
 			typedef FtpStatus function(void*) pf_sfFtpResponse_GetStatus;
-			typedef char* function(void*) pf_sfFtpResponse_GetMessage;
+			typedef ichar* function(void*) pf_sfFtpResponse_GetMessage;
 			
 			static pf_sfFtpResponse_Destroy sfFtpResponse_Destroy;
 			static pf_sfFtpResponse_IsOk sfFtpResponse_IsOk;
@@ -222,7 +222,7 @@ class Ftp : DSFMLObject
 		extern (C)
 		{
 			typedef void function(void*) pf_sfFtpDirectoryResponse_Destroy;
-			typedef char* function(void*) pf_sfFtpDirectoryResponse_GetDirectory;
+			typedef ichar* function(void*) pf_sfFtpDirectoryResponse_GetDirectory;
 			
 			static pf_sfFtpDirectoryResponse_Destroy sfFtpDirectoryResponse_Destroy;
 			static pf_sfFtpDirectoryResponse_GetDirectory sfFtpDirectoryResponse_GetDirectory;
@@ -301,7 +301,7 @@ class Ftp : DSFMLObject
 		{
 			typedef void function(void*) pf_sfFtpListingResponse_Destroy;
 			typedef size_t function(void*) pf_sfFtpListingResponse_GetCount;
-			typedef char* function(void*, size_t) pf_sfFtpListingResponse_GetFilename;
+			typedef ichar* function(void*, size_t) pf_sfFtpListingResponse_GetFilename;
 			
 			static pf_sfFtpListingResponse_Destroy sfFtpListingResponse_Destroy;
 			static pf_sfFtpListingResponse_GetCount sfFtpListingResponse_GetCount;
@@ -542,19 +542,19 @@ private:
 		typedef void function(void*) pf_sfFtp_Destroy;
 		typedef void* function(void*, IPAddress, ushort, float) pf_sfFtp_Connect;
 		typedef void* function(void*) pf_sfFtp_LoginAnonymous;
-		typedef void* function(void*, char*, char*) pf_sfFtp_Login;
+		typedef void* function(void*, cchar*, cchar*) pf_sfFtp_Login;
 		typedef void* function(void*) pf_sfFtp_Disconnect;
 		typedef void* function(void*) pf_sfFtp_KeepAlive;
 		typedef void* function(void*) pf_sfFtp_GetWorkingDirectory;
-		typedef void* function(void*, char*) pf_sfFtp_GetDirectoryListing;
-		typedef void* function(void*, char*) pf_sfFtp_ChangeDirectory;
+		typedef void* function(void*, cchar*) pf_sfFtp_GetDirectoryListing;
+		typedef void* function(void*, cchar*) pf_sfFtp_ChangeDirectory;
 		typedef void* function(void*) pf_sfFtp_ParentDirectory;
-		typedef void* function(void*, char*) pf_sfFtp_MakeDirectory;
-		typedef void* function(void*, char*) pf_sfFtp_DeleteDirectory;
-		typedef void* function(void*, char*, char*) pf_sfFtp_RenameFile;
-		typedef void* function(void*, char*) pf_sfFtp_DeleteFile;
-		typedef void* function(void*, char*, char*, FtpTransferMode) pf_sfFtp_Download;
-		typedef void* function(void*, char*, char*, FtpTransferMode) pf_sfFtp_Upload;
+		typedef void* function(void*, cchar*) pf_sfFtp_MakeDirectory;
+		typedef void* function(void*, cchar*) pf_sfFtp_DeleteDirectory;
+		typedef void* function(void*, cchar*, cchar*) pf_sfFtp_RenameFile;
+		typedef void* function(void*, cchar*) pf_sfFtp_DeleteFile;
+		typedef void* function(void*, cchar*, cchar*, FtpTransferMode) pf_sfFtp_Download;
+		typedef void* function(void*, cchar*, cchar*, FtpTransferMode) pf_sfFtp_Upload;
 		
 		static pf_sfFtp_Create sfFtp_Create;
 		static pf_sfFtp_Destroy sfFtp_Destroy;

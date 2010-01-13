@@ -128,9 +128,13 @@ class SocketTCP : DSFMLObject
 	*		Status code
 	*/
 	SocketStatus send(byte[] data)
+	in
 	{
-		if (data && data.length > 0)
-			return cast(SocketStatus)sfSocketTCP_Send(m_ptr, data.ptr, data.length);
+		assert(data && data.length);
+	}
+	body
+	{
+		return cast(SocketStatus)sfSocketTCP_Send(m_ptr, data.ptr, data.length);
 	}
 
 	/**
@@ -149,9 +153,13 @@ class SocketTCP : DSFMLObject
 	*
 	*/
 	SocketStatus receive(byte[] data, out size_t sizeReceived)
+	in
 	{
-		if (data && data.length > 0)
-			return cast(SocketStatus)sfSocketTCP_Receive(m_ptr, data.ptr, data.length, &sizeReceived);
+		assert(data && data.length);
+	}
+	body
+	{
+		return cast(SocketStatus)sfSocketTCP_Receive(m_ptr, data.ptr, data.length, &sizeReceived);
 	}
 
 
