@@ -306,14 +306,14 @@ private :
     /// array of pixels
     ///
     ////////////////////////////////////////////////////////////
-    void EnsureTextureUpdate();
+    void EnsureTextureUpdate() const;
 
     ////////////////////////////////////////////////////////////
     /// Make sure the array of pixels is updated with the
     /// texture in video memory
     ///
     ////////////////////////////////////////////////////////////
-    void EnsureArrayUpdate();
+    void EnsureArrayUpdate() const;
 
     ////////////////////////////////////////////////////////////
     /// Reset the image attributes
@@ -328,18 +328,23 @@ private :
     void DestroyTexture();
 
     ////////////////////////////////////////////////////////////
+    // Types
+    ////////////////////////////////////////////////////////////
+    typedef std::vector<Color> ColorArray; ///< Array of colors
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int       myWidth;             ///< Image width
-    unsigned int       myHeight;            ///< Image Height
-    unsigned int       myTextureWidth;      ///< Actual texture width (can be greater than image width because of padding)
-    unsigned int       myTextureHeight;     ///< Actual texture height (can be greater than image height because of padding)
-    unsigned int       myTexture;           ///< Internal texture identifier
-    bool               myIsSmooth;          ///< Status of the smooth filter
-    std::vector<Color> myPixels;            ///< Pixels of the image
-    bool               myNeedTextureUpdate; ///< Status of synchronization between pixels in central memory and the internal texture un video memory
-    bool               myNeedArrayUpdate;   ///< Status of synchronization between pixels in central memory and the internal texture un video memory
-    bool               myPixelsFlipped;     ///< To work around the inconsistency in Y orientation
+    unsigned int       myWidth;          ///< Image width
+    unsigned int       myHeight;         ///< Image Height
+    unsigned int       myTextureWidth;   ///< Actual texture width (can be greater than image width because of padding)
+    unsigned int       myTextureHeight;  ///< Actual texture height (can be greater than image height because of padding)
+    unsigned int       myTexture;        ///< Internal texture identifier
+    bool               myIsSmooth;       ///< Status of the smooth filter
+    mutable ColorArray myPixels;         ///< Pixels of the image
+    mutable bool       myTextureUpdated; ///< Status of synchronization between pixels in central memory and the internal texture un video memory
+    mutable bool       myArrayUpdated;   ///< Status of synchronization between pixels in central memory and the internal texture un video memory
+    mutable bool       myPixelsFlipped;  ///< To work around the inconsistency in Y orientation
 };
 
 } // namespace sf

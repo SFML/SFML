@@ -276,14 +276,14 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f        myCenter;        ///< Center of the view, in scene coordinates
-    Vector2f        mySize;          ///< Size of the view, in scene coordinates
-    float           myRotation;      ///< Angle of rotation of the view rectangle, in degrees
-    FloatRect       myViewport;      ///< Viewport rectangle, expressed as a factor of the render-target's size
-    mutable Matrix3 myMatrix;        ///< Precomputed projection matrix corresponding to the view
-    mutable Matrix3 myInverseMatrix; ///< Precomputed inverse projection matrix corresponding to the view
-    mutable bool    myNeedUpdate;    ///< Internal state telling if the matrix needs to be updated
-    mutable bool    myNeedInvUpdate; ///< Internal state telling if the matrix needs to be updated
+    Vector2f        myCenter;           ///< Center of the view, in scene coordinates
+    Vector2f        mySize;             ///< Size of the view, in scene coordinates
+    float           myRotation;         ///< Angle of rotation of the view rectangle, in degrees
+    FloatRect       myViewport;         ///< Viewport rectangle, expressed as a factor of the render-target's size
+    mutable Matrix3 myMatrix;           ///< Precomputed projection matrix corresponding to the view
+    mutable Matrix3 myInverseMatrix;    ///< Precomputed inverse projection matrix corresponding to the view
+    mutable bool    myMatrixUpdated;    ///< Internal state telling if the matrix needs to be updated
+    mutable bool    myInvMatrixUpdated; ///< Internal state telling if the matrix needs to be updated
 };
 
 } // namespace sf

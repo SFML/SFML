@@ -190,7 +190,7 @@ void Sprite::Render(RenderTarget&, RenderQueue& queue) const
 
     // Check if the image is valid, and calculate the texture coordinates
     FloatRect coords;
-    if (myImage && (myImage->GetWidth() > 0) && (myImage->GetHeight() > 0))
+    if (myImage)
     {
         coords = myImage->GetTexCoords(mySubRect);
         if (myIsFlippedX) std::swap(coords.Left, coords.Right);

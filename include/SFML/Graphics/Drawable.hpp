@@ -346,16 +346,16 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f        myPosition;      ///< Position of the object on screen
-    Vector2f        myScale;         ///< Scale of the object
-    Vector2f        myOrigin;        ///< Origin of translation / rotation / scaling of the object
-    float           myRotation;      ///< Orientation of the object, in degrees
-    Color           myColor;         ///< Overlay color of the object
-    Blend::Mode     myBlendMode;     ///< Blending mode
-    mutable bool    myNeedUpdate;    ///< Do we need to recompute the transform matrix ?
-    mutable bool    myInvNeedUpdate; ///< Do we need to recompute the inverse transform matrix ?
-    mutable Matrix3 myMatrix;        ///< Precomputed transform matrix gathering the translation / rotation / scale / center
-    mutable Matrix3 myInvMatrix;     ///< Precomputed inverse transform matrix gathering the translation / rotation / scale / center
+    Vector2f        myPosition;         ///< Position of the object on screen
+    Vector2f        myScale;            ///< Scale of the object
+    Vector2f        myOrigin;           ///< Origin of translation / rotation / scaling of the object
+    float           myRotation;         ///< Orientation of the object, in degrees
+    Color           myColor;            ///< Overlay color of the object
+    Blend::Mode     myBlendMode;        ///< Blending mode
+    mutable Matrix3 myMatrix;           ///< Precomputed transform matrix gathering the translation / rotation / scale / center
+    mutable Matrix3 myInvMatrix;        ///< Precomputed inverse transform matrix gathering the translation / rotation / scale / center
+    mutable bool    myMatrixUpdated;    ///< Do we need to recompute the transform matrix ?
+    mutable bool    myInvMatrixUpdated; ///< Do we need to recompute the inverse transform matrix ?
 };
 
 } // namespace sf

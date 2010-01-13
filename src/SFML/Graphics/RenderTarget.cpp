@@ -165,7 +165,7 @@ IntRect RenderTarget::GetViewport(const View& view) const
     rect.Top    = static_cast<int>(0.5f + height * (1.f - viewport.Bottom));
     rect.Right  = static_cast<int>(0.5f + width  * viewport.Right);
     rect.Bottom = static_cast<int>(0.5f + height * (1.f - viewport.Top));
-    
+
     return rect;
 }
 

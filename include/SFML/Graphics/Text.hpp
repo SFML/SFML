@@ -172,17 +172,17 @@ private :
     /// Recompute the bounding rectangle of the text
     ///
     ////////////////////////////////////////////////////////////
-    void RecomputeRect();
+    void UpdateRect() const;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    String            myString;         ///< String to display
-    ResourcePtr<Font> myFont;           ///< Font used to display the string
-    unsigned int      myCharacterSize;  ///< Base size of characters, in pixels
-    unsigned long     myStyle;          ///< Text style (see Style enum)
-    FloatRect         myBaseRect;       ///< Bounding rectangle of the text in object coordinates
-    bool              myNeedRectUpdate; ///< Does the bounding rect need an update ?
+    String            myString;        ///< String to display
+    ResourcePtr<Font> myFont;          ///< Font used to display the string
+    unsigned int      myCharacterSize; ///< Base size of characters, in pixels
+    unsigned long     myStyle;         ///< Text style (see Style enum)
+    mutable FloatRect myBaseRect;      ///< Bounding rectangle of the text in object coordinates
+    mutable bool      myRectUpdated;   ///< Is the bounding rectangle up-to-date ?
 };
 
 } // namespace sf

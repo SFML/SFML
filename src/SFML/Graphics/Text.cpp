@@ -36,10 +36,10 @@ namespace sf
 /// Default constructor
 ////////////////////////////////////////////////////////////
 Text::Text() :
-myFont          (&Font::GetDefaultFont()),
-myCharacterSize (30),
-myStyle         (Regular),
-myNeedRectUpdate(true)
+myFont         (&Font::GetDefaultFont()),
+myCharacterSize(30),
+myStyle        (Regular),
+myRectUpdated  (true)
 {
 
 }
@@ -49,10 +49,10 @@ myNeedRectUpdate(true)
 /// Construct the string from any kind of text
 ////////////////////////////////////////////////////////////
 Text::Text(const String& string, const Font& font, unsigned int characterSize) :
-myFont          (&font),
-myCharacterSize (characterSize),
-myStyle         (Regular),
-myNeedRectUpdate(true)
+myFont         (&font),
+myCharacterSize(characterSize),
+myStyle        (Regular),
+myRectUpdated  (true)
 {
     SetString(string);
 }
@@ -63,8 +63,8 @@ myNeedRectUpdate(true)
 ////////////////////////////////////////////////////////////
 void Text::SetString(const String& string)
 {
-    myNeedRectUpdate = true;
     myString = string;
+    myRectUpdated = false;
 }
 
 
@@ -75,8 +75,8 @@ void Text::SetFont(const Font& font)
 {
     if (myFont != &font)
     {
-        myNeedRectUpdate = true;
         myFont = &font;
+        myRectUpdated = false;
     }
 }
 
@@ -88,8 +88,8 @@ void Text::SetCharacterSize(unsigned int size)
 {
     if (myCharacterSize != size)
     {
-        myNeedRectUpdate = true;
         myCharacterSize = size;
+        myRectUpdated = false;
     }
 }
 
@@ -102,8 +102,8 @@ void Text::SetStyle(unsigned long style)
 {
     if (myStyle != style)
     {
-        myNeedRectUpdate = true;
         myStyle = style;
+        myRectUpdated = false;
     }
 }
 
@@ -197,8 +197,7 @@ Vector2f Text::GetCharacterPos(std::size_t index) const
 ////////////////////////////////////////////////////////////
 FloatRect Text::GetRect() const
 {
-    if (myNeedRectUpdate)
-        const_cast<Text*>(this)->RecomputeRect();
+    UpdateRect();
 
     FloatRect rect;
     rect.Left   = (myBaseRect.Left   - GetOrigin().x) * GetScale().x + GetPosition().x;
@@ -312,10 +311,13 @@ void Text::Render(RenderTarget&, RenderQueue& queue) const
 ////////////////////////////////////////////////////////////
 /// Recompute the bounding rectangle of the text
 ////////////////////////////////////////////////////////////
-void Text::RecomputeRect()
+void Text::UpdateRect() const
 {
+    if (myRectUpdated)
+        return;
+
     // Reset the previous states
-    myNeedRectUpdate = false;
+    myRectUpdated = true;
     myBaseRect = FloatRect(0, 0, 0, 0);
 
     // No text or not font: empty box

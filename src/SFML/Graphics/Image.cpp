@@ -48,8 +48,8 @@ myTextureWidth     (0),
 myTextureHeight    (0),
 myTexture          (0),
 myIsSmooth         (true),
-myNeedTextureUpdate(false),
-myNeedArrayUpdate  (false),
+myTextureUpdated   (true),
+myArrayUpdated     (true),
 myPixelsFlipped    (false)
 {
 
@@ -63,19 +63,19 @@ Image::Image(const Image& copy) :
 Resource<Image>(copy)
 {
     // First make sure that the source image is up-to-date
-    const_cast<Image&>(copy).EnsureArrayUpdate();
+    copy.EnsureArrayUpdate();
 
     // Copy all its members
-    myWidth             = copy.myWidth;
-    myHeight            = copy.myHeight;
-    myTextureWidth      = copy.myTextureWidth;
-    myTextureHeight     = copy.myTextureHeight;
-    myTexture           = 0;
-    myIsSmooth          = copy.myIsSmooth;
-    myPixels            = copy.myPixels;
-    myNeedTextureUpdate = false;
-    myNeedArrayUpdate   = false;
-    myPixelsFlipped     = copy.myPixelsFlipped;
+    myWidth          = copy.myWidth;
+    myHeight         = copy.myHeight;
+    myTextureWidth   = copy.myTextureWidth;
+    myTextureHeight  = copy.myTextureHeight;
+    myTexture        = 0;
+    myIsSmooth       = copy.myIsSmooth;
+    myPixels         = copy.myPixels;
+    myTextureUpdated = true;
+    myArrayUpdated   = true;
+    myPixelsFlipped  = copy.myPixelsFlipped;
 
     // Create the texture
     CreateTexture();
@@ -184,7 +184,7 @@ bool Image::LoadFromPixels(unsigned int width, unsigned int height, const Uint8*
 bool Image::SaveToFile(const std::string& filename) const
 {
     // Check if the array of pixels needs to be updated
-    const_cast<Image*>(this)->EnsureArrayUpdate();
+    EnsureArrayUpdate();
 
     // Let the image loader save our pixel array into the image
     return priv::ImageLoader::GetInstance().SaveImageToFile(filename, myPixels, myWidth, myHeight);
@@ -233,7 +233,7 @@ void Image::CreateMaskFromColor(const Color& transparentColor, Uint8 alpha)
     std::replace(myPixels.begin(), myPixels.end(), transparentColor, newColor);
 
     // The texture will need to be updated
-    myNeedTextureUpdate = true;
+    myTextureUpdated = false;
 }
 
 
@@ -250,7 +250,7 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
 
     // Make sure both images have up-to-date arrays
     EnsureArrayUpdate();
-    const_cast<Image&>(source).EnsureArrayUpdate();
+    source.EnsureArrayUpdate();
 
     // Adjust the source rectangle
     IntRect srcRect = sourceRect;
@@ -323,7 +323,7 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
     }
 
     // The texture will need an update
-    myNeedTextureUpdate = true;
+    myTextureUpdated = false;
 }
 
 
@@ -368,9 +368,9 @@ bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
 
         GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
-        myNeedTextureUpdate = false;
-        myNeedArrayUpdate   = true;
-        myPixelsFlipped     = true;
+        myTextureUpdated = true;
+        myArrayUpdated   = false;
+        myPixelsFlipped  = true;
 
         return true;
     }
@@ -401,7 +401,7 @@ void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
     myPixels[x + y * myWidth] = color;
 
     // The texture will need to be updated
-    myNeedTextureUpdate = true;
+    myTextureUpdated = false;
 }
 
 
@@ -411,7 +411,7 @@ void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
 const Color& Image::GetPixel(unsigned int x, unsigned int y) const
 {
     // First check if the array of pixels needs to be updated
-    const_cast<Image*>(this)->EnsureArrayUpdate();
+    EnsureArrayUpdate();
 
     // Check if pixel is whithin the image bounds
     if ((x >= myWidth) || (y >= myHeight))
@@ -433,7 +433,7 @@ const Color& Image::GetPixel(unsigned int x, unsigned int y) const
 const Uint8* Image::GetPixelsPtr() const
 {
     // First check if the array of pixels needs to be updated
-    const_cast<Image*>(this)->EnsureArrayUpdate();
+    EnsureArrayUpdate();
 
     if (!myPixels.empty())
     {
@@ -461,8 +461,8 @@ void Image::UpdatePixels(const Uint8* pixels)
 
     GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
-    myNeedArrayUpdate   = true;
-    myNeedTextureUpdate = false;
+    myArrayUpdated   = false;
+    myTextureUpdated = true;
 }
 
 
@@ -484,7 +484,7 @@ void Image::UpdatePixels(const Uint8* pixels, const IntRect& rectangle)
     GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
     // The pixel cache is no longer up-to-date
-    myNeedArrayUpdate = true;
+    myArrayUpdated = false;
 }
 
 
@@ -494,7 +494,7 @@ void Image::UpdatePixels(const Uint8* pixels, const IntRect& rectangle)
 void Image::Bind() const
 {
     // First check if the texture needs to be updated
-    const_cast<Image*>(this)->EnsureTextureUpdate();
+    EnsureTextureUpdate();
 
     // Bind it
     if (myTexture)
@@ -562,22 +562,29 @@ bool Image::IsSmooth() const
 ////////////////////////////////////////////////////////////
 FloatRect Image::GetTexCoords(const IntRect& rect) const
 {
-    float width  = static_cast<float>(myTextureWidth);
-    float height = static_cast<float>(myTextureHeight);
-
-    if (myPixelsFlipped)
+    if ((myTextureWidth != 0) && (myTextureHeight != 0))
     {
-        return FloatRect(rect.Left   / width,
-                         rect.Bottom / height,
-                         rect.Right  / width,
-                         rect.Top    / height);
+        float width  = static_cast<float>(myTextureWidth);
+        float height = static_cast<float>(myTextureHeight);
+
+        if (myPixelsFlipped)
+        {
+            return FloatRect(rect.Left   / width,
+                             rect.Bottom / height,
+                             rect.Right  / width,
+                             rect.Top    / height);
+        }
+        else
+        {
+            return FloatRect(rect.Left   / width,
+                             rect.Top    / height,
+                             rect.Right  / width,
+                             rect.Bottom / height);
+        }
     }
     else
     {
-        return FloatRect(rect.Left   / width,
-                         rect.Top    / height,
-                         rect.Right  / width,
-                         rect.Bottom / height);
+        return FloatRect(0, 0, 0, 0);
     }
 }
 
@@ -626,15 +633,15 @@ Image& Image::operator =(const Image& other)
 {
     Image temp(other);
 
-    std::swap(myWidth,             temp.myWidth);
-    std::swap(myHeight,            temp.myHeight);
-    std::swap(myTextureWidth,      temp.myTextureWidth);
-    std::swap(myTextureHeight,     temp.myTextureHeight);
-    std::swap(myTexture,           temp.myTexture);
-    std::swap(myIsSmooth,          temp.myIsSmooth);
-    std::swap(myNeedArrayUpdate,   temp.myNeedArrayUpdate);
-    std::swap(myNeedTextureUpdate, temp.myNeedTextureUpdate);
-    std::swap(myPixelsFlipped,     temp.myPixelsFlipped);
+    std::swap(myWidth,          temp.myWidth);
+    std::swap(myHeight,         temp.myHeight);
+    std::swap(myTextureWidth,   temp.myTextureWidth);
+    std::swap(myTextureHeight,  temp.myTextureHeight);
+    std::swap(myTexture,        temp.myTexture);
+    std::swap(myIsSmooth,       temp.myIsSmooth);
+    std::swap(myArrayUpdated,   temp.myArrayUpdated);
+    std::swap(myTextureUpdated, temp.myTextureUpdated);
+    std::swap(myPixelsFlipped,  temp.myPixelsFlipped);
     myPixels.swap(temp.myPixels);
 
     return *this;
@@ -692,7 +699,7 @@ bool Image::CreateTexture()
         GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
     }
 
-    myNeedTextureUpdate = true;
+    myTextureUpdated = false;
 
     return true;
 }
@@ -702,9 +709,9 @@ bool Image::CreateTexture()
 /// Make sure the texture in video memory is updated with the
 /// array of pixels
 ////////////////////////////////////////////////////////////
-void Image::EnsureTextureUpdate()
+void Image::EnsureTextureUpdate() const
 {
-    if (myNeedTextureUpdate)
+    if (!myTextureUpdated)
     {
         if (myTexture && !myPixels.empty())
         {
@@ -719,7 +726,7 @@ void Image::EnsureTextureUpdate()
             GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
         }
 
-        myNeedTextureUpdate = false;
+        myTextureUpdated = true;
     }
 }
 
@@ -728,9 +735,9 @@ void Image::EnsureTextureUpdate()
 /// Make sure the array of pixels is updated with the
 /// texture in video memory
 ////////////////////////////////////////////////////////////
-void Image::EnsureArrayUpdate()
+void Image::EnsureArrayUpdate() const
 {
-    if (myNeedArrayUpdate)
+    if (!myArrayUpdated)
     {
         // First make sure the texture is up-to-date
         // (may not be the case if an external update has been scheduled)
@@ -756,7 +763,7 @@ void Image::EnsureArrayUpdate()
             // Texture and array don't have the same size, we have to use a slower algorithm
 
             // All the pixels will first be copied to a temporary array
-            std::vector<Color> allPixels(myTextureWidth * myTextureHeight);
+            ColorArray allPixels(myTextureWidth * myTextureHeight);
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
             GLCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &allPixels[0]));
 
@@ -783,7 +790,7 @@ void Image::EnsureArrayUpdate()
         // Restore the previous texture
         GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
-        myNeedArrayUpdate = false;
+        myArrayUpdated = true;
     }
 }
 
@@ -795,15 +802,15 @@ void Image::Reset()
 {
     DestroyTexture();
 
-    myWidth             = 0;
-    myHeight            = 0;
-    myTextureWidth      = 0;
-    myTextureHeight     = 0;
-    myTexture           = 0;
-    myIsSmooth          = true;
-    myNeedTextureUpdate = false;
-    myNeedArrayUpdate   = false;
-    myPixelsFlipped     = false;
+    myWidth          = 0;
+    myHeight         = 0;
+    myTextureWidth   = 0;
+    myTextureHeight  = 0;
+    myTexture        = 0;
+    myIsSmooth       = true;
+    myTextureUpdated = true;
+    myArrayUpdated   = true;
+    myPixelsFlipped  = false;
     myPixels.clear();
 }
 
@@ -818,9 +825,9 @@ void Image::DestroyTexture()
     {
         GLuint Texture = static_cast<GLuint>(myTexture);
         GLCheck(glDeleteTextures(1, &Texture));
-        myTexture           = 0;
-        myNeedTextureUpdate = false;
-        myNeedArrayUpdate   = false;
+        myTexture        = 0;
+        myTextureUpdated = true;
+        myArrayUpdated   = true;
     }
 }
 

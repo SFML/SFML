@@ -32,12 +32,12 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 View::View() :
-myCenter       (),
-mySize         (),
-myRotation     (0),
-myViewport     (0, 0, 1, 1),
-myNeedUpdate   (true),
-myNeedInvUpdate(true)
+myCenter          (),
+mySize            (),
+myRotation        (0),
+myViewport        (0, 0, 1, 1),
+myMatrixUpdated   (false),
+myInvMatrixUpdated(false)
 {
     Reset(FloatRect(0, 0, 1000, 1000));
 }
@@ -45,12 +45,12 @@ myNeedInvUpdate(true)
 
 ////////////////////////////////////////////////////////////
 View::View(const FloatRect& rectangle) :
-myCenter       (),
-mySize         (),
-myRotation     (0),
-myViewport     (0, 0, 1, 1),
-myNeedUpdate   (true),
-myNeedInvUpdate(true)
+myCenter          (),
+mySize            (),
+myRotation        (0),
+myViewport        (0, 0, 1, 1),
+myMatrixUpdated   (false),
+myInvMatrixUpdated(false)
 {
     Reset(rectangle);
 }
@@ -58,12 +58,12 @@ myNeedInvUpdate(true)
 
 ////////////////////////////////////////////////////////////
 View::View(const Vector2f& center, const Vector2f& size) :
-myCenter       (center),
-mySize         (size),
-myRotation     (0),
-myViewport     (0, 0, 1, 1),
-myNeedUpdate   (true),
-myNeedInvUpdate(true)
+myCenter          (center),
+mySize            (size),
+myRotation        (0),
+myViewport        (0, 0, 1, 1),
+myMatrixUpdated   (false),
+myInvMatrixUpdated(false)
 {
 
 }
@@ -71,10 +71,11 @@ myNeedInvUpdate(true)
 ////////////////////////////////////////////////////////////
 void View::SetCenter(float x, float y)
 {
-    myCenter.x      = x;
-    myCenter.y      = y;
-    myNeedUpdate    = true;
-    myNeedInvUpdate = true;
+    myCenter.x = x;
+    myCenter.y = y;
+
+    myMatrixUpdated    = false;
+    myInvMatrixUpdated = false;
 }
 
 
@@ -88,10 +89,11 @@ void View::SetCenter(const Vector2f& center)
 ////////////////////////////////////////////////////////////
 void View::SetSize(float width, float height)
 {
-    mySize.x        = width;
-    mySize.y        = height;
-    myNeedUpdate    = true;
-    myNeedInvUpdate = true;
+    mySize.x = width;
+    mySize.y = height;
+
+    myMatrixUpdated    = false;
+    myInvMatrixUpdated = false;
 }
 
 
@@ -108,8 +110,9 @@ void View::SetRotation(float angle)
     myRotation = static_cast<float>(fmod(angle, 360));
     if (myRotation < 0)
         myRotation += 360.f;
-    myNeedUpdate    = true;
-    myNeedInvUpdate = true;
+
+    myMatrixUpdated    = false;
+    myInvMatrixUpdated = false;
 }
 
 
@@ -123,11 +126,12 @@ void View::SetViewport(const FloatRect& viewport)
 ////////////////////////////////////////////////////////////
 void View::Reset(const FloatRect& rectangle)
 {
-    myCenter        = rectangle.GetCenter();
-    mySize          = rectangle.GetSize();
-    myRotation      = 0;
-    myNeedUpdate    = true;
-    myNeedInvUpdate = true;
+    myCenter   = rectangle.GetCenter();
+    mySize     = rectangle.GetSize();
+    myRotation = 0;
+
+    myMatrixUpdated    = false;
+    myInvMatrixUpdated = false;
 }
 
 
@@ -191,10 +195,10 @@ void View::Zoom(float factor)
 const Matrix3& View::GetMatrix() const
 {
     // Recompute the matrix if needed
-    if (myNeedUpdate)
+    if (!myMatrixUpdated)
     {
         myMatrix.SetFromProjection(myCenter, mySize, myRotation);
-        myNeedUpdate = false;
+        myMatrixUpdated = true;
     }
 
     return myMatrix;
@@ -205,10 +209,10 @@ const Matrix3& View::GetMatrix() const
 const Matrix3& View::GetInverseMatrix() const
 {
     // Recompute the matrix if needed
-    if (myNeedInvUpdate)
+    if (!myInvMatrixUpdated)
     {
         myInverseMatrix = GetMatrix().GetInverse();
-        myNeedInvUpdate = false;
+        myInvMatrixUpdated = true;
     }
 
     return myInverseMatrix;

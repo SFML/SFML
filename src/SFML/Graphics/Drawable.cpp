@@ -37,14 +37,14 @@ namespace sf
 /// Default constructor
 ////////////////////////////////////////////////////////////
 Drawable::Drawable(const Vector2f& position, const Vector2f& scale, float rotation, const Color& color) :
-myPosition     (position),
-myScale        (scale),
-myOrigin       (0, 0),
-myRotation     (rotation),
-myColor        (color),
-myBlendMode    (Blend::Alpha),
-myNeedUpdate   (true),
-myInvNeedUpdate(true)
+myPosition        (position),
+myScale           (scale),
+myOrigin          (0, 0),
+myRotation        (rotation),
+myColor           (color),
+myBlendMode       (Blend::Alpha),
+myMatrixUpdated   (false),
+myInvMatrixUpdated(false)
 {
 }
 
@@ -83,9 +83,10 @@ void Drawable::SetPosition(const Vector2f& position)
 ////////////////////////////////////////////////////////////
 void Drawable::SetX(float x)
 {
-    myPosition.x    = x;
-    myNeedUpdate    = true;
-    myInvNeedUpdate = true;
+    myPosition.x = x;
+
+    myMatrixUpdated    = false;
+    myInvMatrixUpdated = false;
 }
 
 
@@ -94,9 +95,10 @@ void Drawable::SetX(float x)
 ////////////////////////////////////////////////////////////
 void Drawable::SetY(float y)
 {
-    myPosition.y    = y;
-    myNeedUpdate    = true;
-    myInvNeedUpdate = true;
+    myPosition.y = y;
+
+    myMatrixUpdated    = false;
+    myInvMatrixUpdated = false;
 }
 
 
@@ -127,9 +129,10 @@ void Drawable::SetScaleX(float factor)
 {
     if (factor > 0)
     {
-        myScale.x       = factor;
-        myNeedUpdate    = true;
-        myInvNeedUpdate = true;
+        myScale.x = factor;
+
+        myMatrixUpdated    = false;
+        myInvMatrixUpdated = false;
     }
 }
 
@@ -141,9 +144,10 @@ void Drawable::SetScaleY(float factor)
 {
     if (factor > 0)
     {
-        myScale.y       = factor;
-        myNeedUpdate    = true;
-        myInvNeedUpdate = true;
+        myScale.y = factor;
+
+        myMatrixUpdated    = false;
+        myInvMatrixUpdated = false;
     }
 }
 
@@ -155,10 +159,11 @@ void Drawable::SetScaleY(float factor)
 ////////////////////////////////////////////////////////////
 void Drawable::SetOrigin(float x, float y)
 {
-    myOrigin.x      = x;
-    myOrigin.y      = y;
-    myNeedUpdate    = true;
-    myInvNeedUpdate = true;
+    myOrigin.x = x;
+    myOrigin.y = y;
+
+    myMatrixUpdated    = false;
+    myInvMatrixUpdated = false;
 }
 
 
@@ -181,8 +186,9 @@ void Drawable::SetRotation(float angle)
     myRotation = static_cast<float>(fmod(angle, 360));
     if (myRotation < 0)
         myRotation += 360.f;
-    myNeedUpdate    = true;
-    myInvNeedUpdate = true;
+
+    myMatrixUpdated    = false;
+    myInvMatrixUpdated = false;
 }
 
 
@@ -331,10 +337,10 @@ sf::Vector2f Drawable::TransformToGlobal(const sf::Vector2f& point) const
 const Matrix3& Drawable::GetMatrix() const
 {
     // First recompute it if needed
-    if (myNeedUpdate)
+    if (!myMatrixUpdated)
     {
         myMatrix.SetFromTransformations(myOrigin, myPosition, myRotation, myScale);
-        myNeedUpdate = false;
+        myMatrixUpdated = true;
     }
 
     return myMatrix;
@@ -347,10 +353,10 @@ const Matrix3& Drawable::GetMatrix() const
 const Matrix3& Drawable::GetInverseMatrix() const
 {
     // First recompute it if needed
-    if (myInvNeedUpdate)
+    if (!myInvMatrixUpdated)
     {
-        myInvMatrix     = GetMatrix().GetInverse();
-        myInvNeedUpdate = false;
+        myInvMatrix = GetMatrix().GetInverse();
+        myInvMatrixUpdated = true;
     }
 
     return myInvMatrix;
