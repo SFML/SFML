@@ -10,8 +10,11 @@ set PATH=%PATH%;"%CD%"
 REM Compile the SFML libraries
 cd %SFML%\build\codeblocks
 
+echo Compiling sfml-main...
+codeblocks -na -nd -ns --build sfml-main.cbp --target="Debug_Win32"
+codeblocks -na -nd -ns --build sfml-main.cbp --target="Release_Win32"
+
 echo Compiling debug static libraries...
-codeblocks -na -nd -ns --build sfml-main.cbp --target="Debug"
 codeblocks -na -nd -ns --build sfml-system.cbp --target="Debug static_Win32"
 codeblocks -na -nd -ns --build sfml-window.cbp --target="Debug static_Win32"
 codeblocks -na -nd -ns --build sfml-graphics.cbp --target="Debug static_Win32"
@@ -26,7 +29,6 @@ codeblocks -na -nd -ns --build sfml-audio.cbp --target="Debug DLL_Win32"
 codeblocks -na -nd -ns --build sfml-network.cbp --target="Debug DLL_Win32"
 
 echo Compiling release static libraries...
-codeblocks -na -nd -ns --build sfml-main.cbp --target="Release"
 codeblocks -na -nd -ns --build sfml-system.cbp --target="Release static_Win32"
 codeblocks -na -nd -ns --build sfml-window.cbp --target="Release static_Win32"
 codeblocks -na -nd -ns --build sfml-graphics.cbp --target="Release static_Win32"
