@@ -103,7 +103,7 @@ public:
 	*/	
 	void setSubRect(IntRect rect)
 	{
-		sfSprite_SetSubRect(m_ptr, &rect);
+		sfSprite_SetSubRect(m_ptr, rect);
 		m_subRect = rect;
 	}
 
@@ -213,7 +213,7 @@ private:
 	extern (C)
 	{
 		typedef void function(void*, void*, bool) pf_sfSprite_SetImage;
-		typedef void function(void*, IntRect*) pf_sfSprite_SetSubRect;
+		typedef void function(void*, IntRect) pf_sfSprite_SetSubRect;
 		typedef void function(void*, float, float) pf_sfSprite_Resize;
 		typedef void function(void*, int) pf_sfSprite_FlipX;
 		typedef void function(void*, int) pf_sfSprite_FlipY;

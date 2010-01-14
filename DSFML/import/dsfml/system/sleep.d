@@ -32,7 +32,7 @@ extern(C)
 {
 	typedef void function(float) pf_sfSleep;
 	
-	private static pf_sfSleep sfSleep;
+	private static __gshared pf_sfSleep sfSleep;
 }
 
 static this()

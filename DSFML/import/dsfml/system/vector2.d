@@ -154,3 +154,5 @@ version (UnitTest)
 alias Vector2!(float) Vector2f;
 /// ditto
 alias Vector2!(int) Vector2i;
+/// ditto
+alias Vector2!(int) Vector2ui;
