@@ -189,17 +189,17 @@ namespace SFML
             public override string ToString()
             {
                 return "[SoundStream]" +
-                       " SampleRate = " + SampleRate +
-                       " ChannelsCount = " + ChannelsCount +
-                       " Status = " + Status +
-                       " Loop = " + Loop +
-                       " Pitch = " + Pitch +
-                       " Volume = " + Volume +
-                       " Position = " + Position +
-                       " RelativeToListener = " + RelativeToListener +
-                       " MinDistance = " + MinDistance +
-                       " Attenuation = " + Attenuation +
-                       " PlayingOffset = " + PlayingOffset;
+                       " SampleRate(" + SampleRate + ")" +
+                       " ChannelsCount(" + ChannelsCount + ")" +
+                       " Status(" + Status + ")" +
+                       " Loop(" + Loop + ")" +
+                       " Pitch(" + Pitch + ")" +
+                       " Volume(" + Volume + ")" +
+                       " Position(" + Position + ")" +
+                       " RelativeToListener(" + RelativeToListener + ")" +
+                       " MinDistance(" + MinDistance + ")" +
+                       " Attenuation(" + Attenuation + ")" +
+                       " PlayingOffset(" + PlayingOffset + ")";
             }
 
             ////////////////////////////////////////////////////////////

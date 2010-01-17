@@ -236,16 +236,16 @@ namespace SFML
             public override string ToString()
             {
                 return "[Sprite]" +
-                       " Position = " + Position +
-                       " Rotation = " + Rotation +
-                       " Scale = " + Scale +
-                       " Origin = " + Origin +
-                       " Color = " + Color +
-                       " BlendMode = " + BlendMode +
-                       " Width = " + Width +
-                       " Height = " + Height +
-                       " SubRect = " + SubRect +
-                       " Image = " + Image;
+                       " Position(" + Position + ")" +
+                       " Rotation(" + Rotation + ")" +
+                       " Scale(" + Scale + ")" +
+                       " Origin(" + Origin + ")" +
+                       " Color(" + Color + ")" +
+                       " BlendMode(" + BlendMode + ")" +
+                       " Width(" + Width + ")" +
+                       " Height(" + Height + ")" +
+                       " SubRect(" + SubRect + ")" +
+                       " Image(" + Image + ")";
             }
 
             ////////////////////////////////////////////////////////////

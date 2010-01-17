@@ -434,11 +434,11 @@ namespace SFML
             public override string ToString()
             {
                 return "[RenderWindow]" +
-                       " Width = " + Width +
-                       " Height = " + Height +
-                       " Settings = " + Settings +
-                       " DefaultView = " + DefaultView +
-                       " CurrentView = " + CurrentView;
+                       " Width(" + Width + ")" +
+                       " Height(" + Height + ")" +
+                       " Settings(" + Settings + ")" +
+                       " DefaultView(" + DefaultView + ")" +
+                       " CurrentView(" + CurrentView + ")";
             }
 
             ////////////////////////////////////////////////////////////

@@ -251,11 +251,11 @@ namespace SFML
             public override string ToString()
             {
                 return "[RenderImage]" +
-                       " Width = " + Width +
-                       " Height = " + Height +
-                       " Image = " + Image +
-                       " DefaultView = " + DefaultView +
-                       " CurrentView = " + CurrentView;
+                       " Width(" + Width + ")" +
+                       " Height(" + Height + ")" +
+                       " Image(" + Image + ")" +
+                       " DefaultView(" + DefaultView + ")" +
+                       " CurrentView(" + CurrentView + ")";
             }
 
             ////////////////////////////////////////////////////////////

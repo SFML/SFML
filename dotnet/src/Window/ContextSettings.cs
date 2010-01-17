@@ -66,11 +66,11 @@ namespace SFML
             public override string ToString()
             {
                 return "[ContextSettings]" +
-                       " DepthBits = " + DepthBits +
-                       " StencilBits = " + StencilBits +
-                       " AntialiasingLevel = " + AntialiasingLevel +
-                       " MajorVersion = " + MajorVersion +
-                       " MinorVersion = " + MinorVersion;
+                       " DepthBits(" + DepthBits + ")" +
+                       " StencilBits(" + StencilBits + ")" +
+                       " AntialiasingLevel(" + AntialiasingLevel + ")" +
+                       " MajorVersion(" + MajorVersion + ")" +
+                       " MinorVersion(" + MinorVersion + ")";
             }
 
             /// <summary>Depth buffer bits (0 is disabled)</summary>

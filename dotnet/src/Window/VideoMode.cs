@@ -97,9 +97,9 @@ namespace SFML
             public override string ToString()
             {
                 return "[VideoMode]" +
-                       " Width = " + Width +
-                       " Height = " + Height +
-                       " BitsPerPixel = " + BitsPerPixel;
+                       " Width(" + Width + ")" +
+                       " Height(" + Height + ")" +
+                       " BitsPerPixel(" + BitsPerPixel + ")";
             }
 
             /// <summary>Video mode width, in pixels</summary>

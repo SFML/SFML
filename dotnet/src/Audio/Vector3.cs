@@ -115,9 +115,9 @@ namespace SFML
             public override string ToString()
             {
                 return "[Vector3]" +
-                       " X = " + X +
-                       " Y = " + Y +
-                       " Z = " + Z;
+                       " X(" + X + ")" +
+                       " Y(" + Y + ")" +
+                       " Z(" + Z + ")";
             }
 
             /// <summary>X (horizontal) component of the vector</summary>

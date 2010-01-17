@@ -224,18 +224,18 @@ namespace SFML
             public override string ToString()
             {
                 return "[Music]" +
-                       " SampleRate = " + SampleRate +
-                       " ChannelsCount = " + ChannelsCount +
-                       " Status = " + Status +
-                       " Duration = " + Duration +
-                       " Loop = " + Loop +
-                       " Pitch = " + Pitch +
-                       " Volume = " + Volume +
-                       " Position = " + Position +
-                       " RelativeToListener = " + RelativeToListener +
-                       " MinDistance = " + MinDistance +
-                       " Attenuation = " + Attenuation +
-                       " PlayingOffset = " + PlayingOffset;
+                       " SampleRate(" + SampleRate + ")" +
+                       " ChannelsCount(" + ChannelsCount + ")" +
+                       " Status(" + Status + ")" +
+                       " Duration(" + Duration + ")" +
+                       " Loop(" + Loop + ")" +
+                       " Pitch(" + Pitch + ")" +
+                       " Volume(" + Volume + ")" +
+                       " Position(" + Position + ")" +
+                       " RelativeToListener(" + RelativeToListener + ")" +
+                       " MinDistance(" + MinDistance + ")" +
+                       " Attenuation(" + Attenuation + ")" +
+                       " PlayingOffset(" + PlayingOffset + ")";
             }
 
             ////////////////////////////////////////////////////////////

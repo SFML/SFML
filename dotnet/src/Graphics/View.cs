@@ -158,10 +158,10 @@ namespace SFML
             public override string ToString()
             {
                 return "[View]" +
-                       " Center = " + Center +
-                       " Size = " + Size +
-                       " Rotation = " + Rotation +
-                       " Viewport = " + Viewport;
+                       " Center(" + Center + ")" +
+                       " Size(" + Size + ")" +
+                       " Rotation(" + Rotation + ")" +
+                       " Viewport(" + Viewport + ")";
             }
 
             ////////////////////////////////////////////////////////////

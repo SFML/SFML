@@ -317,9 +317,9 @@ namespace SFML
             public override string ToString()
             {
                 return "[Image]" +
-                       " Width = " + Width +
-                       " Height = " + Height +
-                       " Smooth = " + Smooth;
+                       " Width(" + Width + ")" +
+                       " Height(" + Height + ")" +
+                       " Smooth(" + Smooth + ")";
             }
 
             ////////////////////////////////////////////////////////////

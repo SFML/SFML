@@ -277,17 +277,17 @@ namespace SFML
             public override string ToString()
             {
                 return "[Text]" +
-                       " Position = " + Position +
-                       " Rotation = " + Rotation +
-                       " Scale = " + Scale +
-                       " Origin = " + Origin +
-                       " Color = " + Color +
-                       " BlendMode = " + BlendMode +
-                       " String = " + DisplayedString +
-                       " Font = " + Font +
-                       " Size = " + Size +
-                       " Style = " + Style +
-                       " Rectangle = " + GetRect();
+                       " Position(" + Position + ")" +
+                       " Rotation(" + Rotation + ")" +
+                       " Scale(" + Scale + ")" +
+                       " Origin(" + Origin + ")" +
+                       " Color(" + Color + ")" +
+                       " BlendMode(" + BlendMode + ")" +
+                       " String(" + DisplayedString + ")" +
+                       " Font(" + Font + ")" +
+                       " Size(" + Size + ")" +
+                       " Style(" + Style + ")" +
+                       " Rectangle(" + GetRect() + ")";
             }
 
             ////////////////////////////////////////////////////////////

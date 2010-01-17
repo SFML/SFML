@@ -375,9 +375,9 @@ namespace SFML
             public override string ToString()
             {
                 return "[Window]" +
-                       " Width = " + Width +
-                       " Height = " + Height +
-                       " Settings = " + Settings;
+                       " Width(" + Width + ")" +
+                       " Height(" + Height + ")" +
+                       " Settings(" + Settings + ")";
             }
 
             ////////////////////////////////////////////////////////////

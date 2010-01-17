@@ -154,9 +154,9 @@ namespace SFML
             public override string ToString()
             {
                 return "[SoundBuffer]" +
-                       " SampleRate = " + SampleRate +
-                       " ChannelsCount = " + ChannelsCount +
-                       " Duration = " + Duration;
+                       " SampleRate(" + SampleRate + ")" +
+                       " ChannelsCount(" + ChannelsCount + ")" +
+                       " Duration(" + Duration + ")";
             }
 
             ////////////////////////////////////////////////////////////

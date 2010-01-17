@@ -92,7 +92,7 @@ namespace SFML
             public override string ToString()
             {
                 return "[SoundRecorder]" +
-                       " SampleRate = " + SampleRate;
+                       " SampleRate(" + SampleRate + ")";
             }
 
             ////////////////////////////////////////////////////////////

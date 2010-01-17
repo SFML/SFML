@@ -37,8 +37,8 @@ namespace SFML
             public override string ToString()
             {
                 return "[SoundBufferRecorder]" +
-                       " SampleRate = " + SampleRate +
-                       " SoundBuffer = " + SoundBuffer;
+                       " SampleRate(" + SampleRate + ")" +
+                       " SoundBuffer(" + SoundBuffer + ")";
             }
 
             ////////////////////////////////////////////////////////////

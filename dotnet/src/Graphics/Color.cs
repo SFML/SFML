@@ -63,10 +63,10 @@ namespace SFML
             public override string ToString()
             {
                 return "[Color]" +
-                       " R = " + R +
-                       " G = " + G +
-                       " B = " + B +
-                       " A = " + A;
+                       " R(" + R + ")" +
+                       " G(" + G + ")" +
+                       " B(" + B + ")" +
+                       " A(" + A + ")";
             }
 
             /// <summary>Red component of the color</summary>

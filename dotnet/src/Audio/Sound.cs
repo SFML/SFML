@@ -219,16 +219,16 @@ namespace SFML
             public override string ToString()
             {
                 return "[Sound]" +
-                       " Status = " + Status +
-                       " Loop = " + Loop +
-                       " Pitch = " + Pitch +
-                       " Volume = " + Volume +
-                       " Position = " + Position +
-                       " RelativeToListener = " + RelativeToListener +
-                       " MinDistance = " + MinDistance +
-                       " Attenuation = " + Attenuation +
-                       " PlayingOffset = " + PlayingOffset +
-                       " SoundBuffer = " + SoundBuffer;
+                       " Status(" + Status + ")" +
+                       " Loop(" + Loop + ")" +
+                       " Pitch(" + Pitch + ")" +
+                       " Volume(" + Volume + ")" +
+                       " Position(" + Position + ")" +
+                       " RelativeToListener(" + RelativeToListener + ")" +
+                       " MinDistance(" + MinDistance + ")" +
+                       " Attenuation(" + Attenuation + ")" +
+                       " PlayingOffset(" + PlayingOffset + ")" +
+                       " SoundBuffer(" + SoundBuffer + ")";
             }
 
             ////////////////////////////////////////////////////////////

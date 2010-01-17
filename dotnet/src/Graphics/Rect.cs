@@ -134,10 +134,10 @@ namespace SFML
             public override string ToString()
             {
                 return "[IntRect]" +
-                       " Left = " + Left +
-                       " Top = " + Top +
-                       " Right = " + Right +
-                       " Bottom = " + Bottom;
+                       " Left(" + Left + ")" +
+                       " Top(" + Top + ")" +
+                       " Right(" + Right + ")" +
+                       " Bottom(" + Bottom + ")";
             }
 
             /// <summary>Left coordinate of the rectangle</summary>
@@ -282,10 +282,10 @@ namespace SFML
             public override string ToString()
             {
                 return "[FloatRect]" +
-                       " Left = " + Left +
-                       " Top = " + Top +
-                       " Right = " + Right +
-                       " Bottom = " + Bottom;
+                       " Left(" + Left + ")" +
+                       " Top(" + Top + ")" +
+                       " Right(" + Right + ")" +
+                       " Bottom(" + Bottom + ")";
             }
 
             /// <summary>Left coordinate of the rectangle</summary>

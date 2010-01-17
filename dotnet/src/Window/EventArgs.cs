@@ -34,10 +34,10 @@ namespace SFML
             public override string ToString()
             {
                 return "[KeyEventArgs]" +
-                       " Code = " + Code +
-                       " Alt = " + Alt +
-                       " Control = " + Control +
-                       " Shift = " + Shift;
+                       " Code(" + Code + ")" + 
+                       " Alt(" + Alt + ")" + 
+                       " Control(" + Control + ")" + 
+                       " Shift(" + Shift + ")";
             }
 
             /// <summary>Code of the key (see KeyCode enum)</summary>
@@ -80,7 +80,7 @@ namespace SFML
             public override string ToString()
             {
                 return "[TextEventArgs]" +
-                       " Unicode = " + Unicode;
+                       " Unicode(" + Unicode + ")";
             }
 
             /// <summary>UTF-16 value of the character</summary>
@@ -115,8 +115,8 @@ namespace SFML
             public override string ToString()
             {
                 return "[MouseMoveEventArgs]" +
-                       " X = " + X +
-                       " Y = " + Y;
+                       " X(" + X + ")" +
+                       " Y(" + Y + ")";
             }
 
             /// <summary>X coordinate of the mouse cursor</summary>
@@ -155,9 +155,9 @@ namespace SFML
             public override string ToString()
             {
                 return "[MouseButtonEventArgs]" +
-                       " Button = " + Button +
-                       " X = " + X +
-                       " Y = " + Y;
+                       " Button(" + Button + ")" +
+                       " X(" + X + ")" +
+                       " Y(" + Y + ")";
             }
 
             /// <summary>Code of the button (see MouseButton enum)</summary>
@@ -199,9 +199,9 @@ namespace SFML
             public override string ToString()
             {
                 return "[MouseWheelEventArgs]" +
-                       " Delta = " + Delta +
-                       " X = " + X +
-                       " Y = " + Y;
+                       " Delta(" + Delta + ")" +
+                       " X(" + X + ")" +
+                       " Y(" + Y + ")";
             }
 
             /// <summary>Scroll amount</summary>
@@ -243,9 +243,9 @@ namespace SFML
             public override string ToString()
             {
                 return "[JoyMoveEventArgs]" +
-                       " JoystickId = " + JoystickId +
-                       " Axis = " + Axis +
-                       " Position = " + Position;
+                       " JoystickId(" + JoystickId + ")" +
+                       " Axis(" + Axis + ")" +
+                       " Position(" + Position + ")";
             }
 
             /// <summary>Index of the joystick which triggered the event</summary>
@@ -286,8 +286,8 @@ namespace SFML
             public override string ToString()
             {
                 return "[JoyButtonEventArgs]" +
-                       " JoystickId = " + JoystickId +
-                       " Button = " + Button;
+                       " JoystickId(" + JoystickId + ")" +
+                       " Button(" + Button + ")";
             }
 
             /// <summary>Index of the joystick which triggered the event</summary>
@@ -325,8 +325,8 @@ namespace SFML
             public override string ToString()
             {
                 return "[SizeEventArgs]" +
-                       " Width = " + Width +
-                       " Height = " + Height;
+                       " Width(" + Width + ")" +
+                       " Height(" + Height + ")";
             }
 
             /// <summary>New width of the window</summary>
