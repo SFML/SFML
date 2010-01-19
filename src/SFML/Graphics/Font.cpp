@@ -179,6 +179,10 @@ const Glyph& Font::GetGlyph(Uint32 codePoint, unsigned int characterSize, bool b
 ////////////////////////////////////////////////////////////
 int Font::GetKerning(Uint32 first, Uint32 second, unsigned int characterSize) const
 {
+    // Special case where first or second is 0 (null character)
+    if (first == 0 || second == 0)
+        return 0;
+
     FT_Face face = static_cast<FT_Face>(myFace);
 
     if (face && FT_HAS_KERNING(face) && SetCurrentSize(characterSize))
