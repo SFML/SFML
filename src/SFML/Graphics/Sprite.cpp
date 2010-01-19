@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/RenderQueue.hpp>
+#include <SFML/Graphics/Renderer.hpp>
 #include <utility>
 
 
@@ -182,7 +182,7 @@ Color Sprite::GetPixel(unsigned int x, unsigned int y) const
 ////////////////////////////////////////////////////////////
 /// /see Drawable::Render
 ////////////////////////////////////////////////////////////
-void Sprite::Render(RenderTarget&, RenderQueue& queue) const
+void Sprite::Render(RenderTarget&, Renderer& renderer) const
 {
     // Get the sprite size
     float width  = static_cast<float>(mySubRect.GetSize().x);
@@ -198,16 +198,15 @@ void Sprite::Render(RenderTarget&, RenderQueue& queue) const
     }
 
     // Bind the texture
-    queue.SetTexture(myImage);
+    renderer.SetTexture(myImage);
 
     // Draw the sprite's geometry
-    queue.BeginBatch();
-    queue.AddVertex(0,     0,      coords.Left,  coords.Top);
-    queue.AddVertex(0,     height, coords.Left,  coords.Bottom);
-    queue.AddVertex(width, height, coords.Right, coords.Bottom);
-    queue.AddVertex(width, 0,      coords.Right, coords.Top);
-    queue.AddTriangle(0, 1, 3);
-    queue.AddTriangle(3, 1, 2);
+    renderer.Begin(Renderer::TriangleStrip);
+        renderer.AddVertex(0,     0,      coords.Left,  coords.Top);
+        renderer.AddVertex(width, 0,      coords.Right, coords.Top);
+        renderer.AddVertex(0,     height, coords.Left,  coords.Bottom);
+        renderer.AddVertex(width, height, coords.Right, coords.Bottom);
+    renderer.End();
 }
 
 } // namespace sf

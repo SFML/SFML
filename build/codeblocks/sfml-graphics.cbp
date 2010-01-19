@@ -127,16 +127,14 @@
 		<Unit filename="..\..\include\SFML\Graphics\Rect.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Rect.inl" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderImage.hpp" />
-		<Unit filename="..\..\include\SFML\Graphics\RenderQueue.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderTarget.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\RenderWindow.hpp" />
+		<Unit filename="..\..\include\SFML\Graphics\Renderer.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Shader.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Shape.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Sprite.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Text.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\View.hpp" />
-		<Unit filename="..\..\src\SFML\Graphics\Batch.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\Batch.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Color.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Drawable.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Font.cpp" />
@@ -148,14 +146,6 @@
 		<Unit filename="..\..\src\SFML\Graphics\GLEW\glew.h" />
 		<Unit filename="..\..\src\SFML\Graphics\GLEW\glxew.h" />
 		<Unit filename="..\..\src\SFML\Graphics\GLEW\wglew.h" />
-		<Unit filename="..\..\src\SFML\Graphics\GeometryRenderer.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\GeometryRenderer.hpp" />
-		<Unit filename="..\..\src\SFML\Graphics\GeometryRendererIM.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\GeometryRendererIM.hpp" />
-		<Unit filename="..\..\src\SFML\Graphics\GeometryRendererVA.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\GeometryRendererVA.hpp" />
-		<Unit filename="..\..\src\SFML\Graphics\GeometryRendererVBO.cpp" />
-		<Unit filename="..\..\src\SFML\Graphics\GeometryRendererVBO.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\Image.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\ImageLoader.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\ImageLoader.hpp" />
@@ -167,9 +157,9 @@
 		<Unit filename="..\..\src\SFML\Graphics\RenderImageImplFBO.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderImageImplFBO.hpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderImageImplPBuffer.hpp" />
-		<Unit filename="..\..\src\SFML\Graphics\RenderQueue.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderTarget.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\RenderWindow.cpp" />
+		<Unit filename="..\..\src\SFML\Graphics\Renderer.cpp" />
 		<Unit filename="..\..\src\SFML\Graphics\SOIL\SOIL.c">
 			<Option compilerVar="CC" />
 		</Unit>

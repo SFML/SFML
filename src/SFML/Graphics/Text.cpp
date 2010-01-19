@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/RenderQueue.hpp>
+#include <SFML/Graphics/Renderer.hpp>
 
 
 namespace sf
@@ -212,14 +212,14 @@ FloatRect Text::GetRect() const
 ////////////////////////////////////////////////////////////
 /// /see Drawable::Render
 ////////////////////////////////////////////////////////////
-void Text::Render(RenderTarget&, RenderQueue& queue) const
+void Text::Render(RenderTarget&, Renderer& renderer) const
 {
     // No text or not font: nothing to render
     if (!myFont || myString.IsEmpty())
         return;
 
     // Bind the font texture
-    queue.SetTexture(&myFont->GetImage(myCharacterSize));
+    renderer.SetTexture(&myFont->GetImage(myCharacterSize));
 
     // Computes values related to the text style
     bool  bold          = (myStyle & Bold) != 0;
@@ -235,10 +235,12 @@ void Text::Render(RenderTarget&, RenderQueue& queue) const
     float x = 0.f;
     float y = static_cast<float>(myCharacterSize);
 
+    // Note:
+    // Here we use a Begin/End pair for each quad because
+    // the font's texture may change in a call to GetGlyph
+
     // Draw one quad for each character
-    unsigned int index = 0;
     Uint32 prevChar = 0;
-    queue.BeginBatch();
     for (std::size_t i = 0; i < myString.GetSize(); ++i)
     {
         Uint32 curChar = myString[i];
@@ -252,14 +254,13 @@ void Text::Render(RenderTarget&, RenderQueue& queue) const
         {
             float top = y + outlineOffset;
             float bottom = top + outlineThick;
-            queue.AddVertex(0, top,    outlineCoords.Left,  outlineCoords.Top);
-            queue.AddVertex(0, bottom, outlineCoords.Left,  outlineCoords.Bottom);
-            queue.AddVertex(x, bottom, outlineCoords.Right, outlineCoords.Bottom);
-            queue.AddVertex(x, top,    outlineCoords.Right, outlineCoords.Top);
 
-            queue.AddTriangle(index + 0, index + 1, index + 3);
-            queue.AddTriangle(index + 3, index + 1, index + 2);
-            index += 4;
+            renderer.Begin(Renderer::QuadList);
+                renderer.AddVertex(0, top,    outlineCoords.Left,  outlineCoords.Top);
+                renderer.AddVertex(x, top,    outlineCoords.Right, outlineCoords.Top);
+                renderer.AddVertex(x, bottom, outlineCoords.Right, outlineCoords.Bottom);
+                renderer.AddVertex(0, bottom, outlineCoords.Left,  outlineCoords.Bottom);
+            renderer.End();
         }
 
         // Handle special characters
@@ -278,14 +279,12 @@ void Text::Render(RenderTarget&, RenderQueue& queue) const
         const FloatRect& coord    = curGlyph.TexCoords;
 
         // Draw a textured quad for the current character
-        queue.AddVertex(x + rect.Left  - italicCoeff * rect.Top,    y + rect.Top,    coord.Left,  coord.Top);
-        queue.AddVertex(x + rect.Left  - italicCoeff * rect.Bottom, y + rect.Bottom, coord.Left,  coord.Bottom);
-        queue.AddVertex(x + rect.Right - italicCoeff * rect.Bottom, y + rect.Bottom, coord.Right, coord.Bottom);
-        queue.AddVertex(x + rect.Right - italicCoeff * rect.Top,    y + rect.Top,    coord.Right, coord.Top);
-
-        queue.AddTriangle(index + 0, index + 1, index + 3);
-        queue.AddTriangle(index + 3, index + 1, index + 2);
-        index += 4;
+        renderer.Begin(Renderer::QuadList);
+            renderer.AddVertex(x + rect.Left  - italicCoeff * rect.Top,    y + rect.Top,    coord.Left,  coord.Top);
+            renderer.AddVertex(x + rect.Right - italicCoeff * rect.Top,    y + rect.Top,    coord.Right, coord.Top);
+            renderer.AddVertex(x + rect.Right - italicCoeff * rect.Bottom, y + rect.Bottom, coord.Right, coord.Bottom);
+            renderer.AddVertex(x + rect.Left  - italicCoeff * rect.Bottom, y + rect.Bottom, coord.Left,  coord.Bottom);
+        renderer.End();
 
         // Advance to the next character
         x += advance;
@@ -296,14 +295,13 @@ void Text::Render(RenderTarget&, RenderQueue& queue) const
     {
         float top = y + outlineOffset;
         float bottom = top + outlineThick;
-        queue.AddVertex(0, top,    outlineCoords.Left,  outlineCoords.Top);
-        queue.AddVertex(0, bottom, outlineCoords.Left,  outlineCoords.Bottom);
-        queue.AddVertex(x, bottom, outlineCoords.Right, outlineCoords.Bottom);
-        queue.AddVertex(x, top,    outlineCoords.Right, outlineCoords.Top);
 
-        queue.AddTriangle(index + 0, index + 1, index + 3);
-        queue.AddTriangle(index + 3, index + 1, index + 2);
-        index += 4;
+        renderer.Begin(Renderer::QuadList);
+            renderer.AddVertex(0, top,    outlineCoords.Left,  outlineCoords.Top);
+            renderer.AddVertex(x, top,    outlineCoords.Right, outlineCoords.Top);
+            renderer.AddVertex(x, bottom, outlineCoords.Right, outlineCoords.Bottom);
+            renderer.AddVertex(0, bottom, outlineCoords.Left,  outlineCoords.Bottom);
+        renderer.End();
     }
 }
 
@@ -330,7 +328,7 @@ void Text::UpdateRect() const
     float  outlineThick  = myCharacterSize * (bold ? 0.1f : 0.07f);
     float  charSize      = static_cast<float>(myCharacterSize);
     float  space         = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
-    float  lineSpacing = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
+    float  lineSpacing   = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
     float  curWidth      = 0;
     float  curHeight     = 0;
     float  width         = 0;

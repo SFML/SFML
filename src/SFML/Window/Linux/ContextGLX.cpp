@@ -148,13 +148,6 @@ void ContextGLX::UseVerticalSync(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-bool ContextGLX::IsContextActive()
-{
-    return glXGetCurrentContext() != NULL;
-}
-
-
-////////////////////////////////////////////////////////////
 void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
     // Save the creation settings

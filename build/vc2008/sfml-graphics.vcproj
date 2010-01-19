@@ -362,58 +362,6 @@
 	</References>
 	<Files>
 		<Filter
-			Name="RenderQueue"
-			>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\Batch.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\Batch.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GeometryRenderer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GeometryRenderer.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GeometryRendererIM.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GeometryRendererIM.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GeometryRendererVA.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GeometryRendererVA.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GeometryRendererVBO.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\GeometryRendererVBO.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Graphics\RenderQueue.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\SFML\Graphics\RenderQueue.hpp"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="External libs"
 			>
 			<Filter
@@ -3511,6 +3459,14 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\Rect.inl"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Graphics\Renderer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Graphics\Renderer.hpp"
 			>
 		</File>
 		<File

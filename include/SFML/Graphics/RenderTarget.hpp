@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RenderQueue.hpp>
+#include <SFML/Graphics/Renderer.hpp>
 #include <SFML/Graphics/View.hpp>
 
 
@@ -76,22 +76,6 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void Draw(const Drawable& object, const Shader& shader);
-
-    ////////////////////////////////////////////////////////////
-    /// Make sure that what has been drawn so far is rendered
-    ///
-    /// Use this function if you use OpenGL rendering commands,
-    /// and you want to make sure that things will appear on top
-    /// of all the SFML objects that have been drawn so far.
-    /// This is needed because SFML doesn't use immediate rendering,
-    /// it first accumulates drawables into a queue and
-    /// trigger the actual rendering afterwards.
-    ///
-    /// You don't need to call this function if you're not
-    /// dealing with OpenGL directly.
-    ///
-    ////////////////////////////////////////////////////////////
-    void Flush();
 
     ////////////////////////////////////////////////////////////
     /// Get the width of the rendering region of the target
@@ -168,7 +152,25 @@ public :
     ////////////////////////////////////////////////////////////
     sf::Vector2f ConvertCoords(unsigned int x, unsigned int y, const View& view) const;
 
+    ////////////////////////////////////////////////////////////
+    /// Save the current OpenGL render states and matrices
+    ///
+    ////////////////////////////////////////////////////////////
+    void SaveGLStates();
+
+    ////////////////////////////////////////////////////////////
+    /// Restore the previously saved OpenGL render states and matrices
+    ///
+    ////////////////////////////////////////////////////////////
+    void RestoreGLStates();
+
 protected :
+
+    ////////////////////////////////////////////////////////////
+    /// Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderTarget();
 
     ////////////////////////////////////////////////////////////
     /// Called by the derived class when it's ready to be initialized
@@ -191,9 +193,11 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    RenderQueue myRenderQueue; ///< Rendering queue storing render commands
-    View        myDefaultView; ///< Default view
-    View        myCurrentView; ///< Current active view
+    Renderer myRenderer;       ///< Renderer that will process the rendering commands of the window
+    View     myDefaultView;    ///< Default view
+    View     myCurrentView;    ///< Current active view
+    bool     myStatesSaved;    ///< Are we between a SaveGLStates and a RestoreGLStates?
+    bool     myViewHasChanged; ///< Has the current view changed?
 };
 
 } // namespace sf

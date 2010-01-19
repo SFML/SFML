@@ -162,6 +162,9 @@ int main()
                       "Press numpad 2/5 to change the flower shader\n"
                       "Press numpad 3/6 to change the global shader");
 
+sf::RenderImage test;
+test.Create(800, 600);
+
     // Create a clock to measure the total time elapsed
     sf::Clock clock;
 

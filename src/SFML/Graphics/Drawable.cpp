@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderQueue.hpp>
+#include <SFML/Graphics/Renderer.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <math.h>
 
@@ -366,19 +366,19 @@ const Matrix3& Drawable::GetInverseMatrix() const
 ////////////////////////////////////////////////////////////
 /// Draw the object into the specified render target
 ////////////////////////////////////////////////////////////
-void Drawable::Draw(RenderTarget& target, RenderQueue& queue) const
+void Drawable::Draw(RenderTarget& target, Renderer& renderer) const
 {
     // Set the current model-view matrix
-    queue.ApplyModelView(GetMatrix());
+    renderer.ApplyModelView(GetMatrix());
 
     // Set the current global color
-    queue.ApplyColor(myColor);
+    renderer.ApplyColor(myColor);
 
     // Set the current alpha-blending mode
-    queue.SetBlendMode(myBlendMode);
+    renderer.SetBlendMode(myBlendMode);
 
     // Let the derived class render the object geometry
-    Render(target, queue);
+    Render(target, renderer);
 }
 
 } // namespace sf

@@ -407,22 +407,22 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Make sure that what has been drawn so far is rendered.
-            ///
-            /// Use this function if you use OpenGL rendering commands,
-            /// and you want to make sure that things will appear on top
-            /// of all the SFML objects that have been drawn so far.
-            /// This is needed because SFML doesn't use immediate rendering,
-            /// it first accumulates drawables into a queue and
-            /// trigger the actual rendering afterwards.
-            ///
-            /// You don't need to call this function if you're not
-            /// dealing with OpenGL directly.
+            /// Save the current OpenGL render states and matrices
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public void Flush()
+            public void SaveGLStates()
             {
-                sfRenderWindow_Flush(This);
+                sfRenderWindow_SaveGLStates(This);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Restore the previously saved OpenGL render states and matrices
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public void RestoreGLStates()
+            {
+                sfRenderWindow_RestoreGLStates(This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -563,7 +563,10 @@ namespace SFML
             static extern bool sfRenderWindow_SetActive(IntPtr This, bool Active);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern bool sfRenderWindow_Flush(IntPtr This);
+            static extern bool sfRenderWindow_SaveGLStates(IntPtr This);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            static extern bool sfRenderWindow_RestoreGLStates(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_SetFramerateLimit(IntPtr This, uint Limit);

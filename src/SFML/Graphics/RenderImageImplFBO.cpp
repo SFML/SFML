@@ -28,6 +28,7 @@
 #include <SFML/Graphics/RenderImageImplFBO.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Window/Context.hpp>
 #include <iostream>
 
 
@@ -40,7 +41,8 @@ namespace priv
 ////////////////////////////////////////////////////////////
 RenderImageImplFBO::RenderImageImplFBO() :
 myFrameBuffer(0),
-myDepthBuffer(0)
+myDepthBuffer(0),
+myContext    (NULL)
 {
 
 }
@@ -64,6 +66,9 @@ RenderImageImplFBO::~RenderImageImplFBO()
         GLuint frameBuffer = static_cast<GLuint>(myFrameBuffer);
         GLCheck(glDeleteFramebuffersEXT(1, &frameBuffer));
     }
+
+    // Destroy the context
+    delete myContext;
 }
 
 
@@ -84,6 +89,10 @@ bool RenderImageImplFBO::IsSupported()
 ////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
+    // Create the context if not already done
+    if (!myContext)
+        myContext = new Context;
+
     // Create the framebuffer object if not already done
     if (!myFrameBuffer)
     {
@@ -132,9 +141,6 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
         return false;
     }
 
-    // Unbind the buffers
-    Activate(false);
-
     return true;
 }
 
@@ -144,22 +150,11 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
 ////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::Activate(bool active)
 {
-    if (active)
-    {
-        // Bind the buffers
-        GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, myFrameBuffer));
-        GLCheck(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, myDepthBuffer));
-    }
-    else
-    {
-        // Unbind the buffers
-        GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
-        GLCheck(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0));
-    }
+    if (myContext)
+        myContext->SetActive(active);
 
     return true;
 }
-
 
 ////////////////////////////////////////////////////////////
 /// /see RenderImageImpl::UpdateTexture

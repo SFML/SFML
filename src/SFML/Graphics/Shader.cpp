@@ -218,20 +218,15 @@ void Shader::SetTexture(const std::string& name, const Image& texture)
     int location = glGetUniformLocationARB(myShaderProgram, name.c_str());
     if (location == -1)
     {
-        std::cerr << "Texture \"" << name << "\" not found in Shader" << std::endl;
+        std::cerr << "Texture \"" << name << "\" not found in shader" << std::endl;
         return;
     }
 
     // Store the texture for later use
-    if ((texture.GetWidth() > 0) && (texture.GetHeight() > 0))
-    {
+    if (&texture != &CurrentTexture)
         myTextures[location] = &texture;
-    }
     else
-    {
-        // An invalid size means that texture is Shader::CurrentTexture
         myCurrentTexture = location;
-    }
 }
 
 

@@ -439,14 +439,13 @@ private :
     virtual void OnCreate();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Function called before the window is displayed
+    /// \brief Function called after the window has been resized
     ///
     /// This function is called so that derived classes can
-    /// perform their own specific tasks right before the
-    /// rendered contents are displayed on screen.
+    /// perform custom actions when the size of the window changes.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnDisplay();
+    virtual void OnResize();
 
     ////////////////////////////////////////////////////////////
     /// \brief Called each time an event is received from the internal window

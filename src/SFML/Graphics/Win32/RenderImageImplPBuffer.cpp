@@ -195,6 +195,9 @@ bool RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
 {
     if (Activate(true))
     {
+        GLint previous;
+        GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
+
         // Bind the texture
         GLCheck(glEnable(GL_TEXTURE_2D));
         GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
@@ -202,8 +205,7 @@ bool RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
         // Copy the rendered pixels to the image
         GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
 
-        // Deactivate the P-Buffer
-        Activate(false);
+        GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
         return true;
     }

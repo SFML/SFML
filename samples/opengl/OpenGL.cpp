@@ -78,11 +78,9 @@ int main()
         }
 
         // Draw the background
+        window.SaveGLStates();
         window.Draw(background);
-
-        // Flush the window, to make sure that our OpenGL cube
-        // will be rendered on top of the background sprite
-        window.Flush();
+        window.RestoreGLStates();
 
         // Activate the window before using OpenGL commands.
         // This is useless here because we have only one window which is
@@ -141,10 +139,12 @@ int main()
         glEnd();
 
         // Draw some text on top of our OpenGL object
+        window.SaveGLStates();
         sf::Text text("SFML / OpenGL demo");
         text.SetPosition(250.f, 450.f);
         text.SetColor(sf::Color(255, 255, 255, 170));
         window.Draw(text);
+        window.RestoreGLStates();
 
         // Finally, display the rendered frame on screen
         window.Display();

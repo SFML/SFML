@@ -48,7 +48,6 @@ myRenderImage(NULL)
 ////////////////////////////////////////////////////////////
 RenderImage::~RenderImage()
 {
-    SetActive(false);
     delete myRenderImage;
 }
 
@@ -77,12 +76,12 @@ bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuff
 
     // Create the implementation
     delete myRenderImage;
-    if (priv::RenderImageImplFBO::IsSupported())
+    /*if (priv::RenderImageImplFBO::IsSupported())
     {
         // Use FBO
         myRenderImage = new priv::RenderImageImplFBO;
     }
-    else if (priv::RenderImageImplPBuffer::IsSupported())
+    else*/ if (priv::RenderImageImplPBuffer::IsSupported())
     {
         // Use P-Buffer
         myRenderImage = new priv::RenderImageImplPBuffer;
@@ -132,9 +131,6 @@ bool RenderImage::SetActive(bool active)
 ////////////////////////////////////////////////////////////
 void RenderImage::Display()
 {
-    // Render everything that has been drawn so far
-    Flush();
-
     // Update the target image
     if (myRenderImage)
     {

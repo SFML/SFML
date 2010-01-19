@@ -27,12 +27,22 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
 #include <iostream>
 
 
 namespace sf
 {
+////////////////////////////////////////////////////////////
+/// Default constructor
+////////////////////////////////////////////////////////////
+RenderTarget::RenderTarget() :
+myStatesSaved   (false),
+myViewHasChanged(false)
+{
+
+}
+
+
 ////////////////////////////////////////////////////////////
 /// Destructor
 ////////////////////////////////////////////////////////////
@@ -48,16 +58,7 @@ RenderTarget::~RenderTarget()
 void RenderTarget::Clear(const Color& color)
 {
     if (Activate(true))
-    {
-        // Clear the color buffer
-        GLCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
-        GLCheck(glClear(GL_COLOR_BUFFER_BIT));
-
-        // Clear the render queue
-        myRenderQueue.Clear();
-
-        Activate(false);
-    }
+        myRenderer.Clear(color);
 }
 
 
@@ -66,20 +67,30 @@ void RenderTarget::Clear(const Color& color)
 ////////////////////////////////////////////////////////////
 void RenderTarget::Draw(const Drawable& object)
 {
-    // Save the current render states
-    myRenderQueue.PushStates();
+    if (Activate(true))
+    {
+        // Update the projection matrix and viewport if the current view has changed
+        // Note: we do the changes here and not directly in SetView in order to gather
+        // rendering commands, which is safer in multithreaded environments
+        if (myViewHasChanged)
+        {
+            myRenderer.SetProjection(myCurrentView.GetMatrix());
+            myRenderer.SetViewport(GetViewport(myCurrentView));
+            myViewHasChanged = false;
+        }
 
-    // Setup the shader
-    myRenderQueue.SetShader(NULL);
+        // Save the current render states
+        myRenderer.PushStates();
 
-    // Setup the viewport
-    myRenderQueue.SetViewport(GetViewport(myCurrentView));
+        // Setup the shader
+        myRenderer.SetShader(NULL);
 
-    // Let the object draw itself
-    object.Draw(*this, myRenderQueue);
+        // Let the object draw itself
+        object.Draw(*this, myRenderer);
 
-    // Restore the previous render states
-    myRenderQueue.PopStates();
+        // Restore the previous render states
+        myRenderer.PopStates();
+    }
 }
 
 
@@ -88,34 +99,29 @@ void RenderTarget::Draw(const Drawable& object)
 ////////////////////////////////////////////////////////////
 void RenderTarget::Draw(const Drawable& object, const Shader& shader)
 {
-    // Save the current render states
-    myRenderQueue.PushStates();
-
-    // Setup the shader
-    myRenderQueue.SetShader(&shader);
-
-    // Setup the viewport
-    myRenderQueue.SetViewport(GetViewport(myCurrentView));
-
-    // Let the object draw itself
-    object.Draw(*this, myRenderQueue);
-
-    // Restore the previous render states
-    myRenderQueue.PopStates();
-}
-
-
-////////////////////////////////////////////////////////////
-/// Make sure that what has been drawn so far is rendered
-////////////////////////////////////////////////////////////
-void RenderTarget::Flush()
-{
     if (Activate(true))
     {
-        // Draw the whole render queue
-        myRenderQueue.Render();
+        // Update the projection matrix and viewport if the current view has changed
+        // Note: we do the changes here and not directly in SetView in order to gather
+        // rendering commands, which is safer in multithreaded environments
+        if (myViewHasChanged)
+        {
+            myRenderer.SetProjection(myCurrentView.GetMatrix());
+            myRenderer.SetViewport(GetViewport(myCurrentView));
+            myViewHasChanged = false;
+        }
 
-        Activate(false);
+        // Save the current render states
+        myRenderer.PushStates();
+
+        // Setup the shader
+        myRenderer.SetShader(&shader);
+
+        // Let the object draw itself
+        object.Draw(*this, myRenderer);
+
+        // Restore the previous render states
+        myRenderer.PopStates();
     }
 }
 
@@ -127,9 +133,7 @@ void RenderTarget::SetView(const View& view)
 {
     // Save it
     myCurrentView = view;
-
-    // Send the projection matrix to the render queue
-    myRenderQueue.SetProjection(view.GetMatrix());
+    myViewHasChanged = true;
 }
 
 
@@ -160,13 +164,10 @@ IntRect RenderTarget::GetViewport(const View& view) const
     float height = static_cast<float>(GetHeight());
     const FloatRect& viewport = view.GetViewport();
 
-    IntRect rect;
-    rect.Left   = static_cast<int>(0.5f + width  * viewport.Left);
-    rect.Top    = static_cast<int>(0.5f + height * (1.f - viewport.Bottom));
-    rect.Right  = static_cast<int>(0.5f + width  * viewport.Right);
-    rect.Bottom = static_cast<int>(0.5f + height * (1.f - viewport.Top));
-
-    return rect;
+    return IntRect(static_cast<int>(0.5f + width  * viewport.Left),
+                   static_cast<int>(0.5f + height * (1.f - viewport.Bottom)),
+                   static_cast<int>(0.5f + width  * viewport.Right),
+                   static_cast<int>(0.5f + height * (1.f - viewport.Top)));
 }
 
 
@@ -198,6 +199,39 @@ sf::Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y, const V
 
 
 ////////////////////////////////////////////////////////////
+/// Save the current OpenGL render states and matrices
+////////////////////////////////////////////////////////////
+void RenderTarget::SaveGLStates()
+{
+    if (Activate(true))
+    {
+        myRenderer.SaveGLStates();
+        myStatesSaved = true;
+
+        // Restore the render states and the current view, for SFML rendering
+        myRenderer.Initialize();
+        SetView(GetView());
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+/// Restore the previously saved OpenGL render states and matrices
+////////////////////////////////////////////////////////////
+void RenderTarget::RestoreGLStates()
+{
+    if (myStatesSaved)
+    {
+        if (Activate(true))
+        {
+            myRenderer.RestoreGLStates();
+            myStatesSaved = false;
+        }
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 /// Called by the derived class when it's ready to be initialized
 ////////////////////////////////////////////////////////////
 void RenderTarget::Initialize()
@@ -206,8 +240,9 @@ void RenderTarget::Initialize()
     myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
     SetView(myDefaultView);
 
-    // Clear the render queue
-    myRenderQueue.Clear();
+    // Initialize the renderer
+    if (Activate(true))
+        myRenderer.Initialize();
 }
 
 } // namespace sf

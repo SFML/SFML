@@ -70,11 +70,9 @@ namespace sample_opengl
                 window.Clear();
 
                 // Draw background
+                window.SaveGLStates();
                 window.Draw(background);
-
-                // Flush the window, to make sure that our OpenGL cube
-                // will be rendered on top of the background sprite
-                window.Flush();
+                window.RestoreGLStates();
 
                 // Activate the window before using OpenGL commands.
                 // This is useless here because we have only one window which is
@@ -134,7 +132,9 @@ namespace sample_opengl
                 Gl.glEnd();
 
                 // Draw some text on top of our OpenGL object
+                window.SaveGLStates();
                 window.Draw(text);
+                window.RestoreGLStates();
 
                 // Finally, display the rendered frame on screen
                 window.Display();

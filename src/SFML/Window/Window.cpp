@@ -341,9 +341,6 @@ bool Window::SetActive(bool active) const
 ////////////////////////////////////////////////////////////
 void Window::Display()
 {
-    // Notify the derived class
-    OnDisplay();
-
     // Limit the framerate if needed
     if (myFramerateLimit > 0)
     {
@@ -399,7 +396,7 @@ void Window::OnCreate()
 
 
 ////////////////////////////////////////////////////////////
-void Window::OnDisplay()
+void Window::OnResize()
 {
     // Nothing by default
 }
@@ -417,6 +414,10 @@ void Window::OnEvent(const Event& event)
         mySetCursorPosY = 0xFFFF;
         return;
     }
+
+    // Notify resize events
+    if (event.Type == Event::Resized)
+        OnResize();
 
     myEvents.push(event);
 }

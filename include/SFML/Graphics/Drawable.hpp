@@ -35,7 +35,7 @@
 
 namespace sf
 {
-class RenderQueue;
+class Renderer;
 class RenderTarget;
 
 ////////////////////////////////////////////////////////////
@@ -328,20 +328,20 @@ private :
     ////////////////////////////////////////////////////////////
     /// Draw the object into the specified render target
     ///
-    /// \param target : Target into which render the object
-    /// \param queue :  Render queue to add the rendering commands to
+    /// \param target :   Target into which render the object
+    /// \param renderer : Renderer that processes the rendering commands
     ///
     ////////////////////////////////////////////////////////////
-    void Draw(RenderTarget& target, RenderQueue& queue) const;
+    void Draw(RenderTarget& target, Renderer& renderer) const;
 
     ////////////////////////////////////////////////////////////
     /// Render the specific geometry of the object
     ///
-    /// \param target : Target into which render the object
-    /// \param queue :  Render queue to add the rendering commands to
+    /// \param target :   Target into which render the object
+    /// \param renderer : Renderer that processes the rendering commands
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Render(RenderTarget& target, RenderQueue& queue) const = 0;
+    virtual void Render(RenderTarget& target, Renderer& renderer) const = 0;
 
     ////////////////////////////////////////////////////////////
     // Member data

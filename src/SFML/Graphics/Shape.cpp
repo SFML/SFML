@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shape.hpp>
-#include <SFML/Graphics/RenderQueue.hpp>
+#include <SFML/Graphics/Renderer.hpp>
 #include <math.h>
 
 
@@ -281,7 +281,7 @@ Shape Shape::Circle(const Vector2f& center, float radius, const Color& color, fl
 ////////////////////////////////////////////////////////////
 /// /see Drawable::Render
 ////////////////////////////////////////////////////////////
-void Shape::Render(RenderTarget&, RenderQueue& queue) const
+void Shape::Render(RenderTarget&, Renderer& renderer) const
 {
     // Make sure the shape has at least 3 points (4 if we count the center)
     if (myPoints.size() < 4)
@@ -292,7 +292,7 @@ void Shape::Render(RenderTarget&, RenderQueue& queue) const
         const_cast<Shape*>(this)->Compile();
 
     // Shapes only use color, no texture
-    queue.SetTexture(NULL);
+    renderer.SetTexture(NULL);
 
     // Draw the shape
     if (myIsFillEnabled)
@@ -300,61 +300,59 @@ void Shape::Render(RenderTarget&, RenderQueue& queue) const
         if (myPoints.size() == 4)
         {
             // Special case of a triangle
-            queue.BeginBatch();
-            queue.AddVertex(myPoints[1].Position.x, myPoints[1].Position.y, myPoints[1].Col);
-            queue.AddVertex(myPoints[2].Position.x, myPoints[2].Position.y, myPoints[2].Col);
-            queue.AddVertex(myPoints[3].Position.x, myPoints[3].Position.y, myPoints[3].Col);
-            queue.AddTriangle(0, 1, 2);
+            renderer.Begin(Renderer::TriangleList);
+                renderer.AddVertex(myPoints[1].Position.x, myPoints[1].Position.y, myPoints[1].Col);
+                renderer.AddVertex(myPoints[2].Position.x, myPoints[2].Position.y, myPoints[2].Col);
+                renderer.AddVertex(myPoints[3].Position.x, myPoints[3].Position.y, myPoints[3].Col);
+            renderer.End();
         }
         else if (myPoints.size() == 5)
         {
             // Special case of a quad
-            queue.BeginBatch();
-            queue.AddVertex(myPoints[1].Position.x, myPoints[1].Position.y, myPoints[1].Col);
-            queue.AddVertex(myPoints[2].Position.x, myPoints[2].Position.y, myPoints[2].Col);
-            queue.AddVertex(myPoints[3].Position.x, myPoints[3].Position.y, myPoints[3].Col);
-            queue.AddVertex(myPoints[4].Position.x, myPoints[4].Position.y, myPoints[4].Col);
-            queue.AddTriangle(0, 1, 3);
-            queue.AddTriangle(3, 1, 2);
+            renderer.Begin(Renderer::TriangleStrip);
+                renderer.AddVertex(myPoints[1].Position.x, myPoints[1].Position.y, myPoints[1].Col);
+                renderer.AddVertex(myPoints[2].Position.x, myPoints[2].Position.y, myPoints[2].Col);
+                renderer.AddVertex(myPoints[4].Position.x, myPoints[4].Position.y, myPoints[4].Col);
+                renderer.AddVertex(myPoints[3].Position.x, myPoints[3].Position.y, myPoints[3].Col);
+            renderer.End();
         }
         else
         {
-            // General case of a convex polygon
-            queue.BeginBatch();
-            for (std::vector<Point>::const_iterator i = myPoints.begin(); i != myPoints.end(); ++i)
-                queue.AddVertex(i->Position.x, i->Position.y, i->Col);
+            renderer.Begin(Renderer::TriangleFan);
 
-            for (std::size_t i = 1; i < myPoints.size() - 1; ++i)
-                queue.AddTriangle(0, i, i + 1);
+            // General case of a convex polygon
+            for (std::vector<Point>::const_iterator i = myPoints.begin(); i != myPoints.end(); ++i)
+                renderer.AddVertex(i->Position.x, i->Position.y, i->Col);
 
             // Close the shape by duplicating the first point at the end
-            queue.AddTriangle(0, myPoints.size() - 1, 1);
+            const Point& first = myPoints[1];
+            renderer.AddVertex(first.Position.x, first.Position.y, first.Col);
+
+            renderer.End();
         }
     }
 
     // Draw the outline
     if (myIsOutlineEnabled && (myOutline != 0))
     {
-        queue.BeginBatch();
+        renderer.Begin(Renderer::TriangleStrip);
+
         for (std::vector<Point>::const_iterator i = myPoints.begin() + 1; i != myPoints.end(); ++i)
         {
             Vector2f point1 = i->Position;
             Vector2f point2 = i->Position + i->Normal * myOutline;
-            queue.AddVertex(point1.x, point1.y, i->OutlineCol);
-            queue.AddVertex(point2.x, point2.y, i->OutlineCol);
-        }
-
-        for (std::size_t i = 0; i < myPoints.size() - 2; ++i)
-        {
-            queue.AddTriangle(i * 2 + 0, i * 2 + 1, i * 2 + 2);
-            queue.AddTriangle(i * 2 + 2, i * 2 + 1, i * 2 + 3);
+            renderer.AddVertex(point1.x, point1.y, i->OutlineCol);
+            renderer.AddVertex(point2.x, point2.y, i->OutlineCol);
         }
 
         // Close the shape by duplicating the first point at the end
-        std::size_t begin = 0;
-        std::size_t last = (myPoints.size() - 2) * 2;
-        queue.AddTriangle(last, last + 1, begin);
-        queue.AddTriangle(begin, last + 1, begin + 1);
+        const Point& first = myPoints[1];
+        Vector2f point1 = first.Position;
+        Vector2f point2 = first.Position + first.Normal * myOutline;
+        renderer.AddVertex(point1.x, point1.y, first.OutlineCol);
+        renderer.AddVertex(point2.x, point2.y, first.OutlineCol);
+
+        renderer.End();
     }
 }
 

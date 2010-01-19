@@ -354,9 +354,6 @@ bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
     myWidth  = srcRect.GetSize().x;
     myHeight = srcRect.GetSize().y;
 
-    // Make sure that pending drawables are rendered on the target window
-    window.Flush();
-
     // We can then create the texture
     if (window.SetActive() && CreateTexture())
     {
@@ -642,7 +639,7 @@ Image& Image::operator =(const Image& other)
     std::swap(myArrayUpdated,   temp.myArrayUpdated);
     std::swap(myTextureUpdated, temp.myTextureUpdated);
     std::swap(myPixelsFlipped,  temp.myPixelsFlipped);
-    myPixels.swap(temp.myPixels);
+    std::swap(myPixels,         temp.myPixels);
 
     return *this;
 }
@@ -658,46 +655,38 @@ bool Image::CreateTexture()
         return false;
 
     // Adjust internal texture dimensions depending on NPOT textures support
-    unsigned int textureWidth  = GetValidSize(myWidth);
-    unsigned int textureHeight = GetValidSize(myHeight);
+    myTextureWidth  = GetValidSize(myWidth);
+    myTextureHeight = GetValidSize(myHeight);
 
     // Check the maximum texture size
     unsigned int maxSize = GetMaximumSize();
-    if ((textureWidth > maxSize) || (textureHeight > maxSize))
+    if ((myTextureWidth > maxSize) || (myTextureHeight > maxSize))
     {
         std::cerr << "Failed to create image, its internal size is too high "
-                  << "(" << textureWidth << "x" << textureHeight << ", "
+                  << "(" << myTextureWidth << "x" << myTextureHeight << ", "
                   << "maximum is " << maxSize << "x" << maxSize << ")"
                   << std::endl;
         return false;
     }
 
-    // Destroy the previous OpenGL texture if it already exists with another size
-    if ((textureWidth != myTextureWidth) || (textureHeight != myTextureHeight))
-    {
-        DestroyTexture();
-        myTextureWidth  = textureWidth;
-        myTextureHeight = textureHeight;
-    }
-
-    // Create the OpenGL texture
+    // Create the OpenGL texture if it doesn't exist yet
     if (!myTexture)
     {
-        GLint previous;
-        GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
-
-        GLuint texture = 0;
+        GLuint texture;
         GLCheck(glGenTextures(1, &texture));
-        GLCheck(glBindTexture(GL_TEXTURE_2D, texture));
-        GLCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, myTextureWidth, myTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
-        GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP));
-        GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP));
-        GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
-        GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
         myTexture = static_cast<unsigned int>(texture);
-
-        GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
     }
+
+    // Initialize the texture
+    GLint previous;
+    GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
+    GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
+    GLCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, myTextureWidth, myTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
+    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP));
+    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP));
+    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
+    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
+    GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
     myTextureUpdated = false;
 

@@ -22,50 +22,87 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERQUEUE_HPP
-#define SFML_RENDERQUEUE_HPP
+#ifndef SFML_RENDERER_HPP
+#define SFML_RENDERER_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Matrix3.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <vector>
 
 
 namespace sf
 {
-namespace priv
-{
-    class Batch;
-    class GeometryRenderer;
-}
-
 class Image;
 class Shader;
 
 ////////////////////////////////////////////////////////////
-/// \brief Implements a queue of rendering commands
+/// \brief Handles the low-level rendering (states and geometry)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API RenderQueue : NonCopyable
+class SFML_API Renderer : NonCopyable
 {
+public :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Types of primitives to be rendererd
+    ///
+    ////////////////////////////////////////////////////////////
+    enum PrimitiveType
+    {
+        TriangleList,  ///< Simple list of triangles
+        TriangleStrip, ///< Triangle strip (consecutive triangles always share two points)
+        TriangleFan,   ///< Triangle fan (one center point + outline points)
+        QuadList       ///< Simple list of quads
+    };
+
 public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    RenderQueue();
+    Renderer();
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~RenderQueue();
+    ~Renderer();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Initialize the renderer (set the default states, etc.)
+    ///
+    ////////////////////////////////////////////////////////////
+    void Initialize();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Save the current OpenGL render states and matrices
+    ///
+    /// \see RestoreGLStates
+    ///
+    ////////////////////////////////////////////////////////////
+    void SaveGLStates();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Restore the previously saved OpenGL render states and matrices
+    ///
+    /// \see SaveGLStates
+    ///
+    ////////////////////////////////////////////////////////////
+    void RestoreGLStates();
+
+    ////////////////////////////////////////////////////////////
+    /// Clear the color buffer
+    ///
+    /// \param color Color to use to clear the color buffer
+    ///
+    ////////////////////////////////////////////////////////////
+    void Clear(const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the current render states
@@ -208,15 +245,33 @@ public :
     void SetShader(const Shader* shader);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Begin a new geometry batch
+    /// \brief Begin rendering a new geometry batch
     ///
-    /// This function starts storing geometry and associates it
-    /// to the current render states (viewport, color, blending, transform).
-    /// Note: There's no EndBatch, a batch ends as soon as BeginBatch
-    /// is called again.
+    /// You need to call End() to complete the batch and trigger
+    /// the actual rendering of the geometry that you passed
+    /// between Begin() and End().
+    ///
+    /// Usage:
+    /// \begincode
+    /// renderer.Begin(Renderer::TriangleList);
+    /// renderer.AddVertex(...);
+    /// renderer.AddVertex(...);
+    /// renderer.AddVertex(...);
+    /// renderer.End();
+    /// \endcode
+    ///
+    /// \see End
     ///
     ////////////////////////////////////////////////////////////
-    void BeginBatch();
+    void Begin(PrimitiveType type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief End the current geometry batch and render it
+    ///
+    /// \see Begin
+    ///
+    ////////////////////////////////////////////////////////////
+    void End();
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a new vertex (position only)
@@ -271,123 +326,62 @@ public :
     ////////////////////////////////////////////////////////////
     void AddVertex(float x, float y, float u, float v, const Color& color);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Add a new triangle to be rendered
-    ///
-    /// This function adds a new triangle, using indices of previously
-    /// added vertices. Note that the index base is set to 0
-    /// everytime a new batch is started (BeginBatch).
-    ///
-    /// Example:
-    /// \begincode
-    /// queue.BeginBatch();
-    /// queue.AddVertex(...);
-    /// queue.AddVertex(...);
-    /// queue.AddVertex(...);
-    /// queue.AddTriangle(0, 1, 2);
-    /// \endcode
-    ///
-    /// \param index0 Index of the first vertex of the triangle
-    /// \param index1 Index of the second vertex of the triangle
-    /// \param index2 Index of the third vertex of the triangle
-    ///
-    ////////////////////////////////////////////////////////////
-    void AddTriangle(std::size_t index0, std::size_t index1, std::size_t index2);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Render the content of the whole queue
-    ///
-    /// After everything has been rendered, the render queue is
-    /// automatically cleared.
-    ///
-    /// \see Clear
-    ///
-    ////////////////////////////////////////////////////////////
-    void Render();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Clear the whole queue without rendering it
-    ///
-    ////////////////////////////////////////////////////////////
-    void Clear();
-
 private :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Process a new vertex
+    ///
+    /// This function is called by all the public overloads of AddVertex,
+    /// it processes a new vertex to be rendered.
+    ///
+    /// \param x X coordinate of the vertex
+    /// \param y Y coordinate of the vertex
+    /// \param u X texture coordinate of the vertex
+    /// \param v Y texture coordinate of the vertex
+    /// \param r Red component of the vertex color (normalized)
+    /// \param g Green component of the vertex color (normalized)
+    /// \param b Blue component of the vertex color (normalized)
+    /// \param a Alpha component of the vertex color (normalized)
+    ///
+    ////////////////////////////////////////////////////////////
+    void ProcessVertex(float x, float y, float u, float v, float r, float g, float b, float a);
 
     ////////////////////////////////////////////////////////////
     // Structure holding the render states that can be stacked
     ////////////////////////////////////////////////////////////
-    struct RenderStates
+    struct States
     {
-        RenderStates() : color(255, 255, 255, 255) {}
+        States() : r(1.f), g(1.f), b(1.f), a(1.f) {}
 
         Matrix3 modelView;  ///< Model-view matrix
-        Matrix3 projection; ///< Projection matrix
-        Color   color;      ///< Vertex color
+        float   r, g, b, a; ///< Vertex color (normalized components for faster operations)
     };
-
-    ////////////////////////////////////////////////////////////
-    // Types
-    ////////////////////////////////////////////////////////////
-    typedef std::vector<priv::Batch>  BatchArray;
-    typedef std::vector<float>        VertexArray;
-    typedef std::vector<Uint32>       IndexArray;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    RenderStates            myStatesStack[16];     ///< Stack of render states
-    RenderStates*           myCurrentStates;       ///< Current set of render states
-    Matrix3                 myCurrentTransform;    ///< Current combined projection-model-view matrix
-    const Image*            myCurrentTexture;      ///< Current texture
-    const Shader*           myCurrentShader;       ///< Current pixel shader
-    Blend::Mode             myCurrentBlendMode;    ///< Current blending mode
-    IntRect                 myCurrentViewport;     ///< Current target viewport
-    Vector2f                myCurrentViewportSize; ///< Size of the current viewport (for vertex calculations)
-    Uint32                  myBaseIndex;           ///< Base vertex index for the current batch
-    priv::GeometryRenderer* myRenderer;            ///< Optimized geometry renderer
-    priv::Batch*            myCurrentBatch;        ///< Current geometry block
-    BatchArray              myBatches;             ///< Blocks of geometry to render
-    VertexArray             myVertices;            ///< Geometry to be rendered
-    IndexArray              myIndices;             ///< Indices defining the triangles to be rendered
-    Uint32					myCurrentVertexCount;  ///< Current number of vertices in the vertex array
-    Uint32					myCurrentIndexCount;   ///< Current number of indices in the index array
+    States        myStatesStack[64];  ///< Stack of render states
+    States*       myStates;           ///< Current set of render states
+    Matrix3       myTransform;        ///< Current combined projection-model-view matrix
+    Matrix3       myProjection;       ///< Current projection matrix
+    const Image*  myTexture;          ///< Current texture
+    const Shader* myShader;           ///< Current pixel shader
+    Blend::Mode   myBlendMode;        ///< Current blending mode
+    IntRect       myViewport;         ///< Current target viewport
+    bool          myTextureIsValid;   ///< Is the cached texture valid? (if not, the cached value is ignored)
+    bool          myShaderIsValid;    ///< Is the cached shader valid? (if not, the cached value is ignored)
+    bool          myBlendModeIsValid; ///< Is the cached blend mode valid? (if not, the cached value is ignored)
+    bool          myViewportIsValid;  ///< Is the cached viewport valid? (if not, the cached value is ignored)
+    Vector2f      myViewportSize;     ///< Half-size of the current viewport, stored for optimiation purpose
 };
 
 } // namespace sf
 
 
-#endif // SFML_RENDERQUEUE_HPP
+#endif // SFML_RENDERER_HPP
 
 
 ////////////////////////////////////////////////////////////
-/// \class sf::RenderQueue
-///
-/// The RenderQueue class allows to delay the actual rendering
-/// by storing the sequence of render states and geometry.
-///
-/// Delaying rendering is crucial in order to implement batching
-/// (grouping all the geometry using the same states, and sending
-/// it to the graphics card with only one call), which allow
-/// huge improvements in performances.
-///
-/// Usage example:
-/// \begincode
-/// void MyDrawable::Render(sf::RenderTarget& target, sf::RenderQueue& queue)
-/// {
-///    queue.SetTexture(myImage);
-///    queue.BeginBatch();
-///    {
-///       queue.AddVertex(...);
-///       queue.AddVertex(...);
-///       queue.AddVertex(...);
-///
-///       queue.AddTriangle(0, 1, 2);
-///    }
-/// }
-/// \endcode
-///
-/// Note that this class is meant for internal use only
-/// (it is used by render targets), unless you want to
-/// inherit from sf::Drawable.
+/// \class sf::Renderer
 ///
 ////////////////////////////////////////////////////////////

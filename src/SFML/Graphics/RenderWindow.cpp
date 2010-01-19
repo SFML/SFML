@@ -63,8 +63,7 @@ RenderWindow::~RenderWindow()
 ////////////////////////////////////////////////////////////
 bool RenderWindow::Activate(bool active)
 {
-    // We only handle activation, for performances and consistency reasons
-    return active ? SetActive(active) : true;
+    return SetActive(active);
 }
 
 
@@ -91,10 +90,10 @@ void RenderWindow::OnCreate()
 
 
 ////////////////////////////////////////////////////////////
-void RenderWindow::OnDisplay()
+void RenderWindow::OnResize()
 {
-    // Render the drawables drawn so far
-    Flush();
+    // Update the current view (recompute the viewport, which is stored in relative coordinates)
+    SetView(GetView());
 }
 
 } // namespace sf
