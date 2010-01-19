@@ -134,9 +134,10 @@ void RenderImage::Display()
     // Update the target image
     if (myRenderImage)
     {
-        bool pixelsFlipped = myRenderImage->UpdateTexture(myImage.myTexture);
-        myImage.myPixelsFlipped = pixelsFlipped;
-        myImage.myArrayUpdated = false;
+        myRenderImage->UpdateTexture(myImage.myTexture);
+
+        myImage.myPixelsFlipped  = true;
+        myImage.myArrayUpdated   = false;
         myImage.myTextureUpdated = true;
     }
 }

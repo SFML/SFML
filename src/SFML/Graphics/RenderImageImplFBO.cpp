@@ -28,7 +28,6 @@
 #include <SFML/Graphics/RenderImageImplFBO.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/Window/Context.hpp>
 #include <iostream>
 
 
@@ -41,8 +40,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 RenderImageImplFBO::RenderImageImplFBO() :
 myFrameBuffer(0),
-myDepthBuffer(0),
-myContext    (NULL)
+myDepthBuffer(0)
 {
 
 }
@@ -66,9 +64,6 @@ RenderImageImplFBO::~RenderImageImplFBO()
         GLuint frameBuffer = static_cast<GLuint>(myFrameBuffer);
         GLCheck(glDeleteFramebuffersEXT(1, &frameBuffer));
     }
-
-    // Destroy the context
-    delete myContext;
 }
 
 
@@ -89,32 +84,18 @@ bool RenderImageImplFBO::IsSupported()
 ////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
-    // Create the context if not already done
-    if (!myContext)
-        myContext = new Context;
-
-    // Create the framebuffer object if not already done
+    // Create the framebuffer object
+    GLuint frameBuffer = 0;
+    GLCheck(glGenFramebuffersEXT(1, &frameBuffer));
+    myFrameBuffer = static_cast<unsigned int>(frameBuffer);
     if (!myFrameBuffer)
     {
-        GLuint frameBuffer = 0;
-        GLCheck(glGenFramebuffersEXT(1, &frameBuffer));
-        myFrameBuffer = static_cast<unsigned int>(frameBuffer);
-        if (!myFrameBuffer)
-        {
-            std::cerr << "Impossible to create render image (failed to create the frame buffer object)" << std::endl;
-            return false;
-        }
+        std::cerr << "Impossible to create render image (failed to create the frame buffer object)" << std::endl;
+        return false;
     }
-
-    // Bind the framebuffer
     GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, myFrameBuffer));
 
-    // Create the depth buffer
-    if (myDepthBuffer)
-    {
-        GLuint depth = static_cast<GLuint>(myDepthBuffer);
-        GLCheck(glDeleteRenderbuffersEXT(1, &depth));
-    }
+    // Create the depth buffer if requested
     if (depthBuffer)
     {
         GLuint depth = 0;
@@ -150,8 +131,7 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
 ////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::Activate(bool active)
 {
-    if (myContext)
-        myContext->SetActive(active);
+    myContext.SetActive(active);
 
     return true;
 }
@@ -159,10 +139,9 @@ bool RenderImageImplFBO::Activate(bool active)
 ////////////////////////////////////////////////////////////
 /// /see RenderImageImpl::UpdateTexture
 ////////////////////////////////////////////////////////////
-bool RenderImageImplFBO::UpdateTexture(unsigned int)
+void RenderImageImplFBO::UpdateTexture(unsigned int)
 {
     // Nothing to do: the FBO draws directly into the target image
-    return true;
 }
 
 } // namespace priv

@@ -200,7 +200,7 @@ bool RenderImageImplPBuffer::Activate(bool active)
 ////////////////////////////////////////////////////////////
 /// /see RenderImageImpl::UpdateTexture
 ////////////////////////////////////////////////////////////
-bool RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
+void RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
 {
     if (Activate(true))
     {
@@ -215,11 +215,7 @@ bool RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
         GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
 
         GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
-
-        return true;
     }
-
-    return false;
 }
 
 } // namespace priv

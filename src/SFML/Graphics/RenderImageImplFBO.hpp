@@ -29,17 +29,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderImageImpl.hpp>
+#include <SFML/Window/Context.hpp>
 
 
 namespace sf
 {
-class Context;
-
 namespace priv
 {
 ////////////////////////////////////////////////////////////
 /// Specialization of RenderImageImpl using the
-/// FrameBuffer Object extension
+/// Frame Buffer Object extension
 ////////////////////////////////////////////////////////////
 class RenderImageImplFBO : public RenderImageImpl
 {
@@ -83,14 +82,14 @@ private :
     /// /see RenderImageImpl::UpdateTexture
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool UpdateTexture(unsigned textureId);
+    virtual void UpdateTexture(unsigned textureId);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     unsigned int myFrameBuffer; ///< OpenGL frame buffer object
     unsigned int myDepthBuffer; ///< Optional depth buffer attached to the frame buffer
-    Context*     myContext;     ///< Needs a separate OpenGL context for not messing up the other ones
+    Context      myContext;     ///< Needs a separate OpenGL context for not messing up the other ones
 };
 
 } // namespace priv

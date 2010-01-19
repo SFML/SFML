@@ -74,10 +74,8 @@ public :
     ///
     /// \param textureId : OpenGL identifier of the target texture
     ///
-    /// \return True if the new pixels are flipped vertically
-    ///
     ////////////////////////////////////////////////////////////
-    virtual bool UpdateTexture(unsigned int textureId) = 0;
+    virtual void UpdateTexture(unsigned int textureId) = 0;
 };
 
 } // namespace priv

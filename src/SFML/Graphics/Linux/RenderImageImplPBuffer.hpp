@@ -83,7 +83,7 @@ private :
     /// /see RenderImageImpl::UpdateTexture
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool UpdateTexture(unsigned textureId);
+    virtual void UpdateTexture(unsigned textureId);
 
     ////////////////////////////////////////////////////////////
     // Member data
