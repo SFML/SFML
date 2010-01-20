@@ -300,7 +300,7 @@ void Renderer::SetShader(const Shader* shader)
 
         // Store it
         myShader = shader;
-        myShaderIsValid = false;
+        myShaderIsValid = true;
     }
 }
 
