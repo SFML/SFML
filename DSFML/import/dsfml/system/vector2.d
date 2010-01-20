@@ -155,4 +155,6 @@ alias Vector2!(float) Vector2f;
 /// ditto
 alias Vector2!(int) Vector2i;
 /// ditto
-alias Vector2!(int) Vector2ui;
+alias Vector2!(uint) Vector2ui;
+/// ditto
+alias Vector2!(ubyte) Vector2ub;

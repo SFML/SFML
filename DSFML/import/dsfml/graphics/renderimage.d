@@ -36,13 +36,14 @@ import	dsfml.graphics.idrawable,
 		dsfml.graphics.color,
 		dsfml.graphics.rect,
 		dsfml.graphics.shader,
-		dsfml.graphics.view;
+		dsfml.graphics.view,
+		dsfml.graphics.irendertarget;
 
 
 /**
  *	Target for 2D rendering into an image that can be reused in a sprite
  */
-class RenderImage : DSFMLObject
+class RenderImage : DSFMLObject, IRenderTarget
 {
 private:
 	Image _image = null;
@@ -111,20 +112,6 @@ public:
 	}
 	
 	/**
-	 *	Make sure that what has been drawn so far is rendered
-	 *
-	 *	Use this function if you use OpenGL rendering commands, and you want to make sure that things will appear on top
-	 *	of all the SFML objects that have been drawn so far. This is needed because SFML doesn't use immediate rendering,
-	 *	it first accumulates drawables into a queue and trigger the actual rendering afterwards.
-	 *
-	 *	You don't need to call this function if you're not dealing with OpenGL directly.
-	 */
-	void flush()
-	{
-		sfRenderImage_Flush(m_ptr);
-	}
-	
-	/**
 	 *	Update the contents of the target image
 	 */
 	void display()
@@ -149,7 +136,7 @@ public:
 	 *	    drawable = Object to draw
 	 *	    shader = Shader to use
 	 */
-	void drawWithShader(IDrawable drawable, Shader shader)
+	void draw(IDrawable drawable, Shader shader)
 	{
 		drawable.renderWithShader(this, shader);
 	}
@@ -203,7 +190,7 @@ public:
 	/**
 	*	Get the default view
 	*
-	*	Returns: 
+	*	Returns:
 	*		default view
 	*/
 	View getDefaultView()
@@ -217,9 +204,9 @@ public:
 	}
 	
 	
-	IntRect getViewport() // TODO: is there a need to accept other Views than the currently assigned one?
+	IntRect getViewport(View view = null) // TODO: is there a need to accept other Views than the currently assigned one?
 	{
-		return sfRenderImage_GetViewport(m_ptr, _view.getNativePointer);
+		return sfRenderImage_GetViewport(m_ptr, view is null ? _view.getNativePointer : view.getNativePointer);
 	}
 	
 	/**
@@ -267,17 +254,30 @@ public:
 		return sfRenderImage_IsAvailable();
 	}
 
-private:
-	extern (C)
+	/**
+	 *	Save the current OpenGL render states and matrices
+	 */
+	void saveGLStates()
 	{
-	static
+		sfRenderImage_SaveGLStates(m_ptr);
+	}
+
+	/**
+	 *	Restore the previously saved OpenGL render states and matrices
+	 */
+	void restoreGLStates()
+	{
+		sfRenderImage_RestoreGLStates(m_ptr);
+	}
+
+private:
+	static extern(C)
 	{
 		void*	function(uint, uint, bool)		sfRenderImage_Create;
 		void	function(void*)					sfRenderImage_Destroy;
 		uint	function(void*)					sfRenderImage_GetWidth;
 		uint	function(void*)					sfRenderImage_GetHeight;
 		bool	function(void*, bool)			sfRenderImage_SetActive;
-		void	function(void*)					sfRenderImage_Flush;
 		void	function(void*)					sfRenderImage_Display;
 		
 		void	function(void*, void*)			sfRenderImage_DrawSprite;
@@ -296,40 +296,16 @@ private:
 		void	function(void*, uint, uint, float*, float*, void*)	sfRenderImage_ConvertCoords;
 		void*	function(void*)					sfRenderImage_GetImage;
 		bool	function()						sfRenderImage_IsAvailable;
-	}
-	}
-
-	static this()
-	{
-	debug
-		DllLoader dll = DllLoader.load("csfml-graphics-d");
-	else
-		DllLoader dll = DllLoader.load("csfml-graphics");
 		
-		mixin(loadFromSharedLib("sfRenderImage_Create"));
-		mixin(loadFromSharedLib("sfRenderImage_Destroy"));
-		mixin(loadFromSharedLib("sfRenderImage_GetWidth"));
-		mixin(loadFromSharedLib("sfRenderImage_GetHeight"));
-		mixin(loadFromSharedLib("sfRenderImage_SetActive"));
-		mixin(loadFromSharedLib("sfRenderImage_Flush"));
-		mixin(loadFromSharedLib("sfRenderImage_Display"));
-/*
-		mixin(loadFromSharedLib("sfRenderImage_DrawSprite"));
-		mixin(loadFromSharedLib("sfRenderImage_DrawShape"));
-		mixin(loadFromSharedLib("sfRenderImage_DrawText"));
-	
-		mixin(loadFromSharedLib("sfRenderImage_DrawSpriteWithShader"));
-		mixin(loadFromSharedLib("sfRenderImage_DrawShapeWithShader"));
-		mixin(loadFromSharedLib("sfRenderImage_DrawTextWithShader"));
-*/
-
-		mixin(loadFromSharedLib("sfRenderImage_Clear"));
-		mixin(loadFromSharedLib("sfRenderImage_SetView"));
-		mixin(loadFromSharedLib("sfRenderImage_GetView"));
-		mixin(loadFromSharedLib("sfRenderImage_GetDefaultView"));
-		mixin(loadFromSharedLib("sfRenderImage_GetViewport"));
-		mixin(loadFromSharedLib("sfRenderImage_ConvertCoords"));
-		mixin(loadFromSharedLib("sfRenderImage_GetImage"));
-		mixin(loadFromSharedLib("sfRenderImage_IsAvailable"));
+		// DSFML2
+		void	function(void*)					sfRenderImage_SaveGLStates;
+		void	function(void*)					sfRenderImage_RestoreGLStates;
 	}
+
+	mixin(loadFromSharedLib2("csfml-graphics", "sfRenderImage", "Create", "Destroy", "GetWidth", "GetHeight",
+	"SetActive", "Display", "Clear", "SetView", "GetView", "GetDefaultView", "GetViewport", "ConvertCoords",
+	"GetImage", "IsAvailable",
+	// DSFML2
+	"SaveGLStates", "RestoreGLStates"));
+
 }

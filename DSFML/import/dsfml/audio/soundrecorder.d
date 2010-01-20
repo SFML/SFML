@@ -296,8 +296,8 @@ private:
 		int		function()							sfSoundRecorder_IsAvailable;
 	}
 
-	mixin(loadFromSharedLib2("csfml-audio", "sfSoundRecorder_Create", "sfSoundRecorder_Destroy", "sfSoundRecorder_Start",
-							"sfSoundRecorder_Stop", "sfSoundRecorder_GetSampleRate", "sfSoundRecorder_IsAvailable"));
+	mixin(loadFromSharedLib2("csfml-audio", "sfSoundRecorder", "Create", "Destroy", "Start",
+							"Stop", "GetSampleRate", "IsAvailable"));
 }
 
 // Use explicit alloc to allow instaciation by C thread

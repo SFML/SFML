@@ -177,7 +177,8 @@ public:
 	IntRect getSubRect()
 	{
 		if (m_subRect == IntRect())
-			m_subRect = IntRect(0, 0, m_image.getWidth(), m_image.getHeight());
+			m_subRect = sfSprite_GetSubRect(m_ptr);
+			//m_subRect = IntRect(0, 0, m_image.getWidth(), m_image.getHeight());
 			
 		return m_subRect;
 	}
@@ -218,7 +219,7 @@ private:
 		typedef void function(void*, int) pf_sfSprite_FlipX;
 		typedef void function(void*, int) pf_sfSprite_FlipY;
 		typedef void* function(void*) pf_sfSprite_GetImage;
-		typedef void* function(void*) pf_sfSprite_GetSubRect;
+		typedef IntRect function(void*) pf_sfSprite_GetSubRect;
 		typedef float function(void*) pf_sfSprite_GetWidth;
 		typedef float function(void*) pf_sfSprite_GetHeight;
 		typedef Color function(void*, uint, uint) pf_sfSprite_GetPixel;

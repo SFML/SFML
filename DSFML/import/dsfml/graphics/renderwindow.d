@@ -34,7 +34,8 @@ import	dsfml.graphics.color,
 		dsfml.graphics.rect,
 		dsfml.graphics.shader,
 		dsfml.graphics.view,
-		dsfml.graphics.idrawable;
+		dsfml.graphics.idrawable,
+		dsfml.graphics.irendertarget;
 
 import	dsfml.window.event,
 		dsfml.window.input,
@@ -49,7 +50,7 @@ import	dsfml.system.common,
 /**
 *	Simple wrapper for Window that allows easy 2D rendering. 
 */
-class RenderWindow : Window
+class RenderWindow : Window, IRenderTarget
 {
 private:	
 	View m_view = null;
@@ -233,18 +234,49 @@ public:
 		sfRenderWindow_ConvertCoords(m_ptr, windowX, windowY, &vec.x, &vec.y, targetView is null ? null : targetView.getNativePointer);
 		return vec;
 	}
-	
+
 	/**
-	 *	Make sure that what has been drawn so far is rendered
-	 *	Use this function if you use OpenGL rendering commands, and you want to make sure that things will appear on top
-	 *	of all the SFML objects that have been drawn so far. This is needed because SFML doesn't use immediate rendering,
-	 *	it first accumulates drawables into a queue and trigger the actual rendering afterwards.
-	 *
-	 *	You don't need to call this function if you're not dealing with OpenGL directly.
+	 *	Save the current OpenGL render states and matrices
 	 */
-	void flush()
+	void saveGLStates()
 	{
-		sfRenderWindow_Flush(m_ptr);
+		sfRenderWindow_SaveGLStates(m_ptr);
+	}
+
+	/**
+	 *	Restore the previously saved OpenGL render states and matrices
+	 */
+	void restoreGLStates()
+	{
+		sfRenderWindow_RestoreGLStates(m_ptr);
+	}
+
+
+	/**
+	*	Return the width of the rendering region of a renderwindow
+	*
+	*	Returns: 
+	*		Width in pixels
+	*/
+	uint getWidth()
+	{
+		return sfRenderWindow_GetWidth(m_ptr);
+	}
+
+	/**
+	*	Return the height of the rendering region of a renderwindow
+	*
+	*	Returns: 
+	*		Height in pixels
+	*/
+	uint getHeight()
+	{
+		return sfRenderWindow_GetHeight(m_ptr);
+	}
+
+	IntRect getViewport(View view = null) // TODO: is there a need to accept other Views than the currently assigned one?
+	{
+		return sfRenderWindow_GetViewport(m_ptr, view is null ? m_view.getNativePointer : view.getNativePointer);
 	}
 
 private:
@@ -255,7 +287,9 @@ private:
 		void*	function(WindowHandle, ContextSettings*)			sfRenderWindow_CreateFromHandle;
 		void	function(void*)										sfRenderWindow_Destroy;
 		void*	function(void*)										sfRenderWindow_GetInput;
-//		bool	function(void*)										sfRenderWindow_IsOpened; // also in Window
+		bool	function(void*)										sfRenderWindow_IsOpened;
+		uint	function(void*)										sfRenderWindow_GetWidth;
+		uint	function(void*)										sfRenderWindow_GetHeight;
 
 	/*
 		void	function(void*, void*)								sfRenderWindow_DrawSprite;
@@ -275,40 +309,17 @@ private:
 		void	function(void*, uint, uint, float*, float*, void*)	sfRenderWindow_ConvertCoords;
 		
 		// DSFML2
-		void	function(void*)										sfRenderWindow_Flush;
+		void	function(void*)										sfRenderWindow_SaveGLStates;
+		void	function(void*)										sfRenderWindow_RestoreGLStates;
+		IntRect	function(void*, void*)								sfRenderWindow_GetViewport;
 	}
 
-	static this()
-	{
-	debug
-		DllLoader dll = DllLoader.load("csfml-graphics-d");
-	else
-		DllLoader dll = DllLoader.load("csfml-graphics");
+	mixin(loadFromSharedLib2("csfml-graphics", "sfRenderWindow", "Create", "CreateFromHandle",
+	"Destroy", "GetInput", "Clear", "SetView", "GetView", "GetDefaultView", "ConvertCoords",
+	"GetWidth", "GetHeight",
+	// DSFML2
+	"SaveGLStates", "RestoreGLStates", "GetViewport"));
 
-		mixin(loadFromSharedLib("sfRenderWindow_Create"));
-		mixin(loadFromSharedLib("sfRenderWindow_CreateFromHandle"));
-		mixin(loadFromSharedLib("sfRenderWindow_Destroy"));
-		mixin(loadFromSharedLib("sfRenderWindow_GetInput"));
-
-	/*
-		mixin(loadFromSharedLib("sfRenderWindow_DrawSprite"));
-		mixin(loadFromSharedLib("sfRenderWindow_DrawShape"));
-		mixin(loadFromSharedLib("sfRenderWindow_DrawText"));
-
-		mixin(loadFromSharedLib("sfRenderWindow_DrawSpriteWithShader"));
-		mixin(loadFromSharedLib("sfRenderWindow_DrawShapeWithShader"));
-		mixin(loadFromSharedLib("sfRenderWindow_DrawTextWithShader"));
-	*/
-		
-		mixin(loadFromSharedLib("sfRenderWindow_Clear"));
-		mixin(loadFromSharedLib("sfRenderWindow_SetView"));
-		mixin(loadFromSharedLib("sfRenderWindow_GetView"));
-		mixin(loadFromSharedLib("sfRenderWindow_GetDefaultView"));
-		mixin(loadFromSharedLib("sfRenderWindow_ConvertCoords"));
-		
-		// DSFML2
-		mixin(loadFromSharedLib("sfRenderWindow_Flush"));
-	}
 	
 	static ~this()
 	{

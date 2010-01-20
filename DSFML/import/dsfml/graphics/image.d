@@ -181,7 +181,7 @@ public:
 //	 *	Returns:
 //	 *		True if copy was successful
 //	 */
-//	 void copyScreen(RenderWindow window, IntRect sourceRect = new IntRect())
+//	 void copyScreen(RenderWindow window, IntRect sourceRect = IntRect())
 //	 {
 //		 return cast(bool)sfImage_CopyScreen(m_ptr, window.getNativePointer, sourceRect);
 //	 }

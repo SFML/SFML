@@ -47,7 +47,7 @@ string loadFromSharedLib(string fname)
 }
 
 //used to mixin code function
-string loadFromSharedLib2(S...)(string lib, S fnames)
+string loadFromSharedLib2(S...)(string lib, string object, S fnames)
 {
 	string res = `static this()
 {
@@ -60,7 +60,7 @@ string loadFromSharedLib2(S...)(string lib, S fnames)
 
 	foreach(fname; fnames)
 	{
-		res ~= "\t" ~ fname ~ " = " ~ "cast(typeof(" ~ fname ~ ")) dll.getSymbol(\"" ~ fname ~ "\");\n";
+		res ~= "\t" ~ object ~ "_" ~ fname ~ " = " ~ "cast(typeof(" ~ object ~ "_" ~ fname ~ ")) dll.getSymbol(\"" ~ object ~ "_" ~ fname ~ "\");\n";
 	}
 	return res ~ "}\n";
 }
