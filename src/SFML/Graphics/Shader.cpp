@@ -110,6 +110,7 @@ void Shader::SetParameter(const std::string& name, float x)
     if (myShaderProgram)
     {
         // Enable program
+        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
         // Get parameter location and assign it new values
@@ -120,7 +121,7 @@ void Shader::SetParameter(const std::string& name, float x)
             std::cerr << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
-        GLCheck(glUseProgramObjectARB(0));
+        GLCheck(glUseProgramObjectARB(program));
     }
 }
 
@@ -131,6 +132,7 @@ void Shader::SetParameter(const std::string& name, float x, float y)
     if (myShaderProgram)
     {
         // Enable program
+        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
         // Get parameter location and assign it new values
@@ -141,7 +143,7 @@ void Shader::SetParameter(const std::string& name, float x, float y)
             std::cerr << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
-        GLCheck(glUseProgramObjectARB(0));
+        GLCheck(glUseProgramObjectARB(program));
     }
 }
 
@@ -152,6 +154,7 @@ void Shader::SetParameter(const std::string& name, float x, float y, float z)
     if (myShaderProgram)
     {
         // Enable program
+        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
         // Get parameter location and assign it new values
@@ -162,7 +165,7 @@ void Shader::SetParameter(const std::string& name, float x, float y, float z)
             std::cerr << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
-        GLCheck(glUseProgramObjectARB(0));
+        GLCheck(glUseProgramObjectARB(program));
     }
 }
 
@@ -173,6 +176,7 @@ void Shader::SetParameter(const std::string& name, float x, float y, float z, fl
     if (myShaderProgram)
     {
         // Enable program
+        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
         // Get parameter location and assign it new values
@@ -183,7 +187,7 @@ void Shader::SetParameter(const std::string& name, float x, float y, float z, fl
             std::cerr << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
-        GLCheck(glUseProgramObjectARB(0));
+        GLCheck(glUseProgramObjectARB(program));
     }
 }
 
@@ -322,7 +326,7 @@ bool Shader::CompileProgram()
         return false;
     }
 
-    // Destroy effect program if it was already created
+    // Destroy the shader if it was already created
     if (myShaderProgram)
         GLCheck(glDeleteObjectARB(myShaderProgram));
 
