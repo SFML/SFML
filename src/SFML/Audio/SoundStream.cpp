@@ -186,9 +186,10 @@ bool SoundStream::GetLoop() const
 ////////////////////////////////////////////////////////////
 void SoundStream::Run()
 {
-    // Create buffers
+    // Create the buffers
     ALCheck(alGenBuffers(BuffersCount, myBuffers));
-    unsigned int endBuffer = 0xFFFF;
+    for (int i = 0; i < BuffersCount; ++i)
+        myEndBuffers[i] = false;
 
     // Fill the queue
     bool requestStop = FillQueue();
@@ -223,12 +224,21 @@ void SoundStream::Run()
             ALuint buffer;
             ALCheck(alSourceUnqueueBuffers(mySource, 1, &buffer));
 
+            // Find its number
+            unsigned int bufferNum = 0;
+            for (int i = 0; i < BuffersCount; ++i)
+                if (myBuffers[i] == buffer)
+                {
+                    bufferNum = i;
+                    break;
+                }
+
             // Retrieve its size and add it to the samples count
-            if (buffer == endBuffer)
+            if (myEndBuffers[bufferNum])
             {
                 // This was the last buffer: reset the sample count
                 mySamplesProcessed = 0;
-                endBuffer = 0xFFFF;
+                myEndBuffers[bufferNum] = false;
             }
             else
             {
@@ -240,15 +250,13 @@ void SoundStream::Run()
             // Fill it and push it back into the playing queue
             if (!requestStop)
             {
-                if (FillAndPushBuffer(buffer))
+                if (FillAndPushBuffer(bufferNum))
                 {
                     // User requested to stop: check if we must loop or really stop
                     if (myLoop)
                     {
-                        // Looping: restart and mark the current buffer as the last one
-                        // (to know when to reset the sample count)
+                        // Looping: restart the stream source
                         OnSeek(0);
-                        endBuffer = buffer;
                     }
                     else
                     {
@@ -277,18 +285,23 @@ void SoundStream::Run()
 
 
 ////////////////////////////////////////////////////////////
-bool SoundStream::FillAndPushBuffer(unsigned int buffer)
+bool SoundStream::FillAndPushBuffer(unsigned int bufferNum)
 {
     bool requestStop = false;
 
     // Acquire audio data
     Chunk data = {NULL, 0};
     if (!OnGetData(data))
+    {
+        myEndBuffers[bufferNum] = true;
         requestStop = true;
+    }
 
     // Create and fill the buffer, and push it to the queue
     if (data.Samples && data.NbSamples)
     {
+        unsigned int buffer = myBuffers[bufferNum];
+
         // Fill the buffer
         ALsizei size = static_cast<ALsizei>(data.NbSamples) * sizeof(Int16);
         ALCheck(alBufferData(buffer, myFormat, data.Samples, size, mySampleRate));
@@ -308,8 +321,13 @@ bool SoundStream::FillQueue()
     bool requestStop = false;
     for (int i = 0; (i < BuffersCount) && !requestStop; ++i)
     {
-        if (FillAndPushBuffer(myBuffers[i]))
-            requestStop = true;
+        if (FillAndPushBuffer(i))
+        {
+            if (myLoop)
+                OnSeek(0);
+            else
+                requestStop = true;
+        }
     }
 
     return requestStop;
