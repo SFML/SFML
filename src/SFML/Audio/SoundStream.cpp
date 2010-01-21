@@ -188,9 +188,10 @@ bool SoundStream::GetLoop() const
 ////////////////////////////////////////////////////////////
 void SoundStream::Run()
 {
-    // Create buffers
+    // Create the buffers
     ALCheck(alGenBuffers(BuffersCount, myBuffers));
-    unsigned int EndBuffer = 0xFFFF;
+    for (int i = 0; i < BuffersCount; ++i)
+        myEndBuffers[i] = false;
 
     // Fill the queue
     bool RequestStop = FillQueue();
@@ -225,12 +226,21 @@ void SoundStream::Run()
             ALuint Buffer;
             ALCheck(alSourceUnqueueBuffers(Sound::mySource, 1, &Buffer));
 
+            // Find its number
+            unsigned int BufferNum = 0;
+            for (int i = 0; i < BuffersCount; ++i)
+                if (myBuffers[i] == Buffer)
+                {
+                    BufferNum = i;
+                    break;
+                }
+
             // Retrieve its size and add it to the samples count
-            if (Buffer == EndBuffer)
+            if (myEndBuffers[BufferNum])
             {
                 // This was the last buffer: reset the sample count
                 mySamplesProcessed = 0;
-                EndBuffer = 0xFFFF;
+                myEndBuffers[BufferNum] = false;
             }
             else
             {
@@ -242,16 +252,10 @@ void SoundStream::Run()
             // Fill it and push it back into the playing queue
             if (!RequestStop)
             {
-                if (FillAndPushBuffer(Buffer))
+                if (FillAndPushBuffer(BufferNum))
                 {
                     // User requested to stop: check if we must loop or really stop
-                    if (myLoop && OnStart())
-                    {
-                        // Looping: mark the current buffer as the last one
-                        // (to know when to reset the sample count)
-                        EndBuffer = Buffer;
-                    }
-                    else
+                    if (!myLoop || !OnStart())
                     {
                         // Not looping or restart failed: request stop
                         RequestStop = true;
@@ -281,18 +285,23 @@ void SoundStream::Run()
 /// Fill a new buffer with audio data, and push it to the
 /// playing queue
 ////////////////////////////////////////////////////////////
-bool SoundStream::FillAndPushBuffer(unsigned int Buffer)
+bool SoundStream::FillAndPushBuffer(unsigned int BufferNum)
 {
     bool RequestStop = false;
 
     // Acquire audio data
     Chunk Data = {NULL, 0};
     if (!OnGetData(Data))
+    {
+        myEndBuffers[BufferNum] = true;
         RequestStop = true;
+    }
 
     // Create and fill the buffer, and push it to the queue
     if (Data.Samples && Data.NbSamples)
     {
+        unsigned int Buffer = myBuffers[BufferNum];
+
         // Fill the buffer
         ALsizei Size = static_cast<ALsizei>(Data.NbSamples) * sizeof(Int16);
         ALCheck(alBufferData(Buffer, myFormat, Data.Samples, Size, mySampleRate));
@@ -314,8 +323,11 @@ bool SoundStream::FillQueue()
     bool RequestStop = false;
     for (int i = 0; (i < BuffersCount) && !RequestStop; ++i)
     {
-        if (FillAndPushBuffer(myBuffers[i]))
-            RequestStop = true;
+        if (FillAndPushBuffer(i))
+        {
+            if (!myLoop || !OnStart())
+                RequestStop = true;
+        }
     }
 
     return RequestStop;

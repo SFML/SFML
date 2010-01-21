@@ -186,12 +186,12 @@ private :
     /// Fill a new buffer with audio data, and push it to the
     /// playing queue
     ///
-    /// \param Buffer : Buffer to fill
+    /// \param Buffer : Number of the buffer to fill (in [0, BuffersCount])
     ///
     /// \return True if the derived class has requested to stop
     ///
     ////////////////////////////////////////////////////////////
-    bool FillAndPushBuffer(unsigned int Buffer);
+    bool FillAndPushBuffer(unsigned int BufferNum);
 
     ////////////////////////////////////////////////////////////
     /// Fill the buffers queue with all available buffers
@@ -212,13 +212,14 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool          myIsStreaming;           ///< Streaming state (true = playing, false = stopped)
-    unsigned int  myBuffers[BuffersCount]; ///< Sound buffers used to store temporary audio data
-    unsigned int  myChannelsCount;         ///< Number of channels (1 = mono, 2 = stereo, ...)
-    unsigned int  mySampleRate;            ///< Frequency (samples / second)
-    unsigned long myFormat;                ///< Format of the internal sound buffers
-    bool          myLoop;                  ///< Loop flag (true to loop, false to play once)
-    unsigned int  mySamplesProcessed;      ///< Number of buffers processed since beginning of the stream
+    bool          myIsStreaming;              ///< Streaming state (true = playing, false = stopped)
+    unsigned int  myBuffers[BuffersCount];    ///< Sound buffers used to store temporary audio data
+    unsigned int  myChannelsCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
+    unsigned int  mySampleRate;               ///< Frequency (samples / second)
+    unsigned long myFormat;                   ///< Format of the internal sound buffers
+    bool          myLoop;                     ///< Loop flag (true to loop, false to play once)
+    unsigned int  mySamplesProcessed;         ///< Number of buffers processed since beginning of the stream
+    bool          myEndBuffers[BuffersCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation
 };
 
 } // namespace sf

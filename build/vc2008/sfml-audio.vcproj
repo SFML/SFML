@@ -402,7 +402,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Audio\AudioResource.hpp"
+			RelativePath="..\..\include\SFML\Audio\AudioResource.hpp"
 			>
 		</File>
 		<File
@@ -418,7 +418,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Audio\Music.hpp"
+			RelativePath="..\..\include\SFML\Audio\Music.hpp"
 			>
 		</File>
 		<File
@@ -430,7 +430,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Audio\Sound.hpp"
+			RelativePath="..\..\include\SFML\Audio\Sound.hpp"
 			>
 		</File>
 		<File
@@ -438,7 +438,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Audio\SoundBuffer.hpp"
+			RelativePath="..\..\include\SFML\Audio\SoundBuffer.hpp"
 			>
 		</File>
 		<File
@@ -446,7 +446,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Audio\SoundBufferRecorder.hpp"
+			RelativePath="..\..\include\SFML\Audio\SoundBufferRecorder.hpp"
 			>
 		</File>
 		<File
@@ -478,7 +478,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Audio\SoundRecorder.hpp"
+			RelativePath="..\..\include\SFML\Audio\SoundRecorder.hpp"
 			>
 		</File>
 		<File
@@ -486,7 +486,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Audio\SoundStream.hpp"
+			RelativePath="..\..\include\SFML\Audio\SoundStream.hpp"
 			>
 		</File>
 	</Files>
