@@ -95,5 +95,8 @@ void PySfMouse_InitConst()
 	obj = PyLong_FromLong(sf::Mouse::XButton2);
 	PyDict_SetItemString(PySfMouseType.tp_dict, "XButton2", obj);
 	Py_DECREF(obj);
+	obj = PyLong_FromLong(sf::Mouse::ButtonCount);
+	PyDict_SetItemString(PySfMouseType.tp_dict, "ButtonCount", obj);
+	Py_DECREF(obj);
 }
 
