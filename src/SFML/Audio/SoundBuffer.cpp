@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/SoundFile.hpp>
+#include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/OpenAL.hpp>
 #include <iostream>
@@ -55,7 +56,8 @@ AudioResource        (Copy),
 Resource<SoundBuffer>(Copy),
 myBuffer             (0),
 mySamples            (Copy.mySamples),
-myDuration           (Copy.myDuration)
+myDuration           (Copy.myDuration),
+mySounds             () // don't copy the attached sounds
 {
     // Create the buffer
     ALCheck(alGenBuffers(1, &myBuffer));
@@ -70,6 +72,11 @@ myDuration           (Copy.myDuration)
 ////////////////////////////////////////////////////////////
 SoundBuffer::~SoundBuffer()
 {
+    // First detach the buffer from the sounds that use it (to avoid OpenAL errors)
+    for (SoundList::const_iterator it = mySounds.begin(); it != mySounds.end(); ++it)
+        (*it)->ResetBuffer();
+
+    // Destroy the buffer
     if (myBuffer)
         ALCheck(alDeleteBuffers(1, &myBuffer));
 }
@@ -268,9 +275,10 @@ SoundBuffer& SoundBuffer::operator =(const SoundBuffer& Other)
 {
     SoundBuffer Temp(Other);
 
-    mySamples.swap(Temp.mySamples);
+    std::swap(mySamples,  Temp.mySamples);
     std::swap(myBuffer,   Temp.myBuffer);
     std::swap(myDuration, Temp.myDuration);
+    std::swap(mySounds,   Temp.mySounds); // swap sounds too, so that they are detached when Temp is destroyed
 
     return *this;
 }
@@ -303,6 +311,24 @@ bool SoundBuffer::Update(unsigned int ChannelsCount, unsigned int SampleRate)
     myDuration = static_cast<float>(mySamples.size()) / SampleRate / ChannelsCount;
 
     return true;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Add a sound to the list of sounds that use this buffer
+////////////////////////////////////////////////////////////
+void SoundBuffer::AttachSound(Sound* Instance) const
+{
+    mySounds.insert(Instance);
+}
+
+
+////////////////////////////////////////////////////////////
+/// Remove a sound from the list of sounds that use this buffer
+////////////////////////////////////////////////////////////
+void SoundBuffer::DetachSound(Sound* Instance) const
+{
+    mySounds.erase(Instance);
 }
 
 } // namespace sf

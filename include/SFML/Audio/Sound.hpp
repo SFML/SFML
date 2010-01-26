@@ -288,6 +288,15 @@ public :
     ////////////////////////////////////////////////////////////
     Sound& operator =(const Sound& Other);
 
+    ////////////////////////////////////////////////////////////
+    /// Reset the internal buffer
+    ///
+    /// This function is for internal use only, you don't have
+    /// to use it.
+    ///
+    ////////////////////////////////////////////////////////////
+    void ResetBuffer();
+
 private :
 
     friend class SoundStream;

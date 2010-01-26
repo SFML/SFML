@@ -32,10 +32,13 @@
 #include <SFML/Audio/AudioResource.hpp>
 #include <string>
 #include <vector>
+#include <set>
 
 
 namespace sf
 {
+class Sound;
+
 ////////////////////////////////////////////////////////////
 /// SoundBuffer is the low-level for loading and manipulating
 /// sound buffers
@@ -175,11 +178,33 @@ private :
     bool Update(unsigned int ChannelsCount, unsigned int SampleRate);
 
     ////////////////////////////////////////////////////////////
+    /// Add a sound to the list of sounds that use this buffer
+    ///
+    /// \param Instance : Sound object to attach
+    ///
+    ////////////////////////////////////////////////////////////
+    void AttachSound(Sound* Instance) const;
+
+    ////////////////////////////////////////////////////////////
+    /// Remove a sound from the list of sounds that use this buffer
+    ///
+    /// \param Instance : Sound object to detach
+    ///
+    ////////////////////////////////////////////////////////////
+    void DetachSound(Sound* Instance) const;
+
+    ////////////////////////////////////////////////////////////
+    // Types
+    ////////////////////////////////////////////////////////////
+    typedef std::set<Sound*> SoundList; ///< Set of unique sound instances
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     unsigned int       myBuffer;   ///< OpenAL buffer identifier
     std::vector<Int16> mySamples;  ///< Samples buffer
     float              myDuration; ///< Sound duration, in seconds
+    mutable SoundList  mySounds;   ///< List of sounds that are using this buffer
 };
 
 } // namespace sf

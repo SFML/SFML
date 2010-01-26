@@ -90,6 +90,7 @@ Sound::~Sound()
         {
             Stop();
             ALCheck(alSourcei(mySource, AL_BUFFER, 0));
+            myBuffer->DetachSound(this);
         }
         ALCheck(alDeleteSources(1, &mySource));
     }
@@ -129,7 +130,8 @@ void Sound::Stop()
 void Sound::SetBuffer(const SoundBuffer& Buffer)
 {
     myBuffer = &Buffer;
-    ALCheck(alSourcei(mySource, AL_BUFFER, myBuffer ? myBuffer->myBuffer : 0));
+    myBuffer->AttachSound(this);
+    ALCheck(alSourcei(mySource, AL_BUFFER, myBuffer->myBuffer));
 }
 
 
@@ -358,6 +360,20 @@ Sound& Sound::operator =(const Sound& Other)
     std::swap(myBuffer, Temp.myBuffer);
 
     return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+/// Reset the internal buffer
+////////////////////////////////////////////////////////////
+void Sound::ResetBuffer()
+{
+    // First stop the sound in case it is playing
+    Stop();
+
+    // Detach the buffer
+    ALCheck(alSourcei(mySource, AL_BUFFER, 0));
+    myBuffer = 0;
 }
 
 } // namespace sf
