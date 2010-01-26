@@ -129,6 +129,14 @@ void Sound::Stop()
 ////////////////////////////////////////////////////////////
 void Sound::SetBuffer(const SoundBuffer& Buffer)
 {
+    // First detach from the previous buffer
+    if (myBuffer)
+    {
+        Stop();
+        myBuffer->DetachSound(this);
+    }
+
+    // Assign and use the new buffer
     myBuffer = &Buffer;
     myBuffer->AttachSound(this);
     ALCheck(alSourcei(mySource, AL_BUFFER, myBuffer->myBuffer));
@@ -354,10 +362,27 @@ Sound::Status Sound::GetStatus() const
 ////////////////////////////////////////////////////////////
 Sound& Sound::operator =(const Sound& Other)
 {
-    Sound Temp(Other);
+    // Here we don't use the copy-and-swap idiom, because it would mess up
+    // the list of sound instances contained in the buffers
 
-    std::swap(mySource, Temp.mySource);
-    std::swap(myBuffer, Temp.myBuffer);
+    // Detach the sound instance from the previous buffer (if any)
+    if (myBuffer)
+    {
+        Stop();
+        myBuffer->DetachSound(this);
+        myBuffer = NULL;
+    }
+
+    // Copy the sound attributes
+    if (Other.myBuffer)
+        SetBuffer(*Other.myBuffer);
+    SetLoop(Other.GetLoop());
+    SetPitch(Other.GetPitch());
+    SetVolume(Other.GetVolume());
+    SetPosition(Other.GetPosition());
+    SetRelativeToListener(Other.IsRelativeToListener());
+    SetMinDistance(Other.GetMinDistance());
+    SetAttenuation(Other.GetAttenuation());
 
     return *this;
 }
@@ -373,7 +398,7 @@ void Sound::ResetBuffer()
 
     // Detach the buffer
     ALCheck(alSourcei(mySource, AL_BUFFER, 0));
-    myBuffer = 0;
+    myBuffer = NULL;
 }
 
 } // namespace sf
