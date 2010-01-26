@@ -201,6 +201,17 @@ public :
     ////////////////////////////////////////////////////////////
     Sound& operator =(const Sound& right);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Reset the internal buffer of the sound
+    ///
+    /// This function is for internal use only, you don't have
+    /// to use it. It is called by the sf::SoundBuffer that
+    /// this sound uses, when it is destroyed in order to prevent
+    /// the sound from using a dead buffer.
+    ///
+    ////////////////////////////////////////////////////////////
+    void ResetBuffer();
+
 private :
 
     ////////////////////////////////////////////////////////////

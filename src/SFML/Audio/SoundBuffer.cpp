@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/SoundFile.hpp>
+#include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/ALCheck.hpp>
 #include <iostream>
@@ -49,10 +50,10 @@ myDuration(0.f)
 
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
-Resource<SoundBuffer>(copy),
-myBuffer             (0),
-mySamples            (copy.mySamples),
-myDuration           (copy.myDuration)
+myBuffer  (0),
+mySamples (copy.mySamples),
+myDuration(copy.myDuration),
+mySounds  () // don't copy the attached sounds
 {
     // Create the buffer
     ALCheck(alGenBuffers(1, &myBuffer));
@@ -65,6 +66,11 @@ myDuration           (copy.myDuration)
 ////////////////////////////////////////////////////////////
 SoundBuffer::~SoundBuffer()
 {
+    // First detach the buffer from the sounds that use it (to avoid OpenAL errors)
+    for (SoundList::const_iterator it = mySounds.begin(); it != mySounds.end(); ++it)
+        (*it)->ResetBuffer();
+
+    // Destroy the buffer
     if (myBuffer)
         ALCheck(alDeleteBuffers(1, &myBuffer));
 }
@@ -223,9 +229,10 @@ SoundBuffer& SoundBuffer::operator =(const SoundBuffer& other)
 {
     SoundBuffer temp(other);
 
-    mySamples.swap(temp.mySamples);
+    std::swap(mySamples,  temp.mySamples);
     std::swap(myBuffer,   temp.myBuffer);
     std::swap(myDuration, temp.myDuration);
+    std::swap(mySounds,   temp.mySounds); // swap sounds too, so that they are detached when temp is destroyed
 
     return *this;
 }
@@ -256,6 +263,20 @@ bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
     myDuration = static_cast<float>(mySamples.size()) / sampleRate / channelsCount;
 
     return true;
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundBuffer::AttachSound(Sound* sound) const
+{
+    mySounds.insert(sound);
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundBuffer::DetachSound(Sound* sound) const
+{
+    mySounds.erase(sound);
 }
 
 } // namespace sf

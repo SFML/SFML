@@ -65,6 +65,8 @@ myBuffer   (NULL)
 Sound::~Sound()
 {
     Stop();
+    if (myBuffer)
+        myBuffer->DetachSound(this);
 }
 
 
@@ -92,7 +94,16 @@ void Sound::Stop()
 ////////////////////////////////////////////////////////////
 void Sound::SetBuffer(const SoundBuffer& buffer)
 {
+    // First detach from the previous buffer
+    if (myBuffer)
+    {
+        Stop();
+        myBuffer->DetachSound(this);
+    }
+
+    // Assign and use the new buffer
     myBuffer = &buffer;
+    myBuffer->AttachSound(this);
     ALCheck(alSourcei(mySource, AL_BUFFER, myBuffer->myBuffer));
 }
 
@@ -148,12 +159,41 @@ Sound::Status Sound::GetStatus() const
 ////////////////////////////////////////////////////////////
 Sound& Sound::operator =(const Sound& right)
 {
-    Sound temp(right);
+    // Here we don't use the copy-and-swap idiom, because it would mess up
+    // the list of sound instances contained in the buffers
 
-    std::swap(mySource, temp.mySource);
-    std::swap(myBuffer, temp.myBuffer);
+    // Detach the sound instance from the previous buffer (if any)
+    if (myBuffer)
+    {
+        Stop();
+        myBuffer->DetachSound(this);
+        myBuffer = NULL;
+    }
+
+    // Copy the sound attributes
+    if (right.myBuffer)
+        SetBuffer(*right.myBuffer);
+    SetLoop(right.GetLoop());
+    SetPitch(right.GetPitch());
+    SetVolume(right.GetVolume());
+    SetPosition(right.GetPosition());
+    SetRelativeToListener(right.IsRelativeToListener());
+    SetMinDistance(right.GetMinDistance());
+    SetAttenuation(right.GetAttenuation());
 
     return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+void Sound::ResetBuffer()
+{
+    // First stop the sound in case it is playing
+    Stop();
+
+    // Detach the buffer
+    ALCheck(alSourcei(mySource, AL_BUFFER, 0));
+    myBuffer = NULL;
 }
 
 } // namespace sf

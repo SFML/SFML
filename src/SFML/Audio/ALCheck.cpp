@@ -98,7 +98,7 @@ void EnsureALInit()
 {
     // The audio device is instanciated on demand rather than at global startup,
     // which solves a lot of weird crashes and errors.
-    /// It is destroyed at global exit which is fine.
+    // It is destroyed at global exit which is fine.
 
     static AudioDevice globalDevice;
 }

@@ -222,12 +222,12 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
     renderer.SetTexture(&myFont->GetImage(myCharacterSize));
 
     // Computes values related to the text style
-    bool  bold          = (myStyle & Bold) != 0;
-    bool  underlined    = (myStyle & Underlined) != 0;
-    float italicCoeff   = (myStyle & Italic) ? 0.208f : 0.f; // 12 degrees
-    float outlineOffset = myCharacterSize * 0.1f;
-    float outlineThick  = myCharacterSize * (bold ? 0.1f : 0.07f);
-    FloatRect outlineCoords = myFont->GetImage(myCharacterSize).GetTexCoords(IntRect(1, 1, 1, 1));
+    bool  bold                = (myStyle & Bold) != 0;
+    bool  underlined          = (myStyle & Underlined) != 0;
+    float italicCoeff         = (myStyle & Italic) ? 0.208f : 0.f; // 12 degrees
+    float underlineOffset     = myCharacterSize * 0.1f;
+    float underlineThickness  = myCharacterSize * (bold ? 0.1f : 0.07f);
+    FloatRect underlineCoords = myFont->GetImage(myCharacterSize).GetTexCoords(IntRect(1, 1, 1, 1));
 
     // Initialize the rendering coordinates
     float space       = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
@@ -252,14 +252,14 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
         // If we're using the underlined style and there's a new line, draw a line
         if (underlined && (curChar == L'\n'))
         {
-            float top = y + outlineOffset;
-            float bottom = top + outlineThick;
+            float top = y + underlineOffset;
+            float bottom = top + underlineThickness;
 
             renderer.Begin(Renderer::QuadList);
-                renderer.AddVertex(0, top,    outlineCoords.Left,  outlineCoords.Top);
-                renderer.AddVertex(x, top,    outlineCoords.Right, outlineCoords.Top);
-                renderer.AddVertex(x, bottom, outlineCoords.Right, outlineCoords.Bottom);
-                renderer.AddVertex(0, bottom, outlineCoords.Left,  outlineCoords.Bottom);
+                renderer.AddVertex(0, top,    underlineCoords.Left,  underlineCoords.Top);
+                renderer.AddVertex(x, top,    underlineCoords.Right, underlineCoords.Top);
+                renderer.AddVertex(x, bottom, underlineCoords.Right, underlineCoords.Bottom);
+                renderer.AddVertex(0, bottom, underlineCoords.Left,  underlineCoords.Bottom);
             renderer.End();
         }
 
@@ -293,14 +293,14 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
     // If we're using the underlined style, add the last line
     if (underlined)
     {
-        float top = y + outlineOffset;
-        float bottom = top + outlineThick;
+        float top = y + underlineOffset;
+        float bottom = top + underlineThickness;
 
         renderer.Begin(Renderer::QuadList);
-            renderer.AddVertex(0, top,    outlineCoords.Left,  outlineCoords.Top);
-            renderer.AddVertex(x, top,    outlineCoords.Right, outlineCoords.Top);
-            renderer.AddVertex(x, bottom, outlineCoords.Right, outlineCoords.Bottom);
-            renderer.AddVertex(0, bottom, outlineCoords.Left,  outlineCoords.Bottom);
+            renderer.AddVertex(0, top,    underlineCoords.Left,  underlineCoords.Top);
+            renderer.AddVertex(x, top,    underlineCoords.Right, underlineCoords.Top);
+            renderer.AddVertex(x, bottom, underlineCoords.Right, underlineCoords.Bottom);
+            renderer.AddVertex(0, bottom, underlineCoords.Left,  underlineCoords.Bottom);
         renderer.End();
     }
 }
@@ -323,17 +323,15 @@ void Text::UpdateRect() const
         return;
 
     // Initial values
-    bool   bold          = (myStyle & Bold) != 0;
-    float  outlineOffset = myCharacterSize * 0.1f;
-    float  outlineThick  = myCharacterSize * (bold ? 0.1f : 0.07f);
-    float  charSize      = static_cast<float>(myCharacterSize);
-    float  space         = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
-    float  lineSpacing   = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
-    float  curWidth      = 0;
-    float  curHeight     = 0;
-    float  width         = 0;
-    float  height        = 0;
-    Uint32 prevChar      = 0;
+    bool   bold        = (myStyle & Bold) != 0;
+    float  charSize    = static_cast<float>(myCharacterSize);
+    float  space       = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
+    float  lineSpacing = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
+    float  curWidth    = 0;
+    float  curHeight   = 0;
+    float  width       = 0;
+    float  height      = 0;
+    Uint32 prevChar    = 0;
 
     // Go through each character
     for (std::size_t i = 0; i < myString.GetSize(); ++i)
@@ -395,8 +393,11 @@ void Text::UpdateRect() const
     // Add a slight height if we're using the underlined style
     if (myStyle & Underlined)
     {
-        if (curHeight < charSize + outlineOffset + outlineThick)
-            height += outlineOffset + outlineThick;
+        float underlineOffset    = myCharacterSize * 0.1f;
+        float underlineThickness = myCharacterSize * (bold ? 0.1f : 0.07f);
+
+        if (curHeight < charSize + underlineOffset + underlineThickness)
+            height += underlineOffset + underlineThickness;
     }
 
     // Finally update the rectangle
