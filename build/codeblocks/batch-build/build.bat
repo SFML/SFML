@@ -2,7 +2,7 @@
 
 REM Retrieve the SFML path
 set SFML="%CD%\..\..\.."
-set TMP="%CD%\temp"
+set TMPDIR="%CD%\temp"
 
 REM Add the Code::Blocks path to the PATH
 set PATH=%PATH%;"%CD%"
@@ -43,11 +43,11 @@ codeblocks -na -nd -ns --build sfml-network.cbp --target="Release DLL_Win32"
 codeblocks -na -nd -ns --build sfml-audio.cbp --target="Release DLL_Win32"
 
 REM Copy the SFML static libraries into a temporary folder
-IF NOT EXIST %TMP% mkdir %TMP%
+IF NOT EXIST %TMPDIR% mkdir %TMPDIR%
 cd %SFML%\lib\mingw
-xcopy libsfml-*-s-d.a %TMP%/q /y
-xcopy libsfml-*-s.a %TMP%/q /y
-cd %TMP%
+xcopy libsfml-*-s-d.a %TMPDIR%/q /y
+xcopy libsfml-*-s.a %TMPDIR%/q /y
+cd %TMPDIR%
 
 REM Add external libraries to sfml-window
 echo Adding external libraries to libsfml-window-s...
@@ -86,7 +86,7 @@ xcopy *.a %SFML%\lib\mingw /q /y
 del *.a /f /q
 
 REM Remove the temporary directory we've just created
-rmdir %TMP% /s /q
+cd ..
+rmdir %TMPDIR% /s /q
 
 echo Done
-pause
