@@ -343,7 +343,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\System\Win32\Mutex.hpp"
+				RelativePath="..\..\include\SFML\System\Win32\Mutex.hpp"
 				>
 			</File>
 			<File
@@ -359,7 +359,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\System\Win32\Thread.hpp"
+				RelativePath="..\..\include\SFML\System\Win32\Thread.hpp"
 				>
 			</File>
 		</Filter>
@@ -368,7 +368,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\System\Clock.hpp"
+			RelativePath="..\..\include\SFML\System\Clock.hpp"
 			>
 		</File>
 		<File
@@ -376,15 +376,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\System\Lock.hpp"
+			RelativePath="..\..\include\SFML\System\Lock.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\System\Mutex.hpp"
+			RelativePath="..\..\include\SFML\System\Mutex.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\System\NonCopyable.hpp"
+			RelativePath="..\..\include\SFML\System\NonCopyable.hpp"
 			>
 		</File>
 		<File
@@ -396,7 +396,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\System\Randomizer.hpp"
+			RelativePath="..\..\include\SFML\System\Randomizer.hpp"
 			>
 		</File>
 		<File
@@ -416,11 +416,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\System\Sleep.hpp"
+			RelativePath="..\..\include\SFML\System\Sleep.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\System\Thread.hpp"
+			RelativePath="..\..\include\SFML\System\Thread.hpp"
 			>
 		</File>
 		<File
@@ -433,6 +433,22 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\System\Unicode.inl"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\System\Vector2.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\System\Vector2.inl"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\System\Vector3.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\System\Vector3.inl"
 			>
 		</File>
 	</Files>

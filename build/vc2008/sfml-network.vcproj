@@ -347,7 +347,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\Network\Win32\SocketHelper.hpp"
+				RelativePath="..\..\include\SFML\Network\Win32\SocketHelper.hpp"
 				>
 			</File>
 		</Filter>
@@ -372,7 +372,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\IPAddress.hpp"
+			RelativePath="..\..\include\SFML\Network\IPAddress.hpp"
 			>
 		</File>
 		<File
@@ -380,15 +380,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\Packet.hpp"
+			RelativePath="..\..\include\SFML\Network\Packet.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\Selector.hpp"
+			RelativePath="..\..\include\SFML\Network\Selector.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\Selector.inl"
+			RelativePath="..\..\include\SFML\Network\Selector.inl"
 			>
 		</File>
 		<File
@@ -400,7 +400,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SocketHelper.hpp"
+			RelativePath="..\..\include\SFML\Network\SocketHelper.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Network\Sockets.hpp"
 			>
 		</File>
 		<File
@@ -408,7 +412,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SocketTCP.hpp"
+			RelativePath="..\..\include\SFML\Network\SocketTCP.hpp"
 			>
 		</File>
 		<File
@@ -416,7 +420,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SocketUDP.hpp"
+			RelativePath="..\..\include\SFML\Network\SocketUDP.hpp"
 			>
 		</File>
 	</Files>
