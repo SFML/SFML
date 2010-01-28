@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug DLL|Win32"
-			OutputDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>
@@ -102,8 +102,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release DLL|Win32"
-			OutputDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -196,8 +196,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug static|Win32"
-			OutputDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
@@ -266,8 +266,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release static|Win32"
-			OutputDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="0"

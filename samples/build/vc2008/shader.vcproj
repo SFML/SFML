@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\..\Temp\vc2008\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)..\..\Temp\vc2008\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -96,8 +96,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)..\..\Temp\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\..\Temp\vc2008\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)..\..\Temp\vc2008\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="0"

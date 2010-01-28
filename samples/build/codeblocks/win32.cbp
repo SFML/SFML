@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="Debug_Win32">
 				<Option output="..\..\bin\win32-d" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\..\Temp\win32\Debug_Win32" />
+				<Option object_output="..\..\..\Temp\codeblocks\win32\Debug_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -31,7 +31,7 @@
 			</Target>
 			<Target title="Release_Win32">
 				<Option output="..\..\bin\win32" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\..\Temp\win32\Release_Win32" />
+				<Option object_output="..\..\..\Temp\codeblocks\win32\Release_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>

@@ -386,7 +386,7 @@ const sfFont* sfText_GetFont(const sfText* text)
 ////////////////////////////////////////////////////////////
 unsigned int sfText_GetCharacterSize(const sfText* text)
 {
-    CSFML_CALL_RETURN(text, GetCharacterSize(), 0.f)
+    CSFML_CALL_RETURN(text, GetCharacterSize(), 0)
 }
 
 

@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="Debug_Win32">
 				<Option output="..\..\bin\sound-d" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\..\Temp\sound\Debug_Win32" />
+				<Option object_output="..\..\..\Temp\codeblocks\sound\Debug_Win32" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -30,7 +30,7 @@
 			</Target>
 			<Target title="Release_Win32">
 				<Option output="..\..\bin\sound" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\..\Temp\sound\Release_Win32" />
+				<Option object_output="..\..\..\Temp\codeblocks\sound\Release_Win32" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>

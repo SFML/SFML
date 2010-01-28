@@ -11,7 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "csfml-system", "csfml-syste
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "csfml-window", "csfml-window.vcproj", "{0F9CE5F0-4D89-4314-9147-8AAB1B8842ED}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-main", "csfml-main.vcproj", "{2BD26A09-E1B6-42E2-A0D0-63987B76BB97}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "csfml-main", "csfml-main.vcproj", "{2BD26A09-E1B6-42E2-A0D0-63987B76BB97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

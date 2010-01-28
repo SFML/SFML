@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="Debug DLL_Win32">
 				<Option output="..\..\lib\mingw\sfml-network-d" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\Temp\sfml-network\Debug DLL_Win32" />
+				<Option object_output="..\..\Temp\codeblocks\sfml-network\Debug DLL_Win32" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createStaticLib="1" />
@@ -34,7 +34,7 @@
 			</Target>
 			<Target title="Release DLL_Win32">
 				<Option output="..\..\lib\mingw\sfml-network" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\Temp\sfml-network\Release DLL_Win32" />
+				<Option object_output="..\..\Temp\codeblocks\sfml-network\Release DLL_Win32" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createStaticLib="1" />
@@ -60,7 +60,7 @@
 			<Target title="Debug static_Win32">
 				<Option output="..\..\lib\mingw\libsfml-network-s-d" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\Temp\sfml-network\Debug static_Win32" />
+				<Option object_output="..\..\Temp\codeblocks\sfml-network\Debug static_Win32" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -84,7 +84,7 @@
 			<Target title="Release static_Win32">
 				<Option output="..\..\lib\mingw\libsfml-network-s" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\Temp\sfml-network\Release static_Win32" />
+				<Option object_output="..\..\Temp\codeblocks\sfml-network\Release static_Win32" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
