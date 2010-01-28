@@ -33,6 +33,7 @@
     #include <fcntl.h>
 #elif defined(SFML_SYSTEM_FREEBSD)
     // #include <sys/joystick.h> ?
+    #define ABS_MAX 1
 #endif
 
 
