@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<project SchemaVersion="2.0">
+    <assemblies>
+        <assembly location="..\..\lib\sfmlnet-audio.dll" documentation=".\audio-doc.xml" />
+        <assembly location="..\..\lib\sfmlnet-graphics.dll" documentation=".\graphics-doc.xml" />
+        <assembly location="..\..\lib\sfmlnet-window.dll" documentation=".\window-doc.xml" />
+    </assemblies>
+    <documenters>
+        <documenter name="MSDN-Help2">
+            <property name="PlugInNamespace" value="ms.vscc" />
+            <property name="OutputDirectory" value="..\html\" />
+            <property name="HtmlHelpName" value="SFML.Net" />
+            <property name="Title" value="SFML.Net documentation" />
+        </documenter>
+        <documenter name="XML">
+            <property name="OutputFile" value=".\doc\doc.xml" />
+        </documenter>
+        <documenter name="Intellisense">
+            <property name="OutputDirectory" value="..\intellisense\" />
+            <property name="DocumentProtected" value="False" />
+        </documenter>
+        <documenter name="MSDN-CHM">
+            <property name="RootPageFileName" value=".\MainPage.html" />
+            <property name="OutputDirectory" value="..\" />
+            <property name="HtmlHelpName" value="SFML.Net" />
+            <property name="Title" value="SFML.Net documentation" />
+            <property name="IncrementalBuild" value="True" />
+            <property name="DocumentExplicitInterfaceImplementations" value="True" />
+            <property name="DocumentProtected" value="False" />
+            <property name="CleanIntermediates" value="True" />
+        </documenter>
+        <documenter name="MSDN-Web">
+            <property name="OutputDirectory" value="..\msdn\" />
+            <property name="HtmlHelpName" value="SFML.Net" />
+            <property name="Title" value="SFML.Net documentation" />
+        </documenter>
+    </documenters>
+</project>

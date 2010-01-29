@@ -31,38 +31,38 @@ Here is a short example in C#, to show you how simple it is to use SFML.Net :
         <span style="color:blue">static void</span> Main(<span style="color:blue">string</span>[] args)
         {
             <span style="color:#008000">// Create the main window</span>
-            <span style="color:#2B91AF">RenderWindow</span> app = <span style="color:blue">new</span> <span style="color:#2B91AF">RenderWindow</span>(<span style="color:blue">new</span> <span style="color:#2B91AF">VideoMode</span>(800, 600), <span style="color:#A31515">"SFML window"</span>);
-            app.Closed += <span style="color:blue">new</span> <span style="color:#2B91AF">EventHandler</span>(OnClose);
+            <span style="color:#2B91AF">RenderWindow</span> window = <span style="color:blue">new</span> <span style="color:#2B91AF">RenderWindow</span>(<span style="color:blue">new</span> <span style="color:#2B91AF">VideoMode</span>(800, 600), <span style="color:#A31515">"SFML window"</span>);
+            window.Closed += <span style="color:blue">new</span> <span style="color:#2B91AF">EventHandler</span>(OnClose);
 
             <span style="color:#008000">// Load a sprite to display</span>
             <span style="color:#2B91AF">Image</span>  image  = <span style="color:blue">new</span> <span style="color:#2B91AF">Image</span>(<span style="color:#A31515">"cute_image.jpg"</span>);
             <span style="color:#2B91AF">Sprite</span> sprite = <span style="color:blue">new</span> <span style="color:#2B91AF">Sprite</span>(image);
 
             <span style="color:#008000">// Create a graphical string to display</span>
-            <span style="color:#2B91AF">Font</span>     arial = <span style="color:blue">new</span> <span style="color:#2B91AF">Font</span>(<span style="color:#A31515">"arial.ttf"</span>);
-            <span style="color:#2B91AF">String2D</span> text  = <span style="color:blue">new</span> <span style="color:#2B91AF">String2D</span>(<span style="color:#A31515">"Hello SFML.Net"</span>, arial);
+            <span style="color:#2B91AF">Font</span> font = <span style="color:blue">new</span> <span style="color:#2B91AF">Font</span>(<span style="color:#A31515">"arial.ttf"</span>);
+            <span style="color:#2B91AF">Text</span> text = <span style="color:blue">new</span> <span style="color:#2B91AF">Text</span>(<span style="color:#A31515">"Hello SFML.Net"</span>, font);
 
             <span style="color:#008000">// Load a music to play</span>
             <span style="color:#2B91AF">Music</span> music = <span style="color:blue">new</span> Music(<span style="color:#A31515">"nice_music.ogg"</span>);
             music.Play();
 
             <span style="color:#008000">// Start the game loop</span>
-            <span style="color:blue">while</span> (app.IsOpened())
+            <span style="color:blue">while</span> (window.IsOpened())
             {
                 <span style="color:#008000">// Process events</span>
-                app.DispatchEvents();
+                window.DispatchEvents();
 
                 <span style="color:#008000">// Clear screen</span>
-                app.Clear();
+                window.Clear();
 
                 <span style="color:#008000">// Draw the sprite</span>
-                app.Draw(sprite);
+                window.Draw(sprite);
 
                 <span style="color:#008000">// Draw the string</span>
-                app.Draw(text);
+                window.Draw(text);
 
                 <span style="color:#008000">// Update the window</span>
-                app.Display();
+                window.Display();
             }
         }
     }
