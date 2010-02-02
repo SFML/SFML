@@ -199,7 +199,6 @@ void RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
         GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
         // Bind the texture
-        GLCheck(glEnable(GL_TEXTURE_2D));
         GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
 
         // Copy the rendered pixels to the image
