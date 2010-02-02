@@ -253,14 +253,7 @@ void SoundStream::Run()
             if (!RequestStop)
             {
                 if (FillAndPushBuffer(BufferNum))
-                {
-                    // User requested to stop: check if we must loop or really stop
-                    if (!myLoop || !OnStart())
-                    {
-                        // Not looping or restart failed: request stop
-                        RequestStop = true;
-                    }
-                }
+                    RequestStop = true;
             }
         }
 
@@ -293,11 +286,26 @@ bool SoundStream::FillAndPushBuffer(unsigned int BufferNum)
     Chunk Data = {NULL, 0};
     if (!OnGetData(Data))
     {
+        // Mark the buffer as the last one (so that we know when to reset the playing position)
         myEndBuffers[BufferNum] = true;
-        RequestStop = true;
+
+        // Check if the stream must loop or stop
+        if (myLoop && OnStart())
+        {
+            // If we succeeded to restart and we previously had no data, try to fill the buffer once again
+            if (!Data.Samples || (Data.NbSamples == 0))
+            {
+                return FillAndPushBuffer(BufferNum);
+            }
+        }
+        else
+        {
+            // Not looping or restart failed: request stop
+            RequestStop = true;
+        }
     }
 
-    // Create and fill the buffer, and push it to the queue
+    // Fill the buffer if some data was returned
     if (Data.Samples && Data.NbSamples)
     {
         unsigned int Buffer = myBuffers[BufferNum];
@@ -324,10 +332,7 @@ bool SoundStream::FillQueue()
     for (int i = 0; (i < BuffersCount) && !RequestStop; ++i)
     {
         if (FillAndPushBuffer(i))
-        {
-            if (!myLoop || !OnStart())
-                RequestStop = true;
-        }
+            RequestStop = true;
     }
 
     return RequestStop;
