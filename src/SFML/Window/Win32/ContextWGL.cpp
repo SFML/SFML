@@ -45,7 +45,9 @@ myDeviceContext(NULL),
 myContext      (NULL),
 myOwnsWindow   (true)
 {
-    // TODO : try to create a bitmap in memory instead of a dummy window
+    // Creating a dummy window is mandatory: we could create a memory DC but then
+    // its pixel format wouldn't match the regular contexts' format, and thus
+    // wglShareLists would always fail. Too bad...
 
     // Create a dummy window (disabled and hidden)
     myWindow = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, 1, 1, NULL, NULL, GetModuleHandle(NULL), NULL);

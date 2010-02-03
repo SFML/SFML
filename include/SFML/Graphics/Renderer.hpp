@@ -372,7 +372,6 @@ private :
     bool          myShaderIsValid;    ///< Is the cached shader valid? (if not, the cached value is ignored)
     bool          myBlendModeIsValid; ///< Is the cached blend mode valid? (if not, the cached value is ignored)
     bool          myViewportIsValid;  ///< Is the cached viewport valid? (if not, the cached value is ignored)
-    Vector2f      myViewportSize;     ///< Half-size of the current viewport, stored for optimiation purpose
 };
 
 } // namespace sf
@@ -383,5 +382,20 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Renderer
+///
+/// sf::Renderer is the abstraction layer between SFML code
+/// and the low-level drawing API (OpenGL). It manages
+/// render states efficiently, and provides a lightweight
+/// abstraction for rendering geometry.
+///
+/// The purpose of this class is to provide a single abstract
+/// entry point for everything related to low-level rendering.
+/// Hiding everything behind sf::Renderer makes optimizing
+/// easy, as well as porting to other technologies in the future
+/// (like OpenGL ES or OpenGL 3.x).
+///
+/// This class is mainly meant for internal usage, you should
+/// never care about it unless you write your own sf::Drawable
+/// class that uses raw geometry in its Render function.
 ///
 ////////////////////////////////////////////////////////////

@@ -31,34 +31,6 @@
 #include <SFML/Graphics/GLCheck.hpp>
 
 
-////////////////////////////////////////////////////////////
-// Private data
-////////////////////////////////////////////////////////////
-namespace
-{
-    // Fast float to int conversion
-    inline sf::Int32 Round(double value)
-    {
-        // Use a union rather than reinterpret_cast, because it doesn't break strict-aliasing
-        // rules and results in a correct behaviour when compiling in optimized mode
-        union DoubleToInt
-        {
-            double d; 
-            sf::Int32 i[2];
-        };
-
-        DoubleToInt u;
-        u.d = value + 6755399441055744.0;
-
-        #if defined(SFML_ENDIAN_LITTLE)
-            return u.i[0];
-        #else
-            return u.i[1];
-        #endif
-    } 
-}
-
-
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -215,10 +187,6 @@ void Renderer::SetViewport(const IntRect& viewport)
         // Store it
         myViewport = viewport;
         myViewportIsValid = true;
-
-        // Store the half-size of the viewport for later computations
-        myViewportSize.x = myViewport.GetSize().x / 2.f;
-        myViewportSize.y = myViewport.GetSize().y / 2.f;
     }
 }
 
@@ -364,12 +332,6 @@ void Renderer::ProcessVertex(float x, float y, float u, float v, float r, float 
 {
     // Transform the vertex position by the current model-view-projection matrix
     Vector2f position = myTransform.Transform(Vector2f(x, y));
-
-    // Round the vertex position so that it matches the
-    // viewport's pixels, and thus avoid rendering artifacts
-    // @todo remove and find a better solution :)
-    position.x = Round((position.x + 1.f) * myViewportSize.x) / myViewportSize.x - 1.f;
-    position.y = Round((position.y + 1.f) * myViewportSize.y) / myViewportSize.y - 1.f;
 
     // Modulate the vertex color with the current global color
     r *= myStates->r;
