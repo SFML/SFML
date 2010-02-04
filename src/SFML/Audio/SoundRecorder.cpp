@@ -137,7 +137,8 @@ bool SoundRecorder::CanCapture()
 {
     ALCdevice* Device = priv::AudioDevice::GetInstance().GetDevice();
 
-    return alcIsExtensionPresent(Device, "ALC_EXT_CAPTURE") != AL_FALSE;
+    return (alcIsExtensionPresent(Device, "ALC_EXT_CAPTURE") != AL_FALSE) ||
+           (alcIsExtensionPresent(Device, "ALC_EXT_capture") != AL_FALSE); // "bug" in Mac OS X 10.5 and 10.6
 }
 
 
