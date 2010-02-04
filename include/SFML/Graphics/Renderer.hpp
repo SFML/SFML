@@ -160,19 +160,6 @@ public :
     void SetProjection(const Matrix3& matrix);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Combine a new projection matrix with the current one
-    ///
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
-    ///
-    /// \param matrix Model-view matrix to combine
-    ///
-    /// \see SetProjection
-    ///
-    ////////////////////////////////////////////////////////////
-    void ApplyProjection(const Matrix3& matrix);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Set the current global color
     ///
     /// This color will be modulated with each vertex's color.
@@ -362,8 +349,6 @@ private :
     ////////////////////////////////////////////////////////////
     States        myStatesStack[64];  ///< Stack of render states
     States*       myStates;           ///< Current set of render states
-    Matrix3       myTransform;        ///< Current combined projection-model-view matrix
-    Matrix3       myProjection;       ///< Current projection matrix
     const Image*  myTexture;          ///< Current texture
     const Shader* myShader;           ///< Current pixel shader
     Blend::Mode   myBlendMode;        ///< Current blending mode

@@ -78,7 +78,6 @@ void Renderer::SaveGLStates()
 {
     // Save render states
     GLCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
-    //GLCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
 
     // Save matrices
     GLCheck(glMatrixMode(GL_MODELVIEW));
@@ -93,7 +92,6 @@ void Renderer::RestoreGLStates()
 {
     // Restore render states
     GLCheck(glPopAttrib());
-    //GLCheck(glPopClientAttrib());
 
     // Restore matrices
     GLCheck(glMatrixMode(GL_PROJECTION));
@@ -143,14 +141,9 @@ void Renderer::ApplyModelView(const Matrix3& matrix)
 ////////////////////////////////////////////////////////////
 void Renderer::SetProjection(const Matrix3& matrix)
 {
-    myProjection = matrix;
-}
-
-
-////////////////////////////////////////////////////////////
-void Renderer::ApplyProjection(const Matrix3& matrix)
-{
-    myProjection *= matrix;
+    // Apply it immediately (this one is not critical for performances)
+    GLCheck(glMatrixMode(GL_PROJECTION));
+    GLCheck(glLoadMatrixf(matrix.Get4x4Elements()));
 }
 
 
@@ -276,9 +269,6 @@ void Renderer::SetShader(const Shader* shader)
 ////////////////////////////////////////////////////////////
 void Renderer::Begin(PrimitiveType type)
 {
-    // Update the combined transform matrix
-    myTransform = myProjection * myStates->modelView;
-
     // Begin rendering
     switch (type)
     {
@@ -330,8 +320,8 @@ void Renderer::AddVertex(float x, float y, float u, float v, const Color& color)
 ////////////////////////////////////////////////////////////
 void Renderer::ProcessVertex(float x, float y, float u, float v, float r, float g, float b, float a)
 {
-    // Transform the vertex position by the current model-view-projection matrix
-    Vector2f position = myTransform.Transform(Vector2f(x, y));
+    // Transform the vertex position by the current model-view matrix
+    Vector2f position = myStates->modelView.Transform(Vector2f(x, y));
 
     // Modulate the vertex color with the current global color
     r *= myStates->r;
