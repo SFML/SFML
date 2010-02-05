@@ -92,15 +92,15 @@ myWheelStatus(0.0f)
 	{
 		NSWindow *cocoaWindow = nil;
 		
+		// Classical window import
 		if ([(id)Handle isKindOfClass:[NSWindow class]])
 		{
 			cocoaWindow = (NSWindow *)Handle;
-			NSLog(@"detected window object");
  		}
+		// Qt "window" import
 		else if ([(id)Handle isKindOfClass:[NSView class]])
 		{
 			cocoaWindow = [(NSView *)Handle window];
-			NSLog(@"detected view object");
 		}
 		else
 		{
