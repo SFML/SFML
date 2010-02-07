@@ -478,20 +478,16 @@ void WindowImplWin32::SwitchToFullscreen(const VideoMode& Mode)
         return;
     }
 
-    // Change window style (no border, no titlebar, ...)
-    SetWindowLong(myHandle, GWL_STYLE,   WS_POPUP);
-    SetWindowLong(myHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
-
-    // And resize it so that it fits the entire screen
+    // Resize the window so that it fits the entire screen
     SetWindowPos(myHandle, HWND_TOP, 0, 0, Mode.Width, Mode.Height, SWP_FRAMECHANGED);
     ShowWindow(myHandle, SW_SHOW);
 
+    // Make the window flags compatible with fullscreen mode
+    SetWindowLong(myHandle, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+    SetWindowLong(myHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+
     // Set "this" as the current fullscreen window
     ourFullscreenWindow = this;
-
-    // SetPixelFormat can fail (really ?) if window style doesn't contain these flags
-    long Style = GetWindowLong(myHandle, GWL_STYLE);
-    SetWindowLong(myHandle, GWL_STYLE, Style | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 }
 
 
