@@ -37,7 +37,6 @@
 
 namespace sf
 {
-class RenderImage;
 class RenderWindow;
 
 ////////////////////////////////////////////////////////////
@@ -280,8 +279,6 @@ public :
     Image& operator =(const Image& Other);
 
 private :
-
-    friend class RenderImage;
 
     ////////////////////////////////////////////////////////////
     /// Create the OpenGL texture
