@@ -101,5 +101,14 @@ void PySfJoy_InitConst()
 	obj = PyLong_FromLong(sf::Joy::AxisPOV);
 	PyDict_SetItemString(PySfJoyType.tp_dict, "AxisPOV", obj);
 	Py_DECREF(obj);
+	obj = PyLong_FromLong(sf::Joy::Count);
+	PyDict_SetItemString(PySfJoyType.tp_dict, "Count", obj);
+	Py_DECREF(obj);
+	obj = PyLong_FromLong(sf::Joy::AxisCount);
+	PyDict_SetItemString(PySfJoyType.tp_dict, "AxisCount", obj);
+	Py_DECREF(obj);
+	obj = PyLong_FromLong(sf::Joy::ButtonCount);
+	PyDict_SetItemString(PySfJoyType.tp_dict, "ButtonCount", obj);
+	Py_DECREF(obj);
 }
 

@@ -251,19 +251,7 @@ void SoundStream::Run()
             if (!requestStop)
             {
                 if (FillAndPushBuffer(bufferNum))
-                {
-                    // User requested to stop: check if we must loop or really stop
-                    if (myLoop)
-                    {
-                        // Looping: restart the stream source
-                        OnSeek(0);
-                    }
-                    else
-                    {
-                        // Not looping: request stop
-                        requestStop = true;
-                    }
-                }
+                    requestStop = true;
             }
         }
 
@@ -293,11 +281,29 @@ bool SoundStream::FillAndPushBuffer(unsigned int bufferNum)
     Chunk data = {NULL, 0};
     if (!OnGetData(data))
     {
+        // Mark the buffer as the last one (so that we know when to reset the playing position)
         myEndBuffers[bufferNum] = true;
-        requestStop = true;
+
+        // Check if the stream must loop or stop
+        if (myLoop)
+        {
+            // Return to the beginning of the stream source
+            OnSeek(0);
+
+            // If we previously had no data, try to fill the buffer once again
+            if (!data.Samples || (data.NbSamples == 0))
+            {
+                return FillAndPushBuffer(bufferNum);
+            }
+        }
+        else
+        {
+            // Not looping: request stop
+            requestStop = true;
+        }
     }
 
-    // Create and fill the buffer, and push it to the queue
+    // Fill the buffer if some data was returned
     if (data.Samples && data.NbSamples)
     {
         unsigned int buffer = myBuffers[bufferNum];
@@ -322,12 +328,7 @@ bool SoundStream::FillQueue()
     for (int i = 0; (i < BuffersCount) && !requestStop; ++i)
     {
         if (FillAndPushBuffer(i))
-        {
-            if (myLoop)
-                OnSeek(0);
-            else
-                requestStop = true;
-        }
+            requestStop = true;
     }
 
     return requestStop;

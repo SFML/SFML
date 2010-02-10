@@ -90,16 +90,35 @@ myWheelStatus(0.0f)
 {
 	if (Handle)
 	{
-		if (![(NSWindow *)Handle isKindOfClass:[NSWindow class]])
-			std::cerr << "Cannot import this Window Handle because it is not a <NSWindow *> object"
-			<< "(or one of its subclasses). You gave a <" 
-			<< [[(NSWindow *)Handle className] UTF8String]
-			<< "> object." << std::endl;
+		NSWindow *cocoaWindow = nil;
+		
+		// Classical window import
+		if ([(id)Handle isKindOfClass:[NSWindow class]])
+		{
+			cocoaWindow = (NSWindow *)Handle;
+ 		}
+		// Qt "window" import
+		else if ([(id)Handle isKindOfClass:[NSView class]])
+		{
+			cocoaWindow = [(NSView *)Handle window];
+		}
 		else
+		{
+			std::cerr 
+			<< "Cannot import this Window Handle because it is neither"
+			<< "a <NSWindow *> nor <NSView *> object"
+			<< "(or any of its subclasses). You gave a <" 
+			<< [[(id)Handle className] UTF8String]
+			<< "> object."
+			<< std::endl;
+			
+		}
+
+		if (cocoaWindow)
 		{
 			
 			// We create the window according to the given handle
-			myWrapper = [[WindowWrapper alloc] initWithWindow:(NSWindow *)Handle
+			myWrapper = [[WindowWrapper alloc] initWithWindow:cocoaWindow
 													 settings:params
 													 delegate:this];
 			
@@ -115,6 +134,16 @@ myWheelStatus(0.0f)
 				std::cerr << "Failed to make the public window" << std::endl;
 			}
 		}
+		else
+		{
+			std::cerr
+			<< "Could not get a valid NSWindow object from the given handle"
+			<< " (%p <"
+			<< [[(id)Handle className] UTF8String]
+			<< ">"
+			<< std::endl;
+		}
+
 	}
 }
 

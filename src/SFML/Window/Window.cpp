@@ -426,6 +426,10 @@ void Window::OnEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 void Window::Initialize()
 {
+    // Clear the event queue
+    while (!myEvents.empty())
+        myEvents.pop();
+
     // Listen to events from the new window
     myWindow->AddListener(this);
     myWindow->AddListener(&myInput);

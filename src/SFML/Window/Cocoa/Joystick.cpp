@@ -49,7 +49,7 @@ void Joystick::Initialize(unsigned int Index)
 JoystickState Joystick::UpdateState()
 {
     // Fill a JoystickState instance with the current joystick state
-	JoystickState s = {0};
+	JoystickState s;
 	return s;
 }
 
