@@ -447,7 +447,7 @@ IntRect Font::FindGlyphRect(Page& page, unsigned int width, unsigned int height)
                 std::size_t size = textureWidth * textureHeight * 4;
                 std::vector<Uint8> pixels(size);
                 memcpy(&pixels[0], page.Texture.GetPixelsPtr(), size);
-                page.Texture.Create(textureWidth * 2, textureHeight * 2, sf::Color(255, 255, 255, 0));
+                page.Texture.Create(textureWidth * 2, textureHeight * 2, Color(255, 255, 255, 0));
                 page.Texture.UpdatePixels(&pixels[0], IntRect(0, 0, textureWidth, textureHeight));
 
                 // Adjust the texture coordinates of all the glyphs that are stored in this page

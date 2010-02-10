@@ -41,14 +41,14 @@ Clock::Clock()
 ////////////////////////////////////////////////////////////
 float Clock::GetElapsedTime() const
 {
-    return static_cast<float>(sf::priv::Platform::GetSystemTime() - myStartTime);
+    return static_cast<float>(priv::Platform::GetSystemTime() - myStartTime);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Clock::Reset()
 {
-    myStartTime = sf::priv::Platform::GetSystemTime();
+    myStartTime = priv::Platform::GetSystemTime();
 }
 
 } // namespace sf

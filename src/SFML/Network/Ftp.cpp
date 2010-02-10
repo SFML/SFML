@@ -449,7 +449,7 @@ Ftp::Response Ftp::SendCommand(const std::string& command, const std::string& pa
         commandStr = command + "\r\n";
 
     // Send it to the server
-    if (myCommandSocket.Send(commandStr.c_str(), commandStr.length()) != sf::Socket::Done)
+    if (myCommandSocket.Send(commandStr.c_str(), commandStr.length()) != Socket::Done)
         return Response(Response::ConnectionClosed);
 
     // Get the response
@@ -475,7 +475,7 @@ Ftp::Response Ftp::GetResponse()
         // Receive the response from the server
         char buffer[1024];
         std::size_t length;
-        if (myCommandSocket.Receive(buffer, sizeof(buffer), length) != sf::Socket::Done)
+        if (myCommandSocket.Receive(buffer, sizeof(buffer), length) != Socket::Done)
             return Response(Response::ConnectionClosed);
 
         // There can be several lines inside the received buffer, extract them all
@@ -625,7 +625,7 @@ Ftp::Response Ftp::DataChannel::Open(Ftp::TransferMode mode)
         std::string::size_type begin = response.GetMessage().find_first_of("0123456789");
         if (begin != std::string::npos)
         {
-            sf::Uint8 data[6] = {0, 0, 0, 0, 0, 0};
+            Uint8 data[6] = {0, 0, 0, 0, 0, 0};
             std::string str = response.GetMessage().substr(begin);
             std::size_t index = 0;
             for (int i = 0; i < 6; ++i)
@@ -643,10 +643,10 @@ Ftp::Response Ftp::DataChannel::Open(Ftp::TransferMode mode)
 
             // Reconstruct connection port and address
             unsigned short port = data[4] * 256 + data[5];
-            sf::IPAddress address(static_cast<sf::Uint8>(data[0]),
-                                  static_cast<sf::Uint8>(data[1]),
-                                  static_cast<sf::Uint8>(data[2]),
-                                  static_cast<sf::Uint8>(data[3]));
+            IPAddress address(static_cast<Uint8>(data[0]),
+                              static_cast<Uint8>(data[1]),
+                              static_cast<Uint8>(data[2]),
+                              static_cast<Uint8>(data[3]));
 
             // Connect the data channel to the server
             if (myDataSocket.Connect(port, address) == Socket::Done)
@@ -684,7 +684,7 @@ void Ftp::DataChannel::Receive(std::vector<char>& data)
     data.clear();
     char buffer[1024];
     std::size_t received;
-    while (myDataSocket.Receive(buffer, sizeof(buffer), received) == sf::Socket::Done)
+    while (myDataSocket.Receive(buffer, sizeof(buffer), received) == Socket::Done)
     {
         std::copy(buffer, buffer + received, std::back_inserter(data));
     }

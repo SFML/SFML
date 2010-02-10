@@ -175,7 +175,7 @@ IntRect RenderTarget::GetViewport(const View& view) const
 /// Convert a point in window coordinates into view coordinates
 /// This version uses the current view of the window
 ////////////////////////////////////////////////////////////
-sf::Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y) const
+Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y) const
 {
     return ConvertCoords(x, y, GetView());
 }
@@ -185,7 +185,7 @@ sf::Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y) const
 /// Convert a point in window coordinates into view coordinates
 /// This version uses the given view
 ////////////////////////////////////////////////////////////
-sf::Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y, const View& view) const
+Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
     Vector2f coords;

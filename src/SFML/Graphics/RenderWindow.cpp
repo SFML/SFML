@@ -70,14 +70,14 @@ bool RenderWindow::Activate(bool active)
 ////////////////////////////////////////////////////////////
 unsigned int RenderWindow::GetWidth() const
 {
-    return sf::Window::GetWidth();
+    return Window::GetWidth();
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int RenderWindow::GetHeight() const
 {
-    return sf::Window::GetHeight();
+    return Window::GetHeight();
 }
 
 

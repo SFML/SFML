@@ -316,7 +316,7 @@ void Drawable::Rotate(float angle)
 /// Transform a point from global coordinates into local coordinates
 /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-sf::Vector2f Drawable::TransformToLocal(const sf::Vector2f& point) const
+Vector2f Drawable::TransformToLocal(const Vector2f& point) const
 {
     return GetInverseMatrix().Transform(point);
 }
@@ -325,7 +325,7 @@ sf::Vector2f Drawable::TransformToLocal(const sf::Vector2f& point) const
 /// Transform a point from local coordinates into global coordinates
 /// (ie it applies the object's origin, translation, rotation and scale to the point)
 ////////////////////////////////////////////////////////////
-sf::Vector2f Drawable::TransformToGlobal(const sf::Vector2f& point) const
+Vector2f Drawable::TransformToGlobal(const Vector2f& point) const
 {
     return GetMatrix().Transform(point);
 }

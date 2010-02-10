@@ -190,7 +190,7 @@ public :
     /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
-    static Shape Line(float p1x, float p1y, float p2x, float p2y, float thickness, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
+    static Shape Line(float p1x, float p1y, float p2x, float p2y, float thickness, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Create a shape made of a single line (use vectors)
@@ -203,7 +203,7 @@ public :
     /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
-    static Shape Line(const Vector2f& p1, const Vector2f& p2, float thickness, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
+    static Shape Line(const Vector2f& p1, const Vector2f& p2, float thickness, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Create a shape made of a single rectangle (use floats)
@@ -215,7 +215,7 @@ public :
     /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
-    static Shape Rectangle(float p1x, float p1y, float p2x, float p2y, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
+    static Shape Rectangle(float p1x, float p1y, float p2x, float p2y, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Create a shape made of a single rectangle (use vectors)
@@ -227,7 +227,7 @@ public :
     /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
-    static Shape Rectangle(const Vector2f& p1, const Vector2f& p2, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
+    static Shape Rectangle(const Vector2f& p1, const Vector2f& p2, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Create a shape made of a single circle (use floats)
@@ -239,7 +239,7 @@ public :
     /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
-    static Shape Circle(float x, float y, float radius, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
+    static Shape Circle(float x, float y, float radius, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Create a shape made of a single circle (use vectors)
@@ -251,7 +251,7 @@ public :
     /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
-    static Shape Circle(const Vector2f& center, float radius, const Color& color, float outline = 0.f, const Color& outlineColor = sf::Color(0, 0, 0));
+    static Shape Circle(const Vector2f& center, float radius, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
 
 protected :
 

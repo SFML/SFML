@@ -137,7 +137,7 @@ public :
     /// \return Converted point
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f ConvertCoords(unsigned int x, unsigned int y) const;
+    Vector2f ConvertCoords(unsigned int x, unsigned int y) const;
 
     ////////////////////////////////////////////////////////////
     /// Convert a point in target coordinates into view coordinates
@@ -150,7 +150,7 @@ public :
     /// \return Converted point
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f ConvertCoords(unsigned int x, unsigned int y, const View& view) const;
+    Vector2f ConvertCoords(unsigned int x, unsigned int y, const View& view) const;
 
     ////////////////////////////////////////////////////////////
     /// Save the current OpenGL render states and matrices

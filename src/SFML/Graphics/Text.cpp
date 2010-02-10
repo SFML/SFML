@@ -164,7 +164,7 @@ Vector2f Text::GetCharacterPos(std::size_t index) const
     float space = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
 
     // Compute the position
-    sf::Vector2f position;
+    Vector2f position;
     Uint32 prevChar = 0;
     float lineSpacing = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
     for (std::size_t i = 0; i < index; ++i)

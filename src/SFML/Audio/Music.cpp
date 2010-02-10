@@ -116,7 +116,7 @@ float Music::GetDuration() const
 ////////////////////////////////////////////////////////////
 bool Music::OnGetData(SoundStream::Chunk& data)
 {
-    sf::Lock lock(myMutex);
+    Lock lock(myMutex);
 
     // Fill the chunk parameters
     data.Samples   = &mySamples[0];
@@ -132,7 +132,7 @@ bool Music::OnGetData(SoundStream::Chunk& data)
 ////////////////////////////////////////////////////////////
 void Music::OnSeek(float timeOffset)
 {
-    sf::Lock lock(myMutex);
+    Lock lock(myMutex);
 
     myFile->Seek(timeOffset);
 }

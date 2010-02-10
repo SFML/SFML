@@ -290,7 +290,7 @@ public :
     /// \return Transformed point
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f TransformToLocal(const sf::Vector2f& point) const;
+    Vector2f TransformToLocal(const Vector2f& point) const;
 
     ////////////////////////////////////////////////////////////
     /// Transform a point from local coordinates into global coordinates
@@ -301,7 +301,7 @@ public :
     /// \return Transformed point
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2f TransformToGlobal(const sf::Vector2f& point) const;
+    Vector2f TransformToGlobal(const Vector2f& point) const;
 
 protected :
 

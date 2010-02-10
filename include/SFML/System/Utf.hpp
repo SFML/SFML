@@ -38,7 +38,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Get the default system locale
+/// \brief Get the default system locale
 ///
 /// \return Reference to the default system locale
 ///

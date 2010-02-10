@@ -404,13 +404,13 @@ Http::Response Http::SendRequest(const Http::Request& request, float timeout)
         if (!requestStr.empty())
         {
             // Send it through the socket
-            if (myConnection.Send(requestStr.c_str(), requestStr.size()) == sf::Socket::Done)
+            if (myConnection.Send(requestStr.c_str(), requestStr.size()) == Socket::Done)
             {
                 // Wait for the server's response
                 std::string receivedStr;
                 std::size_t size = 0;
                 char buffer[1024];
-                while (myConnection.Receive(buffer, sizeof(buffer), size) == sf::Socket::Done)
+                while (myConnection.Receive(buffer, sizeof(buffer), size) == Socket::Done)
                 {
                     receivedStr.append(buffer, buffer + size);
                 }
