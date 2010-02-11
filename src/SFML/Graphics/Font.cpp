@@ -158,14 +158,28 @@ const Image& Font::GetImage() const
 ////////////////////////////////////////////////////////////
 const Font& Font::GetDefaultFont()
 {
-    static Font       DefaultFont;
-    static bool       DefaultFontLoaded = false;
+#if defined(SFML_SYSTEM_WINDOWS) && defined(SFML_DYNAMIC)
+
+    // On Windows dynamic build, the default font causes a crash at global exit.
+    // This is a temporary workaround that turns the crash into a memory leak.
+    // Note that this bug doesn't exist anymore in SFML 2.
+    static Font* DefaultFontPtr = new Font;
+    Font& DefaultFont = *DefaultFontPtr;
+
+#else
+
+    static Font DefaultFont;
+
+#endif
+
+    // Get the raw data of the Arial font file into an array, so that we can load it into the font
     static const char DefaultFontData[] =
     {
         #include <SFML/Graphics/Arial.hpp>
     };
 
     // Load the default font on first call
+    static bool DefaultFontLoaded = false;
     if (!DefaultFontLoaded)
     {
         DefaultFont.LoadFromMemory(DefaultFontData, sizeof(DefaultFontData), 30);
