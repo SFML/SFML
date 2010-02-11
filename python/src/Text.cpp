@@ -116,16 +116,16 @@ PySfText_SetFont(PySfText* self, PyObject *args)
 }
 
 static PyObject *
-PySfText_SetSize(PySfText* self, PyObject *args)
+PySfText_SetCharacterSize(PySfText* self, PyObject *args)
 {
-	self->obj->SetSize(PyFloat_AsDouble(args));
+	self->obj->SetCharacterSize(PyFloat_AsDouble(args));
 	Py_RETURN_NONE;
 }
 
 static PyObject *
-PySfText_GetSize(PySfText* self)
+PySfText_GetCharacterSize(PySfText* self)
 {
-	return PyFloat_FromDouble(self->obj->GetSize());
+	return PyFloat_FromDouble(self->obj->GetCharacterSize());
 }
 
 static PyObject *
@@ -223,7 +223,7 @@ PySfText_init(PySfText *self, PyObject *args, PyObject *kwds)
 		}
 	}
 	if (Font) PySfText_SetFont(self, (PyObject *)Font);
-	self->obj->SetSize(Size);
+	self->obj->SetCharacterSize(Size);
 	return 0;
 }
 
@@ -236,8 +236,8 @@ Return the visual position (a tuple of two floats) of the Index-th character of 
 	{"GetString", (PyCFunction)PySfText_GetString, METH_NOARGS, "GetString()\nGet the text as an unicode string."},
 	{"SetFont", (PyCFunction)PySfText_SetFont, METH_O, "SetFont(Font)\nSet the font of the string.\n	Font : font to use"},
 	{"GetFont", (PyCFunction)PySfText_GetFont, METH_NOARGS, "GetFont()\nGet the font used by the string."},
-	{"SetSize", (PyCFunction)PySfText_SetSize, METH_O, "SetSize(Size)\nSet the size of the string.\n	Size : New size, in pixels"},
-	{"GetSize", (PyCFunction)PySfText_GetSize, METH_NOARGS, "GetSize()\nGet the size of the characters."},
+	{"SetCharacterSize", (PyCFunction)PySfText_SetCharacterSize, METH_O, "SetCharacterSize(Size)\nSet the size of the text.\n	Size : New size, in pixels"},
+	{"GetCharacterSize", (PyCFunction)PySfText_GetCharacterSize, METH_NOARGS, "GetCharacterSize()\nGet the size of the characters."},
 	{"SetStyle", (PyCFunction)PySfText_SetStyle, METH_O, "SetStyle(TextSize)\nSet the style of the text. The default style is Regular.\n	TextSize : New text style, (combination of Style values)"},
 	{"GetStyle", (PyCFunction)PySfText_GetStyle, METH_NOARGS, "GetStyle()\nGet the style of the text."},
 	{"GetRect", (PyCFunction)PySfText_GetRect, METH_NOARGS, "GetRect()\nGet the string rectangle on screen."},

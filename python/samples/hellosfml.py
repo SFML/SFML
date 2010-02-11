@@ -20,7 +20,7 @@ wnd.UseVerticalSync( True )
 
 # Load a fancy font.
 cheese = sf.Font()
-cheese.LoadFromFile( "data/cheeseburger.ttf", 50 )
+cheese.LoadFromFile( "data/cheeseburger.ttf" )
 
 # Create a text.
 text = sf.Text( u"Hello SFML from Python!", cheese, 50 )

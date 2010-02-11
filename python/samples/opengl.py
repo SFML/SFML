@@ -73,7 +73,6 @@ def main():
 
 		# Draw background
 		App.Draw(Background)
-		App.Flush()
 
 		# Active window to be able to perform OpenGL commands.
 		App.SetActive()

@@ -159,13 +159,6 @@ PySfRenderWindow_SetActive(PySfRenderWindow *self, PyObject *args)
 }
 
 static PyObject *
-PySfRenderWindow_Flush(PySfRenderWindow *self, PyObject *args)
-{
-	self->obj->Flush();
-	Py_RETURN_NONE;
-}
-
-static PyObject *
 PySfRenderWindow_GetView(PySfRenderWindow *self)
 {
 	if (self->View != NULL)
@@ -209,7 +202,10 @@ PySfRenderWindow_GetDefaultView(PySfRenderWindow *self)
 
 	View = GetNewPySfView();
 	View->Owner = false;
-	View->obj = &(self->obj->GetDefaultView());
+
+	// Python doesn't know anything about 'const', so cast away. Be careful with
+	// not changing the default view!
+	View->obj = const_cast<sf::View*>( &( self->obj->GetDefaultView() ) );
 
 	return (PyObject *)View;
 }
@@ -218,8 +214,6 @@ static PyMethodDef PySfRenderWindow_methods[] = {
 	{"SetActive", (PyCFunction)PySfRenderWindow_SetActive, METH_VARARGS, "SetActive(Active)\n\
 Activate or deactivate the window as the current target for OpenGL rendering.\n\
 	Active : True to activate window. (default: True)"},
-	{"Flush", (PyCFunction)PySfRenderWindow_Flush, METH_VARARGS, "Flush()\n\
-Make sure that what has been drawn so far is rendered."},
 	{"Clear", (PyCFunction)PySfRenderWindow_Clear, METH_VARARGS, "Clear(FillColor)\n\
 Clear the entire target with a single color.\n\
 	FillColor : Color to use to clear the render target."},
