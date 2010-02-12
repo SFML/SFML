@@ -28,6 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Lock.hpp>
+#include <SFML/System/Mutex.hpp>
 #include <set>
 
 
@@ -111,7 +113,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    mutable std::set<ResourcePtr<T>*> myObservers;
+    mutable std::set<ResourcePtr<T>*> myObservers; ///< List of pointers to this resource
+    mutable Mutex                     myMutex;     ///< Mutex for preventing concurrent access to the pointer list
 };
 
 

@@ -64,6 +64,7 @@ Resource<T>& Resource<T>::operator =(const Resource<T>&)
 template <typename T>
 void Resource<T>::Connect(ResourcePtr<T>& observer) const
 {
+    sf::Lock lock(myMutex);
     myObservers.insert(&observer);
 }
 
@@ -72,5 +73,6 @@ void Resource<T>::Connect(ResourcePtr<T>& observer) const
 template <typename T>
 void Resource<T>::Disconnect(ResourcePtr<T>& observer) const
 {
+    sf::Lock lock(myMutex);
     myObservers.erase(&observer);
 }
