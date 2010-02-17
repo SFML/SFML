@@ -35,12 +35,15 @@
 #include <iostream>
 #include <vector>
 
-// Old versions of MinGW lack the definition of XBUTTON1 and XBUTTON2
+// MinGW lacks the definition of some Win32 constants
 #ifndef XBUTTON1
     #define XBUTTON1 0x0001
 #endif
 #ifndef XBUTTON2
     #define XBUTTON2 0x0002
+#endif
+#ifndef MAPVK_VK_TO_VSC
+    #define MAPVK_VK_TO_VSC (0)
 #endif
 
 
