@@ -480,26 +480,15 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_KEYDOWN :
         case WM_SYSKEYDOWN :
         {
-            if (myKeyRepeatEnabled || ((lParam & (1 << 30)) == 0))
+            if (myKeyRepeatEnabled || ((HIWORD(lParam) & KF_REPEAT) == 0))
             {
                 Event event;
                 event.Type        = Event::KeyPressed;
                 event.Key.Alt     = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
                 event.Key.Control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
                 event.Key.Shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
-
-                if (wParam != VK_SHIFT)
-                {
-                    event.Key.Code = VirtualKeyCodeToSF(wParam, lParam);
-                    PushEvent(event);
-                }
-                else
-                {
-                    // Special case for shift, its state can't be retrieved directly
-                    event.Key.Code = GetShiftState(true);
-                    if (event.Key.Code != 0)
-                        PushEvent(event);
-                }
+                event.Key.Code    = VirtualKeyCodeToSF(wParam, lParam);
+                PushEvent(event);
             }
             break;
         }
@@ -513,20 +502,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.Key.Alt     = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
             event.Key.Control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
             event.Key.Shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
-
-            if (wParam != VK_SHIFT)
-            {
-                event.Key.Code = VirtualKeyCodeToSF(wParam, lParam);
-                PushEvent(event);
-            }
-            else
-            {
-                // Special case for shift, its state can't be retrieved directly
-                event.Key.Code = GetShiftState(false);
-                if (event.Key.Code != 0)
-                    PushEvent(event);
-            }
-
+            event.Key.Code    = VirtualKeyCodeToSF(wParam, lParam);
+            PushEvent(event);
             break;
         }
 
@@ -686,41 +663,25 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
 
 ////////////////////////////////////////////////////////////
-Key::Code WindowImplWin32::GetShiftState(bool keyDown)
-{
-    static bool lShiftPrevDown = false;
-    static bool rShiftPrevDown = false;
-
-    bool lShiftDown = (HIWORD(GetAsyncKeyState(VK_LSHIFT)) != 0);
-    bool rShiftDown = (HIWORD(GetAsyncKeyState(VK_RSHIFT)) != 0);
-
-    Key::Code code = Key::Code(0);
-    if (keyDown)
-    {
-        if      (!lShiftPrevDown && lShiftDown) code = Key::LShift;
-        else if (!rShiftPrevDown && rShiftDown) code = Key::RShift;
-    }
-    else
-    {
-        if      (lShiftPrevDown && !lShiftDown) code = Key::LShift;
-        else if (rShiftPrevDown && !rShiftDown) code = Key::RShift;
-    }
-
-    lShiftPrevDown = lShiftDown;
-    rShiftPrevDown = rShiftDown;
-
-    return code;
-}
-
-
-////////////////////////////////////////////////////////////
 Key::Code WindowImplWin32::VirtualKeyCodeToSF(WPARAM key, LPARAM flags)
 {
     switch (key)
     {
-        // VK_SHIFT is handled by the GetShiftState function
-        case VK_MENU :       return (flags & (1 << 24)) ? Key::RAlt     : Key::LAlt;
-        case VK_CONTROL :    return (flags & (1 << 24)) ? Key::RControl : Key::LControl;
+        // Check the scancode to distinguish between left and right shift
+        case VK_SHIFT :
+        {
+            static UINT lShift = MapVirtualKey(VK_LSHIFT, MAPVK_VK_TO_VSC);
+            UINT scancode = (flags & (0xFF << 16)) >> 16;
+            return scancode == lShift ? Key::LShift : Key::RShift;
+        }
+
+        // Check the "extended" flag to distinguish between left and right alt
+        case VK_MENU : return (HIWORD(flags) & KF_EXTENDED) ? Key::RAlt : Key::LAlt;
+
+        // Check the "extended" flag to distinguish between left and right control
+        case VK_CONTROL : return (HIWORD(flags) & KF_EXTENDED) ? Key::RControl : Key::LControl;
+
+        // Other keys are reported properly
         case VK_LWIN :       return Key::LSystem;
         case VK_RWIN :       return Key::RSystem;
         case VK_APPS :       return Key::Menu;

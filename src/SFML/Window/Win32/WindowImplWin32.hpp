@@ -180,17 +180,6 @@ private :
     void ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the state of the shift keys on a key event,
-    ///        and return the corresponding SFML key code
-    ///
-    /// \param keyDown True for a keydown event, false for a keyup event
-    ///
-    /// \return SFML key code corresponding to the shift key
-    ///
-    ////////////////////////////////////////////////////////////
-    static Key::Code GetShiftState(bool keyDown);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Convert a Win32 virtual key code to a SFML key code
     ///
     /// \param key   Virtual key code to convert
