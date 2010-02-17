@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Renderer.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
@@ -34,7 +35,8 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Renderer::Renderer() :
+Renderer::Renderer(RenderTarget& target) :
+myTarget          (target),
 myTextureIsValid  (false),
 myShaderIsValid   (false),
 myBlendModeIsValid(false),
@@ -174,8 +176,8 @@ void Renderer::SetViewport(const IntRect& viewport)
         (viewport.Top  != myViewport.Top)  || (viewport.Bottom != myViewport.Bottom) ||
         !myViewportIsValid)
     {
-        // Apply the new viewport
-        GLCheck(glViewport(viewport.Left, viewport.Top, viewport.GetSize().x, viewport.GetSize().y));
+        // Apply the new viewport -- revert Y axis to match the OpenGL convention
+        GLCheck(glViewport(viewport.Left, myTarget.GetHeight() - viewport.Bottom, viewport.GetSize().x, viewport.GetSize().y));
 
         // Store it
         myViewport = viewport;

@@ -63,10 +63,12 @@ public :
 public :
 
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
+    /// \brief Construct the renderer with its owner render target
+    ///
+    /// \param target Owner render target
     ///
     ////////////////////////////////////////////////////////////
-    Renderer();
+    Renderer(RenderTarget& target);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -347,6 +349,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    RenderTarget& myTarget;           ///< Reference to the render target owning this renderer
     States        myStatesStack[64];  ///< Stack of render states
     States*       myStates;           ///< Current set of render states
     const Image*  myTexture;          ///< Current texture

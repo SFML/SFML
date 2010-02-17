@@ -29,6 +29,10 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <iostream>
 
+#ifdef _MSC_VER
+    #pragma warning(disable : 4355) // "'this' : used in base member initializer list"
+#endif
+
 
 namespace sf
 {
@@ -36,6 +40,7 @@ namespace sf
 /// Default constructor
 ////////////////////////////////////////////////////////////
 RenderTarget::RenderTarget() :
+myRenderer      (*this),
 myStatesSaved   (false),
 myViewHasChanged(false)
 {
@@ -165,9 +170,9 @@ IntRect RenderTarget::GetViewport(const View& view) const
     const FloatRect& viewport = view.GetViewport();
 
     return IntRect(static_cast<int>(0.5f + width  * viewport.Left),
-                   static_cast<int>(0.5f + height * (1.f - viewport.Bottom)),
+                   static_cast<int>(0.5f + height * viewport.Top),
                    static_cast<int>(0.5f + width  * viewport.Right),
-                   static_cast<int>(0.5f + height * (1.f - viewport.Top)));
+                   static_cast<int>(0.5f + height * viewport.Bottom));
 }
 
 
@@ -191,7 +196,7 @@ Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y, const View&
     Vector2f coords;
     IntRect viewport = GetViewport(view);
     coords.x = -1.f + 2.f * (static_cast<int>(x) - viewport.Left) / viewport.GetSize().x;
-    coords.y =  1.f - 2.f * (static_cast<int>(y) - viewport.Top)  / viewport.GetSize().y;
+    coords.y = 1.f  - 2.f * (static_cast<int>(y) - viewport.Top)  / viewport.GetSize().y;
 
     // Then transform by the inverse of the view matrix
     return view.GetInverseMatrix().Transform(coords);

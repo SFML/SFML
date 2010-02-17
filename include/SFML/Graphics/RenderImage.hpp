@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -44,7 +43,7 @@ namespace priv
 /// Target for 2D rendering into an image that can be reused
 /// in a sprite
 ////////////////////////////////////////////////////////////
-class SFML_API RenderImage : public RenderTarget, NonCopyable
+class SFML_API RenderImage : public RenderTarget
 {
 public :
 
