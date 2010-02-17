@@ -116,7 +116,7 @@ bool Image::LoadFromFile(const std::string& filename)
 ////////////////////////////////////////////////////////////
 /// Load the image from a file in memory
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromMemory(const char* data, std::size_t sizeInBytes)
+bool Image::LoadFromMemory(const void* data, std::size_t sizeInBytes)
 {
     // Check parameters
     if (!data || (sizeInBytes == 0))

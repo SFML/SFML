@@ -100,7 +100,7 @@ bool SoundFile::OpenRead(const std::string& filename)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundFile::OpenRead(const char* data, std::size_t sizeInBytes)
+bool SoundFile::OpenRead(const void* data, std::size_t sizeInBytes)
 {
     // If the file is already opened, first close it
     if (myFile)
@@ -246,7 +246,7 @@ int SoundFile::GetFormatFromFilename(const std::string& filename)
 
 
 ////////////////////////////////////////////////////////////
-SF_VIRTUAL_IO SoundFile::MemoryIO::Prepare(const char* data, std::size_t sizeInBytes)
+SF_VIRTUAL_IO SoundFile::MemoryIO::Prepare(const void* data, std::size_t sizeInBytes)
 {
     // Setup the I/O functions
     SF_VIRTUAL_IO io;
@@ -257,8 +257,8 @@ SF_VIRTUAL_IO SoundFile::MemoryIO::Prepare(const char* data, std::size_t sizeInB
     io.write       = &SoundFile::MemoryIO::Write;
 
     // Initialize the memory data
-    myDataStart = data;
-    myDataPtr   = data;
+    myDataStart = static_cast<const char*>(data);
+    myDataPtr   = myDataStart;
     myTotalSize = sizeInBytes;
 
     return io;

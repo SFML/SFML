@@ -96,7 +96,7 @@ public :
     /// \see OpenFromFile
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenFromMemory(const char* data, std::size_t sizeInBytes);
+    bool OpenFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the music

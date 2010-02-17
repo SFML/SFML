@@ -49,7 +49,7 @@ sfFont* sfFont_CreateFromFile(const char* filename)
 ////////////////////////////////////////////////////////////
 /// Create a new font from a file in memory
 ////////////////////////////////////////////////////////////
-sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes)
+sfFont* sfFont_CreateFromMemory(const void* data, size_t sizeInBytes)
 {
     sfFont* font = new sfFont;
     if (!font->This.LoadFromMemory(data, sizeInBytes))

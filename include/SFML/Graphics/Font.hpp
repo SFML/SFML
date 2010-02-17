@@ -108,7 +108,7 @@ public :
     /// \see LoadFromFile
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const char* data, std::size_t sizeInBytes);
+    bool LoadFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve a glyph of the font

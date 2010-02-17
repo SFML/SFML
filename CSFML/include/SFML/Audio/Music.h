@@ -52,7 +52,7 @@ CSFML_API sfMusic* sfMusic_CreateFromFile(const char* filename);
 /// \return A new sfMusic object (NULL if failed)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfMusic* sfMusic_CreateFromMemory(const char* data, size_t sizeInBytes);
+CSFML_API sfMusic* sfMusic_CreateFromMemory(const void* data, size_t sizeInBytes);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing music

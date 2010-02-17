@@ -94,7 +94,7 @@ sfImage* sfImage_CreateFromFile(const char* filename)
 ////////////////////////////////////////////////////////////
 /// Create a new image from a file in memory
 ////////////////////////////////////////////////////////////
-sfImage* sfImage_CreateFromMemory(const char* data, size_t sizeInBytes)
+sfImage* sfImage_CreateFromMemory(const void* data, size_t sizeInBytes)
 {
     sfImage* image = new sfImage;
 

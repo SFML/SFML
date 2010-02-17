@@ -51,7 +51,7 @@ CSFML_API sfFont* sfFont_CreateFromFile(const char* filename);
 /// \return A new sfFont object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFont* sfFont_CreateFromMemory(const char* data, size_t sizeInBytes);
+CSFML_API sfFont* sfFont_CreateFromMemory(const void* data, size_t sizeInBytes);
 
 ////////////////////////////////////////////////////////////
 /// Copy an existing font

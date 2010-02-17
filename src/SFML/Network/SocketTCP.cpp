@@ -232,18 +232,18 @@ Socket::Status SocketTCP::Accept(SocketTCP& connected, IPAddress* address)
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes to the host (must be connected first)
 ////////////////////////////////////////////////////////////
-Socket::Status SocketTCP::Send(const char* data, std::size_t size)
+Socket::Status SocketTCP::Send(const char* data, std::size_t sizeInBytes)
 {
     // First check that socket is valid
     if (!IsValid())
         return Socket::Error;
 
     // Check parameters
-    if (data && size)
+    if (data && sizeInBytes)
     {
         // Loop until every byte has been sent
         int sent = 0;
-        int sizeToSend = static_cast<int>(size);
+        int sizeToSend = static_cast<int>(sizeInBytes);
         for (int length = 0; length < sizeToSend; length += sent)
         {
             // Send a chunk of data

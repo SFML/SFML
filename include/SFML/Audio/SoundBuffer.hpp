@@ -98,7 +98,7 @@ public :
     /// \see LoadFromFile, LoadFromSamples, SaveToFile
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const char* data, std::size_t sizeInBytes);
+    bool LoadFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from an array of audio samples

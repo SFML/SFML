@@ -115,14 +115,14 @@ bool SocketUDP::Unbind()
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes
 ////////////////////////////////////////////////////////////
-Socket::Status SocketUDP::Send(const char* data, std::size_t size, const IPAddress& address, unsigned short port)
+Socket::Status SocketUDP::Send(const char* data, std::size_t sizeInBytes, const IPAddress& address, unsigned short port)
 {
     // Make sure the socket is valid
     if (!IsValid())
         Create();
 
     // Check parameters
-    if (data && size)
+    if (data && sizeInBytes)
     {
         // Build the target address
         sockaddr_in sockAddr;
@@ -133,7 +133,7 @@ Socket::Status SocketUDP::Send(const char* data, std::size_t size, const IPAddre
 
         // Loop until every byte has been sent
         int sent = 0;
-        int sizeToSend = static_cast<int>(size);
+        int sizeToSend = static_cast<int>(sizeInBytes);
         for (int length = 0; length < sizeToSend; length += sent)
         {
             // Send a chunk of data

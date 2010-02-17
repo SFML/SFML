@@ -50,7 +50,7 @@ sfSoundBuffer* sfSoundBuffer_CreateFromFile(const char* filename)
 ////////////////////////////////////////////////////////////
 /// Create a new sound buffer and load it from a file in memory
 ////////////////////////////////////////////////////////////
-sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const char* data, size_t sizeInBytes)
+sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const void* data, size_t sizeInBytes)
 {
     sfSoundBuffer* buffer = new sfSoundBuffer;
 

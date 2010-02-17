@@ -51,7 +51,7 @@ CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromFile(const char* filename);
 /// \return A new sfSoundBuffer object (NULL if failed)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const char* data, size_t sizeInBytes);
+CSFML_API sfSoundBuffer* sfSoundBuffer_CreateFromMemory(const void* data, size_t sizeInBytes);
 
 ////////////////////////////////////////////////////////////
 /// Create a new sound buffer and load it from an array of

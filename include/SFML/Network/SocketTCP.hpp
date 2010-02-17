@@ -98,13 +98,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// Send an array of bytes to the host (must be connected first)
     ///
-    /// \param data : Pointer to the bytes to send
-    /// \param size : Number of bytes to send
+    /// \param data :        Pointer to the bytes to send
+    /// \param sizeInBytes : Number of bytes to send
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Send(const char* data, std::size_t size);
+    Socket::Status Send(const char* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// Receive an array of bytes from the host (must be connected first).

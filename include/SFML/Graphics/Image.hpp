@@ -87,7 +87,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const char* data, std::size_t sizeInBytes);
+    bool LoadFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// Load the image directly from an array of pixels

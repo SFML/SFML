@@ -122,7 +122,7 @@ bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Col
 ////////////////////////////////////////////////////////////
 /// Load pixels from an image file in memory
 ////////////////////////////////////////////////////////////
-bool ImageLoader::LoadImageFromMemory(const char* data, std::size_t sizeInBytes, std::vector<Color>& pixels, unsigned int& width, unsigned int& height)
+bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t sizeInBytes, std::vector<Color>& pixels, unsigned int& width, unsigned int& height)
 {
     // Clear the array (just in case)
     pixels.clear();

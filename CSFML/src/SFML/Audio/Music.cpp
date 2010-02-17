@@ -50,7 +50,7 @@ sfMusic* sfMusic_CreateFromFile(const char* filename)
 ////////////////////////////////////////////////////////////
 /// Create a new music and load it from a file in memory
 ////////////////////////////////////////////////////////////
-sfMusic* sfMusic_CreateFromMemory(const char* data, size_t sizeInBytes)
+sfMusic* sfMusic_CreateFromMemory(const void* data, size_t sizeInBytes)
 {
     sfMusic* music = new sfMusic;
 

@@ -85,7 +85,7 @@ CSFML_API sfImage* sfImage_CreateFromFile(const char* filename);
 /// \return A new sfImage object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfImage* sfImage_CreateFromMemory(const char* data, size_t sizeInBytes);
+CSFML_API sfImage* sfImage_CreateFromMemory(const void* data, size_t sizeInBytes);
 
 ////////////////////////////////////////////////////////////
 /// Copy an existing image

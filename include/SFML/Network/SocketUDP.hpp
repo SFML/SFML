@@ -82,15 +82,15 @@ public :
     ////////////////////////////////////////////////////////////
     /// Send an array of bytes
     ///
-    /// \param data :    Pointer to the bytes to send
-    /// \param size :    Number of bytes to send
-    /// \param address : Address of the computer to send the packet to
-    /// \param port :    Port to send the data to
+    /// \param data :        Pointer to the bytes to send
+    /// \param sizeInBytes : Number of bytes to send
+    /// \param address :     Address of the computer to send the packet to
+    /// \param port :        Port to send the data to
     ///
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Send(const char* data, std::size_t size, const IPAddress& address, unsigned short port);
+    Socket::Status Send(const char* data, std::size_t sizeInBytes, const IPAddress& address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// Receive an array of bytes.

@@ -108,7 +108,7 @@ bool SoundBuffer::LoadFromFile(const std::string& filename)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::LoadFromMemory(const char* data, std::size_t sizeInBytes)
+bool SoundBuffer::LoadFromMemory(const void* data, std::size_t sizeInBytes)
 {
     // Open the sound file
     priv::SoundFile file;

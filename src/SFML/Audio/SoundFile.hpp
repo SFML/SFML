@@ -100,7 +100,7 @@ public :
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenRead(const char* data, std::size_t sizeInBytes);
+    bool OpenRead(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief a the sound file for writing
@@ -163,7 +163,7 @@ private :
     {
     public :
 
-        SF_VIRTUAL_IO Prepare(const char* data, std::size_t sizeInBytes);
+        SF_VIRTUAL_IO Prepare(const void* data, std::size_t sizeInBytes);
 
     private :
 

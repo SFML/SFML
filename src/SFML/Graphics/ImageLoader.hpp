@@ -79,7 +79,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadImageFromMemory(const char* data, std::size_t sizeInBytes, std::vector<Color>& pixels, unsigned int& width, unsigned int& height);
+    bool LoadImageFromMemory(const void* data, std::size_t sizeInBytes, std::vector<Color>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
     /// Save pixels to an image file
