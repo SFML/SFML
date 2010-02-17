@@ -394,7 +394,7 @@ CSFML_API float sfShape_GetOutlineWidth(const sfShape* shape);
 /// \return Total number of points
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfShape_GetNbPoints(const sfShape* shape);
+CSFML_API unsigned int sfShape_GetPointsCount(const sfShape* shape);
 
 ////////////////////////////////////////////////////////////
 /// Get a the position of a shape's point

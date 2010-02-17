@@ -388,9 +388,9 @@ float sfShape_GetOutlineWidth(const sfShape* shape)
 ////////////////////////////////////////////////////////////
 /// Get the number of points composing a shape
 ////////////////////////////////////////////////////////////
-unsigned int sfShape_GetNbPoints(const sfShape* shape)
+unsigned int sfShape_GetPointsCount(const sfShape* shape)
 {
-    CSFML_CALL_RETURN(shape, GetNbPoints(), 0)
+    CSFML_CALL_RETURN(shape, GetPointsCount(), 0)
 }
 
 

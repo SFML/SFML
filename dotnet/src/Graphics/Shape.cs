@@ -197,12 +197,12 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Totla number of points of the shape
+            /// Total number of points of the shape
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public uint NbPoints
+            public uint PointsCount
             {
-                get {return sfShape_GetNbPoints(This);}
+                get {return sfShape_GetPointsCount(This);}
             }
 
             ////////////////////////////////////////////////////////////
@@ -388,7 +388,7 @@ namespace SFML
                        " Color(" + Color + ")" +
                        " BlendMode(" + BlendMode + ")" +
                        " OutlineWidth(" + OutlineWidth + ")" +
-                       " NbPoints(" + NbPoints + ")";
+                       " PointsCount(" + PointsCount + ")";
             }
 
             ////////////////////////////////////////////////////////////
@@ -541,7 +541,7 @@ namespace SFML
             static extern float sfShape_GetOutlineWidth(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
-            static extern uint sfShape_GetNbPoints(IntPtr This);
+            static extern uint sfShape_GetPointsCount(IntPtr This);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfShape_SetPointPosition(IntPtr This, uint Index, float X, float Y);

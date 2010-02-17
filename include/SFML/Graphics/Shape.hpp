@@ -76,7 +76,7 @@ public :
     /// \param Total number of points
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetNbPoints() const;
+    unsigned int GetPointsCount() const;
 
     ////////////////////////////////////////////////////////////
     /// Enable or disable filling the shape.
@@ -99,7 +99,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Set the position of a point
     ///
-    /// \param index :    Index of the point, in range [0, GetNbPoints() - 1]
+    /// \param index :    Index of the point, in range [0, GetPointsCount() - 1]
     /// \param position : New position of the index-th point
     ///
     ////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Set the position of a point
     ///
-    /// \param index : Index of the point, in range [0, GetNbPoints() - 1]
+    /// \param index : Index of the point, in range [0, GetPointsCount() - 1]
     /// \param x :     New X coordinate of the index-th point
     /// \param y :     New Y coordinate of the index-th point
     ///
@@ -118,7 +118,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Set the color of a point
     ///
-    /// \param index : Index of the point, in range [0, GetNbPoints() - 1]
+    /// \param index : Index of the point, in range [0, GetPointsCount() - 1]
     /// \param color : New color of the index-th point
     ///
     ////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Set the outline color of a point
     ///
-    /// \param index :       Index of the point, in range [0, GetNbPoints() - 1]
+    /// \param index :       Index of the point, in range [0, GetPointsCount() - 1]
     /// \param outlineColor : New outline color of the index-th point
     ///
     ////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Get the position of a point
     ///
-    /// \param index : Index of the point, in range [0, GetNbPoints() - 1]
+    /// \param index : Index of the point, in range [0, GetPointsCount() - 1]
     ///
     /// \return Position of the index-th point
     ///
@@ -154,7 +154,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Get the color of a point
     ///
-    /// \param Index : index of the point, in range [0, GetNbPoints() - 1]
+    /// \param Index : index of the point, in range [0, GetPointsCount() - 1]
     ///
     /// \return Color of the index-th point
     ///
@@ -164,7 +164,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Get the outline color of a point
     ///
-    /// \param index : Index of the point, in range [0, GetNbPoints() - 1]
+    /// \param index : Index of the point, in range [0, GetPointsCount() - 1]
     ///
     /// \return Outline color of the index-th point
     ///

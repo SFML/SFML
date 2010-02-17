@@ -84,7 +84,7 @@ EXPORTS
 	sfShape_EnableOutline
 	sfShape_SetOutlineWidth
 	sfShape_GetOutlineWidth
-	sfShape_GetNbPoints
+	sfShape_GetPointsCount
 	sfShape_GetPointPosition
 	sfShape_GetPointColor
 	sfShape_GetPointOutlineColor

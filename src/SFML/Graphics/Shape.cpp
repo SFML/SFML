@@ -68,7 +68,7 @@ void Shape::AddPoint(const Vector2f& position, const Color& color, const Color& 
 ////////////////////////////////////////////////////////////
 /// Get the number of points composing the shape
 ////////////////////////////////////////////////////////////
-unsigned int Shape::GetNbPoints() const
+unsigned int Shape::GetPointsCount() const
 {
     return static_cast<unsigned int>(myPoints.size() - 1);
 }
