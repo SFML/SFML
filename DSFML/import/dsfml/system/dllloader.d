@@ -128,7 +128,7 @@ class DllLoader
 		}
 	
 		if (symb is null)
-			report( "Symbol cannot be found in specified library", m_libPath, symbolName);
+			debug report( "Symbol cannot be found in specified library", m_libPath, symbolName);
 			
 		return symb;
 	}
@@ -183,10 +183,10 @@ private:
 		}
 		if (m_lib is null)
 		{
-			report("Cannot open library", m_libPath, null);
+			debug report("Cannot open library", m_libPath, null);
 			version (Windows)
 			{
-				report("Windows error message: " ~ sysErrorString(GetLastError()), m_libPath, null);
+				debug report("Windows error message: " ~ sysErrorString(GetLastError()), m_libPath, null);
 			}
 		}
 	}

@@ -131,9 +131,9 @@ public:
 	*	Returns:
 	*		Total number of points
 	*/
-	uint getNbPoints()
+	uint getPointsCount()
 	{
-		return sfShape_GetNbPoints(m_ptr);
+		return sfShape_GetPointsCount(m_ptr);
 	}
 
 	/**
@@ -289,7 +289,7 @@ private:
 		typedef void function(void* Shape, int) pf_sfShape_EnableOutline;
 		typedef void function (void* Shape, float Width) pf_sfShape_SetOutlineWidth;
 		typedef float function (void* Shape) pf_sfShape_GetOutlineWidth;
-		typedef uint function (void* Shape) pf_sfShape_GetNbPoints;
+		typedef uint function (void* Shape) pf_sfShape_GetPointsCount;
 		typedef void function (void* Shape, uint Index, float* X, float* Y) pf_sfShape_GetPointPosition;
 		typedef void function (void* Shape, uint Index, float X, float Y) pf_sfShape_SetPointPosition;
 		typedef Color function (void* Shape, uint index) pf_sfShape_GetPointColor;
@@ -305,7 +305,7 @@ private:
 		static pf_sfShape_EnableOutline sfShape_EnableOutline;
 		static pf_sfShape_SetOutlineWidth sfShape_SetOutlineWidth;
 		static pf_sfShape_GetOutlineWidth sfShape_GetOutlineWidth;
-		static pf_sfShape_GetNbPoints sfShape_GetNbPoints;
+		static pf_sfShape_GetPointsCount sfShape_GetPointsCount;
 		static pf_sfShape_GetPointPosition sfShape_GetPointPosition;
 		static pf_sfShape_SetPointPosition sfShape_SetPointPosition;
 		static pf_sfShape_GetPointColor sfShape_GetPointColor;
@@ -329,7 +329,7 @@ private:
 		sfShape_EnableOutline = cast(pf_sfShape_EnableOutline)dll.getSymbol("sfShape_EnableOutline");
 		sfShape_SetOutlineWidth = cast(pf_sfShape_SetOutlineWidth)dll.getSymbol("sfShape_SetOutlineWidth");
 		sfShape_GetOutlineWidth = cast(pf_sfShape_GetOutlineWidth)dll.getSymbol("sfShape_GetOutlineWidth");
-		sfShape_GetNbPoints = cast(pf_sfShape_GetNbPoints)dll.getSymbol("sfShape_GetNbPoints");
+		sfShape_GetPointsCount = cast(pf_sfShape_GetPointsCount)dll.getSymbol("sfShape_GetPointsCount");
 		sfShape_GetPointPosition = cast(pf_sfShape_GetPointPosition)dll.getSymbol("sfShape_GetPointPosition");
 		sfShape_SetPointPosition = cast(pf_sfShape_SetPointPosition)dll.getSymbol("sfShape_SetPointPosition");
 		sfShape_GetPointColor = cast (pf_sfShape_GetPointColor)dll.getSymbol("sfShape_GetPointColor");

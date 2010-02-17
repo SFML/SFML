@@ -37,17 +37,6 @@ struct Vector3(T)
 	T y;
 	T z;
 
-	static Vector3 opCall(T x, T y, T z)
-	{
-		Vector3!(T) ret;
-		
-		ret.x = x;
-		ret.y = y;
-		ret.z = z;
-		
-		return ret;
-	}
-
 	/// unary (-) overload
 	Vector3 opNeg()
 	{
