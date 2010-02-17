@@ -36,7 +36,6 @@
 #include <SFML/Window/Input.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
-#include <SFML/Window/WindowListener.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 
 

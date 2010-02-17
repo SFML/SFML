@@ -517,10 +517,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Window\WindowListener.hpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\SFML\Window\WindowStyle.hpp"
 			>
 		</File>

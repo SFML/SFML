@@ -424,7 +424,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.Type = Event::Closed;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -441,7 +441,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.Type        = Event::Resized;
             event.Size.Width  = myWidth;
             event.Size.Height = myHeight;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -450,7 +450,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.Type = Event::GainedFocus;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -459,7 +459,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.Type = Event::LostFocus;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -471,7 +471,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 Event event;
                 event.Type = Event::TextEntered;
                 event.Text.Unicode = static_cast<Uint32>(wParam);
-                SendEvent(event);
+                PushEvent(event);
             }
             break;
         }
@@ -491,14 +491,14 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 if (wParam != VK_SHIFT)
                 {
                     event.Key.Code = VirtualKeyCodeToSF(wParam, lParam);
-                    SendEvent(event);
+                    PushEvent(event);
                 }
                 else
                 {
                     // Special case for shift, its state can't be retrieved directly
                     event.Key.Code = GetShiftState(true);
                     if (event.Key.Code != 0)
-                        SendEvent(event);
+                        PushEvent(event);
                 }
             }
             break;
@@ -517,14 +517,14 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if (wParam != VK_SHIFT)
             {
                 event.Key.Code = VirtualKeyCodeToSF(wParam, lParam);
-                SendEvent(event);
+                PushEvent(event);
             }
             else
             {
                 // Special case for shift, its state can't be retrieved directly
                 event.Key.Code = GetShiftState(false);
                 if (event.Key.Code != 0)
-                    SendEvent(event);
+                    PushEvent(event);
             }
 
             break;
@@ -544,7 +544,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.MouseWheel.Delta = static_cast<Int16>(HIWORD(wParam)) / 120;
             event.MouseButton.X    = position.x;
             event.MouseButton.Y    = position.y;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -556,7 +556,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.MouseButton.Button = Mouse::Left;
             event.MouseButton.X      = LOWORD(lParam);
             event.MouseButton.Y      = HIWORD(lParam);
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -568,7 +568,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.MouseButton.Button = Mouse::Left;
             event.MouseButton.X      = LOWORD(lParam);
             event.MouseButton.Y      = HIWORD(lParam);
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -580,7 +580,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.MouseButton.Button = Mouse::Right;
             event.MouseButton.X      = LOWORD(lParam);
             event.MouseButton.Y      = HIWORD(lParam);
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -592,7 +592,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.MouseButton.Button = Mouse::Right;
             event.MouseButton.X      = LOWORD(lParam);
             event.MouseButton.Y      = HIWORD(lParam);
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -604,7 +604,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.MouseButton.Button = Mouse::Middle;
             event.MouseButton.X      = LOWORD(lParam);
             event.MouseButton.Y      = HIWORD(lParam);
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -616,7 +616,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.MouseButton.Button = Mouse::Middle;
             event.MouseButton.X      = LOWORD(lParam);
             event.MouseButton.Y      = HIWORD(lParam);
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -628,7 +628,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.MouseButton.Button = HIWORD(wParam) == XBUTTON1 ? Mouse::XButton1 : Mouse::XButton2;
             event.MouseButton.X      = LOWORD(lParam);
             event.MouseButton.Y      = HIWORD(lParam);
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -640,7 +640,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.MouseButton.Button = HIWORD(wParam) == XBUTTON1 ? Mouse::XButton1 : Mouse::XButton2;
             event.MouseButton.X      = LOWORD(lParam);
             event.MouseButton.Y      = HIWORD(lParam);
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -660,14 +660,14 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                 Event event;
                 event.Type = Event::MouseEntered;
-                SendEvent(event);
+                PushEvent(event);
             }
 
             Event event;
             event.Type        = Event::MouseMoved;
             event.MouseMove.X = LOWORD(lParam);
             event.MouseMove.Y = HIWORD(lParam);
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -678,7 +678,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
             Event event;
             event.Type = Event::MouseLeft;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
     }

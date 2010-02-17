@@ -623,7 +623,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
 
             Event event;
             event.Type = Event::GainedFocus;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -636,7 +636,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
 
             Event event;
             event.Type = Event::LostFocus;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -652,7 +652,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                 event.Type        = Event::Resized;
                 event.Size.Width  = myWidth;
                 event.Size.Height = myHeight;
-                SendEvent(event);
+                PushEvent(event);
             }
             break;
         }
@@ -664,7 +664,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             {
                 Event event;
                 event.Type = Event::Closed;
-                SendEvent(event);
+                PushEvent(event);
             }
             break;
         }
@@ -685,7 +685,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             event.Key.Alt     = windowEvent.xkey.state & Mod1Mask;
             event.Key.Control = windowEvent.xkey.state & ControlMask;
             event.Key.Shift   = windowEvent.xkey.state & ShiftMask;
-            SendEvent(event);
+            PushEvent(event);
 
             // Generate a TextEntered event
             if (!XFilterEvent(&windowEvent, None))
@@ -705,7 +705,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                             Event textEvent;
                             textEvent.Type         = Event::TextEntered;
                             textEvent.Text.Unicode = unicode;
-                            SendEvent(textEvent);
+                            PushEvent(textEvent);
                         }
                     }
                 }
@@ -719,7 +719,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                         Event textEvent;
                         textEvent.Type         = Event::TextEntered;
                         textEvent.Text.Unicode = static_cast<Uint32>(keyBuffer[0]);
-                        SendEvent(textEvent);
+                        PushEvent(textEvent);
                     }
                 }
             }
@@ -742,7 +742,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             event.Key.Alt     = windowEvent.xkey.state & Mod1Mask;
             event.Key.Control = windowEvent.xkey.state & ControlMask;
             event.Key.Shift   = windowEvent.xkey.state & ShiftMask;
-            SendEvent(event);
+            PushEvent(event);
 
             break;
         }
@@ -765,7 +765,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                     case 8 :       event.MouseButton.Button = Mouse::XButton1; break;
                     case 9 :       event.MouseButton.Button = Mouse::XButton2; break;            
                 }
-                SendEvent(event);
+                PushEvent(event);
             }
             break;
         }
@@ -788,7 +788,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                     case 8 :       event.MouseButton.Button = Mouse::XButton1; break;
                     case 9 :       event.MouseButton.Button = Mouse::XButton2; break;            
                 }
-                SendEvent(event);
+                PushEvent(event);
             }
             else if ((button == Button4) || (button == Button5))
             {
@@ -797,7 +797,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                 event.MouseWheel.Delta = windowEvent.xbutton.button == Button4 ? 1 : -1;
                 event.MouseWheel.X     = windowEvent.xbutton.x;
                 event.MouseWheel.Y     = windowEvent.xbutton.y;
-                SendEvent(event);
+                PushEvent(event);
             }
             break;
         }
@@ -809,7 +809,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             event.Type        = Event::MouseMoved;
             event.MouseMove.X = windowEvent.xmotion.x;
             event.MouseMove.Y = windowEvent.xmotion.y;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -818,7 +818,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         {
             Event event;
             event.Type = Event::MouseEntered;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
 
@@ -827,7 +827,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         {
             Event event;
             event.Type = Event::MouseLeft;
-            SendEvent(event);
+            PushEvent(event);
             break;
         }
     }

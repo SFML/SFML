@@ -115,7 +115,6 @@
 		<Unit filename="..\..\include\SFML\Window\VideoMode.hpp" />
 		<Unit filename="..\..\include\SFML\Window\Window.hpp" />
 		<Unit filename="..\..\include\SFML\Window\WindowHandle.hpp" />
-		<Unit filename="..\..\include\SFML\Window\WindowListener.hpp" />
 		<Unit filename="..\..\include\SFML\Window\WindowStyle.hpp" />
 		<Unit filename="..\..\include\SFML\Window\glew\glew.h" />
 		<Unit filename="..\..\src\SFML\Window\Context.cpp" />

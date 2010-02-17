@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Window/WindowListener.hpp>
 #include <algorithm>
 #include <cmath>
 
@@ -90,21 +89,6 @@ WindowImpl::~WindowImpl()
 
 
 ////////////////////////////////////////////////////////////
-void WindowImpl::AddListener(WindowListener* listener)
-{
-    if (listener)
-        myListeners.insert(listener);
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowImpl::RemoveListener(WindowListener* listener)
-{
-    myListeners.erase(listener);
-}
-
-
-////////////////////////////////////////////////////////////
 unsigned int WindowImpl::GetWidth() const
 {
     return myWidth;
@@ -126,23 +110,32 @@ void WindowImpl::SetJoystickThreshold(float threshold)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImpl::DoEvents(bool block)
+bool WindowImpl::PopEvent(Event& event, bool block)
 {
-    // Read the joysticks state and generate the appropriate events
-    ProcessJoystickEvents();
+    // If the event queue is empty, let's first check if new events are available from the OS
+    if (myEvents.empty())
+    {
+        ProcessJoystickEvents();
+        ProcessEvents(block);
+    }
 
-    // Let the derived class process other events
-    ProcessEvents(block);
+    // Pop the first event of the queue, if it is not empty
+    if (!myEvents.empty())
+    {
+        event = myEvents.front();
+        myEvents.pop();
+
+        return true;
+    }
+
+    return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImpl::SendEvent(const Event& event)
+void WindowImpl::PushEvent(const Event& event)
 {
-    for (std::set<WindowListener*>::iterator i = myListeners.begin(); i != myListeners.end(); ++i)
-    {
-        (*i)->OnEvent(event);
-    }
+    myEvents.push(event);
 }
 
 
@@ -170,7 +163,7 @@ void WindowImpl::ProcessJoystickEvents()
                     event.JoyMove.JoystickId = i;
                     event.JoyMove.Axis       = axis;
                     event.JoyMove.Position   = currPos;
-                    SendEvent(event);
+                    PushEvent(event);
                 }
             }
         }
@@ -187,7 +180,7 @@ void WindowImpl::ProcessJoystickEvents()
                 event.Type                 = currPressed ? Event::JoyButtonPressed : Event::JoyButtonReleased;
                 event.JoyButton.JoystickId = i;
                 event.JoyButton.Button     = j;
-                SendEvent(event);
+                PushEvent(event);
             }
         }
     }

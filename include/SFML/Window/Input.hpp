@@ -31,17 +31,18 @@
 #include <SFML/Config.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Window/WindowListener.hpp>
 
 
 namespace sf
 {
+class Window;
+
 ////////////////////////////////////////////////////////////
 /// \brief Give access to the real-time states of keyboard,
 ///        mouse and joysticks
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Input : public WindowListener, NonCopyable
+class SFML_API Input : NonCopyable
 {
 public :
 
@@ -120,13 +121,18 @@ public :
 
 private :
 
+    friend class Window;
+
     ////////////////////////////////////////////////////////////
-    /// \brief Called each time an event is received from the attached window
+    /// \brief Notifies the input of a new event
+    ///
+    /// This function is for internal use only, it is called by
+    /// the owner window every time a new event has been triggered.
     ///
     /// \param event Event received
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnEvent(const Event& event);
+    void OnEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     /// Reset all the states

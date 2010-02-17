@@ -30,16 +30,17 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
+#include <queue>
 #include <set>
 #include <string>
 
 
 namespace sf
 {
-class Event;
 class WindowListener;
 
 namespace priv
@@ -83,22 +84,6 @@ public :
     virtual ~WindowImpl();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Add a listener to the window
-    ///
-    /// \param listener Listener to add
-    ///
-    ////////////////////////////////////////////////////////////
-    void AddListener(WindowListener* listener);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Remove a listener from the window
-    ///
-    /// \param listener Listener to remove
-    ///
-    ////////////////////////////////////////////////////////////
-    void RemoveListener(WindowListener* listener);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the client width of the window
     ///
     /// \return Width of the window in pixels
@@ -124,12 +109,20 @@ public :
     void SetJoystickThreshold(float threshold);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Process incoming events from the operating system
+    /// \brief Return the next window event available
     ///
+    /// If there's no event available, this function calls the
+    /// window's internal event processing function.
+    /// The \a block parameter controls the behaviour of the function
+    /// if no event is available: if it is true then the function
+    /// doesn't return until a new event is triggered; otherwise it
+    /// returns false to indicate that no event is available.
+    ///
+    /// \param event Event to be returned
     /// \param block Use true to block the thread until an event arrives
     ///
     ////////////////////////////////////////////////////////////
-    void DoEvents(bool block);
+    bool PopEvent(Event& event, bool block);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -209,12 +202,16 @@ protected :
     WindowImpl();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Send an event to listeners (for derived classes only)
+    /// \brief Push a new event into the event queue
     ///
-    /// \param event Event to send
+    /// This function is to be used by derived classes, to
+    /// notify the SFML window that a new event was triggered
+    /// by the system.
+    ///
+    /// \param event Event to push
     ///
     ////////////////////////////////////////////////////////////
-    void SendEvent(const Event& event);
+    void PushEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -241,10 +238,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::set<WindowListener*> myListeners;             ///< Array of listeners connected to the window
-    Joystick                  myJoysticks[Joy::Count]; ///< Joysticks to observe
-    JoystickState             myJoyStates[Joy::Count]; ///< Current states of the joysticks
-    float                     myJoyThreshold;          ///< Joystick threshold (minimum motion for MOVE event to be generated)
+    std::queue<Event> myEvents;                ///< Queue of available events
+    Joystick          myJoysticks[Joy::Count]; ///< Joysticks to observe
+    JoystickState     myJoyStates[Joy::Count]; ///< Current states of the joysticks
+    float             myJoyThreshold;          ///< Joystick threshold (minimum motion for MOVE event to be generated)
 };
 
 } // namespace priv

@@ -28,16 +28,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Event.hpp>
 #include <SFML/Window/Input.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/WindowListener.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/NonCopyable.hpp>
-#include <queue>
 #include <string>
 
 
@@ -49,11 +46,13 @@ namespace priv
     class ContextGL;
 }
 
+class Event;
+
 ////////////////////////////////////////////////////////////
 /// \brief Window that serves as a target for OpenGL rendering
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Window : public WindowListener, NonCopyable
+class SFML_API Window : NonCopyable
 {
 public :
 
@@ -448,12 +447,18 @@ private :
     virtual void OnResize();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Called each time an event is received from the internal window
+    /// \brief Processes an event before it is sent to the user
     ///
-    /// \param event Event received
+    /// This function is called every time an event is received
+    /// from the internal window (through GetEvent or WaitEvent).
+    /// It filters out unwanted events, and performs whatever internal
+    /// stuff the window needs before the event is returned to the
+    /// user.
+    ///
+    /// \param event Event to filter
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnEvent(const Event& event);
+    bool FilterEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Perform some common internal initializations
@@ -466,7 +471,6 @@ private :
     ////////////////////////////////////////////////////////////
     priv::WindowImpl* myWindow;         ///< Platform-specific implementation of the window
     priv::ContextGL*  myContext;        ///< Platform-specific implementation of the OpenGL context
-    std::queue<Event> myEvents;         ///< Queue of received events
     Input             myInput;          ///< Input manager connected to window
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
     float             myLastFrameTime;  ///< Time elapsed since last frame
