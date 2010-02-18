@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Randomizer.hpp>
-#include <SFML/System/Platform.hpp>
-#include <cstdlib>
+#include <stdlib.h>
+#include <time.h>
 
 
 namespace
@@ -35,7 +35,7 @@ namespace
     // Set the random numbers sequence seed with the current system time, so that it is always different
     unsigned int SetRandomSeed()
     {
-        unsigned int Seed = static_cast<unsigned int>(sf::priv::Platform::GetSystemTime() * 1000);
+        unsigned int Seed = static_cast<unsigned int>(time(NULL));
         srand(Seed);
         return Seed;
     }
