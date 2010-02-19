@@ -239,6 +239,7 @@ Font& Font::operator =(const Font& right)
     std::swap(myPages,       temp.myPages);
     std::swap(myPixelBuffer, temp.myPixelBuffer);
     std::swap(myCurrentSize, temp.myCurrentSize);
+    std::swap(myRefCount,    temp.myRefCount);
 
     return *this;
 }
