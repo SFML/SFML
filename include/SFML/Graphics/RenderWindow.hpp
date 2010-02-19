@@ -149,9 +149,9 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Activate the target for rendering
     ///
-    /// \param active True to activate rendering, false to deactivate
+    /// \param active True to make the target active, false to deactivate it
     ///
-    /// \return True if activation succeeded
+    /// \return True if the function succeeded
     ///
     ////////////////////////////////////////////////////////////
     virtual bool Activate(bool active);
@@ -177,10 +177,9 @@ private :
 /// and code samples.
 ///
 /// On top of that, sf::RenderWindow adds more features related to
-/// 2D drawing with the graphics module, so that you don't need
-/// to use OpenGL to draw things. You can clear the window, and draw
-/// sprites, shapes or text. Here is a typical rendering / event loop
-/// with a sf::RenderWindow:
+/// 2D drawing with the graphics module (see its base class
+/// sf::RenderTarget for more details).
+/// Here is a typical rendering / event loop with a sf::RenderWindow:
 ///
 /// \code
 /// // Declare and create a new render-window
@@ -214,21 +213,11 @@ private :
 /// }
 /// \endcode
 ///
-/// A sf::RenderWindow is also able to use views (sf::View),
-/// which are a kind of 2D cameras. With views you can scroll,
-/// rotate or zoom everything that is drawn to the window globally,
-/// without having to transform every single entity. See the
-/// documentation of sf::View for more details and sample pieces of
-/// code about this class.
-///
 /// Like sf::Window, sf::RenderWindow is still able to render direct
 /// OpenGL stuff. It is even possible to mix together OpenGL calls
-/// and regular SFML drawing commands. No particular setup is required,
-/// all you have to do is to call Flush() whenever you want to make
-/// sure that your SFML entities (sprites, shapes or texts) are
-/// actually drawn to the window, so that your OpenGL commands will draw
-/// on top of them (otherwise the rendering may be delayed internally by SFML,
-/// and probably happen *after* your OpenGL calls).
+/// and regular SFML drawing commands. When doing so, make sure that
+/// OpenGL states are not messed up by calling the SaveGLStates /
+/// RestoreGLStates functions.
 ///
 /// \code
 /// // Create the render window
@@ -250,11 +239,9 @@ private :
 ///     ...
 ///
 ///     // Draw a background sprite
+///     window.SaveGLStates();
 ///     window.Draw(sprite);
-///
-///     // Flush the window, to make sure that the OpenGL object
-///     // will be rendered on top of the background sprite
-///     window.Flush();
+///     window.RestoreGLStates();
 ///
 ///     // Draw a 3D object using OpenGL
 ///     glBegin(GL_QUADS);
@@ -263,7 +250,9 @@ private :
 ///     glEnd();
 ///
 ///     // Draw text on top of the 3D object
+///     window.SaveGLStates();
 ///     window.Draw(text);
+///     window.RestoreGLStates();
 ///
 ///     // Finally, display the rendered frame on screen
 ///     window.Display();
