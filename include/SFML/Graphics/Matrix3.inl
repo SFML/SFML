@@ -120,7 +120,7 @@ inline Matrix3 Matrix3::GetInverse() const
                 myData[3] * (myData[13] * myData[4] - myData[5] * myData[12]);
 
     // Compute the inverse if determinant is not zero
-    if ((det < -1E-7f) || (det > 1E-7f))
+    if (det != 0.f) // don't use an epsilon because the determinant may *really* be tiny
     {
         return Matrix3( (myData[15] * myData[5] - myData[7] * myData[13]) / det,
                        -(myData[15] * myData[4] - myData[7] * myData[12]) / det,
