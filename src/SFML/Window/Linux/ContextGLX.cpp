@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#define GLX_GLXEXT_LEGACY // so that our local glxext.h is used instead of the system one
 #include <SFML/Window/Linux/ContextGLX.hpp>
 #include <SFML/Window/Linux/WindowImplX11.hpp>
 #include <SFML/OpenGL.hpp>
