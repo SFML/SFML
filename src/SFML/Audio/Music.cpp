@@ -29,8 +29,8 @@
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/SoundFile.hpp>
 #include <SFML/System/Lock.hpp>
+#include <SFML/System/Err.hpp>
 #include <fstream>
-#include <iostream>
 
 
 namespace sf
@@ -63,7 +63,7 @@ bool Music::OpenFromFile(const std::string& filename)
     // Create the sound file implementation, and open it in read mode
     if (!myFile->OpenRead(filename))
     {
-        std::cerr << "Failed to open \"" << filename << "\" for reading" << std::endl;
+        Err() << "Failed to open \"" << filename << "\" for reading" << std::endl;
         return false;
     }
 
@@ -89,7 +89,7 @@ bool Music::OpenFromMemory(const void* data, std::size_t sizeInBytes)
     // Create the sound file implementation, and open it in read mode
     if (!myFile->OpenRead(data, sizeInBytes))
     {
-        std::cerr << "Failed to open music from memory for reading" << std::endl;
+        Err() << "Failed to open music from memory for reading" << std::endl;
         return false;
     }
 

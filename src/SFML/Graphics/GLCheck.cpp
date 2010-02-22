@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLCheck.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -100,10 +100,10 @@ void GLCheckError(const std::string& file, unsigned int line)
         }
 
         // Log the error
-        std::cerr << "An internal OpenGL call failed in "
-                  << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
-                  << error << ", " << description
-                  << std::endl;
+        Err() << "An internal OpenGL call failed in "
+              << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
+              << error << ", " << description
+              << std::endl;
     }
 }
 

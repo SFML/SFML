@@ -28,7 +28,7 @@
 #include <SFML/Graphics/RenderImageImplFBO.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -90,7 +90,7 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
     myFrameBuffer = static_cast<unsigned int>(frameBuffer);
     if (!myFrameBuffer)
     {
-        std::cerr << "Impossible to create render image (failed to create the frame buffer object)" << std::endl;
+        Err() << "Impossible to create render image (failed to create the frame buffer object)" << std::endl;
         return false;
     }
     GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, myFrameBuffer));
@@ -103,7 +103,7 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
         myDepthBuffer = static_cast<unsigned int>(depth);
         if (!myDepthBuffer)
         {
-            std::cerr << "Impossible to create render image (failed to create the attached depth buffer)" << std::endl;
+            Err() << "Impossible to create render image (failed to create the attached depth buffer)" << std::endl;
             return false;
         }
         GLCheck(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, myDepthBuffer));
@@ -118,7 +118,7 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
     if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT)
     {
         GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
-        std::cerr << "Impossible to create render image (failed to link the target image to the frame buffer)" << std::endl;
+        Err() << "Impossible to create render image (failed to link the target image to the frame buffer)" << std::endl;
         return false;
     }
 

@@ -28,10 +28,10 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Linux/WindowImplX11.hpp>
 #include <SFML/System/Utf.hpp>
+#include <SFML/System/Err.hpp>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
-#include <iostream>
 #include <sstream>
 #include <vector>
 
@@ -84,7 +84,7 @@ myKeyRepeat   (true)
         XWindowAttributes windowAttributes;
         if (XGetWindowAttributes(myDisplay, myWindow, &windowAttributes) == 0)
         {
-            std::cerr << "Failed to get the window attributes" << std::endl;
+            Err() << "Failed to get the window attributes" << std::endl;
             return;
         }
         myWidth  = windowAttributes.width;
@@ -151,7 +151,7 @@ myKeyRepeat   (true)
                              CWEventMask | CWOverrideRedirect, &attributes);
     if (!myWindow)
     {
-        std::cerr << "Failed to create window" << std::endl;
+        Err() << "Failed to create window" << std::endl;
         return;
     }
 
@@ -379,7 +379,7 @@ void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8
     XImage* iconImage = XCreateImage(myDisplay, defVisual, defDepth, ZPixmap, 0, (char*)iconPixels, width, height, 32, 0);
     if (!iconImage)
     {
-        std::cerr << "Failed to set the window's icon" << std::endl;
+        Err() << "Failed to set the window's icon" << std::endl;
         return;
     }
     Pixmap iconPixmap = XCreatePixmap(myDisplay, RootWindow(myDisplay, myScreen), width, height, defDepth);
@@ -461,13 +461,13 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
         else
         {
             // Failed to get the screen configuration
-            std::cerr << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
+            Err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
         }
     }
     else
     {
         // XRandr extension is not supported : we cannot use fullscreen mode
-        std::cerr << "Fullscreen is not supported, switching to window mode" << std::endl;
+        Err() << "Fullscreen is not supported, switching to window mode" << std::endl;
     }
 }
 
@@ -497,7 +497,7 @@ void WindowImplX11::Initialize()
         myInputContext = NULL;
     }
     if (!myInputContext)
-        std::cerr << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
+        Err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
 
     // Show the window
     XMapWindow(myDisplay, myWindow);

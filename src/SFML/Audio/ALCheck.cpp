@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -83,10 +84,10 @@ void ALCheckError(const std::string& file, unsigned int line)
         }
 
         // Log the error
-        std::cerr << "An internal OpenAL call failed in "
-                  << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
-                  << error << ", " << description
-                  << std::endl;
+        Err() << "An internal OpenAL call failed in "
+              << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
+              << error << ", " << description
+              << std::endl;
     }
 }
 

@@ -29,6 +29,7 @@
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Sleep.hpp>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -68,7 +69,7 @@ void SoundStream::Initialize(unsigned int channelsCount, unsigned int sampleRate
     {
         myChannelsCount = 0;
         mySampleRate    = 0;
-        std::cerr << "Unsupported number of channels (" << myChannelsCount << ")" << std::endl;
+        Err() << "Unsupported number of channels (" << myChannelsCount << ")" << std::endl;
     }
 }
 
@@ -79,7 +80,7 @@ void SoundStream::Play()
     // Check if the sound parameters have been set
     if (myFormat == 0)
     {
-        std::cerr << "Failed to play audio stream: sound parameters have not been initialized (call Initialize first)" << std::endl;
+        Err() << "Failed to play audio stream: sound parameters have not been initialized (call Initialize first)" << std::endl;
         return;
     }
 

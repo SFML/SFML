@@ -30,7 +30,7 @@
 #include <SFML/Window/Linux/WindowImplX11.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/glxext.h>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -158,7 +158,7 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     XWindowAttributes windowAttributes;
     if (XGetWindowAttributes(myDisplay, myWindow, &windowAttributes) == 0)
     {
-        std::cerr << "Failed to get the window attributes" << std::endl;
+        Err() << "Failed to get the window attributes" << std::endl;
         return;
     }
 
@@ -175,7 +175,7 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     {
         if (visuals)
             XFree(visuals);
-        std::cerr << "There is no valid visual for the selected screen" << std::endl;
+        Err() << "There is no valid visual for the selected screen" << std::endl;
         return;
     }
 
@@ -216,7 +216,7 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
     // Make sure that we have found a visual
     if (!bestVisual)
     {
-        std::cerr << "Failed to find a suitable pixel format for the window -- cannot create OpenGL context" << std::endl;
+        Err() << "Failed to find a suitable pixel format for the window -- cannot create OpenGL context" << std::endl;
         return;
     }
 
@@ -267,7 +267,7 @@ void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, co
         myContext = glXCreateContext(myDisplay, bestVisual, toShare, true);
         if (!myContext)
         {
-            std::cerr << "Failed to create an OpenGL context for this window" << std::endl;
+            Err() << "Failed to create an OpenGL context for this window" << std::endl;
             return;
         }
     }

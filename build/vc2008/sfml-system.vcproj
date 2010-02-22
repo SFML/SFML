@@ -380,6 +380,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\SFML\System\Err.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\System\Err.hpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\SFML\System\Lock.cpp"
 			>
 		</File>

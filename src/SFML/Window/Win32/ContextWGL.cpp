@@ -31,7 +31,7 @@
 #include <SFML/Window/glext/wglext.h>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -205,7 +205,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
         else
         {
             // wglChoosePixelFormatARB not supported ; disabling antialiasing
-            std::cerr << "Antialiasing is not supported ; it will be disabled" << std::endl;
+            Err() << "Antialiasing is not supported ; it will be disabled" << std::endl;
             mySettings.AntialiasingLevel = 0;
         }
     }
@@ -229,7 +229,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
         bestFormat = ChoosePixelFormat(myDeviceContext, &descriptor);
         if (bestFormat == 0)
         {
-            std::cerr << "Failed to find a suitable pixel format for device context -- cannot create OpenGL context" << std::endl;
+            Err() << "Failed to find a suitable pixel format for device context -- cannot create OpenGL context" << std::endl;
             return;
         }
     }
@@ -245,7 +245,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
     // Set the chosen pixel format
     if (!SetPixelFormat(myDeviceContext, bestFormat, &actualFormat))
     {
-        std::cerr << "Failed to set pixel format for device context -- cannot create OpenGL context" << std::endl;
+        Err() << "Failed to set pixel format for device context -- cannot create OpenGL context" << std::endl;
         return;
     }
 
@@ -289,7 +289,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
         myContext = wglCreateContext(myDeviceContext);
         if (!myContext)
         {
-            std::cerr << "Failed to create an OpenGL context for this window" << std::endl;
+            Err() << "Failed to create an OpenGL context for this window" << std::endl;
             return;
         }
 
@@ -301,7 +301,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
             Lock lock(mutex);
 
             if (!wglShareLists(sharedContext, myContext))
-                std::cerr << "Failed to share the OpenGL context" << std::endl;
+                Err() << "Failed to share the OpenGL context" << std::endl;
         }
     }
 }

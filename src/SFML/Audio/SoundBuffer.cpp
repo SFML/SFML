@@ -30,7 +30,7 @@
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/ALCheck.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 #include <memory>
 
 
@@ -152,12 +152,12 @@ bool SoundBuffer::LoadFromSamples(const Int16* samples, std::size_t samplesCount
     else
     {
         // Error...
-        std::cerr << "Failed to load sound buffer from memory ("
-                  << "Samples : "        << samples       << ", "
-                  << "Samples count : "  << samplesCount  << ", "
-                  << "Channels count : " << channelsCount << ", "
-                  << "Sample rate : "    << sampleRate    << ")"
-                  << std::endl;
+        Err() << "Failed to load sound buffer from memory ("
+              << "Samples : "        << samples       << ", "
+              << "Samples count : "  << samplesCount  << ", "
+              << "Channels count : " << channelsCount << ", "
+              << "Sample rate : "    << sampleRate    << ")"
+              << std::endl;
 
         return false;
     }
@@ -251,7 +251,7 @@ bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
     // Check if the format is valid
     if (format == 0)
     {
-        std::cerr << "Unsupported number of channels (" << channelsCount << ")" << std::endl;
+        Err() << "Unsupported number of channels (" << channelsCount << ")" << std::endl;
         return false;
     }
 

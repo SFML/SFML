@@ -28,7 +28,7 @@
 #include <SFML/Graphics/Win32/RenderImageImplPBuffer.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -117,7 +117,7 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
     // Make sure that one pixel format has been found
     if (nbFormats == 0)
     {
-        std::cerr << "Impossible to create render image (failed to find a suitable pixel format for PBuffer)" << std::endl;
+        Err() << "Impossible to create render image (failed to find a suitable pixel format for PBuffer)" << std::endl;
         return false;
     }
 
@@ -129,7 +129,7 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
     // Check errors
     if (!myPBuffer || !myDeviceContext || !myContext)
     {
-        std::cerr << "Impossible to create render image (failed to create PBuffer)" << std::endl;
+        Err() << "Impossible to create render image (failed to create PBuffer)" << std::endl;
         return false;
     }
 
@@ -139,10 +139,10 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
     wglQueryPbufferARB(myPBuffer, WGL_PBUFFER_HEIGHT_ARB, &actualHeight);
     if ((actualWidth != static_cast<int>(width)) || (actualHeight != static_cast<int>(height)))
     {
-        std::cerr << "Impossible to create render image (failed to match the requested size). "
-                  << "Size: " << actualWidth << "x" << actualHeight << " - "
-                  << "Requested: " << width << "x" << height
-                  << std::endl;
+        Err() << "Impossible to create render image (failed to match the requested size). "
+              << "Size: " << actualWidth << "x" << actualHeight << " - "
+              << "Requested: " << width << "x" << height
+              << std::endl;
         return false;
     }
 

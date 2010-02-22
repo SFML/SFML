@@ -28,7 +28,7 @@
 #include <SFML/Graphics/RenderImage.hpp>
 #include <SFML/Graphics/RenderImageImplFBO.hpp>
 #include <SFML/Graphics/RenderImageImplPBuffer.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -54,14 +54,14 @@ bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuff
     // Make sure that render-images are supported
     if (!IsAvailable())
     {
-        std::cerr << "Impossible to create render image (your system doesn't support this feature)" << std::endl;
+        Err() << "Impossible to create render image (your system doesn't support this feature)" << std::endl;
         return false;
     }
 
     // Create the image
     if (!myImage.Create(width, height))
     {
-        std::cerr << "Impossible to create render image (failed to create the target image)" << std::endl;
+        Err() << "Impossible to create render image (failed to create the target image)" << std::endl;
         return false;
     }
 

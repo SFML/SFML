@@ -22,68 +22,56 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_ERR_HPP
+#define SFML_ERR_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Win32/ThreadImpl.hpp>
-#include <SFML/System/Thread.hpp>
-#include <SFML/System/Err.hpp>
-#include <process.h>
+#include <SFML/Config.hpp>
+#include <ostream>
 
 
 namespace sf
 {
-namespace priv
-{
 ////////////////////////////////////////////////////////////
-ThreadImpl::ThreadImpl(Thread* owner)
-{
-    myThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, owner, 0, NULL));
-
-    if (!myThread)
-        Err() << "Failed to create thread" << std::endl;
-}
-
-
+/// \brief Standard stream used by SFML to output warnings and errors
+///
 ////////////////////////////////////////////////////////////
-ThreadImpl::~ThreadImpl()
-{
-    if (myThread)
-        CloseHandle(myThread);
-}
-
-
-////////////////////////////////////////////////////////////
-void ThreadImpl::Wait()
-{
-    if (myThread)
-        WaitForSingleObject(myThread, INFINITE);
-}
-
-
-////////////////////////////////////////////////////////////
-void ThreadImpl::Terminate()
-{
-    if (myThread)
-        TerminateThread(myThread, 0);
-}
-
-
-////////////////////////////////////////////////////////////
-unsigned int __stdcall ThreadImpl::EntryPoint(void* userData)
-{
-    // The Thread instance is stored in the user data
-    Thread* owner = static_cast<Thread*>(userData);
-
-    // Forward to the owner
-    owner->Run();
-
-    // Optional, but it is cleaner
-    _endthreadex(0);
-
-    return 0;
-}
-
-} // namespace priv
+SFML_API std::ostream& Err();
 
 } // namespace sf
+
+
+#endif // SFML_ERR_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \fn sf::Err
+///
+/// By default, sf::Err() outputs to the same location as std::cerr,
+/// (-> the stderr descriptor) which is the console if there's
+/// one available.
+///
+/// It is a standard std::ostream instance, so it supports all the
+/// insertion operations defined by the STL
+/// (operator <<, manipulators, etc.).
+///
+/// sf::Err() can be redirected to write to another output, independantly
+/// of std::cerr, by using the rdbuf() function provided by the
+/// std::ostream class.
+///
+/// Example:
+/// \code
+/// // Redirect to a file
+/// std::ofstream file("sfml-log.txt");
+/// std::streambuf* previous = sf::Err().rdbuf(file.rdbuf());
+///
+/// // Redirect to nothing
+/// sf::Err().rdbuf(NULL);
+///
+/// // Restore the original output
+/// sf::Err().rdbuf(previous);
+/// \endcode
+///
+////////////////////////////////////////////////////////////

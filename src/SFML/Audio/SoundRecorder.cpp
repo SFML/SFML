@@ -29,7 +29,7 @@
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Sleep.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 ////////////////////////////////////////////////////////////
@@ -64,14 +64,14 @@ void SoundRecorder::Start(unsigned int sampleRate)
     // Check if the device can do audio capture
     if (!IsAvailable())
     {
-        std::cerr << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::CanCapture to check it)" << std::endl;
+        Err() << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::CanCapture to check it)" << std::endl;
         return;
     }
 
     // Check that another capture is not already running
     if (captureDevice)
     {
-        std::cerr << "Trying to start audio capture, but another capture is already running" << std::endl;
+        Err() << "Trying to start audio capture, but another capture is already running" << std::endl;
         return;
     }
 
@@ -79,7 +79,7 @@ void SoundRecorder::Start(unsigned int sampleRate)
     captureDevice = alcCaptureOpenDevice(NULL, sampleRate, AL_FORMAT_MONO16, sampleRate);
     if (!captureDevice)
     {
-        std::cerr << "Failed to open the audio capture device" << std::endl;
+        Err() << "Failed to open the audio capture device" << std::endl;
         return;
     }
 

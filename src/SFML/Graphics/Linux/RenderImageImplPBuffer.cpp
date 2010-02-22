@@ -28,7 +28,7 @@
 #include <SFML/Graphics/Linux/RenderImageImplPBuffer.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -112,7 +112,7 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
     GLXFBConfig* configs = glXChooseFBConfigSGIX(myDisplay, DefaultScreen(myDisplay), visualAttributes, &nbConfigs);
     if (!configs || !nbConfigs)
     {
-        std::cerr << "Impossible to create render image (failed to find a suitable pixel format for PBuffer)" << std::endl;
+        Err() << "Impossible to create render image (failed to find a suitable pixel format for PBuffer)" << std::endl;
         return false;
     }
 
@@ -120,7 +120,7 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
     myPBuffer = glXCreateGLXPbufferSGIX(myDisplay, configs[0], width, height, PBufferAttributes);
     if (!myPBuffer)
     {
-        std::cerr << "Impossible to create render image (failed to create the OpenGL PBuffer)" << std::endl;
+        Err() << "Impossible to create render image (failed to create the OpenGL PBuffer)" << std::endl;
         XFree(configs);
         return false;
     }
@@ -131,10 +131,10 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
     glXQueryGLXPbufferSGIX(myDisplay, myPBuffer, GLX_HEIGHT_SGIX, &actualHeight);
     if ((actualWidth != width) || (actualHeight != height))
     {
-        std::cerr << "Impossible to create render image (failed to match the requested size). "
-                  << "Size: " << actualWidth << "x" << actualHeight << " - "
-                  << "Requested: " << width << "x" << height
-                  << std::endl;
+        Err() << "Impossible to create render image (failed to match the requested size). "
+              << "Size: " << actualWidth << "x" << actualHeight << " - "
+              << "Requested: " << width << "x" << height
+              << std::endl;
         XFree(configs);
         return false;
     }
@@ -150,7 +150,7 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
     myContext = glXCreateContext(myDisplay, visual, currentContext, true);
     if (!myContext)
     {
-        std::cerr << "Impossible to create render image (failed to create the OpenGL context)" << std::endl;
+        Err() << "Impossible to create render image (failed to create the OpenGL context)" << std::endl;
         XFree(configs);
         XFree(visual);
         return false;

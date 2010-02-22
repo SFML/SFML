@@ -26,12 +26,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/System/Err.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 #include FT_BITMAP_H
-#include <iostream>
 
 
 namespace sf
@@ -84,7 +84,7 @@ bool Font::LoadFromFile(const std::string& filename)
     FT_Library library;
     if (FT_Init_FreeType(&library) != 0)
     {
-        std::cerr << "Failed to load font \"" << filename << "\" (failed to initialize FreeType)" << std::endl;
+        Err() << "Failed to load font \"" << filename << "\" (failed to initialize FreeType)" << std::endl;
         return false;
     }
     myLibrary = library;
@@ -93,14 +93,14 @@ bool Font::LoadFromFile(const std::string& filename)
     FT_Face face;
     if (FT_New_Face(static_cast<FT_Library>(myLibrary), filename.c_str(), 0, &face) != 0)
     {
-        std::cerr << "Failed to load font \"" << filename << "\" (failed to create the font face)" << std::endl;
+        Err() << "Failed to load font \"" << filename << "\" (failed to create the font face)" << std::endl;
         return false;
     }
 
     // Select the unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        std::cerr << "Failed to load font \"" << filename << "\" (failed to set the Unicode character set)" << std::endl;
+        Err() << "Failed to load font \"" << filename << "\" (failed to set the Unicode character set)" << std::endl;
         return false;
     }
 
@@ -124,7 +124,7 @@ bool Font::LoadFromMemory(const void* data, std::size_t sizeInBytes)
     FT_Library library;
     if (FT_Init_FreeType(&library) != 0)
     {
-        std::cerr << "Failed to load font from memory (failed to initialize FreeType)" << std::endl;
+        Err() << "Failed to load font from memory (failed to initialize FreeType)" << std::endl;
         return false;
     }
     myLibrary = library;
@@ -133,14 +133,14 @@ bool Font::LoadFromMemory(const void* data, std::size_t sizeInBytes)
     FT_Face face;
     if (FT_New_Memory_Face(static_cast<FT_Library>(myLibrary), reinterpret_cast<const FT_Byte*>(data), static_cast<FT_Long>(sizeInBytes), 0, &face) != 0)
     {
-        std::cerr << "Failed to load font from memory (failed to create the font face)" << std::endl;
+        Err() << "Failed to load font from memory (failed to create the font face)" << std::endl;
         return false;
     }
 
     // Select the unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        std::cerr << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
+        Err() << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
         return false;
     }
 
@@ -460,7 +460,7 @@ IntRect Font::FindGlyphRect(Page& page, unsigned int width, unsigned int height)
             else
             {
                 // Oops, we've reached the maximum texture size...
-                std::cerr << "Failed to add a new character to the font: the maximum image size has been reached" << std::endl;
+                Err() << "Failed to add a new character to the font: the maximum image size has been reached" << std::endl;
                 return IntRect(0, 0, 2, 2);
             }
         }

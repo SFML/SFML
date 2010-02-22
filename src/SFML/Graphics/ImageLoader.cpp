@@ -33,7 +33,7 @@ extern "C"
 }
 #include <SFML/Graphics/libpng/png.h>
 #include <SFML/Graphics/SOIL/SOIL.h>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 namespace
@@ -43,7 +43,7 @@ namespace
     ////////////////////////////////////////////////////////////
     void PngErrorHandler(png_structp png, png_const_charp message)
     {
-        std::cerr << "Failed to write PNG image. Reason : " << message << std::endl;
+        sf::Err() << "Failed to write PNG image. Reason : " << message << std::endl;
         longjmp(png->jmpbuf, 1);
     }
 }
@@ -112,7 +112,7 @@ bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Col
     else
     {
         // Error, failed to load the image
-        std::cerr << "Failed to load image \"" << filename << "\". Reason : " << SOIL_last_result() << std::endl;
+        Err() << "Failed to load image \"" << filename << "\". Reason : " << SOIL_last_result() << std::endl;
 
         return false;
     }
@@ -151,7 +151,7 @@ bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t sizeInBytes,
     else
     {
         // Error, failed to load the image
-        std::cerr << "Failed to load image from memory. Reason : " << SOIL_last_result() << std::endl;
+        Err() << "Failed to load image from memory. Reason : " << SOIL_last_result() << std::endl;
 
         return false;
     }
@@ -180,7 +180,7 @@ bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector
     if (type == -1)
     {
         // Error, incompatible type
-        std::cerr << "Failed to save image \"" << filename << "\". Reason: this image format is not supported" << std::endl;
+        Err() << "Failed to save image \"" << filename << "\". Reason: this image format is not supported" << std::endl;
         return false;
     }
 
@@ -189,7 +189,7 @@ bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector
     if (!SOIL_save_image(filename.c_str(), type, static_cast<int>(width), static_cast<int>(height), 4, ptr))
     {
         // Error, failed to save the image
-        std::cerr << "Failed to save image \"" << filename << "\". Reason: " << SOIL_last_result() << std::endl;
+        Err() << "Failed to save image \"" << filename << "\". Reason: " << SOIL_last_result() << std::endl;
         return false;
     }
 
@@ -206,7 +206,7 @@ bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Color>
     FILE* file = fopen(filename.c_str(), "wb");
     if (!file)
     {
-        std::cerr << "Failed to save image file \"" << filename << "\". Reason : cannot open file" << std::endl;
+        Err() << "Failed to save image file \"" << filename << "\". Reason : cannot open file" << std::endl;
         return false;
     }
 
@@ -265,7 +265,7 @@ bool ImageLoader::WritePng(const std::string& filename, const std::vector<Color>
     FILE* file = fopen(filename.c_str(), "wb");
     if (!file)
     {
-        std::cerr << "Failed to save image file \"" << filename << "\". Reason : cannot open file" << std::endl;
+        Err() << "Failed to save image file \"" << filename << "\". Reason : cannot open file" << std::endl;
         return false;
     }
 
@@ -274,7 +274,7 @@ bool ImageLoader::WritePng(const std::string& filename, const std::vector<Color>
     if (!png)
     {
         fclose(file);
-        std::cerr << "Failed to save image file \"" << filename << "\". Reason : cannot allocate PNG write structure" << std::endl;
+        Err() << "Failed to save image file \"" << filename << "\". Reason : cannot allocate PNG write structure" << std::endl;
         return false;
     }
 
@@ -284,7 +284,7 @@ bool ImageLoader::WritePng(const std::string& filename, const std::vector<Color>
     {
         fclose(file);
         png_destroy_write_struct(&png, NULL);
-        std::cerr << "Failed to save image file \"" << filename << "\". Reason : cannot allocate PNG info structure" << std::endl;
+        Err() << "Failed to save image file \"" << filename << "\". Reason : cannot allocate PNG info structure" << std::endl;
         return false;
     }
 

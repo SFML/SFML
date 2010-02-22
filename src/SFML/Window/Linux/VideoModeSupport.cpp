@@ -26,10 +26,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Linux/VideoModeSupport.hpp>
+#include <SFML/System/Err.hpp>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 #include <algorithm>
-#include <iostream>
 
 
 namespace sf
@@ -89,13 +89,13 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
             else
             {
                 // Failed to get the screen configuration
-                std::cerr << "Failed to retrieve the screen configuration while trying to get the supported video modes" << std::endl;
+                Err() << "Failed to retrieve the screen configuration while trying to get the supported video modes" << std::endl;
             }
         }
         else
         {
             // XRandr extension is not supported : we cannot get the video modes
-            std::cerr << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
+            Err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
         }
 
         // Close the connection with the X server
@@ -104,7 +104,7 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
     else
     {
         // We couldn't connect to the X server
-        std::cerr << "Failed to connect to the X server while trying to get the supported video modes" << std::endl;
+        Err() << "Failed to connect to the X server while trying to get the supported video modes" << std::endl;
     }
 }
 
@@ -145,13 +145,13 @@ VideoMode VideoModeSupport::GetDesktopVideoMode()
             else
             {
                 // Failed to get the screen configuration
-                std::cerr << "Failed to retrieve the screen configuration while trying to get the desktop video modes" << std::endl;
+                Err() << "Failed to retrieve the screen configuration while trying to get the desktop video modes" << std::endl;
             }
         }
         else
         {
             // XRandr extension is not supported : we cannot get the video modes
-            std::cerr << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
+            Err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
         }
 
         // Close the connection with the X server
@@ -160,7 +160,7 @@ VideoMode VideoModeSupport::GetDesktopVideoMode()
     else
     {
         // We couldn't connect to the X server
-        std::cerr << "Failed to connect to the X server while trying to get the desktop video modes" << std::endl;
+        Err() << "Failed to connect to the X server while trying to get the desktop video modes" << std::endl;
     }
 
     return desktopMode;

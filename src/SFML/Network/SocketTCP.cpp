@@ -29,8 +29,8 @@
 #include <SFML/Network/IPAddress.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/SocketHelper.hpp>
+#include <SFML/System/Err.hpp>
 #include <algorithm>
-#include <iostream>
 #include <string.h>
 
 
@@ -183,7 +183,7 @@ bool SocketTCP::Listen(unsigned short port)
     if (bind(mySocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr)) == -1)
     {
         // Not likely to happen, but...
-        std::cerr << "Failed to bind socket to port " << port << std::endl;
+        Err() << "Failed to bind socket to port " << port << std::endl;
         return false;
     }
 
@@ -191,7 +191,7 @@ bool SocketTCP::Listen(unsigned short port)
     if (listen(mySocket, 0) == -1)
     {
         // Oops, socket is deaf
-        std::cerr << "Failed to listen to port " << port << std::endl;
+        Err() << "Failed to listen to port " << port << std::endl;
         return false;
     }
 
@@ -259,7 +259,7 @@ Socket::Status SocketTCP::Send(const char* data, std::size_t sizeInBytes)
     else
     {
         // Error...
-        std::cerr << "Cannot send data over the network (invalid parameters)" << std::endl;
+        Err() << "Cannot send data over the network (invalid parameters)" << std::endl;
         return Socket::Error;
     }
 }
@@ -302,7 +302,7 @@ Socket::Status SocketTCP::Receive(char* data, std::size_t maxSize, std::size_t& 
     else
     {
         // Error...
-        std::cerr << "Cannot receive data from the network (invalid parameters)" << std::endl;
+        Err() << "Cannot receive data from the network (invalid parameters)" << std::endl;
         return Socket::Error;
     }
 }
@@ -400,7 +400,7 @@ bool SocketTCP::Close()
     {
         if (!SocketHelper::Close(mySocket))
         {
-            std::cerr << "Failed to close socket" << std::endl;
+            Err() << "Failed to close socket" << std::endl;
             return false;
         }
 
@@ -482,15 +482,15 @@ void SocketTCP::Create(SocketHelper::SocketType descriptor)
         int yes = 1;
         if (setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
         {
-            std::cerr << "Failed to set socket option \"SO_REUSEADDR\" ; "
-                      << "binding to a same port may fail if too fast" << std::endl;
+            Err() << "Failed to set socket option \"SO_REUSEADDR\" ; "
+                  << "binding to a same port may fail if too fast" << std::endl;
         }
 
         // Disable the Nagle algorithm (ie. removes buffering of TCP packets)
         if (setsockopt(mySocket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
         {
-            std::cerr << "Failed to set socket option \"TCP_NODELAY\" ; "
-                      << "all your TCP packets will be buffered" << std::endl;
+            Err() << "Failed to set socket option \"TCP_NODELAY\" ; "
+                  << "all your TCP packets will be buffered" << std::endl;
         }
 
         // Set blocking by default (should always be the case anyway)

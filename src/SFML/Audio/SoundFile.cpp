@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFile.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 #include <string.h>
 
 
@@ -86,7 +86,7 @@ bool SoundFile::OpenRead(const std::string& filename)
     myFile = sf_open(filename.c_str(), SFM_READ, &fileInfos);
     if (!myFile)
     {
-        std::cerr << "Failed to read sound file \"" << filename << "\" (" << sf_strerror(myFile) << ")" << std::endl;
+        Err() << "Failed to read sound file \"" << filename << "\" (" << sf_strerror(myFile) << ")" << std::endl;
         return false;
     }
 
@@ -114,7 +114,7 @@ bool SoundFile::OpenRead(const void* data, std::size_t sizeInBytes)
     myFile = sf_open_virtual(&io, SFM_READ, &fileInfos, &myMemoryIO);
     if (!myFile)
     {
-        std::cerr << "Failed to read sound file from memory (" << sf_strerror(myFile) << ")" << std::endl;
+        Err() << "Failed to read sound file from memory (" << sf_strerror(myFile) << ")" << std::endl;
         return false;
     }
 
@@ -139,7 +139,7 @@ bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelsCoun
     if (format == -1)
     {
         // Error : unrecognized extension
-        std::cerr << "Failed to create sound file \"" << filename << "\" (unknown format)" << std::endl;
+        Err() << "Failed to create sound file \"" << filename << "\" (unknown format)" << std::endl;
         return false;
     }
 
@@ -153,7 +153,7 @@ bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelsCoun
     myFile = sf_open(filename.c_str(), SFM_WRITE, &fileInfos);
     if (!myFile)
     {
-        std::cerr << "Failed to create sound file \"" << filename << "\" (" << sf_strerror(myFile) << ")" << std::endl;
+        Err() << "Failed to create sound file \"" << filename << "\" (" << sf_strerror(myFile) << ")" << std::endl;
         return false;
     }
 

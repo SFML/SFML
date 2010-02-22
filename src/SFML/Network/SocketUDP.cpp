@@ -28,8 +28,8 @@
 #include <SFML/Network/SocketUDP.hpp>
 #include <SFML/Network/IPAddress.hpp>
 #include <SFML/Network/Packet.hpp>
+#include <SFML/System/Err.hpp>
 #include <algorithm>
-#include <iostream>
 #include <string.h>
 
 
@@ -81,7 +81,7 @@ bool SocketUDP::Bind(unsigned short port)
             // Bind the socket to the port
             if (bind(mySocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr)) == -1)
             {
-                std::cerr << "Failed to bind the socket to port " << port << std::endl;
+                Err() << "Failed to bind the socket to port " << port << std::endl;
                 myPort = 0;
                 return false;
             }
@@ -149,7 +149,7 @@ Socket::Status SocketUDP::Send(const char* data, std::size_t sizeInBytes, const 
     else
     {
         // Error...
-        std::cerr << "Cannot send data over the network (invalid parameters)" << std::endl;
+        Err() << "Cannot send data over the network (invalid parameters)" << std::endl;
         return Socket::Error;
     }
 }
@@ -167,7 +167,7 @@ Socket::Status SocketUDP::Receive(char* data, std::size_t maxSize, std::size_t& 
     // Make sure the socket is bound to a port
     if (myPort == 0)
     {
-        std::cerr << "Failed to receive data ; the UDP socket first needs to be bound to a port" << std::endl;
+        Err() << "Failed to receive data ; the UDP socket first needs to be bound to a port" << std::endl;
         return Socket::Error;
     }
 
@@ -207,7 +207,7 @@ Socket::Status SocketUDP::Receive(char* data, std::size_t maxSize, std::size_t& 
     else
     {
         // Error...
-        std::cerr << "Cannot receive data from the network (invalid parameters)" << std::endl;
+        Err() << "Cannot receive data from the network (invalid parameters)" << std::endl;
         return Socket::Error;
     }
 }
@@ -313,7 +313,7 @@ bool SocketUDP::Close()
     {
         if (!SocketHelper::Close(mySocket))
         {
-            std::cerr << "Failed to close socket" << std::endl;
+            Err() << "Failed to close socket" << std::endl;
             return false;
         }
 
@@ -408,14 +408,14 @@ void SocketUDP::Create(SocketHelper::SocketType descriptor)
         int yes = 1;
         if (setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
         {
-            std::cerr << "Failed to set socket option \"reuse address\" ; "
-                      << "binding to a same port may fail if too fast" << std::endl;
+            Err() << "Failed to set socket option \"reuse address\" ; "
+                  << "binding to a same port may fail if too fast" << std::endl;
         }
 
         // Enable broadcast by default
         if (setsockopt(mySocket, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
         {
-            std::cerr << "Failed to enable broadcast on UDP socket" << std::endl;
+            Err() << "Failed to enable broadcast on UDP socket" << std::endl;
         }
 
         // Set blocking by default (should always be the case anyway)

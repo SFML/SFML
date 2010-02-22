@@ -28,8 +28,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/System/Err.hpp>
 #include <fstream>
-#include <iostream>
 #include <sstream>
 
 
@@ -79,7 +79,7 @@ bool Shader::LoadFromFile(const std::string& filename)
     std::ifstream file(filename.c_str());
     if (!file)
     {
-        std::cerr << "Failed to open shader file \"" << filename << "\"" << std::endl;
+        Err() << "Failed to open shader file \"" << filename << "\"" << std::endl;
         return false;
     }
 
@@ -118,7 +118,7 @@ void Shader::SetParameter(const std::string& name, float x)
         if (location != -1)
             GLCheck(glUniform1fARB(location, x));
         else
-            std::cerr << "Parameter \"" << name << "\" not found in shader" << std::endl;
+            Err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
         GLCheck(glUseProgramObjectARB(program));
@@ -140,7 +140,7 @@ void Shader::SetParameter(const std::string& name, float x, float y)
         if (location != -1)
             GLCheck(glUniform2fARB(location, x, y));
         else
-            std::cerr << "Parameter \"" << name << "\" not found in shader" << std::endl;
+            Err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
         GLCheck(glUseProgramObjectARB(program));
@@ -162,7 +162,7 @@ void Shader::SetParameter(const std::string& name, float x, float y, float z)
         if (location != -1)
             GLCheck(glUniform3fARB(location, x, y, z));
         else
-            std::cerr << "Parameter \"" << name << "\" not found in shader" << std::endl;
+            Err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
         GLCheck(glUseProgramObjectARB(program));
@@ -184,7 +184,7 @@ void Shader::SetParameter(const std::string& name, float x, float y, float z, fl
         if (location != -1)
             GLCheck(glUniform4fARB(location, x, y, z, w));
         else
-            std::cerr << "Parameter \"" << name << "\" not found in shader" << std::endl;
+            Err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
         GLCheck(glUseProgramObjectARB(program));
@@ -214,7 +214,7 @@ void Shader::SetTexture(const std::string& name, const Image& texture)
     GLCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
     if (myTextures.size() + 1 >= static_cast<std::size_t>(maxUnits))
     {
-        std::cerr << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
+        Err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
         return;
     }
 
@@ -222,7 +222,7 @@ void Shader::SetTexture(const std::string& name, const Image& texture)
     int location = glGetUniformLocationARB(myShaderProgram, name.c_str());
     if (location == -1)
     {
-        std::cerr << "Texture \"" << name << "\" not found in shader" << std::endl;
+        Err() << "Texture \"" << name << "\" not found in shader" << std::endl;
         return;
     }
 
@@ -321,8 +321,8 @@ bool Shader::CompileProgram()
     // First make sure that we can use shaders
     if (!IsAvailable())
     {
-        std::cerr << "Failed to create a shader: your system doesn't support shaders "
-                  << "(you should test Shader::IsAvailable() before trying to use the Shader class)" << std::endl;
+        Err() << "Failed to create a shader: your system doesn't support shaders "
+              << "(you should test Shader::IsAvailable() before trying to use the Shader class)" << std::endl;
         return false;
     }
 
@@ -360,8 +360,8 @@ bool Shader::CompileProgram()
     {
         char log[1024];
         GLCheck(glGetInfoLogARB(vertexShader, sizeof(log), 0, log));
-        std::cerr << "Failed to compile shader:" << std::endl
-                  << log << std::endl;
+        Err() << "Failed to compile shader:" << std::endl
+              << log << std::endl;
         GLCheck(glDeleteObjectARB(vertexShader));
         GLCheck(glDeleteObjectARB(fragmentShader));
         GLCheck(glDeleteObjectARB(myShaderProgram));
@@ -373,8 +373,8 @@ bool Shader::CompileProgram()
     {
         char log[1024];
         GLCheck(glGetInfoLogARB(fragmentShader, sizeof(log), 0, log));
-        std::cerr << "Failed to compile shader:" << std::endl
-                  << log << std::endl;
+        Err() << "Failed to compile shader:" << std::endl
+              << log << std::endl;
         GLCheck(glDeleteObjectARB(vertexShader));
         GLCheck(glDeleteObjectARB(fragmentShader));
         GLCheck(glDeleteObjectARB(myShaderProgram));
@@ -400,8 +400,8 @@ bool Shader::CompileProgram()
         // Oops... link errors
         char log[1024];
         GLCheck(glGetInfoLogARB(myShaderProgram, sizeof(log), 0, log));
-        std::cerr << "Failed to link shader:" << std::endl
-                  << log << std::endl;
+        Err() << "Failed to link shader:" << std::endl
+              << log << std::endl;
         GLCheck(glDeleteObjectARB(myShaderProgram));
         myShaderProgram = 0;
         return false;

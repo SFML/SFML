@@ -29,7 +29,7 @@
 #include <SFML/Window/ContextGL.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Sleep.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 ////////////////////////////////////////////////////////////
@@ -104,7 +104,7 @@ void Window::Create(VideoMode mode, const std::string& title, unsigned long styl
         // Make sure there's not already a fullscreen window (only one is allowed)
         if (fullscreenWindow)
         {
-            std::cerr << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
+            Err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
             style &= ~Style::Fullscreen;
         }
         else
@@ -112,7 +112,7 @@ void Window::Create(VideoMode mode, const std::string& title, unsigned long styl
             // Make sure the chosen video mode is compatible
             if (!mode.IsValid())
             {
-                std::cerr << "The requested video mode is not available, switching to a valid mode" << std::endl;
+                Err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
                 mode = VideoMode::GetMode(0);
             }
 
@@ -315,7 +315,7 @@ bool Window::SetActive(bool active) const
         }
         else
         {
-            std::cerr << "Failed to activate the window's context" << std::endl;
+            Err() << "Failed to activate the window's context" << std::endl;
             return false;
         }
     }

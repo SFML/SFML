@@ -28,7 +28,7 @@
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/Listener.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 
 
 ////////////////////////////////////////////////////////////
@@ -62,12 +62,12 @@ AudioDevice::AudioDevice()
         }
         else
         {
-            std::cerr << "Failed to create the audio context" << std::endl;
+            Err() << "Failed to create the audio context" << std::endl;
         }
     }
     else
     {
-        std::cerr << "Failed to open the audio device" << std::endl;
+        Err() << "Failed to open the audio device" << std::endl;
     }
 }
 

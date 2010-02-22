@@ -30,8 +30,8 @@
 #include <SFML/Graphics/RenderImage.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/System/Err.hpp>
 #include <algorithm>
-#include <iostream>
 #include <vector>
 #include <string.h>
 
@@ -121,7 +121,7 @@ bool Image::LoadFromMemory(const void* data, std::size_t sizeInBytes)
     // Check parameters
     if (!data || (sizeInBytes == 0))
     {
-        std::cerr << "Failed to image font from memory, no data provided" << std::endl;
+        Err() << "Failed to image font from memory, no data provided" << std::endl;
         return false;
     }
 
@@ -389,8 +389,8 @@ void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
     // Check if pixel is whithin the image bounds
     if ((x >= myWidth) || (y >= myHeight))
     {
-        std::cerr << "Cannot set pixel (" << x << "," << y << ") for image "
-                  << "(width = " << myWidth << ", height = " << myHeight << ")" << std::endl;
+        Err() << "Cannot set pixel (" << x << "," << y << ") for image "
+              << "(width = " << myWidth << ", height = " << myHeight << ")" << std::endl;
         return;
     }
 
@@ -412,8 +412,8 @@ const Color& Image::GetPixel(unsigned int x, unsigned int y) const
     // Check if pixel is whithin the image bounds
     if ((x >= myWidth) || (y >= myHeight))
     {
-        std::cerr << "Cannot get pixel (" << x << "," << y << ") for image "
-                  << "(width = " << myWidth << ", height = " << myHeight << ")" << std::endl;
+        Err() << "Cannot get pixel (" << x << "," << y << ") for image "
+              << "(width = " << myWidth << ", height = " << myHeight << ")" << std::endl;
         return Color::Black;
     }
 
@@ -437,7 +437,7 @@ const Uint8* Image::GetPixelsPtr() const
     }
     else
     {
-        std::cerr << "Trying to access the pixels of an empty image" << std::endl;
+        Err() << "Trying to access the pixels of an empty image" << std::endl;
         return NULL;
     }
 }
@@ -661,10 +661,10 @@ bool Image::CreateTexture()
     unsigned int maxSize = GetMaximumSize();
     if ((myTextureWidth > maxSize) || (myTextureHeight > maxSize))
     {
-        std::cerr << "Failed to create image, its internal size is too high "
-                  << "(" << myTextureWidth << "x" << myTextureHeight << ", "
-                  << "maximum is " << maxSize << "x" << maxSize << ")"
-                  << std::endl;
+        Err() << "Failed to create image, its internal size is too high "
+              << "(" << myTextureWidth << "x" << myTextureHeight << ", "
+              << "maximum is " << maxSize << "x" << maxSize << ")"
+              << std::endl;
         return false;
     }
 

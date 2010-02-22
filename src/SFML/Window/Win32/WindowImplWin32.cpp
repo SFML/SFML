@@ -32,7 +32,7 @@
 #include <GL/gl.h>
 #include <SFML/Window/glext/wglext.h>
 #include <SFML/Window/glext/glext.h>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 #include <vector>
 
 // MinGW lacks the definition of some Win32 constants
@@ -309,7 +309,7 @@ void WindowImplWin32::SetIcon(unsigned int width, unsigned int height, const Uin
     }
     else
     {
-        std::cerr << "Failed to set the window's icon" << std::endl;
+        Err() << "Failed to set the window's icon" << std::endl;
     }
 }
 
@@ -363,7 +363,7 @@ void WindowImplWin32::SwitchToFullscreen(const VideoMode& mode)
     // Apply fullscreen mode
     if (ChangeDisplaySettings(&devMode, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
     {
-        std::cerr << "Failed to change display mode for fullscreen" << std::endl;
+        Err() << "Failed to change display mode for fullscreen" << std::endl;
         return;
     }
 
