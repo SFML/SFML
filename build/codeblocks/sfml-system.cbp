@@ -90,6 +90,7 @@
 			<Add directory="..\..\include" />
 		</Compiler>
 		<Unit filename="..\..\include\SFML\System\Clock.hpp" />
+		<Unit filename="..\..\include\SFML\System\Err.hpp" />
 		<Unit filename="..\..\include\SFML\System\Lock.hpp" />
 		<Unit filename="..\..\include\SFML\System\Mutex.hpp" />
 		<Unit filename="..\..\include\SFML\System\NonCopyable.hpp" />
@@ -110,6 +111,7 @@
 		<Unit filename="..\..\include\SFML\System\Vector3.hpp" />
 		<Unit filename="..\..\include\SFML\System\Vector3.inl" />
 		<Unit filename="..\..\src\SFML\System\Clock.cpp" />
+		<Unit filename="..\..\src\SFML\System\Err.cpp" />
 		<Unit filename="..\..\src\SFML\System\Lock.cpp" />
 		<Unit filename="..\..\src\SFML\System\Mutex.cpp" />
 		<Unit filename="..\..\src\SFML\System\Platform.hpp" />

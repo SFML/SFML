@@ -674,7 +674,7 @@ Key::Code WindowImplWin32::VirtualKeyCodeToSF(WPARAM key, LPARAM flags)
         case VK_SHIFT :
         {
             static UINT lShift = MapVirtualKey(VK_LSHIFT, MAPVK_VK_TO_VSC);
-            UINT scancode = (flags & (0xFF << 16)) >> 16;
+            UINT scancode = static_cast<UINT>((flags & (0xFF << 16)) >> 16);
             return scancode == lShift ? Key::LShift : Key::RShift;
         }
 
