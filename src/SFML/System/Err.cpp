@@ -62,14 +62,14 @@ private :
 
     virtual int overflow(int character)
     {
-        if (character != EOF)
+        if ((character != EOF) && (pptr() != epptr()))
         {
-            // Valid character: add it to the write buffer (sync() will be called if the buffer is full)
+            // Valid character
             return sputc(static_cast<char>(character));
         }
         else
         {
-            // Invalid character: just synchronize output
+            // Invalid character, or not enough space in the buffer: synchronize output
             return sync();
         }
     }
