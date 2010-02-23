@@ -67,7 +67,7 @@ myUseKeyRepeat(false),
 myMouseIn(false),
 myWheelStatus(0.0f)
 {
-	[AppController sharedController];
+	[sfPrivAppController sharedController];
 	
     // Create the shared OpenGL context
 	if ([GLContext sharedContext]) {
@@ -88,22 +88,19 @@ myUseKeyRepeat(false),
 myMouseIn(false),
 myWheelStatus(0.0f)
 {
-	if (Handle)
-	{
-		NSWindow *cocoaWindow = nil;
-		
+	if (Handle) {
 		// Classical window import
-		if ([(id)Handle isKindOfClass:[NSWindow class]])
-		{
-			cocoaWindow = (NSWindow *)Handle;
+		if ([(id)Handle isKindOfClass:[NSWindow class]]) {
+			myWrapper = [[sfPrivImportedWindow alloc]
+						 initWithWindow:(NSWindow *)Handle
+						 settings:params];
  		}
 		// Qt "window" import
-		else if ([(id)Handle isKindOfClass:[NSView class]])
-		{
-			cocoaWindow = [(NSView *)Handle window];
-		}
-		else
-		{
+		else if ([(id)Handle isKindOfClass:[NSView class]]) {
+			myWrapper = [[sfPrivImportedView alloc]
+						 initWithView:(NSView *)Handle
+						 settings:params];
+		} else {
 			std::cerr 
 			<< "Cannot import this Window Handle because it is neither"
 			<< "a <NSWindow *> nor <NSView *> object"
@@ -114,36 +111,23 @@ myWheelStatus(0.0f)
 			
 		}
 
-		if (cocoaWindow)
-		{
+		if (myWrapper) {
+			[myWrapper setDelegate:this];
 			
-			// We create the window according to the given handle
-			myWrapper = [[WindowWrapper alloc] initWithWindow:cocoaWindow
-													 settings:params
-													 delegate:this];
+			// initial mouse state
+			myMouseIn = [myWrapper mouseInside];
 			
-			if (myWrapper)
-			{
-				// initial mouse state
-				myMouseIn = [myWrapper mouseInside];
-				
-				// We set the myWidth and myHeight members to the correct values
-				myWidth = (int) [[myWrapper glView] frame].size.width;
-				myHeight = (int) [[myWrapper glView] frame].size.height;
-			} else {
-				std::cerr << "Failed to make the public window" << std::endl;
-			}
+			// We set the myWidth and myHeight members to the correct values
+			myWidth = (int) [[myWrapper view] frame].size.width;
+			myHeight = (int) [[myWrapper view] frame].size.height;
+		} else {
+			std::cerr << "Failed to make the public window" << std::endl;
 		}
-		else
-		{
-			std::cerr
-			<< "Could not get a valid NSWindow object from the given handle"
-			<< " (%p <"
-			<< [[(id)Handle className] UTF8String]
-			<< ">"
-			<< std::endl;
-		}
-
+	} else {
+		std::cerr
+		<< "Invalid null handle given to "
+		<< "Window::Window(WindowHandle Handle, const WindowSettings& Params)"
+		<< std::endl;
 	}
 }
 
@@ -163,14 +147,18 @@ myWheelStatus(0.0f)
 										 encoding:NSASCIIStringEncoding];
 	
 	// We create the window
-	myWrapper = [[WindowWrapper alloc] initWithSettings:params
-											   videoMode:Mode
-												   style:WindowStyle
-												   title:title
-												delegate:this];
+	myWrapper = [[sfPrivOwnedWindow alloc]
+				 initWithVideoMode:Mode
+				 settings:params
+				 style:WindowStyle
+				 title:title];
+	
+	
 	
 	if (myWrapper)
 	{
+		[myWrapper setDelegate:this];
+		
 		// initial mouse state
 		myMouseIn = [myWrapper mouseInside];
 		
@@ -566,7 +554,7 @@ void WindowImplCocoa::Display()
 void WindowImplCocoa::ProcessEvents()
 {
 	// Forward event handling call to the application controller
-	[[AppController sharedController] processEvents];
+	[[sfPrivAppController sharedController] processEvents];
 }
 
 
@@ -626,7 +614,7 @@ void WindowImplCocoa::SetCursorPosition(unsigned int Left, unsigned int Top)
 		pos.y = [[myWrapper window] frame].size.height - pos.y;
 		
 		// Adjust for view reference instead of window
-		pos.y -= [[myWrapper window] frame].size.height - [[myWrapper glView] frame].size.height;
+		pos.y -= [[myWrapper window] frame].size.height - [[myWrapper view] frame].size.height;
 		
 		// Convert to screen coordinates
 		NSPoint absolute = [[myWrapper window] convertBaseToScreen:pos];
@@ -635,7 +623,8 @@ void WindowImplCocoa::SetCursorPosition(unsigned int Left, unsigned int Top)
 		absolute.y = [[NSScreen mainScreen] frame].size.height - absolute.y;
 		
 		// Move cursor
-		CGDisplayMoveCursorToPoint([AppController primaryScreen], CGPointMake(absolute.x, absolute.y));
+		CGDisplayMoveCursorToPoint([sfPrivAppController primaryScreen],
+								   CGPointMake(absolute.x, absolute.y));
 	}
 }
 

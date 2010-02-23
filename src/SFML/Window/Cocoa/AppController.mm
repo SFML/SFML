@@ -57,7 +57,7 @@
 @end
 
 
-@implementation AppController
+@implementation sfPrivAppController
 
 
 ////////////////////////////////////////////////////////////
@@ -129,10 +129,10 @@
 ////////////////////////////////////////////////////////////
 /// Return the shared AppController instance. Make one if needed.
 ////////////////////////////////////////////////////////////
-+ (AppController *)sharedController
++ (sfPrivAppController *)sharedController
 {
 	// AppController singleton object
-	static AppController *shared = [[AppController alloc] init];
+	static sfPrivAppController *shared = [[sfPrivAppController alloc] init];
 	return shared;
 }
 
@@ -192,7 +192,7 @@
 	if (myFullscreenWrapper) {
 		myPrevMode = sf::VideoMode::GetDesktopMode();
 		
-		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([AppController primaryScreen],
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([sfPrivAppController primaryScreen],
 																	  myDesktopMode.BitsPerPixel,
 																	  myDesktopMode.Width,
 																	  myDesktopMode.Height,
@@ -202,7 +202,7 @@
 		[[myFullscreenWrapper window] setAlphaValue:0.0f];
 		
 		// Switch to the wished display mode
-		CGDisplaySwitchToMode([AppController primaryScreen], displayMode);
+		CGDisplaySwitchToMode([sfPrivAppController primaryScreen], displayMode);
 	}
 }
 
@@ -213,7 +213,7 @@
 - (void)applicationWillActivate:(NSNotification *)aNotification
 {
 	if (myFullscreenWrapper) {
-		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([AppController primaryScreen],
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([sfPrivAppController primaryScreen],
 																	  myPrevMode.BitsPerPixel,
 																	  myPrevMode.Width,
 																	  myPrevMode.Height,
@@ -221,7 +221,7 @@
 		[NSMenu setMenuBarVisible:NO];
 		
 		// Switch to the wished display mode
-		CGDisplaySwitchToMode([AppController primaryScreen], displayMode);
+		CGDisplaySwitchToMode([sfPrivAppController primaryScreen], displayMode);
 		
 		// Show the fullscreen window if existing
 		if (myFullscreenWrapper)
@@ -404,13 +404,13 @@
 /// Set @window as the current fullscreen window
 /// Change the screen resolution if needed according to @window and @fullscreenMode
 ////////////////////////////////////////////////////////////
-- (void)setFullscreenWindow:(WindowWrapper *)aWrapper mode:(sf::VideoMode *)fullscreenMode
+- (void)setFullscreenWindow:(sfPrivWindow *)aWindow mode:(sf::VideoMode *)fullscreenMode
 {
 	// If we have a fullscreen window and want to remove it
-	if (aWrapper == nil && myFullscreenWrapper)
+	if (aWindow == nil && myFullscreenWrapper)
 	{
 		// Get the CoreGraphics display mode according to the desktop mode
-		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([AppController primaryScreen],
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([sfPrivAppController primaryScreen],
 																	  myDesktopMode.BitsPerPixel,
 																	  myDesktopMode.Width,
 																	  myDesktopMode.Height,
@@ -422,7 +422,7 @@
 #endif
 		
 		// Switch to the desktop display mode
-		CGDisplaySwitchToMode([AppController primaryScreen], displayMode);
+		CGDisplaySwitchToMode([sfPrivAppController primaryScreen], displayMode);
 		
 		// Close the window
 		[[myFullscreenWrapper window] close];
@@ -438,13 +438,13 @@
 		// Release the saved window wrapper
 		myFullscreenWrapper = nil;
 	}
-	else if (aWrapper)
+	else if (aWindow)
 	{
 		// else if we want to SET fullscreen
 		assert(fullscreenMode != NULL);
 		
 		// Get the CoreGraphics display mode according to the given sf mode
-		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([AppController primaryScreen],
+		CFDictionaryRef displayMode = CGDisplayBestModeForParameters ([sfPrivAppController primaryScreen],
 																	  fullscreenMode->BitsPerPixel,
 																	  fullscreenMode->Width,
 																	  fullscreenMode->Height,
@@ -465,7 +465,7 @@
 		{
 			// Switch to the wished display mode
 			myPrevMode = *fullscreenMode;
-			CGDisplaySwitchToMode([AppController primaryScreen], displayMode);
+			CGDisplaySwitchToMode([sfPrivAppController primaryScreen], displayMode);
 		}
 		
 		if (myFullscreenWrapper)
@@ -474,8 +474,8 @@
 		}
 		
 		// Open and center the window
-		[[aWrapper window] makeKeyAndOrderFront:nil];
-		[[aWrapper window] center];
+		[[aWindow window] makeKeyAndOrderFront:nil];
+		[[aWindow window] center];
 		
 #if ENABLE_FADE_OPERATIONS
 		// Fade to normal screen
@@ -483,11 +483,11 @@
 #endif
 		
 		// Save the fullscreen wrapper
-		myFullscreenWrapper = aWrapper;
+		myFullscreenWrapper = aWindow;
 	}
 	else
 	{
-		std::cerr << "Inconcistency error for arguments given to -[AppController setFullscreenWindow:mode:]" << std::endl;
+		std::cerr << "Inconcistency error for arguments given to -[sfPrivAppController setFullscreenWindow:mode:]" << std::endl;
 	}
 }
 
@@ -514,7 +514,7 @@
 		if (!result) {
 			// Capture display but do not fill the screen with black
 			// so that we can see the fade operation
-			capture = CGDisplayCaptureWithOptions([AppController primaryScreen], kCGCaptureNoFill);
+			capture = CGDisplayCaptureWithOptions([sfPrivAppController primaryScreen], kCGCaptureNoFill);
 			
 			if (!capture) {
 				// Do the increasing fade operation
@@ -524,11 +524,11 @@
 							  0.0f, 0.0f, 0.0f, sync);
 				
 				// Now, release the non black-filling capture
-				CGDisplayRelease([AppController primaryScreen]);
+				CGDisplayRelease([sfPrivAppController primaryScreen]);
 				
 				// And capture with filling
 				// so that we don't see the switching in the meantime
-				CGDisplayCaptureWithOptions([AppController primaryScreen], kCGCaptureNoOptions);
+				CGDisplayCaptureWithOptions([sfPrivAppController primaryScreen], kCGCaptureNoOptions);
 			}
 			
 			prevToken = token;
@@ -541,10 +541,10 @@
 		if (!result) {
 			if (!capture) {
 				// Release the black-filling capture
-				CGDisplayRelease([AppController primaryScreen]);
+				CGDisplayRelease([sfPrivAppController primaryScreen]);
 				
 				// Capture the display but do not fill with black (still for the fade operation)
-				CGDisplayCaptureWithOptions([AppController primaryScreen], kCGCaptureNoFill);
+				CGDisplayCaptureWithOptions([sfPrivAppController primaryScreen], kCGCaptureNoFill);
 				
 				// Do the decreasing fading
 				CGDisplayFade(token, time,
@@ -560,7 +560,7 @@
 			}
 			
 			// Release the captured display
-			CGDisplayRelease([AppController primaryScreen]);
+			CGDisplayRelease([sfPrivAppController primaryScreen]);
 		}
 	}
 }

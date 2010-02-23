@@ -33,6 +33,35 @@
 #import <iostream>
 
 
+@interface sfPrivWindow (Protected)
+
+////////////////////////////////////////////////////////////
+/// Registers a reference to the internal Cocoa window
+////////////////////////////////////////////////////////////
+- (void)setWindow:(NSWindow *)aWindow;
+
+////////////////////////////////////////////////////////////
+/// Registers the the OpenGL view and adds it to its parent container
+////////////////////////////////////////////////////////////
+- (void)putOpenGLView:(GLView *)aView;
+
+////////////////////////////////////////////////////////////
+/// Registers a reference to the internal Cocoa OpenGL view
+////////////////////////////////////////////////////////////
+- (void)setView:(GLView *)aView;
+
+@end
+
+@interface sfPrivOwnedWindow (Private)
+
+////////////////////////////////////////////////////////////
+/// Sets the window's fullscreen state
+////////////////////////////////////////////////////////////
+- (void)setFullscreen:(BOOL)aFlag;
+
+@end
+
+
 ////////////////////////////////////////////////////////////
 /// Window independant OpenGL context class
 ////////////////////////////////////////////////////////////
@@ -72,7 +101,9 @@
 	// I've no way to fix this for now.
 	
 	if (attribs.AntialiasingLevel)
-		std::cerr << "Warning: antialiasing settings are inhibited under Mac OS X for technical reasons" << std::endl;
+		std::cerr 
+		<< "Warning: antialiasing settings are inhibited under Mac OS X for technical reasons"
+		<< std::endl;
 	
 	NSOpenGLPixelFormat *myPixelFormat = nil;
 	unsigned idx = 0;
@@ -87,7 +118,7 @@
 	
 	// Force use of first screen
 	//ctxtAttribs[idx++] = NSOpenGLPFAScreenMask;
-	//ctxtAttribs[idx++] = CGDisplayIDToOpenGLDisplayMask([AppController primaryScreen]);
+	//ctxtAttribs[idx++] = CGDisplayIDToOpenGLDisplayMask([sfPrivAppController primaryScreen]);
 	
 	// windowed context (even fullscreen mode uses a window)
 	ctxtAttribs[idx++] = NSOpenGLPFAWindow;
@@ -155,10 +186,7 @@
 - (id)initWithFrame:(NSRect)frame
 			   mode:(const sf::VideoMode&)mode
 		   settings:(sf::WindowSettings&)settings
-		   delegate:(sf::priv::WindowImplCocoa *)delegate
 {
-	assert(delegate != NULL);
-	
 	// make the view
 	self = [super initWithFrame:frame pixelFormat:nil];
 	
@@ -182,9 +210,6 @@
 			   selector:@selector(viewFrameDidChange:)
 				   name:NSViewFrameDidChangeNotification
 				 object:self];
-		
-		// Save the delegate
-		myDelegate = delegate;
 	}
 	
 	return self;
@@ -201,6 +226,22 @@
 	[myGLContext release];
 	
 	[super dealloc];
+}
+
+////////////////////////////////////////////////////////////
+/// Sets @aDelegate as the view delegate
+////////////////////////////////////////////////////////////
+- (void)setDelegate:(sf::priv::WindowImplCocoa *)aDelegate
+{
+	myDelegate = aDelegate;
+}
+
+////////////////////////////////////////////////////////////
+/// Returns the view delegate
+////////////////////////////////////////////////////////////
+- (sf::priv::WindowImplCocoa *)delegate
+{
+	return myDelegate;
 }
 
 
@@ -437,215 +478,9 @@
 @end
 
 
-////////////////////////////////////////////////////////////
-/// WindowWrapper class : handles both imported and self-built windows
-////////////////////////////////////////////////////////////
-@implementation WindowWrapper
 
-////////////////////////////////////////////////////////////
-/// Make a new window wrapper according to the window settings @attribs,
-/// the video mode @mode, the window style @style, the window title @title
-/// and the sf window implementation delegate @delegate
-////////////////////////////////////////////////////////////
-- (id)initWithSettings:(sf::WindowSettings&)params
-			 videoMode:(sf::VideoMode&)mode
-				 style:(unsigned long)style
-				 title:(NSString *)title
-			  delegate:(sf::priv::WindowImplCocoa *)delegate
-{
-	return [self initWithWindow:nil
-					   settings:params
-					  videoMode:mode
-						  style:style
-						  title:title
-					   delegate:delegate];
-}
+@implementation sfPrivWindow
 
-
-////////////////////////////////////////////////////////////
-/// Make a new window wrapper by importing @window and according to
-/// the window settings @params and the sf window implementation delegate
-/// @delegate
-/// @window and @delegate must not be null
-////////////////////////////////////////////////////////////
-- (id)initWithWindow:(NSWindow *)window
-			settings:(sf::WindowSettings&)params
-			delegate:(sf::priv::WindowImplCocoa *)delegate
-{
-	sf::VideoMode mode([[myWindow contentView] frame].size.width, [[myWindow contentView] frame].size.height);
-	return [self initWithWindow:window
-					   settings:params
-					  videoMode:mode
-						  style:0
-						  title:nil
-					   delegate:delegate];
-}
-
-
-////////////////////////////////////////////////////////////
-/// Make a new window wrapper by importing @window if it's not null and according to
-/// the window settings @params and the sf window implementation delegate
-/// @delegate; or by creating a new window if @window is null. In this case @title
-/// must therefore not be null and @params must be valid.
-/// @delegate must never be null 
-////////////////////////////////////////////////////////////
-- (id)initWithWindow:(NSWindow *)window
-			settings:(sf::WindowSettings&)params
-		   videoMode:(sf::VideoMode&)mode
-			   style:(unsigned long)style
-			   title:(NSString *)title
-			delegate:(sf::priv::WindowImplCocoa *)delegate
-{
-	assert(delegate != NULL);
-	
-	self = [super init];
-	
-	if (self)
-	{
-		if (window) {
-			myWindow = [window retain];
-		} else {
-			assert(title != nil);
-			
-			NSRect frame = NSMakeRect (0.0f, 0.0f, (float) mode.Width, (float) mode.Height);
-			unsigned int mask = 0;
-			
-			if (style & sf::Style::Fullscreen) {
-				myIsFullscreen = true;
-				
-				// Check display mode and put new values in 'mode' if needed
-				boolean_t exact = true;
-				
-				CFDictionaryRef properties = CGDisplayBestModeForParameters([AppController primaryScreen], mode.BitsPerPixel,
-																			mode.Width, mode.Height, &exact);
-				
-				if (!properties) {
-					std::cerr << "Unable to get a display mode with the given parameters" << std::endl;
-					[self autorelease];
-					return nil;
-				}
-				
-				if (exact == false) {
-					CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayWidth),
-									 kCFNumberIntType, &mode.Width);
-					
-					CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayHeight),
-									 kCFNumberIntType, &mode.Height);
-					
-					CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties, kCGDisplayBitsPerPixel),
-									 kCFNumberIntType, &mode.BitsPerPixel);
-					
-				}
-			}
-			
-			// We grab options from WindowStyle and add them to our window mask
-			if (style & sf::Style::None || style & sf::Style::Fullscreen) {
-				mask |= NSBorderlessWindowMask;
-				
-				
-				
-			} else {
-				if (style & sf::Style::Titlebar) {
-					mask |= NSTitledWindowMask;
-					mask |= NSMiniaturizableWindowMask;
-				}
-				
-				if (style & sf::Style::Resize) {
-					mask |= NSTitledWindowMask;
-					mask |= NSMiniaturizableWindowMask;
-					mask |= NSResizableWindowMask;
-				}
-				
-				if (style & sf::Style::Close) {
-					mask |= NSTitledWindowMask;
-					mask |= NSClosableWindowMask;
-					mask |= NSMiniaturizableWindowMask;
-				}
-			}
-			
-			// Now we make the window with the values we got
-			// Note: defer flag set to NO to be able to use OpenGL in our window
-			myWindow = [[NSWindow alloc] initWithContentRect:frame
-												   styleMask:mask
-													 backing:NSBackingStoreBuffered
-													   defer:NO];
-			
-			if (myWindow) {
-				// We set title and window position
-				[myWindow setTitle:title];
-				[myWindow center];
-			} else {
-				std::cerr << "Unable to create the Cocoa window" << std::endl;
-				[self autorelease];
-				return nil;
-			}
-		}
-		
-		// Make the OpenGL view
-		myView = [[GLView alloc] initWithFrame:[[myWindow contentView] frame]
-										  mode:mode
-									  settings:params
-									  delegate:delegate];
-		
-		if (myView)	{
-			// Finish setting up the view and window
-			// Add the view to our window and tell it to the view
-			[[myWindow contentView] addSubview:myView];
-			[myView finishInitialization];
-			
-			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-			
-			// We want to know when our window got the focus
-			[nc addObserver:self
-				   selector:@selector(windowDidBecomeMain:)
-					   name:NSWindowDidBecomeMainNotification
-					 object:myWindow];
-			
-			// We want to know when our window lost the focus
-			[nc addObserver:self
-				   selector:@selector(windowDidResignMain:)
-					   name:NSWindowDidResignMainNotification
-					 object:myWindow];
-			
-			// We want to know when the user closes the window
-			[nc addObserver:self
-				   selector:@selector(windowWillClose:)
-					   name:NSWindowWillCloseNotification
-					 object:myWindow];
-			
-			// I want to re-center the window if it's a full screen one and moved by Spaces
-			[nc addObserver:self
-				   selector:@selector(windowDidMove:)
-					   name:NSWindowDidMoveNotification
-					 object:myWindow];
-			
-			// Needed not to make application crash when releasing the window in our destructor
-			// (I prefer to take control of everything :P)
-			[myWindow setReleasedWhenClosed:NO];
-			[myWindow setAcceptsMouseMovedEvents:YES];
-			
-		} else {
-			std::cerr << "Unable to create the OpenGL view" << std::endl;
-			[self autorelease];
-			return nil;
-		}
-		
-		if (myIsFullscreen) {
-			myFullscreenMode = mode;
-			
-			// Using this because full screen window was not always
-			// in front of the other application windows when unhiding app
-			[myWindow setLevel:NSFloatingWindowLevel];
-		}
-	}
-	
-	return self;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Clean the window wrapper
-////////////////////////////////////////////////////////////
 - (void)dealloc
 {
 	NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
@@ -656,93 +491,173 @@
 	[self show:false];
 	
 	// Release the window and view
-	[myView removeFromSuperviewWithoutNeedingDisplay];
+	[[self view] removeFromSuperviewWithoutNeedingDisplay];
 	
-	[myView release];
-	[myWindow release];
+	[self setWindow:nil];
+	[self setView:nil];
+	[self setDelegate:nil];
 	
 	[super dealloc];
 	[localPool release];
 }
 
+////////////////////////////////////////////////////////////
+/// Registers a reference to the internal Cocoa window
+////////////////////////////////////////////////////////////
+- (void)setWindow:(NSWindow *)aWindow
+{
+	if (myWindow != aWindow)
+	{
+		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+		
+		// Drop the observers on the previously set window
+		if ([self window]) {
+			[nc removeObserver:self 
+						  name:NSWindowDidBecomeMainNotification
+						object:[self window]];
+			[nc removeObserver:self 
+						  name:NSWindowDidResignMainNotification
+						object:[self window]];
+			[nc removeObserver:self 
+						  name:NSWindowWillCloseNotification
+						object:[self window]];
+		}
+		
+		[myWindow release];
+		myWindow = [aWindow retain];
+		
+		// Set the new observers
+		// We want to know when our window got the focus
+		[nc addObserver:self
+			   selector:@selector(windowDidBecomeMain:)
+				   name:NSWindowDidBecomeMainNotification
+				 object:[self window]];
+		
+		// We want to know when our window lost the focus
+		[nc addObserver:self
+			   selector:@selector(windowDidResignMain:)
+				   name:NSWindowDidResignMainNotification
+				 object:[self window]];
+		
+		// We want to know when the user closes the window
+		[nc addObserver:self
+			   selector:@selector(windowWillClose:)
+				   name:NSWindowWillCloseNotification
+				 object:[self window]];
+		
+	}
+}
 
 ////////////////////////////////////////////////////////////
 /// Return a reference to the internal Cocoa window
 ////////////////////////////////////////////////////////////
 - (NSWindow *)window
 {
-	return myWindow;
+	return [[myWindow retain] autorelease];
 }
 
+
+////////////////////////////////////////////////////////////
+/// Registers the the OpenGL view and adds it to its parent container
+////////////////////////////////////////////////////////////
+- (void)putOpenGLView:(GLView *)aView
+{
+	[self setView:aView];
+	
+	// Finish setting up the view and window
+	// Add the view to our window and tell it to the view
+	[[[self window] contentView] addSubview:[self view]];
+	[[self view] finishInitialization];
+}
+
+////////////////////////////////////////////////////////////
+/// Registers a reference to the internal Cocoa OpenGL view
+////////////////////////////////////////////////////////////
+- (void)setView:(GLView *)aView
+{
+	if (myView != aView)
+	{
+		[myView release];
+		myView = [aView retain];
+	}
+}
 
 ////////////////////////////////////////////////////////////
 /// Return a reference to the internal Cocoa OpenGL view
 ////////////////////////////////////////////////////////////
-- (GLView *)glView
+- (GLView *)view
 {
-	return myView;
+	return [[myView retain] autorelease];
 }
 
+////////////////////////////////////////////////////////////
+/// Sets @aDelegate as the window delegate
+////////////////////////////////////////////////////////////
+- (void)setDelegate:(sf::priv::WindowImplCocoa *)aDelegate
+{
+	[[self view] setDelegate:aDelegate];
+}
+
+////////////////////////////////////////////////////////////
+/// Returns the window delegate
+////////////////////////////////////////////////////////////
+- (sf::priv::WindowImplCocoa *)delegate
+{
+	return [[self view] delegate];
+}
 
 ////////////////////////////////////////////////////////////
 /// Forward call to set the window position on screen
 ////////////////////////////////////////////////////////////
 - (void)setPosition:(NSPoint)pos
 {
-	assert(myWindow != nil);
+	NSAssert([self window] != nil, @"expected valid window");
 	
-	if (!myIsFullscreen) {
-		// Flip Y and set window position
-		pos.y = [[myWindow screen] frame].size.height - pos.y;
-		[myWindow setFrameTopLeftPoint:pos];
-	}
+	// Flip Y and set window position
+	pos.y = [[[self window] screen] frame].size.height - pos.y;
+	[[self window] setFrameTopLeftPoint:pos];
 }
-
 
 ////////////////////////////////////////////////////////////
 /// Forward call to set the window size
 ////////////////////////////////////////////////////////////
 - (void)setSize:(NSSize)size
 {
-	assert(myWindow != nil);
+	NSAssert([self window] != nil, @"expected valid window");
 	
-	if (!myIsFullscreen) {
-		[myWindow setFrame:NSMakeRect([myWindow frame].origin.x,
-									  [myWindow frame].origin.y,
-									  size.width, size.height)
-				   display:YES];
-	}
+	[[self window] setFrame:NSMakeRect([[self window] frame].origin.x,
+									   [[self window] frame].origin.y,
+									   size.width, size.height)
+					display:YES];
 }
-
 
 ////////////////////////////////////////////////////////////
 /// Return the mouse location relative to the internal window
 ////////////////////////////////////////////////////////////
 - (NSPoint)mouseLocation
 {
-	assert(myWindow != nil);
+	NSAssert([self window] != nil, @"expected valid window");
 	
-	NSPoint	relativeLocation = [myWindow convertScreenToBase:[NSEvent mouseLocation]];
-	relativeLocation.y = [[self glView] frame].size.height - relativeLocation.y;
+	NSPoint	relativeLocation = [[self window] convertScreenToBase:[NSEvent mouseLocation]];
+	relativeLocation.y = [[self view] frame].size.height - relativeLocation.y;
 	return relativeLocation;
 }
-
 
 ////////////////////////////////////////////////////////////
 /// Return whether the mouse is on our window
 ////////////////////////////////////////////////////////////
 - (BOOL)mouseInside
 {
-	assert(myWindow != nil);
-	assert(myView != nil);
+	NSAssert([self window] != nil, @"expected valid window");
+	NSAssert([self view] != nil, @"expected valid OpenGL view");
 	
 	BOOL flag = NO;
 	
-	if ([myWindow isVisible]) {
-		NSPoint relativeToWindow = [myWindow mouseLocationOutsideOfEventStream];
-		NSPoint relativeToView = [myView convertPoint:relativeToWindow fromView:nil];
+	if ([[self window] isVisible]) {
+		NSPoint relativeToWindow = [[self window] mouseLocationOutsideOfEventStream];
+		NSPoint relativeToView = [[self view] convertPoint:relativeToWindow fromView:nil];
 		
-		if (NSPointInRect (relativeToView, [myView bounds]))
+		if (NSPointInRect (relativeToView, [[self view] bounds]))
 		{
 			flag = YES;
 		}
@@ -751,32 +666,23 @@
 	return flag;
 }
 
-
 ////////////////////////////////////////////////////////////
 /// Close or open the window
 ////////////////////////////////////////////////////////////
 - (void)show:(bool)flag
 {
-	assert(myWindow != nil);
+	NSAssert([self window] != nil, @"expected valid window");
 	
-	if (flag && ![myWindow isVisible]) {
+	if (flag && ![[self window] isVisible]) {
 		// Wanna open the closed window
 		
-		if (myIsFullscreen) {
-			[[AppController sharedController] setFullscreenWindow:self mode:&myFullscreenMode];
-		} else {
-			// Show the window
-			[myWindow makeKeyAndOrderFront:nil];
-		}
-	} else if (!flag && [myWindow isVisible]) {
+		// Show the window
+		[[self window] makeKeyAndOrderFront:nil];
+	} else if (!flag && [[self window] isVisible]) {
 		// Wanna close the opened window
 		
-		if (myIsFullscreen) {
-			[[AppController sharedController] setFullscreenWindow:nil mode:NULL];
-		} else {
-			// Close the window
-			[myWindow close];
-		}
+		// Close the window
+		[[self window] close];
 	}	
 }
 
@@ -786,30 +692,27 @@
 ////////////////////////////////////////////////////////////
 - (void)enableVerticalSync:(bool)flag
 {
-	assert(myView != nil);
-	[myView enableVerticalSync:flag];
+	NSAssert([self view] != nil, @"expected valid OpenGL view");
+	[[self view] enableVerticalSync:flag];
 }
-
 
 ////////////////////////////////////////////////////////////
 /// Forward 'setActive' call the the OpenGL view
 ////////////////////////////////////////////////////////////
 - (void)setActive:(bool)flag
 {
-	assert(myView != nil);
-	[myView setActive:flag];
+	NSAssert([self view] != nil, @"expected valid OpenGL view");
+	[[self view] setActive:flag];
 }
-
 
 ////////////////////////////////////////////////////////////
 /// Forward call to flush the OpenGL view
 ////////////////////////////////////////////////////////////
 - (void)flushBuffer
 {
-	assert(myView != nil);
-	[myView flushBuffer];
+	NSAssert([self view] != nil, @"expected valid OpenGL view");
+	[[self view] flushBuffer];
 }
-
 
 ////////////////////////////////////////////////////////////
 /// Notification method receiver when the window gains focus
@@ -819,7 +722,7 @@
 	sf::Event ev;
 	ev.Type = sf::Event::GainedFocus;
 	
-	[myView pushEvent:ev];
+	[[self view] pushEvent:ev];
 }
 
 
@@ -831,7 +734,7 @@
 	sf::Event ev;
 	ev.Type = sf::Event::LostFocus;
 	
-	[myView pushEvent:ev];
+	[[self view] pushEvent:ev];
 }
 
 
@@ -843,9 +746,170 @@
 	sf::Event ev;
 	ev.Type = sf::Event::Closed;
 	
-	[myView pushEvent:ev];
+	[[self view] pushEvent:ev];
 }
 
+
+@end
+
+
+@implementation sfPrivOwnedWindow
+
+- (id)initWithVideoMode:(sf::VideoMode&)aMode
+			   settings:(sf::WindowSettings&)someSettings
+				  style:(unsigned long)aStyle
+				  title:(NSString *)aTitle
+{
+	self = [super init];
+	if (self)
+	{
+		if (aStyle & sf::Style::Fullscreen) {
+			[self setFullscreen:YES];
+		}
+		
+		NSRect frame = NSMakeRect (0.0f, 0.0f, (float) aMode.Width, (float) aMode.Height);
+		unsigned int mask = 0;
+		
+		if (aStyle & sf::Style::Fullscreen) {
+			// Check display mode and put new values in 'mode' if needed
+			boolean_t exact = true;
+			
+			CFDictionaryRef properties =
+			CGDisplayBestModeForParameters([sfPrivAppController primaryScreen],
+										   aMode.BitsPerPixel,
+										   aMode.Width,
+										   aMode.Height,
+										   &exact);
+			
+			if (!properties) {
+				std::cerr 
+				<< "Unable to get a display mode with the given parameters" 
+				<< std::endl;
+				
+				[self autorelease];
+				return nil;
+			}
+			
+			if (exact == false) {
+				CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties,
+																	kCGDisplayWidth),
+								 kCFNumberIntType, &aMode.Width);
+				
+				CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties,
+																	kCGDisplayHeight),
+								 kCFNumberIntType, &aMode.Height);
+				
+				CFNumberGetValue((CFNumberRef) CFDictionaryGetValue(properties,
+																	kCGDisplayBitsPerPixel),
+								 kCFNumberIntType, &aMode.BitsPerPixel);
+				
+			}
+		}
+		
+		// We grab options from WindowStyle and add them to our window mask
+		if (aStyle & sf::Style::None || aStyle & sf::Style::Fullscreen) {
+			mask |= NSBorderlessWindowMask;
+		} else {
+			if (aStyle & sf::Style::Titlebar) {
+				mask |= NSTitledWindowMask;
+				mask |= NSMiniaturizableWindowMask;
+			}
+			
+			if (aStyle & sf::Style::Resize) {
+				mask |= NSTitledWindowMask;
+				mask |= NSMiniaturizableWindowMask;
+				mask |= NSResizableWindowMask;
+			}
+			
+			if (aStyle & sf::Style::Close) {
+				mask |= NSTitledWindowMask;
+				mask |= NSClosableWindowMask;
+				mask |= NSMiniaturizableWindowMask;
+			}
+		}
+		
+		// Now we make the window with the values we got
+		// Note: defer flag set to NO to be able to use OpenGL in our window
+		NSWindow *newWindow = [[NSWindow alloc]
+							   initWithContentRect:frame
+							   styleMask:mask
+							   backing:NSBackingStoreBuffered
+							   defer:NO];
+		
+		if (newWindow) {
+			[self setWindow:[newWindow autorelease]];
+		} else {
+			std::cerr << "Unable to create the Cocoa window" << std::endl;
+			[self autorelease];
+			return nil;
+		}
+		
+		// We set title and window position
+		[[self window] setTitle:aTitle != nil ? aTitle : @""];
+		[[self window] center];
+		
+		// Make the OpenGL view
+		GLView *newView = [[GLView alloc]
+						   initWithFrame:[[[self window] contentView] frame]
+						   mode:aMode
+						   settings:someSettings];
+		
+		if (!newView) {
+			std::cerr << "Unable to create the OpenGL view" << std::endl;
+			[self autorelease];
+			return nil;
+		}
+		
+		// Put our view in the window 
+		[self putOpenGLView:[newView autorelease]];
+		
+		// I want to re-center the window if it's a full screen one and moved by Spaces
+		[[NSNotificationCenter defaultCenter]
+		 addObserver:self
+		 selector:@selector(windowDidMove:)
+		 name:NSWindowDidMoveNotification
+		 object:[self window]];
+		
+		// Needed not to make application crash when releasing the window in our destructor
+		// (I prefer to take control of everything :P)
+		[[self window] setReleasedWhenClosed:NO];
+		[[self window] setAcceptsMouseMovedEvents:YES];
+		
+		if ([self isFullscreen]) {
+			myFullscreenMode = aMode;
+			
+			// Using this because full screen window was not always
+			// in front of the other application windows when unhiding app
+			[[self window] setLevel:NSFloatingWindowLevel];
+		}
+	}
+	return self;
+}
+
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter]
+	 removeObserver:self 
+	 name:NSWindowDidMoveNotification
+	 object:[self window]];
+	[super dealloc];
+}
+
+////////////////////////////////////////////////////////////
+/// Sets the window's fullscreen state
+////////////////////////////////////////////////////////////
+- (void)setFullscreen:(BOOL)aFlag
+{
+	myIsFullscreen = aFlag;
+}
+
+////////////////////////////////////////////////////////////
+/// Returns the window's fullscreen state
+////////////////////////////////////////////////////////////
+- (BOOL)isFullscreen
+{
+	return myIsFullscreen;
+}
 
 ////////////////////////////////////////////////////////////
 /// Notification method receiver when the window finish moving
@@ -856,6 +920,177 @@
 	
 	if (myIsFullscreen)
 		[sender center];
+}
+
+////////////////////////////////////////////////////////////
+/// Close or open the window
+////////////////////////////////////////////////////////////
+- (void)show:(bool)flag
+{
+	NSAssert([self window] != nil, @"expected valid window");
+	
+	if (flag && ![[self window] isVisible]) {
+		// Wanna open the closed window
+		
+		if ([self isFullscreen]) {
+			[[sfPrivAppController sharedController]
+			 setFullscreenWindow:self
+			 mode:&myFullscreenMode];
+		} else {
+			// Show the window
+			[[self window] makeKeyAndOrderFront:nil];
+		}
+	} else if (!flag && [[self window] isVisible]) {
+		// Wanna close the opened window
+		
+		if ([self isFullscreen]) {
+			[[sfPrivAppController sharedController]
+			 setFullscreenWindow:nil
+			 mode:NULL];
+		} else {
+			// Close the window
+			[[self window] close];
+		}
+	}	
+}
+
+////////////////////////////////////////////////////////////
+/// Forward call to set the window position on screen
+////////////////////////////////////////////////////////////
+- (void)setPosition:(NSPoint)aPosition
+{
+	if (![self isFullscreen]) {
+		[super setPosition:aPosition];
+	}
+}
+
+////////////////////////////////////////////////////////////
+/// Forward call to set the window size
+////////////////////////////////////////////////////////////
+- (void)setSize:(NSSize)size
+{
+	if (![self isFullscreen]) {
+		[super setSize:size];
+	}
+}
+
+@end
+
+
+@implementation sfPrivImportedWindow
+
+- (id)initWithWindow:(NSWindow *)aWindow
+			settings:(sf::WindowSettings&)someSettings
+{
+	self = [super init];
+	
+	if (self) {
+		[self setWindow:aWindow];
+		
+		// Make the OpenGL view
+		sf::VideoMode mode([[[self window] contentView] frame].size.width,
+						   [[[self window] contentView] frame].size.height);
+		GLView *newView = [[GLView alloc]
+						   initWithFrame:[[[self window] contentView] frame]
+						   mode:mode
+						   settings:someSettings];
+		
+		if (!newView) {
+			std::cerr << "Unable to create the OpenGL view" << std::endl;
+			[self autorelease];
+			return nil;
+		}
+		
+		[self putOpenGLView:[newView autorelease]];
+	}
+	
+	return self;
+}
+
+@end
+
+
+@implementation sfPrivImportedView
+
+
+- (id)initWithView:(NSView *)aView
+		  settings:(sf::WindowSettings&)someSettings
+{	
+	self = [super init];
+	if (self)
+	{
+		parentView = [aView retain];
+		[self setWindow:[parentView window]];
+		
+		// Make the OpenGL view
+		sf::VideoMode mode([parentView bounds].size.width,
+						   [parentView bounds].size.height);
+		GLView *newView = [[GLView alloc]
+						   initWithFrame:[parentView bounds]
+						   mode:mode
+						   settings:someSettings];
+		
+		if (!newView) {
+			std::cerr << "Unable to create the OpenGL view" << std::endl;
+			[self autorelease];
+			return nil;
+		}
+		
+		[self putOpenGLView:[newView autorelease]];
+		
+	}
+	return self;
+}
+
+- (void)dealloc
+{
+	[parentView release];
+	[super dealloc];
+}
+
+////////////////////////////////////////////////////////////
+/// Registers the the OpenGL view and adds it to its parent container
+////////////////////////////////////////////////////////////
+- (void)putOpenGLView:(GLView *)aView
+{
+	[self setView:aView];
+	
+	// Finish setting up the view and window
+	NSRect originalFrame = [[self window] frame];
+	NSRect tmpFrame = originalFrame;
+	originalFrame.origin.x++;
+	
+	[[self window] setFrame:tmpFrame display:YES];
+	[[self window] setFrame:originalFrame display:YES];
+	
+	
+	// Add the view to our *parent view* and tell it to the view
+	[parentView addSubview:[self view]];
+	[[self view] finishInitialization];
+}
+
+////////////////////////////////////////////////////////////
+/// Forward call to set the window position on screen
+////////////////////////////////////////////////////////////
+- (void)setPosition:(NSPoint)aPosition
+{
+	std::cerr
+	<< "Warning: called Window::SetPosition() on a window imported from a widget. "
+	<< "This method has been disabled in this case and has no effect. "
+	<< "Directly use the widget if you want to move it."
+	<< std::endl;
+}
+
+////////////////////////////////////////////////////////////
+/// Forward call to set the window size
+////////////////////////////////////////////////////////////
+- (void)setSize:(NSSize)size
+{
+	std::cerr
+	<< "Warning: called Window::SetSize() on a window imported from a widget. "
+	<< "This method has been disabled in this case and has no effect. "
+	<< "Directly use the widget if you want to resize it."
+	<< std::endl;
 }
 
 @end

@@ -33,9 +33,6 @@
 /// Window independant OpenGL context class
 ////////////////////////////////////////////////////////////
 @interface GLContext : NSOpenGLContext
-{
-	
-}
 
 ////////////////////////////////////////////////////////////
 /// Return the shared OpenGL context instance (making one if needed)
@@ -64,13 +61,22 @@
 ////////////////////////////////////////////////////////////
 /// Make a new view according the the rect @frame,
 /// the video mode @mode, the window settings @settings
-/// and the sf window delegate @delegate
 /// @delegate must not be null
 ////////////////////////////////////////////////////////////
 - (id)initWithFrame:(NSRect)frame
 			   mode:(const sf::VideoMode&)mode
-		   settings:(sf::WindowSettings&)settings
-		   delegate:(sf::priv::WindowImplCocoa *)delegate;
+		   settings:(sf::WindowSettings&)settings;
+
+
+////////////////////////////////////////////////////////////
+/// Sets @aDelegate as the view delegate
+////////////////////////////////////////////////////////////
+- (void)setDelegate:(sf::priv::WindowImplCocoa *)aDelegate;
+
+////////////////////////////////////////////////////////////
+/// Returns the view delegate
+////////////////////////////////////////////////////////////
+- (sf::priv::WindowImplCocoa *)delegate;
 
 ////////////////////////////////////////////////////////////
 /// Finish view setting (after having added it to the window)
@@ -94,52 +100,15 @@
 
 @end
 
-
 ////////////////////////////////////////////////////////////
-/// WindowWrapper class : handles both imported and self-built windows
+/// Parent class for handling general SFML window stuff
 ////////////////////////////////////////////////////////////
-@interface WindowWrapper : NSObject
+@interface sfPrivWindow : NSObject
 {
+@private
 	NSWindow *myWindow;
 	GLView *myView;
-	sf::VideoMode myFullscreenMode;
-	bool myIsFullscreen;
 }
-
-////////////////////////////////////////////////////////////
-/// Make a new window wrapper according to the window settings @attribs,
-/// the video mode @mode, the window style @style, the window title @title
-/// and the sf window implementation delegate @delegate
-////////////////////////////////////////////////////////////
-- (id)initWithSettings:(sf::WindowSettings&)attribs
-			 videoMode:(sf::VideoMode&)mode
-				 style:(unsigned long)style
-				 title:(NSString *)title
-			  delegate:(sf::priv::WindowImplCocoa *)delegate;
-
-////////////////////////////////////////////////////////////
-/// Make a new window wrapper by importing @window and according to
-/// the window settings @params and the sf window implementation delegate
-/// @delegate
-/// @window and @delegate must not be null
-////////////////////////////////////////////////////////////
-- (id)initWithWindow:(NSWindow *)window
-			settings:(sf::WindowSettings&)params
-			delegate:(sf::priv::WindowImplCocoa *)delegate;
-
-////////////////////////////////////////////////////////////
-/// Make a new window wrapper by importing @window if it's not null and according to
-/// the window settings @params and the sf window implementation delegate
-/// @delegate; or by creating a new window if @window is null. In this case @title
-/// must therefore not be null and @params must be valid.
-/// @delegate must never be null 
-////////////////////////////////////////////////////////////
-- (id)initWithWindow:(NSWindow *)window
-			settings:(sf::WindowSettings&)params
-		   videoMode:(sf::VideoMode&)mode
-			   style:(unsigned long)style
-			   title:(NSString *)title
-			delegate:(sf::priv::WindowImplCocoa *)delegate;
 
 ////////////////////////////////////////////////////////////
 /// Return a reference to the internal Cocoa window
@@ -149,7 +118,17 @@
 ////////////////////////////////////////////////////////////
 /// Return a reference to the internal Cocoa OpenGL view
 ////////////////////////////////////////////////////////////
-- (GLView *)glView;
+- (GLView *)view;
+
+////////////////////////////////////////////////////////////
+/// Sets @aDelegate as the window delegate
+////////////////////////////////////////////////////////////
+- (void)setDelegate:(sf::priv::WindowImplCocoa *)aDelegate;
+
+////////////////////////////////////////////////////////////
+/// Returns the window delegate
+////////////////////////////////////////////////////////////
+- (sf::priv::WindowImplCocoa *)delegate;
 
 ////////////////////////////////////////////////////////////
 /// Forward call to set the window position on screen
@@ -193,3 +172,61 @@
 
 @end
 
+////////////////////////////////////////////////////////////
+/// Class for creating new SFML windows from informations
+////////////////////////////////////////////////////////////
+@interface sfPrivOwnedWindow : sfPrivWindow
+{
+@private
+	sf::VideoMode myFullscreenMode;
+	bool myIsFullscreen;
+}
+
+////////////////////////////////////////////////////////////
+/// Creates and returns a new SFML window handler with
+/// the given parameters
+////////////////////////////////////////////////////////////
+- (id)initWithVideoMode:(sf::VideoMode&)aMode
+			   settings:(sf::WindowSettings&)someSettings
+				  style:(unsigned long)aStyle
+				  title:(NSString *)aTitle;
+
+////////////////////////////////////////////////////////////
+/// Returns the window's fullscreen state
+////////////////////////////////////////////////////////////
+- (BOOL)isFullscreen;
+
+@end
+
+
+////////////////////////////////////////////////////////////
+/// Class for creating SFML windows from Cocoa windows
+////////////////////////////////////////////////////////////
+@interface sfPrivImportedWindow : sfPrivWindow
+
+////////////////////////////////////////////////////////////
+/// Returns a new SFML window handler with the given window
+/// and parameters
+////////////////////////////////////////////////////////////
+- (id)initWithWindow:(NSWindow *)aWindow
+			settings:(sf::WindowSettings&)someSettings;
+
+@end
+
+
+////////////////////////////////////////////////////////////
+/// Class for creating SFML windows from Cocoa views
+////////////////////////////////////////////////////////////
+@interface sfPrivImportedView : sfPrivWindow
+{
+	NSView *parentView;
+}
+
+////////////////////////////////////////////////////////////
+/// Returns a new SFML window handler with the given view
+/// and parameters
+////////////////////////////////////////////////////////////
+- (id)initWithView:(NSView *)aView
+		  settings:(sf::WindowSettings&)someSettings;
+
+@end

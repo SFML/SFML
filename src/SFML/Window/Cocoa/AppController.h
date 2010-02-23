@@ -36,10 +36,10 @@ enum {
 	CleanScreen
 };
 
-@class WindowWrapper;
-@interface AppController : NSObject {
+@class sfPrivWindow;
+@interface sfPrivAppController : NSObject {
 	BOOL myOwningEventLoop;
-	WindowWrapper *myFullscreenWrapper;
+	sfPrivWindow *myFullscreenWrapper;
 	NSAutoreleasePool *myMainPool;
 	sf::VideoMode myDesktopMode;
 	sf::VideoMode myPrevMode;
@@ -48,7 +48,7 @@ enum {
 ////////////////////////////////////////////////////////////
 /// Return the shared AppController instance. Make one if needed.
 ////////////////////////////////////////////////////////////
-+ (AppController *)sharedController;
++ (sfPrivAppController *)sharedController;
 
 ////////////////////////////////////////////////////////////
 /// Returns the primay computer's screen
@@ -76,7 +76,7 @@ enum {
 /// Set @window as the current fullscreen window
 /// Change the screen resolution if needed according to @window and @fullscreenMode
 ////////////////////////////////////////////////////////////
-- (void)setFullscreenWindow:(WindowWrapper *)window mode:(sf::VideoMode *)fullscreenMode;
+- (void)setFullscreenWindow:(sfPrivWindow *)window mode:(sf::VideoMode *)fullscreenMode;
 
 ////////////////////////////////////////////////////////////
 /// Perform fade operation where 'operation' is one of { FillScreen, CleanScreen}
