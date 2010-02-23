@@ -70,7 +70,7 @@ myWheelStatus(0.0f)
 	[sfPrivAppController sharedController];
 	
     // Create the shared OpenGL context
-	if ([GLContext sharedContext]) {
+	if ([sfPrivGLContext sharedContext]) {
 		// Then we make it the current active OpenGL context
 		SetActive();
 	} else {
@@ -569,10 +569,10 @@ void WindowImplCocoa::SetActive(bool Active) const
 	else {
 		// Or directly activate the shared OpenGL context if we're not using a window
 		if (Active) {
-			if ([NSOpenGLContext currentContext] != [GLContext sharedContext])
-				[[GLContext sharedContext] makeCurrentContext];
+			if ([NSOpenGLContext currentContext] != [sfPrivGLContext sharedContext])
+				[[sfPrivGLContext sharedContext] makeCurrentContext];
 		} else {
-			if ([NSOpenGLContext currentContext] == [GLContext sharedContext])
+			if ([NSOpenGLContext currentContext] == [sfPrivGLContext sharedContext])
 				[NSOpenGLContext clearCurrentContext];
 		}
 	}

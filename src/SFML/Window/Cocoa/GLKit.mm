@@ -43,12 +43,12 @@
 ////////////////////////////////////////////////////////////
 /// Registers the the OpenGL view and adds it to its parent container
 ////////////////////////////////////////////////////////////
-- (void)putOpenGLView:(GLView *)aView;
+- (void)putOpenGLView:(sfPrivGLView *)aView;
 
 ////////////////////////////////////////////////////////////
 /// Registers a reference to the internal Cocoa OpenGL view
 ////////////////////////////////////////////////////////////
-- (void)setView:(GLView *)aView;
+- (void)setView:(sfPrivGLView *)aView;
 
 @end
 
@@ -65,7 +65,7 @@
 ////////////////////////////////////////////////////////////
 /// Window independant OpenGL context class
 ////////////////////////////////////////////////////////////
-@implementation GLContext
+@implementation sfPrivGLContext
 
 
 ////////////////////////////////////////////////////////////
@@ -75,13 +75,13 @@
 {
 	// Make a new context with the default parameters
 	sf::WindowSettings params;
-	static GLContext *sharedCtx = [[GLContext alloc] initWithAttributes:params sharedContext:nil];
+	static sfPrivGLContext *sharedCtx = [[sfPrivGLContext alloc] initWithAttributes:params sharedContext:nil];
 	return sharedCtx;
 }
 
 - (void)dealloc
 {
-	[[GLContext sharedContext] release];
+	[[sfPrivGLContext sharedContext] release];
 	[super dealloc];
 }
 
@@ -89,7 +89,7 @@
 /// Make a new OpenGL context according to the @attribs settings
 /// and the shared context @context
 ////////////////////////////////////////////////////////////
-- (id)initWithAttributes:(sf::WindowSettings&)attribs sharedContext:(GLContext *)sharedContext
+- (id)initWithAttributes:(sf::WindowSettings&)attribs sharedContext:(sfPrivGLContext *)sharedContext
 {
 	// Note about antialiasing and other context attributes :
 	// OpenGL context sharing does not allow the shared contexts to use different attributes.
@@ -175,7 +175,7 @@
 ////////////////////////////////////////////////////////////
 /// Customized Cocoa OpenGL view
 ////////////////////////////////////////////////////////////
-@implementation GLView
+@implementation sfPrivGLView
 
 ////////////////////////////////////////////////////////////
 /// Make a new view according the the rect @frame,
@@ -196,8 +196,8 @@
 		[self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 		
 		// make the OpenGL context
-		myGLContext = [[GLContext alloc] initWithAttributes:settings
-											  sharedContext:[GLContext sharedContext]];
+		myGLContext = [[sfPrivGLContext alloc] initWithAttributes:settings
+											  sharedContext:[sfPrivGLContext sharedContext]];
 		
 		if (!myGLContext) {
 			[self release];
@@ -560,7 +560,7 @@
 ////////////////////////////////////////////////////////////
 /// Registers the the OpenGL view and adds it to its parent container
 ////////////////////////////////////////////////////////////
-- (void)putOpenGLView:(GLView *)aView
+- (void)putOpenGLView:(sfPrivGLView *)aView
 {
 	[self setView:aView];
 	
@@ -573,7 +573,7 @@
 ////////////////////////////////////////////////////////////
 /// Registers a reference to the internal Cocoa OpenGL view
 ////////////////////////////////////////////////////////////
-- (void)setView:(GLView *)aView
+- (void)setView:(sfPrivGLView *)aView
 {
 	if (myView != aView)
 	{
@@ -585,7 +585,7 @@
 ////////////////////////////////////////////////////////////
 /// Return a reference to the internal Cocoa OpenGL view
 ////////////////////////////////////////////////////////////
-- (GLView *)view
+- (sfPrivGLView *)view
 {
 	return [[myView retain] autorelease];
 }
@@ -849,7 +849,7 @@
 		[[self window] center];
 		
 		// Make the OpenGL view
-		GLView *newView = [[GLView alloc]
+		sfPrivGLView *newView = [[sfPrivGLView alloc]
 						   initWithFrame:[[[self window] contentView] frame]
 						   mode:aMode
 						   settings:someSettings];
@@ -990,7 +990,7 @@
 		// Make the OpenGL view
 		sf::VideoMode mode([[[self window] contentView] frame].size.width,
 						   [[[self window] contentView] frame].size.height);
-		GLView *newView = [[GLView alloc]
+		sfPrivGLView *newView = [[sfPrivGLView alloc]
 						   initWithFrame:[[[self window] contentView] frame]
 						   mode:mode
 						   settings:someSettings];
@@ -1025,7 +1025,7 @@
 		// Make the OpenGL view
 		sf::VideoMode mode([parentView bounds].size.width,
 						   [parentView bounds].size.height);
-		GLView *newView = [[GLView alloc]
+		sfPrivGLView *newView = [[sfPrivGLView alloc]
 						   initWithFrame:[parentView bounds]
 						   mode:mode
 						   settings:someSettings];
@@ -1051,7 +1051,7 @@
 ////////////////////////////////////////////////////////////
 /// Registers the the OpenGL view and adds it to its parent container
 ////////////////////////////////////////////////////////////
-- (void)putOpenGLView:(GLView *)aView
+- (void)putOpenGLView:(sfPrivGLView *)aView
 {
 	[self setView:aView];
 	
