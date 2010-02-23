@@ -380,14 +380,14 @@
 		myOwningEventLoop = YES;
 	}
 	
-	// Clean the autorelease pool
-	[myMainPool release];
-	myMainPool = [[NSAutoreleasePool alloc] init];
-	
 	NSEvent *event = nil;
 	
 	if (myOwningEventLoop)
 	{
+		// Clean the autorelease pool
+		[myMainPool release];
+		myMainPool = [[NSAutoreleasePool alloc] init];
+		
 		// Minimal event loop
 		while (nil != (event = [NSApp nextEventMatchingMask:NSAnyEventMask
 												  untilDate:nil
