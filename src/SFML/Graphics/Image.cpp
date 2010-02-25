@@ -42,15 +42,15 @@ namespace sf
 /// Default constructor
 ////////////////////////////////////////////////////////////
 Image::Image() :
-myWidth            (0),
-myHeight           (0),
-myTextureWidth     (0),
-myTextureHeight    (0),
-myTexture          (0),
-myIsSmooth         (true),
-myTextureUpdated   (true),
-myArrayUpdated     (true),
-myPixelsFlipped    (false)
+myWidth         (0),
+myHeight        (0),
+myTextureWidth  (0),
+myTextureHeight (0),
+myTexture       (0),
+myIsSmooth      (true),
+myTextureUpdated(true),
+myArrayUpdated  (true),
+myPixelsFlipped (false)
 {
 
 }
@@ -387,12 +387,12 @@ void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
     EnsureArrayUpdate();
 
     // Check if pixel is whithin the image bounds
-    if ((x >= myWidth) || (y >= myHeight))
+    /*if ((x >= myWidth) || (y >= myHeight))
     {
         Err() << "Cannot set pixel (" << x << "," << y << ") for image "
               << "(width = " << myWidth << ", height = " << myHeight << ")" << std::endl;
         return;
-    }
+    }*/
 
     myPixels[x + y * myWidth] = color;
 
@@ -723,10 +723,6 @@ void Image::EnsureArrayUpdate() const
 {
     if (!myArrayUpdated)
     {
-        // First make sure the texture is up-to-date
-        // (may not be the case if an external update has been scheduled)
-        EnsureTextureUpdate();
-
         // Save the previous texture
         GLint previous;
         GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
@@ -776,6 +772,15 @@ void Image::EnsureArrayUpdate() const
 
         myArrayUpdated = true;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+/// Make sure that the image is ready to be used
+////////////////////////////////////////////////////////////
+void Image::Use() const
+{
+    EnsureTextureUpdate();
 }
 
 

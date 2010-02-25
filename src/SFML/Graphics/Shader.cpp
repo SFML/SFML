@@ -245,15 +245,7 @@ void Shader::Bind() const
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
         // Bind the textures
-        TextureTable::const_iterator it = myTextures.begin();
-        for (std::size_t i = 0; i < myTextures.size(); ++i)
-        {
-            GLint index = static_cast<GLsizei>(i + 1);
-            GLCheck(glUniform1iARB(it->first, index));
-            GLCheck(glActiveTextureARB(GL_TEXTURE0_ARB + index));
-            it->second->Bind();
-            it++;
-        }
+        BindTextures();
 
         // Make sure that the texture unit which is left active is the number 0
         GLCheck(glActiveTextureARB(GL_TEXTURE0_ARB));
@@ -395,6 +387,28 @@ bool Shader::CompileProgram()
     }
 
     return true;
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::BindTextures() const
+{
+    TextureTable::const_iterator it = myTextures.begin();
+    for (std::size_t i = 0; i < myTextures.size(); ++i)
+    {
+        GLint index = static_cast<GLsizei>(i + 1);
+        GLCheck(glUniform1iARB(it->first, index));
+        GLCheck(glActiveTextureARB(GL_TEXTURE0_ARB + index));
+        it->second->Bind();
+        it++;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::Use() const
+{
+    BindTextures();
 }
 
 } // namespace sf

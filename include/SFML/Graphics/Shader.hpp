@@ -38,6 +38,8 @@
 
 namespace sf
 {
+class Renderer;
+
 ////////////////////////////////////////////////////////////
 /// \brief Pixel/fragment shader class
 ///
@@ -317,6 +319,8 @@ public :
 
 private :
 
+    friend class Renderer;
+
     ////////////////////////////////////////////////////////////
     /// \brief Create the program and attach the shaders
     ///
@@ -324,6 +328,25 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     bool CompileProgram();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Bind all the textures used by the shader
+    ///
+    /// This function each texture to a different unit, and
+    /// updates the corresponding variables in the shader accordingly.
+    ///
+    ////////////////////////////////////////////////////////////
+    void BindTextures() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Make sure that the shader is ready to be used
+    ///
+    /// This function is called by the Renderer class, to make
+    /// sure that the shader's parameters are properly applied
+    /// even when Use() is not called due to internal optimizations.
+    ///
+    ////////////////////////////////////////////////////////////
+    void Use() const;
 
     ////////////////////////////////////////////////////////////
     // Types
