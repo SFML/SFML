@@ -58,6 +58,7 @@ void Renderer::Initialize()
     // Default render states
     GLCheck(glDisable(GL_LIGHTING));
     GLCheck(glDisable(GL_DEPTH_TEST));
+    GLCheck(glEnable(GL_TEXTURE_2D));
     GLCheck(glEnable(GL_ALPHA_TEST));
     GLCheck(glAlphaFunc(GL_GREATER, 0));
 
@@ -241,7 +242,7 @@ void Renderer::SetTexture(const Image* texture)
         if (texture)
             texture->Bind();
         else
-            GLCheck(glDisable(GL_TEXTURE_2D));
+            GLCheck(glBindTexture(GL_TEXTURE_2D, 0));
 
         // Store it
         myTexture = texture;
@@ -255,15 +256,18 @@ void Renderer::SetShader(const Shader* shader)
 {
     if ((shader != myShader) || !myShaderIsValid)
     {
-        // Apply the new shader
-        if (shader)
-            shader->Bind();
-        else if (myShaderIsValid && myShader)
-            myShader->Unbind();
+        if (Shader::IsAvailable()) // to avoid calling possibly unsupported functions
+        {
+            // Apply the new shader
+            if (shader)
+                shader->Bind();
+            else
+                GLCheck(glUseProgramObjectARB(0));
 
-        // Store it
-        myShader = shader;
-        myShaderIsValid = true;
+            // Store it
+            myShader = shader;
+            myShaderIsValid = true;
+        }
     }
 }
 

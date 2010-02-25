@@ -493,11 +493,7 @@ void Image::Bind() const
     EnsureTextureUpdate();
 
     // Bind it
-    if (myTexture)
-    {
-        GLCheck(glEnable(GL_TEXTURE_2D));
-        GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
-    }
+    GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
 }
 
 
