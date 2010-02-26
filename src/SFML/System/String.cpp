@@ -34,8 +34,42 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+// Static member data
+////////////////////////////////////////////////////////////
+const std::size_t String::InvalidPos = std::basic_string<Uint32>::npos;
+
+
+////////////////////////////////////////////////////////////
 String::String()
 {
+}
+
+
+////////////////////////////////////////////////////////////
+String::String(char ansiChar)
+{
+    myString += Utf32::DecodeAnsi(ansiChar);
+}
+
+
+////////////////////////////////////////////////////////////
+String::String(char ansiChar, const std::locale& locale)
+{
+    myString += Utf32::DecodeAnsi(ansiChar, locale);
+}
+
+
+////////////////////////////////////////////////////////////
+String::String(wchar_t wideChar)
+{
+    myString += Utf32::DecodeWide(wideChar);
+}
+
+
+////////////////////////////////////////////////////////////
+String::String(Uint32 utf32Char)
+{
+    myString += utf32Char;
 }
 
 
@@ -195,30 +229,6 @@ String& String::operator =(const String& right)
 
 
 ////////////////////////////////////////////////////////////
-String& String::operator +=(char right)
-{
-    myString += Utf32::DecodeAnsi(right);
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-String& String::operator +=(wchar_t right)
-{
-    myString += Utf32::DecodeWide(right);
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-String& String::operator +=(Uint32 right)
-{
-    myString += right;
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
 String& String::operator +=(const String& right)
 {
     myString += right.myString;
@@ -265,6 +275,20 @@ bool String::IsEmpty() const
 void String::Erase(std::size_t position, std::size_t count)
 {
     myString.erase(position, count);
+}
+
+
+////////////////////////////////////////////////////////////
+void String::Insert(std::size_t position, const String& str)
+{
+    myString.insert(position, str.myString);
+}
+
+
+////////////////////////////////////////////////////////////
+std::size_t String::Find(const String& str, std::size_t start) const
+{
+    return myString.find(str.myString, start);
 }
 
 
@@ -342,36 +366,6 @@ bool operator <=(const String& left, const String& right)
 bool operator >=(const String& left, const String& right)
 {
     return !(left < right);
-}
-
-
-////////////////////////////////////////////////////////////
-String operator +(const String& left, char right)
-{
-    String string = left;
-    string += right;
-
-    return string;
-}
-
-
-////////////////////////////////////////////////////////////
-String operator +(const String& left, wchar_t right)
-{
-    String string = left;
-    string += right;
-
-    return string;
-}
-
-
-////////////////////////////////////////////////////////////
-String operator +(const String& left, Uint32 right)
-{
-    String string = left;
-    string += right;
-
-    return string;
 }
 
 

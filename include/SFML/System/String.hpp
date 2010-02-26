@@ -51,12 +51,58 @@ public :
     typedef std::basic_string<Uint32>::const_iterator ConstIterator; ///< Constant iterator type
 
     ////////////////////////////////////////////////////////////
+    // Static member data
+    ////////////////////////////////////////////////////////////
+    static const std::size_t InvalidPos; ///< Represents an invalid position in the string
+
+    ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     /// This constructor creates an empty string.
     ///
     ////////////////////////////////////////////////////////////
     String();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from a single ANSI character
+    ///
+    /// The source character is converted to UTF-32 according
+    /// to the current locale. See the other constructor for
+    /// explicitely passing the locale to use.
+    ///
+    /// \param ansiString ANSI character to convert
+    ///
+    ////////////////////////////////////////////////////////////
+    String(char ansiChar);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from a single ANSI character and a locale
+    ///
+    /// The source character is converted to UTF-32 according
+    /// to the given locale. If you want to use the current global
+    /// locale, rather use the other constructor.
+    ///
+    /// \param ansiChar ANSI character to convert
+    /// \param locale   Locale to use for conversion
+    ///
+    ////////////////////////////////////////////////////////////
+    String(char ansiChar, const std::locale& locale);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from single wide character
+    ///
+    /// \param wideChar Wide character to convert
+    ///
+    ////////////////////////////////////////////////////////////
+    String(wchar_t wideChar);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from single UTF-32 character
+    ///
+    /// \param utf32Char UTF-32 character to convert
+    ///
+    ////////////////////////////////////////////////////////////
+    String(Uint32 utf32Char);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from a null-terminated C-style ANSI string
@@ -160,6 +206,8 @@ public :
     ///
     /// \return Converted ANSI string
     ///
+    /// \see ToAnsiString, operator std::wstring
+    ///
     ////////////////////////////////////////////////////////////
     operator std::string() const;
 
@@ -172,6 +220,8 @@ public :
     /// to calling ToWideString().
     ///
     /// \return Converted wide string
+    ///
+    /// \see ToWideString, operator std::string
     ///
     ////////////////////////////////////////////////////////////
     operator std::wstring() const;
@@ -186,6 +236,8 @@ public :
     /// discarded from the returned string.
     ///
     /// \return Converted ANSI string
+    ///
+    /// \see ToWideString, operator std::string
     ///
     ////////////////////////////////////////////////////////////
     std::string ToAnsiString() const;
@@ -204,6 +256,8 @@ public :
     ///
     /// \return Converted ANSI string
     ///
+    /// \see ToWideString, operator std::string
+    ///
     ////////////////////////////////////////////////////////////
     std::string ToAnsiString(const std::locale& locale) const;
 
@@ -214,6 +268,8 @@ public :
     /// discarded from the returned string.
     ///
     /// \return Converted wide string
+    ///
+    /// \see ToAnsiString, operator std::wstring
     ///
     ////////////////////////////////////////////////////////////
     std::wstring ToWideString() const;
@@ -227,36 +283,6 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     String& operator =(const String& right);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Overload of += operator to append an ANSI character
-    ///
-    /// \param right Character to append
-    ///
-    /// \return Reference to self
-    ///
-    ////////////////////////////////////////////////////////////
-    String& operator +=(char right);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Overload of += operator to append a wide character
-    ///
-    /// \param right Character to append
-    ///
-    /// \return Reference to self
-    ///
-    ////////////////////////////////////////////////////////////
-    String& operator +=(wchar_t right);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Overload of += operator to append an UTF-32 character
-    ///
-    /// \param right Character to append
-    ///
-    /// \return Reference to self
-    ///
-    ////////////////////////////////////////////////////////////
-    String& operator +=(Uint32 right);
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of += operator to append an UTF-32 string
@@ -335,6 +361,32 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void Erase(std::size_t position, std::size_t count = 1);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Insert one or more characters into the string
+    ///
+    /// This function inserts the characters of \a str
+    /// into the string, starting from \a position.
+    ///
+    /// \param position Position of insertion
+    /// \param str      Characters to insert
+    ///
+    ////////////////////////////////////////////////////////////
+    void Insert(std::size_t position, const String& str);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Find a sequence of one or more characters in the string
+    ///
+    /// This function searches for the characters of \a str
+    /// into the string, starting from \a start.
+    ///
+    /// \param str   Characters to find
+    /// \param start Where to begin searching
+    ///
+    /// \return Position of \a str in the string, or String::InvalidPos if not found
+    ///
+    ////////////////////////////////////////////////////////////
+    std::size_t Find(const String& str, std::size_t start = 0) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the C-style array of characters
@@ -473,39 +525,6 @@ SFML_API bool operator <=(const String& left, const String& right);
 ///
 ////////////////////////////////////////////////////////////
 SFML_API bool operator >=(const String& left, const String& right);
-
-////////////////////////////////////////////////////////////
-/// \brief Overload of binary + operator to concatenate a string and an ANSI character
-///
-/// \param left  Source string
-/// \param right Character to concatenate
-///
-/// \return Concatenated string
-///
-////////////////////////////////////////////////////////////
-SFML_API String operator +(const String& left, char right);
-
-////////////////////////////////////////////////////////////
-/// \brief Overload of binary + operator to concatenate a string and a wide character
-///
-/// \param left  Source string
-/// \param right Character to concatenate
-///
-/// \return Concatenated string
-///
-////////////////////////////////////////////////////////////
-SFML_API String operator +(const String& left, wchar_t right);
-
-////////////////////////////////////////////////////////////
-/// \brief Overload of binary + operator to concatenate a string and a UTF-32 character
-///
-/// \param left  Source string
-/// \param right Character to concatenate
-///
-/// \return Concatenated string
-///
-////////////////////////////////////////////////////////////
-SFML_API String operator +(const String& left, Uint32 right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of binary + operator to concatenate two strings
