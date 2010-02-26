@@ -599,6 +599,7 @@ void WindowImplWin32::CreateContext(const VideoMode& Mode, WindowSettings& Param
         PixelDescriptor.cColorBits   = static_cast<BYTE>(Mode.BitsPerPixel);
         PixelDescriptor.cDepthBits   = static_cast<BYTE>(Params.DepthBits);
         PixelDescriptor.cStencilBits = static_cast<BYTE>(Params.StencilBits);
+        PixelDescriptor.cAlphaBits   = Mode.BitsPerPixel == 32 ? 8 : 0;
 
         // Get the pixel format that best matches our requirements
         BestFormat = ChoosePixelFormat(myDeviceContext, &PixelDescriptor);
