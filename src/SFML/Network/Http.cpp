@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Http.hpp>
 #include <ctype.h>
+#include <algorithm>
+#include <iterator>
 #include <sstream>
 
 
@@ -295,8 +297,7 @@ void Http::Response::FromString(const std::string& Data)
 
     // Finally extract the body
     myBody.clear();
-    while (std::getline(In, Line))
-        myBody += Line + "\n";
+    std::copy(std::istreambuf_iterator<char>(In), std::istreambuf_iterator<char>(), std::back_inserter(myBody));
 }
 
 
