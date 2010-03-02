@@ -55,6 +55,9 @@
 		<Compiler>
 			<Add directory="..\..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\win32\Win32.cpp" />
 		<Extensions>
 			<code_completion />

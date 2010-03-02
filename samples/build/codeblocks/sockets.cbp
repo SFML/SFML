@@ -51,6 +51,9 @@
 		<Compiler>
 			<Add directory="..\..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\sockets\Sockets.cpp" />
 		<Unit filename="..\..\sockets\TCP.cpp" />
 		<Unit filename="..\..\sockets\UDP.cpp" />

@@ -109,6 +109,9 @@
 			<Add directory="..\..\src" />
 			<Add directory="..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\include\SFML\Network\Ftp.hpp" />
 		<Unit filename="..\..\include\SFML\Network\Http.hpp" />
 		<Unit filename="..\..\include\SFML\Network\IPAddress.hpp" />

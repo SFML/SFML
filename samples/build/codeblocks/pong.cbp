@@ -63,6 +63,9 @@
 		<Compiler>
 			<Add directory="..\..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\pong\Pong.cpp" />
 		<Extensions>
 			<code_completion />

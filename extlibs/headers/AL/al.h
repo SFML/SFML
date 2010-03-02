@@ -117,8 +117,7 @@ typedef void ALvoid;
 #define AL_CONE_OUTER_ANGLE                       0x1002
 
 /**
- * Specify the pitch to be applied, either at source,
- *  or on mixer results, at listener.
+ * Specify the pitch to be applied at source.
  * Range:   [0.5-2.0]
  * Default: 1.0
  */

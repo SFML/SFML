@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_Win32">
-				<Option output="..\..\lib\mingw\libcsfml-main-d.a" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\lib\mingw\libcsfml-main-d" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="..\..\Temp\codeblocks\csfml-main\Debug_Win32" />
 				<Option type="2" />
@@ -21,9 +21,12 @@
 					<Add option="-DNDEBUG" />
 					<Add option="-D_LIB" />
 				</Compiler>
+				<Linker>
+					<Add option="-static-libgcc" />
+				</Linker>
 			</Target>
 			<Target title="Release_Win32">
-				<Option output="..\..\lib\mingw\libcsfml-main.a" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\lib\mingw\libcsfml-main" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="..\..\Temp\codeblocks\csfml-main\Release_Win32" />
 				<Option type="2" />
@@ -41,6 +44,8 @@
 		<Unit filename="..\..\src\SFML\Main\SFML_Main.cpp" />
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

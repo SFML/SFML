@@ -166,11 +166,6 @@ typedef void ALCvoid;
 #define ALC_ATTRIBUTES_SIZE                      0x1002
 #define ALC_ALL_ATTRIBUTES                       0x1003
 
-/**
- * ALC_ENUMERATE_ALL_EXT enums
- */
-#define ALC_DEFAULT_ALL_DEVICES_SPECIFIER        0x1012
-#define ALC_ALL_DEVICES_SPECIFIER                0x1013
 
 /**
  * Capture extension

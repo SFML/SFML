@@ -53,6 +53,9 @@
 		<Compiler>
 			<Add directory="..\..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\sound_capture\SoundCapture.cpp" />
 		<Extensions>
 			<code_completion />

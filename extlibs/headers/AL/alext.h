@@ -25,16 +25,51 @@
 extern "C" {
 #endif
 
-#ifndef AL_EXT_float32
-#define AL_EXT_float32 1
-#define AL_FORMAT_MONO_FLOAT32                   0x10010
-#define AL_FORMAT_STEREO_FLOAT32                 0x10011
+#ifndef AL_LOKI_IMA_ADPCM_format
+#define AL_LOKI_IMA_ADPCM_format 1
+#define AL_FORMAT_IMA_ADPCM_MONO16_EXT           0x10000
+#define AL_FORMAT_IMA_ADPCM_STEREO16_EXT         0x10001
+#endif
+
+#ifndef AL_LOKI_WAVE_format
+#define AL_LOKI_WAVE_format 1
+#define AL_FORMAT_WAVE_EXT                       0x10002
+#endif
+
+#ifndef AL_EXT_vorbis
+#define AL_EXT_vorbis 1
+#define AL_FORMAT_VORBIS_EXT                     0x10003
 #endif
 
 #ifndef AL_LOKI_quadriphonic
 #define AL_LOKI_quadriphonic 1
 #define AL_FORMAT_QUAD8_LOKI                     0x10004
 #define AL_FORMAT_QUAD16_LOKI                    0x10005
+#endif
+
+#ifndef AL_EXT_float32
+#define AL_EXT_float32 1
+#define AL_FORMAT_MONO_FLOAT32                   0x10010
+#define AL_FORMAT_STEREO_FLOAT32                 0x10011
+#endif
+
+#ifndef AL_EXT_double
+#define AL_EXT_double 1
+#define AL_FORMAT_MONO_DOUBLE_EXT                0x10012
+#define AL_FORMAT_STEREO_DOUBLE_EXT              0x10013
+#endif
+
+#ifndef ALC_LOKI_audio_channel
+#define ALC_LOKI_audio_channel 1
+#define ALC_CHAN_MAIN_LOKI                       0x500001
+#define ALC_CHAN_PCM_LOKI                        0x500002
+#define ALC_CHAN_CD_LOKI                         0x500003
+#endif
+
+#ifndef ALC_ENUMERATE_ALL_EXT
+#define ALC_ENUMERATE_ALL_EXT 1
+#define ALC_DEFAULT_ALL_DEVICES_SPECIFIER        0x1012
+#define ALC_ALL_DEVICES_SPECIFIER                0x1013
 #endif
 
 #ifndef AL_EXT_MCFORMATS
@@ -60,6 +95,70 @@ extern "C" {
 #define AL_EXT_IMA4 1
 #define AL_FORMAT_MONO_IMA4                      0x1300
 #define AL_FORMAT_STEREO_IMA4                    0x1301
+#endif
+
+#ifndef AL_EXT_buffer_sub_data
+#define AL_EXT_buffer_sub_data 1
+#define AL_BYTE_RW_OFFSETS_EXT                   0x1031
+#define AL_SAMPLE_RW_OFFSETS_EXT                 0x1032
+#define AL_SEC_RW_OFFSETS_EXT                    0x1033
+typedef ALvoid (AL_APIENTRY*PFNALBUFFERSUBDATAEXTPROC)(ALuint,ALenum,const ALvoid*,ALsizei,ALsizei);
+#endif
+
+#ifndef AL_EXT_STATIC_BUFFER
+#define AL_EXT_STATIC_BUFFER 1
+typedef ALvoid (AL_APIENTRY*PFNALBUFFERDATASTATICPROC)(const ALint,ALenum,ALvoid*,ALsizei,ALsizei);
+#endif
+
+#ifndef AL_EXT_sample_buffer_object
+#define AL_EXT_sample_buffer_object 1
+#define AL_SAMPLE_SOURCE_EXT                     0x1040
+#define AL_SAMPLE_SINK_EXT                       0x1041
+#define AL_READ_ONLY_EXT                         0x1042
+#define AL_WRITE_ONLY_EXT                        0x1043
+#define AL_READ_WRITE_EXT                        0x1044
+#define AL_STREAM_WRITE_EXT                      0x1045
+#define AL_STREAM_READ_EXT                       0x1046
+#define AL_STREAM_COPY_EXT                       0x1047
+#define AL_STATIC_WRITE_EXT                      0x1048
+#define AL_STATIC_READ_EXT                       0x1049
+#define AL_STATIC_COPY_EXT                       0x104A
+#define AL_DYNAMIC_WRITE_EXT                     0x104B
+#define AL_DYNAMIC_READ_EXT                      0x104C
+#define AL_DYNAMIC_COPY_EXT                      0x104D
+typedef ALvoid (AL_APIENTRY*PFNALGENDATABUFFERSEXTPROC)(ALsizei n,ALuint *puiBuffers);
+typedef ALvoid (AL_APIENTRY*PFNALDELETEDATABUFFERSEXTPROC)(ALsizei n, const ALuint *puiBuffers);
+typedef ALboolean (AL_APIENTRY*PFNALISDATABUFFEREXTPROC)(ALuint uiBuffer);
+typedef ALvoid (AL_APIENTRY*PFNALDATABUFFERDATAEXTPROC)(ALuint buffer,const ALvoid *data,ALsizei size,ALenum usage);
+typedef ALvoid (AL_APIENTRY*PFNALDATABUFFERSUBDATAEXTPROC)(ALuint buffer, ALuint start, ALsizei length, const ALvoid *);
+typedef ALvoid (AL_APIENTRY*PFNALGETDATABUFFERSUBDATAEXTPROC)(ALuint buffer, ALuint start, ALsizei length, ALvoid *);
+typedef ALvoid (AL_APIENTRY*PFNALDATABUFFERFEXTPROC)(ALuint buffer, ALenum eParam, ALfloat flValue);
+typedef ALvoid (AL_APIENTRY*PFNALDATABUFFERFVEXTPROC)(ALuint buffer, ALenum eParam, const ALfloat* flValues);
+typedef ALvoid (AL_APIENTRY*PFNALDATABUFFERIEXTPROC)(ALuint buffer, ALenum eParam, ALint lValue);
+typedef ALvoid (AL_APIENTRY*PFNALDATABUFFERIVEXTPROC)(ALuint buffer, ALenum eParam, const ALint* plValues);
+typedef ALvoid (AL_APIENTRY*PFNALGETDATABUFFERFEXTPROC)(ALuint buffer, ALenum eParam, ALfloat *pflValue);
+typedef ALvoid (AL_APIENTRY*PFNALGETDATABUFFERFVEXTPROC)(ALuint buffer, ALenum eParam, ALfloat* pflValues);
+typedef ALvoid (AL_APIENTRY*PFNALGETDATABUFFERIEXTPROC)(ALuint buffer, ALenum eParam, ALint *plValue);
+typedef ALvoid (AL_APIENTRY*PFNALGETDATABUFFERIVEXTPROC)(ALuint buffer, ALenum eParam, ALint* plValues);
+typedef ALvoid (AL_APIENTRY*PFNALSELECTDATABUFFEREXTPROC)(ALenum target, ALuint uiBuffer);
+typedef ALvoid* (AL_APIENTRY*PFNALMAPDATABUFFEREXTPROC)(ALuint uiBuffer, ALuint start, ALsizei length, ALenum access);
+typedef ALvoid (AL_APIENTRY*PFNALUNMAPDATABUFFEREXTPROC)(ALuint uiBuffer);
+#endif
+
+#ifndef ALC_EXT_disconnect
+#define ALC_EXT_disconnect 1
+#define ALC_CONNECTED                            0x313
+#endif
+
+#ifndef ALC_EXT_thread_local_context
+#define ALC_EXT_thread_local_context 1
+typedef ALCboolean (ALC_APIENTRY*PFNALCMAKECURRENTPROC)(ALCcontext *context);
+typedef ALCcontext* (ALC_APIENTRY*PFNALCGETTHREADCONTEXTPROC)(void);
+#endif
+
+#ifndef AL_EXT_source_distance_model
+#define AL_EXT_source_distance_model 1
+#define AL_SOURCE_DISTANCE_MODEL                 0x200
 #endif
 
 #ifdef __cplusplus

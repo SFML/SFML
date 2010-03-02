@@ -110,6 +110,9 @@
 			<Add directory="..\..\src" />
 			<Add directory="..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\include\SFML\Audio\Listener.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\Music.hpp" />
 		<Unit filename="..\..\include\SFML\Audio\Sound.hpp" />

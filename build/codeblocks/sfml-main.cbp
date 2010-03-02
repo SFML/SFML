@@ -38,6 +38,9 @@
 				</Compiler>
 			</Target>
 		</Build>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\src\SFML\Main\SFML_Main.cpp" />
 		<Extensions>
 			<code_completion />

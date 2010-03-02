@@ -55,6 +55,9 @@
 		<Compiler>
 			<Add directory="..\..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\voip\Client.cpp" />
 		<Unit filename="..\..\voip\Server.cpp" />
 		<Unit filename="..\..\voip\VoIP.cpp" />

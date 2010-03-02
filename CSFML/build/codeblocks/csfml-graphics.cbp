@@ -53,6 +53,7 @@
 			<Add directory="..\..\..\include" />
 		</Compiler>
 		<Linker>
+			<Add option="-static-libgcc" />
 			<Add directory="..\..\..\lib\mingw" />
 		</Linker>
 		<Unit filename="..\..\include\SFML\Graphics\BlendMode.h" />

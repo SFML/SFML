@@ -89,6 +89,9 @@
 			<Add directory="..\..\src" />
 			<Add directory="..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\include\SFML\System\Clock.hpp" />
 		<Unit filename="..\..\include\SFML\System\Err.hpp" />
 		<Unit filename="..\..\include\SFML\System\Lock.hpp" />

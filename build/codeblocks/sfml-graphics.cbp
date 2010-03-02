@@ -117,6 +117,9 @@
 			<Add directory="..\..\extlibs\headers" />
 			<Add directory="..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\include\SFML\Graphics\Color.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Drawable.hpp" />
 		<Unit filename="..\..\include\SFML\Graphics\Font.hpp" />

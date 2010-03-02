@@ -51,6 +51,9 @@
 		<Compiler>
 			<Add directory="..\..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\ftp\Ftp.cpp" />
 		<Extensions>
 			<code_completion />

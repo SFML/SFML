@@ -79,6 +79,9 @@
 		<Compiler>
 			<Add directory="..\..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\wxwidgets\Main.cpp" />
 		<Unit filename="..\..\wxwidgets\wxSFMLCanvas.cpp" />
 		<Unit filename="..\..\wxwidgets\wxSFMLCanvas.hpp" />

@@ -106,6 +106,7 @@
 			<Add directory="..\..\include" />
 		</Compiler>
 		<Linker>
+			<Add option="-static-libgcc" />
 			<Add library="libgdi32.a" />
 		</Linker>
 		<Unit filename="..\..\include\SFML\Window\Context.hpp" />

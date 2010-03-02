@@ -24,6 +24,7 @@
 					<Add directory="..\..\..\extlibs" />
 				</ResourceCompiler>
 				<Linker>
+					<Add option="-static-libgcc" />
 					<Add library="..\..\..\lib\mingw\libsfml-audio-s-d.a" />
 					<Add library="..\..\..\lib\mingw\libsfml-system-s-d.a" />
 				</Linker>

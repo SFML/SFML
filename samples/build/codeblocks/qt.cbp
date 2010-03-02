@@ -84,6 +84,9 @@
 		<Compiler>
 			<Add directory="..\..\..\include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+		</Linker>
 		<Unit filename="..\..\qt\Main.cpp" />
 		<Unit filename="..\..\qt\QSFMLCanvas.cpp" />
 		<Unit filename="..\..\qt\QSFMLCanvas.hpp" />
