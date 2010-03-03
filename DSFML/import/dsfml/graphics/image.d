@@ -36,9 +36,9 @@ import	dsfml.system.common,
 
 
 /**
-*	Image is the low-level class for loading and
-*	manipulating images
-*/
+ *	Image is the low-level class for loading and
+ *	manipulating images
+ */
 class Image : DSFMLObject
 {
 package:
@@ -46,39 +46,39 @@ package:
 	{
 		super(ptr, true);
 	}
-		
+	
 public:
 
 	/**
-	*	Default constructor
-	*/
+	 *	Default constructor
+	 */
 	this()
 	{
 		super(sfImage_Create());
 	}
 
 	/**
-	*	Construct an empty image
-	*
-	*	Params:	
-	*		width = Image width
-	*		height = Image height
-	*		col = Image color (black by default)
-	*/
+	 *	Construct an empty image
+	 *
+	 *	Params:	
+	 *		width = Image width
+	 *		height = Image height
+	 *		col = Image color (black by default)
+	 */
 	this(uint width, uint height, Color col = Color.BLACK)
 	{
 		super(sfImage_CreateFromColor(width, height, col));
 	}
 
 	/**
-	*	Construct the image from a file
-	*
-	*	Params: 
-	*		filename = Path of the image file to load
-	*		
-	*	Throws:
-	*		LoadingException if filename is empty or null.
-	*/
+	 *	Construct the image from a file
+	 *
+	 *	Params: 
+	 *		filename = Path of the image file to load
+	 *		
+	 *	Throws:
+	 *		LoadingException if filename is empty or null.
+	 */
 	this(string filename)
 	{
 		if (filename is null || filename.length == 0)
@@ -88,13 +88,13 @@ public:
 	}
 
 	/**
-	*	Construct the image from a file in memory
-	*
-	*	Params:
-	*		data = array of data in memory
-	*	Throws:
-	*		LoadingException if data is empty or null.
-	*/
+	 *	Construct the image from a file in memory
+	 *
+	 *	Params:
+	 *		data = array of data in memory
+	 *	Throws:
+	 *		LoadingException if data is empty or null.
+	 */
 	this(ubyte[] data)
 	{
 		if (data is null || data.length == 0)
@@ -104,16 +104,16 @@ public:
 	}
 
 	/**
-	*	Construct the image directly from an array of pixels
-	*
-	*	Params: 
-	*		width = Image width
-	*		height = Image height
-	*		data = array of pixels in memory (assumed format is RGBA)
-	*	
-	*	Throws:
-	*		LoadingException if data length doesn't match Width * Height * 4
-	*/
+	 *	Construct the image directly from an array of pixels
+	 *
+	 *	Params: 
+	 *		width = Image width
+	 *		height = Image height
+	 *		data = array of pixels in memory (assumed format is RGBA)
+	 *	
+	 *	Throws:
+	 *		LoadingException if data length doesn't match Width * Height * 4
+	 */
 	this(uint width, uint height, ubyte[] data)
 	{
 		if (width * height * 4 != data.length)
@@ -128,30 +128,30 @@ public:
 	}
 
 	/**
-	*	Save the content of the image to a file
-	*
-	*	Params: 
-	*		filename = Path of the file to save (overwritten if already exist)
-	*
-	*	Returns: 
-	*		True if saving was successful
-	*/
+	 *	Save the content of the image to a file
+	 *
+	 *	Params: 
+	 *		filename = Path of the file to save (overwritten if already exist)
+	 *
+	 *	Returns: 
+	 *		True if saving was successful
+	 */
 	bool saveToFile(string filename)
 	{
 		return cast(bool)sfImage_SaveToFile(m_ptr, toStringz(filename));
 	}
 
 	/**
-	*	Create an empty image
-	*	
-	*	Params:	
-	*		width = Image width
-	*		height = Image height
-	*		col = Image color (black by default)
-	*
-	*	Returns: 
-	*		True if creation was successful
-	*/
+	 *	Create an empty image
+	 *	
+	 *	Params:	
+	 *		width = Image width
+	 *		height = Image height
+	 *		col = Image color (black by default)
+	 *
+	 *	Returns: 
+	 *		True if creation was successful
+	 */
 	bool create(uint width, uint height, Color col = Color.BLACK)
 	{
 		m_ptr = sfImage_CreateFromColor(width, height, col);
@@ -159,27 +159,27 @@ public:
 	}
 
 	/**
-	*	Create transparency mask from a specified colorkey
-	*
-	*	Params: 
-	*		colorKey = Color to become transparent
-	*		alpha = Alpha value to use for transparent pixels (0 by default)
-	*/
+	 *	Create transparency mask from a specified colorkey
+	 *
+	 *	Params: 
+	 *		colorKey = Color to become transparent
+	 *		alpha = Alpha value to use for transparent pixels (0 by default)
+	 */
 	void createMaskFromColor(Color colorKey, ubyte alpha = 0)
 	{
 		sfImage_CreateMaskFromColor(m_ptr, colorKey, alpha);
 	}
 	
 //	 /**
-//	 *	Create the image from the current contents of the
-//	 *	given window
+//	  *	Create the image from the current contents of the
+//	  *	given window
 //	 *
-//	 *	Params:	
-//	 *		window = Window to capture
-//	 *		sourceRect = Sub-rectangle of the screen to copy (empty by default - entire image)
+//	  *	Params:	
+//	  *		window = Window to capture
+//	  *		sourceRect = Sub-rectangle of the screen to copy (empty by default - entire image)
 //	 *
-//	 *	Returns:
-//	 *		True if copy was successful
+//	  *	Returns:
+//	  *		True if copy was successful
 //	 */
 //	 void copyScreen(RenderWindow window, IntRect sourceRect = IntRect())
 //	 {
@@ -187,120 +187,135 @@ public:
 //	 }
 	
 	/**
-	*	Copy pixels from another image onto this one.
-	*	This function does a slow pixel copy and should only
-	*	be used at initialization time
-	*
-	*	Params:
-	*		source = Source image to copy
-	*		destX = X coordinate of the destination position
-	*		destY = Y coordinate of the destination position
-	*		sourceRect = Sub-rectangle of the source image to copy
-	*/
+	 *	Copy pixels from another image onto this one.
+	 *	This function does a slow pixel copy and should only
+	 *	be used at initialization time
+	 *
+	 *	Params:
+	 *		source = Source image to copy
+	 *		destX = X coordinate of the destination position
+	 *		destY = Y coordinate of the destination position
+	 *		sourceRect = Sub-rectangle of the source image to copy
+	 */
 	void copy(Image source, uint destX, uint destY, IntRect sourceRect = IntRect())
 	{
 		sfImage_Copy(m_ptr, source.getNativePointer, destX, destY, sourceRect);
 	} 
 
 	/**
-	*	Change the color of a pixel
-	*	Don't forget to call Update when you end modifying pixels
-	*	
-	*	Params:	
-	*		x = X coordinate of pixel in the image
-	*		y = Y coordinate of pixel in the image
-	*		col = New color for pixel (X, Y)
-	*/
+	 *	Change the color of a pixel
+	 *	Don't forget to call Update when you end modifying pixels
+	 *	
+	 *	Params:	
+	 *		x = X coordinate of pixel in the image
+	 *		y = Y coordinate of pixel in the image
+	 *		col = New color for pixel (X, Y)
+	 */
 	void setPixel(uint x, uint y, Color col)
 	{
 		sfImage_SetPixel(m_ptr, x, y, col);
 	}
 
 	/**
-	*	Get a pixel from the image
-	*
-	*	Params:	
-	*		x = X coordinate of pixel in the image
-	*		y = Y coordinate of pixel in the image
-	*
-	*	Returns: 
-	*		Color of pixel (x, y)
-	*/
+	 *	Get a pixel from the image
+	 *
+	 *	Params:	
+	 *		x = X coordinate of pixel in the image
+	 *		y = Y coordinate of pixel in the image
+	 *
+	 *	Returns: 
+	 *		Color of pixel (x, y)
+	 */
 	Color getPixel(uint x, uint y)
 	{
 		return sfImage_GetPixel(m_ptr, x, y);
 	}
 
 	/**
-	*	Get an array of pixels (8 bits integers RGBA)
-	*	Array size is GetWidth() x GetHeight() x 4
-	*	This array becomes invalid if you reload or resize the image
-	*
-	*	Returns:
-	*		array of pixels
-	*/
+	 *	Get an array of pixels (8 bits integers RGBA)
+	 *	Array size is GetWidth() x GetHeight() x 4
+	 *	This array becomes invalid if you reload or resize the image
+	 *
+	 *	Returns:
+	 *		array of pixels
+	 */
 	ubyte[] getPixelsArray()
 	{
 		return sfImage_GetPixelsPtr(m_ptr)[0..getWidth() * getHeight() * 4];
 	}
 
 	/**
-	*	Bind the image for rendering
-	*/
+	 *	Bind the image for rendering
+	 */
 	void bind()
 	{
 		sfImage_Bind(m_ptr);
 	}
 
 	/**
-	*	Enable or disable image smooth filter.
-	*	This parameter is enabled by default
-	*
-	*	Params: 
-	*		smooth = True to enable smoothing filter, false to disable it
-	*/
+	 *	Enable or disable image smooth filter.
+	 *	This parameter is enabled by default
+	 *
+	 *	Params: 
+	 *		smooth = True to enable smoothing filter, false to disable it
+	 */
 	void setSmooth(bool smooth)
 	{
 		sfImage_SetSmooth(m_ptr, smooth);
 	}
 
 	/**
-	*	Return the width of the image
-	*
-	*	Returns: 
-	*		Width in pixels
-	*/
+	 *	Return the width of the image
+	 *
+	 *	Returns: 
+	 *		Width in pixels
+	 */
 	uint getWidth()
 	{
 		return sfImage_GetWidth(m_ptr);
 	}
 
 	/**
-	*	Return the height of the image
-	*
-	*	Returns: 
-	*		Height in pixels
-	*/
+	 *	Return the height of the image
+	 *
+	 *	Returns: 
+	 *		Height in pixels
+	 */
 	uint getHeight()
 	{
 		return sfImage_GetHeight(m_ptr);
 	}
 	
 	/**
-	*	Tells whether the smooth filtering is enabled or not
-	*
-	*	Returns:
-	*		True if image smoothing is enabled
-	*/
+	 *	Tells whether the smooth filtering is enabled or not
+	 *
+	 *	Returns:
+	 *		True if image smoothing is enabled
+	 */
 	bool isSmooth()
 	{
 		return cast(bool)sfImage_IsSmooth(m_ptr);
 	}
-	
-private:
-	extern (C)
+
+	/**
+	 *	Update a sub-rectangle of the image from an array of pixels
+	 *
+	 *	Warning: for performances reasons, this function doesn't
+	 *	perform any check; thus you're responsible of ensuring that
+	 *	rectangle does not exceed the image size, and that
+	 *	pixels contains enough elements.
+	 *
+	 *	Params:
+	 *		rectangle	= sub rectangle of the image to update
+	 *		pixels		= array of pixels to write to the image
+	 */
+	void updatePixels(ubyte[] pixels, IntRect rectangle)
 	{
-	static
+		sfImage_UpdatePixels(m_ptr, pixels.ptr, rectangle);
+	}
+
+private:
+	static extern (C)
 	{
 		void*	function()									sfImage_Create;
 		void*	function(uint, uint, Color)					sfImage_CreateFromColor;
@@ -320,33 +335,11 @@ private:
 		uint	function(void*)								sfImage_GetWidth;
 		uint	function(void*)								sfImage_GetHeight;
 		int		function(void*)								sfImage_IsSmooth;
-	}
+		void	function(void*, ubyte*, IntRect)			sfImage_UpdatePixels;
 	}
 
-	static this()
-	{
-	debug
-		DllLoader dll = DllLoader.load("csfml-graphics-d");
-	else
-		DllLoader dll = DllLoader.load("csfml-graphics");
-		
-		mixin(loadFromSharedLib("sfImage_Create"));
-		mixin(loadFromSharedLib("sfImage_CreateFromColor"));
-		mixin(loadFromSharedLib("sfImage_CreateFromPixels"));
-		mixin(loadFromSharedLib("sfImage_CreateFromFile"));
-		mixin(loadFromSharedLib("sfImage_CreateFromMemory"));
-		mixin(loadFromSharedLib("sfImage_Destroy"));
-		mixin(loadFromSharedLib("sfImage_SaveToFile"));
-		mixin(loadFromSharedLib("sfImage_CreateMaskFromColor"));
-		mixin(loadFromSharedLib("sfImage_CopyScreen"));
-		mixin(loadFromSharedLib("sfImage_Copy"));
-		mixin(loadFromSharedLib("sfImage_SetPixel"));
-		mixin(loadFromSharedLib("sfImage_GetPixel"));
-		mixin(loadFromSharedLib("sfImage_GetPixelsPtr"));
-		mixin(loadFromSharedLib("sfImage_Bind"));
-		mixin(loadFromSharedLib("sfImage_SetSmooth"));
-		mixin(loadFromSharedLib("sfImage_GetWidth"));
-		mixin(loadFromSharedLib("sfImage_GetHeight"));
-		mixin(loadFromSharedLib("sfImage_IsSmooth"));
-	}
+	mixin(loadFromSharedLib2("csfml-graphics", "sfImage",
+			"Create", "CreateFromColor", "CreateFromPixels", "CreateFromFile", "CreateFromMemory", "Destroy", "SaveToFile",
+			"CreateMaskFromColor", "CopyScreen", "Copy", "SetPixel", "GetPixel", "GetPixelsPtr", "Bind", "SetSmooth", "GetWidth",
+			"GetHeight", "IsSmooth", "UpdatePixels"));
 }
