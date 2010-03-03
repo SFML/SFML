@@ -26,6 +26,7 @@ EXPORTS
 	sfImage_SetPixel
 	sfImage_GetPixel
 	sfImage_GetPixelsPtr
+	sfImage_UpdatePixels
 	sfImage_Bind
 	sfImage_SetSmooth
 	sfImage_GetWidth

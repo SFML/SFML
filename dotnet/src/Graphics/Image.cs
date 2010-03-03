@@ -269,6 +269,38 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Update the pixels of the image
+            /// </summary>
+            /// <param name="pixels">2 dimensions array containing the pixels</param>
+            ////////////////////////////////////////////////////////////
+            public void UpdatePixels(Color[,] pixels)
+            {
+                UpdatePixels(pixels, 0, 0);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Update the pixels of the image
+            /// </summary>
+            /// <param name="pixels">2 dimensions array containing the pixels</param>
+            /// <param name="x">X position of the rectangle to update</param>
+            /// <param name="y">Y position of the rectangle to update</param>
+            ////////////////////////////////////////////////////////////
+            public void UpdatePixels(Color[,] pixels, uint x, uint y)
+            {
+                unsafe
+                {
+                    fixed (Color* PixelsPtr = pixels)
+                    {
+                        int Width  = pixels.GetLength(0);
+                        int Height = pixels.GetLength(1);
+                        sfImage_UpdatePixels(This, PixelsPtr, new IntRect((int)x, (int)y, Width, Height));
+                    }
+                }
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Bind the image for rendering
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -392,6 +424,9 @@ namespace SFML
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfImage_GetPixelsPtr(IntPtr This);
+
+            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            unsafe static extern void sfImage_UpdatePixels(IntPtr This, Color* Pixels, IntRect Rectangle);
 
             [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
             static extern void sfImage_Bind(IntPtr This);

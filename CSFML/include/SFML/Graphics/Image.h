@@ -155,7 +155,6 @@ CSFML_API sfBool sfImage_CopyScreen(sfImage* image, sfRenderWindow* window, sfIn
 
 ////////////////////////////////////////////////////////////
 /// Change the color of a pixel of an image
-/// Don't forget to call Update when you end modifying pixels
 ///
 /// \param image : Image to modify
 /// \param x :     X coordinate of pixel in the image
@@ -188,6 +187,21 @@ CSFML_API sfColor sfImage_GetPixel(const sfImage* image, unsigned int x, unsigne
 ///
 ////////////////////////////////////////////////////////////
 CSFML_API const sfUint8* sfImage_GetPixelsPtr(const sfImage* image);
+
+////////////////////////////////////////////////////////////
+/// Update a sub-rectangle of the image from an array of pixels
+///
+/// Warning: for performances reasons, this function doesn't
+/// perform any check; thus you're responsible of ensuring that
+/// \a rectangle does not exceed the image size, and that
+/// \a pixels contains enough elements.
+///
+/// \param image :     Image to update
+/// \param rectangle : Sub-rectangle of the image to update
+/// \param pixels :    Array of pixels to write to the image
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfImage_UpdatePixels(const sfImage* image, const sfUint8* pixels, sfIntRect rectangle);
 
 ////////////////////////////////////////////////////////////
 /// Bind the image for rendering

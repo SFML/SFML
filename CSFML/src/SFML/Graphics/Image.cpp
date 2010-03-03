@@ -209,6 +209,16 @@ const sfUint8* sfImage_GetPixelsPtr(const sfImage* image)
 
 
 ////////////////////////////////////////////////////////////
+/// Update a sub-rectangle of the image from an array of pixels
+////////////////////////////////////////////////////////////
+void sfImage_UpdatePixels(const sfImage* image, const sfUint8* pixels, sfIntRect rectangle)
+{
+    sf::IntRect rect(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom);
+    CSFML_CALL_PTR(image, UpdatePixels(pixels, rect));
+}
+
+
+////////////////////////////////////////////////////////////
 /// Bind the image for rendering
 ////////////////////////////////////////////////////////////
 void sfImage_Bind(const sfImage* image)
