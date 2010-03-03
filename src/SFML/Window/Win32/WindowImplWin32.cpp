@@ -481,13 +481,13 @@ void WindowImplWin32::SwitchToFullscreen(const VideoMode& Mode)
         return;
     }
 
-    // Resize the window so that it fits the entire screen
-    SetWindowPos(myHandle, HWND_TOP, 0, 0, Mode.Width, Mode.Height, SWP_FRAMECHANGED);
-    ShowWindow(myHandle, SW_SHOW);
-
     // Make the window flags compatible with fullscreen mode
     SetWindowLong(myHandle, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
     SetWindowLong(myHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+
+    // Resize the window so that it fits the entire screen
+    SetWindowPos(myHandle, HWND_TOP, 0, 0, Mode.Width, Mode.Height, SWP_FRAMECHANGED);
+    ShowWindow(myHandle, SW_SHOW);
 
     // Set "this" as the current fullscreen window
     ourFullscreenWindow = this;
