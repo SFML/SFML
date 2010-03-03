@@ -26,7 +26,7 @@
 
 module dsfml.system.lock;
 
-import dsfml.system.mutex;
+import core.sync.mutex;
 
 /**
 *	Encapsulation of an critical section. Unlocking is guaranteed when the Lock goes out of scope, even on exception.

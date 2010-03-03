@@ -31,10 +31,9 @@ import dsfml.system.common;
 import dsfml.system.vector3;
 import dsfml.system.linkedlist;
 import dsfml.system.lock;
-import dsfml.system.mutex;
-import dsfml.system.sleep;
-//import dsfml.system.thread;
+
 import core.thread;
+import core.sync.mutex;
 
 import dsfml.audio.sound;
 import dsfml.audio.soundsource;
@@ -251,7 +250,7 @@ private:
 			SoundStream temp = s_instances[id];
 			//if no samples are available but streaming is not stopped, we sleep the thread
 			while (temp.m_samples.empty && temp.m_flag)
-				sleep(0.01f);
+				Thread.sleep(10_000_0); // 10ms
 			
 			scope Lock l = new Lock(temp.m_mutex);
 			if (!temp.m_samples.empty)
@@ -294,7 +293,7 @@ private:
 					m_samples.enqueue(new Data(data, ret));
 				}
 			}
-			sleep(0.1f);
+			Thread.sleep(100_000_0); // 100ms
 		}
 	}
 	

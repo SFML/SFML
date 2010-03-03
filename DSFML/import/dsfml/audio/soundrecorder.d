@@ -30,12 +30,12 @@ import dsfml.audio.soundbuffer;
 
 import dsfml.system.alloc;
 import dsfml.system.common;
-import dsfml.system.sleep;
+
 import dsfml.system.linkedlist;
-import dsfml.system.mutex;
 import dsfml.system.lock;
-//import dsfml.system.thread;
+
 import core.thread;
+import core.sync.mutex;
 
 /**
 *	SoundRecorder is an interface for capturing sound data.
@@ -252,7 +252,7 @@ private:
 	{
 		while (m_flag)
 		{
-			sleep(0.05f);
+			Thread.sleep(50_000_0); // 50ms
 			// if samples are available
 			if (!m_list.empty)
 			{

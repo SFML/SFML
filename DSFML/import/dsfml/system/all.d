@@ -36,11 +36,6 @@ version (linux)
 
 
 public import
-	dsfml.system.clock,
 	dsfml.system.lock,
-	dsfml.system.mutex,
-	dsfml.system.randomizer,
-	dsfml.system.sleep,
-//	dsfml.system.thread, // thread isn't used anywhere in the library and D threading is nice, so the user can safely use standard threads
 	dsfml.system.vector2,
 	dsfml.system.vector3;
