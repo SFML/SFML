@@ -34,6 +34,13 @@ version (linux)
 	}
 }
 
+version (darwin)
+{
+	version (build)
+	{
+		pragma(link, "dl"); //Link libdl.dylib (dlopen, dlsym)
+	}
+}
 
 public import
 	dsfml.system.lock,

@@ -43,13 +43,28 @@ else
 		import std.windows.syserror; // for error strings
 		alias HMODULE MODULEHANDLE; 
 	}
-	version (linux)
+	else version (linux)
 	{
 		import std.c.linux.linux;
 		alias void* MODULEHANDLE;
 		
 		const int RTLD_NOW = 0x00002;
 		const int RTLD_GLOBAL = 0x00100;
+	}
+	else version (darwin)
+	{
+		alias void* MODULEHANDLE;
+
+		const int RTLD_NOW = 0x2;
+		const int RTLD_GLOBAL = 0x8;
+
+		extern (C)
+		{
+			void* dlopen(char* file, int mode);
+			int   dlclose(void* handle);
+			void* dlsym(void* handle, char* name);
+			char* dlerror();
+		}
 	}
 }
 
@@ -91,9 +106,13 @@ class DllLoader
 		{
 			string libraryName = library ~ ".dll";
 		}
-		version (linux)
+		else version (linux)
 		{
 			string libraryName = "lib" ~ library ~ ".so";
+		}
+		else version (darwin)
+		{   
+			string libraryName = "lib" ~ library ~ ".dylib";
 		}
 		
 		if (libraryName in alreadyLoaded)
@@ -121,7 +140,11 @@ class DllLoader
 			{
 				symb = GetProcAddress(m_lib, toStringz(symbolName));
 			}
-			version (linux)
+			else version (linux)
+			{
+				symb = dlsym(m_lib, toStringz(symbolName));
+			}
+			else version (darwin)
 			{
 				symb = dlsym(m_lib, toStringz(symbolName));
 			}
@@ -145,7 +168,11 @@ class DllLoader
 			{
 				FreeLibrary(m_lib);
 			}
-			version (linux)
+			else version (linux)
+			{
+				dlclose(m_lib);
+			}
+			else version (darwin)
 			{
 				dlclose(m_lib);
 			}
@@ -176,9 +203,15 @@ private:
 			{
 				m_lib = LoadLibraryA(toStringz(libraryPath));
 			}
-			version (linux)
+			else version (linux)
 			{
 				m_lib = dlopen(toStringz(libraryPath), RTLD_NOW | RTLD_GLOBAL);
+			}
+			else version (darwin)
+			{
+				m_lib = dlopen(toStringz(libraryPath), RTLD_NOW | RTLD_GLOBAL);
+				if (m_lib is null)
+					m_lib = dlopen(toStringz("@executable_path/" ~ libraryPath), RTLD_NOW | RTLD_GLOBAL);
 			}
 		}
 		if (m_lib is null)

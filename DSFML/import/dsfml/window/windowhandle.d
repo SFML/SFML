@@ -40,4 +40,8 @@ else version(linux)
 	// Unix - X11 defines an unsigned integer handle (Window)
 	typedef ulong WindowHandle;
 }
-
+else version(darwin)
+{
+	// Mac OS X defines a void* handle (NSWindow)
+	typedef void* WindowHandle;
+}

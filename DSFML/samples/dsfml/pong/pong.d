@@ -13,6 +13,8 @@ version (Tango)
 else
 {
 	import std.math;
+	import std.perf;
+	import std.random;
 }
 
 void main()
@@ -23,7 +25,7 @@ void main()
 	// Create the window of the application
 	RenderWindow app = new RenderWindow(VideoMode(800, 600, 32), "SFML Pong");
 
-	app.useVerticalSync(true);
+	app.useVerticalSync(false);
 	
 	Input i = app.getInput();
 	
@@ -43,6 +45,10 @@ void main()
 	End.move(150.f, 200.f);
 	End.setColor(Color(50, 50, 250));
 
+	Text fps = new Text(""c, font, 30);
+	fps.move(50.f, 50.f);
+	fps.setColor(Color.BLACK);
+	
 	// Create the sprites of the background, the paddles and the ball
 	Sprite LeftPaddle = new Sprite(PaddleImage);
 	Sprite RightPaddle = new Sprite(PaddleImage);
@@ -53,8 +59,8 @@ void main()
 	Ball.move((app.getView().getWidth() - Ball.getSize().x) / 2, (app.getView().getHeight() - Ball.getSize().y) / 2);
 
 	// Define the paddles properties
-	Clock AITimer = new Clock();
-	const float AITime	 = 0.1f;
+	auto AITimer = new PerformanceCounter();
+	const long AITime	 = 100; // 100 ms
 	float LeftPaddleSpeed  = 400.f;
 	float RightPaddleSpeed = 400.f;
 
@@ -64,12 +70,14 @@ void main()
 	do
 	{
 		// Make sure the ball initial angle is not too much vertical
-		BallAngle = Randomizer.random(0.f, 2 * PI);
+		BallAngle = uniform(0.f, 2 * PI);
 	} while (abs(cos(BallAngle)) < 0.7f);
 
 	bool IsPlaying = true;
 
 	Event evt;
+	uint iFps = 0;
+	auto fpsClock = new PerformanceCounter();
 	while (app.isOpened())
 	{
 		app.clear(Color(255, 255, 255, 255));
@@ -102,9 +110,10 @@ void main()
 			}
 
 			// Update the computer's paddle direction according to the ball position
-			if (AITimer.getElapsedTime() > AITime)
+			AITimer.stop();
+			if (AITimer.milliseconds > AITime)
 			{
-				AITimer.reset();
+				AITimer.start();
 				if ((RightPaddleSpeed < 0) && (Ball.getPosition().y + Ball.getSize().y > RightPaddle.getPosition().y + RightPaddle.getSize().y))
 					RightPaddleSpeed = -RightPaddleSpeed;
 				if ((RightPaddleSpeed > 0) && (Ball.getPosition().y < RightPaddle.getPosition().y))
@@ -173,6 +182,15 @@ void main()
 		app.draw(RightPaddle);
 		app.draw(Ball);
 
+		fpsClock.stop();
+		if(fpsClock.seconds >= 1)
+		{
+			fps.setString(std.string.format("%d fps", iFps));
+			iFps = 0;
+			fpsClock.start();
+		}
+		++iFps;
+		app.draw(fps);
 		// If the game is over, display the end message
 		if (!IsPlaying)
 			app.draw(End);
