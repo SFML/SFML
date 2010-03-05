@@ -62,8 +62,7 @@ myUserData(UserData)
 Thread::~Thread()
 {
     // Wait for the thread to finish before destroying the instance
-    if (myHandle)
-        Wait();
+    Wait();
 }
 
 
@@ -72,6 +71,9 @@ Thread::~Thread()
 ////////////////////////////////////////////////////////////
 void Thread::Launch()
 {
+    // Wait for the thread to finish, in case it was already running
+    Wait();
+
     // Create the thread
     myHandle = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &Thread::ThreadFunc, this, 0, NULL));
 

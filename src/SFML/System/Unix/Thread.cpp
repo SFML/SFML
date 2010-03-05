@@ -61,8 +61,7 @@ myUserData(UserData)
 Thread::~Thread()
 {
     // Wait for the thread to finish before destroying the instance
-    if (myIsActive)
-        Wait();
+    Wait();
 }
 
 
@@ -71,6 +70,9 @@ Thread::~Thread()
 ////////////////////////////////////////////////////////////
 void Thread::Launch()
 {
+    // Wait for the thread to finish, in case it was already running
+    Wait();
+
     // Create the thread
     myIsActive = true;
     int Error = pthread_create(&myThread, NULL, &Thread::ThreadFunc, this);
