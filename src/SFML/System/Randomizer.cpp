@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Randomizer.hpp>
-#include <SFML/System/Platform.hpp>
-#include <cstdlib>
+#include <stdlib.h>
+#include <time.h>
 
 
 ////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ namespace
     // in milliseconds, so that it is always different
     unsigned int InitializeSeed()
     {
-        unsigned int seed = static_cast<unsigned int>(sf::priv::Platform::GetSystemTime() * 1000);
+        unsigned int seed = static_cast<unsigned int>(time(NULL));
         srand(seed);
         return seed;
     }

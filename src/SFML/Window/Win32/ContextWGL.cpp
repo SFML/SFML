@@ -224,6 +224,7 @@ void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, co
         descriptor.cColorBits   = static_cast<BYTE>(bitsPerPixel);
         descriptor.cDepthBits   = static_cast<BYTE>(mySettings.DepthBits);
         descriptor.cStencilBits = static_cast<BYTE>(mySettings.StencilBits);
+        descriptor.cAlphaBits   = bitsPerPixel == 32 ? 8 : 0;
 
         // Get the pixel format that best matches our requirements
         bestFormat = ChoosePixelFormat(myDeviceContext, &descriptor);

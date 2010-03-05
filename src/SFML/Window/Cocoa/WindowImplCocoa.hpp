@@ -33,10 +33,10 @@
 #include <string>
 
 #ifdef __OBJC__
-@class WindowWrapper;
-typedef WindowWrapper* WindowWrapperRef;
+@class sfPrivWindow;
+typedef sfPrivWindow* sfPrivWindowRef;
 #else
-typedef void* WindowWrapperRef;
+typedef void* sfPrivWindowRef;
 #endif
 
 namespace sf
@@ -192,7 +192,7 @@ private :
 	////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-	WindowWrapperRef myWrapper;	
+	sfPrivWindowRef myWrapper;	
 	bool myUseKeyRepeat;
 	bool myMouseIn;
 	float myWheelStatus;

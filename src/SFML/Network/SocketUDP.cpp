@@ -249,20 +249,26 @@ Socket::Status SocketUDP::Receive(Packet& packet, IPAddress& address, unsigned s
     std::size_t received   = 0;
     if (myPendingPacketSize < 0)
     {
-        Socket::Status status = Receive(reinterpret_cast<char*>(&packetSize), sizeof(packetSize), received, address, port);
-        if (status != Socket::Done)
-            return status;
+        // Loop until we've received the entire size of the packet
+        // (even a 4 bytes variable may be received in more than one call)
+        while (myPendingHeaderSize < sizeof(myPendingHeader))
+        {
+            char* data = reinterpret_cast<char*>(&myPendingHeader) + myPendingHeaderSize;
+            Socket::Status status = Receive(data, sizeof(myPendingHeader) - myPendingHeaderSize, received, address, port);
+            myPendingHeaderSize += received;
 
-        packetSize = ntohl(packetSize);
+            if (status != Socket::Done)
+                return status;
+        }
+
+        packetSize = ntohl(myPendingHeader);
+        myPendingHeaderSize = 0;
     }
     else
     {
         // There is a pending packet : we already know its size
         packetSize = myPendingPacketSize;
     }
-
-    // Clear the user packet
-    packet.Clear();
 
     // Use another address instance for receiving the packet data ;
     // chunks of data coming from a different sender will be discarded (and lost...)
@@ -398,6 +404,7 @@ void SocketUDP::Create(SocketHelper::SocketType descriptor)
     myPort = 0;
 
     // Reset the pending packet
+    myPendingHeaderSize = 0;
     myPendingPacket.clear();
     myPendingPacketSize = -1;
 

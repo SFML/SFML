@@ -344,11 +344,20 @@ Socket::Status SocketTCP::Receive(Packet& packet)
     std::size_t received   = 0;
     if (myPendingPacketSize < 0)
     {
-        Socket::Status status = Receive(reinterpret_cast<char*>(&packetSize), sizeof(packetSize), received);
-        if (status != Socket::Done)
-            return status;
+        // Loop until we've received the entire size of the packet
+        // (even a 4 bytes variable may be received in more than one call)
+        while (myPendingHeaderSize < sizeof(myPendingHeader))
+        {
+            char* data = reinterpret_cast<char*>(&myPendingHeader) + myPendingHeaderSize;
+            Socket::Status status = Receive(data, sizeof(myPendingHeader) - myPendingHeaderSize, received);
+            myPendingHeaderSize += received;
 
-        packetSize = ntohl(packetSize);
+            if (status != Socket::Done)
+                return status;
+        }
+
+        packetSize = ntohl(myPendingHeader);
+        myPendingHeaderSize = 0;
     }
     else
     {
@@ -472,6 +481,7 @@ void SocketTCP::Create(SocketHelper::SocketType descriptor)
     myIsBlocking = true;
 
     // Reset the pending packet
+    myPendingHeaderSize = 0;
     myPendingPacket.clear();
     myPendingPacketSize = -1;
 

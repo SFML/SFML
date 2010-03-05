@@ -380,7 +380,9 @@ Ftp::Response Ftp::Download(const std::string& distantFile, const std::string& d
                 std::ofstream file((path + filename).c_str(), std::ios_base::binary);
                 if (!file)
                     return Response(Response::InvalidFile);
-                file.write(&fileData[0], static_cast<std::streamsize>(fileData.size()));
+
+                if (!fileData.empty())
+                    file.write(&fileData[0], static_cast<std::streamsize>(fileData.size()));
             }
         }
     }
@@ -398,11 +400,13 @@ Ftp::Response Ftp::Upload(const std::string& localFile, const std::string& destP
     std::ifstream file(localFile.c_str(), std::ios_base::binary);
     if (!file)
         return Response(Response::InvalidFile);
+
     file.seekg(0, std::ios::end);
     std::size_t length = file.tellg();
     file.seekg(0, std::ios::beg);
     std::vector<char> fileData(length);
-    file.read(&fileData[0], static_cast<std::streamsize>(length));
+    if (length > 0)
+        file.read(&fileData[0], static_cast<std::streamsize>(length));
 
     // Extract the filename from the file path
     std::string filename = localFile;
@@ -700,7 +704,8 @@ void Ftp::DataChannel::Receive(std::vector<char>& data)
 void Ftp::DataChannel::Send(const std::vector<char>& data)
 {
     // Send data
-    myDataSocket.Send(&data[0], data.size());
+    if (!data.empty())
+        myDataSocket.Send(&data[0], data.size());
 
     // Close the data socket
     myDataSocket.Close();

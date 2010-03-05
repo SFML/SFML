@@ -61,7 +61,7 @@ public :
     /// \param color :    Color of the sprite
     ///
     ////////////////////////////////////////////////////////////
-    Sprite(const Image& image, const Vector2f& position = Vector2f(0, 0), const Vector2f& scale = Vector2f(1, 1), float rotation = 0.f, const Color& color = Color(255, 255, 255, 255));
+    explicit Sprite(const Image& image, const Vector2f& position = Vector2f(0, 0), const Vector2f& scale = Vector2f(1, 1), float rotation = 0.f, const Color& color = Color(255, 255, 255, 255));
 
     ////////////////////////////////////////////////////////////
     /// Change the image of the sprite

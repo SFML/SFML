@@ -71,7 +71,7 @@ Thread::~Thread()
 ////////////////////////////////////////////////////////////
 void Thread::Launch()
 {
-    delete myThreadImpl;
+    Wait();
     myThreadImpl = new priv::ThreadImpl(this);
 }
 

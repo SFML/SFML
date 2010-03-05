@@ -35,20 +35,45 @@ XCODE_C_ROOT_DIR="$ROOT_DIR/CSFML/xcode"
 XCODE_CXX_ROOT_DIR="$ROOT_DIR/build/xcode"
 XCODE_SAMPLES_ROOT_DIR="$ROOT_DIR/samples/build/xcode"
 XCODE_FRAMEWORKS_PROJECT="SFML.xcodeproj"
+XCODE_64B_FRAMEWORKS_PROJECT="SFML with Intel 64 bits.xcodeproj"
 XCODE_LIBRARIES_PROJECT="SFML-bare.xcodeproj"
 XCODE_SAMPLES_PROJECT="samples.xcodeproj"
+XCODE_64B_SAMPLES_PROJECT="samples with Intel 64 bits.xcodeproj"
 XCODE_BUILD_STYLE="Release"
 XCODE_C_TARGETS=("SFML" "csfml-system" "csfml-network" "csfml-audio" "csfml-window" "csfml-graphics")
 XCODE_CXX_TARGETS=("SFML" "sfml-system" "sfml-network" "sfml-audio" "sfml-window" "sfml-graphics")
 
-C_FRAMEWORKS_DIR="$ROOT_DIR/CSFML/lib"
-CXX_FRAMEWORKS_DIR="$ROOT_DIR/lib"
-CXX_SAMPLES_DIR="$ROOT_DIR/samples/bin"
-PACKAGES_ROOT_DIR="$ROOT_DIR/dist"
-CXX_SDK_PACKAGE="SFML-$SFML_VERSION-sdk-$OS"
-CXX_DEV_PACKAGE="SFML-$SFML_VERSION-dev-$OS"
-C_SDK_PACKAGE="SFML-$SFML_VERSION-c-sdk-$OS"
-C_DEV_PACKAGE="SFML-$SFML_VERSION-c-dev-$OS"
+
+# Architectures
+ARCH_32B="ub32"			# ppc + i386
+ARCH_3264B="ub32+64"	# ppc + i386 + x86_64
+ARCH_64B="$ARCH_3264B"	# same as 3264B for now
+
+C_FRAMEWORKS_DIR="$ROOT_DIR/CSFML/lib"				# target directory for C frameworks
+CXX_FRAMEWORKS_DIR="$ROOT_DIR/lib"					# target directory for C++ frameworks
+CXX_32B_FRAMEWORKS_DIR="$CXX_FRAMEWORKS_DIR"		# target directory for '32b' C++ frameworks
+CXX_64B_FRAMEWORKS_DIR="$ROOT_DIR/lib/$ARCH_3264B"	# target directory for '3264b' C++ frameworks
+CXX_SAMPLES_DIR="$ROOT_DIR/samples/bin"				# target directory for C++ samples
+PACKAGES_ROOT_DIR="$ROOT_DIR/dist"					# target directory for '32b' packages
+PACKAGES_ROOT_DIR_64B="$PACKAGES_ROOT_DIR/$ARCH_64B" # target directory for '64b' packages
+
+# Packages names (default, 32 bits, 64 bits)
+CXX_SDK_PACKAGE="SFML-$SFML_VERSION-sdk-$OS-$ARCH_32B"
+CXX_DEV_PACKAGE="SFML-$SFML_VERSION-dev-$OS-$ARCH_32B"
+C_SDK_PACKAGE="SFML-$SFML_VERSION-c-sdk-$OS-$ARCH_32B"
+C_DEV_PACKAGE="SFML-$SFML_VERSION-c-dev-$OS-$ARCH_32B"
+
+CXX_SDK_PACKAGE_32B="$CXX_SDK_PACKAGE"
+CXX_DEV_PACKAGE_32B="$CXX_DEV_PACKAGE"
+C_SDK_PACKAGE_32B="$C_SDK_PACKAGE"
+C_DEV_PACKAGE_32B="$C_DEV_PACKAGE"
+
+CXX_SDK_PACKAGE_64B="SFML-$SFML_VERSION-sdk-$OS-$ARCH_64B"
+CXX_DEV_PACKAGE_64B="SFML-$SFML_VERSION-dev-$OS-$ARCH_64B"
+C_SDK_PACKAGE_64B="SFML-$SFML_VERSION-c-sdk-$OS-$ARCH_64B"
+C_DEV_PACKAGE_64B="SFML-$SFML_VERSION-c-dev-$OS-$ARCH_64B"
+
+# Package directories
 CXX_SDK_PACKAGE_DIR="$PACKAGES_ROOT_DIR/$CXX_SDK_PACKAGE"
 CXX_DEV_PACKAGE_DIR="$PACKAGES_ROOT_DIR/$CXX_DEV_PACKAGE"
 C_SDK_PACKAGE_DIR="$PACKAGES_ROOT_DIR/$C_SDK_PACKAGE"
@@ -56,6 +81,11 @@ C_SDK_PACKAGE_SUB_DIR="$PACKAGES_ROOT_DIR/$C_SDK_PACKAGE/CSFML"
 C_DEV_PACKAGE_DIR="$PACKAGES_ROOT_DIR/$C_DEV_PACKAGE"
 C_DEV_PACKAGE_SUB_DIR="$PACKAGES_ROOT_DIR/$C_DEV_PACKAGE/CSFML"
 PACKAGES_INFO_FILES_DIR="$XCODE_CXX_ROOT_DIR/dist"
+
+CXX_SDK_PACKAGE_DIR_64B="$PACKAGES_ROOT_DIR_64B/$CXX_SDK_PACKAGE_64B"
+CXX_DEV_PACKAGE_DIR_64B="$PACKAGES_ROOT_DIR_64B/$CXX_DEV_PACKAGE_64B"
+C_SDK_PACKAGE_DIR_64B="$PACKAGES_ROOT_DIR_64B/$C_SDK_PACKAGE_64B"
+C_DEV_PACKAGE_DIR_64B="$PACKAGES_ROOT_DIR_64B/$C_DEV_PACKAGE_64B"
 
 CXX_SDK_DIRS=("build" "src" "include" "lib" "extlibs" "samples" "doc")
 CXX_DEV_DIRS=("lib" "extlibs" "build/xcode/templates")
@@ -65,9 +95,15 @@ C_DEV_DIRS=("extlibs")
 C_DEV_SUB_DIRS=("CSFML/xcode/templates" "CSFML/lib")
 PACKAGE_INFO_FILES=("Read Me.rtf" "Release Notes.rtf" "Notes de version.rtf" "license.txt" "Lisez-moi.rtf")
 
+
+# Build detection
+SHOULD_CONSIDER_64B="yes"
 SHOULD_CONSIDER_CXX="yes"
+SHOULD_CONSIDER_CXX_64B="yes"
 SHOULD_CONSIDER_C="yes"
+SHOULD_CONSIDER_C_64B="yes"
 SHOULD_CONSIDER_SAMPLES="yes"
+SHOULD_CONSIDER_SAMPLES_64B="yes"
 
 VERBOSE_OUTPUT="/dev/null"
 
@@ -82,6 +118,7 @@ check_last_process()
         fi
     else
         echo "*** Last process did not end properly. Process stopped."
+        echo "*** Error occured when executed from `pwd`"
         exit 1
     fi
 }
@@ -89,7 +126,7 @@ check_last_process()
 # User help
 print_usage()
 {
-    echo "Usage: $0 [clean | build | build-samples | build-pkg | all [--verbose]]"
+    echo "Usage: $0 [clean[-32|-64] | build[-32|-64] | build-samples[-32|-64] | build-pkg[-32|-64] | all[-32|-64] [--verbose]]"
     echo
     echo "Commands:"
     echo "    clean\t\tdeletes the C and C++ frameworks, object files and packages"
@@ -102,23 +139,42 @@ print_usage()
     echo "Options:"
     echo "    --verbose\t\tdo not hide standard ouput, errors are still shown"
     echo
+    echo "Command suffixes:"
+    echo "    -32\t\t\tapply command for 32 bits PowerPC and Intel binaries"
+    echo "    -64\t\t\tapply command for 32 bits PowerPC and Intel, and 64 bits Intel binaries"
+    echo "    \t\t\tDefault applies command for both choices"
+    echo "    \t\t\t(ie. build frameworks for both 32 and 64 bits platforms)"
+    echo
     echo "Contents summary:"
-    echo "    Found C++ project : $SHOULD_CONSIDER_CXX"
-    echo "    Found C project : $SHOULD_CONSIDER_C"
-    echo "    Found samples project : $SHOULD_CONSIDER_SAMPLES"
+    echo "    Found C++ frameworks project \t\t $SHOULD_CONSIDER_CXX"
+    echo "    Found C frameworks project \t\t\t $SHOULD_CONSIDER_C"
+    echo "    Found samples project \t\t\t $SHOULD_CONSIDER_SAMPLES"
+    echo "    Can build Intel 64 bits binaries \t\t $SHOULD_CONSIDER_64B"
+    echo "    Found C++ 64 bits frameworks project \t $SHOULD_CONSIDER_CXX_64B"
+    echo "    Found C 64 bits frameworks project \t\t $SHOULD_CONSIDER_C_64B"
+    echo "    Found 64 bits samples project \t\t $SHOULD_CONSIDER_SAMPLES_64B"
     echo "    Missing projects will be skiped without further warning."
 }
 
 # Checks that the user computer can run this script
 check_config()
 {
+	# Check OS type and version
     os=`uname -s`
+    version=`uname -r` # 10.2.0 form; 8.x = Mac OS X 10.4
     if [ $os != "Darwin" ]
       then
         echo "You're not running Mac OS X !"
         exit 1
     fi
     
+   	version=${version%%.*}
+   	if test $version -le 8 # 64 bits builds not supported on Mac OS X 10.4 and earlier
+   	  then
+   	    SHOULD_CONSIDER_64B="no"
+   	fi
+   	
+   	# Check scripts tools
     if ! test -f "/Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp"
       then
         echo "Missing tool pbxcp needed by this script (should be located at /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp). Make sure Apple Developer Tools are correctly installed."
@@ -138,6 +194,7 @@ check_config()
         exit 1
     fi
     
+    # Check Xcode projects availability
     if ! test -d "$XCODE_CXX_ROOT_DIR/$XCODE_FRAMEWORKS_PROJECT"
       then
         SHOULD_CONSIDER_CXX="no"
@@ -152,6 +209,29 @@ check_config()
       then
         SHOULD_CONSIDER_SAMPLES="no"
     fi
+    
+    # 64 bits projects
+    if [ "$SHOULD_CONSIDER_64B" == "no" ]
+      then
+        SHOULD_CONSIDER_CXX_64B="no"
+        SHOULD_CONSIDER_C_64B="no"
+        SHOULD_CONSIDER_SAMPLES_64B="no"
+    else
+    	if ! test -d "$XCODE_CXX_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT"
+	      then
+	        SHOULD_CONSIDER_CXX_64B="no"
+	    fi
+	    
+	    if ! test -d "$XCODE_C_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT"
+	      then
+	        SHOULD_CONSIDER_C_64B="no"
+	    fi
+	    
+	    if ! test -d "$XCODE_SAMPLES_ROOT_DIR/$XCODE_64B_SAMPLE_PROJECT"
+	      then
+	        SHOULD_CONSIDER_SAMPLES_64B="no"
+	    fi
+    fi    
 }
 
 # Makes a directory if needed
@@ -160,6 +240,7 @@ make_dir()
     if ! test -d "$1"
       then
         mkdir -p "$1"
+        check_last_process "[param:$1]"
     fi
 }
 
@@ -271,6 +352,85 @@ clean_all()
     check_last_process " done"
 }
 
+# Delete built frameworks and intermediate object files (64 bits)
+clean_all_64b()
+{
+	if [ "$SHOULD_CONSIDER_64B" == "yes" ]
+	  then
+	    cd "$ROOT_DIR"
+	    
+	    # Process cleaning for C++ project
+	    if [ "$SHOULD_CONSIDER_CXX_64B" == "yes" ]
+	      then
+	        printf "Cleaning 64 bits C++ products..."
+	        if test -d "$XCODE_CXX_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT"
+	          then
+	            cd "$XCODE_CXX_ROOT_DIR"
+	            xcodebuild -project "$XCODE_64B_FRAMEWORKS_PROJECT" -target "All" -configuration "$XCODE_BUILD_STYLE" clean > "$VERBOSE_OUTPUT"
+	            check_last_process " done"
+	        else
+	            if test -d "$XCODE_CXX_ROOT_DIR"
+	              then
+	                echo "*** Missing file $XCODE_CXX_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT. Process stopped."
+	                exit 1
+	            else
+	                echo " not found. Skiped"
+	            fi
+	        fi
+	    fi
+	    
+	    
+	    # Process cleaning for C project
+	    if [ "$SHOULD_CONSIDER_C_64B" == "yes" ]
+	      then
+	        printf "Cleaning 64 bits C products..."
+	        if test -d "$XCODE_C_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT"
+	          then
+	            cd "$XCODE_C_ROOT_DIR"
+	            xcodebuild -project "$XCODE_64B_FRAMEWORKS_PROJECT" -target "All" -configuration "$XCODE_BUILD_STYLE" clean > "$VERBOSE_OUTPUT"
+	            check_last_process " done"
+	        else
+	            # Do not produce error if the package does no contain the C stuff
+	            if test -d "$XCODE_C_ROOT_DIR"
+	              then
+	                echo "*** Missing file $XCODE_C_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT. Process stopped."
+	                exit 1
+	            else
+	                echo " not found. Skiped"
+	            fi
+	        fi
+	    fi
+	    
+	    # Process cleaning for samples
+	    if [ "$SHOULD_CONSIDER_64B_SAMPLES" == "yes" ]
+	      then
+	        printf "Cleaning 64 bits samples..."
+	        if test -d "$XCODE_SAMPLES_ROOT_DIR/$XCODE_64B_SAMPLES_PROJECT"
+	          then
+	            cd "$XCODE_SAMPLES_ROOT_DIR"
+	            xcodebuild -project "$XCODE_64B_SAMPLES_PROJECT" -target "All" -configuration "$XCODE_BUILD_STYLE" clean > "$VERBOSE_OUTPUT"
+	            check_last_process " done"
+	        else
+	            # Do not produce error if the package does not contain the samples
+	            if test -d "$XCODE_SAMPLES_ROOT_DIR"
+	              then
+	                echo "*** Missing file $XCODE_SAMPLES_ROOT_DIR/$XCODE_64B_SAMPLES_PROJECT. Process stopped."
+	                exit 1
+	            else
+	                echo " not found. Skiped"
+	            fi
+	        fi
+	    fi
+	    
+	    # Process cleaning for packages
+	    printf "Removing 64 bits packages..."
+	    remove_dir "$PACKAGES_ROOT_DIR"
+	    check_last_process " done"
+	else
+	    echo "Intel 64 bits is not supported on your computer. Process skiped"
+	fi
+}
+
 # Build C and C++ frameworks
 build_frameworks()
 {
@@ -323,6 +483,63 @@ build_frameworks()
     fi
 }
 
+# Build C and C++ frameworks (with Intel 64 bits)
+build_frameworks_64b()
+{
+	if [ "$SHOULD_CONSIDER_64B" == "yes" ]
+	  then
+	    # Go into the C++ project directory
+	    if [ "$SHOULD_CONSIDER_CXX_64B" == "yes" ]
+	      then
+	        cd "$XCODE_CXX_ROOT_DIR"
+	        check_last_process
+	        echo "Building 64 bits C++ SFML frameworks in $XCODE_BUILD_STYLE mode..."
+	        
+	        if test -d "$XCODE_CXX_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT"
+	          then
+	            # Build every C++ target (building manually each target to be able to show progress)
+	            for target in "${XCODE_CXX_TARGETS[@]}"
+	              do
+	                printf "Building 64 bits $target framework..."
+	                xcodebuild -project "$XCODE_64B_FRAMEWORKS_PROJECT" -target "$target" -parallelizeTargets -configuration "$XCODE_BUILD_STYLE" build > "$VERBOSE_OUTPUT"
+	                check_last_process " done"
+	            done
+	            
+	            echo "All C++ SFML frameworks built."
+	        else
+	            echo "*** Missing file $XCODE_CXX_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT. Process stopped."
+	            exit 1
+	        fi
+	    fi
+	    
+	    # Go into the C project directory
+	    if [ "$SHOULD_CONSIDER_C_64B" == "yes" ]
+	      then
+	        cd "$XCODE_C_ROOT_DIR"
+	        check_last_process
+	        echo "Building C SFML frameworks in $XCODE_BUILD_STYLE mode..."
+	        
+	        if test -d "$XCODE_C_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT"
+	          then
+	            # Build every C target 
+	            for target in "${XCODE_C_TARGETS[@]}"
+	              do
+	                printf "Building 64 bits $target framework..."
+	                xcodebuild -project "$XCODE_64B_FRAMEWORKS_PROJECT" -target "$target" -parallelizeTargets -configuration "$XCODE_BUILD_STYLE" build > "$VERBOSE_OUTPUT"
+	                check_last_process " done"
+	            done
+	            
+	            echo "All C SFML frameworks built."
+	        else
+	            echo "*** Missing file $XCODE_C_ROOT_DIR/$XCODE_64B_FRAMEWORKS_PROJECT. Process stopped."
+	            exit 1
+	        fi
+	    fi
+	else
+	    echo "Intel 64 bits is not supported on your computer. Process skiped"
+	fi
+}
+
 # Build the samples
 build_samples()
 {
@@ -345,6 +562,35 @@ build_samples()
             exit 1
         fi
     fi
+}
+
+# Build the samples (with Intel 64 bits)
+build_samples_64b()
+{
+	if [ "$SHOULD_CONSIDER_64B" == "yes" ]
+	  then
+	    # Go into the samples project directory
+	    if [ "$SHOULD_CONSIDER_SAMPLES_64B" == "yes" ]
+	      then
+	        cd "$XCODE_SAMPLES_ROOT_DIR"
+	        check_last_process
+	        
+	        printf "Building 64 bits SFML samples in $XCODE_BUILD_STYLE mode..."
+	        if test -d "$XCODE_SAMPLES_ROOT_DIR/$XCODE_64B_SAMPLES_PROJECT"
+	          then
+	            # Build the samples
+	            xcodebuild -project "$XCODE_64B_SAMPLES_PROJECT" -target "All" -parallelizeTargets -configuration "$XCODE_BUILD_STYLE" build > "$VERBOSE_OUTPUT"
+	            check_last_process " done"
+	            echo "In order to run the samples, the SFML frameworks (located in \"lib\") must be copied in the /Library/Frameworks directory." > "$CXX_SAMPLES_DIR/README"
+	            check_last_process
+	        else
+	            echo "*** Missing file $XCODE_SAMPLES_ROOT_DIR/$XCODE_64B_SAMPLES_PROJECT. Process stopped."
+	            exit 1
+	        fi
+	    fi
+	else
+	    echo "Intel 64 bits is not supported on your computer. Process skiped"
+	fi
 }
 
 # Put the information files in the package
@@ -494,6 +740,147 @@ build_packages()
     echo "All packages have been built. See $PACKAGES_ROOT_DIR."
 }
 
+# Build the archives of the C and C++ Dev and SDK packages (for Intel 64 bits)
+build_packages_64b()
+{
+	if [ "$SHOULD_CONSIDER_64B" == "yes" ]
+	  then
+	    cd "$ROOT_DIR"
+	    make_dir "$PACKAGES_ROOT_DIR_64B"
+	    
+	    # Build the C++ SDK package
+	    if [ "$SHOULD_CONSIDER_CXX_64B" == "yes" ]
+	      then
+	        printf "Building 64 bits C++ SDK package..."
+	        make_dir "$CXX_SDK_PACKAGE_DIR_64B"
+	        for dir in "${CXX_SDK_DIRS[@]}"
+	          do
+	            case "$dir" in
+	                "doc")
+	                    if ! test -f "$ROOT_DIR/$dir/html/index.htm"
+	                      then
+	                        echo "*** $ROOT_DIR/$dir/html/index.htm not found. Make sure the documentation has been built."
+	                        exit 1
+	                      fi
+	                      ;;
+	            esac
+	            
+	            copy "$ROOT_DIR/$dir" "$CXX_SDK_PACKAGE_DIR_64B"
+	            check_last_process
+	        done
+	        copy_info_files "$CXX_SDK_PACKAGE_DIR_64B"
+			check_last_process
+	        
+	        # Build the archive
+	        cd "$PACKAGES_ROOT_DIR_64B"
+	        tar -cjlf "$PACKAGES_ROOT_DIR_64B/$CXX_SDK_PACKAGE_64B.tar.bz2" "$CXX_SDK_PACKAGE_64B" > "$VERBOSE_OUTPUT"
+	        check_last_process " done"
+	        
+	        # Build the C++ Dev package
+	        printf "Building 64 bits C++ Development package..."
+	        make_dir "$CXX_DEV_PACKAGE_DIR_64B"
+	        for dir in "${CXX_DEV_DIRS[@]}"
+	          do
+	            copy "$ROOT_DIR/$dir" "$CXX_DEV_PACKAGE_DIR_64B"
+	            check_last_process
+	            
+	            case $dir in
+	                "build/xcode/templates")
+	                    # Special consideration for the templates folder that is to be moved in build/xcode
+	                    move_dir "$CXX_DEV_PACKAGE_DIR_64B/templates" "$CXX_DEV_PACKAGE_DIR_64B/build/xcode"
+	                    check_last_process
+	                    ;;
+	                "extlibs")
+	                    # Drop the libs-xcode and headers directories
+	                    remove_dir "$CXX_DEV_PACKAGE_DIR_64B/extlibs/libs-xcode"
+	                    check_last_process
+	                    remove_dir "$CXX_DEV_PACKAGE_DIR_64B/extlibs/headers"
+	                    check_last_process
+	                    ;;
+	                *)
+	                    ;;
+	            esac
+	        done
+	        copy_info_files "$CXX_DEV_PACKAGE_DIR_64B"
+	        
+	        # Build the archive
+	        cd "$PACKAGES_ROOT_DIR_64B"
+	        tar -cjlf "$PACKAGES_ROOT_DIR_64B/$CXX_DEV_PACKAGE_64B.tar.bz2" "$CXX_DEV_PACKAGE_64B" > "$VERBOSE_OUTPUT"
+	        check_last_process " done"
+	    fi # SHOULD_CONSIDER_CXX
+	    
+	    
+	    # Build the C SDK package
+	    if [ "$SHOULD_CONSIDER_C_64B" == "yes" ]
+	      then
+	        printf "Building 64 bits C SDK package..."
+	        make_dir "$C_SDK_PACKAGE_DIR_64B"
+	        for dir in "${C_SDK_DIRS[@]}"
+	          do
+	            copy "$ROOT_DIR/$dir" "$C_SDK_PACKAGE_DIR_64B"
+	            check_last_process
+	        done
+	        
+	        make_dir "$C_SDK_PACKAGE_SUB_DIR"
+	        for dir in "${C_SDK_SUB_DIRS[@]}"
+	          do
+	            copy "$ROOT_DIR/$dir" "$C_SDK_PACKAGE_SUB_DIR"
+	            check_last_process
+	        done
+	        copy_info_files "$C_SDK_PACKAGE_DIR_64B"
+	        
+	        # Build the archive
+	        cd "$PACKAGES_ROOT_DIR_64B"
+	        tar -cjlf "$PACKAGES_ROOT_DIR_64B/$C_SDK_PACKAGE_64B.tar.bz2" "$C_SDK_PACKAGE_64B" > "$VERBOSE_OUTPUT"
+	        check_last_process " done"
+	        
+	        # Build the C Development package
+	        printf "Building 64 bits C Development package..."
+	        make_dir "$C_DEV_PACKAGE_DIR_64B"
+	        for dir in "${C_DEV_DIRS[@]}"
+	          do
+	            copy "$ROOT_DIR/$dir" "$C_DEV_PACKAGE_DIR_64B"
+	            check_last_process
+	            
+	            case $dir in
+	                "extlibs")
+	                    # Drop the libs-xcode and headers directories
+	                    remove_dir "$C_DEV_PACKAGE_DIR_64B/extlibs/libs-xcode"
+	                    check_last_process
+	                    remove_dir "$C_DEV_PACKAGE_DIR_64B/extlibs/headers"
+	                    check_last_process
+	                    ;;
+	            esac
+	        done
+	        
+	        make_dir "$C_DEV_PACKAGE_SUB_DIR"
+	        for dir in "${C_DEV_SUB_DIRS[@]}"
+	          do
+	            copy "$ROOT_DIR/$dir" "$C_DEV_PACKAGE_SUB_DIR_64B"
+	            check_last_process
+	            
+	            case $dir in
+	                "CSFML/xcode/templates")
+	                    # Special consideration for the templates folder that is to be moved in build/xcode
+	                    move_dir "$C_DEV_PACKAGE_DIR_64B/CSFML/templates" "$C_DEV_PACKAGE_DIR_64B/CSFML/xcode"
+	                    check_last_process
+	                    ;;
+	            esac
+	        done
+	        copy_info_files "$C_DEV_PACKAGE_DIR_64B"
+	        
+	        # Build the archive
+	        cd "$PACKAGES_ROOT_DIR_64B"
+	        tar -cjlf "$PACKAGES_ROOT_DIR_64B/$C_DEV_PACKAGE_64B.tar.bz2" "$C_DEV_PACKAGE_64B" > "$VERBOSE_OUTPUT"
+	        check_last_process " done"
+	    fi
+	    
+	    echo "All packages have been built. See $PACKAGES_ROOT_DIR_64B."
+    else
+	    echo "Intel 64 bits is not supported on your computer. Process skiped"
+	fi
+}
+
 main()
 {
     # First make sure the user will be able to run the script
@@ -517,28 +904,77 @@ main()
     case $action in
         "clean")
             clean_all $*
+            clean_all_64b $*
             ;;
+        
+        "clean-32")
+        	clean_all $*
+            ;;
+        
+        "clean-64")
+        	clean_all_64b $*
+        	;;
+        	
         "build")
             build_frameworks $*
+            build_frameworks_64b $*
             ;;
+            
+        "build-32")
+        	build_frameworks $*
+        	;;
+        	
+        "build-64")
+        	build_frameworks_64b $*
+        	;;
+        	
         "build-samples")
             build_samples $*
+            build_samples_64b $*
             ;;
+        "build-samples-32")
+        	build_samples $*
+        	;;
+       	
+       	"build-samples-64")
+       		build_samples_64b $*
+       		;;
+       		
         "build-pkg")
             build_packages $*
+            build_packages_64b $*
             ;;
+            
+        "build-pkg-32")
+        	build_packages $*
+        	;;
+        
+        "build-pkg-64")
+        	build_packages_64b $*
+        	;;
+        	
         "all")
             build_frameworks $*
+            build_frameworks_64b $*
             build_samples $*
+            build_samples_64b $*
             build_packages $*
+            build_packages64b $*
             ;;
-         "-h")
-            print_usage $*
-            ;;
-         "--help")
-            print_usage $*
-            ;;
-         "help")
+         
+         "all-32")
+	         build_frameworks $*
+	         build_samples $*
+	         build_packages $*
+	         ;;
+         
+         "all-64")
+	         build_frameworks_64b $*
+	         build_samples_64b $*
+	         build_packages_64b $*
+	         ;;
+	         
+         "-h" | "--help" | "help")
             print_usage $*
             ;;
           "--verbose")
