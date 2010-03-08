@@ -83,7 +83,8 @@ private :
 /// always be released when the current scope (most likely
 /// a function) ends.
 /// This is even more important when an exception or an early
-/// return statement can interrupt the excution flow of the function.
+/// return statement can interrupt the execution flow of the
+/// function.
 ///
 /// For maximum robustness, sf::Lock should always be used
 /// to lock/unlock a mutex.
@@ -129,7 +130,7 @@ private :
 /// Having a mutex locked longer than required is a bad practice
 /// which can lead to bad performances. Don't forget that when
 /// a mutex is locked, other threads may be waiting doing nothing
-/// until it ls released.
+/// until it is released.
 ///
 /// \see sf::Mutex
 ///

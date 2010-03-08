@@ -317,17 +317,17 @@ void WindowImplX11::ShowMouseCursor(bool show)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetCursorPosition(unsigned int left, unsigned int top)
+void WindowImplX11::SetCursorPosition(unsigned int x, unsigned int y)
 {
-    XWarpPointer(myDisplay, None, myWindow, 0, 0, 0, 0, left, top);
+    XWarpPointer(myDisplay, None, myWindow, 0, 0, 0, 0, x, y);
     XFlush(myDisplay);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetPosition(int left, int top)
+void WindowImplX11::SetPosition(int x, int y)
 {
-    XMoveWindow(myDisplay, myWindow, left, top);
+    XMoveWindow(myDisplay, myWindow, x, y);
     XFlush(myDisplay);
 }
 

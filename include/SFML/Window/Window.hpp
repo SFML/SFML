@@ -282,11 +282,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the mouse cursor
     ///
-    /// \param left Left coordinate of the cursor, relative to the window
-    /// \param top  Top coordinate of the cursor, relative to the window
+    /// \param x Left coordinate of the cursor, relative to the window
+    /// \param y Top coordinate of the cursor, relative to the window
     ///
     ////////////////////////////////////////////////////////////
-    void SetCursorPosition(unsigned int left, unsigned int top);
+    void SetCursorPosition(unsigned int x, unsigned int y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -295,11 +295,11 @@ public :
     /// (i.e. it will be ignored for windows created from
     /// the handle of a child window/control).
     ///
-    /// \param left Left position
-    /// \param top  Top position
+    /// \param x Left position
+    /// \param y Top position
     ///
     ////////////////////////////////////////////////////////////
-    void SetPosition(int left, int top);
+    void SetPosition(int x, int y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window

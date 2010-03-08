@@ -110,20 +110,20 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the mouse cursor
     ///
-    /// \param left Left coordinate of the cursor, relative to the window
-    /// \param top  Top coordinate of the cursor, relative to the window
+    /// \param x Left coordinate of the cursor, relative to the window
+    /// \param y Top coordinate of the cursor, relative to the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetCursorPosition(unsigned int left, unsigned int top);
+    virtual void SetCursorPosition(unsigned int x, unsigned int y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///
-    /// \param left Left position
-    /// \param top  Top position
+    /// \param x Left position
+    /// \param y Top position
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(int left, int top);
+    virtual void SetPosition(int x, int y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window

@@ -69,7 +69,7 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Disabled assignment operator
     ///
-    /// By making the copy constructor private, the compiler will
+    /// By making the assignment operator private, the compiler will
     /// trigger an error if anyone outside tries to use it.
     /// To prevent NonCopyable or friend classes from using it,
     /// we also give no definition, so that the linker will

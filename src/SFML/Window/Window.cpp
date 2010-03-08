@@ -251,24 +251,24 @@ void Window::ShowMouseCursor(bool show)
 
 
 ////////////////////////////////////////////////////////////
-void Window::SetCursorPosition(unsigned int left, unsigned int top)
+void Window::SetCursorPosition(unsigned int x, unsigned int y)
 {
     if (myWindow)
     {
         // Keep coordinates for later checking (to reject the generated MouseMoved event)
-        mySetCursorPosX = left;
-        mySetCursorPosY = top;
+        mySetCursorPosX = x;
+        mySetCursorPosY = y;
 
-        myWindow->SetCursorPosition(left, top);
+        myWindow->SetCursorPosition(x, y);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Window::SetPosition(int left, int top)
+void Window::SetPosition(int x, int y)
 {
     if (myWindow)
-        myWindow->SetPosition(left, top);
+        myWindow->SetPosition(x, y);
 }
 
 
