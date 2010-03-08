@@ -273,7 +273,7 @@ void WindowImplWin32::ProcessEvents()
     if (!myCallback)
     {
         MSG Message;
-        while (PeekMessage(&Message, myHandle, 0, 0, PM_REMOVE))
+        while (PeekMessage(&Message, NULL, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&Message);
             DispatchMessage(&Message);
