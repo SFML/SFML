@@ -29,6 +29,7 @@ module dsfml.graphics.drawableimpl;
 public import dsfml.system.common;
 import dsfml.system.vector2;
 
+import dsfml.graphics.irendertarget;
 import	dsfml.graphics.idrawable,
 		dsfml.graphics.color,
 		dsfml.graphics.blendmode,
@@ -195,24 +196,14 @@ public:
 		return ret;
 	}
 
-	void render(RenderWindow window)
+	void render(IRenderTarget window)
 	{
-		sfRenderWindow_DrawThis(window.getNativePointer(), m_ptr);
+		sfRenderWindow_DrawThis((cast(DSFMLObject)window).getNativePointer(), m_ptr);
 	}
 	
-	void renderWithShader(RenderWindow window, Shader shader)
+	void renderWithShader(IRenderTarget window, Shader shader)
 	{
-		sfRenderWindow_DrawThisWithShader(window.getNativePointer, m_ptr, shader.getNativePointer);
-	}
-
-	void render(RenderImage image)
-	{
-		sfRenderImage_DrawThis(image.getNativePointer(), m_ptr);
-	}
-	
-	void renderWithShader(RenderImage image, Shader shader)
-	{
-		sfRenderImage_DrawThisWithShader(image.getNativePointer, m_ptr, shader.getNativePointer);
+		sfRenderWindow_DrawThisWithShader((cast(DSFMLObject)window).getNativePointer, m_ptr, shader.getNativePointer);
 	}
 
 	override void dispose()

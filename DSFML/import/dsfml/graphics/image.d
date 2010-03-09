@@ -98,7 +98,7 @@ public:
 	this(ubyte[] data)
 	{
 		if (data is null || data.length == 0)
-			throw new LoadingException("LoadingException : Memory stream is invalid.");
+			throw new LoadingException("Memory stream is invalid.");
 			
 		super(sfImage_CreateFromMemory(data.ptr, data.length));
 	}
@@ -117,7 +117,7 @@ public:
 	this(uint width, uint height, ubyte[] data)
 	{
 		if (width * height * 4 != data.length)
-			throw new LoadingException("LoadingException : Pixels array length doesn't match the specified size.");
+			throw new LoadingException("Pixels array length doesn't match the specified size.");
 			
 		super(sfImage_CreateFromPixels(width, height, data.ptr));
 	}

@@ -26,41 +26,24 @@
 
 module dsfml.graphics.color;
 
+import std.string;
+
+alias RGBA Color; // standard Color is RGBA
 
 /**
-*	Color is an utility structure for manipulating colors
-*/
-struct Color
+ *	Color is an utility structure for manipulating colors
+ */
+struct RGBA
 {
-	ubyte r;			/// Red component
-	ubyte g;			/// Green component
-	ubyte b;			/// Blue component
-	ubyte a = 255;	  /// Alpha (transparency) component
+align(1):
+	ubyte r;		/// Red component
+	ubyte g;		/// Green component
+	ubyte b;		/// Blue component
+	ubyte a = 255;	/// Alpha (transparency) component, 255 = opaque
 
 	/**
-	*	Construct the color from its 4 RGBA components
-	*	
-	*	Params:	
-	*		r = Red component	(0 .. 255)
-	*		g = Green component (0 .. 255)
-	*		b = Blue component  (0 .. 255)
-	*		a = Alpha component (0 .. 255) (255 by default)
-	*/
-/*
-	static Color opCall(ubyte r, ubyte g, ubyte b, ubyte a = 255)
-	{
-		Color c;
-		c.r = r;
-		c.g = g;
-		c.b = b;
-		c.a = a;
-		
-		return c;
-	}
-*/
-	/**
 	 *  Operator == and != overload to compare two colors	
-	 */	
+	 */
 	const bool opEquals(ref const(Color) color2)
 	{
 		return 
@@ -70,8 +53,8 @@ struct Color
 			&& (a == color2.a);
 	}
 	/**
-	*	Operator + overload to add two colors
-	*/
+	 *	Operator + overload to add two colors
+	 */
 	Color opAdd(Color color2)
 	{
 		ubyte r = this.r + color2.r > 255 ? 255 : cast(ubyte) (this.r + color2.r);
@@ -83,8 +66,8 @@ struct Color
 	}
 
 	/**
-	*	Operator += overload
-	*/		
+	 *	Operator += overload
+	 */
 	Color opAddAssign(Color color2)
 	{
 		this.r = this.r + color2.r > 255 ? 255 : cast(ubyte) (this.r + color2.r);
@@ -96,8 +79,8 @@ struct Color
 	}
 
 	/**
-	*	Operator * overload to modulate colors
-	*/		
+	 *	Operator * overload to modulate colors
+	 */
 	Color opMul(Color color2)
 	{
 		ubyte r = cast(ubyte) (this.r * color2.r / 255);
@@ -109,8 +92,8 @@ struct Color
 	}
 
 	/**
-	*	Operator *= overload
-	*/		
+	 *	Operator *= overload
+	 */
 	Color opMulAssign(Color color2)
 	{
 		this.r = cast(ubyte) (this.r * color2.r / 255);
@@ -120,13 +103,21 @@ struct Color
 		
 		return this;
 	}
-	 
-	static const Color BLACK = {0, 0, 0};			/// Black predefined color
-	static const Color WHITE = {255, 255, 255};	 /// White predefined color
-	static const Color  RED = {255, 0, 0};		  /// Red predefined color
-	static const Color GREEN = {0, 255, 0};		 /// Green predefined color
-	static const Color BLUE = {0, 0, 255};		  /// Blue predefined color
-	static const Color YELLOW = {255, 0, 255};	  /// Yellow predefined color
-	static const Color MAGENTA = {255, 0, 255};	 /// Magenta predefined color
-	static const Color CYAN = {0, 255, 255};		/// Cyan predefined color
+	
+	string toString()
+	{
+		return std.string.format("(%d,%d,%d,%d)", r,g,b,a);
+	}
+	
+	static immutable
+	{
+		Color BLACK		= Color(0, 0, 0);		/// Black predefined color
+		Color WHITE		= Color(255, 255, 255);	/// White predefined color
+		Color RED		= Color(255, 0, 0);		/// Red predefined color
+		Color GREEN		= Color(0, 255, 0);		/// Green predefined color
+		Color BLUE		= Color(0, 0, 255);		/// Blue predefined color
+		Color YELLOW	= Color(255, 0, 255);	/// Yellow predefined color
+		Color MAGENTA	= Color(255, 0, 255);	/// Magenta predefined color
+		Color CYAN		= Color(0, 255, 255);	/// Cyan predefined color
+	}
 }
