@@ -55,7 +55,7 @@ public :
     ///                     (ie. size taken by the music in memory) (44100 by default)
     ///
     ////////////////////////////////////////////////////////////
-    Music(std::size_t BufferSize = 44100);
+    explicit Music(std::size_t BufferSize = 44100);
 
     ////////////////////////////////////////////////////////////
     /// Destructor

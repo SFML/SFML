@@ -72,7 +72,7 @@ public :
     /// \param Position : Position (0, 0, 0 by default)
     ///
     ////////////////////////////////////////////////////////////
-    Sound(const SoundBuffer& Buffer, bool Loop = false, float Pitch = 1.f, float Volume = 100.f, const Vector3f& Position = Vector3f(0, 0, 0));
+    explicit Sound(const SoundBuffer& Buffer, bool Loop = false, float Pitch = 1.f, float Volume = 100.f, const Vector3f& Position = Vector3f(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Copy constructor
