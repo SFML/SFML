@@ -36,7 +36,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// Static member data
 ////////////////////////////////////////////////////////////
-const IPAddress IPAddress::LocalHost("127.0.0.1");
+const IPAddress IPAddress::LocalHost(127, 0, 0, 1);
 
 
 ////////////////////////////////////////////////////////////
@@ -221,61 +221,47 @@ IPAddress IPAddress::GetPublicAddress(float timeout)
 
 
 ////////////////////////////////////////////////////////////
-/// Comparison operator ==
-////////////////////////////////////////////////////////////
-bool IPAddress::operator ==(const IPAddress& other) const
+bool operator ==(const IPAddress& left, const IPAddress& right)
 {
-    return myAddress == other.myAddress;
+    return left.ToInteger() == right.ToInteger();
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Comparison operator !=
-////////////////////////////////////////////////////////////
-bool IPAddress::operator !=(const IPAddress& other) const
+bool operator !=(const IPAddress& left, const IPAddress& right)
 {
-    return myAddress != other.myAddress;
+    return !(left == right);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Comparison operator <
-////////////////////////////////////////////////////////////
-bool IPAddress::operator <(const IPAddress& other) const
+bool operator <(const IPAddress& left, const IPAddress& right)
 {
-    return myAddress < other.myAddress;
+    return left.ToInteger() < right.ToInteger();
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Comparison operator >
-////////////////////////////////////////////////////////////
-bool IPAddress::operator >(const IPAddress& other) const
+bool operator >(const IPAddress& left, const IPAddress& right)
 {
-    return myAddress > other.myAddress;
+    return right < left;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Comparison operator <=
-////////////////////////////////////////////////////////////
-bool IPAddress::operator <=(const IPAddress& other) const
+bool operator <=(const IPAddress& left, const IPAddress& right)
 {
-    return myAddress <= other.myAddress;
+    return !(right < left);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Comparison operator >=
-////////////////////////////////////////////////////////////
-bool IPAddress::operator >=(const IPAddress& other) const
+bool operator >=(const IPAddress& left, const IPAddress& right)
 {
-    return myAddress >= other.myAddress;
+    return !(left < right);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Operator >> overload to extract an address from an input stream
 ////////////////////////////////////////////////////////////
 std::istream& operator >>(std::istream& stream, IPAddress& address)
 {
@@ -287,8 +273,6 @@ std::istream& operator >>(std::istream& stream, IPAddress& address)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Operator << overload to print an address to an output stream
 ////////////////////////////////////////////////////////////
 std::ostream& operator <<(std::ostream& stream, const IPAddress& address)
 {

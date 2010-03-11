@@ -131,66 +131,6 @@ public :
     static IPAddress GetPublicAddress(float timeout = 0.f);
 
     ////////////////////////////////////////////////////////////
-    /// Comparison operator ==
-    ///
-    /// \param other : Address to compare
-    ///
-    /// \return True if *this == other
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator ==(const IPAddress& other) const;
-
-    ////////////////////////////////////////////////////////////
-    /// Comparison operator !=
-    ///
-    /// \param other : Address to compare
-    ///
-    /// \return True if *this != other
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator !=(const IPAddress& other) const;
-
-    ////////////////////////////////////////////////////////////
-    /// Comparison operator <
-    ///
-    /// \param other : Address to compare
-    ///
-    /// \return True if *this < other
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator <(const IPAddress& other) const;
-
-    ////////////////////////////////////////////////////////////
-    /// Comparison operator >
-    ///
-    /// \param other : Address to compare
-    ///
-    /// \return True if *this > other
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator >(const IPAddress& other) const;
-
-    ////////////////////////////////////////////////////////////
-    /// Comparison operator <=
-    ///
-    /// \param other : Address to compare
-    ///
-    /// \return True if *this <= other
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator <=(const IPAddress& other) const;
-
-    ////////////////////////////////////////////////////////////
-    /// Comparison operator >=
-    ///
-    /// \param other : Address to compare
-    ///
-    /// \return True if *this >= other
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator >=(const IPAddress& other) const;
-
-    ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
     static const IPAddress LocalHost; ///< Local host address (to connect to the same computer)
@@ -204,10 +144,76 @@ private :
 };
 
 ////////////////////////////////////////////////////////////
-/// Operator >> overload to extract an address from an input stream
+/// \brief Overload of == operator to compare two host addresses
+///
+/// \param left  Left operand (a host address)
+/// \param right Right operand (a host address)
+///
+/// \return True if both hosts are equal
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator ==(const IPAddress& left, const IPAddress& right);
+
+////////////////////////////////////////////////////////////
+/// \brief Overload of != operator to compare two host addresses
+///
+/// \param left  Left operand (a host address)
+/// \param right Right operand (a host address)
+///
+/// \return True if both hosts are different
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator !=(const IPAddress& left, const IPAddress& right);
+
+////////////////////////////////////////////////////////////
+/// \brief Overload of < operator to compare two host addresses
+///
+/// \param left  Left operand (a host address)
+/// \param right Right operand (a host address)
+///
+/// \return True if \a left is lesser than \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator <(const IPAddress& left, const IPAddress& right);
+
+////////////////////////////////////////////////////////////
+/// \brief Overload of > operator to compare two host addresses
+///
+/// \param left  Left operand (a host address)
+/// \param right Right operand (a host address)
+///
+/// \return True if \a left is greater than \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator >(const IPAddress& left, const IPAddress& right);
+
+////////////////////////////////////////////////////////////
+/// \brief Overload of <= operator to compare two host addresses
+///
+/// \param left  Left operand (a host address)
+/// \param right Right operand (a host address)
+///
+/// \return True if \a left is lesser or equal than \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator <=(const IPAddress& left, const IPAddress& right);
+
+////////////////////////////////////////////////////////////
+/// \brief Overload of >= operator to compare two host addresses
+///
+/// \param left  Left operand (a host address)
+/// \param right Right operand (a host address)
+///
+/// \return True if \a left is greater or equal than \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator >=(const IPAddress& left, const IPAddress& right);
+
+////////////////////////////////////////////////////////////
+/// Operator >> overload to extract an host address from an input stream
 ///
 /// \param Stream :  Input stream
-/// \param Address : Address to extract
+/// \param Address : Host address to extract
 ///
 /// \return Reference to the input stream
 ///
@@ -215,10 +221,10 @@ private :
 SFML_API std::istream& operator >>(std::istream& stream, IPAddress& address);
 
 ////////////////////////////////////////////////////////////
-/// Operator << overload to print an address to an output stream
+/// Operator << overload to print an host address to an output stream
 ///
 /// \param Stream :  Output stream
-/// \param Address : Address to print
+/// \param Address : Host address to print
 ///
 /// \return Reference to the output stream
 ///

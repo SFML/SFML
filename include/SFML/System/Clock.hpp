@@ -87,8 +87,8 @@ private :
 /// \class sf::Clock
 ///
 /// sf::Clock is a lightweight class for measuring time.
-/// Its accuray depends on the underlying OS, but you can generally
-/// expect a 1 ms precision.
+/// Its resolution depends on the underlying OS, but you can generally
+/// expect a 1 ms resolution.
 ///
 /// Usage example:
 /// \code
