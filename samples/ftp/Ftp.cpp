@@ -26,7 +26,7 @@ std::ostream& operator <<(std::ostream& stream, const sf::Ftp::Response& respons
 int main()
 {
     // Choose the server address
-    sf::IPAddress address;
+    sf::IpAddress address;
     do
     {
         std::cout << "Enter the FTP server address : ";

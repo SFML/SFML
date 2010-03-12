@@ -49,15 +49,15 @@ EXPORTS
 	sfHttp_Destroy
 	sfHttp_SetHost
 	sfHttp_SendRequest
-	sfIPAddress_FromString
-	sfIPAddress_FromBytes
-	sfIPAddress_FromInteger
-	sfIPAddress_IsValid
-	sfIPAddress_ToString
-	sfIPAddress_ToInteger
-	sfIPAddress_GetLocalAddress
-	sfIPAddress_GetPublicAddress
-	sfIPAddress_LocalHost
+	sfIpAddress_FromString
+	sfIpAddress_FromBytes
+	sfIpAddress_FromInteger
+	sfIpAddress_IsValid
+	sfIpAddress_ToString
+	sfIpAddress_ToInteger
+	sfIpAddress_GetLocalAddress
+	sfIpAddress_GetPublicAddress
+	sfIpAddress_LocalHost
 	sfSocketTCP_Create
 	sfSocketTCP_Destroy
 	sfSocketTCP_SetBlocking

@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/NonCopyable.hpp>
-#include <SFML/Network/IPAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/SocketTCP.hpp>
 #include <map>
 #include <string>
@@ -334,7 +334,7 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     SocketTCP      myConnection; ///< Connection to the host
-    IPAddress      myHost;       ///< Web host address
+    IpAddress      myHost;       ///< Web host address
     std::string    myHostName;   ///< Web host name
     unsigned short myPort;       ///< Port used for connection with host
 };

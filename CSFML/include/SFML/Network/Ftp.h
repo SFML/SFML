@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.h>
-#include <SFML/Network/IPAddress.h>
+#include <SFML/Network/IpAddress.h>
 #include <SFML/Network/Types.h>
 
 
@@ -287,7 +287,7 @@ CSFML_API void sfFtp_Destroy(sfFtp* ftp);
 /// \return Server response to the request
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFtpResponse* sfFtp_Connect(sfFtp* ftp, sfIPAddress server, unsigned short port, float timeout);
+CSFML_API sfFtpResponse* sfFtp_Connect(sfFtp* ftp, sfIpAddress server, unsigned short port, float timeout);
 
 ////////////////////////////////////////////////////////////
 /// Log in using anonymous account

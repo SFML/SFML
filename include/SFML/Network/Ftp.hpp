@@ -36,7 +36,7 @@
 
 namespace sf
 {
-class IPAddress;
+class IpAddress;
 
 ////////////////////////////////////////////////////////////
 /// This class provides methods for manipulating the FTP
@@ -267,7 +267,7 @@ public :
     /// \return Server response to the request
     ///
     ////////////////////////////////////////////////////////////
-    Response Connect(const IPAddress& server, unsigned short port = 21, float timeout = 0.f);
+    Response Connect(const IpAddress& server, unsigned short port = 21, float timeout = 0.f);
 
     ////////////////////////////////////////////////////////////
     /// Log in using anonymous account

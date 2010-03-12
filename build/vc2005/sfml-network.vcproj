@@ -369,11 +369,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\IPAddress.cpp"
+			RelativePath="..\..\src\SFML\Network\IpAddress.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\IPAddress.hpp"
+			RelativePath="..\..\include\SFML\Network\IpAddress.hpp"
 			>
 		</File>
 		<File

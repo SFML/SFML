@@ -32,7 +32,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Network/Ftp.hpp>
 #include <SFML/Network/Http.hpp>
-#include <SFML/Network/IPAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/Selector.hpp>
 #include <SFML/Network/SocketTCP.hpp>

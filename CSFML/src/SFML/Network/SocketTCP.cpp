@@ -28,7 +28,7 @@
 #include <SFML/Network/SocketTCP.h>
 #include <SFML/Network/SocketTCPStruct.h>
 #include <SFML/Network/PacketStruct.h>
-#include <SFML/Network/IPAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Internal.h>
 #include <string.h>
 
@@ -79,9 +79,9 @@ void sfSocketTCP_SetBlocking(sfSocketTCP* socket, sfBool blocking)
 ////////////////////////////////////////////////////////////
 /// Connect a TCP socket to another computer on a specified port
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketTCP_Connect(sfSocketTCP* socket, unsigned short port, sfIPAddress host, float timeout)
+sfSocketStatus sfSocketTCP_Connect(sfSocketTCP* socket, unsigned short port, sfIpAddress host, float timeout)
 {
-    sf::IPAddress address(host.Address);
+    sf::IpAddress address(host.Address);
 
     CSFML_CHECK_RETURN(socket, sfSocketError);
 
@@ -103,13 +103,13 @@ sfBool sfSocketTCP_Listen(sfSocketTCP* socket, unsigned short port)
 /// This function is blocking, ie. it won't return before
 /// a connection has been accepted
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketTCP_Accept(sfSocketTCP* socket, sfSocketTCP** connected, sfIPAddress* address)
+sfSocketStatus sfSocketTCP_Accept(sfSocketTCP* socket, sfSocketTCP** connected, sfIpAddress* address)
 {
     CSFML_CHECK_RETURN(socket,    sfSocketError);
     CSFML_CHECK_RETURN(connected, sfSocketError);
 
     // Call SFML internal function
-    sf::IPAddress clientAddress;
+    sf::IpAddress clientAddress;
     sf::SocketTCP client;
     sf::Socket::Status status = socket->This.Accept(client, &clientAddress);
     if (status != sf::Socket::Done)

@@ -35,7 +35,7 @@
 namespace sf
 {
 class Packet;
-class IPAddress;
+class IpAddress;
 template <typename> class Selector;
 
 ////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ public :
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Send(const char* data, std::size_t sizeInBytes, const IPAddress& address, unsigned short port);
+    Socket::Status Send(const char* data, std::size_t sizeInBytes, const IpAddress& address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// Receive an array of bytes.
@@ -105,7 +105,7 @@ public :
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Receive(char* data, std::size_t maxSize, std::size_t& sizeReceived, IPAddress& address, unsigned short& port);
+    Socket::Status Receive(char* data, std::size_t maxSize, std::size_t& sizeReceived, IpAddress& address, unsigned short& port);
 
     ////////////////////////////////////////////////////////////
     /// Send a packet of data
@@ -117,7 +117,7 @@ public :
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Send(Packet& packet, const IPAddress& address, unsigned short port);
+    Socket::Status Send(Packet& packet, const IpAddress& address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// Receive a packet.
@@ -130,7 +130,7 @@ public :
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Receive(Packet& packet, IPAddress& address, unsigned short& port);
+    Socket::Status Receive(Packet& packet, IpAddress& address, unsigned short& port);
 
     ////////////////////////////////////////////////////////////
     /// Close the socket

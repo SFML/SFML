@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Ftp.h>
 #include <SFML/Network/FtpStruct.h>
-#include <SFML/Network/IPAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Internal.h>
 
 
@@ -197,11 +197,11 @@ void sfFtp_Destroy(sfFtp* ftp)
 ////////////////////////////////////////////////////////////
 /// Connect to the specified FTP server
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_Connect(sfFtp* ftp, sfIPAddress server, unsigned short port, float timeout)
+sfFtpResponse* sfFtp_Connect(sfFtp* ftp, sfIpAddress server, unsigned short port, float timeout)
 {
     CSFML_CHECK_RETURN(ftp, NULL);
 
-    sf::IPAddress SFMLServer(server.Address);
+    sf::IpAddress SFMLServer(server.Address);
 
     return new sfFtpResponse(ftp->This.Connect(SFMLServer, port, timeout));
 }

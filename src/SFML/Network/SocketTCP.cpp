@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/SocketTCP.hpp>
-#include <SFML/Network/IPAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/SocketHelper.hpp>
 #include <SFML/System/Err.hpp>
@@ -67,7 +67,7 @@ void SocketTCP::SetBlocking(bool blocking)
 ////////////////////////////////////////////////////////////
 /// Connect to another computer on a specified port
 ////////////////////////////////////////////////////////////
-Socket::Status SocketTCP::Connect(unsigned short port, const IPAddress& host, float timeout)
+Socket::Status SocketTCP::Connect(unsigned short port, const IpAddress& host, float timeout)
 {
     // Make sure our socket is valid
     if (!IsValid())
@@ -203,7 +203,7 @@ bool SocketTCP::Listen(unsigned short port)
 /// Wait for a connection (must be listening to a port).
 /// This function will block if the socket is blocking
 ////////////////////////////////////////////////////////////
-Socket::Status SocketTCP::Accept(SocketTCP& connected, IPAddress* address)
+Socket::Status SocketTCP::Accept(SocketTCP& connected, IpAddress* address)
 {
     // Address that will be filled with client informations
     sockaddr_in clientAddress;
@@ -216,14 +216,14 @@ Socket::Status SocketTCP::Accept(SocketTCP& connected, IPAddress* address)
     if (!connected.IsValid())
     {
         if (address)
-            *address = IPAddress();
+            *address = IpAddress();
 
         return SocketHelper::GetErrorStatus();
     }
 
     // Fill address if requested
     if (address)
-        *address = IPAddress(inet_ntoa(clientAddress.sin_addr));
+        *address = IpAddress(inet_ntoa(clientAddress.sin_addr));
 
     return Socket::Done;
 }

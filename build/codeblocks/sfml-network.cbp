@@ -114,7 +114,7 @@
 		</Linker>
 		<Unit filename="..\..\include\SFML\Network\Ftp.hpp" />
 		<Unit filename="..\..\include\SFML\Network\Http.hpp" />
-		<Unit filename="..\..\include\SFML\Network\IPAddress.hpp" />
+		<Unit filename="..\..\include\SFML\Network\IpAddress.hpp" />
 		<Unit filename="..\..\include\SFML\Network\Packet.hpp" />
 		<Unit filename="..\..\include\SFML\Network\Selector.hpp" />
 		<Unit filename="..\..\include\SFML\Network\Selector.inl" />
@@ -125,7 +125,7 @@
 		<Unit filename="..\..\include\SFML\Network\Win32\SocketHelper.hpp" />
 		<Unit filename="..\..\src\SFML\Network\Ftp.cpp" />
 		<Unit filename="..\..\src\SFML\Network\Http.cpp" />
-		<Unit filename="..\..\src\SFML\Network\IPAddress.cpp" />
+		<Unit filename="..\..\src\SFML\Network\IpAddress.cpp" />
 		<Unit filename="..\..\src\SFML\Network\Packet.cpp" />
 		<Unit filename="..\..\src\SFML\Network\SelectorBase.cpp" />
 		<Unit filename="..\..\src\SFML\Network\SocketTCP.cpp" />

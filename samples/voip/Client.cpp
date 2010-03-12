@@ -70,7 +70,7 @@ void DoClient(unsigned short port)
     }
 
     // Ask for server address
-    sf::IPAddress serverAddress;
+    sf::IpAddress serverAddress;
     do
     {
         std::cout << "Type address or name of the server to connect to : ";

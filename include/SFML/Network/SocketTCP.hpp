@@ -35,7 +35,7 @@
 namespace sf
 {
 class Packet;
-class IPAddress;
+class IpAddress;
 template <typename> class Selector;
 
 ////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ public :
     /// \return True if operation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Connect(unsigned short port, const IPAddress& host, float timeout = 0.f);
+    Socket::Status Connect(unsigned short port, const IpAddress& host, float timeout = 0.f);
 
     ////////////////////////////////////////////////////////////
     /// Listen to a specified port for incoming data or connections
@@ -93,7 +93,7 @@ public :
     /// \return Status code
     ///
     ////////////////////////////////////////////////////////////
-    Socket::Status Accept(SocketTCP& connected, IPAddress* address = NULL);
+    Socket::Status Accept(SocketTCP& connected, IpAddress* address = NULL);
 
     ////////////////////////////////////////////////////////////
     /// Send an array of bytes to the host (must be connected first)

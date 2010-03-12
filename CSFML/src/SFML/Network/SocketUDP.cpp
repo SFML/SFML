@@ -28,7 +28,7 @@
 #include <SFML/Network/SocketUDP.h>
 #include <SFML/Network/SocketUDPStruct.h>
 #include <SFML/Network/PacketStruct.h>
-#include <SFML/Network/IPAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Internal.h>
 #include <string.h>
 
@@ -97,12 +97,12 @@ sfBool sfSocketUDP_Unbind(sfSocketUDP* socket)
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data, size_t size, sfIPAddress address, unsigned short port)
+sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data, size_t size, sfIpAddress address, unsigned short port)
 {
     CSFML_CHECK_RETURN(socket, sfSocketError)
 
     // Convert the address
-    sf::IPAddress receiver(address.Address);
+    sf::IpAddress receiver(address.Address);
 
     return static_cast<sfSocketStatus>(socket->This.Send(data, size, receiver, port));
 }
@@ -113,12 +113,12 @@ sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data, size_t si
 /// This function is blocking, ie. it won't return before some
 /// bytes have been received
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, size_t maxSize, size_t* sizeReceived, sfIPAddress* address, unsigned short* port)
+sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, size_t maxSize, size_t* sizeReceived, sfIpAddress* address, unsigned short* port)
 {
     CSFML_CHECK_RETURN(socket, sfSocketError);
 
     // Call SFML internal function
-    sf::IPAddress sender;
+    sf::IpAddress sender;
     unsigned short senderPort;
     std::size_t received;
 
@@ -142,13 +142,13 @@ sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, size_t maxSi
 ////////////////////////////////////////////////////////////
 /// Send a packet of data
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* packet, sfIPAddress address, unsigned short port)
+sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* packet, sfIpAddress address, unsigned short port)
 {
     CSFML_CHECK_RETURN(socket, sfSocketError);
     CSFML_CHECK_RETURN(packet, sfSocketError);
 
     // Convert the address
-    sf::IPAddress receiver(address.Address);
+    sf::IpAddress receiver(address.Address);
 
     return static_cast<sfSocketStatus>(socket->This.Send(packet->This, receiver, port));
 }
@@ -159,12 +159,12 @@ sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* packet, sfI
 /// This function is blocking, ie. it won't return before a
 /// packet is received
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfSocketUDP_ReceivePacket(sfSocketUDP* socket, sfPacket* packet, sfIPAddress* address, unsigned short* port)
+sfSocketStatus sfSocketUDP_ReceivePacket(sfSocketUDP* socket, sfPacket* packet, sfIpAddress* address, unsigned short* port)
 {
     CSFML_CHECK_RETURN(socket, sfSocketError);
     CSFML_CHECK_RETURN(packet, sfSocketError);
 
-    sf::IPAddress sender;
+    sf::IpAddress sender;
     unsigned short senderPort;
     sf::Socket::Status status = socket->This.Receive(packet->This, sender, senderPort);
     if (status != sf::Socket::Done)

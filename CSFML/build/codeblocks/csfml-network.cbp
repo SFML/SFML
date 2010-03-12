@@ -56,7 +56,7 @@
 		</Linker>
 		<Unit filename="..\..\include\SFML\Network\Ftp.h" />
 		<Unit filename="..\..\include\SFML\Network\Http.h" />
-		<Unit filename="..\..\include\SFML\Network\IPAddress.h" />
+		<Unit filename="..\..\include\SFML\Network\IpAddress.h" />
 		<Unit filename="..\..\include\SFML\Network\Packet.h" />
 		<Unit filename="..\..\include\SFML\Network\Selector.h" />
 		<Unit filename="..\..\include\SFML\Network\SocketStatus.h" />
@@ -67,7 +67,7 @@
 		<Unit filename="..\..\src\SFML\Network\FtpStruct.h" />
 		<Unit filename="..\..\src\SFML\Network\Http.cpp" />
 		<Unit filename="..\..\src\SFML\Network\HttpStruct.h" />
-		<Unit filename="..\..\src\SFML\Network\IPAddress.cpp" />
+		<Unit filename="..\..\src\SFML\Network\IpAddress.cpp" />
 		<Unit filename="..\..\src\SFML\Network\Packet.cpp" />
 		<Unit filename="..\..\src\SFML\Network\PacketStruct.h" />
 		<Unit filename="..\..\src\SFML\Network\Selector.cpp" />

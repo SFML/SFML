@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/System.h>
-#include <SFML/Network/IPAddress.h>
+#include <SFML/Network/IpAddress.h>
 #include <SFML/Network/Packet.h>
 #include <SFML/Network/Selector.h>
 #include <SFML/Network/SocketTCP.h>

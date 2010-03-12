@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Ftp.hpp>
-#include <SFML/Network/IPAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <algorithm>
 #include <fstream>
 #include <iterator>
@@ -192,7 +192,7 @@ Ftp::~Ftp()
 ////////////////////////////////////////////////////////////
 /// Connect to the specified FTP server
 ////////////////////////////////////////////////////////////
-Ftp::Response Ftp::Connect(const IPAddress& server, unsigned short port, float timeout)
+Ftp::Response Ftp::Connect(const IpAddress& server, unsigned short port, float timeout)
 {
     // Connect to the server
     if (myCommandSocket.Connect(port, server, timeout) != Socket::Done)
@@ -647,7 +647,7 @@ Ftp::Response Ftp::DataChannel::Open(Ftp::TransferMode mode)
 
             // Reconstruct connection port and address
             unsigned short port = data[4] * 256 + data[5];
-            IPAddress address(static_cast<Uint8>(data[0]),
+            IpAddress address(static_cast<Uint8>(data[0]),
                               static_cast<Uint8>(data[1]),
                               static_cast<Uint8>(data[2]),
                               static_cast<Uint8>(data[3]));

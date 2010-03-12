@@ -350,7 +350,7 @@ void Http::SetHost(const std::string& host, unsigned short port)
     if (!myHostName.empty() && (*myHostName.rbegin() == '/'))
         myHostName.erase(myHostName.size() - 1);
 
-    myHost = IPAddress(myHostName);
+    myHost = IpAddress(myHostName);
 }
 
 

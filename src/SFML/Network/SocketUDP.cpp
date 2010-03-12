@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/SocketUDP.hpp>
-#include <SFML/Network/IPAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <SFML/System/Err.hpp>
 #include <algorithm>
@@ -115,7 +115,7 @@ bool SocketUDP::Unbind()
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes
 ////////////////////////////////////////////////////////////
-Socket::Status SocketUDP::Send(const char* data, std::size_t sizeInBytes, const IPAddress& address, unsigned short port)
+Socket::Status SocketUDP::Send(const char* data, std::size_t sizeInBytes, const IpAddress& address, unsigned short port)
 {
     // Make sure the socket is valid
     if (!IsValid())
@@ -159,7 +159,7 @@ Socket::Status SocketUDP::Send(const char* data, std::size_t sizeInBytes, const 
 /// Receive an array of bytes.
 /// This function will block if the socket is blocking
 ////////////////////////////////////////////////////////////
-Socket::Status SocketUDP::Receive(char* data, std::size_t maxSize, std::size_t& sizeReceived, IPAddress& address, unsigned short& port)
+Socket::Status SocketUDP::Receive(char* data, std::size_t maxSize, std::size_t& sizeReceived, IpAddress& address, unsigned short& port)
 {
     // First clear the size received
     sizeReceived = 0;
@@ -192,14 +192,14 @@ Socket::Status SocketUDP::Receive(char* data, std::size_t maxSize, std::size_t& 
         // Check the number of bytes received
         if (received > 0)
         {
-            address = IPAddress(inet_ntoa(sockAddr.sin_addr));
+            address = IpAddress(inet_ntoa(sockAddr.sin_addr));
             port = ntohs(sockAddr.sin_port);
             sizeReceived = static_cast<std::size_t>(received);
             return Socket::Done;
         }
         else
         {
-            address = IPAddress();
+            address = IpAddress();
             port = 0;
             return received == 0 ? Socket::Disconnected : SocketHelper::GetErrorStatus();
         }
@@ -216,7 +216,7 @@ Socket::Status SocketUDP::Receive(char* data, std::size_t maxSize, std::size_t& 
 ////////////////////////////////////////////////////////////
 /// Send a packet of data
 ////////////////////////////////////////////////////////////
-Socket::Status SocketUDP::Send(Packet& packet, const IPAddress& address, unsigned short port)
+Socket::Status SocketUDP::Send(Packet& packet, const IpAddress& address, unsigned short port)
 {
     // Get the data to send from the packet
     std::size_t dataSize = 0;
@@ -242,7 +242,7 @@ Socket::Status SocketUDP::Send(Packet& packet, const IPAddress& address, unsigne
 /// Receive a packet.
 /// This function will block if the socket is blocking
 ////////////////////////////////////////////////////////////
-Socket::Status SocketUDP::Receive(Packet& packet, IPAddress& address, unsigned short& port)
+Socket::Status SocketUDP::Receive(Packet& packet, IpAddress& address, unsigned short& port)
 {
     // We start by getting the size of the incoming packet
     Uint32      packetSize = 0;
@@ -272,7 +272,7 @@ Socket::Status SocketUDP::Receive(Packet& packet, IPAddress& address, unsigned s
 
     // Use another address instance for receiving the packet data ;
     // chunks of data coming from a different sender will be discarded (and lost...)
-    IPAddress sender;
+    IpAddress sender;
     unsigned short senderPort;
 
     // Then loop until we receive all the packet data

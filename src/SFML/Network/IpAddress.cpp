@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Network/IPAddress.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Http.hpp>
 #include <SFML/Network/SocketHelper.hpp>
 #include <string.h>
@@ -34,15 +34,11 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Static member data
-////////////////////////////////////////////////////////////
-const IPAddress IPAddress::LocalHost(127, 0, 0, 1);
+const IpAddress IpAddress::LocalHost(127, 0, 0, 1);
 
 
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
-IPAddress::IPAddress() :
+IpAddress::IpAddress() :
 myAddress(INADDR_NONE)
 {
 
@@ -50,9 +46,7 @@ myAddress(INADDR_NONE)
 
 
 ////////////////////////////////////////////////////////////
-/// Construct the address from a string
-////////////////////////////////////////////////////////////
-IPAddress::IPAddress(const std::string& address)
+IpAddress::IpAddress(const std::string& address)
 {
     // First try to convert it as a byte representation ("xxx.xxx.xxx.xxx")
     myAddress = inet_addr(address.c_str());
@@ -76,10 +70,7 @@ IPAddress::IPAddress(const std::string& address)
 
 
 ////////////////////////////////////////////////////////////
-/// Construct the address from a C-style string ;
-/// Needed for implicit conversions from literal strings to IPAddress to work
-////////////////////////////////////////////////////////////
-IPAddress::IPAddress(const char* address)
+IpAddress::IpAddress(const char* address)
 {
     // First try to convert it as a byte representation ("xxx.xxx.xxx.xxx")
     myAddress = inet_addr(address);
@@ -103,36 +94,28 @@ IPAddress::IPAddress(const char* address)
 
 
 ////////////////////////////////////////////////////////////
-/// Construct the address from 4 bytes
-////////////////////////////////////////////////////////////
-IPAddress::IPAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3)
+IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3)
 {
     myAddress = htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Construct the address from a 32-bits integer
-////////////////////////////////////////////////////////////
-IPAddress::IPAddress(Uint32 address)
+IpAddress::IpAddress(Uint32 address)
 {
     myAddress = htonl(address);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Tell if the address is a valid one
-////////////////////////////////////////////////////////////
-bool IPAddress::IsValid() const
+bool IpAddress::IsValid() const
 {
     return myAddress != INADDR_NONE;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get a string representation of the address
-////////////////////////////////////////////////////////////
-std::string IPAddress::ToString() const
+std::string IpAddress::ToString() const
 {
     in_addr address;
     address.s_addr = myAddress;
@@ -142,24 +125,20 @@ std::string IPAddress::ToString() const
 
 
 ////////////////////////////////////////////////////////////
-/// Get an integer representation of the address
-////////////////////////////////////////////////////////////
-Uint32 IPAddress::ToInteger() const
+Uint32 IpAddress::ToInteger() const
 {
     return ntohl(myAddress);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the computer's local IP address (from the LAN point of view)
-////////////////////////////////////////////////////////////
-IPAddress IPAddress::GetLocalAddress()
+IpAddress IpAddress::GetLocalAddress()
 {
     // The method here is to connect a UDP socket to anyone (here to localhost),
     // and get the local socket address with the getsockname function.
     // UDP connection will not send anything to the network, so this function won't cause any overhead.
 
-    IPAddress localAddress;
+    IpAddress localAddress;
 
     // Create the socket
     SocketHelper::SocketType sock = socket(PF_INET, SOCK_DGRAM, 0);
@@ -199,82 +178,80 @@ IPAddress IPAddress::GetLocalAddress()
 
 
 ////////////////////////////////////////////////////////////
-/// Get the computer's public IP address (from the web point of view)
-////////////////////////////////////////////////////////////
-IPAddress IPAddress::GetPublicAddress(float timeout)
+IpAddress IpAddress::GetPublicAddress(float timeout)
 {
     // The trick here is more complicated, because the only way
     // to get our public IP address is to get it from a distant computer.
     // Here we get the web page from http://www.sfml-dev.org/ip-provider.php
     // and parse the result to extract our IP address
-    // (not very hard : the web page contains only our IP address).
+    // (not very hard: the web page contains only our IP address).
 
     Http server("www.sfml-dev.org");
     Http::Request request(Http::Request::Get, "/ip-provider.php");
     Http::Response page = server.SendRequest(request, timeout);
     if (page.GetStatus() == Http::Response::Ok)
-        return IPAddress(page.GetBody());
+        return IpAddress(page.GetBody());
 
     // Something failed: return an invalid address
-    return IPAddress();
+    return IpAddress();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator ==(const IPAddress& left, const IPAddress& right)
+bool operator ==(const IpAddress& left, const IpAddress& right)
 {
     return left.ToInteger() == right.ToInteger();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator !=(const IPAddress& left, const IPAddress& right)
+bool operator !=(const IpAddress& left, const IpAddress& right)
 {
     return !(left == right);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator <(const IPAddress& left, const IPAddress& right)
+bool operator <(const IpAddress& left, const IpAddress& right)
 {
     return left.ToInteger() < right.ToInteger();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator >(const IPAddress& left, const IPAddress& right)
+bool operator >(const IpAddress& left, const IpAddress& right)
 {
     return right < left;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator <=(const IPAddress& left, const IPAddress& right)
+bool operator <=(const IpAddress& left, const IpAddress& right)
 {
     return !(right < left);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator >=(const IPAddress& left, const IPAddress& right)
+bool operator >=(const IpAddress& left, const IpAddress& right)
 {
     return !(left < right);
 }
 
 
 ////////////////////////////////////////////////////////////
-std::istream& operator >>(std::istream& stream, IPAddress& address)
+std::istream& operator >>(std::istream& stream, IpAddress& address)
 {
     std::string str;
     stream >> str;
-    address = IPAddress(str);
+    address = IpAddress(str);
 
     return stream;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::ostream& operator <<(std::ostream& stream, const IPAddress& address)
+std::ostream& operator <<(std::ostream& stream, const IpAddress& address)
 {
     return stream << address.ToString();
 }

@@ -57,7 +57,7 @@ public :
             std::cout << "Server is listening to port " << port << ", waiting for connections... " << std::endl;
 
             // Wait for a connection
-            sf::IPAddress clientAddress;
+            sf::IpAddress clientAddress;
             myListener.Accept(myClient, &clientAddress);
             std::cout << "Client connected : " << clientAddress << std::endl;
 

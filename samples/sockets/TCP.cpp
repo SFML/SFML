@@ -13,7 +13,7 @@
 void DoClientTCP(unsigned short port)
 {
     // Ask for server address
-    sf::IPAddress serverAddress;
+    sf::IpAddress serverAddress;
     do
     {
         std::cout << "Type address or name of the server to connect to : ";
@@ -66,7 +66,7 @@ void DoServerTCP(unsigned short port)
     std::cout << "Server is listening to port " << port << ", waiting for connections... " << std::endl;
 
     // Wait for a connection
-    sf::IPAddress clientAddress;
+    sf::IpAddress clientAddress;
     sf::SocketTCP client;
     if (server.Accept(client, &clientAddress) != sf::Socket::Done)
         return;

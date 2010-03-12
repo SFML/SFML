@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.h>
-#include <SFML/Network/IPAddress.h>
+#include <SFML/Network/IpAddress.h>
 #include <SFML/Network/SocketStatus.h>
 #include <SFML/Network/Types.h>
 
@@ -81,7 +81,7 @@ CSFML_API void sfSocketTCP_SetBlocking(sfSocketTCP* socket, sfBool blocking);
 /// \return sfTrue if operation has been successful
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketTCP_Connect(sfSocketTCP* socket, unsigned short port, sfIPAddress host, float timeout);
+CSFML_API sfSocketStatus sfSocketTCP_Connect(sfSocketTCP* socket, unsigned short port, sfIpAddress host, float timeout);
 
 ////////////////////////////////////////////////////////////
 /// Listen to a specified port for incoming data or connections
@@ -106,7 +106,7 @@ CSFML_API sfBool sfSocketTCP_Listen(sfSocketTCP* socket, unsigned short port);
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketTCP_Accept(sfSocketTCP* socket, sfSocketTCP** connected, sfIPAddress* address);
+CSFML_API sfSocketStatus sfSocketTCP_Accept(sfSocketTCP* socket, sfSocketTCP** connected, sfIpAddress* address);
 
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes to the host (must be connected first)

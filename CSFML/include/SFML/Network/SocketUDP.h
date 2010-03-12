@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.h>
-#include <SFML/Network/IPAddress.h>
+#include <SFML/Network/IpAddress.h>
 #include <SFML/Network/SocketStatus.h>
 #include <SFML/Network/Types.h>
 
@@ -103,7 +103,7 @@ CSFML_API sfBool sfSocketUDP_Unbind(sfSocketUDP* socket);
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data, size_t size, sfIPAddress address, unsigned short port);
+CSFML_API sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data, size_t size, sfIpAddress address, unsigned short port);
 
 ////////////////////////////////////////////////////////////
 /// Receive an array of bytes.
@@ -120,7 +120,7 @@ CSFML_API sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data,
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, size_t maxSize, size_t* sizeReceived, sfIPAddress* address, unsigned short* port);
+CSFML_API sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, size_t maxSize, size_t* sizeReceived, sfIpAddress* address, unsigned short* port);
 
 ////////////////////////////////////////////////////////////
 /// Send a packet of data
@@ -133,7 +133,7 @@ CSFML_API sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, si
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* packet, sfIPAddress address, unsigned short port);
+CSFML_API sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* packet, sfIpAddress address, unsigned short port);
 
 ////////////////////////////////////////////////////////////
 /// Receive a packet.
@@ -148,7 +148,7 @@ CSFML_API sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* p
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_ReceivePacket(sfSocketUDP* socket, sfPacket* packet, sfIPAddress* address, unsigned short* port);
+CSFML_API sfSocketStatus sfSocketUDP_ReceivePacket(sfSocketUDP* socket, sfPacket* packet, sfIpAddress* address, unsigned short* port);
 
 ////////////////////////////////////////////////////////////
 /// Close the socket
