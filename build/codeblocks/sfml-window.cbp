@@ -124,13 +124,12 @@
 		<Unit filename="..\..\src\SFML\Window\Input.cpp" />
 		<Unit filename="..\..\src\SFML\Window\Joystick.hpp" />
 		<Unit filename="..\..\src\SFML\Window\VideoMode.cpp" />
-		<Unit filename="..\..\src\SFML\Window\VideoModeSupport.hpp" />
+		<Unit filename="..\..\src\SFML\Window\VideoModeImpl.hpp" />
 		<Unit filename="..\..\src\SFML\Window\Win32\ContextWGL.cpp" />
 		<Unit filename="..\..\src\SFML\Window\Win32\ContextWGL.hpp" />
 		<Unit filename="..\..\src\SFML\Window\Win32\Joystick.cpp" />
 		<Unit filename="..\..\src\SFML\Window\Win32\Joystick.hpp" />
-		<Unit filename="..\..\src\SFML\Window\Win32\VideoModeSupport.cpp" />
-		<Unit filename="..\..\src\SFML\Window\Win32\VideoModeSupport.hpp" />
+		<Unit filename="..\..\src\SFML\Window\Win32\VideoModeImpl.cpp" />
 		<Unit filename="..\..\src\SFML\Window\Win32\WindowImplWin32.cpp" />
 		<Unit filename="..\..\src\SFML\Window\Win32\WindowImplWin32.hpp" />
 		<Unit filename="..\..\src\SFML\Window\Window.cpp" />

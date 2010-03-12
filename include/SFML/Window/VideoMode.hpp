@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <cstdlib>
+#include <vector>
 
 
 namespace sf
@@ -69,30 +69,20 @@ public :
     static VideoMode GetDesktopMode();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get a valid video mode
+    /// \brief Retrieve all the video modes supported in fullscreen mode
     ///
-    /// The parameter \a index must be in the range [0, GetModesCount()[.
-    /// Modes are sorted from best to worst, so that
-    /// sf::VideoMode::GetMode(0) will always give the best.
+    /// When creating a fullscreen window, the video mode is restricted
+    /// to be compatible with what the graphics driver and monitor
+    /// support. This function returns the complete list of all video
+    /// modes that can be used in fullscreen mode.
+    /// The returned array is sorted from best to worst, so that
+    /// the first element will always give the best mode (higher
+    /// width, height and bits-per-pixel).
     ///
-    /// \param index Index of video mode to get
-    ///
-    /// \return Corresponding video mode (invalid mode if index is out of range)
-    ///
-    ////////////////////////////////////////////////////////////
-    static VideoMode GetMode(std::size_t index);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the total number of valid video modes available
-    ///
-    /// The validity of video modes is only relevant when using
-    /// fullscreen windows; otherwise any video mode can be used
-    /// with no restriction.
-    ///
-    /// \return Number of valid video modes available for fullscreen mode
+    /// \return Array containing all the supported fullscreen modes
     ///
     ////////////////////////////////////////////////////////////
-    static std::size_t GetModesCount();
+    static const std::vector<VideoMode>& GetFullscreenModes();
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the video mode is valid
@@ -115,13 +105,10 @@ public :
 };
 
 ////////////////////////////////////////////////////////////
-/// \brief Overload of binary == operator
+/// \brief Overload of == operator to compare two video modes
 ///
-/// This operator compares strict equality between two modes,
-/// i.e. it checks if all their members are equal.
-///
-/// \param left  Left operand
-/// \param right Right operand
+/// \param left  Left operand (a video mode)
+/// \param right Right operand (a video mode)
 ///
 /// \return True if modes are equal
 ///
@@ -129,18 +116,59 @@ public :
 SFML_API bool operator ==(const VideoMode& left, const VideoMode& right);
 
 ////////////////////////////////////////////////////////////
-/// \brief Overload of binary != operator
+/// \brief Overload of != operator to compare two video modes
 ///
-/// This operator compares strict difference between two modes,
-/// i.e. it checks if not all their members are equal.
-///
-/// \param left  Left operand
-/// \param right Right operand
+/// \param left  Left operand (a video mode)
+/// \param right Right operand (a video mode)
 ///
 /// \return True if modes are different
 ///
 ////////////////////////////////////////////////////////////
 SFML_API bool operator !=(const VideoMode& left, const VideoMode& right);
+
+////////////////////////////////////////////////////////////
+/// \brief Overload of < operator to compare video modes
+///
+/// \param left  Left operand (a video mode)
+/// \param right Right operand (a video mode)
+///
+/// \return True if \a left is lesser than \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator <(const VideoMode& left, const VideoMode& right);
+
+////////////////////////////////////////////////////////////
+/// \brief Overload of > operator to compare video modes
+///
+/// \param left  Left operand (a video mode)
+/// \param right Right operand (a video mode)
+///
+/// \return True if \a left is greater than \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator >(const VideoMode& left, const VideoMode& right);
+
+////////////////////////////////////////////////////////////
+/// \brief Overload of <= operator to compare video modes
+///
+/// \param left  Left operand (a video mode)
+/// \param right Right operand (a video mode)
+///
+/// \return True if \a left is lesser or equal than \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator <=(const VideoMode& left, const VideoMode& right);
+
+////////////////////////////////////////////////////////////
+/// \brief Overload of >= operator to compare video modes
+///
+/// \param left  Left operand (a video mode)
+/// \param right Right operand (a video mode)
+///
+/// \return True if \a left is greater or equal than \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API bool operator >=(const VideoMode& left, const VideoMode& right);
 
 } // namespace sf
 
@@ -161,14 +189,12 @@ SFML_API bool operator !=(const VideoMode& left, const VideoMode& right);
 /// and the graphics card support), otherwise your window
 /// creation will just fail.
 ///
-/// sf::VideoMode provides two static functions for retrieving
+/// sf::VideoMode provides a static function for retrieving
 /// the list of all the video modes supported by the system:
-/// GetModesCount() to get the number of video modes in the
-/// list, and GetMode() to retrieve a particular mode
-/// from the list.
+/// GetFullscreenModes().
 ///
-/// A custom video mode can also be checked directly with
-/// its IsValid() function.
+/// A custom video mode can also be checked directly for
+/// fullscreen compatibility with its IsValid() function.
 ///
 /// Additionnally, sf::VideoMode provides a static function
 /// to get the mode currently used by the desktop: GetDesktopMode().
@@ -178,9 +204,10 @@ SFML_API bool operator !=(const VideoMode& left, const VideoMode& right);
 /// Usage example:
 /// \code
 /// // Display the list of all the video modes available for fullscreen
-/// for (std::size_t i = 0; i < sf::VideoMode::GetModesCount(); ++i)
+/// std::vector<sf::VideoMode> modes = sf::VideoMode::GetFullscreenModes();
+/// for (std::size_t i = 0; i < modes.size(); ++i)
 /// {
-///     sf::VideoMode mode = sf::VideoMode::GetMode(i);
+///     sf::VideoMode mode = modes[i];
 ///     std::cout << "Mode #" << i << ": "
 ///               << mode.Width << "x" << mode.Height << " - "
 ///               << mode.BitsPerPixel << " bpp" << std::endl;

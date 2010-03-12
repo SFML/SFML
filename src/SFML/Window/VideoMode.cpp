@@ -26,47 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/VideoModeSupport.hpp>
+#include <SFML/Window/VideoModeImpl.hpp>
 #include <algorithm>
-#include <vector>
-
-
-////////////////////////////////////////////////////////////
-/// Private data
-////////////////////////////////////////////////////////////
-namespace
-{
-    // Global array of supported video modes
-    std::vector<sf::VideoMode> supportedModes;
-
-    // Functor for sorting modes from highest to lowest
-    struct CompareModes
-    {
-        bool operator ()(const sf::VideoMode& left, const sf::VideoMode& right) const
-        {
-            if (left.BitsPerPixel > right.BitsPerPixel)
-                return true;
-            else if (left.BitsPerPixel < right.BitsPerPixel)
-                return false;
-            else if (left.Width > right.Width)
-                return true;
-            else if (left.Width < right.Width)
-                return false;
-            else
-                return (left.Height > right.Height);
-        }
-    };
-
-    // Get and sort valid video modes
-    static void InitializeModes()
-    {
-        // We request the array of valid modes
-        sf::priv::VideoModeSupport::GetSupportedVideoModes(supportedModes);
-
-        // And we sort them from highest to lowest (so that number 0 is the best)
-        std::sort(supportedModes.begin(), supportedModes.end(), CompareModes());
-    }
-}
+#include <functional>
 
 
 namespace sf
@@ -94,44 +56,33 @@ BitsPerPixel(bitsPerPixel)
 ////////////////////////////////////////////////////////////
 VideoMode VideoMode::GetDesktopMode()
 {
-    // Directly forward to the video mode support
-    return priv::VideoModeSupport::GetDesktopVideoMode();
+    // Directly forward to the OS-specific implementation
+    return priv::VideoModeImpl::GetDesktopMode();
 }
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoMode::GetMode(std::size_t index)
+const std::vector<VideoMode>& VideoMode::GetFullscreenModes()
 {
-    // Build and cache the list of valid modes on first call
-    if (supportedModes.empty())
-        InitializeModes();
+    static std::vector<VideoMode> modes;
 
-    if (index < GetModesCount())
-        return supportedModes[index];
-    else
-        return VideoMode();
-}
+    // Populate the array on first call
+    if (modes.empty())
+    {
+        modes = priv::VideoModeImpl::GetFullscreenModes();
+        std::sort(modes.begin(), modes.end(), std::greater<VideoMode>());
+    }
 
-
-////////////////////////////////////////////////////////////
-std::size_t VideoMode::GetModesCount()
-{
-    // Build and cache the list of valid modes on first call
-    if (supportedModes.empty())
-        InitializeModes();
-
-    return supportedModes.size();
+    return modes;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool VideoMode::IsValid() const
 {
-    // Build and cache the list of valid modes on first call
-    if (supportedModes.empty())
-        InitializeModes();
+    const std::vector<VideoMode>& modes = GetFullscreenModes();
 
-    return std::find(supportedModes.begin(), supportedModes.end(), *this) != supportedModes.end();
+    return std::find(modes.begin(), modes.end(), *this) != modes.end();
 }
 
 
@@ -148,6 +99,48 @@ bool operator ==(const VideoMode& left, const VideoMode& right)
 bool operator !=(const VideoMode& left, const VideoMode& right)
 {
     return !(left == right);
+}
+
+
+////////////////////////////////////////////////////////////
+bool operator <(const VideoMode& left, const VideoMode& right)
+{
+    if (left.BitsPerPixel == right.BitsPerPixel)
+    {
+        if (left.Width == right.Width)
+        {
+            return left.Height < right.Height;
+        }
+        else
+        {
+            return left.Width < right.Width;
+        }
+    }
+    else
+    {
+        return left.BitsPerPixel < right.BitsPerPixel;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+bool operator >(const VideoMode& left, const VideoMode& right)
+{
+    return right < left;
+}
+
+
+////////////////////////////////////////////////////////////
+bool operator <=(const VideoMode& left, const VideoMode& right)
+{
+    return !(right < left);
+}
+
+
+////////////////////////////////////////////////////////////
+bool operator >=(const VideoMode& left, const VideoMode& right)
+{
+    return !(left < right);
 }
 
 } // namespace sf

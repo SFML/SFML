@@ -30,7 +30,6 @@
 #include <SFML/Internal.h>
 
 
-
 ////////////////////////////////////////////////////////////
 /// Get the current desktop video mode
 ////////////////////////////////////////////////////////////
@@ -47,28 +46,31 @@ sfVideoMode sfVideoMode_GetDesktopMode()
 
 
 ////////////////////////////////////////////////////////////
-/// Get a valid video mode
-/// Index must be in range [0, GetModesCount()[
-/// Modes are sorted from best to worst
+/// Get all the supported video modes for fullscreen mode.
+/// Modes are sorted from best to worst.
 ////////////////////////////////////////////////////////////
-sfVideoMode sfVideoMode_GetMode(size_t index)
+const sfVideoMode* sfVideoMode_GetFullscreenModes(size_t* Count)
 {
-    sf::VideoMode mode = sf::VideoMode::GetMode(index);
-    sfVideoMode ret;
-    ret.Width        = mode.Width;
-    ret.Height       = mode.Height;
-    ret.BitsPerPixel = mode.BitsPerPixel;
+    static std::vector<sfVideoMode> modes;
 
-    return ret;
-}
+    // Populate the array on first call
+    if (modes.empty())
+    {
+        const std::vector<sf::VideoMode>& SFMLModes = sf::VideoMode::GetFullscreenModes();
+        for (std::vector<sf::VideoMode>::const_iterator it = SFMLModes.begin(); it != SFMLModes.end(); ++it)
+        {
+            sfVideoMode mode;
+            mode.Width        = it->Width;
+            mode.Height       = it->Height;
+            mode.BitsPerPixel = it->BitsPerPixel;
+            modes.push_back(mode);
+        }
+    }
 
+    if (Count)
+        *Count = modes.size();
 
-////////////////////////////////////////////////////////////
-/// Get valid video modes count
-////////////////////////////////////////////////////////////
-size_t sfVideoMode_GetModesCount()
-{
-    return sf::VideoMode::GetModesCount();
+    return !modes.empty() ? &modes[0] : NULL;
 }
 
 

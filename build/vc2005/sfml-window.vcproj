@@ -400,11 +400,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SFML\Window\Win32\VideoModeSupport.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Window\Win32\VideoModeSupport.hpp"
+				RelativePath="..\..\src\SFML\Window\Win32\VideoModeImpl.cpp"
 				>
 			</File>
 			<File
@@ -493,7 +489,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Window\VideoModeSupport.hpp"
+			RelativePath="..\..\src\SFML\Window\VideoModeImpl.hpp"
 			>
 		</File>
 		<File

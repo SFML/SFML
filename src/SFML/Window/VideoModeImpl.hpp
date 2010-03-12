@@ -22,12 +22,13 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_VIDEOMODEIMPL_HPP
+#define SFML_VIDEOMODEIMPL_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Win32/VideoModeSupport.hpp>
-#include <windows.h>
-#include <algorithm>
+#include <SFML/Window/VideoMode.hpp>
 
 
 namespace sf
@@ -35,36 +36,33 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
-{
-    // First, clear array to fill
-    modes.clear();
-
-    // Enumerate all available video modes for the primary display adapter
-    DEVMODE win32Mode;
-    win32Mode.dmSize = sizeof(win32Mode);
-    for (int count = 0; EnumDisplaySettings(NULL, count, &win32Mode); ++count)
-    {
-        // Convert to sf::VideoMode
-        VideoMode mode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
-
-        // Add it only if it is not already in the array
-        if (std::find(modes.begin(), modes.end(), mode) == modes.end())
-            modes.push_back(mode);
-    }
-}
-
-
+/// \brief OS-specific implementation of video modes functions
+///
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeSupport::GetDesktopVideoMode()
+class VideoModeImpl
 {
-    DEVMODE win32Mode;
-    win32Mode.dmSize = sizeof(win32Mode);
-    EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &win32Mode);
+public :
 
-    return VideoMode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
-}
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the list of all the supported fullscreen video modes
+    ///
+    /// \return Array filled with the fullscreen video modes
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::vector<VideoMode> GetFullscreenModes();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current desktop video mode
+    ///
+    /// \return Current desktop video mode
+    ///
+    ////////////////////////////////////////////////////////////
+    static VideoMode GetDesktopMode();
+};
 
 } // namespace priv
 
 } // namespace sf
+
+
+#endif // SFML_VIDEOMODEIMPL_HPP

@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Cocoa/VideoModeSupport.hpp>
+#include <SFML/Window/VideoModeImpl.hpp>
 #include <ApplicationServices/ApplicationServices.h>
 #include <algorithm>
 

@@ -56,26 +56,24 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Get the number of valid video modes
+            /// Get the list of all the supported fullscreen video modes
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public static uint ModesCount
+            public static VideoMode[] FullscreenModes
             {
-                get {return sfVideoMode_GetModesCount();}
-            }
+                get
+                {
+                    unsafe
+                    {
+                        uint Count;
+                        VideoMode* ModesPtr = sfVideoMode_GetFullscreenModes(out Count);
+                        VideoMode[] Modes = new VideoMode[Count];
+                        for (uint i = 0; i < Count; ++i)
+                            Modes[i] = ModesPtr[i];
 
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Get a valid video mode.
-            /// Index must be in range [0, ModesCount[.
-            /// Modes are sorted from best to worst
-            /// </summary>
-            /// <param name="index">Index of the video mode to get</param>
-            /// <returns>index-th video mode</returns>
-            ////////////////////////////////////////////////////////////
-            public static VideoMode GetMode(uint index)
-            {
-                return sfVideoMode_GetMode(index);
+                        return Modes;
+                    }
+                }
             }
 
             ////////////////////////////////////////////////////////////
@@ -116,10 +114,7 @@ namespace SFML
             static extern VideoMode sfVideoMode_GetDesktopMode();
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
-            static extern uint sfVideoMode_GetModesCount();
-
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
-            static extern VideoMode sfVideoMode_GetMode(uint Index);
+            unsafe static extern VideoMode* sfVideoMode_GetFullscreenModes(out uint Count);
 
             [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
             static extern bool sfVideoMode_IsValid(VideoMode Mode);

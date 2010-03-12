@@ -52,24 +52,15 @@ typedef struct
 CSFML_API sfVideoMode sfVideoMode_GetDesktopMode();
 
 ////////////////////////////////////////////////////////////
-/// Get a valid video mode
-/// Index must be in range [0, GetModesCount()[
-/// Modes are sorted from best to worst
+/// Get all the supported video modes for fullscreen mode.
+/// Modes are sorted from best to worst.
 ///
-/// \param index : Index of video mode to get
+/// \param Count : Variable that will be filled with the number of modes
 ///
-/// \return Corresponding video mode (invalid mode if index is out of range)
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfVideoMode sfVideoMode_GetMode(size_t index);
-
-////////////////////////////////////////////////////////////
-/// Get valid video modes count
-///
-/// \return Number of valid video modes available
+/// \return Pointer to an array of \a count video modes
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API size_t sfVideoMode_GetModesCount();
+CSFML_API const sfVideoMode* sfVideoMode_GetFullscreenModes(size_t* Count);
 
 ////////////////////////////////////////////////////////////
 /// Tell whether or not a video mode is supported

@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Linux/VideoModeSupport.hpp>
+#include <SFML/Window/VideoModeImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
@@ -37,10 +37,9 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
+std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
 {
-    // First, clear array to fill
-    modes.clear();
+    std::vector<VideoMode> modes;
 
     // Open a connection with the X server
     Display* disp = XOpenDisplay(NULL);
@@ -106,11 +105,13 @@ void VideoModeSupport::GetSupportedVideoModes(std::vector<VideoMode>& modes)
         // We couldn't connect to the X server
         Err() << "Failed to connect to the X server while trying to get the supported video modes" << std::endl;
     }
+
+    return modes;
 }
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeSupport::GetDesktopVideoMode()
+VideoMode VideoModeImpl::GetDesktopMode()
 {
     VideoMode desktopMode;
 

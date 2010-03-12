@@ -7,8 +7,7 @@ EXPORTS
 	sfInput_GetMouseY
 	sfInput_GetJoystickAxis
 	sfVideoMode_GetDesktopMode
-	sfVideoMode_GetMode
-	sfVideoMode_GetModesCount
+	sfVideoMode_GetFullscreenModes
 	sfVideoMode_IsValid
 	sfWindow_Create
 	sfWindow_CreateFromHandle
