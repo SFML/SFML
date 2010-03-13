@@ -81,15 +81,6 @@ sfIpAddress sfIpAddress_FromInteger(sfUint32 address)
 
 
 ////////////////////////////////////////////////////////////
-/// Tell if an address is a valid one
-////////////////////////////////////////////////////////////
-sfBool sfIpAddress_IsValid(sfIpAddress address)
-{
-    return ToSFMLAddress(address).IsValid() ? sfTrue : sfFalse;
-}
-
-
-////////////////////////////////////////////////////////////
 /// Get a string representation of an address
 ////////////////////////////////////////////////////////////
 void sfIpAddress_ToString(sfIpAddress address, char* string)
@@ -135,4 +126,12 @@ sfIpAddress sfIpAddress_GetPublicAddress(float timeout)
 sfIpAddress sfIpAddress_LocalHost()
 {
     return FromSFMLAddress(sf::IpAddress::LocalHost);
+}
+
+////////////////////////////////////////////////////////////
+/// Get the empty/invalid address
+////////////////////////////////////////////////////////////
+sfIpAddress sfIpAddress_None()
+{
+    return FromSFMLAddress(sf::IpAddress::None);
 }

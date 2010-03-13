@@ -72,16 +72,6 @@ CSFML_API sfIpAddress sfIpAddress_FromBytes(sfUint8 byte0, sfUint8 byte1, sfUint
 CSFML_API sfIpAddress sfIpAddress_FromInteger(sfUint32 address);
 
 ////////////////////////////////////////////////////////////
-/// Tell if an address is a valid one
-///
-/// \param address : Address to check
-///
-/// \return sfTrue if address has a valid syntax
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfBool sfIpAddress_IsValid(sfIpAddress address);
-
-////////////////////////////////////////////////////////////
 /// Get a string representation of an address
 ///
 /// \param address : Address to convert
@@ -128,6 +118,14 @@ CSFML_API sfIpAddress sfIpAddress_GetPublicAddress(float timeout);
 ///
 ////////////////////////////////////////////////////////////
 CSFML_API sfIpAddress sfIpAddress_LocalHost();
+
+////////////////////////////////////////////////////////////
+/// Get the empty/invalid address
+///
+/// \return Empty object that represents invalid addresses
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfIpAddress sfIpAddress_None();
 
 
 #endif // SFML_IPADDRESS_H

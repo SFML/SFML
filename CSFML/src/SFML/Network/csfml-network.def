@@ -52,12 +52,12 @@ EXPORTS
 	sfIpAddress_FromString
 	sfIpAddress_FromBytes
 	sfIpAddress_FromInteger
-	sfIpAddress_IsValid
 	sfIpAddress_ToString
 	sfIpAddress_ToInteger
 	sfIpAddress_GetLocalAddress
 	sfIpAddress_GetPublicAddress
 	sfIpAddress_LocalHost
+	sfIpAddress_None
 	sfSocketTCP_Create
 	sfSocketTCP_Copy
 	sfSocketTCP_Destroy
