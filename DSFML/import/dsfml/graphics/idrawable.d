@@ -44,23 +44,6 @@ import	dsfml.graphics.color,
 interface IDrawable
 {
 	/**
-	 *	Set the left position of the object
-	 *	
-	 *	Params:
-	 *		x = New left coordinate			
-	 */
-	void setX(float x);
-
-	/**
-	 *	Set the top position of the object
-	 *	
-	 *	Params:
-	 *		y = New top coordinate			
-	 */
-	void setY(float y);
-
-  
-	/**
 	 *	Set the position of the object
 	 *	
 	 *	Params: 
@@ -68,48 +51,17 @@ interface IDrawable
 	 *		y = New top coordinate			
 	 */	
 	void setPosition(float x, float y);
-	
-	/**
-	 *	Set the position of the object
-	 *	
-	 *	Params:
-	 *		vec = new position			 
-	 */		
-	void setPosition(Vector2f vec);
-	
-	/**
-	 *	Set the horizontal scale of the object
-	 *	
-	 *	Params:
-	 *		scale = New horizontal scale (Strictly positive)
-	 */		
-	void setScaleX(float scale);
-		
-	/**
-	 *	Set the vertical scale of the object
-	 *	
-	 *	Params:
-	 *		scale = New vertical scale (Strictly positive)			
-	 */
-	void setScaleY(float scale);
 
 	/**
 	 *	Set the scale of the object
 	 *	
 	 *	Params:
-	 *		scaleX = New horizontal scale
-	 *		scaleY = New vertical scale
+	 *		scaleX = New horizontal scale > 0
+	 *		scaleY = New vertical scale > 0
 	 */
-	void setScale(float scaleX, float scaleY);
-			
-	/**
-	 *	Set the scale of the object
-	 *	
-	 *	Params:
-	 *		scale = new scale			
-	 */
-	void setScale(Vector2f scale);
-	
+	void setScale(float scalex, float scaley);
+//	in {assert(scalex > 0 && scalex > 0);} // TODO: add in again when interface contracts work
+
 	/**
 	 *	Set the origin of the object, in coordinates relative to the
 	 *	top-left of the object (take 2 values).
@@ -121,6 +73,57 @@ interface IDrawable
 	 */
 	void setOrigin(float originX, float originY);
 
+@property
+{
+	/**
+	 *	Set the left position of the object
+	 *	
+	 *	Params:
+	 *		x = New left coordinate			
+	 */
+	void x(float x);
+
+	/**
+	 *	Set the top position of the object
+	 *	
+	 *	Params:
+	 *		y = New top coordinate			
+	 */
+	void y(float y);
+
+	/**
+	 *	Set the position of the object
+	 *	
+	 *	Params:
+	 *		vec = new position			 
+	 */		
+	void position(Vector2f vec);
+	
+	/**
+	 *	Set the horizontal scale of the object
+	 *	
+	 *	Params:
+	 *		scale = New horizontal scale (Strictly positive)
+	 */		
+	void scaleX(float scale);
+		
+	/**
+	 *	Set the vertical scale of the object
+	 *	
+	 *	Params:
+	 *		scale = New vertical scale (Strictly positive)			
+	 */
+	void scaleY(float scale);
+
+	/**
+	 *	Set the scale of the object
+	 *	
+	 *	Params:
+	 *		scale = new scale			
+	 */
+	void scale(Vector2f scale);
+//	in {assert(scale.x > 0 && scale.y > 0);} // TODO
+	
 	/**
 	 *	Set the origin of the object, in coordinates relative to the
 	 *	top-left of the object (take a 2D vector).
@@ -129,7 +132,7 @@ interface IDrawable
 	 *	Params:
 	 *	  origin : New origin
 	 */
-	void setOrigin(Vector2f origin);
+	void origin(Vector2f origin);
 
 			 
 	/**
@@ -138,7 +141,7 @@ interface IDrawable
 	 *	Params: 
 	 *		angle = Angle of rotation, in degree			
 	 */		
-	void setRotation(float angle);
+	void rotation(float angle);
 		
 	/**
 	 *	Set the color
@@ -146,7 +149,7 @@ interface IDrawable
 	 *	Params:
 	 *		c = New color			
 	 */			
-	void setColor(Color c);
+	void color(Color c);
 			
 	/**
 	 *	Set the blending mode for the object.
@@ -155,7 +158,7 @@ interface IDrawable
 	 *	Params: 
 	 *		mode = New blending mode
 	 */
-	void setBlendMode(BlendMode mode);
+	void blendMode(BlendMode mode);
 
 	/**
 	 *	Get the position of the object
@@ -164,7 +167,7 @@ interface IDrawable
 	 *		Current position
 	 *
 	 */
-	Vector2f getPosition();
+	Vector2f position();
 
 	/**
 	 *	Get the current scale of the object
@@ -172,7 +175,7 @@ interface IDrawable
 	 *	Returns:
 	 *		Current scale			
 	 */		
-	Vector2f getScale();
+	Vector2f scale();
 	
 	/**
 	 *	Get the origin of the object
@@ -181,7 +184,7 @@ interface IDrawable
 	 *		Current position of the origin
 	 *
 	 */
-	Vector2f getOrigin();
+	Vector2f origin();
 	
 	/**
 	 *	Get the rotation angle of the object
@@ -189,7 +192,7 @@ interface IDrawable
 	 *	Returns: 
 	 *		Angle of rotation, in degree			
 	 */		
-	float getRotation();
+	float rotation();
 	
 	/**
 	 *	Get the color of the string
@@ -197,7 +200,7 @@ interface IDrawable
 	 *	Returns:
 	 *		Current color				
 	 */		
-	Color getColor();
+	Color color();
 
 	/**
 	 *	Get the current blending mode
@@ -205,7 +208,8 @@ interface IDrawable
 	 *	Returns: 
 	 *		Current blending mode
 	 */
-	BlendMode getBlendMode();
+	BlendMode blendMode();
+}
 
 	/**
 	 *	Rotate the object
@@ -235,23 +239,6 @@ interface IDrawable
 	 */		
 	void move(Vector2f offset);
 
-	/**
-	 *	Set the scale of the object
-	 *	
-	 *	Params:
-	 *		scaleX = New horizontal scale (Strictly positive)
-	 *		scaleY = New vertical scale (Strictly positive)				
-	 */		
-	void scale(float scaleX, float scaleY);
-	
-	/**
-	 *	Scale the object (take a 2D vector)
-	 *
-	 *	Params:
-	 *	  factor = Scaling factors (both values must be strictly positive)
-	 */
-	void scale(Vector2f factor);
-	
 	/**
 	 *	Transform a point from global coordinates into local coordinates
 	 *	(ie it applies the inverse of object's origin, translation, rotation and scale to the point)

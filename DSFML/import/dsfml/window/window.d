@@ -358,10 +358,10 @@ public:
 	}
 
 	/**
-	*	Get time elapsed since last frame
+	*	Get the time the last frame took
 	*
 	*	Returns:
-	*		Time elapsed, in seconds
+	*		time in seconds
 	*/
 	float getFrameTime()
 	{

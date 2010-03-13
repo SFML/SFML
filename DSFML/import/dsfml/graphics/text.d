@@ -76,17 +76,17 @@ public:
 	*	Prefixs string litterals with c		
 	*
 	*	Params:	
-	*		text = Text assigned to the string
-	*		font = Font used to draw the string (use default font)
+	*		s = Text assigned to the string
+	*		f = Font used to draw the string (use default font)
 	*		size = Characters size, in pixels (32 by default)
 	*/
-	this(string text, Font font = Font.getDefaultFont(), uint size = 30)
+	this(string s, Font f = Font.getDefaultFont(), uint size = 30)
 	{
 		super();
-		m_font = font;
-		setFont(font);
-		setString(text);
-		setCharacterSize(size);
+
+		font = f;
+		text = s;
+		characterSize = size;
 	}
 
 	/**
@@ -95,106 +95,108 @@ public:
 	*	Prefixs string litterals with d  
 	*			
 	*	Params:	
-	*		text = Text assigned to the string
-	*		font = Font used to draw the string (use default font)
+	*		s = Text assigned to the string
+	*		f = Font used to draw the string (use default font)
 	*		size = Characters size, in pixels (32 by default)
 	*/
-	this(dstring text, Font font = Font.getDefaultFont(), uint size = 30)
+	this(dstring s, Font f = Font.getDefaultFont(), uint size = 30)
 	{
 		super();
-		m_font = font;
-		setFont(font);
-		setString(text);
-		setCharacterSize(size);
+
+		font = f;
+		text = s;
+		characterSize = size;
 	}
 
+@property
+{
 	/**
-	*	Set the text (from a multibyte string)
-	*
-	*	Params: 
-	*		text = New text
-	*/
-	void setString(string text)
+	 *	Set the text (from a multibyte string)
+	 *
+	 *	Params: 
+	 *		text = New text
+	 */
+	void text(string text)
 	{
 		sfText_SetString(m_ptr, toStringz(text));
 	}
 
 	/**
-	*	Set the text (from a unicode string)
-	*
-	*	Params:	 
-	*		text = New text
-	*/
-	void setString(dstring text)
+	 *	Set the text (from a unicode string)
+	 *
+	 *	Params:	 
+	 *		text = New text
+	 */
+	void text(dstring text)
 	{
 		sfText_SetUnicodeString(m_ptr, toStringz(text));
 	}
 
 	/**
-	*	Set the font of the string
-	*
-	*	Params:	
-	*		font = Font filename
-	*/
-	void setFont(Font font)
+	 *	Get the text (returns a multibyte string)
+	 *
+	 *	Returns: 
+	 *		Text
+	 */
+	string text()
 	{
-		m_font = font;
-		sfText_SetFont(m_ptr, font.getNativePointer);
+		return fromStringz(sfText_GetString(m_ptr));
+	}
+	
+	/**
+	 *	Set the font of the string
+	 *
+	 *	Params:	
+	 *		f = Font
+	 */
+	void font(Font f)
+	{
+		m_font = f;
+		sfText_SetFont(m_ptr, f.getNativePointer);
 	}
 
 	/**
-	*	Set the size of the string
-	*
-	*	Params:	
-	*		size = New size, in pixels
-	*/
-	void setCharacterSize(uint size)
+	 *	Set the size of the string
+	 *
+	 *	Params:	
+	 *		size = New size, in pixels
+	 */
+	void characterSize(uint size)
 	{
 		sfText_SetCharacterSize(m_ptr, size);
 	}
 
 	/**
-	*	Set the style of the text
-	*	The default style is Regular
-	*
-	*	Params:
-	*		TextStyle = New text style, (combination of Style enum values)
-	*
-	*/
-	void setStyle(TextStyle style)
+	 *	Set the style of the text
+	 *	The default style is Regular
+	 *
+	 *	Params:
+	 *		TextStyle = New text style, (combination of Style enum values)
+	 *
+	 */
+	void style(TextStyle tstyle)
 	{
-		sfText_SetStyle(m_ptr, style);
+		sfText_SetStyle(m_ptr, tstyle);
 	}		
 
 	/**
-	*	Get the text (returns a unicode string)
-	*
-	*	Returns: 
-	*		Text
-	*/
-	dstring getUnicodeText()
+	 *	Get the text (returns a unicode string)
+	 *
+	 *	Returns: 
+	 *		Text
+	 */
+	dstring unicodeText()
 	{
 		return fromStringz(sfText_GetUnicodeString(m_ptr));
 	}
 
 	/**
-	*	Get the text (returns a multibyte string)
-	*
-	*	Returns: 
-	*		Text
-	*/
-	string getText()
-	{
-		return fromStringz(sfText_GetString(m_ptr));
-	}
-
-	/**
-	*	Get the font used by the string
-	*
-	*	Returns: 
-	*		Font name
-	*/
-	Font getFont()
+	 *	Get the font used by the string
+	 *
+	 *	Returns: 
+	 *		Font name
+	 */
+	Font font()
 	{
 		return m_font;
 	}
@@ -205,7 +207,7 @@ public:
 	*	Returns: 
 	*		Size of the characters
 	*/
-	uint getCharacterSize()
+	uint characterSize()
 	{
 		return sfText_GetCharacterSize(m_ptr);
 	}
@@ -216,89 +218,60 @@ public:
 	*	Returns:
 	*		Font style			
 	*/
-	TextStyle getStyle()
+	TextStyle style()
 	{
 		return sfText_GetStyle(m_ptr);
 	}
 	
 	/**
-	*	Return the visual position of the Index-th character of the string,
-	*	in coordinates relative to the string
-	*	(note : translation, center, rotation and scale are not applied)
-	*
-	*	Params:
-	*		index = Index of the character
-	*
-	*	Returns:
-	*		Position of the Index-th character (end of string of Index is out of range)
-	*/
+	 *	Get the string rectangle on screen
+	 *
+	 *	Returns: 
+	 *		Rectangle contaning the string in screen coordinates
+	 */
+	FloatRect rect()
+	{
+		return sfText_GetRect(m_ptr);
+	}
+}
+
+	/**
+	 *	Return the visual position of the Index-th character of the string,
+	 *	in coordinates relative to the string
+	 *	(note : translation, center, rotation and scale are not applied)
+	 *
+	 *	Params:
+	 *		index = Index of the character
+	 *
+	 *	Returns:
+	 *		Position of the Index-th character (end of string of Index is out of range)
+	 */
 	Vector2f getCharacterPos(size_t index)
 	{
 		Vector2f ret;
 		sfText_GetCharacterPos(m_ptr, index, &ret.x, &ret.y);
 		return ret;
 	}
-	
-	/**
-	*	Get the string rectangle on screen
-	*
-	*	Returns: 
-	*		Rectangle contaning the string in screen coordinates
-	*/
-	FloatRect getRect()
-	{
-		return sfText_GetRect(m_ptr);
-	}
 
 private:
 	
-	extern (C)
+	static extern(C)
 	{
-		typedef void function(void*, cchar*) pf_sfText_SetString;
-		typedef void function(void*, cdchar*) pf_sfText_SetUnicodeString;
-		typedef void function(void*, void*) pf_sfText_SetFont;
-		typedef void function(void*, uint) pf_sfText_SetCharacterSize;
-		typedef void function(void*, TextStyle) pf_sfText_SetStyle;
-		typedef idchar* function(void*) pf_sfText_GetUnicodeString;
-		typedef ichar* function(void*) pf_sfText_GetString;
-		typedef void* function(void*) pf_sfText_GetFont;
-		typedef uint function(void*) pf_sfText_GetCharacterSize;
-		typedef TextStyle function (void*) pf_sfText_GetStyle;
-		typedef void function(void*, size_t, float*, float*) pf_sfText_GetCharacterPos;
-		typedef FloatRect function(void*) pf_sfText_GetRect;
-	
-		static pf_sfText_SetString sfText_SetString;
-		static pf_sfText_SetUnicodeString sfText_SetUnicodeString;
-		static pf_sfText_SetFont sfText_SetFont;
-		static pf_sfText_SetCharacterSize sfText_SetCharacterSize;
-		static pf_sfText_SetStyle sfText_SetStyle;
-		static pf_sfText_GetUnicodeString sfText_GetUnicodeString;
-		static pf_sfText_GetString sfText_GetString;
-		static pf_sfText_GetFont sfText_GetFont;
-		static pf_sfText_GetCharacterSize sfText_GetCharacterSize;
-		static pf_sfText_GetStyle sfText_GetStyle;
-		static pf_sfText_GetCharacterPos sfText_GetCharacterPos;
-		static pf_sfText_GetRect sfText_GetRect;
+		void		function(void*, cchar*)					sfText_SetString;
+		void		function(void*, cdchar*)				sfText_SetUnicodeString;
+		void		function(void*, void*)					sfText_SetFont;
+		void		function(void*, uint)					sfText_SetCharacterSize;
+		void		function(void*, TextStyle)				sfText_SetStyle;
+		idchar*		function(void*)							sfText_GetUnicodeString;
+		ichar*		function(void*)							sfText_GetString;
+		void*		function(void*)							sfText_GetFont;
+		uint		function(void*)							sfText_GetCharacterSize;
+		TextStyle	function (void*)						sfText_GetStyle;
+		void		function(void*, size_t, float*, float*)	sfText_GetCharacterPos;
+		FloatRect	function(void*)							sfText_GetRect;
 	}
 
-	static this()
-	{
-	debug
-		DllLoader dll = DllLoader.load("csfml-graphics-d");
-	else
-		DllLoader dll = DllLoader.load("csfml-graphics");
-		
-		sfText_SetString = cast(pf_sfText_SetString)dll.getSymbol("sfText_SetString");
-		sfText_SetUnicodeString = cast(pf_sfText_SetUnicodeString)dll.getSymbol("sfText_SetUnicodeString");
-		sfText_SetFont = cast(pf_sfText_SetFont)dll.getSymbol("sfText_SetFont");
-		sfText_SetCharacterSize = cast(pf_sfText_SetCharacterSize)dll.getSymbol("sfText_SetCharacterSize");
-		sfText_SetStyle = cast(pf_sfText_SetStyle)dll.getSymbol("sfText_SetStyle");
-		sfText_GetUnicodeString = cast(pf_sfText_GetUnicodeString)dll.getSymbol("sfText_GetUnicodeString");
-		sfText_GetString = cast(pf_sfText_GetString)dll.getSymbol("sfText_GetString");
-		sfText_GetFont = cast(pf_sfText_GetFont)dll.getSymbol("sfText_GetFont");
-		sfText_GetCharacterSize = cast(pf_sfText_GetCharacterSize)dll.getSymbol("sfText_GetCharacterSize");
-		sfText_GetStyle = cast(pf_sfText_GetStyle)dll.getSymbol("sfText_GetStyle");
-		sfText_GetCharacterPos = cast(pf_sfText_GetCharacterPos)dll.getSymbol("sfText_GetCharacterPos");
-		sfText_GetRect = cast(pf_sfText_GetRect)dll.getSymbol("sfText_GetRect");
-	}
+	mixin(loadFromSharedLib2("csfml-graphics", "sfText",
+	"SetString", "SetUnicodeString", "SetFont", "SetCharacterSize", "SetStyle", "GetUnicodeString", "GetString", "GetFont",
+	"GetCharacterSize", "GetStyle", "GetCharacterPos", "GetRect"));
 }

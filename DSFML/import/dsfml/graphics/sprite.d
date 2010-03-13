@@ -63,22 +63,22 @@ public:
 	*		img = Image of the sprite
 	*		left = Left coordinate of the sprite (0 by default)
 	*		top = Top coordinate of the sprite (0 by default)
-	*		scaleX = Horizontal scale (1 by default)
-	*		scaleY= Vertical scale (1 by default)
-	*		rotation = Orientation, in degrees (0 by default)
+	*		scalex = Horizontal scale (1 by default)
+	*		scaley = Vertical scale (1 by default)
+	*		rot = Orientation, in degrees (0 by default)
 	*		col = Color of the sprite (white by default)
 	*/
-	this(Image img, float left = 0.f, float top = 0.f, float scaleX = 1.f, float scaleY = 1.f, float rotation = 0.f, Color col = Color.WHITE)
+	this(Image img, float left = 0.f, float top = 0.f, float scalex = 1.f, float scaley = 1.f, float rot = 0.f, Color col = Color.WHITE)
 	{
 		super();
 		m_image = img;
 		sfSprite_SetImage(m_ptr, img.getNativePointer, true);
-		setX(left);
-		setY(top);
-		setScaleX(scaleX);
-		setScaleY(scaleY);
-		setRotation(rotation);
-		setColor(col);
+		x = left;
+		y = top;
+		scaleX = scalex;
+		scaleY = scaley;
+		rotation = rot;
+		color = col;
 	}
 
 	/**
@@ -93,18 +93,6 @@ public:
 		assert(img !is null, "Trying to set a null image.");
 		sfSprite_SetImage(m_ptr, img.getNativePointer, adjustToNewSize);
 		m_image = img;
-	}
-
-	/**
-	*	Set the sub-rectangle of a sprite inside the source image.
-	*  
-	*	Params:
-	*		rect = New sub-rectangle					
-	*/	
-	void setSubRect(IntRect rect)
-	{
-		sfSprite_SetSubRect(m_ptr, rect);
-		m_subRect = rect;
 	}
 
 	/**
@@ -158,23 +146,52 @@ public:
 	}
 
 	/**
-	*	Get the source image of the sprite
-	*
-	*	Returns: 
-	*		Pointer to the image (can be NULL)
-	*/
-	Image getImage()
+	 *	Get the color of a given pixel in the sprite
+	 *	
+	 *	Params:
+	 *		x = X coordinate 
+	 *		y = Y coordinate
+	 *	
+	 *	Returns:
+	 *		Color of pixel			 
+	 */
+	Color getPixel(uint x, uint y)
+	{
+		return sfSprite_GetPixel(m_ptr, x, y);
+	}
+	
+@property
+{
+	/**
+	 *	Set the sub-rectangle of a sprite inside the source image.
+	 *  
+	 *	Params:
+	 *		rect = New sub-rectangle					
+	 */	
+	void subRect(IntRect rect)
+	{
+		sfSprite_SetSubRect(m_ptr, rect);
+		m_subRect = rect;
+	}
+
+	/**
+	 *	Get the source image of the sprite
+	 *
+	 *	Returns: 
+	 *		Pointer to the image (can be NULL)
+	 */
+	Image image()
 	{
 		return m_image;
 	}
 
 	/**
-	*	Get the sub-rectangle of the sprite inside the source image
-	*	
-	*	Returns:
-	*		Sub-rectangle			
-	*/		
-	IntRect getSubRect()
+	 *	Get the sub-rectangle of the sprite inside the source image
+	 *	
+	 *	Returns:
+	 *		Sub-rectangle			
+	 */		
+	IntRect subRect()
 	{
 		if (m_subRect == IntRect())
 			m_subRect = sfSprite_GetSubRect(m_ptr);
@@ -184,74 +201,33 @@ public:
 	}
 
 	/**
-	*	Get the sprite size
-	*
-	*	Returns: 
-	*		Size of the sprite
-	*/		
-	Vector2f getSize()
+	 *	Get the sprite size
+	 *
+	 *	Returns: 
+	 *		Size of the sprite
+	 */		
+	Vector2f size()
 	{
 		return Vector2f(sfSprite_GetWidth(m_ptr), sfSprite_GetHeight(m_ptr));
 	}
-
-	/**
-	*	Get the color of a given pixel in the sprite
-	*	
-	*	Params:
-	*		x = X coordinate 
-	*		y = Y coordinate
-	*	
-	*	Returns:
-	*		Color of pixel			 
-	*/
-	Color getPixel(uint x, uint y)
-	{
-		return sfSprite_GetPixel(m_ptr, x, y);
-	}
+}
 
 private:
 	
-	extern (C)
+	static extern(C)
 	{
-		typedef void function(void*, void*, bool) pf_sfSprite_SetImage;
-		typedef void function(void*, IntRect) pf_sfSprite_SetSubRect;
-		typedef void function(void*, float, float) pf_sfSprite_Resize;
-		typedef void function(void*, int) pf_sfSprite_FlipX;
-		typedef void function(void*, int) pf_sfSprite_FlipY;
-		typedef void* function(void*) pf_sfSprite_GetImage;
-		typedef IntRect function(void*) pf_sfSprite_GetSubRect;
-		typedef float function(void*) pf_sfSprite_GetWidth;
-		typedef float function(void*) pf_sfSprite_GetHeight;
-		typedef Color function(void*, uint, uint) pf_sfSprite_GetPixel;
-	
-		static pf_sfSprite_SetImage sfSprite_SetImage;
-		static pf_sfSprite_SetSubRect sfSprite_SetSubRect;
-		static pf_sfSprite_Resize sfSprite_Resize;
-		static pf_sfSprite_FlipX sfSprite_FlipX;
-		static pf_sfSprite_FlipY sfSprite_FlipY;
-		static pf_sfSprite_GetImage sfSprite_GetImage;
-		static pf_sfSprite_GetSubRect sfSprite_GetSubRect;
-		static pf_sfSprite_GetWidth sfSprite_GetWidth;
-		static pf_sfSprite_GetHeight sfSprite_GetHeight;
-		static pf_sfSprite_GetPixel sfSprite_GetPixel;
+		void	function(void*, void*, bool)	sfSprite_SetImage;
+		void	function(void*, IntRect)		sfSprite_SetSubRect;
+		void	function(void*, float, float)	sfSprite_Resize;
+		void	function(void*, int)			sfSprite_FlipX;
+		void	function(void*, int)			sfSprite_FlipY;
+		void*	function(void*)					sfSprite_GetImage;
+		IntRect	function(void*)					sfSprite_GetSubRect;
+		float	function(void*)					sfSprite_GetWidth;
+		float	function(void*)					sfSprite_GetHeight;
+		Color	function(void*, uint, uint)		sfSprite_GetPixel;
 	}
 
-	static this()
-	{
-	debug
-		DllLoader dll = DllLoader.load("csfml-graphics-d");
-	else
-		DllLoader dll = DllLoader.load("csfml-graphics");
-		
-		sfSprite_SetImage = cast(pf_sfSprite_SetImage)dll.getSymbol("sfSprite_SetImage");
-		sfSprite_SetSubRect = cast(pf_sfSprite_SetSubRect)dll.getSymbol("sfSprite_SetSubRect");
-		sfSprite_Resize = cast(pf_sfSprite_Resize)dll.getSymbol("sfSprite_Resize");
-		sfSprite_FlipX = cast(pf_sfSprite_FlipX)dll.getSymbol("sfSprite_FlipX");
-		sfSprite_FlipY = cast(pf_sfSprite_FlipY)dll.getSymbol("sfSprite_FlipY");
-		sfSprite_GetImage = cast(pf_sfSprite_GetImage)dll.getSymbol("sfSprite_GetImage");
-		sfSprite_GetSubRect = cast(pf_sfSprite_GetSubRect)dll.getSymbol("sfSprite_GetSubRect");
-		sfSprite_GetWidth = cast(pf_sfSprite_GetWidth)dll.getSymbol("sfSprite_GetWidth");
-		sfSprite_GetHeight = cast(pf_sfSprite_GetHeight)dll.getSymbol("sfSprite_GetHeight");
-		sfSprite_GetPixel = cast(pf_sfSprite_GetPixel)dll.getSymbol("sfSprite_GetPixel");
-	}	
+	mixin(loadFromSharedLib2("csfml-graphics", "sfSprite",
+	"SetImage", "SetSubRect", "Resize", "FlipX", "FlipY", "GetImage", "GetSubRect", "GetWidth", "GetHeight", "GetPixel"));
 }
