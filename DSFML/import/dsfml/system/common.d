@@ -47,7 +47,7 @@ string loadFromSharedLib(string fname)
 }
 
 //used to mixin code function
-string loadFromSharedLib2(S...)(string lib, string object, S fnames)
+string loadFromSharedLib2(S...)(string lib, string className, S fnames)
 {
 	string res = `static this()
 {
@@ -60,14 +60,27 @@ string loadFromSharedLib2(S...)(string lib, string object, S fnames)
 
 	foreach(fname; fnames)
 	{
-		res ~= "\t" ~ object ~ "_" ~ fname ~ " = " ~ "cast(typeof(" ~ object ~ "_" ~ fname ~ ")) dll.getSymbol(\"" ~ object ~ "_" ~ fname ~ "\");\n";
+		res ~= "\t" ~ className ~ "_" ~ fname ~ " = " ~ "cast(typeof(" ~ className ~ "_" ~ fname ~ ")) dll.getSymbol(\"" ~ className ~ "_" ~ fname ~ "\");\n";
 	}
 	return res ~ "}\n";
 }
 
-string loadDerivedFromSharedLib(string base, string fname, string derived)
+string loadDerivedFromSharedLib(S...)(string lib, string baseClass, string derivedClass, S fnames)
 {
-	return base ~ "_" ~ fname ~ " = " ~ "cast(typeof(" ~ base ~ "_" ~ fname ~ ")) dll.getSymbol(\"" ~ derived ~ "_" ~ fname ~ "\");";
+	string res = `static this()
+{
+	debug
+		DllLoader dll = DllLoader.load("` ~ lib ~ `-d");
+	else
+		DllLoader dll = DllLoader.load("` ~ lib ~ `");
+
+`;
+
+	foreach(fname; fnames)
+	{
+		res ~= "\t" ~ baseClass ~ "_" ~ fname ~ " = " ~ "cast(typeof(" ~ baseClass ~ "_" ~ fname ~ ")) dll.getSymbol(\"" ~ derivedClass ~ "_" ~ fname ~ "\");";
+	}
+	return res ~ "}\n";
 }
 
 /**

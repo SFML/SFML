@@ -85,7 +85,7 @@ abstract class SoundStream : SoundSource!("sfSoundStream")
 		m_flag = true;			
 		sfSoundStream_Play(m_ptr);
 		
-		if (getStatus() != SoundStatus.Paused)
+		if (status != SoundStatus.Paused)
 		{
 			m_t = new Thread(&threadPoll);
 			m_t.start();
