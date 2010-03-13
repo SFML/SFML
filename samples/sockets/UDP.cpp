@@ -19,7 +19,7 @@ void DoClientUDP(unsigned short port)
         std::cout << "Type address or name of the server to send the message to : ";
         std::cin  >> serverAddress;
     }
-    while (!serverAddress.IsValid());
+    while (serverAddress == sf::IpAddress::None);
 
     // Create a UDP socket for communicating with server
     sf::SocketUDP client;

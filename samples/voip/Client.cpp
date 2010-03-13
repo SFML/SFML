@@ -76,7 +76,7 @@ void DoClient(unsigned short port)
         std::cout << "Type address or name of the server to connect to : ";
         std::cin  >> serverAddress;
     }
-    while (!serverAddress.IsValid());
+    while (serverAddress == sf::IpAddress::None);
 
     // Create a TCP socket for communicating with server
     sf::SocketTCP socket;

@@ -32,7 +32,7 @@ int main()
         std::cout << "Enter the FTP server address : ";
         std::cin  >> address;
     }
-    while (!address.IsValid());
+    while (address == sf::IpAddress::None);
 
     // Connect to the server
     sf::Ftp server;

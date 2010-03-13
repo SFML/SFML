@@ -34,6 +34,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+const IpAddress IpAddress::None;
 const IpAddress IpAddress::LocalHost(127, 0, 0, 1);
 
 
@@ -52,7 +53,7 @@ IpAddress::IpAddress(const std::string& address)
     myAddress = inet_addr(address.c_str());
 
     // If not successful, try to convert it as a host name
-    if (!IsValid())
+    if (myAddress == INADDR_NONE)
     {
         hostent* host = gethostbyname(address.c_str());
         if (host)
@@ -76,7 +77,7 @@ IpAddress::IpAddress(const char* address)
     myAddress = inet_addr(address);
 
     // If not successful, try to convert it as a host name
-    if (!IsValid())
+    if (myAddress == INADDR_NONE)
     {
         hostent* host = gethostbyname(address);
         if (host)
@@ -104,13 +105,6 @@ IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3)
 IpAddress::IpAddress(Uint32 address)
 {
     myAddress = htonl(address);
-}
-
-
-////////////////////////////////////////////////////////////
-bool IpAddress::IsValid() const
-{
-    return myAddress != INADDR_NONE;
 }
 
 

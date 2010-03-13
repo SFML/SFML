@@ -108,29 +108,6 @@ public :
     IpAddress(Uint32 address);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if the address is a valid one
-    ///
-    /// If the address was constructed from a decimal representation
-    /// (like "192.168.1.56") this function will always return true
-    /// unless the address is the special one 255.255.255.255.
-    /// If the address was constructed from a host name, it is
-    /// reported as beeing valid only if the host exists and could
-    /// be converted to a decimal IP address.
-    ///
-    /// Examples:
-    /// \begincode
-    /// bool b1 = sf::IpAddress("127.0.0.1").IsValid();         // true
-    /// bool b2 = sf::IpAddress("1.2.3.4").IsValid();           // true
-    /// bool b3 = sf::IpAddress("www.google.com").IsValid();    // true
-    /// bool b4 = sf::IpAddress("www.dfgfghqsd.com").IsValid(); // false
-    /// \endcode
-    ///
-    /// \return True if address has a valid syntax
-    ///
-    ////////////////////////////////////////////////////////////
-    bool IsValid() const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get a string representation of the address
     ///
     /// The returned string is the decimal representation of the
@@ -203,6 +180,7 @@ public :
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    static const IpAddress None;      ///< Value representing an empty/invalid address
     static const IpAddress LocalHost; ///< The "localhost" address (for connecting a computer to itself locally)
 
 private :
@@ -317,7 +295,8 @@ SFML_API std::ostream& operator <<(std::ostream& stream, const IpAddress& addres
 ///
 /// Usage example:
 /// \code
-/// sf::IpAddress a1;                                     // an invalid address
+/// sf::IpAddress a0;                                     // an invalid address
+/// sf::IpAddress a1 = sf::IpAddress::None;               // an invalid address (same as a0)
 /// sf::IpAddress a2("127.0.0.1");                        // the local host address
 /// sf::IpAddress a3 = sf::IpAddress::LocalHost;          // the local host address (same as a2)
 /// sf::IpAddress a4(192, 168, 1, 56);                    // a local address
