@@ -30,10 +30,12 @@ import dsfml.system.common;
 import dsfml.system.stringutil;
 
 /**
-*	IPAddress provides easy manipulation of IP v4 addresses
-*/
+ *	IPAddress provides easy manipulation of IP v4 addresses
+ */
 struct IPAddress
 {
+	byte[16] Address;
+
 	/**
 	*	Construct the address from a string
 	*
@@ -41,9 +43,9 @@ struct IPAddress
 	*		address = IP address ("xxx.xxx.xxx.xxx") or network name
 	*
 	*/
-	static IPAddress opCall(string address)
+	static opCall(string address)
 	{
-		return sfIPAddress_FromString(toStringz(address));
+		 return sfIpAddress_FromString(toStringz(address));
 	}
 
 
@@ -57,9 +59,9 @@ struct IPAddress
 	*		byte3 = Fourth byte of the address
 	*
 	*/
-	static IPAddress opCall(ubyte byte0, ubyte byte1, ubyte byte2, ubyte byte3)
+	static opCall(ubyte byte0, ubyte byte1, ubyte byte2, ubyte byte3)
 	{
-		return sfIPAddress_FromBytes(byte0, byte1, byte2, byte3);
+		return sfIpAddress_FromBytes(byte0, byte1, byte2, byte3);
 	}
 
 	/**
@@ -69,9 +71,9 @@ struct IPAddress
 	*		address = 4 bytes of the address packed into a 32 bits integer
 	*
 	*/
-	static IPAddress opCall(uint address)
+	static opCall(uint address)
 	{
-		return sfIPAddress_FromInteger(address);
+		return sfIpAddress_FromInteger(address);
 	}
 
 	/**
@@ -83,9 +85,11 @@ struct IPAddress
 	*/
 	bool isValid()
 	{
-		return cast(bool)sfIPAddress_IsValid(this);
+		return cast(bool)sfIpAddress_IsValid(this);
 	}
-	
+
+@property
+{
 	/**
 	*	Get the computer's local IP address (from the LAN point of view)
 	*
@@ -93,9 +97,9 @@ struct IPAddress
 	*		Local IP address
 	*
 	*/
-	static IPAddress getLocalAddress()
+	static IPAddress localAddress()
 	{
-		return sfIPAddress_GetLocalAddress();
+		return sfIpAddress_GetLocalAddress();
 	}
 
 	/**
@@ -108,61 +112,38 @@ struct IPAddress
 	*		 Public IP address
 	*
 	*/
-	static IPAddress getPublicAddress()
+	static IPAddress publicAddress()
 	{
-		return sfIPAddress_GetPublicAddress();
+		return sfIpAddress_GetPublicAddress();
 	}
-
-	bool opEqual(IPAddress other) 
-	{
-		return Address == other.Address;
-	}
-
+	
 	/**
 	*	Local host address (to connect to the same computer). 
 	*/	
-	static IPAddress LOCALHOST()
+	static IPAddress localHost()
 	{
-		return sfIPAddress_LocalHost();
+		return sfIpAddress_LocalHost();
 	}
- 
-	byte[16] Address;
-	
+}
+
+	const bool opEquals(ref const(IPAddress) other) 
+	{
+		return Address == other.Address;
+	}
 }
 
 private:
 
-extern (C)
+static extern(C)
 {
-	typedef IPAddress function(cchar*) pf_sfIPAddress_FromString;
-	typedef IPAddress function(ubyte, ubyte, ubyte, ubyte) pf_sfIPAddress_FromBytes;
-	typedef IPAddress function(uint) pf_sfIPAddress_FromInteger;
-	typedef int function(IPAddress) pf_sfIPAddress_IsValid;
-	typedef IPAddress function() pf_sfIPAddress_GetLocalAddress;
-	typedef IPAddress function() pf_sfIPAddress_GetPublicAddress;
-	typedef IPAddress function() pf_sfIPAddress_LocalHost;
-
-	static pf_sfIPAddress_FromString sfIPAddress_FromString;
-	static pf_sfIPAddress_FromBytes sfIPAddress_FromBytes;
-	static pf_sfIPAddress_FromInteger sfIPAddress_FromInteger;
-	static pf_sfIPAddress_IsValid sfIPAddress_IsValid;
-	static pf_sfIPAddress_GetLocalAddress sfIPAddress_GetLocalAddress;
-	static pf_sfIPAddress_GetPublicAddress sfIPAddress_GetPublicAddress;
-	static pf_sfIPAddress_LocalHost sfIPAddress_LocalHost;
+	IPAddress	function(cchar*)					sfIpAddress_FromString;
+	IPAddress	function(ubyte, ubyte, ubyte, ubyte)sfIpAddress_FromBytes;
+	IPAddress	function(uint)						sfIpAddress_FromInteger;
+	int			function(IPAddress)					sfIpAddress_IsValid;
+	IPAddress	function()							sfIpAddress_GetLocalAddress;
+	IPAddress	function()							sfIpAddress_GetPublicAddress;
+	IPAddress	function()							sfIpAddress_LocalHost;
 }
 
-static this()
-{
-	debug
-		DllLoader dll = DllLoader.load("csfml-network-d");
-	else
-		DllLoader dll = DllLoader.load("csfml-network");
-	
-	sfIPAddress_FromBytes = cast(pf_sfIPAddress_FromBytes)dll.getSymbol("sfIPAddress_FromBytes");
-	sfIPAddress_FromString = cast(pf_sfIPAddress_FromString)dll.getSymbol("sfIPAddress_FromString");
-	sfIPAddress_FromInteger = cast(pf_sfIPAddress_FromInteger)dll.getSymbol("sfIPAddress_FromInteger");
-	sfIPAddress_GetLocalAddress = cast(pf_sfIPAddress_GetLocalAddress)dll.getSymbol("sfIPAddress_GetLocalAddress");
-	sfIPAddress_GetPublicAddress = cast(pf_sfIPAddress_GetPublicAddress)dll.getSymbol("sfIPAddress_GetPublicAddress");
-	sfIPAddress_IsValid = cast(pf_sfIPAddress_IsValid)dll.getSymbol("sfIPAddress_IsValid");
-	sfIPAddress_LocalHost = cast(pf_sfIPAddress_LocalHost)dll.getSymbol("sfIPAddress_LocalHost");
-}
+mixin(loadFromSharedLib2("csfml-network", "sfIpAddress",
+	"FromBytes", "FromString", "FromInteger", "GetLocalAddress", "GetPublicAddress", "IsValid", "LocalHost"));
