@@ -40,7 +40,7 @@ import dsfml.graphics.drawableimpl;
 class Shape : DrawableImpl!("sfShape")
 {
 private:
-	this (void* ptr)
+	this (SFMLClass ptr)
 	{
 		super(ptr);
 	}
@@ -284,21 +284,21 @@ private:
 	
 	static extern(C)
 	{
-		void*	function(float, float, float, float, float, Color, float, Color)	sfShape_CreateLine;
-		void*	function(float, float, float, float, Color, float, Color)			sfShape_CreateRectangle;
-		void*	function(float, float, float, Color, float, Color)					sfShape_CreateCircle;
-		void	function(void*, float, float, Color, Color)							sfShape_AddPoint;
-		void	function(void*, int)												sfShape_EnableFill;
-		void	function(void*, int)												sfShape_EnableOutline;
-		void	function(void*, float Width)										sfShape_SetOutlineWidth;
-		float	function(void*)														sfShape_GetOutlineWidth;
-		uint	function(void*)														sfShape_GetPointsCount;
-		void	function(void*, uint Index, float* X, float* Y)						sfShape_GetPointPosition;
-		void	function(void*, uint Index, float X, float Y)						sfShape_SetPointPosition;
-		Color	function(void*, uint index)											sfShape_GetPointColor;
-		void	function(void*, uint index, Color color)							sfShape_SetPointColor;
-		Color	function(void*, uint index)											sfShape_GetPointOutlineColor;
-		void	function(void*, uint index, Color color)							sfShape_SetPointOutlineColor;
+		SFMLClass	function(float, float, float, float, float, Color, float, Color)	sfShape_CreateLine;
+		SFMLClass	function(float, float, float, float, Color, float, Color)			sfShape_CreateRectangle;
+		SFMLClass	function(float, float, float, Color, float, Color)					sfShape_CreateCircle;
+		void	function(SFMLClass, float, float, Color, Color)							sfShape_AddPoint;
+		void	function(SFMLClass, int)												sfShape_EnableFill;
+		void	function(SFMLClass, int)												sfShape_EnableOutline;
+		void	function(SFMLClass, float Width)										sfShape_SetOutlineWidth;
+		float	function(SFMLClass)														sfShape_GetOutlineWidth;
+		uint	function(SFMLClass)														sfShape_GetPointsCount;
+		void	function(SFMLClass, uint Index, float* X, float* Y)						sfShape_GetPointPosition;
+		void	function(SFMLClass, uint Index, float X, float Y)						sfShape_SetPointPosition;
+		Color	function(SFMLClass, uint index)											sfShape_GetPointColor;
+		void	function(SFMLClass, uint index, Color color)							sfShape_SetPointColor;
+		Color	function(SFMLClass, uint index)											sfShape_GetPointOutlineColor;
+		void	function(SFMLClass, uint index, Color color)							sfShape_SetPointOutlineColor;
 	}
 
 	mixin(loadFromSharedLib2("csfml-graphics", "sfShape",

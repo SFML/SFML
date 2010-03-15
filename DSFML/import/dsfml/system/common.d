@@ -38,6 +38,10 @@ package
 	alias immutable(wchar) iwchar;
 	alias immutable(dchar) idchar;
 	alias const(char)[] cstring;
+	
+//	alias immutable(void)	ivoid;
+	alias const(void)		cvoid;
+	typedef void*	SFMLClass;
 }
 
 // used to mixin code function
@@ -78,25 +82,34 @@ string loadDerivedFromSharedLib(S...)(string lib, string baseClass, string deriv
 
 	foreach(fname; fnames)
 	{
-		res ~= "\t" ~ baseClass ~ "_" ~ fname ~ " = " ~ "cast(typeof(" ~ baseClass ~ "_" ~ fname ~ ")) dll.getSymbol(\"" ~ derivedClass ~ "_" ~ fname ~ "\");";
+		res ~= "\t" ~ baseClass ~ "_" ~ fname ~ " = " ~ "cast(typeof(" ~ baseClass ~ "_" ~ fname ~ ")) dll.getSymbol(\"" ~ derivedClass ~ "_" ~ fname ~ "\");\n";
 	}
 	return res ~ "}\n";
 }
 
 /**
-*	Base class for all DSFML classes.
-*/
+ *	Base class for all DSFML classes.
+ */
 class DSFMLObject
 {
 private:
 	bool m_preventDelete;
 
 protected:
-	void* m_ptr;
+	SFMLClass m_ptr;
+
+	abstract void dispose();
+
+public:
+	/// get the underlying C pointer
+	@property final SFMLClass nativePointer()
+	{
+		return m_ptr;
+	}
 
 public:
 
-	this(void* ptr, bool preventDelete = false)
+	this(SFMLClass ptr, bool preventDelete = false)
 	{
 		m_ptr = ptr;
 		m_preventDelete = preventDelete;
@@ -110,16 +123,15 @@ public:
 		m_ptr = m_ptr.init;
 	}
 	
-	abstract void dispose();
-	
-	void* getNativePointer()
-	{
-		return m_ptr;
-	}
 
-	void setHandled(bool handled)
+	final void setHandled(bool handled)
 	{
 		m_preventDelete = handled;
+	}
+	
+	override bool opEquals(Object o)
+	{
+		return (m_ptr == (cast(DSFMLObject)o).nativePointer);
 	}
 	
 	protected invariant()

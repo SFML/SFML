@@ -334,17 +334,17 @@ private:
 		alias void function(float, void*) sfSoundStreamSeekCallback;
 		alias int function (sfSoundStreamChunk*, void*) sfSoundStreamGetDataCallback;
 		
-		alias void* function(sfSoundStreamGetDataCallback, sfSoundStreamSeekCallback, uint, uint, void*) pf_sfSoundStream_Create;
-		alias void function(void*) pf_sfSoundStream_Destroy;
-		alias void function(void*) pf_sfSoundStream_Play;
-		alias void function(void*) pf_sfSoundStream_Pause;
-		alias void function(void*) pf_sfSoundStream_Stop;
-		alias uint function(void*) pf_sfSoundStream_GetChannelsCount;
-		alias uint function(void*) pf_sfSoundStream_GetSampleRate;
-		alias float function(void*) pf_sfSoundStream_GetPlayingOffset;
-		alias void function(void*, float) pf_sfSoundStream_SetPlayingOffset;
-		alias int function(void*) pf_sfSoundStream_GetLoop;
-		alias void function(void*, int) pf_sfSoundStream_SetLoop;
+		alias SFMLClass function(sfSoundStreamGetDataCallback, sfSoundStreamSeekCallback, uint, uint, void*) pf_sfSoundStream_Create;
+		alias void function(SFMLClass) pf_sfSoundStream_Destroy;
+		alias void function(SFMLClass) pf_sfSoundStream_Play;
+		alias void function(SFMLClass) pf_sfSoundStream_Pause;
+		alias void function(SFMLClass) pf_sfSoundStream_Stop;
+		alias uint function(SFMLClass) pf_sfSoundStream_GetChannelsCount;
+		alias uint function(SFMLClass) pf_sfSoundStream_GetSampleRate;
+		alias float function(SFMLClass) pf_sfSoundStream_GetPlayingOffset;
+		alias void function(SFMLClass, float) pf_sfSoundStream_SetPlayingOffset;
+		alias int function(SFMLClass) pf_sfSoundStream_GetLoop;
+		alias void function(SFMLClass, int) pf_sfSoundStream_SetLoop;
 
 
 		static pf_sfSoundStream_Create sfSoundStream_Create;

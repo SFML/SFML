@@ -288,7 +288,7 @@ public:
 	}
 package:
 
-	this(void* ptr, bool preventDelete)
+	this(SFMLClass ptr, bool preventDelete)
 	{
 		super(ptr, preventDelete);
 	}
@@ -296,25 +296,25 @@ package:
 private:
 	static extern(C)
 	{
-		void*		function()						sfView_Create;
-		void*		function(FloatRect)				sfView_CreateFromRect;
-		void		function(void*)					sfView_Destroy;
-		void		function(void*, float, float)	sfView_SetCenter;
-		void		function(void*, float, float)	sfView_SetSize;
-		void		function(void*, FloatRect)		sfView_SetViewport;
-		float		function(void*)					sfView_GetCenterX;
-		float		function(void*)					sfView_GetCenterY;
-		float		function(void*)					sfView_GetWidth;
-		float		function(void*)					sfView_GetHeight;
-		FloatRect	function(void*)					sfView_GetViewport;
-		void		function(void*, float, float)	sfView_Move;
-		void		function(void*, float)			sfView_Zoom;
+		SFMLClass		function()						sfView_Create;
+		SFMLClass		function(FloatRect)				sfView_CreateFromRect;
+		void		function(SFMLClass)					sfView_Destroy;
+		void		function(SFMLClass, float, float)	sfView_SetCenter;
+		void		function(SFMLClass, float, float)	sfView_SetSize;
+		void		function(SFMLClass, FloatRect)		sfView_SetViewport;
+		float		function(SFMLClass)					sfView_GetCenterX;
+		float		function(SFMLClass)					sfView_GetCenterY;
+		float		function(SFMLClass)					sfView_GetWidth;
+		float		function(SFMLClass)					sfView_GetHeight;
+		FloatRect	function(SFMLClass)					sfView_GetViewport;
+		void		function(SFMLClass, float, float)	sfView_Move;
+		void		function(SFMLClass, float)			sfView_Zoom;
 		
 		// DSFML2
-		void		function(void*, float)			sfView_SetRotation;
-		float		function(void*)					sfView_GetRotation;
-		void		function(void*, float)			sfView_Rotate;
-		void		function(void*, FloatRect)		sfView_Reset;
+		void		function(SFMLClass, float)			sfView_SetRotation;
+		float		function(SFMLClass)					sfView_GetRotation;
+		void		function(SFMLClass, float)			sfView_Rotate;
+		void		function(SFMLClass, FloatRect)		sfView_Reset;
 	}
 
 	static this()

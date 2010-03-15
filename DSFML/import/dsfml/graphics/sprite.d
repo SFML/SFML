@@ -72,7 +72,7 @@ public:
 	{
 		super();
 		m_image = img;
-		sfSprite_SetImage(m_ptr, img.getNativePointer, true);
+		sfSprite_SetImage(m_ptr, img.nativePointer, true);
 		x = left;
 		y = top;
 		scaleX = scalex;
@@ -91,7 +91,7 @@ public:
 	void setImage(Image img, bool adjustToNewSize = false)
 	{
 		assert(img !is null, "Trying to set a null image.");
-		sfSprite_SetImage(m_ptr, img.getNativePointer, adjustToNewSize);
+		sfSprite_SetImage(m_ptr, img.nativePointer, adjustToNewSize);
 		m_image = img;
 	}
 
@@ -216,16 +216,16 @@ private:
 	
 	static extern(C)
 	{
-		void	function(void*, void*, bool)	sfSprite_SetImage;
-		void	function(void*, IntRect)		sfSprite_SetSubRect;
-		void	function(void*, float, float)	sfSprite_Resize;
-		void	function(void*, int)			sfSprite_FlipX;
-		void	function(void*, int)			sfSprite_FlipY;
-		void*	function(void*)					sfSprite_GetImage;
-		IntRect	function(void*)					sfSprite_GetSubRect;
-		float	function(void*)					sfSprite_GetWidth;
-		float	function(void*)					sfSprite_GetHeight;
-		Color	function(void*, uint, uint)		sfSprite_GetPixel;
+		void	function(SFMLClass, SFMLClass, bool)	sfSprite_SetImage;
+		void	function(SFMLClass, IntRect)		sfSprite_SetSubRect;
+		void	function(SFMLClass, float, float)	sfSprite_Resize;
+		void	function(SFMLClass, int)			sfSprite_FlipX;
+		void	function(SFMLClass, int)			sfSprite_FlipY;
+		SFMLClass	function(SFMLClass)					sfSprite_GetImage;
+		IntRect	function(SFMLClass)					sfSprite_GetSubRect;
+		float	function(SFMLClass)					sfSprite_GetWidth;
+		float	function(SFMLClass)					sfSprite_GetHeight;
+		Color	function(SFMLClass, uint, uint)		sfSprite_GetPixel;
 	}
 
 	mixin(loadFromSharedLib2("csfml-graphics", "sfSprite",

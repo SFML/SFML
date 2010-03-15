@@ -77,15 +77,14 @@ struct IPAddress
 	}
 
 	/**
-	*	Tell if the address is a valid one
-	*
-	*	Returns: 
-	*		True if address has a valid syntax
-	*
-	*/
-	bool isValid()
+	 *	Get the empty/invalid address
+	 *
+	 *	Returns:
+	 *		Empty object that represents invalid addresses
+	 */
+	static IPAddress None()
 	{
-		return cast(bool)sfIpAddress_IsValid(this);
+		return sfIpAddress_None();
 	}
 
 @property
@@ -139,11 +138,11 @@ static extern(C)
 	IPAddress	function(cchar*)					sfIpAddress_FromString;
 	IPAddress	function(ubyte, ubyte, ubyte, ubyte)sfIpAddress_FromBytes;
 	IPAddress	function(uint)						sfIpAddress_FromInteger;
-	int			function(IPAddress)					sfIpAddress_IsValid;
+	IPAddress	function()							sfIpAddress_None;
 	IPAddress	function()							sfIpAddress_GetLocalAddress;
 	IPAddress	function()							sfIpAddress_GetPublicAddress;
 	IPAddress	function()							sfIpAddress_LocalHost;
 }
 
 mixin(loadFromSharedLib2("csfml-network", "sfIpAddress",
-	"FromBytes", "FromString", "FromInteger", "GetLocalAddress", "GetPublicAddress", "IsValid", "LocalHost"));
+	"FromBytes", "FromString", "FromInteger", "GetLocalAddress", "GetPublicAddress", "None", "LocalHost"));

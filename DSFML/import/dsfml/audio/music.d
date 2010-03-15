@@ -156,16 +156,16 @@ private:
 	
 extern(C)
 {
-void* function(cchar*)						sfMusic_CreateFromFile;
-void* function(byte*, size_t)				sfMusic_CreateFromMemory;
-void function(void*, int)					sfMusic_SetLoop;
-bool function(void*)						sfMusic_GetLoop;
-float function(void*)						sfMusic_GetDuration;
-void function(void*)						sfMusic_Play;
-void function(void*)						sfMusic_Pause;
-void function(void*)						sfMusic_Stop;
-uint function(void*)						sfMusic_GetChannelsCount;
-uint function(void*)						sfMusic_GetSampleRate;
+SFMLClass function(cchar*)						sfMusic_CreateFromFile;
+SFMLClass function(byte*, size_t)				sfMusic_CreateFromMemory;
+void function(SFMLClass, int)					sfMusic_SetLoop;
+bool function(SFMLClass)						sfMusic_GetLoop;
+float function(SFMLClass)						sfMusic_GetDuration;
+void function(SFMLClass)						sfMusic_Play;
+void function(SFMLClass)						sfMusic_Pause;
+void function(SFMLClass)						sfMusic_Stop;
+uint function(SFMLClass)						sfMusic_GetChannelsCount;
+uint function(SFMLClass)						sfMusic_GetSampleRate;
 }
 
 static this()

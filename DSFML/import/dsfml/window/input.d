@@ -118,7 +118,7 @@ class Input : DSFMLObject
 		return sfInput_GetJoystickAxis(m_ptr, joyId, axis);
 	}
 
-	this(void* input)
+	this(SFMLClass input)
 	{
 		super(input, true);
 	}
@@ -134,12 +134,12 @@ private:
 
 	static extern (C)
 	{
-		int		function(void*, KeyCode)		sfInput_IsKeyDown;
-		int		function(void*, MouseButtons)	sfInput_IsMouseButtonDown;
-		int		function(void*, uint, uint)		sfInput_IsJoystickButtonDown;
-		int		function(void*)					sfInput_GetMouseX;
-		int		function(void*)					sfInput_GetMouseY;
-		float	function(void*, uint, JoyAxis)	sfInput_GetJoystickAxis;
+		int		function(SFMLClass, KeyCode)		sfInput_IsKeyDown;
+		int		function(SFMLClass, MouseButtons)	sfInput_IsMouseButtonDown;
+		int		function(SFMLClass, uint, uint)		sfInput_IsJoystickButtonDown;
+		int		function(SFMLClass)					sfInput_GetMouseX;
+		int		function(SFMLClass)					sfInput_GetMouseY;
+		float	function(SFMLClass, uint, JoyAxis)	sfInput_GetJoystickAxis;
 	}
 
 	static this()

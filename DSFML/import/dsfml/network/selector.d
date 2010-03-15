@@ -32,10 +32,10 @@ import dsfml.network.socketudp;
 import dsfml.system.common;
 
 /**
-* Selector TCP allow reading from multiple sockets
-* without blocking. It's a kind of multiplexer. Use SocketTCP or 
-* SocketUDP aliases.
-*/
+ *	Selector TCP allow reading from multiple sockets
+ *	without blocking. It's a kind of multiplexer. Use SocketTCP or 
+ *	SocketUDP aliases.
+ */
 class Selector(T) : DSFMLObject
 {
 	//Ensure type is correct
@@ -64,10 +64,10 @@ class Selector(T) : DSFMLObject
 	*/		
 	void add(T socket)
 	{
-		if (!(socket.getNativePointer in m_watchedSockets))
+		if (!(socket.nativePointer in m_watchedSockets))
 		{
-			sfSelector_Add(m_ptr, socket.getNativePointer);
-			m_watchedSockets[socket.getNativePointer] = socket;
+			sfSelector_Add(m_ptr, socket.nativePointer);
+			m_watchedSockets[socket.nativePointer] = socket;
 			m_numSocketsWatched++;
 		}
 	}
@@ -80,10 +80,10 @@ class Selector(T) : DSFMLObject
 	*/		
 	void remove(T socket)
 	{
-		if (socket.getNativePointer in m_watchedSockets)
+		if (socket.nativePointer in m_watchedSockets)
 		{
-			sfSelector_Remove(m_ptr, socket.getNativePointer);
-			m_watchedSockets.remove(socket.getNativePointer);
+			sfSelector_Remove(m_ptr, socket.nativePointer);
+			m_watchedSockets.remove(socket.nativePointer);
 			m_numSocketsWatched--;
 		}
 	}
@@ -139,13 +139,13 @@ private:
 // External ====================================================================
 	extern (C)
 	{
-		typedef void* function() pf_sfSelector_Create;
-		typedef void function(void*) pf_sfSelector_Destroy;
-		typedef void function(void*, void*) pf_sfSelector_Add;
-		typedef void function(void*, void*) pf_sfSelector_Remove;
-		typedef void function(void*) pf_sfSelector_Clear;
-		typedef uint function(void*, float) pf_sfSelector_Wait;
-		typedef void* function(void*, uint) pf_sfSelector_GetSocketReady;
+		typedef SFMLClass function() pf_sfSelector_Create;
+		typedef void function(SFMLClass) pf_sfSelector_Destroy;
+		typedef void function(SFMLClass, SFMLClass) pf_sfSelector_Add;
+		typedef void function(SFMLClass, SFMLClass) pf_sfSelector_Remove;
+		typedef void function(SFMLClass) pf_sfSelector_Clear;
+		typedef uint function(SFMLClass, float) pf_sfSelector_Wait;
+		typedef SFMLClass function(SFMLClass, uint) pf_sfSelector_GetSocketReady;
 
 		static pf_sfSelector_Create sfSelector_Create;
 		static pf_sfSelector_Destroy sfSelector_Destroy;
@@ -188,4 +188,3 @@ private:
 alias Selector!(SocketTCP) SelectorTCP;
 /// ditto
 alias Selector!(SocketUDP) SelectorUDP;
-

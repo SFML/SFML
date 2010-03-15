@@ -152,7 +152,7 @@ public:
 	void font(Font f)
 	{
 		m_font = f;
-		sfText_SetFont(m_ptr, f.getNativePointer);
+		sfText_SetFont(m_ptr, f.nativePointer);
 	}
 
 	/**
@@ -257,18 +257,18 @@ private:
 	
 	static extern(C)
 	{
-		void		function(void*, cchar*)					sfText_SetString;
-		void		function(void*, cdchar*)				sfText_SetUnicodeString;
-		void		function(void*, void*)					sfText_SetFont;
-		void		function(void*, uint)					sfText_SetCharacterSize;
-		void		function(void*, TextStyle)				sfText_SetStyle;
-		idchar*		function(void*)							sfText_GetUnicodeString;
-		ichar*		function(void*)							sfText_GetString;
-		void*		function(void*)							sfText_GetFont;
-		uint		function(void*)							sfText_GetCharacterSize;
-		TextStyle	function (void*)						sfText_GetStyle;
-		void		function(void*, size_t, float*, float*)	sfText_GetCharacterPos;
-		FloatRect	function(void*)							sfText_GetRect;
+		void		function(SFMLClass, cchar*)					sfText_SetString;
+		void		function(SFMLClass, cdchar*)				sfText_SetUnicodeString;
+		void		function(SFMLClass, SFMLClass)					sfText_SetFont;
+		void		function(SFMLClass, uint)					sfText_SetCharacterSize;
+		void		function(SFMLClass, TextStyle)				sfText_SetStyle;
+		idchar*		function(SFMLClass)							sfText_GetUnicodeString;
+		ichar*		function(SFMLClass)							sfText_GetString;
+		SFMLClass		function(SFMLClass)							sfText_GetFont;
+		uint		function(SFMLClass)							sfText_GetCharacterSize;
+		TextStyle	function (SFMLClass)						sfText_GetStyle;
+		void		function(SFMLClass, size_t, float*, float*)	sfText_GetCharacterPos;
+		FloatRect	function(SFMLClass)							sfText_GetRect;
 	}
 
 	mixin(loadFromSharedLib2("csfml-graphics", "sfText",

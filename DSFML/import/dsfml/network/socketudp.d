@@ -33,14 +33,14 @@ import dsfml.network.socketstatus;
 import dsfml.system.common;
 
 /**
-*	SocketUDP wraps a socket using UDP protocol to
-*	send data fastly (but with less safety)
-*/
+ *	SocketUDP wraps a socket using UDP protocol to
+ *	send data fastly (but with less safety)
+ */
 class SocketUDP : DSFMLObject
 {
 	/**
-	*	Default constructor
-	*/
+	 *	Default constructor
+	 */
 	this()
 	{
 		super(sfSocketUDP_Create());
@@ -135,7 +135,7 @@ class SocketUDP : DSFMLObject
 	{
 			byte[] dataArray = packetToSend.onSend();
 			m_intermediatePacket.append(dataArray);
-		SocketStatus stat = cast(SocketStatus)sfSocketUDP_SendPacket(m_ptr, m_intermediatePacket.getNativePointer, address, port);
+		SocketStatus stat = cast(SocketStatus)sfSocketUDP_SendPacket(m_ptr, m_intermediatePacket.nativePointer, address, port);
 		m_intermediatePacket.clear();
 		return stat;
 	}
@@ -154,7 +154,7 @@ class SocketUDP : DSFMLObject
 	*/
 	SocketStatus receive(Packet packetToReceive, out IPAddress address)
 	{
-		SocketStatus ret = sfSocketUDP_ReceivePacket(m_ptr, m_intermediatePacket.getNativePointer, &address);
+		SocketStatus ret = sfSocketUDP_ReceivePacket(m_ptr, m_intermediatePacket.nativePointer, &address);
 		packetToReceive.onReceive(m_intermediatePacket.getData);
 		m_intermediatePacket.clear();
 		return ret;
@@ -185,14 +185,8 @@ class SocketUDP : DSFMLObject
 		return m_port;
 	}
 
-	///
-	bool opEquals(SocketUDP other)
-	{
-		return (other.getNativePointer == this.getNativePointer);
-	}
-
 package:
-	this (void* ptr)
+	this (SFMLClass ptr)
 	{
 		super(ptr);
 		m_intermediatePacket = new Packet();
@@ -206,15 +200,15 @@ private:
 
 	extern (C)
 	{
-		typedef void* function() pf_sfSocketUDP_Create;
-		typedef void function(void*) pf_sfSocketUDP_Destroy;
-		typedef int function(void*, ushort) pf_sfSocketUDP_Bind;
-		typedef int function(void*, ushort) pf_sfSocketUDP_Unbind;
-		typedef SocketStatus function(void*, byte*, size_t, IPAddress, ushort) pf_sfSocketUDP_Send;
-		typedef SocketStatus function(void*, byte*, size_t, size_t*, IPAddress*) pf_sfSocketUDP_Receive;
-		typedef SocketStatus function(void*, void*, IPAddress, ushort) pf_sfSocketUDP_SendPacket;
-		typedef SocketStatus function(void*, void*, IPAddress*) pf_sfSocketUDP_ReceivePacket;
-		typedef int function(void*) pf_sfSocketUDP_IsValid;
+		typedef SFMLClass function() pf_sfSocketUDP_Create;
+		typedef void function(SFMLClass) pf_sfSocketUDP_Destroy;
+		typedef int function(SFMLClass, ushort) pf_sfSocketUDP_Bind;
+		typedef int function(SFMLClass, ushort) pf_sfSocketUDP_Unbind;
+		typedef SocketStatus function(SFMLClass, byte*, size_t, IPAddress, ushort) pf_sfSocketUDP_Send;
+		typedef SocketStatus function(SFMLClass, byte*, size_t, size_t*, IPAddress*) pf_sfSocketUDP_Receive;
+		typedef SocketStatus function(SFMLClass, SFMLClass, IPAddress, ushort) pf_sfSocketUDP_SendPacket;
+		typedef SocketStatus function(SFMLClass, SFMLClass, IPAddress*) pf_sfSocketUDP_ReceivePacket;
+		typedef int function(SFMLClass) pf_sfSocketUDP_IsValid;
 	
 		static pf_sfSocketUDP_Create sfSocketUDP_Create;
 		static pf_sfSocketUDP_Destroy sfSocketUDP_Destroy;

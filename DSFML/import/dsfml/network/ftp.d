@@ -162,7 +162,7 @@ class Ftp : DSFMLObject
 		}
 	
 	private:
-		this(void* ptr)
+		this(SFMLClass ptr)
 		{
 			super(ptr);
 		}
@@ -170,10 +170,10 @@ class Ftp : DSFMLObject
 		
 		extern (C)
 		{
-			typedef void function(void*) pf_sfFtpResponse_Destroy;
-			typedef int function(void*) pf_sfFtpResponse_IsOk;
-			typedef FtpStatus function(void*) pf_sfFtpResponse_GetStatus;
-			typedef ichar* function(void*) pf_sfFtpResponse_GetMessage;
+			typedef void function(SFMLClass) pf_sfFtpResponse_Destroy;
+			typedef int function(SFMLClass) pf_sfFtpResponse_IsOk;
+			typedef FtpStatus function(SFMLClass) pf_sfFtpResponse_GetStatus;
+			typedef ichar* function(SFMLClass) pf_sfFtpResponse_GetMessage;
 			
 			static pf_sfFtpResponse_Destroy sfFtpResponse_Destroy;
 			static pf_sfFtpResponse_IsOk sfFtpResponse_IsOk;
@@ -213,7 +213,7 @@ class Ftp : DSFMLObject
 		}
 	
 	private:
-		this(void* ptr)
+		this(SFMLClass ptr)
 		{
 			super(ptr);
 		}
@@ -221,8 +221,8 @@ class Ftp : DSFMLObject
 		
 		extern (C)
 		{
-			typedef void function(void*) pf_sfFtpDirectoryResponse_Destroy;
-			typedef ichar* function(void*) pf_sfFtpDirectoryResponse_GetDirectory;
+			typedef void function(SFMLClass) pf_sfFtpDirectoryResponse_Destroy;
+			typedef ichar* function(SFMLClass) pf_sfFtpDirectoryResponse_GetDirectory;
 			
 			static pf_sfFtpDirectoryResponse_Destroy sfFtpDirectoryResponse_Destroy;
 			static pf_sfFtpDirectoryResponse_GetDirectory sfFtpDirectoryResponse_GetDirectory;
@@ -291,7 +291,7 @@ class Ftp : DSFMLObject
 		}
 	
 	private:
-		this(void* ptr)
+		this(SFMLClass ptr)
 		{
 			super(ptr);
 		}
@@ -299,9 +299,9 @@ class Ftp : DSFMLObject
 	// External ================================================================
 		extern (C)
 		{
-			typedef void function(void*) pf_sfFtpListingResponse_Destroy;
-			typedef size_t function(void*) pf_sfFtpListingResponse_GetCount;
-			typedef ichar* function(void*, size_t) pf_sfFtpListingResponse_GetFilename;
+			typedef void function(SFMLClass) pf_sfFtpListingResponse_Destroy;
+			typedef size_t function(SFMLClass) pf_sfFtpListingResponse_GetCount;
+			typedef ichar* function(SFMLClass, size_t) pf_sfFtpListingResponse_GetFilename;
 			
 			static pf_sfFtpListingResponse_Destroy sfFtpListingResponse_Destroy;
 			static pf_sfFtpListingResponse_GetCount sfFtpListingResponse_GetCount;
@@ -538,23 +538,23 @@ private:
 	
 	extern (C)
 	{
-		typedef void* function() pf_sfFtp_Create;
-		typedef void function(void*) pf_sfFtp_Destroy;
-		typedef void* function(void*, IPAddress, ushort, float) pf_sfFtp_Connect;
-		typedef void* function(void*) pf_sfFtp_LoginAnonymous;
-		typedef void* function(void*, cchar*, cchar*) pf_sfFtp_Login;
-		typedef void* function(void*) pf_sfFtp_Disconnect;
-		typedef void* function(void*) pf_sfFtp_KeepAlive;
-		typedef void* function(void*) pf_sfFtp_GetWorkingDirectory;
-		typedef void* function(void*, cchar*) pf_sfFtp_GetDirectoryListing;
-		typedef void* function(void*, cchar*) pf_sfFtp_ChangeDirectory;
-		typedef void* function(void*) pf_sfFtp_ParentDirectory;
-		typedef void* function(void*, cchar*) pf_sfFtp_MakeDirectory;
-		typedef void* function(void*, cchar*) pf_sfFtp_DeleteDirectory;
-		typedef void* function(void*, cchar*, cchar*) pf_sfFtp_RenameFile;
-		typedef void* function(void*, cchar*) pf_sfFtp_DeleteFile;
-		typedef void* function(void*, cchar*, cchar*, FtpTransferMode) pf_sfFtp_Download;
-		typedef void* function(void*, cchar*, cchar*, FtpTransferMode) pf_sfFtp_Upload;
+		typedef SFMLClass function() pf_sfFtp_Create;
+		typedef void function(SFMLClass) pf_sfFtp_Destroy;
+		typedef SFMLClass function(SFMLClass, IPAddress, ushort, float) pf_sfFtp_Connect;
+		typedef SFMLClass function(SFMLClass) pf_sfFtp_LoginAnonymous;
+		typedef SFMLClass function(SFMLClass, cchar*, cchar*) pf_sfFtp_Login;
+		typedef SFMLClass function(SFMLClass) pf_sfFtp_Disconnect;
+		typedef SFMLClass function(SFMLClass) pf_sfFtp_KeepAlive;
+		typedef SFMLClass function(SFMLClass) pf_sfFtp_GetWorkingDirectory;
+		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_GetDirectoryListing;
+		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_ChangeDirectory;
+		typedef SFMLClass function(SFMLClass) pf_sfFtp_ParentDirectory;
+		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_MakeDirectory;
+		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_DeleteDirectory;
+		typedef SFMLClass function(SFMLClass, cchar*, cchar*) pf_sfFtp_RenameFile;
+		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_DeleteFile;
+		typedef SFMLClass function(SFMLClass, cchar*, cchar*, FtpTransferMode) pf_sfFtp_Download;
+		typedef SFMLClass function(SFMLClass, cchar*, cchar*, FtpTransferMode) pf_sfFtp_Upload;
 		
 		static pf_sfFtp_Create sfFtp_Create;
 		static pf_sfFtp_Destroy sfFtp_Destroy;

@@ -93,7 +93,7 @@ class SocketTCP : DSFMLObject
 	*/
 	SocketStatus accept(SocketTCP connected)
 	{
-		void* temp = null;
+		SFMLClass temp = null;
 		SocketStatus ret = sfSocketTCP_Accept(m_ptr, &temp, null);
 		connected.m_ptr = temp;
 		return ret;
@@ -112,7 +112,7 @@ class SocketTCP : DSFMLObject
 	*/
 	SocketStatus accept(SocketTCP connected, out IPAddress address)
 	{
-		void* temp = null;
+		SFMLClass temp = null;
 		SocketStatus ret = sfSocketTCP_Accept(m_ptr, &temp, &address);
 		connected.m_ptr = temp;
 		return ret;
@@ -177,7 +177,7 @@ class SocketTCP : DSFMLObject
 	{
 		byte[] dataArray = packetToSend.onSend();
 		m_intermediatePacket.append(dataArray);
-		SocketStatus stat = cast(SocketStatus)sfSocketTCP_SendPacket(m_ptr, m_intermediatePacket.getNativePointer);
+		SocketStatus stat = cast(SocketStatus)sfSocketTCP_SendPacket(m_ptr, m_intermediatePacket.nativePointer);
 		m_intermediatePacket.clear();
 		return stat;
 	}
@@ -195,7 +195,7 @@ class SocketTCP : DSFMLObject
 	*/
 	SocketStatus receive(Packet packetToReceive)
 	{
-		SocketStatus stat = cast(SocketStatus)sfSocketTCP_ReceivePacket(m_ptr, m_intermediatePacket.getNativePointer);
+		SocketStatus stat = cast(SocketStatus)sfSocketTCP_ReceivePacket(m_ptr, m_intermediatePacket.nativePointer);
 		packetToReceive.onReceive(m_intermediatePacket.getData);
 		m_intermediatePacket.clear();
 		return stat;
@@ -214,16 +214,9 @@ class SocketTCP : DSFMLObject
 		return cast(bool)sfSocketTCP_IsValid(m_ptr);
 	}
 
-	///		
-	bool opEquals(SocketTCP other) 
-	{
-		return (other.getNativePointer == this.getNativePointer);
-	}
-
-
 package:
 
-	this (void* ptr)
+	this (SFMLClass ptr)
 	{
 		super(ptr);
 		m_intermediatePacket = new Packet();
@@ -236,16 +229,16 @@ private:
 // External ====================================================================
 	extern (C)
 	{
-		typedef void* function() pf_sfSocketTCP_Create;
-		typedef void function(void*) pf_sfSocketTCP_Destroy;
-		typedef int function(void*, ushort, IPAddress, float) pf_sfSocketTCP_Connect;
-		typedef int function(void*, ushort) pf_sfSocketTCP_Listen;
-		typedef SocketStatus function(void*, void**, IPAddress*) pf_sfSocketTCP_Accept;
-		typedef SocketStatus function(void*, byte*, size_t) pf_sfSocketTCP_Send;
-		typedef SocketStatus function(void*, byte*, size_t, size_t*) pf_sfSocketTCP_Receive;
-		typedef SocketStatus function(void*, void*) pf_sfSocketTCP_SendPacket;
-		typedef SocketStatus function(void*, void*) pf_sfSocketTCP_ReceivePacket;
-		typedef int function(void*) pf_sfSocketTCP_IsValid;
+		typedef SFMLClass function() pf_sfSocketTCP_Create;
+		typedef void function(SFMLClass) pf_sfSocketTCP_Destroy;
+		typedef int function(SFMLClass, ushort, IPAddress, float) pf_sfSocketTCP_Connect;
+		typedef int function(SFMLClass, ushort) pf_sfSocketTCP_Listen;
+		typedef SocketStatus function(SFMLClass, SFMLClass*, IPAddress*) pf_sfSocketTCP_Accept;
+		typedef SocketStatus function(SFMLClass, const(byte)*, size_t) pf_sfSocketTCP_Send;
+		typedef SocketStatus function(SFMLClass, byte*, size_t, size_t*) pf_sfSocketTCP_Receive;
+		typedef SocketStatus function(SFMLClass, SFMLClass) pf_sfSocketTCP_SendPacket;
+		typedef SocketStatus function(SFMLClass, SFMLClass) pf_sfSocketTCP_ReceivePacket;
+		typedef int function(SFMLClass) pf_sfSocketTCP_IsValid;
 	
 		static pf_sfSocketTCP_Create sfSocketTCP_Create;
 		static pf_sfSocketTCP_Destroy sfSocketTCP_Destroy;

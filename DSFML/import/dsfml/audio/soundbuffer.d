@@ -178,7 +178,7 @@ class SoundBuffer : DSFMLObject
 }
 
 package:	
-	this(void* ptr)
+	this(SFMLClass ptr)
 	{
 		super(ptr, true);
 	}
@@ -187,16 +187,16 @@ private:
 
 	static extern(C)
 	{
-		void*	function(cchar*)							sfSoundBuffer_CreateFromFile;
-		void*	function(const(byte)*, size_t)				sfSoundBuffer_CreateFromMemory;
-		void*	function(const(short)*, size_t, uint, uint)	sfSoundBuffer_CreateFromSamples;
-		void	function(void*) 							sfSoundBuffer_Destroy;
-		int		function(void*, cchar*) 					sfSoundBuffer_SaveToFile;
-		short*	function(void*) 							sfSoundBuffer_GetSamples;
-		size_t	function(void*) 							sfSoundBuffer_GetSamplesCount;
-		uint	function(void*) 							sfSoundBuffer_GetSampleRate;
-		uint	function(void*) 							sfSoundBuffer_GetChannelsCount;
-		float	function(void*) 							sfSoundBuffer_GetDuration;
+		SFMLClass	function(cchar*)							sfSoundBuffer_CreateFromFile;
+		SFMLClass	function(const(byte)*, size_t)				sfSoundBuffer_CreateFromMemory;
+		SFMLClass	function(const(short)*, size_t, uint, uint)	sfSoundBuffer_CreateFromSamples;
+		void	function(SFMLClass) 							sfSoundBuffer_Destroy;
+		int		function(SFMLClass, cchar*) 					sfSoundBuffer_SaveToFile;
+		short*	function(SFMLClass) 							sfSoundBuffer_GetSamples;
+		size_t	function(SFMLClass) 							sfSoundBuffer_GetSamplesCount;
+		uint	function(SFMLClass) 							sfSoundBuffer_GetSampleRate;
+		uint	function(SFMLClass) 							sfSoundBuffer_GetChannelsCount;
+		float	function(SFMLClass) 							sfSoundBuffer_GetDuration;
 	}
 
 	mixin(loadFromSharedLib2("csfml-audio", "sfSoundBuffer",

@@ -53,7 +53,7 @@ protected:
 		super(sfSoundSource_Create());
 	}
 	
-	this(void* ptr)
+	this(SFMLClass ptr)
 	{
 		super(ptr);
 	}
@@ -286,23 +286,23 @@ private:
 
 	static extern(C)
 	{
-		void*		function()								sfSoundSource_Create;
-		void		function(void*)							sfSoundSource_Destroy;
+		SFMLClass		function()								sfSoundSource_Create;
+		void		function(SFMLClass)							sfSoundSource_Destroy;
 
-		SoundStatus	function(void*)							sfSoundSource_GetStatus;
-		void		function(void*, float)					sfSoundSource_SetPitch;
-		void		function(void*, float)					sfSoundSource_SetVolume;
-		void		function(void*, float, float, float)	sfSoundSource_SetPosition;
-		float		function(void*)							sfSoundSource_GetPitch;
-		float		function(void*)							sfSoundSource_GetVolume;
-		void		function(void*, float*, float*, float*)	sfSoundSource_GetPosition;
-		float		function(void*)							sfSoundSource_GetMinDistance;
-		float		function(void*)							sfSoundSource_GetAttenuation;
-		void		function(void*, float)					sfSoundSource_SetMinDistance;
-		void		function(void*, float)					sfSoundSource_SetAttenuation;
+		SoundStatus	function(SFMLClass)							sfSoundSource_GetStatus;
+		void		function(SFMLClass, float)					sfSoundSource_SetPitch;
+		void		function(SFMLClass, float)					sfSoundSource_SetVolume;
+		void		function(SFMLClass, float, float, float)	sfSoundSource_SetPosition;
+		float		function(SFMLClass)							sfSoundSource_GetPitch;
+		float		function(SFMLClass)							sfSoundSource_GetVolume;
+		void		function(SFMLClass, float*, float*, float*)	sfSoundSource_GetPosition;
+		float		function(SFMLClass)							sfSoundSource_GetMinDistance;
+		float		function(SFMLClass)							sfSoundSource_GetAttenuation;
+		void		function(SFMLClass, float)					sfSoundSource_SetMinDistance;
+		void		function(SFMLClass, float)					sfSoundSource_SetAttenuation;
 		
-		void		function(void*, bool)					sfSoundSource_SetRelativeToListener;
-		bool		function(void*)							sfSoundSource_IsRelativeToListener;
+		void		function(SFMLClass, bool)					sfSoundSource_SetRelativeToListener;
+		bool		function(SFMLClass)							sfSoundSource_IsRelativeToListener;
 	}
 
 	mixin(loadDerivedFromSharedLib("csfml-audio", "sfSoundSource", derivedClassName,

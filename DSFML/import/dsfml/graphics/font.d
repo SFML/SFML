@@ -148,7 +148,7 @@ public:
 
 package:
 
-	this(void* ptr)
+	this(SFMLClass ptr)
 	{
 		super(ptr, true);
 	}
@@ -157,17 +157,17 @@ private:
 	static extern(C)
 	{
 		// sfFont
-		void*	function()					sfFont_Create;
-		void*	function(cchar*)			sfFont_CreateFromFile;
-		void*	function(ubyte*, size_t)	sfFont_CreateFromMemory;
-		void	function(void*)				sfFont_Destroy;
-		void*	function()					sfFont_GetDefaultFont;
+		SFMLClass	function()					sfFont_Create;
+		SFMLClass	function(cchar*)			sfFont_CreateFromFile;
+		SFMLClass	function(ubyte*, size_t)	sfFont_CreateFromMemory;
+		void	function(SFMLClass)				sfFont_Destroy;
+		SFMLClass	function()					sfFont_GetDefaultFont;
 		
 		// DSFML2
-		Glyph	function(void*, uint, uint, bool)	sfFont_GetGlyph;
-		int		function(void*, uint, uint, uint)	sfFont_GetKerning;
-		int		function(void*, uint)				sfFont_GetLineSpacing;
-		void*	function(void*, uint)				sfFont_GetImage;
+		Glyph	function(SFMLClass, uint, uint, bool)	sfFont_GetGlyph;
+		int		function(SFMLClass, uint, uint, uint)	sfFont_GetKerning;
+		int		function(SFMLClass, uint)				sfFont_GetLineSpacing;
+		SFMLClass	function(SFMLClass, uint)				sfFont_GetImage;
 	}
 	
 	static this()
@@ -190,4 +190,4 @@ private:
 		mixin(loadFromSharedLib("sfFont_GetImage"));
 
 	}
-} 
+}

@@ -123,7 +123,7 @@ public:
 	void setTexture(string name, Image texture)
 	{
 		m_texture = texture;
-		sfShader_SetTexture(m_ptr, toStringz(name), texture is null ? null : texture.getNativePointer);
+		sfShader_SetTexture(m_ptr, toStringz(name), texture is null ? null : texture.nativePointer);
 	}
 
 	/**
@@ -142,17 +142,17 @@ private:
 	
 	static extern(C)
 	{
-		void*	function(cchar*)									sfShader_CreateFromFile;
-		void*	function(cchar*)									sfShader_CreateFromMemory;
-		void	function(void*)										sfShader_Destroy;
-		void	function(void*, cchar*, float)						sfShader_SetParameter1;
-		void	function(void*, cchar*, float, float)				sfShader_SetParameter2;
-		void	function(void*, cchar*, float, float, float)		sfShader_SetParameter3;
-		void	function(void*, cchar*, float, float, float, float)	sfShader_SetParameter4;
-		void	function(void*, cchar*, void*)						sfShader_SetTexture;
+		SFMLClass	function(cchar*)									sfShader_CreateFromFile;
+		SFMLClass	function(cchar*)									sfShader_CreateFromMemory;
+		void	function(SFMLClass)										sfShader_Destroy;
+		void	function(SFMLClass, cchar*, float)						sfShader_SetParameter1;
+		void	function(SFMLClass, cchar*, float, float)				sfShader_SetParameter2;
+		void	function(SFMLClass, cchar*, float, float, float)		sfShader_SetParameter3;
+		void	function(SFMLClass, cchar*, float, float, float, float)	sfShader_SetParameter4;
+		void	function(SFMLClass, cchar*, SFMLClass)						sfShader_SetTexture;
 		int		function()											sfShader_IsAvailable;
-		void	function(void*)										sfShader_Bind;
-		void	function(void*)										sfShader_Unbind;
+		void	function(SFMLClass)										sfShader_Bind;
+		void	function(SFMLClass)										sfShader_Unbind;
 	}
 	
 	static this()

@@ -59,9 +59,9 @@ class Context : DSFMLObject
 private:
 	static extern(C)
 	{
-		void*	function()				sfContext_Create;
-		void	function(void*)			sfContext_Destroy;
-		void	function(void*, bool)	sfContext_SetActive;
+		SFMLClass	function()				sfContext_Create;
+		void	function(SFMLClass)			sfContext_Destroy;
+		void	function(SFMLClass, bool)	sfContext_SetActive;
 	}
 
 	static this()

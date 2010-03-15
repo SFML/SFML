@@ -146,7 +146,7 @@ protected:
 		init(true);
 	}
 
-	this(void* ptr)
+	this(SFMLClass ptr)
 	{
 		super(ptr);
 
@@ -288,11 +288,11 @@ private:
 
 	static extern (C)
 	{
-		void*	function(int function(void*), int function(short*, size_t, void*), void function(void*), void*)	sfSoundRecorder_Create;
-		void	function(void*)						sfSoundRecorder_Destroy;
-		void	function(void*, uint SampleRate)	sfSoundRecorder_Start;
-		void	function(void*)						sfSoundRecorder_Stop;
-		uint	function(void*)						sfSoundRecorder_GetSampleRate;
+		SFMLClass	function(int function(void*), int function(const(short)*, size_t, void*), void function(void*), void*)	sfSoundRecorder_Create;
+		void	function(SFMLClass)						sfSoundRecorder_Destroy;
+		void	function(SFMLClass, uint SampleRate)	sfSoundRecorder_Start;
+		void	function(SFMLClass)						sfSoundRecorder_Stop;
+		uint	function(SFMLClass)						sfSoundRecorder_GetSampleRate;
 		int		function()							sfSoundRecorder_IsAvailable;
 	}
 

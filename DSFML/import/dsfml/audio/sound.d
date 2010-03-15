@@ -114,7 +114,7 @@ class Sound : SoundSource!("sfSound")
 			throw new NullParameterException("NullParameterException : SoundBuffer is null.");
 			
 		m_buffer = buffer;
-		sfSound_SetBuffer(m_ptr, buffer.getNativePointer);
+		sfSound_SetBuffer(m_ptr, buffer.nativePointer);
 	}
 
 	/**
@@ -183,15 +183,15 @@ private:
 
 	extern (C)
 	{
-		typedef void function(void*) pf_sfSound_Play;
-		typedef void function(void*) pf_sfSound_Pause;
-		typedef void function(void*) pf_sfSound_Stop;
-		typedef void function(void*, void*) pf_sfSound_SetBuffer;
-		typedef void* function(void*) pf_sfSound_GetBuffer;
-		typedef void function(void*, int) pf_sfSound_SetLoop;
-		typedef int function(void*) pf_sfSound_GetLoop;
-		typedef float function(void*) pf_sfSound_GetPlayingOffset;
-		typedef void function(void*, float) pf_sfSound_SetPlayingOffset;
+		typedef void function(SFMLClass) pf_sfSound_Play;
+		typedef void function(SFMLClass) pf_sfSound_Pause;
+		typedef void function(SFMLClass) pf_sfSound_Stop;
+		typedef void function(SFMLClass, SFMLClass) pf_sfSound_SetBuffer;
+		typedef SFMLClass function(SFMLClass) pf_sfSound_GetBuffer;
+		typedef void function(SFMLClass, int) pf_sfSound_SetLoop;
+		typedef int function(SFMLClass) pf_sfSound_GetLoop;
+		typedef float function(SFMLClass) pf_sfSound_GetPlayingOffset;
+		typedef void function(SFMLClass, float) pf_sfSound_SetPlayingOffset;
 		
 		static pf_sfSound_Play sfSound_Play;
 		static pf_sfSound_Pause sfSound_Pause;

@@ -85,9 +85,9 @@ private:
 
 	extern (C)
 	{
-		typedef void* function() pf_sfSoundBufferRecorder_Create;
-		typedef void function(void*) pf_sfSoundBufferRecorder_Destroy;
-		typedef void* function(void*) pf_sfSoundBufferRecorder_GetBuffer;
+		typedef SFMLClass function() pf_sfSoundBufferRecorder_Create;
+		typedef void function(SFMLClass) pf_sfSoundBufferRecorder_Destroy;
+		typedef SFMLClass function(SFMLClass) pf_sfSoundBufferRecorder_GetBuffer;
 	
 		static pf_sfSoundBufferRecorder_Create sfSoundBufferRecorder_Create;
 		static pf_sfSoundBufferRecorder_Destroy sfSoundBufferRecorder_Destroy;
