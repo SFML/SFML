@@ -179,7 +179,7 @@ public:
 			m_view.setHandled(false);
 		}
 		
-		sfRenderWindow_SetView(m_ptr, newView.getNativePointer);
+		sfRenderWindow_SetView(m_ptr, newView.nativePointer);
 		  
 		m_view = newView;
 		m_view.setHandled(true);
@@ -231,7 +231,7 @@ public:
 	Vector2f convertCoords(uint windowX, uint windowY, View targetView = null)
 	{
 		Vector2f vec;
-		sfRenderWindow_ConvertCoords(m_ptr, windowX, windowY, &vec.x, &vec.y, targetView is null ? null : targetView.getNativePointer);
+		sfRenderWindow_ConvertCoords(m_ptr, windowX, windowY, &vec.x, &vec.y, targetView is null ? null : targetView.nativePointer);
 		return vec;
 	}
 
@@ -276,7 +276,7 @@ public:
 
 	IntRect getViewport(View view = null) // TODO: is there a need to accept other Views than the currently assigned one?
 	{
-		return sfRenderWindow_GetViewport(m_ptr, view is null ? m_view.getNativePointer : view.getNativePointer);
+		return sfRenderWindow_GetViewport(m_ptr, view is null ? m_view.nativePointer : view.nativePointer);
 	}
 
 private:

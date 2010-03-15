@@ -183,7 +183,7 @@ public:
 //	 */
 //	 void copyScreen(RenderWindow window, IntRect sourceRect = IntRect())
 //	 {
-//		 return cast(bool)sfImage_CopyScreen(m_ptr, window.getNativePointer, sourceRect);
+//		 return cast(bool)sfImage_CopyScreen(m_ptr, window.nativePointer, sourceRect);
 //	 }
 	
 	/**
@@ -199,7 +199,7 @@ public:
 	 */
 	void copy(Image source, uint destX, uint destY, IntRect sourceRect = IntRect())
 	{
-		sfImage_Copy(m_ptr, source.getNativePointer, destX, destY, sourceRect);
+		sfImage_Copy(m_ptr, source.nativePointer, destX, destY, sourceRect);
 	} 
 
 	/**

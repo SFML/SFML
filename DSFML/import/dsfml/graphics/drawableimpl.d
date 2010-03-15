@@ -93,12 +93,12 @@ public:
 
 	void render(IRenderTarget window)
 	{
-		sfRenderWindow_DrawThis((cast(DSFMLObject)window).getNativePointer(), m_ptr);
+		sfRenderWindow_DrawThis((cast(DSFMLObject)window).nativePointer, m_ptr);
 	}
 	
 	void renderWithShader(IRenderTarget window, Shader shader)
 	{
-		sfRenderWindow_DrawThisWithShader((cast(DSFMLObject)window).getNativePointer, m_ptr, shader.getNativePointer);
+		sfRenderWindow_DrawThisWithShader((cast(DSFMLObject)window).nativePointer, m_ptr, shader.nativePointer);
 	}
 
 	void setPosition(float x, float y)
