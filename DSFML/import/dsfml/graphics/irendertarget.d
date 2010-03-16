@@ -60,58 +60,6 @@ interface IRenderTarget
 	void draw(IDrawable object, Shader shader);
 
 	/**
-	 * 	Get the width of the rendering region of the target
-	 *
-	 * 	\return Width in pixels
-	 *
-	 */
-	uint getWidth();
-
-	/**
-	 * 	Get the height of the rendering region of the target
-	 *
-	 * 	\return Height in pixels
-	 *
-	 */
-	uint getHeight();
-
-	/**
-	 * 	Change the current active view.
-	 *
-	 * 	\param view : New view to use (pass GetDefaultView() to set the default view)
-	 *
-	 */
-	void setView(View view);
-
-	/**
-	 * 	Get the current view
-	 *
-	 * 	\return Current view active in the window
-	 *
-	 */
-	View getView();
-
-	/**
-	 * 	Get the default view of the window
-	 *
-	 * 	\return Default view
-	 *
-	 */
-	View getDefaultView();
-
-	/**
-	 * 	Get the viewport of a view applied to this target
-	 *
-	 * 	\param view Target view
-	 *
-	 * 	\return Viewport rectangle, expressed in pixels in the current target
-	 *
-	 */
-	IntRect getViewport(View view);
-
-
-
-	/**
 	 * 	Convert a point in target coordinates into view coordinates
 	 *
 	 * 	\param x :	X coordinate of the point to convert, relative to the target
@@ -134,4 +82,57 @@ interface IRenderTarget
 	 *
 	 */
 	void restoreGLStates();
+
+@property
+{
+	/**
+	 * 	Get the width of the rendering region of the target
+	 *
+	 * 	\return Width in pixels
+	 *
+	 */
+	uint width();
+
+	/**
+	 * 	Get the height of the rendering region of the target
+	 *
+	 * 	\return Height in pixels
+	 *
+	 */
+	uint height();
+
+	/**
+	 * 	Change the current active view.
+	 *
+	 * 	\param view : New view to use (pass GetDefaultView() to set the default view)
+	 *
+	 */
+	void view(View view);
+
+	/**
+	 * 	Get the current view
+	 *
+	 * 	\return Current view active in the window
+	 *
+	 */
+	View view();
+
+	/**
+	 * 	Get the default view of the window
+	 *
+	 * 	\return Default view
+	 *
+	 */
+	View defaultView();
+
+	/**
+	 * 	Get the viewport of a view applied to this target
+	 *
+	 * 	\param view Target view
+	 *
+	 * 	\return Viewport rectangle, expressed in pixels in the current target
+	 *
+	 */
+	IntRect viewport(View view);
+}
 }

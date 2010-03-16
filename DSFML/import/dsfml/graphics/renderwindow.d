@@ -30,7 +30,6 @@ import	dsfml.graphics.color,
 		dsfml.graphics.sprite,
 		dsfml.graphics.shape,
 		dsfml.graphics.text,
-		dsfml.graphics.image,
 		dsfml.graphics.rect,
 		dsfml.graphics.shader,
 		dsfml.graphics.view,
@@ -48,8 +47,8 @@ import	dsfml.system.common,
 		dsfml.system.vector2;
 
 /**
-*	Simple wrapper for Window that allows easy 2D rendering. 
-*/
+ *	Simple wrapper for Window that allows easy 2D rendering. 
+ */
 class RenderWindow : Window, IRenderTarget
 {
 private:	
@@ -59,27 +58,27 @@ private:
 public:
 
 	/**
-	*	Construct the window
-	*
-	*	Params:	
-	*		mode = Video mode to use
-	*		title = Title of the window
-	*		windowStyle = Window style (Resize | Close by default)
-	*		settings = Context settings (default is default ContextSettings values)
-	*/
-	this(VideoMode mode, string title, uint windowStyle = Style.Default, ContextSettings settings = ContextSettings())
+	 *	Construct the window
+	 *
+	 *	Params:	
+	 *		mode = Video mode to use
+	 *		title = Title of the window
+	 *		windowStyle = Window style (Resize | Close by default)
+	 *		settings = Context settings (default is default ContextSettings values)
+	 */
+	this(VideoMode mode, string title, Style windowStyle = Style.Default, ContextSettings settings = ContextSettings())
 	{
 		super(sfRenderWindow_Create(mode, toStringz(title), windowStyle, &settings));
 		m_input = new Input(sfRenderWindow_GetInput(m_ptr));
 	}
 
 	/**
-	*	Construct the window from an existing control
-	*	
-	*	Params:		
-	*		handle = Platform-specific handle of the control
-	*		settings = Context settings (default is default ContextSettings values)
-	*/
+	 *	Construct the window from an existing control
+	 *	
+	 *	Params:		
+	 *		handle = Platform-specific handle of the control
+	 *		settings = Context settings (default is default ContextSettings values)
+	 */
 	this(WindowHandle handle, ContextSettings settings = ContextSettings())
 	{
 		super(sfRenderWindow_CreateFromHandle(handle, &settings));
@@ -92,18 +91,18 @@ public:
 	}
 
 	/**
-	*	Create (or recreate) the window
-	*	
-	*	Input created with getInput will become invalid.
-	*					
-	*	Params:		
-	*		mode = Video mode to use
-	*		title = Title of the window
-	*		windowStyle = Window style (Resize | Close by default)
-	*		settings = Context settings (default is default ContextSettings values)
-	*
-	*/
-	void create(VideoMode mode, string title, uint windowStyle = Style.Default, ContextSettings settings = ContextSettings())
+	 *	Create (or recreate) the window
+	 *	
+	 *	Input created with getInput will become invalid.
+	 *					
+	 *	Params:		
+	 *		mode = Video mode to use
+	 *		title = Title of the window
+	 *		windowStyle = Window style (Resize | Close by default)
+	 *		settings = Context settings (default is default ContextSettings values)
+	 *
+	 */
+	override void create(VideoMode mode, string title, Style windowStyle = Style.Default, ContextSettings settings = ContextSettings())
 	{
 		if (m_ptr !is null)
 			dispose();
@@ -113,16 +112,16 @@ public:
 	}
 
 	/**
-	*	Create (or recreate) the window from an existing control
-	*	
-	*	Input created with getInput become invalid.
-	*					
-	*	Params:		
-	*		handle = Platform-specific handle of the control
-	*		settings = Context settings (default is default ContextSettings values)
-	*
-	*/
-	void create(WindowHandle handle, ContextSettings settings = ContextSettings())
+	 *	Create (or recreate) the window from an existing control
+	 *	
+	 *	Input created with getInput become invalid.
+	 *					
+	 *	Params:		
+	 *		handle = Platform-specific handle of the control
+	 *		settings = Context settings (default is default ContextSettings values)
+	 *
+	 */
+	override void create(WindowHandle handle, ContextSettings settings = ContextSettings())
 	{
 		if (m_ptr !is null)
 			dispose();
@@ -132,102 +131,52 @@ public:
 	}
 	
 	/**
-	*	Draw a sprite, shape or text on the window with a shader
-	*
-	*	Params:
-	*		drawable = IDrawable to draw
-	*		shader = Shader to use
-	*/
+	 *	Draw a sprite, shape or text on the window with a shader
+	 *
+	 *	Params:
+	 *		drawable = IDrawable to draw
+	 *		shader = Shader to use
+	 */
 	void draw(IDrawable drawable, Shader shader)
 	{
 		drawable.renderWithShader(this, shader);
 	}
 	
 	/**
-	*	Draw a sprite, shape or text
-	*	
-	*	Params:
-	*		drawable = IDrawable to draw
-	*/				
+	 *	Draw a sprite, shape or text
+	 *	
+	 *	Params:
+	 *		drawable = IDrawable to draw
+	 */				
 	void draw(IDrawable drawable)
 	{
 		drawable.render(this);
 	}
 	
 	/**
-	*	Clear the screen with the given color.
-	*
-	*	Params:
-	*		col = Fill color
-	*/
+	 *	Clear the screen with the given color.
+	 *
+	 *	Params:
+	 *		col = Fill color
+	 */
 	void clear(Color col = Color.BLACK)
 	{
 		sfRenderWindow_Clear(m_ptr, col);
 	}
 
-	/**
-	*	Change the current active view.
-	*	The current view is defined with the initial size of the window
-	*
-	*	Params: 
-	*		newView = Pointer to the new view (pass getDefaultView to set the default view)
-	*/
-	void setView(View newView)
-	{
-		if (m_view !is null)
-		{		
-			m_view.setHandled(false);
-		}
-		
-		sfRenderWindow_SetView(m_ptr, newView.nativePointer);
-		  
-		m_view = newView;
-		m_view.setHandled(true);
-	}
+
 
 	/**
-	*	Get the current view rectangle
-	*
-	*	Returns: 
-	*		current view rectangle, in global coordinates
-	*/
-	View getView()
-	{
-		if (m_view is null)
-		{
-			void* cView = sfRenderWindow_GetView(m_ptr);
-			m_view = new View(cView, true);
-		}
-		return m_view;
-	}
-
-	/**
-	*	Get the default view
-	*
-	*	Returns: 
-	*		default view
-	*/
-	View getDefaultView()
-	{
-		if (m_defaultView is null)
-		{
-			void* cView = sfRenderWindow_GetDefaultView(m_ptr);
-			m_defaultView = new View(cView, true);
-		}
-		return m_defaultView;
-	}
-
-	/**
-	*	Convert a point in window coordinates into view coordinates
-	*
-	*	Params: 
-	*		windowX = X coordinate of the point to convert, relative to the window
-	*		windowY = Y coordinate of the point to convert, relative to the window
-	*		targetView = Target view to convert the point to (pass NULL to use the current view)
-	*		
-	*	Returns:
-	*		Converted point			
-	*/	 
+	 *	Convert a point in window coordinates into view coordinates
+	 *
+	 *	Params: 
+	 *		windowX = X coordinate of the point to convert, relative to the window
+	 *		windowY = Y coordinate of the point to convert, relative to the window
+	 *		targetView = Target view to convert the point to (pass NULL to use the current view)
+	 *		
+	 *	Returns:
+	 *		Converted point			
+	 */	 
 	Vector2f convertCoords(uint windowX, uint windowY, View targetView = null)
 	{
 		Vector2f vec;
@@ -251,67 +200,129 @@ public:
 		sfRenderWindow_RestoreGLStates(m_ptr);
 	}
 
+@property
+{
+	/**
+	 *	Change the current active view.
+	 *	The current view is defined with the initial size of the window
+	 *
+	 *	Params: 
+	 *		newView = Pointer to the new view (pass getDefaultView to set the default view)
+	 */
+	void view(View newView)
+	{
+		if (m_view !is null)
+		{		
+			m_view.setHandled(false);
+		}
+		
+		sfRenderWindow_SetView(m_ptr, newView.nativePointer);
+		  
+		m_view = newView;
+		m_view.setHandled(true);
+	}
 
 	/**
-	*	Return the width of the rendering region of a renderwindow
-	*
-	*	Returns: 
-	*		Width in pixels
-	*/
-	uint getWidth()
+	 *	Get the current view rectangle
+	 *
+	 *	Returns: 
+	 *		current view rectangle, in global coordinates
+	 */
+	View view()
+	{
+		if (m_view is null)
+		{
+			SFMLClass cView = sfRenderWindow_GetView(m_ptr);
+			m_view = new View(cView, true);
+		}
+		return m_view;
+	}
+
+	/**
+	 *	Get the default view
+	 *
+	 *	Returns: 
+	 *		default view
+	 */
+	View defaultView()
+	{
+		if (m_defaultView is null)
+		{
+			SFMLClass cView = sfRenderWindow_GetDefaultView(m_ptr);
+			m_defaultView = new View(cView, true);
+		}
+		return m_defaultView;
+	}
+	
+	/**
+	 *	Return the width of the rendering region of a renderwindow
+	 *
+	 *	Returns: 
+	 *		Width in pixels
+	 */
+	override uint width()
 	{
 		return sfRenderWindow_GetWidth(m_ptr);
 	}
 
 	/**
-	*	Return the height of the rendering region of a renderwindow
-	*
-	*	Returns: 
-	*		Height in pixels
-	*/
-	uint getHeight()
+	 *	Return the height of the rendering region of a renderwindow
+	 *
+	 *	Returns: 
+	 *		Height in pixels
+	 */
+	override uint height()
 	{
 		return sfRenderWindow_GetHeight(m_ptr);
 	}
 
-	IntRect getViewport(View view = null) // TODO: is there a need to accept other Views than the currently assigned one?
+	/**
+	 *	Get the viewport of a view applied to this target
+	 *
+	 *	Params:
+	 *	    view = Target view
+	 *	Returns:
+	 *		Viewport rectangle, expressed in pixels in the current target
+	 */
+	IntRect viewport(View v = null) // TODO: is there a need to accept other Views than the currently assigned one?
 	{
-		return sfRenderWindow_GetViewport(m_ptr, view is null ? m_view.nativePointer : view.nativePointer);
+		return sfRenderWindow_GetViewport(m_ptr, v is null ? m_view.nativePointer : v.nativePointer);
 	}
+}
 
 private:
 	
 	static extern(C)
 	{
-		void*	function(VideoMode, cchar*, uint, ContextSettings*)	sfRenderWindow_Create;
-		void*	function(WindowHandle, ContextSettings*)			sfRenderWindow_CreateFromHandle;
-		void	function(void*)										sfRenderWindow_Destroy;
-		void*	function(void*)										sfRenderWindow_GetInput;
-		bool	function(void*)										sfRenderWindow_IsOpened;
-		uint	function(void*)										sfRenderWindow_GetWidth;
-		uint	function(void*)										sfRenderWindow_GetHeight;
+		SFMLClass	function(VideoMode, cchar*, Style, ContextSettings*)sfRenderWindow_Create;
+		SFMLClass	function(WindowHandle, ContextSettings*)			sfRenderWindow_CreateFromHandle;
+		void		function(SFMLClass)									sfRenderWindow_Destroy;
+		SFMLClass	function(SFMLClass)									sfRenderWindow_GetInput;
+		bool		function(SFMLClass)									sfRenderWindow_IsOpened;
+		uint		function(SFMLClass)									sfRenderWindow_GetWidth;
+		uint		function(SFMLClass)									sfRenderWindow_GetHeight;
 
 	/*
-		void	function(void*, void*)								sfRenderWindow_DrawSprite;
-		void	function(void*, void*)								sfRenderWindow_DrawShape;
-		void	function(void*, void*)								sfRenderWindow_DrawText;
+		void	function(SFMLClass, SFMLClass)							sfRenderWindow_DrawSprite;
+		void	function(SFMLClass, SFMLClass)							sfRenderWindow_DrawShape;
+		void	function(SFMLClass, SFMLClass)							sfRenderWindow_DrawText;
 
-		void	function(void*, void*, void*)						sfRenderWindow_DrawSpriteWithShader;
-		void	function(void*, void*, void*)						sfRenderWindow_DrawShapeWithShader;
-		void	function(void*, void*, void*)						sfRenderWindow_DrawTextWithShader;
+		void	function(SFMLClass, SFMLClass, SFMLClass)				sfRenderWindow_DrawSpriteWithShader;
+		void	function(SFMLClass, SFMLClass, SFMLClass)				sfRenderWindow_DrawShapeWithShader;
+		void	function(SFMLClass, SFMLClass, SFMLClass)				sfRenderWindow_DrawTextWithShader;
 	*/
 		
-		void*	function(void*)										sfRenderWindow_Capture;
-		void	function(void*, Color)								sfRenderWindow_Clear;
-		void	function(void*, void*)								sfRenderWindow_SetView;
-		void*	function(void*)										sfRenderWindow_GetView;
-		void*	function (void*)									sfRenderWindow_GetDefaultView;
-		void	function(void*, uint, uint, float*, float*, void*)	sfRenderWindow_ConvertCoords;
+		SFMLClass	function(SFMLClass)									sfRenderWindow_Capture;
+		void		function(SFMLClass, Color)							sfRenderWindow_Clear;
+		void		function(SFMLClass, SFMLClass)						sfRenderWindow_SetView;
+		SFMLClass	function(SFMLClass)									sfRenderWindow_GetView;
+		SFMLClass	function(SFMLClass)									sfRenderWindow_GetDefaultView;
+		void		function(SFMLClass, uint, uint, float*, float*, SFMLClass)	sfRenderWindow_ConvertCoords;
 		
 		// DSFML2
-		void	function(void*)										sfRenderWindow_SaveGLStates;
-		void	function(void*)										sfRenderWindow_RestoreGLStates;
-		IntRect	function(void*, void*)								sfRenderWindow_GetViewport;
+		void		function(SFMLClass)									sfRenderWindow_SaveGLStates;
+		void		function(SFMLClass)									sfRenderWindow_RestoreGLStates;
+		IntRect		function(SFMLClass, SFMLClass)						sfRenderWindow_GetViewport;
 	}
 
 	mixin(loadFromSharedLib2("csfml-graphics", "sfRenderWindow", "Create", "CreateFromHandle",

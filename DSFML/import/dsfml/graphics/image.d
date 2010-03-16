@@ -29,6 +29,7 @@ module dsfml.graphics.image;
 
 import	dsfml.graphics.color,
 		dsfml.graphics.rect;
+//		dsfml.graphics.renderwindow;
 
 import	dsfml.system.common,
 		dsfml.system.exception,
@@ -42,7 +43,7 @@ import	dsfml.system.common,
 class Image : DSFMLObject
 {
 package:
-	this(void* ptr)
+	this(SFMLClass ptr)
 	{
 		super(ptr, true);
 	}
@@ -169,23 +170,25 @@ public:
 	{
 		sfImage_CreateMaskFromColor(m_ptr, colorKey, alpha);
 	}
-	
-//	 /**
-//	  *	Create the image from the current contents of the
-//	  *	given window
-//	 *
-//	  *	Params:	
-//	  *		window = Window to capture
-//	  *		sourceRect = Sub-rectangle of the screen to copy (empty by default - entire image)
-//	 *
-//	  *	Returns:
-//	  *		True if copy was successful
-//	 */
-//	 void copyScreen(RenderWindow window, IntRect sourceRect = IntRect())
-//	 {
-//		 return cast(bool)sfImage_CopyScreen(m_ptr, window.nativePointer, sourceRect);
-//	 }
-	
+
+/+
+	/**
+	 *	Create the image from the current contents of the
+	 *	given window
+	 *
+	 *	Params:	
+	 *		window = Window to capture
+	 *		sourceRect = Sub-rectangle of the screen to copy (empty by default - entire image)
+	 *
+	 *	Returns:
+	 *		True if copy was successful
+	 */
+	 bool copyScreen(RenderWindow window, IntRect sourceRect = IntRect())
+	 {
+		 return cast(bool)sfImage_CopyScreen(m_ptr, window.nativePointer, sourceRect);
+	 }
++/
+
 	/**
 	 *	Copy pixels from another image onto this one.
 	 *	This function does a slow pixel copy and should only
@@ -197,9 +200,9 @@ public:
 	 *		destY = Y coordinate of the destination position
 	 *		sourceRect = Sub-rectangle of the source image to copy
 	 */
-	void copy(Image source, uint destX, uint destY, IntRect sourceRect = IntRect())
+	void copyImage(Image source, uint destX, uint destY, IntRect sourceRect = IntRect())
 	{
-		sfImage_Copy(m_ptr, source.nativePointer, destX, destY, sourceRect);
+		sfImage_CopyImage(m_ptr, source.nativePointer, destX, destY, sourceRect);
 	} 
 
 	/**
@@ -241,7 +244,7 @@ public:
 	 */
 	ubyte[] getPixelsArray()
 	{
-		return sfImage_GetPixelsPtr(m_ptr)[0..getWidth() * getHeight() * 4];
+		return sfImage_GetPixelsPtr(m_ptr)[0..width() * height() * 4];
 	}
 
 	/**
@@ -250,51 +253,6 @@ public:
 	void bind()
 	{
 		sfImage_Bind(m_ptr);
-	}
-
-	/**
-	 *	Enable or disable image smooth filter.
-	 *	This parameter is enabled by default
-	 *
-	 *	Params: 
-	 *		smooth = True to enable smoothing filter, false to disable it
-	 */
-	void setSmooth(bool smooth)
-	{
-		sfImage_SetSmooth(m_ptr, smooth);
-	}
-
-	/**
-	 *	Return the width of the image
-	 *
-	 *	Returns: 
-	 *		Width in pixels
-	 */
-	uint getWidth()
-	{
-		return sfImage_GetWidth(m_ptr);
-	}
-
-	/**
-	 *	Return the height of the image
-	 *
-	 *	Returns: 
-	 *		Height in pixels
-	 */
-	uint getHeight()
-	{
-		return sfImage_GetHeight(m_ptr);
-	}
-	
-	/**
-	 *	Tells whether the smooth filtering is enabled or not
-	 *
-	 *	Returns:
-	 *		True if image smoothing is enabled
-	 */
-	bool isSmooth()
-	{
-		return cast(bool)sfImage_IsSmooth(m_ptr);
 	}
 
 	/**
@@ -313,33 +271,82 @@ public:
 	{
 		sfImage_UpdatePixels(m_ptr, pixels.ptr, rectangle);
 	}
+	
+@property
+{
+	/**
+	 *	Enable or disable image smooth filter.
+	 *	This parameter is enabled by default
+	 *
+	 *	Params: 
+	 *		s = True to enable smoothing filter, false to disable it
+	 */
+	void smooth(bool s)
+	{
+		sfImage_SetSmooth(m_ptr, s);
+	}
+
+	/**
+	 *	Return the width of the image
+	 *
+	 *	Returns: 
+	 *		Width in pixels
+	 */
+	uint width()
+	{
+		return sfImage_GetWidth(m_ptr);
+	}
+
+	/**
+	 *	Return the height of the image
+	 *
+	 *	Returns: 
+	 *		Height in pixels
+	 */
+	uint height()
+	{
+		return sfImage_GetHeight(m_ptr);
+	}
+	
+	/**
+	 *	Tells whether the smooth filtering is enabled or not
+	 *
+	 *	Returns:
+	 *		True if image smoothing is enabled
+	 */
+	bool smooth()
+	{
+		return cast(bool)sfImage_IsSmooth(m_ptr);
+	}
+}
 
 private:
 	static extern (C)
 	{
-		void*	function()									sfImage_Create;
-		void*	function(uint, uint, Color)					sfImage_CreateFromColor;
-		void*	function(uint, uint, ubyte*)				sfImage_CreateFromPixels;
-		void*	function(cchar*)							sfImage_CreateFromFile;
-		void*	function(ubyte* ,size_t)					sfImage_CreateFromMemory;
-		void	function(void*)								sfImage_Destroy;
-		int		function(void*, cchar*)						sfImage_SaveToFile;
-		void	function(void*, Color, ubyte)				sfImage_CreateMaskFromColor;
-		int		function(void*, void*, IntRect)				sfImage_CopyScreen;
-		void	function(void*, void*, uint, uint, IntRect)	sfImage_Copy;
-		void	function(void*, uint, uint, Color)			sfImage_SetPixel;
-		Color	function(void*, uint, uint)					sfImage_GetPixel;
-		ubyte*	function(void*)								sfImage_GetPixelsPtr;
-		void	function(void*)								sfImage_Bind;
-		void	function(void*, int)						sfImage_SetSmooth;
-		uint	function(void*)								sfImage_GetWidth;
-		uint	function(void*)								sfImage_GetHeight;
-		int		function(void*)								sfImage_IsSmooth;
-		void	function(void*, ubyte*, IntRect)			sfImage_UpdatePixels;
+		SFMLClass	function()										sfImage_Create;
+		SFMLClass	function(uint, uint, Color)						sfImage_CreateFromColor;
+		SFMLClass	function(uint, uint, ubyte*)					sfImage_CreateFromPixels;
+		SFMLClass	function(cchar*)								sfImage_CreateFromFile;
+		SFMLClass	function(ubyte* ,size_t)						sfImage_CreateFromMemory;
+		void		function(SFMLClass)								sfImage_Destroy;
+		int			function(SFMLClass, cchar*)						sfImage_SaveToFile;
+		void		function(SFMLClass, Color, ubyte)				sfImage_CreateMaskFromColor;
+		SFMLClass	function(SFMLClass)								sfImage_Copy;
+		int			function(SFMLClass, SFMLClass, IntRect)			sfImage_CopyScreen;
+		void		function(SFMLClass, SFMLClass, uint, uint, IntRect)	sfImage_CopyImage;
+		void		function(SFMLClass, uint, uint, Color)			sfImage_SetPixel;
+		Color		function(SFMLClass, uint, uint)					sfImage_GetPixel;
+		ubyte*		function(SFMLClass)								sfImage_GetPixelsPtr;
+		void		function(SFMLClass)								sfImage_Bind;
+		void		function(SFMLClass, int)						sfImage_SetSmooth;
+		uint		function(SFMLClass)								sfImage_GetWidth;
+		uint		function(SFMLClass)								sfImage_GetHeight;
+		int			function(SFMLClass)								sfImage_IsSmooth;
+		void		function(SFMLClass, ubyte*, IntRect)			sfImage_UpdatePixels;
 	}
 
 	mixin(loadFromSharedLib2("csfml-graphics", "sfImage",
-			"Create", "CreateFromColor", "CreateFromPixels", "CreateFromFile", "CreateFromMemory", "Destroy", "SaveToFile",
-			"CreateMaskFromColor", "CopyScreen", "Copy", "SetPixel", "GetPixel", "GetPixelsPtr", "Bind", "SetSmooth", "GetWidth",
-			"GetHeight", "IsSmooth", "UpdatePixels"));
+	"Create", "CreateFromColor", "CreateFromPixels", "CreateFromFile", "CreateFromMemory", "Destroy", "SaveToFile",
+	"CreateMaskFromColor", "Copy", "CopyScreen", "CopyImage", "SetPixel", "GetPixel", "GetPixelsPtr", "Bind", "SetSmooth", "GetWidth",
+	"GetHeight", "IsSmooth", "UpdatePixels"));
 }

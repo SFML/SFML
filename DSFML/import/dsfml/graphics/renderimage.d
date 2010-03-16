@@ -51,11 +51,16 @@ private:
 	View _defaultView = null;
 
 package:
-	this(void* ptr)
+	this(SFMLClass ptr)
 	{
 		super(ptr, true);
 	}
-		
+	
+	override void dispose()
+	{
+		sfRenderImage_Destroy(m_ptr);
+	}
+
 public:
 
 	/**
@@ -69,46 +74,6 @@ public:
 	this(uint width, uint height, bool depthBuffer = false)
 	{
 		super(sfRenderImage_Create(width, height, depthBuffer));
-	}
-
-	override void dispose()
-	{
-		sfRenderImage_Destroy(m_ptr);
-	}
-
-	/**
-	*	Return the width of the rendering region of a renderimage
-	*
-	*	Returns: 
-	*		Width in pixels
-	*/
-	uint getWidth()
-	{
-		return sfRenderImage_GetWidth(m_ptr);
-	}
-
-	/**
-	*	Return the height of the rendering region of a renderimage
-	*
-	*	Returns: 
-	*		Height in pixels
-	*/
-	uint getHeight()
-	{
-		return sfRenderImage_GetHeight(m_ptr);
-	}
-	
-	/**
-	 *	Activate or deactivate a renderimage as the current target for rendering
-	 *
-	 *	Params:
-	 *	    active = true to activate, false to deactivate
-	 *	Returns:
-	 *		true if operation was successful, false otherwise
-	 */
-	bool setActive(bool active)
-	{
-		return sfRenderImage_SetActive(m_ptr, active);
 	}
 	
 	/**
@@ -151,64 +116,7 @@ public:
 	{
 		sfRenderImage_Clear(m_ptr, color);
 	}
-	
-	/**
-	 *	Change the current active view of a renderimage
-	 *
-	 *	Params:
-	 *	    view = Pointer to the new view
-	 */
-	void setView(View view)
-	{
-		if (_view !is null)
-		{		
-			_view.setHandled(false);
-		}
-		
-		sfRenderImage_SetView(m_ptr, view.nativePointer);
-		  
-		_view = view;
-		_view.setHandled(true);
-	}
 
-	/**
-	*	Get the current active view rectangle
-	*
-	*	Returns: 
-	*		current view rectangle, in global coordinates
-	*/
-	View getView()
-	{
-		if (_view is null)
-		{
-			void* cView = sfRenderImage_GetView(m_ptr);
-			_view = new View(cView, true);
-		}
-		return _view;
-	}
-
-	/**
-	*	Get the default view
-	*
-	*	Returns:
-	*		default view
-	*/
-	View getDefaultView()
-	{
-		if (_defaultView is null)
-		{
-			void* cView = sfRenderImage_GetDefaultView(m_ptr);
-			_defaultView = new View(cView, true);
-		}
-		return _defaultView;
-	}
-	
-	
-	IntRect getViewport(View view = null) // TODO: is there a need to accept other Views than the currently assigned one?
-	{
-		return sfRenderImage_GetViewport(m_ptr, view is null ? _view.nativePointer : view.nativePointer);
-	}
-	
 	/**
 	*	Convert a point in image coordinates into view coordinates
 	*
@@ -227,32 +135,7 @@ public:
 		return vec;
 	}
 	
-	/**
-	 *	Get the target image
-	 *
-	 *	Returns:
-	 *		target image
-	 */
-	Image getImage()
-	{
-		if (_image is null)
-		{
-			void* cImage = sfRenderImage_GetImage(m_ptr);
-			_image = new Image(cImage);
-		}
-		return _image;
-	}
-	
-	/**
-	 *	Check whether the system supports render images or not
-	 *
-	 *	Returns:
-	 *		true if the RenderImage class can be used
-	 */
-	bool isAvailable()
-	{
-		return sfRenderImage_IsAvailable();
-	}
+
 
 	/**
 	 *	Save the current OpenGL render states and matrices
@@ -270,36 +153,158 @@ public:
 		sfRenderImage_RestoreGLStates(m_ptr);
 	}
 
+@property
+{
+	/**
+	*	Return the width of the rendering region of a renderimage
+	*
+	*	Returns: 
+	*		Width in pixels
+	*/
+	uint width()
+	{
+		return sfRenderImage_GetWidth(m_ptr);
+	}
+
+	/**
+	*	Return the height of the rendering region of a renderimage
+	*
+	*	Returns: 
+	*		Height in pixels
+	*/
+	uint height()
+	{
+		return sfRenderImage_GetHeight(m_ptr);
+	}
+	
+	/**
+	 *	Activate or deactivate a renderimage as the current target for rendering
+	 *
+	 *	Params:
+	 *	    active = true to activate, false to deactivate
+	 *	Returns:
+	 *		true if operation was successful, false otherwise
+	 */
+	bool active(bool activ)
+	{
+		return sfRenderImage_SetActive(m_ptr, activ);
+	}
+
+	/**
+	 *	Change the current active view of a renderimage
+	 *
+	 *	Params:
+	 *	    view = Pointer to the new view
+	 */
+	void view(View v)
+	{
+		if (_view !is null)
+		{		
+			_view.setHandled(false);
+		}
+		
+		sfRenderImage_SetView(m_ptr, v.nativePointer);
+		  
+		_view = v;
+		_view.setHandled(true);
+	}
+
+	/**
+	 *	Get the current active view rectangle
+	 *
+	 *	Returns: 
+	 *		current view rectangle, in global coordinates
+	 */
+	View view()
+	{
+		if (_view is null)
+		{
+			SFMLClass cView = sfRenderImage_GetView(m_ptr);
+			_view = new View(cView, true);
+		}
+		return _view;
+	}
+
+	/**
+	*	Get the default view
+	*
+	*	Returns:
+	*		default view
+	*/
+	View defaultView()
+	{
+		if (_defaultView is null)
+		{
+			SFMLClass cView = sfRenderImage_GetDefaultView(m_ptr);
+			_defaultView = new View(cView, true);
+		}
+		return _defaultView;
+	}
+	
+	
+	IntRect viewport(View v = null) // TODO: is there a need to accept other Views than the currently assigned one?
+	{
+		return sfRenderImage_GetViewport(m_ptr, v is null ? _view.nativePointer : v.nativePointer);
+	}
+	
+	/**
+	 *	Get the target image
+	 *
+	 *	Returns:
+	 *		target image
+	 */
+	Image image()
+	{
+		if (_image is null)
+		{
+			SFMLClass cImage = sfRenderImage_GetImage(m_ptr);
+			_image = new Image(cImage);
+		}
+		return _image;
+	}
+	
+	/**
+	 *	Check whether the system supports render images or not
+	 *
+	 *	Returns:
+	 *		true if the RenderImage class can be used
+	 */
+	bool isAvailable()
+	{
+		return sfRenderImage_IsAvailable();
+	}
+}
+
 private:
 	static extern(C)
 	{
-		void*	function(uint, uint, bool)		sfRenderImage_Create;
-		void	function(void*)					sfRenderImage_Destroy;
-		uint	function(void*)					sfRenderImage_GetWidth;
-		uint	function(void*)					sfRenderImage_GetHeight;
-		bool	function(void*, bool)			sfRenderImage_SetActive;
-		void	function(void*)					sfRenderImage_Display;
+		SFMLClass	function(uint, uint, bool)		sfRenderImage_Create;
+		void	function(SFMLClass)					sfRenderImage_Destroy;
+		uint	function(SFMLClass)					sfRenderImage_GetWidth;
+		uint	function(SFMLClass)					sfRenderImage_GetHeight;
+		bool	function(SFMLClass, bool)			sfRenderImage_SetActive;
+		void	function(SFMLClass)					sfRenderImage_Display;
 		
-		void	function(void*, void*)			sfRenderImage_DrawSprite;
-		void	function(void*, void*)			sfRenderImage_DrawShape;
-		void	function(void*, void*)			sfRenderImage_DrawText;
+		void	function(SFMLClass, void*)			sfRenderImage_DrawSprite;
+		void	function(SFMLClass, void*)			sfRenderImage_DrawShape;
+		void	function(SFMLClass, void*)			sfRenderImage_DrawText;
 
-		void	function(void*, void*, void*)	sfRenderImage_DrawSpriteWithShader;
-		void	function(void*, void*, void*)	sfRenderImage_DrawShapeWithShader;
-		void	function(void*, void*, void*)	sfRenderImage_DrawTextWithShader;
+		void	function(SFMLClass, void*, void*)	sfRenderImage_DrawSpriteWithShader;
+		void	function(SFMLClass, void*, void*)	sfRenderImage_DrawShapeWithShader;
+		void	function(SFMLClass, void*, void*)	sfRenderImage_DrawTextWithShader;
 
-		void	function(void*, Color)			sfRenderImage_Clear;
-		void	function(void*, void*)			sfRenderImage_SetView;
-		void*	function(void*)					sfRenderImage_GetView;
-		void*	function(void*)					sfRenderImage_GetDefaultView;
-		IntRect	function(void*, void*)			sfRenderImage_GetViewport;
-		void	function(void*, uint, uint, float*, float*, void*)	sfRenderImage_ConvertCoords;
-		void*	function(void*)					sfRenderImage_GetImage;
-		bool	function()						sfRenderImage_IsAvailable;
+		void	function(SFMLClass, Color)			sfRenderImage_Clear;
+		void	function(SFMLClass, SFMLClass)		sfRenderImage_SetView;
+		SFMLClass	function(SFMLClass)				sfRenderImage_GetView;
+		SFMLClass	function(SFMLClass)				sfRenderImage_GetDefaultView;
+		IntRect	function(SFMLClass, SFMLClass)		sfRenderImage_GetViewport;
+		void	function(SFMLClass, uint, uint, float*, float*, SFMLClass)	sfRenderImage_ConvertCoords;
+		SFMLClass	function(SFMLClass)				sfRenderImage_GetImage;
+		bool	function()							sfRenderImage_IsAvailable;
 		
 		// DSFML2
-		void	function(void*)					sfRenderImage_SaveGLStates;
-		void	function(void*)					sfRenderImage_RestoreGLStates;
+		void	function(SFMLClass)				sfRenderImage_SaveGLStates;
+		void	function(SFMLClass)				sfRenderImage_RestoreGLStates;
 	}
 
 	mixin(loadFromSharedLib2("csfml-graphics", "sfRenderImage", "Create", "Destroy", "GetWidth", "GetHeight",
