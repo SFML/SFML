@@ -44,6 +44,7 @@
 /// and the shared context @context
 ////////////////////////////////////////////////////////////
 - (id)initWithAttributes:(sf::WindowSettings&)attribs
+					mode:(const sf::VideoMode&)mode
 		   sharedContext:(sfPrivGLContext *)context;
 
 @end

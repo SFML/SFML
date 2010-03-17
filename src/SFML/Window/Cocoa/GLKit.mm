@@ -75,7 +75,10 @@
 {
 	// Make a new context with the default parameters
 	sf::WindowSettings params;
-	static sfPrivGLContext *sharedCtx = [[sfPrivGLContext alloc] initWithAttributes:params sharedContext:nil];
+	sf::VideoMode m;
+	static sfPrivGLContext *sharedCtx = [[sfPrivGLContext alloc] initWithAttributes:params
+																			   mode:m
+																	  sharedContext:nil];
 	return sharedCtx;
 }
 
@@ -89,7 +92,7 @@
 /// Make a new OpenGL context according to the @attribs settings
 /// and the shared context @context
 ////////////////////////////////////////////////////////////
-- (id)initWithAttributes:(sf::WindowSettings&)attribs sharedContext:(sfPrivGLContext *)sharedContext
+- (id)initWithAttributes:(sf::WindowSettings&)attribs mode:(const sf::VideoMode&)mode sharedContext:(sfPrivGLContext *)sharedContext
 {
 	// Note about antialiasing and other context attributes :
 	// OpenGL context sharing does not allow the shared contexts to use different attributes.
@@ -100,10 +103,13 @@
 	//
 	// I've no way to fix this for now.
 	
-	if (attribs.AntialiasingLevel)
-		std::cerr 
-		<< "Warning: antialiasing settings are inhibited under Mac OS X for technical reasons"
-		<< std::endl;
+	if (attribs.AntialiasingLevel) {
+		NSLog(@"Warning: antialiasing settings are inhibited on Mac OS X for technical reasons");
+	}
+	
+	if (attribs.StencilBits != 8) {
+		NSLog(@"Warning: stencil bits settings are inhibited on Mac OS X for technical reasons");
+	}
 	
 	NSOpenGLPixelFormat *myPixelFormat = nil;
 	unsigned idx = 0;
@@ -125,15 +131,29 @@
 	
 	// Color buffer bits ; usually 32 bits per pixel
 	ctxtAttribs[idx++] = NSOpenGLPFAColorSize;
-	ctxtAttribs[idx++] = (NSOpenGLPixelFormatAttribute) sf::VideoMode::GetDesktopMode().BitsPerPixel;
+	
+	// well.. whatever I put here, the color size is always 24 bits on my computer..
+	ctxtAttribs[idx++] = (NSOpenGLPixelFormatAttribute) mode.BitsPerPixel;
+	
+	// Alpha buffer size
+	// FIXME: I don't really remember whether I can safely use the user video mode settings
+	// to set this attribute (because of the shared context attributes conflicts)
+	if (mode.BitsPerPixel > 24) {
+		ctxtAttribs[idx++] = NSOpenGLPFAAlphaSize;
+		ctxtAttribs[idx++] = (NSOpenGLPixelFormatAttribute) 8;
+	}
 	
 	// Depth buffer size
 	ctxtAttribs[idx++] = NSOpenGLPFADepthSize;
 	ctxtAttribs[idx++] = (NSOpenGLPixelFormatAttribute) attribs.DepthBits;
 	
 	// Stencil buffer bits
+	// Note: even with "NSOpenGLPFAClosestPolicy" set, the NSOpenGLPFAStencilSize value must be an valid and exact one
+	// I've been looking for possible diffferent default stencil bits values among different Apple computers
+	// but I can't again get the website I found oneaday
+	// (describing all the graphic cards used by Apple, the supported extensions, etc).
 	ctxtAttribs[idx++] = NSOpenGLPFAStencilSize;
-	ctxtAttribs[idx++] = (NSOpenGLPixelFormatAttribute) attribs.StencilBits;
+	ctxtAttribs[idx++] = (NSOpenGLPixelFormatAttribute) /* attribs.StencilBits */ 8;
 	
 	myPixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:ctxtAttribs];
 	
@@ -164,6 +184,8 @@
 		attribs.AntialiasingLevel = (unsigned) tmpAntialiasingLevel;
 		
 		[myPixelFormat release];
+	} else {
+		NSLog(@"NSOpenGLPixelFormat creation failed! (invalid video settings ?)");
 	}
 	
 	return self;
@@ -197,6 +219,7 @@
 		
 		// make the OpenGL context
 		myGLContext = [[sfPrivGLContext alloc] initWithAttributes:settings
+															 mode:mode
 											  sharedContext:[sfPrivGLContext sharedContext]];
 		
 		if (!myGLContext) {
@@ -636,11 +659,13 @@
 ////////////////////////////////////////////////////////////
 - (NSPoint)mouseLocation
 {
-	NSAssert([self window] != nil, @"expected valid window");
+	NSAssert([self view] != nil, @"expected valid window");
 	
-	NSPoint	relativeLocation = [[self window] convertScreenToBase:[NSEvent mouseLocation]];
-	relativeLocation.y = [[self view] frame].size.height - relativeLocation.y;
-	return relativeLocation;
+	NSPoint windowPoint = [[self window] convertScreenToBase:[NSEvent mouseLocation]];
+	NSPoint viewPoint = [[self view] convertPointFromBase:windowPoint];
+	
+	viewPoint.y = [[self view] frame].size.height - viewPoint.y;
+	return viewPoint;
 }
 
 ////////////////////////////////////////////////////////////
@@ -1002,6 +1027,8 @@
 		}
 		
 		[self putOpenGLView:[newView autorelease]];
+		
+		[[self window] setAcceptsMouseMovedEvents:YES];
 	}
 	
 	return self;
@@ -1037,7 +1064,7 @@
 		}
 		
 		[self putOpenGLView:[newView autorelease]];
-		
+		[[self window] setAcceptsMouseMovedEvents:YES];
 	}
 	return self;
 }
