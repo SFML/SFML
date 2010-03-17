@@ -662,7 +662,7 @@
 	NSAssert([self view] != nil, @"expected valid window");
 	
 	NSPoint windowPoint = [[self window] convertScreenToBase:[NSEvent mouseLocation]];
-	NSPoint viewPoint = [[self view] convertPointFromBase:windowPoint];
+	NSPoint viewPoint = [[self view] convertPoint:windowPoint fromView:[[[self window] contentView] superview]];
 	
 	viewPoint.y = [[self view] frame].size.height - viewPoint.y;
 	return viewPoint;
