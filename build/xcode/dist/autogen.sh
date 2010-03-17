@@ -503,6 +503,15 @@ build_packages()
             esac
             
             copy "$ROOT_DIR/$dir" "$CXX_SDK_PACKAGE_DIR"
+            
+            # in 32 bits mode, remove the 64 bits dependencies directory
+            case "$dir" in
+                "extlibs")
+                	remove_dir "$CXX_SDK_PACKAGE_DIR/extlibs/bin/x86_64"
+                	check_last_process
+                	;;
+            esac
+            
             check_last_process
         done
         copy_info_files "$CXX_SDK_PACKAGE_DIR"
@@ -533,6 +542,9 @@ build_packages()
                     check_last_process
                     remove_dir "$CXX_DEV_PACKAGE_DIR/extlibs/headers"
                     check_last_process
+                    # in 32 bits mode, remove the 64 bits dependencies directory
+                    remove_dir "$CXX_DEV_PACKAGE_DIR/extlibs/bin/x86_64"
+                    check_last_process
                     ;;
                 *)
                     ;;
@@ -557,6 +569,10 @@ build_packages()
             copy "$ROOT_DIR/$dir" "$C_SDK_PACKAGE_DIR"
             check_last_process
         done
+        
+        # in 32 bits mode, remove the 64 bits dependencies directory
+        remove_dir "$C_DEV_PACKAGE_DIR/extlibs/bin/x86_64"
+        check_last_process
         
         make_dir "$C_SDK_PACKAGE_SUB_DIR"
         for dir in "${C_SDK_SUB_DIRS[@]}"
@@ -586,6 +602,9 @@ build_packages()
                     check_last_process
                     remove_dir "$C_DEV_PACKAGE_DIR/extlibs/headers"
                     check_last_process
+                    # in 32 bits mode, remove the 64 bits dependencies directory
+			        remove_dir "$C_DEV_PACKAGE_DIR/extlibs/bin/x86_64"
+			        check_last_process
                     ;;
             esac
         done
@@ -643,7 +662,13 @@ build_packages_64b()
 	            copy "$ROOT_DIR/$dir" "$CXX_SDK_PACKAGE_DIR_64B"
 	            check_last_process
 	        done
-	        copy_info_files "$CXX_SDK_PACKAGE_DIR_64B"
+	        copy_info_files "$CXX_SDK_PACKAGE_DIR_64B" 
+	        check_last_process
+	        
+	        # in 64 bits mode, remove the 32 bits dependencies
+	        remove_dir "$CXX_SDK_PACKAGE_DIR_64B/extlibs/bin/OpenAL.framework"
+			check_last_process
+			remove_dir "$CXX_SDK_PACKAGE_DIR_64B/extlibs/bin/sndfile.framework"
 			check_last_process
 	        
 	        # Build the archive
@@ -677,6 +702,13 @@ build_packages_64b()
 	            esac
 	        done
 	        copy_info_files "$CXX_DEV_PACKAGE_DIR_64B"
+	        check_last_process
+	        
+	        # in 64 bits mode, remove the 32 bits dependencies
+	        remove_dir "$CXX_DEV_PACKAGE_DIR_64B/extlibs/bin/OpenAL.framework"
+			check_last_process
+			remove_dir "$CXX_DEV_PACKAGE_DIR_64B/extlibs/bin/sndfile.framework"
+			check_last_process
 	        
 	        # Build the archive
 	        cd "$PACKAGES_ROOT_DIR_64B"
