@@ -476,8 +476,6 @@ copy_info_files()
         copy "$PACKAGES_INFO_FILES_DIR/$file" "$1"
         check_last_process
     done
-    
-    echo "copied info files to $1"
 }
 
 # Build the archives of the C and C++ Dev and SDK packages
