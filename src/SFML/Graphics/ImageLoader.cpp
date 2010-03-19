@@ -228,9 +228,9 @@ bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Uint8>
     std::vector<Uint8> buffer(width * height * 3);
     for (std::size_t i = 0; i < width * height; ++i)
     {
-        buffer[i * 3 + 0] = pixels[i * 3 + 0];
-        buffer[i * 3 + 1] = pixels[i * 3 + 1];
-        buffer[i * 3 + 2] = pixels[i * 3 + 2];
+        buffer[i * 3 + 0] = pixels[i * 4 + 0];
+        buffer[i * 3 + 1] = pixels[i * 4 + 1];
+        buffer[i * 3 + 2] = pixels[i * 4 + 2];
     }
     Uint8* ptr = &buffer[0];
 
