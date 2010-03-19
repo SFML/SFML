@@ -154,8 +154,8 @@ bool Image::LoadFromPixels(unsigned int width, unsigned int height, const Uint8*
         myHeight = height;
 
         // Fill the pixel buffer with the specified raw data
-        const Color* ptr = reinterpret_cast<const Color*>(data);
-        myPixels.assign(ptr, ptr + width * height);
+        myPixels.resize(width * height * 4);
+        memcpy(&myPixels[0], data, myPixels.size());
 
         // We can create the texture
         if (CreateTexture())
@@ -199,9 +199,19 @@ bool Image::Create(unsigned int width, unsigned int height, const Color& color)
     myWidth  = width;
     myHeight = height;
 
-    // Recreate the pixel buffer and fill it with the specified color
-    myPixels.clear();
-    myPixels.resize(width * height, color);
+    // Resize the pixel buffer
+    myPixels.resize(myWidth * myHeight * 4);
+
+    // Fill it with the specified color
+    Uint8* p   = &myPixels[0];
+    Uint8* end = p + myWidth * myHeight * 4;
+    while (p < end)
+    {
+        *p++ = color.r;
+        *p++ = color.g;
+        *p++ = color.b;
+        *p++ = color.a;
+    }
 
     // We can create the texture
     if (CreateTexture())
@@ -220,16 +230,24 @@ bool Image::Create(unsigned int width, unsigned int height, const Color& color)
 ////////////////////////////////////////////////////////////
 /// Create transparency mask from a specified colorkey
 ////////////////////////////////////////////////////////////
-void Image::CreateMaskFromColor(const Color& transparentColor, Uint8 alpha)
+void Image::CreateMaskFromColor(const Color& color, Uint8 alpha)
 {
+    // No pixels to replace
+    if (myPixels.empty())
+        return;
+
     // Check if the array of pixels needs to be updated
     EnsureArrayUpdate();
 
-    // Calculate the new color (old color with no alpha)
-    Color newColor(transparentColor.r, transparentColor.g, transparentColor.b, alpha);
-
-    // Replace the old color with the new one
-    std::replace(myPixels.begin(), myPixels.end(), transparentColor, newColor);
+    // Replace the alpha of the pixels that match the transparent color
+    Uint8* p   = &myPixels[0];
+    Uint8* end = p + myWidth * myHeight * 4;
+    while (p < end)
+    {
+        if ((p[0] == color.r) && (p[1] == color.g) && (p[2] == color.b) && (p[3] == color.a))
+            p[3] = alpha;
+        p += 4;
+    }
 
     // The texture will need to be updated
     myTextureUpdated = false;
@@ -283,8 +301,8 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
     int          rows      = height;
     int          srcStride = source.myWidth * 4;
     int          dstStride = myWidth * 4;
-    const Uint8* srcPixels = source.GetPixelsPtr() + (srcRect.Left + srcRect.Top * source.myWidth) * 4;
-    Uint8*       dstPixels = reinterpret_cast<Uint8*>(&myPixels[0]) + (destX + destY * myWidth) * 4;
+    const Uint8* srcPixels = &source.myPixels[0] + (srcRect.Left + srcRect.Top * source.myWidth) * 4;
+    Uint8*       dstPixels = &myPixels[0] + (destX + destY * myWidth) * 4;
 
     // Copy the pixels
     if (applyAlpha)
@@ -386,15 +404,12 @@ void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
     // First check if the array of pixels needs to be updated
     EnsureArrayUpdate();
 
-    // Check if pixel is whithin the image bounds
-    /*if ((x >= myWidth) || (y >= myHeight))
-    {
-        Err() << "Cannot set pixel (" << x << "," << y << ") for image "
-              << "(width = " << myWidth << ", height = " << myHeight << ")" << std::endl;
-        return;
-    }*/
-
-    myPixels[x + y * myWidth] = color;
+    // Copy the color components
+    Uint8* pixel = &myPixels[(x + y * myWidth) * 4];
+    *pixel++ = color.r;
+    *pixel++ = color.g;
+    *pixel++ = color.b;
+    *pixel++ = color.a;
 
     // The texture will need to be updated
     myTextureUpdated = false;
@@ -404,20 +419,15 @@ void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
 ////////////////////////////////////////////////////////////
 /// Get a pixel from the image
 ////////////////////////////////////////////////////////////
-const Color& Image::GetPixel(unsigned int x, unsigned int y) const
+Color Image::GetPixel(unsigned int x, unsigned int y) const
 {
     // First check if the array of pixels needs to be updated
     EnsureArrayUpdate();
 
-    // Check if pixel is whithin the image bounds
-    if ((x >= myWidth) || (y >= myHeight))
-    {
-        Err() << "Cannot get pixel (" << x << "," << y << ") for image "
-              << "(width = " << myWidth << ", height = " << myHeight << ")" << std::endl;
-        return Color::Black;
-    }
+    // Get the color at (x, y)
+    const Uint8* pixel = &myPixels[(x + y * myWidth) * 4];
 
-    return myPixels[x + y * myWidth];
+    return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 
@@ -433,7 +443,7 @@ const Uint8* Image::GetPixelsPtr() const
 
     if (!myPixels.empty())
     {
-        return reinterpret_cast<const Uint8*>(&myPixels[0]);
+        return &myPixels[0];
     }
     else
     {
@@ -728,7 +738,7 @@ void Image::EnsureArrayUpdate() const
         GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
         // Resize the destination array of pixels
-        myPixels.resize(myWidth * myHeight);
+        myPixels.resize(myWidth * myHeight * 4);
 
         if ((myWidth == myTextureWidth) && (myHeight == myTextureHeight) && !myPixelsFlipped)
         {
@@ -743,27 +753,28 @@ void Image::EnsureArrayUpdate() const
             // Texture and array don't have the same size, we have to use a slower algorithm
 
             // All the pixels will first be copied to a temporary array
-            ColorArray allPixels(myTextureWidth * myTextureHeight);
+            ColorArray allPixels(myTextureWidth * myTextureHeight * 4);
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
             GLCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &allPixels[0]));
 
             // Then we copy the useful pixels from the temporary array to the final one
-            const Color* src = &allPixels[0];
-            Color* dst = &myPixels[0];
-            int srcPitch = myTextureWidth;
+            const Uint8* src = &allPixels[0];
+            Uint8* dst = &myPixels[0];
+            int srcPitch = myTextureWidth * 4;
+            int dstPitch = myWidth * 4;
 
             // Handle the case where source pixels are flipped vertically
             if (myPixelsFlipped)
             {
-                src += myTextureWidth * (myHeight - 1);
+                src += srcPitch * (myHeight - 1);
                 srcPitch = -srcPitch;
             }
 
             for (unsigned int i = 0; i < myHeight; ++i)
             {
-                std::copy(src, src + myWidth, dst);
+                memcpy(dst, src, dstPitch);
                 src += srcPitch;
-                dst += myWidth;
+                dst += dstPitch;
             }
         }
 

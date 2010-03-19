@@ -194,17 +194,6 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// \brief Structure storing a glyph together with its
-    ///        rectangle in the texture
-    ///
-    ////////////////////////////////////////////////////////////
-    struct GlyphInfo
-    {
-        Glyph   GlyphDesc;
-        IntRect TextureRect;
-    };
-
-    ////////////////////////////////////////////////////////////
     /// \brief Structure defining a row of glyphs
     ///
     ////////////////////////////////////////////////////////////
@@ -220,7 +209,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<Uint32, GlyphInfo> GlyphTable; ///< Table mapping a codepoint to its glyph
+    typedef std::map<Uint32, Glyph> GlyphTable; ///< Table mapping a codepoint to its glyph
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a page if glyphs
@@ -252,7 +241,7 @@ private :
     /// \return The glyph corresponding to \a codePoint and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    GlyphInfo LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
+    Glyph LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Find a suitable rectangle within the texture for a glyph

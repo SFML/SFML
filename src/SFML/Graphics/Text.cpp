@@ -219,7 +219,8 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
         return;
 
     // Bind the font texture
-    renderer.SetTexture(&myFont->GetImage(myCharacterSize));
+    const Image& texture = myFont->GetImage(myCharacterSize);
+    renderer.SetTexture(&texture);
 
     // Computes values related to the text style
     bool  bold                = (myStyle & Bold) != 0;
@@ -227,7 +228,7 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
     float italicCoeff         = (myStyle & Italic) ? 0.208f : 0.f; // 12 degrees
     float underlineOffset     = myCharacterSize * 0.1f;
     float underlineThickness  = myCharacterSize * (bold ? 0.1f : 0.07f);
-    FloatRect underlineCoords = myFont->GetImage(myCharacterSize).GetTexCoords(IntRect(1, 1, 1, 1));
+    FloatRect underlineCoords = texture.GetTexCoords(IntRect(1, 1, 1, 1));
 
     // Initialize the rendering coordinates
     float space       = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
@@ -273,17 +274,17 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
         }
 
         // Extract the current glyph's description
-        const Glyph&     curGlyph = myFont->GetGlyph(curChar, myCharacterSize, bold);
-        int              advance  = curGlyph.Advance;
-        const IntRect&   rect     = curGlyph.Rectangle;
-        const FloatRect& coord    = curGlyph.TexCoords;
+        const Glyph&     glyph   = myFont->GetGlyph(curChar, myCharacterSize, bold);
+        int              advance = glyph.Advance;
+        const IntRect&   bounds  = glyph.Bounds;
+        const FloatRect& coords  = texture.GetTexCoords(glyph.SubRect);
 
         // Draw a textured quad for the current character
         renderer.Begin(Renderer::QuadList);
-            renderer.AddVertex(x + rect.Left  - italicCoeff * rect.Top,    y + rect.Top,    coord.Left,  coord.Top);
-            renderer.AddVertex(x + rect.Right - italicCoeff * rect.Top,    y + rect.Top,    coord.Right, coord.Top);
-            renderer.AddVertex(x + rect.Right - italicCoeff * rect.Bottom, y + rect.Bottom, coord.Right, coord.Bottom);
-            renderer.AddVertex(x + rect.Left  - italicCoeff * rect.Bottom, y + rect.Bottom, coord.Left,  coord.Bottom);
+            renderer.AddVertex(x + bounds.Left  - italicCoeff * bounds.Top,    y + bounds.Top,    coords.Left,  coords.Top);
+            renderer.AddVertex(x + bounds.Right - italicCoeff * bounds.Top,    y + bounds.Top,    coords.Right, coords.Top);
+            renderer.AddVertex(x + bounds.Right - italicCoeff * bounds.Bottom, y + bounds.Bottom, coords.Right, coords.Bottom);
+            renderer.AddVertex(x + bounds.Left  - italicCoeff * bounds.Bottom, y + bounds.Bottom, coords.Left,  coords.Bottom);
         renderer.End();
 
         // Advance to the next character
@@ -374,7 +375,7 @@ void Text::UpdateRect() const
         curWidth += static_cast<float>(curGlyph.Advance);
 
         // Update the maximum height
-        float charHeight = charSize + curGlyph.Rectangle.Bottom;
+        float charHeight = charSize + curGlyph.Bounds.Bottom;
         if (charHeight > curHeight)
             curHeight = charHeight;
     }

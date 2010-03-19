@@ -50,9 +50,9 @@ public :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int       Advance;   ///< Offset to move horizontically to the next character
-    IntRect   Rectangle; ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
-    FloatRect TexCoords; ///< Texture coordinates of the glyph inside the font's image
+    int     Advance; ///< Offset to move horizontically to the next character
+    IntRect Bounds;  ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
+    IntRect SubRect; ///< Texture coordinates of the glyph inside the font's image
 };
 
 } // namespace sf

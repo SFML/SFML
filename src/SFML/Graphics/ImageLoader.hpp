@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/Color.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <string>
 #include <vector>
@@ -65,7 +64,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadImageFromFile(const std::string& filename, std::vector<Color>& pixels, unsigned int& width, unsigned int& height);
+    bool LoadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
     /// Load pixels from an image file in memory
@@ -79,7 +78,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadImageFromMemory(const void* data, std::size_t sizeInBytes, std::vector<Color>& pixels, unsigned int& width, unsigned int& height);
+    bool LoadImageFromMemory(const void* data, std::size_t sizeInBytes, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
     /// Save pixels to an image file
@@ -92,7 +91,7 @@ public :
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool SaveImageToFile(const std::string& filename, const std::vector<Color>& pixels, unsigned int width, unsigned int height);
+    bool SaveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
 
 private :
 
@@ -119,7 +118,7 @@ private :
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool WriteJpg(const std::string& filename, const std::vector<Color>& pixels, unsigned int width, unsigned int height);
+    bool WriteJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// Save a PNG image file
@@ -132,7 +131,7 @@ private :
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool WritePng(const std::string& filename, const std::vector<Color>& pixels, unsigned int width, unsigned int height);
+    bool WritePng(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
 };
 
 } // namespace priv

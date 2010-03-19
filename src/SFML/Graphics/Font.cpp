@@ -165,13 +165,13 @@ const Glyph& Font::GetGlyph(Uint32 codePoint, unsigned int characterSize, bool b
     if (it != glyphs.end())
     {
         // Found: just return it
-        return it->second.GlyphDesc;
+        return it->second;
     }
     else
     {
         // Not found: we have to load it
-        GlyphInfo glyph = LoadGlyph(codePoint, characterSize, bold);
-        return glyphs.insert(std::make_pair(key, glyph)).first->second.GlyphDesc;
+        Glyph glyph = LoadGlyph(codePoint, characterSize, bold);
+        return glyphs.insert(std::make_pair(key, glyph)).first->second;
     }
 }
 
@@ -303,28 +303,28 @@ void Font::Cleanup()
 
 
 ////////////////////////////////////////////////////////////
-Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const
+Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const
 {
     // The glyph to return
-    GlyphInfo glyphInfo;
+    Glyph glyph;
 
     // First, transform our ugly void* to a FT_Face
     FT_Face face = static_cast<FT_Face>(myFace);
     if (!face)
-        return glyphInfo;
+        return glyph;
 
     // Set the character size
     if (!SetCurrentSize(characterSize))
-        return glyphInfo;
+        return glyph;
 
     // Load the glyph corresponding to the code point
     if (FT_Load_Char(face, codePoint, FT_LOAD_TARGET_NORMAL) != 0)
-        return glyphInfo;
+        return glyph;
 
     // Retrieve the glyph
     FT_Glyph glyphDesc;
     if (FT_Get_Glyph(face->glyph, &glyphDesc) != 0)
-        return glyphInfo;
+        return glyph;
 
     // Apply bold if necessary -- first technique using outline (highest quality)
     FT_Pos weight = 1 << 6;
@@ -347,9 +347,9 @@ Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bo
     }
 
     // Compute the glyph's advance offset
-    glyphInfo.GlyphDesc.Advance = glyphDesc->advance.x >> 16;
+    glyph.Advance = glyphDesc->advance.x >> 16;
     if (bold)
-        glyphInfo.GlyphDesc.Advance += weight >> 6;
+        glyph.Advance += weight >> 6;
 
     int width  = bitmap.width;
     int height = bitmap.rows;
@@ -363,14 +363,13 @@ Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bo
         Page& page = myPages[characterSize];
 
         // Find a good position for the new glyph into the texture
-        glyphInfo.TextureRect = FindGlyphRect(page, width + 2 * padding, height + 2 * padding);
+        glyph.SubRect = FindGlyphRect(page, width + 2 * padding, height + 2 * padding);
 
-        // Compute the glyph's texture coordinates and bounding box
-        glyphInfo.GlyphDesc.TexCoords        = page.Texture.GetTexCoords(glyphInfo.TextureRect);
-        glyphInfo.GlyphDesc.Rectangle.Left   = bitmapGlyph->left - padding;
-        glyphInfo.GlyphDesc.Rectangle.Top    = -bitmapGlyph->top - padding;
-        glyphInfo.GlyphDesc.Rectangle.Right  = bitmapGlyph->left + width + padding;
-        glyphInfo.GlyphDesc.Rectangle.Bottom = -bitmapGlyph->top + height + padding;
+        // Compute the glyph's bounding box
+        glyph.Bounds.Left   = bitmapGlyph->left - padding;
+        glyph.Bounds.Top    = -bitmapGlyph->top - padding;
+        glyph.Bounds.Right  = bitmapGlyph->left + width + padding;
+        glyph.Bounds.Bottom = -bitmapGlyph->top + height + padding;
 
         // Extract the glyph's pixels from the bitmap
         myPixelBuffer.resize(width * height * 4, 255);
@@ -390,7 +389,7 @@ Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bo
         }
 
         // Write the pixels to the texture
-        IntRect subrect = glyphInfo.TextureRect;
+        IntRect subrect = glyph.SubRect;
         subrect.Left   += padding;
         subrect.Top    += padding;
         subrect.Right  -= padding;
@@ -402,7 +401,7 @@ Font::GlyphInfo Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bo
     FT_Done_Glyph(glyphDesc);
 
     // Done :)
-    return glyphInfo;
+    return glyph;
 }
 
 
@@ -450,12 +449,6 @@ IntRect Font::FindGlyphRect(Page& page, unsigned int width, unsigned int height)
                 memcpy(&pixels[0], page.Texture.GetPixelsPtr(), size);
                 page.Texture.Create(textureWidth * 2, textureHeight * 2, Color(255, 255, 255, 0));
                 page.Texture.UpdatePixels(&pixels[0], IntRect(0, 0, textureWidth, textureHeight));
-
-                // Adjust the texture coordinates of all the glyphs that are stored in this page
-                for (GlyphTable::iterator it = page.Glyphs.begin(); it != page.Glyphs.end(); ++it)
-                {
-                    it->second.GlyphDesc.TexCoords = page.Texture.GetTexCoords(it->second.TextureRect);
-                }
             }
             else
             {

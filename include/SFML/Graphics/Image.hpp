@@ -127,11 +127,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// Create transparency mask from a specified colorkey
     ///
-    /// \param transparentColor : Color to become transparent
-    /// \param alpha :            Alpha value to assign to transparent pixels
+    /// \param color : Color to become transparent
+    /// \param alpha : Alpha value to assign to transparent pixels
     ///
     ////////////////////////////////////////////////////////////
-    void CreateMaskFromColor(const Color& transparentColor, Uint8 alpha = 0);
+    void CreateMaskFromColor(const Color& color, Uint8 alpha = 0);
 
     ////////////////////////////////////////////////////////////
     /// Copy pixels from another image onto this one.
@@ -178,7 +178,7 @@ public :
     /// \return Color of pixel (x, y)
     ///
     ////////////////////////////////////////////////////////////
-    const Color& GetPixel(unsigned int x, unsigned int y) const;
+    Color GetPixel(unsigned int x, unsigned int y) const;
 
     ////////////////////////////////////////////////////////////
     /// Get a read-only pointer to the array of pixels (RGBA 8 bits integers components)
@@ -338,7 +338,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::vector<Color> ColorArray; ///< Array of colors
+    typedef std::vector<Uint8> ColorArray; ///< Array of colors
 
     ////////////////////////////////////////////////////////////
     // Member data

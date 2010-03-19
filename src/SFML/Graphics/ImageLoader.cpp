@@ -85,7 +85,7 @@ ImageLoader::~ImageLoader()
 ////////////////////////////////////////////////////////////
 /// Load pixels from an image file
 ////////////////////////////////////////////////////////////
-bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Color>& pixels, unsigned int& width, unsigned int& height)
+bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height)
 {
     // Clear the array (just in case)
     pixels.clear();
@@ -101,8 +101,8 @@ bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Col
         height = imgHeight;
 
         // Copy the loaded pixels to the pixel buffer
-        pixels.resize(width * height);
-        memcpy(&pixels[0], ptr, width * height * 4);
+        pixels.resize(width * height * 4);
+        memcpy(&pixels[0], ptr, pixels.size());
 
         // Free the loaded pixels (they are now in our own pixel buffer)
         SOIL_free_image_data(ptr);
@@ -122,13 +122,13 @@ bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Col
 ////////////////////////////////////////////////////////////
 /// Load pixels from an image file in memory
 ////////////////////////////////////////////////////////////
-bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t sizeInBytes, std::vector<Color>& pixels, unsigned int& width, unsigned int& height)
+bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t sizeInBytes, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height)
 {
     // Clear the array (just in case)
     pixels.clear();
 
     // Load the image and get a pointer to the pixels in memory
-    const unsigned char* buffer = reinterpret_cast<const unsigned char*>(data);
+    const unsigned char* buffer = static_cast<const unsigned char*>(data);
     int size = static_cast<int>(sizeInBytes);
     int imgWidth, imgHeight, imgChannels;
     unsigned char* ptr = SOIL_load_image_from_memory(buffer, size, &imgWidth, &imgHeight, &imgChannels, SOIL_LOAD_RGBA);
@@ -140,8 +140,8 @@ bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t sizeInBytes,
         height = imgHeight;
 
         // Copy the loaded pixels to the pixel buffer
-        pixels.resize(width * height);
-        memcpy(&pixels[0], ptr, width * height * 4);
+        pixels.resize(width * height * 4);
+        memcpy(&pixels[0], ptr, pixels.size());
 
         // Free the loaded pixels (they are now in our own pixel buffer)
         SOIL_free_image_data(ptr);
@@ -161,7 +161,7 @@ bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t sizeInBytes,
 ////////////////////////////////////////////////////////////
 /// Save pixels to an image file
 ////////////////////////////////////////////////////////////
-bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector<Color>& pixels, unsigned int width, unsigned int height)
+bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
 {
     // Deduce the image type from its extension
     int type = -1;
@@ -185,8 +185,7 @@ bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector
     }
 
     // Finally save the image
-    const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&pixels[0]);
-    if (!SOIL_save_image(filename.c_str(), type, static_cast<int>(width), static_cast<int>(height), 4, ptr))
+    if (!SOIL_save_image(filename.c_str(), type, static_cast<int>(width), static_cast<int>(height), 4, &pixels[0]))
     {
         // Error, failed to save the image
         Err() << "Failed to save image \"" << filename << "\". Reason: " << SOIL_last_result() << std::endl;
@@ -200,7 +199,7 @@ bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector
 ////////////////////////////////////////////////////////////
 /// Save a JPG image file
 ////////////////////////////////////////////////////////////
-bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Color>& pixels, unsigned int width, unsigned int height)
+bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
 {
     // Open the file to write in
     FILE* file = fopen(filename.c_str(), "wb");
@@ -227,11 +226,11 @@ bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Color>
 
     // Get rid of the aplha channel
     std::vector<Uint8> buffer(width * height * 3);
-    for (std::size_t i = 0; i < pixels.size(); ++i)
+    for (std::size_t i = 0; i < width * height; ++i)
     {
-        buffer[i * 3 + 0] = pixels[i].r;
-        buffer[i * 3 + 1] = pixels[i].g;
-        buffer[i * 3 + 2] = pixels[i].b;
+        buffer[i * 3 + 0] = pixels[i * 3 + 0];
+        buffer[i * 3 + 1] = pixels[i * 3 + 1];
+        buffer[i * 3 + 2] = pixels[i * 3 + 2];
     }
     Uint8* ptr = &buffer[0];
 
@@ -259,7 +258,7 @@ bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Color>
 ////////////////////////////////////////////////////////////
 /// Save a PNG image file
 ////////////////////////////////////////////////////////////
-bool ImageLoader::WritePng(const std::string& filename, const std::vector<Color>& pixels, unsigned int width, unsigned int height)
+bool ImageLoader::WritePng(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
 {
     // Open the file to write in
     FILE* file = fopen(filename.c_str(), "wb");
