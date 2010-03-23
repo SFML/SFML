@@ -49,12 +49,13 @@ myCurrentSize(0)
 
 ////////////////////////////////////////////////////////////
 Font::Font(const Font& copy) :
-myLibrary    (copy.myLibrary),
-myFace       (copy.myFace),
-myRefCount   (copy.myRefCount),
-myPages      (copy.myPages),
-myPixelBuffer(copy.myPixelBuffer),
-myCurrentSize(copy.myCurrentSize)
+Resource<Font>(),
+myLibrary     (copy.myLibrary),
+myFace        (copy.myFace),
+myRefCount    (copy.myRefCount),
+myPages       (copy.myPages),
+myPixelBuffer (copy.myPixelBuffer),
+myCurrentSize (copy.myCurrentSize)
 {
     // Note: as FreeType doesn't provide functions for copying/cloning,
     // we must share all the FreeType pointers

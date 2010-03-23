@@ -59,7 +59,8 @@ myPixelsFlipped (false)
 ////////////////////////////////////////////////////////////
 /// Copy constructor
 ////////////////////////////////////////////////////////////
-Image::Image(const Image& copy)
+Image::Image(const Image& copy) :
+Resource<Image>()
 {
     // First make sure that the source image is up-to-date
     copy.EnsureArrayUpdate();
