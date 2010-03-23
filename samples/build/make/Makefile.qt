@@ -1,0 +1,21 @@
+EXE     = qt
+SRC     = $(wildcard $(SRCROOT)/$(EXE)/*.cpp)
+OBJ     = $(SRC:.cpp=.o)
+LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lQtCore -lQtGui -lX11
+CFLAGS += -I/usr/include/qt4 -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui
+
+all: $(EXE)
+
+$(EXE): $(OBJ)
+	$(CPP) -o $(BINPATH)/$(EXE) $(OBJ) $(LDFLAGS)
+
+$(OBJ): %.o: %.cpp
+	$(CPP) -o $@ -c $< $(CFLAGS)
+
+.PHONY: clean mrproper
+
+clean:
+	@rm -rf $(OBJ)
+
+mrproper: clean
+	@rm -rf $(BINPATH)/$(EXE)

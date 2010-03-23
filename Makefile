@@ -1,19 +1,8 @@
 
 all: sfml
 
-sfml:
-	@(cd ./src/SFML && $(MAKE))
+sfml samples install clean mrproper:
+	cd ./build/make && $(MAKE) $@
 
-sfml-samples:
-	@(cd ./samples && $(MAKE))
+.PHONY: samples
 
-install:
-	@(cd ./src/SFML && $(MAKE) $@)
-
-clean:
-	@(cd ./src/SFML && $(MAKE) $@)
-	@(cd ./samples  && $(MAKE) $@)
-
-mrproper:
-	@(cd ./src/SFML && $(MAKE) $@)
-	@(cd ./samples  && $(MAKE) $@) 
