@@ -22,22 +22,22 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOCKETUDPSTRUCT_H
-#define SFML_SOCKETUDPSTRUCT_H
+#ifndef SFML_SOCKETSELECTORSTRUCT_H
+#define SFML_SOCKETSELECTORSTRUCT_H
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Network/SocketUDP.hpp>
+#include <SFML/Network/SocketSelector.hpp>
 
 
 ////////////////////////////////////////////////////////////
-// Internal structure of sfSocketUDP
+// Internal structure of sfSocketSelector
 ////////////////////////////////////////////////////////////
-struct sfSocketUDP
+struct sfSocketSelector
 {
-    sf::SocketUDP This;
+    sf::SocketSelector This;
 };
 
 
-#endif // SFML_SOCKETUDPSTRUCT_H
+#endif // SFML_SOCKETSELECTORSTRUCT_H

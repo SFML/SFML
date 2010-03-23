@@ -26,7 +26,7 @@ EXPORTS
 	sfFtp_GetDirectoryListing
 	sfFtp_ChangeDirectory
 	sfFtp_ParentDirectory
-	sfFtp_MakeDirectory
+	sfFtp_CreateDirectory
 	sfFtp_DeleteDirectory
 	sfFtp_RenameFile
 	sfFtp_DeleteFile
@@ -36,7 +36,7 @@ EXPORTS
 	sfHttpRequest_Destroy
 	sfHttpRequest_SetField
 	sfHttpRequest_SetMethod
-	sfHttpRequest_SetURI
+	sfHttpRequest_SetUri
 	sfHttpRequest_SetHttpVersion
 	sfHttpRequest_SetBody
 	sfHttpResponse_Destroy
@@ -58,31 +58,36 @@ EXPORTS
 	sfIpAddress_GetPublicAddress
 	sfIpAddress_LocalHost
 	sfIpAddress_None
-	sfSocketTCP_Create
-	sfSocketTCP_Copy
-	sfSocketTCP_Destroy
-	sfSocketTCP_SetBlocking
-	sfSocketTCP_Connect
-	sfSocketTCP_Listen
-	sfSocketTCP_Accept
-	sfSocketTCP_Send
-	sfSocketTCP_Receive
-	sfSocketTCP_SendPacket
-	sfSocketTCP_ReceivePacket
-	sfSocketTCP_Close
-	sfSocketTCP_IsValid
-	sfSocketUDP_Create
-	sfSocketUDP_Copy
-	sfSocketUDP_Destroy
-	sfSocketUDP_SetBlocking
-	sfSocketUDP_Bind
-	sfSocketUDP_Unbind
-	sfSocketUDP_Send
-	sfSocketUDP_Receive
-	sfSocketUDP_SendPacket
-	sfSocketUDP_ReceivePacket
-	sfSocketUDP_Close
-	sfSocketUDP_IsValid
+	sfTcpListener_Create
+	sfTcpListener_Destroy
+	sfTcpListener_SetBlocking
+	sfTcpListener_IsBlocking
+	sfTcpListener_Listen
+	sfTcpListener_Accept
+	sfTcpSocket_Create
+	sfTcpSocket_Destroy
+	sfTcpSocket_SetBlocking
+	sfTcpSocket_IsBlocking
+	sfTcpSocket_GetLocalPort
+	sfTcpSocket_GetRemoteAddress
+	sfTcpSocket_GetRemotePort
+	sfTcpSocket_Connect
+	sfTcpSocket_Disconnect
+	sfTcpSocket_Send
+	sfTcpSocket_Receive
+	sfTcpSocket_SendPacket
+	sfTcpSocket_ReceivePacket
+	sfUdpSocket_Create
+	sfUdpSocket_Destroy
+	sfUdpSocket_SetBlocking
+	sfUdpSocket_IsBlocking
+	sfUdpSocket_GetLocalPort
+	sfUdpSocket_Bind
+	sfUdpSocket_Unbind
+	sfUdpSocket_Send
+	sfUdpSocket_Receive
+	sfUdpSocket_SendPacket
+	sfUdpSocket_ReceivePacket
 	sfPacket_Create
 	sfPacket_Copy
 	sfPacket_Destroy
@@ -114,19 +119,17 @@ EXPORTS
 	sfPacket_WriteDouble
 	sfPacket_WriteString
 	sfPacket_WriteWideString
-	sfSelectorTCP_Create
-	sfSelectorTCP_Copy
-	sfSelectorTCP_Destroy
-	sfSelectorTCP_Add
-	sfSelectorTCP_Remove
-	sfSelectorTCP_Clear
-	sfSelectorTCP_Wait
-	sfSelectorTCP_GetSocketReady
-	sfSelectorUDP_Create
-	sfSelectorUDP_Copy
-	sfSelectorUDP_Destroy
-	sfSelectorUDP_Add
-	sfSelectorUDP_Remove
-	sfSelectorUDP_Clear
-	sfSelectorUDP_Wait
-	sfSelectorUDP_GetSocketReady
+	sfSocketSelector_Create
+	sfSocketSelector_Copy
+	sfSocketSelector_Destroy
+	sfSocketSelector_AddTcpListener
+	sfSocketSelector_AddTcpSocket
+	sfSocketSelector_AddUdpSocket
+	sfSocketSelector_RemoveTcpListener
+	sfSocketSelector_RemoveTcpSocket
+	sfSocketSelector_RemoveUdpSocket
+	sfSocketSelector_Clear
+	sfSocketSelector_Wait
+	sfSocketSelector_IsTcpListenerReady
+	sfSocketSelector_IsTcpSocketReady
+	sfSocketSelector_IsUdpSocketReady

@@ -32,16 +32,16 @@
 #include <sstream>
 
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
 namespace
 {
-    ////////////////////////////////////////////////////////////
-    // Convenience function to convert a string to lower case
-    ////////////////////////////////////////////////////////////
+    // Convert a string to lower case
     std::string ToLower(std::string str)
     {
         for (std::string::iterator i = str.begin(); i != str.end(); ++i)
             *i = static_cast<char>(tolower(*i));
-
         return str;
     }
 }
@@ -50,19 +50,15 @@ namespace
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
-Http::Request::Request(Method method, const std::string& URI, const std::string& body)
+Http::Request::Request(const std::string& uri, Method method, const std::string& body)
 {
     SetMethod(method);
-    SetURI(URI);
+    SetUri(uri);
     SetHttpVersion(1, 0);
     SetBody(body);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Set the value of a field; the field is added if it doesn't exist
 ////////////////////////////////////////////////////////////
 void Http::Request::SetField(const std::string& field, const std::string& value)
 {
@@ -71,9 +67,6 @@ void Http::Request::SetField(const std::string& field, const std::string& value)
 
 
 ////////////////////////////////////////////////////////////
-/// Set the request method.
-/// This parameter is Get by default
-////////////////////////////////////////////////////////////
 void Http::Request::SetMethod(Http::Request::Method method)
 {
     myMethod = method;
@@ -81,12 +74,9 @@ void Http::Request::SetMethod(Http::Request::Method method)
 
 
 ////////////////////////////////////////////////////////////
-/// Set the target URI of the request.
-/// This parameter is "/" by default
-////////////////////////////////////////////////////////////
-void Http::Request::SetURI(const std::string& URI)
+void Http::Request::SetUri(const std::string& uri)
 {
-    myURI = URI;
+    myURI = uri;
 
     // Make sure it starts with a '/'
     if (myURI.empty() || (myURI[0] != '/'))
@@ -94,9 +84,6 @@ void Http::Request::SetURI(const std::string& URI)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Set the HTTP version of the request.
-/// This parameter is 1.0 by default
 ////////////////////////////////////////////////////////////
 void Http::Request::SetHttpVersion(unsigned int major, unsigned int minor)
 {
@@ -106,10 +93,6 @@ void Http::Request::SetHttpVersion(unsigned int major, unsigned int minor)
 
 
 ////////////////////////////////////////////////////////////
-/// Set the body of the request. This parameter is optional and
-/// makes sense only for POST requests.
-/// This parameter is empty by default
-////////////////////////////////////////////////////////////
 void Http::Request::SetBody(const std::string& body)
 {
     myBody = body;
@@ -117,9 +100,7 @@ void Http::Request::SetBody(const std::string& body)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the string representation of a request header
-////////////////////////////////////////////////////////////
-std::string Http::Request::ToString() const
+std::string Http::Request::Prepare() const
 {
     std::ostringstream out;
 
@@ -154,16 +135,12 @@ std::string Http::Request::ToString() const
 
 
 ////////////////////////////////////////////////////////////
-/// Check if the given field has been defined
-////////////////////////////////////////////////////////////
 bool Http::Request::HasField(const std::string& field) const
 {
     return myFields.find(field) != myFields.end();
 }
 
 
-////////////////////////////////////////////////////////////
-/// Default constructor
 ////////////////////////////////////////////////////////////
 Http::Response::Response() :
 myStatus      (ConnectionFailed),
@@ -174,8 +151,6 @@ myMinorVersion(0)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the value of a field
 ////////////////////////////////////////////////////////////
 const std::string& Http::Response::GetField(const std::string& field) const
 {
@@ -193,16 +168,12 @@ const std::string& Http::Response::GetField(const std::string& field) const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the header's status code
-////////////////////////////////////////////////////////////
 Http::Response::Status Http::Response::GetStatus() const
 {
     return myStatus;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the major HTTP version number of the response
 ////////////////////////////////////////////////////////////
 unsigned int Http::Response::GetMajorHttpVersion() const
 {
@@ -211,20 +182,12 @@ unsigned int Http::Response::GetMajorHttpVersion() const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the major HTTP version number of the response
-////////////////////////////////////////////////////////////
 unsigned int Http::Response::GetMinorHttpVersion() const
 {
     return myMinorVersion;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the body of the response. The body can contain :
-/// - the requested page (for GET requests)
-/// - a response from the server (for POST requests)
-/// - nothing (for HEAD requests)
-/// - an error message (in case of an error)
 ////////////////////////////////////////////////////////////
 const std::string& Http::Response::GetBody() const
 {
@@ -233,9 +196,7 @@ const std::string& Http::Response::GetBody() const
 
 
 ////////////////////////////////////////////////////////////
-/// Construct the header from a response string
-////////////////////////////////////////////////////////////
-void Http::Response::FromString(const std::string& data)
+void Http::Response::Parse(const std::string& data)
 {
     std::istringstream in(data);
 
@@ -301,8 +262,6 @@ void Http::Response::FromString(const std::string& data)
 
 
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 Http::Http() :
 myHost(),
 myPort(0)
@@ -312,16 +271,12 @@ myPort(0)
 
 
 ////////////////////////////////////////////////////////////
-/// Construct the Http instance with the target host
-////////////////////////////////////////////////////////////
 Http::Http(const std::string& host, unsigned short port)
 {
     SetHost(host, port);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Set the target host
 ////////////////////////////////////////////////////////////
 void Http::SetHost(const std::string& host, unsigned short port)
 {
@@ -355,16 +310,9 @@ void Http::SetHost(const std::string& host, unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-/// Send a HTTP request and return the server's response.
-/// You must be connected to a host before sending requests.
-/// Any missing mandatory header field will be added with an appropriate value.
-/// Warning : this function waits for the server's response and may
-/// not return instantly; use a thread if you don't want to block your
-/// application.
-////////////////////////////////////////////////////////////
 Http::Response Http::SendRequest(const Http::Request& request, float timeout)
 {
-    // First make sure the request is valid -- add missing mandatory fields
+    // First make sure that the request is valid -- add missing mandatory fields
     Request toSend(request);
     if (!toSend.HasField("From"))
     {
@@ -397,10 +345,10 @@ Http::Response Http::SendRequest(const Http::Request& request, float timeout)
     Response received;
 
     // Connect the socket to the host
-    if (myConnection.Connect(myPort, myHost, timeout) == Socket::Done)
+    if (myConnection.Connect(myHost, myPort, timeout) == Socket::Done)
     {
         // Convert the request to string and send it through the connected socket
-        std::string requestStr = toSend.ToString();
+        std::string requestStr = toSend.Prepare();
 
         if (!requestStr.empty())
         {
@@ -417,12 +365,12 @@ Http::Response Http::SendRequest(const Http::Request& request, float timeout)
                 }
 
                 // Build the Response object from the received data
-                received.FromString(receivedStr);
+                received.Parse(receivedStr);
             }
         }
 
         // Close the connection
-        myConnection.Close();
+        myConnection.Disconnect();
     }
 
     return received;

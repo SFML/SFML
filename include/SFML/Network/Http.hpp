@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Network/IpAddress.hpp>
-#include <SFML/Network/SocketTCP.hpp>
+#include <SFML/Network/TcpSocket.hpp>
 #include <map>
 #include <string>
 
@@ -38,25 +38,24 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// This class provides methods for manipulating the HTTP
-/// protocol (described in RFC 1945).
-/// It can connect to a website, get its files, send requests, etc.
+/// \brief A HTTP client
+///
 ////////////////////////////////////////////////////////////
 class SFML_API Http : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// This class wraps an HTTP request, which is basically :
-    /// - a header with a method, a target URI, and a set of field/value pairs
-    /// - an optional body (for POST requests)
+    /// \brief Define a HTTP request
+    ///
     ////////////////////////////////////////////////////////////
     class SFML_API Request
     {
     public :
 
         ////////////////////////////////////////////////////////////
-        /// Enumerate the available HTTP methods for a request
+        /// \brief Enumerate the available HTTP methods for a request
+        ///
         ////////////////////////////////////////////////////////////
         enum Method
         {
@@ -66,58 +65,76 @@ public :
         };
 
         ////////////////////////////////////////////////////////////
-        /// Default constructor
+        /// \brief Default constructor
         ///
-        /// \param method : Method to use for the request
-        /// \param URI :    Target URI
-        /// \param body :   Content of the request's body
+        /// This constructor creates a GET request, with the root
+        /// URI ("/") and an empty body.
+        ///
+        /// \param uri    Target URI
+        /// \param method Method to use for the request
+        /// \param body   Content of the request's body
         ///
         ////////////////////////////////////////////////////////////
-        Request(Method method = Get, const std::string& URI = "/", const std::string& body = "");
+        Request(const std::string& uri = "/", Method method = Get, const std::string& body = "");
 
         ////////////////////////////////////////////////////////////
-        /// Set the value of a field; the field is added if it doesn't exist
+        /// \brief Set the value of a field
         ///
-        /// \param field : Name of the field to set (case-insensitive)
-        /// \param value : Value of the field
+        /// The field is created if it doesn't exist. The name of
+        /// the field is case insensitive.
+        /// By default, a request doesn't contain any field (but the
+        /// mandatory fields are added later by the HTTP client when
+        /// sending the request).
+        ///
+        /// \param field Name of the field to set
+        /// \param value Value of the field
         ///
         ////////////////////////////////////////////////////////////
         void SetField(const std::string& field, const std::string& value);
 
         ////////////////////////////////////////////////////////////
-        /// Set the request method.
-        /// This parameter is Http::Request::Get by default
+        /// \brief Set the request method
         ///
-        /// \param method : Method to use for the request
+        /// See the Method enumeration for a complete list of all
+        /// the availale methods.
+        /// The method is Http::Request::Get by default.
+        ///
+        /// \param method Method to use for the request
         ///
         ////////////////////////////////////////////////////////////
         void SetMethod(Method method);
 
         ////////////////////////////////////////////////////////////
-        /// Set the target URI of the request.
-        /// This parameter is "/" by default
+        /// \brief Set the requested URI
         ///
-        /// \param URI : URI to request, local to the host
+        /// The URI is the resource (usually a web page or a file)
+        /// that you want to get or post.
+        /// The URI is "/" (the root page) by default.
+        ///
+        /// \param uri URI to request, relative to the host
         ///
         ////////////////////////////////////////////////////////////
-        void SetURI(const std::string& URI);
+        void SetUri(const std::string& uri);
 
         ////////////////////////////////////////////////////////////
-        /// Set the HTTP version of the request.
-        /// This parameter is 1.0 by default
+        /// \brief Set the HTTP version fo the request
         ///
-        /// \param major : Major version number
-        /// \param minor : Minor version number
+        /// The HTTP version is 1.0 by default.
+        ///
+        /// \param major Major HTTP version number
+        /// \param minor Minor HTTP version number
         ///
         ////////////////////////////////////////////////////////////
         void SetHttpVersion(unsigned int major, unsigned int minor);
 
         ////////////////////////////////////////////////////////////
-        /// Set the body of the request. This parameter is optional and
-        /// makes sense only for POST requests.
-        /// This parameter is empty by default
+        /// \brief Set the body of the request
         ///
-        /// \param body : Content of the request body
+        /// The body of a request is optional and only makes sense
+        /// for POST requests. It is ignored for all other methods.
+        /// The body is empty by default.
+        ///
+        /// \param body Content of the body
         ///
         ////////////////////////////////////////////////////////////
         void SetBody(const std::string& body);
@@ -127,19 +144,24 @@ public :
         friend class Http;
 
         ////////////////////////////////////////////////////////////
-        /// Get the string representation of the request header
+        /// \brief Prepare the final request to send to the server
         ///
-        /// \return String containing the request
+        /// This is used internally by Http before sending the
+        /// request to the web server.
+        ///
+        /// \return String containing the request, ready to be sent
         ///
         ////////////////////////////////////////////////////////////
-        std::string ToString() const;
+        std::string Prepare() const;
 
         ////////////////////////////////////////////////////////////
-        /// Check if the given field has been defined
+        /// \brief Check if the request defines a field
         ///
-        /// \param field : Name of the field to check (case-insensitive)
+        /// This function uses case-insensitive comparisons.
         ///
-        /// \return True if the field exists
+        /// \param field Name of the field to test
+        ///
+        /// \return True if the field exists, false otherwise
         ///
         ////////////////////////////////////////////////////////////
         bool HasField(const std::string& field) const;
@@ -152,7 +174,7 @@ public :
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        FieldTable   myFields;       ///< Fields of the header
+        FieldTable   myFields;       ///< Fields of the header associated to their value
         Method       myMethod;       ///< Method to use for the request
         std::string  myURI;          ///< Target URI of the request
         unsigned int myMajorVersion; ///< Major HTTP version
@@ -161,17 +183,16 @@ public :
     };
 
     ////////////////////////////////////////////////////////////
-    /// This class wraps an HTTP response, which is basically :
-    /// - a header with a status code and a set of field/value pairs
-    /// - a body (the content of the requested resource)
+    /// \brief Define a HTTP response
+    ///
     ////////////////////////////////////////////////////////////
     class SFML_API Response
     {
     public :
 
         ////////////////////////////////////////////////////////////
-        /// Enumerate all the valid status codes returned in
-        /// a HTTP response
+        /// \brief Enumerate all the valid status codes for a response
+        ///
         ////////////////////////////////////////////////////////////
         enum Status
         {
@@ -210,15 +231,21 @@ public :
         };
 
         ////////////////////////////////////////////////////////////
-        /// Default constructor
+        /// \brief Default constructor
+        ///
+        /// Constructs an empty response.
         ///
         ////////////////////////////////////////////////////////////
         Response();
 
         ////////////////////////////////////////////////////////////
-        /// Get the value of a field
+        /// \brief Get the value of a field
         ///
-        /// \param field : Name of the field to get (case-insensitive)
+        /// If the field \a field is not found in the response header,
+        /// the empty string is returned. This function uses
+        /// case-insensitive comparisons.
+        ///
+        /// \param field Name of the field to get
         ///
         /// \return Value of the field, or empty string if not found
         ///
@@ -226,35 +253,46 @@ public :
         const std::string& GetField(const std::string& field) const;
 
         ////////////////////////////////////////////////////////////
-        /// Get the header's status code
+        /// \brief Get the response status code
         ///
-        /// \return Header's status code
+        /// The status code should be the first thing to be checked
+        /// after receiving a response, it defines whether it is a
+        /// success, a failure or anything else (see the Status
+        /// enumeration).
+        ///
+        /// \return Status code of the response
         ///
         ////////////////////////////////////////////////////////////
         Status GetStatus() const;
 
         ////////////////////////////////////////////////////////////
-        /// Get the major HTTP version number of the response
+        /// \brief Get the major HTTP version number of the response
         ///
-        /// \return Major version number
+        /// \return Major HTTP version number
+        ///
+        /// \see GetMinorHttpVersion
         ///
         ////////////////////////////////////////////////////////////
         unsigned int GetMajorHttpVersion() const;
 
         ////////////////////////////////////////////////////////////
-        /// Get the major HTTP version number of the response
+        /// \brief Get the minor HTTP version number of the response
         ///
-        /// \return Major version number
+        /// \return Minor HTTP version number
+        ///
+        /// \see GetMajorHttpVersion
         ///
         ////////////////////////////////////////////////////////////
         unsigned int GetMinorHttpVersion() const;
 
         ////////////////////////////////////////////////////////////
-        /// Get the body of the response. The body can contain :
-        /// - the requested page (for GET requests)
-        /// - a response from the server (for POST requests)
-        /// - nothing (for HEAD requests)
-        /// - an error message (in case of an error)
+        /// \brief Get the body of the response
+        ///
+        /// The body of a response may contain:
+        /// \li the requested page (for GET requests)
+        /// \li a response from the server (for POST requests)
+        /// \li nothing (for HEAD requests)
+        /// \li an error message (in case of an error)
         ///
         /// \return The response body
         ///
@@ -266,12 +304,15 @@ public :
         friend class Http;
 
         ////////////////////////////////////////////////////////////
-        /// Construct the header from a response string
+        /// \brief Construct the header from a response string
         ///
-        /// \param data : Content of the response's header to parse
+        /// This function is used by Http to build the response
+        /// of a request.
+        ///
+        /// \param data Content of the response to parse
         ///
         ////////////////////////////////////////////////////////////
-        void FromString(const std::string& data);
+        void Parse(const std::string& data);
 
         ////////////////////////////////////////////////////////////
         // Types
@@ -289,39 +330,58 @@ public :
     };
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
     Http();
 
     ////////////////////////////////////////////////////////////
-    /// Construct the Http instance with the target host
+    /// \brief Construct the HTTP client with the target host
     ///
-    /// \param host : Web server to connect to
-    /// \param port : Port to use for connection (0 by default -- use the standard port of the protocol used)
+    /// This is equivalent to calling SetHost(host, port).
+    /// The port has a default value of 0, which means that the
+    /// HTTP client will use the right port according to the
+    /// protocol used (80 for HTTP, 443 for HTTPS). You should
+    /// leave it like this unless you really need a port other
+    /// than the standard one, or use an unknown protocol.
+    ///
+    /// \param host Web server to connect to
+    /// \param port Port to use for connection
     ///
     ////////////////////////////////////////////////////////////
     Http(const std::string& host, unsigned short port = 0);
 
     ////////////////////////////////////////////////////////////
-    /// Set the target host
+    /// \brief Set the target host
     ///
-    /// \param host : Web server to connect to
-    /// \param port : Port to use for connection (0 by default -- use the standard port of the protocol used)
+    /// This function just stores the host address and port, it
+    /// doesn't actually connect to it until you send a request.
+    /// The port has a default value of 0, which means that the
+    /// HTTP client will use the right port according to the
+    /// protocol used (80 for HTTP, 443 for HTTPS). You should
+    /// leave it like this unless you really need a port other
+    /// than the standard one, or use an unknown protocol.
+    ///
+    /// \param host Web server to connect to
+    /// \param port Port to use for connection
     ///
     ////////////////////////////////////////////////////////////
     void SetHost(const std::string& host, unsigned short port = 0);
 
     ////////////////////////////////////////////////////////////
-    /// Send a HTTP request and return the server's response.
-    /// You must be connected to a host before sending requests.
-    /// Any missing mandatory header field will be added with an appropriate value.
-    /// Warning : this function waits for the server's response and may
-    /// not return instantly; use a thread if you don't want to block your
-    /// application.
+    /// \brief Send a HTTP request and return the server's response.
     ///
-    /// \param request : Request to send
-    /// \param timeout : Maximum time to wait, in seconds (0 by default, means no timeout)
+    /// You must have a valid host before sending a request (see SetHost).
+    /// Any missing mandatory header field in the request will be added
+    /// with an appropriate value.
+    /// Warning: this function waits for the server's response and may
+    /// not return instantly; use a thread if you don't want to block your
+    /// application, or use a timeout to limit the time to wait. A value
+    /// of 0 means that the client will use the system defaut timeout
+    /// (which is usually pretty long).
+    ///
+    /// \param request Request to send
+    /// \param timeout Maximum time to wait, in seconds
     ///
     /// \return Server's response
     ///
@@ -333,7 +393,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SocketTCP      myConnection; ///< Connection to the host
+    TcpSocket      myConnection; ///< Connection to the host
     IpAddress      myHost;       ///< Web host address
     std::string    myHostName;   ///< Web host name
     unsigned short myPort;       ///< Port used for connection with host
@@ -343,3 +403,62 @@ private :
 
 
 #endif // SFML_HTTP_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Http
+///
+/// sf::Http is a very simple HTTP client that allows you
+/// to communicate with a web server. You can retrieve
+/// web pages, send data to an interactive resource,
+/// download a remote file, etc.
+///
+/// The HTTP client is split into 3 classes:
+/// \li sf::Http::Request
+/// \li sf::Http::Response
+/// \li sf::Http
+///
+/// sf::Http::Request builds the request that will be
+/// sent to the server. A request is made of:
+/// \li a method (what you want to do)
+/// \li a target URI (usually the name of the web page or file)
+/// \li one or more header fields (options that you can pass to the server)
+/// \li an optional body (for POST requests)
+///
+/// sf::Http::Response parse the response from the web server
+/// and provides getters to read them. The response contains:
+/// \li a status code
+/// \li header fields (that may be answers to the ones that you requested)
+/// \li a body, which contains the contents of the requested resource
+///
+/// sf::Http provides a simple function, SendRequest, to send a
+/// sf::Http::Request and return the corresponding sf::Http::Response
+/// from the server.
+///
+/// Usage example:
+/// \code
+/// // Create a new HTTP client
+/// sf::Http http;
+///
+/// // We'll work on http://www.sfml-dev.org
+/// http.SetHost("http://www.sfml-dev.org");
+///
+/// // Prepare a request to get the 'features.php' page
+/// sf::Http::Request request("features.php");
+///
+/// // Send the request
+/// sf::Http::Response response = http.SendRequest(request);
+///
+/// // Check the status code and display the result
+/// sf::Http::Response::Status status = response.GetStatus();
+/// if (status == sf::Http::Response::Ok)
+/// {
+///     std::cout << response.GetBody() << std::endl;
+/// }
+/// else
+/// {
+///     std::cout << "Error " << status << std::endl;
+/// }
+/// \endcode
+///
+////////////////////////////////////////////////////////////

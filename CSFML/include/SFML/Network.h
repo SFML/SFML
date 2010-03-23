@@ -32,9 +32,10 @@
 #include <SFML/System.h>
 #include <SFML/Network/IpAddress.h>
 #include <SFML/Network/Packet.h>
-#include <SFML/Network/Selector.h>
-#include <SFML/Network/SocketTCP.h>
-#include <SFML/Network/SocketUDP.h>
+#include <SFML/Network/SocketSelector.h>
+#include <SFML/Network/TcpListener.h>
+#include <SFML/Network/TcpSocket.h>
+#include <SFML/Network/UdpSocket.h>
 
 
 #endif // SFML_NETWORK_H

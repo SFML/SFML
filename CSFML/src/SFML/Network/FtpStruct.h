@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Ftp.hpp>
+#include <vector>
 
 
 ////////////////////////////////////////////////////////////
@@ -78,7 +79,14 @@ struct sfFtpListingResponse
     {
     }
 
+    ~sfFtpListingResponse()
+    {
+        for (std::vector<const char*>::iterator it = Filenames.begin(); it != Filenames.end(); ++it)
+            delete[] *it;
+    }
+
     sf::Ftp::ListingResponse This;
+    std::vector<const char*> Filenames;
 };
 
 

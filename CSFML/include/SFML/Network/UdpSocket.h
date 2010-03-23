@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOCKETUDP_H
-#define SFML_SOCKETUDP_H
+#ifndef SFML_UDPSOCKET_H
+#define SFML_UDPSOCKET_H
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -40,17 +40,7 @@
 /// \return Pointer to the new socket
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketUDP* sfSocketUDP_Create();
-
-////////////////////////////////////////////////////////////
-/// Copy an existing UDP socket
-///
-/// \param socket : Socket to copy
-///
-/// \return Copied object
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfSocketUDP* sfSocketUDP_Copy(sfSocketUDP* socket);
+CSFML_API sfUdpSocket* sfUdpSocket_Create();
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing UDP socket
@@ -58,7 +48,7 @@ CSFML_API sfSocketUDP* sfSocketUDP_Copy(sfSocketUDP* socket);
 /// \param socket : Socket to destroy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSocketUDP_Destroy(sfSocketUDP* socket);
+CSFML_API void sfUdpSocket_Destroy(sfUdpSocket* socket);
 
 ////////////////////////////////////////////////////////////
 /// Change the blocking state of a UDP socket.
@@ -68,7 +58,27 @@ CSFML_API void sfSocketUDP_Destroy(sfSocketUDP* socket);
 /// \param blocking : Pass sfTrue to set the socket as blocking, or false for non-blocking
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSocketUDP_SetBlocking(sfSocketUDP* socket, sfBool blocking);
+CSFML_API void sfUdpSocket_SetBlocking(sfUdpSocket* socket, sfBool blocking);
+
+////////////////////////////////////////////////////////////
+/// Get the blocking state of the socket
+///
+/// \param socket : Socket to read
+///
+/// \Return sfTrue if the socket is blocking, sfFalse otherwise
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfBool sfUdpSocket_IsBlocking(const sfUdpSocket* socket);
+
+////////////////////////////////////////////////////////////
+/// Get the port to which a socket is bound locally
+///
+/// \param socket : Socket to read
+///
+/// \return Port to which the socket is bound
+///
+////////////////////////////////////////////////////////////
+CSFML_API unsigned short sfUdpSocket_GetLocalPort(const sfUdpSocket* socket);
 
 ////////////////////////////////////////////////////////////
 /// Bind a socket to a specific port
@@ -76,20 +86,18 @@ CSFML_API void sfSocketUDP_SetBlocking(sfSocketUDP* socket, sfBool blocking);
 /// \param socket : Socket to bind
 /// \param port :   Port to bind the socket to
 ///
-/// \return True if operation has been successful
+/// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketUDP_Bind(sfSocketUDP* socket, unsigned short port);
+CSFML_API sfSocketStatus sfUdpSocket_Bind(sfUdpSocket* socket, unsigned short port);
 
 ////////////////////////////////////////////////////////////
 /// Unbind a socket from its previous port, if any
 ///
 /// \param socket : Socket to unbind
 ///
-/// \return sfTrue if operation has been successful
-///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketUDP_Unbind(sfSocketUDP* socket);
+CSFML_API void sfUdpSocket_Unbind(sfUdpSocket* socket);
 
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes
@@ -103,7 +111,7 @@ CSFML_API sfBool sfSocketUDP_Unbind(sfSocketUDP* socket);
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data, size_t size, sfIpAddress address, unsigned short port);
+CSFML_API sfSocketStatus sfUdpSocket_Send(sfUdpSocket* socket, const char* data, size_t size, sfIpAddress address, unsigned short port);
 
 ////////////////////////////////////////////////////////////
 /// Receive an array of bytes.
@@ -120,7 +128,7 @@ CSFML_API sfSocketStatus sfSocketUDP_Send(sfSocketUDP* socket, const char* data,
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, size_t maxSize, size_t* sizeReceived, sfIpAddress* address, unsigned short* port);
+CSFML_API sfSocketStatus sfUdpSocket_Receive(sfUdpSocket* socket, char* data, size_t maxSize, size_t* sizeReceived, sfIpAddress* address, unsigned short* port);
 
 ////////////////////////////////////////////////////////////
 /// Send a packet of data
@@ -133,7 +141,7 @@ CSFML_API sfSocketStatus sfSocketUDP_Receive(sfSocketUDP* socket, char* data, si
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* packet, sfIpAddress address, unsigned short port);
+CSFML_API sfSocketStatus sfUdpSocket_SendPacket(sfUdpSocket* socket, sfPacket* packet, sfIpAddress address, unsigned short port);
 
 ////////////////////////////////////////////////////////////
 /// Receive a packet.
@@ -148,28 +156,7 @@ CSFML_API sfSocketStatus sfSocketUDP_SendPacket(sfSocketUDP* socket, sfPacket* p
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketUDP_ReceivePacket(sfSocketUDP* socket, sfPacket* packet, sfIpAddress* address, unsigned short* port);
-
-////////////////////////////////////////////////////////////
-/// Close the socket
-///
-/// \param socket : Socket to close
-///
-/// \return True if the socket was successfully closed
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketUDP_Close(sfSocketUDP* socket);
-
-////////////////////////////////////////////////////////////
-/// Check if a socket is in a valid state ; this function
-/// can be called any time to check if the socket is OK
-///
-/// \param socket : Socket to check
-///
-/// \return sfTrue if the socket is valid
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketUDP_IsValid(sfSocketUDP* socket);
+CSFML_API sfSocketStatus sfUdpSocket_ReceivePacket(sfUdpSocket* socket, sfPacket* packet, sfIpAddress* address, unsigned short* port);
 
 
-#endif // SFML_SOCKETUDP_H
+#endif // SFML_UDPSOCKET_H

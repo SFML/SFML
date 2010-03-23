@@ -22,22 +22,22 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOCKETTCPSTRUCT_H
-#define SFML_SOCKETTCPSTRUCT_H
+#ifndef SFML_TCPLISTENERSTRUCT_H
+#define SFML_TCPLISTENERSTRUCT_H
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Network/SocketTCP.hpp>
+#include <SFML/Network/TcpListener.hpp>
 
 
 ////////////////////////////////////////////////////////////
-// Internal structure of sfSocketTCP
+// Internal structure of sfTcpListener
 ////////////////////////////////////////////////////////////
-struct sfSocketTCP
+struct sfTcpListener
 {
-    sf::SocketTCP This;
+    sf::TcpListener This;
 };
 
 
-#endif // SFML_SOCKETTCPSTRUCT_H
+#endif // SFML_TCPLISTENERSTRUCT_H

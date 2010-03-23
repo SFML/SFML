@@ -243,47 +243,55 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\Selector.cpp"
+			RelativePath="..\..\src\SFML\Network\SocketSelector.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\Selector.h"
+			RelativePath="..\..\include\SFML\Network\SocketSelector.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SelectorStruct.h"
+			RelativePath="..\..\src\SFML\Network\SocketSelectorStruct.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\SocketStatus.h"
+			RelativePath="..\..\src\SFML\Network\TcpListener.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SocketTCP.cpp"
+			RelativePath="..\..\include\SFML\Network\TcpListener.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\SocketTCP.h"
+			RelativePath="..\..\src\SFML\Network\TcpListenerStruct.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SocketTCPStruct.h"
+			RelativePath="..\..\src\SFML\Network\TcpSocket.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SocketUDP.cpp"
+			RelativePath="..\..\include\SFML\Network\TcpSocket.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\SocketUDP.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Network\SocketUDPStruct.h"
+			RelativePath="..\..\src\SFML\Network\TcpSocketStruct.h"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Network\Types.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Network\UdpSocket.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Network\UdpSocket.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Network\UdpSocketStruct.h"
 			>
 		</File>
 	</Files>

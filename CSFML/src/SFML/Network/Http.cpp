@@ -73,9 +73,9 @@ void sfHttpRequest_SetMethod(sfHttpRequest* httpRequest, sfHttpMethod method)
 /// Set the target URI of the request.
 /// This parameter is "/" by default
 ////////////////////////////////////////////////////////////
-void sfHttpRequest_SetURI(sfHttpRequest* httpRequest, const char* URI)
+void sfHttpRequest_SetUri(sfHttpRequest* httpRequest, const char* uri)
 {
-    CSFML_CALL(httpRequest, SetURI(URI ? URI : ""));
+    CSFML_CALL(httpRequest, SetUri(uri ? uri : ""));
 }
 
 

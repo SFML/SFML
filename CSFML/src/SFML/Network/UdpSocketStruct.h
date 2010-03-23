@@ -22,36 +22,22 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SELECTORSTRUCT_H
-#define SFML_SELECTORSTRUCT_H
+#ifndef SFML_UDPSOCKETSTRUCT_H
+#define SFML_UDPSOCKETSTRUCT_H
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Network/Selector.hpp>
-#include <SFML/Network/SocketTCPStruct.h>
-#include <SFML/Network/SocketUDPStruct.h>
-#include <map>
+#include <SFML/Network/UdpSocket.hpp>
 
 
 ////////////////////////////////////////////////////////////
-// Internal structure of SelectorTCP
+// Internal structure of sfUdpSocket
 ////////////////////////////////////////////////////////////
-struct sfSelectorTCP
+struct sfUdpSocket
 {
-    sf::SelectorTCP                       This;
-    std::map<sf::SocketTCP, sfSocketTCP*> Sockets;
+    sf::UdpSocket This;
 };
 
 
-////////////////////////////////////////////////////////////
-// Internal structure of sfSelectorUDP
-////////////////////////////////////////////////////////////
-struct sfSelectorUDP
-{
-    sf::SelectorUDP                       This;
-    std::map<sf::SocketUDP, sfSocketUDP*> Sockets;
-};
-
-
-#endif // SFML_SELECTORSTRUCT_H
+#endif // SFML_UDPSOCKETSTRUCT_H

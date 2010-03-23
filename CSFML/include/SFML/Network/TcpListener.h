@@ -22,79 +22,76 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_TCPLISTENER_H
+#define SFML_TCPLISTENER_H
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Network/SocketHelper.hpp>
-
-
-namespace sf
-{
-////////////////////////////////////////////////////////////
-/// Return the value of the invalid socket
-////////////////////////////////////////////////////////////
-SocketHelper::SocketType SocketHelper::InvalidSocket()
-{
-    return INVALID_SOCKET;
-}
+#include <SFML/Config.h>
+#include <SFML/Network/SocketStatus.h>
+#include <SFML/Network/Types.h>
 
 
 ////////////////////////////////////////////////////////////
-/// Close / destroy a socket
+/// Construct a new TCP socket
+///
+/// \return Pointer to the new socket
+///
 ////////////////////////////////////////////////////////////
-bool SocketHelper::Close(SocketHelper::SocketType socket)
-{
-    return closesocket(socket) != -1;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Set a socket as blocking or non-blocking
-////////////////////////////////////////////////////////////
-void SocketHelper::SetBlocking(SocketHelper::SocketType socket, bool block)
-{
-    unsigned long blocking = block ? 0 : 1;
-    ioctlsocket(socket, FIONBIO, &blocking);
-}
-
+CSFML_API sfTcpListener* sfTcpListener_Create();
 
 ////////////////////////////////////////////////////////////
-/// Get the last socket error status
+/// Destroy an existing TCP socket
+///
+/// \param socket : Socket to destroy
+///
 ////////////////////////////////////////////////////////////
-Socket::Status SocketHelper::GetErrorStatus()
-{
-    switch (WSAGetLastError())
-    {
-        case WSAEWOULDBLOCK :  return Socket::NotReady;
-        case WSAECONNABORTED : return Socket::Disconnected;
-        case WSAECONNRESET :   return Socket::Disconnected;
-        case WSAETIMEDOUT :    return Socket::Disconnected;
-        case WSAENETRESET :    return Socket::Disconnected;
-        case WSAENOTCONN :     return Socket::Disconnected;
-        default :              return Socket::Error;
-    }
-}
-
+CSFML_API void sfTcpListener_Destroy(sfTcpListener* socket);
 
 ////////////////////////////////////////////////////////////
-// Windows needs some initialization and cleanup to get
-// sockets working properly... so let's create a class that will
-// do it automatically
+/// Change the blocking state of a TCP socket.
+/// The default behaviour of a socket is blocking
+///
+/// \param socket :   Socket to modify
+/// \param blocking : Pass sfTrue to set the socket as blocking, or sfFalse for non-blocking
+///
 ////////////////////////////////////////////////////////////
-struct SocketInitializer
-{
-    SocketInitializer()
-    {
-        WSADATA init;
-        WSAStartup(MAKEWORD(2,2), &init);
-    }
+CSFML_API void sfTcpListener_SetBlocking(sfTcpListener* socket, sfBool blocking);
 
-    ~SocketInitializer()
-    {
-        WSACleanup();
-    }
-};
+////////////////////////////////////////////////////////////
+/// Get the blocking state of the socket
+///
+/// \param socket : Socket to read
+///
+/// \Return sfTrue if the socket is blocking, sfFalse otherwise
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfBool sfTcpListener_IsBlocking(const sfTcpListener* socket);
 
-SocketInitializer globalInitializer;
+////////////////////////////////////////////////////////////
+/// Listen to a specified port for incoming data or connections
+///
+/// \param socket : Socket to use for listening
+/// \param port :   Port to listen to
+///
+/// \return Socket status
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfSocketStatus sfTcpListener_Listen(sfTcpListener* socket, unsigned short port);
 
-} // namespace sf
+////////////////////////////////////////////////////////////
+/// Wait for a connection (must be listening to a port).
+/// This function is blocking, ie. it won't return before
+/// a connection has been accepted
+///
+/// \param socket :    Socket to use for accepting
+/// \param connected : Pointer to a socket pointer that will be filled with the connected client
+///
+/// \return Socket status
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfSocketStatus sfTcpListener_Accept(sfTcpListener* socket, sfTcpSocket** connected);
+
+
+#endif // SFML_TCPLISTENER_H

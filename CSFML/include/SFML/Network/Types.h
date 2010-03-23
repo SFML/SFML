@@ -34,10 +34,10 @@ typedef struct sfHttpRequest sfHttpRequest;
 typedef struct sfHttpResponse sfHttpResponse;
 typedef struct sfHttp sfHttp;
 typedef struct sfPacket sfPacket;
-typedef struct sfSelectorTCP sfSelectorTCP;
-typedef struct sfSelectorUDP sfSelectorUDP;
-typedef struct sfSocketTCP sfSocketTCP;
-typedef struct sfSocketUDP sfSocketUDP;
+typedef struct sfSocketSelector sfSocketSelector;
+typedef struct sfTcpListener sfTcpListener;
+typedef struct sfTcpSocket sfTcpSocket;
+typedef struct sfUdpSocket sfUdpSocket;
 
 
 #endif // SFML_NETWORK_TYPES_H

@@ -105,7 +105,7 @@ public :
     /// \see ToInteger
     ///
     ////////////////////////////////////////////////////////////
-    IpAddress(Uint32 address);
+    explicit IpAddress(Uint32 address);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a string representation of the address

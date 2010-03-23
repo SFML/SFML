@@ -116,21 +116,24 @@
 		<Unit filename="..\..\include\SFML\Network\Http.hpp" />
 		<Unit filename="..\..\include\SFML\Network\IpAddress.hpp" />
 		<Unit filename="..\..\include\SFML\Network\Packet.hpp" />
-		<Unit filename="..\..\include\SFML\Network\Selector.hpp" />
-		<Unit filename="..\..\include\SFML\Network\Selector.inl" />
-		<Unit filename="..\..\include\SFML\Network\SelectorBase.hpp" />
-		<Unit filename="..\..\include\SFML\Network\SocketHelper.hpp" />
-		<Unit filename="..\..\include\SFML\Network\SocketTCP.hpp" />
-		<Unit filename="..\..\include\SFML\Network\SocketUDP.hpp" />
-		<Unit filename="..\..\include\SFML\Network\Win32\SocketHelper.hpp" />
+		<Unit filename="..\..\include\SFML\Network\Socket.hpp" />
+		<Unit filename="..\..\include\SFML\Network\SocketHandle.hpp" />
+		<Unit filename="..\..\include\SFML\Network\SocketSelector.hpp" />
+		<Unit filename="..\..\include\SFML\Network\TcpListener.hpp" />
+		<Unit filename="..\..\include\SFML\Network\TcpSocket.hpp" />
+		<Unit filename="..\..\include\SFML\Network\UdpSocket.hpp" />
 		<Unit filename="..\..\src\SFML\Network\Ftp.cpp" />
 		<Unit filename="..\..\src\SFML\Network\Http.cpp" />
 		<Unit filename="..\..\src\SFML\Network\IpAddress.cpp" />
 		<Unit filename="..\..\src\SFML\Network\Packet.cpp" />
-		<Unit filename="..\..\src\SFML\Network\SelectorBase.cpp" />
-		<Unit filename="..\..\src\SFML\Network\SocketTCP.cpp" />
-		<Unit filename="..\..\src\SFML\Network\SocketUDP.cpp" />
-		<Unit filename="..\..\src\SFML\Network\Win32\SocketHelper.cpp" />
+		<Unit filename="..\..\src\SFML\Network\Socket.cpp" />
+		<Unit filename="..\..\src\SFML\Network\SocketImpl.hpp" />
+		<Unit filename="..\..\src\SFML\Network\SocketSelector.cpp" />
+		<Unit filename="..\..\src\SFML\Network\TcpListener.cpp" />
+		<Unit filename="..\..\src\SFML\Network\TcpSocket.cpp" />
+		<Unit filename="..\..\src\SFML\Network\UdpSocket.cpp" />
+		<Unit filename="..\..\src\SFML\Network\Win32\SocketImpl.cpp" />
+		<Unit filename="..\..\src\SFML\Network\Win32\SocketImpl.hpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

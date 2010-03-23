@@ -33,17 +33,6 @@ public :
     }
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~NetworkAudioStream()
-    {
-        // Close the sockets
-        myClient.Close();
-        myListener.Close();
-    }
-
-    ////////////////////////////////////////////////////////////
     /// Run the server, stream audio data from the client
     ///
     ////////////////////////////////////////////////////////////
@@ -52,14 +41,14 @@ public :
         if (!myHasFinished)
         {
             // Listen to the given port for incoming connections
-            if (!myListener.Listen(port))
+            if (myListener.Listen(port) != sf::Socket::Done)
                 return;
             std::cout << "Server is listening to port " << port << ", waiting for connections... " << std::endl;
 
             // Wait for a connection
-            sf::IpAddress clientAddress;
-            myListener.Accept(myClient, &clientAddress);
-            std::cout << "Client connected : " << clientAddress << std::endl;
+            if (myListener.Accept(myClient) != sf::Socket::Done)
+                return;
+            std::cout << "Client connected: " << myClient.GetRemoteAddress() << std::endl;
 
             // Start playback
             Play();
@@ -149,7 +138,7 @@ private :
             else if (id == endOfStream)
             {
                 // End of stream reached : we stop receiving audio data
-                std::cout << "Audio data has been 100% received !" << std::endl;
+                std::cout << "Audio data has been 100% received!" << std::endl;
                 myHasFinished = true;
             }
             else
@@ -164,8 +153,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::SocketTCP          myListener;
-    sf::SocketTCP          myClient;
+    sf::TcpListener        myListener;
+    sf::TcpSocket          myClient;
     sf::Mutex              myMutex;
     std::vector<sf::Int16> mySamples;
     std::vector<sf::Int16> myTempBuffer;

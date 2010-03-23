@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOCKETTCP_H
-#define SFML_SOCKETTCP_H
+#ifndef SFML_TCPSOCKET_H
+#define SFML_TCPSOCKET_H
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -40,17 +40,7 @@
 /// \return Pointer to the new socket
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketTCP* sfSocketTCP_Create();
-
-////////////////////////////////////////////////////////////
-/// Copy an existing TCP socket
-///
-/// \param socket : Socket to copy
-///
-/// \return Copied object
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfSocketTCP* sfSocketTCP_Copy(sfSocketTCP* socket);
+CSFML_API sfTcpSocket* sfTcpSocket_Create();
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing TCP socket
@@ -58,7 +48,7 @@ CSFML_API sfSocketTCP* sfSocketTCP_Copy(sfSocketTCP* socket);
 /// \param socket : Socket to destroy
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSocketTCP_Destroy(sfSocketTCP* socket);
+CSFML_API void sfTcpSocket_Destroy(sfTcpSocket* socket);
 
 ////////////////////////////////////////////////////////////
 /// Change the blocking state of a TCP socket.
@@ -68,45 +58,68 @@ CSFML_API void sfSocketTCP_Destroy(sfSocketTCP* socket);
 /// \param blocking : Pass sfTrue to set the socket as blocking, or false for non-blocking
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSocketTCP_SetBlocking(sfSocketTCP* socket, sfBool blocking);
+CSFML_API void sfTcpSocket_SetBlocking(sfTcpSocket* socket, sfBool blocking);
+
+////////////////////////////////////////////////////////////
+/// Get the blocking state of the socket
+///
+/// \param socket : Socket to read
+///
+/// \Return sfTrue if the socket is blocking, sfFalse otherwise
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfBool sfTcpSocket_IsBlocking(const sfTcpSocket* socket);
+
+////////////////////////////////////////////////////////////
+/// Get the port to which a socket is bound locally
+///
+/// \param socket : Socket to read
+///
+/// \return Port to which the socket is bound
+///
+////////////////////////////////////////////////////////////
+CSFML_API unsigned short sfTcpSocket_GetLocalPort(const sfTcpSocket* socket);
+
+////////////////////////////////////////////////////////////
+/// Get the address of the connected peer of a socket
+///
+/// \param socket : Socket to read
+///
+/// \return Address of the remote peer
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfIpAddress sfTcpSocket_GetRemoteAddress(const sfTcpSocket* socket);
+
+////////////////////////////////////////////////////////////
+/// Get the port of the connected peer to which a socket is connected
+///
+/// \param socket : Socket to read
+///
+/// \return Remote port to which the socket is connected
+///
+////////////////////////////////////////////////////////////
+CSFML_API unsigned short sfTcpSocket_GetRemotePort(const sfTcpSocket* socket);
 
 ////////////////////////////////////////////////////////////
 /// Connect a TCP socket to another computer on a specified port
 ///
-/// \param socket :  Socket to use for connecting
-/// \param port :    Port to use for transfers (warning : ports < 1024 are reserved)
+/// \param socket :  Socket to connect
 /// \param host :    IP Address of the host to connect to
+/// \param port :    Port to use for transfers (warning : ports < 1024 are reserved)
 /// \param timeout : Maximum time to wait (0 to use no timeout)
 ///
 /// \return sfTrue if operation has been successful
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketTCP_Connect(sfSocketTCP* socket, unsigned short port, sfIpAddress host, float timeout);
+CSFML_API sfSocketStatus sfTcpSocket_Connect(sfTcpSocket* socket, sfIpAddress host, unsigned short port, float timeout);
 
 ////////////////////////////////////////////////////////////
-/// Listen to a specified port for incoming data or connections
+/// Disconnect a connect from its remote peer
 ///
-/// \param socket : Socket to use for listening
-/// \param port :   Port to listen to
-///
-/// \return sfTrue if operation has been successful
+/// \param socket : Socket to disconnect
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketTCP_Listen(sfSocketTCP* socket, unsigned short port);
-
-////////////////////////////////////////////////////////////
-/// Wait for a connection (must be listening to a port).
-/// This function is blocking, ie. it won't return before
-/// a connection has been accepted
-///
-/// \param socket :    Socket to use for accepting
-/// \param connected : Pointer to a socket pointer that will be filled with the connected client
-/// \param address :   Pointer to an address to fill with client infos
-///
-/// \return Socket status
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketTCP_Accept(sfSocketTCP* socket, sfSocketTCP** connected, sfIpAddress* address);
+CSFML_API void sfTcpSocket_Disconnect(sfTcpSocket* socket);
 
 ////////////////////////////////////////////////////////////
 /// Send an array of bytes to the host (must be connected first)
@@ -118,7 +131,7 @@ CSFML_API sfSocketStatus sfSocketTCP_Accept(sfSocketTCP* socket, sfSocketTCP** c
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketTCP_Send(sfSocketTCP* socket, const char* data, size_t size);
+CSFML_API sfSocketStatus sfTcpSocket_Send(sfTcpSocket* socket, const char* data, size_t size);
 
 ////////////////////////////////////////////////////////////
 /// Receive an array of bytes from the host (must be connected first)
@@ -131,7 +144,7 @@ CSFML_API sfSocketStatus sfSocketTCP_Send(sfSocketTCP* socket, const char* data,
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketTCP_Receive(sfSocketTCP* socket, char* data, size_t maxSize, size_t* sizeReceived);
+CSFML_API sfSocketStatus sfTcpSocket_Receive(sfTcpSocket* socket, char* data, size_t maxSize, size_t* sizeReceived);
 
 ////////////////////////////////////////////////////////////
 /// Send a packet of data to the host (must be connected first)
@@ -142,7 +155,7 @@ CSFML_API sfSocketStatus sfSocketTCP_Receive(sfSocketTCP* socket, char* data, si
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketTCP_SendPacket(sfSocketTCP* socket, sfPacket* packet);
+CSFML_API sfSocketStatus sfTcpSocket_SendPacket(sfTcpSocket* socket, sfPacket* packet);
 
 ////////////////////////////////////////////////////////////
 /// Receive a packet from the host (must be connected first)
@@ -153,28 +166,7 @@ CSFML_API sfSocketStatus sfSocketTCP_SendPacket(sfSocketTCP* socket, sfPacket* p
 /// \return Socket status
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfSocketTCP_ReceivePacket(sfSocketTCP* socket, sfPacket* packet);
-
-////////////////////////////////////////////////////////////
-/// Close the socket
-///
-/// \param socket : Socket to close
-///
-/// \return True if the socket was successfully closed
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketTCP_Close(sfSocketTCP* socket);
-
-////////////////////////////////////////////////////////////
-/// Check if a socket is in a valid state ; this function
-/// can be called any time to check if the socket is OK
-///
-/// \param socket : Socket to check
-///
-/// \return True if the socket is valid
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketTCP_IsValid(const sfSocketTCP* socket);
+CSFML_API sfSocketStatus sfTcpSocket_ReceivePacket(sfTcpSocket* socket, sfPacket* packet);
 
 
-#endif // SFML_SOCKETTCP_H
+#endif // SFML_TCPSOCKET_H

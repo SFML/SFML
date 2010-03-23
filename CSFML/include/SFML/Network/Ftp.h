@@ -383,7 +383,7 @@ CSFML_API sfFtpResponse* sfFtp_ParentDirectory(sfFtp* ftp);
 /// \return Server response to the request
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFtpResponse* sfFtp_MakeDirectory(sfFtp* ftp, const char* name);
+CSFML_API sfFtpResponse* sfFtp_CreateDirectory(sfFtp* ftp, const char* name);
 
 ////////////////////////////////////////////////////////////
 /// Remove an existing directory

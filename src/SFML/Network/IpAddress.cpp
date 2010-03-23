@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Http.hpp>
-#include <SFML/Network/SocketHelper.hpp>
+#include <SFML/Network/SocketImpl.hpp>
 #include <string.h>
 
 
@@ -135,37 +135,31 @@ IpAddress IpAddress::GetLocalAddress()
     IpAddress localAddress;
 
     // Create the socket
-    SocketHelper::SocketType sock = socket(PF_INET, SOCK_DGRAM, 0);
-    if (sock == SocketHelper::InvalidSocket())
+    SocketHandle sock = socket(PF_INET, SOCK_DGRAM, 0);
+    if (sock == priv::SocketImpl::InvalidSocket())
         return localAddress;
 
-    // Build the host address (use a random port)
-    sockaddr_in sockAddr;
-    memset(sockAddr.sin_zero, 0, sizeof(sockAddr.sin_zero));
-    sockAddr.sin_addr.s_addr = INADDR_LOOPBACK;
-    sockAddr.sin_family      = AF_INET;
-    sockAddr.sin_port        = htons(4567);
-
-    // Connect the socket
-    if (connect(sock, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr)) == -1)
+    // Connect the socket to localhost on any port
+    sockaddr_in address = priv::SocketImpl::CreateAddress(INADDR_LOOPBACK, 0);
+    if (connect(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
-        SocketHelper::Close(sock);
+        priv::SocketImpl::Close(sock);
         return localAddress;
     }
  
     // Get the local address of the socket connection
-    SocketHelper::LengthType size = sizeof(sockAddr);
-    if (getsockname(sock, reinterpret_cast<sockaddr*>(&sockAddr), &size) == -1)
+    priv::SocketImpl::AddrLength size = sizeof(address);
+    if (getsockname(sock, reinterpret_cast<sockaddr*>(&address), &size) == -1)
     {
-        SocketHelper::Close(sock);
+        priv::SocketImpl::Close(sock);
         return localAddress;
     }
 
     // Close the socket
-    SocketHelper::Close(sock);
+    priv::SocketImpl::Close(sock);
 
     // Finally build the IP address
-    localAddress.myAddress = sockAddr.sin_addr.s_addr;
+    localAddress.myAddress = address.sin_addr.s_addr;
 
     return localAddress;
 }
@@ -181,7 +175,7 @@ IpAddress IpAddress::GetPublicAddress(float timeout)
     // (not very hard: the web page contains only our IP address).
 
     Http server("www.sfml-dev.org");
-    Http::Request request(Http::Request::Get, "/ip-provider.php");
+    Http::Request request("/ip-provider.php", Http::Request::Get);
     Http::Response page = server.SendRequest(request, timeout);
     if (page.GetStatus() == Http::Response::Ok)
         return IpAddress(page.GetBody());

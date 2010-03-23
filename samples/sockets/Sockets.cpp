@@ -6,14 +6,10 @@
 #include <cstdlib>
 
 
-////////////////////////////////////////////////////////////
-// Function prototypes
-// (I'm too lazy to put them into separate headers...)
-////////////////////////////////////////////////////////////
-void DoClientTCP(unsigned short Port);
-void DoClientUDP(unsigned short Port);
-void DoServerTCP(unsigned short Port);
-void DoServerUDP(unsigned short Port);
+void RunTcpServer(unsigned short Port);
+void RunTcpClient(unsigned short Port);
+void RunUdpServer(unsigned short Port);
+void RunUdpClient(unsigned short Port);
 
 
 ////////////////////////////////////////////////////////////
@@ -24,34 +20,34 @@ void DoServerUDP(unsigned short Port);
 ////////////////////////////////////////////////////////////
 int main()
 {
-    // Choose a random port for opening sockets (ports < 1024 are reserved)
-    const unsigned short port = 2435;
+    // Choose an arbitrary port for opening sockets
+    const unsigned short port = 50001;
 
-    // TCP or UDP ?
+    // TCP, UDP or connected UDP ?
     char protocol;
-    std::cout << "Do you want to use TCP ('t') or UDP ('u') ? ";
+    std::cout << "Do you want to use TCP (t) or UDP (u) ? ";
     std::cin  >> protocol;
 
     // Client or server ?
     char who;
-    std::cout << "Do you want to be a server ('s') or a client ('c') ? ";
+    std::cout << "Do you want to be a server (s) or a client (c) ? ";
     std::cin  >> who;
 
-    if (who == 's')
+    if (protocol == 't')
     {
-        // Run as a server
-        if (protocol == 't')
-            DoServerTCP(port);
+        // Test the TCP protocol
+        if (who == 's')
+            RunTcpServer(port);
         else
-            DoServerUDP(port);
+            RunTcpClient(port);
     }
     else
     {
-        // Run as a client
-        if (protocol == 't')
-            DoClientTCP(port);
+        // Test the unconnected UDP protocol
+        if (who == 's')
+            RunUdpServer(port);
         else
-            DoClientUDP(port);
+            RunUdpClient(port);
     }
 
     // Wait until the user presses 'enter' key

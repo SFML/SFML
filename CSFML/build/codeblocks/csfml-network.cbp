@@ -58,11 +58,14 @@
 		<Unit filename="..\..\include\SFML\Network\Http.h" />
 		<Unit filename="..\..\include\SFML\Network\IpAddress.h" />
 		<Unit filename="..\..\include\SFML\Network\Packet.h" />
-		<Unit filename="..\..\include\SFML\Network\Selector.h" />
+		<Unit filename="..\..\include\SFML\Network\SocketSelector.h" />
 		<Unit filename="..\..\include\SFML\Network\SocketStatus.h" />
 		<Unit filename="..\..\include\SFML\Network\SocketTCP.h" />
 		<Unit filename="..\..\include\SFML\Network\SocketUDP.h" />
+		<Unit filename="..\..\include\SFML\Network\TcpListener.h" />
+		<Unit filename="..\..\include\SFML\Network\TcpSocket.h" />
 		<Unit filename="..\..\include\SFML\Network\Types.h" />
+		<Unit filename="..\..\include\SFML\Network\UdpSocket.h" />
 		<Unit filename="..\..\src\SFML\Network\Ftp.cpp" />
 		<Unit filename="..\..\src\SFML\Network\FtpStruct.h" />
 		<Unit filename="..\..\src\SFML\Network\Http.cpp" />
@@ -70,12 +73,14 @@
 		<Unit filename="..\..\src\SFML\Network\IpAddress.cpp" />
 		<Unit filename="..\..\src\SFML\Network\Packet.cpp" />
 		<Unit filename="..\..\src\SFML\Network\PacketStruct.h" />
-		<Unit filename="..\..\src\SFML\Network\Selector.cpp" />
-		<Unit filename="..\..\src\SFML\Network\SelectorStruct.h" />
-		<Unit filename="..\..\src\SFML\Network\SocketTCP.cpp" />
-		<Unit filename="..\..\src\SFML\Network\SocketTCPStruct.h" />
-		<Unit filename="..\..\src\SFML\Network\SocketUDP.cpp" />
-		<Unit filename="..\..\src\SFML\Network\SocketUDPStruct.h" />
+		<Unit filename="..\..\src\SFML\Network\SocketSelector.cpp" />
+		<Unit filename="..\..\src\SFML\Network\SocketSelectorStruct.h" />
+		<Unit filename="..\..\src\SFML\Network\TcpListener.cpp" />
+		<Unit filename="..\..\src\SFML\Network\TcpListenerStruct.h" />
+		<Unit filename="..\..\src\SFML\Network\TcpSocket.cpp" />
+		<Unit filename="..\..\src\SFML\Network\TcpSocketStruct.h" />
+		<Unit filename="..\..\src\SFML\Network\UdpSocket.cpp" />
+		<Unit filename="..\..\src\SFML\Network\UdpSocketStruct.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

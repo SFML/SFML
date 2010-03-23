@@ -22,43 +22,18 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOCKETHELPER_HPP
-#define SFML_SOCKETHELPER_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
 
-namespace sf
-{
-namespace Socket
-{
-    ////////////////////////////////////////////////////////////
-    /// Enumeration of status returned by socket functions
-    ////////////////////////////////////////////////////////////
-    enum Status
-    {
-        Done,         ///< The socket has sent / received the data
-        NotReady,     ///< The socket is not ready to send / receive data yet
-        Disconnected, ///< The TCP socket has been disconnected
-        Error         ///< An unexpected error happened
-    };
-}
+#if defined(SFML_SYSTEM_WINDOWS)
 
-} // namespace sf
-
-
-#ifdef SFML_SYSTEM_WINDOWS
-
-    #include <SFML/Network/Win32/SocketHelper.hpp>
+    #include <SFML/Network/Win32/SocketImpl.hpp>
 
 #else
 
-    #include <SFML/Network/Unix/SocketHelper.hpp>
+    #include <SFML/Network/Unix/SocketImpl.hpp>
 
 #endif
-
-
-#endif // SFML_SOCKETHELPER_HPP

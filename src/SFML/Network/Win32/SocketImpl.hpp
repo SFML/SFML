@@ -22,58 +22,69 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOCKETHELPERWIN32_HPP
-#define SFML_SOCKETHELPERWIN32_HPP
+#ifndef SFML_SOCKETIMPL_HPP
+#define SFML_SOCKETIMPL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Network/Socket.hpp>
 #include <winsock2.h>
 
 
 namespace sf
 {
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// This class defines helper functions to do all the
-/// non-portable socket stuff. This class is meant for internal
-/// use only
+/// \brief Helper class implementing all the non-portable
+///        socket stuff; this is the Windows version
+///
 ////////////////////////////////////////////////////////////
-class SFML_API SocketHelper
+class SocketImpl
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    // Define some socket types
+    // Types
     ////////////////////////////////////////////////////////////
-    typedef SOCKET SocketType;
-    typedef int    LengthType;
+    typedef int AddrLength;
 
     ////////////////////////////////////////////////////////////
-    /// Return the value of the invalid socket
+    /// \brief Create an internal sockaddr_in address
     ///
-    /// \return Unique value of the invalid socket
+    /// \param address Target address
+    /// \param port    Target port
+    ///
+    /// \return sockaddr_in ready to be used by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    static SocketType InvalidSocket();
+    static sockaddr_in CreateAddress(unsigned long address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
-    /// Close / destroy a socket
+    /// \brief Return the value of the invalid socket
     ///
-    /// \param socket : Socket to close
-    ///
-    /// \return True on success
+    /// \return Special value of the invalid socket
     ///
     ////////////////////////////////////////////////////////////
-    static bool Close(SocketType socket);
+    static SocketHandle InvalidSocket();
 
     ////////////////////////////////////////////////////////////
-    /// Set a socket as blocking or non-blocking
+    /// \brief Close and destroy a socket
     ///
-    /// \param socket : Socket to modify
-    /// \param block :  New blocking state of the socket
+    /// \param sock Handle of the socket to close
     ///
     ////////////////////////////////////////////////////////////
-    static void SetBlocking(SocketType socket, bool block);
+    static void Close(SocketHandle sock);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set a socket as blocking or non-blocking
+    ///
+    /// \param sock  Handle of the socket
+    /// \param block New blocking state of the socket
+    ///
+    ////////////////////////////////////////////////////////////
+    static void SetBlocking(SocketHandle sock, bool block);
 
     ////////////////////////////////////////////////////////////
     /// Get the last socket error status
@@ -84,7 +95,9 @@ public :
     static Socket::Status GetErrorStatus();
 };
 
+} // namespace priv
+
 } // namespace sf
 
 
-#endif // SFML_SOCKETHELPERWIN32_HPP
+#endif // SFML_SOCKETIMPL_HPP

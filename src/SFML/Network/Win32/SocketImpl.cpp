@@ -25,65 +25,86 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Network/SocketHelper.hpp>
-#include <errno.h>
-#include <fcntl.h>
+#include <SFML/Network/Win32/SocketImpl.hpp>
+#include <string.h>
 
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-/// Return the value of the invalid socket
-////////////////////////////////////////////////////////////
-SocketHelper::SocketType SocketHelper::InvalidSocket()
+namespace priv
 {
-    return -1;
+////////////////////////////////////////////////////////////
+sockaddr_in SocketImpl::CreateAddress(unsigned long address, unsigned short port)
+{
+    sockaddr_in addr;
+    memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
+    addr.sin_addr.s_addr = htonl(address);
+    addr.sin_family      = AF_INET;
+    addr.sin_port        = htons(port);
+
+    return addr;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Close / destroy a socket
-////////////////////////////////////////////////////////////
-bool SocketHelper::Close(SocketHelper::SocketType socket)
+SocketHandle SocketImpl::InvalidSocket()
 {
-    return close(socket) != -1;
+    return INVALID_SOCKET;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Set a socket as blocking or non-blocking
-////////////////////////////////////////////////////////////
-void SocketHelper::SetBlocking(SocketHelper::SocketType sock, bool block)
+void SocketImpl::Close(SocketHandle sock)
 {
-    int status = fcntl(sock, F_GETFL);
-    if (block)
-        fcntl(sock, F_SETFL, status & ~O_NONBLOCK);
-    else
-        fcntl(sock, F_SETFL, status | O_NONBLOCK);
+    closesocket(sock);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the last socket error status
-////////////////////////////////////////////////////////////
-Socket::Status SocketHelper::GetErrorStatus()
+void SocketImpl::SetBlocking(SocketHandle sock, bool block)
 {
-    // The followings are sometimes equal to EWOULDBLOCK,
-    // so we have to make a special case for them in order
-    // to avoid having double values in the switch case
-    if ((errno == EAGAIN) || (errno == EINPROGRESS))
-        return Socket::NotReady;
+    unsigned long blocking = block ? 0 : 1;
+    ioctlsocket(sock, FIONBIO, &blocking);
+}
 
-    switch (errno)
+
+////////////////////////////////////////////////////////////
+Socket::Status SocketImpl::GetErrorStatus()
+{
+    switch (WSAGetLastError())
     {
-        case EWOULDBLOCK :  return Socket::NotReady;
-        case ECONNABORTED : return Socket::Disconnected;
-        case ECONNRESET :   return Socket::Disconnected;
-        case ETIMEDOUT :    return Socket::Disconnected;
-        case ENETRESET :    return Socket::Disconnected;
-        case ENOTCONN :     return Socket::Disconnected;
-        default :           return Socket::Error;
+        case WSAEWOULDBLOCK :  return Socket::NotReady;
+        case WSAECONNABORTED : return Socket::Disconnected;
+        case WSAECONNRESET :   return Socket::Disconnected;
+        case WSAETIMEDOUT :    return Socket::Disconnected;
+        case WSAENETRESET :    return Socket::Disconnected;
+        case WSAENOTCONN :     return Socket::Disconnected;
+        default :              return Socket::Error;
     }
 }
+
+
+////////////////////////////////////////////////////////////
+// Windows needs some initialization and cleanup to get
+// sockets working properly... so let's create a class that will
+// do it automatically
+////////////////////////////////////////////////////////////
+struct SocketInitializer
+{
+    SocketInitializer()
+    {
+        WSADATA init;
+        WSAStartup(MAKEWORD(2, 2), &init);
+    }
+
+    ~SocketInitializer()
+    {
+        WSACleanup();
+    }
+};
+
+SocketInitializer globalInitializer;
+
+} // namespace priv
 
 } // namespace sf

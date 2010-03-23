@@ -22,16 +22,34 @@ public :
     ////////////////////////////////////////////////////////////
     /// Constructor
     ///
-    /// \param Socket : Socket that holds the connection with the server
+    /// \param host Remote host to which send the recording data
+    /// \param port Port of the remote host
     ///
     ////////////////////////////////////////////////////////////
-    NetworkRecorder(sf::SocketTCP socket) :
-    mySocket(socket)
+    NetworkRecorder(const sf::IpAddress& host, unsigned short port) :
+    myHost(host),
+    myPort(port)
     {
-
     }
 
 private :
+
+    ////////////////////////////////////////////////////////////
+    /// /see SoundRecorder::OnStart
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool OnStart()
+    {
+        if (mySocket.Connect(myHost, myPort) == sf::Socket::Done)
+        {
+            std::cout << "Connected to server " << myHost << std::endl;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     ////////////////////////////////////////////////////////////
     /// /see SoundRecorder::ProcessSamples
@@ -49,9 +67,26 @@ private :
     }
 
     ////////////////////////////////////////////////////////////
+    /// /see SoundRecorder::OnStop
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void OnStop()
+    {
+        // Send a "end-of-stream" packet
+        sf::Packet packet;
+        packet << endOfStream;
+        mySocket.Send(packet);
+
+        // Close the socket
+        mySocket.Disconnect();
+    }
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::SocketTCP mySocket; ///< Socket used to communicate with the server
+    sf::IpAddress  myHost;   ///< Address of the remote host
+    unsigned short myPort;   ///< Remote port
+    sf::TcpSocket  mySocket; ///< Socket used to communicate with the server
 };
 
 
@@ -70,41 +105,25 @@ void DoClient(unsigned short port)
     }
 
     // Ask for server address
-    sf::IpAddress serverAddress;
+    sf::IpAddress server;
     do
     {
         std::cout << "Type address or name of the server to connect to : ";
-        std::cin  >> serverAddress;
+        std::cin  >> server;
     }
-    while (serverAddress == sf::IpAddress::None);
+    while (server == sf::IpAddress::None);
 
-    // Create a TCP socket for communicating with server
-    sf::SocketTCP socket;
-
-    // Connect to the specified server
-    if (socket.Connect(port, serverAddress) != sf::Socket::Done)
-        return;
-    std::cout << "Connected to server " << serverAddress << std::endl;
+    // Create an instance of our custom recorder
+    NetworkRecorder recorder(server, port);
 
     // Wait for user input...
     std::cin.ignore(10000, '\n');
     std::cout << "Press enter to start recording audio";
     std::cin.ignore(10000, '\n');
 
-    // Create a instance of our custom recorder
-    NetworkRecorder recorder(socket);
-
     // Start capturing audio data
     recorder.Start(44100);
     std::cout << "Recording... press enter to stop";
     std::cin.ignore(10000, '\n');
     recorder.Stop();
-
-    // Send a "end-of-stream" packet
-    sf::Packet packet;
-    packet << endOfStream;
-    socket.Send(packet);
-
-    // Close the socket when we're done
-    socket.Close();
 }

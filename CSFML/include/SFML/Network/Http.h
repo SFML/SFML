@@ -123,7 +123,7 @@ CSFML_API void sfHttpRequest_SetMethod(sfHttpRequest* httpRequest, sfHttpMethod 
 /// \param URI :         URI to request, local to the host
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfHttpRequest_SetURI(sfHttpRequest* httpRequest, const char* URI);
+CSFML_API void sfHttpRequest_SetUri(sfHttpRequest* httpRequest, const char* uri);
 
 ////////////////////////////////////////////////////////////
 /// Set the HTTP version of the request.

@@ -90,7 +90,7 @@ int main()
 
             case 1 :
             {
-                // Print current server directory
+                // Print the current server directory
                 sf::Ftp::DirectoryResponse response = server.GetWorkingDirectory();
                 std::cout << response << std::endl;
                 std::cout << "Current directory is " << response.GetDirectory() << std::endl;
@@ -99,11 +99,12 @@ int main()
 
             case 2 :
             {
-                // Print content of current server directory
+                // Print the contents of the current server directory
                 sf::Ftp::ListingResponse response = server.GetDirectoryListing();
                 std::cout << response << std::endl;
-                for (std::size_t i = 0; i < response.GetCount(); ++i)
-                    std::cout << response.GetFilename(i) << std::endl;
+                std::vector<std::string> filenames = response.GetFilenames();
+                for (std::vector<std::string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
+                    std::cout << *it << std::endl;
                 break;
             }
 
@@ -123,7 +124,7 @@ int main()
                 std::string directory;
                 std::cout << "Name of the directory to create: ";
                 std::cin  >> directory;
-                std::cout << server.MakeDirectory(directory) << std::endl;
+                std::cout << server.CreateDirectory(directory) << std::endl;
                 break;
             }
 

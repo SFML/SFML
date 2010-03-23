@@ -343,11 +343,11 @@
 			Name="Win32"
 			>
 			<File
-				RelativePath="..\..\src\SFML\Network\Win32\SocketHelper.cpp"
+				RelativePath="..\..\src\SFML\Network\Win32\SocketImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\SFML\Network\Win32\SocketHelper.hpp"
+				RelativePath="..\..\src\SFML\Network\Win32\SocketImpl.hpp"
 				>
 			</File>
 		</Filter>
@@ -384,39 +384,51 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\Selector.hpp"
+			RelativePath="..\..\src\SFML\Network\Socket.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\Selector.inl"
+			RelativePath="..\..\include\SFML\Network\Socket.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SelectorBase.cpp"
+			RelativePath="..\..\include\SFML\Network\SocketHandle.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\SelectorBase.hpp"
+			RelativePath="..\..\src\SFML\Network\SocketImpl.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\SocketHelper.hpp"
+			RelativePath="..\..\src\SFML\Network\SocketSelector.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SocketTCP.cpp"
+			RelativePath="..\..\include\SFML\Network\SocketSelector.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\SocketTCP.hpp"
+			RelativePath="..\..\src\SFML\Network\TcpListener.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Network\SocketUDP.cpp"
+			RelativePath="..\..\include\SFML\Network\TcpListener.hpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\SFML\Network\SocketUDP.hpp"
+			RelativePath="..\..\src\SFML\Network\TcpSocket.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Network\TcpSocket.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Network\UdpSocket.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\SFML\Network\UdpSocket.hpp"
 			>
 		</File>
 	</Files>

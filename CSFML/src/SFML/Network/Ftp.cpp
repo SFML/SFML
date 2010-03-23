@@ -39,6 +39,7 @@ void sfFtpListingResponse_Destroy(sfFtpListingResponse* ftpListingResponse)
     delete ftpListingResponse;
 }
 
+
 ////////////////////////////////////////////////////////////
 /// Convenience function to check if the response status code
 /// means a success
@@ -47,6 +48,7 @@ sfBool sfFtpListingResponse_IsOk(const sfFtpListingResponse* ftpListingResponse)
 {
     CSFML_CALL_RETURN(ftpListingResponse, IsOk(), sfFalse);
 }
+
 
 ////////////////////////////////////////////////////////////
 /// Get the response status code
@@ -58,6 +60,7 @@ sfFtpStatus sfFtpListingResponse_GetStatus(const sfFtpListingResponse* ftpListin
     return static_cast<sfFtpStatus>(ftpListingResponse->This.GetStatus());
 }
 
+
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
 ////////////////////////////////////////////////////////////
@@ -68,13 +71,17 @@ const char* sfFtpListingResponse_GetMessage(const sfFtpListingResponse* ftpListi
     return ftpListingResponse->This.GetMessage().c_str();
 }
 
+
 ////////////////////////////////////////////////////////////
 /// Get the number of filenames in the listing
 ////////////////////////////////////////////////////////////
 size_t sfFtpListingResponse_GetCount(const sfFtpListingResponse* ftpListingResponse)
 {
-    CSFML_CALL_RETURN(ftpListingResponse, GetCount(), 0);
+    CSFML_CHECK_RETURN(ftpListingResponse, 0);
+
+    return ftpListingResponse->This.GetFilenames().size();
 }
+
 
 ////////////////////////////////////////////////////////////
 /// Get the Index-th filename in the directory
@@ -83,7 +90,7 @@ const char* sfFtpListingResponse_GetFilename(const sfFtpListingResponse* ftpList
 {
     CSFML_CHECK_RETURN(ftpListingResponse, NULL);
 
-    return ftpListingResponse->This.GetFilename(index).c_str();
+    return ftpListingResponse->This.GetFilenames()[index].c_str();
 }
 
 
@@ -95,6 +102,7 @@ void sfFtpDirectoryResponse_Destroy(sfFtpDirectoryResponse* ftpDirectoryResponse
     delete ftpDirectoryResponse;
 }
 
+
 ////////////////////////////////////////////////////////////
 /// Convenience function to check if the response status code
 /// means a success
@@ -103,6 +111,7 @@ sfBool sfFtpDirectoryResponse_IsOk(const sfFtpDirectoryResponse* ftpDirectoryRes
 {
     CSFML_CALL_RETURN(ftpDirectoryResponse, IsOk(), sfFalse);
 }
+
 
 ////////////////////////////////////////////////////////////
 /// Get the response status code
@@ -114,6 +123,7 @@ sfFtpStatus sfFtpDirectoryResponse_GetStatus(const sfFtpDirectoryResponse* ftpDi
     return static_cast<sfFtpStatus>(ftpDirectoryResponse->This.GetStatus());
 }
 
+
 ////////////////////////////////////////////////////////////
 /// Get the full message contained in the response
 ////////////////////////////////////////////////////////////
@@ -123,6 +133,7 @@ const char* sfFtpDirectoryResponse_GetMessage(const sfFtpDirectoryResponse* ftpD
 
     return ftpDirectoryResponse->This.GetMessage().c_str();
 }
+
 
 ////////////////////////////////////////////////////////////
 /// Get the directory returned in the response
@@ -299,11 +310,11 @@ sfFtpResponse* sfFtp_ParentDirectory(sfFtp* ftp)
 ////////////////////////////////////////////////////////////
 /// Create a new directory
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_MakeDirectory(sfFtp* ftp, const char* name)
+sfFtpResponse* sfFtp_CreateDirectory(sfFtp* ftp, const char* name)
 {
     CSFML_CHECK_RETURN(ftp, NULL);
 
-    return new sfFtpResponse(ftp->This.MakeDirectory(name ? name : ""));
+    return new sfFtpResponse(ftp->This.CreateDirectory(name ? name : ""));
 }
 
 

@@ -22,76 +22,73 @@
 //
 ////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/Network/TcpListener.h>
+#include <SFML/Network/TcpListenerStruct.h>
+#include <SFML/Network/TcpSocketStruct.h>
+#include <SFML/Internal.h>
+
 
 ////////////////////////////////////////////////////////////
-/// Add a socket to watch
+/// Construct a new TCP socket
 ////////////////////////////////////////////////////////////
-template <typename Type>
-void Selector<Type>::Add(Type socket)
+sfTcpListener* sfTcpListener_Create()
 {
-    if (socket.IsValid())
-    {
-        SelectorBase::Add(socket.mySocket);
-        mySockets[socket.mySocket] = socket;
-    }
+    return new sfTcpListener;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Remove a socket
+/// Destroy an existing TCP socket
 ////////////////////////////////////////////////////////////
-template <typename Type>
-void Selector<Type>::Remove(Type socket)
+void sfTcpListener_Destroy(sfTcpListener* socket)
 {
-    typename SocketTable::iterator it = mySockets.find(socket.mySocket);
-    if (it != mySockets.end())
-    {
-        SelectorBase::Remove(socket.mySocket);
-        mySockets.erase(it);
-    }
+    delete socket;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Remove all sockets
+/// Change the blocking state of a TCP socket.
+/// The default behaviour of a socket is blocking
 ////////////////////////////////////////////////////////////
-template <typename Type>
-void Selector<Type>::Clear()
+void sfTcpListener_SetBlocking(sfTcpListener* socket, sfBool blocking)
 {
-    SelectorBase::Clear();
-    mySockets.clear();
+    CSFML_CALL(socket, SetBlocking(blocking == sfTrue));
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Wait and collect sockets which are ready for reading.
-/// This functions will return either when at least one socket
-/// is ready, or when the given time is out
+/// Get the blocking state of the socket
 ////////////////////////////////////////////////////////////
-template <typename Type>
-unsigned int Selector<Type>::Wait(float timeout)
+sfBool sfTcpListener_IsBlocking(const sfTcpListener* socket)
 {
-    // No socket in the selector : return 0
-    if (mySockets.empty())
-        return 0;
-
-    return SelectorBase::Wait(timeout);
+    CSFML_CALL_RETURN(socket, IsBlocking(), sfFalse);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// After a call to Wait(), get the Index-th socket which is
-/// ready for reading. The total number of sockets ready
-/// is the integer returned by the previous call to Wait()
+/// Listen to a specified port for incoming data or connections
 ////////////////////////////////////////////////////////////
-template <typename Type>
-Type Selector<Type>::GetSocketReady(unsigned int index) const
+sfSocketStatus sfTcpListener_Listen(sfTcpListener* socket, unsigned short port)
 {
-    SocketHelper::SocketType socket = SelectorBase::GetSocketReady(index);
+    CSFML_CHECK_RETURN(socket, sfSocketError);
 
-    typename SocketTable::const_iterator it = mySockets.find(socket);
-    if (it != mySockets.end())
-        return it->second;
-    else
-        return Type(socket);
+    return static_cast<sfSocketStatus>(socket->This.Listen(port));
+}
+
+
+////////////////////////////////////////////////////////////
+/// Wait for a connection (must be listening to a port).
+/// This function is blocking, ie. it won't return before
+/// a connection has been accepted
+////////////////////////////////////////////////////////////
+sfSocketStatus sfTcpListener_Accept(sfTcpListener* socket, sfTcpSocket** connected)
+{
+    CSFML_CHECK_RETURN(socket, sfSocketError);
+    CSFML_CHECK_RETURN(connected, sfSocketError);
+
+    *connected = new sfTcpSocket;
+    return static_cast<sfSocketStatus>(socket->This.Accept((*connected)->This));
 }

@@ -22,22 +22,22 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_NETWORK_HPP
-#define SFML_NETWORK_HPP
+#ifndef SFML_TCPSOCKETSTRUCT_H
+#define SFML_TCPSOCKETSTRUCT_H
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
-#include <SFML/System.hpp>
-#include <SFML/Network/Ftp.hpp>
-#include <SFML/Network/Http.hpp>
-#include <SFML/Network/IpAddress.hpp>
-#include <SFML/Network/Packet.hpp>
-#include <SFML/Network/SocketSelector.hpp>
-#include <SFML/Network/TcpListener.hpp>
 #include <SFML/Network/TcpSocket.hpp>
-#include <SFML/Network/UdpSocket.hpp>
 
 
-#endif // SFML_NETWORK_HPP
+////////////////////////////////////////////////////////////
+// Internal structure of sfTcpSocket
+////////////////////////////////////////////////////////////
+struct sfTcpSocket
+{
+    sf::TcpSocket This;
+};
+
+
+#endif // SFML_TCPSOCKETSTRUCT_H

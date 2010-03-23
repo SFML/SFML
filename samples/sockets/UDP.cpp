@@ -7,59 +7,66 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Create a client and send a message to a running server
+/// Launch a server, wait for a message, send an answer.
 ///
 ////////////////////////////////////////////////////////////
-void DoClientUDP(unsigned short port)
+void RunUdpServer(unsigned short port)
 {
-    // Ask for server address
-    sf::IpAddress serverAddress;
-    do
-    {
-        std::cout << "Type address or name of the server to send the message to : ";
-        std::cin  >> serverAddress;
-    }
-    while (serverAddress == sf::IpAddress::None);
+    // Create a socket to receive a message from anyone
+    sf::UdpSocket socket;
 
-    // Create a UDP socket for communicating with server
-    sf::SocketUDP client;
-
-    // Send a message to the server
-    char message[] = "Hi, I'm a client !";
-    if (client.Send(message, sizeof(message), serverAddress, port) != sf::Socket::Done)
+    // Listen to messages on the specified port
+    if (socket.Bind(port) != sf::Socket::Done)
         return;
-    std::cout << "Message sent to server : \"" << message << "\"" << std::endl;
+    std::cout << "Server is listening to port " << port << ", waiting for a message... " << std::endl;
 
-    // Close the socket when we're done
-    client.Close();
+    // Wait for a message
+    char in[128];
+    std::size_t received;
+    sf::IpAddress sender;
+    unsigned short senderPort;
+    if (socket.Receive(in, sizeof(in), received, sender, senderPort) != sf::Socket::Done)
+        return;
+    std::cout << "Message received from client " << sender << ": \"" << in << "\"" << std::endl;
+
+    // Send an answer to the client
+    const char out[] = "Hi, I'm the server";
+    if (socket.Send(out, sizeof(out), sender, senderPort) != sf::Socket::Done)
+        return;
+    std::cout << "Message sent to the client: \"" << out << "\"" << std::endl;
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Launch a server and wait for incoming messages
+/// Send a message to the server, wait for the answer
 ///
 ////////////////////////////////////////////////////////////
-void DoServerUDP(unsigned short port)
+void RunUdpClient(unsigned short port)
 {
-    // Create a UDP socket for communicating with clients
-    sf::SocketUDP server;
+    // Ask for the server address
+    sf::IpAddress server;
+    do
+    {
+        std::cout << "Type the address or name of the server to connect to: ";
+        std::cin  >> server;
+    }
+    while (server == sf::IpAddress::None);
 
-    // Bind it to the specified port
-    if (!server.Bind(port))
+    // Create a socket for communicating with the server
+    sf::UdpSocket socket;
+
+    // Send a message to the server
+    const char out[] = "Hi, I'm a client";
+    if (socket.Send(out, sizeof(out), server, port) != sf::Socket::Done)
         return;
+    std::cout << "Message sent to the server: \"" << out << "\"" << std::endl;
 
-    // Receive a message from anyone
-    sf::IpAddress clientAddress;
-    unsigned short clientPort;
-    char message[128];
+    // Receive an answer from anyone (but most likely from the server)
+    char in[128];
     std::size_t received;
-    if (server.Receive(message, sizeof(message), received, clientAddress, clientPort) != sf::Socket::Done)
+    sf::IpAddress sender;
+    unsigned short senderPort;
+    if (socket.Receive(in, sizeof(in), received, sender, senderPort) != sf::Socket::Done)
         return;
-
-    // Display it
-    std::cout << "Message received from " << clientAddress << " on port " << clientPort
-              << ": \"" << message << "\"" << std::endl;
-
-    // Close the socket when we're done
-    server.Close();
+    std::cout << "Message received from " << sender << ": \"" << in << "\"" << std::endl;
 }
