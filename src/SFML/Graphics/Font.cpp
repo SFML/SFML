@@ -375,18 +375,33 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         // Extract the glyph's pixels from the bitmap
         myPixelBuffer.resize(width * height * 4, 255);
         const Uint8* pixels = bitmap.buffer;
-        for (int y = 0; y < height; ++y)
+        if (bitmap.pixel_mode == FT_PIXEL_MODE_MONO)
         {
-            for (int x = 0; x < width; ++x)
+            // Pixels are 1 bit monochrome values
+            for (int y = 0; y < height; ++y)
             {
-                // The color channels remain white, just fill the alpha channel
-                std::size_t index = (x + y * width) * 4 + 3;
-                myPixelBuffer[index] = pixels[x];
-
-                // Formula for FT_RENDER_MODE_MONO
-                //myPixelBuffer[index] = ((pixels[x / 8]) & (1 << (7 - (x % 8)))) ? 255 : 0;
+                for (int x = 0; x < width; ++x)
+                {
+                    // The color channels remain white, just fill the alpha channel
+                    std::size_t index = (x + y * width) * 4 + 3;
+                    myPixelBuffer[index] = ((pixels[x / 8]) & (1 << (7 - (x % 8)))) ? 255 : 0;
+                }
+                pixels += bitmap.pitch;
             }
-            pixels += bitmap.pitch;
+        }
+        else
+        {
+            // Pixels are 8 bits gray levels
+            for (int y = 0; y < height; ++y)
+            {
+                for (int x = 0; x < width; ++x)
+                {
+                    // The color channels remain white, just fill the alpha channel
+                    std::size_t index = (x + y * width) * 4 + 3;
+                    myPixelBuffer[index] = pixels[x];
+                }
+                pixels += bitmap.pitch;
+            }
         }
 
         // Write the pixels to the texture
