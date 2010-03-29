@@ -42,6 +42,25 @@ Socket(Tcp)
 
 
 ////////////////////////////////////////////////////////////
+unsigned short TcpListener::GetLocalPort() const
+{
+    if (GetHandle() != priv::SocketImpl::InvalidSocket())
+    {
+        // Retrieve informations about the local end of the socket
+        sockaddr_in address;
+        priv::SocketImpl::AddrLength size = sizeof(address);
+        if (getsockname(GetHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        {
+            return ntohs(address.sin_port);
+        }
+    }
+
+    // We failed to retrieve the port
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
 Socket::Status TcpListener::Listen(unsigned short port)
 {
     // Create the internal socket if it doesn't exist

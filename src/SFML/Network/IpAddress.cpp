@@ -159,7 +159,7 @@ IpAddress IpAddress::GetLocalAddress()
     priv::SocketImpl::Close(sock);
 
     // Finally build the IP address
-    localAddress.myAddress = address.sin_addr.s_addr;
+    localAddress = IpAddress(ntohl(address.sin_addr.s_addr));
 
     return localAddress;
 }

@@ -99,6 +99,9 @@ public :
     /// Note that this function know nothing about the standard
     /// fonts installed on the user's system, thus you can't
     /// load them directly.
+    /// Warning: SFML cannot preload all the font data in this
+    /// function, so the buffer pointed by \a data has to remain
+    /// valid as long as the font is used.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes

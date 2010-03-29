@@ -50,6 +50,19 @@ public :
     TcpListener();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the port to which the socket is bound locally
+    ///
+    /// If the socket is not listening to a port, this function
+    /// returns 0.
+    ///
+    /// \return Port to which the socket is bound
+    ///
+    /// \see Listen
+    ///
+    ////////////////////////////////////////////////////////////
+    unsigned short GetLocalPort() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Start listening for connections
     ///
     /// This functions makes the socket listen to the specified
