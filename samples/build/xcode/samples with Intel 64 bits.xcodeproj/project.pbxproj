@@ -951,7 +951,7 @@
 				);
 				CONFIGURATION_BUILD_DIR = ../../bin;
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../../lib/ub64\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../../lib64\"";
 				GCC_VERSION = 4.0;
 				OBJROOT = build;
 				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
@@ -969,7 +969,7 @@
 				);
 				CONFIGURATION_BUILD_DIR = ../../bin;
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../../lib/ub64\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../../lib64\"";
 				GCC_VERSION = 4.0;
 				OBJROOT = build;
 				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
