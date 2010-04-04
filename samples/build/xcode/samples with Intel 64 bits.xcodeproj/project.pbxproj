@@ -29,6 +29,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		8709B2831169140500513C21 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8709B2801169140500513C21 /* main.m */; };
+		8709B2841169140500513C21 /* SfmlController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8709B2821169140500513C21 /* SfmlController.mm */; };
+		8709B2891169140B00513C21 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8709B2851169140B00513C21 /* InfoPlist.strings */; };
+		8709B28A1169140B00513C21 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8709B2871169140B00513C21 /* MainMenu.xib */; };
+		8709B28B1169141800513C21 /* sfml-window.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07D7D6E0EE82B6F006712A3 /* sfml-window.framework */; };
+		8709B28C1169141C00513C21 /* sfml-graphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07D7D6C0EE82B6F006712A3 /* sfml-graphics.framework */; };
 		A07D7E330EE82C0A006712A3 /* Ftp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A07D7DDA0EE82B93006712A3 /* Ftp.cpp */; };
 		A07D7E340EE82C0F006712A3 /* sfml-system.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07D7D6D0EE82B6F006712A3 /* sfml-system.framework */; };
 		A07D7E350EE82C0F006712A3 /* sfml-network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07D7D6B0EE82B6F006712A3 /* sfml-network.framework */; };
@@ -135,12 +141,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A07D7D6A0EE82B6F006712A3 /* sfml-audio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-audio.framework"; path = "../../../lib/ub64/sfml-audio.framework"; sourceTree = "<group>"; };
-		A07D7D6B0EE82B6F006712A3 /* sfml-network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-network.framework"; path = "../../../lib/ub64/sfml-network.framework"; sourceTree = "<group>"; };
-		A07D7D6C0EE82B6F006712A3 /* sfml-graphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-graphics.framework"; path = "../../../lib/ub64/sfml-graphics.framework"; sourceTree = "<group>"; };
-		A07D7D6D0EE82B6F006712A3 /* sfml-system.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-system.framework"; path = "../../../lib/ub64/sfml-system.framework"; sourceTree = "<group>"; };
-		A07D7D6E0EE82B6F006712A3 /* sfml-window.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-window.framework"; path = "../../../lib/ub64/sfml-window.framework"; sourceTree = "<group>"; };
-		A07D7D6F0EE82B6F006712A3 /* SFML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SFML.framework; path = ../../../lib/ub64/SFML.framework; sourceTree = "<group>"; };
+		8709B26F116913DB00513C21 /* cocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8709B271116913DB00513C21 /* cocoa-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "cocoa-Info.plist"; sourceTree = "<group>"; };
+		8709B2801169140500513C21 /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../cocoa/main.m; sourceTree = SOURCE_ROOT; };
+		8709B2811169140500513C21 /* SfmlController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SfmlController.h; path = ../../cocoa/SfmlController.h; sourceTree = SOURCE_ROOT; };
+		8709B2821169140500513C21 /* SfmlController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SfmlController.mm; path = ../../cocoa/SfmlController.mm; sourceTree = SOURCE_ROOT; };
+		8709B2861169140B00513C21 /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = ../../cocoa/English.lproj/InfoPlist.strings; sourceTree = SOURCE_ROOT; };
+		8709B2881169140B00513C21 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = ../../cocoa/English.lproj/MainMenu.xib; sourceTree = SOURCE_ROOT; };
+		A07D7D6A0EE82B6F006712A3 /* sfml-audio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-audio.framework"; path = "../../../lib64/sfml-audio.framework"; sourceTree = "<group>"; };
+		A07D7D6B0EE82B6F006712A3 /* sfml-network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-network.framework"; path = "../../../lib64/sfml-network.framework"; sourceTree = "<group>"; };
+		A07D7D6C0EE82B6F006712A3 /* sfml-graphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-graphics.framework"; path = "../../../lib64/sfml-graphics.framework"; sourceTree = "<group>"; };
+		A07D7D6D0EE82B6F006712A3 /* sfml-system.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-system.framework"; path = "../../../lib64/sfml-system.framework"; sourceTree = "<group>"; };
+		A07D7D6E0EE82B6F006712A3 /* sfml-window.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "sfml-window.framework"; path = "../../../lib64/sfml-window.framework"; sourceTree = "<group>"; };
+		A07D7D6F0EE82B6F006712A3 /* SFML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SFML.framework; path = ../../../lib64/SFML.framework; sourceTree = "<group>"; };
 		A07D7DDA0EE82B93006712A3 /* Ftp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Ftp.cpp; sourceTree = "<group>"; };
 		A07D7DDF0EE82B93006712A3 /* OpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OpenGL.cpp; sourceTree = "<group>"; };
 		A07D7DE20EE82B93006712A3 /* Pong.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Pong.cpp; sourceTree = "<group>"; };
@@ -171,6 +184,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8709B26D116913DB00513C21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8709B28B1169141800513C21 /* sfml-window.framework in Frameworks */,
+				8709B28C1169141C00513C21 /* sfml-graphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A07D7E2D0EE82C04006712A3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -261,6 +283,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8709B27C116913F600513C21 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				8709B2801169140500513C21 /* main.m */,
+				8709B2811169140500513C21 /* SfmlController.h */,
+				8709B2821169140500513C21 /* SfmlController.mm */,
+				8709B2851169140B00513C21 /* InfoPlist.strings */,
+				8709B2871169140B00513C21 /* MainMenu.xib */,
+			);
+			name = cocoa;
+			sourceTree = "<group>";
+		};
 		A07D7D510EE82B1A006712A3 = {
 			isa = PBXGroup;
 			children = (
@@ -283,6 +317,7 @@
 				A07D7EBF0EE8302C006712A3 /* sound_capture */,
 				A07D7ED00EE830D3006712A3 /* voip */,
 				A07D7EE40EE83167006712A3 /* window.app */,
+				8709B26F116913DB00513C21 /* cocoa.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -290,6 +325,7 @@
 		A07D7D650EE82B3F006712A3 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				8709B27C116913F600513C21 /* cocoa */,
 				A07D7DD90EE82B93006712A3 /* ftp */,
 				A07D7DDD0EE82B93006712A3 /* opengl */,
 				A07D7DE00EE82B93006712A3 /* pong */,
@@ -405,6 +441,7 @@
 		A07D7F170EE832AD006712A3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8709B271116913DB00513C21 /* cocoa-Info.plist */,
 				A07D7E3C0EE82C1A006712A3 /* opengl-Info.plist */,
 				A07D7E4C0EE82C68006712A3 /* pong-Info.plist */,
 				A07D7E6F0EE82D5D006712A3 /* post-fx-Info.plist */,
@@ -416,6 +453,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		8709B26E116913DB00513C21 /* cocoa */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8709B274116913DC00513C21 /* Build configuration list for PBXNativeTarget "cocoa" */;
+			buildPhases = (
+				8709B26B116913DB00513C21 /* Resources */,
+				8709B26C116913DB00513C21 /* Sources */,
+				8709B26D116913DB00513C21 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = cocoa;
+			productName = cocoa;
+			productReference = 8709B26F116913DB00513C21 /* cocoa.app */;
+			productType = "com.apple.product-type.application";
+		};
 		A07D7E2E0EE82C04006712A3 /* ftp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A07D7E3F0EE82C1B006712A3 /* Build configuration list for PBXNativeTarget "ftp" */;
@@ -578,7 +632,7 @@
 			mainGroup = A07D7D510EE82B1A006712A3;
 			productRefGroup = A07D7D600EE82B34006712A3 /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
+			projectRoot = ../..;
 			targets = (
 				A07D7E600EE82D33006712A3 /* All */,
 				A07D7E2E0EE82C04006712A3 /* ftp */,
@@ -590,11 +644,21 @@
 				A07D7EBE0EE8302C006712A3 /* sound_capture */,
 				A07D7ECF0EE830D3006712A3 /* voip */,
 				A07D7EE30EE83167006712A3 /* window */,
+				8709B26E116913DB00513C21 /* cocoa */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8709B26B116913DB00513C21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8709B2891169140B00513C21 /* InfoPlist.strings in Resources */,
+				8709B28A1169140B00513C21 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A07D7E360EE82C1A006712A3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -668,6 +732,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8709B26C116913DB00513C21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8709B2831169140500513C21 /* main.m in Sources */,
+				8709B2841169140500513C21 /* SfmlController.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A07D7E2C0EE82C04006712A3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -794,7 +867,80 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		8709B2851169140B00513C21 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8709B2861169140B00513C21 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		8709B2871169140B00513C21 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8709B2881169140B00513C21 /* English */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		8709B272116913DC00513C21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../lib/ub64\"";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = "cocoa-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = cocoa;
+			};
+			name = Debug;
+		};
+		8709B273116913DC00513C21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../lib/ub64\"";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = "cocoa-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = cocoa;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		A07D7D540EE82B1A006712A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1293,6 +1439,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8709B274116913DC00513C21 /* Build configuration list for PBXNativeTarget "cocoa" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8709B272116913DC00513C21 /* Debug */,
+				8709B273116913DC00513C21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A07D7D560EE82B1A006712A3 /* Build configuration list for PBXProject "samples with Intel 64 bits" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
