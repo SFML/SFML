@@ -278,7 +278,7 @@ move_dir()
 
 copy()
 {
-    /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp -exclude ".*" -exclude codeblocks -exclude *vc2005 -exclude *vc2008 -exclude *mingw -exclude Makefile -exclude Main -exclude "Template for new ports" -exclude Linux -exclude Win32 -exclude win32 -exclude *.build -exclude *.dll -exclude *.dSYM -exclude qt -exclude wxwidgets -exclude X11 -exclude "$USER*" -exclude dist -exclude AL -strip-debug-symbols -resolve-src-symlinks "$1" "$2"
+    /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp -exclude ".*" -exclude codeblocks -exclude *vc2005 -exclude *vc2008 -exclude *mingw -exclude Makefile -exclude Main -exclude "Template for new ports" -exclude Linux -exclude Win32 -exclude win32 -exclude *.build -exclude *.dll -exclude *.dSYM -exclude qt -exclude wxwidgets -exclude X11 -exclude "$USER*" -exclude AL -strip-debug-symbols -resolve-src-symlinks "$1" "$2"
 }
 
 build_project()
