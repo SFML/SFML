@@ -866,7 +866,7 @@ main()
             build_samples $*
             build_samples_64b $*
             build_packages $*
-            build_packages64b $*
+            build_packages_64b $*
             ;;
          
          "all-32")
