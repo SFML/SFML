@@ -549,25 +549,26 @@
 		[myWindow release];
 		myWindow = [aWindow retain];
 		
-		// Set the new observers
-		// We want to know when our window got the focus
-		[nc addObserver:self
-			   selector:@selector(windowDidBecomeMain:)
-				   name:NSWindowDidBecomeMainNotification
-				 object:[self window]];
-		
-		// We want to know when our window lost the focus
-		[nc addObserver:self
-			   selector:@selector(windowDidResignMain:)
-				   name:NSWindowDidResignMainNotification
-				 object:[self window]];
-		
-		// We want to know when the user closes the window
-		[nc addObserver:self
-			   selector:@selector(windowWillClose:)
-				   name:NSWindowWillCloseNotification
-				 object:[self window]];
-		
+		if (myWindow) {
+			// Set the new observers
+			// We want to know when our window got the focus
+			[nc addObserver:self
+				   selector:@selector(windowDidBecomeMain:)
+					   name:NSWindowDidBecomeMainNotification
+					 object:[self window]];
+			
+			// We want to know when our window lost the focus
+			[nc addObserver:self
+				   selector:@selector(windowDidResignMain:)
+					   name:NSWindowDidResignMainNotification
+					 object:[self window]];
+			
+			// We want to know when the user closes the window
+			[nc addObserver:self
+				   selector:@selector(windowWillClose:)
+					   name:NSWindowWillCloseNotification
+					 object:[self window]];
+		}
 	}
 }
 
