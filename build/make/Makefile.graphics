@@ -1,16 +1,5 @@
-SRC     = $(wildcard $(SRCROOT)/Graphics/*.cpp $(SRCROOT)/Graphics/Linux/*.cpp)
-SRCGLEW = $(wildcard $(SRCROOT)/Graphics/GLEW/*.c)
-SRCJPEG = $(wildcard $(SRCROOT)/Graphics/libjpeg/*.c)
-SRCPNG  = $(wildcard $(SRCROOT)/Graphics/libpng/*.c)
-SRCSOIL = $(wildcard $(SRCROOT)/Graphics/SOIL/*.c)
-SRCZLIB = $(wildcard $(SRCROOT)/Graphics/zlib/*.c)
-OBJ     = $(SRC:.cpp=.o)
-OBJGLEW = $(SRCGLEW:.c=.o)
-OBJJPEG = $(SRCJPEG:.c=.o)
-OBJPNG  = $(SRCPNG:.c=.o)
-OBJSOIL = $(SRCSOIL:.c=.o)
-OBJZLIB = $(SRCZLIB:.c=.o)
-
+SRC         = $(wildcard $(SRCROOT)/Graphics/*.cpp $(SRCROOT)/Graphics/Linux/*.cpp)
+OBJ         = $(SRC:.cpp=.o)
 LIB         = libsfml-graphics.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
@@ -18,22 +7,16 @@ LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
-libsfml-graphics.so: $(OBJ) $(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB)
-	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) $(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB) -lfreetype -lX11 -lGL
+libsfml-graphics.so: $(OBJ)
+	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lGLEW -ljpeg -lpng -lSOIL -lfreetype -lX11 -lGL
 
 $(OBJ): %.o: %.cpp
 	$(CPP) -o $@ -c $< $(CFLAGS) -I/usr/include/freetype2
 
-$(OBJSOIL): %.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGSEXT) -DSTBI_FAILURE_USERMSG
-
-$(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJZLIB): %.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGSEXT)
-
 .PHONY: clean mrproper
 
 clean:
-	rm -rf $(OBJ) $(OBJGLEW) $(OBJJPEG) $(OBJPNG) $(OBJSOIL) $(OBJZLIB)
+	rm -rf $(OBJ)
 
 mrproper: clean
 	rm -rf $(FULLLIBNAME)
