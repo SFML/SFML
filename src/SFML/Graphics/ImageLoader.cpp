@@ -26,14 +26,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/ImageLoader.hpp>
+#include <SFML/System/Err.hpp>
 extern "C"
 {
-    #include <SFML/Graphics/libjpeg/jpeglib.h>
-    #include <SFML/Graphics/libjpeg/jerror.h>
+    #include <jpeglib.h>
+    #include <jerror.h>
 }
-#include <SFML/Graphics/libpng/png.h>
-#include <SFML/Graphics/SOIL/SOIL.h>
-#include <SFML/System/Err.hpp>
+#include <png.h>
+#include <SOIL/SOIL.h>
 
 
 namespace

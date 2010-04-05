@@ -29,8 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderImageImpl.hpp>
-#include <SFML/Graphics/GLEW/glew.h>
-#include <SFML/Graphics/GLEW/glxew.h>
+#include <GL/glew.h>
+#include <GL/glxew.h>
 #include <X11/Xlib.h>
 
 

@@ -29,8 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderImageImpl.hpp>
-#include <SFML/Graphics/GLEW/glew.h>
-#include <SFML/Graphics/GLEW/wglew.h>
+#include <GL/glew.h>
+#include <GL/wglew.h>
 
 
 namespace sf

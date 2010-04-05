@@ -61,6 +61,10 @@ del *.o /f /q
 REM Add external libraries to sfml-graphics
 echo Adding external libraries to libsfml-graphics-s...
 ar x %SFML%\extlibs\libs-mingw\libfreetype.a
+ar x %SFML%\extlibs\libs-mingw\libglew.a
+ar x %SFML%\extlibs\libs-mingw\libjpeg.a
+ar x %SFML%\extlibs\libs-mingw\libpng.a
+ar x %SFML%\extlibs\libs-mingw\libsoil.a
 ar rs libsfml-graphics-s.a *.o
 ar rs libsfml-graphics-s-d.a *.o
 del *.o /f /q
