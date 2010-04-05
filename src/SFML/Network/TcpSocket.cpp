@@ -208,7 +208,7 @@ Socket::Status TcpSocket::Send(const char* data, std::size_t size)
     // Check the parameters
     if (!data || (size == 0))
     {
-        Err() << "Cannot send data over the network (invalid parameters)" << std::endl;
+        Err() << "Cannot send data over the network (no data to send)" << std::endl;
         return Error;
     }
 
@@ -221,7 +221,7 @@ Socket::Status TcpSocket::Send(const char* data, std::size_t size)
         sent = send(GetHandle(), data + length, sizeToSend - length, 0);
 
         // Check for errors
-        if (sent <= 0)
+        if (sent < 0)
             return priv::SocketImpl::GetErrorStatus();
     }
 
@@ -235,10 +235,10 @@ Socket::Status TcpSocket::Receive(char* data, std::size_t size, std::size_t& rec
     // First clear the variables to fill
     received = 0;
 
-    // Check the parameters
-    if (!data || (size == 0))
+    // Check the destination buffer
+    if (!data)
     {
-        Err() << "Cannot receive data from the network (invalid parameters)" << std::endl;
+        Err() << "Cannot receive data from the network (the destination buffer is invalid)" << std::endl;
         return Error;
     }
 
@@ -265,6 +265,10 @@ Socket::Status TcpSocket::Receive(char* data, std::size_t size, std::size_t& rec
 ////////////////////////////////////////////////////////////
 Socket::Status TcpSocket::Send(Packet& packet)
 {
+    // TCP is a stream protocol, it doesn't preserve messages boundaries.
+    // This means that we have to send the packet size first, so that the
+    // receiver knows the actual end of the packet in the data stream.
+
     // Get the data to send from the packet
     std::size_t size = 0;
     const char* data = packet.OnSend(size);

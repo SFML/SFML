@@ -95,28 +95,23 @@ Socket::Status UdpSocket::Send(const char* data, std::size_t size, const IpAddre
     // Create the internal socket if it doesn't exist
     Create();
 
-    // Check the parameters
-    if (!data || (size == 0))
+    // Make sure that all the data will fit in one datagram
+    if (size > MaxDatagramSize)
     {
-        Err() << "Cannot send data over the network (invalid parameters)" << std::endl;
+        Err() << "Cannot send data over the network "
+              << "(the number of bytes to send is greater than sf::UdpSocket::MaxDatagramSize)" << std::endl;
         return Error;
     }
 
     // Build the target address
     sockaddr_in address = priv::SocketImpl::CreateAddress(remoteAddress.ToInteger(), remotePort);
 
-    // Loop until every byte has been sent
-    int sent = 0;
-    int sizeToSend = static_cast<int>(size);
-    for (int length = 0; length < sizeToSend; length += sent)
-    {
-        // Send a chunk of data
-        sent = sendto(GetHandle(), data + length, sizeToSend - length, 0, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+    // Send the data (unlike TCP, all the data is always sent in one call)
+    int sent = sendto(GetHandle(), data, size, 0, reinterpret_cast<sockaddr*>(&address), sizeof(address));
 
-        // Check for errors
-        if (sent <= 0)
-            return priv::SocketImpl::GetErrorStatus();
-    }
+    // Check for errors
+    if (sent < 0)
+        return priv::SocketImpl::GetErrorStatus();
 
     return Done;
 }
@@ -130,10 +125,10 @@ Socket::Status UdpSocket::Receive(char* data, std::size_t size, std::size_t& rec
     remoteAddress = IpAddress();
     remotePort    = 0;
 
-    // Check the parameters
-    if (!data || (size == 0))
+    // Check the destination buffer
+    if (!data)
     {
-        Err() << "Cannot receive data from the network (invalid parameters)" << std::endl;
+        Err() << "Cannot receive data from the network (the destination buffer is invalid)" << std::endl;
         return Error;
     }
 
@@ -145,7 +140,7 @@ Socket::Status UdpSocket::Receive(char* data, std::size_t size, std::size_t& rec
     int sizeReceived = recvfrom(GetHandle(), data, static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address), &addressSize);
 
     // Check for errors
-    if (sizeReceived <= 0)
+    if (sizeReceived < 0)
         return priv::SocketImpl::GetErrorStatus();
 
     // Fill the sender informations
@@ -160,27 +155,29 @@ Socket::Status UdpSocket::Receive(char* data, std::size_t size, std::size_t& rec
 ////////////////////////////////////////////////////////////
 Socket::Status UdpSocket::Send(Packet& packet, const IpAddress& remoteAddress, unsigned short remotePort)
 {
+    // As the UDP protocol preserves datagrams boundaries, we don't have to
+    // send the packet size first (it would even be a potential source of bug, if
+    // that size arrives corrupted), but we must split the packet into multiple
+    // pieces if data size is greater than the maximum datagram size.
+
     // Get the data to send from the packet
     std::size_t size = 0;
     const char* data = packet.OnSend(size);
 
-    // First send the packet size
-    Uint32 packetSize = htonl(static_cast<unsigned long>(size));
-    Status status = Send(reinterpret_cast<const char*>(&packetSize), sizeof(packetSize), remoteAddress, remotePort);
-
-    // Make sure that the size was properly sent
-    if (status != Done)
-        return status;
-
-    // Finally send the packet data
-    if (packetSize > 0)
+    // If size is greater than MaxDatagramSize, the data must be split into multiple datagrams
+    while (size >= MaxDatagramSize)
     {
-        return Send(data, size, remoteAddress, remotePort);
+        Status status = Send(data, MaxDatagramSize, remoteAddress, remotePort);
+        if (status != Done)
+            return status;
+
+        data += MaxDatagramSize;
+        size -= MaxDatagramSize;
     }
-    else
-    {
-        return Done;
-    }
+
+    // It is important to send a final datagram with a size < MaxDatagramSize,
+    // even if it is zero, to mark the end of the packet
+    return Send(data, size, remoteAddress, remotePort);
 }
 
 
@@ -192,60 +189,28 @@ Socket::Status UdpSocket::Receive(Packet& packet, IpAddress& remoteAddress, unsi
     remoteAddress = IpAddress();
     remotePort    = 0;
 
-    // We start by getting the size of the incoming packet
-    Uint32 packetSize = 0;
+    // Receive datagrams
     std::size_t received = 0;
-    if (myPendingPacket.SizeReceived < sizeof(myPendingPacket.Size))
+    do
     {
-        // Loop until we've received the entire size of the packet
-        // (even a 4 bytes variable may be received in more than one call)
-        while (myPendingPacket.SizeReceived < sizeof(myPendingPacket.Size))
-        {
-            char* data = reinterpret_cast<char*>(&myPendingPacket.Size) + myPendingPacket.SizeReceived;
-            std::size_t size = sizeof(myPendingPacket.Size) - myPendingPacket.SizeReceived;
-            Status status = Receive(data, size, received, remoteAddress, remotePort);
-            myPendingPacket.SizeReceived += received;
+        // Make room in the data buffer for a new datagram
+        std::size_t size = myPendingPacket.Data.size();
+        myPendingPacket.Data.resize(size + MaxDatagramSize);
+        char* data = &myPendingPacket.Data[0] + size;
 
-            if (status != Done)
-                return status;
-        }
+        // Receive the datagram
+        Status status = Receive(data, MaxDatagramSize, received, remoteAddress, remotePort);
 
-        // The packet size has been fully received
-        packetSize = ntohl(myPendingPacket.Size);
-    }
-    else
-    {
-        // The packet size has already been received in a previous call
-        packetSize = ntohl(myPendingPacket.Size);
-    }
-
-    // Use another address instance for receiving the packet data,
-    // chunks of data coming from a different sender will be discarded (and lost...)
-    IpAddress currentSender;
-    unsigned short currentPort;
-
-    // Loop until we receive all the packet data
-    char buffer[1024];
-    while (myPendingPacket.Data.size() < packetSize)
-    {
-        // Receive a chunk of data
-        std::size_t sizeToGet = std::min(static_cast<std::size_t>(packetSize - myPendingPacket.Data.size()), sizeof(buffer));
-        Status status = Receive(buffer, sizeToGet, received, currentSender, currentPort);
+        // Check for errors
         if (status != Done)
             return status;
-
-        // Append it into the packet
-        if ((currentSender == remoteAddress) && (currentPort == remotePort) && (received > 0))
-        {
-            myPendingPacket.Data.resize(myPendingPacket.Data.size() + received);
-            char* begin = &myPendingPacket.Data[0] + myPendingPacket.Data.size() - received;
-            memcpy(begin, buffer, received);
-        }
     }
+    while (received == MaxDatagramSize);
 
     // We have received all the packet data: we can copy it to the user packet
-    if (!myPendingPacket.Data.empty())
-        packet.OnReceive(&myPendingPacket.Data[0], myPendingPacket.Data.size());
+    std::size_t actualSize = myPendingPacket.Data.size() - MaxDatagramSize + received;
+    if (actualSize > 0)
+        packet.OnReceive(&myPendingPacket.Data[0], actualSize);
 
     // Clear the pending packet data
     myPendingPacket = PendingPacket();

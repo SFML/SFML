@@ -45,6 +45,14 @@ class SFML_API UdpSocket : public Socket
 public :
 
     ////////////////////////////////////////////////////////////
+    // Constants
+    ////////////////////////////////////////////////////////////
+    enum
+    {
+        MaxDatagramSize = 65507 ///< The maximum number of bytes that can be sent in a single UDP datagram
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
@@ -96,6 +104,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Send raw data to a remote peer
     ///
+    /// Make sure that \a size is not greater than
+    /// UdpSocket::MaxDatagramSize, otherwise this function will
+    /// fail and no data will be sent.
+    ///
     /// \param data          Pointer to the sequence of bytes to send
     /// \param size          Number of bytes to send
     /// \param remoteAddress Address of the receiver
@@ -113,6 +125,10 @@ public :
     ///
     /// In blocking mode, this function will wait until some
     /// bytes are actually received.
+    /// Be careful to use a buffer which is large enough for
+    /// the data that you intend to receive, if it is too small
+    /// then an error will be returned and *all* the data will
+    /// be lost.
     ///
     /// \param data          Pointer to the array to fill with the received bytes
     /// \param size          Maximum number of bytes that can be received
@@ -130,6 +146,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to a remote peer
     ///
+    /// Unlike the other version of Send, this function can accept
+    /// data sizes greater than UdpSocket::MaxDatagramSize.
+    /// If necessary, the data will be split and sent in multiple
+    /// datagrams.
+    ///
     /// \param packet        Packet to send
     /// \param remoteAddress Address of the receiver
     /// \param remotePort    Port of the receiver to send the data to
@@ -146,6 +167,8 @@ public :
     ///
     /// In blocking mode, this function will wait until the whole packet
     /// has been received.
+    /// Warning: this functon doesn't properly handle mixed data
+    /// received from multiple peers.
     ///
     /// \param packet        Packet to fill with the received data
     /// \param remoteAddress Address of the peer that sent the data
