@@ -71,7 +71,7 @@ bool Music::OpenFromFile(const std::string& filename)
     myDuration = static_cast<float>(myFile->GetSamplesCount()) / myFile->GetSampleRate() / myFile->GetChannelsCount();
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
-    mySamples.resize(myFile->GetSampleRate());
+    mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelsCount());
 
     // Initialize the stream
     Initialize(myFile->GetChannelsCount(), myFile->GetSampleRate());
@@ -97,7 +97,7 @@ bool Music::OpenFromMemory(const void* data, std::size_t sizeInBytes)
     myDuration = static_cast<float>(myFile->GetSamplesCount()) / myFile->GetSampleRate() / myFile->GetChannelsCount();
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
-    mySamples.resize(myFile->GetSampleRate());
+    mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelsCount());
 
     // Initialize the stream
     Initialize(myFile->GetChannelsCount(), myFile->GetSampleRate());

@@ -243,9 +243,10 @@ void SoundStream::Run()
             }
             else
             {
-                ALint size;
+                ALint size, bits;
                 ALCheck(alGetBufferi(buffer, AL_SIZE, &size));
-                mySamplesProcessed += size / sizeof(Int16);
+                ALCheck(alGetBufferi(buffer, AL_BITS, &bits));
+                mySamplesProcessed += size / (bits / 8);
             }
 
             // Fill it and push it back into the playing queue

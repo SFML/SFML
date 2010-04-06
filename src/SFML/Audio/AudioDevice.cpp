@@ -79,7 +79,7 @@ AudioDevice::~AudioDevice()
     alcMakeContextCurrent(NULL);
     if (audioContext)
         alcDestroyContext(audioContext);
-    
+
     // Destroy the device
     if (audioDevice)
         alcCloseDevice(audioDevice);
