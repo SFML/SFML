@@ -26,10 +26,10 @@ namespace sample_sound
         private static void PlaySound()
         {
             // Load a sound buffer from a wav file
-            SoundBuffer buffer = new SoundBuffer("datas/sound/footsteps.wav");
+            SoundBuffer buffer = new SoundBuffer("datas/sound/canary.wav");
 
             // Display sound informations
-            Console.WriteLine("footsteps.wav :");
+            Console.WriteLine("canary.wav :");
             Console.WriteLine(" " + buffer.Duration      + " sec");
             Console.WriteLine(" " + buffer.SampleRate    + " samples / sec");
             Console.WriteLine(" " + buffer.ChannelsCount + " channels");
@@ -56,10 +56,10 @@ namespace sample_sound
         private static void PlayMusic()
         {
             // Load an ogg music file
-            Music music = new Music("datas/sound/lepidoptera.ogg");
+            Music music = new Music("datas/sound/orchestral.ogg");
 
             // Display music informations
-            Console.WriteLine("lepidoptera.ogg :");
+            Console.WriteLine("orchestral.ogg :");
             Console.WriteLine(" " + music.Duration      + " sec");
             Console.WriteLine(" " + music.SampleRate    + " samples / sec");
             Console.WriteLine(" " + music.ChannelsCount + " channels");

@@ -15,11 +15,11 @@ void PlaySound()
 {
     // Load a sound buffer from a wav file
     sf::SoundBuffer buffer;
-    if (!buffer.LoadFromFile("datas/sound/footsteps.wav"))
+    if (!buffer.LoadFromFile("datas/sound/canary.wav"))
         return;
 
     // Display sound informations
-    std::cout << "footsteps.wav :" << std::endl;
+    std::cout << "canary.wav :" << std::endl;
     std::cout << " " << buffer.GetDuration()      << " sec"           << std::endl;
     std::cout << " " << buffer.GetSampleRate()    << " samples / sec" << std::endl;
     std::cout << " " << buffer.GetChannelsCount() << " channels"      << std::endl;
@@ -49,11 +49,11 @@ void PlayMusic()
 {
     // Load an ogg music file
     sf::Music music;
-    if (!music.OpenFromFile("datas/sound/lepidoptera.ogg"))
+    if (!music.OpenFromFile("datas/sound/orchestral.ogg"))
         return;
 
     // Display music informations
-    std::cout << "lepidoptera.ogg :" << std::endl;
+    std::cout << "orchestral.ogg :" << std::endl;
     std::cout << " " << music.GetDuration()      << " sec"           << std::endl;
     std::cout << " " << music.GetSampleRate()    << " samples / sec" << std::endl;
     std::cout << " " << music.GetChannelsCount() << " channels"      << std::endl;
