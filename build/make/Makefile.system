@@ -1,6 +1,5 @@
-SRC = $(wildcard $(SRCROOT)/System/*.cpp $(SRCROOT)/System/Unix/*.cpp)
-OBJ = $(SRC:.cpp=.o)
-
+SRC         = $(wildcard $(SRCROOT)/System/*.cpp $(SRCROOT)/System/Unix/*.cpp)
+OBJ         = $(SRC:.cpp=.o)
 LIB         = libsfml-system.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)

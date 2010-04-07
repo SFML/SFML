@@ -1,14 +1,6 @@
 
 all: csfml
 
-csfml:
-	@(cd ./src/SFML && $(MAKE))
+csfml install clean mrproper:
+	cd ./build/make && $(MAKE) $@
 
-install:
-	@(cd ./src/SFML && $(MAKE) $@)
-
-clean:
-	@(cd ./src/SFML && $(MAKE) $@)
-
-mrproper:
-	@(cd ./src/SFML && $(MAKE) $@)

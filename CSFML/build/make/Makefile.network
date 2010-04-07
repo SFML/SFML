@@ -1,6 +1,6 @@
-LIB         = libcsfml-network.so
-SRC         = $(wildcard *.cpp)
+SRC         = $(wildcard $(SRCROOT)/Network/*.cpp)
 OBJ         = $(SRC:.cpp=.o)
+LIB         = libcsfml-network.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
 LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
@@ -16,10 +16,10 @@ $(OBJ): %.o: %.cpp
 .PHONY: clean mrproper
 
 clean:
-	@rm -rf $(OBJ)
+	rm -rf $(OBJ)
 
 mrproper: clean
-	@rm -rf $(FULLLIBNAME)
+	rm -rf $(FULLLIBNAME)
 
 install:
 	objcopy --only-keep-debug $(FULLLIBNAME) $(DESTDBGDIR)/$(LIBNAME)

@@ -1,6 +1,5 @@
-SRC = $(wildcard $(SRCROOT)/Window/*.cpp $(SRCROOT)/Window/Linux/*.cpp)
-OBJ = $(SRC:.cpp=.o)
-
+SRC         = $(wildcard $(SRCROOT)/Window/*.cpp $(SRCROOT)/Window/Linux/*.cpp)
+OBJ         = $(SRC:.cpp=.o)
 LIB         = libsfml-window.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)

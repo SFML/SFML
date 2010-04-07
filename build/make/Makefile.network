@@ -1,6 +1,5 @@
-SRC = $(wildcard $(SRCROOT)/Network/*.cpp $(SRCROOT)/Network/Unix/*.cpp)
-OBJ = $(SRC:.cpp=.o)
-
+SRC         = $(wildcard $(SRCROOT)/Network/*.cpp $(SRCROOT)/Network/Unix/*.cpp)
+OBJ         = $(SRC:.cpp=.o)
 LIB         = libsfml-network.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)

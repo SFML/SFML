@@ -142,7 +142,7 @@ unsigned int sfRenderWindow_GetHeight(const sfRenderWindow* renderWindow)
 ////////////////////////////////////////////////////////////
 sfContextSettings sfRenderWindow_GetSettings(const sfRenderWindow* renderWindow)
 {
-    sfContextSettings settings = {0, 0, 0};
+    sfContextSettings settings = {0, 0, 0, 2, 0};
     CSFML_CHECK_RETURN(renderWindow, settings);
 
     const sf::ContextSettings& params = renderWindow->This.GetSettings();

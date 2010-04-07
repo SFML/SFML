@@ -1,6 +1,6 @@
-LIB         = libcsfml-window.so
-SRC         = $(wildcard *.cpp)
+SRC         = $(wildcard $(SRCROOT)/Window/*.cpp)
 OBJ         = $(SRC:.cpp=.o)
+LIB         = libcsfml-window.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
 LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
@@ -12,14 +12,14 @@ libcsfml-window.so: $(OBJ)
 
 $(OBJ): %.o: %.cpp
 	$(CPP) -o $@ -c $< $(CFLAGS)
-
+	
 .PHONY: clean mrproper
 
 clean:
-	@rm -rf $(OBJ)
+	rm -rf $(OBJ)
 
 mrproper: clean
-	@rm -rf $(FULLLIBNAME)
+	rm -rf $(FULLLIBNAME)
 
 install:
 	objcopy --only-keep-debug $(FULLLIBNAME) $(DESTDBGDIR)/$(LIBNAME)
