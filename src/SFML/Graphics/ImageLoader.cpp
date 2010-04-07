@@ -35,6 +35,10 @@ extern "C"
 #include <png.h>
 #include <SOIL/SOIL.h>
 
+// For compatibility with versions of libpng < 1.4.0
+#ifndef png_jmpbuf
+    #define png_jmpbuf(png) png->jmpbuf
+#endif
 
 namespace
 {
@@ -44,7 +48,7 @@ namespace
     void PngErrorHandler(png_structp png, png_const_charp message)
     {
         sf::Err() << "Failed to write PNG image. Reason : " << message << std::endl;
-        longjmp(png->jmpbuf, 1);
+        longjmp(png_jmpbuf(png), 1);
     }
 }
 
@@ -288,7 +292,7 @@ bool ImageLoader::WritePng(const std::string& filename, const std::vector<Uint8>
     }
 
     // For proper error handling...
-    if (setjmp(png->jmpbuf))
+    if (setjmp(png_jmpbuf(png)))
     {
         png_destroy_write_struct(&png, &pngInfos);
         return false;

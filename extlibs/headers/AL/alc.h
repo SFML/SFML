@@ -6,15 +6,14 @@ extern "C" {
 #endif
 
 #if defined(_WIN32) && !defined(_XBOX)
- /* _OPENAL32LIB is deprecated */
- #if defined(AL_BUILD_LIBRARY) || defined (_OPENAL32LIB)
+ #if defined(AL_BUILD_LIBRARY)
   #define ALC_API __declspec(dllexport)
  #else
   #define ALC_API __declspec(dllimport)
  #endif
 #else
  #if defined(AL_BUILD_LIBRARY) && defined(HAVE_GCC_VISIBILITY)
-  #define ALC_API __attribute__((visibility("default")))
+  #define ALC_API __attribute__((visibility("protected")))
  #else
   #define ALC_API extern
  #endif
@@ -52,7 +51,7 @@ typedef char ALCboolean;
 typedef char ALCchar;
 
 /** signed 8-bit 2's complement integer */
-typedef char ALCbyte;
+typedef signed char ALCbyte;
 
 /** unsigned 8-bit integer */
 typedef unsigned char ALCubyte;
