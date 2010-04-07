@@ -107,7 +107,7 @@ Socket::Status UdpSocket::Send(const char* data, std::size_t size, const IpAddre
     sockaddr_in address = priv::SocketImpl::CreateAddress(remoteAddress.ToInteger(), remotePort);
 
     // Send the data (unlike TCP, all the data is always sent in one call)
-    int sent = sendto(GetHandle(), data, size, 0, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+    int sent = sendto(GetHandle(), data, static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address), sizeof(address));
 
     // Check for errors
     if (sent < 0)
