@@ -16,7 +16,7 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
+			Name="Debug static|Win32"
 			OutputDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
@@ -80,7 +80,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Release static|Win32"
 			OutputDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)..\..\Temp\vc2005\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"

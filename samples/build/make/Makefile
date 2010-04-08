@@ -2,7 +2,7 @@ export SRCROOT = ../..
 export BINPATH = ../../bin
 export CPP     = g++
 export CFLAGS  = -W -Wall -ansi -g -O2 -DNDEBUG -I../../include
-export SAMPLES = ftp opengl pong qt shader sockets sound sound_capture voip window wxwidgets X11
+export SAMPLES = ftp opengl pong shader sockets sound sound_capture voip window X11
 
 all: $(SAMPLES)
 

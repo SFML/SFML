@@ -10,8 +10,6 @@
 		<Project filename="..\..\samples\build\codeblocks\ftp.cbp" />
 		<Project filename="..\..\samples\build\codeblocks\opengl.cbp" />
 		<Project filename="..\..\samples\build\codeblocks\pong.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\qt.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\wxwidgets.cbp" />
 		<Project filename="..\..\samples\build\codeblocks\shader.cbp" />
 		<Project filename="..\..\samples\build\codeblocks\sockets.cbp" />
 		<Project filename="..\..\samples\build\codeblocks\sound.cbp" />

@@ -217,7 +217,7 @@ Packet& Packet::operator >>(double& data)
 Packet& Packet::operator >>(char* data)
 {
     // First extract string length
-    Uint32 length;
+    Uint32 length = 0;
     *this >> length;
 
     if ((length > 0) && CheckSize(length))
@@ -238,7 +238,7 @@ Packet& Packet::operator >>(char* data)
 Packet& Packet::operator >>(std::string& data)
 {
     // First extract string length
-    Uint32 length;
+    Uint32 length = 0;
     *this >> length;
 
     data.clear();
@@ -259,7 +259,7 @@ Packet& Packet::operator >>(std::string& data)
 Packet& Packet::operator >>(wchar_t* data)
 {
     // First extract string length
-    Uint32 length;
+    Uint32 length = 0;
     *this >> length;
 
     if ((length > 0) && CheckSize(length * sizeof(Uint32)))
@@ -267,7 +267,7 @@ Packet& Packet::operator >>(wchar_t* data)
         // Then extract characters
         for (Uint32 i = 0; i < length; ++i)
         {
-            Uint32 character;
+            Uint32 character = 0;
             *this >> character;
             data[i] = static_cast<wchar_t>(character);
         }
@@ -282,7 +282,7 @@ Packet& Packet::operator >>(wchar_t* data)
 Packet& Packet::operator >>(std::wstring& data)
 {
     // First extract string length
-    Uint32 length;
+    Uint32 length = 0;
     *this >> length;
 
     data.clear();
@@ -291,7 +291,7 @@ Packet& Packet::operator >>(std::wstring& data)
         // Then extract characters
         for (Uint32 i = 0; i < length; ++i)
         {
-            Uint32 character;
+            Uint32 character = 0;
             *this >> character;
             data += static_cast<wchar_t>(character);
         }
@@ -305,7 +305,7 @@ Packet& Packet::operator >>(std::wstring& data)
 Packet& Packet::operator >>(String& data)
 {
     // First extract the string length
-    Uint32 length;
+    Uint32 length = 0;
     *this >> length;
 
     data.Clear();
@@ -314,7 +314,7 @@ Packet& Packet::operator >>(String& data)
         // Then extract characters
         for (Uint32 i = 0; i < length; ++i)
         {
-            Uint32 character;
+            Uint32 character = 0;
             *this >> character;
             data += character;
         }

@@ -6,9 +6,9 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug_Win32">
+			<Target title="Debug static_Win32">
 				<Option output="..\..\bin\win32-d" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\..\Temp\codeblocks\win32\Debug_Win32" />
+				<Option object_output="..\..\..\Temp\codeblocks\win32\Debug static_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -29,9 +29,9 @@
 					<Add library="..\..\..\lib\mingw\libsfml-system-s-d.a" />
 				</Linker>
 			</Target>
-			<Target title="Release_Win32">
+			<Target title="Release static_Win32">
 				<Option output="..\..\bin\win32" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\..\Temp\codeblocks\win32\Release_Win32" />
+				<Option object_output="..\..\..\Temp\codeblocks\win32\Release static_Win32" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -49,6 +49,53 @@
 					<Add library="..\..\..\lib\mingw\libsfml-graphics-s.a" />
 					<Add library="..\..\..\lib\mingw\libsfml-window-s.a" />
 					<Add library="..\..\..\lib\mingw\libsfml-system-s.a" />
+				</Linker>
+			</Target>
+			<Target title="Debug DLL_Win32">
+				<Option output="..\..\bin\win32-d" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\..\Temp\codeblocks\win32\Debug DLL_Win32" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-DSFML_DYNAMIC" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\include" />
+					<Add directory="..\..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\..\lib\mingw\libsfml-graphics-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-window-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-system-d.a" />
+				</Linker>
+			</Target>
+			<Target title="Release DLL_Win32">
+				<Option output="..\..\bin\win32" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\..\Temp\codeblocks\win32\Release DLL_Win32" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-DSFML_DYNAMIC" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\include" />
+					<Add directory="..\..\..\extlibs" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="..\..\..\lib\mingw\libsfml-graphics.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-window.a" />
+					<Add library="..\..\..\lib\mingw\libsfml-system.a" />
 				</Linker>
 			</Target>
 		</Build>
