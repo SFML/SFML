@@ -37,7 +37,7 @@
 
     #include <SFML/Graphics/Linux/RenderImageImplPBuffer.hpp>
 
-#elif defined(SFML_SYSTEM_WINDOWS)
+#elif defined(SFML_SYSTEM_MACOS)
 
     #include <SFML/Graphics/MacOSX/RenderImageImplPBuffer.hpp>
 
