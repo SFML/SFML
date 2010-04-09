@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Win32/ContextWGL.hpp>
+#include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/wglext.h>
@@ -39,7 +39,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-ContextWGL::ContextWGL(ContextWGL* shared) :
+WglContext::WglContext(WglContext* shared) :
 myWindow       (NULL),
 myDeviceContext(NULL),
 myContext      (NULL),
@@ -64,7 +64,7 @@ myOwnsWindow   (true)
 
 
 ////////////////////////////////////////////////////////////
-ContextWGL::ContextWGL(ContextWGL* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings) :
+WglContext::WglContext(WglContext* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings) :
 myWindow       (NULL),
 myDeviceContext(NULL),
 myContext      (NULL),
@@ -84,7 +84,7 @@ myOwnsWindow   (false)
 
 
 ////////////////////////////////////////////////////////////
-ContextWGL::~ContextWGL()
+WglContext::~WglContext()
 {
     // Destroy the OpenGL context
     if (myContext)
@@ -105,7 +105,7 @@ ContextWGL::~ContextWGL()
 
 
 ////////////////////////////////////////////////////////////
-bool ContextWGL::MakeCurrent()
+bool WglContext::MakeCurrent()
 {
     if (myDeviceContext && myContext)
     {
@@ -122,7 +122,7 @@ bool ContextWGL::MakeCurrent()
 
 
 ////////////////////////////////////////////////////////////
-void ContextWGL::Display()
+void WglContext::Display()
 {
     if (myDeviceContext && myContext)
         SwapBuffers(myDeviceContext);
@@ -130,7 +130,7 @@ void ContextWGL::Display()
 
 
 ////////////////////////////////////////////////////////////
-void ContextWGL::UseVerticalSync(bool enabled)
+void WglContext::UseVerticalSync(bool enabled)
 {
     PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
     if (wglSwapIntervalEXT)
@@ -139,7 +139,7 @@ void ContextWGL::UseVerticalSync(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-void ContextWGL::CreateContext(ContextWGL* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
+void WglContext::CreateContext(WglContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
     // Save the creation settings
     mySettings = settings;

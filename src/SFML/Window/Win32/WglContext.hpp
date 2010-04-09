@@ -22,15 +22,14 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONTEXTGLX_HPP
-#define SFML_CONTEXTGLX_HPP
+#ifndef SFML_WGLCONTEXT_HPP
+#define SFML_WGLCONTEXT_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/ContextGL.hpp>
-#include <X11/Xlib.h>
-#include <GL/glx.h>
+#include <SFML/Window/GlContext.hpp>
+#include <windows.h>
 
 
 namespace sf
@@ -38,10 +37,10 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Linux (GLX) implementation of OpenGL contexts
+/// \brief Windows (WGL) implementation of OpenGL contexts
 ///
 ////////////////////////////////////////////////////////////
-class ContextGLX : public ContextGL
+class WglContext : public GlContext
 {
 public :
 
@@ -51,7 +50,7 @@ public :
     /// \param shared Context to share the new one with (can be NULL)
     ///
     ////////////////////////////////////////////////////////////
-    ContextGLX(ContextGLX* shared);
+    WglContext(WglContext* shared);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
@@ -62,13 +61,13 @@ public :
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    ContextGLX(ContextGLX* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
+    WglContext(WglContext* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~ContextGLX();
+    ~WglContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target
@@ -108,19 +107,19 @@ private :
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
+    void CreateContext(WglContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Display* myDisplay;    ///< Connection to the X server
-    ::Window   myWindow;     ///< Window to which the context is attached
-    GLXContext myContext;    ///< OpenGL context
-    bool       myOwnsWindow; ///< Do we own the window associated to the context?
+    HWND  myWindow;        ///< Window to which the context is attached
+    HDC   myDeviceContext; ///< Device context of the window
+    HGLRC myContext;       ///< OpenGL context
+    bool  myOwnsWindow;    ///< Did we create the host window?
 };
 
 } // namespace priv
 
 } // namespace sf
 
-#endif // SFML_CONTEXTGLX_HPP
+#endif // SFML_WGLCONTEXT_HPP

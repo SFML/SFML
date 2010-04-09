@@ -347,14 +347,6 @@
 			Name="Win32"
 			>
 			<File
-				RelativePath="..\..\src\SFML\Window\Win32\ContextWGL.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SFML\Window\Win32\ContextWGL.hpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\SFML\Window\Win32\Joystick.cpp"
 				>
 			</File>
@@ -364,6 +356,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\SFML\Window\Win32\VideoModeImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Window\Win32\WglContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SFML\Window\Win32\WglContext.hpp"
 				>
 			</File>
 			<File
@@ -416,19 +416,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\SFML\Window\ContextGL.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Window\ContextGL.hpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\SFML\Window\ContextSettings.hpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Window\Event.hpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Window\GlContext.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\SFML\Window\GlContext.hpp"
 			>
 		</File>
 		<File

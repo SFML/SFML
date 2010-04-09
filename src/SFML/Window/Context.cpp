@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Context.hpp>
-#include <SFML/Window/ContextGL.hpp>
+#include <SFML/Window/GlContext.hpp>
 
 
 namespace sf
@@ -34,7 +34,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Context::Context()
 {
-    myContext = priv::ContextGL::New();
+    myContext = priv::GlContext::New();
     SetActive(true);
 }
 
@@ -57,7 +57,7 @@ void Context::SetActive(bool active)
 ////////////////////////////////////////////////////////////
 bool Context::SetReferenceActive()
 {
-    return priv::ContextGL::SetReferenceActive();
+    return priv::GlContext::SetReferenceActive();
 }
 
 

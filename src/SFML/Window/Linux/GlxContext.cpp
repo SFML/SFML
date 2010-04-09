@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #define GLX_GLXEXT_LEGACY // so that our local glxext.h is used instead of the system one
-#include <SFML/Window/Linux/ContextGLX.hpp>
+#include <SFML/Window/Linux/GlxContext.hpp>
 #include <SFML/Window/Linux/WindowImplX11.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/glxext.h>
@@ -38,7 +38,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-ContextGLX::ContextGLX(ContextGLX* shared) :
+GlxContext::GlxContext(GlxContext* shared) :
 myWindow    (0),
 myContext   (NULL),
 myOwnsWindow(true)
@@ -67,7 +67,7 @@ myOwnsWindow(true)
 
 
 ////////////////////////////////////////////////////////////
-ContextGLX::ContextGLX(ContextGLX* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings) :
+GlxContext::GlxContext(GlxContext* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings) :
 myWindow    (0),
 myContext   (NULL),
 myOwnsWindow(false)
@@ -88,7 +88,7 @@ myOwnsWindow(false)
 
 
 ////////////////////////////////////////////////////////////
-ContextGLX::~ContextGLX()
+GlxContext::~GlxContext()
 {
     // Destroy the context
     if (myContext)
@@ -114,7 +114,7 @@ ContextGLX::~ContextGLX()
 
 
 ////////////////////////////////////////////////////////////
-bool ContextGLX::MakeCurrent()
+bool GlxContext::MakeCurrent()
 {
     if (myContext)
     {
@@ -131,7 +131,7 @@ bool ContextGLX::MakeCurrent()
 
 
 ////////////////////////////////////////////////////////////
-void ContextGLX::Display()
+void GlxContext::Display()
 {
     if (myWindow)
         glXSwapBuffers(myDisplay, myWindow);
@@ -139,7 +139,7 @@ void ContextGLX::Display()
 
 
 ////////////////////////////////////////////////////////////
-void ContextGLX::UseVerticalSync(bool enabled)
+void GlxContext::UseVerticalSync(bool enabled)
 {
     const GLubyte* name = reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI");
     PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress(name));
@@ -149,7 +149,7 @@ void ContextGLX::UseVerticalSync(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-void ContextGLX::CreateContext(ContextGLX* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
+void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
     // Save the creation settings
     mySettings = settings;

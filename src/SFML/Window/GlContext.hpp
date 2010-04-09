@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONTEXTGL_HPP
-#define SFML_CONTEXTGL_HPP
+#ifndef SFML_GLCONTEXT_HPP
+#define SFML_GLCONTEXT_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -43,7 +43,7 @@ class WindowImpl;
 /// \brief Abstract class representing an OpenGL context
 ///
 ////////////////////////////////////////////////////////////
-class ContextGL : NonCopyable
+class GlContext : NonCopyable
 {
 public :
 
@@ -56,7 +56,7 @@ public :
     /// \return Pointer to the created context (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static ContextGL* New();
+    static GlContext* New();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
@@ -71,7 +71,7 @@ public :
     /// \return Pointer to the created context (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static ContextGL* New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
+    static GlContext* New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
 
 public :
 
@@ -79,7 +79,7 @@ public :
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~ContextGL();
+    virtual ~GlContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the settings of the context
@@ -149,7 +149,7 @@ protected :
     /// This constructor is meant for derived classes only.
     ///
     ////////////////////////////////////////////////////////////
-    ContextGL();
+    GlContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target
@@ -191,4 +191,4 @@ protected :
 } // namespace sf
 
 
-#endif // SFML_CONTEXTGL_HPP
+#endif // SFML_GLCONTEXT_HPP

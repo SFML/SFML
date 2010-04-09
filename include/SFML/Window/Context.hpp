@@ -36,7 +36,7 @@ namespace sf
 {
 namespace priv
 {
-    class ContextGL;
+    class GlContext;
 }
 
 ////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::ContextGL* myContext; ///< Internal OpenGL context
+    priv::GlContext* myContext; ///< Internal OpenGL context
 };
 
 } // namespace sf

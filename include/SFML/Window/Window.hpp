@@ -28,10 +28,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/Input.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/NonCopyable.hpp>
@@ -42,8 +42,8 @@ namespace sf
 {
 namespace priv
 {
+    class GlContext;
     class WindowImpl;
-    class ContextGL;
 }
 
 class Event;
@@ -470,7 +470,7 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     priv::WindowImpl* myWindow;         ///< Platform-specific implementation of the window
-    priv::ContextGL*  myContext;        ///< Platform-specific implementation of the OpenGL context
+    priv::GlContext*  myContext;        ///< Platform-specific implementation of the OpenGL context
     Input             myInput;          ///< Input manager connected to window
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
     float             myLastFrameTime;  ///< Time elapsed since last frame

@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/ContextGL.hpp>
+#include <SFML/Window/GlContext.hpp>
 #include <SFML/System/ThreadLocalPtr.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/glext.h>
@@ -34,18 +34,18 @@
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    #include <SFML/Window/Win32/ContextWGL.hpp>
-    typedef sf::priv::ContextWGL ContextType;
+    #include <SFML/Window/Win32/WglContext.hpp>
+    typedef sf::priv::WglContext ContextType;
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-    #include <SFML/Window/Linux/ContextGLX.hpp>
-    typedef sf::priv::ContextGLX ContextType;
+    #include <SFML/Window/Linux/GlxContext.hpp>
+    typedef sf::priv::GlxContext ContextType;
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-	#include <SFML/Window/Cocoa/ContextAGL.hpp>
-	typedef sf::priv::ContextAGL ContextType;
+	#include <SFML/Window/Cocoa/AglContext.hpp>
+	typedef sf::priv::AglContext ContextType;
 
 #endif
 
@@ -56,7 +56,7 @@
 namespace
 {
     // This thread-local variable will hold the "global" context for each thread
-    sf::ThreadLocalPtr<sf::priv::ContextGL> threadContext(NULL);
+    sf::ThreadLocalPtr<sf::priv::GlContext> threadContext(NULL);
 
     // Now we create two global contexts.
     // The first one is the reference context: it will be shared with every other
@@ -73,14 +73,14 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-ContextGL* ContextGL::New()
+GlContext* GlContext::New()
 {
     return new ContextType(&referenceContext);
 }
 
 
 ////////////////////////////////////////////////////////////
-ContextGL* ContextGL::New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings)
+GlContext* GlContext::New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
     ContextType* context = new ContextType(&referenceContext, owner, bitsPerPixel, settings);
 
@@ -93,7 +93,7 @@ ContextGL* ContextGL::New(const WindowImpl* owner, unsigned int bitsPerPixel, co
 
 
 ////////////////////////////////////////////////////////////
-ContextGL::~ContextGL()
+GlContext::~GlContext()
 {
     if (threadContext == this)
     {
@@ -108,14 +108,14 @@ ContextGL::~ContextGL()
 
 
 ////////////////////////////////////////////////////////////
-const ContextSettings& ContextGL::GetSettings() const
+const ContextSettings& GlContext::GetSettings() const
 {
     return mySettings;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool ContextGL::SetActive(bool active)
+bool GlContext::SetActive(bool active)
 {
     if (active)
     {
@@ -148,7 +148,7 @@ bool ContextGL::SetActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
-bool ContextGL::SetReferenceActive()
+bool GlContext::SetReferenceActive()
 {
     if (threadContext)
         return threadContext->SetActive(true);
@@ -158,14 +158,14 @@ bool ContextGL::SetReferenceActive()
 
 
 ////////////////////////////////////////////////////////////
-ContextGL::ContextGL()
+GlContext::GlContext()
 {
     // Nothing to do
 }
 
 
 ////////////////////////////////////////////////////////////
-int ContextGL::EvaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing)
+int GlContext::EvaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing)
 {
     return abs(static_cast<int>(bitsPerPixel               - colorBits))   +
            abs(static_cast<int>(settings.DepthBits         - depthBits))   +
