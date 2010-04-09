@@ -20,50 +20,15 @@ namespace SFML
             /// </summary>
             /// <param name="left">Left coordinate of the rectangle</param>
             /// <param name="top">Top coordinate of the rectangle</param>
-            /// <param name="right">Right coordinate of the rectangle</param>
-            /// <param name="bottom">Bottom coordinate of the rectangle</param>
+            /// <param name="width">Width of the rectangle</param>
+            /// <param name="height">Height of the rectangle</param>
             ////////////////////////////////////////////////////////////
-            public IntRect(int left, int top, int right, int bottom)
+            public IntRect(int left, int top, int width, int height)
             {
                 Left   = left;
                 Top    = top;
-                Right  = right;
-                Bottom = bottom;
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Width of the rectangle
-            /// </summary>
-            ////////////////////////////////////////////////////////////
-            public int Width
-            {
-                get {return Right - Left;}
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Height of the rectangle
-            /// </summary>
-            ////////////////////////////////////////////////////////////
-            public int Height
-            {
-                get {return Bottom - Top;}
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Move the whole rectangle by the given offset
-            /// </summary>
-            /// <param name="offsetX">Horizontal offset</param>
-            /// <param name="offsetY">Vertical offset</param>
-            ////////////////////////////////////////////////////////////
-            public void Offset(int offsetX, int offsetY)
-            {
-                Left   += offsetX;
-                Top    += offsetY;
-                Right  += offsetX;
-                Bottom += offsetY;
+                Width  = width;
+                Height = height;
             }
 
             ////////////////////////////////////////////////////////////
@@ -76,7 +41,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public bool Contains(int x, int y)
             {
-                return (x >= Left) && (x <= Right) && (y >= Top) && (y <= Bottom);
+                return (x >= Left) && (x < Left + Width) && (y >= Top) && (y < Top + Height);
             }
 
             ////////////////////////////////////////////////////////////
@@ -88,8 +53,13 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public bool Intersects(IntRect rect)
             {
-                return ((Math.Max(Left, rect.Left) < Math.Min(Right,  rect.Right)) &&
-                        (Math.Max(Top,  rect.Top)  < Math.Min(Bottom, rect.Bottom)));
+                // Compute the intersection boundaries
+                int left   = Math.Max(Left,         rect.Left);
+                int top    = Math.Max(Top,          rect.Top);
+                int right  = Math.Min(Left + Width, rect.Left + rect.Width);
+                int bottom = Math.Min(Top + Height, rect.Top + rect.Height);
+            
+                return (left < right) && (top < bottom);
             }
 
             ////////////////////////////////////////////////////////////
@@ -102,25 +72,27 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public bool Intersects(IntRect rect, out IntRect overlap)
             {
-                IntRect Overlapping = new IntRect(Math.Max(Left,   rect.Left),
-                                                  Math.Max(Top,    rect.Top),
-                                                  Math.Min(Right,  rect.Right),
-                                                  Math.Min(Bottom, rect.Bottom));
+                // Compute the intersection boundaries
+                int left   = Math.Max(Left,         rect.Left);
+                int top    = Math.Max(Top,          rect.Top);
+                int right  = Math.Min(Left + Width, rect.Left + rect.Width);
+                int bottom = Math.Min(Top + Height, rect.Top + rect.Height);
 
-                if ((Overlapping.Left < Overlapping.Right) && (Overlapping.Top < Overlapping.Bottom))
+                // If the intersection is valid (positive non zero area), then there is an intersection
+                if ((left < right) && (top < bottom))
                 {
-                    overlap.Left   = Overlapping.Left;
-                    overlap.Top    = Overlapping.Top;
-                    overlap.Right  = Overlapping.Right;
-                    overlap.Bottom = Overlapping.Bottom;
+                    overlap.Left   = left;
+                    overlap.Top    = top;
+                    overlap.Width  = right - left;
+                    overlap.Height = bottom - top;
                     return true;
                 }
                 else
                 {
                     overlap.Left   = 0;
                     overlap.Top    = 0;
-                    overlap.Right  = 0;
-                    overlap.Bottom = 0;
+                    overlap.Width  = 0;
+                    overlap.Height = 0;
                     return false;
                 }
             }
@@ -136,8 +108,8 @@ namespace SFML
                 return "[IntRect]" +
                        " Left(" + Left + ")" +
                        " Top(" + Top + ")" +
-                       " Right(" + Right + ")" +
-                       " Bottom(" + Bottom + ")";
+                       " Width(" + Width + ")" +
+                       " Height(" + Height + ")";
             }
 
             /// <summary>Left coordinate of the rectangle</summary>
@@ -146,16 +118,15 @@ namespace SFML
             /// <summary>Top coordinate of the rectangle</summary>
             public int Top;
 
-            /// <summary>Right coordinate of the rectangle</summary>
-            public int Right;
+            /// <summary>Width of the rectangle</summary>
+            public int Width;
 
-            /// <summary>Bottom coordinate of the rectangle</summary>
-            public int Bottom;
+            /// <summary>Height of the rectangle</summary>
+            public int Height;
         }
-
         ////////////////////////////////////////////////////////////
         /// <summary>
-        /// FloatRect is an utility class for manipulating 2D rectangles
+        /// IntRect is an utility class for manipulating 2D rectangles
         /// with float coordinates
         /// </summary>
         ////////////////////////////////////////////////////////////
@@ -168,50 +139,15 @@ namespace SFML
             /// </summary>
             /// <param name="left">Left coordinate of the rectangle</param>
             /// <param name="top">Top coordinate of the rectangle</param>
-            /// <param name="right">Right coordinate of the rectangle</param>
-            /// <param name="bottom">Bottom coordinate of the rectangle</param>
+            /// <param name="width">Width of the rectangle</param>
+            /// <param name="height">Height of the rectangle</param>
             ////////////////////////////////////////////////////////////
-            public FloatRect(float left, float top, float right, float bottom)
+            public FloatRect(float left, float top, float width, float height)
             {
                 Left   = left;
                 Top    = top;
-                Right  = right;
-                Bottom = bottom;
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Width of the rectangle
-            /// </summary>
-            ////////////////////////////////////////////////////////////
-            public float Width
-            {
-                get {return Right - Left;}
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Height of the rectangle
-            /// </summary>
-            ////////////////////////////////////////////////////////////
-            public float Height
-            {
-                get {return Bottom - Top;}
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Move the whole rectangle by the given offset
-            /// </summary>
-            /// <param name="offsetX">Horizontal offset</param>
-            /// <param name="offsetY">Vertical offset</param>
-            ////////////////////////////////////////////////////////////
-            public void Offset(float offsetX, float offsetY)
-            {
-                Left   += offsetX;
-                Top    += offsetY;
-                Right  += offsetX;
-                Bottom += offsetY;
+                Width  = width;
+                Height = height;
             }
 
             ////////////////////////////////////////////////////////////
@@ -224,7 +160,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public bool Contains(float x, float y)
             {
-                return (x >= Left) && (x <= Right) && (y >= Top) && (y <= Bottom);
+                return (x >= Left) && (x < Left + Width) && (y >= Top) && (y < Top + Height);
             }
 
             ////////////////////////////////////////////////////////////
@@ -236,8 +172,13 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public bool Intersects(FloatRect rect)
             {
-                return ((Math.Max(Left, rect.Left) < Math.Min(Right,  rect.Right)) &&
-                        (Math.Max(Top,  rect.Top)  < Math.Min(Bottom, rect.Bottom)));
+                // Compute the intersection boundaries
+                float left   = Math.Max(Left,         rect.Left);
+                float top    = Math.Max(Top,          rect.Top);
+                float right  = Math.Min(Left + Width, rect.Left + rect.Width);
+                float bottom = Math.Min(Top + Height, rect.Top + rect.Height);
+            
+                return (left < right) && (top < bottom);
             }
 
             ////////////////////////////////////////////////////////////
@@ -250,25 +191,27 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public bool Intersects(FloatRect rect, out FloatRect overlap)
             {
-                FloatRect Overlapping = new FloatRect(Math.Max(Left,   rect.Left),
-                                                      Math.Max(Top,    rect.Top),
-                                                      Math.Min(Right,  rect.Right),
-                                                      Math.Min(Bottom, rect.Bottom));
+                // Compute the intersection boundaries
+                float left   = Math.Max(Left,         rect.Left);
+                float top    = Math.Max(Top,          rect.Top);
+                float right  = Math.Min(Left + Width, rect.Left + rect.Width);
+                float bottom = Math.Min(Top + Height, rect.Top + rect.Height);
 
-                if ((Overlapping.Left < Overlapping.Right) && (Overlapping.Top < Overlapping.Bottom))
+                // If the intersection is valid (positive non zero area), then there is an intersection
+                if ((left < right) && (top < bottom))
                 {
-                    overlap.Left   = Overlapping.Left;
-                    overlap.Top    = Overlapping.Top;
-                    overlap.Right  = Overlapping.Right;
-                    overlap.Bottom = Overlapping.Bottom;
+                    overlap.Left   = left;
+                    overlap.Top    = top;
+                    overlap.Width  = right - left;
+                    overlap.Height = bottom - top;
                     return true;
                 }
                 else
                 {
                     overlap.Left   = 0;
                     overlap.Top    = 0;
-                    overlap.Right  = 0;
-                    overlap.Bottom = 0;
+                    overlap.Width  = 0;
+                    overlap.Height = 0;
                     return false;
                 }
             }
@@ -284,8 +227,8 @@ namespace SFML
                 return "[FloatRect]" +
                        " Left(" + Left + ")" +
                        " Top(" + Top + ")" +
-                       " Right(" + Right + ")" +
-                       " Bottom(" + Bottom + ")";
+                       " Width(" + Width + ")" +
+                       " Height(" + Height + ")";
             }
 
             /// <summary>Left coordinate of the rectangle</summary>
@@ -294,11 +237,11 @@ namespace SFML
             /// <summary>Top coordinate of the rectangle</summary>
             public float Top;
 
-            /// <summary>Right coordinate of the rectangle</summary>
-            public float Right;
+            /// <summary>Width of the rectangle</summary>
+            public float Width;
 
-            /// <summary>Bottom coordinate of the rectangle</summary>
-            public float Bottom;
+            /// <summary>Height of the rectangle</summary>
+            public float Height;
         }
     }
 }

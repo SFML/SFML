@@ -95,12 +95,12 @@ sfGlyph sfFont_GetGlyph(sfFont* font, sfUint32 codePoint, unsigned int character
     glyph.Advance        = SFMLGlyph.Advance;
     glyph.Bounds.Left    = SFMLGlyph.Bounds.Left;
     glyph.Bounds.Top     = SFMLGlyph.Bounds.Top;
-    glyph.Bounds.Right   = SFMLGlyph.Bounds.Right;
-    glyph.Bounds.Bottom  = SFMLGlyph.Bounds.Bottom;
+    glyph.Bounds.Width   = SFMLGlyph.Bounds.Width;
+    glyph.Bounds.Height  = SFMLGlyph.Bounds.Height;
     glyph.SubRect.Left   = SFMLGlyph.SubRect.Left;
     glyph.SubRect.Top    = SFMLGlyph.SubRect.Top;
-    glyph.SubRect.Right  = SFMLGlyph.SubRect.Right;
-    glyph.SubRect.Bottom = SFMLGlyph.SubRect.Bottom;
+    glyph.SubRect.Width  = SFMLGlyph.SubRect.Width;
+    glyph.SubRect.Height = SFMLGlyph.SubRect.Height;
 
     return glyph;
 }

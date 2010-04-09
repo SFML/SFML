@@ -39,29 +39,17 @@ typedef struct
 {
     float Left;
     float Top;
-    float Right;
-    float Bottom;
+    float Width;
+    float Height;
 } sfFloatRect;
 
 typedef struct
 {
     int Left;
     int Top;
-    int Right;
-    int Bottom;
+    int Width;
+    int Height;
 } sfIntRect;
-
-
-////////////////////////////////////////////////////////////
-/// Move a rectangle by the given offset
-///
-/// \param rect :    Rectangle to move
-/// \param offsetX : Horizontal offset
-/// \param offsetY : Vertical offset
-///
-////////////////////////////////////////////////////////////
-CSFML_API void sfFloatRect_Offset(sfFloatRect* rect, float offsetX, float offsetY);
-CSFML_API void sfIntRect_Offset(sfIntRect* rect, int offsetX, int offsetY);
 
 ////////////////////////////////////////////////////////////
 /// Check if a point is inside a rectangle's area

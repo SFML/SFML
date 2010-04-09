@@ -449,8 +449,8 @@ sfIntRect sfRenderWindow_GetViewport(const sfRenderWindow* renderWindow, const s
     sf::IntRect SFMLrect = renderWindow->This.GetViewport(view->This);
     rect.Left   = SFMLrect.Left;
     rect.Top    = SFMLrect.Top;
-    rect.Right  = SFMLrect.Right;
-    rect.Bottom = SFMLrect.Bottom;
+    rect.Width  = SFMLrect.Width;
+    rect.Height = SFMLrect.Height;
 
     return rect;
 }

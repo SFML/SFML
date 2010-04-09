@@ -103,7 +103,7 @@ void sfView_SetRotation(sfView* view, float angle)
 ////////////////////////////////////////////////////////////
 void sfView_SetViewport(sfView* view, sfFloatRect viewport)
 {
-    CSFML_CALL(view, SetViewport(sf::FloatRect(viewport.Left, viewport.Top, viewport.Right, viewport.Bottom)));
+    CSFML_CALL(view, SetViewport(sf::FloatRect(viewport.Left, viewport.Top, viewport.Width, viewport.Height)));
 }
 
 
@@ -113,7 +113,7 @@ void sfView_SetViewport(sfView* view, sfFloatRect viewport)
 ////////////////////////////////////////////////////////////
 void sfView_Reset(sfView* view, sfFloatRect rectangle)
 {
-    CSFML_CALL(view, Reset(sf::FloatRect(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom)));
+    CSFML_CALL(view, Reset(sf::FloatRect(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height)));
 }
 
 
@@ -181,8 +181,8 @@ sfFloatRect sfView_GetViewport(const sfView* view)
     sf::FloatRect SFMLRect = view->This.GetViewport();
     rect.Left   = SFMLRect.Left;
     rect.Top    = SFMLRect.Top;
-    rect.Right  = SFMLRect.Right;
-    rect.Bottom = SFMLRect.Bottom;
+    rect.Width  = SFMLRect.Width;
+    rect.Height = SFMLRect.Height;
 
     return rect;
 }

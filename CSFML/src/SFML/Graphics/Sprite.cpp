@@ -41,8 +41,8 @@ sfSprite* sfSprite_Create()
     sprite->Image          = NULL;
     sprite->SubRect.Left   = sprite->This.GetSubRect().Left;
     sprite->SubRect.Top    = sprite->This.GetSubRect().Top;
-    sprite->SubRect.Right  = sprite->This.GetSubRect().Right;
-    sprite->SubRect.Bottom = sprite->This.GetSubRect().Bottom;
+    sprite->SubRect.Width  = sprite->This.GetSubRect().Width;
+    sprite->SubRect.Height = sprite->This.GetSubRect().Height;
 
     return sprite;
 }
@@ -319,7 +319,7 @@ void sfSprite_SetImage(sfSprite* sprite, const sfImage* image, sfBool adjustToNe
 ////////////////////////////////////////////////////////////
 void sfSprite_SetSubRect(sfSprite* sprite, sfIntRect rectangle)
 {
-    CSFML_CALL(sprite, SetSubRect(sf::IntRect(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom)))
+    CSFML_CALL(sprite, SetSubRect(sf::IntRect(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height)))
     sprite->SubRect = rectangle;
 }
 

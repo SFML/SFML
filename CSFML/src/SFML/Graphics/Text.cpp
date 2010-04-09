@@ -425,8 +425,8 @@ sfFloatRect sfText_GetRect(const sfText* text)
     sf::FloatRect SFMLRect = text->This.GetRect();
     text->Rect.Left   = SFMLRect.Left;
     text->Rect.Top    = SFMLRect.Top;
-    text->Rect.Right  = SFMLRect.Right;
-    text->Rect.Bottom = SFMLRect.Bottom;
+    text->Rect.Width  = SFMLRect.Width;
+    text->Rect.Height = SFMLRect.Height;
 
     return text->Rect;
 }

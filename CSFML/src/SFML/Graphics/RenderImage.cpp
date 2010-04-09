@@ -212,8 +212,8 @@ sfIntRect sfRenderImage_GetViewport(const sfRenderImage* renderImage, const sfVi
     sf::IntRect SFMLrect = renderImage->This.GetViewport(view->This);
     rect.Left   = SFMLrect.Left;
     rect.Top    = SFMLrect.Top;
-    rect.Right  = SFMLrect.Right;
-    rect.Bottom = SFMLrect.Bottom;
+    rect.Width  = SFMLrect.Width;
+    rect.Height = SFMLrect.Height;
 
     return rect;
 }

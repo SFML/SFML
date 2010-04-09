@@ -155,7 +155,7 @@ void sfImage_CreateMaskFromColor(sfImage* image, sfColor colorKey, sfUint8 alpha
 void sfImage_CopyImage(sfImage* image, const sfImage* source, unsigned int destX, unsigned int destY, sfIntRect sourceRect)
 {
     CSFML_CHECK(source);
-    sf::IntRect SFMLRect(sourceRect.Left, sourceRect.Top, sourceRect.Right, sourceRect.Bottom);
+    sf::IntRect SFMLRect(sourceRect.Left, sourceRect.Top, sourceRect.Width, sourceRect.Height);
     CSFML_CALL_PTR(image, Copy(*source->This, destX, destY, SFMLRect));
 }
 
@@ -167,7 +167,7 @@ void sfImage_CopyImage(sfImage* image, const sfImage* source, unsigned int destX
 CSFML_API sfBool sfImage_CopyScreen(sfImage* image, sfRenderWindow* window, sfIntRect sourceRect)
 {
     CSFML_CHECK_RETURN(window, sfFalse);
-    sf::IntRect SFMLRect(sourceRect.Left, sourceRect.Top, sourceRect.Right, sourceRect.Bottom);
+    sf::IntRect SFMLRect(sourceRect.Left, sourceRect.Top, sourceRect.Width, sourceRect.Height);
     CSFML_CALL_PTR_RETURN(image, CopyScreen(window->This, SFMLRect), sfFalse);
 }
 
@@ -213,7 +213,7 @@ const sfUint8* sfImage_GetPixelsPtr(const sfImage* image)
 ////////////////////////////////////////////////////////////
 void sfImage_UpdatePixels(const sfImage* image, const sfUint8* pixels, sfIntRect rectangle)
 {
-    sf::IntRect rect(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom);
+    sf::IntRect rect(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height);
     CSFML_CALL_PTR(image, UpdatePixels(pixels, rect));
 }
 

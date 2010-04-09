@@ -32,10 +32,8 @@ EXPORTS
 	sfImage_GetWidth
 	sfImage_GetHeight
 	sfImage_IsSmooth
-	sfFloatRect_Offset
 	sfFloatRect_Contains
 	sfFloatRect_Intersects
-	sfIntRect_Offset
 	sfIntRect_Contains
 	sfIntRect_Intersects
 	sfShader_CreateFromFile
