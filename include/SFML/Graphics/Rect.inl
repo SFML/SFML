@@ -24,88 +24,49 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 template <typename T>
 Rect<T>::Rect() :
 Left  (0),
 Top   (0),
-Right (0),
-Bottom(0)
+Width (0),
+Height(0)
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Construct the color from its coordinates
-////////////////////////////////////////////////////////////
 template <typename T>
-Rect<T>::Rect(T left, T top, T right, T bottom) :
+Rect<T>::Rect(T left, T top, T width, T height) :
 Left  (left),
 Top   (top),
-Right (right),
-Bottom(bottom)
+Width (width),
+Height(height)
 {
 
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the size of the rectangle
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> Rect<T>::GetSize() const
+Rect<T>::Rect(const Vector2<T>& position, const Vector2<T>& size) :
+Left  (position.x),
+Top   (position.y),
+Width (size.x),
+Height(size.y)
 {
-    return Vector2<T>(Right - Left, Bottom - Top);
+
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the center of the rectangle
-////////////////////////////////////////////////////////////
-template <typename T>
-Vector2<T> Rect<T>::GetCenter() const
-{
-    return Vector2<T>((Left + Right) / 2, (Top + Bottom) / 2);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Move the whole rectangle by the given offset
-////////////////////////////////////////////////////////////
-template <typename T>
-void Rect<T>::Offset(T offsetX, T offsetY)
-{
-    Left   += offsetX;
-    Right  += offsetX;
-    Top    += offsetY;
-    Bottom += offsetY;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Move the whole rectangle by the given offset
-////////////////////////////////////////////////////////////
-template <typename T>
-void Rect<T>::Offset(const Vector2<T>& offset)
-{
-    Offset(offset.x, offset.y);
-}
-
-
-////////////////////////////////////////////////////////////
-/// Check if a point is inside the rectangle's area
 ////////////////////////////////////////////////////////////
 template <typename T>
 bool Rect<T>::Contains(T x, T y) const
 {
-    return (x >= Left) && (x <= Right) && (y >= Top) && (y <= Bottom);
+    return (x >= Left) && (x < Left + Width) && (y >= Top) && (y < Top + Height);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Check if a point is inside the rectangle's area
 ////////////////////////////////////////////////////////////
 template <typename T>
 bool Rect<T>::Contains(const Vector2<T>& point) const
@@ -115,39 +76,28 @@ bool Rect<T>::Contains(const Vector2<T>& point) const
 
 
 ////////////////////////////////////////////////////////////
-/// Check intersection between two rectangles
-////////////////////////////////////////////////////////////
 template <typename T>
 bool Rect<T>::Intersects(const Rect<T>& rectangle) const
 {
-    // Compute overlapping rect
-    Rect<T> overlapping(std::max(Left,   rectangle.Left),
-                        std::max(Top,    rectangle.Top),
-                        std::min(Right,  rectangle.Right),
-                        std::min(Bottom, rectangle.Bottom));
-
-    // If overlapping rect is valid, then there is intersection
-    return (overlapping.Left < overlapping.Right) && (overlapping.Top < overlapping.Bottom);
+    Rect<T> intersection;
+    return Intersects(rectangle, intersection);
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Check intersection between two rectangles and return the
-/// resulting rectangle
-////////////////////////////////////////////////////////////
 template <typename T>
 bool Rect<T>::Intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
 {
-    // Compute overlapping rect
-    Rect<T> overlapping(std::max(Left,   rectangle.Left),
-                        std::max(Top,    rectangle.Top),
-                        std::min(Right,  rectangle.Right),
-                        std::min(Bottom, rectangle.Bottom));
+    // Compute the intersection boundaries
+    T left   = std::max(Left,         rectangle.Left);
+    T top    = std::max(Top,          rectangle.Top);
+    T right  = std::min(Left + Width, rectangle.Left + rectangle.Width);
+    T bottom = std::min(Top + Height, rectangle.Top + rectangle.Height);
 
-    // If overlapping rect is valid, then there is intersection
-    if ((overlapping.Left < overlapping.Right) && (overlapping.Top < overlapping.Bottom))
+    // If the intersection is valid (positive non zero area), then there is an intersection
+    if ((left < right) && (top < bottom))
     {
-        intersection = overlapping;
+        intersection = Rect<T>(left, top, right - left, bottom - top);
         return true;
     }
     else

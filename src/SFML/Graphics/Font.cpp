@@ -369,8 +369,8 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         // Compute the glyph's bounding box
         glyph.Bounds.Left   = bitmapGlyph->left - padding;
         glyph.Bounds.Top    = -bitmapGlyph->top - padding;
-        glyph.Bounds.Right  = bitmapGlyph->left + width + padding;
-        glyph.Bounds.Bottom = -bitmapGlyph->top + height + padding;
+        glyph.Bounds.Width  = width + 2 * padding;
+        glyph.Bounds.Height = height + 2 * padding;
 
         // Extract the glyph's pixels from the bitmap
         myPixelBuffer.resize(width * height * 4, 255);
@@ -408,8 +408,8 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         IntRect subrect = glyph.SubRect;
         subrect.Left   += padding;
         subrect.Top    += padding;
-        subrect.Right  -= padding;
-        subrect.Bottom -= padding;
+        subrect.Width  -= 2 * padding;
+        subrect.Height -= 2 * padding;
         page.Texture.UpdatePixels(&myPixelBuffer[0], subrect);
     }
 
@@ -481,7 +481,7 @@ IntRect Font::FindGlyphRect(Page& page, unsigned int width, unsigned int height)
     }
 
     // Find the glyph's rectangle on the selected row
-    IntRect rect(row->Width, row->Top, row->Width + width, row->Top + height);
+    IntRect rect(row->Width, row->Top, width, height);
 
     // Update the row informations
     row->Width += width;

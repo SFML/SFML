@@ -272,24 +272,24 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
 
     // Adjust the source rectangle
     IntRect srcRect = sourceRect;
-    if (srcRect.GetSize().x == 0 || (srcRect.GetSize().y == 0))
+    if (srcRect.Width == 0 || (srcRect.Height == 0))
     {
         srcRect.Left   = 0;
         srcRect.Top    = 0;
-        srcRect.Right  = source.myWidth;
-        srcRect.Bottom = source.myHeight;
+        srcRect.Width  = source.myWidth;
+        srcRect.Height = source.myHeight;
     }
     else
     {
         if (srcRect.Left   < 0) srcRect.Left = 0;
         if (srcRect.Top    < 0) srcRect.Top  = 0;
-        if (srcRect.Right  > static_cast<int>(source.myWidth))  srcRect.Right  = source.myWidth;
-        if (srcRect.Bottom > static_cast<int>(source.myHeight)) srcRect.Bottom = source.myHeight;
+        if (srcRect.Width  > static_cast<int>(source.myWidth))  srcRect.Width  = source.myWidth;
+        if (srcRect.Height > static_cast<int>(source.myHeight)) srcRect.Height = source.myHeight;
     }
 
     // Then find the valid bounds of the destination rectangle
-    int width  = srcRect.GetSize().x;
-    int height = srcRect.GetSize().y;
+    int width  = srcRect.Width;
+    int height = srcRect.Height;
     if (destX + width  > myWidth)  width  = myWidth  - destX;
     if (destY + height > myHeight) height = myHeight - destY;
 
@@ -353,24 +353,24 @@ bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
 {
     // Adjust the source rectangle
     IntRect srcRect = sourceRect;
-    if (srcRect.GetSize().x == 0 || (srcRect.GetSize().y == 0))
+    if (srcRect.Width == 0 || (srcRect.Height == 0))
     {
         srcRect.Left   = 0;
         srcRect.Top    = 0;
-        srcRect.Right  = window.GetWidth();
-        srcRect.Bottom = window.GetHeight();
+        srcRect.Width  = window.GetWidth();
+        srcRect.Height = window.GetHeight();
     }
     else
     {
         if (srcRect.Left   < 0) srcRect.Left = 0;
         if (srcRect.Top    < 0) srcRect.Top  = 0;
-        if (srcRect.Right  > static_cast<int>(window.GetWidth()))  srcRect.Right  = window.GetWidth();
-        if (srcRect.Bottom > static_cast<int>(window.GetHeight())) srcRect.Bottom = window.GetHeight();
+        if (srcRect.Width  > static_cast<int>(window.GetWidth()))  srcRect.Width  = window.GetWidth();
+        if (srcRect.Height > static_cast<int>(window.GetHeight())) srcRect.Height = window.GetHeight();
     }
 
     // Store the texture dimensions
-    myWidth  = srcRect.GetSize().x;
-    myHeight = srcRect.GetSize().y;
+    myWidth  = srcRect.Width;
+    myHeight = srcRect.Height;
 
     // We can then create the texture
     if (window.SetActive() && CreateTexture())
@@ -486,7 +486,7 @@ void Image::UpdatePixels(const Uint8* pixels, const IntRect& rectangle)
 
     // Update the texture from the array of pixels
     GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
-    GLCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, rectangle.Left, rectangle.Top, rectangle.GetSize().x, rectangle.GetSize().y, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+    GLCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
 
     GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
@@ -573,16 +573,16 @@ FloatRect Image::GetTexCoords(const IntRect& rect) const
         if (myPixelsFlipped)
         {
             return FloatRect(rect.Left   / width,
-                             rect.Bottom / height,
-                             rect.Right  / width,
+                             rect.Height / height,
+                             rect.Width  / width,
                              rect.Top    / height);
         }
         else
         {
             return FloatRect(rect.Left   / width,
                              rect.Top    / height,
-                             rect.Right  / width,
-                             rect.Bottom / height);
+                             rect.Width  / width,
+                             rect.Height / height);
         }
     }
     else

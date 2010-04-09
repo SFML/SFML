@@ -320,8 +320,8 @@ private :
 /// sf::RenderWindow window;
 /// sf::View view;
 /// 
-/// // Initialize the view to a rectangle going from (100, 100) to (500, 300)
-/// view.Reset(sf::FloatRect(100, 100, 500, 300));
+/// // Initialize the view to a rectangle located at (100, 100) and with a size of 400x200
+/// view.Reset(sf::FloatRect(100, 100, 400, 200));
 ///
 /// // Rotate it by 45 degrees
 /// view.Rotate(45);

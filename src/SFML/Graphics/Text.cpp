@@ -202,8 +202,8 @@ FloatRect Text::GetRect() const
     FloatRect rect;
     rect.Left   = (myBaseRect.Left   - GetOrigin().x) * GetScale().x + GetPosition().x;
     rect.Top    = (myBaseRect.Top    - GetOrigin().y) * GetScale().y + GetPosition().y;
-    rect.Right  = (myBaseRect.Right  - GetOrigin().x) * GetScale().x + GetPosition().x;
-    rect.Bottom = (myBaseRect.Bottom - GetOrigin().y) * GetScale().y + GetPosition().y;
+    rect.Width  = myBaseRect.Width  * GetScale().x;
+    rect.Height = myBaseRect.Height * GetScale().y;
 
     return rect;
 }
@@ -229,6 +229,10 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
     float underlineOffset     = myCharacterSize * 0.1f;
     float underlineThickness  = myCharacterSize * (bold ? 0.1f : 0.07f);
     FloatRect underlineCoords = texture.GetTexCoords(IntRect(1, 1, 1, 1));
+    float underlineLeft       = underlineCoords.Left;
+    float underlineTop        = underlineCoords.Top;
+    float underlineRight      = underlineCoords.Left + underlineCoords.Width;
+    float underlineBottom     = underlineCoords.Top + underlineCoords.Height;
 
     // Initialize the rendering coordinates
     float space       = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
@@ -257,10 +261,10 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
             float bottom = top + underlineThickness;
 
             renderer.Begin(Renderer::QuadList);
-                renderer.AddVertex(0, top,    underlineCoords.Left,  underlineCoords.Top);
-                renderer.AddVertex(x, top,    underlineCoords.Right, underlineCoords.Top);
-                renderer.AddVertex(x, bottom, underlineCoords.Right, underlineCoords.Bottom);
-                renderer.AddVertex(0, bottom, underlineCoords.Left,  underlineCoords.Bottom);
+                renderer.AddVertex(0, top,    underlineLeft,  underlineTop);
+                renderer.AddVertex(x, top,    underlineRight, underlineTop);
+                renderer.AddVertex(x, bottom, underlineRight, underlineBottom);
+                renderer.AddVertex(0, bottom, underlineLeft,  underlineBottom);
             renderer.End();
         }
 
@@ -279,12 +283,17 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
         const IntRect&   bounds  = glyph.Bounds;
         const FloatRect& coords  = texture.GetTexCoords(glyph.SubRect);
 
+        int   boundsRight  = bounds.Left + bounds.Width;
+        int   boundsBottom = bounds.Top  + bounds.Height;
+        float coordsRight  = coords.Left + coords.Width;
+        float coordsBottom = coords.Top  + coords.Height;
+
         // Draw a textured quad for the current character
         renderer.Begin(Renderer::QuadList);
-            renderer.AddVertex(x + bounds.Left  - italicCoeff * bounds.Top,    y + bounds.Top,    coords.Left,  coords.Top);
-            renderer.AddVertex(x + bounds.Right - italicCoeff * bounds.Top,    y + bounds.Top,    coords.Right, coords.Top);
-            renderer.AddVertex(x + bounds.Right - italicCoeff * bounds.Bottom, y + bounds.Bottom, coords.Right, coords.Bottom);
-            renderer.AddVertex(x + bounds.Left  - italicCoeff * bounds.Bottom, y + bounds.Bottom, coords.Left,  coords.Bottom);
+            renderer.AddVertex(x + bounds.Left - italicCoeff * bounds.Top,   y + bounds.Top,   coords.Left, coords.Top);
+            renderer.AddVertex(x + boundsRight - italicCoeff * bounds.Top,   y + bounds.Top,   coordsRight, coords.Top);
+            renderer.AddVertex(x + boundsRight - italicCoeff * boundsBottom, y + boundsBottom, coordsRight, coordsBottom);
+            renderer.AddVertex(x + bounds.Left - italicCoeff * boundsBottom, y + boundsBottom, coords.Left, coordsBottom);
         renderer.End();
 
         // Advance to the next character
@@ -298,10 +307,10 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
         float bottom = top + underlineThickness;
 
         renderer.Begin(Renderer::QuadList);
-            renderer.AddVertex(0, top,    underlineCoords.Left,  underlineCoords.Top);
-            renderer.AddVertex(x, top,    underlineCoords.Right, underlineCoords.Top);
-            renderer.AddVertex(x, bottom, underlineCoords.Right, underlineCoords.Bottom);
-            renderer.AddVertex(0, bottom, underlineCoords.Left,  underlineCoords.Bottom);
+            renderer.AddVertex(0, top,    underlineLeft,  underlineTop);
+            renderer.AddVertex(x, top,    underlineRight, underlineTop);
+            renderer.AddVertex(x, bottom, underlineRight, underlineBottom);
+            renderer.AddVertex(0, bottom, underlineLeft,  underlineBottom);
         renderer.End();
     }
 }
@@ -375,7 +384,7 @@ void Text::UpdateRect() const
         curWidth += static_cast<float>(curGlyph.Advance);
 
         // Update the maximum height
-        float charHeight = charSize + curGlyph.Bounds.Bottom;
+        float charHeight = charSize + curGlyph.Bounds.Top + curGlyph.Bounds.Height;
         if (charHeight > curHeight)
             curHeight = charHeight;
     }
@@ -404,8 +413,8 @@ void Text::UpdateRect() const
     // Finally update the rectangle
     myBaseRect.Left   = 0;
     myBaseRect.Top    = 0;
-    myBaseRect.Right  = width;
-    myBaseRect.Bottom = height;
+    myBaseRect.Width  = width;
+    myBaseRect.Height = height;
 }
 
 } // namespace sf

@@ -173,12 +173,15 @@ void Renderer::ApplyColor(const Color& color)
 ////////////////////////////////////////////////////////////
 void Renderer::SetViewport(const IntRect& viewport)
 {
-    if ((viewport.Left != myViewport.Left) || (viewport.Right  != myViewport.Right)  ||
-        (viewport.Top  != myViewport.Top)  || (viewport.Bottom != myViewport.Bottom) ||
+    if ((viewport.Left != myViewport.Left) || (viewport.Width  != myViewport.Width)  ||
+        (viewport.Top  != myViewport.Top)  || (viewport.Height != myViewport.Height) ||
         !myViewportIsValid)
     {
-        // Apply the new viewport -- revert Y axis to match the OpenGL convention
-        GLCheck(glViewport(viewport.Left, myTarget.GetHeight() - viewport.Bottom, viewport.GetSize().x, viewport.GetSize().y));
+        // Revert the Y axis to match the OpenGL convention
+        int top = myTarget.GetHeight() - (viewport.Top + viewport.Height);
+
+        // Apply the new viewport
+        GLCheck(glViewport(viewport.Left, top, viewport.Width, viewport.Height));
 
         // Store it
         myViewport = viewport;

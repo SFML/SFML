@@ -93,11 +93,8 @@ void Sprite::SetSubRect(const IntRect& rectangle)
 ////////////////////////////////////////////////////////////
 void Sprite::Resize(float width, float height)
 {
-    int localWidth  = mySubRect.GetSize().x;
-    int localHeight = mySubRect.GetSize().y;
-
-    if ((localWidth > 0) && (localHeight > 0))
-        SetScale(width / localWidth, height / localHeight);
+    if ((mySubRect.Width > 0) && (mySubRect.Height > 0))
+        SetScale(width / mySubRect.Width, height / mySubRect.Height);
 }
 
 
@@ -152,7 +149,7 @@ const IntRect& Sprite::GetSubRect() const
 ////////////////////////////////////////////////////////////
 Vector2f Sprite::GetSize() const
 {
-    return Vector2f(mySubRect.GetSize().x * GetScale().x, mySubRect.GetSize().y * GetScale().y);
+    return Vector2f(mySubRect.Width * GetScale().x, mySubRect.Height * GetScale().y);
 }
 
 
@@ -167,8 +164,8 @@ Color Sprite::GetPixel(unsigned int x, unsigned int y) const
         unsigned int imageX = mySubRect.Left + x;
         unsigned int imageY = mySubRect.Top  + y;
 
-        if (myIsFlippedX) imageX = mySubRect.GetSize().x - imageX - 1;
-        if (myIsFlippedY) imageY = mySubRect.GetSize().y - imageY - 1;
+        if (myIsFlippedX) imageX = mySubRect.Width  - imageX - 1;
+        if (myIsFlippedY) imageY = mySubRect.Height - imageY - 1;
 
         return myImage->GetPixel(imageX, imageY) * GetColor();
     }
@@ -185,27 +182,29 @@ Color Sprite::GetPixel(unsigned int x, unsigned int y) const
 void Sprite::Render(RenderTarget&, Renderer& renderer) const
 {
     // Get the sprite size
-    float width  = static_cast<float>(mySubRect.GetSize().x);
-    float height = static_cast<float>(mySubRect.GetSize().y);
+    float width  = static_cast<float>(mySubRect.Width);
+    float height = static_cast<float>(mySubRect.Height);
 
     // Check if the image is valid, and calculate the texture coordinates
     FloatRect coords;
     if (myImage)
     {
         coords = myImage->GetTexCoords(mySubRect);
-        if (myIsFlippedX) std::swap(coords.Left, coords.Right);
-        if (myIsFlippedY) std::swap(coords.Top, coords.Bottom);
+        if (myIsFlippedX) coords.Width  = -coords.Width;
+        if (myIsFlippedY) coords.Height = -coords.Height;
     }
 
     // Bind the texture
     renderer.SetTexture(myImage);
 
     // Draw the sprite's geometry
+    float right  = coords.Left + coords.Width;
+    float bottom = coords.Top + coords.Height;
     renderer.Begin(Renderer::TriangleStrip);
-        renderer.AddVertex(0,     0,      coords.Left,  coords.Top);
-        renderer.AddVertex(width, 0,      coords.Right, coords.Top);
-        renderer.AddVertex(0,     height, coords.Left,  coords.Bottom);
-        renderer.AddVertex(width, height, coords.Right, coords.Bottom);
+        renderer.AddVertex(0,     0,      coords.Left, coords.Top);
+        renderer.AddVertex(width, 0,      right,       coords.Top);
+        renderer.AddVertex(0,     height, coords.Left, bottom);
+        renderer.AddVertex(width, height, right,       bottom);
     renderer.End();
 }
 
