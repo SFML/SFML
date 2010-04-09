@@ -268,6 +268,13 @@ void WindowImplWin32::SetSize(unsigned int width, unsigned int height)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplWin32::SetTitle(const std::string& title)
+{
+    SetWindowText(myHandle, title.c_str());
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::Show(bool show)
 {
     ShowWindow(myHandle, show ? SW_SHOW : SW_HIDE);

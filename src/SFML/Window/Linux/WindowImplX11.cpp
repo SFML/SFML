@@ -156,7 +156,7 @@ myKeyRepeat   (true)
     }
 
     // Set the window's name
-    XStoreName(myDisplay, myWindow, title.c_str());
+    SetTitle(title);
 
     // Set the window's style (tell the windows manager to change our window's decorations and functions according to the requested style)
     if (!fullscreen)
@@ -337,6 +337,13 @@ void WindowImplX11::SetSize(unsigned int width, unsigned int height)
 {
     XResizeWindow(myDisplay, myWindow, width, height);
     XFlush(myDisplay);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::SetTitle(const std::string& title)
+{
+    XStoreName(myDisplay, myWindow, title.c_str());
 }
 
 

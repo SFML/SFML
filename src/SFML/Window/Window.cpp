@@ -281,6 +281,14 @@ void Window::SetSize(unsigned int width, unsigned int height)
 
 
 ////////////////////////////////////////////////////////////
+void Window::SetTitle(const std::string& title)
+{
+    if (myWindow)
+        myWindow->SetTitle(title);
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::Show(bool show)
 {
     if (myWindow)
