@@ -188,23 +188,25 @@ void Sprite::Render(RenderTarget&, Renderer& renderer) const
     // Check if the image is valid, and calculate the texture coordinates
     FloatRect coords;
     if (myImage)
-    {
         coords = myImage->GetTexCoords(mySubRect);
-        if (myIsFlippedX) coords.Width  = -coords.Width;
-        if (myIsFlippedY) coords.Height = -coords.Height;
-    }
+
+    // Compute the texture coordinates
+    float left   = coords.Left;
+    float top    = coords.Top;
+    float right  = coords.Left + coords.Width;
+    float bottom = coords.Top + coords.Height;
+    if (myIsFlippedX) std::swap(left, right);
+    if (myIsFlippedY) std::swap(top, bottom);
 
     // Bind the texture
     renderer.SetTexture(myImage);
 
     // Draw the sprite's geometry
-    float right  = coords.Left + coords.Width;
-    float bottom = coords.Top + coords.Height;
     renderer.Begin(Renderer::TriangleStrip);
-        renderer.AddVertex(0,     0,      coords.Left, coords.Top);
-        renderer.AddVertex(width, 0,      right,       coords.Top);
-        renderer.AddVertex(0,     height, coords.Left, bottom);
-        renderer.AddVertex(width, height, right,       bottom);
+        renderer.AddVertex(0,     0,      left,  top);
+        renderer.AddVertex(width, 0,      right, top);
+        renderer.AddVertex(0,     height, left,  bottom);
+        renderer.AddVertex(width, height, right, bottom);
     renderer.End();
 }
 
