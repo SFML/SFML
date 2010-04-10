@@ -108,7 +108,7 @@ int main()
 
     // Load the text font
     sf::Font font;
-    if (!font.LoadFromFile("datas/shader/arial.ttf"))
+    if (!font.LoadFromFile("datas/shader/sansation.ttf"))
         return EXIT_FAILURE;
 
     // Load the image needed for the wave shader
