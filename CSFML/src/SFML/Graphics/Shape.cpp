@@ -57,13 +57,13 @@ sfShape* sfShape_CreateLine(float p1x, float p1y, float p2x, float p2y, float th
 ////////////////////////////////////////////////////////////
 /// Create a new shape made of a single rectangle
 ////////////////////////////////////////////////////////////
-sfShape* sfShape_CreateRectangle(float p1x, float p1y, float p2x, float p2y, sfColor color, float outline, sfColor outlineColor)
+sfShape* sfShape_CreateRectangle(float left, float top, float width, float height, sfColor color, float outline, sfColor outlineColor)
 {
     sf::Color SFMLColor(color.r, color.g, color.b, color.a);
     sf::Color SFMLOutlineColor(outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
 
     sfShape* shape = new sfShape;
-    shape->This = sf::Shape::Rectangle(p1x, p1y, p2x, p2y, SFMLColor, outline, SFMLOutlineColor);
+    shape->This = sf::Shape::Rectangle(left, top, width, height, SFMLColor, outline, SFMLOutlineColor);
     return shape;
 }
 

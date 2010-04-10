@@ -316,30 +316,28 @@ namespace SFML
             /// <summary>
             /// Create a shape made of a single rectangle
             /// </summary>
-            /// <param name="p1">Position of the top-left corner</param>
-            /// <param name="p2">Position of the bottom-right corner</param>
+            /// <param name="rectangle">Rectangle to create</param>
             /// <param name="color">Color used to fill the rectangle</param>
             /// <returns>New rectangle shape built with the given parameters</returns>
             ////////////////////////////////////////////////////////////
-            public static Shape Rectangle(Vector2 p1, Vector2 p2, Color color)
+            public static Shape Rectangle(FloatRect rectangle, Color color)
             {
-                return Rectangle(p1, p2, color, 0, Color.White);
+                return Rectangle(rectangle, color, 0, Color.White);
             }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
             /// Create a shape made of a single rectangle
             /// </summary>
-            /// <param name="p1">Position of the top-left corner</param>
-            /// <param name="p2">Position of the bottom-right corner</param>
+            /// <param name="rectangle">Rectangle to create</param>
             /// <param name="color">Color used to fill the rectangle</param>
             /// <param name="outline">Outline width</param>
             /// <param name="outlineColor">Color used to draw the outline</param>
             /// <returns>New rectangle shape built with the given parameters</returns>
             ////////////////////////////////////////////////////////////
-            public static Shape Rectangle(Vector2 p1, Vector2 p2, Color color, float outline, Color outlineColor)
+            public static Shape Rectangle(FloatRect rectangle, Color color, float outline, Color outlineColor)
             {
-                return new Shape(sfShape_CreateRectangle(p1.X, p1.Y, p2.X, p2.Y, color, outline, outlineColor));
+                return new Shape(sfShape_CreateRectangle(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, color, outline, outlineColor));
             }
 
             ////////////////////////////////////////////////////////////

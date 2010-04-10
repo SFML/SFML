@@ -218,14 +218,14 @@ Shape Shape::Line(const Vector2f& p1, const Vector2f& p2, float thickness, const
 ////////////////////////////////////////////////////////////
 /// Create a shape made of a single rectangle
 ////////////////////////////////////////////////////////////
-Shape Shape::Rectangle(float p1x, float p1y, float p2x, float p2y, const Color& color, float outline, const Color& outlineColor)
+Shape Shape::Rectangle(float left, float top, float width, float height, const Color& color, float outline, const Color& outlineColor)
 {
     // Create the shape's points
     Shape shape;
-    shape.AddPoint(Vector2f(p1x, p1y), color, outlineColor);
-    shape.AddPoint(Vector2f(p2x, p1y), color, outlineColor);
-    shape.AddPoint(Vector2f(p2x, p2y), color, outlineColor);
-    shape.AddPoint(Vector2f(p1x, p2y), color, outlineColor);
+    shape.AddPoint(Vector2f(left,         top),          color, outlineColor);
+    shape.AddPoint(Vector2f(left + width, top),          color, outlineColor);
+    shape.AddPoint(Vector2f(left + width, top + height), color, outlineColor);
+    shape.AddPoint(Vector2f(left,         top + height), color, outlineColor);
     shape.SetOutlineWidth(outline);
 
     // Compile it
@@ -236,11 +236,11 @@ Shape Shape::Rectangle(float p1x, float p1y, float p2x, float p2y, const Color& 
 
 
 ////////////////////////////////////////////////////////////
-/// Create a shape made of a single rectangle (use vectors)
+/// Create a shape made of a single rectangle
 ////////////////////////////////////////////////////////////
-Shape Shape::Rectangle(const Vector2f& p1, const Vector2f& p2, const Color& color, float outline, const Color& outlineColor)
+Shape Shape::Rectangle(const FloatRect& rectangle, const Color& color, float outline, const Color& outlineColor)
 {
-    return Shape::Rectangle(p1.x, p1.y, p2.x, p2.y, color, outline, outlineColor);
+    return Shape::Rectangle(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, color, outline, outlineColor);
 }
 
 

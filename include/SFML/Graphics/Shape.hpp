@@ -206,28 +206,27 @@ public :
     static Shape Line(const Vector2f& p1, const Vector2f& p2, float thickness, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
-    /// Create a shape made of a single rectangle (use floats)
+    /// Create a shape made of a single rectangle
     ///
-    /// \param p1x, p1y :     Position of the first point
-    /// \param p2x, p2y :     Position second point
-    /// \param color :        Color used to fill the rectangle
-    /// \param outline :      Outline width
-    /// \param outlineColor : Color used to draw the outline
+    /// \param left, top :     Position of the top-left corner
+    /// \param width, height : Size of the rectangle
+    /// \param color :         Color used to fill the rectangle
+    /// \param outline :       Outline width
+    /// \param outlineColor :  Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
-    static Shape Rectangle(float p1x, float p1y, float p2x, float p2y, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
+    static Shape Rectangle(float left, float top, float width, float height, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
-    /// Create a shape made of a single rectangle (use vectors)
+    /// Create a shape made of a single rectangle
     ///
-    /// \param p1 :           Position of the first point
-    /// \param p2 :           Position second point
+    /// \param rectangle :    Rectangle
     /// \param color :        Color used to fill the rectangle
     /// \param outline :      Outline width
     /// \param outlineColor : Color used to draw the outline
     ///
     ////////////////////////////////////////////////////////////
-    static Shape Rectangle(const Vector2f& p1, const Vector2f& p2, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
+    static Shape Rectangle(const FloatRect& rectangle, const Color& color, float outline = 0.f, const Color& outlineColor = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// Create a shape made of a single circle (use floats)

@@ -58,14 +58,14 @@ CSFML_API sfShape* sfShape_CreateLine(float p1x, float p1y, float p2x, float p2y
 ////////////////////////////////////////////////////////////
 /// Create a new shape made of a single rectangle
 ///
-/// \param p1x, p1y :     Position of the first point
-/// \param p2x, p2y :     Position second point
-/// \param color :        Color used to fill the rectangle
-/// \param outline :      Outline width
-/// \param outlineColor : Color used to draw the outline
+/// \param left, top :     Top-left corner of the rectangle
+/// \param width, height : Size of the rectangle
+/// \param color :         Color used to fill the rectangle
+/// \param outline :       Outline width
+/// \param outlineColor :  Color used to draw the outline
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfShape* sfShape_CreateRectangle(float p1x, float p1y, float p2x, float p2y, sfColor color, float outline, sfColor outlineColor);
+CSFML_API sfShape* sfShape_CreateRectangle(float left, float top, float width, float height, sfColor color, float outline, sfColor outlineColor);
 
 ////////////////////////////////////////////////////////////
 /// Create a new shape made of a single circle
