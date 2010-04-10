@@ -24,8 +24,6 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Default constructor (builds an identity matrix)
-////////////////////////////////////////////////////////////
 inline Matrix3::Matrix3()
 {
     myData[0] = 1.f; myData[4] = 0.f; myData[8]  = 0.f; myData[12] = 0.f;
@@ -35,8 +33,6 @@ inline Matrix3::Matrix3()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Construct a matrix from its 9 elements
 ////////////////////////////////////////////////////////////
 inline Matrix3::Matrix3(float a00, float a01, float a02,
                         float a10, float a11, float a12,
@@ -50,58 +46,6 @@ inline Matrix3::Matrix3(float a00, float a01, float a02,
 
 
 ////////////////////////////////////////////////////////////
-/// Build a matrix from a set of transformations
-////////////////////////////////////////////////////////////
-inline void Matrix3::SetFromTransformations(const Vector2f& origin, const Vector2f& translation, float rotation, const Vector2f& scale)
-{
-    // Combine the transformations
-    float angle  = rotation * 3.141592654f / 180.f;
-    float cosine = static_cast<float>(cos(angle));
-    float sine   = static_cast<float>(sin(angle));
-    float sxCos  = scale.x * cosine;
-    float syCos  = scale.y * cosine;
-    float sxSin  = scale.x * sine;
-    float sySin  = scale.y * sine;
-    float tx     = -origin.x * sxCos - origin.y * sySin + translation.x;
-    float ty     =  origin.x * sxSin - origin.y * syCos + translation.y;
-
-    // Rebuild the matrix
-    myData[0] =  sxCos; myData[4] = sySin; myData[8]  = 0.f; myData[12] = tx;
-    myData[1] = -sxSin; myData[5] = syCos; myData[9]  = 0.f; myData[13] = ty;
-    myData[2] =  0.f;   myData[6] = 0.f;   myData[10] = 1.f; myData[14] = 0.f;
-    myData[3] =  0.f;   myData[7] = 0.f;   myData[11] = 0.f; myData[15] = 1.f;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Build a matrix from a projection
-////////////////////////////////////////////////////////////
-inline void Matrix3::SetFromProjection(const Vector2f& center, const Vector2f& size, float rotation)
-{
-    // Rotation components
-    float angle  = rotation * 3.141592654f / 180.f;
-    float cosine = static_cast<float>(cos(angle));
-    float sine   = static_cast<float>(sin(angle));
-    float tx     = -center.x * cosine - center.y * sine + center.x;
-    float ty     =  center.x * sine - center.y * cosine + center.y;
-
-    // Projection components
-    float a =  2.f / size.x;
-    float b = -2.f / size.y;
-    float c = -a * center.x;
-    float d = -b * center.y;
-
-    // Rebuild the projection matrix
-    myData[0] =  a * cosine; myData[4] = a * sine;   myData[8]  = 0.f; myData[12] = a * tx + c;
-    myData[1] = -b * sine;   myData[5] = b * cosine; myData[9]  = 0.f; myData[13] = b * ty + d;
-    myData[2] = 0.f;         myData[6] = 0.f;        myData[10] = 1.f; myData[14] = 0.f;
-    myData[3] = 0.f;         myData[7] = 0.f;        myData[11] = 0.f; myData[15] = 1.f;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Transform a point by the matrix
-////////////////////////////////////////////////////////////
 inline Vector2f Matrix3::Transform(const Vector2f& point) const
 {
     return Vector2f(myData[0] * point.x + myData[4] * point.y + myData[12],
@@ -109,8 +53,6 @@ inline Vector2f Matrix3::Transform(const Vector2f& point) const
 }
 
 
-////////////////////////////////////////////////////////////
-/// Return the inverse of the matrix
 ////////////////////////////////////////////////////////////
 inline Matrix3 Matrix3::GetInverse() const
 {
@@ -140,56 +82,12 @@ inline Matrix3 Matrix3::GetInverse() const
 
 
 ////////////////////////////////////////////////////////////
-/// Return the elements of the matrix as a 4x4,
-/// in an array of 16 floats
-////////////////////////////////////////////////////////////
 inline const float* Matrix3::Get4x4Elements() const
 {
     return myData;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Operator () overloads to access the matrix elements
-////////////////////////////////////////////////////////////
-inline float Matrix3::operator ()(unsigned int row, unsigned int column) const
-{
-    switch (row + column * 3)
-    {
-        case 0 : return myData[0];
-        case 1 : return myData[1];
-        case 2 : return myData[3];
-        case 3 : return myData[4];
-        case 4 : return myData[5];
-        case 5 : return myData[7];
-        case 6 : return myData[12];
-        case 7 : return myData[13];
-        case 8 : return myData[15];
-
-        default : return myData[0];
-    }
-}
-inline float& Matrix3::operator ()(unsigned int row, unsigned int column)
-{
-    switch (row + column * 3)
-    {
-        case 0 : return myData[0];
-        case 1 : return myData[1];
-        case 2 : return myData[3];
-        case 3 : return myData[4];
-        case 4 : return myData[5];
-        case 5 : return myData[7];
-        case 6 : return myData[12];
-        case 7 : return myData[13];
-        case 8 : return myData[15];
-
-        default : return myData[0];
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-/// Operator * overload to multiply two matrices
 ////////////////////////////////////////////////////////////
 inline Matrix3 Matrix3::operator *(const Matrix3& right) const
 {
@@ -206,9 +104,44 @@ inline Matrix3 Matrix3::operator *(const Matrix3& right) const
 
 
 ////////////////////////////////////////////////////////////
-/// Operator *= overload to multiply-assign two matrices
-////////////////////////////////////////////////////////////
-inline Matrix3& Matrix3::operator *=(const Matrix3& right)
+inline Matrix3 Matrix3::Transformation(const Vector2f& origin, const Vector2f& translation, float rotation, const Vector2f& scale)
 {
-    return *this = *this * right;
+    // Combine the transformations
+    float angle  = rotation * 3.141592654f / 180.f;
+    float cosine = static_cast<float>(cos(angle));
+    float sine   = static_cast<float>(sin(angle));
+    float sxCos  = scale.x * cosine;
+    float syCos  = scale.y * cosine;
+    float sxSin  = scale.x * sine;
+    float sySin  = scale.y * sine;
+    float tx     = -origin.x * sxCos - origin.y * sySin + translation.x;
+    float ty     =  origin.x * sxSin - origin.y * syCos + translation.y;
+
+    // Construct the matrix
+    return Matrix3( sxCos, sySin, tx,
+                   -sxSin, syCos, ty,
+                    0.f,   0.f,   1.f);
+}
+
+
+////////////////////////////////////////////////////////////
+inline Matrix3 Matrix3::Projection(const Vector2f& center, const Vector2f& size, float rotation)
+{
+    // Rotation components
+    float angle  = rotation * 3.141592654f / 180.f;
+    float cosine = static_cast<float>(cos(angle));
+    float sine   = static_cast<float>(sin(angle));
+    float tx     = -center.x * cosine - center.y * sine + center.x;
+    float ty     =  center.x * sine - center.y * cosine + center.y;
+
+    // Projection components
+    float a =  2.f / size.x;
+    float b = -2.f / size.y;
+    float c = -a * center.x;
+    float d = -b * center.y;
+
+    // Rebuild the projection matrix
+    return Matrix3( a * cosine, a * sine,   a * tx + c,
+                   -b * sine,   b * cosine, b * ty + d,
+                    0.f,        0.f,        1.f);
 }

@@ -199,7 +199,7 @@ const Matrix3& View::GetMatrix() const
     // Recompute the matrix if needed
     if (!myMatrixUpdated)
     {
-        myMatrix.SetFromProjection(myCenter, mySize, myRotation);
+        myMatrix = Matrix3::Projection(myCenter, mySize, myRotation);
         myMatrixUpdated = true;
     }
 

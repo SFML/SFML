@@ -137,7 +137,7 @@ void Renderer::SetModelView(const Matrix3& matrix)
 ////////////////////////////////////////////////////////////
 void Renderer::ApplyModelView(const Matrix3& matrix)
 {
-    myStates->modelView *= matrix;
+    myStates->modelView = myStates->modelView * matrix;
 }
 
 

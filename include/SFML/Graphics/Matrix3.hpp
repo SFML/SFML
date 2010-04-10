@@ -37,21 +37,33 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Utility class to manipulate 3x3 matrices representing
-/// 2D transformations
+/// \brief Utility class to manipulate 3x3 matrices of floats
+///
 ////////////////////////////////////////////////////////////
 class SFML_API Matrix3
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor (builds an identity matrix)
+    /// \brief Default constructor
+    ///
+    /// This constructor creates an identity matrix.
     ///
     ////////////////////////////////////////////////////////////
     Matrix3();
 
     ////////////////////////////////////////////////////////////
-    /// Construct a matrix from its 9 elements
+    /// \brief Construct a matrix from its 9 elements
+    ///
+    /// \param a00 Element (0, 0) of the matrix
+    /// \param a01 Element (0, 1) of the matrix
+    /// \param a02 Element (0, 2) of the matrix
+    /// \param a10 Element (1, 0) of the matrix
+    /// \param a11 Element (1, 1) of the matrix
+    /// \param a12 Element (1, 2) of the matrix
+    /// \param a20 Element (2, 0) of the matrix
+    /// \param a21 Element (2, 1) of the matrix
+    /// \param a22 Element (2, 2) of the matrix
     ///
     ////////////////////////////////////////////////////////////
     Matrix3(float a00, float a01, float a02,
@@ -59,30 +71,9 @@ public :
             float a20, float a21, float a22);
 
     ////////////////////////////////////////////////////////////
-    /// Build a matrix from a set of transformations
+    /// \brief Transform a point by the matrix
     ///
-    /// \param origin :      Origin for the transformations
-    /// \param translation : Translation offset
-    /// \param rotation :    Rotation angle in degrees
-    /// \param scale :       Scaling factors
-    ///
-    ////////////////////////////////////////////////////////////
-    void SetFromTransformations(const Vector2f& origin, const Vector2f& translation, float rotation, const Vector2f& scale);
-
-    ////////////////////////////////////////////////////////////
-    /// Build a matrix from a projection
-    ///
-    /// \param center :   Center of the view
-    /// \param size :     Size of the view
-    /// \param rotation : Angle of rotation of the view rectangle, in degrees
-    ///
-    ////////////////////////////////////////////////////////////
-    void SetFromProjection(const Vector2f& center, const Vector2f& size, float rotation);
-
-    ////////////////////////////////////////////////////////////
-    /// Transform a point by the matrix
-    ///
-    /// \param point : Point to transform
+    /// \param point Point to transform
     ///
     /// \return Transformed point
     ///
@@ -90,16 +81,22 @@ public :
     Vector2f Transform(const Vector2f& point) const;
 
     ////////////////////////////////////////////////////////////
-    /// Return the inverse of the matrix
+    /// \brief Return the inverse of the matrix
     ///
-    /// \return A new matrix which is the inverse of this
+    /// If the inverse cannot be computed, the identity matrix
+    /// is returned.
+    ///
+    /// \return A new matrix which is the inverse of self
     ///
     ////////////////////////////////////////////////////////////
     Matrix3 GetInverse() const;
 
     ////////////////////////////////////////////////////////////
-    /// Return the elements of the matrix as a 4x4,
-    /// in an array of 16 floats
+    /// \brief Return the elements of the matrix
+    ///
+    /// This function returns an array of 16 floats containing
+    /// the corresponding 4x4 matrix, so that it is directly
+    /// compatible with OpenGL functions.
     ///
     /// \return Pointer to the 4x4 matrix elements
     ///
@@ -107,41 +104,48 @@ public :
     const float* Get4x4Elements() const;
 
     ////////////////////////////////////////////////////////////
-    /// Operator () overloads to access the matrix elements
+    /// \brief Overload of binary operator *
     ///
-    /// \param row :    Element row (0 based)
-    /// \param column : Element column (0 based)
+    /// \param right Right operand of the multiplication
     ///
-    /// \return Matrix element (Row, Col)
-    ///
-    ////////////////////////////////////////////////////////////
-    float  operator ()(unsigned int row, unsigned int column) const;
-    float& operator ()(unsigned int row, unsigned int column);
-
-    ////////////////////////////////////////////////////////////
-    /// Operator * overload to multiply two matrices
-    ///
-    /// \param right : Matrix to multiply
-    ///
-    /// \return this * right
+    /// \return New matrix which is the result of self * \a right
     ///
     ////////////////////////////////////////////////////////////
     Matrix3 operator *(const Matrix3& right) const;
 
     ////////////////////////////////////////////////////////////
-    /// Operator *= overload to multiply-assign two matrices
+    /// \brief Build a matrix from a set of transformations
     ///
-    /// \param right : Matrix to multiply
+    /// \param origin      Origin for the transformations
+    /// \param translation Translation offset
+    /// \param rotation    Rotation angle in degrees
+    /// \param scale       Scaling factors
     ///
-    /// \return this * right
+    /// \return New Matrix3 containing the transformations
+    ///
+    /// \see Projection
     ///
     ////////////////////////////////////////////////////////////
-    Matrix3& operator *=(const Matrix3& right);
+    static Matrix3 Transformation(const Vector2f& origin, const Vector2f& translation, float rotation, const Vector2f& scale);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Build a 2D project matrix
+    ///
+    /// \param center    Center of the view
+    /// \param size      Size of the view
+    /// \param rotation  Angle of rotation of the view, in degrees
+    ///
+    /// \return New Matrix3 containing the projection
+    ///
+    /// \see Transformation
+    ///
+    ////////////////////////////////////////////////////////////
+    static Matrix3 Projection(const Vector2f& center, const Vector2f& size, float rotation);
 
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const Matrix3 Identity; ///< Identity matrix
+    static const Matrix3 Identity; ///< The identity matrix
 
 private :
 
@@ -157,3 +161,15 @@ private :
 
 
 #endif // SFML_MATRIX3_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Matrix3
+///
+/// Matrix3 is only meant for internal use, its interface is
+/// limited and its implementation is optimized for OpenGL
+/// rendering.
+///
+/// This type is not used at all in the public API of SFML.
+///
+////////////////////////////////////////////////////////////

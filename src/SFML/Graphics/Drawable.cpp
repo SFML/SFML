@@ -339,7 +339,7 @@ const Matrix3& Drawable::GetMatrix() const
     // First recompute it if needed
     if (!myMatrixUpdated)
     {
-        myMatrix.SetFromTransformations(myOrigin, myPosition, myRotation, myScale);
+        myMatrix = Matrix3::Transformation(myOrigin, myPosition, myRotation, myScale);
         myMatrixUpdated = true;
     }
 
