@@ -126,8 +126,8 @@ void View::SetViewport(const FloatRect& viewport)
 ////////////////////////////////////////////////////////////
 void View::Reset(const FloatRect& rectangle)
 {
-    myCenter.x = (rectangle.Left + rectangle.Width) / 2.f;
-    myCenter.y = (rectangle.Top + rectangle.Height) / 2.f;
+    myCenter.x = rectangle.Left + rectangle.Width / 2.f;
+    myCenter.y = rectangle.Top + rectangle.Height / 2.f;
     mySize.x   = rectangle.Width;
     mySize.y   = rectangle.Height;
     myRotation = 0;
