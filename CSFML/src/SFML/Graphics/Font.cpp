@@ -142,7 +142,7 @@ const sfImage* sfFont_GetImage(sfFont* font, unsigned int characterSize)
 ////////////////////////////////////////////////////////////
 const sfFont* sfFont_GetDefaultFont()
 {
-    static sfFont defaultFont = {sf::Font::GetDefaultFont()};
+    static sfFont defaultFont = {sf::Font::GetDefaultFont(), std::map<unsigned int, sfImage>()};
 
     return &defaultFont;
 }
