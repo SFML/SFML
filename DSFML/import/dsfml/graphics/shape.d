@@ -245,10 +245,8 @@ public:
 	 *	Create a shape made of a single rectangle
 	 *
 	 *	Params:	
-	 *		p1X = X position of the first point
-	 *		p1Y = Y position of the first point	
-	 *		p2X = X position second point 
-	 *		p2Y = Y position second point	
+	 *		left, top = Top-left corner of the rectangle
+	 *		width, height = Size of the rectangle
 	 *		col = Color used to fill the rectangle
 	 *		outline = Outline width (0 by default)
 	 *		outlineCol = Color used to draw the outline (black by default)
@@ -256,9 +254,9 @@ public:
 	 *	Returns:
 	 *		new rectangle shape			
 	 */
-	static Shape rectangle(float p1X, float p1Y, float p2X, float p2Y, Color col, float outline = 0.f, Color outlineCol = Color.BLACK)
+	static Shape rectangle(float left, float top, float width, float height, Color col, float outline = 0.f, Color outlineCol = Color.BLACK)
 	{
-		return new Shape(sfShape_CreateRectangle(p1X, p1Y, p2X, p2Y, col, outline, outlineCol));
+		return new Shape(sfShape_CreateRectangle(left, top, width, height, col, outline, outlineCol));
 	}
 
 	/**

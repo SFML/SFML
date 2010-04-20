@@ -62,7 +62,7 @@ public:
 	*/			  
 	this(Vector2f center, Vector2f size)
 	{
-		super(sfView_CreateFromRect(FloatRect(center.x - size.x / 2, center.y - size.y / 2, center.x + size.x / 2, center.y + size.y / 2) ));
+		super(sfView_CreateFromRect(FloatRect(center.x - size.x / 2, center.y - size.y / 2, size.x, size.y) ));
 	}
 	
 	/**

@@ -51,17 +51,17 @@ else
 }
 
 /**
-*	Rect is an utility class for manipulating rectangles.
-*	Template parameter defines the type of coordinates (integer float, ...)
-*/
+ *	Rect is an utility class for manipulating rectangles.
+ *	Template parameter defines the type of coordinates (integer float, ...)
+ */
 struct Rect(T)
 {
 
 private:
 	T left;	// Left coordinate of the rectangle
 	T top;	// Top coordinate of the rectangle
-	T right;  // Right coordinate of the rectangle
-	T bottom; // Bottom coordinate of the rectangle
+	T width;  // width
+	T height; // height
 
 public:
 	static if (!isIntegerType!(T) && !isRealType!(T))
@@ -78,88 +78,48 @@ public:
 	{
 		return i > j ? i : j;
 	}
-	
-/+
-	/**
-	*	Construct the rectangle from its coordinates
-	*
-	*	Params:
-	*		leftCoord = Left coordinate of the rectangle
-	*		topCoord = Top coordinate of the rectangle
-	*		rightCoord = Right coordinate of the rectangle
-	*		bottomCoord = Bottom coordinate of the rectangle
-	*/
-	this(T leftCoord, T topCoord, T rightCoord, T bottomCoord)
-	{
-		left = leftCoord;
-		top = topCoord;
-		right = rightCoord;
-		bottom = bottomCoord;
-	}
-+/
 
 	/**
-	*	Get the width of the rectangle
-	*
-	*	Returns:
-	*		Width of rectangle
-	*/
-	T getWidth() 
+	 *	Get the right coordinate of the rectangle
+	 */
+	T right() 
 	{
-		return right - left;
+		return left + width;
 	}
 
 	/**
-	*	Get the height of the rectangle
-	*
-	*	Returns:
-	*		Height of rectangle
-	*/
-	T getHeight()
+	 *	Get the bottom coordinate of the rectangle
+	 */
+	T bottom()
 	{
-		return bottom - top;
+		return top + height;
 	}
 
 	/**
-	*	Move the whole rectangle by the given offset
-	*
-	*	Params:
-	*		offsetX = Horizontal offset
-	*		offsetY = Vertical offset
-	*/
-	void offset(T offsetX, T offsetY)
-	{
-		left	+= offsetX;
-		right  += offsetX;
-		top	+= offsetY;
-		bottom += offsetY;
-	}
-
-	/**
-	*	Check if a point is inside the rectangle's area
-	*
-	*	Params:
-	*		x = X coordinate of the point to test
-	*		y = Y coordinate of the point to test
-	*
-	*	Returns:
-	*		True if the point is inside
-	*/
+	 *	Check if a point is inside the rectangle's area
+	 *
+	 *	Params:
+	 *		x = X coordinate of the point to test
+	 *		y = Y coordinate of the point to test
+	 *
+	 *	Returns:
+	 *		True if the point is inside
+	 */
 	bool contains(T x, T y)
 	{
-		return (x >= left) && (x <= right) && (y >= top) && (y <= bottom);
+		return (x >= left) && (x < right) && (y >= top) && (y < bottom);
 	}
 
 	/**
-	*	Check intersection between two rectangles
-	*
-	*	Params:
-	*		rectangle = Rectangle to test
-	*		overlappingRect = Rectangle to be filled with overlapping rect (NULL by default)
-	*
-	*	Returns:
-	*		True if rectangles overlap
-	*/
+	 *	Check intersection between two rectangles
+	 *
+	 *	Params:
+	 *		rectangle = Rectangle to test
+	 *		overlappingRect = Rectangle to be filled with overlapping rect (NULL by default)
+	 *
+	 *	Returns:
+	 *		True if rectangles overlap
+	 */
 	bool intersects(Rect!(T) rectangle, out Rect!(T) overlappingRect = Rect!(T)())
 	{
 		// Compute overlapping rect
