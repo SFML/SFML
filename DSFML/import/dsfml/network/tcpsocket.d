@@ -24,7 +24,7 @@
 *		source distribution.
 */
 
-module dsfml.network.sockettcp;
+module dsfml.network.tcpsocket;
 
 import dsfml.network.ipaddress;
 import dsfml.network.packet;
@@ -33,22 +33,22 @@ import dsfml.network.socketstatus;
 import dsfml.system.common;
 
 /**
-*	SocketTCP wraps a socket using TCP protocol to send data safely (but a bit slower)
+*	TcpSocket wraps a socket using TCP protocol to send data safely (but a bit slower)
 */
-class SocketTCP : DSFMLObject
+class TcpSocket : DSFMLObject
 {
 	/**
 	*	Default constructor
 	*/
 	this()
 	{
-		super(sfSocketTCP_Create());
+		super(sfTcpSocket_Create());
 		m_intermediatePacket = new Packet();
 	}
 
 	override void dispose()
 	{
-		sfSocketTCP_Destroy(m_ptr);
+		sfTcpSocket_Destroy(m_ptr);
 	}
 
 	/**
@@ -64,7 +64,7 @@ class SocketTCP : DSFMLObject
 	*/
 	bool connect(ushort port, IPAddress hostAddress, float timeout = 0.f)
 	{
-		return cast(bool) !sfSocketTCP_Connect(m_ptr, port, hostAddress, timeout);
+		return cast(bool) !sfTcpSocket_Connect(m_ptr, port, hostAddress, timeout);
 	}
 
 	/**
@@ -78,7 +78,7 @@ class SocketTCP : DSFMLObject
 	*/
 	bool listen(ushort port)
 	{
-		return cast(bool)sfSocketTCP_Listen(m_ptr, port);
+		return cast(bool)sfTcpSocket_Listen(m_ptr, port);
 	}
 
 	/**
@@ -91,10 +91,10 @@ class SocketTCP : DSFMLObject
 	*	Returns: 
 	*		Status code
 	*/
-	SocketStatus accept(SocketTCP connected)
+	SocketStatus accept(TcpSocket connected)
 	{
 		SFMLClass temp = null;
-		SocketStatus ret = sfSocketTCP_Accept(m_ptr, &temp, null);
+		SocketStatus ret = sfTcpSocket_Accept(m_ptr, &temp, null);
 		connected.m_ptr = temp;
 		return ret;
 	}
@@ -110,10 +110,10 @@ class SocketTCP : DSFMLObject
 	*	Returns: 
 	*		Status code
 	*/
-	SocketStatus accept(SocketTCP connected, out IPAddress address)
+	SocketStatus accept(TcpSocket connected, out IPAddress address)
 	{
 		SFMLClass temp = null;
-		SocketStatus ret = sfSocketTCP_Accept(m_ptr, &temp, &address);
+		SocketStatus ret = sfTcpSocket_Accept(m_ptr, &temp, &address);
 		connected.m_ptr = temp;
 		return ret;
 	}
@@ -134,7 +134,7 @@ class SocketTCP : DSFMLObject
 	}
 	body
 	{
-		return cast(SocketStatus)sfSocketTCP_Send(m_ptr, data.ptr, data.length);
+		return cast(SocketStatus)sfTcpSocket_Send(m_ptr, data.ptr, data.length);
 	}
 
 	/**
@@ -159,7 +159,7 @@ class SocketTCP : DSFMLObject
 	}
 	body
 	{
-		return cast(SocketStatus)sfSocketTCP_Receive(m_ptr, data.ptr, data.length, &sizeReceived);
+		return cast(SocketStatus)sfTcpSocket_Receive(m_ptr, data.ptr, data.length, &sizeReceived);
 	}
 
 
@@ -177,7 +177,7 @@ class SocketTCP : DSFMLObject
 	{
 		byte[] dataArray = packetToSend.onSend();
 		m_intermediatePacket.append(dataArray);
-		SocketStatus stat = cast(SocketStatus)sfSocketTCP_SendPacket(m_ptr, m_intermediatePacket.nativePointer);
+		SocketStatus stat = cast(SocketStatus)sfTcpSocket_SendPacket(m_ptr, m_intermediatePacket.nativePointer);
 		m_intermediatePacket.clear();
 		return stat;
 	}
@@ -195,7 +195,7 @@ class SocketTCP : DSFMLObject
 	*/
 	SocketStatus receive(Packet packetToReceive)
 	{
-		SocketStatus stat = cast(SocketStatus)sfSocketTCP_ReceivePacket(m_ptr, m_intermediatePacket.nativePointer);
+		SocketStatus stat = cast(SocketStatus)sfTcpSocket_ReceivePacket(m_ptr, m_intermediatePacket.nativePointer);
 		packetToReceive.onReceive(m_intermediatePacket.getData);
 		m_intermediatePacket.clear();
 		return stat;
@@ -211,7 +211,7 @@ class SocketTCP : DSFMLObject
 	*/
 	bool isValid() 
 	{
-		return cast(bool)sfSocketTCP_IsValid(m_ptr);
+		return cast(bool)sfTcpSocket_IsValid(m_ptr);
 	}
 
 package:
@@ -229,27 +229,27 @@ private:
 // External ====================================================================
 	extern (C)
 	{
-		typedef SFMLClass function() pf_sfSocketTCP_Create;
-		typedef void function(SFMLClass) pf_sfSocketTCP_Destroy;
-		typedef int function(SFMLClass, ushort, IPAddress, float) pf_sfSocketTCP_Connect;
-		typedef int function(SFMLClass, ushort) pf_sfSocketTCP_Listen;
-		typedef SocketStatus function(SFMLClass, SFMLClass*, IPAddress*) pf_sfSocketTCP_Accept;
-		typedef SocketStatus function(SFMLClass, const(byte)*, size_t) pf_sfSocketTCP_Send;
-		typedef SocketStatus function(SFMLClass, byte*, size_t, size_t*) pf_sfSocketTCP_Receive;
-		typedef SocketStatus function(SFMLClass, SFMLClass) pf_sfSocketTCP_SendPacket;
-		typedef SocketStatus function(SFMLClass, SFMLClass) pf_sfSocketTCP_ReceivePacket;
-		typedef int function(SFMLClass) pf_sfSocketTCP_IsValid;
+		typedef SFMLClass function() pf_sfTcpSocket_Create;
+		typedef void function(SFMLClass) pf_sfTcpSocket_Destroy;
+		typedef int function(SFMLClass, ushort, IPAddress, float) pf_sfTcpSocket_Connect;
+		typedef int function(SFMLClass, ushort) pf_sfTcpSocket_Listen;
+		typedef SocketStatus function(SFMLClass, SFMLClass*, IPAddress*) pf_sfTcpSocket_Accept;
+		typedef SocketStatus function(SFMLClass, const(byte)*, size_t) pf_sfTcpSocket_Send;
+		typedef SocketStatus function(SFMLClass, byte*, size_t, size_t*) pf_sfTcpSocket_Receive;
+		typedef SocketStatus function(SFMLClass, SFMLClass) pf_sfTcpSocket_SendPacket;
+		typedef SocketStatus function(SFMLClass, SFMLClass) pf_sfTcpSocket_ReceivePacket;
+		typedef int function(SFMLClass) pf_sfTcpSocket_IsValid;
 	
-		static pf_sfSocketTCP_Create sfSocketTCP_Create;
-		static pf_sfSocketTCP_Destroy sfSocketTCP_Destroy;
-		static pf_sfSocketTCP_Connect sfSocketTCP_Connect;
-		static pf_sfSocketTCP_Listen sfSocketTCP_Listen;
-		static pf_sfSocketTCP_Accept sfSocketTCP_Accept;
-		static pf_sfSocketTCP_Send sfSocketTCP_Send;
-		static pf_sfSocketTCP_Receive sfSocketTCP_Receive;
-		static pf_sfSocketTCP_SendPacket sfSocketTCP_SendPacket;
-		static pf_sfSocketTCP_ReceivePacket sfSocketTCP_ReceivePacket;
-		static pf_sfSocketTCP_IsValid sfSocketTCP_IsValid;
+		static pf_sfTcpSocket_Create sfTcpSocket_Create;
+		static pf_sfTcpSocket_Destroy sfTcpSocket_Destroy;
+		static pf_sfTcpSocket_Connect sfTcpSocket_Connect;
+		static pf_sfTcpSocket_Listen sfTcpSocket_Listen;
+		static pf_sfTcpSocket_Accept sfTcpSocket_Accept;
+		static pf_sfTcpSocket_Send sfTcpSocket_Send;
+		static pf_sfTcpSocket_Receive sfTcpSocket_Receive;
+		static pf_sfTcpSocket_SendPacket sfTcpSocket_SendPacket;
+		static pf_sfTcpSocket_ReceivePacket sfTcpSocket_ReceivePacket;
+		static pf_sfTcpSocket_IsValid sfTcpSocket_IsValid;
 	}
 
 	static this()
@@ -259,15 +259,15 @@ private:
 	else
 		DllLoader dll = DllLoader.load("csfml-network");
 		
-		sfSocketTCP_Accept = cast(pf_sfSocketTCP_Accept)dll.getSymbol("sfSocketTCP_Accept");
-		sfSocketTCP_Connect = cast(pf_sfSocketTCP_Connect)dll.getSymbol("sfSocketTCP_Connect");
-		sfSocketTCP_Create = cast(pf_sfSocketTCP_Create)dll.getSymbol("sfSocketTCP_Create");
-		sfSocketTCP_Destroy = cast(pf_sfSocketTCP_Destroy)dll.getSymbol("sfSocketTCP_Destroy");
-		sfSocketTCP_IsValid = cast(pf_sfSocketTCP_IsValid)dll.getSymbol("sfSocketTCP_IsValid");
-		sfSocketTCP_Listen = cast(pf_sfSocketTCP_Listen)dll.getSymbol("sfSocketTCP_Listen");
-		sfSocketTCP_Receive = cast(pf_sfSocketTCP_Receive)dll.getSymbol("sfSocketTCP_Receive");
-		sfSocketTCP_ReceivePacket = cast(pf_sfSocketTCP_ReceivePacket)dll.getSymbol("sfSocketTCP_ReceivePacket");
-		sfSocketTCP_Send = cast(pf_sfSocketTCP_Send)dll.getSymbol("sfSocketTCP_Send");
-		sfSocketTCP_SendPacket = cast(pf_sfSocketTCP_SendPacket)dll.getSymbol("sfSocketTCP_SendPacket");
+		sfTcpSocket_Accept = cast(pf_sfTcpSocket_Accept)dll.getSymbol("sfTcpSocket_Accept");
+		sfTcpSocket_Connect = cast(pf_sfTcpSocket_Connect)dll.getSymbol("sfTcpSocket_Connect");
+		sfTcpSocket_Create = cast(pf_sfTcpSocket_Create)dll.getSymbol("sfTcpSocket_Create");
+		sfTcpSocket_Destroy = cast(pf_sfTcpSocket_Destroy)dll.getSymbol("sfTcpSocket_Destroy");
+		sfTcpSocket_IsValid = cast(pf_sfTcpSocket_IsValid)dll.getSymbol("sfTcpSocket_IsValid");
+		sfTcpSocket_Listen = cast(pf_sfTcpSocket_Listen)dll.getSymbol("sfTcpSocket_Listen");
+		sfTcpSocket_Receive = cast(pf_sfTcpSocket_Receive)dll.getSymbol("sfTcpSocket_Receive");
+		sfTcpSocket_ReceivePacket = cast(pf_sfTcpSocket_ReceivePacket)dll.getSymbol("sfTcpSocket_ReceivePacket");
+		sfTcpSocket_Send = cast(pf_sfTcpSocket_Send)dll.getSymbol("sfTcpSocket_Send");
+		sfTcpSocket_SendPacket = cast(pf_sfTcpSocket_SendPacket)dll.getSymbol("sfTcpSocket_SendPacket");
 	}
 }

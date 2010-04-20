@@ -31,7 +31,8 @@ public import
 	dsfml.network.http,
 	dsfml.network.ipaddress,
 	dsfml.network.packet,
-	dsfml.network.selector,
+	dsfml.network.socketselector,
 	dsfml.network.socketstatus,
-	dsfml.network.sockettcp,
-	dsfml.network.socketudp;
+	dsfml.network.tcpsocket,
+	dsfml.network.udpsocket,
+	dsfml.network.tcplistener ;

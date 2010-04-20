@@ -24,7 +24,7 @@
 *		source distribution.
 */
 
-module dsfml.network.socketudp;
+module dsfml.network.udpsocket;
 
 import dsfml.network.ipaddress;
 import dsfml.network.packet;
@@ -33,23 +33,23 @@ import dsfml.network.socketstatus;
 import dsfml.system.common;
 
 /**
- *	SocketUDP wraps a socket using UDP protocol to
+ *	UdpSocket wraps a socket using UDP protocol to
  *	send data fastly (but with less safety)
  */
-class SocketUDP : DSFMLObject
+class UdpSocket : DSFMLObject
 {
 	/**
 	 *	Default constructor
 	 */
 	this()
 	{
-		super(sfSocketUDP_Create());
+		super(sfUdpSocket_Create());
 		m_intermediatePacket = new Packet();
 	}
 
 	override void dispose()
 	{
-		sfSocketUDP_Destroy(m_ptr);
+		sfUdpSocket_Destroy(m_ptr);
 	}
 
 	/**
@@ -65,7 +65,7 @@ class SocketUDP : DSFMLObject
 	bool bind(ushort port)
 	{
 		m_port = port;
-		return cast(bool)sfSocketUDP_Bind(m_ptr, port);
+		return cast(bool)sfUdpSocket_Bind(m_ptr, port);
 	}
 
 	/**
@@ -77,7 +77,7 @@ class SocketUDP : DSFMLObject
 	bool unbind()
 	{
 		m_port = 0;
-		return cast(bool)sfSocketUDP_Unbind(m_ptr, m_port);
+		return cast(bool)sfUdpSocket_Unbind(m_ptr, m_port);
 	}
 
 	/**
@@ -94,7 +94,7 @@ class SocketUDP : DSFMLObject
 	*/
 	SocketStatus send(byte[] data, IPAddress address, ushort port)
 	{
-		return cast(SocketStatus) sfSocketUDP_Send(m_ptr, data.ptr, data.length, address, port);
+		return cast(SocketStatus) sfUdpSocket_Send(m_ptr, data.ptr, data.length, address, port);
 	}
 
 	/**
@@ -115,7 +115,7 @@ class SocketUDP : DSFMLObject
 	*/
 	SocketStatus receive(byte[] data, out size_t sizeReceived, out IPAddress address)
 	{
-		SocketStatus ret = sfSocketUDP_Receive(m_ptr, data.ptr, data.length, &sizeReceived, &address);
+		SocketStatus ret = sfUdpSocket_Receive(m_ptr, data.ptr, data.length, &sizeReceived, &address);
 		return ret;
 	}
 
@@ -135,7 +135,7 @@ class SocketUDP : DSFMLObject
 	{
 			byte[] dataArray = packetToSend.onSend();
 			m_intermediatePacket.append(dataArray);
-		SocketStatus stat = cast(SocketStatus)sfSocketUDP_SendPacket(m_ptr, m_intermediatePacket.nativePointer, address, port);
+		SocketStatus stat = cast(SocketStatus)sfUdpSocket_SendPacket(m_ptr, m_intermediatePacket.nativePointer, address, port);
 		m_intermediatePacket.clear();
 		return stat;
 	}
@@ -154,7 +154,7 @@ class SocketUDP : DSFMLObject
 	*/
 	SocketStatus receive(Packet packetToReceive, out IPAddress address)
 	{
-		SocketStatus ret = sfSocketUDP_ReceivePacket(m_ptr, m_intermediatePacket.nativePointer, &address);
+		SocketStatus ret = sfUdpSocket_ReceivePacket(m_ptr, m_intermediatePacket.nativePointer, &address);
 		packetToReceive.onReceive(m_intermediatePacket.getData);
 		m_intermediatePacket.clear();
 		return ret;
@@ -171,7 +171,7 @@ class SocketUDP : DSFMLObject
 	*/
 	bool isValid()
 	{
-		return cast(bool)sfSocketUDP_IsValid(m_ptr);
+		return cast(bool)sfUdpSocket_IsValid(m_ptr);
 	}
 
 	/**
@@ -200,25 +200,25 @@ private:
 
 	extern (C)
 	{
-		typedef SFMLClass function() pf_sfSocketUDP_Create;
-		typedef void function(SFMLClass) pf_sfSocketUDP_Destroy;
-		typedef int function(SFMLClass, ushort) pf_sfSocketUDP_Bind;
-		typedef int function(SFMLClass, ushort) pf_sfSocketUDP_Unbind;
-		typedef SocketStatus function(SFMLClass, byte*, size_t, IPAddress, ushort) pf_sfSocketUDP_Send;
-		typedef SocketStatus function(SFMLClass, byte*, size_t, size_t*, IPAddress*) pf_sfSocketUDP_Receive;
-		typedef SocketStatus function(SFMLClass, SFMLClass, IPAddress, ushort) pf_sfSocketUDP_SendPacket;
-		typedef SocketStatus function(SFMLClass, SFMLClass, IPAddress*) pf_sfSocketUDP_ReceivePacket;
-		typedef int function(SFMLClass) pf_sfSocketUDP_IsValid;
+		typedef SFMLClass function() pf_sfUdpSocket_Create;
+		typedef void function(SFMLClass) pf_sfUdpSocket_Destroy;
+		typedef int function(SFMLClass, ushort) pf_sfUdpSocket_Bind;
+		typedef int function(SFMLClass, ushort) pf_sfUdpSocket_Unbind;
+		typedef SocketStatus function(SFMLClass, byte*, size_t, IPAddress, ushort) pf_sfUdpSocket_Send;
+		typedef SocketStatus function(SFMLClass, byte*, size_t, size_t*, IPAddress*) pf_sfUdpSocket_Receive;
+		typedef SocketStatus function(SFMLClass, SFMLClass, IPAddress, ushort) pf_sfUdpSocket_SendPacket;
+		typedef SocketStatus function(SFMLClass, SFMLClass, IPAddress*) pf_sfUdpSocket_ReceivePacket;
+		typedef int function(SFMLClass) pf_sfUdpSocket_IsValid;
 	
-		static pf_sfSocketUDP_Create sfSocketUDP_Create;
-		static pf_sfSocketUDP_Destroy sfSocketUDP_Destroy;
-		static pf_sfSocketUDP_Bind sfSocketUDP_Bind;
-		static pf_sfSocketUDP_Unbind sfSocketUDP_Unbind;
-		static pf_sfSocketUDP_Send sfSocketUDP_Send;
-		static pf_sfSocketUDP_Receive sfSocketUDP_Receive;
-		static pf_sfSocketUDP_SendPacket sfSocketUDP_SendPacket;
-		static pf_sfSocketUDP_ReceivePacket sfSocketUDP_ReceivePacket;
-		static pf_sfSocketUDP_IsValid sfSocketUDP_IsValid;
+		static pf_sfUdpSocket_Create sfUdpSocket_Create;
+		static pf_sfUdpSocket_Destroy sfUdpSocket_Destroy;
+		static pf_sfUdpSocket_Bind sfUdpSocket_Bind;
+		static pf_sfUdpSocket_Unbind sfUdpSocket_Unbind;
+		static pf_sfUdpSocket_Send sfUdpSocket_Send;
+		static pf_sfUdpSocket_Receive sfUdpSocket_Receive;
+		static pf_sfUdpSocket_SendPacket sfUdpSocket_SendPacket;
+		static pf_sfUdpSocket_ReceivePacket sfUdpSocket_ReceivePacket;
+		static pf_sfUdpSocket_IsValid sfUdpSocket_IsValid;
 	}
 
 	static this()
@@ -228,14 +228,14 @@ private:
 	else
 		DllLoader dll = DllLoader.load("csfml-network");
 		
-		sfSocketUDP_Bind = cast(pf_sfSocketUDP_Bind)dll.getSymbol("sfSocketUDP_Bind");
-		sfSocketUDP_Create = cast(pf_sfSocketUDP_Create)dll.getSymbol("sfSocketUDP_Create");
-		sfSocketUDP_Destroy = cast(pf_sfSocketUDP_Destroy)dll.getSymbol("sfSocketUDP_Destroy");
-		sfSocketUDP_IsValid = cast(pf_sfSocketUDP_IsValid)dll.getSymbol("sfSocketUDP_IsValid");
-		sfSocketUDP_Receive = cast(pf_sfSocketUDP_Receive)dll.getSymbol("sfSocketUDP_Receive");
-		sfSocketUDP_ReceivePacket = cast(pf_sfSocketUDP_ReceivePacket)dll.getSymbol("sfSocketUDP_ReceivePacket");
-		sfSocketUDP_Send = cast(pf_sfSocketUDP_Send)dll.getSymbol("sfSocketUDP_Send");
-		sfSocketUDP_SendPacket = cast(pf_sfSocketUDP_SendPacket)dll.getSymbol("sfSocketUDP_SendPacket");
-		sfSocketUDP_Unbind = cast(pf_sfSocketUDP_Unbind)dll.getSymbol("sfSocketUDP_Unbind");
+		sfUdpSocket_Bind = cast(pf_sfUdpSocket_Bind)dll.getSymbol("sfUdpSocket_Bind");
+		sfUdpSocket_Create = cast(pf_sfUdpSocket_Create)dll.getSymbol("sfUdpSocket_Create");
+		sfUdpSocket_Destroy = cast(pf_sfUdpSocket_Destroy)dll.getSymbol("sfUdpSocket_Destroy");
+		sfUdpSocket_IsValid = cast(pf_sfUdpSocket_IsValid)dll.getSymbol("sfUdpSocket_IsValid");
+		sfUdpSocket_Receive = cast(pf_sfUdpSocket_Receive)dll.getSymbol("sfUdpSocket_Receive");
+		sfUdpSocket_ReceivePacket = cast(pf_sfUdpSocket_ReceivePacket)dll.getSymbol("sfUdpSocket_ReceivePacket");
+		sfUdpSocket_Send = cast(pf_sfUdpSocket_Send)dll.getSymbol("sfUdpSocket_Send");
+		sfUdpSocket_SendPacket = cast(pf_sfUdpSocket_SendPacket)dll.getSymbol("sfUdpSocket_SendPacket");
+		sfUdpSocket_Unbind = cast(pf_sfUdpSocket_Unbind)dll.getSymbol("sfUdpSocket_Unbind");
 	}
 }

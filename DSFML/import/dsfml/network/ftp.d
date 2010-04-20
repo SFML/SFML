@@ -453,9 +453,9 @@ class Ftp : DSFMLObject
 	*	Returns:
 	*		Server response to the request						
 	*/		
-	FtpResponse makeDirectory(string name)
+	FtpResponse createDirectory(string name)
 	{
-		return new FtpResponse(sfFtp_MakeDirectory(m_ptr, toStringz(name)));
+		return new FtpResponse(sfFtp_CreateDirectory(m_ptr, toStringz(name)));
 	}
 
 	/**
@@ -549,7 +549,7 @@ private:
 		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_GetDirectoryListing;
 		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_ChangeDirectory;
 		typedef SFMLClass function(SFMLClass) pf_sfFtp_ParentDirectory;
-		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_MakeDirectory;
+		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_CreateDirectory;
 		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_DeleteDirectory;
 		typedef SFMLClass function(SFMLClass, cchar*, cchar*) pf_sfFtp_RenameFile;
 		typedef SFMLClass function(SFMLClass, cchar*) pf_sfFtp_DeleteFile;
@@ -567,7 +567,7 @@ private:
 		static pf_sfFtp_GetDirectoryListing sfFtp_GetDirectoryListing;
 		static pf_sfFtp_ChangeDirectory sfFtp_ChangeDirectory;
 		static pf_sfFtp_ParentDirectory sfFtp_ParentDirectory;
-		static pf_sfFtp_MakeDirectory sfFtp_MakeDirectory;
+		static pf_sfFtp_CreateDirectory sfFtp_CreateDirectory;
 		static pf_sfFtp_DeleteDirectory sfFtp_DeleteDirectory;
 		static pf_sfFtp_RenameFile sfFtp_RenameFile;
 		static pf_sfFtp_DeleteFile sfFtp_DeleteFile;
@@ -592,7 +592,7 @@ private:
 		sfFtp_GetDirectoryListing = cast(pf_sfFtp_GetDirectoryListing)dll.getSymbol("sfFtp_GetDirectoryListing");
 		sfFtp_ChangeDirectory = cast(pf_sfFtp_ChangeDirectory)dll.getSymbol("sfFtp_ChangeDirectory");
 		sfFtp_ParentDirectory = cast(pf_sfFtp_ParentDirectory)dll.getSymbol("sfFtp_ParentDirectory");
-		sfFtp_MakeDirectory = cast(pf_sfFtp_MakeDirectory)dll.getSymbol("sfFtp_MakeDirectory");
+		sfFtp_sfFtp_CreateDirectoryDirectory = cast(pf_sfFtp_CreateDirectory)dll.getSymbol("sfFtp_CreateDirectory");
 		sfFtp_DeleteDirectory = cast(pf_sfFtp_DeleteDirectory)dll.getSymbol("sfFtp_DeleteDirectory");
 		sfFtp_RenameFile = cast(pf_sfFtp_RenameFile)dll.getSymbol("sfFtp_RenameFile");
 		sfFtp_DeleteFile = cast(pf_sfFtp_DeleteFile)dll.getSymbol("sfFtp_DeleteFile");

@@ -24,36 +24,29 @@
 *		source distribution.
 */
 
-module dsfml.network.selector;
+module dsfml.network.socketselector;
 
-import dsfml.network.sockettcp;
-import dsfml.network.socketudp;
+import dsfml.network.tcpsocket;
+import dsfml.network.udpsocket;
 
 import dsfml.system.common;
 
 /**
- *	Selector TCP allow reading from multiple sockets
- *	without blocking. It's a kind of multiplexer. Use SocketTCP or 
- *	SocketUDP aliases.
+ *	Multiplexer that allows to read from multiple sockets
  */
-class Selector(T) : DSFMLObject
+class SocketSelector : DSFMLObject
 {
-	//Ensure type is correct
-	static if (!is(T : SocketTCP) && !is(T : SocketUDP))
-		static assert("Only SocketTCP and SocketUDP are valid for Selector.");
-	
-	
 	/**
 	*	Default constructor
 	*/		
 	this()
 	{
-		super(sfSelector_Create());
+		super(sfSocketSelector_Create());
 	}
 	
 	override void dispose()
 	{
-		sfSelector_Destroy(m_ptr);
+		sfSocketSelector_Destroy(m_ptr);
 	}
 	
 	/**
@@ -66,7 +59,7 @@ class Selector(T) : DSFMLObject
 	{
 		if (!(socket.nativePointer in m_watchedSockets))
 		{
-			sfSelector_Add(m_ptr, socket.nativePointer);
+			sfSocketSelector_Add(m_ptr, socket.nativePointer);
 			m_watchedSockets[socket.nativePointer] = socket;
 			m_numSocketsWatched++;
 		}
@@ -82,7 +75,7 @@ class Selector(T) : DSFMLObject
 	{
 		if (socket.nativePointer in m_watchedSockets)
 		{
-			sfSelector_Remove(m_ptr, socket.nativePointer);
+			sfSocketSelector_Remove(m_ptr, socket.nativePointer);
 			m_watchedSockets.remove(socket.nativePointer);
 			m_numSocketsWatched--;
 		}
@@ -93,7 +86,7 @@ class Selector(T) : DSFMLObject
 	*/		
 	void clear()
 	{
-		sfSelector_Clear(m_ptr);
+		sfSocketSelector_Clear(m_ptr);
 		foreach(key; m_watchedSockets.keys)
 			m_watchedSockets.remove(key);
 		m_numSocketsWatched = 0;
@@ -112,7 +105,7 @@ class Selector(T) : DSFMLObject
 	*/
 	uint wait(float timeout = 0.f)
 	{
-		return sfSelector_Wait(m_ptr, timeout);
+		return sfSocketSelector_Wait(m_ptr, timeout);
 	}
 	
 	/**
@@ -128,63 +121,33 @@ class Selector(T) : DSFMLObject
 	*/
 	T GetSocketsReady(uint index)
 	{
-		return m_watchedSockets[sfSelector_GetSocketReady(m_ptr, index)];
+		return m_watchedSockets[sfSocketSelector_GetSocketReady(m_ptr, index)];
 	}
 	
 
 private: 
-	size_t m_numSocketsWatched;
-	T[void*] m_watchedSockets;
+//	size_t m_numSocketsWatched;
+//	T[void*] m_watchedSockets;
 	
 // External ====================================================================
-	extern (C)
+	static extern(C)
 	{
-		typedef SFMLClass function() pf_sfSelector_Create;
-		typedef void function(SFMLClass) pf_sfSelector_Destroy;
-		typedef void function(SFMLClass, SFMLClass) pf_sfSelector_Add;
-		typedef void function(SFMLClass, SFMLClass) pf_sfSelector_Remove;
-		typedef void function(SFMLClass) pf_sfSelector_Clear;
-		typedef uint function(SFMLClass, float) pf_sfSelector_Wait;
-		typedef SFMLClass function(SFMLClass, uint) pf_sfSelector_GetSocketReady;
-
-		static pf_sfSelector_Create sfSelector_Create;
-		static pf_sfSelector_Destroy sfSelector_Destroy;
-		static pf_sfSelector_Add sfSelector_Add;
-		static pf_sfSelector_Remove sfSelector_Remove;
-		static pf_sfSelector_Clear sfSelector_Clear;
-		static pf_sfSelector_Wait sfSelector_Wait;
-		static pf_sfSelector_GetSocketReady sfSelector_GetSocketReady;
+		SFMLClass	function()						sfSocketSelector_Create;
+		void		function(SFMLClass)				sfSocketSelector_Destroy;
+		void		function(SFMLClass, SFMLClass)	sfSocketSelector_AddTcpListener;
+		void		function(SFMLClass, SFMLClass)	sfSocketSelector_AddTcpSocket;
+		void		function(SFMLClass, SFMLClass)	sfSocketSelector_AddUdpSocket;
+		void		function(SFMLClass, SFMLClass)	sfSocketSelector_RemoveTcpListener;
+		void		function(SFMLClass, SFMLClass)	sfSocketSelector_RemoveTcpSocket;
+		void		function(SFMLClass, SFMLClass)	sfSocketSelector_RemoveUdpSocket;
+		void		function(SFMLClass)				sfSocketSelector_Clear;
+		bool		function(SFMLClass, float)		sfSocketSelector_Wait;
+		bool		function(SFMLClass, SFMLClass)	sfSocketSelector_IsTcpListenerReady;
+		bool		function(SFMLClass, SFMLClass)	sfSocketSelector_IsTcpSocketReady;
+		bool		function(SFMLClass, SFMLClass)	sfSocketSelector_IsUdpSocketReady;
 	}
 
-	static this()
-	{
-	debug
-		DllLoader dll = DllLoader.load("csfml-network-d");
-	else
-		DllLoader dll = DllLoader.load("csfml-network");
-		
-		static if (is (T : SocketTCP))
-		{
-			string symbol = "sfSelectorTCP";
-		}
-		else static if (is (T : SocketUDP))
-		{
-			string symbol = "sfSelectorUDP";
-		}
-		
-		sfSelector_Add = cast(pf_sfSelector_Add)dll.getSymbol(symbol ~ "_Add");
-		sfSelector_Clear = cast(pf_sfSelector_Clear)dll.getSymbol(symbol ~ "_Clear");
-		sfSelector_Create = cast(pf_sfSelector_Create)dll.getSymbol(symbol ~ "_Create");
-		sfSelector_Destroy = cast(pf_sfSelector_Destroy)dll.getSymbol(symbol ~ "_Destroy");
-		sfSelector_GetSocketReady = cast(pf_sfSelector_GetSocketReady)dll.getSymbol(symbol ~ "_GetSocketReady");
-		sfSelector_Wait = cast(pf_sfSelector_Wait)dll.getSymbol(symbol ~ "_Wait");
-		sfSelector_Remove = cast(pf_sfSelector_Remove)dll.getSymbol(symbol ~ "_Remove");
-	}
+	mixin(loadFromSharedLib2("csfml-network", "sfSocketSelector",
+		"Create", "Destroy", "AddTcpListener", "AddTcpSocket", "AddUdpSocket", "RemoveTcpListener", "RemoveTcpSocket", "RemoveUdpSocket",
+		"Clear", "Wait", "IsTcpListenerReady", "IsTcpSocketReady", "IsUdpSocketReady"));
 }
-
-/**
-*	alias of selector for TCP or UDP Socket. 
-*/
-alias Selector!(SocketTCP) SelectorTCP;
-/// ditto
-alias Selector!(SocketUDP) SelectorUDP;

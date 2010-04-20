@@ -208,7 +208,7 @@ class Http : DSFMLObject
 		{
 			super(sfHttpRequest_Create());
 			sfHttpRequest_SetMethod(m_ptr, requestMethod);
-			sfHttpRequest_SetURI(m_ptr, toStringz(uri));
+			sfHttpRequest_SetUri(m_ptr, toStringz(uri));
 			sfHttpRequest_SetBody(m_ptr, toStringz(requestBody));
 		}
 		
@@ -242,9 +242,9 @@ class Http : DSFMLObject
 		*		uri = URI to request, local to the host.
 		*	Returns:
 		*/
-		void setURI(string uri)
+		void setUri(string uri)
 		{
-			sfHttpRequest_SetURI(m_ptr, toStringz(uri));
+			sfHttpRequest_SetUri(m_ptr, toStringz(uri));
 		}
 	
 		/**
@@ -280,7 +280,7 @@ class Http : DSFMLObject
 			typedef void function(SFMLClass) pf_sfHttpRequest_Destroy;
 			typedef void function(SFMLClass, cchar*, cchar*) pf_sfHttpRequest_SetField;
 			typedef void function(SFMLClass, HttpMethod) pf_sfHttpRequest_SetMethod;
-			typedef void function(SFMLClass, cchar*) pf_sfHttpRequest_SetURI;
+			typedef void function(SFMLClass, cchar*) pf_sfHttpRequest_SetUri;
 			typedef void function(SFMLClass, uint, uint) pf_sfHttpRequest_SetHttpVersion;
 			typedef void function(SFMLClass, cchar*) pf_sfHttpRequest_SetBody;
 			
@@ -288,7 +288,7 @@ class Http : DSFMLObject
 			static pf_sfHttpRequest_Destroy sfHttpRequest_Destroy;
 			static pf_sfHttpRequest_SetField sfHttpRequest_SetField;
 			static pf_sfHttpRequest_SetMethod sfHttpRequest_SetMethod;
-			static pf_sfHttpRequest_SetURI sfHttpRequest_SetURI;
+			static pf_sfHttpRequest_SetUri sfHttpRequest_SetUri;
 			static pf_sfHttpRequest_SetHttpVersion sfHttpRequest_SetHttpVersion;
 			static pf_sfHttpRequest_SetBody sfHttpRequest_SetBody;
 		}
@@ -301,7 +301,7 @@ class Http : DSFMLObject
 			sfHttpRequest_Destroy = cast(pf_sfHttpRequest_Destroy)dll.getSymbol("sfHttpRequest_Destroy");
 			sfHttpRequest_SetField = cast(pf_sfHttpRequest_SetField)dll.getSymbol("sfHttpRequest_SetField");
 			sfHttpRequest_SetMethod = cast(pf_sfHttpRequest_SetMethod)dll.getSymbol("sfHttpRequest_SetMethod");
-			sfHttpRequest_SetURI = cast(pf_sfHttpRequest_SetURI)dll.getSymbol("sfHttpRequest_SetURI");
+			sfHttpRequest_SetUri = cast(pf_sfHttpRequest_SetUri)dll.getSymbol("sfHttpRequest_SetUri");
 			sfHttpRequest_SetHttpVersion = cast(pf_sfHttpRequest_SetHttpVersion)dll.getSymbol("sfHttpRequest_SetHttpVersion");
 			sfHttpRequest_SetBody = cast(pf_sfHttpRequest_SetBody)dll.getSymbol("sfHttpRequest_SetBody");
 		}
