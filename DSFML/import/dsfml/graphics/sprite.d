@@ -95,6 +95,11 @@ public:
 		m_image = img;
 	}
 
+	@property void image(Image img)
+	{
+		setImage(img, false);
+	}
+	
 	/**
 	*	Resize the sprite (by changing its scale factors).
 	*	The default size is defined by the subrect

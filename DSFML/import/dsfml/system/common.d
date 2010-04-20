@@ -41,7 +41,7 @@ package
 	
 //	alias immutable(void)	ivoid;
 	alias const(void)		cvoid;
-	alias void*	SFMLClass;
+	typedef immutable(void)*	SFMLClass;
 }
 
 // used to mixin code function

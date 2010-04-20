@@ -37,9 +37,9 @@ import	dsfml.graphics.rect,
 /// Glyph describes a glyph (a visual character)
 struct Glyph
 {
-	int			Advance;	/// Offset to move horizontically to the next character
-	IntRect		Rectangle;	/// Bounding rectangle of the glyph, in relative coordinates
-	FloatRect	TexCoords;	/// Texture coordinates of the glyph inside the bitmap font
+	int		Advance;	/// Offset to move horizontically to the next character
+	IntRect	Bounds;		/// Bounding rectangle of the glyph, in coordinates relative to the baseline
+	IntRect	SubRect;	/// Texture coordinates of the glyph inside the font's image
 }
 
 /**
