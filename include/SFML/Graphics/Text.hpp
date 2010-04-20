@@ -39,121 +39,179 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Text defines a graphical 2D text, that can be drawn on screen
+/// \brief Graphical text that can be drawn to a render target
+///
 ////////////////////////////////////////////////////////////
 class SFML_API Text : public Drawable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Enumerate the string drawing styles
+    /// \brief Enumeration of the string drawing styles
+    ///
     ////////////////////////////////////////////////////////////
     enum Style
     {
         Regular    = 0,      ///< Regular characters, no style
-        Bold       = 1 << 0, ///< Characters are bold
-        Italic     = 1 << 1, ///< Characters are in italic
-        Underlined = 1 << 2  ///< Characters are underlined
+        Bold       = 1 << 0, ///< Bold characters
+        Italic     = 1 << 1, ///< Italic characters
+        Underlined = 1 << 2  ///< Underlined characters
     };
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
+    ///
+    /// Creates an empty text.
     ///
     ////////////////////////////////////////////////////////////
     Text();
 
     ////////////////////////////////////////////////////////////
-    /// Construct the string from any kind of text
+    /// \brief Construct the string from a string, font and size
     ///
-    /// \param string :        Text assigned to the string
-    /// \param font :          Font used to draw the string
-    /// \param characterSize : Base size of characters, in pixels
+    /// \param string         Text assigned to the string
+    /// \param font           Font used to draw the string
+    /// \param characterSize  Base size of characters, in pixels
     ///
     ////////////////////////////////////////////////////////////
     explicit Text(const String& string, const Font& font = Font::GetDefaultFont(), unsigned int characterSize = 30);
 
     ////////////////////////////////////////////////////////////
-    /// Set the text (from any kind of string)
+    /// \brief Set the text's string
     ///
-    /// \param string : New text
+    /// The \a string argument is a sf::String, which can
+    /// automatically be constructed from standard string types.
+    /// So, the following calls are all valid:
+    /// \begincode
+    /// text.SetString("hello");
+    /// text.SetString(L"hello");
+    /// text.SetString(std::string("hello"));
+    /// text.SetString(std::wstring(L"hello"));
+    /// \endcode
+    /// A text's string is empty by default.
+    ///
+    /// \param string New string
+    ///
+    /// \see GetString
     ///
     ////////////////////////////////////////////////////////////
     void SetString(const String& string);
 
     ////////////////////////////////////////////////////////////
-    /// Set the font of the string
+    /// \brief Set the text's font
     ///
-    /// \param font : Font to use
+    /// Texts have a valid font by default, which the built-in
+    /// Font::GetDefaultFont().
+    ///
+    /// \param font New font
+    ///
+    /// \see GetFont
     ///
     ////////////////////////////////////////////////////////////
     void SetFont(const Font& font);
 
     ////////////////////////////////////////////////////////////
-    /// Set the base size for the characters.
-    /// The default size is 30
+    /// \brief Set the character size
     ///
-    /// \param size : New size, in pixels
+    /// The default size is 30.
+    ///
+    /// \param size New character size, in pixels
+    ///
+    /// \see GetCharacterSize
     ///
     ////////////////////////////////////////////////////////////
     void SetCharacterSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
-    /// Set the style of the text
-    /// The default style is Regular
+    /// \brief Set the text's style
     ///
-    /// \param style : New text style (combination of Style enum values)
+    /// You can pass a combination of one or more styles, for
+    /// example sf::Text::Bold | sf::Text::Italic.
+    /// The default style is sf::Text::Regular.
+    ///
+    /// \param style New style
+    ///
+    /// \see GetStyle
     ///
     ////////////////////////////////////////////////////////////
     void SetStyle(unsigned long style);
 
     ////////////////////////////////////////////////////////////
-    /// Get the text (the returned text can be converted implicitely to any kind of string)
+    /// \brief Get the text's string
     ///
-    /// \return String's text
+    /// The returned string is a sf::String, which can automatically
+    /// be converted to standard string types. So, the following
+    /// lines of code are all valid:
+    /// \begincode
+    /// sf::String   s1 = text.GetString();
+    /// std::string  s2 = text.GetString();
+    /// std::wstring s3 = text.GetString();
+    /// \endcode
+    ///
+    /// \return Text's string
+    ///
+    /// \see GetString
     ///
     ////////////////////////////////////////////////////////////
     const String& GetString() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the font used by the string
+    /// \brief Get the text's font
     ///
-    /// \return Font used
+    /// The returned reference is const, which means that you
+    /// cannot modify the font when you get it from this function.
+    ///
+    /// \return Text's font
+    ///
+    /// \see SetFont
     ///
     ////////////////////////////////////////////////////////////
     const Font& GetFont() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the base size of characters
+    /// \brief Get the character size
     ///
     /// \return Size of the characters, in pixels
+    ///
+    /// \see SetCharacterSize
     ///
     ////////////////////////////////////////////////////////////
     unsigned int GetCharacterSize() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the style of the text
+    /// \brief Get the text's style
     ///
-    /// \return Current string style (combination of Style enum values)
+    /// \return Text's style
+    ///
+    /// \see SetStyle
     ///
     ////////////////////////////////////////////////////////////
     unsigned long GetStyle() const;
 
     ////////////////////////////////////////////////////////////
-    /// Return the visual position of the Index-th character of the string,
-    /// in coordinates relative to the string
-    /// (note : translation, center, rotation and scale are not applied)
+    /// \brief Return the position of the \a index-th character
     ///
-    /// \param index : Index of the character
+    /// This function computes the visual position of a character
+    /// from its index in the string. The returned position is
+    /// in local coordinates (translation, rotation, scale and
+    /// origin are not applied). You can easily get the corresponding
+    /// global position with the TransformToGlobal function.
+    /// If \a index is out of range, the position of the end of
+    /// the string is returned.
     ///
-    /// \return Position of the index-th character (end of string if Index is out of range)
+    /// \param index Index of the character
+    ///
+    /// \return Position of the character
     ///
     ////////////////////////////////////////////////////////////
     Vector2f GetCharacterPos(std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the string rectangle on screen
+    /// \brief Get the bounding rectangle of the text
     ///
-    /// \return Rectangle contaning the string in screen coordinates
+    /// The returned rectangle is in global coordinates.
+    ///
+    /// \return Bounding rectangle of the text
     ///
     ////////////////////////////////////////////////////////////
     FloatRect GetRect() const;
@@ -161,7 +219,10 @@ public :
 protected :
 
     ////////////////////////////////////////////////////////////
-    /// /see Drawable::Render
+    /// \brief Draw the object to a render target
+    ///
+    /// \param target   Render target
+    /// \param renderer Renderer providing low-level rendering commands
     ///
     ////////////////////////////////////////////////////////////
     virtual void Render(RenderTarget& target, Renderer& renderer) const;
@@ -169,7 +230,7 @@ protected :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// Recompute the bounding rectangle of the text
+    /// \brief Recompute the bounding rectangle
     ///
     ////////////////////////////////////////////////////////////
     void UpdateRect() const;

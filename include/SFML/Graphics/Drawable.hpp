@@ -39,141 +39,207 @@ class Renderer;
 class RenderTarget;
 
 ////////////////////////////////////////////////////////////
-/// Enumerate the blending modes for drawable objects
+/// \brief Available blending modes for drawable objects
+///
 ////////////////////////////////////////////////////////////
 namespace Blend
 {
     enum Mode
     {
-        Alpha,    ///< Pixel = Src * a + Dest * (1 - a)
+        Alpha,    ///< Pixel = Src * Src.a + Dest * (1 - Src.a)
         Add,      ///< Pixel = Src + Dest
         Multiply, ///< Pixel = Src * Dest
-        None      ///< No blending
+        None      ///< Pixel = Src
     };
 }
 
 ////////////////////////////////////////////////////////////
-/// Abstract base class for every object that can be drawn
-/// into a render window
+/// \brief Abstract base class for objects that can be drawn
+///        to a render target
+///
 ////////////////////////////////////////////////////////////
 class SFML_API Drawable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
-    /// \param position : Position of the object
-    /// \param scale :    Scale factor
-    /// \param rotation : Orientation, in degrees
-    /// \param color :    Color of the object
+    /// \param position Position of the object
+    /// \param scale    Scale factor
+    /// \param rotation Orientation, in degrees
+    /// \param color    Global color of the object
     ///
     ////////////////////////////////////////////////////////////
     Drawable(const Vector2f& position = Vector2f(0, 0), const Vector2f& scale = Vector2f(1, 1), float rotation = 0.f, const Color& color = Color(255, 255, 255));
 
     ////////////////////////////////////////////////////////////
-    /// Virtual destructor
+    /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
     virtual ~Drawable();
 
     ////////////////////////////////////////////////////////////
-    /// Set the position of the object (take 2 values)
+    /// \brief Set the position of the object
     ///
-    /// \param x : New X coordinate
-    /// \param y : New Y coordinate
+    /// This function completely overwrites the previous position.
+    /// See Move to apply an offset based on the previous position instead.
+    /// The default position of a drawable object is (0, 0).
+    ///
+    /// \param x X coordinate of the new position
+    /// \param y Y coordinate of the new position
+    ///
+    /// \see Move, SetX, SetY, GetPosition
     ///
     ////////////////////////////////////////////////////////////
     void SetPosition(float x, float y);
 
     ////////////////////////////////////////////////////////////
-    /// Set the position of the object (take a 2D vector)
+    /// \brief Set the position of the object
     ///
-    /// \param position : New position
+    /// This function completely overwrites the previous position.
+    /// See Move to apply an offset based on the previous position instead.
+    /// The default position of a drawable object is (0, 0).
+    ///
+    /// \param position New position
+    ///
+    /// \see Move, SetX, SetY, GetPosition
     ///
     ////////////////////////////////////////////////////////////
     void SetPosition(const Vector2f& position);
 
     ////////////////////////////////////////////////////////////
-    /// Set the X position of the object
+    /// \brief Set the X position of the object
     ///
-    /// \param x : New X coordinate
+    /// \param x New X coordinate
+    ///
+    /// \see SetY, SetPosition, GetPosition
     ///
     ////////////////////////////////////////////////////////////
     void SetX(float x);
 
     ////////////////////////////////////////////////////////////
-    /// Set the Y position of the object
+    /// \brief Set the Y position of the object
     ///
-    /// \param y : New Y coordinate
+    /// \param y New Y coordinate
+    ///
+    /// \see SetX, SetPosition, GetPosition
     ///
     ////////////////////////////////////////////////////////////
     void SetY(float y);
 
     ////////////////////////////////////////////////////////////
-    /// Set the scale of the object (take 2 values)
+    /// \brief Set the scale factors of the object
     ///
-    /// \param factorX : New horizontal scale (must be strictly positive)
-    /// \param factorY : New vertical scale (must be strictly positive)
+    /// \a factorX and \a factorY must be strictly positive,
+    /// otherwise they are ignored.
+    /// This function completely overwrites the previous scale.
+    /// See Scale to add a factor based on the previous scale instead.
+    /// The default scale of a drawable object is (1, 1).
+    ///
+    /// \param factorX New horizontal scale factor
+    /// \param factorY New vertical scale factor
+    ///
+    /// \see Scale, SetScaleX, SetScaleY, GetScale
     ///
     ////////////////////////////////////////////////////////////
     void SetScale(float factorX, float factorY);
 
     ////////////////////////////////////////////////////////////
-    /// Set the scale of the object (take a 2D vector)
+    /// \brief Set the scale factors of the object
     ///
-    /// \param Scale : New scale (both values must be strictly positive)
+    /// \a scale.x and \a scale.y must be strictly positive,
+    /// otherwise they are ignored.
+    /// This function completely overwrites the previous scale.
+    /// See Scale to add a factor based on the previous scale instead.
+    /// The default scale of a drawable object is (1, 1).
+    ///
+    /// \param scale New scale factors
+    ///
+    /// \see Scale, SetScaleX, SetScaleY, GetScale
     ///
     ////////////////////////////////////////////////////////////
     void SetScale(const Vector2f& scale);
 
     ////////////////////////////////////////////////////////////
-    /// Set the X scale factor of the object
+    /// \brief Set the X scale factor of the object
     ///
-    /// \param factor : New X scale factor
+    /// \a factor must be strictly positive, otherwise it is ignored.
+    ///
+    /// \param factor New horizontal scale factor
+    ///
+    /// \see SetScaleY, SetScale, GetScale
     ///
     ////////////////////////////////////////////////////////////
     void SetScaleX(float factor);
 
     ////////////////////////////////////////////////////////////
-    /// Set the Y scale factor of the object
+    /// \brief Set the Y scale factor of the object
     ///
-    /// \param factor : New Y scale factor
+    /// \a factor must be strictly positive, otherwise it is ignored.
+    ///
+    /// \param factor New vertical scale factor
+    ///
+    /// \see SetScaleX, SetScale, GetScale
     ///
     ////////////////////////////////////////////////////////////
     void SetScaleY(float factor);
 
     ////////////////////////////////////////////////////////////
-    /// Set the local origin of the object, in coordinates relative to the
-    /// top-left of the object (take 2 values).
-    /// The default origin is (0, 0)
+    /// \brief Set the local origin of the object
     ///
-    /// \param x : X coordinate of the origin
-    /// \param y : Y coordinate of the origin
+    /// The origin of an object defines the center point for
+    /// all transformations (position, scale, rotation).
+    /// The coordinates of this point must be relative to the
+    /// top-left corner of the object, and ignore all
+    /// transformations (position, scale, rotation).
+    /// The default origin of a drawable object is (0, 0).
+    ///
+    /// \param x X coordinate of the new origin
+    /// \param y Y coordinate of the new origin
+    ///
+    /// \see GetOrigin
     ///
     ////////////////////////////////////////////////////////////
     void SetOrigin(float x, float y);
 
     ////////////////////////////////////////////////////////////
-    /// Set the local origin of the object, in coordinates relative to the
-    /// top-left of the object (take a 2D vector).
-    /// The default origin is (0, 0)
+    /// \brief Set the local origin of the object
     ///
-    /// \param origin : New origin
+    /// The origin of an object defines the center point for
+    /// all transformations (position, scale, rotation).
+    /// The coordinates of this point must be relative to the
+    /// top-left corner of the object, and ignore all
+    /// transformations (position, scale, rotation).
+    /// The default origin of a drawable object is (0, 0).
+    ///
+    /// \param origin New origin
+    ///
+    /// \see GetOrigin
     ///
     ////////////////////////////////////////////////////////////
     void SetOrigin(const Vector2f& origin);
 
     ////////////////////////////////////////////////////////////
-    /// Set the orientation of the object
+    /// \brief Set the orientation of the object
     ///
-    /// \param angle : Angle of rotation, in degrees
+    /// This function completely overwrites the previous rotation.
+    /// See Rotate to add an angle based on the previous rotation instead.
+    /// The default rotation of a drawable object is 0.
+    ///
+    /// \param angle New rotation, in degrees
+    ///
+    /// \see Rotate, GetRotation
     ///
     ////////////////////////////////////////////////////////////
     void SetRotation(float angle);
 
     ////////////////////////////////////////////////////////////
-    /// Set the color of the object.
+    /// \brief Set the global color of the object
+    ///
+    /// This global color affects the entire object, and modulates
+    /// (multiplies) its original pixels.
+    ///
     /// The default color is white
     ///
     /// \param color : New color

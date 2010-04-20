@@ -36,8 +36,6 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 RenderImageImplFBO::RenderImageImplFBO() :
 myFrameBuffer(0),
 myDepthBuffer(0)
@@ -46,8 +44,6 @@ myDepthBuffer(0)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Destructor
 ////////////////////////////////////////////////////////////
 RenderImageImplFBO::~RenderImageImplFBO()
 {
@@ -68,8 +64,6 @@ RenderImageImplFBO::~RenderImageImplFBO()
 
 
 ////////////////////////////////////////////////////////////
-/// Check whether the system supports FBOs or not
-////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::IsSupported()
 {
     // Make sure that GLEW is initialized
@@ -79,8 +73,6 @@ bool RenderImageImplFBO::IsSupported()
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see RenderImageImpl::Create
 ////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
@@ -127,8 +119,6 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
 
 
 ////////////////////////////////////////////////////////////
-/// /see RenderImageImpl::Activate
-////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::Activate(bool active)
 {
     myContext.SetActive(active);
@@ -137,11 +127,9 @@ bool RenderImageImplFBO::Activate(bool active)
 }
 
 ////////////////////////////////////////////////////////////
-/// /see RenderImageImpl::UpdateTexture
-////////////////////////////////////////////////////////////
 void RenderImageImplFBO::UpdateTexture(unsigned int)
 {
-    // Nothing to do: the FBO draws directly into the target image
+    // Nothing to do: the FBO draws directly to the target image
 }
 
 } // namespace priv

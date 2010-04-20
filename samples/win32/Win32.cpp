@@ -82,6 +82,7 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
     sf::Sprite sprite1(image1);
     sf::Sprite sprite2(image2);
     sprite1.SetOrigin(sprite1.GetSize() / 2.f);
+    sprite1.SetPosition(sprite1.GetSize() / 2.f);
 
     // Create a clock for measuring elapsed time
     sf::Clock clock;

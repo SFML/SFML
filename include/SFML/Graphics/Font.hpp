@@ -294,7 +294,7 @@ private :
 /// \class sf::Font
 ///
 /// Fonts can be loaded from a file or from memory, from
-/// the most common types of fonts. See the LoadFromFile()
+/// the most common types of fonts. See the LoadFromFile
 /// function for the complete list of supported formats.
 ///
 /// Once it is loaded, a sf::Font instance provides three

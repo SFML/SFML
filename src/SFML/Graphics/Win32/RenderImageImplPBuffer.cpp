@@ -36,8 +36,6 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 RenderImageImplPBuffer::RenderImageImplPBuffer() :
 myPBuffer      (NULL),
 myDeviceContext(NULL),
@@ -50,14 +48,10 @@ myHeight       (0)
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor
-////////////////////////////////////////////////////////////
 RenderImageImplPBuffer::~RenderImageImplPBuffer()
 {
     if (myContext)
-    {
         wglDeleteContext(myContext);
-    }
 
     if (myPBuffer && myDeviceContext)
     {
@@ -72,8 +66,6 @@ RenderImageImplPBuffer::~RenderImageImplPBuffer()
 
 
 ////////////////////////////////////////////////////////////
-/// Check whether the system supports P-Buffer or not
-////////////////////////////////////////////////////////////
 bool RenderImageImplPBuffer::IsSupported()
 {
     // Make sure that GLEW is initialized
@@ -83,8 +75,6 @@ bool RenderImageImplPBuffer::IsSupported()
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see RenderImageImpl::Create
 ////////////////////////////////////////////////////////////
 bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
 {
@@ -160,8 +150,6 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
 
 
 ////////////////////////////////////////////////////////////
-/// /see RenderImageImpl::Activate
-////////////////////////////////////////////////////////////
 bool RenderImageImplPBuffer::Activate(bool active)
 {
     if (active)
@@ -188,8 +176,6 @@ bool RenderImageImplPBuffer::Activate(bool active)
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see RenderImageImpl::UpdateTexture
 ////////////////////////////////////////////////////////////
 void RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
 {

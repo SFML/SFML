@@ -36,25 +36,26 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Abstract base class for render-image implementations
+/// \brief Abstract base class for render-image implementations
+///
 ////////////////////////////////////////////////////////////
 class RenderImageImpl : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     virtual ~RenderImageImpl();
 
     ////////////////////////////////////////////////////////////
-    /// Create the render image
+    /// \brief Create the render image implementation
     ///
-    /// \param width :       Width of the image to render to
-    /// \param height :      Height of the image to render to
-    /// \param textureId :   OpenGL texture identifier of the target image
-    /// \param depthBuffer : Do you want a depth buffer attached ?
+    /// \param width       Width of the image to render to
+    /// \param height      Height of the image to render to
+    /// \param textureId   OpenGL texture identifier of the target image
+    /// \param depthBuffer Is a depth buffer requested?
     ///
     /// \return True if creation has been successful
     ///
@@ -62,17 +63,19 @@ public :
     virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Activate / deactivate the render image for rendering
+    /// \brief Activate or deactivate the render image for rendering
     ///
-    /// \param active : True to activate, false to deactivate
+    /// \param active True to activate, false to deactivate
+    ///
+    /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
     virtual bool Activate(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// Update the pixels of the target texture
+    /// \brief Update the pixels of the target texture
     ///
-    /// \param textureId : OpenGL identifier of the target texture
+    /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
     virtual void UpdateTexture(unsigned int textureId) = 0;

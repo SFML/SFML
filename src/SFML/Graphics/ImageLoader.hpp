@@ -38,15 +38,15 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// ImageLoader load and save images from files ;
-/// Supported formats are : bmp, dds, jpg, png, tga, psd
+/// \brief Load/save image files
+///
 ////////////////////////////////////////////////////////////
 class ImageLoader : NonCopyable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Get the unique instance of the class
+    /// \brief Get the unique instance of the class
     ///
     /// \return Reference to the ImageLoader instance
     ///
@@ -54,12 +54,12 @@ public :
     static ImageLoader& GetInstance();
 
     ////////////////////////////////////////////////////////////
-    /// Load pixels from an image file
+    /// \brief Load an image from a file on disk
     ///
-    /// \param filename : Path of image file to load
-    /// \param pixels :   Array of pixels to fill with loaded image
-    /// \param width :    Width of loaded image, in pixels
-    /// \param height :   Height of loaded image, in pixels
+    /// \param filename Path of image file to load
+    /// \param pixels   Array of pixels to fill with loaded image
+    /// \param width    Width of loaded image, in pixels
+    /// \param height   Height of loaded image, in pixels
     ///
     /// \return True if loading was successful
     ///
@@ -67,26 +67,26 @@ public :
     bool LoadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
-    /// Load pixels from an image file in memory
+    /// \brief Load an image from a file inn memory
     ///
-    /// \param data :        Pointer to the file data in memory
-    /// \param sizeInBytes : Size of the data to load, in bytes
-    /// \param pixels :      Array of pixels to fill with loaded image
-    /// \param width :       Width of loaded image, in pixels
-    /// \param height :      Height of loaded image, in pixels
+    /// \param data   Pointer to the file data in memory
+    /// \param size   Size of the data to load, in bytes
+    /// \param pixels Array of pixels to fill with loaded image
+    /// \param width  Width of loaded image, in pixels
+    /// \param height Height of loaded image, in pixels
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadImageFromMemory(const void* data, std::size_t sizeInBytes, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
+    bool LoadImageFromMemory(const void* data, std::size_t size, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
-    /// Save pixels to an image file
+    /// \bref Save an array of pixels as an image file
     ///
-    /// \param filename : Path of image file to save
-    /// \param pixels :   Array of pixels to save to image
-    /// \param width :    Width of image to save, in pixels
-    /// \param height :   Height of image to save, in pixels
+    /// \param filename Path of image file to save
+    /// \param pixels   Array of pixels to save to image
+    /// \param width    Width of image to save, in pixels
+    /// \param height   Height of image to save, in pixels
     ///
     /// \return True if saving was successful
     ///
@@ -96,24 +96,24 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
     ImageLoader();
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~ImageLoader();
 
     ////////////////////////////////////////////////////////////
-    /// Save a JPG image file
+    /// \brief Save an image file in JPEG format
     ///
-    /// \param filename : Path of image file to save
-    /// \param pixels :   Array of pixels to save to image
-    /// \param width :    Width of image to save, in pixels
-    /// \param height :   Height of image to save, in pixels
+    /// \param filename Path of image file to save
+    /// \param pixels   Array of pixels to save to image
+    /// \param width    Width of image to save, in pixels
+    /// \param height   Height of image to save, in pixels
     ///
     /// \return True if saving was successful
     ///
@@ -121,12 +121,12 @@ private :
     bool WriteJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
-    /// Save a PNG image file
+    /// \brief Save an image file in PNG format
     ///
-    /// \param filename : Path of image file to save
-    /// \param pixels :   Array of pixels to save to image
-    /// \param width :    Width of image to save, in pixels
-    /// \param height :   Height of image to save, in pixels
+    /// \param filename Path of image file to save
+    /// \param pixels   Array of pixels to save to image
+    /// \param width    Width of image to save, in pixels
+    /// \param height   Height of image to save, in pixels
     ///
     /// \return True if saving was successful
     ///

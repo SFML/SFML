@@ -43,8 +43,6 @@ extern "C"
 namespace
 {
     ////////////////////////////////////////////////////////////
-    /// Error callback for PNG writing
-    ////////////////////////////////////////////////////////////
     void PngErrorHandler(png_structp png, png_const_charp message)
     {
         sf::Err() << "Failed to write PNG image. Reason : " << message << std::endl;
@@ -58,8 +56,6 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Get the unique instance of the class
-////////////////////////////////////////////////////////////
 ImageLoader& ImageLoader::GetInstance()
 {
     static ImageLoader Instance;
@@ -69,8 +65,6 @@ ImageLoader& ImageLoader::GetInstance()
 
 
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 ImageLoader::ImageLoader()
 {
     // Nothing to do
@@ -78,16 +72,12 @@ ImageLoader::ImageLoader()
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor
-////////////////////////////////////////////////////////////
 ImageLoader::~ImageLoader()
 {
     // Nothing to do
 }
 
 
-////////////////////////////////////////////////////////////
-/// Load pixels from an image file
 ////////////////////////////////////////////////////////////
 bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height)
 {
@@ -124,18 +114,15 @@ bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Uin
 
 
 ////////////////////////////////////////////////////////////
-/// Load pixels from an image file in memory
-////////////////////////////////////////////////////////////
-bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t sizeInBytes, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height)
+bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t size, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height)
 {
     // Clear the array (just in case)
     pixels.clear();
 
     // Load the image and get a pointer to the pixels in memory
-    const unsigned char* buffer = static_cast<const unsigned char*>(data);
-    int size = static_cast<int>(sizeInBytes);
     int imgWidth, imgHeight, imgChannels;
-    unsigned char* ptr = SOIL_load_image_from_memory(buffer, size, &imgWidth, &imgHeight, &imgChannels, SOIL_LOAD_RGBA);
+    const unsigned char* buffer = static_cast<const unsigned char*>(data);
+    unsigned char* ptr = SOIL_load_image_from_memory(buffer, static_cast<int>(size), &imgWidth, &imgHeight, &imgChannels, SOIL_LOAD_RGBA);
 
     if (ptr)
     {
@@ -162,8 +149,6 @@ bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t sizeInBytes,
 }
 
 
-////////////////////////////////////////////////////////////
-/// Save pixels to an image file
 ////////////////////////////////////////////////////////////
 bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
 {
@@ -200,8 +185,6 @@ bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector
 }
 
 
-////////////////////////////////////////////////////////////
-/// Save a JPG image file
 ////////////////////////////////////////////////////////////
 bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
 {
@@ -259,8 +242,6 @@ bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Uint8>
 }
 
 
-////////////////////////////////////////////////////////////
-/// Save a PNG image file
 ////////////////////////////////////////////////////////////
 bool ImageLoader::WritePng(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
 {

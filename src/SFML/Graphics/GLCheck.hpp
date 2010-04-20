@@ -54,16 +54,16 @@ namespace priv
 #endif
 
 ////////////////////////////////////////////////////////////
-/// Check the last OpenGL error
+/// \brief Check the last OpenGL error
 ///
-/// \param file : Source file where the call is located
-/// \param line : Line number of the source file where the call is located
+/// \param file Source file where the call is located
+/// \param line Line number of the source file where the call is located
 ///
 ////////////////////////////////////////////////////////////
 void GLCheckError(const std::string& file, unsigned int line);
 
 ////////////////////////////////////////////////////////////
-/// Make sure that GLEW is initialized
+/// \brief Make sure that GLEW is initialized
 ///
 ////////////////////////////////////////////////////////////
 void EnsureGlewInit();

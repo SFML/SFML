@@ -37,27 +37,28 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Specialization of RenderImageImpl using the
-/// Frame Buffer Object extension
+/// \brief Specialization of RenderImageImpl using the
+///        Frame Buffer Object OpenGL extension
+///
 ////////////////////////////////////////////////////////////
 class RenderImageImplFBO : public RenderImageImpl
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
     RenderImageImplFBO();
 
     ////////////////////////////////////////////////////////////
-    /// Destructor
+    /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~RenderImageImplFBO();
 
     ////////////////////////////////////////////////////////////
-    /// Check whether the system supports FBOs or not
+    /// \brief Check whether the system supports FBOs or not
     ///
     /// \return True if FBO render images are supported
     ///
@@ -67,19 +68,32 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// /see RenderImageImpl::Create
+    /// \brief Create the render image implementation
+    ///
+    /// \param width       Width of the image to render to
+    /// \param height      Height of the image to render to
+    /// \param textureId   OpenGL texture identifier of the target image
+    /// \param depthBuffer Is a depth buffer requested?
+    ///
+    /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
     virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
 
     ////////////////////////////////////////////////////////////
-    /// /see RenderImageImpl::Activate
+    /// \brief Activate or deactivate the render image for rendering
+    ///
+    /// \param active True to activate, false to deactivate
+    ///
+    /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
     virtual bool Activate(bool active);
 
     ////////////////////////////////////////////////////////////
-    /// /see RenderImageImpl::UpdateTexture
+    /// \brief Update the pixels of the target texture
+    ///
+    /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
     virtual void UpdateTexture(unsigned textureId);

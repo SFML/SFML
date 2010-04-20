@@ -33,8 +33,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 Shape::Shape() :
 myOutline         (0.f),
 myIsFillEnabled   (true),
@@ -47,16 +45,12 @@ myIsCompiled      (false)
 
 
 ////////////////////////////////////////////////////////////
-/// Add a point to the shape
-////////////////////////////////////////////////////////////
 void Shape::AddPoint(float x, float y, const Color& color, const Color& outlineColor)
 {
     AddPoint(Vector2f(x, y), color, outlineColor);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Add a point to the shape
 ////////////////////////////////////////////////////////////
 void Shape::AddPoint(const Vector2f& position, const Color& color, const Color& outlineColor)
 {
@@ -66,17 +60,12 @@ void Shape::AddPoint(const Vector2f& position, const Color& color, const Color& 
 
 
 ////////////////////////////////////////////////////////////
-/// Get the number of points composing the shape
-////////////////////////////////////////////////////////////
 unsigned int Shape::GetPointsCount() const
 {
     return static_cast<unsigned int>(myPoints.size() - 1);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Enable or disable filling the shape.
-/// Fill is enabled by default
 ////////////////////////////////////////////////////////////
 void Shape::EnableFill(bool enable)
 {
@@ -85,17 +74,12 @@ void Shape::EnableFill(bool enable)
 
 
 ////////////////////////////////////////////////////////////
-/// Enable or disable drawing the shape outline.
-/// Outline is enabled by default
-////////////////////////////////////////////////////////////
 void Shape::EnableOutline(bool enable)
 {
     myIsOutlineEnabled = enable;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Set the position of a point
 ////////////////////////////////////////////////////////////
 void Shape::SetPointPosition(unsigned int index, const Vector2f& position)
 {
@@ -105,16 +89,12 @@ void Shape::SetPointPosition(unsigned int index, const Vector2f& position)
 
 
 ////////////////////////////////////////////////////////////
-/// Set the position of a point
-////////////////////////////////////////////////////////////
 void Shape::SetPointPosition(unsigned int index, float x, float y)
 {
     SetPointPosition(index, Vector2f(x, y));
 }
 
 
-////////////////////////////////////////////////////////////
-/// Set the color of a point
 ////////////////////////////////////////////////////////////
 void Shape::SetPointColor(unsigned int index, const Color& color)
 {
@@ -124,17 +104,13 @@ void Shape::SetPointColor(unsigned int index, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-/// Set the outline color of a point
-////////////////////////////////////////////////////////////
-void Shape::SetPointOutlineColor(unsigned int index, const Color& outlineColor)
+void Shape::SetPointOutlineColor(unsigned int index, const Color& color)
 {
-    myPoints[index + 1].OutlineCol = outlineColor;
+    myPoints[index + 1].OutlineCol = color;
     myIsCompiled = false;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Change the width of the shape outline
 ////////////////////////////////////////////////////////////
 void Shape::SetOutlineWidth(float width)
 {
@@ -143,16 +119,12 @@ void Shape::SetOutlineWidth(float width)
 
 
 ////////////////////////////////////////////////////////////
-/// Get the position of a point
-////////////////////////////////////////////////////////////
 const Vector2f& Shape::GetPointPosition(unsigned int index) const
 {
     return myPoints[index + 1].Position;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get the color of a point
 ////////////////////////////////////////////////////////////
 const Color& Shape::GetPointColor(unsigned int index) const
 {
@@ -161,8 +133,6 @@ const Color& Shape::GetPointColor(unsigned int index) const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the outline color of a point
-////////////////////////////////////////////////////////////
 const Color& Shape::GetPointOutlineColor(unsigned int index) const
 {
     return myPoints[index + 1].OutlineCol;
@@ -170,16 +140,12 @@ const Color& Shape::GetPointOutlineColor(unsigned int index) const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the width of the shape outline
-////////////////////////////////////////////////////////////
 float Shape::GetOutlineWidth() const
 {
     return myOutline;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Create a shape made of a single line
 ////////////////////////////////////////////////////////////
 Shape Shape::Line(float p1x, float p1y, float p2x, float p2y, float thickness, const Color& color, float outline, const Color& outlineColor)
 {
@@ -190,8 +156,6 @@ Shape Shape::Line(float p1x, float p1y, float p2x, float p2y, float thickness, c
 }
 
 
-////////////////////////////////////////////////////////////
-/// Create a shape made of a single line (use vectors)
 ////////////////////////////////////////////////////////////
 Shape Shape::Line(const Vector2f& p1, const Vector2f& p2, float thickness, const Color& color, float outline, const Color& outlineColor)
 {
@@ -216,8 +180,6 @@ Shape Shape::Line(const Vector2f& p1, const Vector2f& p2, float thickness, const
 
 
 ////////////////////////////////////////////////////////////
-/// Create a shape made of a single rectangle
-////////////////////////////////////////////////////////////
 Shape Shape::Rectangle(float left, float top, float width, float height, const Color& color, float outline, const Color& outlineColor)
 {
     // Create the shape's points
@@ -236,8 +198,6 @@ Shape Shape::Rectangle(float left, float top, float width, float height, const C
 
 
 ////////////////////////////////////////////////////////////
-/// Create a shape made of a single rectangle
-////////////////////////////////////////////////////////////
 Shape Shape::Rectangle(const FloatRect& rectangle, const Color& color, float outline, const Color& outlineColor)
 {
     return Shape::Rectangle(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, color, outline, outlineColor);
@@ -245,16 +205,12 @@ Shape Shape::Rectangle(const FloatRect& rectangle, const Color& color, float out
 
 
 ////////////////////////////////////////////////////////////
-/// Create a shape made of a single circle
-////////////////////////////////////////////////////////////
 Shape Shape::Circle(float x, float y, float radius, const Color& color, float outline, const Color& outlineColor)
 {
     return Shape::Circle(Vector2f(x, y), radius, color, outline, outlineColor);
 }
 
 
-////////////////////////////////////////////////////////////
-/// Create a shape made of a single circle (use vectors)
 ////////////////////////////////////////////////////////////
 Shape Shape::Circle(const Vector2f& center, float radius, const Color& color, float outline, const Color& outlineColor)
 {
@@ -278,8 +234,6 @@ Shape Shape::Circle(const Vector2f& center, float radius, const Color& color, fl
 }
 
 
-////////////////////////////////////////////////////////////
-/// /see Drawable::Render
 ////////////////////////////////////////////////////////////
 void Shape::Render(RenderTarget&, Renderer& renderer) const
 {
@@ -358,8 +312,6 @@ void Shape::Render(RenderTarget&, Renderer& renderer) const
 
 
 ////////////////////////////////////////////////////////////
-/// Compile the shape : compute its center and its outline
-////////////////////////////////////////////////////////////
 void Shape::Compile()
 {
     // Compute the center
@@ -409,8 +361,6 @@ void Shape::Compile()
 
 
 ////////////////////////////////////////////////////////////
-/// Compute the normal of a given 2D segment
-////////////////////////////////////////////////////////////
 bool Shape::ComputeNormal(const Vector2f& p1, const Vector2f& p2, Vector2f& normal)
 {
     normal.x = p1.y - p2.y;
@@ -427,8 +377,6 @@ bool Shape::ComputeNormal(const Vector2f& p1, const Vector2f& p2, Vector2f& norm
 }
 
 
-////////////////////////////////////////////////////////////
-/// Default constructor for Point
 ////////////////////////////////////////////////////////////
 Shape::Point::Point(const Vector2f& position, const Color& color, const Color& outlineColor) :
 Position  (position),

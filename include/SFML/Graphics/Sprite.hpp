@@ -38,116 +38,177 @@ namespace sf
 class Image;
 
 ////////////////////////////////////////////////////////////
-/// Sprite defines a sprite : texture, transformations,
-/// color, and draw on screen
+/// \brief Drawable representation of an image, with its
+///        own transformations, color, blend mode, etc.
+///
 ////////////////////////////////////////////////////////////
 class SFML_API Sprite : public Drawable
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// Default constructor
+    /// \brief Default constructor
+    ///
+    /// Creates an empty sprite with no source image.
     ///
     ////////////////////////////////////////////////////////////
     Sprite();
 
     ////////////////////////////////////////////////////////////
-    /// Construct the sprite from a source image
+    /// \brief Construct the sprite from a source image
     ///
-    /// \param image :    Image of the sprite
-    /// \param position : Position of the sprite
-    /// \param scale :    Scale factor
-    /// \param rotation : Orientation, in degrees
-    /// \param color :    Color of the sprite
+    /// \param image    Source image, that the sprite will display
+    /// \param position Position of the sprite in the scene
+    /// \param scale    Scale factor of the sprite
+    /// \param rotation Rotation angle, in degrees
+    /// \param color    Global color of the sprite
+    ///
+    /// \see SetImage
     ///
     ////////////////////////////////////////////////////////////
     explicit Sprite(const Image& image, const Vector2f& position = Vector2f(0, 0), const Vector2f& scale = Vector2f(1, 1), float rotation = 0.f, const Color& color = Color(255, 255, 255, 255));
 
     ////////////////////////////////////////////////////////////
-    /// Change the image of the sprite
+    /// \brief Change the source image of the sprite
     ///
-    /// \param image :           New image
-    /// \param adjustToNewSize : If true, the SubRect of the sprite will be adjusted to the size of the new image
+    /// The \a image argument refers to an image that must
+    /// exist as long as the sprite uses it. Indeed, the sprite
+    /// doesn't store its own copy of the image, but rather keeps
+    /// a pointer to the one that you passed to this function.
+    /// If the source image is destroyed and the sprite tries to
+    /// use it, it may appear as a white rectangle.
+    /// If \a adjustToNewSize is true, the SubRect property of
+    /// the sprite is adjusted to the size of the new image. If
+    /// it is false, the SubRect is unchanged.
+    ///
+    /// \param image           New image
+    /// \param adjustToNewSize Should the sub-rect be adjusted to the size of the new image?
+    ///
+    /// \see GetImage, SetSubRect
     ///
     ////////////////////////////////////////////////////////////
     void SetImage(const Image& image, bool adjustToNewSize = false);
 
     ////////////////////////////////////////////////////////////
-    /// Set the sub-rectangle of the sprite inside the source image.
-    /// By default, the subrect covers the entire source image
+    /// \brief Set the part of the image that the sprite will display
     ///
-    /// \param rectangle : New sub-rectangle
+    /// The sub-rectangle is useful when you don't want to display
+    /// the whole image, but rather a part of it.
+    /// By default, the sub-rectangle covers the entire image.
+    ///
+    /// \param rectangle Rectangle defining the region of the image to display
+    ///
+    /// \see GetSubRect, SetImage
     ///
     ////////////////////////////////////////////////////////////
     void SetSubRect(const IntRect& rectangle);
 
     ////////////////////////////////////////////////////////////
-    /// Resize the sprite (by changing its scale factors) (take 2 values).
-    /// The default size is defined by the subrect
+    /// \brief Change the size of the sprite
     ///
-    /// \param width :  New width (must be strictly positive)
-    /// \param height : New height (must be strictly positive)
+    /// This function is just a shortcut that calls SetScale
+    /// with the proper values, calculated from the size of
+    /// the current subrect.
+    /// If \a width or \a height is not strictly positive,
+    /// this functions does nothing.
+    ///
+    /// \param width  New width of the sprite
+    /// \param height New height of the sprite
+    ///
+    /// \see GetSize
     ///
     ////////////////////////////////////////////////////////////
     void Resize(float width, float height);
 
     ////////////////////////////////////////////////////////////
-    /// Resize the sprite (by changing its scale factors) (take a 2D vector).
-    /// The default size is defined by the subrect
+    /// \brief Change the size of the sprite
     ///
-    /// \param size : New size (both coordinates must be strictly positive)
+    /// This function is just a shortcut that calls SetScale
+    /// with the proper values, calculated from the size of
+    /// the current subrect.
+    /// If \a size.x or \a size.y is not strictly positive,
+    /// this functions does nothing.
+    ///
+    /// \param size New size of the sprite
+    ///
+    /// \see GetSize
     ///
     ////////////////////////////////////////////////////////////
     void Resize(const Vector2f& size);
 
     ////////////////////////////////////////////////////////////
-    /// Flip the sprite horizontally
+    /// \brief Flip the sprite horizontally
     ///
-    /// \param flipped : True to flip the sprite
+    /// \param flipped True to flip the sprite
+    ///
+    /// \see FlipY
     ///
     ////////////////////////////////////////////////////////////
     void FlipX(bool flipped);
 
     ////////////////////////////////////////////////////////////
-    /// Flip the sprite vertically
+    /// \brief Flip the sprite vertically
     ///
-    /// \param flipped : True to flip the sprite
+    /// \param flipped True to flip the sprite
+    ///
+    /// \see FlipX
     ///
     ////////////////////////////////////////////////////////////
     void FlipY(bool flipped);
 
     ////////////////////////////////////////////////////////////
-    /// Get the source image of the sprite
+    /// \brief Get the source image of the sprite
     ///
-    /// \return Pointer to the image (can be NULL)
+    /// If the sprite has no source image, or if the image
+    /// doesn't exist anymore, a NULL pointer is returned.
+    /// The returned pointer is const, which means that you can't
+    /// modify the image when you retrieve it with this function.
+    ///
+    /// \return Pointer to the sprite's image
+    ///
+    /// \see SetImage
     ///
     ////////////////////////////////////////////////////////////
     const Image* GetImage() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the sub-rectangle of the sprite inside the source image
+    /// \brief Get the region of the image displayed by the sprite
     ///
-    /// \return Sub-rectangle
+    /// \return Rectangle defining the region of the image
+    ///
+    /// \see SetSubRect
     ///
     ////////////////////////////////////////////////////////////
     const IntRect& GetSubRect() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the sprite size
+    /// \brief Get the global size of the sprite
+    ///
+    /// This function is a shortcut that multiplies the
+    /// size of the subrect by the scale factors.
     ///
     /// \return Size of the sprite
+    ///
+    /// \see Resize
     ///
     ////////////////////////////////////////////////////////////
     Vector2f GetSize() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the color of a given pixel in the sprite
-    /// (point is in local coordinates)
+    /// \brief Get the color of a given pixel in the sprite
     ///
-    /// \param x : X coordinate of the pixel to get
-    /// \param y : Y coordinate of the pixel to get
+    /// This function returns the source image pixel, multiplied
+    /// by the global color of the sprite.
+    /// The input point must be in local coordinates. If you have
+    /// a global point, you can use the TransformToLocal function
+    /// to make it local.
+    /// This function doesn't perform any check, you must ensure that
+    /// the \a x and \a y coordinates are not out of bounds.
     ///
-    /// \return Color of pixel (x, y)
+    /// \param x X coordinate of the pixel to get
+    /// \param y Y coordinate of the pixel to get
+    ///
+    /// \return Color of the pixel
     ///
     ////////////////////////////////////////////////////////////
     Color GetPixel(unsigned int x, unsigned int y) const;
@@ -155,7 +216,10 @@ public :
 protected :
 
     ////////////////////////////////////////////////////////////
-    /// /see Drawable::Render
+    /// \brief Draw the object to a render target
+    ///
+    /// \param target   Render target
+    /// \param renderer Renderer providing low-level rendering commands
     ///
     ////////////////////////////////////////////////////////////
     virtual void Render(RenderTarget& target, Renderer& renderer) const;

@@ -39,8 +39,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// Default constructor
-////////////////////////////////////////////////////////////
 Image::Image() :
 myWidth         (0),
 myHeight        (0),
@@ -56,8 +54,6 @@ myPixelsFlipped (false)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Copy constructor
 ////////////////////////////////////////////////////////////
 Image::Image(const Image& copy) :
 Resource<Image>()
@@ -83,8 +79,6 @@ Resource<Image>()
 
 
 ////////////////////////////////////////////////////////////
-/// Destructor
-////////////////////////////////////////////////////////////
 Image::~Image()
 {
     // Destroy the OpenGL texture
@@ -92,8 +86,6 @@ Image::~Image()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Load the image from a file
 ////////////////////////////////////////////////////////////
 bool Image::LoadFromFile(const std::string& filename)
 {
@@ -115,19 +107,17 @@ bool Image::LoadFromFile(const std::string& filename)
 
 
 ////////////////////////////////////////////////////////////
-/// Load the image from a file in memory
-////////////////////////////////////////////////////////////
-bool Image::LoadFromMemory(const void* data, std::size_t sizeInBytes)
+bool Image::LoadFromMemory(const void* data, std::size_t size)
 {
     // Check parameters
-    if (!data || (sizeInBytes == 0))
+    if (!data || (size == 0))
     {
         Err() << "Failed to image font from memory, no data provided" << std::endl;
         return false;
     }
 
     // Let the image loader load the image into our pixel array
-    bool success = priv::ImageLoader::GetInstance().LoadImageFromMemory(data, sizeInBytes, myPixels, myWidth, myHeight);
+    bool success = priv::ImageLoader::GetInstance().LoadImageFromMemory(data, size, myPixels, myWidth, myHeight);
 
     if (success)
     {
@@ -143,8 +133,6 @@ bool Image::LoadFromMemory(const void* data, std::size_t sizeInBytes)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Load the image directly from an array of pixels
 ////////////////////////////////////////////////////////////
 bool Image::LoadFromPixels(unsigned int width, unsigned int height, const Uint8* data)
 {
@@ -179,8 +167,6 @@ bool Image::LoadFromPixels(unsigned int width, unsigned int height, const Uint8*
 
 
 ////////////////////////////////////////////////////////////
-/// Save the content of the image to a file
-////////////////////////////////////////////////////////////
 bool Image::SaveToFile(const std::string& filename) const
 {
     // Check if the array of pixels needs to be updated
@@ -191,8 +177,6 @@ bool Image::SaveToFile(const std::string& filename) const
 }
 
 
-////////////////////////////////////////////////////////////
-/// Create an empty image
 ////////////////////////////////////////////////////////////
 bool Image::Create(unsigned int width, unsigned int height, const Color& color)
 {
@@ -229,8 +213,6 @@ bool Image::Create(unsigned int width, unsigned int height, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-/// Create transparency mask from a specified colorkey
-////////////////////////////////////////////////////////////
 void Image::CreateMaskFromColor(const Color& color, Uint8 alpha)
 {
     // No pixels to replace
@@ -255,10 +237,6 @@ void Image::CreateMaskFromColor(const Color& color, Uint8 alpha)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Copy pixels from another image onto this one.
-/// This function does a slow pixel copy and should only
-/// be used at initialization time
 ////////////////////////////////////////////////////////////
 void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect, bool applyAlpha)
 {
@@ -346,9 +324,6 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
 
 
 ////////////////////////////////////////////////////////////
-/// Create the image from the current contents of the
-/// given window
-////////////////////////////////////////////////////////////
 bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
 {
     // Adjust the source rectangle
@@ -398,8 +373,6 @@ bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
 
 
 ////////////////////////////////////////////////////////////
-/// Change the color of a pixel
-////////////////////////////////////////////////////////////
 void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
 {
     // First check if the array of pixels needs to be updated
@@ -418,8 +391,6 @@ void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-/// Get a pixel from the image
-////////////////////////////////////////////////////////////
 Color Image::GetPixel(unsigned int x, unsigned int y) const
 {
     // First check if the array of pixels needs to be updated
@@ -432,10 +403,6 @@ Color Image::GetPixel(unsigned int x, unsigned int y) const
 }
 
 
-////////////////////////////////////////////////////////////
-/// Get a read-only pointer to the array of pixels (RGBA 8 bits integers components)
-/// Array size is GetWidth() x GetHeight() x 4
-/// This pointer becomes invalid if you reload or resize the image
 ////////////////////////////////////////////////////////////
 const Uint8* Image::GetPixelsPtr() const
 {
@@ -455,8 +422,6 @@ const Uint8* Image::GetPixelsPtr() const
 
 
 ////////////////////////////////////////////////////////////
-/// Update the whole image from an array of pixels
-////////////////////////////////////////////////////////////
 void Image::UpdatePixels(const Uint8* pixels)
 {
     GLint previous;
@@ -473,8 +438,6 @@ void Image::UpdatePixels(const Uint8* pixels)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Update a sub-rectangle of the image from an array of pixels
 ////////////////////////////////////////////////////////////
 void Image::UpdatePixels(const Uint8* pixels, const IntRect& rectangle)
 {
@@ -496,8 +459,6 @@ void Image::UpdatePixels(const Uint8* pixels, const IntRect& rectangle)
 
 
 ////////////////////////////////////////////////////////////
-/// Bind the image for rendering
-////////////////////////////////////////////////////////////
 void Image::Bind() const
 {
     // First check if the texture needs to be updated
@@ -508,8 +469,6 @@ void Image::Bind() const
 }
 
 
-////////////////////////////////////////////////////////////
-/// Enable or disable image smoothing filter
 ////////////////////////////////////////////////////////////
 void Image::SetSmooth(bool smooth)
 {
@@ -533,16 +492,12 @@ void Image::SetSmooth(bool smooth)
 
 
 ////////////////////////////////////////////////////////////
-/// Return the width of the image
-////////////////////////////////////////////////////////////
 unsigned int Image::GetWidth() const
 {
     return myWidth;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Return the height of the image
 ////////////////////////////////////////////////////////////
 unsigned int Image::GetHeight() const
 {
@@ -551,17 +506,12 @@ unsigned int Image::GetHeight() const
 
 
 ////////////////////////////////////////////////////////////
-/// Tells whether the smooth filtering is enabled or not
-////////////////////////////////////////////////////////////
 bool Image::IsSmooth() const
 {
     return myIsSmooth;
 }
 
 
-////////////////////////////////////////////////////////////
-/// Convert a subrect expressed in pixels, into float
-/// texture coordinates
 ////////////////////////////////////////////////////////////
 FloatRect Image::GetTexCoords(const IntRect& rect) const
 {
@@ -593,8 +543,6 @@ FloatRect Image::GetTexCoords(const IntRect& rect) const
 
 
 ////////////////////////////////////////////////////////////
-/// Get the maximum image size according to hardware support
-////////////////////////////////////////////////////////////
 unsigned int Image::GetMaximumSize()
 {
     GLint size;
@@ -605,7 +553,25 @@ unsigned int Image::GetMaximumSize()
 
 
 ////////////////////////////////////////////////////////////
-/// Get a valid image size according to hardware support
+Image& Image::operator =(const Image& other)
+{
+    Image temp(other);
+
+    std::swap(myWidth,          temp.myWidth);
+    std::swap(myHeight,         temp.myHeight);
+    std::swap(myTextureWidth,   temp.myTextureWidth);
+    std::swap(myTextureHeight,  temp.myTextureHeight);
+    std::swap(myTexture,        temp.myTexture);
+    std::swap(myIsSmooth,       temp.myIsSmooth);
+    std::swap(myArrayUpdated,   temp.myArrayUpdated);
+    std::swap(myTextureUpdated, temp.myTextureUpdated);
+    std::swap(myPixelsFlipped,  temp.myPixelsFlipped);
+    std::swap(myPixels,         temp.myPixels);
+
+    return *this;
+}
+
+
 ////////////////////////////////////////////////////////////
 unsigned int Image::GetValidSize(unsigned int size)
 {
@@ -629,30 +595,6 @@ unsigned int Image::GetValidSize(unsigned int size)
 }
 
 
-////////////////////////////////////////////////////////////
-/// Assignment operator
-////////////////////////////////////////////////////////////
-Image& Image::operator =(const Image& other)
-{
-    Image temp(other);
-
-    std::swap(myWidth,          temp.myWidth);
-    std::swap(myHeight,         temp.myHeight);
-    std::swap(myTextureWidth,   temp.myTextureWidth);
-    std::swap(myTextureHeight,  temp.myTextureHeight);
-    std::swap(myTexture,        temp.myTexture);
-    std::swap(myIsSmooth,       temp.myIsSmooth);
-    std::swap(myArrayUpdated,   temp.myArrayUpdated);
-    std::swap(myTextureUpdated, temp.myTextureUpdated);
-    std::swap(myPixelsFlipped,  temp.myPixelsFlipped);
-    std::swap(myPixels,         temp.myPixels);
-
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Create the OpenGL texture
 ////////////////////////////////////////////////////////////
 bool Image::CreateTexture()
 {
@@ -688,8 +630,8 @@ bool Image::CreateTexture()
     GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
     GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
     GLCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, myTextureWidth, myTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
-    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP));
-    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP));
+    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
     GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
     GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
     GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
@@ -700,9 +642,6 @@ bool Image::CreateTexture()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Make sure the texture in video memory is updated with the
-/// array of pixels
 ////////////////////////////////////////////////////////////
 void Image::EnsureTextureUpdate() const
 {
@@ -726,9 +665,6 @@ void Image::EnsureTextureUpdate() const
 }
 
 
-////////////////////////////////////////////////////////////
-/// Make sure the array of pixels is updated with the
-/// texture in video memory
 ////////////////////////////////////////////////////////////
 void Image::EnsureArrayUpdate() const
 {
@@ -788,16 +724,12 @@ void Image::EnsureArrayUpdate() const
 
 
 ////////////////////////////////////////////////////////////
-/// Make sure that the image is ready to be used
-////////////////////////////////////////////////////////////
 void Image::Use() const
 {
     EnsureTextureUpdate();
 }
 
 
-////////////////////////////////////////////////////////////
-/// Reset the image attributes
 ////////////////////////////////////////////////////////////
 void Image::Reset()
 {
@@ -816,8 +748,6 @@ void Image::Reset()
 }
 
 
-////////////////////////////////////////////////////////////
-/// Destroy the OpenGL texture
 ////////////////////////////////////////////////////////////
 void Image::DestroyTexture()
 {
