@@ -206,31 +206,31 @@ namespace SFML
             private static Font ourDefaultFont = null;
 
             #region Imports
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfFont_CreateFromFile(string Filename);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             unsafe static extern IntPtr sfFont_CreateFromMemory(char* Data, uint SizeInBytes);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfFont_Copy(IntPtr Font);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfFont_Destroy(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern Glyph sfFont_GetGlyph(IntPtr This, uint codePoint, uint characterSize, bool bold);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern int sfFont_GetKerning(IntPtr This, uint first, uint second, uint characterSize);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern int sfFont_GetLineSpacing(IntPtr This, uint characterSize);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfFont_GetImage(IntPtr This, uint characterSize);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfFont_GetDefaultFont();
             #endregion
         }

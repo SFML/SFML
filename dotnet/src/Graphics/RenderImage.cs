@@ -286,52 +286,52 @@ namespace SFML
             private Image myImage       = null;
 
             #region Imports
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfRenderImage_Create(uint Width, uint Height, bool DepthBuffer);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_Destroy(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_Clear(IntPtr This, Color ClearColor);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfRenderImage_GetWidth(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfRenderImage_GetHeight(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderImage_SetActive(IntPtr This, bool Active);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderImage_SaveGLStates(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderImage_RestoreGLStates(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderImage_Display(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_SetView(IntPtr This, IntPtr View);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfRenderImage_GetView(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfRenderImage_GetDefaultView(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntRect sfRenderImage_GetViewport(IntPtr This, IntPtr TargetView);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_ConvertCoords(IntPtr This, uint WindowX, uint WindowY, out float ViewX, out float ViewY, IntPtr TargetView);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfRenderImage_GetImage(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderImage_IsAvailable();
 
             #endregion

@@ -292,103 +292,103 @@ namespace SFML
             private Image myImage = null;
 
             #region Imports
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfSprite_Create();
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfSprite_Copy(IntPtr Sprite);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_Destroy(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetPosition(IntPtr This, float X, float Y);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSprite_GetX(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSprite_GetY(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetRotation(IntPtr This, float Rotation);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSprite_GetRotation(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetScale(IntPtr This, float X, float Y);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSprite_GetScaleX(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSprite_GetScaleY(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetOrigin(IntPtr This, float X, float Y);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSprite_GetOriginX(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSprite_GetOriginY(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetColor(IntPtr This, Color Color);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern Color sfSprite_GetColor(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetBlendMode(IntPtr This, BlendMode Mode);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern BlendMode sfSprite_GetBlendMode(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern Vector2 sfSprite_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern Vector2 sfSprite_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawSprite(IntPtr This, IntPtr Sprite);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawSpriteWithShader(IntPtr This, IntPtr Sprite, IntPtr Shader);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_DrawSprite(IntPtr This, IntPtr Sprite);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_DrawSpriteWithShader(IntPtr This, IntPtr Sprite, IntPtr Shader);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_Resize(IntPtr This, float Width, float Height);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSprite_GetWidth(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSprite_GetHeight(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetImage(IntPtr This, IntPtr Image, bool AdjustToNewSize);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetSubRect(IntPtr This, IntRect Rect);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntRect sfSprite_GetSubRect(IntPtr This);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_FlipX(IntPtr This, bool Flipped);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_FlipY(IntPtr This, bool Flipped);
 
-            [DllImport("csfml-graphics"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern Color sfSprite_GetPixel(IntPtr This, uint X, uint Y);
             #endregion
         }

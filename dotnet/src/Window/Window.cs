@@ -571,76 +571,76 @@ namespace SFML
             protected Input myInput = null;
 
             #region Imports
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfWindow_Create(VideoMode Mode, string Title, Styles Style, ref ContextSettings Params);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfWindow_CreateFromHandle(IntPtr Handle, ref ContextSettings Params);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Destroy(IntPtr This);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfWindow_GetInput(IntPtr This);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfWindow_IsOpened(IntPtr This);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Close(IntPtr This);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfWindow_GetEvent(IntPtr This, out Event Evt);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfWindow_WaitEvent(IntPtr This, out Event Evt);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Display(IntPtr This);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfWindow_GetWidth(IntPtr This);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfWindow_GetHeight(IntPtr This);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern ContextSettings sfWindow_GetSettings(IntPtr This);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_UseVerticalSync(IntPtr This, bool Enable);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_ShowMouseCursor(IntPtr This, bool Show);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetCursorPosition(IntPtr This, uint X, uint Y);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetPosition(IntPtr This, int X, int Y);
             
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetSize(IntPtr This, uint Width, uint Height);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Show(IntPtr This, bool Show);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_EnableKeyRepeat(IntPtr This, bool Enable);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             unsafe static extern void sfWindow_SetIcon(IntPtr This, uint Width, uint Height, byte* Pixels);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfWindow_SetActive(IntPtr This, bool Active);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetFramerateLimit(IntPtr This, uint Limit);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfWindow_GetFrameTime(IntPtr This);
 
-            [DllImport("csfml-window"), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetJoystickThreshold(IntPtr This, float Threshold);
             #endregion
         }
