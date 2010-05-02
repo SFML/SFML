@@ -46,7 +46,7 @@ CSFML_API void sfRandom_SetSeed(unsigned int seed);
 /// \return Current seed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API unsigned int sfRandom_GetSeed();
+CSFML_API unsigned int sfRandom_GetSeed(void);
 
 ////////////////////////////////////////////////////////////
 /// Get a random float number in a given range

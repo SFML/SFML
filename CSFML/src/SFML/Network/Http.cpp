@@ -33,7 +33,7 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new Http request
 ////////////////////////////////////////////////////////////
-sfHttpRequest* sfHttpRequest_Create()
+sfHttpRequest* sfHttpRequest_Create(void)
 {
     return new sfHttpRequest;
 }
@@ -169,7 +169,7 @@ const char* sfHttpResponse_GetBody(const sfHttpResponse* httpResponse)
 ////////////////////////////////////////////////////////////
 /// Construct a new Http object
 ////////////////////////////////////////////////////////////
-sfHttp* sfHttp_Create()
+sfHttp* sfHttp_Create(void)
 {
     return new sfHttp;
 }

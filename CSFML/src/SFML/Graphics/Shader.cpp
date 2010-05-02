@@ -151,7 +151,7 @@ void sfShader_Unbind(const sfShader* shader)
 ////////////////////////////////////////////////////////////
 /// Tell whether or not the system supports shaders
 ////////////////////////////////////////////////////////////
-sfBool sfShader_IsAvailable()
+sfBool sfShader_IsAvailable(void)
 {
     return sf::Shader::IsAvailable() ? sfTrue : sfFalse;
 }

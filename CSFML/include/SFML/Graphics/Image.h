@@ -40,7 +40,7 @@
 /// \return A new sfImage object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfImage* sfImage_Create();
+CSFML_API sfImage* sfImage_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Create a new image filled with a color
@@ -178,7 +178,7 @@ CSFML_API sfColor sfImage_GetPixel(const sfImage* image, unsigned int x, unsigne
 
 ////////////////////////////////////////////////////////////
 /// Get a read-only pointer to the array of pixels of an image (8 bits integers RGBA)
-/// Array size is sfImage_GetWidth() x sfImage_GetHeight() x 4
+/// Array size is sfImage_GetWidth(img) x sfImage_GetHeight(img) x 4
 /// This pointer becomes invalid if you reload or resize the image
 ///
 /// \param image : Image to read

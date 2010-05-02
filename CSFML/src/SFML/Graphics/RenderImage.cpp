@@ -251,7 +251,7 @@ const sfImage* sfRenderImage_GetImage(const sfRenderImage* renderImage)
 ////////////////////////////////////////////////////////////
 /// Check whether the system supports render images or not
 ////////////////////////////////////////////////////////////
-sfBool sfRenderImage_IsAvailable()
+sfBool sfRenderImage_IsAvailable(void)
 {
     return sf::RenderImage::IsAvailable() ? sfTrue : sfFalse;
 }

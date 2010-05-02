@@ -40,7 +40,7 @@
 /// \return Pointer to the new socket
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfTcpSocket* sfTcpSocket_Create();
+CSFML_API sfTcpSocket* sfTcpSocket_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing TCP socket

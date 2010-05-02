@@ -190,7 +190,7 @@ const char* sfFtpResponse_GetMessage(const sfFtpResponse* ftpResponse)
 ////////////////////////////////////////////////////////////
 /// Construct a new Ftp
 ////////////////////////////////////////////////////////////
-sfFtp* sfFtp_Create()
+sfFtp* sfFtp_Create(void)
 {
     return new sfFtp;
 }

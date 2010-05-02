@@ -208,7 +208,7 @@ CSFML_API const sfImage* sfRenderImage_GetImage(const sfRenderImage* renderImage
 /// \return sfTrue if the RenderImage class can be used
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfRenderImage_IsAvailable();
+CSFML_API sfBool sfRenderImage_IsAvailable(void);
 
 
 #endif // SFML_RENDERIMAGE_H

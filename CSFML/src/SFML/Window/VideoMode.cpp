@@ -33,7 +33,7 @@
 ////////////////////////////////////////////////////////////
 /// Get the current desktop video mode
 ////////////////////////////////////////////////////////////
-sfVideoMode sfVideoMode_GetDesktopMode()
+sfVideoMode sfVideoMode_GetDesktopMode(void)
 {
     sf::VideoMode desktop = sf::VideoMode::GetDesktopMode();
     sfVideoMode ret;

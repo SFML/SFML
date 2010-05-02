@@ -38,7 +38,7 @@
 /// \return A new sfSoundBufferRecorder object (NULL if failed)
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSoundBufferRecorder* sfSoundBufferRecorder_Create();
+CSFML_API sfSoundBufferRecorder* sfSoundBufferRecorder_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing sound buffer recorder

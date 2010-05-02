@@ -40,7 +40,7 @@
 /// \return A new sfShape object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfShape* sfShape_Create();
+CSFML_API sfShape* sfShape_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Create a new shape made of a single line

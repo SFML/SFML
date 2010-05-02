@@ -140,7 +140,7 @@ const sfImage* sfFont_GetImage(sfFont* font, unsigned int characterSize)
 ////////////////////////////////////////////////////////////
 /// Get the built-in default font (Arial)
 ////////////////////////////////////////////////////////////
-const sfFont* sfFont_GetDefaultFont()
+const sfFont* sfFont_GetDefaultFont(void)
 {
     static sfFont defaultFont = {sf::Font::GetDefaultFont(), std::map<unsigned int, sfImage>()};
 

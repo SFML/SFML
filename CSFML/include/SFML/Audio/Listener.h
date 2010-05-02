@@ -45,7 +45,7 @@ CSFML_API void sfListener_SetGlobalVolume(float volume);
 /// \return Current global volume, in the range [0, 100]
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfListener_GetGlobalVolume();
+CSFML_API float sfListener_GetGlobalVolume(void);
 
 ////////////////////////////////////////////////////////////
 /// Change the position of the listener

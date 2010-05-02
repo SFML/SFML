@@ -102,7 +102,7 @@ sfUint32 sfIpAddress_ToInteger(sfIpAddress address)
 ////////////////////////////////////////////////////////////
 /// Get the computer's local IP address (from the LAN point of view)
 ////////////////////////////////////////////////////////////
-sfIpAddress sfIpAddress_GetLocalAddress()
+sfIpAddress sfIpAddress_GetLocalAddress(void)
 {
     return FromSFMLAddress(sf::IpAddress::GetLocalAddress());
 }
@@ -123,7 +123,7 @@ sfIpAddress sfIpAddress_GetPublicAddress(float timeout)
 ////////////////////////////////////////////////////////////
 /// Get the computer's loopback address
 ////////////////////////////////////////////////////////////
-sfIpAddress sfIpAddress_LocalHost()
+sfIpAddress sfIpAddress_LocalHost(void)
 {
     return FromSFMLAddress(sf::IpAddress::LocalHost);
 }
@@ -131,7 +131,7 @@ sfIpAddress sfIpAddress_LocalHost()
 ////////////////////////////////////////////////////////////
 /// Get the empty/invalid address
 ////////////////////////////////////////////////////////////
-sfIpAddress sfIpAddress_None()
+sfIpAddress sfIpAddress_None(void)
 {
     return FromSFMLAddress(sf::IpAddress::None);
 }

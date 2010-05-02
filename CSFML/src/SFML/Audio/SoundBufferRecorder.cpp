@@ -33,7 +33,7 @@
 ////////////////////////////////////////////////////////////
 /// Construct a new sound buffer recorder
 ////////////////////////////////////////////////////////////
-sfSoundBufferRecorder* sfSoundBufferRecorder_Create()
+sfSoundBufferRecorder* sfSoundBufferRecorder_Create(void)
 {
     return new sfSoundBufferRecorder;
 }

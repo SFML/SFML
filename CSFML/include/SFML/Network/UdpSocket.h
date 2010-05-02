@@ -40,7 +40,7 @@
 /// \return Pointer to the new socket
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfUdpSocket* sfUdpSocket_Create();
+CSFML_API sfUdpSocket* sfUdpSocket_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing UDP socket

@@ -53,7 +53,7 @@ typedef enum
 /// \return A new sfText object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfText* sfText_Create();
+CSFML_API sfText* sfText_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Copy an existing text

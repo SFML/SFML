@@ -85,7 +85,7 @@ enum sfHttpStatus
 /// \return Pointer to the new Http request
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfHttpRequest* sfHttpRequest_Create();
+CSFML_API sfHttpRequest* sfHttpRequest_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Http request
@@ -216,7 +216,7 @@ CSFML_API const char* sfHttpResponse_GetBody(const sfHttpResponse* httpResponse)
 /// \return Pointer to the new Http
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfHttp* sfHttp_Create();
+CSFML_API sfHttp* sfHttp_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Http object

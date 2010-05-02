@@ -266,7 +266,7 @@ CSFML_API const char* sfFtpResponse_GetMessage(const sfFtpResponse* ftpResponse)
 /// \return Pointer to the new Ftp
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFtp* sfFtp_Create();
+CSFML_API sfFtp* sfFtp_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Destroy an existing Ftp

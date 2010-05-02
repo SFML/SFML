@@ -142,7 +142,7 @@ CSFML_API void sfShader_Unbind(const sfShader* shader);
 /// \return sfTrue if the system can use shaders
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfShader_IsAvailable();
+CSFML_API sfBool sfShader_IsAvailable(void);
 
 
 #endif // SFML_SHADER_H

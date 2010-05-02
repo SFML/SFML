@@ -41,7 +41,7 @@
 /// \return A new sfSprite object, or NULL if it failed
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSprite* sfSprite_Create();
+CSFML_API sfSprite* sfSprite_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Copy an existing sprite

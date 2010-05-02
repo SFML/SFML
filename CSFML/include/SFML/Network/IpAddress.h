@@ -96,7 +96,7 @@ CSFML_API sfUint32 sfIpAddress_ToInteger(sfIpAddress address);
 /// \return Local IP address
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfIpAddress sfIpAddress_GetLocalAddress();
+CSFML_API sfIpAddress sfIpAddress_GetLocalAddress(void);
 
 ////////////////////////////////////////////////////////////
 /// Get the computer's public IP address (from the web point of view).
@@ -117,7 +117,7 @@ CSFML_API sfIpAddress sfIpAddress_GetPublicAddress(float timeout);
 /// \return Local host IP address (127.0.0.1, or "localhost")
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfIpAddress sfIpAddress_LocalHost();
+CSFML_API sfIpAddress sfIpAddress_LocalHost(void);
 
 ////////////////////////////////////////////////////////////
 /// Get the empty/invalid address
@@ -125,7 +125,7 @@ CSFML_API sfIpAddress sfIpAddress_LocalHost();
 /// \return Empty object that represents invalid addresses
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfIpAddress sfIpAddress_None();
+CSFML_API sfIpAddress sfIpAddress_None(void);
 
 
 #endif // SFML_IPADDRESS_H

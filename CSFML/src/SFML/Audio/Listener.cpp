@@ -42,7 +42,7 @@ void sfListener_SetGlobalVolume(float volume)
 ////////////////////////////////////////////////////////////
 /// Get the current value of the global volume of all the sounds
 ////////////////////////////////////////////////////////////
-float sfListener_GetGlobalVolume()
+float sfListener_GetGlobalVolume(void)
 {
     return sf::Listener::GetGlobalVolume();
 }

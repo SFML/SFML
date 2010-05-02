@@ -126,7 +126,7 @@ CSFML_API const sfImage* sfFont_GetImage(sfFont* font, unsigned int characterSiz
 /// \return Pointer to the default font
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API const sfFont* sfFont_GetDefaultFont();
+CSFML_API const sfFont* sfFont_GetDefaultFont(void);
 
 
 #endif // SFML_IMAGE_H

@@ -49,7 +49,7 @@ typedef struct
 /// \return Current desktop video mode
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfVideoMode sfVideoMode_GetDesktopMode();
+CSFML_API sfVideoMode sfVideoMode_GetDesktopMode(void);
 
 ////////////////////////////////////////////////////////////
 /// Get all the supported video modes for fullscreen mode.

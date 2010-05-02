@@ -38,7 +38,7 @@
 /// \return A new sfSelector object
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketSelector* sfSocketSelector_Create();
+CSFML_API sfSocketSelector* sfSocketSelector_Create(void);
 
 ////////////////////////////////////////////////////////////
 /// Copy an existing selector

@@ -43,7 +43,7 @@ void sfRandom_SetSeed(unsigned int seed)
 ////////////////////////////////////////////////////////////
 /// Get the seed used to generate random numbers the generator
 ////////////////////////////////////////////////////////////
-unsigned int sfRandom_GetSeed()
+unsigned int sfRandom_GetSeed(void)
 {
     return sf::Randomizer::GetSeed();
 }

@@ -35,7 +35,7 @@
 ////////////////////////////////////////////////////////////
 /// Create a new sprite
 ////////////////////////////////////////////////////////////
-sfSprite* sfSprite_Create()
+sfSprite* sfSprite_Create(void)
 {
     sfSprite* sprite       = new sfSprite;
     sprite->Image          = NULL;
