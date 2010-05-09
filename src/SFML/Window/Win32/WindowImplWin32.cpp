@@ -818,7 +818,7 @@ LRESULT CALLBACK WindowImplWin32::GlobalOnEvent(HWND handle, UINT message, WPARA
     if (message == WM_CREATE)
     {
         // Get WindowImplWin32 instance (it was passed as the last argument of CreateWindow)
-        long window = reinterpret_cast<long>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
+        LONG_PTR window = (LONG_PTR)reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;
 
         // Set as the "user data" parameter of the window
         SetWindowLongPtr(handle, GWLP_USERDATA, window);
