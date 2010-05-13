@@ -241,7 +241,7 @@ public :
     /// between Begin() and End().
     ///
     /// Usage:
-    /// \begincode
+    /// \code
     /// renderer.Begin(Renderer::TriangleList);
     /// renderer.AddVertex(...);
     /// renderer.AddVertex(...);

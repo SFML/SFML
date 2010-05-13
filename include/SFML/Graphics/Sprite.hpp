@@ -239,3 +239,29 @@ private :
 
 
 #endif // SFML_SPRITE_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Sprite
+///
+/// ...
+///
+/// Usage example:
+/// \code
+/// // Declare and load an image
+/// sf::Image image;
+/// image.LoadFromFile("image.png");
+/// 
+/// // Create a sprite
+/// sf::Sprite sprite;
+/// text.SetImage(image);
+/// text.SetSubRect(sf::IntRect(10, 10, 50, 30));
+/// text.Resize(100, 60);
+///
+/// // Display it
+/// window.Draw(sprite); // window is a sf::RenderWindow
+/// \endcode
+///
+/// \see sf::Image
+///
+////////////////////////////////////////////////////////////

@@ -137,7 +137,7 @@ public :
     /// This behaviour is the same as standard C++ streams.
     ///
     /// Usage example:
-    /// \begincode
+    /// \code
     /// float x;
     /// packet >> x;
     /// if (packet)
@@ -289,7 +289,7 @@ private :
 /// and your data may be corrupted if that happens.
 ///
 /// Usage example:
-/// \begincode
+/// \code
 /// sf::Uint32 x = 24;
 /// std::string s = "hello";
 /// double d = 5.89;
@@ -328,7 +328,7 @@ private :
 /// overloads of operators >> and << in order to handle your
 /// custom types.
 ///
-/// \begincode
+/// \code
 /// struct MyStruct
 /// {
 ///     float       number;
@@ -355,7 +355,7 @@ private :
 /// the OnSend and OnReceive functions.
 ///
 /// Here is an example:
-/// \begincode
+/// \code
 /// class ZipPacket : public sf::Packet
 /// {
 ///     virtual const char* OnSend(std::size_t& size)

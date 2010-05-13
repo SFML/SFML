@@ -242,7 +242,7 @@ public :
     ///
     /// This is a static function that returns a new object,
     /// don't try to call it on an existing object to modify it.
-    /// \begincode
+    /// \code
     /// sf::Shape line = sf::Shape::Line(0, 0, 10, 20, 2.5f, sf::Color::Green);
     /// \endcode
     ///
@@ -265,7 +265,7 @@ public :
     ///
     /// This is a static function that returns a new object,
     /// don't try to call it on an existing object to modify it.
-    /// \begincode
+    /// \code
     /// sf::Vector2f start(0, 0);
     /// sf::Vector2f end(10, 20);
     /// sf::Shape line = sf::Shape::Line(start, end, 2.5f, sf::Color::Green);
@@ -288,7 +288,7 @@ public :
     ///
     /// This is a static function that returns a new object,
     /// don't try to call it on an existing object to modify it.
-    /// \begincode
+    /// \code
     /// sf::Shape rect = sf::Shape::Rectangle(10, 20, 50, 100, sf::Color::Red);
     /// \endcode
     ///
@@ -310,7 +310,7 @@ public :
     ///
     /// This is a static function that returns a new object,
     /// don't try to call it on an existing object to modify it.
-    /// \begincode
+    /// \code
     /// sf::FloatRect source(10, 20, 50, 100);
     /// sf::Shape rect = sf::Shape::Rectangle(source, sf::Color::Red);
     /// \endcode
@@ -330,7 +330,7 @@ public :
     ///
     /// This is a static function that returns a new object,
     /// don't try to call it on an existing object to modify it.
-    /// \begincode
+    /// \code
     /// sf::Shape circle = sf::Shape::Circle(0, 0, 7, sf::Color::Blue);
     /// \endcode
     ///
@@ -351,7 +351,7 @@ public :
     ///
     /// This is a static function that returns a new object,
     /// don't try to call it on an existing object to modify it.
-    /// \begincode
+    /// \code
     /// sf::Vector2f center(0, 0);
     /// sf::Shape circle = sf::Shape::Circle(center, 7, sf::Color::Blue);
     /// \endcode

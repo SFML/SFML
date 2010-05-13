@@ -6,6 +6,7 @@
 #include <SFML/Network.hpp>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 
 
 const sf::Uint8 audioData   = 1;

@@ -229,7 +229,7 @@ public :
     ///
     /// More specifically, it must be used around code that
     /// calls Draw functions. Example:
-    /// \begincode
+    /// \code
     /// // OpenGL code here...
     /// window.SaveGLStates();
     /// window.Draw(...);

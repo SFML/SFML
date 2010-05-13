@@ -239,132 +239,212 @@ public :
     ///
     /// This global color affects the entire object, and modulates
     /// (multiplies) its original pixels.
+    /// The default color is white.
     ///
-    /// The default color is white
+    /// \param color New color
     ///
-    /// \param color : New color
+    /// \see GetColor
     ///
     ////////////////////////////////////////////////////////////
     void SetColor(const Color& color);
 
     ////////////////////////////////////////////////////////////
-    /// Set the blending mode for the object.
-    /// The default blend mode is Blend::Alpha
+    /// \brief Set the blending mode of the object
     ///
-    /// \param mode : New blending mode
+    /// This property defines how the pixels of an object are
+    /// blended with the pixels of the render target to which
+    /// it is drawn. To know more about the blending modes
+    /// available, see the sf::Blend::Mode enum.
+    /// The default blend mode is Blend::Alpha.
+    ///
+    /// \param mode New blending mode
+    ///
+    /// \see GetBlendMode
     ///
     ////////////////////////////////////////////////////////////
     void SetBlendMode(Blend::Mode mode);
 
     ////////////////////////////////////////////////////////////
-    /// Get the position of the object
+    /// \brief Get the position of the object
     ///
     /// \return Current position
+    ///
+    /// \see SetPosition
     ///
     ////////////////////////////////////////////////////////////
     const Vector2f& GetPosition() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the current scale of the object
+    /// \brief Get the current scale of the object
     ///
-    /// \return Current scale factor (always positive)
+    /// \return Current scale factors
+    ///
+    /// \see SetScale
     ///
     ////////////////////////////////////////////////////////////
     const Vector2f& GetScale() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the local origin of the object
+    /// \brief Get the local origin of the object
     ///
-    /// \return Current position of the origin
+    /// \return Current origin
+    ///
+    /// \see SetOrigin
     ///
     ////////////////////////////////////////////////////////////
     const Vector2f& GetOrigin() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the orientation of the object.
-    /// Rotation is always in the range [0, 360]
+    /// \brief Get the orientation of the object
+    ///
+    /// The rotation is always in the range [0, 360].
     ///
     /// \return Current rotation, in degrees
+    ///
+    /// \see SetRotation
     ///
     ////////////////////////////////////////////////////////////
     float GetRotation() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the color of the object
+    /// \brief Get the color of the object
     ///
     /// \return Current color
+    ///
+    /// \see SetColor
     ///
     ////////////////////////////////////////////////////////////
     const Color& GetColor() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the current blending mode
+    /// \brief Get the blend mode of the object
     ///
-    /// \return Current blending mode
+    /// \return Current blend mode
+    ///
+    /// \see SetBlendMode
     ///
     ////////////////////////////////////////////////////////////
     Blend::Mode GetBlendMode() const;
 
     ////////////////////////////////////////////////////////////
-    /// Move the object of a given offset (take 2 values)
+    /// \brief Move the object by a given offset
     ///
-    /// \param offsetX : X offset
-    /// \param offsetY : Y offset
+    /// This function adds to the current position of the object,
+    /// unlike SetPosition which overwrites it.
+    /// Thus, it is equivalent to the following code:
+    /// \code
+    /// sf::Vector2f pos = object.GetPosition();
+    /// object.SetPosition(pos.x + offsetX, pos.y + offsetY);
+    /// \endcode
+    ///
+    /// \param offsetX X offset
+    /// \param offsetY Y offset
+    ///
+    /// \see SetPosition
     ///
     ////////////////////////////////////////////////////////////
     void Move(float offsetX, float offsetY);
 
     ////////////////////////////////////////////////////////////
-    /// Move the object of a given offset (take a 2D vector)
+    /// \brief Move the object by a given offset
     ///
-    /// \param offset : Amount of units to move the object of
+    /// This function adds to the current position of the object,
+    /// unlike SetPosition which overwrites it.
+    /// Thus, it is equivalent to the following code:
+    /// \code
+    /// object.SetPosition(object.GetPosition() + offset);
+    /// \endcode
+    ///
+    /// \param offset Offset
+    ///
+    /// \see SetPosition
     ///
     ////////////////////////////////////////////////////////////
     void Move(const Vector2f& offset);
 
     ////////////////////////////////////////////////////////////
-    /// Scale the object (take 2 values)
+    /// \brief Scale the object
     ///
-    /// \param factorX : Scaling factor on X (must be strictly positive)
-    /// \param factorY : Scaling factor on Y (must be strictly positive)
+    /// This function multiplies the current scale of the object,
+    /// unlike SetScale which overwrites it.
+    /// Thus, it is equivalent to the following code:
+    /// \code
+    /// sf::Vector2f scale = object.GetScale();
+    /// object.SetScale(scale.x * factorX, scale.y * factorY);
+    /// \endcode
+    ///
+    /// \param factorX Horizontal scale factor
+    /// \param factorY Vertical scale factor
+    ///
+    /// \see SetScale
     ///
     ////////////////////////////////////////////////////////////
     void Scale(float factorX, float factorY);
 
     ////////////////////////////////////////////////////////////
-    /// Scale the object (take a 2D vector)
+    /// \brief Scale the object
     ///
-    /// \param factor : Scaling factors (both values must be strictly positive)
+    /// This function multiplies the current scale of the object,
+    /// unlike SetScale which overwrites it.
+    /// Thus, it is equivalent to the following code:
+    /// \code
+    /// sf::Vector2f scale = object.GetScale();
+    /// object.SetScale(scale.x * factor.x, scale.y * factor.y);
+    /// \endcode
+    ///
+    /// \param factor Scale factors
+    ///
+    /// \see SetScale
     ///
     ////////////////////////////////////////////////////////////
     void Scale(const Vector2f& factor);
 
     ////////////////////////////////////////////////////////////
-    /// Rotate the object
+    /// \brief Rotate the object
     ///
-    /// \param Angle : Angle of rotation, in degrees
+    /// This function ads to the current rotation of the object,
+    /// unlike SetRotation which overwrites it.
+    /// Thus, it is equivalent to the following code:
+    /// \code
+    /// object.SetRotation(object.GetRotation() + angle);
+    /// \endcode
+    ///
+    /// \param angle Angle of rotation, in degrees
     ///
     ////////////////////////////////////////////////////////////
-    void Rotate(float Angle);
+    void Rotate(float angle);
 
     ////////////////////////////////////////////////////////////
-    /// Transform a point from global coordinates into local coordinates
-    /// (ie it applies the inverse of object's origin, translation, rotation and scale to the point)
+    /// \brief Transform a point in object local coordinates
     ///
-    /// \param point : Point to transform
+    /// This function takes a point in global coordinates, and
+    /// transforms it in coordinates local to the object.
+    /// In other words, it applies the inverse of all the
+    /// transformations applied to the object (origin,
+    /// translation, rotation and scale).
     ///
-    /// \return Transformed point
+    /// \param point Point to transform
+    ///
+    /// \return The transformed point
+    ///
+    /// \see TransformToGlobal
     ///
     ////////////////////////////////////////////////////////////
     Vector2f TransformToLocal(const Vector2f& point) const;
 
     ////////////////////////////////////////////////////////////
-    /// Transform a point from local coordinates into global coordinates
-    /// (ie it applies the object's origin, translation, rotation and scale to the point)
+    /// \brief Transform a local point in global coordinates
     ///
-    /// \param point : Point to transform
+    /// This function takes a point in local coordinates, and
+    /// transforms it in global coordinates. In other words,
+    /// it applies the same transformations that are applied
+    /// to the object (origin, translation, rotation and scale).
     ///
-    /// \return Transformed point
+    /// \param point Point to transform
+    ///
+    /// \return The transformed point
+    ///
+    /// \see TransformToLocal
     ///
     ////////////////////////////////////////////////////////////
     Vector2f TransformToGlobal(const Vector2f& point) const;
@@ -372,17 +452,21 @@ public :
 protected :
 
     ////////////////////////////////////////////////////////////
-    /// Get the transform matrix of the drawable
+    /// \brief Get the transform matrix of the object
     ///
     /// \return Transform matrix
+    ///
+    /// \see GetInverseMatrix
     ///
     ////////////////////////////////////////////////////////////
     const Matrix3& GetMatrix() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the inverse transform matrix of the drawable
+    /// \brief Get the inverse transform matrix of the object
     ///
     /// \return Inverse transform matrix
+    ///
+    /// \see GetMatrix
     ///
     ////////////////////////////////////////////////////////////
     const Matrix3& GetInverseMatrix() const;
@@ -392,19 +476,27 @@ private :
     friend class RenderTarget;
 
     ////////////////////////////////////////////////////////////
-    /// Draw the object into the specified render target
+    /// \brief Draw the object to a render target
     ///
-    /// \param target :   Target into which render the object
-    /// \param renderer : Renderer that processes the rendering commands
+    /// This function applies the common states of the object,
+    /// then calls the virtual Render functions to let the derived
+    /// class draw the geometry of the object.
+    ///
+    /// \param target   Render target
+    /// \param renderer Renderer providing low-level rendering commands
     ///
     ////////////////////////////////////////////////////////////
     void Draw(RenderTarget& target, Renderer& renderer) const;
 
     ////////////////////////////////////////////////////////////
-    /// Render the specific geometry of the object
+    /// \brief Draw the object to a render target
     ///
-    /// \param target :   Target into which render the object
-    /// \param renderer : Renderer that processes the rendering commands
+    /// This is a pure virtual function that has to be implemented
+    /// by the derived class to define how the drawable should be
+    /// rendered.
+    ///
+    /// \param target   Render target
+    /// \param renderer Renderer providing low-level rendering commands
     ///
     ////////////////////////////////////////////////////////////
     virtual void Render(RenderTarget& target, Renderer& renderer) const = 0;
@@ -428,3 +520,80 @@ private :
 
 
 #endif // SFML_DRAWABLE_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Drawable
+///
+/// sf::Drawable defines the attributes and operations that
+/// are common to all the drawable classes:
+/// \li transformations (position, rotation, scale, local origin)
+/// \li global overlay color
+/// \li blending mode with background pixels
+/// \li the ability to be drawn on a sf::RenderTarget (either RenderWindow or RenderImage)
+///
+/// Please note that all these attributes are hardware accelerated,
+/// therefore they are extremely cheap to use (unlike older
+/// libraries that perform slow transformations on the CPU, such as
+/// rotation or scale).
+///
+/// Usage example:
+/// \code
+/// // Here we'll use a sf::Sprite to demonstrate the features of sf::Drawable
+/// sf::Sprite drawable = /* ...whatever... */;
+///
+/// drawable.SetOrigin(10, 20);               // set its origin to the local point (10, 20)
+/// drawable.SetPosition(100, 100);           // set its position to (100, 100)
+/// drawable.SetRotation(45);                 // set its orientation to 45 degrees
+/// drawable.SetColor(sf::Color::Red);        // set its global color to red
+/// drawable.SetBlendingMode(sf::Blend::Add); // set an additive blend mode
+///
+/// window.Draw(drawable); // finally draw it (window is a sf::RenderWindow)
+/// \endcode
+///
+/// Deriving your own class from sf::Drawable is possible, however
+/// you have to use the sf::Renderer class instead of direct OpenGL
+/// calls, which is more limited. To create a derived drawable class,
+/// all you have to do is to override the virtual Render function.
+///
+/// One of the main benefits of creating your own drawable class is
+/// that you can build hierarchies of drawable objects. Indeed,
+/// when you draw a drawable inside the Render function of another
+/// drawable, the former inherits the transformations and color of
+/// the latter and combines them with its own attributes.
+/// This way, you can apply global transformations/color to a set
+/// of drawables as if it was a single entity.
+///
+/// Example:
+/// \code
+/// class MyDrawable : public sf::Drawable
+/// {
+/// public :
+///
+///    ...
+///
+/// private :
+///
+///     virtual void Render(sf::RenderTarget& target, sf::Renderer& renderer) const
+///     {
+///         // Low-level geometry rendering
+///         renderer.SetTexture(&myTexture);
+///         renderer.Begin(sf::Renderer::QuadList);
+///             renderer.AddVertex(...);
+///             renderer.AddVertex(...);
+///             renderer.AddVertex(...);
+///             renderer.AddVertex(...);
+///         renderer.End();
+///
+///         // High-level drawable rendering
+///         target.Draw(mySubSprite);
+///     }
+///
+///     sf::Image myTexture;
+///     sf::Sprite mySubSprite;
+/// };
+/// \endcode
+///
+/// \see sf::Shape, sf::Sprite, sf::Text
+///
+////////////////////////////////////////////////////////////

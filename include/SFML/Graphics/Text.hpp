@@ -82,7 +82,7 @@ public :
     /// The \a string argument is a sf::String, which can
     /// automatically be constructed from standard string types.
     /// So, the following calls are all valid:
-    /// \begincode
+    /// \code
     /// text.SetString("hello");
     /// text.SetString(L"hello");
     /// text.SetString(std::string("hello"));
@@ -142,7 +142,7 @@ public :
     /// The returned string is a sf::String, which can automatically
     /// be converted to standard string types. So, the following
     /// lines of code are all valid:
-    /// \begincode
+    /// \code
     /// sf::String   s1 = text.GetString();
     /// std::string  s2 = text.GetString();
     /// std::wstring s3 = text.GetString();
@@ -250,3 +250,55 @@ private :
 
 
 #endif // SFML_TEXT_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Text
+///
+/// sf::Text is a drawable class that allows to easily display
+/// some text with custom style and color on a render target.
+///
+/// It inherits all the functions from sf::Drawable:
+/// position, rotation, scale, origin, global color and blend
+/// mode. It also adds text-specific properties such as the
+/// font to use, the character size, the font style (bold,
+/// italic, underlined), and the text to display of course.
+/// It also provides convenience functions to calculate the
+/// graphical size of the text, or to get the visual position
+/// of a given character.
+///
+/// sf::Text works in combination with the sf::Font class, which
+/// loads and provides the glyphs (visual characters) of a given font.
+///
+/// The separation of sf::Font and sf::Text allows more flexibility
+/// and better performances: indeed a sf::Font is a heavy resource,
+/// and any operation on it is slow (often too slow for real-time
+/// applications). On the other side, a sf::Text is a lightweight
+/// object which can combine the glyphs data and metrics of a sf::Font
+/// to display any text on a render target.
+///
+/// It is important to note that the sf::Text instance doesn't
+/// copy the font that it uses, it only keeps a reference to it.
+/// Thus, a sf::Font must not be destructed while it is
+/// used by a sf::Text (i.e. never write a function that
+/// uses a local sf::Font instance for creating a text).
+///
+/// Usage example:
+/// \code
+/// // Declare and load a font
+/// sf::Font font;
+/// font.LoadFromFile("arial.ttf");
+/// 
+/// // Create a text
+/// sf::Text text("hello");
+/// text.SetFont(font);
+/// text.SetCharacterSize(30);
+/// text.SetStyle(sf::Text::Regular);
+///
+/// // Display it
+/// window.Draw(text); // window is a sf::RenderWindow
+/// \endcode
+///
+/// \see sf::Font
+///
+////////////////////////////////////////////////////////////
