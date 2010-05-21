@@ -76,9 +76,9 @@ struct ContextSettings
 /// ContextSettings allows to define several advanced settings
 /// of the OpenGL context attached to a window. All these
 /// settings have no impact on the regular SFML rendering
-/// (graphics module), so you may need to use this structure
-/// only if you're using SFML as a windowing system for
-/// custom OpenGL rendering.
+/// (graphics module) -- except the anti-aliasing level, so
+/// you may need to use this structure only if you're using
+/// SFML as a windowing system for custom OpenGL rendering.
 ///
 /// The DepthBits and StencilBits members define the number
 /// of bits per pixel requested for the (respectively) depth

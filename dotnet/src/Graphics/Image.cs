@@ -178,7 +178,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public void Copy(Image source, uint destX, uint destY)
             {
-                sfImage_Copy(This, source.This, destX, destY, new IntRect(0, 0, 0, 0));
+                Copy(source, destX, destY, new IntRect(0, 0, 0, 0));
             }
 
             ////////////////////////////////////////////////////////////
@@ -194,7 +194,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public void Copy(Image source, uint destX, uint destY, IntRect sourceRect)
             {
-                sfImage_Copy(This, source.This, destX, destY, sourceRect);
+                sfImage_CopyImage(This, source.This, destX, destY, sourceRect);
             }
 
             ////////////////////////////////////////////////////////////
@@ -414,7 +414,7 @@ namespace SFML
             static extern bool sfImage_CopyScreen(IntPtr This, IntPtr Window, IntRect SourceRect);
 
             [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfImage_Copy(IntPtr This, IntPtr Source, uint DestX, uint DestY, IntRect SourceRect);
+            static extern void sfImage_CopyImage(IntPtr This, IntPtr Source, uint DestX, uint DestY, IntRect SourceRect);
 
             [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfImage_SetPixel(IntPtr This, uint X, uint Y, Color Col);
