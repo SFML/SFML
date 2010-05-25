@@ -522,8 +522,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             // Mouse position is in screen coordinates, convert it to window coordinates
             POINT position;
-            position.x = LOWORD(lParam);
-            position.y = HIWORD(lParam);
+            position.x = static_cast<Int16>(LOWORD(lParam));
+            position.y = static_cast<Int16>(HIWORD(lParam));
             ScreenToClient(myHandle, &position);
 
             Event event;
@@ -541,8 +541,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.Type               = Event::MouseButtonPressed;
             event.MouseButton.Button = Mouse::Left;
-            event.MouseButton.X      = LOWORD(lParam);
-            event.MouseButton.Y      = HIWORD(lParam);
+            event.MouseButton.X      = static_cast<Int16>(LOWORD(lParam));
+            event.MouseButton.Y      = static_cast<Int16>(HIWORD(lParam));
             PushEvent(event);
             break;
         }
@@ -553,8 +553,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.Type               = Event::MouseButtonReleased;
             event.MouseButton.Button = Mouse::Left;
-            event.MouseButton.X      = LOWORD(lParam);
-            event.MouseButton.Y      = HIWORD(lParam);
+            event.MouseButton.X      = static_cast<Int16>(LOWORD(lParam));
+            event.MouseButton.Y      = static_cast<Int16>(HIWORD(lParam));
             PushEvent(event);
             break;
         }
@@ -565,8 +565,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.Type               = Event::MouseButtonPressed;
             event.MouseButton.Button = Mouse::Right;
-            event.MouseButton.X      = LOWORD(lParam);
-            event.MouseButton.Y      = HIWORD(lParam);
+            event.MouseButton.X      = static_cast<Int16>(LOWORD(lParam));
+            event.MouseButton.Y      = static_cast<Int16>(HIWORD(lParam));
             PushEvent(event);
             break;
         }
@@ -577,8 +577,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.Type               = Event::MouseButtonReleased;
             event.MouseButton.Button = Mouse::Right;
-            event.MouseButton.X      = LOWORD(lParam);
-            event.MouseButton.Y      = HIWORD(lParam);
+            event.MouseButton.X      = static_cast<Int16>(LOWORD(lParam));
+            event.MouseButton.Y      = static_cast<Int16>(HIWORD(lParam));
             PushEvent(event);
             break;
         }
@@ -589,8 +589,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.Type               = Event::MouseButtonPressed;
             event.MouseButton.Button = Mouse::Middle;
-            event.MouseButton.X      = LOWORD(lParam);
-            event.MouseButton.Y      = HIWORD(lParam);
+            event.MouseButton.X      = static_cast<Int16>(LOWORD(lParam));
+            event.MouseButton.Y      = static_cast<Int16>(HIWORD(lParam));
             PushEvent(event);
             break;
         }
@@ -601,8 +601,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.Type               = Event::MouseButtonReleased;
             event.MouseButton.Button = Mouse::Middle;
-            event.MouseButton.X      = LOWORD(lParam);
-            event.MouseButton.Y      = HIWORD(lParam);
+            event.MouseButton.X      = static_cast<Int16>(LOWORD(lParam));
+            event.MouseButton.Y      = static_cast<Int16>(HIWORD(lParam));
             PushEvent(event);
             break;
         }
@@ -613,8 +613,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.Type               = Event::MouseButtonPressed;
             event.MouseButton.Button = HIWORD(wParam) == XBUTTON1 ? Mouse::XButton1 : Mouse::XButton2;
-            event.MouseButton.X      = LOWORD(lParam);
-            event.MouseButton.Y      = HIWORD(lParam);
+            event.MouseButton.X      = static_cast<Int16>(LOWORD(lParam));
+            event.MouseButton.Y      = static_cast<Int16>(HIWORD(lParam));
             PushEvent(event);
             break;
         }
@@ -625,8 +625,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.Type               = Event::MouseButtonReleased;
             event.MouseButton.Button = HIWORD(wParam) == XBUTTON1 ? Mouse::XButton1 : Mouse::XButton2;
-            event.MouseButton.X      = LOWORD(lParam);
-            event.MouseButton.Y      = HIWORD(lParam);
+            event.MouseButton.X      = static_cast<Int16>(LOWORD(lParam));
+            event.MouseButton.Y      = static_cast<Int16>(HIWORD(lParam));
             PushEvent(event);
             break;
         }
@@ -652,8 +652,8 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
             Event event;
             event.Type        = Event::MouseMoved;
-            event.MouseMove.X = LOWORD(lParam);
-            event.MouseMove.Y = HIWORD(lParam);
+            event.MouseMove.X = static_cast<Int16>(LOWORD(lParam));
+            event.MouseMove.Y = static_cast<Int16>(HIWORD(lParam));
             PushEvent(event);
             break;
         }

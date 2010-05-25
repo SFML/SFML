@@ -45,7 +45,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpenGL.cs" />
+    <Compile Include="OpenGL.cs">
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Tao.FreeGlut, Version=2.4.0.2, Culture=neutral, PublicKeyToken=6e602a6ad6c0d06d, processorArchitecture=MSIL">
