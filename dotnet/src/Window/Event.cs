@@ -228,6 +228,7 @@ namespace SFML
         /// Keyboard event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
         public struct KeyEvent
         {
             /// <summary>Code of the key (see KeyCode enum)</summary>
@@ -248,6 +249,7 @@ namespace SFML
         /// Text event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
         public struct TextEvent
         {
             /// <summary>UTF-32 value of the character</summary>
@@ -259,6 +261,7 @@ namespace SFML
         /// Mouse move event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
         public struct MouseMoveEvent
         {
             /// <summary>X coordinate of the mouse cursor</summary>
@@ -273,6 +276,7 @@ namespace SFML
         /// Mouse buttons event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
         public struct MouseButtonEvent
         {
             /// <summary>Code of the button (see MouseButton enum)</summary>
@@ -290,6 +294,7 @@ namespace SFML
         /// Mouse wheel event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
         public struct MouseWheelEvent
         {
             /// <summary>Scroll amount</summary>
@@ -307,6 +312,7 @@ namespace SFML
         /// Joystick axis move event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
         public struct JoyMoveEvent
         {
             /// <summary>Index of the joystick which triggered the event</summary>
@@ -324,6 +330,7 @@ namespace SFML
         /// Joystick buttons event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
         public struct JoyButtonEvent
         {
             /// <summary>Index of the joystick which triggered the event</summary>
@@ -338,6 +345,7 @@ namespace SFML
         /// Size event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
         public struct SizeEvent
         {
             /// <summary>New width of the window</summary>
