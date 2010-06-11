@@ -70,7 +70,7 @@ public :
     /// to the current locale. See the other constructor for
     /// explicitely passing the locale to use.
     ///
-    /// \param ansiString ANSI character to convert
+    /// \param ansiChar ANSI character to convert
     ///
     ////////////////////////////////////////////////////////////
     String(char ansiChar);

@@ -111,6 +111,8 @@ public :
     /// If you use a timeout and no socket is ready before the timeout
     /// is over, the function returns false.
     ///
+    /// \param timeout Maximum time to wait (use 0 for infinity)
+    ///
     /// \return True if there are sockets ready, false otherwise
     ///
     /// \see IsReady
@@ -127,6 +129,8 @@ public :
     /// that there is data available to read.
     /// Note that if this function returns true for a TcpListener,
     /// this means that it is ready to accept a new connection.
+    ///
+    /// \param socket Socket to test
     ///
     /// \return True if the socket is ready to read, false otherwise
     ///

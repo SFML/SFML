@@ -641,16 +641,8 @@ EXCLUDE_SYMLINKS       = NO
 # for example use the pattern */test/*
 
 EXCLUDE_PATTERNS       = .svn \
-                         stb_vorbis \
-                         libjpeg \
-                         libpng \
-                         SOIL \
-                         zlib \
-                         glew \
-                         glext \
                          Linux \
                          Unix \
-                         Attic \
                          OSX*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names 
