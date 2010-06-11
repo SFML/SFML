@@ -416,6 +416,20 @@ private :
 /// with sf::Shape is even more limited, as shapes don't use
 /// any texture.
 ///
+/// Shaders can also be used to apply global post-effects to the
+/// current contents of the target (like the old sf::PostFx class
+/// in SFML 1). This can be done in two different ways:
+/// \li draw everything to a sf::RenderImage, then draw it to
+///     the main target using the shader
+/// \li draw everything directly to the main target, then use
+///     sf::Image::CopyScreen to copy its contents to an image and
+///     draw it to the main target using the shader
+///
+/// The first technique is more optimized because it doesn't involve
+/// retrieving the target's pixels to system memory, but the
+/// second one doesn't impact the rendering process and can be
+/// easily inserted anywhere.
+///
 /// Like sf::Image that can be used as a raw OpenGL texture,
 /// sf::Shader can also be used directly as a raw fragment
 /// shader for custom OpenGL geometry.

@@ -241,7 +241,6 @@ public :
 /// std::size_t received = 0;
 /// socket.Receive(buffer, sizeof(buffer), received);
 /// std::cout << "The server said: " << buffer << std::endl;
-/// }
 ///
 /// // ----- The server -----
 ///
@@ -263,7 +262,6 @@ public :
 /// // Send an answer
 /// std::string message = "Welcome, client";
 /// socket.Send(message.c_str(), message.size() + 1);
-/// }
 /// \endcode
 ///
 /// \see sf::Socket, sf::UdpSocket, sf::Packet

@@ -244,7 +244,30 @@ private :
 ////////////////////////////////////////////////////////////
 /// \class sf::Sprite
 ///
-/// ...
+/// sf::Sprite is a drawable class that allows to easily display
+/// an image (or a part of it) on a render target.
+///
+/// It inherits all the functions from sf::Drawable:
+/// position, rotation, scale, origin, global color and blend
+/// mode. It also adds sprite-specific properties such as the
+/// image to use, the part of it to display, and some convenience
+/// functions to flip or resize the sprite.
+///
+/// sf::Sprite works in combination with the sf::Image class, which
+/// loads and provides the pixel data of a given image.
+///
+/// The separation of sf::Sprite and sf::Image allows more flexibility
+/// and better performances: indeed a sf::Image is a heavy resource,
+/// and any operation on it is slow (often too slow for real-time
+/// applications). On the other side, a sf::Sprite is a lightweight
+/// object which can use the pixel data of a sf::Image and draw
+/// it with its own transformation / color / blending attributes.
+///
+/// It is important to note that the sf::Sprite instance doesn't
+/// copy the image that it uses, it only keeps a reference to it.
+/// Thus, a sf::Image must not be destructed while it is
+/// used by a sf::Sprite (i.e. never write a function that
+/// uses a local sf::Image instance for creating a sprite).
 ///
 /// Usage example:
 /// \code

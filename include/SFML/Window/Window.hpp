@@ -423,7 +423,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Change the joystick threshold
     ///
-    /// Ths joystick threshold is the value below which
+    /// The joystick threshold is the value below which
     /// no JoyMoved event will be generated.
     ///
     /// The threshold value is 0.1 by default.

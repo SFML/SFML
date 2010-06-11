@@ -238,7 +238,6 @@ public :
 /// unsigned short port;
 /// socket.Receive(buffer, sizeof(buffer), received, sender, port);
 /// std::cout << sender.ToString() << " said: " << buffer << std::endl;
-/// }
 ///
 /// // ----- The server -----
 ///
@@ -257,7 +256,6 @@ public :
 /// // Send an answer
 /// std::string message = "Welcome " + sender.ToString();
 /// socket.Send(message.c_str(), message.size() + 1, sender, port);
-/// }
 /// \endcode
 ///
 /// \see sf::Socket, sf::TcpSocket, sf::Packet

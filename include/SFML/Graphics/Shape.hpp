@@ -429,3 +429,80 @@ private :
 
 
 #endif // SFML_SHAPE_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Shape
+///
+/// sf::Shape is a drawable class that allows to define and
+/// display a custom convex shape on a render target.
+///
+/// It is important to keep in mind that shapes must always be
+/// convex, otherwise they may not be drawn correctly. Moreover,
+/// the points must be added in the right order; using a random
+/// order would also result in an incorrect shape.
+///
+/// A shape is made of points that have their own individual
+/// attributes:
+/// \li position (relative to the origin of the shape)
+/// \li color
+/// \li outline color
+///
+/// Shapes have an outline that can be enabled or not. You can
+/// control the thickness of the outline with the SetOutlineWidth
+/// function.
+///
+/// They also inherits all the functions from sf::Drawable:
+/// position, rotation, scale, origin, global color and blend
+/// mode.
+///
+/// Some static functions are provided to directly create common
+/// shapes such as lines, rectangles and circles:
+/// \code
+/// sf::Shape line = sf::Shape::Line(start, end, thickness, color);
+/// sf::Shape rectangle = sf::Shape::Rectangle(rect, thickness);
+/// sf::Shape circle = sf::Shape::Circle(center, radius, color);
+/// \endcode
+///
+/// A common mistake is to mix the individual points
+/// positions / colors and the global position / color of the shape.
+/// They are completely separate attributes that are combined
+/// when the shape is drawn (positions are added, colors are multiplied).
+/// \code
+/// sf::Shape line = sf::Shape::Line(sf::Vector2f(100, 100), sf::Vector2f(200, 200), 10, sf::Color::Red);
+///
+/// // --> line.GetPosition() is (0, 0), *not* (100, 100)
+/// // --> line.GetColor() is white, *not* red
+/// \endcode
+/// So if you plan to change the position / color of your shape
+/// after it is created, you'd better create the points around
+/// the origin and with white color, and use only the global
+/// position / color (SetPosition, SetColor).
+///
+/// Usage example:
+/// \code
+/// // Create a shape
+/// sf::Shape shape;
+///
+/// // Define its points
+/// shape.AddPoint(10, 10, sf::Color::White, sf::Color::Red);
+/// shape.AddPoint(50, 10, sf::Color::White, sf::Color::Green);
+/// shape.AddPoint(10, 50, sf::Color::White, sf::Color::Blue);
+///
+/// // Enable outline only
+/// shape.EnableFill(false);
+/// shape.EnableOutline(true);
+/// shape.SetOutlineWidth(10);
+///
+/// // Display it
+/// window.Draw(shape); // window is a sf::RenderWindow
+///
+/// // Display static shapes
+/// window.Draw(sf::Shape::Line(0, 0, 10, 20, sf::Color::Red));
+/// window.Draw(sf::Shape::Rectangle(100, 1000, 50, 20, sf::Color::Green));
+/// window.Draw(sf::Shape::Circle(500, 500, 20, sf::Color::Blue, 5, sf::Color::Black));
+/// \endcode
+///
+/// \see sf::Image
+///
+////////////////////////////////////////////////////////////
