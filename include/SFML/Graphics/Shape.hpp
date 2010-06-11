@@ -79,7 +79,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of points composing the shape
     ///
-    /// \param Total number of points
+    /// \return Total number of points
     ///
     ////////////////////////////////////////////////////////////
     unsigned int GetPointsCount() const;
@@ -202,7 +202,7 @@ public :
     /// \a index, if it is out of bounds (ie. in the range
     /// [0, GetPointscount() - 1]) the behaviour is undefined.
     ///
-    /// \param Index index of the point
+    /// \param index Index of the point
     ///
     /// \return Color of the index-th point
     ///
@@ -246,10 +246,10 @@ public :
     /// sf::Shape line = sf::Shape::Line(0, 0, 10, 20, 2.5f, sf::Color::Green);
     /// \endcode
     ///
-    /// \param x0           X coordinate of the start point
-    /// \param y0           Y coordinate of the start point
-    /// \param x1           X coordinate of the end point
-    /// \param y1           Y coordinate of the end point
+    /// \param p1x          X coordinate of the start point
+    /// \param p1y          Y coordinate of the start point
+    /// \param p2x          X coordinate of the end point
+    /// \param p2y          Y coordinate of the end point
     /// \param thickness    Thickness of the line
     /// \param color        Color of the shape's points
     /// \param outline      Outline width

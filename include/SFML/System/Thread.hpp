@@ -48,7 +48,7 @@ class SFML_API Thread : NonCopyable
 {
 public :
 
-    typedef void (*FuncType)(void*); // Type of functions that can be used as thread entry points
+    typedef void (*FuncType)(void*); ///< Type of functions that can be used as thread entry points
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the thread from a function pointer

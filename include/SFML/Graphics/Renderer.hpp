@@ -249,6 +249,8 @@ public :
     /// renderer.End();
     /// \endcode
     ///
+    /// \param type Type of the primitives that are going to be rendered
+    ///
     /// \see End
     ///
     ////////////////////////////////////////////////////////////

@@ -373,7 +373,7 @@ public :
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    Image& operator =(const Image& other);
+    Image& operator =(const Image& right);
 
 private :
 

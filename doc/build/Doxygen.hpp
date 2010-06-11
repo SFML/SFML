@@ -4,7 +4,7 @@
 /// \section welcome Welcome
 /// Welcome to the official SFML documentation. Here you will find a detailed
 /// view of all the SFML <a href="./annotated.htm">classes</a>, as well as source
-/// <a href="./files.htm">files</a>. <br/>
+/// <a href="./files.htm">files</a>. <br>
 /// If you are looking for tutorials, you can visit the official website
 /// at <a href="http://www.sfml-dev.org/tutorials/">www.sfml-dev.org</a>.
 ///

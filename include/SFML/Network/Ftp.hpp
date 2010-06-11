@@ -401,7 +401,7 @@ public :
     /// Use this function with caution, the directory will
     /// be removed permanently!
     ///
-    /// \param Name Name of the directory to remove
+    /// \param name Name of the directory to remove
     ///
     /// \return Server response to the request
     ///
@@ -457,7 +457,6 @@ public :
     /// \param remoteFile Filename of the distant file to download
     /// \param localPath  Where to put to file on the local computer
     /// \param mode       Transfer mode
-    /// \param handler    Object that will be notified of the download progress
     ///
     /// \return Server response to the request
     ///
@@ -480,7 +479,6 @@ public :
     /// \param localFile  Path of the local file to upload
     /// \param remotePath Where to put to file on the server
     /// \param mode       Transfer mode
-    /// \param handler    Object that will be notified of the upload progress
     ///
     /// \return Server response to the request
     ///

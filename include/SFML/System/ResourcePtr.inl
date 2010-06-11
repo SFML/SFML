@@ -63,12 +63,12 @@ ResourcePtr<T>::~ResourcePtr()
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-ResourcePtr<T>& ResourcePtr<T>::operator =(const ResourcePtr<T>& other)
+ResourcePtr<T>& ResourcePtr<T>::operator =(const ResourcePtr<T>& right)
 {
     if (myResource)
         myResource->Disconnect(*this);
 
-    myResource = other.myResource;
+    myResource = right.myResource;
 
     if (myResource)
         myResource->Connect(*this);

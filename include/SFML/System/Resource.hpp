@@ -77,12 +77,12 @@ protected :
     ////////////////////////////////////////////////////////////
     /// \brief Assignment operator
     ///
-    /// \param other Instance to copy
+    /// \param right Instance to assign
     ///
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    Resource<T>& operator =(const Resource<T>& other);
+    Resource<T>& operator =(const Resource<T>& right);
 
 private :
 
@@ -162,12 +162,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Assignment operator for a ResourcePtr parameter
     ///
-    /// \param other ResourcePtr to assign
+    /// \param right Instance to assign
     ///
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    ResourcePtr<T>& operator =(const ResourcePtr<T>& other);
+    ResourcePtr<T>& operator =(const ResourcePtr<T>& right);
 
     ////////////////////////////////////////////////////////////
     /// \brief Assignment operator for a raw pointer parameter

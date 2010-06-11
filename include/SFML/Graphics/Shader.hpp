@@ -144,7 +144,7 @@ public :
     /// \see SetTexture
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& Name, float x, float y);
+    void SetParameter(const std::string& name, float x, float y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 3-components vector parameter of the shader
@@ -166,7 +166,7 @@ public :
     /// \see SetTexture
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& Name, float x, float y, float z);
+    void SetParameter(const std::string& name, float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 4-components vector parameter of the shader
@@ -189,7 +189,7 @@ public :
     /// \see SetTexture
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& Name, float x, float y, float z, float w);
+    void SetParameter(const std::string& name, float x, float y, float z, float w);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 2-components vector parameter of the shader

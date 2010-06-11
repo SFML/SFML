@@ -553,9 +553,9 @@ unsigned int Image::GetMaximumSize()
 
 
 ////////////////////////////////////////////////////////////
-Image& Image::operator =(const Image& other)
+Image& Image::operator =(const Image& right)
 {
-    Image temp(other);
+    Image temp(right);
 
     std::swap(myWidth,          temp.myWidth);
     std::swap(myHeight,         temp.myHeight);

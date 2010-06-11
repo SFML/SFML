@@ -226,9 +226,9 @@ float SoundBuffer::GetDuration() const
 
 
 ////////////////////////////////////////////////////////////
-SoundBuffer& SoundBuffer::operator =(const SoundBuffer& other)
+SoundBuffer& SoundBuffer::operator =(const SoundBuffer& right)
 {
-    SoundBuffer temp(other);
+    SoundBuffer temp(right);
 
     std::swap(mySamples,  temp.mySamples);
     std::swap(myBuffer,   temp.myBuffer);
