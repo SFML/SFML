@@ -112,7 +112,31 @@ namespace SFML
                     {
                         uint Width  = (uint)pixels.GetLength(0);
                         uint Height = (uint)pixels.GetLength(1);
-                        SetThis(sfImage_CreateFromPixels(Width, Height, PixelsPtr));
+                        SetThis(sfImage_CreateFromPixels(Width, Height, (byte*)PixelsPtr));
+                    }
+                }
+
+                if (This == IntPtr.Zero)
+                    throw new LoadingFailedException("image");
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Construct the image directly from an array of pixels
+            /// </summary>
+            /// <param name="width">Image width</param>
+            /// <param name="height">Image height</param>
+            /// <param name="pixels">array containing the pixels</param>
+            /// <exception cref="LoadingFailedException" />
+            ////////////////////////////////////////////////////////////
+            public Image(uint width, uint height, byte[] pixels) :
+                base(IntPtr.Zero)
+            {
+                unsafe
+                {
+                    fixed (byte* PixelsPtr = pixels)
+                    {
+                        SetThis(sfImage_CreateFromPixels(width, height, PixelsPtr));
                     }
                 }
 
@@ -390,7 +414,7 @@ namespace SFML
             static extern IntPtr sfImage_CreateFromColor(uint Width, uint Height, Color Col);
 
             [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            unsafe static extern IntPtr sfImage_CreateFromPixels(uint Width, uint Height, Color* Pixels);
+            unsafe static extern IntPtr sfImage_CreateFromPixels(uint Width, uint Height, byte* Pixels);
 
             [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfImage_CreateFromFile(string Filename);
