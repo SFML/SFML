@@ -522,10 +522,10 @@ FloatRect Image::GetTexCoords(const IntRect& rect) const
 
         if (myPixelsFlipped)
         {
-            return FloatRect( rect.Left               / width,
-                             (rect.Top + rect.Height) / height,
-                              rect.Width              / width,
-                             -rect.Height             / height);
+            return FloatRect( rect.Left           / width,
+                             (myWidth - rect.Top) / height,
+                              rect.Width          / width,
+                             -rect.Height         / height);
         }
         else
         {
