@@ -27,11 +27,11 @@
 ///         return EXIT_FAILURE;
 ///     sf::Sprite sprite(image);
 /// 
-///     // Create a graphical string to display
+///     // Create a graphical text to display
 ///     sf::Font font;
 ///     if (!font.LoadFromFile("arial.ttf"))
 ///         return EXIT_FAILURE;
-///     sf::String text("Hello SFML", font, 50);
+///     sf::Text text("Hello SFML", font, 50);
 /// 
 ///     // Load a music to play
 ///     sf::Music music;

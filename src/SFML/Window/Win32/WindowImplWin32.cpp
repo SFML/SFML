@@ -200,7 +200,7 @@ WindowImplWin32::~WindowImplWin32()
 
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplWin32::GetHandle() const
+WindowHandle WindowImplWin32::GetSystemHandle() const
 {
     return myHandle;
 }

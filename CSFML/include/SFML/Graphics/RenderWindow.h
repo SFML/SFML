@@ -288,6 +288,16 @@ CSFML_API float sfRenderWindow_GetFrameTime(const sfRenderWindow* renderWindow);
 CSFML_API void sfRenderWindow_SetJoystickThreshold(sfRenderWindow* renderWindow, float threshold);
 
 ////////////////////////////////////////////////////////////
+/// Retrieve the Os-specific handle of a window
+///
+/// \param renderWindow : Renderwindow object
+///
+/// \return Window handle
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfWindowHandle sfRenderWindow_GetSystemHandle(const sfRenderWindow* renderWindow);
+
+////////////////////////////////////////////////////////////
 /// Draw something on a renderwindow
 ///
 /// \param renderWindow :          Renderwindow to draw in

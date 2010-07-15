@@ -351,6 +351,15 @@ void sfRenderWindow_SetJoystickThreshold(sfRenderWindow* renderWindow, float thr
 
 
 ////////////////////////////////////////////////////////////
+/// Retrieve the Os-specific handle of a window
+////////////////////////////////////////////////////////////
+sfWindowHandle sfRenderWindow_GetSystemHandle(const sfRenderWindow* renderWindow)
+{
+    CSFML_CALL_RETURN(renderWindow, GetSystemHandle(), 0);
+}
+
+
+////////////////////////////////////////////////////////////
 /// Draw something on a renderwindow
 ////////////////////////////////////////////////////////////
 void sfRenderWindow_DrawSprite(sfRenderWindow* renderWindow, const sfSprite* sprite)

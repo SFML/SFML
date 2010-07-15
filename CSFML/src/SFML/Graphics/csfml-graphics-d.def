@@ -223,6 +223,7 @@ EXPORTS
 	sfRenderWindow_SetFramerateLimit
 	sfRenderWindow_GetFrameTime
 	sfRenderWindow_SetJoystickThreshold
+	sfRenderWindow_GetSystemHandle
 	sfRenderWindow_DrawSprite
 	sfRenderWindow_DrawText
 	sfRenderWindow_DrawShape

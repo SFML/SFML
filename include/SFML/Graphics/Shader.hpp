@@ -279,7 +279,7 @@ public :
     void Bind() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Bind the shader (deactivate it)
+    /// \brief Unbind the shader (deactivate it)
     ///
     /// This function is normally for internal use only, unless
     /// you want to use the shader with a custom OpenGL rendering

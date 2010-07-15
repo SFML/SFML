@@ -76,7 +76,7 @@ myOwnsWindow(false)
     myDisplay = static_cast<const WindowImplX11*>(owner)->GetDisplay();
 
     // Get the owner window and its device context
-    myWindow = static_cast<Window>(owner->GetHandle());
+    myWindow = static_cast<Window>(owner->GetSystemHandle());
 
     // Create the context
     if (myWindow)

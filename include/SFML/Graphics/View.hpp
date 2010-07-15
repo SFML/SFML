@@ -144,13 +144,6 @@ public :
     /// \brief Reset the view to the given rectangle
     ///
     /// Note that this function resets the rotation angle to 0.
-    /// It is a function provided for convenience, equivalent to the
-    /// following calls:
-    /// \code
-    /// view.SetCenter(rectangle.GetCenter());
-    /// view.SetSize(rectangle.GetSize());
-    /// view.SetRotation(0);
-    /// \endcode
     ///
     /// \param rectangle Rectangle defining the zone to display
     ///

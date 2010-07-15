@@ -313,6 +313,7 @@ float sfWindow_GetFrameTime(const sfWindow* window)
     CSFML_CALL_RETURN(window, GetFrameTime(), 0.f)
 }
 
+
 ////////////////////////////////////////////////////////////
 /// Change the joystick threshold, ie. the value below which
 /// no move event will be generated
@@ -320,4 +321,13 @@ float sfWindow_GetFrameTime(const sfWindow* window)
 void sfWindow_SetJoystickThreshold(sfWindow* window, float threshold)
 {
     CSFML_CALL(window, SetJoystickThreshold(threshold))
+}
+
+
+////////////////////////////////////////////////////////////
+/// Retrieve the Os-specific handle of a window
+////////////////////////////////////////////////////////////
+sfWindowHandle sfWindow_GetSystemHandle(const sfWindow* window)
+{
+    CSFML_CALL_RETURN(window, GetSystemHandle(), 0);
 }

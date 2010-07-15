@@ -277,7 +277,7 @@ WindowImplX11::~WindowImplX11()
 
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplX11::GetHandle() const
+WindowHandle WindowImplX11::GetSystemHandle() const
 {
     return myWindow;
 }

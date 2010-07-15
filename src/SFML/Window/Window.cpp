@@ -385,6 +385,13 @@ void Window::SetJoystickThreshold(float threshold)
 
 
 ////////////////////////////////////////////////////////////
+WindowHandle Window::GetSystemHandle() const
+{
+    return myWindow ? myWindow->GetSystemHandle() : 0;
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::OnCreate()
 {
     // Nothing by default

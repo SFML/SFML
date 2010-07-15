@@ -296,5 +296,15 @@ CSFML_API float sfWindow_GetFrameTime(const sfWindow* window);
 ////////////////////////////////////////////////////////////
 CSFML_API void sfWindow_SetJoystickThreshold(sfWindow* window, float threshold);
 
+////////////////////////////////////////////////////////////
+/// Retrieve the Os-specific handle of a window
+///
+/// \param window : Window object
+///
+/// \return Window handle
+///
+////////////////////////////////////////////////////////////
+CSFML_API sfWindowHandle sfWindow_GetSystemHandle(const sfWindow* window);
+
 
 #endif // SFML_WINDOW_H

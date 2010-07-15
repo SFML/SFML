@@ -71,7 +71,7 @@ myContext      (NULL),
 myOwnsWindow   (false)
 {
     // Get the owner window and its device context
-    myWindow = static_cast<HWND>(owner->GetHandle());
+    myWindow = static_cast<HWND>(owner->GetSystemHandle());
     myDeviceContext = GetDC(myWindow);
 
     // Create the context

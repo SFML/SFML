@@ -296,6 +296,16 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// OS-specific handle of the window
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public override IntPtr SystemHandle
+            {
+                get {return sfRenderWindow_GetSystemHandle(This);}
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Default view of the window
             /// </summary>
             ////////////////////////////////////////////////////////////
@@ -591,6 +601,9 @@ namespace SFML
 
             [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_ConvertCoords(IntPtr This, uint WindowX, uint WindowY, out float ViewX, out float ViewY, IntPtr TargetView);
+
+            [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfRenderWindow_GetSystemHandle(IntPtr This);
 
             #endregion
         }

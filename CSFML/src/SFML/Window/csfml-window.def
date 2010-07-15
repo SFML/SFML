@@ -33,6 +33,7 @@ EXPORTS
 	sfWindow_SetFramerateLimit
 	sfWindow_GetFrameTime
 	sfWindow_SetJoystickThreshold
+	sfWindow_GetSystemHandle
 	sfContext_Create
 	sfContext_Destroy
 	sfContext_SetActive

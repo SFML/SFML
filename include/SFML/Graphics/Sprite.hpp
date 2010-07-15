@@ -277,9 +277,9 @@ private :
 /// 
 /// // Create a sprite
 /// sf::Sprite sprite;
-/// text.SetImage(image);
-/// text.SetSubRect(sf::IntRect(10, 10, 50, 30));
-/// text.Resize(100, 60);
+/// sprite.SetImage(image);
+/// sprite.SetSubRect(sf::IntRect(10, 10, 50, 30));
+/// sprite.Resize(100, 60);
 ///
 /// // Display it
 /// window.Draw(sprite); // window is a sf::RenderWindow

@@ -130,7 +130,7 @@ public :
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle GetHandle() const = 0;
+    virtual WindowHandle GetSystemHandle() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor

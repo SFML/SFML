@@ -343,6 +343,16 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// OS-specific handle of the window
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public virtual IntPtr SystemHandle
+            {
+                get {return sfWindow_GetSystemHandle(This);}
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Wait for a new event and dispatch it to the corresponding
             /// event handler
             /// </summary>
@@ -642,6 +652,9 @@ namespace SFML
 
             [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetJoystickThreshold(IntPtr This, float Threshold);
+
+            [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfWindow_GetSystemHandle(IntPtr This);
             #endregion
         }
     }

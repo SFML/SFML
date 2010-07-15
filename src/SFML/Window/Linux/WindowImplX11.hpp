@@ -89,7 +89,7 @@ private :
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle GetHandle() const;
+    virtual WindowHandle GetSystemHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
