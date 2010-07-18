@@ -211,6 +211,12 @@ PySfImage_SetSmooth (PySfImage *self, PyObject *args)
 }
 
 static PyObject *
+PySfImage_IsSmooth (PySfImage *self)
+{
+	return PyBool_FromLong(self->obj->IsSmooth());
+}
+
+static PyObject *
 PySfImage_GetWidth(PySfImage *self)
 {
 	return PyLong_FromUnsignedLong(self->obj->GetWidth());
@@ -295,7 +301,8 @@ Create the image from the current contents of the given window. Return True if c
 	{"GetPixels", (PyCFunction)PySfImage_GetPixels, METH_NOARGS, "GetPixels()\nGet a string representing the array of pixels (8 bits integers RGBA). String length is GetWidth() x GetHeight() x 4. This string becomes invalid if you reload or resize the image."},
 	{"CreateMaskFromColor", (PyCFunction)PySfImage_CreateMaskFromColor, METH_O, "CreateMaskFromColor(Color)\nCreate transparency mask from a specified colorkey."},
 	{"Bind", (PyCFunction)PySfImage_Bind, METH_NOARGS, "Bind()\nBind the image for rendering."},
-	{"SetSmooth", (PyCFunction)PySfImage_SetSmooth, METH_VARARGS, "SetSmooth(Smooth)\nEnable or disable image smooth filter."},
+	{"SetSmooth", (PyCFunction)PySfImage_SetSmooth, METH_O, "SetSmooth(Smooth)\nEnable or disable image smooth filter."},
+	{"IsSmooth", (PyCFunction)PySfImage_IsSmooth, METH_NOARGS, "IsOpened(Smooth)\nTells whether the smooth filtering is enabled or not."},
 	{"GetWidth", (PyCFunction)PySfImage_GetWidth, METH_NOARGS, "GetWidth()\nReturn the width of the image."},
 	{"GetHeight", (PyCFunction)PySfImage_GetHeight, METH_NOARGS, "GetHeight()\nReturn the height of the image."},
 	{"GetTexCoords", (PyCFunction)PySfImage_GetTexCoords, METH_VARARGS, "GetTexCoords(Rect)\nConvert a subrect expressed in pixels, into float texture coordinates. Returns texture coordinates corresponding to the sub-rectangle (sf.FloatRect instance)\n\
