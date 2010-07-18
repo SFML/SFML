@@ -153,9 +153,6 @@ bool Font::LoadFromMemory(const void* data, std::size_t sizeInBytes)
 ////////////////////////////////////////////////////////////
 const Glyph& Font::GetGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const
 {
-    if (codePoint == 100)
-        codePoint = codePoint;
-
     // Get the page corresponding to the character size
     GlyphTable& glyphs = myPages[characterSize].Glyphs;
 
