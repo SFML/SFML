@@ -281,7 +281,6 @@ private :
     int*                       myRefCount;    ///< Reference counter used by implicit sharing
     mutable PageTable          myPages;       ///< Table containing the glyphs pages by character size
     mutable std::vector<Uint8> myPixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
-    mutable unsigned int       myCurrentSize; ///< Current character size in use
 };
 
 } // namespace sf

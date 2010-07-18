@@ -38,10 +38,9 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Font::Font() :
-myLibrary    (NULL),
-myFace       (NULL),
-myRefCount   (NULL),
-myCurrentSize(0)
+myLibrary (NULL),
+myFace    (NULL),
+myRefCount(NULL)
 {
 
 }
@@ -50,12 +49,11 @@ myCurrentSize(0)
 ////////////////////////////////////////////////////////////
 Font::Font(const Font& copy) :
 Resource<Font>(),
-myLibrary     (copy.myLibrary),
-myFace        (copy.myFace),
-myRefCount    (copy.myRefCount),
-myPages       (copy.myPages),
-myPixelBuffer (copy.myPixelBuffer),
-myCurrentSize (copy.myCurrentSize)
+myLibrary    (copy.myLibrary),
+myFace       (copy.myFace),
+myRefCount   (copy.myRefCount),
+myPages      (copy.myPages),
+myPixelBuffer(copy.myPixelBuffer)
 {
     // Note: as FreeType doesn't provide functions for copying/cloning,
     // we must share all the FreeType pointers
@@ -155,6 +153,9 @@ bool Font::LoadFromMemory(const void* data, std::size_t sizeInBytes)
 ////////////////////////////////////////////////////////////
 const Glyph& Font::GetGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const
 {
+    if (codePoint == 100)
+        codePoint = codePoint;
+
     // Get the page corresponding to the character size
     GlyphTable& glyphs = myPages[characterSize].Glyphs;
 
@@ -239,7 +240,6 @@ Font& Font::operator =(const Font& right)
     std::swap(myFace,        temp.myFace);
     std::swap(myPages,       temp.myPages);
     std::swap(myPixelBuffer, temp.myPixelBuffer);
-    std::swap(myCurrentSize, temp.myCurrentSize);
     std::swap(myRefCount,    temp.myRefCount);
 
     return *this;
@@ -294,10 +294,9 @@ void Font::Cleanup()
     }
 
     // Reset members
-    myLibrary     = NULL;
-    myFace        = NULL;
-    myRefCount    = NULL;
-    myCurrentSize = 0;
+    myLibrary  = NULL;
+    myFace     = NULL;
+    myRefCount = NULL;
     myPages.clear();
     myPixelBuffer.clear();
 }
@@ -496,10 +495,12 @@ bool Font::SetCurrentSize(unsigned int characterSize) const
     // FT_Set_Pixel_Sizes is an expensive function, so we must call it
     // only when necessary to avoid killing performances
 
-    if (myCurrentSize != characterSize)
+    FT_Face face = static_cast<FT_Face>(myFace);
+    FT_UShort currentSize = face->size->metrics.x_ppem;
+
+    if (currentSize != characterSize)
     {
-        myCurrentSize = characterSize;
-        return FT_Set_Pixel_Sizes(static_cast<FT_Face>(myFace), 0, characterSize) == 0;
+        return FT_Set_Pixel_Sizes(face, 0, characterSize) == 0;
     }
     else
     {
