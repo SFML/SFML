@@ -64,6 +64,7 @@ public :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Glyph
+/// \ingroup graphics
 ///
 /// A glyph is the visual representation of a character.
 ///

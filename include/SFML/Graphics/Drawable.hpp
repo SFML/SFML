@@ -41,6 +41,7 @@ class RenderTarget;
 namespace Blend
 {
     ////////////////////////////////////////////////////////////
+    /// \ingroup graphics
     /// \brief Available blending modes for drawable objects
     ///
     ////////////////////////////////////////////////////////////
@@ -524,6 +525,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Drawable
+/// \ingroup graphics
 ///
 /// sf::Drawable defines the attributes and operations that
 /// are common to all the drawable classes:

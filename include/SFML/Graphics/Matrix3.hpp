@@ -165,6 +165,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Matrix3
+/// \ingroup graphics
 ///
 /// Matrix3 is only meant for internal use, its interface is
 /// limited and its implementation is optimized for OpenGL

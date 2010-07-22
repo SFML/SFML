@@ -77,6 +77,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Lock
+/// \ingroup system
 ///
 /// sf::Lock is a RAII wrapper for sf::Mutex. By unlocking
 /// it in its destructor, it ensures that the mutex will

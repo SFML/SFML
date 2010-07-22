@@ -228,6 +228,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Sound
+/// \ingroup audio
 ///
 /// sf::Sound is the class to use to play sounds.
 /// It provides:

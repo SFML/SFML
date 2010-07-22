@@ -104,6 +104,7 @@ public :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::TcpListener
+/// \ingroup network
 ///
 /// A listener socket is a special type of socket that listens to
 /// a given port and waits for connections on that port.

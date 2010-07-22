@@ -461,6 +461,7 @@ private :
 };
 
 ////////////////////////////////////////////////////////////
+/// \relates String
 /// \brief Overload of == operator to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
@@ -472,6 +473,7 @@ private :
 SFML_API bool operator ==(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates String
 /// \brief Overload of != operator to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
@@ -483,6 +485,7 @@ SFML_API bool operator ==(const String& left, const String& right);
 SFML_API bool operator !=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates String
 /// \brief Overload of < operator to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
@@ -494,6 +497,7 @@ SFML_API bool operator !=(const String& left, const String& right);
 SFML_API bool operator <(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates String
 /// \brief Overload of > operator to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
@@ -505,6 +509,7 @@ SFML_API bool operator <(const String& left, const String& right);
 SFML_API bool operator >(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates String
 /// \brief Overload of <= operator to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
@@ -516,6 +521,7 @@ SFML_API bool operator >(const String& left, const String& right);
 SFML_API bool operator <=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates String
 /// \brief Overload of >= operator to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
@@ -527,6 +533,7 @@ SFML_API bool operator <=(const String& left, const String& right);
 SFML_API bool operator >=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates String
 /// \brief Overload of binary + operator to concatenate two strings
 ///
 /// \param left  Left operand (a string)
@@ -545,6 +552,7 @@ SFML_API String operator +(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \class sf::String
+/// \ingroup system
 ///
 /// sf::String is a utility string class defined mainly for
 /// convenience. It is a Unicode string (implemented using

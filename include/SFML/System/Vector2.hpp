@@ -61,6 +61,7 @@ public :
 };
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of unary operator -
 ///
 /// \param right Vector to negate
@@ -72,6 +73,7 @@ template <typename T>
 Vector2<T> operator -(const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator +=
 ///
 /// This operator performs a memberwise addition of both vectors,
@@ -87,6 +89,7 @@ template <typename T>
 Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator -=
 ///
 /// This operator performs a memberwise subtraction of both vectors,
@@ -102,6 +105,7 @@ template <typename T>
 Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator +
 ///
 /// \param left  Left operand (a vector)
@@ -114,6 +118,7 @@ template <typename T>
 Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator -
 ///
 /// \param left  Left operand (a vector)
@@ -126,6 +131,7 @@ template <typename T>
 Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator *
 ///
 /// \param left  Left operand (a vector)
@@ -138,6 +144,7 @@ template <typename T>
 Vector2<T> operator *(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator *
 ///
 /// \param left  Left operand (a scalar value)
@@ -150,6 +157,7 @@ template <typename T>
 Vector2<T> operator *(T left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator *=
 ///
 /// This operator performs a memberwise multiplication by \a right,
@@ -165,6 +173,7 @@ template <typename T>
 Vector2<T>& operator *=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator /
 ///
 /// \param left  Left operand (a scalar value)
@@ -177,6 +186,7 @@ template <typename T>
 Vector2<T> operator /(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator /=
 ///
 /// This operator performs a memberwise division by \a right,
@@ -192,6 +202,7 @@ template <typename T>
 Vector2<T>& operator /=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator ==
 ///
 /// This operator compares strict equality between two vectors.
@@ -206,6 +217,7 @@ template <typename T>
 bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector2
 /// \brief Overload of binary operator !=
 ///
 /// This operator compares strict difference between two vectors.
@@ -233,6 +245,7 @@ typedef Vector2<float> Vector2f;
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Vector2
+/// \ingroup system
 ///
 /// sf::Vector2 is a simple class that defines a mathematical
 /// vector with two coordinates (x and y). It can be used to

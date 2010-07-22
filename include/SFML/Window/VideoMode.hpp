@@ -105,6 +105,7 @@ public :
 };
 
 ////////////////////////////////////////////////////////////
+/// \relates VideoMode
 /// \brief Overload of == operator to compare two video modes
 ///
 /// \param left  Left operand (a video mode)
@@ -116,6 +117,7 @@ public :
 SFML_API bool operator ==(const VideoMode& left, const VideoMode& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates VideoMode
 /// \brief Overload of != operator to compare two video modes
 ///
 /// \param left  Left operand (a video mode)
@@ -127,6 +129,7 @@ SFML_API bool operator ==(const VideoMode& left, const VideoMode& right);
 SFML_API bool operator !=(const VideoMode& left, const VideoMode& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates VideoMode
 /// \brief Overload of < operator to compare video modes
 ///
 /// \param left  Left operand (a video mode)
@@ -138,6 +141,7 @@ SFML_API bool operator !=(const VideoMode& left, const VideoMode& right);
 SFML_API bool operator <(const VideoMode& left, const VideoMode& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates VideoMode
 /// \brief Overload of > operator to compare video modes
 ///
 /// \param left  Left operand (a video mode)
@@ -149,6 +153,7 @@ SFML_API bool operator <(const VideoMode& left, const VideoMode& right);
 SFML_API bool operator >(const VideoMode& left, const VideoMode& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates VideoMode
 /// \brief Overload of <= operator to compare video modes
 ///
 /// \param left  Left operand (a video mode)
@@ -160,6 +165,7 @@ SFML_API bool operator >(const VideoMode& left, const VideoMode& right);
 SFML_API bool operator <=(const VideoMode& left, const VideoMode& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates VideoMode
 /// \brief Overload of >= operator to compare video modes
 ///
 /// \param left  Left operand (a video mode)
@@ -178,6 +184,7 @@ SFML_API bool operator >=(const VideoMode& left, const VideoMode& right);
 
 ////////////////////////////////////////////////////////////
 /// \class sf::VideoMode
+/// \ingroup window
 ///
 /// A video mode is defined by a width and a height (in pixels)
 /// and a depth (in bits per pixel). Video modes are used to

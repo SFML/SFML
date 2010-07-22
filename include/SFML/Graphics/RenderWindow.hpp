@@ -165,6 +165,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::RenderWindow
+/// \ingroup graphics
 ///
 /// sf::RenderWindow is the main class of the Graphics module.
 /// It defines an OS window that can be painted using the other

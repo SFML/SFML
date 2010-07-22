@@ -48,6 +48,7 @@ SFML_API std::ostream& Err();
 
 ////////////////////////////////////////////////////////////
 /// \fn sf::Err
+/// \ingroup system
 ///
 /// By default, sf::Err() outputs to the same location as std::cerr,
 /// (-> the stderr descriptor) which is the console if there's

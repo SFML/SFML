@@ -271,6 +271,7 @@ protected :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::SoundSource
+/// \ingroup audio
 ///
 /// sf::SoundSource is not meant to be used directly, it
 /// only serves as a common base for all audio objects

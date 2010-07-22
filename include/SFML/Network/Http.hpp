@@ -407,6 +407,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Http
+/// \ingroup network
 ///
 /// sf::Http is a very simple HTTP client that allows you
 /// to communicate with a web server. You can retrieve

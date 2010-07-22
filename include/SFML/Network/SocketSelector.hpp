@@ -167,6 +167,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::SocketSelector
+/// \ingroup network
 ///
 /// Socket selectors provide a way to wait until some data is
 /// available on a set of sockets, instead of just one. This

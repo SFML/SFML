@@ -83,6 +83,7 @@ public :
 };
 
 ////////////////////////////////////////////////////////////
+/// \relates Color
 /// \brief Overload of the == operator
 ///
 /// This operator compares two colors and check if they are equal.
@@ -96,6 +97,7 @@ public :
 SFML_API bool operator ==(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Color
 /// \brief Overload of the != operator
 ///
 /// This operator compares two colors and check if they are different.
@@ -109,6 +111,7 @@ SFML_API bool operator ==(const Color& left, const Color& right);
 SFML_API bool operator !=(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Color
 /// \brief Overload of the binary + operator
 ///
 /// This operator returns the component-wise sum of two colors.
@@ -123,6 +126,7 @@ SFML_API bool operator !=(const Color& left, const Color& right);
 SFML_API Color operator +(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Color
 /// \brief Overload of the binary * operator
 ///
 /// This operator returns the component-wise multiplication
@@ -139,6 +143,7 @@ SFML_API Color operator +(const Color& left, const Color& right);
 SFML_API Color operator *(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Color
 /// \brief Overload of the binary += operator
 ///
 /// This operator computes the component-wise sum of two colors,
@@ -154,6 +159,7 @@ SFML_API Color operator *(const Color& left, const Color& right);
 SFML_API Color& operator +=(Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Color
 /// \brief Overload of the binary *= operator
 ///
 /// This operator returns the component-wise multiplication
@@ -178,6 +184,7 @@ SFML_API Color& operator *=(Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Color
+/// \ingroup graphics
 ///
 /// sf::Color is a simple color class composed of 4 components:
 /// \li Red

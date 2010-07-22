@@ -296,6 +296,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::SoundStream
+/// \ingroup audio
 ///
 /// Unlike audio buffers (see sf::SoundBuffer), audio streams
 /// are never completely loaded in memory. Instead, the audio

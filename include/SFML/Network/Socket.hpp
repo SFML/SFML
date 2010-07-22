@@ -202,6 +202,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Socket
+/// \ingroup network
 ///
 /// This class mainly defines internal stuff to be used by
 /// derived classes.

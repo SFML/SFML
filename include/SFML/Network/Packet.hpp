@@ -269,6 +269,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Packet
+/// \ingroup network
 ///
 /// Packets provide a safe and easy way to serialize data,
 /// in order to send it over the network using sockets

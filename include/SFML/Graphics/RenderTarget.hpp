@@ -311,6 +311,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::RenderTarget
+/// \ingroup graphics
 ///
 /// sf::RenderTarget defines the common behaviour of all the
 /// 2D render targets usable in the graphics module. It makes

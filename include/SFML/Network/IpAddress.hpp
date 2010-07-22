@@ -287,6 +287,7 @@ SFML_API std::ostream& operator <<(std::ostream& stream, const IpAddress& addres
 
 ////////////////////////////////////////////////////////////
 /// \class sf::IpAddress
+/// \ingroup network
 ///
 /// sf::IpAddress is a utility class for manipulating network
 /// addresses. It provides a set a implicit constructors and

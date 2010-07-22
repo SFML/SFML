@@ -221,6 +221,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::RenderImage
+/// \ingroup graphics
 ///
 /// sf::RenderImage is the little brother of sf::RenderWindow.
 /// It implements the same 2D drawing and OpenGL-related functions

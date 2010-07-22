@@ -72,6 +72,7 @@ struct ContextSettings
 
 ////////////////////////////////////////////////////////////
 /// \class sf::ContextSettings
+/// \ingroup window
 ///
 /// ContextSettings allows to define several advanced settings
 /// of the OpenGL context attached to a window. All these

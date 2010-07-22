@@ -94,6 +94,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::ThreadLocal
+/// \ingroup system
 ///
 /// This class manipulates void* parameters and thus is not
 /// appropriate for strongly-typed variables. You should rather

@@ -372,6 +372,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Renderer
+/// \ingroup graphics
 ///
 /// sf::Renderer is the abstraction layer between SFML code
 /// and the low-level drawing API (OpenGL). It manages

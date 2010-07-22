@@ -96,6 +96,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Mutex
+/// \ingroup system
 ///
 /// Mutex stands for "MUTual EXclusion". A mutex is a
 /// synchronization object, used when multiple threads are involved.

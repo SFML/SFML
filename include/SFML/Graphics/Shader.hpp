@@ -370,6 +370,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Shader
+/// \ingroup graphics
 ///
 /// Pixel shaders (or fragment shaders) are programs written
 /// using a specific language, executed directly by the

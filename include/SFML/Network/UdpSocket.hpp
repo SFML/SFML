@@ -190,6 +190,7 @@ public :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::UdpSocket
+/// \ingroup network
 ///
 /// A UDP socket is a connectionless socket. Instead of
 /// connecting once to a remote host, like TCP sockets,

@@ -532,6 +532,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Ftp
+/// \ingroup network
 ///
 /// sf::Ftp is a very simple FTP client that allows you
 /// to communicate with a FTP server. The FTP protocol allows

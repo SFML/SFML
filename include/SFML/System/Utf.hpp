@@ -38,6 +38,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+/// \ingroup system
 /// \brief Get the default system locale
 ///
 /// \return Reference to the default system locale
@@ -670,6 +671,7 @@ typedef Utf<32> Utf32;
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Utf
+/// \ingroup system
 ///
 /// Utility class providing generic functions for UTF conversions.
 ///

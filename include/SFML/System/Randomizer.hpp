@@ -91,6 +91,7 @@ public :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Randomizer
+/// \ingroup system
 ///
 /// sf::Randomizer generates pseudo-random numbers using the
 /// standard library.

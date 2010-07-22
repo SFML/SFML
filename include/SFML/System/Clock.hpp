@@ -85,6 +85,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Clock
+/// \ingroup system
 ///
 /// sf::Clock is a lightweight class for measuring time.
 /// Its resolution depends on the underlying OS, but you can generally

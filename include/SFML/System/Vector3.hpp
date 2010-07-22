@@ -63,6 +63,7 @@ public :
 };
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of unary operator -
 ///
 /// \param right Vector to negate
@@ -74,6 +75,7 @@ template <typename T>
 Vector3<T> operator -(const Vector3<T>& left);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator +=
 ///
 /// This operator performs a memberwise addition of both vectors,
@@ -89,6 +91,7 @@ template <typename T>
 Vector3<T>& operator +=(Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator -=
 ///
 /// This operator performs a memberwise subtraction of both vectors,
@@ -104,6 +107,7 @@ template <typename T>
 Vector3<T>& operator -=(Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator +
 ///
 /// \param left  Left operand (a vector)
@@ -116,6 +120,7 @@ template <typename T>
 Vector3<T> operator +(const Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator -
 ///
 /// \param left  Left operand (a vector)
@@ -128,6 +133,7 @@ template <typename T>
 Vector3<T> operator -(const Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator *
 ///
 /// \param left  Left operand (a vector)
@@ -140,6 +146,7 @@ template <typename T>
 Vector3<T> operator *(const Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator *
 ///
 /// \param left  Left operand (a scalar value)
@@ -152,6 +159,7 @@ template <typename T>
 Vector3<T> operator *(T left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator *=
 ///
 /// This operator performs a memberwise multiplication by \a right,
@@ -167,6 +175,7 @@ template <typename T>
 Vector3<T>& operator *=(Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator /
 ///
 /// \param left  Left operand (a scalar value)
@@ -179,6 +188,7 @@ template <typename T>
 Vector3<T> operator /(const Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator /=
 ///
 /// This operator performs a memberwise division by \a right,
@@ -194,6 +204,7 @@ template <typename T>
 Vector3<T>& operator /=(Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator ==
 ///
 /// This operator compares strict equality between two vectors.
@@ -208,6 +219,7 @@ template <typename T>
 bool operator ==(const Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
+/// \relates Vector3
 /// \brief Overload of binary operator !=
 ///
 /// This operator compares strict difference between two vectors.
@@ -235,6 +247,7 @@ typedef Vector3<float> Vector3f;
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Vector3
+/// \ingroup system
 ///
 /// sf::Vector3 is a simple class that defines a mathematical
 /// vector with three coordinates (x, y and z). It can be used to

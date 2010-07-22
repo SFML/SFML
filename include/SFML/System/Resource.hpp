@@ -243,6 +243,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Resource
+/// \ingroup system
 ///
 /// sf::Resource is a base for classes that want to be
 /// compatible with the sf::ResourcePtr safe pointer.
@@ -256,6 +257,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::ResourcePtr
+/// \ingroup system
 ///
 /// sf::ResourcePtr is a special kind of smart pointer for
 /// resources. Its main feature is to automatically

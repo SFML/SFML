@@ -254,6 +254,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Text
+/// \ingroup graphics
 ///
 /// sf::Text is a drawable class that allows to easily display
 /// some text with custom style and color on a render target.

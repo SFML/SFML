@@ -135,6 +135,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Thread
+/// \ingroup system
 ///
 /// Threads provide a way to run multiple parts of the code
 /// in parallel. When you launch a new thread, the execution

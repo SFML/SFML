@@ -146,6 +146,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Music
+/// \ingroup audio
 ///
 /// Musics are sounds that are streamed rather than completely
 /// loaded in memory. This is especially useful for compressed

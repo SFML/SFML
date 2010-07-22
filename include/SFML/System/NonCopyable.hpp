@@ -87,6 +87,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::NonCopyable
+/// \ingroup system
 ///
 /// This class makes its instances non-copyable, by explicitely
 /// disabling its copy constructor and its assignment operator.

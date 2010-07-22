@@ -193,6 +193,7 @@ public :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::TcpSocket
+/// \ingroup network
 ///
 /// TCP is a connected protocol, which means that a TCP
 /// socket can only communicate with the host it is connected

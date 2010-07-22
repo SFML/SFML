@@ -159,6 +159,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Input
+/// \ingroup window
 ///
 /// sf::Input provides a way to access the state of keys,
 /// mouse buttons, mouse position, joystick buttons and

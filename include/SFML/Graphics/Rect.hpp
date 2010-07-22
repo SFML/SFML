@@ -154,6 +154,7 @@ typedef Rect<float> FloatRect;
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Rect
+/// \ingroup graphics
 ///
 /// A rectangle is defined by its top-left corner and its size.
 /// It is a very simple class defined for convenience, so

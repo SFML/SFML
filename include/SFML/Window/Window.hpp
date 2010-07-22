@@ -510,6 +510,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Window
+/// \ingroup window
 ///
 /// sf::Window is the main class of the Window module. It defines
 /// an OS window that is able to receive an OpenGL rendering.

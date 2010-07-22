@@ -112,6 +112,7 @@ public :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::ThreadLocalPtr
+/// \ingroup system
 ///
 /// sf::ThreadLocalPtr is a type-safe wrapper for storing
 /// pointers to thread-local variables. A thread-local

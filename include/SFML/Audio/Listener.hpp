@@ -154,6 +154,7 @@ public :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Listener
+/// \ingroup audio
 ///
 /// The audio listener defines the global properties of the
 /// audio environment, it defines where and how sounds and musics

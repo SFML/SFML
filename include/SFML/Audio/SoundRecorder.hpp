@@ -193,6 +193,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::SoundRecorder
+/// \ingroup audio
 ///
 /// sf::SoundBuffer provides a simple interface to access
 /// the audio recording capabilities of the computer

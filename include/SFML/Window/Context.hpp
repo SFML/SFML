@@ -98,6 +98,7 @@ private :
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Context
+/// \ingroup window
 ///
 /// If you need to make OpenGL / graphics calls without
 /// having an active window (like in a thread), you can use

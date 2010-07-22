@@ -34,6 +34,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+/// \ingroup system
 /// \brief Make the current thread sleep for a given time
 ///
 /// sf::Sleep is the best way to block a program or one of its
