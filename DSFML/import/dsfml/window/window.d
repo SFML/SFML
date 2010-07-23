@@ -349,6 +349,17 @@ public:
 	{
 		sfWindow_SetJoystickThreshold(m_ptr, threshold);
 	}
+	
+	/**
+	 *	Retrieve the Os-specific handle of a window
+	 *
+	 *	Params:
+	 *		renderWindow = Renderwindow object
+	 */
+	WindowHandle windowHandle()
+	{
+		return sfWindow_GetSystemHandle(m_ptr);
+	}
 }
 
 	/**
@@ -414,29 +425,30 @@ private:
 		int				function(SFMLClass)									sfWindow_IsOpened;
 		uint			function(SFMLClass)									sfWindow_GetWidth;
 		uint			function(SFMLClass)									sfWindow_GetHeight;
-		ContextSettings	function(SFMLClass Window)								sfWindow_GetSettings;
+		ContextSettings	function(SFMLClass Window)							sfWindow_GetSettings;
 		int				function(SFMLClass, Event*)							sfWindow_GetEvent;
-		void			function(SFMLClass, int)								sfWindow_UseVerticalSync;
-		void			function(SFMLClass, int)								sfWindow_ShowMouseCursor;
+		void			function(SFMLClass, int)							sfWindow_UseVerticalSync;
+		void			function(SFMLClass, int)							sfWindow_ShowMouseCursor;
 		void			function(SFMLClass, uint, uint)						sfWindow_SetCursorPosition;
-		void			function(SFMLClass, int, int)							sfWindow_SetPosition;
+		void			function(SFMLClass, int, int)						sfWindow_SetPosition;
 		void			function(SFMLClass, uint, uint)						sfWindow_SetSize;
-		void			function(SFMLClass, int)								sfWindow_Show;
-		void			function(SFMLClass, int)								sfWindow_EnableKeyRepeat;
+		void			function(SFMLClass, int)							sfWindow_Show;
+		void			function(SFMLClass, int)							sfWindow_EnableKeyRepeat;
 		void			function(SFMLClass, size_t, size_t, ubyte*)			sfWindow_SetIcon;
-		int				function(SFMLClass, int)								sfWindow_SetActive;
+		int				function(SFMLClass, int)							sfWindow_SetActive;
 		void			function(SFMLClass)									sfWindow_Display;
-		SFMLClass			function(SFMLClass)									sfWindow_GetInput;
-		void			function(SFMLClass, uint)								sfWindow_SetFramerateLimit;
+		SFMLClass		function(SFMLClass)									sfWindow_GetInput;
+		void			function(SFMLClass, uint)							sfWindow_SetFramerateLimit;
 		float			function(SFMLClass)									sfWindow_GetFrameTime;
-		void			function(SFMLClass, float)								sfWindow_SetJoystickThreshold;
+		void			function(SFMLClass, float)							sfWindow_SetJoystickThreshold;
 
 		// DSFML2
-		bool			function(SFMLClass, void*)								sfWindow_WaitEvent;
+		bool			function(SFMLClass, void*)							sfWindow_WaitEvent;
+		WindowHandle	function(SFMLClass)									sfWindow_GetSystemHandle;
 	}
 
 	mixin(loadFromSharedLib2("csfml-window", "sfWindow",
 	"Create", "CreateFromHandle", "Destroy", "Close", "IsOpened", "GetWidth", "GetHeight", "GetSettings", "GetEvent", "UseVerticalSync",
 	"ShowMouseCursor", "SetCursorPosition", "SetPosition", "SetSize", "Show", "EnableKeyRepeat", "SetIcon", "SetActive", "Display",
-	"GetInput", "SetFramerateLimit", "GetFrameTime", "SetJoystickThreshold", "WaitEvent"));
+	"GetInput", "SetFramerateLimit", "GetFrameTime", "SetJoystickThreshold", "WaitEvent", "GetSystemHandle"));
 }
