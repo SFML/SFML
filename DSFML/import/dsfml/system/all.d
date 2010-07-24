@@ -44,5 +44,4 @@ version (darwin)
 
 public import
 	dsfml.system.lock,
-	dsfml.system.vector2,
-	dsfml.system.vector3;
+	dsfml.system.vector;

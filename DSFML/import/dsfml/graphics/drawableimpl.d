@@ -27,7 +27,7 @@
 module dsfml.graphics.drawableimpl;
 
 public import dsfml.system.common;
-import dsfml.system.vector2;
+import dsfml.system.vector;
 
 import dsfml.graphics.irendertarget;
 import	dsfml.graphics.idrawable,
@@ -61,148 +61,146 @@ protected:
 	}
 
 public:
-
-	void rotate(float angle)
+	override void rotate(float angle)
 	{
 		sfDrawable_Rotate(m_ptr, angle);
 	}
 
-	void move(float offsetX, float offsetY)
+	override void move(float offsetX, float offsetY)
 	{
 		sfDrawable_Move(m_ptr, offsetX, offsetY);
 	}
 
-	void move(Vector2f offset)
+	override void move(Vector2f offset)
 	{
 		sfDrawable_Move(m_ptr, offset.x, offset.y);
 	}
 
-	Vector2f tranformToLocal(Vector2f point)
+	override Vector2f transformToLocal(Vector2f point) const
 	{
 		Vector2f ret;
 		sfDrawable_TransformToLocal(m_ptr, point.x, point.y, &ret.x, &ret.y);
 		return ret;
 	}
 
-	Vector2f tranformToGlobal(Vector2f point)
+	override Vector2f transformToGlobal(Vector2f point) const
 	{
 		Vector2f ret;
 		sfDrawable_TransformToLocal(m_ptr, point.x, point.y, &ret.x, &ret.y);
 		return ret;
 	}
 
-	void render(IRenderTarget window)
+	override void render(IRenderTarget window)
 	{
 		sfRenderWindow_DrawThis((cast(DSFMLObject)window).nativePointer, m_ptr);
 	}
 	
-	void renderWithShader(IRenderTarget window, Shader shader)
+	override void renderWithShader(IRenderTarget window, Shader shader)
 	{
 		sfRenderWindow_DrawThisWithShader((cast(DSFMLObject)window).nativePointer, m_ptr, shader.nativePointer);
 	}
 
-	void setPosition(float x, float y)
+	override void setPosition(float x, float y)
 	{
 		sfDrawable_SetPosition(m_ptr, x, y);
 	}
 
-	void setScale(float scaleX, float scaleY)
+	override void setScale(float scaleX, float scaleY)
 	{
 		sfDrawable_SetScale(m_ptr, scaleX, scaleY);
 	}
 	
-	void setOrigin(float originX, float originY)
+	override void setOrigin(float originX, float originY)
 	{
 		sfDrawable_SetOrigin(m_ptr, originX, originY);
 	}
 
 @property
 {
-	void x(float x)
+	override void x(float x)
 	{
 		sfDrawable_SetX(m_ptr, x);
 	}
 
-	void y(float y)
+	override void y(float y)
 	{
 		sfDrawable_SetY(m_ptr, y);
 	}
 
-	void position(Vector2f vec)
+	override void position(Vector2f vec)
 	{
 		sfDrawable_SetPosition(m_ptr, vec.x, vec.y);
 	}
 
-	void scaleX(float scale)
+	override void scaleX(float scale)
 	{
 		if (scale > 0)
 			sfDrawable_SetScaleX(m_ptr, scale);
 	}
 	
-	void scaleY(float scale)
+	override void scaleY(float scale)
 	{
 		if (scale > 0)
 			sfDrawable_SetScaleY(m_ptr, scale);
 	}
 
-	void scale(Vector2f scale)
+	override void scale(Vector2f scale)
 	{
 		if (scale.x > 0 && scale.y > 0)
 			sfDrawable_SetScale(m_ptr, scale.x, scale.y);
 	}
 
-
-	void origin(Vector2f origin)
+	override void origin(Vector2f origin)
 	{
 		sfDrawable_SetOrigin(m_ptr, origin.x, origin.y);
 	}
 
-	void rotation(float angle)
+	override void rotation(float angle)
 	{
 		sfDrawable_SetRotation(m_ptr, angle);
 	}
 
-	void color(Color c)
+	override void color(Color c)
 	{
 		sfDrawable_SetColor(m_ptr, c);
 	}
 			
-	void blendMode(BlendMode mode)
+	override void blendMode(BlendMode mode)
 	{
 		sfDrawable_SetBlendMode(m_ptr, mode);
 	}
 
-	Vector2f position()
+	override Vector2f position() const
 	{
 		return Vector2f(sfDrawable_GetX(m_ptr), sfDrawable_GetY(m_ptr));
 	}
 
-	Vector2f scale()
+	override Vector2f scale() const
 	{
 		return Vector2f(sfDrawable_GetScaleX(m_ptr), sfDrawable_GetScaleY(m_ptr));
 	}
 
-	Vector2f origin()
+	override Vector2f origin() const
 	{
 		return Vector2f(sfDrawable_GetOriginX(m_ptr),  sfDrawable_GetOriginY(m_ptr));
 	}
 	
-	float rotation()
+	override float rotation() const
 	{
 		return sfDrawable_GetRotation(m_ptr);
 	}
 
-	Color color()
+	override Color color() const
 	{
 		return sfDrawable_GetColor(m_ptr);
 	}
 
-	BlendMode blendMode()
+	override BlendMode blendMode() const
 	{
 		return cast(BlendMode)(sfDrawable_GetBlendMode(m_ptr));
 	}
 	
-	void scale(Vector2f scale)
+	override void scale(Vector2f scale)
 	{
 		sfDrawable_SetScale(m_ptr, scale.x, scale.y);
 	}

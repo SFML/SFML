@@ -31,7 +31,7 @@ import dsfml.audio.soundsource;
 
 import dsfml.system.common;
 import dsfml.system.exception;
-import dsfml.system.vector3;
+import dsfml.system.vector;
 
 /**
   *	Sound defines the properties of the sound such as position,

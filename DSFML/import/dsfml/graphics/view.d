@@ -29,7 +29,7 @@ module dsfml.graphics.view;
 import	dsfml.graphics.rect;
 
 import	dsfml.system.common,
-		dsfml.system.vector2;
+		dsfml.system.vector;
 
 /**
 *	This class defines a view (position, size and zoom) ;

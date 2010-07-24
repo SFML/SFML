@@ -25,7 +25,7 @@
 
 module dsfml.audio.soundsource;
 
-import dsfml.system.vector3;
+import dsfml.system.vector;
 import dsfml.system.common;
 
 

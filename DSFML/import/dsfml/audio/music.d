@@ -31,7 +31,7 @@ import dsfml.audio.soundsource;
 import dsfml.system.common;
 import dsfml.system.exception;
 import dsfml.system.stringutil;
-import dsfml.system.vector3;
+import dsfml.system.vector;
 
 /**
 * Music defines a big sound played using streaming,

@@ -44,7 +44,7 @@ import	dsfml.window.event,
 
 import	dsfml.system.common,
 		dsfml.system.stringutil,
-		dsfml.system.vector2;
+		dsfml.system.vector;
 
 /**
  *	Simple wrapper for Window that allows easy 2D rendering. 

@@ -33,7 +33,7 @@ import dsfml.graphics.drawableimpl;
 import dsfml.graphics.rect;
 
 import dsfml.system.stringutil;
-import dsfml.system.vector2;
+import dsfml.system.vector;
 
 
 /**

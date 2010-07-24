@@ -27,7 +27,7 @@
 module dsfml.audio.listener;
 
 import dsfml.system.common;
-import dsfml.system.vector3;
+import dsfml.system.vector;
 
 /**
 *	Listener is a global interface for defining the audio

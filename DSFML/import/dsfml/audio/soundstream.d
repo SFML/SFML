@@ -28,7 +28,7 @@ module dsfml.audio.soundstream;
 
 import dsfml.system.alloc;
 import dsfml.system.common;
-import dsfml.system.vector3;
+import dsfml.system.vector;
 import dsfml.system.linkedlist;
 import dsfml.system.lock;
 

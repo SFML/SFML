@@ -56,14 +56,11 @@ else
  */
 struct Rect(T)
 {
-
-private:
 	T left;	// Left coordinate of the rectangle
 	T top;	// Top coordinate of the rectangle
 	T width;  // width
 	T height; // height
 
-public:
 	static if (!isIntegerType!(T) && !isRealType!(T))
 	{
 		static assert (0, "This type is not supported by Rectangle");

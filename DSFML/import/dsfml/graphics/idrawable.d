@@ -26,7 +26,7 @@
 
 module dsfml.graphics.idrawable;
 
-import dsfml.system.vector2;
+import dsfml.system.vector;
 
 import dsfml.graphics.irendertarget;
 import	dsfml.graphics.color,
@@ -49,7 +49,7 @@ interface IDrawable
 	 *	Params: 
 	 *		x = New left coordinate
 	 *		y = New top coordinate			
-	 */	
+	 */
 	void setPosition(float x, float y);
 
 	/**
@@ -60,7 +60,7 @@ interface IDrawable
 	 *		scaleY = New vertical scale > 0
 	 */
 	void setScale(float scalex, float scaley);
-//	in {assert(scalex > 0 && scalex > 0);} // TODO: add in again when interface contracts work
+	// in {assert(scalex > 0 && scalex > 0);} // TODO: add in again when interface contracts work
 
 	/**
 	 *	Set the origin of the object, in coordinates relative to the
@@ -96,7 +96,7 @@ interface IDrawable
 	 *	
 	 *	Params:
 	 *		vec = new position			 
-	 */		
+	 */
 	void position(Vector2f vec);
 	
 	/**
@@ -104,7 +104,7 @@ interface IDrawable
 	 *	
 	 *	Params:
 	 *		scale = New horizontal scale (Strictly positive)
-	 */		
+	 */
 	void scaleX(float scale);
 		
 	/**
@@ -140,7 +140,7 @@ interface IDrawable
 	 *	
 	 *	Params: 
 	 *		angle = Angle of rotation, in degree			
-	 */		
+	 */
 	void rotation(float angle);
 		
 	/**
@@ -148,7 +148,7 @@ interface IDrawable
 	 *	
 	 *	Params:
 	 *		c = New color			
-	 */			
+	 */
 	void color(Color c);
 			
 	/**
@@ -160,6 +160,8 @@ interface IDrawable
 	 */
 	void blendMode(BlendMode mode);
 
+const
+{
 	/**
 	 *	Get the position of the object
 	 *
@@ -174,7 +176,7 @@ interface IDrawable
 	 *	
 	 *	Returns:
 	 *		Current scale			
-	 */		
+	 */
 	Vector2f scale();
 	
 	/**
@@ -191,7 +193,7 @@ interface IDrawable
 	 *	
 	 *	Returns: 
 	 *		Angle of rotation, in degree			
-	 */		
+	 */
 	float rotation();
 	
 	/**
@@ -199,7 +201,7 @@ interface IDrawable
 	 *	
 	 *	Returns:
 	 *		Current color				
-	 */		
+	 */
 	Color color();
 
 	/**
@@ -209,7 +211,8 @@ interface IDrawable
 	 *		Current blending mode
 	 */
 	BlendMode blendMode();
-}
+} // const
+} // @property
 
 	/**
 	 *	Rotate the object
@@ -217,7 +220,7 @@ interface IDrawable
 	 *	
 	 *	Params:
 	 *		angle = Angle of rotation in degree			
-	 */		
+	 */
 	void rotate(float angle);
 
 	/**
@@ -227,7 +230,7 @@ interface IDrawable
 	 *	Params:
 	 *		offsetX = Offset on the X axis
 	 *		offsetY = Offset on the Y axis				
-	 */		
+	 */
 	void move(float offsetX, float offsetY);
 	
 	/**
@@ -236,7 +239,7 @@ interface IDrawable
 	 *	
 	 *	Params:
 	 *		offset = Amount of units to move the object of			 
-	 */		
+	 */
 	void move(Vector2f offset);
 
 	/**
@@ -248,8 +251,8 @@ interface IDrawable
 	 *
 	 *	Returns: 
 	 *		Transformed point
-	 */		
-	Vector2f tranformToLocal(Vector2f point);
+	 */
+	Vector2f tranformToLocal(Vector2f point) const;
 
 	/**
 	 *	Transform a point from local coordinates into global coordinates
@@ -260,15 +263,15 @@ interface IDrawable
 	 *
 	 *	Returns: 
 	 *		Transformed point
-	 */		
-	Vector2f tranformToGlobal(Vector2f point);
+	 */
+	Vector2f tranformToGlobal(Vector2f point) const;
 	
 	/**
 	 *	Render the specific geometry of the object
 	 *	
 	 *	Params:
 	 *		window = Target into which render the object		
-	 */		
+	 */
 	void render(IRenderTarget window);
 	
 	/**

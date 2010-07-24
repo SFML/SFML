@@ -26,7 +26,7 @@
 
 module dsfml.graphics.shape;
 
-import dsfml.system.vector2;
+import dsfml.system.vector;
 
 import dsfml.graphics.blendmode;
 import dsfml.graphics.color;

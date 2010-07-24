@@ -32,7 +32,7 @@ import dsfml.graphics.drawableimpl;
 import dsfml.graphics.image;
 import dsfml.graphics.rect;
 
-import dsfml.system.vector2;
+import dsfml.system.vector;
 
 /**
 *	Sprite defines a sprite : texture, transformations,
@@ -160,7 +160,7 @@ public:
 	 *	Returns:
 	 *		Color of pixel			 
 	 */
-	Color getPixel(uint x, uint y)
+	Color getPixel(uint x, uint y) const
 	{
 		return sfSprite_GetPixel(m_ptr, x, y);
 	}
@@ -211,7 +211,7 @@ public:
 	 *	Returns: 
 	 *		Size of the sprite
 	 */		
-	Vector2f size()
+	Vector2f size() const
 	{
 		return Vector2f(sfSprite_GetWidth(m_ptr), sfSprite_GetHeight(m_ptr));
 	}
@@ -226,7 +226,7 @@ private:
 		void	function(SFMLClass, float, float)	sfSprite_Resize;
 		void	function(SFMLClass, int)			sfSprite_FlipX;
 		void	function(SFMLClass, int)			sfSprite_FlipY;
-		SFMLClass	function(SFMLClass)					sfSprite_GetImage;
+		SFMLClass	function(SFMLClass)				sfSprite_GetImage;
 		IntRect	function(SFMLClass)					sfSprite_GetSubRect;
 		float	function(SFMLClass)					sfSprite_GetWidth;
 		float	function(SFMLClass)					sfSprite_GetHeight;

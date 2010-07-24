@@ -25,7 +25,7 @@
 
 module dsfml.graphics.irendertarget;
 
-import dsfml.system.vector2;
+import dsfml.system.vector;
 import dsfml.graphics.idrawable;
 import dsfml.graphics.rect;
 import dsfml.graphics.shader;

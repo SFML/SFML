@@ -29,7 +29,7 @@ module dsfml.graphics.renderimage;
 import	dsfml.system.common,
 		dsfml.system.exception,
 		dsfml.system.stringutil,
-		dsfml.system.vector2;
+		dsfml.system.vector;
 
 import	dsfml.graphics.idrawable,
 		dsfml.graphics.image,
