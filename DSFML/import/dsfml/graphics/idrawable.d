@@ -252,7 +252,7 @@ const
 	 *	Returns: 
 	 *		Transformed point
 	 */
-	Vector2f tranformToLocal(Vector2f point) const;
+	Vector2f transformToLocal(Vector2f point) const;
 
 	/**
 	 *	Transform a point from local coordinates into global coordinates
@@ -264,7 +264,7 @@ const
 	 *	Returns: 
 	 *		Transformed point
 	 */
-	Vector2f tranformToGlobal(Vector2f point) const;
+	Vector2f transformToGlobal(Vector2f point) const;
 	
 	/**
 	 *	Render the specific geometry of the object
