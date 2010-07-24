@@ -441,18 +441,22 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Resize event
         case WM_SIZE :
         {
-            // Update window size
-            RECT rectangle;
-            GetClientRect(myHandle, &rectangle);
-            myWidth  = rectangle.right - rectangle.left;
-            myHeight = rectangle.bottom - rectangle.top;
+            // Ignore size events triggered by a minimize (size == 0 in this case)
+            if (wParam != SIZE_MINIMIZED)
+            {
+                // Update window size
+                RECT rectangle;
+                GetClientRect(myHandle, &rectangle);
+                myWidth  = rectangle.right - rectangle.left;
+                myHeight = rectangle.bottom - rectangle.top;
 
-            Event event;
-            event.Type        = Event::Resized;
-            event.Size.Width  = myWidth;
-            event.Size.Height = myHeight;
-            PushEvent(event);
-            break;
+                Event event;
+                event.Type        = Event::Resized;
+                event.Size.Width  = myWidth;
+                event.Size.Height = myHeight;
+                PushEvent(event);
+                break;
+            }
         }
 
         // Gain focus event
