@@ -245,6 +245,11 @@ public :
     /// \code
     /// sf::Shape line = sf::Shape::Line(0, 0, 10, 20, 2.5f, sf::Color::Green);
     /// \endcode
+    /// Warning: the position and color that you pass to this function
+    /// are used to compute the position and color of each point,
+    /// they have nothing to do with the global position and color
+    /// of the shape, inherited from sf::Drawable.
+    /// See the class description for more information about this.
     ///
     /// \param p1x          X coordinate of the start point
     /// \param p1y          Y coordinate of the start point
@@ -270,6 +275,11 @@ public :
     /// sf::Vector2f end(10, 20);
     /// sf::Shape line = sf::Shape::Line(start, end, 2.5f, sf::Color::Green);
     /// \endcode
+    /// Warning: the position and color that you pass to this function
+    /// are used to compute the position and color of each point,
+    /// they have nothing to do with the global position and color
+    /// of the shape, inherited from sf::Drawable.
+    /// See the class description for more information about this.
     ///
     /// \param start        Start point
     /// \param end          End point
@@ -291,6 +301,11 @@ public :
     /// \code
     /// sf::Shape rect = sf::Shape::Rectangle(10, 20, 50, 100, sf::Color::Red);
     /// \endcode
+    /// Warning: the position and color that you pass to this function
+    /// are used to compute the position and color of each point,
+    /// they have nothing to do with the global position and color
+    /// of the shape, inherited from sf::Drawable.
+    /// See the class description for more information about this.
     ///
     /// \param left         Left coordinate of the rectangle
     /// \param top          Top coordinate of the rectangle
@@ -314,6 +329,11 @@ public :
     /// sf::FloatRect source(10, 20, 50, 100);
     /// sf::Shape rect = sf::Shape::Rectangle(source, sf::Color::Red);
     /// \endcode
+    /// Warning: the position and color that you pass to this function
+    /// are used to compute the position and color of each point,
+    /// they have nothing to do with the global position and color
+    /// of the shape, inherited from sf::Drawable.
+    /// See the class description for more information about this.
     ///
     /// \param rectangle    Rectangle defining the shape
     /// \param color        Color of the shape's points
@@ -333,6 +353,11 @@ public :
     /// \code
     /// sf::Shape circle = sf::Shape::Circle(0, 0, 7, sf::Color::Blue);
     /// \endcode
+    /// Warning: the position and color that you pass to this function
+    /// are used to compute the position and color of each point,
+    /// they have nothing to do with the global position and color
+    /// of the shape, inherited from sf::Drawable.
+    /// See the class description for more information about this.
     ///
     /// \param x            X coordinate of the center
     /// \param y            Y coordinate of the center
@@ -355,6 +380,11 @@ public :
     /// sf::Vector2f center(0, 0);
     /// sf::Shape circle = sf::Shape::Circle(center, 7, sf::Color::Blue);
     /// \endcode
+    /// Warning: the position and color that you pass to this function
+    /// are used to compute the position and color of each point,
+    /// they have nothing to do with the global position and color
+    /// of the shape, inherited from sf::Drawable.
+    /// See the class description for more information about this.
     ///
     /// \param center       Center of the circle
     /// \param radius       Radius of the circle
