@@ -49,7 +49,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\jpeg&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\png&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\jpeg&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;SFML_EXPORTS;SFML_DYNAMIC;GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\jpeg.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\png.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\soil.lib&quot;"
+				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\jpeg.lib&quot;"
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
@@ -143,7 +143,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\jpeg&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\png&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\jpeg&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_LIB;SFML_EXPORTS;SFML_DYNAMIC;GLEW_STATIC;STBI_FAILURE_USERMSG"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -167,7 +167,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\jpeg.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\png.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\soil.lib&quot;"
+				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\jpeg.lib&quot;"
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
@@ -236,7 +236,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\jpeg&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\png&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\jpeg&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;SFML_EXPORTS;GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -258,7 +258,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\jpeg.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\png.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\soil.lib&quot;"
+				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\jpeg.lib&quot;"
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-s-d.lib"
 				AdditionalLibraryDirectories=""
 			/>
@@ -315,7 +315,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\jpeg&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\png&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\jpeg&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_LIB;SFML_EXPORTS;GLEW_STATIC;STBI_FAILURE_USERMSG"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -340,7 +340,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\jpeg.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\png.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\soil.lib&quot;"
+				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\jpeg.lib&quot;"
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-s.lib"
 				AdditionalLibraryDirectories=""
 			/>
@@ -488,6 +488,7 @@
 				>
 				<Tool
 					Name="VCCLCompilerTool"
+					WarningLevel="0"
 					DisableSpecificWarnings="4611"
 				/>
 			</FileConfiguration>
@@ -496,6 +497,7 @@
 				>
 				<Tool
 					Name="VCCLCompilerTool"
+					WarningLevel="0"
 					DisableSpecificWarnings="4611"
 				/>
 			</FileConfiguration>
@@ -504,6 +506,7 @@
 				>
 				<Tool
 					Name="VCCLCompilerTool"
+					WarningLevel="0"
 					DisableSpecificWarnings="4611"
 				/>
 			</FileConfiguration>
@@ -512,6 +515,7 @@
 				>
 				<Tool
 					Name="VCCLCompilerTool"
+					WarningLevel="0"
 					DisableSpecificWarnings="4611"
 				/>
 			</FileConfiguration>

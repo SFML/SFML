@@ -8,7 +8,7 @@ LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 all: $(LIB)
 
 libsfml-graphics.so: $(OBJ)
-	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lGLEW -ljpeg -lpng -lSOIL -lfreetype -lX11 -lGL
+	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lGLEW -ljpeg -lfreetype -lX11 -lGL
 
 $(OBJ): %.o: %.cpp
 	$(CPP) -o $@ -c $< $(CFLAGS) -I/usr/include/freetype2

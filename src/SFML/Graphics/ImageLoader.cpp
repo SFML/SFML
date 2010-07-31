@@ -27,26 +27,27 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/ImageLoader.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Graphics/stb_image/stb_image.h>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <SFML/Graphics/stb_image/stb_image_write.h>
 extern "C"
 {
     #include <jpeglib.h>
     #include <jerror.h>
 }
-#include <png.h>
-#include <SOIL/SOIL.h>
+#include <ctype.h>
 
-// For compatibility with versions of libpng < 1.4.0
-#ifndef png_jmpbuf
-    #define png_jmpbuf(png) png->jmpbuf
-#endif
 
 namespace
 {
     ////////////////////////////////////////////////////////////
-    void PngErrorHandler(png_structp png, png_const_charp message)
+    std::string ToLower(const std::string& str)
     {
-        sf::Err() << "Failed to write PNG image. Reason : " << message << std::endl;
-        longjmp(png_jmpbuf(png), 1);
+        std::string lower = str;
+        for (std::string::iterator it = lower.begin(); it != lower.end(); ++it)
+            *it = static_cast<char>(tolower(*it));
+
+        return str;
     }
 }
 
@@ -86,7 +87,7 @@ bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Uin
 
     // Load the image and get a pointer to the pixels in memory
     int imgWidth, imgHeight, imgChannels;
-    unsigned char* ptr = SOIL_load_image(filename.c_str(), &imgWidth, &imgHeight, &imgChannels, SOIL_LOAD_RGBA);
+    unsigned char* ptr = stbi_load(filename.c_str(), &imgWidth, &imgHeight, &imgChannels, STBI_rgb_alpha);
 
     if (ptr)
     {
@@ -99,14 +100,14 @@ bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Uin
         memcpy(&pixels[0], ptr, pixels.size());
 
         // Free the loaded pixels (they are now in our own pixel buffer)
-        SOIL_free_image_data(ptr);
+        stbi_image_free(ptr);
 
         return true;
     }
     else
     {
         // Error, failed to load the image
-        Err() << "Failed to load image \"" << filename << "\". Reason : " << SOIL_last_result() << std::endl;
+        Err() << "Failed to load image \"" << filename << "\". Reason : " << stbi_failure_reason() << std::endl;
 
         return false;
     }
@@ -122,7 +123,7 @@ bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t size, std::v
     // Load the image and get a pointer to the pixels in memory
     int imgWidth, imgHeight, imgChannels;
     const unsigned char* buffer = static_cast<const unsigned char*>(data);
-    unsigned char* ptr = SOIL_load_image_from_memory(buffer, static_cast<int>(size), &imgWidth, &imgHeight, &imgChannels, SOIL_LOAD_RGBA);
+    unsigned char* ptr = stbi_load_from_memory(buffer, static_cast<int>(size), &imgWidth, &imgHeight, &imgChannels, STBI_rgb_alpha);
 
     if (ptr)
     {
@@ -135,14 +136,14 @@ bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t size, std::v
         memcpy(&pixels[0], ptr, pixels.size());
 
         // Free the loaded pixels (they are now in our own pixel buffer)
-        SOIL_free_image_data(ptr);
+        stbi_image_free(ptr);
 
         return true;
     }
     else
     {
         // Error, failed to load the image
-        Err() << "Failed to load image from memory. Reason : " << SOIL_last_result() << std::endl;
+        Err() << "Failed to load image from memory. Reason : " << stbi_failure_reason() << std::endl;
 
         return false;
     }
@@ -153,35 +154,39 @@ bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t size, std::v
 bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
 {
     // Deduce the image type from its extension
-    int type = -1;
     if (filename.size() > 3)
     {
+        // Extract the extension
         std::string extension = filename.substr(filename.size() - 3);
-        if      (extension == "bmp" || extension == "BMP") type = SOIL_SAVE_TYPE_BMP;
-        else if (extension == "tga" || extension == "TGA") type = SOIL_SAVE_TYPE_TGA;
-        else if (extension == "dds" || extension == "DDS") type = SOIL_SAVE_TYPE_DDS;
 
-        // Special handling for PNG and JPG -- not handled by SOIL
-        else if (extension == "png" || extension == "PNG") return WritePng(filename, pixels, width, height);
-        else if (extension == "jpg" || extension == "JPG") return WriteJpg(filename, pixels, width, height);
+        if (ToLower(extension) == "bmp")
+        {
+            // BMP format
+            if (stbi_write_bmp(filename.c_str(), width, height, 4, &pixels[0]))
+                return true;
+        }
+        else if (ToLower(extension) == "tga")
+        {
+            // TGA format
+            if (stbi_write_tga(filename.c_str(), width, height, 4, &pixels[0]))
+                return true;
+        }
+        else if(ToLower(extension) == "png")
+        {
+            // PNG format
+            if (stbi_write_png(filename.c_str(), width, height, 4, &pixels[0], 0))
+                return true;
+        }
+        else if (ToLower(extension) == "jpg")
+        {
+            // JPG format
+            if (WriteJpg(filename, pixels, width, height))
+                return true;
+        }
     }
 
-    if (type == -1)
-    {
-        // Error, incompatible type
-        Err() << "Failed to save image \"" << filename << "\". Reason: this image format is not supported" << std::endl;
-        return false;
-    }
-
-    // Finally save the image
-    if (!SOIL_save_image(filename.c_str(), type, static_cast<int>(width), static_cast<int>(height), 4, &pixels[0]))
-    {
-        // Error, failed to save the image
-        Err() << "Failed to save image \"" << filename << "\". Reason: " << SOIL_last_result() << std::endl;
-        return false;
-    }
-
-    return true;
+    Err() << "Failed to save image \"" << filename << "\"" << std::endl;
+    return false;
 }
 
 
@@ -191,10 +196,7 @@ bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Uint8>
     // Open the file to write in
     FILE* file = fopen(filename.c_str(), "wb");
     if (!file)
-    {
-        Err() << "Failed to save image file \"" << filename << "\". Reason : cannot open file" << std::endl;
         return false;
-    }
 
     // Initialize the error handler
     jpeg_compress_struct compressInfos;
@@ -236,76 +238,6 @@ bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Uint8>
     jpeg_destroy_compress(&compressInfos);
 
     // Close the file
-    fclose(file);
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-bool ImageLoader::WritePng(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
-{
-    // Open the file to write in
-    FILE* file = fopen(filename.c_str(), "wb");
-    if (!file)
-    {
-        Err() << "Failed to save image file \"" << filename << "\". Reason : cannot open file" << std::endl;
-        return false;
-    }
-
-    // Create the main PNG structure
-    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, &PngErrorHandler, NULL);
-    if (!png)
-    {
-        fclose(file);
-        Err() << "Failed to save image file \"" << filename << "\". Reason : cannot allocate PNG write structure" << std::endl;
-        return false;
-    }
-
-    // Initialize the image informations
-    png_infop pngInfos = png_create_info_struct(png);
-    if (!pngInfos)
-    {
-        fclose(file);
-        png_destroy_write_struct(&png, NULL);
-        Err() << "Failed to save image file \"" << filename << "\". Reason : cannot allocate PNG info structure" << std::endl;
-        return false;
-    }
-
-    // For proper error handling...
-    if (setjmp(png_jmpbuf(png)))
-    {
-        png_destroy_write_struct(&png, &pngInfos);
-        return false;
-    }
-
-    // Link the file to the PNG structure
-    png_init_io(png, file);
-
-    // Set the image informations
-    png_set_IHDR(png, pngInfos, width, height, 8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
-
-    // Write the header
-    png_write_info(png, pngInfos);
-
-    // Get the pointers to the pixels rows into an array
-    png_byte* ptr = (png_byte*)&pixels[0];
-    std::vector<png_byte*> rawPointers(height);
-    for (unsigned int i = 0; i < height; ++i)
-    {
-        rawPointers[i] = ptr;
-        ptr += width * 4;
-    }
-
-    // Write pixels row by row
-    png_set_rows(png, pngInfos, &rawPointers[0]);
-    png_write_png(png, pngInfos, PNG_TRANSFORM_IDENTITY, NULL);
-
-    // Finish writing the file
-    png_write_end(png, pngInfos);
-
-    // Cleanup resources
-    png_destroy_write_struct(&png, &pngInfos);
     fclose(file);
 
     return true;

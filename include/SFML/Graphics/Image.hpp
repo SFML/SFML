@@ -74,9 +74,9 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file on disk
     ///
-    /// The supported image formats are bmp, png, tga, jpg, dds
-    /// and psd. Some format options are not supported, like
-    /// progressive jpeg.
+    /// The supported image formats are bmp, png, tga, jpg, gif,
+    /// psd, hdr and pic. Some format options are not supported,
+    /// like progressive jpeg.
     /// The maximum size for an image depends on the graphics
     /// driver and can be retrieve with the GetMaximumSize function.
     ///
@@ -92,9 +92,9 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file in memory
     ///
-    /// The supported image formats are bmp, png, tga, jpg, dds
-    /// and psd. Some format options are not supported, like
-    /// progressive jpeg.
+    /// The supported image formats are bmp, png, tga, jpg, gif,
+    /// psd, hdr and pic. Some format options are not supported,
+    /// like progressive jpeg.
     /// The maximum size for an image depends on the graphics
     /// driver and can be retrieve with the GetMaximumSize function.
     ///
@@ -133,7 +133,7 @@ public :
     ///
     /// The format of the image is automatically deduced from
     /// the extension. The supported image formats are bmp, png,
-    /// tga, jpg, dds and psd. The destination file is overwritten
+    /// tga and jpg. The destination file is overwritten
     /// if it already exists.
     ///
     /// \param filename Path of the file to save
