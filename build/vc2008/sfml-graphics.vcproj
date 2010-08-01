@@ -483,42 +483,6 @@
 		<File
 			RelativePath="..\..\src\SFML\Graphics\ImageLoader.cpp"
 			>
-			<FileConfiguration
-				Name="Debug DLL|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					WarningLevel="3"
-					DisableSpecificWarnings="4611"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release DLL|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					WarningLevel="3"
-					DisableSpecificWarnings="4611"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug static|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					WarningLevel="3"
-					DisableSpecificWarnings="4611"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release static|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					WarningLevel="3"
-					DisableSpecificWarnings="4611"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\..\src\SFML\Graphics\ImageLoader.hpp"

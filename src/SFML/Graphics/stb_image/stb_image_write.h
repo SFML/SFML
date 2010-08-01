@@ -84,9 +84,9 @@ static void writefv(FILE *f, const char *fmt, va_list v)
    while (*fmt) {
       switch (*fmt++) {
          case ' ': break;
-         case '1': { unsigned char x = va_arg(v, int); fputc(x,f); break; }
-         case '2': { int x = va_arg(v,int); unsigned char b[2]; b[0] = x; b[1] = x>>8; fwrite(b,2,1,f); break; }
-         case '4': { stbiw_uint32 x = va_arg(v,int); unsigned char b[4]; b[0]=x; b[1]=x>>8; b[2]=x>>16; b[3]=x>>24; fwrite(b,4,1,f); break; }
+         case '1': { unsigned char x = (unsigned char)va_arg(v, int); fputc(x,f); break; }
+         case '2': { int x = va_arg(v,int); unsigned char b[2]; b[0] = (unsigned char)x; b[1] = (unsigned char)(x>>8); fwrite(b,2,1,f); break; }
+         case '4': { stbiw_uint32 x = va_arg(v,int); unsigned char b[4]; b[0]=(unsigned char)x; b[1]=(unsigned char)(x>>8); b[2]=(unsigned char)(x>>16); b[3]=(unsigned char)(x>>24); fwrite(b,4,1,f); break; }
          default:
             assert(0);
             return;
@@ -205,7 +205,7 @@ static void *stbi__sbgrowf(void **arr, int increment, int itemsize)
 static unsigned char *stbi__zlib_flushf(unsigned char *data, unsigned int *bitbuffer, int *bitcount)
 {
    while (*bitcount >= 8) {
-      stbi__sbpush(data, *bitbuffer);
+      stbi__sbpush(data, (unsigned char)*bitbuffer);
       *bitbuffer >>= 8;
       *bitcount -= 8;
    }
@@ -348,10 +348,10 @@ unsigned char * stbi_zlib_compress(unsigned char *data, int data_len, int *out_l
          j += blocklen;
          blocklen = 5552;
       }
-      stbi__sbpush(out, s2 >> 8);
-      stbi__sbpush(out, s2);
-      stbi__sbpush(out, s1 >> 8);
-      stbi__sbpush(out, s1);
+      stbi__sbpush(out, (unsigned char)(s2 >> 8));
+      stbi__sbpush(out, (unsigned char)s2);
+      stbi__sbpush(out, (unsigned char)(s1 >> 8));
+      stbi__sbpush(out, (unsigned char)s1);
    }
    *out_len = stbi__sbn(out);
    // make returned pointer freeable
@@ -362,7 +362,7 @@ unsigned char * stbi_zlib_compress(unsigned char *data, int data_len, int *out_l
 unsigned int stbi__crc32(unsigned char *buffer, int len)
 {
    static unsigned int crc_table[256];
-   unsigned int crc = ~0;
+   unsigned int crc = ~(unsigned int)0;
    int i,j;
    if (crc_table[1] == 0)
       for(i=0; i < 256; i++)
@@ -373,7 +373,7 @@ unsigned int stbi__crc32(unsigned char *buffer, int len)
    return ~crc;
 }
 
-#define stbi__wpng4(o,a,b,c,d) ((o)[0]=(a),(o)[1]=(b),(o)[2]=(c),(o)[3]=(d),(o)+=4)
+#define stbi__wpng4(o,a,b,c,d) ((o)[0]=(unsigned char)(a),(o)[1]=(unsigned char)(b),(o)[2]=(unsigned char)(c),(o)[3]=(unsigned char)(d),(o)+=4)
 #define stbi__wp32(data,v) stbi__wpng4(data, v>>24,v>>16,v>>8,v);
 #define stbi__wptag(data,s) stbi__wpng4(data, s[0],s[1],s[2],s[3])
 
@@ -419,7 +419,7 @@ unsigned char *stbi_write_png_to_mem(unsigned char *pixels, int stride_bytes, in
                   case 1: line_buffer[i] = z[i]; break;
                   case 2: line_buffer[i] = z[i] - z[i-stride_bytes]; break;
                   case 3: line_buffer[i] = z[i] - (z[i-stride_bytes]>>1); break;
-                  case 4: line_buffer[i] = z[i] - stbi__paeth(0,z[i-stride_bytes],0); break;
+                  case 4: line_buffer[i] = (signed char)(z[i] - stbi__paeth(0,z[i-stride_bytes],0)); break;
                   case 5: line_buffer[i] = z[i]; break;
                   case 6: line_buffer[i] = z[i]; break;
                }
@@ -429,9 +429,9 @@ unsigned char *stbi_write_png_to_mem(unsigned char *pixels, int stride_bytes, in
                   case 1: line_buffer[i] = z[i] - z[i-n]; break;
                   case 2: line_buffer[i] = z[i] - z[i-stride_bytes]; break;
                   case 3: line_buffer[i] = z[i] - ((z[i-n] + z[i-stride_bytes])>>1); break;
-                  case 4: line_buffer[i] = z[i] - stbi__paeth(z[i-n], z[i-stride_bytes], z[i-stride_bytes-n]); break;
+                  case 4: line_buffer[i] = (signed char)(z[i] - stbi__paeth(z[i-n], z[i-stride_bytes], z[i-stride_bytes-n])); break;
                   case 5: line_buffer[i] = z[i] - (z[i-n]>>1); break;
-                  case 6: line_buffer[i] = z[i] - stbi__paeth(z[i-n], 0,0); break;
+                  case 6: line_buffer[i] = (signed char)(z[i] - stbi__paeth(z[i-n], 0,0)); break;
                }
             }
             if (p) break;
@@ -441,7 +441,7 @@ unsigned char *stbi_write_png_to_mem(unsigned char *pixels, int stride_bytes, in
          }
       }
       // when we get here, best contains the filter type, and line_buffer contains the data
-      filt[j*(x*n+1)] = best;
+      filt[j*(x*n+1)] = (unsigned char)best;
       memcpy(filt+j*(x*n+1)+1, line_buffer, x*n);
    }
    free(line_buffer);
@@ -461,7 +461,7 @@ unsigned char *stbi_write_png_to_mem(unsigned char *pixels, int stride_bytes, in
    stbi__wp32(o, x);
    stbi__wp32(o, y);
    *o++ = 8;
-   *o++ = ctype[n];
+   *o++ = (unsigned char)ctype[n];
    *o++ = 0;
    *o++ = 0;
    *o++ = 0;
