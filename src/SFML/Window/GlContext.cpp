@@ -29,7 +29,7 @@
 #include <SFML/System/ThreadLocalPtr.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/glext.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 
 #if defined(SFML_SYSTEM_WINDOWS)
@@ -167,10 +167,10 @@ GlContext::GlContext()
 ////////////////////////////////////////////////////////////
 int GlContext::EvaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing)
 {
-    return abs(static_cast<int>(bitsPerPixel               - colorBits))   +
-           abs(static_cast<int>(settings.DepthBits         - depthBits))   +
-           abs(static_cast<int>(settings.StencilBits       - stencilBits)) +
-           abs(static_cast<int>(settings.AntialiasingLevel - antialiasing));
+    return std::abs(static_cast<int>(bitsPerPixel               - colorBits))   +
+           std::abs(static_cast<int>(settings.DepthBits         - depthBits))   +
+           std::abs(static_cast<int>(settings.StencilBits       - stencilBits)) +
+           std::abs(static_cast<int>(settings.AntialiasingLevel - antialiasing));
 }
 
 } // namespace priv

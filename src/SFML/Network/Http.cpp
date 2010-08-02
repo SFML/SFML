@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Http.hpp>
-#include <ctype.h>
+#include <cctype>
 #include <algorithm>
 #include <iterator>
 #include <sstream>
@@ -41,7 +41,7 @@ namespace
     std::string ToLower(std::string str)
     {
         for (std::string::iterator i = str.begin(); i != str.end(); ++i)
-            *i = static_cast<char>(tolower(*i));
+            *i = static_cast<char>(std::tolower(*i));
         return str;
     }
 }

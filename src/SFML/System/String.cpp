@@ -28,7 +28,7 @@
 #include <SFML/System/String.hpp>
 #include <SFML/System/Utf.hpp>
 #include <iterator>
-#include <string.h>
+#include <cstring>
 
 
 namespace sf
@@ -122,7 +122,7 @@ String::String(const wchar_t* wideString)
 {
     if (wideString)
     {
-        std::size_t length = wcslen(wideString);
+        std::size_t length = std::wcslen(wideString);
         if (length > 0)
         {
             myString.reserve(length + 1);

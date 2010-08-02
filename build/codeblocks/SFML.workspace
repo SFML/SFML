@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="SFML workspace">
-		<Project filename="sfml-system.cbp" />
+		<Project filename="sfml-system.cbp" active="1" />
 		<Project filename="sfml-window.cbp" />
 		<Project filename="sfml-network.cbp" />
-		<Project filename="sfml-graphics.cbp" active="1" />
+		<Project filename="sfml-graphics.cbp" />
 		<Project filename="sfml-audio.cbp" />
 		<Project filename="sfml-main.cbp" />
 		<Project filename="..\..\samples\build\codeblocks\ftp.cbp" />

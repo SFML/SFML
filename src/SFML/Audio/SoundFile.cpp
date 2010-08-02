@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFile.hpp>
 #include <SFML/System/Err.hpp>
-#include <string.h>
+#include <cstring>
 
 
 namespace sf
@@ -283,7 +283,7 @@ sf_count_t SoundFile::MemoryIO::Read(void* ptr, sf_count_t count, void* userData
     if (position + count >= self->myTotalSize)
         count = self->myTotalSize - position;
 
-    memcpy(ptr, self->myDataPtr, static_cast<std::size_t>(count));
+    std::memcpy(ptr, self->myDataPtr, static_cast<std::size_t>(count));
 
     self->myDataPtr += count;
 

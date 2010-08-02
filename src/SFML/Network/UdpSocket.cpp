@@ -31,7 +31,6 @@
 #include <SFML/Network/SocketImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <algorithm>
-#include <string.h>
 
 
 namespace sf

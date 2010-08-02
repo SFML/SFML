@@ -35,18 +35,16 @@ extern "C"
     #include <jpeglib.h>
     #include <jerror.h>
 }
-#include <ctype.h>
+#include <cctype>
 
 
 namespace
 {
-    ////////////////////////////////////////////////////////////
-    std::string ToLower(const std::string& str)
+    // Convert a string to lower case
+    std::string ToLower(std::string str)
     {
-        std::string lower = str;
-        for (std::string::iterator it = lower.begin(); it != lower.end(); ++it)
-            *it = static_cast<char>(tolower(*it));
-
+        for (std::string::iterator i = str.begin(); i != str.end(); ++i)
+            *i = static_cast<char>(std::tolower(*i));
         return str;
     }
 }

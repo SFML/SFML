@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Randomizer.hpp>
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 
 
 ////////////////////////////////////////////////////////////
@@ -39,8 +39,8 @@ namespace
     // in milliseconds, so that it is always different
     unsigned int InitializeSeed()
     {
-        unsigned int seed = static_cast<unsigned int>(time(NULL));
-        srand(seed);
+        unsigned int seed = static_cast<unsigned int>(std::time(NULL));
+        std::srand(seed);
         return seed;
     }
 
@@ -54,7 +54,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void Randomizer::SetSeed(unsigned int seed)
 {
-    srand(seed);
+    std::srand(seed);
     globalSeed = seed;
 }
 
@@ -71,7 +71,7 @@ float Randomizer::Random(float begin, float end)
 {
     // This is not the best algorithm, but it is fast and will be enough in most cases
 
-    return static_cast<float>(rand()) / RAND_MAX * (end - begin) + begin;
+    return static_cast<float>(std::rand()) / RAND_MAX * (end - begin) + begin;
 }
 
 
@@ -82,7 +82,7 @@ int Randomizer::Random(int begin, int end)
 {
     // This is not the best algorithm, but it is fast and will be enough in most cases
 
-    return rand() % (end - begin + 1) + begin;
+    return std::rand() % (end - begin + 1) + begin;
 }
 
 } // namespace sf

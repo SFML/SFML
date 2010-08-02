@@ -28,7 +28,7 @@
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/SocketImpl.hpp>
 #include <SFML/System/String.hpp>
-#include <string.h>
+#include <cstring>
 
 
 namespace sf
@@ -56,7 +56,7 @@ void Packet::Append(const void* data, std::size_t sizeInBytes)
     {
         std::size_t start = myData.size();
         myData.resize(start + sizeInBytes);
-        memcpy(&myData[start], data, sizeInBytes);
+        std::memcpy(&myData[start], data, sizeInBytes);
     }
 }
 
@@ -223,7 +223,7 @@ Packet& Packet::operator >>(char* data)
     if ((length > 0) && CheckSize(length))
     {
         // Then extract characters
-        memcpy(data, GetData() + myReadPos, length);
+        std::memcpy(data, GetData() + myReadPos, length);
         data[length] = '\0';
 
         // Update reading position

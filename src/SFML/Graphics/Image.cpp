@@ -33,7 +33,7 @@
 #include <SFML/System/Err.hpp>
 #include <algorithm>
 #include <vector>
-#include <string.h>
+#include <cstring>
 
 
 namespace sf
@@ -144,7 +144,7 @@ bool Image::LoadFromPixels(unsigned int width, unsigned int height, const Uint8*
 
         // Fill the pixel buffer with the specified raw data
         myPixels.resize(width * height * 4);
-        memcpy(&myPixels[0], data, myPixels.size());
+        std::memcpy(&myPixels[0], data, myPixels.size());
 
         // We can create the texture
         if (CreateTexture())
@@ -312,7 +312,7 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
         // Optimized copy ignoring alpha values, row by row (faster)
         for (int i = 0; i < rows; ++i)
         {
-            memcpy(dstPixels, srcPixels, pitch);
+            std::memcpy(dstPixels, srcPixels, pitch);
             srcPixels += srcStride;
             dstPixels += dstStride;
         }
@@ -709,7 +709,7 @@ void Image::EnsureArrayUpdate() const
 
             for (unsigned int i = 0; i < myHeight; ++i)
             {
-                memcpy(dst, src, dstPitch);
+                std::memcpy(dst, src, dstPitch);
                 src += srcPitch;
                 dst += dstPitch;
             }

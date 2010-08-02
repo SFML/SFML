@@ -28,7 +28,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Renderer.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <math.h>
+#include <cmath>
 
 
 namespace sf
@@ -153,7 +153,7 @@ void Drawable::SetOrigin(const Vector2f& origin)
 ////////////////////////////////////////////////////////////
 void Drawable::SetRotation(float angle)
 {
-    myRotation = static_cast<float>(fmod(angle, 360));
+    myRotation = static_cast<float>(std::fmod(angle, 360));
     if (myRotation < 0)
         myRotation += 360.f;
 

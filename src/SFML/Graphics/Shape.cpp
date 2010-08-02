@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/Renderer.hpp>
-#include <math.h>
+#include <cmath>
 
 
 namespace sf
@@ -221,7 +221,7 @@ Shape Shape::Circle(const Vector2f& center, float radius, const Color& color, fl
     for (int i = 0; i < nbSegments; ++i)
     {
         float angle = i * 2 * 3.141592654f / nbSegments;
-        Vector2f offset(cos(angle), sin(angle));
+        Vector2f offset(std::cos(angle), std::sin(angle));
 
         shape.AddPoint(center + offset * radius, color, outlineColor);
     }
@@ -366,7 +366,7 @@ bool Shape::ComputeNormal(const Vector2f& p1, const Vector2f& p2, Vector2f& norm
     normal.x = p1.y - p2.y;
     normal.y = p2.x - p1.x;
 
-    float len = sqrt(normal.x * normal.x + normal.y * normal.y);
+    float len = std::sqrt(normal.x * normal.x + normal.y * normal.y);
     if (len == 0.f)
         return false;
 

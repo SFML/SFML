@@ -32,7 +32,7 @@
 #include <algorithm>
 #include <locale>
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 
 
 namespace sf

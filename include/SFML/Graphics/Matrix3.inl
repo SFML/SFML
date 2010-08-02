@@ -108,8 +108,8 @@ inline Matrix3 Matrix3::Transformation(const Vector2f& origin, const Vector2f& t
 {
     // Combine the transformations
     float angle  = rotation * 3.141592654f / 180.f;
-    float cosine = static_cast<float>(cos(angle));
-    float sine   = static_cast<float>(sin(angle));
+    float cosine = static_cast<float>(std::cos(angle));
+    float sine   = static_cast<float>(std::sin(angle));
     float sxCos  = scale.x * cosine;
     float syCos  = scale.y * cosine;
     float sxSin  = scale.x * sine;
@@ -129,8 +129,8 @@ inline Matrix3 Matrix3::Projection(const Vector2f& center, const Vector2f& size,
 {
     // Rotation components
     float angle  = rotation * 3.141592654f / 180.f;
-    float cosine = static_cast<float>(cos(angle));
-    float sine   = static_cast<float>(sin(angle));
+    float cosine = static_cast<float>(std::cos(angle));
+    float sine   = static_cast<float>(std::sin(angle));
     float tx     = -center.x * cosine - center.y * sine + center.x;
     float ty     =  center.x * sine - center.y * cosine + center.y;
 
