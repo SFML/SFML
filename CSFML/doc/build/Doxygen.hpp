@@ -23,7 +23,7 @@
 ///     sfImage* image;
 ///     sfSprite* sprite;
 ///     sfFont* font;
-///     sfString* text;
+///     sfText* text;
 ///     sfMusic* music;
 ///     sfEvent event;
 ///
@@ -37,16 +37,16 @@
 ///     if (!image)
 ///         return EXIT_FAILURE;
 ///     sprite = sfSprite_Create();
-///     sfSprite_SetImage(sprite, image);
+///     sfSprite_SetImage(sprite, image, sfTrue);
 /// 
 ///     /* Create a graphical string to display */
-///     font = sfFont_CreateFromFile("arial.ttf", 50, NULL);
+///     font = sfFont_CreateFromFile("arial.ttf");
 ///     if (!font)
 ///         return EXIT_FAILURE;
 ///     text = sfString_Create();
-///     sfString_SetText(text, "Hello SFML");
-///     sfString_SetFont(text, font);
-///     sfString_SetSize(text, 50);
+///     sfText_SetString(text, "Hello SFML");
+///     sfText_SetFont(text, font);
+///     sfText_SetSize(text, 50);
 /// 
 ///     /* Load a music to play */
 ///     music = sfMusic_CreateFromFile("nice_music.ogg");
