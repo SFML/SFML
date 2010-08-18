@@ -239,6 +239,7 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
                 {
                     GLX_CONTEXT_MAJOR_VERSION_ARB, mySettings.MajorVersion,
                     GLX_CONTEXT_MINOR_VERSION_ARB, mySettings.MinorVersion,
+                    GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
                     0, 0
                 };
                 myContext = glXCreateContextAttribsARB(myDisplay, configs[0], toShare, true, attributes);
