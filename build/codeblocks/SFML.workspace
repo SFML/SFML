@@ -7,15 +7,15 @@
 		<Project filename="sfml-graphics.cbp" />
 		<Project filename="sfml-audio.cbp" />
 		<Project filename="sfml-main.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\ftp.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\opengl.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\pong.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\shader.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\sockets.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\sound.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\sound-capture.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\voip.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\win32.cbp" />
-		<Project filename="..\..\samples\build\codeblocks\window.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\ftp.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\opengl.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\pong.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\shader.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\sockets.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\sound.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\sound-capture.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\voip.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\win32.cbp" />
+		<Project filename="..\..\examples\build\codeblocks\window.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

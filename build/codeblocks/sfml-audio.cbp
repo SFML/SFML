@@ -109,6 +109,7 @@
 			<Add directory="..\..\extlibs\headers" />
 			<Add directory="..\..\src" />
 			<Add directory="..\..\include" />
+			<Add directory="..\..\extlibs\headers\AL" />
 		</Compiler>
 		<Linker>
 			<Add option="-static-libgcc" />

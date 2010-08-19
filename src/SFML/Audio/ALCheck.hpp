@@ -31,14 +31,8 @@
 #include <SFML/Config.hpp>
 #include <iostream>
 #include <string>
-
-#if defined(SFML_SYSTEM_MACOS)
-    #include <OpenAL/al.h>
-    #include <OpenAL/alc.h>
-#else
-    #include <AL/al.h>
-    #include <AL/alc.h>
-#endif
+#include <al.h>
+#include <alc.h>
 
 
 namespace sf

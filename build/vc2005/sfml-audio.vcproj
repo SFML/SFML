@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\AL&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;SFML_EXPORTS;SFML_DYNAMIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-vc2005\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\sndfile.lib&quot;"
+				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-msvc\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\sndfile.lib&quot;"
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
@@ -133,7 +133,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\AL&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_LIB;SFML_EXPORTS;SFML_DYNAMIC"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -157,7 +157,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-vc2005\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\sndfile.lib&quot;"
+				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-msvc\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\sndfile.lib&quot;"
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
@@ -222,7 +222,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\AL&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;SFML_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -244,7 +244,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-vc2005\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\sndfile.lib&quot;"
+				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-msvc\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\sndfile.lib&quot;"
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-s-d.lib"
 			/>
 			<Tool
@@ -296,7 +296,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\include&quot;;&quot;$(SolutionDir)..\..\src&quot;;&quot;$(SolutionDir)..\..\extlibs\headers&quot;;&quot;$(SolutionDir)..\..\extlibs\headers\AL&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_LIB;SFML_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -320,7 +320,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-vc2005\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-vc2005\sndfile.lib&quot;"
+				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-msvc\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\sndfile.lib&quot;"
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-s.lib"
 			/>
 			<Tool

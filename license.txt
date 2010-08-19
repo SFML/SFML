@@ -31,7 +31,5 @@ External libraries used by SFML
 * OpenAL-Soft is under the LGPL license
 * libsndfile is under the LGPL license
 * libjpeg is public domain
-* libpng is under the zlib/png license
-* zlib is under the zlib/png license
-* SOIL is public domain
+* stb_image and stb_image_write are public domain
 * freetype is under the FreeType license or the GPL license

@@ -19,8 +19,8 @@ all: sfml
 
 sfml: $(LIBS)
 
-samples:
-	cd ../../samples/build/make && $(MAKE)
+examples:
+	cd ../../examples/build/make && $(MAKE)
 
 $(LIBS):
 	mkdir -p $(LIBPATH)
@@ -44,7 +44,7 @@ clean mrproper:
 	$(MAKE) $@ -f Makefile.graphics
 	$(MAKE) $@ -f Makefile.audio
 	$(MAKE) $@ -f Makefile.network
-	cd ../../samples/build/make && $(MAKE) $@
+	cd ../../examples/build/make && $(MAKE) $@
 
 .PHONY: clean mrproper
 

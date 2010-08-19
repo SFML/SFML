@@ -1,0 +1,16 @@
+
+# add the examples subdirectories
+add_subdirectory(ftp)
+add_subdirectory(opengl)
+add_subdirectory(pong)
+add_subdirectory(shader)
+add_subdirectory(sockets)
+add_subdirectory(sound)
+add_subdirectory(sound_capture)
+add_subdirectory(voip)
+add_subdirectory(window)
+if(WINDOWS)
+    add_subdirectory(win32)
+elseif(LINUX)
+    add_subdirectory(X11)
+endif()

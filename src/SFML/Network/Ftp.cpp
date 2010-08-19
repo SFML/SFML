@@ -327,7 +327,7 @@ Ftp::Response Ftp::Upload(const std::string& localFile, const std::string& remot
         return Response(Response::InvalidFile);
 
     file.seekg(0, std::ios::end);
-    std::size_t length = file.tellg();
+    std::size_t length = static_cast<std::size_t>(file.tellg());
     file.seekg(0, std::ios::beg);
     std::vector<char> fileData(length);
     if (length > 0)
