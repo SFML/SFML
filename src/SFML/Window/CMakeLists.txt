@@ -71,7 +71,7 @@ endif()
 # build the list of external libraries to link
 set(WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})
 if(WINDOWS)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} winmm)
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} winmm gdi32)
 else(LINUX)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB})
 endif()
