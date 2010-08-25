@@ -111,14 +111,16 @@ abstract class SoundStream : SoundSource!("sfSoundStream")
 		if (m_dummy !is null)
 			delete m_dummy;
 	}
-	
+
+@property
+{
 	/**
 	*	Get number of channels of the stream
 	*	
 	*	Returns:
 	*		number of channels			
-	*/		
-	uint getChannelsCount()
+	*/
+	uint channelsCount()
 	{
 		return m_channelsCount;
 	}
@@ -129,7 +131,7 @@ abstract class SoundStream : SoundSource!("sfSoundStream")
 	*	Returns:
 	*		sample rate			
 	*/		
-	uint getSampleRate()
+	uint sampleRate()
 	{
 		return m_sampleRate;
 	}
@@ -140,7 +142,7 @@ abstract class SoundStream : SoundSource!("sfSoundStream")
 	*	Returns:
 	*		current playing offset, in seconds.			
 	*/		
-	float getPlayingOffset()
+	float playingOffset()
 	{
 		return sfSoundStream_GetPlayingOffset(m_ptr);
 	}
@@ -151,7 +153,7 @@ abstract class SoundStream : SoundSource!("sfSoundStream")
 	 *	Params:
 	 *	    timeOffset = New playing position, expressed in seconds
 	 */
-	void setPlayingOffset(float timeOffset)
+	void playingOffset(float timeOffset)
 	{
 		sfSoundStream_SetPlayingOffset(m_ptr, timeOffset);
 	}
@@ -162,7 +164,7 @@ abstract class SoundStream : SoundSource!("sfSoundStream")
 	*	Returns:
 	*		True if the music is looping, false otherwise
 	*/
-	bool getLoop()
+	bool loop()
 	{
 		if (m_ptr !is null)
 			return cast(bool)sfSoundStream_GetLoop(m_ptr);
@@ -177,12 +179,12 @@ abstract class SoundStream : SoundSource!("sfSoundStream")
 	*	Params:
 	*		loop = true to play in loop, false to play once					
 	*/		
-	void setLoop(bool loop)
+	void loop(bool loop)
 	{
 		if (m_ptr !is null)
 			sfSoundStream_SetLoop(m_ptr, loop);
 	}
-	
+} // of @property
 
 protected:
 	/**
@@ -213,7 +215,7 @@ protected:
 	/**
 	*	Called each time the stream is seeked
 	*/		
-	abstract void onSeek();
+	abstract void onSeek(float timeOffset);
 	
 	/**
 	*	Called each time the stream needs new data.
@@ -236,7 +238,7 @@ private:
 		if ((id = *cast(int*) user) in s_instances)
 		{
 			SoundStream temp = s_instances[id];
-			return (temp.onSeek());
+			return (temp.onSeek(t));
 		}
 	}
 	

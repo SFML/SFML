@@ -27,7 +27,7 @@ void main()
 
 	app.useVerticalSync(false);
 	
-	Input i = app.getInput();
+	Input i = app.input;
 	
 	// Load the sounds used in the game
 	Sound BallSound = new Sound(new SoundBuffer("Data/ball.wav"));
@@ -40,23 +40,23 @@ void main()
 	// Initialize the end text
 	Text End = new Text(""c);
 	Font font = new Font("Data/cheeseburger.ttf");
-	End.setFont(font);
-	End.setCharacterSize(60);
+	End.font = font;
+	End.characterSize = 60;
 	End.move(150.f, 200.f);
-	End.setColor(Color(50, 50, 250));
+	End.color = Color(50, 50, 250);
 
 	Text fps = new Text(""c, font, 30);
 	fps.move(50.f, 50.f);
-	fps.setColor(Color.BLACK);
+	fps.color = Color.BLACK;
 	
 	// Create the sprites of the background, the paddles and the ball
 	Sprite LeftPaddle = new Sprite(PaddleImage);
 	Sprite RightPaddle = new Sprite(PaddleImage);
 	Sprite Ball = new Sprite(BallImage);
 
-	LeftPaddle.move(10, (app.getView().getHeight() - LeftPaddle.getSize().y) / 2);
-	RightPaddle.move(app.getView().getWidth() - RightPaddle.getSize().x - 10, (app.getView().getHeight() - RightPaddle.getSize().y) / 2);
-	Ball.move((app.getView().getWidth() - Ball.getSize().x) / 2, (app.getView().getHeight() - Ball.getSize().y) / 2);
+	LeftPaddle.move(10, (app.view.getHeight() - LeftPaddle.size.y) / 2);
+	RightPaddle.move(app.view.getWidth() - RightPaddle.size.x - 10, (app.view.getHeight() - RightPaddle.size.y) / 2);
+	Ball.move((app.view.getWidth() - Ball.size.x) / 2, (app.view.getHeight() - Ball.size.y) / 2);
 
 	// Define the paddles properties
 	auto AITimer = new PerformanceCounter();
@@ -78,11 +78,12 @@ void main()
 	Event evt;
 	uint iFps = 0;
 	auto fpsClock = new PerformanceCounter();
+	
 	while (app.isOpened())
 	{
 		app.clear(Color(255, 255, 255, 255));
-		// Handle events
 		
+		// Handle events
 		while (app.getEvent(evt))
 		{
 			// Window closed or escape key pressed : exit
@@ -97,16 +98,16 @@ void main()
 		if (IsPlaying)
 		{
 			// Move the player's paddle
-			if (i.isKeyDown(KeyCode.Up) && (LeftPaddle.getPosition().y > 5.f))
-				LeftPaddle.move(0.f, -LeftPaddleSpeed * app.getFrameTime());
-			if (i.isKeyDown(KeyCode.Down) && (LeftPaddle.getPosition().y < app.getView().getHeight() - LeftPaddle.getSize().y - 5.f))
-				LeftPaddle.move(0.f, LeftPaddleSpeed * app.getFrameTime());
+			if (i.isKeyDown(KeyCode.Up) && (LeftPaddle.position.y > 5.f))
+				LeftPaddle.move(0.f, -LeftPaddleSpeed * app.frameTime);
+			if (i.isKeyDown(KeyCode.Down) && (LeftPaddle.position.y < app.view.getHeight() - LeftPaddle.size.y - 5.f))
+				LeftPaddle.move(0.f, LeftPaddleSpeed * app.frameTime);
 			
 			// Move the computer's paddle
-			if (((RightPaddleSpeed < 0.f) && (RightPaddle.getPosition().y > 5.f)) ||
-				((RightPaddleSpeed > 0.f) && (RightPaddle.getPosition().y < app.getView().getHeight() - RightPaddle.getSize().y - 5.f)))
+			if (((RightPaddleSpeed < 0.f) && (RightPaddle.position.y > 5.f)) ||
+				((RightPaddleSpeed > 0.f) && (RightPaddle.position.y < app.view.getHeight() - RightPaddle.size.y - 5.f)))
 			{
-				RightPaddle.move(0.f, RightPaddleSpeed * app.getFrameTime());
+				RightPaddle.move(0.f, RightPaddleSpeed * app.frameTime);
 			}
 
 			// Update the computer's paddle direction according to the ball position
@@ -114,65 +115,65 @@ void main()
 			if (AITimer.milliseconds > AITime)
 			{
 				AITimer.start();
-				if ((RightPaddleSpeed < 0) && (Ball.getPosition().y + Ball.getSize().y > RightPaddle.getPosition().y + RightPaddle.getSize().y))
+				if ((RightPaddleSpeed < 0) && (Ball.position.y + Ball.size.y > RightPaddle.position.y + RightPaddle.size.y))
 					RightPaddleSpeed = -RightPaddleSpeed;
-				if ((RightPaddleSpeed > 0) && (Ball.getPosition().y < RightPaddle.getPosition().y))
+				if ((RightPaddleSpeed > 0) && (Ball.position.y < RightPaddle.position.y))
 					RightPaddleSpeed = -RightPaddleSpeed;
 			}
 
 
 
 			// Move the ball
-			float Factor = BallSpeed * app.getFrameTime();
+			float Factor = BallSpeed * app.frameTime;
 			Ball.move(cos(BallAngle) * Factor, sin(BallAngle) * Factor);
 
 			// Check collisions between the ball and the screen
-			if (Ball.getPosition().x < 0.f)
+			if (Ball.position.x < 0.f)
 			{
 				IsPlaying = false;
-				End.setString("You lost !\n(press escape to exit)"c);
+				End.text("You lost !\n(press escape to exit)"c);
 			}
 
-			if (Ball.getPosition().x + Ball.getSize().x > app.getView().getWidth())
+			if (Ball.position.x + Ball.size.x > app.view.getWidth())
 			{
 				IsPlaying = false;
-				End.setString("You won !\n(press escape to exit)"c);
+				End.text("You won !\n(press escape to exit)"c);
 			}
 
-			if (Ball.getPosition().y < 0.f)
+			if (Ball.position.y < 0.f)
 			{
 				BallSound.play();
 				BallAngle = -BallAngle;
-				Ball.setY(0.1f);
+				Ball.y = 0.1f;
 			}
 
-			if (Ball.getPosition().y + Ball.getSize().y > app.getView().getHeight())
+			if (Ball.position.y + Ball.size.y > app.view.getHeight())
 			{
 				BallSound.play();
 				BallAngle = -BallAngle;
-				Ball.setY(app.getView().getHeight() - Ball.getSize().y - 0.1f);
+				Ball.y = app.view.getHeight() - Ball.size.y - 0.1f;
 			}
 			// Check the collisions between the ball and the paddles
 			// Left Paddle
-			if (Ball.getPosition().x < LeftPaddle.getPosition().x + LeftPaddle.getSize().x && 
-				Ball.getPosition().x > LeftPaddle.getPosition().x + (LeftPaddle.getSize().x / 2.0f) &&
-				Ball.getPosition().y + Ball.getSize().y >= LeftPaddle.getPosition().y &&
-				Ball.getPosition().y <= LeftPaddle.getPosition().y + LeftPaddle.getSize().y)
+			if (Ball.position.x < LeftPaddle.position.x + LeftPaddle.size.x && 
+				Ball.position.x > LeftPaddle.position.x + (LeftPaddle.size.x / 2.0f) &&
+				Ball.position.y + Ball.size.y >= LeftPaddle.position.y &&
+				Ball.position.y <= LeftPaddle.position.y + LeftPaddle.size.y)
 			{
 				BallSound.play();
 				BallAngle = PI - BallAngle;
-				Ball.setX(LeftPaddle.getPosition().x + LeftPaddle.getSize().x + 0.1f);
+				Ball.x = LeftPaddle.position.x + LeftPaddle.size.x + 0.1f;
 			}
 
 			// Right Paddle
-			if (Ball.getPosition().x + Ball.getSize().x > RightPaddle.getPosition().x &&
-				Ball.getPosition().x + Ball.getSize().x < RightPaddle.getPosition().x + (RightPaddle.getSize().x / 2.0f) &&
-				Ball.getPosition().y + Ball.getSize().y >= RightPaddle.getPosition().y &&
-				Ball.getPosition().y <= RightPaddle.getPosition().y + RightPaddle.getSize().y)
+			if (Ball.position.x + Ball.size.x > RightPaddle.position.x &&
+				Ball.position.x + Ball.size.x < RightPaddle.position.x + (RightPaddle.size.x / 2.0f) &&
+				Ball.position.y + Ball.size.y >= RightPaddle.position.y &&
+				Ball.position.y <= RightPaddle.position.y + RightPaddle.size.y)
 			{
 				BallSound.play();
 				BallAngle = PI - BallAngle;
-				Ball.setX(RightPaddle.getPosition().x - Ball.getSize().x - 0.1f);
+				Ball.x = RightPaddle.position.x - Ball.size.x - 0.1f;
 			}
 		}
 
@@ -185,7 +186,7 @@ void main()
 		fpsClock.stop();
 		if(fpsClock.seconds >= 1)
 		{
-			fps.setString(std.string.format("%d fps", iFps));
+			fps.text = std.string.format("%d fps", iFps);
 			iFps = 0;
 			fpsClock.start();
 		}

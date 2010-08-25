@@ -173,7 +173,7 @@ public:
 	 *	Returns:
 	 *	Position of the sound
 	 */
-	Vector3f getPosition()
+	Vector3f position()
 	{
 		Vector3f ret;
 		sfSoundSource_GetPosition(m_ptr, &ret.x, &ret.y, &ret.z);
@@ -279,7 +279,7 @@ public:
 	{
 		return sfSoundSource_GetAttenuation(m_ptr);
 	}
-}
+} // of @property
 
 
 private:
