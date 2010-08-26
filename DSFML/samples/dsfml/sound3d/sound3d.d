@@ -15,9 +15,10 @@ void main()
 	
 	//Some instructions
 	Text s = new Text("Click anywhere on screen to change listener position.\nPress + or - to modify the speed of the car."c, f);
-	s.setCharacterSize(34);
+	
+	s.characterSize = 34;
 	s.setPosition(20, 30);
-	s.setColor(Color.BLACK);
+	s.color = Color.BLACK;
 	
 	//We prepare our images and the sound
 	string[2] images = ["Data/bluerallyecarleft.bmp", "Data/bluerallyecarright.bmp"];
@@ -26,8 +27,8 @@ void main()
 	int carSpeed = 100;
 	
 	//Set default position for the car and the listener
-	c.setPosition(Vector2f(0, 300));
-	SoundListener.setPosition(Vector2f(400, 300));
+	c.position = Vector2f(0, 300);
+	SoundListener.position = Vector2f(400, 300);
 	
 	c.startPlaying();
 	
@@ -45,8 +46,8 @@ void main()
 			// we handle the click event to change listener position
 			else if (evt.Type == EventType.MouseButtonPressed && evt.MouseButton.Button == MouseButtons.Left)
 			{
-				Input i = app.getInput();
-				SoundListener.setPosition(Vector2f(i.getMouseX(), i.getMouseY()));
+				Input i = app.input;
+				SoundListener.position = Vector2f(i.mouseX, i.mouseY);
 			}
 			// and eventual keys press
 			else if (evt.Type == EventType.KeyPressed)
@@ -64,12 +65,12 @@ void main()
 		}
 		
 		//We move constantly our car.
-		c.move(Vector2f(app.getFrameTime() * carSpeed, 0));
+		c.move(Vector2f(app.frameTime * carSpeed, 0));
 	
 		//Draw all the sprite and string on render window
 		app.draw(s);
-		app.draw(c.getSprite());
-		app.draw(SoundListener.getSprite());
+		app.draw(c.sprite);
+		app.draw(SoundListener.sprite);
 		
 		//And finally display the window
 		app.display();
@@ -91,26 +92,26 @@ class SoundListener
 		crosshairImg.createMaskFromColor(Color.WHITE);
 		
 		s_crosshair = new Sprite(crosshairImg);
-		s_crosshair.setOrigin(Vector2f(s_crosshair.getSize().x / 2, s_crosshair.getSize().y / 2));
+		s_crosshair.setOrigin(s_crosshair.size.x / 2, s_crosshair.size.y / 2);
 		
 		//Listener.setTarget(1.f, 0.f, 0.f);
 	}
 	
 	// Adjust position of the listener
-	static void setPosition(Vector2f p)
+	@property static void position(Vector2f p)
 	{
 		Listener.setPosition(p.x, p.y, 5.f);
-		s_crosshair.setPosition(p);
+		s_crosshair.setPosition(p.x, p.y);
 	}
 	
-	static Sprite getSprite()
+	@property static Sprite sprite()
 	{
 		return s_crosshair;
 	}  
 }
 
 
-// Class encapsulating all data for our car
+//! Class encapsulating all data for our car
 class Car
 {
 	Vector2f m_actual;
@@ -129,13 +130,13 @@ class Car
 			img.createMaskFromColor(Color(97, 68, 43));
 		
 		m_sprite = new Sprite(imgs[0]);
-		m_sprite.setOrigin(Vector2f(m_sprite.getSize().x / 2, m_sprite.getSize().y / 2));
+		m_sprite.setOrigin(m_sprite.size.x / 2, m_sprite.size.y / 2);
 		
 		SoundBuffer buff = new SoundBuffer(soundFilename);
 		
 		//load our sound with loop enabled
 		m_sound = new Sound(buff, true);
-		m_sound.setAttenuation(.05f);
+		m_sound.attenuation = .05f;
 	}
 	
 	// Begin the sound play
@@ -146,9 +147,9 @@ class Car
 	
 	// Set the position of the car on the window
 	// Used to setup the begin car window and sound location 
-	void setPosition(Vector2f p)
+	@property void position(Vector2f p)
 	{
-		m_sprite.setPosition(p);
+		m_sprite.setPosition(p.x, p.y);
 		m_sound.setPosition(p.x, 0, p.y);
 	}
 	
@@ -157,13 +158,13 @@ class Car
 	void move(Vector2f vec)
 	{
 		// if the car is beyond the right screen limit
-		if (!reverse && m_sprite.getPosition().x > 850)
+		if (!reverse && m_sprite.position.x > 850)
 		{
 			m_sprite.setImage(imgs[1]);
 			reverse = true;
 		}
 		// same as above but for left limit
-		else if (reverse && vec.x + m_sprite.getPosition().x < -50)
+		else if (reverse && vec.x + m_sprite.position.x < -50)
 		{
 			m_sprite.setImage(imgs[0]);
 			reverse = false;
@@ -173,19 +174,12 @@ class Car
 			vec = -vec;
 			
 		m_sprite.move(vec);
-		Vector2f pos = m_sprite.getPosition();
+		Vector2f pos = m_sprite.position;
 		m_sound.setPosition(pos.x , pos.y, 0);
 	}
 
-	Sprite getSprite()
+	@property Sprite sprite()
 	{
 		return m_sprite;
 	}
 }
-
-
-
-
-
-
-

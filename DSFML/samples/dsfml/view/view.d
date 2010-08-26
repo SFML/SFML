@@ -7,10 +7,10 @@ import dsfml.graphics.all;
 void main()
 {
 	RenderWindow window = new RenderWindow(VideoMode(800, 600), "View sample");
-	window.setFramerateLimit(100);
-	Input input = window.getInput();
+	window.framerateLimit = 100;
+	Input input = window.input;
 	Vector2f top;
-	Rect!(float) bound;
+	FloatRect bound;
 	Shape s;
 	bool mousePressed;
 	
@@ -28,33 +28,33 @@ void main()
 			if (		evt.Type == EventType.MouseButtonPressed &&
 						evt.MouseButton.Button == MouseButtons.Left)
 			{
-				top = window.convertCoords(input.getMouseX(), input.getMouseY());
+				top = window.convertCoords(input.mouseX, input.mouseY);
 				mousePressed = true;
 				
 			}
 			else if (	evt.Type == EventType.MouseButtonReleased &&
 						evt.MouseButton.Button == MouseButtons.Left)
 			{
-				mousePressed = false;	
+				mousePressed = false;
 			}
 			else if (	evt.Type == EventType.MouseMoved &&
 						mousePressed)
 			{
-				Vector2f bottom = window.convertCoords(input.getMouseX(), input.getMouseY());
-				bound = FloatRect(top.x, top.y, bottom.x, bottom.y);
-				s = Shape.rectangle(top.x, top.y, bottom.x, bottom.y, Color(0, 0, 0, 0), 1, Color.BLACK);
+				Vector2f bottom = window.convertCoords(input.mouseX, input.mouseY);
+				bound = FloatRect(top.x, top.y, bottom.x-top.x, bottom.y-top.y);
+				s = Shape.rectangle(bound.left, bound.top, bound.width, bound.height, Color(0, 0, 0, 0), 1, Color.BLACK);
 			}
 			else if (	evt.Type == EventType.KeyPressed &&
 						evt.Key.Code == KeyCode.Return)
 			{
 				if (bound != FloatRect())
-					window.setView(new View(bound));
+					window.view = new View(bound);
 				s = null;
 			}
 			else if (	evt.Type == EventType.KeyPressed &&
 						evt.Key.Code == KeyCode.Escape)
 			{
-				window.setView(window.getDefaultView());	
+				window.view = window.defaultView;
 			}
 			else if (	evt.Type == EventType.Closed)
 				window.close();
