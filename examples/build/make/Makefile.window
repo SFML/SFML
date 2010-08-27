@@ -1,7 +1,7 @@
 EXE     = window
 SRC     = $(wildcard $(SRCROOT)/$(EXE)/*.cpp)
 OBJ     = $(SRC:.cpp=.o)
-LDFLAGS = -lsfml-window -lsfml-system -lGLU -lGL
+LDFLAGS = -lsfml2-window -lsfml2-system -lGLU -lGL
 
 all: $(EXE)
 

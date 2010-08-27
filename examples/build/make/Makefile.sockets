@@ -1,7 +1,7 @@
 EXE     = sockets
 SRC     = $(wildcard $(SRCROOT)/$(EXE)/*.cpp)
 OBJ     = $(SRC:.cpp=.o)
-LDFLAGS = -lsfml-network -lsfml-system
+LDFLAGS = -lsfml2-network -lsfml2-system
 
 all: $(EXE)
 

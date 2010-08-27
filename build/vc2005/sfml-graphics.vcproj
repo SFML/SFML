@@ -72,7 +72,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-msvc\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\jpeg.lib&quot;"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.dll"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\sfml2-graphics-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib;libcd.lib;libcmtd.lib"
@@ -168,7 +168,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-msvc\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\jpeg.lib&quot;"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\sfml2-graphics.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrtd.lib;libcd.lib;libcmtd.lib"
@@ -259,7 +259,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-msvc\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\jpeg.lib&quot;"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-s-d.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\sfml2-graphics-s-d.lib"
 				AdditionalLibraryDirectories=""
 			/>
 			<Tool
@@ -341,7 +341,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="opengl32.lib &quot;$(SolutionDir)..\..\extlibs\libs-msvc\freetype.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\glew.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\jpeg.lib&quot;"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-s.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\sfml2-graphics-s.lib"
 				AdditionalLibraryDirectories=""
 			/>
 			<Tool

@@ -1,7 +1,7 @@
 EXE     = voip
 SRC     = $(wildcard $(SRCROOT)/$(EXE)/*.cpp)
 OBJ     = $(SRC:.cpp=.o)
-LDFLAGS = -lsfml-audio -lsfml-network -lsfml-system
+LDFLAGS = -lsfml2-audio -lsfml2-network -lsfml2-system
 
 all: $(EXE)
 

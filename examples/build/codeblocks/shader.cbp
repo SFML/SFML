@@ -24,10 +24,10 @@
 					<Add directory="..\..\..\extlibs" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-main-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-graphics-s-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-window-s-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-main-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-graphics-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-window-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system-s-d.a" />
 				</Linker>
 			</Target>
 			<Target title="Release static_Win32">
@@ -47,10 +47,10 @@
 					<Add directory="..\..\..\extlibs" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-main.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-graphics-s.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-window-s.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-main.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-graphics-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-window-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system-s.a" />
 				</Linker>
 			</Target>
 			<Target title="Debug DLL_Win32">
@@ -72,10 +72,10 @@
 					<Add directory="..\..\..\extlibs" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-main-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-graphics-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-window-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-main-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-graphics-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-window-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system-d.a" />
 				</Linker>
 			</Target>
 			<Target title="Release DLL_Win32">
@@ -96,10 +96,10 @@
 					<Add directory="..\..\..\extlibs" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-main.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-graphics.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-window.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-main.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-graphics.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-window.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system.a" />
 				</Linker>
 			</Target>
 		</Build>

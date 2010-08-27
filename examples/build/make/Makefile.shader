@@ -1,7 +1,7 @@
 EXE     = shader
 SRC     = $(wildcard $(SRCROOT)/$(EXE)/*.cpp)
 OBJ     = $(SRC:.cpp=.o)
-LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
+LDFLAGS = -lsfml2-graphics -lsfml2-window -lsfml2-system
 
 all: $(EXE)
 

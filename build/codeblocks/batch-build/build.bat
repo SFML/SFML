@@ -45,41 +45,41 @@ codeblocks -na -nd -ns --build sfml-audio.cbp --target="Release DLL_Win32"
 REM Copy the SFML static libraries into a temporary folder
 IF NOT EXIST %TMPDIR% mkdir %TMPDIR%
 cd %SFML%\lib\mingw
-xcopy libsfml-*-s-d.a %TMPDIR%/q /y
-xcopy libsfml-*-s.a %TMPDIR%/q /y
+xcopy libsfml2-*-s-d.a %TMPDIR%/q /y
+xcopy libsfml2-*-s.a %TMPDIR%/q /y
 cd %TMPDIR%
 
 REM Add external libraries to sfml-window
-echo Adding external libraries to libsfml-window-s...
+echo Adding external libraries to libsfml2-window-s...
 ar x %SFML%\build\codeblocks\batch-build\libgdi32.a
 ar x %SFML%\build\codeblocks\batch-build\libopengl32.a
 ar x %SFML%\build\codeblocks\batch-build\libwinmm.a
-ar rs libsfml-window-s.a *.o
-ar rs libsfml-window-s-d.a *.o
+ar rs libsfml2-window-s.a *.o
+ar rs libsfml2-window-s-d.a *.o
 del *.o /f /q
 
 REM Add external libraries to sfml-graphics
-echo Adding external libraries to libsfml-graphics-s...
+echo Adding external libraries to libsfml2-graphics-s...
 ar x %SFML%\extlibs\libs-mingw\libfreetype.a
 ar x %SFML%\extlibs\libs-mingw\libglew.a
 ar x %SFML%\extlibs\libs-mingw\libjpeg.a
-ar rs libsfml-graphics-s.a *.o
-ar rs libsfml-graphics-s-d.a *.o
+ar rs libsfml2-graphics-s.a *.o
+ar rs libsfml2-graphics-s-d.a *.o
 del *.o /f /q
 
 REM Add external libraries to sfml-audio
-echo Adding external libraries to libsfml-audio-s...
+echo Adding external libraries to libsfml2-audio-s...
 ar x %SFML%\extlibs\libs-mingw\libopenal32.a
 ar x %SFML%\extlibs\libs-mingw\libsndfile.a
-ar rs libsfml-audio-s.a *.o
-ar rs libsfml-audio-s-d.a *.o
+ar rs libsfml2-audio-s.a *.o
+ar rs libsfml2-audio-s-d.a *.o
 del *.o /f /q
 
 REM Add external libraries to sfml-network
-echo Adding external libraries to libsfml-network-s...
+echo Adding external libraries to libsfml2-network-s...
 ar x %SFML%\build\codeblocks\batch-build\libws2_32.a
-ar rs libsfml-network-s.a *.o
-ar rs libsfml-network-s-d.a *.o
+ar rs libsfml2-network-s.a *.o
+ar rs libsfml2-network-s-d.a *.o
 del *.o /f /q
 
 REM Copy the SFML libraries to their final location

@@ -23,8 +23,8 @@
 					<Add directory="..\..\..\include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-network-s-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-network-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system-s-d.a" />
 				</Linker>
 			</Target>
 			<Target title="Release static_Win32">
@@ -43,8 +43,8 @@
 					<Add directory="..\..\..\include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-network-s.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-network-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system-s.a" />
 				</Linker>
 			</Target>
 			<Target title="Debug DLL_Win32">
@@ -65,8 +65,8 @@
 					<Add directory="..\..\..\include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-network-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-network-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system-d.a" />
 				</Linker>
 			</Target>
 			<Target title="Release DLL_Win32">
@@ -86,8 +86,8 @@
 					<Add directory="..\..\..\include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-network.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-network.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system.a" />
 				</Linker>
 			</Target>
 		</Build>

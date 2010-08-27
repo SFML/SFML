@@ -1,13 +1,13 @@
 SRC         = $(wildcard $(SRCROOT)/Network/*.cpp $(SRCROOT)/Network/Unix/*.cpp)
 OBJ         = $(SRC:.cpp=.o)
-LIB         = libsfml-network.so
+LIB         = libsfml2-network.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
 LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
-libsfml-network.so: $(OBJ)
+libsfml2-network.so: $(OBJ)
 	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ)
 
 $(OBJ): %.o: %.cpp

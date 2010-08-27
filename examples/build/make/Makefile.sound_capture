@@ -1,7 +1,7 @@
 EXE     = sound_capture
 SRC     = $(wildcard $(SRCROOT)/$(EXE)/*.cpp)
 OBJ     = $(SRC:.cpp=.o)
-LDFLAGS = -lsfml-audio -lsfml-system
+LDFLAGS = -lsfml2-audio -lsfml2-system
 
 all: $(EXE)
 

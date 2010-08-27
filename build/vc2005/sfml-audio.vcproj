@@ -66,7 +66,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-msvc\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\sndfile.lib&quot;"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.dll"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\sfml2-audio-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -158,7 +158,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-msvc\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\sndfile.lib&quot;"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\sfml2-audio.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -245,7 +245,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-msvc\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\sndfile.lib&quot;"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-s-d.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\sfml2-audio-s-d.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -321,7 +321,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="&quot;$(SolutionDir)..\..\extlibs\libs-msvc\openal32.lib&quot; &quot;$(SolutionDir)..\..\extlibs\libs-msvc\sndfile.lib&quot;"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-s.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\sfml2-audio-s.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

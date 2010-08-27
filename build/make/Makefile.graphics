@@ -1,13 +1,13 @@
 SRC         = $(wildcard $(SRCROOT)/Graphics/*.cpp $(SRCROOT)/Graphics/Linux/*.cpp)
 OBJ         = $(SRC:.cpp=.o)
-LIB         = libsfml-graphics.so
+LIB         = libsfml2-graphics.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
 LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
-libsfml-graphics.so: $(OBJ)
+libsfml2-graphics.so: $(OBJ)
 	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lGLEW -ljpeg -lfreetype -lX11 -lGL
 
 $(OBJ): %.o: %.cpp

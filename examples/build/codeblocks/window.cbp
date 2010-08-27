@@ -23,9 +23,9 @@
 					<Add directory="..\..\..\include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-main-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-window-s-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-main-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-window-s-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system-s-d.a" />
 					<Add library="opengl32" />
 					<Add library="glu32" />
 				</Linker>
@@ -46,9 +46,9 @@
 					<Add directory="..\..\..\include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-main.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-window-s.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-main.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-window-s.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system-s.a" />
 					<Add library="opengl32" />
 					<Add library="glu32" />
 				</Linker>
@@ -71,9 +71,9 @@
 					<Add directory="..\..\..\include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-main-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-window-d.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-main-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-window-d.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system-d.a" />
 					<Add library="opengl32" />
 					<Add library="glu32" />
 				</Linker>
@@ -95,9 +95,9 @@
 					<Add directory="..\..\..\include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="..\..\..\lib\mingw\libsfml-main.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-window.a" />
-					<Add library="..\..\..\lib\mingw\libsfml-system.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-main.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-window.a" />
+					<Add library="..\..\..\lib\mingw\libsfml2-system.a" />
 					<Add library="opengl32" />
 					<Add library="glu32" />
 				</Linker>

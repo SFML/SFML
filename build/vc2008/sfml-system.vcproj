@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName)-d.dll"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\sfml2-system-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -154,7 +154,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName).dll"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\sfml2-system.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -238,7 +238,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName)-s-d.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\sfml2-system-s-d.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -313,7 +313,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName)-s.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\sfml2-system-s.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

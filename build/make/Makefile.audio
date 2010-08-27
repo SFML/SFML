@@ -1,17 +1,17 @@
 SRC         = $(wildcard $(SRCROOT)/Audio/*.cpp)
 OBJ         = $(SRC:.cpp=.o)
-LIB         = libsfml-audio.so
+LIB         = libsfml2-audio.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
 LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
-libsfml-audio.so: $(OBJ)
+libsfml2-audio.so: $(OBJ)
 	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lsndfile -lopenal
 
 $(OBJ): %.o: %.cpp
-	$(CPP) -o $@ -c $< $(CFLAGS)
+	$(CPP) -o $@ -c $< $(CFLAGS) -I/usr/include/AL
 
 .PHONY: clean mrproper
 

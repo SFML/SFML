@@ -1,13 +1,13 @@
 SRC         = $(wildcard $(SRCROOT)/Window/*.cpp $(SRCROOT)/Window/Linux/*.cpp)
 OBJ         = $(SRC:.cpp=.o)
-LIB         = libsfml-window.so
+LIB         = libsfml2-window.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
 LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
-libsfml-window.so: $(OBJ)
+libsfml2-window.so: $(OBJ)
 	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lX11 -lXrandr -lGL
 
 $(OBJ): %.o: %.cpp

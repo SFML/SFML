@@ -66,7 +66,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName)-d.dll"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\sfml2-network-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\..\bin\static&quot;"
 				GenerateDebugInformation="true"
@@ -156,7 +156,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName).dll"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\sfml2-network.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\..\bin\static&quot;"
 				GenerateDebugInformation="true"
@@ -241,7 +241,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="ws2_32.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName)-s-d.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\sfml2-network-s-d.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -317,7 +317,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="ws2_32.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName)-s.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\sfml2-network-s.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
