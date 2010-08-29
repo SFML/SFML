@@ -1,14 +1,14 @@
 SRC         = $(wildcard $(SRCROOT)/System/*.cpp)
 OBJ         = $(SRC:.cpp=.o)
-LIB         = libcsfml-system.so
+LIB         = libcsfml2-system.so
 LIBNAME     = $(LIB).$(VERSION)
 FULLLIBNAME = $(LIBPATH)/$(LIBNAME)
 LINK        = $(LN) $(LNFLAGS) $(LIBNAME) $(DESTLIBDIR)/$(LIB)
 
 all: $(LIB)
 
-libcsfml-system.so: $(OBJ)
-	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lsfml-system
+libcsfml2-system.so: $(OBJ)
+	$(CPP) $(LDFLAGS) -Wl,-soname,$(LIBNAME) -o $(FULLLIBNAME) $(OBJ) -lsfml2-system
 
 $(OBJ): %.o: %.cpp
 	$(CPP) -o $@ -c $< $(CFLAGS)

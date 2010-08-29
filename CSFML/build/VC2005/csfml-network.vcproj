@@ -64,8 +64,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-network-s-d.lib  sfml-system-s-d.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.dll"
+				AdditionalDependencies="sfml2-network-s-d.lib  sfml2-system-s-d.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\csfml2-network-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
 				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Network/csfml-network-d.def"
@@ -149,8 +149,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-network-s.lib  sfml-system-s.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
+				AdditionalDependencies="sfml2-network-s.lib  sfml2-system-s.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\csfml2-network.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
 				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Network/csfml-network.def"

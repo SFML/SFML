@@ -65,8 +65,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-audio-s-d.lib sfml-system-s-d.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.dll"
+				AdditionalDependencies="sfml2-audio-s-d.lib sfml2-system-s-d.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\csfml2-audio-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
 				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Audio/csfml-audio-d.def"
@@ -151,8 +151,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-audio-s.lib sfml-system-s.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).dll"
+				AdditionalDependencies="sfml2-audio-s.lib sfml2-system-s.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\csfml2-audio.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
 				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Audio/csfml-audio.def"

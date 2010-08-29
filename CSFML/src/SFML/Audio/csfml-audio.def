@@ -1,4 +1,4 @@
-LIBRARY csfml-audio
+LIBRARY csfml2-audio
 EXPORTS
 	sfListener_SetGlobalVolume
 	sfListener_GetGlobalVolume

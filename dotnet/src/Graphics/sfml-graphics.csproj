@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SFML.Graphics</RootNamespace>
-    <AssemblyName>sfmlnet-graphics</AssemblyName>
+    <AssemblyName>sfmlnet2-graphics</AssemblyName>
     <StartupObject>
     </StartupObject>
     <FileUpgradeFlags>

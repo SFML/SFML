@@ -1,4 +1,4 @@
-LIBRARY csfml-window
+LIBRARY csfml2-window
 EXPORTS
 	sfInput_IsKeyDown
 	sfInput_IsMouseButtonDown

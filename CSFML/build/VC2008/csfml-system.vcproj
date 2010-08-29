@@ -65,8 +65,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-system-s-d.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName)-d.dll"
+				AdditionalDependencies="sfml2-system-s-d.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\csfml2-system-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2008\"
 				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/System/csfml-system-d.def"
@@ -149,8 +149,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-system-s.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName).dll"
+				AdditionalDependencies="sfml2-system-s.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\csfml2-system.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2008\"
 				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/System/csfml-system.def"

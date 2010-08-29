@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName)-d.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\csfml2-main-d.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -126,7 +126,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(SolutionDir)..\..\lib\vc2005\$(ProjectName).lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2005\csfml2-main.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

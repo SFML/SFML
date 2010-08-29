@@ -72,8 +72,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-graphics-s-d.lib sfml-window-s-d.lib sfml-system-s-d.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName)-d.dll"
+				AdditionalDependencies="sfml2-graphics-s-d.lib sfml2-window-s-d.lib sfml2-system-s-d.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\csfml2-graphics-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2008\"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib;libcd.lib;libcmtd.lib"
@@ -161,8 +161,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-graphics-s.lib sfml-window-s.lib sfml-system-s.lib"
-				OutputFile="$(SolutionDir)..\..\lib\vc2008\$(ProjectName).dll"
+				AdditionalDependencies="sfml2-graphics-s.lib sfml2-window-s.lib sfml2-system-s.lib"
+				OutputFile="$(SolutionDir)..\..\lib\vc2008\csfml2-graphics.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2008\"
 				IgnoreDefaultLibraryNames="libc.lib, libcmt.lib, msvcrtd.lib, libcd.lib, libcmtd.lib"

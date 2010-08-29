@@ -1,4 +1,4 @@
-LIBRARY csfml-system-d
+LIBRARY csfml2-system-d
 EXPORTS
 	sfClock_Create
 	sfClock_Copy

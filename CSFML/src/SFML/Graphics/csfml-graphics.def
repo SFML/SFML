@@ -1,4 +1,4 @@
-LIBRARY csfml-graphics
+LIBRARY csfml2-graphics
 EXPORTS
 	sfBlack
 	sfWhite

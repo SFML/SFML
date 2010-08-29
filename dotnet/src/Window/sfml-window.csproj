@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SFML.Window</RootNamespace>
-    <AssemblyName>sfmlnet-window</AssemblyName>
+    <AssemblyName>sfmlnet2-window</AssemblyName>
     <StartupObject>
     </StartupObject>
     <FileUpgradeFlags>

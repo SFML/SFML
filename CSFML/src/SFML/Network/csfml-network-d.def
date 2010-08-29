@@ -1,4 +1,4 @@
-LIBRARY csfml-network-d
+LIBRARY csfml2-network-d
 EXPORTS
 	sfFtpListingResponse_Destroy
 	sfFtpListingResponse_IsOk
