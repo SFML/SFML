@@ -83,8 +83,8 @@ myIsCursorIn      (false)
         myHeight = rectangle.bottom - rectangle.top;
 
         // We change the event procedure of the control (it is important to save the old one)
-        SetWindowLongPtr(myHandle, GWLP_USERDATA, reinterpret_cast<long>(this));
-        myCallback = SetWindowLongPtr(myHandle, GWLP_WNDPROC, reinterpret_cast<long>(&WindowImplWin32::GlobalOnEvent));
+        SetWindowLongPtr(myHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+        myCallback = SetWindowLongPtr(myHandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowImplWin32::GlobalOnEvent));
     }
 }
 
