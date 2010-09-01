@@ -1,0 +1,12 @@
+uniform sampler2D texture;
+uniform sampler2D wave;
+uniform vec2 offset;
+
+void main()
+{
+	vec2 texoffset = texture2D(wave, (gl_TexCoord[0].xy * offset).xy);
+	texoffset -= vec2(0.5, 0.5);
+	texoffset *= 0.05;
+
+	gl_FragColor = texture2D(texture, gl_TexCoord[0].xy + texoffset) * gl_Color;
+}

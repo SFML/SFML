@@ -1,0 +1,13 @@
+uniform sampler2D texture;
+uniform vec2 mouse;
+
+void main()
+{
+	float len = distance(gl_TexCoord[0].xy, mouse) * 7.0;
+
+    vec2 coords = gl_TexCoord[0].xy;
+	if (len < 1.0)
+		coords += (gl_TexCoord[0].xy - mouse) * len;
+
+    gl_FragColor = texture2D(texture, coords) * gl_Color;	
+}

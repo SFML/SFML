@@ -1,0 +1,16 @@
+uniform sampler2D texture;
+uniform float offset;
+
+void main()
+{
+	vec2 offx = vec2(offset, 0.0);
+	vec2 offy = vec2(0.0, offset);
+
+	vec4 c0 = texture2D(texture, gl_TexCoord[0].xy);
+	vec4 c1 = texture2D(texture, gl_TexCoord[0].xy - offy);
+	vec4 c2 = texture2D(texture, gl_TexCoord[0].xy + offy);
+	vec4 c3 = texture2D(texture, gl_TexCoord[0].xy - offx);
+	vec4 c4 = texture2D(texture, gl_TexCoord[0].xy + offx);
+
+	gl_FragColor =  gl_Color * (c0 * 0.2 + c1 * 0.2 + c2 * 0.2 + c3 * 0.2 + c4 * 0.2);
+}
