@@ -7,15 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sfml-graphics", "..\..\src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sfml-audio", "..\..\src\Audio\sfml-audio.csproj", "{0B202C4D-A457-47FE-84A3-031DD878C6BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample-opengl", "..\..\samples\opengl\sample-opengl.csproj", "{160AE11E-138A-4B77-9642-EA74F9A79B4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "opengl", "..\..\examples\opengl\opengl.csproj", "{160AE11E-138A-4B77-9642-EA74F9A79B4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample-window", "..\..\samples\window\sample-window.csproj", "{C1FBB9AF-B69A-4D06-9BDC-EAC7606296FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "window", "..\..\examples\window\window.csproj", "{C1FBB9AF-B69A-4D06-9BDC-EAC7606296FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample-sound", "..\..\samples\sound\sample-sound.csproj", "{16E177F3-A0FF-4091-8521-562E0EBAA3AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sound", "..\..\examples\sound\sound.csproj", "{16E177F3-A0FF-4091-8521-562E0EBAA3AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample-soundcapture", "..\..\samples\sound_capture\sample-soundcapture.csproj", "{F2F48990-F81E-41BA-AD01-168F6178C807}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sound_capture", "..\..\examples\sound_capture\sound_capture.csproj", "{F2F48990-F81E-41BA-AD01-168F6178C807}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample-shader", "..\..\samples\shader\sample-shader.csproj", "{9D4738F7-34EA-433A-A765-AF85A52A174D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "shader", "..\..\examples\shader\shader.csproj", "{9D4738F7-34EA-433A-A765-AF85A52A174D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
