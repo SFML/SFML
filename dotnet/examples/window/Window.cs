@@ -3,7 +3,7 @@ using SFML;
 using SFML.Window;
 using Tao.OpenGl;
 
-namespace sample_window
+namespace window
 {
     static class Program
     {

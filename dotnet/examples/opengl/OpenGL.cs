@@ -4,7 +4,7 @@ using SFML.Graphics;
 using SFML.Window;
 using Tao.OpenGl;
 
-namespace sample_opengl
+namespace opengl
 {
     static class Program
     {
@@ -22,7 +22,7 @@ namespace sample_opengl
             window.Resized    += new EventHandler<SizeEventArgs>(OnResized);
 
             // Create a sprite for the background
-            Image backgroundImage = new Image("datas/opengl/background.jpg");
+            Image backgroundImage = new Image("resources/background.jpg");
             Sprite background = new Sprite(backgroundImage);
 
             // Create a text to display
@@ -34,7 +34,7 @@ namespace sample_opengl
             // We could directly use a sf::Image as an OpenGL texture (with its Bind() member function),
             // but here we want more control on it (generate mipmaps, ...) so we create a new one
             int texture = 0;
-            using (Image image = new Image("datas/opengl/texture.jpg"))
+            using (Image image = new Image("resources/texture.jpg"))
             {
                 Gl.glGenTextures(1, out texture);
                 Gl.glBindTexture(Gl.GL_TEXTURE_2D, texture);

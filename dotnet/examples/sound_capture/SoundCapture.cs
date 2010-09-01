@@ -3,7 +3,7 @@ using System.Threading;
 using SFML;
 using SFML.Audio;
 
-namespace sample_soundcapture
+namespace sound_capture
 {
     static class Program
     {

@@ -3,7 +3,7 @@ using System.Threading;
 using SFML;
 using SFML.Audio;
 
-namespace sample_sound
+namespace sound
 {
     static class Program
     {
@@ -26,7 +26,7 @@ namespace sample_sound
         private static void PlaySound()
         {
             // Load a sound buffer from a wav file
-            SoundBuffer buffer = new SoundBuffer("datas/sound/canary.wav");
+            SoundBuffer buffer = new SoundBuffer("resources/canary.wav");
 
             // Display sound informations
             Console.WriteLine("canary.wav :");
@@ -56,7 +56,7 @@ namespace sample_sound
         private static void PlayMusic()
         {
             // Load an ogg music file
-            Music music = new Music("datas/sound/orchestral.ogg");
+            Music music = new Music("resources/orchestral.ogg");
 
             // Display music informations
             Console.WriteLine("orchestral.ogg :");

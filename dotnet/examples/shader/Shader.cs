@@ -4,7 +4,7 @@ using SFML;
 using SFML.Graphics;
 using SFML.Window;
 
-namespace sample_shader
+namespace shader
 {
     /// <summary>
     /// A class to simplify shader selection
@@ -86,26 +86,26 @@ namespace sample_shader
             RenderImage image = new RenderImage(window.Width, window.Height);
 
             // Load a background image to display
-            Sprite background = new Sprite(new Image("datas/shader/background.jpg"));
+            Sprite background = new Sprite(new Image("resources/background.jpg"));
             background.Image.Smooth = false;
 
             // Load a sprite which we'll move into the scene
-            Sprite entity = new Sprite(new Image("datas/shader/sprite.png"));
+            Sprite entity = new Sprite(new Image("resources/sprite.png"));
 
             // Load the text font
-            Font font = new Font("datas/shader/arial.ttf");
+            Font font = new Font("resources/arial.ttf");
 
             // Load the image needed for the wave effect
-            Image waveImage = new Image("datas/shader/wave.jpg");
+            Image waveImage = new Image("resources/wave.jpg");
 
             // Load all effects
             shaders = new Dictionary<string, Shader>();
-            shaders["nothing"]  = new Shader("datas/shader/nothing.sfx");
-            shaders["blur"]     = new Shader("datas/shader/blur.sfx");
-            shaders["colorize"] = new Shader("datas/shader/colorize.sfx");
-            shaders["fisheye"]  = new Shader("datas/shader/fisheye.sfx");
-            shaders["wave"]     = new Shader("datas/shader/wave.sfx");
-            shaders["pixelate"] = new Shader("datas/shader/pixelate.sfx");
+            shaders["nothing"]  = new Shader("resources/nothing.sfx");
+            shaders["blur"]     = new Shader("resources/blur.sfx");
+            shaders["colorize"] = new Shader("resources/colorize.sfx");
+            shaders["fisheye"]  = new Shader("resources/fisheye.sfx");
+            shaders["wave"]     = new Shader("resources/wave.sfx");
+            shaders["pixelate"] = new Shader("resources/pixelate.sfx");
             backgroundShader = new ShaderSelector(shaders);
             entityShader     = new ShaderSelector(shaders);
             globalShader     = new ShaderSelector(shaders);
