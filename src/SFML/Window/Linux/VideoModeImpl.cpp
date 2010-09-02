@@ -79,6 +79,9 @@ std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
                                     modes.push_back(mode);
                             }
                         }
+
+                        // Free the array of depths
+                        XFree(depths);
                     }
                 }
 
