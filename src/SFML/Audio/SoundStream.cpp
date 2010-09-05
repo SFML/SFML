@@ -259,7 +259,7 @@ void SoundStream::Run()
 
         // Leave some time for the other threads if the stream is still playing
         if (SoundSource::GetStatus() != Stopped)
-            Sleep(0.1f);
+            Sleep(0.01f);
     }
 
     // Stop the playback
