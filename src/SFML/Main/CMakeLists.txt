@@ -6,4 +6,4 @@ add_library(sfml-main STATIC ${CMAKE_SOURCE_DIR}/src/SFML/Main/SFML_Main.cpp)
 set_target_properties(sfml-main PROPERTIES DEBUG_POSTFIX -d)
 
 # insert the major version number in the output filename
-set_target_properties(${target} PROPERTIES OUTPUT_NAME "sfml${VERSION_MAJOR}-main")
+set_target_properties(sfml-main PROPERTIES OUTPUT_NAME "sfml${VERSION_MAJOR}-main")
