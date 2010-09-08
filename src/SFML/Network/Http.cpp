@@ -137,7 +137,7 @@ std::string Http::Request::Prepare() const
 ////////////////////////////////////////////////////////////
 bool Http::Request::HasField(const std::string& field) const
 {
-    return myFields.find(field) != myFields.end();
+    return myFields.find(ToLower(field)) != myFields.end();
 }
 
 
