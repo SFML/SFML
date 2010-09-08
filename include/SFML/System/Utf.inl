@@ -561,11 +561,14 @@ Out Utf<32>::ToUtf32(In begin, In end, Out output)
 template <typename In>
 Uint32 Utf<32>::DecodeAnsi(In input, const std::locale& locale)
 {
-    #ifdef __MINGW32__
+    // On Windows, gcc's standard library (glibc++) has almost
+    // no support for Unicode stuff. As a consequence, in this
+    // context we can only use the default locale and ignore
+    // the one passed as parameter.
 
-        // MinGW has almost no support for unicode stuff
-        // As a consequence, the MinGW version of this function can only use the default locale
-        // and ignores the one passed as parameter
+    #if defined(SFML_SYSTEM_WINDOWS) &&                       /* if Windows ... */                          \
+       (defined(__GLIBCPP__) || defined (__GLIBCXX__)) &&     /* ... and standard library is glibc++ ... */ \
+      !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) /* ... and STLPort is not used on top of it */
 
         wchar_t character = 0;
         mbtowc(&character, &input, 1);
@@ -601,11 +604,14 @@ Uint32 Utf<32>::DecodeWide(In input)
 template <typename Out>
 Out Utf<32>::EncodeAnsi(Uint32 codepoint, Out output, char replacement, const std::locale& locale)
 {
-    #ifdef __MINGW32__
+    // On Windows, gcc's standard library (glibc++) has almost
+    // no support for Unicode stuff. As a consequence, in this
+    // context we can only use the default locale and ignore
+    // the one passed as parameter.
 
-        // MinGW has almost no support for unicode stuff
-        // As a consequence, the MinGW version of this function can only use the default locale
-        // and ignores the one passed as parameter
+    #if defined(SFML_SYSTEM_WINDOWS) &&                       /* if Windows ... */                          \
+       (defined(__GLIBCPP__) || defined (__GLIBCXX__)) &&     /* ... and standard library is glibc++ ... */ \
+      !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) /* ... and STLPort is not used on top of it */
 
         char character = 0;
         if (wctomb(&character, static_cast<wchar_t>(codepoint)) >= 0)
