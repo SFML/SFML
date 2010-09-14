@@ -63,7 +63,7 @@ public :
     /// \param color Fill color to use to clear the render target
     ///
     ////////////////////////////////////////////////////////////
-    void Clear(const Color& color = Color(0, 0, 0));
+    void Clear(const Color& color = Color(0, 0, 0, 255));
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw an object into the target
