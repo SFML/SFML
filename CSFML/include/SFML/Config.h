@@ -60,13 +60,32 @@
 ////////////////////////////////////////////////////////////
 // Define portable import / export macros
 ////////////////////////////////////////////////////////////
-#ifdef CSFML_EXPORTS
+#if defined(CSFML_SYSTEM_WINDOWS)
 
-    #define CSFML_API extern "C"
+    // Windows platforms
+    #ifdef CSFML_EXPORTS
+
+        // From DLL side, we must export
+        #define CSFML_API extern "C" __declspec(dllexport)
+
+    #else
+
+        // From client application side, we must import
+        #define CSFML_API extern __declspec(dllimport)
+
+    #endif
 
 #else
 
-    #define CSFML_API extern
+    #ifdef CSFML_EXPORTS
+
+        #define CSFML_API extern "C"
+
+    #else
+
+        #define CSFML_API extern
+
+    #endif
 
 #endif
 

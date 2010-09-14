@@ -69,7 +69,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\csfml2-audio-d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
-				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Audio/csfml-audio-d.def"
+				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -155,7 +155,7 @@
 				OutputFile="$(SolutionDir)..\..\lib\vc2005\csfml2-audio.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2005\"
-				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Audio/csfml-audio.def"
+				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -192,14 +192,6 @@
 	<References>
 	</References>
 	<Files>
-		<File
-			RelativePath="..\..\src\SFML\Audio\csfml-audio-d.def"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Audio\csfml-audio.def"
-			>
-		</File>
 		<File
 			RelativePath="..\..\src\SFML\Audio\Listener.cpp"
 			>

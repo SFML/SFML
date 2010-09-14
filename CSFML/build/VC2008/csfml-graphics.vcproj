@@ -77,7 +77,7 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2008\"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib;libcd.lib;libcmtd.lib"
-				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Graphics/csfml-graphics-d.def"
+				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -166,7 +166,7 @@
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)..\..\..\lib\vc2008\"
 				IgnoreDefaultLibraryNames="libc.lib, libcmt.lib, msvcrtd.lib, libcd.lib, libcmtd.lib"
-				ModuleDefinitionFile="$(SolutionDir)../../src/SFML/Graphics/csfml-graphics.def"
+				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)$(TargetName).pdb"
 				SubSystem="2"
@@ -212,14 +212,6 @@
 		</File>
 		<File
 			RelativePath="..\..\include\SFML\Graphics\Color.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\csfml-graphics-d.def"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\SFML\Graphics\csfml-graphics.def"
 			>
 		</File>
 		<File
