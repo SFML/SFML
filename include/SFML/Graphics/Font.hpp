@@ -92,7 +92,7 @@ public :
     bool LoadFromFile(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the font from a file
+    /// \brief Load the font from a file in memory
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
     /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.

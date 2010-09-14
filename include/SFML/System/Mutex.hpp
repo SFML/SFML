@@ -103,7 +103,7 @@ private :
 ///
 /// When you want to protect a part of the code from being accessed
 /// simultaneously by multiple threads, you typically use a
-/// mutex. When a thread is locked by a thread, any other thread
+/// mutex. When a thread is locked by a mutex, any other thread
 /// trying to lock it will be blocked until the mutex is released
 /// by the thread that locked it. This way, you can allow only
 /// one thread at a time to access a critical region of your code.
