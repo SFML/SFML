@@ -123,8 +123,9 @@ bool GlContext::SetActive(bool active)
         if (MakeCurrent())
         {
             // If this is the first context to be activated on this thread, make
-            // it the reference context for the whole thread
-            if (!threadContext)
+            // it the reference context for the whole thread.
+            // referenceContext must *not* be the threadContext of the main thread
+            if (!threadContext && (this != &referenceContext))
                 threadContext = this;
 
             return true;

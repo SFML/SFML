@@ -62,14 +62,7 @@ myOwnsWindow(true)
     CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
 
     // Activate the context
-    if (shared)
-        SetActive(true);
-
-    // -- Warning --
-    // The "if (shared)" condition fixes this bug:
-    // http://www.sfml-dev.org/forum/viewtopic.php?p=20767#20767
-    // However, it was already there before and removed at revision 1236,
-    // but without any comment... so it might cause other problems in the future
+    SetActive(true);
 }
 
 
