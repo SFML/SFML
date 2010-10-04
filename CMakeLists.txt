@@ -57,6 +57,8 @@ install(DIRECTORY include
         DESTINATION .
         COMPONENT devel
         PATTERN ".svn" EXCLUDE)
+install(FILES cmake/Modules/FindSFML.cmake
+        DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
 install(FILES license.txt DESTINATION ${INSTALL_MISC_DIR})
 if(WINDOWS)
     install(FILES extlibs/bin/libsndfile-1.dll DESTINATION bin)
