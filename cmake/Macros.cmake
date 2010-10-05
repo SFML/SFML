@@ -33,7 +33,9 @@ macro(sfml_static_add_libraries target)
             if(NOT ${lib} MATCHES ".*\\.lib")
                 set(lib ${lib}.lib)
             endif()
-            set(LIBRARIES "${LIBRARIES} ${lib}")
+            # we add &quot; so that the path will be put into "",
+            # making possible to have spaces in it
+            set(LIBRARIES "${LIBRARIES} &quot\\;${lib}&quot\\;")
         endforeach()
         set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS ${LIBRARIES})
     endif()
