@@ -33,9 +33,12 @@ macro(sfml_static_add_libraries target)
             if(NOT ${lib} MATCHES ".*\\.lib")
                 set(lib ${lib}.lib)
             endif()
-            # we add &quot; so that the path will be put into "",
-            # making possible to have spaces in it
-            set(LIBRARIES "${LIBRARIES} &quot\\;${lib}&quot\\;")
+            if(CMAKE_CONFIGURATION_TYPES) # this condition is true when generator is "Visual Studio solution"
+                # we add &quot; so that the path will be put inside "", making possible to have spaces in it
+                set(LIBRARIES "${LIBRARIES} &quot\\;${lib}&quot\\;")
+            else()
+                set(LIBRARIES "${LIBRARIES} ${lib}")
+            endif()
         endforeach()
         set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS ${LIBRARIES})
     endif()
