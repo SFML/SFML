@@ -33,7 +33,6 @@
 #include <SFML/Window/Context.h>
 #include <SFML/Window/Event.h>
 #include <SFML/Window/Input.h>
-#include <SFML/Window/OpenGL.h>
 #include <SFML/Window/VideoMode.h>
 #include <SFML/Window/Window.h>
 

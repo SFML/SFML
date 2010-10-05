@@ -31,14 +31,14 @@ PROJECT_NAME           = SFML
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 
+PROJECT_NUMBER         = @VERSION_MAJOR@.@VERSION_MINOR@
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = ..
+OUTPUT_DIRECTORY       = "@DOXYGEN_OUTPUT_DIR@"
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -573,8 +573,8 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ../../include/SFML/ \
-                         Doxygen.hpp
+INPUT                  = "@DOXYGEN_INPUT_DIR@/include/SFML" \
+                         "@DOXYGEN_INPUT_DIR@/doc/mainpage.hpp"
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -782,13 +782,13 @@ HTML_FILE_EXTENSION    = .htm
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard header.
 
-HTML_HEADER            = header.htm
+HTML_HEADER            = "@DOXYGEN_INPUT_DIR@/doc/header.htm"
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for 
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard footer.
 
-HTML_FOOTER            = footer.htm
+HTML_FOOTER            = "@DOXYGEN_INPUT_DIR@/doc/footer.htm"
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading 
 # style sheet that is used by each HTML page. It can be used to 
@@ -797,7 +797,7 @@ HTML_FOOTER            = footer.htm
 # the style sheet file to the HTML output directory, so don't put your own 
 # stylesheet in the HTML output directory as well, or it will be erased!
 
-HTML_STYLESHEET        = doxygen.css
+HTML_STYLESHEET        = "@DOXYGEN_INPUT_DIR@/doc/doxygen.css"
 
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
 # files or namespaces will be aligned in HTML using tables. If set to 
@@ -844,7 +844,7 @@ DOCSET_BUNDLE_ID       = org.doxygen.Project
 # Microsoft HTML help workshop to generate a compiled HTML help file (.chm) 
 # of the generated HTML documentation.
 
-GENERATE_HTMLHELP      = YES
+GENERATE_HTMLHELP      = @DOXYGEN_GENERATE_HTMLHELP@
 
 # If the GENERATE_HTMLHELP tag is set to YES, the CHM_FILE tag can 
 # be used to specify the file name of the resulting .chm file. You 
@@ -858,7 +858,7 @@ CHM_FILE               = ../SFML.chm
 # the HTML help compiler (hhc.exe). If non-empty doxygen will try to run 
 # the HTML help compiler on the generated index.hhp.
 
-HHC_LOCATION           = "C:/Program Files/HTML Help Workshop/hhc.exe"
+HHC_LOCATION           = "@DOXYGEN_HHC_PROGRAM@"
 
 # If the GENERATE_HTMLHELP tag is set to YES, the GENERATE_CHI flag 
 # controls if a separate .chi index file is generated (YES) or that 
