@@ -63,7 +63,8 @@ public :
     /// \brief Start or resume playing the audio stream
     ///
     /// This function starts the stream if it was stopped, resumes
-    /// it if it was paused, and does nothing it is it already playing.
+    /// it if it was paused, and restarts it from beginning if it
+    /// was it already playing.
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the stream is played.
     ///
