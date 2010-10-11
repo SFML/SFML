@@ -45,18 +45,18 @@ In Utf<8>::Decode(In begin, In end, Uint32& output, Uint32 replacement)
     };
 
     // Decode the character
-    int trailingBytes = trailing[static_cast<int>(*begin)];
+    int trailingBytes = trailing[static_cast<Uint8>(*begin)];
     if (begin + trailingBytes < end)
     {
         output = 0;
         switch (trailingBytes)
         {
-            case 5 : output += *begin++; output <<= 6;
-            case 4 : output += *begin++; output <<= 6;
-            case 3 : output += *begin++; output <<= 6;
-            case 2 : output += *begin++; output <<= 6;
-            case 1 : output += *begin++; output <<= 6;
-            case 0 : output += *begin++;
+            case 5 : output += static_cast<Uint8>(*begin++); output <<= 6;
+            case 4 : output += static_cast<Uint8>(*begin++); output <<= 6;
+            case 3 : output += static_cast<Uint8>(*begin++); output <<= 6;
+            case 2 : output += static_cast<Uint8>(*begin++); output <<= 6;
+            case 1 : output += static_cast<Uint8>(*begin++); output <<= 6;
+            case 0 : output += static_cast<Uint8>(*begin++);
         }
         output -= offsets[trailingBytes];
     }
