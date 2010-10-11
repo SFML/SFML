@@ -67,9 +67,15 @@ private :
             // Valid character
             return sputc(static_cast<char>(character));
         }
+        else if (character != EOF)
+        {
+            // Not enough space in the buffer: synchronize output and try again
+            sync();
+            return overflow(character);
+        }
         else
         {
-            // Invalid character, or not enough space in the buffer: synchronize output
+            // Invalid character: synchronize output
             return sync();
         }
     }
