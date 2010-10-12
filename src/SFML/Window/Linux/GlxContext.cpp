@@ -244,6 +244,9 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
                 };
                 myContext = glXCreateContextAttribsARB(myDisplay, configs[0], toShare, true, attributes);
             }
+
+            if (configs)
+                XFree(configs);
         }
 
         // If we couldn't create an OpenGL 3 context, adjust the settings
