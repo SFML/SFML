@@ -64,16 +64,13 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplWin32::WindowImplWin32(WindowHandle handle) :
-myHandle          (NULL),
+myHandle          (handle),
 myCallback        (0),
 myCursor          (NULL),
 myIcon            (NULL),
 myKeyRepeatEnabled(true),
 myIsCursorIn      (false)
 {
-    // Save window handle
-    myHandle = static_cast<HWND>(handle);
-
     if (myHandle)
     {
         // Get window client size

@@ -30,6 +30,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
+// Windows' HWND is a typedef on struct HWND__*
+#if defined(SFML_SYSTEM_WINDOWS)
+    struct HWND__;
+#endif
 
 namespace sf
 {
@@ -39,17 +43,17 @@ namespace sf
 ////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    // Windows defines a void* handle (HWND)
-    typedef void* WindowHandle;
+    // Window handle is HWND (HWND__*) on Windows
+    typedef HWND__* WindowHandle;
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-    // Unix - X11 defines an unsigned integer handle (Window)
+    // Window handle is Window (unsigned long) on Unix - X11
     typedef unsigned long WindowHandle;
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-    // Mac OS X defines a void* handle (NSWindow)
+    // Window handle is NSWindow (void*) on Mac OS X - Cocoa
 	typedef void* WindowHandle;
 
 #endif
