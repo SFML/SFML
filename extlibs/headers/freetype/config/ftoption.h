@@ -4,7 +4,8 @@
 /*                                                                         */
 /*    User-selectable configuration macros (specification only).           */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005 by                         */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,   */
+/*            2010 by                                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -38,22 +39,22 @@ FT_BEGIN_HEADER
   /*    library from a single source directory.                            */
   /*                                                                       */
   /*  - You can put a copy of this file in your build directory, more      */
-  /*    precisely in "$BUILD/freetype/config/ftoption.h", where "$BUILD"   */
+  /*    precisely in `$BUILD/freetype/config/ftoption.h', where `$BUILD'   */
   /*    is the name of a directory that is included _before_ the FreeType  */
   /*    include path during compilation.                                   */
   /*                                                                       */
   /*    The default FreeType Makefiles and Jamfiles use the build          */
-  /*    directory "builds/<system>" by default, but you can easily change  */
+  /*    directory `builds/<system>' by default, but you can easily change  */
   /*    that for your own projects.                                        */
   /*                                                                       */
-  /*  - Copy the file <ft2build.h> to "$BUILD/ft2build.h" and modify it    */
+  /*  - Copy the file <ft2build.h> to `$BUILD/ft2build.h' and modify it    */
   /*    slightly to pre-define the macro FT_CONFIG_OPTIONS_H used to       */
   /*    locate this file during the build.  For example,                   */
   /*                                                                       */
   /*      #define FT_CONFIG_OPTIONS_H  <myftoptions.h>                     */
   /*      #include <freetype/config/ftheader.h>                            */
   /*                                                                       */
-  /*    will use "$BUILD/myftoptions.h" instead of this file for macro     */
+  /*    will use `$BUILD/myftoptions.h' instead of this file for macro     */
   /*    definitions.                                                       */
   /*                                                                       */
   /*    Note also that you can similarly pre-define the macro              */
@@ -77,6 +78,26 @@ FT_BEGIN_HEADER
 
   /*************************************************************************/
   /*                                                                       */
+  /* Uncomment the line below if you want to activate sub-pixel rendering  */
+  /* (a.k.a. LCD rendering, or ClearType) in this build of the library.    */
+  /*                                                                       */
+  /* Note that this feature is covered by several Microsoft patents        */
+  /* and should not be activated in any default build of the library.      */
+  /*                                                                       */
+  /* This macro has no impact on the FreeType API, only on its             */
+  /* _implementation_.  For example, using FT_RENDER_MODE_LCD when calling */
+  /* FT_Render_Glyph still generates a bitmap that is 3 times wider than   */
+  /* the original size in case this macro isn't defined; however, each     */
+  /* triplet of subpixels has R=G=B.                                       */
+  /*                                                                       */
+  /* This is done to allow FreeType clients to run unmodified, forcing     */
+  /* them to display normal gray-level anti-aliased glyphs.                */
+  /*                                                                       */
+/* #define FT_CONFIG_OPTION_SUBPIXEL_RENDERING */
+
+
+  /*************************************************************************/
+  /*                                                                       */
   /* Many compilers provide a non-ANSI 64-bit data type that can be used   */
   /* by FreeType to speed up some computations.  However, this will create */
   /* some problems when compiling the library in strict ANSI mode.         */
@@ -89,10 +110,31 @@ FT_BEGIN_HEADER
   /* building the library.                                                 */
   /*                                                                       */
   /* ObNote: The compiler-specific 64-bit integers are detected in the     */
-  /*         file "ftconfig.h" either statically or through the            */
+  /*         file `ftconfig.h' either statically or through the            */
   /*         `configure' script on supported platforms.                    */
   /*                                                                       */
-#undef  FT_CONFIG_OPTION_FORCE_INT64
+#undef FT_CONFIG_OPTION_FORCE_INT64
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* If this macro is defined, do not try to use an assembler version of   */
+  /* performance-critical functions (e.g. FT_MulFix).  You should only do  */
+  /* that to verify that the assembler function works properly, or to      */
+  /* execute benchmark tests of the various implementations.               */
+/* #define FT_CONFIG_OPTION_NO_ASSEMBLER */
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* If this macro is defined, try to use an inlined assembler version of  */
+  /* the `FT_MulFix' function, which is a `hotspot' when loading and       */
+  /* hinting glyphs, and which should be executed as fast as possible.     */
+  /*                                                                       */
+  /* Note that if your compiler or CPU is not supported, this will default */
+  /* to the standard and portable implementation found in `ftcalc.c'.      */
+  /*                                                                       */
+#define FT_CONFIG_OPTION_INLINE_MULFIX
 
 
   /*************************************************************************/
@@ -100,7 +142,7 @@ FT_BEGIN_HEADER
   /* LZW-compressed file support.                                          */
   /*                                                                       */
   /*   FreeType now handles font files that have been compressed with the  */
-  /*   'compress' program.  This is mostly used to parse many of the PCF   */
+  /*   `compress' program.  This is mostly used to parse many of the PCF   */
   /*   files that come with various X11 distributions.  The implementation */
   /*   uses NetBSD's `zopen' to partially uncompress the file on the fly   */
   /*   (see src/lzw/ftgzip.c).                                             */
@@ -115,7 +157,7 @@ FT_BEGIN_HEADER
   /* Gzip-compressed file support.                                         */
   /*                                                                       */
   /*   FreeType now handles font files that have been compressed with the  */
-  /*   'gzip' program.  This is mostly used to parse many of the PCF files */
+  /*   `gzip' program.  This is mostly used to parse many of the PCF files */
   /*   that come with XFree86.  The implementation uses `zlib' to          */
   /*   partially uncompress the file on the fly (see src/gzip/ftgzip.c).   */
   /*                                                                       */
@@ -143,7 +185,7 @@ FT_BEGIN_HEADER
   /*   Do not #undef this macro here since the build system might define   */
   /*   it for certain configurations only.                                 */
   /*                                                                       */
-/* #define  FT_CONFIG_OPTION_SYSTEM_ZLIB */
+/* #define FT_CONFIG_OPTION_SYSTEM_ZLIB */
 
 
   /*************************************************************************/
@@ -184,27 +226,27 @@ FT_BEGIN_HEADER
   /*   Do not #undef these macros here since the build system might define */
   /*   them for certain configurations only.                               */
   /*                                                                       */
-/* #define  FT_EXPORT(x)       extern x */
-/* #define  FT_EXPORT_DEF(x)   x */
+/* #define FT_EXPORT(x)      extern x */
+/* #define FT_EXPORT_DEF(x)  x */
 
 
   /*************************************************************************/
   /*                                                                       */
   /* Glyph Postscript Names handling                                       */
   /*                                                                       */
-  /*   By default, FreeType 2 is compiled with the `PSNames' module.  This */
+  /*   By default, FreeType 2 is compiled with the `psnames' module.  This */
   /*   module is in charge of converting a glyph name string into a        */
   /*   Unicode value, or return a Macintosh standard glyph name for the    */
   /*   use with the TrueType `post' table.                                 */
   /*                                                                       */
-  /*   Undefine this macro if you do not want `PSNames' compiled in your   */
+  /*   Undefine this macro if you do not want `psnames' compiled in your   */
   /*   build of FreeType.  This has the following effects:                 */
   /*                                                                       */
   /*   - The TrueType driver will provide its own set of glyph names,      */
   /*     if you build it to support postscript names in the TrueType       */
   /*     `post' table.                                                     */
   /*                                                                       */
-  /*   - The Type 1 driver will not be able to synthetize a Unicode        */
+  /*   - The Type 1 driver will not be able to synthesize a Unicode        */
   /*     charmap out of the glyphs found in the fonts.                     */
   /*                                                                       */
   /*   You would normally undefine this configuration macro when building  */
@@ -220,12 +262,12 @@ FT_BEGIN_HEADER
   /*   By default, FreeType 2 is built with the `PSNames' module compiled  */
   /*   in.  Among other things, the module is used to convert a glyph name */
   /*   into a Unicode value.  This is especially useful in order to        */
-  /*   synthetize on the fly a Unicode charmap from the CFF/Type 1 driver  */
+  /*   synthesize on the fly a Unicode charmap from the CFF/Type 1 driver  */
   /*   through a big table named the `Adobe Glyph List' (AGL).             */
   /*                                                                       */
   /*   Undefine this macro if you do not want the Adobe Glyph List         */
   /*   compiled in your `PSNames' module.  The Type 1 driver will not be   */
-  /*   able to synthetize a Unicode charmap out of the glyphs found in the */
+  /*   able to synthesize a Unicode charmap out of the glyphs found in the */
   /*   fonts.                                                              */
   /*                                                                       */
 #define FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
@@ -271,10 +313,11 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* Allow the use of FT_Incremental_Interface to load typefaces that      */
   /* contain no glyph data, but supply it via a callback function.         */
-  /* This allows FreeType to be used with the PostScript language, using   */
-  /* the GhostScript interpreter.                                          */
+  /* This is required by clients supporting document formats which         */
+  /* supply font data incrementally as the document is parsed, such        */
+  /* as the Ghostscript interpreter for the PostScript language.           */
   /*                                                                       */
-/* #define FT_CONFIG_OPTION_INCREMENTAL */
+#define FT_CONFIG_OPTION_INCREMENTAL
 
 
   /*************************************************************************/
@@ -282,7 +325,9 @@ FT_BEGIN_HEADER
   /* The size in bytes of the render pool used by the scan-line converter  */
   /* to do all of its work.                                                */
   /*                                                                       */
-  /* This must be greater than 4KByte.                                     */
+  /* This must be greater than 4KByte if you use FreeType to rasterize     */
+  /* glyphs; otherwise, you may set it to zero to avoid unnecessary        */
+  /* allocation of the render pool.                                        */
   /*                                                                       */
 #define FT_RENDER_POOL_SIZE  16384L
 
@@ -328,7 +373,7 @@ FT_BEGIN_HEADER
   /*   should define FT_DEBUG_MEMORY here.                                 */
   /*                                                                       */
   /*   Note that the memory debugger is only activated at runtime when     */
-  /*   when the _environment_ variable "FT2_DEBUG_MEMORY" is defined also! */
+  /*   when the _environment_ variable `FT2_DEBUG_MEMORY' is defined also! */
   /*                                                                       */
   /*   Do not #undef this macro here since the build system might define   */
   /*   it for certain configurations only.                                 */
@@ -352,6 +397,20 @@ FT_BEGIN_HEADER
   /*                                                                       */
 #undef FT_CONFIG_OPTION_USE_MODULE_ERRORS
 
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* Position Independent Code                                             */
+  /*                                                                       */
+  /*   If this macro is set (which is _not_ the default), FreeType2 will   */
+  /*   avoid creating constants that require address fixups.  Instead the  */
+  /*   constants will be moved into a struct and additional intialization  */
+  /*   code will be used.                                                  */
+  /*                                                                       */
+  /*   Setting this macro is needed for systems that prohibit address      */
+  /*   fixups, such as BREW.                                               */
+  /*                                                                       */
+/* #define FT_CONFIG_OPTION_PIC */
 
 
   /*************************************************************************/
@@ -396,7 +455,7 @@ FT_BEGIN_HEADER
   /* does not contain any glyph name though.                               */
   /*                                                                       */
   /* Accessing SFNT names is done through the functions declared in        */
-  /* `freetype/ftnames.h'.                                                 */
+  /* `freetype/ftsnames.h'.                                                */
   /*                                                                       */
 #define TT_CONFIG_OPTION_SFNT_NAMES
 
@@ -414,6 +473,8 @@ FT_BEGIN_HEADER
 #define TT_CONFIG_CMAP_FORMAT_8
 #define TT_CONFIG_CMAP_FORMAT_10
 #define TT_CONFIG_CMAP_FORMAT_12
+#define TT_CONFIG_CMAP_FORMAT_13
+#define TT_CONFIG_CMAP_FORMAT_14
 
 
   /*************************************************************************/
@@ -427,8 +488,7 @@ FT_BEGIN_HEADER
   /*************************************************************************/
   /*                                                                       */
   /* Define TT_CONFIG_OPTION_BYTECODE_INTERPRETER if you want to compile   */
-  /* a bytecode interpreter in the TrueType driver.  Note that there are   */
-  /* important patent issues related to the use of the interpreter.        */
+  /* a bytecode interpreter in the TrueType driver.                        */
   /*                                                                       */
   /* By undefining this, you will only compile the code necessary to load  */
   /* TrueType glyphs without hinting.                                      */
@@ -436,19 +496,57 @@ FT_BEGIN_HEADER
   /*   Do not #undef this macro here, since the build system might         */
   /*   define it for certain configurations only.                          */
   /*                                                                       */
-/* #define TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
+#define TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
 
   /*************************************************************************/
   /*                                                                       */
-  /* Define TT_CONFIG_OPTION_UNPATENTED_HINTING (in addition to            */
-  /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER) to compile the unpatented      */
-  /* work-around hinting system.  Note that for the moment, the algorithm  */
-  /* is only used when selected at runtime through the parameter tag       */
-  /* FT_PARAM_TAG_UNPATENTED_HINTING; or when the debug hook               */
-  /* FT_DEBUG_HOOK_UNPATENTED_HINTING is globally activated.               */
+  /* If you define TT_CONFIG_OPTION_UNPATENTED_HINTING, a special version  */
+  /* of the TrueType bytecode interpreter is used that doesn't implement   */
+  /* any of the patented opcodes and algorithms.  The patents related to   */
+  /* TrueType hinting have expired worldwide since May 2010; this option   */
+  /* is now deprecated.                                                    */
   /*                                                                       */
-#define TT_CONFIG_OPTION_UNPATENTED_HINTING
+  /* Note that the TT_CONFIG_OPTION_UNPATENTED_HINTING macro is *ignored*  */
+  /* if you define TT_CONFIG_OPTION_BYTECODE_INTERPRETER; in other words,  */
+  /* either define TT_CONFIG_OPTION_BYTECODE_INTERPRETER or                */
+  /* TT_CONFIG_OPTION_UNPATENTED_HINTING but not both at the same time.    */
+  /*                                                                       */
+  /* This macro is only useful for a small number of font files (mostly    */
+  /* for Asian scripts) that require bytecode interpretation to properly   */
+  /* load glyphs.  For all other fonts, this produces unpleasant results,  */
+  /* thus the unpatented interpreter is never used to load glyphs from     */
+  /* TrueType fonts unless one of the following two options is used.       */
+  /*                                                                       */
+  /*   - The unpatented interpreter is explicitly activated by the user    */
+  /*     through the FT_PARAM_TAG_UNPATENTED_HINTING parameter tag         */
+  /*     when opening the FT_Face.                                         */
+  /*                                                                       */
+  /*   - FreeType detects that the FT_Face corresponds to one of the       */
+  /*     `trick' fonts (e.g., `Mingliu') it knows about.  The font engine  */
+  /*     contains a hard-coded list of font names and other matching       */
+  /*     parameters (see function `tt_face_init' in file                   */
+  /*     `src/truetype/ttobjs.c').                                         */
+  /*                                                                       */
+  /* Here a sample code snippet for using FT_PARAM_TAG_UNPATENTED_HINTING. */
+  /*                                                                       */
+  /*   {                                                                   */
+  /*     FT_Parameter  parameter;                                          */
+  /*     FT_Open_Args  open_args;                                          */
+  /*                                                                       */
+  /*                                                                       */
+  /*     parameter.tag = FT_PARAM_TAG_UNPATENTED_HINTING;                  */
+  /*                                                                       */
+  /*     open_args.flags      = FT_OPEN_PATHNAME | FT_OPEN_PARAMS;         */
+  /*     open_args.pathname   = my_font_pathname;                          */
+  /*     open_args.num_params = 1;                                         */
+  /*     open_args.params     = &parameter;                                */
+  /*                                                                       */
+  /*     error = FT_Open_Face( library, &open_args, index, &face );        */
+  /*     ...                                                               */
+  /*   }                                                                   */
+  /*                                                                       */
+/* #define TT_CONFIG_OPTION_UNPATENTED_HINTING */
 
 
   /*************************************************************************/
@@ -471,7 +569,7 @@ FT_BEGIN_HEADER
   /* component offsets in composite glyphs.                                */
   /*                                                                       */
   /* Apple and MS disagree on the default behavior of component offsets    */
-  /* in composites.  Apple says that they should be scaled by the scale    */
+  /* in composites.  Apple says that they should be scaled by the scaling  */
   /* factors in the transformation matrix (roughly, it's more complex)     */
   /* while MS says they should not.  OpenType defines two bits in the      */
   /* composite flags array which can be used to disambiguate, but old      */
@@ -491,6 +589,14 @@ FT_BEGIN_HEADER
   /* Masters support.                                                      */
   /*                                                                       */
 #define TT_CONFIG_OPTION_GX_VAR_SUPPORT
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* Define TT_CONFIG_OPTION_BDF if you want to include support for        */
+  /* an embedded `BDF ' table within SFNT-based bitmap formats.            */
+  /*                                                                       */
+#define TT_CONFIG_OPTION_BDF
 
 
   /*************************************************************************/
@@ -547,14 +653,76 @@ FT_BEGIN_HEADER
   /*                                                                       */
 #undef T1_CONFIG_OPTION_NO_MM_SUPPORT
 
- /* */
 
-/*
- * This temporary macro is used to control various optimizations for
- * reducing the heap footprint of memory-mapped TrueType files.
- *
- */
-/* #define  FT_OPTIMIZE_MEMORY */
+  /*************************************************************************/
+  /*************************************************************************/
+  /****                                                                 ****/
+  /****    A U T O F I T   M O D U L E    C O N F I G U R A T I O N     ****/
+  /****                                                                 ****/
+  /*************************************************************************/
+  /*************************************************************************/
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* Compile autofit module with CJK (Chinese, Japanese, Korean) script    */
+  /* support.                                                              */
+  /*                                                                       */
+#define AF_CONFIG_OPTION_CJK
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* Compile autofit module with Indic script support.                     */
+  /*                                                                       */
+#define AF_CONFIG_OPTION_INDIC
+
+  /* */
+
+
+  /*
+   * Define this variable if you want to keep the layout of internal
+   * structures that was used prior to FreeType 2.2.  This also compiles in
+   * a few obsolete functions to avoid linking problems on typical Unix
+   * distributions.
+   *
+   * For embedded systems or building a new distribution from scratch, it
+   * is recommended to disable the macro since it reduces the library's code
+   * size and activates a few memory-saving optimizations as well.
+   */
+#define FT_CONFIG_OPTION_OLD_INTERNALS
+
+
+  /*
+   *  To detect legacy cache-lookup call from a rogue client (<= 2.1.7),
+   *  we restrict the number of charmaps in a font.  The current API of
+   *  FTC_CMapCache_Lookup() takes cmap_index & charcode, but old API
+   *  takes charcode only.  To determine the passed value is for cmap_index
+   *  or charcode, the possible cmap_index is restricted not to exceed
+   *  the minimum possible charcode by a rogue client.  It is also very
+   *  unlikely that a rogue client is interested in Unicode values 0 to 15.
+   *
+   *  NOTE: The original threshold was 4 deduced from popular number of
+   *        cmap subtables in UCS-4 TrueType fonts, but now it is not
+   *        irregular for OpenType fonts to have more than 4 subtables,
+   *        because variation selector subtables are available for Apple
+   *        and Microsoft platforms.
+   */
+
+#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
+#define FT_MAX_CHARMAP_CACHEABLE 15
+#endif
+
+
+  /*
+   * This macro is defined if either unpatented or native TrueType
+   * hinting is requested by the definitions above.
+   */
+#ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+#define  TT_USE_BYTECODE_INTERPRETER
+#undef   TT_CONFIG_OPTION_UNPATENTED_HINTING
+#elif defined TT_CONFIG_OPTION_UNPATENTED_HINTING
+#define  TT_USE_BYTECODE_INTERPRETER
+#endif
 
 FT_END_HEADER
 
