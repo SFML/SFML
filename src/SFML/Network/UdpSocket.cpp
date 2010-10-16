@@ -190,10 +190,10 @@ Socket::Status UdpSocket::Receive(Packet& packet, IpAddress& remoteAddress, unsi
 
     // Receive datagrams
     std::size_t received = 0;
+    std::size_t size = myPendingPacket.Data.size();
     do
     {
         // Make room in the data buffer for a new datagram
-        std::size_t size = myPendingPacket.Data.size();
         myPendingPacket.Data.resize(size + MaxDatagramSize);
         char* data = &myPendingPacket.Data[0] + size;
 
@@ -202,12 +202,15 @@ Socket::Status UdpSocket::Receive(Packet& packet, IpAddress& remoteAddress, unsi
 
         // Check for errors
         if (status != Done)
+        {
+            myPendingPacket.Data.resize(size + received);
             return status;
+        }
     }
     while (received == MaxDatagramSize);
 
     // We have received all the packet data: we can copy it to the user packet
-    std::size_t actualSize = myPendingPacket.Data.size() - MaxDatagramSize + received;
+    std::size_t actualSize = size + received;
     if (actualSize > 0)
         packet.OnReceive(&myPendingPacket.Data[0], actualSize);
 
