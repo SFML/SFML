@@ -99,17 +99,10 @@ void Socket::Create(SocketHandle handle)
         // Set the current blocking state
         SetBlocking(myIsBlocking);
 
-        // To avoid the "Address already in use" error message when trying to bind to the same port
-        int yes = 1;
-        if (setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
-        {
-            Err() << "Failed to set socket option \"SO_REUSEADDR\" ; "
-                  << "binding to a same port may fail if too fast" << std::endl;
-        }
-
         if (myType == Tcp)
         {
             // Disable the Nagle algorithm (ie. removes buffering of TCP packets)
+            int yes = 1;
             if (setsockopt(mySocket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
             {
                 Err() << "Failed to set socket option \"TCP_NODELAY\" ; "
@@ -119,6 +112,7 @@ void Socket::Create(SocketHandle handle)
         else
         {
             // Enable broadcast by default for UDP sockets
+            int yes = 1;
             if (setsockopt(mySocket, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
             {
                 Err() << "Failed to enable broadcast on UDP socket" << std::endl;
