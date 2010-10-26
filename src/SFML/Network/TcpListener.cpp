@@ -88,6 +88,14 @@ Socket::Status TcpListener::Listen(unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
+void TcpListener::Close()
+{
+    // Simply close the socket
+    Socket::Close();
+}
+
+
+////////////////////////////////////////////////////////////
 Socket::Status TcpListener::Accept(TcpSocket& socket)
 {
     // Make sure that we're listening

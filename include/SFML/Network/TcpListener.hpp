@@ -80,6 +80,17 @@ public :
     Status Listen(unsigned short port);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Stop listening and close the socket
+    ///
+    /// This function gracefully stops the listener. If the
+    /// socket is not listening, this function has no effect.
+    ///
+    /// \see Listen
+    ///
+    ////////////////////////////////////////////////////////////
+    void Close();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Accept a new connection
     ///
     /// If the socket is in blocking mode, this function will
@@ -110,16 +121,21 @@ public :
 /// a given port and waits for connections on that port.
 /// This is all it can do.
 ///
-/// When a new connection is received, the socket returns a
-/// new instance of sf::TcpSocket that is properly
-/// initialized and can be used to communicate with the
-/// new client.
+/// When a new connection is received, you must call Accept and
+/// the listener returns a new instance of sf::TcpSocket that
+/// is properly initialized and can be used to communicate with
+/// the new client.
 ///
 /// Listener sockets are specific to the TCP protocol,
 /// UDP sockets are connectionless and can therefore communicate
 /// directly. As a consequence, a listener socket will always
 /// return the new connections as sf::TcpSocket instances.
-/// 
+///
+/// A listener is automatically closed on destruction, like all
+/// other types of socket. However if you want to stop listening
+/// before the socket is destroyed, you can call its Close()
+/// function.
+///
 /// Usage example:
 /// \code
 /// // Create a listener socket and make it wait for new
