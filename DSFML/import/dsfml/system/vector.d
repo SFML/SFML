@@ -145,6 +145,7 @@ struct Vector(T, int dim)
 	}
 
 	/// operations with a scalar
+	// TODO: make this usable with arbitrary scalars (not only Vector element type T), including necessary checks etc.
 	typeof(this) opBinary(string op)(T s)
 	{
 		Vector res = void;
@@ -325,7 +326,33 @@ struct Vector(T, int dim)
 		static if (dim >= 4) if (w != v.w) return false;
 		return true;
 	}
+
+	/// swizzling
+	@property Vector!(T,n.length) opDispatch(string n)() const
+	if (allCharsValid(n,"xyzw"[0..dim]))
+	{
+		static if (n.length == 2) return  
+			Vector!(T,n.length)(cell[n[0]-'x'], cell[n[1]-'x']);
+		static if (n.length == 3) return  
+			Vector!(T,n.length)(cell[n[0]-'x'], cell[n[1]-'x'], cell[n[2]-'x']);
+		static if (n.length == 4) return  
+			Vector!(T,n.length)(cell[n[0]-'x'], cell[n[1]-'x'], cell[n[2]-'x'], cell[n[3]-'x']);
+	}
 	
+	// helper function
+	static private bool allCharsValid( string s, string valid )
+	{
+		foreach ( e1; s )
+		{
+			bool b = false;
+			foreach (e2; valid)
+				b |= e1 == e2;
+			if (!b)
+				return false;
+		}
+		return true;
+	}
+
 	///
 	bool isUnit()
 	{
@@ -373,6 +400,9 @@ unittest
 
 	assert(v+w == Vector3f(0.5f, 3.f, 0.f));
 	assert(v-w == Vector3f(2.5f, -1.f, 1.f));
+	
+	auto r = v.xy;
+	writeln(r);
 }
 
 /**

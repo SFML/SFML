@@ -26,7 +26,6 @@
 module dsfml.window.context;
 
 import dsfml.system.common;
-import dsfml.window.common;
 
 /**
  * 

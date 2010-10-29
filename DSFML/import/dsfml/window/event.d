@@ -108,7 +108,7 @@ enum KeyCode
 		Insert,
 		Delete,
 		Add,
-		Substract,
+		Subtract,
 		Multiply,
 		Divide,
 		Left,
