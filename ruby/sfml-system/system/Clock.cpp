@@ -45,4 +45,5 @@ void Init_Clock( void )
 	
 	// Aliases
 	rb_define_alias( globalClockClass, "elapsedTime", "getElapsedTime" );
+	rb_define_alias( globalClockClass, "elapsed_time", "getElapsedTime" );
 }
