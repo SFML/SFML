@@ -3,8 +3,6 @@
 
 #include "ruby.h"
 
-VALUE Clock_New( VALUE aKlass );
-
 // Ruby initiation function
 void Init_Clock( void );
 

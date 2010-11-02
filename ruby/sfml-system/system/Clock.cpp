@@ -24,7 +24,7 @@ static VALUE Clock_Reset( VALUE self )
 	return Qnil;
 }
 
-VALUE Clock_New( VALUE aKlass )
+static VALUE Clock_New( VALUE aKlass )
 {
 	sf::Clock *object = new sf::Clock();
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Clock_Free, object );
