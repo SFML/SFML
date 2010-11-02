@@ -1,8 +1,29 @@
 #include "Vector2.hpp"
 #include "System.hpp"
 
+/* SFML::Vector2 is a simple class that defines a mathematical vector with two coordinates (x and y).
+ *
+ * It can be used to represent anything that has two dimensions: a size, a point, a velocity, etc.
+ *
+ * This class differs from the C++ version. It will accept any value that is Numeric and both x and y must be of the same class.
+ *
+ *   v1 = SFML::Vector2.new(16.5, 24.0)
+ *   v1.x = 18.2
+ *   y = v1.y
+ *
+ *   v2 = v1 * v1;
+ *   v3 = SFML::Vector2.new
+ *   v3 = v1 + v2
+ *
+ *   different = (v2 != v3);
+ */
 VALUE globalVector2Class;
 
+/* Internal function
+ * Forces the argument someValue to be a Vector2. IF it can convert it then it will.
+ * So you can always safely asume that this function returns a Vector2 object.
+ * If it fails then an exception will be thrown.
+ */
 VALUE Vector2_ForceType( VALUE someValue )
 {
 	if( rb_obj_is_kind_of( someValue, rb_cArray ) == true )
@@ -21,6 +42,9 @@ VALUE Vector2_ForceType( VALUE someValue )
 	}
 }
 
+/* Internal function
+ * Will copy the x and y from aSource to self.
+ */
 static void Vector2_internal_CopyFrom( VALUE self, VALUE aSource )
 {
 	VALUE vectorSource = Vector2_ForceType( aSource );
@@ -32,6 +56,9 @@ static void Vector2_internal_CopyFrom( VALUE self, VALUE aSource )
 	rb_iv_set( self, "@dataType", rb_iv_get( vectorSource, "@dataType" ) );
 }
 
+/* Internal function
+ * Validate that the passed types are the same and numeric.
+ */
 static void Vector2_internal_ValidateTypes( VALUE aFirst, VALUE aSecond )
 {
 	if( CLASS_OF( aFirst ) != CLASS_OF( aSecond ) )
@@ -156,6 +183,14 @@ static VALUE Vector2_StrictEqual( VALUE self, VALUE anArgument )
 	}
 }
 
+/* call-seq:
+ *   Vector2.new() 			-> vector
+ *   Vector2.new([x,y])		-> vector
+ *	 Vector2.new(vector) 	-> vector
+ *   Vector2.new(x,y)		-> vector
+ * 
+ * Create a new vector instance.
+ */
 static VALUE Vector2_Initialize( VALUE self, VALUE someArgs )
 {
 	long arrayLength = RARRAY_LEN( someArgs );

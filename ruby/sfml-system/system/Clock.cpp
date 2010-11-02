@@ -2,7 +2,7 @@
 #include "System.hpp"
 #include <SFML/System/Clock.hpp>
 
-/* Clock class */
+/* Utility class for manipulating time. */
 VALUE globalClockClass;
 
 /* Free a heap allocated object 

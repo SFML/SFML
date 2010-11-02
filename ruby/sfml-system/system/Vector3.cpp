@@ -1,8 +1,29 @@
 #include "Vector3.hpp"
 #include "System.hpp"
 
+/* SFML::Vector3 is a simple class that defines a mathematical vector with three coordinates (x, y and z).
+ *
+ * It can be used to represent anything that has three dimensions: a size, a point, a velocity, etc.
+ *
+ * This class differs from the C++ version. It will accept any value that is Numeric and both x, y an z must be of the same class.
+ *
+ *   v1 = SFML::Vector3.new(16.5, 24.0, -8.2)
+ *   v1.z = 18.2
+ *   y = v1.y
+ *
+ *   v2 = v1 * v1;
+ *   v3 = SFML::Vector3.new
+ *   v3 = v1 + v2
+ *
+ *   different = (v2 != v3);
+ */
 VALUE globalVector3Class;
 
+/* Internal function
+ * Forces the argument someValue to be a Vector3. IF it can convert it then it will.
+ * So you can always safely asume that this function returns a Vector3 object.
+ * If it fails then an exception will be thrown.
+ */
 VALUE Vector3_ForceType( VALUE someValue )
 {
 	if( rb_obj_is_kind_of( someValue, rb_cArray ) == true )
@@ -22,6 +43,9 @@ VALUE Vector3_ForceType( VALUE someValue )
 	}
 }
 
+/* Internal function
+ * Will copy the x, y and z from aSource to self.
+ */
 static void Vector3_internal_CopyFrom( VALUE self, VALUE aSource )
 {
 	VALUE vectorSource = Vector3_ForceType( aSource );
@@ -35,6 +59,9 @@ static void Vector3_internal_CopyFrom( VALUE self, VALUE aSource )
 	rb_iv_set( self, "@dataType", rb_iv_get( vectorSource, "@dataType" ) );
 }
 
+/* Internal function
+ * Validate that the passed values types are the same and numeric.
+ */
 static void Vector3_internal_ValidateTypes( VALUE aFirst, VALUE aSecond, VALUE aThird )
 {
 	if( CLASS_OF( aFirst ) != CLASS_OF( aSecond ) && CLASS_OF( aFirst ) != CLASS_OF( aThird ) )
@@ -179,6 +206,14 @@ static VALUE Vector3_StrictEqual( VALUE self, VALUE anArgument )
 	}
 }
 
+/* call-seq:
+ *   Vector3.new() 			-> vector
+ *   Vector3.new([x,y,z])	-> vector
+ *	 Vector3.new(vector) 	-> vector
+ *   Vector3.new(x,y,z)		-> vector
+ * 
+ * Create a new vector instance.
+ */
 static VALUE Vector3_Initialize( VALUE self, VALUE someArgs )
 {
 	long arrayLength = RARRAY_LEN( someArgs );
