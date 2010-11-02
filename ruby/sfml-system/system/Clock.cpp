@@ -2,13 +2,23 @@
 #include "System.hpp"
 #include <SFML/System/Clock.hpp>
 
+/* Clock class */
 VALUE globalClockClass;
 
+/* Free a heap allocated object 
+ * Not accessible trough ruby directly!
+ */
 static void Clock_Free( sf::Clock *anObject )
 {
 	delete anObject;
 }
 
+/* call-seq:
+ *   clock.getElapsedTime()		-> Float
+ *
+ * This function returns the time elapsed since the last call to Reset() 
+ * (or the construction of the instance if Reset() has not been called) in seconds.
+ */
 static VALUE Clock_GetElapsedTime( VALUE self )
 {
 	sf::Clock *object = NULL;
@@ -16,6 +26,11 @@ static VALUE Clock_GetElapsedTime( VALUE self )
 	return rb_float_new( object->GetElapsedTime() );
 }
 
+/* call-seq:
+ *   clock.reset()		-> nil
+ * 
+ * This function puts the time counter back to zero.
+ */
 static VALUE Clock_Reset( VALUE self )
 {
 	sf::Clock *object = NULL;
@@ -24,6 +39,11 @@ static VALUE Clock_Reset( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   Clock.new()		-> clock
+ *
+ * The clock starts automatically after being constructed.
+ */
 static VALUE Clock_New( VALUE aKlass )
 {
 	sf::Clock *object = new sf::Clock();
