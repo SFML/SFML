@@ -19,20 +19,13 @@
  * 3. This notice may not be removed or altered from any
  *    source distribution.
  */
- 
-#include "main.hpp"
-#include "Context.hpp"
 
-VALUE globalSFMLNamespace;
+#ifndef SFML_RUBYEXT_CONTEXT_HEADER_
+#define SFML_RUBYEXT_CONTEXT_HEADER_
 
-VALUE GetNamespace( void )
-{
-	return globalSFMLNamespace;
-}
+#include "ruby.h"
 
-void Init_window( void )
-{
-	globalSFMLNamespace = rb_define_module( "SFML" );
-	rb_define_const(globalSFMLNamespace, "WindowLoaded", Qtrue);
-	Init_Context();
-}
+// Ruby initiation function
+void Init_Context( void );
+
+#endif // SFML_RUBYEXT_CONTEXT_HEADER_
