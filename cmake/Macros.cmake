@@ -113,6 +113,10 @@ macro(sfml_add_library target)
         set_target_properties(${target} PROPERTIES RELEASE_POSTFIX -s)
     endif()
 
+    # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
+    set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+    set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+
     # insert the major version number in the output filename
     string(REGEX REPLACE "sfml(-.*)" "sfml${VERSION_MAJOR}\\1" OUTPUT_NAME ${target})
     set_target_properties(${target} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
