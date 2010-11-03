@@ -21,7 +21,7 @@
  */
  
 #include "Vector3.hpp"
-#include "System.hpp"
+#include "main.hpp"
 
 /* SFML::Vector3 is a simple class that defines a mathematical vector with three coordinates (x, y and z).
  *

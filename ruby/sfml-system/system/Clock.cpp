@@ -21,7 +21,7 @@
  */
  
 #include "Clock.hpp"
-#include "System.hpp"
+#include "main.hpp"
 #include <SFML/System/Clock.hpp>
 
 /* Utility class for manipulating time. */

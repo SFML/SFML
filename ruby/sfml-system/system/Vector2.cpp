@@ -21,7 +21,7 @@
  */
  
 #include "Vector2.hpp"
-#include "System.hpp"
+#include "main.hpp"
 
 /* SFML::Vector2 is a simple class that defines a mathematical vector with two coordinates (x and y).
  *

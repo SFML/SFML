@@ -20,7 +20,7 @@
  *    source distribution.
  */
  
-#include "System.hpp"
+#include "main.hpp"
 #include "Clock.hpp"
 #include "Vector2.hpp"
 #include "Vector3.hpp"

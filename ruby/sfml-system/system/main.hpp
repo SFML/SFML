@@ -20,8 +20,8 @@
  *    source distribution.
  */
  
-#ifndef SFML_RUBYEXT_SYSTEM_HEADER_
-#define SFML_RUBYEXT_SYSTEM_HEADER_
+#ifndef SFML_RUBYEXT_MAIN_HEADER_
+#define SFML_RUBYEXT_MAIN_HEADER_
 
 #include "ruby.h"
 
@@ -34,4 +34,4 @@ typedef VALUE ( *RubyFunctionPtr )( ... );
 
 #define FUNCPTR( x ) ( reinterpret_cast< RubyFunctionPtr >( x ) )
 
-#endif // SFML_RUBYEXT_SYSTEM_HEADER_
+#endif // SFML_RUBYEXT_MAIN_HEADER_
