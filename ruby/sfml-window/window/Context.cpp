@@ -66,7 +66,7 @@ static VALUE Context_SetActive( VALUE self, VALUE anArgument )
 			object->SetActive( false );
 			break;
 		default:
-			rb_raise( rb_eRuntimeError, "expected true or false" );
+			rb_raise( rb_eTypeError, "expected true or false" );
 	}
 	return Qnil;
 }
