@@ -267,17 +267,9 @@ static VALUE Vector3_Initialize( VALUE self, VALUE someArgs )
 	return self;
 }
 
-VALUE Vector3_New( int anArgCount, VALUE * someArgs, VALUE aKlass )
-{
-	return rb_call_super( anArgCount, someArgs );
-}
-
 void Init_Vector3( void )
 {
 	globalVector3Class = rb_define_class_under( GetNamespace(), "Vector3", rb_cObject );
-	
-	// Class methods
-	rb_define_singleton_method( globalVector3Class, "new", FUNCPTR( Vector3_New ), -1 );
 	
 	// Instance methods
 	rb_define_method( globalVector3Class, "initialize", FUNCPTR( Vector3_Initialize ), -2 );
