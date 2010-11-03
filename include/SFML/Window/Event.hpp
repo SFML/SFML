@@ -191,7 +191,7 @@ namespace Joy
 
     enum
     {
-        Count       = 4, ///< Total number of supported joysticks
+        Count       = 8, ///< Total number of supported joysticks
         ButtonCount = 32 ///< Total number of supported joystick buttons
     };
 }
