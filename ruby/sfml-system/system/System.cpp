@@ -35,6 +35,7 @@ VALUE GetNamespace( void )
 void Init_system( void )
 {
 	globalSFMLNamespace = rb_define_module( "SFML" );
+	rb_define_const(globalSFMLNamespace, "SystemLoaded", Qtrue);
 	Init_Clock();
 	Init_Vector2();
 	Init_Vector3();
