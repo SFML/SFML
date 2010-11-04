@@ -107,6 +107,15 @@ static VALUE Event_Initialize( VALUE self )
 	rb_obj_call_init( mouseWheel, 0, 0 );
 	rb_obj_call_init( size, 0, 0 );
 	rb_obj_call_init( text, 0, 0 );
+	
+	rb_iv_set( joyButton, "@internal__parent_ref", self );
+	rb_iv_set( joyMove, "@internal__parent_ref", self );
+	rb_iv_set( key, "@internal__parent_ref", self );
+	rb_iv_set( mouseButton, "@internal__parent_ref", self );
+	rb_iv_set( mouseMove, "@internal__parent_ref", self );
+	rb_iv_set( mouseWheel, "@internal__parent_ref", self );
+	rb_iv_set( size, "@internal__parent_ref", self );
+	rb_iv_set( text, "@internal__parent_ref", self );
 }
 
 /* call-seq:
