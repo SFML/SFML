@@ -85,6 +85,85 @@ static void Event_Free( sf::Event *anObject )
 	delete anObject;
 }
 
+#define EVENT_TYPE_ACCESSORS( a, b, conv1, conv2 )			\
+static VALUE a##Event_Get##b##( VALUE self ) 				\
+{															\
+	sf::Event::##a##Event * object = NULL;					\
+	Data_Get_Struct( self, sf::Event::##a##Event, object );	\
+	return conv1##( object->##a##.##b );					\
+}															\
+															\
+static VALUE a##Event_Set##b##( VALUE self, VALUE aVal )	\
+{															\
+	sf::Event::##a##Event * object = NULL;					\
+	Data_Get_Struct( self, sf::Event::##a##Event, object );	\
+	return conv1##( object->##a##.##b = conv2##( aVal ) );	\
+}
+
+#define EVENT_TYÅE_BOOL_ACCESSORS( a, b )					\
+static VALUE a##Event_Get##b##( VALUE self ) 				\
+{															\
+	sf::Event::##a##Event * object = NULL;					\
+	Data_Get_Struct( self, sf::Event::##a##Event, object );	\
+	if( object->##a##.##b == true )							\
+		return Qtrue;										\
+	else													\
+		return Qfalse;										\
+}															\
+															\
+static VALUE a##Event_Set##b##( VALUE self, VALUE aVal )	\
+{															\
+	sf::Event::##a##Event * object = NULL;					\
+	Data_Get_Struct( self, sf::Event::##a##Event, object );	\
+	if( aVal == Qtrue )										\
+		object->##a##.##b = true;							\
+	else													\
+		object->##a##.##b = false;							\
+	return aVal;											\
+}
+
+/*static VALUE JoyButtonEvent_GetJoystickId( VALUE self )
+{
+	sf::Event * object = NULL;
+	Data_Get_Struct( self, sf::Event, object );
+	return UINT2FIX( object->Key.JoystickId );
+}
+
+static VALUE JoyButtonEvent_SetJoystickId( VALUE self, VALUE aValue )
+{
+	sf::Event * object = NULL;
+	Data_Get_Struct( self, sf::Event, object );
+	return INT2NUM( object->Key.JoystickId = NUM2UINT( aValue ) );
+}*/
+
+EVENT_TYPE_ACCESSORS( JoyButton, JoystickId, INT2NUM, NUM2UINT );
+EVENT_TYPE_ACCESSORS( JoyButton, Button, INT2NUM, NUM2UINT );
+
+EVENT_TYPE_ACCESSORS( JoyMove, JoystickId, INT2NUM, NUM2UINT );
+EVENT_TYPE_ACCESSORS( JoyMove, Axis, INT2NUM, NUM2INT );
+EVENT_TYPE_ACCESSORS( JoyMove, Position, rb_float_new, NUM2DBL );
+
+EVENT_TYPE_ACCESSORS( Key, Code, INT2NUM, NUM2INT );
+EVENT_TYPE_BOOL_ACCESSORS( Key, Alt );
+EVENT_TYPE_BOOL_ACCESSORS( Key, Control );
+EVENT_TYPE_BOOL_ACCESSORS( Key, Shift );
+
+EVENT_TYPE_ACCESSORS( MouseButton, Button, INT2NUM, NUM2INT );
+EVENT_TYPE_ACCESSORS( MouseButton, X, INT2NUM, NUM2INT );
+EVENT_TYPE_ACCESSORS( MouseButton, Y, INT2NUM, NUM2INT );
+
+EVENT_TYPE_ACCESSORS( MouseMove, X, INT2NUM, NUM2INT );
+EVENT_TYPE_ACCESSORS( MouseMove, Y, INT2NUM, NUM2INT );
+
+EVENT_TYPE_ACCESSORS( MouseWheel, Delta, INT2NUM, NUM2INT );
+EVENT_TYPE_ACCESSORS( MouseWheel, X, INT2NUM, NUM2INT );
+EVENT_TYPE_ACCESSORS( MouseWheel, Y, INT2NUM, NUM2INT );
+
+EVENT_TYPE_ACCESSORS( Size, Width, INT2NUM, NUM2UINT );
+EVENT_TYPE_ACCESSORS( Size, Height, INT2NUM, NUM2UINT );
+
+EVENT_TYPE_ACCESSORS( Text, Unicode, INT2NUM, NUM2UINT );
+
 static VALUE Event_Initialize( VALUE self )
 {
 	sf::Event * object = NULL;
@@ -147,16 +226,87 @@ static VALUE Event_New( VALUE aKlass )
 
 void Init_Event( void )
 {
-	globalEventClass = rb_define_class_under( GetNamespace(), "Event", rb_cObject );
-	globalJoyButtonEventClass 	= rb_define_class_under( globalEventClass, "JoyButton", rb_cObject );
-	globalJoyMoveEventClass		= rb_define_class_under( globalEventClass, "JoyMove", rb_cObject );
-	globalKeyEventClass 		= rb_define_class_under( globalEventClass, "Key", rb_cObject );
+	globalEventClass 				= rb_define_class_under( GetNamespace(), "Event", rb_cObject );
+	globalJoyButtonEventClass 		= rb_define_class_under( globalEventClass, "JoyButton", rb_cObject );
+	globalJoyMoveEventClass			= rb_define_class_under( globalEventClass, "JoyMove", rb_cObject );
+	globalKeyEventClass 			= rb_define_class_under( globalEventClass, "Key", rb_cObject );
 	globalMouseButtonEventClass 	= rb_define_class_under( globalEventClass, "MouseButton", rb_cObject );
-	globalMouseMoveEventClass 	= rb_define_class_under( globalEventClass, "MouseMove", rb_cObject );
-	globalMouseWheelEventClass 	= rb_define_class_under( globalEventClass, "MouseWheel", rb_cObject );
-	globalSizeEventClass 	= rb_define_class_under( globalEventClass, "Size", rb_cObject );
-	globalTextEventClass 	= rb_define_class_under( globalEventClass, "Text", rb_cObject );
+	globalMouseMoveEventClass 		= rb_define_class_under( globalEventClass, "MouseMove", rb_cObject );
+	globalMouseWheelEventClass 		= rb_define_class_under( globalEventClass, "MouseWheel", rb_cObject );
+	globalSizeEventClass 			= rb_define_class_under( globalEventClass, "Size", rb_cObject );
+	globalTextEventClass 			= rb_define_class_under( globalEventClass, "Text", rb_cObject );
 	
 	// Class methods
 	rb_define_singleton_method( globalEventClass, "new", FUNCPTR( Event_New ), 0 );
+	
+	// Instance methods
+	//rb_define_attr( globalEventClass, "
+	
+	// JoyButton methods
+	rb_define_method( globalJoyButtonEventClass, "joystickId", FUNCPTR( JoyButtonEvent_GetJoystickId ), 0 );
+	rb_define_method( globalJoyButtonEventClass, "joystickId=", FUNCPTR( JoyButtonEvent_SetJoystickId ), 1 );
+	
+	rb_define_method( globalJoyButtonEventClass, "button", FUNCPTR( JoyButtonEvent_GetButton ), 0 );
+	rb_define_method( globalJoyButtonEventClass, "button=", FUNCPTR( JoyButtonEvent_SetButton ), 1 );
+	
+	// JoyMove methods
+	rb_define_method( globalJoyMoveEventClass, "joystickId", FUNCPTR( JoyMoveEvent_GetJoystickId ), 0 );
+	rb_define_method( globalJoyMoveEventClass, "joystickId=", FUNCPTR( JoyMoveEvent_SetJoystickId ), 1 );
+	
+	rb_define_method( globalJoyMoveEventClass, "axis", FUNCPTR( JoyMoveEvent_GetAxis ), 0 );
+	rb_define_method( globalJoyMoveEventClass, "axis=", FUNCPTR( JoyMoveEvent_SetAxis ), 1 );
+	
+	rb_define_method( globalJoyMoveEventClass, "position", FUNCPTR( JoyMoveEvent_GetPosition ), 0 );
+	rb_define_method( globalJoyMoveEventClass, "position=", FUNCPTR( JoyMoveEvent_SetPosition ), 1 );
+	
+	// Key methods
+	rb_define_method( globalKeyEventClass, "code", FUNCPTR( KeyEvent_GetCode ), 0 );
+	rb_define_method( globalKeyEventClass, "code=", FUNCPTR( KeyEvent_SetCode ), 1 );
+	
+	rb_define_method( globalKeyEventClass, "alt", FUNCPTR( KeyEvent_GetAlt ), 0 );
+	rb_define_method( globalKeyEventClass, "alt=", FUNCPTR( KeyEvent_SetAlt ), 1 );
+	
+	rb_define_method( globalKeyEventClass, "control", FUNCPTR( KeyEvent_GetControl ), 0 );
+	rb_define_method( globalKeyEventClass, "control=", FUNCPTR( KeyEvent_SetControl ), 1 );
+	
+	rb_define_method( globalKeyEventClass, "shift", FUNCPTR( KeyEvent_GetShift ), 0 );
+	rb_define_method( globalKeyEventClass, "shift=", FUNCPTR( KeyEvent_SetShift ), 1 );
+	
+	// MouseButton methods
+	rb_define_method( globalMouseButtonEventClass, "button", FUNCPTR( MouseButtonEvent_GetButton ), 0 );
+	rb_define_method( globalMouseButtonEventClass, "button=", FUNCPTR( MouseButtonEvent_SetButton ), 1 );
+	
+	rb_define_method( globalMouseButtonEventClass, "x", FUNCPTR( MouseButtonEvent_GetX ), 0 );
+	rb_define_method( globalMouseButtonEventClass, "x=", FUNCPTR( MouseButtonEvent_SetX ), 1 );
+	
+	rb_define_method( globalMouseButtonEventClass, "y", FUNCPTR( MouseButtonEvent_GetY ), 0 );
+	rb_define_method( globalMouseButtonEventClass, "y=", FUNCPTR( MouseButtonEvent_SetY ), 1 );
+	
+	// MouseMove methods
+	rb_define_method( globalMouseMoveEventClass, "x", FUNCPTR( MouseMoveEvent_GetX ), 0 );
+	rb_define_method( globalMouseMoveEventClass, "x=", FUNCPTR( MouseMoveEvent_SetX ), 1 );
+	
+	rb_define_method( globalMouseMoveEventClass, "y", FUNCPTR( MouseMoveEvent_GetY ), 0 );
+	rb_define_method( globalMouseMoveEventClass, "y=", FUNCPTR( MouseMoveEvent_SetY ), 1 );
+	
+	// MouseWheel methods
+	rb_define_method( globalMouseWheelEventClass, "delta", FUNCPTR( MouseWheelEvent_GetDelta ), 0 );
+	rb_define_method( globalMouseWheelEventClass, "delta=", FUNCPTR( MouseWheelEvent_SetDelta ), 1 );
+	
+	rb_define_method( globalMouseWheelEventClass, "x", FUNCPTR( MouseWheelEvent_GetX ), 0 );
+	rb_define_method( globalMouseWheelEventClass, "x=", FUNCPTR( MouseWheelEvent_SetX ), 1 );
+	
+	rb_define_method( globalMouseWheelEventClass, "y", FUNCPTR( MouseWheelEvent_GetY ), 0 );
+	rb_define_method( globalMouseWheelEventClass, "y=", FUNCPTR( MouseWheelEvent_SetY ), 1 );
+	
+	// Size methods
+	rb_define_method( globalSizeEventClass, "width", FUNCPTR( SizeEvent_GetWidth ), 0 );
+	rb_define_method( globalSizeEventClass, "width=", FUNCPTR( SizeEvent_SetWidth ), 1 );
+	
+	rb_define_method( globalSizeEventClass, "height", FUNCPTR( SizeEvent_GetWidth ), 0 );
+	rb_define_method( globalSizeEventClass, "height=", FUNCPTR( SizeEvent_SetWidth ), 1 );
+	
+	// Text methods
+	rb_define_method( globalTextEventClass, "unicode", FUNCPTR( SizeEvent_GetUnicode ), 0 );
+	rb_define_method( globalTextEventClass, "unicode=", FUNCPTR( SizeEvent_SetUnicode ), 1 )
 }
