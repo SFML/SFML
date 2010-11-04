@@ -90,32 +90,46 @@ static VALUE Event_Initialize( VALUE self )
 	sf::Event * object = NULL;
 	Data_Get_Struct( self, sf::Event, object );
 	
-	VALUE joyButton 	= Data_Wrap_Struct( globalJoyButtonEventClass, 0, 0, &object->JoyButton );
-	VALUE joyMove 		= Data_Wrap_Struct( globalJoyMoveEventClass, 0, 0, &object->JoyMove );
-	VALUE key		= Data_Wrap_Struct( globalKeyEventClass, 0, 0, &object->Key );
-	VALUE mouseButton 	= Data_Wrap_Struct( globalMouseButtonEventClass, 0, 0, &object->MouseButton );
-	VALUE mouseMove 	= Data_Wrap_Struct( globalMouseMoveEventClass, 0, 0, &object->MouseMove );
-	VALUE mouseWheel 	= Data_Wrap_Struct( globalMouseWheelEventClass, 0, 0, &object->MouseWheel );
-	VALUE size		= Data_Wrap_Struct( globalSizeEventClass, 0, 0, &object->Size );
-	VALUE text		= Data_Wrap_Struct( globalTextEventClass, 0, 0, &object->Text );
+	bool noSpecialType = false;
+	VALUE eventType;
+	switch( self->Type )
+	{
+		case JoyButtonPressed:
+		case JoyButtonReleased:
+			eventType = Data_Wrap_Struct( globalJoyButtonEventClass, 0, 0, &object->JoyButton );
+			break;
+		case JoyMoved:
+			eventType = Data_Wrap_Struct( globalJoyMoveEventClass, 0, 0, &object->JoyMove );
+			break;
+		case KeyPressed:
+		case KeyReleased:
+			eventType = Data_Wrap_Struct( globalKeyEventClass, 0, 0, &object->Key );
+			break;
+		case MouseButtonPressed:
+		case MouseButtonReleased:
+			eventType = Data_Wrap_Struct( globalMouseButtonEventClass, 0, 0, &object->MouseButton );
+			break;
+		case MouseMoved:
+			eventType = Data_Wrap_Struct( globalMouseMoveEventClass, 0, 0, &object->MouseMove );
+			break;
+		case MouseWheelMoved:
+			eventType = Data_Wrap_Struct( globalMouseWheelEventClass, 0, 0, &object->MouseWheel );
+			break;
+		case Resized:
+			eventType = Data_Wrap_Struct( globalSizeEventClass, 0, 0, &object->Size );
+			break;
+		case TextEntered:
+			eventType = Data_Wrap_Struct( globalTextEventClass, 0, 0, &object->Text );
+			break;
+		default:
+			noSpecialType = true;
+	};
 	
-	rb_obj_call_init( joyButton, 0, 0 );
-	rb_obj_call_init( joyMove, 0, 0 );
-	rb_obj_call_init( key, 0, 0 );
-	rb_obj_call_init( mouseButton, 0, 0 );
-	rb_obj_call_init( mouseMove, 0, 0 );
-	rb_obj_call_init( mouseWheel, 0, 0 );
-	rb_obj_call_init( size, 0, 0 );
-	rb_obj_call_init( text, 0, 0 );
-	
-	rb_iv_set( joyButton, "@internal__parent_ref", self );
-	rb_iv_set( joyMove, "@internal__parent_ref", self );
-	rb_iv_set( key, "@internal__parent_ref", self );
-	rb_iv_set( mouseButton, "@internal__parent_ref", self );
-	rb_iv_set( mouseMove, "@internal__parent_ref", self );
-	rb_iv_set( mouseWheel, "@internal__parent_ref", self );
-	rb_iv_set( size, "@internal__parent_ref", self );
-	rb_iv_set( text, "@internal__parent_ref", self );
+	if( noSpecialType == false )
+	{
+		rb_obj_call_init( eventType, 0, 0 );
+		rb_iv_set( eventType, "@internal__parent_ref", self );
+	}
 }
 
 /* call-seq:
