@@ -85,8 +85,32 @@ static void Event_Free( sf::Event *anObject )
 	delete anObject;
 }
 
+static VALUE Event_Initialize( VALUE self )
+{
+	sf::Event * object = NULL;
+	Data_Get_Struct( self, sf::Event, object );
+	
+	VALUE joyButton 	= Data_Wrap_Struct( globalJoyButtonEventClass, 0, 0, &object->JoyButton );
+	VALUE joyMove 		= Data_Wrap_Struct( globalJoyMoveEventClass, 0, 0, &object->JoyMove );
+	VALUE key		= Data_Wrap_Struct( globalKeyEventClass, 0, 0, &object->Key );
+	VALUE mouseButton 	= Data_Wrap_Struct( globalMouseButtonEventClass, 0, 0, &object->MouseButton );
+	VALUE mouseMove 	= Data_Wrap_Struct( globalMouseMoveEventClass, 0, 0, &object->MouseMove );
+	VALUE mouseWheel 	= Data_Wrap_Struct( globalMouseWheelEventClass, 0, 0, &object->MouseWheel );
+	VALUE size		= Data_Wrap_Struct( globalSizeEventClass, 0, 0, &object->Size );
+	VALUE text		= Data_Wrap_Struct( globalTextEventClass, 0, 0, &object->Text );
+	
+	rb_obj_call_init( joyButton, 0, 0 );
+	rb_obj_call_init( joyMove, 0, 0 );
+	rb_obj_call_init( key, 0, 0 );
+	rb_obj_call_init( mouseButton, 0, 0 );
+	rb_obj_call_init( mouseMove, 0, 0 );
+	rb_obj_call_init( mouseWheel, 0, 0 );
+	rb_obj_call_init( size, 0, 0 );
+	rb_obj_call_init( text, 0, 0 );
+}
+
 /* call-seq:
- *   Event.new()		-> event
+ *   Event.new()	-> event
  *
  * The constructor creates a new event.
  */
@@ -101,14 +125,14 @@ static VALUE Event_New( VALUE aKlass )
 void Init_Event( void )
 {
 	globalEventClass = rb_define_class_under( GetNamespace(), "Event", rb_cObject );
-	globalJoyButtonEventClass 	= rb_define_class_under( globalEventClass, "JoyButton" );
-	globalJoyMoveEventClass		= rb_define_class_under( globalEventClass, "JoyMove" );
-	globalKeyEventClass 		= rb_define_class_under( globalEventClass, "Key" );
-	globalMouseButtonEventClass 	= rb_define_class_under( globalEventClass, "MouseButton" );
-	globalMouseMoveEventClass = rb_define_class_under( globalEventClass, "MouseMove" );
-	globalMouseWheelEventClass = rb_define_class_under( globalEventClass, "MouseWheel" );
-	globalSizeEventEventClass = rb_define_class_under( globalEventClass, "Size" );
-	globalTextEventEventClass = rb_define_class_under( globalEventClass, "Text" );
+	globalJoyButtonEventClass 	= rb_define_class_under( globalEventClass, "JoyButton", rb_cObject );
+	globalJoyMoveEventClass		= rb_define_class_under( globalEventClass, "JoyMove", rb_cObject );
+	globalKeyEventClass 		= rb_define_class_under( globalEventClass, "Key", rb_cObject );
+	globalMouseButtonEventClass 	= rb_define_class_under( globalEventClass, "MouseButton", rb_cObject );
+	globalMouseMoveEventClass 	= rb_define_class_under( globalEventClass, "MouseMove", rb_cObject );
+	globalMouseWheelEventClass 	= rb_define_class_under( globalEventClass, "MouseWheel", rb_cObject );
+	globalSizeEventClass 	= rb_define_class_under( globalEventClass, "Size", rb_cObject );
+	globalTextEventClass 	= rb_define_class_under( globalEventClass, "Text", rb_cObject );
 	
 	// Class methods
 	rb_define_singleton_method( globalEventClass, "new", FUNCPTR( Event_New ), 0 );
