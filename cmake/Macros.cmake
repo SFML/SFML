@@ -103,8 +103,16 @@ macro(sfml_add_library target)
 
     # adjust the output file prefix/suffix to match our conventions
     if(BUILD_SHARED_LIBS)
-        set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
+        if(WINDOWS)
+            # include the major version number in Windows shared library names (but not import library names)
+            set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
+            set_target_properties(${target} PROPERTIES SUFFIX "-${VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+        else()
+            set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
+        endif()
         if (WINDOWS AND COMPILER_GCC)
+            # on Windows/gcc get rid of "lib" prefix for shared libraries,
+            # and transform the ".dll.a" suffix into ".a" for import libraries
             set_target_properties(${target} PROPERTIES PREFIX "")
             set_target_properties(${target} PROPERTIES IMPORT_SUFFIX ".a")
         endif()
@@ -116,10 +124,6 @@ macro(sfml_add_library target)
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
     set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
     set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
-
-    # insert the major version number in the output filename
-    string(REGEX REPLACE "sfml(-.*)" "sfml${VERSION_MAJOR}\\1" OUTPUT_NAME ${target})
-    set_target_properties(${target} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
 
     # for gcc 4.x on Windows, we add the -static-libgcc linker flag to get rid of an extra gcc DLL
     if(WINDOWS AND COMPILER_GCC)
