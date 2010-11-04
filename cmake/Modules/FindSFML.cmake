@@ -10,12 +10,6 @@
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
 # you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
 
-# deduce the SFML libraries prefix from the major version number
-set(FIND_SFML_LIB_PREFIX "sfml-")
-if(${SFML_FIND_VERSION_MAJOR} GREATER 1)
-    set(FIND_SFML_LIB_PREFIX "sfml${SFML_FIND_VERSION_MAJOR}-")
-endif()
-
 # deduce the libraries suffix from the options
 set(FIND_SFML_LIB_SUFFIX "")
 if(SFML_STATIC_LIBRARIES)
@@ -50,7 +44,7 @@ foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
     string(TOLOWER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_LOWER)
     string(TOUPPER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_UPPER)
     set(FIND_SFML_COMPONENT_VAR SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY)
-    set(FIND_SFML_COMPONENT_NAME ${FIND_SFML_LIB_PREFIX}${FIND_SFML_COMPONENT_LOWER}${FIND_SFML_LIB_SUFFIX})
+    set(FIND_SFML_COMPONENT_NAME sfml-${FIND_SFML_COMPONENT_LOWER}${FIND_SFML_LIB_SUFFIX})
 
     # release library
     find_library(${FIND_SFML_COMPONENT_VAR}

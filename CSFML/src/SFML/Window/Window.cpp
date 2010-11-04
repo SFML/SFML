@@ -329,5 +329,7 @@ void sfWindow_SetJoystickThreshold(sfWindow* window, float threshold)
 ////////////////////////////////////////////////////////////
 sfWindowHandle sfWindow_GetSystemHandle(const sfWindow* window)
 {
-    CSFML_CALL_RETURN(window, GetSystemHandle(), 0);
+    CSFML_CHECK_RETURN(window, NULL);
+
+    return (sfWindowHandle)window->This.GetSystemHandle();
 }

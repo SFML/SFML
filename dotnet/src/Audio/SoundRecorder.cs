@@ -169,22 +169,22 @@ namespace SFML
             private StopCallback    myStopCallback;
 
             #region Imports
-            [DllImport("csfml2-audio", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfSoundRecorder_Create(StartCallback OnStart, ProcessCallback OnProcess, StopCallback OnStop, IntPtr UserData);
 
-            [DllImport("csfml2-audio", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundRecorder_Destroy(IntPtr SoundRecorder);
 
-            [DllImport("csfml2-audio", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundRecorder_Start(IntPtr SoundRecorder, uint SampleRate);
 
-            [DllImport("csfml2-audio", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSoundRecorder_Stop(IntPtr SoundRecorder);
 
-            [DllImport("csfml2-audio", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfSoundRecorder_GetSampleRate(IntPtr SoundRecorder);
 
-            [DllImport("csfml2-audio", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfSoundRecorder_IsAvailable();
             #endregion
         }

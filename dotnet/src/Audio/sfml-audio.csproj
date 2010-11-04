@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SFML.Audio</RootNamespace>
-    <AssemblyName>sfmlnet2-audio</AssemblyName>
+    <AssemblyName>sfmlnet-audio-2</AssemblyName>
     <StartupObject>
     </StartupObject>
     <FileUpgradeFlags>

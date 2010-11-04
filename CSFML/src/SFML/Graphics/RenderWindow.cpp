@@ -355,7 +355,9 @@ void sfRenderWindow_SetJoystickThreshold(sfRenderWindow* renderWindow, float thr
 ////////////////////////////////////////////////////////////
 sfWindowHandle sfRenderWindow_GetSystemHandle(const sfRenderWindow* renderWindow)
 {
-    CSFML_CALL_RETURN(renderWindow, GetSystemHandle(), 0);
+    CSFML_CHECK_RETURN(renderWindow, NULL);
+
+    return (sfWindowHandle)renderWindow->This.GetSystemHandle();
 }
 
 
