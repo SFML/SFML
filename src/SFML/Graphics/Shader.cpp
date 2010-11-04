@@ -248,9 +248,6 @@ void Shader::Bind() const
         // Bind the textures
         BindTextures();
 
-        // Make sure that the texture unit which is left active is the number 0
-        GLCheck(glActiveTextureARB(GL_TEXTURE0_ARB));
-
         // Bind the current texture
         if (myCurrentTexture != -1)
             GLCheck(glUniform1iARB(myCurrentTexture, 0));
@@ -403,6 +400,9 @@ void Shader::BindTextures() const
         it->second->Bind();
         it++;
     }
+
+    // Make sure that the texture unit which is left active is the number 0
+    GLCheck(glActiveTextureARB(GL_TEXTURE0_ARB));
 }
 
 
