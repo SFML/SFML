@@ -36,8 +36,8 @@
  *  member, all other members such as event.MouseMove or event.Text will have undefined values.
  *
  * The ruby version differs from C++ in that the parameters are still stored in a union but that
- * the values are directly accessible from the event object. If you try to access any data which
- * would be considered undefined then a SFML::SomeKindOfException will be thrown.
+ * the values can be directly accessed from the event object. If you try to access any data which
+ * would be considered undefined then SFML::SomeKindOfException will be thrown.
  *
  * Usage example:
  *
@@ -53,12 +53,29 @@
  *
  *     # The window was resized
  *     if event.type == SFML::Event::Resized
- *       DoSomethingWithTheNewSize(event.width, event.height);
+ *       DoSomethingWithTheNewSize(event.size);
  *
  *     # etc ...
  *   end
  */
 VALUE globalEventClass;
+
+/* Joystick buttons events parameters (JoyButtonPressed, JoyButtonReleased). */
+VALUE globalJoyButtonEventClass;
+/* Joystick axis move event parameters (JoyMoved). */
+VALUE globalJoyMoveEventClass;
+/* Keyboard event parameters (KeyPressed, KeyReleased). */
+VALUE globalKeyEventClass;
+/* Mouse buttons events parameters (MouseButtonPressed, MouseButtonReleased). */
+VALUE globalMouseButtonEventClass;
+/* Mouse move event parameters (MouseMoved). */
+VALUE globalMouseMoveEventClass;
+/* Mouse wheel events parameters (MouseWheelMoved). */
+VALUE globalMouseWheelEventClass;
+/* Size events parameters (Resized). */
+VALUE globalSizeEventClass;
+/* Text event parameters (TextEntered). */
+VALUE globalTextEventClass;
 
 /* Free a heap allocated object 
  * Not accessible trough ruby directly!
@@ -84,6 +101,14 @@ static VALUE Event_New( VALUE aKlass )
 void Init_Event( void )
 {
 	globalEventClass = rb_define_class_under( GetNamespace(), "Event", rb_cObject );
+	globalJoyButtonEventClass 	= rb_define_class_under( globalEventClass, "JoyButton" );
+	globalJoyMoveEventClass		= rb_define_class_under( globalEventClass, "JoyMove" );
+	globalKeyEventClass 		= rb_define_class_under( globalEventClass, "Key" );
+	globalMouseButtonEventClass 	= rb_define_class_under( globalEventClass, "MouseButton" );
+	globalMouseMoveEventClass = rb_define_class_under( globalEventClass, "MouseMove" );
+	globalMouseWheelEventClass = rb_define_class_under( globalEventClass, "MouseWheel" );
+	globalSizeEventEventClass = rb_define_class_under( globalEventClass, "Size" );
+	globalTextEventEventClass = rb_define_class_under( globalEventClass, "Text" );
 	
 	// Class methods
 	rb_define_singleton_method( globalEventClass, "new", FUNCPTR( Event_New ), 0 );
