@@ -93,42 +93,32 @@
 ////////////////////////////////////////////////////////////
 // Define portable import / export macros
 ////////////////////////////////////////////////////////////
-#if defined(SFML_SYSTEM_WINDOWS)
+#if defined(SFML_SYSTEM_WINDOWS) && !defined(SFML_STATIC)
 
-    #ifndef SFML_STATIC
+    #ifdef SFML_EXPORTS
 
-        // Windows platforms
-        #ifdef SFML_EXPORTS
-
-            // From DLL side, we must export
-            #define SFML_API __declspec(dllexport)
-
-        #else
-
-            // From client application side, we must import
-            #define SFML_API __declspec(dllimport)
-
-        #endif
-
-        // For Visual C++ compilers, we also need to turn off this annoying C4251 warning.
-        // You can read lots ot different things about it, but the point is the code will
-        // just work fine, and so the simplest way to get rid of this warning is to disable it
-        #ifdef _MSC_VER
-
-            #pragma warning(disable : 4251)
-
-        #endif
+        // From DLL side, we must export
+        #define SFML_API __declspec(dllexport)
 
     #else
 
-        // No specific directive needed for static build
-        #define SFML_API
+        // From client application side, we must import
+        #define SFML_API __declspec(dllimport)
+
+    #endif
+
+    // For Visual C++ compilers, we also need to turn off this annoying C4251 warning.
+    // You can read lots ot different things about it, but the point is the code will
+    // just work fine, and so the simplest way to get rid of this warning is to disable it
+    #ifdef _MSC_VER
+
+        #pragma warning(disable : 4251)
 
     #endif
 
 #else
 
-    // Other platforms don't need to define anything
+    // Other platforms and static build don't need these export macros
     #define SFML_API
 
 #endif
