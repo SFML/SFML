@@ -62,7 +62,6 @@
 ////////////////////////////////////////////////////////////
 #if defined(CSFML_SYSTEM_WINDOWS)
 
-    // Windows platforms
     #ifdef CSFML_EXPORTS
 
         // From DLL side, we must export

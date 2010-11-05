@@ -30,9 +30,9 @@ set(BUILD_EXAMPLES FALSE CACHE BOOL "TRUE to build the SFML examples, FALSE to i
 # add an option for building the API documentation
 set(BUILD_DOC FALSE CACHE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
-# define SFML_DYNAMIC if the build type is set to 'shared'
-if(BUILD_SHARED_LIBS)
-    add_definitions(-DSFML_DYNAMIC)
+# define SFML_STATIC if the build type is not set to 'shared'
+if(NOT BUILD_SHARED_LIBS)
+    add_definitions(-DSFML_STATIC)
 endif()
 
 # remove SL security warnings with Visual C++

@@ -95,7 +95,7 @@
 ////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    #ifdef SFML_DYNAMIC
+    #ifndef SFML_STATIC
 
         // Windows platforms
         #ifdef SFML_EXPORTS
