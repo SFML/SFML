@@ -131,20 +131,6 @@ static VALUE a##Event_Set##b ( VALUE self, VALUE aVal )	\
 	return aVal;						\
 }
 
-/*static VALUE JoyButtonEvent_GetJoystickId( VALUE self )
-{
-	sf::Event * object = NULL;
-	Data_Get_Struct( self, sf::Event, object );
-	return UINT2FIX( object->Key.JoystickId );
-}
-
-static VALUE JoyButtonEvent_SetJoystickId( VALUE self, VALUE aValue )
-{
-	sf::Event * object = NULL;
-	Data_Get_Struct( self, sf::Event, object );
-	return INT2NUM( object->Key.JoystickId = NUM2UINT( aValue ) );
-}*/
-
 EVENT_TYPE_ACCESSORS( JoyButton, JoystickId, INT2NUM, NUM2UINT );
 EVENT_TYPE_ACCESSORS( JoyButton, Button, INT2NUM, NUM2UINT );
 
