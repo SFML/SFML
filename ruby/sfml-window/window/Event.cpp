@@ -180,34 +180,43 @@ static VALUE Event_Initialize( VALUE self )
 	
 	bool noSpecialType = false;
 	VALUE eventType;
+	const char * name = NULL;
 	switch( object->Type )
 	{
 		case sf::Event::JoyButtonPressed:
 		case sf::Event::JoyButtonReleased:
 			eventType = Data_Wrap_Struct( globalJoyButtonEventClass, 0, 0, &object->JoyButton );
+			name = "@joyButton";
 			break;
 		case sf::Event::JoyMoved:
 			eventType = Data_Wrap_Struct( globalJoyMoveEventClass, 0, 0, &object->JoyMove );
+			name = "@joyMove";
 			break;
 		case sf::Event::KeyPressed:
 		case sf::Event::KeyReleased:
 			eventType = Data_Wrap_Struct( globalKeyEventClass, 0, 0, &object->Key );
+			name = "@key";
 			break;
 		case sf::Event::MouseButtonPressed:
 		case sf::Event::MouseButtonReleased:
 			eventType = Data_Wrap_Struct( globalMouseButtonEventClass, 0, 0, &object->MouseButton );
+			name = "@mouseButton";
 			break;
 		case sf::Event::MouseMoved:
 			eventType = Data_Wrap_Struct( globalMouseMoveEventClass, 0, 0, &object->MouseMove );
+			name = "@mouseMove";
 			break;
 		case sf::Event::MouseWheelMoved:
 			eventType = Data_Wrap_Struct( globalMouseWheelEventClass, 0, 0, &object->MouseWheel );
+			name = "@mouseWheel";
 			break;
 		case sf::Event::Resized:
 			eventType = Data_Wrap_Struct( globalSizeEventClass, 0, 0, &object->Size );
+			name = "@resized";
 			break;
 		case sf::Event::TextEntered:
 			eventType = Data_Wrap_Struct( globalTextEventClass, 0, 0, &object->Text );
+			name = "@text";
 			break;
 		default:
 			noSpecialType = true;
@@ -217,6 +226,7 @@ static VALUE Event_Initialize( VALUE self )
 	{
 		rb_obj_call_init( eventType, 0, 0 );
 		rb_iv_set( eventType, "@internal__parent_ref", self );
+		rb_iv_set( self, name, eventType );
 	}
 }
 
@@ -245,11 +255,36 @@ void Init_Event( void )
 	globalSizeEventClass 			= rb_define_class_under( globalEventClass, "Size", rb_cObject );
 	globalTextEventClass 			= rb_define_class_under( globalEventClass, "Text", rb_cObject );
 	
+	rb_define_const( globalEventClass, "Closed", INT2NUM( static_cast< int >( sf::Event::Closed ) ) );
+	rb_define_const( globalEventClass, "Resized", INT2NUM( static_cast< int >( sf::Event::Resized ) ) );
+	rb_define_const( globalEventClass, "LostFocus", INT2NUM( static_cast< int >( sf::Event::LostFocus ) ) );
+	rb_define_const( globalEventClass, "GainedFocus", INT2NUM( static_cast< int >( sf::Event::GainedFocus ) ) );
+	rb_define_const( globalEventClass, "TextEntered", INT2NUM( static_cast< int >( sf::Event::TextEntered ) ) );
+	rb_define_const( globalEventClass, "KeyPressed", INT2NUM( static_cast< int >( sf::Event::KeyPressed ) ) );
+	rb_define_const( globalEventClass, "KeyReleased", INT2NUM( static_cast< int >( sf::Event::KeyReleased ) ) );
+	rb_define_const( globalEventClass, "MouseWheelMoved", INT2NUM( static_cast< int >( sf::Event::MouseWheelMoved ) ) );
+	rb_define_const( globalEventClass, "MouseButtonPressed", INT2NUM( static_cast< int >( sf::Event::MouseButtonPressed ) ) );
+	rb_define_const( globalEventClass, "MouseButtonReleased", INT2NUM( static_cast< int >( sf::Event::MouseButtonReleased ) ) );
+	rb_define_const( globalEventClass, "MouseMoved", INT2NUM( static_cast< int >( sf::Event::MouseMoved ) ) );
+	rb_define_const( globalEventClass, "MouseEntered", INT2NUM( static_cast< int >( sf::Event::MouseEntered ) ) );
+	rb_define_const( globalEventClass, "MouseLeft", INT2NUM( static_cast< int >( sf::Event::MouseLeft ) ) );
+	rb_define_const( globalEventClass, "JoyButtonPressed", INT2NUM( static_cast< int >( sf::Event::JoyButtonPressed ) ) );
+	rb_define_const( globalEventClass, "JoyButtonReleased", INT2NUM( static_cast< int >( sf::Event::JoyButtonReleased ) ) );
+	rb_define_const( globalEventClass, "JoyMoved", INT2NUM( static_cast< int >( sf::Event::JoyMoved ) ) );
+	rb_define_const( globalEventClass, "Count", INT2NUM( static_cast< int >( sf::Event::Count ) ) );
+	
 	// Class methods
 	rb_define_singleton_method( globalEventClass, "new", FUNCPTR( Event_New ), 0 );
 	
 	// Instance methods
-	//rb_define_attr( globalEventClass, "
+	rb_define_attr( globalEventClass, "joyButton", 1, 0 );
+	rb_define_attr( globalEventClass, "joyMove", 1, 0 );
+	rb_define_attr( globalEventClass, "key", 1, 0 );
+	rb_define_attr( globalEventClass, "mouseButton", 1, 0 );
+	rb_define_attr( globalEventClass, "mouseMove", 1, 0 );
+	rb_define_attr( globalEventClass, "mouseWheel", 1, 0 );
+	rb_define_attr( globalEventClass, "size", 1, 0 );
+	rb_define_attr( globalEventClass, "text", 1, 0 );
 	
 	// JoyButton methods
 	rb_define_method( globalJoyButtonEventClass, "joystickId", FUNCPTR( JoyButtonEvent_GetJoystickId ), 0 );
