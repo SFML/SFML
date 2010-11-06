@@ -23,6 +23,7 @@
 #include "main.hpp"
 #include "Context.hpp"
 #include "ContextSettings.hpp"
+#include "Event.hpp"
 
 VALUE globalSFMLNamespace;
 
@@ -37,4 +38,5 @@ void Init_window( void )
 	rb_define_const(globalSFMLNamespace, "WindowLoaded", Qtrue);
 	Init_Context();
 	Init_ContextSettings();
+	Init_Event();
 }

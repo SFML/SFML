@@ -173,10 +173,21 @@ EVENT_TYPE_ACCESSORS( Size, Height, INT2NUM, NUM2UINT );
 
 EVENT_TYPE_ACCESSORS( Text, Unicode, INT2NUM, NUM2UINT );
 
-static VALUE Event_Initialize( VALUE self )
+static VALUE Event_Initialize( VALUE self, VALUE aType )
 {
 	sf::Event * object = NULL;
 	Data_Get_Struct( self, sf::Event, object );
+	
+	int typeNum = FIX2INT( aType );
+	if(typeNum >= 0 && typeNum < sf::Event::Count)
+	{
+		rb_iv_set( self, "@type", aType );
+		object->Type = static_cast< sf::Event::EventType >( typeNum );
+	}
+	else
+	{
+		rb_raise( rb_eTypeError, "expected Fixnum in range of 0...SFML::Event::Count" );
+	}
 	
 	bool noSpecialType = false;
 	VALUE eventType;
@@ -235,11 +246,11 @@ static VALUE Event_Initialize( VALUE self )
  *
  * The constructor creates a new event.
  */
-static VALUE Event_New( VALUE aKlass )
+static VALUE Event_New( int argc, VALUE * args, VALUE aKlass )
 {
 	sf::Event *object = new sf::Event();
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Event_Free, object );
-	rb_obj_call_init( rbData, 0, 0 );
+	rb_obj_call_init( rbData, argc, args );
 	return rbData;
 }
 
@@ -274,9 +285,10 @@ void Init_Event( void )
 	rb_define_const( globalEventClass, "Count", INT2NUM( static_cast< int >( sf::Event::Count ) ) );
 	
 	// Class methods
-	rb_define_singleton_method( globalEventClass, "new", FUNCPTR( Event_New ), 0 );
+	rb_define_singleton_method( globalEventClass, "new", FUNCPTR( Event_New ), -1 );
 	
 	// Instance methods
+	rb_define_method( globalEventClass, "initialize", FUNCPTR( Event_Initialize ), 1 );
 	rb_define_attr( globalEventClass, "joyButton", 1, 0 );
 	rb_define_attr( globalEventClass, "joyMove", 1, 0 );
 	rb_define_attr( globalEventClass, "key", 1, 0 );
