@@ -65,9 +65,46 @@ static void VideoMode_Free( sf::VideoMode *anObject )
 	delete anObject;
 }
 
-static VALUE VideoMode_New( VALUE aKlass, VALUE someArgs )
+static VALUE VideoMode_GetDesktopMode( VALUE aKlass )
 {
-	sf::ContextSettings *object = new sf::ContextSettings();
+	sf::VideoMode *object = new sf::VideoMode( sf::VideoMode::GetDesktopMode() );
+	VALUE rbData = Data_Wrap_Struct( aKlass, 0, VideoMode_Free, object );
+	rb_obj_call_init( rbData, 0, 0 );
+	return rbData;
+}
+
+static VALUE VideoMode_GetFullscreenModes( VALUE aKlass )
+{
+	std::vector< sf::VideoMode >& modes = sf::VideoMode::GetFullscreenModes();
+	VALUE array = rb_ary_new();
+	for( std::vector< sf::VideoMode >::const_iterator it = modes.begin(), end = modes.end(); it != end; it++ )
+	{
+		sf::VideoMode *object = new sf::VideoMode( *it );
+		VALUE rbData = Data_Wrap_Struct( aKlass, 0, VideoMode_Free, object );
+		rb_obj_call_init( rbData, 0, 0 );
+		rb_ary_push( array, rbData );
+	}
+	return array;
+}
+
+static VALUE VideoMode_New( int argc, VALUE *args, VALUE aKlass )
+{
+	sf::VideoMode *object = NULL;
+	switch( argc )
+	{
+		case 0:
+			object = new sf::VideoMode();
+			break;
+		case 2:
+			object = new sf::VideoMode( UINT2FIX( args[0] ), UINT2FIX( args[1] ) );
+			break;
+		case 3:
+			object = new sf::VideoMode( UINT2FIX( args[0] ), UINT2FIX( args[1] ), UINT2FIX( args[2] ) );
+			break;
+		default:
+			rb_raise( rb_eArgError, "Expected 0 2 or 3 arguments but was given %ld", arrayLength );
+			break;
+	}
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, VideoMode_Free, object );
 	rb_obj_call_init( rbData, 0, 0 );
 	return rbData;
@@ -78,7 +115,9 @@ void Init_VideoMode( void )
 	globalVideoModeClass = rb_define_class_under( GetNamespace(), "VideoMode", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalVideoModeClass, "new", FUNCPTR( VideoMode ), 0 );
+	rb_define_singleton_method( globalVideoModeClass, "new", FUNCPTR( VideoMode_New ), -1 );
+	rb_define_singleton_method( globalVideoModeClass, "getDesktopMode", FUNCPTR( VideoMode_GetDesktopMode ), 0 );
+	rb_define_singleton_method( globalVideoModeClass, "getFullscreenModes", FUNCPTR( VideoMode_GetFullscreenModes ), 0 );
 	
 	// Instance methods
 	
