@@ -24,6 +24,7 @@
 #include "Context.hpp"
 #include "ContextSettings.hpp"
 #include "Event.hpp"
+#include "Input.hpp"
 
 VALUE globalSFMLNamespace;
 
@@ -39,4 +40,5 @@ void Init_window( void )
 	Init_Context();
 	Init_ContextSettings();
 	Init_Event();
+	Init_Input();
 }

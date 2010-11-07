@@ -49,10 +49,10 @@
  *   
  *   # Move an entity according to the current keys state
  *   offset = 5.0 * window.GetFrameTime(); # 5 pixels/sec
- *   entity.move( -offset, 0 ) if input.isKeyDown(SFML::Key::Left) == true
- *   entity.move( offset, 0 )  if input.isKeyDown(SFML::Key::Right) == true 
- *   entity.move( 0, -offset ) if input.isKeyDown(SFML::Key::Up) == true
- *   entity.move( 0,  offset ) if input.isKeyDown(SFML::Key::Down) == true
+ *   entity.move( -offset, 0 ) if input.isKeyDown?( SFML::Key::Left )
+ *   entity.move( offset, 0 )  if input.isKeyDown?( SFML::Key::Right )
+ *   entity.move( 0, -offset ) if input.isKeyDown?( SFML::Key::Up )
+ *   entity.move( 0,  offset ) if input.isKeyDown?( SFML::Key::Down )
  */
 VALUE globalInputClass;
 
@@ -62,6 +62,105 @@ VALUE globalInputClass;
 static void Input_Free( sf::Event *anObject )
 {
 	delete anObject;
+}
+
+/* call-seq:
+ *   input.isKeyDown( keycode )	-> true or false
+ *
+ * Get the current state of a key (pressed or released).
+ */
+static VALUE Input_IsKeyDown( VALUE self, VALUE aKeyCode )
+{
+	sf::Input *object = NULL;
+	Data_Get_Struct( self, sf::Input, object );
+	sf::Key::Code rawCode = static_cast< sf::Key::Code > ( NUM2INT( aKeyCode ) );
+	if( object->IsKeyDown( rawCode ) == true )
+	{
+		return Qtrue;
+	}
+	else
+	{
+		return Qfalse;
+	}
+}
+
+/* call-seq:
+ *   input.isMouseButtonDown( keycode )	-> true or false
+ *
+ * Get the current state of a mouse button (pressed or released).
+ */
+static VALUE Input_IsMouseButtonDown( VALUE self, VALUE aMouseButton )
+{
+	sf::Input *object = NULL;
+	Data_Get_Struct( self, sf::Input, object );
+	sf::Mouse::Button rawButton = static_cast< sf::Mouse::Button > ( NUM2INT( aMouseButton ) );
+	if( object->IsMouseButtonDown( rawButton ) == true )
+	{
+		return Qtrue;
+	}
+	else
+	{
+		return Qfalse;
+	}
+}
+
+/* call-seq:
+ *   input.isJoystickButtonDown( joystick, button )	-> true or false
+ *
+ * Get the current state of a joystick button (pressed or released).
+ */
+static VALUE Input_IsJoystickButtonDown( VALUE self, VALUE aJoystick, VALUE aButton )
+{
+	sf::Input *object = NULL;
+	Data_Get_Struct( self, sf::Input, object );
+	unsigned int rawJoystick =  NUM2UINT( aJoystick );
+	unsigned int rawButton =  NUM2UINT( aButton );
+	if( object->IsJoystickButtonDown( aJoystick, rawButton ) == true )
+	{
+		return Qtrue;
+	}
+	else
+	{
+		return Qfalse;
+	}
+}
+
+/* call-seq:
+ *   input.getMouseX()	-> fixnum
+ *
+ * The returned position is relative to the left border of the owner window.
+ */
+static VALUE Input_GetMouseX( VALUE self, VALUE aMouseButton )
+{
+	sf::Input *object = NULL;
+	Data_Get_Struct( self, sf::Input, object );
+	return INT2FIX( object->GetMouseX() );
+}
+
+/* call-seq:
+ *   input.getMouseY()	-> fixnum
+ *
+ * The returned position is relative to the top border of the owner window.
+ */
+static VALUE Input_GetMouseY( VALUE self, VALUE aMouseButton )
+{
+	sf::Input *object = NULL;
+	Data_Get_Struct( self, sf::Input, object );
+	return INT2FIX( object->GetMouseY() );
+}
+
+/* call-seq:
+ *   input.getJoystickAxis( joystick, axis )	-> true or false
+ *
+ * The returned position is in the range [-100, 100], except the POV which is an angle and is thus defined in [0, 360].
+ */
+static VALUE Input_GetJoystickAxis( VALUE self, VALUE aJoystick, VALUE anAxis )
+{
+	sf::Input *object = NULL;
+	Data_Get_Struct( self, sf::Input, object );
+	unsigned int rawJoystick =  NUM2UINT( aJoystick );
+	sf::Joy::Axis rawAxis =  static_cast< sf::Joy::Axis >( NUM2INT( anAxis ) );
+	return rb_float_new( object->GetJoystickAxis( rawJoystick, rawAxis ) );
 }
 
 /* call-seq:
@@ -85,4 +184,29 @@ void Init_Input( void )
 	rb_define_singleton_method( globalInputClass, "new", FUNCPTR( Input_New ), -1 );
 	
 	// Instance methods
+	rb_define_method( globalInputClass, "isKeyDown", FUNCPTR( Input_IsKeyDown ), 1 );
+	rb_define_method( globalInputClass, "isMouseButtonDown", FUNCPTR( Input_IsMouseButtonDown ), 1 );
+	rb_define_method( globalInputClass, "isJoystickButtonDown", FUNCPTR( Input_IsJoystickButtonDown ), 2 );
+	rb_define_method( globalInputClass, "getMouseX", FUNCPTR( Input_GetMouseX ), 0 );
+	rb_define_method( globalInputClass, "getMouseY", FUNCPTR( Input_GetMouseY ), 0 );
+	rb_define_method( globalInputClass, "getJoystickAxis", FUNCPTR( Input_GetJoystickAxis ), 2 );
+	
+	// Aliases
+	rb_define_alias( globalInputClass, "key_down?", "isKeyDown");
+	rb_define_alias( globalInputClass, "keyDown?", "isKeyDown");
+	
+	rb_define_alias( globalInputClass, "mouse_button_down?", "isMouseButtonDown");
+	rb_define_alias( globalInputClass, "mouseButtonDown?", "isMouseButtonDown");
+	
+	rb_define_alias( globalInputClass, "joystick_button_down?", "isJoystickButtonDown");
+	rb_define_alias( globalInputClass, "joystickButtonDown?", "isJoystickButtonDown");
+	
+	rb_define_alias( globalInputClass, "mouseX", "getMouseX");
+	rb_define_alias( globalInputClass, "mouse_x", "getMouseX");
+	
+	rb_define_alias( globalInputClass, "mouseY", "getMouseY");
+	rb_define_alias( globalInputClass, "mouse_y", "getMouseY");
+	
+	rb_define_alias( globalInputClass, "joystickAxis", "getJoystickAxis");
+	rb_define_alias( globalInputClass, "joystick_axis", "getJoystickAxis");
 }
