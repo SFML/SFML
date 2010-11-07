@@ -406,7 +406,7 @@ namespace SFML
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_DrawTextWithShader(IntPtr This, IntPtr String, IntPtr Shader);
 
-            [DllImport("csfml-graphics-2", CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
             static extern void sfText_SetString(IntPtr This, string Text);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
@@ -418,7 +418,7 @@ namespace SFML
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfText_SetStyle(IntPtr This, Styles Style);
 
-            [DllImport("csfml-graphics-2", CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
             static extern string sfText_GetString(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
