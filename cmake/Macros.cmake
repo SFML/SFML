@@ -152,8 +152,8 @@ macro(sfml_add_library target)
     # add the install rule
     install(TARGETS ${target}
             RUNTIME DESTINATION bin COMPONENT bin
-            LIBRARY DESTINATION lib COMPONENT bin 
-            ARCHIVE DESTINATION lib COMPONENT devel)
+            LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT bin 
+            ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel)
 
 endmacro()
 
