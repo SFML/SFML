@@ -71,12 +71,6 @@ public :
     Renderer(RenderTarget& target);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~Renderer();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Initialize the renderer (set the default states, etc.)
     ///
     ////////////////////////////////////////////////////////////
@@ -355,6 +349,7 @@ private :
     States        myStatesStack[64];  ///< Stack of render states
     States*       myStates;           ///< Current set of render states
     const Image*  myTexture;          ///< Current texture
+    unsigned int  myTextureId;        ///< Current texture identifier (the sf::Image instance may be the same, but not the internal OpenGL texture)
     const Shader* myShader;           ///< Current pixel shader
     Blend::Mode   myBlendMode;        ///< Current blending mode
     IntRect       myViewport;         ///< Current target viewport

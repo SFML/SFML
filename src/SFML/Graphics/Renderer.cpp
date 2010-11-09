@@ -47,12 +47,6 @@ myViewportIsValid (false)
 
 
 ////////////////////////////////////////////////////////////
-Renderer::~Renderer()
-{
-}
-
-
-////////////////////////////////////////////////////////////
 void Renderer::Initialize()
 {
     // Default render states
@@ -239,7 +233,7 @@ void Renderer::SetBlendMode(Blend::Mode mode)
 ////////////////////////////////////////////////////////////
 void Renderer::SetTexture(const Image* texture)
 {
-    if ((texture != myTexture) || !myTextureIsValid)
+    if ((texture != myTexture) || (texture && (texture->myTexture != myTextureId)) || !myTextureIsValid)
     {
         // Apply the new texture
         if (texture)
@@ -249,6 +243,7 @@ void Renderer::SetTexture(const Image* texture)
 
         // Store it
         myTexture = texture;
+        myTextureId = texture ? texture->myTexture : 0;
         myTextureIsValid = true;
     }
     else if (texture)
