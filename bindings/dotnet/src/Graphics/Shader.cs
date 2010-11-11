@@ -16,19 +16,6 @@ namespace SFML
         {
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Default constructor (invalid shader)
-            /// </summary>
-            /// <exception cref="LoadingFailedException" />
-            ////////////////////////////////////////////////////////////
-            public Shader() :
-                base(sfShader_Create())
-            {
-                if (This == IntPtr.Zero)
-                    throw new LoadingFailedException("shader");
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
             /// Load the shader from a file
             /// </summary>
             /// <param name="filename">Path of the shader file to load</param>

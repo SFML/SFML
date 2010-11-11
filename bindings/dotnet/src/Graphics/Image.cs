@@ -18,19 +18,6 @@ namespace SFML
         {
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Default constructor (invalid image)
-            /// </summary>
-            /// <exception cref="LoadingFailedException" />
-            ////////////////////////////////////////////////////////////
-            public Image() :
-                base(sfImage_Create())
-            {
-                if (This == IntPtr.Zero)
-                    throw new LoadingFailedException("image");
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
             /// Construct the image with black color
             /// </summary>
             /// <param name="width">Image width</param>
