@@ -26,6 +26,8 @@
 #include "Event.hpp"
 #include "Input.hpp"
 
+#include <SFML/Window.hpp>
+
 VALUE globalSFMLNamespace;
 VALUE globalKeyNamespace;
 VALUE globalMouseNamespace;
@@ -74,17 +76,17 @@ static const char * axisNames[] =
 void CreateKeyEnum( void )
 {
 	globalKeyNamespace = rb_define_module_under( globalSFMLNamespace, "Key" );
-	for( sf::Key::Code index = sf::Key::A; index <= sf::Key::Z; index++ )
+	for( int index = static_cast< int >( sf::Key::A ); index <= sf::Key::Z; index++ )
 	{
 		rb_define_const( globalKeyNamespace, keyNamesLetters[ index - sf::Key::A ], INT2FIX( index ) );
 	}
 	
-	for( sf::Key::Code index = sf::Key::Num0; index <= sf::Key::Num0; index++ )
+	for( int index = static_cast< int >( sf::Key::Num0 ); index <= sf::Key::Num0; index++ )
 	{
 		rb_define_const( globalKeyNamespace, keyNamesNum[ index - sf::Key::Num0 ], INT2FIX( index ) );
 	}
 	
-	for( sf::Key::Code index = sf::Key::Escape; index <= sf::Key::Count; index++ )
+	for( int index = static_cast< int >( sf::Key::Escape ); index <= sf::Key::Count; index++ )
 	{
 		rb_define_const( globalKeyNamespace, keyNamesMisc[ index - sf::Key::Escape ], INT2FIX( index ) );
 	}
@@ -93,7 +95,7 @@ void CreateKeyEnum( void )
 void CreateMouseEnum( void )
 {
 	globalMouseNamespace = rb_define_module_under( globalSFMLNamespace, "Mouse" );
-	for( sf::Mouse::Button index = sf::Mouse::Left; index <= sf::Mouse::ButtonCount; index++ )
+	for( int index = static_cast< int >( sf::Mouse::Left ); index <= sf::Mouse::ButtonCount; index++ )
 	{
 		rb_define_const( globalMouseNamespace, mouseNames[ index - sf::Mouse::Left ], INT2FIX( index ) );
 	}
@@ -102,7 +104,7 @@ void CreateMouseEnum( void )
 void CreateJoyEnum( void )
 {
 	globalJoyNamespace = rb_define_module_under( globalSFMLNamespace, "Joy" );
-	for( sf::Joy::Axis index = sf::Joy::AxisX; index <= sf::Joy::AxisCount; index++ )
+	for( int index = static_cast< int >( sf::Joy::AxisX ); index <= sf::Joy::AxisCount; index++ )
 	{
 		rb_define_const( globalJoyNamespace, axisNames[ index - sf::Joy::AxisX ], INT2FIX( index ) );
 	}

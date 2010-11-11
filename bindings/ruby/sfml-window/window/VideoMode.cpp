@@ -117,7 +117,7 @@ static VALUE VideoMode_GetDesktopMode( VALUE aKlass )
 
 static VALUE VideoMode_GetFullscreenModes( VALUE aKlass )
 {
-	std::vector< sf::VideoMode >& modes = sf::VideoMode::GetFullscreenModes();
+	const std::vector< sf::VideoMode >& modes = sf::VideoMode::GetFullscreenModes();
 	VALUE array = rb_ary_new();
 	for( std::vector< sf::VideoMode >::const_iterator it = modes.begin(), end = modes.end(); it != end; it++ )
 	{
@@ -138,13 +138,13 @@ static VALUE VideoMode_New( int argc, VALUE *args, VALUE aKlass )
 			object = new sf::VideoMode();
 			break;
 		case 2:
-			object = new sf::VideoMode( UINT2FIX( args[0] ), UINT2FIX( args[1] ) );
+			object = new sf::VideoMode( INT2FIX( args[0] ), INT2FIX( args[1] ) );
 			break;
 		case 3:
-			object = new sf::VideoMode( UINT2FIX( args[0] ), UINT2FIX( args[1] ), UINT2FIX( args[2] ) );
+			object = new sf::VideoMode( INT2FIX( args[0] ), INT2FIX( args[1] ), INT2FIX( args[2] ) );
 			break;
 		default:
-			rb_raise( rb_eArgError, "Expected 0 2 or 3 arguments but was given %ld", arrayLength );
+			rb_raise( rb_eArgError, "Expected 0 2 or 3 arguments but was given %d", argc );
 			break;
 	}
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, VideoMode_Free, object );
