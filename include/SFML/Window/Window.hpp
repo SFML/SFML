@@ -76,8 +76,7 @@ public :
     ///
     /// The fourth parameter is an optional structure specifying
     /// advanced OpenGL context settings such as antialiasing,
-    /// depth-buffer bits, etc. You shouldn't care about these
-    /// parameters for a regular usage of the graphics module.
+    /// depth-buffer bits, etc.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
@@ -93,10 +92,9 @@ public :
     /// Use this constructor if you want to create an OpenGL
     /// rendering area into an already existing control.
     ///
-    /// The fourth parameter is an optional structure specifying
+    /// The second parameter is an optional structure specifying
     /// advanced OpenGL context settings such as antialiasing,
-    /// depth-buffer bits, etc. You shouldn't care about these
-    /// parameters for a regular usage of the graphics module.
+    /// depth-buffer bits, etc.
     ///
     /// \param handle   Platform-specific handle of the control
     /// \param settings Additional settings for the underlying OpenGL context
@@ -496,7 +494,6 @@ private :
     Input             myInput;          ///< Input manager connected to window
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
     float             myLastFrameTime;  ///< Time elapsed since last frame
-    bool              myIsExternal;     ///< Tell whether the window is internal or external (i.e. created by SFML or not)
     unsigned int      myFramerateLimit; ///< Current framerate limit
     int               mySetCursorPosX;  ///< X coordinate passed to the last call to SetCursorPosition
     int               mySetCursorPosY;  ///< Y coordinate passed to the last call to SetCursorPosition

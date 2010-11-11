@@ -48,7 +48,6 @@ Window::Window() :
 myWindow        (NULL),
 myContext       (NULL),
 myLastFrameTime (0.f),
-myIsExternal    (false),
 myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
@@ -62,7 +61,6 @@ Window::Window(VideoMode mode, const std::string& title, unsigned long style, co
 myWindow        (NULL),
 myContext       (NULL),
 myLastFrameTime (0.f),
-myIsExternal    (false),
 myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
@@ -76,7 +74,6 @@ Window::Window(WindowHandle handle, const ContextSettings& settings) :
 myWindow        (NULL),
 myContext       (NULL),
 myLastFrameTime (0.f),
-myIsExternal    (true),
 myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
