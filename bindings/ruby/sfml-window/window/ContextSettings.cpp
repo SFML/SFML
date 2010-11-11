@@ -211,16 +211,28 @@ void Init_ContextSettings( void )
 	// Aliases
 	rb_define_alias( globalContextSettingsClass, "depth", "depthBits" );
 	rb_define_alias( globalContextSettingsClass, "depth=", "depthBits=" );
+	rb_define_alias( globalContextSettingsClass, "depth_bits", "depthBits" );
+	rb_define_alias( globalContextSettingsClass, "depth_bits=", "depthBits=" );
 	
 	rb_define_alias( globalContextSettingsClass, "stencil", "stencilBits" );
 	rb_define_alias( globalContextSettingsClass, "stencil=", "stencilBits=" );
+	rb_define_alias( globalContextSettingsClass, "stencil_bits", "stencilBits" );
+	rb_define_alias( globalContextSettingsClass, "stencil_bits=", "stencilBits=" );
 	
 	rb_define_alias( globalContextSettingsClass, "antialiasing", "antialiasingLevel" );
 	rb_define_alias( globalContextSettingsClass, "antialiasing=", "antialiasingLevel=" );
+	rb_define_alias( globalContextSettingsClass, "antialiasing_level", "antialiasingLevel" );
+	rb_define_alias( globalContextSettingsClass, "antialiasing_level=", "antialiasingLevel=" );
 	
 	rb_define_alias( globalContextSettingsClass, "major", "majorVersion" );
 	rb_define_alias( globalContextSettingsClass, "major=", "majorVersion=" );
+	rb_define_alias( globalContextSettingsClass, "major_version", "majorVersion" );
+	rb_define_alias( globalContextSettingsClass, "major_version=", "majorVersion=" );
 	
 	rb_define_alias( globalContextSettingsClass, "minor", "minorVersion" );
 	rb_define_alias( globalContextSettingsClass, "minor=", "minorVersion=" );
+	rb_define_alias( globalContextSettingsClass, "minor_version", "minorVersion" );
+	rb_define_alias( globalContextSettingsClass, "minor_version=", "minorVersion=" );
+	
+	
 }

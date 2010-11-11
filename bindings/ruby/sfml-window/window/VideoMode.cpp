@@ -65,6 +65,48 @@ static void VideoMode_Free( sf::VideoMode *anObject )
 	delete anObject;
 }
 
+static VALUE VideoMode_GetWidth( VALUE self )
+{
+	sf::VideoMode *object = NULL;
+	Data_Get_Struct( self, sf::VideoMode, object );
+	return INT2FIX( object->Width );
+}
+
+static VALUE VideoMode_SetWidth( VALUE self, VALUE aValue )
+{
+	sf::VideoMode *object = NULL;
+	Data_Get_Struct( self, sf::VideoMode, object );
+	return INT2FIX( object->Width = NUM2UINT( aValue ) );
+}
+
+static VALUE VideoMode_GetHeight( VALUE self )
+{
+	sf::VideoMode *object = NULL;
+	Data_Get_Struct( self, sf::VideoMode, object );
+	return INT2FIX( object->Height );
+}
+
+static VALUE VideoMode_SetHeight( VALUE self, VALUE aValue )
+{
+	sf::VideoMode *object = NULL;
+	Data_Get_Struct( self, sf::VideoMode, object );
+	return INT2FIX( object->Height = NUM2UINT( aValue ) );
+}
+
+static VALUE VideoMode_GetBitsPerPixel( VALUE self )
+{
+	sf::VideoMode *object = NULL;
+	Data_Get_Struct( self, sf::VideoMode, object );
+	return INT2FIX( object->BitsPerPixel );
+}
+
+static VALUE VideoMode_SetBitsPerPixel( VALUE self, VALUE aValue )
+{
+	sf::VideoMode *object = NULL;
+	Data_Get_Struct( self, sf::VideoMode, object );
+	return INT2FIX( object->BitsPerPixel = NUM2UINT( aValue ) );
+}
+
 static VALUE VideoMode_GetDesktopMode( VALUE aKlass )
 {
 	sf::VideoMode *object = new sf::VideoMode( sf::VideoMode::GetDesktopMode() );
@@ -120,6 +162,18 @@ void Init_VideoMode( void )
 	rb_define_singleton_method( globalVideoModeClass, "getFullscreenModes", FUNCPTR( VideoMode_GetFullscreenModes ), 0 );
 	
 	// Instance methods
+	rb_define_method( globalVideoModeClass, "width", FUNCPTR( VideoMode_GetWidth ), 0 );
+	rb_define_method( globalVideoModeClass, "width=", FUNCPTR( VideoMode_SetWidth ), 1 );
+	
+	rb_define_method( globalVideoModeClass, "height", FUNCPTR( VideoMode_GetWidth ), 0 );
+	rb_define_method( globalVideoModeClass, "height=", FUNCPTR( VideoMode_SetWidth ), 1 );
+
+	rb_define_method( globalVideoModeClass, "bitsPerPixel", FUNCPTR( VideoMode_GetBitsPerPixel ), 0 );
+	rb_define_method( globalVideoModeClass, "bitsPerPixel=", FUNCPTR( VideoMode_SetBitsPerPixel ), 1 );
 	
 	// Aliases
+	rb_define_alias( globalVideoModeClass, "bits_per_pixel", "bitsPerPixel" );
+	rb_define_alias( globalVideoModeClass, "bits_per_pixel=", "bitsPerPixel=" );
+	rb_define_alias( globalVideoModeClass, "bpp", "bitsPerPixel" );
+	rb_define_alias( globalVideoModeClass, "bpp=", "bitsPerPixel=" );
 }
