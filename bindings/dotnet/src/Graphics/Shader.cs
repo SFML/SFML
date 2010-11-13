@@ -48,7 +48,7 @@ namespace SFML
             /// <param name="shader">String containing the shader code</param>
             /// <exception cref="LoadingFailedException" />
             ////////////////////////////////////////////////////////////
-            void LoadFromString(string shader)
+            public void LoadFromString(string shader)
             {
                 SetThis(sfShader_CreateFromMemory(shader));
 
@@ -207,9 +207,7 @@ namespace SFML
             Dictionary<string, Image> myTextures = new Dictionary<string, Image>();
 
             #region Imports
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfShader_Create();
-            
+           
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfShader_CreateFromFile(string Filename);
 
