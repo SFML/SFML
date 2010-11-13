@@ -173,6 +173,7 @@ namespace SFML
             internal View(IntPtr thisPtr) :
                 base(thisPtr)
             {
+                myExternal = true;
             }
 
             ////////////////////////////////////////////////////////////
@@ -183,9 +184,11 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             protected override void Destroy(bool disposing)
             {
-                sfView_Destroy(This);
+                if (!myExternal)
+                    sfView_Destroy(This);
             }
 
+            private bool myExternal = false;
             #region Imports
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfView_Create();

@@ -374,6 +374,7 @@ namespace SFML
             internal Image(IntPtr thisPtr) :
                 base(thisPtr)
             {
+                myExternal = true;
             }
 
             ////////////////////////////////////////////////////////////
@@ -384,14 +385,19 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             protected override void Destroy(bool disposing)
             {
-                if (!disposing)
-                    Context.Global.SetActive(true);
+                if (!myExternal)
+                {
+                    if (!disposing)
+                        Context.Global.SetActive(true);
 
-                sfImage_Destroy(This);
+                    sfImage_Destroy(This);
 
-                if (!disposing)
-                    Context.Global.SetActive(false);
+                    if (!disposing)
+                        Context.Global.SetActive(false);
+                }
             }
+
+            bool myExternal = false;
 
             #region Imports
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
