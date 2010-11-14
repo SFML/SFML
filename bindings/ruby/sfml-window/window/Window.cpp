@@ -267,6 +267,7 @@ static VALUE Window_SetIcon( VALUE self, VALUE aWidth, VALUE aHeight, VALUE some
 {
 	const unsigned int rawWidth = FIX2UINT( aWidth );
 	const unsigned int rawHeight = FIX2UINT( aHeight );
+	VALIDATE_CLASS( somePixels, rb_cArray, "third" );
 	const unsigned long dataSize = rawWidth * rawHeight * 4;
 	sf::Uint8 * const tempData = new sf::Uint8[dataSize];
 	VALUE pixels = rb_funcall( somePixels, rb_intern("flatten"), 0 );
@@ -334,6 +335,63 @@ static VALUE Window_Show( VALUE self, VALUE aShowFlag )
 	return Qnil;
 }
 
+static VALUE Window_ShowMouseCursor( VALUE self, VALUE aShowFlag )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	if( aShowFlag == Qfalse )
+	{
+		object->ShowMouseCursor( false );
+	}
+	else if( aShowFlag == Qtrue )
+	{
+		object->ShowMouseCursor( true );
+	}
+	else
+	{
+		rb_raise( rb_eTypeError, "Expected true or false" );
+	}
+	return Qnil;
+}
+
+static VALUE Window_UseVerticalSync( VALUE self, VALUE aEnableFlag )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	if( aEnableFlag == Qfalse )
+	{
+		object->UseVerticalSync( false );
+	}
+	else if( aEnableFlag == Qtrue )
+	{
+		object->UseVerticalSync( true );
+	}
+	else
+	{
+		rb_raise( rb_eTypeError, "Expected true or false" );
+	}
+	return Qnil;
+}
+
+static VALUE Window_WaitEvent( VALUE self )
+{
+	sf::Event event;
+	sf::Window *window = NULL;
+	Data_Get_Struct( self, sf::Window, window );
+	if( window->WaitEvent( event ) == true )
+	{
+		VALUE rbObject = rb_funcall( globalEventClass, rb_intern( "new" ), 1, INT2FIX( event.Type ) );
+		sf::Event *rubyRawEvent = NULL;
+		Data_Get_Struct( rbObject, sf::Event, rubyRawEvent );
+		*rubyRawEvent = event;
+		return rbObject;
+	}
+	else
+	{
+		return Qnil;
+	}	
+}
+
 static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::Window *object = NULL;
@@ -383,6 +441,29 @@ void Init_Window( void )
 	rb_define_singleton_method( globalWindowClass, "new", FUNCPTR( Window_New ), -1 );
 	
 	// Instance methods
+	rb_define_method( globalWindowClass, "close", FUNCPTR( Window_Close ), 0 );
+	rb_define_method( globalWindowClass, "create", FUNCPTR( Window_Create ), -1 );
+	rb_define_method( globalWindowClass, "display", FUNCPTR( Window_Display ), 0 );
+	rb_define_method( globalWindowClass, "enableKeyRepeat", FUNCPTR( Window_EnableKeyRepeat ), 1 );
+	rb_define_method( globalWindowClass, "getEvent", FUNCPTR( Window_GetEvent ), 0 );
+	rb_define_method( globalWindowClass, "getFrameTime", FUNCPTR( Window_GetFrameTime ), 0 );
+	rb_define_method( globalWindowClass, "getHeight", FUNCPTR( Window_GetHeight ), 0 );
+	rb_define_method( globalWindowClass, "getInput", FUNCPTR( Window_GetInput ), 0 );
+	rb_define_method( globalWindowClass, "getSettings", FUNCPTR( Window_GetSettings ), 0 );
+	rb_define_method( globalWindowClass, "getWidth", FUNCPTR( Window_GetWidth ), 0 );
+	rb_define_method( globalWindowClass, "isOpened", FUNCPTR( Window_IsOpened ), 0 );
+	rb_define_method( globalWindowClass, "setActive", FUNCPTR( Window_SetActive ), 1 );
+	rb_define_method( globalWindowClass, "setCursorPosition", FUNCPTR( Window_SetCursorPosition ), 2 );
+	rb_define_method( globalWindowClass, "setFramerateLimit", FUNCPTR( Window_SetFramerateLimit ), 1 );
+	rb_define_method( globalWindowClass, "setIcon", FUNCPTR( Window_SetIcon ), 3 );
+	rb_define_method( globalWindowClass, "setJoystickTreshold", FUNCPTR( Window_SetJoystickTreshold ), 1 );
+	rb_define_method( globalWindowClass, "setPosition", FUNCPTR( Window_SetPosition ), 2 );
+	rb_define_method( globalWindowClass, "setSize", FUNCPTR( Window_SetSize ), 2 );
+	rb_define_method( globalWindowClass, "setTitle", FUNCPTR( Window_SetTitle ), 1 );
+	rb_define_method( globalWindowClass, "show", FUNCPTR( Window_Show ), 1 );
+	rb_define_method( globalWindowClass, "showMouseCursor", FUNCPTR( Window_ShowMouseCursor ), 1 );
+	rb_define_method( globalWindowClass, "useVerticalSync", FUNCPTR( Window_UseVerticalSync ), 1 );
+	rb_define_method( globalWindowClass, "waitEvent", FUNCPTR( Window_WaitEvent ), 0 );
 	
 	// Aliases
 }
