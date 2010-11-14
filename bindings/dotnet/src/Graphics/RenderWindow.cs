@@ -316,13 +316,24 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Current view active in the window
+            /// Return the current active view
             /// </summary>
+            /// <returns>The current view</returns>
             ////////////////////////////////////////////////////////////
-            public View CurrentView
+            public View GetView()
             {
-                get {return myCurrentView;}
-                set {myCurrentView = value; sfRenderWindow_SetView(This, value.This);}
+                return new View(sfRenderWindow_GetView(This));
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Change the current active view
+            /// </summary>
+            /// <param name="view">New view</param>
+            ////////////////////////////////////////////////////////////
+            public void SetView(View view)
+            {
+                sfRenderWindow_SetView(This, view.This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -349,7 +360,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public Vector2 ConvertCoords(uint x, uint y)
             {
-                return ConvertCoords(x, y, CurrentView);
+                return ConvertCoords(x, y, GetView());
             }
 
             ////////////////////////////////////////////////////////////
@@ -448,7 +459,7 @@ namespace SFML
                        " Height(" + Height + ")" +
                        " Settings(" + Settings + ")" +
                        " DefaultView(" + DefaultView + ")" +
-                       " CurrentView(" + CurrentView + ")";
+                       " View(" + GetView() + ")";
             }
 
             ////////////////////////////////////////////////////////////
@@ -498,11 +509,9 @@ namespace SFML
             {
                 myInput       = new Input(sfRenderWindow_GetInput(This));
                 myDefaultView = new View(sfRenderWindow_GetDefaultView(This));
-                myCurrentView = myDefaultView;
                 GC.SuppressFinalize(myDefaultView);
             }
 
-            private View myCurrentView = null;
             private View myDefaultView = null;
 
             #region Imports

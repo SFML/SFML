@@ -43,7 +43,6 @@ namespace SFML
             {
                 myDefaultView = new View(sfRenderImage_GetDefaultView(This));
                 myImage       = new Image(sfRenderImage_GetImage(This));
-                myCurrentView = myDefaultView;
                 GC.SuppressFinalize(myDefaultView);
                 GC.SuppressFinalize(myImage);
             }
@@ -93,13 +92,24 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Current view active in the render image
+            /// Return the current active view
             /// </summary>
+            /// <returns>The current view</returns>
             ////////////////////////////////////////////////////////////
-            public View CurrentView
+            public View GetView()
             {
-                get {return myCurrentView;}
-                set {myCurrentView = value; sfRenderImage_SetView(This, value.This);}
+                return new View(sfRenderImage_GetView(This));
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Change the current active view
+            /// </summary>
+            /// <param name="view">New view</param>
+            ////////////////////////////////////////////////////////////
+            public void SetView(View view)
+            {
+                sfRenderImage_SetView(This, view.This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -126,7 +136,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public Vector2 ConvertCoords(uint x, uint y)
             {
-                return ConvertCoords(x, y, CurrentView);
+                return ConvertCoords(x, y, GetView());
             }
 
             ////////////////////////////////////////////////////////////
@@ -255,7 +265,7 @@ namespace SFML
                        " Height(" + Height + ")" +
                        " Image(" + Image + ")" +
                        " DefaultView(" + DefaultView + ")" +
-                       " CurrentView(" + CurrentView + ")";
+                       " View(" + GetView() + ")";
             }
 
             ////////////////////////////////////////////////////////////
@@ -281,7 +291,6 @@ namespace SFML
                     Context.Global.SetActive(false);
             }
 
-            private View  myCurrentView = null;
             private View  myDefaultView = null;
             private Image myImage       = null;
 
