@@ -122,33 +122,19 @@ static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 			rb_raise( rb_eArgError, "Expected 2..4 arguments but was given %d", argc );
 			break;
 	}
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, VideoMode_Free, object );
+	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Window_Free, object );
 	rb_obj_call_init( rbData, 0, 0 );
 	return rbData;
 }
 
-void Init_VideoMode( void )
+void Init_Window( void )
 {
-	globalVideoModeClass = rb_define_class_under( GetNamespace(), "VideoMode", rb_cObject );
+	globalWindowClass = rb_define_class_under( GetNamespace(), "Window", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalVideoModeClass, "new", FUNCPTR( VideoMode_New ), -1 );
-	rb_define_singleton_method( globalVideoModeClass, "getDesktopMode", FUNCPTR( VideoMode_GetDesktopMode ), 0 );
-	rb_define_singleton_method( globalVideoModeClass, "getFullscreenModes", FUNCPTR( VideoMode_GetFullscreenModes ), 0 );
+	rb_define_singleton_method( globalWindowClass, "new", FUNCPTR( Window_New ), -1 );
 	
 	// Instance methods
-	rb_define_method( globalVideoModeClass, "width", FUNCPTR( VideoMode_GetWidth ), 0 );
-	rb_define_method( globalVideoModeClass, "width=", FUNCPTR( VideoMode_SetWidth ), 1 );
-	
-	rb_define_method( globalVideoModeClass, "height", FUNCPTR( VideoMode_GetWidth ), 0 );
-	rb_define_method( globalVideoModeClass, "height=", FUNCPTR( VideoMode_SetWidth ), 1 );
-
-	rb_define_method( globalVideoModeClass, "bitsPerPixel", FUNCPTR( VideoMode_GetBitsPerPixel ), 0 );
-	rb_define_method( globalVideoModeClass, "bitsPerPixel=", FUNCPTR( VideoMode_SetBitsPerPixel ), 1 );
 	
 	// Aliases
-	rb_define_alias( globalVideoModeClass, "bits_per_pixel", "bitsPerPixel" );
-	rb_define_alias( globalVideoModeClass, "bits_per_pixel=", "bitsPerPixel=" );
-	rb_define_alias( globalVideoModeClass, "bpp", "bitsPerPixel" );
-	rb_define_alias( globalVideoModeClass, "bpp=", "bitsPerPixel=" );
 }
