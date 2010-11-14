@@ -23,7 +23,6 @@
 #include "Window.hpp"
 #include "main.hpp"
 #include <SFML/Window/Window.hpp>
-#include <iostream>
 
 /* SFML::Window is the main class of the Window module.
  *
@@ -74,11 +73,13 @@
 VALUE globalWindowClass;
 extern VALUE globalVideoModeClass;
 extern VALUE globalContextSettingsClass;
+extern VALUE globalEventClass;
+extern VALUE globalInputClass;
 
 #define VALIDATE_CLASS( variable, type, name ) \
 if( CLASS_OF( variable ) != type ) \
 { \
-	rb_raise( rb_eTypeError, name#" argument must be instance of %s", STR2CSTR( rb_funcall( type, rb_intern( "to_s" ), 0 ) ) ); \
+	rb_raise( rb_eTypeError, "%s argument must be instance of %s", name, STR2CSTR( rb_funcall( type, rb_intern( "to_s" ), 0 ) ) ); \
 }
 
 /* Free a heap allocated object 
@@ -89,6 +90,250 @@ static void Window_Free( sf::Window *anObject )
 	delete anObject;
 }
 
+static VALUE Window_Create( int argc, VALUE *args, VALUE self )
+{
+	sf::Window *object = NULL;
+	sf::VideoMode *mode = NULL;
+	sf::ContextSettings *settings = NULL;
+	
+	Data_Get_Struct( self, sf::Window, object );
+	switch( argc )
+	{
+		case 2:
+			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			VALIDATE_CLASS( args[1], rb_cString, "second" );
+			Data_Get_Struct( args[0], sf::VideoMode, mode );
+			object->Create( *mode , STR2CSTR( args[1] ) );
+			break;
+		case 3:
+			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			VALIDATE_CLASS( args[1], rb_cString, "second" );
+			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
+			Data_Get_Struct( args[0], sf::VideoMode, mode );
+			object->Create( *mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ) );
+			break;
+		case 4:
+			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			VALIDATE_CLASS( args[1], rb_cString, "second" );
+			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
+			VALIDATE_CLASS( args[3], globalContextSettingsClass, "fourth" );
+			Data_Get_Struct( args[0], sf::VideoMode, mode );
+			Data_Get_Struct( args[3], sf::ContextSettings, settings );
+			object->Create( *mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ), *settings );
+			break;
+		default:
+			rb_raise( rb_eArgError, "Expected 2..4 arguments but was given %d", argc );
+			break;
+	}
+	return Qnil;
+}
+
+
+static VALUE Window_Display( VALUE self )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	object->Display();
+	return Qnil;
+}
+
+static VALUE Window_EnableKeyRepeat( VALUE self, VALUE anEnableFlag )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	if( anEnableFlag == Qfalse )
+	{
+		object->EnableKeyRepeat( false );
+	}
+	else if( anEnableFlag == Qtrue )
+	{
+		object->EnableKeyRepeat( true );
+	}
+	else
+	{
+		rb_raise( rb_eTypeError, "Expected true or false" );
+	}
+	return Qnil;
+}
+
+static VALUE Window_GetEvent( VALUE self )
+{
+	sf::Event event;
+	sf::Window *window = NULL;
+	Data_Get_Struct( self, sf::Window, window );
+	if( window->GetEvent( event ) == true )
+	{
+		VALUE rbObject = rb_funcall( globalEventClass, rb_intern( "new" ), 1, INT2FIX( event.Type ) );
+		sf::Event *rubyRawEvent = NULL;
+		Data_Get_Struct( rbObject, sf::Event, rubyRawEvent );
+		*rubyRawEvent = event;
+		return rbObject;
+	}
+	else
+	{
+		return Qnil;
+	}	
+}
+
+static VALUE Window_GetFrameTime( VALUE self )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	return rb_float_new( object->GetFrameTime() );
+}
+
+static VALUE Window_GetHeight( VALUE self )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	return INT2FIX( object->GetHeight() );
+}
+
+static VALUE Window_GetInput( VALUE self )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	VALUE rbData = Data_Wrap_Struct( globalInputClass, 0, 0, const_cast< sf::Input * >( &object->GetInput() ) );
+	rb_obj_call_init( rbData, 0, 0 );
+	return rbData;
+}
+
+static VALUE Window_GetSettings( VALUE self )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	VALUE rbData = Data_Wrap_Struct( globalContextSettingsClass, 0, 0, const_cast<sf::ContextSettings *>( &object->GetSettings() ) );
+	rb_obj_call_init( rbData, 0, 0 );
+	return rbData;
+}
+
+static VALUE Window_GetWidth( VALUE self )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	return INT2FIX( object->GetWidth() );
+}
+
+static VALUE Window_IsOpened( VALUE self )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	if( object->IsOpened() == true )
+	{
+		return Qtrue;
+	}
+	else
+	{
+		return Qfalse;
+	}
+}
+
+static VALUE Window_SetActive( VALUE self, VALUE anActiveFlag )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	if( anActiveFlag == Qfalse )
+	{
+		object->SetActive( false );
+	}
+	else if( anActiveFlag == Qtrue )
+	{
+		object->SetActive( true );
+	}
+	else
+	{
+		rb_raise( rb_eTypeError, "Expected true or false" );
+	}
+	return Qnil;
+}
+
+static VALUE Window_SetCursorPosition( VALUE self, VALUE aX, VALUE aY )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	object->SetCursorPosition( FIX2UINT( aX ), FIX2UINT( aY ) );
+	return Qnil;
+}
+
+static VALUE Window_SetFramerateLimit( VALUE self, VALUE aLimit )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	object->SetFramerateLimit( FIX2UINT( aLimit ) );
+	return Qnil;
+}
+
+static VALUE Window_SetIcon( VALUE self, VALUE aWidth, VALUE aHeight, VALUE somePixels )
+{
+	const unsigned int rawWidth = FIX2UINT( aWidth );
+	const unsigned int rawHeight = FIX2UINT( aHeight );
+	const unsigned long dataSize = rawWidth * rawHeight * 4;
+	sf::Uint8 * const tempData = new sf::Uint8[dataSize];
+	VALUE pixels = rb_funcall( somePixels, rb_intern("flatten"), 0 );
+	for(unsigned long index = 0; index < dataSize; index++)
+	{
+		sf::Uint8 val = NUM2CHR( rb_ary_entry( pixels, index ) );
+		tempData[index] = val;
+	}
+	
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	object->SetIcon( rawWidth, rawHeight, tempData );
+	delete[] tempData;
+	return Qnil;
+}
+
+static VALUE Window_SetJoystickTreshold( VALUE self, VALUE aTreshold )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	object->SetJoystickTreshold( rb_float_new( aTreshold ) );
+	return Qnil;
+}
+
+static VALUE Window_SetPosition( VALUE self, VALUE aX, VALUE aY )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	object->SetPosition( FIX2UINT( aX ), FIX2UINT( aY ) );
+	return Qnil;
+}
+
+static VALUE Window_SetSize( VALUE self, VALUE aWidth, VALUE aHeight )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	object->SetSize( FIX2UINT( aWidth ), FIX2UINT( aHeight ) );
+	return Qnil;
+}
+
+static VALUE Window_SetTitle( VALUE self, VALUE aTitle )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	object->SetTitle( STR2CSTR(aTitle) );
+	return Qnil;
+}
+
+static VALUE Window_Show( VALUE self, VALUE aShowFlag )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	if( aShowFlag == Qfalse )
+	{
+		object->Show( false );
+	}
+	else if( aShowFlag == Qtrue )
+	{
+		object->Show( true );
+	}
+	else
+	{
+		rb_raise( rb_eTypeError, "Expected true or false" );
+	}
+	return Qnil;
+}
+
 static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::Window *object = NULL;
@@ -96,27 +341,30 @@ static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 	sf::ContextSettings *settings = NULL;
 	switch( argc )
 	{
+		case 0:
+			object = new sf::Window( *mode , STR2CSTR( args[1] ) );
+			break;
 		case 2:
-			VALIDATE_CLASS( args[0], globalVideoModeClass, first );
-			VALIDATE_CLASS( args[1], rb_cString, second );
+			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			Data_Get_Struct( args[0], sf::VideoMode, mode );
-			object = new sf::Window( mode , STR2CSTR( args[1] ) );
+			object = new sf::Window( *mode , STR2CSTR( args[1] ) );
 			break;
 		case 3:
-			VALIDATE_CLASS( args[0], globalVideoModeClass, first );
-			VALIDATE_CLASS( args[1], rb_cString, second );
-			VALIDATE_CLASS( args[2], rb_cFixnum, second );
+			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			VALIDATE_CLASS( args[1], rb_cString, "second" );
+			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
 			Data_Get_Struct( args[0], sf::VideoMode, mode );
-			object = new sf::VideoMode( mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ) );
+			object = new sf::Window( *mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ) );
 			break;
 		case 4:
-			VALIDATE_CLASS( args[0], globalVideoModeClass, first );
-			VALIDATE_CLASS( args[1], rb_cString, second );
-			VALIDATE_CLASS( args[2], rb_cFixnum, second );
-			VALIDATE_CLASS( args[3], globalContextSettingsClass, fourth );
+			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			VALIDATE_CLASS( args[1], rb_cString, "second" );
+			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
+			VALIDATE_CLASS( args[3], globalContextSettingsClass, "fourth" );
 			Data_Get_Struct( args[0], sf::VideoMode, mode );
 			Data_Get_Struct( args[3], sf::ContextSettings, settings );
-			object = new sf::VideoMode( mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ), *settings );
+			object = new sf::Window( *mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ), *settings );
 			break;
 		default:
 			rb_raise( rb_eArgError, "Expected 2..4 arguments but was given %d", argc );
