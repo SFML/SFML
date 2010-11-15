@@ -533,6 +533,7 @@ void Init_Window( void )
 	rb_define_alias( globalWindowClass, "width", "getWidth" );
 	
 	rb_define_alias( globalWindowClass, "opened?", "isOpened" );
+	rb_define_alias( globalWindowClass, "open?", "isOpened" );
 	
 	rb_define_alias( globalWindowClass, "active=", "setActive" );
 	

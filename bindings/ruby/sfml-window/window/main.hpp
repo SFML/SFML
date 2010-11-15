@@ -25,6 +25,8 @@
 
 #include "ruby.h"
 
+#define SFML_STATIC
+
 VALUE GetNamespace( void );
 
 // Ruby initiation function

@@ -82,19 +82,16 @@ void CreateKeyEnum( void )
 	globalKeyNamespace = rb_define_module_under( globalSFMLNamespace, "Key" );
 	for( int index = static_cast< int >( sf::Key::A ); index <= sf::Key::Z; index++ )
 	{
-		std::cout << static_cast< char >( index ) << " => " << keyNamesLetters[ index - sf::Key::A ] << std::endl;
 		rb_define_const( globalKeyNamespace, keyNamesLetters[ index - sf::Key::A ], INT2FIX( index ) );
 	}
 	
 	for( int index = static_cast< int >( sf::Key::Num0 ); index <= sf::Key::Num9; index++ )
 	{
-		std::cout << static_cast< char >( index ) << " => " << keyNamesNum[ index - sf::Key::Num0 ] << std::endl;
 		rb_define_const( globalKeyNamespace, keyNamesNum[ index - sf::Key::Num0 ], INT2FIX( index ) );
 	}
 	
 	for( int index = static_cast< int >( sf::Key::Escape ); index <= sf::Key::Count; index++ )
 	{
-		std::cout << index << " => " << keyNamesMisc[ index - sf::Key::Escape ] << std::endl;
 		rb_define_const( globalKeyNamespace, keyNamesMisc[ index - sf::Key::Escape ], INT2FIX( index ) );
 	}
 }
