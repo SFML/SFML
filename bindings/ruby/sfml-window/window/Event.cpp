@@ -275,6 +275,7 @@ void Init_Event( void )
 	
 	// Instance methods
 	rb_define_method( globalEventClass, "initialize", FUNCPTR( Event_Initialize ), 1 );
+	rb_define_attr( globalEventClass, "type", 1, 0 );
 	rb_define_attr( globalEventClass, "joyButton", 1, 0 );
 	rb_define_attr( globalEventClass, "joyMove", 1, 0 );
 	rb_define_attr( globalEventClass, "key", 1, 0 );
