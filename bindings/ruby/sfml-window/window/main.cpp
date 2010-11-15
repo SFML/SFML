@@ -28,6 +28,8 @@
 
 #include <SFML/Window.hpp>
 
+#include <iostream>
+
 VALUE globalSFMLNamespace;
 VALUE globalKeyNamespace;
 VALUE globalMouseNamespace;
@@ -41,13 +43,13 @@ VALUE GetNamespace( void )
 
 static const char * keyNamesLetters[] =
 {
-	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"
+	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
 	"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
 };
 
 static const char * keyNamesNum[] =
 {
-	"Num1", "Num2", "Num3", "Num4", "Num5", "Num6", "Num7", "Num8", "Num9"
+	"Num0", "Num1", "Num2", "Num3", "Num4", "Num5", "Num6", "Num7", "Num8", "Num9"
 };
 
 static const char * keyNamesMisc[] =
@@ -58,7 +60,7 @@ static const char * keyNamesMisc[] =
 	"PageDown", "End", "Home", "Insert", "Delete", "Add", "Subtract", "Multiply", 
 	"Divide", "Left", "Right", "Up", "Down", "Numpad0", "Numpad1", "Numpad2", "Numpad3", 
 	"Numpad4", "Numpad5", "Numpad6", "Numpad7", "Numpad8", "Numpad9", "F1", "F2", "F3", 
-	"F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "Pause"
+	"F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "Pause",
 	"Count"
 };
 
@@ -78,16 +80,19 @@ void CreateKeyEnum( void )
 	globalKeyNamespace = rb_define_module_under( globalSFMLNamespace, "Key" );
 	for( int index = static_cast< int >( sf::Key::A ); index <= sf::Key::Z; index++ )
 	{
+		std::cout << static_cast< char >( index ) << " => " << keyNamesLetters[ index - sf::Key::A ] << std::endl;
 		rb_define_const( globalKeyNamespace, keyNamesLetters[ index - sf::Key::A ], INT2FIX( index ) );
 	}
 	
-	for( int index = static_cast< int >( sf::Key::Num0 ); index <= sf::Key::Num0; index++ )
+	for( int index = static_cast< int >( sf::Key::Num0 ); index <= sf::Key::Num9; index++ )
 	{
+		std::cout << static_cast< char >( index ) << " => " << keyNamesNum[ index - sf::Key::Num0 ] << std::endl;
 		rb_define_const( globalKeyNamespace, keyNamesNum[ index - sf::Key::Num0 ], INT2FIX( index ) );
 	}
 	
 	for( int index = static_cast< int >( sf::Key::Escape ); index <= sf::Key::Count; index++ )
 	{
+		std::cout << index << " => " << keyNamesMisc[ index - sf::Key::Escape ] << std::endl;
 		rb_define_const( globalKeyNamespace, keyNamesMisc[ index - sf::Key::Escape ], INT2FIX( index ) );
 	}
 }
