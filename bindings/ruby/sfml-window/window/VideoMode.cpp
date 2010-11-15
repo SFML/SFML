@@ -138,13 +138,13 @@ static VALUE VideoMode_New( int argc, VALUE *args, VALUE aKlass )
 			object = new sf::VideoMode();
 			break;
 		case 2:
-			object = new sf::VideoMode( INT2FIX( args[0] ), INT2FIX( args[1] ) );
+			object = new sf::VideoMode( FIX2UINT( args[0] ), FIX2UINT( args[1] ) );
 			break;
 		case 3:
-			object = new sf::VideoMode( INT2FIX( args[0] ), INT2FIX( args[1] ), INT2FIX( args[2] ) );
+			object = new sf::VideoMode( FIX2UINT( args[0] ), FIX2UINT( args[1] ),FIX2UINT( args[2] ) );
 			break;
 		default:
-			rb_raise( rb_eArgError, "Expected 0 2 or 3 arguments but was given %d", argc );
+			rb_raise( rb_eArgError, "Expected 0, 2 or 3 arguments but was given %d", argc );
 			break;
 	}
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, VideoMode_Free, object );
