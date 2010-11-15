@@ -25,6 +25,8 @@
 #include "ContextSettings.hpp"
 #include "Event.hpp"
 #include "Input.hpp"
+#include "VideoMode.hpp"
+#include "Window.hpp"
 
 #include <SFML/Window.hpp>
 
@@ -140,4 +142,6 @@ void Init_window( void )
 	Init_ContextSettings();
 	Init_Event();
 	Init_Input();
+	Init_VideoMode();
+	Init_Window();
 }
