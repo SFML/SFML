@@ -20,9 +20,9 @@
  *    source distribution.
  */
  
+#include <SFML/Window/Window.hpp>
 #include "Window.hpp"
 #include "main.hpp"
-#include <SFML/Window/Window.hpp>
 
 /* SFML::Window is the main class of the Window module.
  *
@@ -79,7 +79,7 @@ extern VALUE globalInputClass;
 #define VALIDATE_CLASS( variable, type, name ) \
 if( CLASS_OF( variable ) != type ) \
 { \
-	rb_raise( rb_eTypeError, "%s argument must be instance of %s", name, STR2CSTR( rb_funcall( type, rb_intern( "to_s" ), 0 ) ) ); \
+	rb_raise( rb_eTypeError, "%s argument must be instance of %s", name, rb_string_value_cstr ( &type ) ); \
 }
 
 /* Free a heap allocated object 
@@ -88,6 +88,14 @@ if( CLASS_OF( variable ) != type ) \
 static void Window_Free( sf::Window *anObject )
 {
 	delete anObject;
+}
+
+static VALUE Window_Close( VALUE self )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	object->Close();
+	return Qnil;
 }
 
 static VALUE Window_Create( int argc, VALUE *args, VALUE self )
@@ -103,14 +111,14 @@ static VALUE Window_Create( int argc, VALUE *args, VALUE self )
 			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			Data_Get_Struct( args[0], sf::VideoMode, mode );
-			object->Create( *mode , STR2CSTR( args[1] ) );
+			object->Create( *mode ,rb_string_value_cstr( &args[1] ) );
 			break;
 		case 3:
 			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
 			Data_Get_Struct( args[0], sf::VideoMode, mode );
-			object->Create( *mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ) );
+			object->Create( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ) );
 			break;
 		case 4:
 			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
@@ -119,7 +127,7 @@ static VALUE Window_Create( int argc, VALUE *args, VALUE self )
 			VALIDATE_CLASS( args[3], globalContextSettingsClass, "fourth" );
 			Data_Get_Struct( args[0], sf::VideoMode, mode );
 			Data_Get_Struct( args[3], sf::ContextSettings, settings );
-			object->Create( *mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ), *settings );
+			object->Create( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ), *settings );
 			break;
 		default:
 			rb_raise( rb_eArgError, "Expected 2..4 arguments but was given %d", argc );
@@ -255,6 +263,20 @@ static VALUE Window_SetCursorPosition( VALUE self, VALUE aX, VALUE aY )
 	return Qnil;
 }
 
+static VALUE Window_SetCursorPosition2( VALUE self, VALUE anArray )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	VALIDATE_CLASS( anArray, rb_cArray, "first" );
+	VALUE arraySize = rb_funcall( anArray, rb_intern( "size" ), 0 );
+	if( FIX2UINT( arraySize ) != 2 )
+	{
+		rb_raise( rb_eArgError, "Expected 2 elements in array" );
+	}
+	object->SetCursorPosition( FIX2UINT( rb_ary_entry( anArray, 0 ) ), FIX2UINT( rb_ary_entry( anArray, 1 ) ) );
+	return Qnil;
+}
+
 static VALUE Window_SetFramerateLimit( VALUE self, VALUE aLimit )
 {
 	sf::Window *object = NULL;
@@ -284,11 +306,11 @@ static VALUE Window_SetIcon( VALUE self, VALUE aWidth, VALUE aHeight, VALUE some
 	return Qnil;
 }
 
-static VALUE Window_SetJoystickTreshold( VALUE self, VALUE aTreshold )
+static VALUE Window_SetJoystickThreshold( VALUE self, VALUE aThreshold )
 {
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
-	object->SetJoystickTreshold( rb_float_new( aTreshold ) );
+	object->SetJoystickThreshold( rb_float_new( aThreshold ) );
 	return Qnil;
 }
 
@@ -300,6 +322,20 @@ static VALUE Window_SetPosition( VALUE self, VALUE aX, VALUE aY )
 	return Qnil;
 }
 
+static VALUE Window_SetPosition2( VALUE self, VALUE anArray )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	VALIDATE_CLASS( anArray, rb_cArray, "first" );
+	VALUE arraySize = rb_funcall( anArray, rb_intern( "size" ), 0 );
+	if( FIX2UINT( arraySize ) != 2 )
+	{
+		rb_raise( rb_eArgError, "Expected 2 elements in array" );
+	}
+	object->SetPosition( FIX2UINT( rb_ary_entry( anArray, 0 ) ), FIX2UINT( rb_ary_entry( anArray, 1 ) ) );
+	return Qnil;
+}
+
 static VALUE Window_SetSize( VALUE self, VALUE aWidth, VALUE aHeight )
 {
 	sf::Window *object = NULL;
@@ -308,11 +344,25 @@ static VALUE Window_SetSize( VALUE self, VALUE aWidth, VALUE aHeight )
 	return Qnil;
 }
 
+static VALUE Window_SetSize2( VALUE self, VALUE anArray )
+{
+	sf::Window *object = NULL;
+	Data_Get_Struct( self, sf::Window, object );
+	VALIDATE_CLASS( anArray, rb_cArray, "first" );
+	VALUE arraySize = rb_funcall( anArray, rb_intern( "size" ), 0 );
+	if( FIX2UINT( arraySize ) != 2 )
+	{
+		rb_raise( rb_eArgError, "Expected 2 elements in array" );
+	}
+	object->SetSize( FIX2UINT( rb_ary_entry( anArray, 0 ) ), FIX2UINT( rb_ary_entry( anArray, 1 ) ) );
+	return Qnil;
+}
+
 static VALUE Window_SetTitle( VALUE self, VALUE aTitle )
 {
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
-	object->SetTitle( STR2CSTR(aTitle) );
+	object->SetTitle( rb_string_value_cstr( &aTitle ) );
 	return Qnil;
 }
 
@@ -400,20 +450,20 @@ static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 	switch( argc )
 	{
 		case 0:
-			object = new sf::Window( *mode , STR2CSTR( args[1] ) );
+			object = new sf::Window();
 			break;
 		case 2:
 			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			Data_Get_Struct( args[0], sf::VideoMode, mode );
-			object = new sf::Window( *mode , STR2CSTR( args[1] ) );
+			object = new sf::Window( *mode , rb_string_value_cstr( &args[1] ) );
 			break;
 		case 3:
 			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
 			Data_Get_Struct( args[0], sf::VideoMode, mode );
-			object = new sf::Window( *mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ) );
+			object = new sf::Window( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ) );
 			break;
 		case 4:
 			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
@@ -422,7 +472,7 @@ static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 			VALIDATE_CLASS( args[3], globalContextSettingsClass, "fourth" );
 			Data_Get_Struct( args[0], sf::VideoMode, mode );
 			Data_Get_Struct( args[3], sf::ContextSettings, settings );
-			object = new sf::Window( *mode, STR2CSTR( args[1] ), FIX2UINT( args[2] ), *settings );
+			object = new sf::Window( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ), *settings );
 			break;
 		default:
 			rb_raise( rb_eArgError, "Expected 2..4 arguments but was given %d", argc );
@@ -454,11 +504,14 @@ void Init_Window( void )
 	rb_define_method( globalWindowClass, "isOpened", FUNCPTR( Window_IsOpened ), 0 );
 	rb_define_method( globalWindowClass, "setActive", FUNCPTR( Window_SetActive ), 1 );
 	rb_define_method( globalWindowClass, "setCursorPosition", FUNCPTR( Window_SetCursorPosition ), 2 );
+	rb_define_method( globalWindowClass, "cursorPosition=", FUNCPTR( Window_SetCursorPosition2 ), 2 );
 	rb_define_method( globalWindowClass, "setFramerateLimit", FUNCPTR( Window_SetFramerateLimit ), 1 );
 	rb_define_method( globalWindowClass, "setIcon", FUNCPTR( Window_SetIcon ), 3 );
-	rb_define_method( globalWindowClass, "setJoystickTreshold", FUNCPTR( Window_SetJoystickTreshold ), 1 );
+	rb_define_method( globalWindowClass, "setJoystickThreshold", FUNCPTR( Window_SetJoystickThreshold ), 1 );
 	rb_define_method( globalWindowClass, "setPosition", FUNCPTR( Window_SetPosition ), 2 );
+	rb_define_method( globalWindowClass, "position=", FUNCPTR( Window_SetPosition2 ), 2 );
 	rb_define_method( globalWindowClass, "setSize", FUNCPTR( Window_SetSize ), 2 );
+	rb_define_method( globalWindowClass, "size=", FUNCPTR( Window_SetSize2 ), 2 );
 	rb_define_method( globalWindowClass, "setTitle", FUNCPTR( Window_SetTitle ), 1 );
 	rb_define_method( globalWindowClass, "show", FUNCPTR( Window_Show ), 1 );
 	rb_define_method( globalWindowClass, "showMouseCursor", FUNCPTR( Window_ShowMouseCursor ), 1 );
@@ -466,4 +519,46 @@ void Init_Window( void )
 	rb_define_method( globalWindowClass, "waitEvent", FUNCPTR( Window_WaitEvent ), 0 );
 	
 	// Aliases
+	rb_define_alias( globalWindowClass, "keyRepeat=", "enableKeyRepeat" );
+	rb_define_alias( globalWindowClass, "key_repeat=", "enableKeyRepeat" );
+	
+	rb_define_alias( globalWindowClass, "get_event", "getEvent" );
+	
+	rb_define_alias( globalWindowClass, "frameTime", "getFrameTime" );
+	rb_define_alias( globalWindowClass, "frame_time", "getFrameTime" );
+	
+	rb_define_alias( globalWindowClass, "height", "getHeight" );
+	rb_define_alias( globalWindowClass, "input", "getInput" );
+	rb_define_alias( globalWindowClass, "settings", "getSettings" );
+	rb_define_alias( globalWindowClass, "width", "getWidth" );
+	
+	rb_define_alias( globalWindowClass, "opened?", "isOpened" );
+	
+	rb_define_alias( globalWindowClass, "active=", "setActive" );
+	
+	rb_define_alias( globalWindowClass, "set_cursor_position", "setCursorPosition" );
+	rb_define_alias( globalWindowClass, "cursor_position=", "cursorPosition=" );
+	
+	rb_define_alias( globalWindowClass, "framerateLimit=", "setFramerateLimit" );
+	rb_define_alias( globalWindowClass, "framerate_limit=", "setFramerateLimit" );
+	rb_define_alias( globalWindowClass, "framerate=", "setFramerateLimit" );
+	
+	rb_define_alias( globalWindowClass, "set_icon", "setIcon" );
+	
+	rb_define_alias( globalWindowClass, "joystickThreshold=", "setJoystickThreshold" );
+	rb_define_alias( globalWindowClass, "joystick_threshold=", "setJoystickThreshold" );
+	
+	rb_define_alias( globalWindowClass, "set_position", "setPosition" );
+	rb_define_alias( globalWindowClass, "set_size", "setSize" );
+	rb_define_alias( globalWindowClass, "title=", "setTitle" );
+	
+	rb_define_alias( globalWindowClass, "showMouseCursor=", "showMouseCursor" );
+	rb_define_alias( globalWindowClass, "show_mouse_cursor", "showMouseCursor" );
+	rb_define_alias( globalWindowClass, "show_mouse_cursor=", "showMouseCursor" );
+	
+	rb_define_alias( globalWindowClass, "useVerticalSync=", "useVerticalSync" );
+	rb_define_alias( globalWindowClass, "use_vertical_sync", "useVerticalSync" );
+	rb_define_alias( globalWindowClass, "use_vertical_sync=", "useVerticalSync" );
+	
+	rb_define_alias( globalWindowClass, "wait_event", "waitEvent" );
 }
