@@ -23,22 +23,6 @@
 #include "Vector2.hpp"
 #include "main.hpp"
 
-/* SFML::Vector2 is a simple class that defines a mathematical vector with two coordinates (x and y).
- *
- * It can be used to represent anything that has two dimensions: a size, a point, a velocity, etc.
- *
- * This class differs from the C++ version. It will accept any value that is Numeric and both x and y must be of the same class.
- *
- *   v1 = SFML::Vector2.new(16.5, 24.0)
- *   v1.x = 18.2
- *   y = v1.y
- *
- *   v2 = v1 * v1;
- *   v3 = SFML::Vector2.new
- *   v3 = v1 + v2
- *
- *   different = (v2 != v3);
- */
 VALUE globalVector2Class;
 
 /* Internal function
@@ -94,6 +78,7 @@ static void Vector2_internal_ValidateTypes( VALUE aFirst, VALUE aSecond )
 	}
 }
 
+/* */
 static VALUE Vector2_Negate( VALUE self )
 {
 	VALUE x = rb_funcall( self, rb_intern( "x" ), 0 );
@@ -103,6 +88,7 @@ static VALUE Vector2_Negate( VALUE self )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, negatedX, negatedY );
 }
 
+/* */
 static VALUE Vector2_Add( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector2_ForceType( aRightOperand );
@@ -119,6 +105,7 @@ static VALUE Vector2_Add( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, newX, newY );
 }
 
+/* */
 static VALUE Vector2_Subtract( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector2_ForceType( aRightOperand );
@@ -135,6 +122,7 @@ static VALUE Vector2_Subtract( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, newX, newY );
 }
 
+/* */
 static VALUE Vector2_Multiply( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector2_ForceType( aRightOperand );
@@ -151,6 +139,7 @@ static VALUE Vector2_Multiply( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, newX, newY );
 }
 
+/* */
 static VALUE Vector2_Divide( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector2_ForceType( aRightOperand );
@@ -167,6 +156,7 @@ static VALUE Vector2_Divide( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, newX, newY );
 }
 
+/* */
 static VALUE Vector2_Equal( VALUE self, VALUE anArgument )
 {
 	VALUE aVector = Vector2_ForceType( anArgument );
@@ -186,6 +176,7 @@ static VALUE Vector2_Equal( VALUE self, VALUE anArgument )
 	}
 }
 
+/* */
 static VALUE Vector2_StrictEqual( VALUE self, VALUE anArgument )
 {
 	VALUE aVector = Vector2_ForceType( anArgument );
@@ -243,19 +234,37 @@ static VALUE Vector2_Initialize( VALUE self, VALUE someArgs )
 
 void Init_Vector2( void )
 {
-	globalVector2Class = rb_define_class_under( GetNamespace(), "Vector2", rb_cObject );
+/* SFML namespace which contains the classes of this module. */
+	VALUE sfml = rb_define_module( "SFML" );
+/* SFML::Vector2 is a simple class that defines a mathematical vector with two coordinates (x and y).
+ *
+ * It can be used to represent anything that has two dimensions: a size, a point, a velocity, etc.
+ *
+ * This class differs from the C++ version. It will accept any value that is Numeric and both x and y must be of the same class.
+ *
+ *   v1 = SFML::Vector2.new(16.5, 24.0)
+ *   v1.x = 18.2
+ *   y = v1.y
+ *
+ *   v2 = v1 * v1;
+ *   v3 = SFML::Vector2.new
+ *   v3 = v1 + v2
+ *
+ *   different = (v2 != v3);
+ */
+	globalVector2Class = rb_define_class_under( sfml, "Vector2", rb_cObject );
 	
 	// Instance methods
-	rb_define_method( globalVector2Class, "initialize", FUNCPTR( Vector2_Initialize ), -2 );
-	rb_define_method( globalVector2Class, "eql?", FUNCPTR( Vector2_Initialize ), 1 );
+	rb_define_method( globalVector2Class, "initialize", Vector2_Initialize, -2 );
+	rb_define_method( globalVector2Class, "eql?", Vector2_StrictEqual, 1 );
 	
 	// Instance operators
-	rb_define_method( globalVector2Class, "-@", FUNCPTR( Vector2_Negate ), 0 );
-	rb_define_method( globalVector2Class, "+", FUNCPTR( Vector2_Add ), 1 );
-	rb_define_method( globalVector2Class, "-", FUNCPTR( Vector2_Subtract ), 1 );
-	rb_define_method( globalVector2Class, "*", FUNCPTR( Vector2_Multiply ), 1 );
-	rb_define_method( globalVector2Class, "/", FUNCPTR( Vector2_Divide ), 1 );
-	rb_define_method( globalVector2Class, "==", FUNCPTR( Vector2_Divide ), 1 );
+	rb_define_method( globalVector2Class, "-@", Vector2_Negate, 0 );
+	rb_define_method( globalVector2Class, "+", Vector2_Add, 1 );
+	rb_define_method( globalVector2Class, "-", Vector2_Subtract, 1 );
+	rb_define_method( globalVector2Class, "*", Vector2_Multiply, 1 );
+	rb_define_method( globalVector2Class, "/", Vector2_Divide, 1 );
+	rb_define_method( globalVector2Class, "==", Vector2_Equal, 1 );
 	
 	// Attribute accessors
 	rb_define_attr( globalVector2Class, "x", 1, 1 );

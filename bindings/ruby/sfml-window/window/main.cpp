@@ -42,11 +42,6 @@ VALUE globalStyleNamespace;
 /* External classes */
 VALUE globalVector2Class;
 
-VALUE GetNamespace( void )
-{
-	return globalSFMLNamespace;
-}
-
 static const char * keyNamesMisc[] =
 {
 	"Escape", "LControl", "LShift", "LAlt", "LSystem", "RControl", "RShift", "RAlt", "RSystem", 

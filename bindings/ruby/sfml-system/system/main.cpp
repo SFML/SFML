@@ -27,13 +27,9 @@
 
 VALUE globalSFMLNamespace;
 
-VALUE GetNamespace( void )
-{
-	return globalSFMLNamespace;
-}
-
 void Init_system( void )
 {
+	/* SFML namespace which contains the classes of this module. */
 	globalSFMLNamespace = rb_define_module( "SFML" );
 	rb_define_const(globalSFMLNamespace, "SystemLoaded", Qtrue);
 	Init_Clock();

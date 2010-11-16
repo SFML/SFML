@@ -23,22 +23,6 @@
 #include "Vector3.hpp"
 #include "main.hpp"
 
-/* SFML::Vector3 is a simple class that defines a mathematical vector with three coordinates (x, y and z).
- *
- * It can be used to represent anything that has three dimensions: a size, a point, a velocity, etc.
- *
- * This class differs from the C++ version. It will accept any value that is Numeric and both x, y an z must be of the same class.
- *
- *   v1 = SFML::Vector3.new(16.5, 24.0, -8.2)
- *   v1.z = 18.2
- *   y = v1.y
- *
- *   v2 = v1 * v1;
- *   v3 = SFML::Vector3.new
- *   v3 = v1 + v2
- *
- *   different = (v2 != v3);
- */
 VALUE globalVector3Class;
 
 /* Internal function
@@ -97,6 +81,7 @@ static void Vector3_internal_ValidateTypes( VALUE aFirst, VALUE aSecond, VALUE a
 	}
 }
 
+/* */
 static VALUE Vector3_Negate( VALUE self )
 {
 	VALUE x = rb_funcall( self, rb_intern( "x" ), 0 );
@@ -108,6 +93,7 @@ static VALUE Vector3_Negate( VALUE self )
 	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, negatedX, negatedY, negatedZ );
 }
 
+/* */
 static VALUE Vector3_Add( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector3_ForceType( aRightOperand );
@@ -127,6 +113,7 @@ static VALUE Vector3_Add( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, newX, newY, newZ );
 }
 
+/* */
 static VALUE Vector3_Subtract( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector3_ForceType( aRightOperand );
@@ -146,6 +133,7 @@ static VALUE Vector3_Subtract( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, newX, newY, newZ );
 }
 
+/* */
 static VALUE Vector3_Multiply( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector3_ForceType( aRightOperand );
@@ -165,6 +153,7 @@ static VALUE Vector3_Multiply( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, newX, newY, newZ );
 }
 
+/* */
 static VALUE Vector3_Divide( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector3_ForceType( aRightOperand );
@@ -184,6 +173,7 @@ static VALUE Vector3_Divide( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, newX, newY, newZ );
 }
 
+/* */
 static VALUE Vector3_Equal( VALUE self, VALUE anArgument )
 {
 	VALUE aVector = Vector3_ForceType( anArgument );
@@ -206,6 +196,7 @@ static VALUE Vector3_Equal( VALUE self, VALUE anArgument )
 	}
 }
 
+/* */
 static VALUE Vector3_StrictEqual( VALUE self, VALUE anArgument )
 {
 	VALUE aVector = Vector3_ForceType( anArgument );
@@ -269,19 +260,37 @@ static VALUE Vector3_Initialize( VALUE self, VALUE someArgs )
 
 void Init_Vector3( void )
 {
-	globalVector3Class = rb_define_class_under( GetNamespace(), "Vector3", rb_cObject );
+/* SFML namespace which contains the classes of this module. */
+	VALUE sfml = rb_define_module( "SFML" );
+/* SFML::Vector3 is a simple class that defines a mathematical vector with three coordinates (x, y and z).
+ *
+ * It can be used to represent anything that has three dimensions: a size, a point, a velocity, etc.
+ *
+ * This class differs from the C++ version. It will accept any value that is Numeric and both x, y an z must be of the same class.
+ *
+ *   v1 = SFML::Vector3.new(16.5, 24.0, -8.2)
+ *   v1.z = 18.2
+ *   y = v1.y
+ *
+ *   v2 = v1 * v1;
+ *   v3 = SFML::Vector3.new
+ *   v3 = v1 + v2
+ *
+ *   different = (v2 != v3);
+ */
+	globalVector3Class = rb_define_class_under( sfml, "Vector3", rb_cObject );
 	
 	// Instance methods
-	rb_define_method( globalVector3Class, "initialize", FUNCPTR( Vector3_Initialize ), -2 );
-	rb_define_method( globalVector3Class, "eql?", FUNCPTR( Vector3_Initialize ), 1 );
+	rb_define_method( globalVector3Class, "initialize", Vector3_Initialize, -2 );
+	rb_define_method( globalVector3Class, "eql?", Vector3_StrictEqual, 1 );
 	
 	// Instance operators
-	rb_define_method( globalVector3Class, "-@", FUNCPTR( Vector3_Negate ), 0 );
-	rb_define_method( globalVector3Class, "+", FUNCPTR( Vector3_Add ), 1 );
-	rb_define_method( globalVector3Class, "-", FUNCPTR( Vector3_Subtract ), 1 );
-	rb_define_method( globalVector3Class, "*", FUNCPTR( Vector3_Multiply ), 1 );
-	rb_define_method( globalVector3Class, "/", FUNCPTR( Vector3_Divide ), 1 );
-	rb_define_method( globalVector3Class, "==", FUNCPTR( Vector3_Divide ), 1 );
+	rb_define_method( globalVector3Class, "-@", Vector3_Negate, 0 );
+	rb_define_method( globalVector3Class, "+", Vector3_Add, 1 );
+	rb_define_method( globalVector3Class, "-", Vector3_Subtract, 1 );
+	rb_define_method( globalVector3Class, "*", Vector3_Multiply, 1 );
+	rb_define_method( globalVector3Class, "/", Vector3_Divide, 1 );
+	rb_define_method( globalVector3Class, "==", Vector3_Equal, 1 );
 	
 	// Attribute accessors
 	rb_define_attr( globalVector3Class, "x", 1, 1 );

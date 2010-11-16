@@ -24,7 +24,6 @@
 #include "main.hpp"
 #include <SFML/System/Clock.hpp>
 
-/* Utility class for manipulating time. */
 VALUE globalClockClass;
 
 /* Free a heap allocated object 
@@ -76,14 +75,22 @@ static VALUE Clock_New( VALUE aKlass )
 
 void Init_Clock( void )
 {
-	globalClockClass = rb_define_class_under( GetNamespace(), "Clock", rb_cObject );
+/* SFML namespace which contains the classes of this module. */
+	VALUE sfml = rb_define_module( "SFML" );
+/* Utility class for manipulating time.
+ *
+ * sf::Clock is a lightweight class for measuring time.
+ *
+ * Its resolution depends on the underlying OS, but you can generally expect a 1 ms resolution.
+ */
+	globalClockClass = rb_define_class_under( sfml, "Clock", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalClockClass, "new", FUNCPTR( Clock_New ), 0 );
+	rb_define_singleton_method( globalClockClass, "new", Clock_New, 0 );
 	
 	// Instance methods
-	rb_define_method( globalClockClass, "getElapsedTime", FUNCPTR( Clock_GetElapsedTime ), 0 );
-	rb_define_method( globalClockClass, "reset", FUNCPTR( Clock_Reset ), 0 );
+	rb_define_method( globalClockClass, "getElapsedTime", Clock_GetElapsedTime, 0 );
+	rb_define_method( globalClockClass, "reset", Clock_Reset, 0 );
 	
 	// Aliases
 	rb_define_alias( globalClockClass, "elapsedTime", "getElapsedTime" );
