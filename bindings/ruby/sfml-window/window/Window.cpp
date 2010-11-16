@@ -22,6 +22,8 @@
  
 #include <SFML/Window/Window.hpp>
 #include "Window.hpp"
+#include "VideoMode.hpp"
+#include "Vector2.hpp"
 #include "main.hpp"
 
 /* SFML::Window is the main class of the Window module.
@@ -75,6 +77,7 @@ extern VALUE globalVideoModeClass;
 extern VALUE globalContextSettingsClass;
 extern VALUE globalEventClass;
 extern VALUE globalInputClass;
+extern VALUE globalVector2Class;
 
 #define VALIDATE_CLASS( variable, type, name ) \
 if( CLASS_OF( variable ) != type ) \
@@ -103,29 +106,33 @@ static VALUE Window_Create( int argc, VALUE *args, VALUE self )
 	sf::Window *object = NULL;
 	sf::VideoMode *mode = NULL;
 	sf::ContextSettings *settings = NULL;
+	VALUE arg0 = Qnil;
 	
 	Data_Get_Struct( self, sf::Window, object );
 	switch( argc )
 	{
 		case 2:
-			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			arg0 = VideoMode_ForceType( args[0] );
+			VALIDATE_CLASS( arg0, globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
-			Data_Get_Struct( args[0], sf::VideoMode, mode );
+			Data_Get_Struct( arg0, sf::VideoMode, mode );
 			object->Create( *mode ,rb_string_value_cstr( &args[1] ) );
 			break;
 		case 3:
-			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			arg0 = VideoMode_ForceType( args[0] );
+			VALIDATE_CLASS( arg0, globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
-			Data_Get_Struct( args[0], sf::VideoMode, mode );
+			Data_Get_Struct( arg0, sf::VideoMode, mode );
 			object->Create( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ) );
 			break;
 		case 4:
-			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			arg0 = VideoMode_ForceType( args[0] );
+			VALIDATE_CLASS( arg0, globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
 			VALIDATE_CLASS( args[3], globalContextSettingsClass, "fourth" );
-			Data_Get_Struct( args[0], sf::VideoMode, mode );
+			Data_Get_Struct( arg0, sf::VideoMode, mode );
 			Data_Get_Struct( args[3], sf::ContextSettings, settings );
 			object->Create( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ), *settings );
 			break;
@@ -263,17 +270,14 @@ static VALUE Window_SetCursorPosition( VALUE self, VALUE aX, VALUE aY )
 	return Qnil;
 }
 
-static VALUE Window_SetCursorPosition2( VALUE self, VALUE anArray )
+static VALUE Window_SetCursorPosition2( VALUE self, VALUE anArgument )
 {
+	VALUE argument = Vector2_ForceType( anArgument );
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
-	VALIDATE_CLASS( anArray, rb_cArray, "first" );
-	VALUE arraySize = rb_funcall( anArray, rb_intern( "size" ), 0 );
-	if( FIX2UINT( arraySize ) != 2 )
-	{
-		rb_raise( rb_eArgError, "Expected 2 elements in array" );
-	}
-	object->SetCursorPosition( FIX2UINT( rb_ary_entry( anArray, 0 ) ), FIX2UINT( rb_ary_entry( anArray, 1 ) ) );
+	VALUE argumentX = rb_funcall( argument, rb_intern( "x" ), 0 );
+	VALUE argumentY = rb_funcall( argument, rb_intern( "y" ), 0 );
+	object->SetCursorPosition( FIX2UINT( argumentX ), FIX2UINT( argumentY ) );
 	return Qnil;
 }
 
@@ -318,21 +322,18 @@ static VALUE Window_SetPosition( VALUE self, VALUE aX, VALUE aY )
 {
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
-	object->SetPosition( FIX2UINT( aX ), FIX2UINT( aY ) );
+	object->SetPosition( FIX2INT( aX ), FIX2INT( aY ) );
 	return Qnil;
 }
 
-static VALUE Window_SetPosition2( VALUE self, VALUE anArray )
+static VALUE Window_SetPosition2( VALUE self, VALUE anArgument )
 {
+	VALUE argument = Vector2_ForceType( anArgument );
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
-	VALIDATE_CLASS( anArray, rb_cArray, "first" );
-	VALUE arraySize = rb_funcall( anArray, rb_intern( "size" ), 0 );
-	if( FIX2UINT( arraySize ) != 2 )
-	{
-		rb_raise( rb_eArgError, "Expected 2 elements in array" );
-	}
-	object->SetPosition( FIX2UINT( rb_ary_entry( anArray, 0 ) ), FIX2UINT( rb_ary_entry( anArray, 1 ) ) );
+	VALUE argumentX = rb_funcall( argument, rb_intern( "x" ), 0 );
+	VALUE argumentY = rb_funcall( argument, rb_intern( "y" ), 0 );
+	object->SetPosition( FIX2UINT( argumentX ), FIX2INT( argumentY ) );
 	return Qnil;
 }
 
@@ -344,17 +345,14 @@ static VALUE Window_SetSize( VALUE self, VALUE aWidth, VALUE aHeight )
 	return Qnil;
 }
 
-static VALUE Window_SetSize2( VALUE self, VALUE anArray )
+static VALUE Window_SetSize2( VALUE self, VALUE anArgument )
 {
+	VALUE argument = Vector2_ForceType( anArgument );
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
-	VALIDATE_CLASS( anArray, rb_cArray, "first" );
-	VALUE arraySize = rb_funcall( anArray, rb_intern( "size" ), 0 );
-	if( FIX2UINT( arraySize ) != 2 )
-	{
-		rb_raise( rb_eArgError, "Expected 2 elements in array" );
-	}
-	object->SetSize( FIX2UINT( rb_ary_entry( anArray, 0 ) ), FIX2UINT( rb_ary_entry( anArray, 1 ) ) );
+	VALUE argumentX = rb_funcall( argument, rb_intern( "x" ), 0 );
+	VALUE argumentY = rb_funcall( argument, rb_intern( "y" ), 0 );
+	object->SetSize( FIX2UINT( argumentX ), FIX2UINT( argumentY ) );
 	return Qnil;
 }
 
@@ -447,30 +445,34 @@ static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 	sf::Window *object = NULL;
 	sf::VideoMode *mode = NULL;
 	sf::ContextSettings *settings = NULL;
+	VALUE arg0 = Qnil;
 	switch( argc )
 	{
 		case 0:
 			object = new sf::Window();
 			break;
 		case 2:
-			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			arg0 = VideoMode_ForceType( args[0] );
+			VALIDATE_CLASS( arg0, globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
-			Data_Get_Struct( args[0], sf::VideoMode, mode );
+			Data_Get_Struct( arg0, sf::VideoMode, mode );
 			object = new sf::Window( *mode , rb_string_value_cstr( &args[1] ) );
 			break;
 		case 3:
-			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			arg0 = VideoMode_ForceType( args[0] );
+			VALIDATE_CLASS( arg0, globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
-			Data_Get_Struct( args[0], sf::VideoMode, mode );
+			Data_Get_Struct( arg0, sf::VideoMode, mode );
 			object = new sf::Window( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ) );
 			break;
 		case 4:
-			VALIDATE_CLASS( args[0], globalVideoModeClass, "first" );
+			arg0 = VideoMode_ForceType( args[0] );
+			VALIDATE_CLASS( arg0, globalVideoModeClass, "first" );
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
 			VALIDATE_CLASS( args[3], globalContextSettingsClass, "fourth" );
-			Data_Get_Struct( args[0], sf::VideoMode, mode );
+			Data_Get_Struct( arg0, sf::VideoMode, mode );
 			Data_Get_Struct( args[3], sf::ContextSettings, settings );
 			object = new sf::Window( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ), *settings );
 			break;
@@ -504,14 +506,14 @@ void Init_Window( void )
 	rb_define_method( globalWindowClass, "isOpened", FUNCPTR( Window_IsOpened ), 0 );
 	rb_define_method( globalWindowClass, "setActive", FUNCPTR( Window_SetActive ), 1 );
 	rb_define_method( globalWindowClass, "setCursorPosition", FUNCPTR( Window_SetCursorPosition ), 2 );
-	rb_define_method( globalWindowClass, "cursorPosition=", FUNCPTR( Window_SetCursorPosition2 ), 2 );
+	rb_define_method( globalWindowClass, "cursorPosition=", FUNCPTR( Window_SetCursorPosition2 ), 1 );
 	rb_define_method( globalWindowClass, "setFramerateLimit", FUNCPTR( Window_SetFramerateLimit ), 1 );
 	rb_define_method( globalWindowClass, "setIcon", FUNCPTR( Window_SetIcon ), 3 );
 	rb_define_method( globalWindowClass, "setJoystickThreshold", FUNCPTR( Window_SetJoystickThreshold ), 1 );
 	rb_define_method( globalWindowClass, "setPosition", FUNCPTR( Window_SetPosition ), 2 );
-	rb_define_method( globalWindowClass, "position=", FUNCPTR( Window_SetPosition2 ), 2 );
+	rb_define_method( globalWindowClass, "position=", FUNCPTR( Window_SetPosition2 ), 1 );
 	rb_define_method( globalWindowClass, "setSize", FUNCPTR( Window_SetSize ), 2 );
-	rb_define_method( globalWindowClass, "size=", FUNCPTR( Window_SetSize2 ), 2 );
+	rb_define_method( globalWindowClass, "size=", FUNCPTR( Window_SetSize2 ), 1 );
 	rb_define_method( globalWindowClass, "setTitle", FUNCPTR( Window_SetTitle ), 1 );
 	rb_define_method( globalWindowClass, "show", FUNCPTR( Window_Show ), 1 );
 	rb_define_method( globalWindowClass, "showMouseCursor", FUNCPTR( Window_ShowMouseCursor ), 1 );

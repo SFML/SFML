@@ -1,8 +1,9 @@
 require 'sfml/system'
 require 'sfml/window'
 
-app = SFML::Window.new( SFML::VideoMode.new( 800, 600 ), "My Ruby SFML" )
+app = SFML::Window.new( [800, 600], "My Ruby SFML" )
 app.framerate = 100
+app.position = [300, 300]
 input = app.input
 
 while app.open?
