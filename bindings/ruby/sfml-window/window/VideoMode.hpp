@@ -25,6 +25,8 @@
 
 #include "ruby.h"
 
+VALUE VideoMode_ForceType( VALUE someValue );
+
 // Ruby initiation function
 void Init_VideoMode( void );
 

@@ -57,6 +57,37 @@
  */
 VALUE globalVideoModeClass;
 
+/* Internal function
+ * Forces the argument someValue to be a VideoMode. If it can convert it then it will.
+ * So you can always safely asume that this function returns a VideoMode object.
+ * If it fails then an exception will be thrown.
+ */
+VALUE VideoMode_ForceType( VALUE someValue )
+{
+	if( rb_obj_is_kind_of( someValue, rb_cArray ) == true )
+	{
+		VALUE arg1 = rb_ary_entry( someValue, 0 );
+		VALUE arg2 = rb_ary_entry( someValue, 1 );
+		if( FIX2INT( rb_funcall( someValue, rb_intern( "size" ), 0 ) ) == 3 )
+		{
+			VALUE arg3 = rb_ary_entry( someValue, 2 );
+			return rb_funcall( globalVideoModeClass, rb_intern( "new" ), 3, arg1, arg2, arg3 );	
+		}
+		else
+		{
+			return rb_funcall( globalVideoModeClass, rb_intern( "new" ), 2, arg1, arg2 );
+		}
+	}
+	else if( rb_obj_is_kind_of( someValue, globalVideoModeClass ) == true )
+	{
+		return someValue;
+	}
+	else
+	{
+		rb_raise( rb_eRuntimeError, "expected Array[width, height, bpp] or VideoMode" );
+	}
+}
+
 /* Free a heap allocated object 
  * Not accessible trough ruby directly!
  */
