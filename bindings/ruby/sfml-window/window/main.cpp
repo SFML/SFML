@@ -38,6 +38,9 @@ VALUE globalMouseNamespace;
 VALUE globalJoyNamespace;
 VALUE globalStyleNamespace;
 
+/* External classes */
+VALUE globalVector2Class;
+
 VALUE GetNamespace( void )
 {
 	return globalSFMLNamespace;
@@ -135,6 +138,22 @@ bool CheckDependencies( void )
 	return false;
 }
 
+VALUE RetrieveSFMLClass( const char * aName )
+{
+	ID name = rb_intern( aName );
+	if( rb_cvar_defined( globalSFMLNamespace, name ) == Qfalse )
+	{
+		rb_raise( rb_eRuntimeError, "This module depends on SFML::%s", aName );
+	}
+	
+	return rb_cvar_get( globalSFMLNamespace, name );
+}
+
+void RetrieveVector2Class( void )
+{
+	globalVector2Class = RetrieveSFMLClass( "Vector2" );
+}
+
 void Init_window( void )
 {
 	globalSFMLNamespace = rb_define_module( "SFML" );
@@ -142,6 +161,8 @@ void Init_window( void )
 	{
 		rb_raise( rb_eRuntimeError, "This module depends on sfml-system" );
 	}
+	
+	RetrieveVector2Class();
 	
 	rb_define_const( globalSFMLNamespace, "WindowLoaded", Qtrue );
 	
