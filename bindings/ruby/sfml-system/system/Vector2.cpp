@@ -48,13 +48,13 @@ VALUE globalVector2Class;
  */
 VALUE Vector2_ForceType( VALUE someValue )
 {
-	if( rb_obj_is_kind_of( someValue, rb_cArray ) == true )
+	if( rb_obj_is_kind_of( someValue, rb_cArray ) == Qtrue )
 	{
 		VALUE arg1 = rb_ary_entry( someValue, 0 );
 		VALUE arg2 = rb_ary_entry( someValue, 1 );
 		return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, arg1, arg2 );
 	}
-	else if( rb_obj_is_kind_of( someValue, globalVector2Class ) == true )
+	else if( rb_obj_is_kind_of( someValue, globalVector2Class ) == Qtrue )
 	{
 		return someValue;
 	}

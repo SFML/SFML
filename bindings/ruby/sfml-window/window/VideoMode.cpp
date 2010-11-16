@@ -64,7 +64,7 @@ VALUE globalVideoModeClass;
  */
 VALUE VideoMode_ForceType( VALUE someValue )
 {
-	if( rb_obj_is_kind_of( someValue, rb_cArray ) == true )
+	if( rb_obj_is_kind_of( someValue, rb_cArray ) == Qtrue )
 	{
 		VALUE arg1 = rb_ary_entry( someValue, 0 );
 		VALUE arg2 = rb_ary_entry( someValue, 1 );
@@ -78,7 +78,7 @@ VALUE VideoMode_ForceType( VALUE someValue )
 			return rb_funcall( globalVideoModeClass, rb_intern( "new" ), 2, arg1, arg2 );
 		}
 	}
-	else if( rb_obj_is_kind_of( someValue, globalVideoModeClass ) == true )
+	else if( rb_obj_is_kind_of( someValue, globalVideoModeClass ) == Qtrue )
 	{
 		return someValue;
 	}
