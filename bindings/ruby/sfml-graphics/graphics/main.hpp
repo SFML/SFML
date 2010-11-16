@@ -30,6 +30,9 @@ extern "C" void Init_graphics( void );
 
 typedef VALUE ( *RubyFunctionPtr )( ... );
 
+#define MAX( x, y ) ( ( x ) < ( y ) ? ( y ) : ( x ) )
+#define MIN( x, y ) ( ( x ) > ( y ) ? ( x ) : ( y ) )
+
 #define VALIDATE_CLASS( variable, type, name ) \
 if( rb_obj_is_kind_of( variable, type ) != Qtrue ) \
 { \
