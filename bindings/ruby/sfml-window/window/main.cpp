@@ -125,9 +125,24 @@ void CreateStyleEnum( void )
 	rb_define_const( globalStyleNamespace, "Default", sf::Style::Default );
 }
 
+bool CheckDependencies( void )
+{
+	if( rb_cvar_defined( globalSFMLNamespace, rb_intern( "SystemLoaded" ) ) == Qtrue )
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void Init_window( void )
 {
 	globalSFMLNamespace = rb_define_module( "SFML" );
+	if( CheckDependencies() == false )
+	{
+		rb_raise( rb_eRuntimeError, "This module depends on sfml-system" );
+	}
+	
 	rb_define_const( globalSFMLNamespace, "WindowLoaded", Qtrue );
 	
 	CreateKeyEnum();
