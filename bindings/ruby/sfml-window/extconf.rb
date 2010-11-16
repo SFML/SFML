@@ -23,4 +23,5 @@ require 'mkmf'
 
 dir_config("window")
 have_library("sfml-window") 
+find_header("main.hpp", "../sfml-system/system")
 create_makefile("sfml/window", "window")
