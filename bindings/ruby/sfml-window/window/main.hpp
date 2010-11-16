@@ -34,6 +34,7 @@ extern "C" void Init_window( void );
 
 typedef VALUE ( *RubyFunctionPtr )( ... );
 
-#define FUNCPTR( x ) ( reinterpret_cast< RubyFunctionPtr >( x ) )
+#define rb_define_singleton_method( klass, name, func, argc, ... ) rb_define_singleton_method( klass, name, reinterpret_cast< RubyFunctionPtr >( func ), argc, ##__VA_ARGS__ )
+#define rb_define_method( klass, name, func, argc, ... ) rb_define_method( klass, name, reinterpret_cast< RubyFunctionPtr >( func ), argc, ##__VA_ARGS__ )
 
 #endif // SFML_RUBYEXT_MAIN_HEADER_

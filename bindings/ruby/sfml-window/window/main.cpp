@@ -32,6 +32,7 @@
 
 #include <iostream>
 
+/* SFML Namespace which contains all classes in this module. */
 VALUE globalSFMLNamespace;
 VALUE globalKeyNamespace;
 VALUE globalMouseNamespace;
@@ -46,17 +47,6 @@ VALUE GetNamespace( void )
 	return globalSFMLNamespace;
 }
 
-static const char * keyNamesLetters[] =
-{
-	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-	"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-};
-
-static const char * keyNamesNum[] =
-{
-	"Num0", "Num1", "Num2", "Num3", "Num4", "Num5", "Num6", "Num7", "Num8", "Num9"
-};
-
 static const char * keyNamesMisc[] =
 {
 	"Escape", "LControl", "LShift", "LAlt", "LSystem", "RControl", "RShift", "RAlt", "RSystem", 
@@ -69,29 +59,49 @@ static const char * keyNamesMisc[] =
 	"Count"
 };
 
-static const char * mouseNames[] =
-{
-	"Left", "Right", "Middle", "XButton1", "XButton2", "ButtonCount"
-};
-
-static const char * axisNames[] =
-{
-	"AxisX", "AxisY", "AxisZ", "AxisR", "AxisU", "AxisV", "AxisPOV",
-	"AxisCount"
-};
-
+/* Definition of key codes for keyboard events. 
+ *
+ * All SFML::Key constants exists, I just haven't written them all so Rdoc can interpret them yet.
+ */
 void CreateKeyEnum( void )
 {
 	globalKeyNamespace = rb_define_module_under( globalSFMLNamespace, "Key" );
-	for( int index = static_cast< int >( sf::Key::A ); index <= sf::Key::Z; index++ )
-	{
-		rb_define_const( globalKeyNamespace, keyNamesLetters[ index - sf::Key::A ], INT2FIX( index ) );
-	}
+	rb_define_const( globalKeyNamespace, "A", INT2FIX( sf::Key::A ) );
+	rb_define_const( globalKeyNamespace, "B", INT2FIX( sf::Key::B ) );
+	rb_define_const( globalKeyNamespace, "C", INT2FIX( sf::Key::C ) );
+	rb_define_const( globalKeyNamespace, "D", INT2FIX( sf::Key::D ) );
+	rb_define_const( globalKeyNamespace, "E", INT2FIX( sf::Key::E ) );
+	rb_define_const( globalKeyNamespace, "F", INT2FIX( sf::Key::F ) );
+	rb_define_const( globalKeyNamespace, "G", INT2FIX( sf::Key::G ) );
+	rb_define_const( globalKeyNamespace, "H", INT2FIX( sf::Key::H ) );
+	rb_define_const( globalKeyNamespace, "I", INT2FIX( sf::Key::I ) );
+	rb_define_const( globalKeyNamespace, "J", INT2FIX( sf::Key::J ) );
+	rb_define_const( globalKeyNamespace, "K", INT2FIX( sf::Key::K ) );
+	rb_define_const( globalKeyNamespace, "L", INT2FIX( sf::Key::L ) );
+	rb_define_const( globalKeyNamespace, "M", INT2FIX( sf::Key::M ) );
+	rb_define_const( globalKeyNamespace, "N", INT2FIX( sf::Key::N ) );
+	rb_define_const( globalKeyNamespace, "O", INT2FIX( sf::Key::O ) );
+	rb_define_const( globalKeyNamespace, "P", INT2FIX( sf::Key::P ) );
+	rb_define_const( globalKeyNamespace, "Q", INT2FIX( sf::Key::Q ) );
+	rb_define_const( globalKeyNamespace, "R", INT2FIX( sf::Key::R ) );
+	rb_define_const( globalKeyNamespace, "S", INT2FIX( sf::Key::S ) );
+	rb_define_const( globalKeyNamespace, "T", INT2FIX( sf::Key::T ) );
+	rb_define_const( globalKeyNamespace, "U", INT2FIX( sf::Key::U ) );
+	rb_define_const( globalKeyNamespace, "V", INT2FIX( sf::Key::V ) );
+	rb_define_const( globalKeyNamespace, "X", INT2FIX( sf::Key::X ) );
+	rb_define_const( globalKeyNamespace, "Y", INT2FIX( sf::Key::Y ) );
+	rb_define_const( globalKeyNamespace, "Z", INT2FIX( sf::Key::Z ) );
 	
-	for( int index = static_cast< int >( sf::Key::Num0 ); index <= sf::Key::Num9; index++ )
-	{
-		rb_define_const( globalKeyNamespace, keyNamesNum[ index - sf::Key::Num0 ], INT2FIX( index ) );
-	}
+	rb_define_const( globalKeyNamespace, "Num0", INT2FIX( sf::Key::Num0 ) );
+	rb_define_const( globalKeyNamespace, "Num1", INT2FIX( sf::Key::Num1 ) );
+	rb_define_const( globalKeyNamespace, "Num2", INT2FIX( sf::Key::Num2 ) );
+	rb_define_const( globalKeyNamespace, "Num3", INT2FIX( sf::Key::Num3 ) );
+	rb_define_const( globalKeyNamespace, "Num4", INT2FIX( sf::Key::Num4 ) );
+	rb_define_const( globalKeyNamespace, "Num5", INT2FIX( sf::Key::Num5 ) );
+	rb_define_const( globalKeyNamespace, "Num6", INT2FIX( sf::Key::Num6 ) );
+	rb_define_const( globalKeyNamespace, "Num7", INT2FIX( sf::Key::Num7 ) );
+	rb_define_const( globalKeyNamespace, "Num8", INT2FIX( sf::Key::Num8 ) );
+	rb_define_const( globalKeyNamespace, "Num9", INT2FIX( sf::Key::Num9 ) );
 	
 	for( int index = static_cast< int >( sf::Key::Escape ); index <= sf::Key::Count; index++ )
 	{
@@ -99,33 +109,42 @@ void CreateKeyEnum( void )
 	}
 }
 
+/* Definition of button codes for mouse events. */
 void CreateMouseEnum( void )
 {
 	globalMouseNamespace = rb_define_module_under( globalSFMLNamespace, "Mouse" );
-	for( int index = static_cast< int >( sf::Mouse::Left ); index <= sf::Mouse::ButtonCount; index++ )
-	{
-		rb_define_const( globalMouseNamespace, mouseNames[ index - sf::Mouse::Left ], INT2FIX( index ) );
-	}
+	rb_define_const( globalMouseNamespace, "Left", INT2FIX( sf::Mouse::Left ) );
+	rb_define_const( globalMouseNamespace, "Right", INT2FIX( sf::Mouse::Right ) );
+	rb_define_const( globalMouseNamespace, "Middle", INT2FIX( sf::Mouse::Middle ) );
+	rb_define_const( globalMouseNamespace, "XButton1", INT2FIX( sf::Mouse::XButton1 ) );
+	rb_define_const( globalMouseNamespace, "XButton2", INT2FIX( sf::Mouse::XButton2 ) );
+	rb_define_const( globalMouseNamespace, "ButtonCount", INT2FIX( sf::Mouse::ButtonCount ) );
 }
 
+/* Definition of joystick axis for joystick events. */
 void CreateJoyEnum( void )
 {
 	globalJoyNamespace = rb_define_module_under( globalSFMLNamespace, "Joy" );
-	for( int index = static_cast< int >( sf::Joy::AxisX ); index <= sf::Joy::AxisCount; index++ )
-	{
-		rb_define_const( globalJoyNamespace, axisNames[ index - sf::Joy::AxisX ], INT2FIX( index ) );
-	}
+	rb_define_const( globalJoyNamespace, "AxisX", INT2FIX( sf::Joy::AxisX ) );
+	rb_define_const( globalJoyNamespace, "AxisY", INT2FIX( sf::Joy::AxisY ) );
+	rb_define_const( globalJoyNamespace, "AxisZ", INT2FIX( sf::Joy::AxisZ ) );
+	rb_define_const( globalJoyNamespace, "AxisR", INT2FIX( sf::Joy::AxisR ) );
+	rb_define_const( globalJoyNamespace, "AxisU", INT2FIX( sf::Joy::AxisU ) );
+	rb_define_const( globalJoyNamespace, "AxisV", INT2FIX( sf::Joy::AxisV ) );
+	rb_define_const( globalJoyNamespace, "AxisPOV", INT2FIX( sf::Joy::AxisPOV ) );
+	rb_define_const( globalJoyNamespace, "AxisCount", INT2FIX( sf::Joy::AxisCount ) );
 }
 
+/* Enumeration of the window styles. */
 void CreateStyleEnum( void )
 {
 	globalStyleNamespace = rb_define_module_under( globalSFMLNamespace, "Style" );
-	rb_define_const( globalStyleNamespace, "None", sf::Style::None );
-	rb_define_const( globalStyleNamespace, "Titlebar", sf::Style::Titlebar );
-	rb_define_const( globalStyleNamespace, "Resize", sf::Style::Resize );
-	rb_define_const( globalStyleNamespace, "Close", sf::Style::Close );
-	rb_define_const( globalStyleNamespace, "Fullscreen", sf::Style::Fullscreen );
-	rb_define_const( globalStyleNamespace, "Default", sf::Style::Default );
+	rb_define_const( globalStyleNamespace, "None", INT2FIX( sf::Style::None ) );
+	rb_define_const( globalStyleNamespace, "Titlebar", INT2FIX( sf::Style::Titlebar ) );
+	rb_define_const( globalStyleNamespace, "Resize", INT2FIX( sf::Style::Resize ) );
+	rb_define_const( globalStyleNamespace, "Close", INT2FIX( sf::Style::Close ) );
+	rb_define_const( globalStyleNamespace, "Fullscreen", INT2FIX( sf::Style::Fullscreen ) );
+	rb_define_const( globalStyleNamespace, "Default", INT2FIX( sf::Style::Default ) );
 }
 
 bool CheckDependencies( void )
@@ -156,6 +175,7 @@ void RetrieveVector2Class( void )
 
 void Init_window( void )
 {
+	/* SFML namespace which contains the classes of this module. */
 	globalSFMLNamespace = rb_define_module( "SFML" );
 	if( CheckDependencies() == false )
 	{

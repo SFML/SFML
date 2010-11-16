@@ -25,36 +25,6 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <iostream>
 
-/* A video mode is defined by a width and a height (in pixels) and a depth (in bits per pixel).
- *
- * Video modes are used to setup windows (SFML::Window) at creation time.
- * 
- * The main usage of video modes is for fullscreen mode: indeed you must use one of the valid 
- * video modes allowed by the OS (which are defined by what the monitor and the graphics card support), 
- * otherwise your window creation will just fail.
- * 
- * SFML::VideoMode provides a static function for retrieving the list of all the video modes supported by
- * the system: getFullscreenModes().
- * 
- * A custom video mode can also be checked directly for fullscreen compatibility with its isValid() function.
- * 
- * Additionnally, SFML::VideoMode provides a static function to get the mode currently used by the desktop: 
- * getDesktopMode(). This allows to build windows with the same size or pixel depth as the current resolution.
- * 
- * Usage example:
- * 
- *   # Display the list of all the video modes available for fullscreen
- *   modes = SFML::VideoMode.getFullscreenModes()
- *   i = 0
- *   modes.each do | mode |
- *     puts "Mode #" + i + ": " + mode.width + "x" + mode.height + " - " + mode.bitsPerPixel + " bpp"
- *
- *   end
- *
- *   # Create a window with the same pixel depth as the desktop
- *   desktop = SFML::VideoMode.getDesktopMode()
- *   window.create( SFML::VideoMode.new( 1024, 768, desktop.BitsPerPixel ), "SFML window" )
- */
 VALUE globalVideoModeClass;
 
 /* Internal function
@@ -236,22 +206,54 @@ static VALUE VideoMode_New( int argc, VALUE *args, VALUE aKlass )
 
 void Init_VideoMode( void )
 {
-	globalVideoModeClass = rb_define_class_under( GetNamespace(), "VideoMode", rb_cObject );
+/* SFML namespace which contains the classes of this module. */
+	VALUE sfml = rb_define_module( "SFML" );
+/* A video mode is defined by a width and a height (in pixels) and a depth (in bits per pixel).
+ *
+ * Video modes are used to setup windows (SFML::Window) at creation time.
+ * 
+ * The main usage of video modes is for fullscreen mode: indeed you must use one of the valid 
+ * video modes allowed by the OS (which are defined by what the monitor and the graphics card support), 
+ * otherwise your window creation will just fail.
+ * 
+ * SFML::VideoMode provides a static function for retrieving the list of all the video modes supported by
+ * the system: getFullscreenModes().
+ * 
+ * A custom video mode can also be checked directly for fullscreen compatibility with its isValid() function.
+ * 
+ * Additionnally, SFML::VideoMode provides a static function to get the mode currently used by the desktop: 
+ * getDesktopMode(). This allows to build windows with the same size or pixel depth as the current resolution.
+ * 
+ * Usage example:
+ * 
+ *   # Display the list of all the video modes available for fullscreen
+ *   modes = SFML::VideoMode.getFullscreenModes()
+ *   i = 0
+ *   modes.each do | mode |
+ *     puts "Mode #" + i + ": " + mode.width + "x" + mode.height + " - " + mode.bitsPerPixel + " bpp"
+ *
+ *   end
+ *
+ *   # Create a window with the same pixel depth as the desktop
+ *   desktop = SFML::VideoMode.getDesktopMode()
+ *   window.create( SFML::VideoMode.new( 1024, 768, desktop.BitsPerPixel ), "SFML window" )
+ */
+	globalVideoModeClass = rb_define_class_under( sfml, "VideoMode", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalVideoModeClass, "new", FUNCPTR( VideoMode_New ), -1 );
-	rb_define_singleton_method( globalVideoModeClass, "getDesktopMode", FUNCPTR( VideoMode_GetDesktopMode ), 0 );
-	rb_define_singleton_method( globalVideoModeClass, "getFullscreenModes", FUNCPTR( VideoMode_GetFullscreenModes ), 0 );
+	rb_define_singleton_method( globalVideoModeClass, "new", VideoMode_New, -1 );
+	rb_define_singleton_method( globalVideoModeClass, "getDesktopMode", VideoMode_GetDesktopMode, 0 );
+	rb_define_singleton_method( globalVideoModeClass, "getFullscreenModes", VideoMode_GetFullscreenModes, 0 );
 	
 	// Instance methods
-	rb_define_method( globalVideoModeClass, "width", FUNCPTR( VideoMode_GetWidth ), 0 );
-	rb_define_method( globalVideoModeClass, "width=", FUNCPTR( VideoMode_SetWidth ), 1 );
+	rb_define_method( globalVideoModeClass, "width", VideoMode_GetWidth, 0 );
+	rb_define_method( globalVideoModeClass, "width=", VideoMode_SetWidth, 1 );
 	
-	rb_define_method( globalVideoModeClass, "height", FUNCPTR( VideoMode_GetWidth ), 0 );
-	rb_define_method( globalVideoModeClass, "height=", FUNCPTR( VideoMode_SetWidth ), 1 );
+	rb_define_method( globalVideoModeClass, "height", VideoMode_GetWidth, 0 );
+	rb_define_method( globalVideoModeClass, "height=", VideoMode_SetWidth, 1 );
 
-	rb_define_method( globalVideoModeClass, "bitsPerPixel", FUNCPTR( VideoMode_GetBitsPerPixel ), 0 );
-	rb_define_method( globalVideoModeClass, "bitsPerPixel=", FUNCPTR( VideoMode_SetBitsPerPixel ), 1 );
+	rb_define_method( globalVideoModeClass, "bitsPerPixel", VideoMode_GetBitsPerPixel, 0 );
+	rb_define_method( globalVideoModeClass, "bitsPerPixel=", VideoMode_SetBitsPerPixel, 1 );
 	
 	// Class aliases
 	rb_define_alias( CLASS_OF( globalVideoModeClass ), "desktopMode", "getDesktopMode" );

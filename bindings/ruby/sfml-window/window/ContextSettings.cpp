@@ -25,31 +25,7 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <iostream>
 
-/* ContextSettings allows to define several advanced settings of the OpenGL 
- * context attached to a window.
- *
- * All these settings have no impact on the regular SFML rendering 
- * (graphics module) -- except the anti-aliasing level, so you may need to use 
- * this structure only if you're using SFML as a windowing system for custom 
- * OpenGL rendering.
- *
- * The DepthBits and StencilBits members define the number of bits per pixel 
- * requested for the (respectively) depth and stencil buffers.
- *
- * AntialiasingLevel represents the requested number of multisampling levels 
- * for anti-aliasing.
- *
- * MajorVersion and MinorVersion define the version of the OpenGL context that 
- * you want. Only versions greater or equal to 3.0 are relevant; versions 
- * lesser than 3.0 are all handled the same way (i.e. you can use any version 
- * < 3.0 if you don't want an OpenGL 3 context).
- *
- * Please note that these values are only a hint. No failure will be reported 
- * if one or more of these values are not supported by the system; instead, 
- * SFML will try to find the closest valid match. You can then retrieve the 
- * settings that the window actually used to create its context, with 
- * Window::GetSettings().
- */
+
 VALUE globalContextSettingsClass;
 
 /* Free a heap allocated object 
@@ -242,26 +218,53 @@ static VALUE ContextSettings_New( VALUE aKlass, VALUE someArgs )
 
 void Init_ContextSettings( void )
 {
-	globalContextSettingsClass = rb_define_class_under( GetNamespace(), "ContextSettings", rb_cObject );
+/* SFML namespace which contains the classes of this module. */
+	VALUE sfml = rb_define_module( "SFML" );
+/* ContextSettings allows to define several advanced settings of the OpenGL 
+ * context attached to a window.
+ *
+ * All these settings have no impact on the regular SFML rendering 
+ * (graphics module) -- except the anti-aliasing level, so you may need to use 
+ * this structure only if you're using SFML as a windowing system for custom 
+ * OpenGL rendering.
+ *
+ * The DepthBits and StencilBits members define the number of bits per pixel 
+ * requested for the (respectively) depth and stencil buffers.
+ *
+ * AntialiasingLevel represents the requested number of multisampling levels 
+ * for anti-aliasing.
+ *
+ * MajorVersion and MinorVersion define the version of the OpenGL context that 
+ * you want. Only versions greater or equal to 3.0 are relevant; versions 
+ * lesser than 3.0 are all handled the same way (i.e. you can use any version 
+ * < 3.0 if you don't want an OpenGL 3 context).
+ *
+ * Please note that these values are only a hint. No failure will be reported 
+ * if one or more of these values are not supported by the system; instead, 
+ * SFML will try to find the closest valid match. You can then retrieve the 
+ * settings that the window actually used to create its context, with 
+ * Window::GetSettings().
+ */
+	globalContextSettingsClass = rb_define_class_under( sfml, "ContextSettings", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalContextSettingsClass, "new", FUNCPTR( ContextSettings_New ), -2 );
+	rb_define_singleton_method( globalContextSettingsClass, "new", ContextSettings_New, -2 );
 	
 	// Instance methods
-	rb_define_method( globalContextSettingsClass, "depthBits", FUNCPTR( ContextSettings_GetDepth ), 0 );
-	rb_define_method( globalContextSettingsClass, "depthBits=", FUNCPTR( ContextSettings_SetDepth ), 1 );
+	rb_define_method( globalContextSettingsClass, "depthBits", ContextSettings_GetDepth, 0 );
+	rb_define_method( globalContextSettingsClass, "depthBits=", ContextSettings_SetDepth, 1 );
 	
-	rb_define_method( globalContextSettingsClass, "stencilBits", FUNCPTR( ContextSettings_GetStencil ), 0 );
-	rb_define_method( globalContextSettingsClass, "stencilBits=", FUNCPTR( ContextSettings_SetStencil ), 1 );
+	rb_define_method( globalContextSettingsClass, "stencilBits", ContextSettings_GetStencil, 0 );
+	rb_define_method( globalContextSettingsClass, "stencilBits=", ContextSettings_SetStencil, 1 );
 	
-	rb_define_method( globalContextSettingsClass, "antialiasingLevel", FUNCPTR( ContextSettings_GetAntialiasing ), 0 );
-	rb_define_method( globalContextSettingsClass, "antialiasingLevel=", FUNCPTR( ContextSettings_SetAntialiasing ), 1 );
+	rb_define_method( globalContextSettingsClass, "antialiasingLevel", ContextSettings_GetAntialiasing, 0 );
+	rb_define_method( globalContextSettingsClass, "antialiasingLevel=", ContextSettings_SetAntialiasing, 1 );
 	
-	rb_define_method( globalContextSettingsClass, "majorVersion", FUNCPTR( ContextSettings_GetMajorVersion ), 0 );
-	rb_define_method( globalContextSettingsClass, "majorVersion=", FUNCPTR( ContextSettings_SetMajorVersion ), 1 );
+	rb_define_method( globalContextSettingsClass, "majorVersion", ContextSettings_GetMajorVersion, 0 );
+	rb_define_method( globalContextSettingsClass, "majorVersion=", ContextSettings_SetMajorVersion, 1 );
 	
-	rb_define_method( globalContextSettingsClass, "minorVersion", FUNCPTR( ContextSettings_GetMinorVersion ), 0 );
-	rb_define_method( globalContextSettingsClass, "minorVersion=", FUNCPTR( ContextSettings_SetMinorVersion ), 1 );
+	rb_define_method( globalContextSettingsClass, "minorVersion", ContextSettings_GetMinorVersion, 0 );
+	rb_define_method( globalContextSettingsClass, "minorVersion=", ContextSettings_SetMinorVersion, 1 );
 	
 	// Aliases
 	rb_define_alias( globalContextSettingsClass, "depth", "depthBits" );

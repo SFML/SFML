@@ -26,50 +26,6 @@
 #include "Vector2.hpp"
 #include "main.hpp"
 
-/* SFML::Window is the main class of the Window module.
- *
- * It defines an OS window that is able to receive an OpenGL rendering.
- *
- * A SFML::Window can create its own new window, but using an already created window trough a handle is not supported
- * in the ruby bindings yet.
- *
- * The SFML::Window class provides a simple interface for manipulating the window: move, resize, show/hide, control mouse 
- * cursor, etc. It also provides event handling through its getEvent() function, and real-time state handling with its 
- * attached SFML::Input object (see getInput()).
- *
- * Note that OpenGL experts can pass their own parameters (antialiasing level, bits for the depth and stencil buffers, 
- * etc.) to the OpenGL context attached to the window, with the SFML::ContextSettings structure which is passed as an 
- * optional argument when creating the window.
- *
- * Usage example:
- *
- *   # Declare and create a new window
- *   window = SFML::Window.new( SFML::VideoMode.new( 800, 600 ), "SFML window" )
- *
- *   # Limit the framerate to 60 frames per second (this step is optional)
- *   window.setFramerateLimit( 60 );
- *
- *   # The main loop - ends as soon as the window is closed
- *   while window.open?
- *
- *     # Event processing
- *     while event = window.getEvent
- *
- *       # Request for closing the window
- *       if event.type == SFML::Event::Closed
- *         window.close()
- *       end
- *     end
- *
- *     # Activate the window for OpenGL rendering
- *     window.setActive()
- *
- *     # OpenGL drawing commands go here...
- *
- *     # End the current frame and display its contents on screen
- *     window.display()
- *   end
- */
 VALUE globalWindowClass;
 extern VALUE globalVideoModeClass;
 extern VALUE globalContextSettingsClass;
@@ -109,7 +65,7 @@ static VALUE Window_Close( VALUE self )
 }
 
 /* call-seq:
- *   window.Create( mode, title, style = SFML::Style::Default, settings = SFML::ContextSettings.new )
+ *   window.create( mode, title, style = SFML::Style::Default, settings = SFML::ContextSettings.new )
  *
  * Create (or recreate) the window. 
  *
@@ -703,38 +659,84 @@ static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 
 void Init_Window( void )
 {
-	globalWindowClass = rb_define_class_under( GetNamespace(), "Window", rb_cObject );
+/* SFML namespace which contains the classes of this module. */
+	VALUE sfml = rb_define_module( "SFML" );
+/* SFML::Window is the main class of the Window module.
+ *
+ * It defines an OS window that is able to receive an OpenGL rendering.
+ *
+ * A SFML::Window can create its own new window, but using an already created window trough a handle is not supported
+ * in the ruby bindings yet.
+ *
+ * The SFML::Window class provides a simple interface for manipulating the window: move, resize, show/hide, control mouse 
+ * cursor, etc. It also provides event handling through its getEvent() function, and real-time state handling with its 
+ * attached SFML::Input object (see getInput()).
+ *
+ * Note that OpenGL experts can pass their own parameters (antialiasing level, bits for the depth and stencil buffers, 
+ * etc.) to the OpenGL context attached to the window, with the SFML::ContextSettings structure which is passed as an 
+ * optional argument when creating the window.
+ *
+ * Usage example:
+ *
+ *   # Declare and create a new window
+ *   window = SFML::Window.new( SFML::VideoMode.new( 800, 600 ), "SFML window" )
+ *
+ *   # Limit the framerate to 60 frames per second (this step is optional)
+ *   window.setFramerateLimit( 60 );
+ *
+ *   # The main loop - ends as soon as the window is closed
+ *   while window.open?
+ *
+ *     # Event processing
+ *     while event = window.getEvent
+ *
+ *       # Request for closing the window
+ *       if event.type == SFML::Event::Closed
+ *         window.close()
+ *       end
+ *     end
+ *
+ *     # Activate the window for OpenGL rendering
+ *     window.setActive()
+ *
+ *     # OpenGL drawing commands go here...
+ *
+ *     # End the current frame and display its contents on screen
+ *     window.display()
+ *   end
+ */
+	globalWindowClass = rb_define_class_under( sfml, "Window", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalWindowClass, "new", FUNCPTR( Window_New ), -1 );
+	rb_define_singleton_method( globalWindowClass, "new", Window_New , -1 );
 	
 	// Instance methods
-	rb_define_method( globalWindowClass, "close", FUNCPTR( Window_Close ), 0 );
-	rb_define_method( globalWindowClass, "create", FUNCPTR( Window_Create ), -1 );
-	rb_define_method( globalWindowClass, "display", FUNCPTR( Window_Display ), 0 );
-	rb_define_method( globalWindowClass, "enableKeyRepeat", FUNCPTR( Window_EnableKeyRepeat ), 1 );
-	rb_define_method( globalWindowClass, "getEvent", FUNCPTR( Window_GetEvent ), 0 );
-	rb_define_method( globalWindowClass, "getFrameTime", FUNCPTR( Window_GetFrameTime ), 0 );
-	rb_define_method( globalWindowClass, "getHeight", FUNCPTR( Window_GetHeight ), 0 );
-	rb_define_method( globalWindowClass, "getInput", FUNCPTR( Window_GetInput ), 0 );
-	rb_define_method( globalWindowClass, "getSettings", FUNCPTR( Window_GetSettings ), 0 );
-	rb_define_method( globalWindowClass, "getWidth", FUNCPTR( Window_GetWidth ), 0 );
-	rb_define_method( globalWindowClass, "isOpened", FUNCPTR( Window_IsOpened ), 0 );
-	rb_define_method( globalWindowClass, "setActive", FUNCPTR( Window_SetActive ), 1 );
-	rb_define_method( globalWindowClass, "setCursorPosition", FUNCPTR( Window_SetCursorPosition ), 2 );
-	rb_define_method( globalWindowClass, "cursorPosition=", FUNCPTR( Window_SetCursorPosition2 ), 1 );
-	rb_define_method( globalWindowClass, "setFramerateLimit", FUNCPTR( Window_SetFramerateLimit ), 1 );
-	rb_define_method( globalWindowClass, "setIcon", FUNCPTR( Window_SetIcon ), 3 );
-	rb_define_method( globalWindowClass, "setJoystickThreshold", FUNCPTR( Window_SetJoystickThreshold ), 1 );
-	rb_define_method( globalWindowClass, "setPosition", FUNCPTR( Window_SetPosition ), 2 );
-	rb_define_method( globalWindowClass, "position=", FUNCPTR( Window_SetPosition2 ), 1 );
-	rb_define_method( globalWindowClass, "setSize", FUNCPTR( Window_SetSize ), 2 );
-	rb_define_method( globalWindowClass, "size=", FUNCPTR( Window_SetSize2 ), 1 );
-	rb_define_method( globalWindowClass, "setTitle", FUNCPTR( Window_SetTitle ), 1 );
-	rb_define_method( globalWindowClass, "show", FUNCPTR( Window_Show ), 1 );
-	rb_define_method( globalWindowClass, "showMouseCursor", FUNCPTR( Window_ShowMouseCursor ), 1 );
-	rb_define_method( globalWindowClass, "useVerticalSync", FUNCPTR( Window_UseVerticalSync ), 1 );
-	rb_define_method( globalWindowClass, "waitEvent", FUNCPTR( Window_WaitEvent ), 0 );
+	rb_define_method( globalWindowClass, "close", Window_Close, 0 );
+	rb_define_method( globalWindowClass, "create", Window_Create, -1 );
+	rb_define_method( globalWindowClass, "display", Window_Display, 0 );
+	rb_define_method( globalWindowClass, "enableKeyRepeat", Window_EnableKeyRepeat, 1 );
+	rb_define_method( globalWindowClass, "getEvent", Window_GetEvent, 0 );
+	rb_define_method( globalWindowClass, "getFrameTime", Window_GetFrameTime , 0 );
+	rb_define_method( globalWindowClass, "getHeight", Window_GetHeight, 0 );
+	rb_define_method( globalWindowClass, "getInput", Window_GetInput, 0 );
+	rb_define_method( globalWindowClass, "getSettings", Window_GetSettings, 0 );
+	rb_define_method( globalWindowClass, "getWidth", Window_GetWidth, 0 );
+	rb_define_method( globalWindowClass, "isOpened", Window_IsOpened, 0 );
+	rb_define_method( globalWindowClass, "setActive", Window_SetActive, 1 );
+	rb_define_method( globalWindowClass, "setCursorPosition", Window_SetCursorPosition, 2 );
+	rb_define_method( globalWindowClass, "cursorPosition=", Window_SetCursorPosition2, 1 );
+	rb_define_method( globalWindowClass, "setFramerateLimit", Window_SetFramerateLimit, 1 );
+	rb_define_method( globalWindowClass, "setIcon", Window_SetIcon, 3 );
+	rb_define_method( globalWindowClass, "setJoystickThreshold", Window_SetJoystickThreshold, 1 );
+	rb_define_method( globalWindowClass, "setPosition", Window_SetPosition, 2 );
+	rb_define_method( globalWindowClass, "position=", Window_SetPosition2, 1 );
+	rb_define_method( globalWindowClass, "setSize", Window_SetSize, 2 );
+	rb_define_method( globalWindowClass, "size=", Window_SetSize2, 1 );
+	rb_define_method( globalWindowClass, "setTitle", Window_SetTitle, 1 );
+	rb_define_method( globalWindowClass, "show", Window_Show, 1 );
+	rb_define_method( globalWindowClass, "showMouseCursor", Window_ShowMouseCursor, 1 );
+	rb_define_method( globalWindowClass, "useVerticalSync", Window_UseVerticalSync, 1 );
+	rb_define_method( globalWindowClass, "waitEvent", Window_WaitEvent, 0 );
 	
 	// Aliases
 	rb_define_alias( globalWindowClass, "keyRepeat=", "enableKeyRepeat" );

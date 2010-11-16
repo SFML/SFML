@@ -24,36 +24,6 @@
 #include "main.hpp"
 #include <SFML/Window/Input.hpp>
 
-/* SFML::Input provides a way to access the state of keys, mouse buttons, 
- * mouse position, joystick buttons and jostick axis.
- *
- * SFML::Input provides the same informations as the event system, but these 
- * informations can be accessed at any time, which is more convenient in many 
- * situations.
- *
- * For example, to move an entity you can decide to catch the 
- * SFML::Event::KeyPressed event on arrow keys. But if you do so, you will only 
- * receive one event when the key gets pressed (or repeated events if you 
- * activated this feature), thus the entity will not move smoothly. The best 
- * solution here is to use SFML::Input#isKeyDown so that you can update your 
- * entity's position at every iteration of your game loop, not only when you 
- * catch a KeyPressed event.
- *
- * Note that instances of SFML::Input cannot be created directly, they must be 
- * retrieved from a window (SFML::Window) with the SFML::Window#input method.
- *
- * Usage example:
- * 
- *   # Retrieve the input object attached to our window
- *   input = window.input
- *   
- *   # Move an entity according to the current keys state
- *   offset = 5.0 * window.frameTime # 5 pixels/sec
- *   entity.move( -offset, 0 ) if input.keyDown?( SFML::Key::Left )
- *   entity.move( offset, 0 )  if input.keyDown?( SFML::Key::Right )
- *   entity.move( 0, -offset ) if input.keyDown?( SFML::Key::Up )
- *   entity.move( 0,  offset ) if input.keyDown?( SFML::Key::Down )
- */
 VALUE globalInputClass;
 
 /* Free a heap allocated object 
@@ -179,18 +149,46 @@ static VALUE Input_New( int argc, VALUE * args, VALUE aKlass )
 
 void Init_Input( void )
 {
-	globalInputClass = rb_define_class_under( GetNamespace(), "Input", rb_cObject );
+/* SFML namespace which contains the classes of this module. */
+	VALUE sfml = rb_define_module( "SFML" );
+/* The SFML::Input class provides a way to access the state of keys, mouse buttons, mouse position, joystick 
+ * buttons and jostick axis.
+ *
+ * SFML::Input provides the same informations as the event system, but these informations can be accessed at any time, 
+ * which is more convenient in many situations.
+ *
+ * For example, to move an entity you can decide to catch the SFML::Event::KeyPressed event on arrow keys. But if you 
+ * do so, you will only receive one event when the key gets pressed (or repeated events if you activated this feature), 
+ * thus the entity will not move smoothly. The best solution here is to use SFML::Input#isKeyDown so that you can 
+ * update your entity's position at every iteration of your game loop, not only when you catch a KeyPressed event.
+ *
+ * Note that instances of SFML::Input cannot be created directly, they must be retrieved from a window (SFML::Window)
+ * with the SFML::Window#input method.
+ *
+ * Usage example:
+ * 
+ *   # Retrieve the input object attached to our window
+ *   input = window.input
+ *  
+ *   # Move an entity according to the current keys state
+ *   offset = 5.0 * window.frameTime # 5 pixels/sec
+ *   entity.move( -offset, 0 ) if input.keyDown?( SFML::Key::Left )
+ *   entity.move( offset, 0 )  if input.keyDown?( SFML::Key::Right )
+ *   entity.move( 0, -offset ) if input.keyDown?( SFML::Key::Up )
+ *   entity.move( 0,  offset ) if input.keyDown?( SFML::Key::Down )
+ */
+	globalInputClass = rb_define_class_under( sfml, "Input", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalInputClass, "new", FUNCPTR( Input_New ), -1 );
+	rb_define_singleton_method( globalInputClass, "new", Input_New, -1 );
 	
 	// Instance methods
-	rb_define_method( globalInputClass, "isKeyDown", FUNCPTR( Input_IsKeyDown ), 1 );
-	rb_define_method( globalInputClass, "isMouseButtonDown", FUNCPTR( Input_IsMouseButtonDown ), 1 );
-	rb_define_method( globalInputClass, "isJoystickButtonDown", FUNCPTR( Input_IsJoystickButtonDown ), 2 );
-	rb_define_method( globalInputClass, "getMouseX", FUNCPTR( Input_GetMouseX ), 0 );
-	rb_define_method( globalInputClass, "getMouseY", FUNCPTR( Input_GetMouseY ), 0 );
-	rb_define_method( globalInputClass, "getJoystickAxis", FUNCPTR( Input_GetJoystickAxis ), 2 );
+	rb_define_method( globalInputClass, "isKeyDown", Input_IsKeyDown, 1 );
+	rb_define_method( globalInputClass, "isMouseButtonDown", Input_IsMouseButtonDown, 1 );
+	rb_define_method( globalInputClass, "isJoystickButtonDown", Input_IsJoystickButtonDown, 2 );
+	rb_define_method( globalInputClass, "getMouseX", Input_GetMouseX, 0 );
+	rb_define_method( globalInputClass, "getMouseY", Input_GetMouseY, 0 );
+	rb_define_method( globalInputClass, "getJoystickAxis", Input_GetJoystickAxis, 2 );
 	
 	// Aliases
 	rb_define_alias( globalInputClass, "key_down?", "isKeyDown");

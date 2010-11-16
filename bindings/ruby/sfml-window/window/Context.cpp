@@ -24,20 +24,6 @@
 #include "main.hpp"
 #include <SFML/Window/Context.hpp>
 
-/* If you need to make OpenGL / graphics calls without having an active window 
- * (like in a thread), you can use an instance of this class to get a valid context.
- *
- * Having a valid context is necessary for *every* OpenGL call, and for most of 
- * the classes from the Graphics package.
- *
- * Note that a context is only active in its current thread, if you create a new
- * thread it will have no valid context by default.
- *
- * To use a sf::Context instance, just construct it and let it live as long as 
- * you need a valid context. No explicit activation is needed, all it has to do 
- * is to exist. Its destructor will take care of deactivating and freeing all 
- * the attached resources.
- */
 VALUE globalContextClass;
 
 /* Free a heap allocated object 
@@ -105,14 +91,31 @@ static VALUE Context_New( VALUE aKlass )
 
 void Init_Context( void )
 {
-	globalContextClass = rb_define_class_under( GetNamespace(), "Context", rb_cObject );
+
+/* SFML namespace which contains the classes of this module. */
+	VALUE sfml = rb_define_module( "SFML" );
+/* If you need to make OpenGL / graphics calls without having an active window 
+ * (like in a thread), you can use an instance of this class to get a valid context.
+ *
+ * Having a valid context is necessary for *every* OpenGL call, and for most of 
+ * the classes from the Graphics package.
+ *
+ * Note that a context is only active in its current thread, if you create a new
+ * thread it will have no valid context by default.
+ *
+ * To use a sf::Context instance, just construct it and let it live as long as 
+ * you need a valid context. No explicit activation is needed, all it has to do 
+ * is to exist. Its destructor will take care of deactivating and freeing all 
+ * the attached resources.
+ */
+	globalContextClass = rb_define_class_under( sfml, "Context", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalContextClass, "new", FUNCPTR( Context_New ), 0 );
-	rb_define_singleton_method( globalContextClass, "setReferenceActive", FUNCPTR( Context_SetReferenceActive ), 0 );
+	rb_define_singleton_method( globalContextClass, "new", Context_New, 0 );
+	rb_define_singleton_method( globalContextClass, "setReferenceActive", Context_SetReferenceActive, 0 );
 	
 	// Instance methods
-	rb_define_method( globalContextClass, "setActive", FUNCPTR( Context_SetActive ), 1 );
+	rb_define_method( globalContextClass, "setActive", Context_SetActive, 1 );
 	
 	// Aliases
 	rb_define_alias( globalContextClass, "active=", "setActive" );
