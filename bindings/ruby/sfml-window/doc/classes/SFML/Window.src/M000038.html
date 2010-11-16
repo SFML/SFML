@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>close (SFML::Window)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* call-seq:
+ *   window.close()
+ *
+ * Close the window and destroy all the attached resources. 
+ *
+ * After calling this function, the SFML::Window instance remains valid and you can call SFML::Window#create to recreate
+ * the window. All other functions such as getEvent or display will still work (i.e. you don't have to test 
+ * isOpened every time), and will have no effect on closed windows. 
+ */
+static VALUE Window_Close( VALUE self )
+{
+        sf::Window *object = NULL;
+        Data_Get_Struct( self, sf::Window, object );
+        object-&gt;Close();
+        return Qnil;
+}</pre>
+</body>
+</html>

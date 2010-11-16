@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>getJoystickAxis (SFML::Input)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* call-seq:
+ *   input.getJoystickAxis( joystick, axis )    -&gt; true or false
+ *
+ * The returned position is in the range [-100, 100], except the POV which is an angle and is thus defined in [0, 360].
+ */
+static VALUE Input_GetJoystickAxis( VALUE self, VALUE aJoystick, VALUE anAxis )
+{
+        sf::Input *object = NULL;
+        Data_Get_Struct( self, sf::Input, object );
+        unsigned int rawJoystick =  NUM2UINT( aJoystick );
+        sf::Joy::Axis rawAxis =  static_cast&lt; sf::Joy::Axis &gt;( NUM2INT( anAxis ) );
+        return rb_float_new( object-&gt;GetJoystickAxis( rawJoystick, rawAxis ) );
+}</pre>
+</body>
+</html>

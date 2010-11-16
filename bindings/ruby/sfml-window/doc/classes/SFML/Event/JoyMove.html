@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: SFML::Event::JoyMove</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">SFML::Event::JoyMove</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/window/Event_cpp.html">
+                window/Event.cpp
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="../Event.html">SFML::Event</a> holds all the informations about a
+system event that just happened.
+</p>
+<p>
+Events are retrieved using the SFML::Window#GetEvent function.
+</p>
+<p>
+A <a href="../Event.html">SFML::Event</a> instance contains the type of the
+event (mouse moved, key pressed, window closed, &#8230;) as well as the
+details about this particular event. Please note that the event parameters
+are defined in a union, which means that only the member matching the type
+of the event will be properly filled; all other members will have undefined
+values and must not be read if the type of the event doesn&#8216;t match.
+For example, if you received a KeyPressed event, then you must read the
+event.Key
+</p>
+<pre>
+ member, all other members such as event.MouseMove or event.Text will have undefined values.
+</pre>
+<p>
+The ruby version differs from C++ in that the parameters are still stored
+in a union but that the values can be directly accessed from the event
+object. If you try to access any data which would be considered undefined
+then SFML::SomeKindOfException will be thrown.
+</p>
+<p>
+Usage example:
+</p>
+<pre>
+ while event = window.getEvent()
+
+    # Request for closing the window
+    if event.type == SFML::Event::Closed
+      window.close
+
+    # The escape key was pressed
+    if ( event.type == sf::Event::KeyPressed ) &amp;&amp; ( event.code == SFML::Key::Escape )
+      window.close
+
+    # The window was resized
+    if event.type == SFML::Event::Resized
+      DoSomethingWithTheNewSize(event.size);
+
+    # etc ...
+  end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000111">axis</a>&nbsp;&nbsp;
+      <a href="#M000110">joystickId</a>&nbsp;&nbsp;
+      <a href="#M000112">position</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000111" class="method-detail">
+        <a name="M000111"></a>
+
+        <div class="method-heading">
+          <a href="JoyMove.src/M000111.html" target="Code" class="method-signature"
+            onclick="popupCode('JoyMove.src/M000111.html');return false;">
+          <span class="method-name">axis</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Axis on which the joystick moved.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000110" class="method-detail">
+        <a name="M000110"></a>
+
+        <div class="method-heading">
+          <a href="JoyMove.src/M000110.html" target="Code" class="method-signature"
+            onclick="popupCode('JoyMove.src/M000110.html');return false;">
+          <span class="method-name">joystickId</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Index of the joystick (0 or 1).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000112" class="method-detail">
+        <a name="M000112"></a>
+
+        <div class="method-heading">
+          <a href="JoyMove.src/M000112.html" target="Code" class="method-signature"
+            onclick="popupCode('JoyMove.src/M000112.html');return false;">
+          <span class="method-name">position</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+New <a href="JoyMove.html#M000112">position</a> on the <a
+href="JoyMove.html#M000111">axis</a> (in range [-100, 100]).
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

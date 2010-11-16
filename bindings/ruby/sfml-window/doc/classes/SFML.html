@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: SFML</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">SFML</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/window/main_cpp.html">
+                window/main.cpp
+                </a>
+        <br />
+                <a href="../files/window/ContextSettings_cpp.html">
+                window/ContextSettings.cpp
+                </a>
+        <br />
+                <a href="../files/window/Event_cpp.html">
+                window/Event.cpp
+                </a>
+        <br />
+                <a href="../files/window/VideoMode_cpp.html">
+                window/VideoMode.cpp
+                </a>
+        <br />
+                <a href="../files/window/Context_cpp.html">
+                window/Context.cpp
+                </a>
+        <br />
+                <a href="../files/window/Window_cpp.html">
+                window/Window.cpp
+                </a>
+        <br />
+                <a href="../files/window/Input_cpp.html">
+                window/Input.cpp
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="SFML.html">SFML</a> namespace which contains the classes of this
+module.
+</p>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="SFML/Joy.html" class="link">SFML::Joy</a><br />
+Module <a href="SFML/Key.html" class="link">SFML::Key</a><br />
+Module <a href="SFML/Mouse.html" class="link">SFML::Mouse</a><br />
+Module <a href="SFML/Style.html" class="link">SFML::Style</a><br />
+Class <a href="SFML/Context.html" class="link">SFML::Context</a><br />
+Class <a href="SFML/ContextSettings.html" class="link">SFML::ContextSettings</a><br />
+Class <a href="SFML/Event.html" class="link">SFML::Event</a><br />
+Class <a href="SFML/Input.html" class="link">SFML::Input</a><br />
+Class <a href="SFML/VideoMode.html" class="link">SFML::VideoMode</a><br />
+Class <a href="SFML/Window.html" class="link">SFML::Window</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">WindowLoaded</td>
+          <td>=</td>
+          <td class="context-item-value">Qtrue</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

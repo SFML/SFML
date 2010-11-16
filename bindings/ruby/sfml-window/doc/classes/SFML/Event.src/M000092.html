@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (SFML::Event)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* */
+static VALUE Event_Initialize( VALUE self, VALUE aType )
+{
+        sf::Event * object = NULL;
+        Data_Get_Struct( self, sf::Event, object );
+        
+        int typeNum = FIX2INT( aType );
+        if(typeNum &gt;= 0 &amp;&amp; typeNum &lt; sf::Event::Count)
+        {
+                rb_iv_set( self, &quot;@type&quot;, aType );
+                object-&gt;Type = static_cast&lt; sf::Event::EventType &gt;( typeNum );
+        }
+        else
+        {
+                rb_raise( rb_eTypeError, &quot;expected Fixnum in range of 0...SFML::Event::Count&quot; );
+        }
+        
+        bool noSpecialType = false;
+        VALUE eventType;
+        const char * name = NULL;
+        switch( object-&gt;Type )
+        {
+                case sf::Event::JoyButtonPressed:
+                case sf::Event::JoyButtonReleased:
+                        eventType = Data_Wrap_Struct( globalJoyButtonEventClass, 0, 0, &amp;object-&gt;JoyButton );
+                        name = &quot;@joyButton&quot;;
+                        break;
+                case sf::Event::JoyMoved:
+                        eventType = Data_Wrap_Struct( globalJoyMoveEventClass, 0, 0, &amp;object-&gt;JoyMove );
+                        name = &quot;@joyMove&quot;;
+                        break;
+                case sf::Event::KeyPressed:
+                case sf::Event::KeyReleased:
+                        eventType = Data_Wrap_Struct( globalKeyEventClass, 0, 0, &amp;object-&gt;Key );
+                        name = &quot;@key&quot;;
+                        break;
+                case sf::Event::MouseButtonPressed:
+                case sf::Event::MouseButtonReleased:
+                        eventType = Data_Wrap_Struct( globalMouseButtonEventClass, 0, 0, &amp;object-&gt;MouseButton );
+                        name = &quot;@mouseButton&quot;;
+                        break;
+                case sf::Event::MouseMoved:
+                        eventType = Data_Wrap_Struct( globalMouseMoveEventClass, 0, 0, &amp;object-&gt;MouseMove );
+                        name = &quot;@mouseMove&quot;;
+                        break;
+                case sf::Event::MouseWheelMoved:
+                        eventType = Data_Wrap_Struct( globalMouseWheelEventClass, 0, 0, &amp;object-&gt;MouseWheel );
+                        name = &quot;@mouseWheel&quot;;
+                        break;
+                case sf::Event::Resized:
+                        eventType = Data_Wrap_Struct( globalSizeEventClass, 0, 0, &amp;object-&gt;Size );
+                        name = &quot;@resized&quot;;
+                        break;
+                case sf::Event::TextEntered:
+                        eventType = Data_Wrap_Struct( globalTextEventClass, 0, 0, &amp;object-&gt;Text );
+                        name = &quot;@text&quot;;
+                        break;
+                default:
+                        noSpecialType = true;
+        };
+        
+        if( noSpecialType == false )
+        {
+                rb_obj_call_init( eventType, 0, 0 );
+                rb_iv_set( eventType, &quot;@internal__parent_ref&quot;, self );
+                rb_iv_set( self, name, eventType );
+        }
+}</pre>
+</body>
+</html>

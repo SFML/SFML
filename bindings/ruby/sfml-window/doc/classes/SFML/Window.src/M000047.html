@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>isOpened (SFML::Window)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* call-seq:
+ *   window.isOpened()  -&gt; true or false
+ *
+ * This function returns whether or not the window exists. Note that a hidden window (Show(false)) will return true.
+ */
+static VALUE Window_IsOpened( VALUE self )
+{
+        sf::Window *object = NULL;
+        Data_Get_Struct( self, sf::Window, object );
+        if( object-&gt;IsOpened() == true )
+        {
+                return Qtrue;
+        }
+        else
+        {
+                return Qfalse;
+        }
+}</pre>
+</body>
+</html>

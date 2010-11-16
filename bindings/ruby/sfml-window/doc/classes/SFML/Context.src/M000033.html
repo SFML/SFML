@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (SFML::Context)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* call-seq:
+ *   Context.new()              -&gt; context
+ *
+ * The constructor creates and activates the context
+ */
+static VALUE Context_New( VALUE aKlass )
+{
+        sf::Context *object = new sf::Context();
+        VALUE rbData = Data_Wrap_Struct( aKlass, 0, Context_Free, object );
+        rb_obj_call_init( rbData, 0, 0 );
+        return rbData;
+}</pre>
+</body>
+</html>

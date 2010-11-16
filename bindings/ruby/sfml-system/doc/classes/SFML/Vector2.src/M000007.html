@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>eql? (SFML::Vector2)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* */
+static VALUE Vector2_StrictEqual( VALUE self, VALUE anArgument )
+{
+        VALUE aVector = Vector2_ForceType( anArgument );
+        VALUE leftX  = rb_funcall( self, rb_intern( &quot;x&quot; ), 0 );
+        VALUE leftY  = rb_funcall( self, rb_intern( &quot;y&quot; ), 0 );
+        VALUE rightX = rb_funcall( aVector, rb_intern( &quot;x&quot; ), 0 );
+        VALUE rightY = rb_funcall( aVector, rb_intern( &quot;y&quot; ), 0 );
+        
+        if( rb_funcall( leftX, rb_intern( &quot;eql?&quot; ), 1, rightX ) == Qtrue &amp;&amp;
+            rb_funcall( leftY, rb_intern( &quot;eql?&quot; ), 1, rightY ) == Qtrue )
+        {
+                return Qtrue;
+        }
+        else
+        {
+                return Qfalse;
+        }
+}</pre>
+</body>
+</html>

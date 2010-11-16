@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>enableKeyRepeat (SFML::Window)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* call-seq:
+ *   window.enableKeyRepeat( enable )
+ *
+ * Enable or disable automatic key-repeat. 
+ *
+ * If key repeat is enabled, you will receive repeated KeyPress events while keeping a key pressed. If it is disabled, 
+ * you will only get a single event when the key is pressed.
+ *
+ * Key repeat is enabled by default.
+ */
+static VALUE Window_EnableKeyRepeat( VALUE self, VALUE anEnableFlag )
+{
+        sf::Window *object = NULL;
+        Data_Get_Struct( self, sf::Window, object );
+        if( anEnableFlag == Qfalse )
+        {
+                object-&gt;EnableKeyRepeat( false );
+        }
+        else if( anEnableFlag == Qtrue )
+        {
+                object-&gt;EnableKeyRepeat( true );
+        }
+        else
+        {
+                rb_raise( rb_eTypeError, &quot;Expected true or false&quot; );
+        }
+        return Qnil;
+}</pre>
+</body>
+</html>

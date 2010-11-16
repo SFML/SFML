@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>isJoystickButtonDown (SFML::Input)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* call-seq:
+ *   input.isJoystickButtonDown( joystick, button )     -&gt; true or false
+ *
+ * Get the current state of a joystick button (pressed or released).
+ */
+static VALUE Input_IsJoystickButtonDown( VALUE self, VALUE aJoystick, VALUE aButton )
+{
+        sf::Input *object = NULL;
+        Data_Get_Struct( self, sf::Input, object );
+        unsigned int rawJoystick =  NUM2UINT( aJoystick );
+        unsigned int rawButton =  NUM2UINT( aButton );
+        if( object-&gt;IsJoystickButtonDown( aJoystick, rawButton ) == true )
+        {
+                return Qtrue;
+        }
+        else
+        {
+                return Qfalse;
+        }
+}</pre>
+</body>
+</html>

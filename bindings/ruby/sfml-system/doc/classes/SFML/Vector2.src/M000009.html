@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>+ (SFML::Vector2)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* */
+static VALUE Vector2_Add( VALUE self, VALUE aRightOperand )
+{
+        VALUE rightVector = Vector2_ForceType( aRightOperand );
+        // Get values
+        VALUE leftX  = rb_funcall( self, rb_intern( &quot;x&quot; ), 0 );
+        VALUE leftY  = rb_funcall( self, rb_intern( &quot;y&quot; ), 0 );
+        VALUE rightX = rb_funcall( rightVector, rb_intern( &quot;x&quot; ), 0 );
+        VALUE rightY = rb_funcall( rightVector, rb_intern( &quot;y&quot; ), 0 );
+
+        // Do calculation      
+        VALUE newX = rb_funcall( leftX, rb_intern( &quot;+&quot; ), 1, rightX );
+        VALUE newY = rb_funcall( leftY, rb_intern( &quot;+&quot; ), 1, rightY );
+        
+        return rb_funcall( globalVector2Class, rb_intern( &quot;new&quot; ), 2, newX, newY );
+}</pre>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>create (SFML::Window)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* call-seq:
+ *   window.create( mode, title, style = SFML::Style::Default, settings = SFML::ContextSettings.new )
+ *
+ * Create (or recreate) the window. 
+ *
+ * If the window was already created, it closes it first. If style contains Style::Fullscreen, 
+ * then mode must be a valid video mode.
+ */
+static VALUE Window_Create( int argc, VALUE *args, VALUE self )
+{
+        sf::Window *object = NULL;
+        sf::VideoMode *mode = NULL;
+        sf::ContextSettings *settings = NULL;
+        VALUE arg0 = Qnil;
+        
+        Data_Get_Struct( self, sf::Window, object );
+        switch( argc )
+        {
+                case 2:
+                        arg0 = VideoMode_ForceType( args[0] );
+                        VALIDATE_CLASS( arg0, globalVideoModeClass, &quot;first&quot; );
+                        VALIDATE_CLASS( args[1], rb_cString, &quot;second&quot; );
+                        Data_Get_Struct( arg0, sf::VideoMode, mode );
+                        object-&gt;Create( *mode ,rb_string_value_cstr( &amp;args[1] ) );
+                        break;
+                case 3:
+                        arg0 = VideoMode_ForceType( args[0] );
+                        VALIDATE_CLASS( arg0, globalVideoModeClass, &quot;first&quot; );
+                        VALIDATE_CLASS( args[1], rb_cString, &quot;second&quot; );
+                        VALIDATE_CLASS( args[2], rb_cFixnum, &quot;third&quot; );
+                        Data_Get_Struct( arg0, sf::VideoMode, mode );
+                        object-&gt;Create( *mode, rb_string_value_cstr( &amp;args[1] ), FIX2UINT( args[2] ) );
+                        break;
+                case 4:
+                        arg0 = VideoMode_ForceType( args[0] );
+                        VALIDATE_CLASS( arg0, globalVideoModeClass, &quot;first&quot; );
+                        VALIDATE_CLASS( args[1], rb_cString, &quot;second&quot; );
+                        VALIDATE_CLASS( args[2], rb_cFixnum, &quot;third&quot; );
+                        VALIDATE_CLASS( args[3], globalContextSettingsClass, &quot;fourth&quot; );
+                        Data_Get_Struct( arg0, sf::VideoMode, mode );
+                        Data_Get_Struct( args[3], sf::ContextSettings, settings );
+                        object-&gt;Create( *mode, rb_string_value_cstr( &amp;args[1] ), FIX2UINT( args[2] ), *settings );
+                        break;
+                default:
+                        rb_raise( rb_eArgError, &quot;Expected 2..4 arguments but was given %d&quot;, argc );
+                        break;
+        }
+        return Qnil;
+}</pre>
+</body>
+</html>

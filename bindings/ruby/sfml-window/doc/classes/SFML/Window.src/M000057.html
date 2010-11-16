@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>size= (SFML::Window)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* call-seq:
+ *   window.size=( vector2 )
+ *
+ * Change the size of the rendering region of the window. 
+ */
+static VALUE Window_SetSize2( VALUE self, VALUE anArgument )
+{
+        VALUE argument = Vector2_ForceType( anArgument );
+        sf::Window *object = NULL;
+        Data_Get_Struct( self, sf::Window, object );
+        VALUE argumentX = rb_funcall( argument, rb_intern( &quot;x&quot; ), 0 );
+        VALUE argumentY = rb_funcall( argument, rb_intern( &quot;y&quot; ), 0 );
+        object-&gt;SetSize( FIX2UINT( argumentX ), FIX2UINT( argumentY ) );
+        return Qnil;
+}</pre>
+</body>
+</html>

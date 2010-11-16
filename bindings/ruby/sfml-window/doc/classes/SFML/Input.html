@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: SFML::Input</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">SFML::Input</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/window/main_cpp.html">
+                window/main.cpp
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <a href="Input.html">SFML::Input</a> class provides a way to access the
+state of keys, mouse buttons, mouse position, joystick buttons and jostick
+axis.
+</p>
+<p>
+<a href="Input.html">SFML::Input</a> provides the same informations as the
+event system, but these informations can be accessed at any time, which is
+more convenient in many situations.
+</p>
+<p>
+For example, to move an entity you can decide to catch the
+SFML::Event::KeyPressed event on arrow keys. But if you do so, you will
+only receive one event when the key gets pressed (or repeated events if you
+activated this feature), thus the entity will not move smoothly. The best
+solution here is to use <a
+href="Input.html#M000002">SFML::Input#isKeyDown</a> so that you can update
+your entity&#8216;s position at every iteration of your game loop, not only
+when you catch a KeyPressed event.
+</p>
+<p>
+Note that instances of <a href="Input.html">SFML::Input</a> cannot be
+created directly, they must be retrieved from a window (<a
+href="Window.html">SFML::Window</a>) with the <a
+href="Window.html#M000067">SFML::Window#input</a> method.
+</p>
+<p>
+Usage example:
+</p>
+<pre>
+  # Retrieve the input object attached to our window
+  input = window.input
+
+  # Move an entity according to the current keys state
+  offset = 5.0 * window.frameTime # 5 pixels/sec
+  entity.move( -offset, 0 ) if input.keyDown?( SFML::Key::Left )
+  entity.move( offset, 0 )  if input.keyDown?( SFML::Key::Right )
+  entity.move( 0, -offset ) if input.keyDown?( SFML::Key::Up )
+  entity.move( 0,  offset ) if input.keyDown?( SFML::Key::Down )
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000007">getJoystickAxis</a>&nbsp;&nbsp;
+      <a href="#M000005">getMouseX</a>&nbsp;&nbsp;
+      <a href="#M000006">getMouseY</a>&nbsp;&nbsp;
+      <a href="#M000004">isJoystickButtonDown</a>&nbsp;&nbsp;
+      <a href="#M000002">isKeyDown</a>&nbsp;&nbsp;
+      <a href="#M000003">isMouseButtonDown</a>&nbsp;&nbsp;
+      <a href="#M000018">joystickAxis</a>&nbsp;&nbsp;
+      <a href="#M000013">joystickButtonDown?</a>&nbsp;&nbsp;
+      <a href="#M000019">joystick_axis</a>&nbsp;&nbsp;
+      <a href="#M000012">joystick_button_down?</a>&nbsp;&nbsp;
+      <a href="#M000009">keyDown?</a>&nbsp;&nbsp;
+      <a href="#M000008">key_down?</a>&nbsp;&nbsp;
+      <a href="#M000011">mouseButtonDown?</a>&nbsp;&nbsp;
+      <a href="#M000014">mouseX</a>&nbsp;&nbsp;
+      <a href="#M000016">mouseY</a>&nbsp;&nbsp;
+      <a href="#M000010">mouse_button_down?</a>&nbsp;&nbsp;
+      <a href="#M000015">mouse_x</a>&nbsp;&nbsp;
+      <a href="#M000017">mouse_y</a>&nbsp;&nbsp;
+      <a href="#M000001">new</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000001" class="method-detail">
+        <a name="M000001"></a>
+
+        <div class="method-heading">
+          <a href="Input.src/M000001.html" target="Code" class="method-signature"
+            onclick="popupCode('Input.src/M000001.html');return false;">
+          <span class="method-name">Input.new()        &rarr; input<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This will create a <a href="Input.html#M000001">new</a> input object.
+though it will not receive any updates of events. You should aquire an
+input object from the <a href="Window.html#M000067">SFML::Window#input</a>
+method.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+          <a href="Input.src/M000007.html" target="Code" class="method-signature"
+            onclick="popupCode('Input.src/M000007.html');return false;">
+          <span class="method-name">input.getJoystickAxis( joystick, axis )    &rarr; true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The returned position is in the range [-100, 100], except the POV which is
+an angle and is thus defined in [0, 360].
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+          <a href="Input.src/M000005.html" target="Code" class="method-signature"
+            onclick="popupCode('Input.src/M000005.html');return false;">
+          <span class="method-name">input.getMouseX()  &rarr; fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The returned position is relative to the left border of the owner window.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
+
+        <div class="method-heading">
+          <a href="Input.src/M000006.html" target="Code" class="method-signature"
+            onclick="popupCode('Input.src/M000006.html');return false;">
+          <span class="method-name">input.getMouseY()  &rarr; fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The returned position is relative to the top border of the owner window.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
+
+        <div class="method-heading">
+          <a href="Input.src/M000004.html" target="Code" class="method-signature"
+            onclick="popupCode('Input.src/M000004.html');return false;">
+          <span class="method-name">input.isJoystickButtonDown( joystick, button )     &rarr; true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the current state of a joystick button (pressed or released).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000002" class="method-detail">
+        <a name="M000002"></a>
+
+        <div class="method-heading">
+          <a href="Input.src/M000002.html" target="Code" class="method-signature"
+            onclick="popupCode('Input.src/M000002.html');return false;">
+          <span class="method-name">input.isKeyDown( keycode ) &rarr; true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the current state of a key (pressed or released).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000003" class="method-detail">
+        <a name="M000003"></a>
+
+        <div class="method-heading">
+          <a href="Input.src/M000003.html" target="Code" class="method-signature"
+            onclick="popupCode('Input.src/M000003.html');return false;">
+          <span class="method-name">input.isMouseButtonDown( keycode ) &rarr; true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the current state of a mouse button (pressed or released).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000018" class="method-detail">
+        <a name="M000018"></a>
+
+        <div class="method-heading">
+          <span class="method-name">joystickAxis</span><span class="method-args">(p1, p2)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000007">getJoystickAxis</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000013" class="method-detail">
+        <a name="M000013"></a>
+
+        <div class="method-heading">
+          <span class="method-name">joystickButtonDown?</span><span class="method-args">(p1, p2)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000004">isJoystickButtonDown</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000019" class="method-detail">
+        <a name="M000019"></a>
+
+        <div class="method-heading">
+          <span class="method-name">joystick_axis</span><span class="method-args">(p1, p2)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000007">getJoystickAxis</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000012" class="method-detail">
+        <a name="M000012"></a>
+
+        <div class="method-heading">
+          <span class="method-name">joystick_button_down?</span><span class="method-args">(p1, p2)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000004">isJoystickButtonDown</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
+
+        <div class="method-heading">
+          <span class="method-name">keyDown?</span><span class="method-args">(p1)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000002">isKeyDown</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000008" class="method-detail">
+        <a name="M000008"></a>
+
+        <div class="method-heading">
+          <span class="method-name">key_down?</span><span class="method-args">(p1)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000002">isKeyDown</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000011" class="method-detail">
+        <a name="M000011"></a>
+
+        <div class="method-heading">
+          <span class="method-name">mouseButtonDown?</span><span class="method-args">(p1)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000003">isMouseButtonDown</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000014" class="method-detail">
+        <a name="M000014"></a>
+
+        <div class="method-heading">
+          <span class="method-name">mouseX</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000005">getMouseX</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000016" class="method-detail">
+        <a name="M000016"></a>
+
+        <div class="method-heading">
+          <span class="method-name">mouseY</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000006">getMouseY</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000010" class="method-detail">
+        <a name="M000010"></a>
+
+        <div class="method-heading">
+          <span class="method-name">mouse_button_down?</span><span class="method-args">(p1)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000003">isMouseButtonDown</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000015" class="method-detail">
+        <a name="M000015"></a>
+
+        <div class="method-heading">
+          <span class="method-name">mouse_x</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000005">getMouseX</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000017" class="method-detail">
+        <a name="M000017"></a>
+
+        <div class="method-heading">
+          <span class="method-name">mouse_y</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Input.html#M000006">getMouseY</a>
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

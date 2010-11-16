@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>useVerticalSync (SFML::Window)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* call-seq:
+ *   window.useVerticalSync( enabled )
+ *
+ * Enable or disable vertical synchronization.
+ *
+ * Activating vertical synchronization will limit the number of frames displayed to the refresh rate of the monitor. 
+ * This can avoid some visual artifacts, and limit the framerate to a good value (but not constant across different 
+ * computers).
+ *
+ * Vertical synchronization is disabled by default.
+ */
+static VALUE Window_UseVerticalSync( VALUE self, VALUE aEnableFlag )
+{
+        sf::Window *object = NULL;
+        Data_Get_Struct( self, sf::Window, object );
+        if( aEnableFlag == Qfalse )
+        {
+                object-&gt;UseVerticalSync( false );
+        }
+        else if( aEnableFlag == Qtrue )
+        {
+                object-&gt;UseVerticalSync( true );
+        }
+        else
+        {
+                rb_raise( rb_eTypeError, &quot;Expected true or false&quot; );
+        }
+        return Qnil;
+}</pre>
+</body>
+</html>
