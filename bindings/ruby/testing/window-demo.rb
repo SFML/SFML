@@ -2,6 +2,7 @@ require 'sfml/system'
 require 'sfml/window'
 
 app = SFML::Window.new( SFML::VideoMode.new( 800, 600 ), "My Ruby SFML" )
+app.framerate = 100
 input = app.input
 
 while app.open?
