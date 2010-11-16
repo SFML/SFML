@@ -27,7 +27,7 @@
 
 /* A video mode is defined by a width and a height (in pixels) and a depth (in bits per pixel).
  *
- * Video modes are used to setup windows (sf::Window) at creation time.
+ * Video modes are used to setup windows (SFML::Window) at creation time.
  * 
  * The main usage of video modes is for fullscreen mode: indeed you must use one of the valid 
  * video modes allowed by the OS (which are defined by what the monitor and the graphics card support), 
@@ -44,10 +44,10 @@
  * Usage example:
  * 
  *   # Display the list of all the video modes available for fullscreen
- *   modes = SFMK::VideoMode.getFullscreenModes()
+ *   modes = SFML::VideoMode.getFullscreenModes()
  *   i = 0
  *   modes.each do | mode |
- *     puts "Mode #" + i + ": " + mode.Width + "x" + mode.Height + " - " + mode.BitsPerPixel + " bpp"
+ *     puts "Mode #" + i + ": " + mode.width + "x" + mode.height + " - " + mode.bitsPerPixel + " bpp"
  *
  *   end
  *
@@ -96,6 +96,11 @@ static void VideoMode_Free( sf::VideoMode *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   mode.width		-> width
+ *
+ * Video mode width, in pixels.
+ */
 static VALUE VideoMode_GetWidth( VALUE self )
 {
 	sf::VideoMode *object = NULL;
@@ -103,6 +108,11 @@ static VALUE VideoMode_GetWidth( VALUE self )
 	return INT2FIX( object->Width );
 }
 
+/* call-seq:
+ *   mode.width=(new_width)	-> new_width
+ *
+ * Video mode width, in pixels.
+ */
 static VALUE VideoMode_SetWidth( VALUE self, VALUE aValue )
 {
 	sf::VideoMode *object = NULL;
@@ -110,6 +120,11 @@ static VALUE VideoMode_SetWidth( VALUE self, VALUE aValue )
 	return INT2FIX( object->Width = NUM2UINT( aValue ) );
 }
 
+/* call-seq:
+ *   mode.height	-> height
+ *
+ * Video mode height, in pixels.
+ */
 static VALUE VideoMode_GetHeight( VALUE self )
 {
 	sf::VideoMode *object = NULL;
@@ -117,6 +132,11 @@ static VALUE VideoMode_GetHeight( VALUE self )
 	return INT2FIX( object->Height );
 }
 
+/* call-seq:
+ *   mode.height=(new_height)	-> new_height
+ *
+ * Video mode height, in pixels.
+ */
 static VALUE VideoMode_SetHeight( VALUE self, VALUE aValue )
 {
 	sf::VideoMode *object = NULL;
@@ -124,6 +144,11 @@ static VALUE VideoMode_SetHeight( VALUE self, VALUE aValue )
 	return INT2FIX( object->Height = NUM2UINT( aValue ) );
 }
 
+/* call-seq:
+ *   mode.bitsPerPixel	-> bpp
+ *
+ * Video mode pixel depth, in bits per pixels. 
+ */
 static VALUE VideoMode_GetBitsPerPixel( VALUE self )
 {
 	sf::VideoMode *object = NULL;
@@ -131,6 +156,11 @@ static VALUE VideoMode_GetBitsPerPixel( VALUE self )
 	return INT2FIX( object->BitsPerPixel );
 }
 
+/* call-seq:
+ *   mode.bitsPerPixel=(new_bpp)	-> new_bpp
+ *
+ * Video mode pixel depth, in bits per pixels. 
+ */
 static VALUE VideoMode_SetBitsPerPixel( VALUE self, VALUE aValue )
 {
 	sf::VideoMode *object = NULL;
@@ -138,6 +168,11 @@ static VALUE VideoMode_SetBitsPerPixel( VALUE self, VALUE aValue )
 	return INT2FIX( object->BitsPerPixel = NUM2UINT( aValue ) );
 }
 
+/* call-seq:
+ *   VideoMode.getDesktopMode	-> desktop_mode
+ *
+ * Get the current desktop video mode. 
+ */
 static VALUE VideoMode_GetDesktopMode( VALUE aKlass )
 {
 	sf::VideoMode *object = new sf::VideoMode( sf::VideoMode::GetDesktopMode() );
@@ -146,6 +181,16 @@ static VALUE VideoMode_GetDesktopMode( VALUE aKlass )
 	return rbData;
 }
 
+/* call-seq:
+ *   VideoMode.getFullscreenModes	-> [supported_modes]
+ *
+ * Retrieve all the video modes supported in fullscreen mode.
+ *
+ * When creating a fullscreen window, the video mode is restricted to be compatible with what the graphics driver and 
+ * monitor support. This function returns the complete list of all video modes that can be used in fullscreen mode. 
+ * The returned array is sorted from best to worst, so that the first element will always give the best mode
+ * (higher width, height and bits-per-pixel).
+ */
 static VALUE VideoMode_GetFullscreenModes( VALUE aKlass )
 {
 	const std::vector< sf::VideoMode >& modes = sf::VideoMode::GetFullscreenModes();
@@ -160,6 +205,12 @@ static VALUE VideoMode_GetFullscreenModes( VALUE aKlass )
 	return array;
 }
 
+/* call-seq:
+ *   VideoMode.new()				-> mode
+ *   VideoMode.new( width, height, bpp = 32 )	-> mode
+ *
+ * Create a new mode.
+ */
 static VALUE VideoMode_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::VideoMode *object = NULL;
@@ -201,6 +252,12 @@ void Init_VideoMode( void )
 
 	rb_define_method( globalVideoModeClass, "bitsPerPixel", FUNCPTR( VideoMode_GetBitsPerPixel ), 0 );
 	rb_define_method( globalVideoModeClass, "bitsPerPixel=", FUNCPTR( VideoMode_SetBitsPerPixel ), 1 );
+	
+	// Class aliases
+	rb_define_alias( CLASS_OF( globalVideoModeClass ), "desktopMode", "getDesktopMode" );
+	rb_define_alias( CLASS_OF( globalVideoModeClass ), "desktop_mode", "getDesktopMode" );
+	rb_define_alias( CLASS_OF( globalVideoModeClass ), "fullscreenModes", "getFullscreenModes" );
+	rb_define_alias( CLASS_OF( globalVideoModeClass ), "fullscreen_modes", "getFullscreenModes" );
 	
 	// Aliases
 	rb_define_alias( globalVideoModeClass, "bits_per_pixel", "bitsPerPixel" );

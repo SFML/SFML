@@ -35,24 +35,24 @@
  * SFML::Event::KeyPressed event on arrow keys. But if you do so, you will only 
  * receive one event when the key gets pressed (or repeated events if you 
  * activated this feature), thus the entity will not move smoothly. The best 
- * solution here is to use sf::Input::IsKeyDown so that you can update your 
+ * solution here is to use SFML::Input#isKeyDown so that you can update your 
  * entity's position at every iteration of your game loop, not only when you 
  * catch a KeyPressed event.
  *
- * Note that instances of sf::Input cannot be created directly, they must be 
- * retrieved from a window (sf::Window) with its GetInput() function.
+ * Note that instances of SFML::Input cannot be created directly, they must be 
+ * retrieved from a window (SFML::Window) with the SFML::Window#input method.
  *
  * Usage example:
  * 
  *   # Retrieve the input object attached to our window
- *   input = window.getInput();
+ *   input = window.input
  *   
  *   # Move an entity according to the current keys state
- *   offset = 5.0 * window.GetFrameTime(); # 5 pixels/sec
- *   entity.move( -offset, 0 ) if input.isKeyDown?( SFML::Key::Left )
- *   entity.move( offset, 0 )  if input.isKeyDown?( SFML::Key::Right )
- *   entity.move( 0, -offset ) if input.isKeyDown?( SFML::Key::Up )
- *   entity.move( 0,  offset ) if input.isKeyDown?( SFML::Key::Down )
+ *   offset = 5.0 * window.frameTime # 5 pixels/sec
+ *   entity.move( -offset, 0 ) if input.keyDown?( SFML::Key::Left )
+ *   entity.move( offset, 0 )  if input.keyDown?( SFML::Key::Right )
+ *   entity.move( 0, -offset ) if input.keyDown?( SFML::Key::Up )
+ *   entity.move( 0,  offset ) if input.keyDown?( SFML::Key::Down )
  */
 VALUE globalInputClass;
 
@@ -166,7 +166,8 @@ static VALUE Input_GetJoystickAxis( VALUE self, VALUE aJoystick, VALUE anAxis )
 /* call-seq:
  *   Input.new()	-> input
  *
- * The constructor creates a new input.
+ * This will create a new input object. though it will not receive any updates of events.
+ * You should aquire an input object from the SFML::Window#input method.
  */
 static VALUE Input_New( int argc, VALUE * args, VALUE aKlass )
 {

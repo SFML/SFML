@@ -60,6 +60,11 @@ static void ContextSettings_Free( sf::ContextSettings *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   settings.depthBits	-> depth
+ *
+ * Bits of the depth buffer
+ */
 static VALUE ContextSettings_GetDepth( VALUE self )
 {
 	sf::ContextSettings *object = NULL;
@@ -67,6 +72,11 @@ static VALUE ContextSettings_GetDepth( VALUE self )
 	return INT2FIX( object->DepthBits );
 }
 
+/* call-seq:
+ *   settings.depthBits=(new_depth)	-> new_depth
+ *
+ * Bits of the depth buffer
+ */
 static VALUE ContextSettings_SetDepth( VALUE self, VALUE aValue )
 {
 	sf::ContextSettings *object = NULL;
@@ -74,6 +84,11 @@ static VALUE ContextSettings_SetDepth( VALUE self, VALUE aValue )
 	return INT2FIX( object->DepthBits = NUM2UINT( aValue ) );
 }
 
+/* call-seq:
+ *   settings.stencilBits	-> stencil
+ *
+ * Bits of the stencil buffer
+ */
 static VALUE ContextSettings_GetStencil( VALUE self )
 {
 	sf::ContextSettings *object = NULL;
@@ -81,6 +96,11 @@ static VALUE ContextSettings_GetStencil( VALUE self )
 	return INT2FIX( object->StencilBits );
 }
 
+/* call-seq:
+ *   settings.stencilBits=(new_stencil)	-> new_stencil
+ *
+ * Bits of the stencil buffer
+ */
 static VALUE ContextSettings_SetStencil( VALUE self, VALUE aValue )
 {
 	sf::ContextSettings *object = NULL;
@@ -88,6 +108,11 @@ static VALUE ContextSettings_SetStencil( VALUE self, VALUE aValue )
 	return INT2FIX( object->StencilBits = NUM2UINT( aValue ) );
 }
 
+/* call-seq:
+ *   settings.antialiasingLevel	-> antialiasing
+ *
+ * Level of antialiasing
+ */
 static VALUE ContextSettings_GetAntialiasing( VALUE self )
 {
 	sf::ContextSettings *object = NULL;
@@ -95,6 +120,11 @@ static VALUE ContextSettings_GetAntialiasing( VALUE self )
 	return INT2FIX( object->AntialiasingLevel );
 }
 
+/* call-seq:
+ *   settings.antialiasingLevel=(new_antialiasing)	-> new_antialiasing
+ *
+ * Level of antialiasing
+ */
 static VALUE ContextSettings_SetAntialiasing( VALUE self, VALUE aValue )
 {
 	sf::ContextSettings *object = NULL;
@@ -102,6 +132,11 @@ static VALUE ContextSettings_SetAntialiasing( VALUE self, VALUE aValue )
 	return INT2FIX( object->AntialiasingLevel = NUM2UINT( aValue ) );
 }
 
+/* call-seq:
+ *   settings.majorVersion	-> major
+ *
+ * Major number of the context version to create
+ */
 static VALUE ContextSettings_GetMajorVersion( VALUE self )
 {
 	sf::ContextSettings *object = NULL;
@@ -109,6 +144,11 @@ static VALUE ContextSettings_GetMajorVersion( VALUE self )
 	return INT2FIX( object->MajorVersion );
 }
 
+/* call-seq:
+ *   settings.majorVersion=(new_major)	-> new_major
+ *
+ * Major number of the context version to create
+ */
 static VALUE ContextSettings_SetMajorVersion( VALUE self, VALUE aValue )
 {
 	sf::ContextSettings *object = NULL;
@@ -116,6 +156,11 @@ static VALUE ContextSettings_SetMajorVersion( VALUE self, VALUE aValue )
 	return INT2FIX( object->MajorVersion = NUM2UINT( aValue ) );
 }
 
+/* call-seq:
+ *   settings.minorVersion	-> minor
+ *
+ * Minor number of the context version to create
+ */
 static VALUE ContextSettings_GetMinorVersion( VALUE self )
 {
 	sf::ContextSettings *object = NULL;
@@ -123,6 +168,11 @@ static VALUE ContextSettings_GetMinorVersion( VALUE self )
 	return INT2FIX( object->MinorVersion );
 }
 
+/* call-seq:
+ *   settings.minorVersion=(new_minor)	-> new_minor
+ *
+ * Minor number of the context version to create
+ */
 static VALUE ContextSettings_SetMinorVersion( VALUE self, VALUE aValue )
 {
 	sf::ContextSettings *object = NULL;
@@ -130,6 +180,11 @@ static VALUE ContextSettings_SetMinorVersion( VALUE self, VALUE aValue )
 	return INT2FIX( object->MinorVersion = NUM2UINT( aValue ) );
 }
 
+/* call-seq:
+ *   ContextSettings.new( depth = 24, stencil = 8, antialiasing = 0, major = 2, minor = 0)	-> settings
+ *
+ * The constructor creates the settings
+ */
 static VALUE ContextSettings_New( VALUE aKlass, VALUE someArgs )
 {
 	long arrayLength = RARRAY_LEN( someArgs );	

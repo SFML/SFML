@@ -30,10 +30,8 @@
  *
  * It defines an OS window that is able to receive an OpenGL rendering.
  *
- * A SFML::Window can create its own new window, or be embedded into an already existing control using the Create(handle)
- * function. This can be useful for embedding an OpenGL rendering area into a view which is part of a bigger GUI with 
- * existing windows, controls, etc. It can also serve as embedding an OpenGL rendering area into a window created by 
- * another (probably richer) GUI library like Qt or wxWidgets.
+ * A SFML::Window can create its own new window, but using an already created window trough a handle is not supported
+ * in the ruby bindings yet.
  *
  * The SFML::Window class provides a simple interface for manipulating the window: move, resize, show/hide, control mouse 
  * cursor, etc. It also provides event handling through its getEvent() function, and real-time state handling with its 
@@ -93,6 +91,15 @@ static void Window_Free( sf::Window *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   window.close()
+ *
+ * Close the window and destroy all the attached resources. 
+ *
+ * After calling this function, the SFML::Window instance remains valid and you can call SFML::Window#create to recreate
+ * the window. All other functions such as getEvent or display will still work (i.e. you don't have to test 
+ * isOpened every time), and will have no effect on closed windows. 
+ */
 static VALUE Window_Close( VALUE self )
 {
 	sf::Window *object = NULL;
@@ -101,6 +108,14 @@ static VALUE Window_Close( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.Create( mode, title, style = SFML::Style::Default, settings = SFML::ContextSettings.new )
+ *
+ * Create (or recreate) the window. 
+ *
+ * If the window was already created, it closes it first. If style contains Style::Fullscreen, 
+ * then mode must be a valid video mode.
+ */
 static VALUE Window_Create( int argc, VALUE *args, VALUE self )
 {
 	sf::Window *object = NULL;
@@ -143,7 +158,14 @@ static VALUE Window_Create( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
-
+/* call-seq:
+ *   window.display()
+ *
+ * Display on screen what has been rendered to the window so far. 
+ *
+ * This function is typically called after all OpenGL rendering has been done for the current frame, in order to show 
+ * it on screen. 
+ */
 static VALUE Window_Display( VALUE self )
 {
 	sf::Window *object = NULL;
@@ -152,6 +174,16 @@ static VALUE Window_Display( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.enableKeyRepeat( enable )
+ *
+ * Enable or disable automatic key-repeat. 
+ *
+ * If key repeat is enabled, you will receive repeated KeyPress events while keeping a key pressed. If it is disabled, 
+ * you will only get a single event when the key is pressed.
+ *
+ * Key repeat is enabled by default.
+ */
 static VALUE Window_EnableKeyRepeat( VALUE self, VALUE anEnableFlag )
 {
 	sf::Window *object = NULL;
@@ -171,6 +203,15 @@ static VALUE Window_EnableKeyRepeat( VALUE self, VALUE anEnableFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.getEvent()	-> event or nil
+ *
+ * Pop the event on top of events stack, if any, and return it.
+ *
+ * This function is not blocking: if there's no pending event then it will return nil. Note that more than the returned
+ * event may be present in the events stack, thus you should always call this function in a loop to make sure that you
+ * process every pending event. 
+ */
 static VALUE Window_GetEvent( VALUE self )
 {
 	sf::Event event;
@@ -190,6 +231,12 @@ static VALUE Window_GetEvent( VALUE self )
 	}	
 }
 
+/* call-seq:
+ *   window.getFrameTime()	-> float
+ *
+ * This function returns the time elapsed during the last frame. This can be useful for calculating the framerate, or 
+ * for updating the application's objects.
+ */
 static VALUE Window_GetFrameTime( VALUE self )
 {
 	sf::Window *object = NULL;
@@ -197,6 +244,13 @@ static VALUE Window_GetFrameTime( VALUE self )
 	return rb_float_new( object->GetFrameTime() );
 }
 
+/* call-seq:
+ *   window.getHeight()	-> fixnum
+ *
+ * Get the height of the rendering region of the window.
+ *
+ * The height doesn't include the titlebar and borders of the window.
+ */
 static VALUE Window_GetHeight( VALUE self )
 {
 	sf::Window *object = NULL;
@@ -204,6 +258,11 @@ static VALUE Window_GetHeight( VALUE self )
 	return INT2FIX( object->GetHeight() );
 }
 
+/* call-seq:
+ *   window.getInput()	-> input
+ *
+ * This input gives access to the real-time state of keyboard, mouse and joysticks for this window
+ */
 static VALUE Window_GetInput( VALUE self )
 {
 	sf::Window *object = NULL;
@@ -213,6 +272,14 @@ static VALUE Window_GetInput( VALUE self )
 	return rbData;
 }
 
+/* call-seq:
+ *   window.getSettings()	-> settings
+ *
+ * Get the settings of the OpenGL context of the window.
+ *
+ * Note that these settings may be different from what was passed to the constructor or the Create() function, if one 
+ * or more settings were not supported. In this case, SFML chose the closest match.
+ */
 static VALUE Window_GetSettings( VALUE self )
 {
 	sf::Window *object = NULL;
@@ -222,6 +289,13 @@ static VALUE Window_GetSettings( VALUE self )
 	return rbData;
 }
 
+/* call-seq:
+ *   window.getWidth()	-> fixnum
+ *
+ * Get the width of the rendering region of the window.
+ *
+ * The width doesn't include the titlebar and borders of the window.
+ */
 static VALUE Window_GetWidth( VALUE self )
 {
 	sf::Window *object = NULL;
@@ -229,6 +303,11 @@ static VALUE Window_GetWidth( VALUE self )
 	return INT2FIX( object->GetWidth() );
 }
 
+/* call-seq:
+ *   window.isOpened()	-> true or false
+ *
+ * This function returns whether or not the window exists. Note that a hidden window (Show(false)) will return true.
+ */
 static VALUE Window_IsOpened( VALUE self )
 {
 	sf::Window *object = NULL;
@@ -243,6 +322,15 @@ static VALUE Window_IsOpened( VALUE self )
 	}
 }
 
+/* call-seq:
+ *   window.setActive( activate )	-> true or false
+ *
+ * Activate or deactivate the window as the current target for OpenGL rendering.
+ *
+ * A window is active only on the current thread, if you want to make it active on another thread you have to 
+ * deactivate it on the previous thread first if it was active. Only one window can be active on a thread at a time, 
+ * thus the window previously active (if any) automatically gets deactivated.
+ */
 static VALUE Window_SetActive( VALUE self, VALUE anActiveFlag )
 {
 	sf::Window *object = NULL;
@@ -262,6 +350,11 @@ static VALUE Window_SetActive( VALUE self, VALUE anActiveFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.setCursorPosition( new_x, new_y )
+ *
+ * Change the position of the mouse cursor. 
+ */
 static VALUE Window_SetCursorPosition( VALUE self, VALUE aX, VALUE aY )
 {
 	sf::Window *object = NULL;
@@ -270,6 +363,11 @@ static VALUE Window_SetCursorPosition( VALUE self, VALUE aX, VALUE aY )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.cursorPosition=( vector2 )
+ *
+ * Change the position of the mouse cursor. 
+ */
 static VALUE Window_SetCursorPosition2( VALUE self, VALUE anArgument )
 {
 	VALUE argument = Vector2_ForceType( anArgument );
@@ -281,6 +379,14 @@ static VALUE Window_SetCursorPosition2( VALUE self, VALUE anArgument )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.setFramerateLimit( new_limit )
+ *
+ * Limit the framerate to a maximum fixed frequency.
+ *
+ * If a limit is set, the window will use a small delay after each call to Display() to ensure that the current frame 
+ * lasted long enough to match the framerate limit.
+ */
 static VALUE Window_SetFramerateLimit( VALUE self, VALUE aLimit )
 {
 	sf::Window *object = NULL;
@@ -289,6 +395,25 @@ static VALUE Window_SetFramerateLimit( VALUE self, VALUE aLimit )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.setIcon( width, height, pixels )
+ *
+ * Change the window's icon.
+ *
+ * pixels must be an array of width x height pixels in 32-bits RGBA format. In the ruby binding the array will be
+ * flattened so you can have array's up to 3 dimensions(or more) to represent each pixel component. The size of the
+ * array will be assumed to be width * height * 4.
+ *
+ * The OS default icon is used by default.
+ * 
+ * Usage example:
+ *   pixels = [
+ *     [[255, 0, 0, 255], [0, 0, 255, 255]],
+ *     [[0, 255, 0, 255], [0, 0, 0, 255]]
+ *   ]
+ *   
+ *   window.setIcon( 2, 2, pixels )
+ */
 static VALUE Window_SetIcon( VALUE self, VALUE aWidth, VALUE aHeight, VALUE somePixels )
 {
 	const unsigned int rawWidth = FIX2UINT( aWidth );
@@ -310,6 +435,15 @@ static VALUE Window_SetIcon( VALUE self, VALUE aWidth, VALUE aHeight, VALUE some
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.setJoystickThreshold( new_threshold )
+ *
+ * Change the joystick threshold.
+ *
+ * The joystick threshold is the value below which no JoyMoved event will be generated.
+ *
+ * The threshold value is 0.1 by default. The threshold has to be in the range 0..100
+ */
 static VALUE Window_SetJoystickThreshold( VALUE self, VALUE aThreshold )
 {
 	sf::Window *object = NULL;
@@ -318,6 +452,14 @@ static VALUE Window_SetJoystickThreshold( VALUE self, VALUE aThreshold )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.setPosition( new_x, new_y )
+ *
+ * Change the position of the window on screen.
+ *
+ * This function only works for top-level windows (i.e. it will be ignored for windows created from the handle of a 
+ * child window/control).
+ */
 static VALUE Window_SetPosition( VALUE self, VALUE aX, VALUE aY )
 {
 	sf::Window *object = NULL;
@@ -326,6 +468,14 @@ static VALUE Window_SetPosition( VALUE self, VALUE aX, VALUE aY )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.position=( vector2 )
+ *
+ * Change the position of the window on screen.
+ *
+ * This function only works for top-level windows (i.e. it will be ignored for windows created from the handle of a 
+ * child window/control).
+ */
 static VALUE Window_SetPosition2( VALUE self, VALUE anArgument )
 {
 	VALUE argument = Vector2_ForceType( anArgument );
@@ -337,6 +487,11 @@ static VALUE Window_SetPosition2( VALUE self, VALUE anArgument )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.setSize( new_width, new_height )
+ *
+ * Change the size of the rendering region of the window. 
+ */
 static VALUE Window_SetSize( VALUE self, VALUE aWidth, VALUE aHeight )
 {
 	sf::Window *object = NULL;
@@ -345,6 +500,11 @@ static VALUE Window_SetSize( VALUE self, VALUE aWidth, VALUE aHeight )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.size=( vector2 )
+ *
+ * Change the size of the rendering region of the window. 
+ */
 static VALUE Window_SetSize2( VALUE self, VALUE anArgument )
 {
 	VALUE argument = Vector2_ForceType( anArgument );
@@ -356,6 +516,11 @@ static VALUE Window_SetSize2( VALUE self, VALUE anArgument )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.setTitle( new_title )
+ *
+ * Change the title of the window. 
+ */
 static VALUE Window_SetTitle( VALUE self, VALUE aTitle )
 {
 	sf::Window *object = NULL;
@@ -364,6 +529,13 @@ static VALUE Window_SetTitle( VALUE self, VALUE aTitle )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.show( show )
+ *
+ * Show or hide the window.
+ *
+ * The window is shown by default. 
+ */
 static VALUE Window_Show( VALUE self, VALUE aShowFlag )
 {
 	sf::Window *object = NULL;
@@ -383,6 +555,13 @@ static VALUE Window_Show( VALUE self, VALUE aShowFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.showMouseCursor( show )
+ *
+ * Show or hide the mouse cursor.
+ *
+ * The mouse cursor is shown by default.
+ */
 static VALUE Window_ShowMouseCursor( VALUE self, VALUE aShowFlag )
 {
 	sf::Window *object = NULL;
@@ -402,6 +581,17 @@ static VALUE Window_ShowMouseCursor( VALUE self, VALUE aShowFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.useVerticalSync( enabled )
+ *
+ * Enable or disable vertical synchronization.
+ *
+ * Activating vertical synchronization will limit the number of frames displayed to the refresh rate of the monitor. 
+ * This can avoid some visual artifacts, and limit the framerate to a good value (but not constant across different 
+ * computers).
+ *
+ * Vertical synchronization is disabled by default.
+ */
 static VALUE Window_UseVerticalSync( VALUE self, VALUE aEnableFlag )
 {
 	sf::Window *object = NULL;
@@ -421,6 +611,16 @@ static VALUE Window_UseVerticalSync( VALUE self, VALUE aEnableFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   window.waitEvent()	-> event or nil
+ *
+ * Wait for an event and return it.
+ *
+ * This function is blocking: if there's no pending event then it will wait until an event is received. After this 
+ * function returns (and no error occured), the event object is always valid and filled properly. This function is 
+ * typically used when you have a thread that is dedicated to events handling: you want to make this thread sleep as 
+ * long as no new event is received. 
+ */
 static VALUE Window_WaitEvent( VALUE self )
 {
 	sf::Event event;
@@ -440,6 +640,22 @@ static VALUE Window_WaitEvent( VALUE self )
 	}	
 }
 
+/* call-seq:
+ *   Window.new()											-> window
+ *   Window.new( mode, title, style = SFML::Style::Default, settings = SFML::ContextSettings.new )	-> window
+ *
+ * Construct a new window.
+ *
+ * The first form of new doesn't actually create the visual window, use the other form of new or call 
+ * SFML::Window#create to do so.
+ *
+ * The second form of new creates the window with the size and pixel depth defined in mode. An optional style can be passed 
+ * to customize the look and behaviour of the window (borders, title bar, resizable, closable, ...). If style contains 
+ * Style::Fullscreen, then mode must be a valid video mode.
+ *
+ * The fourth parameter is an optional structure specifying advanced OpenGL context settings such as antialiasing, 
+ * depth-buffer bits, etc. You shouldn't care about these parameters for a regular usage of the graphics module.
+ */
 static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::Window *object = NULL;

@@ -228,9 +228,12 @@ static VALUE Event_Initialize( VALUE self, VALUE aType )
 }
 
 /* call-seq:
- *   Event.new()	-> event
+ *   Event.new(type)	-> event
  *
- * The constructor creates a new event.
+ * You should never call this function directly. You should only aquire event's trough
+ * SFML::Window#getEvent or SFML::Window#waitEvent, if you need to pass data to a method
+ * that takes an event instance then make a proxy instance to simulate an event.
+ * NOTE: Using this method works but it will act constant as you can't access any values.
  */
 static VALUE Event_New( int argc, VALUE * args, VALUE aKlass )
 {
