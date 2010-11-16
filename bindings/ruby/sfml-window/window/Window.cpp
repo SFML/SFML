@@ -33,12 +33,6 @@ extern VALUE globalEventClass;
 extern VALUE globalInputClass;
 extern VALUE globalVector2Class;
 
-#define VALIDATE_CLASS( variable, type, name ) \
-if( CLASS_OF( variable ) != type ) \
-{ \
-	rb_raise( rb_eTypeError, "%s argument must be instance of %s", name, rb_string_value_cstr ( &type ) ); \
-}
-
 /* Free a heap allocated object 
  * Not accessible trough ruby directly!
  */
