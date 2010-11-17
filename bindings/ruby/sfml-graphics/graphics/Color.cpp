@@ -141,6 +141,14 @@ static VALUE Color_Equal( VALUE self, VALUE anArgument )
 	return Qfalse;
 }
 
+/* call-seq:
+ *   Color.new() 		-> color
+ *   Color.new([r,g,b,a=255])	-> color
+ *   Color.new(vector) 		-> color
+ *   Color.new(r,g,b,a=255)	-> color
+ * 
+ * Create a new color instance.
+ */
 static VALUE Color_Initialize( int argc, VALUE * args, VALUE self )
 {
 	rb_iv_set( self, "@r", INT2NUM( 0 ) );

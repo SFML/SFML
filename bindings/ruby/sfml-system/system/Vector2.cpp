@@ -197,9 +197,9 @@ static VALUE Vector2_StrictEqual( VALUE self, VALUE anArgument )
 }
 
 /* call-seq:
- *   Vector2.new() 			-> vector
+ *   Vector2.new() 		-> vector
  *   Vector2.new([x,y])		-> vector
- *	 Vector2.new(vector) 	-> vector
+ *   Vector2.new(vector) 	-> vector
  *   Vector2.new(x,y)		-> vector
  * 
  * Create a new vector instance.
