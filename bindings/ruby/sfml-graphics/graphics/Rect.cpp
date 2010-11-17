@@ -21,6 +21,7 @@
  */
  
 #include "Rect.hpp"
+#include "Vector2.hpp"
 #include "main.hpp"
 
 VALUE globalRectClass;
@@ -96,6 +97,8 @@ static void Rect_internal_ValidateTypes( VALUE aFirst, VALUE aSecond, VALUE aThi
  */
 static VALUE Rect_Initialize( int argc, VALUE *args VALUE self )
 {	
+	VALUE arg0 = Qnil;
+	VALUE arg1 = Qnil;
 	switch( argc )
 	{
 		case 0:
@@ -106,6 +109,14 @@ static VALUE Rect_Initialize( int argc, VALUE *args VALUE self )
 			break;
 		case 1:
 			Color_internal_CopyFrom( self, args[0] );
+			break;
+		case 2:
+			arg0 = Vector2_ForceType( args[0] );
+			arg1 = Vector2_ForceType( args[1] );
+			rb_iv_set( self, "@left", rb_funcall( arg0, rb_intern( "x" ), 0 ) );
+			rb_iv_set( self, "@top", rb_funcall( arg0, rb_intern( "y" ), 0 ) );
+			rb_iv_set( self, "@width", rb_funcall( arg1, rb_intern( "x" ), 0 ) );
+			rb_iv_set( self, "@height", rb_funcall( arg2, rb_intern( "y" ), 0 ) );
 			break;
 		case 4:
 			Rect_internal_ValidateTypes( args[0], args[1], args[2], args[3] );
