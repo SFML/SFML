@@ -21,6 +21,7 @@
  */
  
 #include "main.hpp"
+#include "Color.hpp"
 
 VALUE globalSFMLNamespace;
 
@@ -50,7 +51,7 @@ VALUE RetrieveSFMLClass( const char * aName )
 	return rb_cvar_get( globalSFMLNamespace, name );
 }
 
-void Init_system( void )
+void Init_graphics( void )
 {
 	/* SFML namespace which contains the classes of this module. */
 	globalSFMLNamespace = rb_define_module( "SFML" );
@@ -63,4 +64,6 @@ void Init_system( void )
 	globalWindowClass  = RetrieveSFMLClass( "Window" );
 	
 	rb_define_const(globalSFMLNamespace, "GraphicsLoaded", Qtrue);
+	
+	Init_Color();
 }

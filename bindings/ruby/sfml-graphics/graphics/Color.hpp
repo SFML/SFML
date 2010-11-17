@@ -20,12 +20,12 @@
  *    source distribution.
  */
 
-#ifndef SFML_RUBYEXT_CLOCK_HEADER_
-#define SFML_RUBYEXT_CLOCK_HEADER_
+#ifndef SFML_RUBYEXT_COLOR_HEADER_
+#define SFML_RUBYEXT_COLOR_HEADER_
 
 #include "ruby.h"
 
 // Ruby initiation function
-void Init_Clock( void );
+void Init_Color( void );
 
-#endif // SFML_RUBYEXT_CLOCK_HEADER_
+#endif // SFML_RUBYEXT_COLOR_HEADER_
