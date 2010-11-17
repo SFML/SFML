@@ -204,4 +204,14 @@ void Init_Color( void )
 	rb_define_attr( globalColorClass, "g", 1, 1 );
 	rb_define_attr( globalColorClass, "b", 1, 1 );
 	rb_define_attr( globalColorClass, "a", 1, 1 );
+	
+	// Class constants
+	rb_define_const( globalColorClass, "Black", rb_funcall( globalColorClass, rb_intern( "new" ), 3, 0, 0, 0 ) );
+	rb_define_const( globalColorClass, "White", rb_funcall( globalColorClass, rb_intern( "new" ), 3, 255, 255, 255 ) );
+	rb_define_const( globalColorClass, "Red", rb_funcall( globalColorClass, rb_intern( "new" ), 3, 255, 0, 0 ) );
+	rb_define_const( globalColorClass, "Green", rb_funcall( globalColorClass, rb_intern( "new" ), 3, 0, 255, 0 ) );
+	rb_define_const( globalColorClass, "Blue", rb_funcall( globalColorClass, rb_intern( "new" ), 3, 0, 0, 255 ) );
+	rb_define_const( globalColorClass, "Yellow", rb_funcall( globalColorClass, rb_intern( "new" ), 3, 255, 255, 0 ) );
+	rb_define_const( globalColorClass, "Magneta", rb_funcall( globalColorClass, rb_intern( "new" ), 3, 255, 0, 255 ) );
+	rb_define_const( globalColorClass, "Cyan", rb_funcall( globalColorClass, rb_intern( "new" ), 3, 0, 255, 255 ) );
 }
