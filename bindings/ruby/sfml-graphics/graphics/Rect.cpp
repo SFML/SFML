@@ -85,6 +85,115 @@ static void Rect_internal_ValidateTypes( VALUE aFirst, VALUE aSecond, VALUE aThi
 	}
 }
 
+/* call-seq:
+ *   Rect.new( x, y )		-> true or false
+ *   Rect.new( vector2 )	-> true or false
+ * 
+ */
+static VALUE Rect_Contains( int argc, VALUE * args, VALUE self )
+{
+	VALUE pointX 	= Qnil;
+	VALUE pointY 	= Qnil;
+	VALUE left 	= rb_funcall( self, rb_intern( "left" ), 0 );
+	VALUE top 	= rb_funcall( self, rb_intern( "top" ), 0 );
+	VALUE width 	= rb_funcall( self, rb_intern( "width" ), 0 );
+	VALUE height 	= rb_funcall( self, rb_intern( "height" ), 0 );
+	
+	
+	switch( argc )
+	{
+		case 1:
+			pointX = rb_funcall( args[0], rb_intern( "x" ), 0 );
+			pointY = rb_funcall( args[0], rb_intern( "y" ), 0 );
+			break;
+		case 2:
+			VALIDATE_CLASS( args[0], rb_cNumeric, "x" );
+			VALIDATE_CLASS( args[1], rb_cNumeric, "y" );
+			pointX = args[0];
+			pointY = args[1];
+			break;
+		default:
+			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
+	}
+	
+	VALUE first  = rb_funcall( pointX, rb_intern( ">=" ), 1, left );
+	VALUE second = rb_funcall( pointX, rb_intern( "<" ), 1, rb_funcall( left, rb_intern( "+" ), 1, width ) );
+	VALUE third  = rb_funcall( pointY, rb_intern( ">=" ), 1, top );
+	VALUE fourth = rb_funcall( pointY, rb_intern( "<" ), 1, rb_funcall( top, rb_intern( "+" ), 1, height ) );
+	if( first == Qtrue && second == Qtrue && third == Qtrue && fourth == Qtrue )
+	{
+		return Qtrue;
+	}
+	else
+	{
+		return Qfalse;
+	}
+}
+
+static VALUE Rect_Intersect( VALUE self, VALUE aRect )
+{
+	VALUE selfLeft 	 = rb_funcall( self, rb_intern( "left" ), 0 );
+	VALUE selfTop 	 = rb_funcall( self, rb_intern( "top" ), 0 );
+	VALUE selfWidth  = rb_funcall( self, rb_intern( "width" ), 0 );
+	VALUE selfHeight = rb_funcall( self, rb_intern( "height" ), 0 );
+	VALUE selfRight  = rb_funcall( selfLeft, rb_intern( "+" ), 1, selfWidth );
+	VALUE selfBottom = rb_funcall( selfTop, rb_intern( "+" ), 1, selfHeight );
+	VALUE rectLeft 	 = rb_funcall( aRect, rb_intern( "left" ), 0 );
+	VALUE rectTop 	 = rb_funcall( aRect, rb_intern( "top" ), 0 );
+	VALUE rectWidth  = rb_funcall( aRect, rb_intern( "width" ), 0 );
+	VALUE rectHeight = rb_funcall( aRect, rb_intern( "height" ), 0 );
+	VALUE rectRight  = rb_funcall( rectLeft, rb_intern( "+" ), 1, rectWidth );
+	VALUE rectBottom = rb_funcall( rectTop, rb_intern( "+" ), 1, rectHeight );
+	
+	VALUE left, top, right, bottom;
+	
+	if( rb_funcall( selfLeft, rb_intern( ">" ), 1, rectLeft ) == Qtrue )
+	{
+		left = selfLeft;
+	}
+	else
+	{
+		left = rectLeft;
+	}
+	
+	if( rb_funcall( selfTop, rb_intern( ">" ), 1, rectTop ) == Qtrue )
+	{
+		top = selfTop;
+	}
+	else
+	{
+		top = rectTop;
+	}
+	
+	if( rb_funcall( selfRight , rb_intern( ">" ), 1, rectRight ) == Qtrue )
+	{
+		right = selfRight;
+	}
+	else
+	{
+		right = rectRight;
+	}
+	
+	if( rb_funcall( selfBottom , rb_intern( ">" ), 1, rectBottom ) == Qtrue )
+	{
+		bottom = selfBottom;
+	}
+	else
+	{
+		bottom = rectBottom;
+	}
+	
+	if( rb_funcall( left, rb_intern( "<" ), 1, right) == Qtrue && rb_funcall( top, rb_intern( "<" ), 1, bottom) == Qtrue )
+	{
+		VALUE newWidth  = rb_funcall( right, rb_intern( "-" ), 1, left );
+		VALUE newHeight = rb_funcall( bottom, rb_intern( "-" ), 1, top );
+		return rb_funcall( globalRectClass, rb_intern( "new" ), 4, left, top, newWidth, newHeight );
+	}
+	else
+	{
+		return Qnil;
+	}
+}
 
 /* call-seq:
  *   Rect.new() 				-> rect
@@ -95,7 +204,7 @@ static void Rect_internal_ValidateTypes( VALUE aFirst, VALUE aSecond, VALUE aThi
  * 
  * Create a new rect instance.
  */
-static VALUE Rect_Initialize( int argc, VALUE *args VALUE self )
+static VALUE Rect_Initialize( int argc, VALUE *args, VALUE self )
 {	
 	VALUE arg0 = Qnil;
 	VALUE arg1 = Qnil;
@@ -108,7 +217,7 @@ static VALUE Rect_Initialize( int argc, VALUE *args VALUE self )
 			rb_iv_set( self, "@height", INT2NUM( 0 ) );
 			break;
 		case 1:
-			Color_internal_CopyFrom( self, args[0] );
+			Rect_internal_CopyFrom( self, args[0] );
 			break;
 		case 2:
 			arg0 = Vector2_ForceType( args[0] );
@@ -116,7 +225,7 @@ static VALUE Rect_Initialize( int argc, VALUE *args VALUE self )
 			rb_iv_set( self, "@left", rb_funcall( arg0, rb_intern( "x" ), 0 ) );
 			rb_iv_set( self, "@top", rb_funcall( arg0, rb_intern( "y" ), 0 ) );
 			rb_iv_set( self, "@width", rb_funcall( arg1, rb_intern( "x" ), 0 ) );
-			rb_iv_set( self, "@height", rb_funcall( arg2, rb_intern( "y" ), 0 ) );
+			rb_iv_set( self, "@height", rb_funcall( arg1, rb_intern( "y" ), 0 ) );
 			break;
 		case 4:
 			Rect_internal_ValidateTypes( args[0], args[1], args[2], args[3] );
@@ -128,13 +237,13 @@ static VALUE Rect_Initialize( int argc, VALUE *args VALUE self )
 		default:
 			rb_raise( rb_eArgError, "Expected 0, 3 or 4 arguments but was given %d", argc );
 	}
-	return self;
 	
 	rb_iv_set( self, "@dataType", CLASS_OF( rb_iv_get( self, "@left" ) ) );
 	return self;
 }
 
-void Init_Rect
+void Init_Rect( void )
+{
 /* SFML namespace which contains the classes of this module. */
 	VALUE sfml = rb_define_module( "SFML" );
 /* Utility class for manipulating 2D axis aligned rectangles.
@@ -160,20 +269,19 @@ void Init_Rect
  * Usage example:
  *
  *   # Define a rectangle, located at (0, 0) with a size of 20x5
- *   r1 = SFML::Rect.new(0, 0, 20, 5)
+ *   r1 = SFML::Rect.new( 0, 0, 20, 5 )
  *
  *   # Define another rectangle, located at (4, 2) with a size of 18x10
- *   position = SFML::Vector2.new(4, 2)
- *   size = SFML::Vector2.new(18, 10)
- *   r2 = SFML::Rect.new(position, size)
+ *   position = SFML::Vector2.new( 4, 2 )
+ *   size = SFML::Vector2.new( 18, 10 )
+ *   r2 = SFML::Rect.new( position, size )
  *  
  *   # Test intersections with the point (3, 1)
- *   b1 = r1.contains(3, 1); # true
- *   b2 = r2.contains(3, 1); # false
+ *   b1 = r1.contains( 3, 1 ) # true
+ *   b2 = r2.contains( 3, 1 ) # false
  *
  *   # Test the intersection between r1 and r2
- *   result = SFML::Rect.new
- *   b3 = r1.intersects(r2, result) # true
+ *   result = r1.intersects( r2 ) # If r1 don't intersect r2 then result would be nil
  *   # result == (4, 2, 16, 3)
  *
  */
@@ -181,6 +289,8 @@ void Init_Rect
 	
 	// Instance methods
 	rb_define_method( globalRectClass, "initialize", Rect_Initialize, -2 );
+	rb_define_method( globalRectClass, "contains", Rect_Contains, -2 );
+	rb_define_method( globalRectClass, "intersects", Rect_Contains, 1 );
 	
 	// Instance operators
 	
