@@ -19,18 +19,22 @@
  * 3. This notice may not be removed or altered from any
  *    source distribution.
  */
- 
+
+#include "../../sfml-system/system/main.hpp"
 #include "main.hpp"
 #include "Color.hpp"
 
+#include <SFML/Graphics.hpp>
+
 VALUE globalSFMLNamespace;
+VALUE globalBlendNamespace;
 
 /* External classes */
 VALUE globalVector2Class;
 VALUE globalVector3Class;
 VALUE globalWindowClass;
 
-bool CheckDependencies( void )
+static bool CheckDependencies( void )
 {
 	if( rb_cvar_defined( globalSFMLNamespace, rb_intern( "WindowLoaded" ) ) == Qtrue )
 	{
@@ -40,15 +44,13 @@ bool CheckDependencies( void )
 	return false;
 }
 
-VALUE RetrieveSFMLClass( const char * aName )
+/* Available blending modes for drawable objects. */
+static void CreateBlendEnum( void )
 {
-	ID name = rb_intern( aName );
-	if( rb_cvar_defined( globalSFMLNamespace, name ) == Qfalse )
-	{
-		rb_raise( rb_eRuntimeError, "This module depends on SFML::%s", aName );
-	}
-	
-	return rb_cvar_get( globalSFMLNamespace, name );
+	rb_define_const( globalBlendNamespace, "Alpha", INT2FIX( sf::Blend::Alpha ) );
+	rb_define_const( globalBlendNamespace, "Add", INT2FIX( sf::Blend::Add ) );
+	rb_define_const( globalBlendNamespace, "Multiply", INT2FIX( sf::Blend::Multiply ) );
+	rb_define_const( globalBlendNamespace, "None", INT2FIX( sf::Blend::None ) );
 }
 
 void Init_graphics( void )
@@ -62,6 +64,8 @@ void Init_graphics( void )
 	globalVector2Class = RetrieveSFMLClass( "Vector2" );
 	globalVector3Class = RetrieveSFMLClass( "Vector3" );
 	globalWindowClass  = RetrieveSFMLClass( "Window" );
+	
+	CreateBlendEnum();
 	
 	rb_define_const(globalSFMLNamespace, "GraphicsLoaded", Qtrue);
 	
