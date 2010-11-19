@@ -25,6 +25,14 @@
 
 #include "ruby.h"
 
+VALUE Vector3_GetX( VALUE self );
+VALUE Vector3_GetY( VALUE self );
+VALUE Vector3_GetZ( VALUE self );
+
+VALUE Vector3_SetX( VALUE self, VALUE aVal );
+VALUE Vector3_SetY( VALUE self, VALUE aVal );
+VALUE Vector3_SetZ( VALUE self, VALUE aVal );
+
 VALUE Vector3_ForceType( VALUE someValue );
 
 void Init_Vector3( void );

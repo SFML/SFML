@@ -25,6 +25,12 @@
 
 #include "ruby.h"
 
+VALUE Vector2_GetX( VALUE self );
+VALUE Vector2_GetY( VALUE self );
+
+VALUE Vector2_SetX( VALUE self, VALUE aVal );
+VALUE Vector2_SetY( VALUE self, VALUE aVal );
+
 VALUE Vector2_ForceType( VALUE someValue );
 
 void Init_Vector2( void );

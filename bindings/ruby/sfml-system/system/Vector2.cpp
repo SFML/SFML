@@ -25,6 +25,28 @@
 
 VALUE globalVector2Class;
 
+VALUE Vector2_GetX( VALUE self )
+{
+	static ID idX = rb_intern( "x" );
+	return rb_funcall( self, idX, 0 );
+}
+VALUE Vector2_GetY( VALUE self )
+{
+	static ID idY = rb_intern( "y" );
+	return rb_funcall( self, idY, 0 );
+}
+
+VALUE Vector2_SetX( VALUE self, VALUE aVal )
+{
+	static ID idX = rb_intern( "x=" );
+	return rb_funcall( self, idX, 1, aVal );
+}
+VALUE Vector2_SetY( VALUE self, VALUE aVal )
+{
+	static ID idY = rb_intern( "y=" );
+	return rb_funcall( self, idY, 1, aVal );
+}
+
 /* Internal function
  * Forces the argument someValue to be a Vector2. IF it can convert it then it will.
  * So you can always safely asume that this function returns a Vector2 object.
@@ -54,11 +76,11 @@ VALUE Vector2_ForceType( VALUE someValue )
 static void Vector2_internal_CopyFrom( VALUE self, VALUE aSource )
 {
 	VALUE vectorSource = Vector2_ForceType( aSource );
-	VALUE x = rb_funcall( vectorSource, rb_intern( "x" ), 0 );
-	VALUE y = rb_funcall( vectorSource, rb_intern( "y" ), 0 );
+	VALUE x = Vector2_GetX( self );
+	VALUE y = Vector2_GetY( self );
 	
-	rb_funcall( self, rb_intern( "x=" ), 1, x ); 
-	rb_funcall( self, rb_intern( "y=" ), 1, y );
+	Vector2_SetX( self, x );
+	Vector2_SetY( self, y );
 	rb_iv_set( self, "@dataType", rb_iv_get( vectorSource, "@dataType" ) );
 }
 
@@ -81,8 +103,8 @@ static void Vector2_internal_ValidateTypes( VALUE aFirst, VALUE aSecond )
 /* */
 static VALUE Vector2_Negate( VALUE self )
 {
-	VALUE x = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE y = rb_funcall( self, rb_intern( "y" ), 0 );
+	VALUE x = Vector2_GetX( self );
+	VALUE y = Vector2_GetY( self );
 	VALUE negatedX = rb_funcall( x, rb_intern( "-@" ), 0 );
 	VALUE negatedY = rb_funcall( y, rb_intern( "-@" ), 0 );
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, negatedX, negatedY );
@@ -93,10 +115,10 @@ static VALUE Vector2_Add( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector2_ForceType( aRightOperand );
 	// Get values
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE rightX = rb_funcall( rightVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( rightVector, rb_intern( "y" ), 0 );
+	VALUE leftX = Vector2_GetX( self );
+	VALUE leftY = Vector2_GetY( self );
+	VALUE rightX = Vector2_GetX( rightVector );
+	VALUE rightY = Vector2_GetY( rightVector );
 
 	// Do calculation	
 	VALUE newX = rb_funcall( leftX, rb_intern( "+" ), 1, rightX );
@@ -110,10 +132,10 @@ static VALUE Vector2_Subtract( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector2_ForceType( aRightOperand );
 	// Get values
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE rightX = rb_funcall( rightVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( rightVector, rb_intern( "y" ), 0 );
+	VALUE leftX = Vector2_GetX( self );
+	VALUE leftY = Vector2_GetY( self );
+	VALUE rightX = Vector2_GetX( rightVector );
+	VALUE rightY = Vector2_GetY( rightVector );
 
 	// Do calculation
 	VALUE newX = rb_funcall( leftX, rb_intern( "-" ), 1, rightX );
@@ -127,10 +149,10 @@ static VALUE Vector2_Multiply( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector2_ForceType( aRightOperand );
 	// Get values
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE rightX = rb_funcall( rightVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( rightVector, rb_intern( "y" ), 0 );
+	VALUE leftX = Vector2_GetX( self );
+	VALUE leftY = Vector2_GetY( self );
+	VALUE rightX = Vector2_GetX( rightVector );
+	VALUE rightY = Vector2_GetY( rightVector );
 
 	// Do calculation
 	VALUE newX = rb_funcall( leftX, rb_intern( "*" ), 1, rightX );
@@ -144,10 +166,10 @@ static VALUE Vector2_Divide( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector2_ForceType( aRightOperand );
 	// Get values
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE rightX = rb_funcall( rightVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( rightVector, rb_intern( "y" ), 0 );
+	VALUE leftX = Vector2_GetX( self );
+	VALUE leftY = Vector2_GetY( self );
+	VALUE rightX = Vector2_GetX( rightVector );
+	VALUE rightY = Vector2_GetY( rightVector );
 
 	// Do calculation	
 	VALUE newX = rb_funcall( leftX, rb_intern( "/" ), 1, rightX );
@@ -160,10 +182,10 @@ static VALUE Vector2_Divide( VALUE self, VALUE aRightOperand )
 static VALUE Vector2_Equal( VALUE self, VALUE anArgument )
 {
 	VALUE aVector = Vector2_ForceType( anArgument );
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE rightX = rb_funcall( aVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( aVector, rb_intern( "y" ), 0 );
+	VALUE leftX = Vector2_GetX( self );
+	VALUE leftY = Vector2_GetY( self );
+	VALUE rightX = Vector2_GetX( rightVector );
+	VALUE rightY = Vector2_GetY( rightVector );
 	
 	if( rb_funcall( leftX, rb_intern( "==" ), 1, rightX ) == Qtrue &&
 	    rb_funcall( leftY, rb_intern( "==" ), 1, rightY ) == Qtrue )
@@ -180,10 +202,10 @@ static VALUE Vector2_Equal( VALUE self, VALUE anArgument )
 static VALUE Vector2_StrictEqual( VALUE self, VALUE anArgument )
 {
 	VALUE aVector = Vector2_ForceType( anArgument );
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE rightX = rb_funcall( aVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( aVector, rb_intern( "y" ), 0 );
+	VALUE leftX = Vector2_GetX( self );
+	VALUE leftY = Vector2_GetY( self );
+	VALUE rightX = Vector2_GetX( rightVector );
+	VALUE rightY = Vector2_GetY( rightVector );
 	
 	if( rb_funcall( leftX, rb_intern( "eql?" ), 1, rightX ) == Qtrue &&
 	    rb_funcall( leftY, rb_intern( "eql?" ), 1, rightY ) == Qtrue )

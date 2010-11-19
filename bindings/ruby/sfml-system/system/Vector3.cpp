@@ -25,6 +25,38 @@
 
 VALUE globalVector3Class;
 
+VALUE Vector3_GetX( VALUE self )
+{
+	static ID idX = rb_intern( "x" );
+	return rb_funcall( self, idX, 0 );
+}
+VALUE Vector3_GetY( VALUE self )
+{
+	static ID idY = rb_intern( "y" );
+	return rb_funcall( self, idY, 0 );
+}
+VALUE Vector3_GetZ( VALUE self )
+{
+	static ID idZ = rb_intern( "z" );
+	return rb_funcall( self, idZ, 0 );
+}
+
+VALUE Vector3_SetX( VALUE self, VALUE aVal )
+{
+	static ID idX = rb_intern( "x=" );
+	return rb_funcall( self, idX, 1, aVal );
+}
+VALUE Vector3_SetY( VALUE self, VALUE aVal )
+{
+	static ID idY = rb_intern( "y=" );
+	return rb_funcall( self, idY, 1, aVal );
+}
+VALUE Vector3_SetZ( VALUE self, VALUE aVal )
+{
+	static ID idZ = rb_intern( "z=" );
+	return rb_funcall( self, idZ, 1, aVal );
+}
+
 /* Internal function
  * Forces the argument someValue to be a Vector3. IF it can convert it then it will.
  * So you can always safely asume that this function returns a Vector3 object.
@@ -55,13 +87,13 @@ VALUE Vector3_ForceType( VALUE someValue )
 static void Vector3_internal_CopyFrom( VALUE self, VALUE aSource )
 {
 	VALUE vectorSource = Vector3_ForceType( aSource );
-	VALUE x = rb_funcall( vectorSource, rb_intern( "x" ), 0 );
-	VALUE y = rb_funcall( vectorSource, rb_intern( "y" ), 0 );
-	VALUE z = rb_funcall( vectorSource, rb_intern( "z" ), 0 );
+	VALUE x = Vector3_GetX( self );
+	VALUE y = Vector3_GetY( self );
+	VALUE z = Vector3_GetZ( self );
 	
-	rb_funcall( self, rb_intern( "x=" ), 1, x ); 
-	rb_funcall( self, rb_intern( "y=" ), 1, y );
-	rb_funcall( self, rb_intern( "z=" ), 1, z );
+	Vector3_SetX( self, x );
+	Vector3_SetY( self, y );
+	Vector3_SetZ( self, z );
 	rb_iv_set( self, "@dataType", rb_iv_get( vectorSource, "@dataType" ) );
 }
 
@@ -84,13 +116,13 @@ static void Vector3_internal_ValidateTypes( VALUE aFirst, VALUE aSecond, VALUE a
 /* */
 static VALUE Vector3_Negate( VALUE self )
 {
-	VALUE x = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE y = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE z = rb_funcall( self, rb_intern( "y" ), 0 );
+	VALUE x = Vector3_GetX( self );
+	VALUE y = Vector3_GetY( self );
+	VALUE z = Vector3_GetZ( self );
 	VALUE negatedX = rb_funcall( x, rb_intern( "-@" ), 0 );
 	VALUE negatedY = rb_funcall( y, rb_intern( "-@" ), 0 );
 	VALUE negatedZ = rb_funcall( z, rb_intern( "-@" ), 0 );
-	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, negatedX, negatedY, negatedZ );
+	return rb_funcall( globalVector3Class, rb_intern( "new" ), 3, negatedX, negatedY, negatedZ );
 }
 
 /* */
@@ -98,19 +130,19 @@ static VALUE Vector3_Add( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector3_ForceType( aRightOperand );
 	// Get values
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE leftZ  = rb_funcall( self, rb_intern( "z" ), 0 );
-	VALUE rightX = rb_funcall( rightVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( rightVector, rb_intern( "y" ), 0 );
-	VALUE rightZ = rb_funcall( rightVector, rb_intern( "z" ), 0 );
+	VALUE leftX = Vector3_GetX( self );
+	VALUE leftY = Vector3_GetY( self );
+	VALUE leftZ = Vector3_GetZ( self );
+	VALUE rightX = Vector3_GetX( rightVector );
+	VALUE rightY = Vector3_GetY( rightVector );
+	VALUE rightZ = Vector3_GetZ( rightVector );
 
 	// Do calculation	
 	VALUE newX = rb_funcall( leftX, rb_intern( "+" ), 1, rightX );
 	VALUE newY = rb_funcall( leftY, rb_intern( "+" ), 1, rightY );
 	VALUE newZ = rb_funcall( leftZ, rb_intern( "+" ), 1, rightZ );
 	
-	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, newX, newY, newZ );
+	return rb_funcall( globalVector3Class, rb_intern( "new" ), 3, newX, newY, newZ );
 }
 
 /* */
@@ -118,19 +150,19 @@ static VALUE Vector3_Subtract( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector3_ForceType( aRightOperand );
 	// Get values
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE leftZ  = rb_funcall( self, rb_intern( "z" ), 0 );
-	VALUE rightX = rb_funcall( rightVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( rightVector, rb_intern( "y" ), 0 );
-	VALUE rightZ = rb_funcall( rightVector, rb_intern( "z" ), 0 );
+	VALUE leftX = Vector3_GetX( self );
+	VALUE leftY = Vector3_GetY( self );
+	VALUE leftZ = Vector3_GetZ( self );
+	VALUE rightX = Vector3_GetX( rightVector );
+	VALUE rightY = Vector3_GetY( rightVector );
+	VALUE rightZ = Vector3_GetZ( rightVector );
 
 	// Do calculation	
 	VALUE newX = rb_funcall( leftX, rb_intern( "-" ), 1, rightX );
 	VALUE newY = rb_funcall( leftY, rb_intern( "-" ), 1, rightY );
 	VALUE newZ = rb_funcall( leftZ, rb_intern( "-" ), 1, rightZ );
 	
-	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, newX, newY, newZ );
+	return rb_funcall( globalVector3Class, rb_intern( "new" ), 3, newX, newY, newZ );
 }
 
 /* */
@@ -138,19 +170,19 @@ static VALUE Vector3_Multiply( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector3_ForceType( aRightOperand );
 	// Get values
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE leftZ  = rb_funcall( self, rb_intern( "z" ), 0 );
-	VALUE rightX = rb_funcall( rightVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( rightVector, rb_intern( "y" ), 0 );
-	VALUE rightZ = rb_funcall( rightVector, rb_intern( "z" ), 0 );
+	VALUE leftX = Vector3_GetX( self );
+	VALUE leftY = Vector3_GetY( self );
+	VALUE leftZ = Vector3_GetZ( self );
+	VALUE rightX = Vector3_GetX( rightVector );
+	VALUE rightY = Vector3_GetY( rightVector );
+	VALUE rightZ = Vector3_GetZ( rightVector );
 
 	// Do calculation	
 	VALUE newX = rb_funcall( leftX, rb_intern( "*" ), 1, rightX );
 	VALUE newY = rb_funcall( leftY, rb_intern( "*" ), 1, rightY );
 	VALUE newZ = rb_funcall( leftZ, rb_intern( "*" ), 1, rightZ );
 	
-	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, newX, newY, newZ );
+	return rb_funcall( globalVector3Class, rb_intern( "new" ), 3, newX, newY, newZ );
 }
 
 /* */
@@ -158,31 +190,31 @@ static VALUE Vector3_Divide( VALUE self, VALUE aRightOperand )
 {
 	VALUE rightVector = Vector3_ForceType( aRightOperand );
 	// Get values
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE leftZ  = rb_funcall( self, rb_intern( "z" ), 0 );
-	VALUE rightX = rb_funcall( rightVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( rightVector, rb_intern( "y" ), 0 );
-	VALUE rightZ = rb_funcall( rightVector, rb_intern( "z" ), 0 );
+	VALUE leftX = Vector3_GetX( self );
+	VALUE leftY = Vector3_GetY( self );
+	VALUE leftZ = Vector3_GetZ( self );
+	VALUE rightX = Vector3_GetX( rightVector );
+	VALUE rightY = Vector3_GetY( rightVector );
+	VALUE rightZ = Vector3_GetZ( rightVector );
 
 	// Do calculation	
 	VALUE newX = rb_funcall( leftX, rb_intern( "/" ), 1, rightX );
 	VALUE newY = rb_funcall( leftY, rb_intern( "/" ), 1, rightY );
 	VALUE newZ = rb_funcall( leftZ, rb_intern( "/" ), 1, rightZ );
 	
-	return rb_funcall( globalVector3Class, rb_intern( "new" ), 2, newX, newY, newZ );
+	return rb_funcall( globalVector3Class, rb_intern( "new" ), 3, newX, newY, newZ );
 }
 
 /* */
 static VALUE Vector3_Equal( VALUE self, VALUE anArgument )
 {
 	VALUE aVector = Vector3_ForceType( anArgument );
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE leftZ  = rb_funcall( self, rb_intern( "z" ), 0 );
-	VALUE rightX = rb_funcall( aVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( aVector, rb_intern( "y" ), 0 );
-	VALUE rightZ = rb_funcall( aVector, rb_intern( "z" ), 0 );
+	VALUE leftX = Vector3_GetX( self );
+	VALUE leftY = Vector3_GetY( self );
+	VALUE leftZ = Vector3_GetZ( self );
+	VALUE rightX = Vector3_GetX( rightVector );
+	VALUE rightY = Vector3_GetY( rightVector );
+	VALUE rightZ = Vector3_GetZ( rightVector );
 	
 	if( rb_funcall( leftX, rb_intern( "==" ), 1, rightX ) == Qtrue &&
 	    rb_funcall( leftY, rb_intern( "==" ), 1, rightY ) == Qtrue &&
@@ -200,12 +232,12 @@ static VALUE Vector3_Equal( VALUE self, VALUE anArgument )
 static VALUE Vector3_StrictEqual( VALUE self, VALUE anArgument )
 {
 	VALUE aVector = Vector3_ForceType( anArgument );
-	VALUE leftX  = rb_funcall( self, rb_intern( "x" ), 0 );
-	VALUE leftY  = rb_funcall( self, rb_intern( "y" ), 0 );
-	VALUE leftZ  = rb_funcall( self, rb_intern( "z" ), 0 );
-	VALUE rightX = rb_funcall( aVector, rb_intern( "x" ), 0 );
-	VALUE rightY = rb_funcall( aVector, rb_intern( "y" ), 0 );
-	VALUE rightZ = rb_funcall( aVector, rb_intern( "z" ), 0 );
+	VALUE leftX = Vector3_GetX( self );
+	VALUE leftY = Vector3_GetY( self );
+	VALUE leftZ = Vector3_GetZ( self );
+	VALUE rightX = Vector3_GetX( rightVector );
+	VALUE rightY = Vector3_GetY( rightVector );
+	VALUE rightZ = Vector3_GetZ( rightVector );
 	
 	if( rb_funcall( leftX, rb_intern( "eql?" ), 1, rightX ) == Qtrue &&
 	    rb_funcall( leftY, rb_intern( "eql?" ), 1, rightY ) == Qtrue &&
