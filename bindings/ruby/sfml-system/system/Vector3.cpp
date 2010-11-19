@@ -212,9 +212,9 @@ static VALUE Vector3_Equal( VALUE self, VALUE anArgument )
 	VALUE leftX = Vector3_GetX( self );
 	VALUE leftY = Vector3_GetY( self );
 	VALUE leftZ = Vector3_GetZ( self );
-	VALUE rightX = Vector3_GetX( rightVector );
-	VALUE rightY = Vector3_GetY( rightVector );
-	VALUE rightZ = Vector3_GetZ( rightVector );
+	VALUE rightX = Vector3_GetX( aVector );
+	VALUE rightY = Vector3_GetY( aVector );
+	VALUE rightZ = Vector3_GetZ( aVector );
 	
 	if( rb_funcall( leftX, rb_intern( "==" ), 1, rightX ) == Qtrue &&
 	    rb_funcall( leftY, rb_intern( "==" ), 1, rightY ) == Qtrue &&
@@ -235,9 +235,9 @@ static VALUE Vector3_StrictEqual( VALUE self, VALUE anArgument )
 	VALUE leftX = Vector3_GetX( self );
 	VALUE leftY = Vector3_GetY( self );
 	VALUE leftZ = Vector3_GetZ( self );
-	VALUE rightX = Vector3_GetX( rightVector );
-	VALUE rightY = Vector3_GetY( rightVector );
-	VALUE rightZ = Vector3_GetZ( rightVector );
+	VALUE rightX = Vector3_GetX( aVector );
+	VALUE rightY = Vector3_GetY( aVector );
+	VALUE rightZ = Vector3_GetZ( aVector );
 	
 	if( rb_funcall( leftX, rb_intern( "eql?" ), 1, rightX ) == Qtrue &&
 	    rb_funcall( leftY, rb_intern( "eql?" ), 1, rightY ) == Qtrue &&

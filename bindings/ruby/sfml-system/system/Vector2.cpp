@@ -184,8 +184,8 @@ static VALUE Vector2_Equal( VALUE self, VALUE anArgument )
 	VALUE aVector = Vector2_ForceType( anArgument );
 	VALUE leftX = Vector2_GetX( self );
 	VALUE leftY = Vector2_GetY( self );
-	VALUE rightX = Vector2_GetX( rightVector );
-	VALUE rightY = Vector2_GetY( rightVector );
+	VALUE rightX = Vector2_GetX( aVector );
+	VALUE rightY = Vector2_GetY( aVector );
 	
 	if( rb_funcall( leftX, rb_intern( "==" ), 1, rightX ) == Qtrue &&
 	    rb_funcall( leftY, rb_intern( "==" ), 1, rightY ) == Qtrue )
@@ -204,8 +204,8 @@ static VALUE Vector2_StrictEqual( VALUE self, VALUE anArgument )
 	VALUE aVector = Vector2_ForceType( anArgument );
 	VALUE leftX = Vector2_GetX( self );
 	VALUE leftY = Vector2_GetY( self );
-	VALUE rightX = Vector2_GetX( rightVector );
-	VALUE rightY = Vector2_GetY( rightVector );
+	VALUE rightX = Vector2_GetX( aVector );
+	VALUE rightY = Vector2_GetY( aVector );
 	
 	if( rb_funcall( leftX, rb_intern( "eql?" ), 1, rightX ) == Qtrue &&
 	    rb_funcall( leftY, rb_intern( "eql?" ), 1, rightY ) == Qtrue )
