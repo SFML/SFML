@@ -20,7 +20,6 @@
  *    source distribution.
  */
 
-#include "../../sfml-system/system/main.hpp"
 #include "main.hpp"
 #include "Context.hpp"
 #include "ContextSettings.hpp"

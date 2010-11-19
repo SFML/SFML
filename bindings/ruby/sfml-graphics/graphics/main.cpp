@@ -20,9 +20,10 @@
  *    source distribution.
  */
 
-#include "../../sfml-system/system/main.hpp"
 #include "main.hpp"
 #include "Color.hpp"
+#include "Rect.hpp"
+#include "Drawable.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -70,4 +71,6 @@ void Init_graphics( void )
 	rb_define_const(globalSFMLNamespace, "GraphicsLoaded", Qtrue);
 	
 	Init_Color();
+	Init_Rect();
+	Init_Drawable();
 }

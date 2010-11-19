@@ -22,6 +22,6 @@
 require 'mkmf'
 
 dir_config("graphics")
-have_library("sfml-graphics") 
+have_library("sfml-graphics")
 find_header("main.hpp", "../sfml-system/system")
 create_makefile("sfml/graphics", "graphics")
