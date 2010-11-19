@@ -368,7 +368,7 @@ static VALUE Window_SetIcon( VALUE self, VALUE aWidth, VALUE aHeight, VALUE some
 {
 	const unsigned int rawWidth = FIX2UINT( aWidth );
 	const unsigned int rawHeight = FIX2UINT( aHeight );
-	VALIDATE_CLASS( somePixels, rb_cArray, "third" );
+	VALIDATE_CLASS( somePixels, rb_cArray, "pixels" );
 	const unsigned long dataSize = rawWidth * rawHeight * 4;
 	sf::Uint8 * const tempData = new sf::Uint8[dataSize];
 	VALUE pixels = rb_funcall( somePixels, rb_intern("flatten"), 0 );

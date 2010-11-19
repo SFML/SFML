@@ -335,7 +335,7 @@ static VALUE Drawable_TransformToGlobal( VALUE self, VALUE aPoint )
  */
 static VALUE Drawable_Initialize( int argc, VALUE *args, VALUE self )
 {
-	rbDrawable * object = NULL;
+	rbDrawable *object = NULL;
 	Data_Get_Struct( self, rbDrawable, object );
 	VALUE aPosition = Qnil;
 	VALUE aScale = Qnil;

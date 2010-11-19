@@ -8,3 +8,4 @@ end
 
 drawable = MyDrawable.new
 p drawable.position
+p drawable.is_a?( SFML::Drawable )
