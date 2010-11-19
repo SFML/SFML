@@ -56,21 +56,63 @@ VALUE Color_ForceType( VALUE someValue )
 	}
 }
 
+VALUE Color_GetR( VALUE self )
+{
+	static ID id = rb_intern( "r" );
+	return rb_funcall( self, id, 0 );
+}
+VALUE Color_GetG( VALUE self )
+{
+	static ID id = rb_intern( "g" );
+	return rb_funcall( self, id, 0 );
+}
+VALUE Color_GetB( VALUE self )
+{
+	static ID id = rb_intern( "b" );
+	return rb_funcall( self, id, 0 );
+}
+VALUE Color_GetA( VALUE self )
+{
+	static ID id = rb_intern( "a" );
+	return rb_funcall( self, id, 0 );
+}
+
+VALUE Color_SetR( VALUE self, VALUE aVal )
+{
+	static ID id = rb_intern( "r=" );
+	return rb_funcall( self, id, 1, aVal );
+}
+VALUE Color_SetG( VALUE self, VALUE aVal )
+{
+	static ID id = rb_intern( "g=" );
+	return rb_funcall( self, id, 1, aVal );
+}
+VALUE Color_SetB( VALUE self, VALUE aVal )
+{
+	static ID id = rb_intern( "b=" );
+	return rb_funcall( self, id, 1, aVal );
+}
+VALUE Color_SetA( VALUE self, VALUE aVal )
+{
+	static ID id = rb_intern( "a=" );
+	return rb_funcall( self, id, 1, aVal );
+}
+
 /* Internal function
  * Will copy the x and y from aSource to self.
  */
 static void Color_internal_CopyFrom( VALUE self, VALUE aSource )
 {
-	VALUE sourceVector = Color_ForceType( aSource );
-	VALUE r = rb_funcall( sourceVector, rb_intern( "r" ), 0 );
-	VALUE g = rb_funcall( sourceVector, rb_intern( "g" ), 0 );
-	VALUE b = rb_funcall( sourceVector, rb_intern( "b" ), 0 );
-	VALUE a = rb_funcall( sourceVector, rb_intern( "a" ), 0 );
+	VALUE source = Color_ForceType( aSource );
+	VALUE r = Color_GetR( source );
+	VALUE g = Color_GetG( source );
+	VALUE b = Color_GetB( source );
+	VALUE a = Color_GetA( source );
 	
-	rb_funcall( self, rb_intern( "r=" ), 1, r );
-	rb_funcall( self, rb_intern( "g=" ), 1, g ); 
-	rb_funcall( self, rb_intern( "b=" ), 1, b ); 
-	rb_funcall( self, rb_intern( "a=" ), 1, a );  
+	Color_SetR( self, r );
+	Color_SetG( self, g );
+	Color_SetB( self, b );
+	Color_SetA( self, a ); 
 }
 
 /* */
@@ -78,14 +120,14 @@ static VALUE Color_Add( VALUE self, VALUE aRightOperand )
 {
 	VALUE right = Color_ForceType( aRightOperand );
 	// Get values
-	unsigned int leftR  = FIX2INT( rb_funcall( self, rb_intern( "r" ), 0 ) );
-	unsigned int leftG  = FIX2INT( rb_funcall( self, rb_intern( "g" ), 0 ) );
-	unsigned int leftB  = FIX2INT( rb_funcall( self, rb_intern( "b" ), 0 ) );
-	unsigned int leftA  = FIX2INT( rb_funcall( self, rb_intern( "a" ), 0 ) );
-	unsigned int rightR = FIX2INT( rb_funcall( right, rb_intern( "r" ), 0 ) );
-	unsigned int rightG = FIX2INT( rb_funcall( right, rb_intern( "g" ), 0 ) );
-	unsigned int rightB = FIX2INT( rb_funcall( right, rb_intern( "b" ), 0 ) );
-	unsigned int rightA = FIX2INT( rb_funcall( right, rb_intern( "a" ), 0 ) );
+	unsigned int leftR  = FIX2INT( Color_GetR( self ) );
+	unsigned int leftG  = FIX2INT( Color_GetG( self ) );
+	unsigned int leftB  = FIX2INT( Color_GetB( self ) );
+	unsigned int leftA  = FIX2INT( Color_GetA( self ) );
+	unsigned int rightR = FIX2INT( Color_GetR( right ) );
+	unsigned int rightG = FIX2INT( Color_GetG( right ) );
+	unsigned int rightB = FIX2INT( Color_GetB( right ) );
+	unsigned int rightA = FIX2INT( Color_GetA( right ) );
 
 	// Do calculation	
 	unsigned int newR = MIN( leftR + rightR, 255 );
@@ -101,14 +143,14 @@ static VALUE Color_Multiply( VALUE self, VALUE aRightOperand )
 {
 	VALUE right = Color_ForceType( aRightOperand );
 	// Get values
-	unsigned int leftR  = FIX2INT( rb_funcall( self, rb_intern( "r" ), 0 ) );
-	unsigned int leftG  = FIX2INT( rb_funcall( self, rb_intern( "g" ), 0 ) );
-	unsigned int leftB  = FIX2INT( rb_funcall( self, rb_intern( "b" ), 0 ) );
-	unsigned int leftA  = FIX2INT( rb_funcall( self, rb_intern( "a" ), 0 ) );
-	unsigned int rightR = FIX2INT( rb_funcall( right, rb_intern( "r" ), 0 ) );
-	unsigned int rightG = FIX2INT( rb_funcall( right, rb_intern( "g" ), 0 ) );
-	unsigned int rightB = FIX2INT( rb_funcall( right, rb_intern( "b" ), 0 ) );
-	unsigned int rightA = FIX2INT( rb_funcall( right, rb_intern( "a" ), 0 ) );
+	unsigned int leftR  = FIX2INT( Color_GetR( self ) );
+	unsigned int leftG  = FIX2INT( Color_GetG( self ) );
+	unsigned int leftB  = FIX2INT( Color_GetB( self ) );
+	unsigned int leftA  = FIX2INT( Color_GetA( self ) );
+	unsigned int rightR = FIX2INT( Color_GetR( right ) );
+	unsigned int rightG = FIX2INT( Color_GetG( right ) );
+	unsigned int rightB = FIX2INT( Color_GetB( right ) );
+	unsigned int rightA = FIX2INT( Color_GetA( right ) );
 
 	// Do calculation	
 	unsigned int newR = ( leftR * rightR ) / 255;
@@ -124,14 +166,14 @@ static VALUE Color_Equal( VALUE self, VALUE anArgument )
 {
 	VALUE right = Color_ForceType( anArgument );
 	// Get values
-	unsigned int leftR  = FIX2INT( rb_funcall( self, rb_intern( "r" ), 0 ) );
-	unsigned int leftG  = FIX2INT( rb_funcall( self, rb_intern( "g" ), 0 ) );
-	unsigned int leftB  = FIX2INT( rb_funcall( self, rb_intern( "b" ), 0 ) );
-	unsigned int leftA  = FIX2INT( rb_funcall( self, rb_intern( "a" ), 0 ) );
-	unsigned int rightR = FIX2INT( rb_funcall( right, rb_intern( "r" ), 0 ) );
-	unsigned int rightG = FIX2INT( rb_funcall( right, rb_intern( "g" ), 0 ) );
-	unsigned int rightB = FIX2INT( rb_funcall( right, rb_intern( "b" ), 0 ) );
-	unsigned int rightA = FIX2INT( rb_funcall( right, rb_intern( "a" ), 0 ) );
+	unsigned int leftR  = FIX2INT( Color_GetR( self ) );
+	unsigned int leftG  = FIX2INT( Color_GetG( self ) );
+	unsigned int leftB  = FIX2INT( Color_GetB( self ) );
+	unsigned int leftA  = FIX2INT( Color_GetA( self ) );
+	unsigned int rightR = FIX2INT( Color_GetR( right ) );
+	unsigned int rightG = FIX2INT( Color_GetG( right ) );
+	unsigned int rightB = FIX2INT( Color_GetB( right ) );
+	unsigned int rightA = FIX2INT( Color_GetA( right ) );
 
 	// Do calculation	
 	if( leftR == rightR && leftG == rightG && leftB == rightB && leftA == rightA )

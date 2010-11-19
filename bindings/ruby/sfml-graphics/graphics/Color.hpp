@@ -25,6 +25,18 @@
 
 #include "ruby.h"
 
+VALUE Color_ForceType( VALUE someValue );
+
+VALUE Color_GetR( VALUE self );
+VALUE Color_GetG( VALUE self );
+VALUE Color_GetB( VALUE self );
+VALUE Color_GetA( VALUE self );
+
+VALUE Color_SetR( VALUE self, VALUE aVal );
+VALUE Color_SetG( VALUE self, VALUE aVal );
+VALUE Color_SetB( VALUE self, VALUE aVal );
+VALUE Color_SetA( VALUE self, VALUE aVal );
+
 // Ruby initiation function
 void Init_Color( void );
 
