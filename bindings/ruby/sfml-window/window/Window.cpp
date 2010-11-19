@@ -323,8 +323,8 @@ static VALUE Window_SetCursorPosition2( VALUE self, VALUE anArgument )
 	VALUE argument = Vector2_ForceType( anArgument );
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
-	VALUE argumentX = rb_funcall( argument, rb_intern( "x" ), 0 );
-	VALUE argumentY = rb_funcall( argument, rb_intern( "y" ), 0 );
+	VALUE argumentX = Vector2_GetX( argument );
+	VALUE argumentY = Vector2_GetY( argument );
 	object->SetCursorPosition( FIX2UINT( argumentX ), FIX2UINT( argumentY ) );
 	return Qnil;
 }
@@ -431,8 +431,8 @@ static VALUE Window_SetPosition2( VALUE self, VALUE anArgument )
 	VALUE argument = Vector2_ForceType( anArgument );
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
-	VALUE argumentX = rb_funcall( argument, rb_intern( "x" ), 0 );
-	VALUE argumentY = rb_funcall( argument, rb_intern( "y" ), 0 );
+	VALUE argumentX = Vector2_GetX( argument );
+	VALUE argumentY = Vector2_GetY( argument );
 	object->SetPosition( FIX2UINT( argumentX ), FIX2INT( argumentY ) );
 	return Qnil;
 }
@@ -460,8 +460,8 @@ static VALUE Window_SetSize2( VALUE self, VALUE anArgument )
 	VALUE argument = Vector2_ForceType( anArgument );
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
-	VALUE argumentX = rb_funcall( argument, rb_intern( "x" ), 0 );
-	VALUE argumentY = rb_funcall( argument, rb_intern( "y" ), 0 );
+	VALUE argumentX = Vector2_GetX( argument );
+	VALUE argumentY = Vector2_GetY( argument );
 	object->SetSize( FIX2UINT( argumentX ), FIX2UINT( argumentY ) );
 	return Qnil;
 }
