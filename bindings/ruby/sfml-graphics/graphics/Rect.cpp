@@ -103,8 +103,8 @@ static VALUE Rect_Contains( int argc, VALUE * args, VALUE self )
 	switch( argc )
 	{
 		case 1:
-			pointX = rb_funcall( args[0], rb_intern( "x" ), 0 );
-			pointY = rb_funcall( args[0], rb_intern( "y" ), 0 );
+			pointX = Vector2_GetX( args[0] );
+			pointY = Vector2_GetY( args[0] );
 			break;
 		case 2:
 			VALIDATE_CLASS( args[0], rb_cNumeric, "x" );
@@ -222,10 +222,10 @@ static VALUE Rect_Initialize( int argc, VALUE *args, VALUE self )
 		case 2:
 			arg0 = Vector2_ForceType( args[0] );
 			arg1 = Vector2_ForceType( args[1] );
-			rb_iv_set( self, "@left", rb_funcall( arg0, rb_intern( "x" ), 0 ) );
-			rb_iv_set( self, "@top", rb_funcall( arg0, rb_intern( "y" ), 0 ) );
-			rb_iv_set( self, "@width", rb_funcall( arg1, rb_intern( "x" ), 0 ) );
-			rb_iv_set( self, "@height", rb_funcall( arg1, rb_intern( "y" ), 0 ) );
+			rb_iv_set( self, "@left", Vector2_GetX( arg0 ) );
+			rb_iv_set( self, "@top", Vector2_GetY( arg0 ) );
+			rb_iv_set( self, "@width", Vector2_GetX( arg1 ) );
+			rb_iv_set( self, "@height", Vector2_GetY( arg1 ) );
 			break;
 		case 4:
 			Rect_internal_ValidateTypes( args[0], args[1], args[2], args[3] );
@@ -235,7 +235,7 @@ static VALUE Rect_Initialize( int argc, VALUE *args, VALUE self )
 			rb_iv_set( self, "@height", args[3]);
 			break;
 		default:
-			rb_raise( rb_eArgError, "Expected 0, 3 or 4 arguments but was given %d", argc );
+			rb_raise( rb_eArgError, "Expected 0, 1, 2 or 4 arguments but was given %d", argc );
 	}
 	
 	rb_iv_set( self, "@dataType", CLASS_OF( rb_iv_get( self, "@left" ) ) );
