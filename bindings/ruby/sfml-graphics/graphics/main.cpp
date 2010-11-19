@@ -48,6 +48,7 @@ static bool CheckDependencies( void )
 /* Available blending modes for drawable objects. */
 static void CreateBlendEnum( void )
 {
+	globalBlendNamespace = rb_define_module_under( globalSFMLNamespace, "Blend" );
 	rb_define_const( globalBlendNamespace, "Alpha", INT2FIX( sf::Blend::Alpha ) );
 	rb_define_const( globalBlendNamespace, "Add", INT2FIX( sf::Blend::Add ) );
 	rb_define_const( globalBlendNamespace, "Multiply", INT2FIX( sf::Blend::Multiply ) );
@@ -65,10 +66,9 @@ void Init_graphics( void )
 	globalVector2Class = RetrieveSFMLClass( "Vector2" );
 	globalVector3Class = RetrieveSFMLClass( "Vector3" );
 	globalWindowClass  = RetrieveSFMLClass( "Window" );
+	rb_define_const(globalSFMLNamespace, "GraphicsLoaded", Qtrue);
 	
 	CreateBlendEnum();
-	
-	rb_define_const(globalSFMLNamespace, "GraphicsLoaded", Qtrue);
 	
 	Init_Color();
 	Init_Rect();

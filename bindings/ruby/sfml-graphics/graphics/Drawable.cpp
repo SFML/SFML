@@ -486,20 +486,14 @@ void Init_Drawable( void )
 	rb_define_alias( globalDrawableModule, "position=", "setPosition" );
 	rb_define_alias( globalDrawableModule, "position", "getPosition" );
 	rb_define_alias( globalDrawableModule, "x=", "setX" );
-	rb_define_alias( globalDrawableModule, "x", "getX" );
 	rb_define_alias( globalDrawableModule, "y=", "setY" );
-	rb_define_alias( globalDrawableModule, "y", "getY" );
 	
 	rb_define_alias( globalDrawableModule, "scale=", "setScale" );
 	rb_define_alias( globalDrawableModule, "scale", "getScale" );
 	rb_define_alias( globalDrawableModule, "scaleX=", "setScaleX" );
-	rb_define_alias( globalDrawableModule, "scaleX", "getScaleX" );
 	rb_define_alias( globalDrawableModule, "scale_x=", "setScaleX" );
-	rb_define_alias( globalDrawableModule, "scale_x", "getScaleX" );
 	rb_define_alias( globalDrawableModule, "scaleY=", "setScaleY" );
-	rb_define_alias( globalDrawableModule, "scaleY", "getScaleY" );
 	rb_define_alias( globalDrawableModule, "scale_y=", "setScaleY" );
-	rb_define_alias( globalDrawableModule, "scale_y", "getScaleY" );
 	
 	rb_define_alias( globalDrawableModule, "origin=", "setOrigin" );
 	rb_define_alias( globalDrawableModule, "origin", "getOrigin" );
