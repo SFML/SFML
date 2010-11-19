@@ -25,6 +25,8 @@
 
 #include "ruby.h"
 
+VALUE RetrieveSFMLClass( const char * aName );
+
 // Ruby initiation function
 extern "C" void Init_system( void );
 

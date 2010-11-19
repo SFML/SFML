@@ -19,7 +19,8 @@
  * 3. This notice may not be removed or altered from any
  *    source distribution.
  */
- 
+
+#include "../../sfml-system/system/main.hpp"
 #include "main.hpp"
 #include "Context.hpp"
 #include "ContextSettings.hpp"
@@ -58,7 +59,7 @@ static const char * keyNamesMisc[] =
  *
  * All SFML::Key constants exists, I just haven't written them all so Rdoc can interpret them yet.
  */
-void CreateKeyEnum( void )
+static void CreateKeyEnum( void )
 {
 	globalKeyNamespace = rb_define_module_under( globalSFMLNamespace, "Key" );
 	rb_define_const( globalKeyNamespace, "A", INT2FIX( sf::Key::A ) );
@@ -105,7 +106,7 @@ void CreateKeyEnum( void )
 }
 
 /* Definition of button codes for mouse events. */
-void CreateMouseEnum( void )
+static void CreateMouseEnum( void )
 {
 	globalMouseNamespace = rb_define_module_under( globalSFMLNamespace, "Mouse" );
 	rb_define_const( globalMouseNamespace, "Left", INT2FIX( sf::Mouse::Left ) );
@@ -117,7 +118,7 @@ void CreateMouseEnum( void )
 }
 
 /* Definition of joystick axis for joystick events. */
-void CreateJoyEnum( void )
+static void CreateJoyEnum( void )
 {
 	globalJoyNamespace = rb_define_module_under( globalSFMLNamespace, "Joy" );
 	rb_define_const( globalJoyNamespace, "AxisX", INT2FIX( sf::Joy::AxisX ) );
@@ -131,7 +132,7 @@ void CreateJoyEnum( void )
 }
 
 /* Enumeration of the window styles. */
-void CreateStyleEnum( void )
+static void CreateStyleEnum( void )
 {
 	globalStyleNamespace = rb_define_module_under( globalSFMLNamespace, "Style" );
 	rb_define_const( globalStyleNamespace, "None", INT2FIX( sf::Style::None ) );
@@ -142,7 +143,7 @@ void CreateStyleEnum( void )
 	rb_define_const( globalStyleNamespace, "Default", INT2FIX( sf::Style::Default ) );
 }
 
-bool CheckDependencies( void )
+static bool CheckDependencies( void )
 {
 	if( rb_cvar_defined( globalSFMLNamespace, rb_intern( "SystemLoaded" ) ) == Qtrue )
 	{
@@ -150,22 +151,6 @@ bool CheckDependencies( void )
 	}
 
 	return false;
-}
-
-VALUE RetrieveSFMLClass( const char * aName )
-{
-	ID name = rb_intern( aName );
-	if( rb_cvar_defined( globalSFMLNamespace, name ) == Qfalse )
-	{
-		rb_raise( rb_eRuntimeError, "This module depends on SFML::%s", aName );
-	}
-	
-	return rb_cvar_get( globalSFMLNamespace, name );
-}
-
-void RetrieveVector2Class( void )
-{
-	globalVector2Class = RetrieveSFMLClass( "Vector2" );
 }
 
 void Init_window( void )
@@ -177,7 +162,7 @@ void Init_window( void )
 		rb_raise( rb_eRuntimeError, "This module depends on sfml-system" );
 	}
 	
-	RetrieveVector2Class();
+	globalVector2Class = RetrieveSFMLClass( "Vector2" );
 	
 	rb_define_const( globalSFMLNamespace, "WindowLoaded", Qtrue );
 	
@@ -193,3 +178,4 @@ void Init_window( void )
 	Init_VideoMode();
 	Init_Window();
 }
+

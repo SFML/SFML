@@ -27,6 +27,17 @@
 
 VALUE globalSFMLNamespace;
 
+VALUE RetrieveSFMLClass( const char * aName )
+{
+	ID name = rb_intern( aName );
+	if( rb_cvar_defined( globalSFMLNamespace, name ) == Qfalse )
+	{
+		rb_raise( rb_eRuntimeError, "This module depends on SFML::%s", aName );
+	}
+	
+	return rb_cvar_get( globalSFMLNamespace, name );
+}
+
 void Init_system( void )
 {
 	/* SFML namespace which contains the classes of this module. */
