@@ -392,7 +392,7 @@ static VALUE Image_UpdatePixels( int argc, VALUE *args, VALUE self )
 			somePixels = args[0];
 			break;
 		default:
-			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );		
+			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
 	}
 	const unsigned int rawWidth = FIX2UINT( rectangle.Width );
 	const unsigned int rawHeight = FIX2UINT( rectangle.Height );
