@@ -38,7 +38,7 @@ macro(sfml_static_add_libraries target)
                 # around paths because they may contain spaces
                 set(LIBRARIES "${LIBRARIES} &quot\\;${lib}&quot\\;")
             else()
-                set(LIBRARIES "${LIBRARIES} ${lib}")
+                set(LIBRARIES "${LIBRARIES} \"${lib}\"")
             endif()
         endforeach()
         set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS ${LIBRARIES})

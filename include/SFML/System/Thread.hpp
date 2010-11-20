@@ -126,7 +126,7 @@ public :
     Thread(void(C::*function)(), C* object);
 
     ////////////////////////////////////////////////////////////
-    /// \brief destructor
+    /// \brief Destructor
     ///
     /// This destructor calls Wait(), so that the internal thread
     /// cannot survive after its sf::Thread instance is destroyed.
