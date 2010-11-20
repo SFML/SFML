@@ -22,13 +22,16 @@
  
 #include "Image.hpp"
 #include "Color.hpp"
+#include "Rect.hpp"
 #include "main.hpp"
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 VALUE globalImageClass;
 
 /* External classes */
 extern VALUE globalColorClass;
+extern VALUE globalRectClass;
 
 /* Free a heap allocated object 
  * Not accessible trough ruby directly!
@@ -42,7 +45,7 @@ static VALUE Image_LoadFromFile( VALUE self, VALUE aFileName )
 {
 	sf::Image *object = NULL;
 	Data_Get_Struct( self, sf::Image, object );
-	if( object->LoadFromFile( rb_string_value_cstr( aFileName ) ) == true )
+	if( object->LoadFromFile( rb_string_value_cstr( &aFileName ) ) == true )
 	{
 		return Qtrue;
 	}
@@ -85,7 +88,7 @@ static VALUE Image_SaveToFile( VALUE self, VALUE aFileName )
 {
 	sf::Image *object = NULL;
 	Data_Get_Struct( self, sf::Image, object );
-	if( object->SaveToFile( rb_string_value_cstr( aFileName ) ) == true )
+	if( object->SaveToFile( rb_string_value_cstr( &aFileName ) ) == true )
 	{
 		return Qtrue;
 	}
@@ -154,7 +157,7 @@ static VALUE Image_CreateMaskFromColor( int argc, VALUE *args, VALUE self )
 
 static VALUE Image_Copy( int argc, VALUE *args, VALUE self )
 {
-	Image *source;
+	sf::Image *source;
 	unsigned int destX = 0;
 	unsigned int destY = 0;
 	sf::IntRect sourceRect = sf::IntRect(0, 0, 0, 0);
@@ -194,7 +197,7 @@ static VALUE Image_Copy( int argc, VALUE *args, VALUE self )
 	
 	sf::Image *object = NULL;
 	Data_Get_Struct( self, sf::Image, object );
-	object->Copy( *source, dextX, dextY, sourceRect, applyAlpha );
+	object->Copy( *source, destX, destY, sourceRect, applyAlpha );
 	return Qnil;
 }
 
@@ -236,10 +239,10 @@ static VALUE Image_SetPixel( VALUE self, VALUE aX, VALUE aY, VALUE aColor )
 {
 	VALUE rbColor = Color_ForceType( aColor );
 	sf::Color color;
-	color.r = FIX2INT( Color_GetR( rubyColor ) );
-	color.g = FIX2INT( Color_GetG( rubyColor ) );
-	color.b = FIX2INT( Color_GetB( rubyColor ) );
-	color.a = FIX2INT( Color_GetA( rubyColor ) );
+	color.r = FIX2INT( Color_GetR( rbColor ) );
+	color.g = FIX2INT( Color_GetG( rbColor ) );
+	color.b = FIX2INT( Color_GetB( rbColor ) );
+	color.a = FIX2INT( Color_GetA( rbColor ) );
 	
 	sf::Image *object = NULL;
 	Data_Get_Struct( self, sf::Image, object );
@@ -247,27 +250,27 @@ static VALUE Image_SetPixel( VALUE self, VALUE aX, VALUE aY, VALUE aColor )
 	return Qnil;
 }
 
-static VALUE Image_SetPixel( VALUE self, VALUE aX, VALUE aY )
+static VALUE Image_GetPixel( VALUE self, VALUE aX, VALUE aY )
 {
 	sf::Image *object = NULL;
 	Data_Get_Struct( self, sf::Image, object );
-	const sf::Color color = object->SetPixel( FIX2INT( aX ), FIX2INT( aY ) );
+	const sf::Color color = object->GetPixel( FIX2INT( aX ), FIX2INT( aY ) );
 	return rb_funcall( globalColorClass, rb_intern( "new" ), 4,
 				INT2FIX( color.r ), INT2FIX( color.g ),
 				INT2FIX( color.b ), INT2FIX( color.a ) );
 }
 
-static VALUE Image_GetPixelPtr( VALUE self )
+static VALUE Image_GetPixelsPtr( VALUE self )
 {
 	sf::Image *object = NULL;
 	Data_Get_Struct( self, sf::Image, object );
 	
-	VALUE pixels = rb_ary_new2( dataSize );
-	const sf::Uint8 *const pixelPointer = object->GetPixelPtr();
-	
 	const unsigned int rawWidth = object->GetWidth();
 	const unsigned int rawHeight = object->GetHeight();
 	const unsigned long dataSize = rawWidth * rawHeight * 4;
+	
+	VALUE pixels = rb_ary_new2( dataSize );
+	const sf::Uint8 *const pixelPointer = object->GetPixelsPtr();
 	for(unsigned long index = 0; index < dataSize; index++)
 	{
 		rb_ary_store( pixels, index, CHR2FIX( pixelPointer[index] ) );
@@ -282,7 +285,7 @@ static VALUE Image_UpdatePixels( int argc, VALUE *args, VALUE self )
 	Data_Get_Struct( self, sf::Image, object );
 	VALUE somePixels = Qnil;
 	VALUE aRectangle = Qnil;
-	IntRect rectangle = IntRect(0, 0, object->GetWidth(), object->GetHeight() );
+	sf::IntRect rectangle = sf::IntRect(0, 0, object->GetWidth(), object->GetHeight() );
 	
 	switch( argc )
 	{
@@ -309,7 +312,7 @@ static VALUE Image_UpdatePixels( int argc, VALUE *args, VALUE self )
 		sf::Uint8 val = NUM2CHR( rb_ary_entry( pixels, index ) );
 		tempData[index] = val;
 	}
-	bool result = object->UpdatePixels( tempData, rectangle );
+	object->UpdatePixels( tempData, rectangle );
 	delete[] tempData;
 	
 	return Qnil;	
@@ -330,7 +333,7 @@ static VALUE Image_SetSmooth( VALUE self, VALUE aSmoothFlag )
 	
 	if( aSmoothFlag == Qtrue )
 	{
-		object->SetSmooth( true ):
+		object->SetSmooth( true );
 	}
 	else if( aSmoothFlag == Qfalse )
 	{
@@ -376,7 +379,7 @@ static VALUE Image_GetTexCoords( VALUE self, VALUE aRectangle )
 	sf::Image *object = NULL;
 	Data_Get_Struct( self, sf::Image, object );
 	
-	sf::FloatRect result = object->GetTexCords( rectangle );
+	sf::FloatRect result = object->GetTexCoords( rectangle );
 	return rb_funcall( globalRectClass, rb_intern( "new" ), 4, 
 					rb_float_new( result.Left ), rb_float_new( result.Top ), 
 					rb_float_new( result.Width ), rb_float_new( result.Height ) );

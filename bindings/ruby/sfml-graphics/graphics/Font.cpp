@@ -39,7 +39,7 @@ static VALUE Font_LoadFromFile( VALUE self, VALUE aFileName )
 {
 	sf::Font *object = NULL;
 	Data_Get_Struct( self, sf::Font, object );
-	if( object->LoadFromFile( rb_string_value_cstr( aFileName ) ) == true )
+	if( object->LoadFromFile( rb_string_value_cstr( &aFileName ) ) == true )
 	{
 		return Qtrue;
 	}
@@ -49,11 +49,11 @@ static VALUE Font_LoadFromFile( VALUE self, VALUE aFileName )
 	}
 }
 
-static VALUE Font_GetGlyph( VALUE self, VALUE aCodePoint, VALUE aCharacterSize VALUE aBoldFlag )
+static VALUE Font_GetGlyph( VALUE self, VALUE aCodePoint, VALUE aCharacterSize, VALUE aBoldFlag )
 {
 	sf::Font *object = NULL;
 	Data_Get_Struct( self, sf::Font, object );
-	const Glyph& glyph = object->GetGlyph( FIX2UINT( aCodePoint ), FIX2UINT( aCharacterSize ), aBoldFlag != Qfalse );
+	const sf::Glyph &glyph = object->GetGlyph( FIX2UINT( aCodePoint ), FIX2UINT( aCharacterSize ), aBoldFlag != Qfalse );
 	VALUE rbGlyph = rb_funcall( globalGlyphClass, rb_intern( "new" ), 0 );
 	VALUE bounds = rb_funcall( globalRectClass, rb_intern( "new" ), 4,
 					INT2FIX( glyph.Bounds.Left ), INT2FIX( glyph.Bounds.Top ), 
