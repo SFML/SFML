@@ -38,7 +38,7 @@ namespace sf
 /// \brief Abstract base class for capturing sound data
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API SoundRecorder : private Thread
+class SFML_API SoundRecorder
 {
 public :
 
@@ -157,7 +157,7 @@ private :
     /// only when the capture is stopped.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Run();
+    void Record();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the new available audio samples and process them
@@ -180,6 +180,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    Thread             myThread;      ///< Thread running the background recording task
     std::vector<Int16> mySamples;     ///< Buffer to store captured samples
     unsigned int       mySampleRate;  ///< Sample rate
     bool               myIsCapturing; ///< Capturing state

@@ -29,42 +29,19 @@
 
 
 #if defined(SFML_SYSTEM_WINDOWS)
-
     #include <SFML/System/Win32/ThreadImpl.hpp>
-
 #else
-
     #include <SFML/System/Unix/ThreadImpl.hpp>
-
 #endif
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Thread::Thread() :
-myThreadImpl(NULL),
-myFunction  (NULL),
-myUserData  (NULL)
-{
-
-}
-
-
-////////////////////////////////////////////////////////////
-Thread::Thread(Thread::FuncType function, void* userData) :
-myThreadImpl(NULL),
-myFunction  (function),
-myUserData  (userData)
-{
-
-}
-
-
-////////////////////////////////////////////////////////////
 Thread::~Thread()
 {
     Wait();
+    delete myFunction;
 }
 
 
@@ -72,18 +49,18 @@ Thread::~Thread()
 void Thread::Launch()
 {
     Wait();
-    myThreadImpl = new priv::ThreadImpl(this);
+    myImpl = new priv::ThreadImpl(this);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Thread::Wait()
 {
-    if (myThreadImpl)
+    if (myImpl)
     {
-        myThreadImpl->Wait();
-        delete myThreadImpl;
-        myThreadImpl = NULL;
+        myImpl->Wait();
+        delete myImpl;
+        myImpl = NULL;
     }
 }
 
@@ -91,11 +68,11 @@ void Thread::Wait()
 ////////////////////////////////////////////////////////////
 void Thread::Terminate()
 {
-    if (myThreadImpl)
+    if (myImpl)
     {
-        myThreadImpl->Terminate();
-        delete myThreadImpl;
-        myThreadImpl = NULL;
+        myImpl->Terminate();
+        delete myImpl;
+        myImpl = NULL;
     }
 }
 
@@ -103,8 +80,7 @@ void Thread::Terminate()
 ////////////////////////////////////////////////////////////
 void Thread::Run()
 {
-    if (myFunction)
-        myFunction(myUserData);
+    myFunction->Run();
 }
 
 } // namespace sf

@@ -25,6 +25,7 @@ set(SRC
     ${INCROOT}/String.hpp
     ${SRCROOT}/Thread.cpp
     ${INCROOT}/Thread.hpp
+    ${INCROOT}/Thread.inl
     ${SRCROOT}/ThreadLocal.cpp
     ${INCROOT}/ThreadLocal.hpp
     ${INCROOT}/ThreadLocalPtr.hpp

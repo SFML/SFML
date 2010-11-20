@@ -31,6 +31,10 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
 
+#ifdef _MSC_VER
+    #pragma warning(disable : 4355) // 'this' used in base member initializer list
+#endif
+
 
 ////////////////////////////////////////////////////////////
 // Private data
@@ -44,6 +48,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundRecorder::SoundRecorder() :
+myThread     (&SoundRecorder::Record, this),
 mySampleRate (0),
 myIsCapturing(false)
 {
@@ -97,7 +102,7 @@ void SoundRecorder::Start(unsigned int sampleRate)
 
         // Start the capture in a new thread, to avoid blocking the main thread
         myIsCapturing = true;
-        Launch();
+        myThread.Launch();
     }
 }
 
@@ -107,7 +112,7 @@ void SoundRecorder::Stop()
 {
     // Stop the capturing thread
     myIsCapturing = false;
-    Wait();
+    myThread.Wait();
 }
 
 
@@ -142,7 +147,7 @@ void SoundRecorder::OnStop()
 
 
 ////////////////////////////////////////////////////////////
-void SoundRecorder::Run()
+void SoundRecorder::Record()
 {
     while (myIsCapturing)
     {

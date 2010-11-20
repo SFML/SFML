@@ -39,7 +39,7 @@ namespace sf
 /// \brief Abstract base class for streamed audio sources
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API SoundStream : public SoundSource, private Thread
+class SFML_API SoundStream : public SoundSource
 {
 public :
 
@@ -208,7 +208,7 @@ private :
     /// only when the sound is stopped.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Run();
+    void Stream();
 
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source
@@ -279,6 +279,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    Thread        myThread;                   ///< Thread running the background tasks
     bool          myIsStreaming;              ///< Streaming state (true = playing, false = stopped)
     unsigned int  myBuffers[BuffersCount];    ///< Sound buffers used to store temporary audio data
     unsigned int  myChannelsCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)

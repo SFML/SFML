@@ -31,11 +31,16 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
 
+#ifdef _MSC_VER
+    #pragma warning(disable : 4355) // 'this' used in base member initializer list
+#endif
+
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundStream::SoundStream() :
+myThread          (&SoundStream::Stream, this),
 myIsStreaming     (false),
 myChannelsCount   (0),
 mySampleRate      (0),
@@ -97,7 +102,7 @@ void SoundStream::Play()
     // Start updating the stream in a separate thread to avoid blocking the application
     mySamplesProcessed = 0;
     myIsStreaming = true;
-    Launch();
+    myThread.Launch();
 }
 
 
@@ -113,7 +118,7 @@ void SoundStream::Stop()
 {
     // Wait for the thread to terminate
     myIsStreaming = false;
-    Wait();
+    myThread.Wait();
 }
 
 
@@ -156,7 +161,7 @@ void SoundStream::SetPlayingOffset(float timeOffset)
     // Restart streaming
     mySamplesProcessed = static_cast<unsigned int>(timeOffset * mySampleRate * myChannelsCount);
     myIsStreaming = true;
-    Launch();
+    myThread.Launch();
 }
 
 
@@ -185,7 +190,7 @@ bool SoundStream::GetLoop() const
 
 
 ////////////////////////////////////////////////////////////
-void SoundStream::Run()
+void SoundStream::Stream()
 {
     // Create the buffers
     ALCheck(alGenBuffers(BuffersCount, myBuffers));
