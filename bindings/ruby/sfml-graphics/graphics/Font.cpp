@@ -29,12 +29,22 @@ VALUE globalFontClass;
 /* External classes */
 extern VALUE globalGlyphClass;
 extern VALUE globalRectClass;
+extern VALUE globalImageClass;
 
 static void Font_Free( sf::Font *anObject )
 {
 	delete anObject;
 }
 
+/* call-seq:
+ *   font.loadFromFile( filename )	-> true or false
+ *
+ * Load the font from a file.
+ *
+ * The supported font formats are: TrueType, Type 1, CFF, OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and 
+ * Type 42. Note that this function know nothing about the standard fonts installed on the user's system, thus 
+ * you can't load them directly.
+ */
 static VALUE Font_LoadFromFile( VALUE self, VALUE aFileName )
 {
 	sf::Font *object = NULL;
@@ -49,6 +59,11 @@ static VALUE Font_LoadFromFile( VALUE self, VALUE aFileName )
 	}
 }
 
+/* call-seq:
+ *   font.getGlyph( codePoint, characterSize, boldFlag )	-> glyph
+ *
+ * Retrieve a glyph of the font. 
+ */
 static VALUE Font_GetGlyph( VALUE self, VALUE aCodePoint, VALUE aCharacterSize, VALUE aBoldFlag )
 {
 	sf::Font *object = NULL;
@@ -67,6 +82,15 @@ static VALUE Font_GetGlyph( VALUE self, VALUE aCodePoint, VALUE aCharacterSize, 
 	return rbGlyph;
 }
 
+/* call-seq:
+ *   font.getKerning( first, size, characterSize )	-> fixnum
+ *
+ * Get the kerning offset of two glyphs.
+ *
+ * The kerning is an extra offset (negative) to apply between two glyphs when rendering them, to make the pair 
+ * look more "natural". For example, the pair "AV" have a special kerning to make them closer than other characters. 
+ * Most of the glyphs pairs have a kerning offset of zero, though.
+ */
 static VALUE Font_GetKerning( VALUE self, VALUE aFirst, VALUE aSecond, VALUE aCharacterSize )
 {
 	sf::Font *object = NULL;
@@ -74,11 +98,36 @@ static VALUE Font_GetKerning( VALUE self, VALUE aFirst, VALUE aSecond, VALUE aCh
 	return INT2FIX( object->GetKerning( FIX2UINT( aFirst ), FIX2UINT( aSecond ), FIX2UINT( aCharacterSize ) ) );
 }
 
+/* call-seq:
+ *   font.getLineSpacing( characterSize )	-> fixnum
+ *
+ * Get the line spacing.
+ *
+ * Line spacing is the vertical offset to apply between two consecutive lines of text.
+ */
 static VALUE Font_GetLineSpacing( VALUE self, VALUE aCharacterSize )
 {
 	sf::Font *object = NULL;
 	Data_Get_Struct( self, sf::Font, object );
 	return INT2FIX( object->GetLineSpacing( FIX2UINT( aCharacterSize ) ) );
+}
+
+/* call-seq:
+ *   font.getImage( characterSize )	-> image
+ *
+ * Retrieve the image containing the loaded glyphs of a certain size.
+ *
+ * The contents of the returned image changes as more glyphs are requested, thus it is not very relevant. 
+ * It is mainly used internally by SFML::Text.
+ */
+static VALUE Font_GetImage( VALUE self, VALUE aCharacterSize )
+{
+	sf::Font *object = NULL;
+	Data_Get_Struct( self, sf::Font, object );
+	const sf::Image& image = object->GetImage( FIX2UINT( aCharacterSize ) );
+	VALUE rbImage = Data_Wrap_Struct( globalImageClass, 0, 0, const_cast<sf::Image *>( &image ) );
+	rb_iv_set( rbImage, "@__owner__", self );
+	return rbImage;
 }
 
 static VALUE Font_New( int argc, VALUE *args, VALUE aKlass )
@@ -87,6 +136,13 @@ static VALUE Font_New( int argc, VALUE *args, VALUE aKlass )
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Font_Free, object );
 	rb_obj_call_init( rbData, argc, args );
 	return rbData;
+}
+
+static VALUE Font_GetDefaultFont( VALUE aKlass )
+{
+	const sf::Font& font = sf::Font::GetDefaultFont();
+	VALUE rbFont = Data_Wrap_Struct( globalFontClass, 0, 0, const_cast<sf::Font *>( &font ) );
+	return rbFont;
 }
 
 void Init_Font( void )
@@ -143,4 +199,30 @@ void Init_Font( void )
  * usage.
  */
 	globalFontClass = rb_define_class_under( sfml, "Font", rb_cObject );
+	
+	// Class methods
+	rb_define_singleton_method( globalFontClass, "new", Font_New, -1 );
+	rb_define_singleton_method( globalFontClass, "getDefaultFont", Font_GetDefaultFont, 0 );
+	
+	// Instance methods
+	rb_define_method( globalFontClass, "loadFromFile", Font_LoadFromFile, 1 );
+	rb_define_method( globalFontClass, "getGlyph", Font_GetGlyph, 3 );
+	rb_define_method( globalFontClass, "getKerning", Font_GetKerning, 3 );
+	rb_define_method( globalFontClass, "getLineSpacing", Font_GetLineSpacing, 1 );
+	rb_define_method( globalFontClass, "getImage", Font_GetImage, 1 );
+	
+	// Class Aliases
+	rb_define_alias( CLASS_OF( globalFontClass ), "get_default_font", "getDefaultFont" );
+	rb_define_alias( CLASS_OF( globalFontClass ), "defaultFont", "getDefaultFont" );
+	rb_define_alias( CLASS_OF( globalFontClass ), "default_font", "getDefaultFont" );
+	
+	// Instance Aliases
+	rb_define_alias( globalFontClass , "load_from_file", "loadFromFile" );
+	rb_define_alias( globalFontClass , "loadFile", "loadFromFile" );
+	rb_define_alias( globalFontClass , "load_file", "loadFromFile" );
+	
+	rb_define_alias( globalFontClass , "get_glyph", "getGlyph" );
+	rb_define_alias( globalFontClass , "get_kerning", "getKerning" );
+	rb_define_alias( globalFontClass , "get_line_spacing", "getLineSpacing" );
+	rb_define_alias( globalFontClass , "get_image", "getImage" );
 }
