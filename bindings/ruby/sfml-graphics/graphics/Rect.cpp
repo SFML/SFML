@@ -51,6 +51,48 @@ VALUE Rect_ForceType( VALUE someValue )
 	}
 }
 
+VALUE Rect_GetLeft( VALUE self )
+{
+	static ID id = rb_intern( "left" );
+	return rb_funcall( self, id, 0 );
+}
+VALUE Rect_GetTop( VALUE self )
+{
+	static ID id = rb_intern( "top" );
+	return rb_funcall( self, id, 0 );
+}
+VALUE Rect_GetWidth( VALUE self )
+{
+	static ID id = rb_intern( "width" );
+	return rb_funcall( self, id, 0 );
+}
+VALUE Rect_GetHeight( VALUE self )
+{
+	static ID id = rb_intern( "height" );
+	return rb_funcall( self, id, 0 );
+}
+
+VALUE Rect_SetLeft( VALUE self, VALUE aVal )
+{
+	static ID id = rb_intern( "left=" );
+	return rb_funcall( self, id, 1, aVal );
+}
+VALUE Rect_SetTop( VALUE self, VALUE aVal )
+{
+	static ID id = rb_intern( "top=" );
+	return rb_funcall( self, id, 1, aVal );
+}
+VALUE Rect_SetWidth( VALUE self, VALUE aVal )
+{
+	static ID id = rb_intern( "width=" );
+	return rb_funcall( self, id, 1, aVal );
+}
+VALUE Rect_SetHeight( VALUE self, VALUE aVal )
+{
+	static ID id = rb_intern( "height=" );
+	return rb_funcall( self, id, 1, aVal );
+}
+
 /* Internal function
  * Will copy the x and y from aSource to self.
  */

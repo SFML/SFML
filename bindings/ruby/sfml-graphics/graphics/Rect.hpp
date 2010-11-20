@@ -27,6 +27,17 @@
 
 VALUE Rect_ForceType( VALUE someValue );
 
+VALUE Color_GetLeft( VALUE self );
+VALUE Color_GetTop( VALUE self );
+VALUE Color_GetWidth( VALUE self );
+VALUE Color_GetHeight( VALUE self );
+
+VALUE Color_SetLeft( VALUE self, VALUE aVal );
+VALUE Color_SetTop( VALUE self, VALUE aVal );
+VALUE Color_SetWidth( VALUE self, VALUE aVal );
+VALUE Color_SetHeight( VALUE self, VALUE aVal );
+
+
 void Init_Rect( void );
 
 #endif // SFML_RUBYEXT_RECT_HEADER_

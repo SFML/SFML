@@ -27,6 +27,8 @@
 #include "main.hpp"
 
 VALUE globalWindowClass;
+
+/* External classes */
 extern VALUE globalVideoModeClass;
 extern VALUE globalContextSettingsClass;
 extern VALUE globalEventClass;
