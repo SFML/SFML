@@ -41,6 +41,15 @@ static void Image_Free( sf::Image *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   image.loadFromFile( filename )	-> true or false
+ *
+ * Load the image from a file on disk.
+ *
+ * The supported image formats are bmp, png, tga, jpg, dds and psd. Some format options are not supported, like 
+ * progressive jpeg. The maximum size for an image depends on the graphics driver and can be retrieve with the 
+ * GetMaximumSize function.
+ */
 static VALUE Image_LoadFromFile( VALUE self, VALUE aFileName )
 {
 	sf::Image *object = NULL;
@@ -55,6 +64,16 @@ static VALUE Image_LoadFromFile( VALUE self, VALUE aFileName )
 	}
 }
 
+/* call-seq:
+ *   image.loadFromPixels( width, height, pixels )	-> true or false
+ *
+ * Load the image from an array of pixels.
+ *
+ * The pixels argument must point to an array of 32 bits RGBA pixels. In other words, the pixel array must have 
+ * this memory layout:
+ *
+ * [r0 g0 b0 a0 r1 g1 b1 a1 r2...]
+ */
 static VALUE Image_LoadFromPixels( VALUE self, VALUE aWidth, VALUE aHeight, VALUE somePixels )
 {
 	const unsigned int rawWidth = FIX2UINT( aWidth );
@@ -84,6 +103,14 @@ static VALUE Image_LoadFromPixels( VALUE self, VALUE aWidth, VALUE aHeight, VALU
 	}
 }
 
+/* call-seq:
+ *   image.saveToFile( filename )	-> true or false
+ *
+ * Save the image to a file on disk.
+ *
+ * The format of the image is automatically deduced from the extension. The supported image formats are bmp, png, 
+ * tga, jpg, dds and psd. The destination file is overwritten if it already exists.
+ */
 static VALUE Image_SaveToFile( VALUE self, VALUE aFileName )
 {
 	sf::Image *object = NULL;
@@ -98,6 +125,11 @@ static VALUE Image_SaveToFile( VALUE self, VALUE aFileName )
 	}
 }
 
+/* call-seq:
+ *   image.create( width, height, color = SFML::Color::Black )	-> true or false
+ *
+ * Create the image and fill it with a unique color. 
+ */
 static VALUE Image_Create( int argc, VALUE *args, VALUE self )
 {
 	sf::Image *object = NULL;
@@ -127,6 +159,14 @@ static VALUE Image_Create( int argc, VALUE *args, VALUE self )
 	return ( object->Create( width, height, color ) == true ? Qtrue : Qfalse );
 }
 
+/* call-seq:
+ *   image.createMaskFromColor( color, alpha = 0 )
+ *
+ * Create a transparency mask from a specified colorkey.
+ *
+ * This function sets the alpha value of every pixel matching the given color to alpha (0 by default), 
+ * so that they become transparent.
+ */
 static VALUE Image_CreateMaskFromColor( int argc, VALUE *args, VALUE self )
 {
 	sf::Image *object = NULL;
@@ -155,6 +195,16 @@ static VALUE Image_CreateMaskFromColor( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   image.copy( source, destX, destY, sourceRect = [0, 0, 0, 0], applyAlpha = false )
+ *
+ * Copy pixels from another image onto this one.
+ *
+ * This function does a slow pixel copy and should only be used at initialization time. It can be used to prepare 
+ * a complex static image from several others, but if you need this kind of feature in real-time you'd better use 
+ * SFML::RenderImage. If sourceRect is empty, the whole image is copied. If applyAlpha is set to true, the 
+ * transparency of source pixels is applied. If it is false, the pixels are copied unchanged with their alpha value.
+ */
 static VALUE Image_Copy( int argc, VALUE *args, VALUE self )
 {
 	sf::Image *source;
@@ -201,6 +251,14 @@ static VALUE Image_Copy( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   image.copyScreen( window, sourceRect = [0, 0, 0, 0] )	-> true or false
+ *
+ * Copy the contents of a window to the image.
+ *
+ * If sourceRect is empty, the whole window is copied. Warning: this is a slow operation, if you need to draw dynamic
+ * contents to an image then use SFML::RenderImage.
+ */
 static VALUE Image_CopyScreen( int argc, VALUE *args, VALUE self )
 {
 	sf::RenderWindow *source;
@@ -235,6 +293,14 @@ static VALUE Image_CopyScreen( int argc, VALUE *args, VALUE self )
 	}
 }
 
+/* call-seq:
+ *   image.setPixel( x, y, color )
+ *
+ * Change the color of a pixel.
+ *
+ * This function doesn't check the validity of the pixel coordinates, using out-of-range values will 
+ * result in an undefined behaviour.
+ */
 static VALUE Image_SetPixel( VALUE self, VALUE aX, VALUE aY, VALUE aColor )
 {
 	VALUE rbColor = Color_ForceType( aColor );
@@ -250,6 +316,14 @@ static VALUE Image_SetPixel( VALUE self, VALUE aX, VALUE aY, VALUE aColor )
 	return Qnil;
 }
 
+/* call-seq:
+ *   image.getPixel( x, y )	-> color
+ *
+ * Get the color of a pixel.
+ *
+ * This function doesn't check the validity of the pixel coordinates, using out-of-range values will 
+ * result in an undefined behaviour.
+ */
 static VALUE Image_GetPixel( VALUE self, VALUE aX, VALUE aY )
 {
 	sf::Image *object = NULL;
@@ -260,6 +334,15 @@ static VALUE Image_GetPixel( VALUE self, VALUE aX, VALUE aY )
 				INT2FIX( color.b ), INT2FIX( color.a ) );
 }
 
+/* call-seq:
+ *   image.getPixelsPtr()	-> array of pixels
+ *
+ * Get a read-only pointer to the array of pixels.
+ *
+ * The returned value points to an array of RGBA pixels made of 8 bits integers components. 
+ * The size of the array is width * height * 4. Warning: the returned pointer may become invalid if 
+ * you modify the image, so you should never store it for too long.
+ */
 static VALUE Image_GetPixelsPtr( VALUE self )
 {
 	sf::Image *object = NULL;
@@ -279,6 +362,15 @@ static VALUE Image_GetPixelsPtr( VALUE self )
 	return pixels;
 }
 
+/* call-seq:
+ *   image.updatePixels( pixels, rectangle = [0, 0, image.width, image.height] )
+ *
+ * Update a sub-rectangle of the image from an array of pixels.
+ *
+ * The pixels array is assumed to store RGBA 32 bits pixels. Warning: for performances reasons, this function doesn't 
+ * perform any check; thus you're responsible of ensuring that rectangle does not exceed the image size, and that 
+ * pixels contains enough elements.
+ */
 static VALUE Image_UpdatePixels( int argc, VALUE *args, VALUE self )
 {
 	sf::Image *object = NULL;
@@ -318,6 +410,14 @@ static VALUE Image_UpdatePixels( int argc, VALUE *args, VALUE self )
 	return Qnil;	
 }
 
+/* call-seq:
+ *   image.bind()
+ *
+ * Activate the image for rendering.
+ *
+ * This function is mainly used internally by the SFML render system. However it can be useful when
+ * using SFML::Image together with OpenGL code (it calls glBindTexture). 
+ */
 static VALUE Image_Bind( VALUE self )
 {
 	sf::Image *object = NULL;
@@ -326,6 +426,15 @@ static VALUE Image_Bind( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   image.setSmooth( smooth )
+ *
+ * Enable or disable the smooth filter.
+ *
+ * When the filter is activated, the image appears smoother so that pixels are less noticeable. However if you want 
+ * the image to look exactly the same as its source file, you should disable it. The smooth filter is enabled 
+ * by default.
+ */
 static VALUE Image_SetSmooth( VALUE self, VALUE aSmoothFlag )
 {
 	sf::Image *object = NULL;
@@ -346,6 +455,11 @@ static VALUE Image_SetSmooth( VALUE self, VALUE aSmoothFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   image.isSmooth()	-> true or false
+ *
+ * Tell whether the smooth filter is enabled or not. 
+ */
 static VALUE Image_IsSmooth( VALUE self )
 {
 	sf::Image *object = NULL;
@@ -353,6 +467,11 @@ static VALUE Image_IsSmooth( VALUE self )
 	return ( object->IsSmooth() == true ? Qtrue : Qfalse );
 }
 
+/* call-seq:
+ *   image.getWidth()	-> width
+ *
+ * Return the width of the image. 
+ */
 static VALUE Image_GetWidth( VALUE self )
 {
 	sf::Image *object = NULL;
@@ -360,6 +479,11 @@ static VALUE Image_GetWidth( VALUE self )
 	return INT2FIX( object->GetWidth() );
 }
 
+/* call-seq:
+ *   image.getHeight()	-> height
+ *
+ * Return the height of the image. 
+ */
 static VALUE Image_GetHeight( VALUE self )
 {
 	sf::Image *object = NULL;
@@ -367,6 +491,14 @@ static VALUE Image_GetHeight( VALUE self )
 	return INT2FIX( object->GetHeight() );
 }
 
+/* call-seq:
+ *   image.getTexCoords( rectangle )	-> tex coordinates rectangle
+ *
+ * Convert a rectangle of pixels into texture coordinates.
+ *
+ * This function is used by code that needs to map the image to some OpenGL geometry. It converts the source 
+ * rectangle, expressed in pixels, to float coordinates in the range [0, 1].
+ */
 static VALUE Image_GetTexCoords( VALUE self, VALUE aRectangle )
 {
 	VALUE rubyRectangle = Rect_ForceType( aRectangle );
@@ -388,7 +520,7 @@ static VALUE Image_GetTexCoords( VALUE self, VALUE aRectangle )
 /* call-seq:
  *   Image.new()	-> image
  *
- * The clock starts automatically after being constructed.
+ * Creates an image instance for us.
  */
 static VALUE Image_New( VALUE aKlass )
 {
@@ -396,6 +528,19 @@ static VALUE Image_New( VALUE aKlass )
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Image_Free, object );
 	rb_obj_call_init( rbData, 0, 0 );
 	return rbData;
+}
+
+/* call-seq:
+ *   Image.getMaximumSize()	-> size
+ *
+ * Get the maximum image size allowed.
+ *
+ * This maximum size is defined by the graphics driver. You can expect a value of 512 pixels for low-end graphics 
+ * card, and up to 8192 pixels for newer hardware.
+ */
+static VALUE Image_GetMaximumSize( VALUE aKlass )
+{
+	return INT2FIX( sf::Image::GetMaximumSize() );
 }
 
 void Init_Image( void )
@@ -448,8 +593,68 @@ void Init_Image( void )
 	
 	// Class methods
 	rb_define_singleton_method( globalImageClass, "new", Image_New, 0 );
+	rb_define_singleton_method( globalImageClass, "getMaximumSize", Image_GetMaximumSize, 0 );
 	
 	// Instance methods
+	rb_define_method( globalImageClass, "loadFromFile", Image_LoadFromFile, 1 );
+	rb_define_method( globalImageClass, "loadFromPixels", Image_LoadFromFile, 3 );
+	rb_define_method( globalImageClass, "saveToFile", Image_SaveToFile, 1 );
+	rb_define_method( globalImageClass, "create", Image_Create, -1 );
+	rb_define_method( globalImageClass, "createMaskFromColor", Image_CreateMaskFromColor, -1 );
+	rb_define_method( globalImageClass, "copy", Image_Copy, -1 );
+	rb_define_method( globalImageClass, "copyScreen", Image_CopyScreen, -1 );
+	rb_define_method( globalImageClass, "setPixel", Image_SetPixel, 3 );
+	rb_define_method( globalImageClass, "getPixel", Image_GetPixel, 2 );
+	rb_define_method( globalImageClass, "getPixelsPtr", Image_GetPixelsPtr, 0 );
+	rb_define_method( globalImageClass, "updatePixels", Image_UpdatePixels, -1 );
+	rb_define_method( globalImageClass, "bind", Image_Bind, 0 );
+	rb_define_method( globalImageClass, "setSmooth", Image_SetSmooth, 1 );
+	rb_define_method( globalImageClass, "isSmooth", Image_IsSmooth, 0 );
+	rb_define_method( globalImageClass, "getWidth", Image_GetWidth, 0 );
+	rb_define_method( globalImageClass, "getHeight", Image_GetHeight, 0 );
+	rb_define_method( globalImageClass, "getTexCoords", Image_GetTexCoords, 1 );
 	
-	// Aliases
+	// Class aliases
+	rb_define_alias( CLASS_OF( globalImageClass ), "maximumSize", "getMaximumSize" );
+	rb_define_alias( CLASS_OF( globalImageClass ), "maximum_size", "getMaximumSize" );
+	
+	// Instance Aliases
+	rb_define_alias( globalImageClass, "load_from_file", "loadFromFile");
+	rb_define_alias( globalImageClass, "loadFile", "loadFromFile");
+	rb_define_alias( globalImageClass, "load_file", "loadFromFile");
+	rb_define_alias( globalImageClass, "load_from_pixels", "loadFromPixels");
+	rb_define_alias( globalImageClass, "loadPixels", "loadFromPixels");
+	rb_define_alias( globalImageClass, "load_pixels", "loadFromPixels");
+	rb_define_alias( globalImageClass, "save_to_file", "saveToFile");
+	rb_define_alias( globalImageClass, "save", "saveToFile");
+	
+	rb_define_alias( globalImageClass, "create_mask_from_color", "createMaskFromColor");
+	rb_define_alias( globalImageClass, "create_mask", "createMaskFromColor");
+	rb_define_alias( globalImageClass, "createMask", "createMaskFromColor");
+	
+	rb_define_alias( globalImageClass, "copy_screen", "copyScreen");
+	
+	rb_define_alias( globalImageClass, "set_pixel", "setPixel");
+	rb_define_alias( globalImageClass, "get_pixel", "getPixel");
+	rb_define_alias( globalImageClass, "get_pixels_ptr", "getPixelsPtr");
+	rb_define_alias( globalImageClass, "pixelsPtr", "getPixelsPtr");
+	rb_define_alias( globalImageClass, "pixels_ptr", "getPixelsPtr");
+	rb_define_alias( globalImageClass, "getPixels", "getPixelsPtr");
+	rb_define_alias( globalImageClass, "get_pixels", "getPixelsPtr");
+	rb_define_alias( globalImageClass, "pixels", "getPixelsPtr");
+	
+	rb_define_alias( globalImageClass, "update_pixels", "updatePixels");
+	
+	rb_define_alias( globalImageClass, "set_smooth", "setSmooth");
+	rb_define_alias( globalImageClass, "smooth=", "setSmooth");
+	rb_define_alias( globalImageClass, "is_smooth", "isSmooth");
+	rb_define_alias( globalImageClass, "smooth?", "isSmooth");
+	rb_define_alias( globalImageClass, "smooth", "isSmooth");
+	
+	rb_define_alias( globalImageClass, "get_width", "getWidth");
+	rb_define_alias( globalImageClass, "width", "getWidth");
+	rb_define_alias( globalImageClass, "get_height", "getHeight");
+	rb_define_alias( globalImageClass, "height", "getHeight");
+	
+	rb_define_alias( globalImageClass, "get_tex_coords", "getTexCoords");
 }
