@@ -407,13 +407,14 @@ public :
     void SetFramerateLimit(unsigned int limit);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the time elapsed since the last frame
+    /// \brief Get the duration of the last frame
     ///
-    /// This function returns the time elapsed during the last frame.
+    /// This function returns the time elapsed between the last
+    /// two calls to Display().
     /// This can be useful for calculating the framerate, or for
     /// updating the application's objects.
     ///
-    /// \return Time elapsed, in seconds
+    /// \return Time elapsed in last frame, in seconds
     ///
     ////////////////////////////////////////////////////////////
     float GetFrameTime() const;
