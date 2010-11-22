@@ -31,6 +31,8 @@ VALUE globalDrawableModule;
 /* External classes */
 extern VALUE globalVector2Class;
 extern VALUE globalColorClass;
+extern VALUE globalRenderTargetInstanceClass;
+extern VALUE globalRendererClass;
 
 class rbDrawable : public sf::Drawable
 {
@@ -47,6 +49,9 @@ protected:
 	
 	virtual void Render( sf::RenderTarget& aTarget, sf::Renderer& aRenderer ) const
 	{
+		VALUE targetWrap = Data_Wrap_Struct( globalRenderTargetInstanceClass, 0, 0, &aTarget );
+		VALUE rendererWrap = Data_Wrap_Struct( globalRendererClass, 0, 0, &aRenderer );
+		rb_funcall( myRubySelf, myRenderID, 2, targetWrap, rendererWrap );
 	}
 };
 
