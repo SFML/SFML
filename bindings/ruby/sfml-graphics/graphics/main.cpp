@@ -24,6 +24,16 @@
 #include "Color.hpp"
 #include "Rect.hpp"
 #include "Drawable.hpp"
+#include "Font.hpp"
+#include "Glyph.hpp"
+#include "Image.hpp"
+#include "Renderer.hpp"
+#include "RenderImage.hpp"
+#include "RenderTarget.hpp"
+#include "RenderWindow.hpp"
+#include "Shape.hpp"
+#include "Shader.hpp"
+#include "View.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -73,4 +83,14 @@ void Init_graphics( void )
 	Init_Color();
 	Init_Rect();
 	Init_Drawable();
+	Init_Glyph();
+	Init_Font();
+	Init_Image();
+	Init_Renderer();
+	Init_RenderTarget();
+	Init_RenderImage();
+	Init_RenderWindow();
+	Init_Shape();
+	Init_Shader();
+	Init_View();
 }

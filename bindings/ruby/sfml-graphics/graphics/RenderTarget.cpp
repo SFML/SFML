@@ -24,6 +24,7 @@
 #include "Color.hpp"
 #include "main.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 VALUE globalRenderTargetModule;
 VALUE globalRenderTargetInstanceClass;

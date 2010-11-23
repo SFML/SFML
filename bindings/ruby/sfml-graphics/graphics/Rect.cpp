@@ -330,8 +330,8 @@ void Init_Rect( void )
 	globalRectClass = rb_define_class_under( sfml, "Rect", rb_cObject );
 	
 	// Instance methods
-	rb_define_method( globalRectClass, "initialize", Rect_Initialize, -2 );
-	rb_define_method( globalRectClass, "contains", Rect_Contains, -2 );
+	rb_define_method( globalRectClass, "initialize", Rect_Initialize, -1 );
+	rb_define_method( globalRectClass, "contains", Rect_Contains, -1 );
 	rb_define_method( globalRectClass, "intersects", Rect_Contains, 1 );
 	
 	// Instance operators

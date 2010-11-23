@@ -75,6 +75,37 @@ static VALUE RenderImage_Create( int argc, VALUE *args, VALUE self )
 	}
 }
 
+static VALUE RenderImage_Draw( int argc, VALUE *args, VALUE self )
+{
+	sf::RenderImage *object = NULL;
+	Data_Get_Struct( self, sf::RenderImage, object );
+	switch( argc )
+	{
+		case 2:
+		{
+			VALIDATE_CLASS( args[0], globalDrawableModule, "object" );
+			VALIDATE_CLASS( args[1], globalShaderClass, "shader" );
+			sf::Drawable *drawable = NULL;
+			Data_Get_Struct( args[0], sf::Drawable, drawable );
+			sf::Shader *shader = NULL;
+			Data_Get_Struct( args[1], sf::Shader, shader );
+			object->Draw( *drawable, *shader );
+			break;
+		}
+		case 1:
+		{
+			VALIDATE_CLASS( args[0], globalDrawableModule, "object" );
+			sf::Drawable *drawable = NULL;
+			Data_Get_Struct( args[0], sf::Drawable, drawable );
+			object->Draw( *drawable );
+			break;
+		}
+		default:
+			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
+	}
+	return Qnil;
+}
+
 static VALUE RenderImage_Display( VALUE self )
 {
 	sf::RenderImage *object = NULL;
