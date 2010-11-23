@@ -33,6 +33,8 @@
 #include "RenderWindow.hpp"
 #include "Shape.hpp"
 #include "Shader.hpp"
+#include "Sprite.hpp"
+#include "Text.hpp"
 #include "View.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -92,5 +94,7 @@ void Init_graphics( void )
 	Init_RenderWindow();
 	Init_Shape();
 	Init_Shader();
+	Init_Sprite();
+	Init_Text();
 	Init_View();
 }

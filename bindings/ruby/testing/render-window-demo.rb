@@ -10,6 +10,12 @@ input = app.input
 
 shape = SFML::Shape.rectangle( [-10, -10, 20, 20], SFML::Color::White )
 
+image = SFML::Image.new
+image.create( 100, 100, [255, 0, 0] )
+sprite = SFML::Sprite.new( image, [500, 500] )
+
+text = SFML::Text.new( "This is a test!" )
+
 while app.open?
   while event = app.get_event
     if event.type == SFML::Event::Closed
@@ -20,5 +26,7 @@ while app.open?
   app.clear
   shape.position = [input.mouseX, input.mouseY]
   app.draw shape
+  app.draw sprite
+  app.draw text
   app.display
-end
+end 
