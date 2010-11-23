@@ -25,6 +25,7 @@
 #include "main.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <iostream>
 
 VALUE globalRenderTargetModule;
 VALUE globalRenderTargetInstanceClass;
@@ -65,6 +66,7 @@ static VALUE RenderTarget_Draw( int argc, VALUE *args, VALUE self )
 {
 	sf::RenderTarget *object = NULL;
 	Data_Get_Struct( self, sf::RenderTarget, object );
+	std::cout << object << std::endl;
 	switch( argc )
 	{
 		case 2:

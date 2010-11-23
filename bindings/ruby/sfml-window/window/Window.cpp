@@ -592,6 +592,15 @@ static VALUE Window_WaitEvent( VALUE self )
 	}	
 }
 
+static VALUE Window_Initialize( int argc, VALUE *args, VALUE self )
+{
+	if( args > 0 )
+	{
+		rb_funcall( self, rb_intern( "create" ), argc, args );
+	}
+	return self;
+}
+
 /* call-seq:
  *   Window.new()											-> window
  *   Window.new( mode, title, style = SFML::Style::Default, settings = SFML::ContextSettings.new )	-> window
@@ -610,46 +619,9 @@ static VALUE Window_WaitEvent( VALUE self )
  */
 static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 {
-	sf::Window *object = NULL;
-	sf::VideoMode *mode = NULL;
-	sf::ContextSettings *settings = NULL;
-	VALUE arg0 = Qnil;
-	switch( argc )
-	{
-		case 0:
-			object = new sf::Window();
-			break;
-		case 2:
-			arg0 = VideoMode_ForceType( args[0] );
-			VALIDATE_CLASS( arg0, globalVideoModeClass, "first" );
-			VALIDATE_CLASS( args[1], rb_cString, "second" );
-			Data_Get_Struct( arg0, sf::VideoMode, mode );
-			object = new sf::Window( *mode , rb_string_value_cstr( &args[1] ) );
-			break;
-		case 3:
-			arg0 = VideoMode_ForceType( args[0] );
-			VALIDATE_CLASS( arg0, globalVideoModeClass, "first" );
-			VALIDATE_CLASS( args[1], rb_cString, "second" );
-			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
-			Data_Get_Struct( arg0, sf::VideoMode, mode );
-			object = new sf::Window( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ) );
-			break;
-		case 4:
-			arg0 = VideoMode_ForceType( args[0] );
-			VALIDATE_CLASS( arg0, globalVideoModeClass, "first" );
-			VALIDATE_CLASS( args[1], rb_cString, "second" );
-			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
-			VALIDATE_CLASS( args[3], globalContextSettingsClass, "fourth" );
-			Data_Get_Struct( arg0, sf::VideoMode, mode );
-			Data_Get_Struct( args[3], sf::ContextSettings, settings );
-			object = new sf::Window( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ), *settings );
-			break;
-		default:
-			rb_raise( rb_eArgError, "Expected 2..4 arguments but was given %d", argc );
-			break;
-	}
+	sf::Window *object = new sf::Window();
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Window_Free, object );
-	rb_obj_call_init( rbData, 0, 0 );
+	rb_obj_call_init( rbData, argc, args );
 	return rbData;
 }
 
@@ -707,6 +679,7 @@ void Init_Window( void )
 	rb_define_singleton_method( globalWindowClass, "new", Window_New , -1 );
 	
 	// Instance methods
+	rb_define_method( globalWindowClass, "initialize", Window_Initialize, -1 );
 	rb_define_method( globalWindowClass, "close", Window_Close, 0 );
 	rb_define_method( globalWindowClass, "create", Window_Create, -1 );
 	rb_define_method( globalWindowClass, "display", Window_Display, 0 );

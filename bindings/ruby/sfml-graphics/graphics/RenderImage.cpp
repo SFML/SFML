@@ -29,6 +29,8 @@ VALUE globalRenderImageClass;
 /* External classes */
 extern VALUE globalRenderTargetModule;
 extern VALUE globalImageClass;
+extern VALUE globalDrawableModule;
+extern VALUE globalShaderClass;
 
 static void RenderImage_Free( sf::RenderImage *anObject )
 {
@@ -264,6 +266,7 @@ void Init_RenderImage( void )
 	rb_define_singleton_method( globalRenderImageClass, "isAvailable", RenderImage_IsAvailable, 0 );
 	
 	// Instance methods
+	rb_define_method( globalRenderImageClass, "draw", RenderImage_Create, -1 );
 	rb_define_method( globalRenderImageClass, "create", RenderImage_Create, -1 );
 	rb_define_method( globalRenderImageClass, "display", RenderImage_Display, 0 );
 	rb_define_method( globalRenderImageClass, "getImage", RenderImage_GetImage, 0 );

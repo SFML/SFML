@@ -2,7 +2,8 @@ require 'sfml/system'
 require 'sfml/window'
 require 'sfml/graphics'
 
-app = SFML::RenderWindow.new( [800, 600], "My Ruby SFML" )
+app = SFML::RenderWindow.new
+app.create( [800, 600], "My Ruby SFML" )
 app.framerate = 100
 app.position = [300, 300]
 input = app.input
@@ -16,9 +17,8 @@ while app.open?
     end
   end
   
-  
   app.clear
   shape.position = [input.mouseX, input.mouseY]
-  app.draw shape  
+  app.draw shape
   app.display
 end
