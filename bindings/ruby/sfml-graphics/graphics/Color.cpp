@@ -115,7 +115,11 @@ static void Color_internal_CopyFrom( VALUE self, VALUE aSource )
 	Color_SetA( self, a ); 
 }
 
-/* */
+/* call-seq:
+ *   color1 + color2	-> color
+ *
+ * This operator returns the component-wise sum of two colors. Components that exceed 255 are clamped to 255.
+ */
 static VALUE Color_Add( VALUE self, VALUE aRightOperand )
 {
 	VALUE right = Color_ForceType( aRightOperand );
@@ -138,7 +142,12 @@ static VALUE Color_Add( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalColorClass, rb_intern( "new" ), 4, newR, newG, newB, newA );
 }
 
-/* */
+/* call-seq:
+ *   color1 * color2	-> color
+ *
+ * This operator returns the component-wise multiplication (also called "modulation") of two colors. Components are 
+ * then divided by 255 so that the result is still in the range [0, 255].
+ */
 static VALUE Color_Multiply( VALUE self, VALUE aRightOperand )
 {
 	VALUE right = Color_ForceType( aRightOperand );
@@ -161,7 +170,11 @@ static VALUE Color_Multiply( VALUE self, VALUE aRightOperand )
 	return rb_funcall( globalColorClass, rb_intern( "new" ), 4, newR, newG, newB, newA );
 }
 
-/* */
+/* call-seq:
+ *   color1 == color2	-> true or false
+ *
+ * This operator compares two colors and check if they are equal.
+ */
 static VALUE Color_Equal( VALUE self, VALUE anArgument )
 {
 	VALUE right = Color_ForceType( anArgument );
@@ -227,11 +240,37 @@ void Init_Color( void )
 {
 /* SFML namespace which contains the classes of this module. */
 	VALUE sfml = rb_define_module( "SFML" );
-/* Utility class for manipulating time.
+/* Utility class for manpulating RGBA colors.
  *
- * sf::Clock is a lightweight class for measuring time.
+ * SFML::Color is a simple color class composed of 4 components:
  *
- * Its resolution depends on the underlying OS, but you can generally expect a 1 ms resolution.
+ *   - Red
+ *   - Green
+ *   - Blue
+ *   - Alpha (opacity)
+ *
+ * Each component is a public member, an unsigned integer in the range [0, 255]. Thus, colors can be constructed and manipulated very easily:
+ *
+ *   c1 = SFML::Color.new(255, 0, 0)	# red
+ *   c1.red = 0				# make it black
+ *   c1.blue = 128			# make it dark blue
+ *
+ * The fourth component of colors, named "alpha", represents the opacity of the color. A color with an alpha value of 
+ * 255 will be fully opaque, while an alpha value of 0 will make a color fully transparent, whatever the value of the 
+ * other components.
+ * 
+ * The most common colors are already defined as class constants:
+ *
+ * black   = SFML::Color::Black
+ * white   = SFML::Color::White
+ * red     = SFML::Color::Red
+ * green   = SFML::Color::Green
+ * blue    = SFML::Color::Blue
+ * yellow  = SFML::Color::Yellow
+ * magenta = SFML::Color::Magenta
+ * cyan    = SFML::Color::Cyan
+ *
+ * Colors can also be added and modulated (multiplied) using the overloaded operators + and *. 
  */
 	globalColorClass = rb_define_class_under( sfml, "Color", rb_cObject );
 	
@@ -256,4 +295,13 @@ void Init_Color( void )
 	rb_define_const( globalColorClass, "Yellow", rb_funcall( globalColorClass, rb_intern( "new" ), 3, INT2FIX( 255 ), INT2FIX( 255 ), INT2FIX( 0 ) ) );
 	rb_define_const( globalColorClass, "Magneta", rb_funcall( globalColorClass, rb_intern( "new" ), 3, INT2FIX( 255 ), INT2FIX( 0 ), INT2FIX( 255 ) ) );
 	rb_define_const( globalColorClass, "Cyan", rb_funcall( globalColorClass, rb_intern( "new" ), 3, INT2FIX( 0 ), INT2FIX( 255 ), INT2FIX( 255 ) ) );
+	
+	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Black" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar( globalColorClass, rb_intern( "White" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Red" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Green" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Blue" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Yellow" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Magneta" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Cyan" ) ), rb_intern( "freeze" ), 0 );
 }

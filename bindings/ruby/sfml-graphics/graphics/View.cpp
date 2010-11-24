@@ -36,175 +36,13 @@ static void View_Free( sf::View *anObject )
 	delete anObject;
 }
 
-static VALUE View_GetCenter( VALUE self )
-{
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	const sf::Vector2f& center = object->GetCenter();
-	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( center.x ), rb_float_new( center.y ) );
-}
-
-static VALUE View_GetRotation( VALUE self )
-{
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	return rb_float_new( object->GetRotation() );
-}
-
-static VALUE View_GetSize( VALUE self )
-{
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	const sf::Vector2f& size = object->GetSize();
-	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( size.x ), rb_float_new( size.y ) );
-}
-
-static VALUE View_GetViewport( VALUE self )
-{
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	const sf::FloatRect& viewport = object->GetViewport();
-	return rb_funcall( globalRectClass, rb_intern( "new" ), 4, 
-				rb_float_new( viewport.Left ), rb_float_new( viewport.Top ),
-				rb_float_new( viewport.Width ), rb_float_new( viewport.Height ) );
-}
-
-static VALUE View_Move( int argc, VALUE * args, VALUE self )
-{
-	float offsetX = 0;
-	float offsetY = 0;
-	
-	switch( argc )
-	{
-		case 1:
-		{
-			VALUE temp = Vector2_ForceType( args[0] );
-			offsetX = NUM2DBL( Vector2_GetX( temp ) );
-			offsetY = NUM2DBL( Vector2_GetY( temp ) );
-		}
-		case 2:
-		{
-			offsetX = NUM2DBL( args[0] );
-			offsetY = NUM2DBL( args[1] );
-		}
-		default:
-			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
-	}
-	
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	object->Move( offsetX, offsetY );
-	return Qnil;
-}
-
-static VALUE View_Reset( VALUE self, VALUE aRectangle )
-{
-	VALUE temp = Rect_ForceType( aRectangle );
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	sf::FloatRect rectangle;
-	rectangle.Left   = NUM2DBL( Rect_GetLeft( temp ) );
-	rectangle.Top    = NUM2DBL( Rect_GetTop( temp ) );
-	rectangle.Width  = NUM2DBL( Rect_GetWidth( temp ) );
-	rectangle.Height = NUM2DBL( Rect_GetHeight( temp ) );
-	object->Reset( rectangle );
-	return Qnil;
-}
-
-static VALUE View_Rotate( VALUE self, VALUE anAngle )
-{
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	object->Rotate( NUM2DBL( anAngle ) );
-	return Qnil;
-}
-
-static VALUE View_SetCenter( int argc, VALUE * args, VALUE self )
-{
-	float x = 0;
-	float y = 0;
-	
-	switch( argc )
-	{
-		case 1:
-		{
-			VALUE temp = Vector2_ForceType( args[0] );
-			x = NUM2DBL( Vector2_GetX( temp ) );
-			y = NUM2DBL( Vector2_GetY( temp ) );
-		}
-		case 2:
-		{
-			x = NUM2DBL( args[0] );
-			y = NUM2DBL( args[1] );
-		}
-		default:
-			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
-	}
-	
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	object->SetCenter( x, y );
-	return Qnil;
-}
-
-static VALUE View_SetRotation( VALUE self, VALUE anAngle )
-{
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	object->SetRotation( NUM2DBL( anAngle ) );
-	return Qnil;
-}
-
-static VALUE View_SetSize( int argc, VALUE * args, VALUE self )
-{
-	float x = 0;
-	float y = 0;
-	
-	switch( argc )
-	{
-		case 1:
-		{
-			VALUE temp = Vector2_ForceType( args[0] );
-			x = NUM2DBL( Vector2_GetX( temp ) );
-			y = NUM2DBL( Vector2_GetY( temp ) );
-		}
-		case 2:
-		{
-			x = NUM2DBL( args[0] );
-			y = NUM2DBL( args[1] );
-		}
-		default:
-			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
-	}
-	
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	object->SetSize( x, y );
-	return Qnil;
-}
-
-static VALUE View_SetViewport( VALUE self, VALUE aRectangle )
-{
-	VALUE temp = Rect_ForceType( aRectangle );
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	sf::FloatRect viewport;
-	viewport.Left   = NUM2DBL( Rect_GetLeft( temp ) );
-	viewport.Top    = NUM2DBL( Rect_GetTop( temp ) );
-	viewport.Width  = NUM2DBL( Rect_GetWidth( temp ) );
-	viewport.Height = NUM2DBL( Rect_GetHeight( temp ) );
-	object->SetViewport( viewport );
-	return Qnil;
-}
-
-static VALUE View_Zoom( VALUE self, VALUE aFactor )
-{
-	sf::View *object = NULL;
-	Data_Get_Struct( self, sf::View, object );
-	object->Zoom( NUM2DBL( aFactor ) );
-	return Qnil;
-}
-
+/* call-seq:
+ *   View.new()			-> view
+ *   View.new( rectangle )	-> view
+ *   View.new( center, size )	-> view
+ *
+ * Construct a view.
+ */
 static VALUE View_Initialize( int argc, VALUE *args, VALUE self )
 {
 	VALUE temp = Qnil;
@@ -246,6 +84,254 @@ static VALUE View_Initialize( int argc, VALUE *args, VALUE self )
 	}
 	
 	return self;
+}
+
+/* call-seq:
+ *   view.getCenter()	-> vector2
+ *
+ * Get the center of the view. 
+ */
+static VALUE View_GetCenter( VALUE self )
+{
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	const sf::Vector2f& center = object->GetCenter();
+	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( center.x ), rb_float_new( center.y ) );
+}
+
+/* call-seq:
+ *   view.getRotation()	-> float
+ *
+ * Get the current orientation of the view. 
+ */
+static VALUE View_GetRotation( VALUE self )
+{
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	return rb_float_new( object->GetRotation() );
+}
+
+/* call-seq:
+ *   view.getSize()	-> vector2
+ *
+ * Get the size of the view.
+ */
+static VALUE View_GetSize( VALUE self )
+{
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	const sf::Vector2f& size = object->GetSize();
+	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( size.x ), rb_float_new( size.y ) );
+}
+
+/* call-seq:
+ *   view.getViewport()	-> rectangle
+ *
+ * Get the target viewport rectangle of the view. 
+ */
+static VALUE View_GetViewport( VALUE self )
+{
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	const sf::FloatRect& viewport = object->GetViewport();
+	return rb_funcall( globalRectClass, rb_intern( "new" ), 4, 
+				rb_float_new( viewport.Left ), rb_float_new( viewport.Top ),
+				rb_float_new( viewport.Width ), rb_float_new( viewport.Height ) );
+}
+
+/* call-seq:
+ *   view.move( x, y )
+ *   view.move( offset )
+ *
+ * Move the view relatively to its current position. 
+ */
+static VALUE View_Move( int argc, VALUE * args, VALUE self )
+{
+	float offsetX = 0;
+	float offsetY = 0;
+	
+	switch( argc )
+	{
+		case 1:
+		{
+			VALUE temp = Vector2_ForceType( args[0] );
+			offsetX = NUM2DBL( Vector2_GetX( temp ) );
+			offsetY = NUM2DBL( Vector2_GetY( temp ) );
+		}
+		case 2:
+		{
+			offsetX = NUM2DBL( args[0] );
+			offsetY = NUM2DBL( args[1] );
+		}
+		default:
+			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
+	}
+	
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	object->Move( offsetX, offsetY );
+	return Qnil;
+}
+
+/* call-seq:
+ *   view.reset( rectangle )
+ *
+ * Reset the view to the given rectangle.
+ *
+ * Note that this function resets the rotation angle to 0.
+ */
+static VALUE View_Reset( VALUE self, VALUE aRectangle )
+{
+	VALUE temp = Rect_ForceType( aRectangle );
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	sf::FloatRect rectangle;
+	rectangle.Left   = NUM2DBL( Rect_GetLeft( temp ) );
+	rectangle.Top    = NUM2DBL( Rect_GetTop( temp ) );
+	rectangle.Width  = NUM2DBL( Rect_GetWidth( temp ) );
+	rectangle.Height = NUM2DBL( Rect_GetHeight( temp ) );
+	object->Reset( rectangle );
+	return Qnil;
+}
+
+/* call-seq:
+ *   view.rotate( angle )
+ *
+ * Rotate the view relatively to its current orientation. 
+ */
+static VALUE View_Rotate( VALUE self, VALUE anAngle )
+{
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	object->Rotate( NUM2DBL( anAngle ) );
+	return Qnil;
+}
+
+/* call-seq:
+ *   view.setCenter( center )
+ *   view.setCenter( x, y )
+ *
+ * Set the center of the view. 
+ */
+static VALUE View_SetCenter( int argc, VALUE * args, VALUE self )
+{
+	float x = 0;
+	float y = 0;
+	
+	switch( argc )
+	{
+		case 1:
+		{
+			VALUE temp = Vector2_ForceType( args[0] );
+			x = NUM2DBL( Vector2_GetX( temp ) );
+			y = NUM2DBL( Vector2_GetY( temp ) );
+		}
+		case 2:
+		{
+			x = NUM2DBL( args[0] );
+			y = NUM2DBL( args[1] );
+		}
+		default:
+			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
+	}
+	
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	object->SetCenter( x, y );
+	return Qnil;
+}
+
+/* call-seq:
+ *   view.setRotation( angle )
+ *
+ * Set the orientation of the view.
+ *
+ * The default rotation of a view is 0 degree.
+ */
+static VALUE View_SetRotation( VALUE self, VALUE anAngle )
+{
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	object->SetRotation( NUM2DBL( anAngle ) );
+	return Qnil;
+}
+
+/* call-seq:
+ *   view.setSize( size )
+ *   view.setSize( width, height )
+ *
+ * Set the center of the view. 
+ */
+static VALUE View_SetSize( int argc, VALUE * args, VALUE self )
+{
+	float x = 0;
+	float y = 0;
+	
+	switch( argc )
+	{
+		case 1:
+		{
+			VALUE temp = Vector2_ForceType( args[0] );
+			x = NUM2DBL( Vector2_GetX( temp ) );
+			y = NUM2DBL( Vector2_GetY( temp ) );
+		}
+		case 2:
+		{
+			x = NUM2DBL( args[0] );
+			y = NUM2DBL( args[1] );
+		}
+		default:
+			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
+	}
+	
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	object->SetSize( x, y );
+	return Qnil;
+}
+
+/* call-seq:
+ *   view.setViewport( rectangle )
+ *
+ * Set the target viewport.
+ *
+ * The viewport is the rectangle into which the contents of the view are displayed, expressed as a factor 
+ * (between 0 and 1) of the size of the RenderTarget to which the view is applied. For example, a view which takes the
+ * left side of the target would be defined with SFML::View.setViewport( [0.0, 0.0, 0.5, 1.0] ). By default, a view has
+ * a viewport which covers the entire target.
+ */
+static VALUE View_SetViewport( VALUE self, VALUE aRectangle )
+{
+	VALUE temp = Rect_ForceType( aRectangle );
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	sf::FloatRect viewport;
+	viewport.Left   = NUM2DBL( Rect_GetLeft( temp ) );
+	viewport.Top    = NUM2DBL( Rect_GetTop( temp ) );
+	viewport.Width  = NUM2DBL( Rect_GetWidth( temp ) );
+	viewport.Height = NUM2DBL( Rect_GetHeight( temp ) );
+	object->SetViewport( viewport );
+	return Qnil;
+}
+
+/* call-seq:
+ *   view.zoom( factor )
+ *
+ * Resize the view rectangle relatively to its current size.
+ *
+ * Resizing the view simulates a zoom, as the zone displayed on screen grows or shrinks. factor is a multiplier:
+ *
+ *   - 1 keeps the size unchanged
+ *   - > 1 makes the view bigger (objects appear smaller)
+ *   - < 1 makes the view smaller (objects appear bigger)
+ *
+ */
+static VALUE View_Zoom( VALUE self, VALUE aFactor )
+{
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	object->Zoom( NUM2DBL( aFactor ) );
+	return Qnil;
 }
 
 static VALUE View_New( int argc, VALUE *args, VALUE aKlass )

@@ -60,6 +60,15 @@ static void Drawable_Free( rbDrawable *object )
 	delete object;
 }
 
+/* call-seq:
+ *   drawable.setPosition( x, y )
+ *   drawable.setPosition( vector2 )
+ *
+ * Set the position of the object.
+ *
+ * This function completely overwrites the previous position. See Move to apply an offset based on the previous 
+ * position instead. The default position of a drawable object is (0, 0).
+ */
 static VALUE Drawable_SetPosition( int argc, VALUE *args, VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -87,6 +96,11 @@ static VALUE Drawable_SetPosition( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.setX( x )
+ *
+ * Set the X position of the object.
+ */
 static VALUE Drawable_SetX( VALUE self, VALUE aX )
 {
 	rbDrawable *object = NULL;
@@ -95,6 +109,11 @@ static VALUE Drawable_SetX( VALUE self, VALUE aX )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.setY( y )
+ *
+ * Set the Y position of the object.
+ */
 static VALUE Drawable_SetY( VALUE self, VALUE aY )
 {
 	rbDrawable *object = NULL;
@@ -103,6 +122,16 @@ static VALUE Drawable_SetY( VALUE self, VALUE aY )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.setScale( x, y )
+ *   drawable.setScale( vector2 )
+ *
+ * Set the scale factors of the object.
+ *
+ * scale.x and scale.y must be strictly positive, otherwise they are ignored. This function completely overwrites 
+ * the previous scale. See Scale to add a factor based on the previous scale instead. The default scale of a drawable 
+ * object is (1, 1).
+ */
 static VALUE Drawable_SetScale( int argc, VALUE *args, VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -130,6 +159,13 @@ static VALUE Drawable_SetScale( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.setScaleX( factor )
+ *
+ * Set the X scale factor of the object.
+ *
+ * factor must be strictly positive, otherwise it is ignored.
+ */
 static VALUE Drawable_SetScaleX( VALUE self, VALUE aX )
 {
 	rbDrawable *object = NULL;
@@ -138,6 +174,13 @@ static VALUE Drawable_SetScaleX( VALUE self, VALUE aX )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.setScaleY( factor )
+ *
+ * Set the Y scale factor of the object.
+ *
+ * factor must be strictly positive, otherwise it is ignored.
+ */
 static VALUE Drawable_SetScaleY( VALUE self, VALUE aY )
 {
 	rbDrawable *object = NULL;
@@ -146,6 +189,16 @@ static VALUE Drawable_SetScaleY( VALUE self, VALUE aY )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.setOrigin( x, y )
+ *   drawable.setOrigin( vector2 )
+ *
+ * Set the local origin of the object.
+ *
+ * The origin of an object defines the center point for all transformations (position, scale, rotation). The 
+ * coordinates of this point must be relative to the top-left corner of the object, and ignore all transformations 
+ * (position, scale, rotation). The default origin of a drawable object is (0, 0).
+ */
 static VALUE Drawable_SetOrigin( int argc, VALUE *args, VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -173,6 +226,14 @@ static VALUE Drawable_SetOrigin( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.setRotation( angle )
+ *
+ * Set the orientation of the object.
+ *
+ * This function completely overwrites the previous rotation. See Rotate to add an angle based on the previous 
+ * rotation instead. The default rotation of a drawable object is 0.
+ */
 static VALUE Drawable_SetRotation( VALUE self, VALUE aRotation )
 {
 	rbDrawable *object = NULL;
@@ -181,6 +242,14 @@ static VALUE Drawable_SetRotation( VALUE self, VALUE aRotation )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.setColor( color )
+ *
+ * Set the global color of the object.
+ *
+ * This global color affects the entire object, and modulates (multiplies) its original pixels. 
+ * The default color is white.
+ */
 static VALUE Drawable_SetColor( VALUE self, VALUE aColor )
 {
 	VALUE color = Color_ForceType( aColor );
@@ -190,6 +259,15 @@ static VALUE Drawable_SetColor( VALUE self, VALUE aColor )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.setBlendMode( mode )
+ *
+ * Set the blending mode of the object.
+ *
+ * This property defines how the pixels of an object are blended with the pixels of the render target to which it is
+ * drawn. To know more about the blending modes available, see the SFML::Blend module. The default blend mode is
+ * SFML::Blend::Alpha.
+ */
 static VALUE Drawable_SetBlendMode( VALUE self, VALUE aMode )
 {
 	rbDrawable *object = NULL;
@@ -198,6 +276,11 @@ static VALUE Drawable_SetBlendMode( VALUE self, VALUE aMode )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.getPosition()	-> vector2
+ *
+ * Get the position of the object. 
+ */
 static VALUE Drawable_GetPosition( VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -206,6 +289,11 @@ static VALUE Drawable_GetPosition( VALUE self )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( vector.x ), rb_float_new( vector.y ) );
 }
 
+/* call-seq:
+ *   drawable.getScale()	-> vector2
+ *
+ * Get the current scale of the object. 
+ */
 static VALUE Drawable_GetScale( VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -214,6 +302,11 @@ static VALUE Drawable_GetScale( VALUE self )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( vector.x ), rb_float_new( vector.y ) );
 }
 
+/* call-seq:
+ *   drawable.getOrigin()	-> vector2
+ *
+ * Get the local origin of the object.
+ */
 static VALUE Drawable_GetOrigin( VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -222,6 +315,13 @@ static VALUE Drawable_GetOrigin( VALUE self )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( vector.x ), rb_float_new( vector.y ) );
 }
 
+/* call-seq:
+ *   drawable.getRotation()	-> float
+ *
+ * Get the orientation of the object.
+ *
+ * The rotation is always in the range [0, 360].
+ */
 static VALUE Drawable_GetRotation( VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -229,6 +329,11 @@ static VALUE Drawable_GetRotation( VALUE self )
 	return rb_float_new( object->GetRotation() );
 }
 
+/* call-seq:
+ *   drawable.getColor()	-> color
+ *
+ * Get the color of the object. 
+ */
 static VALUE Drawable_GetColor( VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -238,6 +343,11 @@ static VALUE Drawable_GetColor( VALUE self )
 									INT2FIX( color.b ), INT2FIX( color.a ) );
 }
 
+/* call-seq:
+ *   drawable.getBlendMode()	-> mode
+ *
+ * Get the blend mode of the object. 
+ */
 static VALUE Drawable_GetBlendMode( VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -245,6 +355,14 @@ static VALUE Drawable_GetBlendMode( VALUE self )
 	return INT2FIX( object->GetBlendMode() );
 }
 
+/* call-seq:
+ *   drawable.move( x, y )
+ *   drawable.move( vector2 )
+ *
+ * Move the object by a given offset.
+ *
+ * This function adds to the current position of the object, unlike setPosition which overwrites it.
+ */
 static VALUE Drawable_Move( int argc, VALUE *args, VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -272,6 +390,14 @@ static VALUE Drawable_Move( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.scale( x, y )
+ *   drawable.scale( vector2 )
+ *
+ * Scale the object.
+ *
+ * This function multiplies the current scale of the object, unlike setScale which overwrites it.
+ */
 static VALUE Drawable_Scale( int argc, VALUE *args, VALUE self )
 {
 	rbDrawable *object = NULL;
@@ -299,6 +425,13 @@ static VALUE Drawable_Scale( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.rotate( angle )
+ *
+ * Rotate the object.
+ *
+ * This function ads to the current rotation of the object, unlike setRotation which overwrites it
+ */
 static VALUE Drawable_Rotate( VALUE self, VALUE aRotation )
 {
 	rbDrawable *object = NULL;
@@ -307,6 +440,15 @@ static VALUE Drawable_Rotate( VALUE self, VALUE aRotation )
 	return Qnil;
 }
 
+/* call-seq:
+ *   drawable.transformToLocal( vector2 )	-> vector2
+ *
+ * Transform a point in object local coordinates.
+ *
+ * This function takes a point in global coordinates, and transforms it in coordinates local to the object. In other
+ * words, it applies the inverse of all the transformations applied to the object (origin, translation, rotation 
+ * and scale).
+ */
 static VALUE Drawable_TransformToLocal( VALUE self, VALUE aPoint )
 {
 	VALUE point = Vector2_ForceType( point );
@@ -318,6 +460,14 @@ static VALUE Drawable_TransformToLocal( VALUE self, VALUE aPoint )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( newPoint.x ), rb_float_new( newPoint.y ) );
 }
 
+/* call-seq:
+ *   drawable.transformToGlobal( vector2 )	-> vector2
+ *
+ * Transform a local point in global coordinates.
+ *
+ * This function takes a point in local coordinates, and transforms it in global coordinates. In other words, it 
+ * applies the same transformations that are applied to the object (origin, translation, rotation and scale).
+ */
 static VALUE Drawable_TransformToGlobal( VALUE self, VALUE aPoint )
 {
 	VALUE point = Vector2_ForceType( point );

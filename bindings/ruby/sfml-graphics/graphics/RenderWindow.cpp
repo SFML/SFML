@@ -37,6 +37,16 @@ static void RenderWindow_Free( sf::RenderWindow *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   render_window.draw( drawable )
+ *   render_window.draw( drawable, shader )
+ *
+ * Draw an object into the target with a shader.
+ *
+ * This function draws anything that inherits from the SFML::Drawable base class (SFML::Sprite, SFML::Shape,
+ * SFML::Text, or even your own derived classes). The shader alters the way that the pixels are processed right before
+ * being written to the render target.
+ */
 static VALUE RenderWindow_Draw( int argc, VALUE *args, VALUE self )
 {
 	sf::RenderWindow *object = NULL;
@@ -68,13 +78,22 @@ static VALUE RenderWindow_Draw( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
-static VALUE RenderWindow_Display( VALUE self )
-{
-	sf::RenderWindow *object = NULL;
-	Data_Get_Struct( self, sf::RenderWindow, object );
-	object->Display();
-}
-
+/* call-seq:
+ *   Window.new()											-> render_window
+ *   Window.new( mode, title, style = SFML::Style::Default, settings = SFML::ContextSettings.new )	-> render_window
+ *
+ * Construct a new window.
+ *
+ * The first form of new doesn't actually create the visual window, use the other form of new or call 
+ * SFML::Window#create to do so.
+ *
+ * The second form of new creates the window with the size and pixel depth defined in mode. An optional style can be passed 
+ * to customize the look and behaviour of the window (borders, title bar, resizable, closable, ...). If style contains 
+ * Style::Fullscreen, then mode must be a valid video mode.
+ *
+ * The fourth parameter is an optional structure specifying advanced OpenGL context settings such as antialiasing, 
+ * depth-buffer bits, etc. You shouldn't care about these parameters for a regular usage of the graphics module.
+ */
 static VALUE RenderWindow_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::RenderWindow *object = new sf::RenderWindow();

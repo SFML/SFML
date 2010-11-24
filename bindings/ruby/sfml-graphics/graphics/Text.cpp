@@ -40,6 +40,12 @@ static void Text_Free( sf::Text *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   Text.new()									-> text
+ *   Text.new( string, font = SFML::Font::DefaultFont, characterSize = 30 )	-> text
+ *
+ * Create a text instance
+ */
 static VALUE Text_Initialize( int argc, VALUE *args, VALUE self )
 {
 	VALUE temp			= Qnil;
@@ -68,6 +74,11 @@ static VALUE Text_Initialize( int argc, VALUE *args, VALUE self )
 	return self;
 }
 
+/* call-seq:
+ *   text.setString( string )
+ *
+ * Set the text's string. 
+ */
 static VALUE Text_SetString( VALUE self, VALUE aString )
 {
 	sf::Text *object = NULL;
@@ -76,6 +87,13 @@ static VALUE Text_SetString( VALUE self, VALUE aString )
 	return Qnil;
 }
 
+/* call-seq:
+ *   text.setFont( font )
+ *
+ * Set the text's font.
+ *
+ * Texts have a valid font by default, which the built-in SFML::Font::DefaultFont.
+ */
 static VALUE Text_SetFont( VALUE self, VALUE aFont )
 {
 	VALIDATE_CLASS( aFont, globalFontClass, "font" );
@@ -88,6 +106,13 @@ static VALUE Text_SetFont( VALUE self, VALUE aFont )
 	return Qnil;
 }
 
+/* call-seq:
+ *   text.setCharacterSize( size )
+ *
+ * Set the character size.
+ *
+ * The default size is 30.
+ */
 static VALUE Text_SetCharacterSize( VALUE self, VALUE aSize )
 {
 	sf::Text *object = NULL;
@@ -96,6 +121,14 @@ static VALUE Text_SetCharacterSize( VALUE self, VALUE aSize )
 	return Qnil;
 }
 
+/* call-seq:
+ *   text.setStyle( style )
+ *
+ * Set the text's style.
+ *
+ * You can pass a combination of one or more styles, for example sf::Text::Bold | sf::Text::Italic. The default style 
+ * is sf::Text::Regular.
+ */
 static VALUE Text_SetStyle( VALUE self, VALUE aStyle )
 {
 	sf::Text *object = NULL;
@@ -104,6 +137,11 @@ static VALUE Text_SetStyle( VALUE self, VALUE aStyle )
 	return Qnil;
 }
 
+/* call-seq:
+ *   text.getString()	-> string
+ *
+ * Get the text's string. 
+ */
 static VALUE Text_GetString( VALUE self )
 {
 	sf::Text *object = NULL;
@@ -111,11 +149,21 @@ static VALUE Text_GetString( VALUE self )
 	return rb_str_new2( object->GetString().ToAnsiString().c_str() );
 }
 
+/* call-seq:
+ *   text.getFont()	-> font
+ *
+ * Get the text's font. 
+ */
 static VALUE Text_GetFont( VALUE self )
 {
 	return rb_iv_get( self, "@__font_ref" );
 }
 
+/* call-seq:
+ *   text.getCharacterSize()	-> fixnum
+ *
+ * Get the character size
+ */
 static VALUE Text_GetCharacterSize( VALUE self )
 {
 	sf::Text *object = NULL;
@@ -123,6 +171,11 @@ static VALUE Text_GetCharacterSize( VALUE self )
 	return INT2FIX( object->GetCharacterSize() );
 }
 
+/* call-seq:
+ *   text.getStyle()	-> fixnum
+ *
+ * Get the text's style. 
+ */
 static VALUE Text_GetStyle( VALUE self )
 {
 	sf::Text *object = NULL;
@@ -130,6 +183,16 @@ static VALUE Text_GetStyle( VALUE self )
 	return INT2FIX( object->GetStyle() );
 }
 
+/* call-seq:
+ *   text.getCharacterPos( index )	-> vector2
+ *
+ * Return the position of the index-th character.
+ *
+ * This function computes the visual position of a character from its index in the string. The returned position is in
+ * local coordinates (translation, rotation, scale and origin are not applied). You can easily get the corresponding
+ * global position with the TransformToGlobal function. If index is out of range, the position of the end of the 
+ * string is returned.
+ */
 static VALUE Text_GetCharacterPos( VALUE self, VALUE anIndex )
 {
 	sf::Text *object = NULL;
@@ -138,6 +201,13 @@ static VALUE Text_GetCharacterPos( VALUE self, VALUE anIndex )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( pos.x ), rb_float_new( pos.y ) );
 }
 
+/* call-seq:
+ *   text.getRect()	-> rectangle
+ *
+ * Get the bounding rectangle of the text.
+ *
+ * The returned rectangle is in global coordinates.
+ */
 static VALUE Text_GetRect( VALUE self )
 {
 	sf::Text *object = NULL;
@@ -168,44 +238,44 @@ void Init_Text( void )
 {
 /* SFML namespace which contains the classes of this module. */
 	VALUE sfml = rb_define_module( "SFML" );
-/* Drawable representation of an image, with its own transformations, color, blend mode, etc.
+/* Graphical text that can be drawn to a render target.
  *
- * SFML::Sprite is a drawable class that allows to easily display an image (or a part of it) on a render target.
+ * SFML::Text is a drawable class that allows to easily display some text with custom style and color on a render target.
  *
  * It inherits all the functions from SFML::Drawable: position, rotation, scale, origin, global color and blend mode. 
- * It also adds sprite-specific properties such as the image to use, the part of it to display, and some convenience 
- * functions to flip or resize the sprite.
+ * It also adds text-specific properties such as the font to use, the character size, the font style (bold, italic,
+ * underlined), and the text to display of course. It also provides convenience functions to calculate the graphical 
+ * size of the text, or to get the visual position of a given character.
  *
- * SFML::Sprite works in combination with the SFML::Image class, which loads and provides the pixel data of a 
- * given image.
+ * SFML::Text works in combination with the sf::Font class, which loads and provides the glyphs (visual characters) of
+ * a given font.
  *
- * The separation of SFML::Sprite and SFML::Image allows more flexibility and better performances: indeed a SFML::Image 
- * is a heavy resource, and any operation on it is slow (often too slow for real-time applications). On the other side, 
- * a SFML::Sprite is a lightweight object which can use the pixel data of a SFML::Image and draw it with its own 
- * transformation / color / blending attributes.
+ * The separation of SFML::Font and SFML::Text allows more flexibility and better performances: indeed a SFML::Font is a 
+ * heavy resource, and any operation on it is slow (often too slow for real-time applications). On the other side, a 
+ * SFML::Text is a lightweight object which can combine the glyphs data and metrics of a SFML::Font to display any 
+ * text on a render target.
+ * 
+ * It is important to note that the SFML::Text instance doesn't copy the font that it uses, it only keeps a 
+ * reference to it. Thus, a SFML::Font must not be destructed while it is used by a SFML::Text (i.e. never write a
+ * function that uses a local SFML::Font instance for creating a text).
  *
- * It is important to note that the SFML::Sprite instance doesn't copy the image that it uses, it only keeps a reference 
- * to it. Thus, a SFML::Image must not be destructed while it is used by a SFML::Sprite (i.e. never write a function that 
- * uses a local SFML::Image instance for creating a sprite).
- *
- * NOTE: This is the ruby bindings so the images will be managed by the ruby garbage collector and thus the image won't
+ * NOTE: This is the ruby bindings so the fonts will be managed by the ruby garbage collector and thus the font won't
  * be destructed until all sprites referencing it is destructed. But it's still a good practice to keep in mind.
  *
  * Usage example:
  *
- *   # Declare and load an image
- *   image = SFML::Image.new
- *   image.loadFromFile( "image.png" )
+ *   # Declare and load a font
+ *   font = SFML::Font.new
+ *   font.loadFromFile( "arial.ttf" )
  *
- *   # Create a sprite
- *   sprite = SFML::Sprite.new
- *   sprite.image = image
- *   sprite.subRect = [10, 10, 50, 30]
- *   sprite.resize( 100, 60 )
+ *   # Create a text
+ *   text SFML::Text.new( "hello" )
+ *   text.setFont( font )
+ *   text.SetCharacterSize( 30 )
+ *   text.setStyle( SFML::Text::Regular )
  *
  *   # Display it
- *   window.draw( sprite ) # window is a SFML::RenderWindow
- *
+ *   window.draw( text ) # window is a SFML::RenderWindow
  */
 	globalTextClass = rb_define_class_under( sfml, "Text", rb_cObject );
 	rb_include_module( globalTextClass, globalDrawableModule );

@@ -128,9 +128,10 @@ static void Rect_internal_ValidateTypes( VALUE aFirst, VALUE aSecond, VALUE aThi
 }
 
 /* call-seq:
- *   Rect.new( x, y )		-> true or false
- *   Rect.new( vector2 )	-> true or false
+ *   rect.contains( x, y )	-> true or false
+ *   rect.contains( vector2 )	-> true or false
  * 
+ * Check if a point is inside the rectangle's area.
  */
 static VALUE Rect_Contains( int argc, VALUE * args, VALUE self )
 {
@@ -172,7 +173,14 @@ static VALUE Rect_Contains( int argc, VALUE * args, VALUE self )
 	}
 }
 
-static VALUE Rect_Intersect( VALUE self, VALUE aRect )
+/* call-seq:
+ *   rect.intersects( rectangle )	-> intersection rectangel or nil
+ * 
+ * Check the intersection between two rectangles.
+ *
+ * This method returns the overlapped rectangle if intersecting otherwise nil.
+ */
+static VALUE Rect_Intersects( VALUE self, VALUE aRect )
 {
 	VALUE selfLeft 	 = rb_funcall( self, rb_intern( "left" ), 0 );
 	VALUE selfTop 	 = rb_funcall( self, rb_intern( "top" ), 0 );
@@ -332,7 +340,7 @@ void Init_Rect( void )
 	// Instance methods
 	rb_define_method( globalRectClass, "initialize", Rect_Initialize, -1 );
 	rb_define_method( globalRectClass, "contains", Rect_Contains, -1 );
-	rb_define_method( globalRectClass, "intersects", Rect_Contains, 1 );
+	rb_define_method( globalRectClass, "intersects", Rect_Intersects, 1 );
 	
 	// Instance operators
 	

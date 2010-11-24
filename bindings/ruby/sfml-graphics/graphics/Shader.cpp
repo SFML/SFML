@@ -38,6 +38,14 @@ static void Shader_Free( sf::Shader *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   shader.loadFromFile( filename )	-> true or false
+ *
+ * Load the shader from a file.
+ *
+ * The source must be a text file containing a valid fragment shader in GLSL language. GLSL is a C-like language 
+ * dedicated to OpenGL shaders; you'll probably need to read a good documentation for it before writing your own shaders.
+ */
 static VALUE Shader_LoadFromFile( VALUE self, VALUE aFileName )
 {
 	sf::Shader *object = NULL;
@@ -52,6 +60,14 @@ static VALUE Shader_LoadFromFile( VALUE self, VALUE aFileName )
 	}
 }
 
+/* call-seq:
+ *   shader.loadFromMemory( filename )	-> true or false
+ *
+ * Load the shader from a source code in memory.
+ *
+ * The source code must be a valid fragment shader in GLSL language. GLSL is a C-like language dedicated to OpenGL 
+ * shaders; you'll probably need to read a good documentation for it before writing your own shaders.
+ */
 static VALUE Shader_LoadFromMemory( VALUE self, VALUE aShader )
 {
 	sf::Shader *object = NULL;
@@ -66,6 +82,16 @@ static VALUE Shader_LoadFromMemory( VALUE self, VALUE aShader )
 	}
 }
 
+/* call-seq:
+ *   shader.setParameter( name, x )
+ *   shader.setParameter( name, x, y )
+ *   shader.setParameter( name, x, y, z )
+ *   shader.setParameter( name, x, y, z, w )
+ *   shader.setParameter( name, vector2 )
+ *   shader.setParameter( name, vector3 )
+ *
+ * Change a vector parameter of the shader. 
+ */
 static VALUE Shader_SetParameter( int argc, VALUE *args, VALUE self )
 {
 	sf::Shader *object = NULL;
@@ -125,6 +151,25 @@ static VALUE Shader_SetParameter( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   shader.setParameter( name, texture )
+ *
+ * Change a texture parameter of the shader.
+ *
+ * name is the name of the texture to change in the shader. To tell the shader to use the current texture of the object 
+ * being drawn, pass Shader::CurrentTexture. Example:
+ * 
+ *   # These are the variables in the pixel shader
+ *   uniform sampler2D current;
+ *   uniform sampler2D other;
+ * 
+ *   image = SFML::Image.new
+ *   ...
+ *   shader.setParameter( "current", SFML::Shader::CurrentTexture )
+ *   shader.setParameter( "other", image )
+ *
+* It is important to note that texture must remain alive as long as the shader uses it, no copy is made internally.
+ */
 static VALUE Shader_SetTexture( VALUE self, VALUE aName, VALUE aTexture )
 {
 	VALIDATE_CLASS( aName, rb_cString, "name" );
@@ -138,6 +183,14 @@ static VALUE Shader_SetTexture( VALUE self, VALUE aName, VALUE aTexture )
 	return Qnil;
 }
 
+/* call-seq:
+ *   shader.bind()
+ *
+ * Bind the shader for rendering (activate it).
+ *
+ * This function is normally for internal use only, unless you want to use the shader with a custom OpenGL rendering 
+ * instead of a SFML drawable.
+ */
 static VALUE Shader_Bind( VALUE self )
 {
 	sf::Shader *object = NULL;
@@ -146,6 +199,14 @@ static VALUE Shader_Bind( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   shader.unbind()
+ *
+ * Unbind the shader (deactivate it).
+ *
+ * This function is normally for internal use only, unless you want to use the shader with a custom OpenGL rendering 
+ * instead of a SFML drawable.
+ */
 static VALUE Shader_Unbind( VALUE self )
 {
 	sf::Shader *object = NULL;
@@ -154,6 +215,11 @@ static VALUE Shader_Unbind( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   Shader.new()
+ *
+ * Create a new shader.
+ */
 static VALUE Shader_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::Shader *object = new sf::Shader();
@@ -162,6 +228,14 @@ static VALUE Shader_New( int argc, VALUE *args, VALUE aKlass )
 	return rbData;
 }
 
+/* call-seq:
+ *   Shader.isAvailable()
+ *
+ * Tell whether or not the system supports shaders.
+ *
+ * This function should always be called before using the shader features. If it returns false, then any attempt to 
+ * use SFML::Shader will fail.
+ */
 static VALUE Shader_IsAvailable( VALUE aKlass )
 {
 	return ( sf::Shader::IsAvailable() == true ? Qtrue : Qfalse );

@@ -27,13 +27,17 @@
 #include <SFML/Graphics/Renderer.hpp>
 
 VALUE globalRendererClass;
-VALUE globalPrimitiveTypesNamespace;
 
 /* External classes */
 extern VALUE globalColorClass;
 extern VALUE globalImageClass;
 extern VALUE globalShaderClass;
 
+/* call-seq:
+ *   renderer.saveGLStates()
+ *
+ * Save the current OpenGL render states and matrices. 
+ */
 static VALUE Renderer_SaveGLStates( VALUE self )
 {
 	sf::Renderer *object = NULL;
@@ -42,6 +46,11 @@ static VALUE Renderer_SaveGLStates( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.restoreGLStates()
+ *
+ * Restore the previously saved OpenGL render states and matrices. 
+ */
 static VALUE Renderer_RestoreGLStates( VALUE self )
 {
 	sf::Renderer *object = NULL;
@@ -50,6 +59,11 @@ static VALUE Renderer_RestoreGLStates( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.clear()
+ *
+ * Clear the color buffer. 
+ */
 static VALUE Renderer_Clear( VALUE self, VALUE aColor )
 {
 	VALUE temp = Color_ForceType( aColor );
@@ -64,6 +78,11 @@ static VALUE Renderer_Clear( VALUE self, VALUE aColor )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.pushStates()
+ *
+ * Save the current render states. 
+ */
 static VALUE Renderer_PushStates( VALUE self )
 {
 	sf::Renderer *object = NULL;
@@ -72,6 +91,11 @@ static VALUE Renderer_PushStates( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.popStates()
+ *
+ * Restore the previously saved render states. 
+ */
 static VALUE Renderer_PopStates( VALUE self )
 {
 	sf::Renderer *object = NULL;
@@ -80,6 +104,14 @@ static VALUE Renderer_PopStates( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.setColor( color )
+ *
+ * Set the current global color.
+ *
+ * This color will be modulated with each vertex's color. Note: any call to this function after a call to BeginBatch
+ * will be ignored, and delayed until BeginBatch is called again.
+ */
 static VALUE Renderer_SetColor( VALUE self, VALUE aColor )
 {
 	VALUE temp = Color_ForceType( aColor );
@@ -94,6 +126,14 @@ static VALUE Renderer_SetColor( VALUE self, VALUE aColor )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.applyColor( color )
+ *
+ * Modulate the current global color with a new one.
+ *
+ * This color will be modulated with each vertex's color. Note: any call to this function after a call to BeginBatch 
+ * will be ignored, and delayed until BeginBatch is called again.
+ */
 static VALUE Renderer_ApplyColor( VALUE self, VALUE aColor )
 {
 	VALUE temp = Color_ForceType( aColor );
@@ -108,6 +148,13 @@ static VALUE Renderer_ApplyColor( VALUE self, VALUE aColor )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.setViewport( rectangle )
+ *
+ * Set the current viewport.
+ *
+ * Note: any call to this function after a call to BeginBatch will be ignored, and delayed until BeginBatch is called again.
+ */
 static VALUE Renderer_SetViewport( VALUE self, VALUE aRect )
 {
 	VALUE temp = Rect_ForceType( aRect );
@@ -122,6 +169,13 @@ static VALUE Renderer_SetViewport( VALUE self, VALUE aRect )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.setBlendMode( mode )
+ *
+ * Set the current alpha-blending mode.
+ *
+ * Note: any call to this function after a call to BeginBatch will be ignored, and delayed until BeginBatch is called again.
+ */
 static VALUE Renderer_SetBlendMode( VALUE self, VALUE aMode )
 {
 	sf::Renderer *object = NULL;
@@ -130,6 +184,13 @@ static VALUE Renderer_SetBlendMode( VALUE self, VALUE aMode )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.setTexture( texture )
+ *
+ * Set the current texture.
+ *
+ * Note: any call to this function after a call to BeginBatch will be ignored, and delayed until BeginBatch is called again.
+ */
 static VALUE Renderer_SetTexture( VALUE self, VALUE aTexture )
 {
 	VALIDATE_CLASS( aTexture, globalImageClass, "texture" );
@@ -141,6 +202,13 @@ static VALUE Renderer_SetTexture( VALUE self, VALUE aTexture )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.setShader( shader )
+ *
+ * Set the current shader.
+ *
+ * Note: any call to this function after a call to BeginBatch will be ignored, and delayed until BeginBatch is called again.
+ */
 static VALUE Renderer_SetShader( VALUE self, VALUE aShader )
 {
 	VALIDATE_CLASS( aShader, globalShaderClass, "shader" );
@@ -152,6 +220,23 @@ static VALUE Renderer_SetShader( VALUE self, VALUE aShader )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.begin( type )
+ *
+ * Begin rendering a new geometry batch.
+ * 
+ * You need to call SFML::Renderer#end to complete the batch and trigger the actual rendering of the geometry that you
+ * passed between begin() and end().
+ *
+ * Usage:
+ *
+ *   renderer.begin( SFML::Renderer::TriangleList )
+ *   renderer.addVertex(...)
+ *   renderer.addVertex(...)
+ *   renderer.addVertex(...)
+ *   renderer.end()
+ *
+ */
 static VALUE Renderer_Begin( VALUE self, VALUE aType )
 {
 	sf::Renderer *object = NULL;
@@ -160,6 +245,11 @@ static VALUE Renderer_Begin( VALUE self, VALUE aType )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.end()
+ *
+ * End the current geometry batch and render it. 
+ */
 static VALUE Renderer_End( VALUE self )
 {
 	sf::Renderer *object = NULL;
@@ -168,6 +258,14 @@ static VALUE Renderer_End( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   renderer.addVertex( x, y )
+ *   renderer.addVertex( x, y, u, v )
+ *   renderer.addVertex( x, y color )
+ *   renderer.addVertex( x, y, u, v, color )
+ *
+ * This function adds a new vertex to the current batch.
+ */
 static VALUE Renderer_AddVertex( int argc, VALUE *args, VALUE self )
 {
 	sf::Renderer *object = NULL;
@@ -214,11 +312,10 @@ static VALUE Renderer_AddVertex( int argc, VALUE *args, VALUE self )
 
 static void DefinePrimitiveTypesEnum( void )
 {
-	globalPrimitiveTypesNamespace = rb_define_module_under( globalRendererClass, "PrimitiveTypes" );
-	rb_define_const( globalPrimitiveTypesNamespace, "TriangleList", INT2FIX( sf::Renderer::TriangleList ) );
-	rb_define_const( globalPrimitiveTypesNamespace, "TriangleStrip", INT2FIX( sf::Renderer::TriangleStrip ) );
-	rb_define_const( globalPrimitiveTypesNamespace, "TriangleFan", INT2FIX( sf::Renderer::TriangleFan ) );
-	rb_define_const( globalPrimitiveTypesNamespace, "QuadList", INT2FIX( sf::Renderer::QuadList ) );
+	rb_define_const( globalRendererClass, "TriangleList", INT2FIX( sf::Renderer::TriangleList ) );
+	rb_define_const( globalRendererClass, "TriangleStrip", INT2FIX( sf::Renderer::TriangleStrip ) );
+	rb_define_const( globalRendererClass, "TriangleFan", INT2FIX( sf::Renderer::TriangleFan ) );
+	rb_define_const( globalRendererClass, "QuadList", INT2FIX( sf::Renderer::QuadList ) );
 }
 
 void Init_Renderer( void )

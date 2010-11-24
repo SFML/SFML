@@ -40,6 +40,12 @@ static void Sprite_Free( sf::Sprite *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   Sprite.new()											-> sprite
+ *   Sprite.new( image, position = [0, 0], scale = [1, 1], rotation = 0.0, color = SFML::Color::White )	-> sprite
+ *
+ * Construct the sprite from a source image. 
+ */
 static VALUE Sprite_Initialize( int argc, VALUE *args, VALUE self )
 {
 	VALUE temp		= Qnil;
@@ -82,6 +88,17 @@ static VALUE Sprite_Initialize( int argc, VALUE *args, VALUE self )
 	return self;
 }
 
+/* call-seq:
+ *   sprite.setImage( image, adjustToNewSize = false)
+ *
+ * Change the source image of the sprite.
+ *
+ * The image argument refers to an image that must exist as long as the sprite uses it. Indeed, the sprite doesn't 
+ * store its own copy of the image, but rather keeps a pointer to the one that you passed to this function. If the 
+ * source image is destroyed and the sprite tries to use it, it may appear as a white rectangle. If adjustToNewSize is
+ * true, the SubRect property of the sprite is adjusted to the size of the new image. If it is false, the SubRect 
+ * is unchanged.
+ */
 static VALUE Sprite_SetImage( int argc, VALUE *args, VALUE self )
 {
 	sf::Image *image	= NULL;
@@ -89,6 +106,7 @@ static VALUE Sprite_SetImage( int argc, VALUE *args, VALUE self )
 	
 	sf::Sprite *object = NULL;
 	Data_Get_Struct( self, sf::Sprite, object );
+	rb_iv_set( self, "@__image_ref", Qnil );
 	switch( argc )
 	{
 		case 2:
@@ -116,6 +134,14 @@ static VALUE Sprite_SetImage( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sprite.setSubRect( rectangle )
+ *
+ * Set the part of the image that the sprite will display.
+ *
+ * The sub-rectangle is useful when you don't want to display the whole image, but rather a part of it. By default,
+ * the sub-rectangle covers the entire image.
+ */
 static VALUE Sprite_SetSubRect( VALUE self, VALUE aRectangle )
 {
 	VALUE temp = Rect_ForceType( aRectangle );
@@ -127,6 +153,15 @@ static VALUE Sprite_SetSubRect( VALUE self, VALUE aRectangle )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sprite.resize( width, height )
+ *   sprite.resize( vector2 )
+ *
+ * Change the size of the sprite.
+ *
+ * This function is just a shortcut that calls SetScale with the proper values, calculated from the size of the current
+ * subrect. If width or height is not strictly positive, this functions does nothing.
+ */
 static VALUE Sprite_Resize( int argc, VALUE *args, VALUE self )
 {
 	VALUE arg0 = Qnil;
@@ -152,6 +187,11 @@ static VALUE Sprite_Resize( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sprite.flipX( flipped )
+ *
+ * Flip the sprite horizontally. 
+ */
 static VALUE Sprite_FlipX( VALUE self, VALUE aFlippedFlag )
 {
 	sf::Sprite *object = NULL;
@@ -171,6 +211,11 @@ static VALUE Sprite_FlipX( VALUE self, VALUE aFlippedFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sprite.flipY( flipped )
+ *
+ * Flip the sprite vertically. 
+ */
 static VALUE Sprite_FlipY( VALUE self, VALUE aFlippedFlag )
 {
 	sf::Sprite *object = NULL;
@@ -190,11 +235,23 @@ static VALUE Sprite_FlipY( VALUE self, VALUE aFlippedFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sprite.getImage()	-> image or nil
+ *
+ * Get the source image of the sprite.
+ *
+ * If the sprite has no source image, or if the image doesn't exist anymore, nil is returned.
+ */
 static VALUE Sprite_GetImage( VALUE self )
 {
 	return rb_iv_get( self, "@__image_ref" );
 }
 
+/* call-seq:
+ *   sprite.getSubRect()	-> rectangle
+ *
+ * Get the region of the image displayed by the sprite. 
+ */
 static VALUE Sprite_GetSubRect( VALUE self )
 {
 	sf::Sprite *object = NULL;
@@ -205,6 +262,13 @@ static VALUE Sprite_GetSubRect( VALUE self )
 				INT2FIX( rect.Width ), INT2FIX( rect.Height ) );
 }
 
+/* call-seq:
+ *   sprite.getSize()	-> vector2
+ *
+ * Get the global size of the sprite.
+ *
+ * This function is a shortcut that multiplies the size of the subrect by the scale factors.
+ */
 static VALUE Sprite_GetSize( VALUE self )
 {
 	sf::Sprite *object = NULL;
@@ -213,6 +277,15 @@ static VALUE Sprite_GetSize( VALUE self )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( size.x ), rb_float_new( size.y ) );	
 }
 
+/* call-seq:
+ *   sprite.getPixel( x, y )	-> color
+ *
+ * Get the color of a given pixel in the sprite.
+ *
+ * This function returns the source image pixel, multiplied by the global color of the sprite. The input point must 
+ * be in local coordinates. If you have a global point, you can use the TransformToLocal function to make it local. 
+ * This function doesn't perform any check, you must ensure that the x and y coordinates are not out of bounds.
+ */
 static VALUE Sprite_GetPixel( VALUE self, VALUE aX, VALUE aY )
 {
 	sf::Sprite *object = NULL;

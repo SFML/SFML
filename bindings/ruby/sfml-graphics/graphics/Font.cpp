@@ -130,6 +130,11 @@ static VALUE Font_GetImage( VALUE self, VALUE aCharacterSize )
 	return rbImage;
 }
 
+/* call-seq:
+ *   Font.new()	-> font
+ *
+ * Creates an empty font 
+ */
 static VALUE Font_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::Font *object = new sf::Font();
@@ -138,10 +143,19 @@ static VALUE Font_New( int argc, VALUE *args, VALUE aKlass )
 	return rbData;
 }
 
+/* call-seq:
+ *   Font.getDefaultFont()	-> font
+ *
+ * Return the default built-in font.
+ *
+ * This font is provided for convenience, it is used by SFML::Text instances by default. It is provided so that users 
+ * don't have to provide and load a font file in order to display text on screen. The font used is Arial.
+ */
 static VALUE Font_GetDefaultFont( VALUE aKlass )
 {
 	const sf::Font& font = sf::Font::GetDefaultFont();
 	VALUE rbFont = Data_Wrap_Struct( globalFontClass, 0, 0, const_cast<sf::Font *>( &font ) );
+	rb_obj_call_init( rbFont, 0, 0 );
 	return rbFont;
 }
 
@@ -215,6 +229,7 @@ void Init_Font( void )
 	rb_define_alias( CLASS_OF( globalFontClass ), "get_default_font", "getDefaultFont" );
 	rb_define_alias( CLASS_OF( globalFontClass ), "defaultFont", "getDefaultFont" );
 	rb_define_alias( CLASS_OF( globalFontClass ), "default_font", "getDefaultFont" );
+	rb_define_alias( CLASS_OF( globalFontClass ), "DefaultFont", "getDefaultFont" );
 	
 	// Instance Aliases
 	rb_define_alias( globalFontClass , "load_from_file", "loadFromFile" );

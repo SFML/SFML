@@ -38,6 +38,14 @@ static void Shape_Free( sf::Shape *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   shape.addPoint( x, y, color, outlineColor )
+ *   shape.addPoint( position, color, outlineColor )
+ *
+ * Add a new point to the shape.
+ *
+ * The new point is inserted at the end of the shape.
+ */
 static VALUE Shape_AddPoint( int argc, VALUE *args, VALUE self )
 {
 	VALUE temp = Qnil;
@@ -102,6 +110,11 @@ static VALUE Shape_AddPoint( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   shape.getPointsCount()	-> fixnum
+ *
+ * Get the number of points composing the shape.
+ */
 static VALUE Shape_GetPointsCount( VALUE self )
 {
 	sf::Shape *object = NULL;
@@ -109,6 +122,13 @@ static VALUE Shape_GetPointsCount( VALUE self )
 	return INT2FIX( object->GetPointsCount() );
 }
 
+/* call-seq:
+ *   shape.enableFill( enable )
+ *
+ * Enable or disable the shape's filling.
+ *
+ * This option is enabled by default.
+ */
 static VALUE Shape_EnableFill( VALUE self, VALUE anEnableFlag )
 {
 	sf::Shape *object = NULL;
@@ -128,6 +148,13 @@ static VALUE Shape_EnableFill( VALUE self, VALUE anEnableFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   shape.enableOutline( enable )
+ *
+ * Enable or disable the shape's outline.
+ *
+ * This option is enabled by default.
+ */
 static VALUE Shape_EnableOutline( VALUE self, VALUE anEnableFlag )
 {
 	sf::Shape *object = NULL;
@@ -147,6 +174,15 @@ static VALUE Shape_EnableOutline( VALUE self, VALUE anEnableFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   shape.setPointPosition( index, position )
+ *   shape.setPointPosition( index, x, y )
+ *
+ * Change the position of a point.
+ *
+ * Warning: this function doesn't check the validity of index, if it is out of bounds (ie. in the range 
+ * [0, GetPointscount() - 1]) the behaviour is undefined.
+ */
 static VALUE Shape_SetPointPosition( int argc, VALUE *args, VALUE self )
 {
 	VALUE temp = Qnil;
@@ -173,6 +209,14 @@ static VALUE Shape_SetPointPosition( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   shape.setPointColor( index, color )
+ *
+ * Change the color of a point.
+ *
+ * Warning: this function doesn't check the validity of index, if it is out of bounds (ie. in the range 
+ * [0, GetPointscount() - 1]) the behaviour is undefined.
+ */
 static VALUE Shape_SetPointColor( VALUE self, VALUE anIndex, VALUE aColor )
 {
 	sf::Shape *object = NULL;
@@ -187,6 +231,14 @@ static VALUE Shape_SetPointColor( VALUE self, VALUE anIndex, VALUE aColor )
 	return Qnil;
 }
 
+/* call-seq:
+ *   shape.setPointOutlineColor( index, color )
+ *
+ * Change the outline color of a point.
+ *
+ * Warning: this function doesn't check the validity of index, if it is out of bounds (ie. in the range 
+ * [0, GetPointscount() - 1]) the behaviour is undefined.
+ */
 static VALUE Shape_SetPointOutlineColor( VALUE self, VALUE anIndex, VALUE aColor )
 {
 	sf::Shape *object = NULL;
@@ -201,6 +253,11 @@ static VALUE Shape_SetPointOutlineColor( VALUE self, VALUE anIndex, VALUE aColor
 	return Qnil;
 }
 
+/* call-seq:
+ *   shape.setOutlineWidth( width )
+ *
+ * Change the thickness of the shape outline. 
+ */
 static VALUE Shape_SetOutlineWidth( VALUE self, VALUE aWidth )
 {
 	sf::Shape *object = NULL;
@@ -209,6 +266,14 @@ static VALUE Shape_SetOutlineWidth( VALUE self, VALUE aWidth )
 	return Qnil;
 }
 
+/* call-seq:
+ *   shape.getPointPosition( index )	-> vector2
+ *
+ * Get the position of a point.
+ *
+ * Warning: this function doesn't check the validity of index, if it is out of bounds (ie. in the range 
+ * [0, GetPointscount() - 1]) the behaviour is undefined.
+ */
 static VALUE Shape_GetPointPosition( VALUE self, VALUE anIndex )
 {
 	sf::Shape *object = NULL;
@@ -217,6 +282,14 @@ static VALUE Shape_GetPointPosition( VALUE self, VALUE anIndex )
 	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( vector.x ), rb_float_new( vector.y ) );
 }
 
+/* call-seq:
+ *   shape.getPointColor( index )	-> color
+ *
+ * Get the color of a point.
+ *
+ * Warning: this function doesn't check the validity of index, if it is out of bounds (ie. in the range 
+ * [0, GetPointscount() - 1]) the behaviour is undefined.
+ */
 static VALUE Shape_GetPointColor( VALUE self, VALUE anIndex )
 {
 	sf::Shape *object = NULL;
@@ -227,6 +300,14 @@ static VALUE Shape_GetPointColor( VALUE self, VALUE anIndex )
 				INT2FIX( color.b ), INT2FIX( color.a ) );
 }
 
+/* call-seq:
+ *   shape.getPointOutlineColor( index )	-> color
+ *
+ * Get the outline color of a point.
+ *
+ * Warning: this function doesn't check the validity of index, if it is out of bounds (ie. in the range 
+ * [0, GetPointscount() - 1]) the behaviour is undefined.
+ */
 static VALUE Shape_GetPointOutlineColor( VALUE self, VALUE anIndex )
 {
 	sf::Shape *object = NULL;
@@ -237,6 +318,11 @@ static VALUE Shape_GetPointOutlineColor( VALUE self, VALUE anIndex )
 				INT2FIX( color.b ), INT2FIX( color.a ) );
 }
 
+/* call-seq:
+ *   shape.getOutlineWidth()	-> float
+ *
+ * Get the thickness of the shape outline. 
+ */
 static VALUE Shape_GetOutlineWidth( VALUE self )
 {
 	sf::Shape *object = NULL;
@@ -244,6 +330,11 @@ static VALUE Shape_GetOutlineWidth( VALUE self )
 	return rb_float_new( object->GetOutlineWidth() );
 }
 
+/* call-seq:
+ *   Shape.new()	-> shape
+ *
+ * Create an empty shape.
+ */
 static VALUE Shape_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::Shape *object = new sf::Shape();
@@ -252,6 +343,12 @@ static VALUE Shape_New( int argc, VALUE *args, VALUE aKlass )
 	return rbData;
 }
 
+/* call-seq:
+ *   Shape.line( p1x, p1y, p2x, p2y, thickness, color, outline = 0.0, outlineColor = SFML::Color::Black)	-> shape
+ *   Shape.line( start, end, thickness, color, outline = 0.0, outlineColor = SFML::Color::Black)		-> shape
+ *
+ * Create a new line.
+ */
 static VALUE Shape_Line( int argc, VALUE *args, VALUE aKlass )
 {
 	VALUE temp = Qnil;
@@ -323,6 +420,12 @@ static VALUE Shape_Line( int argc, VALUE *args, VALUE aKlass )
 	return rbData;
 }
 
+/* call-seq:
+ *   Shape.rectangle( left, top, width, height, color, outline = 0.0, outlineColor = SFML::Color::Black)	-> shape
+ *   Shape.rectangle( rectangle, color, outline = 0.0, outlineColor = SFML::Color::Black)			-> shape
+ *
+ * Create a new rectangular shape. 
+ */
 static VALUE Shape_Rectangle( int argc, VALUE *args, VALUE aKlass )
 {
 	VALUE temp = Qnil;
@@ -390,6 +493,12 @@ static VALUE Shape_Rectangle( int argc, VALUE *args, VALUE aKlass )
 	return rbData;
 }
 
+/* call-seq:
+ *   Shape.circle( x, y, radius, color, outline = 0.0, outlineColor = SFML::Color::Black)	-> shape
+ *   Shape.circle( center, radius, color, outline = 0.0, outlineColor = SFML::Color::Black)	-> shape
+ *
+ * Create a new circular shape.
+ */
 static VALUE Shape_Circle( int argc, VALUE *args, VALUE aKlass )
 {
 	VALUE temp = Qnil;

@@ -37,6 +37,16 @@ static void RenderImage_Free( sf::RenderImage *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   render_image.create( width, height, depthBuffer = false )	-> true or false
+ *
+ * Create the render-image.
+ *
+ * Before calling this function, the render-image is in an invalid state, thus it is mandatory to call it before 
+ * doing anything with the render-image. The last parameter, depthBuffer, is useful if you want to use the render-image
+ * for 3D OpenGL rendering that requires a depth-buffer. Otherwise it is unnecessary, and you should leave this 
+ * parameter to false (which is its default value).
+ */
 static VALUE RenderImage_Create( int argc, VALUE *args, VALUE self )
 {
 	unsigned int width = 0;
@@ -77,6 +87,16 @@ static VALUE RenderImage_Create( int argc, VALUE *args, VALUE self )
 	}
 }
 
+/* call-seq:
+ *   render_image.draw( drawable )
+ *   render_image.draw( drawable, shader )
+ *
+ * Draw an object into the target with a shader.
+ *
+ * This function draws anything that inherits from the sf::Drawable base class (SFML::Sprite, SFML::Shape, SFML::Text, 
+ * or even your own derived classes). The shader alters the way that the pixels are processed right before being 
+ * written to the render target.
+ */
 static VALUE RenderImage_Draw( int argc, VALUE *args, VALUE self )
 {
 	sf::RenderImage *object = NULL;
@@ -108,13 +128,31 @@ static VALUE RenderImage_Draw( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   render_image.display()
+ *
+ * Update the contents of the target image.
+ *
+ * This function updates the target image with what has been drawn so far. Like for windows, calling this function is
+ * mandatory at the end of rendering. Not calling it may leave the image in an undefined state. 
+ */
 static VALUE RenderImage_Display( VALUE self )
 {
 	sf::RenderImage *object = NULL;
 	Data_Get_Struct( self, sf::RenderImage, object );
 	object->Display();
+	return Qnil;
 }
 
+/* call-seq:
+ *   render_image.getImage()	-> image
+ *
+ * Get a read-only reference to the target image.
+ *
+ * After drawing to the render-image and calling display, you can retrieve the updated image using this function, and 
+ * draw it using a sprite (for example). The internal SFML::Image of a render-image is always the same instance, so that
+ * it is possible to call this function once and keep a reference to the image even after is it modified.
+ */
 static VALUE RenderImage_GetImage( VALUE self )
 {
 	sf::RenderImage *object = NULL;
@@ -125,6 +163,11 @@ static VALUE RenderImage_GetImage( VALUE self )
 	return rbData;
 }
 
+/* call-seq:
+ *   render_image.isSmooth()	-> true or false
+ *
+ * Tell whether the smooth filtering is enabled or not. 
+ */
 static VALUE RenderImage_IsSmooth( VALUE self )
 {
 	sf::RenderImage *object = NULL;
@@ -132,6 +175,15 @@ static VALUE RenderImage_IsSmooth( VALUE self )
 	return ( object->IsSmooth() == true ? Qtrue : Qfalse );
 }
 
+/* call-seq:
+ *   render_image.setActive( active )
+ *
+ * Activate of deactivate the render-image for rendering.
+ *
+ * This function makes the render-image's context current for future OpenGL rendering operations (so you shouldn't 
+ * care about it if you're not doing direct OpenGL stuff). Only one context can be current on a thread, so if you want
+ * to draw OpenGL geometry to another render target (like a RenderWindow) don't forget to activate it again.
+ */
 static VALUE RenderImage_SetActive( int argc, VALUE *args, VALUE self )
 {
 	sf::RenderImage *object = NULL;
@@ -161,6 +213,13 @@ static VALUE RenderImage_SetActive( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   render_image.setSmooth( smooth )
+ *
+ * Enable or disable image smoothing.
+ *
+ * This function is similar to SFML::Image#setSmooth. This parameter is enabled by default.
+ */
 static VALUE RenderImage_SetSmooth( VALUE self, VALUE aSmoothFlag )
 {
 	sf::RenderImage *object = NULL;
@@ -180,6 +239,11 @@ static VALUE RenderImage_SetSmooth( VALUE self, VALUE aSmoothFlag )
 	return Qnil;
 }
 
+/* call-seq:
+ *   RenderImage.new()	-> render_image
+ *
+ * Constructs an empty, invalid render-image. You must call create() to have a valid render-image.
+ */
 static VALUE RenderImage_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::RenderImage *object = new sf::RenderImage();
@@ -188,6 +252,15 @@ static VALUE RenderImage_New( int argc, VALUE *args, VALUE aKlass )
 	return rbData;
 }
 
+/* call-seq:
+ *   RenderImage.isAvailable()	-> true or false
+ *
+ * Check whether the system supports render images or not.
+ *
+ * It is very important to always call this function before trying to use the RenderImage class, as the feature may 
+ * not be supported on all platforms (especially very old ones). If this function returns false, then you won't be 
+ * able to use the class at all.
+ */
 static VALUE RenderImage_IsAvailable( VALUE aKlass )
 {
 	return ( sf::RenderImage::IsAvailable() == true ? Qtrue : Qfalse );
