@@ -32,6 +32,16 @@ extern "C" void Init_system( void );
 
 typedef VALUE ( *RubyFunctionPtr )( ... );
 
+#define MAX( x, y ) ( ( x ) < ( y ) ? ( y ) : ( x ) )
+#define MIN( x, y ) ( ( x ) > ( y ) ? ( x ) : ( y ) )
+
+#define VALIDATE_CLASS( variable, type, name ) \
+if( rb_obj_is_kind_of( variable, type ) != Qtrue ) \
+{ \
+	rb_raise( rb_eTypeError, "%s argument must be instance of %s", name, rb_string_value_cstr ( &type ) ); \
+}
+
+#define rb_define_module_function( klass, name, func, argc, ... ) rb_define_module_function( klass, name, reinterpret_cast< RubyFunctionPtr >( func ), argc, ##__VA_ARGS__ )
 #define rb_define_singleton_method( klass, name, func, argc, ... ) rb_define_singleton_method( klass, name, reinterpret_cast< RubyFunctionPtr >( func ), argc, ##__VA_ARGS__ )
 #define rb_define_method( klass, name, func, argc, ... ) rb_define_method( klass, name, reinterpret_cast< RubyFunctionPtr >( func ), argc, ##__VA_ARGS__ )
 

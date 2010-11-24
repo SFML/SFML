@@ -21,10 +21,14 @@
  */
  
 #include "Listener.hpp"
+#include "Vector3.hpp"
 #include "main.hpp"
 #include <SFML/Audio/Listener.hpp>
 
 VALUE globalListenerModule;
+
+/* External class */
+extern VALUE globalVector3Class;
 
 /* call-seq:
  *   Listener.setGlobalVolume( volume )

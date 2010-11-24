@@ -19,14 +19,13 @@
  * 3. This notice may not be removed or altered from any
  *    source distribution.
  */
- 
-#ifndef SFML_RUBYEXT_AUDIO_MAIN_HEADER_
-#define SFML_RUBYEXT_AUDIO_MAIN_HEADER_
+
+#ifndef SFML_RUBYEXT_SOUND_SOURCE_HEADER_
+#define SFML_RUBYEXT_SOUND_SOURCE_HEADER_
 
 #include "ruby.h"
-#include "../../sfml-system/system/main.hpp"
 
 // Ruby initiation function
-extern "C" void Init_audio( void );
+void Init_SoundSource( void );
 
-#endif // SFML_RUBYEXT_AUDIO_MAIN_HEADER_
+#endif // SFML_RUBYEXT_SOUND_SOURCE_HEADER_
