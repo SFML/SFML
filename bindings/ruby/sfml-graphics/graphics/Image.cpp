@@ -597,7 +597,7 @@ void Init_Image( void )
 	
 	// Instance methods
 	rb_define_method( globalImageClass, "loadFromFile", Image_LoadFromFile, 1 );
-	rb_define_method( globalImageClass, "loadFromPixels", Image_LoadFromFile, 3 );
+	rb_define_method( globalImageClass, "loadFromPixels", Image_LoadFromPixels, 3 );
 	rb_define_method( globalImageClass, "saveToFile", Image_SaveToFile, 1 );
 	rb_define_method( globalImageClass, "create", Image_Create, -1 );
 	rb_define_method( globalImageClass, "createMaskFromColor", Image_CreateMaskFromColor, -1 );
