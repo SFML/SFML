@@ -611,7 +611,7 @@ void Init_Drawable( void )
 	globalDrawableModule = rb_define_module_under( sfml, "Drawable" );
 	
 	// Class methods
-	rb_define_module_method( globalDrawableModule, "included", Drawable_Included, 1 );
+	rb_define_module_function( globalDrawableModule, "included", Drawable_Included, 1 );
 	
 	// Instance methods
 	rb_define_method( globalDrawableModule, "initialize", Drawable_Initialize, -1 );

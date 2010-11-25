@@ -296,12 +296,12 @@ void Init_Color( void )
 	rb_define_const( globalColorClass, "Magneta", rb_funcall( globalColorClass, rb_intern( "new" ), 3, INT2FIX( 255 ), INT2FIX( 0 ), INT2FIX( 255 ) ) );
 	rb_define_const( globalColorClass, "Cyan", rb_funcall( globalColorClass, rb_intern( "new" ), 3, INT2FIX( 0 ), INT2FIX( 255 ), INT2FIX( 255 ) ) );
 	
-	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Black" ) ), rb_intern( "freeze" ), 0 );
-	rb_funcall( rb_cvar( globalColorClass, rb_intern( "White" ) ), rb_intern( "freeze" ), 0 );
-	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Red" ) ), rb_intern( "freeze" ), 0 );
-	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Green" ) ), rb_intern( "freeze" ), 0 );
-	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Blue" ) ), rb_intern( "freeze" ), 0 );
-	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Yellow" ) ), rb_intern( "freeze" ), 0 );
-	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Magneta" ) ), rb_intern( "freeze" ), 0 );
-	rb_funcall( rb_cvar( globalColorClass, rb_intern( "Cyan" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar_get( globalColorClass, rb_intern( "Black" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar_get( globalColorClass, rb_intern( "White" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar_get( globalColorClass, rb_intern( "Red" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar_get( globalColorClass, rb_intern( "Green" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar_get( globalColorClass, rb_intern( "Blue" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar_get( globalColorClass, rb_intern( "Yellow" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar_get( globalColorClass, rb_intern( "Magneta" ) ), rb_intern( "freeze" ), 0 );
+	rb_funcall( rb_cvar_get( globalColorClass, rb_intern( "Cyan" ) ), rb_intern( "freeze" ), 0 );
 }

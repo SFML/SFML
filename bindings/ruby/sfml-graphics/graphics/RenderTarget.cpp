@@ -25,12 +25,13 @@
 #include "main.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <iostream>
+#include <SFML/Graphics/RenderImage.hpp>
 
 VALUE globalRenderTargetModule;
 VALUE globalRenderTargetInstanceClass;
 
 /* External classes */
+extern VALUE globalRenderWindowClass;
 extern VALUE globalVector2Class;
 extern VALUE globalRectClass;
 extern VALUE globalDrawableModule;
@@ -83,7 +84,20 @@ static VALUE RenderTarget_Draw( int argc, VALUE *args, VALUE self )
 {
 	sf::RenderTarget *object = NULL;
 	Data_Get_Struct( self, sf::RenderTarget, object );
-	std::cout << object << std::endl;
+	
+	VALUE targetWrap = Qnil;
+	sf::RenderWindow *window = NULL;
+	sf::RenderImage *image = NULL;
+		
+	if( CLASS_OF( self ) == globalRenderWindowClass )
+	{
+		Data_Get_Struct( self, sf::RenderWindow, window );
+	}
+	else
+	{
+		Data_Get_Struct( self, sf::RenderImage, image );
+	}
+	
 	switch( argc )
 	{
 		case 2:
@@ -94,7 +108,7 @@ static VALUE RenderTarget_Draw( int argc, VALUE *args, VALUE self )
 			Data_Get_Struct( args[0], sf::Drawable, drawable );
 			sf::Shader *shader = NULL;
 			Data_Get_Struct( args[1], sf::Shader, shader );
-			object->Draw( *drawable, *shader );
+			( window != NULL ? window->Draw( *drawable, *shader ) : image->Draw( *drawable, *shader ) );
 			break;
 		}
 		case 1:
@@ -102,7 +116,7 @@ static VALUE RenderTarget_Draw( int argc, VALUE *args, VALUE self )
 			VALIDATE_CLASS( args[0], globalDrawableModule, "object" );
 			sf::Drawable *drawable = NULL;
 			Data_Get_Struct( args[0], sf::Drawable, drawable );
-			object->Draw( *drawable );
+			( window != NULL ? window->Draw( *drawable ) : image->Draw( *drawable ) );
 			break;
 		}
 		default:
