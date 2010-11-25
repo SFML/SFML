@@ -79,6 +79,8 @@ static VALUE Sound_Initialize( int argc, VALUE *args, VALUE self )
 		}
 		case 0:
 			break;
+		default:
+			rb_raise( rb_eArgError, "Expected 0..5 arguments but was given %d", argc );
 	}
 	
 	return self;

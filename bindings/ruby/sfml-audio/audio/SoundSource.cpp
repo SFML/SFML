@@ -117,6 +117,8 @@ static VALUE SoundSource_SetPosition( int argc, VALUE *args, VALUE self )
 			z = NUM2DBL( Vector3_GetZ( temp ) );
 			break;
 		}
+		default:
+			rb_raise( rb_eArgError, "Expected 1 or 3 arguments but was given %d", argc );
 	}
 	
 	sf::SoundSource *object = NULL;
