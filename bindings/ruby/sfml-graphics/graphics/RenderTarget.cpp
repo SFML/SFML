@@ -167,6 +167,7 @@ static VALUE RenderTarget_GetView( VALUE self )
 	const sf::View &view = object->GetView();
 	VALUE rbData = Data_Wrap_Struct( globalViewClass, 0, 0, const_cast< sf::View * >( &view ) );
 	rb_obj_call_init( rbData, 0, 0 );
+	rb_iv_set( rbData, "@__owner_ref", self );
 	return rbData;
 }
 
@@ -184,6 +185,7 @@ static VALUE RenderTarget_GetDefaultView( VALUE self )
 	const sf::View &view = object->GetDefaultView();
 	VALUE rbData = Data_Wrap_Struct( globalViewClass, 0, 0, const_cast< sf::View * >( &view ) );
 	rb_obj_call_init( rbData, 0, 0 );
+	rb_iv_set( rbData, "@__owner_ref", self );
 	return rbData;
 }
 

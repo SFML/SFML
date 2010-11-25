@@ -160,6 +160,7 @@ static VALUE RenderImage_GetImage( VALUE self )
 	const sf::Image &image = object->GetImage();
 	VALUE rbData = Data_Wrap_Struct( globalImageClass, 0, 0, const_cast< sf::Image * >( &image ) );
 	rb_obj_call_init( rbData, 0, 0 );
+	rb_iv_set( rbData, "@__owner_ref", self );
 	return rbData;
 }
 

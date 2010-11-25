@@ -126,7 +126,7 @@ static VALUE Font_GetImage( VALUE self, VALUE aCharacterSize )
 	Data_Get_Struct( self, sf::Font, object );
 	const sf::Image& image = object->GetImage( FIX2UINT( aCharacterSize ) );
 	VALUE rbImage = Data_Wrap_Struct( globalImageClass, 0, 0, const_cast<sf::Image *>( &image ) );
-	rb_iv_set( rbImage, "@__owner__", self );
+	rb_iv_set( rbImage, "@__owner_ref", self );
 	return rbImage;
 }
 

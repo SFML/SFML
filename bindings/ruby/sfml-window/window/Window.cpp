@@ -221,6 +221,7 @@ static VALUE Window_GetInput( VALUE self )
 	Data_Get_Struct( self, sf::Window, object );
 	VALUE rbData = Data_Wrap_Struct( globalInputClass, 0, 0, const_cast< sf::Input * >( &object->GetInput() ) );
 	rb_obj_call_init( rbData, 0, 0 );
+	rb_iv_set( rbData, "@__owner_ref", self );
 	return rbData;
 }
 
@@ -238,6 +239,7 @@ static VALUE Window_GetSettings( VALUE self )
 	Data_Get_Struct( self, sf::Window, object );
 	VALUE rbData = Data_Wrap_Struct( globalContextSettingsClass, 0, 0, const_cast<sf::ContextSettings *>( &object->GetSettings() ) );
 	rb_obj_call_init( rbData, 0, 0 );
+	rb_iv_set( rbData, "@__owner_ref", self );
 	return rbData;
 }
 
