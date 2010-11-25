@@ -39,6 +39,6 @@
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-    #include <SFML/Graphics/MacOSX/RenderImageImplPBuffer.hpp>
+    #include <SFML/Graphics/OSX/RenderImageImplPBuffer.hpp>
 
 #endif

@@ -47,18 +47,25 @@ elseif(LINUX)
         ${SRCROOT}/Linux/WindowImplX11.cpp
         ${SRCROOT}/Linux/WindowImplX11.hpp
     )
-else()
+else() # MACOSX
     set(SRC
         ${SRC}
-        ${SRCROOT}/Cocoa/AppController.h
-        ${SRCROOT}/Cocoa/AppController.mm
-        ${SRCROOT}/Cocoa/GLKit.h
-        ${SRCROOT}/Cocoa/GLKit.mm
-        ${SRCROOT}/Cocoa/Joystick.cpp
-        ${SRCROOT}/Cocoa/Joystick.hpp
-        ${SRCROOT}/Cocoa/VideoModeImpl.cpp
-        ${SRCROOT}/Cocoa/WindowImplCocoa.cpp
-        ${SRCROOT}/Cocoa/WindowImplCocoa.mm
+        ${SRCROOT}/OSX/cpp_objc_conversion.h
+        ${SRCROOT}/OSX/cpp_objc_conversion.mm
+        ${SRCROOT}/OSX/Joystick.cpp
+        ${SRCROOT}/OSX/Joystick.hpp
+        ${SRCROOT}/OSX/SFApplication.h
+        ${SRCROOT}/OSX/SFApplication.m
+        ${SRCROOT}/OSX/SFContext.hpp
+        ${SRCROOT}/OSX/SFContext.mm
+        ${SRCROOT}/OSX/SFOpenGLView.h
+        ${SRCROOT}/OSX/SFOpenGLView.mm
+        ${SRCROOT}/OSX/SFWindowController.h
+        ${SRCROOT}/OSX/SFWindowController.mm
+        ${SRCROOT}/OSX/VideoModeImpl.cpp
+        ${SRCROOT}/OSX/WindowImplCocoa.hpp
+        ${SRCROOT}/OSX/WindowImplCocoa.mm
+        ${SRCROOT}/OSX/WindowImplDelegateProtocol.h
     )
 endif()
 
@@ -72,8 +79,10 @@ endif()
 set(WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})
 if(WINDOWS)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} winmm gdi32)
-else(LINUX)
+elseif(LINUX)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB})
+elseif(MACOSX)
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework Foundation -framework AppKit")
 endif()
 
 # define the sfml-window target

@@ -28,9 +28,12 @@ set(SRC
     ${INCROOT}/SoundStream.hpp
 )
 
-# let CMake know about our additional audio libraries paths (on Windows)
+# let CMake know about our additional audio libraries paths (on Windows and OSX)
 if(WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/AL")
+elseif (MACOSX)
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/include")
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
 endif()
 
 # find external libraries

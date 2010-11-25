@@ -42,7 +42,7 @@
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-	#include <SFML/Window/Cocoa/WindowImplCocoa.hpp>
+	#include <SFML/Window/OSX/WindowImplCocoa.hpp>
 	typedef sf::priv::WindowImplCocoa WindowImplType;
 
 #endif

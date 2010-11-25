@@ -44,8 +44,8 @@
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-	#include <SFML/Window/Cocoa/AglContext.hpp>
-	typedef sf::priv::AglContext ContextType;
+	#include <SFML/Window/OSX/SFContext.hpp>
+	typedef sf::priv::SFContext ContextType;
 
 #endif
 
