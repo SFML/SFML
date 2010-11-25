@@ -30,6 +30,11 @@ VALUE globalSoundSourceClass;
 /* External classes */
 extern VALUE globalVector3Class;
 
+/* call-seq:
+ *   sound_source.getAttenuation()	-> float
+ *
+ * Get the attenuation factor of the sound.
+ */
 static VALUE SoundSource_GetAttenuation( VALUE self )
 {
 	sf::SoundSource *object = NULL;
@@ -37,6 +42,11 @@ static VALUE SoundSource_GetAttenuation( VALUE self )
 	return rb_float_new( object->GetAttenuation() );
 }
 
+/* call-seq:
+ *   sound_source.getMinDistance()	-> float
+ *
+ * Get the minimum distance of the sound.
+ */
 static VALUE SoundSource_GetMinDistance( VALUE self )
 {
 	sf::SoundSource *object = NULL;
@@ -44,6 +54,11 @@ static VALUE SoundSource_GetMinDistance( VALUE self )
 	return rb_float_new( object->GetMinDistance() );
 }
 
+/* call-seq:
+ *   sound_source.getPitch()	-> float
+ *
+ * Get the pitch of the sound. 
+ */
 static VALUE SoundSource_GetPitch( VALUE self )
 {
 	sf::SoundSource *object = NULL;
@@ -51,6 +66,11 @@ static VALUE SoundSource_GetPitch( VALUE self )
 	return rb_float_new( object->GetPitch() );
 }
 
+/* call-seq:
+ *   sound_source.getPosition()	-> vector3
+ *
+ * Get the 3D position of the sound in the audio scene. 
+ */
 static VALUE SoundSource_GetPosition( VALUE self )
 {
 	sf::SoundSource *object = NULL;
@@ -59,6 +79,11 @@ static VALUE SoundSource_GetPosition( VALUE self )
 	return rb_funcall( globalVector3Class, rb_intern( "new" ), 3, rb_float_new( pos.x ), rb_float_new( pos.y ), rb_float_new( pos.z ) );
 }
 
+/* call-seq:
+ *   sound_source.getVolume()	-> float
+ *
+ * Get the volume of the sound. 
+ */
 static VALUE SoundSource_GetVolume( VALUE self )
 {
 	sf::SoundSource *object = NULL;
@@ -66,6 +91,11 @@ static VALUE SoundSource_GetVolume( VALUE self )
 	return rb_float_new( object->GetVolume() );
 }
 
+/* call-seq:
+ *   sound_source.isRelativeToListener()	-> true or false
+ *
+ * Tell whether the sound's position is relative to the listener or is absolute. 
+ */
 static VALUE SoundSource_IsRelativeToListener( VALUE self )
 {
 	sf::SoundSource *object = NULL;
@@ -73,6 +103,16 @@ static VALUE SoundSource_IsRelativeToListener( VALUE self )
 	return ( object->IsRelativeToListener() == true ? Qtrue : Qfalse );
 }
 
+/* call-seq:
+ *   sound_source.setAttenuation( value )
+ *
+ * Set the attenuation factor of the sound.
+ *
+ * The attenuation is a multiplicative factor which makes the sound more or less loud according to its distance from 
+ * the listener. An attenuation of 0 will produce a non-attenuated sound, i.e. its volume will always be the same 
+ * whether it is heard from near or from far. On the other hand, an attenuation value such as 100 will make the sound 
+ * fade out very quickly as it gets further from the listener. The default value of the attenuation is 1.
+ */
 static VALUE SoundSource_SetAttenuation( VALUE self, VALUE aValue )
 {
 	sf::SoundSource *object = NULL;
@@ -81,6 +121,15 @@ static VALUE SoundSource_SetAttenuation( VALUE self, VALUE aValue )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_source.setMinDistance( value )
+ *
+ * Set the minimum distance of the sound.
+ *
+ * The "minimum distance" of a sound is the maximum distance at which it is heard at its maximum volume. Further than 
+ * the minimum distance, it will start to fade out according to its attenuation factor. A value of 0 ("inside the head 
+ * of the listener") is an invalid value and is forbidden. The default value of the minimum distance is 1.
+ */
 static VALUE SoundSource_SetMinDistance( VALUE self, VALUE aValue )
 {
 	sf::SoundSource *object = NULL;
@@ -89,6 +138,15 @@ static VALUE SoundSource_SetMinDistance( VALUE self, VALUE aValue )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_source.setPitch( value )
+ *
+ * Set the pitch of the sound.
+ *
+ * The pitch represents the perceived fundamental frequency of a sound; thus you can make a sound more acute or grave 
+ * by changing its pitch. A side effect of changing the pitch is to modify the playing speed of the sound as well. The 
+ * default value for the pitch is 1.
+ */
 static VALUE SoundSource_SetPitch( VALUE self, VALUE aValue )
 {
 	sf::SoundSource *object = NULL;
@@ -97,6 +155,14 @@ static VALUE SoundSource_SetPitch( VALUE self, VALUE aValue )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_source.setPosition( x, y, z )
+ *   sound_source.setPosition( vector3 )
+ *
+ * Set the 3D position of the sound in the audio scene.
+ *
+ * Only sounds with one channel (mono sounds) can be spatialized. The default position of a sound is (0, 0, 0).
+ */
 static VALUE SoundSource_SetPosition( int argc, VALUE *args, VALUE self )
 {
 	float x, y, z;
@@ -128,6 +194,15 @@ static VALUE SoundSource_SetPosition( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_source.setRelativeToListener( value )
+ *
+ * Make the sound's position relative to the listener or absolute.
+ *
+ * Making a sound relative to the listener will ensure that it will always be played the same way regardless the 
+ * position of the listener. This can be useful for non-spatialized sounds, sounds that are produced by the listener, 
+ * or sounds attached to it. The default value is false (position is absolute).
+ */
 static VALUE SoundSource_SetRelativeToListener( VALUE self, VALUE aValue )
 {
 	sf::SoundSource *object = NULL;
@@ -147,6 +222,13 @@ static VALUE SoundSource_SetRelativeToListener( VALUE self, VALUE aValue )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_source.setVolume( value )
+ *
+ * Set the volume of the sound.
+ *
+ * The volume is a value between 0 (mute) and 100 (full volume). The default value for the volume is 100.
+ */
 static VALUE SoundSource_SetVolume( VALUE self, VALUE aValue )
 {
 	sf::SoundSource *object = NULL;

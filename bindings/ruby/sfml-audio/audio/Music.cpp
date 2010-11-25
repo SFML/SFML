@@ -34,11 +34,25 @@ static VALUE Music_Free( sf::Music *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   Music.new()	-> music
+ *
+ * Creates a new music instance.
+ */
 static VALUE Music_Initialize( int argc, VALUE *args, VALUE self )
 {
 	return self;
 }
 
+/* call-seq:
+ *   music.openFromFile()	-> true or false
+ *
+ * Open a music from an audio file.
+ *
+ * This function doesn't start playing the music (call Play() to do so). Here is a complete list of all the supported 
+ * audio formats: ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam, w64, mat4, mat5 pvf, htk, sds, avr, sd2,
+ * caf, wve, mpc2k, rf64.
+ */
 static VALUE Music_OpenFromFile( VALUE self, VALUE aFilename )
 {
 	sf::Music *object = NULL;
@@ -53,6 +67,11 @@ static VALUE Music_OpenFromFile( VALUE self, VALUE aFilename )
 	}
 }
 
+/* call-seq:
+ *   music.getDuration()	-> float
+ *
+ * Get the total duration of the music. 
+ */
 static VALUE Music_GetDuration( VALUE self )
 {
 	sf::Music *object = NULL;
@@ -111,7 +130,7 @@ void Init_Music( void )
 	rb_define_singleton_method( globalMusicClass, "new", Music_New, -1 );
 	
 	// Instance methods
-	rb_define_method( globalMusicClass, "initialize", Music_Initialize, -1 );
+	rb_define_method( globalMusicClass, "initialize", Music_Initialize, 0 );
 	rb_define_method( globalMusicClass, "openFromFile", Music_OpenFromFile, 1 );
 	rb_define_method( globalMusicClass, "getDuration", Music_GetDuration, 0 );
 		

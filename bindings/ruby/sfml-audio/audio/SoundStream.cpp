@@ -106,6 +106,14 @@ static VALUE SoundStream_Free( rbSoundStream *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   sound_stream.play()
+ *
+ * Start or resume playing the audio stream.
+ *
+ * This function starts the stream if it was stopped, resumes it if it was paused, and does nothing it is it already 
+ * playing. This function uses its own thread so that it doesn't block the rest of the program while the stream is played.
+ */
 static VALUE SoundStream_Play( VALUE self )
 {
 	sf::SoundStream *object = NULL;
@@ -114,6 +122,14 @@ static VALUE SoundStream_Play( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_stream.pause()
+ *
+ * Start or resume playing the audio stream.
+ *
+ * This function starts the stream if it was stopped, resumes it if it was paused, and does nothing it is it already 
+ * playing. This function uses its own thread so that it doesn't block the rest of the program while the stream is played.
+ */
 static VALUE SoundStream_Pause( VALUE self )
 {
 	sf::SoundStream *object = NULL;
@@ -122,6 +138,14 @@ static VALUE SoundStream_Pause( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_stream.stop()
+ *
+ * Stop playing the audio stream.
+ *
+ * This function stops the stream if it was playing or paused, and does nothing if it was already stopped. It also 
+ * resets the playing position (unlike pause()).
+ */
 static VALUE SoundStream_Stop( VALUE self )
 {
 	sf::SoundStream *object = NULL;
@@ -130,6 +154,13 @@ static VALUE SoundStream_Stop( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_stream.getChannelsCount()	-> fixnum
+ *
+ * Return the number of channels of the stream.
+ *
+ * 1 channel means a mono sound, 2 means stereo, etc.
+ */
 static VALUE SoundStream_GetChannelsCount( VALUE self )
 {
 	sf::SoundStream *object = NULL;
@@ -137,6 +168,13 @@ static VALUE SoundStream_GetChannelsCount( VALUE self )
 	return INT2FIX( object->GetChannelsCount() );
 }
 
+/* call-seq:
+ *   sound_stream.getSampleRate()	-> fixnum
+ *
+ * Get the stream sample rate of the stream.
+ *
+ * The sample rate is the number of audio samples played per second. The higher, the better the quality.
+ */
 static VALUE SoundStream_GetSampleRate( VALUE self )
 {
 	sf::SoundStream *object = NULL;
@@ -144,6 +182,11 @@ static VALUE SoundStream_GetSampleRate( VALUE self )
 	return INT2FIX( object->GetSampleRate() );
 }
 
+/* call-seq:
+ *   sound_stream.getStatus()	-> fixnum
+ *
+ * Get the current status of the stream (stopped, paused, playing). 
+ */
 static VALUE SoundStream_GetStatus( VALUE self )
 {
 	sf::SoundStream *object = NULL;
@@ -151,6 +194,13 @@ static VALUE SoundStream_GetStatus( VALUE self )
 	return INT2FIX( static_cast< int >( object->GetStatus() ) );
 }
 
+/* call-seq:
+ *   sound_stream.setPlayingOffset( offset )
+ *
+ * Change the current playing position of the stream.
+ *
+ * The playing position can be changed when the stream is either paused or playing.
+ */
 static VALUE SoundStream_SetPlayingOffset( VALUE self, VALUE anOffset )
 {
 	sf::SoundStream *object = NULL;
@@ -159,6 +209,11 @@ static VALUE SoundStream_SetPlayingOffset( VALUE self, VALUE anOffset )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_stream.getPlayingOffset()	-> float
+ *
+ * Get the current playing position of the stream. 
+ */
 static VALUE SoundStream_GetPlayingOffset( VALUE self, VALUE anOffset )
 {
 	sf::SoundStream *object = NULL;
@@ -166,6 +221,14 @@ static VALUE SoundStream_GetPlayingOffset( VALUE self, VALUE anOffset )
 	return rb_float_new( object->GetPlayingOffset() );
 }
 
+/* call-seq:
+ *   sound_stream.setLoop( loop )
+ *
+ * Set whether or not the stream should loop after reaching the end.
+ *
+ * If set, the stream will restart from beginning after reaching the end and so on, until it is stopped or 
+ * SetLoop(false) is called. The default looping state for streams is false.
+ */
 static VALUE SoundStream_SetLoop( VALUE self, VALUE aLoop )
 {
 	sf::SoundStream *object = NULL;
@@ -185,6 +248,11 @@ static VALUE SoundStream_SetLoop( VALUE self, VALUE aLoop )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_stream.getLoop() 	-> true or false
+ *
+ * Tell whether or not the stream is in loop mode. 
+ */
 static VALUE SoundStream_GetLoop( VALUE self )
 {
 	sf::SoundStream *object = NULL;
@@ -199,6 +267,17 @@ static VALUE SoundStream_GetLoop( VALUE self )
 	}
 }
 
+/* call-seq:
+ *   sound_stream.initialize()
+ *
+ * This is a direct binding to the sf::SoundStream::Initialize function.
+ *
+ * Define the audio stream parameters.
+ *
+ * This function must be called by derived classes as soon as they know the audio settings of the stream to play. Any 
+ * attempt to manipulate the stream (play(), ...) before calling this function will fail. It can be called multiple 
+ * times if the settings of the audio stream change, but only when the stream is stopped.
+ */
 static VALUE SoundStream_Initialize( VALUE self, VALUE channelsCount, VALUE sampleRate )
 {
 	rbSoundStream *object = NULL;

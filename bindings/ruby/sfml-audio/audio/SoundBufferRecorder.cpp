@@ -103,6 +103,14 @@ static void SoundBufferRecorder_Free( rbSoundBufferRecorder * anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   sound_buffer_recorder.getBuffer()	-> sound_buffer
+ *
+ * Get the sound buffer containing the captured audio data.
+ *
+ * The sound buffer is valid only after the capture has ended. This function provides a read-only access to the internal 
+ * sound buffer, but it can be copied if you need to make any modification to it.
+ */
 static VALUE SoundBufferRecorder_GetBuffer( VALUE self )
 {
 	sf::SoundBufferRecorder *object = NULL;
@@ -113,6 +121,11 @@ static VALUE SoundBufferRecorder_GetBuffer( VALUE self )
 	return rbData;
 }
 
+/* call-seq:
+ *   SoundBufferRecorder.new()	-> sound_buffer_recorder
+ *
+ * Creates a sound buffer recorder instance for us.
+ */
 static VALUE SoundBufferRecorder_New( int argc, VALUE *args, VALUE aKlass )
 {
 	rbSoundBufferRecorder *object = new rbSoundBufferRecorder();

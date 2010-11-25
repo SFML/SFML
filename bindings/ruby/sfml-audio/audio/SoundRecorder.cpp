@@ -98,6 +98,15 @@ static void SoundRecorder_Free( rbSoundRecorder * anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   sound_recorder.start()
+ *
+ * Start the capture.
+ *
+ * The sampleRate parameter defines the number of audio samples captured per second. The higher, the better the 
+ * quality (for example, 44100 samples/sec is CD quality). This function uses its own thread so that it doesn't block 
+ * the rest of the program while the capture runs. Please note that only one capture can happen at the same time.
+ */
 static VALUE SoundRecorder_Start( int argc, VALUE *args, VALUE self )
 {
 	sf::SoundRecorder *object = NULL;
@@ -116,6 +125,11 @@ static VALUE SoundRecorder_Start( int argc, VALUE *args, VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_recorder.stop()
+ *
+ * Stop the capture. 
+ */
 static VALUE SoundRecorder_Stop( VALUE self )
 {
 	sf::SoundRecorder *object = NULL;
@@ -124,6 +138,14 @@ static VALUE SoundRecorder_Stop( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound_recorder.getSampleRate()	-> fixnum
+ *
+ * Get the sample rate.
+ *
+ * The sample rate defines the number of audio samples captured per second. The higher, the better the quality 
+ *(for example, 44100 samples/sec is CD quality).
+ */
 static VALUE SoundRecorder_GetSampleRate( VALUE self )
 {
 	sf::SoundRecorder *object = NULL;
@@ -131,6 +153,11 @@ static VALUE SoundRecorder_GetSampleRate( VALUE self )
 	return INT2FIX( object->GetSampleRate() );
 }
 
+/* call-seq:
+ *   SoundRecorder.new()	-> sound_recorder
+ *
+ * Creates a sound recorder instance for us.
+ */
 static VALUE SoundRecorder_New( int argc, VALUE *args, VALUE aKlass )
 {
 	rbSoundRecorder *object = new rbSoundRecorder();
@@ -139,6 +166,14 @@ static VALUE SoundRecorder_New( int argc, VALUE *args, VALUE aKlass )
 	return rbData;
 }
 
+/* call-seq:
+ *   SoundRecorder.isAvailable()	-> true or false
+ *
+ * Check if the system supports audio capture.
+ *
+ * This function should always be called before using the audio capture features. If it returns false, then any attempt 
+ * to use sf::SoundRecorder or one of its derived classes will fail.
+ */
 static VALUE SoundRecorder_IsAvailable( VALUE aKlass )
 {
 	return ( sf::SoundRecorder::IsAvailable() == true ? Qtrue : Qfalse );

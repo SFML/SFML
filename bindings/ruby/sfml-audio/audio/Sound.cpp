@@ -37,6 +37,11 @@ static void Sound_Free( sf::Sound *anObject )
 	delete anObject;
 }
 
+/* call-seq:
+ *   Sound.new()	-> sound
+ *
+ * Creates a new sound instance.
+ */
 static VALUE Sound_Initialize( int argc, VALUE *args, VALUE self )
 {
 	sf::Sound *object = NULL;
@@ -86,6 +91,14 @@ static VALUE Sound_Initialize( int argc, VALUE *args, VALUE self )
 	return self;
 }
 
+/* call-seq:
+ *   sound.play()
+ *
+ * Start or resume playing the sound.
+ *
+ * This function starts the sound if it was stopped, resumes it if it was paused, and does nothing it is it already 
+ * playing. This function uses its own thread so that it doesn't block the rest of the program while the sound is played.
+ */
 static VALUE Sound_Play( VALUE self )
 {
 	sf::Sound *object = NULL;
@@ -94,6 +107,13 @@ static VALUE Sound_Play( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound.pause()
+ *
+ * Pause the sound.
+ *
+ * This function pauses the sound if it was playing, otherwise (sound already paused or stopped) it has no effect.
+ */
 static VALUE Sound_Pause( VALUE self )
 {
 	sf::Sound *object = NULL;
@@ -102,6 +122,14 @@ static VALUE Sound_Pause( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound.stop()
+ *
+ * Stop playing the sound.
+ *
+ * This function stops the sound if it was playing or paused, and does nothing if it was already stopped. It also 
+ * resets the playing position (unlike pause()).
+ */
 static VALUE Sound_Stop( VALUE self )
 {
 	sf::Sound *object = NULL;
@@ -110,6 +138,14 @@ static VALUE Sound_Stop( VALUE self )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound.setBuffer( buffer )
+ *
+ * Set the source buffer containing the audio data to play.
+ *
+ * It is important to note that the sound buffer is not copied, thus the sf::SoundBuffer instance must remain alive as 
+ * long as it is attached to the sound.
+ */
 static VALUE Sound_SetBuffer( VALUE self, VALUE aBuffer )
 {
 	VALIDATE_CLASS( aBuffer, globalSoundBufferClass, "buffer" );
@@ -122,6 +158,14 @@ static VALUE Sound_SetBuffer( VALUE self, VALUE aBuffer )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound.setLoop( loop )
+ *
+ * Set whether or not the sound should loop after reaching the end.
+ *
+ * If set, the sound will restart from beginning after reaching the end and so on, until it is stopped or 
+ * setLoop(false) is called. The default looping state for sound is false.
+ */
 static VALUE Sound_SetLoop( VALUE self, VALUE aLoop )
 {
 	sf::Sound *object = NULL;
@@ -141,6 +185,13 @@ static VALUE Sound_SetLoop( VALUE self, VALUE aLoop )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound.setPlayingOffset( offset )
+ *
+ * Change the current playing position of the sound.
+ *
+ * The playing position can be changed when the sound is either paused or playing.
+ */
 static VALUE Sound_SetPlayingOffset( VALUE self, VALUE aOffset )
 {
 	sf::Sound *object = NULL;
@@ -149,11 +200,21 @@ static VALUE Sound_SetPlayingOffset( VALUE self, VALUE aOffset )
 	return Qnil;
 }
 
+/* call-seq:
+ *   sound.getBuffer()	-> buffer
+ *
+ * Get the audio buffer attached to the sound. 
+ */
 static VALUE Sound_GetBuffer( VALUE self )
 {
 	return rb_iv_get( self, "@__buffer_ref" );
 }
 
+/* call-seq:
+ *   sound.getLoop()	-> true or false
+ *
+ * Tell whether or not the sound is in loop mode. 
+ */
 static VALUE Sound_GetLoop( VALUE self )
 {
 	sf::Sound *object = NULL;
@@ -168,6 +229,11 @@ static VALUE Sound_GetLoop( VALUE self )
 	}
 }
 
+/* call-seq:
+ *   sound.getPlayingOffset()	-> float
+ *
+ * Get the current playing position of the sound. 
+ */
 static VALUE Sound_GetPlayingOffset( VALUE self )
 {
 	sf::Sound *object = NULL;
@@ -175,6 +241,11 @@ static VALUE Sound_GetPlayingOffset( VALUE self )
 	return rb_float_new( object->GetPlayingOffset() );
 }
 
+/* call-seq:
+ *   sound.getStatus()	-> fixnum
+ *
+ * Get the current status of the sound (stopped, paused, playing). 
+ */
 static VALUE Sound_GetStatus( VALUE self )
 {
 	sf::Sound *object = NULL;
@@ -182,6 +253,14 @@ static VALUE Sound_GetStatus( VALUE self )
 	return INT2FIX( static_cast< int >( object->GetStatus() ) );
 }
 
+/* call-seq:
+ *   sound.resetBuffer()
+ *
+ * Reset the internal buffer of the sound.
+ *
+ * This function is for internal use only, you don't have to use it. It is called by the SFML::SoundBuffer that this 
+ * sound uses, when it is destroyed in order to prevent the sound from using a dead buffer. 
+ */
 static VALUE Sound_ResetBuffer( VALUE self )
 {
 	sf::Sound *object = NULL;

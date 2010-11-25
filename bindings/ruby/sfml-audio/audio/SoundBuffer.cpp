@@ -115,7 +115,7 @@ static VALUE SoundBuffer_SaveToFile( VALUE self, VALUE aFileName )
 }
 
 /* call-seq:
- *   image.getSamples()	-> array of samples
+ *   sound_buffer.getSamples()	-> array of samples
  *
  * Get the array of audio samples stored in the buffer.
  *
@@ -138,6 +138,13 @@ static VALUE SoundBuffer_GetSamples( VALUE self )
 	return samples;
 }
 
+/* call-seq:
+ *   sound_buffer.getSamplesCount()	-> fixnum
+ *
+ * Get the number of samples stored in the buffer.
+ *
+ * The array of samples can be accessed with the getSamples() function.
+ */
 static VALUE SoundBuffer_GetSamplesCount( VALUE self )
 {
 	sf::SoundBuffer *object = NULL;
@@ -145,6 +152,14 @@ static VALUE SoundBuffer_GetSamplesCount( VALUE self )
 	return INT2FIX( object->GetSamplesCount() );
 }
 
+/* call-seq:
+ *   sound_buffer.getSampleRate()	-> fixnum
+ *
+ * Get the sample rate of the sound.
+ *
+ * The sample rate is the number of samples played per second. The higher, the better the quality (for example, 
+ * 44100 samples/s is CD quality).
+ */
 static VALUE SoundBuffer_GetSampleRate( VALUE self )
 {
 	sf::SoundBuffer *object = NULL;
@@ -152,6 +167,11 @@ static VALUE SoundBuffer_GetSampleRate( VALUE self )
 	return INT2FIX( object->GetSampleRate() );
 }
 
+/* call-seq:
+ *   sound_buffer.getChannelsCount()	-> float
+ *
+ * Get the total duration of the sound. 
+ */
 static VALUE SoundBuffer_GetChannelsCount( VALUE self )
 {
 	sf::SoundBuffer *object = NULL;
@@ -159,6 +179,13 @@ static VALUE SoundBuffer_GetChannelsCount( VALUE self )
 	return INT2FIX( object->GetChannelsCount() );
 }
 
+/* call-seq:
+ *   sound_buffer.getDuration()	-> fixnum
+ *
+ * Get the number of channels used by the sound.
+ *
+ * If the sound is mono then the number of channels will be 1, 2 for stereo, etc.
+ */
 static VALUE SoundBuffer_GetDuration( VALUE self )
 {
 	sf::SoundBuffer *object = NULL;
