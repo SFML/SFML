@@ -26,11 +26,108 @@
 
 VALUE globalSoundStreamClass;
 
-static VALUE SoundStream_GetAttenuation( VALUE self )
+/* External classes */
+extern VALUE globalSoundSourceClass;
+
+class rbSoundStream : public sf::SoundStream
+{
+public:
+	rbSoundStream()
+	{
+	}
+	
+	~rbSoundStream()
+	{
+		if( myData != NULL )
+		{
+			delete[] myData;
+		}
+	}
+	
+	void Init( VALUE rubySelf )
+	{
+		mySelf = rubySelf;
+		myOnGetDataID = rb_intern( "onGetData" );
+		myOnSeekID = rb_intern( "onSeek" );
+		
+		myData = NULL;
+	}
+	
+	void Initialize ( unsigned int channelsCount, unsigned int sampleRate )
+	{
+		sf::SoundStream::Initialize( channelsCount, sampleRate );
+	} 	
+	
+protected:
+	virtual bool OnGetData( Chunk& aData )
+	{
+		if( myData != NULL )
+		{
+			delete[] myData;
+			myData = NULL;
+		}
+		
+		VALUE chunk = rb_funcall( mySelf, myOnGetDataID, 0 );
+		if( chunk == Qnil )
+		{
+			return false;
+		}
+		else
+		{
+			VALIDATE_CLASS( chunk, rb_cArray, "chunk" );
+			const unsigned int rawSamplesCount = FIX2UINT( rb_funcall( chunk, rb_intern( "size" ), 0 ) );
+			myData = new sf::Int16[rawSamplesCount];
+			VALUE samples = rb_ary_entry( chunk, 0 );
+			for(unsigned long index = 0; index < rawSamplesCount; index++)
+			{
+				const sf::Int16 val = NUM2INT( rb_ary_entry( samples, index ) );
+				myData[index] = val;
+			}
+			aData.Samples = myData;
+			aData.NbSamples = rawSamplesCount;
+			return true;
+		}
+	}
+	
+	virtual void OnSeek( float anOffset )
+	{
+		rb_funcall( mySelf, myOnSeekID, 1, rb_float_new( anOffset ) );
+	}
+	
+	VALUE mySelf;
+	ID myOnGetDataID;
+	ID myOnSeekID;
+	
+	sf::Int16 *myData;
+};
+
+static VALUE SoundStream_Free( rbSoundStream *anObject )
+{
+	delete anObject;
+}
+
+static VALUE SoundStream_Play( VALUE self )
 {
 	sf::SoundStream *object = NULL;
 	Data_Get_Struct( self, sf::SoundStream, object );
-	return rb_float_new( object->GetAttenuation() );
+	object->Play();
+	return Qnil;
+}
+
+static VALUE SoundStream_Pause( VALUE self )
+{
+	sf::SoundStream *object = NULL;
+	Data_Get_Struct( self, sf::SoundStream, object );
+	object->Pause();
+	return Qnil;
+}
+
+static VALUE SoundStream_Stop( VALUE self )
+{
+	sf::SoundStream *object = NULL;
+	Data_Get_Struct( self, sf::SoundStream, object );
+	object->Stop();
+	return Qnil;
 }
 
 static VALUE SoundStream_GetChannelsCount( VALUE self )
@@ -40,33 +137,83 @@ static VALUE SoundStream_GetChannelsCount( VALUE self )
 	return INT2FIX( object->GetChannelsCount() );
 }
 
+static VALUE SoundStream_GetSampleRate( VALUE self )
+{
+	sf::SoundStream *object = NULL;
+	Data_Get_Struct( self, sf::SoundStream, object );
+	return INT2FIX( object->GetSampleRate() );
+}
+
+static VALUE SoundStream_GetStatus( VALUE self )
+{
+	sf::SoundStream *object = NULL;
+	Data_Get_Struct( self, sf::SoundStream, object );
+	return INT2FIX( static_cast< int >( object->GetStatus() ) );
+}
+
+static VALUE SoundStream_SetPlayingOffset( VALUE self, VALUE anOffset )
+{
+	sf::SoundStream *object = NULL;
+	Data_Get_Struct( self, sf::SoundStream, object );
+	object->SetPlayingOffset( NUM2DBL( anOffset ) );
+	return Qnil;
+}
+
+static VALUE SoundStream_GetPlayingOffset( VALUE self, VALUE anOffset )
+{
+	sf::SoundStream *object = NULL;
+	Data_Get_Struct( self, sf::SoundStream, object );
+	return rb_float_new( object->GetPlayingOffset() );
+}
+
+static VALUE SoundStream_SetLoop( VALUE self, VALUE aLoop )
+{
+	sf::SoundStream *object = NULL;
+	Data_Get_Struct( self, sf::SoundStream, object );
+	if( aLoop == Qtrue )
+	{
+		object->SetLoop( true );
+	}
+	else if( aLoop == Qfalse )
+	{
+		object->SetLoop( false );
+	}
+	else
+	{
+		VALIDATE_CLASS( aLoop, rb_cTrueClass, "loop" );
+	}
+	return Qnil;
+}
+
 static VALUE SoundStream_GetLoop( VALUE self )
 {
 	sf::SoundStream *object = NULL;
 	Data_Get_Struct( self, sf::SoundStream, object );
-	return ( object->GetLoop() == true ? Qtrue : Qfalse );
+	if( object->GetLoop() == true )
+	{
+		return Qtrue;
+	}
+	else
+	{
+		return Qfalse;
+	}
 }
 
-static VALUE SoundStream_GetMinDistance( VALUE self )
+static VALUE SoundStream_Initialize( VALUE self, VALUE channelsCount, VALUE sampleRate )
 {
-	sf::SoundStream *object = NULL;
-	Data_Get_Struct( self, sf::SoundStream, object );
-	return rb_float_new( object->GetMinDistance() );
+	rbSoundStream *object = NULL;
+	Data_Get_Struct( self, rbSoundStream, object );
+	object->Initialize( FIX2UINT( channelsCount ), FIX2UINT( sampleRate ) );
+	return self;
 }
 
-static VALUE SoundStream_GetPitch( VALUE self )
+static VALUE SoundStream_New( int argc, VALUE *args, VALUE aKlass )
 {
-	sf::SoundStream *object = NULL;
-	Data_Get_Struct( self, sf::SoundStream, object );
-	return rb_float_new( object->GetPitch() );
-}
-
-
-static void DefineStatusEnum( void )
-{
-	rb_define_const( globalSoundStreamClass, "Stopped", INT2FIX( sf::SoundStream::Stopped ) );
-	rb_define_const( globalSoundStreamClass, "Paused", INT2FIX( sf::SoundStream::Paused ) );
-	rb_define_const( globalSoundStreamClass, "Playing", INT2FIX( sf::SoundStream::Playing ) );
+	rbSoundStream *object = new rbSoundStream();
+	VALUE rbData = Data_Wrap_Struct( aKlass, 0, SoundStream_Free, object );
+	object->Init( rbData );
+	rb_obj_call_init( rbData, argc, args );
+	return rbData;
 }
 
 void Init_SoundStream( void )
@@ -130,12 +277,43 @@ void Init_SoundStream( void )
  * stream.open( "path/to/stream" )
  * stream.play
  */
-	globalSoundStreamClass = rb_define_class_under( sfml, "SoundStream", rb_cObject );
-	DefineStatusEnum();
-	
+	globalSoundStreamClass = rb_define_class_under( sfml, "SoundStream", globalSoundSourceClass );
+
 	// Class methods
+	rb_define_singleton_method( globalSoundStreamClass, "new", SoundStream_New, -1 );
 	
 	// Instance methods
+	rb_define_method( globalSoundStreamClass, "initialize", SoundStream_Initialize, 2 );
+	rb_define_method( globalSoundStreamClass, "play", SoundStream_Play, 0 );
+	rb_define_method( globalSoundStreamClass, "pause", SoundStream_Pause, 0 );
+	rb_define_method( globalSoundStreamClass, "stop", SoundStream_Stop, 0 );
+	rb_define_method( globalSoundStreamClass, "getChannelsCount", SoundStream_GetChannelsCount, 0 );
+	rb_define_method( globalSoundStreamClass, "getSampleRate", SoundStream_GetSampleRate, 0 );
+	rb_define_method( globalSoundStreamClass, "getStatus", SoundStream_GetStatus, 0 );
+	rb_define_method( globalSoundStreamClass, "setPlayingOffset", SoundStream_SetPlayingOffset, 1 );
+	rb_define_method( globalSoundStreamClass, "getPlayingOffset", SoundStream_GetPlayingOffset, 0 );
+	rb_define_method( globalSoundStreamClass, "setLoop", SoundStream_SetLoop, 1 );
+	rb_define_method( globalSoundStreamClass, "getLoop", SoundStream_GetLoop, 0 );
 		
-	// Aliases
+	// Instance Aliases
+	rb_define_alias( globalSoundStreamClass, "get_channels_count", "getChannelsCount" );
+	rb_define_alias( globalSoundStreamClass, "channelsCount", "getChannelsCount" );
+	rb_define_alias( globalSoundStreamClass, "channels_count", "getChannelsCount" );
+	
+	rb_define_alias( globalSoundStreamClass, "get_sample_rate", "getSampleRate" );
+	rb_define_alias( globalSoundStreamClass, "sampleRate", "getSampleRate" );
+	rb_define_alias( globalSoundStreamClass, "sample_rate", "getSampleRate" );
+	
+	rb_define_alias( globalSoundStreamClass, "status", "getStatus" );
+	
+	rb_define_alias( globalSoundStreamClass, "get_playing_offset", "getPlayingOffset" );
+	rb_define_alias( globalSoundStreamClass, "playingOffset", "getPlayingOffset" );
+	rb_define_alias( globalSoundStreamClass, "playing_offset", "getPlayingOffset" );
+	
+	rb_define_alias( globalSoundStreamClass, "set_playing_offset", "setPlayingOffset" );
+	rb_define_alias( globalSoundStreamClass, "playingOffset=", "setPlayingOffset" );
+	rb_define_alias( globalSoundStreamClass, "playing_offset=", "setPlayingOffset" );
+	
+	rb_define_alias( globalSoundStreamClass, "loop", "getPlayingOffset" );
+	rb_define_alias( globalSoundStreamClass, "loop=", "setPlayingOffset" );
 }

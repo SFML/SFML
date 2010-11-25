@@ -93,7 +93,6 @@ protected:
 	ID myOnProcessSamplesID;
 };
 
-
 static void SoundRecorder_Free( rbSoundRecorder * anObject )
 {
 	delete anObject;
