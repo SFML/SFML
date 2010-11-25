@@ -596,9 +596,9 @@ static VALUE Window_WaitEvent( VALUE self )
 
 static VALUE Window_Initialize( int argc, VALUE *args, VALUE self )
 {
-	if( args > 0 )
+	if( argc > 0 )
 	{
-		rb_funcall( self, rb_intern( "create" ), argc, args );
+		rb_funcall2( self, rb_intern( "create" ), argc, args );
 	}
 	return self;
 }
