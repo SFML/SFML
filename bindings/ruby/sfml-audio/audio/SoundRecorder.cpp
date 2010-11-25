@@ -22,14 +22,14 @@
  
 #include "SoundStream.hpp"
 #include "main.hpp"
-#include <SFML/Audio/SoundStream.hpp>
+#include <SFML/Audio/SoundRecorder.hpp>
 
 VALUE globalSoundRecorderClass;
 
 class rbSoundRecorder : public sf::SoundRecorder
 {
 public:
-	SoundRecorder()
+	rbSoundRecorder()
 	{
 	}
 	
@@ -44,7 +44,7 @@ public:
 protected:
 	virtual bool OnStart()
 	{
-		if( rb_respond_to( myOnStartID ) == 0 )
+		if( rb_respond_to( mySelf, myOnStartID ) == 0 )
 		{
 			return true;
 		}
@@ -63,7 +63,7 @@ protected:
 	
 	virtual void OnStop()
 	{
-		if( rb_respond_to( myOnStopID ) != 0 )
+		if( rb_respond_to( mySelf, myOnStopID ) != 0 )
 		{
 			rb_funcall( mySelf, myOnStopID, 0 );
 		}
@@ -71,20 +71,19 @@ protected:
 	
 	virtual bool OnProcessSamples( const sf::Int16 *someSamples, std::size_t someCount )
 	{
-		if( rb_respond_to( myOnProcessSamples ) == 0 )
+		VALUE samples = rb_ary_new2( someCount );
+		for(unsigned long index = 0; index < someCount; index++)
 		{
-			return true;
+			rb_ary_store( samples, index, INT2FIX( someSamples[index] ) );
+		}
+		
+		if( rb_funcall( mySelf, myOnProcessSamplesID, 2, samples, INT2FIX( someCount )  ) == Qfalse )
+		{
+			return false;
 		}
 		else
 		{
-			if( rb_funcall( mySelf, myOnProcessSamples, 0 ) == Qfalse )
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
+			return true;
 		}
 	}
 	
@@ -222,11 +221,14 @@ void Init_SoundRecorder( void )
 	rb_define_method( globalSoundRecorderClass, "getSampleRate", SoundRecorder_GetSampleRate, 0 );
 		
 	// Class Aliases
-	rb_define_alias( globalSoundRecorderClass, "is_available", "isAvailable" );
-	rb_define_alias( globalSoundRecorderClass, "available?", "isAvailable" );
+	rb_define_alias( CLASS_OF( globalSoundRecorderClass ), "is_available", "isAvailable" );
+	rb_define_alias( CLASS_OF( globalSoundRecorderClass ), "available?", "isAvailable" );
 	
 	// Instance Aliases
 	rb_define_alias( globalSoundRecorderClass, "get_sample_rate", "getSampleRate" );
 	rb_define_alias( globalSoundRecorderClass, "sampleRate", "getSampleRate" );
 	rb_define_alias( globalSoundRecorderClass, "sample_rate", "getSampleRate" );
+	
+	rb_define_alias( globalSoundRecorderClass, "on_start", "on_start" );
+	rb_define_alias( globalSoundRecorderClass, "on_stop", "on_stop" );
 }
