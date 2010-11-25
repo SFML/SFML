@@ -20,16 +20,20 @@
  *    source distribution.
  */
  
-#include "SoundRecorder.hpp"
+#include "SoundBufferRecorder.hpp"
 #include "main.hpp"
-#include <SFML/Audio/SoundRecorder.hpp>
+#include <SFML/Audio/SoundBufferRecorder.hpp>
 
-VALUE globalSoundRecorderClass;
+VALUE globalSoundBufferRecorderClass;
 
-class rbSoundRecorder : public sf::SoundRecorder
+/* External classes */
+extern VALUE globalSoundRecorderClass;
+extern VALUE globalSoundBufferClass;
+
+class rbSoundBufferRecorder : public sf::SoundBufferRecorder
 {
 public:
-	rbSoundRecorder()
+	rbSoundBufferRecorder()
 	{
 	}
 	
@@ -94,58 +98,30 @@ protected:
 };
 
 
-static void SoundRecorder_Free( rbSoundRecorder * anObject )
+static void SoundBufferRecorder_Free( rbSoundBufferRecorder * anObject )
 {
 	delete anObject;
 }
 
-static VALUE SoundRecorder_Start( int argc, VALUE *args, VALUE self )
+static VALUE SoundBufferRecorder_GetBuffer( VALUE self )
 {
-	sf::SoundRecorder *object = NULL;
-	Data_Get_Struct( self, sf::SoundRecorder, object );
-	unsigned int sampleRate = 44100;
-	switch( argc )
-	{
-		case 1:
-			sampleRate = FIX2UINT( args[0] );
-		case 0:
-			object->Start( sampleRate );
-			break;
-		default:
-			rb_raise( rb_eArgError, "Expected 0 or 1 arguments but was given %d", argc );
-	}
-	return Qnil;
+	sf::SoundBufferRecorder *object = NULL;
+	Data_Get_Struct( self, sf::SoundBufferRecorder, object );
+	const sf::SoundBuffer &buffer = object->GetBuffer();
+	VALUE rbData = Data_Wrap_Struct( globalSoundBufferClass, 0, 0, const_cast< sf::SoundBuffer * >( &buffer ) );
+	rb_iv_set( rbData, "@__owner_ref", self );
+	return rbData;
 }
 
-static VALUE SoundRecorder_Stop( VALUE self )
+static VALUE SoundBufferRecorder_New( int argc, VALUE *args, VALUE aKlass )
 {
-	sf::SoundRecorder *object = NULL;
-	Data_Get_Struct( self, sf::SoundRecorder, object );
-	object->Stop();
-	return Qnil;
-}
-
-static VALUE SoundRecorder_GetSampleRate( VALUE self )
-{
-	sf::SoundRecorder *object = NULL;
-	Data_Get_Struct( self, sf::SoundRecorder, object );
-	return INT2FIX( object->GetSampleRate() );
-}
-
-static VALUE SoundRecorder_New( int argc, VALUE *args, VALUE aKlass )
-{
-	rbSoundRecorder *object = new rbSoundRecorder();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, SoundRecorder_Free, object );
+	rbSoundBufferRecorder *object = new rbSoundBufferRecorder();
+	VALUE rbData = Data_Wrap_Struct( aKlass, 0, SoundBufferRecorder_Free, object );
 	rb_obj_call_init( rbData, argc, args );
 	return rbData;
 }
 
-static VALUE SoundRecorder_IsAvailable( VALUE aKlass )
-{
-	return ( sf::SoundRecorder::IsAvailable() == true ? Qtrue : Qfalse );
-}
-
-void Init_SoundRecorder( void )
+void Init_SoundBufferRecorder( void )
 {
 /* SFML namespace which contains the classes of this module. */
 	VALUE sfml = rb_define_module( "SFML" );
@@ -209,26 +185,14 @@ void Init_SoundRecorder( void )
  *     recorder.stop()
  *   end
  */
-	globalSoundRecorderClass = rb_define_class_under( sfml, "SoundRecorder", rb_cObject );
+	globalSoundBufferRecorderClass = rb_define_class_under( sfml, "SoundBufferRecorder", globalSoundRecorderClass );
 	
 	// Class methods
-	rb_define_singleton_method( globalSoundRecorderClass, "new", SoundRecorder_New, -1 );
-	rb_define_singleton_method( globalSoundRecorderClass, "isAvailable", SoundRecorder_IsAvailable, 0 );
+	rb_define_singleton_method( globalSoundBufferRecorderClass, "new", SoundBufferRecorder_New, -1 );
 	
 	// Instance methods
-	rb_define_method( globalSoundRecorderClass, "start", SoundRecorder_Start, -1 );
-	rb_define_method( globalSoundRecorderClass, "stop", SoundRecorder_Stop, 0 );
-	rb_define_method( globalSoundRecorderClass, "getSampleRate", SoundRecorder_GetSampleRate, 0 );
-		
-	// Class Aliases
-	rb_define_alias( CLASS_OF( globalSoundRecorderClass ), "is_available", "isAvailable" );
-	rb_define_alias( CLASS_OF( globalSoundRecorderClass ), "available?", "isAvailable" );
+	rb_define_method( globalSoundRecorderClass, "getBuffer", SoundBufferRecorder_GetBuffer, 0 );
 	
 	// Instance Aliases
-	rb_define_alias( globalSoundRecorderClass, "get_sample_rate", "getSampleRate" );
-	rb_define_alias( globalSoundRecorderClass, "sampleRate", "getSampleRate" );
-	rb_define_alias( globalSoundRecorderClass, "sample_rate", "getSampleRate" );
-	
-	rb_define_alias( globalSoundRecorderClass, "on_start", "on_start" );
-	rb_define_alias( globalSoundRecorderClass, "on_stop", "on_stop" );
+	rb_define_alias( globalSoundRecorderClass, "buffer", "getBuffer" );
 }
