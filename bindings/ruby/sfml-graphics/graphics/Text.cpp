@@ -213,7 +213,7 @@ static VALUE Text_GetRect( VALUE self )
 	sf::Text *object = NULL;
 	Data_Get_Struct( self, sf::Text, object );
 	const sf::FloatRect rect = object->GetRect();
-	return rb_funcall( globalVector2Class, rb_intern( "new" ), 4, 
+	return rb_funcall( globalRectClass, rb_intern( "new" ), 4, 
 		rb_float_new( rect.Left ), rb_float_new( rect.Top ),
 		rb_float_new( rect.Width ), rb_float_new( rect.Height ) );
 }
