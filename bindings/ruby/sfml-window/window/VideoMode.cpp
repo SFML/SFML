@@ -139,6 +139,21 @@ static VALUE VideoMode_SetBitsPerPixel( VALUE self, VALUE aValue )
 }
 
 /* call-seq:
+ *   mode.isValid()	-> true or false
+ *
+ * Tell whether or not the video mode is valid.
+ *
+ * The validity of video modes is only relevant when using fullscreen windows; otherwise any video mode can be used 
+ * with no restriction.
+ */
+static VALUE VideoMode_IsValid( VALUE self )
+{
+	sf::VideoMode *object = NULL;
+	Data_Get_Struct( self, sf::VideoMode, object );
+	return ( object->IsValid() == true ? Qtrue : Qfalse );
+}
+
+/* call-seq:
  *   VideoMode.getDesktopMode	-> desktop_mode
  *
  * Get the current desktop video mode. 
@@ -255,6 +270,8 @@ void Init_VideoMode( void )
 	rb_define_method( globalVideoModeClass, "bitsPerPixel", VideoMode_GetBitsPerPixel, 0 );
 	rb_define_method( globalVideoModeClass, "bitsPerPixel=", VideoMode_SetBitsPerPixel, 1 );
 	
+	rb_define_method( globalVideoModeClass, "isValid", VideoMode_IsValid, 0 );
+	
 	// Class aliases
 	rb_define_alias( CLASS_OF( globalVideoModeClass ), "desktopMode", "getDesktopMode" );
 	rb_define_alias( CLASS_OF( globalVideoModeClass ), "desktop_mode", "getDesktopMode" );
@@ -266,4 +283,7 @@ void Init_VideoMode( void )
 	rb_define_alias( globalVideoModeClass, "bits_per_pixel=", "bitsPerPixel=" );
 	rb_define_alias( globalVideoModeClass, "bpp", "bitsPerPixel" );
 	rb_define_alias( globalVideoModeClass, "bpp=", "bitsPerPixel=" );
+	
+	rb_define_alias( globalVideoModeClass, "is_valid", "isValid" );
+	rb_define_alias( globalVideoModeClass, "valid?", "isValid" );
 }
