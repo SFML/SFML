@@ -264,8 +264,8 @@ void Init_VideoMode( void )
 	rb_define_method( globalVideoModeClass, "width", VideoMode_GetWidth, 0 );
 	rb_define_method( globalVideoModeClass, "width=", VideoMode_SetWidth, 1 );
 	
-	rb_define_method( globalVideoModeClass, "height", VideoMode_GetWidth, 0 );
-	rb_define_method( globalVideoModeClass, "height=", VideoMode_SetWidth, 1 );
+	rb_define_method( globalVideoModeClass, "height", VideoMode_GetHeight, 0 );
+	rb_define_method( globalVideoModeClass, "height=", VideoMode_SetHeight, 1 );
 
 	rb_define_method( globalVideoModeClass, "bitsPerPixel", VideoMode_GetBitsPerPixel, 0 );
 	rb_define_method( globalVideoModeClass, "bitsPerPixel=", VideoMode_SetBitsPerPixel, 1 );
