@@ -91,7 +91,7 @@ static VALUE Window_Create( int argc, VALUE *args, VALUE self )
 			VALIDATE_CLASS( args[1], rb_cString, "second" );
 			VALIDATE_CLASS( args[2], rb_cFixnum, "third" );
 			Data_Get_Struct( arg0, sf::VideoMode, mode );
-			object->Create( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ) );
+			object->Create( *mode, rb_string_value_cstr( &args[1] ), FIX2INT( args[2] ) );
 			break;
 		case 4:
 			arg0 = VideoMode_ForceType( args[0] );
@@ -101,7 +101,7 @@ static VALUE Window_Create( int argc, VALUE *args, VALUE self )
 			VALIDATE_CLASS( args[3], globalContextSettingsClass, "fourth" );
 			Data_Get_Struct( arg0, sf::VideoMode, mode );
 			Data_Get_Struct( args[3], sf::ContextSettings, settings );
-			object->Create( *mode, rb_string_value_cstr( &args[1] ), FIX2UINT( args[2] ), *settings );
+			object->Create( *mode, rb_string_value_cstr( &args[1] ), FIX2INT( args[2] ), *settings );
 			break;
 		default:
 			rb_raise( rb_eArgError, "Expected 2..4 arguments but was given %d", argc );

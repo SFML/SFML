@@ -15,6 +15,7 @@ image.create( 100, 100, [255, 0, 0] )
 sprite = SFML::Sprite.new( image, [500, 500] )
 
 text = SFML::Text.new( "This is a test!" )
+text.position = [ 20, 20 ]
 
 while app.open?
   while event = app.get_event

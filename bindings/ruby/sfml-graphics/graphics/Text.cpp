@@ -59,13 +59,15 @@ static VALUE Text_Initialize( int argc, VALUE *args, VALUE self )
 	{
 		case 3:
 			characterSize = FIX2UINT( args[2] );
+			object->SetCharacterSize( characterSize );
 		case 2:
 			VALIDATE_CLASS( args[1], globalFontClass, "font" );
 			Data_Get_Struct( args[1], sf::Font, font );
 			rb_iv_set( self, "@__font_ref", args[1] );
+			object->SetFont( *font );
 		case 1:
 			string = rb_string_value_cstr( &args[0] );
-			*object = sf::Text( string, *font, characterSize );
+			object->SetString( string );
 		case 0:
 			break;
 		default:
