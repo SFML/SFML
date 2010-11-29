@@ -55,12 +55,12 @@ static VALUE View_Initialize( int argc, VALUE *args, VALUE self )
 		{
 			temp = Vector2_ForceType( args[0] );
 			sf::Vector2f center;
-			center.x = FIX2UINT( Vector2_GetX( temp ) );
-			center.y = FIX2UINT( Vector2_GetY( temp ) );
+			center.x = NUM2DBL( Vector2_GetX( temp ) );
+			center.y = NUM2DBL( Vector2_GetY( temp ) );
 			temp = Vector2_ForceType( args[1] );
 			sf::Vector2f size;
-			size.x = FIX2UINT( Vector2_GetX( temp ) );
-			size.y = FIX2UINT( Vector2_GetY( temp ) );
+			size.x = NUM2DBL( Vector2_GetX( temp ) );
+			size.y = NUM2DBL( Vector2_GetY( temp ) );
 			object->SetCenter( center );
 			object->SetSize( size );
 			break;
@@ -69,10 +69,10 @@ static VALUE View_Initialize( int argc, VALUE *args, VALUE self )
 		{
 			temp = Rect_ForceType( args[0] );
 			sf::FloatRect rectangle;
-			rectangle.Left   = FIX2UINT( Rect_GetLeft( temp ) );
-			rectangle.Top    = FIX2UINT( Rect_GetTop( temp ) );
-			rectangle.Width  = FIX2UINT( Rect_GetWidth( temp ) );
-			rectangle.Height = FIX2UINT( Rect_GetHeight( temp ) );
+			rectangle.Left   = NUM2DBL( Rect_GetLeft( temp ) );
+			rectangle.Top    = NUM2DBL( Rect_GetTop( temp ) );
+			rectangle.Width  = NUM2DBL( Rect_GetWidth( temp ) );
+			rectangle.Height = NUM2DBL( Rect_GetHeight( temp ) );
 			object->Reset( rectangle );
 			break;
 		}
@@ -157,11 +157,13 @@ static VALUE View_Move( int argc, VALUE * args, VALUE self )
 			VALUE temp = Vector2_ForceType( args[0] );
 			offsetX = NUM2DBL( Vector2_GetX( temp ) );
 			offsetY = NUM2DBL( Vector2_GetY( temp ) );
+			break;
 		}
 		case 2:
 		{
 			offsetX = NUM2DBL( args[0] );
 			offsetY = NUM2DBL( args[1] );
+			break;
 		}
 		default:
 			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
@@ -225,11 +227,13 @@ static VALUE View_SetCenter( int argc, VALUE * args, VALUE self )
 			VALUE temp = Vector2_ForceType( args[0] );
 			x = NUM2DBL( Vector2_GetX( temp ) );
 			y = NUM2DBL( Vector2_GetY( temp ) );
+			break;
 		}
 		case 2:
 		{
 			x = NUM2DBL( args[0] );
 			y = NUM2DBL( args[1] );
+			break;
 		}
 		default:
 			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
