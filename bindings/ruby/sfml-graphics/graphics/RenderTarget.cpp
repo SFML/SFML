@@ -38,6 +38,11 @@ extern VALUE globalDrawableModule;
 extern VALUE globalShaderClass;
 extern VALUE globalViewClass;
 
+static VALUE View_Free( sf::View *anObject )
+{
+	delete anObject;
+}
+
 /* call-seq:
  *   render_target.clear( color = SFML::Color::Black )
  *
@@ -178,10 +183,10 @@ static VALUE RenderTarget_GetView( VALUE self )
 {
 	sf::RenderTarget *object = NULL;
 	Data_Get_Struct( self, sf::RenderTarget, object );
-	const sf::View &view = object->GetView();
-	VALUE rbData = Data_Wrap_Struct( globalViewClass, 0, 0, const_cast< sf::View * >( &view ) );
+	const sf::View &original = object->GetView();
+	sf::View * view = new sf::View( original );
+	VALUE rbData = Data_Wrap_Struct( globalViewClass, 0, View_Free, view );
 	rb_obj_call_init( rbData, 0, 0 );
-	rb_iv_set( rbData, "@__owner_ref", self );
 	return rbData;
 }
 

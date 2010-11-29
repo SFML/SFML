@@ -278,11 +278,13 @@ static VALUE View_SetSize( int argc, VALUE * args, VALUE self )
 			VALUE temp = Vector2_ForceType( args[0] );
 			x = NUM2DBL( Vector2_GetX( temp ) );
 			y = NUM2DBL( Vector2_GetY( temp ) );
+			break;
 		}
 		case 2:
 		{
 			x = NUM2DBL( args[0] );
 			y = NUM2DBL( args[1] );
+			break;
 		}
 		default:
 			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );

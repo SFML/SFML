@@ -31,8 +31,14 @@ extern VALUE globalRenderTargetModule;
 extern VALUE globalWindowClass;
 extern VALUE globalDrawableModule;
 extern VALUE globalShaderClass;
+extern VALUE globalViewClass;
 
 static void RenderWindow_Free( sf::RenderWindow *anObject )
+{
+	delete anObject;
+}
+
+static void View_Free( sf::View *anObject )
 {
 	delete anObject;
 }
@@ -76,6 +82,60 @@ static VALUE RenderWindow_Draw( int argc, VALUE *args, VALUE self )
 			rb_raise( rb_eArgError, "Expected 1 or 2 arguments but was given %d", argc );
 	}
 	return Qnil;
+}
+
+/* call-seq:
+ *   render_target.setView( view )
+ *
+ * Change the current active view.
+ *
+ * The new view will affect everything that is drawn, until another view is activated. The render target keeps its own
+ * copy of the view object, so it is not necessary to keep the original one alive as long as it is in use. To restore
+ * the original view of the target, you can pass the result of getDefaultView() to this function.
+ */
+static VALUE RenderWindow_SetView( VALUE self, VALUE aView )
+{
+	VALIDATE_CLASS( aView, globalViewClass, "view" );
+	sf::View *view = NULL;
+	sf::RenderWindow *object = NULL;
+	Data_Get_Struct( self, sf::RenderWindow, object );
+	Data_Get_Struct( aView, sf::View, view );
+	object->SetView( *view );
+	return Qnil;
+}
+
+/* call-seq:
+ *   render_target.getView()	-> view
+ *
+ * Retrieve the view currently in use in the render target. 
+ */
+static VALUE RenderWindow_GetView( VALUE self )
+{
+	sf::RenderWindow *object = NULL;
+	Data_Get_Struct( self, sf::RenderWindow, object );
+	const sf::View &original = object->GetView();
+	sf::View * view = new sf::View( original );
+	VALUE rbData = Data_Wrap_Struct( globalViewClass, 0, View_Free, view );
+	rb_obj_call_init( rbData, 0, 0 );
+	return rbData;
+}
+
+/* call-seq:
+ *   render_target.getDefaultView()	-> VIEW
+ *
+ * Get the default view of the render target.
+ *
+ * The default view has the initial size of the render target, and never changes after the target has been created.
+ */
+static VALUE RenderWindow_GetDefaultView( VALUE self )
+{
+	sf::RenderWindow *object = NULL;
+	Data_Get_Struct( self, sf::RenderWindow, object );
+	const sf::View &original = object->GetDefaultView();
+	sf::View * view = new sf::View( original );
+	VALUE rbData = Data_Wrap_Struct( globalViewClass, 0, View_Free, view );
+	rb_obj_call_init( rbData, 0, 0 );
+	return rbData;
 }
 
 /* call-seq:
@@ -197,4 +257,14 @@ void Init_RenderWindow( void )
 	
 	// Instance methods
 	rb_define_method( globalRenderWindowClass, "draw", RenderWindow_Draw, -1 );
+	rb_define_method( globalRenderWindowClass, "getView", RenderWindow_GetView, 0 );
+	rb_define_method( globalRenderWindowClass, "setView", RenderWindow_SetView, 1 );
+	rb_define_method( globalRenderWindowClass, "getDefaultView", RenderWindow_GetDefaultView, 0 );
+	
+	// Alias
+	rb_define_alias( globalRenderWindowClass, "view=", "setView" );
+	rb_define_alias( globalRenderWindowClass, "view", "getView" );
+	
+	rb_define_alias( globalRenderWindowClass, "defaultView", "getDefaultView" );
+	rb_define_alias( globalRenderWindowClass, "default_view", "getDefaultView" );
 }

@@ -31,8 +31,14 @@ extern VALUE globalRenderTargetModule;
 extern VALUE globalImageClass;
 extern VALUE globalDrawableModule;
 extern VALUE globalShaderClass;
+extern VALUE globalViewClass;
 
 static void RenderImage_Free( sf::RenderImage *anObject )
+{
+	delete anObject;
+}
+
+static void View_Free( sf::View *anObject )
 {
 	delete anObject;
 }
@@ -241,6 +247,60 @@ static VALUE RenderImage_SetSmooth( VALUE self, VALUE aSmoothFlag )
 }
 
 /* call-seq:
+ *   render_target.setView( view )
+ *
+ * Change the current active view.
+ *
+ * The new view will affect everything that is drawn, until another view is activated. The render target keeps its own
+ * copy of the view object, so it is not necessary to keep the original one alive as long as it is in use. To restore
+ * the original view of the target, you can pass the result of getDefaultView() to this function.
+ */
+static VALUE RenderImage_SetView( VALUE self, VALUE aView )
+{
+	VALIDATE_CLASS( aView, globalViewClass, "view" );
+	sf::View *view = NULL;
+	sf::RenderImage *object = NULL;
+	Data_Get_Struct( self, sf::RenderImage, object );
+	Data_Get_Struct( aView, sf::View, view );
+	object->SetView( *view );
+	return Qnil;
+}
+
+/* call-seq:
+ *   render_target.getView()	-> view
+ *
+ * Retrieve the view currently in use in the render target. 
+ */
+static VALUE RenderImage_GetView( VALUE self )
+{
+	sf::RenderImage *object = NULL;
+	Data_Get_Struct( self, sf::RenderImage, object );
+	const sf::View &original = object->GetView();
+	sf::View * view = new sf::View( original );
+	VALUE rbData = Data_Wrap_Struct( globalViewClass, 0, View_Free, view );
+	rb_obj_call_init( rbData, 0, 0 );
+	return rbData;
+}
+
+/* call-seq:
+ *   render_target.getDefaultView()	-> VIEW
+ *
+ * Get the default view of the render target.
+ *
+ * The default view has the initial size of the render target, and never changes after the target has been created.
+ */
+static VALUE RenderImage_GetDefaultView( VALUE self )
+{
+	sf::RenderImage *object = NULL;
+	Data_Get_Struct( self, sf::RenderImage, object );
+	const sf::View &original = object->GetDefaultView();
+	sf::View * view = new sf::View( original );
+	VALUE rbData = Data_Wrap_Struct( globalViewClass, 0, View_Free, view );
+	rb_obj_call_init( rbData, 0, 0 );
+	return rbData;
+}
+
+/* call-seq:
  *   RenderImage.new()	-> render_image
  *
  * Constructs an empty, invalid render-image. You must call create() to have a valid render-image.
@@ -347,6 +407,9 @@ void Init_RenderImage( void )
 	rb_define_method( globalRenderImageClass, "isSmooth", RenderImage_IsSmooth, 0 );
 	rb_define_method( globalRenderImageClass, "setActive", RenderImage_SetActive, -1 );
 	rb_define_method( globalRenderImageClass, "setSmooth", RenderImage_SetSmooth, 1 );
+	rb_define_method( globalRenderImageClass, "getView", RenderImage_GetView, 0 );
+	rb_define_method( globalRenderImageClass, "setView", RenderImage_SetView, 1 );
+	rb_define_method( globalRenderImageClass, "getDefaultView", RenderImage_GetDefaultView, 0 );
 	
 	// Class Aliases
 	rb_define_alias( CLASS_OF( globalRenderImageClass ), "is_available", "isAvailable" );
@@ -363,4 +426,10 @@ void Init_RenderImage( void )
 	rb_define_alias( globalRenderImageClass, "active=", "setActive" );
 	
 	rb_define_alias( globalRenderImageClass, "smooth=", "setSmooth" );
+	
+	rb_define_alias( globalRenderImageClass, "view=", "setView" );
+	rb_define_alias( globalRenderImageClass, "view", "getView" );
+	
+	rb_define_alias( globalRenderImageClass, "defaultView", "getDefaultView" );
+	rb_define_alias( globalRenderImageClass, "default_view", "getDefaultView" );
 }
