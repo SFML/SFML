@@ -215,7 +215,7 @@ static VALUE Rect_Intersects( VALUE self, VALUE aRect )
 		top = rectTop;
 	}
 	
-	if( rb_funcall( selfRight , rb_intern( ">" ), 1, rectRight ) == Qtrue )
+	if( rb_funcall( selfRight , rb_intern( "<" ), 1, rectRight ) == Qtrue )
 	{
 		right = selfRight;
 	}
@@ -224,7 +224,7 @@ static VALUE Rect_Intersects( VALUE self, VALUE aRect )
 		right = rectRight;
 	}
 	
-	if( rb_funcall( selfBottom , rb_intern( ">" ), 1, rectBottom ) == Qtrue )
+	if( rb_funcall( selfBottom , rb_intern( "<" ), 1, rectBottom ) == Qtrue )
 	{
 		bottom = selfBottom;
 	}
