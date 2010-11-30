@@ -93,16 +93,6 @@ static VALUE RenderImage_Create( int argc, VALUE *args, VALUE self )
 	}
 }
 
-/* call-seq:
- *   render_image.draw( drawable )
- *   render_image.draw( drawable, shader )
- *
- * Draw an object into the target with a shader.
- *
- * This function draws anything that inherits from the sf::Drawable base class (SFML::Sprite, SFML::Shape, SFML::Text, 
- * or even your own derived classes). The shader alters the way that the pixels are processed right before being 
- * written to the render target.
- */
 static VALUE RenderImage_Draw( int argc, VALUE *args, VALUE self )
 {
 	sf::RenderImage *object = NULL;
@@ -246,15 +236,6 @@ static VALUE RenderImage_SetSmooth( VALUE self, VALUE aSmoothFlag )
 	return Qnil;
 }
 
-/* call-seq:
- *   render_target.setView( view )
- *
- * Change the current active view.
- *
- * The new view will affect everything that is drawn, until another view is activated. The render target keeps its own
- * copy of the view object, so it is not necessary to keep the original one alive as long as it is in use. To restore
- * the original view of the target, you can pass the result of getDefaultView() to this function.
- */
 static VALUE RenderImage_SetView( VALUE self, VALUE aView )
 {
 	VALIDATE_CLASS( aView, globalViewClass, "view" );
@@ -266,11 +247,6 @@ static VALUE RenderImage_SetView( VALUE self, VALUE aView )
 	return Qnil;
 }
 
-/* call-seq:
- *   render_target.getView()	-> view
- *
- * Retrieve the view currently in use in the render target. 
- */
 static VALUE RenderImage_GetView( VALUE self )
 {
 	sf::RenderImage *object = NULL;
@@ -282,13 +258,6 @@ static VALUE RenderImage_GetView( VALUE self )
 	return rbData;
 }
 
-/* call-seq:
- *   render_target.getDefaultView()	-> VIEW
- *
- * Get the default view of the render target.
- *
- * The default view has the initial size of the render target, and never changes after the target has been created.
- */
 static VALUE RenderImage_GetDefaultView( VALUE self )
 {
 	sf::RenderImage *object = NULL;
@@ -298,6 +267,20 @@ static VALUE RenderImage_GetDefaultView( VALUE self )
 	VALUE rbData = Data_Wrap_Struct( globalViewClass, 0, View_Free, view );
 	rb_obj_call_init( rbData, 0, 0 );
 	return rbData;
+}
+
+static VALUE RenderImage_GetWidth( VALUE self )
+{
+	sf::RenderImage *object = NULL;
+	Data_Get_Struct( self, sf::RenderImage, object );
+	return INT2FIX( object->GetWidth() );
+}
+
+static VALUE RenderTarget_GetHeight( VALUE self )
+{
+	sf::RenderImage *object = NULL;
+	Data_Get_Struct( self, sf::RenderImage, object );
+	return INT2FIX( object->GetHeight() );
 }
 
 /* call-seq:
@@ -410,6 +393,8 @@ void Init_RenderImage( void )
 	rb_define_method( globalRenderImageClass, "getView", RenderImage_GetView, 0 );
 	rb_define_method( globalRenderImageClass, "setView", RenderImage_SetView, 1 );
 	rb_define_method( globalRenderImageClass, "getDefaultView", RenderImage_GetDefaultView, 0 );
+	rb_define_method( globalRenderImageClass, "getWidth", RenderImage_GetWidth, 0 );
+	rb_define_method( globalRenderImageClass, "getHeight", RenderImage_GetHeight, 0 );
 	
 	// Class Aliases
 	rb_define_alias( CLASS_OF( globalRenderImageClass ), "is_available", "isAvailable" );
@@ -432,4 +417,7 @@ void Init_RenderImage( void )
 	
 	rb_define_alias( globalRenderImageClass, "defaultView", "getDefaultView" );
 	rb_define_alias( globalRenderImageClass, "default_view", "getDefaultView" );
+	
+	rb_define_alias( globalRenderImageClass, "width", "getWidth" );
+	rb_define_alias( globalRenderImageClass, "height", "getHeight" );
 }
