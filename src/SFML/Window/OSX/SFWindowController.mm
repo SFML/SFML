@@ -35,6 +35,7 @@
 #import <SFML/Window/OSX/SFWindowController.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
+#import <SFML/Window/OSX/SFWindow.h>
 
 @implementation SFWindowController
 
@@ -103,7 +104,7 @@
 		}
 		
 		// Create the window.
-		myWindow = [[NSWindow alloc] initWithContentRect:rect
+		myWindow = [[SFWindow alloc] initWithContentRect:rect
 																					 styleMask:nsStyle 
 																						 backing:NSBackingStoreBuffered 
 																							 defer:NO];
@@ -125,6 +126,26 @@
 			<< std::endl;
 	
 			return self;
+		}
+		
+		// Apply special feature for fullscreen window.
+		if (style & sf::Style::Fullscreen) {			
+			// We place the window above everything else.
+			[myWindow setLevel:NSMainMenuWindowLevel+1];
+			[myWindow setOpaque:YES];
+			[myWindow setHidesOnDeactivate:YES];
+			
+			/* ---------------------------
+			 * | Note for future version |
+			 * ---------------------------
+			 *
+			 * starting with OS 10.5 NSView provides
+			 * a new method -enterFullScreenMode:withOptions: 
+			 * which could be a good alternative.
+			 */
+		} else {
+			// Center the window to be cool =)
+			[myWindow center];
 		}
 		
 		// Create the view.
@@ -151,28 +172,6 @@
 		// And some other things...
 		[myWindow setAutodisplay:YES];
 		[myWindow setReleasedWhenClosed:NO];
-		
-		// Apply special feature for fullscreen window.
-		if (style & sf::Style::Fullscreen) {
-			
-			// We place the window above everything else.
-			[myWindow setLevel:NSMainMenuWindowLevel+1];
-			[myWindow setOpaque:YES];
-			[myWindow setHidesOnDeactivate:YES];
-			
-			/* ---------------------------
-			 * | Note for future version |
-			 * ---------------------------
-			 *
-			 * starting with OS 10.5 NSView provides
-			 * a new method -enterFullScreenMode:withOptions: 
-			 * which could be a good alternative.
-			 */
-		}
-		
-		// Center the window to be cool =)
-		[myWindow center];
-	
 	} // if super init ok
 	
 	return self;

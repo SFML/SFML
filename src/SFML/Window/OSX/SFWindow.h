@@ -26,45 +26,21 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
-
+#import <AppKit/AppKit.h>
 
 ////////////////////////////////////////////////////////////
-/// Predefine some classes
+/// Here we redefine some methods to allow grabing fullscreen events.
 ////////////////////////////////////////////////////////////
-namespace sf {
-	namespace priv {
-		class WindowImplCocoa;
-	}
-	class VideoMode;
+@interface SFWindow : NSWindow {
+
 }
 
-@class SFOpenGLView;
-
-////////////////////////////////////////////////////////////
-/// Implementation of WindowImplDelegateProtocol for window managment.
-/// 
-/// Key and mouse events are delegated to its view.
-/// Window events are managed by this class.
-///
-/// Used when SFML handle everything and when a NSWindow* is given
-/// as handle to WindowImpl.
-////////////////////////////////////////////////////////////
-
-#ifdef USE_OS_X_VERSION_10_4
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol> {
-#else /* USE_OS_X_VERSION_10_6 */
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate> {
-#endif
-	NSWindow*										myWindow;
-	SFOpenGLView*								myOGLView;
-	sf::priv::WindowImplCocoa*	myRequester;
-}
-
--(id)initWithWindow:(NSWindow*)window;
--(id)initWithMode:(sf::VideoMode const*)mode andStyle:(unsigned long)style;
--(void)dealloc;
-
--(float)titlebarHeight;
+/* 
+ These two methods must return YES to grab fullscreen events.
+ See http://stackoverflow.com/questions/999464/fullscreen-key-down-actions
+ for more informations
+ */
+-(BOOL)acceptsFirstResponder;
+-(BOOL)canBecomeKeyWindow;
 
 @end
