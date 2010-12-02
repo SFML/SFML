@@ -221,7 +221,7 @@ void SoundStream::Stream()
         }
 
         // Get the number of buffers that have been processed (ie. ready for reuse)
-        ALint nbProcessed;
+        ALint nbProcessed = 0;
         ALCheck(alGetSourcei(mySource, AL_BUFFERS_PROCESSED, &nbProcessed));
 
         while (nbProcessed--)
