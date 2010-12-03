@@ -31,23 +31,42 @@
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
 
-#warning RenderImageImplPBuffer not yet implemented
-
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-RenderImageImplPBuffer::RenderImageImplPBuffer()
+RenderImageImplPBuffer::RenderImageImplPBuffer() :
+	myPBuffer(NULL),
+	myContext(NULL),
+	myWidth  (0),
+	myHeight (0) 
 {
-	/* TODO */
+	/* Nothing else */
 }
 
 
 ////////////////////////////////////////////////////////////
 RenderImageImplPBuffer::~RenderImageImplPBuffer()
 {
-  /* TODO */
+	
+	if (myPBuffer && aglDestroyPBuffer(myPBuffer) == GL_FALSE) {
+		sf::Err() 
+		<< "An error occurs while destroying the PBuffer in "
+		<< __PRETTY_FUNCTION__
+		<< ". The error code is "
+		<< aglGetError()
+		<< std::endl;
+	}
+	
+	if (myContext && aglDestroyContext(myContext) == GL_FALSE) {
+		sf::Err() 
+		<< "An error occurs while destroying the context in "
+		<< __PRETTY_FUNCTION__
+		<< ". The error code is "
+		<< aglGetError()
+		<< std::endl;
+	}
 
 	// This is to make sure that another valid context is made
   // active after we destroy the P-Buffer's one
@@ -58,8 +77,10 @@ RenderImageImplPBuffer::~RenderImageImplPBuffer()
 ////////////////////////////////////////////////////////////
 bool RenderImageImplPBuffer::IsSupported()
 {
-	/* TODO */
-	return false;
+	const GLubyte* strExt = glGetString(GL_EXTENSIONS);
+	GLboolean isSupported = gluCheckExtension((const GLubyte*)"GL_APPLE_pixel_buffer", strExt);
+	
+	return isSupported;
 }
 
 
@@ -70,33 +91,95 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
 	myWidth  = width;
 	myHeight = height;
 
-	/* TODO */
-
-  return true;
+	// Create the pixel format.
+	GLint attribs[] = {
+		AGL_RGBA,
+		AGL_RED_SIZE,      8,
+		AGL_GREEN_SIZE,    8,
+		AGL_BLUE_SIZE,     8,
+		AGL_ALPHA_SIZE,    8,
+		AGL_DEPTH_SIZE,    (depthBuffer ? 24 : 0),
+		0
+	};
+	AGLPixelFormat pf = aglChoosePixelFormat(NULL, 0, attribs);
+	if (!pf) {
+		sf::Err()
+		<< "Couldn't create the pixel format for the PBuffer."
+		<< std::endl;
+		
+		return false;
+	}
+	
+	// Create the context.
+	myContext = aglCreateContext(pf, NULL);
+	if (!myContext) {
+		sf::Err()
+		<< "Couldn't create the context for the PBuffer. (Error : "
+		<< aglGetError()
+		<< ")"
+		<< std::endl;
+		
+		return false;
+	}
+	
+	// Create the PBuffer.
+	GLboolean status = aglCreatePBuffer(myWidth, myHeight, GL_TEXTURE_RECTANGLE_EXT, GL_RGBA, 0, &myPBuffer);
+	if (status == GL_FALSE) {
+		sf::Err()
+		<< "Couldn't create the PBuffer. (Error : "
+		<< aglGetError()
+		<< ")"
+		<< std::endl;
+		
+		return false;
+	}
+	
+	// Set up the PBuffer with the context.
+	GLint screen = aglGetVirtualScreen(myContext);
+	if (screen == -1) {
+		sf::Err()
+		<< "Couldn't get the virtual screen of the context used with the PBuffer. (Error : "
+		<< aglGetError()
+		<< ")"
+		<< std::endl;
+		
+		return false;
+	}
+	
+	status = aglSetPBuffer(myContext, myPBuffer, 0, 0, screen);
+	if (status == GL_FALSE) {
+		sf::Err()
+		<< "Couldn't set up the PBuffer with the context. (Error : "
+		<< aglGetError()
+		<< ")"
+		<< std::endl;
+		
+		return false;
+	}
+	
+	return true;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool RenderImageImplPBuffer::Activate(bool active)
 {
-    if (active)
-    {
-        if (false/*myPBuffer && myContext*/)
-        {
-            // try to activate
-        }
-        else
-        {
-            return false;
-        }
-    }
-    else
-    {
-        // To deactivate the P-Buffer's context, we actually activate
-        // another one so that we make sure that there is always an
-        // active context for subsequent graphics operations
-        return Context::SetReferenceActive();
-    }
+	if (active) {
+		if (!myContext || !myPBuffer) { // Not created yet.
+			return false;
+		}
+		
+		if (aglGetCurrentContext() == myContext) {
+			return true;
+		} else {
+			return aglSetCurrentContext(myContext);
+		}
+	} else {
+		// To deactivate the P-Buffer's context, we actually activate
+		// another one so that we make sure that there is always an
+		// active context for subsequent graphics operations
+		return Context::SetReferenceActive();
+	}
 }
 
 

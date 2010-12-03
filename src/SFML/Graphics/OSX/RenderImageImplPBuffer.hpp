@@ -30,14 +30,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderImageImpl.hpp>
-
+#include <GL/glew.h>
+#include <AGL/agl.h>
 
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Specialization of RenderImageImpl using ****** P-Buffers
+/// \brief Specialization of RenderImageImpl using AGL P-Buffers
 ///
 ////////////////////////////////////////////////////////////
 class RenderImageImplPBuffer : public RenderImageImpl
@@ -100,6 +101,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    AGLPbuffer	 myPBuffer; ///< P-Buffer
+    AGLContext   myContext; ///< Associated OpenGL context
     unsigned int myWidth;   ///< Width of the P-Buffer
     unsigned int myHeight;  ///< Height of the P-Buffer
 };
