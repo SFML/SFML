@@ -37,6 +37,7 @@ extern VALUE globalRectClass;
 extern VALUE globalDrawableModule;
 extern VALUE globalShaderClass;
 extern VALUE globalViewClass;
+extern VALUE globalNonCopyableModule;
 
 static VALUE View_Free( sf::View *anObject )
 {
@@ -323,7 +324,8 @@ void Init_RenderTarget( void )
  * classes that inherits from sf::RenderTarget(sf::RenderWindow, sf::RenderImage) and you will only use it as the
  * first argument in the SFML::Drawable#render method. 
  */
- 	globalRenderTargetModule	= rb_define_module_under( sfml, "RenderTarget" );
+ 	globalRenderTargetModule = rb_define_module_under( sfml, "RenderTarget" );
+	rb_include_module( globalRenderTargetModule, globalNonCopyableModule );
 	globalRenderTargetInstanceClass = rb_define_class_under( globalRenderTargetModule, "Instance", rb_cObject );
 	rb_include_module( globalRenderTargetInstanceClass, globalRenderTargetModule );
 		

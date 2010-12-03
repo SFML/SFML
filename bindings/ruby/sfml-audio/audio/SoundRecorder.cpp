@@ -26,6 +26,9 @@
 
 VALUE globalSoundRecorderClass;
 
+/* External classes */
+extern VALUE globalNonCopyableModule;
+
 class rbSoundRecorder : public sf::SoundRecorder
 {
 public:
@@ -244,6 +247,7 @@ void Init_SoundRecorder( void )
  *   end
  */
 	globalSoundRecorderClass = rb_define_class_under( sfml, "SoundRecorder", rb_cObject );
+	rb_include_module( globalSoundRecorderClass, globalNonCopyableModule );
 	
 	// Class methods
 	rb_define_singleton_method( globalSoundRecorderClass, "new", SoundRecorder_New, -1 );

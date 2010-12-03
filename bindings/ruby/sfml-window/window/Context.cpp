@@ -26,6 +26,9 @@
 
 VALUE globalContextClass;
 
+/* External classes */
+extern VALUE globalNonCopyableModule;
+
 /* Free a heap allocated object 
  * Not accessible trough ruby directly!
  */
@@ -109,6 +112,7 @@ void Init_Context( void )
  * the attached resources.
  */
 	globalContextClass = rb_define_class_under( sfml, "Context", rb_cObject );
+	rb_include_module( globalContextClass, globalNonCopyableModule );
 	
 	// Class methods
 	rb_define_singleton_method( globalContextClass, "new", Context_New, 0 );

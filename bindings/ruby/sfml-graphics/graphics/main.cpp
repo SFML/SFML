@@ -46,6 +46,7 @@ VALUE globalBlendNamespace;
 VALUE globalVector2Class;
 VALUE globalVector3Class;
 VALUE globalWindowClass;
+VALUE globalNonCopyableModule;
 
 static bool CheckDependencies( void )
 {
@@ -78,6 +79,7 @@ void Init_graphics( void )
 	globalVector2Class = RetrieveSFMLClass( "Vector2" );
 	globalVector3Class = RetrieveSFMLClass( "Vector3" );
 	globalWindowClass  = RetrieveSFMLClass( "Window" );
+	globalNonCopyableModule = RetrieveSFMLClass( "NonCopyable" );
 	rb_define_const(globalSFMLNamespace, "GraphicsLoaded", Qtrue);
 	
 	CreateBlendEnum();

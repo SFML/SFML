@@ -28,6 +28,7 @@ VALUE globalSoundStreamClass;
 
 /* External classes */
 extern VALUE globalSoundSourceClass;
+extern VALUE globalNonCopyableModule;
 
 class rbSoundStream : public sf::SoundStream
 {
@@ -357,6 +358,7 @@ void Init_SoundStream( void )
  * stream.play
  */
 	globalSoundStreamClass = rb_define_class_under( sfml, "SoundStream", globalSoundSourceClass );
+	rb_include_module( globalSoundStreamClass, globalNonCopyableModule );
 
 	// Class methods
 	rb_define_singleton_method( globalSoundStreamClass, "new", SoundStream_New, -1 );

@@ -26,6 +26,9 @@
 
 VALUE globalInputClass;
 
+/* External classes */
+extern VALUE globalNonCopyableModule;
+
 /* Free a heap allocated object 
  * Not accessible trough ruby directly!
  */
@@ -178,6 +181,7 @@ void Init_Input( void )
  *   entity.move( 0,  offset ) if input.keyDown?( SFML::Key::Down )
  */
 	globalInputClass = rb_define_class_under( sfml, "Input", rb_cObject );
+	rb_include_module( globalInputClass, globalNonCopyableModule );
 	
 	// Class methods
 	rb_define_singleton_method( globalInputClass, "new", Input_New, -1 );

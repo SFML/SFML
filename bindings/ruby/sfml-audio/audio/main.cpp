@@ -27,6 +27,7 @@ VALUE globalSFMLNamespace;
 /* External classes */
 VALUE globalVector2Class;
 VALUE globalVector3Class;
+VALUE globalNonCopyableModule;
 
 static bool CheckDependencies( void )
 {
@@ -48,5 +49,6 @@ void Init_audio( void )
 	}
 	globalVector2Class = RetrieveSFMLClass( "Vector2" );
 	globalVector3Class = RetrieveSFMLClass( "Vector3" );
+	globalNonCopyableModule = RetrieveSFMLClass( "NonCopyable" );
 	rb_define_const(globalSFMLNamespace, "AudioLoaded", Qtrue);
 }

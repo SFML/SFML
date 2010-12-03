@@ -32,6 +32,7 @@ VALUE globalRendererClass;
 extern VALUE globalColorClass;
 extern VALUE globalImageClass;
 extern VALUE globalShaderClass;
+extern VALUE globalNonCopyableModule;
 
 /* call-seq:
  *   renderer.saveGLStates()
@@ -336,6 +337,7 @@ void Init_Renderer( void )
  * SFML::Drawable class that uses raw geometry in its Render function. 
  */
 	globalRendererClass = rb_define_class_under( sfml, "Renderer", rb_cObject );
+	rb_include_module( globalRendererClass, globalNonCopyableModule );
 	DefinePrimitiveTypesEnum();
 	
 	// Instance methods

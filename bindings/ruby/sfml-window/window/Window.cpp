@@ -34,6 +34,7 @@ extern VALUE globalContextSettingsClass;
 extern VALUE globalEventClass;
 extern VALUE globalInputClass;
 extern VALUE globalVector2Class;
+extern VALUE globalNonCopyableModule;
 
 /* Free a heap allocated object 
  * Not accessible trough ruby directly!
@@ -676,6 +677,7 @@ void Init_Window( void )
  *   end
  */
 	globalWindowClass = rb_define_class_under( sfml, "Window", rb_cObject );
+	rb_include_module( globalWindowClass, globalNonCopyableModule );
 	
 	// Class methods
 	rb_define_singleton_method( globalWindowClass, "new", Window_New , -1 );

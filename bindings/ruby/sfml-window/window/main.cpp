@@ -41,6 +41,7 @@ VALUE globalStyleNamespace;
 
 /* External classes */
 VALUE globalVector2Class;
+VALUE globalNonCopyableModule;
 
 static const char * keyNamesMisc[] =
 {
@@ -162,6 +163,7 @@ void Init_window( void )
 	}
 	
 	globalVector2Class = RetrieveSFMLClass( "Vector2" );
+	globalNonCopyableModule = RetrieveSFMLClass( "NonCopyable" );
 	
 	rb_define_const( globalSFMLNamespace, "WindowLoaded", Qtrue );
 	
