@@ -193,6 +193,40 @@
 
 
 ////////////////////////////////////////////////////////
+-(void)scrollWheel:(NSEvent*)theEvent
+{
+	if (myRequester == 0) return;
+	
+	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	// Don't forget to change to SFML coord system.
+	float h = [[theEvent window] frame].size.height;
+	myRequester->MouseWheelScrolledAt([theEvent deltaY], loc.x, h - loc.y);
+}
+
+
+////////////////////////////////////////////////////////
+-(void)mouseEntered:(NSEvent*)theEvent
+{
+	myMouseIsIn = YES;
+	
+	if (myRequester == 0) return;
+	
+	myRequester->MouseMovedIn();
+}
+
+
+////////////////////////////////////////////////////////
+-(void)mouseExited:(NSEvent*)theEvent
+{
+	myMouseIsIn = NO;
+	
+	if (myRequester == 0) return;
+	
+	myRequester->MouseMovedOut();
+}
+
+
+////////////////////////////////////////////////////////
 -(void)rightMouseDown:(NSEvent*)theEvent
 {
 	if (myRequester == 0) return;
@@ -269,36 +303,47 @@
 
 
 ////////////////////////////////////////////////////////
--(void)scrollWheel:(NSEvent*)theEvent
+-(void)rightMouseDragged:(NSEvent*)theEvent
 {
 	if (myRequester == 0) return;
+	
+	// If the event is not useful.
+	if (!myMouseIsIn) return;
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
 	float h = [[theEvent window] frame].size.height;
-	myRequester->MouseWheelScrolledAt([theEvent deltaY], loc.x, h - loc.y);
+	myRequester->MouseMovedAt(loc.x, h - loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)mouseEntered:(NSEvent*)theEvent
+-(void)mouseDragged:(NSEvent*)theEvent
 {
-	myMouseIsIn = YES;
-	
 	if (myRequester == 0) return;
 	
-	myRequester->MouseMovedIn();
+	// If the event is not useful.
+	if (!myMouseIsIn) return;
+	
+	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	// Don't forget to change to SFML coord system.
+	float h = [[theEvent window] frame].size.height;
+	myRequester->MouseMovedAt(loc.x, h - loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)mouseExited:(NSEvent*)theEvent
+-(void)otherMouseDragged:(NSEvent*)theEvent
 {
-	myMouseIsIn = NO;
-	
 	if (myRequester == 0) return;
 	
-	myRequester->MouseMovedOut();
+	// If the event is not useful.
+	if (!myMouseIsIn) return;
+	
+	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	// Don't forget to change to SFML coord system.
+	float h = [[theEvent window] frame].size.height;
+	myRequester->MouseMovedAt(loc.x, h - loc.y);
 }
 
 
