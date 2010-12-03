@@ -193,6 +193,15 @@ static VALUE SoundBuffer_GetDuration( VALUE self )
 	return rb_float_new( object->GetDuration() );
 }
 
+static VALUE SoundBuffer_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::SoundBuffer *object = NULL;
+	Data_Get_Struct( self, sf::SoundBuffer, object );
+	sf::SoundBuffer *source = NULL;
+	Data_Get_Struct( aSource, sf::SoundBuffer, source );
+	*object = *source;
+}
+
 /* call-seq:
  *   SoundBuffer.new()	-> sound_buffer
  *
@@ -264,6 +273,7 @@ void Init_SoundBuffer( void )
 	rb_define_singleton_method( globalSoundBufferClass, "new", SoundBuffer_New, -1 );
 	
 	// Instance methods
+	rb_define_method( globalSoundBufferClass, "initialize_copy", SoundBuffer_InitializeCopy, 1 );
 	rb_define_method( globalSoundBufferClass, "loadFromFile", SoundBuffer_LoadFromFile, 1 );
 	rb_define_method( globalSoundBufferClass, "loadFromSamples", SoundBuffer_LoadFromSamples, 4 );
 	rb_define_method( globalSoundBufferClass, "saveToFile", SoundBuffer_SaveToFile, 1 );

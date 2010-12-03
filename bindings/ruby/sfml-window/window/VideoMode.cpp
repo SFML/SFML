@@ -152,6 +152,15 @@ static VALUE VideoMode_IsValid( VALUE self )
 	return ( object->IsValid() == true ? Qtrue : Qfalse );
 }
 
+static VALUE VideoMode_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::VideoMode *object = NULL;
+	Data_Get_Struct( self, sf::VideoMode, object );
+	sf::VideoMode *source = NULL;
+	Data_Get_Struct( aSource, sf::VideoMode, source );
+	*object = *source;
+}
+
 /* call-seq:
  *   VideoMode.getDesktopMode	-> desktop_mode
  *
@@ -260,6 +269,8 @@ void Init_VideoMode( void )
 	rb_define_singleton_method( globalVideoModeClass, "getFullscreenModes", VideoMode_GetFullscreenModes, 0 );
 	
 	// Instance methods
+	rb_define_method( globalVideoModeClass, "initialize_copy", VideoMode_InitializeCopy, 1 );
+	
 	rb_define_method( globalVideoModeClass, "width", VideoMode_GetWidth, 0 );
 	rb_define_method( globalVideoModeClass, "width=", VideoMode_SetWidth, 1 );
 	

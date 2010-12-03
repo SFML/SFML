@@ -76,6 +76,15 @@ static VALUE Text_Initialize( int argc, VALUE *args, VALUE self )
 	return self;
 }
 
+static VALUE Text_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Text *object = NULL;
+	Data_Get_Struct( self, sf::Text, object );
+	sf::Text *source = NULL;
+	Data_Get_Struct( aSource, sf::Text, source );
+	*object = *source;
+}
+
 /* call-seq:
  *   text.setString( string )
  *
@@ -288,6 +297,7 @@ void Init_Text( void )
 	
 	// Instance methods
 	rb_define_method( globalTextClass, "initialize", Text_Initialize, -1 );
+	rb_define_method( globalTextClass, "initialize_copy", Text_InitializeCopy, 1 );
 	rb_define_method( globalTextClass, "setString", Text_SetString, 1 );
 	rb_define_method( globalTextClass, "setFont", Text_SetFont, 1 );
 	rb_define_method( globalTextClass, "setCharacterSize", Text_SetCharacterSize, 1 );

@@ -517,16 +517,25 @@ static VALUE Image_GetTexCoords( VALUE self, VALUE aRectangle )
 					rb_float_new( result.Width ), rb_float_new( result.Height ) );
 }
 
+static VALUE Image_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Image *object = NULL;
+	Data_Get_Struct( self, sf::Image, object );
+	sf::Image *source = NULL;
+	Data_Get_Struct( aSource, sf::Image, source );
+	*object = *source;
+}
+
 /* call-seq:
  *   Image.new()	-> image
  *
  * Creates an image instance for us.
  */
-static VALUE Image_New( VALUE aKlass )
+static VALUE Image_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::Image *object = new sf::Image();
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Image_Free, object );
-	rb_obj_call_init( rbData, 0, 0 );
+	rb_obj_call_init( rbData, argc, args );
 	return rbData;
 }
 
@@ -592,10 +601,11 @@ void Init_Image( void )
 	globalImageClass = rb_define_class_under( sfml, "Image", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalImageClass, "new", Image_New, 0 );
+	rb_define_singleton_method( globalImageClass, "new", Image_New, -1 );
 	rb_define_singleton_method( globalImageClass, "getMaximumSize", Image_GetMaximumSize, 0 );
 	
 	// Instance methods
+	rb_define_method( globalImageClass, "initialize_copy", Image_InitializeCopy, 1 );
 	rb_define_method( globalImageClass, "loadFromFile", Image_LoadFromFile, 1 );
 	rb_define_method( globalImageClass, "loadFromPixels", Image_LoadFromPixels, 3 );
 	rb_define_method( globalImageClass, "saveToFile", Image_SaveToFile, 1 );

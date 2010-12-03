@@ -214,6 +214,16 @@ static VALUE Event_Initialize( VALUE self, VALUE aType )
 	}
 }
 
+static VALUE Event_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Event *object = NULL;
+	Data_Get_Struct( self, sf::Event, object );
+	sf::Event *source = NULL;
+	Data_Get_Struct( aSource, sf::Event, source );
+	*object = *source;
+	return Event_Initialize( VALUE self, INT2FIX( object->Type ) );
+}
+
 /* call-seq:
  *   Event.new(type)	-> event
  *
@@ -229,7 +239,6 @@ static VALUE Event_New( int argc, VALUE * args, VALUE aKlass )
 	rb_obj_call_init( rbData, argc, args );
 	return rbData;
 }
-
 
 void Init_Event( void )
 {
@@ -302,6 +311,8 @@ void Init_Event( void )
 	
 	// Instance methods
 	rb_define_method( globalEventClass, "initialize", Event_Initialize, 1 );
+	rb_define_method( globalEventClass, "initialize_copy", Event_InitializeCopy, 1 );
+	
 	rb_define_attr( globalEventClass, "type", 1, 0 );
 	rb_define_attr( globalEventClass, "joyButton", 1, 0 );
 	rb_define_attr( globalEventClass, "joyMove", 1, 0 );

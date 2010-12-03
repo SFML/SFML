@@ -86,6 +86,15 @@ static VALUE View_Initialize( int argc, VALUE *args, VALUE self )
 	return self;
 }
 
+static VALUE View_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::View *object = NULL;
+	Data_Get_Struct( self, sf::View, object );
+	sf::View *source = NULL;
+	Data_Get_Struct( aSource, sf::View, source );
+	*object = *source;
+}
+
 /* call-seq:
  *   view.getCenter()	-> vector2
  *
@@ -403,6 +412,7 @@ void Init_View( void )
 		
 	// Instance methods
 	rb_define_method( globalViewClass, "initialize", View_Initialize, -1 );
+	rb_define_method( globalViewClass, "initialize_copy", View_InitializeCopy, 1 );
 	rb_define_method( globalViewClass, "setCenter", View_SetCenter, -1 );
 	rb_define_method( globalViewClass, "setSize", View_SetSize, -1 );
 	rb_define_method( globalViewClass, "setRotation", View_SetRotation, 1 );

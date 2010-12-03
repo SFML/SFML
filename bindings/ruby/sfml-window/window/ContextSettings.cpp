@@ -156,6 +156,16 @@ static VALUE ContextSettings_SetMinorVersion( VALUE self, VALUE aValue )
 	return INT2FIX( object->MinorVersion = NUM2UINT( aValue ) );
 }
 
+static VALUE ContextSettings_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::ContextSettings *object = NULL;
+	Data_Get_Struct( self, sf::ContextSettings, object );
+	sf::ContextSettings *source = NULL;
+	Data_Get_Struct( aSource, sf::ContextSettings, source );
+	*object = *source;
+	return self;
+}
+
 /* call-seq:
  *   ContextSettings.new( depth = 24, stencil = 8, antialiasing = 0, major = 2, minor = 0)	-> settings
  *
@@ -212,7 +222,7 @@ static VALUE ContextSettings_New( VALUE aKlass, VALUE someArgs )
 	}
 	 
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, ContextSettings_Free, object );
-	rb_obj_call_init( rbData, 0, 0 );
+	rb_obj_call_init( rbData, argc, args );
 	return rbData;
 }
 
@@ -251,6 +261,8 @@ void Init_ContextSettings( void )
 	rb_define_singleton_method( globalContextSettingsClass, "new", ContextSettings_New, -2 );
 	
 	// Instance methods
+	rb_define_method( globalContextSettingsClass, "initialize_copy", ContextSettings_InitializeCopy, 1 );
+	
 	rb_define_method( globalContextSettingsClass, "depthBits", ContextSettings_GetDepth, 0 );
 	rb_define_method( globalContextSettingsClass, "depthBits=", ContextSettings_SetDepth, 1 );
 	

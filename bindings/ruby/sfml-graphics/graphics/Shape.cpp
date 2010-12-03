@@ -330,6 +330,15 @@ static VALUE Shape_GetOutlineWidth( VALUE self )
 	return rb_float_new( object->GetOutlineWidth() );
 }
 
+static VALUE Shape_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Shape *object = NULL;
+	Data_Get_Struct( self, sf::Shape, object );
+	sf::Shape *source = NULL;
+	Data_Get_Struct( aSource, sf::Shape, source );
+	*object = *source;
+}
+
 /* call-seq:
  *   Shape.new()	-> shape
  *
@@ -643,6 +652,7 @@ void Init_Shape( void )
 	rb_define_singleton_method( globalShapeClass, "circle", Shape_Circle, -1 );
 	
 	// Instance methods
+	rb_define_method( globalShapeClass, "initialize_copy", Shape_InitializeCopy, 1 );
 	rb_define_method( globalShapeClass, "addPoint", Shape_AddPoint, -1 );
 	rb_define_method( globalShapeClass, "getPointsCount", Shape_GetPointsCount, 0 );
 	rb_define_method( globalShapeClass, "enableFill", Shape_EnableFill, 1 );

@@ -60,16 +60,26 @@ static VALUE Clock_Reset( VALUE self )
 	return Qnil;
 }
 
+static VALUE Clock_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Clock *object = NULL;
+	Data_Get_Struct( self, sf::Clock, object );
+	sf::Clock *source = NULL;
+	Data_Get_Struct( aSource, sf::Clock, source );
+	*object = *source ;
+	return self;
+}
+
 /* call-seq:
  *   Clock.new()		-> clock
  *
  * The clock starts automatically after being constructed.
  */
-static VALUE Clock_New( VALUE aKlass )
+static VALUE Clock_New( int argc, VALUE *args VALUE aKlass )
 {
 	sf::Clock *object = new sf::Clock();
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Clock_Free, object );
-	rb_obj_call_init( rbData, 0, 0 );
+	rb_obj_call_init( rbData, argc, args );
 	return rbData;
 }
 
@@ -86,9 +96,10 @@ void Init_Clock( void )
 	globalClockClass = rb_define_class_under( sfml, "Clock", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalClockClass, "new", Clock_New, 0 );
+	rb_define_singleton_method( globalClockClass, "new", Clock_New, -1 );
 	
 	// Instance methods
+	rb_define_method( globalClockClass, "initialize_copy", Clock_InitializeCopy, 1 );
 	rb_define_method( globalClockClass, "getElapsedTime", Clock_GetElapsedTime, 0 );
 	rb_define_method( globalClockClass, "reset", Clock_Reset, 0 );
 	

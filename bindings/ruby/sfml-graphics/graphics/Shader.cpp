@@ -215,6 +215,15 @@ static VALUE Shader_Unbind( VALUE self )
 	return Qnil;
 }
 
+static VALUE Shader_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Shader *object = NULL;
+	Data_Get_Struct( self, sf::Shader, object );
+	sf::Shader *source = NULL;
+	Data_Get_Struct( aSource, sf::Shader, source );
+	*object = *source;
+}
+
 /* call-seq:
  *   Shader.new()
  *
@@ -316,6 +325,7 @@ void Init_Shader( void )
 	rb_define_const( globalShaderClass, "CurrentTexture", CreateCurrentTextureWrapper() );
 	
 	// Instance methods
+	rb_define_method( globalShaderClass, "initialize_copy", Shader_InitializeCopy, 1 );
 	rb_define_method( globalShaderClass, "loadFromFile", Shader_LoadFromFile, 1 );
 	rb_define_method( globalShaderClass, "loadFromMemory", Shader_LoadFromMemory, 1 );
 	rb_define_method( globalShaderClass, "setParameter", Shader_SetParameter, -1 );

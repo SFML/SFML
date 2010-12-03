@@ -88,6 +88,15 @@ static VALUE Sprite_Initialize( int argc, VALUE *args, VALUE self )
 	return self;
 }
 
+static VALUE Sprite_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Sprite *object = NULL;
+	Data_Get_Struct( self, sf::Sprite, object );
+	sf::Sprite *source = NULL;
+	Data_Get_Struct( aSource, sf::Sprite, source );
+	*object = *source;
+}
+
 /* call-seq:
  *   sprite.setImage( image, adjustToNewSize = false)
  *
@@ -355,6 +364,7 @@ void Init_Sprite( void )
 	
 	// Instance methods
 	rb_define_method( globalSpriteClass, "initialize", Sprite_Initialize, -1 );
+	rb_define_method( globalSpriteClass, "initialize_copy", Sprite_InitializeCopy, 1 );
 	rb_define_method( globalSpriteClass, "setImage", Sprite_SetImage, -1 );
 	rb_define_method( globalSpriteClass, "setSubRect", Sprite_SetSubRect, 1 );
 	rb_define_method( globalSpriteClass, "resize", Sprite_Resize, -1 );

@@ -130,6 +130,15 @@ static VALUE Font_GetImage( VALUE self, VALUE aCharacterSize )
 	return rbImage;
 }
 
+static VALUE Font_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Font *object = NULL;
+	Data_Get_Struct( self, sf::Font, object );
+	sf::Font *source = NULL;
+	Data_Get_Struct( aSource, sf::Font, source );
+	*object = *source;
+}
+
 /* call-seq:
  *   Font.new()	-> font
  *
@@ -219,6 +228,7 @@ void Init_Font( void )
 	rb_define_singleton_method( globalFontClass, "getDefaultFont", Font_GetDefaultFont, 0 );
 	
 	// Instance methods
+	rb_define_method( globalFontClass, "initialize_copy", Font_InitializeCopy, 1 );
 	rb_define_method( globalFontClass, "loadFromFile", Font_LoadFromFile, 1 );
 	rb_define_method( globalFontClass, "getGlyph", Font_GetGlyph, 3 );
 	rb_define_method( globalFontClass, "getKerning", Font_GetKerning, 3 );
