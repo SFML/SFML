@@ -20,32 +20,11 @@
  *    source distribution.
  */
  
-#include "main.hpp"
-#include "Clock.hpp"
-#include "Vector2.hpp"
-#include "Vector3.hpp"
-#include "NonCopyable.hpp"
+#ifndef SFML_RUBYEXT_NON_COPYABLE_HEADER_
+#define SFML_RUBYEXT_NON_COPYABLE_HEADER_
 
-VALUE globalSFMLNamespace;
+#include "ruby.h"
 
-VALUE RetrieveSFMLClass( const char * aName )
-{
-	ID name = rb_intern( aName );
-	if( rb_cvar_defined( globalSFMLNamespace, name ) == Qfalse )
-	{
-		rb_raise( rb_eRuntimeError, "This module depends on SFML::%s", aName );
-	}
-	
-	return rb_cvar_get( globalSFMLNamespace, name );
-}
+void Init_NonCopyable( void );
 
-void Init_system( void )
-{
-	/* SFML namespace which contains the classes of this module. */
-	globalSFMLNamespace = rb_define_module( "SFML" );
-	rb_define_const(globalSFMLNamespace, "SystemLoaded", Qtrue);
-	Init_Clock();
-	Init_Vector2();
-	Init_Vector3();
-	Init_NonCopyable();
-}
+#endif // SFML_RUBYEXT_NON_COPYABLE_HEADER_
