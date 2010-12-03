@@ -23,7 +23,6 @@
 #include "VideoMode.hpp"
 #include "main.hpp"
 #include <SFML/Window/VideoMode.hpp>
-#include <iostream>
 
 VALUE globalVideoModeClass;
 

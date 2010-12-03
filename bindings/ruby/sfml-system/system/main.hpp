@@ -25,6 +25,8 @@
 
 #include "ruby.h"
 
+#define SFML_STATIC
+
 VALUE RetrieveSFMLClass( const char * aName );
 
 // Ruby initiation function

@@ -21,6 +21,5 @@
 
 require 'mkmf'
 
-dir_config("system")
-have_library("sfml-system-s") 
-create_makefile("sfml/system", "system")
+dir_config("all")
+create_makefile("sfml/all", "all")

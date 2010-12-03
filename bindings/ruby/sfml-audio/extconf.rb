@@ -22,6 +22,6 @@
 require 'mkmf'
 
 dir_config("audio")
-have_library("sfml-audio")
+have_library("sfml-audio-s")
 find_header("main.hpp", "../sfml-system/system")
 create_makefile("sfml/audio", "audio")
