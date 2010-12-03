@@ -23,7 +23,7 @@
 #include "NonCopyable.hpp"
 #include "main.hpp"
 
-VALUE globalNonCopyableClass;
+VALUE globalNonCopyableModule;
 
 /* call-seq:
  *   non_copyable.clone( source ) 	-> copy
@@ -60,6 +60,6 @@ void Init_NonCopyable( void )
 	globalNonCopyableModule = rb_define_module_under( sfml, "NonCopyable" );
 	
 	// Instance methods
-	rb_define_method( globalNonCopyableModule, "initialize_copy", NonCopyable_Initialize, 1 );
+	rb_define_method( globalNonCopyableModule, "initialize_copy", NonCopyable_InitializeCopy, 1 );
 	
 }
