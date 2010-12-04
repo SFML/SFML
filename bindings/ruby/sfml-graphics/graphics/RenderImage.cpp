@@ -276,11 +276,20 @@ static VALUE RenderImage_GetWidth( VALUE self )
 	return INT2FIX( object->GetWidth() );
 }
 
-static VALUE RenderTarget_GetHeight( VALUE self )
+static VALUE RenderImage_GetHeight( VALUE self )
 {
 	sf::RenderImage *object = NULL;
 	Data_Get_Struct( self, sf::RenderImage, object );
 	return INT2FIX( object->GetHeight() );
+}
+
+static VALUE RenderImage_Initialize( int argc, VALUE *args, VALUE self )
+{
+	if( argc > 0 )
+	{
+		rb_funcall2( self, rb_intern( "create" ), argc, args );
+	}
+	return self;
 }
 
 /* call-seq:
@@ -383,6 +392,7 @@ void Init_RenderImage( void )
 	rb_define_singleton_method( globalRenderImageClass, "isAvailable", RenderImage_IsAvailable, 0 );
 	
 	// Instance methods
+	rb_define_method( globalRenderImageClass, "initialize", RenderImage_Initialize, -1 );
 	rb_define_method( globalRenderImageClass, "draw", RenderImage_Create, -1 );
 	rb_define_method( globalRenderImageClass, "create", RenderImage_Create, -1 );
 	rb_define_method( globalRenderImageClass, "display", RenderImage_Display, 0 );
