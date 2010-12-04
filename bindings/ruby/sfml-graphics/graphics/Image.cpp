@@ -517,6 +517,19 @@ static VALUE Image_GetTexCoords( VALUE self, VALUE aRectangle )
 					rb_float_new( result.Width ), rb_float_new( result.Height ) );
 }
 
+static VALUE Image_Initialize( int argc, VALUE *args, VALUE self )
+{
+	if( argc > 1 )
+	{
+		rb_funcall2( self, rb_intern( "loadFromPixels" ), argc, args );
+	}
+	else if( argc > 0 )
+	{
+		rb_funcall2( self, rb_intern( "loadFromFile" ), argc, args );
+	}
+	return self;
+}
+
 static VALUE Image_InitializeCopy( VALUE self, VALUE aSource )
 {
 	sf::Image *object = NULL;
@@ -605,6 +618,7 @@ void Init_Image( void )
 	rb_define_singleton_method( globalImageClass, "getMaximumSize", Image_GetMaximumSize, 0 );
 	
 	// Instance methods
+	rb_define_method( globalImageClass, "initialize", Image_Initialize, 1 );
 	rb_define_method( globalImageClass, "initialize_copy", Image_InitializeCopy, 1 );
 	rb_define_method( globalImageClass, "loadFromFile", Image_LoadFromFile, 1 );
 	rb_define_method( globalImageClass, "loadFromPixels", Image_LoadFromPixels, 3 );

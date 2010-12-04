@@ -35,16 +35,6 @@ static VALUE Music_Free( sf::Music *anObject )
 }
 
 /* call-seq:
- *   Music.new()	-> music
- *
- * Creates a new music instance.
- */
-static VALUE Music_Initialize( int argc, VALUE *args, VALUE self )
-{
-	return self;
-}
-
-/* call-seq:
  *   music.openFromFile()	-> true or false
  *
  * Open a music from an audio file.
@@ -65,6 +55,20 @@ static VALUE Music_OpenFromFile( VALUE self, VALUE aFilename )
 	{
 		return Qfalse;
 	}
+}
+
+/* call-seq:
+ *   Music.new()	-> music
+ *
+ * Creates a new music instance.
+ */
+static VALUE Music_Initialize( int argc, VALUE *args, VALUE self )
+{
+	if( argc > 0 )
+	{
+		rb_funcall2( self, rb_intern( "openFromFile" ), argc, args );
+	}
+	return self;
 }
 
 /* call-seq:
@@ -130,7 +134,7 @@ void Init_Music( void )
 	rb_define_singleton_method( globalMusicClass, "new", Music_New, -1 );
 	
 	// Instance methods
-	rb_define_method( globalMusicClass, "initialize", Music_Initialize, 0 );
+	rb_define_method( globalMusicClass, "initialize", Music_Initialize, -1 );
 	rb_define_method( globalMusicClass, "openFromFile", Music_OpenFromFile, 1 );
 	rb_define_method( globalMusicClass, "getDuration", Music_GetDuration, 0 );
 		

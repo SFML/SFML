@@ -130,6 +130,15 @@ static VALUE Font_GetImage( VALUE self, VALUE aCharacterSize )
 	return rbImage;
 }
 
+static VALUE Font_Initialize( int argc, VALUE *args, VALUE self )
+{
+	if( argc > 0 )
+	{
+		rb_funcall2( self, rb_intern( "loadFromFile" ), argc, args );
+	}
+	return self;
+}
+
 static VALUE Font_InitializeCopy( VALUE self, VALUE aSource )
 {
 	sf::Font *object = NULL;
@@ -228,6 +237,7 @@ void Init_Font( void )
 	rb_define_singleton_method( globalFontClass, "getDefaultFont", Font_GetDefaultFont, 0 );
 	
 	// Instance methods
+	rb_define_method( globalFontClass, "initialize", Font_Initialize, -1 );
 	rb_define_method( globalFontClass, "initialize_copy", Font_InitializeCopy, 1 );
 	rb_define_method( globalFontClass, "loadFromFile", Font_LoadFromFile, 1 );
 	rb_define_method( globalFontClass, "getGlyph", Font_GetGlyph, 3 );
