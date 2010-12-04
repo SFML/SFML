@@ -58,9 +58,12 @@ static VALUE Music_OpenFromFile( VALUE self, VALUE aFilename )
 }
 
 /* call-seq:
- *   Music.new()	-> music
+ *   Music.new()			-> music
+ *   Music.new( filename )	-> music
  *
- * Creates a new music instance.
+ * Will create a new music instance.
+ * 
+ * If a filename argument is specified then music#openFromFile will be called on the created instance.
  */
 static VALUE Music_Initialize( int argc, VALUE *args, VALUE self )
 {

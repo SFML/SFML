@@ -595,17 +595,8 @@ static VALUE Window_WaitEvent( VALUE self )
 	}	
 }
 
-static VALUE Window_Initialize( int argc, VALUE *args, VALUE self )
-{
-	if( argc > 0 )
-	{
-		rb_funcall2( self, rb_intern( "create" ), argc, args );
-	}
-	return self;
-}
-
 /* call-seq:
- *   Window.new()											-> window
+ *   Window.new()																					-> window
  *   Window.new( mode, title, style = SFML::Style::Default, settings = SFML::ContextSettings.new )	-> window
  *
  * Construct a new window.
@@ -620,6 +611,15 @@ static VALUE Window_Initialize( int argc, VALUE *args, VALUE self )
  * The fourth parameter is an optional structure specifying advanced OpenGL context settings such as antialiasing, 
  * depth-buffer bits, etc. You shouldn't care about these parameters for a regular usage of the graphics module.
  */
+static VALUE Window_Initialize( int argc, VALUE *args, VALUE self )
+{
+	if( argc > 0 )
+	{
+		rb_funcall2( self, rb_intern( "create" ), argc, args );
+	}
+	return self;
+}
+
 static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::Window *object = new sf::Window();

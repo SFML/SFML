@@ -130,6 +130,14 @@ static VALUE Font_GetImage( VALUE self, VALUE aCharacterSize )
 	return rbImage;
 }
 
+/* call-seq:
+ *   Font.new()				-> font
+ *   Font.new( filename )	-> font
+ *
+ * Will create a new font instance.
+ * 
+ * If a filename argument is specified then font#loadFromFile will be called on the created instance.
+ */
 static VALUE Font_Initialize( int argc, VALUE *args, VALUE self )
 {
 	if( argc > 0 )

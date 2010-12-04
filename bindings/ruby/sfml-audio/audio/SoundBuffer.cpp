@@ -193,6 +193,17 @@ static VALUE SoundBuffer_GetDuration( VALUE self )
 	return rb_float_new( object->GetDuration() );
 }
 
+/* call-seq:
+ *   SoundBuffer.new()														-> sound_buffer
+ *   SoundBuffer.new( filename )											-> sound_buffer
+ *   SoundBuffer.new( samples, samplesCount, channelsCount, sampleRate )	-> sound_buffer
+ *
+ * Will create a new sound buffer instance.
+ * 
+ * If a filename argument is specified then sound_buffer#loadFromFile will be called on the created instance. If 
+ * samples, samplesCount, channelsCount and sampleRate are specified then image#loadFromPixels will be called on the 
+ * created instance.
+ */
 static VALUE SoundBuffer_Initialize( int argc, VALUE *args, VALUE self )
 {
 	if( argc > 1 )

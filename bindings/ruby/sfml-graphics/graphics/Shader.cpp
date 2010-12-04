@@ -215,7 +215,14 @@ static VALUE Shader_Unbind( VALUE self )
 	return Qnil;
 }
 
-
+/* call-seq:
+ *   Shader.new()			-> shader
+ *   Shader.new( filename )	-> shader
+ *
+ * Will create a new shader instance.
+ * 
+ * If a filename argument is specified then shader#loadFromFile will be called on the created instance.
+ */
 static VALUE Shader_Initialize( int argc, VALUE *args, VALUE self )
 {
 	if( argc > 0 )

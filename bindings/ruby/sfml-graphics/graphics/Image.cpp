@@ -517,6 +517,16 @@ static VALUE Image_GetTexCoords( VALUE self, VALUE aRectangle )
 					rb_float_new( result.Width ), rb_float_new( result.Height ) );
 }
 
+/* call-seq:
+ *   Image.new()						-> image
+ *   Image.new( filename )				-> image
+ *   Image.new( width, height, pixels )	-> image
+ *
+ * Will create a new image instance.
+ * 
+ * If a filename argument is specified then image#loadFromFile will be called on the created instance. If width, height
+ * and pixels are specified then image#loadFromPixels will be called on the created instance.
+ */
 static VALUE Image_Initialize( int argc, VALUE *args, VALUE self )
 {
 	if( argc > 1 )

@@ -283,6 +283,14 @@ static VALUE RenderImage_GetHeight( VALUE self )
 	return INT2FIX( object->GetHeight() );
 }
 
+/* call-seq:
+ *   RenderImage.new()										-> render_image
+ *   RenderImage.new( width, height, depthBuffer = false )	-> render_image
+ *
+ * Will create a new render image instance.
+ * 
+ * If any arguments are specified then a call to the #create method will be made passing the arguments to it.
+ */
 static VALUE RenderImage_Initialize( int argc, VALUE *args, VALUE self )
 {
 	if( argc > 0 )
