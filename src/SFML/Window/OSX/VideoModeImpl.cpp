@@ -40,14 +40,7 @@ namespace priv
 /// \brief Get bpp for all OS X version
 /// 
 /// This function use only non-deprecated way to get the
-/// display bits per pixel information. It depends
-/// on these macros :
-///
-/// - USE_OS_X_VERSION_10_4
-/// - USE_OS_X_VERSION_10_6
-///
-#warning This may be improved by removing these dummy macros.
-/// Maybe MAC_OS_X_VERSION_MAX_ALLOWED ?
+/// display bits per pixel information.
 ////////////////////////////////////////////////////////////
 size_t DisplayBitsPerPixel(CGDirectDisplayID displayId)
 {
