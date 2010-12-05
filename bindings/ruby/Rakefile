@@ -22,7 +22,8 @@ spec = Gem::Specification.new do |s|
     s.platform = Gem::Platform::CURRENT
 		s.name     = "rbSFML"
 		s.version  = RUBYSFML_VERSION
-		s.author   = "Henrik Valter Vogelius Hansson"
+		s.authors = ["Henrik Valter Vogelius Hansson", 'Brandon Whitehead']
+
 		s.email    = "groogy@groogy.se"
 		s.summary  = "Ruby bindings for SFML 2.0"
 		s.has_rdoc = true
@@ -36,6 +37,17 @@ spec = Gem::Specification.new do |s|
 		  fl.include("sfml-all/all/*.cpp", "sfml-all/all/*.hpp")
 		end
   	s.extensions = ["Rakefile"]
+  	
+  	s.description = <<-EOF
+    	rbSFML are bindings for the SFML library version 2.0 for Ruby.
+    	SFML or Simple Fast Multimedia library is is a free multimedia C++ API 
+    	that provides you low and high level access to graphics, input, audio, etc.
+  	EOF
+  	
+  	s.homepage = 'http://sfml-dev.org'
+  	
+
+
 
   	s.extra_rdoc_files = FileList.new do |fl|
     	fl.include "doc/*.rdoc"
