@@ -20,7 +20,7 @@ SODIR = 'sfml'
 
 spec = Gem::Specification.new do |s|
     s.platform = Gem::Platform::CURRENT
-		s.name     = "rubysfml"
+		s.name     = "rbSFML"
 		s.version  = RUBYSFML_VERSION
 		s.author   = "Henrik Valter Vogelius Hansson"
 		s.email    = "groogy@groogy.se"
