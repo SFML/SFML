@@ -221,7 +221,7 @@ static VALUE Event_InitializeCopy( VALUE self, VALUE aSource )
 	sf::Event *source = NULL;
 	Data_Get_Struct( aSource, sf::Event, source );
 	*object = *source;
-	return Event_Initialize( VALUE self, INT2FIX( object->Type ) );
+	return Event_Initialize( self, INT2FIX( object->Type ) );
 }
 
 /* call-seq:

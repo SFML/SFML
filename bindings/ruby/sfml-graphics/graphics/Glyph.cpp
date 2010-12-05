@@ -23,6 +23,7 @@
 #include "Glyph.hpp"
 #include "Rect.hpp"
 #include "main.hpp"
+#include <SFML/Graphics/Glyph.hpp>
 
 VALUE globalGlyphClass;
 

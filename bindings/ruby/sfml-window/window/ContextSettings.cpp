@@ -171,53 +171,37 @@ static VALUE ContextSettings_InitializeCopy( VALUE self, VALUE aSource )
  *
  * The constructor creates the settings
  */
-static VALUE ContextSettings_New( VALUE aKlass, VALUE someArgs )
+static VALUE ContextSettings_New( int argc, VALUE *args, VALUE aKlass )
 {
-	long arrayLength = RARRAY_LEN( someArgs );	
 	sf::ContextSettings *object = NULL;
-	if( arrayLength == 0 )
+	if( argc == 0 )
 	{
 		object = new sf::ContextSettings();
 	}
-	else if( arrayLength == 1 )
+	else if( argc == 1 )
 	{
-		VALUE arg1 = rb_ary_entry( someArgs, 0 );
-		object = new sf::ContextSettings( NUM2UINT( arg1 ) );
+		object = new sf::ContextSettings( NUM2UINT( args[0] ) );
 	}
-	else if( arrayLength == 2 )
+	else if( argc == 2 )
 	{
-		VALUE arg1 = rb_ary_entry( someArgs, 0 );
-		VALUE arg2 = rb_ary_entry( someArgs, 1 );
-		object = new sf::ContextSettings( NUM2UINT( arg1 ), NUM2UINT( arg2 ) );
+		object = new sf::ContextSettings( NUM2UINT( args[0] ), NUM2UINT( args[1] ) );
 	}
 	
-	else if( arrayLength == 3 )
+	else if( argc == 3 )
 	{
-		VALUE arg1 = rb_ary_entry( someArgs, 0 );
-		VALUE arg2 = rb_ary_entry( someArgs, 1 );
-		VALUE arg3 = rb_ary_entry( someArgs, 2 );
-		object = new sf::ContextSettings( NUM2UINT( arg1 ), NUM2UINT( arg2 ), NUM2UINT( arg3 ) );
+		object = new sf::ContextSettings( NUM2UINT( args[0] ), NUM2UINT( args[1] ), NUM2UINT( args[2] ) );
 	}
-	else if( arrayLength == 4 )
+	else if( argc == 4 )
 	{
-		VALUE arg1 = rb_ary_entry( someArgs, 0 );
-		VALUE arg2 = rb_ary_entry( someArgs, 1 );
-		VALUE arg3 = rb_ary_entry( someArgs, 2 );
-		VALUE arg4 = rb_ary_entry( someArgs, 3 );
-		object = new sf::ContextSettings( NUM2UINT( arg1 ), NUM2UINT( arg2 ), NUM2UINT( arg3 ), NUM2UINT( arg4 ) );
+		object = new sf::ContextSettings( NUM2UINT( args[0] ), NUM2UINT( args[1] ), NUM2UINT( args[2] ), NUM2UINT( args[3] ) );
 	}
-	else if( arrayLength == 5 )
+	else if( argc == 5 )
 	{
-		VALUE arg1 = rb_ary_entry( someArgs, 0 );
-		VALUE arg2 = rb_ary_entry( someArgs, 1 );
-		VALUE arg3 = rb_ary_entry( someArgs, 2 );
-		VALUE arg4 = rb_ary_entry( someArgs, 3 );
-		VALUE arg5 = rb_ary_entry( someArgs, 4 );
-		object = new sf::ContextSettings( NUM2UINT( arg1 ), NUM2UINT( arg2 ), NUM2UINT( arg3 ), NUM2UINT( arg4 ), NUM2UINT( arg5 ) );
+		object = new sf::ContextSettings( NUM2UINT( args[0] ), NUM2UINT( args[1] ), NUM2UINT( args[2] ), NUM2UINT( args[3] ), NUM2UINT( args[4] ) );
 	}
 	else
 	{
-		rb_raise( rb_eArgError, "Expected 0..5 arguments but was given %ld", arrayLength );
+		rb_raise( rb_eArgError, "Expected 0..5 arguments but was given %d", argc );
 		return Qnil;
 	}
 	 
@@ -258,7 +242,7 @@ void Init_ContextSettings( void )
 	globalContextSettingsClass = rb_define_class_under( sfml, "ContextSettings", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalContextSettingsClass, "new", ContextSettings_New, -2 );
+	rb_define_singleton_method( globalContextSettingsClass, "new", ContextSettings_New, -1 );
 	
 	// Instance methods
 	rb_define_method( globalContextSettingsClass, "initialize_copy", ContextSettings_InitializeCopy, 1 );

@@ -75,7 +75,7 @@ static VALUE Clock_InitializeCopy( VALUE self, VALUE aSource )
  *
  * The clock starts automatically after being constructed.
  */
-static VALUE Clock_New( int argc, VALUE *args VALUE aKlass )
+static VALUE Clock_New( int argc, VALUE *args, VALUE aKlass )
 {
 	sf::Clock *object = new sf::Clock();
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Clock_Free, object );
