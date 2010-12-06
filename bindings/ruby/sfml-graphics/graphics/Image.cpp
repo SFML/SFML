@@ -628,7 +628,7 @@ void Init_Image( void )
 	rb_define_singleton_method( globalImageClass, "getMaximumSize", Image_GetMaximumSize, 0 );
 	
 	// Instance methods
-	rb_define_method( globalImageClass, "initialize", Image_Initialize, 1 );
+	rb_define_method( globalImageClass, "initialize", Image_Initialize, -1 );
 	rb_define_method( globalImageClass, "initialize_copy", Image_InitializeCopy, 1 );
 	rb_define_method( globalImageClass, "loadFromFile", Image_LoadFromFile, 1 );
 	rb_define_method( globalImageClass, "loadFromPixels", Image_LoadFromPixels, 3 );

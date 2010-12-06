@@ -83,7 +83,7 @@ void Init_graphics( void )
 	rb_define_const(globalSFMLNamespace, "GraphicsLoaded", Qtrue);
 	
 	CreateBlendEnum();
-	
+  
 	Init_Color();
 	Init_Rect();
 	Init_Drawable();
