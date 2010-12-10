@@ -51,9 +51,9 @@ namespace sf {
 /// as handle to WindowImpl.
 ////////////////////////////////////////////////////////////
 
-#ifdef USE_OS_X_VERSION_10_4
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060 // NSWindowDelegate is only define since 10.6
 @interface SFWindowController : NSResponder <WindowImplDelegateProtocol> {
-#else /* USE_OS_X_VERSION_10_6 */
+#else
 @interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate> {
 #endif
 	NSWindow*										myWindow;

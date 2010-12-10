@@ -109,7 +109,7 @@
 																						 backing:NSBackingStoreBuffered 
 																							 defer:NO];
 		/*
-		 "YES" make some "invalid drawable".
+		 "YES" produces some "invalid drawable".
 		 See http://www.cocoabuilder.com/archive/cocoa/152482-nsviews-and-nsopenglcontext-invalid-drawable-error.html
 		 
 		 [...]
@@ -226,6 +226,11 @@
 ////////////////////////////////////////////////////////
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
 {
+	// Create a SFML event.
+	if (myRequester == 0) return;
+	
+	myRequester->MouseMovedAt(x, y);
+	
 	// Flip for SFML window coordinate system
 	y = NSHeight([myWindow frame]) - y;
 	
@@ -243,6 +248,12 @@
 	
 	// Place the cursor.
 	CGDisplayMoveCursorToPoint(screenNumber, CGPointMake(screenCoord.x, screenCoord.y));
+	/*
+	 CGDisplayMoveCursorToPoint -- Discussion :
+	 
+	 No events are generated as a result of this move. 
+	 Points that lie outside the desktop are clipped to the desktop.
+	 */
 }
 
 
