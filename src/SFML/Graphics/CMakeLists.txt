@@ -72,27 +72,9 @@ elseif(MACOSX)
 endif()
 
 # let CMake know about our additional graphics libraries paths (on Windows and OSX)
-if (WINDOWS)
+if (WINDOWS OR MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/freetype")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/GL")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/jpeg")
-
-elseif (MACOSX)
-    
-    # Add freetype search path
-    #set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/include/")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/freetype")
-    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/lib/")
-
-    # Add GLEW search path
-    #set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/include/")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/")
-    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/lib/")
-
-    # Add jpeg search path
-    #set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/include/jpeg")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/jpeg")
-    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/lib/")
 endif()
 
 # find external libraries
@@ -102,6 +84,9 @@ find_package(GLEW REQUIRED)
 find_package(JPEG REQUIRED)
 if(LINUX)
     find_package(X11 REQUIRED)
+endif()
+if(MACOSX)
+    find_package(ZLIB REQUIRED)
 endif()
 
 # add include paths of external libraries
@@ -114,10 +99,9 @@ if(BUILD_SHARED_LIBS)
     set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${OPENGL_gl_LIBRARY})
     if(LINUX)
         set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
-    endif()
-    if(MACOSX)
+    elseif(MACOSX)
         # We use static version of freetype so we need to link against zlib.
-        set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} z "-framework AGL")
+        set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${ZLIB_LIBRARIES} "-framework AGL")
     endif()
 endif()
 

@@ -2,7 +2,7 @@
 # include the SFML specific macros
 include(${CMAKE_SOURCE_DIR}/cmake/Macros.cmake)
 
-# let CMake know about our additional libraries paths (on Windows)
+# let CMake know about our additional libraries paths (on Windows and OS X)
 if (WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers")
     if(COMPILER_GCC)
@@ -10,6 +10,8 @@ if (WINDOWS)
     elseif(COMPILER_MSVC)
         set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-msvc")
     endif()
+elseif(MACOSX)
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/lib/")
 endif()
 
 # add the SFML sources path
