@@ -246,7 +246,7 @@ void Renderer::SetTexture(const Image* texture)
         myTextureId = texture ? texture->myTexture : 0;
         myTextureIsValid = true;
     }
-    else if (texture)
+    else if (texture && myTextureIsValid)
     {
         // If the texture was already the current one, make sure that
         // it is synchronized (in case it was modified since last use)
@@ -273,7 +273,7 @@ void Renderer::SetShader(const Shader* shader)
             myShaderIsValid = true;
         }
     }
-    else if (shader)
+    else if (shader && myShaderIsValid)
     {
         // If the shader was already the current one, make sure that
         // it is synchronized (in case it was modified since last use)
