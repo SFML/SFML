@@ -178,6 +178,19 @@ Out Utf<8>::FromWide(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
+Out Utf<8>::FromLatin1(In begin, In end, Out output)
+{
+    // Latin-1 is directly compatible with Unicode encodings,
+    // and can thus be treated as (a sub-range of) UTF-32
+    while (begin < end)
+        output = Encode(*begin++, output);
+
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename In, typename Out>
 Out Utf<8>::ToAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
     while (begin < end)
@@ -200,6 +213,23 @@ Out Utf<8>::ToWide(In begin, In end, Out output, wchar_t replacement)
         Uint32 codepoint;
         begin = Decode(begin, end, codepoint);
         output = Utf<32>::EncodeWide(codepoint, output, replacement);
+    }
+
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename In, typename Out>
+Out Utf<8>::ToLatin1(In begin, In end, Out output, char replacement)
+{
+    // Latin-1 is directly compatible with Unicode encodings,
+    // and can thus be treated as (a sub-range of) UTF-32
+    while (begin < end)
+    {
+        Uint32 codepoint;
+        begin = Decode(begin, end, codepoint);
+        *output++ = codepoint < 256 ? static_cast<char>(codepoint) : replacement;
     }
 
     return output;
@@ -378,6 +408,19 @@ Out Utf<16>::FromWide(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
+Out Utf<16>::FromLatin1(In begin, In end, Out output)
+{
+    // Latin-1 is directly compatible with Unicode encodings,
+    // and can thus be treated as (a sub-range of) UTF-32
+    while (begin < end)
+        *output++ = *begin++;
+
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename In, typename Out>
 Out Utf<16>::ToAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
     while (begin < end)
@@ -400,6 +443,22 @@ Out Utf<16>::ToWide(In begin, In end, Out output, wchar_t replacement)
         Uint32 codepoint;
         begin = Decode(begin, end, codepoint);
         output = Utf<32>::EncodeWide(codepoint, output, replacement);
+    }
+
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename In, typename Out>
+Out Utf<16>::ToLatin1(In begin, In end, Out output, char replacement)
+{
+    // Latin-1 is directly compatible with Unicode encodings,
+    // and can thus be treated as (a sub-range of) UTF-32
+    while (begin < end)
+    {
+        *output++ = *begin < 256 ? static_cast<char>(*begin) : replacement;
+        begin++;
     }
 
     return output;
@@ -505,6 +564,19 @@ Out Utf<32>::FromWide(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
+Out Utf<32>::FromLatin1(In begin, In end, Out output)
+{
+    // Latin-1 is directly compatible with Unicode encodings,
+    // and can thus be treated as (a sub-range of) UTF-32
+    while (begin < end)
+        *output++ = *begin++;
+
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename In, typename Out>
 Out Utf<32>::ToAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
     while (begin < end)
@@ -520,6 +592,22 @@ Out Utf<32>::ToWide(In begin, In end, Out output, wchar_t replacement)
 {
     while (begin < end)
         output = EncodeWide(*begin++, output, replacement);
+
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename In, typename Out>
+Out Utf<32>::ToLatin1(In begin, In end, Out output, char replacement)
+{
+    // Latin-1 is directly compatible with Unicode encodings,
+    // and can thus be treated as (a sub-range of) UTF-32
+    while (begin < end)
+    {
+        *output++ = *begin < 256 ? static_cast<char>(*begin) : replacement;
+        begin++;
+    }
 
     return output;
 }

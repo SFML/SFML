@@ -153,6 +153,20 @@ public :
     static Out FromWide(In begin, In end, Out output);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert a latin-1 (ISO-5589-1) characters range to UTF-8
+    ///
+    /// \param begin  Iterator pointing to the beginning of the input sequence
+    /// \param end    Iterator pointing to the end of the input sequence
+    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param locale Locale to use for conversion
+    ///
+    /// \return Iterator to the end of the output sequence which has been written
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename In, typename Out>
+    static Out FromLatin1(In begin, In end, Out output);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Convert an UTF-8 characters range to ANSI characters
     ///
     /// The current global locale will be used by default, unless you
@@ -183,6 +197,20 @@ public :
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
     static Out ToWide(In begin, In end, Out output, wchar_t replacement = 0);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert an UTF-8 characters range to latin-1 (ISO-5589-1) characters
+    ///
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Replacement for characters not convertible to wide (use 0 to skip them)
+    ///
+    /// \return Iterator to the end of the output sequence which has been written
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename In, typename Out>
+    static Out ToLatin1(In begin, In end, Out output, char replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-8 characters range to UTF-8
@@ -333,6 +361,20 @@ public :
     static Out FromWide(In begin, In end, Out output);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert a latin-1 (ISO-5589-1) characters range to UTF-16
+    ///
+    /// \param begin  Iterator pointing to the beginning of the input sequence
+    /// \param end    Iterator pointing to the end of the input sequence
+    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param locale Locale to use for conversion
+    ///
+    /// \return Iterator to the end of the output sequence which has been written
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename In, typename Out>
+    static Out FromLatin1(In begin, In end, Out output);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Convert an UTF-16 characters range to ANSI characters
     ///
     /// The current global locale will be used by default, unless you
@@ -363,6 +405,20 @@ public :
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
     static Out ToWide(In begin, In end, Out output, wchar_t replacement = 0);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert an UTF-16 characters range to latin-1 (ISO-5589-1) characters
+    ///
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Replacement for characters not convertible to wide (use 0 to skip them)
+    ///
+    /// \return Iterator to the end of the output sequence which has been written
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename In, typename Out>
+    static Out ToLatin1(In begin, In end, Out output, char replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-16 characters range to UTF-8
@@ -514,6 +570,20 @@ public :
     static Out FromWide(In begin, In end, Out output);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert a latin-1 (ISO-5589-1) characters range to UTF-32
+    ///
+    /// \param begin  Iterator pointing to the beginning of the input sequence
+    /// \param end    Iterator pointing to the end of the input sequence
+    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param locale Locale to use for conversion
+    ///
+    /// \return Iterator to the end of the output sequence which has been written
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename In, typename Out>
+    static Out FromLatin1(In begin, In end, Out output);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Convert an UTF-32 characters range to ANSI characters
     ///
     /// The current global locale will be used by default, unless you
@@ -544,6 +614,20 @@ public :
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
     static Out ToWide(In begin, In end, Out output, wchar_t replacement = 0);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert an UTF-16 characters range to latin-1 (ISO-5589-1) characters
+    ///
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Replacement for characters not convertible to wide (use 0 to skip them)
+    ///
+    /// \return Iterator to the end of the output sequence which has been written
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename In, typename Out>
+    static Out ToLatin1(In begin, In end, Out output, char replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-32 characters range to UTF-8
