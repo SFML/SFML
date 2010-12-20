@@ -359,7 +359,7 @@
 	if (myUseKeyRepeat || ![theEvent isARepeat])
 		myRequester->KeyDown([theEvent keyCode], [theEvent modifierFlags]);
 	
-	if ([[theEvent characters] length] > 0)
+	if ((myUseKeyRepeat || ![theEvent isARepeat]) && [[theEvent characters] length] > 0)
 		myRequester->TextEntred([[theEvent characters] characterAtIndex:0]);
 }
 
