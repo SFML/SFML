@@ -115,8 +115,22 @@ bool WindowImpl::PopEvent(Event& event, bool block)
     // If the event queue is empty, let's first check if new events are available from the OS
     if (myEvents.empty())
     {
+        // Special handling of joystick events (we must use polling)
         ProcessJoystickEvents();
-        ProcessEvents(block);
+
+        if (block)
+        {
+            // If we are blocking, loop until we actually received a SFML event
+            // (there may be OS events that make ProcessEvents(true) return, but
+            // which don't translate to SFML events)
+            while (myEvents.empty())
+                ProcessEvents(true);
+        }
+        else
+        {
+            // If we are not blocking, just process the pending events
+            ProcessEvents(false);
+        }
     }
 
     // Pop the first event of the queue, if it is not empty
