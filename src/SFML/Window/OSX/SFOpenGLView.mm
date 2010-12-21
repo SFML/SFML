@@ -187,7 +187,7 @@
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseMovedAt(loc.x, h - loc.y);
 }
 
