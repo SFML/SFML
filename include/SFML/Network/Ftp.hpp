@@ -450,9 +450,6 @@ public :
     /// current working directory of the server, and the local
     /// destination path is relative to the current directory
     /// of your application.
-    /// If you want to watch the progress (to update a progress bar
-    /// for example) or have the ability to stop or pause the download,
-    /// you can use the fourth parameter to pass your progress handler.
     ///
     /// \param remoteFile Filename of the distant file to download
     /// \param localPath  Where to put to file on the local computer
@@ -472,9 +469,6 @@ public :
     /// working directory of your application, and the
     /// remote path is relative to the current directory of the
     /// FTP server.
-    /// If you want to watch the progress (to update a progress bar
-    /// for example) or have the ability to stop or pause the upload,
-    /// you can use the fourth parameter to pass your progress handler.
     ///
     /// \param localFile  Path of the local file to upload
     /// \param remotePath Where to put to file on the server
