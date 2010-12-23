@@ -20,8 +20,23 @@
 #    source distribution.
 
 require 'mkmf'
+require 'rbconfig'
+
+on_windows = Config::CONFIG['host_os'] =~ /mswin|mingw/
+
 
 dir_config("graphics")
-have_library("sfml-graphics-s")
+if (on_windows)
+	have_library("winmm")
+	have_library("jpeg")
+	have_library("gdi32")
+	have_library("opengl32")
+	have_library("glew")
+	have_library("sfml-system-s")
+	have_library("sfml-window-s")
+	have_library("sfml-graphics-s")
+else
+	have_library("sfml-graphics-s")	
+end
 find_header("main.hpp", "../sfml-system/system")
 create_makefile("sfml/graphics", "graphics")
