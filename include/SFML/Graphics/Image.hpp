@@ -79,6 +79,7 @@ public :
     /// like progressive jpeg.
     /// The maximum size for an image depends on the graphics
     /// driver and can be retrieve with the GetMaximumSize function.
+    /// If this function fails, the image is left unchanged.
     ///
     /// \param filename Path of the image file to load
     ///
@@ -97,6 +98,7 @@ public :
     /// like progressive jpeg.
     /// The maximum size for an image depends on the graphics
     /// driver and can be retrieve with the GetMaximumSize function.
+    /// If this function fails, the image is left unchanged.
     ///
     /// \param data Pointer to the file data in memory
     /// \param size Size of the data to load, in bytes
@@ -113,9 +115,8 @@ public :
     ///
     /// The \a pixels argument must point to an array of 32 bits
     /// RGBA pixels. In other words, the pixel array must have
-    /// this memory layout:
-    ///
-    /// [r0 g0 b0 a0 r1 g1 b1 a1 r2...]
+    /// this memory layout: [r0 g0 b0 a0 r1 g1 b1 a1 r2...]
+    /// If this function fails, the image is left unchanged.
     ///
     /// \param width  Width of the image
     /// \param height Height of the image
@@ -134,7 +135,7 @@ public :
     /// The format of the image is automatically deduced from
     /// the extension. The supported image formats are bmp, png,
     /// tga and jpg. The destination file is overwritten
-    /// if it already exists.
+    /// if it already exists. This function fails if the image is empty.
     ///
     /// \param filename Path of the file to save
     ///
@@ -147,6 +148,8 @@ public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the image and fill it with a unique color
+    ///
+    /// If this function fails, the image is left unchanged.
     ///
     /// \param width  Width of the image
     /// \param height Height of the image
@@ -198,6 +201,7 @@ public :
     /// If \a sourceRect is empty, the whole window is copied.
     /// Warning: this is a slow operation, if you need to draw
     /// dynamic contents to an image then use sf::RenderImage.
+    /// If this function fails, the image is left unchanged.
     ///
     /// \param window     Window to capture
     /// \param sourceRect Sub-rectangle of the screen to copy
@@ -243,9 +247,10 @@ public :
     ///
     /// The returned value points to an array of RGBA pixels made of
     /// 8 bits integers components. The size of the array is
-    /// width * height * 4.
+    /// GetWidth() * GetHeight() * 4.
     /// Warning: the returned pointer may become invalid if you
     /// modify the image, so you should never store it for too long.
+    /// If the image is empty, a null pointer is returned.
     ///
     /// \return Const pointer to the array of pixels
     ///
@@ -259,6 +264,7 @@ public :
     /// the image, and to store RGBA 32 bits pixels.
     /// See the other overload of this function to update only
     /// a sub-rectangle of the image.
+    /// This function does nothing if \a pixels is null.
     ///
     /// \param pixels Array of pixels to write to the image
     ///
@@ -273,6 +279,7 @@ public :
     /// perform any check; thus you're responsible of ensuring that
     /// \a rectangle does not exceed the image size, and that
     /// \a pixels contains enough elements.
+    /// This function does nothing if \a pixels is null.
     /// See the other overload of this function to update the
     /// whole image.
     ///
@@ -398,10 +405,15 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Create the OpenGL texture
     ///
-    /// \return True if texture has been successfully created
+    /// If this function fails, the image's members are left unchanged.
+    ///
+    /// \param width Texture width
+    /// \param height Texture height
+    ///
+    /// \return True if texture was successfully created, false if it failed
     ///
     ////////////////////////////////////////////////////////////
-    bool CreateTexture();
+    bool CreateTexture(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Make sure that the texture in video memory is
@@ -422,18 +434,6 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     void Use() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Reset the image attributes and leave a clean empty image
-    ///
-    ////////////////////////////////////////////////////////////
-    void Reset();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destroy the OpenGL texture
-    ///
-    ////////////////////////////////////////////////////////////
-    void DestroyTexture();
 
     ////////////////////////////////////////////////////////////
     // Types
