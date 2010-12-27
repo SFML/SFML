@@ -85,12 +85,9 @@ private :
         // Check if there is something into the write buffer
         if (pbase() != pptr())
         {
-            // Retrieve the contents of the write buffer
-            int size = static_cast<int>(pptr() - pbase());
-            std::string buffer(pbase(), size);
-
-            // Write it into the standard error output
-            fprintf(stderr, "%s", buffer.c_str());
+            // Print the contents of the write buffer into the standard error output
+            std::size_t size = static_cast<int>(pptr() - pbase());
+            fwrite(pbase(), 1, size, stderr);
 
             // Reset the pointer position to the beginning of the write buffer
             setp(pbase(), epptr());
