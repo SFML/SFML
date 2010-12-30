@@ -182,8 +182,8 @@ bool Image::Create(unsigned int width, unsigned int height, const Color& color)
         myPixels.resize(width * height * 4);
 
         // Fill it with the specified color
-        Uint8* ptr = &*myPixels.begin();
-        Uint8* end = &*myPixels.end();
+        Uint8* ptr = &myPixels[0];
+        Uint8* end = ptr + myPixels.size();
         while (ptr < end)
         {
             *ptr++ = color.r;
@@ -211,8 +211,8 @@ void Image::CreateMaskFromColor(const Color& color, Uint8 alpha)
     if (!myPixels.empty())
     {
         // Replace the alpha of the pixels that match the transparent color
-        Uint8* ptr = &*myPixels.begin();
-        Uint8* end = &*myPixels.end();
+        Uint8* ptr = &myPixels[0];
+        Uint8* end = ptr + myPixels.size();
         while (ptr < end)
         {
             if ((ptr[0] == color.r) && (ptr[1] == color.g) && (ptr[2] == color.b) && (ptr[3] == color.a))
