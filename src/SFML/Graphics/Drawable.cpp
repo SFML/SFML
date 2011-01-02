@@ -99,10 +99,10 @@ void Drawable::SetScale(float factorX, float factorY)
 
 
 ////////////////////////////////////////////////////////////
-void Drawable::SetScale(const Vector2f& scale)
+void Drawable::SetScale(const Vector2f& factors)
 {
-    SetScaleX(scale.x);
-    SetScaleY(scale.y);
+    SetScaleX(factors.x);
+    SetScaleY(factors.y);
 }
 
 

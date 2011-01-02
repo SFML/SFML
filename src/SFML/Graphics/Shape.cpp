@@ -112,9 +112,9 @@ void Shape::SetPointOutlineColor(unsigned int index, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-void Shape::SetOutlineWidth(float width)
+void Shape::SetOutlineThickness(float thickness)
 {
-    myOutline = width;
+    myOutline = thickness;
 }
 
 
@@ -140,7 +140,7 @@ const Color& Shape::GetPointOutlineColor(unsigned int index) const
 
 
 ////////////////////////////////////////////////////////////
-float Shape::GetOutlineWidth() const
+float Shape::GetOutlineThickness() const
 {
     return myOutline;
 }
@@ -170,7 +170,7 @@ Shape Shape::Line(const Vector2f& p1, const Vector2f& p2, float thickness, const
     shape.AddPoint(p2 - normal, color, outlineColor);
     shape.AddPoint(p2 + normal, color, outlineColor);
     shape.AddPoint(p1 + normal, color, outlineColor);
-    shape.SetOutlineWidth(outline);
+    shape.SetOutlineThickness(outline);
 
     // Compile it
     shape.Compile();
@@ -188,7 +188,7 @@ Shape Shape::Rectangle(float left, float top, float width, float height, const C
     shape.AddPoint(Vector2f(left + width, top),          color, outlineColor);
     shape.AddPoint(Vector2f(left + width, top + height), color, outlineColor);
     shape.AddPoint(Vector2f(left,         top + height), color, outlineColor);
-    shape.SetOutlineWidth(outline);
+    shape.SetOutlineThickness(outline);
 
     // Compile it
     shape.Compile();
@@ -227,7 +227,7 @@ Shape Shape::Circle(const Vector2f& center, float radius, const Color& color, fl
     }
 
     // Compile it
-    shape.SetOutlineWidth(outline);
+    shape.SetOutlineThickness(outline);
     shape.Compile();
 
     return shape;

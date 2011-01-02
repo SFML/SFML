@@ -196,9 +196,9 @@ sfBool sfWindow_WaitEvent(sfWindow* window, sfEvent* event)
 ////////////////////////////////////////////////////////////
 /// Enable / disable vertical synchronization on a window
 ////////////////////////////////////////////////////////////
-void sfWindow_UseVerticalSync(sfWindow* window, sfBool enabled)
+void sfWindow_EnableVerticalSync(sfWindow* window, sfBool enabled)
 {
-    CSFML_CALL(window, UseVerticalSync(enabled == sfTrue))
+    CSFML_CALL(window, EnableVerticalSync(enabled == sfTrue))
 }
 
 

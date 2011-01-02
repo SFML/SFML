@@ -99,7 +99,7 @@ void SFContext::Display()
 
 	
 ////////////////////////////////////////////////////////////
-void SFContext::UseVerticalSync(bool enabled)
+void SFContext::EnableVerticalSync(bool enabled)
 {
 	// Make compiler happy
 #ifdef USE_OS_X_VERSION_10_4

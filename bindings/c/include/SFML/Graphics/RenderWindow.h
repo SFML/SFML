@@ -141,7 +141,7 @@ CSFML_API sfBool sfRenderWindow_WaitEvent(sfRenderWindow* renderWindow, sfEvent*
 /// \param enabled :      sfTrue to enable v-sync, sfFalse to deactivate
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfRenderWindow_UseVerticalSync(sfRenderWindow* renderWindow, sfBool enabled);
+CSFML_API void sfRenderWindow_EnableVerticalSync(sfRenderWindow* renderWindow, sfBool enabled);
 
 ////////////////////////////////////////////////////////////
 /// Show or hide the mouse cursor on a window

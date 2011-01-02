@@ -155,12 +155,12 @@ public :
     /// See Scale to add a factor based on the previous scale instead.
     /// The default scale of a drawable object is (1, 1).
     ///
-    /// \param scale New scale factors
+    /// \param factors New scale factors
     ///
     /// \see Scale, SetScaleX, SetScaleY, GetScale
     ///
     ////////////////////////////////////////////////////////////
-    void SetScale(const Vector2f& scale);
+    void SetScale(const Vector2f& factors);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the X scale factor of the object

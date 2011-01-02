@@ -265,7 +265,7 @@ public :
     /// \param enabled True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    void UseVerticalSync(bool enabled);
+    void EnableVerticalSync(bool enabled);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor

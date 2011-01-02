@@ -139,7 +139,7 @@ void GlxContext::Display()
 
 
 ////////////////////////////////////////////////////////////
-void GlxContext::UseVerticalSync(bool enabled)
+void GlxContext::EnableVerticalSync(bool enabled)
 {
     const GLubyte* name = reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI");
     PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress(name));

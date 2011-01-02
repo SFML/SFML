@@ -186,13 +186,13 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Width of the shape outline
+            /// Thickness of the shape outline
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public float OutlineWidth
+            public float OutlineThickness
             {
-                get {return sfShape_GetOutlineWidth(This);}
-                set {sfShape_SetOutlineWidth(This, value);}
+                get {return sfShape_GetOutlineThickness(This);}
+                set {sfShape_SetOutlineThickness(This, value);}
             }
 
             ////////////////////////////////////////////////////////////
@@ -385,7 +385,7 @@ namespace SFML
                        " Origin(" + Origin + ")" +
                        " Color(" + Color + ")" +
                        " BlendMode(" + BlendMode + ")" +
-                       " OutlineWidth(" + OutlineWidth + ")" +
+                       " OutlineThickness(" + OutlineThickness + ")" +
                        " PointsCount(" + PointsCount + ")";
             }
 
@@ -533,10 +533,10 @@ namespace SFML
             static extern void sfShape_EnableOutline(IntPtr This, bool Enable);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfShape_SetOutlineWidth(IntPtr This, float Width);
+            static extern void sfShape_SetOutlineThickness(IntPtr This, float Thickness);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfShape_GetOutlineWidth(IntPtr This);
+            static extern float sfShape_GetOutlineThickness(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfShape_GetPointsCount(IntPtr This);

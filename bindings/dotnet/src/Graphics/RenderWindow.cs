@@ -152,9 +152,9 @@ namespace SFML
             /// </summary>
             /// <param name="enable">True to enable v-sync, false to deactivate</param>
             ////////////////////////////////////////////////////////////
-            public override void UseVerticalSync(bool enable)
+            public override void EnableVerticalSync(bool enable)
             {
-                sfRenderWindow_UseVerticalSync(This, enable);
+                sfRenderWindow_EnableVerticalSync(This, enable);
             }
 
             ////////////////////////////////////////////////////////////
@@ -555,7 +555,7 @@ namespace SFML
             static extern ContextSettings sfRenderWindow_GetSettings(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderWindow_UseVerticalSync(IntPtr This, bool Enable);
+            static extern void sfRenderWindow_EnableVerticalSync(IntPtr This, bool Enable);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_ShowMouseCursor(IntPtr This, bool Show);

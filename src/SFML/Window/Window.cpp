@@ -232,10 +232,10 @@ bool Window::WaitEvent(Event& event)
 
 
 ////////////////////////////////////////////////////////////
-void Window::UseVerticalSync(bool enabled)
+void Window::EnableVerticalSync(bool enabled)
 {
     if (SetActive())
-        myContext->UseVerticalSync(enabled);
+        myContext->EnableVerticalSync(enabled);
 }
 
 
@@ -431,8 +431,8 @@ void Window::Initialize()
 {
     // Setup default behaviours (to get a consistent behaviour across different implementations)
     Show(true);
-    UseVerticalSync(false);
     ShowMouseCursor(true);
+    EnableVerticalSync(false);
     EnableKeyRepeat(true);
 
     // Reset frame time

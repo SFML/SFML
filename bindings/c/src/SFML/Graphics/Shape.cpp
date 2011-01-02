@@ -368,20 +368,20 @@ void sfShape_EnableOutline(sfShape* shape, sfBool enable)
 
 
 ////////////////////////////////////////////////////////////
-/// Change the width of a shape outline
+/// Change the thickness of a shape outline
 ////////////////////////////////////////////////////////////
-void sfShape_SetOutlineWidth(sfShape* shape, float width)
+void sfShape_SetOutlineThickness(sfShape* shape, float thickness)
 {
-    CSFML_CALL(shape, SetOutlineWidth(width))
+    CSFML_CALL(shape, SetOutlineThickness(thickness))
 }
 
 
 ////////////////////////////////////////////////////////////
-/// Get the width of a shape outline
+/// Get the thickness of a shape outline
 ////////////////////////////////////////////////////////////
-float sfShape_GetOutlineWidth(const sfShape* shape)
+float sfShape_GetOutlineThickness(const sfShape* shape)
 {
-    CSFML_CALL_RETURN(shape, GetOutlineWidth(), 0.f)
+    CSFML_CALL_RETURN(shape, GetOutlineThickness(), 0.f)
 }
 
 

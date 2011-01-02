@@ -172,12 +172,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Change the thickness of the shape outline
     ///
-    /// \param width New width of the outline
+    /// \param thickness New thickness of the outline
     ///
-    /// \see GetOutlineWidth, EnableOutline
+    /// \see GetOutlineThickness, EnableOutline
     ///
     ////////////////////////////////////////////////////////////
-    void SetOutlineWidth(float width);
+    void SetOutlineThickness(float thickness);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of a point
@@ -230,12 +230,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the thickness of the shape outline
     ///
-    /// \return Current outline width
+    /// \return Current outline thickness
     ///
-    /// \see SetOutlineWidth
+    /// \see SetOutlineThickness
     ///
     ////////////////////////////////////////////////////////////
-    float GetOutlineWidth() const;
+    float GetOutlineThickness() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new line
@@ -257,7 +257,7 @@ public :
     /// \param p2y          Y coordinate of the end point
     /// \param thickness    Thickness of the line
     /// \param color        Color of the shape's points
-    /// \param outline      Outline width
+    /// \param outline      Outline thickness
     /// \param outlineColor Outline color of the shape's points
     ///
     /// \see Rectangle, Circle
@@ -285,7 +285,7 @@ public :
     /// \param end          End point
     /// \param thickness    Thickness of the line
     /// \param color        Color of the shape's points
-    /// \param outline      Outline width
+    /// \param outline      Outline thickness
     /// \param outlineColor Outline color of the shape's points
     ///
     /// \see Rectangle, Circle
@@ -312,7 +312,7 @@ public :
     /// \param width        Width of the rectangle
     /// \param height       Height of the rectangle
     /// \param color        Color of the shape's points
-    /// \param outline      Outline width
+    /// \param outline      Outline thickness
     /// \param outlineColor Outline color of the shape's points
     ///
     /// \see Line, Circle
@@ -337,7 +337,7 @@ public :
     ///
     /// \param rectangle    Rectangle defining the shape
     /// \param color        Color of the shape's points
-    /// \param outline      Outline width
+    /// \param outline      Outline thickness
     /// \param outlineColor Outline color of the shape's points
     ///
     /// \see Line, Circle
@@ -363,7 +363,7 @@ public :
     /// \param y            Y coordinate of the center
     /// \param radius       Radius of the circle
     /// \param color        Color of the shape's points
-    /// \param outline      Outline width
+    /// \param outline      Outline thickness
     /// \param outlineColor Outline color of the shape's points
     ///
     /// \see Line, Rectangle
@@ -389,7 +389,7 @@ public :
     /// \param center       Center of the circle
     /// \param radius       Radius of the circle
     /// \param color        Color of the shape's points
-    /// \param outline      Outline width
+    /// \param outline      Outline thickness
     /// \param outlineColor Outline color of the shape's points
     ///
     /// \see Line, Rectangle
@@ -449,7 +449,7 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     std::vector<Point> myPoints;           ///< Points composing the shape
-    float              myOutline;          ///< Outline width
+    float              myOutline;          ///< Outline thickness
     bool               myIsFillEnabled;    ///< Should we draw the inside if the shape ?
     bool               myIsOutlineEnabled; ///< Should we draw the outline if the shape ?
     bool               myIsCompiled;       ///< Compiled state of the shape
@@ -480,7 +480,7 @@ private :
 /// \li outline color
 ///
 /// Shapes have an outline that can be enabled or not. You can
-/// control the thickness of the outline with the SetOutlineWidth
+/// control the thickness of the outline with the SetOutlineThickness
 /// function.
 ///
 /// They also inherits all the functions from sf::Drawable:
@@ -523,7 +523,7 @@ private :
 /// // Enable outline only
 /// shape.EnableFill(false);
 /// shape.EnableOutline(true);
-/// shape.SetOutlineWidth(10);
+/// shape.SetOutlineThickness(10);
 ///
 /// // Display it
 /// window.Draw(shape); // window is a sf::RenderWindow

@@ -127,7 +127,7 @@ public :
     /// \param enabled True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void UseVerticalSync(bool enabled) = 0;
+    virtual void EnableVerticalSync(bool enabled) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Make the current thread's reference context active

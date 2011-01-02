@@ -104,7 +104,7 @@ public:
 	/// \param enabled : True to enable v-sync, false to deactivate
 	///
 	////////////////////////////////////////////////////////////
-	virtual void UseVerticalSync(bool enabled);
+	virtual void EnableVerticalSync(bool enabled);
 	
 protected:
 	////////////////////////////////////////////////////////////
@@ -141,4 +141,4 @@ private:
 	
 } // namespace sf
 
-#endif // SFML_AGLCONTEXT_HPP
+#endif // SFML_SFCONTEXT_HPP

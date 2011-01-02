@@ -49,7 +49,7 @@ CSFML_API sfShape* sfShape_Create(void);
 /// \param p2x, p2y :     Position second point
 /// \param thickness :    Line thickness
 /// \param color :        Color used to draw the line
-/// \param outline :      Outline width
+/// \param outline :      Outline thickness
 /// \param outlineColor : Color used to draw the outline
 ///
 ////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ CSFML_API sfShape* sfShape_CreateLine(float p1x, float p1y, float p2x, float p2y
 /// \param left, top :     Top-left corner of the rectangle
 /// \param width, height : Size of the rectangle
 /// \param color :         Color used to fill the rectangle
-/// \param outline :       Outline width
+/// \param outline :       Outline thickness
 /// \param outlineColor :  Color used to draw the outline
 ///
 ////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ CSFML_API sfShape* sfShape_CreateRectangle(float left, float top, float width, f
 /// \param x, y :         Position of the center
 /// \param radius :       Radius
 /// \param color :        Color used to fill the circle
-/// \param outline :      Outline width
+/// \param outline :      Outline thickness
 /// \param outlineColor : Color used to draw the outline
 ///
 ////////////////////////////////////////////////////////////
@@ -368,23 +368,23 @@ CSFML_API void sfShape_EnableFill(sfShape* shape, sfBool enable);
 CSFML_API void sfShape_EnableOutline(sfShape* shape, sfBool enable);
 
 ////////////////////////////////////////////////////////////
-/// Change the width of a shape outline
+/// Change the thickness of a shape outline
 ///
 /// \param shape : Shape to modify
-/// \param width : New width
+/// \param thickness : New thickness
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfShape_SetOutlineWidth(sfShape* shape, float width);
+CSFML_API void sfShape_SetOutlineThickness(sfShape* shape, float thickness);
 
 ////////////////////////////////////////////////////////////
-/// Get the width of a shape outline
+/// Get the thickness of a shape outline
 ///
 /// \param shape : Shape to read
 ///
-/// \param return Current outline width
+/// \param return Current outline thickness
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfShape_GetOutlineWidth(const sfShape* shape);
+CSFML_API float sfShape_GetOutlineThickness(const sfShape* shape);
 
 ////////////////////////////////////////////////////////////
 /// Get the number of points composing a shape
