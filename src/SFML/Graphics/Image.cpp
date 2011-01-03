@@ -71,7 +71,7 @@ Resource<Image>()
     myPixels         = copy.myPixels;
     myTextureUpdated = true;
     myArrayUpdated   = true;
-    myPixelsFlipped  = copy.myPixelsFlipped;
+    myPixelsFlipped  = false; // pixels can't be flipped, this is handled in copy.EnsureArrayUpdate()
 
     // Create the texture
     CreateTexture(myWidth, myHeight);
