@@ -254,15 +254,15 @@ static VALUE Shape_SetPointOutlineColor( VALUE self, VALUE anIndex, VALUE aColor
 }
 
 /* call-seq:
- *   shape.setOutlineWidth( width )
+ *   shape.setOutlineThickness( width )
  *
  * Change the thickness of the shape outline. 
  */
-static VALUE Shape_SetOutlineWidth( VALUE self, VALUE aWidth )
+static VALUE Shape_SetOutlineThickness( VALUE self, VALUE aWidth )
 {
 	sf::Shape *object = NULL;
 	Data_Get_Struct( self, sf::Shape, object );
-	object->SetOutlineWidth( NUM2DBL( aWidth ) );
+	object->SetOutlineThickness( NUM2DBL( aWidth ) );
 	return Qnil;
 }
 
@@ -319,15 +319,15 @@ static VALUE Shape_GetPointOutlineColor( VALUE self, VALUE anIndex )
 }
 
 /* call-seq:
- *   shape.getOutlineWidth()	-> float
+ *   shape.getOutlineThickness()	-> float
  *
  * Get the thickness of the shape outline. 
  */
-static VALUE Shape_GetOutlineWidth( VALUE self )
+static VALUE Shape_GetOutlineThickness( VALUE self )
 {
 	sf::Shape *object = NULL;
 	Data_Get_Struct( self, sf::Shape, object );
-	return rb_float_new( object->GetOutlineWidth() );
+	return rb_float_new( object->GetOutlineThickness() );
 }
 
 static VALUE Shape_InitializeCopy( VALUE self, VALUE aSource )
@@ -660,11 +660,11 @@ void Init_Shape( void )
 	rb_define_method( globalShapeClass, "setPointPosition", Shape_SetPointPosition, -1 );
 	rb_define_method( globalShapeClass, "setPointColor", Shape_SetPointColor, 2 );
 	rb_define_method( globalShapeClass, "setPointOutlineColor", Shape_SetPointOutlineColor, 2 );
-	rb_define_method( globalShapeClass, "setOutlineWidth", Shape_SetOutlineWidth, 1 );
+	rb_define_method( globalShapeClass, "setOutlineThickness", Shape_SetOutlineThickness, 1 );
 	rb_define_method( globalShapeClass, "getPointPosition", Shape_GetPointPosition, 1 );
 	rb_define_method( globalShapeClass, "getPointColor", Shape_GetPointColor, 1 );
 	rb_define_method( globalShapeClass, "getPointOutlineColor", Shape_GetPointOutlineColor, 1 );
-	rb_define_method( globalShapeClass, "getOutlineWidth", Shape_GetOutlineWidth, 0 );
+	rb_define_method( globalShapeClass, "getOutlineThickness", Shape_GetOutlineThickness, 0 );
 	
 	// Instance Aliases
 	rb_define_alias( globalShapeClass, "add_point", "addPoint" );
@@ -677,10 +677,10 @@ void Init_Shape( void )
 	rb_define_alias( globalShapeClass, "set_point_position", "setPointPosition" );
 	rb_define_alias( globalShapeClass, "set_point_color", "setPointColor" );
 	rb_define_alias( globalShapeClass, "set_point_outline_color", "setPointOutlineColor" );
-	rb_define_alias( globalShapeClass, "outlineWidth=", "setOutlineWidth" );
-	rb_define_alias( globalShapeClass, "outline_width=", "setOutlineWidth" );
-	rb_define_alias( globalShapeClass, "outlineWidth", "getOutlineWidth" );
-	rb_define_alias( globalShapeClass, "outline_width", "getOutlineWidth" );
+	rb_define_alias( globalShapeClass, "outlineThickness=", "setOutlineThickness" );
+	rb_define_alias( globalShapeClass, "outline_thickness=", "setOutlineThickness" );
+	rb_define_alias( globalShapeClass, "outlineThickness", "getOutlineThickness" );
+	rb_define_alias( globalShapeClass, "outline_thickness", "getOutlineThickness" );
 	rb_define_alias( globalShapeClass, "get_point_position", "getPointPosition" );
 	rb_define_alias( globalShapeClass, "get_point_color", "getPointColor" );
 	rb_define_alias( globalShapeClass, "get_point_outline_color", "getPointOutlineColor" );

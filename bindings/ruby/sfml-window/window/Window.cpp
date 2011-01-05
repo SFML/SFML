@@ -537,7 +537,7 @@ static VALUE Window_ShowMouseCursor( VALUE self, VALUE aShowFlag )
 }
 
 /* call-seq:
- *   window.useVerticalSync( enabled )
+ *   window.enableVerticalSync( enabled )
  *
  * Enable or disable vertical synchronization.
  *
@@ -547,17 +547,17 @@ static VALUE Window_ShowMouseCursor( VALUE self, VALUE aShowFlag )
  *
  * Vertical synchronization is disabled by default.
  */
-static VALUE Window_UseVerticalSync( VALUE self, VALUE aEnableFlag )
+static VALUE Window_EnableVerticalSync( VALUE self, VALUE aEnableFlag )
 {
 	sf::Window *object = NULL;
 	Data_Get_Struct( self, sf::Window, object );
 	if( aEnableFlag == Qfalse )
 	{
-		object->UseVerticalSync( false );
+		object->EnableVerticalSync( false );
 	}
 	else if( aEnableFlag == Qtrue )
 	{
-		object->UseVerticalSync( true );
+		object->EnableVerticalSync( true );
 	}
 	else
 	{
@@ -708,7 +708,7 @@ void Init_Window( void )
 	rb_define_method( globalWindowClass, "setTitle", Window_SetTitle, 1 );
 	rb_define_method( globalWindowClass, "show", Window_Show, 1 );
 	rb_define_method( globalWindowClass, "showMouseCursor", Window_ShowMouseCursor, 1 );
-	rb_define_method( globalWindowClass, "useVerticalSync", Window_UseVerticalSync, 1 );
+	rb_define_method( globalWindowClass, "enableVerticalSync", Window_EnableVerticalSync, 1 );
 	rb_define_method( globalWindowClass, "waitEvent", Window_WaitEvent, 0 );
 	
 	// Aliases
@@ -750,9 +750,10 @@ void Init_Window( void )
 	rb_define_alias( globalWindowClass, "show_mouse_cursor", "showMouseCursor" );
 	rb_define_alias( globalWindowClass, "show_mouse_cursor=", "showMouseCursor" );
 	
-	rb_define_alias( globalWindowClass, "useVerticalSync=", "useVerticalSync" );
-	rb_define_alias( globalWindowClass, "use_vertical_sync", "useVerticalSync" );
-	rb_define_alias( globalWindowClass, "use_vertical_sync=", "useVerticalSync" );
+	rb_define_alias( globalWindowClass, "enableVerticalSync=", "enableVerticalSync" );
+	rb_define_alias( globalWindowClass, "enable_vertical_sync", "enableVerticalSync" );
+	rb_define_alias( globalWindowClass, "enable_vertical_sync=", "enableVerticalSync" );
+	rb_define_alias( globalWindowClass, "vertical_sync=", "enableVerticalSync" );
 	
 	rb_define_alias( globalWindowClass, "wait_event", "waitEvent" );
 }
