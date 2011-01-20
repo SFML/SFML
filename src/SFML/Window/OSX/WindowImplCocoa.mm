@@ -104,7 +104,7 @@ WindowImplCocoa::~WindowImplCocoa()
 	[myDelegate closeWindow];
 	
 	[myDelegate release];
-	[myPool release];
+	[myPool drain];
 }
 	
 	

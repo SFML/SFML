@@ -62,7 +62,7 @@ SFContext::SFContext(SFContext* shared)
 	
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const WindowImpl* owner, 
-										 unsigned int bitsPerPixel, const ContextSettings& settings)
+                     unsigned int bitsPerPixel, const ContextSettings& settings)
 {
 	myPool = [[NSAutoreleasePool alloc] init];
 	
@@ -79,7 +79,11 @@ SFContext::SFContext(SFContext* shared, const WindowImpl* owner,
 SFContext::~SFContext()
 {
 	[myContext release];
-	[myPool release];
+	[myPool drain]; // [1]
+    
+    /*
+     [1] : Produce sometimes "*** attempt to pop an unknown autorelease pool"
+     */
 }
 
 	
@@ -114,8 +118,8 @@ void SFContext::EnableVerticalSync(bool enabled)
 	
 ////////////////////////////////////////////////////////////	
 void SFContext::CreateContext(SFContext* shared, 
-															const ContextSettings& settings,
-															unsigned int bitsPerPixel)
+                              const ContextSettings& settings,
+                              unsigned int bitsPerPixel)
 {
 	// Choose the attributs of OGL context.
 	std::vector<NSOpenGLPixelFormatAttribute> attrs;
@@ -163,7 +167,7 @@ void SFContext::CreateContext(SFContext* shared,
 	
 	// Create the context.
 	myContext = [[NSOpenGLContext alloc] initWithFormat:pixFmt
-																				 shareContext:sharedContext];
+                                           shareContext:sharedContext];
 	
 	// Free up.
 	[pixFmt release];

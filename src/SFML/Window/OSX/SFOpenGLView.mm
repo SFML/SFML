@@ -160,7 +160,7 @@
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseDownAt(sf::Mouse::Left, loc.x, h - loc.y);
 }
 
@@ -172,7 +172,7 @@
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseUpAt(sf::Mouse::Left, loc.x, h - loc.y);
 }
 
@@ -199,7 +199,7 @@
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseWheelScrolledAt([theEvent deltaY], loc.x, h - loc.y);
 }
 
@@ -233,7 +233,7 @@
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseDownAt(sf::Mouse::Right, loc.x, h - loc.y);
 }
 
@@ -245,7 +245,7 @@
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseUpAt(sf::Mouse::Right, loc.x, h - loc.y);
 }
 
@@ -271,7 +271,7 @@
 			break;
 	}
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseDownAt(button, loc.x, h - loc.y);
 }
 
@@ -297,7 +297,7 @@
 			break;
 	}
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseUpAt(button, loc.x, h - loc.y);
 }
 
@@ -312,7 +312,7 @@
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseMovedAt(loc.x, h - loc.y);
 }
 
@@ -327,7 +327,7 @@
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseMovedAt(loc.x, h - loc.y);
 }
 
@@ -342,7 +342,7 @@
 	
 	NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	// Don't forget to change to SFML coord system.
-	float h = [[theEvent window] frame].size.height;
+	float h = [self frame].size.height;
 	myRequester->MouseMovedAt(loc.x, h - loc.y);
 }
 

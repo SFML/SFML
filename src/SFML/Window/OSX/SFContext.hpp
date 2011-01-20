@@ -79,7 +79,7 @@ public:
 	///
 	////////////////////////////////////////////////////////////
 	SFContext(SFContext* shared, const WindowImpl* owner,
-						unsigned int bitsPerPixel, const ContextSettings& settings);
+              unsigned int bitsPerPixel, const ContextSettings& settings);
 	
 	////////////////////////////////////////////////////////////
 	/// \brief Destructor
@@ -127,13 +127,13 @@ private:
 	///
 	////////////////////////////////////////////////////////////
 	void CreateContext(SFContext* shared, 
-										 const ContextSettings& settings,
-										 unsigned int bitsPerPixel);
+                       const ContextSettings& settings,
+                       unsigned int bitsPerPixel);
 	
 	////////////////////////////////////////////////////////////
 	// Member data
 	////////////////////////////////////////////////////////////
-	NSOpenGLContextRef		myContext;	///< OpenGL context
+	NSOpenGLContextRef	  myContext;        ///< OpenGL context
 	NSAutoreleasePoolRef  myPool;			///< Memory manager for this class.
 };
 	
