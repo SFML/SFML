@@ -33,10 +33,10 @@
 /// Predefine some classes
 ////////////////////////////////////////////////////////////
 namespace sf {
-	namespace priv {
-		class WindowImplCocoa;
-	}
-	class VideoMode;
+    namespace priv {
+        class WindowImplCocoa;
+    }
+    class VideoMode;
 }
 
 @class SFOpenGLView;
@@ -56,9 +56,9 @@ namespace sf {
 #else
 @interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate> {
 #endif
-	NSWindow*										myWindow;
-	SFOpenGLView*								myOGLView;
-	sf::priv::WindowImplCocoa*	myRequester;
+    NSWindow*                   myWindow;
+    SFOpenGLView*               myOGLView;
+    sf::priv::WindowImplCocoa*  myRequester;
 }
 
 -(id)initWithWindow:(NSWindow*)window;

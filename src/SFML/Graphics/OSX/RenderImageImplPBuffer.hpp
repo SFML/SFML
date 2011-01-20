@@ -101,7 +101,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    AGLPbuffer	 myPBuffer; ///< P-Buffer
+    AGLPbuffer   myPBuffer; ///< P-Buffer
     AGLContext   myContext; ///< Associated OpenGL context
     unsigned int myWidth;   ///< Width of the P-Buffer
     unsigned int myHeight;  ///< Height of the P-Buffer

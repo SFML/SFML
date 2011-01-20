@@ -61,84 +61,84 @@ namespace priv
 class SFContext : public GlContext
 {
 public:
-	////////////////////////////////////////////////////////////
-	/// \brief Create a new context, not associated to a window
-	///
-	/// \param shared Context to share the new one with (can be NULL)
-	///
-	////////////////////////////////////////////////////////////
-	SFContext(SFContext* shared);
-	
-	////////////////////////////////////////////////////////////
-	/// \brief Create a new context attached to a window
-	///
-	/// \param shared       Context to share the new one with (can be NULL)
-	/// \param owner        Pointer to the owner window
-	/// \param bitsPerPixel Pixel depth (in bits per pixel)
-	/// \param settings     Creation parameters
-	///
-	////////////////////////////////////////////////////////////
-	SFContext(SFContext* shared, const WindowImpl* owner,
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new context, not associated to a window
+    ///
+    /// \param shared Context to share the new one with (can be NULL)
+    ///
+    ////////////////////////////////////////////////////////////
+    SFContext(SFContext* shared);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new context attached to a window
+    ///
+    /// \param shared       Context to share the new one with (can be NULL)
+    /// \param owner        Pointer to the owner window
+    /// \param bitsPerPixel Pixel depth (in bits per pixel)
+    /// \param settings     Creation parameters
+    ///
+    ////////////////////////////////////////////////////////////
+    SFContext(SFContext* shared, const WindowImpl* owner,
               unsigned int bitsPerPixel, const ContextSettings& settings);
-	
-	////////////////////////////////////////////////////////////
-	/// \brief Destructor
-	///
-	////////////////////////////////////////////////////////////
-	~SFContext();
-	
-	////////////////////////////////////////////////////////////
-	/// \brief Display what has been rendered to the context so far
-	///
-	////////////////////////////////////////////////////////////
-	virtual void Display();
-	
-	////////////////////////////////////////////////////////////
-	/// \brief Enable or disable vertical synchronization
-	///
-	/// Activating vertical synchronization will limit the number
-	/// of frames displayed to the refresh rate of the monitor.
-	/// This can avoid some visual artifacts, and limit the framerate
-	/// to a good value (but not constant across different computers).
-	///
-	/// \param enabled : True to enable v-sync, false to deactivate
-	///
-	////////////////////////////////////////////////////////////
-	virtual void EnableVerticalSync(bool enabled);
-	
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Destructor
+    ///
+    ////////////////////////////////////////////////////////////
+    ~SFContext();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Display what has been rendered to the context so far
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void Display();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable vertical synchronization
+    ///
+    /// Activating vertical synchronization will limit the number
+    /// of frames displayed to the refresh rate of the monitor.
+    /// This can avoid some visual artifacts, and limit the framerate
+    /// to a good value (but not constant across different computers).
+    ///
+    /// \param enabled : True to enable v-sync, false to deactivate
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void EnableVerticalSync(bool enabled);
+    
 protected:
-	////////////////////////////////////////////////////////////
-	/// \brief Activate the context as the current target
-	///        for rendering
-	///
-	/// \return True on success, false if any error happened
-	///
-	////////////////////////////////////////////////////////////
-	virtual bool MakeCurrent();
-	
+    ////////////////////////////////////////////////////////////
+    /// \brief Activate the context as the current target
+    ///        for rendering
+    ///
+    /// \return True on success, false if any error happened
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool MakeCurrent();
+    
 private:
-	////////////////////////////////////////////////////////////
-	/// \brief Create the context
-	/// \note Must only be called from Ctor.
-	///
-	/// \param shared       Context to share the new one with (can be NULL)
-	/// \param settings     Creation parameters
-	/// \param bitsPerPixel bpp
-	///
-	////////////////////////////////////////////////////////////
-	void CreateContext(SFContext* shared, 
+    ////////////////////////////////////////////////////////////
+    /// \brief Create the context
+    /// \note Must only be called from Ctor.
+    ///
+    /// \param shared       Context to share the new one with (can be NULL)
+    /// \param settings     Creation parameters
+    /// \param bitsPerPixel bpp
+    ///
+    ////////////////////////////////////////////////////////////
+    void CreateContext(SFContext* shared, 
                        const ContextSettings& settings,
                        unsigned int bitsPerPixel);
-	
-	////////////////////////////////////////////////////////////
-	// Member data
-	////////////////////////////////////////////////////////////
-	NSOpenGLContextRef	  myContext;        ///< OpenGL context
-	NSAutoreleasePoolRef  myPool;			///< Memory manager for this class.
+    
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    NSOpenGLContextRef    myContext;    ///< OpenGL context
+    NSAutoreleasePoolRef  myPool;       ///< Memory manager for this class.
 };
-	
+    
 } // namespace priv
-	
+    
 } // namespace sf
 
 #endif // SFML_SFCONTEXT_HPP

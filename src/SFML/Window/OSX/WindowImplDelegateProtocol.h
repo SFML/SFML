@@ -32,9 +32,9 @@
 #import <AppKit/AppKit.h>
 
 namespace sf {
-	namespace priv {
-		class WindowImplCocoa;
-	}
+    namespace priv {
+        class WindowImplCocoa;
+    }
 }
 
 ////////////////////////////////////////////////////////////

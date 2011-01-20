@@ -129,7 +129,6 @@ bool RenderImageImplFBO::Activate(bool active)
 ////////////////////////////////////////////////////////////
 void RenderImageImplFBO::UpdateTexture(unsigned int)
 {
-    // Nothing to do: the FBO draws directly to the target image
     glFlush();
 }
 

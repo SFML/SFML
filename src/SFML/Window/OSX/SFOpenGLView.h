@@ -29,9 +29,9 @@
 #import <AppKit/AppKit.h>
 
 namespace sf {
-	namespace priv {
-		class WindowImplCocoa;
-	}
+    namespace priv {
+        class WindowImplCocoa;
+    }
 }
 
 ////////////////////////////////////////////////////////////
@@ -40,10 +40,10 @@ namespace sf {
 /// Handle event and send them back to the requester.
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView : NSOpenGLView {
-	sf::priv::WindowImplCocoa*	myRequester;
-	BOOL												myUseKeyRepeat;
-	NSTrackingRectTag						myTrackingTag;
-	BOOL												myMouseIsIn;
+    sf::priv::WindowImplCocoa*    myRequester;
+    BOOL                          myUseKeyRepeat;
+    NSTrackingRectTag             myTrackingTag;
+    BOOL                          myMouseIsIn;
 }
 
 

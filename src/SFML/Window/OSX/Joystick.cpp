@@ -37,35 +37,35 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void Joystick::Initialize(unsigned int Index)
 {
-	// Reset the joystick state
-	
-	// Initialize the Index-th available joystick
+    // Reset the joystick state
+    
+    // Initialize the Index-th available joystick
 }
 
 
 ////////////////////////////////////////////////////////////
 JoystickState Joystick::UpdateState()
 {
-	// Fill a JoystickState instance with the current joystick state
-	JoystickState s;
-	return s;
+    // Fill a JoystickState instance with the current joystick state
+    JoystickState s;
+    return s;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Joystick::HasAxis(Joy::Axis Axis) const
 {
-	return false;
+    return false;
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int Joystick::GetButtonsCount() const
 {
-	// Return number of supported buttons
-	return 0;
+    // Return number of supported buttons
+    return 0;
 }
-	
+    
 } // namespace priv
-	
+    
 } // namespace sf
