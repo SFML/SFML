@@ -263,7 +263,7 @@
     NSPoint point = NSMakePoint(x, y);
     
     // Flip for SFML window coordinate system.
-    point.y = NSHeight([[myWindow screen] visibleFrame]) - point.y;
+    point.y = [self screenHeight] - point.y;
     
     // Place the window.
     [myWindow setFrameTopLeftPoint:point];
@@ -420,6 +420,33 @@
 
 #pragma mark
 #pragma mark Other methods
+
+////////////////////////////////////////////////////////
+-(float)screenHeight {
+    // We want to recompute it because the user may have moved the window to another screen
+    // since last time.
+    static float height = 0.f;
+    static NSDate* lastTime = [NSDate date];
+    if (height > 1.f && // height was set at least once.
+        [lastTime timeIntervalSinceNow] > -1.f) { // last time was less than one secode ago.
+        return height; // We don't want to compute it too often because the dock blink.
+    }
+    
+    // Save current settings.
+    NSApplicationPresentationOptions currentOptions = [NSApp currentSystemPresentationOptions];
+    
+    // Hide dock.
+    [NSApp setPresentationOptions:currentOptions | NSApplicationPresentationHideDock];
+    
+    // Get the screen height (without apple menu bar if there is one).
+    height = NSHeight([[myWindow screen] visibleFrame]);
+    lastTime = [NSDate date];
+    
+    // Set back user's settings.
+    [NSApp setPresentationOptions:currentOptions];
+    
+    return height;
+}
 
 ////////////////////////////////////////////////////////
 -(float)titlebarHeight {

@@ -65,6 +65,7 @@ namespace sf {
 -(id)initWithMode:(sf::VideoMode const*)mode andStyle:(unsigned long)style;
 -(void)dealloc;
 
+-(float)screenHeight;
 -(float)titlebarHeight;
 
 @end
