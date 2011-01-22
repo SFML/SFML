@@ -423,8 +423,21 @@
 
 ////////////////////////////////////////////////////////
 -(float)screenHeight {
+    NSLog(@"hihi");
+    // With Mac OS X 10.4 and 10.5, there is a shift upwards
+    // (about 22px – that is the apple menu bar height). With 10.6 and later
+    // we have a workaround : we hide the dock and get the visibleFrame of the
+    // screen (see NSApplicationPresentationOptions and NSScreen for more info).
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
+    NSLog(@"<1060");
+    return NSHeight([[myWindow screen] frame]);
+    
+#else // (NSApplicationPresentationOptions Availability: Mac OS X 10.6 and later)
     // We want to recompute it because the user may have moved the window to another screen
     // since last time.
+    
+    NSLog(@">=1060");
+    
     static float height = 0.f;
     static NSDate* lastTime = [NSDate date];
     if (height > 1.f && // height was set at least once.
@@ -446,6 +459,7 @@
     [NSApp setPresentationOptions:currentOptions];
     
     return height;
+#endif
 }
 
 ////////////////////////////////////////////////////////
