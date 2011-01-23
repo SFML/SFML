@@ -308,6 +308,8 @@
 -(void)closeWindow
 {
     [myWindow close];
+    [myWindow setDelegate:nil];
+    [self setRequesterTo:0];
 }
 
 
