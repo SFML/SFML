@@ -19,38 +19,31 @@ OBJDIR = 'obj'
 SODIR = 'sfml'
 
 spec = Gem::Specification.new do |s|
-    s.platform = Gem::Platform::CURRENT
-		s.name     = "rbSFML"
-		s.version  = RUBYSFML_VERSION
-		s.authors = ["Henrik Valter Vogelius Hansson", 'Brandon Whitehead']
-
-		s.email    = "groogy@groogy.se"
-		s.summary  = "Ruby bindings for SFML 2.0"
-		s.has_rdoc = true
-    s.requirements << 'none'
-    s.require_path = ''
-		s.files = FileList.new do |fl|
-		  fl.include("sfml-audio/audio/*.cpp", "sfml-audio/audio/*.hpp")
-		  fl.include("sfml-graphics/graphics/*.cpp", "sfml-graphics/graphics/*.hpp")
-		  fl.include("sfml-window/window/*.cpp", "sfml-window/window/*.hpp")
-		  fl.include("sfml-system/system/*.cpp", "sfml-system/system/*.hpp")
-		  fl.include("sfml-all/all/*.cpp", "sfml-all/all/*.hpp")
-		end
+	s.platform = Gem::Platform::CURRENT
+	s.name     = "rbSFML"
+	s.version  = RUBYSFML_VERSION
+	s.authors = ["Henrik Valter Vogelius Hansson", 'Brandon Whitehead']
+	s.email    = "groogy@groogy.se"
+	s.homepage = 'http://sfml-dev.org'
+	s.summary  = "Ruby bindings for SFML 2.0"
+	s.has_rdoc = true
+	s.requirements << 'none'
+	s.require_path = ''
+	s.files = FileList.new do |fl|
+		fl.include("sfml-audio/audio/*.cpp", "sfml-audio/audio/*.hpp")
+		fl.include("sfml-graphics/graphics/*.cpp", "sfml-graphics/graphics/*.hpp")
+		fl.include("sfml-window/window/*.cpp", "sfml-window/window/*.hpp")
+		fl.include("sfml-system/system/*.cpp", "sfml-system/system/*.hpp")
+		fl.include("sfml-all/all/*.cpp", "sfml-all/all/*.hpp")
+	end
   	s.extensions = ["Rakefile"]
-  	
   	s.description = <<-EOF
     	rbSFML are bindings for the SFML library version 2.0 for Ruby.
     	SFML or Simple Fast Multimedia library is is a free multimedia C++ API 
     	that provides you low and high level access to graphics, input, audio, etc.
   	EOF
-  	
-  	s.homepage = 'http://sfml-dev.org'
-  	
-
-
-
   	s.extra_rdoc_files = FileList.new do |fl|
-    	fl.include "doc/*.rdoc"
+		fl.include "doc/*.rdoc"
   	end
 end
 verbose(false)
@@ -96,8 +89,8 @@ Rake::GemPackageTask.new(spec) do |pkg|
 end
 
 RDoc::Task.new do |rd|
-  rd.title = "RSFML #{RUBYSFML_VERSION} Documentation"
-  rd.rdoc_files.include(SO_SRCS.values)
+	rd.title = "RSFML #{RUBYSFML_VERSION} Documentation"
+	rd.rdoc_files.include(SO_SRCS.values)
 	rd.options << '--line-numbers' << '--quiet' << '--all'
 	rd.rdoc_dir = "doc"
 end
@@ -110,12 +103,14 @@ LOCATION = CONFIG['sitearchdir'] + '/sfml'
 RUBYSFML_INC = "sfml-system/system"
 SFML_INC = ENV.key?('SFML_INCLUDE') ? ENV['SFML_INCLUDE'] : '../../include'
 SFML_LIB = ENV.key?('SFML_LIB') ? ENV['SFML_LIB'] : '../../lib'
-SFML_LIBS = '-lsfml-audio -lsfml-graphics -lsfml-window -lsfml-system'
+SFML_LIBS = '-lsfml-audio-s -lsfml-graphics-s -lsfml-window-s -lsfml-system-s'
 RUBY_INC = CONFIG['rubyhdrdir']
 RUBY_LIB = (CONFIG['ENABLE_SHARED'] == 'yes' ? CONFIG['LIBRUBYARG_SHARED'] : CONFIG['LIBRUBYARG_STATIC']) + ' ' + CONFIG['SOLIBS']
 RUBY_LIB_PATH = CONFIG['libdir']
-LINK = CONFIG['LDSHARED']
-LINK_FLAGS = CONFIG['DLDFLAGS']
+LINK = CONFIG['LDSHAREDXX']
+LINK.sub!("$(if $(filter-out -g -g0,#{CONFIG["debugflags"]}),,-s)", '')
+LINK_FLAGS = CONFIG['DLDFLAGS'] + " " + CONFIG['LDFLAGS']
+LINK_FLAGS.sub!("$(DEFFILE)", "")
 
 SO_SRCS.each_key {|dir| directory "#{OBJDIR}/#{dir}"}
 directory SODIR
@@ -129,6 +124,7 @@ SO_SRCS.each do |so_file, list|
 			file objfile => [srcfile, objdir] do
 				puts "Compiling #{File.basename(srcfile)}"
 				sh "#{CC} #{CFLAGS} -c #{srcfile} -o #{objfile} -I#{SFML_INC} -I#{RUBY_INC} -I#{RUBY_INC}/#{CONFIG['arch']} -I#{RUBYSFML_INC}"
+				#p "#{CC} #{CFLAGS} -c #{srcfile} -o #{objfile} -I#{SFML_INC} -I#{RUBY_INC} -I#{RUBY_INC}/#{CONFIG['arch']} -I#{RUBYSFML_INC}"
 			end
 		end
 	rescue
@@ -139,10 +135,11 @@ SO_OBJS.each do |so_file, objs|
 	begin
 		file "#{SODIR}/#{so_file}.so" => [*objs, SODIR] do
 			puts "Linking files to create #{so_file}.so"
-		  sh "#{LINK} -o #{SODIR}/#{so_file}.so #{objs} -L. -L#{SFML_LIB} -L#{RUBY_LIB_PATH} #{LINK_FLAGS} #{RUBY_LIB} #{SFML_LIBS}"
+			#p "#{LINK} -o #{SODIR}/#{so_file}.so #{objs} -L. -L#{SFML_LIB} -L#{RUBY_LIB_PATH} #{LINK_FLAGS} #{RUBY_LIB} #{SFML_LIBS}"
+			sh "#{LINK} -o #{SODIR}/#{so_file}.so #{objs} -L. -L#{SFML_LIB} -L#{RUBY_LIB_PATH} #{LINK_FLAGS} #{RUBY_LIB} #{SFML_LIBS}"
 		end
-  rescue
-  end
+	rescue
+	end
 end
 
 task :install => [:build, LOCATION] do
