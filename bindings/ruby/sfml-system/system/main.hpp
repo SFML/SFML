@@ -34,6 +34,9 @@ extern "C" void Init_system( void );
 
 typedef VALUE ( *RubyFunctionPtr )( ... );
 
+#define BINDING_VERSION "development"
+#define LIB_VERSION "2.0"
+
 #define MAX( x, y ) ( ( x ) < ( y ) ? ( y ) : ( x ) )
 #define MIN( x, y ) ( ( x ) > ( y ) ? ( x ) : ( y ) )
 

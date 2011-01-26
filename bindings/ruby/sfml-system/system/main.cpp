@@ -44,6 +44,8 @@ void Init_system( void )
 	/* SFML namespace which contains the classes of this module. */
 	globalSFMLNamespace = rb_define_module( "SFML" );
 	rb_define_const(globalSFMLNamespace, "SystemLoaded", Qtrue);
+	rb_define_const(globalSFMLNamespace, "Version", rb_str_new2(LIB_VERSION));
+	rb_define_const(globalSFMLNamespace, "BindingVersion", rb_str_new2(BINDING_VERSION));
 	Init_Clock();
 	Init_Vector2();
 	Init_Vector3();
