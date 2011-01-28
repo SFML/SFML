@@ -159,6 +159,9 @@ static VALUE Sprite_SetSubRect( VALUE self, VALUE aRectangle )
 	rectangle.Top    = FIX2INT( Rect_GetTop( temp ) );
 	rectangle.Width  = FIX2INT( Rect_GetWidth( temp ) );
 	rectangle.Height = FIX2INT( Rect_GetHeight( temp ) );
+  sf::Sprite *object = NULL;
+  Data_Get_Struct( self, sf::Sprite, object );
+	object->SetSubRect( rectangle );
 	return Qnil;
 }
 
