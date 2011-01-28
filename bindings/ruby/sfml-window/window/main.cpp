@@ -83,6 +83,7 @@ static void CreateKeyEnum( void )
 	rb_define_const( globalKeyNamespace, "S", INT2FIX( sf::Key::S ) );
 	rb_define_const( globalKeyNamespace, "T", INT2FIX( sf::Key::T ) );
 	rb_define_const( globalKeyNamespace, "U", INT2FIX( sf::Key::U ) );
+  rb_define_const( globalKeyNamespace, "W", INT2FIX( sf::Key::W ) );
 	rb_define_const( globalKeyNamespace, "V", INT2FIX( sf::Key::V ) );
 	rb_define_const( globalKeyNamespace, "X", INT2FIX( sf::Key::X ) );
 	rb_define_const( globalKeyNamespace, "Y", INT2FIX( sf::Key::Y ) );
