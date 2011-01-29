@@ -43,17 +43,18 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Load the shader from a text in memory
+            /// Create a new shader from a text in memory
             /// </summary>
             /// <param name="shader">String containing the shader code</param>
             /// <exception cref="LoadingFailedException" />
             ////////////////////////////////////////////////////////////
-            public void LoadFromString(string shader)
+            public static Shader FromString(string shader)
             {
-                SetThis(sfShader_CreateFromMemory(shader));
-
-                if (This == IntPtr.Zero)
+                IntPtr ptr = sfShader_CreateFromMemory(shader);
+                if (ptr == IntPtr.Zero)
                     throw new LoadingFailedException("shader");
+
+                return new Shader(ptr);
             }
 
             ////////////////////////////////////////////////////////////
@@ -202,6 +203,17 @@ namespace SFML
 
                 if (!disposing)
                     Context.Global.SetActive(false);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Construct the shader from a pointer
+            /// </summary>
+            /// <param name="ptr">Pointer to the shader instance</param>
+            ////////////////////////////////////////////////////////////
+            public Shader(IntPtr ptr) :
+                base(ptr)
+            {
             }
 
             Dictionary<string, Image> myTextures = new Dictionary<string, Image>();
