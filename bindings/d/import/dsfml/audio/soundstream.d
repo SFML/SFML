@@ -365,9 +365,9 @@ private:
 	static this()
 	{
 	debug
-		DllLoader dll = DllLoader.load("csfml-audio-d");
+		DllLoader dll = DllLoader.load("csfml-audio-d-2");
 	else
-		DllLoader dll = DllLoader.load("csfml-audio");
+		DllLoader dll = DllLoader.load("csfml-audio-2");
 		
 		sfSoundStream_Create = cast(pf_sfSoundStream_Create)dll.getSymbol("sfSoundStream_Create");
 		sfSoundStream_Destroy = cast(pf_sfSoundStream_Destroy)dll.getSymbol("sfSoundStream_Destroy");

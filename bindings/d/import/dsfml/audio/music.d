@@ -171,9 +171,9 @@ uint function(SFMLClass)						sfMusic_GetSampleRate;
 static this()
 {
 debug
-	DllLoader dll = DllLoader.load("csfml-audio-d");
+	DllLoader dll = DllLoader.load("csfml-audio-d-2");
 else
-	DllLoader dll = DllLoader.load("csfml-audio");
+	DllLoader dll = DllLoader.load("csfml-audio-2");
 
 	mixin(loadFromSharedLib("sfMusic_CreateFromFile"));
 	mixin(loadFromSharedLib("sfMusic_CreateFromMemory"));

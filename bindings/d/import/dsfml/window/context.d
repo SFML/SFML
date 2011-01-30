@@ -63,15 +63,6 @@ private:
 		void	function(SFMLClass, bool)	sfContext_SetActive;
 	}
 
-	static this()
-	{
-	debug
-		DllLoader dll = DllLoader.load("csfml-window-d");
-	else
-		DllLoader dll = DllLoader.load("csfml-window");
-
-		mixin(loadFromSharedLib("sfContext_Create"));
-		mixin(loadFromSharedLib("sfContext_Destroy"));
-		mixin(loadFromSharedLib("sfContext_SetActive"));
-	}
+	mixin(loadFromSharedLib2("csfml-window", "sfContext",
+	"Create", "Destroy", "SetActive"));
 }

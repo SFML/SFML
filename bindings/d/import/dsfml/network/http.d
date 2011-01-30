@@ -178,7 +178,7 @@ class Http : DSFMLObject
 	
 		static this()
 		{
-			DllLoader dll = DllLoader.load("csfml-network");
+			DllLoader dll = DllLoader.load("csfml-network-2");
 			
 			sfHttpResponse_Destroy = cast(pf_sfHttpResponse_Destroy)dll.getSymbol("sfHttpResponse_Destroy"); 
 			sfHttpResponse_GetField = cast(pf_sfHttpResponse_GetField)dll.getSymbol("sfHttpResponse_GetField");
@@ -295,7 +295,7 @@ class Http : DSFMLObject
 	
 		static this()
 		{
-			DllLoader dll = DllLoader.load("csfml-network");
+			DllLoader dll = DllLoader.load("csfml-network-2");
 			
 			sfHttpRequest_Create = cast(pf_sfHttpRequest_Create)dll.getSymbol("sfHttpRequest_Create");
 			sfHttpRequest_Destroy = cast(pf_sfHttpRequest_Destroy)dll.getSymbol("sfHttpRequest_Destroy");
@@ -386,9 +386,9 @@ private:
 	static this()
 	{
 	debug
-		DllLoader dll = DllLoader.load("csfml-network-d");
+		DllLoader dll = DllLoader.load("csfml-network-d-2");
 	else
-		DllLoader dll = DllLoader.load("csfml-network");
+		DllLoader dll = DllLoader.load("csfml-network-2");
 		
 		sfHttp_Create = cast(pf_sfHttp_Create)dll.getSymbol("sfHttp_Create");
 		sfHttp_Destroy = cast(pf_sfHttp_Destroy)dll.getSymbol("sfHttp_Destroy");

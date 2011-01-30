@@ -207,9 +207,9 @@ private:
 	static this()
 	{
 	debug
-		DllLoader dll = DllLoader.load("csfml-audio-d");
+		DllLoader dll = DllLoader.load("csfml-audio-d-2");
 	else
-		DllLoader dll = DllLoader.load("csfml-audio");
+		DllLoader dll = DllLoader.load("csfml-audio-2");
 		
 		sfSound_Play = cast(pf_sfSound_Play)dll.getSymbol("sfSound_Play");
 		sfSound_Pause = cast(pf_sfSound_Pause)dll.getSymbol("sfSound_Pause");

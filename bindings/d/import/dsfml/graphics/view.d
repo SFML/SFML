@@ -320,9 +320,9 @@ private:
 	static this()
 	{
 	debug
-		DllLoader dll = DllLoader.load("csfml-graphics-d");
+		DllLoader dll = DllLoader.load("csfml-graphics-d-2");
 	else
-		DllLoader dll = DllLoader.load("csfml-graphics");
+		DllLoader dll = DllLoader.load("csfml-graphics-2");
 		
 		mixin(loadFromSharedLib("sfView_Create"));
 		mixin(loadFromSharedLib("sfView_CreateFromRect"));

@@ -256,9 +256,9 @@ private:
 	static this()
 	{
 		debug
-			DllLoader dll = DllLoader.load("csfml-graphics-d");
+			DllLoader dll = DllLoader.load("csfml-graphics-d-2");
 		else
-			DllLoader dll = DllLoader.load("csfml-graphics");
+			DllLoader dll = DllLoader.load("csfml-graphics-2");
 	
 		sfRenderWindow_DrawThis = cast(pf_sfRenderWindow_DrawThis)dll.getSymbol("sfRenderWindow_Draw" ~ derivedClassName[2..$]);
 		sfRenderWindow_DrawThisWithShader = cast(pf_sfRenderWindow_DrawThisWithShader)dll.getSymbol("sfRenderWindow_Draw" ~ derivedClassName[2..$] ~ "WithShader");

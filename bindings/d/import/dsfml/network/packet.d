@@ -381,9 +381,9 @@ private:
 	static this()
 	{
 	debug
-		DllLoader dll = DllLoader.load("csfml-network-d");
+		DllLoader dll = DllLoader.load("csfml-network-d-2");
 	else
-		DllLoader dll = DllLoader.load("csfml-network");
+		DllLoader dll = DllLoader.load("csfml-network-2");
 		
 		sfPacket_Append = cast(pf_sfPacket_Append)dll.getSymbol("sfPacket_Append");
 		sfPacket_CanRead = cast(pf_sfPacket_CanRead)dll.getSymbol("sfPacket_CanRead");

@@ -56,9 +56,9 @@ string loadFromSharedLib2(S...)(string lib, string className, S fnames)
 	string res = `static this()
 {
 	debug
-		DllLoader dll = DllLoader.load("` ~ lib ~ `-d");
+		DllLoader dll = DllLoader.load("` ~ lib ~ `-d-2");
 	else
-		DllLoader dll = DllLoader.load("` ~ lib ~ `");
+		DllLoader dll = DllLoader.load("` ~ lib ~ `-2");
 
 `;
 
@@ -74,9 +74,9 @@ string loadDerivedFromSharedLib(S...)(string lib, string baseClass, string deriv
 	string res = `static this()
 {
 	debug
-		DllLoader dll = DllLoader.load("` ~ lib ~ `-d");
+		DllLoader dll = DllLoader.load("` ~ lib ~ `-d-2");
 	else
-		DllLoader dll = DllLoader.load("` ~ lib ~ `");
+		DllLoader dll = DllLoader.load("` ~ lib ~ `-2");
 
 `;
 

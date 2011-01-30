@@ -255,9 +255,9 @@ private:
 	static this()
 	{
 	debug
-		DllLoader dll = DllLoader.load("csfml-network-d");
+		DllLoader dll = DllLoader.load("csfml-network-d-2");
 	else
-		DllLoader dll = DllLoader.load("csfml-network");
+		DllLoader dll = DllLoader.load("csfml-network-2");
 		
 		sfTcpSocket_Accept = cast(pf_sfTcpSocket_Accept)dll.getSymbol("sfTcpSocket_Accept");
 		sfTcpSocket_Connect = cast(pf_sfTcpSocket_Connect)dll.getSymbol("sfTcpSocket_Connect");

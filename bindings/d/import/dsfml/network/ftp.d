@@ -182,7 +182,7 @@ class Ftp : DSFMLObject
 		}
 		static this()
 		{
-			DllLoader dll = DllLoader.load("csfml-network");
+			DllLoader dll = DllLoader.load("csfml-network-2");
 			
 			sfFtpResponse_Destroy = cast(pf_sfFtpResponse_Destroy)dll.getSymbol("sfFtpResponse_Destroy");
 			sfFtpResponse_IsOk = cast(pf_sfFtpResponse_IsOk)dll.getSymbol("sfFtpResponse_IsOk");
@@ -229,7 +229,7 @@ class Ftp : DSFMLObject
 		}
 		static this()
 		{
-			DllLoader dll = DllLoader.load("csfml-network");
+			DllLoader dll = DllLoader.load("csfml-network-2");
 			
 			sfFtpDirectoryResponse_Destroy = cast(pf_sfFtpDirectoryResponse_Destroy)dll.getSymbol("sfFtpDirectoryResponse_Destroy");
 			sfFtpDirectoryResponse_GetDirectory = cast(pf_sfFtpDirectoryResponse_GetDirectory)dll.getSymbol("sfFtpDirectoryResponse_GetDirectory");
@@ -309,7 +309,7 @@ class Ftp : DSFMLObject
 		}
 		static this()
 		{
-			DllLoader dll = DllLoader.load("csfml-network");
+			DllLoader dll = DllLoader.load("csfml-network-2");
 			
 			sfFtpListingResponse_Destroy = cast(pf_sfFtpListingResponse_Destroy)dll.getSymbol("sfFtpListingResponse_Destroy");
 			sfFtpListingResponse_GetCount = cast(pf_sfFtpListingResponse_GetCount)dll.getSymbol("sfFtpListingResponse_GetCount");
@@ -577,9 +577,9 @@ private:
 	static this()
 	{
 	debug
-		DllLoader dll = DllLoader.load("csfml-network-d");
+		DllLoader dll = DllLoader.load("csfml-network-d-2");
 	else
-		DllLoader dll = DllLoader.load("csfml-network");
+		DllLoader dll = DllLoader.load("csfml-network-2");
 		
 		sfFtp_Create = cast(pf_sfFtp_Create)dll.getSymbol("sfFtp_Create");
 		sfFtp_Destroy = cast(pf_sfFtp_Destroy)dll.getSymbol("sfFtp_Destroy");

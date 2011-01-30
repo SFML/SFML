@@ -158,9 +158,9 @@ private:
 	static this()
 	{
 	debug
-		DllLoader dll = DllLoader.load("csfml-graphics-d");
+		DllLoader dll = DllLoader.load("csfml-graphics-d-2");
 	else
-		DllLoader dll = DllLoader.load("csfml-graphics");
+		DllLoader dll = DllLoader.load("csfml-graphics-2");
 
 		mixin(loadFromSharedLib("sfShader_CreateFromFile"));
 		mixin(loadFromSharedLib("sfShader_CreateFromMemory"));

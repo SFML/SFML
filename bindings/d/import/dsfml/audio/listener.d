@@ -171,9 +171,9 @@ private:
 	static this()
 	{
 		debug
-			DllLoader dll = DllLoader.load("csfml-audio-d");
+			DllLoader dll = DllLoader.load("csfml-audio-d-2");
 		else
-			DllLoader dll = DllLoader.load("csfml-audio");
+			DllLoader dll = DllLoader.load("csfml-audio-2");
 		
 		sfListener_SetGlobalVolume = cast(pf_sfListener_SetGlobalVolume)dll.getSymbol("sfListener_SetGlobalVolume");
 		sfListener_GetGlobalVolume = cast(pf_sfListener_GetGlobalVolume)dll.getSymbol("sfListener_GetGlobalVolume");
