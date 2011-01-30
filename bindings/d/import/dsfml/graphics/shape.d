@@ -105,26 +105,26 @@ public:
 	}
 
 	/**
-	 *	Change the width of a shape outline
+	 *	Change the thickness of a shape outline
 	 *
 	 *	Params: 
-	 *		width = New width
+	 *		thickness = New thickness
 	 */
-	void outlineWidth(float width)
+	void outlineThickness(float thickness)
 	{
-		sfShape_SetOutlineWidth(m_ptr, width);
+		sfShape_SetOutlineThickness(m_ptr, thickness);
 	}
 
 	/**
-	 *	Get the width of the shape outline
+	 *	Get the thickness of the shape outline
 	 *
 	 *	Returns:
-	 *		Current outline width
+	 *		Current outline thickness
 	 *
 	 */
-	float outlineWidth() 
+	float outlineThickness() 
 	{
-		return sfShape_GetOutlineWidth(m_ptr);
+		return sfShape_GetOutlineThickness(m_ptr);
 	}
 
 	/**
@@ -229,7 +229,7 @@ public:
 	 *		p2X, p2Y = Position second point
 	 *		thickness = Line thickness
 	 *		col = Color used to draw the line
-	 *		outline = Outline width (0 by default)
+	 *		outline = Outline thickness (0 by default)
 	 *		outlineCol = Color used to draw the outline (black by default)
 	 *	
 	 *	Returns:
@@ -248,7 +248,7 @@ public:
 	 *		left, top = Top-left corner of the rectangle
 	 *		width, height = Size of the rectangle
 	 *		col = Color used to fill the rectangle
-	 *		outline = Outline width (0 by default)
+	 *		outline = Outline thickness (0 by default)
 	 *		outlineCol = Color used to draw the outline (black by default)
 	 *		
 	 *	Returns:
@@ -267,7 +267,7 @@ public:
 	 *		y = Y position of the center	
 	 *		radius = Radius
 	 *		col = Color used to fill the circle
-	 *		outline = Outline width (0 by default)
+	 *		outline = Outline thickness (0 by default)
 	 *		outlineCol = Color used to draw the outline (black by default)
 	 *
 	 *	Returns:
@@ -288,8 +288,8 @@ private:
 		void	function(SFMLClass, float, float, Color, Color)							sfShape_AddPoint;
 		void	function(SFMLClass, int)												sfShape_EnableFill;
 		void	function(SFMLClass, int)												sfShape_EnableOutline;
-		void	function(SFMLClass, float Width)										sfShape_SetOutlineWidth;
-		float	function(SFMLClass)														sfShape_GetOutlineWidth;
+		void	function(SFMLClass, float Width)										sfShape_SetOutlineThickness;
+		float	function(SFMLClass)														sfShape_GetOutlineThickness;
 		uint	function(SFMLClass)														sfShape_GetPointsCount;
 		void	function(SFMLClass, uint Index, float* X, float* Y)						sfShape_GetPointPosition;
 		void	function(SFMLClass, uint Index, float X, float Y)						sfShape_SetPointPosition;
@@ -300,7 +300,7 @@ private:
 	}
 
 	mixin(loadFromSharedLib2("csfml-graphics", "sfShape",
-	"CreateLine", "CreateRectangle", "CreateCircle", "AddPoint", "EnableFill", "EnableOutline", "SetOutlineWidth", "GetOutlineWidth",
+	"CreateLine", "CreateRectangle", "CreateCircle", "AddPoint", "EnableFill", "EnableOutline", "SetOutlineThickness", "GetOutlineThickness",
 	"GetPointsCount", "GetPointPosition", "SetPointPosition", "GetPointColor", "SetPointColor", "GetPointOutlineColor",
 	"SetPointOutlineColor"));
 }

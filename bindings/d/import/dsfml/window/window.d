@@ -208,7 +208,18 @@ public:
 	{
 		sfWindow_Display(m_ptr);
 	}
-	
+
+	/**
+	 *	Enable / disable vertical synchronization
+	 *
+	 *	Params: 
+	 *		enabled : True to enable v-sync, false to deactivate
+	 */
+	void enableVerticalSync(bool enabled)
+	{
+		sfWindow_EnableVerticalSync(m_ptr, enabled);
+	}
+
 @property
 {
 	/**
@@ -253,17 +264,6 @@ public:
 	{
 		return sfWindow_GetSettings(m_ptr);
 	}		
-
-	/**
-	 *	Enable / disable vertical synchronization
-	 *
-	 *	Params: 
-	 *		enabled : True to enable v-sync, false to deactivate
-	 */
-	void useVerticalSync(bool enabled)
-	{
-		sfWindow_UseVerticalSync(m_ptr, enabled);
-	}
 
 	/**
 	 *	Show or hide the mouse cursor
@@ -427,7 +427,7 @@ private:
 		uint			function(SFMLClass)									sfWindow_GetHeight;
 		ContextSettings	function(SFMLClass Window)							sfWindow_GetSettings;
 		int				function(SFMLClass, Event*)							sfWindow_GetEvent;
-		void			function(SFMLClass, int)							sfWindow_UseVerticalSync;
+		void			function(SFMLClass, int)							sfWindow_EnableVerticalSync;
 		void			function(SFMLClass, int)							sfWindow_ShowMouseCursor;
 		void			function(SFMLClass, uint, uint)						sfWindow_SetCursorPosition;
 		void			function(SFMLClass, int, int)						sfWindow_SetPosition;
@@ -448,7 +448,7 @@ private:
 	}
 
 	mixin(loadFromSharedLib2("csfml-window", "sfWindow",
-	"Create", "CreateFromHandle", "Destroy", "Close", "IsOpened", "GetWidth", "GetHeight", "GetSettings", "GetEvent", "UseVerticalSync",
+	"Create", "CreateFromHandle", "Destroy", "Close", "IsOpened", "GetWidth", "GetHeight", "GetSettings", "GetEvent", "EnableVerticalSync",
 	"ShowMouseCursor", "SetCursorPosition", "SetPosition", "SetSize", "Show", "EnableKeyRepeat", "SetIcon", "SetActive", "Display",
 	"GetInput", "SetFramerateLimit", "GetFrameTime", "SetJoystickThreshold", "WaitEvent", "GetSystemHandle"));
 }
