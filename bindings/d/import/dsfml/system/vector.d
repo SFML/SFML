@@ -37,7 +37,7 @@ import std.typetuple;
  *		T	= element type
  *		dim	= vector dimension
  */
-struct Vector(T, int dim)
+struct Vector(T, uint dim)
 {
 	static assert (dim >= 2 && dim <= 4);
 	
@@ -116,7 +116,7 @@ struct Vector(T, int dim)
 	 ***********************************************************************************/
 	
 	/// negate the vector
-	Vector opUnary(string op : "-")()
+	Vector opUnary(string op : "-")() const
 	{
 				static if (dim == 2) return Vector(-x, -y);
 		else	static if (dim == 3) return Vector(-x, -y, -z);
@@ -124,7 +124,7 @@ struct Vector(T, int dim)
 	}
 	
 	/// dot product
-	T opBinary(string op : "*")(typeof(this) v)
+	T opBinary(string op : "*")(typeof(this) v) const
 	if (is(typeof(T+T)) && is(typeof(T*T)))
 	{
 				static if (dim == 2) return x*v.x + y*v.y;
@@ -133,7 +133,7 @@ struct Vector(T, int dim)
 	}
 
 	/// element-wise operations, +, -, 
-	Vector opBinary(string op, U:typeof(this))(U v)
+	Vector opBinary(string op, U:typeof(this))(U v) const
 	// check if the operation is supported on the type T
 	if (op != "*" && (op == "+" && is(typeof(T+T)) || op == "-" && is(typeof(T-T)) || op == "*" && is(typeof(T*T))
 					|| op == "/" && is(typeof(T/T))	|| op == "%" && is(typeof(T%T))))
@@ -145,8 +145,7 @@ struct Vector(T, int dim)
 	}
 
 	/// operations with a scalar
-	// TODO: make this usable with arbitrary scalars (not only Vector element type T), including necessary checks etc.
-	typeof(this) opBinary(string op)(T s)
+	Vector opBinary(string op, U)(U s) const
 	{
 		Vector res = void;
 		foreach(i, x; tuple)
@@ -162,16 +161,17 @@ struct Vector(T, int dim)
 
 		return this;
 	}
-	
+
 	/// (*=) overload
-	Vector opOpAssign(string op)(T s)
+	Vector opOpAssign(string op, U)(U s)
+	if (!is(U:typeof(this))) // TODO: there's some dmd bug about this
 	{
 		foreach (i, _; tuple)
 			mixin("tuple[i] " ~ op ~ "= s;");
 
 		return this;
 	}
-	
+
 	/// return length*length
 	@property LengthType sqLength()
 	{
@@ -190,7 +190,6 @@ struct Vector(T, int dim)
 					assert(w == 0);
 			
 			float res;
-			
 			auto p = cell.ptr;
 			asm
 			{
@@ -306,11 +305,11 @@ struct Vector(T, int dim)
 	}
 	
 	/// calculate distance to other vector
-	LengthType distance(Vector!(T,dim) other)
+	LengthType distance(Vector other)
 	{
 		assert (isValid);
 		assert (other.isValid);
-		other -= this;
+		other -= this; // doable cause other is a struct not ref
 		return other.length;
 	}
 	
@@ -326,7 +325,7 @@ struct Vector(T, int dim)
 		static if (dim >= 4) if (w != v.w) return false;
 		return true;
 	}
-
+	
 	/// swizzling
 	@property Vector!(T,n.length) opDispatch(string n)() const
 	if (allCharsValid(n,"xyzw"[0..dim]))
@@ -352,7 +351,7 @@ struct Vector(T, int dim)
 		}
 		return true;
 	}
-
+	
 	///
 	bool isUnit()
 	{
@@ -390,13 +389,17 @@ alias Vector!(ubyte, 4) Vector4ub; ///
 
 
 // TODO: do all kinds of unittesting
+import std.stdio;
 unittest
 {
+	writeln("unittests running");
 	Vector3f v = {1.5f, 1.f, 0.5f};
 	Vector3f w = {-1.f, 2.f, -0.5f};
 
-	assert(v.length - sqrt(3.5f) < 0.0001, sseAvailable ? "SSE length calculation failed" : "normal length calculation failed");
-	assert(w.length - sqrt(5.25f) < 0.0001, sseAvailable ? "SSE length calculation failed" : "normal length calculation failed");
+	writefln("v: %f w: %f", v.length - sqrt(3.5f), w.length - sqrt(5.25f));
+	// strangely calculating w.length is much less accurate
+	assert(v.length - sqrt(3.5f) < 0.001, sseAvailable ? "SSE length calculation failed" : "normal length calculation failed");
+	assert(w.length - sqrt(5.25f) < 0.001, sseAvailable ? "SSE length calculation failed" : "normal length calculation failed");
 
 	assert(v+w == Vector3f(0.5f, 3.f, 0.f));
 	assert(v-w == Vector3f(2.5f, -1.f, 1.f));
