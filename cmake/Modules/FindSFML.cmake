@@ -75,6 +75,11 @@ foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
     set(FIND_SFML_COMPONENT_VAR SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY)
     set(FIND_SFML_COMPONENT_NAME sfml-${FIND_SFML_COMPONENT_LOWER}${FIND_SFML_LIB_SUFFIX})
 
+    # no suffix for sfml-main, it is always a static library
+    if(FIND_SFML_COMPONENT_LOWER STREQUAL "main")
+        set(FIND_SFML_COMPONENT_NAME sfml-${FIND_SFML_COMPONENT_LOWER})
+    endif()
+
     # release library
     find_library(${FIND_SFML_COMPONENT_VAR}
                  NAMES ${FIND_SFML_COMPONENT_NAME}
