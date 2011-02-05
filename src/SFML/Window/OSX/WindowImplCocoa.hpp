@@ -102,7 +102,7 @@ public:
     void MouseMovedOut(void);
     void KeyDown(unsigned short keycode, unsigned int modifierFlags);
     void KeyUp(unsigned short keycode, unsigned int modifierFlags);
-    void TextEntred(Uint32 charcode);
+    void TextEntered(Uint32 charcode);
     
     static Key::Code NSKeyCodeToSFMLKeyCode(unsigned short rawchar);
     

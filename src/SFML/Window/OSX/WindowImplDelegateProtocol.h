@@ -54,7 +54,7 @@ namespace sf {
 /// MouseDownAt, MouseUpAt, MouseMovedAt, MouseWheelScrolledAt,
 /// MouseMovedIn, MouseMovedOut
 ///
-/// KeyDown, KeyUp, TextEntred
+/// KeyDown, KeyUp, TextEntered
 ///
 /// Note : Joystick are not bound to a view or window 
 /// thus they're not managed by a class implementing this protocol.

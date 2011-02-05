@@ -359,8 +359,20 @@
     if (myUseKeyRepeat || ![theEvent isARepeat])
         myRequester->KeyDown([theEvent keyCode], [theEvent modifierFlags]);
     
-    if ((myUseKeyRepeat || ![theEvent isARepeat]) && [[theEvent characters] length] > 0)
-        myRequester->TextEntred([[theEvent characters] characterAtIndex:0]);
+    if ((myUseKeyRepeat || ![theEvent isARepeat]) && [[theEvent characters] length] > 0) {
+        /// From NSEvent.h :
+        /* 
+         * Unicodes we reserve for function keys on the keyboard, 
+         * OpenStep reserves the range 0xF700-0xF8FF for this purpose.
+         * The availability of various keys will be system dependent.
+         */
+        /// And 0x35 is the Escape key.
+        unichar ch = [[theEvent characters] characterAtIndex:0];
+        if ([theEvent keyCode] != 0x35 && 
+            (ch < 0xf700 || ch > 0xf8ff)) {
+            myRequester->TextEntered(ch);
+        }
+    }
 }
 
 

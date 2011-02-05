@@ -281,7 +281,7 @@ void WindowImplCocoa::KeyUp(unsigned short keycode, unsigned int modifierFlags)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::TextEntred(Uint32 charcode)
+void WindowImplCocoa::TextEntered(Uint32 charcode)
 {
     Event event;
     event.Type = Event::TextEntered;
