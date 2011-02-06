@@ -31,7 +31,7 @@
 #include <SFML/Config.hpp>
 
 #if defined(SFML_SYSTEM_WINDOWS)
-    #include <BaseTsd.h>
+    #include <basetsd.h>
 #endif
 
 
