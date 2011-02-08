@@ -270,6 +270,10 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     // If the OpenGL >= 3.0 context failed or if we don't want one, create a regular OpenGL 1.x/2.x context
     if (!myContext)
     {
+        // set the context version to 2.0 (arbitrary)
+        mySettings.MajorVersion = 2;
+        mySettings.MinorVersion = 0;
+
         myContext = glXCreateContext(myDisplay, bestVisual, toShare, true);
         if (!myContext)
         {
