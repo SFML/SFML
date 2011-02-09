@@ -481,39 +481,11 @@
 ////////////////////////////////////////////////////////
 -(float)screenHeight
 {
-    // With Mac OS X 10.4 and 10.5, there is a shift upwards
-    // (about 22px – that is the apple menu bar height). With 10.6 and later
-    // we have a workaround : we hide the dock and get the visibleFrame of the
-    // screen (see NSApplicationPresentationOptions and NSScreen for more info).
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
-    return NSHeight([[myWindow screen] frame]);
-    
-#else // (NSApplicationPresentationOptions Availability: Mac OS X 10.6 and later)
-    // We want to recompute it because the user may have moved the window to another screen
-    // since last time.
-    
-    static float height = 0.f;
-    static NSDate* lastTime = [NSDate date];
-    if (height > 1.f && // height was set at least once.
-        [lastTime timeIntervalSinceNow] > -1.f) { // last time was less than one secode ago.
-        return height; // We don't want to compute it too often because the dock blink.
-    }
-    
-    // Save current settings.
-    NSApplicationPresentationOptions currentOptions = [NSApp currentSystemPresentationOptions];
-    
-    // Hide dock.
-    [NSApp setPresentationOptions:currentOptions | NSApplicationPresentationHideDock];
-    
-    // Get the screen height (without apple menu bar if there is one).
-    height = NSHeight([[myWindow screen] visibleFrame]);
-    lastTime = [NSDate date];
-    
-    // Set back user's settings.
-    [NSApp setPresentationOptions:currentOptions];
-    
+    NSDictionary *deviceDescription = [[myWindow screen] deviceDescription];
+    NSNumber *screenNumber = [deviceDescription valueForKey:@"NSScreenNumber"];
+    CGDirectDisplayID screenID = (CGDirectDisplayID)[screenNumber intValue];
+    CGFloat height = CGDisplayPixelsHigh(screenID);
     return height;
-#endif
 }
 
 
