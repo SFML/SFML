@@ -24,6 +24,17 @@
 
 
 ////////////////////////////////////////////////////////////
+// References :
+//
+// http://www.unicode.org/
+// http://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.c
+// http://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.h
+// http://people.w3.org/rishida/scripts/uniview/conversion
+//
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
 template <typename In>
 In Utf<8>::Decode(In begin, In end, Uint32& output, Uint32 replacement)
 {

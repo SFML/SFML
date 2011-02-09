@@ -37,15 +37,6 @@
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-/// \ingroup system
-/// \brief Get the default system locale
-///
-/// \return Reference to the default system locale
-///
-////////////////////////////////////////////////////////////
-SFML_API const std::locale& GetDefaultLocale();
-
 template <unsigned int N>
 class Utf;
 
@@ -137,7 +128,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out FromAnsi(In begin, In end, Out output, const std::locale& locale = GetDefaultLocale());
+    static Out FromAnsi(In begin, In end, Out output, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a wide characters range to UTF-8
@@ -182,7 +173,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out ToAnsi(In begin, In end, Out output, char replacement = 0, const std::locale& locale = GetDefaultLocale());
+    static Out ToAnsi(In begin, In end, Out output, char replacement = 0, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert an UTF-8 characters range to wide characters
@@ -345,7 +336,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out FromAnsi(In begin, In end, Out output, const std::locale& locale = GetDefaultLocale());
+    static Out FromAnsi(In begin, In end, Out output, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a wide characters range to UTF-16
@@ -390,7 +381,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out ToAnsi(In begin, In end, Out output, char replacement = 0, const std::locale& locale = GetDefaultLocale());
+    static Out ToAnsi(In begin, In end, Out output, char replacement = 0, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert an UTF-16 characters range to wide characters
@@ -554,7 +545,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out FromAnsi(In begin, In end, Out output, const std::locale& locale = GetDefaultLocale());
+    static Out FromAnsi(In begin, In end, Out output, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a wide characters range to UTF-32
@@ -599,7 +590,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out ToAnsi(In begin, In end, Out output, char replacement = 0, const std::locale& locale = GetDefaultLocale());
+    static Out ToAnsi(In begin, In end, Out output, char replacement = 0, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert an UTF-32 characters range to wide characters
@@ -687,7 +678,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     template <typename In>
-    static Uint32 DecodeAnsi(In input, const std::locale& locale = GetDefaultLocale());
+    static Uint32 DecodeAnsi(In input, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Decode a single wide character to UTF-32
@@ -720,7 +711,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     template <typename Out>
-    static Out EncodeAnsi(Uint32 codepoint, Out output, char replacement = 0, const std::locale& locale = GetDefaultLocale());
+    static Out EncodeAnsi(Uint32 codepoint, Out output, char replacement = 0, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Encode a single UTF-32 character to wide
