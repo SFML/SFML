@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -30,6 +30,7 @@
 
 ////////////////////////////////////////////////////////////
 /// \brief Event processing
+///
 ////////////////////////////////////////////////////////////
 @interface SFApplication : NSObject
 
@@ -38,6 +39,7 @@
 /// \brief Event processing
 ///
 /// \param block blocking mode means at least one event is proccessed.
+///
 ////////////////////////////////////////////////////////////
 +(void)processEventWithBlockingMode:(BOOL)block;
 

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -56,7 +56,7 @@ SFContext::SFContext(SFContext* shared)
     myPool = [[NSAutoreleasePool alloc] init];
     
     // Create the context
-    CreateContext(shared, ContextSettings(0, 0, 0), 0);
+    CreateContext(shared, 0, ContextSettings(0, 0, 0));
 }
 
     
@@ -67,7 +67,7 @@ SFContext::SFContext(SFContext* shared, const WindowImpl* owner,
     myPool = [[NSAutoreleasePool alloc] init];
     
     // Create the context.
-    CreateContext(shared, settings, bitsPerPixel);
+    CreateContext(shared, bitsPerPixel, settings);
     
     // Apply context.
     WindowImplCocoa const * ownerCocoa = static_cast<WindowImplCocoa const *>(owner);
@@ -82,7 +82,7 @@ SFContext::~SFContext()
     [myPool drain]; // [A]
     
     /*
-     [A] : Produce sometimes "*** attempt to pop an unknown autorelease pool"
+     * [A] : Produce sometimes "*** attempt to pop an unknown autorelease pool"
      */
 }
 
@@ -117,16 +117,15 @@ void SFContext::EnableVerticalSync(bool enabled)
 
     
 ////////////////////////////////////////////////////////////    
-void SFContext::CreateContext(SFContext* shared, 
-                              const ContextSettings& settings,
-                              unsigned int bitsPerPixel)
+void SFContext::CreateContext(SFContext* shared,
+                              unsigned int bitsPerPixel, 
+                              const ContextSettings& settings)
 {
     // Choose the attributs of OGL context.
     std::vector<NSOpenGLPixelFormatAttribute> attrs;
     attrs.reserve(20); // max attributs (estimation).
     
-    // These casts are safe. C++ is much more stric than Obj-C.
-    
+    // These casts are safe. C++ is much more strict than Obj-C.
     attrs.push_back(NSOpenGLPFAClosestPolicy);
     
     attrs.push_back(NSOpenGLPFADoubleBuffer);

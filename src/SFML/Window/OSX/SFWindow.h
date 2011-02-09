@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -29,17 +29,19 @@
 #import <AppKit/AppKit.h>
 
 ////////////////////////////////////////////////////////////
-/// Here we redefine some methods to allow grabing fullscreen events.
+/// \brief Here we redefine some methods to allow grabing fullscreen events.
+///
 ////////////////////////////////////////////////////////////
 @interface SFWindow : NSWindow {
 
 }
 
-/* 
- These two methods must return YES to grab fullscreen events.
- See http://stackoverflow.com/questions/999464/fullscreen-key-down-actions
- for more informations
- */
+////////////////////////////////////////////////////////////
+/// These two methods must return YES to grab fullscreen events.
+/// See http://stackoverflow.com/questions/999464/fullscreen-key-down-actions
+/// for more informations
+///
+////////////////////////////////////////////////////////////
 -(BOOL)acceptsFirstResponder;
 -(BOOL)canBecomeKeyWindow;
 

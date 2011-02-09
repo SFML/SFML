@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -27,79 +27,80 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/System/Err.hpp>
 #include <algorithm>
-
-#import <ApplicationServices/ApplicationServices.h>
 
 namespace sf
 {
 namespace priv
-{
+{    
 ////////////////////////////////////////////////////////////
-/// \brief Get bpp for all OS X version
-/// 
-/// This function use only non-deprecated way to get the
-/// display bits per pixel information.
-////////////////////////////////////////////////////////////
-size_t DisplayBitsPerPixel(CGDirectDisplayID displayId)
-{
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
-    
-    return CGDisplayBitsPerPixel(displayId);
-
-#else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-    
-    CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayId);
-
-    CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(mode);
-    if(CFStringCompare(pixEnc, CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-        return 32;
-    else if(CFStringCompare(pixEnc, CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-        return 16;
-    else if(CFStringCompare(pixEnc, CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-        return 8;
-
-    return 0; // no match
-    
-#endif
-}
-
-    
+/// Note : 
+///     Starting with 10.6, CGDisplayModeRef and CGDisplayCopyAllDisplayModes
+///     should be used instead of CFDictionaryRef and CGDisplayAvailableModes.
+///
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
+    
     std::vector<VideoMode> modes;
     
-    CGDisplayCount count = 0;
-    int err = CGGetActiveDisplayList(0, NULL, &count);
+    // Retrieve array of dictionaries representing display modes.
+    CFArrayRef displayModes = CGDisplayAvailableModes(CGMainDisplayID());
     
-    if (err != 0) {
-        sf::Err() << "Error when retrieving displays count";
+    if (displayModes == NULL) {
+        sf::Err() << "Couldn't get VideoMode for main display.";
         return modes;
     }
     
-    CGDirectDisplayID* displays = new CGDirectDisplayID[count];
-    err = CGGetActiveDisplayList(count, displays, &count);
-    
-    if (err != 0) {
-        sf::Err() << "Error when retrieving displays array";
-        return modes;
-    }
-    
-    for (int i = 0; i < count; ++i) {        
-        VideoMode mode(CGDisplayPixelsWide(displays[i]), 
-                       CGDisplayPixelsHigh(displays[i]), 
-                       DisplayBitsPerPixel(displays[i]));
+    // Loop on each mode and convert it into a sf::VideoMode object.
+    CFIndex const modesCount = CFArrayGetCount(displayModes);
+    for (CFIndex i = 0; i < modesCount; i++) {
+        CFDictionaryRef dictionary = (CFDictionaryRef)CFArrayGetValueAtIndex(displayModes, i);
         
-        // Add it only if it isn't already in the array.
-        if (std::find(modes.begin(), modes.end(), mode) == modes.end())
+        VideoMode mode = ConvertCGModeToSFMode(dictionary);
+        
+        // If not yet listed we add it to our modes array.
+        if (std::find(modes.begin(), modes.end(), mode) == modes.end()) {
             modes.push_back(mode);
+        }
     }
-    
-    delete[] displays;
     
     return modes;
+    
+#else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
+    
+    std::vector<VideoMode> modes;
+    
+    // Retrieve all modes available for main screen only.
+    CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
+    
+    if (cgmodes == NULL) {
+        sf::Err() << "Couldn't get VideoMode for main display.";
+        return modes;
+    }
+    
+    // Loop on each mode and convert it into a sf::VideoMode object.
+    CFIndex const modesCount = CFArrayGetCount(cgmodes);
+    for (CFIndex i = 0; i < modesCount; i++) {
+        CGDisplayModeRef cgmode = (CGDisplayModeRef)CFArrayGetValueAtIndex(cgmodes, i);
+        
+        VideoMode mode = ConvertCGModeToSFMode(cgmode);
+        
+        // If not yet listed we add it to our modes array.
+        if (std::find(modes.begin(), modes.end(), mode) == modes.end()) {
+            modes.push_back(mode);
+        }
+    }
+    
+    // Clean up memory.
+    CFRelease(cgmodes);
+    
+    return modes;
+    
+#endif
 }
 
 

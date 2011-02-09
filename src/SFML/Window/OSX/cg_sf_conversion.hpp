@@ -23,57 +23,60 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_CG_SF_CONVERSION_HPP
+#define SFML_CG_SF_CONVERSION_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
 #include <SFML/Window/VideoMode.hpp>
+#include <ApplicationServices/ApplicationServices.h>
 
+namespace sf
+{
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// Predefine some classes
-////////////////////////////////////////////////////////////
-namespace sf {
-    namespace priv {
-        class WindowImplCocoa;
-    }
-}
-
-@class SFOpenGLView;
-
-////////////////////////////////////////////////////////////
-/// Implementation of WindowImplDelegateProtocol for window managment.
+/// \brief Get bpp of a video mode for OS 10.6 or later.
 /// 
-/// Key and mouse events are delegated to its view.
-/// Window events are managed by this class.
+/// With OS 10.6 and later, Quartz doesn't use anymore dictionaries
+/// to represent video mode. Instead it uses a CGDisplayMode opaque type.
 ///
-/// Used when SFML handle everything and when a NSWindow* is given
-/// as handle to WindowImpl.
-///
-/// myFullscreenMode is bind to default video mode if we don't need to change screen size.
-///
-////////////////////////////////////////////////////////////
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060 // NSWindowDelegate is only define since 10.6
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol> {
-#else
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate> {
+//////////////////////////////////////////////////////////// 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
+size_t ModeBitsPerPixel(CGDisplayModeRef mode);
 #endif
-    NSWindow*                   myWindow;
-    SFOpenGLView*               myOGLView;
-    sf::priv::WindowImplCocoa*  myRequester;
-    sf::VideoMode               myFullscreenMode;
-}
 
 ////////////////////////////////////////////////////////////
-/// Create the SFML window with an external Cocoa window.
+/// \brief Get bpp for all OS X version.
 /// 
+/// This function use only non-deprecated way to get the
+/// display bits per pixel information for a given display id.
+///
 ////////////////////////////////////////////////////////////
--(id)initWithWindow:(NSWindow *)window;
+size_t DisplayBitsPerPixel(CGDirectDisplayID displayId);
 
 ////////////////////////////////////////////////////////////
-/// Create the SFML window "from scratch" (full SFML handling).
-/// 
+/// \brief Convert a Quartz video mode into a sf::VideoMode object.
+///
 ////////////////////////////////////////////////////////////
--(id)initWithMode:(sf::VideoMode const &)mode andStyle:(unsigned long)style;
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
+VideoMode ConvertCGModeToSFMode(CFDictionaryRef dictionary);
+#else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
+VideoMode ConvertCGModeToSFMode(CGDisplayModeRef cgmode);
+#endif
+    
+////////////////////////////////////////////////////////////
+/// \brief Convert a sf::VideoMode object into a Quartz video mode.
+///
+////////////////////////////////////////////////////////////
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
+CFDictionaryRef ConvertSFModeToCGMode(VideoMode sfmode);
+#else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
+CGDisplayModeRef ConvertSFModeToCGMode(VideoMode sfmode);
+#endif
+    
+} // namespace priv
+} // namespace sf
 
-@end
+#endif

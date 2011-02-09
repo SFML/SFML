@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -122,13 +122,13 @@ private:
     /// \note Must only be called from Ctor.
     ///
     /// \param shared       Context to share the new one with (can be NULL)
-    /// \param settings     Creation parameters
     /// \param bitsPerPixel bpp
+    /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
     void CreateContext(SFContext* shared, 
-                       const ContextSettings& settings,
-                       unsigned int bitsPerPixel);
+                       unsigned int bitsPerPixel, 
+                       const ContextSettings& settings);
     
     ////////////////////////////////////////////////////////////
     // Member data

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -31,20 +31,40 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Err.hpp>
+#include <ApplicationServices/ApplicationServices.h>
 
 #import <SFML/Window/OSX/SFWindowController.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFWindow.h>
 
+////////////////////////////////////////////////////////////
+/// SFWindowController class : Privates Methods Declaration
+///
+////////////////////////////////////////////////////////////
+@interface SFWindowController ()
+
+////////////////////////////////////////////////////////////
+/// Retrieves the screen height.
+/// 
+////////////////////////////////////////////////////////////
+-(float)screenHeight;
+
+////////////////////////////////////////////////////////////
+/// Retrives the title bar height.
+/// 
+////////////////////////////////////////////////////////////
+-(float)titlebarHeight;
+
+@end
+
 @implementation SFWindowController
 
 #pragma mark
 #pragma mark SFWindowController's methods
 
-
 ////////////////////////////////////////////////////////
--(id)initWithWindow:(NSWindow*)window
+-(id)initWithWindow:(NSWindow *)window
 {
     if (self = [super init]) {
         myRequester = 0;
@@ -83,13 +103,25 @@
 
 
 ////////////////////////////////////////////////////////
--(id)initWithMode:(sf::VideoMode const*)mode andStyle:(unsigned long)style
-{    
+-(id)initWithMode:(sf::VideoMode const &)mode andStyle:(unsigned long)style
+{
     if (self = [super init]) {
         myRequester = 0;
         
         // Create our window size.
-        NSRect rect = NSMakeRect(0, 0, mode->Width, mode->Height);
+        NSRect rect = NSZeroRect;
+        if (style & sf::Style::Fullscreen && mode != sf::VideoMode::GetDesktopMode()) {
+            // We use desktop mode to size the window
+            // but we set the back buffer size to 'mode' in applyContext method.
+            
+            myFullscreenMode = mode;
+            
+            sf::VideoMode dm = sf::VideoMode::GetDesktopMode();
+            rect = NSMakeRect(0, 0, dm.Width, dm.Height);
+            
+        } else { // no fullscreen requested.
+            rect = NSMakeRect(0, 0, mode.Width, mode.Height);
+        }
         
         // Convert the SFML window style to Cocoa window style.
         unsigned int nsStyle = NSBorderlessWindowMask;
@@ -119,21 +151,23 @@
          */
         
         if (myWindow == nil) {
-            
             sf::Err() 
             << "Could not create an instance of NSWindow "
             << "in (SFWindowController -initWithMode:andStyle:)."
             << std::endl;
-    
+            
             return self;
         }
         
         // Apply special feature for fullscreen window.
-        if (style & sf::Style::Fullscreen) {            
+        if (style & sf::Style::Fullscreen) {
             // We place the window above everything else.
-            [myWindow setLevel:NSMainMenuWindowLevel+1];
             [myWindow setOpaque:YES];
             [myWindow setHidesOnDeactivate:YES];
+            [myWindow setLevel:NSMainMenuWindowLevel+1];
+            
+            // And hide the menu bar
+            [NSMenu setMenuBarVisible:NO];
             
             /* ---------------------------
              * | Note for future version |
@@ -143,22 +177,27 @@
              * a new method -enterFullScreenMode:withOptions: 
              * which could be a good alternative.
              */
-        } else {
-            // Center the window to be cool =)
-            [myWindow center];
         }
+
+        // Center the window to be cool =)
+        [myWindow center];
         
         // Create the view.
         myOGLView = [[SFOpenGLView alloc] initWithFrame:[[myWindow contentView] frame]];
         
         if (myOGLView == nil) {
-            
             sf::Err()
             << "Could not create an instance of NSOpenGLView "
             << "in (SFWindowController -initWithMode:andStyle:)."
             << std::endl;
             
             return self;
+        }
+        
+        // If a fullscreen window was requested...
+        if (style & sf::Style::Fullscreen && mode != sf::VideoMode::GetDesktopMode()) {
+            /// ... we set the "read size" of the view (that is the back buffer size).
+            [myOGLView setRealSize:NSMakeSize(myFullscreenMode.Width, myFullscreenMode.Height)];
         }
         
         // Set the view to the window as its content view.
@@ -194,7 +233,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester
+-(void)setRequesterTo:(sf::priv::WindowImplCocoa *)requester
 {
     // Forward to the view.
     [myOGLView setRequesterTo:requester];
@@ -226,9 +265,9 @@
 ////////////////////////////////////////////////////////
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
 {
-    // Create a SFML event.
     if (myRequester == 0) return;
     
+    // Create a SFML event.
     myRequester->MouseMovedAt(x, y);
     
     // Flip for SFML window coordinate system
@@ -284,7 +323,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)changeTitle:(NSString*)title
+-(void)changeTitle:(NSString *)title
 {
     [myWindow setTitle:title];
 }
@@ -330,21 +369,21 @@
 ////////////////////////////////////////////////////////
 -(void)setIconTo:(unsigned int)width
               by:(unsigned int)height 
-            with:(sf::Uint8 const*)pixels
+            with:(sf::Uint8 const *)pixels
 {
     // Create an empty image representation.
     NSBitmapImageRep* bitmap = 
-        [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:0 // if 0 : only allocate memory
-                                                pixelsWide:width
-                                                pixelsHigh:height
-                                             bitsPerSample:8 // The number of bits used to specify 
-                                                             // one pixel in a single component of the data.
-                                           samplesPerPixel:4 // 3 if no alpha, 4 with it
-                                                  hasAlpha:YES
-                                                  isPlanar:NO   // I don't know what it is but it works
-                                            colorSpaceName:NSCalibratedRGBColorSpace
-                                               bytesPerRow:0    // 0 == determine automatically
-                                              bitsPerPixel:0];  // 0 == determine automatically
+    [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:0 // if 0 : only allocate memory
+                                            pixelsWide:width
+                                            pixelsHigh:height
+                                         bitsPerSample:8 // The number of bits used to specify 
+                                                         // one pixel in a single component of the data.
+                                       samplesPerPixel:4 // 3 if no alpha, 4 with it
+                                              hasAlpha:YES
+                                              isPlanar:NO   // I don't know what it is but it works
+                                        colorSpaceName:NSCalibratedRGBColorSpace
+                                           bytesPerRow:0    // 0 == determine automatically
+                                          bitsPerPixel:0];  // 0 == determine automatically
     
     // Load data pixels.
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1050 // We may need to define NSUInteger.
@@ -383,10 +422,22 @@
 
 
 ////////////////////////////////////////////////////////
--(void)applyContext:(NSOpenGLContext*)context
+-(void)applyContext:(NSOpenGLContext *)context
 {
     [myOGLView setOpenGLContext:context];
     [context setView:myOGLView];
+    
+    // If fullscreen was requested and the mode used to create the window
+    // was not the desktop mode, we change the back buffer size of the
+    // context.
+    if (myFullscreenMode != sf::VideoMode()) {
+        CGLContextObj cgcontext = (CGLContextObj)[context CGLContextObj];
+        
+        GLint dim[2] = {myFullscreenMode.Width, myFullscreenMode.Height};
+        
+        CGLSetParameter(cgcontext, kCGLCPSurfaceBackingSize, dim);
+        CGLEnable(cgcontext, kCGLCESurfaceBackingSize);
+    }
 }
 
 
@@ -405,7 +456,9 @@
 
 
 ////////////////////////////////////////////////////////
--(void)windowDidBecomeKey:(NSNotification*)notification {
+-(void)windowDidBecomeKey:(NSNotification *)notification
+{
+    // Send event.
     if (myRequester == 0) return;
     
     myRequester->WindowGainedFocus();
@@ -413,7 +466,9 @@
 
 
 ////////////////////////////////////////////////////////
--(void)windowDidResignKey:(NSNotification*)notification {
+-(void)windowDidResignKey:(NSNotification *)notification
+{
+    // Send event.
     if (myRequester == 0) return;
     
     myRequester->WindowLostFocus();
@@ -424,7 +479,8 @@
 #pragma mark Other methods
 
 ////////////////////////////////////////////////////////
--(float)screenHeight {
+-(float)screenHeight
+{
     // With Mac OS X 10.4 and 10.5, there is a shift upwards
     // (about 22px – that is the apple menu bar height). With 10.6 and later
     // we have a workaround : we hide the dock and get the visibleFrame of the
@@ -460,8 +516,10 @@
 #endif
 }
 
+
 ////////////////////////////////////////////////////////
--(float)titlebarHeight {
+-(float)titlebarHeight
+{
     return NSHeight([myWindow frame]) - NSHeight([[myWindow contentView] frame]);
 }
 

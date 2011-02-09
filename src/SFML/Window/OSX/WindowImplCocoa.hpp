@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -48,6 +48,8 @@ typedef NSOpenGLContext* NSOpenGLContextRef;
 
 #else // If C++
 
+typedef unsigned short unichar; // See NSString.h
+
 typedef void* WindowImplDelegateRef;
 typedef void* NSAutoreleasePoolRef;
 typedef void* NSOpenGLContextRef;
@@ -89,29 +91,155 @@ public:
     ////////////////////////////////////////////////////////////
     ~WindowImplCocoa();
     
-    /// Events
+    ////////////////////////////////////////////////////////////
+    /// \brief Window Closed Event – called by the cocoa window object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    ////////////////////////////////////////////////////////////
     void WindowClosed(void);
-    void WindowResized(unsigned int width, unsigned int height);
-    void WindowLostFocus(void);
-    void WindowGainedFocus(void);
-    void MouseDownAt(Mouse::Button button, int x, int y);
-    void MouseUpAt(Mouse::Button button, int x, int y);
-    void MouseMovedAt(int x, int y);
-    void MouseWheelScrolledAt(float delta, int x, int y);
-    void MouseMovedIn(void);
-    void MouseMovedOut(void);
-    void KeyDown(unsigned short keycode, unsigned int modifierFlags);
-    void KeyUp(unsigned short keycode, unsigned int modifierFlags);
-    void TextEntered(Uint32 charcode);
-    
-    static Key::Code NSKeyCodeToSFMLKeyCode(unsigned short rawchar);
     
     ////////////////////////////////////////////////////////////
-    /// 
+    /// \brief Window Resized Event – called by the cocoa window object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    /// \param width
+    /// \param height
+    ///
+    ////////////////////////////////////////////////////////////
+    void WindowResized(unsigned int width, unsigned int height);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Window Lost Focus Event – called by the cocoa window object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    ////////////////////////////////////////////////////////////
+    void WindowLostFocus(void);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Window Get Focus Event – called by the cocoa window object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    ////////////////////////////////////////////////////////////
+    void WindowGainedFocus(void);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse Down Event – called by the cocoa view object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    /// \param button
+    /// \param x
+    /// \param y
+    ///
+    ////////////////////////////////////////////////////////////
+    void MouseDownAt(Mouse::Button button, int x, int y);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse Up Event – called by the cocoa view object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    /// \param button
+    /// \param x
+    /// \param y
+    ///
+    ////////////////////////////////////////////////////////////
+    void MouseUpAt(Mouse::Button button, int x, int y);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse Moved Event – called by the cocoa view object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    /// \param x
+    /// \param y
+    ///
+    ////////////////////////////////////////////////////////////
+    void MouseMovedAt(int x, int y);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse Wheel Scrolled Event – called by the cocoa view object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    /// \param delta
+    /// \param x
+    /// \param y
+    ///
+    ////////////////////////////////////////////////////////////
+    void MouseWheelScrolledAt(float delta, int x, int y);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse In Event – called by the cocoa view object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    ////////////////////////////////////////////////////////////
+    void MouseMovedIn(void);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse Out Event – called by the cocoa view object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    ////////////////////////////////////////////////////////////
+    void MouseMovedOut(void);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Key Down Event – called by the cocoa view object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    /// \param keycode
+    /// \param modifierFlags
+    ///
+    ////////////////////////////////////////////////////////////
+    void KeyDown(unsigned short keycode, unsigned int modifierFlags);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Key Up Event – called by the cocoa view object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    /// \param keycode
+    /// \param modifierFlags
+    ///
+    ////////////////////////////////////////////////////////////
+    void KeyUp(unsigned short keycode, unsigned int modifierFlags);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Text Entred Event – called by the cocoa view object.
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    /// \param charcode Input unicode
+    ///
+    ////////////////////////////////////////////////////////////
+    void TextEntered(unichar charcode);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply the context to the view.
+    ///
+    /// Called by the SFML context object to finalize its creation.
+    ///
+    /// \param context The context to bind to the window
+    ///
     ////////////////////////////////////////////////////////////
     void ApplyContext(NSOpenGLContextRef context) const;
     
 private:
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert Cocoa keycode to SFML keycode.
+    ///
+    /// \param rawchar Cocoa keycode to convert
+    ///
+    ////////////////////////////////////////////////////////////
+    static Key::Code NSKeyCodeToSFMLKeyCode(unichar rawchar);
+    
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
@@ -199,11 +327,13 @@ private:
     
     ////////////////////////////////////////////////////////////
     /// \brief Construct the pool after ensuring NSApp is valid.
+    ///
     ////////////////////////////////////////////////////////////
     void SetUpPoolAndApplication(void);
     
     ////////////////////////////////////////////////////////////
     /// \brief Change the type of the current process to become a full GUI app.
+    ///
     ////////////////////////////////////////////////////////////
     static void SetUpProcessAsApplication(void);
     

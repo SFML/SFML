@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -38,23 +38,48 @@ namespace sf {
 /// \brief Spesialized NSOpenGLView
 ///
 /// Handle event and send them back to the requester.
+///
+/// In order to send correct mouse coordonate to the requester when
+/// the window is in fullscreen we use myRealSize to represent the
+/// back buffer size (see SFWindowController). If 'myRealSize' is
+/// bound to its default value we don't recompute the mouse position
+/// and assume it's correct.
+///
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView : NSOpenGLView {
     sf::priv::WindowImplCocoa*    myRequester;
     BOOL                          myUseKeyRepeat;
     NSTrackingRectTag             myTrackingTag;
     BOOL                          myMouseIsIn;
+    NSSize                        myRealSize;
 }
 
-
+////////////////////////////////////////////////////////////
+/// Create the SFML opengl view to fit the given area.
+/// 
+////////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect;
--(void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester;
 
+////////////////////////////////////////////////////////////
+/// Apply the given resquester to the view.
+/// 
+////////////////////////////////////////////////////////////
+-(void)setRequesterTo:(sf::priv::WindowImplCocoa *)requester;
+
+////////////////////////////////////////////////////////////
+/// Set the real size of view (it should be the back buffer size).
+/// If not set, or set to its default value NSZeroSize, the view
+/// won't recompute the mouse coordinates before sending them
+/// to the requester.
+/// 
+////////////////////////////////////////////////////////////
+-(void)setRealSize:(NSSize)newSize;
+
+////////////////////////////////////////////////////////////
+/// Adjust key repeat configuration.
+/// 
+////////////////////////////////////////////////////////////
 -(void)enableKeyRepeat;
 -(void)disableKeyRepeat;
-
--(void)frameDidChange:(NSNotification*)notification;
-
--(BOOL)isMouseInside;
 
 @end

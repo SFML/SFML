@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -30,6 +30,26 @@
 
 #import <SFML/Window/OSX/SFOpenGLView.h>
 
+////////////////////////////////////////////////////////////
+/// SFOpenGLView class : Privates Methods Declaration
+///
+////////////////////////////////////////////////////////////
+@interface SFOpenGLView ()
+
+////////////////////////////////////////////////////////////
+/// Handle view resized event.
+/// 
+////////////////////////////////////////////////////////////
+-(void)frameDidChange:(NSNotification *)notification;
+
+////////////////////////////////////////////////////////////
+/// Establish if the mouse is inside or outside the OpenGL view.
+/// 
+////////////////////////////////////////////////////////////
+-(BOOL)isMouseInside;
+
+@end
+
 @implementation SFOpenGLView
 
 #pragma mark
@@ -42,6 +62,8 @@
         [self setRequesterTo:0];
         [self enableKeyRepeat];
         
+        myRealSize = NSZeroSize;
+        
         // Register for mouse-move event
         myMouseIsIn = [self isMouseInside];
         myTrackingTag = [self addTrackingRect:[self frame]
@@ -51,10 +73,10 @@
         
         // Register for resize event
         NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self 
+        [center addObserver:self
                    selector:@selector(frameDidChange:)
                        name:NSViewFrameDidChangeNotification
-                     object:nil];
+                     object:self];
     }
 
     return self;
@@ -62,9 +84,16 @@
 
 
 ////////////////////////////////////////////////////////
--(void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester
+-(void)setRequesterTo:(sf::priv::WindowImplCocoa *)requester
 {
     myRequester = requester;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)setRealSize:(NSSize)newSize
+{
+    myRealSize = newSize;
 }
 
 
@@ -83,7 +112,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)frameDidChange:(NSNotification*)notification
+-(void)frameDidChange:(NSNotification *)notification
 {
     // Adapt tracking area for mouse mouse event.
     [self removeTrackingRect:myTrackingTag];
@@ -154,11 +183,12 @@
 
 
 ////////////////////////////////////////////////////////
--(void)mouseDown:(NSEvent*)theEvent 
+-(void)mouseDown:(NSEvent *)theEvent 
 {
     if (myRequester == 0) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
     myRequester->MouseDownAt(sf::Mouse::Left, loc.x, h - loc.y);
@@ -166,19 +196,28 @@
 
 
 ////////////////////////////////////////////////////////
--(void)mouseUp:(NSEvent*)theEvent
+-(void)mouseUp:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseUpAt(sf::Mouse::Left, loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseUpAt(sf::Mouse::Left, loc.x, loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)mouseMoved:(NSEvent*)theEvent
+-(void)mouseMoved:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
@@ -186,26 +225,44 @@
     if (!myMouseIsIn) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseMovedAt(loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseMovedAt(loc.x, loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)scrollWheel:(NSEvent*)theEvent
+-(void)scrollWheel:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseWheelScrolledAt([theEvent deltaY], loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseWheelScrolledAt([theEvent deltaY], loc.x, loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)mouseEntered:(NSEvent*)theEvent
+-(void)mouseEntered:(NSEvent *)theEvent
 {
     myMouseIsIn = YES;
     
@@ -216,7 +273,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)mouseExited:(NSEvent*)theEvent
+-(void)mouseExited:(NSEvent *)theEvent
 {
     myMouseIsIn = NO;
     
@@ -227,35 +284,54 @@
 
 
 ////////////////////////////////////////////////////////
--(void)rightMouseDown:(NSEvent*)theEvent
+-(void)rightMouseDown:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseDownAt(sf::Mouse::Right, loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseDownAt(sf::Mouse::Right, loc.x, loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)rightMouseUp:(NSEvent*)theEvent
+-(void)rightMouseUp:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseUpAt(sf::Mouse::Right, loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseUpAt(sf::Mouse::Right, loc.x, loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)otherMouseDown:(NSEvent*)theEvent
+-(void)otherMouseDown:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     sf::Mouse::Button button;
     switch ([theEvent buttonNumber]) {
         case 2:
@@ -270,18 +346,28 @@
         default:
             break;
     }
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseDownAt(button, loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseDownAt(button, loc.x, loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)otherMouseUp:(NSEvent*)theEvent
+-(void)otherMouseUp:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     sf::Mouse::Button button;
     switch ([theEvent buttonNumber]) {
         case 2:
@@ -296,14 +382,23 @@
         default:
             break;
     }
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseUpAt(button, loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseUpAt(button, loc.x, loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)rightMouseDragged:(NSEvent*)theEvent
+-(void)rightMouseDragged:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
@@ -311,14 +406,23 @@
     if (!myMouseIsIn) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseMovedAt(loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseMovedAt(loc.x, loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)mouseDragged:(NSEvent*)theEvent
+-(void)mouseDragged:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
@@ -326,14 +430,23 @@
     if (!myMouseIsIn) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseMovedAt(loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseMovedAt(loc.x, loc.y);
 }
 
 
 ////////////////////////////////////////////////////////
--(void)otherMouseDragged:(NSEvent*)theEvent
+-(void)otherMouseDragged:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
@@ -341,9 +454,18 @@
     if (!myMouseIsIn) return;
     
     NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
-    myRequester->MouseMovedAt(loc.x, h - loc.y);
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    myRequester->MouseMovedAt(loc.x, loc.y);
 }
 
 
@@ -352,36 +474,42 @@
 
 
 ////////////////////////////////////////////////////////
--(void)keyDown:(NSEvent*)theEvent
+-(void)keyDown:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
     if (myUseKeyRepeat || ![theEvent isARepeat])
         myRequester->KeyDown([theEvent keyCode], [theEvent modifierFlags]);
-    
-    if ((myUseKeyRepeat || ![theEvent isARepeat]) && [[theEvent characters] length] > 0) {
-        /// From NSEvent.h :
-        /* 
-         * Unicodes we reserve for function keys on the keyboard, 
-         * OpenStep reserves the range 0xF700-0xF8FF for this purpose.
-         * The availability of various keys will be system dependent.
-         */
-        /// And 0x35 is the Escape key.
-        unichar ch = [[theEvent characters] characterAtIndex:0];
-        if ([theEvent keyCode] != 0x35 && 
-            (ch < 0xf700 || ch > 0xf8ff)) {
-            myRequester->TextEntered(ch);
-        }
+
+    if (myUseKeyRepeat || ![theEvent isARepeat]) {
+        // Let's see if its a valid text.
+        // -interpretKeyEvents: will call -insertText: if theEvent is a valid caracter.
+        [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
     }
 }
 
 
 ////////////////////////////////////////////////////////
--(void)keyUp:(NSEvent*)theEvent
+-(void)keyUp:(NSEvent *)theEvent
 {
     if (myRequester == 0) return;
     
     myRequester->KeyUp([theEvent keyCode], [theEvent modifierFlags]);
+}
+
+
+////////////////////////////////////////////////////////
+-(void)insertText:(id)aString
+{
+    // aString can be either a NSString or a NSAttributedString.
+    if ([aString isKindOfClass:[NSAttributedString class]]) {
+        aString = [aString string]; // We want a NSString.
+    }
+    
+    if (myRequester == 0 || [aString length] == 0) return;
+    
+    // It's a valid TextEntered event.
+    myRequester->TextEntered([aString characterAtIndex:0]);
 }
 
 @end

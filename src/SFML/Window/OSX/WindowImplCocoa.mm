@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2010 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -92,7 +92,7 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
     myWidth = mode.Width;
     myHeight = mode.Height;
     
-    myDelegate = [[SFWindowController alloc] initWithMode:&mode andStyle:style];
+    myDelegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
     [myDelegate changeTitle:stringToNSString(title)];
     [myDelegate setRequesterTo:this];
 }
@@ -108,13 +108,13 @@ WindowImplCocoa::~WindowImplCocoa()
 }
     
     
-////////////////////////////////////////////////////////////    
+////////////////////////////////////////////////////////////
 void WindowImplCocoa::ApplyContext(NSOpenGLContextRef context) const
 {
     [myDelegate applyContext:context];
 }
-    
-    
+
+
 #pragma mark
 #pragma mark WindowImplCocoa's window-event methods
     
@@ -281,7 +281,7 @@ void WindowImplCocoa::KeyUp(unsigned short keycode, unsigned int modifierFlags)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::TextEntered(Uint32 charcode)
+void WindowImplCocoa::TextEntered(unichar charcode)
 {
     Event event;
     event.Type = Event::TextEntered;
