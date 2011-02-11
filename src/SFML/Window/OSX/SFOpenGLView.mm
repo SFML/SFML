@@ -178,6 +178,17 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 ////////////////////////////////////////////////////////
 -(void)frameDidChange:(NSNotification *)notification
 {
+    // Update mouse internal state.
+    BOOL mouseWasIn = myMouseIsIn;
+    myMouseIsIn = [self isMouseInside];
+    
+    // Send event if needed.
+    if (mouseWasIn && !myMouseIsIn) {
+        [self mouseExited:nil];
+    } else if (!mouseWasIn && myMouseIsIn) {
+        [self mouseEntered:nil];
+    }
+    
     // Adapt tracking area for mouse mouse event.
     [self removeTrackingRect:myTrackingTag];
     myTrackingTag = [self addTrackingRect:[self frame]

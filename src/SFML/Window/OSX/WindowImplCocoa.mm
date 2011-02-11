@@ -88,6 +88,9 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
 {
     SetUpPoolAndApplication();
     
+    // Transform the app process.
+    SetUpProcessAsApplication();
+    
     // Don't forget to update our parent (that is, WindowImpl) size :
     myWidth = mode.Width;
     myHeight = mode.Height;
@@ -374,9 +377,6 @@ void WindowImplCocoa::SetUpPoolAndApplication(void)
     
     // Create the pool.
     myPool = [[NSAutoreleasePool alloc] init];
-    
-    // Transform the app process.
-    SetUpProcessAsApplication();
 }
 
     
