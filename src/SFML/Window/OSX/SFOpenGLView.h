@@ -45,6 +45,9 @@ namespace sf {
 /// bound to its default value we don't recompute the mouse position
 /// and assume it's correct.
 ///
+/// As I don't have the right control keycode I cannot implement left-right
+/// recognition for this key. (See SFOpenGLView.mm for more info.)
+///
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView : NSOpenGLView {
     sf::priv::WindowImplCocoa*    myRequester;
@@ -52,6 +55,15 @@ namespace sf {
     NSTrackingRectTag             myTrackingTag;
     BOOL                          myMouseIsIn;
     NSSize                        myRealSize;
+    
+    /// 'modifiers' state
+    BOOL myRightShiftWasDown;
+    BOOL myLeftShiftWasDown;
+    BOOL myRightCommandWasDown;
+    BOOL myLeftCommandWasDown;
+    BOOL myRightAlternateWasDown;
+    BOOL myLeftAlternateWasDown;
+    BOOL myControlWasDown;
 }
 
 ////////////////////////////////////////////////////////////

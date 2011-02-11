@@ -194,22 +194,20 @@ public:
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param keycode
-    /// \param modifierFlags
+    /// \param key
     ///
     ////////////////////////////////////////////////////////////
-    void KeyDown(unsigned short keycode, unsigned int modifierFlags);
+    void KeyDown(Event::KeyEvent key);
     
     ////////////////////////////////////////////////////////////
     /// \brief Key Up Event – called by the cocoa view object.
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param keycode
-    /// \param modifierFlags
+    /// \param key
     ///
     ////////////////////////////////////////////////////////////
-    void KeyUp(unsigned short keycode, unsigned int modifierFlags);
+    void KeyUp(Event::KeyEvent key);
     
     ////////////////////////////////////////////////////////////
     /// \brief Text Entred Event – called by the cocoa view object.
@@ -232,14 +230,6 @@ public:
     void ApplyContext(NSOpenGLContextRef context) const;
     
 private:
-    ////////////////////////////////////////////////////////////
-    /// \brief Convert Cocoa keycode to SFML keycode.
-    ///
-    /// \param rawchar Cocoa keycode to convert
-    ///
-    ////////////////////////////////////////////////////////////
-    static Key::Code NSKeyCodeToSFMLKeyCode(unichar rawchar);
-    
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///

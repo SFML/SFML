@@ -66,7 +66,7 @@
 ////////////////////////////////////////////////////////
 -(id)initWithWindow:(NSWindow *)window
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         myRequester = 0;
         
         // Retain the window for our own use.
@@ -105,7 +105,7 @@
 ////////////////////////////////////////////////////////
 -(id)initWithMode:(sf::VideoMode const &)mode andStyle:(unsigned long)style
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         myRequester = 0;
         
         // Create our window size.
