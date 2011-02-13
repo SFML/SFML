@@ -162,7 +162,6 @@ void Init_window( void )
 		rb_raise( rb_eRuntimeError, "This module depends on sfml-system" );
 	}
 	
-	
 	globalVector2Class = rb_define_class_under(globalSFMLNamespace, "Vector2", rb_cObject );
 	globalNonCopyableModule = rb_define_module_under(globalSFMLNamespace, "NonCopyable");
 	

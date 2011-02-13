@@ -25,6 +25,8 @@
 
 #include "ruby.h"
 
+extern VALUE globalVector2Class;
+
 VALUE Vector2_GetX( VALUE self );
 VALUE Vector2_GetY( VALUE self );
 

@@ -25,6 +25,8 @@
 
 #include "ruby.h"
 
+extern VALUE globalVector3Class;
+
 VALUE Vector3_GetX( VALUE self );
 VALUE Vector3_GetY( VALUE self );
 VALUE Vector3_GetZ( VALUE self );

@@ -70,15 +70,15 @@ static void CreateBlendEnum( void )
 void Init_graphics( void )
 {
 	/* SFML namespace which contains the classes of this module. */
-	/*globalSFMLNamespace = rb_define_module( "SFML" );*/
+	globalSFMLNamespace = rb_define_module( "SFML" );
 	if( CheckDependencies() == false )
 	{
 		rb_raise( rb_eRuntimeError, "This module depends on sfml-window" );
 	}
-	/*globalVector2Class = RetrieveSFMLClass( "Vector2" );
-	globalVector3Class = RetrieveSFMLClass( "Vector3" );*/
+	globalVector2Class = RetrieveSFMLClass( "Vector2" );
+	globalVector3Class = RetrieveSFMLClass( "Vector3" );
 	globalWindowClass  = RetrieveSFMLClass( "Window" );
-	/*globalNonCopyableModule = RetrieveSFMLClass( "NonCopyable" );*/
+	globalNonCopyableModule = RetrieveSFMLClass( "NonCopyable" );
 	rb_define_const(globalSFMLNamespace, "GraphicsLoaded", Qtrue);
 
 	CreateBlendEnum();

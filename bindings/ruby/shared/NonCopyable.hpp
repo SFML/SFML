@@ -25,6 +25,8 @@
 
 #include "ruby.h"
 
+extern VALUE globalNonCopyableModule;
+
 void Init_NonCopyable( void );
 
 #endif // SFML_RUBYEXT_NON_COPYABLE_HEADER_
