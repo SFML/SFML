@@ -451,7 +451,7 @@ static VALUE Drawable_Rotate( VALUE self, VALUE aRotation )
  */
 static VALUE Drawable_TransformToLocal( VALUE self, VALUE aPoint )
 {
-	VALUE point = Vector2_ForceType( point );
+	VALUE point = Vector2_ForceType( aPoint );
 	rbDrawable *object = NULL;
 	Data_Get_Struct( self, rbDrawable, object );
 	sf::Vector2f newPoint = object->TransformToLocal( sf::Vector2f( NUM2DBL( Vector2_GetX( point ) ), 
@@ -470,7 +470,7 @@ static VALUE Drawable_TransformToLocal( VALUE self, VALUE aPoint )
  */
 static VALUE Drawable_TransformToGlobal( VALUE self, VALUE aPoint )
 {
-	VALUE point = Vector2_ForceType(point);
+	VALUE point = Vector2_ForceType(aPoint);
 	rbDrawable *object = NULL;
 	Data_Get_Struct( self, rbDrawable, object );
 	sf::Vector2f newPoint = object->TransformToGlobal( sf::Vector2f( NUM2DBL( Vector2_GetX( point ) ), 
