@@ -21,23 +21,11 @@
  */
  
 #include "main.hpp"
+#include "global.hpp"
 #include "Clock.hpp"
 #include "Vector2.hpp"
 #include "Vector3.hpp"
 #include "NonCopyable.hpp"
-
-VALUE globalSFMLNamespace;
-
-VALUE RetrieveSFMLClass( const char * aName )
-{
-	ID name = rb_intern( aName );
-	if( rb_cvar_defined( globalSFMLNamespace, name ) == Qfalse )
-	{
-		rb_raise( rb_eRuntimeError, "This module depends on SFML::%s", aName );
-	}
-	
-	return rb_cvar_get( globalSFMLNamespace, name );
-}
 
 void Init_system( void )
 {

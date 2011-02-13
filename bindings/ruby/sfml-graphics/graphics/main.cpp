@@ -21,6 +21,9 @@
  */
 
 #include "main.hpp"
+#include "Vector2.hpp"
+#include "Vector3.hpp"
+#include "NonCopyable.hpp"
 #include "Color.hpp"
 #include "Rect.hpp"
 #include "Drawable.hpp"
@@ -39,14 +42,10 @@
 
 #include <SFML/Graphics.hpp>
 
-VALUE globalSFMLNamespace;
 VALUE globalBlendNamespace;
 
 /* External classes */
-VALUE globalVector2Class;
-VALUE globalVector3Class;
 VALUE globalWindowClass;
-VALUE globalNonCopyableModule;
 
 static bool CheckDependencies( void )
 {
@@ -71,19 +70,19 @@ static void CreateBlendEnum( void )
 void Init_graphics( void )
 {
 	/* SFML namespace which contains the classes of this module. */
-	globalSFMLNamespace = rb_define_module( "SFML" );
+	/*globalSFMLNamespace = rb_define_module( "SFML" );*/
 	if( CheckDependencies() == false )
 	{
 		rb_raise( rb_eRuntimeError, "This module depends on sfml-window" );
 	}
-	globalVector2Class = RetrieveSFMLClass( "Vector2" );
-	globalVector3Class = RetrieveSFMLClass( "Vector3" );
+	/*globalVector2Class = RetrieveSFMLClass( "Vector2" );
+	globalVector3Class = RetrieveSFMLClass( "Vector3" );*/
 	globalWindowClass  = RetrieveSFMLClass( "Window" );
-	globalNonCopyableModule = RetrieveSFMLClass( "NonCopyable" );
+	/*globalNonCopyableModule = RetrieveSFMLClass( "NonCopyable" );*/
 	rb_define_const(globalSFMLNamespace, "GraphicsLoaded", Qtrue);
-	
+
 	CreateBlendEnum();
-  
+
 	Init_Color();
 	Init_Rect();
 	Init_Drawable();

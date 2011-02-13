@@ -24,7 +24,7 @@
 #define SFML_RUBYEXT_WINDOW_MAIN_HEADER_
 
 #include "ruby.h"
-#include "../../sfml-system/system/main.hpp"
+#include "global.hpp"
 
 // Ruby initiation function
 extern "C" void Init_window( void );

@@ -21,7 +21,7 @@
  */
  
 #include "Vector3.hpp"
-#include "main.hpp"
+#include "global.hpp"
 
 VALUE globalVector3Class;
 

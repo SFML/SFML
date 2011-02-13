@@ -21,7 +21,7 @@
  */
  
 #include "NonCopyable.hpp"
-#include "main.hpp"
+#include "global.hpp"
 
 VALUE globalNonCopyableModule;
 

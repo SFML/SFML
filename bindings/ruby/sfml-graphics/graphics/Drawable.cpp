@@ -470,7 +470,7 @@ static VALUE Drawable_TransformToLocal( VALUE self, VALUE aPoint )
  */
 static VALUE Drawable_TransformToGlobal( VALUE self, VALUE aPoint )
 {
-	VALUE point = Vector2_ForceType( point );
+	VALUE point = Vector2_ForceType(point);
 	rbDrawable *object = NULL;
 	Data_Get_Struct( self, rbDrawable, object );
 	sf::Vector2f newPoint = object->TransformToGlobal( sf::Vector2f( NUM2DBL( Vector2_GetX( point ) ), 

@@ -20,32 +20,17 @@
  *    source distribution.
  */
  
-#include "main.hpp"
 #include "global.hpp"
-#include "Vector2.hpp"
-#include "Vector3.hpp"
-#include "NonCopyable.hpp"
 
-static bool CheckDependencies( void )
+VALUE globalSFMLNamespace;
+
+VALUE RetrieveSFMLClass( const char * aName )
 {
-	if( rb_cvar_defined( globalSFMLNamespace, rb_intern( "SystemLoaded" ) ) == Qtrue )
+	ID name = rb_intern( aName );
+	if( rb_cvar_defined( globalSFMLNamespace, name ) == Qfalse )
 	{
-		return true;
+		rb_raise( rb_eRuntimeError, "This module depends on SFML::%s", aName );
 	}
-
-	return false;
-}
-
-void Init_audio( void )
-{
-	/* SFML namespace which contains the classes of this module. */
-	globalSFMLNamespace = rb_define_module( "SFML" );
-	if( CheckDependencies() == false )
-	{
-		rb_raise( rb_eRuntimeError, "This module depends on sfml-window" );
-	}
-	/*globalVector2Class = RetrieveSFMLClass( "Vector2" );
-	globalVector3Class = RetrieveSFMLClass( "Vector3" );
-	globalNonCopyableModule = RetrieveSFMLClass( "NonCopyable" );*/
-	rb_define_const(globalSFMLNamespace, "AudioLoaded", Qtrue);
+	
+	return rb_cvar_get( globalSFMLNamespace, name );
 }

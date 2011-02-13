@@ -21,7 +21,7 @@
  */
  
 #include "Vector2.hpp"
-#include "main.hpp"
+#include "global.hpp"
 
 VALUE globalVector2Class;
 

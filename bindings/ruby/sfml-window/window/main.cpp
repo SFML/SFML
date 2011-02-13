@@ -21,6 +21,8 @@
  */
 
 #include "main.hpp"
+#include "Vector2.hpp"
+#include "NonCopyable.hpp"
 #include "Context.hpp"
 #include "ContextSettings.hpp"
 #include "Event.hpp"
@@ -33,15 +35,12 @@
 #include <iostream>
 
 /* SFML Namespace which contains all classes in this module. */
-VALUE globalSFMLNamespace;
 VALUE globalKeyNamespace;
 VALUE globalMouseNamespace;
 VALUE globalJoyNamespace;
 VALUE globalStyleNamespace;
-
-/* External classes */
-VALUE globalVector2Class;
-VALUE globalNonCopyableModule;
+extern VALUE globalVector2Class;
+extern VALUE globalNonCopyableModule;
 
 static const char * keyNamesMisc[] =
 {
@@ -163,8 +162,9 @@ void Init_window( void )
 		rb_raise( rb_eRuntimeError, "This module depends on sfml-system" );
 	}
 	
-	globalVector2Class = RetrieveSFMLClass( "Vector2" );
-	globalNonCopyableModule = RetrieveSFMLClass( "NonCopyable" );
+	
+	globalVector2Class = rb_define_class_under(globalSFMLNamespace, "Vector2", rb_cObject );
+	globalNonCopyableModule = rb_define_module_under(globalSFMLNamespace, "NonCopyable");
 	
 	rb_define_const( globalSFMLNamespace, "WindowLoaded", Qtrue );
 	
