@@ -49,10 +49,10 @@
     }
     
     // If there are some other event read them.
-    while (event = [NSApp nextEventMatchingMask:NSAnyEventMask
-                                      untilDate:[NSDate distantPast]
-                                         inMode:NSDefaultRunLoopMode
-                                        dequeue:YES]) // Remove the event from the dequeue
+    while ((event = [NSApp nextEventMatchingMask:NSAnyEventMask
+                                       untilDate:[NSDate distantPast]
+                                          inMode:NSDefaultRunLoopMode
+                                         dequeue:YES])) // Remove the event from the dequeue
     {
         [NSApp sendEvent:event];
     }

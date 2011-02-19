@@ -105,6 +105,19 @@
 ////////////////////////////////////////////////////////
 -(id)initWithMode:(sf::VideoMode const &)mode andStyle:(unsigned long)style
 {
+    // If we are not on the main thread we stop here and advice the user.
+    if ([NSThread currentThread] != [NSThread mainThread]) {
+        /*
+         * See http://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
+         * for more information.
+         */
+        sf::Err()
+        << "Cannot create a window from a worker thread. (OS X limitation)"
+        << std::endl;
+        
+        return nil;
+    }
+
     if ((self = [super init])) {
         myRequester = 0;
         
@@ -414,6 +427,19 @@
 ////////////////////////////////////////////////////////
 -(void)processEventWithBlockingMode:(BOOL)block
 {
+    // If we are not on the main thread we stop here and advice the user.
+    if ([NSThread currentThread] != [NSThread mainThread]) {
+        /*
+         * See http://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
+         * for more information.
+         */
+        sf::Err()
+        << "Cannot fetch event from a worker thread. (OS X limitation)"
+        << std::endl;
+        
+        return;
+    }
+    
     // If we don't have a requester we don't fetch event.
     if (myRequester != 0) {
         [SFApplication processEventWithBlockingMode:block];

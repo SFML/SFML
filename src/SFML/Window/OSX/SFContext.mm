@@ -30,7 +30,6 @@
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
 
-
 /*
  * DISCUSSION :
  * ============
@@ -57,6 +56,9 @@ SFContext::SFContext(SFContext* shared)
     
     // Create the context
     CreateContext(shared, 0, ContextSettings(0, 0, 0));
+    
+    // Activate the context
+    SetActive(true);
 }
 
     
@@ -72,6 +74,9 @@ SFContext::SFContext(SFContext* shared, const WindowImpl* owner,
     // Apply context.
     WindowImplCocoa const * ownerCocoa = static_cast<WindowImplCocoa const *>(owner);
     ownerCocoa->ApplyContext(myContext);
+    
+    // Activate the context
+    SetActive(true);
 }
 
     
@@ -106,11 +111,11 @@ void SFContext::Display()
 void SFContext::EnableVerticalSync(bool enabled)
 {
     // Make compiler happy
-#ifdef USE_OS_X_VERSION_10_4
-    long int swapInterval = enabled ? 1 : 0;
-#else /* USE_OS_X_VERSION_10_6 */
-    GLint swapInterval = enabled ? 1 : 0;
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
+    typedef int GLint;
 #endif
+    
+    GLint swapInterval = enabled ? 1 : 0;
     
     [myContext setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
 }
