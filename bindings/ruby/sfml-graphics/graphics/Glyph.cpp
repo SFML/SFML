@@ -43,15 +43,6 @@ static VALUE Glyph_Initialize( VALUE self )
 	return self;
 }
 
-static VALUE Glyph_InitializeCopy( VALUE self, VALUE aSource )
-{
-	sf::Glyph *object = NULL;
-	Data_Get_Struct( self, sf::Glyph, object );
-	sf::Glyph *source = NULL;
-	Data_Get_Struct( aSource, sf::Glyph, source );
-	*object = *source;
-}
-
 void Init_Glyph( void )
 {
 /* SFML namespace which contains the classes of this module. */
@@ -70,7 +61,6 @@ void Init_Glyph( void )
 	
 	// Instance methods
 	rb_define_method( globalGlyphClass, "initialize", Glyph_Initialize, 0 );
-	rb_define_method( globalGlyphClass, "initialize_copy", Glyph_InitializeCopy, 1 );
 	
 	// Attribute accessors
 	rb_define_attr( globalGlyphClass, "advance", 1, 1 );

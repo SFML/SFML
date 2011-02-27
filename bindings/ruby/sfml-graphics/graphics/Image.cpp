@@ -524,8 +524,8 @@ static VALUE Image_GetTexCoords( VALUE self, VALUE aRectangle )
  *
  * Will create a new image instance.
  * 
- * If a filename argument is specified then image#loadFromFile will be called on the created instance. If width, height
- * and pixels are specified then image#loadFromPixels will be called on the created instance.
+ * If a filename argument is specified then Image#loadFromFile will be called on the created instance. If width, height
+ * and pixels are specified then Image#loadFromPixels will be called on the created instance.
  */
 static VALUE Image_Initialize( int argc, VALUE *args, VALUE self )
 {
@@ -549,17 +549,10 @@ static VALUE Image_InitializeCopy( VALUE self, VALUE aSource )
 	*object = *source;
 }
 
-/* call-seq:
- *   Image.new()	-> image
- *
- * Creates an image instance for us.
- */
-static VALUE Image_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Image_Alloc( VALUE aKlass )
 {
 	sf::Image *object = new sf::Image();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Image_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Image_Free, object );
 }
 
 /* call-seq:
@@ -624,7 +617,8 @@ void Init_Image( void )
 	globalImageClass = rb_define_class_under( sfml, "Image", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalImageClass, "new", Image_New, -1 );
+	//rb_define_singleton_method( globalImageClass, "new", Image_New, -1 );
+	rb_define_alloc_func( globalImageClass, Image_Alloc );
 	rb_define_singleton_method( globalImageClass, "getMaximumSize", Image_GetMaximumSize, 0 );
 	
 	// Instance methods

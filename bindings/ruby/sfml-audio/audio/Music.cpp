@@ -86,12 +86,10 @@ static VALUE Music_GetDuration( VALUE self )
 	return rb_float_new( object->GetDuration() );
 }
 
-static VALUE Music_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Music_Alloc( VALUE aKlass )
 {
 	sf::Music *object = new sf::Music();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Music_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Music_Free, object );
 }
 
 void Init_Music( void )
@@ -134,7 +132,8 @@ void Init_Music( void )
 	globalMusicClass = rb_define_class_under( sfml, "Music", globalSoundStreamClass );
 
 	// Class methods
-	rb_define_singleton_method( globalMusicClass, "new", Music_New, -1 );
+	//rb_define_singleton_method( globalMusicClass, "new", Music_New, -1 );
+	rb_define_alloc_func( globalMusicClass, Music_Alloc );
 	
 	// Instance methods
 	rb_define_method( globalMusicClass, "initialize", Music_Initialize, -1 );

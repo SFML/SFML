@@ -231,12 +231,10 @@ static VALUE SoundBuffer_InitializeCopy( VALUE self, VALUE aSource )
  *
  * Creates an sound buffer instance for us.
  */
-static VALUE SoundBuffer_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE SoundBuffer_Alloc( VALUE aKlass )
 {
 	sf::SoundBuffer *object = new sf::SoundBuffer();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, SoundBuffer_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, SoundBuffer_Free, object );
 }
 
 void Init_SoundBuffer( void )
@@ -294,7 +292,8 @@ void Init_SoundBuffer( void )
 	globalSoundBufferClass = rb_define_class_under( sfml, "SoundBuffer", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalSoundBufferClass, "new", SoundBuffer_New, -1 );
+	//rb_define_singleton_method( globalSoundBufferClass, "new", SoundBuffer_New, -1 );
+	rb_define_alloc_func( globalSoundBufferClass, SoundBuffer_Alloc );
 	
 	// Instance methods
 	rb_define_method( globalSoundBufferClass, "initialize", SoundBuffer_Initialize, -1 );

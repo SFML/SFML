@@ -620,12 +620,10 @@ static VALUE Window_Initialize( int argc, VALUE *args, VALUE self )
 	return self;
 }
 
-static VALUE Window_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Window_Alloc( VALUE aKlass )
 {
 	sf::Window *object = new sf::Window();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Window_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Window_Free, object );
 }
 
 void Init_Window( void )
@@ -680,7 +678,8 @@ void Init_Window( void )
 	rb_include_module( globalWindowClass, globalNonCopyableModule );
 	
 	// Class methods
-	rb_define_singleton_method( globalWindowClass, "new", Window_New , -1 );
+	//rb_define_singleton_method( globalWindowClass, "new", Window_New , -1 );
+	rb_define_alloc_func( globalWindowClass, Window_Alloc );
 	
 	// Instance methods
 	rb_define_method( globalWindowClass, "initialize", Window_Initialize, -1 );

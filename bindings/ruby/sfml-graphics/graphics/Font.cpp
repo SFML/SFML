@@ -156,17 +156,10 @@ static VALUE Font_InitializeCopy( VALUE self, VALUE aSource )
 	*object = *source;
 }
 
-/* call-seq:
- *   Font.new()	-> font
- *
- * Creates an empty font 
- */
-static VALUE Font_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Font_Alloc( VALUE aKlass )
 {
 	sf::Font *object = new sf::Font();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Font_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Font_Free, object );
 }
 
 /* call-seq:
@@ -241,7 +234,8 @@ void Init_Font( void )
 	globalFontClass = rb_define_class_under( sfml, "Font", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalFontClass, "new", Font_New, -1 );
+	//rb_define_singleton_method( globalFontClass, "new", Font_New, -1 );
+	rb_define_alloc_func( globalFontClass, Font_Alloc );
 	rb_define_singleton_method( globalFontClass, "getDefaultFont", Font_GetDefaultFont, 0 );
 	
 	// Instance methods

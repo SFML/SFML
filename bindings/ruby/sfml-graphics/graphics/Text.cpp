@@ -229,12 +229,10 @@ static VALUE Text_GetRect( VALUE self )
 		rb_float_new( rect.Width ), rb_float_new( rect.Height ) );
 }
 
-static VALUE Text_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Text_Alloc( VALUE aKlass )
 {
 	sf::Text *object = new sf::Text();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Text_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Text_Free, object );
 }
 
 static void CreateStyleEnum()
@@ -293,7 +291,8 @@ void Init_Text( void )
 	CreateStyleEnum();
 	
 	// Class methods
-	rb_define_singleton_method( globalTextClass, "new", Text_New, -1 );
+	//rb_define_singleton_method( globalTextClass, "new", Text_New, -1 );
+	rb_define_alloc_func( globalTextClass, Text_Alloc );
 	
 	// Instance methods
 	rb_define_method( globalTextClass, "initialize", Text_Initialize, -1 );

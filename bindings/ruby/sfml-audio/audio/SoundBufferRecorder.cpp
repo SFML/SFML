@@ -126,12 +126,10 @@ static VALUE SoundBufferRecorder_GetBuffer( VALUE self )
  *
  * Creates a sound buffer recorder instance for us.
  */
-static VALUE SoundBufferRecorder_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE SoundBufferRecorder_Alloc( VALUE aKlass )
 {
 	rbSoundBufferRecorder *object = new rbSoundBufferRecorder();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, SoundBufferRecorder_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, SoundBufferRecorder_Free, object );
 }
 
 void Init_SoundBufferRecorder( void )
@@ -201,7 +199,8 @@ void Init_SoundBufferRecorder( void )
 	globalSoundBufferRecorderClass = rb_define_class_under( sfml, "SoundBufferRecorder", globalSoundRecorderClass );
 	
 	// Class methods
-	rb_define_singleton_method( globalSoundBufferRecorderClass, "new", SoundBufferRecorder_New, -1 );
+	//rb_define_singleton_method( globalSoundBufferRecorderClass, "new", SoundBufferRecorder_New, -1 );
+	rb_define_alloc_func( globalSoundBufferRecorderClass, SoundBufferRecorder_Alloc );
 	
 	// Instance methods
 	rb_define_method( globalSoundRecorderClass, "getBuffer", SoundBufferRecorder_GetBuffer, 0 );

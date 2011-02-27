@@ -79,17 +79,10 @@ static VALUE Context_SetReferenceActive( VALUE aKlass )
 	}
 }
 
-/* call-seq:
- *   Context.new()		-> context
- *
- * The constructor creates and activates the context
- */
-static VALUE Context_New( VALUE aKlass )
+static VALUE Context_Alloc( VALUE aKlass )
 {
 	sf::Context *object = new sf::Context();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Context_Free, object );
-	rb_obj_call_init( rbData, 0, 0 );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Context_Free, object );
 }
 
 void Init_Context( void )
@@ -115,7 +108,8 @@ void Init_Context( void )
 	rb_include_module( globalContextClass, globalNonCopyableModule );
 	
 	// Class methods
-	rb_define_singleton_method( globalContextClass, "new", Context_New, 0 );
+	//rb_define_singleton_method( globalContextClass, "new", Context_New, 0 );
+	rb_define_alloc_func( globalContextClass, Context_Alloc );
 	rb_define_singleton_method( globalContextClass, "setReferenceActive", Context_SetReferenceActive, 0 );
 	
 	// Instance methods

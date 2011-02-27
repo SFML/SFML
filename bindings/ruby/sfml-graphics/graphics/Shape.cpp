@@ -344,12 +344,10 @@ static VALUE Shape_InitializeCopy( VALUE self, VALUE aSource )
  *
  * Create an empty shape.
  */
-static VALUE Shape_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Shape_Alloc( VALUE aKlass )
 {
 	sf::Shape *object = new sf::Shape();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Shape_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Shape_Free, object );
 }
 
 /* call-seq:
@@ -646,7 +644,8 @@ void Init_Shape( void )
 	rb_include_module( globalShapeClass, globalDrawableModule );
 	
 	// Class methods
-	rb_define_singleton_method( globalShapeClass, "new", Shape_New, -1 );
+	//rb_define_singleton_method( globalShapeClass, "new", Shape_New, -1 );
+	rb_define_alloc_func( globalShapeClass, Shape_Alloc );
 	rb_define_singleton_method( globalShapeClass, "line", Shape_Line, -1 );
 	rb_define_singleton_method( globalShapeClass, "rectangle", Shape_Rectangle, -1 );
 	rb_define_singleton_method( globalShapeClass, "circle", Shape_Circle, -1 );

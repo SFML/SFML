@@ -91,6 +91,16 @@ static VALUE Sound_Initialize( int argc, VALUE *args, VALUE self )
 	return self;
 }
 
+static VALUE Sound_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Sound *selfObject = NULL;
+	Data_Get_Struct( self, sf::Sound, selfObject );
+	sf::Sound *sourceObject = NULL;
+	Data_Get_Struct( aSource, sf::Sound, sourceObject );
+	*selfObject = *sourceObject;
+	return self;
+}
+
 /* call-seq:
  *   sound.play()
  *
@@ -269,12 +279,10 @@ static VALUE Sound_ResetBuffer( VALUE self )
 	return Qnil;
 }
 
-static VALUE Sound_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Sound_Alloc( VALUE aKlass )
 {
 	sf::Sound *object = new sf::Sound();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Sound_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Sound_Free, object );
 }
 
 void Init_Sound( void )
@@ -312,10 +320,12 @@ void Init_Sound( void )
 	globalSoundClass = rb_define_class_under( sfml, "Sound", globalSoundSourceClass );
 	
 	// Class methods
-	rb_define_singleton_method( globalSoundClass, "new", Sound_New, -1 );
+	//rb_define_singleton_method( globalSoundClass, "new", Sound_New, -1 );
+	rb_define_alloc_func( globalSoundClass, Sound_Alloc );
 	
 	// Instance methods
 	rb_define_method( globalSoundClass, "initialize", Sound_Initialize, 0 );
+	rb_define_method( globalSoundClass, "initialize_copy", Sound_InitializeCopy, 1 );
 	rb_define_method( globalSoundClass, "play", Sound_Play, 0 );
 	rb_define_method( globalSoundClass, "pause", Sound_Pause, 0 );
 	rb_define_method( globalSoundClass, "stop", Sound_Stop, 0 );

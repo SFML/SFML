@@ -136,18 +136,10 @@ static VALUE Input_GetJoystickAxis( VALUE self, VALUE aJoystick, VALUE anAxis )
 	return rb_float_new( object->GetJoystickAxis( rawJoystick, rawAxis ) );
 }
 
-/* call-seq:
- *   Input.new()	-> input
- *
- * This will create a new input object. though it will not receive any updates of events.
- * You should aquire an input object from the SFML::Window#input method.
- */
-static VALUE Input_New( int argc, VALUE * args, VALUE aKlass )
+static VALUE Input_Alloc( VALUE aKlass )
 {
 	sf::Input *object = new sf::Input();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Input_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Input_Free, object );
 }
 
 void Init_Input( void )
@@ -184,7 +176,8 @@ void Init_Input( void )
 	rb_include_module( globalInputClass, globalNonCopyableModule );
 	
 	// Class methods
-	rb_define_singleton_method( globalInputClass, "new", Input_New, -1 );
+	//rb_define_singleton_method( globalInputClass, "new", Input_New, -1 );
+	rb_define_alloc_func( globalInputClass, Input_Alloc );
 	
 	// Instance methods
 	rb_define_method( globalInputClass, "isKeyDown", Input_IsKeyDown, 1 );

@@ -300,17 +300,10 @@ static VALUE RenderImage_Initialize( int argc, VALUE *args, VALUE self )
 	return self;
 }
 
-/* call-seq:
- *   RenderImage.new()	-> render_image
- *
- * Constructs an empty, invalid render-image. You must call create() to have a valid render-image.
- */
-static VALUE RenderImage_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE RenderImage_Alloc( VALUE aKlass )
 {
 	sf::RenderImage *object = new sf::RenderImage();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, RenderImage_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, RenderImage_Free, object );
 }
 
 /* call-seq:
@@ -396,7 +389,8 @@ void Init_RenderImage( void )
 	rb_include_module( globalRenderImageClass, globalRenderTargetModule );
 	
 	// Class methods
-	rb_define_singleton_method( globalRenderImageClass, "new", RenderImage_New, 0 );
+	//rb_define_singleton_method( globalRenderImageClass, "new", RenderImage_New, 0 );
+	rb_define_alloc_func( globalRenderImageClass, RenderImage_Alloc );
 	rb_define_singleton_method( globalRenderImageClass, "isAvailable", RenderImage_IsAvailable, 0 );
 	
 	// Instance methods

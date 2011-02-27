@@ -237,13 +237,9 @@ static VALUE SoundSource_SetVolume( VALUE self, VALUE aValue )
 	return Qnil;
 }
 
-static VALUE SoundSource_InitializeCopy( VALUE self, VALUE aSource )
+static VALUE SoundSource_Initialize( VALUE self )
 {
-	sf::SoundSource *object = NULL;
-	Data_Get_Struct( self, sf::SoundSource, object );
-	sf::SoundSource *source = NULL;
-	Data_Get_Struct( aSource, sf::SoundSource, source );
-	*object = *source;
+	rb_raise( rb_eNotImpError, "Trying to construct instance of abstract class" );
 }
 
 static void DefineStatusEnum( void )
@@ -269,7 +265,6 @@ void Init_SoundSource( void )
 	DefineStatusEnum();
 	
 	// Instance methods
-	rb_define_method( globalSoundSourceClass, "initialize_copy", SoundSource_InitializeCopy, 1 );
 	rb_define_method( globalSoundSourceClass, "getAttenuation", SoundSource_GetAttenuation, 0 );
 	rb_define_method( globalSoundSourceClass, "getMinDistance", SoundSource_GetMinDistance, 0 );
 	rb_define_method( globalSoundSourceClass, "getPitch", SoundSource_GetPitch, 0 );

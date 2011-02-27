@@ -75,12 +75,10 @@ static VALUE Clock_InitializeCopy( VALUE self, VALUE aSource )
  *
  * The clock starts automatically after being constructed.
  */
-static VALUE Clock_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Clock_Allocate( VALUE aKlass )
 {
 	sf::Clock *object = new sf::Clock();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Clock_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Clock_Free, object );
 }
 
 void Init_Clock( void )
@@ -94,16 +92,17 @@ void Init_Clock( void )
  * Its resolution depends on the underlying OS, but you can generally expect a 1 ms resolution.
  */
 	globalClockClass = rb_define_class_under( sfml, "Clock", rb_cObject );
+	rb_define_alloc_func( globalClockClass, Clock_Allocate );
 	
 	// Class methods
-	rb_define_singleton_method( globalClockClass, "new", Clock_New, -1 );
+	//rb_define_singleton_method( globalClockClass, "new", Clock_New, -1 );
 	
 	// Instance methods
 	rb_define_method( globalClockClass, "initialize_copy", Clock_InitializeCopy, 1 );
-	rb_define_method( globalClockClass, "getElapsedTime", Clock_GetElapsedTime, 0 );
+	rb_define_method( globalClockClass, "elapsed_time", Clock_GetElapsedTime, 0 );
 	rb_define_method( globalClockClass, "reset", Clock_Reset, 0 );
 	
 	// Aliases
-	rb_define_alias( globalClockClass, "elapsedTime", "getElapsedTime" );
-	rb_define_alias( globalClockClass, "elapsed_time", "getElapsedTime" );
+	rb_define_alias( globalClockClass, "elapsedTime", "elapsed_time" );
+	rb_define_alias( globalClockClass, "getElapsedTime", "elapsed_time" );
 }

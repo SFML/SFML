@@ -246,12 +246,10 @@ static VALUE Shader_InitializeCopy( VALUE self, VALUE aSource )
  *
  * Create a new shader.
  */
-static VALUE Shader_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Shader_Alloc( VALUE aKlass )
 {
 	sf::Shader *object = new sf::Shader();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Shader_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Shader_Free, object );
 }
 
 /* call-seq:
@@ -335,7 +333,8 @@ void Init_Shader( void )
 	globalShaderClass = rb_define_class_under( sfml, "Shader", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalShaderClass, "new", Shader_New, -1 );
+	//rb_define_singleton_method( globalShaderClass, "new", Shader_New, -1 );
+	rb_define_alloc_func( globalShaderClass, Shader_Alloc );
 	rb_define_singleton_method( globalShaderClass, "isAvailable", Shader_IsAvailable, 0 );
 	
 	// Class Constants

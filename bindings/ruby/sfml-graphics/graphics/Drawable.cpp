@@ -529,18 +529,28 @@ static VALUE Drawable_Initialize( int argc, VALUE *args, VALUE self )
 	return rb_call_super( argc, args );
 }
 
-static VALUE Drawable_New( int argc, VALUE *args, VALUE aKlass )
+
+static VALUE Drawable_InitializeCopy( VALUE self, VALUE aSource )
+{
+	sf::Drawable *selfDrawable = NULL;
+	Data_Get_Struct( self, sf::Drawable, selfDrawable );
+	sf::Drawable *sourceDrawable = NULL;
+	Data_Get_Struct( aSource, sf::Drawable, sourceDrawable );
+	*selfDrawable = *sourceDrawable;
+	return self;
+}
+
+static VALUE Drawable_Allocate( VALUE aKlass )
 {
 	rbDrawable *object = new rbDrawable();
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Drawable_Free, object );
 	object->Init( rbData );
-	rb_obj_call_init( rbData, argc, args );
 	return rbData;
 }
 
 static VALUE Drawable_Included( VALUE aModule, VALUE aBase )
 {
-	rb_define_singleton_method( aBase, "new", Drawable_New, -1 );
+	rb_define_singleton_method( aBase, "allocate", Drawable_Allocate, 0 );
 	return Qnil;
 }
 
@@ -615,6 +625,7 @@ void Init_Drawable( void )
 	
 	// Instance methods
 	rb_define_method( globalDrawableModule, "initialize", Drawable_Initialize, -1 );
+	rb_define_method( globalDrawableModule, "initialize_copy", Drawable_Initialize, 1 );
 	rb_define_method( globalDrawableModule, "setPosition", Drawable_SetPosition, -1 );
 	rb_define_method( globalDrawableModule, "setX", Drawable_SetX, 1 );
 	rb_define_method( globalDrawableModule, "setY", Drawable_SetY, 1 );

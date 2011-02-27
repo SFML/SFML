@@ -25,7 +25,6 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <iostream>
 
-
 VALUE globalContextSettingsClass;
 
 /* Free a heap allocated object 
@@ -171,43 +170,36 @@ static VALUE ContextSettings_InitializeCopy( VALUE self, VALUE aSource )
  *
  * The constructor creates the settings
  */
-static VALUE ContextSettings_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE ContextSettings_Alloc( VALUE aKlass )
+{
+	sf::ContextSettings *object = new sf::ContextSettings();	 
+	return Data_Wrap_Struct( aKlass, 0, ContextSettings_Free, object );;
+}
+
+static VALUE ContextSettings_Initialize( int argc, VALUE *args, VALUE self )
 {
 	sf::ContextSettings *object = NULL;
-	if( argc == 0 )
+	Data_Get_Struct( self, sf::ContextSettings, object );
+	switch( argc )
 	{
-		object = new sf::ContextSettings();
+		case 0:
+			break;
+		case 5:
+			object->MinorVersion = NUM2UINT( args[4] );
+		case 4:
+			object->MajorVersion = NUM2UINT( args[3] );
+		case 3:
+			object->AntialiasingLevel = NUM2UINT( args[2] );
+		case 2:
+			object->StencilBits = NUM2UINT( args[1] );
+		case 1:
+			object->DepthBits = NUM2UINT( args[0] );
+			break;
+		default:
+			rb_raise( rb_eArgError, "Expected 0..5 arguments but was given %d", argc );
+			return Qnil;
 	}
-	else if( argc == 1 )
-	{
-		object = new sf::ContextSettings( NUM2UINT( args[0] ) );
-	}
-	else if( argc == 2 )
-	{
-		object = new sf::ContextSettings( NUM2UINT( args[0] ), NUM2UINT( args[1] ) );
-	}
-	
-	else if( argc == 3 )
-	{
-		object = new sf::ContextSettings( NUM2UINT( args[0] ), NUM2UINT( args[1] ), NUM2UINT( args[2] ) );
-	}
-	else if( argc == 4 )
-	{
-		object = new sf::ContextSettings( NUM2UINT( args[0] ), NUM2UINT( args[1] ), NUM2UINT( args[2] ), NUM2UINT( args[3] ) );
-	}
-	else if( argc == 5 )
-	{
-		object = new sf::ContextSettings( NUM2UINT( args[0] ), NUM2UINT( args[1] ), NUM2UINT( args[2] ), NUM2UINT( args[3] ), NUM2UINT( args[4] ) );
-	}
-	else
-	{
-		rb_raise( rb_eArgError, "Expected 0..5 arguments but was given %d", argc );
-		return Qnil;
-	}
-	 
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, ContextSettings_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return self;
 }
 
 void Init_ContextSettings( void )
@@ -242,9 +234,11 @@ void Init_ContextSettings( void )
 	globalContextSettingsClass = rb_define_class_under( sfml, "ContextSettings", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalContextSettingsClass, "new", ContextSettings_New, -1 );
+	//rb_define_singleton_method( globalContextSettingsClass, "new", ContextSettings_New, -1 );
+	rb_define_alloc_func( globalContextSettingsClass, ContextSettings_Alloc );
 	
 	// Instance methods
+	rb_define_method( globalContextSettingsClass, "initialize", ContextSettings_Initialize, -1 );
 	rb_define_method( globalContextSettingsClass, "initialize_copy", ContextSettings_InitializeCopy, 1 );
 	
 	rb_define_method( globalContextSettingsClass, "depthBits", ContextSettings_GetDepth, 0 );

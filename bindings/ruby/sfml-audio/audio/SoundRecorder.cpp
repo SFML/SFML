@@ -161,12 +161,10 @@ static VALUE SoundRecorder_GetSampleRate( VALUE self )
  *
  * Creates a sound recorder instance for us.
  */
-static VALUE SoundRecorder_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE SoundRecorder_Alloc( VALUE aKlass )
 {
 	rbSoundRecorder *object = new rbSoundRecorder();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, SoundRecorder_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, SoundRecorder_Free, object );
 }
 
 /* call-seq:
@@ -250,7 +248,8 @@ void Init_SoundRecorder( void )
 	rb_include_module( globalSoundRecorderClass, globalNonCopyableModule );
 	
 	// Class methods
-	rb_define_singleton_method( globalSoundRecorderClass, "new", SoundRecorder_New, -1 );
+	//rb_define_singleton_method( globalSoundRecorderClass, "new", SoundRecorder_New, -1 );
+	rb_define_alloc_func( globalSoundRecorderClass, SoundRecorder_Alloc );
 	rb_define_singleton_method( globalSoundRecorderClass, "isAvailable", SoundRecorder_IsAvailable, 0 );
 	
 	// Instance methods

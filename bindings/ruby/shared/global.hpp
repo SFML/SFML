@@ -25,7 +25,7 @@
 
 #include "ruby.h"
 
-#define SFML_STATIC
+#define SFML_DYNAMIC
 
 extern VALUE globalSFMLNamespace;
 

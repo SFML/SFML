@@ -19,7 +19,7 @@
  * 3. This notice may not be removed or altered from any
  *    source distribution.
  */
- 
+
 #include "Sprite.hpp"
 #include "Vector2.hpp"
 #include "Rect.hpp"
@@ -44,7 +44,7 @@ static void Sprite_Free( sf::Sprite *anObject )
  *   Sprite.new()											-> sprite
  *   Sprite.new( image, position = [0, 0], scale = [1, 1], rotation = 0.0, color = SFML::Color::White )	-> sprite
  *
- * Construct the sprite from a source image. 
+ * Construct the sprite from a source image.
  */
 static VALUE Sprite_Initialize( int argc, VALUE *args, VALUE self )
 {
@@ -54,7 +54,7 @@ static VALUE Sprite_Initialize( int argc, VALUE *args, VALUE self )
 	sf::Vector2f scale	= sf::Vector2f( 1, 1 );
 	float rotation		= 0;
 	sf::Color color 	= sf::Color::White;
-	
+
 	sf::Sprite *object = NULL;
 	Data_Get_Struct( self, sf::Sprite, object );
 	switch( argc )
@@ -102,17 +102,17 @@ static VALUE Sprite_InitializeCopy( VALUE self, VALUE aSource )
  *
  * Change the source image of the sprite.
  *
- * The image argument refers to an image that must exist as long as the sprite uses it. Indeed, the sprite doesn't 
- * store its own copy of the image, but rather keeps a pointer to the one that you passed to this function. If the 
+ * The image argument refers to an image that must exist as long as the sprite uses it. Indeed, the sprite doesn't
+ * store its own copy of the image, but rather keeps a pointer to the one that you passed to this function. If the
  * source image is destroyed and the sprite tries to use it, it may appear as a white rectangle. If adjustToNewSize is
- * true, the SubRect property of the sprite is adjusted to the size of the new image. If it is false, the SubRect 
+ * true, the SubRect property of the sprite is adjusted to the size of the new image. If it is false, the SubRect
  * is unchanged.
  */
 static VALUE Sprite_SetImage( int argc, VALUE *args, VALUE self )
 {
 	sf::Image *image	= NULL;
 	bool adjustToNewSize 	= false;
-	
+
 	sf::Sprite *object = NULL;
 	Data_Get_Struct( self, sf::Sprite, object );
 	rb_iv_set( self, "@__image_ref", Qnil );
@@ -202,7 +202,7 @@ static VALUE Sprite_Resize( int argc, VALUE *args, VALUE self )
 /* call-seq:
  *   sprite.flipX( flipped )
  *
- * Flip the sprite horizontally. 
+ * Flip the sprite horizontally.
  */
 static VALUE Sprite_FlipX( VALUE self, VALUE aFlippedFlag )
 {
@@ -226,7 +226,7 @@ static VALUE Sprite_FlipX( VALUE self, VALUE aFlippedFlag )
 /* call-seq:
  *   sprite.flipY( flipped )
  *
- * Flip the sprite vertically. 
+ * Flip the sprite vertically.
  */
 static VALUE Sprite_FlipY( VALUE self, VALUE aFlippedFlag )
 {
@@ -262,15 +262,15 @@ static VALUE Sprite_GetImage( VALUE self )
 /* call-seq:
  *   sprite.getSubRect()	-> rectangle
  *
- * Get the region of the image displayed by the sprite. 
+ * Get the region of the image displayed by the sprite.
  */
 static VALUE Sprite_GetSubRect( VALUE self )
 {
 	sf::Sprite *object = NULL;
 	Data_Get_Struct( self, sf::Sprite, object );
 	const sf::IntRect &rect = object->GetSubRect();
-	return rb_funcall( globalRectClass, rb_intern( "new" ), 4, 
-				INT2FIX( rect.Left ), INT2FIX( rect.Top ), 
+	return rb_funcall( globalRectClass, rb_intern( "new" ), 4,
+				INT2FIX( rect.Left ), INT2FIX( rect.Top ),
 				INT2FIX( rect.Width ), INT2FIX( rect.Height ) );
 }
 
@@ -286,7 +286,7 @@ static VALUE Sprite_GetSize( VALUE self )
 	sf::Sprite *object = NULL;
 	Data_Get_Struct( self, sf::Sprite, object );
 	const sf::Vector2f size = object->GetSize();
-	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( size.x ), rb_float_new( size.y ) );	
+	return rb_funcall( globalVector2Class, rb_intern( "new" ), 2, rb_float_new( size.x ), rb_float_new( size.y ) );
 }
 
 /* call-seq:
@@ -294,8 +294,8 @@ static VALUE Sprite_GetSize( VALUE self )
  *
  * Get the color of a given pixel in the sprite.
  *
- * This function returns the source image pixel, multiplied by the global color of the sprite. The input point must 
- * be in local coordinates. If you have a global point, you can use the TransformToLocal function to make it local. 
+ * This function returns the source image pixel, multiplied by the global color of the sprite. The input point must
+ * be in local coordinates. If you have a global point, you can use the TransformToLocal function to make it local.
  * This function doesn't perform any check, you must ensure that the x and y coordinates are not out of bounds.
  */
 static VALUE Sprite_GetPixel( VALUE self, VALUE aX, VALUE aY )
@@ -303,17 +303,15 @@ static VALUE Sprite_GetPixel( VALUE self, VALUE aX, VALUE aY )
 	sf::Sprite *object = NULL;
 	Data_Get_Struct( self, sf::Sprite, object );
 	const sf::Color color = object->GetPixel( FIX2UINT( aX ), FIX2UINT( aY ) );
-	return rb_funcall( globalColorClass, rb_intern( "new" ), 4, 
-				INT2FIX( color.r ), INT2FIX( color.g ), 
+	return rb_funcall( globalColorClass, rb_intern( "new" ), 4,
+				INT2FIX( color.r ), INT2FIX( color.g ),
 				INT2FIX( color.b ), INT2FIX( color.a ) );
 }
 
-static VALUE Sprite_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE Sprite_Alloc( VALUE aKlass )
 {
 	sf::Sprite *object = new sf::Sprite();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, Sprite_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, Sprite_Free, object );
 }
 
 void Init_Sprite( void )
@@ -324,20 +322,20 @@ void Init_Sprite( void )
  *
  * SFML::Sprite is a drawable class that allows to easily display an image (or a part of it) on a render target.
  *
- * It inherits all the functions from SFML::Drawable: position, rotation, scale, origin, global color and blend mode. 
- * It also adds sprite-specific properties such as the image to use, the part of it to display, and some convenience 
+ * It inherits all the functions from SFML::Drawable: position, rotation, scale, origin, global color and blend mode.
+ * It also adds sprite-specific properties such as the image to use, the part of it to display, and some convenience
  * functions to flip or resize the sprite.
  *
- * SFML::Sprite works in combination with the SFML::Image class, which loads and provides the pixel data of a 
+ * SFML::Sprite works in combination with the SFML::Image class, which loads and provides the pixel data of a
  * given image.
  *
- * The separation of SFML::Sprite and SFML::Image allows more flexibility and better performances: indeed a SFML::Image 
- * is a heavy resource, and any operation on it is slow (often too slow for real-time applications). On the other side, 
- * a SFML::Sprite is a lightweight object which can use the pixel data of a SFML::Image and draw it with its own 
+ * The separation of SFML::Sprite and SFML::Image allows more flexibility and better performances: indeed a SFML::Image
+ * is a heavy resource, and any operation on it is slow (often too slow for real-time applications). On the other side,
+ * a SFML::Sprite is a lightweight object which can use the pixel data of a SFML::Image and draw it with its own
  * transformation / color / blending attributes.
  *
- * It is important to note that the SFML::Sprite instance doesn't copy the image that it uses, it only keeps a reference 
- * to it. Thus, a SFML::Image must not be destructed while it is used by a SFML::Sprite (i.e. never write a function that 
+ * It is important to note that the SFML::Sprite instance doesn't copy the image that it uses, it only keeps a reference
+ * to it. Thus, a SFML::Image must not be destructed while it is used by a SFML::Sprite (i.e. never write a function that
  * uses a local SFML::Image instance for creating a sprite).
  *
  * NOTE: This is the ruby bindings so the images will be managed by the ruby garbage collector and thus the image won't
@@ -361,10 +359,11 @@ void Init_Sprite( void )
  */
 	globalSpriteClass = rb_define_class_under( sfml, "Sprite", rb_cObject );
 	rb_include_module( globalSpriteClass, globalDrawableModule );
-	
+
 	// Class methods
-	rb_define_singleton_method( globalSpriteClass, "new", Sprite_New, -1 );
-	
+	//rb_define_singleton_method( globalSpriteClass, "new", Sprite_New, -1 );
+	rb_define_alloc_func( globalSpriteClass, Sprite_Alloc );
+
 	// Instance methods
 	rb_define_method( globalSpriteClass, "initialize", Sprite_Initialize, -1 );
 	rb_define_method( globalSpriteClass, "initialize_copy", Sprite_InitializeCopy, 1 );
@@ -377,27 +376,27 @@ void Init_Sprite( void )
 	rb_define_method( globalSpriteClass, "getSubRect", Sprite_GetSubRect, 0 );
 	rb_define_method( globalSpriteClass, "getSize", Sprite_GetSize, 0 );
 	rb_define_method( globalSpriteClass, "getPixel", Sprite_GetPixel, 2 );
-	
+
 	// Instance Aliases
 	rb_define_alias( globalSpriteClass, "image=", "setImage" );
 	rb_define_alias( globalSpriteClass, "set_image", "setImage" );
 	rb_define_alias( globalSpriteClass, "image", "getImage" );
 	rb_define_alias( globalSpriteClass, "get_image", "getImage" );
-	
+
 	rb_define_alias( globalSpriteClass, "subRect=", "setSubRect" );
 	rb_define_alias( globalSpriteClass, "sub_rect=", "setSubRect" );
 	rb_define_alias( globalSpriteClass, "subRect", "getSubRect" );
 	rb_define_alias( globalSpriteClass, "sub_rect", "getSubRect" );
-	
+
 	rb_define_alias( globalSpriteClass, "flip_x", "flipX" );
 	rb_define_alias( globalSpriteClass, "flip_y", "flipY" );
 	rb_define_alias( globalSpriteClass, "flip_x=", "flipX" );
 	rb_define_alias( globalSpriteClass, "flip_y=", "flipY" );
 	rb_define_alias( globalSpriteClass, "flipX=", "flipX" );
 	rb_define_alias( globalSpriteClass, "flipY=", "flipY" );
-	
+
 	rb_define_alias( globalSpriteClass, "get_size", "getSize" );
 	rb_define_alias( globalSpriteClass, "size", "getSize" );
-	
+
 	rb_define_alias( globalSpriteClass, "get_pixel", "getPixel" );
 }

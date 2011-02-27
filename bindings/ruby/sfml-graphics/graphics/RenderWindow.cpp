@@ -121,28 +121,10 @@ static VALUE RenderWindow_GetHeight( VALUE self )
 	return INT2FIX( object->GetHeight() );
 }
 
-/* call-seq:
- *   Window.new()											-> render_window
- *   Window.new( mode, title, style = SFML::Style::Default, settings = SFML::ContextSettings.new )	-> render_window
- *
- * Construct a new window.
- *
- * The first form of new doesn't actually create the visual window, use the other form of new or call 
- * SFML::Window#create to do so.
- *
- * The second form of new creates the window with the size and pixel depth defined in mode. An optional style can be passed 
- * to customize the look and behaviour of the window (borders, title bar, resizable, closable, ...). If style contains 
- * Style::Fullscreen, then mode must be a valid video mode.
- *
- * The fourth parameter is an optional structure specifying advanced OpenGL context settings such as antialiasing, 
- * depth-buffer bits, etc. You shouldn't care about these parameters for a regular usage of the graphics module.
- */
-static VALUE RenderWindow_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE RenderWindow_Alloc( VALUE aKlass )
 {
 	sf::RenderWindow *object = new sf::RenderWindow();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, RenderWindow_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, RenderWindow_Free, object );
 }
 
 void Init_RenderWindow( void )
@@ -236,7 +218,8 @@ void Init_RenderWindow( void )
 	rb_include_module( globalRenderWindowClass, globalRenderTargetModule );
 	
 	// Class methods
-	rb_define_singleton_method( globalRenderWindowClass, "new", RenderWindow_New, -1 );
+	//rb_define_singleton_method( globalRenderWindowClass, "new", RenderWindow_New, -1 );
+	rb_define_alloc_func( globalRenderWindowClass, RenderWindow_Alloc );
 	
 	// Instance methods
 	rb_define_method( globalRenderWindowClass, "draw", RenderWindow_Draw, -1 );

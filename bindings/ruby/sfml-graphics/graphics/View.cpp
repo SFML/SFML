@@ -349,12 +349,10 @@ static VALUE View_Zoom( VALUE self, VALUE aFactor )
 	return Qnil;
 }
 
-static VALUE View_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE View_Alloc( VALUE aKlass )
 {
 	sf::View *object = new sf::View();
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, View_Free, object );
-	rb_obj_call_init( rbData, argc, args );
-	return rbData;
+	return Data_Wrap_Struct( aKlass, 0, View_Free, object );
 }
 
 void Init_View( void )
@@ -408,7 +406,8 @@ void Init_View( void )
 	globalViewClass = rb_define_class_under( sfml, "View", rb_cObject );
 	
 	// Class methods
-	rb_define_singleton_method( globalViewClass, "new", View_New, -1 );
+	//rb_define_singleton_method( globalViewClass, "new", View_New, -1 );
+	rb_define_alloc_func( globalViewClass, View_Alloc );
 		
 	// Instance methods
 	rb_define_method( globalViewClass, "initialize", View_Initialize, -1 );

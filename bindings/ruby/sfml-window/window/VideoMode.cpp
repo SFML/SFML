@@ -19,7 +19,7 @@
  * 3. This notice may not be removed or altered from any
  *    source distribution.
  */
- 
+
 #include "VideoMode.hpp"
 #include "main.hpp"
 #include <SFML/Window/VideoMode.hpp>
@@ -40,7 +40,7 @@ VALUE VideoMode_ForceType( VALUE someValue )
 		if( FIX2INT( rb_funcall( someValue, rb_intern( "size" ), 0 ) ) == 3 )
 		{
 			VALUE arg3 = rb_ary_entry( someValue, 2 );
-			return rb_funcall( globalVideoModeClass, rb_intern( "new" ), 3, arg1, arg2, arg3 );	
+			return rb_funcall( globalVideoModeClass, rb_intern( "new" ), 3, arg1, arg2, arg3 );
 		}
 		else
 		{
@@ -57,7 +57,7 @@ VALUE VideoMode_ForceType( VALUE someValue )
 	}
 }
 
-/* Free a heap allocated object 
+/* Free a heap allocated object
  * Not accessible trough ruby directly!
  */
 static void VideoMode_Free( sf::VideoMode *anObject )
@@ -116,7 +116,7 @@ static VALUE VideoMode_SetHeight( VALUE self, VALUE aValue )
 /* call-seq:
  *   mode.bitsPerPixel	-> bpp
  *
- * Video mode pixel depth, in bits per pixels. 
+ * Video mode pixel depth, in bits per pixels.
  */
 static VALUE VideoMode_GetBitsPerPixel( VALUE self )
 {
@@ -128,7 +128,7 @@ static VALUE VideoMode_GetBitsPerPixel( VALUE self )
 /* call-seq:
  *   mode.bitsPerPixel=(new_bpp)	-> new_bpp
  *
- * Video mode pixel depth, in bits per pixels. 
+ * Video mode pixel depth, in bits per pixels.
  */
 static VALUE VideoMode_SetBitsPerPixel( VALUE self, VALUE aValue )
 {
@@ -142,7 +142,7 @@ static VALUE VideoMode_SetBitsPerPixel( VALUE self, VALUE aValue )
  *
  * Tell whether or not the video mode is valid.
  *
- * The validity of video modes is only relevant when using fullscreen windows; otherwise any video mode can be used 
+ * The validity of video modes is only relevant when using fullscreen windows; otherwise any video mode can be used
  * with no restriction.
  */
 static VALUE VideoMode_IsValid( VALUE self )
@@ -164,7 +164,7 @@ static VALUE VideoMode_InitializeCopy( VALUE self, VALUE aSource )
 /* call-seq:
  *   VideoMode.getDesktopMode	-> desktop_mode
  *
- * Get the current desktop video mode. 
+ * Get the current desktop video mode.
  */
 static VALUE VideoMode_GetDesktopMode( VALUE aKlass )
 {
@@ -179,8 +179,8 @@ static VALUE VideoMode_GetDesktopMode( VALUE aKlass )
  *
  * Retrieve all the video modes supported in fullscreen mode.
  *
- * When creating a fullscreen window, the video mode is restricted to be compatible with what the graphics driver and 
- * monitor support. This function returns the complete list of all video modes that can be used in fullscreen mode. 
+ * When creating a fullscreen window, the video mode is restricted to be compatible with what the graphics driver and
+ * monitor support. This function returns the complete list of all video modes that can be used in fullscreen mode.
  * The returned array is sorted from best to worst, so that the first element will always give the best mode
  * (higher width, height and bits-per-pixel).
  */
@@ -198,33 +198,37 @@ static VALUE VideoMode_GetFullscreenModes( VALUE aKlass )
 	return array;
 }
 
+static VALUE VideoMode_Alloc( VALUE aKlass )
+{
+	sf::VideoMode *object = new sf::VideoMode();
+	return Data_Wrap_Struct( aKlass, 0, VideoMode_Free, object );
+}
+
 /* call-seq:
- *   VideoMode.new()				-> mode
+ *   VideoMode.new()							-> mode
  *   VideoMode.new( width, height, bpp = 32 )	-> mode
  *
  * Create a new mode.
  */
-static VALUE VideoMode_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE VideoMode_Initialize( int argc, VALUE *args, VALUE self )
 {
 	sf::VideoMode *object = NULL;
+	Data_Get_Struct( self, sf::VideoMode, object );
 	switch( argc )
 	{
 		case 0:
-			object = new sf::VideoMode();
-			break;
-		case 2:
-			object = new sf::VideoMode( FIX2UINT( args[0] ), FIX2UINT( args[1] ) );
 			break;
 		case 3:
-			object = new sf::VideoMode( FIX2UINT( args[0] ), FIX2UINT( args[1] ),FIX2UINT( args[2] ) );
+			object->BitsPerPixel = NUM2UINT( args[2] );
+		case 2:
+			object->Height = NUM2UINT( args[1] );
+			object->Width = NUM2UINT( args[0] );
 			break;
 		default:
-			rb_raise( rb_eArgError, "Expected 0, 2 or 3 arguments but was given %d", argc );
-			break;
+			rb_raise( rb_eArgError, "Expected 0..3 arguments but was given %d", argc );
+			return Qnil;
 	}
-	VALUE rbData = Data_Wrap_Struct( aKlass, 0, VideoMode_Free, object );
-	rb_obj_call_init( rbData, 0, 0 );
-	return rbData;
+	return self;
 }
 
 void Init_VideoMode( void )
@@ -234,21 +238,21 @@ void Init_VideoMode( void )
 /* A video mode is defined by a width and a height (in pixels) and a depth (in bits per pixel).
  *
  * Video modes are used to setup windows (SFML::Window) at creation time.
- * 
- * The main usage of video modes is for fullscreen mode: indeed you must use one of the valid 
- * video modes allowed by the OS (which are defined by what the monitor and the graphics card support), 
+ *
+ * The main usage of video modes is for fullscreen mode: indeed you must use one of the valid
+ * video modes allowed by the OS (which are defined by what the monitor and the graphics card support),
  * otherwise your window creation will just fail.
- * 
+ *
  * SFML::VideoMode provides a static function for retrieving the list of all the video modes supported by
  * the system: getFullscreenModes().
- * 
+ *
  * A custom video mode can also be checked directly for fullscreen compatibility with its isValid() function.
- * 
- * Additionnally, SFML::VideoMode provides a static function to get the mode currently used by the desktop: 
+ *
+ * Additionnally, SFML::VideoMode provides a static function to get the mode currently used by the desktop:
  * getDesktopMode(). This allows to build windows with the same size or pixel depth as the current resolution.
- * 
+ *
  * Usage example:
- * 
+ *
  *   # Display the list of all the video modes available for fullscreen
  *   modes = SFML::VideoMode.getFullscreenModes()
  *   i = 0
@@ -262,38 +266,40 @@ void Init_VideoMode( void )
  *   window.create( SFML::VideoMode.new( 1024, 768, desktop.BitsPerPixel ), "SFML window" )
  */
 	globalVideoModeClass = rb_define_class_under( sfml, "VideoMode", rb_cObject );
-	
+
 	// Class methods
-	rb_define_singleton_method( globalVideoModeClass, "new", VideoMode_New, -1 );
+	//rb_define_singleton_method( globalVideoModeClass, "new", VideoMode_New, -1 );
+	rb_define_alloc_func( globalVideoModeClass, VideoMode_Alloc );
 	rb_define_singleton_method( globalVideoModeClass, "getDesktopMode", VideoMode_GetDesktopMode, 0 );
 	rb_define_singleton_method( globalVideoModeClass, "getFullscreenModes", VideoMode_GetFullscreenModes, 0 );
-	
+
 	// Instance methods
+	rb_define_method( globalVideoModeClass, "initialize", VideoMode_Initialize, -1 );
 	rb_define_method( globalVideoModeClass, "initialize_copy", VideoMode_InitializeCopy, 1 );
-	
+
 	rb_define_method( globalVideoModeClass, "width", VideoMode_GetWidth, 0 );
 	rb_define_method( globalVideoModeClass, "width=", VideoMode_SetWidth, 1 );
-	
+
 	rb_define_method( globalVideoModeClass, "height", VideoMode_GetHeight, 0 );
 	rb_define_method( globalVideoModeClass, "height=", VideoMode_SetHeight, 1 );
 
 	rb_define_method( globalVideoModeClass, "bitsPerPixel", VideoMode_GetBitsPerPixel, 0 );
 	rb_define_method( globalVideoModeClass, "bitsPerPixel=", VideoMode_SetBitsPerPixel, 1 );
-	
+
 	rb_define_method( globalVideoModeClass, "isValid", VideoMode_IsValid, 0 );
-	
+
 	// Class aliases
 	rb_define_alias( CLASS_OF( globalVideoModeClass ), "desktopMode", "getDesktopMode" );
 	rb_define_alias( CLASS_OF( globalVideoModeClass ), "desktop_mode", "getDesktopMode" );
 	rb_define_alias( CLASS_OF( globalVideoModeClass ), "fullscreenModes", "getFullscreenModes" );
 	rb_define_alias( CLASS_OF( globalVideoModeClass ), "fullscreen_modes", "getFullscreenModes" );
-	
+
 	// Aliases
 	rb_define_alias( globalVideoModeClass, "bits_per_pixel", "bitsPerPixel" );
 	rb_define_alias( globalVideoModeClass, "bits_per_pixel=", "bitsPerPixel=" );
 	rb_define_alias( globalVideoModeClass, "bpp", "bitsPerPixel" );
 	rb_define_alias( globalVideoModeClass, "bpp=", "bitsPerPixel=" );
-	
+
 	rb_define_alias( globalVideoModeClass, "is_valid", "isValid" );
 	rb_define_alias( globalVideoModeClass, "valid?", "isValid" );
 }

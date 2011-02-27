@@ -287,12 +287,11 @@ static VALUE SoundStream_Initialize( VALUE self, VALUE channelsCount, VALUE samp
 	return self;
 }
 
-static VALUE SoundStream_New( int argc, VALUE *args, VALUE aKlass )
+static VALUE SoundStream_Alloc( VALUE aKlass )
 {
 	rbSoundStream *object = new rbSoundStream();
 	VALUE rbData = Data_Wrap_Struct( aKlass, 0, SoundStream_Free, object );
 	object->Init( rbData );
-	rb_obj_call_init( rbData, argc, args );
 	return rbData;
 }
 
@@ -361,7 +360,8 @@ void Init_SoundStream( void )
 	rb_include_module( globalSoundStreamClass, globalNonCopyableModule );
 
 	// Class methods
-	rb_define_singleton_method( globalSoundStreamClass, "new", SoundStream_New, -1 );
+	//rb_define_singleton_method( globalSoundStreamClass, "new", SoundStream_New, -1 );
+	rb_define_alloc_func( globalSoundStreamClass, SoundStream_Alloc );
 	
 	// Instance methods
 	rb_define_method( globalSoundStreamClass, "initialize", SoundStream_Initialize, 2 );
