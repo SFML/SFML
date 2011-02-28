@@ -550,7 +550,8 @@ static VALUE Drawable_Allocate( VALUE aKlass )
 
 static VALUE Drawable_Included( VALUE aModule, VALUE aBase )
 {
-	rb_define_singleton_method( aBase, "allocate", Drawable_Allocate, 0 );
+	//rb_define_singleton_method( aBase, "allocate", Drawable_Allocate, 0 );
+	rb_define_alloc_func( aBase, Drawable_Allocate );
 	return Qnil;
 }
 
