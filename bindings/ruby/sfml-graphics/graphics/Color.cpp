@@ -135,9 +135,9 @@ static VALUE Color_Add( VALUE self, VALUE aRightOperand )
 
 	// Do calculation	
 	unsigned int newR = MIN( leftR + rightR, 255 );
-	unsigned int newG = MIN( leftR + rightG, 255 );
-	unsigned int newB = MIN( leftR + rightB, 255 );
-	unsigned int newA = MIN( leftR + rightA, 255 );
+	unsigned int newG = MIN( leftG + rightG, 255 );
+	unsigned int newB = MIN( leftB + rightB, 255 );
+	unsigned int newA = MIN( leftA + rightA, 255 );
 	
 	return rb_funcall( globalColorClass, rb_intern( "new" ), 4, newR, newG, newB, newA );
 }
@@ -162,10 +162,10 @@ static VALUE Color_Multiply( VALUE self, VALUE aRightOperand )
 	unsigned int rightA = FIX2INT( Color_GetA( right ) );
 
 	// Do calculation	
-	unsigned int newR = ( leftR * rightR ) / 255;
-	unsigned int newG = ( leftR * rightG ) / 255;
-	unsigned int newB = ( leftR * rightB ) / 255;
-	unsigned int newA = ( leftR * rightA ) / 255;
+	unsigned int newR = leftR * rightR / 255;
+	unsigned int newG = leftG * rightG / 255;
+	unsigned int newB = leftB * rightB / 255;
+	unsigned int newA = leftA * rightA / 255;
 	
 	return rb_funcall( globalColorClass, rb_intern( "new" ), 4, newR, newG, newB, newA );
 }
