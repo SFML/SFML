@@ -27,9 +27,6 @@
 module dsfml.graphics.renderwindow;
 
 import	dsfml.graphics.color,
-		dsfml.graphics.sprite,
-		dsfml.graphics.shape,
-		dsfml.graphics.text,
 		dsfml.graphics.rect,
 		dsfml.graphics.shader,
 		dsfml.graphics.view,

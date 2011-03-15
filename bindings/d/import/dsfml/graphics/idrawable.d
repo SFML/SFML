@@ -31,8 +31,6 @@ import dsfml.system.vector;
 import dsfml.graphics.irendertarget;
 import	dsfml.graphics.color,
 		dsfml.graphics.blendmode,
-		dsfml.graphics.renderwindow,
-		dsfml.graphics.renderimage,
 		dsfml.graphics.shader;
 
 
