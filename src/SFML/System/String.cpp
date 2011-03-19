@@ -44,13 +44,6 @@ String::String()
 
 
 ////////////////////////////////////////////////////////////
-String::String(char ansiChar)
-{
-    myString += Utf32::DecodeAnsi(ansiChar);
-}
-
-
-////////////////////////////////////////////////////////////
 String::String(char ansiChar, const std::locale& locale)
 {
     myString += Utf32::DecodeAnsi(ansiChar, locale);
@@ -68,29 +61,6 @@ String::String(wchar_t wideChar)
 String::String(Uint32 utf32Char)
 {
     myString += utf32Char;
-}
-
-
-////////////////////////////////////////////////////////////
-String::String(const char* ansiString)
-{
-    if (ansiString)
-    {
-        std::size_t length = strlen(ansiString);
-        if (length > 0)
-        {
-            myString.reserve(length + 1);
-            Utf32::FromAnsi(ansiString, ansiString + length, std::back_inserter(myString));
-        }
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-String::String(const std::string& ansiString)
-{
-    myString.reserve(ansiString.length() + 1);
-    Utf32::FromAnsi(ansiString.begin(), ansiString.end(), std::back_inserter(myString));
 }
 
 
@@ -173,20 +143,6 @@ String::operator std::string() const
 String::operator std::wstring() const
 {
     return ToWideString();
-}
-
-
-////////////////////////////////////////////////////////////
-std::string String::ToAnsiString() const
-{
-    // Prepare the output string
-    std::string output;
-    output.reserve(myString.length() + 1);
-
-    // Convert
-    Utf32::ToAnsi(myString.begin(), myString.end(), std::back_inserter(output), 0);
-
-    return output;
 }
 
 

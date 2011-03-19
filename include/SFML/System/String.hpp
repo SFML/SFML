@@ -64,29 +64,16 @@ public :
     String();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from a single ANSI character
-    ///
-    /// The source character is converted to UTF-32 according
-    /// to the current locale. See the other constructor for
-    /// explicitely passing the locale to use.
-    ///
-    /// \param ansiChar ANSI character to convert
-    ///
-    ////////////////////////////////////////////////////////////
-    String(char ansiChar);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Construct from a single ANSI character and a locale
     ///
     /// The source character is converted to UTF-32 according
-    /// to the given locale. If you want to use the current global
-    /// locale, rather use the other constructor.
+    /// to the given locale.
     ///
     /// \param ansiChar ANSI character to convert
     /// \param locale   Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
-    String(char ansiChar, const std::locale& locale);
+    String(char ansiChar, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from single wide character
@@ -105,54 +92,28 @@ public :
     String(Uint32 utf32Char);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from a null-terminated C-style ANSI string
-    ///
-    /// The source string is converted to UTF-32 according
-    /// to the current locale. See the other constructor for
-    /// explicitely passing the locale to use.
-    ///
-    /// \param ansiString ANSI string to convert
-    ///
-    ////////////////////////////////////////////////////////////
-    String(const char* ansiString);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct from an ANSI string
-    ///
-    /// The source string is converted to UTF-32 according
-    /// to the current global locale. See the other constructor for
-    /// explicitely passing the locale to use.
-    ///
-    /// \param ansiString ANSI string to convert
-    ///
-    ////////////////////////////////////////////////////////////
-    String(const std::string& ansiString);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Construct from a null-terminated C-style ANSI string and a locale
     ///
     /// The source string is converted to UTF-32 according
-    /// to the given locale. If you want to use the current global
-    /// locale, rather use the other constructor.
+    /// to the given locale.
     ///
     /// \param ansiString ANSI string to convert
     /// \param locale     Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
-    String(const char* ansiString, const std::locale& locale);
+    String(const char* ansiString, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from an ANSI string and a locale
     ///
     /// The source string is converted to UTF-32 according
-    /// to the given locale. If you want to use the current global
-    /// locale, rather use the other constructor.
+    /// to the given locale.
     ///
     /// \param ansiString ANSI string to convert
     /// \param locale     Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
-    String(const std::string& ansiString, const std::locale& locale);
+    String(const std::string& ansiString, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from null-terminated C-style wide string
@@ -229,26 +190,8 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Convert the unicode string to an ANSI string
     ///
-    /// The current global locale is used for conversion. If you
-    /// want to explicitely specify a locale, see the other overload
-    /// of ToAnsiString.
-    /// Characters that do not fit in the target encoding are
-    /// discarded from the returned string.
-    ///
-    /// \return Converted ANSI string
-    ///
-    /// \see ToWideString, operator std::string
-    ///
-    ////////////////////////////////////////////////////////////
-    std::string ToAnsiString() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Convert the unicode string to an ANSI string
-    ///
     /// The UTF-32 string is converted to an ANSI string in
-    /// the encoding defined by \a locale. If you want to use
-    /// the current global locale, see the other overload
-    /// of ToAnsiString.
+    /// the encoding defined by \a locale.
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
     ///
@@ -259,7 +202,7 @@ public :
     /// \see ToWideString, operator std::string
     ///
     ////////////////////////////////////////////////////////////
-    std::string ToAnsiString(const std::locale& locale) const;
+    std::string ToAnsiString(const std::locale& locale = std::locale()) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the unicode string to a wide string
