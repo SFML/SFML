@@ -44,6 +44,7 @@ myRenderImage(NULL)
 ////////////////////////////////////////////////////////////
 RenderImage::~RenderImage()
 {
+    SetActive(false);
     delete myRenderImage;
 }
 
@@ -117,7 +118,7 @@ bool RenderImage::SetActive(bool active)
 void RenderImage::Display()
 {
     // Update the target image
-    if (myRenderImage)
+    if (SetActive(true))
     {
         myRenderImage->UpdateTexture(myImage.myTexture);
 

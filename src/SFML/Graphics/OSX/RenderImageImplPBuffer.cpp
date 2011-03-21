@@ -66,16 +66,14 @@ RenderImageImplPBuffer::~RenderImageImplPBuffer()
         << aglGetError()
         << std::endl;
     }
-
-    // This is to make sure that another valid context is made
-    // active after we destroy the P-Buffer's one
-    Context::SetReferenceActive();
 }
 
 
 ////////////////////////////////////////////////////////////
 bool RenderImageImplPBuffer::IsSupported()
 {
+    EnsureGlContext();
+
     const GLubyte* strExt = glGetString(GL_EXTENSIONS);
     GLboolean isSupported = gluCheckExtension((const GLubyte*)"GL_APPLE_pixel_buffer", strExt);
     
@@ -164,21 +162,24 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
 ////////////////////////////////////////////////////////////
 bool RenderImageImplPBuffer::Activate(bool active)
 {
-    if (active) {
-        if (!myContext || !myPBuffer) { // Not created yet.
+    if (active)
+    {
+        if (!myContext || !myPBuffer) // Not created yet.
             return false;
-        }
         
-        if (aglGetCurrentContext() == myContext) {
+        if (aglGetCurrentContext() == myContext)
             return true;
-        } else {
+        else
             return aglSetCurrentContext(myContext);
-        }
-    } else {
+    }
+    else
+    {
         // To deactivate the P-Buffer's context, we actually activate
         // another one so that we make sure that there is always an
         // active context for subsequent graphics operations
-        return Context::SetReferenceActive();
+        // @todo fixme
+        // return Context::SetReferenceActive();
+        return true;
     }
 }
 
@@ -186,17 +187,14 @@ bool RenderImageImplPBuffer::Activate(bool active)
 ////////////////////////////////////////////////////////////
 void RenderImageImplPBuffer::UpdateTexture(unsigned int textureId)
 {
-    if (Activate(true))
-    {
-        GLint previous;
-        GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
+    GLint previous;
+    GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
-        // Copy the rendered pixels to the image
-        GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-        GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
+    // Copy the rendered pixels to the image
+    GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
+    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
 
-        GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
-    }
+    GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 }
 
 } // namespace priv

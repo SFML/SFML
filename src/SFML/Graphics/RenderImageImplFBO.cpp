@@ -47,6 +47,8 @@ myDepthBuffer(0)
 ////////////////////////////////////////////////////////////
 RenderImageImplFBO::~RenderImageImplFBO()
 {
+    EnsureGlContext();
+
     // Destroy the depth buffer
     if (myDepthBuffer)
     {
@@ -66,6 +68,8 @@ RenderImageImplFBO::~RenderImageImplFBO()
 ////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::IsSupported()
 {
+    EnsureGlContext();
+
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
 
@@ -76,6 +80,9 @@ bool RenderImageImplFBO::IsSupported()
 ////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
+    // Activate the render-image's context
+    myContext.SetActive(true);
+
     // Create the framebuffer object
     GLuint frameBuffer = 0;
     GLCheck(glGenFramebuffersEXT(1, &frameBuffer));

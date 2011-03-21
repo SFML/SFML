@@ -27,9 +27,13 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/System/ThreadLocalPtr.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/glext.h>
+#include <vector>
 #include <cstdlib>
+#include <cassert>
 
 
 #if defined(SFML_SYSTEM_WINDOWS)
@@ -55,16 +59,29 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    // This thread-local variable will hold the "global" context for each thread
-    sf::ThreadLocalPtr<sf::priv::GlContext> threadContext(NULL);
+    // This per-thread variable holds the current context for each thread
+    sf::ThreadLocalPtr<sf::priv::GlContext> currentContext = NULL;
 
-    // Now we create two global contexts.
-    // The first one is the reference context: it will be shared with every other
-    // context, and it can't be activated if we want the sharing operation to always succeed.
-    // That's why we need the second context: this one will be activated and used
-    // in the main thread whenever there's no other context (window) active.
-    ContextType referenceContext(NULL);
-    ContextType defaultContext(&referenceContext);
+    // The hidden, inactive context that will be shared with all other contexts
+    ContextType* sharedContext = NULL;
+
+    // Internal contexts
+    sf::ThreadLocalPtr<sf::priv::GlContext> internalContext = NULL;
+    std::vector<sf::priv::GlContext*> internalContexts;
+    sf::Mutex internalContextsMutex;
+
+    // Retrieve the internal context for the current thread
+    sf::priv::GlContext* GetInternalContext()
+    {
+        if (!internalContext)
+        {
+            internalContext = sf::priv::GlContext::New();
+            sf::Lock lock(internalContextsMutex);
+            internalContexts.push_back(internalContext);
+        }
+
+        return internalContext;
+    }
 }
 
 
@@ -73,16 +90,57 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
+void GlContext::Initialize()
+{
+    // Create the shared context
+    sharedContext = new ContextType(NULL);
+
+    // This call makes sure that:
+    // - the shared context is inactive (it must never be)
+    // - another valid context is activated in the current thread
+    sharedContext->SetActive(false);
+}
+
+
+////////////////////////////////////////////////////////////
+void GlContext::Cleanup()
+{
+    // Destroy the shared context
+    delete sharedContext;
+    sharedContext = NULL;
+
+    // Destroy the internal contexts
+    sf::Lock lock(internalContextsMutex);
+    for (std::vector<GlContext*>::iterator it = internalContexts.begin(); it != internalContexts.end(); ++it)
+        delete *it;
+    internalContexts.clear();
+}
+
+
+////////////////////////////////////////////////////////////
+void GlContext::EnsureContext()
+{
+    // If there's no active context on the current thread, activate an internal one
+    if (!currentContext)
+        GetInternalContext()->SetActive(true);
+}
+
+
+////////////////////////////////////////////////////////////
 GlContext* GlContext::New()
 {
-    return new ContextType(&referenceContext);
+    return new ContextType(sharedContext);
 }
 
 
 ////////////////////////////////////////////////////////////
 GlContext* GlContext::New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    ContextType* context = new ContextType(&referenceContext, owner, bitsPerPixel, settings);
+    // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
+    EnsureContext();
+
+    // Create the context
+    GlContext* context = new ContextType(sharedContext, owner, bitsPerPixel, settings);
 
     // Enable antialiasing if needed
     if (context->GetSettings().AntialiasingLevel > 0)
@@ -95,15 +153,8 @@ GlContext* GlContext::New(const WindowImpl* owner, unsigned int bitsPerPixel, co
 ////////////////////////////////////////////////////////////
 GlContext::~GlContext()
 {
-    if (threadContext == this)
-    {
-        threadContext = NULL;
-    }
-    else if (threadContext)
-    {
-        // Don't call this->SetActive(false), it would lead to a pure virtual function call
-        threadContext->SetActive(true);
-    }
+    // Deactivate the context before killing it
+    SetActive(false);
 }
 
 
@@ -119,42 +170,40 @@ bool GlContext::SetActive(bool active)
 {
     if (active)
     {
-        // Activate the context
-        if (MakeCurrent())
+        if (this != currentContext)
         {
-            // If this is the first context to be activated on this thread, make
-            // it the reference context for the whole thread.
-            // referenceContext must *not* be the threadContext of the main thread
-            if (!threadContext && (this != &referenceContext))
-                threadContext = this;
-
+            // Activate the context
+            if (MakeCurrent())
+            {
+                // Set it as the new current context for this thread
+                currentContext = this;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            // This context is already the active one on this thread, don't do anything
             return true;
         }
     }
     else
     {
-        // Deactivate the context
-        if (threadContext && (threadContext != this))
+        if (this == currentContext)
         {
-            // To deactivate the context, we actually activate another one
-            // so that we make sure that there is always an active context
-            // for subsequent graphics operations
-            return threadContext->SetActive(true);
+            // To deactivate the context, we actually activate another one so that we make
+            // sure that there is always an active context for subsequent graphics operations
+            return GetInternalContext()->SetActive(true);
+        }
+        else
+        {
+            // This context is not the active one on this thread, don't do anything
+            return true;
         }
     }
-
-    // If we got there then something failed
-    return false;
-}
-
-
-////////////////////////////////////////////////////////////
-bool GlContext::SetReferenceActive()
-{
-    if (threadContext)
-        return threadContext->SetActive(true);
-    else
-        return false;
 }
 
 

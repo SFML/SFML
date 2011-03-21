@@ -30,6 +30,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderImageImpl.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <GL/glew.h>
 #include <AGL/agl.h>
 
@@ -41,7 +42,7 @@ namespace priv
 /// \brief Specialization of RenderImageImpl using AGL P-Buffers
 ///
 ////////////////////////////////////////////////////////////
-class RenderImageImplPBuffer : public RenderImageImpl
+class RenderImageImplPBuffer : public RenderImageImpl, GlResource
 {
 public :
 

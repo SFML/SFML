@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderImageImpl.hpp>
 #include <SFML/Window/Context.hpp>
+#include <SFML/Window/GlResource.hpp>
 
 
 namespace sf
@@ -41,7 +42,7 @@ namespace priv
 ///        Frame Buffer Object OpenGL extension
 ///
 ////////////////////////////////////////////////////////////
-class RenderImageImplFBO : public RenderImageImpl
+class RenderImageImplFBO : public RenderImageImpl, GlResource
 {
 public :
 

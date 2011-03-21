@@ -36,12 +36,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-// Static member data
-////////////////////////////////////////////////////////////
-const Image Shader::CurrentTexture;
-
-
-////////////////////////////////////////////////////////////
 Shader::Shader() :
 myShaderProgram (0),
 myCurrentTexture(-1)
@@ -66,6 +60,8 @@ myFragmentShader(copy.myFragmentShader)
 ////////////////////////////////////////////////////////////
 Shader::~Shader()
 {
+    EnsureGlContext();
+
     // Destroy effect program
     if (myShaderProgram)
         GLCheck(glDeleteObjectARB(myShaderProgram));
@@ -109,6 +105,8 @@ void Shader::SetParameter(const std::string& name, float x)
 {
     if (myShaderProgram)
     {
+        EnsureGlContext();
+
         // Enable program
         GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
         GLCheck(glUseProgramObjectARB(myShaderProgram));
@@ -131,6 +129,8 @@ void Shader::SetParameter(const std::string& name, float x, float y)
 {
     if (myShaderProgram)
     {
+        EnsureGlContext();
+
         // Enable program
         GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
         GLCheck(glUseProgramObjectARB(myShaderProgram));
@@ -153,6 +153,8 @@ void Shader::SetParameter(const std::string& name, float x, float y, float z)
 {
     if (myShaderProgram)
     {
+        EnsureGlContext();
+
         // Enable program
         GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
         GLCheck(glUseProgramObjectARB(myShaderProgram));
@@ -175,6 +177,8 @@ void Shader::SetParameter(const std::string& name, float x, float y, float z, fl
 {
     if (myShaderProgram)
     {
+        EnsureGlContext();
+
         // Enable program
         GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
         GLCheck(glUseProgramObjectARB(myShaderProgram));
@@ -211,16 +215,9 @@ void Shader::SetTexture(const std::string& name, const Image& texture)
 {
     if (myShaderProgram)
     {
-        // Check if there is a texture unit available
-        GLint maxUnits;
-        GLCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
-        if (myTextures.size() + 1 >= static_cast<std::size_t>(maxUnits))
-        {
-            Err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
-            return;
-        }
+        EnsureGlContext();
 
-        // Make sure the given name is a valid variable in the effect
+        // Find the location of the variable in the shader
         int location = glGetUniformLocationARB(myShaderProgram, name.c_str());
         if (location == -1)
         {
@@ -228,11 +225,41 @@ void Shader::SetTexture(const std::string& name, const Image& texture)
             return;
         }
 
-        // Store the texture for later use
-        if (&texture != &CurrentTexture)
+        // Store the location -> texture mapping
+        TextureTable::iterator it = myTextures.find(location);
+        if (it == myTextures.end())
+        {
+            // New entry, make sure there are enough texture units
+            GLint maxUnits;
+            GLCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
+            if (myTextures.size() + 1 >= static_cast<std::size_t>(maxUnits))
+            {
+                Err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
+                return;
+            }
+
             myTextures[location] = &texture;
+        }
         else
-            myCurrentTexture = location;
+        {
+            // Location already used, just replace the texture
+            it->second = &texture;
+        }
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::SetCurrentTexture(const std::string& name)
+{
+    if (myShaderProgram)
+    {
+        EnsureGlContext();
+
+        // Find the location of the variable in the shader
+        int myCurrentTexture = glGetUniformLocationARB(myShaderProgram, name.c_str());
+        if (myCurrentTexture == -1)
+            Err() << "Texture \"" << name << "\" not found in shader" << std::endl;
     }
 }
 
@@ -242,6 +269,8 @@ void Shader::Bind() const
 {
     if (myShaderProgram)
     {
+        EnsureGlContext();
+
         // Enable the program
         GLCheck(glUseProgramObjectARB(myShaderProgram));
 
@@ -258,6 +287,8 @@ void Shader::Bind() const
 ////////////////////////////////////////////////////////////
 void Shader::Unbind() const
 {
+    EnsureGlContext();
+
     GLCheck(glUseProgramObjectARB(0));
 }
 
@@ -279,6 +310,8 @@ Shader& Shader::operator =(const Shader& right)
 ////////////////////////////////////////////////////////////
 bool Shader::IsAvailable()
 {
+    EnsureGlContext();
+
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
 
@@ -292,6 +325,8 @@ bool Shader::IsAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::CompileProgram()
 {
+    EnsureGlContext();
+
     // First make sure that we can use shaders
     if (!IsAvailable())
     {
@@ -299,9 +334,6 @@ bool Shader::CompileProgram()
               << "(you should test Shader::IsAvailable() before trying to use the Shader class)" << std::endl;
         return false;
     }
-
-    // Make sure that GLEW is initialized (extra safety -- it is already done in IsAvailable())
-    priv::EnsureGlewInit();
 
     // Destroy the shader if it was already created
     if (myShaderProgram)
@@ -398,7 +430,7 @@ void Shader::BindTextures() const
         GLCheck(glUniform1iARB(it->first, index));
         GLCheck(glActiveTextureARB(GL_TEXTURE0_ARB + index));
         it->second->Bind();
-        it++;
+        ++it;
     }
 
     // Make sure that the texture unit which is left active is the number 0

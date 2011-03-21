@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Matrix3.hpp>
@@ -44,7 +45,7 @@ class Shader;
 /// \brief Handles the low-level rendering (states and geometry)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Renderer : NonCopyable
+class SFML_API Renderer : GlResource, NonCopyable
 {
 public :
 

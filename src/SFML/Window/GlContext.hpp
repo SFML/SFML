@@ -48,6 +48,36 @@ class GlContext : NonCopyable
 public :
 
     ////////////////////////////////////////////////////////////
+    /// \brief Perform the global initialization
+    ///
+    /// This function is called once, before the very first OpenGL
+    /// resource is created. It makes sure that everything is ready
+    /// for contexts to work properly.
+    /// Note: this function doesn't need to be thread-safe, as it
+    /// can be called only once.
+    ///
+    ////////////////////////////////////////////////////////////
+    static void Initialize();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Perform the global cleanup
+    ///
+    /// This function is called after the very last OpenGL resource
+    /// is destroyed. It makes sure that everything that was
+    /// created by Initialize() is properly released.
+    /// Note: this function doesn't need to be thread-safe, as it
+    /// can be called only once.
+    ///
+    ////////////////////////////////////////////////////////////
+    static void Cleanup();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Ensures that an OpenGL context is active in the current thread
+    ///
+    ////////////////////////////////////////////////////////////
+    static void EnsureContext();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
     ///
     /// This function automatically chooses the specialized class
@@ -128,18 +158,6 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     virtual void EnableVerticalSync(bool enabled) = 0;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Make the current thread's reference context active
-    ///
-    /// This function is meant to be called internally; it is used
-    /// to deactivate the current context by activating another one
-    /// (so that we still have an active context on the current thread).
-    ///
-    /// \return True if operation was successful, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool SetReferenceActive();
 
 protected :
 

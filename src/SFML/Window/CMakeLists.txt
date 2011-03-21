@@ -8,6 +8,8 @@ set(SRC
     ${INCROOT}/Context.hpp
     ${SRCROOT}/GlContext.cpp
     ${SRCROOT}/GlContext.hpp
+    ${SRCROOT}/GlResource.cpp
+    ${INCROOT}/GlResource.hpp
     ${INCROOT}/ContextSettings.hpp
     ${INCROOT}/Event.hpp
     ${SRCROOT}/Input.cpp

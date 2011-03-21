@@ -25,33 +25,65 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Context.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/GlContext.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
+
+
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    // OpenGL resources counter and its mutex
+    unsigned long count = 0;
+    bool initialized = false;
+    sf::Mutex mutex;
+}
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Context::Context()
+GlResource::GlResource()
 {
-    myContext = priv::GlContext::New();
-    SetActive(true);
+    {
+        // Protect from concurrent access
+        Lock lock(mutex);
+
+        // If this is the very first resource, trigger the global context initialization
+        if (count == 0)
+            priv::GlContext::Initialize();
+
+        // Increment the resources counter
+        count++;
+    }
+
+    // Now make sure that there is an active OpenGL context in the current thread
+    priv::GlContext::EnsureContext();
 }
 
 
 ////////////////////////////////////////////////////////////
-Context::~Context()
+GlResource::~GlResource()
 {
-    SetActive(false);
-    delete myContext;
+    // Protect from concurrent access
+    Lock lock(mutex);
+
+    // Decrement the resources counter
+    count--;
+
+    // If there's no more resource alive, we can trigger the global context cleanup
+    if (count == 0)
+        priv::GlContext::Cleanup();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Context::SetActive(bool active)
+void GlResource::EnsureGlContext()
 {
-    myContext->SetActive(active);
+    priv::GlContext::EnsureContext();
 }
-
 
 } // namespace sf

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Resource.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <string>
@@ -45,7 +46,7 @@ class RenderWindow;
 /// \brief Class for loading, manipulating and saving images
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Image : public Resource<Image>
+class SFML_API Image : public Resource<Image>, GlResource
 {
 public :
 

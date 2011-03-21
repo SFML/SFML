@@ -33,6 +33,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <string>
@@ -52,7 +53,7 @@ class Event;
 /// \brief Window that serves as a target for OpenGL rendering
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Window : NonCopyable
+class SFML_API Window : GlResource, NonCopyable
 {
 public :
 

@@ -116,17 +116,7 @@ GlxContext::~GlxContext()
 ////////////////////////////////////////////////////////////
 bool GlxContext::MakeCurrent()
 {
-    if (myContext)
-    {
-        if (glXGetCurrentContext() != myContext)
-            return glXMakeCurrent(myDisplay, myWindow, myContext) != 0;
-        else
-            return true;
-    }
-    else
-    {
-        return false;
-    }
+    return myContext && glXMakeCurrent(myDisplay, myWindow, myContext);
 }
 
 

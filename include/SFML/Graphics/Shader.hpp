@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <map>
@@ -44,7 +45,7 @@ class Renderer;
 /// \brief Pixel/fragment shader class
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Shader
+class SFML_API Shader : GlResource
 {
 public :
 
@@ -120,7 +121,7 @@ public :
     /// \param name Name of the parameter in the shader
     /// \param x    Value to assign
     ///
-    /// \see SetTexture
+    /// \see SetTexture, SetCurrentTexture
     ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, float x);
@@ -141,7 +142,7 @@ public :
     /// \param x    First component of the value to assign
     /// \param y    Second component of the value to assign
     ///
-    /// \see SetTexture
+    /// \see SetTexture, SetCurrentTexture
     ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, float x, float y);
@@ -163,7 +164,7 @@ public :
     /// \param y    Second component of the value to assign
     /// \param z    Third component of the value to assign
     ///
-    /// \see SetTexture
+    /// \see SetTexture, SetCurrentTexture
     ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, float x, float y, float z);
@@ -186,7 +187,7 @@ public :
     /// \param z    Third component of the value to assign
     /// \param w    Fourth component of the value to assign
     ///
-    /// \see SetTexture
+    /// \see SetTexture, SetCurrentTexture
     ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, float x, float y, float z, float w);
@@ -206,7 +207,7 @@ public :
     /// \param name   Name of the parameter in the shader
     /// \param vector Vector to assign
     ///
-    /// \see SetTexture
+    /// \see SetTexture, SetCurrentTexture
     ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, const Vector2f& vector);
@@ -226,7 +227,7 @@ public :
     /// \param name   Name of the parameter in the shader
     /// \param vector Vector to assign
     ///
-    /// \see SetTexture
+    /// \see SetTexture, SetCurrentTexture
     ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, const Vector3f& vector);
@@ -235,19 +236,18 @@ public :
     /// \brief Change a texture parameter of the shader
     ///
     /// \a name is the name of the texture to change in the shader.
-    /// To tell the shader to use the current texture of the object being
-    /// drawn, pass Shader::CurrentTexture.
+    /// This function maps an external image to the texture variable;
+    /// to use the current texture of the object being drawn, use
+    /// SetCurrentTexture instead.
     /// Example:
     /// \code
     /// // These are the variables in the pixel shader
-    /// uniform sampler2D current;
-    /// uniform sampler2D other;
+    /// uniform sampler2D texture;
     /// \endcode
     /// \code
     /// sf::Image image;
     /// ...
-    /// shader.SetParameter("current", sf::Shader::CurrentTexture);
-    /// shader.SetParameter("other", image);
+    /// shader.SetTexture("texture", image);
     /// \endcode
     /// It is important to note that \a texture must remain alive as long
     /// as the shader uses it, no copy is made internally.
@@ -255,10 +255,31 @@ public :
     /// \param name    Name of the texture in the shader
     /// \param texture Image to assign
     ///
-    /// \see SetParameter
+    /// \see SetParameter, SetCurrentTexture
     ///
     ////////////////////////////////////////////////////////////
     void SetTexture(const std::string& name, const Image& texture);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the current object texture in the shader
+    ///
+    /// This function maps a shader texture variable to the
+    /// image of the object being drawn.
+    /// Example:
+    /// \code
+    /// // This is the variable in the pixel shader
+    /// uniform sampler2D current;
+    /// \endcode
+    /// \code
+    /// shader.SetCurrentTexture("current");
+    /// \endcode
+    ///
+    /// \param name Name of the texture in the shader
+    ///
+    /// \see SetParameter, SetTexture
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetCurrentTexture(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind the shader for rendering (activate it)
@@ -311,11 +332,6 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static bool IsAvailable();
-
-    ////////////////////////////////////////////////////////////
-    // Static member data
-    ////////////////////////////////////////////////////////////
-    static const Image CurrentTexture; ///< Special image representing the texture used by the object being drawn
 
 private :
 
@@ -394,12 +410,12 @@ private :
 /// \code
 /// shader.SetParameter("offset", 2.f);
 /// shader.SetParameter("color", 0.5f, 0.8f, 0.3f);
-/// shader.SetTexture("image", image); // image is a sf::Image
-/// shader.SetTexture("current", sf::Shader::CurrentTexture);
+/// shader.SetTexture("overlay", image); // image is a sf::Image
+/// shader.SetCurrentTexture("texture");
 /// \endcode
 ///
-/// Shader::CurrentTexture is a special value that represents
-/// the texture that the object being drawn is using.
+/// Shader::SetCurrentTexture maps the given texture variable
+/// to the current texture of the object being drawn.
 ///
 /// To apply a shader to a drawable, you must pass it as an
 /// additional parameter to the Draw function:

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
 
@@ -43,7 +44,7 @@ namespace priv
 /// \brief Class holding a valid drawing context
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Context : NonCopyable
+class SFML_API Context : GlResource, NonCopyable
 {
 public :
 
@@ -70,18 +71,6 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void SetActive(bool active);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Make the current thread's reference context active
-    ///
-    /// This function is meant to be called internally; it is used
-    /// to deactivate the current context by activating another one
-    /// (so that we still have an active context on the current thread).
-    ///
-    /// \return True if operation was successful, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool SetReferenceActive();
 
 private :
 

@@ -84,6 +84,8 @@ Image::~Image()
     // Destroy the OpenGL texture
     if (myTexture)
     {
+        EnsureGlContext();
+
         GLuint Texture = static_cast<GLuint>(myTexture);
         GLCheck(glDeleteTextures(1, &Texture));
     }
@@ -410,6 +412,8 @@ void Image::UpdatePixels(const Uint8* pixels)
 {
     if (pixels && myTexture)
     {
+        EnsureGlContext();
+
         GLint previous;
         GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
@@ -468,6 +472,8 @@ void Image::SetSmooth(bool smooth)
 
         if (myTexture)
         {
+            EnsureGlContext();
+
             GLint previous;
             GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
@@ -535,6 +541,8 @@ FloatRect Image::GetTexCoords(const IntRect& rect) const
 ////////////////////////////////////////////////////////////
 unsigned int Image::GetMaximumSize()
 {
+    EnsureGlContext();
+
     GLint size;
     GLCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
 
@@ -565,6 +573,8 @@ Image& Image::operator =(const Image& right)
 ////////////////////////////////////////////////////////////
 unsigned int Image::GetValidSize(unsigned int size)
 {
+    EnsureGlContext();
+
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
 
@@ -613,6 +623,8 @@ bool Image::CreateTexture(unsigned int width, unsigned int height)
     myTextureWidth  = textureWidth;
     myTextureHeight = textureHeight;
 
+    EnsureGlContext();
+
     // Create the OpenGL texture if it doesn't exist yet
     if (!myTexture)
     {
@@ -645,6 +657,8 @@ void Image::EnsureTextureUpdate() const
     {
         if (myTexture && !myPixels.empty())
         {
+            EnsureGlContext();
+
             GLint previous;
             GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
@@ -666,6 +680,8 @@ void Image::EnsureArrayUpdate() const
 {
     if (!myArrayUpdated)
     {
+        EnsureGlContext();
+
         // Save the previous texture
         GLint previous;
         GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));

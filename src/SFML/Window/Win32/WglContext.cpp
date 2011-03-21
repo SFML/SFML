@@ -107,17 +107,7 @@ WglContext::~WglContext()
 ////////////////////////////////////////////////////////////
 bool WglContext::MakeCurrent()
 {
-    if (myDeviceContext && myContext)
-    {
-        if (wglGetCurrentContext() != myContext)
-            return wglMakeCurrent(myDeviceContext, myContext) != 0;
-        else
-            return true;
-    }
-    else
-    {
-        return false;
-    }
+    return myDeviceContext && myContext && wglMakeCurrent(myDeviceContext, myContext);
 }
 
 
