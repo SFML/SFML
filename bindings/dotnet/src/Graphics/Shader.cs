@@ -128,12 +128,23 @@ namespace SFML
             /// Set a texture parameter
             /// </summary>
             /// <param name="name">Name of the texture in the shader</param>
-            /// <param name="texture">Image to set (pass null to use the texture of the object being drawn)</param>
+            /// <param name="texture">Image to set</param>
             ////////////////////////////////////////////////////////////
             public void SetTexture(string name, Image texture)
             {
                 myTextures[name] = texture;
-                sfShader_SetTexture(This, name, texture != null ? texture.This : IntPtr.Zero);
+                sfShader_SetTexture(This, name, texture.This);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Set the current texture parameter
+            /// </summary>
+            /// <param name="name">Name of the texture in the shader</param>
+            ////////////////////////////////////////////////////////////
+            public void SetCurrentTexture(string name)
+            {
+                sfShader_SetCurrentTexture(This, name);
             }
 
             ////////////////////////////////////////////////////////////
@@ -164,16 +175,6 @@ namespace SFML
             public static bool IsAvailable
             {
                 get {return sfShader_IsAvailable();}
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Special image representing the texture used by the object being drawn
-            /// </summary>
-            ////////////////////////////////////////////////////////////
-            public static Image CurrentTexture
-            {
-                get {return null;}
             }
 
             ////////////////////////////////////////////////////////////
@@ -246,6 +247,9 @@ namespace SFML
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfShader_SetTexture(IntPtr Shader, string Name, IntPtr Texture);
+
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern void sfShader_SetCurrentTexture(IntPtr Shader, string Name);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfShader_Bind(IntPtr Shader);

@@ -111,15 +111,15 @@ namespace shader
             globalShader     = new ShaderSelector(shaders);
 
             // Do specific initializations
-            shaders["nothing"].SetTexture("texture", Shader.CurrentTexture);
-            shaders["blur"].SetTexture("texture", Shader.CurrentTexture);
+            shaders["nothing"].SetCurrentTexture("texture");
+            shaders["blur"].SetCurrentTexture("texture");
             shaders["blur"].SetParameter("offset", 0.0F);
-            shaders["colorize"].SetTexture("texture", Shader.CurrentTexture);
+            shaders["colorize"].SetCurrentTexture("texture");
             shaders["colorize"].SetParameter("color", 1.0F, 1.0F, 1.0F);
-            shaders["fisheye"].SetTexture("texture", Shader.CurrentTexture);
-            shaders["wave"].SetTexture("texture", Shader.CurrentTexture);
+            shaders["fisheye"].SetCurrentTexture("texture");
+            shaders["wave"].SetCurrentTexture("texture");
             shaders["wave"].SetTexture("wave", waveImage);
-            shaders["pixelate"].SetTexture("texture", Shader.CurrentTexture);
+            shaders["pixelate"].SetCurrentTexture("texture");
 
             // Define a string for displaying current effect description
             shaderText = new Text();
