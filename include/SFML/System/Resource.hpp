@@ -31,6 +31,7 @@
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <set>
+#include <cstddef>
 
 
 namespace sf
