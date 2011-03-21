@@ -37,7 +37,7 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 RenderImageImplPBuffer::RenderImageImplPBuffer() :
-myPBuffer(NULL),
+myPBuffer(0),
 myContext(NULL),
 myWidth  (0),
 myHeight (0)
@@ -135,7 +135,7 @@ bool RenderImageImplPBuffer::Create(unsigned int width, unsigned int height, uns
     GLXDrawable currentDrawable = glXGetCurrentDrawable();
     GLXContext currentContext = glXGetCurrentContext();
     if (currentContext)
-        glXMakeCurrent(myDisplay, NULL, NULL);
+        glXMakeCurrent(myDisplay, 0, NULL);
 
     // Create the context
     XVisualInfo* visual = glXGetVisualFromFBConfig(myDisplay, configs[0]);
