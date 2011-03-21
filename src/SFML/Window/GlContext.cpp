@@ -60,13 +60,13 @@
 namespace
 {
     // This per-thread variable holds the current context for each thread
-    sf::ThreadLocalPtr<sf::priv::GlContext> currentContext = NULL;
+    sf::ThreadLocalPtr<sf::priv::GlContext> currentContext(NULL);
 
     // The hidden, inactive context that will be shared with all other contexts
     ContextType* sharedContext = NULL;
 
     // Internal contexts
-    sf::ThreadLocalPtr<sf::priv::GlContext> internalContext = NULL;
+    sf::ThreadLocalPtr<sf::priv::GlContext> internalContext(NULL);
     std::vector<sf::priv::GlContext*> internalContexts;
     sf::Mutex internalContextsMutex;
 
