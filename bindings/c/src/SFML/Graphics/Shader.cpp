@@ -126,7 +126,17 @@ void sfShader_SetParameter4(sfShader* shader, const char* name, float x, float y
 ////////////////////////////////////////////////////////////
 void sfShader_SetTexture(sfShader* shader, const char* name, const sfImage* texture)
 {
-    CSFML_CALL(shader, SetTexture(name, texture && texture->This ? *texture->This : sf::Shader::CurrentTexture))
+    CSFML_CHECK(texture);
+    CSFML_CALL(shader, SetTexture(name, *texture->This))
+}
+
+
+////////////////////////////////////////////////////////////
+/// Set the current texture parameter in a shader
+////////////////////////////////////////////////////////////
+void sfShader_SetCurrentTexture(sfShader* shader, const char* name)
+{
+    CSFML_CALL(shader, SetCurrentTexture(name))
 }
 
 
