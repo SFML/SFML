@@ -69,7 +69,7 @@ void SoundRecorder::Start(unsigned int sampleRate)
     // Check if the device can do audio capture
     if (!IsAvailable())
     {
-        Err() << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::CanCapture to check it)" << std::endl;
+        Err() << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::IsAvailable to check it)" << std::endl;
         return;
     }
 
