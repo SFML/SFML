@@ -73,14 +73,14 @@ namespace SFML
             /// </summary>
             /// <param name="str">String to display</param>
             /// <param name="font">Font to use</param>
-            /// <param name="size">Base characters size</param>
+            /// <param name="characterSize">Base characters size</param>
             ////////////////////////////////////////////////////////////
-            public Text(string str, Font font, uint size) :
+            public Text(string str, Font font, uint characterSize) :
                 base(sfText_Create())
             {
                 DisplayedString = str;
                 Font = font;
-                Size = size;
+                CharacterSize = characterSize;
             }
 
             ////////////////////////////////////////////////////////////
@@ -223,7 +223,7 @@ namespace SFML
             /// Base size of characters
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public uint Size
+            public uint CharacterSize
             {
                 get {return sfText_GetCharacterSize(This);}
                 set {sfText_SetCharacterSize(This, value);}
@@ -285,7 +285,7 @@ namespace SFML
                        " BlendMode(" + BlendMode + ")" +
                        " String(" + DisplayedString + ")" +
                        " Font(" + Font + ")" +
-                       " Size(" + Size + ")" +
+                       " CharacterSize(" + CharacterSize + ")" +
                        " Style(" + Style + ")" +
                        " Rectangle(" + GetRect() + ")";
             }

@@ -124,7 +124,7 @@ namespace shader
             // Define a string for displaying current effect description
             shaderText = new Text();
             shaderText.Font = font;
-            shaderText.Size = 20;
+            shaderText.CharacterSize = 20;
             shaderText.Position = new Vector2(5.0F, 0.0F);
             shaderText.Color = new Color(250, 100, 30);
             shaderText.DisplayedString = "Background shader: \"" + backgroundShader.Name + "\"\n" +
@@ -134,7 +134,7 @@ namespace shader
             // Define a string for displaying help
             Text infoText = new Text();
             infoText.Font = font;
-            infoText.Size = 20;
+            infoText.CharacterSize = 20;
             infoText.Position = new Vector2(5.0F, 500.0F);
             infoText.Color = new Color(250, 100, 30);
             infoText.DisplayedString = "Move your mouse to change the shaders' parameters\n" +
