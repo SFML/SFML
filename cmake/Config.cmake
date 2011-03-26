@@ -15,10 +15,10 @@ endif()
 # note: this test won't work for cross-compilation
 include(CheckTypeSize)
 check_type_size(void* SIZEOF_VOID_PTR)
-if(${SIZEOF_VOID_PTR} MATCHES "^8$")
-    set(ARCH_BITS 64)
+if(${SIZEOF_VOID_PTR} MATCHES "^4$")
+    set(ARCH_32BITS 1)
 else()
-    set(ARCH_BITS 32)
+    set(ARCH_64BITS 1)
 endif()
 
 # detect the compiler and its version

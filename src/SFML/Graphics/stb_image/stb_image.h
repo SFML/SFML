@@ -1,4 +1,4 @@
-/* stbi-1.27 - public domain JPEG/PNG reader - http://nothings.org/stb_image.c
+/* stbi-1.29 - public domain JPEG/PNG reader - http://nothings.org/stb_image.c
    when you control the images you're loading
                                      no warranty implied; use at your own risk
 
@@ -21,6 +21,8 @@
       - supports installable dequantizing-IDCT, YCbCr-to-RGB conversion (define STBI_SIMD)
 
    Latest revisions:
+      1.29 (2010-08-16) various warning fixes from Aurelien Pocheville 
+      1.28 (2010-08-01) fix bug in GIF palette transparency (SpartanJ)
       1.27 (2010-08-01) cast-to-uint8 to fix warnings (Laurent Gomila)
                         allow trailing 0s at end of image data (Laurent Gomila)
       1.26 (2010-07-24) fix bug in file buffering for PNG reported by SpartanJ
@@ -60,7 +62,8 @@
                                                  the Horde3D community      
  Extensions, features                            Janez Zemva                
     Jetro Lauha (stbi_info)                      Jonathan Blow              
-    James "moose2000" Brown (iPhone PNG)                                      
+    James "moose2000" Brown (iPhone PNG)         Laurent Gomila                             
+                                                 Aruelien Pocheville
 
  If your name should be here but isn't, let Sean know.
 
@@ -188,7 +191,7 @@ enum
    STBI_grey       = 1,
    STBI_grey_alpha = 2,
    STBI_rgb        = 3,
-   STBI_rgb_alpha  = 4,
+   STBI_rgb_alpha  = 4
 };
 
 typedef unsigned char stbi_uc;
@@ -278,7 +281,7 @@ typedef struct
 extern int stbi_register_loader(stbi_loader *loader);
 
 // define faster low-level operations (typically SIMD support)
-#if STBI_SIMD
+#ifdef STBI_SIMD
 typedef void (*stbi_idct_8x8)(stbi_uc *out, int out_stride, short data[64], unsigned short *dequantize);
 // compute an integer IDCT on "input"
 //     input[x] = data[x] * dequantize[x]
@@ -729,6 +732,8 @@ int stbi_is_hdr_from_memory(stbi_uc const *buffer, int len)
    #ifndef STBI_NO_HDR
    return stbi_hdr_test_memory(buffer, len);
    #else
+   STBI_NOTUSED(buffer);
+   STBI_NOTUSED(len);
    return 0;
    #endif
 }
@@ -777,7 +782,7 @@ enum
 {
    SCAN_load=0,
    SCAN_type,
-   SCAN_header,
+   SCAN_header
 };
 
 typedef struct
@@ -1070,7 +1075,7 @@ typedef struct
 
 typedef struct
 {
-   #if STBI_SIMD
+   #ifdef STBI_SIMD
    unsigned short dequant2[4][64];
    #endif
    stbi s;
@@ -1349,7 +1354,7 @@ __forceinline static uint8 clamp(int x)
    t1 += p2+p4;                                \
    t0 += p1+p3;
 
-#if STBI_SIMD
+#ifdef STBI_SIMD
 typedef unsigned short stbi_dequantize_t;
 #else
 typedef uint8 stbi_dequantize_t;
@@ -1464,7 +1469,7 @@ static int parse_entropy_coded_data(jpeg *z)
    reset(z);
    if (z->scan_n == 1) {
       int i,j;
-      #if STBI_SIMD
+      #ifdef STBI_SIMD
       __declspec(align(16))
       #endif
       short data[64];
@@ -1478,7 +1483,7 @@ static int parse_entropy_coded_data(jpeg *z)
       for (j=0; j < h; ++j) {
          for (i=0; i < w; ++i) {
             if (!decode_block(z, data, z->huff_dc+z->img_comp[n].hd, z->huff_ac+z->img_comp[n].ha, n)) return 0;
-            #if STBI_SIMD
+            #ifdef STBI_SIMD
             stbi_idct_installed(z->img_comp[n].data+z->img_comp[n].w2*j*8+i*8, z->img_comp[n].w2, data, z->dequant2[z->img_comp[n].tq]);
             #else
             idct_block(z->img_comp[n].data+z->img_comp[n].w2*j*8+i*8, z->img_comp[n].w2, data, z->dequant[z->img_comp[n].tq]);
@@ -1508,7 +1513,7 @@ static int parse_entropy_coded_data(jpeg *z)
                      int x2 = (i*z->img_comp[n].h + x)*8;
                      int y2 = (j*z->img_comp[n].v + y)*8;
                      if (!decode_block(z, data, z->huff_dc+z->img_comp[n].hd, z->huff_ac+z->img_comp[n].ha, n)) return 0;
-                     #if STBI_SIMD
+                     #ifdef STBI_SIMD
                      stbi_idct_installed(z->img_comp[n].data+z->img_comp[n].w2*y2+x2, z->img_comp[n].w2, data, z->dequant2[z->img_comp[n].tq]);
                      #else
                      idct_block(z->img_comp[n].data+z->img_comp[n].w2*y2+x2, z->img_comp[n].w2, data, z->dequant[z->img_comp[n].tq]);
@@ -1556,7 +1561,7 @@ static int process_marker(jpeg *z, int m)
             if (t > 3) return e("bad DQT table","Corrupt JPEG");
             for (i=0; i < 64; ++i)
                z->dequant[t][dezigzag[i]] = get8u(&z->s);
-            #if STBI_SIMD
+            #ifdef STBI_SIMD
             for (i=0; i < 64; ++i)
                z->dequant2[t][i] = z->dequant[t][i];
             #endif
@@ -1736,6 +1741,7 @@ static int decode_jpeg_image(jpeg *j)
          if (!process_scan_header(j)) return 0;
          if (!parse_entropy_coded_data(j)) return 0;
          if (j->marker == MARKER_none ) {
+            // handle 0s at the end of image data from IP Kamera 9060
             while (!at_eof(&j->s)) {
                int x = get8(&j->s);
                if (x == 255) {
@@ -1745,6 +1751,7 @@ static int decode_jpeg_image(jpeg *j)
                   return 0;
                }
             }
+            // if we reach eof without hitting a marker, get_marker() below will fail and we'll eventually return 0
          }
       } else {
          if (!process_marker(j, m)) return 0;
@@ -1874,7 +1881,7 @@ static void YCbCr_to_RGB_row(uint8 *out, const uint8 *y, const uint8 *pcb, const
    }
 }
 
-#if STBI_SIMD
+#ifdef STBI_SIMD
 static stbi_YCbCr_to_RGB_run stbi_YCbCr_installed = YCbCr_to_RGB_row;
 
 void stbi_install_YCbCr_to_RGB(stbi_YCbCr_to_RGB_run func)
@@ -1983,7 +1990,7 @@ static uint8 *load_jpeg_image(jpeg *z, int *out_x, int *out_y, int *comp, int re
          if (n >= 3) {
             uint8 *y = coutput[0];
             if (z->s.img_n == 3) {
-               #if STBI_SIMD
+               #ifdef STBI_SIMD
                stbi_YCbCr_installed(out, y, coutput[1], coutput[2], z->s.img_x, n);
                #else
                YCbCr_to_RGB_row(out, y, coutput[1], coutput[2], z->s.img_x, n);
@@ -2031,9 +2038,18 @@ unsigned char *stbi_jpeg_load(char const *filename, int *x, int *y, int *comp, i
 
 unsigned char *stbi_jpeg_load_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp)
 {
+   #ifdef STBI_SMALL_STACK
+   unsigned char *result;
+   jpeg *j = (jpeg *) malloc(sizeof(*j));
+   start_mem(&j->s, buffer, len);
+   result = load_jpeg_image(j,x,y,comp,req_comp);
+   free(j);
+   return result;
+   #else
    jpeg j;
    start_mem(&j.s, buffer,len);
    return load_jpeg_image(&j, x,y,comp,req_comp);
+   #endif
 }
 
 static int stbi_jpeg_info_raw(jpeg *j, int *x, int *y, int *comp)
@@ -2579,7 +2595,7 @@ typedef struct
 
 enum {
    F_none=0, F_sub=1, F_up=2, F_avg=3, F_paeth=4,
-   F_avg_first, F_paeth_first,
+   F_avg_first, F_paeth_first
 };
 
 static uint8 first_row_filter[5] =
@@ -3422,6 +3438,7 @@ static int tga_info(stbi *s, int *x, int *y, int *comp)
     return 1;                   // seems to have passed everything
 }
 
+#ifndef STBI_NO_STDIO
 int stbi_tga_info_from_file(FILE *f, int *x, int *y, int *comp)
 {
     stbi s;
@@ -3432,6 +3449,7 @@ int stbi_tga_info_from_file(FILE *f, int *x, int *y, int *comp)
     fseek(f, n, SEEK_SET);
     return r;
 }
+#endif
 
 int stbi_tga_info_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp)
 {
@@ -4477,7 +4495,7 @@ static uint8 *stbi_gif_load_next(stbi *s, stbi_gif *g, int *comp, int req_comp)
                for (i=0; i < 256; ++i)  // @OPTIMIZE: reset only the previous transparent
                   g->pal[i][3] = 255; 
                if (g->transparent >= 0 && (g->eflags & 0x01))
-                  g->pal[i][3] = 0;
+                  g->pal[g->transparent][3] = 0;
                g->color_table = (uint8 *) g->pal;
             } else
                return epuc("missing color table", "Corrupt GIF");
@@ -4863,6 +4881,8 @@ int stbi_info_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *c
 
 /*
    revision history:
+      1.29 (2010-08-16) various warning fixes from Aurelien Pocheville 
+      1.28 (2010-08-01) fix bug in GIF palette transparency (SpartanJ)
       1.27 (2010-08-01)
              cast-to-uint8 to fix warnings
       1.26 (2010-07-24)
