@@ -40,6 +40,20 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif()
 
+# define an option for choosing between static CRT and DLL CRT (with Visual C++)
+if(COMPILER_MSVC)
+    set(FORCE_STATIC_VCRT FALSE CACHE BOOL "TRUE to force static VC++ runtimes, FALSE to use the DLL ones")
+    if(FORCE_STATIC_VCRT)
+        foreach(flag
+                CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+                CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+            if(${flag} MATCHES "/MD")
+                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+            endif()
+        endforeach()
+    endif()
+endif()
+
 # disable the rpath stuff
 set(CMAKE_SKIP_BUILD_RPATH TRUE)
 
