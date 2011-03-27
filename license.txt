@@ -1,7 +1,7 @@
 SFML
 ----
 
-SFML - Copyright (c) 2007-2009 Laurent Gomila - laurent.gom@gmail.com
+SFML - Copyright (c) 2007-2011 Laurent Gomila - laurent.gom@gmail.com
 
 This software is provided 'as-is', without any express or
 implied warranty. In no event will the authors be held
@@ -33,3 +33,4 @@ External libraries used by SFML
 * libjpeg is public domain
 * stb_image and stb_image_write are public domain
 * freetype is under the FreeType license or the GPL license
+* GLEW is under the modified BSD License, the Mesa 3-D License (MIT License), and the Khronos License (MIT License)
