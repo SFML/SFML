@@ -68,6 +68,8 @@ else() # MACOSX
         ${SRCROOT}/OSX/SFWindow.m
         ${SRCROOT}/OSX/SFWindowController.h
         ${SRCROOT}/OSX/SFWindowController.mm
+        ${SRCROOT}/OSX/SFViewController.h
+        ${SRCROOT}/OSX/SFViewController.mm
         ${SRCROOT}/OSX/VideoModeImpl.cpp
         ${SRCROOT}/OSX/WindowImplCocoa.hpp
         ${SRCROOT}/OSX/WindowImplCocoa.mm

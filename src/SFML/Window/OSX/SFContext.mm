@@ -55,7 +55,7 @@ SFContext::SFContext(SFContext* shared)
     myPool = [[NSAutoreleasePool alloc] init];
     
     // Create the context
-    CreateContext(shared, 0, ContextSettings(0, 0, 0));
+    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
     
     // Activate the context
     SetActive(true);
@@ -83,6 +83,7 @@ SFContext::SFContext(SFContext* shared, const WindowImpl* owner,
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
+    [myContext clearDrawable];
     [myContext release];
     [myPool drain]; // [A]
     

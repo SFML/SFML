@@ -30,8 +30,7 @@
 #include <SFML/System/Err.hpp>
 
 #import <SFML/Window/OSX/SFWindowController.h>
-//#import <SFML/Window/OSX/SFViewController.h>
-#warning SFViewController not yet implemented.
+#import <SFML/Window/OSX/SFViewController.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
 
 namespace sf
@@ -45,9 +44,6 @@ namespace priv
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
 {
-    sf::Err() << "Not yet fully supported." << std::endl;
-#warning WindowImplCocoa(WindowHandle handle) not yet fully implemented
-    
     SetUpPoolAndApplication();
     
     // Treat the handle as it real type
@@ -56,13 +52,21 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
         
         // We have a window.
         myDelegate = [[SFWindowController alloc] initWithWindow:nsHandle];
+        
+        // Don't forget to update our parent (that is, WindowImpl) size :
+        myWidth = [[nsHandle contentView] frame].size.width;
+        myHeight = [[nsHandle contentView] frame].size.height;
     
-    } /*else if ([nsHandle isKindOfClass:[NSView class]]) {
+    } else if ([nsHandle isKindOfClass:[NSView class]]) {
         
         // We have a view.
         myDelegate = [[SFViewController alloc] initWithView:nsHandle];
         
-    } */ else {
+        // Don't forget to update our parent (that is, WindowImpl) size :
+        myWidth = [nsHandle frame].size.width;
+        myHeight = [nsHandle frame].size.height;
+        
+    } else {
         
         sf::Err()
             << "Cannot import this Window Handle because it is neither "
