@@ -88,14 +88,14 @@
             
             sf::Err()
             << "Could not create an instance of NSOpenGLView "
-            << "in (SFWindowController -initWithMode:andStyle:)."
+            << "in (SFWindowController -initWithWindow:)."
             << std::endl;
             
             return self;
         }
         
         // Set the view to the window as its content view.
-        [myWindow setContentView:myOGLView];
+        [[myWindow contentView] addSubview:myOGLView];
     }
     
     return self;
@@ -434,7 +434,7 @@
          * for more information.
          */
         sf::Err()
-        << "Cannot fetch event from a worker thread. (OS X limitation)"
+        << "Cannot fetch event from a worker thread. (OS X restriction)"
         << std::endl;
         
         return;
