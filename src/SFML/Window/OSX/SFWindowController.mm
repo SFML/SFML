@@ -37,6 +37,7 @@
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFWindow.h>
+#import <OpenGL/OpenGL.h>
 
 ////////////////////////////////////////////////////////////
 /// SFWindowController class : Privates Methods Declaration
