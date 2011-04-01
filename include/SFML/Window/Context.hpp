@@ -89,12 +89,11 @@ private :
 /// \class sf::Context
 /// \ingroup window
 ///
-/// If you need to make OpenGL / graphics calls without
-/// having an active window (like in a thread), you can use
-/// an instance of this class to get a valid context.
+/// If you need to make OpenGL calls without having an
+/// active window (like in a thread), you can use an
+/// instance of this class to get a valid context.
 ///
-/// Having a valid context is necessary for *every* OpenGL call,
-/// and for most of the classes from the Graphics package.
+/// Having a valid context is necessary for *every* OpenGL call.
 ///
 /// Note that a context is only active in its current thread,
 /// if you create a new thread it will have no valid context
@@ -115,10 +114,6 @@ private :
 ///
 ///    // you can make OpenGL calls
 ///    glClear(GL_DEPTH_BUFFER_BIT);
-///
-///    // as well as using objects from the graphics package
-///    sf::Image image;
-///    image.LoadFromFile("image.png");
 /// }
 /// // the context is automatically deactivated and destroyed
 /// // by the sf::Context destructor
