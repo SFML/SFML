@@ -64,7 +64,7 @@ public :
     /// \return True if FBO render images are supported
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsSupported();
+    static bool IsAvailable();
 
 private :
 
@@ -102,9 +102,9 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    Context*     myContext;     ///< Needs a separate OpenGL context for not messing up the other ones
     unsigned int myFrameBuffer; ///< OpenGL frame buffer object
     unsigned int myDepthBuffer; ///< Optional depth buffer attached to the frame buffer
-    Context      myContext;     ///< Needs a separate OpenGL context for not messing up the other ones
 };
 
 } // namespace priv

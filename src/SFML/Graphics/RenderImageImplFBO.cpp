@@ -62,11 +62,14 @@ RenderImageImplFBO::~RenderImageImplFBO()
         GLuint frameBuffer = static_cast<GLuint>(myFrameBuffer);
         GLCheck(glDeleteFramebuffersEXT(1, &frameBuffer));
     }
+
+    // Delete the context
+    delete myContext;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImageImplFBO::IsSupported()
+bool RenderImageImplFBO::IsAvailable()
 {
     EnsureGlContext();
 
@@ -80,8 +83,8 @@ bool RenderImageImplFBO::IsSupported()
 ////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
-    // Activate the render-image's context
-    myContext.SetActive(true);
+    //Create the context
+    myContext = new Context;
 
     // Create the framebuffer object
     GLuint frameBuffer = 0;
@@ -128,9 +131,7 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
 ////////////////////////////////////////////////////////////
 bool RenderImageImplFBO::Activate(bool active)
 {
-    myContext.SetActive(active);
-
-    return true;
+    return myContext->SetActive(active);
 }
 
 ////////////////////////////////////////////////////////////

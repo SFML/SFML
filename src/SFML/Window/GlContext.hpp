@@ -94,14 +94,29 @@ public :
     /// This function automatically chooses the specialized class
     /// to use according to the OS.
     ///
+    /// \param settings     Creation parameters
     /// \param owner        Pointer to the owner window
     /// \param bitsPerPixel Pixel depth (in bits per pixel)
-    /// \param settings     Creation parameters
     ///
-    /// \return Pointer to the created context (don't forget to delete it)
+    /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    static GlContext* New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
+    static GlContext* New(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new context that embeds its own rendering target
+    ///
+    /// This function automatically chooses the specialized class
+    /// to use according to the OS.
+    ///
+    /// \param settings Creation parameters
+    /// \param width    Back buffer width
+    /// \param height   Back buffer height
+    ///
+    /// \return Pointer to the created context
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlContext* New(const ContextSettings& settings, unsigned int width, unsigned int height);
 
 public :
 

@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/Window/GlResource.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
 
@@ -69,8 +70,25 @@ public :
     ///
     /// \param active True to activate, false to deactivate
     ///
+    /// \return True on success, false on failure
+    ///
     ////////////////////////////////////////////////////////////
-    void SetActive(bool active);
+    bool SetActive(bool active);
+
+public :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a in-memory context
+    ///
+    /// This constructor is for internal use, you don't need
+    /// to bother with it.
+    ///
+    /// \param settings Creation parameters
+    /// \param width    Back buffer width
+    /// \param height   Back buffer height
+    ///
+    ////////////////////////////////////////////////////////////
+    Context(const ContextSettings& settings, unsigned int width, unsigned int height);
 
 private :
 

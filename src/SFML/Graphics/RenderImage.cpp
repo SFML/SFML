@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderImage.hpp>
 #include <SFML/Graphics/RenderImageImplFBO.hpp>
-#include <SFML/Graphics/RenderImageImplPBuffer.hpp>
+#include <SFML/Graphics/RenderImageImplDefault.hpp>
 #include <SFML/System/Err.hpp>
 
 
@@ -44,7 +44,6 @@ myRenderImage(NULL)
 ////////////////////////////////////////////////////////////
 RenderImage::~RenderImage()
 {
-    SetActive(false);
     delete myRenderImage;
 }
 
@@ -52,13 +51,6 @@ RenderImage::~RenderImage()
 ////////////////////////////////////////////////////////////
 bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuffer)
 {
-    // Make sure that render-images are supported
-    if (!IsAvailable())
-    {
-        Err() << "Impossible to create render image (your system doesn't support this feature)" << std::endl;
-        return false;
-    }
-
     // Create the image
     if (!myImage.Create(width, height))
     {
@@ -71,15 +63,15 @@ bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuff
 
     // Create the implementation
     delete myRenderImage;
-    if (priv::RenderImageImplFBO::IsSupported())
+    if (priv::RenderImageImplFBO::IsAvailable())
     {
-        // Use FBO
+        // Use frame-buffer object (FBO)
         myRenderImage = new priv::RenderImageImplFBO;
     }
-    else if (priv::RenderImageImplPBuffer::IsSupported())
+    else
     {
-        // Use P-Buffer
-        myRenderImage = new priv::RenderImageImplPBuffer;
+        // Use default implementation
+        myRenderImage = new priv::RenderImageImplDefault;
     }
 
     // Initialize the render image
@@ -147,14 +139,6 @@ unsigned int RenderImage::GetHeight() const
 const Image& RenderImage::GetImage() const
 {
     return myImage;
-}
-
-
-////////////////////////////////////////////////////////////
-bool RenderImage::IsAvailable()
-{
-    return priv::RenderImageImplFBO::IsSupported() ||
-           priv::RenderImageImplPBuffer::IsSupported();
 }
 
 

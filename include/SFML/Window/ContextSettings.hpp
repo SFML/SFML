@@ -45,7 +45,7 @@ struct ContextSettings
     /// \param minor        Minor number of the context version
     ///
     ////////////////////////////////////////////////////////////
-    explicit ContextSettings(unsigned int depth = 24, unsigned int stencil = 8, unsigned int antialiasing = 0, unsigned int major = 2, unsigned int minor = 0) :
+    explicit ContextSettings(unsigned int depth = 0, unsigned int stencil = 0, unsigned int antialiasing = 0, unsigned int major = 2, unsigned int minor = 0) :
     DepthBits        (depth),
     StencilBits      (stencil),
     AntialiasingLevel(antialiasing),

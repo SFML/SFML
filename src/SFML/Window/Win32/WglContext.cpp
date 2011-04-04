@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
-#include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/wglext.h>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
@@ -56,7 +55,7 @@ myOwnsWindow   (true)
 
     // Create the context
     if (myDeviceContext)
-        CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
+        CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings());
 
     // Activate the context
     SetActive(true);
@@ -64,7 +63,7 @@ myOwnsWindow   (true)
 
 
 ////////////////////////////////////////////////////////////
-WglContext::WglContext(WglContext* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings) :
+WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
 myWindow       (NULL),
 myDeviceContext(NULL),
 myContext      (NULL),
@@ -84,6 +83,32 @@ myOwnsWindow   (false)
 
 
 ////////////////////////////////////////////////////////////
+WglContext::WglContext(WglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
+myWindow       (NULL),
+myDeviceContext(NULL),
+myContext      (NULL),
+myOwnsWindow   (true)
+{
+    // The target of the context is a hidden window.
+    // We can't create a memory DC (the resulting context wouldn't be compatible
+    // with other contexts), and we don't add the extra complexity of P-Buffers;
+    // we can still support them in the future if this solution is not good enough.
+
+    // Create the hidden window
+    myWindow = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, width, height, NULL, NULL, GetModuleHandle(NULL), NULL);
+    ShowWindow(myWindow, SW_HIDE);
+    myDeviceContext = GetDC(myWindow);
+
+    // Create the context
+    if (myDeviceContext)
+        CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, settings);
+
+    // Activate the context
+    SetActive(true);
+}
+
+
+////////////////////////////////////////////////////////////
 WglContext::~WglContext()
 {
     // Destroy the OpenGL context
@@ -94,8 +119,8 @@ WglContext::~WglContext()
         wglDeleteContext(myContext);
     }
 
-    // Release the DC
-    if (myWindow && myDeviceContext)
+    // Destroy the device context
+    if (myDeviceContext)
         ReleaseDC(myWindow, myDeviceContext);
 
     // Destroy the window if we own it

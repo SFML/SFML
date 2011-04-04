@@ -129,18 +129,38 @@ void GlContext::EnsureContext()
 ////////////////////////////////////////////////////////////
 GlContext* GlContext::New()
 {
+    // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
+    EnsureContext();
+
     return new ContextType(sharedContext);
 }
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::New(const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings)
+GlContext* GlContext::New(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     EnsureContext();
 
     // Create the context
-    GlContext* context = new ContextType(sharedContext, owner, bitsPerPixel, settings);
+    GlContext* context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
+
+    // Enable antialiasing if needed
+    if (context->GetSettings().AntialiasingLevel > 0)
+        glEnable(GL_MULTISAMPLE_ARB);
+
+    return context;
+}
+
+
+////////////////////////////////////////////////////////////
+GlContext* GlContext::New(const ContextSettings& settings, unsigned int width, unsigned int height)
+{
+    // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
+    EnsureContext();
+
+    // Create the context
+    GlContext* context = new ContextType(sharedContext, settings, width, height);
 
     // Enable antialiasing if needed
     if (context->GetSettings().AntialiasingLevel > 0)

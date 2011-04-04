@@ -59,7 +59,7 @@ myOwnsWindow(true)
                              0, NULL);
 
     // Create the context
-    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
+    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings());
 
     // Activate the context
     SetActive(true);
@@ -67,7 +67,7 @@ myOwnsWindow(true)
 
 
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings) :
+GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
 myWindow    (0),
 myContext   (NULL),
 myOwnsWindow(false)
@@ -81,6 +81,35 @@ myOwnsWindow(false)
     // Create the context
     if (myWindow)
         CreateContext(shared, bitsPerPixel, settings);
+
+    // Activate the context
+    SetActive(true);
+}
+
+
+////////////////////////////////////////////////////////////
+GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
+myWindow    (NULL),
+myContext   (NULL),
+myOwnsWindow(true)
+{
+    // Open a connection with the X server
+    myDisplay = XOpenDisplay(NULL);
+
+    // Create the hidden window
+    int screen = DefaultScreen(myDisplay);
+    myWindow = XCreateWindow(myDisplay,
+                             RootWindow(myDisplay, screen),
+                             0, 0,
+                             width, height,
+                             0,
+                             DefaultDepth(myDisplay, screen),
+                             InputOutput,
+                             DefaultVisual(myDisplay, screen),
+                             0, NULL);
+
+    // Create the context
+    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings());
 
     // Activate the context
     SetActive(true);
@@ -107,9 +136,7 @@ GlxContext::~GlxContext()
     
     // Close the connection with the X server
     if (myOwnsWindow)
-    {
         XCloseDisplay(myDisplay);
-    }
 }
 
 

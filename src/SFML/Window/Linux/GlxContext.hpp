@@ -46,7 +46,7 @@ class GlxContext : public GlContext
 public :
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a new context, not associated to a window
+    /// \brief Create a new default context
     ///
     /// \param shared Context to share the new one with (can be NULL)
     ///
@@ -56,13 +56,24 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
-    /// \param owner        Pointer to the owner window
-    /// \param bitsPerPixel Pixel depth (in bits per pixel)
+    /// \param shared       Context to share the new one with
     /// \param settings     Creation parameters
+    /// \param owner        Pointer to the owner window
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    GlxContext(GlxContext* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
+    GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new context that embeds its own rendering target
+    ///
+    /// \param shared   Context to share the new one with
+    /// \param settings Creation parameters
+    /// \param width    Back buffer width, in pixels
+    /// \param height   Back buffer height, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

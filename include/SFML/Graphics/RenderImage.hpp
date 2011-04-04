@@ -177,20 +177,6 @@ public :
     ////////////////////////////////////////////////////////////
     const Image& GetImage() const;
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Check whether the system supports render images or not
-    ///
-    /// It is very important to always call this function before
-    /// trying to use the RenderImage class, as the feature may not
-    /// be supported on all platforms (especially very old ones).
-    /// If this function returns false, then you won't be able
-    /// to use the class at all.
-    ///
-    /// \return True if the RenderImage class can be used
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool IsAvailable();
-
 private :
 
     ////////////////////////////////////////////////////////////

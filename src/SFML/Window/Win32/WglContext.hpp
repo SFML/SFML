@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
-#include <windows.h>
+#include <SFML/OpenGL.hpp>
 
 
 namespace sf
@@ -45,7 +45,7 @@ class WglContext : public GlContext
 public :
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a new context, not associated to a window
+    /// \brief Create a new default context
     ///
     /// \param shared Context to share the new one with (can be NULL)
     ///
@@ -55,13 +55,24 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
-    /// \param owner        Pointer to the owner window
-    /// \param bitsPerPixel Pixel depth (in bits per pixel)
+    /// \param shared       Context to share the new one with
     /// \param settings     Creation parameters
+    /// \param owner        Pointer to the owner window
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    WglContext(WglContext* shared, const WindowImpl* owner, unsigned int bitsPerPixel, const ContextSettings& settings);
+    WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new context that embeds its own rendering target
+    ///
+    /// \param shared   Context to share the new one with
+    /// \param settings Creation parameters
+    /// \param width    Back buffer width, in pixels
+    /// \param height   Back buffer height, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    WglContext(WglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -102,9 +113,9 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
-    /// \param bitsPerPixel Pixel depth, in bits per pixel
-    /// \param settings     Creation parameters
+    /// \param shared        Context to share the new one with (can be NULL)
+    /// \param bitsPerPixel  Pixel depth, in bits per pixel
+    /// \param settings      Creation parameters
     ///
     ////////////////////////////////////////////////////////////
     void CreateContext(WglContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
@@ -113,9 +124,9 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     HWND  myWindow;        ///< Window to which the context is attached
-    HDC   myDeviceContext; ///< Device context of the window
+    HDC   myDeviceContext; ///< Device context associated to the context
     HGLRC myContext;       ///< OpenGL context
-    bool  myOwnsWindow;    ///< Did we create the host window?
+    bool  myOwnsWindow;    ///< Do we own the target window?
 };
 
 } // namespace priv

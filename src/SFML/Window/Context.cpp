@@ -42,16 +42,22 @@ Context::Context()
 ////////////////////////////////////////////////////////////
 Context::~Context()
 {
-    SetActive(false);
     delete myContext;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Context::SetActive(bool active)
+bool Context::SetActive(bool active)
 {
-    myContext->SetActive(active);
+    return myContext->SetActive(active);
 }
 
+
+////////////////////////////////////////////////////////////
+Context::Context(const ContextSettings& settings, unsigned int width, unsigned int height)
+{
+    myContext = priv::GlContext::New(settings, width, height);
+    SetActive(true);
+}
 
 } // namespace sf

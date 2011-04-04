@@ -31,7 +31,8 @@ set(SRC
     ${SRCROOT}/RenderImageImpl.hpp
     ${SRCROOT}/RenderImageImplFBO.cpp
     ${SRCROOT}/RenderImageImplFBO.hpp
-    ${SRCROOT}/RenderImageImplPBuffer.hpp
+    ${SRCROOT}/RenderImageImplDefault.cpp
+    ${SRCROOT}/RenderImageImplDefault.hpp
     ${SRCROOT}/RenderTarget.cpp
     ${INCROOT}/RenderTarget.hpp
     ${SRCROOT}/RenderWindow.cpp
@@ -49,27 +50,6 @@ set(SRC
     ${SRCROOT}/stb_image/stb_image.h
     ${SRCROOT}/stb_image/stb_image_write.h
 )
-
-# add platform specific sources
-if(WINDOWS)
-    set(SRC
-        ${SRC}
-        ${SRCROOT}/Win32/RenderImageImplPBuffer.cpp
-        ${SRCROOT}/Win32/RenderImageImplPBuffer.hpp
-    )
-elseif(LINUX)
-    set(SRC
-        ${SRC}
-        ${SRCROOT}/Linux/RenderImageImplPBuffer.cpp
-        ${SRCROOT}/Linux/RenderImageImplPBuffer.hpp
-    )
-elseif(MACOSX)
-    set(SRC
-        ${SRC}
-        ${SRCROOT}/OSX/RenderImageImplPBuffer.cpp
-        ${SRCROOT}/OSX/RenderImageImplPBuffer.hpp
-    )
-endif()
 
 # let CMake know about our additional graphics libraries paths (on Windows and OSX)
 if (WINDOWS OR MACOSX)
