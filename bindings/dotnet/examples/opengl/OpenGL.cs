@@ -13,10 +13,8 @@ namespace opengl
         /// </summary>
         static void Main()
         {
-            string path = System.IO.Directory.GetCurrentDirectory();
-
             // Create main window
-            RenderWindow window = new RenderWindow(new VideoMode(800, 600), "SFML.Net OpenGL");
+            RenderWindow window = new RenderWindow(new VideoMode(800, 600), "SFML.Net OpenGL", Styles.Default, new ContextSettings(32, 0));
 
             // Setup event handlers
             window.Closed     += new EventHandler(OnClosed);

@@ -244,16 +244,6 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Tell whether or not the system supports render images
-            /// </summary>
-            ////////////////////////////////////////////////////////////
-            public static bool IsAvailable
-            {
-                get {return sfRenderImage_IsAvailable();}
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
             /// Provide a string describing the object
             /// </summary>
             /// <returns>String description of the object</returns>
@@ -339,9 +329,6 @@ namespace SFML
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfRenderImage_GetImage(IntPtr This);
-
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern bool sfRenderImage_IsAvailable();
 
             #endregion
         }

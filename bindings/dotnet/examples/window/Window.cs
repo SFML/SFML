@@ -13,7 +13,7 @@ namespace window
         static void Main()
         {
             // Create the main window
-            Window window = new Window(new VideoMode(640, 480, 32), "SFML.Net Window");
+            Window window = new Window(new VideoMode(640, 480, 32), "SFML.Net Window", Styles.Default, new ContextSettings(32, 0));
 
             // Setup event handlers
             window.Closed     += new EventHandler(OnClosed);

@@ -25,7 +25,7 @@ namespace SFML
             /// <param name="title">Title of the window</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title) :
-                this(mode, title, Styles.Default, new ContextSettings(24, 8))
+                this(mode, title, Styles.Default, new ContextSettings(0, 0))
             {
             }
 
@@ -38,7 +38,7 @@ namespace SFML
             /// <param name="style">Window style (Resize | Close by default)</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title, Styles style) :
-                this(mode, title, style, new ContextSettings(24, 8))
+                this(mode, title, style, new ContextSettings(0, 0))
             {
             }
 
@@ -64,7 +64,7 @@ namespace SFML
             /// <param name="handle">Platform-specific handle of the control</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(IntPtr handle) :
-                this(handle, new ContextSettings(24, 8))
+                this(handle, new ContextSettings(0, 0))
             {
             }
 

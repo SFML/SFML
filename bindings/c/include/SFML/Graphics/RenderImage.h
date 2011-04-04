@@ -202,13 +202,5 @@ CSFML_API void sfRenderImage_ConvertCoords(const sfRenderImage* renderImage, uns
 ////////////////////////////////////////////////////////////
 CSFML_API const sfImage* sfRenderImage_GetImage(const sfRenderImage* renderImage);
 
-////////////////////////////////////////////////////////////
-/// Check whether the system supports render images or not
-///
-/// \return sfTrue if the RenderImage class can be used
-///
-////////////////////////////////////////////////////////////
-CSFML_API sfBool sfRenderImage_IsAvailable(void);
-
 
 #endif // SFML_RENDERIMAGE_H

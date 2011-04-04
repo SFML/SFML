@@ -15,7 +15,7 @@ Module OpenGL
     Sub Main()
 
         ' Create main window
-        window = New RenderWindow(New VideoMode(800, 600), "SFML.Net OpenGL (Visual Basic)")
+        window = New RenderWindow(New VideoMode(800, 600), "SFML.Net OpenGL (Visual Basic)", Styles.Default, new ContextSettings(32, 0))
 
         ' Create a sprite for the background
         Dim backgroundImage = New Image("resources/background.jpg")

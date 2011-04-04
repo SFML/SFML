@@ -246,12 +246,3 @@ const sfImage* sfRenderImage_GetImage(const sfRenderImage* renderImage)
 
     return renderImage->Target;
 }
-
-
-////////////////////////////////////////////////////////////
-/// Check whether the system supports render images or not
-////////////////////////////////////////////////////////////
-sfBool sfRenderImage_IsAvailable(void)
-{
-    return sf::RenderImage::IsAvailable() ? sfTrue : sfFalse;
-}

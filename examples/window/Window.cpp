@@ -15,7 +15,7 @@
 int main()
 {
     // Create the main window
-    sf::Window window(sf::VideoMode(640, 480, 32), "SFML Window");
+    sf::Window window(sf::VideoMode(640, 480, 32), "SFML Window", sf::Style::Default, sf::ContextSettings(32));
 
     // Create a clock for measuring the time elapsed
     sf::Clock clock;
