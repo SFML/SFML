@@ -96,14 +96,14 @@ VideoMode ConvertCGModeToSFMode(CFDictionaryRef dictionary)
 {
     VideoMode sfmode;
     
-    CFNumberRef cfnumber = (CFNumberRef)CFDictionaryGetValue(CurrentMode, kCGDisplayWidth);
-    CFNumberGetValue(cfnumber, kCFNumberIntType, &(mode.Width));
+    CFNumberRef cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayWidth);
+    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.Width));
     
-    cfnumber = (CFNumberRef)CFDictionaryGetValue(CurrentMode, kCGDisplayHeight);
-    CFNumberGetValue(cfnumber, kCFNumberIntType, &(mode.Height));
+    cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayHeight);
+    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.Height));
     
-    cfnumber = (CFNumberRef)CFDictionaryGetValue(CurrentMode, kCGDisplayBitsPerPixel);
-    CFNumberGetValue(cfnumber, kCFNumberIntType, &(mode.BitsPerPixel));
+    cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayBitsPerPixel);
+    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.BitsPerPixel));
     
     return sfmode;
 }
@@ -129,7 +129,7 @@ CFDictionaryRef ConvertSFModeToCGMode(VideoMode sfmode)
     return CGDisplayBestModeForParameters(CGMainDisplayID(),
                                           sfmode.BitsPerPixel,
                                           sfmode.Width,
-                                          sfmode.Height
+                                          sfmode.Height,
                                           NULL);
 }
 
