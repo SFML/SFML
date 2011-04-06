@@ -129,9 +129,6 @@ void GlContext::EnsureContext()
 ////////////////////////////////////////////////////////////
 GlContext* GlContext::New()
 {
-    // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    EnsureContext();
-
     return new ContextType(sharedContext);
 }
 
