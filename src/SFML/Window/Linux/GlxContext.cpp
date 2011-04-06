@@ -109,7 +109,7 @@ myOwnsWindow(true)
                              0, NULL);
 
     // Create the context
-    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings());
+    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, settings);
 
     // Activate the context
     SetActive(true);
