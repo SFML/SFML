@@ -45,7 +45,7 @@ myHeight        (0),
 myTextureWidth  (0),
 myTextureHeight (0),
 myTexture       (0),
-myIsSmooth      (true),
+myIsSmooth      (false),
 myTextureUpdated(true),
 myArrayUpdated  (true),
 myPixelsFlipped (false)
