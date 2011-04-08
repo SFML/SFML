@@ -308,7 +308,7 @@ public :
     /// so that pixels are less noticeable. However if you want
     /// the image to look exactly the same as its source file, you
     /// should disable it.
-    /// The smooth filter is enabled by default.
+    /// The smooth filter is disabled by default.
     ///
     /// \param smooth True to enable smoothing, false to disable it
     ///
