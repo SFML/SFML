@@ -209,6 +209,15 @@ CSFML_API void sfWindow_SetPosition(sfWindow* window, int left, int top);
 CSFML_API void sfWindow_SetSize(sfWindow* window, unsigned int width, unsigned int height);
 
 ////////////////////////////////////////////////////////////
+/// Change the title of a window
+///
+/// \param window : Window object
+/// \param title :  New title
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfWindow_SetTitle(sfWindow* window, const char* title);
+
+////////////////////////////////////////////////////////////
 /// Show or hide a window
 ///
 /// \param window : Window object

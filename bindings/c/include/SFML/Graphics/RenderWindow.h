@@ -184,6 +184,15 @@ CSFML_API void sfRenderWindow_SetPosition(sfRenderWindow* renderWindow, int left
 CSFML_API void sfRenderWindow_SetSize(sfRenderWindow* renderWindow, unsigned int width, unsigned int height);
 
 ////////////////////////////////////////////////////////////
+/// Change the title of a window
+///
+/// \param renderWindow : Renderwindow object
+/// \param title :        New title
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfRenderWindow_SetTitle(sfRenderWindow* renderWindow, const char* title);
+
+////////////////////////////////////////////////////////////
 /// Show or hide a window
 ///
 /// \param renderWindow : Renderwindow object

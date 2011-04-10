@@ -248,6 +248,15 @@ void sfRenderWindow_SetSize(sfRenderWindow* renderWindow, unsigned int width, un
 
 
 ////////////////////////////////////////////////////////////
+/// Change the title of a window
+////////////////////////////////////////////////////////////
+void sfRenderWindow_SetTitle(sfRenderWindow* renderWindow, const char* title)
+{
+    CSFML_CALL(renderWindow, SetTitle(title))
+}
+
+
+////////////////////////////////////////////////////////////
 /// Show or hide a window
 ////////////////////////////////////////////////////////////
 void sfRenderWindow_Show(sfRenderWindow* renderWindow, sfBool show)

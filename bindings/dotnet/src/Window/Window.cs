@@ -242,6 +242,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Change the title of the window
+            /// </summary>
+            /// <param name="title">New title</param>
+            ////////////////////////////////////////////////////////////
+            public virtual void SetTitle(string title)
+            {
+                sfWindow_SetTitle(This, title);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Show or hide the window
             /// </summary>
             /// <param name="show">True to show, false to hide</param>
@@ -631,6 +642,9 @@ namespace SFML
             
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetSize(IntPtr This, uint Width, uint Height);
+
+            [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern void sfWindow_SetTitle(IntPtr This, string title);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Show(IntPtr This, bool Show);
