@@ -37,5 +37,4 @@ Contribute
 SFML is an open-source project, and it needs your help to go on growing and improving.
 Don't hesitate to post suggestions or bug reports on the forum (http://www.sfml-dev.org/forum/),
 submit patches by e-mail, or post new bugs/features requests on the task tracker (https://github.com/LaurentGomila/SFML/issues/).
-You can even fork the project on github, maintain your own version and send us pull requests periodically to merge
-your work.
+You can even fork the project on github, maintain your own version and send us pull requests periodically to merge your work.
