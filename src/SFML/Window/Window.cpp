@@ -204,7 +204,7 @@ const ContextSettings& Window::GetSettings() const
 
 
 ////////////////////////////////////////////////////////////
-bool Window::GetEvent(Event& event)
+bool Window::PollEvent(Event& event)
 {
     if (myWindow && myWindow->PopEvent(event, false))
     {

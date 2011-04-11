@@ -480,9 +480,9 @@ namespace SFML
             /// <param name="eventToFill">Variable to fill with the raw pointer to the event structure</param>
             /// <returns>True if there was an event, false otherwise</returns>
             ////////////////////////////////////////////////////////////
-            protected override bool GetEvent(out Event eventToFill)
+            protected override bool PollEvent(out Event eventToFill)
             {
-                return sfRenderWindow_GetEvent(This, out eventToFill);
+                return sfRenderWindow_PollEvent(This, out eventToFill);
             }
 
             ////////////////////////////////////////////////////////////
@@ -545,7 +545,7 @@ namespace SFML
             static extern void sfRenderWindow_Close(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern bool sfRenderWindow_GetEvent(IntPtr This, out Event Evt);
+            static extern bool sfRenderWindow_PollEvent(IntPtr This, out Event Evt);
             
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderWindow_WaitEvent(IntPtr This, out Event Evt);

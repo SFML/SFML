@@ -347,7 +347,7 @@ public :
 ///
 /// sf::Event holds all the informations about a system event
 /// that just happened. Events are retrieved using the
-/// sf::Window::GetEvent function.
+/// sf::Window::PollEvent and sf::Window::WaitEvent functions.
 ///
 /// A sf::Event instance contains the type of the event
 /// (mouse moved, key pressed, window closed, ...) as well
@@ -363,7 +363,7 @@ public :
 /// Usage example:
 /// \code
 /// sf::Event event;
-/// while (window.GetEvent(event))
+/// while (window.PollEvent(event))
 /// {
 ///     // Request for closing the window
 ///     if (event.Type == sf::Event::Closed)

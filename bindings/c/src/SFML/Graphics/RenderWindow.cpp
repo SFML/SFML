@@ -158,14 +158,14 @@ sfContextSettings sfRenderWindow_GetSettings(const sfRenderWindow* renderWindow)
 ////////////////////////////////////////////////////////////
 /// Get the event on top of events stack of a window, if any, and pop it
 ////////////////////////////////////////////////////////////
-sfBool sfRenderWindow_GetEvent(sfRenderWindow* renderWindow, sfEvent* event)
+sfBool sfRenderWindow_PollEvent(sfRenderWindow* renderWindow, sfEvent* event)
 {
     CSFML_CHECK_RETURN(renderWindow, sfFalse);
     CSFML_CHECK_RETURN(event,        sfFalse);
 
     // Get the event
     sf::Event SFMLEvent;
-    sfBool ret = renderWindow->This.GetEvent(SFMLEvent);
+    sfBool ret = renderWindow->This.PollEvent(SFMLEvent);
 
     // No event, return
     if (!ret)

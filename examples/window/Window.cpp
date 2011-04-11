@@ -38,7 +38,7 @@ int main()
     {
         // Process events
         sf::Event event;
-        while (window.GetEvent(event))
+        while (window.PollEvent(event))
         {
             // Close window : exit
             if (event.Type == sf::Event::Closed)

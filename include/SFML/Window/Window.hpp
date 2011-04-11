@@ -144,7 +144,7 @@ public :
     ///
     /// After calling this function, the sf::Window instance remains
     /// valid and you can call Create() to recreate the window.
-    /// All other functions such as GetEvent() or Display() will
+    /// All other functions such as PollEvent() or Display() will
     /// still work (i.e. you don't have to test IsOpened() every time),
     /// and will have no effect on closed windows.
     ///
@@ -206,12 +206,12 @@ public :
     ///
     /// This function is not blocking: if there's no pending event then
     /// it will return false and leave \a event unmodified.
-    /// Note that more than event may be present in the events stack,
+    /// Note that more than one event may be present in the events stack,
     /// thus you should always call this function in a loop
     /// to make sure that you process every pending event.
     /// \code
     /// sf::Event event;
-    /// while (window.GetEvent(event))
+    /// while (window.PollEvent(event))
     /// {
     ///    // process event...
     /// }
@@ -224,7 +224,7 @@ public :
     /// \see WaitEvent
     ///
     ////////////////////////////////////////////////////////////
-    bool GetEvent(Event& event);
+    bool PollEvent(Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Wait for an event and return it
@@ -248,7 +248,7 @@ public :
     ///
     /// \return False if any error occured
     ///
-    /// \see GetEvent
+    /// \see PollEvent
     ///
     ////////////////////////////////////////////////////////////
     bool WaitEvent(Event& event);
@@ -472,7 +472,7 @@ private :
     /// \brief Processes an event before it is sent to the user
     ///
     /// This function is called every time an event is received
-    /// from the internal window (through GetEvent or WaitEvent).
+    /// from the internal window (through PollEvent or WaitEvent).
     /// It filters out unwanted events, and performs whatever internal
     /// stuff the window needs before the event is returned to the
     /// user.
@@ -524,9 +524,9 @@ private :
 ///
 /// The sf::Window class provides a simple interface for manipulating
 /// the window: move, resize, show/hide, control mouse cursor, etc.
-/// It also provides event handling through its GetEvent() function,
-/// and real-time state handling with its attached sf::Input object
-/// (see GetInput()).
+/// It also provides event handling through its PollEvent() and WaitEvent()
+/// functions, and real-time state handling with its attached sf::Input
+/// object (see GetInput()).
 ///
 /// Note that OpenGL experts can pass their own parameters (antialiasing
 /// level, bits for the depth and stencil buffers, etc.) to the
@@ -547,7 +547,7 @@ private :
 /// {
 ///    // Event processing
 ///    sf::Event event;
-///    while (window.GetEvent(event))
+///    while (window.PollEvent(event))
 ///    {
 ///        // Request for closing the window
 ///        if (event.Type == sf::Event::Closed)

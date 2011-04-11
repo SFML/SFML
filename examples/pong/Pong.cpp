@@ -81,7 +81,7 @@ int main()
     {
         // Handle events
         sf::Event event;
-        while (window.GetEvent(event))
+        while (window.PollEvent(event))
         {
             // Window closed or escape key pressed : exit
             if ((event.Type == sf::Event::Closed) || 

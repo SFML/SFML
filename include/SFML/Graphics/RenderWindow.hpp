@@ -194,7 +194,7 @@ private :
 /// {
 ///    // Event processing
 ///    sf::Event event;
-///    while (window.GetEvent(event))
+///    while (window.PollEvent(event))
 ///    {
 ///        // Request for closing the window
 ///        if (event.Type == sf::Event::Closed)

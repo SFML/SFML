@@ -383,7 +383,7 @@ namespace SFML
             public void DispatchEvents()
             {
                 Event e;
-                while (GetEvent(out e))
+                while (PollEvent(out e))
                     CallEventHandler(e);
             }
 
@@ -421,9 +421,9 @@ namespace SFML
             /// <param name="eventToFill">Variable to fill with the raw pointer to the event structure</param>
             /// <returns>True if there was an event, false otherwise</returns>
             ////////////////////////////////////////////////////////////
-            protected virtual bool GetEvent(out Event eventToFill)
+            protected virtual bool PollEvent(out Event eventToFill)
             {
-                return sfWindow_GetEvent(This, out eventToFill);
+                return sfWindow_PollEvent(This, out eventToFill);
             }
 
             ////////////////////////////////////////////////////////////
@@ -611,7 +611,7 @@ namespace SFML
             static extern void sfWindow_Close(IntPtr This);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern bool sfWindow_GetEvent(IntPtr This, out Event Evt);
+            static extern bool sfWindow_PollEvent(IntPtr This, out Event Evt);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfWindow_WaitEvent(IntPtr This, out Event Evt);

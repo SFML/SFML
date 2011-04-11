@@ -146,7 +146,7 @@ CSFML_API sfContextSettings sfWindow_GetSettings(const sfWindow* window);
 /// \return sfTrue if an event was returned, sfFalse if events stack was empty
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfWindow_GetEvent(sfWindow* window, sfEvent* event);
+CSFML_API sfBool sfWindow_PollEvent(sfWindow* window, sfEvent* event);
 
 ////////////////////////////////////////////////////////////
 /// Wait for an event and return it
