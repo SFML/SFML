@@ -31,7 +31,7 @@
 #include <SFML/System/Lock.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/glext.h>
-#include <vector>
+#include <set>
 #include <cstdlib>
 #include <cassert>
 
@@ -67,17 +67,29 @@ namespace
 
     // Internal contexts
     sf::ThreadLocalPtr<sf::priv::GlContext> internalContext(NULL);
-    std::vector<sf::priv::GlContext*> internalContexts;
+    std::set<sf::priv::GlContext*> internalContexts;
     sf::Mutex internalContextsMutex;
+
+    // Check if the internal context of the current thread is valid
+    bool HasInternalContext()
+    {
+        // The internal context can be null...
+        if (!internalContext)
+            return false;
+
+        // ... or non-null but deleted from the list of internal contexts
+        sf::Lock lock(internalContextsMutex);
+        return internalContexts.find(internalContext) != internalContexts.end();
+    }
 
     // Retrieve the internal context for the current thread
     sf::priv::GlContext* GetInternalContext()
     {
-        if (!internalContext)
+        if (!HasInternalContext())
         {
             internalContext = sf::priv::GlContext::New();
             sf::Lock lock(internalContextsMutex);
-            internalContexts.push_back(internalContext);
+            internalContexts.insert(internalContext);
         }
 
         return internalContext;
@@ -111,7 +123,7 @@ void GlContext::Cleanup()
 
     // Destroy the internal contexts
     sf::Lock lock(internalContextsMutex);
-    for (std::vector<GlContext*>::iterator it = internalContexts.begin(); it != internalContexts.end(); ++it)
+    for (std::set<GlContext*>::iterator it = internalContexts.begin(); it != internalContexts.end(); ++it)
         delete *it;
     internalContexts.clear();
 }
