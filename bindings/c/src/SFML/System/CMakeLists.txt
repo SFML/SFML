@@ -23,4 +23,4 @@ set(SRC
 # define the csfml-system target
 csfml_add_library(csfml-system
                   SOURCES ${SRC}
-                  DEPENDS optimized ${SFML_SYSTEM_LIBRARY} debug ${SFML_SYSTEM_LIBRARY_DEBUG})
+                  DEPENDS ${SFML_SYSTEM_LIBRARY})

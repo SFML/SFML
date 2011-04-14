@@ -23,5 +23,4 @@ set(SRC
 # define the csfml-window target
 csfml_add_library(csfml-window
                   SOURCES ${SRC}
-                  DEPENDS optimized ${SFML_WINDOW_LIBRARY} debug ${SFML_WINDOW_LIBRARY_DEBUG}
-                          optimized ${SFML_SYSTEM_LIBRARY} debug ${SFML_SYSTEM_LIBRARY_DEBUG})
+                  DEPENDS ${SFML_WINDOW_LIBRARY} ${SFML_SYSTEM_LIBRARY})

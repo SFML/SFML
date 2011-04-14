@@ -34,5 +34,4 @@ set(SRC
 # define the csfml-network target
 csfml_add_library(csfml-network
                   SOURCES ${SRC}
-                  DEPENDS optimized ${SFML_NETWORK_LIBRARY} debug ${SFML_NETWORK_LIBRARY_DEBUG}
-                          optimized ${SFML_SYSTEM_LIBRARY} debug ${SFML_SYSTEM_LIBRARY_DEBUG})
+                  DEPENDS ${SFML_NETWORK_LIBRARY} ${SFML_SYSTEM_LIBRARY})

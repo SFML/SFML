@@ -31,5 +31,4 @@ set(SRC
 # define the csfml-audio target
 csfml_add_library(csfml-audio
                   SOURCES ${SRC}
-                  DEPENDS optimized ${SFML_AUDIO_LIBRARY} debug ${SFML_AUDIO_LIBRARY_DEBUG}
-                          optimized ${SFML_SYSTEM_LIBRARY} debug ${SFML_SYSTEM_LIBRARY_DEBUG})
+                  DEPENDS ${SFML_AUDIO_LIBRARY} ${SFML_SYSTEM_LIBRARY})

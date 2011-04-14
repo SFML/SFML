@@ -43,6 +43,4 @@ set(SRC
 # define the csfml-graphics target
 csfml_add_library(csfml-graphics
                   SOURCES ${SRC}
-                  DEPENDS optimized ${SFML_GRAPHICS_LIBRARY} debug ${SFML_GRAPHICS_LIBRARY_DEBUG}
-                          optimized ${SFML_WINDOW_LIBRARY} debug ${SFML_WINDOW_LIBRARY_DEBUG}
-                          optimized ${SFML_SYSTEM_LIBRARY} debug ${SFML_SYSTEM_LIBRARY_DEBUG})
+                  DEPENDS ${SFML_GRAPHICS_LIBRARY} ${SFML_WINDOW_LIBRARY} ${SFML_SYSTEM_LIBRARY})

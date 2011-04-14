@@ -19,7 +19,7 @@ if(WINDOWS)
     set(SFML_STATIC_LIBRARIES TRUE)
     add_definitions(-DSFML_STATIC)
 endif()
-find_package(SFML 2 COMPONENTS system window network graphics audio REQUIRED)
+find_package(SFML 2.0 COMPONENTS system window network graphics audio REQUIRED)
 include_directories(${SFML_INCLUDE_DIR})
 
 # add the modules subdirectories

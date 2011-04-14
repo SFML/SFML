@@ -1,16 +1,19 @@
 # Locate the SFML library
 #
-# This module defines
-#  SFML_FOUND, if false, do not try to link to SFML
-#  SFML_XXX_LIBRARY, library corresponding to the XXX component (release)
-#  SFML_XXX_LIBRARY_DEBUG, library corresponding to the XXX component (debug)
-#  SFML_LIBRARIES, list containing all the libraries corresponding to the requested components
-#  SFML_INCLUDE_DIR, where to find SFML/Config.hpp
+# This module defines the following variables:
+# - For each module XXX (SYSTEM, WINDOW, GRAPHICS, NETWORK, AUDIO, MAIN):
+#   - SFML_XXX_LIBRARY_DEBUG, the name of the debug library of the xxx module (set to SFML_XXX_LIBRARY_RELEASE is no debug version is found)
+#   - SFML_XXX_LIBRARY_RELEASE, the name of the release library of the xxx module (set to SFML_XXX_LIBRARY_DEBUG is no release version is found)
+#   - SFML_XXX_LIBRARY, the name of the library to link to for the xxx module (includes both debug and optimized names if necessary)
+#   - SFML_XXX_FOUND, true if either the debug or release library of the xxx module is found
+# - SFML_LIBRARIES, the list of all libraries corresponding to the required modules
+# - SFML_FOUND, true if all the required modules are found
+# - SFML_INCLUDE_DIR, the path where SFML headers are located (the directory containing the SFML/Config.hpp file)
 #
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
 # you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
 #
-# If SFML is not installed in a standard path, you can use the SFMLDIR CMake variable
+# If SFML is not installed in a standard path, you can use the SFMLDIR CMake variable or environment variable
 # to tell CMake where SFML is.
 
 # deduce the libraries suffix from the options
@@ -31,7 +34,8 @@ find_path(SFML_INCLUDE_DIR SFML/Config.hpp
           /opt/local/  # DarwinPorts
           /opt/csw/    # Blastwave
           /opt/
-          ${SFMLDIR})
+          ${SFMLDIR}
+          $ENV{SFMLDIR})
 
 # check the version number
 set(SFML_VERSION_OK TRUE)
@@ -59,7 +63,8 @@ if(SFML_FIND_VERSION AND SFML_INCLUDE_DIR)
     endif()
 endif()
 
-# find the requested components
+# find the requested modules
+set(SFML_FOUND TRUE) # will be set to false if one of the required modules is not found
 set(FIND_SFML_LIB_PATHS ~/Library/Frameworks
                         /Library/Frameworks
                         /usr/local
@@ -68,11 +73,11 @@ set(FIND_SFML_LIB_PATHS ~/Library/Frameworks
                         /opt/local
                         /opt/csw
                         /opt
-                        ${SFMLDIR})
+                        ${SFMLDIR}
+                        $ENV{SFMLDIR})
 foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
     string(TOLOWER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_LOWER)
     string(TOUPPER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_UPPER)
-    set(FIND_SFML_COMPONENT_VAR SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY)
     set(FIND_SFML_COMPONENT_NAME sfml-${FIND_SFML_COMPONENT_LOWER}${FIND_SFML_LIB_SUFFIX})
 
     # no suffix for sfml-main, it is always a static library
@@ -80,28 +85,76 @@ foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
         set(FIND_SFML_COMPONENT_NAME sfml-${FIND_SFML_COMPONENT_LOWER})
     endif()
 
-    # release library
-    find_library(${FIND_SFML_COMPONENT_VAR}
-                 NAMES ${FIND_SFML_COMPONENT_NAME}
-                 PATH_SUFFIXES lib64 lib
-                 PATHS ${FIND_SFML_LIB_PATHS})
-
     # debug library
-    find_library(${FIND_SFML_COMPONENT_VAR}_DEBUG
+    find_library(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG
                  NAMES ${FIND_SFML_COMPONENT_NAME}-d
                  PATH_SUFFIXES lib64 lib
                  PATHS ${FIND_SFML_LIB_PATHS})
 
-    set(SFML_LIBRARIES_NAMES ${SFML_LIBRARIES_NAMES} ${FIND_SFML_COMPONENT_VAR})
-    set(SFML_LIBRARIES ${SFML_LIBRARIES} ${${FIND_SFML_COMPONENT_VAR}})
+    # release library
+    find_library(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE
+                 NAMES ${FIND_SFML_COMPONENT_NAME}
+                 PATH_SUFFIXES lib64 lib
+                 PATHS ${FIND_SFML_LIB_PATHS})
+
+    if (SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG OR SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE)
+        # library found
+        set(SFML_${FIND_SFML_COMPONENT_UPPER}_FOUND TRUE)
+        
+        # if both are found, set SFML_XXX_LIBRARY to contain both
+        if (SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG AND SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE)
+            set(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY debug     ${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG}
+                                                          optimized ${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE})
+        endif()
+
+        # if only one debug/release variant is found, set the other to be equal to the found one
+        if (SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG AND NOT SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE)
+            # debug and not release
+            set(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE ${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG})
+            set(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY         ${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG})
+        endif()
+        if (SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE AND NOT SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG)
+            # release and not debug
+            set(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG ${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE})
+            set(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY       ${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE})
+        endif()
+    else()
+        # library not found
+        set(SFML_FOUND FALSE)
+        set(SFML_${FIND_SFML_COMPONENT_UPPER}_FOUND FALSE)
+        set(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY "")
+        set(FIND_SFML_MISSING "${FIND_SFML_MISSING} SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY")
+    endif()
+
+    # mark as advanced
+    MARK_AS_ADVANCED(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY
+                     SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE
+                     SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG)
+
+    # add to the global list of libraries
+    set(SFML_LIBRARIES "${SFML_LIBRARIES} ${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY}")
 endforeach()
 
-if(SFML_FIND_REQUIRED AND NOT SFML_VERSION_OK)
-    message(SEND_ERROR "Bad SFML version (requested: ${SFML_FIND_VERSION}, found: ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR})")
+# handle errors
+if(NOT SFML_VERSION_OK)
+    # SFML version not ok
+    set(FIND_SFML_ERROR "SFML found but version too low (requested: ${SFML_FIND_VERSION}, found: ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR})")
     set(SFML_FOUND FALSE)
-else()
-    # handle the QUIETLY and REQUIRED arguments and set SFML_FOUND to TRUE if all listed variables are TRUE
-    INCLUDE(FindPackageHandleStandardArgs)
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(SFML DEFAULT_MSG SFML_INCLUDE_DIR ${SFML_LIBRARIES_NAMES})
-    MARK_AS_ADVANCED(SFML_INCLUDE_DIR ${SFML_LIBRARIES_NAMES})
+elseif(NOT SFML_FOUND)
+    # include directory or library not found
+    set(FIND_SFML_ERROR "Could NOT find SFML (missing: ${FIND_SFML_MISSING})")
+endif()
+if (NOT SFML_FOUND)
+    if(SFML_FIND_REQUIRED)
+        # fatal error
+        message(FATAL_ERROR ${FIND_SFML_ERROR})
+    elseif(NOT SFML_FIND_QUIETLY)
+        # error but continue
+        message("${FIND_SFML_ERROR}")
+    endif()
+endif()
+
+# handle success
+if(SFML_FOUND)
+    message("Found SFML: ${SFML_INCLUDE_DIR}")
 endif()
