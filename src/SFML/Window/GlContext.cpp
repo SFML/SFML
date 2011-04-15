@@ -182,8 +182,9 @@ GlContext* GlContext::New(const ContextSettings& settings, unsigned int width, u
 ////////////////////////////////////////////////////////////
 GlContext::~GlContext()
 {
-    // Deactivate the context before killing it
-    SetActive(false);
+    // Deactivate the context before killing it, unless we're inside Cleanup()
+    if (sharedContext)
+        SetActive(false);
 }
 
 
