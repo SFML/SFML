@@ -43,8 +43,9 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
-{
-    SetUpPoolAndApplication();
+{    
+    // Create the pool.
+    myPool = [[NSAutoreleasePool alloc] init];
     
     // Treat the handle as it real type
     id nsHandle = (id)handle;
@@ -90,10 +91,11 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
                                  const std::string& title, 
                                  unsigned long style)
 {
-    SetUpPoolAndApplication();
-    
     // Transform the app process.
-    SetUpProcessAsApplication();
+    SetUpProcess();
+    
+    // Create the pool.
+    myPool = [[NSAutoreleasePool alloc] init];
     
     // Don't forget to update our parent (that is, WindowImpl) size :
     myWidth = mode.Width;
@@ -119,6 +121,30 @@ WindowImplCocoa::~WindowImplCocoa()
 void WindowImplCocoa::ApplyContext(NSOpenGLContextRef context) const
 {
     [myDelegate applyContext:context];
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::SetUpProcess(void)
+{
+    static bool isTheProcessSetAsApplication = false;
+    
+    if (!isTheProcessSetAsApplication) {
+        // Do it only once !
+        isTheProcessSetAsApplication = true;
+        
+        // Set the process as a normal application so it can get focus.
+        ProcessSerialNumber psn;
+        if (!GetCurrentProcess(&psn)) {
+            TransformProcessType(&psn, kProcessTransformToForegroundApplication);
+            SetFrontProcess(&psn);
+        }
+        
+        // Tell the application to stop bouncing in the Dock.
+        [[NSApplication sharedApplication] finishLaunching];
+        // NOTE : This last call won't harm anything even if SFML window was
+        // created with an external handle.
+    }
 }
 
 
@@ -368,43 +394,6 @@ void WindowImplCocoa::EnableKeyRepeat(bool enabled)
 void WindowImplCocoa::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     [myDelegate setIconTo:width by:height with:pixels];
-}
-
-#pragma mark
-#pragma mark WindowImplCocoa's init methods
-
-////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetUpPoolAndApplication(void)
-{
-    // Ensure NSApp exists.
-    [NSApplication sharedApplication];
-    
-    // Create the pool.
-    myPool = [[NSAutoreleasePool alloc] init];
-}
-
-    
-////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetUpProcessAsApplication(void)
-{
-    static bool isTheProcessSetAsApplication = false;
-    
-    if (!isTheProcessSetAsApplication) {
-        // Do it only once !
-        isTheProcessSetAsApplication = true;
-        
-        // Set the process as a normal application so it can get focus.
-        ProcessSerialNumber psn;
-        if (!GetCurrentProcess(&psn)) {
-            TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-            SetFrontProcess(&psn);
-        }
-        
-        // Tell the application to stop bouncing in the Dock.
-        [[NSApplication sharedApplication] finishLaunching];
-        // NOTE : This last call won't harm anything even if SFML window was
-        // created with an external handle.
-    }
 }
     
 } // namespace priv
