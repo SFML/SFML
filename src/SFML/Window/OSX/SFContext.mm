@@ -51,6 +51,7 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared)
+    : myView(0), myWindow(0)
 {
     myPool = [[NSAutoreleasePool alloc] init];
     
@@ -63,8 +64,9 @@ SFContext::SFContext(SFContext* shared)
 
     
 ////////////////////////////////////////////////////////////
-SFContext::SFContext(SFContext* shared, const WindowImpl* owner, 
-                     unsigned int bitsPerPixel, const ContextSettings& settings)
+SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
+                     const WindowImpl* owner, unsigned int bitsPerPixel)
+    : myView(0), myWindow(0)
 {
     myPool = [[NSAutoreleasePool alloc] init];
     
@@ -80,16 +82,43 @@ SFContext::SFContext(SFContext* shared, const WindowImpl* owner,
 }
 
     
+SFContext::SFContext(SFContext* shared, const ContextSettings& settings, 
+                     unsigned int width, unsigned int height)
+    : myView(0), myWindow(0)
+{
+    // Ensure the process is setup in order to create a valid window.
+    WindowImplCocoa::SetUpProcess();
+    
+    myPool = [[NSAutoreleasePool alloc] init];
+    
+    // Create the context.
+    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, settings);
+    
+    // Create a dummy window/view pair (hidden) and asign it our context.
+    myWindow = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height)
+                                           styleMask:NSBorderlessWindowMask
+                                             backing:NSBackingStoreBuffered
+                                               defer:NO]; // Don't defer it!
+    myView = [[NSOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
+    [myWindow setContentView:myView];
+    [myView setOpenGLContext:myContext];
+    [myContext setView:myView];
+    
+    // Activate the context
+    SetActive(true);
+}
+    
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
     [myContext clearDrawable];
     [myContext release];
-    [myPool drain]; // [A]
     
-    /*
-     * [A] : Produce sometimes "*** attempt to pop an unknown autorelease pool"
-     */
+    [myView release]; // Might be nil but we don't care.
+    [myWindow release]; // Idem.
+    
+    [myPool drain]; // Produce sometimes "*** attempt to pop an unknown autorelease pool"
+    // This is not a real issue : http://stackoverflow.com/questions/3484888/nsautoreleasepool-question
 }
 
     
@@ -132,8 +161,8 @@ void SFContext::CreateContext(SFContext* shared,
     attrs.reserve(20); // max attributs (estimation).
     
     // These casts are safe. C++ is much more strict than Obj-C.
-    attrs.push_back(NSOpenGLPFAClosestPolicy);
     
+    attrs.push_back(NSOpenGLPFAClosestPolicy);
     attrs.push_back(NSOpenGLPFADoubleBuffer);
     
     if (bitsPerPixel > 24) {
@@ -162,7 +191,7 @@ void SFContext::CreateContext(SFContext* shared,
     // Create the pixel pormat.
     NSOpenGLPixelFormat* pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:&attrs[0]];
     
-    if(pixFmt == nil) {
+    if (pixFmt == nil) {
         sf::Err() << "Error. Unable to find a suitable pixel format." << std::endl;
         return;
     }
@@ -173,6 +202,10 @@ void SFContext::CreateContext(SFContext* shared,
     // Create the context.
     myContext = [[NSOpenGLContext alloc] initWithFormat:pixFmt
                                            shareContext:sharedContext];
+    
+    if (myContext == nil) {
+        sf::Err() << "Error. Unable to create the context." << std::endl;
+    }
     
     // Free up.
     [pixFmt release];

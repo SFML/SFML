@@ -42,10 +42,18 @@ typedef NSOpenGLContext* NSOpenGLContextRef;
 @class NSAutoreleasePool;
 typedef NSAutoreleasePool* NSAutoreleasePoolRef;
 
+@class NSOpenGLView;
+typedef NSOpenGLView* NSOpenGLViewRef;
+
+@class NSWindow;
+typedef NSWindow* NSWindowRef;
+
 #else // If C++
 
 typedef void* NSOpenGLContextRef;
 typedef void* NSAutoreleasePoolRef;
+typedef void* NSOpenGLViewRef;
+typedef void* NSWindowRef;
 
 #endif
 
@@ -72,14 +80,26 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
-    /// \param owner        Pointer to the owner window
-    /// \param bitsPerPixel Pixel depth (in bits per pixel)
+    /// \param shared       Context to share the new one with
     /// \param settings     Creation parameters
+    /// \param owner        Pointer to the owner window
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    SFContext(SFContext* shared, const WindowImpl* owner,
-              unsigned int bitsPerPixel, const ContextSettings& settings);
+    SFContext(SFContext* shared, const ContextSettings& settings,
+              const WindowImpl* owner, unsigned int bitsPerPixel);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new context that embeds its own rendering target
+    ///
+    /// \param shared   Context to share the new one with
+    /// \param settings Creation parameters
+    /// \param width    Back buffer width, in pixels
+    /// \param height   Back buffer height, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    SFContext(SFContext* shared, const ContextSettings& settings, 
+              unsigned int width, unsigned int height);
     
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -133,8 +153,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    NSOpenGLContextRef    myContext;    ///< OpenGL context
-    NSAutoreleasePoolRef  myPool;       ///< Memory manager for this class.
+    NSOpenGLContextRef    myContext;       ///< OpenGL context.
+    NSAutoreleasePoolRef  myPool;          ///< Memory manager for this class.
+    NSOpenGLViewRef       myView;          ///< Only for offscreen context.
+    NSWindowRef           myWindow;        ///< Only for offscreen context.
 };
     
 } // namespace priv
