@@ -153,7 +153,7 @@
         myWindow = [[SFWindow alloc] initWithContentRect:rect
                                                styleMask:nsStyle 
                                                  backing:NSBackingStoreBuffered 
-                                                   defer:NO];
+                                                   defer:NO]; // Don't defer it!
         /*
          "YES" produces some "invalid drawable".
          See http://www.cocoabuilder.com/archive/cocoa/152482-nsviews-and-nsopenglcontext-invalid-drawable-error.html
