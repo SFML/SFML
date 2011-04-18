@@ -132,7 +132,7 @@ foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
                      SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG)
 
     # add to the global list of libraries
-    set(SFML_LIBRARIES "${SFML_LIBRARIES} ${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY}")
+    set(SFML_LIBRARIES ${SFML_LIBRARIES} "${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY}")
 endforeach()
 
 # handle errors
