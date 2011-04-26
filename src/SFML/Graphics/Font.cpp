@@ -512,6 +512,7 @@ NextRow(2)
 {
     // Make sure that the texture is initialized by default
     Texture.Create(128, 128, Color(255, 255, 255, 0));
+    Texture.SetSmooth(true);
 
     // Reserve a 2x2 white square for texturing underlines
     for (int x = 0; x < 2; ++x)
