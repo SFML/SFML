@@ -45,6 +45,16 @@ y(Y)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+template <typename U>
+inline Vector2<T>::Vector2(const Vector2<U>& vector) :
+x(static_cast<T>(vector.x)),
+y(static_cast<T>(vector.y))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 inline Vector2<T> operator -(const Vector2<T>& right)
 {
     return Vector2<T>(-right.x, -right.y);

@@ -47,6 +47,17 @@ z(Z)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+template <typename U>
+inline Vector3<T>::Vector3(const Vector3<U>& vector) :
+x(static_cast<T>(vector.x)),
+y(static_cast<T>(vector.y)),
+z(static_cast<T>(vector.z))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 inline Vector3<T> operator -(const Vector3<T>& left)
 {
     return Vector3<T>(-left.x, -left.y, -left.z);

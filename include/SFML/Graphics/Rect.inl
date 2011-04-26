@@ -61,6 +61,18 @@ Height(size.y)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+template <typename U>
+Rect<T>::Rect(const Rect<U>& rectangle) :
+Left  (static_cast<T>(rectangle.Left)),
+Top   (static_cast<T>(rectangle.Top)),
+Width (static_cast<T>(rectangle.Width)),
+Height(static_cast<T>(rectangle.Height))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 bool Rect<T>::Contains(T x, T y) const
 {
     return (x >= Left) && (x < Left + Width) && (y >= Top) && (y < Top + Height);

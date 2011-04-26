@@ -56,6 +56,20 @@ public :
     Vector2(T X, T Y);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the vector from another type of vector
+    ///
+    /// This constructor doesn't replace the copy constructor,
+    /// it's called only when U != T.
+    /// A call to this constructor will fail to compile if U
+    /// is not convertible to T.
+    ///
+    /// \param vector Vector to convert
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename U>
+    explicit Vector2(const Vector2<U>& vector);
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     T x; ///< X coordinate of the vector

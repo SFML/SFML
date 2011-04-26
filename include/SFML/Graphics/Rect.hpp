@@ -79,6 +79,20 @@ public :
     Rect(const Vector2<T>& position, const Vector2<T>& size);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the rectangle from another type of rectangle
+    ///
+    /// This constructor doesn't replace the copy constructor,
+    /// it's called only when U != T.
+    /// A call to this constructor will fail to compile if U
+    /// is not convertible to T.
+    ///
+    /// \param rectangle Rectangle to convert
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename U>
+    explicit Rect(const Rect<U>& rectangle);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
     ///
     /// \param x X coordinate of the point to test
