@@ -23,6 +23,7 @@ namespace SFML
                 Alt     = e.Alt != 0;
                 Control = e.Control != 0;
                 Shift   = e.Shift != 0;
+                System  = e.System != 0;
             }
 
             ////////////////////////////////////////////////////////////
@@ -37,7 +38,8 @@ namespace SFML
                        " Code(" + Code + ")" + 
                        " Alt(" + Alt + ")" + 
                        " Control(" + Control + ")" + 
-                       " Shift(" + Shift + ")";
+                       " Shift(" + Shift + ")" +
+                       " System(" + System + ")";
             }
 
             /// <summary>Code of the key (see KeyCode enum)</summary>
@@ -51,6 +53,9 @@ namespace SFML
 
             /// <summary>Is the Shift modifier pressed?</summary>
             public bool Shift;
+
+            /// <summary>Is the System modifier pressed?</summary>
+            public bool System;
         }
 
         ////////////////////////////////////////////////////////////

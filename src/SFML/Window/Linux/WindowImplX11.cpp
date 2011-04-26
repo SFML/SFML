@@ -686,12 +686,14 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             XLookupString(&windowEvent.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
 
             // Fill the event parameters
+            // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
             event.Type        = Event::KeyPressed;
             event.Key.Code    = KeysymToSF(symbol);
             event.Key.Alt     = windowEvent.xkey.state & Mod1Mask;
             event.Key.Control = windowEvent.xkey.state & ControlMask;
             event.Key.Shift   = windowEvent.xkey.state & ShiftMask;
+            event.Key.System  = windowEvent.xkey.state & Mod4Mask;
             PushEvent(event);
 
             // Generate a TextEntered event
@@ -749,6 +751,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             event.Key.Alt     = windowEvent.xkey.state & Mod1Mask;
             event.Key.Control = windowEvent.xkey.state & ControlMask;
             event.Key.Shift   = windowEvent.xkey.state & ShiftMask;
+            event.Key.System  = windowEvent.xkey.state & Mod4Mask;
             PushEvent(event);
 
             break;

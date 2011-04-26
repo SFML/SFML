@@ -58,6 +58,7 @@ inline void ConvertEvent(const sf::Event& SFMLEvent, sfEvent* event)
             event->Key.Alt     = SFMLEvent.Key.Alt     ? sfTrue : sfFalse;
             event->Key.Control = SFMLEvent.Key.Control ? sfTrue : sfFalse;
             event->Key.Shift   = SFMLEvent.Key.Shift   ? sfTrue : sfFalse;
+            event->Key.System  = SFMLEvent.Key.System  ? sfTrue : sfFalse;
             break;
 
         case sfEvtMouseWheelMoved :

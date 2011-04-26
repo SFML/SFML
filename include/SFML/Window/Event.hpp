@@ -215,6 +215,7 @@ public :
         bool      Alt;     ///< Is the Alt key pressed?
         bool      Control; ///< Is the Control key pressed?
         bool      Shift;   ///< Is the Shift key pressed?
+        bool      System;  ///< Is the System key pressed?
     };
 
     ////////////////////////////////////////////////////////////

@@ -242,6 +242,9 @@ namespace SFML
 
             /// <summary>Is the Shift modifier pressed?</summary>
             public int Shift;
+
+            /// <summary>Is the System modifier pressed?</summary>
+            public int System;
         }
 
         ////////////////////////////////////////////////////////////

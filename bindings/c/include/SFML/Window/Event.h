@@ -203,6 +203,7 @@ struct sfKeyEvent
     sfBool      Alt;
     sfBool      Control;
     sfBool      Shift;
+    sfBool      System;
 };
 
 ////////////////////////////////////////////////////////////

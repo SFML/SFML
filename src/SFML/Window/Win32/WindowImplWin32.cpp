@@ -498,6 +498,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 event.Key.Alt     = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
                 event.Key.Control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
                 event.Key.Shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
+                event.Key.System  = HIWORD(GetAsyncKeyState(VK_LWIN)) || HIWORD(GetAsyncKeyState(VK_RWIN));
                 event.Key.Code    = VirtualKeyCodeToSF(wParam, lParam);
                 PushEvent(event);
             }
@@ -514,6 +515,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.Key.Control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
             event.Key.Shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
             event.Key.Code    = VirtualKeyCodeToSF(wParam, lParam);
+            event.Key.System  = HIWORD(GetAsyncKeyState(VK_LWIN)) || HIWORD(GetAsyncKeyState(VK_RWIN));
             PushEvent(event);
             break;
         }
