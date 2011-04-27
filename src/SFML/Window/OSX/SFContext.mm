@@ -60,6 +60,9 @@ SFContext::SFContext(SFContext* shared)
     
     // Activate the context
     SetActive(true);
+    
+    // Finish updating settings.
+    UpdateOpenGLVersion();
 }
 
     
@@ -79,9 +82,12 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
     
     // Activate the context
     SetActive(true);
+    
+    // Finish updating settings.
+    UpdateOpenGLVersion();
 }
 
-    
+
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings, 
                      unsigned int width, unsigned int height)
     : myView(0), myWindow(0)
@@ -106,8 +112,12 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
     
     // Activate the context
     SetActive(true);
-}
     
+    // Finish updating settings.
+    UpdateOpenGLVersion();
+}
+
+
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
@@ -121,7 +131,7 @@ SFContext::~SFContext()
     // This is not a real issue : http://stackoverflow.com/questions/3484888/nsautoreleasepool-question
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 bool SFContext::MakeCurrent()
 {
@@ -129,14 +139,14 @@ bool SFContext::MakeCurrent()
     return myContext == [NSOpenGLContext currentContext]; // Should be true.
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void SFContext::Display()
 {
     [myContext flushBuffer];
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void SFContext::EnableVerticalSync(bool enabled)
 {
@@ -150,8 +160,8 @@ void SFContext::EnableVerticalSync(bool enabled)
     [myContext setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
 }
 
-    
-////////////////////////////////////////////////////////////    
+
+////////////////////////////////////////////////////////////
 void SFContext::CreateContext(SFContext* shared,
                               unsigned int bitsPerPixel, 
                               const ContextSettings& settings)
@@ -210,13 +220,38 @@ void SFContext::CreateContext(SFContext* shared,
     // Free up.
     [pixFmt release];
     
-#warning update settings with ogl version not yet implemented
-    
-    // Save the creation settings
+    // Save the settings. (OpenGL version is updated elsewhere.)
     mySettings = settings;
 }
+
+
+////////////////////////////////////////////////////////////
+void SFContext::UpdateOpenGLVersion()
+{
+    // Update the OpenGL version in the settings.
+    // NB : the context muste be active to get its version.
+
+    GLubyte const* versionString = glGetString(GL_VERSION);
     
+    if (versionString == 0) {
+
+        // (Warning) Couldn't get the OpenGL version of the context.
+        // This happens sometimes (but not always) when creating the first
+        // context for no apparent reason.
+        
+        // We assume we can get at least a 2.0 valid context.
+        mySettings.MajorVersion = 2;
+        mySettings.MinorVersion = 0;
+        
+    } else {
+        
+        // versionString looks like "2.1 NVIDIA-1.6.26".
+        mySettings.MajorVersion = versionString[0];
+        mySettings.MinorVersion = versionString[2];
+    }
+}
+
 } // namespace priv
-    
+
 } // namespace sf
 
