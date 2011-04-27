@@ -603,6 +603,7 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
     key.Alt     = modifiers & NSAlternateKeyMask;
     key.Control = modifiers & NSControlKeyMask;
     key.Shift   = modifiers & NSShiftKeyMask;
+    key.System  = modifiers & NSCommandKeyMask;
     
     // State
     BOOL rightShiftIsDown       = NO;
@@ -1018,6 +1019,7 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
     key.Alt     = modifierFlags & NSAlternateKeyMask;
     key.Control = modifierFlags & NSControlKeyMask;
     key.Shift   = modifierFlags & NSShiftKeyMask;
+    key.System  = modifierFlags & NSCommandKeyMask;
     
     // Key code.
     key.Code = sf::Key::Count;
