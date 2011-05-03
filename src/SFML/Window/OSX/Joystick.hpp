@@ -29,10 +29,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
-#if USE_OS_X_VERSION_10_6
-    #include <IOKit/hid/IOHIDDevice.h>
-#endif
+#include <IOKit/hid/IOHIDManager.h>
+#include <IOKit/hid/IOHIDDevice.h>
+#include <map>
+#include <vector>
 
 namespace sf
 {
@@ -44,7 +44,24 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class Joystick
 {
-    public :
+public :
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// This constructors initializes all members to 0.
+    /// That is, it does nothing.
+    ///
+    ////////////////////////////////////////////////////////////
+    Joystick();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Destructor
+    ///
+    /// Close all connections to any devices if required.
+    ///
+    ////////////////////////////////////////////////////////////
+    ~Joystick();
     
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the instance and bind it to a physical joystick
@@ -80,11 +97,75 @@ class Joystick
     ////////////////////////////////////////////////////////////
     unsigned int GetButtonsCount() const;
     
-    private :
+private :
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a mask (dictionary) for an IOHIDManager
+    ///
+    /// \param page  
+    /// \param usage 
+    ///
+    ////////////////////////////////////////////////////////////
+    static CFDictionaryRef DevicesMaskForManager(UInt32 page, UInt32 usage);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Create and open the manager
+    ///
+    /// \return Return false if someting went wrong
+    ///
+    ////////////////////////////////////////////////////////////
+    bool CreateManager();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Copy all connected joysticks to the manager
+    ///
+    /// \return NULL or a valid (possibly empty) set of devices
+    ///
+    ////////////////////////////////////////////////////////////
+    CFSetRef CopyJoysticksOnly();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Load all connected elements to the given device
+    ///
+    /// \param device The desired joystick
+    /// \return False if something went wrong
+    ///
+    ////////////////////////////////////////////////////////////
+    bool RetriveElements(IOHIDDeviceRef device);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Release all resources
+    ///
+    /// Close all connections to any devices, if required
+    ///
+    ////////////////////////////////////////////////////////////
+    void FreeUp();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Close and release the manager
+    ///
+    ////////////////////////////////////////////////////////////
+    void ReleaseManager();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Release all elements
+    ///
+    ////////////////////////////////////////////////////////////
+    void ReleaseElements();
     
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    typedef std::map<sf::Joy::Axis, IOHIDElementRef> AxisMap;
+    typedef std::vector<IOHIDElementRef> ButtonsVector;
+    
+    AxisMap myAxis;             ///< Axis (IOHIDElementRef) connected to the joystick.
+    ButtonsVector myButtons;    ///< Buttons (IOHIDElementRef) connected to the joystick.
+    // Note : Both myAxis and myButton contains only reference from myElements.
+    //        Thus no special cleanup is required on these two.
+    
+    IOHIDManagerRef myManager;  ///< HID Manager.
+    CFArrayRef myElements;      ///< IOHIDElementRef connected to the joytick.
 };
     
 } // namespace priv
