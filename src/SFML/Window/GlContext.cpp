@@ -102,7 +102,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void GlContext::Initialize()
+void GlContext::GlobalInit()
 {
     // Create the shared context
     sharedContext = new ContextType(NULL);
@@ -115,7 +115,7 @@ void GlContext::Initialize()
 
 
 ////////////////////////////////////////////////////////////
-void GlContext::Cleanup()
+void GlContext::GlobalCleanup()
 {
     // Destroy the shared context
     delete sharedContext;
@@ -141,7 +141,10 @@ void GlContext::EnsureContext()
 ////////////////////////////////////////////////////////////
 GlContext* GlContext::New()
 {
-    return new ContextType(sharedContext);
+    GlContext* context = new ContextType(sharedContext);
+    context->Initialize();
+
+    return context;
 }
 
 
@@ -153,10 +156,7 @@ GlContext* GlContext::New(const ContextSettings& settings, const WindowImpl* own
 
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
-
-    // Enable antialiasing if needed
-    if (context->GetSettings().AntialiasingLevel > 0)
-        glEnable(GL_MULTISAMPLE_ARB);
+    context->Initialize();
 
     return context;
 }
@@ -170,10 +170,7 @@ GlContext* GlContext::New(const ContextSettings& settings, unsigned int width, u
 
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, width, height);
-
-    // Enable antialiasing if needed
-    if (context->GetSettings().AntialiasingLevel > 0)
-        glEnable(GL_MULTISAMPLE_ARB);
+    context->Initialize();
 
     return context;
 }
@@ -251,6 +248,33 @@ int GlContext::EvaluateFormat(unsigned int bitsPerPixel, const ContextSettings& 
            std::abs(static_cast<int>(settings.DepthBits         - depthBits))   +
            std::abs(static_cast<int>(settings.StencilBits       - stencilBits)) +
            std::abs(static_cast<int>(settings.AntialiasingLevel - antialiasing));
+}
+
+
+////////////////////////////////////////////////////////////
+void GlContext::Initialize()
+{
+    // Activate the context
+    SetActive(true);
+
+    // Retrieve the context version number
+    const GLubyte* version = glGetString(GL_VERSION);
+    if (version)
+    {
+        // The beginning of the returned string is "major.minor" (this is standard)
+        mySettings.MajorVersion = version[0] - '0';
+        mySettings.MinorVersion = version[2] - '0';
+    }
+    else
+    {
+        // Can't get the version number, assume 2.0
+        mySettings.MajorVersion = 2;
+        mySettings.MinorVersion = 0;
+    }
+
+    // Enable antialiasing if needed
+    if (mySettings.AntialiasingLevel > 0)
+        glEnable(GL_MULTISAMPLE_ARB);
 }
 
 } // namespace priv

@@ -57,12 +57,6 @@ SFContext::SFContext(SFContext* shared)
     
     // Create the context
     CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
-    
-    // Activate the context
-    SetActive(true);
-    
-    // Finish updating settings.
-    UpdateOpenGLVersion();
 }
 
     
@@ -79,12 +73,6 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
     // Apply context.
     WindowImplCocoa const * ownerCocoa = static_cast<WindowImplCocoa const *>(owner);
     ownerCocoa->ApplyContext(myContext);
-    
-    // Activate the context
-    SetActive(true);
-    
-    // Finish updating settings.
-    UpdateOpenGLVersion();
 }
 
 
@@ -109,12 +97,6 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
     [myWindow setContentView:myView];
     [myView setOpenGLContext:myContext];
     [myContext setView:myView];
-    
-    // Activate the context
-    SetActive(true);
-    
-    // Finish updating settings.
-    UpdateOpenGLVersion();
 }
 
 
@@ -222,33 +204,6 @@ void SFContext::CreateContext(SFContext* shared,
     
     // Save the settings. (OpenGL version is updated elsewhere.)
     mySettings = settings;
-}
-
-
-////////////////////////////////////////////////////////////
-void SFContext::UpdateOpenGLVersion()
-{
-    // Update the OpenGL version in the settings.
-    // NB : the context muste be active to get its version.
-
-    GLubyte const* versionString = glGetString(GL_VERSION);
-    
-    if (versionString == 0) {
-
-        // (Warning) Couldn't get the OpenGL version of the context.
-        // This happens sometimes (but not always) when creating the first
-        // context for no apparent reason.
-        
-        // We assume we can get at least a 2.0 valid context.
-        mySettings.MajorVersion = 2;
-        mySettings.MinorVersion = 0;
-        
-    } else {
-        
-        // versionString looks like "2.1 NVIDIA-1.6.26".
-        mySettings.MajorVersion = versionString[0];
-        mySettings.MinorVersion = versionString[2];
-    }
 }
 
 } // namespace priv

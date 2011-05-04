@@ -57,7 +57,7 @@ public :
     /// can be called only once.
     ///
     ////////////////////////////////////////////////////////////
-    static void Initialize();
+    static void GlobalInit();
 
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global cleanup
@@ -69,7 +69,7 @@ public :
     /// can be called only once.
     ///
     ////////////////////////////////////////////////////////////
-    static void Cleanup();
+    static void GlobalCleanup();
 
     ////////////////////////////////////////////////////////////
     /// \brief Ensures that an OpenGL context is active in the current thread
@@ -217,6 +217,14 @@ protected :
     // Member data
     ////////////////////////////////////////////////////////////
     ContextSettings mySettings; ///< Creation settings of the context
+
+private:
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Perform various initializations after the context construction
+    ///
+    ////////////////////////////////////////////////////////////
+    void Initialize();
 };
 
 } // namespace priv

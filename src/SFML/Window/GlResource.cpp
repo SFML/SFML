@@ -54,7 +54,7 @@ GlResource::GlResource()
 
         // If this is the very first resource, trigger the global context initialization
         if (count == 0)
-            priv::GlContext::Initialize();
+            priv::GlContext::GlobalInit();
 
         // Increment the resources counter
         count++;
@@ -76,7 +76,7 @@ GlResource::~GlResource()
 
     // If there's no more resource alive, we can trigger the global context cleanup
     if (count == 0)
-        priv::GlContext::Cleanup();
+        priv::GlContext::GlobalCleanup();
 }
 
 
