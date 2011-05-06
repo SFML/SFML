@@ -75,8 +75,8 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the current state of a joystick button (pressed or released)
     ///
-    /// \param joystick Index of the joystick to test (0 or 1)
-    /// \param button   Index of the button to test
+    /// \param joystick Index of the joystick to test (in range [0 .. Joy::Count - 1])
+    /// \param button   Index of the button to test (in range [0 .. Joy::ButtonCount - 1])
     ///
     /// \return True if button is down, false if button is up
     ///
@@ -108,10 +108,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the current position of a joystick axis
     ///
-    /// The returned position is in the range [-100, 100], except
-    /// the POV which is an angle and is thus defined in [0, 360].
+    /// The returned position is in the range [-100 .. 100], except
+    /// the POV which is an angle and is thus defined in [0 .. 360].
     ///
-    /// \param joystick Index of the joystick to test (0 or 1)
+    /// \param joystick Index of the joystick to test (in range [0 .. Joy::Count - 1])
     /// \param axis     Axis to test
     ///
     /// \return Current axis position

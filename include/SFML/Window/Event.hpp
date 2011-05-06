@@ -266,9 +266,9 @@ public :
     ////////////////////////////////////////////////////////////
     struct JoyMoveEvent
     {
-        unsigned int JoystickId; ///< Index of the joystick (0 or 1)
+        unsigned int JoystickId; ///< Index of the joystick (in range [0 .. Joy::Count - 1])
         Joy::Axis    Axis;       ///< Axis on which the joystick moved
-        float        Position;   ///< New position on the axis (in range [-100, 100])
+        float        Position;   ///< New position on the axis (in range [-100 .. 100])
     };
 
     ////////////////////////////////////////////////////////////
@@ -278,8 +278,8 @@ public :
     ////////////////////////////////////////////////////////////
     struct JoyButtonEvent
     {
-        unsigned int JoystickId; ///< Index of the joystick (0 or 1)
-        unsigned int Button;     ///< Index of the button that has been pressed
+        unsigned int JoystickId; ///< Index of the joystick (in range [0 .. Joy::Count - 1])
+        unsigned int Button;     ///< Index of the button that has been pressed (in range [0 .. Joy::ButtonCount - 1])
     };
 
     ////////////////////////////////////////////////////////////
