@@ -201,10 +201,32 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public string DisplayedString
             {
-                // TODO : use unicode functions
-                // (convert from UTF-16 to UTF-32, and find how to marshal System.String as sfUint32*...)
-                get {return sfText_GetString(This);}
-                set {sfText_SetString(This, value);}
+                get
+                {
+                    // Get the number of characters
+                    // This is probably not the most optimized way; if anyone has a better solution...
+                    int length = Marshal.PtrToStringAnsi(sfText_GetString(This)).Length;
+
+                    // Copy the characters
+                    byte[] characters = new byte[length * 4];
+                    Marshal.Copy(sfText_GetUnicodeString(This), characters, 0, characters.Length);
+
+                    // Convert from UTF-32 to String (UTF-16)
+                    return System.Text.Encoding.UTF32.GetString(characters);
+                }
+
+                set
+                {
+                    // Convert from String (UTF-16) to UTF-32
+                    int[] characters = new int[value.Length];
+                    for (int i = 0; i < value.Length; ++i)
+                        characters[i] = Char.ConvertToUtf32(value, i);
+
+                    // Transform to raw and pass to the C API
+                    GCHandle handle = GCHandle.Alloc(characters, GCHandleType.Pinned);
+                    sfText_SetUnicodeString(This, handle.AddrOfPinnedObject());
+                    handle.Free();
+                }
             }
 
             ////////////////////////////////////////////////////////////
@@ -406,8 +428,8 @@ namespace SFML
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderImage_DrawTextWithShader(IntPtr This, IntPtr String, IntPtr Shader);
 
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
-            static extern void sfText_SetString(IntPtr This, string Text);
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern void sfText_SetUnicodeString(IntPtr This, IntPtr Text);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfText_SetFont(IntPtr This, IntPtr Font);
@@ -418,8 +440,11 @@ namespace SFML
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfText_SetStyle(IntPtr This, Styles Style);
 
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
-            static extern string sfText_GetString(IntPtr This);
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfText_GetString(IntPtr This);
+
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfText_GetUnicodeString(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfText_GetCharacterSize(IntPtr This);
