@@ -14,8 +14,6 @@ set(SRC
     ${INCROOT}/Mutex.hpp
     ${INCROOT}/NonCopyable.hpp
     ${SRCROOT}/Platform.hpp
-    ${SRCROOT}/Randomizer.cpp
-    ${INCROOT}/Randomizer.hpp
     ${INCROOT}/Resource.hpp
     ${INCROOT}/Resource.inl
     ${INCROOT}/ResourcePtr.inl

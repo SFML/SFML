@@ -5,6 +5,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <cmath>
+#include <ctime>
+#include <cstdlib>
 
 
 ////////////////////////////////////////////////////////////
@@ -15,6 +17,8 @@
 ////////////////////////////////////////////////////////////
 int main()
 {
+    std::srand(std::time(NULL));
+
     // Defines PI
     const float PI = 3.14159f;
 
@@ -73,7 +77,7 @@ int main()
     do
     {
         // Make sure the ball initial angle is not too much vertical
-        ballAngle = sf::Randomizer::Random(0.f, 2 * PI);
+        ballAngle = std::rand() * 2 * PI / RAND_MAX;
     } while (std::abs(std::cos(ballAngle)) < 0.7f);
 
     bool isPlaying = true;

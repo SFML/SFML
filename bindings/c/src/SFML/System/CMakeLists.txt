@@ -10,8 +10,6 @@ set(SRC
     ${SRCROOT}/Mutex.cpp
     ${SRCROOT}/MutexStruct.h
     ${INCROOT}/Mutex.h
-    ${SRCROOT}/Randomizer.cpp
-    ${INCROOT}/Randomizer.h
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.h
     ${SRCROOT}/Thread.cpp
