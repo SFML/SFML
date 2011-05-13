@@ -106,6 +106,7 @@ void GlContext::GlobalInit()
 {
     // Create the shared context
     sharedContext = new ContextType(NULL);
+    sharedContext->Initialize();
 
     // This call makes sure that:
     // - the shared context is inactive (it must never be)
