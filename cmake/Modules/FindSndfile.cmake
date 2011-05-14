@@ -17,8 +17,7 @@ find_library(SNDFILE_LIBRARY NAMES sndfile sndfile-1)
 # Handle the QUIETLY and REQUIRED arguments and set SNDFILE_FOUND to TRUE if
 # all listed variables are TRUE.
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(SNDFILE DEFAULT_MSG
-    SNDFILE_INCLUDE_DIR SNDFILE_LIBRARY)
+find_package_handle_standard_args(SNDFILE DEFAULT_MSG SNDFILE_LIBRARY SNDFILE_INCLUDE_DIR)
 
 if(SNDFILE_FOUND)
   set(SNDFILE_LIBRARIES ${SNDFILE_LIBRARY})
