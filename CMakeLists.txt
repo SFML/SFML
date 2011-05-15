@@ -49,10 +49,12 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif()
 
-# define an option for choosing between static CRT and DLL CRT (with Visual C++)
-if(COMPILER_MSVC)
-    set(FORCE_STATIC_VCRT FALSE CACHE BOOL "TRUE to force static VC++ runtimes, FALSE to use the DLL ones")
-    if(FORCE_STATIC_VCRT)
+# define an option for choosing between static and dynamic C runtime (Windows only)
+if(WINDOWS)
+    set(STATIC_STD_LIBS TRUE CACHE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
+    
+    # for VC++, we can apply it globally by modifying the compiler flags
+    if(COMPILER_MSVC AND STATIC_STD_LIBS)
         foreach(flag
                 CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
                 CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)

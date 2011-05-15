@@ -126,10 +126,10 @@ macro(sfml_add_library target)
     set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
     set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
-    # for gcc 4.x on Windows, we add the -static-libgcc linker flag to get rid of an extra gcc DLL
-    if(WINDOWS AND COMPILER_GCC)
+    # for gcc 4.x on Windows, apply the STATIC_STD_LIBS option if it is enabled
+    if(WINDOWS AND COMPILER_GCC AND STATIC_STD_LIBS)
         if(${GCC_VERSION} MATCHES "4\\..*")
-            set_target_properties(${target} PROPERTIES LINK_FLAGS -static-libgcc)
+            set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
         endif()
     endif()
 
@@ -178,10 +178,10 @@ macro(sfml_add_example target)
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
 
-    # for gcc 4.x on Windows, we add the -static-libgcc linker flag to get rid of an extra gcc DLL
-    if(WINDOWS AND COMPILER_GCC)
+    # for gcc 4.x on Windows, apply the STATIC_STD_LIBS option if it is enabled
+    if(WINDOWS AND COMPILER_GCC AND STATIC_STD_LIBS)
         if(${GCC_VERSION} MATCHES "4\\..*")
-            set_target_properties(${target} PROPERTIES LINK_FLAGS -static-libgcc)
+            set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
         endif()
     endif()
 
