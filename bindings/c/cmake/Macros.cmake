@@ -73,8 +73,8 @@ macro(csfml_add_library target)
     endif()
 
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
-    set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
-    set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+    set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR})
+    set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 
     # for gcc 4.x on Windows, apply the STATIC_STD_LIBS option if it is enabled
     if(WINDOWS AND COMPILER_GCC AND STATIC_STD_LIBS)
