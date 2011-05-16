@@ -30,6 +30,22 @@ set(BUILD_DOC FALSE CACHE BOOL "TRUE to generate the API documentation, FALSE to
 # disable the rpath stuff
 set(CMAKE_SKIP_BUILD_RPATH TRUE)
 
+# define an option for choosing between static and dynamic C runtime (Windows only)
+if(WINDOWS)
+    set(STATIC_STD_LIBS TRUE CACHE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
+    
+    # for VC++, we can apply it globally by modifying the compiler flags
+    if(COMPILER_MSVC AND STATIC_STD_LIBS)
+        foreach(flag
+                CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+                CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+            if(${flag} MATCHES "/MD")
+                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+            endif()
+        endforeach()
+    endif()
+endif()
+
 # add the subdirectories
 add_subdirectory(src/SFML)
 if(BUILD_DOC)
