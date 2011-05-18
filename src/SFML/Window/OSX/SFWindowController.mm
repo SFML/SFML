@@ -281,9 +281,6 @@
 {
     if (myRequester == 0) return;
     
-    // Create a SFML event.
-    myRequester->MouseMovedAt(x, y);
-    
     // Flip for SFML window coordinate system
     y = NSHeight([myWindow frame]) - y;
     
@@ -297,16 +294,15 @@
     float const screenHeight = NSHeight([[myWindow screen] frame]);
     screenCoord.y = screenHeight - screenCoord.y;
     
-    CGDirectDisplayID screenNumber = (CGDirectDisplayID)[[[[myWindow screen] deviceDescription] valueForKey:@"NSScreenNumber"] intValue];
-    
     // Place the cursor.
-    CGDisplayMoveCursorToPoint(screenNumber, CGPointMake(screenCoord.x, screenCoord.y));
-    /*
-     CGDisplayMoveCursorToPoint -- Discussion :
-     
-     No events are generated as a result of this move. 
-     Points that lie outside the desktop are clipped to the desktop.
-     */
+    CGEventRef event = CGEventCreateMouseEvent(NULL, 
+                                               kCGEventMouseMoved, 
+                                               CGPointMake(screenCoord.x, screenCoord.y), 
+                                               /*we don't care about this : */0);
+    CGEventPost(kCGHIDEventTap, event);
+    CFRelease(event);
+    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.
+    // The event produced will be catched by SFML in sf::Window::FilterEvent.
 }
 
 
