@@ -35,19 +35,19 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-double Platform::GetSystemTime()
+Uint64 Platform::GetSystemTime()
 {
     timeval time = {0, 0};
     gettimeofday(&time, NULL);
 
-    return time.tv_sec + time.tv_usec / 1000000.;
+    return time.tv_sec * 1000 + time.tv_usec / 1000;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Platform::Sleep(float time)
+void Platform::Sleep(Uint32 time)
 {
-    usleep(static_cast<unsigned long>(time * 1000000));
+    usleep(time * 1000);
 }
 
 } // namespace priv

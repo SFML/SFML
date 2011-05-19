@@ -32,12 +32,12 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Make the current thread sleep for a given time
+/// Make the current thread sleep for a given duration
 ///
-/// \param duration : Time to sleep, in seconds
+/// \param duration : Time to sleep, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSleep(float duration);
+CSFML_API void sfSleep(sfUint32 duration);
 
 
 #endif // SFML_SLEEP_H

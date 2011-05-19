@@ -288,7 +288,7 @@ namespace SFML
             /// </summary>
             /// <returns>Time elapsed, in seconds</returns>
             ////////////////////////////////////////////////////////////
-            public override float GetFrameTime()
+            public override uint GetFrameTime()
             {
                 return sfRenderWindow_GetFrameTime(This);
             }
@@ -605,7 +605,7 @@ namespace SFML
             static extern void sfRenderWindow_SetFramerateLimit(IntPtr This, uint Limit);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfRenderWindow_GetFrameTime(IntPtr This);
+            static extern uint sfRenderWindow_GetFrameTime(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_SetJoystickThreshold(IntPtr This, float Threshold);

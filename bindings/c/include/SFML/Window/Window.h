@@ -290,10 +290,10 @@ CSFML_API void sfWindow_SetFramerateLimit(sfWindow* window, unsigned int limit);
 ///
 /// \param window : Window object
 ///
-/// \return Time elapsed, in seconds
+/// \return Time elapsed, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfWindow_GetFrameTime(const sfWindow* window);
+CSFML_API sfUint32 sfWindow_GetFrameTime(const sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Change the joystick threshold, ie. the value below which

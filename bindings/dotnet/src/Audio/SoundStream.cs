@@ -171,10 +171,10 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Current playing position, in seconds
+            /// Current playing position, in milliseconds
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public float PlayingOffset
+            public uint PlayingOffset
             {
                 get {return sfSoundStream_GetPlayingOffset(This);}
                 set {sfSoundStream_SetPlayingOffset(This, value);}
@@ -229,9 +229,9 @@ namespace SFML
             /// <summary>
             /// Virtual function called to seek into the stream
             /// </summary>
-            /// <param name="timeOffset">New position, expressed in seconds</param>
+            /// <param name="timeOffset">New position, in milliseconds</param>
             ////////////////////////////////////////////////////////////
-            protected abstract void OnSeek(float timeOffset);
+            protected abstract void OnSeek(uint timeOffset);
 
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -289,11 +289,11 @@ namespace SFML
             /// <summary>
             /// Called to seek in the stream
             /// </summary>
-            /// <param name="timeOffset">New position, expressed in seconds</param>
+            /// <param name="timeOffset">New position, in milliseconds</param>
             /// <param name="userData">User data -- unused</param>
             /// <returns>If false is returned, the playback is aborted</returns>
             ////////////////////////////////////////////////////////////
-            private void Seek(float timeOffset, IntPtr userData)
+            private void Seek(uint timeOffset, IntPtr userData)
             {
                 OnSeek(timeOffset);
             }
@@ -302,7 +302,7 @@ namespace SFML
             private delegate bool GetDataCallbackType(ref Chunk dataChunk, IntPtr UserData);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            private delegate void SeekCallbackType(float timeOffset, IntPtr UserData);
+            private delegate void SeekCallbackType(uint timeOffset, IntPtr UserData);
 
             private GetDataCallbackType myGetDataCallback;
             private SeekCallbackType    mySeekCallback;
@@ -355,7 +355,7 @@ namespace SFML
             static extern void sfSoundStream_SetAttenuation(IntPtr SoundStream, float Attenuation);
             
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfSoundStream_SetPlayingOffset(IntPtr SoundStream, float TimeOffset);
+            static extern void sfSoundStream_SetPlayingOffset(IntPtr SoundStream, uint TimeOffset);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfSoundStream_GetLoop(IntPtr SoundStream);
@@ -379,7 +379,7 @@ namespace SFML
             static extern float sfSoundStream_GetAttenuation(IntPtr SoundStream);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfSoundStream_GetPlayingOffset(IntPtr SoundStream);
+            static extern uint sfSoundStream_GetPlayingOffset(IntPtr SoundStream);
             #endregion
         }
     }

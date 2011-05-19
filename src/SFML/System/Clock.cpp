@@ -39,9 +39,9 @@ Clock::Clock()
 
 
 ////////////////////////////////////////////////////////////
-float Clock::GetElapsedTime() const
+Uint32 Clock::GetElapsedTime() const
 {
-    return static_cast<float>(priv::Platform::GetSystemTime() - myStartTime);
+    return static_cast<Uint32>(priv::Platform::GetSystemTime() - myStartTime);
 }
 
 

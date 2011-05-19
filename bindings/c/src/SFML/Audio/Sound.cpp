@@ -202,7 +202,7 @@ void sfSound_SetAttenuation(sfSound* sound, float attenuation)
 ////////////////////////////////////////////////////////////
 /// Set the current playing position of a sound
 ////////////////////////////////////////////////////////////
-void sfSound_SetPlayingOffset(sfSound* sound, float timeOffset)
+void sfSound_SetPlayingOffset(sfSound* sound, sfUint32 timeOffset)
 {
     CSFML_CALL(sound, SetPlayingOffset(timeOffset));
 }
@@ -271,7 +271,7 @@ float sfSound_GetAttenuation(const sfSound* sound)
 ////////////////////////////////////////////////////////////
 /// Get the current playing position of a sound
 ////////////////////////////////////////////////////////////
-float sfSound_GetPlayingOffset(const sfSound* sound)
+sfUint32 sfSound_GetPlayingOffset(const sfSound* sound)
 {
-    CSFML_CALL_RETURN(sound, GetPlayingOffset(), 0.f)
+    CSFML_CALL_RETURN(sound, GetPlayingOffset(), 0)
 }

@@ -150,7 +150,7 @@ SoundStream::Status SoundStream::GetStatus() const
 
 
 ////////////////////////////////////////////////////////////
-void SoundStream::SetPlayingOffset(float timeOffset)
+void SoundStream::SetPlayingOffset(Uint32 timeOffset)
 {
     // Stop the stream
     Stop();
@@ -159,19 +159,19 @@ void SoundStream::SetPlayingOffset(float timeOffset)
     OnSeek(timeOffset);
 
     // Restart streaming
-    mySamplesProcessed = static_cast<unsigned int>(timeOffset * mySampleRate * myChannelsCount);
+    mySamplesProcessed = timeOffset * mySampleRate * myChannelsCount / 1000;
     myIsStreaming = true;
     myThread.Launch();
 }
 
 
 ////////////////////////////////////////////////////////////
-float SoundStream::GetPlayingOffset() const
+Uint32 SoundStream::GetPlayingOffset() const
 {
     ALfloat seconds = 0.f;
     ALCheck(alGetSourcef(mySource, AL_SEC_OFFSET, &seconds));
 
-    return seconds + static_cast<float>(mySamplesProcessed) / mySampleRate / myChannelsCount;
+    return static_cast<Uint32>(1000 * seconds) + 1000 * mySamplesProcessed / mySampleRate / myChannelsCount;
 }
 
 
@@ -264,7 +264,7 @@ void SoundStream::Stream()
 
         // Leave some time for the other threads if the stream is still playing
         if (SoundSource::GetStatus() != Stopped)
-            Sleep(0.01f);
+            Sleep(10);
     }
 
     // Stop the playback

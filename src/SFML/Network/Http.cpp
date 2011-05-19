@@ -310,7 +310,7 @@ void Http::SetHost(const std::string& host, unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-Http::Response Http::SendRequest(const Http::Request& request, float timeout)
+Http::Response Http::SendRequest(const Http::Request& request, Uint32 timeout)
 {
     // First make sure that the request is valid -- add missing mandatory fields
     Request toSend(request);

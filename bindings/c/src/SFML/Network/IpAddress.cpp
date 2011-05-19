@@ -114,7 +114,7 @@ sfIpAddress sfIpAddress_GetLocalAddress(void)
 /// distant website ; as a consequence, this function may be
 /// very slow -- use it as few as possible !
 ////////////////////////////////////////////////////////////
-sfIpAddress sfIpAddress_GetPublicAddress(float timeout)
+sfIpAddress sfIpAddress_GetPublicAddress(sfUint32 timeout)
 {
     return FromSFMLAddress(sf::IpAddress::GetPublicAddress(timeout));
 }

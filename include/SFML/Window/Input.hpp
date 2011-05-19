@@ -188,7 +188,7 @@ private :
 /// const sf::Input& input = window.GetInput();
 ///
 /// // Move an entity according to the current keys state
-/// float offset = 5 * window.GetFrameTime(); // 5 pixels/sec
+/// float offset = 5.f * window.GetFrameTime(); // 5 pixels/sec
 /// if (input.IsKeyDown(sf::Key::Left))  entity.Move(-offset, 0);
 /// if (input.IsKeyDown(sf::Key::Right)) entity.Move( offset, 0);
 /// if (input.IsKeyDown(sf::Key::Up))    entity.Move(0, -offset);

@@ -50,7 +50,7 @@ namespace window
                 Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
 
                 // Apply some transformations
-                time += window.GetFrameTime();
+                time += window.GetFrameTime() / 1000.0F;
                 Gl.glMatrixMode(Gl.GL_MODELVIEW);
                 Gl.glLoadIdentity();
                 Gl.glTranslatef(0.0F, 0.0F, -200.0F);

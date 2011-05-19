@@ -343,9 +343,9 @@ void sfRenderWindow_SetFramerateLimit(sfRenderWindow* renderWindow, unsigned int
 ////////////////////////////////////////////////////////////
 /// Get time elapsed since last frame of a window
 ////////////////////////////////////////////////////////////
-float sfRenderWindow_GetFrameTime(const sfRenderWindow* renderWindow)
+sfUint32 sfRenderWindow_GetFrameTime(const sfRenderWindow* renderWindow)
 {
-    CSFML_CALL_RETURN(renderWindow, GetFrameTime(), 0.f);
+    CSFML_CALL_RETURN(renderWindow, GetFrameTime(), 0);
 }
 
 

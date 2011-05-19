@@ -269,14 +269,14 @@ public :
     ///
     /// \param server  Name or address of the FTP server to connect to
     /// \param port    Port used for the connection
-    /// \param timeout Maximum time to wait, in seconds
+    /// \param timeout Maximum time to wait, in milliseconds
     ///
     /// \return Server response to the request
     ///
     /// \see Disconnect
     ///
     ////////////////////////////////////////////////////////////
-    Response Connect(const IpAddress& server, unsigned short port = 21, float timeout = 0.f);
+    Response Connect(const IpAddress& server, unsigned short port = 21, Uint32 timeout = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the connection with the server

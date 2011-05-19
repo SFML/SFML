@@ -99,14 +99,14 @@ public :
     ///
     /// \param remoteAddress Address of the remote peer
     /// \param remotePort    Port of the remote peer
-    /// \param timeout       Optional maximum time to wait, in seconds
+    /// \param timeout       Optional maximum time to wait, in milliseconds
     ///
     /// \return Status code
     ///
     /// \see Disconnect
     ///
     ////////////////////////////////////////////////////////////
-    Status Connect(const IpAddress& remoteAddress, unsigned short remotePort, float timeout = 0.f);
+    Status Connect(const IpAddress& remoteAddress, unsigned short remotePort, Uint32 timeout = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Disconnect the connect from its remote peer

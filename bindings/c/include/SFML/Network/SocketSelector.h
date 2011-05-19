@@ -94,12 +94,12 @@ CSFML_API void sfSocketSelector_Clear(sfSocketSelector* selector);
 /// is ready, or when the given timeout is over
 ///
 /// \param selector : Selector to check
-/// \param timeout :  Maximum time to wait, in seconds (0 to disable timeout)
+/// \param timeout :  Maximum time to wait, in milliseconds (0 to disable timeout)
 ///
 /// \return sfTrue if there are sockets ready, sfFalse otherwise
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfBool sfSocketSelector_Wait(sfSocketSelector* selector, float timeout);
+CSFML_API sfBool sfSocketSelector_Wait(sfSocketSelector* selector, sfUint32 timeout);
 
 ////////////////////////////////////////////////////////////
 /// Test a socket to know if it is ready to receive data

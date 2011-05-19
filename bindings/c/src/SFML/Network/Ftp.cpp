@@ -208,7 +208,7 @@ void sfFtp_Destroy(sfFtp* ftp)
 ////////////////////////////////////////////////////////////
 /// Connect to the specified FTP server
 ////////////////////////////////////////////////////////////
-sfFtpResponse* sfFtp_Connect(sfFtp* ftp, sfIpAddress server, unsigned short port, float timeout)
+sfFtpResponse* sfFtp_Connect(sfFtp* ftp, sfIpAddress server, unsigned short port, sfUint32 timeout)
 {
     CSFML_CHECK_RETURN(ftp, NULL);
 

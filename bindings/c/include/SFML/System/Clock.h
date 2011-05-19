@@ -63,8 +63,10 @@ CSFML_API void sfClock_Destroy(sfClock* clock);
 ///
 /// \param clock : Clock to get time from
 ///
+/// \return Elapsed time, in milliseconds
+///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfClock_GetTime(const sfClock* clock);
+CSFML_API sfUint32 sfClock_GetTime(const sfClock* clock);
 
 ////////////////////////////////////////////////////////////
 /// Restart a clock

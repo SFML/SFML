@@ -74,7 +74,7 @@ Module OpenGL
             Dim y = -window.Input.GetMouseY() * 200.0F / window.Height + 100.0F
 
             ' Apply some transformations
-            time += window.GetFrameTime()
+            time += window.GetFrameTime() / 1000.0F
             Gl.glMatrixMode(Gl.GL_MODELVIEW)
             Gl.glLoadIdentity()
             Gl.glTranslatef(x, y, -100.0F)

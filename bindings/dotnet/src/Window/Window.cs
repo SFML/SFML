@@ -333,9 +333,9 @@ namespace SFML
             /// <summary>
             /// Get time elapsed since last frame
             /// </summary>
-            /// <returns>Time elapsed, in seconds</returns>
+            /// <returns>Time elapsed, in milliseconds</returns>
             ////////////////////////////////////////////////////////////
-            public virtual float GetFrameTime()
+            public virtual uint GetFrameTime()
             {
                 return sfWindow_GetFrameTime(This);
             }
@@ -662,7 +662,7 @@ namespace SFML
             static extern void sfWindow_SetFramerateLimit(IntPtr This, uint Limit);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfWindow_GetFrameTime(IntPtr This);
+            static extern uint sfWindow_GetFrameTime(IntPtr This);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetJoystickThreshold(IntPtr This, float Threshold);

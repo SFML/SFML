@@ -246,12 +246,12 @@ CSFML_API void sfHttp_SetHost(sfHttp* http, const char* host, unsigned short por
 ///
 /// \param http :    Http object
 /// \param request : Request to send
-/// \param timeout : Maximum time to wait (0 to use no timeout)
+/// \param timeout : Maximum time to wait, in milliseconds (0 to use no timeout)
 ///
 /// \return Server's response, or NULL if request is invalid
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfHttpResponse* sfHttp_SendRequest(sfHttp* http, const sfHttpRequest* request, float timeout);
+CSFML_API sfHttpResponse* sfHttp_SendRequest(sfHttp* http, const sfHttpRequest* request, sfUint32 timeout);
 
 
 #endif // SFML_HTTP_H

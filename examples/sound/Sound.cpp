@@ -20,9 +20,9 @@ void PlaySound()
 
     // Display sound informations
     std::cout << "canary.wav :" << std::endl;
-    std::cout << " " << buffer.GetDuration()      << " sec"           << std::endl;
-    std::cout << " " << buffer.GetSampleRate()    << " samples / sec" << std::endl;
-    std::cout << " " << buffer.GetChannelsCount() << " channels"      << std::endl;
+    std::cout << " " << buffer.GetDuration() / 1000.f  << " seconds"       << std::endl;
+    std::cout << " " << buffer.GetSampleRate()         << " samples / sec" << std::endl;
+    std::cout << " " << buffer.GetChannelsCount()      << " channels"      << std::endl;
 
     // Create a sound instance and play it
     sf::Sound sound(buffer);
@@ -32,7 +32,7 @@ void PlaySound()
     while (sound.GetStatus() == sf::Sound::Playing)
     {
         // Leave some CPU time for other processes
-        sf::Sleep(0.1f);
+        sf::Sleep(100);
 
         // Display the playing position
         std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.GetPlayingOffset() << " sec   ";
@@ -54,9 +54,9 @@ void PlayMusic()
 
     // Display music informations
     std::cout << "orchestral.ogg :" << std::endl;
-    std::cout << " " << music.GetDuration()      << " sec"           << std::endl;
-    std::cout << " " << music.GetSampleRate()    << " samples / sec" << std::endl;
-    std::cout << " " << music.GetChannelsCount() << " channels"      << std::endl;
+    std::cout << " " << music.GetDuration() / 1000.f << " seconds"       << std::endl;
+    std::cout << " " << music.GetSampleRate()        << " samples / sec" << std::endl;
+    std::cout << " " << music.GetChannelsCount()     << " channels"      << std::endl;
 
     // Play it
     music.Play();
@@ -65,7 +65,7 @@ void PlayMusic()
     while (music.GetStatus() == sf::Music::Playing)
     {
         // Leave some CPU time for other processes
-        sf::Sleep(0.1f);
+        sf::Sleep(100);
 
         // Display the playing position
         std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << music.GetPlayingOffset() << " sec   ";

@@ -281,10 +281,10 @@ CSFML_API void sfRenderWindow_SetFramerateLimit(sfRenderWindow* renderWindow, un
 ///
 /// \param renderWindow : Renderwindow object
 ///
-/// \return Time elapsed, in seconds
+/// \return Time elapsed, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfRenderWindow_GetFrameTime(const sfRenderWindow* renderWindow);
+CSFML_API sfUint32 sfRenderWindow_GetFrameTime(const sfRenderWindow* renderWindow);
 
 ////////////////////////////////////////////////////////////
 /// Change the joystick threshold, ie. the value below which

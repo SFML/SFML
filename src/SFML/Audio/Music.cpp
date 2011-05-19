@@ -38,7 +38,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Music::Music() :
 myFile    (new priv::SoundFile),
-myDuration(0.f)
+myDuration(0)
 {
 
 }
@@ -68,7 +68,7 @@ bool Music::OpenFromFile(const std::string& filename)
     }
 
     // Compute the duration
-    myDuration = static_cast<float>(myFile->GetSamplesCount()) / myFile->GetSampleRate() / myFile->GetChannelsCount();
+    myDuration = static_cast<Uint32>(1000 * myFile->GetSamplesCount() / myFile->GetSampleRate() / myFile->GetChannelsCount());
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
     mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelsCount());
@@ -94,7 +94,7 @@ bool Music::OpenFromMemory(const void* data, std::size_t sizeInBytes)
     }
 
     // Compute the duration
-    myDuration = static_cast<float>(myFile->GetSamplesCount()) / myFile->GetSampleRate() / myFile->GetChannelsCount();
+    myDuration = static_cast<Uint32>(1000 * myFile->GetSamplesCount() / myFile->GetSampleRate() / myFile->GetChannelsCount());
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
     mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelsCount());
@@ -107,7 +107,7 @@ bool Music::OpenFromMemory(const void* data, std::size_t sizeInBytes)
 
 
 ////////////////////////////////////////////////////////////
-float Music::GetDuration() const
+Uint32 Music::GetDuration() const
 {
     return myDuration;
 }
@@ -130,7 +130,7 @@ bool Music::OnGetData(SoundStream::Chunk& data)
 ////////////////////////////////////////////////////////////
 /// /see SoundStream::OnSeek
 ////////////////////////////////////////////////////////////
-void Music::OnSeek(float timeOffset)
+void Music::OnSeek(Uint32 timeOffset)
 {
     Lock lock(myMutex);
 

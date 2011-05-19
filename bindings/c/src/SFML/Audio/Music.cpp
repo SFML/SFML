@@ -94,9 +94,9 @@ sfBool sfMusic_GetLoop(const sfMusic* music)
 ////////////////////////////////////////////////////////////
 /// Get a music duration
 ////////////////////////////////////////////////////////////
-float sfMusic_GetDuration(const sfMusic* music)
+sfUint32 sfMusic_GetDuration(const sfMusic* music)
 {
-    CSFML_CALL_RETURN(music, GetDuration(), 0.f);
+    CSFML_CALL_RETURN(music, GetDuration(), 0);
 }
 
 
@@ -159,9 +159,9 @@ sfSoundStatus sfMusic_GetStatus(const sfMusic* music)
 ////////////////////////////////////////////////////////////
 /// Get the current playing position of a music
 ////////////////////////////////////////////////////////////
-float sfMusic_GetPlayingOffset(const sfMusic* music)
+sfUint32 sfMusic_GetPlayingOffset(const sfMusic* music)
 {
-    CSFML_CALL_RETURN(music, GetPlayingOffset(), 0.f);
+    CSFML_CALL_RETURN(music, GetPlayingOffset(), 0);
 }
 
 
@@ -228,7 +228,7 @@ void sfMusic_SetAttenuation(sfMusic* music, float attenuation)
 ////////////////////////////////////////////////////////////
 /// Set the current playing position of a stream
 ////////////////////////////////////////////////////////////
-void sfMusic_SetPlayingOffset(sfMusic* music, float timeOffset)
+void sfMusic_SetPlayingOffset(sfMusic* music, sfUint32 timeOffset)
 {
     CSFML_CALL(music, SetPlayingOffset(timeOffset));
 }

@@ -34,7 +34,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-double Platform::GetSystemTime()
+Uint64 Platform::GetSystemTime()
 {
     static LARGE_INTEGER frequency;
     static BOOL          useHighPerformanceTimer = QueryPerformanceFrequency(&frequency);
@@ -45,20 +45,20 @@ double Platform::GetSystemTime()
         LARGE_INTEGER currentTime;
         QueryPerformanceCounter(&currentTime);
 
-        return static_cast<double>(currentTime.QuadPart) / frequency.QuadPart;
+        return currentTime.QuadPart * 1000 / frequency.QuadPart;
     }
     else
     {
         // High performance counter not available: use GetTickCount (less accurate)
-        return GetTickCount() * 0.001;
+        return GetTickCount();
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Platform::Sleep(float time)
+void Platform::Sleep(Uint32 time)
 {
-    ::Sleep(static_cast<DWORD>(time * 1000));
+    ::Sleep(time);
 }
 
 } // namespace priv

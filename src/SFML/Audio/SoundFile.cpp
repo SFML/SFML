@@ -195,11 +195,11 @@ void SoundFile::Write(const Int16* data, std::size_t nbSamples)
 
 
 ////////////////////////////////////////////////////////////
-void SoundFile::Seek(float timeOffset)
+void SoundFile::Seek(Uint32 timeOffset)
 {
     if (myFile)
     {
-        sf_count_t frameOffset = static_cast<sf_count_t>(timeOffset * mySampleRate);
+        sf_count_t frameOffset = timeOffset * mySampleRate / 1000;
         sf_seek(myFile, frameOffset, SEEK_SET);
     }
 }

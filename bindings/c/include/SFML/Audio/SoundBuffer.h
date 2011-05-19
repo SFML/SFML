@@ -142,10 +142,10 @@ CSFML_API unsigned int sfSoundBuffer_GetChannelsCount(const sfSoundBuffer* sound
 ///
 /// \param soundBuffer : Sound buffer to get duration from
 ///
-/// \return Sound duration, in seconds
+/// \return Sound duration, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSoundBuffer_GetDuration(const sfSoundBuffer* soundBuffer);
+CSFML_API sfUint32 sfSoundBuffer_GetDuration(const sfSoundBuffer* soundBuffer);
 
 
 #endif // SFML_SOUNDBUFFER_H

@@ -106,12 +106,12 @@ CSFML_API unsigned short sfTcpSocket_GetRemotePort(const sfTcpSocket* socket);
 /// \param socket :  Socket to connect
 /// \param host :    IP Address of the host to connect to
 /// \param port :    Port to use for transfers (warning : ports < 1024 are reserved)
-/// \param timeout : Maximum time to wait (0 to use no timeout)
+/// \param timeout : Maximum time to wait, in milliseconds (0 to use no timeout)
 ///
 /// \return sfTrue if operation has been successful
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfSocketStatus sfTcpSocket_Connect(sfTcpSocket* socket, sfIpAddress host, unsigned short port, float timeout);
+CSFML_API sfSocketStatus sfTcpSocket_Connect(sfTcpSocket* socket, sfIpAddress host, unsigned short port, sfUint32 timeout);
 
 ////////////////////////////////////////////////////////////
 /// Disconnect a connect from its remote peer

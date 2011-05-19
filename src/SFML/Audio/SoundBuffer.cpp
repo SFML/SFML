@@ -39,7 +39,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer() :
 myBuffer  (0),
-myDuration(0.f)
+myDuration(0)
 {
     priv::EnsureALInit();
 
@@ -219,7 +219,7 @@ unsigned int SoundBuffer::GetChannelsCount() const
 
 
 ////////////////////////////////////////////////////////////
-float SoundBuffer::GetDuration() const
+Uint32 SoundBuffer::GetDuration() const
 {
     return myDuration;
 }
@@ -261,7 +261,7 @@ bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
     ALCheck(alBufferData(myBuffer, format, &mySamples[0], size, sampleRate));
 
     // Compute the duration
-    myDuration = static_cast<float>(mySamples.size()) / sampleRate / channelsCount;
+    myDuration = static_cast<Uint32>(1000 * mySamples.size() / sampleRate / channelsCount);
 
     return true;
 }

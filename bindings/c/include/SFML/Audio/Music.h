@@ -86,10 +86,10 @@ CSFML_API sfBool sfMusic_GetLoop(const sfMusic* music);
 ///
 /// \param music : Music to get the duration from
 ///
-/// \return Music duration, in seconds
+/// \return Music duration, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfMusic_GetDuration(const sfMusic* music);
+CSFML_API sfUint32 sfMusic_GetDuration(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Start playing a music
@@ -150,10 +150,10 @@ CSFML_API sfSoundStatus sfMusic_GetStatus(const sfMusic* music);
 ///
 /// \param music : Music to get the position from
 ///
-/// \return Current playing position, expressed in seconds
+/// \return Current playing position, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfMusic_GetPlayingOffset(const sfMusic* music);
+CSFML_API sfUint32 sfMusic_GetPlayingOffset(const sfMusic* music);
 
 ////////////////////////////////////////////////////////////
 /// Set the pitch of a music
@@ -221,10 +221,10 @@ CSFML_API void sfMusic_SetAttenuation(sfMusic* music, float attenuation);
 /// Set the current playing position of a music
 ///
 /// \param music :      Music to modify
-/// \param timeOffset : New playing position, expressed in seconds
+/// \param timeOffset : New playing position, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfMusic_SetPlayingOffset(sfMusic* music, float timeOffset);
+CSFML_API void sfMusic_SetPlayingOffset(sfMusic* music, sfUint32 timeOffset);
 
 ////////////////////////////////////////////////////////////
 /// Get the pitch of a music

@@ -172,7 +172,7 @@ void sfSoundStream_SetAttenuation(sfSoundStream* soundStream, float attenuation)
 ////////////////////////////////////////////////////////////
 /// Set the current playing position of a stream
 ////////////////////////////////////////////////////////////
-void sfSoundStream_SetPlayingOffset(sfSoundStream* soundStream, float timeOffset)
+void sfSoundStream_SetPlayingOffset(sfSoundStream* soundStream, sfUint32 timeOffset)
 {
     CSFML_CALL(soundStream, SetPlayingOffset(timeOffset));
 }
@@ -259,7 +259,7 @@ sfBool sfSoundStream_GetLoop(const sfSoundStream* soundStream)
 ////////////////////////////////////////////////////////////
 /// Get the current playing position of a sound stream
 ////////////////////////////////////////////////////////////
-float sfSoundStream_GetPlayingOffset(const sfSoundStream* soundStream)
+sfUint32 sfSoundStream_GetPlayingOffset(const sfSoundStream* soundStream)
 {
-    CSFML_CALL_RETURN(soundStream, GetPlayingOffset(), 0.f);
+    CSFML_CALL_RETURN(soundStream, GetPlayingOffset(), 0);
 }

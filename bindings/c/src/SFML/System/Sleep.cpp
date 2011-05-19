@@ -31,9 +31,9 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Make the current thread sleep for a given time
+/// Make the current thread sleep for a given duration
 ////////////////////////////////////////////////////////////
-void sfSleep(float Duration)
+void sfSleep(sfUint32 Duration)
 {
     sf::Sleep(Duration);
 }

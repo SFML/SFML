@@ -137,10 +137,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position in the file
     ///
-    /// \param timeOffset New read position, in seconds
+    /// \param timeOffset New read position, in milliseconds
     ///
     ////////////////////////////////////////////////////////////
-    void Seek(float timeOffset);
+    void Seek(Uint32 timeOffset);
 
 private :
 

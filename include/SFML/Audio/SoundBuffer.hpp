@@ -191,12 +191,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the sound
     ///
-    /// \return Sound duration, in seconds
+    /// \return Sound duration, in milliseconds
     ///
     /// \see GetSampleRate, GetChannelsCount
     ///
     ////////////////////////////////////////////////////////////
-    float GetDuration() const;
+    Uint32 GetDuration() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -249,7 +249,7 @@ private :
     ////////////////////////////////////////////////////////////
     unsigned int       myBuffer;   ///< OpenAL buffer identifier
     std::vector<Int16> mySamples;  ///< Samples buffer
-    float              myDuration; ///< Sound duration, in seconds
+    Uint32             myDuration; ///< Sound duration, in milliseconds
     mutable SoundList  mySounds;   ///< List of sounds that are using this buffer
 };
 

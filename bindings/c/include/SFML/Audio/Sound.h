@@ -197,10 +197,10 @@ CSFML_API void sfSound_SetAttenuation(sfSound* sound, float attenuation);
 /// Set the current playing position of a sound
 ///
 /// \param sound :      Sound to modify
-/// \param timeOffset : New playing position, expressed in seconds
+/// \param timeOffset : New playing position, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSound_SetPlayingOffset(sfSound* sound, float timeOffset);
+CSFML_API void sfSound_SetPlayingOffset(sfSound* sound, sfUint32 timeOffset);
 
 ////////////////////////////////////////////////////////////
 /// Get the pitch of a sound
@@ -269,10 +269,10 @@ CSFML_API float sfSound_GetAttenuation(const sfSound* sound);
 ///
 /// \param sound : Sound to get the position from
 ///
-/// \return Current playing position, expressed in seconds
+/// \return Current playing position, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSound_GetPlayingOffset(const sfSound* sound);
+CSFML_API sfUint32 sfSound_GetPlayingOffset(const sfSound* sound);
 
 
 #endif // SFML_SOUND_H

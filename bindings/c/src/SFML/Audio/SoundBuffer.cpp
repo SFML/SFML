@@ -151,7 +151,7 @@ unsigned int sfSoundBuffer_GetChannelsCount(const sfSoundBuffer* soundBuffer)
 ////////////////////////////////////////////////////////////
 /// Get the duration of a sound buffer
 ////////////////////////////////////////////////////////////
-float sfSoundBuffer_GetDuration(const sfSoundBuffer* soundBuffer)
+sfUint32 sfSoundBuffer_GetDuration(const sfSoundBuffer* soundBuffer)
 {
-    CSFML_CALL_RETURN(soundBuffer, GetDuration(), 0.f)
+    CSFML_CALL_RETURN(soundBuffer, GetDuration(), 0)
 }

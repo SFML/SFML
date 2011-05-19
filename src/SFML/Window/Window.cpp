@@ -47,7 +47,7 @@ namespace sf
 Window::Window() :
 myWindow        (NULL),
 myContext       (NULL),
-myLastFrameTime (0.f),
+myLastFrameTime (0),
 myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
@@ -60,7 +60,7 @@ mySetCursorPosY (0xFFFF)
 Window::Window(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings) :
 myWindow        (NULL),
 myContext       (NULL),
-myLastFrameTime (0.f),
+myLastFrameTime (0),
 myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
@@ -73,7 +73,7 @@ mySetCursorPosY (0xFFFF)
 Window::Window(WindowHandle handle, const ContextSettings& settings) :
 myWindow        (NULL),
 myContext       (NULL),
-myLastFrameTime (0.f),
+myLastFrameTime (0),
 myFramerateLimit(0),
 mySetCursorPosX (0xFFFF),
 mySetCursorPosY (0xFFFF)
@@ -337,7 +337,7 @@ void Window::Display()
     // Limit the framerate if needed
     if (myFramerateLimit > 0)
     {
-        float remainingTime = 1.f / myFramerateLimit - myClock.GetElapsedTime();
+        Int32 remainingTime = 1000 / myFramerateLimit - myClock.GetElapsedTime();
         if (remainingTime > 0)
             Sleep(remainingTime);
     }
@@ -367,7 +367,7 @@ void Window::SetFramerateLimit(unsigned int limit)
 
 
 ////////////////////////////////////////////////////////////
-float Window::GetFrameTime() const
+Uint32 Window::GetFrameTime() const
 {
     return myLastFrameTime;
 }
@@ -437,7 +437,7 @@ void Window::Initialize()
 
     // Reset frame time
     myClock.Reset();
-    myLastFrameTime = 0.f;
+    myLastFrameTime = 0;
 
     // Activate the window
     SetActive();

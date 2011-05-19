@@ -105,11 +105,11 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
             SFMLView2.Clear();
 
             // Draw sprite 1 on view 1
-            sprite1.SetRotation(clock.GetElapsedTime() * 100);
+            sprite1.SetRotation(clock.GetElapsedTime() * 0.1f);
             SFMLView1.Draw(sprite1);
 
             // Draw sprite 2 on view 2
-            sprite2.SetX(cos(clock.GetElapsedTime()) * 100);
+            sprite2.SetX(cos(clock.GetElapsedTime() * 0.001f) * 100.f);
             SFMLView2.Draw(sprite2);
 
             // Display each view on screen

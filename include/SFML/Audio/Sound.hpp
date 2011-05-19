@@ -149,12 +149,12 @@ public :
     /// The playing position can be changed when the sound is
     /// either paused or playing.
     ///
-    /// \param timeOffset New playing position, in seconds
+    /// \param timeOffset New playing position, in milliseconds
     ///
     /// \see GetPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    void SetPlayingOffset(float timeOffset);
+    void SetPlayingOffset(Uint32 timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the audio buffer attached to the sound
@@ -177,12 +177,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the current playing position of the sound
     ///
-    /// \return Current playing position, in seconds
+    /// \return Current playing position, in milliseconds
     ///
     /// \see SetPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    float GetPlayingOffset() const;
+    Uint32 GetPlayingOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current status of the sound (stopped, paused, playing)

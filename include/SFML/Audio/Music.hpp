@@ -101,10 +101,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the music
     ///
-    /// \return Music duration, in seconds
+    /// \return Music duration, in milliseconds
     ///
     ////////////////////////////////////////////////////////////
-    float GetDuration() const;
+    Uint32 GetDuration() const;
 
 protected :
 
@@ -124,10 +124,10 @@ protected :
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source
     ///
-    /// \param timeOffset New playing position, in seconds
+    /// \param timeOffset New playing position, in milliseconds
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnSeek(float timeOffset);
+    virtual void OnSeek(Uint32 timeOffset);
 
 private :
 
@@ -135,7 +135,7 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     priv::SoundFile*   myFile;     ///< Sound file
-    float              myDuration; ///< Music duration, in seconds
+    Uint32             myDuration; ///< Music duration, in milliseconds
     std::vector<Int16> mySamples;  ///< Temporary buffer of samples
     Mutex              myMutex;    ///< Mutex protecting the data
 };

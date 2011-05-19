@@ -131,22 +131,22 @@ public :
     /// The playing position can be changed when the stream is
     /// either paused or playing.
     ///
-    /// \param timeOffset New playing position, in seconds
+    /// \param timeOffset New playing position, in milliseconds
     ///
     /// \see GetPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    void SetPlayingOffset(float timeOffset);
+    void SetPlayingOffset(Uint32 timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current playing position of the stream
     ///
-    /// \return Current playing position, in seconds
+    /// \return Current playing position, in milliseconds
     ///
     /// \see SetPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    float GetPlayingOffset() const;
+    Uint32 GetPlayingOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set whether or not the stream should loop after reaching the end
@@ -232,10 +232,10 @@ private :
     /// This function must be overriden by derived classes to
     /// allow random seeking into the stream source.
     ///
-    /// \param timeOffset New playing position, in seconds
+    /// \param timeOffset New playing position, in milliseconds
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnSeek(float timeOffset) = 0;
+    virtual void OnSeek(Uint32 timeOffset) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Fill a new buffer with audio samples, and append
@@ -357,7 +357,7 @@ private :
 ///         return true;
 ///     }
 ///
-///     virtual void OnSeek(float timeOffset)
+///     virtual void OnSeek(Uint32 timeOffset)
 ///     {
 ///         // Change the current position in the stream source
 ///         ...

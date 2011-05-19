@@ -54,12 +54,12 @@ public :
     ///
     /// This function returns the time elapsed since the last call
     /// to Reset() (or the construction of the instance if Reset()
-    /// has not been called) in seconds.
+    /// has not been called).
     ///
-    /// \return Time elapsed, in seconds
+    /// \return Time elapsed, in milliseconds
     ///
     ////////////////////////////////////////////////////////////
-    float GetElapsedTime() const;
+    Uint32 GetElapsedTime() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Restart the timer
@@ -74,7 +74,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    double myStartTime; ///< Time of last reset
+    Uint64 myStartTime; ///< Time of last reset
 };
 
 } // namespace sf
@@ -95,10 +95,10 @@ private :
 /// \code
 /// sf::Clock clock;
 /// ...
-/// float time1 = clock.GetElapsedTime();
+/// Uint32 time1 = clock.GetElapsedTime();
 /// clock.Reset();
 /// ...
-/// float time2 = clock.GetElapsedTime();
+/// Uint32 time2 = clock.GetElapsedTime();
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////

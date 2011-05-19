@@ -64,7 +64,7 @@ private :
         return Continue;
     }
 
-    virtual void OnSeek(float TimeOffset)
+    virtual void OnSeek(sfUint32 TimeOffset)
     {
         if (mySeekCallback)
             mySeekCallback(TimeOffset, myUserData);

@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////
 int main()
 {
-    std::srand(std::time(NULL));
+    std::srand(static_cast<unsigned int>(std::time(NULL)));
 
     // Defines PI
     const float PI = 3.14159f;
@@ -100,15 +100,15 @@ int main()
         {
             // Move the player's paddle
             if (window.GetInput().IsKeyDown(sf::Key::Up) && (leftPaddle.GetPosition().y > 5.f))
-                leftPaddle.Move(0.f, -leftPaddleSpeed * window.GetFrameTime());
+                leftPaddle.Move(0.f, -leftPaddleSpeed * window.GetFrameTime() / 1000.f);
             if (window.GetInput().IsKeyDown(sf::Key::Down) && (leftPaddle.GetPosition().y < window.GetView().GetSize().y - leftPaddle.GetSize().y - 5.f))
-                leftPaddle.Move(0.f, leftPaddleSpeed * window.GetFrameTime());
+                leftPaddle.Move(0.f, leftPaddleSpeed * window.GetFrameTime() / 1000.f);
 
             // Move the computer's paddle
             if (((rightPaddleSpeed < 0.f) && (rightPaddle.GetPosition().y > 5.f)) ||
                 ((rightPaddleSpeed > 0.f) && (rightPaddle.GetPosition().y < window.GetView().GetSize().y - rightPaddle.GetSize().y - 5.f)))
             {
-                rightPaddle.Move(0.f, rightPaddleSpeed * window.GetFrameTime());
+                rightPaddle.Move(0.f, rightPaddleSpeed * window.GetFrameTime() / 1000.f);
             }
 
             // Update the computer's paddle direction according to the ball position
@@ -122,7 +122,7 @@ int main()
             }
 
             // Move the ball
-            float factor = ballSpeed * window.GetFrameTime();
+            float factor = ballSpeed * window.GetFrameTime() / 1000.f;
                 ball.Move(std::cos(ballAngle) * factor, std::sin(ballAngle) * factor);
 
             // Check collisions between the ball and the screen

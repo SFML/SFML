@@ -201,7 +201,7 @@ void sfHttp_SetHost(sfHttp* http, const char* host, unsigned short port)
 /// not return instantly; use a thread if you don't want to block your
 /// application.
 ////////////////////////////////////////////////////////////
-sfHttpResponse* sfHttp_SendRequest(sfHttp* http, const sfHttpRequest* request, float timeout)
+sfHttpResponse* sfHttp_SendRequest(sfHttp* http, const sfHttpRequest* request, sfUint32 timeout)
 {
     CSFML_CHECK_RETURN(http,    NULL);
     CSFML_CHECK_RETURN(request, NULL);

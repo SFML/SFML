@@ -106,7 +106,7 @@ unsigned short sfTcpSocket_GetRemotePort(const sfTcpSocket* socket)
 ////////////////////////////////////////////////////////////
 /// Connect a TCP socket to another computer on a specified port
 ////////////////////////////////////////////////////////////
-sfSocketStatus sfTcpSocket_Connect(sfTcpSocket* socket, sfIpAddress host, unsigned short port, float timeout)
+sfSocketStatus sfTcpSocket_Connect(sfTcpSocket* socket, sfIpAddress host, unsigned short port, sfUint32 timeout)
 {
     sf::IpAddress address(host.Address);
 

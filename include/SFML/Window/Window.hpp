@@ -415,10 +415,10 @@ public :
     /// This can be useful for calculating the framerate, or for
     /// updating the application's objects.
     ///
-    /// \return Time elapsed in last frame, in seconds
+    /// \return Time elapsed in last frame, in milliseconds
     ///
     ////////////////////////////////////////////////////////////
-    float GetFrameTime() const;
+    Uint32 GetFrameTime() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the joystick threshold
@@ -495,7 +495,7 @@ private :
     priv::GlContext*  myContext;        ///< Platform-specific implementation of the OpenGL context
     Input             myInput;          ///< Input manager connected to window
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
-    float             myLastFrameTime;  ///< Time elapsed since last frame
+    Uint32            myLastFrameTime;  ///< Time elapsed since last frame
     unsigned int      myFramerateLimit; ///< Current framerate limit
     int               mySetCursorPosX;  ///< X coordinate passed to the last call to SetCursorPosition
     int               mySetCursorPosY;  ///< Y coordinate passed to the last call to SetCursorPosition

@@ -282,12 +282,12 @@ CSFML_API void sfFtp_Destroy(sfFtp* ftp);
 /// \param ftp :     Ftp instance
 /// \param server :  FTP server to connect to
 /// \param port :    Port used for connection (21 by default, standard FTP port)
-/// \param timeout : Maximum time to wait (0 to use no timeout)
+/// \param timeout : Maximum time to wait, in milliseconds (0 to use no timeout)
 ///
 /// \return Server response to the request
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfFtpResponse* sfFtp_Connect(sfFtp* ftp, sfIpAddress server, unsigned short port, float timeout);
+CSFML_API sfFtpResponse* sfFtp_Connect(sfFtp* ftp, sfIpAddress server, unsigned short port, sfUint32 timeout);
 
 ////////////////////////////////////////////////////////////
 /// Log in using anonymous account

@@ -104,12 +104,12 @@ CSFML_API sfIpAddress sfIpAddress_GetLocalAddress(void);
 /// distant website ; as a consequence, this function may be
 /// very slow -- use it as few as possible !
 ///
-/// \param timeout : Maximum time to wait, in seconds (use 0 for no timeout)
+/// \param timeout : Maximum time to wait, in milliseconds (use 0 for no timeout)
 ///
 /// \return Public IP address
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API sfIpAddress sfIpAddress_GetPublicAddress(float timeout);
+CSFML_API sfIpAddress sfIpAddress_GetPublicAddress(sfUint32 timeout);
 
 ////////////////////////////////////////////////////////////
 /// Get the computer's loopback address

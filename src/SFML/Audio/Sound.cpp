@@ -116,9 +116,9 @@ void Sound::SetLoop(bool Loop)
 
 
 ////////////////////////////////////////////////////////////
-void Sound::SetPlayingOffset(float timeOffset)
+void Sound::SetPlayingOffset(Uint32 timeOffset)
 {
-    ALCheck(alSourcef(mySource, AL_SEC_OFFSET, timeOffset));
+    ALCheck(alSourcef(mySource, AL_SEC_OFFSET, timeOffset / 1000.f));
 }
 
 
@@ -140,12 +140,12 @@ bool Sound::GetLoop() const
 
 
 ////////////////////////////////////////////////////////////
-float Sound::GetPlayingOffset() const
+Uint32 Sound::GetPlayingOffset() const
 {
     ALfloat seconds = 0.f;
     ALCheck(alGetSourcef(mySource, AL_SEC_OFFSET, &seconds));
 
-    return seconds;
+    return static_cast<Uint32>(seconds * 1000);
 }
 
 

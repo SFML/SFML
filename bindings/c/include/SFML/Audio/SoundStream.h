@@ -44,7 +44,7 @@ typedef struct
 } sfSoundStreamChunk;
 
 typedef sfBool (*sfSoundStreamGetDataCallback)(sfSoundStreamChunk*, void*); ///< Type of the callback used to get a sound stream data
-typedef void   (*sfSoundStreamSeekCallback)(float, void*);                  ///< Type of the callback used to seek in a sound stream
+typedef void   (*sfSoundStreamSeekCallback)(sfUint32, void*);               ///< Type of the callback used to seek in a sound stream
 
 
 ////////////////////////////////////////////////////////////
@@ -194,10 +194,10 @@ CSFML_API void sfSoundStream_SetAttenuation(sfSoundStream* soundStream, float at
 /// Set the current playing position of a stream
 ///
 /// \param soundStream : Sound stream to modify
-/// \param timeOffset :  New playing position, expressed in seconds
+/// \param timeOffset :  New playing position, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfSoundStream_SetPlayingOffset(sfSoundStream* soundStream, float timeOffset);
+CSFML_API void sfSoundStream_SetPlayingOffset(sfSoundStream* soundStream, sfUint32 timeOffset);
 
 ////////////////////////////////////////////////////////////
 /// Set a stream loop state
@@ -285,10 +285,10 @@ CSFML_API sfBool sfSoundStream_GetLoop(const sfSoundStream* soundStream);
 ///
 /// \param soundStream : Sound stream to get the position from
 ///
-/// \return Current playing position, expressed in seconds
+/// \return Current playing position, in milliseconds
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API float sfSoundStream_GetPlayingOffset(const sfSoundStream* soundStream);
+CSFML_API sfUint32 sfSoundStream_GetPlayingOffset(const sfSoundStream* soundStream);
 
 
 #endif // SFML_SOUNDSTREAM_H

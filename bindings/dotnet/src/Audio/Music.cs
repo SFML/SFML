@@ -113,10 +113,10 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Total duration of the music, in seconds
+            /// Total duration of the music, in milliseconds
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public float Duration
+            public uint Duration
             {
                 get {return sfMusic_GetDuration(This);}
             }
@@ -206,10 +206,10 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Current playing position, in seconds
+            /// Current playing position, in milliseconds
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public float PlayingOffset
+            public uint PlayingOffset
             {
                 get {return sfMusic_GetPlayingOffset(This);}
                 set {sfMusic_SetPlayingOffset(This, value);}
@@ -272,7 +272,7 @@ namespace SFML
             static extern SoundStatus sfMusic_GetStatus(IntPtr Music);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfMusic_GetDuration(IntPtr Music);
+            static extern uint sfMusic_GetDuration(IntPtr Music);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfMusic_GetChannelsCount(IntPtr Music);
@@ -302,7 +302,7 @@ namespace SFML
             static extern void sfMusic_SetAttenuation(IntPtr Music, float Attenuation);
             
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfMusic_SetPlayingOffset(IntPtr Music, float TimeOffset);
+            static extern void sfMusic_SetPlayingOffset(IntPtr Music, uint TimeOffset);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfMusic_GetLoop(IntPtr Music);
@@ -326,7 +326,7 @@ namespace SFML
             static extern float sfMusic_GetAttenuation(IntPtr Music);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfMusic_GetPlayingOffset(IntPtr Music);
+            static extern uint sfMusic_GetPlayingOffset(IntPtr Music);
             #endregion
         }
     }

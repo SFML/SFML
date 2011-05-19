@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <vector>
 
 
 namespace sf
@@ -38,6 +37,7 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Give access to some system-specific low-level functions
+///
 ////////////////////////////////////////////////////////////
 class Platform
 {
@@ -46,18 +46,18 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the current system time
     ///
-    /// \return System time, in seconds
+    /// \return System time, in milliseconds
     ///
     ////////////////////////////////////////////////////////////
-    static double GetSystemTime();
+    static Uint64 GetSystemTime();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Suspend the execution of the current thread for a specified time
+    /// \brief Suspend the execution of the current thread for a specified duration
     ///
-    /// \param time Time to sleep, in seconds
+    /// \param time Time to sleep, in milliseconds
     ///
     ////////////////////////////////////////////////////////////
-    static void Sleep(float time);
+    static void Sleep(Uint32 time);
 };
 
 } // namespace priv

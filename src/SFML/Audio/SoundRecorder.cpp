@@ -155,7 +155,7 @@ void SoundRecorder::Record()
         ProcessCapturedSamples();
 
         // Don't bother the CPU while waiting for more captured data
-        Sleep(0.1f);
+        Sleep(100);
     }
 
     // Capture is finished : clean up everything

@@ -168,14 +168,14 @@ public :
     /// to be possibly stuck waiting in case there is a problem; this
     /// limit is deactivated by default.
     ///
-    /// \param timeout Maximum time to wait, in seconds
+    /// \param timeout Maximum time to wait, in milliseconds
     ///
     /// \return Public IP address of the computer
     ///
     /// \see GetLocalAddress
     ///
     ////////////////////////////////////////////////////////////
-    static IpAddress GetPublicAddress(float timeout = 0.f);
+    static IpAddress GetPublicAddress(Uint32 timeout = 0);
 
     ////////////////////////////////////////////////////////////
     // Static member data

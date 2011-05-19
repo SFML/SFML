@@ -32,10 +32,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-void Sleep(float duration)
+void Sleep(Uint32 duration)
 {
-    if (duration >= 0)
-        priv::Platform::Sleep(duration);
+    priv::Platform::Sleep(duration);
 }
 
 } // namespace sf

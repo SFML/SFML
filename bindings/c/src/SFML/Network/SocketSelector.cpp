@@ -116,7 +116,7 @@ void sfSocketSelector_Clear(sfSocketSelector* selector)
 /// This functions will return either when at least one socket
 /// is ready, or when the given timeout is over
 ////////////////////////////////////////////////////////////
-sfBool sfSocketSelector_Wait(sfSocketSelector* selector, float timeout)
+sfBool sfSocketSelector_Wait(sfSocketSelector* selector, sfUint32 timeout)
 {
     CSFML_CALL_RETURN(selector, Wait(timeout), sfFalse);
 }

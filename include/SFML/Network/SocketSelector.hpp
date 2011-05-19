@@ -111,14 +111,14 @@ public :
     /// If you use a timeout and no socket is ready before the timeout
     /// is over, the function returns false.
     ///
-    /// \param timeout Maximum time to wait (use 0 for infinity)
+    /// \param timeout Maximum time to wait, in milliseconds (use 0 for infinity)
     ///
     /// \return True if there are sockets ready, false otherwise
     ///
     /// \see IsReady
     ///
     ////////////////////////////////////////////////////////////
-    bool Wait(float timeout = 0.f);
+    bool Wait(Uint32 timeout = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Test a socket to know if it is ready to receive data

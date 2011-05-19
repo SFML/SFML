@@ -214,10 +214,10 @@ test.Create(800, 600);
         globalShader.Update(mouseX, mouseY);
 
         // Animate the entity
-        float entityX = (cos(clock.GetElapsedTime() * 1.3f) + 1.2f) * 300;
-        float entityY = (cos(clock.GetElapsedTime() * 0.8f) + 1.2f) * 200;
+        float entityX = (cos(clock.GetElapsedTime() * 0.0013f) + 1.2f) * 300;
+        float entityY = (cos(clock.GetElapsedTime() * 0.0008f) + 1.2f) * 200;
         entity.SetPosition(entityX, entityY);
-        entity.Rotate(window.GetFrameTime() * 100);
+        entity.Rotate(window.GetFrameTime() * 0.1f);
 
         // Draw the background and the moving entity to the render image
         image.Clear();
