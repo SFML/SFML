@@ -215,7 +215,7 @@ private :
     typedef std::map<Uint32, Glyph> GlyphTable; ///< Table mapping a codepoint to its glyph
 
     ////////////////////////////////////////////////////////////
-    /// \brief Structure defining a page if glyphs
+    /// \brief Structure defining a page of glyphs
     ///
     ////////////////////////////////////////////////////////////
     struct Page
