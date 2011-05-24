@@ -92,9 +92,9 @@ bool Packet::EndOfPacket() const
 
 
 ////////////////////////////////////////////////////////////
-Packet::operator bool() const
+Packet::operator void*() const
 {
-    return myIsValid;
+    return myIsValid ? this : NULL;
 }
 
 

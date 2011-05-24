@@ -159,7 +159,7 @@ public :
     /// \see EndOfPacket
     ///
     ////////////////////////////////////////////////////////////
-    operator bool() const;
+    operator void*() const;
 
     ////////////////////////////////////////////////////////////
     /// Overloads of operator >> to read data from the packet
