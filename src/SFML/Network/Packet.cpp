@@ -94,7 +94,7 @@ bool Packet::EndOfPacket() const
 ////////////////////////////////////////////////////////////
 Packet::operator void*() const
 {
-    return myIsValid ? this : NULL;
+    return myIsValid ? const_cast<Packet*>(this) : NULL;
 }
 
 
