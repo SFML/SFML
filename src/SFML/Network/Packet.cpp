@@ -92,9 +92,9 @@ bool Packet::EndOfPacket() const
 
 
 ////////////////////////////////////////////////////////////
-Packet::operator void*() const
+Packet::operator BoolType() const
 {
-    return myIsValid ? const_cast<Packet*>(this) : NULL;
+    return myIsValid ? &Packet::CheckSize : NULL;
 }
 
 

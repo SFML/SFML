@@ -46,6 +46,9 @@ class UdpSocket;
 ////////////////////////////////////////////////////////////
 class SFML_API Packet
 {
+    // A bool-like type that cannot be converted to integer or pointer types
+    typedef bool (Packet::*BoolType)(std::size_t);
+
 public :
 
     ////////////////////////////////////////////////////////////
@@ -125,6 +128,8 @@ public :
     ////////////////////////////////////////////////////////////
     bool EndOfPacket() const;
 
+public:
+
     ////////////////////////////////////////////////////////////
     /// \brief Test the validity of the packet, for reading
     ///
@@ -154,12 +159,16 @@ public :
     /// }
     /// \endcode
     ///
+    /// Don't focus on the return type, it's equivalent to bool but
+    /// it disallows unwanted implicit conversions to integer or
+    /// pointer types.
+    ///
     /// \return True if last data extraction from packet was successful
     ///
     /// \see EndOfPacket
     ///
     ////////////////////////////////////////////////////////////
-    operator void*() const;
+    operator BoolType() const;
 
     ////////////////////////////////////////////////////////////
     /// Overloads of operator >> to read data from the packet
@@ -203,6 +212,13 @@ private :
 
     friend class TcpSocket;
     friend class UdpSocket;
+
+    ////////////////////////////////////////////////////////////
+    /// Disallow comparisons between packets
+    ///
+    ////////////////////////////////////////////////////////////
+    bool operator ==(const Packet& right) const;
+    bool operator !=(const Packet& right) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if the packet can extract a given number of bytes
