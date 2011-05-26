@@ -139,7 +139,8 @@ sfBool sfPacket_EndOfPacket(const sfPacket* packet)
 ////////////////////////////////////////////////////////////
 sfBool sfPacket_CanRead(const sfPacket* packet)
 {
-    CSFML_CALL_RETURN(packet, operator bool(), sfFalse);
+    CSFML_CHECK_RETURN(packet, sfFalse);
+    return packet->This ? sfTrue : sfFalse;
 }
 
 
