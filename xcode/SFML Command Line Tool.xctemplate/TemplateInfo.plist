@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<!--
+SFML - Simple and Fast Multimedia Library
+Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
+                        Laurent Gomila (laurent.gom@gmail.com), 
+                        
+This software is provided 'as-is', without any express or implied warranty.
+In no event will the authors be held liable for any damages arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it freely,
+subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented;
+   you must not claim that you wrote the original software.
+   If you use this software in a product, an acknowledgment
+   in the product documentation would be appreciated but is not required.
+   
+2. Altered source versions must be plainly marked as such,
+   and must not be misrepresented as being the original software.
+   
+3. This notice may not be removed or altered from any source distribution.
+-->
+<!-- 
+	 ###########################################################################
+     *********************** org.sfml-dev.commandLineTool template *************
+     ###########################################################################
+-->
+			
+			<!-- *** Ancestors Hierarchy *** -->
+	<key>Ancestors</key>
+	<array>
+		<string>org.sfml-dev.commandLineToolBase</string>
+		<string>com.apple.dt.unit.base</string>
+	</array>
+	
+			<!-- *** This is a Concrete Template *** -->
+	<key>Concrete</key>
+	<true/>
+	
+			<!-- *** Basic Stuff *** -->
+	<key>Description</key>
+	<string>This template builds a command-line tool using SFML.</string>
+	<key>Identifier</key>
+	<string>org.sfml-dev.commandLineTool</string>
+	<key>Kind</key>
+	<string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+	
+			<!-- *** Project's Targets *** -->
+    <key>Targets</key>
+	<array>
+		<dict>
+		
+			<!-- *** Basic Stuff *** -->
+			<key>BuildPhases</key>
+			<array>
+				<dict>
+					<key>Class</key>
+					<string>Sources</string>
+				</dict>
+				<dict>
+					<key>Class</key>
+					<string>Frameworks</string>
+				</dict>
+			</array>
+			<key>ProductType</key>
+			<string>com.apple.product-type.tool</string>
+		</dict>
+	</array>
+</dict>
+</plist>

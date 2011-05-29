@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<!--
+SFML - Simple and Fast Multimedia Library
+Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
+                        Laurent Gomila (laurent.gom@gmail.com), 
+                        
+This software is provided 'as-is', without any express or implied warranty.
+In no event will the authors be held liable for any damages arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it freely,
+subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented;
+   you must not claim that you wrote the original software.
+   If you use this software in a product, an acknowledgment
+   in the product documentation would be appreciated but is not required.
+   
+2. Altered source versions must be plainly marked as such,
+   and must not be misrepresented as being the original software.
+   
+3. This notice may not be removed or altered from any source distribution.
+-->
+<!-- 
+	 ###########################################################################
+     ******************* org.sfml-dev.commandLineToolBase template *************
+     ###########################################################################
+-->
+	<key>Kind</key>
+	<string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+	<key>Identifier</key>
+	<string>org.sfml-dev.commandLineToolBase</string>
+	
+	<key>Ancestors</key>
+	<array>
+		<string>com.apple.dt.unit.macBase</string>
+	</array>
+	
+<!-- ############################################################### Options -->
+	<key>Options</key>
+	<array>
+			<!-- ********************************************* Window Module -->
+		<dict>
+			<key>Identifier</key>
+			<string>windowModule</string>
+			<key>Name</key>
+			<string>Use window module</string>
+			<key>Description</key>
+			<string>Indicates whether window module should be used or not.</string>
+			<key>Type</key>
+			<string>checkbox</string>
+			<key>SortOrder</key>
+			<integer>1</integer>
+			<key>Default</key>
+			<string>true</string>
+			<key>Units</key>
+			<dict>
+				<!-- 													  ON -->
+				<key>true</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>WINDOW_RELEASE</key>
+							<string>-lsfml-window</string>
+							
+							<key>WINDOW_DEBUG</key>
+							<string>-lsfml-window-d</string>
+						</dict>
+					</dict>
+					
+					<!-- content definition -->
+					<key>Definitions</key>
+					<dict>
+						<key>main.cpp:window:include</key>
+						<string>#include &lt;SFML/Window.hpp&gt;</string>
+						
+						<key>main.cpp:main:window:content</key>
+						<string>sf::Window window(sf::VideoMode(800, 600), "SFML window");</string>
+						
+						<!-- erase system/audio module content -->
+						<key>main.cpp:system:include</key>
+						<string></string>
+						
+						<key>main.cpp:main:audio_loop</key>
+				 		<string></string>
+					</dict>
+				</dict>
+				<!-- 													 OFF -->
+				<key>false</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>WINDOW_RELEASE</key>
+							<string></string>
+							
+							<key>WINDOW_DEBUG</key>
+							<string></string>
+						</dict>
+					</dict>
+					
+					<!-- content definition -->
+					<key>Definitions</key>
+					<dict>
+						<key>main.cpp:window:include</key>
+						<string></string>
+						
+						<key>main.cpp:main:window:content</key>
+						<string></string>
+						
+						<!-- erase main loop & display -->
+						<key>main.cpp:main:event_loop</key>
+					    <string></string>
+					    
+					    <key>main.cpp:main:display</key>
+						<string></string>
+					</dict>
+				</dict>
+				
+			</dict>
+		</dict>
+		
+			<!-- ******************************************* Graphics Module -->
+		<dict>
+			<key>Identifier</key>
+			<string>graphicsModule</string>
+			<key>RequiredOptions</key>
+			<dict>
+				<key>windowModule</key>
+				<string>true</string>
+			</dict>
+			<key>Name</key>
+			<string>Use graphics module</string>
+			<key>Description</key>
+			<string>Indicates whether graphics module should be used or not.</string>
+			<key>Type</key>
+			<string>checkbox</string>
+			<key>SortOrder</key>
+			<integer>1</integer>
+			<key>Default</key>
+			<string>true</string>
+			<key>Units</key>
+			<dict>
+				<!-- 													  ON -->
+				<key>true</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>GRAPHICS_RELEASE</key>
+							<string>-lsfml-graphics</string>
+							
+							<key>GRAPHICS_DEBUG</key>
+							<string>-lsfml-graphics-d</string>
+						</dict>
+					</dict>
+					
+					<!-- content definition -->
+					<key>Definitions</key>
+					<dict>
+						<key>main.cpp:graphics:include</key>
+						<string>#include &lt;SFML/Graphics.hpp&gt;</string>
+						
+						<key>main.cpp:main:graphics_init_window</key>
+						<string>// Create the main window
+sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+</string>
+						
+						<key>main.cpp:main:image_init</key>
+						<string>
+// Load a sprite to display
+sf::Image image;
+</string>
+
+						<key>main.cpp:main:image_finalize</key>
+						<string>	return EXIT_FAILURE;
+sf::Sprite sprite(image);
+</string>
+
+						<key>main.cpp:main:image_load</key>
+						<string>if (!image.LoadFromFile("cute_image.jpg"))</string>
+						
+						<key>main.cpp:main:text_init</key>
+						<string>
+// Create a graphical text to display
+sf::Font font;
+</string>
+
+						<key>main.cpp:main:text_finalize</key>
+						<string>	return EXIT_FAILURE;
+sf::Text text("Hello SFML", font, 50);
+text.SetColor(sf::Color::Black);
+</string>
+						
+						<key>main.cpp:main:text_load</key>
+						<string>if (!font.LoadFromFile("sansation.ttf"))</string>
+						
+						<key>main.cpp:main:graphics_display</key>
+						<string>
+	// Clear screen
+	window.Clear();
+	
+	// Draw the sprite
+	window.Draw(sprite);
+	
+	// Draw the string
+	window.Draw(text);
+</string>
+						
+						<!-- erase window module content -->
+						<key>main.cpp:window:include</key>
+						<string></string>
+						
+						<key>main.cpp:main:window:content</key>
+						<string></string>
+		
+						<key>sansation.ttf</key>
+						<dict>
+							<key>Group</key>
+							<string>Supporting Files</string>
+							<key>Path</key>
+							<string>sansation.ttf</string>
+						</dict>
+		
+						<key>cute_image.jpg</key>
+						<dict>
+							<key>Group</key>
+							<string>Supporting Files</string>
+							<key>Path</key>
+							<string>cute_image.jpg</string>
+						</dict>
+					</dict>
+					
+					<!-- resources -->
+					<key>Nodes</key>
+					<array>
+						<string>sansation.ttf</string>
+						<string>cute_image.jpg</string>
+					</array>
+				</dict>
+				<!-- 													 OFF -->
+				<key>false</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>GRAPHICS_RELEASE</key>
+							<string></string>
+							
+							<key>GRAPHICS_DEBUG</key>
+							<string></string>
+						</dict>
+					</dict>
+					
+					<!-- content definition : none -->
+					<key>Definitions</key>
+					<dict>
+						<key>main.cpp:graphics:include</key>
+						<string></string>
+						
+						<key>main.cpp:main:graphics_init</key>
+						<string></string>
+						
+						<key>main.cpp:main:graphics_display</key>
+						<string></string>
+						
+						<key>main.cpp:main:image_load</key>
+						<string></string>
+					</dict>
+				</dict>
+			</dict>
+		</dict>
+		
+			<!-- ********************************************** Audio Module -->
+		<dict>
+			<key>Identifier</key>
+			<string>audioModule</string>
+			<key>Name</key>
+			<string>Use audio module</string>
+			<key>Description</key>
+			<string>Indicates whether audio module should be used or not.</string>
+			<key>Type</key>
+			<string>checkbox</string>
+			<key>SortOrder</key>
+			<integer>1</integer>
+			<key>Default</key>
+			<string>true</string>
+			<key>Units</key>
+			<dict>
+				<!-- 													  ON -->
+				<key>true</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>AUDIO_RELEASE</key>
+							<string>-lsfml-audio</string>
+							
+							<key>AUDIO_DEBUG</key>
+							<string>-lsfml-audio-d</string>
+						</dict>
+					</dict>
+					
+					<!-- content definition -->
+					<key>Definitions</key>
+					<dict>
+						<key>main.cpp:audio:include</key>
+						<string>#include &lt;SFML/Audio.hpp&gt;</string>
+						
+						<key>main.cpp:main:audio:content</key>
+						<string>
+// Load a music to play
+sf::Music music;
+if (!music.OpenFromFile("nice_music.ogg"))
+	return EXIT_FAILURE;
+
+// Play the music
+music.Play();
+    </string>
+    					<key>nice_music.ogg</key>
+						<dict>
+							<key>Group</key>
+							<string>Supporting Files</string>
+							<key>Path</key>
+							<string>nice_music.ogg</string>
+						</dict>
+					</dict>
+					
+					<!-- resources -->
+					<key>Nodes</key>
+					<array>
+						<string>nice_music.ogg</string>
+					</array>
+				</dict>
+				<!-- 													 OFF -->
+				<key>false</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>AUDIO_RELEASE</key>
+							<string></string>
+							
+							<key>AUDIO_DEBUG</key>
+							<string></string>
+						</dict>
+					</dict>
+					
+					<!-- content definition -->
+					<key>Definitions</key>
+					<dict>
+						<key>main.cpp:audio:include</key>
+						<string></string>
+						
+						<key>main.cpp:main:audio:content</key>
+						<string></string>
+					</dict>
+				</dict>
+			</dict>
+		</dict>
+		
+			<!-- ******************************************** Network Module -->
+		<dict>
+			<key>Identifier</key>
+			<string>networkModule</string>
+			<key>Name</key>
+			<string>Use network module</string>
+			<key>Description</key>
+			<string>Indicates whether network module should be used or not.</string>
+			<key>Type</key>
+			<string>checkbox</string>
+			<key>SortOrder</key>
+			<integer>1</integer>
+			<key>Default</key>
+			<string>true</string>
+			<key>Units</key>
+			<dict>
+				<!-- 													  ON -->
+				<key>true</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>NETWORK_RELEASE</key>
+							<string>-lsfml-network</string>
+							
+							<key>NETWORK_DEBUG</key>
+							<string>-lsfml-network-d</string>
+						</dict>
+					</dict>
+					
+					<!-- content definition -->
+					<key>Definitions</key>
+					<dict>
+						<key>main.cpp:network:include</key>
+						<string>#include &lt;SFML/Network.hpp&gt;</string>
+						
+						<!-- no content example for network -->
+					</dict>
+				</dict>
+				<!-- 													 OFF -->
+				<key>false</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>NETWORK_RELEASE</key>
+							<string></string>
+							
+							<key>NETWORK_DEBUG</key>
+							<string></string>
+						</dict>
+					</dict>
+					
+					<!-- content definition -->
+					<key>Definitions</key>
+					<dict>
+						<key>main.cpp:network:include</key>
+						<string></string>
+						
+						<!-- no content example for network -->
+					</dict>
+				</dict>
+			</dict>
+		</dict>
+	</array>
+
+	
+<!-- ################################################################# Nodes -->
+	<key>Nodes</key>
+	<array>
+		<string>main.cpp:system:include</string>
+		<string>main.cpp:window:include</string>
+		<string>main.cpp:graphics:include</string>
+		<string>main.cpp:audio:include</string>
+		<string>main.cpp:network:include</string>
+		<string>main.cpp:resources_comment</string>
+		<string>main.cpp:main:window:content</string>
+	    <string>main.cpp:main:graphics_init_window</string>
+	    <string>main.cpp:main:image_init</string>
+	    <string>main.cpp:main:image_load</string>
+	    <string>main.cpp:main:image_finalize</string>
+	    <string>main.cpp:main:text_init</string>
+	    <string>main.cpp:main:text_load</string>
+	    <string>main.cpp:main:text_finalize</string>
+	    <string>main.cpp:main:audio:content</string>
+	    <string>main.cpp:main:audio_loop</string>
+	    <string>main.cpp:main:event_loop</string>
+	    <string>main.cpp:main:graphics_display</string>
+	    <string>main.cpp:main:display</string>
+	</array>
+	
+			
+<!-- ########################################################### Definitions -->
+	<key>Definitions</key>
+	<dict>
+			<!-- main function -->
+		<key>*:main</key>
+	    <dict>
+			<key>Beginning</key>
+			<string>
+int main (int argc, const char * argv[])
+{</string>
+			<key>End</key>
+			<string>
+	return EXIT_SUCCESS;
+}</string>
+			<key>Indent</key>
+			<integer>1</integer>
+	    </dict>
+
+	    <key>main.cpp:system:include</key>
+	    <string>#include &lt;SFML/System.hpp&gt;</string>
+	    
+	    <key>main.cpp:main:event_loop</key>
+	    <string>
+// Start the game loop
+while (window.IsOpened())
+{
+	// Process events
+	sf::Event event;
+	while (window.PollEvent(event))
+	{
+		// Close window : exit
+		if (event.Type == sf::Event::Closed)
+			window.Close();
+        
+		// Escape pressed : exit
+		if (event.Type == sf::Event::KeyPressed &amp;&amp; event.Key.Code == sf::Key::Escape)
+			window.Close();
+	}
+</string>
+		
+		<key>main.cpp:main:display</key>
+		<string>
+	// Update the window
+	window.Display();
+}
+</string>
+		
+		<key>main.cpp:resources_comment</key>
+		<string>
+/* Resources :
+ * ===========
+ *
+ * In order to load the resources like cute_image.png, you have to set up
+ * your target scheme :
+ *
+ * - Select "Edit Scheme…" in the "Product" menu;
+ * - Check the box "use custom working directory";
+ * - Fill the text field with the folder path containing your resources;
+ *        (e.g. your project folder)
+ * - Click OK.
+ */
+ </string>
+ 		
+ 		<key>main.cpp:main:audio_loop</key>
+ 		<string>while (music.GetStatus() == sf::Music::Playing) {
+	sf::Sleep(100);
+}</string>
+	</dict>
+	
+
+<!-- ###################################################### Project Settings -->
+	<key>Project</key>
+	<dict>
+    	<!-- *************************************************** Basic stuff -->
+		<key>Name</key>
+		<string>___PACKAGENAME___</string>
+		
+		<!-- *********************************************** Shared Settings -->
+		<key>SharedSettings</key>
+		<dict>
+			<key>PRODUCT_NAME</key>
+			<string>$(TARGET_NAME)</string>
+			
+		   	<key>SYSTEM_RELEASE</key>
+    		<string>-lsfml-system</string>
+		   	<key>SYSTEM_DEBUG</key>
+    		<string>-lsfml-system-d</string>
+    		
+    		<key>HEADER_SEARCH_PATHS</key>
+    		<string>$(HEADER_SEARCH_PATHS) /usr/local/include/</string>
+		</dict>
+		
+		<key>Configurations</key>
+		<dict>
+    		<!-- ***************************************************** Debug -->
+			<key>Debug</key>
+			<dict>
+				<key>OTHER_LDFLAGS</key>
+<string>$(OTHER_LDFLAGS) $(SYSTEM_DEBUG) $(WINDOW_DEBUG) $(GRAPHICS_DEBUG) $(AUDIO_DEBUG) $(NETWORK_DEBUG)</string>
+			</dict>
+    		
+			
+    		<!-- *************************************************** Release -->
+			<key>Release</key>
+			<dict>
+				<key>OTHER_LDFLAGS</key>
+<string>$(OTHER_LDFLAGS) $(SYSTEM_RELEASE) $(WINDOW_RELEASE) $(GRAPHICS_RELEASE) $(AUDIO_RELEASE) $(NETWORK_RELEASE)</string>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>
