@@ -497,8 +497,6 @@ private :
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
     Uint32            myLastFrameTime;  ///< Time elapsed since last frame
     unsigned int      myFramerateLimit; ///< Current framerate limit
-    int               mySetCursorPosX;  ///< X coordinate passed to the last call to SetCursorPosition
-    int               mySetCursorPosY;  ///< Y coordinate passed to the last call to SetCursorPosition
 };
 
 } // namespace sf
