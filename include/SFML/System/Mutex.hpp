@@ -110,31 +110,38 @@ private :
 ///
 /// Usage example:
 /// \code
-/// Database db; // this is a critical resource that needs some protection
+/// Database database; // this is a critical resource that needs some protection
 /// sf::Mutex mutex;
 ///
 /// void thread1()
 /// {
 ///     mutex.Lock(); // this call will block the thread if the mutex is already locked by thread2
-///     db.write(...);
+///     database.write(...);
 ///     mutex.Unlock(); // if thread2 was waiting, it will now be unblocked
 /// }
 /// 
 /// void thread2()
 /// {
 ///     mutex.Lock(); // this call will block the thread if the mutex is already locked by thread1
-///     db.write(...);
+///     database.write(...);
 ///     mutex.Unlock(); // if thread1 was waiting, it will now be unblocked
 /// }
 /// \endcode
 ///
 /// Be very careful with mutexes. A bad usage can lead to bad problems,
 /// like deadlocks (two threads are waiting for each other and the
-/// application is stuck).
+/// application is globally stuck).
 ///
 /// To make the usage of mutexes more robust, particularly in
 /// environments where exceptions can be thrown, you should
 /// use the helper class sf::Lock to lock/unlock mutexes.
+///
+/// SFML mutexes are recursive, which means that you can lock
+/// a mutex multiple times in the same thread without creating
+/// a deadlock. In this case, the first call to Lock() will behave
+/// as usual, and the following ones will have no effect.
+/// However, you must call Unlock() exactly as many times as you
+/// called Lock(). If you don't, the mutex won't be released.
 ///
 /// \see sf::Lock
 ///
