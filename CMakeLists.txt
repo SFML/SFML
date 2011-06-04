@@ -32,11 +32,8 @@ set(BUILD_DOC FALSE CACHE BOOL "TRUE to generate the API documentation, FALSE to
 
 # Mac OS X specific options
 if (MACOSX)
-    # (Not supported anymore by extlibs) add an option to compile ppc/ppc64
-    #set(BUILD_PPC FALSE CACHE BOOL "TRUE to build SFML for ppc and ppc64, too, FALSE to only compile i386 and x86_64")
-
     # add an option to build against 10.5 SDK
-    set(BUILD_LEOPARD FALSE CACHE BOOL "TRUE to build SFML for OS X 10.5, FALSE to compile for default SDK")
+    set(BUILD_LEOPARD FALSE CACHE BOOL "TRUE to build SFML for OS X 10.5, FALSE to compile with default SDK")
 endif()
 
 # define SFML_STATIC if the build type is not set to 'shared'
@@ -70,26 +67,14 @@ set(CMAKE_SKIP_BUILD_RPATH TRUE)
 
 # Setup Mac OS X multi arch/SDK support.
 if (MACOSX)
-#    # compile for PPC ?
-#    if (BUILD_PPC)
-#        if (NOT CMAKE_OSX_ARCHITECTURES)
-#            # Custom : ppc, ppc64, i386 and x86_64
-#            set(CMAKE_OSX_ARCHITECTURES "ppc;i386;ppc64;x86_64")
-#        else()
-#            # We got some conflict with custom user settings ; let him know his on his own.
-#            message("You set BUILD_PPC to TRUE but CMAKE_OSX_ARCHITECTURES is not empty.")
-#            message("You're on your own : I won't change your settings.")
-#        endif()
-#    else()
-#        if (NOT CMAKE_OSX_ARCHITECTURES)
-#            # Default : i386 and x86_64
-#            set(CMAKE_OSX_ARCHITECTURES "i386;x86_64")
-#        else()
-#            # We got some conflict with custom user settings ; let him know his on his own.
-#            message("CMAKE_OSX_ARCHITECTURES is not empty.")
-#            message("You're on your own : I won't change your settings.")
-#        endif()
-#    endif()
+    if (NOT CMAKE_OSX_ARCHITECTURES)
+        # Default : i386 and x86_64
+        set(CMAKE_OSX_ARCHITECTURES "i386;x86_64")
+    else()
+        # We got some conflict with custom user settings ; let him know his on his own.
+        message("CMAKE_OSX_ARCHITECTURES is not empty.")
+        message("You're on your own : I won't change your settings.")
+    endif()
 
     # use 10.5 SDK ?
     if (BUILD_LEOPARD)
