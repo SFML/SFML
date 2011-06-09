@@ -249,10 +249,10 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
         }
 
         // Extract the current glyph's description
-        const Glyph&     glyph   = myFont->GetGlyph(curChar, myCharacterSize, bold);
-        int              advance = glyph.Advance;
-        const IntRect&   bounds  = glyph.Bounds;
-        const FloatRect& coords  = texture.GetTexCoords(glyph.SubRect);
+        const Glyph&   glyph   = myFont->GetGlyph(curChar, myCharacterSize, bold);
+        int            advance = glyph.Advance;
+        const IntRect& bounds  = glyph.Bounds;
+        FloatRect      coords  = texture.GetTexCoords(glyph.SubRect);
 
         int   boundsRight  = bounds.Left + bounds.Width;
         int   boundsBottom = bounds.Top  + bounds.Height;
