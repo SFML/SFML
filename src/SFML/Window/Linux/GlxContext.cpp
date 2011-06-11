@@ -83,7 +83,7 @@ myOwnsWindow(false)
 
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
-myWindow    (NULL),
+myWindow    (0),
 myContext   (NULL),
 myOwnsWindow(true)
 {
