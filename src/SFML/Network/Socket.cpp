@@ -131,19 +131,6 @@ void Socket::Close()
         priv::SocketImpl::Close(mySocket);
         mySocket = priv::SocketImpl::InvalidSocket();
     }
-
-    // Reset the pending packet data
-    myPendingPacket = PendingPacket();
-}
-
-
-////////////////////////////////////////////////////////////
-Socket::PendingPacket::PendingPacket() :
-Size        (0),
-SizeReceived(0),
-Data        ()
-{
-
 }
 
 } // namespace sf

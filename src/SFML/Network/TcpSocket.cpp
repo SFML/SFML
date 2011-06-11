@@ -197,8 +197,11 @@ Socket::Status TcpSocket::Connect(const IpAddress& remoteAddress, unsigned short
 ////////////////////////////////////////////////////////////
 void TcpSocket::Disconnect()
 {
-    // Simply close the socket
+    // Close the socket
     Close();
+
+    // Reset the pending packet data
+    myPendingPacket = PendingPacket();
 }
 
 
@@ -352,6 +355,16 @@ Socket::Status TcpSocket::Receive(Packet& packet)
     myPendingPacket = PendingPacket();
 
     return Done;
+}
+
+
+////////////////////////////////////////////////////////////
+TcpSocket::PendingPacket::PendingPacket() :
+Size        (0),
+SizeReceived(0),
+Data        ()
+{
+
 }
 
 } // namespace sf

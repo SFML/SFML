@@ -37,7 +37,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 UdpSocket::UdpSocket() :
-Socket(Udp)
+Socket  (Udp),
+myBuffer(MaxDatagramSize)
 {
 
 }
@@ -154,70 +155,38 @@ Socket::Status UdpSocket::Receive(char* data, std::size_t size, std::size_t& rec
 ////////////////////////////////////////////////////////////
 Socket::Status UdpSocket::Send(Packet& packet, const IpAddress& remoteAddress, unsigned short remotePort)
 {
-    // As the UDP protocol preserves datagrams boundaries, we don't have to
-    // send the packet size first (it would even be a potential source of bug, if
-    // that size arrives corrupted), but we must split the packet into multiple
-    // pieces if data size is greater than the maximum datagram size.
+    // UDP is a datagram-oriented protocol (as opposed to TCP which is a stream protocol).
+    // Sending one datagram is almost safe: it may be lost but if it's received, then its data
+    // is guaranteed to be ok. However, splitting a packet into multiple datagrams would be highly
+    // unreliable, since datagrams may be reordered, dropped or mixed between different sources.
+    // That's why SFML imposes a limit on packet size so that they can be sent in a single datagram.
+    // This also removes the overhead associated to packets -- there's no size to send in addition
+    // to the packet's data.
 
     // Get the data to send from the packet
     std::size_t size = 0;
     const char* data = packet.OnSend(size);
 
-    // If size is greater than MaxDatagramSize, the data must be split into multiple datagrams
-    while (size >= MaxDatagramSize)
-    {
-        Status status = Send(data, MaxDatagramSize, remoteAddress, remotePort);
-        if (status != Done)
-            return status;
-
-        data += MaxDatagramSize;
-        size -= MaxDatagramSize;
-    }
-
-    // It is important to send a final datagram with a size < MaxDatagramSize,
-    // even if it is zero, to mark the end of the packet
-    return Send(data, size, remoteAddress, remotePort);
+    // Send it
+    return Send(data, std::min(size, static_cast<std::size_t>(MaxDatagramSize)), remoteAddress, remotePort);
 }
 
 
 ////////////////////////////////////////////////////////////
 Socket::Status UdpSocket::Receive(Packet& packet, IpAddress& remoteAddress, unsigned short& remotePort)
 {
-    // First clear the variables to fill
-    packet.Clear();
-    remoteAddress = IpAddress();
-    remotePort    = 0;
+    // See the detailed comment in Send(Packet) above.
 
-    // Receive datagrams
+    // Receive the datagram
     std::size_t received = 0;
-    std::size_t size = myPendingPacket.Data.size();
-    do
-    {
-        // Make room in the data buffer for a new datagram
-        myPendingPacket.Data.resize(size + MaxDatagramSize);
-        char* data = &myPendingPacket.Data[0] + size;
+    Status status = Receive(&myBuffer[0], myBuffer.size(), received, remoteAddress, remotePort);
 
-        // Receive the datagram
-        Status status = Receive(data, MaxDatagramSize, received, remoteAddress, remotePort);
+    // If we received valid data, we can copy it to the user packet
+    packet.Clear();
+    if ((status == Done) && (received > 0))
+        packet.OnReceive(&myBuffer[0], received);
 
-        // Check for errors
-        if (status != Done)
-        {
-            myPendingPacket.Data.resize(size + received);
-            return status;
-        }
-    }
-    while (received == MaxDatagramSize);
-
-    // We have received all the packet data: we can copy it to the user packet
-    std::size_t actualSize = size + received;
-    if (actualSize > 0)
-        packet.OnReceive(&myPendingPacket.Data[0], actualSize);
-
-    // Clear the pending packet data
-    myPendingPacket = PendingPacket();
-
-    return Done;
+    return status;
 }
 
 

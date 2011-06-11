@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Socket.hpp>
+#include <vector>
 
 
 namespace sf
@@ -146,10 +147,9 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to a remote peer
     ///
-    /// Unlike the other version of Send, this function can accept
-    /// data sizes greater than UdpSocket::MaxDatagramSize.
-    /// If necessary, the data will be split and sent in multiple
-    /// datagrams.
+    /// Make sure that the packet size is not greater than
+    /// UdpSocket::MaxDatagramSize, otherwise this function will
+    /// fail and no data will be sent.
     ///
     /// \param packet        Packet to send
     /// \param remoteAddress Address of the receiver
@@ -180,6 +180,13 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     Status Receive(Packet& packet, IpAddress& remoteAddress, unsigned short& remotePort);
+
+private:
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    std::vector<char> myBuffer; ///< Temporary buffer holding the received data in Receive(Packet)
 };
 
 } // namespace sf
@@ -196,23 +203,36 @@ public :
 /// connecting once to a remote host, like TCP sockets,
 /// it can send to and receive from any host at any time.
 ///
+/// It is a datagram protocol: bounded blocks of data (datagrams)
+/// are transfered over the network rather than a continuous
+/// stream of data (TCP). Therefore, one call to Send will always
+/// match one call to Receive (if the datagram is not lost),
+/// with the same data that was sent.
+/// 
 /// The UDP protocol is lightweight but unreliable. Unreliable
-/// means that the data may be corrupted, duplicated, lost or
-/// arrive out of order. UDP is generally used for real-time
-/// communication (audio or video streaming, real-time games,
-/// etc.) where speed is crucial and corrupted data
-/// doesn't matter much.
+/// means that datagrams may be duplicated, be lost or
+/// arrive reordered. However, if a datagram arrives, its
+/// data is guaranteed to be valid.
+///
+/// UDP is generally used for real-time communication
+/// (audio or video streaming, real-time games, etc.) where
+/// speed is crucial and lost data doesn't matter much.
 ///
 /// Sending and receiving data can use either the low-level
 /// or the high-level functions. The low-level functions
-/// process a raw sequence of bytes, and cannot ensure that
-/// one call to Send will exactly match one call to Receive
-/// at the other end of the socket.
+/// process a raw sequence of bytes, whereas the high-level
+/// interface uses packets (see sf::Packet), which are easier
+/// to use and provide more safety regarding the data that is
+/// exchanged. You can look at the sf::Packet class to get
+/// more details about how they work.
 ///
-/// The high-level interface uses packets (see sf::Packet),
-/// which are easier to use and provide more safety regarding
-/// the data that is exchanged. You can look at the sf::Packet
-/// class to get more details about how they work.
+/// It is important to note that UdpSocket is unable to send
+/// datagrams bigger than MaxDatagramSize. In this case, it
+/// returns an error and doesn't send anything. This applies
+/// to both raw data and packets. Indeed, even packets are
+/// unable to split and recompose data, due to the unreliability
+/// of the protocol (dropped, mixed or duplicated datagrams may
+/// lead to a big mess when trying to recompose a packet).
 ///
 /// If the socket is bound to a port, it is automatically
 /// unbound from it when the socket is destroyed. However,
