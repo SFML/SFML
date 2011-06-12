@@ -168,7 +168,7 @@ Socket::Status UdpSocket::Send(Packet& packet, const IpAddress& remoteAddress, u
     const char* data = packet.OnSend(size);
 
     // Send it
-    return Send(data, std::min(size, static_cast<std::size_t>(MaxDatagramSize)), remoteAddress, remotePort);
+    return Send(data, size, remoteAddress, remotePort);
 }
 
 
