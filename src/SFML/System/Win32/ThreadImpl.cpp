@@ -57,7 +57,12 @@ ThreadImpl::~ThreadImpl()
 void ThreadImpl::Wait()
 {
     if (myThread)
-        WaitForSingleObject(myThread, INFINITE);
+    {
+        // The following condition avoids a deadlock if Wait() is called from its
+        // owner thread. This makes the behaviour consistent with the Unix implementation
+        if (GetThreadId(myThread) != GetCurrentThreadId())
+            WaitForSingleObject(myThread, INFINITE);
+    }
 }
 
 

@@ -152,6 +152,8 @@ public :
     /// thread's function ends.
     /// Warning: if the thread function never ends, the calling
     /// thread will block forever.
+    /// If this function is called from its owner thread, it
+    /// returns without doing anything.
     ///
     ////////////////////////////////////////////////////////////
     void Wait();
