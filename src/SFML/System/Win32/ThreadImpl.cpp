@@ -28,6 +28,7 @@
 #include <SFML/System/Win32/ThreadImpl.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Err.hpp>
+#include <cassert>
 #include <process.h>
 
 
@@ -38,7 +39,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ThreadImpl::ThreadImpl(Thread* owner)
 {
-    myThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, owner, 0, NULL));
+    myThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, owner, 0, &myThreadId));
 
     if (!myThread)
         Err() << "Failed to create thread" << std::endl;
@@ -57,7 +58,10 @@ ThreadImpl::~ThreadImpl()
 void ThreadImpl::Wait()
 {
     if (myThread)
+    {
+        assert(myThreadId != GetCurrentThreadId()); // A thread cannot wait for itself!
         WaitForSingleObject(myThread, INFINITE);
+    }
 }
 
 

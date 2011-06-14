@@ -28,6 +28,7 @@
 #include <SFML/System/Unix/ThreadImpl.hpp>
 #include <SFML/System/Thread.hpp>
 #include <iostream>
+#include <cassert>
 
 
 namespace sf
@@ -49,7 +50,10 @@ myIsActive(true)
 void ThreadImpl::Wait()
 {
     if (myIsActive)
+    {
+        assert(pthread_equal(pthread_self(), myThread) == 0); // A thread cannot wait for itself!
         pthread_join(myThread, NULL);
+    }
 }
 
 
