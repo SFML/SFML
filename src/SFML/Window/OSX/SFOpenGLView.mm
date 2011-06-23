@@ -104,6 +104,18 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 -(void)initModifiersState;
 
 ////////////////////////////////////////////////////////////
+/// Compute the position of the cursor.
+/// 
+////////////////////////////////////////////////////////////
+-(NSPoint)cursorPositionFromEvent:(NSEvent *)event;
+
+////////////////////////////////////////////////////////////
+/// Converte the NSEvent mouse button type to SFML type.
+/// 
+////////////////////////////////////////////////////////////
+-(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event;
+
+////////////////////////////////////////////////////////////
 /// Convert a key down/up NSEvent into an SFML key event.
 /// Based on LocalizedKeys and NonLocalizedKeys function.
 ///
@@ -158,6 +170,39 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 -(void)setRealSize:(NSSize)newSize
 {
     myRealSize = newSize;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
+{
+    // Flip for SFML window coordinate system
+    y = NSHeight([[self window] frame]) - y;
+    
+    // Adjust for view reference instead of window
+    y -= NSHeight([[self window] frame]) - NSHeight([self frame]);
+    
+    // Convert to screen coordinates
+    NSPoint screenCoord = [[self window] convertBaseToScreen:NSMakePoint(x, y)];
+    
+    // Flip screen coodinates
+    float const screenHeight = NSHeight([[[self window] screen] frame]);
+    screenCoord.y = screenHeight - screenCoord.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        screenCoord.x = screenCoord.x / myRealSize.width  * [self frame].size.width;
+        screenCoord.y = screenCoord.y / myRealSize.height * [self frame].size.height;
+    }
+    
+    // Place the cursor.
+    CGEventRef event = CGEventCreateMouseEvent(NULL, 
+                                               kCGEventMouseMoved, 
+                                               CGPointMake(screenCoord.x, screenCoord.y), 
+                                               /*we don't care about this : */0);
+    CGEventPost(kCGHIDEventTap, event);
+    CFRelease(event);
+    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.
 }
 
 
@@ -260,58 +305,24 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 ////////////////////////////////////////////////////////
 -(void)mouseDown:(NSEvent *)theEvent 
 {
-    if (myRequester == 0) return;
-    
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    myRequester->MouseDownAt(sf::Mouse::Left, loc.x, h - loc.y);
+    // Forward to...
+    [self otherMouseDown:theEvent];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)mouseUp:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
-    
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
-    
-    myRequester->MouseUpAt(sf::Mouse::Left, loc.x, loc.y);
+    // Forward to...
+    [self otherMouseUp:theEvent];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)mouseMoved:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
-    
-    // If the event is not useful.
-    if (!myMouseIsIn) return;
-    
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
-    
-    myRequester->MouseMovedAt(loc.x, loc.y);
+    // Forward to...
+    [self otherMouseDragged:theEvent];
 }
 
 
@@ -320,17 +331,7 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 {
     if (myRequester == 0) return;
     
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
+    NSPoint loc = [self cursorPositionFromEvent:theEvent];
     
     myRequester->MouseWheelScrolledAt([theEvent deltaY], loc.x, loc.y);
 }
@@ -361,42 +362,16 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 ////////////////////////////////////////////////////////
 -(void)rightMouseDown:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
-    
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
-    
-    myRequester->MouseDownAt(sf::Mouse::Right, loc.x, loc.y);
+    // Forward to...
+    [self otherMouseDown:theEvent];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)rightMouseUp:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
-    
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
-    
-    myRequester->MouseUpAt(sf::Mouse::Right, loc.x, loc.y);
+    // Forward to...
+    [self otherMouseUp:theEvent];
 }
 
 
@@ -405,32 +380,9 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 {
     if (myRequester == 0) return;
     
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSPoint loc = [self cursorPositionFromEvent:theEvent];
     
-    sf::Mouse::Button button;
-    switch ([theEvent buttonNumber]) {
-        case 2:
-            button = sf::Mouse::Middle;
-            break;
-        case 3:
-            button = sf::Mouse::XButton1;
-            break;
-        case 4:
-            button = sf::Mouse::XButton2;
-            break;
-        default:
-            break;
-    }
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
+    sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
     
     myRequester->MouseDownAt(button, loc.x, loc.y);
 }
@@ -441,32 +393,9 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 {
     if (myRequester == 0) return;
     
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSPoint loc = [self cursorPositionFromEvent:theEvent];
     
-    sf::Mouse::Button button;
-    switch ([theEvent buttonNumber]) {
-        case 2:
-            button = sf::Mouse::Middle;
-            break;
-        case 3:
-            button = sf::Mouse::XButton1;
-            break;
-        case 4:
-            button = sf::Mouse::XButton2;
-            break;
-        default:
-            break;
-    }
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
+    sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
     
     myRequester->MouseUpAt(button, loc.x, loc.y);
 }
@@ -475,48 +404,16 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 ////////////////////////////////////////////////////////
 -(void)rightMouseDragged:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
-    
-    // If the event is not useful.
-    if (!myMouseIsIn) return;
-    
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
-    
-    myRequester->MouseMovedAt(loc.x, loc.y);
+    // Forward to...
+    [self otherMouseDragged:theEvent];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)mouseDragged:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
-    
-    // If the event is not useful.
-    if (!myMouseIsIn) return;
-    
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
-    
-    myRequester->MouseMovedAt(loc.x, loc.y);
+    // Forward to...
+    [self otherMouseDragged:theEvent];
 }
 
 
@@ -528,17 +425,7 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
     // If the event is not useful.
     if (!myMouseIsIn) return;
     
-    NSPoint loc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
+    NSPoint loc = [self cursorPositionFromEvent:theEvent];
     
     myRequester->MouseMovedAt(loc.x, loc.y);
 }
@@ -1005,6 +892,39 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
         // Currently only the left control key will be used in SFML (see note above).
         
         myControlWasDown = YES;
+    }
+}
+
+
+////////////////////////////////////////////////////////
+-(NSPoint)cursorPositionFromEvent:(NSEvent *)event
+{
+    NSPoint loc = [self convertPoint:[event locationInWindow] fromView:nil];
+    
+    // Don't forget to change to SFML coord system.
+    float h = [self frame].size.height;
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width  / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    return loc;
+}
+
+
+////////////////////////////////////////////////////////
+-(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event
+{
+    switch ([event buttonNumber]) {
+        case 0:     return sf::Mouse::Left;
+        case 1:     return sf::Mouse::Right;
+        case 2:     return sf::Mouse::Middle;
+        case 3:     return sf::Mouse::XButton1;
+        case 4:     return sf::Mouse::XButton2;
+        default:    return sf::Mouse::ButtonCount; // Never happens! (hopefully)
     }
 }
 

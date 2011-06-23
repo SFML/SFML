@@ -279,30 +279,8 @@
 ////////////////////////////////////////////////////////
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
 {
-    if (myRequester == 0) return;
-    
-    // Flip for SFML window coordinate system
-    y = NSHeight([myWindow frame]) - y;
-    
-    // Adjust for view reference instead of window
-    y -= NSHeight([myWindow frame]) - NSHeight([myOGLView frame]);
-    
-    // Convert to screen coordinates
-    NSPoint screenCoord = [myWindow convertBaseToScreen:NSMakePoint(x, y)];
-    
-    // Flip screen coodinates
-    float const screenHeight = NSHeight([[myWindow screen] frame]);
-    screenCoord.y = screenHeight - screenCoord.y;
-    
-    // Place the cursor.
-    CGEventRef event = CGEventCreateMouseEvent(NULL, 
-                                               kCGEventMouseMoved, 
-                                               CGPointMake(screenCoord.x, screenCoord.y), 
-                                               /*we don't care about this : */0);
-    CGEventPost(kCGHIDEventTap, event);
-    CFRelease(event);
-    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.
-    // The event produced will be catched by SFML in sf::Window::FilterEvent.
+    // Forward to...
+    [myOGLView setCursorPositionToX:x Y:y];
 }
 
 
