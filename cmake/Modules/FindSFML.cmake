@@ -18,6 +18,7 @@
 
 # deduce the libraries suffix from the options
 set(FIND_SFML_LIB_SUFFIX "")
+set(SFML_FIND_COMPONENTS GRAPHICS WINDOW SYSTEM NETWORK AUDIO MAIN)
 if(SFML_STATIC_LIBRARIES)
     set(FIND_SFML_LIB_SUFFIX "${FIND_SFML_LIB_SUFFIX}-s")
 endif()
