@@ -32,7 +32,6 @@
 #include <SFML/Config.h>
 #include <SFML/System/Clock.h>
 #include <SFML/System/Mutex.h>
-#include <SFML/System/Randomizer.h>
 #include <SFML/System/Sleep.h>
 #include <SFML/System/Thread.h>
 
