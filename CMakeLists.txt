@@ -31,8 +31,8 @@ set(BUILD_EXAMPLES FALSE CACHE BOOL "TRUE to build the SFML examples, FALSE to i
 set(BUILD_DOC FALSE CACHE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
 # Mac OS X specific options
-if (MACOSX)
-    # add an option to build against 10.5 SDK
+if (MACOSX AND MACOSX_VERSION GREATER 5)
+    # add an option to build against 10.5 SDK if current OS X version is greater than 10.5
     set(BUILD_LEOPARD FALSE CACHE BOOL "TRUE to build SFML for OS X 10.5, FALSE to compile with default SDK")
 endif()
 
