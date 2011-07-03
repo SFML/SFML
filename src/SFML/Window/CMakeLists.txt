@@ -74,6 +74,8 @@ else() # MACOSX
         ${SRCROOT}/OSX/WindowImplCocoa.hpp
         ${SRCROOT}/OSX/WindowImplCocoa.mm
         ${SRCROOT}/OSX/WindowImplDelegateProtocol.h
+        ${SRCROOT}/OSX/AutoreleasePoolWrapper.h
+        ${SRCROOT}/OSX/AutoreleasePoolWrapper.mm
     )
 endif()
 

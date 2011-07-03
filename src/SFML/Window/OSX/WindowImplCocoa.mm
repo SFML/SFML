@@ -32,6 +32,7 @@
 #import <SFML/Window/OSX/SFWindowController.h>
 #import <SFML/Window/OSX/SFViewController.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
+#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 
 namespace sf
 {
@@ -44,8 +45,8 @@ namespace priv
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
 {    
-    // Create the pool.
-    myPool = [[NSAutoreleasePool alloc] init];
+    // Ask for a pool.
+    RetainPool();
     
     // Treat the handle as it real type
     id nsHandle = (id)handle;
@@ -94,8 +95,8 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
     // Transform the app process.
     SetUpProcess();
     
-    // Create the pool.
-    myPool = [[NSAutoreleasePool alloc] init];
+    // Ask for a pool.
+    RetainPool();
     
     // Don't forget to update our parent (that is, WindowImpl) size :
     myWidth = mode.Width;
@@ -113,7 +114,8 @@ WindowImplCocoa::~WindowImplCocoa()
     [myDelegate closeWindow];
     
     [myDelegate release];
-    [myPool drain];
+    
+    ReleasePool();
 }
     
     

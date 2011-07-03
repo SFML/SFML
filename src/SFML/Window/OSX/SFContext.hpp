@@ -39,9 +39,6 @@
 @class NSOpenGLContext;
 typedef NSOpenGLContext* NSOpenGLContextRef;
 
-@class NSAutoreleasePool;
-typedef NSAutoreleasePool* NSAutoreleasePoolRef;
-
 @class NSOpenGLView;
 typedef NSOpenGLView* NSOpenGLViewRef;
 
@@ -51,7 +48,6 @@ typedef NSWindow* NSWindowRef;
 #else // If C++
 
 typedef void* NSOpenGLContextRef;
-typedef void* NSAutoreleasePoolRef;
 typedef void* NSOpenGLViewRef;
 typedef void* NSWindowRef;
 
@@ -154,7 +150,6 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     NSOpenGLContextRef    myContext;       ///< OpenGL context.
-    NSAutoreleasePoolRef  myPool;          ///< Memory manager for this class.
     NSOpenGLViewRef       myView;          ///< Only for offscreen context.
     NSWindowRef           myWindow;        ///< Only for offscreen context.
 };
