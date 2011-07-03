@@ -448,17 +448,24 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
         }
     }
 
-    if (myUseKeyRepeat || ![theEvent isARepeat]) {
-        // Let's see if its a valid text.
-        NSText* text = [[self window] fieldEditor:YES forObject:self];
-        [text interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    if ((myUseKeyRepeat || ![theEvent isARepeat]) && [[theEvent characters] length] > 0) {
         
-        NSString* string = [text string];
-        if ([string length] > 0) {
-            // It's a valid TextEntered event.
-            myRequester->TextEntered([string characterAtIndex:0]);
+        // Ignore escape key and non text keycode. (See NSEvent.h)
+        // They produce a sound alert.
+        unichar code = [[theEvent characters] characterAtIndex:0];
+        if ([theEvent keyCode] != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
             
-            [text setString:@""];
+            // Let's see if its a valid text.
+            NSText* text = [[self window] fieldEditor:YES forObject:self];
+            [text interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+            
+            NSString* string = [text string];
+            if ([string length] > 0) {
+                // It's a valid TextEntered event.
+                myRequester->TextEntered([string characterAtIndex:0]);
+                
+                [text setString:@""];
+            }
         }
     }
 }
