@@ -37,9 +37,9 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 RenderImageImplDefault::RenderImageImplDefault() :
+myContext(0),
 myWidth  (0),
-myHeight (0),
-myContext(0)
+myHeight (0)
 {
 
 }

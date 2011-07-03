@@ -61,7 +61,7 @@ namespace sf {
     NSWindow*                   myWindow;
     SFOpenGLView*               myOGLView;
     sf::priv::WindowImplCocoa*  myRequester;
-    sf::VideoMode               myFullscreenMode;
+    sf::VideoMode*              myFullscreenMode; // Note : C++ ctor/dtor are not called for Obj-C fields.
 }
 
 ////////////////////////////////////////////////////////////
