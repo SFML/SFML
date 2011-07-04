@@ -22,12 +22,18 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKWIN32_HPP
-#define SFML_JOYSTICKWIN32_HPP
+#ifndef SFML_JOYSTICKIMPLWIN32_HPP
+#define SFML_JOYSTICKIMPLWIN32_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#define _WIN32_WINDOWS 0x0501
+#define _WIN32_WINNT   0x0501
+#include <SFML/Window/JoystickImpl.hpp>
+#include <windows.h>
+#include <mmsystem.h>
+#include <cmath>
 
 
 namespace sf
@@ -35,57 +41,62 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Windows implementation of Joystick
+/// \brief Windows implementation of joysticks
 ///
 ////////////////////////////////////////////////////////////
-class Joystick
+class JoystickImpl
 {
 public :
 
     ////////////////////////////////////////////////////////////
-    /// \brief Initialize the instance and bind it to a physical joystick
+    /// \brief Check if a joystick is currently connected
     ///
-    /// \param index Index of the physical joystick to bind to
+    /// \param index Index of the joystick to check
+    ///
+    /// \return True if the joystick is connected, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize(unsigned int index);
+    static bool IsConnected(unsigned int index);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Update the current joystick and return its new state
+    /// \brief Open the joystick
     ///
-    /// \return Current state of the joystick
+    /// \param index Index assigned to the joystick
+    ///
+    /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    JoystickState UpdateState();
+    bool Open(unsigned int index);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if the joystick supports the given axis
-    ///
-    /// \param Axis : Axis to check
-    ///
-    /// \return True of the axis is supported, false otherwise
+    /// \brief Close the joystick
     ///
     ////////////////////////////////////////////////////////////
-    bool HasAxis(Joy::Axis Axis) const;
+    void Close();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the number of buttons supported by the joystick
+    /// \brief Get the joystick capabilities
     ///
-    /// \return Number of buttons
+    /// \return Joystick capabilities
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetButtonsCount() const;
+    JoystickCaps GetCapabilities() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Update the joystick and get its new state
+    ///
+    /// \return Joystick state
+    ///
+    ////////////////////////////////////////////////////////////
+    JoystickState Update();
 
 private :
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool         myIsConnected;          ///< Is there a joystick connected?
-    unsigned int myIndex;                ///< Windows ID of the joystick
-    unsigned int myNbButtons;            ///< Number of buttons supported by the joystick
-    bool         myAxes[Joy::AxisCount]; ///< Supported axes
-    bool         myHasContinuousPOV;     ///< True if the driver supports continuous values for the POV
+    unsigned int myIndex; ///< Index of the joystick
+    JOYCAPS      myCaps;  ///< Joystick capabilities
 };
 
 } // namespace priv
@@ -93,4 +104,4 @@ private :
 } // namespace sf
 
 
-#endif // SFML_JOYSTICKWIN32_HPP
+#endif // SFML_JOYSTICKIMPLWIN32_HPP

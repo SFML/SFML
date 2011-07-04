@@ -257,7 +257,7 @@ void Shader::SetCurrentTexture(const std::string& name)
         EnsureGlContext();
 
         // Find the location of the variable in the shader
-        int myCurrentTexture = glGetUniformLocationARB(myShaderProgram, name.c_str());
+        myCurrentTexture = glGetUniformLocationARB(myShaderProgram, name.c_str());
         if (myCurrentTexture == -1)
             Err() << "Texture \"" << name << "\" not found in shader" << std::endl;
     }

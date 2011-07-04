@@ -32,6 +32,7 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
+#include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <queue>
@@ -150,6 +151,14 @@ public :
     virtual void SetCursorPosition(unsigned int x, unsigned int y) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the mouse cursor
+    ///
+    /// \return Current mouse cursor position, relative to the window
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2i GetCursorPosition() const = 0;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///
     /// \param x Left position
@@ -238,18 +247,15 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
-    /// \param block Use true to block the thread until an event arrives
-    ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents(bool block) = 0;
+    virtual void ProcessEvents() = 0;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::queue<Event> myEvents;                ///< Queue of available events
-    Joystick          myJoysticks[Joy::Count]; ///< Joysticks to observe
-    JoystickState     myJoyStates[Joy::Count]; ///< Current states of the joysticks
-    float             myJoyThreshold;          ///< Joystick threshold (minimum motion for MOVE event to be generated)
+    std::queue<Event> myEvents;                     ///< Queue of available events
+    JoystickState     myJoyStates[Joystick::Count]; ///< Previous state of the joysticks
+    float             myJoyThreshold;               ///< Joystick threshold (minimum motion for MOVE event to be generated)
 };
 
 } // namespace priv

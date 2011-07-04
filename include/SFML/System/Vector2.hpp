@@ -250,8 +250,9 @@ bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 #include <SFML/System/Vector2.inl>
 
 // Define the most common types
-typedef Vector2<int>   Vector2i;
-typedef Vector2<float> Vector2f;
+typedef Vector2<int>          Vector2i;
+typedef Vector2<unsigned int> Vector2u;
+typedef Vector2<float>        Vector2f;
 
 } // namespace sf
 

@@ -179,19 +179,19 @@ int main()
             if (event.Type == sf::Event::KeyPressed)
             {
                 // Escape key : exit
-                if (event.Key.Code == sf::Key::Escape)
+                if (event.Key.Code == sf::Keyboard::Escape)
                     window.Close();
 
                 // Numpad : switch effect
                 switch (event.Key.Code)
                 {
-                    case sf::Key::Numpad1 : backgroundShader.GotoPrevious(); break;
-                    case sf::Key::Numpad4 : backgroundShader.GotoNext();     break;
-                    case sf::Key::Numpad2 : entityShader.GotoPrevious();     break;
-                    case sf::Key::Numpad5 : entityShader.GotoNext();         break;
-                    case sf::Key::Numpad3 : globalShader.GotoPrevious();     break;
-                    case sf::Key::Numpad6 : globalShader.GotoNext();         break;
-                    default :                                                break;
+                    case sf::Keyboard::Numpad1 : backgroundShader.GotoPrevious(); break;
+                    case sf::Keyboard::Numpad4 : backgroundShader.GotoNext();     break;
+                    case sf::Keyboard::Numpad2 : entityShader.GotoPrevious();     break;
+                    case sf::Keyboard::Numpad5 : entityShader.GotoNext();         break;
+                    case sf::Keyboard::Numpad3 : globalShader.GotoPrevious();     break;
+                    case sf::Keyboard::Numpad6 : globalShader.GotoNext();         break;
+                    default : break;
                 }
 
                 // Update the text
@@ -202,8 +202,8 @@ int main()
         }
 
         // Get the mouse position in the range [0, 1]
-        float mouseX = window.GetInput().GetMouseX() / static_cast<float>(window.GetWidth());
-        float mouseY = window.GetInput().GetMouseY() / static_cast<float>(window.GetHeight());
+        float mouseX = window.GetCursorPosition().x / static_cast<float>(window.GetWidth());
+        float mouseY = window.GetCursorPosition().y / static_cast<float>(window.GetHeight());
 
         // Update the shaders
         backgroundShader.Update(mouseX, mouseY);
@@ -265,7 +265,7 @@ void DisplayError()
                 window.Close();
 
             // Escape key : exit
-            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Key::Escape))
+            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Keyboard::Escape))
                 window.Close();
         }
 

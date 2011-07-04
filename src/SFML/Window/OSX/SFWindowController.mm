@@ -422,7 +422,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)processEventWithBlockingMode:(BOOL)block
+-(void)processEvent
 {
     // If we are not on the main thread we stop here and advice the user.
     if ([NSThread currentThread] != [NSThread mainThread]) {
@@ -439,7 +439,7 @@
     
     // If we don't have a requester we don't fetch event.
     if (myRequester != 0) {
-        [SFApplication processEventWithBlockingMode:block];
+        [SFApplication processEvent];
     }
 }
 

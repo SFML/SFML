@@ -310,9 +310,9 @@ void WindowImplCocoa::TextEntered(unichar charcode)
 #pragma mark WindowImplCocoa's event-related methods
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::ProcessEvents(bool block)
+void WindowImplCocoa::ProcessEvents()
 {
-    [myDelegate processEventWithBlockingMode:(block ? YES : NO)];
+    [myDelegate processEvent];
 }
     
 #pragma mark
@@ -340,6 +340,14 @@ void WindowImplCocoa::ShowMouseCursor(bool show)
 void WindowImplCocoa::SetCursorPosition(unsigned int x, unsigned int y)
 {
     [myDelegate setCursorPositionToX:x Y:y];
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i WindowImplCocoa::GetCursorPosition() const
+{
+	// @to be implemented
+    return Vector2i();
 }
 
     

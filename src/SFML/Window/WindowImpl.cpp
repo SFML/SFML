@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/JoystickManager.hpp>
 #include <algorithm>
 #include <cmath>
 
@@ -72,12 +73,10 @@ myWidth       (0),
 myHeight      (0),
 myJoyThreshold(0.1f)
 {
-    // Initialize the joysticks
-    for (unsigned int i = 0; i < Joy::Count; ++i)
-    {
-        myJoysticks[i].Initialize(i);
-        myJoyStates[i] = myJoysticks[i].UpdateState();
-    }
+    // Get the initial joystick states
+    JoystickManager::GetInstance().Update();
+    for (unsigned int i = 0; i < Joystick::Count; ++i)
+        myJoyStates[i] = JoystickManager::GetInstance().GetState(i);
 }
 
 
@@ -115,21 +114,25 @@ bool WindowImpl::PopEvent(Event& event, bool block)
     // If the event queue is empty, let's first check if new events are available from the OS
     if (myEvents.empty())
     {
-        // Special handling of joystick events (we must use polling)
-        ProcessJoystickEvents();
-
-        if (block)
+        if (!block)
         {
-            // If we are blocking, loop until we actually received a SFML event
-            // (there may be OS events that make ProcessEvents(true) return, but
-            // which don't translate to SFML events)
-            while (myEvents.empty())
-                ProcessEvents(true);
+            // Non-blocking mode: process events and continue
+            ProcessJoystickEvents();
+            ProcessEvents();
         }
         else
         {
-            // If we are not blocking, just process the pending events
-            ProcessEvents(false);
+            // Blocking mode: process events until one is triggered
+
+            // Here we use a manual wait loop instead of the optimized
+            // wait-event provided by the OS, so that we don't skip joystick
+            // events (which require polling)
+            while (myEvents.empty())
+            {
+                ProcessJoystickEvents();
+                ProcessEvents();
+                Sleep(10);
+            }
         }
     }
 
@@ -156,45 +159,62 @@ void WindowImpl::PushEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 void WindowImpl::ProcessJoystickEvents()
 {
-    for (unsigned int i = 0; i < Joy::Count; ++i)
+    // First update the global joystick states
+    JoystickManager::GetInstance().Update();
+
+    for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
         // Copy the previous state of the joystick and get the new one
         JoystickState previousState = myJoyStates[i];
-        myJoyStates[i] = myJoysticks[i].UpdateState();
+        myJoyStates[i] = JoystickManager::GetInstance().GetState(i);
+        JoystickCaps caps = JoystickManager::GetInstance().GetCapabilities(i);
 
-        // Axis
-        for (unsigned int j = 0; j < Joy::AxisCount; ++j)
+        // Connection state
+        bool connected = myJoyStates[i].Connected;
+        if (previousState.Connected ^ connected)
         {
-            Joy::Axis axis = static_cast<Joy::Axis>(j);
-            if (myJoysticks[i].HasAxis(axis))
-            {
-                float prevPos = previousState.Axis[axis];
-                float currPos = myJoyStates[i].Axis[axis];
-                if (fabs(currPos - prevPos) >= myJoyThreshold)
-                {
-                    Event event;
-                    event.Type               = Event::JoyMoved;
-                    event.JoyMove.JoystickId = i;
-                    event.JoyMove.Axis       = axis;
-                    event.JoyMove.Position   = currPos;
-                    PushEvent(event);
-                }
-            }
+            Event event;
+            event.Type = connected ? Event::JoystickConnected : Event::JoystickDisconnected;
+            event.JoystickButton.JoystickId = i;
+            PushEvent(event);
         }
 
-        // Buttons
-        for (unsigned int j = 0; j < myJoysticks[i].GetButtonsCount(); ++j)
+        if (connected)
         {
-            bool prevPressed = previousState.Buttons[j];
-            bool currPressed = myJoyStates[i].Buttons[j];
-
-            if ((!prevPressed && currPressed) || (prevPressed && !currPressed))
+            // Axes
+            for (unsigned int j = 0; j < Joystick::AxisCount; ++j)
             {
-                Event event;
-                event.Type                 = currPressed ? Event::JoyButtonPressed : Event::JoyButtonReleased;
-                event.JoyButton.JoystickId = i;
-                event.JoyButton.Button     = j;
-                PushEvent(event);
+                if (caps.Axes[j])
+                {
+                    Joystick::Axis axis = static_cast<Joystick::Axis>(j);
+                    float prevPos = previousState.Axes[axis];
+                    float currPos = myJoyStates[i].Axes[axis];
+                    if (fabs(currPos - prevPos) >= myJoyThreshold)
+                    {
+                        Event event;
+                        event.Type = Event::JoystickMoved;
+                        event.JoystickMove.JoystickId = i;
+                        event.JoystickMove.Axis = axis;
+                        event.JoystickMove.Position = currPos;
+                        PushEvent(event);
+                    }
+                }
+            }
+
+            // Buttons
+            for (unsigned int j = 0; j < caps.ButtonCount; ++j)
+            {
+                bool prevPressed = previousState.Buttons[j];
+                bool currPressed = myJoyStates[i].Buttons[j];
+
+                if (prevPressed ^ currPressed)
+                {
+                    Event event;
+                    event.Type = currPressed ? Event::JoystickButtonPressed : Event::JoystickButtonReleased;
+                    event.JoystickButton.JoystickId = i;
+                    event.JoystickButton.Button = j;
+                    PushEvent(event);
+                }
             }
         }
     }

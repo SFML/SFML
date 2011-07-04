@@ -68,7 +68,7 @@ int main()
                 window.Close();
 
             // Escape key : exit
-            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Key::Escape))
+            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Keyboard::Escape))
                 window.Close();
 
             // Adjust the viewport when the window is resized
@@ -90,8 +90,8 @@ int main()
         glClear(GL_DEPTH_BUFFER_BIT);
 
         // We get the position of the mouse cursor, so that we can move the box accordingly
-        float x =  window.GetInput().GetMouseX() * 200.f / window.GetWidth()  - 100.f;
-        float y = -window.GetInput().GetMouseY() * 200.f / window.GetHeight() + 100.f;
+        float x =  window.GetCursorPosition().x * 200.f / window.GetWidth()  - 100.f;
+        float y = -window.GetCursorPosition().y * 200.f / window.GetHeight() + 100.f;
 
         // Apply some transformations
         glMatrixMode(GL_MODELVIEW);

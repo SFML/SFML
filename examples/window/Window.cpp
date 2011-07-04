@@ -45,7 +45,7 @@ int main()
                 window.Close();
 
             // Escape key : exit
-            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Key::Escape))
+            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Keyboard::Escape))
                 window.Close();
 
             // Resize event : adjust viewport

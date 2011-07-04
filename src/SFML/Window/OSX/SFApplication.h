@@ -38,9 +38,7 @@
 ////////////////////////////////////////////////////////////
 /// \brief Event processing
 ///
-/// \param block blocking mode means at least one event is proccessed.
-///
 ////////////////////////////////////////////////////////////
-+(void)processEventWithBlockingMode:(BOOL)block;
++(void)processEvent
 
 @end
