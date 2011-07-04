@@ -69,6 +69,10 @@ else() # MACOSX
         ${SRCROOT}/OSX/cg_sf_conversion.cpp
         ${SRCROOT}/OSX/Joystick.cpp
         ${SRCROOT}/OSX/Joystick.hpp
+        ${SRCROOT}/OSX/InputImpl.cpp
+        ${SRCROOT}/OSX/InputImpl.hpp
+        ${SRCROOT}/OSX/JoystickImpl.cpp
+        ${SRCROOT}/OSX/JoystickImpl.hpp
         ${SRCROOT}/OSX/SFApplication.h
         ${SRCROOT}/OSX/SFApplication.m
         ${SRCROOT}/OSX/SFContext.hpp
