@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 1999-2010 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 1999-2011Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -305,16 +305,17 @@ enum
 typedef	struct SNDFILE_tag	SNDFILE ;
 
 /* The following typedef is system specific and is defined when libsndfile is
-** compiled. sf_count_t can be one of loff_t (Linux), off_t (*BSD), off64_t
-** (Solaris), __int64 (Win32) etc. On windows, we need to allow the same
-** header file to be compiler by both GCC and the microsoft compiler.
+** compiled. sf_count_t will be a 64 bit value when the underlying OS allows
+** 64 bit file offsets.
+** On windows, we need to allow the same header file to be compiler by both GCC
+** and the Microsoft compiler.
 */
 
 #if (defined (_MSCVER) || defined (_MSC_VER))
 typedef __int64		sf_count_t ;
 #define SF_COUNT_MAX		0x7fffffffffffffffi64
 #else
-typedef off_t	sf_count_t ;
+typedef int64_t	sf_count_t ;
 #define SF_COUNT_MAX		0x7FFFFFFFFFFFFFFFLL
 #endif
 
