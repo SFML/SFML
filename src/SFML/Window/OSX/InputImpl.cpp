@@ -1,8 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,30 +25,36 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/SFApplication.h>
-#import <AppKit/AppKit.h>
+#include <SFML/Window/OSX/InputImpl.hpp>
 
 
-////////////////////////////////////////////////////////////
-@implementation SFApplication
-
-
-////////////////////////////////////////////////////////////
-+(void)processEvent
+namespace sf
 {
-    [NSApplication sharedApplication]; // Make sure NSApp exists
-    NSEvent* event = nil;
-    
-    while ((event = [NSApp nextEventMatchingMask:NSAnyEventMask
-                                       untilDate:[NSDate distantPast]
-                                          inMode:NSDefaultRunLoopMode
-                                         dequeue:YES])) // Remove the event from the dequeue
-    {
-        [NSApp sendEvent:event];
-    }
+namespace priv
+{
+////////////////////////////////////////////////////////////
+bool InputImpl::IsKeyPressed(Keyboard::Key key)
+{
+	// @to be implemented
+    return false;
 }
 
 
-@end
+////////////////////////////////////////////////////////////
+bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
+{
+	// @to be implemented
+    return false;
+}
 
 
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::GetMousePosition()
+{
+	// @to be implemented
+    return Vector2i();
+}
+
+} // namespace priv
+
+} // namespace sf

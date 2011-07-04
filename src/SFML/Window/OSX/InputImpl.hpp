@@ -22,14 +22,14 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICK_HPP
-#define SFML_JOYSTICK_HPP
+#ifndef SFML_INPUTIMPLOSX_HPP
+#define SFML_INPUTIMPLOSX_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 
 
 namespace sf
@@ -37,25 +37,42 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Structure holding the joystick state's parameters
+/// \brief Mac OS X implementation of inputs (keyboard + mouse)
 ///
 ////////////////////////////////////////////////////////////
-struct JoystickState
+class InputImpl
 {
-    JoystickState()
-    {
-        // Default value for axes
-        for (int i = 0; i < Joy::AxisCount; ++i)
-            Axis[i] = 0.f;
-        Axis[Joy::AxisPOV] = -1.f;
+public :
 
-        // Default value for buttons
-        for (int i = 0; i < Joy::ButtonCount; ++i)
-            Buttons[i] = false;
-    }
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if a key is pressed
+    ///
+    /// \param key Key to check
+    ///
+    /// \return True if the key is pressed, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool IsKeyPressed(Keyboard::Key key);
 
-    float Axis[Joy::AxisCount];      ///< Position on each axis in range [-100, 100] (except POV which is [0, 360])
-    bool  Buttons[Joy::ButtonCount]; ///< Status of each button (true = pressed)
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if a mouse button is pressed
+    ///
+    /// \param button Button to check
+    ///
+    /// \return True if the button is pressed, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool IsMouseButtonPressed(Mouse::Button button);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current position of the mouse
+    ///
+    /// This function returns the mouse position in desktop coordinates.
+    ///
+    /// \return Current position of the mouse
+    ///
+    ////////////////////////////////////////////////////////////
+    static Vector2i GetMousePosition();
 };
 
 } // namespace priv
@@ -63,19 +80,4 @@ struct JoystickState
 } // namespace sf
 
 
-#if defined(SFML_SYSTEM_WINDOWS)
-
-    #include <SFML/Window/Win32/Joystick.hpp>
-
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
-
-    #include <SFML/Window/Linux/Joystick.hpp>
-
-#elif defined(SFML_SYSTEM_MACOS)
-
-	#include <SFML/Window/OSX/Joystick.hpp>
-
-#endif
-
-
-#endif // SFML_JOYSTICK_HPP
+#endif // SFML_INPUTIMPLOSX_HPP

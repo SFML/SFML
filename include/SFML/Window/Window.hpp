@@ -29,12 +29,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/ContextSettings.hpp>
-#include <SFML/Window/Input.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/System/Clock.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <string>
 
@@ -288,6 +288,14 @@ public :
     void SetCursorPosition(unsigned int x, unsigned int y);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the mouse cursor
+    ///
+    /// \return Current mouse cursor position, relative to the window
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2i GetCursorPosition() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///
     /// This function only works for top-level windows
@@ -385,17 +393,6 @@ public :
     void Display();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the input manager attached the window
-    ///
-    /// This input gives access to the real-time state of
-    /// keyboard, mouse and joysticks for this window.
-    ///
-    /// \return Read-only reference to the input manager
-    ///
-    ////////////////////////////////////////////////////////////
-    const Input& GetInput() const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Limit the framerate to a maximum fixed frequency
     ///
     /// If a limit is set, the window will use a small delay after
@@ -447,6 +444,16 @@ public :
     ////////////////////////////////////////////////////////////
     WindowHandle GetSystemHandle() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the window which is under the mouse cursor
+    ///
+    /// This function is for internal use.
+    ///
+    /// \return Pointer to the mouse focus window (NULL if not)
+    ///
+    ////////////////////////////////////////////////////////////
+    static const Window* GetMouseFocusWindow();
+
 private :
 
     ////////////////////////////////////////////////////////////
@@ -493,7 +500,6 @@ private :
     ////////////////////////////////////////////////////////////
     priv::WindowImpl* myWindow;         ///< Platform-specific implementation of the window
     priv::GlContext*  myContext;        ///< Platform-specific implementation of the OpenGL context
-    Input             myInput;          ///< Input manager connected to window
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
     Uint32            myLastFrameTime;  ///< Time elapsed since last frame
     unsigned int      myFramerateLimit; ///< Current framerate limit
@@ -523,8 +529,7 @@ private :
 /// The sf::Window class provides a simple interface for manipulating
 /// the window: move, resize, show/hide, control mouse cursor, etc.
 /// It also provides event handling through its PollEvent() and WaitEvent()
-/// functions, and real-time state handling with its attached sf::Input
-/// object (see GetInput()).
+/// functions.
 ///
 /// Note that OpenGL experts can pass their own parameters (antialiasing
 /// level, bits for the depth and stencil buffers, etc.) to the

@@ -38,6 +38,7 @@
 namespace
 {
     const sf::Window* fullscreenWindow = NULL;
+    const sf::Window* mouseFocusWindow = NULL;
 }
 
 
@@ -250,6 +251,13 @@ void Window::SetCursorPosition(unsigned int x, unsigned int y)
 
 
 ////////////////////////////////////////////////////////////
+Vector2i Window::GetCursorPosition() const
+{
+    return myWindow ? myWindow->GetCursorPosition() : Vector2i(0, 0);
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::SetPosition(int x, int y)
 {
     if (myWindow)
@@ -341,13 +349,6 @@ void Window::Display()
 
 
 ////////////////////////////////////////////////////////////
-const Input& Window::GetInput() const
-{
-    return myInput;
-}
-
-
-////////////////////////////////////////////////////////////
 void Window::SetFramerateLimit(unsigned int limit)
 {
     myFramerateLimit = limit;
@@ -377,6 +378,13 @@ WindowHandle Window::GetSystemHandle() const
 
 
 ////////////////////////////////////////////////////////////
+const Window* Window::GetMouseFocusWindow()
+{
+    return mouseFocusWindow;
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::OnCreate()
 {
     // Nothing by default
@@ -393,12 +401,19 @@ void Window::OnResize()
 ////////////////////////////////////////////////////////////
 bool Window::FilterEvent(const Event& event)
 {
-    // Notify the input object
-    myInput.OnEvent(event);
-
     // Notify resize events to the derived class
     if (event.Type == Event::Resized)
         OnResize();
+
+    // Watch mouse move/left events to track the window which is under the cursor
+    if (event.Type == Event::MouseMoved)
+    {
+        mouseFocusWindow = this;
+    }
+    else if ((event.Type == Event::MouseLeft) && (mouseFocusWindow == this))
+    {
+        mouseFocusWindow = NULL;
+    }
 
     return true;
 }

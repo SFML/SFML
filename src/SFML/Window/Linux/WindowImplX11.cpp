@@ -284,26 +284,12 @@ WindowHandle WindowImplX11::GetSystemHandle() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::ProcessEvents(bool block)
+void WindowImplX11::ProcessEvents()
 {
-    if (block)
+    XEvent event;
+    while (XCheckIfEvent(myDisplay, &event, &CheckEvent, reinterpret_cast<XPointer>(myWindow)))
     {
-        // Blocking -- wait and process events in the event queue until a valid event is found
-        XEvent event;
-        do
-        {
-            XIfEvent(myDisplay, &event, &CheckEvent, reinterpret_cast<XPointer>(myWindow));
-        }
-        while (!ProcessEvent(event));
-    }
-    else
-    {
-        // Non-blocking -- process all events in the event queue
-        XEvent event;
-        while (XCheckIfEvent(myDisplay, &event, &CheckEvent, reinterpret_cast<XPointer>(myWindow)))
-        {
-            ProcessEvent(event);
-        }
+        ProcessEvent(event);
     }
 }
 
@@ -321,6 +307,22 @@ void WindowImplX11::SetCursorPosition(unsigned int x, unsigned int y)
 {
     XWarpPointer(myDisplay, None, myWindow, 0, 0, 0, 0, x, y);
     XFlush(myDisplay);
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i WindowImplX11::GetCursorPosition() const
+{
+    // we don't care about these but they are required
+    ::Window root, child;
+    int gx, gy;
+    unsigned int buttons;
+
+    int x = 0;
+    int y = 0;
+    XQueryPointer(myDisplay, myWindow, &root, &child, &gx, &gy, &x, &y, &buttons);
+
+    return Vector2i(x, y);
 }
 
 
@@ -590,7 +592,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             //   and we need to properly forward the first one.
             char keys[32];
             XQueryKeymap(myDisplay, keys);
-            if (keys[windowEvent.xkey.keycode >> 3] & (1 << (windowEvent.xkey.keycode % 8)))
+            if (keys[windowEvent.xkey.keycode / 8] & (1 << (windowEvent.xkey.keycode % 8)))
             {
                 // KeyRelease event + key down = repeated event --> discard
                 if (windowEvent.type == KeyRelease)
@@ -847,7 +849,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
 
 
 ////////////////////////////////////////////////////////////
-Key::Code WindowImplX11::KeysymToSF(KeySym symbol)
+Keyboard::Key WindowImplX11::KeysymToSF(KeySym symbol)
 {
     // First convert to uppercase (to avoid dealing with two different keysyms for the same key)
     KeySym lower, key;
@@ -855,111 +857,111 @@ Key::Code WindowImplX11::KeysymToSF(KeySym symbol)
 
     switch (key)
     {
-        case XK_Shift_L :      return Key::LShift;
-        case XK_Shift_R :      return Key::RShift;
-        case XK_Control_L :    return Key::LControl;
-        case XK_Control_R :    return Key::RControl;
-        case XK_Alt_L :        return Key::LAlt;
-        case XK_Alt_R :        return Key::RAlt;
-        case XK_Super_L :      return Key::LSystem;
-        case XK_Super_R :      return Key::RSystem;
-        case XK_Menu :         return Key::Menu;
-        case XK_Escape :       return Key::Escape;
-        case XK_semicolon :    return Key::SemiColon;
-        case XK_slash :        return Key::Slash;
-        case XK_equal :        return Key::Equal;
-        case XK_minus :        return Key::Dash;
-        case XK_bracketleft :  return Key::LBracket;
-        case XK_bracketright : return Key::RBracket;
-        case XK_comma :        return Key::Comma;
-        case XK_period :       return Key::Period;
-        case XK_dead_acute :   return Key::Quote;
-        case XK_backslash :    return Key::BackSlash;
-        case XK_dead_grave :   return Key::Tilde;
-        case XK_space :        return Key::Space;
-        case XK_Return :       return Key::Return;
-        case XK_KP_Enter :     return Key::Return;
-        case XK_BackSpace :    return Key::Back;
-        case XK_Tab :          return Key::Tab;
-        case XK_Prior :        return Key::PageUp;
-        case XK_Next :         return Key::PageDown;
-        case XK_End :          return Key::End;
-        case XK_Home :         return Key::Home;
-        case XK_Insert :       return Key::Insert;
-        case XK_Delete :       return Key::Delete;
-        case XK_KP_Add :       return Key::Add;
-        case XK_KP_Subtract :  return Key::Subtract;
-        case XK_KP_Multiply :  return Key::Multiply;
-        case XK_KP_Divide :    return Key::Divide;
-        case XK_Pause :        return Key::Pause;
-        case XK_F1 :           return Key::F1;
-        case XK_F2 :           return Key::F2;
-        case XK_F3 :           return Key::F3;
-        case XK_F4 :           return Key::F4;
-        case XK_F5 :           return Key::F5;
-        case XK_F6 :           return Key::F6;
-        case XK_F7 :           return Key::F7;
-        case XK_F8 :           return Key::F8;
-        case XK_F9 :           return Key::F9;
-        case XK_F10 :          return Key::F10;
-        case XK_F11 :          return Key::F11;
-        case XK_F12 :          return Key::F12;
-        case XK_F13 :          return Key::F13;
-        case XK_F14 :          return Key::F14;
-        case XK_F15 :          return Key::F15;
-        case XK_Left :         return Key::Left;
-        case XK_Right :        return Key::Right;
-        case XK_Up :           return Key::Up;
-        case XK_Down :         return Key::Down;
-        case XK_KP_0 :         return Key::Numpad0;
-        case XK_KP_1 :         return Key::Numpad1;
-        case XK_KP_2 :         return Key::Numpad2;
-        case XK_KP_3 :         return Key::Numpad3;
-        case XK_KP_4 :         return Key::Numpad4;
-        case XK_KP_5 :         return Key::Numpad5;
-        case XK_KP_6 :         return Key::Numpad6;
-        case XK_KP_7 :         return Key::Numpad7;
-        case XK_KP_8 :         return Key::Numpad8;
-        case XK_KP_9 :         return Key::Numpad9;
-        case XK_A :            return Key::A;
-        case XK_Z :            return Key::Z;
-        case XK_E :            return Key::E;
-        case XK_R :            return Key::R;
-        case XK_T :            return Key::T;
-        case XK_Y :            return Key::Y;
-        case XK_U :            return Key::U;
-        case XK_I :            return Key::I;
-        case XK_O :            return Key::O;
-        case XK_P :            return Key::P;
-        case XK_Q :            return Key::Q;
-        case XK_S :            return Key::S;
-        case XK_D :            return Key::D;
-        case XK_F :            return Key::F;
-        case XK_G :            return Key::G;
-        case XK_H :            return Key::H;
-        case XK_J :            return Key::J;
-        case XK_K :            return Key::K;
-        case XK_L :            return Key::L;
-        case XK_M :            return Key::M;
-        case XK_W :            return Key::W;
-        case XK_X :            return Key::X;
-        case XK_C :            return Key::C;
-        case XK_V :            return Key::V;
-        case XK_B :            return Key::B;
-        case XK_N :            return Key::N;
-        case XK_0 :            return Key::Num0;
-        case XK_1 :            return Key::Num1;
-        case XK_2 :            return Key::Num2;
-        case XK_3 :            return Key::Num3;
-        case XK_4 :            return Key::Num4;
-        case XK_5 :            return Key::Num5;
-        case XK_6 :            return Key::Num6;
-        case XK_7 :            return Key::Num7;
-        case XK_8 :            return Key::Num8;
-        case XK_9 :            return Key::Num9;
+        case XK_Shift_L :      return Keyboard::LShift;
+        case XK_Shift_R :      return Keyboard::RShift;
+        case XK_Control_L :    return Keyboard::LControl;
+        case XK_Control_R :    return Keyboard::RControl;
+        case XK_Alt_L :        return Keyboard::LAlt;
+        case XK_Alt_R :        return Keyboard::RAlt;
+        case XK_Super_L :      return Keyboard::LSystem;
+        case XK_Super_R :      return Keyboard::RSystem;
+        case XK_Menu :         return Keyboard::Menu;
+        case XK_Escape :       return Keyboard::Escape;
+        case XK_semicolon :    return Keyboard::SemiColon;
+        case XK_slash :        return Keyboard::Slash;
+        case XK_equal :        return Keyboard::Equal;
+        case XK_minus :        return Keyboard::Dash;
+        case XK_bracketleft :  return Keyboard::LBracket;
+        case XK_bracketright : return Keyboard::RBracket;
+        case XK_comma :        return Keyboard::Comma;
+        case XK_period :       return Keyboard::Period;
+        case XK_dead_acute :   return Keyboard::Quote;
+        case XK_backslash :    return Keyboard::BackSlash;
+        case XK_dead_grave :   return Keyboard::Tilde;
+        case XK_space :        return Keyboard::Space;
+        case XK_Return :       return Keyboard::Return;
+        case XK_KP_Enter :     return Keyboard::Return;
+        case XK_BackSpace :    return Keyboard::Back;
+        case XK_Tab :          return Keyboard::Tab;
+        case XK_Prior :        return Keyboard::PageUp;
+        case XK_Next :         return Keyboard::PageDown;
+        case XK_End :          return Keyboard::End;
+        case XK_Home :         return Keyboard::Home;
+        case XK_Insert :       return Keyboard::Insert;
+        case XK_Delete :       return Keyboard::Delete;
+        case XK_KP_Add :       return Keyboard::Add;
+        case XK_KP_Subtract :  return Keyboard::Subtract;
+        case XK_KP_Multiply :  return Keyboard::Multiply;
+        case XK_KP_Divide :    return Keyboard::Divide;
+        case XK_Pause :        return Keyboard::Pause;
+        case XK_F1 :           return Keyboard::F1;
+        case XK_F2 :           return Keyboard::F2;
+        case XK_F3 :           return Keyboard::F3;
+        case XK_F4 :           return Keyboard::F4;
+        case XK_F5 :           return Keyboard::F5;
+        case XK_F6 :           return Keyboard::F6;
+        case XK_F7 :           return Keyboard::F7;
+        case XK_F8 :           return Keyboard::F8;
+        case XK_F9 :           return Keyboard::F9;
+        case XK_F10 :          return Keyboard::F10;
+        case XK_F11 :          return Keyboard::F11;
+        case XK_F12 :          return Keyboard::F12;
+        case XK_F13 :          return Keyboard::F13;
+        case XK_F14 :          return Keyboard::F14;
+        case XK_F15 :          return Keyboard::F15;
+        case XK_Left :         return Keyboard::Left;
+        case XK_Right :        return Keyboard::Right;
+        case XK_Up :           return Keyboard::Up;
+        case XK_Down :         return Keyboard::Down;
+        case XK_KP_0 :         return Keyboard::Numpad0;
+        case XK_KP_1 :         return Keyboard::Numpad1;
+        case XK_KP_2 :         return Keyboard::Numpad2;
+        case XK_KP_3 :         return Keyboard::Numpad3;
+        case XK_KP_4 :         return Keyboard::Numpad4;
+        case XK_KP_5 :         return Keyboard::Numpad5;
+        case XK_KP_6 :         return Keyboard::Numpad6;
+        case XK_KP_7 :         return Keyboard::Numpad7;
+        case XK_KP_8 :         return Keyboard::Numpad8;
+        case XK_KP_9 :         return Keyboard::Numpad9;
+        case XK_A :            return Keyboard::A;
+        case XK_Z :            return Keyboard::Z;
+        case XK_E :            return Keyboard::E;
+        case XK_R :            return Keyboard::R;
+        case XK_T :            return Keyboard::T;
+        case XK_Y :            return Keyboard::Y;
+        case XK_U :            return Keyboard::U;
+        case XK_I :            return Keyboard::I;
+        case XK_O :            return Keyboard::O;
+        case XK_P :            return Keyboard::P;
+        case XK_Q :            return Keyboard::Q;
+        case XK_S :            return Keyboard::S;
+        case XK_D :            return Keyboard::D;
+        case XK_F :            return Keyboard::F;
+        case XK_G :            return Keyboard::G;
+        case XK_H :            return Keyboard::H;
+        case XK_J :            return Keyboard::J;
+        case XK_K :            return Keyboard::K;
+        case XK_L :            return Keyboard::L;
+        case XK_M :            return Keyboard::M;
+        case XK_W :            return Keyboard::W;
+        case XK_X :            return Keyboard::X;
+        case XK_C :            return Keyboard::C;
+        case XK_V :            return Keyboard::V;
+        case XK_B :            return Keyboard::B;
+        case XK_N :            return Keyboard::N;
+        case XK_0 :            return Keyboard::Num0;
+        case XK_1 :            return Keyboard::Num1;
+        case XK_2 :            return Keyboard::Num2;
+        case XK_3 :            return Keyboard::Num3;
+        case XK_4 :            return Keyboard::Num4;
+        case XK_5 :            return Keyboard::Num5;
+        case XK_6 :            return Keyboard::Num6;
+        case XK_7 :            return Keyboard::Num7;
+        case XK_8 :            return Keyboard::Num8;
+        case XK_9 :            return Keyboard::Num9;
     }
 
-    return Key::Code(0);
+    return Keyboard::Key(0);
 }
 
 } // namespace priv

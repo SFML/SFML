@@ -89,7 +89,7 @@ int main()
         {
             // Window closed or escape key pressed : exit
             if ((event.Type == sf::Event::Closed) || 
-               ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Key::Escape)))
+               ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Keyboard::Escape)))
             {
                 window.Close();
                 break;
@@ -99,9 +99,9 @@ int main()
         if (isPlaying)
         {
             // Move the player's paddle
-            if (window.GetInput().IsKeyDown(sf::Key::Up) && (leftPaddle.GetPosition().y > 5.f))
+            if (sf::Keyboard::IsKeyPressed(sf::Keyboard::Up) && (leftPaddle.GetPosition().y > 5.f))
                 leftPaddle.Move(0.f, -leftPaddleSpeed * window.GetFrameTime() / 1000.f);
-            if (window.GetInput().IsKeyDown(sf::Key::Down) && (leftPaddle.GetPosition().y < window.GetView().GetSize().y - leftPaddle.GetSize().y - 5.f))
+            if (sf::Keyboard::IsKeyPressed(sf::Keyboard::Down) && (leftPaddle.GetPosition().y < window.GetView().GetSize().y - leftPaddle.GetSize().y - 5.f))
                 leftPaddle.Move(0.f, leftPaddleSpeed * window.GetFrameTime() / 1000.f);
 
             // Move the computer's paddle

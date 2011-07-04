@@ -233,13 +233,12 @@ public:
     static void SetUpProcess(void);
     
 private:
+
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
-    /// \param block Use true to block the thread until an event arrives
-    ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents(bool block);
+    virtual void ProcessEvents();
     
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -266,6 +265,14 @@ private:
     ////////////////////////////////////////////////////////////
     virtual void SetCursorPosition(unsigned int x, unsigned int y);
     
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the mouse cursor
+    ///
+    /// \return Current mouse cursor position, relative to the window
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2i GetCursorPosition() const;
+
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///

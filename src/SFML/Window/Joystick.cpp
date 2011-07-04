@@ -1,8 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,30 +25,51 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/SFApplication.h>
-#import <AppKit/AppKit.h>
+#include <SFML/Window/Joystick.hpp>
+#include <SFML/Window/JoystickManager.hpp>
 
 
-////////////////////////////////////////////////////////////
-@implementation SFApplication
-
-
-////////////////////////////////////////////////////////////
-+(void)processEvent
+namespace sf
 {
-    [NSApplication sharedApplication]; // Make sure NSApp exists
-    NSEvent* event = nil;
-    
-    while ((event = [NSApp nextEventMatchingMask:NSAnyEventMask
-                                       untilDate:[NSDate distantPast]
-                                          inMode:NSDefaultRunLoopMode
-                                         dequeue:YES])) // Remove the event from the dequeue
-    {
-        [NSApp sendEvent:event];
-    }
+////////////////////////////////////////////////////////////
+bool Joystick::IsConnected(unsigned int joystick)
+{
+    return priv::JoystickManager::GetInstance().GetState(joystick).Connected;
 }
 
 
-@end
+////////////////////////////////////////////////////////////
+unsigned int Joystick::GetButtonCount(unsigned int joystick)
+{
+    return priv::JoystickManager::GetInstance().GetCapabilities(joystick).ButtonCount;
+}
 
 
+////////////////////////////////////////////////////////////
+bool Joystick::HasAxis(unsigned int joystick, Axis axis)
+{
+    return priv::JoystickManager::GetInstance().GetCapabilities(joystick).Axes[axis];
+}
+
+
+////////////////////////////////////////////////////////////
+bool Joystick::IsButtonPressed(unsigned int joystick, int button)
+{
+    return priv::JoystickManager::GetInstance().GetState(joystick).Buttons[button];
+}
+
+
+////////////////////////////////////////////////////////////
+float Joystick::GetAxisPosition(unsigned int joystick, Axis axis)
+{
+    return priv::JoystickManager::GetInstance().GetState(joystick).Axes[axis];
+}
+
+
+////////////////////////////////////////////////////////////
+void Joystick::Update()
+{
+    return priv::JoystickManager::GetInstance().Update();
+}
+
+} // namespace sf

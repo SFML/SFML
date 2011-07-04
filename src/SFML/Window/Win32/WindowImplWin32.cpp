@@ -204,14 +204,11 @@ WindowHandle WindowImplWin32::GetSystemHandle() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::ProcessEvents(bool block)
+void WindowImplWin32::ProcessEvents()
 {
     // We process the window events only if we own it
     if (!myCallback)
     {
-        if (block)
-            WaitMessage();
-
         MSG message;
         while (PeekMessage(&message, myHandle, 0, 0, PM_REMOVE))
         {
@@ -240,6 +237,17 @@ void WindowImplWin32::SetCursorPosition(unsigned int x, unsigned int y)
     POINT position = {x, y};
     ClientToScreen(myHandle, &position);
     SetCursorPos(position.x, position.y);
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i WindowImplWin32::GetCursorPosition() const
+{
+    POINT position;
+    GetCursorPos(&position);
+    ScreenToClient(myHandle, &position);
+
+    return Vector2i(position.x, position.y);
 }
 
 
@@ -676,7 +684,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
 
 ////////////////////////////////////////////////////////////
-Key::Code WindowImplWin32::VirtualKeyCodeToSF(WPARAM key, LPARAM flags)
+Keyboard::Key WindowImplWin32::VirtualKeyCodeToSF(WPARAM key, LPARAM flags)
 {
     switch (key)
     {
@@ -685,114 +693,114 @@ Key::Code WindowImplWin32::VirtualKeyCodeToSF(WPARAM key, LPARAM flags)
         {
             static UINT lShift = MapVirtualKey(VK_LSHIFT, MAPVK_VK_TO_VSC);
             UINT scancode = static_cast<UINT>((flags & (0xFF << 16)) >> 16);
-            return scancode == lShift ? Key::LShift : Key::RShift;
+            return scancode == lShift ? Keyboard::LShift : Keyboard::RShift;
         }
 
         // Check the "extended" flag to distinguish between left and right alt
-        case VK_MENU : return (HIWORD(flags) & KF_EXTENDED) ? Key::RAlt : Key::LAlt;
+        case VK_MENU : return (HIWORD(flags) & KF_EXTENDED) ? Keyboard::RAlt : Keyboard::LAlt;
 
         // Check the "extended" flag to distinguish between left and right control
-        case VK_CONTROL : return (HIWORD(flags) & KF_EXTENDED) ? Key::RControl : Key::LControl;
+        case VK_CONTROL : return (HIWORD(flags) & KF_EXTENDED) ? Keyboard::RControl : Keyboard::LControl;
 
         // Other keys are reported properly
-        case VK_LWIN :       return Key::LSystem;
-        case VK_RWIN :       return Key::RSystem;
-        case VK_APPS :       return Key::Menu;
-        case VK_OEM_1 :      return Key::SemiColon;
-        case VK_OEM_2 :      return Key::Slash;
-        case VK_OEM_PLUS :   return Key::Equal;
-        case VK_OEM_MINUS :  return Key::Dash;
-        case VK_OEM_4 :      return Key::LBracket;
-        case VK_OEM_6 :      return Key::RBracket;
-        case VK_OEM_COMMA :  return Key::Comma;
-        case VK_OEM_PERIOD : return Key::Period;
-        case VK_OEM_7 :      return Key::Quote;
-        case VK_OEM_5 :      return Key::BackSlash;
-        case VK_OEM_3 :      return Key::Tilde;
-        case VK_ESCAPE :     return Key::Escape;
-        case VK_SPACE :      return Key::Space;
-        case VK_RETURN :     return Key::Return;
-        case VK_BACK :       return Key::Back;
-        case VK_TAB :        return Key::Tab;
-        case VK_PRIOR :      return Key::PageUp;
-        case VK_NEXT :       return Key::PageDown;
-        case VK_END :        return Key::End;
-        case VK_HOME :       return Key::Home;
-        case VK_INSERT :     return Key::Insert;
-        case VK_DELETE :     return Key::Delete;
-        case VK_ADD :        return Key::Add;
-        case VK_SUBTRACT :   return Key::Subtract;
-        case VK_MULTIPLY :   return Key::Multiply;
-        case VK_DIVIDE :     return Key::Divide;
-        case VK_PAUSE :      return Key::Pause;
-        case VK_F1 :         return Key::F1;
-        case VK_F2 :         return Key::F2;
-        case VK_F3 :         return Key::F3;
-        case VK_F4 :         return Key::F4;
-        case VK_F5 :         return Key::F5;
-        case VK_F6 :         return Key::F6;
-        case VK_F7 :         return Key::F7;
-        case VK_F8 :         return Key::F8;
-        case VK_F9 :         return Key::F9;
-        case VK_F10 :        return Key::F10;
-        case VK_F11 :        return Key::F11;
-        case VK_F12 :        return Key::F12;
-        case VK_F13 :        return Key::F13;
-        case VK_F14 :        return Key::F14;
-        case VK_F15 :        return Key::F15;
-        case VK_LEFT :       return Key::Left;
-        case VK_RIGHT :      return Key::Right;
-        case VK_UP :         return Key::Up;
-        case VK_DOWN :       return Key::Down;
-        case VK_NUMPAD0 :    return Key::Numpad0;
-        case VK_NUMPAD1 :    return Key::Numpad1;
-        case VK_NUMPAD2 :    return Key::Numpad2;
-        case VK_NUMPAD3 :    return Key::Numpad3;
-        case VK_NUMPAD4 :    return Key::Numpad4;
-        case VK_NUMPAD5 :    return Key::Numpad5;
-        case VK_NUMPAD6 :    return Key::Numpad6;
-        case VK_NUMPAD7 :    return Key::Numpad7;
-        case VK_NUMPAD8 :    return Key::Numpad8;
-        case VK_NUMPAD9 :    return Key::Numpad9;
-        case 'A' :           return Key::A;
-        case 'Z' :           return Key::Z;
-        case 'E' :           return Key::E;
-        case 'R' :           return Key::R;
-        case 'T' :           return Key::T;
-        case 'Y' :           return Key::Y;
-        case 'U' :           return Key::U;
-        case 'I' :           return Key::I;
-        case 'O' :           return Key::O;
-        case 'P' :           return Key::P;
-        case 'Q' :           return Key::Q;
-        case 'S' :           return Key::S;
-        case 'D' :           return Key::D;
-        case 'F' :           return Key::F;
-        case 'G' :           return Key::G;
-        case 'H' :           return Key::H;
-        case 'J' :           return Key::J;
-        case 'K' :           return Key::K;
-        case 'L' :           return Key::L;
-        case 'M' :           return Key::M;
-        case 'W' :           return Key::W;
-        case 'X' :           return Key::X;
-        case 'C' :           return Key::C;
-        case 'V' :           return Key::V;
-        case 'B' :           return Key::B;
-        case 'N' :           return Key::N;
-        case '0' :           return Key::Num0;
-        case '1' :           return Key::Num1;
-        case '2' :           return Key::Num2;
-        case '3' :           return Key::Num3;
-        case '4' :           return Key::Num4;
-        case '5' :           return Key::Num5;
-        case '6' :           return Key::Num6;
-        case '7' :           return Key::Num7;
-        case '8' :           return Key::Num8;
-        case '9' :           return Key::Num9;
+        case VK_LWIN :       return Keyboard::LSystem;
+        case VK_RWIN :       return Keyboard::RSystem;
+        case VK_APPS :       return Keyboard::Menu;
+        case VK_OEM_1 :      return Keyboard::SemiColon;
+        case VK_OEM_2 :      return Keyboard::Slash;
+        case VK_OEM_PLUS :   return Keyboard::Equal;
+        case VK_OEM_MINUS :  return Keyboard::Dash;
+        case VK_OEM_4 :      return Keyboard::LBracket;
+        case VK_OEM_6 :      return Keyboard::RBracket;
+        case VK_OEM_COMMA :  return Keyboard::Comma;
+        case VK_OEM_PERIOD : return Keyboard::Period;
+        case VK_OEM_7 :      return Keyboard::Quote;
+        case VK_OEM_5 :      return Keyboard::BackSlash;
+        case VK_OEM_3 :      return Keyboard::Tilde;
+        case VK_ESCAPE :     return Keyboard::Escape;
+        case VK_SPACE :      return Keyboard::Space;
+        case VK_RETURN :     return Keyboard::Return;
+        case VK_BACK :       return Keyboard::Back;
+        case VK_TAB :        return Keyboard::Tab;
+        case VK_PRIOR :      return Keyboard::PageUp;
+        case VK_NEXT :       return Keyboard::PageDown;
+        case VK_END :        return Keyboard::End;
+        case VK_HOME :       return Keyboard::Home;
+        case VK_INSERT :     return Keyboard::Insert;
+        case VK_DELETE :     return Keyboard::Delete;
+        case VK_ADD :        return Keyboard::Add;
+        case VK_SUBTRACT :   return Keyboard::Subtract;
+        case VK_MULTIPLY :   return Keyboard::Multiply;
+        case VK_DIVIDE :     return Keyboard::Divide;
+        case VK_PAUSE :      return Keyboard::Pause;
+        case VK_F1 :         return Keyboard::F1;
+        case VK_F2 :         return Keyboard::F2;
+        case VK_F3 :         return Keyboard::F3;
+        case VK_F4 :         return Keyboard::F4;
+        case VK_F5 :         return Keyboard::F5;
+        case VK_F6 :         return Keyboard::F6;
+        case VK_F7 :         return Keyboard::F7;
+        case VK_F8 :         return Keyboard::F8;
+        case VK_F9 :         return Keyboard::F9;
+        case VK_F10 :        return Keyboard::F10;
+        case VK_F11 :        return Keyboard::F11;
+        case VK_F12 :        return Keyboard::F12;
+        case VK_F13 :        return Keyboard::F13;
+        case VK_F14 :        return Keyboard::F14;
+        case VK_F15 :        return Keyboard::F15;
+        case VK_LEFT :       return Keyboard::Left;
+        case VK_RIGHT :      return Keyboard::Right;
+        case VK_UP :         return Keyboard::Up;
+        case VK_DOWN :       return Keyboard::Down;
+        case VK_NUMPAD0 :    return Keyboard::Numpad0;
+        case VK_NUMPAD1 :    return Keyboard::Numpad1;
+        case VK_NUMPAD2 :    return Keyboard::Numpad2;
+        case VK_NUMPAD3 :    return Keyboard::Numpad3;
+        case VK_NUMPAD4 :    return Keyboard::Numpad4;
+        case VK_NUMPAD5 :    return Keyboard::Numpad5;
+        case VK_NUMPAD6 :    return Keyboard::Numpad6;
+        case VK_NUMPAD7 :    return Keyboard::Numpad7;
+        case VK_NUMPAD8 :    return Keyboard::Numpad8;
+        case VK_NUMPAD9 :    return Keyboard::Numpad9;
+        case 'A' :           return Keyboard::A;
+        case 'Z' :           return Keyboard::Z;
+        case 'E' :           return Keyboard::E;
+        case 'R' :           return Keyboard::R;
+        case 'T' :           return Keyboard::T;
+        case 'Y' :           return Keyboard::Y;
+        case 'U' :           return Keyboard::U;
+        case 'I' :           return Keyboard::I;
+        case 'O' :           return Keyboard::O;
+        case 'P' :           return Keyboard::P;
+        case 'Q' :           return Keyboard::Q;
+        case 'S' :           return Keyboard::S;
+        case 'D' :           return Keyboard::D;
+        case 'F' :           return Keyboard::F;
+        case 'G' :           return Keyboard::G;
+        case 'H' :           return Keyboard::H;
+        case 'J' :           return Keyboard::J;
+        case 'K' :           return Keyboard::K;
+        case 'L' :           return Keyboard::L;
+        case 'M' :           return Keyboard::M;
+        case 'W' :           return Keyboard::W;
+        case 'X' :           return Keyboard::X;
+        case 'C' :           return Keyboard::C;
+        case 'V' :           return Keyboard::V;
+        case 'B' :           return Keyboard::B;
+        case 'N' :           return Keyboard::N;
+        case '0' :           return Keyboard::Num0;
+        case '1' :           return Keyboard::Num1;
+        case '2' :           return Keyboard::Num2;
+        case '3' :           return Keyboard::Num3;
+        case '4' :           return Keyboard::Num4;
+        case '5' :           return Keyboard::Num5;
+        case '6' :           return Keyboard::Num6;
+        case '7' :           return Keyboard::Num7;
+        case '8' :           return Keyboard::Num8;
+        case '9' :           return Keyboard::Num9;
     }
 
-    return Key::Code(0);
+    return Keyboard::Key(0);
 }
 
 

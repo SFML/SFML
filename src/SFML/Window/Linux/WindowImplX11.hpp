@@ -94,10 +94,8 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
-    /// \param block Use true to block the thread until an event arrives
-    ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents(bool block);
+    virtual void ProcessEvents();
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor
@@ -115,6 +113,14 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetCursorPosition(unsigned int x, unsigned int y);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the mouse cursor
+    ///
+    /// \return Current mouse cursor position, relative to the window
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2i GetCursorPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -212,7 +218,7 @@ private :
     /// \return Corrsponding SFML key code
     ///
     ////////////////////////////////////////////////////////////
-    static Key::Code KeysymToSF(KeySym symbol);
+    static Keyboard::Key KeysymToSF(KeySym symbol);
 
     ////////////////////////////////////////////////////////////
     // Member data

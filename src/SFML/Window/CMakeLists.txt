@@ -12,9 +12,16 @@ set(SRC
     ${INCROOT}/GlResource.hpp
     ${INCROOT}/ContextSettings.hpp
     ${INCROOT}/Event.hpp
-    ${SRCROOT}/Input.cpp
-    ${INCROOT}/Input.hpp
-    ${SRCROOT}/Joystick.hpp
+    ${SRCROOT}/InputImpl.hpp
+    ${INCROOT}/Joystick.hpp
+    ${SRCROOT}/Joystick.cpp
+    ${SRCROOT}/JoystickImpl.hpp
+    ${SRCROOT}/JoystickManager.cpp
+    ${SRCROOT}/JoystickManager.hpp
+    ${INCROOT}/Keyboard.hpp
+    ${SRCROOT}/Keyboard.cpp
+    ${INCROOT}/Mouse.hpp
+    ${SRCROOT}/Mouse.cpp
     ${SRCROOT}/VideoMode.cpp
     ${INCROOT}/VideoMode.hpp
     ${SRCROOT}/VideoModeImpl.hpp
@@ -32,8 +39,10 @@ if(WINDOWS)
         ${SRC}
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
-        ${SRCROOT}/Win32/Joystick.cpp
-        ${SRCROOT}/Win32/Joystick.hpp
+        ${SRCROOT}/Win32/InputImpl.cpp
+        ${SRCROOT}/Win32/InputImpl.hpp
+        ${SRCROOT}/Win32/JoystickImpl.cpp
+        ${SRCROOT}/Win32/JoystickImpl.hpp
         ${SRCROOT}/Win32/VideoModeImpl.cpp
         ${SRCROOT}/Win32/WindowImplWin32.cpp
         ${SRCROOT}/Win32/WindowImplWin32.hpp
@@ -43,8 +52,10 @@ elseif(LINUX)
         ${SRC}
         ${SRCROOT}/Linux/GlxContext.cpp
         ${SRCROOT}/Linux/GlxContext.hpp
-        ${SRCROOT}/Linux/Joystick.cpp
-        ${SRCROOT}/Linux/Joystick.hpp
+        ${SRCROOT}/Linux/InputImpl.cpp
+        ${SRCROOT}/Linux/InputImpl.hpp
+        ${SRCROOT}/Linux/JoystickImpl.cpp
+        ${SRCROOT}/Linux/JoystickImpl.hpp
         ${SRCROOT}/Linux/VideoModeImpl.cpp
         ${SRCROOT}/Linux/WindowImplX11.cpp
         ${SRCROOT}/Linux/WindowImplX11.hpp
