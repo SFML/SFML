@@ -40,9 +40,6 @@
 #import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
 typedef id<WindowImplDelegateProtocol,NSObject> WindowImplDelegateRef;
 
-@class NSAutoreleasePool;
-typedef NSAutoreleasePool* NSAutoreleasePoolRef;
-
 @class NSOpenGLContext;
 typedef NSOpenGLContext* NSOpenGLContextRef;
 
@@ -51,7 +48,6 @@ typedef NSOpenGLContext* NSOpenGLContextRef;
 typedef unsigned short unichar; // See NSString.h
 
 typedef void* WindowImplDelegateRef;
-typedef void* NSAutoreleasePoolRef;
 typedef void* NSOpenGLContextRef;
 
 #endif
@@ -333,7 +329,6 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     WindowImplDelegateRef myDelegate; ///< Implementation in Obj-C.
-    NSAutoreleasePoolRef  myPool;     ///< Memory manager for this class.
 };
     
 } // namespace priv

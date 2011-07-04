@@ -30,6 +30,8 @@
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
 
+#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
+
 /*
  * DISCUSSION :
  * ============
@@ -53,7 +55,8 @@ namespace priv
 SFContext::SFContext(SFContext* shared)
     : myView(0), myWindow(0)
 {
-    myPool = [[NSAutoreleasePool alloc] init];
+    // Ask for a pool.
+    RetainPool();
     
     // Create the context
     CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
@@ -65,7 +68,8 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
                      const WindowImpl* owner, unsigned int bitsPerPixel)
     : myView(0), myWindow(0)
 {
-    myPool = [[NSAutoreleasePool alloc] init];
+    // Ask for a pool.
+    RetainPool();
     
     // Create the context.
     CreateContext(shared, bitsPerPixel, settings);
@@ -83,7 +87,8 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
     // Ensure the process is setup in order to create a valid window.
     WindowImplCocoa::SetUpProcess();
     
-    myPool = [[NSAutoreleasePool alloc] init];
+    // Ask for a pool.
+    RetainPool();
     
     // Create the context.
     CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, settings);
@@ -109,8 +114,7 @@ SFContext::~SFContext()
     [myView release]; // Might be nil but we don't care.
     [myWindow release]; // Idem.
     
-    [myPool drain]; // Produce sometimes "*** attempt to pop an unknown autorelease pool"
-    // This is not a real issue : http://stackoverflow.com/questions/3484888/nsautoreleasepool-question
+    ReleasePool();
 }
 
 

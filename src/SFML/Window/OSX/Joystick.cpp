@@ -69,7 +69,7 @@ void Joystick::Initialize(unsigned int Index)
 
     // Is there enough joystick ?
     CFIndex joysticksCount = CFSetGetCount(devices);
-    if (joysticksCount <= Index) {
+    if (joysticksCount <= CFIndex(Index)) {
         FreeUp();
         return;
     }
@@ -302,6 +302,9 @@ bool Joystick::RetriveElements(IOHIDDeviceRef device)
                 } else {
                     // Too many buttons. We ignore this one.
                 }
+                break;
+                
+            default: // Make compiler happy.
                 break;
         }
 	}

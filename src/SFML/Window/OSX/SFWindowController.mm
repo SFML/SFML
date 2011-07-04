@@ -69,6 +69,7 @@
 {
     if ((self = [super init])) {
         myRequester = 0;
+        myFullscreenMode = new sf::VideoMode();
         
         // Retain the window for our own use.
         myWindow = [window retain];
@@ -121,6 +122,7 @@
 
     if ((self = [super init])) {
         myRequester = 0;
+        myFullscreenMode = new sf::VideoMode();
         
         // Create our window size.
         NSRect rect = NSZeroRect;
@@ -128,7 +130,7 @@
             // We use desktop mode to size the window
             // but we set the back buffer size to 'mode' in applyContext method.
             
-            myFullscreenMode = mode;
+            *myFullscreenMode = mode;
             
             sf::VideoMode dm = sf::VideoMode::GetDesktopMode();
             rect = NSMakeRect(0, 0, dm.Width, dm.Height);
@@ -211,7 +213,7 @@
         // If a fullscreen window was requested...
         if (style & sf::Style::Fullscreen && mode != sf::VideoMode::GetDesktopMode()) {
             /// ... we set the "read size" of the view (that is the back buffer size).
-            [myOGLView setRealSize:NSMakeSize(myFullscreenMode.Width, myFullscreenMode.Height)];
+            [myOGLView setRealSize:NSMakeSize(myFullscreenMode->Width, myFullscreenMode->Height)];
         }
         
         // Set the view to the window as its content view.
@@ -237,6 +239,8 @@
     
     [myWindow release];
     [myOGLView release];
+    
+    delete myFullscreenMode;
     
     [super dealloc];
 }
@@ -279,30 +283,8 @@
 ////////////////////////////////////////////////////////
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
 {
-    if (myRequester == 0) return;
-    
-    // Flip for SFML window coordinate system
-    y = NSHeight([myWindow frame]) - y;
-    
-    // Adjust for view reference instead of window
-    y -= NSHeight([myWindow frame]) - NSHeight([myOGLView frame]);
-    
-    // Convert to screen coordinates
-    NSPoint screenCoord = [myWindow convertBaseToScreen:NSMakePoint(x, y)];
-    
-    // Flip screen coodinates
-    float const screenHeight = NSHeight([[myWindow screen] frame]);
-    screenCoord.y = screenHeight - screenCoord.y;
-    
-    // Place the cursor.
-    CGEventRef event = CGEventCreateMouseEvent(NULL, 
-                                               kCGEventMouseMoved, 
-                                               CGPointMake(screenCoord.x, screenCoord.y), 
-                                               /*we don't care about this : */0);
-    CGEventPost(kCGHIDEventTap, event);
-    CFRelease(event);
-    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.
-    // The event produced will be catched by SFML in sf::Window::FilterEvent.
+    // Forward to...
+    [myOGLView setCursorPositionToX:x Y:y];
 }
 
 
@@ -453,10 +435,10 @@
     // If fullscreen was requested and the mode used to create the window
     // was not the desktop mode, we change the back buffer size of the
     // context.
-    if (myFullscreenMode != sf::VideoMode()) {
+    if (*myFullscreenMode != sf::VideoMode()) {
         CGLContextObj cgcontext = (CGLContextObj)[context CGLContextObj];
         
-        GLint dim[2] = {myFullscreenMode.Width, myFullscreenMode.Height};
+        GLint dim[2] = {myFullscreenMode->Width, myFullscreenMode->Height};
         
         CGLSetParameter(cgcontext, kCGLCPSurfaceBackingSize, dim);
         CGLEnable(cgcontext, kCGLCESurfaceBackingSize);
