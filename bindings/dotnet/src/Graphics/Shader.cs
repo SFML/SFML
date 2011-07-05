@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Collections.Generic;
+using SFML.Window;
 
 namespace SFML
 {
@@ -64,7 +65,7 @@ namespace SFML
             /// <param name="name">Name of the parameter in the shader</param>
             /// <param name="v">Value of the parameter</param>
             ////////////////////////////////////////////////////////////
-            public void SetParameter(string name, Vector2 v)
+            public void SetParameter(string name, Vector2f v)
             {
                 SetParameter(name, v.X, v.Y);
             }

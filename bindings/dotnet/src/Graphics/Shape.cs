@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using SFML.Window;
 
 namespace SFML
 {
@@ -41,9 +42,9 @@ namespace SFML
             /// Position of the object on screen
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Position
+            public override Vector2f Position
             {
-                get { return new Vector2(sfShape_GetX(This), sfShape_GetY(This)); }
+                get { return new Vector2f(sfShape_GetX(This), sfShape_GetY(This)); }
                 set { sfShape_SetPosition(This, value.X, value.Y); }
             }
 
@@ -63,9 +64,9 @@ namespace SFML
             /// Vertical and horizontal scale of the object
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Scale
+            public override Vector2f Scale
             {
-                get { return new Vector2(sfShape_GetScaleX(This), sfShape_GetScaleY(This)); }
+                get { return new Vector2f(sfShape_GetScaleX(This), sfShape_GetScaleY(This)); }
                 set { sfShape_SetScale(This, value.X, value.Y); }
             }
 
@@ -75,9 +76,9 @@ namespace SFML
             /// (center of translation, rotation and scale)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Origin
+            public override Vector2f Origin
             {
-                get { return new Vector2(sfShape_GetOriginX(This), sfShape_GetOriginY(This)); }
+                get { return new Vector2f(sfShape_GetOriginX(This), sfShape_GetOriginY(This)); }
                 set { sfShape_SetOrigin(This, value.X, value.Y); }
             }
 
@@ -111,9 +112,9 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToLocal(Vector2 point)
+            public override Vector2f TransformToLocal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfShape_TransformToLocal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
@@ -127,9 +128,9 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToGlobal(Vector2 point)
+            public override Vector2f TransformToGlobal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfShape_TransformToGlobal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
@@ -142,7 +143,7 @@ namespace SFML
             /// <param name="position">Position of the point</param>
             /// <param name="color">Color of the point</param>
             ////////////////////////////////////////////////////////////
-            public void AddPoint(Vector2 position, Color color)
+            public void AddPoint(Vector2f position, Color color)
             {
                 AddPoint(position, color, Color.Black);
             }
@@ -155,7 +156,7 @@ namespace SFML
             /// <param name="color">Color of the point</param>
             /// <param name="outlineColor">Outline color of the point</param>
             ////////////////////////////////////////////////////////////
-            public void AddPoint(Vector2 position, Color color, Color outlineColor)
+            public void AddPoint(Vector2f position, Color color, Color outlineColor)
             {
                 sfShape_AddPoint(This, position.X, position.Y, color, outlineColor);
             }
@@ -212,7 +213,7 @@ namespace SFML
             /// <param name="index">Index of the point, in range [0, NbPoints - 1]</param>
             /// <param name="position">New position of the index-th point</param>
             ////////////////////////////////////////////////////////////
-            public void SetPointPosition(uint index, Vector2 position)
+            public void SetPointPosition(uint index, Vector2f position)
             {
                 sfShape_SetPointPosition(This, index, position.X, position.Y);
             }
@@ -224,9 +225,9 @@ namespace SFML
             /// <param name="index">Index of the point, in range [0, NbPoints - 1]</param>
             /// <returns>Position of the index-th point</returns>
             ////////////////////////////////////////////////////////////
-            public Vector2 GetPointPosition(uint index)
+            public Vector2f GetPointPosition(uint index)
             {
-                Vector2 Pos;
+                Vector2f Pos;
                 sfShape_GetPointPosition(This, index, out Pos.X, out Pos.Y);
 
                 return Pos;
@@ -290,7 +291,7 @@ namespace SFML
             /// <param name="color">Color used to draw the line</param>
             /// <returns>New line shape built with the given parameters</returns>
             ////////////////////////////////////////////////////////////
-            public static Shape Line(Vector2 p1, Vector2 p2, float thickness, Color color)
+            public static Shape Line(Vector2f p1, Vector2f p2, float thickness, Color color)
             {
                 return Line(p1, p2, thickness, color, 0, Color.White);
             }
@@ -307,7 +308,7 @@ namespace SFML
             /// <param name="outlineColor">Color used to draw the outline</param>
             /// <returns>New line shape built with the given parameters</returns>
             ////////////////////////////////////////////////////////////
-            public static Shape Line(Vector2 p1, Vector2 p2, float thickness, Color color, float outline, Color outlineColor)
+            public static Shape Line(Vector2f p1, Vector2f p2, float thickness, Color color, float outline, Color outlineColor)
             {
                 return new Shape(sfShape_CreateLine(p1.X, p1.Y, p2.X, p2.Y, thickness, color, outline, outlineColor));
             }
@@ -349,7 +350,7 @@ namespace SFML
             /// <param name="color">Color used to fill the circle</param>
             /// <returns>New circle shape built with the given parameters</returns>
             ////////////////////////////////////////////////////////////
-            public static Shape Circle(Vector2 center, float radius, Color color)
+            public static Shape Circle(Vector2f center, float radius, Color color)
             {
                 return Circle(center, radius, color, 0, Color.White);
             }
@@ -365,7 +366,7 @@ namespace SFML
             /// <param name="outlineColor">Color used to draw the outline</param>
             /// <returns>New circle shape built with the given parameters</returns>
             ////////////////////////////////////////////////////////////
-            public static Shape Circle(Vector2 center, float radius, Color color, float outline, Color outlineColor)
+            public static Shape Circle(Vector2f center, float radius, Color color, float outline, Color outlineColor)
             {
                 return new Shape(sfShape_CreateCircle(center.X, center.Y, radius, color, outline, outlineColor));
             }
@@ -497,10 +498,10 @@ namespace SFML
             static extern BlendMode sfShape_GetBlendMode(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfShape_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern void sfShape_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfShape_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern void sfShape_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawShape(IntPtr This, IntPtr Shape);

@@ -258,16 +258,6 @@ CSFML_API void sfRenderWindow_RestoreGLStates(sfRenderWindow* renderWindow);
 CSFML_API void sfRenderWindow_Display(sfRenderWindow* renderWindow);
 
 ////////////////////////////////////////////////////////////
-/// Get the input manager of a window
-///
-/// \param renderWindow : Renderwindow object
-///
-/// \return Reference to the input
-///
-////////////////////////////////////////////////////////////
-CSFML_API const sfInput* sfRenderWindow_GetInput(const sfRenderWindow* renderWindow);
-
-////////////////////////////////////////////////////////////
 /// Limit the framerate to a maximum fixed frequency for a window
 ///
 /// \param renderWindow : Renderwindow object

@@ -43,7 +43,7 @@ namespace SFML
             }
 
             /// <summary>Code of the key (see KeyCode enum)</summary>
-            public KeyCode Code;
+            public Keyboard.Key Code;
 
             /// <summary>Is the Alt modifier pressed?</summary>
             public bool Alt;
@@ -166,7 +166,7 @@ namespace SFML
             }
 
             /// <summary>Code of the button (see MouseButton enum)</summary>
-            public MouseButton Button;
+            public Mouse.Button Button;
 
             /// <summary>X coordinate of the mouse cursor</summary>
             public int X;
@@ -224,7 +224,7 @@ namespace SFML
         /// Joystick axis move event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
-        public class JoyMoveEventArgs : EventArgs
+        public class JoystickMoveEventArgs : EventArgs
         {
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -232,7 +232,7 @@ namespace SFML
             /// </summary>
             /// <param name="e">Joystick move event</param>
             ////////////////////////////////////////////////////////////
-            public JoyMoveEventArgs(JoyMoveEvent e)
+            public JoystickMoveEventArgs(JoystickMoveEvent e)
             {
                 JoystickId = e.JoystickId;
                 Axis       = e.Axis;
@@ -247,7 +247,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public override string ToString()
             {
-                return "[JoyMoveEventArgs]" +
+                return "[JoystickMoveEventArgs]" +
                        " JoystickId(" + JoystickId + ")" +
                        " Axis(" + Axis + ")" +
                        " Position(" + Position + ")";
@@ -257,7 +257,7 @@ namespace SFML
             public uint JoystickId;
 
             /// <summary>Joystick axis (see JoyAxis enum)</summary>
-            public JoyAxis Axis;
+            public Joystick.Axis Axis;
 
             /// <summary>Current position of the axis</summary>
             public float Position;
@@ -268,7 +268,7 @@ namespace SFML
         /// Joystick buttons event parameters
         /// </summary>
         ////////////////////////////////////////////////////////////
-        public class JoyButtonEventArgs : EventArgs
+        public class JoystickButtonEventArgs : EventArgs
         {
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -276,7 +276,7 @@ namespace SFML
             /// </summary>
             /// <param name="e">Joystick button event</param>
             ////////////////////////////////////////////////////////////
-            public JoyButtonEventArgs(JoyButtonEvent e)
+            public JoystickButtonEventArgs(JoystickButtonEvent e)
             {
                 JoystickId = e.JoystickId;
                 Button     = e.Button;
@@ -290,7 +290,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public override string ToString()
             {
-                return "[JoyButtonEventArgs]" +
+                return "[JoystickButtonEventArgs]" +
                        " JoystickId(" + JoystickId + ")" +
                        " Button(" + Button + ")";
             }
@@ -300,6 +300,40 @@ namespace SFML
 
             /// <summary>Index of the button</summary>
             public uint Button;
+        }
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Joystick connection/disconnection event parameters
+        /// </summary>
+        ////////////////////////////////////////////////////////////
+        public class JoystickConnectEventArgs : EventArgs
+        {
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Construct the joystick connect arguments from a joystick connect event
+            /// </summary>
+            /// <param name="e">Joystick button event</param>
+            ////////////////////////////////////////////////////////////
+            public JoystickConnectEventArgs(JoystickConnectEvent e)
+            {
+                JoystickId = e.JoystickId;
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Provide a string describing the object
+            /// </summary>
+            /// <returns>String description of the object</returns>
+            ////////////////////////////////////////////////////////////
+            public override string ToString()
+            {
+                return "[JoystickConnectEventArgs]" +
+                       " JoystickId(" + JoystickId + ")";
+            }
+
+            /// <summary>Index of the joystick which triggered the event</summary>
+            public uint JoystickId;
         }
 
         ////////////////////////////////////////////////////////////

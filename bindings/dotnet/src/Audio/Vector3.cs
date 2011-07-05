@@ -7,12 +7,12 @@ namespace SFML
     {
         ////////////////////////////////////////////////////////////
         /// <summary>
-        /// Vector3 is an utility class for manipulating 3 dimensional
+        /// Vector3f is an utility class for manipulating 3 dimensional
         /// vectors with float components
         /// </summary>
         ////////////////////////////////////////////////////////////
         [StructLayout(LayoutKind.Sequential)]
-        public struct Vector3
+        public struct Vector3f
         {
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -22,7 +22,7 @@ namespace SFML
             /// <param name="y">Y coordinate</param>
             /// <param name="z">Z coordinate</param>
             ////////////////////////////////////////////////////////////
-            public Vector3(float x, float y, float z)
+            public Vector3f(float x, float y, float z)
             {
                 X = x;
                 Y = y;
@@ -36,9 +36,9 @@ namespace SFML
             /// <param name="v">Vector to negate</param>
             /// <returns>-v</returns>
             ////////////////////////////////////////////////////////////
-            public static Vector3 operator -(Vector3 v)
+            public static Vector3f operator -(Vector3f v)
             {
-                return new Vector3(-v.X, -v.Y, -v.Z);
+                return new Vector3f(-v.X, -v.Y, -v.Z);
             }
 
             ////////////////////////////////////////////////////////////
@@ -49,9 +49,9 @@ namespace SFML
             /// <param name="v2">Second vector</param>
             /// <returns>v1 - v2</returns>
             ////////////////////////////////////////////////////////////
-            public static Vector3 operator -(Vector3 v1, Vector3 v2)
+            public static Vector3f operator -(Vector3f v1, Vector3f v2)
             {
-                return new Vector3(v1.X - v2.X, v1.Y - v2.X, v1.Z - v2.Z);
+                return new Vector3f(v1.X - v2.X, v1.Y - v2.X, v1.Z - v2.Z);
             }
 
             ////////////////////////////////////////////////////////////
@@ -62,9 +62,9 @@ namespace SFML
             /// <param name="v2">Second vector</param>
             /// <returns>v1 + v2</returns>
             ////////////////////////////////////////////////////////////
-            public static Vector3 operator +(Vector3 v1, Vector3 v2)
+            public static Vector3f operator +(Vector3f v1, Vector3f v2)
             {
-                return new Vector3(v1.X + v2.X, v1.Y + v2.X, v1.Z + v2.Z);
+                return new Vector3f(v1.X + v2.X, v1.Y + v2.X, v1.Z + v2.Z);
             }
 
             ////////////////////////////////////////////////////////////
@@ -75,9 +75,9 @@ namespace SFML
             /// <param name="x">Scalar value</param>
             /// <returns>v * x</returns>
             ////////////////////////////////////////////////////////////
-            public static Vector3 operator *(Vector3 v, float x)
+            public static Vector3f operator *(Vector3f v, float x)
             {
-                return new Vector3(v.X * x, v.Y * x, v.Z * x);
+                return new Vector3f(v.X * x, v.Y * x, v.Z * x);
             }
 
             ////////////////////////////////////////////////////////////
@@ -88,9 +88,9 @@ namespace SFML
             /// <param name="v">Vector</param>
             /// <returns>x * v</returns>
             ////////////////////////////////////////////////////////////
-            public static Vector3 operator *(float x, Vector3 v)
+            public static Vector3f operator *(float x, Vector3f v)
             {
-                return new Vector3(v.X * x, v.Y * x, v.Z * x);
+                return new Vector3f(v.X * x, v.Y * x, v.Z * x);
             }
 
             ////////////////////////////////////////////////////////////
@@ -101,9 +101,9 @@ namespace SFML
             /// <param name="x">Scalar value</param>
             /// <returns>v / x</returns>
             ////////////////////////////////////////////////////////////
-            public static Vector3 operator /(Vector3 v, float x)
+            public static Vector3f operator /(Vector3f v, float x)
             {
-                return new Vector3(v.X / x, v.Y / x, v.Z / x);
+                return new Vector3f(v.X / x, v.Y / x, v.Z / x);
             }
 
             ////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public override string ToString()
             {
-                return "[Vector3]" +
+                return "[Vector3f]" +
                        " X(" + X + ")" +
                        " Y(" + Y + ")" +
                        " Z(" + Z + ")";

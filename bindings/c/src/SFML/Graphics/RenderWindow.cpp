@@ -58,7 +58,6 @@ sfRenderWindow* sfRenderWindow_Create(sfVideoMode mode, const char* title, unsig
     // Create the window
     sfRenderWindow* renderWindow = new sfRenderWindow;
     renderWindow->This.Create(videoMode, title, style, params);
-    renderWindow->Input.This = &renderWindow->This.GetInput();
     renderWindow->DefaultView.This = renderWindow->This.GetDefaultView();
     renderWindow->CurrentView.This = renderWindow->This.GetView();
 
@@ -85,7 +84,6 @@ sfRenderWindow* sfRenderWindow_CreateFromHandle(sfWindowHandle handle, const sfC
     // Create the window
     sfRenderWindow* renderWindow = new sfRenderWindow;
     renderWindow->This.Create(handle, params);
-    renderWindow->Input.This = &renderWindow->This.GetInput();
     renderWindow->DefaultView.This = renderWindow->This.GetDefaultView();
     renderWindow->CurrentView.This = renderWindow->This.GetView();
 
@@ -317,17 +315,6 @@ void sfRenderWindow_RestoreGLStates(sfRenderWindow* renderWindow)
 void sfRenderWindow_Display(sfRenderWindow* renderWindow)
 {
     CSFML_CALL(renderWindow, Display());
-}
-
-
-////////////////////////////////////////////////////////////
-/// Get the input manager of a window
-////////////////////////////////////////////////////////////
-const sfInput* sfRenderWindow_GetInput(const sfRenderWindow* renderWindow)
-{
-    CSFML_CHECK_RETURN(renderWindow, NULL);
-
-    return &renderWindow->Input;
 }
 
 

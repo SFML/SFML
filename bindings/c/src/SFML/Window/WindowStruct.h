@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Window.hpp>
-#include <SFML/Window/InputStruct.h>
 
 
 ////////////////////////////////////////////////////////////
@@ -38,7 +37,6 @@
 struct sfWindow
 {
     sf::Window This;
-    sfInput    Input;
 };
 
 

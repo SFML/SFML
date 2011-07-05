@@ -369,7 +369,7 @@ namespace SFML
             /// <returns>Converted point</returns>
             ///
             ////////////////////////////////////////////////////////////
-            public Vector2 ConvertCoords(uint x, uint y)
+            public Vector2f ConvertCoords(uint x, uint y)
             {
                 return ConvertCoords(x, y, GetView());
             }
@@ -385,9 +385,9 @@ namespace SFML
             /// <returns>Converted point</returns>
             ///
             ////////////////////////////////////////////////////////////
-            public Vector2 ConvertCoords(uint x, uint y, View view)
+            public Vector2f ConvertCoords(uint x, uint y, View view)
             {
-                Vector2 point;
+                Vector2f point;
                 sfRenderWindow_ConvertCoords(This, x, y, out point.X, out point.Y, view.This);
 
                 return point;
@@ -518,7 +518,6 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             private void Initialize()
             {
-                myInput       = new Input(sfRenderWindow_GetInput(This));
                 myDefaultView = new View(sfRenderWindow_GetDefaultView(This));
                 GC.SuppressFinalize(myDefaultView);
             }
@@ -534,9 +533,6 @@ namespace SFML
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_Destroy(IntPtr This);
-
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfRenderWindow_GetInput(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderWindow_IsOpened(IntPtr This);

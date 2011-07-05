@@ -114,7 +114,7 @@ public :
     /// \return True if the button is pressed, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsButtonPressed(unsigned int joystick, int button);
+    static bool IsButtonPressed(unsigned int joystick, unsigned int button);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current position of a joystick axis

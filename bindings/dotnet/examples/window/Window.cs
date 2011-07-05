@@ -119,7 +119,7 @@ namespace window
         static void OnKeyPressed(object sender, KeyEventArgs e)
         {
             Window window = (Window)sender;
-            if (e.Code == KeyCode.Escape)
+            if (e.Code == Keyboard.Key.Escape)
                 window.Close();
         }
 

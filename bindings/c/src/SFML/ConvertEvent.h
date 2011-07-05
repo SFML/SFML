@@ -79,16 +79,24 @@ inline void ConvertEvent(const sf::Event& SFMLEvent, sfEvent* event)
             event->MouseMove.Y = SFMLEvent.MouseMove.Y;
             break;
 
-        case sfEvtJoyButtonPressed :
-        case sfEvtJoyButtonReleased :
-            event->JoyButton.JoystickId = SFMLEvent.JoyButton.JoystickId;
-            event->JoyButton.Button     = SFMLEvent.JoyButton.Button;
+        case sfEvtJoystickButtonPressed :
+        case sfEvtJoystickButtonReleased :
+            event->JoystickButton.JoystickId = SFMLEvent.JoystickButton.JoystickId;
+            event->JoystickButton.Button     = SFMLEvent.JoystickButton.Button;
             break;
 
-        case sfEvtJoyMoved :
-            event->JoyMove.JoystickId = SFMLEvent.JoyMove.JoystickId;
-            event->JoyMove.Axis       = static_cast<sfJoyAxis>(SFMLEvent.JoyMove.Axis);
-            event->JoyMove.Position   = SFMLEvent.JoyMove.Position;
+        case sfEvtJoystickMoved :
+            event->JoystickMove.JoystickId = SFMLEvent.JoystickMove.JoystickId;
+            event->JoystickMove.Axis       = static_cast<sfJoystickAxis>(SFMLEvent.JoystickMove.Axis);
+            event->JoystickMove.Position   = SFMLEvent.JoystickMove.Position;
+            break;
+
+        case sfEvtJoystickConnected :
+            event->JoystickConnect.JoystickId = SFMLEvent.JoystickConnect.JoystickId;
+            break;
+
+        case sfEvtJoystickDisconnected :
+            event->JoystickConnect.JoystickId = SFMLEvent.JoystickConnect.JoystickId;
             break;
 
         default :

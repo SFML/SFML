@@ -70,9 +70,12 @@
     <Compile Include="ContextSettings.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventArgs.cs" />
-    <Compile Include="Input.cs" />
+    <Compile Include="Joystick.cs" />
+    <Compile Include="Keyboard.cs" />
     <Compile Include="LoadingFailedException.cs" />
+    <Compile Include="Mouse.cs" />
     <Compile Include="ObjectBase.cs" />
+    <Compile Include="Vector2.cs" />
     <Compile Include="VideoMode.cs" />
     <Compile Include="Window.cs" />
   </ItemGroup>

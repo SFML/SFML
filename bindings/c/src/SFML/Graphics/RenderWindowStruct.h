@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/ViewStruct.h>
-#include <SFML/Window/InputStruct.h>
 
 
 ////////////////////////////////////////////////////////////
@@ -39,7 +38,6 @@
 struct sfRenderWindow
 {
     sf::RenderWindow This;
-    sfInput          Input;
     sfView           DefaultView;
     sfView           CurrentView;
 };

@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using SFML.Window;
 
 namespace SFML
 {
@@ -38,7 +39,7 @@ namespace SFML
             /// Position of the object on screen
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public abstract Vector2 Position {get; set;}
+            public abstract Vector2f Position { get; set; }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -52,7 +53,7 @@ namespace SFML
             /// Vertical and horizontal scale of the object
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public abstract Vector2 Scale {get; set;}
+            public abstract Vector2f Scale { get; set; }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -60,7 +61,7 @@ namespace SFML
             /// (center of translation, rotation and scale)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public abstract Vector2 Origin {get; set;}
+            public abstract Vector2f Origin { get; set; }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -84,7 +85,7 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public abstract Vector2 TransformToLocal(Vector2 point);
+            public abstract Vector2f TransformToLocal(Vector2f point);
 
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -94,7 +95,7 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public abstract Vector2 TransformToGlobal(Vector2 point);
+            public abstract Vector2f TransformToGlobal(Vector2f point);
 
             ////////////////////////////////////////////////////////////
             /// <summary>

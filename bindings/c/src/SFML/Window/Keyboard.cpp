@@ -25,51 +25,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Joystick.hpp>
-#include <SFML/Window/JoystickManager.hpp>
-
-
-namespace sf
-{
-////////////////////////////////////////////////////////////
-bool Joystick::IsConnected(unsigned int joystick)
-{
-    return priv::JoystickManager::GetInstance().GetState(joystick).Connected;
-}
+#include <SFML/Window/Keyboard.h>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Internal.h>
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Joystick::GetButtonCount(unsigned int joystick)
-{
-    return priv::JoystickManager::GetInstance().GetCapabilities(joystick).ButtonCount;
-}
-
-
+/// Check if a key is pressed
 ////////////////////////////////////////////////////////////
-bool Joystick::HasAxis(unsigned int joystick, Axis axis)
+sfBool sfKeyboard_IsKeyPressed(sfKeyCode key)
 {
-    return priv::JoystickManager::GetInstance().GetCapabilities(joystick).Axes[axis];
+    return sf::Keyboard::IsKeyPressed(static_cast<sf::Keyboard::Key>(key));
 }
-
-
-////////////////////////////////////////////////////////////
-bool Joystick::IsButtonPressed(unsigned int joystick, unsigned int button)
-{
-    return priv::JoystickManager::GetInstance().GetState(joystick).Buttons[button];
-}
-
-
-////////////////////////////////////////////////////////////
-float Joystick::GetAxisPosition(unsigned int joystick, Axis axis)
-{
-    return priv::JoystickManager::GetInstance().GetState(joystick).Axes[axis];
-}
-
-
-////////////////////////////////////////////////////////////
-void Joystick::Update()
-{
-    return priv::JoystickManager::GetInstance().Update();
-}
-
-} // namespace sf

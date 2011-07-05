@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using SFML.Window;
 
 namespace SFML
 {
@@ -42,7 +43,7 @@ namespace SFML
             /// <param name="center">Center of the view</param>
             /// <param name="size">Size of the view</param>
             ////////////////////////////////////////////////////////////
-            public View(Vector2 center, Vector2 size) :
+            public View(Vector2f center, Vector2f size) :
                 base(sfView_Create())
             {
                 this.Center = center;
@@ -65,9 +66,9 @@ namespace SFML
             /// Center of the view
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public Vector2 Center
+            public Vector2f Center
             {
-                get {return new Vector2(sfView_GetCenterX(This), sfView_GetCenterY(This));}
+                get {return new Vector2f(sfView_GetCenterX(This), sfView_GetCenterY(This));}
                 set {sfView_SetCenter(This, value.X, value.Y);}
             }
 
@@ -76,9 +77,9 @@ namespace SFML
             /// Half-size of the view
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public Vector2 Size
+            public Vector2f Size
             {
-                get {return new Vector2(sfView_GetWidth(This), sfView_GetHeight(This));}
+                get {return new Vector2f(sfView_GetWidth(This), sfView_GetHeight(This));}
                 set {sfView_SetSize(This, value.X, value.Y);}
             }
 
@@ -122,7 +123,7 @@ namespace SFML
             /// </summary>
             /// <param name="offset">Offset to move the view</param>
             ////////////////////////////////////////////////////////////
-            public void Move(Vector2 offset)
+            public void Move(Vector2f offset)
             {
                 sfView_Move(This, offset.X, offset.Y);
             }

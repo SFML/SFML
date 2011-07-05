@@ -1,6 +1,7 @@
 using System;
 using System.Security;
 using System.Runtime.InteropServices;
+using SFML.Window;
 
 namespace SFML
 {
@@ -100,9 +101,9 @@ namespace SFML
             /// Position of the object on screen
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Position
+            public override Vector2f Position
             {
-                get { return new Vector2(sfText_GetX(This), sfText_GetY(This)); }
+                get { return new Vector2f(sfText_GetX(This), sfText_GetY(This)); }
                 set { sfText_SetPosition(This, value.X, value.Y); }
             }
 
@@ -122,9 +123,9 @@ namespace SFML
             /// Vertical and horizontal scale of the object
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Scale
+            public override Vector2f Scale
             {
-                get { return new Vector2(sfText_GetScaleX(This), sfText_GetScaleY(This)); }
+                get { return new Vector2f(sfText_GetScaleX(This), sfText_GetScaleY(This)); }
                 set { sfText_SetScale(This, value.X, value.Y); }
             }
 
@@ -134,9 +135,9 @@ namespace SFML
             /// (center of translation, rotation and scale)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Origin
+            public override Vector2f Origin
             {
-                get { return new Vector2(sfText_GetOriginX(This), sfText_GetOriginY(This)); }
+                get { return new Vector2f(sfText_GetOriginX(This), sfText_GetOriginY(This)); }
                 set { sfText_SetOrigin(This, value.X, value.Y); }
             }
 
@@ -170,9 +171,9 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToLocal(Vector2 point)
+            public override Vector2f TransformToLocal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfText_TransformToLocal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
@@ -186,9 +187,9 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToGlobal(Vector2 point)
+            public override Vector2f TransformToGlobal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfText_TransformToGlobal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
@@ -282,9 +283,9 @@ namespace SFML
             /// <param name="index">Index of the character</param>
             /// <returns>Position of the Index-th character (end of text if Index is out of range)</returns>
             ////////////////////////////////////////////////////////////
-            public Vector2 GetCharacterPos(uint index)
+            public Vector2f GetCharacterPos(uint index)
             {
-                Vector2 Pos;
+                Vector2f Pos;
                 sfText_GetCharacterPos(This, index, out Pos.X, out Pos.Y);
                 
                 return Pos;
@@ -411,10 +412,10 @@ namespace SFML
             static extern BlendMode sfText_GetBlendMode(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfText_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern Vector2f sfText_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfText_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern Vector2f sfText_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawText(IntPtr This, IntPtr String);
