@@ -27,7 +27,7 @@ namespace opengl
 
             // Create a text to display
             Text text = new Text("SFML / OpenGL demo");
-            text.Position = new Vector2(250.0F, 450.0F);
+            text.Position = new Vector2f(250.0F, 450.0F);
             text.Color = new Color(255, 255, 255, 170);
 
             // Load an OpenGL texture.
@@ -83,8 +83,8 @@ namespace opengl
                 Gl.glClear(Gl.GL_DEPTH_BUFFER_BIT);
 
                 // We get the position of the mouse cursor, so that we can move the box accordingly
-                float x =  window.Input.GetMouseX() * 200.0F / window.Width  - 100.0F;
-                float y = -window.Input.GetMouseY() * 200.0F / window.Height + 100.0F;
+                float x =  window.GetCursorPosition().X * 200.0F / window.Width  - 100.0F;
+                float y = -window.GetCursorPosition().Y * 200.0F / window.Height + 100.0F;
 
                 // Apply some transformations
                 time += window.GetFrameTime() / 1000.0F;
@@ -159,7 +159,7 @@ namespace opengl
         static void OnKeyPressed(object sender, KeyEventArgs e)
         {
             RenderWindow window = (RenderWindow)sender;
-            if (e.Code == KeyCode.Escape)
+            if (e.Code == Keyboard.Key.Escape)
                 window.Close();
         }
 

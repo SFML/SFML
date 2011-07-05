@@ -25,51 +25,29 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Joystick.hpp>
-#include <SFML/Window/JoystickManager.hpp>
+#include <SFML/Window/Mouse.h>
+#include <SFML/Window/Mouse.hpp>
+#include <SFML/Internal.h>
 
 
-namespace sf
-{
 ////////////////////////////////////////////////////////////
-bool Joystick::IsConnected(unsigned int joystick)
+/// Check if a mouse button is pressed
+////////////////////////////////////////////////////////////
+sfBool sfMouse_IsButtonPressed(sfMouseButton button)
 {
-    return priv::JoystickManager::GetInstance().GetState(joystick).Connected;
+    return sf::Mouse::IsButtonPressed(static_cast<sf::Mouse::Button>(button)) ? sfTrue : sfFalse;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Joystick::GetButtonCount(unsigned int joystick)
-{
-    return priv::JoystickManager::GetInstance().GetCapabilities(joystick).ButtonCount;
-}
-
-
+/// Get the current position of the mouse
 ////////////////////////////////////////////////////////////
-bool Joystick::HasAxis(unsigned int joystick, Axis axis)
+void sfMouse_GetPosition(int* x, int* y)
 {
-    return priv::JoystickManager::GetInstance().GetCapabilities(joystick).Axes[axis];
+    sf::Vector2i position = sf::Mouse::GetPosition();
+
+    if (x)
+        *x = position.x;
+    if (y)
+        *y = position.y;
 }
-
-
-////////////////////////////////////////////////////////////
-bool Joystick::IsButtonPressed(unsigned int joystick, unsigned int button)
-{
-    return priv::JoystickManager::GetInstance().GetState(joystick).Buttons[button];
-}
-
-
-////////////////////////////////////////////////////////////
-float Joystick::GetAxisPosition(unsigned int joystick, Axis axis)
-{
-    return priv::JoystickManager::GetInstance().GetState(joystick).Axes[axis];
-}
-
-
-////////////////////////////////////////////////////////////
-void Joystick::Update()
-{
-    return priv::JoystickManager::GetInstance().Update();
-}
-
-} // namespace sf

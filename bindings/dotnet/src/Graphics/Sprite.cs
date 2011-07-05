@@ -1,6 +1,7 @@
 using System;
 using System.Security;
 using System.Runtime.InteropServices;
+using SFML.Window;
 
 namespace SFML
 {
@@ -53,9 +54,9 @@ namespace SFML
             /// Position of the object on screen
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Position
+            public override Vector2f Position
             {
-                get { return new Vector2(sfSprite_GetX(This), sfSprite_GetY(This)); }
+                get { return new Vector2f(sfSprite_GetX(This), sfSprite_GetY(This)); }
                 set { sfSprite_SetPosition(This, value.X, value.Y); }
             }
 
@@ -75,9 +76,9 @@ namespace SFML
             /// Vertical and horizontal scale of the object
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Scale
+            public override Vector2f Scale
             {
-                get { return new Vector2(sfSprite_GetScaleX(This), sfSprite_GetScaleY(This)); }
+                get { return new Vector2f(sfSprite_GetScaleX(This), sfSprite_GetScaleY(This)); }
                 set { sfSprite_SetScale(This, value.X, value.Y); }
             }
 
@@ -87,9 +88,9 @@ namespace SFML
             /// (center of translation, rotation and scale)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Origin
+            public override Vector2f Origin
             {
-                get { return new Vector2(sfSprite_GetOriginX(This), sfSprite_GetOriginY(This)); }
+                get { return new Vector2f(sfSprite_GetOriginX(This), sfSprite_GetOriginY(This)); }
                 set { sfSprite_SetOrigin(This, value.X, value.Y); }
             }
 
@@ -123,9 +124,9 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToLocal(Vector2 point)
+            public override Vector2f TransformToLocal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfSprite_TransformToLocal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
@@ -139,9 +140,9 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToGlobal(Vector2 point)
+            public override Vector2f TransformToGlobal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfSprite_TransformToGlobal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
@@ -347,10 +348,10 @@ namespace SFML
             static extern BlendMode sfSprite_GetBlendMode(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfSprite_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern Vector2f sfSprite_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfSprite_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern Vector2f sfSprite_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawSprite(IntPtr This, IntPtr Sprite);

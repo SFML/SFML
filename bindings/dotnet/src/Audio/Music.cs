@@ -159,9 +159,9 @@ namespace SFML
             /// 3D position of the music. Default value is (0, 0, 0)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public Vector3 Position
+            public Vector3f Position
             {
-                get {Vector3 v; sfMusic_GetPosition(This, out v.X, out v.Y, out v.Z); return v;}
+                get {Vector3f v; sfMusic_GetPosition(This, out v.X, out v.Y, out v.Z); return v;}
                 set {sfMusic_SetPosition(This, value.X, value.Y, value.Z);}
             }
 

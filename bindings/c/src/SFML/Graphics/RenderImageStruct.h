@@ -31,7 +31,6 @@
 #include <SFML/Graphics/RenderImage.hpp>
 #include <SFML/Graphics/ImageStruct.h>
 #include <SFML/Graphics/ViewStruct.h>
-#include <SFML/Window/InputStruct.h>
 
 
 ////////////////////////////////////////////////////////////

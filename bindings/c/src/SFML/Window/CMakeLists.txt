@@ -8,9 +8,12 @@ set(SRC
     ${SRCROOT}/ContextStruct.h
     ${INCROOT}/Context.h
     ${INCROOT}/Event.h
-    ${SRCROOT}/Input.cpp
-    ${SRCROOT}/InputStruct.h
-    ${INCROOT}/Input.h
+    ${SRCROOT}/Joystick.cpp
+    ${SRCROOT}/Keyboard.cpp
+    ${SRCROOT}/Mouse.cpp
+    ${INCROOT}/Joystick.h
+    ${INCROOT}/Keyboard.h
+    ${INCROOT}/Mouse.h
     ${INCROOT}/Types.h
     ${SRCROOT}/VideoMode.cpp
     ${INCROOT}/VideoMode.h

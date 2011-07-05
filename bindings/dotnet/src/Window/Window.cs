@@ -79,7 +79,6 @@ namespace SFML
             public Window(VideoMode mode, string title, Styles style, ContextSettings settings) :
                 base(sfWindow_Create(mode, title, style, ref settings))
             {
-                myInput = new Input(sfWindow_GetInput(This));
             }
 
             ////////////////////////////////////////////////////////////
@@ -103,17 +102,6 @@ namespace SFML
             public Window(IntPtr Handle, ContextSettings settings) :
                 base(sfWindow_CreateFromHandle(Handle, ref settings))
             {
-                myInput = new Input(sfWindow_GetInput(This));
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Input manager of the window
-            /// </summary>
-            ////////////////////////////////////////////////////////////
-            public Input Input
-            {
-                get {return myInput;}
             }
 
             ////////////////////////////////////////////////////////////
@@ -213,6 +201,19 @@ namespace SFML
             public virtual void SetCursorPosition(uint x, uint y)
             {
                 sfWindow_SetCursorPosition(This, x, y);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Get the position of the mouse cursor
+            /// </summary>
+            /// <returns>The current position of the mouse cursor, relative to the window</returns>
+            ////////////////////////////////////////////////////////////
+            public virtual Vector2i GetCursorPosition()
+            {
+                Vector2i position;
+                sfWindow_GetCursorPosition(This, out position.X, out position.Y);
+                return position;
             }
 
             ////////////////////////////////////////////////////////////
@@ -469,19 +470,29 @@ namespace SFML
                             GainedFocus(this, EventArgs.Empty);
                         break;
 
-                    case EventType.JoyButtonPressed :
-                        if (JoyButtonPressed != null)
-                            JoyButtonPressed(this, new JoyButtonEventArgs(e.JoyButton));
+                    case EventType.JoystickButtonPressed:
+                        if (JoystickButtonPressed != null)
+                            JoystickButtonPressed(this, new JoystickButtonEventArgs(e.JoystickButton));
                         break;
 
-                    case EventType.JoyButtonReleased :
-                        if (JoyButtonReleased != null)
-                            JoyButtonReleased(this, new JoyButtonEventArgs(e.JoyButton));
+                    case EventType.JoystickButtonReleased :
+                        if (JoystickButtonReleased != null)
+                            JoystickButtonReleased(this, new JoystickButtonEventArgs(e.JoystickButton));
                         break;
 
-                    case EventType.JoyMoved :
-                        if (JoyMoved != null)
-                            JoyMoved(this, new JoyMoveEventArgs(e.JoyMove));
+                    case EventType.JoystickMoved :
+                        if (JoystickMoved != null)
+                            JoystickMoved(this, new JoystickMoveEventArgs(e.JoystickMove));
+                        break;
+
+                    case EventType.JoystickConnected:
+                        if (JoystickConnected != null)
+                            JoystickConnected(this, new JoystickConnectEventArgs(e.JoystickConnect));
+                        break;
+
+                    case EventType.JoystickDisconnected:
+                        if (JoystickDisconnected != null)
+                            JoystickDisconnected(this, new JoystickConnectEventArgs(e.JoystickConnect));
                         break;
 
                     case EventType.KeyPressed :
@@ -580,16 +591,20 @@ namespace SFML
             /// <summary>Event handler for the MouseLeft event</summary>
             public event EventHandler MouseLeft = null;
 
-            /// <summary>Event handler for the JoyButtonPressed event</summary>
-            public event EventHandler<JoyButtonEventArgs> JoyButtonPressed = null;
+            /// <summary>Event handler for the JoystickButtonPressed event</summary>
+            public event EventHandler<JoystickButtonEventArgs> JoystickButtonPressed = null;
 
-            /// <summary>Event handler for the JoyButtonReleased event</summary>
-            public event EventHandler<JoyButtonEventArgs> JoyButtonReleased = null;
+            /// <summary>Event handler for the JoystickButtonReleased event</summary>
+            public event EventHandler<JoystickButtonEventArgs> JoystickButtonReleased = null;
 
-            /// <summary>Event handler for the JoyMoved event</summary>
-            public event EventHandler<JoyMoveEventArgs> JoyMoved = null;
+            /// <summary>Event handler for the JoystickMoved event</summary>
+            public event EventHandler<JoystickMoveEventArgs> JoystickMoved = null;
 
-            protected Input myInput = null;
+            /// <summary>Event handler for the JoystickConnected event</summary>
+            public event EventHandler<JoystickConnectEventArgs> JoystickConnected = null;
+
+            /// <summary>Event handler for the JoystickDisconnected event</summary>
+            public event EventHandler<JoystickConnectEventArgs> JoystickDisconnected = null;
 
             #region Imports
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
@@ -600,9 +615,6 @@ namespace SFML
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Destroy(IntPtr This);
-
-            [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfWindow_GetInput(IntPtr This);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfWindow_IsOpened(IntPtr This);
@@ -636,6 +648,9 @@ namespace SFML
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetCursorPosition(IntPtr This, uint X, uint Y);
+
+            [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern void sfWindow_GetCursorPosition(IntPtr This, out int X, out int Y);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetPosition(IntPtr This, int X, int Y);

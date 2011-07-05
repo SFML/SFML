@@ -53,7 +53,6 @@ sfWindow* sfWindow_Create(sfVideoMode mode, const char* title, unsigned long sty
     // Create the window
     sfWindow* window = new sfWindow;
     window->This.Create(videoMode, title, style, params);
-    window->Input.This = &window->This.GetInput();
 
     return window;
 }
@@ -78,7 +77,6 @@ sfWindow* sfWindow_CreateFromHandle(sfWindowHandle handle, const sfContextSettin
     // Create the window
     sfWindow* window = new sfWindow;
     window->This.Create(handle, params);
-    window->Input.This = &window->This.GetInput();
 
     return window;
 }
@@ -221,6 +219,21 @@ void sfWindow_SetCursorPosition(sfWindow* window, unsigned int left, unsigned in
 
 
 ////////////////////////////////////////////////////////////
+/// Get the position of the mouse cursor on a window
+////////////////////////////////////////////////////////////
+void sfWindow_GetCursorPosition(sfWindow* window, int* left, int* top)
+{
+    CSFML_CHECK(window);
+    sf::Vector2i position = window->This.GetCursorPosition();
+
+    if (left)
+        *left = position.x;
+    if (top)
+        *top = position.y;
+}
+
+
+////////////////////////////////////////////////////////////
 /// Change the position of a window on screen.
 /// Only works for top-level windows
 ////////////////////////////////////////////////////////////
@@ -291,17 +304,6 @@ sfBool sfWindow_SetActive(sfWindow* window, sfBool active)
 void sfWindow_Display(sfWindow* window)
 {
     CSFML_CALL(window, Display())
-}
-
-
-////////////////////////////////////////////////////////////
-/// Get the input manager of a window
-////////////////////////////////////////////////////////////
-const sfInput* sfWindow_GetInput(sfWindow* window)
-{
-    CSFML_CHECK_RETURN(window, NULL);
-
-    return &window->Input;
 }
 
 

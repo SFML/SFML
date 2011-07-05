@@ -185,7 +185,17 @@ CSFML_API void sfWindow_ShowMouseCursor(sfWindow* window, sfBool show);
 /// \param top :    Top coordinate of the cursor, relative to the window
 ///
 ////////////////////////////////////////////////////////////
-CSFML_API void sfWindow_SetCursorPosition(sfWindow* window, unsigned int left, unsigned int Top);
+CSFML_API void sfWindow_SetCursorPosition(sfWindow* window, unsigned int left, unsigned int top);
+
+////////////////////////////////////////////////////////////
+/// Get the position of the mouse cursor on a window
+///
+/// \param window : Window object
+/// \param left :   Left coordinate of the cursor, relative to the window
+/// \param top :    Top coordinate of the cursor, relative to the window
+///
+////////////////////////////////////////////////////////////
+CSFML_API void sfWindow_GetCursorPosition(sfWindow* window, int* left, int* top);
 
 ////////////////////////////////////////////////////////////
 /// Change the position of a window on screen.
@@ -265,16 +275,6 @@ CSFML_API sfBool sfWindow_SetActive(sfWindow* window, sfBool active);
 ///
 ////////////////////////////////////////////////////////////
 CSFML_API void sfWindow_Display(sfWindow* window);
-
-////////////////////////////////////////////////////////////
-/// Get the input manager of a window
-///
-/// \param window : Window object
-///
-/// \return Reference to the input
-///
-////////////////////////////////////////////////////////////
-CSFML_API const sfInput* sfWindow_GetInput(sfWindow* window);
 
 ////////////////////////////////////////////////////////////
 /// Limit the framerate to a maximum fixed frequency for a window

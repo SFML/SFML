@@ -125,7 +125,7 @@ namespace shader
             shaderText = new Text();
             shaderText.Font = font;
             shaderText.CharacterSize = 20;
-            shaderText.Position = new Vector2(5.0F, 0.0F);
+            shaderText.Position = new Vector2f(5.0F, 0.0F);
             shaderText.Color = new Color(250, 100, 30);
             shaderText.DisplayedString = "Background shader: \"" + backgroundShader.Name + "\"\n" +
                                          "Flower shader: \"" + entityShader.Name + "\"\n" +
@@ -135,7 +135,7 @@ namespace shader
             Text infoText = new Text();
             infoText.Font = font;
             infoText.CharacterSize = 20;
-            infoText.Position = new Vector2(5.0F, 500.0F);
+            infoText.Position = new Vector2f(5.0F, 500.0F);
             infoText.Color = new Color(250, 100, 30);
             infoText.DisplayedString = "Move your mouse to change the shaders' parameters\n" +
                                        "Press numpad 1 to change the background shader\n" +
@@ -149,12 +149,9 @@ namespace shader
                 // Process events
                 window.DispatchEvents();
 
-                // TOFIX -- using window.Input together with image.Draw apparently causes a memory corruption
                 // Get the mouse position in the range [0, 1]
-                //float x = window.Input.GetMouseX() / (float)window.Width;
-                //float y = window.Input.GetMouseY() / (float)window.Height;
-                float x = (float)(Math.Cos(time * 1.3) + 1) * 0.5F;
-                float y = (float)(Math.Sin(time * 0.8) + 1) * 0.5F;
+                float x = window.GetCursorPosition().X / (float)window.Width;
+                float y = window.GetCursorPosition().Y / (float)window.Height;
 
                 // Update the shaders
                 backgroundShader.Update(x, y);
@@ -162,10 +159,10 @@ namespace shader
                 globalShader.Update(x, y);
 
                 // Animate the sprite
-                time += window.GetFrameTime();
+                time += window.GetFrameTime() / 1000.0F;
                 float entityX = (float)(Math.Cos(time * 1.3) + 1.2) * 300;
                 float entityY = (float)(Math.Cos(time * 0.8) + 1.2) * 200;
-                entity.Position = new Vector2(entityX, entityY);
+                entity.Position = new Vector2f(entityX, entityY);
                 entity.Rotation = time * 100;
 
                 // Draw the background and the moving entity to the render image
@@ -193,7 +190,7 @@ namespace shader
         {
             // Define a string for displaying the error message
             Text error = new Text("Sorry, your system doesn't support shaders");
-            error.Position = new Vector2(100.0F, 250.0F);
+            error.Position = new Vector2f(100.0F, 250.0F);
             error.Color = new Color(200, 100, 150);
 
             // Start the game loop
@@ -230,15 +227,15 @@ namespace shader
             RenderWindow window = (RenderWindow)sender;
 
             // Escape key : exit
-            if (e.Code == KeyCode.Escape)
+            if (e.Code == Keyboard.Key.Escape)
                 window.Close();
 
             // Numpad : switch effect
             switch (e.Code)
             {
-                case KeyCode.Numpad1 : backgroundShader.GotoNext(); break;
-                case KeyCode.Numpad2 : entityShader.GotoNext();     break;
-                case KeyCode.Numpad3 : globalShader.GotoNext();     break;
+                case Keyboard.Key.Numpad1: backgroundShader.GotoNext(); break;
+                case Keyboard.Key.Numpad2: entityShader.GotoNext(); break;
+                case Keyboard.Key.Numpad3: globalShader.GotoNext(); break;
             }
 
             // Update the text

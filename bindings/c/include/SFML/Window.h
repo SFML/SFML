@@ -32,7 +32,9 @@
 #include <SFML/System.h>
 #include <SFML/Window/Context.h>
 #include <SFML/Window/Event.h>
-#include <SFML/Window/Input.h>
+#include <SFML/Window/Joystick.h>
+#include <SFML/Window/Keyboard.h>
+#include <SFML/Window/Mouse.h>
 #include <SFML/Window/VideoMode.h>
 #include <SFML/Window/Window.h>
 

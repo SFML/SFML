@@ -31,9 +31,9 @@ namespace SFML
             /// 3D position of the listener (default is (0, 0, 0))
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public static Vector3 Position
+            public static Vector3f Position
             {
-                get {Vector3 v; sfListener_GetPosition(out v.X, out v.Y, out v.Z); return v;}
+                get {Vector3f v; sfListener_GetPosition(out v.X, out v.Y, out v.Z); return v;}
                 set {sfListener_SetPosition(value.X, value.Y, value.Z);}
             }
 
@@ -42,9 +42,9 @@ namespace SFML
             /// 3D direction of the listener (default is (0, 0, -1))
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public static Vector3 Direction
+            public static Vector3f Direction
             {
-                get {Vector3 v; sfListener_GetDirection(out v.X, out v.Y, out v.Z); return v;}
+                get {Vector3f v; sfListener_GetDirection(out v.X, out v.Y, out v.Z); return v;}
                 set {sfListener_SetDirection(value.X, value.Y, value.Z);}
             }
 

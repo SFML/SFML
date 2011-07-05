@@ -25,51 +25,60 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Joystick.h>
 #include <SFML/Window/Joystick.hpp>
-#include <SFML/Window/JoystickManager.hpp>
+#include <SFML/Internal.h>
 
 
-namespace sf
-{
 ////////////////////////////////////////////////////////////
-bool Joystick::IsConnected(unsigned int joystick)
+/// Check if a joystick is connected
+////////////////////////////////////////////////////////////
+sfBool sfJoystick_IsConnected(unsigned int joystick)
 {
-    return priv::JoystickManager::GetInstance().GetState(joystick).Connected;
+    return sf::Joystick::IsConnected(joystick) ? sfTrue : sfFalse;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Joystick::GetButtonCount(unsigned int joystick)
+/// Return the number of buttons supported by a joystick
+////////////////////////////////////////////////////////////
+unsigned int sfJoystick_GetButtonCount(unsigned int joystick)
 {
-    return priv::JoystickManager::GetInstance().GetCapabilities(joystick).ButtonCount;
+    return sf::Joystick::GetButtonCount(joystick);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Joystick::HasAxis(unsigned int joystick, Axis axis)
+/// Check if a joystick supports a given axis
+////////////////////////////////////////////////////////////
+sfBool sfJoystick_HasAxis(unsigned int joystick, sfJoystickAxis axis)
 {
-    return priv::JoystickManager::GetInstance().GetCapabilities(joystick).Axes[axis];
+    return sf::Joystick::HasAxis(joystick, static_cast<sf::Joystick::Axis>(axis)) ? sfTrue : sfFalse;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Joystick::IsButtonPressed(unsigned int joystick, unsigned int button)
+/// Check if a joystick button is pressed
+////////////////////////////////////////////////////////////
+sfBool sfJoystick_IsButtonPressed(unsigned int joystick, unsigned int button)
 {
-    return priv::JoystickManager::GetInstance().GetState(joystick).Buttons[button];
+    return sf::Joystick::IsButtonPressed(joystick, button) ? sfTrue : sfFalse;
 }
 
 
 ////////////////////////////////////////////////////////////
-float Joystick::GetAxisPosition(unsigned int joystick, Axis axis)
+/// Get the current position of a joystick axis
+////////////////////////////////////////////////////////////
+float sfJoystick_GetAxisPosition(unsigned int joystick, sfJoystickAxis axis)
 {
-    return priv::JoystickManager::GetInstance().GetState(joystick).Axes[axis];
+    return sf::Joystick::GetAxisPosition(joystick, static_cast<sf::Joystick::Axis>(axis));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Joystick::Update()
+/// Update the states of all joysticks
+////////////////////////////////////////////////////////////
+void sfJoystick_Update(void)
 {
-    return priv::JoystickManager::GetInstance().Update();
+    sf::Joystick::Update();
 }
-
-} // namespace sf

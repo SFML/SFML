@@ -69,7 +69,7 @@ namespace SFML
             /// <param name="y">Y coordinate of the point to convert, relative to the target</param>
             /// <returns>Converted point</returns>
             ////////////////////////////////////////////////////////////
-            Vector2 ConvertCoords(uint x, uint y);
+            Vector2f ConvertCoords(uint x, uint y);
 
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -81,7 +81,7 @@ namespace SFML
             /// <param name="view">Target view to convert the point to</param>
             /// <returns>Converted point</returns>
             ////////////////////////////////////////////////////////////
-            Vector2 ConvertCoords(uint x, uint y, View view);
+            Vector2f ConvertCoords(uint x, uint y, View view);
 
             ////////////////////////////////////////////////////////////
             /// <summary>

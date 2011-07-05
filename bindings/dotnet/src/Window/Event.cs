@@ -7,168 +7,6 @@ namespace SFML
     {
         ////////////////////////////////////////////////////////////
         /// <summary>
-        /// Definition of key codes for keyboard events
-        /// </summary>
-        ////////////////////////////////////////////////////////////
-        public enum KeyCode
-        {
-            A = 'a',
-            B = 'b',
-            C = 'c',
-            D = 'd',
-            E = 'e',
-            F = 'f',
-            G = 'g',
-            H = 'h',
-            I = 'i',
-            J = 'j',
-            K = 'k',
-            L = 'l',
-            M = 'm',
-            N = 'n',
-            O = 'o',
-            P = 'p',
-            Q = 'q',
-            R = 'r',
-            S = 's',
-            T = 't',
-            U = 'u',
-            V = 'v',
-            W = 'w',
-            X = 'x',
-            Y = 'y',
-            Z = 'z',
-            Num0 = '0',
-            Num1 = '1',
-            Num2 = '2',
-            Num3 = '3',
-            Num4 = '4',
-            Num5 = '5',
-            Num6 = '6',
-            Num7 = '7',
-            Num8 = '8',
-            Num9 = '9', 
-            Escape = 256,
-            LControl,
-            LShift,
-            LAlt,
-            LSystem,      // OS specific key (left side) : windows (Win and Linux), apple (MacOS), ...
-            RControl,
-            RShift,
-            RAlt,
-            RSystem,      // OS specific key (right side) : windows (Win and Linux), apple (MacOS), ...
-            Menu,
-            LBracket,     // [
-            RBracket,     // ]
-            SemiColon,    // ;
-            Comma,        // ,
-            Period,       // .
-            Quote,        // '
-            Slash,        // /
-            BackSlash,
-            Tilde,        // ~
-            Equal,        // =
-            Dash,         // -
-            Space,
-            Return,
-            Back,
-            Tab,
-            PageUp,
-            PageDown,
-            End,
-            Home,
-            Insert,
-            Delete,
-            Add,          // +
-            Subtract,     // -
-            Multiply,     // *
-            Divide,       // /
-            Left,         // Left arrow
-            Right,        // Right arrow
-            Up,           // Up arrow
-            Down,         // Down arrow
-            Numpad0,
-            Numpad1,
-            Numpad2,
-            Numpad3,
-            Numpad4,
-            Numpad5,
-            Numpad6,
-            Numpad7,
-            Numpad8,
-            Numpad9,
-            F1,
-            F2,
-            F3,
-            F4,
-            F5,
-            F6,
-            F7,
-            F8,
-            F9,
-            F10,
-            F11,
-            F12,
-            F13,
-            F14,
-            F15,
-            Pause
-        }
-
-        ////////////////////////////////////////////////////////////
-        /// <summary>
-        /// Definition of button codes for mouse events
-        /// </summary>
-        ////////////////////////////////////////////////////////////
-        public enum MouseButton
-        {
-            /// <summary>Left mouse button</summary>
-            Left,
-
-            /// <summary>Right mouse button</summary>
-            Right,
-
-            /// <summary>Center (wheel) mouse button</summary>
-            Middle,
-
-            /// <summary>First extra button</summary>
-            XButton1,
-
-            /// <summary>Second extra button</summary>
-            XButton2
-        }
-
-        ////////////////////////////////////////////////////////////
-        /// <summary>
-        /// Definition of joystick axis for joystick events
-        /// </summary>
-        ////////////////////////////////////////////////////////////
-        public enum JoyAxis
-        {
-            /// <summary>X axis</summary>
-            AxisX,
-
-            /// <summary>Y axis</summary>
-            AxisY,
-
-            /// <summary>Z axis</summary>
-            AxisZ,
-
-            /// <summary>R axis</summary>
-            AxisR,
-
-            /// <summary>U axis</summary>
-            AxisU,
-
-            /// <summary>V axis</summary>
-            AxisV,
-
-            /// <summary>Point of view</summary>
-            AxisPOV
-        }
-
-        ////////////////////////////////////////////////////////////
-        /// <summary>
         /// Enumeration of the different types of events
         /// </summary>
         ////////////////////////////////////////////////////////////
@@ -214,13 +52,19 @@ namespace SFML
             MouseLeft,
 
             /// <summary>Event triggered when a joystick button is pressed</summary>
-            JoyButtonPressed,
+            JoystickButtonPressed,
 
             /// <summary>Event triggered when a joystick button is released</summary>
-            JoyButtonReleased,
+            JoystickButtonReleased,
 
             /// <summary>Event triggered when a joystick axis moves</summary>
-            JoyMoved
+            JoystickMoved,
+
+            /// <summary>Event triggered when a joystick is connected</summary>
+            JoystickConnected,
+
+            /// <summary>Event triggered when a joystick is disconnected</summary>
+            JoystickDisconnected
         }
 
         ////////////////////////////////////////////////////////////
@@ -232,7 +76,7 @@ namespace SFML
         public struct KeyEvent
         {
             /// <summary>Code of the key (see KeyCode enum)</summary>
-            public KeyCode Code;
+            public Keyboard.Key Code;
 
             /// <summary>Is the Alt modifier pressed?</summary>
             public int Alt;
@@ -283,7 +127,7 @@ namespace SFML
         public struct MouseButtonEvent
         {
             /// <summary>Code of the button (see MouseButton enum)</summary>
-            public MouseButton Button;
+            public Mouse.Button Button;
 
             /// <summary>X coordinate of the mouse cursor</summary>
             public int X;
@@ -316,13 +160,13 @@ namespace SFML
         /// </summary>
         ////////////////////////////////////////////////////////////
         [StructLayout(LayoutKind.Sequential)]
-        public struct JoyMoveEvent
+        public struct JoystickMoveEvent
         {
             /// <summary>Index of the joystick which triggered the event</summary>
             public uint JoystickId;
 
             /// <summary>Joystick axis (see JoyAxis enum)</summary>
-            public JoyAxis Axis;
+            public Joystick.Axis Axis;
 
             /// <summary>Current position of the axis</summary>
             public float Position;
@@ -334,13 +178,25 @@ namespace SFML
         /// </summary>
         ////////////////////////////////////////////////////////////
         [StructLayout(LayoutKind.Sequential)]
-        public struct JoyButtonEvent
+        public struct JoystickButtonEvent
         {
             /// <summary>Index of the joystick which triggered the event</summary>
             public uint JoystickId;
 
             /// <summary>Index of the button</summary>
             public uint Button;
+        }
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Joystick connect event parameters
+        /// </summary>
+        ////////////////////////////////////////////////////////////
+        [StructLayout(LayoutKind.Sequential)]
+        public struct JoystickConnectEvent
+        {
+            /// <summary>Index of the joystick which triggered the event</summary>
+            public uint JoystickId;
         }
 
         ////////////////////////////////////////////////////////////
@@ -370,6 +226,10 @@ namespace SFML
             [FieldOffset(0)]
             public EventType Type;
 
+            /// <summary>Arguments for size events (Resized)</summary>
+            [FieldOffset(4)]
+            public SizeEvent Size;
+
             /// <summary>Arguments for key events (KeyPressed, KeyReleased)</summary>
             [FieldOffset(4)]
             public KeyEvent Key;
@@ -390,17 +250,17 @@ namespace SFML
             [FieldOffset(4)]
             public MouseWheelEvent MouseWheel;
 
-            /// <summary>Arguments for joystick axis events (JoyMoved)</summary>
+            /// <summary>Arguments for joystick axis events (JoystickMoved)</summary>
             [FieldOffset(4)]
-            public JoyMoveEvent JoyMove;
+            public JoystickMoveEvent JoystickMove;
 
-            /// <summary>Arguments for joystick button events (JoyButtonPressed, JoyButtonReleased)</summary>
+            /// <summary>Arguments for joystick button events (JoystickButtonPressed, JoystickButtonReleased)</summary>
             [FieldOffset(4)]
-            public JoyButtonEvent JoyButton;
+            public JoystickButtonEvent JoystickButton;
 
-            /// <summary>Arguments for size events (Resized)</summary>
+            /// <summary>Arguments for joystick connect events (JoystickConnected, JoystickDisconnected)</summary>
             [FieldOffset(4)]
-            public SizeEvent Size;
+            public JoystickConnectEvent JoystickConnect;
         }
     }
 }

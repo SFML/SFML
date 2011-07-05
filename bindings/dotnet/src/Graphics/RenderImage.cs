@@ -134,7 +134,7 @@ namespace SFML
             /// <returns>Converted point</returns>
             ///
             ////////////////////////////////////////////////////////////
-            public Vector2 ConvertCoords(uint x, uint y)
+            public Vector2f ConvertCoords(uint x, uint y)
             {
                 return ConvertCoords(x, y, GetView());
             }
@@ -150,9 +150,9 @@ namespace SFML
             /// <returns>Converted point</returns>
             ///
             ////////////////////////////////////////////////////////////
-            public Vector2 ConvertCoords(uint x, uint y, View view)
+            public Vector2f ConvertCoords(uint x, uint y, View view)
             {
-                Vector2 point;
+                Vector2f point;
                 sfRenderImage_ConvertCoords(This, x, y, out point.X, out point.Y, view.This);
 
                 return point;
