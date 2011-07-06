@@ -192,7 +192,8 @@ sf::Keyboard::Key NonLocalizedKeys(unsigned short keycode);
     // Place the cursor.
     CGEventRef event = CGEventCreateMouseEvent(NULL, 
                                                kCGEventMouseMoved, 
-                                               CGPointMake(screenCoord.x, screenCoord.y), 
+                                               CGPointMake(screenCoord.x, 
+                                                           screenCoord.y), 
                                                /*we don't care about this : */0);
     CGEventPost(kCGHIDEventTap, event);
     CFRelease(event);

@@ -26,7 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/InputImpl.hpp>
-
+#include <SFML/Window/VideoMode.hpp>
+#import <Cocoa/Cocoa.h>
 
 namespace sf
 {
@@ -51,8 +52,11 @@ bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::GetMousePosition()
 {
-	// @to be implemented
-    return Vector2i();
+    // Reverse Y axis to match SFML coord.
+	NSPoint pos = [NSEvent mouseLocation];
+    pos.y = sf::VideoMode::GetDesktopMode().Height - pos.y;
+
+    return Vector2i(pos.x, pos.y);
 }
 
 } // namespace priv
