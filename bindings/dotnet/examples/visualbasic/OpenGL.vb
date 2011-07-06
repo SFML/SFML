@@ -23,7 +23,7 @@ Module OpenGL
 
         ' Create a text to display
         Dim text = New Text("SFML / OpenGL demo")
-        text.Position = New Vector2(250.0F, 450.0F)
+        text.Position = New Vector2f(250.0F, 450.0F)
         text.Color = New Color(255, 255, 255, 170)
 
         ' Load an OpenGL texture.
@@ -70,8 +70,8 @@ Module OpenGL
             Gl.glClear(Gl.GL_DEPTH_BUFFER_BIT)
 
             ' We get the position of the mouse cursor, so that we can move the box accordingly
-            Dim x = window.Input.GetMouseX() * 200.0F / window.Width - 100.0F
-            Dim y = -window.Input.GetMouseY() * 200.0F / window.Height + 100.0F
+            Dim x = window.GetCursorPosition().X * 200.0F / window.Width - 100.0F
+            Dim y = -window.GetCursorPosition().Y * 200.0F / window.Height + 100.0F
 
             ' Apply some transformations
             time += window.GetFrameTime() / 1000.0F
@@ -146,7 +146,7 @@ Module OpenGL
     ''' </summary>
     Sub App_KeyPressed(ByVal sender As Object, ByVal e As KeyEventArgs) Handles window.KeyPressed
         Dim window = CType(sender, RenderWindow)
-        If e.Code = KeyCode.Escape Then
+        If e.Code = Keyboard.Key.Escape Then
             window.Close()
         End If
     End Sub
