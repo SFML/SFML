@@ -38,7 +38,6 @@ namespace
 {
     // OpenGL resources counter and its mutex
     unsigned long count = 0;
-    bool initialized = false;
     sf::Mutex mutex;
 }
 
