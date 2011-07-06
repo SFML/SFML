@@ -28,6 +28,7 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/JoystickManager.hpp>
+#include <SFML/System/Sleep.hpp>
 #include <algorithm>
 #include <cmath>
 
@@ -43,8 +44,8 @@
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-	#include <SFML/Window/OSX/WindowImplCocoa.hpp>
-	typedef sf::priv::WindowImplCocoa WindowImplType;
+    #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+    typedef sf::priv::WindowImplCocoa WindowImplType;
 
 #endif
 

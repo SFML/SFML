@@ -67,8 +67,6 @@ else() # MACOSX
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
         ${SRCROOT}/OSX/cg_sf_conversion.hpp
         ${SRCROOT}/OSX/cg_sf_conversion.cpp
-        ${SRCROOT}/OSX/Joystick.cpp
-        ${SRCROOT}/OSX/Joystick.hpp
         ${SRCROOT}/OSX/InputImpl.cpp
         ${SRCROOT}/OSX/InputImpl.hpp
         ${SRCROOT}/OSX/JoystickImpl.cpp

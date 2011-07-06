@@ -224,7 +224,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)processEventWithBlockingMode:(BOOL)block
+-(void)processEvent
 {
     sf::Err() << "Cannot process event from the view." << std::endl;
 }
