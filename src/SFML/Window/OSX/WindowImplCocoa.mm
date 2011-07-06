@@ -348,8 +348,8 @@ void WindowImplCocoa::SetCursorPosition(unsigned int x, unsigned int y)
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplCocoa::GetCursorPosition() const
 {
-	// @to be implemented
-    return Vector2i();
+	NSPoint pos = [myDelegate cursorPosition];
+    return Vector2i(pos.x, pos.y);
 }
 
     

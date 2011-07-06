@@ -104,12 +104,6 @@ sf::Keyboard::Key NonLocalizedKeys(unsigned short keycode);
 -(void)initModifiersState;
 
 ////////////////////////////////////////////////////////////
-/// Compute the position of the cursor.
-/// 
-////////////////////////////////////////////////////////////
--(NSPoint)cursorPositionFromEvent:(NSEvent *)event;
-
-////////////////////////////////////////////////////////////
 /// Converte the NSEvent mouse button type to SFML type.
 /// 
 ////////////////////////////////////////////////////////////
@@ -904,9 +898,16 @@ sf::Keyboard::Key NonLocalizedKeys(unsigned short keycode);
 
 
 ////////////////////////////////////////////////////////
--(NSPoint)cursorPositionFromEvent:(NSEvent *)event
+-(NSPoint)cursorPositionFromEvent:(NSEvent *)eventOrNil
 {
-    NSPoint loc = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSPoint loc;
+    // If no event given then get current mouse pos.
+    if (eventOrNil == nil) {
+        NSPoint rawPos = [[self window] mouseLocationOutsideOfEventStream];
+        loc = [self convertPoint:rawPos fromView:nil];
+    } else {
+        loc = [self convertPoint:[eventOrNil locationInWindow] fromView:nil];
+    }
     
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;

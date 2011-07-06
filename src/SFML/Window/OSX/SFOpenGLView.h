@@ -100,4 +100,10 @@ namespace sf {
 -(void)enableKeyRepeat;
 -(void)disableKeyRepeat;
 
+////////////////////////////////////////////////////////////
+/// Compute the position of the cursor.
+/// 
+////////////////////////////////////////////////////////////
+-(NSPoint)cursorPositionFromEvent:(NSEvent *)eventOrNil;
+
 @end

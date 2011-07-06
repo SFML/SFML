@@ -287,6 +287,12 @@
     [myOGLView setCursorPositionToX:x Y:y];
 }
 
+////////////////////////////////////////////////////////
+-(NSPoint)cursorPosition
+{
+    return [myOGLView cursorPositionFromEvent:nil];
+}
+
 
 ////////////////////////////////////////////////////////.
 -(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
