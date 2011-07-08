@@ -42,17 +42,28 @@ bool Mouse::IsButtonPressed(Button button)
 ////////////////////////////////////////////////////////////
 Vector2i Mouse::GetPosition()
 {
-    const Window* focusWindow = Window::GetMouseFocusWindow();
-    if (focusWindow)
-    {
-        // Position relative to the focus window
-        return focusWindow->GetCursorPosition();
-    }
-    else
-    {
-        // Desktop position
-        return priv::InputImpl::GetMousePosition();
-    }
+    return priv::InputImpl::GetMousePosition();
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i Mouse::GetPosition(const Window& relativeTo)
+{
+    return priv::InputImpl::GetMousePosition(relativeTo);
+}
+
+
+////////////////////////////////////////////////////////////
+void Mouse::SetPosition(const Vector2i& position)
+{
+    priv::InputImpl::SetMousePosition(position);
+}
+
+
+////////////////////////////////////////////////////////////
+void Mouse::SetPosition(const Vector2i& position, const Window& relativeTo)
+{
+    priv::InputImpl::SetMousePosition(position, relativeTo);
 }
 
 } // namespace sf

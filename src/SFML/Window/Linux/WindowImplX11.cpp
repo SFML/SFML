@@ -303,30 +303,6 @@ void WindowImplX11::ShowMouseCursor(bool show)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetCursorPosition(unsigned int x, unsigned int y)
-{
-    XWarpPointer(myDisplay, None, myWindow, 0, 0, 0, 0, x, y);
-    XFlush(myDisplay);
-}
-
-
-////////////////////////////////////////////////////////////
-Vector2i WindowImplX11::GetCursorPosition() const
-{
-    // we don't care about these but they are required
-    ::Window root, child;
-    int gx, gy;
-    unsigned int buttons;
-
-    int x = 0;
-    int y = 0;
-    XQueryPointer(myDisplay, myWindow, &root, &child, &gx, &gy, &x, &y, &buttons);
-
-    return Vector2i(x, y);
-}
-
-
-////////////////////////////////////////////////////////////
 void WindowImplX11::SetPosition(int x, int y)
 {
     XMoveWindow(myDisplay, myWindow, x, y);

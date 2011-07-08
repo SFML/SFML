@@ -243,21 +243,6 @@ void Window::ShowMouseCursor(bool show)
 
 
 ////////////////////////////////////////////////////////////
-void Window::SetCursorPosition(unsigned int x, unsigned int y)
-{
-    if (myWindow)
-        myWindow->SetCursorPosition(x, y);
-}
-
-
-////////////////////////////////////////////////////////////
-Vector2i Window::GetCursorPosition() const
-{
-    return myWindow ? myWindow->GetCursorPosition() : Vector2i(0, 0);
-}
-
-
-////////////////////////////////////////////////////////////
 void Window::SetPosition(int x, int y)
 {
     if (myWindow)

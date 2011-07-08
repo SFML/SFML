@@ -339,21 +339,6 @@ void WindowImplCocoa::ShowMouseCursor(bool show)
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetCursorPosition(unsigned int x, unsigned int y)
-{
-    [myDelegate setCursorPositionToX:x Y:y];
-}
-
-
-////////////////////////////////////////////////////////////
-Vector2i WindowImplCocoa::GetCursorPosition() const
-{
-	NSPoint pos = [myDelegate cursorPosition];
-    return Vector2i(pos.x, pos.y);
-}
-
-    
-////////////////////////////////////////////////////////////
 void WindowImplCocoa::SetPosition(int x, int y)
 {
     [myDelegate setWindowPositionToX:x Y:y];

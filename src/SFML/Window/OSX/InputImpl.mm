@@ -60,6 +60,28 @@ Vector2i InputImpl::GetMousePosition()
     return Vector2i(pos.x, pos.y);
 }
 
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
+{
+	// @to be implemented
+    return Vector2i();
+}
+
+
+////////////////////////////////////////////////////////////
+void InputImpl::SetMousePosition(const Vector2i& position)
+{
+	// @to be implemented
+}
+
+
+////////////////////////////////////////////////////////////
+void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
+{
+	// @to be implemented
+}
+
 } // namespace priv
 
 } // namespace sf

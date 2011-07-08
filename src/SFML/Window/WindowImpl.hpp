@@ -142,23 +142,6 @@ public :
     virtual void ShowMouseCursor(bool show) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Change the position of the mouse cursor
-    ///
-    /// \param x Left coordinate of the cursor, relative to the window
-    /// \param y Top coordinate of the cursor, relative to the window
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void SetCursorPosition(unsigned int x, unsigned int y) = 0;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the position of the mouse cursor
-    ///
-    /// \return Current mouse cursor position, relative to the window
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual Vector2i GetCursorPosition() const = 0;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///
     /// \param x Left position

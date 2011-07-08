@@ -213,14 +213,46 @@ Vector2i InputImpl::GetMousePosition()
 {
     // we don't care about these but they are required
     ::Window root, child;
-    int wx, wy;
+    int x, y;
+    unsigned int buttons;
+
+    int gx = 0;
+    int gy = 0;
+    XQueryPointer(global.display, global.window, &root, &child, &gx, &gy, &x, &y, &buttons);
+
+    return Vector2i(gx, gy);
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
+{
+    // we don't care about these but they are required
+    ::Window root, child;
+    int gx, gy;
     unsigned int buttons;
 
     int x = 0;
     int y = 0;
-    XQueryPointer(global.display, global.window, &root, &child, &x, &y, &wx, &wy, &buttons);
+    XQueryPointer(global.display, relativeTo.GetSystemHandle(), &root, &child, &gx, &gy, &x, &y, &buttons);
 
     return Vector2i(x, y);
+}
+
+
+////////////////////////////////////////////////////////////
+void InputImpl::SetMousePosition(const Vector2i& position)
+{
+    XWarpPointer(global.display, None, global.window, 0, 0, 0, 0, position.x, position.y);
+    XFlush(global.display);
+}
+
+
+////////////////////////////////////////////////////////////
+void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
+{
+    XWarpPointer(global.display, None, relativeTo.GetSystemHandle(), 0, 0, 0, 0, position.x, position.y);
+    XFlush(global.display);
 }
 
 } // namespace priv

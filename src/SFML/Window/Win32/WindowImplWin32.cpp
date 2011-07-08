@@ -232,26 +232,6 @@ void WindowImplWin32::ShowMouseCursor(bool show)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::SetCursorPosition(unsigned int x, unsigned int y)
-{
-    POINT position = {x, y};
-    ClientToScreen(myHandle, &position);
-    SetCursorPos(position.x, position.y);
-}
-
-
-////////////////////////////////////////////////////////////
-Vector2i WindowImplWin32::GetCursorPosition() const
-{
-    POINT position;
-    GetCursorPos(&position);
-    ScreenToClient(myHandle, &position);
-
-    return Vector2i(position.x, position.y);
-}
-
-
-////////////////////////////////////////////////////////////
 void WindowImplWin32::SetPosition(int x, int y)
 {
     SetWindowPos(myHandle, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);

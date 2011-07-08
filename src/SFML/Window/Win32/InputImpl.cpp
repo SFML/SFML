@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #define _WIN32_WINDOWS 0x0501
 #define _WIN32_WINNT   0x0501
+#include <SFML/Window/Window.hpp>
 #include <SFML/Window/Win32/InputImpl.hpp>
 #include <windows.h>
 
@@ -168,10 +169,35 @@ bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::GetMousePosition()
 {
-    POINT position;
-    GetCursorPos(&position);
+    POINT point;
+    GetCursorPos(&point);
+    return Vector2i(point.x, point.y);
+}
 
-    return Vector2i(position.x, position.y);
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
+{
+    POINT point;
+    GetCursorPos(&point);
+    ScreenToClient(relativeTo.GetSystemHandle(), &point);
+    return Vector2i(point.x, point.y);
+}
+
+
+////////////////////////////////////////////////////////////
+void InputImpl::SetMousePosition(const Vector2i& position)
+{
+    SetCursorPos(position.x, position.y);
+}
+
+
+////////////////////////////////////////////////////////////
+void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
+{
+    POINT point = {position.x, position.y};
+    ClientToScreen(relativeTo.GetSystemHandle(), &point);
+    SetCursorPos(point.x, point.y);
 }
 
 } // namespace priv
