@@ -28,12 +28,67 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/InputImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Window.hpp>
+#include <SFML/System/Err.hpp>
+
 #import <AppKit/AppKit.h>
+#import <SFML/Window/OSX/SFOpenGLView.h>
 
 namespace sf
 {
 namespace priv
 {
+////////////////////////////////////////////////////////////
+/// \brief Extract the dedicated SFOpenGLView from the SFML window
+/// 
+/// \param window a SFML window
+/// \return nil if something went wrong or a SFOpenGLView*.
+///
+////////////////////////////////////////////////////////////    
+SFOpenGLView* GetSFOpenGLViewFromSFMLWindow(const Window& window)
+{
+    id nsHandle = (id)window.GetSystemHandle();
+    
+    // Get our SFOpenGLView from ...
+    SFOpenGLView* view = nil;
+    if ([nsHandle isKindOfClass:[NSWindow class]]) {
+        // If system handle is a window then from its content view.
+        view = [nsHandle contentView];
+        
+        // Subview doesn't match ?
+        if (![view isKindOfClass:[SFOpenGLView class]]) {
+            sf::Err() << "The content view is not a valid SFOpenGLView" 
+                      << std::endl;
+            view = nil;
+        }
+        
+    } else if ([nsHandle isKindOfClass:[NSView class]]) {
+        // If system handle is a view then from a subview of kind SFOpenGLView.
+        NSArray* subviews = [nsHandle subviews];
+        for (NSView* subview in subviews) {
+            if ([subview isKindOfClass:[SFOpenGLView class]]) {
+                view = (SFOpenGLView *)subview;
+                break;
+            }
+        }
+        
+        // No matching subview ?
+        if (view == nil) {
+            sf::Err() << "Cannot find a valid SFOpenGLView subview." << std::endl;
+
+        }
+        
+    } else {
+        
+        sf::Err() << "The system handle is neither a <NSWindow*> nor <NSView*>"
+                  << "object. This shouldn't happen."
+                  << std::endl;
+
+    }
+    
+    return view;
+}
+
 ////////////////////////////////////////////////////////////
 bool InputImpl::IsKeyPressed(Keyboard::Key key)
 {
@@ -64,22 +119,49 @@ Vector2i InputImpl::GetMousePosition()
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
 {
-	// @to be implemented
-    return Vector2i();
+    SFOpenGLView* view = GetSFOpenGLViewFromSFMLWindow(relativeTo);
+    
+    // No view ?
+    if (view == nil) {
+        return Vector2i();
+    }
+    
+    // Use -cursorPositionFromEvent: with nil.
+    NSPoint pos = [view cursorPositionFromEvent:nil];
+    
+    return Vector2i(pos.x, pos.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 void InputImpl::SetMousePosition(const Vector2i& position)
 {
-	// @to be implemented
+    // Here we don't need to reverse the coordinates.
+    CGPoint pos = CGPointMake(position.x, position.y);
+    
+    // Place the cursor.
+    CGEventRef event = CGEventCreateMouseEvent(NULL, 
+                                               kCGEventMouseMoved, 
+                                               pos, 
+                                               /*we don't care about this : */0);
+    CGEventPost(kCGHIDEventTap, event);
+    CFRelease(event);
+    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.
 }
 
 
 ////////////////////////////////////////////////////////////
 void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
 {
-	// @to be implemented
+    SFOpenGLView* view = GetSFOpenGLViewFromSFMLWindow(relativeTo);
+    
+    // No view ?
+    if (view == nil) {
+        return;
+    }
+    
+    // Use -setCursorPositionToX:Y:.
+    [view setCursorPositionToX:position.x Y:position.y];
 }
 
 } // namespace priv
