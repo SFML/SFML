@@ -97,7 +97,7 @@
         }
         
         // Set the view to the window as its content view.
-        [[myWindow contentView] addSubview:myOGLView];
+        [myWindow setContentView:myOGLView];
     }
     
     return self;

@@ -379,7 +379,14 @@ sf::Keyboard::Key NonLocalizedKeys(unsigned short keycode);
     
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
     
-    myRequester->MouseDownAt(button, loc.x, loc.y);
+    if (button != sf::Mouse::ButtonCount) {
+        myRequester->MouseDownAt(button, loc.x, loc.y);
+    }
+#ifdef SFML_DEBUG
+    else {
+        sf::Err() << "Unknown mouse button released." << std::endl;
+    }
+#endif
 }
 
 
@@ -392,7 +399,14 @@ sf::Keyboard::Key NonLocalizedKeys(unsigned short keycode);
     
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
     
-    myRequester->MouseUpAt(button, loc.x, loc.y);
+    if (button != sf::Mouse::ButtonCount) {
+        myRequester->MouseUpAt(button, loc.x, loc.y);
+    }
+#ifdef SFML_DEBUG
+    else {
+        sf::Err() << "Unknown mouse button released." << std::endl;
+    }
+#endif
 }
 
 
@@ -423,6 +437,46 @@ sf::Keyboard::Key NonLocalizedKeys(unsigned short keycode);
     NSPoint loc = [self cursorPositionFromEvent:theEvent];
     
     myRequester->MouseMovedAt(loc.x, loc.y);
+}
+
+
+////////////////////////////////////////////////////////
+-(NSPoint)cursorPositionFromEvent:(NSEvent *)eventOrNil
+{
+    NSPoint loc;
+    // If no event given then get current mouse pos.
+    if (eventOrNil == nil) {
+        NSPoint rawPos = [[self window] mouseLocationOutsideOfEventStream];
+        loc = [self convertPoint:rawPos fromView:nil];
+    } else {
+        loc = [self convertPoint:[eventOrNil locationInWindow] fromView:nil];
+    }
+    
+    // Don't forget to change to SFML coord system.
+    float h = [self frame].size.height;
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width  / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    return loc;
+}
+
+
+////////////////////////////////////////////////////////
+-(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event
+{
+    switch ([event buttonNumber]) {
+        case 0:     return sf::Mouse::Left;
+        case 1:     return sf::Mouse::Right;
+        case 2:     return sf::Mouse::Middle;
+        case 3:     return sf::Mouse::XButton1;
+        case 4:     return sf::Mouse::XButton2;
+        default:    return sf::Mouse::ButtonCount; // Never happens! (hopefully)
+    }
 }
 
 
@@ -894,46 +948,6 @@ sf::Keyboard::Key NonLocalizedKeys(unsigned short keycode);
         // Currently only the left control key will be used in SFML (see note above).
         
         myControlWasDown = YES;
-    }
-}
-
-
-////////////////////////////////////////////////////////
--(NSPoint)cursorPositionFromEvent:(NSEvent *)eventOrNil
-{
-    NSPoint loc;
-    // If no event given then get current mouse pos.
-    if (eventOrNil == nil) {
-        NSPoint rawPos = [[self window] mouseLocationOutsideOfEventStream];
-        loc = [self convertPoint:rawPos fromView:nil];
-    } else {
-        loc = [self convertPoint:[eventOrNil locationInWindow] fromView:nil];
-    }
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width  / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
-    
-    return loc;
-}
-
-
-////////////////////////////////////////////////////////
--(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event
-{
-    switch ([event buttonNumber]) {
-        case 0:     return sf::Mouse::Left;
-        case 1:     return sf::Mouse::Right;
-        case 2:     return sf::Mouse::Middle;
-        case 3:     return sf::Mouse::XButton1;
-        case 4:     return sf::Mouse::XButton2;
-        default:    return sf::Mouse::ButtonCount; // Never happens! (hopefully)
     }
 }
 
