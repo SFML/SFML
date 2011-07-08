@@ -339,21 +339,6 @@ void WindowImplCocoa::ShowMouseCursor(bool show)
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetCursorPosition(unsigned int x, unsigned int y)
-{
-    [myDelegate setCursorPositionToX:x Y:y];
-}
-
-
-////////////////////////////////////////////////////////////
-Vector2i WindowImplCocoa::GetCursorPosition() const
-{
-	// @to be implemented
-    return Vector2i();
-}
-
-    
-////////////////////////////////////////////////////////////
 void WindowImplCocoa::SetPosition(int x, int y)
 {
     [myDelegate setWindowPositionToX:x Y:y];

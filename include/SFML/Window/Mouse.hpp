@@ -34,6 +34,8 @@
 
 namespace sf
 {
+class Window;
+
 ////////////////////////////////////////////////////////////
 /// \brief Give access to the real-time state of the mouse
 ///
@@ -68,18 +70,51 @@ public :
     static bool IsButtonPressed(Button button);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current position of the mouse
+    /// \brief Get the current position of the mouse in desktop coordinates
     ///
-    /// This function returns the current position of the mouse
-    /// cursor.
-    /// If the cursor is over a SFML window, the returned position
-    /// is relative to this window. Otherwise, the returned position
-    /// is in desktop coordinates.
+    /// This function returns the global position of the mouse
+    /// cursor on the desktop.
     ///
     /// \return Current position of the mouse
     ///
     ////////////////////////////////////////////////////////////
     static Vector2i GetPosition();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current position of the mouse in window coordinates
+    ///
+    /// This function returns the current position of the mouse
+    /// cursor, relative to the given window.
+    ///
+    /// \param relativeTo Reference window
+    ///
+    /// \return Current position of the mouse
+    ///
+    ////////////////////////////////////////////////////////////
+    static Vector2i GetPosition(const Window& relativeTo);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the current position of the mouse in desktop coordinates
+    ///
+    /// This function sets the global position of the mouse
+    /// cursor on the desktop.
+    ///
+    /// \param position New position of the mouse
+    ///
+    ////////////////////////////////////////////////////////////
+    static void SetPosition(const Vector2i& position);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current position of the mouse in window coordinates
+    ///
+    /// This function sets the current position of the mouse
+    /// cursor, relative to the given window.
+    ///
+    /// \param position New position of the mouse
+    /// \param relativeTo Reference window
+    ///
+    ////////////////////////////////////////////////////////////
+    static void SetPosition(const Vector2i& position, const Window& relativeTo);
 };
 
 } // namespace sf
@@ -107,10 +142,11 @@ public :
 /// moved, pressed or released when your window is out of focus
 /// and no event is triggered.
 ///
-/// Note that the sf::Mouse::GetPosition function has a special
-/// behaviour: it returns the cursor position relative to the
-/// window which has the mouse focus (ie. the window on which
-/// the cursor is).
+/// The SetPosition and GetPosition functions can be used to change
+/// or retrieve the current position of the mouse pointer. There are
+/// two versions: one that operates in global coordinates (relative
+/// to the desktop) and one that operates in window coordinates
+/// (relative to a specific window).
 ///
 /// Usage example:
 /// \code
@@ -118,12 +154,12 @@ public :
 /// {
 ///     // left click...
 /// }
-/// else if (sf::Mouse::IsButtonPressed(sf::Mouse::Right))
-/// {
-///     // right click...
-/// }
 ///
+/// // get global mouse position
 /// sf::Vector2i position = sf::Mouse::GetPosition();
+///
+/// // set mouse position relative to a window
+/// sf::Mouse::SetPosition(sf::Vector2i(100, 200), window);
 /// \endcode
 ///
 /// \see sf::Joystick, sf::Keyboard

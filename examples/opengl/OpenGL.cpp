@@ -90,8 +90,8 @@ int main()
         glClear(GL_DEPTH_BUFFER_BIT);
 
         // We get the position of the mouse cursor, so that we can move the box accordingly
-        float x =  window.GetCursorPosition().x * 200.f / window.GetWidth()  - 100.f;
-        float y = -window.GetCursorPosition().y * 200.f / window.GetHeight() + 100.f;
+        float x =  sf::Mouse::GetPosition(window).x * 200.f / window.GetWidth()  - 100.f;
+        float y = -sf::Mouse::GetPosition(window).y * 200.f / window.GetHeight() + 100.f;
 
         // Apply some transformations
         glMatrixMode(GL_MODELVIEW);

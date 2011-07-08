@@ -202,8 +202,8 @@ int main()
         }
 
         // Get the mouse position in the range [0, 1]
-        float mouseX = window.GetCursorPosition().x / static_cast<float>(window.GetWidth());
-        float mouseY = window.GetCursorPosition().y / static_cast<float>(window.GetHeight());
+        float mouseX = sf::Mouse::GetPosition(window).x / static_cast<float>(window.GetWidth());
+        float mouseY = sf::Mouse::GetPosition(window).y / static_cast<float>(window.GetHeight());
 
         // Update the shaders
         backgroundShader.Update(mouseX, mouseY);
