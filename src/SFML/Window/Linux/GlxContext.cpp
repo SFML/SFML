@@ -69,11 +69,11 @@ myWindow    (0),
 myContext   (NULL),
 myOwnsWindow(false)
 {
-    // Use the same context as the owner window (important!)
+    // Use the same display as the owner window (important!)
     myDisplay = static_cast<const WindowImplX11*>(owner)->GetDisplay();
 
     // Get the owner window and its device context
-    myWindow = static_cast<Window>(owner->GetSystemHandle());
+    myWindow = static_cast< ::Window>(owner->GetSystemHandle());
 
     // Create the context
     if (myWindow)
