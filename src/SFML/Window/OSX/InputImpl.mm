@@ -30,9 +30,19 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Window/OSX/HIDInputManager.hpp>
 
 #import <AppKit/AppKit.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
+
+////////////////////////////////////////////////////////////
+/// In order to keep track of the keyboard's state and mouse buttons' state
+/// we use the HID manager. Mouse position is handled differently.
+///
+/// NB : we probably could use 
+/// NSEvent +addGlobalMonitorForEventsMatchingMask:handler: for mouse only.
+///
+////////////////////////////////////////////////////////////
 
 namespace sf
 {
@@ -92,16 +102,14 @@ SFOpenGLView* GetSFOpenGLViewFromSFMLWindow(const Window& window)
 ////////////////////////////////////////////////////////////
 bool InputImpl::IsKeyPressed(Keyboard::Key key)
 {
-	// @to be implemented
-    return false;
+	return HIDInputManager::GetInstance().IsKeyPressed(key);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
 {
-	// @to be implemented
-    return false;
+	return HIDInputManager::GetInstance().IsMouseButtonPressed(button);
 }
 
 
