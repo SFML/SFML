@@ -366,11 +366,11 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     if (button != sf::Mouse::ButtonCount) {
         myRequester->MouseDownAt(button, loc.x, loc.y);
     }
-#ifdef SFML_DEBUG
-    else {
-        sf::Err() << "Unknown mouse button released." << std::endl;
-    }
-#endif
+//#ifdef SFML_DEBUG
+//    else {
+//        sf::Err() << "Unknown mouse button released." << std::endl;
+//    }
+//#endif
 }
 
 
@@ -386,11 +386,11 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     if (button != sf::Mouse::ButtonCount) {
         myRequester->MouseUpAt(button, loc.x, loc.y);
     }
-#ifdef SFML_DEBUG
-    else {
-        sf::Err() << "Unknown mouse button released." << std::endl;
-    }
-#endif
+//#ifdef SFML_DEBUG
+//    else {
+//        sf::Err() << "Unknown mouse button released." << std::endl;
+//    }
+//#endif
 }
 
 
@@ -966,15 +966,15 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
         key.Code = sf::priv::HIDInputManager::NonLocalizedKeys([anEvent keyCode]);
     }
     
-#ifdef SFML_DEBUG // Don't bother the final customers with annoying messages.
-    if (key.Code == sf::Keyboard::KeyCount) { // The key is unknown.
-        sf::Err() << "This is an unknow key. Virtual key code is 0x"
-                  << std::hex
-                  << [anEvent keyCode]
-                  << "."
-                  << std::endl;
-    }
-#endif
+//#ifdef SFML_DEBUG // Don't bother the final customers with annoying messages.
+//    if (key.Code == sf::Keyboard::KeyCount) { // The key is unknown.
+//        sf::Err() << "This is an unknow key. Virtual key code is 0x"
+//                  << std::hex
+//                  << [anEvent keyCode]
+//                  << "."
+//                  << std::endl;
+//    }
+//#endif
     
     return key;
 }
