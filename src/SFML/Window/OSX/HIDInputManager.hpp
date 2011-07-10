@@ -36,6 +36,7 @@
 #include <Carbon/Carbon.h>
 #include <IOKit/hid/IOHIDManager.h>
 #include <IOKit/hid/IOHIDDevice.h>
+#include <vector>
 
 namespace sf
 {
@@ -127,6 +128,27 @@ private :
     void InitializeKeyboard();
     
     ////////////////////////////////////////////////////////////
+    /// \brief Load the given keyboard into myKeys
+    ///
+    /// If the given keyboard has no key this function simply
+    /// returns. FreeUp is _not_ called because this is not fatal.
+    ///
+    /// \param keyboard Keyboard to load
+    ///
+    ////////////////////////////////////////////////////////////
+    void LoadKeyboard(IOHIDDeviceRef keyboard);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the given key into myKeys
+    ///
+    /// FreeUp is _not_ called by this function.
+    ///
+    /// \param key Key to load
+    ///
+    ////////////////////////////////////////////////////////////
+    void LoadKey(IOHIDElementRef key);
+    
+    ////////////////////////////////////////////////////////////
     /// \brief Release all resources
     ///
     /// Close all connections to any devices, if required
@@ -146,13 +168,25 @@ private :
     static CFDictionaryRef CopyDevicesMaskForManager(UInt32 page, UInt32 usage);
     
     ////////////////////////////////////////////////////////////
-    /// \brief Converte a HID key usage to it's conrresponding virtual code
+    /// \brief Filter the devices and return them.
+    ///
+    /// If something went wrong FreeUp is called
+    ///
+    /// \param page  HID page like kHIDPage_GenericDesktop
+    /// \param usage HID usage page like kHIDUsage_GD_Keyboard or kHIDUsage_GD_Mouse
+    /// \return a retained CFSetRef of IOHIDDeviceRef or NULL
+    ///
+    ////////////////////////////////////////////////////////////
+    CFSetRef CopyDevices(UInt32 page, UInt32 usage);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Converte a HID key usage to its corresponding virtual code
     ///
     /// See IOHIDUsageTables.h
     ///
     /// \param usage Any kHIDUsage_Keyboard* usage
-    /// \return the virtual code associate to the given HID key usage
-    ///         or 0xff if it is associate to no virtual code
+    /// \return the virtual code associate with the given HID key usage
+    ///         or 0xff if it is associate with no virtual code
     ///
     ////////////////////////////////////////////////////////////
     static UInt8 UsageToVirtualCode(UInt32 usage);
@@ -166,9 +200,18 @@ private :
     CFDataRef         myLayoutData;                 ///< CFData containing the layout
     UCKeyboardLayout* myLayout;                     ///< Current Keyboard Layout
     IOHIDManagerRef   myManager;                    ///< HID Manager
-    IOHIDElementRef   myKeys[Keyboard::KeyCount];   ///< All the keys on the current keyboard
-    /* myKeys index correspond to sf::Keyboard::Key enum       */
-    /* if no key is assigned to a key XYZ then myKeys[XYZ] = 0 */
+    
+    typedef std::vector<IOHIDElementRef> IOHIDElements;
+    IOHIDElements     myKeys[Keyboard::KeyCount];   ///< All the keys on the current keyboard
+    
+    ////////////////////////////////////////////////////////////
+    /// myKeys' index corresponds to sf::Keyboard::Key enum.
+    /// if no key is assigned with key XYZ then myKeys[XYZ].size() == 0.
+    /// if there are several keyboards connected and several HID keys associate
+    /// with the same sf::Keyboard::Key then myKeys[XYZ] contains all these
+    /// HID keys.
+    ///
+    ////////////////////////////////////////////////////////////
 };
 
 } // namespace priv

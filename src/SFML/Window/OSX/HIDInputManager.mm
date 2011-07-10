@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/HIDInputManager.hpp>
 #include <SFML/System/Err.hpp>
-#include <algorithm>
 #include <AppKit/AppKit.h>
 
 namespace sf
@@ -51,48 +50,42 @@ bool HIDInputManager::IsKeyPressed(Keyboard::Key key)
         return false;
     }
     
-    // Have we an associate IOHIDElementRef to that key ?
-    if (myKeys[key] == 0) { // No
-        
-        sf::Err() << key 
-                  << " is not associate to any IOHIDElementRef." 
-                  << std::endl;
-        
-        return false;
-        
-    } else {                // Yes
+    // state = true if at least one corresponding HID key is pressed
+    bool state = false;
+    
+    for (IOHIDElements::iterator it = myKeys[key].begin(); it != myKeys[key].end(); ++it) {
         
         IOHIDValueRef value = 0;
         
-        IOHIDDeviceRef device = IOHIDElementGetDevice(myKeys[key]);
-        IOHIDDeviceGetValue(device, myKeys[key], &value);
+        IOHIDDeviceRef device = IOHIDElementGetDevice(*it);
+        IOHIDDeviceGetValue(device, *it, &value);
         
         if (!value) {
             
             // This means some kind of error / deconnection so we remove this
             // element from our keys
             
-            CFRelease(myKeys[key]);
-            myKeys[key] = 0;
+            CFRelease(*it);
+            it = myKeys[key].erase(it);
             
             sf::Err() << key 
                       << " is dead (cannot access its value)."
                       << std::endl;
-            
-            return false;
-            
+                        
         } else if (IOHIDValueGetIntegerValue(value) == 1) {
             
             // This means the key is pressed
-            return true;
+            state = true;
+            break; // Stop here.
             
         } else {
             
             // This means the key is released
-            return false;
         }
         
     }
+    
+    return state;
 }
 
 
@@ -116,9 +109,6 @@ HIDInputManager::HIDInputManager()
 , myLayout(0)
 , myManager(0)
 {
-    // And initialize myKeys with 0s.
-    std::fill(myKeys, myKeys + Keyboard::KeyCount, (IOHIDElementRef)0);
-    
     // Get the current keyboard layout
     TISInputSourceRef tis = TISCopyCurrentKeyboardLayoutInputSource(); 
     myLayoutData = (CFDataRef)TISGetInputSourceProperty(tis, 
@@ -172,65 +162,60 @@ void HIDInputManager::InitializeKeyboard()
 {
     ////////////////////////////////////////////////////////////
     // The purpose of this function is to initalize myKeys so we can get
-    // the associate IOHIDElementRef of a sf::Keyboard::Key in constant time.
+    // the associate IOHIDElementRef with a sf::Keyboard::Key in ~constant~ time.
     
-    
-    // Filter and keep only the keyboards
-    CFDictionaryRef mask = CopyDevicesMaskForManager(kHIDPage_GenericDesktop,
-                                                     kHIDUsage_GD_Keyboard);
-    
-    IOHIDManagerSetDeviceMatching(myManager, mask);
-    
-    CFRelease(mask);
-    mask = 0;
-    
-    CFSetRef keyboards = IOHIDManagerCopyDevices(myManager);
+    // Get only keyboards
+    CFSetRef keyboards = CopyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
     if (keyboards == NULL) {
-        sf::Err() << "Cannot find any keyboard (1)" << std::endl;
-        FreeUp();
+        
+        // FreeUp was already called
         return;
     }
     
-    // Is there at least one keyboard ?
-    CFIndex keyboardCount = CFSetGetCount(keyboards);
-    if (keyboardCount < 1) {
-        sf::Err() << "Cannot find any keyboard (2)" << std::endl;
-        CFRelease(keyboards);
-        FreeUp();
-        return;
-    }
+    CFIndex keyboardCount = CFSetGetCount(keyboards); // >= 1 (asserted by CopyDevices)
     
-    // Get the first keyboard
+    // Get an iterable array
     CFTypeRef devicesArray[keyboardCount];
     CFSetGetValues(keyboards, devicesArray);
     
-    IOHIDDeviceRef keyboard = (IOHIDDeviceRef)devicesArray[0];
+    for (CFIndex i = 0; i < keyboardCount; ++i) {
     
-    CFArrayRef keys = IOHIDDeviceCopyMatchingElements(keyboard,
-                                                      NULL,
-                                                      kIOHIDOptionsTypeNone);
+        IOHIDDeviceRef keyboard = (IOHIDDeviceRef)devicesArray[i];
+        
+        LoadKeyboard(keyboard);
+    }
     
     // Release unused stuff
     CFRelease(keyboards);
     
+    ////////////////////////////////////////////////////////////
+    // At this point myKeys is filled with as many IOHIDElementRef as possible
+}
+
+
+////////////////////////////////////////////////////////////    
+void HIDInputManager::LoadKeyboard(IOHIDDeviceRef keyboard)
+{
+    CFArrayRef keys = IOHIDDeviceCopyMatchingElements(keyboard,
+                                                      NULL,
+                                                      kIOHIDOptionsTypeNone);
     if (keys == NULL) {
         sf::Err() << "We got a keyboard without any keys (1)" << std::endl;
-        FreeUp();
         return;
     }
     
     // How many elements are there ?
     CFIndex keysCount = CFArrayGetCount(keys);
-
+    
     if (keysCount == 0) {
         sf::Err() << "We got a keyboard without any keys (2)" << std::endl;
         CFRelease(keys);
-        FreeUp();
         return;
     }
     
     // Go through all connected elements.
-    for (int i = 0; i < keysCount; ++i) {
+    for (CFIndex i = 0; i < keysCount; ++i) {
+        
         IOHIDElementRef aKey = (IOHIDElementRef) CFArrayGetValueAtIndex(keys, i);
         
         // Skip non-matching keys elements
@@ -238,131 +223,110 @@ void HIDInputManager::InitializeKeyboard()
             continue;
         }
         
-        // Get its virtual code
-        UInt32 usageCode   = IOHIDElementGetUsage(aKey);
-        UInt8  virtualCode = UsageToVirtualCode(usageCode);
+        LoadKey(aKey);
         
-        if (virtualCode == 0xff) {
-            continue; // no corresponding virtual code -> skip
-        }
-        
-        // Now translate the virtual code to unicode according to
-        // the current keyboard layout
-        
-        UInt32       deadKeyState = 0;
-        // unicode string length is usually less or equal to 4
-        UniCharCount maxStringLength = 4;
-        UniCharCount actualStringLength = 0;
-        UniChar      unicodeString[maxStringLength];
-        
-        OSStatus     error;
-        
-        error = UCKeyTranslate(myLayout,                    // current layout
-                               virtualCode,                 // our key
-                               kUCKeyActionDown,            // or kUCKeyActionUp ?
-                               0x100,                       // no modifiers
-                               LMGetKbdType(),              // keyboard's type
-                               kUCKeyTranslateNoDeadKeysBit,// some sort of option
-                               &deadKeyState,               // unused stuff
-                               maxStringLength,             // our memory limit
-                               &actualStringLength,         // length of what we get
-                               unicodeString);              // what we get
-        
-        if (error == noErr) {
-            // Translation went fine
-            
-            // The corresponding SFML key code
-            Keyboard::Key code = Keyboard::KeyCount;
-            
-            // First we look if the key down is from a list of caracter 
-            // that depend on keyboard localization.
-            if (actualStringLength > 0) {
-                code = LocalizedKeys(unicodeString[0]);
-            }
-            
-            // The key is not a localized one, so we try to find a corresponding
-            // code through virtual key code.
-            if (code == Keyboard::KeyCount) {
-                code = NonLocalizedKeys(virtualCode);
-            }
-            
-            // A code was found, wonderful!
-            if (code != Keyboard::KeyCount) {
-                
-                // Last step : verify that the key was not found twice or more
-                
-                // Some keys (modifiers) appears to be twice on my keyboard
-                // I've no idea why
-//                if (myKeys[code] != 0) {
-//                    UInt32 firstUsageCode   = IOHIDElementGetUsage(myKeys[code]);
-//                    sf::Err() << "The current keyboard has several times the "
-//                              << "same keys. Only the first one is considered "
-//                              << "as valid. sf::Keyboard::Key is "
-//                              << code
-//                              << ", virtual key code is 0x"
-//                              << std::hex
-//                              << (UInt32)virtualCode
-//                              << " and HID usage code is 0x"
-//                              << usageCode
-//                              << ". First HID usage code is 0x"
-//                              << firstUsageCode
-//                              << std::dec
-//                              << "."
-//                              << std::endl;
-//                }
-                
-                if (myKeys[code] == 0) {
-                    
-                    // Ok, everything went fine. Now we have a unique 
-                    // corresponding sf::Keyboard::Key to one IOHIDElementRef.
-                    
-                    myKeys[code] = aKey;
-                    
-                    // And don't forget to keep the reference alive for our usage
-                    CFRetain(myKeys[code]);
-                    
-                }
-                
-            }
-
-            ////////////////////////////////////////////////////////////
-            // These are known to be unbound :
-            //    Supposed Virtual | HID  | Supposed Key
-            //    ===============================================
-            //          0x1b       | 0x2d | Hyphen
-            //          0x39       | 0x39 | CapsLock
-            //          0x47       | 0x53 | NumLock
-            //          0x4c       | 0x58 | Keypad Enter
-            //          0x41       | 0x63 | Keypad Period
-            //          0x6e       | 0x65 | Application
-            //          0x51       | 0x67 | Keypad Equal
-            //          0x4c       | 0x77 | Select
-
-//            else { // The key is unknown.
-//                sf::Err() << "This is an unknow key. Virtual key code is 0x"
-//                          << std::hex
-//                          << (UInt32)virtualCode
-//                          << " and HID usage code is 0x"
-//                          << usageCode
-//                          << std::dec
-//                          << "."
-//                          << std::endl;
-//            }
-            
-        } /* if (error == noErr) */
-        
-        else {
-            sf::Err() << "Cannot translate the virtual key code, error : "
-                      << error
-                      << std::endl;
-        }
-        
-    } /* for (int i = 0; i < keysCount; ++i) */
+    }
     
+    // Release unused stuff
     CFRelease(keys);
+}
+
+
+////////////////////////////////////////////////////////////
+void HIDInputManager::LoadKey(IOHIDElementRef key)
+{
+    // Get its virtual code
+    UInt32 usageCode   = IOHIDElementGetUsage(key);
+    UInt8  virtualCode = UsageToVirtualCode(usageCode);
     
-    ////////////////////////////////////////////////////////////
-    // At this point myKeys is filled with as many IOHIDElementRef as possible
+    if (virtualCode == 0xff) {
+        return; // no corresponding virtual code -> skip
+    }
+    
+    // Now translate the virtual code to unicode according to
+    // the current keyboard layout
+    
+    UInt32       deadKeyState = 0;
+    // unicode string length is usually less or equal to 4
+    UniCharCount maxStringLength = 4;
+    UniCharCount actualStringLength = 0;
+    UniChar      unicodeString[maxStringLength];
+    
+    OSStatus     error;
+    
+    error = UCKeyTranslate(myLayout,                    // current layout
+                           virtualCode,                 // our key
+                           kUCKeyActionDown,            // or kUCKeyActionUp ?
+                           0x100,                       // no modifiers
+                           LMGetKbdType(),              // keyboard's type
+                           kUCKeyTranslateNoDeadKeysBit,// some sort of option
+                           &deadKeyState,               // unused stuff
+                           maxStringLength,             // our memory limit
+                           &actualStringLength,         // length of what we get
+                           unicodeString);              // what we get
+    
+    if (error == noErr) {
+        // Translation went fine
+        
+        // The corresponding SFML key code
+        Keyboard::Key code = Keyboard::KeyCount; // KeyCound means 'none'
+        
+        // First we look if the key down is from a list of characters 
+        // that depend on keyboard localization
+        if (actualStringLength > 0) {
+            code = LocalizedKeys(unicodeString[0]);
+        }
+        
+        // The key is not a localized one so we try to find a
+        // corresponding code through virtual key code
+        if (code == Keyboard::KeyCount) {
+            code = NonLocalizedKeys(virtualCode);
+        }
+        
+        // A code was found, wonderful!
+        if (code != Keyboard::KeyCount) {
+            
+            // Ok, everything went fine. Now we have a unique 
+            // corresponding sf::Keyboard::Key to one IOHIDElementRef
+            
+            myKeys[code].push_back(key);
+            
+            // And don't forget to keep the reference alive for our usage
+            CFRetain(myKeys[code].back());
+            
+        }
+        
+        ////////////////////////////////////////////////////////////
+        // These are known to be unbound :
+        //    Supposed Virtual | HID  | Supposed Key
+        //    ===============================================
+        //          0x1b       | 0x2d | Hyphen
+        //          0x39       | 0x39 | CapsLock
+        //          0x47       | 0x53 | NumLock
+        //          0x4c       | 0x58 | Keypad Enter
+        //          0x41       | 0x63 | Keypad Period
+        //          0x6e       | 0x65 | Application
+        //          0x51       | 0x67 | Keypad Equal
+        //          0x4c       | 0x77 | Select
+        
+        //if (code == Keyboard::KeyCount) { // The key is unknown.
+        //    sf::Err() << "This is an unknow key. Virtual key code is 0x"
+        //              << std::hex
+        //              << (UInt32)virtualCode
+        //              << " and HID usage code is 0x"
+        //              << usageCode
+        //              << std::dec
+        //              << "."
+        //              << std::endl;
+        //}
+        
+    } /* if (error == noErr) */ 
+    else {
+        
+        sf::Err() << "Cannot translate the virtual key code, error : "
+                  << error
+                  << std::endl;
+    }
 }
 
 
@@ -376,9 +340,10 @@ void HIDInputManager::FreeUp()
     if (myManager       != 0)   CFRelease(myManager);
     
     for (unsigned int i = 0; i < Keyboard::KeyCount; ++i) {
-        if (myKeys[i] != 0) {
-            CFRelease(myKeys[i]);
+        for (IOHIDElements::iterator it = myKeys[i].begin(); it != myKeys[i].end(); ++it) {
+            CFRelease(*it);
         }
+        myKeys[i].clear();
     }
 }
 
@@ -403,13 +368,44 @@ CFDictionaryRef HIDInputManager::CopyDevicesMaskForManager(UInt32 page, UInt32 u
     
     return dict;
 }
+ 
+    
+////////////////////////////////////////////////////////////
+CFSetRef HIDInputManager::CopyDevices(UInt32 page, UInt32 usage)
+{
+    // Filter and keep only the requested devices
+    CFDictionaryRef mask = CopyDevicesMaskForManager(page, usage);
+    
+    IOHIDManagerSetDeviceMatching(myManager, mask);
+    
+    CFRelease(mask);
+    mask = 0;
+    
+    CFSetRef devices = IOHIDManagerCopyDevices(myManager);
+    if (devices == NULL) {
+        sf::Err() << "Cannot find any devices." << std::endl;
+        FreeUp();
+        return NULL;
+    }
+    
+    // Is there at least one keyboard ?
+    CFIndex deviceCount = CFSetGetCount(devices);
+    if (deviceCount < 1) {
+        sf::Err() << "Found no device." << std::endl;
+        CFRelease(devices);
+        FreeUp();
+        return NULL;
+    }
+    
+    return devices;
+}
 
 
 ////////////////////////////////////////////////////////////
 UInt8 HIDInputManager::UsageToVirtualCode(UInt32 usage)
 {
-    // Some usage key doesn't have any corresponding virtual code or it was not
-    // found.
+    // Some usage key doesn't have any corresponding virtual
+    // code or it was not found (return 0xff).
     switch (usage) {
         case kHIDUsage_KeyboardErrorRollOver:       return 0xff;
         case kHIDUsage_KeyboardPOSTFail:            return 0xff;
