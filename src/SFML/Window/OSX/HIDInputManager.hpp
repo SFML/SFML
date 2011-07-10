@@ -128,6 +128,14 @@ private :
     void InitializeKeyboard();
     
     ////////////////////////////////////////////////////////////
+    /// \brief Initialize the mouse part of this class
+    ///
+    /// If something went wrong FreeUp is called
+    ///
+    ////////////////////////////////////////////////////////////
+    void InitializeMouse();
+    
+    ////////////////////////////////////////////////////////////
     /// \brief Load the given keyboard into myKeys
     ///
     /// If the given keyboard has no key this function simply
@@ -139,6 +147,17 @@ private :
     void LoadKeyboard(IOHIDDeviceRef keyboard);
     
     ////////////////////////////////////////////////////////////
+    /// \brief Load the given mouse into myButtons
+    ///
+    /// If the given mouse has no button this function simply
+    /// returns. FreeUp is _not_ called because this is not fatal.
+    ///
+    /// \param mouse Mouse to load
+    ///
+    ////////////////////////////////////////////////////////////
+    void LoadMouse(IOHIDDeviceRef mouse);
+    
+    ////////////////////////////////////////////////////////////
     /// \brief Load the given key into myKeys
     ///
     /// FreeUp is _not_ called by this function.
@@ -147,6 +166,16 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     void LoadKey(IOHIDElementRef key);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the given button into myButtons
+    ///
+    /// FreeUp is _not_ called by this function.
+    ///
+    /// \param button Button to load
+    ///
+    ////////////////////////////////////////////////////////////
+    void LoadButton(IOHIDElementRef button);
     
     ////////////////////////////////////////////////////////////
     /// \brief Release all resources
@@ -202,7 +231,8 @@ private :
     IOHIDManagerRef   myManager;                    ///< HID Manager
     
     typedef std::vector<IOHIDElementRef> IOHIDElements;
-    IOHIDElements     myKeys[Keyboard::KeyCount];   ///< All the keys on the current keyboard
+    IOHIDElements     myKeys[Keyboard::KeyCount];   ///< All the keys on any connected keyboard
+    IOHIDElements     myButtons[Mouse::ButtonCount];///< All the buttons on any connected mouse
     
     ////////////////////////////////////////////////////////////
     /// myKeys' index corresponds to sf::Keyboard::Key enum.
@@ -210,6 +240,8 @@ private :
     /// if there are several keyboards connected and several HID keys associate
     /// with the same sf::Keyboard::Key then myKeys[XYZ] contains all these
     /// HID keys.
+    ///
+    /// myButtons works the same way.
     ///
     ////////////////////////////////////////////////////////////
 };
