@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+#include <SFML/Window/OSX/HIDInputManager.hpp> // For LocalizedKeys and NonLocalizedKeys
 #include <SFML/System/Err.hpp>
 
 #import <SFML/Window/OSX/SFOpenGLView.h>
@@ -61,25 +62,6 @@ NSUInteger EraseMaskFromData(NSUInteger data, NSUInteger mask);
 NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 
 ////////////////////////////////////////////////////////////
-/// Try to convert a character into a SFML key code.
-/// Return sf::Key::Count if it doesn't match any 'localized' keys.
-///
-/// By 'localized' I mean keys that depend on the keyboard layout
-/// and might not be the same as the US keycode in some country
-/// (e.g. the keys 'Y' and 'Z' are switched on QWERTZ keyboard and
-/// US keyboard layouts.)
-///
-////////////////////////////////////////////////////////////
-sf::Key::Code LocalizedKeys(unichar ch);
-
-////////////////////////////////////////////////////////////
-/// Try to convert a keycode into a SFML key code.
-/// Return sf::Key::Count if the keycode is unknown.
-///
-////////////////////////////////////////////////////////////
-sf::Key::Code NonLocalizedKeys(unsigned short keycode);
-
-////////////////////////////////////////////////////////////
 /// SFOpenGLView class : Privates Methods Declaration
 ///
 ////////////////////////////////////////////////////////////
@@ -104,13 +86,9 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 -(void)initModifiersState;
 
 ////////////////////////////////////////////////////////////
-/// Compute the position of the cursor.
-/// 
-////////////////////////////////////////////////////////////
--(NSPoint)cursorPositionFromEvent:(NSEvent *)event;
-
-////////////////////////////////////////////////////////////
 /// Converte the NSEvent mouse button type to SFML type.
+///
+/// Returns ButtonCount if the button is unknown
 /// 
 ////////////////////////////////////////////////////////////
 -(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event;
@@ -119,7 +97,7 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 /// Convert a key down/up NSEvent into an SFML key event.
 /// Based on LocalizedKeys and NonLocalizedKeys function.
 ///
-/// Return sf::Key::Count as Code if the key is unknown.
+/// Return sf::Keyboard::KeyCount as Code if the key is unknown.
 ///
 ////////////////////////////////////////////////////////////
 +(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent *)anEvent;
@@ -198,11 +176,12 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
     // Place the cursor.
     CGEventRef event = CGEventCreateMouseEvent(NULL, 
                                                kCGEventMouseMoved, 
-                                               CGPointMake(screenCoord.x, screenCoord.y), 
+                                               CGPointMake(screenCoord.x, 
+                                                           screenCoord.y), 
                                                /*we don't care about this : */0);
     CGEventPost(kCGHIDEventTap, event);
     CFRelease(event);
-    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.
+    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval function
 }
 
 
@@ -384,7 +363,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
     
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
     
-    myRequester->MouseDownAt(button, loc.x, loc.y);
+    if (button != sf::Mouse::ButtonCount) {
+        myRequester->MouseDownAt(button, loc.x, loc.y);
+    }
+//#ifdef SFML_DEBUG
+//    else {
+//        sf::Err() << "Unknown mouse button released." << std::endl;
+//    }
+//#endif
 }
 
 
@@ -397,7 +383,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
     
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
     
-    myRequester->MouseUpAt(button, loc.x, loc.y);
+    if (button != sf::Mouse::ButtonCount) {
+        myRequester->MouseUpAt(button, loc.x, loc.y);
+    }
+//#ifdef SFML_DEBUG
+//    else {
+//        sf::Err() << "Unknown mouse button released." << std::endl;
+//    }
+//#endif
 }
 
 
@@ -431,6 +424,46 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 }
 
 
+////////////////////////////////////////////////////////
+-(NSPoint)cursorPositionFromEvent:(NSEvent *)eventOrNil
+{
+    NSPoint loc;
+    // If no event given then get current mouse pos.
+    if (eventOrNil == nil) {
+        NSPoint rawPos = [[self window] mouseLocationOutsideOfEventStream];
+        loc = [self convertPoint:rawPos fromView:nil];
+    } else {
+        loc = [self convertPoint:[eventOrNil locationInWindow] fromView:nil];
+    }
+    
+    // Don't forget to change to SFML coord system.
+    float h = [self frame].size.height;
+    loc.y = h - loc.y;
+    
+    // Recompute the mouse pos if required.
+    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
+        loc.x = loc.x * myRealSize.width  / [self frame].size.width;
+        loc.y = loc.y * myRealSize.height / [self frame].size.height;
+    }
+    
+    return loc;
+}
+
+
+////////////////////////////////////////////////////////
+-(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event
+{
+    switch ([event buttonNumber]) {
+        case 0:     return sf::Mouse::Left;
+        case 1:     return sf::Mouse::Right;
+        case 2:     return sf::Mouse::Middle;
+        case 3:     return sf::Mouse::XButton1;
+        case 4:     return sf::Mouse::XButton2;
+        default:    return sf::Mouse::ButtonCount; // Never happens! (hopefully)
+    }
+}
+
+
 #pragma mark
 #pragma mark Key-event methods
 
@@ -440,14 +473,17 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 {
     if (myRequester == 0) return;
     
+    // Handle key down event
     if (myUseKeyRepeat || ![theEvent isARepeat]) {
         sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
         
-        if (key.Code != sf::Key::Count) { // The key is recognized.
+        if (key.Code != sf::Keyboard::KeyCount) { // The key is recognized.
             myRequester->KeyDown(key);
         }
     }
 
+
+    // Handle text entred event
     if ((myUseKeyRepeat || ![theEvent isARepeat]) && [[theEvent characters] length] > 0) {
         
         // Ignore escape key and non text keycode. (See NSEvent.h)
@@ -478,7 +514,7 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
     
     sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
     
-    if (key.Code != sf::Key::Count) { // The key is recognized.
+    if (key.Code != sf::Keyboard::KeyCount) { // The key is recognized.
         myRequester->KeyUp(key);
     }
 }
@@ -493,7 +529,7 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
     
     // Setup a potential event key.
     sf::Event::KeyEvent key;
-    key.Code    = sf::Key::Count;
+    key.Code    = sf::Keyboard::KeyCount;
     key.Alt     = modifiers & NSAlternateKeyMask;
     key.Control = modifiers & NSControlKeyMask;
     key.Shift   = modifiers & NSShiftKeyMask;
@@ -522,14 +558,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
                 // left shift released
                 leftShiftIsDown  = NO;
                 
-                key.Code = sf::Key::LShift;
+                key.Code = sf::Keyboard::LShift;
                 myRequester->KeyUp(key);
             }
             
             if (!myRightShiftWasDown) {
                 // right shift pressed
                 
-                key.Code = sf::Key::RShift;
+                key.Code = sf::Keyboard::RShift;
                 myRequester->KeyDown(key);
             }
         }
@@ -543,14 +579,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
                 // right shift released
                 rightShiftIsDown = NO;
                 
-                key.Code = sf::Key::RShift;
+                key.Code = sf::Keyboard::RShift;
                 myRequester->KeyUp(key);
             }
             
             if (!myLeftShiftWasDown) {
                 // left shift pressed
                 
-                key.Code = sf::Key::LShift;
+                key.Code = sf::Keyboard::LShift;
                 myRequester->KeyDown(key);
             }
         }
@@ -564,14 +600,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
             if (!myRightShiftWasDown) {
                 // right shift pressed
                 
-                key.Code = sf::Key::RShift;
+                key.Code = sf::Keyboard::RShift;
                 myRequester->KeyDown(key);
             }
             
             if (!myLeftShiftWasDown) {
                 // left shift pressed
                 
-                key.Code = sf::Key::LShift;
+                key.Code = sf::Keyboard::LShift;
                 myRequester->KeyDown(key);
             }
         }
@@ -583,14 +619,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
         if (myRightShiftWasDown) {
             // right shift released
             
-            key.Code = sf::Key::RShift;
+            key.Code = sf::Keyboard::RShift;
             myRequester->KeyUp(key);
         }
         
         if (myLeftShiftWasDown) {
             // left shift released
             
-            key.Code = sf::Key::LShift;
+            key.Code = sf::Keyboard::LShift;
             myRequester->KeyUp(key);
         }
     }
@@ -609,14 +645,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
                 // left command released
                 leftCommandIsDown  = NO;
                 
-                key.Code = sf::Key::LSystem;
+                key.Code = sf::Keyboard::LSystem;
                 myRequester->KeyUp(key);
             }
             
             if (!myRightCommandWasDown) {
                 // right command pressed
                 
-                key.Code = sf::Key::RSystem;
+                key.Code = sf::Keyboard::RSystem;
                 myRequester->KeyDown(key);
             }
         }
@@ -630,14 +666,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
                 // right command released
                 rightCommandIsDown = NO;
                 
-                key.Code = sf::Key::RSystem;
+                key.Code = sf::Keyboard::RSystem;
                 myRequester->KeyUp(key);
             }
             
             if (!myLeftCommandWasDown) {
                 // left command pressed
                 
-                key.Code = sf::Key::LSystem;
+                key.Code = sf::Keyboard::LSystem;
                 myRequester->KeyDown(key);
             }
         }
@@ -651,14 +687,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
             if (!myRightCommandWasDown) {
                 // right command pressed
                 
-                key.Code = sf::Key::RSystem;
+                key.Code = sf::Keyboard::RSystem;
                 myRequester->KeyDown(key);
             }
             
             if (!myLeftCommandWasDown) {
                 // left command pressed
                 
-                key.Code = sf::Key::LSystem;
+                key.Code = sf::Keyboard::LSystem;
                 myRequester->KeyDown(key);
             }
         }
@@ -670,14 +706,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
         if (myRightCommandWasDown) {
             // right command released
             
-            key.Code = sf::Key::RSystem;
+            key.Code = sf::Keyboard::RSystem;
             myRequester->KeyUp(key);
         }
         
         if (myLeftCommandWasDown) {
             // left command released
             
-            key.Code = sf::Key::LSystem;
+            key.Code = sf::Keyboard::LSystem;
             myRequester->KeyUp(key);
         }
     }
@@ -696,14 +732,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
                 // left alt released
                 leftAlternateIsDown  = NO;
                 
-                key.Code = sf::Key::LAlt;
+                key.Code = sf::Keyboard::LAlt;
                 myRequester->KeyUp(key);
             }
             
             if (!myRightAlternateWasDown) {
                 // right alt pressed
                 
-                key.Code = sf::Key::RAlt;
+                key.Code = sf::Keyboard::RAlt;
                 myRequester->KeyDown(key);
             }
         }
@@ -717,14 +753,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
                 // right alt released
                 rightAlternateIsDown = NO;
                 
-                key.Code = sf::Key::RAlt;
+                key.Code = sf::Keyboard::RAlt;
                 myRequester->KeyUp(key);
             }
             
             if (!myLeftAlternateWasDown) {
                 // left alt pressed
                 
-                key.Code = sf::Key::LAlt;
+                key.Code = sf::Keyboard::LAlt;
                 myRequester->KeyDown(key);
             }
         }
@@ -738,14 +774,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
             if (!myRightAlternateWasDown) {
                 // right alt pressed
                 
-                key.Code = sf::Key::RAlt;
+                key.Code = sf::Keyboard::RAlt;
                 myRequester->KeyDown(key);
             }
             
             if (!myLeftAlternateWasDown) {
                 // left alt pressed
                 
-                key.Code = sf::Key::LAlt;
+                key.Code = sf::Keyboard::LAlt;
                 myRequester->KeyDown(key);
             }
         }
@@ -757,14 +793,14 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
         if (myRightAlternateWasDown) {
             // right alt released
             
-            key.Code = sf::Key::RAlt;
+            key.Code = sf::Keyboard::RAlt;
             myRequester->KeyUp(key);
         }
         
         if (myLeftAlternateWasDown) {
             // left alt released
             
-            key.Code = sf::Key::LAlt;
+            key.Code = sf::Keyboard::LAlt;
             myRequester->KeyUp(key);
         }
     }
@@ -778,7 +814,7 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
         if (!myControlWasDown) {
             // ctrl pressed
             
-            key.Code = sf::Key::LControl;
+            key.Code = sf::Keyboard::LControl;
             myRequester->KeyDown(key);
         }
     } else { // No control key down.
@@ -787,7 +823,7 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
         if (myControlWasDown) {
             // ctrl released
             
-            key.Code = sf::Key::LControl;
+            key.Code = sf::Keyboard::LControl;
             myRequester->KeyUp(key);
         }
     }
@@ -904,39 +940,6 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
 
 
 ////////////////////////////////////////////////////////
--(NSPoint)cursorPositionFromEvent:(NSEvent *)event
-{
-    NSPoint loc = [self convertPoint:[event locationInWindow] fromView:nil];
-    
-    // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
-    loc.y = h - loc.y;
-    
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(myRealSize, NSZeroSize)) {
-        loc.x = loc.x * myRealSize.width  / [self frame].size.width;
-        loc.y = loc.y * myRealSize.height / [self frame].size.height;
-    }
-    
-    return loc;
-}
-
-
-////////////////////////////////////////////////////////
--(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event
-{
-    switch ([event buttonNumber]) {
-        case 0:     return sf::Mouse::Left;
-        case 1:     return sf::Mouse::Right;
-        case 2:     return sf::Mouse::Middle;
-        case 3:     return sf::Mouse::XButton1;
-        case 4:     return sf::Mouse::XButton2;
-        default:    return sf::Mouse::ButtonCount; // Never happens! (hopefully)
-    }
-}
-
-
-////////////////////////////////////////////////////////
 +(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent *)anEvent
 {
     sf::Event::KeyEvent key;
@@ -949,28 +952,30 @@ sf::Key::Code NonLocalizedKeys(unsigned short keycode);
     key.System  = modifierFlags & NSCommandKeyMask;
     
     // Key code.
-    key.Code = sf::Key::Count;
-    // First we look if the key down is from a list of caracter that depend on keyboard localization.
+    key.Code = sf::Keyboard::KeyCount;
+    
+    // First we look if the key down is from a list of caracter 
+    // that depend on keyboard localization.
     NSString* string = [anEvent charactersIgnoringModifiers];
     if ([string length] > 0) {
-        key.Code = LocalizedKeys([string characterAtIndex:0]);
+        key.Code = sf::priv::HIDInputManager::LocalizedKeys([string characterAtIndex:0]);
     }
     
-    // The key is not a localized one, the other keys.
-    if (key.Code == sf::Key::Count) {
-        key.Code = NonLocalizedKeys([anEvent keyCode]);
+    // The key is not a localized one, so we try to find a corresponding code
+    // through virtual key code.
+    if (key.Code == sf::Keyboard::KeyCount) {
+        key.Code = sf::priv::HIDInputManager::NonLocalizedKeys([anEvent keyCode]);
     }
     
-#ifdef SFML_DEBUG // We don't want to bother the final customer with anoying messages.
-    if (key.Code == sf::Key::Count) { // The key is unknown.
-        sf::Err()
-        << "This is an unknow key. Should not happen (?). Keycode is 0x"
-        << std::hex
-        << [anEvent keyCode]
-        << "."
-        << std::endl;
-    }
-#endif
+//#ifdef SFML_DEBUG // Don't bother the final customers with annoying messages.
+//    if (key.Code == sf::Keyboard::KeyCount) { // The key is unknown.
+//        sf::Err() << "This is an unknow key. Virtual key code is 0x"
+//                  << std::hex
+//                  << [anEvent keyCode]
+//                  << "."
+//                  << std::endl;
+//    }
+//#endif
     
     return key;
 }
@@ -995,257 +1000,4 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask)
     return EraseMaskFromData(data, negative);
 }
 
-
-////////////////////////////////////////////////////////
-sf::Key::Code LocalizedKeys(unichar ch)
-{
-    switch (ch) {
-        case 'a':
-        case 'A':                   return sf::Key::A;
-        
-        case 'b':
-        case 'B':                   return sf::Key::B;
-        
-        case 'c':
-        case 'C':                   return sf::Key::C;
-        
-        case 'd':
-        case 'D':                   return sf::Key::D;
-        
-        case 'e':
-        case 'E':                   return sf::Key::E;
-        
-        case 'f':
-        case 'F':                   return sf::Key::F;
-        
-        case 'g':
-        case 'G':                   return sf::Key::G;
-        
-        case 'h':
-        case 'H':                   return sf::Key::H;
-        
-        case 'i':
-        case 'I':                   return sf::Key::I;
-        
-        case 'j':
-        case 'J':                   return sf::Key::J;
-        
-        case 'k':
-        case 'K':                   return sf::Key::K;
-        
-        case 'l':
-        case 'L':                   return sf::Key::L;
-        
-        case 'm':
-        case 'M':                   return sf::Key::M;
-        
-        case 'n':
-        case 'N':                   return sf::Key::N;
-        
-        case 'o':
-        case 'O':                   return sf::Key::O;
-        
-        case 'p':
-        case 'P':                   return sf::Key::P;
-        
-        case 'q':
-        case 'Q':                   return sf::Key::Q;
-        
-        case 'r':
-        case 'R':                   return sf::Key::R;
-        
-        case 's':
-        case 'S':                   return sf::Key::S;
-        
-        case 't':
-        case 'T':                   return sf::Key::T;
-        
-        case 'u':
-        case 'U':                   return sf::Key::U;
-        
-        case 'v':
-        case 'V':                   return sf::Key::V;
-        
-        case 'w':
-        case 'W':                   return sf::Key::W;
-        
-        case 'x':
-        case 'X':                   return sf::Key::X;
-        
-        case 'y':
-        case 'Y':                   return sf::Key::Y;
-        
-        case 'z':
-        case 'Z':                   return sf::Key::Z;
-        
-        // The kew is not 'localized'.
-        default:                    return sf::Key::Count;
-    }
-}
-
-
-////////////////////////////////////////////////////////
-sf::Key::Code NonLocalizedKeys(unsigned short keycode)
-{
-    // (Some) 0x code based on http://forums.macrumors.com/showthread.php?t=780577
-    // Some sf::Key are present twice.
-    switch (keycode) {
-        // These cases should not be used but anyway...
-        case 0x00:                      return sf::Key::A;
-        case 0x0b:                      return sf::Key::B;
-        case 0x08:                      return sf::Key::C;
-        case 0x02:                      return sf::Key::D;
-        case 0x0e:                      return sf::Key::E;
-        case 0x03:                      return sf::Key::F;
-        case 0x05:                      return sf::Key::G;
-        case 0x04:                      return sf::Key::H;
-        case 0x22:                      return sf::Key::I;
-        case 0x26:                      return sf::Key::J;
-        case 0x28:                      return sf::Key::K;
-        case 0x25:                      return sf::Key::L;
-        case 0x2e:                      return sf::Key::M;
-        case 0x2d:                      return sf::Key::N;
-        case 0x1f:                      return sf::Key::O;
-        case 0x23:                      return sf::Key::P;
-        case 0x0c:                      return sf::Key::Q;
-        case 0x0f:                      return sf::Key::R;
-        case 0x01:                      return sf::Key::S;
-        case 0x11:                      return sf::Key::T;
-        case 0x20:                      return sf::Key::U;
-        case 0x09:                      return sf::Key::V;
-        case 0x0d:                      return sf::Key::W;
-        case 0x07:                      return sf::Key::X;
-        case 0x10:                      return sf::Key::Y;
-        case 0x06:                      return sf::Key::Z;
-            
-        // These cases should not be used but anyway...
-        case 0x1d:                      return sf::Key::Num0;
-        case 0x12:                      return sf::Key::Num1;
-        case 0x13:                      return sf::Key::Num2;
-        case 0x14:                      return sf::Key::Num3;
-        case 0x15:                      return sf::Key::Num4;
-        case 0x17:                      return sf::Key::Num5;
-        case 0x16:                      return sf::Key::Num6;
-        case 0x1a:                      return sf::Key::Num7;
-        case 0x1c:                      return sf::Key::Num8;
-        case 0x19:                      return sf::Key::Num9;
-        
-        case 0x35:                      return sf::Key::Escape;
-        
-        // Modifier keys : never happen with keyDown/keyUp methods (?)
-        case 0x3b:                      return sf::Key::LControl;
-        case 0x38:                      return sf::Key::LShift;
-        case 0x3a:                      return sf::Key::LAlt;
-        case 0x37:                      return sf::Key::LSystem;
-        case 0x3e:                      return sf::Key::RControl;
-        case 0x3c:                      return sf::Key::RShift;
-        case 0x3d:                      return sf::Key::RAlt;
-        case 0x36:                      return sf::Key::RSystem;
-        
-        case NSMenuFunctionKey:         return sf::Key::Menu;
-        
-        case 0x21:                      return sf::Key::LBracket;
-        case 0x1e:                      return sf::Key::RBracket;
-        case 0x29:                      return sf::Key::SemiColon;
-        case 0x2b:                      return sf::Key::Comma;
-        case 0x2f:                      return sf::Key::Period;
-        case 0x27:                      return sf::Key::Quote;
-        case 0x2c:                      return sf::Key::Slash;
-        case 0x2a:                      return sf::Key::BackSlash;
-
-#warning sf::Key::Tilde might be in conflict with some other key.
-        // 0x0a is for "Non-US Backslash" according to HID Calibrator,
-        // a sample provided by Apple.
-        case 0x0a:                      return sf::Key::Tilde;
-
-        case 0x18:                      return sf::Key::Equal;
-        case 0x32:                      return sf::Key::Dash;
-        case 0x31:                      return sf::Key::Space;
-        case 0x24:                      return sf::Key::Return;
-        case 0x33:                      return sf::Key::Back;
-        case 0x30:                      return sf::Key::Tab;
-        
-        // Duplicates (see next §).
-        case 0x74:                      return sf::Key::PageUp;
-        case 0x79:                      return sf::Key::PageDown;
-        case 0x77:                      return sf::Key::End;
-        case 0x73:                      return sf::Key::Home;
-        
-        case NSPageUpFunctionKey:       return sf::Key::PageUp;
-        case NSPageDownFunctionKey:     return sf::Key::PageDown;
-        case NSEndFunctionKey:          return sf::Key::End;
-        case NSHomeFunctionKey:         return sf::Key::Home;
-            
-        case NSInsertFunctionKey:       return sf::Key::Insert;
-        case NSDeleteFunctionKey:       return sf::Key::Delete;
-        
-        case 0x45:                      return sf::Key::Add;
-        case 0x4e:                      return sf::Key::Subtract;
-        case 0x43:                      return sf::Key::Multiply;
-        case 0x4b:                      return sf::Key::Divide;
-        
-        // Duplicates (see next §).
-        case 0x7b:                      return sf::Key::Left;
-        case 0x7c:                      return sf::Key::Right;
-        case 0x7e:                      return sf::Key::Up;
-        case 0x7d:                      return sf::Key::Down;
-        
-        case NSLeftArrowFunctionKey:    return sf::Key::Left;
-        case NSRightArrowFunctionKey:   return sf::Key::Right;
-        case NSUpArrowFunctionKey:      return sf::Key::Up;
-        case NSDownArrowFunctionKey:    return sf::Key::Down;
-        
-        case 0x52:                      return sf::Key::Numpad0;
-        case 0x53:                      return sf::Key::Numpad1;
-        case 0x54:                      return sf::Key::Numpad2;
-        case 0x55:                      return sf::Key::Numpad3;
-        case 0x56:                      return sf::Key::Numpad4;
-        case 0x57:                      return sf::Key::Numpad5;
-        case 0x58:                      return sf::Key::Numpad6;
-        case 0x59:                      return sf::Key::Numpad7;
-        case 0x5b:                      return sf::Key::Numpad8;
-        case 0x5c:                      return sf::Key::Numpad9;
-        
-        // Duplicates (see next §).
-        case 0x7a:                      return sf::Key::F1;
-        case 0x78:                      return sf::Key::F2;
-        case 0x63:                      return sf::Key::F3;
-        case 0x76:                      return sf::Key::F4;
-        case 0x60:                      return sf::Key::F5;
-        case 0x61:                      return sf::Key::F6;
-        case 0x62:                      return sf::Key::F7;
-        case 0x64:                      return sf::Key::F8;
-        case 0x65:                      return sf::Key::F9;
-        case 0x6d:                      return sf::Key::F10;
-        case 0x67:                      return sf::Key::F11;
-        case 0x6f:                      return sf::Key::F12;
-        case 0x69:                      return sf::Key::F13;
-        case 0x6b:                      return sf::Key::F14;
-        case 0x71:                      return sf::Key::F15;
-        
-        case NSF1FunctionKey:           return sf::Key::F1;
-        case NSF2FunctionKey:           return sf::Key::F2;
-        case NSF3FunctionKey:           return sf::Key::F3;
-        case NSF4FunctionKey:           return sf::Key::F4;
-        case NSF5FunctionKey:           return sf::Key::F5;
-        case NSF6FunctionKey:           return sf::Key::F6;
-        case NSF7FunctionKey:           return sf::Key::F7;
-        case NSF8FunctionKey:           return sf::Key::F8;
-        case NSF9FunctionKey:           return sf::Key::F9;
-        case NSF10FunctionKey:          return sf::Key::F10;
-        case NSF11FunctionKey:          return sf::Key::F11;
-        case NSF12FunctionKey:          return sf::Key::F12;
-        case NSF13FunctionKey:          return sf::Key::F13;
-        case NSF14FunctionKey:          return sf::Key::F14;
-        case NSF15FunctionKey:          return sf::Key::F15;
-        
-        case NSPauseFunctionKey:        return sf::Key::Pause;
-        
-#warning keycode 0x1b is not bound to any key.
-        // This key is ' on CH-FR, ) on FR and - on US layouts.
-        
-        // An unknown key.
-        default:                        return sf::Key::Count;
-    }
-}
 

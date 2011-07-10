@@ -39,6 +39,7 @@
 /// \brief Event processing
 ///
 ////////////////////////////////////////////////////////////
-+(void)processEvent
++(void)processEvent;
+
 
 @end

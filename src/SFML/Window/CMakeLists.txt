@@ -67,10 +67,10 @@ else() # MACOSX
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
         ${SRCROOT}/OSX/cg_sf_conversion.hpp
         ${SRCROOT}/OSX/cg_sf_conversion.cpp
-        ${SRCROOT}/OSX/Joystick.cpp
-        ${SRCROOT}/OSX/Joystick.hpp
-        ${SRCROOT}/OSX/InputImpl.cpp
+        ${SRCROOT}/OSX/InputImpl.mm
         ${SRCROOT}/OSX/InputImpl.hpp
+        ${SRCROOT}/OSX/HIDInputManager.hpp
+        ${SRCROOT}/OSX/HIDInputManager.mm
         ${SRCROOT}/OSX/JoystickImpl.cpp
         ${SRCROOT}/OSX/JoystickImpl.hpp
         ${SRCROOT}/OSX/SFApplication.h
@@ -107,7 +107,7 @@ if(WINDOWS)
 elseif(LINUX)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB})
 elseif(MACOSX)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework Foundation -framework AppKit -framework IOKit")
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 endif()
 
 # define the sfml-window target
