@@ -105,7 +105,7 @@ public :
     static void SetPosition(const Vector2i& position);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current position of the mouse in window coordinates
+    /// \brief Set the current position of the mouse in window coordinates
     ///
     /// This function sets the current position of the mouse
     /// cursor, relative to the given window.
