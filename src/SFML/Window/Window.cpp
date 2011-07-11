@@ -38,7 +38,6 @@
 namespace
 {
     const sf::Window* fullscreenWindow = NULL;
-    const sf::Window* mouseFocusWindow = NULL;
 }
 
 
@@ -363,13 +362,6 @@ WindowHandle Window::GetSystemHandle() const
 
 
 ////////////////////////////////////////////////////////////
-const Window* Window::GetMouseFocusWindow()
-{
-    return mouseFocusWindow;
-}
-
-
-////////////////////////////////////////////////////////////
 void Window::OnCreate()
 {
     // Nothing by default
@@ -389,16 +381,6 @@ bool Window::FilterEvent(const Event& event)
     // Notify resize events to the derived class
     if (event.Type == Event::Resized)
         OnResize();
-
-    // Watch mouse move/left events to track the window which is under the cursor
-    if (event.Type == Event::MouseMoved)
-    {
-        mouseFocusWindow = this;
-    }
-    else if ((event.Type == Event::MouseLeft) && (mouseFocusWindow == this))
-    {
-        mouseFocusWindow = NULL;
-    }
 
     return true;
 }
