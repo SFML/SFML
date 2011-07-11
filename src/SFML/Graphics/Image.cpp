@@ -318,30 +318,31 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
 bool Image::CopyScreen(RenderWindow& window, const IntRect& sourceRect)
 {
     // Adjust the source rectangle
-    IntRect srcRect = sourceRect;
-    if (srcRect.Width == 0 || (srcRect.Height == 0))
+    IntRect rect = sourceRect;
+    if (rect.Width == 0 || (rect.Height == 0))
     {
-        srcRect.Left   = 0;
-        srcRect.Top    = 0;
-        srcRect.Width  = window.GetWidth();
-        srcRect.Height = window.GetHeight();
+        rect.Left   = 0;
+        rect.Top    = 0;
+        rect.Width  = window.GetWidth();
+        rect.Height = window.GetHeight();
     }
     else
     {
-        if (srcRect.Left   < 0) srcRect.Left = 0;
-        if (srcRect.Top    < 0) srcRect.Top  = 0;
-        if (srcRect.Width  > static_cast<int>(window.GetWidth()))  srcRect.Width  = window.GetWidth();
-        if (srcRect.Height > static_cast<int>(window.GetHeight())) srcRect.Height = window.GetHeight();
+        if (rect.Left   < 0) rect.Left = 0;
+        if (rect.Top    < 0) rect.Top  = 0;
+        if (rect.Width  > static_cast<int>(window.GetWidth()))  rect.Width  = window.GetWidth();
+        if (rect.Height > static_cast<int>(window.GetHeight())) rect.Height = window.GetHeight();
     }
 
     // We can then create the texture
-    if (window.SetActive() && CreateTexture(srcRect.Width, srcRect.Height))
+    if (window.SetActive() && CreateTexture(rect.Width, rect.Height))
     {
         GLint previous;
         GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
         GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
-        GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, srcRect.Left, srcRect.Top, myWidth, myHeight));
+        int y = window.GetHeight() - (rect.Top + rect.Height); // Y axis is inverted
+        GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rect.Left, y, myWidth, myHeight));
 
         GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 
