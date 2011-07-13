@@ -30,7 +30,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
-
+#include <IOKit/hid/IOHIDDevice.h>
+#include <map>
+#include <vector>
 
 namespace sf
 {
@@ -91,6 +93,17 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    typedef long Location;
+    typedef std::map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
+    typedef std::vector<IOHIDElementRef>                  ButtonsVector;
+    
+    AxisMap       myAxis;    ///< Axis (IOHIDElementRef) connected to the joystick
+    ButtonsVector myButtons; ///< Buttons (IOHIDElementRef) connected to the joystick
+    unsigned int  myIndex;   ///< SFML index
+    
+    static Location myLocationIDs[sf::Joystick::Count]; ///< Global Joystick register
+    /// For a corresponding SFML index, myLocationIDs is either some usb 
+    /// location or 0 if there isn't currently a connected joystick device
 };
 
 } // namespace priv

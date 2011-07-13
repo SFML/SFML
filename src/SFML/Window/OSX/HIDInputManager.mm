@@ -84,7 +84,6 @@ bool HIDInputManager::IsKeyPressed(Keyboard::Key key)
     return state;
 }
 
-
 ////////////////////////////////////////////////////////////
 bool HIDInputManager::IsMouseButtonPressed(Mouse::Button button)
 {
@@ -125,6 +124,35 @@ bool HIDInputManager::IsMouseButtonPressed(Mouse::Button button)
     }
     
     return state;
+}
+
+
+////////////////////////////////////////////////////////////
+CFSetRef HIDInputManager::CopyJoystickDevices()
+{
+    return CopyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick);
+}
+
+
+////////////////////////////////////////////////////////////
+long HIDInputManager::GetLocationID(IOHIDDeviceRef device)
+{
+    long loc = 0;
+    
+    // Get a unique ID : its usb location ID
+    CFTypeRef typeRef = IOHIDDeviceGetProperty(device, 
+                                               CFSTR(kIOHIDLocationIDKey));
+    if (!typeRef || CFGetTypeID(typeRef) != CFNumberGetTypeID()) {
+        return 0;
+    }
+    
+    CFNumberRef locRef = (CFNumberRef)typeRef;
+    
+    if (!CFNumberGetValue(locRef, kCFNumberLongType, &loc)) {
+        return 0;
+    }
+    
+    return loc;
 }
 
 
@@ -198,8 +226,7 @@ void HIDInputManager::InitializeKeyboard()
     // Get only keyboards
     CFSetRef keyboards = CopyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
     if (keyboards == NULL) {
-        
-        // FreeUp was already called
+        FreeUp();
         return;
     }
     
@@ -234,8 +261,7 @@ void HIDInputManager::InitializeMouse()
     // Get only mouses
     CFSetRef mouses = CopyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse);
     if (mouses == NULL) {
-        
-        // FreeUp was already called
+        FreeUp();
         return;
     }
     
@@ -525,17 +551,13 @@ CFSetRef HIDInputManager::CopyDevices(UInt32 page, UInt32 usage)
     
     CFSetRef devices = IOHIDManagerCopyDevices(myManager);
     if (devices == NULL) {
-        sf::Err() << "Cannot find any devices." << std::endl;
-        FreeUp();
         return NULL;
     }
     
-    // Is there at least one keyboard ?
+    // Is there at least one device ?
     CFIndex deviceCount = CFSetGetCount(devices);
     if (deviceCount < 1) {
-        sf::Err() << "Found no device." << std::endl;
         CFRelease(devices);
-        FreeUp();
         return NULL;
     }
     

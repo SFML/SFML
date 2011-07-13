@@ -48,8 +48,8 @@
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-	#include <SFML/Window/OSX/SFContext.hpp>
-	typedef sf::priv::SFContext ContextType;
+    #include <SFML/Window/OSX/SFContext.hpp>
+    typedef sf::priv::SFContext ContextType;
 
 #endif
 

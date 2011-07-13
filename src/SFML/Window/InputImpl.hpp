@@ -40,7 +40,7 @@
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-	#include <SFML/Window/OSX/InputImpl.hpp>
+    #include <SFML/Window/OSX/InputImpl.hpp>
 
 #endif
 

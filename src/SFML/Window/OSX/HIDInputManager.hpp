@@ -47,7 +47,8 @@ namespace priv
 /// keyboard and mouse states. It's only purpose is
 /// to help sf::priv::InputImpl class.
 ///
-/// sf::priv::JoystickImpl is not concerned by this class.
+/// HIDInputManager provides a function to get all connected joysticks
+/// to help sf::priv::JoystickImpl.
 ///
 ////////////////////////////////////////////////////////////
 class HIDInputManager : NonCopyable
@@ -83,6 +84,27 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool IsMouseButtonPressed(Mouse::Button button);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief List all connected joysticks
+    ///
+    /// \return a retained CFSetRef of IOHIDDeviceRef or NULL
+    ///
+    ////////////////////////////////////////////////////////////
+    CFSetRef CopyJoystickDevices();
+
+public :
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the usb location ID of a given device
+    ///
+    /// This location ID is unique and can be used a usb port identifier
+    ///
+    /// \param device HID device to query
+    /// \return the device's location ID or 0 if something went wrong
+    ///
+    ////////////////////////////////////////////////////////////
+    static long GetLocationID(IOHIDDeviceRef device);
     
     ////////////////////////////////////////////////////////////
     /// Try to convert a character into a SFML key code.
@@ -199,7 +221,7 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Filter the devices and return them.
     ///
-    /// If something went wrong FreeUp is called
+    /// FreeUp is _not_ called by this function.
     ///
     /// \param page  HID page like kHIDPage_GenericDesktop
     /// \param usage HID usage page like kHIDUsage_GD_Keyboard or kHIDUsage_GD_Mouse

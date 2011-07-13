@@ -102,14 +102,14 @@ SFOpenGLView* GetSFOpenGLViewFromSFMLWindow(const Window& window)
 ////////////////////////////////////////////////////////////
 bool InputImpl::IsKeyPressed(Keyboard::Key key)
 {
-	return HIDInputManager::GetInstance().IsKeyPressed(key);
+    return HIDInputManager::GetInstance().IsKeyPressed(key);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
 {
-	return HIDInputManager::GetInstance().IsMouseButtonPressed(button);
+    return HIDInputManager::GetInstance().IsMouseButtonPressed(button);
 }
 
 
@@ -117,7 +117,7 @@ bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
 Vector2i InputImpl::GetMousePosition()
 {
     // Reverse Y axis to match SFML coord.
-	NSPoint pos = [NSEvent mouseLocation];
+    NSPoint pos = [NSEvent mouseLocation];
     pos.y = sf::VideoMode::GetDesktopMode().Height - pos.y;
 
     return Vector2i(pos.x, pos.y);
