@@ -61,6 +61,7 @@ SFOpenGLView* GetSFOpenGLViewFromSFMLWindow(const Window& window)
     
     // Get our SFOpenGLView from ...
     SFOpenGLView* view = nil;
+    
     if ([nsHandle isKindOfClass:[NSWindow class]]) {
         // If system handle is a window then from its content view.
         view = [nsHandle contentView];
@@ -89,10 +90,13 @@ SFOpenGLView* GetSFOpenGLViewFromSFMLWindow(const Window& window)
         }
         
     } else {
-        
-        sf::Err() << "The system handle is neither a <NSWindow*> nor <NSView*>"
-                  << "object. This shouldn't happen."
-                  << std::endl;
+        if (nsHandle != 0) {
+            sf::Err() << "The system handle is neither a <NSWindow*> nor <NSView*>"
+                      << "object. This shouldn't happen."
+                      << std::endl;
+        } else {
+            // This probably means the SFML window was previously closed.
+        }
 
     }
     
