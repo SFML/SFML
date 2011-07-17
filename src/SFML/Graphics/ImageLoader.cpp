@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/ImageLoader.hpp>
+#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/Graphics/stb_image/stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -38,6 +39,9 @@ extern "C"
 #include <cctype>
 
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
 namespace
 {
     // Convert a string to lower case
@@ -46,6 +50,23 @@ namespace
         for (std::string::iterator i = str.begin(); i != str.end(); ++i)
             *i = static_cast<char>(std::tolower(*i));
         return str;
+    }
+
+    // stb_image callbacks that operate on a sf::InputStream
+    int Read(void* user, char* data, int size)
+    {
+        sf::InputStream* stream = static_cast<sf::InputStream*>(user);
+        return static_cast<int>(stream->Read(data, size));
+    }
+    void Skip(void* user, unsigned int size)
+    {
+        sf::InputStream* stream = static_cast<sf::InputStream*>(user);
+        stream->Seek(stream->GetPosition() + size);
+    }
+    int Eof(void* user)
+    {
+        sf::InputStream* stream = static_cast<sf::InputStream*>(user);
+        return stream->GetPosition() >= stream->GetSize();
     }
 }
 
@@ -152,6 +173,47 @@ bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t size, std::v
     else
     {
         Err() << "Failed to load image from memory, no data provided" << std::endl;
+        return false;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+bool ImageLoader::LoadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height)
+{
+    // Clear the array (just in case)
+    pixels.clear();
+
+    // Setup the stb_image callbacks
+    stbi_io_callbacks callbacks;
+    callbacks.read = &Read;
+    callbacks.skip = &Skip;
+    callbacks.eof  = &Eof;
+
+    // Load the image and get a pointer to the pixels in memory
+    int imgWidth, imgHeight, imgChannels;
+    unsigned char* ptr = stbi_load_from_callbacks(&callbacks, &stream, &imgWidth, &imgHeight, &imgChannels, STBI_rgb_alpha);
+
+    if (ptr && imgWidth && imgHeight)
+    {
+        // Assign the image properties
+        width  = imgWidth;
+        height = imgHeight;
+
+        // Copy the loaded pixels to the pixel buffer
+        pixels.resize(width * height * 4);
+        memcpy(&pixels[0], ptr, pixels.size());
+
+        // Free the loaded pixels (they are now in our own pixel buffer)
+        stbi_image_free(ptr);
+
+        return true;
+    }
+    else
+    {
+        // Error, failed to load the image
+        Err() << "Failed to load image from stream. Reason : " << stbi_failure_reason() << std::endl;
+
         return false;
     }
 }

@@ -28,9 +28,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>
-#include <sstream>
+#include <vector>
 
 
 namespace sf
@@ -94,6 +95,19 @@ bool Shader::LoadFromMemory(const std::string& shader)
 {
     // Save the shader code
     myFragmentShader = shader;
+
+    // Create the shaders and the program
+    return CompileProgram();
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::LoadFromStream(InputStream& stream)
+{
+    // Read the shader code from the stream
+    std::vector<char> buffer(static_cast<std::size_t>(stream.GetSize()));
+    Int64 read = stream.Read(&buffer[0], buffer.size());
+    myFragmentShader.assign(&buffer[0], &buffer[0] + read);
 
     // Create the shaders and the program
     return CompileProgram();

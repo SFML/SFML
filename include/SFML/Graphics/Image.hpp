@@ -41,6 +41,7 @@ namespace sf
 class Renderer;
 class RenderImage;
 class RenderWindow;
+class InputStream;
 
 ////////////////////////////////////////////////////////////
 /// \brief Class for loading, manipulating and saving images
@@ -86,7 +87,7 @@ public :
     ///
     /// \return True if loading was successful
     ///
-    /// \see LoadFromMemory, LoadFromPixels, SaveToFile
+    /// \see LoadFromMemory, LoadFromStream, LoadFromPixels, SaveToFile
     ///
     ////////////////////////////////////////////////////////////
     bool LoadFromFile(const std::string& filename);
@@ -106,10 +107,29 @@ public :
     ///
     /// \return True if loading was successful
     ///
-    /// \see LoadFromFile, LoadFromPixels, SaveToFile
+    /// \see LoadFromFile, LoadFromStream, LoadFromPixels
     ///
     ////////////////////////////////////////////////////////////
     bool LoadFromMemory(const void* data, std::size_t size);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the image from a custom stream
+    ///
+    /// The supported image formats are bmp, png, tga, jpg, gif,
+    /// psd, hdr and pic. Some format options are not supported,
+    /// like progressive jpeg.
+    /// The maximum size for an image depends on the graphics
+    /// driver and can be retrieve with the GetMaximumSize function.
+    /// If this function fails, the image is left unchanged.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \return True if loading was successful
+    ///
+    /// \see LoadFromFile, LoadFromMemory, LoadFromPixels
+    ///
+    ////////////////////////////////////////////////////////////
+    bool LoadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from an array of pixels

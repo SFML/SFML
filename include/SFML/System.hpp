@@ -32,6 +32,7 @@
 #include <SFML/Config.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Sleep.hpp>

@@ -137,6 +137,28 @@ bool Image::LoadFromMemory(const void* data, std::size_t size)
 
 
 ////////////////////////////////////////////////////////////
+bool Image::LoadFromStream(InputStream& stream)
+{
+    // Forward the job to the image loader
+    std::vector<Uint8> pixels;
+    unsigned int width;
+    unsigned int height;
+    if (priv::ImageLoader::GetInstance().LoadImageFromStream(stream, pixels, width, height))
+    {
+        // Loading succeeded : we can create the texture
+        if (CreateTexture(width, height))
+        {
+            // Copy the pixels
+            myPixels.swap(pixels);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
 bool Image::LoadFromPixels(unsigned int width, unsigned int height, const Uint8* data)
 {
     if (data)

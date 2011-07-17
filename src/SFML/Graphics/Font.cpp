@@ -26,21 +26,43 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 #include FT_BITMAP_H
+#include <cstdlib>
+
+
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    // FreeType callbacks that operate on a sf::InputStream
+    unsigned long Read(FT_Stream rec, unsigned long offset, unsigned char* buffer, unsigned long count)
+    {
+        sf::InputStream* stream = static_cast<sf::InputStream*>(rec->descriptor.pointer);
+        if (stream->Seek(offset) != offset)
+            return count ? 1 : 0; // error code is 0 if we're reading, or nonzero if we're seeking
+        return static_cast<unsigned long>(stream->Read(reinterpret_cast<char*>(buffer), count));
+    }
+    void Close(FT_Stream)
+    {
+    }
+}
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 Font::Font() :
-myLibrary (NULL),
-myFace    (NULL),
-myRefCount(NULL)
+myLibrary  (NULL),
+myFace     (NULL),
+myStreamRec(NULL),
+myRefCount (NULL)
 {
 
 }
@@ -51,6 +73,7 @@ Font::Font(const Font& copy) :
 Resource<Font>(),
 myLibrary    (copy.myLibrary),
 myFace       (copy.myFace),
+myStreamRec  (copy.myStreamRec),
 myRefCount   (copy.myRefCount),
 myPages      (copy.myPages),
 myPixelBuffer(copy.myPixelBuffer)
@@ -145,6 +168,63 @@ bool Font::LoadFromMemory(const void* data, std::size_t sizeInBytes)
 
     // Store the loaded font in our ugly void* :)
     myFace = face;
+
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Font::LoadFromStream(InputStream& stream)
+{
+    // Cleanup the previous resources
+    Cleanup();
+    myRefCount = new int(1);
+
+    // Initialize FreeType
+    // Note: we initialize FreeType for every font instance in order to avoid having a single
+    // global manager that would create a lot of issues regarding creation and destruction order.
+    FT_Library library;
+    if (FT_Init_FreeType(&library) != 0)
+    {
+        Err() << "Failed to load font from stream (failed to initialize FreeType)" << std::endl;
+        return false;
+    }
+    myLibrary = library;
+
+    // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
+    FT_StreamRec* rec = new FT_StreamRec;
+    std::memset(rec, 0, sizeof(rec));
+    rec->base               = NULL;
+    rec->size               = static_cast<unsigned long>(stream.GetSize());
+    rec->pos                = 0;
+    rec->descriptor.pointer = &stream;
+    rec->read               = &Read;
+    rec->close              = &Close;
+
+    // Setup the FreeType callbacks that will read our stream
+    FT_Open_Args args;
+    args.flags  = FT_OPEN_STREAM;
+    args.stream = rec;
+    args.driver = 0;
+
+    // Load the new font face from the specified stream
+    FT_Face face;
+    if (FT_Open_Face(static_cast<FT_Library>(myLibrary), &args, 0, &face) != 0)
+    {
+        Err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
+        return false;
+    }
+
+    // Select the unicode character map
+    if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
+    {
+        Err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
+        return false;
+    }
+
+    // Store the loaded font in our ugly void* :)
+    myFace = face;
+    myStreamRec = rec;
 
     return true;
 }
@@ -284,6 +364,10 @@ void Font::Cleanup()
             if (myFace)
                 FT_Done_Face(static_cast<FT_Face>(myFace));
 
+            // Destroy the stream rec instance, if any (must be done after FT_Done_Face!)
+            if (myStreamRec)
+                delete static_cast<FT_StreamRec*>(myStreamRec);
+
             // Close the library
             if (myLibrary)
                 FT_Done_FreeType(static_cast<FT_Library>(myLibrary));
@@ -291,9 +375,10 @@ void Font::Cleanup()
     }
 
     // Reset members
-    myLibrary  = NULL;
-    myFace     = NULL;
-    myRefCount = NULL;
+    myLibrary   = NULL;
+    myFace      = NULL;
+    myStreamRec = NULL;
+    myRefCount  = NULL;
     myPages.clear();
     myPixelBuffer.clear();
 }

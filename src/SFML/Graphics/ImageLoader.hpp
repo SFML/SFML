@@ -35,6 +35,8 @@
 
 namespace sf
 {
+class InputStream;
+
 namespace priv
 {
 ////////////////////////////////////////////////////////////
@@ -67,7 +69,7 @@ public :
     bool LoadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load an image from a file inn memory
+    /// \brief Load an image from a file in memory
     ///
     /// \param data   Pointer to the file data in memory
     /// \param size   Size of the data to load, in bytes
@@ -79,6 +81,19 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool LoadImageFromMemory(const void* data, std::size_t size, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load an image from a custom stream
+    ///
+    /// \param stream Source stream to read from
+    /// \param pixels Array of pixels to fill with loaded image
+    /// \param width  Width of loaded image, in pixels
+    /// \param height Height of loaded image, in pixels
+    ///
+    /// \return True if loading was successful
+    ///
+    ////////////////////////////////////////////////////////////
+    bool LoadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
     /// \bref Save an array of pixels as an image file

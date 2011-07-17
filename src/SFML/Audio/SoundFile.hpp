@@ -35,6 +35,8 @@
 
 namespace sf
 {
+class InputStream;
+
 namespace priv
 {
 ////////////////////////////////////////////////////////////
@@ -103,6 +105,16 @@ public :
     bool OpenRead(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Open a sound file from a custom stream for reading
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \return True if the file was successfully opened
+    ///
+    ////////////////////////////////////////////////////////////
+    bool OpenRead(InputStream& stream);
+
+    ////////////////////////////////////////////////////////////
     /// \brief a the sound file for writing
     ///
     /// \param filename      Path of the sound file to write
@@ -156,33 +168,38 @@ private :
     static int GetFormatFromFilename(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Provide I/O functions for manipulating files in memory
+    /// \brief Data and callbacks for opening from memory
     ///
     ////////////////////////////////////////////////////////////
-    class MemoryIO
+    struct Memory
     {
-    public :
+        const char* DataStart;
+        const char* DataPtr;
+        sf_count_t  TotalSize;
 
-        SF_VIRTUAL_IO Prepare(const void* data, std::size_t sizeInBytes);
+        static sf_count_t GetLength(void* user);
+        static sf_count_t Read(void* ptr, sf_count_t count, void* user);
+        static sf_count_t Seek(sf_count_t offset, int whence, void* user);
+        static sf_count_t Tell(void* user);
+    };
 
-    private :
-
-        static sf_count_t GetLength(void* userData);
-        static sf_count_t Read(void* ptr, sf_count_t count, void* userData);
-        static sf_count_t Seek(sf_count_t offset, int whence, void* userData);
-        static sf_count_t Tell(void* userData);
-        static sf_count_t Write(const void* ptr, sf_count_t count, void* userData);
-
-        const char* myDataStart;
-        const char* myDataPtr;
-        sf_count_t  myTotalSize;
+    ////////////////////////////////////////////////////////////
+    /// \brief Callbacks for opening from stream
+    ///
+    ////////////////////////////////////////////////////////////
+    struct Stream
+    {
+        static sf_count_t GetLength(void* user);
+        static sf_count_t Read(void* ptr, sf_count_t count, void* user);
+        static sf_count_t Seek(sf_count_t offset, int whence, void* user);
+        static sf_count_t Tell(void* user);
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     SNDFILE*     myFile;          ///< File descriptor
-    MemoryIO     myMemoryIO;      ///< Memory read / write data
+    Memory       myMemory;        ///< Memory reading info
     std::size_t  myNbSamples;     ///< Total number of samples in the file
     unsigned int myChannelsCount; ///< Number of channels used by the sound
     unsigned int mySampleRate;    ///< Number of samples per second

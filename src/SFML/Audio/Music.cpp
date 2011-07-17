@@ -60,21 +60,12 @@ bool Music::OpenFromFile(const std::string& filename)
     // First stop the music if it was already running
     Stop();
 
-    // Create the sound file implementation, and open it in read mode
+    // Open the underlying sound file
     if (!myFile->OpenRead(filename))
-    {
-        Err() << "Failed to open \"" << filename << "\" for reading" << std::endl;
         return false;
-    }
 
-    // Compute the duration
-    myDuration = static_cast<Uint32>(1000 * myFile->GetSamplesCount() / myFile->GetSampleRate() / myFile->GetChannelsCount());
-
-    // Resize the internal buffer so that it can contain 1 second of audio samples
-    mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelsCount());
-
-    // Initialize the stream
-    Initialize(myFile->GetChannelsCount(), myFile->GetSampleRate());
+    // Perform common initializations
+    Initialize();
 
     return true;
 }
@@ -86,21 +77,29 @@ bool Music::OpenFromMemory(const void* data, std::size_t sizeInBytes)
     // First stop the music if it was already running
     Stop();
 
-    // Create the sound file implementation, and open it in read mode
+    // Open the underlying sound file
     if (!myFile->OpenRead(data, sizeInBytes))
-    {
-        Err() << "Failed to open music from memory for reading" << std::endl;
         return false;
-    }
 
-    // Compute the duration
-    myDuration = static_cast<Uint32>(1000 * myFile->GetSamplesCount() / myFile->GetSampleRate() / myFile->GetChannelsCount());
+    // Perform common initializations
+    Initialize();
 
-    // Resize the internal buffer so that it can contain 1 second of audio samples
-    mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelsCount());
+    return true;
+}
 
-    // Initialize the stream
-    Initialize(myFile->GetChannelsCount(), myFile->GetSampleRate());
+
+////////////////////////////////////////////////////////////
+bool Music::OpenFromStream(InputStream& stream)
+{
+    // First stop the music if it was already running
+    Stop();
+
+    // Open the underlying sound file
+    if (!myFile->OpenRead(stream))
+        return false;
+
+    // Perform common initializations
+    Initialize();
 
     return true;
 }
@@ -128,13 +127,25 @@ bool Music::OnGetData(SoundStream::Chunk& data)
 
 
 ////////////////////////////////////////////////////////////
-/// /see SoundStream::OnSeek
-////////////////////////////////////////////////////////////
 void Music::OnSeek(Uint32 timeOffset)
 {
     Lock lock(myMutex);
 
     myFile->Seek(timeOffset);
+}
+
+
+////////////////////////////////////////////////////////////
+void Music::Initialize()
+{
+    // Compute the music duration
+    myDuration = static_cast<Uint32>(1000 * myFile->GetSamplesCount() / myFile->GetSampleRate() / myFile->GetChannelsCount());
+
+    // Resize the internal buffer so that it can contain 1 second of audio samples
+    mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelsCount());
+
+    // Initialize the stream
+    SoundStream::Initialize(myFile->GetChannelsCount(), myFile->GetSampleRate());
 }
 
 } // namespace sf

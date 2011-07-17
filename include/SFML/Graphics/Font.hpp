@@ -41,6 +41,8 @@
 
 namespace sf
 {
+class InputStream;
+
 ////////////////////////////////////////////////////////////
 /// \brief Class for loading and manipulating character fonts
 ///
@@ -86,7 +88,7 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromMemory
+    /// \see LoadFromMemory, LoadFromStream
     ///
     ////////////////////////////////////////////////////////////
     bool LoadFromFile(const std::string& filename);
@@ -96,9 +98,6 @@ public :
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
     /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-    /// Note that this function know nothing about the standard
-    /// fonts installed on the user's system, thus you can't
-    /// load them directly.
     /// Warning: SFML cannot preload all the font data in this
     /// function, so the buffer pointed by \a data has to remain
     /// valid as long as the font is used.
@@ -108,10 +107,28 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile
+    /// \see LoadFromFile, LoadFromStream
     ///
     ////////////////////////////////////////////////////////////
     bool LoadFromMemory(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the font from a custom stream
+    ///
+    /// The supported font formats are: TrueType, Type 1, CFF,
+    /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
+    /// Warning: SFML cannot preload all the font data in this
+    /// function, so the contents of \a stream have to remain
+    /// valid as long as the font is used.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see LoadFromFile, LoadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    bool LoadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve a glyph of the font
@@ -278,6 +295,7 @@ private :
     ////////////////////////////////////////////////////////////
     void*                      myLibrary;     ///< Pointer to the internal library interface (it is typeless to avoid exposing implementation details)
     void*                      myFace;        ///< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
+    void*                      myStreamRec;   ///< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
     int*                       myRefCount;    ///< Reference counter used by implicit sharing
     mutable PageTable          myPages;       ///< Table containing the glyphs pages by character size
     mutable std::vector<Uint8> myPixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
@@ -293,9 +311,9 @@ private :
 /// \class sf::Font
 /// \ingroup graphics
 ///
-/// Fonts can be loaded from a file or from memory, from
-/// the most common types of fonts. See the LoadFromFile
-/// function for the complete list of supported formats.
+/// Fonts can be loaded from a file, from memory or from a custom
+/// stream, and supports the most common types of fonts. See
+/// the LoadFromFile function for the complete list of supported formats.
 ///
 /// Once it is loaded, a sf::Font instance provides three
 /// types of informations about the font:

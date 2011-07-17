@@ -26,8 +26,25 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFile.hpp>
+#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <cstring>
+#include <cctype>
+
+
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    // Convert a string to lower case
+    std::string ToLower(std::string str)
+    {
+        for (std::string::iterator i = str.begin(); i != str.end(); ++i)
+            *i = static_cast<char>(std::tolower(*i));
+        return str;
+    }
+}
 
 
 namespace sf
@@ -86,7 +103,7 @@ bool SoundFile::OpenRead(const std::string& filename)
     myFile = sf_open(filename.c_str(), SFM_READ, &fileInfos);
     if (!myFile)
     {
-        Err() << "Failed to read sound file \"" << filename << "\" (" << sf_strerror(myFile) << ")" << std::endl;
+        Err() << "Failed to open sound file \"" << filename << "\" (" << sf_strerror(myFile) << ")" << std::endl;
         return false;
     }
 
@@ -107,14 +124,55 @@ bool SoundFile::OpenRead(const void* data, std::size_t sizeInBytes)
         sf_close(myFile);
 
     // Prepare the memory I/O structure
-    SF_VIRTUAL_IO io = myMemoryIO.Prepare(data, sizeInBytes);
+    SF_VIRTUAL_IO io;
+    io.get_filelen = &Memory::GetLength;
+    io.read        = &Memory::Read;
+    io.seek        = &Memory::Seek;
+    io.tell        = &Memory::Tell;
+
+    // Initialize the memory data
+    myMemory.DataStart = static_cast<const char*>(data);
+    myMemory.DataPtr   = myMemory.DataStart;
+    myMemory.TotalSize = sizeInBytes;
 
     // Open the sound file
     SF_INFO fileInfos;
-    myFile = sf_open_virtual(&io, SFM_READ, &fileInfos, &myMemoryIO);
+    myFile = sf_open_virtual(&io, SFM_READ, &fileInfos, &myMemory);
     if (!myFile)
     {
-        Err() << "Failed to read sound file from memory (" << sf_strerror(myFile) << ")" << std::endl;
+        Err() << "Failed to open sound file from memory (" << sf_strerror(myFile) << ")" << std::endl;
+        return false;
+    }
+
+    // Set the sound parameters
+    myChannelsCount = fileInfos.channels;
+    mySampleRate    = fileInfos.samplerate;
+    myNbSamples     = static_cast<std::size_t>(fileInfos.frames) * myChannelsCount;
+
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////
+bool SoundFile::OpenRead(InputStream& stream)
+{
+    // If the file is already opened, first close it
+    if (myFile)
+        sf_close(myFile);
+
+    // Prepare the memory I/O structure
+    SF_VIRTUAL_IO io;
+    io.get_filelen = &Stream::GetLength;
+    io.read        = &Stream::Read;
+    io.seek        = &Stream::Seek;
+    io.tell        = &Stream::Tell;
+
+    // Open the sound file
+    SF_INFO fileInfos;
+    myFile = sf_open_virtual(&io, SFM_READ, &fileInfos, &stream);
+    if (!myFile)
+    {
+        Err() << "Failed to open sound file from stream (" << sf_strerror(myFile) << ")" << std::endl;
         return false;
     }
 
@@ -215,120 +273,125 @@ int SoundFile::GetFormatFromFilename(const std::string& filename)
         ext = filename.substr(pos + 1);
 
     // Match every supported extension with its format constant
-    if (ext == "wav"   || ext == "WAV" )  return SF_FORMAT_WAV;
-    if (ext == "aif"   || ext == "AIF" )  return SF_FORMAT_AIFF;
-    if (ext == "aiff"  || ext == "AIFF")  return SF_FORMAT_AIFF;
-    if (ext == "au"    || ext == "AU"  )  return SF_FORMAT_AU;
-    if (ext == "raw"   || ext == "RAW" )  return SF_FORMAT_RAW;
-    if (ext == "paf"   || ext == "PAF" )  return SF_FORMAT_PAF;
-    if (ext == "svx"   || ext == "SVX" )  return SF_FORMAT_SVX;
-    if (ext == "nist"  || ext == "NIST")  return SF_FORMAT_NIST;
-    if (ext == "voc"   || ext == "VOC" )  return SF_FORMAT_VOC;
-    if (ext == "sf"    || ext == "SF"  )  return SF_FORMAT_IRCAM;
-    if (ext == "w64"   || ext == "W64" )  return SF_FORMAT_W64;
-    if (ext == "mat4"  || ext == "MAT4")  return SF_FORMAT_MAT4;
-    if (ext == "mat5"  || ext == "MAT5")  return SF_FORMAT_MAT5;
-    if (ext == "pvf"   || ext == "PVF" )  return SF_FORMAT_PVF;
-    if (ext == "xi"    || ext == "XI" )   return SF_FORMAT_XI;
-    if (ext == "htk"   || ext == "HTK" )  return SF_FORMAT_HTK;
-    if (ext == "sds"   || ext == "SDS" )  return SF_FORMAT_SDS;
-    if (ext == "avr"   || ext == "AVR" )  return SF_FORMAT_AVR;
-    if (ext == "sd2"   || ext == "SD2" )  return SF_FORMAT_SD2;
-    if (ext == "flac"  || ext == "FLAC")  return SF_FORMAT_FLAC;
-    if (ext == "caf"   || ext == "CAF" )  return SF_FORMAT_CAF;
-    if (ext == "wve"   || ext == "WVE" )  return SF_FORMAT_WVE;
-    if (ext == "ogg"   || ext == "OGG")   return SF_FORMAT_OGG;
-    if (ext == "mpc2k" || ext == "MPC2K") return SF_FORMAT_MPC2K;
-    if (ext == "rf64"  || ext == "RF64")  return SF_FORMAT_RF64;
+    if (ToLower(ext) == "wav"  ) return SF_FORMAT_WAV;
+    if (ToLower(ext) == "aif"  ) return SF_FORMAT_AIFF;
+    if (ToLower(ext) == "aiff" ) return SF_FORMAT_AIFF;
+    if (ToLower(ext) == "au"   ) return SF_FORMAT_AU;
+    if (ToLower(ext) == "raw"  ) return SF_FORMAT_RAW;
+    if (ToLower(ext) == "paf"  ) return SF_FORMAT_PAF;
+    if (ToLower(ext) == "svx"  ) return SF_FORMAT_SVX;
+    if (ToLower(ext) == "nist" ) return SF_FORMAT_NIST;
+    if (ToLower(ext) == "voc"  ) return SF_FORMAT_VOC;
+    if (ToLower(ext) == "sf"   ) return SF_FORMAT_IRCAM;
+    if (ToLower(ext) == "w64"  ) return SF_FORMAT_W64;
+    if (ToLower(ext) == "mat4" ) return SF_FORMAT_MAT4;
+    if (ToLower(ext) == "mat5" ) return SF_FORMAT_MAT5;
+    if (ToLower(ext) == "pvf"  ) return SF_FORMAT_PVF;
+    if (ToLower(ext) == "xi"   ) return SF_FORMAT_XI;
+    if (ToLower(ext) == "htk"  ) return SF_FORMAT_HTK;
+    if (ToLower(ext) == "sds"  ) return SF_FORMAT_SDS;
+    if (ToLower(ext) == "avr"  ) return SF_FORMAT_AVR;
+    if (ToLower(ext) == "sd2"  ) return SF_FORMAT_SD2;
+    if (ToLower(ext) == "flac" ) return SF_FORMAT_FLAC;
+    if (ToLower(ext) == "caf"  ) return SF_FORMAT_CAF;
+    if (ToLower(ext) == "wve"  ) return SF_FORMAT_WVE;
+    if (ToLower(ext) == "ogg"  ) return SF_FORMAT_OGG;
+    if (ToLower(ext) == "mpc2k") return SF_FORMAT_MPC2K;
+    if (ToLower(ext) == "rf64" ) return SF_FORMAT_RF64;
 
     return -1;
 }
 
 
 ////////////////////////////////////////////////////////////
-SF_VIRTUAL_IO SoundFile::MemoryIO::Prepare(const void* data, std::size_t sizeInBytes)
+sf_count_t SoundFile::Memory::GetLength(void* user)
 {
-    // Setup the I/O functions
-    SF_VIRTUAL_IO io;
-    io.get_filelen = &SoundFile::MemoryIO::GetLength;
-    io.read        = &SoundFile::MemoryIO::Read;
-    io.seek        = &SoundFile::MemoryIO::Seek;
-    io.tell        = &SoundFile::MemoryIO::Tell;
-    io.write       = &SoundFile::MemoryIO::Write;
-
-    // Initialize the memory data
-    myDataStart = static_cast<const char*>(data);
-    myDataPtr   = myDataStart;
-    myTotalSize = sizeInBytes;
-
-    return io;
+    Memory* memory = static_cast<Memory*>(user);
+    return memory->TotalSize;
 }
 
 
 ////////////////////////////////////////////////////////////
-sf_count_t SoundFile::MemoryIO::GetLength(void* userData)
+sf_count_t SoundFile::Memory::Read(void* ptr, sf_count_t count, void* user)
 {
-    MemoryIO* self = static_cast<MemoryIO*>(userData);
+    Memory* memory = static_cast<Memory*>(user);
 
-    return self->myTotalSize;
-}
+    sf_count_t position = memory->DataPtr - memory->DataStart;
+    if (position + count >= memory->TotalSize)
+        count = memory->TotalSize - position;
 
-
-////////////////////////////////////////////////////////////
-sf_count_t SoundFile::MemoryIO::Read(void* ptr, sf_count_t count, void* userData)
-{
-    MemoryIO* self = static_cast<MemoryIO*>(userData);
-
-    sf_count_t position = self->myDataPtr - self->myDataStart;
-    if (position + count >= self->myTotalSize)
-        count = self->myTotalSize - position;
-
-    std::memcpy(ptr, self->myDataPtr, static_cast<std::size_t>(count));
-
-    self->myDataPtr += count;
-
+    std::memcpy(ptr, memory->DataPtr, static_cast<std::size_t>(count));
+    memory->DataPtr += count;
     return count;
 }
 
 
 ////////////////////////////////////////////////////////////
-sf_count_t SoundFile::MemoryIO::Seek(sf_count_t offset, int whence, void* userData)
+sf_count_t SoundFile::Memory::Seek(sf_count_t offset, int whence, void* user)
 {
-    MemoryIO* self = static_cast<MemoryIO*>(userData);
-
+    Memory* memory = static_cast<Memory*>(user);
     sf_count_t position = 0;
     switch (whence)
     {
         case SEEK_SET : position = offset;                                       break;
-        case SEEK_CUR : position = self->myDataPtr - self->myDataStart + offset; break;
-        case SEEK_END : position = self->myTotalSize - offset;                   break;
+        case SEEK_CUR : position = memory->DataPtr - memory->DataStart + offset; break;
+        case SEEK_END : position = memory->TotalSize - offset;                   break;
         default       : position = 0;                                            break;
     }
 
-    if (position >= self->myTotalSize)
-        position = self->myTotalSize - 1;
+    if (position >= memory->TotalSize)
+        position = memory->TotalSize - 1;
     else if (position < 0)
         position = 0;
 
-    self->myDataPtr = self->myDataStart + position;
-
+    memory->DataPtr = memory->DataStart + position;
     return position;
 }
 
 
 ////////////////////////////////////////////////////////////
-sf_count_t SoundFile::MemoryIO::Tell(void* userData)
+sf_count_t SoundFile::Memory::Tell(void* user)
 {
-    MemoryIO* self = static_cast<MemoryIO*>(userData);
-
-    return self->myDataPtr - self->myDataStart;
+    Memory* memory = static_cast<Memory*>(user);
+    return memory->DataPtr - memory->DataStart;
 }
 
 
 ////////////////////////////////////////////////////////////
-sf_count_t SoundFile::MemoryIO::Write(const void*, sf_count_t, void*)
+sf_count_t SoundFile::Stream::GetLength(void* userData)
 {
-    return 0;
+    sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
+    return stream->GetSize();
+}
+
+
+////////////////////////////////////////////////////////////
+sf_count_t SoundFile::Stream::Read(void* ptr, sf_count_t count, void* userData)
+{
+    sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
+    return stream->Read(reinterpret_cast<char*>(ptr), count);
+}
+
+
+////////////////////////////////////////////////////////////
+sf_count_t SoundFile::Stream::Seek(sf_count_t offset, int whence, void* userData)
+{
+    sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
+    switch (whence)
+    {
+        case SEEK_SET : return stream->Seek(offset);
+        case SEEK_CUR : return stream->Seek(stream->GetPosition() + offset);
+        case SEEK_END : return stream->Seek(stream->GetSize() - offset);
+        default       : return stream->Seek(0);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+sf_count_t SoundFile::Stream::Tell(void* userData)
+{
+    sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
+    return stream->GetPosition();
 }
 
 } // namespace priv

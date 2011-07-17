@@ -41,6 +41,8 @@ namespace priv
     class SoundFile;
 }
 
+class InputStream;
+
 ////////////////////////////////////////////////////////////
 /// \brief Streamed music played from an audio file
 ///
@@ -74,7 +76,7 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see OpenFromMemory
+    /// \see OpenFromMemory, OpenFromStream
     ///
     ////////////////////////////////////////////////////////////
     bool OpenFromFile(const std::string& filename);
@@ -93,10 +95,28 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see OpenFromFile
+    /// \see OpenFromFile, OpenFromStream
     ///
     ////////////////////////////////////////////////////////////
     bool OpenFromMemory(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Open a music from an audio file in a custom stream
+    ///
+    /// This function doesn't start playing the music (call Play()
+    /// to do so).
+    /// Here is a complete list of all the supported audio formats:
+    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
+    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see OpenFromFile, OpenFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    bool OpenFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the music
@@ -130,6 +150,12 @@ protected :
     virtual void OnSeek(Uint32 timeOffset);
 
 private :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Initialize the internal state after loading a new music
+    ///
+    ////////////////////////////////////////////////////////////
+    void Initialize();
 
     ////////////////////////////////////////////////////////////
     // Member data

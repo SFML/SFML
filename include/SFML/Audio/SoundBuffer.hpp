@@ -37,7 +37,13 @@
 
 namespace sf
 {
+namespace priv
+{
+    class SoundFile;
+}
+
 class Sound;
+class InputStream;
 
 ////////////////////////////////////////////////////////////
 /// \brief Storage for audio samples defining a sound
@@ -78,7 +84,7 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromMemory, LoadFromSamples, SaveToFile
+    /// \see LoadFromMemory, LoadFromStream, LoadFromSamples, SaveToFile
     ///
     ////////////////////////////////////////////////////////////
     bool LoadFromFile(const std::string& filename);
@@ -95,10 +101,26 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromSamples, SaveToFile
+    /// \see LoadFromFile, LoadFromStream, LoadFromSamples
     ///
     ////////////////////////////////////////////////////////////
     bool LoadFromMemory(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the sound buffer from a custom stream
+    ///
+    /// Here is a complete list of all the supported audio formats:
+    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
+    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see LoadFromFile, LoadFromMemory, LoadFromSamples
+    ///
+    ////////////////////////////////////////////////////////////
+    bool LoadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from an array of audio samples
@@ -213,6 +235,16 @@ private :
     friend class Sound;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Initialize the internal state after loading a new sound
+    ///
+    /// \param file Sound file providing access to the new loaded sound
+    ///
+    /// \return True on succesful initialization, false on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    bool Initialize(priv::SoundFile& file);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples
     ///
     /// \param channelsCount Number of channels
@@ -273,9 +305,9 @@ private :
 /// a sf::Image.
 ///
 /// A sound buffer can be loaded from a file (see LoadFromFile()
-/// for the complete list of supported formats), from memory
-/// or directly from an array of samples. It can also be saved
-/// back to a file.
+/// for the complete list of supported formats), from memory, from
+/// a custom stream (see sf::InputStream) or directly from an array
+/// of samples. It can also be saved back to a file.
 ///
 /// Sound buffers alone are not very useful: they hold the audio data
 /// but cannot be played. To do so, you need to use the sf::Sound class,

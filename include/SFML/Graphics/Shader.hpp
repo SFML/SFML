@@ -84,7 +84,7 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromMemory
+    /// \see LoadFromMemory, LoadFromStream
     ///
     ////////////////////////////////////////////////////////////
     bool LoadFromFile(const std::string& filename);
@@ -101,10 +101,27 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile
+    /// \see LoadFromFile, LoadFromStream
     ///
     ////////////////////////////////////////////////////////////
     bool LoadFromMemory(const std::string& shader);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the shader from a custom stream
+    ///
+    /// The source code must be a valid fragment shader in
+    /// GLSL language. GLSL is a C-like language dedicated
+    /// to OpenGL shaders; you'll probably need to read a
+    /// good documentation for it before writing your own shaders.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see LoadFromFile, LoadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    bool LoadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a float parameter of the shader

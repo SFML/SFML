@@ -80,62 +80,33 @@ SoundBuffer::~SoundBuffer()
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::LoadFromFile(const std::string& filename)
 {
-    // Open the sound file
     priv::SoundFile file;
     if (file.OpenRead(filename))
-    {
-        // Get the sound parameters
-        std::size_t  nbSamples     = file.GetSamplesCount();
-        unsigned int channelsCount = file.GetChannelsCount();
-        unsigned int sampleRate    = file.GetSampleRate();
-
-        // Read the samples from the opened file
-        mySamples.resize(nbSamples);
-        if (file.Read(&mySamples[0], nbSamples) == nbSamples)
-        {
-            // Update the internal buffer with the new samples
-            return Update(channelsCount, sampleRate);
-        }
-        else
-        {
-            return false;
-        }
-    }
+        return Initialize(file);
     else
-    {
         return false;
-    }
 }
 
 
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::LoadFromMemory(const void* data, std::size_t sizeInBytes)
 {
-    // Open the sound file
     priv::SoundFile file;
     if (file.OpenRead(data, sizeInBytes))
-    {
-        // Get the sound parameters
-        std::size_t  nbSamples     = file.GetSamplesCount();
-        unsigned int channelsCount = file.GetChannelsCount();
-        unsigned int sampleRate    = file.GetSampleRate();
-
-        // Read the samples from the opened file
-        mySamples.resize(nbSamples);
-        if (file.Read(&mySamples[0], nbSamples) == nbSamples)
-        {
-            // Update the internal buffer with the new samples
-            return Update(channelsCount, sampleRate);
-        }
-        else
-        {
-            return false;
-        }
-    }
+        return Initialize(file);
     else
-    {
         return false;
-    }
+}
+
+
+////////////////////////////////////////////////////////////
+bool SoundBuffer::LoadFromStream(InputStream& stream)
+{
+    priv::SoundFile file;
+    if (file.OpenRead(stream))
+        return Initialize(file);
+    else
+        return false;
 }
 
 
@@ -153,11 +124,11 @@ bool SoundBuffer::LoadFromSamples(const Int16* samples, std::size_t samplesCount
     else
     {
         // Error...
-        Err() << "Failed to load sound buffer from memory ("
-              << "Samples : "        << samples       << ", "
-              << "Samples count : "  << samplesCount  << ", "
-              << "Channels count : " << channelsCount << ", "
-              << "Sample rate : "    << sampleRate    << ")"
+        Err() << "Failed to load sound buffer from samples ("
+              << "array: "      << samples       << ", "
+              << "count: "      << samplesCount  << ", "
+              << "channels: "   << channelsCount << ", "
+              << "samplerate: " << sampleRate    << ")"
               << std::endl;
 
         return false;
@@ -240,6 +211,28 @@ SoundBuffer& SoundBuffer::operator =(const SoundBuffer& right)
 
 
 ////////////////////////////////////////////////////////////
+bool SoundBuffer::Initialize(priv::SoundFile& file)
+{
+    // Retrieve the sound parameters
+    std::size_t  nbSamples     = file.GetSamplesCount();
+    unsigned int channelsCount = file.GetChannelsCount();
+    unsigned int sampleRate    = file.GetSampleRate();
+
+    // Read the samples from the provided file
+    mySamples.resize(nbSamples);
+    if (file.Read(&mySamples[0], nbSamples) == nbSamples)
+    {
+        // Update the internal buffer with the new samples
+        return Update(channelsCount, sampleRate);
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
 {
     // Check parameters
@@ -252,7 +245,7 @@ bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
     // Check if the format is valid
     if (format == 0)
     {
-        Err() << "Unsupported number of channels (" << channelsCount << ")" << std::endl;
+        Err() << "Failed to load sound buffer (unsupported number of channels: " << channelsCount << ")" << std::endl;
         return false;
     }
 
