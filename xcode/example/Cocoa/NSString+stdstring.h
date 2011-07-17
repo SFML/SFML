@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
+//                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,27 +23,17 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_INPUTIMPL_HPP
-#define SFML_INPUTIMPL_HPP
+#import <string>
+#import <Foundation/Foundation.h>
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+@interface NSString (NSString_stdstring)
 
-#if defined(SFML_SYSTEM_WINDOWS)
++(id)stringWithstdstring:(std::string const &)string;
 
-    #include <SFML/Window/Win32/InputImpl.hpp>
++(id)stringWithstdwstring:(std::wstring const &)string;
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+-(std::string)tostdstring;
 
-    #include <SFML/Window/Linux/InputImpl.hpp>
+-(std::wstring)tostdwstring;
 
-#elif defined(SFML_SYSTEM_MACOS)
-
-    #include <SFML/Window/OSX/InputImpl.hpp>
-
-#endif
-
-
-#endif // SFML_INPUTIMPL_HPP
+@end
