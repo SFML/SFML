@@ -34,6 +34,7 @@
 #include FT_OUTLINE_H
 #include FT_BITMAP_H
 #include <cstdlib>
+#include <cstring>
 
 
 ////////////////////////////////////////////////////////////
