@@ -228,16 +228,24 @@ Vector2i InputImpl::GetMousePosition()
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
 {
-    // we don't care about these but they are required
-    ::Window root, child;
-    int gx, gy;
-    unsigned int buttons;
+    WindowHandle handle = relativeTo.GetSystemHandle();
+    if (handle)
+    {
+        // we don't care about these but they are required
+        ::Window root, child;
+        int gx, gy;
+        unsigned int buttons;
 
-    int x = 0;
-    int y = 0;
-    XQueryPointer(global.display, relativeTo.GetSystemHandle(), &root, &child, &gx, &gy, &x, &y, &buttons);
+        int x = 0;
+        int y = 0;
+        XQueryPointer(global.display, handle, &root, &child, &gx, &gy, &x, &y, &buttons);
 
-    return Vector2i(x, y);
+        return Vector2i(x, y);
+    }
+    else
+    {
+        return Vector2i();
+    }
 }
 
 
@@ -252,8 +260,12 @@ void InputImpl::SetMousePosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
 {
-    XWarpPointer(global.display, None, relativeTo.GetSystemHandle(), 0, 0, 0, 0, position.x, position.y);
-    XFlush(global.display);
+    WindowHandle handle = relativeTo.GetSystemHandle();
+    if (handle)
+    {
+        XWarpPointer(global.display, None, handle, 0, 0, 0, 0, position.x, position.y);
+        XFlush(global.display);
+    }
 }
 
 } // namespace priv

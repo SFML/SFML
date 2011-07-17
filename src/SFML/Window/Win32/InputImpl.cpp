@@ -178,10 +178,18 @@ Vector2i InputImpl::GetMousePosition()
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
 {
-    POINT point;
-    GetCursorPos(&point);
-    ScreenToClient(relativeTo.GetSystemHandle(), &point);
-    return Vector2i(point.x, point.y);
+    WindowHandle handle = relativeTo.GetSystemHandle();
+    if (handle)
+    {
+        POINT point;
+        GetCursorPos(&point);
+        ScreenToClient(handle, &point);
+        return Vector2i(point.x, point.y);
+    }
+    else
+    {
+        return Vector2i();
+    }
 }
 
 
@@ -195,9 +203,13 @@ void InputImpl::SetMousePosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
 {
-    POINT point = {position.x, position.y};
-    ClientToScreen(relativeTo.GetSystemHandle(), &point);
-    SetCursorPos(point.x, point.y);
+    WindowHandle handle = relativeTo.GetSystemHandle();
+    if (handle)
+    {
+        POINT point = {position.x, position.y};
+        ClientToScreen(handle, &point);
+        SetCursorPos(point.x, point.y);
+    }
 }
 
 } // namespace priv
