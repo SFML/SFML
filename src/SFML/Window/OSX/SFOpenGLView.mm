@@ -484,16 +484,32 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 
 
     // Handle text entred event
-    if ((myUseKeyRepeat || ![theEvent isARepeat]) && [[theEvent characters] length] > 0) {
+    // We create a new event without command modifiers 
+    // to prevent the OS from sending an alert
+    NSUInteger modifiers = [theEvent modifierFlags] & NSCommandKeyMask
+                            ? [theEvent modifierFlags] & ~NSCommandKeyMask
+                            : [theEvent modifierFlags];
+    NSEvent* ev = [NSEvent keyEventWithType:NSKeyDown
+                                   location:[theEvent locationInWindow]
+                              modifierFlags:modifiers
+                                  timestamp:[theEvent timestamp]
+                               windowNumber:[theEvent windowNumber]
+                                    context:[theEvent context]
+                                 characters:[theEvent characters]
+                charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers]
+                                  isARepeat:[theEvent isARepeat]
+                                    keyCode:[theEvent keyCode]];
+    
+    if ((myUseKeyRepeat || ![ev isARepeat]) && [[ev characters] length] > 0) {
         
         // Ignore escape key and non text keycode. (See NSEvent.h)
         // They produce a sound alert.
-        unichar code = [[theEvent characters] characterAtIndex:0];
-        if ([theEvent keyCode] != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
+        unichar code = [[ev characters] characterAtIndex:0];
+        if ([ev keyCode] != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
             
             // Let's see if its a valid text.
             NSText* text = [[self window] fieldEditor:YES forObject:self];
-            [text interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+            [text interpretKeyEvents:[NSArray arrayWithObject:ev]];
             
             NSString* string = [text string];
             if ([string length] > 0) {
