@@ -61,12 +61,12 @@ namespace
     void Skip(void* user, unsigned int size)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
-        stream->Seek(stream->GetPosition() + size);
+        stream->Seek(stream->Tell() + size);
     }
     int Eof(void* user)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
-        return stream->GetPosition() >= stream->GetSize();
+        return stream->Tell() >= stream->GetSize();
     }
 }
 

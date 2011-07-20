@@ -69,12 +69,12 @@ public :
     virtual Int64 Seek(Int64 position) = 0;
     
     ////////////////////////////////////////////////////////////
-    /// \brief Return the current reading position in the stream
+    /// \brief Get the current reading position in the stream
     ///
     /// \return The current position, or -1 on error.
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 GetPosition() = 0;
+    virtual Int64 Tell() = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the stream
@@ -121,7 +121,7 @@ public :
 /// 
 ///     Int64 Seek(Int64 position);
 ///     
-///     Int64 GetPosition();
+///     Int64 Tell();
 /// 
 ///     Int64 GetSize();
 ///

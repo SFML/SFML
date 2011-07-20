@@ -380,7 +380,7 @@ sf_count_t SoundFile::Stream::Seek(sf_count_t offset, int whence, void* userData
     switch (whence)
     {
         case SEEK_SET : return stream->Seek(offset);
-        case SEEK_CUR : return stream->Seek(stream->GetPosition() + offset);
+        case SEEK_CUR : return stream->Seek(stream->Tell() + offset);
         case SEEK_END : return stream->Seek(stream->GetSize() - offset);
         default       : return stream->Seek(0);
     }
@@ -391,7 +391,7 @@ sf_count_t SoundFile::Stream::Seek(sf_count_t offset, int whence, void* userData
 sf_count_t SoundFile::Stream::Tell(void* userData)
 {
     sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
-    return stream->GetPosition();
+    return stream->Tell();
 }
 
 } // namespace priv
