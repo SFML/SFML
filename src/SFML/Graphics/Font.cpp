@@ -46,9 +46,15 @@ namespace
     unsigned long Read(FT_Stream rec, unsigned long offset, unsigned char* buffer, unsigned long count)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(rec->descriptor.pointer);
-        if (stream->Seek(offset) != offset)
-            return count ? 1 : 0; // error code is 0 if we're reading, or nonzero if we're seeking
-        return static_cast<unsigned long>(stream->Read(reinterpret_cast<char*>(buffer), count));
+        if (stream->Seek(offset) == offset)
+        {
+            if (count > 0)
+                return static_cast<unsigned long>(stream->Read(reinterpret_cast<char*>(buffer), count));
+            else
+                return 0;
+        }
+        else
+            return count > 0 ? 0 : 1; // error code is 0 if we're reading, or nonzero if we're seeking
     }
     void Close(FT_Stream)
     {
