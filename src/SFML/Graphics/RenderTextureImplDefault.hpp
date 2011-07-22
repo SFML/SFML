@@ -22,13 +22,13 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERIMAGEIMPLDEFAULT_HPP
-#define SFML_RENDERIMAGEIMPLDEFAULT_HPP
+#ifndef SFML_RENDERTEXTUREIMPLDEFAULT_HPP
+#define SFML_RENDERTEXTUREIMPLDEFAULT_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderImageImpl.hpp>
+#include <SFML/Graphics/RenderTextureImpl.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/Context.hpp>
 
@@ -38,11 +38,11 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Default specialization of RenderImageImpl,
+/// \brief Default specialization of RenderTextureImpl,
 ///        using a in-memory context
 ///
 ////////////////////////////////////////////////////////////
-class RenderImageImplDefault : public RenderImageImpl, GlResource
+class RenderTextureImplDefault : public RenderTextureImpl, GlResource
 {
 public :
 
@@ -50,22 +50,22 @@ public :
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    RenderImageImplDefault();
+    RenderTextureImplDefault();
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~RenderImageImplDefault();
+    ~RenderTextureImplDefault();
 
 private :
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create the render image implementation
+    /// \brief Create the render texture implementation
     ///
-    /// \param width       Width of the image to render to
-    /// \param height      Height of the image to render to
-    /// \param textureId   OpenGL texture identifier of the target image
+    /// \param width       Width of the texture to render to
+    /// \param height      Height of the texture to render to
+    /// \param textureId   OpenGL identifier of the target texture
     /// \param depthBuffer Is a depth buffer requested?
     ///
     /// \return True if creation has been successful
@@ -74,7 +74,7 @@ private :
     virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate or deactivate the render image for rendering
+    /// \brief Activate or deactivate the render texture for rendering
     ///
     /// \param active True to activate, false to deactivate
     ///
@@ -104,4 +104,4 @@ private :
 } // namespace sf
 
 
-#endif // SFML_RENDERIMAGEIMPLDEFAULT_HPP
+#endif // SFML_RENDERTEXTUREIMPLDEFAULT_HPP

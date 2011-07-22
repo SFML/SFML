@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderImageImpl.hpp>
+#include <SFML/Graphics/RenderTextureImpl.hpp>
 
 
 namespace sf
@@ -33,7 +33,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-RenderImageImpl::~RenderImageImpl()
+RenderTextureImpl::~RenderTextureImpl()
 {
     // Nothing to do
 }

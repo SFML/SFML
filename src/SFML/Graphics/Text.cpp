@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Renderer.hpp>
 
 
@@ -190,7 +190,7 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
         return;
 
     // Bind the font texture
-    const Image& texture = myFont->GetImage(myCharacterSize);
+    const Texture& texture = myFont->GetTexture(myCharacterSize);
     renderer.SetTexture(&texture);
 
     // Computes values related to the text style

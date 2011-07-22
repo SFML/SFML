@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderImageImplDefault.hpp>
+#include <SFML/Graphics/RenderTextureImplDefault.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
@@ -36,7 +36,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-RenderImageImplDefault::RenderImageImplDefault() :
+RenderTextureImplDefault::RenderTextureImplDefault() :
 myContext(0),
 myWidth  (0),
 myHeight (0)
@@ -46,7 +46,7 @@ myHeight (0)
 
 
 ////////////////////////////////////////////////////////////
-RenderImageImplDefault::~RenderImageImplDefault()
+RenderTextureImplDefault::~RenderTextureImplDefault()
 {
     // Destroy the context
     delete myContext;
@@ -54,33 +54,33 @@ RenderImageImplDefault::~RenderImageImplDefault()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImageImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
+bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
 {
     // Store the dimensions
     myWidth = width;
     myHeight = height;
 
     // Create the in-memory OpenGL context
-    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0, 0, 4), width, height);
+    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImageImplDefault::Activate(bool active)
+bool RenderTextureImplDefault::Activate(bool active)
 {
     return myContext->SetActive(active);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderImageImplDefault::UpdateTexture(unsigned int textureId)
+void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
 {
     GLint previous;
     GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
 
-    // Copy the rendered pixels to the image
+    // Copy the rendered pixels to the texture
     GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
     GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
 

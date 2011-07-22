@@ -35,10 +35,10 @@
 
 namespace sf
 {
-class Image;
+class Texture;
 
 ////////////////////////////////////////////////////////////
-/// \brief Drawable representation of an image, with its
+/// \brief Drawable representation of a texture, with its
 ///        own transformations, color, blend mode, etc.
 ///
 ////////////////////////////////////////////////////////////
@@ -49,56 +49,50 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// Creates an empty sprite with no source image.
+    /// Creates an empty sprite with no source texture.
     ///
     ////////////////////////////////////////////////////////////
     Sprite();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the sprite from a source image
+    /// \brief Construct the sprite from a source texture
     ///
-    /// \param image    Source image, that the sprite will display
-    /// \param position Position of the sprite in the scene
-    /// \param scale    Scale factor of the sprite
-    /// \param rotation Rotation angle, in degrees
-    /// \param color    Global color of the sprite
-    ///
-    /// \see SetImage
+    /// \see SetTexture
     ///
     ////////////////////////////////////////////////////////////
-    explicit Sprite(const Image& image, const Vector2f& position = Vector2f(0, 0), const Vector2f& scale = Vector2f(1, 1), float rotation = 0.f, const Color& color = Color(255, 255, 255, 255));
+    explicit Sprite(const Texture& texture);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Change the source image of the sprite
+    /// \brief Change the source texture of the sprite
     ///
-    /// The \a image argument refers to an image that must
+    /// The \a texture argument refers to a texture that must
     /// exist as long as the sprite uses it. Indeed, the sprite
-    /// doesn't store its own copy of the image, but rather keeps
+    /// doesn't store its own copy of the texture, but rather keeps
     /// a pointer to the one that you passed to this function.
-    /// If the source image is destroyed and the sprite tries to
+    /// If the source texture is destroyed and the sprite tries to
     /// use it, it may appear as a white rectangle.
     /// If \a adjustToNewSize is true, the SubRect property of
-    /// the sprite is adjusted to the size of the new image. If
+    /// the sprite is adjusted to the size of the new texture. If
     /// it is false, the SubRect is unchanged.
     ///
-    /// \param image           New image
-    /// \param adjustToNewSize Should the sub-rect be adjusted to the size of the new image?
+    /// \param texture         New texture
+    /// \param adjustToNewSize Should the sub-rect be adjusted to the size of the new texture?
     ///
-    /// \see GetImage, SetSubRect
+    /// \see GetTexture, SetSubRect
     ///
     ////////////////////////////////////////////////////////////
-    void SetImage(const Image& image, bool adjustToNewSize = false);
+    void SetTexture(const Texture& texture, bool adjustToNewSize = false);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the part of the image that the sprite will display
+    /// \brief Set the part of the texture that the sprite will display
     ///
     /// The sub-rectangle is useful when you don't want to display
-    /// the whole image, but rather a part of it.
-    /// By default, the sub-rectangle covers the entire image.
+    /// the whole texture, but rather a part of it.
+    /// By default, the sub-rectangle covers the entire texture.
     ///
-    /// \param rectangle Rectangle defining the region of the image to display
+    /// \param rectangle Rectangle defining the region of the texture to display
     ///
-    /// \see GetSubRect, SetImage
+    /// \see GetSubRect, SetTexture
     ///
     ////////////////////////////////////////////////////////////
     void SetSubRect(const IntRect& rectangle);
@@ -157,24 +151,24 @@ public :
     void FlipY(bool flipped);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the source image of the sprite
+    /// \brief Get the source texture of the sprite
     ///
-    /// If the sprite has no source image, or if the image
+    /// If the sprite has no source texture, or if the texture
     /// doesn't exist anymore, a NULL pointer is returned.
     /// The returned pointer is const, which means that you can't
-    /// modify the image when you retrieve it with this function.
+    /// modify the texture when you retrieve it with this function.
     ///
-    /// \return Pointer to the sprite's image
+    /// \return Pointer to the sprite's texture
     ///
-    /// \see SetImage
+    /// \see SetTexture
     ///
     ////////////////////////////////////////////////////////////
-    const Image* GetImage() const;
+    const Texture* GetTexture() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the region of the image displayed by the sprite
+    /// \brief Get the region of the texture displayed by the sprite
     ///
-    /// \return Rectangle defining the region of the image
+    /// \return Rectangle defining the region of the texture
     ///
     /// \see SetSubRect
     ///
@@ -194,25 +188,6 @@ public :
     ////////////////////////////////////////////////////////////
     Vector2f GetSize() const;
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the color of a given pixel in the sprite
-    ///
-    /// This function returns the source image pixel, multiplied
-    /// by the global color of the sprite.
-    /// The input point must be in local coordinates. If you have
-    /// a global point, you can use the TransformToLocal function
-    /// to make it local.
-    /// This function doesn't perform any check, you must ensure that
-    /// the \a x and \a y coordinates are not out of bounds.
-    ///
-    /// \param x X coordinate of the pixel to get
-    /// \param y Y coordinate of the pixel to get
-    ///
-    /// \return Color of the pixel
-    ///
-    ////////////////////////////////////////////////////////////
-    Color GetPixel(unsigned int x, unsigned int y) const;
-
 protected :
 
     ////////////////////////////////////////////////////////////
@@ -229,10 +204,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ResourcePtr<Image> myImage;      ///< Image used to draw the sprite
-    IntRect            mySubRect;    ///< Sub-rectangle of source image to assign to the sprite
-    bool               myIsFlippedX; ///< Is the sprite flipped on the X axis ?
-    bool               myIsFlippedY; ///< Is the sprite flipped on the Y axis ?
+    ResourcePtr<Texture> myTexture;    ///< Texture used to draw the sprite
+    IntRect              mySubRect;    ///< Sub-rectangle of source texture to assign to the sprite
+    bool                 myIsFlippedX; ///< Is the sprite flipped on the X axis ?
+    bool                 myIsFlippedY; ///< Is the sprite flipped on the Y axis ?
 };
 
 } // namespace sf
@@ -246,39 +221,39 @@ private :
 /// \ingroup graphics
 ///
 /// sf::Sprite is a drawable class that allows to easily display
-/// an image (or a part of it) on a render target.
+/// a texture (or a part of it) on a render target.
 ///
 /// It inherits all the functions from sf::Drawable:
 /// position, rotation, scale, origin, global color and blend
 /// mode. It also adds sprite-specific properties such as the
-/// image to use, the part of it to display, and some convenience
+/// texture to use, the part of it to display, and some convenience
 /// functions to flip or resize the sprite.
 ///
-/// sf::Sprite works in combination with the sf::Image class, which
-/// loads and provides the pixel data of a given image.
+/// sf::Sprite works in combination with the sf::Texture class, which
+/// loads and provides the pixel data of a given texture.
 ///
-/// The separation of sf::Sprite and sf::Image allows more flexibility
-/// and better performances: indeed a sf::Image is a heavy resource,
+/// The separation of sf::Sprite and sf::Texture allows more flexibility
+/// and better performances: indeed a sf::Texture is a heavy resource,
 /// and any operation on it is slow (often too slow for real-time
 /// applications). On the other side, a sf::Sprite is a lightweight
-/// object which can use the pixel data of a sf::Image and draw
+/// object which can use the pixel data of a sf::Texture and draw
 /// it with its own transformation / color / blending attributes.
 ///
 /// It is important to note that the sf::Sprite instance doesn't
-/// copy the image that it uses, it only keeps a reference to it.
-/// Thus, a sf::Image must not be destructed while it is
+/// copy the texture that it uses, it only keeps a reference to it.
+/// Thus, a sf::Texture must not be destructed while it is
 /// used by a sf::Sprite (i.e. never write a function that
-/// uses a local sf::Image instance for creating a sprite).
+/// uses a local sf::Texture instance for creating a sprite).
 ///
 /// Usage example:
 /// \code
-/// // Declare and load an image
-/// sf::Image image;
-/// image.LoadFromFile("image.png");
+/// // Declare and load a texture
+/// sf::Texture texture;
+/// texture.LoadFromFile("texture.png");
 /// 
 /// // Create a sprite
 /// sf::Sprite sprite;
-/// sprite.SetImage(image);
+/// sprite.SetTexture(texture);
 /// sprite.SetSubRect(sf::IntRect(10, 10, 50, 30));
 /// sprite.Resize(100, 60);
 ///
@@ -286,6 +261,6 @@ private :
 /// window.Draw(sprite); // window is a sf::RenderWindow
 /// \endcode
 ///
-/// \see sf::Image
+/// \see sf::Texture
 ///
 ////////////////////////////////////////////////////////////

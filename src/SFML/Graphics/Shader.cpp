@@ -225,7 +225,7 @@ void Shader::SetParameter(const std::string& name, const Vector3f& v)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::SetTexture(const std::string& name, const Image& texture)
+void Shader::SetTexture(const std::string& name, const Texture& texture)
 {
     if (myShaderProgram)
     {

@@ -25,14 +25,14 @@ set(SRC
     ${INCROOT}/Rect.inl
     ${SRCROOT}/Renderer.cpp
     ${INCROOT}/Renderer.hpp
-    ${SRCROOT}/RenderImage.cpp
-    ${INCROOT}/RenderImage.hpp
-    ${SRCROOT}/RenderImageImpl.cpp
-    ${SRCROOT}/RenderImageImpl.hpp
-    ${SRCROOT}/RenderImageImplFBO.cpp
-    ${SRCROOT}/RenderImageImplFBO.hpp
-    ${SRCROOT}/RenderImageImplDefault.cpp
-    ${SRCROOT}/RenderImageImplDefault.hpp
+    ${SRCROOT}/RenderTexture.cpp
+    ${INCROOT}/RenderTexture.hpp
+    ${SRCROOT}/RenderTextureImpl.cpp
+    ${SRCROOT}/RenderTextureImpl.hpp
+    ${SRCROOT}/RenderTextureImplFBO.cpp
+    ${SRCROOT}/RenderTextureImplFBO.hpp
+    ${SRCROOT}/RenderTextureImplDefault.cpp
+    ${SRCROOT}/RenderTextureImplDefault.hpp
     ${SRCROOT}/RenderTarget.cpp
     ${INCROOT}/RenderTarget.hpp
     ${SRCROOT}/RenderWindow.cpp
@@ -45,6 +45,8 @@ set(SRC
     ${INCROOT}/Sprite.hpp
     ${SRCROOT}/Text.cpp
     ${INCROOT}/Text.hpp
+    ${SRCROOT}/Texture.cpp
+    ${INCROOT}/Texture.hpp
     ${SRCROOT}/View.cpp
     ${INCROOT}/View.hpp
     ${SRCROOT}/stb_image/stb_image.h

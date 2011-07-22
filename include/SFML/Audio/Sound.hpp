@@ -52,16 +52,12 @@ public :
     Sound();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the sound with parameters
+    /// \brief Construct the sound with a buffer
     ///
-    /// \param buffer   Sound buffer containing the audio data to play with the sound
-    /// \param loop     Should the sound loop?
-    /// \param pitch    Pitch of the sound
-    /// \param volume   Volume of the sound, in the range [0, 100]
-    /// \param position 3D position of the sound source in the audio scene
+    /// \param buffer Sound buffer containing the audio data to play with the sound
     ///
     ////////////////////////////////////////////////////////////
-    Sound(const SoundBuffer& buffer, bool loop = false, float pitch = 1.f, float volume = 100.f, const Vector3f& position = Vector3f(0, 0, 0));
+    Sound(const SoundBuffer& buffer);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor

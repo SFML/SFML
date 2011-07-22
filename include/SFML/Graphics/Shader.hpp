@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
@@ -253,35 +253,35 @@ public :
     /// \brief Change a texture parameter of the shader
     ///
     /// \a name is the name of the texture to change in the shader.
-    /// This function maps an external image to the texture variable;
-    /// to use the current texture of the object being drawn, use
-    /// SetCurrentTexture instead.
+    /// This function maps an external texture to the given shader
+    /// variable; to use the current texture of the object being drawn,
+    /// use SetCurrentTexture instead.
     /// Example:
     /// \code
     /// // These are the variables in the pixel shader
-    /// uniform sampler2D texture;
+    /// uniform sampler2D the_texture;
     /// \endcode
     /// \code
-    /// sf::Image image;
+    /// sf::Texture texture;
     /// ...
-    /// shader.SetTexture("texture", image);
+    /// shader.SetTexture("the_texture", texture);
     /// \endcode
     /// It is important to note that \a texture must remain alive as long
     /// as the shader uses it, no copy is made internally.
     ///
     /// \param name    Name of the texture in the shader
-    /// \param texture Image to assign
+    /// \param texture Texture to assign
     ///
     /// \see SetParameter, SetCurrentTexture
     ///
     ////////////////////////////////////////////////////////////
-    void SetTexture(const std::string& name, const Image& texture);
+    void SetTexture(const std::string& name, const Texture& texture);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current object texture in the shader
     ///
     /// This function maps a shader texture variable to the
-    /// image of the object being drawn.
+    /// texture of the object being drawn.
     /// Example:
     /// \code
     /// // This is the variable in the pixel shader
@@ -384,7 +384,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<int, const Image*> TextureTable;
+    typedef std::map<int, const Texture*> TextureTable;
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -427,7 +427,7 @@ private :
 /// \code
 /// shader.SetParameter("offset", 2.f);
 /// shader.SetParameter("color", 0.5f, 0.8f, 0.3f);
-/// shader.SetTexture("overlay", image); // image is a sf::Image
+/// shader.SetTexture("overlay", texture); // texture is a sf::Texture
 /// shader.SetCurrentTexture("texture");
 /// \endcode
 ///
@@ -442,8 +442,8 @@ private :
 ///
 /// Shaders can be used on any drawable, but they are mainly
 /// made for sf::Sprite. Using a shader on a sf::String is more
-/// limited, because the texture of the string is not the
-/// actual text that you see on screen, it is a big image
+/// limited, because the texture of the text is not the
+/// actual text that you see on screen, it is a big texture
 /// containing all the characters of the font in an arbitrary
 /// order. Thus, texture lookups on pixels other than the current
 /// one may not give you the expected result. Using a shader
@@ -453,18 +453,18 @@ private :
 /// Shaders can also be used to apply global post-effects to the
 /// current contents of the target (like the old sf::PostFx class
 /// in SFML 1). This can be done in two different ways:
-/// \li draw everything to a sf::RenderImage, then draw it to
+/// \li draw everything to a sf::RenderTexture, then draw it to
 ///     the main target using the shader
 /// \li draw everything directly to the main target, then use
-///     sf::Image::CopyScreen to copy its contents to an image and
-///     draw it to the main target using the shader
+///     sf::Texture::Update(Window&) to copy its contents to a texture
+///     and draw it to the main target using the shader
 ///
 /// The first technique is more optimized because it doesn't involve
 /// retrieving the target's pixels to system memory, but the
 /// second one doesn't impact the rendering process and can be
 /// easily inserted anywhere.
 ///
-/// Like sf::Image that can be used as a raw OpenGL texture,
+/// Like sf::Texture that can be used as a raw OpenGL texture,
 /// sf::Shader can also be used directly as a raw fragment
 /// shader for custom OpenGL geometry.
 /// \code

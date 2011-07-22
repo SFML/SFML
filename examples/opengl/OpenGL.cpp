@@ -18,14 +18,14 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL", sf::Style::Default, sf::ContextSettings(32));
 
     // Create a sprite for the background
-    sf::Image backgroundImage;
-    if (!backgroundImage.LoadFromFile("resources/background.jpg"))
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.LoadFromFile("resources/background.jpg"))
         return EXIT_FAILURE;
-    sf::Sprite background(backgroundImage);
+    sf::Sprite background(backgroundTexture);
 
     // Load an OpenGL texture.
-    // We could directly use a sf::Image as an OpenGL texture (with its Bind() member function),
-    // but here we want more control on it (generate mipmaps, ...) so we create a new one from the image pixels
+    // We could directly use a sf::Texture as an OpenGL texture (with its Bind() member function),
+    // but here we want more control on it (generate mipmaps, ...) so we create a new one from an image
     GLuint texture = 0;
     {
         sf::Image image;

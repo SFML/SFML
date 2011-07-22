@@ -534,6 +534,6 @@ private :
 /// window.Draw(sf::Shape::Circle(500, 500, 20, sf::Color::Blue, 5, sf::Color::Black));
 /// \endcode
 ///
-/// \see sf::Image
+/// \see sf::Sprite
 ///
 ////////////////////////////////////////////////////////////

@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 
 
 namespace sf
@@ -78,6 +79,30 @@ unsigned int RenderWindow::GetWidth() const
 unsigned int RenderWindow::GetHeight() const
 {
     return Window::GetHeight();
+}
+
+
+////////////////////////////////////////////////////////////
+Image RenderWindow::Capture() const
+{
+    Image image;
+    if (SetActive())
+    {
+        int width = static_cast<int>(GetWidth());
+        int height = static_cast<int>(GetHeight());
+
+        // copy rows one by one and flip them (OpenGL's origin is bottom while SFML's origin is top)
+        std::vector<Uint8> pixels(width * height * 4);
+        for (int i = 0; i < height; ++i)
+        {
+            Uint8* ptr = &pixels[i * width * 4];
+            GLCheck(glReadPixels(0, height - i - 1, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
+        }
+
+        image.Create(width, height, &pixels[0]);
+    }
+
+    return image;
 }
 
 

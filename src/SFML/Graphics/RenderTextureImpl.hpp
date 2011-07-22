@@ -22,15 +22,13 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERIMAGEIMPLFBO_HPP
-#define SFML_RENDERIMAGEIMPLFBO_HPP
+#ifndef SFML_RENDERTEXTUREIMPL_HPP
+#define SFML_RENDERTEXTUREIMPL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderImageImpl.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/Window/GlResource.hpp>
+#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
@@ -38,58 +36,41 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Specialization of RenderImageImpl using the
-///        Frame Buffer Object OpenGL extension
+/// \brief Abstract base class for render-texture implementations
 ///
 ////////////////////////////////////////////////////////////
-class RenderImageImplFBO : public RenderImageImpl, GlResource
+class RenderTextureImpl : NonCopyable
 {
 public :
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    RenderImageImplFBO();
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~RenderImageImplFBO();
+    virtual ~RenderTextureImpl();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check whether the system supports FBOs or not
+    /// \brief Create the render texture implementation
     ///
-    /// \return True if FBO render images are supported
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool IsAvailable();
-
-private :
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create the render image implementation
-    ///
-    /// \param width       Width of the image to render to
-    /// \param height      Height of the image to render to
-    /// \param textureId   OpenGL texture identifier of the target image
+    /// \param width       Width of the texture to render to
+    /// \param height      Height of the texture to render to
+    /// \param textureId   OpenGL identifier of the target texture
     /// \param depthBuffer Is a depth buffer requested?
     ///
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
+    virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate or deactivate the render image for rendering
+    /// \brief Activate or deactivate the render texture for rendering
     ///
     /// \param active True to activate, false to deactivate
     ///
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool active);
+    virtual bool Activate(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
@@ -97,14 +78,7 @@ private :
     /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
-    virtual void UpdateTexture(unsigned textureId);
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    Context*     myContext;     ///< Needs a separate OpenGL context for not messing up the other ones
-    unsigned int myFrameBuffer; ///< OpenGL frame buffer object
-    unsigned int myDepthBuffer; ///< Optional depth buffer attached to the frame buffer
+    virtual void UpdateTexture(unsigned int textureId) = 0;
 };
 
 } // namespace priv
@@ -112,4 +86,4 @@ private :
 } // namespace sf
 
 
-#endif // SFML_RENDERIMAGEIMPLFBO_HPP
+#endif // SFML_RENDERTEXTUREIMPL_HPP

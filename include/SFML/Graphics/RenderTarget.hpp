@@ -41,7 +41,7 @@ class Drawable;
 class Shader;
 
 ////////////////////////////////////////////////////////////
-/// \brief Base class for all render targets (window, image, ...)
+/// \brief Base class for all render targets (window, texture, ...)
 ///
 ////////////////////////////////////////////////////////////
 class SFML_API RenderTarget : NonCopyable
@@ -331,6 +331,6 @@ private :
 /// OpenGL states are not messed up by calling the SaveGLStates /
 /// RestoreGLStates functions.
 ///
-/// \see sf::RenderWindow, sf::RenderImage, sf::View
+/// \see sf::RenderWindow, sf::RenderTexture, sf::View
 ///
 ////////////////////////////////////////////////////////////

@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderImageImplFBO.hpp>
-#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/RenderTextureImplFBO.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
 
@@ -36,7 +36,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-RenderImageImplFBO::RenderImageImplFBO() :
+RenderTextureImplFBO::RenderTextureImplFBO() :
 myFrameBuffer(0),
 myDepthBuffer(0)
 {
@@ -45,7 +45,7 @@ myDepthBuffer(0)
 
 
 ////////////////////////////////////////////////////////////
-RenderImageImplFBO::~RenderImageImplFBO()
+RenderTextureImplFBO::~RenderTextureImplFBO()
 {
     EnsureGlContext();
 
@@ -69,7 +69,7 @@ RenderImageImplFBO::~RenderImageImplFBO()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImageImplFBO::IsAvailable()
+bool RenderTextureImplFBO::IsAvailable()
 {
     EnsureGlContext();
 
@@ -81,7 +81,7 @@ bool RenderImageImplFBO::IsAvailable()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
+bool RenderTextureImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
     //Create the context
     myContext = new Context;
@@ -92,7 +92,7 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
     myFrameBuffer = static_cast<unsigned int>(frameBuffer);
     if (!myFrameBuffer)
     {
-        Err() << "Impossible to create render image (failed to create the frame buffer object)" << std::endl;
+        Err() << "Impossible to create render texture (failed to create the frame buffer object)" << std::endl;
         return false;
     }
     GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, myFrameBuffer));
@@ -105,7 +105,7 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
         myDepthBuffer = static_cast<unsigned int>(depth);
         if (!myDepthBuffer)
         {
-            Err() << "Impossible to create render image (failed to create the attached depth buffer)" << std::endl;
+            Err() << "Impossible to create render texture (failed to create the attached depth buffer)" << std::endl;
             return false;
         }
         GLCheck(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, myDepthBuffer));
@@ -113,14 +113,14 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
         GLCheck(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, myDepthBuffer));
     }
 
-    // Link the image to the frame buffer
+    // Link the texture to the frame buffer
     GLCheck(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, textureId, 0));
 
     // A final check, just to be sure...
     if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT)
     {
         GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
-        Err() << "Impossible to create render image (failed to link the target image to the frame buffer)" << std::endl;
+        Err() << "Impossible to create render texture (failed to link the target texture to the frame buffer)" << std::endl;
         return false;
     }
 
@@ -129,13 +129,13 @@ bool RenderImageImplFBO::Create(unsigned int width, unsigned int height, unsigne
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImageImplFBO::Activate(bool active)
+bool RenderTextureImplFBO::Activate(bool active)
 {
     return myContext->SetActive(active);
 }
 
 ////////////////////////////////////////////////////////////
-void RenderImageImplFBO::UpdateTexture(unsigned int)
+void RenderTextureImplFBO::UpdateTexture(unsigned int)
 {
     glFlush();
 }

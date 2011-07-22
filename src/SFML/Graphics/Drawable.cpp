@@ -34,20 +34,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Drawable::Drawable(const Vector2f& position, const Vector2f& scale, float rotation, const Color& color) :
-myPosition        (position),
-myScale           (scale),
-myOrigin          (0, 0),
-myRotation        (rotation),
-myColor           (color),
-myBlendMode       (Blend::Alpha),
-myMatrixUpdated   (false),
-myInvMatrixUpdated(false)
-{
-}
-
-
-////////////////////////////////////////////////////////////
 Drawable::~Drawable()
 {
     // Nothing to do
@@ -264,6 +250,20 @@ Vector2f Drawable::TransformToLocal(const Vector2f& point) const
 Vector2f Drawable::TransformToGlobal(const Vector2f& point) const
 {
     return GetMatrix().Transform(point);
+}
+
+
+////////////////////////////////////////////////////////////
+Drawable::Drawable() :
+myPosition        (0, 0),
+myScale           (1, 1),
+myOrigin          (0, 0),
+myRotation        (0),
+myColor           (255, 255, 255, 255),
+myBlendMode       (Blend::Alpha),
+myMatrixUpdated   (false),
+myInvMatrixUpdated(false)
+{
 }
 
 

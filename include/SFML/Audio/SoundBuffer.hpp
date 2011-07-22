@@ -301,8 +301,8 @@ private :
 /// The sound is then restituted by playing these samples at
 /// a high rate (for example, 44100 samples per second is the
 /// standard rate used for playing CDs). In short, audio samples
-/// are like image pixels, and a sf::SoundBuffer is similar to
-/// a sf::Image.
+/// are like texture pixels, and a sf::SoundBuffer is similar to
+/// a sf::Texture.
 ///
 /// A sound buffer can be loaded from a file (see LoadFromFile()
 /// for the complete list of supported formats), from memory, from

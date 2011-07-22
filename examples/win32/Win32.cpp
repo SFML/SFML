@@ -75,12 +75,12 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
     sf::RenderWindow SFMLView1(view1);
     sf::RenderWindow SFMLView2(view2);
 
-    // Load some images to display
-    sf::Image image1, image2;
-    if (!image1.LoadFromFile("resources/image1.jpg") || !image2.LoadFromFile("resources/image2.jpg"))
+    // Load some textures to display
+    sf::Texture texture1, texture2;
+    if (!texture1.LoadFromFile("resources/image1.jpg") || !texture2.LoadFromFile("resources/image2.jpg"))
         return EXIT_FAILURE;
-    sf::Sprite sprite1(image1);
-    sf::Sprite sprite2(image2);
+    sf::Sprite sprite1(texture1);
+    sf::Sprite sprite2(texture2);
     sprite1.SetOrigin(sprite1.GetSize() / 2.f);
     sprite1.SetPosition(sprite1.GetSize() / 2.f);
 

@@ -32,7 +32,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Glyph.hpp>
-#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <map>
 #include <string>
@@ -174,18 +174,18 @@ public :
     int GetLineSpacing(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Retrieve the image containing the loaded glyphs of a certain size
+    /// \brief Retrieve the texture containing the loaded glyphs of a certain size
     ///
-    /// The contents of the returned image changes as more glyphs
+    /// The contents of the returned texture changes as more glyphs
     /// are requested, thus it is not very relevant. It is mainly
     /// used internally by sf::Text.
     ///
     /// \param characterSize Reference character size
     ///
-    /// \return Image containing the glyphs of the requested size
+    /// \return Texture containing the glyphs of the requested size
     ///
     ////////////////////////////////////////////////////////////
-    const Image& GetImage(unsigned int characterSize) const;
+    const Texture& GetTexture(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -240,8 +240,8 @@ private :
         Page();
 
         GlyphTable       Glyphs;  ///< Table mapping code points to their corresponding glyph
-        Image            Texture; ///< Image containing the pixels of the glyphs
-        unsigned int     NextRow; ///< Y position of the next new row in the image
+        Texture          Texture; ///< Texture containing the pixels of the glyphs
+        unsigned int     NextRow; ///< Y position of the next new row in the texture
         std::vector<Row> Rows;    ///< List containing the position of all the existing rows
     };
 
@@ -288,7 +288,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<unsigned int, Page> PageTable; ///< Table mapping a character size to its page (image)
+    typedef std::map<unsigned int, Page> PageTable; ///< Table mapping a character size to its page (texture)
 
     ////////////////////////////////////////////////////////////
     // Member data

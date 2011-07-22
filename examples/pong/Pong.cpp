@@ -33,12 +33,12 @@ int main()
     }
     sf::Sound ballSound(ballSoundBuffer);
 
-    // Load the images used in the game
-    sf::Image backgroundImage, leftPaddleImage, rightPaddleImage, ballImage;
-    if (!backgroundImage.LoadFromFile("resources/background.jpg")    ||
-        !leftPaddleImage.LoadFromFile("resources/paddle_left.png")   ||
-        !rightPaddleImage.LoadFromFile("resources/paddle_right.png") ||
-        !ballImage.LoadFromFile("resources/ball.png"))
+    // Load the textures used in the game
+    sf::Texture backgroundTexture, leftPaddleTexture, rightPaddleTexture, ballTexture;
+    if (!backgroundTexture.LoadFromFile("resources/background.jpg")    ||
+        !leftPaddleTexture.LoadFromFile("resources/paddle_left.png")   ||
+        !rightPaddleTexture.LoadFromFile("resources/paddle_right.png") ||
+        !ballTexture.LoadFromFile("resources/ball.png"))
     {
         return EXIT_FAILURE;
     }
@@ -56,10 +56,10 @@ int main()
     end.SetColor(sf::Color(50, 50, 250));
 
     // Create the sprites of the background, the paddles and the ball
-    sf::Sprite background(backgroundImage);
-    sf::Sprite leftPaddle(leftPaddleImage);
-    sf::Sprite rightPaddle(rightPaddleImage);
-    sf::Sprite ball(ballImage);
+    sf::Sprite background(backgroundTexture);
+    sf::Sprite leftPaddle(leftPaddleTexture);
+    sf::Sprite rightPaddle(rightPaddleTexture);
+    sf::Sprite ball(ballTexture);
 
     leftPaddle.Move(10, (window.GetView().GetSize().y - leftPaddle.GetSize().y) / 2);
     rightPaddle.Move(window.GetView().GetSize().x - rightPaddle.GetSize().x - 10, (window.GetView().GetSize().y - rightPaddle.GetSize().y) / 2);

@@ -275,8 +275,8 @@ private :
 ///
 /// These two classes are heavily used internally in SFML
 /// to safely handle resources and the classes that use them:
-/// \li sf::Image / sf::Sprite
-/// \li sf::Font / sf::String
+/// \li sf::Texture / sf::Sprite
+/// \li sf::Font / sf::Text
 /// \li sf::SoundBuffer / sf::Sound
 ///
 /// sf::Resource and sf::ResourcePtr are designed for internal use,

@@ -64,17 +64,6 @@ class SFML_API Drawable
 public :
 
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// \param position Position of the object
-    /// \param scale    Scale factor
-    /// \param rotation Orientation, in degrees
-    /// \param color    Global color of the object
-    ///
-    ////////////////////////////////////////////////////////////
-    Drawable(const Vector2f& position = Vector2f(0, 0), const Vector2f& scale = Vector2f(1, 1), float rotation = 0.f, const Color& color = Color(255, 255, 255));
-
-    ////////////////////////////////////////////////////////////
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -453,6 +442,12 @@ public :
 protected :
 
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Drawable();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the transform matrix of the object
     ///
     /// \return Transform matrix
@@ -532,7 +527,7 @@ private :
 /// \li transformations (position, rotation, scale, local origin)
 /// \li global overlay color
 /// \li blending mode with background pixels
-/// \li the ability to be drawn on a sf::RenderTarget (either RenderWindow or RenderImage)
+/// \li the ability to be drawn on a sf::RenderTarget (either RenderWindow or RenderTexture)
 ///
 /// Please note that all these attributes are hardware accelerated,
 /// therefore they are extremely cheap to use (unlike older
@@ -591,7 +586,7 @@ private :
 ///         target.Draw(mySubSprite);
 ///     }
 ///
-///     sf::Image myTexture;
+///     sf::Texture myTexture;
 ///     sf::Sprite mySubSprite;
 /// };
 /// \endcode

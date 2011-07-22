@@ -38,8 +38,8 @@
 
 namespace sf
 {
-class Image;
 class Shader;
+class Texture;
 
 ////////////////////////////////////////////////////////////
 /// \brief Handles the low-level rendering (states and geometry)
@@ -120,9 +120,6 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set a new model-view matrix
     ///
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
-    ///
     /// \param matrix New model-view matrix
     ///
     /// \see ApplyModelView
@@ -133,9 +130,6 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Combine a new model-view matrix with the current one
     ///
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
-    ///
     /// \param matrix Model-view matrix to combine
     ///
     /// \see SetModelView
@@ -145,9 +139,6 @@ public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Set a new projection matrix
-    ///
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
     ///
     /// \param matrix New projection matrix
     ///
@@ -160,8 +151,6 @@ public :
     /// \brief Set the current global color
     ///
     /// This color will be modulated with each vertex's color.
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
     ///
     /// \param color New global color
     ///
@@ -174,8 +163,6 @@ public :
     /// \brief Modulate the current global color with a new one
     ///
     /// This color will be modulated with each vertex's color.
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
     ///
     /// \param color Color to modulate
     ///
@@ -187,9 +174,6 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the current viewport
     ///
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
-    ///
     /// \param viewport New viewport to apply
     ///
     ////////////////////////////////////////////////////////////
@@ -197,9 +181,6 @@ public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current alpha-blending mode
-    ///
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
     ///
     /// \param mode New blending mode
     ///
@@ -209,19 +190,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the current texture
     ///
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
-    ///
     /// \param texture New texture
     ///
     ////////////////////////////////////////////////////////////
-    void SetTexture(const Image* texture);
+    void SetTexture(const Texture* texture);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current shader
-    ///
-    /// Note: any call to this function after a call to BeginBatch
-    /// will be ignored, and delayed until BeginBatch is called again.
     ///
     /// \param shader New Shader
     ///
@@ -346,18 +321,18 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    RenderTarget& myTarget;           ///< Reference to the render target owning this renderer
-    States        myStatesStack[64];  ///< Stack of render states
-    States*       myStates;           ///< Current set of render states
-    const Image*  myTexture;          ///< Current texture
-    unsigned int  myTextureId;        ///< Current texture identifier (the sf::Image instance may be the same, but not the internal OpenGL texture)
-    const Shader* myShader;           ///< Current pixel shader
-    Blend::Mode   myBlendMode;        ///< Current blending mode
-    IntRect       myViewport;         ///< Current target viewport
-    bool          myTextureIsValid;   ///< Is the cached texture valid? (if not, the cached value is ignored)
-    bool          myShaderIsValid;    ///< Is the cached shader valid? (if not, the cached value is ignored)
-    bool          myBlendModeIsValid; ///< Is the cached blend mode valid? (if not, the cached value is ignored)
-    bool          myViewportIsValid;  ///< Is the cached viewport valid? (if not, the cached value is ignored)
+    RenderTarget&  myTarget;           ///< Reference to the render target owning this renderer
+    States         myStatesStack[64];  ///< Stack of render states
+    States*        myStates;           ///< Current set of render states
+    const Texture* myTexture;          ///< Current texture
+    unsigned int   myTextureId;        ///< Current texture identifier (the sf::Texture instance may be the same, but not the internal OpenGL texture)
+    const Shader*  myShader;           ///< Current pixel shader
+    Blend::Mode    myBlendMode;        ///< Current blending mode
+    IntRect        myViewport;         ///< Current target viewport
+    bool           myTextureIsValid;   ///< Is the cached texture valid? (if not, the cached value is ignored)
+    bool           myShaderIsValid;    ///< Is the cached shader valid? (if not, the cached value is ignored)
+    bool           myBlendModeIsValid; ///< Is the cached blend mode valid? (if not, the cached value is ignored)
+    bool           myViewportIsValid;  ///< Is the cached viewport valid? (if not, the cached value is ignored)
 };
 
 } // namespace sf

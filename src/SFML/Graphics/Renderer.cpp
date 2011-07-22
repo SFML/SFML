@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Renderer.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 
@@ -202,7 +202,7 @@ void Renderer::SetBlendMode(Blend::Mode mode)
             {
                 // Alpha blending
                 // glBlendFuncSeparateEXT is used when available to avoid an incorrect alpha value when the target
-                // is a RenderImage -- in this case the alpha value must be written directly to the target buffer
+                // is a RenderTexture -- in this case the alpha value must be written directly to the target buffer
                 default :
                 case Blend::Alpha :
                     if (GLEW_EXT_blend_func_separate)
@@ -231,7 +231,7 @@ void Renderer::SetBlendMode(Blend::Mode mode)
 
 
 ////////////////////////////////////////////////////////////
-void Renderer::SetTexture(const Image* texture)
+void Renderer::SetTexture(const Texture* texture)
 {
     if ((texture != myTexture) || (texture && (texture->myTexture != myTextureId)) || !myTextureIsValid)
     {
@@ -245,12 +245,6 @@ void Renderer::SetTexture(const Image* texture)
         myTexture = texture;
         myTextureId = texture ? texture->myTexture : 0;
         myTextureIsValid = true;
-    }
-    else if (texture && myTextureIsValid)
-    {
-        // If the texture was already the current one, make sure that
-        // it is synchronized (in case it was modified since last use)
-        texture->Use();
     }
 }
 

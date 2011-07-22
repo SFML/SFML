@@ -25,57 +25,57 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderImage.hpp>
-#include <SFML/Graphics/RenderImageImplFBO.hpp>
-#include <SFML/Graphics/RenderImageImplDefault.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/RenderTextureImplFBO.hpp>
+#include <SFML/Graphics/RenderTextureImplDefault.hpp>
 #include <SFML/System/Err.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RenderImage::RenderImage() :
-myRenderImage(NULL)
+RenderTexture::RenderTexture() :
+myRenderTexture(NULL)
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderImage::~RenderImage()
+RenderTexture::~RenderTexture()
 {
-    delete myRenderImage;
+    delete myRenderTexture;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuffer)
+bool RenderTexture::Create(unsigned int width, unsigned int height, bool depthBuffer)
 {
-    // Create the image
-    if (!myImage.Create(width, height))
+    // Create the texture
+    if (!myTexture.Create(width, height))
     {
-        Err() << "Impossible to create render image (failed to create the target image)" << std::endl;
+        Err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return false;
     }
 
-    // We disable smoothing by default for render images
+    // We disable smoothing by default for render textures
     SetSmooth(false);
 
     // Create the implementation
-    delete myRenderImage;
-    if (priv::RenderImageImplFBO::IsAvailable())
+    delete myRenderTexture;
+    if (priv::RenderTextureImplFBO::IsAvailable())
     {
         // Use frame-buffer object (FBO)
-        myRenderImage = new priv::RenderImageImplFBO;
+        myRenderTexture = new priv::RenderTextureImplFBO;
     }
     else
     {
         // Use default implementation
-        myRenderImage = new priv::RenderImageImplDefault;
+        myRenderTexture = new priv::RenderTextureImplDefault;
     }
 
-    // Initialize the render image
-    if (!myRenderImage->Create(width, height, myImage.myTexture, depthBuffer))
+    // Initialize the render texture
+    if (!myRenderTexture->Create(width, height, myTexture.myTexture, depthBuffer))
         return false;
 
     // We can now initialize the render target part
@@ -86,64 +86,61 @@ bool RenderImage::Create(unsigned int width, unsigned int height, bool depthBuff
 
 
 ////////////////////////////////////////////////////////////
-void RenderImage::SetSmooth(bool smooth)
+void RenderTexture::SetSmooth(bool smooth)
 {
-    myImage.SetSmooth(smooth);
+    myTexture.SetSmooth(smooth);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImage::IsSmooth() const
+bool RenderTexture::IsSmooth() const
 {
-    return myImage.IsSmooth();
+    return myTexture.IsSmooth();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImage::SetActive(bool active)
+bool RenderTexture::SetActive(bool active)
 {
-    return myRenderImage && myRenderImage->Activate(active);
+    return myRenderTexture && myRenderTexture->Activate(active);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderImage::Display()
+void RenderTexture::Display()
 {
-    // Update the target image
+    // Update the target texture
     if (SetActive(true))
     {
-        myRenderImage->UpdateTexture(myImage.myTexture);
-
-        myImage.myPixelsFlipped  = true;
-        myImage.myArrayUpdated   = false;
-        myImage.myTextureUpdated = true;
+        myRenderTexture->UpdateTexture(myTexture.myTexture);
+        myTexture.myPixelsFlipped = true;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RenderImage::GetWidth() const
+unsigned int RenderTexture::GetWidth() const
 {
-    return myImage.GetWidth();
+    return myTexture.GetWidth();
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RenderImage::GetHeight() const
+unsigned int RenderTexture::GetHeight() const
 {
-    return myImage.GetHeight();
+    return myTexture.GetHeight();
 }
 
 
 ////////////////////////////////////////////////////////////
-const Image& RenderImage::GetImage() const
+const Texture& RenderTexture::GetTexture() const
 {
-    return myImage;
+    return myTexture;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderImage::Activate(bool active)
+bool RenderTexture::Activate(bool active)
 {
     return SetActive(active);
 }

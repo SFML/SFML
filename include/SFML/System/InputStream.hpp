@@ -98,7 +98,7 @@ public :
 /// This class allows users to define their own file input sources
 /// from which SFML can load resources.
 ///
-/// SFML resource classes like sf::Image and
+/// SFML resource classes like sf::Texture and
 /// sf::SoundBuffer provide LoadFromFile and LoadFromMemory functions,
 /// which read data from conventional sources. However, if you
 /// have data coming from a different source (over a network,
@@ -130,11 +130,11 @@ public :
 ///     ...
 /// };
 ///
-/// // now you can load images...
-/// sf::Image image;
+/// // now you can load textures...
+/// sf::Texture texture;
 /// ZipStream stream("resources.zip");
 /// stream.Open("images/img.png");
-/// image.LoadFromStream(stream);
+/// texture.LoadFromStream(stream);
 ///
 /// // musics...
 /// sf::Music music;

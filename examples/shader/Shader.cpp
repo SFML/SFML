@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 #include <map>
-#include <math.h>
+#include <cmath>
 
 
 void DisplayError();
@@ -88,32 +88,31 @@ int main()
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Shader");
 
-    // Create the render image
-    sf::RenderImage image;
-    if (!image.Create(window.GetWidth(), window.GetHeight()))
+    // Create the render texture
+    sf::RenderTexture texture;
+    if (!texture.Create(window.GetWidth(), window.GetHeight()))
         return EXIT_FAILURE;
 
-    // Load a background image to display
-    sf::Image backgroundImage;
-    if (!backgroundImage.LoadFromFile("resources/background.jpg"))
+    // Load a background texture to display
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.LoadFromFile("resources/background.jpg"))
         return EXIT_FAILURE;
-    sf::Sprite background(backgroundImage);
-    backgroundImage.SetSmooth(false);
+    sf::Sprite background(backgroundTexture);
 
     // Load a sprite which we'll move into the scene
-    sf::Image entityImage;
-    if (!entityImage.LoadFromFile("resources/sprite.png"))
+    sf::Texture entityTexture;
+    if (!entityTexture.LoadFromFile("resources/sprite.png"))
         return EXIT_FAILURE;
-    sf::Sprite entity(entityImage);
+    sf::Sprite entity(entityTexture);
 
     // Load the text font
     sf::Font font;
     if (!font.LoadFromFile("resources/sansation.ttf"))
         return EXIT_FAILURE;
 
-    // Load the image needed for the wave shader
-    sf::Image waveImage;
-    if (!waveImage.LoadFromFile("resources/wave.jpg"))
+    // Load the texture needed for the wave shader
+    sf::Texture waveTexture;
+    if (!waveTexture.LoadFromFile("resources/wave.jpg"))
         return EXIT_FAILURE;
 
     // Load all shaders
@@ -138,7 +137,7 @@ int main()
     shaders["edge"].SetCurrentTexture("texture");
     shaders["fisheye"].SetCurrentTexture("texture");
     shaders["wave"].SetCurrentTexture("texture");
-    shaders["wave"].SetTexture("wave", waveImage);
+    shaders["wave"].SetTexture("wave", waveTexture);
     shaders["pixelate"].SetCurrentTexture("texture");
 
     // Define a string for displaying the description of the current shader
@@ -211,19 +210,19 @@ int main()
         globalShader.Update(mouseX, mouseY);
 
         // Animate the entity
-        float entityX = (cos(clock.GetElapsedTime() * 0.0013f) + 1.2f) * 300;
-        float entityY = (cos(clock.GetElapsedTime() * 0.0008f) + 1.2f) * 200;
+        float entityX = (std::cos(clock.GetElapsedTime() * 0.0013f) + 1.2f) * 300;
+        float entityY = (std::cos(clock.GetElapsedTime() * 0.0008f) + 1.2f) * 200;
         entity.SetPosition(entityX, entityY);
         entity.Rotate(window.GetFrameTime() * 0.1f);
 
-        // Draw the background and the moving entity to the render image
-        image.Clear();
-        image.Draw(background, backgroundShader.GetShader());
-        image.Draw(entity, entityShader.GetShader());
-        image.Display();
+        // Draw the background and the moving entity to the render texture
+        texture.Clear();
+        texture.Draw(background, backgroundShader.GetShader());
+        texture.Draw(entity, entityShader.GetShader());
+        texture.Display();
 
-        // Draw the contents of the render image to the window
-        sf::Sprite screen(image.GetImage());
+        // Draw the contents of the render texture to the window
+        sf::Sprite screen(texture.GetTexture());
         window.Draw(screen, globalShader.GetShader());
 
         // Draw the interface texts

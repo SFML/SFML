@@ -39,14 +39,10 @@ Sound::Sound()
 
 
 ////////////////////////////////////////////////////////////
-Sound::Sound(const SoundBuffer& buffer, bool loop, float pitch, float volume, const Vector3f& position) :
+Sound::Sound(const SoundBuffer& buffer) :
 myBuffer(NULL)
 {
     SetBuffer(buffer);
-    SetLoop(loop);
-    SetPitch(pitch);
-    SetVolume(volume);
-    SetPosition(position);
 }
 
 

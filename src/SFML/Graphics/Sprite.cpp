@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Renderer.hpp>
 #include <utility>
 
@@ -35,6 +35,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Sprite::Sprite() :
+Drawable    (),
 mySubRect   (0, 0, 1, 1),
 myIsFlippedX(false),
 myIsFlippedY(false)
@@ -44,31 +45,31 @@ myIsFlippedY(false)
 
 
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Image& image, const Vector2f& position, const Vector2f& scale, float rotation, const Color& color) :
-Drawable    (position, scale, rotation, color),
+Sprite::Sprite(const Texture& texture) :
+Drawable    (),
 mySubRect   (0, 0, 1, 1),
 myIsFlippedX(false),
 myIsFlippedY(false)
 {
-    SetImage(image);
+    SetTexture(texture);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::SetImage(const Image& image, bool adjustToNewSize)
+void Sprite::SetTexture(const Texture& texture, bool adjustToNewSize)
 {
-    // If there was no valid image before, force adjusting to the new image size
-    if (!myImage)
+    // If there was no valid texture before, force adjusting to the new texture size
+    if (!myTexture)
         adjustToNewSize = true;
 
-    // If we want to adjust the size and the new image is valid, we adjust the source rectangle
-    if (adjustToNewSize && (image.GetWidth() > 0) && (image.GetHeight() > 0))
+    // If we want to adjust the size and the new texture is valid, we adjust the source rectangle
+    if (adjustToNewSize && (texture.GetWidth() > 0) && (texture.GetHeight() > 0))
     {
-        SetSubRect(IntRect(0, 0, image.GetWidth(), image.GetHeight()));
+        SetSubRect(IntRect(0, 0, texture.GetWidth(), texture.GetHeight()));
     }
 
-    // Assign the new image
-    myImage = &image;
+    // Assign the new texture
+    myTexture = &texture;
 }
 
 
@@ -109,9 +110,9 @@ void Sprite::FlipY(bool flipped)
 
 
 ////////////////////////////////////////////////////////////
-const Image* Sprite::GetImage() const
+const Texture* Sprite::GetTexture() const
 {
-    return myImage;
+    return myTexture;
 }
 
 
@@ -130,36 +131,16 @@ Vector2f Sprite::GetSize() const
 
 
 ////////////////////////////////////////////////////////////
-Color Sprite::GetPixel(unsigned int x, unsigned int y) const
-{
-    if (myImage)
-    {
-        unsigned int imageX = mySubRect.Left + x;
-        unsigned int imageY = mySubRect.Top  + y;
-
-        if (myIsFlippedX) imageX = mySubRect.Width  - imageX - 1;
-        if (myIsFlippedY) imageY = mySubRect.Height - imageY - 1;
-
-        return myImage->GetPixel(imageX, imageY) * GetColor();
-    }
-    else
-    {
-        return GetColor();
-    }
-}
-
-
-////////////////////////////////////////////////////////////
 void Sprite::Render(RenderTarget&, Renderer& renderer) const
 {
     // Get the sprite size
     float width  = static_cast<float>(mySubRect.Width);
     float height = static_cast<float>(mySubRect.Height);
 
-    // Check if the image is valid, and calculate the texture coordinates
+    // Check if the texture is valid, and calculate the texture coordinates
     FloatRect coords;
-    if (myImage)
-        coords = myImage->GetTexCoords(mySubRect);
+    if (myTexture)
+        coords = myTexture->GetTexCoords(mySubRect);
 
     // Compute the texture coordinates
     float left   = coords.Left;
@@ -170,7 +151,7 @@ void Sprite::Render(RenderTarget&, Renderer& renderer) const
     if (myIsFlippedY) std::swap(top, bottom);
 
     // Bind the texture
-    renderer.SetTexture(myImage);
+    renderer.SetTexture(myTexture);
 
     // Draw the sprite's geometry
     renderer.Begin(Renderer::TriangleStrip);

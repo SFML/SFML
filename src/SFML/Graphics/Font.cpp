@@ -309,7 +309,7 @@ int Font::GetLineSpacing(unsigned int characterSize) const
 
 
 ////////////////////////////////////////////////////////////
-const Image& Font::GetImage(unsigned int characterSize) const
+const Texture& Font::GetTexture(unsigned int characterSize) const
 {
     return myPages[characterSize].Texture;
 }
@@ -493,12 +493,11 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         }
 
         // Write the pixels to the texture
-        IntRect subrect = glyph.SubRect;
-        subrect.Left   += padding;
-        subrect.Top    += padding;
-        subrect.Width  -= 2 * padding;
-        subrect.Height -= 2 * padding;
-        page.Texture.UpdatePixels(&myPixelBuffer[0], subrect);
+        unsigned int x      = glyph.SubRect.Left + padding;
+        unsigned int y      = glyph.SubRect.Top + padding;
+        unsigned int width  = glyph.SubRect.Width - 2 * padding;
+        unsigned int height = glyph.SubRect.Height - 2 * padding;
+        page.Texture.Update(&myPixelBuffer[0], width, height, x, y);
     }
 
     // Delete the FT glyph
@@ -545,19 +544,17 @@ IntRect Font::FindGlyphRect(Page& page, unsigned int width, unsigned int height)
             // Not enough space: resize the texture if possible
             unsigned int textureWidth  = page.Texture.GetWidth();
             unsigned int textureHeight = page.Texture.GetHeight();
-            if ((textureWidth * 2 <= Image::GetMaximumSize()) && (textureHeight * 2 <= Image::GetMaximumSize()))
+            if ((textureWidth * 2 <= Texture::GetMaximumSize()) && (textureHeight * 2 <= Texture::GetMaximumSize()))
             {
                 // Make the texture 2 times bigger
-                std::size_t size = textureWidth * textureHeight * 4;
-                std::vector<Uint8> pixels(size);
-                memcpy(&pixels[0], page.Texture.GetPixelsPtr(), size);
-                page.Texture.Create(textureWidth * 2, textureHeight * 2, Color(255, 255, 255, 0));
-                page.Texture.UpdatePixels(&pixels[0], IntRect(0, 0, textureWidth, textureHeight));
+                sf::Image pixels = page.Texture.CopyToImage();
+                page.Texture.Create(textureWidth * 2, textureHeight * 2);
+                page.Texture.Update(pixels);
             }
             else
             {
                 // Oops, we've reached the maximum texture size...
-                Err() << "Failed to add a new character to the font: the maximum image size has been reached" << std::endl;
+                Err() << "Failed to add a new character to the font: the maximum texture size has been reached" << std::endl;
                 return IntRect(0, 0, 2, 2);
             }
         }
@@ -603,13 +600,17 @@ Font::Page::Page() :
 NextRow(2)
 {
     // Make sure that the texture is initialized by default
-    Texture.Create(128, 128, Color(255, 255, 255, 0));
-    Texture.SetSmooth(true);
+    sf::Image image;
+    image.Create(128, 128, Color(255, 255, 255, 0));
 
     // Reserve a 2x2 white square for texturing underlines
     for (int x = 0; x < 2; ++x)
         for (int y = 0; y < 2; ++y)
-            Texture.SetPixel(x, y, Color(255, 255, 255, 255));
+            image.SetPixel(x, y, Color(255, 255, 255, 255));
+
+    // Create the texture
+    Texture.LoadFromImage(image);
+    Texture.SetSmooth(true);
 }
 
 } // namespace sf

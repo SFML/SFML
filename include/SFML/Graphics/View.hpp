@@ -297,7 +297,7 @@ private :
 /// A view is composed of a source rectangle, which defines
 /// what part of the 2D scene is shown, and a target viewport,
 /// which defines where the contents of the source rectangle
-/// will be displayed on the render target (window or render-image).
+/// will be displayed on the render target (window or texture).
 ///
 /// The viewport allows to map the scene to a custom part
 /// of the render target, and can be used for split-screen
@@ -336,6 +336,6 @@ private :
 /// window.Draw(someText);
 /// \endcode
 ///
-/// \see RenderWindow, RenderImage
+/// \see sf::RenderWindow, sf::RenderTexture
 ///
 ////////////////////////////////////////////////////////////
