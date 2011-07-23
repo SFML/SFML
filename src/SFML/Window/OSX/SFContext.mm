@@ -32,20 +32,6 @@
 
 #import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 
-/*
- * DISCUSSION :
- * ============
- * 
- * [1] (2010_07)    
- *     should AA-related NSOpenGLPixelFormatAttribute not be in the array 
- *     if AA is not enable (settings.AntialiasingLevel == 0) ?
- *     => will not be present in attributs array if 0.
- *
- * [2] (2010_07)    
- *     how many buffer should be used for AA ?
- *     => «1» was choosen.
- */
-
 namespace sf
 {
 namespace priv
@@ -172,14 +158,31 @@ void SFContext::CreateContext(SFContext* shared,
     attrs.push_back(NSOpenGLPFAStencilSize);
     attrs.push_back((NSOpenGLPixelFormatAttribute)settings.StencilBits);
     
-    if (settings.AntialiasingLevel > 0) { // [1]
+    if (settings.AntialiasingLevel > 0) {
+        /* 
+         * Antialiasing techniques are described in the 
+         * "OpenGL Programming Guide for Mac OS X" document.
+         *
+         * According to this document, there is currently only one 
+         * supported sample buffer the antialisaing level.
+         *
+         * The document also states that software renderers should be avoided
+         * because antialisaing techniques are very slow with them.
+         */
+        
+        // Prefer multisampling over supersampling
         attrs.push_back(NSOpenGLPFAMultisample);
         
+        // Only one buffer is currently available.
         attrs.push_back(NSOpenGLPFASampleBuffers);
-        attrs.push_back((NSOpenGLPixelFormatAttribute)1); // [2]
+        attrs.push_back((NSOpenGLPixelFormatAttribute)1);
         
+        // Antialiasing level
         attrs.push_back(NSOpenGLPFASamples);
         attrs.push_back((NSOpenGLPixelFormatAttribute)settings.AntialiasingLevel);
+        
+        // No software renderer
+        attrs.push_back(NSOpenGLPFANoRecovery);
     }
     
     attrs.push_back((NSOpenGLPixelFormatAttribute)0); // end of array
