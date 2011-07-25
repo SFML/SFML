@@ -163,8 +163,8 @@ void SFContext::CreateContext(SFContext* shared,
          * Antialiasing techniques are described in the 
          * "OpenGL Programming Guide for Mac OS X" document.
          *
-         * According to this document, there is currently only one 
-         * supported sample buffer the antialisaing level.
+         * According to this document, the specification currently allows 
+         * only one multisample buffer.
          *
          * The document also states that software renderers should be avoided
          * because antialisaing techniques are very slow with them.
