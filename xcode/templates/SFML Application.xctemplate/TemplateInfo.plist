@@ -84,6 +84,12 @@ subject to the following restrictions:
 			<dict>
 				<key>WRAPPER_EXTENSION</key>
 				<string>app</string>
+				
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>NO</string>
+				
+				<key>GCC_PREFIX_HEADER</key>
+				<string></string>
 			</dict>
 			<key>Configurations</key>
 			<dict>
