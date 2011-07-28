@@ -28,6 +28,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp>
+#include <SFML/Window/OSX/HIDJoystickManager.hpp>
+
 
 namespace sf
 {
@@ -50,49 +52,62 @@ bool JoystickImpl::IsConnected(unsigned int index)
     
     // Otherwise, let's check if it is now connected :
     else { // i.e., myLocationIDs[index] == 0
-    
-        // Get all devices
-        CFSetRef devices = HIDInputManager::GetInstance().CopyJoystickDevices();
         
-        if (devices != NULL) {
+        // if there is more connected joystick to the HID manager than
+        // opened joystick devices then we find the new one.
+        
+        unsigned int openedCount = 0;
+        for (unsigned int i(0); i < sf::Joystick::Count; ++i) {
+            if (myLocationIDs[i] != 0) openedCount++;
+        }
+        
+        unsigned int connectedCount = HIDJoystickManager::GetInstance().GetJoystickCount();
+        
+        if (connectedCount > openedCount) {
+        
+            // Get all devices
+            CFSetRef devices = HIDJoystickManager::GetInstance().CopyJoysticks();
             
-            CFIndex size = CFSetGetCount(devices);
-            
-            if (size > 0) {
-            
-                CFTypeRef array[size]; // array of IOHIDDeviceRef
-                CFSetGetValues(devices, array);
+            if (devices != NULL) {
                 
-                // If there exists a device d s.t. there is no j s.t.
-                // myLocationIDs[j] == d's location then we have a new device.
+                CFIndex size = CFSetGetCount(devices);
                 
-                for (CFIndex didx(0); didx < size; ++didx) {
-                    IOHIDDeviceRef d = (IOHIDDeviceRef)array[didx];
-                    Location dloc = HIDInputManager::GetLocationID(d);
+                if (size > 0) {
                     
-                    bool foundJ = false;
-                    for (unsigned int j(0); j < Joystick::Count; ++j) {
-                        if (myLocationIDs[j] == dloc) {
-                            foundJ = true;
-                            break; // no need to loop again
+                    CFTypeRef array[size]; // array of IOHIDDeviceRef
+                    CFSetGetValues(devices, array);
+                    
+                    // If there exists a device d s.t. there is no j s.t.
+                    // myLocationIDs[j] == d's location then we have a new device.
+                    
+                    for (CFIndex didx(0); didx < size; ++didx) {
+                        IOHIDDeviceRef d = (IOHIDDeviceRef)array[didx];
+                        Location dloc = HIDInputManager::GetLocationID(d);
+                        
+                        bool foundJ = false;
+                        for (unsigned int j(0); j < Joystick::Count; ++j) {
+                            if (myLocationIDs[j] == dloc) {
+                                foundJ = true;
+                                break; // no need to loop again
+                            }
+                        }
+                        
+                        if (foundJ) {
+                            // This is a known device
+                            // Nothing else to do
+                        } else {
+                            // This is a new device
+                            // We set it up for Open(..)
+                            myLocationIDs[index] = dloc;
+                            state = true;
+                            break; // We stop looking for a new device
                         }
                     }
                     
-                    if (foundJ) {
-                        // This is a known device
-                        // Nothing else to do
-                    } else {
-                        // This is a new device
-                        // We set it up for Open(..)
-                        myLocationIDs[index] = dloc;
-                        state = true;
-                        break; // We stop looking for a new device
-                    }
                 }
                 
+                CFRelease(devices);
             }
-            
-            CFRelease(devices);
         }
     }
     
@@ -107,7 +122,7 @@ bool JoystickImpl::Open(unsigned int index)
     Location deviceLoc = myLocationIDs[index]; // The device we need to load
     
     // Get all devices
-    CFSetRef devices = HIDInputManager::GetInstance().CopyJoystickDevices();
+    CFSetRef devices = HIDJoystickManager::GetInstance().CopyJoysticks();
     if (devices == NULL) {
         return false;
     }
@@ -274,7 +289,7 @@ JoystickState JoystickImpl::Update()
     Location selfLoc = myLocationIDs[myIndex];
     
     // Get all devices
-    CFSetRef devices = HIDInputManager::GetInstance().CopyJoystickDevices();
+    CFSetRef devices = HIDJoystickManager::GetInstance().CopyJoysticks();
     if (devices == NULL) {
         return disconnectedState;
     }

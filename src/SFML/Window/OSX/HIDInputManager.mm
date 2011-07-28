@@ -128,13 +128,6 @@ bool HIDInputManager::IsMouseButtonPressed(Mouse::Button button)
 
 
 ////////////////////////////////////////////////////////////
-CFSetRef HIDInputManager::CopyJoystickDevices()
-{
-    return CopyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick);
-}
-
-
-////////////////////////////////////////////////////////////
 long HIDInputManager::GetLocationID(IOHIDDeviceRef device)
 {
     long loc = 0;
@@ -153,6 +146,28 @@ long HIDInputManager::GetLocationID(IOHIDDeviceRef device)
     }
     
     return loc;
+}
+
+
+////////////////////////////////////////////////////////////
+CFDictionaryRef HIDInputManager::CopyDevicesMask(UInt32 page, UInt32 usage)
+{
+    // Create the dictionary.
+    CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 2, 
+                                                            &kCFTypeDictionaryKeyCallBacks,
+                                                            &kCFTypeDictionaryValueCallBacks);
+    
+    // Add the page value.
+    CFNumberRef value = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &page);
+    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsagePageKey), value);
+    CFRelease(value);
+    
+    // Add the usage value (which is only valid if page value exists).
+    value = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage);
+    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsageKey), value);
+    CFRelease(value);
+    
+    return dict;
 }
 
 
@@ -514,35 +529,13 @@ void HIDInputManager::FreeUp()
         myButtons[i].clear();
     }
 }
-
-
-////////////////////////////////////////////////////////////
-CFDictionaryRef HIDInputManager::CopyDevicesMaskForManager(UInt32 page, UInt32 usage)
-{
-    // Create the dictionary.
-    CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 2, 
-                                                            &kCFTypeDictionaryKeyCallBacks,
-                                                            &kCFTypeDictionaryValueCallBacks);
-    
-    // Add the page value.
-    CFNumberRef value = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &page);
-    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsagePageKey), value);
-    CFRelease(value);
-    
-    // Add the usage value (which is only valid if page value exists).
-    value = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage);
-    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsageKey), value);
-    CFRelease(value);
-    
-    return dict;
-}
  
     
 ////////////////////////////////////////////////////////////
 CFSetRef HIDInputManager::CopyDevices(UInt32 page, UInt32 usage)
 {
     // Filter and keep only the requested devices
-    CFDictionaryRef mask = CopyDevicesMaskForManager(page, usage);
+    CFDictionaryRef mask = CopyDevicesMask(page, usage);
     
     IOHIDManagerSetDeviceMatching(myManager, mask);
     
