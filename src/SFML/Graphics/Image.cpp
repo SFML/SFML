@@ -263,4 +263,49 @@ const Uint8* Image::GetPixelsPtr() const
     }
 }
 
+
+////////////////////////////////////////////////////////////
+void Image::FlipHorizontally()
+{
+    if (!myPixels.empty())
+    {
+        std::vector<Uint8> before = myPixels;
+        for (unsigned int y = 0; y < myHeight; ++y)
+        {
+            const Uint8* source = &before[y * myWidth * 4];
+            Uint8* dest = &myPixels[(y + 1) * myWidth * 4 - 4];
+            for (unsigned int x = 0; x < myWidth; ++x)
+            {
+                dest[0] = source[0];
+                dest[1] = source[1];
+                dest[2] = source[2];
+                dest[3] = source[3];
+
+                source += 4;
+                dest -= 4;
+            }
+        }
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Image::FlipVertically()
+{
+    if (!myPixels.empty())
+    {
+        std::vector<Uint8> before = myPixels;
+        const Uint8* source = &before[myWidth * (myHeight - 1) * 4];
+        Uint8* dest = &myPixels[0];
+        std::size_t rowSize = myWidth * 4;
+
+        for (unsigned int y = 0; y < myHeight; ++y)
+        {
+            std::memcpy(dest, source, rowSize);
+            source -= rowSize;
+            dest += rowSize;
+        }
+    }
+}
+
 } // namespace sf
