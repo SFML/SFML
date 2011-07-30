@@ -147,7 +147,7 @@ public :
 /// while (running)
 /// {
 ///     sf::TcpSocket client;
-///     if (listener.accept(client) == sf::Socket::Done)
+///     if (listener.Accept(client) == sf::Socket::Done)
 ///     {
 ///         // A new client just connected!
 ///         std::cout << "New connection received from " << client.GetRemoteAddress() << std::endl;
