@@ -179,16 +179,16 @@ sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
 						<key>main.cpp:main:image_init</key>
 						<string>
 // Load a sprite to display
-sf::Image image;
+sf::Texture texture;
 </string>
 
 						<key>main.cpp:main:image_finalize</key>
 						<string>	return EXIT_FAILURE;
-sf::Sprite sprite(image);
+sf::Sprite sprite(texture);
 </string>
 
 						<key>main.cpp:main:image_load</key>
-						<string>if (!image.LoadFromFile("cute_image.jpg"))</string>
+						<string>if (!texture.LoadFromFile("cute_image.jpg"))</string>
 						
 						<key>main.cpp:main:text_init</key>
 						<string>
