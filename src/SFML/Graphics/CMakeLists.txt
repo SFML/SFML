@@ -83,7 +83,7 @@ if(BUILD_SHARED_LIBS)
         set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
     elseif(MACOSX)
         # We use static version of freetype so we need to link against zlib.
-        set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${ZLIB_LIBRARIES} "-framework AGL")
+        set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${ZLIB_LIBRARIES})
     endif()
 endif()
 
