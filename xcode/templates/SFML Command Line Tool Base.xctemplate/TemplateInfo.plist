@@ -506,7 +506,7 @@ while (window.IsOpened())
 			window.Close();
         
 		// Escape pressed : exit
-		if (event.Type == sf::Event::KeyPressed &amp;&amp; event.Key.Code == sf::Key::Escape)
+		if (event.Type == sf::Event::KeyPressed &amp;&amp; event.Key.Code == sf::Keyboard::Escape)
 			window.Close();
 	}
 </string>

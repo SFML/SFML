@@ -2,7 +2,7 @@
 //
 // SFML - Simple and Fast Multimedia Library
 // Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -23,92 +23,106 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKIMPLOSX_HPP
-#define SFML_JOYSTICKIMPLOSX_HPP
+#ifndef SFML_HIDJOYSTICKMANAGER_HPP
+#define SFML_HIDJOYSTICKMANAGER_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/System/NonCopyable.hpp>
+#include <IOKit/hid/IOHIDManager.h>
 #include <IOKit/hid/IOHIDDevice.h>
-#include <map>
-#include <vector>
 
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Mac OS X implementation of joysticks
+/// \brief This class manage as a singleton instance the
+/// joysticks. It's only purpose is
+/// to help sf::priv::JoystickImpl class.
 ///
 ////////////////////////////////////////////////////////////
-class JoystickImpl
+class HIDJoystickManager : NonCopyable
 {
-public :
-
+public:
+    
     ////////////////////////////////////////////////////////////
-    /// \brief Check if a joystick is currently connected
+    /// \brief Get the unique instance of the class
     ///
-    /// \param index Index of the joystick to check
+    /// \note Private use only
     ///
-    /// \return True if the joystick is connected, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool IsConnected(unsigned int index);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Open the joystick
-    ///
-    /// \param index Index assigned to the joystick
-    ///
-    /// \return True on success, false on failure
+    /// \return Reference to the HIDJoystickManager instance
     ///
     ////////////////////////////////////////////////////////////
-    bool Open(unsigned int index);
-
+    static HIDJoystickManager& GetInstance();
+    
+public:
+    
     ////////////////////////////////////////////////////////////
-    /// \brief Close the joystick
+    /// \brief Get the number of currently connected joystick
     ///
     ////////////////////////////////////////////////////////////
-    void Close();
-
+    unsigned int GetJoystickCount();
+    
     ////////////////////////////////////////////////////////////
-    /// \brief Get the joystick capabilities
-    ///
-    /// \return Joystick capabilities
-    ///
-    ////////////////////////////////////////////////////////////
-    JoystickCaps GetCapabilities() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the joystick and get its new state
-    ///
-    /// \return Joystick state
+    /// \brief Copy the devices assosiated with this HID manager
+    /// 
+    /// \return a retained CFSetRef of IOHIDDeviceRef or NULL
     ///
     ////////////////////////////////////////////////////////////
-    JoystickState Update();
-
-private :
-
+    CFSetRef CopyJoysticks();
+    
+private:
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    HIDJoystickManager();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Destructor
+    ///
+    ////////////////////////////////////////////////////////////
+    ~HIDJoystickManager();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Make sur all event have been processed in the run loop
+    ///
+    ////////////////////////////////////////////////////////////
+    void Update();
+    
+private:
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Private "plug-in" callback
+    /// \note Only 'context' parametre is used.
+    /// \see IOHIDDeviceCallback
+    ///
+    ////////////////////////////////////////////////////////////
+    static void pluggedIn(void * context, IOReturn, void *, IOHIDDeviceRef);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Private "plug-out" callback
+    /// \note Only 'context' parametre is used.
+    /// \see IOHIDDeviceCallback
+    ///
+    ////////////////////////////////////////////////////////////
+    static void pluggedOut(void * context, IOReturn, void *, IOHIDDeviceRef);
+    
+private:
+    
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    typedef long                                          Location;
-    typedef std::map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
-    typedef std::vector<IOHIDElementRef>                  ButtonsVector;
-    
-    AxisMap       myAxis;    ///< Axis (IOHIDElementRef) connected to the joystick
-    ButtonsVector myButtons; ///< Buttons (IOHIDElementRef) connected to the joystick
-    unsigned int  myIndex;   ///< SFML index
-    
-    static Location myLocationIDs[sf::Joystick::Count]; ///< Global Joystick register
-    /// For a corresponding SFML index, myLocationIDs is either some usb 
-    /// location or 0 if there isn't currently a connected joystick device
+    IOHIDManagerRef myHIDManager;   ///< HID Manager
+    unsigned int    myJoystickCount;///< Number of joysticks currently connected
 };
 
-} // namespace priv
 
+} // namespace priv
+    
 } // namespace sf
 
-
-#endif // SFML_JOYSTICKIMPLOSX_HPP
+#endif

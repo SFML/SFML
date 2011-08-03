@@ -47,9 +47,6 @@ namespace priv
 /// keyboard and mouse states. It's only purpose is
 /// to help sf::priv::InputImpl class.
 ///
-/// HIDInputManager provides a function to get all connected joysticks
-/// to help sf::priv::JoystickImpl.
-///
 ////////////////////////////////////////////////////////////
 class HIDInputManager : NonCopyable
 {
@@ -84,14 +81,6 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool IsMouseButtonPressed(Mouse::Button button);
-    
-    ////////////////////////////////////////////////////////////
-    /// \brief List all connected joysticks
-    ///
-    /// \return a retained CFSetRef of IOHIDDeviceRef or NULL
-    ///
-    ////////////////////////////////////////////////////////////
-    CFSetRef CopyJoystickDevices();
 
 public :
     
@@ -105,6 +94,16 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static long GetLocationID(IOHIDDeviceRef device);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a mask (dictionary) for an IOHIDManager
+    ///
+    /// \param page  HID page
+    /// \param usage HID usage page
+    /// \return a retained CFDictionaryRef
+    ///
+    ////////////////////////////////////////////////////////////
+    static CFDictionaryRef CopyDevicesMask(UInt32 page, UInt32 usage);
     
     ////////////////////////////////////////////////////////////
     /// Try to convert a character into a SFML key code.
@@ -207,16 +206,6 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     void FreeUp();
-    
-    ////////////////////////////////////////////////////////////
-    /// \brief Create a mask (dictionary) for an IOHIDManager
-    ///
-    /// \param page  HID page
-    /// \param usage HID usage page
-    /// \return a retained CFDictionaryRef
-    ///
-    ////////////////////////////////////////////////////////////
-    static CFDictionaryRef CopyDevicesMaskForManager(UInt32 page, UInt32 usage);
     
     ////////////////////////////////////////////////////////////
     /// \brief Filter the devices and return them.

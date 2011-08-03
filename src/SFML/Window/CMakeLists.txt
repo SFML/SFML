@@ -71,6 +71,8 @@ else() # MACOSX
         ${SRCROOT}/OSX/InputImpl.hpp
         ${SRCROOT}/OSX/HIDInputManager.hpp
         ${SRCROOT}/OSX/HIDInputManager.mm
+        ${SRCROOT}/OSX/HIDJoystickManager.hpp
+        ${SRCROOT}/OSX/HIDJoystickManager.cpp
         ${SRCROOT}/OSX/JoystickImpl.cpp
         ${SRCROOT}/OSX/JoystickImpl.hpp
         ${SRCROOT}/OSX/SFApplication.h
