@@ -22,10 +22,10 @@
 ///     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
 /// 
 ///     // Load a sprite to display
-///     sf::Image image;
-///     if (!image.LoadFromFile("cute_image.jpg"))
+///     sf::Texture texture;
+///     if (!texture.LoadFromFile("cute_image.jpg"))
 ///         return EXIT_FAILURE;
-///     sf::Sprite sprite(image);
+///     sf::Sprite sprite(texture);
 /// 
 ///     // Create a graphical text to display
 ///     sf::Font font;
