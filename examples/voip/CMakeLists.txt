@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/voip)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/voip)
 
 # all source files
 set(SRC ${SRCROOT}/VoIP.cpp

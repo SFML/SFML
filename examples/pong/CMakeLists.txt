@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/pong)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/pong)
 
 # all source files
 set(SRC ${SRCROOT}/Pong.cpp)

@@ -1,6 +1,6 @@
 
-set(INCROOT ${CMAKE_SOURCE_DIR}/include/SFML/Graphics)
-set(SRCROOT ${CMAKE_SOURCE_DIR}/src/SFML/Graphics)
+set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Graphics)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Graphics)
 
 # all source files
 set(SRC
@@ -55,8 +55,8 @@ set(SRC
 
 # let CMake know about our additional graphics libraries paths (on Windows and OSX)
 if (WINDOWS OR MACOSX)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/freetype")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/jpeg")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
 endif()
 
 # find external libraries

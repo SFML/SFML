@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/ftp)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/ftp)
 
 # all source files
 set(SRC ${SRCROOT}/Ftp.cpp)

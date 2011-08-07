@@ -15,8 +15,8 @@ endif()
 find_package(Doxygen REQUIRED)
 
 # set the input and output documentation paths
-set(DOXYGEN_INPUT_DIR ${CMAKE_SOURCE_DIR})
-set(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc)
+set(DOXYGEN_INPUT_DIR ${PROJECT_SOURCE_DIR})
+set(DOXYGEN_OUTPUT_DIR ${PROJECT_BINARY_DIR}/doc)
 
 # see if we can generate the CHM documentation
 if(WINDOWS)

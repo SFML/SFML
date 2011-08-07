@@ -1,6 +1,6 @@
 
 # define the sfml-main target
-add_library(sfml-main STATIC ${CMAKE_SOURCE_DIR}/src/SFML/Main/SFML_Main.cpp)
+add_library(sfml-main STATIC ${PROJECT_SOURCE_DIR}/src/SFML/Main/SFML_Main.cpp)
 
 # set the debug suffix
 set_target_properties(sfml-main PROPERTIES DEBUG_POSTFIX -d)

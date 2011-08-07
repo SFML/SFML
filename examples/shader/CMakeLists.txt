@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/shader)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/shader)
 
 # all source files
 set(SRC ${SRCROOT}/Shader.cpp)
