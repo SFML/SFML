@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/sockets)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/sockets)
 
 # all source files
 set(SRC ${SRCROOT}/Sockets.cpp
