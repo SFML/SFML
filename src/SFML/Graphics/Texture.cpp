@@ -58,7 +58,7 @@ myHeight       (0),
 myTextureWidth (0),
 myTextureHeight(0),
 myTexture      (0),
-myIsSmooth     (false),
+myIsSmooth     (copy.myIsSmooth),
 myPixelsFlipped(false)
 {
     LoadFromImage(copy.CopyToImage());
