@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/X11)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/X11)
 
 # all source files
 set(SRC ${SRCROOT}/X11.cpp)

@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/sound_capture)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/sound_capture)
 
 # all source files
 set(SRC ${SRCROOT}/SoundCapture.cpp)

@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/window)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/window)
 
 # all source files
 set(SRC ${SRCROOT}/Window.cpp)
