@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/WindowImpl.hpp> // included first to avoid a warning about macro redefinition
 #include <SFML/Window/Win32/WglContext.hpp>
-#include <SFML/Window/WindowImpl.hpp>
 #include <SFML/Window/glext/wglext.h>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
