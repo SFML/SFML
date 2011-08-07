@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/opengl)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/opengl)
 
 # all source files
 set(SRC ${SRCROOT}/OpenGL.cpp)

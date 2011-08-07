@@ -1,5 +1,5 @@
 
-set(SRCROOT ${CMAKE_SOURCE_DIR}/examples/win32)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/win32)
 
 # all source files
 set(SRC ${SRCROOT}/Win32.cpp)

@@ -1,6 +1,6 @@
 
-set(INCROOT ${CMAKE_SOURCE_DIR}/include/SFML/Network)
-set(SRCROOT ${CMAKE_SOURCE_DIR}/src/SFML/Network)
+set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Network)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Network)
 
 # all source files
 set(SRC

@@ -11,7 +11,7 @@ endif()
 project(SFML)
 
 # include the configuration file
-include(${CMAKE_SOURCE_DIR}/cmake/Config.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
 
 # setup version numbers
 set(VERSION_MAJOR 2)
@@ -19,7 +19,7 @@ set(VERSION_MINOR 0)
 set(VERSION_PATCH 0)
 
 # add the SFML header path
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
 set(BUILD_SHARED_LIBS TRUE CACHE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")

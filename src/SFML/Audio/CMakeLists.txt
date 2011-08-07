@@ -1,6 +1,6 @@
 
-set(INCROOT ${CMAKE_SOURCE_DIR}/include/SFML/Audio)
-set(SRCROOT ${CMAKE_SOURCE_DIR}/src/SFML/Audio)
+set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Audio)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Audio)
 
 # all source files
 set(SRC
@@ -30,11 +30,11 @@ set(SRC
 
 # let CMake know about our additional audio libraries paths (on Windows and OSX)
 if(WINDOWS)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/AL")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/libsndfile/windows")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/AL")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libsndfile/windows")
 elseif (MACOSX)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/headers/libsndfile/osx")
-    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${CMAKE_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libsndfile/osx")
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
 endif()
 
 # find external libraries
