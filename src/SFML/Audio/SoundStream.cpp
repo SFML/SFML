@@ -159,7 +159,7 @@ void SoundStream::SetPlayingOffset(Uint32 timeOffset)
     OnSeek(timeOffset);
 
     // Restart streaming
-    mySamplesProcessed = timeOffset * mySampleRate * myChannelsCount / 1000;
+    mySamplesProcessed = static_cast<Uint64>(timeOffset) * mySampleRate * myChannelsCount / 1000;
     myIsStreaming = true;
     myThread.Launch();
 }
@@ -171,7 +171,7 @@ Uint32 SoundStream::GetPlayingOffset() const
     ALfloat seconds = 0.f;
     ALCheck(alGetSourcef(mySource, AL_SEC_OFFSET, &seconds));
 
-    return static_cast<Uint32>(1000 * seconds) + 1000 * mySamplesProcessed / mySampleRate / myChannelsCount;
+    return static_cast<Uint32>(1000 * seconds + 1000 * mySamplesProcessed / mySampleRate / myChannelsCount);
 }
 
 

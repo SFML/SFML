@@ -286,7 +286,7 @@ private :
     unsigned int  mySampleRate;               ///< Frequency (samples / second)
     unsigned long myFormat;                   ///< Format of the internal sound buffers
     bool          myLoop;                     ///< Loop flag (true to loop, false to play once)
-    unsigned int  mySamplesProcessed;         ///< Number of buffers processed since beginning of the stream
+    Uint64        mySamplesProcessed;         ///< Number of buffers processed since beginning of the stream
     bool          myEndBuffers[BuffersCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation
 };
 
