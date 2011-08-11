@@ -179,16 +179,16 @@ sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
 						<key>main.cpp:main:image_init</key>
 						<string>
 // Load a sprite to display
-sf::Image image;
+sf::Texture texture;
 </string>
 
 						<key>main.cpp:main:image_finalize</key>
 						<string>	return EXIT_FAILURE;
-sf::Sprite sprite(image);
+sf::Sprite sprite(texture);
 </string>
 
 						<key>main.cpp:main:image_load</key>
-						<string>if (!image.LoadFromFile(ResourcePath() + "cute_image.jpg"))</string>
+						<string>if (!texture.LoadFromFile(ResourcePath() + "cute_image.jpg"))</string>
 						
 						<key>main.cpp:main:text_init</key>
 						<string>
@@ -227,7 +227,7 @@ text.SetColor(sf::Color::Black);
 						<key>sansation.ttf</key>
 						<dict>
 							<key>Group</key>
-							<string>Supporting Files</string>
+							<string>Resources</string>
 							<key>Path</key>
 							<string>sansation.ttf</string>
 						</dict>
@@ -235,7 +235,7 @@ text.SetColor(sf::Color::Black);
 						<key>cute_image.jpg</key>
 						<dict>
 							<key>Group</key>
-							<string>Supporting Files</string>
+							<string>Resources</string>
 							<key>Path</key>
 							<string>cute_image.jpg</string>
 						</dict>
@@ -334,7 +334,7 @@ music.Play();
     					<key>nice_music.ogg</key>
 						<dict>
 							<key>Group</key>
-							<string>Supporting Files</string>
+							<string>Resources</string>
 							<key>Path</key>
 							<string>nice_music.ogg</string>
 						</dict>
@@ -369,6 +369,9 @@ music.Play();
 						<string></string>
 						
 						<key>main.cpp:main:audio:content</key>
+						<string></string>
+						
+						<key>main.cpp:main:audio_loop</key>
 						<string></string>
 					</dict>
 				</dict>
@@ -501,8 +504,9 @@ int main (int argc, const char * argv[])
 	    <dict>
 	    	<key>Path</key>
 	    	<string>ResourcePath.hpp</string>
+			<key>TargetIndices</key>
+			<array/>
 	    </dict>
-	    
 
 	    <key>main.cpp:system:include</key>
 	    <string>#include &lt;SFML/System.hpp&gt;</string>
@@ -590,6 +594,68 @@ while (window.IsOpened())
 			<key>Frameworks</key>
 			<array>
 				<string>Foundation</string>
+			</array>
+			
+			<key>BuildPhases</key>
+			<array>
+				<dict>
+					<key>Class</key>
+					<string>ShellScript</string>
+					
+					<key>ShellPath</key>
+					<string>/bin/sh</string>
+					
+					<key>ShellScript</key>
+					<string># This shell script simply copies required sfml dylibs into the application bundle frameworks folder
+# NB : this script assumes that if moduleX is required in release mode then it is also required in debug mode.
+
+require () # $1 is a SFML module like 'system' or 'audio'
+{
+    if [ -z $1 ]
+    then
+        echo "no parameter! ERROR!"
+        exit
+    else
+        if [ $CONFIGURATION = "Debug" ]
+        then
+            rm -f $BUILT_PRODUCTS_DIR/test.app/Contents/Frameworks/libsfml-$1.2.dylib
+            ditto /usr/local/lib/libsfml-$1-d.2.dylib $BUILT_PRODUCTS_DIR/test.app/Contents/Frameworks/libsfml-$1-d.2.dylib
+        else
+            rm -f $BUILT_PRODUCTS_DIR/test.app/Contents/Frameworks/libsfml-$1-d.2.dylib
+            ditto /usr/local/lib/libsfml-$1.2.dylib $BUILT_PRODUCTS_DIR/test.app/Contents/Frameworks/libsfml-$1.2.dylib
+        fi
+    fi
+}
+
+if [ -n "$SYSTEM_RELEASE" ]
+then
+    require "system"
+fi
+
+if [ -n "$AUDIO_RELEASE" ]
+then
+    require "audio"
+fi
+
+if [ -n "$NETWORK_RELEASE" ]
+then
+    require "network"
+fi
+
+if [ -n "$WINDOW_RELEASE" ]
+then
+    require "window"
+fi
+
+if [ -n "$GRAPHICS_RELEASE" ]
+then
+    require "graphics"
+fi
+					</string>
+					
+					<key>RunOnlyForDeploymentPostprocessing</key>
+					<string>NO</string>
+				</dict>
 			</array>
 		</dict>
 	</array>

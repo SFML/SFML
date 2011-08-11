@@ -236,6 +236,7 @@
 -(void)dealloc
 {
     [self closeWindow];
+    [NSMenu setMenuBarVisible:YES];
     
     [myWindow release];
     [myOGLView release];
