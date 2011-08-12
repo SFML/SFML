@@ -34,6 +34,21 @@
 #include <vector>
 
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    // Retrieve the maximum number of texture units available
+    GLint GetMaxTextureUnits()
+    {
+        GLint maxUnits;
+        GLCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
+        return maxUnits;
+    }
+}
+
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -244,8 +259,7 @@ void Shader::SetTexture(const std::string& name, const Texture& texture)
         if (it == myTextures.end())
         {
             // New entry, make sure there are enough texture units
-            GLint maxUnits;
-            GLCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
+            static const GLint maxUnits = GetMaxTextureUnits();
             if (myTextures.size() + 1 >= static_cast<std::size_t>(maxUnits))
             {
                 Err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;

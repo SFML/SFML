@@ -77,14 +77,9 @@ bool RenderTextureImplDefault::Activate(bool active)
 ////////////////////////////////////////////////////////////
 void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
 {
-    GLint previous;
-    GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous));
-
     // Copy the rendered pixels to the texture
     GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
     GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
-
-    GLCheck(glBindTexture(GL_TEXTURE_2D, previous));
 }
 
 } // namespace priv
