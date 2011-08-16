@@ -194,12 +194,12 @@ bool Texture::LoadFromImage(const Image& image, const IntRect& area)
         if (Create(rectangle.Width, rectangle.Height))
         {
             // Copy the pixels to the texture, row by row
-            const Uint8* pixels = image.GetPixelsPtr() + rectangle.Left + (width * rectangle.Top);
+            const Uint8* pixels = image.GetPixelsPtr() + 4 * (rectangle.Left + (width * rectangle.Top));
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
             for (int i = 0; i < rectangle.Height; ++i)
             {
                 GLCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, myWidth, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
-                pixels += width;
+                pixels += 4 * width;
             }
 
             return true;
