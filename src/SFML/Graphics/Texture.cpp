@@ -61,7 +61,8 @@ myTexture      (0),
 myIsSmooth     (copy.myIsSmooth),
 myPixelsFlipped(false)
 {
-    LoadFromImage(copy.CopyToImage());
+    if (copy.myTexture)
+        LoadFromImage(copy.CopyToImage());
 }
 
 
