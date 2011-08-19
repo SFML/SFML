@@ -176,7 +176,7 @@ public :
     unsigned int GetWidth() const;
 
     ////////////////////////////////////////////////////////////
-    /// Get the height of the rendering region of the window
+    /// \brief Get the height of the rendering region of the window
     ///
     /// The height doesn't include the titlebar and borders
     /// of the window.

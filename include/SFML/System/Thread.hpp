@@ -66,7 +66,7 @@ public :
     ///     void operator()();
     /// };
     /// \endcode
-    /// Note: this does *not* run the thread, use Run().
+    /// Note: this does *not* run the thread, use Launch().
     ///
     /// \param function Functor or free function to use as the entry point of the thread
     ///
@@ -93,7 +93,7 @@ public :
     ///     void operator()(std::string arg);
     /// };
     /// \endcode
-    /// Note: this does *not* run the thread, use Run().
+    /// Note: this does *not* run the thread, use Launch().
     ///
     /// \param function Functor or free function to use as the entry point of the thread
     /// \param argument argument to forward to the function
@@ -116,7 +116,7 @@ public :
     ///     void function();
     /// };
     /// \endcode
-    /// Note: this does *not* run the thread, use Run().
+    /// Note: this does *not* run the thread, use Launch().
     ///
     /// \param function Entry point of the thread
     /// \param object Pointer to the object to use
