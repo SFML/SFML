@@ -31,9 +31,20 @@ set(BUILD_EXAMPLES FALSE CACHE BOOL "TRUE to build the SFML examples, FALSE to i
 set(BUILD_DOC FALSE CACHE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
 # Mac OS X specific options
-if (MACOSX AND MACOSX_VERSION GREATER 5)
-    # add an option to build against 10.5 SDK if current OS X version is greater than 10.5
-    set(BUILD_LEOPARD FALSE CACHE BOOL "TRUE to build SFML for OS X 10.5, FALSE to compile with default SDK")
+if(MACOSX)
+    if(MACOSX_VERSION GREATER 5)
+        # add an option to build against 10.5 SDK if current OS X version is greater than 10.5
+        set(BUILD_LEOPARD FALSE CACHE BOOL "TRUE to build SFML for OS X 10.5, FALSE to compile with default SDK")
+    endif()
+    
+    # add an option to build frameworks instead of dylibs (release only)
+    set(BUILD_FRAMEWORKS FALSE CACHE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
+    
+    # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
+    set(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" CACHE STRING "Frameworks installation directory")
+
+    # add an option to automatically install Xcode 4 templates
+    set(INSTALL_XCODE4_TEMPLATES FALSE CACHE BOOL "TRUE to automatically install the Xcode 4 templates, FALSE to do nothing about it")
 endif()
 
 # define SFML_STATIC if the build type is not set to 'shared'
@@ -65,9 +76,10 @@ endif()
 # disable the rpath stuff
 set(CMAKE_SKIP_BUILD_RPATH TRUE)
 
-# Setup Mac OS X multi arch/SDK support.
-if (MACOSX)
-    if (NOT CMAKE_OSX_ARCHITECTURES)
+# Setup Mac OS X stuff
+if(MACOSX)
+    # multi arch support
+    if(NOT CMAKE_OSX_ARCHITECTURES)
         # Default : i386 and x86_64
         set(CMAKE_OSX_ARCHITECTURES "i386;x86_64")
     else()
@@ -76,13 +88,31 @@ if (MACOSX)
         message("You're on your own : I won't change your settings.")
     endif()
 
-    # use 10.5 SDK ?
-    if (BUILD_LEOPARD)
+    # multi SDK support
+    if(BUILD_LEOPARD)
         # Use 10.5 SDK : override default value
         set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk")
         set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5")
     else()
         # Default SDK, let either the user or CMake decide which one to use.
+    endif()
+
+    # BUILD_FRAMEWORKS needs two things :
+    # first, it's available only for release
+    #    (because cmake currently doesn't allow specifying a custom framework name so XXX-d is not possible)
+    # secondly, it works only with BUILD_SHARED_LIBS enabled
+    if(BUILD_FRAMEWORKS)
+        # requirement #1
+        if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+            message(WARNING "CMAKE_BUILD_TYPE should be \"Release\" when BUILD_FRAMEWORKS is TRUE")
+            return()
+        endif()
+
+        # requirement #2
+        if(NOT BUILD_SHARED_LIBS)
+            message(WARNING "BUILD_SHARED_LIBS should be TRUE when BUILD_FRAMEWORKS is TRUE")
+            return()
+        endif()
     endif()
 endif()
 
@@ -96,12 +126,49 @@ if(BUILD_DOC)
 endif()
 
 # setup the install rules
-install(DIRECTORY include
-        DESTINATION .
-        COMPONENT devel
-        PATTERN ".svn" EXCLUDE)
+if(NOT BUILD_FRAMEWORKS)
+    install(DIRECTORY include
+            DESTINATION .
+            COMPONENT devel
+            PATTERN ".svn" EXCLUDE)
+else()
+    # find only "root" headers
+    file(GLOB SFML_HEADERS RELATIVE ${PROJECT_SOURCE_DIR} "include/SFML/*")
+
+    # in fact we have to fool cmake to copy all the headers in subdirectories
+    # to do that we have to add the "root" headers to the PUBLIC_HEADER
+    # then we can run a post script to copy the remaining headers
+
+    # we need a dummy file in order to compile the framework
+    set(SFML_SOURCES ${SFML_HEADERS})
+    list(APPEND SFML_SOURCES dummy.cpp)
+
+    # create SFML.framework
+    add_library(SFML ${SFML_SOURCES})
+
+    # edit target properties
+    set_target_properties(SFML PROPERTIES 
+                          FRAMEWORK TRUE
+                          FRAMEWORK_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                          MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.SFML
+                          MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                          MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                          PUBLIC_HEADER "${SFML_HEADERS}")
+
+    # add the remaining headers
+    add_custom_command(TARGET SFML 
+                       POST_BUILD
+                       COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* SFML.framework/Versions/2.0.0/Headers)
+
+    # install rule
+    install(TARGETS SFML
+            FRAMEWORK DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX}
+            COMPONENT devel)
+endif()
+
 install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${CMAKE_ROOT}/Modules)
 install(FILES license.txt DESTINATION ${INSTALL_MISC_DIR})
+
 if(WINDOWS)
     if(ARCH_32BITS)
         install(FILES extlibs/bin/x86/libsndfile-1.dll DESTINATION bin)
@@ -111,5 +178,9 @@ if(WINDOWS)
         install(FILES extlibs/bin/x64/openal32.dll DESTINATION bin)
     endif()
 elseif(MACOSX)
-    install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION /Library/Frameworks PATTERN ".svn" EXCLUDE)
+    install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+
+    if(INSTALL_XCODE4_TEMPLATES)
+        install(DIRECTORY xcode/templates/SFML DESTINATION $ENV{HOME}/Library/Developer/Xcode/Templates)
+    endif()
 endif()
