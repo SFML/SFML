@@ -26,13 +26,13 @@ subject to the following restrictions:
 -->
 <!-- 
 	 ###########################################################################
-     *************************** org.sfml-dev.AppBase template *****************
+     ******************* org.sfml-dev.commandLineToolBase template *************
      ###########################################################################
 -->
 	<key>Kind</key>
 	<string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
 	<key>Identifier</key>
-	<string>org.sfml-dev.AppBase</string>
+	<string>org.sfml-dev.commandLineToolBase</string>
 	
 	<key>Ancestors</key>
 	<array>
@@ -42,6 +42,64 @@ subject to the following restrictions:
 <!-- ############################################################### Options -->
 	<key>Options</key>
 	<array>
+			<!-- ****************************************** Framework option -->
+		<dict>
+			<key>Identifier</key>
+			<string>libraryType</string>
+			<key>Name</key>
+			<string>Use frameworks</string>
+			<key>Description</key>
+			<string>Indicates whether frameworks should be used instead of dylibs or not.</string>
+			<key>Type</key>
+			<string>checkbox</string>
+			<key>SortOrder</key>
+			<integer>1</integer>
+			<key>Default</key>
+			<string>false</string>
+			<key>Units</key>
+			<dict>
+				<!-- 													  ON -->
+				<key>true</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>SFML_LINK_PREFIX</key>
+							<string>$(SFML_LINK_FRAMEWORKS_PREFIX)</string>
+							
+							<key>SFML_LINK_SUFFIX</key>
+							<string>$(SFML_LINK_FRAMEWORKS_SUFFIX)</string>
+    		
+    		                <key>HEADER_SEARCH_PATHS</key>
+    		                <string>$(HEADER_SEARCH_PATHS)</string>
+						</dict>
+					</dict>
+				</dict>
+				<!-- 													 OFF -->
+				<key>false</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>SFML_LINK_PREFIX</key>
+							<string>$(SFML_LINK_DYLIBS_PREFIX)</string>
+							
+							<key>SFML_LINK_SUFFIX</key>
+							<string>$(SFML_LINK_DYLIBS_SUFFIX)</string>
+    		
+    		                <key>HEADER_SEARCH_PATHS</key>
+    		                <string>$(HEADER_SEARCH_PATHS) /usr/local/include/</string>
+						</dict>
+					</dict>
+				</dict>
+				
+			</dict>
+		</dict>
+		
 			<!-- ********************************************* Window Module -->
 		<dict>
 			<key>Identifier</key>
@@ -66,11 +124,8 @@ subject to the following restrictions:
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>WINDOW_RELEASE</key>
-							<string>-lsfml-window</string>
-							
-							<key>WINDOW_DEBUG</key>
-							<string>-lsfml-window-d</string>
+							<key>SFML_WINDOW</key>
+							<string>$(SFML_LINK_PREFIX)sfml-window$(SFML_LINK_SUFFIX)</string>
 						</dict>
 					</dict>
 					
@@ -99,10 +154,7 @@ subject to the following restrictions:
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>WINDOW_RELEASE</key>
-							<string></string>
-							
-							<key>WINDOW_DEBUG</key>
+							<key>SFML_WINDOW</key>
 							<string></string>
 						</dict>
 					</dict>
@@ -157,11 +209,8 @@ subject to the following restrictions:
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>GRAPHICS_RELEASE</key>
-							<string>-lsfml-graphics</string>
-							
-							<key>GRAPHICS_DEBUG</key>
-							<string>-lsfml-graphics-d</string>
+							<key>SFML_GRAPHICS</key>
+							<string>$(SFML_LINK_PREFIX)sfml-graphics$(SFML_LINK_SUFFIX)</string>
 						</dict>
 					</dict>
 					
@@ -188,7 +237,7 @@ sf::Sprite sprite(texture);
 </string>
 
 						<key>main.cpp:main:image_load</key>
-						<string>if (!texture.LoadFromFile(ResourcePath() + "cute_image.jpg"))</string>
+						<string>if (!texture.LoadFromFile("cute_image.jpg"))</string>
 						
 						<key>main.cpp:main:text_init</key>
 						<string>
@@ -203,7 +252,7 @@ text.SetColor(sf::Color::Black);
 </string>
 						
 						<key>main.cpp:main:text_load</key>
-						<string>if (!font.LoadFromFile(ResourcePath() + "sansation.ttf"))</string>
+						<string>if (!font.LoadFromFile("sansation.ttf"))</string>
 						
 						<key>main.cpp:main:graphics_display</key>
 						<string>
@@ -227,7 +276,7 @@ text.SetColor(sf::Color::Black);
 						<key>sansation.ttf</key>
 						<dict>
 							<key>Group</key>
-							<string>Resources</string>
+							<string>Supporting Files</string>
 							<key>Path</key>
 							<string>sansation.ttf</string>
 						</dict>
@@ -235,7 +284,7 @@ text.SetColor(sf::Color::Black);
 						<key>cute_image.jpg</key>
 						<dict>
 							<key>Group</key>
-							<string>Resources</string>
+							<string>Supporting Files</string>
 							<key>Path</key>
 							<string>cute_image.jpg</string>
 						</dict>
@@ -256,10 +305,7 @@ text.SetColor(sf::Color::Black);
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>GRAPHICS_RELEASE</key>
-							<string></string>
-							
-							<key>GRAPHICS_DEBUG</key>
+							<key>SFML_GRAPHICS</key>
 							<string></string>
 						</dict>
 					</dict>
@@ -307,11 +353,8 @@ text.SetColor(sf::Color::Black);
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>AUDIO_RELEASE</key>
-							<string>-lsfml-audio</string>
-							
-							<key>AUDIO_DEBUG</key>
-							<string>-lsfml-audio-d</string>
+							<key>SFML_AUDIO</key>
+							<string>$(SFML_LINK_PREFIX)sfml-audio$(SFML_LINK_SUFFIX)</string>
 						</dict>
 					</dict>
 					
@@ -325,7 +368,7 @@ text.SetColor(sf::Color::Black);
 						<string>
 // Load a music to play
 sf::Music music;
-if (!music.OpenFromFile(ResourcePath() + "nice_music.ogg"))
+if (!music.OpenFromFile("nice_music.ogg"))
 	return EXIT_FAILURE;
 
 // Play the music
@@ -334,7 +377,7 @@ music.Play();
     					<key>nice_music.ogg</key>
 						<dict>
 							<key>Group</key>
-							<string>Resources</string>
+							<string>Supporting Files</string>
 							<key>Path</key>
 							<string>nice_music.ogg</string>
 						</dict>
@@ -354,10 +397,7 @@ music.Play();
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>AUDIO_RELEASE</key>
-							<string></string>
-							
-							<key>AUDIO_DEBUG</key>
+							<key>SFML_AUDIO</key>
 							<string></string>
 						</dict>
 					</dict>
@@ -369,9 +409,6 @@ music.Play();
 						<string></string>
 						
 						<key>main.cpp:main:audio:content</key>
-						<string></string>
-						
-						<key>main.cpp:main:audio_loop</key>
 						<string></string>
 					</dict>
 				</dict>
@@ -402,11 +439,8 @@ music.Play();
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>NETWORK_RELEASE</key>
-							<string>-lsfml-network</string>
-							
-							<key>NETWORK_DEBUG</key>
-							<string>-lsfml-network-d</string>
+							<key>SFML_NETWORK</key>
+							<string>$(SFML_LINK_PREFIX)sfml-network$(SFML_LINK_SUFFIX)</string>
 						</dict>
 					</dict>
 					
@@ -427,10 +461,7 @@ music.Play();
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>NETWORK_RELEASE</key>
-							<string></string>
-							
-							<key>NETWORK_DEBUG</key>
+							<key>SFML_NETWORK</key>
 							<string></string>
 						</dict>
 					</dict>
@@ -457,7 +488,7 @@ music.Play();
 		<string>main.cpp:graphics:include</string>
 		<string>main.cpp:audio:include</string>
 		<string>main.cpp:network:include</string>
-		<string>main.cpp:resources:include</string>
+		<string>main.cpp:resources_comment</string>
 		<string>main.cpp:main:window:content</string>
 	    <string>main.cpp:main:graphics_init_window</string>
 	    <string>main.cpp:main:image_init</string>
@@ -471,8 +502,6 @@ music.Play();
 	    <string>main.cpp:main:event_loop</string>
 	    <string>main.cpp:main:graphics_display</string>
 	    <string>main.cpp:main:display</string>
-	    <string>ResourcePath.mm</string>
-   	    <string>ResourcePath.hpp</string>
 	</array>
 	
 			
@@ -492,20 +521,6 @@ int main (int argc, const char * argv[])
 }</string>
 			<key>Indent</key>
 			<integer>1</integer>
-	    </dict>
-	    
-	    <key>ResourcePath.mm</key>
-	    <dict>
-	    	<key>Path</key>
-	    	<string>ResourcePath.mm</string>
-	    </dict>
-	    
-   	    <key>ResourcePath.hpp</key>
-	    <dict>
-	    	<key>Path</key>
-	    	<string>ResourcePath.hpp</string>
-			<key>TargetIndices</key>
-			<array/>
 	    </dict>
 
 	    <key>main.cpp:system:include</key>
@@ -537,8 +552,21 @@ while (window.IsOpened())
 }
 </string>
 		
-		<key>main.cpp:resources:include</key>
-		<string>#include "ResourcePath.hpp"</string>
+		<key>main.cpp:resources_comment</key>
+		<string>
+/* Resources :
+ * ===========
+ *
+ * In order to load the resources like cute_image.png, you have to set up
+ * your target scheme :
+ *
+ * - Select "Edit Scheme…" in the "Product" menu;
+ * - Check the box "use custom working directory";
+ * - Fill the text field with the folder path containing your resources;
+ *        (e.g. your project folder)
+ * - Click OK.
+ */
+ </string>
  		
  		<key>main.cpp:main:audio_loop</key>
  		<string>while (music.GetStatus() == sf::Music::Playing) {
@@ -560,13 +588,23 @@ while (window.IsOpened())
 			<key>PRODUCT_NAME</key>
 			<string>$(TARGET_NAME)</string>
 			
-		   	<key>SYSTEM_RELEASE</key>
-    		<string>-lsfml-system</string>
-		   	<key>SYSTEM_DEBUG</key>
-    		<string>-lsfml-system-d</string>
-    		
-    		<key>HEADER_SEARCH_PATHS</key>
-    		<string>$(HEADER_SEARCH_PATHS) /usr/local/include/</string>
+		   	<key>SFML_LINK_DYLIBS_PREFIX</key>
+			<string>-l</string>
+			
+			<key>SFML_LINK_FRAMEWORKS_PREFIX</key>
+			<string>-framework </string>
+			
+		   	<key>SFML_SYSTEM</key>
+    		<string>$(SFML_LINK_PREFIX)sfml-system$(SFML_LINK_SUFFIX)</string>
+			
+			<key>SFML_LINK_FRAMEWORKS_SUFFIX</key>
+			<string></string>
+			
+			<key>CLANG_ENABLE_OBJC_ARC</key>
+			<string></string>
+			
+			<key>GCC_ENABLE_OBJC_GC</key>
+			<string>unsupported</string>
 		</dict>
 		
 		<key>Configurations</key>
@@ -574,90 +612,24 @@ while (window.IsOpened())
     		<!-- ***************************************************** Debug -->
 			<key>Debug</key>
 			<dict>
+				<key>SFML_LINK_DYLIBS_SUFFIX</key>
+				<string>-d</string>
+				
 				<key>OTHER_LDFLAGS</key>
-<string>$(OTHER_LDFLAGS) $(SYSTEM_DEBUG) $(WINDOW_DEBUG) $(GRAPHICS_DEBUG) $(AUDIO_DEBUG) $(NETWORK_DEBUG)</string>
+				<string>$(OTHER_LDFLAGS) $(SFML_SYSTEM) $(SFML_WINDOW) $(SFML_GRAPHICS) $(SFML_AUDIO) $(SFML_NETWORK)</string>
 			</dict>
     		
 			
     		<!-- *************************************************** Release -->
 			<key>Release</key>
 			<dict>
+				<key>SFML_LINK_DYLIBS_SUFFIX</key>
+				<string></string>
+				
 				<key>OTHER_LDFLAGS</key>
-<string>$(OTHER_LDFLAGS) $(SYSTEM_RELEASE) $(WINDOW_RELEASE) $(GRAPHICS_RELEASE) $(AUDIO_RELEASE) $(NETWORK_RELEASE)</string>
+				<string>$(OTHER_LDFLAGS) $(SFML_SYSTEM) $(SFML_WINDOW) $(SFML_GRAPHICS) $(SFML_AUDIO) $(SFML_NETWORK)</string>
 			</dict>
 		</dict>
 	</dict>
-	
-	<key>Targets</key>
-	<array>
-		<dict>
-			<key>Frameworks</key>
-			<array>
-				<string>Foundation</string>
-			</array>
-			
-			<key>BuildPhases</key>
-			<array>
-				<dict>
-					<key>Class</key>
-					<string>ShellScript</string>
-					
-					<key>ShellPath</key>
-					<string>/bin/sh</string>
-					
-					<key>ShellScript</key>
-					<string># This shell script simply copies required sfml dylibs into the application bundle frameworks folder
-# NB : this script assumes that if moduleX is required in release mode then it is also required in debug mode.
-
-require () # $1 is a SFML module like 'system' or 'audio'
-{
-    if [ -z $1 ]
-    then
-        echo "no parameter! ERROR!"
-        exit
-    else
-        if [ $CONFIGURATION = "Debug" ]
-        then
-            rm -f $BUILT_PRODUCTS_DIR/test.app/Contents/Frameworks/libsfml-$1.2.dylib
-            ditto /usr/local/lib/libsfml-$1-d.2.dylib $BUILT_PRODUCTS_DIR/test.app/Contents/Frameworks/libsfml-$1-d.2.dylib
-        else
-            rm -f $BUILT_PRODUCTS_DIR/test.app/Contents/Frameworks/libsfml-$1-d.2.dylib
-            ditto /usr/local/lib/libsfml-$1.2.dylib $BUILT_PRODUCTS_DIR/test.app/Contents/Frameworks/libsfml-$1.2.dylib
-        fi
-    fi
-}
-
-if [ -n "$SYSTEM_RELEASE" ]
-then
-    require "system"
-fi
-
-if [ -n "$AUDIO_RELEASE" ]
-then
-    require "audio"
-fi
-
-if [ -n "$NETWORK_RELEASE" ]
-then
-    require "network"
-fi
-
-if [ -n "$WINDOW_RELEASE" ]
-then
-    require "window"
-fi
-
-if [ -n "$GRAPHICS_RELEASE" ]
-then
-    require "graphics"
-fi
-					</string>
-					
-					<key>RunOnlyForDeploymentPostprocessing</key>
-					<string>NO</string>
-				</dict>
-			</array>
-		</dict>
-	</array>
 </dict>
 </plist>
