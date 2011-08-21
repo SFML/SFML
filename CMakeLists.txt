@@ -141,7 +141,7 @@ else()
 
     # we need a dummy file in order to compile the framework
     set(SFML_SOURCES ${SFML_HEADERS})
-    list(APPEND SFML_SOURCES dummy.cpp)
+    list(APPEND SFML_SOURCES src/dummy.cpp)
 
     # create SFML.framework
     add_library(SFML ${SFML_SOURCES})
