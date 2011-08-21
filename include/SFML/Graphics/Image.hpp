@@ -120,8 +120,6 @@ public :
     /// The supported image formats are bmp, png, tga, jpg, gif,
     /// psd, hdr and pic. Some format options are not supported,
     /// like progressive jpeg.
-    /// The maximum size for an image depends on the graphics
-    /// driver and can be retrieve with the GetMaximumSize function.
     /// If this function fails, the image is left unchanged.
     ///
     /// \param stream Source stream to read from
