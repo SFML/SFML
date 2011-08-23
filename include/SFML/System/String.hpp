@@ -156,6 +156,15 @@ public :
     String(const String& copy);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct from iterators.
+    ///
+    /// \param begin Begin iterator.
+    /// \param end End iterator.
+    ///
+    ////////////////////////////////////////////////////////////
+    String(const ConstIterator& begin, const ConstIterator& end);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Implicit cast operator to std::string (ANSI string)
     ///
     /// The current global locale is used for conversion. If you

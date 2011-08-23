@@ -131,6 +131,10 @@ myString(copy.myString)
 {
 }
 
+String::String(const ConstIterator& begin, const ConstIterator& end) :
+myString( begin, end )
+{
+}
 
 ////////////////////////////////////////////////////////////
 String::operator std::string() const
