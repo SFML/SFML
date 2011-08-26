@@ -117,7 +117,7 @@ public :
         void SetUri(const std::string& uri);
 
         ////////////////////////////////////////////////////////////
-        /// \brief Set the HTTP version fo the request
+        /// \brief Set the HTTP version for the request
         ///
         /// The HTTP version is 1.0 by default.
         ///

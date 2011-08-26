@@ -94,7 +94,7 @@ public :
     void SetBlocking(bool blocking);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Tell whether the socket is blocking or non-blocking mode
+    /// \brief Tell whether the socket is in blocking or non-blocking mode
     ///
     /// \return True if the socket is blocking, false otherwise
     ///
