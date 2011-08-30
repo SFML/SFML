@@ -29,6 +29,17 @@
 #include <SFML/Window/OSX/HIDJoystickManager.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp>
 
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    // Using a custom run loop mode solve some issues that appears when SFML
+    // is used with Cocoa.
+    CFStringRef const runLoopMode = CFSTR("SFML_RUN_LOOP_MODE");
+}
+
+
 namespace sf
 {
 namespace priv
@@ -74,7 +85,7 @@ HIDJoystickManager::HIDJoystickManager()
     
     IOHIDManagerScheduleWithRunLoop(myHIDManager, 
                                     CFRunLoopGetCurrent(), 
-                                    kCFRunLoopDefaultMode);
+                                    runLoopMode);
     
     IOHIDManagerOpen(myHIDManager, kIOHIDOptionsTypeNone);
 }
@@ -85,7 +96,7 @@ HIDJoystickManager::~HIDJoystickManager()
 {
     IOHIDManagerUnscheduleFromRunLoop(myHIDManager, 
                                       CFRunLoopGetCurrent(), 
-                                      kCFRunLoopDefaultMode);
+                                      runLoopMode);
     
     IOHIDManagerRegisterDeviceMatchingCallback(myHIDManager, NULL, 0);
     IOHIDManagerRegisterDeviceRemovalCallback(myHIDManager, NULL, 0);
@@ -100,7 +111,7 @@ void HIDJoystickManager::Update()
     SInt32 status = kCFRunLoopRunHandledSource;
     
     while (status == kCFRunLoopRunHandledSource) {
-        status = CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
+        status = CFRunLoopRunInMode(runLoopMode, 0, true);
     }
 }
 

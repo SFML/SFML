@@ -109,12 +109,12 @@ PoolWrapper::~PoolWrapper()
 #ifdef SFML_DEBUG
     if (count < 0) {
         sf::Err() << "~PoolWrapper : count is less than zero! "
-        "You called ReleasePool from a thread too many times."
-        << std::endl;
+                     "You called ReleasePool from a thread too many times."
+                  << std::endl;
     } else if (count > 0) {
         sf::Err() << "~PoolWrapper : count is greater than zero! "
-        "You called ReleasePool from a thread to few times."
-        << std::endl;
+                     "You called ReleasePool from a thread to few times."
+                  << std::endl;
     } else { // count == 0
         sf::Err() << "~PoolWrapper is HAPPY!" << std::endl;
     }
