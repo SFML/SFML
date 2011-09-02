@@ -200,7 +200,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of channels used by the sound
     ///
-    /// If the sound is mono then the number ofchannels will
+    /// If the sound is mono then the number of channels will
     /// be 1, 2 for stereo, etc.
     ///
     /// \return Number of channels
