@@ -140,8 +140,11 @@ else()
     # then we can run a post script to copy the remaining headers
 
     # we need a dummy file in order to compile the framework
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp
+                       COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp)
+
     set(SFML_SOURCES ${SFML_HEADERS})
-    list(APPEND SFML_SOURCES src/dummy.cpp)
+    list(APPEND SFML_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp)
 
     # create SFML.framework
     add_library(SFML ${SFML_SOURCES})
