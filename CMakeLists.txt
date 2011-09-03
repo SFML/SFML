@@ -32,11 +32,6 @@ set(BUILD_DOC FALSE CACHE BOOL "TRUE to generate the API documentation, FALSE to
 
 # Mac OS X specific options
 if(MACOSX)
-    if(MACOSX_VERSION GREATER 5)
-        # add an option to build against 10.5 SDK if current OS X version is greater than 10.5
-        set(BUILD_LEOPARD FALSE CACHE BOOL "TRUE to build SFML for OS X 10.5, FALSE to compile with default SDK")
-    endif()
-    
     # add an option to build frameworks instead of dylibs (release only)
     set(BUILD_FRAMEWORKS FALSE CACHE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
     
@@ -78,23 +73,39 @@ set(CMAKE_SKIP_BUILD_RPATH TRUE)
 
 # Setup Mac OS X stuff
 if(MACOSX)
-    # multi arch support
+    # multi arch support - by default : i386 and x86_64
     if(NOT CMAKE_OSX_ARCHITECTURES)
-        # Default : i386 and x86_64
-        set(CMAKE_OSX_ARCHITECTURES "i386;x86_64")
-    else()
-        # We got some conflict with custom user settings ; let him know his on his own.
-        message("CMAKE_OSX_ARCHITECTURES is not empty.")
-        message("You're on your own : I won't change your settings.")
+        set(CMAKE_OSX_ARCHITECTURES "i386;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
     endif()
 
-    # multi SDK support
-    if(BUILD_LEOPARD)
-        # Use 10.5 SDK : override default value
-        set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk")
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5")
-    else()
-        # Default SDK, let either the user or CMake decide which one to use.
+    # multi SDK support - by default we choose the older SDK available starting by 10.5 SDK
+    if(NOT OSX_CONFIG_HAS_BEEN_RUN_BEFORE)
+        if(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
+            # target 10.5 system
+            set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk"
+                CACHE STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value."
+                FORCE)
+            set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" 
+                CACHE STRING "Minimum OS X version to target for deployment (at runtime); ewer APIs weak linked."
+                FORCE)
+        elseif(EXISTS /Developer/SDKs/MacOSX10.6.sdk)
+            # target 10.6 system
+            set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk"
+                CACHE STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value."
+                FORCE)
+            set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6" 
+                CACHE STRING "Minimum OS X version to target for deployment (at runtime); newer APIs weak linked."
+                FORCE)
+        else()
+            # use default SDK.
+        endif()
+
+        # note : we use OSX_CONFIG_HAS_BEEN_RUN_BEFORE to be able to let the user set his/her custom settings
+        #        so we don't always have to FORCE the value of CMAKE_OSX_DEPLOYMENT_TARGET and CMAKE_OSX_SYSROOT
+        set(OSX_CONFIG_HAS_BEEN_RUN_BEFORE TRUE
+            CACHE BOOL "Don't edit this value; you should instead empty your cache."
+            FORCE)
+        mark_as_advanced(OSX_CONFIG_HAS_BEEN_RUN_BEFORE)
     endif()
 
     # BUILD_FRAMEWORKS needs two things :
