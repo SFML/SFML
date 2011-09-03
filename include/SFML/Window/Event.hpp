@@ -223,7 +223,7 @@ public :
 ///         window.Close();
 ///
 ///     // The escape key was pressed
-///     if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Key::Escape))
+///     if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Keyboard::Escape))
 ///         window.Close();
 ///
 ///     // The window was resized
