@@ -139,13 +139,13 @@ IpAddress IpAddress::GetLocalAddress()
         return localAddress;
 
     // Connect the socket to localhost on any port
-    sockaddr_in address = priv::SocketImpl::CreateAddress(INADDR_LOOPBACK, 0);
+    sockaddr_in address = priv::SocketImpl::CreateAddress(ntohl(INADDR_LOOPBACK), 0);
     if (connect(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
         priv::SocketImpl::Close(sock);
         return localAddress;
     }
- 
+
     // Get the local address of the socket connection
     priv::SocketImpl::AddrLength size = sizeof(address);
     if (getsockname(sock, reinterpret_cast<sockaddr*>(&address), &size) == -1)
