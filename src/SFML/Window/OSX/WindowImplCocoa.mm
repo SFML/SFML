@@ -45,7 +45,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
 : myShowCursor(true)
-{    
+{
     // Ask for a pool.
     RetainPool();
     
@@ -118,6 +118,10 @@ WindowImplCocoa::~WindowImplCocoa()
     [myDelegate release];
     
     ReleasePool();
+    
+    DrainPool(); // Make sure everything was freed
+    // This solve some issue when sf::Window::Create is called for the
+    // second time (nothing was render until the function was called again)
 }
     
     
