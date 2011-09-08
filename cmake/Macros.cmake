@@ -148,12 +148,12 @@ macro(sfml_add_library target)
                                   MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.${target}
                                   MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
                                   MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
-        else()
-            # adapt install directory to allow distributing dylibs in user’s frameworks
-            set_target_properties(${target} PROPERTIES 
-                                  BUILD_WITH_INSTALL_RPATH 1 
-                                  INSTALL_NAME_DIR "@executable_path/../Frameworks")
         endif()
+        
+        # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks
+        set_target_properties(${target} PROPERTIES 
+                              BUILD_WITH_INSTALL_RPATH 1 
+                              INSTALL_NAME_DIR "@executable_path/../Frameworks")
     endif()
 
     # link the target to its external dependencies

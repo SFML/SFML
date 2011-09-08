@@ -679,7 +679,7 @@ require () # $1 is a SFML module like 'system' or 'audio'
         # clean potentially old stuff
         rm -f $dest/libsfml-$1.2.dylib
         rm -f $dest/libsfml-$1-d.2.dylib
-        rm -f $dest/sfml-$1.framework
+        rm -fr $dest/sfml-$1.framework
     
         # copy SFML libraries
         if [ $frameworks ]
