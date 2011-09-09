@@ -174,6 +174,12 @@ else()
                        POST_BUILD
                        COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* SFML.framework/Versions/2.0.0/Headers)
 
+    # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
+    # NOTE : it's not required to link agains SFML.framework
+    set_target_properties(SFML PROPERTIES 
+                          BUILD_WITH_INSTALL_RPATH 1 
+                          INSTALL_NAME_DIR "@executable_path/../Frameworks")
+
     # install rule
     install(TARGETS SFML
             FRAMEWORK DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX}
