@@ -100,6 +100,9 @@ endif()
 find_package(OpenGL REQUIRED)
 if(LINUX)
     find_package(X11 REQUIRED)
+    if(NOT X11_Xrandr_FOUND)
+        message(FATAL_ERROR "Xrandr library not found")
+    endif()
 endif()
 
 # build the list of external libraries to link
