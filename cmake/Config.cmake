@@ -4,6 +4,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(WINDOWS 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(LINUX 1)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+    # FreeBSD compile path is the same as Linux
+    set(LINUX 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(MACOSX 1)
 
