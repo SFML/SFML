@@ -286,6 +286,9 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 {
     // Forward to...
     [self otherMouseDown:theEvent];
+    
+    // Transmit to non-SFML responder
+    [[self nextResponder] mouseDown:theEvent];
 }
 
 
@@ -294,6 +297,9 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 {
     // Forward to...
     [self otherMouseUp:theEvent];
+    
+    // Transmit to non-SFML responder
+    [[self nextResponder] mouseUp:theEvent];
 }
 
 
@@ -302,17 +308,23 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 {
     // Forward to...
     [self otherMouseDragged:theEvent];
+    
+    // Transmit to non-SFML responder
+    [[self nextResponder] mouseMoved:theEvent];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)scrollWheel:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
+    if (myRequester != 0) {
+        NSPoint loc = [self cursorPositionFromEvent:theEvent];
+        
+        myRequester->MouseWheelScrolledAt([theEvent deltaY], loc.x, loc.y);
+    }
     
-    NSPoint loc = [self cursorPositionFromEvent:theEvent];
-    
-    myRequester->MouseWheelScrolledAt([theEvent deltaY], loc.x, loc.y);
+    // Transmit to non-SFML responder
+    [[self nextResponder] scrollWheel:theEvent];
 }
 
 
@@ -343,6 +355,9 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 {
     // Forward to...
     [self otherMouseDown:theEvent];
+    
+    // Transmit to non-SFML responder
+    [[self nextResponder] rightMouseDown:theEvent];
 }
 
 
@@ -351,46 +366,51 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 {
     // Forward to...
     [self otherMouseUp:theEvent];
+    
+    // Transmit to non-SFML responder
+    [[self nextResponder] rightMouseUp:theEvent];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)otherMouseDown:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
-    
-    NSPoint loc = [self cursorPositionFromEvent:theEvent];
-    
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
     
-    if (button != sf::Mouse::ButtonCount) {
-        myRequester->MouseDownAt(button, loc.x, loc.y);
+    if (myRequester != 0) {
+        NSPoint loc = [self cursorPositionFromEvent:theEvent];
+        
+        if (button != sf::Mouse::ButtonCount) {
+            myRequester->MouseDownAt(button, loc.x, loc.y);
+        }
     }
-//#ifdef SFML_DEBUG
-//    else {
-//        sf::Err() << "Unknown mouse button released." << std::endl;
-//    }
-//#endif
+    
+    // If the event is not forwarded by mouseDown or rightMouseDown...
+    if (button != sf::Mouse::Left && button != sf::Mouse::Right) {
+        // ... transmit to non-SFML responder
+        [[self nextResponder] otherMouseDown:theEvent];
+    }
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)otherMouseUp:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
-    
-    NSPoint loc = [self cursorPositionFromEvent:theEvent];
-    
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
     
-    if (button != sf::Mouse::ButtonCount) {
-        myRequester->MouseUpAt(button, loc.x, loc.y);
+    if (myRequester != 0) {
+        NSPoint loc = [self cursorPositionFromEvent:theEvent];
+        
+        if (button != sf::Mouse::ButtonCount) {
+            myRequester->MouseUpAt(button, loc.x, loc.y);
+        }
     }
-//#ifdef SFML_DEBUG
-//    else {
-//        sf::Err() << "Unknown mouse button released." << std::endl;
-//    }
-//#endif
+    
+    // If the event is not forwarded by mouseUp or rightMouseUp...
+    if (button != sf::Mouse::Left && button != sf::Mouse::Right) {
+        // ... transmit to non-SFML responder
+        [[self nextResponder] otherMouseUp:theEvent];
+    }
 }
 
 
@@ -399,6 +419,9 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 {
     // Forward to...
     [self otherMouseDragged:theEvent];
+    
+    // Transmit to non-SFML responder
+    [[self nextResponder] rightMouseDragged:theEvent];
 }
 
 
@@ -407,20 +430,30 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 {
     // Forward to...
     [self otherMouseDragged:theEvent];
+    
+    // Transmit to non-SFML responder
+    [[self nextResponder] mouseDragged:theEvent];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)otherMouseDragged:(NSEvent *)theEvent
 {
-    if (myRequester == 0) return;
+    if (myRequester != 0) {
+        // If the event is not useful.
+        if (!myMouseIsIn) return;
+        
+        NSPoint loc = [self cursorPositionFromEvent:theEvent];
+        
+        myRequester->MouseMovedAt(loc.x, loc.y);
+    }
     
-    // If the event is not useful.
-    if (!myMouseIsIn) return;
-    
-    NSPoint loc = [self cursorPositionFromEvent:theEvent];
-    
-    myRequester->MouseMovedAt(loc.x, loc.y);
+    // If the event is not forwarded by mouseDragged or rightMouseDragged...
+    sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
+    if (button != sf::Mouse::Left && button != sf::Mouse::Right) {
+        // ... transmit to non-SFML responder
+        [[self nextResponder] otherMouseUp:theEvent];
+    }
 }
 
 
@@ -471,6 +504,9 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 ////////////////////////////////////////////////////////
 -(void)keyDown:(NSEvent *)theEvent
 {
+    // Transmit to non-SFML responder
+    [[self nextResponder] keyDown:theEvent];
+    
     if (myRequester == 0) return;
     
     // Handle key down event
@@ -526,6 +562,9 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 ////////////////////////////////////////////////////////
 -(void)keyUp:(NSEvent *)theEvent
 {
+    // Transmit to non-SFML responder
+    [[self nextResponder] keyUp:theEvent];
+ 
     if (myRequester == 0) return;
     
     sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
@@ -539,6 +578,9 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 ////////////////////////////////////////////////////////
 -(void)flagsChanged:(NSEvent *)theEvent
 {
+    // Transmit to non-SFML responder
+    [[self nextResponder] flagsChanged:theEvent];
+ 
     if (myRequester == 0) return;
     
     NSUInteger modifiers = [theEvent modifierFlags];
