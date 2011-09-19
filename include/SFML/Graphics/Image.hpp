@@ -202,6 +202,31 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void Copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect = IntRect(0, 0, 0, 0), bool applyAlpha = false);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Compare with another Image with this one
+    ///
+    /// This function does slow pixel and component wise comparisons
+    /// and it's generally a bad idea to call this in real-time applications.
+    ///
+    /// This method can be quite useful for automatic unit-tests.
+    ///
+    /// Both images are equal if
+    /// \li both images are invalid
+    /// \li both images have the same dimensions and every component of of the
+    ///     same pixel of both images differ not more than epsilon.
+    ///
+    /// \note For more performance, take a look on memcmp in the standart
+    ///       C-libraries.
+    ///
+    /// \param other   Other Image to compare with
+    /// \param epsilon Maximum difference of the same component of the same pixel
+    ///
+    /// \return false if at least one component of one pixel oth both images
+    ///               differs more than epsilon
+    ///
+    ////////////////////////////////////////////////////////////
+    bool IsEqual(const Image& other, Uint8 epsilon = 0) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the color of a pixel

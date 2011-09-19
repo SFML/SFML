@@ -30,6 +30,7 @@
 #include <SFML/System/Err.hpp>
 #include <algorithm>
 #include <cstring>
+#include <cstdlib>
 
 
 namespace sf
@@ -229,6 +230,37 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
     }
 }
 
+////////////////////////////////////////////////////////////
+bool Image::IsEqual(const Image& other, Uint8 epsilon) const
+{
+    // if this Image is invalid, both images are equal with both images beeing invalid
+    if ((myWidth==0) || (myHeight==0))
+        return ((other.myWidth==0) || (other.myHeight==0));
+    
+    // different size means not equal images
+    if ( myWidth!=other.myWidth || myHeight!=other.myHeight )
+        return false;
+
+    // search for different Pixels
+    const Int8* myPixels = (const Int8*)GetPixelsPtr();
+    const Int8* otherPixels = (const Int8*)other.GetPixelsPtr();
+    
+    const int signed_epsilon = int(epsilon);
+    
+    // for every Pixel
+    for (unsigned int i = (myWidth * myHeight * 4); i>0; --i)
+    {
+        int difference = abs(*myPixels - *otherPixels);
+
+        if (difference > signed_epsilon)
+            return false;
+
+        ++myPixels;
+        ++otherPixels;
+    }
+    
+    return true;
+}
 
 ////////////////////////////////////////////////////////////
 void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
