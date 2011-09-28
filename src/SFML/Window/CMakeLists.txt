@@ -105,6 +105,8 @@ if(LINUX)
     endif()
 endif()
 
+include_directories(${OPENGL_INCLUDE_DIR})
+
 # build the list of external libraries to link
 set(WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})
 if(WINDOWS)
