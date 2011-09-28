@@ -8,6 +8,8 @@ set(SRC ${SRCROOT}/X11.cpp)
 find_package(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
 
+include_directories(${OPENGL_INCLUDE_DIR})
+
 # define the X11 target
 sfml_add_example(X11 GUI_APP
                  SOURCES ${SRC}
