@@ -520,11 +520,13 @@ NSUInteger KeepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 
 
     // Handle text entred event
-    // We create a new event without command modifiers 
+    // We create a new event without command/ctrl modifiers 
     // to prevent the OS from sending an alert
-    NSUInteger modifiers = [theEvent modifierFlags] & NSCommandKeyMask
-                            ? [theEvent modifierFlags] & ~NSCommandKeyMask
-                            : [theEvent modifierFlags];
+    NSUInteger modifiers = [theEvent modifierFlags];
+    
+    if (modifiers & NSCommandKeyMask) modifiers = modifiers & ~NSCommandKeyMask;
+    if (modifiers & NSControlKeyMask) modifiers = modifiers & ~NSControlKeyMask;
+    
     NSEvent* ev = [NSEvent keyEventWithType:NSKeyDown
                                    location:[theEvent locationInWindow]
                               modifierFlags:modifiers
