@@ -42,13 +42,13 @@ namespace sf
 class Renderer;
 
 ////////////////////////////////////////////////////////////
-/// \brief Pixel/fragment shader class
+/// \brief Pixel/fragment and vertex shader class
 ///
 ////////////////////////////////////////////////////////////
 class SFML_API Shader : GlResource
 {
 public :
-
+  
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -74,40 +74,44 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Load the shader from a file
     ///
-    /// The source must be a text file containing a valid
-    /// fragment shader in GLSL language. GLSL is a C-like
-    /// language dedicated to OpenGL shaders; you'll probably
-    /// need to read a good documentation for it before writing
+    /// The sources must be text files containing valid
+    /// shaders in GLSL language. GLSL is a C-like language
+    /// dedicated to OpenGL shaders; you'll probably need
+    /// to read a good documentation for it before writing
     /// your own shaders.
     ///
-    /// \param filename Path of the shader file to load
+    /// \param filename Path of the fragment shader file to load
+    ///
+    /// \param vertexFilename Path of the vertex shader file to load, if any
     ///
     /// \return True if loading succeeded, false if it failed
     ///
     /// \see LoadFromMemory, LoadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& filename);
+    bool LoadFromFile(const std::string& filename, const std::string& vertexFilename = "");
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the shader from a source code in memory
     ///
-    /// The source code must be a valid fragment shader in
+    /// The sources codes must be valid shaders in
     /// GLSL language. GLSL is a C-like language dedicated
     /// to OpenGL shaders; you'll probably need to read a
     /// good documentation for it before writing your own shaders.
     ///
-    /// \param shader String containing the source code of the shader
+    /// \param shader String containing the source code of the fragment shader
+    ///
+    /// \param vertexShader String containing the source code of the vertex shader, if any
     ///
     /// \return True if loading succeeded, false if it failed
     ///
     /// \see LoadFromFile, LoadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const std::string& shader);
+    bool LoadFromMemory(const std::string& shader, const std::string& vertexShader = "");
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the shader from a custom stream
+    /// \brief Load the fragment shader from a custom stream
     ///
     /// The source code must be a valid fragment shader in
     /// GLSL language. GLSL is a C-like language dedicated
@@ -122,6 +126,25 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool LoadFromStream(InputStream& stream);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the shaders from custom streams
+    ///
+    /// The source code must be valid fragment and vertex shaders in
+    /// GLSL language. GLSL is a C-like language dedicated
+    /// to OpenGL shaders; you'll probably need to read a
+    /// good documentation for it before writing your own shaders.
+    ///
+    /// \param stream Source stream of the fragment shader to read from
+    ///
+    /// \param vertexStream Source stream of the vertex shader to read from
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see LoadFromFile, LoadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    bool LoadFromStream(InputStream& stream, InputStream& vertexStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a float parameter of the shader
@@ -137,6 +160,7 @@ public :
     ///
     /// \param name Name of the parameter in the shader
     /// \param x    Value to assign
+    /// \param type Type of shader to affect
     ///
     /// \see SetTexture, SetCurrentTexture
     ///
@@ -393,6 +417,7 @@ private :
     int          myCurrentTexture; ///< Location of the current texture in the shader
     TextureTable myTextures;       ///< Texture variables in the shader, mapped to their location
     std::string  myFragmentShader; ///< Fragment shader source code
+    std::string  myVertexShader;   ///< Vertex shader source code
 };
 
 } // namespace sf
@@ -404,11 +429,13 @@ private :
 ////////////////////////////////////////////////////////////
 /// \class sf::Shader
 /// \ingroup graphics
+/// Shaders are programs written using a specific language,
+/// executed directly by the graphics card and allowing to apply
+/// parallel real-time operations to the rendered entities.
 ///
-/// Pixel shaders (or fragment shaders) are programs written
-/// using a specific language, executed directly by the
-/// graphics card and allowing to apply per-pixel real-time
-/// operations to the rendered entities.
+/// Pixel shaders (or fragment shaders) are programs that executes
+/// per-pixel operations while vertex shaders operates on
+/// vertices.
 ///
 /// Pixel shaders are written in GLSL, which is a C-like
 /// language dedicated to OpenGL shaders. You'll probably
@@ -448,7 +475,7 @@ private :
 /// order. Thus, texture lookups on pixels other than the current
 /// one may not give you the expected result. Using a shader
 /// with sf::Shape is even more limited, as shapes don't use
-/// any texture.
+/// any texture so only vertex shaders make some sense.
 ///
 /// Shaders can also be used to apply global post-effects to the
 /// current contents of the target (like the old sf::PostFx class

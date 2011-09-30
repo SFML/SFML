@@ -33,6 +33,13 @@
 #include <fstream>
 #include <vector>
 
+const char* defaultVertexShader = 
+        "void main()"
+        "{"
+        "    gl_TexCoord[0] = gl_MultiTexCoord0;"
+        "    gl_FrontColor = gl_Color;"
+        "    gl_Position = ftransform();"
+        "}";
 
 ////////////////////////////////////////////////////////////
 // Private data
@@ -65,7 +72,8 @@ Shader::Shader(const Shader& copy) :
 myShaderProgram (0),
 myCurrentTexture(copy.myCurrentTexture),
 myTextures      (copy.myTextures),
-myFragmentShader(copy.myFragmentShader)
+myFragmentShader(copy.myFragmentShader),
+myVertexShader  (copy.myVertexShader)
 {
     // Create the shaders and the program
     if (copy.myShaderProgram)
@@ -85,21 +93,41 @@ Shader::~Shader()
 
 
 ////////////////////////////////////////////////////////////
-bool Shader::LoadFromFile(const std::string& filename)
+bool Shader::LoadFromFile(const std::string& filename, const std::string& vertexFilename)
 {
-    // Open the file
+    // Open the fragment shader file
     std::ifstream file(filename.c_str());
     if (!file)
     {
-        Err() << "Failed to open shader file \"" << filename << "\"" << std::endl;
+        Err() << "Failed to open fragment shader file \"" << filename << "\"" << std::endl;
         return false;
     }
 
-    // Read the shader code from the file
+    // Read the fragment shader code from the file
     myFragmentShader.clear();
     std::string line;
     while (std::getline(file, line))
         myFragmentShader += line + "\n";
+    
+    // Open the vertex shader file, if any filename is given
+    if(vertexFilename.empty())
+        myVertexShader = defaultVertexShader;
+    else
+    {
+            // Open the vertex shader file
+            std::ifstream file(vertexFilename.c_str());
+            if (!file)
+            {
+                Err() << "Failed to open vertex shader file \"" << vertexFilename << "\"" << std::endl;
+                return false;
+            }
+
+            // Read the vertex shader code from the file
+            myVertexShader.clear();
+            std::string line;
+            while (std::getline(file, line))
+                myVertexShader += line + "\n";
+    }
 
     // Create the shaders and the program
     return CompileProgram();
@@ -107,10 +135,16 @@ bool Shader::LoadFromFile(const std::string& filename)
 
 
 ////////////////////////////////////////////////////////////
-bool Shader::LoadFromMemory(const std::string& shader)
+bool Shader::LoadFromMemory(const std::string& shader, const std::string& vertexShader)
 {
-    // Save the shader code
+    // Save the fragment shader code
     myFragmentShader = shader;
+    
+    // Save the vertex shader code, if any
+    if(vertexShader.empty())
+        myVertexShader = defaultVertexShader;
+    else
+        myVertexShader = vertexShader;
 
     // Create the shaders and the program
     return CompileProgram();
@@ -124,11 +158,30 @@ bool Shader::LoadFromStream(InputStream& stream)
     std::vector<char> buffer(static_cast<std::size_t>(stream.GetSize()));
     Int64 read = stream.Read(&buffer[0], buffer.size());
     myFragmentShader.assign(&buffer[0], &buffer[0] + read);
+    
+    // Setting up the default vertex shader
+    myVertexShader = defaultVertexShader;
 
     // Create the shaders and the program
     return CompileProgram();
 }
 
+////////////////////////////////////////////////////////////
+bool Shader::LoadFromStream(InputStream& stream, InputStream& vertexStream)
+{
+    // Read the fragment shader code from the stream
+    std::vector<char> buffer(static_cast<std::size_t>(stream.GetSize()));
+    Int64 read = stream.Read(&buffer[0], buffer.size());
+    myFragmentShader.assign(&buffer[0], &buffer[0] + read);
+
+    // Read the vertex shader code from the stream
+    std::vector<char> vertexBuffer(static_cast<std::size_t>(vertexStream.GetSize()));
+    read = vertexStream.Read(&vertexBuffer[0], vertexBuffer.size());
+    myVertexShader.assign(&vertexBuffer[0], &vertexBuffer[0] + read);
+    
+    // Create the shaders and the program
+    return CompileProgram();
+}
 
 ////////////////////////////////////////////////////////////
 void Shader::SetParameter(const std::string& name, float x)
@@ -331,6 +384,7 @@ Shader& Shader::operator =(const Shader& right)
     std::swap(myCurrentTexture, temp.myCurrentTexture);
     std::swap(myTextures,       temp.myTextures);
     std::swap(myFragmentShader, temp.myFragmentShader);
+    std::swap(myVertexShader,   temp.myVertexShader);
 
     return *this;
 }
@@ -368,15 +422,6 @@ bool Shader::CompileProgram()
     if (myShaderProgram)
         GLCheck(glDeleteObjectARB(myShaderProgram));
 
-    // Define the vertex shader source (we provide it directly as it doesn't have to change)
-    static const char* vertexSrc =
-        "void main()"
-        "{"
-        "    gl_TexCoord[0] = gl_MultiTexCoord0;"
-        "    gl_FrontColor = gl_Color;"
-        "    gl_Position = ftransform();"
-        "}";
-
     // Create the program
     myShaderProgram = glCreateProgramObjectARB();
 
@@ -386,6 +431,7 @@ bool Shader::CompileProgram()
 
     // Compile them
     const char* fragmentSrc = myFragmentShader.c_str();
+    const char* vertexSrc = myVertexShader.c_str();
     GLCheck(glShaderSourceARB(vertexShader,   1, &vertexSrc,   NULL));
     GLCheck(glShaderSourceARB(fragmentShader, 1, &fragmentSrc, NULL));
     GLCheck(glCompileShaderARB(vertexShader));
@@ -398,7 +444,7 @@ bool Shader::CompileProgram()
     {
         char log[1024];
         GLCheck(glGetInfoLogARB(vertexShader, sizeof(log), 0, log));
-        Err() << "Failed to compile shader:" << std::endl
+        Err() << "Failed to compile vertex shader:" << std::endl
               << log << std::endl;
         GLCheck(glDeleteObjectARB(vertexShader));
         GLCheck(glDeleteObjectARB(fragmentShader));
@@ -411,7 +457,7 @@ bool Shader::CompileProgram()
     {
         char log[1024];
         GLCheck(glGetInfoLogARB(fragmentShader, sizeof(log), 0, log));
-        Err() << "Failed to compile shader:" << std::endl
+        Err() << "Failed to compile fragment shader:" << std::endl
               << log << std::endl;
         GLCheck(glDeleteObjectARB(vertexShader));
         GLCheck(glDeleteObjectARB(fragmentShader));
