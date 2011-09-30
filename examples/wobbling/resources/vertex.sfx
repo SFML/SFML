@@ -1,0 +1,14 @@
+uniform vec2 motion;
+varying float alpha;
+
+void main(void)
+{
+    gl_TexCoord[0] = gl_MultiTexCoord0;
+    gl_FrontColor = gl_Color;
+    gl_Position = ftransform();
+    gl_Position.x -= pow(1.0 + gl_MultiTexCoord0.y, 2.0) * motion.x;
+    gl_Position.y += pow(1.0 + gl_MultiTexCoord0.x, 2.0) * motion.y;
+
+    alpha = exp(-10.0 * length(motion));
+}
+
