@@ -72,7 +72,7 @@ if(MACOSX)
 endif()
 
 # add include paths of external libraries
-include_directories(${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR})
+include_directories(${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
 
 # build the list of libraries to link
 # GL and X11 are only needed for shared build, as they are already linked by sfml-window

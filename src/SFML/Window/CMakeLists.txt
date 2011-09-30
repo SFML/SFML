@@ -98,11 +98,13 @@ endif()
 
 # find external libraries
 find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
 if(LINUX)
     find_package(X11 REQUIRED)
     if(NOT X11_Xrandr_FOUND)
         message(FATAL_ERROR "Xrandr library not found")
     endif()
+    include_directories(${X11_INCLUDE_DIR})
 endif()
 
 # build the list of external libraries to link
