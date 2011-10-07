@@ -188,8 +188,8 @@ bool Texture::LoadFromImage(const Image& image, const IntRect& area)
         IntRect rectangle = area;
         if (rectangle.Left   < 0) rectangle.Left = 0;
         if (rectangle.Top    < 0) rectangle.Top  = 0;
-        if (rectangle.Width  > width)  rectangle.Width  = width;
-        if (rectangle.Height > height) rectangle.Height = height;
+        if (rectangle.Left + rectangle.Width > width)  rectangle.Width  = width - rectangle.Left;
+        if (rectangle.Top + rectangle.Height > height) rectangle.Height = height - rectangle.Top;
 
         // Create the texture and upload the pixels
         if (Create(rectangle.Width, rectangle.Height))
