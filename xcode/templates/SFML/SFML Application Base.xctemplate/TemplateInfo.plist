@@ -727,7 +727,7 @@ fi
 					</string>
 					
 					<key>RunOnlyForDeploymentPostprocessing</key>
-					<string>YES</string>
+					<string>NO</string>
 				</dict>
 			</array>
 		</dict>
