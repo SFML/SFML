@@ -133,6 +133,14 @@ macro(sfml_add_library target)
         endif()
     endif()
 
+    # on Unix systems with gcc 4.x, we must hide public symbols by default
+    # (exported ones are explicitely marked)
+    if((LINUX OR MACOSX) AND COMPILER_GCC)
+        if(${GCC_VERSION} MATCHES "4\\..*")
+            set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
+        endif()
+    endif()
+
     # link the target to its SFML dependencies
     if(THIS_DEPENDS)
         target_link_libraries(${target} ${THIS_DEPENDS})

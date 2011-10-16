@@ -97,32 +97,50 @@
 ////////////////////////////////////////////////////////////
 // Define portable import / export macros
 ////////////////////////////////////////////////////////////
-#if defined(SFML_SYSTEM_WINDOWS) && !defined(SFML_STATIC)
+#if !defined(SFML_STATIC)
 
-    #ifdef SFML_EXPORTS
+    #if defined(SFML_SYSTEM_WINDOWS)
 
-        // From DLL side, we must export
-        #define SFML_API __declspec(dllexport)
+        #ifdef SFML_EXPORTS
 
-    #else
+            // From DLL side, we must export
+            #define SFML_API __declspec(dllexport)
 
-        // From client application side, we must import
-        #define SFML_API __declspec(dllimport)
+        #else
 
-    #endif
+            // From client application side, we must import
+            #define SFML_API __declspec(dllimport)
 
-    // For Visual C++ compilers, we also need to turn off this annoying C4251 warning.
-    // You can read lots ot different things about it, but the point is the code will
-    // just work fine, and so the simplest way to get rid of this warning is to disable it
-    #ifdef _MSC_VER
+        #endif
 
-        #pragma warning(disable : 4251)
+        // For Visual C++ compilers, we also need to turn off this annoying C4251 warning.
+        // You can read lots ot different things about it, but the point is the code will
+        // just work fine, and so the simplest way to get rid of this warning is to disable it
+        #ifdef _MSC_VER
+
+            #pragma warning(disable : 4251)
+
+        #endif
+
+    #else // Linux, FreeBSD, Mac OS X
+
+        #if __GNUC__ >= 4
+
+            // gcc 4 has special keywords for showing/hidding symbols
+            #define SFML_API __attribute__ ((visibility ("default")))
+
+        #else
+
+            // gcc < 4 has no mechanism to explicitely hide symbols, everything's exported
+            #define SFML_API
+
+        #endif
 
     #endif
 
 #else
 
-    // Other platforms and static build don't need these export macros
+    // Static build doesn't need these export macros
     #define SFML_API
 
 #endif
