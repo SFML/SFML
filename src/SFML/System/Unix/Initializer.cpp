@@ -48,7 +48,7 @@ namespace priv
 /// The "constructor" attribute forces the function to be called
 /// at library loading time.
 ////////////////////////////////////////////////////////////
-void InitializeWorkingDirectory(void) __attribute__ ((constructor));
+void InitializeWorkingDirectory(void) __attribute__ ((__constructor__));
 void InitializeWorkingDirectory(void)
 {
 	char PathBuffer[4096];

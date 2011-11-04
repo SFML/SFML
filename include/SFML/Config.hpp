@@ -127,7 +127,7 @@
         #if __GNUC__ >= 4
 
             // gcc 4 has special keywords for showing/hidding symbols
-            #define SFML_API __attribute__ ((visibility ("default")))
+            #define SFML_API __attribute__ ((__visibility__ ("default")))
 
         #else
 
