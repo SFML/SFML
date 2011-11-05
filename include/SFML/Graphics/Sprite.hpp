@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Resource.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
@@ -204,10 +203,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ResourcePtr<Texture> myTexture;    ///< Texture used to draw the sprite
-    IntRect              mySubRect;    ///< Sub-rectangle of source texture to assign to the sprite
-    bool                 myIsFlippedX; ///< Is the sprite flipped on the X axis ?
-    bool                 myIsFlippedY; ///< Is the sprite flipped on the Y axis ?
+    const Texture* myTexture;    ///< Texture used to draw the sprite
+    IntRect        mySubRect;    ///< Sub-rectangle of source texture to assign to the sprite
+    bool           myIsFlippedX; ///< Is the sprite flipped on the X axis ?
+    bool           myIsFlippedY; ///< Is the sprite flipped on the Y axis ?
 };
 
 } // namespace sf

@@ -33,7 +33,8 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sound::Sound()
+Sound::Sound() :
+myBuffer(NULL)
 {
 }
 

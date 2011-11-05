@@ -77,7 +77,6 @@ myRefCount (NULL)
 
 ////////////////////////////////////////////////////////////
 Font::Font(const Font& copy) :
-Resource<Font>(),
 myLibrary    (copy.myLibrary),
 myFace       (copy.myFace),
 myStreamRec  (copy.myStreamRec),

@@ -52,7 +52,6 @@ myPixelsFlipped(false)
 
 ////////////////////////////////////////////////////////////
 Texture::Texture(const Texture& copy) :
-Resource<Texture>(),
 myWidth        (0),
 myHeight       (0),
 myTextureWidth (0),

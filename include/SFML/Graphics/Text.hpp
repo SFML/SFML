@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Resource.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -239,7 +238,7 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     String            myString;        ///< String to display
-    ResourcePtr<Font> myFont;          ///< Font used to display the string
+    const Font*       myFont;          ///< Font used to display the string
     unsigned int      myCharacterSize; ///< Base size of characters, in pixels
     unsigned long     myStyle;         ///< Text style (see Style enum)
     mutable FloatRect myBaseRect;      ///< Bounding rectangle of the text in object coordinates

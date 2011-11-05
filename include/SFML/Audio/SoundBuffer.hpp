@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <SFML/System/Resource.hpp>
 #include <string>
 #include <vector>
 #include <set>
@@ -49,7 +48,7 @@ class InputStream;
 /// \brief Storage for audio samples defining a sound
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API SoundBuffer : public Resource<SoundBuffer>
+class SFML_API SoundBuffer
 {
 public :
 

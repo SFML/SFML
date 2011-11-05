@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundSource.hpp>
-#include <SFML/System/Resource.hpp>
 #include <cstdlib>
 
 
@@ -214,7 +213,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ResourcePtr<SoundBuffer> myBuffer; ///< Sound buffer bound to the source
+    const SoundBuffer* myBuffer; ///< Sound buffer bound to the source
 };
 
 } // namespace sf

@@ -36,6 +36,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Sprite::Sprite() :
 Drawable    (),
+myTexture   (NULL),
 mySubRect   (0, 0, 1, 1),
 myIsFlippedX(false),
 myIsFlippedY(false)
@@ -47,6 +48,7 @@ myIsFlippedY(false)
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture) :
 Drawable    (),
+myTexture   (NULL),
 mySubRect   (0, 0, 1, 1),
 myIsFlippedX(false),
 myIsFlippedY(false)
