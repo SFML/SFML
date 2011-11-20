@@ -133,7 +133,7 @@ public :
     /// \see GetStyle
     ///
     ////////////////////////////////////////////////////////////
-    void SetStyle(unsigned long style);
+    void SetStyle(Uint32 style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's string
@@ -185,7 +185,7 @@ public :
     /// \see SetStyle
     ///
     ////////////////////////////////////////////////////////////
-    unsigned long GetStyle() const;
+    Uint32 GetStyle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the position of the \a index-th character
@@ -240,7 +240,7 @@ private :
     String            myString;        ///< String to display
     const Font*       myFont;          ///< Font used to display the string
     unsigned int      myCharacterSize; ///< Base size of characters, in pixels
-    unsigned long     myStyle;         ///< Text style (see Style enum)
+    Uint32            myStyle;         ///< Text style (see Style enum)
     mutable FloatRect myBaseRect;      ///< Bounding rectangle of the text in object coordinates
     mutable bool      myRectUpdated;   ///< Is the bounding rectangle up-to-date ?
 };

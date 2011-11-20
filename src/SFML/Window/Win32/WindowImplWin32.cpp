@@ -87,7 +87,7 @@ myIsCursorIn      (false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode mode, const std::string& title, unsigned long style) :
+WindowImplWin32::WindowImplWin32(VideoMode mode, const std::string& title, Uint32 style) :
 myHandle          (NULL),
 myCallback        (0),
 myCursor          (NULL),

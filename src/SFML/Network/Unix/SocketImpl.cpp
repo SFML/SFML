@@ -36,7 +36,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-sockaddr_in SocketImpl::CreateAddress(unsigned long address, unsigned short port)
+sockaddr_in SocketImpl::CreateAddress(Uint32 address, unsigned short port)
 {
     sockaddr_in addr;
     std::memset(addr.sin_zero, 0, sizeof(addr.sin_zero));

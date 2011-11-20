@@ -85,7 +85,7 @@ void Text::SetCharacterSize(unsigned int size)
 
 
 ////////////////////////////////////////////////////////////
-void Text::SetStyle(unsigned long style)
+void Text::SetStyle(Uint32 style)
 {
     if (myStyle != style)
     {
@@ -117,7 +117,7 @@ unsigned int Text::GetCharacterSize() const
 
 
 ////////////////////////////////////////////////////////////
-unsigned long Text::GetStyle() const
+Uint32 Text::GetStyle() const
 {
     return myStyle;
 }

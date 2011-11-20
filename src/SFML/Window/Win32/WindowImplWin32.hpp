@@ -62,7 +62,7 @@ public :
     /// \param style Window style
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplWin32(VideoMode mode, const std::string& title, unsigned long style);
+    WindowImplWin32(VideoMode mode, const std::string& title, Uint32 style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
