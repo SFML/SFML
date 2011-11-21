@@ -65,7 +65,7 @@ public :
     /// \return sockaddr_in ready to be used by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    static sockaddr_in CreateAddress(unsigned long address, unsigned short port);
+    static sockaddr_in CreateAddress(Uint32 address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the value of the invalid socket
