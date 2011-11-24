@@ -315,6 +315,9 @@ void WindowImplX11::SetSize(unsigned int width, unsigned int height)
 {
     XResizeWindow(myDisplay, myWindow, width, height);
     XFlush(myDisplay);
+
+    myWidth = width;
+    myHeight = height;
 }
 
 
