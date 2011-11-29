@@ -338,7 +338,7 @@ const Font& Font::GetDefaultFont()
     // Load the default font on first call
     if (!loaded)
     {
-        static const char data[] =
+        static const signed char data[] =
         {
             #include <SFML/Graphics/Arial.hpp>
         };
