@@ -27,29 +27,27 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 #include <iostream>
-
-#ifdef _MSC_VER
-    #pragma warning(disable : 4355) // "'this' : used in base member initializer list"
-#endif
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 RenderTarget::RenderTarget() :
-myRenderer      (*this),
-myStatesSaved   (false),
-myViewHasChanged(false)
+myDefaultView(),
+myView       (),
+myViewChanged(false)
 {
-
 }
 
 
 ////////////////////////////////////////////////////////////
 RenderTarget::~RenderTarget()
 {
-    // Nothing to do
 }
 
 
@@ -57,66 +55,9 @@ RenderTarget::~RenderTarget()
 void RenderTarget::Clear(const Color& color)
 {
     if (Activate(true))
-        myRenderer.Clear(color);
-}
-
-
-////////////////////////////////////////////////////////////
-void RenderTarget::Draw(const Drawable& object)
-{
-    if (Activate(true))
     {
-        // Update the projection matrix and viewport if the current view has changed
-        // Note: we do the changes here and not directly in SetView in order to gather
-        // rendering commands, which is safer in multithreaded environments
-        if (myViewHasChanged)
-        {
-            myRenderer.SetProjection(myCurrentView.GetMatrix());
-            myRenderer.SetViewport(GetViewport(myCurrentView));
-            myViewHasChanged = false;
-        }
-
-        // Save the current render states
-        myRenderer.PushStates();
-
-        // Setup the shader
-        myRenderer.SetShader(NULL);
-
-        // Let the object draw itself
-        object.Draw(*this, myRenderer);
-
-        // Restore the previous render states
-        myRenderer.PopStates();
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-void RenderTarget::Draw(const Drawable& object, const Shader& shader)
-{
-    if (Activate(true))
-    {
-        // Update the projection matrix and viewport if the current view has changed
-        // Note: we do the changes here and not directly in SetView in order to gather
-        // rendering commands, which is safer in multithreaded environments
-        if (myViewHasChanged)
-        {
-            myRenderer.SetProjection(myCurrentView.GetMatrix());
-            myRenderer.SetViewport(GetViewport(myCurrentView));
-            myViewHasChanged = false;
-        }
-
-        // Save the current render states
-        myRenderer.PushStates();
-
-        // Setup the shader
-        myRenderer.SetShader(&shader);
-
-        // Let the object draw itself
-        object.Draw(*this, myRenderer);
-
-        // Restore the previous render states
-        myRenderer.PopStates();
+        GLCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
+        GLCheck(glClear(GL_COLOR_BUFFER_BIT));
     }
 }
 
@@ -124,16 +65,15 @@ void RenderTarget::Draw(const Drawable& object, const Shader& shader)
 ////////////////////////////////////////////////////////////
 void RenderTarget::SetView(const View& view)
 {
-    // Save it for later use
-    myCurrentView = view;
-    myViewHasChanged = true;
+    myView = view;
+    myViewChanged = true;
 }
 
 
 ////////////////////////////////////////////////////////////
 const View& RenderTarget::GetView() const
 {
-    return myCurrentView;
+    return myView;
 }
 
 
@@ -175,35 +115,159 @@ Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y, const View&
     coords.y = 1.f  - 2.f * (static_cast<int>(y) - viewport.Top)  / viewport.Height;
 
     // Then transform by the inverse of the view matrix
-    return view.GetInverseMatrix().Transform(coords);
+    return view.GetInverseTransform().TransformPoint(coords);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::SaveGLStates()
+void RenderTarget::Draw(const Drawable& drawable, const RenderStates& states)
 {
+    drawable.Draw(*this, states);
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::Draw(const Vertex* vertices, unsigned int verticesCount,
+                        PrimitiveType type, const RenderStates& states)
+{
+    // Nothing to draw?
+    if (!vertices || (verticesCount == 0))
+        return;
+
     if (Activate(true))
     {
-        myRenderer.SaveGLStates();
-        myStatesSaved = true;
+        // Apply the new view if needed
+        if (myViewChanged)
+        {
+            // Set the viewport
+            IntRect viewport = GetViewport(myView);
+            int top = GetHeight() - (viewport.Top + viewport.Height);
+            GLCheck(glViewport(viewport.Left, top, viewport.Width, viewport.Height));
 
-        // Restore the render states and the current view, for SFML rendering
-        myRenderer.Initialize();
-        SetView(GetView());
+            // Set the projection matrix
+            GLCheck(glMatrixMode(GL_PROJECTION));
+            GLCheck(glLoadMatrixf(myView.GetTransform().GetMatrix()));
+
+            myViewChanged = false;
+        }
+
+        // Apply the transform
+        GLCheck(glMatrixMode(GL_MODELVIEW));
+        GLCheck(glLoadMatrixf(states.Transform.GetMatrix()));
+
+        // Apply the blend mode
+        switch (states.BlendMode)
+        {
+            // Alpha blending
+            // glBlendFuncSeparateEXT is used when available to avoid an incorrect alpha value when the target
+            // is a RenderTexture -- in this case the alpha value must be written directly to the target buffer
+            default :
+            case BlendAlpha :
+                if (GLEW_EXT_blend_func_separate)
+                    GLCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+                else
+                    GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+                break;
+
+            // Additive blending
+            case BlendAdd :
+                GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
+                break;
+
+            // Multiplicative blending
+            case BlendMultiply :
+                GLCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));
+                break;
+
+            // No blending
+            case BlendNone :
+                GLCheck(glBlendFunc(GL_ONE, GL_ZERO));
+                break;
+        }
+
+        // Apply the texture
+        if (states.Texture)
+            states.Texture->Bind(Texture::Pixels);
+        else
+            GLCheck(glBindTexture(GL_TEXTURE_2D, 0));
+
+        // Apply the shader
+        if (states.Shader)
+            states.Shader->Bind();
+        else
+            GLCheck(glUseProgramObjectARB(0));
+
+        // Setup the pointers to the vertices' components
+        const char* data = reinterpret_cast<const char*>(vertices);
+        GLCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), data + 0));
+        GLCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + 8));
+        GLCheck(glTexCoordPointer(2, GL_INT, sizeof(Vertex), data + 12));
+
+        // Find the OpenGL primitive type
+        static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP,
+                                       GL_TRIANGLES, GL_TRIANGLE_STRIP,
+                                       GL_TRIANGLE_FAN, GL_QUADS};
+        GLenum mode = modes[type];
+
+        // Draw the primitives
+        GLCheck(glDrawArrays(mode, 0, verticesCount));
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::RestoreGLStates()
+void RenderTarget::PushGLStates()
 {
-    if (myStatesSaved)
+    if (Activate(true))
     {
-        if (Activate(true))
-        {
-            myRenderer.RestoreGLStates();
-            myStatesSaved = false;
-        }
+        GLCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
+        GLCheck(glMatrixMode(GL_MODELVIEW));
+        GLCheck(glPushMatrix());
+        GLCheck(glMatrixMode(GL_PROJECTION));
+        GLCheck(glPushMatrix());
+        GLCheck(glMatrixMode(GL_TEXTURE));
+        GLCheck(glPushMatrix());
+    }
+
+    ResetGLStates();
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::PopGLStates()
+{
+    if (Activate(true))
+    {
+        GLCheck(glPopAttrib());
+        GLCheck(glMatrixMode(GL_PROJECTION));
+        GLCheck(glPopMatrix());
+        GLCheck(glMatrixMode(GL_MODELVIEW));
+        GLCheck(glPopMatrix());
+        GLCheck(glMatrixMode(GL_TEXTURE));
+        GLCheck(glPopMatrix());
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::ResetGLStates()
+{
+    if (Activate(true))
+    {
+        // Make sure that GLEW is initialized
+        priv::EnsureGlewInit();
+
+        GLCheck(glDisable(GL_LIGHTING));
+        GLCheck(glDisable(GL_DEPTH_TEST));
+        GLCheck(glEnable(GL_TEXTURE_2D));
+        GLCheck(glEnable(GL_ALPHA_TEST));
+        GLCheck(glEnable(GL_BLEND));
+        GLCheck(glAlphaFunc(GL_GREATER, 0));
+        GLCheck(glEnableClientState(GL_VERTEX_ARRAY));
+        GLCheck(glEnableClientState(GL_COLOR_ARRAY));
+        GLCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+
+        SetView(GetView());
     }
 }
 
@@ -215,9 +279,8 @@ void RenderTarget::Initialize()
     myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
     SetView(myDefaultView);
 
-    // Initialize the renderer
-    if (Activate(true))
-        myRenderer.Initialize();
+    // Initialize the default OpenGL render-states
+    ResetGLStates();
 }
 
 } // namespace sf

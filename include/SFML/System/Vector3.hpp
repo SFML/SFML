@@ -82,7 +82,7 @@ public :
 /// \relates Vector3
 /// \brief Overload of unary operator -
 ///
-/// \param right Vector to negate
+/// \param left Vector to negate
 ///
 /// \return Memberwise opposite of the vector
 ///

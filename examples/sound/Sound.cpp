@@ -35,7 +35,8 @@ void PlaySound()
         sf::Sleep(100);
 
         // Display the playing position
-        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.GetPlayingOffset() << " sec   ";
+        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.GetPlayingOffset() / 1000.f << " sec   ";
+        std::cout << std::flush;
     }
     std::cout << std::endl << std::endl;
 }
@@ -68,7 +69,8 @@ void PlayMusic()
         sf::Sleep(100);
 
         // Display the playing position
-        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << music.GetPlayingOffset() << " sec   ";
+        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << music.GetPlayingOffset() / 1000.f << " sec   ";
+        std::cout << std::flush;
     }
     std::cout << std::endl;
 }

@@ -440,15 +440,20 @@ private :
 /// window.Draw(sprite, shader);
 /// \endcode
 ///
+/// ... which is in fact just a shortcut for this:
+/// \code
+/// sf::RenderStates states;
+/// states.Shader = shader;
+/// window.Draw(sprite, states);
+/// \endcode
+///
 /// Shaders can be used on any drawable, but they are mainly
-/// made for sf::Sprite. Using a shader on a sf::String is more
-/// limited, because the texture of the text is not the
+/// made for sprites and shapes. Using a shader on a sf::String
+/// is more limited, because the texture of the text is not the
 /// actual text that you see on screen, it is a big texture
 /// containing all the characters of the font in an arbitrary
 /// order. Thus, texture lookups on pixels other than the current
-/// one may not give you the expected result. Using a shader
-/// with sf::Shape is even more limited, as shapes don't use
-/// any texture.
+/// one may not give you the expected result.
 ///
 /// Shaders can also be used to apply global post-effects to the
 /// current contents of the target (like the old sf::PostFx class
@@ -462,7 +467,7 @@ private :
 /// The first technique is more optimized because it doesn't involve
 /// retrieving the target's pixels to system memory, but the
 /// second one doesn't impact the rendering process and can be
-/// easily inserted anywhere.
+/// easily inserted anywhere without impacting all the code.
 ///
 /// Like sf::Texture that can be used as a raw OpenGL texture,
 /// sf::Shader can also be used directly as a raw fragment

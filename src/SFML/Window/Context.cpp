@@ -54,6 +54,13 @@ bool Context::SetActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
+ContextId Context::GetCurrentContextId()
+{
+    return priv::GlContext::GetCurrentContext();
+}
+
+
+////////////////////////////////////////////////////////////
 Context::Context(const ContextSettings& settings, unsigned int width, unsigned int height)
 {
     myContext = priv::GlContext::New(settings, width, height);

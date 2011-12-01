@@ -26,365 +26,271 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shape.hpp>
-#include <SFML/Graphics/Renderer.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/System/Err.hpp>
 #include <cmath>
+
+
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    // Compute the normal of a segment
+    sf::Vector2f ComputeNormal(const sf::Vector2f& p1, const sf::Vector2f& p2)
+    {
+        sf::Vector2f normal(p1.y - p2.y, p2.x - p1.x);
+        float length = std::sqrt(normal.x * normal.x + normal.y * normal.y);
+        if (length != 0.f)
+            normal /= length;
+        return normal;
+    }
+}
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Shape::Shape() :
-myOutline         (0.f),
-myIsFillEnabled   (true),
-myIsOutlineEnabled(true),
-myIsCompiled      (false)
+Shape::~Shape()
 {
-    // Put a placeholder for the center of the shape
-    myPoints.push_back(Point());
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::AddPoint(float x, float y, const Color& color, const Color& outlineColor)
+void Shape::SetTexture(const Texture* texture, bool resetRect)
 {
-    AddPoint(Vector2f(x, y), color, outlineColor);
+    // Recompute the texture area if requested, or if there was no texture before
+    if (texture && (resetRect || !myTexture))
+        SetTextureRect(IntRect(0, 0, texture->GetWidth(), texture->GetHeight()));
+
+    // Assign the new texture
+    myTexture = texture;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::AddPoint(const Vector2f& position, const Color& color, const Color& outlineColor)
+const Texture* Shape::GetTexture() const
 {
-    myPoints.push_back(Point(position, color, outlineColor));
-    myIsCompiled = false;
+    return myTexture;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Shape::GetPointsCount() const
+void Shape::SetTextureRect(const IntRect& rect)
 {
-    return static_cast<unsigned int>(myPoints.size() - 1);
+    myTextureRect = rect;
+    UpdateTexCoords();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::EnableFill(bool enable)
+const IntRect& Shape::GetTextureRect() const
 {
-    myIsFillEnabled = enable;
+    return myTextureRect;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::EnableOutline(bool enable)
+void Shape::SetFillColor(const Color& color)
 {
-    myIsOutlineEnabled = enable;
+    myFillColor = color;
+    UpdateFillColors();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::SetPointPosition(unsigned int index, const Vector2f& position)
+const Color& Shape::GetFillColor() const
 {
-    myPoints[index + 1].Position = position;
-    myIsCompiled = false;
+    return myFillColor;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::SetPointPosition(unsigned int index, float x, float y)
+void Shape::SetOutlineColor(const Color& color)
 {
-    SetPointPosition(index, Vector2f(x, y));
+    myOutlineColor = color;
+    UpdateOutlineColors();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::SetPointColor(unsigned int index, const Color& color)
+const Color& Shape::GetOutlineColor() const
 {
-    myPoints[index + 1].Col = color;
-    myIsCompiled = false;
-}
-
-
-////////////////////////////////////////////////////////////
-void Shape::SetPointOutlineColor(unsigned int index, const Color& color)
-{
-    myPoints[index + 1].OutlineCol = color;
-    myIsCompiled = false;
+    return myOutlineColor;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shape::SetOutlineThickness(float thickness)
 {
-    myOutline = thickness;
-}
-
-
-////////////////////////////////////////////////////////////
-const Vector2f& Shape::GetPointPosition(unsigned int index) const
-{
-    return myPoints[index + 1].Position;
-}
-
-
-////////////////////////////////////////////////////////////
-const Color& Shape::GetPointColor(unsigned int index) const
-{
-    return myPoints[index + 1].Col;
-}
-
-
-////////////////////////////////////////////////////////////
-const Color& Shape::GetPointOutlineColor(unsigned int index) const
-{
-    return myPoints[index + 1].OutlineCol;
+    myOutlineThickness = thickness;
+    Update(); // recompute everything because the whole shape must be offseted
 }
 
 
 ////////////////////////////////////////////////////////////
 float Shape::GetOutlineThickness() const
 {
-    return myOutline;
+    return myOutlineThickness;
 }
 
 
 ////////////////////////////////////////////////////////////
-Shape Shape::Line(float p1x, float p1y, float p2x, float p2y, float thickness, const Color& color, float outline, const Color& outlineColor)
+FloatRect Shape::GetLocalBounds() const
 {
-    Vector2f p1(p1x, p1y);
-    Vector2f p2(p2x, p2y);
-
-    return Shape::Line(p1, p2, thickness, color, outline, outlineColor);
+    return myBounds;
 }
 
 
 ////////////////////////////////////////////////////////////
-Shape Shape::Line(const Vector2f& p1, const Vector2f& p2, float thickness, const Color& color, float outline, const Color& outlineColor)
+FloatRect Shape::GetGlobalBounds() const
 {
-    // Compute the extrusion direction
-    Vector2f normal;
-    ComputeNormal(p1, p2, normal);
-    normal *= thickness / 2;
-
-    // Create the shape's points
-    Shape shape;
-    shape.AddPoint(p1 - normal, color, outlineColor);
-    shape.AddPoint(p2 - normal, color, outlineColor);
-    shape.AddPoint(p2 + normal, color, outlineColor);
-    shape.AddPoint(p1 + normal, color, outlineColor);
-    shape.SetOutlineThickness(outline);
-
-    // Compile it
-    shape.Compile();
-
-    return shape;
+    return GetTransform().TransformRect(GetLocalBounds());
 }
 
 
 ////////////////////////////////////////////////////////////
-Shape Shape::Rectangle(float left, float top, float width, float height, const Color& color, float outline, const Color& outlineColor)
+Shape::Shape() :
+myTexture         (NULL),
+myTextureRect     (),
+myFillColor       (255, 255, 255),
+myOutlineColor    (255, 255, 255),
+myOutlineThickness(0),
+myVertices        (TrianglesFan),
+myOutlineVertices (TrianglesStrip),
+myInsideBounds    (),
+myBounds          ()
 {
-    // Create the shape's points
-    Shape shape;
-    shape.AddPoint(Vector2f(left,         top),          color, outlineColor);
-    shape.AddPoint(Vector2f(left + width, top),          color, outlineColor);
-    shape.AddPoint(Vector2f(left + width, top + height), color, outlineColor);
-    shape.AddPoint(Vector2f(left,         top + height), color, outlineColor);
-    shape.SetOutlineThickness(outline);
-
-    // Compile it
-    shape.Compile();
-
-    return shape;
 }
 
 
 ////////////////////////////////////////////////////////////
-Shape Shape::Rectangle(const FloatRect& rectangle, const Color& color, float outline, const Color& outlineColor)
+void Shape::Update()
 {
-    return Shape::Rectangle(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, color, outline, outlineColor);
-}
-
-
-////////////////////////////////////////////////////////////
-Shape Shape::Circle(float x, float y, float radius, const Color& color, float outline, const Color& outlineColor)
-{
-    return Shape::Circle(Vector2f(x, y), radius, color, outline, outlineColor);
-}
-
-
-////////////////////////////////////////////////////////////
-Shape Shape::Circle(const Vector2f& center, float radius, const Color& color, float outline, const Color& outlineColor)
-{
-    static const int nbSegments = 40;
-
-    // Create the points set
-    Shape shape;
-    for (int i = 0; i < nbSegments; ++i)
+    // Get the total number of points of the shape
+    unsigned int count = GetOutlinePointsCount();
+    if (count < 3)
     {
-        float angle = i * 2 * 3.141592654f / nbSegments;
-        Vector2f offset(std::cos(angle), std::sin(angle));
-
-        shape.AddPoint(center + offset * radius, color, outlineColor);
-    }
-
-    // Compile it
-    shape.SetOutlineThickness(outline);
-    shape.Compile();
-
-    return shape;
-}
-
-
-////////////////////////////////////////////////////////////
-void Shape::Render(RenderTarget&, Renderer& renderer) const
-{
-    // Make sure the shape has at least 3 points (4 if we count the center)
-    if (myPoints.size() < 4)
+        sf::Err() << "Invalid shape: it has less than 3 points" << std::endl;
+        myVertices.Resize(0);
+        myOutlineVertices.Resize(0);
         return;
-
-    // Make sure the shape is compiled
-    if (!myIsCompiled)
-        const_cast<Shape*>(this)->Compile();
-
-    // Shapes only use color, no texture
-    renderer.SetTexture(NULL);
-
-    // Draw the shape
-    if (myIsFillEnabled)
-    {
-        if (myPoints.size() == 4)
-        {
-            // Special case of a triangle
-            renderer.Begin(Renderer::TriangleList);
-                renderer.AddVertex(myPoints[1].Position.x, myPoints[1].Position.y, myPoints[1].Col);
-                renderer.AddVertex(myPoints[2].Position.x, myPoints[2].Position.y, myPoints[2].Col);
-                renderer.AddVertex(myPoints[3].Position.x, myPoints[3].Position.y, myPoints[3].Col);
-            renderer.End();
-        }
-        else if (myPoints.size() == 5)
-        {
-            // Special case of a quad
-            renderer.Begin(Renderer::TriangleStrip);
-                renderer.AddVertex(myPoints[1].Position.x, myPoints[1].Position.y, myPoints[1].Col);
-                renderer.AddVertex(myPoints[2].Position.x, myPoints[2].Position.y, myPoints[2].Col);
-                renderer.AddVertex(myPoints[4].Position.x, myPoints[4].Position.y, myPoints[4].Col);
-                renderer.AddVertex(myPoints[3].Position.x, myPoints[3].Position.y, myPoints[3].Col);
-            renderer.End();
-        }
-        else
-        {
-            renderer.Begin(Renderer::TriangleFan);
-
-            // General case of a convex polygon
-            for (std::vector<Point>::const_iterator i = myPoints.begin(); i != myPoints.end(); ++i)
-                renderer.AddVertex(i->Position.x, i->Position.y, i->Col);
-
-            // Close the shape by duplicating the first point at the end
-            const Point& first = myPoints[1];
-            renderer.AddVertex(first.Position.x, first.Position.y, first.Col);
-
-            renderer.End();
-        }
     }
 
-    // Draw the outline
-    if (myIsOutlineEnabled && (myOutline != 0))
+    myVertices.Resize(count + 2); // + 2 for center and repeated first point
+
+    // Position
+    Vector2f offset(myOutlineThickness, myOutlineThickness);
+    for (unsigned int i = 0; i < count; ++i)
+        myVertices[i + 1].Position = GetOutlinePoint(i) + offset;
+    myVertices[count + 1].Position = myVertices[1].Position;
+
+    // Update the bounding rectangle
+    myInsideBounds = myVertices.GetBounds();
+
+    // Compute the center and make it the first vertex
+    myVertices[0].Position.x = myInsideBounds.Left + myInsideBounds.Width / 2;
+    myVertices[0].Position.y = myInsideBounds.Top + myInsideBounds.Height / 2;
+
+    // Color
+    UpdateFillColors();
+
+    // Texture coordinates
+    UpdateTexCoords();
+
+    // Outline
+    UpdateOutline();
+}
+
+
+////////////////////////////////////////////////////////////
+void Shape::Draw(RenderTarget& target, RenderStates states) const
+{
+    states.Transform *= GetTransform();
+
+    // Render the inside
+    if (myFillColor.a > 0)
     {
-        renderer.Begin(Renderer::TriangleStrip);
+        states.Texture = myTexture;
+        target.Draw(myVertices, states);
+    }
 
-        for (std::vector<Point>::const_iterator i = myPoints.begin() + 1; i != myPoints.end(); ++i)
-        {
-            Vector2f point1 = i->Position;
-            Vector2f point2 = i->Position + i->Normal * myOutline;
-            renderer.AddVertex(point1.x, point1.y, i->OutlineCol);
-            renderer.AddVertex(point2.x, point2.y, i->OutlineCol);
-        }
-
-        // Close the shape by duplicating the first point at the end
-        const Point& first = myPoints[1];
-        Vector2f point1 = first.Position;
-        Vector2f point2 = first.Position + first.Normal * myOutline;
-        renderer.AddVertex(point1.x, point1.y, first.OutlineCol);
-        renderer.AddVertex(point2.x, point2.y, first.OutlineCol);
-
-        renderer.End();
+    // Render the outline
+    if ((myOutlineColor.a > 0) && (myOutlineThickness > 0))
+    {
+        states.Texture = NULL;
+        target.Draw(myOutlineVertices, states);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::Compile()
+void Shape::UpdateFillColors()
 {
-    // Compute the center
-    float nbPoints = static_cast<float>(myPoints.size() - 1);
-    float r = 0, g = 0, b = 0, a = 0;
-    Point center(Vector2f(0, 0), Color(0, 0, 0, 0));
-    for (std::size_t i = 1; i < myPoints.size(); ++i)
-    {
-        center.Position += myPoints[i].Position;
-        r += myPoints[i].Col.r;
-        g += myPoints[i].Col.g;
-        b += myPoints[i].Col.b;
-        a += myPoints[i].Col.a;
-    }
-    center.Position /= nbPoints;
-    center.Col.r = static_cast<Uint8>(r / nbPoints);
-    center.Col.g = static_cast<Uint8>(g / nbPoints);
-    center.Col.b = static_cast<Uint8>(b / nbPoints);
-    center.Col.a = static_cast<Uint8>(a / nbPoints);
-    myPoints[0] = center;
+    for (unsigned int i = 0; i < myVertices.GetVerticesCount(); ++i)
+        myVertices[i].Color = myFillColor;
+}
 
-    // Compute the outline
-    for (std::size_t i = 1; i < myPoints.size(); ++i)
+
+////////////////////////////////////////////////////////////
+void Shape::UpdateTexCoords()
+{
+    for (unsigned int i = 0; i < myVertices.GetVerticesCount(); ++i)
     {
+        float xratio = (myVertices[i].Position.x - myInsideBounds.Left) / myInsideBounds.Width;
+        float yratio = (myVertices[i].Position.y - myInsideBounds.Top) / myInsideBounds.Height;
+        myVertices[i].TexCoords.x = static_cast<int>(myTextureRect.Left + myTextureRect.Width * xratio);
+        myVertices[i].TexCoords.y = static_cast<int>(myTextureRect.Top + myTextureRect.Height * yratio);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Shape::UpdateOutline()
+{
+    unsigned int count = myVertices.GetVerticesCount() - 2;
+    myOutlineVertices.Resize((count + 1) * 2);
+
+    for (unsigned int i = 0; i < count; ++i)
+    {
+        unsigned int index = i + 1;
+
         // Get the two segments shared by the current point
-        Point& p0 = (i == 1) ? myPoints[myPoints.size() - 1] : myPoints[i - 1];
-        Point& p1 = myPoints[i];
-        Point& p2 = (i == myPoints.size() - 1) ? myPoints[1] : myPoints[i + 1];
+        Vector2f p0 = (i == 0) ? myVertices[count].Position : myVertices[index - 1].Position;
+        Vector2f p1 = myVertices[index].Position;
+        Vector2f p2 = myVertices[index + 1].Position;
 
         // Compute their normal
-        Vector2f normal1, normal2;
-        if (!ComputeNormal(p0.Position, p1.Position, normal1) || !ComputeNormal(p1.Position, p2.Position, normal2))
-            continue;
+        Vector2f n1 = ComputeNormal(p0, p1);
+        Vector2f n2 = ComputeNormal(p1, p2);
 
-        // Add them to get the extrusion direction
-        float factor = 1.f + (normal1.x * normal2.x + normal1.y * normal2.y);
-        p1.Normal = (normal1 + normal2) / factor;
+        // Combine them to get the extrusion direction
+        float factor = 1.f + (n1.x * n2.x + n1.y * n2.y);
+        Vector2f normal = -(n1 + n2) / factor;
 
-        // Make sure it points towards the outside of the shape
-        float dot = (p1.Position.x - center.Position.x) * p1.Normal.x + (p1.Position.y - center.Position.y) * p1.Normal.y;
-        if (dot < 0)
-            p1.Normal = -p1.Normal;
+        // Update the outline points
+        myOutlineVertices[i * 2 + 0].Position = p1;
+        myOutlineVertices[i * 2 + 1].Position = p1 + normal * myOutlineThickness;
     }
 
-    myIsCompiled = true;
+    // Duplicate the first point at the end, to close the outline
+    myOutlineVertices[count * 2 + 0].Position = myOutlineVertices[0].Position;
+    myOutlineVertices[count * 2 + 1].Position = myOutlineVertices[1].Position;
+
+    // Update outline colors
+    UpdateOutlineColors();
+
+    // Update the shape's bounds
+    myBounds = myOutlineVertices.GetBounds();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Shape::ComputeNormal(const Vector2f& p1, const Vector2f& p2, Vector2f& normal)
+void Shape::UpdateOutlineColors()
 {
-    normal.x = p1.y - p2.y;
-    normal.y = p2.x - p1.x;
-
-    float len = std::sqrt(normal.x * normal.x + normal.y * normal.y);
-    if (len == 0.f)
-        return false;
-
-    normal.x /= len;
-    normal.y /= len;
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-Shape::Point::Point(const Vector2f& position, const Color& color, const Color& outlineColor) :
-Position  (position),
-Normal    (0.f, 0.f),
-Col       (color),
-OutlineCol(outlineColor)
-{
-
+    for (unsigned int i = 0; i < myOutlineVertices.GetVerticesCount(); ++i)
+        myOutlineVertices[i].Color = myOutlineColor;
 }
 
 } // namespace sf

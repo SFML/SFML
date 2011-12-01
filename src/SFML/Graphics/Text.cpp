@@ -27,17 +27,20 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Renderer.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <cassert>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 Text::Text() :
+myString       (),
 myFont         (&Font::GetDefaultFont()),
 myCharacterSize(30),
 myStyle        (Regular),
-myRectUpdated  (true)
+myVertices     (Quads),
+myBounds       ()
 {
 
 }
@@ -45,12 +48,14 @@ myRectUpdated  (true)
 
 ////////////////////////////////////////////////////////////
 Text::Text(const String& string, const Font& font, unsigned int characterSize) :
+myString       (string),
 myFont         (&font),
 myCharacterSize(characterSize),
 myStyle        (Regular),
-myRectUpdated  (true)
+myVertices     (Quads),
+myBounds       ()
 {
-    SetString(string);
+    UpdateGeometry();
 }
 
 
@@ -58,7 +63,7 @@ myRectUpdated  (true)
 void Text::SetString(const String& string)
 {
     myString = string;
-    myRectUpdated = false;
+    UpdateGeometry();
 }
 
 
@@ -68,7 +73,7 @@ void Text::SetFont(const Font& font)
     if (myFont != &font)
     {
         myFont = &font;
-        myRectUpdated = false;
+        UpdateGeometry();
     }
 }
 
@@ -79,7 +84,7 @@ void Text::SetCharacterSize(unsigned int size)
     if (myCharacterSize != size)
     {
         myCharacterSize = size;
-        myRectUpdated = false;
+        UpdateGeometry();
     }
 }
 
@@ -90,7 +95,19 @@ void Text::SetStyle(unsigned long style)
     if (myStyle != style)
     {
         myStyle = style;
-        myRectUpdated = false;
+        UpdateGeometry();
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::SetColor(const Color& color)
+{
+    if (color != myColor)
+    {
+        myColor = color;
+        for (unsigned int i = 0; i < myVertices.GetVerticesCount(); ++i)
+            myVertices[i].Color = myColor;
     }
 }
 
@@ -105,6 +122,7 @@ const String& Text::GetString() const
 ////////////////////////////////////////////////////////////
 const Font& Text::GetFont() const
 {
+    assert(myFont != NULL); // can never be NULL, always &Font::GetDefaultFont() by default
     return *myFont;
 }
 
@@ -124,24 +142,29 @@ unsigned long Text::GetStyle() const
 
 
 ////////////////////////////////////////////////////////////
-Vector2f Text::GetCharacterPos(std::size_t index) const
+const Color& Text::GetColor() const
 {
-    // Make sure that we have a valid font
-    if (!myFont)
-        return Vector2f(0, 0);
+    return myColor;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2f Text::FindCharacterPos(std::size_t index) const
+{
+    assert(myFont != NULL);
 
     // Adjust the index if it's out of range
     if (index > myString.GetSize())
         index = myString.GetSize();
 
-    // We'll need this a lot
-    bool  bold  = (myStyle & Bold) != 0;
-    float space = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
+    // Precompute the variables needed by the algorithm
+    bool  bold   = (myStyle & Bold) != 0;
+    float hspace = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
+    float vspace = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
 
     // Compute the position
     Vector2f position;
     Uint32 prevChar = 0;
-    float lineSpacing = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
     for (std::size_t i = 0; i < index; ++i)
     {
         Uint32 curChar = myString[i];
@@ -153,69 +176,75 @@ Vector2f Text::GetCharacterPos(std::size_t index) const
         // Handle special characters
         switch (curChar)
         {
-            case L' ' :  position.x += space;                       continue;
-            case L'\t' : position.x += space * 4;                   continue;
-            case L'\v' : position.y += lineSpacing * 4;             continue;
-            case L'\n' : position.y += lineSpacing; position.x = 0; continue;
+            case L' ' :  position.x += hspace;                 continue;
+            case L'\t' : position.x += hspace * 4;             continue;
+            case L'\n' : position.y += vspace; position.x = 0; continue;
+            case L'\v' : position.y += vspace * 4;             continue;
         }
 
         // For regular characters, add the advance offset of the glyph
         position.x += static_cast<float>(myFont->GetGlyph(curChar, myCharacterSize, bold).Advance);
     }
 
+    // Transform the position to global coordinates
+    position = GetTransform().TransformPoint(position);
+
     return position;
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect Text::GetRect() const
+FloatRect Text::GetLocalBounds() const
 {
-    UpdateRect();
-
-    FloatRect rect;
-    rect.Left   = (myBaseRect.Left   - GetOrigin().x) * GetScale().x + GetPosition().x;
-    rect.Top    = (myBaseRect.Top    - GetOrigin().y) * GetScale().y + GetPosition().y;
-    rect.Width  = myBaseRect.Width  * GetScale().x;
-    rect.Height = myBaseRect.Height * GetScale().y;
-
-    return rect;
+    return myBounds;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Text::Render(RenderTarget&, Renderer& renderer) const
+FloatRect Text::GetGlobalBounds() const
 {
-    // No text or not font: nothing to render
-    if (!myFont || myString.IsEmpty())
+    return GetTransform().TransformRect(GetLocalBounds());
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::Draw(RenderTarget& target, RenderStates states) const
+{
+    assert(myFont != NULL);
+
+    states.Transform *= GetTransform();
+    states.BlendMode = BlendAlpha; // alpha blending is mandatory for proper text rendering
+    states.Texture = &myFont->GetTexture(myCharacterSize);
+    target.Draw(myVertices, states);
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::UpdateGeometry()
+{
+    assert(myFont != NULL);
+
+    // Clear the previous geometry
+    myVertices.Clear();
+
+    // No text: nothing to draw
+    if (myString.IsEmpty())
         return;
 
-    // Bind the font texture
-    const Texture& texture = myFont->GetTexture(myCharacterSize);
-    renderer.SetTexture(&texture);
+    // Compute values related to the text style
+    bool  bold               = (myStyle & Bold) != 0;
+    bool  underlined         = (myStyle & Underlined) != 0;
+    float italic             = (myStyle & Italic) ? 0.208f : 0.f; // 12 degrees
+    float underlineOffset    = myCharacterSize * 0.1f;
+    float underlineThickness = myCharacterSize * (bold ? 0.1f : 0.07f);
 
-    // Computes values related to the text style
-    bool  bold                = (myStyle & Bold) != 0;
-    bool  underlined          = (myStyle & Underlined) != 0;
-    float italicCoeff         = (myStyle & Italic) ? 0.208f : 0.f; // 12 degrees
-    float underlineOffset     = myCharacterSize * 0.1f;
-    float underlineThickness  = myCharacterSize * (bold ? 0.1f : 0.07f);
-    FloatRect underlineCoords = texture.GetTexCoords(IntRect(1, 1, 1, 1));
-    float underlineLeft       = underlineCoords.Left;
-    float underlineTop        = underlineCoords.Top;
-    float underlineRight      = underlineCoords.Left + underlineCoords.Width;
-    float underlineBottom     = underlineCoords.Top + underlineCoords.Height;
+    // Precompute the variables needed by the algorithm
+    float hspace = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
+    float vspace = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
+    float x      = 0.f;
+    float y      = static_cast<float>(myCharacterSize);
 
-    // Initialize the rendering coordinates
-    float space       = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
-    float lineSpacing = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
-    float x = 0.f;
-    float y = static_cast<float>(myCharacterSize);
-
-    // Note:
-    // Here we use a Begin/End pair for each quad because
-    // the font's texture may change in a call to GetGlyph
-
-    // Draw one quad for each character
+    // Create one quad for each character
     Uint32 prevChar = 0;
     for (std::size_t i = 0; i < myString.GetSize(); ++i)
     {
@@ -231,44 +260,42 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
             float top = y + underlineOffset;
             float bottom = top + underlineThickness;
 
-            renderer.Begin(Renderer::QuadList);
-                renderer.AddVertex(0, top,    underlineLeft,  underlineTop);
-                renderer.AddVertex(x, top,    underlineRight, underlineTop);
-                renderer.AddVertex(x, bottom, underlineRight, underlineBottom);
-                renderer.AddVertex(0, bottom, underlineLeft,  underlineBottom);
-            renderer.End();
+            myVertices.Append(Vertex(Vector2f(0, top),    myColor, Vector2i(1, 1)));
+            myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2i(2, 1)));
+            myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2i(2, 2)));
+            myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2i(1, 2)));
         }
 
         // Handle special characters
         switch (curChar)
         {
-            case L' ' :  x += space;              continue;
-            case L'\t' : x += space * 4;          continue;
-            case L'\n' : y += lineSpacing; x = 0; continue;
-            case L'\v' : y += lineSpacing * 4;    continue;
+            case L' ' :  x += hspace;        continue;
+            case L'\t' : x += hspace * 4;    continue;
+            case L'\n' : y += vspace; x = 0; continue;
+            case L'\v' : y += vspace * 4;    continue;
         }
 
         // Extract the current glyph's description
-        const Glyph&   glyph   = myFont->GetGlyph(curChar, myCharacterSize, bold);
-        int            advance = glyph.Advance;
-        const IntRect& bounds  = glyph.Bounds;
-        FloatRect      coords  = texture.GetTexCoords(glyph.SubRect);
+        const Glyph& glyph = myFont->GetGlyph(curChar, myCharacterSize, bold);
 
-        int   boundsRight  = bounds.Left + bounds.Width;
-        int   boundsBottom = bounds.Top  + bounds.Height;
-        float coordsRight  = coords.Left + coords.Width;
-        float coordsBottom = coords.Top  + coords.Height;
+        int left   = glyph.Bounds.Left;
+        int top    = glyph.Bounds.Top;
+        int right  = glyph.Bounds.Left + glyph.Bounds.Width;
+        int bottom = glyph.Bounds.Top  + glyph.Bounds.Height;
 
-        // Draw a textured quad for the current character
-        renderer.Begin(Renderer::QuadList);
-            renderer.AddVertex(x + bounds.Left - italicCoeff * bounds.Top,   y + bounds.Top,   coords.Left, coords.Top);
-            renderer.AddVertex(x + boundsRight - italicCoeff * bounds.Top,   y + bounds.Top,   coordsRight, coords.Top);
-            renderer.AddVertex(x + boundsRight - italicCoeff * boundsBottom, y + boundsBottom, coordsRight, coordsBottom);
-            renderer.AddVertex(x + bounds.Left - italicCoeff * boundsBottom, y + boundsBottom, coords.Left, coordsBottom);
-        renderer.End();
+        int u1 = glyph.TextureRect.Left;
+        int v1 = glyph.TextureRect.Top;
+        int u2 = glyph.TextureRect.Left + glyph.TextureRect.Width;
+        int v2 = glyph.TextureRect.Top  + glyph.TextureRect.Height;
+
+        // Add a quad for the current character
+        myVertices.Append(Vertex(Vector2f(x + left  - italic * top,    y + top),    myColor, Vector2i(u1, v1)));
+        myVertices.Append(Vertex(Vector2f(x + right - italic * top,    y + top),    myColor, Vector2i(u2, v1)));
+        myVertices.Append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), myColor, Vector2i(u2, v2)));
+        myVertices.Append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), myColor, Vector2i(u1, v2)));
 
         // Advance to the next character
-        x += advance;
+        x += glyph.Advance;
     }
 
     // If we're using the underlined style, add the last line
@@ -277,113 +304,14 @@ void Text::Render(RenderTarget&, Renderer& renderer) const
         float top = y + underlineOffset;
         float bottom = top + underlineThickness;
 
-        renderer.Begin(Renderer::QuadList);
-            renderer.AddVertex(0, top,    underlineLeft,  underlineTop);
-            renderer.AddVertex(x, top,    underlineRight, underlineTop);
-            renderer.AddVertex(x, bottom, underlineRight, underlineBottom);
-            renderer.AddVertex(0, bottom, underlineLeft,  underlineBottom);
-        renderer.End();
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-void Text::UpdateRect() const
-{
-    if (myRectUpdated)
-        return;
-
-    // Reset the previous states
-    myRectUpdated = true;
-    myBaseRect = FloatRect(0, 0, 0, 0);
-
-    // No text or not font: empty box
-    if (!myFont || myString.IsEmpty())
-        return;
-
-    // Initial values
-    bool   bold        = (myStyle & Bold) != 0;
-    float  charSize    = static_cast<float>(myCharacterSize);
-    float  space       = static_cast<float>(myFont->GetGlyph(L' ', myCharacterSize, bold).Advance);
-    float  lineSpacing = static_cast<float>(myFont->GetLineSpacing(myCharacterSize));
-    float  curWidth    = 0;
-    float  curHeight   = 0;
-    float  width       = 0;
-    float  height      = 0;
-    Uint32 prevChar    = 0;
-
-    // Go through each character
-    for (std::size_t i = 0; i < myString.GetSize(); ++i)
-    {
-        Uint32 curChar = myString[i];
-
-        // Apply the kerning offset
-        curWidth += static_cast<float>(myFont->GetKerning(prevChar, curChar, myCharacterSize));
-        prevChar = curChar;
-
-        // Handle special characters
-        switch (curChar)
-        {
-            case L' ' :
-                curWidth += space;
-                continue;
-
-            case L'\t' : 
-                curWidth += space * 4;
-                continue;
-
-            case L'\v' :
-                height += lineSpacing * 4;
-                curHeight = 0;
-                continue;
-
-            case L'\n' :
-                height += lineSpacing;
-                curHeight = 0;
-                if (curWidth > width)
-                    width = curWidth;
-                curWidth = 0;
-                continue;
-        }
-
-        // Extract the current glyph's description
-        const Glyph& curGlyph = myFont->GetGlyph(curChar, myCharacterSize, bold);
-
-        // Advance to the next character
-        curWidth += static_cast<float>(curGlyph.Advance);
-
-        // Update the maximum height
-        float charHeight = charSize + curGlyph.Bounds.Top + curGlyph.Bounds.Height;
-        if (charHeight > curHeight)
-            curHeight = charHeight;
+        myVertices.Append(Vertex(Vector2f(0, top),    myColor, Vector2i(1, 1)));
+        myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2i(2, 1)));
+        myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2i(2, 2)));
+        myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2i(1, 2)));
     }
 
-    // Update the last line
-    if (curWidth > width)
-        width = curWidth;
-    height += curHeight;
-
-    // Add a slight width if we're using the italic style
-    if (myStyle & Italic)
-    {
-        width += 0.208f * charSize;
-    }
-
-    // Add a slight height if we're using the underlined style
-    if (myStyle & Underlined)
-    {
-        float underlineOffset    = myCharacterSize * 0.1f;
-        float underlineThickness = myCharacterSize * (bold ? 0.1f : 0.07f);
-
-        if (curHeight < charSize + underlineOffset + underlineThickness)
-            height += underlineOffset + underlineThickness;
-    }
-
-    // Finally update the rectangle
-    myBaseRect.Left   = 0;
-    myBaseRect.Top    = 0;
-    myBaseRect.Width  = width;
-    myBaseRect.Height = height;
+    // Recompute the bounding rectangle
+    myBounds = myVertices.GetBounds();
 }
 
 } // namespace sf

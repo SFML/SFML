@@ -44,6 +44,7 @@ myTextureWidth (0),
 myTextureHeight(0),
 myTexture      (0),
 myIsSmooth     (false),
+myIsRepeated   (false),
 myPixelsFlipped(false)
 {
 
@@ -59,6 +60,7 @@ myTextureWidth (0),
 myTextureHeight(0),
 myTexture      (0),
 myIsSmooth     (copy.myIsSmooth),
+myIsRepeated   (copy.myIsRepeated),
 myPixelsFlipped(false)
 {
     LoadFromImage(copy.CopyToImage());
@@ -124,8 +126,8 @@ bool Texture::Create(unsigned int width, unsigned int height)
     // Initialize the texture
     GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
     GLCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, myTextureWidth, myTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
-    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, myIsRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
+    GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, myIsRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
     GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
     GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
 
@@ -347,9 +349,38 @@ void Texture::Update(const Window& window, unsigned int x, unsigned int y)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::Bind() const
+void Texture::Bind(CoordinateType coordinateType) const
 {
+    // Bind the texture
     GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
+
+    // Check if we need to define a special texture matrix
+    if ((coordinateType == Pixels) || myPixelsFlipped)
+    {
+        GLfloat matrix[16] = {1.f, 0.f, 0.f, 0.f,
+                              0.f, 1.f, 0.f, 0.f,
+                              0.f, 0.f, 1.f, 0.f,
+                              0.f, 0.f, 0.f, 1.f};
+
+        // If non-normalized coordinates (= pixels) are requested, we need to
+        // setup scale factors that convert the range [0 .. size] to [0 .. 1]
+        if (coordinateType == Pixels)
+        {
+            matrix[0] = 1.f / myTextureWidth;
+            matrix[5] = 1.f / myTextureHeight;
+        }
+
+        // If pixels are flipped we must invert the Y axis
+        if (myPixelsFlipped)
+        {
+            matrix[5] = -matrix[5];
+            matrix[13] = static_cast<float>(myHeight / myTextureHeight);
+        }
+
+        // Load the matrix
+        GLCheck(glMatrixMode(GL_TEXTURE));
+        GLCheck(glLoadMatrixf(matrix));
+    }
 }
 
 
@@ -380,32 +411,28 @@ bool Texture::IsSmooth() const
 
 
 ////////////////////////////////////////////////////////////
-FloatRect Texture::GetTexCoords(const IntRect& rect) const
+void Texture::SetRepeated(bool repeated)
 {
-    if ((myTextureWidth != 0) && (myTextureHeight != 0))
+    if (repeated != myIsRepeated)
     {
-        float width  = static_cast<float>(myTextureWidth);
-        float height = static_cast<float>(myTextureHeight);
+        myIsRepeated = repeated;
 
-        if (myPixelsFlipped)
+        if (myTexture)
         {
-            return FloatRect( rect.Left            / width,
-                             (myHeight - rect.Top) / height,
-                              rect.Width           / width,
-                             -rect.Height          / height);
-        }
-        else
-        {
-            return FloatRect(rect.Left   / width,
-                             rect.Top    / height,
-                             rect.Width  / width,
-                             rect.Height / height);
+            EnsureGlContext();
+
+            GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
+            GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, myIsRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
+            GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, myIsRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
         }
     }
-    else
-    {
-        return FloatRect(0, 0, 0, 0);
-    }
+}
+
+
+////////////////////////////////////////////////////////////
+bool Texture::IsRepeated() const
+{
+    return myIsRepeated;
 }
 
 
@@ -432,6 +459,7 @@ Texture& Texture::operator =(const Texture& right)
     std::swap(myTextureHeight, temp.myTextureHeight);
     std::swap(myTexture,       temp.myTexture);
     std::swap(myIsSmooth,      temp.myIsSmooth);
+    std::swap(myIsRepeated,    temp.myIsRepeated);
     std::swap(myPixelsFlipped, temp.myPixelsFlipped);
 
     return *this;

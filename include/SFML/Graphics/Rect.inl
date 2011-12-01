@@ -118,3 +118,21 @@ bool Rect<T>::Intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
         return false;
     }
 }
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+inline bool operator ==(const Rect<T>& left, const Rect<T>& right)
+{
+    return (left.Left == right.Left) && (left.Width == right.Width) &&
+           (left.Top == right.Top) && (left.Height == right.Height);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+inline bool operator !=(const Rect<T>& left, const Rect<T>& right)
+{
+    return (left.Left != right.Left) || (left.Width != right.Width) ||
+           (left.Top != right.Top) || (left.Height != right.Height);
+}
