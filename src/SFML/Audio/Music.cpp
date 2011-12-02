@@ -139,7 +139,8 @@ void Music::OnSeek(Uint32 timeOffset)
 void Music::Initialize()
 {
     // Compute the music duration
-    myDuration = static_cast<Uint32>(1000 * myFile->GetSamplesCount() / myFile->GetSampleRate() / myFile->GetChannelsCount());
+    Uint64 samples = myFile->GetSamplesCount();
+    myDuration = static_cast<Uint32>(1000 * samples / myFile->GetSampleRate() / myFile->GetChannelsCount());
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
     mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelsCount());

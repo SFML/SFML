@@ -133,9 +133,35 @@ macro(sfml_add_library target)
         endif()
     endif()
 
+    # on Unix systems with gcc 4.x, we must hide public symbols by default
+    # (exported ones are explicitely marked)
+    if((LINUX OR MACOSX) AND COMPILER_GCC)
+        if(${GCC_VERSION} MATCHES "4\\..*")
+            set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
+        endif()
+    endif()
+
     # link the target to its SFML dependencies
     if(THIS_DEPENDS)
         target_link_libraries(${target} ${THIS_DEPENDS})
+    endif()
+
+    # build frameworks or dylibs
+    if(MACOSX AND BUILD_SHARED_LIBS)
+        if(BUILD_FRAMEWORKS)
+            # adapt target to build frameworks instead of dylibs
+            set_target_properties(${target} PROPERTIES 
+                                  FRAMEWORK TRUE
+                                  FRAMEWORK_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                                  MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.${target}
+                                  MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                                  MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+        endif()
+        
+        # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
+        set_target_properties(${target} PROPERTIES 
+                              BUILD_WITH_INSTALL_RPATH 1 
+                              INSTALL_NAME_DIR "@executable_path/../Frameworks")
     endif()
 
     # link the target to its external dependencies
@@ -143,12 +169,6 @@ macro(sfml_add_library target)
         if(BUILD_SHARED_LIBS)
             # in shared build, we use the regular linker commands
             target_link_libraries(${target} ${THIS_EXTERNAL_LIBS})
-
-            if (MACOSX) 
-                set_target_properties(${target} PROPERTIES 
-                    BUILD_WITH_INSTALL_RPATH 1 
-                    INSTALL_NAME_DIR "@executable_path/../Frameworks") 
-            endif()
         else()
             # in static build there's no link stage, but with some compilers it is possible to force
             # the generated static library to directly contain the symbols from its dependencies
@@ -160,7 +180,8 @@ macro(sfml_add_library target)
     install(TARGETS ${target}
             RUNTIME DESTINATION bin COMPONENT bin
             LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT bin 
-            ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel)
+            ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel
+            FRAMEWORK DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX} COMPONENT bin)
 
 endmacro()
 

@@ -28,7 +28,7 @@
 #include <SFML/Network/Unix/SocketImpl.hpp>
 #include <errno.h>
 #include <fcntl.h>
-#include <string.h>
+#include <cstring>
 
 
 namespace sf
@@ -36,10 +36,10 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-sockaddr_in SocketImpl::CreateAddress(unsigned long address, unsigned short port)
+sockaddr_in SocketImpl::CreateAddress(Uint32 address, unsigned short port)
 {
     sockaddr_in addr;
-    memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
+    std::memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
     addr.sin_addr.s_addr = htonl(address);
     addr.sin_family      = AF_INET;
     addr.sin_port        = htons(port);

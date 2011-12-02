@@ -39,20 +39,22 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared)
-    : myView(0), myWindow(0)
+: myView(0), myWindow(0)
 {
     // Ask for a pool.
     RetainPool();
     
     // Create the context
-    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings(0, 0, 0));
+    CreateContext(shared,
+                  VideoMode::GetDesktopMode().BitsPerPixel, 
+                  ContextSettings(0, 0, 0));
 }
 
     
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
                      const WindowImpl* owner, unsigned int bitsPerPixel)
-    : myView(0), myWindow(0)
+: myView(0), myWindow(0)
 {
     // Ask for a pool.
     RetainPool();
@@ -68,7 +70,7 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
 
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings, 
                      unsigned int width, unsigned int height)
-    : myView(0), myWindow(0)
+: myView(0), myWindow(0)
 {
     // Ensure the process is setup in order to create a valid window.
     WindowImplCocoa::SetUpProcess();

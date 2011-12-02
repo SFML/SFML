@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Resource.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Glyph.hpp>
@@ -47,7 +46,7 @@ class InputStream;
 /// \brief Class for loading and manipulating character fonts
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Font : public Resource<Font>
+class SFML_API Font
 {
 public :
 

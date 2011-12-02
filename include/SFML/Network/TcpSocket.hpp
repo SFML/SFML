@@ -109,7 +109,7 @@ public :
     Status Connect(const IpAddress& remoteAddress, unsigned short remotePort, Uint32 timeout = 0);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Disconnect the connect from its remote peer
+    /// \brief Disconnect the socket from its remote peer
     ///
     /// This function gracefully closes the connection. If the
     /// socket is not connected, this function has no effect.

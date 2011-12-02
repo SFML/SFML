@@ -53,7 +53,6 @@ myPixelsFlipped(false)
 
 ////////////////////////////////////////////////////////////
 Texture::Texture(const Texture& copy) :
-Resource<Texture>(),
 myWidth        (0),
 myHeight       (0),
 myTextureWidth (0),
@@ -63,7 +62,8 @@ myIsSmooth     (copy.myIsSmooth),
 myIsRepeated   (copy.myIsRepeated),
 myPixelsFlipped(false)
 {
-    LoadFromImage(copy.CopyToImage());
+    if (copy.myTexture)
+        LoadFromImage(copy.CopyToImage());
 }
 
 
@@ -189,19 +189,19 @@ bool Texture::LoadFromImage(const Image& image, const IntRect& area)
         IntRect rectangle = area;
         if (rectangle.Left   < 0) rectangle.Left = 0;
         if (rectangle.Top    < 0) rectangle.Top  = 0;
-        if (rectangle.Width  > width)  rectangle.Width  = width;
-        if (rectangle.Height > height) rectangle.Height = height;
+        if (rectangle.Left + rectangle.Width > width)  rectangle.Width  = width - rectangle.Left;
+        if (rectangle.Top + rectangle.Height > height) rectangle.Height = height - rectangle.Top;
 
         // Create the texture and upload the pixels
         if (Create(rectangle.Width, rectangle.Height))
         {
             // Copy the pixels to the texture, row by row
-            const Uint8* pixels = image.GetPixelsPtr() + rectangle.Left + (width * rectangle.Top);
+            const Uint8* pixels = image.GetPixelsPtr() + 4 * (rectangle.Left + (width * rectangle.Top));
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
             for (int i = 0; i < rectangle.Height; ++i)
             {
                 GLCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, myWidth, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
-                pixels += width;
+                pixels += 4 * width;
             }
 
             return true;

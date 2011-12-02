@@ -14,9 +14,6 @@ set(SRC
     ${INCROOT}/Mutex.hpp
     ${INCROOT}/NonCopyable.hpp
     ${SRCROOT}/Platform.hpp
-    ${INCROOT}/Resource.hpp
-    ${INCROOT}/Resource.inl
-    ${INCROOT}/ResourcePtr.inl
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp
     ${SRCROOT}/String.cpp

@@ -145,7 +145,7 @@ bool InputImpl::IsKeyPressed(Keyboard::Key key)
         case Keyboard::Pause:      vkey = VK_PAUSE;      break;
     }
 
-    return GetAsyncKeyState(vkey) != 0;
+    return (GetAsyncKeyState(vkey) & 0x8000) != 0;
 }
 
 
@@ -162,7 +162,7 @@ bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
         case Mouse::XButton2: vkey = VK_XBUTTON2; break;
     }
 
-    return GetAsyncKeyState(vkey) != 0;
+    return (GetAsyncKeyState(vkey) & 0x8000) != 0;
 }
 
 

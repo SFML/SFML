@@ -6,6 +6,7 @@ set(SRC ${SRCROOT}/Window.cpp)
 
 # find OpenGL and GLU
 find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
 
 # define the window target
 sfml_add_example(window GUI_APP

@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/OpenGL.hpp>
+#include <windows.h>
 
 
 namespace sf

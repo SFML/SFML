@@ -84,6 +84,12 @@ public :
     ////////////////////////////////////////////////////////////
     void Release();
     
+    ////////////////////////////////////////////////////////////
+    /// \brief Drain the pool
+    ///
+    ////////////////////////////////////////////////////////////
+    void Drain();
+    
 private:
     
     ////////////////////////////////////////////////////////////
@@ -109,12 +115,12 @@ PoolWrapper::~PoolWrapper()
 #ifdef SFML_DEBUG
     if (count < 0) {
         sf::Err() << "~PoolWrapper : count is less than zero! "
-        "You called ReleasePool from a thread too many times."
-        << std::endl;
+                     "You called ReleasePool from a thread too many times."
+                  << std::endl;
     } else if (count > 0) {
         sf::Err() << "~PoolWrapper : count is greater than zero! "
-        "You called ReleasePool from a thread to few times."
-        << std::endl;
+                     "You called ReleasePool from a thread to few times."
+                  << std::endl;
     } else { // count == 0
         sf::Err() << "~PoolWrapper is HAPPY!" << std::endl;
     }
@@ -149,8 +155,7 @@ void PoolWrapper::Release()
     
     // Drain pool if required.
     if (count == 0) {
-        [pool drain];
-        pool = 0;
+        Drain();
     }
     
 #ifdef SFML_DEBUG
@@ -158,6 +163,16 @@ void PoolWrapper::Release()
         sf::Err() << "PoolWrapper::Release : count < 0! " << std::endl;
     }
 #endif
+}
+
+void PoolWrapper::Drain()
+{
+    [pool drain];
+    pool = 0;
+    
+    if (count != 0) {
+        pool = [[NSAutoreleasePool alloc] init];
+    }
 }
 
     
@@ -203,6 +218,21 @@ void ReleasePool(void)
     localPool->Release();
     
 #ifdef SFML_DEBUG
+    }
+#endif
+}
+
+
+////////////////////////////////////////////////////////////
+void DrainPool()
+{
+    if (localPool != NULL) {
+        localPool->Drain();
+    }
+#ifdef SFML_DEBUG
+    else {
+        sf::Err() << "ReleasePool must be called at least one before DrainPool"
+                  << std::endl;
     }
 #endif
 }

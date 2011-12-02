@@ -369,7 +369,7 @@ public :
     Response ChangeDirectory(const std::string& directory);
 
     ////////////////////////////////////////////////////////////
-    /// Go to the parent directory of the current one
+    /// \brief Go to the parent directory of the current one
     ///
     /// \return Server response to the request
     ///

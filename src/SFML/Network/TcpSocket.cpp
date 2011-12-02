@@ -277,7 +277,7 @@ Socket::Status TcpSocket::Send(Packet& packet)
     const char* data = packet.OnSend(size);
 
     // First send the packet size
-    Uint32 packetSize = htonl(static_cast<unsigned long>(size));
+    Uint32 packetSize = htonl(static_cast<Uint32>(size));
     Status status = Send(reinterpret_cast<const char*>(&packetSize), sizeof(packetSize));
 
     // Make sure that the size was properly sent

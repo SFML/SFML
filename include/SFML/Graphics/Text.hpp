@@ -142,7 +142,7 @@ public :
     /// \see GetStyle
     ///
     ////////////////////////////////////////////////////////////
-    void SetStyle(unsigned long style);
+    void SetStyle(Uint32 style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the global color of the text
@@ -206,7 +206,7 @@ public :
     /// \see SetStyle
     ///
     ////////////////////////////////////////////////////////////
-    unsigned long GetStyle() const;
+    Uint32 GetStyle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the global color of the text
@@ -286,7 +286,7 @@ private :
     String        myString;        ///< String to display
     const Font*   myFont;          ///< Font used to display the string
     unsigned int  myCharacterSize; ///< Base size of characters, in pixels
-    unsigned long myStyle;         ///< Text style (see the Style enum)
+    Uint32        myStyle;         ///< Text style (see Style enum)
     Color         myColor;         ///< Text color
     VertexArray   myVertices;      ///< Vertex array containing the text's geometry
     FloatRect     myBounds;        ///< Bounding rectangle of the text (in local coordinates)

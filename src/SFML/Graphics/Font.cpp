@@ -46,7 +46,7 @@ namespace
     unsigned long Read(FT_Stream rec, unsigned long offset, unsigned char* buffer, unsigned long count)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(rec->descriptor.pointer);
-        if (stream->Seek(offset) == offset)
+        if (static_cast<unsigned long>(stream->Seek(offset)) == offset)
         {
             if (count > 0)
                 return static_cast<unsigned long>(stream->Read(reinterpret_cast<char*>(buffer), count));
@@ -77,7 +77,6 @@ myRefCount (NULL)
 
 ////////////////////////////////////////////////////////////
 Font::Font(const Font& copy) :
-Resource<Font>(),
 myLibrary    (copy.myLibrary),
 myFace       (copy.myFace),
 myStreamRec  (copy.myStreamRec),
@@ -339,7 +338,7 @@ const Font& Font::GetDefaultFont()
     // Load the default font on first call
     if (!loaded)
     {
-        static const char data[] =
+        static const signed char data[] =
         {
             #include <SFML/Graphics/Arial.hpp>
         };

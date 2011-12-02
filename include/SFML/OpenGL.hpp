@@ -38,7 +38,11 @@
 ////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    #include <windows.h>
+    // The Visual C++ version of gl.h uses WINGDIAPI and APIENTRY but doesn't define them
+    #ifdef _MSC_VER
+        #include <windows.h>
+    #endif
+
     #include <GL/gl.h>
     #include <GL/glu.h>
 

@@ -43,7 +43,9 @@ struct SFMLmainWindow
             NSLog(@"Couldn't load the logo image");
         }
         
-        sprite.SetImage(logo, true);
+        logo.SetSmooth(true);
+        
+        sprite.SetTexture(logo, true);
         sprite.SetOrigin(sprite.GetSize() / 2.f);
         sprite.Scale(0.3, 0.3);
         
@@ -56,7 +58,7 @@ struct SFMLmainWindow
     
     sf::RenderWindow    renderWindow;
     sf::Text            text;
-    sf::Image           logo;
+    sf::Texture         logo;
     sf::Sprite          sprite;
     sf::Color           background;
 };

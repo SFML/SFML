@@ -12,9 +12,20 @@
 #
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
 # you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
+# In case of static linking, the SFML_STATIC macro will also be defined by this script.
+#
+# On Mac OS X if SFML_STATIC_LIBRARIES is not set to TRUE then by default CMake will search for frameworks unless
+# CMAKE_FIND_FRAMEWORK is set to "NEVER" for example. Please refer to CMake documentation for more details.
+# Moreover, keep in mind that SFML frameworks are only available as release libraries unlike dylibs which
+# are available for both release and debug modes.
 #
 # If SFML is not installed in a standard path, you can use the SFMLDIR CMake variable or environment variable
 # to tell CMake where SFML is.
+
+# define the SFML_STATIC macro if static build was chosen
+if(SFML_STATIC_LIBRARIES)
+    add_definitions(-DSFML_STATIC)
+endif()
 
 # deduce the libraries suffix from the options
 set(FIND_SFML_LIB_SUFFIX "")

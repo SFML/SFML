@@ -50,11 +50,10 @@ myDuration(0)
 
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
-Resource<SoundBuffer>(),
-myBuffer             (0),
-mySamples            (copy.mySamples),
-myDuration           (copy.myDuration),
-mySounds             () // don't copy the attached sounds
+myBuffer  (0),
+mySamples (copy.mySamples),
+myDuration(copy.myDuration),
+mySounds  () // don't copy the attached sounds
 {
     // Create the buffer
     ALCheck(alGenBuffers(1, &myBuffer));

@@ -311,7 +311,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    WindowImplDelegateRef myDelegate; ///< Implementation in Obj-C.
+    WindowImplDelegateRef myDelegate;   ///< Implementation in Obj-C.
+    bool                  myShowCursor; ///< Is the cursor displayed or hidden ?
 };
     
 } // namespace priv

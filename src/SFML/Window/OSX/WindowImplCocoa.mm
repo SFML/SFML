@@ -44,7 +44,8 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
-{    
+: myShowCursor(true)
+{
     // Ask for a pool.
     RetainPool();
     
@@ -91,6 +92,7 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
 WindowImplCocoa::WindowImplCocoa(VideoMode mode, 
                                  const std::string& title, 
                                  unsigned long style)
+: myShowCursor(true)
 {
     // Transform the app process.
     SetUpProcess();
@@ -116,6 +118,10 @@ WindowImplCocoa::~WindowImplCocoa()
     [myDelegate release];
     
     ReleasePool();
+    
+    DrainPool(); // Make sure everything was freed
+    // This solve some issue when sf::Window::Create is called for the
+    // second time (nothing was render until the function was called again)
 }
     
     
@@ -183,6 +189,10 @@ void WindowImplCocoa::WindowResized(unsigned int width, unsigned int height)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::WindowLostFocus(void)
 {
+    if (!myShowCursor) {
+        [myDelegate showMouseCursor]; // Make sur the cursor is visible
+    }
+    
     Event event;
     event.Type = Event::LostFocus;
     
@@ -193,6 +203,10 @@ void WindowImplCocoa::WindowLostFocus(void)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::WindowGainedFocus(void)
 {
+    if (!myShowCursor) {
+        [myDelegate hideMouseCursor]; // Restore user's setting
+    }
+    
     Event event;
     event.Type = Event::GainedFocus;
     
@@ -255,6 +269,10 @@ void WindowImplCocoa::MouseWheelScrolledAt(float delta, int x, int y)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::MouseMovedIn(void)
 {
+    if (!myShowCursor) {
+        [myDelegate hideMouseCursor]; // Restore user's setting
+    }
+    
     Event event;
     event.Type = Event::MouseEntered;
     
@@ -264,6 +282,10 @@ void WindowImplCocoa::MouseMovedIn(void)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::MouseMovedOut(void)
 {
+    if (!myShowCursor) {
+        [myDelegate showMouseCursor]; // Make sur the cursor is visible
+    }
+    
     Event event;
     event.Type = Event::MouseLeft;
     
@@ -330,7 +352,9 @@ WindowHandle WindowImplCocoa::GetSystemHandle() const
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::ShowMouseCursor(bool show)
 {
-    if (show) {
+    myShowCursor = show;
+    
+    if (myShowCursor) {
         [myDelegate showMouseCursor];
     } else {
         [myDelegate hideMouseCursor];

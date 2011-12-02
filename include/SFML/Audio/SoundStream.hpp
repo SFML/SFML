@@ -284,7 +284,7 @@ private :
     unsigned int  myBuffers[BuffersCount];    ///< Sound buffers used to store temporary audio data
     unsigned int  myChannelsCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
     unsigned int  mySampleRate;               ///< Frequency (samples / second)
-    unsigned long myFormat;                   ///< Format of the internal sound buffers
+    Uint32        myFormat;                   ///< Format of the internal sound buffers
     bool          myLoop;                     ///< Loop flag (true to loop, false to play once)
     Uint64        mySamplesProcessed;         ///< Number of buffers processed since beginning of the stream
     bool          myEndBuffers[BuffersCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation

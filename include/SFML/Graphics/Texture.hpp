@@ -28,9 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Resource.hpp>
-#include <SFML/Window/GlResource.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Window/GlResource.hpp>
 
 
 namespace sf
@@ -44,7 +43,7 @@ class InputStream;
 /// \brief Image living on the graphics card that can be used for drawing
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Texture : public Resource<Texture>, GlResource
+class SFML_API Texture : GlResource
 {
 public :
 

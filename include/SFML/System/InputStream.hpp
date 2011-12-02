@@ -37,7 +37,7 @@ namespace sf
 /// \brief Abstract class for custom file input streams
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API InputStream
+class InputStream
 {
 public :
 

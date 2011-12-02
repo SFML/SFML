@@ -55,7 +55,7 @@ myFramerateLimit(0)
 
 
 ////////////////////////////////////////////////////////////
-Window::Window(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings) :
+Window::Window(VideoMode mode, const std::string& title, Uint32 style, const ContextSettings& settings) :
 myWindow        (NULL),
 myContext       (NULL),
 myLastFrameTime (0),
@@ -84,7 +84,7 @@ Window::~Window()
 
 
 ////////////////////////////////////////////////////////////
-void Window::Create(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings)
+void Window::Create(VideoMode mode, const std::string& title, Uint32 style, const ContextSettings& settings)
 {
     // Destroy the previous window implementation
     Close();

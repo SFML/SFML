@@ -48,7 +48,7 @@ float Listener::GetGlobalVolume()
     float volume = 0.f;
     ALCheck(alGetListenerf(AL_GAIN, &volume));
 
-    return volume;
+    return volume * 100;
 }
 
 

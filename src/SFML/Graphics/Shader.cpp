@@ -96,6 +96,7 @@ bool Shader::LoadFromFile(const std::string& filename)
     }
 
     // Read the shader code from the file
+    myFragmentShader.clear();
     std::string line;
     while (std::getline(file, line))
         myFragmentShader += line + "\n";

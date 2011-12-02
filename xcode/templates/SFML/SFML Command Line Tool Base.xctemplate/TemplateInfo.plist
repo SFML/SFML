@@ -42,6 +42,64 @@ subject to the following restrictions:
 <!-- ############################################################### Options -->
 	<key>Options</key>
 	<array>
+			<!-- ****************************************** Framework option -->
+		<dict>
+			<key>Identifier</key>
+			<string>libraryType</string>
+			<key>Name</key>
+			<string>Use frameworks</string>
+			<key>Description</key>
+			<string>Indicates whether frameworks should be used instead of dylibs or not.</string>
+			<key>Type</key>
+			<string>checkbox</string>
+			<key>SortOrder</key>
+			<integer>1</integer>
+			<key>Default</key>
+			<string>false</string>
+			<key>Units</key>
+			<dict>
+				<!-- 													  ON -->
+				<key>true</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>SFML_LINK_PREFIX</key>
+							<string>$(SFML_LINK_FRAMEWORKS_PREFIX)</string>
+							
+							<key>SFML_LINK_SUFFIX</key>
+							<string>$(SFML_LINK_FRAMEWORKS_SUFFIX)</string>
+    		
+    		                <key>HEADER_SEARCH_PATHS</key>
+    		                <string>$(HEADER_SEARCH_PATHS)</string>
+						</dict>
+					</dict>
+				</dict>
+				<!-- 													 OFF -->
+				<key>false</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>SFML_LINK_PREFIX</key>
+							<string>$(SFML_LINK_DYLIBS_PREFIX)</string>
+							
+							<key>SFML_LINK_SUFFIX</key>
+							<string>$(SFML_LINK_DYLIBS_SUFFIX)</string>
+    		
+    		                <key>HEADER_SEARCH_PATHS</key>
+    		                <string>$(HEADER_SEARCH_PATHS) /usr/local/include/</string>
+						</dict>
+					</dict>
+				</dict>
+				
+			</dict>
+		</dict>
+		
 			<!-- ********************************************* Window Module -->
 		<dict>
 			<key>Identifier</key>
@@ -66,11 +124,8 @@ subject to the following restrictions:
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>WINDOW_RELEASE</key>
-							<string>-lsfml-window</string>
-							
-							<key>WINDOW_DEBUG</key>
-							<string>-lsfml-window-d</string>
+							<key>SFML_WINDOW</key>
+							<string>$(SFML_LINK_PREFIX)sfml-window$(SFML_LINK_SUFFIX)</string>
 						</dict>
 					</dict>
 					
@@ -99,10 +154,7 @@ subject to the following restrictions:
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>WINDOW_RELEASE</key>
-							<string></string>
-							
-							<key>WINDOW_DEBUG</key>
+							<key>SFML_WINDOW</key>
 							<string></string>
 						</dict>
 					</dict>
@@ -157,11 +209,8 @@ subject to the following restrictions:
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>GRAPHICS_RELEASE</key>
-							<string>-lsfml-graphics</string>
-							
-							<key>GRAPHICS_DEBUG</key>
-							<string>-lsfml-graphics-d</string>
+							<key>SFML_GRAPHICS</key>
+							<string>$(SFML_LINK_PREFIX)sfml-graphics$(SFML_LINK_SUFFIX)</string>
 						</dict>
 					</dict>
 					
@@ -256,10 +305,7 @@ text.SetColor(sf::Color::Black);
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>GRAPHICS_RELEASE</key>
-							<string></string>
-							
-							<key>GRAPHICS_DEBUG</key>
+							<key>SFML_GRAPHICS</key>
 							<string></string>
 						</dict>
 					</dict>
@@ -307,11 +353,8 @@ text.SetColor(sf::Color::Black);
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>AUDIO_RELEASE</key>
-							<string>-lsfml-audio</string>
-							
-							<key>AUDIO_DEBUG</key>
-							<string>-lsfml-audio-d</string>
+							<key>SFML_AUDIO</key>
+							<string>$(SFML_LINK_PREFIX)sfml-audio$(SFML_LINK_SUFFIX)</string>
 						</dict>
 					</dict>
 					
@@ -354,10 +397,7 @@ music.Play();
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>AUDIO_RELEASE</key>
-							<string></string>
-							
-							<key>AUDIO_DEBUG</key>
+							<key>SFML_AUDIO</key>
 							<string></string>
 						</dict>
 					</dict>
@@ -399,11 +439,8 @@ music.Play();
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>NETWORK_RELEASE</key>
-							<string>-lsfml-network</string>
-							
-							<key>NETWORK_DEBUG</key>
-							<string>-lsfml-network-d</string>
+							<key>SFML_NETWORK</key>
+							<string>$(SFML_LINK_PREFIX)sfml-network$(SFML_LINK_SUFFIX)</string>
 						</dict>
 					</dict>
 					
@@ -424,10 +461,7 @@ music.Play();
 					<dict>
 						<key>SharedSettings</key>
 						<dict>
-							<key>NETWORK_RELEASE</key>
-							<string></string>
-							
-							<key>NETWORK_DEBUG</key>
+							<key>SFML_NETWORK</key>
 							<string></string>
 						</dict>
 					</dict>
@@ -554,13 +588,23 @@ while (window.IsOpened())
 			<key>PRODUCT_NAME</key>
 			<string>$(TARGET_NAME)</string>
 			
-		   	<key>SYSTEM_RELEASE</key>
-    		<string>-lsfml-system</string>
-		   	<key>SYSTEM_DEBUG</key>
-    		<string>-lsfml-system-d</string>
-    		
-    		<key>HEADER_SEARCH_PATHS</key>
-    		<string>$(HEADER_SEARCH_PATHS) /usr/local/include/</string>
+		   	<key>SFML_LINK_DYLIBS_PREFIX</key>
+			<string>-l</string>
+			
+			<key>SFML_LINK_FRAMEWORKS_PREFIX</key>
+			<string>-framework </string>
+			
+		   	<key>SFML_SYSTEM</key>
+    		<string>$(SFML_LINK_PREFIX)sfml-system$(SFML_LINK_SUFFIX)</string>
+			
+			<key>SFML_LINK_FRAMEWORKS_SUFFIX</key>
+			<string></string>
+			
+			<key>CLANG_ENABLE_OBJC_ARC</key>
+			<string></string>
+			
+			<key>GCC_ENABLE_OBJC_GC</key>
+			<string>unsupported</string>
 		</dict>
 		
 		<key>Configurations</key>
@@ -568,16 +612,22 @@ while (window.IsOpened())
     		<!-- ***************************************************** Debug -->
 			<key>Debug</key>
 			<dict>
+				<key>SFML_LINK_DYLIBS_SUFFIX</key>
+				<string>-d</string>
+				
 				<key>OTHER_LDFLAGS</key>
-<string>$(OTHER_LDFLAGS) $(SYSTEM_DEBUG) $(WINDOW_DEBUG) $(GRAPHICS_DEBUG) $(AUDIO_DEBUG) $(NETWORK_DEBUG)</string>
+				<string>$(OTHER_LDFLAGS) $(SFML_SYSTEM) $(SFML_WINDOW) $(SFML_GRAPHICS) $(SFML_AUDIO) $(SFML_NETWORK)</string>
 			</dict>
     		
 			
     		<!-- *************************************************** Release -->
 			<key>Release</key>
 			<dict>
+				<key>SFML_LINK_DYLIBS_SUFFIX</key>
+				<string></string>
+				
 				<key>OTHER_LDFLAGS</key>
-<string>$(OTHER_LDFLAGS) $(SYSTEM_RELEASE) $(WINDOW_RELEASE) $(GRAPHICS_RELEASE) $(AUDIO_RELEASE) $(NETWORK_RELEASE)</string>
+				<string>$(OTHER_LDFLAGS) $(SFML_SYSTEM) $(SFML_WINDOW) $(SFML_GRAPHICS) $(SFML_AUDIO) $(SFML_NETWORK)</string>
 			</dict>
 		</dict>
 	</dict>
