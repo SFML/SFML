@@ -45,6 +45,7 @@ ConvexShape::ConvexShape()
 void ConvexShape::SetPointsCount(unsigned int count)
 {
     myPoints.resize(count);
+    Update();
 }
 
 
@@ -59,6 +60,7 @@ unsigned int ConvexShape::GetPointsCount() const
 void ConvexShape::SetPoint(unsigned int index, const Vector2f& point)
 {
     myPoints[index] = point;
+    Update();
 }
 
 
