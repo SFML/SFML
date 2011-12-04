@@ -31,10 +31,8 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-ConvexShape::ConvexShape() :
-myPoints()
+ConvexShape::ConvexShape()
 {
-    Update();
 }
 
 

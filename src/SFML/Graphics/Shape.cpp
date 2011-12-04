@@ -172,7 +172,6 @@ void Shape::Update()
     unsigned int count = GetOutlinePointsCount();
     if (count < 3)
     {
-        sf::Err() << "Invalid shape: it has less than 3 points" << std::endl;
         myVertices.Resize(0);
         myOutlineVertices.Resize(0);
         return;

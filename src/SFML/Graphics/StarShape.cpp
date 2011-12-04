@@ -37,7 +37,6 @@ myInnerRadius(0),
 myOuterRadius(0),
 myPointsCount(0)
 {
-    Update();
 }
 
 
