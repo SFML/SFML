@@ -47,7 +47,7 @@ public :
     /// \param radius Radius of the circle
     ///
     ////////////////////////////////////////////////////////////
-    CircleShape(float radius = 0);
+    explicit CircleShape(float radius = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the radius of the circle

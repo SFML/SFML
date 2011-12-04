@@ -45,8 +45,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
+    /// \param pointsCount Number of points of the polygon
+    ///
     ////////////////////////////////////////////////////////////
-    ConvexShape();
+    explicit ConvexShape(unsigned int pointsCount = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the polygon

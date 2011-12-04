@@ -31,8 +31,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-ConvexShape::ConvexShape()
+ConvexShape::ConvexShape(unsigned int pointsCount)
 {
+    SetPointsCount(pointsCount);
 }
 
 
