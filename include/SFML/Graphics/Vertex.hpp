@@ -67,7 +67,7 @@ public :
     /// \param color    Vertex color
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position, const Color& color);
+    Vertex(const Vector2f& position, const sf::Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vertex from its position and texture coordinates
@@ -88,7 +88,7 @@ public :
     /// \param texCoords Vertex texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position, const Color& color, const Vector2i& texCoords);
+    Vertex(const Vector2f& position, const sf::Color& color, const Vector2i& texCoords);
 
     ////////////////////////////////////////////////////////////
     // Member data
