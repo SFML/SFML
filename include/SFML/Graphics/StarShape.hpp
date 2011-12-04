@@ -44,16 +44,21 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// Creates a star with 5 points, an inner radius of 10 and
-    /// an outer radius of 20.
-    ///
     ////////////////////////////////////////////////////////////
     StarShape();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the inner radius of the star
+    /// \brief Constructor
     ///
-    /// The default inner radius of a star is 10.
+    /// \param innerRadius Inner radius of the star
+    /// \param outerRadius Outer radius of the star
+    /// \param pointsCount Number of points of the star
+    ///
+    ////////////////////////////////////////////////////////////
+    StarShape(float innerRadius, float outerRadius, unsigned int pointsCount);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the inner radius of the star
     ///
     /// \param radius New inner radius of the star
     ///
@@ -75,8 +80,6 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the outer radius of the star
     ///
-    /// The default outer radius of a star is 20.
-    ///
     /// \param radius New outer radius of the star
     ///
     /// \see GetOuterRadius
@@ -96,8 +99,6 @@ public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the star
-    ///
-    /// The default number of points of a star is 5.
     ///
     /// \param count New number of points of the star
     ///

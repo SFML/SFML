@@ -45,15 +45,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// Creates a default triangle, just so that it's not empty.
-    ///
     ////////////////////////////////////////////////////////////
     ConvexShape();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the polygon
-    ///
-    /// The default number of points of a polygon is 6.
     ///
     /// \param count New number of points of the polygon
     ///

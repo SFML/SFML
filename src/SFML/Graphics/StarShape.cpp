@@ -33,10 +33,21 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 StarShape::StarShape() :
-myInnerRadius(10),
-myOuterRadius(20),
-myPointsCount(5)
+myInnerRadius(0),
+myOuterRadius(0),
+myPointsCount(0)
 {
+    Update();
+}
+
+
+////////////////////////////////////////////////////////////
+StarShape::StarShape(float innerRadius, float outerRadius, unsigned int pointsCount) :
+myInnerRadius(innerRadius),
+myOuterRadius(outerRadius),
+myPointsCount(pointsCount)
+{
+    Update();
 }
 
 

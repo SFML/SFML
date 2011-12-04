@@ -44,15 +44,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// Creates a 10x10 rectangle.
+    /// \param size Size of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    RectangleShape();
+    RectangleShape(const Vector2f& size = Vector2f(0, 0));
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the size of the rectangle
-    ///
-    /// The default size of a rectangle is 10x10.
     ///
     /// \param size New size of the rectangle
     ///

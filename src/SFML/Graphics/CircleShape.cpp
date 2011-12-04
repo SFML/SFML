@@ -32,9 +32,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-CircleShape::CircleShape() :
-myRadius(10)
+CircleShape::CircleShape(float radius) 
 {
+    SetRadius(radius);
 }
 
 

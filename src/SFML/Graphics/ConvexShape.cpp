@@ -31,13 +31,10 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-ConvexShape::ConvexShape()
+ConvexShape::ConvexShape() :
+myPoints()
 {
-    // Let's define a triangle by default... just so that it's not empty
-    SetPointsCount(3);
-    SetPoint(0, Vector2f(5, 0));
-    SetPoint(1, Vector2f(0, 10));
-    SetPoint(2, Vector2f(10, 10));
+    Update();
 }
 
 

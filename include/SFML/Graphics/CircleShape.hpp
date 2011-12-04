@@ -44,15 +44,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// Creates a circle with a radius of 10.
+    /// \param radius Radius of the circle
     ///
     ////////////////////////////////////////////////////////////
-    CircleShape();
+    CircleShape(float radius = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the radius of the circle
-    ///
-    /// The default radius of a circle is 10.
     ///
     /// \param radius New radius of the circle
     ///

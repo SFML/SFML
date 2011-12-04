@@ -32,9 +32,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RectangleShape::RectangleShape() :
-mySize(10, 10)
+RectangleShape::RectangleShape(const Vector2f& size) :
 {
+    SetSize(size);
 }
 
 
