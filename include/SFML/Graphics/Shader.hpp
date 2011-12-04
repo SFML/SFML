@@ -39,8 +39,6 @@
 
 namespace sf
 {
-class Renderer;
-
 ////////////////////////////////////////////////////////////
 /// \brief Pixel/fragment shader class
 ///
@@ -351,8 +349,6 @@ public :
     static bool IsAvailable();
 
 private :
-
-    friend class Renderer;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the program and attach the shaders
