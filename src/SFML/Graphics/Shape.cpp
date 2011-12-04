@@ -186,6 +186,7 @@ void Shape::Update()
     myVertices[count + 1].Position = myVertices[1].Position;
 
     // Update the bounding rectangle
+    myVertices[0] = myVertices[1]; // so that the result of GetBounds() is correct
     myInsideBounds = myVertices.GetBounds();
 
     // Compute the center and make it the first vertex
