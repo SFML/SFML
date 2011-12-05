@@ -93,8 +93,6 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the scale factors of the object
     ///
-    /// \a factorX and \a factorY must be strictly positive,
-    /// otherwise they are ignored.
     /// This function completely overwrites the previous scale.
     /// See Scale to add a factor based on the previous scale instead.
     /// The default scale of a transformable object is (1, 1).
@@ -110,8 +108,6 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the scale factors of the object
     ///
-    /// \a scale.x and \a scale.y must be strictly positive,
-    /// otherwise they are ignored.
     /// This function completely overwrites the previous scale.
     /// See Scale to add a factor based on the previous scale instead.
     /// The default scale of a transformable object is (1, 1).
