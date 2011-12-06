@@ -125,7 +125,7 @@ const Color& Shape::GetOutlineColor() const
 void Shape::SetOutlineThickness(float thickness)
 {
     myOutlineThickness = thickness;
-    Update(); // recompute everything because the whole shape must be offseted
+    Update(); // recompute everything because the whole shape must be offset
 }
 
 
