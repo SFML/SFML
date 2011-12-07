@@ -36,7 +36,8 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Packet::Packet() :
 myReadPos(0),
-myIsValid(true)
+myIsValid(true),
+myData(sizeof(Uint32), 0)
 {
 
 }
@@ -64,8 +65,8 @@ void Packet::Append(const void* data, std::size_t sizeInBytes)
 ////////////////////////////////////////////////////////////
 void Packet::Clear()
 {
-    myData.clear();
-    myReadPos = 0;
+    myData.erase(myData.begin()+sizeof(Uint32),myData.end());
+	myReadPos = 0;
     myIsValid = true;
 }
 
@@ -73,21 +74,21 @@ void Packet::Clear()
 ////////////////////////////////////////////////////////////
 const char* Packet::GetData() const
 {
-    return !myData.empty() ? &myData[0] : NULL;
+    return !myData.empty() ? (&myData[0] + sizeof(Uint32)) : NULL;
 }
 
 
 ////////////////////////////////////////////////////////////
 std::size_t Packet::GetDataSize() const
 {
-    return myData.size();
+    return myData.size() - sizeof(Uint32);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Packet::EndOfPacket() const
 {
-    return myReadPos >= myData.size();
+    return myReadPos >= GetDataSize();
 }
 
 
@@ -489,7 +490,7 @@ Packet& Packet::operator <<(const String& data)
 ////////////////////////////////////////////////////////////
 bool Packet::CheckSize(std::size_t size)
 {
-    myIsValid = myIsValid && (myReadPos + size <= myData.size());
+    myIsValid = myIsValid && (myReadPos + size <= GetDataSize());
 
     return myIsValid;
 }
