@@ -272,22 +272,18 @@ Socket::Status TcpSocket::Send(Packet& packet)
     // This means that we have to send the packet size first, so that the
     // receiver knows the actual end of the packet in the data stream.
 
-    // Get the data to send from the packet
+    // Get the data to send (including the placeholder) and size from the packet
     std::size_t size = 0;
-    const char* data = packet.OnSend(size);
+    char* data = const_cast<char*>(packet.OnSend(size)) - sizeof(size);
 
-    // First send the packet size
-    Uint32 packetSize = htonl(static_cast<Uint32>(size));
-    Status status = Send(reinterpret_cast<const char*>(&packetSize), sizeof(packetSize));
-
-    // Make sure that the size was properly sent
-    if (status != Done)
-        return status;
+    // First set the packet's size placeholder
+    Uint32 packetSize = htonl(size);
+    std::memcpy(data, &packetSize, sizeof(packetSize));
 
     // Send the packet data
-    if (packetSize > 0)
+    if (size > 0)
     {
-        return Send(data, size);
+        return Send(data, size+sizeof(size));
     }
     else
     {
@@ -302,31 +298,19 @@ Socket::Status TcpSocket::Receive(Packet& packet)
     // First clear the variables to fill
     packet.Clear();
 
-    // We start by getting the size of the incoming packet
-    Uint32 packetSize = 0;
+    // Loop until we've received the entire size of the packet
+    // (even a 4 bytes variable may be received in more than one call)
     std::size_t received = 0;
-    if (myPendingPacket.SizeReceived < sizeof(myPendingPacket.Size))
+    while (myPendingPacket.SizeReceived < sizeof(myPendingPacket.Size))
     {
-        // Loop until we've received the entire size of the packet
-        // (even a 4 bytes variable may be received in more than one call)
-        while (myPendingPacket.SizeReceived < sizeof(myPendingPacket.Size))
-        {
-            char* data = reinterpret_cast<char*>(&myPendingPacket.Size) + myPendingPacket.SizeReceived;
-            Status status = Receive(data, sizeof(myPendingPacket.Size) - myPendingPacket.SizeReceived, received);
-            myPendingPacket.SizeReceived += received;
-
-            if (status != Done)
-                return status;
-        }
-
-        // The packet size has been fully received
-        packetSize = ntohl(myPendingPacket.Size);
+        char* data = reinterpret_cast<char*>(&myPendingPacket.Size) + myPendingPacket.SizeReceived;
+        Status status = Receive(data, sizeof(myPendingPacket.Size) - myPendingPacket.SizeReceived, received);
+        myPendingPacket.SizeReceived += received;
+		if (status != Done)
+				return status;
     }
-    else
-    {
-        // The packet size has already been received in a previous call
-        packetSize = ntohl(myPendingPacket.Size);
-    }
+    // The packet size has been fully received
+    Uint32 packetSize = ntohl(myPendingPacket.Size);
 
     // Loop until we receive all the packet data
     char buffer[1024];
