@@ -257,7 +257,7 @@ void SoundFile::Seek(Uint32 timeOffset)
 {
     if (myFile)
     {
-        sf_count_t frameOffset = timeOffset * mySampleRate / 1000;
+        sf_count_t frameOffset = static_cast<sf_count_t>(timeOffset) * mySampleRate / 1000;
         sf_seek(myFile, frameOffset, SEEK_SET);
     }
 }
