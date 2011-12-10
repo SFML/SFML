@@ -44,10 +44,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// \param radius Radius of the circle
+    /// \param radius      Radius of the circle
+    /// \param pointsCount Number of points composing the circle
     ///
     ////////////////////////////////////////////////////////////
-    explicit CircleShape(float radius = 0);
+    explicit CircleShape(float radius = 0, unsigned int pointsCount = 30);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the radius of the circle
@@ -70,9 +71,21 @@ public :
     float GetRadius() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the number of points of the circle
+    ///
+    /// \param count New number of points of the circle
+    ///
+    /// \see GetPointsCount
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetPointsCount(unsigned int count);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the number of points of the shape
     ///
     /// \return Number of points of the shape
+    ///
+    /// \see SetPointsCount
     ///
     ////////////////////////////////////////////////////////////
     virtual unsigned int GetPointsCount() const;
@@ -92,7 +105,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float myRadius; ///< Radius of the circle
+    float        myRadius;      ///< Radius of the circle
+    unsigned int myPointsCount; ///< Number of points composing the circle
 };
 
 } // namespace sf
@@ -119,6 +133,15 @@ private :
 /// ...
 /// window.Draw(circle);
 /// \endcode
+///
+/// Since the graphics card can't draw perfect circles, we have to
+/// fake them with multiple triangles connected to each other. The
+/// "points count" property of sf::CircleShape defines how many of these
+/// triangles to use, and therefore defines the quality of the circle.
+///
+/// The number of points can also be used for another purpose; with
+/// small numbers you can create any regular polygon shape:
+/// equilateral triangle, square, pentagon, hexagon, ...
 ///
 /// \see sf::Shape, sf::RectangleShape, sf::ConvexShape
 ///
