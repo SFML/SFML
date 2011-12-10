@@ -54,14 +54,14 @@ const Vector2f& RectangleShape::GetSize() const
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RectangleShape::GetOutlinePointsCount() const
+unsigned int RectangleShape::GetPointsCount() const
 {
     return 4;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RectangleShape::GetOutlinePoint(unsigned int index) const
+Vector2f RectangleShape::GetPoint(unsigned int index) const
 {
     switch (index)
     {

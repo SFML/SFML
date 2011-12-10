@@ -185,6 +185,24 @@ public :
     float GetOutlineThickness() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the total number of points of the shape
+    ///
+    /// \return Number of points of the shape
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual unsigned int GetPointsCount() const = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get a point of the shape
+    ///
+    /// \param index Index of the point to get, in range [0 .. GetPointsCount() - 1]
+    ///
+    /// \return Index-th point of the shape
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2f GetPoint(unsigned int index) const = 0;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity
     ///
     /// The returned rectangle is in local coordinates, which means
@@ -229,30 +247,6 @@ protected :
     ///
     ////////////////////////////////////////////////////////////
     void Update();
-
-private :
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the number of points defining the shape
-    ///
-    /// This function must be implemented in derived classes.
-    ///
-    /// \return Number of points of the shape
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual unsigned int GetOutlinePointsCount() const = 0;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get a point of the shape
-    ///
-    /// This function must be implemented in derived classes.
-    ///
-    /// \param index Index of the point to get
-    ///
-    /// \return Index-th point of the shape
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual Vector2f GetOutlinePoint(unsigned int index) const = 0;
 
 private :
 

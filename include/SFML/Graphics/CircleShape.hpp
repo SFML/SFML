@@ -69,15 +69,13 @@ public :
     ////////////////////////////////////////////////////////////
     float GetRadius() const;
 
-private :
-
     ////////////////////////////////////////////////////////////
-    /// \brief Get the number of points defining the shape
+    /// \brief Get the number of points of the shape
     ///
     /// \return Number of points of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetOutlinePointsCount() const;
+    virtual unsigned int GetPointsCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
@@ -87,7 +85,7 @@ private :
     /// \return Index-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f GetOutlinePoint(unsigned int index) const;
+    virtual Vector2f GetPoint(unsigned int index) const;
 
 private :
 
@@ -122,6 +120,6 @@ private :
 /// window.Draw(circle);
 /// \endcode
 ///
-/// \see sf::Shape, sf::StarShape, sf::RectangleShape, sf::ConvexShape
+/// \see sf::Shape, sf::RectangleShape, sf::ConvexShape
 ///
 ////////////////////////////////////////////////////////////

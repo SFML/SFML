@@ -69,15 +69,13 @@ public :
     ////////////////////////////////////////////////////////////
     const Vector2f& GetSize() const;
 
-private :
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of points defining the shape
     ///
     /// \return Number of points of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetOutlinePointsCount() const;
+    virtual unsigned int GetPointsCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
@@ -87,7 +85,7 @@ private :
     /// \return Index-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f GetOutlinePoint(unsigned int index) const;
+    virtual Vector2f GetPoint(unsigned int index) const;
 
 private :
 
@@ -122,6 +120,6 @@ private :
 /// window.Draw(rectangle);
 /// \endcode
 ///
-/// \see sf::Shape, sf::StarShape, sf::CircleShape, sf::ConvexShape
+/// \see sf::Shape, sf::CircleShape, sf::ConvexShape
 ///
 ////////////////////////////////////////////////////////////

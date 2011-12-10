@@ -169,7 +169,7 @@ myBounds          ()
 void Shape::Update()
 {
     // Get the total number of points of the shape
-    unsigned int count = GetOutlinePointsCount();
+    unsigned int count = GetPointsCount();
     if (count < 3)
     {
         myVertices.Resize(0);
@@ -180,9 +180,8 @@ void Shape::Update()
     myVertices.Resize(count + 2); // + 2 for center and repeated first point
 
     // Position
-    Vector2f offset(myOutlineThickness, myOutlineThickness);
     for (unsigned int i = 0; i < count; ++i)
-        myVertices[i + 1].Position = GetOutlinePoint(i) + offset;
+        myVertices[i + 1].Position = GetPoint(i);
     myVertices[count + 1].Position = myVertices[1].Position;
 
     // Update the bounding rectangle

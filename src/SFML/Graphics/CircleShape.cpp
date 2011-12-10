@@ -54,16 +54,16 @@ float CircleShape::GetRadius() const
 
 
 ////////////////////////////////////////////////////////////
-unsigned int CircleShape::GetOutlinePointsCount() const
+unsigned int CircleShape::GetPointsCount() const
 {
     return 30;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f CircleShape::GetOutlinePoint(unsigned int index) const
+Vector2f CircleShape::GetPoint(unsigned int index) const
 {
-    float angle = index * 2 * 3.141592654f / GetOutlinePointsCount();
+    float angle = index * 2 * 3.141592654f / GetPointsCount();
     float x = std::cos(angle) * myRadius;
     float y = std::sin(angle) * myRadius;
 

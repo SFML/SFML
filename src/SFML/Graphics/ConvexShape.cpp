@@ -66,18 +66,4 @@ Vector2f ConvexShape::GetPoint(unsigned int index) const
     return myPoints[index];
 }
 
-
-////////////////////////////////////////////////////////////
-unsigned int ConvexShape::GetOutlinePointsCount() const
-{
-    return GetPointsCount();
-}
-
-
-////////////////////////////////////////////////////////////
-Vector2f ConvexShape::GetOutlinePoint(unsigned int index) const
-{
-    return GetPoint(index);
-}
-
 } // namespace sf
