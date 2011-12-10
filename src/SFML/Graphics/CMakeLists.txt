@@ -43,8 +43,6 @@ set(SRC
     ${INCROOT}/CircleShape.hpp
     ${SRCROOT}/RectangleShape.cpp
     ${INCROOT}/RectangleShape.hpp
-    ${SRCROOT}/StarShape.cpp
-    ${INCROOT}/StarShape.hpp
     ${SRCROOT}/ConvexShape.cpp
     ${INCROOT}/ConvexShape.hpp
     ${SRCROOT}/Sprite.cpp
