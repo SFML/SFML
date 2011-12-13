@@ -167,6 +167,7 @@ bool InputImpl::IsKeyPressed(Keyboard::Key key)
         case Keyboard::F14:        keysym = XK_F14;          break;
         case Keyboard::F15:        keysym = XK_F15;          break;
         case Keyboard::Pause:      keysym = XK_Pause;        break;
+        default:                   keysym = 0;               break;
     }
 
     // Convert to keycode
@@ -203,6 +204,7 @@ bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
         case Mouse::Middle:   return buttons & Button2Mask;
         case Mouse::XButton1: return false; // not supported by X
         case Mouse::XButton2: return false; // not supported by X
+        default:              return false;
     }
 
     return false;
