@@ -24,7 +24,7 @@ void main()
     vec3 result = sqrt(hEdge.rgb * hEdge.rgb + vEdge.rgb * vEdge.rgb);
     float edge = length(result);
     vec4 pixel = gl_Color * texture2D(texture, gl_TexCoord[0].xy);
-    if (edge > edge_threshold * 8)
+    if (edge > (edge_threshold * 8.0))
         pixel.rgb = vec3(0.0, 0.0, 0.0);
     else
         pixel.a = edge_threshold;
