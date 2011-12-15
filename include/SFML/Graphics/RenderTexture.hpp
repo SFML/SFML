@@ -88,7 +88,7 @@ public :
     /// \brief Enable or disable texture smoothing
     ///
     /// This function is similar to Texture::SetSmooth.
-    /// This parameter is enabled by default.
+    /// This parameter is disabled by default.
     ///
     /// \param smooth True to enable smoothing, false to disable it
     ///
