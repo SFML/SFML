@@ -46,6 +46,12 @@ myInverseTransformNeedUpdate(true)
 
 
 ////////////////////////////////////////////////////////////
+Transformable::~Transformable()
+{
+}
+
+
+////////////////////////////////////////////////////////////
 void Transformable::SetPosition(float x, float y)
 {
     myPosition.x = x;
