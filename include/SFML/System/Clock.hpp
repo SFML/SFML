@@ -74,7 +74,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Uint64 myStartTime; ///< Time of last reset, in nanoseconds
+    Uint64 myStartTime; ///< Time of last reset, in microseconds
 };
 
 } // namespace sf
