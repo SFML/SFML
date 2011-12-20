@@ -68,6 +68,9 @@ set(SYSTEM_EXT_LIBS)
 if(UNIX)
     set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} pthread)
 endif()
+if(LINUX)
+    set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} rt)
+endif()
 
 # define the sfml-system target
 sfml_add_library(sfml-system
