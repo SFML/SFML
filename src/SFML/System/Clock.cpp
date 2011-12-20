@@ -26,7 +26,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Clock.hpp>
-#include <SFML/System/Platform.hpp>
+
+#if defined(SFML_SYSTEM_WINDOWS)
+    #include <SFML/System/Win32/ClockImpl.hpp>
+#else
+    #include <SFML/System/Unix/ClockImpl.hpp>
+#endif
 
 
 namespace sf
@@ -41,14 +46,15 @@ Clock::Clock()
 ////////////////////////////////////////////////////////////
 Uint32 Clock::GetElapsedTime() const
 {
-    return static_cast<Uint32>(priv::Platform::GetSystemTime() - myStartTime);
+    Uint64 microseconds = priv::ClockImpl::GetMicroSeconds() - myStartTime;
+    return static_cast<Uint32>(microseconds / 1000);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Clock::Reset()
 {
-    myStartTime = priv::Platform::GetSystemTime();
+    myStartTime = priv::ClockImpl::GetMicroSeconds();
 }
 
 } // namespace sf

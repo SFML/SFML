@@ -62,7 +62,7 @@ public :
     Uint32 GetElapsedTime() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Restart the timer
+    /// \brief Restart the clock
     ///
     /// This function puts the time counter back to zero.
     ///
@@ -74,7 +74,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Uint64 myStartTime; ///< Time of last reset
+    Uint64 myStartTime; ///< Time of last reset, in nanoseconds
 };
 
 } // namespace sf

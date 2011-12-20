@@ -13,7 +13,6 @@ set(SRC
     ${SRCROOT}/Mutex.cpp
     ${INCROOT}/Mutex.hpp
     ${INCROOT}/NonCopyable.hpp
-    ${SRCROOT}/Platform.hpp
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp
     ${SRCROOT}/String.cpp
@@ -37,10 +36,12 @@ set(SRC
 if(WINDOWS)
     set(SRC
         ${SRC}
+        ${SRCROOT}/Win32/ClockImpl.cpp
+        ${SRCROOT}/Win32/ClockImpl.hpp
         ${SRCROOT}/Win32/MutexImpl.cpp
         ${SRCROOT}/Win32/MutexImpl.hpp
-        ${SRCROOT}/Win32/Platform.cpp
-        ${SRCROOT}/Win32/Platform.hpp
+        ${SRCROOT}/Win32/SleepImpl.cpp
+        ${SRCROOT}/Win32/SleepImpl.hpp
         ${SRCROOT}/Win32/ThreadImpl.cpp
         ${SRCROOT}/Win32/ThreadImpl.hpp
         ${SRCROOT}/Win32/ThreadLocalImpl.cpp
@@ -49,10 +50,12 @@ if(WINDOWS)
 else()
     set(SRC
         ${SRC}
+        ${SRCROOT}/Unix/ClockImpl.cpp
+        ${SRCROOT}/Unix/ClockImpl.hpp
         ${SRCROOT}/Unix/MutexImpl.cpp
         ${SRCROOT}/Unix/MutexImpl.hpp
-        ${SRCROOT}/Unix/Platform.cpp
-        ${SRCROOT}/Unix/Platform.hpp
+        ${SRCROOT}/Unix/SleepImpl.cpp
+        ${SRCROOT}/Unix/SleepImpl.hpp
         ${SRCROOT}/Unix/ThreadImpl.cpp
         ${SRCROOT}/Unix/ThreadImpl.hpp
         ${SRCROOT}/Unix/ThreadLocalImpl.cpp

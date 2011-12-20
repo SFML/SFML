@@ -26,7 +26,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Sleep.hpp>
-#include <SFML/System/Platform.hpp>
+
+#if defined(SFML_SYSTEM_WINDOWS)
+    #include <SFML/System/Win32/SleepImpl.hpp>
+#else
+    #include <SFML/System/Unix/SleepImpl.hpp>
+#endif
 
 
 namespace sf
@@ -34,7 +39,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void Sleep(Uint32 duration)
 {
-    priv::Platform::Sleep(duration);
+    priv::SleepImpl(duration);
 }
 
 } // namespace sf
