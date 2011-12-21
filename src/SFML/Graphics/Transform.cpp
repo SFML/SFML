@@ -89,7 +89,7 @@ Transform Transform::GetInverse() const
     }
     else
     {
-        return Transform();
+        return Identity;
     }
 }
 
