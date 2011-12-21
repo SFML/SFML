@@ -118,16 +118,6 @@ public :
     ////////////////////////////////////////////////////////////
     static GlContext* New(const ContextSettings& settings, unsigned int width, unsigned int height);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the current active context
-    ///
-    /// This function returns 0 if no context is active.
-    ///
-    /// \return Context currently active in this thread
-    ///
-    ////////////////////////////////////////////////////////////
-    static GlContext* GetCurrentContext();
-
 public :
 
     ////////////////////////////////////////////////////////////

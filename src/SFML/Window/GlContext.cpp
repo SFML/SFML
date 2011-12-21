@@ -178,13 +178,6 @@ GlContext* GlContext::New(const ContextSettings& settings, unsigned int width, u
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::GetCurrentContext()
-{
-    return currentContext;
-}
-
-
-////////////////////////////////////////////////////////////
 GlContext::~GlContext()
 {
     // Deactivate the context before killing it, unless we're inside Cleanup()

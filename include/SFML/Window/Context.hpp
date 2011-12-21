@@ -41,8 +41,6 @@ namespace priv
     class GlContext;
 }
 
-typedef void* ContextId;
-
 ////////////////////////////////////////////////////////////
 /// \brief Class holding a valid drawing context
 ///
@@ -76,18 +74,6 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool SetActive(bool active);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the identifier of the current active context
-    ///
-    /// The returned id has no special meaning, it should only be
-    /// used as a key to map external stuff to internal contexts.
-    /// This function returns 0 if no context is active.
-    ///
-    /// \return Identifier of the current context
-    ///
-    ////////////////////////////////////////////////////////////
-    static ContextId GetCurrentContextId();
 
 public :
 
