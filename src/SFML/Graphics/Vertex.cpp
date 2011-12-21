@@ -58,7 +58,7 @@ TexCoords(0, 0)
 
 
 ////////////////////////////////////////////////////////////
-Vertex::Vertex(const Vector2f& position, const Vector2i& texCoords) :
+Vertex::Vertex(const Vector2f& position, const Vector2f& texCoords) :
 Position (position),
 Color    (255, 255, 255),
 TexCoords(texCoords)
@@ -67,7 +67,7 @@ TexCoords(texCoords)
 
 
 ////////////////////////////////////////////////////////////
-Vertex::Vertex(const Vector2f& position, const sf::Color& color, const Vector2i& texCoords) :
+Vertex::Vertex(const Vector2f& position, const sf::Color& color, const Vector2f& texCoords) :
 Position (position),
 Color    (color),
 TexCoords(texCoords)

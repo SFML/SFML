@@ -201,7 +201,7 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int verticesCount,
         const char* data = reinterpret_cast<const char*>(vertices);
         GLCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), data + 0));
         GLCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + 8));
-        GLCheck(glTexCoordPointer(2, GL_INT, sizeof(Vertex), data + 12));
+        GLCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
 
         // Find the OpenGL primitive type
         static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP,

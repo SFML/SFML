@@ -260,10 +260,10 @@ void Text::UpdateGeometry()
             float top = y + underlineOffset;
             float bottom = top + underlineThickness;
 
-            myVertices.Append(Vertex(Vector2f(0, top),    myColor, Vector2i(1, 1)));
-            myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2i(2, 1)));
-            myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2i(2, 2)));
-            myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2i(1, 2)));
+            myVertices.Append(Vertex(Vector2f(0, top),    myColor, Vector2f(1, 1)));
+            myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2f(2, 1)));
+            myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2f(2, 2)));
+            myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2f(1, 2)));
         }
 
         // Handle special characters
@@ -283,16 +283,16 @@ void Text::UpdateGeometry()
         int right  = glyph.Bounds.Left + glyph.Bounds.Width;
         int bottom = glyph.Bounds.Top  + glyph.Bounds.Height;
 
-        int u1 = glyph.TextureRect.Left;
-        int v1 = glyph.TextureRect.Top;
-        int u2 = glyph.TextureRect.Left + glyph.TextureRect.Width;
-        int v2 = glyph.TextureRect.Top  + glyph.TextureRect.Height;
+        float u1 = static_cast<float>(glyph.TextureRect.Left);
+        float v1 = static_cast<float>(glyph.TextureRect.Top);
+        float u2 = static_cast<float>(glyph.TextureRect.Left + glyph.TextureRect.Width);
+        float v2 = static_cast<float>(glyph.TextureRect.Top  + glyph.TextureRect.Height);
 
         // Add a quad for the current character
-        myVertices.Append(Vertex(Vector2f(x + left  - italic * top,    y + top),    myColor, Vector2i(u1, v1)));
-        myVertices.Append(Vertex(Vector2f(x + right - italic * top,    y + top),    myColor, Vector2i(u2, v1)));
-        myVertices.Append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), myColor, Vector2i(u2, v2)));
-        myVertices.Append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), myColor, Vector2i(u1, v2)));
+        myVertices.Append(Vertex(Vector2f(x + left  - italic * top,    y + top),    myColor, Vector2f(u1, v1)));
+        myVertices.Append(Vertex(Vector2f(x + right - italic * top,    y + top),    myColor, Vector2f(u2, v1)));
+        myVertices.Append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), myColor, Vector2f(u2, v2)));
+        myVertices.Append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), myColor, Vector2f(u1, v2)));
 
         // Advance to the next character
         x += glyph.Advance;
@@ -304,10 +304,10 @@ void Text::UpdateGeometry()
         float top = y + underlineOffset;
         float bottom = top + underlineThickness;
 
-        myVertices.Append(Vertex(Vector2f(0, top),    myColor, Vector2i(1, 1)));
-        myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2i(2, 1)));
-        myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2i(2, 2)));
-        myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2i(1, 2)));
+        myVertices.Append(Vertex(Vector2f(0, top),    myColor, Vector2f(1, 1)));
+        myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2f(2, 1)));
+        myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2f(2, 2)));
+        myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2f(1, 2)));
     }
 
     // Recompute the bounding rectangle

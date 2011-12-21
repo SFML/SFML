@@ -78,7 +78,7 @@ public :
     /// \param texCoords Vertex texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position, const Vector2i& texCoords);
+    Vertex(const Vector2f& position, const Vector2f& texCoords);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vertex from its position, color and texture coordinates
@@ -88,14 +88,14 @@ public :
     /// \param texCoords Vertex texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position, const sf::Color& color, const Vector2i& texCoords);
+    Vertex(const Vector2f& position, const sf::Color& color, const Vector2f& texCoords);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     Vector2f  Position;  ///< 2D position of the vertex
     sf::Color Color;     ///< Color of the vertex
-    Vector2i  TexCoords; ///< Coordinates of the texture's pixel to map to the vertex
+    Vector2f  TexCoords; ///< Coordinates of the texture's pixel to map to the vertex
 };
 
 } // namespace sf
@@ -128,15 +128,19 @@ public :
 /// // define a 100x100 square, red, with a 10x10 texture mapped on it
 /// sf::Vertex vertices[] =
 /// {
-///     sf::Vertex(sf::Vector2f(  0,   0), sf::Color::Red, sf::Vector2i( 0,  0)),
-///     sf::Vertex(sf::Vector2f(  0, 100), sf::Color::Red, sf::Vector2i( 0, 10)),
-///     sf::Vertex(sf::Vector2f(100, 100), sf::Color::Red, sf::Vector2i(10, 10)),
-///     sf::Vertex(sf::Vector2f(100,   0), sf::Color::Red, sf::Vector2i(10,  0))
+///     sf::Vertex(sf::Vector2f(  0,   0), sf::Color::Red, sf::Vector2f( 0,  0)),
+///     sf::Vertex(sf::Vector2f(  0, 100), sf::Color::Red, sf::Vector2f( 0, 10)),
+///     sf::Vertex(sf::Vector2f(100, 100), sf::Color::Red, sf::Vector2f(10, 10)),
+///     sf::Vertex(sf::Vector2f(100,   0), sf::Color::Red, sf::Vector2f(10,  0))
 /// };
 ///
 /// // draw it
 /// window.Draw(vertices, 4, sf::Quads);
 /// \endcode
+///
+/// Note: although texture coordinates are supposed to be an integer
+/// amount of pixels, their type is float because of some buggy graphics
+/// drivers that are not able to process integer coordinates correctly.
 ///
 /// \see sf::VertexArray
 ///

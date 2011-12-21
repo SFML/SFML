@@ -160,15 +160,15 @@ void Sprite::UpdatePositions()
 ////////////////////////////////////////////////////////////
 void Sprite::UpdateTexCoords()
 {
-    int left   = myTextureRect.Left;
-    int right  = myTextureRect.Left + myTextureRect.Width;
-    int top    = myTextureRect.Top;
-    int bottom = myTextureRect.Top + myTextureRect.Height;
+    float left   = static_cast<float>(myTextureRect.Left);
+    float right  = left + myTextureRect.Width;
+    float top    = static_cast<float>(myTextureRect.Top);
+    float bottom = top + myTextureRect.Height;
 
-    myVertices[0].TexCoords = Vector2i(left, top);
-    myVertices[1].TexCoords = Vector2i(left, bottom);
-    myVertices[2].TexCoords = Vector2i(right, bottom);
-    myVertices[3].TexCoords = Vector2i(right, top);
+    myVertices[0].TexCoords = Vector2f(left, top);
+    myVertices[1].TexCoords = Vector2f(left, bottom);
+    myVertices[2].TexCoords = Vector2f(right, bottom);
+    myVertices[3].TexCoords = Vector2f(right, top);
 }
 
 } // namespace sf

@@ -239,8 +239,8 @@ void Shape::UpdateTexCoords()
     {
         float xratio = (myVertices[i].Position.x - myInsideBounds.Left) / myInsideBounds.Width;
         float yratio = (myVertices[i].Position.y - myInsideBounds.Top) / myInsideBounds.Height;
-        myVertices[i].TexCoords.x = static_cast<int>(myTextureRect.Left + myTextureRect.Width * xratio);
-        myVertices[i].TexCoords.y = static_cast<int>(myTextureRect.Top + myTextureRect.Height * yratio);
+        myVertices[i].TexCoords.x = myTextureRect.Left + myTextureRect.Width * xratio;
+        myVertices[i].TexCoords.y = myTextureRect.Top + myTextureRect.Height * yratio;
     }
 }
 
