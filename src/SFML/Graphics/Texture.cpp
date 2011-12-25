@@ -28,10 +28,31 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/TextureSaver.hpp>
 #include <SFML/Window/Window.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <cassert>
 #include <cstring>
+
+
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    // Thread-safe unique identifier generator,
+    // is used for states cache (see RenderTarget)
+    sf::Uint64 GetUniqueId()
+    {
+        static sf::Uint64 id = 1; // start at 1, zero is "no texture"
+        static sf::Mutex mutex;
+
+        sf::Lock lock(mutex);
+        return id++;
+    }
+}
 
 
 namespace sf
@@ -45,7 +66,8 @@ myTextureHeight(0),
 myTexture      (0),
 myIsSmooth     (false),
 myIsRepeated   (false),
-myPixelsFlipped(false)
+myPixelsFlipped(false),
+myCacheId      (GetUniqueId())
 {
 
 }
@@ -60,7 +82,8 @@ myTextureHeight(0),
 myTexture      (0),
 myIsSmooth     (copy.myIsSmooth),
 myIsRepeated   (copy.myIsRepeated),
-myPixelsFlipped(false)
+myPixelsFlipped(false),
+myCacheId      (GetUniqueId())
 {
     if (copy.myTexture)
         LoadFromImage(copy.CopyToImage());
@@ -123,6 +146,9 @@ bool Texture::Create(unsigned int width, unsigned int height)
         myTexture = static_cast<unsigned int>(texture);
     }
 
+    // Make sure that the current texture binding will be preserved
+    priv::TextureSaver save;
+
     // Initialize the texture
     GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
     GLCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, myTextureWidth, myTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
@@ -130,6 +156,7 @@ bool Texture::Create(unsigned int width, unsigned int height)
     GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, myIsRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
     GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
     GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
+    myCacheId = GetUniqueId();
 
     return true;
 }
@@ -195,6 +222,9 @@ bool Texture::LoadFromImage(const Image& image, const IntRect& area)
         // Create the texture and upload the pixels
         if (Create(rectangle.Width, rectangle.Height))
         {
+            // Make sure that the current texture binding will be preserved
+            priv::TextureSaver save;
+
             // Copy the pixels to the texture, row by row
             const Uint8* pixels = image.GetPixelsPtr() + 4 * (rectangle.Left + (width * rectangle.Top));
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
@@ -236,6 +266,9 @@ Image Texture::CopyToImage() const
         return Image();
 
     EnsureGlContext();
+
+    // Make sure that the current texture binding will be preserved
+    priv::TextureSaver save;
 
     // Create an array of pixels
     std::vector<Uint8> pixels(myWidth * myHeight * 4);
@@ -302,10 +335,14 @@ void Texture::Update(const Uint8* pixels, unsigned int width, unsigned int heigh
     {
         EnsureGlContext();
 
+        // Make sure that the current texture binding will be preserved
+        priv::TextureSaver save;
+
         // Copy pixels from the given array to the texture
         GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
         GLCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
         myPixelsFlipped = false;
+        myCacheId = GetUniqueId();
     }
 }
 
@@ -340,10 +377,14 @@ void Texture::Update(const Window& window, unsigned int x, unsigned int y)
 
     if (myTexture && window.SetActive(true))
     {
+        // Make sure that the current texture binding will be preserved
+        priv::TextureSaver save;
+
         // Copy pixels from the back-buffer to the texture
         GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
         GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, x, y, 0, 0, window.GetWidth(), window.GetHeight()));
         myPixelsFlipped = true;
+        myCacheId = GetUniqueId();
     }
 }
 
@@ -380,6 +421,9 @@ void Texture::Bind(CoordinateType coordinateType) const
         // Load the matrix
         GLCheck(glMatrixMode(GL_TEXTURE));
         GLCheck(glLoadMatrixf(matrix));
+
+        // Go back to model-view mode (sf::RenderTarget relies on it)
+        GLCheck(glMatrixMode(GL_MODELVIEW));
     }
 }
 
@@ -394,6 +438,9 @@ void Texture::SetSmooth(bool smooth)
         if (myTexture)
         {
             EnsureGlContext();
+
+            // Make sure that the current texture binding will be preserved
+            priv::TextureSaver save;
 
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
             GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, myIsSmooth ? GL_LINEAR : GL_NEAREST));
@@ -420,6 +467,9 @@ void Texture::SetRepeated(bool repeated)
         if (myTexture)
         {
             EnsureGlContext();
+
+            // Make sure that the current texture binding will be preserved
+            priv::TextureSaver save;
 
             GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
             GLCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, myIsRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
@@ -461,6 +511,7 @@ Texture& Texture::operator =(const Texture& right)
     std::swap(myIsSmooth,      temp.myIsSmooth);
     std::swap(myIsRepeated,    temp.myIsRepeated);
     std::swap(myPixelsFlipped, temp.myPixelsFlipped);
+    myCacheId = GetUniqueId();
 
     return *this;
 }

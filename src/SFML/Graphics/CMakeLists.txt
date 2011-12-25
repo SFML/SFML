@@ -51,6 +51,8 @@ set(SRC
     ${INCROOT}/Text.hpp
     ${SRCROOT}/Texture.cpp
     ${INCROOT}/Texture.hpp
+    ${SRCROOT}/TextureSaver.cpp
+    ${SRCROOT}/TextureSaver.hpp
     ${SRCROOT}/Transform.cpp
     ${INCROOT}/Transform.hpp
     ${SRCROOT}/Transformable.cpp

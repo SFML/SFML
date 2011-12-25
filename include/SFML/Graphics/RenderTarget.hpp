@@ -36,12 +36,12 @@
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 
 
 namespace sf
 {
 class Drawable;
-class Vertex;
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
@@ -303,6 +303,44 @@ protected :
     ////////////////////////////////////////////////////////////
     void Initialize();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply the current view
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyCurrentView();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a new blending mode
+    ///
+    /// \param mode Blending mode to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyBlendMode(BlendMode mode);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a new transform
+    ///
+    /// \param transform Transform to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyTransform(const Transform& transform);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a new texture
+    ///
+    /// \param texture Texture to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyTexture(const Texture* texture);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a new shader
+    ///
+    /// \param shader Shader to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyShader(const Shader* shader);
+
 private :
 
     ////////////////////////////////////////////////////////////
@@ -320,11 +358,26 @@ private :
     virtual bool Activate(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Render states cache
+    ///
+    ////////////////////////////////////////////////////////////
+    struct StatesCache
+    {
+        enum {VertexCacheSize = 4};
+
+        bool      ViewChanged;    ///< Has the current view changed since last draw?
+        BlendMode LastBlendMode;  ///< Cached blending mode
+        Uint64    LastTextureId;  ///< Cached texture
+        bool      UseVertexCache; ///< Did we previously use the vertex cache?
+        Vertex    VertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
+    };
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    View myDefaultView; ///< Default view
-    View myView;        ///< Current view
-    bool myViewChanged; ///< Has the current view changed since last Draw?
+    View        myDefaultView; ///< Default view
+    View        myView;        ///< Current view
+    StatesCache myCache;       ///< Render states cache
 };
 
 } // namespace sf

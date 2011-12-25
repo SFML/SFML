@@ -40,7 +40,7 @@ namespace sf
 RenderTarget::RenderTarget() :
 myDefaultView(),
 myView       (),
-myViewChanged(false)
+myCache      ()
 {
 }
 
@@ -66,7 +66,7 @@ void RenderTarget::Clear(const Color& color)
 void RenderTarget::SetView(const View& view)
 {
     myView = view;
-    myViewChanged = true;
+    myCache.ViewChanged = true;
 }
 
 
@@ -136,81 +136,78 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int verticesCount,
 
     if (Activate(true))
     {
-        // Apply the new view if needed
-        if (myViewChanged)
+        // Check if the vertex count is low enough so that we can pre-transform them
+        bool useVertexCache = (verticesCount <= StatesCache::VertexCacheSize);
+        if (useVertexCache)
         {
-            // Set the viewport
-            IntRect viewport = GetViewport(myView);
-            int top = GetHeight() - (viewport.Top + viewport.Height);
-            GLCheck(glViewport(viewport.Left, top, viewport.Width, viewport.Height));
+            // Pre-transform the vertices and store them into the vertex cache
+            for (unsigned int i = 0; i < verticesCount; ++i)
+            {
+                Vertex& vertex = myCache.VertexCache[i];
+                vertex.Position = states.Transform * vertices[i].Position;
+                vertex.Color = vertices[i].Color;
+                vertex.TexCoords = vertices[i].TexCoords;
+            }
 
-            // Set the projection matrix
-            GLCheck(glMatrixMode(GL_PROJECTION));
-            GLCheck(glLoadMatrixf(myView.GetTransform().GetMatrix()));
-
-            myViewChanged = false;
+            // Since vertices are transformed, we must use an identity transform to render them
+            if (!myCache.UseVertexCache)
+                ApplyTransform(Transform::Identity);
+        }
+        else
+        {
+            ApplyTransform(states.Transform);
         }
 
-        // Apply the transform
-        GLCheck(glMatrixMode(GL_MODELVIEW));
-        GLCheck(glLoadMatrixf(states.Transform.GetMatrix()));
+        // Apply the view
+        if (myCache.ViewChanged)
+            ApplyCurrentView();
 
         // Apply the blend mode
-        switch (states.BlendMode)
-        {
-            // Alpha blending
-            // glBlendFuncSeparateEXT is used when available to avoid an incorrect alpha value when the target
-            // is a RenderTexture -- in this case the alpha value must be written directly to the target buffer
-            default :
-            case BlendAlpha :
-                if (GLEW_EXT_blend_func_separate)
-                    GLCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
-                else
-                    GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-                break;
-
-            // Additive blending
-            case BlendAdd :
-                GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
-                break;
-
-            // Multiplicative blending
-            case BlendMultiply :
-                GLCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));
-                break;
-
-            // No blending
-            case BlendNone :
-                GLCheck(glBlendFunc(GL_ONE, GL_ZERO));
-                break;
-        }
+        if (states.BlendMode != myCache.LastBlendMode)
+            ApplyBlendMode(states.BlendMode);
 
         // Apply the texture
-        if (states.Texture)
-            states.Texture->Bind(Texture::Pixels);
-        else
-            GLCheck(glBindTexture(GL_TEXTURE_2D, 0));
+        Uint64 textureId = states.Texture ? states.Texture->myCacheId : 0;
+        if (textureId != myCache.LastTextureId)
+            ApplyTexture(states.Texture);
 
         // Apply the shader
         if (states.Shader)
-            states.Shader->Bind();
-        else
-            GLCheck(glUseProgramObjectARB(0));
+            ApplyShader(states.Shader);
+
+        // If we pre-transform the vertices, we must use our internal vertex cache
+        if (useVertexCache)
+        {
+            // ... and if we already used it previously, we don't need to set the pointers again
+            if (!myCache.UseVertexCache)
+                vertices = myCache.VertexCache;
+            else
+                vertices = NULL;
+        }
 
         // Setup the pointers to the vertices' components
-        const char* data = reinterpret_cast<const char*>(vertices);
-        GLCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), data + 0));
-        GLCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + 8));
-        GLCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
+        if (vertices)
+        {
+            const char* data = reinterpret_cast<const char*>(vertices);
+            GLCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), data + 0));
+            GLCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + 8));
+            GLCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
+        }
 
         // Find the OpenGL primitive type
-        static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP,
-                                       GL_TRIANGLES, GL_TRIANGLE_STRIP,
-                                       GL_TRIANGLE_FAN, GL_QUADS};
+        static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
+                                       GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
         GLenum mode = modes[type];
 
         // Draw the primitives
         GLCheck(glDrawArrays(mode, 0, verticesCount));
+
+        // Unbind the shader, if any
+        if (states.Shader)
+            ApplyShader(NULL);
+
+        // Update the cache
+        myCache.UseVertexCache = useVertexCache;
     }
 }
 
@@ -257,16 +254,26 @@ void RenderTarget::ResetGLStates()
         // Make sure that GLEW is initialized
         priv::EnsureGlewInit();
 
+        // Define the default OpenGL states
         GLCheck(glDisable(GL_LIGHTING));
         GLCheck(glDisable(GL_DEPTH_TEST));
         GLCheck(glEnable(GL_TEXTURE_2D));
         GLCheck(glEnable(GL_ALPHA_TEST));
         GLCheck(glEnable(GL_BLEND));
         GLCheck(glAlphaFunc(GL_GREATER, 0));
+        GLCheck(glMatrixMode(GL_MODELVIEW));
         GLCheck(glEnableClientState(GL_VERTEX_ARRAY));
         GLCheck(glEnableClientState(GL_COLOR_ARRAY));
         GLCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 
+        // Apply the default SFML states
+        ApplyBlendMode(BlendAlpha);
+        ApplyTransform(Transform::Identity);
+        ApplyTexture(NULL);
+        ApplyShader(NULL);
+        myCache.UseVertexCache = false;
+
+        // Set the default view
         SetView(GetView());
     }
 }
@@ -275,12 +282,135 @@ void RenderTarget::ResetGLStates()
 ////////////////////////////////////////////////////////////
 void RenderTarget::Initialize()
 {
-    // Setup the default view
+    // Setup the default and current views
     myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
-    SetView(myDefaultView);
+    myView = myDefaultView;
 
     // Initialize the default OpenGL render-states
     ResetGLStates();
 }
 
+
+////////////////////////////////////////////////////////////
+void RenderTarget::ApplyCurrentView()
+{
+    // Set the viewport
+    IntRect viewport = GetViewport(myView);
+    int top = GetHeight() - (viewport.Top + viewport.Height);
+    GLCheck(glViewport(viewport.Left, top, viewport.Width, viewport.Height));
+
+    // Set the projection matrix
+    GLCheck(glMatrixMode(GL_PROJECTION));
+    GLCheck(glLoadMatrixf(myView.GetTransform().GetMatrix()));
+
+    // Go back to model-view mode
+    GLCheck(glMatrixMode(GL_MODELVIEW));
+
+    myCache.ViewChanged = false;
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::ApplyBlendMode(BlendMode mode)
+{
+    switch (mode)
+    {
+        // Alpha blending
+        // glBlendFuncSeparateEXT is used when available to avoid an incorrect alpha value when the target
+        // is a RenderTexture -- in this case the alpha value must be written directly to the target buffer
+        default :
+        case BlendAlpha :
+            if (GLEW_EXT_blend_func_separate)
+                GLCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+            else
+                GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+            break;
+
+        // Additive blending
+        case BlendAdd :
+            GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
+            break;
+
+        // Multiplicative blending
+        case BlendMultiply :
+            GLCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));
+            break;
+
+        // No blending
+        case BlendNone :
+            GLCheck(glBlendFunc(GL_ONE, GL_ZERO));
+            break;
+    }
+
+    myCache.LastBlendMode = mode;
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::ApplyTransform(const Transform& transform)
+{
+    // No need to call glMatrixMode(GL_MODELVIEW), it is always the
+    // current mode (for optimization purpose, since it's the most used)
+    GLCheck(glLoadMatrixf(transform.GetMatrix()));
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::ApplyTexture(const Texture* texture)
+{
+    if (texture)
+        texture->Bind(Texture::Pixels);
+    else
+        GLCheck(glBindTexture(GL_TEXTURE_2D, 0));
+
+    myCache.LastTextureId = texture ? texture->myCacheId : 0;
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::ApplyShader(const Shader* shader)
+{
+    if (shader)
+        shader->Bind();
+    else
+        GLCheck(glUseProgramObjectARB(0));
+}
+
 } // namespace sf
+
+
+////////////////////////////////////////////////////////////
+// Render states caching strategies
+//
+// * View
+//   If SetView was called since last draw, the projection
+//   matrix is updated. We don't need more, the view doesn't
+//   change frequently.
+//
+// * Transform
+//   The transform matrix is usually expensive because each
+//   entity will most likely use a different transform. This can
+//   lead, in worst case, to changing it every 4 vertices.
+//   To avoid that, when the vertex count is low enough, we
+//   pre-transform them and therefore use an identity transform
+//   to render them.
+//
+// * Blending mode
+//   It's a simple integral value, so we can easily check
+//   whether the value to apply is the same as before or not.
+//
+// * Texture
+//   Storing the pointer or OpenGL ID of the last used texture
+//   is not enough; if the sf::Texture instance is destroyed,
+//   both the pointer and the OpenGL ID might be recycled in
+//   a new texture instance. We need to use our own unique
+//   identifier system to ensure consistent caching.
+//
+// * Shader
+//   Shaders are very hard to optimize, because they have
+//   parameters that can be hard (if not impossible) to track,
+//   like matrices or textures. The only optimization that we
+//   do is that we avoid setting a null shader if there was
+//   already none for the previous draw.
+// 
+////////////////////////////////////////////////////////////

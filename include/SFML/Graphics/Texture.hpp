@@ -35,6 +35,7 @@
 namespace sf
 {
 class Window;
+class RenderTarget;
 class RenderTexture;
 class InputStream;
 
@@ -467,6 +468,7 @@ public :
 private :
 
     friend class RenderTexture;
+    friend class RenderTarget;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a valid image size according to hardware support
@@ -494,6 +496,7 @@ private :
     bool         myIsSmooth;      ///< Status of the smooth filter
     bool         myIsRepeated;    ///< Is the texture in repeat mode?
     mutable bool myPixelsFlipped; ///< To work around the inconsistency in Y orientation
+    Uint64       myCacheId;       ///< Unique number that identifies the texture to the render target's cache
 };
 
 } // namespace sf
