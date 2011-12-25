@@ -15,6 +15,7 @@ int main()
 {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL", sf::Style::Default, sf::ContextSettings(32));
+    window.EnableVerticalSync(true);
 
     // Create a sprite for the background
     sf::Texture backgroundTexture;
