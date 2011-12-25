@@ -29,8 +29,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Transform.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/GlResource.hpp>
+#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <map>
@@ -39,31 +41,44 @@
 
 namespace sf
 {
-class Renderer;
+class InputStream;
+class Texture;
 
 ////////////////////////////////////////////////////////////
-/// \brief Pixel/fragment shader class
+/// \brief Shader class (vertex and fragment)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Shader : GlResource
+class SFML_API Shader : GlResource, NonCopyable
 {
+public :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Types of shaders
+    ///
+    ////////////////////////////////////////////////////////////
+    enum Type
+    {
+        Vertex,  ///< Vertex shader
+        Fragment ///< Fragment (pixel) shader
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Special type/value that can be passed to SetParameter,
+    ///        and that represents the texture of the object being drawn
+    ///
+    ////////////////////////////////////////////////////////////
+    struct CurrentTextureType {};
+    static CurrentTextureType CurrentTexture;
+
 public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// This constructor creates an invalid shader
+    /// This constructor creates an invalid shader.
     ///
     ////////////////////////////////////////////////////////////
     Shader();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Copy constructor
-    ///
-    /// \param copy Instance to copy
-    ///
-    ////////////////////////////////////////////////////////////
-    Shader(const Shader& copy);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -72,64 +87,139 @@ public :
     ~Shader();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the shader from a file
+    /// \brief Load either the vertex or fragment shader from a file
     ///
+    /// This function loads a single shader, either vertex or
+    /// fragment, identified by the second argument.
     /// The source must be a text file containing a valid
-    /// fragment shader in GLSL language. GLSL is a C-like
-    /// language dedicated to OpenGL shaders; you'll probably
-    /// need to read a good documentation for it before writing
-    /// your own shaders.
+    /// shader in GLSL language. GLSL is a C-like language
+    /// dedicated to OpenGL shaders; you'll probably need to
+    /// read a good documentation for it before writing your
+    /// own shaders.
     ///
-    /// \param filename Path of the shader file to load
+    /// \param filename Path of the vertex or fragment shader file to load
+    /// \param type     Type of shader (vertex or fragment)
     ///
     /// \return True if loading succeeded, false if it failed
     ///
     /// \see LoadFromMemory, LoadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& filename);
+    bool LoadFromFile(const std::string& filename, Type type);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the shader from a source code in memory
+    /// \brief Load both the vertex and fragment shaders from files
     ///
-    /// The source code must be a valid fragment shader in
-    /// GLSL language. GLSL is a C-like language dedicated
-    /// to OpenGL shaders; you'll probably need to read a
-    /// good documentation for it before writing your own shaders.
+    /// This function loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be text files containing valid shaders
+    /// in GLSL language. GLSL is a C-like language dedicated to
+    /// OpenGL shaders; you'll probably need to read a good documentation
+    /// for it before writing your own shaders.
+    ///
+    /// \param vertexShaderFilename   Path of the vertex shader file to load
+    /// \param fragmentShaderFilename Path of the fragment shader file to load
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see LoadFromMemory, LoadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    bool LoadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load either the vertex or fragment shader from a source code in memory
+    ///
+    /// This function loads a single shader, either vertex or
+    /// fragment, identified by the second argument.
+    /// The source code must be a valid shader in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
     ///
     /// \param shader String containing the source code of the shader
+    /// \param type   Type of shader (vertex or fragment)
     ///
     /// \return True if loading succeeded, false if it failed
     ///
     /// \see LoadFromFile, LoadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const std::string& shader);
+    bool LoadFromMemory(const std::string& shader, Type type);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the shader from a custom stream
+    /// \brief Load both the vertex and fragment shaders from source codes in memory
     ///
-    /// The source code must be a valid fragment shader in
-    /// GLSL language. GLSL is a C-like language dedicated
-    /// to OpenGL shaders; you'll probably need to read a
-    /// good documentation for it before writing your own shaders.
+    /// This function loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be valid shaders in GLSL language. GLSL is
+    /// a C-like language dedicated to OpenGL shaders; you'll
+    /// probably need to read a good documentation for it before
+    /// writing your own shaders.
+    ///
+    /// \param vertexShader   String containing the source code of the vertex shader
+    /// \param fragmentShader String containing the source code of the fragment shader
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see LoadFromFile, LoadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    bool LoadFromMemory(const std::string& vertexShader, const std::string& fragmentShader);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load either the vertex or fragment shader from a custom stream
+    ///
+    /// This function loads a single shader, either vertex or
+    /// fragment, identified by the second argument.
+    /// The source code must be a valid shader in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for it
+    /// before writing your own shaders.
     ///
     /// \param stream Source stream to read from
+    /// \param type   Type of shader (vertex or fragment)
     ///
     /// \return True if loading succeeded, false if it failed
     ///
     /// \see LoadFromFile, LoadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromStream(InputStream& stream);
+    bool LoadFromStream(InputStream& stream, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load both the vertex and fragment shaders from custom streams
+    ///
+    /// This function loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The source codes must be valid shaders in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param vertexShaderStream   Source stream to read the vertex shader from
+    /// \param fragmentShaderStream Source stream to read the fragment shader from
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see LoadFromFile, LoadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    bool LoadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a float parameter of the shader
     ///
     /// \a name is the name of the variable to change in the shader.
-    /// For example:
+    /// The corresponding parameter in the shader must be a float
+    /// (float GLSL type).
+    ///
+    /// Example:
     /// \code
-    /// uniform float myparam; // this is the variable in the pixel shader
+    /// uniform float myparam; // this is the variable in the shader
     /// \endcode
     /// \code
     /// shader.SetParameter("myparam", 5.2f);
@@ -138,8 +228,6 @@ public :
     /// \param name Name of the parameter in the shader
     /// \param x    Value to assign
     ///
-    /// \see SetTexture, SetCurrentTexture
-    ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, float x);
 
@@ -147,9 +235,12 @@ public :
     /// \brief Change a 2-components vector parameter of the shader
     ///
     /// \a name is the name of the variable to change in the shader.
-    /// For example:
+    /// The corresponding parameter in the shader must be a 2x1 vector
+    /// (vec2 GLSL type).
+    ///
+    /// Example:
     /// \code
-    /// uniform vec2 myparam; // this is the variable in the pixel shader
+    /// uniform vec2 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
     /// shader.SetParameter("myparam", 5.2f, 6.0f);
@@ -159,8 +250,6 @@ public :
     /// \param x    First component of the value to assign
     /// \param y    Second component of the value to assign
     ///
-    /// \see SetTexture, SetCurrentTexture
-    ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, float x, float y);
 
@@ -168,9 +257,12 @@ public :
     /// \brief Change a 3-components vector parameter of the shader
     ///
     /// \a name is the name of the variable to change in the shader.
-    /// For example:
+    /// The corresponding parameter in the shader must be a 3x1 vector
+    /// (vec3 GLSL type).
+    ///
+    /// Example:
     /// \code
-    /// uniform vec3 myparam; // this is the variable in the pixel shader
+    /// uniform vec3 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
     /// shader.SetParameter("myparam", 5.2f, 6.0f, -8.1f);
@@ -181,8 +273,6 @@ public :
     /// \param y    Second component of the value to assign
     /// \param z    Third component of the value to assign
     ///
-    /// \see SetTexture, SetCurrentTexture
-    ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, float x, float y, float z);
 
@@ -190,9 +280,12 @@ public :
     /// \brief Change a 4-components vector parameter of the shader
     ///
     /// \a name is the name of the variable to change in the shader.
-    /// For example:
+    /// The corresponding parameter in the shader must be a 4x1 vector
+    /// (vec4 GLSL type).
+    ///
+    /// Example:
     /// \code
-    /// uniform vec4 myparam; // this is the variable in the pixel shader
+    /// uniform vec4 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
     /// shader.SetParameter("myparam", 5.2f, 6.0f, -8.1f, 0.4f);
@@ -204,8 +297,6 @@ public :
     /// \param z    Third component of the value to assign
     /// \param w    Fourth component of the value to assign
     ///
-    /// \see SetTexture, SetCurrentTexture
-    ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, float x, float y, float z, float w);
 
@@ -213,9 +304,12 @@ public :
     /// \brief Change a 2-components vector parameter of the shader
     ///
     /// \a name is the name of the variable to change in the shader.
-    /// For example:
+    /// The corresponding parameter in the shader must be a 2x1 vector
+    /// (vec2 GLSL type).
+    ///
+    /// Example:
     /// \code
-    /// uniform vec2 myparam; // this is the variable in the pixel shader
+    /// uniform vec2 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
     /// shader.SetParameter("myparam", sf::Vector2f(5.2f, 6.0f));
@@ -224,8 +318,6 @@ public :
     /// \param name   Name of the parameter in the shader
     /// \param vector Vector to assign
     ///
-    /// \see SetTexture, SetCurrentTexture
-    ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, const Vector2f& vector);
 
@@ -233,9 +325,12 @@ public :
     /// \brief Change a 2-components vector parameter of the shader
     ///
     /// \a name is the name of the variable to change in the shader.
-    /// For example:
+    /// The corresponding parameter in the shader must be a 3x1 vector
+    /// (vec3 GLSL type).
+    ///
+    /// Example:
     /// \code
-    /// uniform vec3 myparam; // this is the variable in the pixel shader
+    /// uniform vec3 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
     /// shader.SetParameter("myparam", sf::Vector3f(5.2f, 6.0f, -8.1f));
@@ -244,59 +339,113 @@ public :
     /// \param name   Name of the parameter in the shader
     /// \param vector Vector to assign
     ///
-    /// \see SetTexture, SetCurrentTexture
-    ///
     ////////////////////////////////////////////////////////////
     void SetParameter(const std::string& name, const Vector3f& vector);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Change a texture parameter of the shader
+    /// \brief Change a color parameter of the shader
     ///
-    /// \a name is the name of the texture to change in the shader.
-    /// This function maps an external texture to the given shader
-    /// variable; to use the current texture of the object being drawn,
-    /// use SetCurrentTexture instead.
+    /// \a name is the name of the variable to change in the shader.
+    /// The corresponding parameter in the shader must be a 4x1 vector
+    /// (vec4 GLSL type).
+    ///
+    /// It is important to note that the components of the color are
+    /// normalized before being passed to the shader. Therefore,
+    /// they are converted from range [0 .. 255] to range [0 .. 1].
+    /// For example, a sf::Color(255, 125, 0, 255) will be transformed
+    /// to a vec4(1.0, 0.5, 0.0, 1.0) in the shader.
+    ///
     /// Example:
     /// \code
-    /// // These are the variables in the pixel shader
-    /// uniform sampler2D the_texture;
+    /// uniform vec4 color; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// shader.SetParameter("color", sf::Color(255, 128, 0, 255));
+    /// \endcode
+    ///
+    /// \param name  Name of the parameter in the shader
+    /// \param color Color to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetParameter(const std::string& name, const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a matrix parameter of the shader
+    ///
+    /// \a name is the name of the variable to change in the shader.
+    /// The corresponding parameter in the shader must be a 4x4 matrix
+    /// (mat4 GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform mat4 matrix; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// sf::Transform transform;
+    /// transform.Translate(5, 10);
+    /// shader.SetParameter("matrix", transform);
+    /// \endcode
+    ///
+    /// \param name      Name of the parameter in the shader
+    /// \param transform Transform to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetParameter(const std::string& name, const sf::Transform& transform);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a texture parameter of the shader
+    ///
+    /// \a name is the name of the variable to change in the shader.
+    /// The corresponding parameter in the shader must be a 2D texture
+    /// (sampler2D GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform sampler2D the_texture; // this is the variable in the shader
     /// \endcode
     /// \code
     /// sf::Texture texture;
     /// ...
-    /// shader.SetTexture("the_texture", texture);
+    /// shader.SetParameter("the_texture", texture);
     /// \endcode
     /// It is important to note that \a texture must remain alive as long
     /// as the shader uses it, no copy is made internally.
     ///
+    /// To use the texture of the object being draw, which cannot be
+    /// known in advance, you can pass the special value
+    /// sf::Shader::CurrentTexture:
+    /// \code
+    /// shader.SetParameter("the_texture", sf::Shader::CurrentTexture).
+    /// \endcode
+    ///
     /// \param name    Name of the texture in the shader
     /// \param texture Texture to assign
     ///
-    /// \see SetParameter, SetCurrentTexture
-    ///
     ////////////////////////////////////////////////////////////
-    void SetTexture(const std::string& name, const Texture& texture);
+    void SetParameter(const std::string& name, const Texture& texture);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the current object texture in the shader
+    /// \brief Change a texture parameter of the shader
     ///
-    /// This function maps a shader texture variable to the
-    /// texture of the object being drawn.
+    /// This overload maps a shader texture variable to the
+    /// texture of the object being drawn, which cannot be
+    /// known in advance. The second argument must be
+    /// sf::Shader::CurrentTexture.
+    /// The corresponding parameter in the shader must be a 2D texture
+    /// (sampler2D GLSL type).
+    ///
     /// Example:
     /// \code
-    /// // This is the variable in the pixel shader
-    /// uniform sampler2D current;
+    /// uniform sampler2D current; // this is the variable in the shader
     /// \endcode
     /// \code
-    /// shader.SetCurrentTexture("current");
+    /// shader.SetParameter("current", sf::Shader::CurrentTexture);
     /// \endcode
     ///
     /// \param name Name of the texture in the shader
     ///
-    /// \see SetParameter, SetTexture
-    ///
     ////////////////////////////////////////////////////////////
-    void SetCurrentTexture(const std::string& name);
+    void SetParameter(const std::string& name, CurrentTextureType);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind the shader for rendering (activate it)
@@ -329,16 +478,6 @@ public :
     void Unbind() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Overload of assignment operator
-    ///
-    /// \param right Instance to assign
-    ///
-    /// \return Reference to self
-    ///
-    ////////////////////////////////////////////////////////////
-    Shader& operator =(const Shader& right);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the system supports shaders
     ///
     /// This function should always be called before using
@@ -352,15 +491,19 @@ public :
 
 private :
 
-    friend class Renderer;
-
     ////////////////////////////////////////////////////////////
-    /// \brief Create the program and attach the shaders
+    /// \brief Compile the shader(s) and create the program
+    ///
+    /// If one of the arguments is NULL, the corresponding shader
+    /// is not created.
+    ///
+    /// \param vertexShaderCode   Source code of the vertex shader
+    /// \param fragmentShaderCode Source code of the fragment shader
     ///
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    bool CompileProgram();
+    bool CompileProgram(const char* vertexShaderCode, const char* fragmentShaderCode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind all the textures used by the shader
@@ -370,16 +513,6 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     void BindTextures() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Make sure that the shader is ready to be used
-    ///
-    /// This function is called by the Renderer class, to make
-    /// sure that the shader's parameters are properly applied
-    /// even when Use() is not called due to internal optimizations.
-    ///
-    ////////////////////////////////////////////////////////////
-    void Use() const;
 
     ////////////////////////////////////////////////////////////
     // Types
@@ -392,7 +525,6 @@ private :
     unsigned int myShaderProgram;  ///< OpenGL identifier for the program
     int          myCurrentTexture; ///< Location of the current texture in the shader
     TextureTable myTextures;       ///< Texture variables in the shader, mapped to their location
-    std::string  myFragmentShader; ///< Fragment shader source code
 };
 
 } // namespace sf
@@ -405,34 +537,44 @@ private :
 /// \class sf::Shader
 /// \ingroup graphics
 ///
-/// Pixel shaders (or fragment shaders) are programs written
-/// using a specific language, executed directly by the
-/// graphics card and allowing to apply per-pixel real-time
-/// operations to the rendered entities.
+/// Shaders are programs written using a specific language,
+/// executed directly by the graphics card and allowing
+/// to apply real-time operations to the rendered entities.
 ///
-/// Pixel shaders are written in GLSL, which is a C-like
+/// There are two kinds of shaders:
+/// \li Vertex shaders, that process vertices
+/// \li Fragment (pixel) shaders, that process pixels
+///
+/// A sf::Shader can be composed of either a vertex shader
+/// alone, a fragment shader alone, or both combined
+/// (see the variants of the Load functions).
+///
+/// Shaders are written in GLSL, which is a C-like
 /// language dedicated to OpenGL shaders. You'll probably
 /// need to learn its basics before writing your own shaders
 /// for SFML.
 ///
 /// Like any C/C++ program, a shader has its own variables
 /// that you can set from your C++ application. sf::Shader
-/// handles 3 different types of variables:
+/// handles 4 different types of variables:
 /// \li floats
 /// \li vectors (2, 3 or 4 components)
 /// \li textures
+/// \li transforms (matrices)
 ///
 /// The value of the variables can be changed at any time
-/// with either Shader::SetParameter or Shader::SetTexture:
+/// with either the various overloads of the SetParameter function:
 /// \code
 /// shader.SetParameter("offset", 2.f);
 /// shader.SetParameter("color", 0.5f, 0.8f, 0.3f);
-/// shader.SetTexture("overlay", texture); // texture is a sf::Texture
-/// shader.SetCurrentTexture("texture");
+/// shader.SetParameter("matrix", transform); // transform is a sf::Transform
+/// shader.SetParameter("overlay", texture); // texture is a sf::Texture
+/// shader.SetParameter("texture", sf::Shader::CurrentTexture);
 /// \endcode
 ///
-/// Shader::SetCurrentTexture maps the given texture variable
-/// to the current texture of the object being drawn.
+/// The special Shader::CurrentTexture argument maps the
+/// given texture variable to the current texture of the
+/// object being drawn (which cannot be known in advance).
 ///
 /// To apply a shader to a drawable, you must pass it as an
 /// additional parameter to the Draw function:
@@ -440,15 +582,22 @@ private :
 /// window.Draw(sprite, shader);
 /// \endcode
 ///
-/// Shaders can be used on any drawable, but they are mainly
-/// made for sf::Sprite. Using a shader on a sf::String is more
-/// limited, because the texture of the text is not the
-/// actual text that you see on screen, it is a big texture
-/// containing all the characters of the font in an arbitrary
-/// order. Thus, texture lookups on pixels other than the current
-/// one may not give you the expected result. Using a shader
-/// with sf::Shape is even more limited, as shapes don't use
-/// any texture.
+/// ... which is in fact just a shortcut for this:
+/// \code
+/// sf::RenderStates states;
+/// states.Shader = shader;
+/// window.Draw(sprite, states);
+/// \endcode
+///
+/// Shaders can be used on any drawable, but some combinations are
+/// not interesting. For example, using a vertex shader on a sf::Sprite
+/// is limited because there are only 4 vertices, the sprite would
+/// have to be subdivided in order to apply wave effects.
+/// Another bad example is a fragment shader with sf::Text: the texture
+/// of the text is not the actual text that you see on screen, it is
+/// a big texture containing all the characters of the font in an
+/// arbitrary order; thus, texture lookups on pixels other than the
+/// current one may not give you the expected result.
 ///
 /// Shaders can also be used to apply global post-effects to the
 /// current contents of the target (like the old sf::PostFx class
@@ -462,11 +611,11 @@ private :
 /// The first technique is more optimized because it doesn't involve
 /// retrieving the target's pixels to system memory, but the
 /// second one doesn't impact the rendering process and can be
-/// easily inserted anywhere.
+/// easily inserted anywhere without impacting all the code.
 ///
 /// Like sf::Texture that can be used as a raw OpenGL texture,
-/// sf::Shader can also be used directly as a raw fragment
-/// shader for custom OpenGL geometry.
+/// sf::Shader can also be used directly as a raw shader for
+/// custom OpenGL geometry.
 /// \code
 /// window.SetActive();
 /// shader.Bind();

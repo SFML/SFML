@@ -5,9 +5,9 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Graphics)
 # all source files
 set(SRC
     ${SRCROOT}/Arial.hpp
+    ${INCROOT}/BlendMode.hpp
     ${SRCROOT}/Color.cpp
     ${INCROOT}/Color.hpp
-    ${SRCROOT}/Drawable.cpp
     ${INCROOT}/Drawable.hpp
     ${SRCROOT}/Font.cpp
     ${INCROOT}/Font.hpp
@@ -18,13 +18,11 @@ set(SRC
     ${INCROOT}/Image.hpp
     ${SRCROOT}/ImageLoader.cpp
     ${SRCROOT}/ImageLoader.hpp
-    ${SRCROOT}/Matrix3.cpp
-    ${INCROOT}/Matrix3.hpp
-    ${INCROOT}/Matrix3.inl
+    ${INCROOT}/PrimitiveType.hpp
     ${INCROOT}/Rect.hpp
     ${INCROOT}/Rect.inl
-    ${SRCROOT}/Renderer.cpp
-    ${INCROOT}/Renderer.hpp
+    ${SRCROOT}/RenderStates.cpp
+    ${INCROOT}/RenderStates.hpp
     ${SRCROOT}/RenderTexture.cpp
     ${INCROOT}/RenderTexture.hpp
     ${SRCROOT}/RenderTextureImpl.cpp
@@ -41,14 +39,30 @@ set(SRC
     ${INCROOT}/Shader.hpp
     ${SRCROOT}/Shape.cpp
     ${INCROOT}/Shape.hpp
+    ${SRCROOT}/CircleShape.cpp
+    ${INCROOT}/CircleShape.hpp
+    ${SRCROOT}/RectangleShape.cpp
+    ${INCROOT}/RectangleShape.hpp
+    ${SRCROOT}/ConvexShape.cpp
+    ${INCROOT}/ConvexShape.hpp
     ${SRCROOT}/Sprite.cpp
     ${INCROOT}/Sprite.hpp
     ${SRCROOT}/Text.cpp
     ${INCROOT}/Text.hpp
     ${SRCROOT}/Texture.cpp
     ${INCROOT}/Texture.hpp
+    ${SRCROOT}/TextureSaver.cpp
+    ${SRCROOT}/TextureSaver.hpp
+    ${SRCROOT}/Transform.cpp
+    ${INCROOT}/Transform.hpp
+    ${SRCROOT}/Transformable.cpp
+    ${INCROOT}/Transformable.hpp
     ${SRCROOT}/View.cpp
     ${INCROOT}/View.hpp
+    ${SRCROOT}/Vertex.cpp
+    ${INCROOT}/Vertex.hpp
+    ${SRCROOT}/VertexArray.cpp
+    ${INCROOT}/VertexArray.hpp
     ${SRCROOT}/stb_image/stb_image.h
     ${SRCROOT}/stb_image/stb_image_write.h
 )

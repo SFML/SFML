@@ -81,8 +81,8 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
         return EXIT_FAILURE;
     sf::Sprite sprite1(texture1);
     sf::Sprite sprite2(texture2);
-    sprite1.SetOrigin(sprite1.GetSize() / 2.f);
-    sprite1.SetPosition(sprite1.GetSize() / 2.f);
+    sprite1.SetOrigin(texture1.GetWidth() / 2.f, texture1.GetHeight() / 2.f);
+    sprite1.SetPosition(sprite1.GetOrigin());
 
     // Create a clock for measuring elapsed time
     sf::Clock clock;
@@ -100,16 +100,18 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
         }
         else
         {
+            sf::Uint32 time = clock.GetElapsedTime();
+
             // Clear views
             SFMLView1.Clear();
             SFMLView2.Clear();
 
             // Draw sprite 1 on view 1
-            sprite1.SetRotation(clock.GetElapsedTime() * 0.1f);
+            sprite1.SetRotation(time * 0.1f);
             SFMLView1.Draw(sprite1);
 
             // Draw sprite 2 on view 2
-            sprite2.SetX(cos(clock.GetElapsedTime() * 0.001f) * 100.f);
+            sprite2.SetPosition(std::cos(time * 0.001f) * 100.f, 0.f);
             SFMLView2.Draw(sprite2);
 
             // Display each view on screen

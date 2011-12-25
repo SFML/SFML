@@ -451,7 +451,7 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         Page& page = myPages[characterSize];
 
         // Find a good position for the new glyph into the texture
-        glyph.SubRect = FindGlyphRect(page, width + 2 * padding, height + 2 * padding);
+        glyph.TextureRect = FindGlyphRect(page, width + 2 * padding, height + 2 * padding);
 
         // Compute the glyph's bounding box
         glyph.Bounds.Left   = bitmapGlyph->left - padding;
@@ -492,10 +492,10 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         }
 
         // Write the pixels to the texture
-        unsigned int x      = glyph.SubRect.Left + padding;
-        unsigned int y      = glyph.SubRect.Top + padding;
-        unsigned int width  = glyph.SubRect.Width - 2 * padding;
-        unsigned int height = glyph.SubRect.Height - 2 * padding;
+        unsigned int x      = glyph.TextureRect.Left + padding;
+        unsigned int y      = glyph.TextureRect.Top + padding;
+        unsigned int width  = glyph.TextureRect.Width - 2 * padding;
+        unsigned int height = glyph.TextureRect.Height - 2 * padding;
         page.Texture.Update(&myPixelBuffer[0], width, height, x, y);
     }
 

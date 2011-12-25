@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/Matrix3.hpp>
+#include <SFML/Graphics/Transform.hpp>
 #include <SFML/System/Vector2.hpp>
 
 
@@ -241,42 +241,42 @@ public :
     void Zoom(float factor);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the projection matrix of the view
+    /// \brief Get the projection transform of the view
     ///
-    /// This functions is meant for internal use only.
+    /// This function is meant for internal use only.
     ///
-    /// \return Projection matrix defining the view
+    /// \return Projection transform defining the view
     ///
-    /// \see GetInverseMatrix
+    /// \see GetInverseTransform
     ///
     ////////////////////////////////////////////////////////////
-    const Matrix3& GetMatrix() const;
+    const Transform& GetTransform() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the inverse projection matrix of the view
+    /// \brief Get the inverse projection transform of the view
     ///
-    /// This functions is meant for internal use only.
+    /// This function is meant for internal use only.
     ///
-    /// \return Inverse of the projection matrix defining the view
+    /// \return Inverse of the projection transform defining the view
     ///
-    /// \see GetMatrix
+    /// \see GetTransform
     ///
     ////////////////////////////////////////////////////////////
-    const Matrix3& GetInverseMatrix() const;
+    const Transform& GetInverseTransform() const;
 
 private :
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f        myCenter;           ///< Center of the view, in scene coordinates
-    Vector2f        mySize;             ///< Size of the view, in scene coordinates
-    float           myRotation;         ///< Angle of rotation of the view rectangle, in degrees
-    FloatRect       myViewport;         ///< Viewport rectangle, expressed as a factor of the render-target's size
-    mutable Matrix3 myMatrix;           ///< Precomputed projection matrix corresponding to the view
-    mutable Matrix3 myInverseMatrix;    ///< Precomputed inverse projection matrix corresponding to the view
-    mutable bool    myMatrixUpdated;    ///< Internal state telling if the matrix needs to be updated
-    mutable bool    myInvMatrixUpdated; ///< Internal state telling if the matrix needs to be updated
+    Vector2f          myCenter;              ///< Center of the view, in scene coordinates
+    Vector2f          mySize;                ///< Size of the view, in scene coordinates
+    float             myRotation;            ///< Angle of rotation of the view rectangle, in degrees
+    FloatRect         myViewport;            ///< Viewport rectangle, expressed as a factor of the render-target's size
+    mutable Transform myTransform;           ///< Precomputed projection transform corresponding to the view
+    mutable Transform myInverseTransform;    ///< Precomputed inverse projection transform corresponding to the view
+    mutable bool      myTransformUpdated;    ///< Internal state telling if the transform needs to be updated
+    mutable bool      myInvTransformUpdated; ///< Internal state telling if the inverse transform needs to be updated
 };
 
 } // namespace sf

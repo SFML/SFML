@@ -83,7 +83,7 @@ bool RenderTextureImplFBO::IsAvailable()
 ////////////////////////////////////////////////////////////
 bool RenderTextureImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
-    //Create the context
+    // Create the context
     myContext = new Context;
 
     // Create the framebuffer object

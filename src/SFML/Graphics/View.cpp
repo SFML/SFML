@@ -26,18 +26,19 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/View.hpp>
+#include <cmath>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 View::View() :
-myCenter          (),
-mySize            (),
-myRotation        (0),
-myViewport        (0, 0, 1, 1),
-myMatrixUpdated   (false),
-myInvMatrixUpdated(false)
+myCenter             (),
+mySize               (),
+myRotation           (0),
+myViewport           (0, 0, 1, 1),
+myTransformUpdated   (false),
+myInvTransformUpdated(false)
 {
     Reset(FloatRect(0, 0, 1000, 1000));
 }
@@ -45,12 +46,12 @@ myInvMatrixUpdated(false)
 
 ////////////////////////////////////////////////////////////
 View::View(const FloatRect& rectangle) :
-myCenter          (),
-mySize            (),
-myRotation        (0),
-myViewport        (0, 0, 1, 1),
-myMatrixUpdated   (false),
-myInvMatrixUpdated(false)
+myCenter             (),
+mySize               (),
+myRotation           (0),
+myViewport           (0, 0, 1, 1),
+myTransformUpdated   (false),
+myInvTransformUpdated(false)
 {
     Reset(rectangle);
 }
@@ -58,12 +59,12 @@ myInvMatrixUpdated(false)
 
 ////////////////////////////////////////////////////////////
 View::View(const Vector2f& center, const Vector2f& size) :
-myCenter          (center),
-mySize            (size),
-myRotation        (0),
-myViewport        (0, 0, 1, 1),
-myMatrixUpdated   (false),
-myInvMatrixUpdated(false)
+myCenter             (center),
+mySize               (size),
+myRotation           (0),
+myViewport           (0, 0, 1, 1),
+myTransformUpdated   (false),
+myInvTransformUpdated(false)
 {
 
 }
@@ -74,8 +75,8 @@ void View::SetCenter(float x, float y)
     myCenter.x = x;
     myCenter.y = y;
 
-    myMatrixUpdated    = false;
-    myInvMatrixUpdated = false;
+    myTransformUpdated    = false;
+    myInvTransformUpdated = false;
 }
 
 
@@ -92,8 +93,8 @@ void View::SetSize(float width, float height)
     mySize.x = width;
     mySize.y = height;
 
-    myMatrixUpdated    = false;
-    myInvMatrixUpdated = false;
+    myTransformUpdated    = false;
+    myInvTransformUpdated = false;
 }
 
 
@@ -111,8 +112,8 @@ void View::SetRotation(float angle)
     if (myRotation < 0)
         myRotation += 360.f;
 
-    myMatrixUpdated    = false;
-    myInvMatrixUpdated = false;
+    myTransformUpdated    = false;
+    myInvTransformUpdated = false;
 }
 
 
@@ -132,8 +133,8 @@ void View::Reset(const FloatRect& rectangle)
     mySize.y   = rectangle.Height;
     myRotation = 0;
 
-    myMatrixUpdated    = false;
-    myInvMatrixUpdated = false;
+    myTransformUpdated    = false;
+    myInvTransformUpdated = false;
 }
 
 
@@ -194,30 +195,46 @@ void View::Zoom(float factor)
 
 
 ////////////////////////////////////////////////////////////
-const Matrix3& View::GetMatrix() const
+const Transform& View::GetTransform() const
 {
     // Recompute the matrix if needed
-    if (!myMatrixUpdated)
+    if (!myTransformUpdated)
     {
-        myMatrix = Matrix3::Projection(myCenter, mySize, myRotation);
-        myMatrixUpdated = true;
+        // Rotation components
+        float angle  = myRotation * 3.141592654f / 180.f;
+        float cosine = static_cast<float>(std::cos(angle));
+        float sine   = static_cast<float>(std::sin(angle));
+        float tx     = -myCenter.x * cosine - myCenter.y * sine + myCenter.x;
+        float ty     =  myCenter.x * sine - myCenter.y * cosine + myCenter.y;
+
+        // Projection components
+        float a =  2.f / mySize.x;
+        float b = -2.f / mySize.y;
+        float c = -a * myCenter.x;
+        float d = -b * myCenter.y;
+
+        // Rebuild the projection matrix
+        myTransform = Transform( a * cosine, a * sine,   a * tx + c,
+                                -b * sine,   b * cosine, b * ty + d,
+                                 0.f,        0.f,        1.f);
+        myTransformUpdated = true;
     }
 
-    return myMatrix;
+    return myTransform;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Matrix3& View::GetInverseMatrix() const
+const Transform& View::GetInverseTransform() const
 {
     // Recompute the matrix if needed
-    if (!myInvMatrixUpdated)
+    if (!myInvTransformUpdated)
     {
-        myInverseMatrix = GetMatrix().GetInverse();
-        myInvMatrixUpdated = true;
+        myInverseTransform = GetTransform().GetInverse();
+        myInvTransformUpdated = true;
     }
 
-    return myInverseMatrix;
+    return myInverseTransform;
 }
 
 } // namespace sf

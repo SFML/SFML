@@ -2,71 +2,257 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "Effect.hpp"
 #include <SFML/Graphics.hpp>
-#include <map>
+#include <vector>
 #include <cmath>
 
 
-void DisplayError();
-
 ////////////////////////////////////////////////////////////
-/// A class to simplify shader selection
-///
+// "Pixelate" fragment shader
 ////////////////////////////////////////////////////////////
-class ShaderSelector
+class Pixelate : public Effect
 {
 public :
 
-    // Constructor
-    ShaderSelector(std::map<std::string, sf::Shader>& owner, const std::string& shader) :
-    myOwner   (&owner),
-    myIterator(owner.find(shader))
+    Pixelate() :
+    Effect("pixelate")
     {
     }
 
-    // Select the previous shader
-    void GotoPrevious()
+    bool OnLoad()
     {
-        if (myIterator == myOwner->begin())
-            myIterator = myOwner->end();
-        myIterator--;
+        // Load the texture and initialize the sprite
+        if (!myTexture.LoadFromFile("resources/background.jpg"))
+            return false;
+        mySprite.SetTexture(myTexture);
+
+        // Load the shader
+        if (!myShader.LoadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
+            return false;
+        myShader.SetParameter("texture", sf::Shader::CurrentTexture);
+
+        return true;
     }
 
-    // Select the next shader
-    void GotoNext()
+    void OnUpdate(float, float x, float y)
     {
-        myIterator++;
-        if (myIterator == myOwner->end())
-            myIterator = myOwner->begin();
+        myShader.SetParameter("pixel_threshold", (x + y) / 30);
     }
 
-    // Update the shader parameters
-    void Update(float x, float y)
+    void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        if      (myIterator->first == "blur")     myIterator->second.SetParameter("offset", x * y * 0.03f);
-        else if (myIterator->first == "colorize") myIterator->second.SetParameter("color", 0.3f, x, y);
-        else if (myIterator->first == "edge")     myIterator->second.SetParameter("threshold", x * y);
-        else if (myIterator->first == "fisheye")  myIterator->second.SetParameter("mouse", x, y);
-        else if (myIterator->first == "wave")     myIterator->second.SetParameter("offset", x, y);
-        else if (myIterator->first == "pixelate") myIterator->second.SetParameter("mouse", x, y);
+        states.Shader = &myShader;
+        target.Draw(mySprite, states);
     }
 
-    // Get the name of the current shader
-    const std::string& GetName() const
+private:
+
+    sf::Texture myTexture;
+    sf::Sprite mySprite;
+    sf::Shader myShader;
+};
+
+
+////////////////////////////////////////////////////////////
+// "Wave" vertex shader + "blur" fragment shader
+////////////////////////////////////////////////////////////
+class WaveBlur : public Effect
+{
+public :
+
+    WaveBlur() :
+    Effect("wave + blur")
     {
-        return myIterator->first;
     }
 
-    // Get the current shader
-    const sf::Shader& GetShader() const
+    bool OnLoad()
     {
-        return myIterator->second;
+        // Create the text
+        myText.SetString("Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
+                         "Mauris mi odio, bibendum quis fringilla a, laoreet vel orci. Proin vitae vulputate tortor.\n"
+                         "Praesent cursus ultrices justo, ut feugiat ante vehicula quis.\n"
+                         "Donec fringilla scelerisque mauris et viverra.\n"
+                         "Maecenas adipiscing ornare scelerisque. Nullam at libero elit.\n"
+                         "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n"
+                         "Nullam leo urna, tincidunt id semper eget, ultricies sed mi.\n"
+                         "Morbi mauris massa, commodo id dignissim vel, lobortis et elit.\n"
+                         "Fusce vel libero sed neque scelerisque venenatis.\n"
+                         "Integer mattis tincidunt quam vitae iaculis.\n"
+                         "Vivamus fringilla sem non velit venenatis fermentum.\n"
+                         "Vivamus varius tincidunt nisi id vehicula.\n"
+                         "Integer ullamcorper, enim vitae euismod rutrum, massa nisl semper ipsum,\n"
+                         "vestibulum sodales sem ante in massa.\n"
+                         "Vestibulum in augue non felis convallis viverra.\n"
+                         "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
+                         "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
+                         "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
+        myText.SetCharacterSize(22);
+        myText.SetPosition(30, 20);
+
+        // Load the shader
+        //if (!myShader.LoadFromFile("resources/wave.vert", sf::Shader::Vertex))
+        if (!myShader.LoadFromFile("resources/wave.vert", "resources/blur.frag"))
+            return false;
+
+        return true;
     }
 
-private :
+    void OnUpdate(float time, float x, float y)
+    {
+        myShader.SetParameter("wave_phase", time);
+        myShader.SetParameter("wave_amplitude", x * 40, y * 40);
+        myShader.SetParameter("blur_radius", (x + y) * 0.008f);
+    }
 
-    std::map<std::string, sf::Shader>* myOwner;
-    std::map<std::string, sf::Shader>::iterator myIterator;
+    void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        states.Shader = &myShader;
+        target.Draw(myText, states);
+    }
+
+private:
+
+    sf::Text myText;
+    sf::Shader myShader;
+};
+
+
+////////////////////////////////////////////////////////////
+// "Storm" vertex shader + "blink" fragment shader
+////////////////////////////////////////////////////////////
+class StormBlink : public Effect
+{
+public :
+
+    StormBlink() :
+    Effect("storm + blink")
+    {
+    }
+
+    bool OnLoad()
+    {
+        // Create the points
+        myPoints.SetPrimitiveType(sf::Points);
+        for (int i = 0; i < 40000; ++i)
+        {
+            float x = static_cast<float>(std::rand() % 800);
+            float y = static_cast<float>(std::rand() % 600);
+            sf::Uint8 r = std::rand() % 255;
+            sf::Uint8 g = std::rand() % 255;
+            sf::Uint8 b = std::rand() % 255;
+            myPoints.Append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
+        }
+
+        // Load the shader
+        if (!myShader.LoadFromFile("resources/storm.vert", "resources/blink.frag"))
+            return false;
+
+        return true;
+    }
+
+    void OnUpdate(float time, float x, float y)
+    {
+        float radius = 200 + std::cos(time) * 150;
+        myShader.SetParameter("storm_position", x * 800, y * 600);
+        myShader.SetParameter("storm_inner_radius", radius / 3);
+        myShader.SetParameter("storm_total_radius", radius);
+        myShader.SetParameter("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
+    }
+
+    void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        states.Shader = &myShader;
+        target.Draw(myPoints, states);
+    }
+
+private:
+
+    sf::VertexArray myPoints;
+    sf::Shader myShader;
+};
+
+
+////////////////////////////////////////////////////////////
+// "Edge" post-effect fragment shader
+////////////////////////////////////////////////////////////
+class Edge : public Effect
+{
+public :
+
+    Edge() :
+    Effect("edge post-effect")
+    {
+    }
+
+    bool OnLoad()
+    {
+        // Create the off-screen surface
+        if (!mySurface.Create(800, 600))
+            return false;
+        mySurface.SetSmooth(true);
+
+        // Load the textures
+        if (!myBackgroundTexture.LoadFromFile("resources/sfml.png"))
+            return false;
+        myBackgroundTexture.SetSmooth(true);
+        if (!myEntityTexture.LoadFromFile("resources/devices.png"))
+            return false;
+        myEntityTexture.SetSmooth(true);
+
+        // Initialize the background sprite
+        myBackgroundSprite.SetTexture(myBackgroundTexture);
+        myBackgroundSprite.SetPosition(135, 100);
+
+        // Load the moving entities
+        for (int i = 0; i < 6; ++i)
+        {
+            sf::Sprite entity(myEntityTexture, sf::IntRect(96 * i, 0, 96, 96));
+            myEntities.push_back(entity);
+        }
+
+        // Load the shader
+        if (!myShader.LoadFromFile("resources/edge.frag", sf::Shader::Fragment))
+            return false;
+        myShader.SetParameter("texture", sf::Shader::CurrentTexture);
+
+        return true;
+    }
+
+    void OnUpdate(float time, float x, float y)
+    {
+        myShader.SetParameter("edge_threshold", 1 - (x + y) / 2);
+
+        // Update the position of the moving entities
+        for (std::size_t i = 0; i < myEntities.size(); ++i)
+        {
+            float x = std::cos(0.25f * (time * i + (myEntities.size() - i))) * 300 + 350;
+            float y = std::sin(0.25f * (time * (myEntities.size() - i) + i)) * 200 + 250;
+            myEntities[i].SetPosition(x, y);
+        }
+
+        // Render the updated scene to the off-screen surface
+        mySurface.Clear(sf::Color::White);
+        mySurface.Draw(myBackgroundSprite);
+        for (std::size_t i = 0; i < myEntities.size(); ++i)
+            mySurface.Draw(myEntities[i]);
+        mySurface.Display();
+    }
+
+    void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        states.Shader = &myShader;
+        target.Draw(sf::Sprite(mySurface.GetTexture()), states);
+    }
+
+private:
+
+    sf::RenderTexture mySurface;
+    sf::Texture myBackgroundTexture;
+    sf::Texture myEntityTexture;
+    sf::Sprite myBackgroundSprite;
+    std::vector<sf::Sprite> myEntities;
+    sf::Shader myShader;
 };
 
 
@@ -78,203 +264,110 @@ private :
 ////////////////////////////////////////////////////////////
 int main()
 {
-    // Check that the system can use shaders
-    if (sf::Shader::IsAvailable() == false)
-    {
-        DisplayError();
-        return EXIT_SUCCESS;
-    }
-
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Shader");
+    window.EnableVerticalSync(true);
 
-    // Create the render texture
-    sf::RenderTexture texture;
-    if (!texture.Create(window.GetWidth(), window.GetHeight()))
+    // Create the effects
+    std::vector<Effect*> effects;
+    effects.push_back(new Pixelate);
+    effects.push_back(new WaveBlur);
+    effects.push_back(new StormBlink);
+    effects.push_back(new Edge);
+    std::size_t current = 0;
+
+    // Initialize them
+    for (std::size_t i = 0; i < effects.size(); ++i)
+        effects[i]->Load();
+
+    // Create the messages background
+    sf::Texture textBackgroundTexture;
+    if (!textBackgroundTexture.LoadFromFile("resources/text-background.png"))
         return EXIT_FAILURE;
+    sf::Sprite textBackground(textBackgroundTexture);
+    textBackground.SetPosition(0, 520);
+    textBackground.SetColor(sf::Color(255, 255, 255, 200));
 
-    // Load a background texture to display
-    sf::Texture backgroundTexture;
-    if (!backgroundTexture.LoadFromFile("resources/background.jpg"))
-        return EXIT_FAILURE;
-    sf::Sprite background(backgroundTexture);
-
-    // Load a sprite which we'll move into the scene
-    sf::Texture entityTexture;
-    if (!entityTexture.LoadFromFile("resources/sprite.png"))
-        return EXIT_FAILURE;
-    sf::Sprite entity(entityTexture);
-
-    // Load the text font
+    // Load the messages font
     sf::Font font;
     if (!font.LoadFromFile("resources/sansation.ttf"))
         return EXIT_FAILURE;
 
-    // Load the texture needed for the wave shader
-    sf::Texture waveTexture;
-    if (!waveTexture.LoadFromFile("resources/wave.jpg"))
-        return EXIT_FAILURE;
+    // Create the description text
+    sf::Text description("Current effect: " + effects[current]->GetName(), font, 20);
+    description.SetPosition(10, 530);
+    description.SetColor(sf::Color(80, 80, 80));
 
-    // Load all shaders
-    std::map<std::string, sf::Shader> shaders;
-    if (!shaders["nothing"].LoadFromFile("resources/nothing.sfx"))   return EXIT_FAILURE;
-    if (!shaders["blur"].LoadFromFile("resources/blur.sfx"))         return EXIT_FAILURE;
-    if (!shaders["colorize"].LoadFromFile("resources/colorize.sfx")) return EXIT_FAILURE;
-    if (!shaders["edge"].LoadFromFile("resources/edge.sfx"))         return EXIT_FAILURE;
-    if (!shaders["fisheye"].LoadFromFile("resources/fisheye.sfx"))   return EXIT_FAILURE;
-    if (!shaders["wave"].LoadFromFile("resources/wave.sfx"))         return EXIT_FAILURE;
-    if (!shaders["pixelate"].LoadFromFile("resources/pixelate.sfx")) return EXIT_FAILURE;
-    ShaderSelector backgroundShader(shaders, "nothing");
-    ShaderSelector entityShader(shaders, "nothing");
-    ShaderSelector globalShader(shaders, "nothing");
-
-    // Do specific initializations
-    shaders["nothing"].SetCurrentTexture("texture");
-    shaders["blur"].SetCurrentTexture("texture");
-    shaders["blur"].SetParameter("offset", 0.f);
-    shaders["colorize"].SetCurrentTexture("texture");
-    shaders["colorize"].SetParameter("color", 1.f, 1.f, 1.f);
-    shaders["edge"].SetCurrentTexture("texture");
-    shaders["fisheye"].SetCurrentTexture("texture");
-    shaders["wave"].SetCurrentTexture("texture");
-    shaders["wave"].SetTexture("wave", waveTexture);
-    shaders["pixelate"].SetCurrentTexture("texture");
-
-    // Define a string for displaying the description of the current shader
-    sf::Text shaderStr;
-    shaderStr.SetFont(font);
-    shaderStr.SetCharacterSize(20);
-    shaderStr.SetPosition(5.f, 0.f);
-    shaderStr.SetColor(sf::Color(250, 100, 30));
-    shaderStr.SetString("Background shader: \"" + backgroundShader.GetName() + "\"\n"
-                        "Flower shader: \"" + entityShader.GetName() + "\"\n"
-                        "Global shader: \"" + globalShader.GetName() + "\"\n");
-
-    // Define a string for displaying help
-    sf::Text infoStr;
-    infoStr.SetFont(font);
-    infoStr.SetCharacterSize(20);
-    infoStr.SetPosition(5.f, 500.f);
-    infoStr.SetColor(sf::Color(250, 100, 30));
-    infoStr.SetString("Move your mouse to change the shaders' parameters\n"
-                      "Press numpad 1/4 to change the background shader\n"
-                      "Press numpad 2/5 to change the flower shader\n"
-                      "Press numpad 3/6 to change the global shader");
-
-    // Create a clock to measure the total time elapsed
-    sf::Clock clock;
+    // Create the instructions text
+    sf::Text instructions("Press left and right arrows to change the current shader", font, 20);
+    instructions.SetPosition(280, 555);
+    instructions.SetColor(sf::Color(80, 80, 80));
 
     // Start the game loop
+    sf::Clock clock;
     while (window.IsOpened())
     {
         // Process events
         sf::Event event;
         while (window.PollEvent(event))
         {
-            // Close window : exit
+            // Close window: exit
             if (event.Type == sf::Event::Closed)
                 window.Close();
 
             if (event.Type == sf::Event::KeyPressed)
             {
-                // Escape key : exit
-                if (event.Key.Code == sf::Keyboard::Escape)
-                    window.Close();
-
-                // Numpad : switch effect
                 switch (event.Key.Code)
                 {
-                    case sf::Keyboard::Numpad1 : backgroundShader.GotoPrevious(); break;
-                    case sf::Keyboard::Numpad4 : backgroundShader.GotoNext();     break;
-                    case sf::Keyboard::Numpad2 : entityShader.GotoPrevious();     break;
-                    case sf::Keyboard::Numpad5 : entityShader.GotoNext();         break;
-                    case sf::Keyboard::Numpad3 : globalShader.GotoPrevious();     break;
-                    case sf::Keyboard::Numpad6 : globalShader.GotoNext();         break;
-                    default : break;
-                }
+                    // Escape key: exit
+                    case sf::Keyboard::Escape:
+                        window.Close();
+                        break;
 
-                // Update the text
-                shaderStr.SetString("Background shader: \"" + backgroundShader.GetName() + "\"\n"
-                                    "Entity shader: \"" + entityShader.GetName() + "\"\n"
-                                    "Global shader: \"" + globalShader.GetName() + "\"\n");
+                    // Left arrow key: previous shader
+                    case sf::Keyboard::Left:
+                        if (current == 0)
+                            current = effects.size() - 1;
+                        else
+                            current--;
+                        description.SetString("Current effect: " + effects[current]->GetName());
+                        break;
+
+                    // Right arrow key: next shader
+                    case sf::Keyboard::Right:
+                        if (current == effects.size() - 1)
+                            current = 0;
+                        else
+                            current++;
+                        description.SetString("Current effect: " + effects[current]->GetName());
+                        break;
+                }
             }
         }
 
-        // Get the mouse position in the range [0, 1]
-        float mouseX = sf::Mouse::GetPosition(window).x / static_cast<float>(window.GetWidth());
-        float mouseY = sf::Mouse::GetPosition(window).y / static_cast<float>(window.GetHeight());
-
-        // Update the shaders
-        backgroundShader.Update(mouseX, mouseY);
-        entityShader.Update(mouseX, mouseY);
-        globalShader.Update(mouseX, mouseY);
-
-        // Animate the entity
-        float entityX = (std::cos(clock.GetElapsedTime() * 0.0013f) + 1.2f) * 300;
-        float entityY = (std::cos(clock.GetElapsedTime() * 0.0008f) + 1.2f) * 200;
-        entity.SetPosition(entityX, entityY);
-        entity.Rotate(window.GetFrameTime() * 0.1f);
-
-        // Draw the background and the moving entity to the render texture
-        texture.Clear();
-        texture.Draw(background, backgroundShader.GetShader());
-        texture.Draw(entity, entityShader.GetShader());
-        texture.Display();
-
-        // Draw the contents of the render texture to the window
-        sf::Sprite screen(texture.GetTexture());
-        window.Draw(screen, globalShader.GetShader());
-
-        // Draw the interface texts
-        window.Draw(shaderStr);
-        window.Draw(infoStr);
-
-        // Finally, display the rendered frame on screen
-        window.Display();
-    }
-
-    return EXIT_SUCCESS;
-}
-
-
-////////////////////////////////////////////////////////////
-/// Fonction called when the post-effects are not supported ;
-/// Display an error message and wait until the user exits
-///
-////////////////////////////////////////////////////////////
-void DisplayError()
-{
-    // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Shader");
-
-    // Define a string for displaying the error message
-    sf::Text error("Sorry, your system doesn't support shaders");
-    error.SetPosition(100.f, 250.f);
-    error.SetColor(sf::Color(200, 100, 150));
-
-    // Start the game loop
-    while (window.IsOpened())
-    {
-        // Process events
-        sf::Event event;
-        while (window.PollEvent(event))
-        {
-            // Close window : exit
-            if (event.Type == sf::Event::Closed)
-                window.Close();
-
-            // Escape key : exit
-            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Keyboard::Escape))
-                window.Close();
-        }
+        // Update the current example
+        float x = static_cast<float>(sf::Mouse::GetPosition(window).x) / window.GetWidth();
+        float y = static_cast<float>(sf::Mouse::GetPosition(window).y) / window.GetHeight();
+        effects[current]->Update(clock.GetElapsedTime() / 1000.f, x, y);
 
         // Clear the window
-        window.Clear();
+        window.Clear(sf::Color(255, 128, 0));
 
-        // Draw the error message
-        window.Draw(error);
+        // Draw the current example
+        window.Draw(*effects[current]);
+
+        // Draw the text
+        window.Draw(textBackground);
+        window.Draw(instructions);
+        window.Draw(description);
 
         // Finally, display the rendered frame on screen
         window.Display();
     }
+
+    // delete the effects
+    for (std::size_t i = 0; i < effects.size(); ++i)
+        delete effects[i];
+
+    return EXIT_SUCCESS;
 }

@@ -25,67 +25,45 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTextureImplDefault.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/Graphics/TextureSaver.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/System/Err.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
 
 
 namespace sf
 {
-namespace priv
-{
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::RenderTextureImplDefault() :
-myContext(0),
-myWidth  (0),
-myHeight (0)
+ConvexShape::ConvexShape(unsigned int pointsCount)
 {
-
+    SetPointsCount(pointsCount);
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::~RenderTextureImplDefault()
+void ConvexShape::SetPointsCount(unsigned int count)
 {
-    // Destroy the context
-    delete myContext;
+    myPoints.resize(count);
+    Update();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
+unsigned int ConvexShape::GetPointsCount() const
 {
-    // Store the dimensions
-    myWidth = width;
-    myHeight = height;
-
-    // Create the in-memory OpenGL context
-    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
-
-    return true;
+    return myPoints.size();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Activate(bool active)
+void ConvexShape::SetPoint(unsigned int index, const Vector2f& point)
 {
-    return myContext->SetActive(active);
+    myPoints[index] = point;
+    Update();
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
+Vector2f ConvexShape::GetPoint(unsigned int index) const
 {
-    // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
-
-    // Copy the rendered pixels to the texture
-    GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
+    return myPoints[index];
 }
-
-} // namespace priv
 
 } // namespace sf

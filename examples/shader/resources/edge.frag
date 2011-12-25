@@ -1,5 +1,5 @@
 uniform sampler2D texture;
-uniform float threshold;
+uniform float edge_threshold;
 
 void main()
 {
@@ -23,9 +23,10 @@ void main()
 
     vec3 result = sqrt(hEdge.rgb * hEdge.rgb + vEdge.rgb * vEdge.rgb);
     float edge = length(result);
-    if (edge > threshold)
-        gl_FragColor.rgb = vec3(0, 0, 0);
+    vec4 pixel = gl_Color * texture2D(texture, gl_TexCoord[0].xy);
+    if (edge > (edge_threshold * 8.0))
+        pixel.rgb = vec3(0.0, 0.0, 0.0);
     else
-        gl_FragColor.rgb = vec3(1, 1, 1);
-	gl_FragColor.a = gl_Color.a * texture2D(texture, gl_TexCoord[0].xy).a;
+        pixel.a = edge_threshold;
+	gl_FragColor = pixel;
 }

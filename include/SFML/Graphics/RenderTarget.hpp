@@ -31,14 +31,17 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/Renderer.hpp>
 #include <SFML/Graphics/View.hpp>
+#include <SFML/Graphics/Transform.hpp>
+#include <SFML/Graphics/BlendMode.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 
 
 namespace sf
 {
 class Drawable;
-class Shader;
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
@@ -66,60 +69,16 @@ public :
     void Clear(const Color& color = Color(0, 0, 0, 255));
 
     ////////////////////////////////////////////////////////////
-    /// \brief Draw an object into the target
-    ///
-    /// This function draws anything that inherits from the
-    /// sf::Drawable base class (sf::Sprite, sf::Shape, sf::Text,
-    /// or even your own derived classes).
-    ///
-    /// \param object Object to draw
-    ///
-    ////////////////////////////////////////////////////////////
-    void Draw(const Drawable& object);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Draw an object into the target with a shader
-    ///
-    /// This function draws anything that inherits from the
-    /// sf::Drawable base class (sf::Sprite, sf::Shape, sf::Text,
-    /// or even your own derived classes).
-    /// The shader alters the way that the pixels are processed
-    /// right before being written to the render target.
-    ///
-    /// \param object Object to draw
-    /// \param shader Shader to use for drawing the object
-    ///
-    ////////////////////////////////////////////////////////////
-    void Draw(const Drawable& object, const Shader& shader);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the width of the rendering region of the target
-    ///
-    /// \return Width in pixels
-    ///
-    /// \see GetHeight
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual unsigned int GetWidth() const = 0;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the height of the rendering region of the target
-    ///
-    /// \return Height in pixels
-    ///
-    /// \see GetWidth
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual unsigned int GetHeight() const = 0;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Change the current active view
     ///
+    /// The view is like a 2D camera, it controls which part of
+    /// the 2D scene is visible, and how it is viewed in the
+    /// render-target.
     /// The new view will affect everything that is drawn, until
-    /// another view is activated.
+    /// another view is set.
     /// The render target keeps its own copy of the view object,
     /// so it is not necessary to keep the original one alive
-    /// as long as it is in use.
+    /// after calling this function.
     /// To restore the original view of the target, you can pass
     /// the result of GetDefaultView() to this function.
     ///
@@ -131,7 +90,7 @@ public :
     void SetView(const View& view);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Retrieve the view currently in use in the render target
+    /// \brief Get the view currently in use in the render target
     ///
     /// \return The view object that is currently used
     ///
@@ -219,10 +178,51 @@ public :
     Vector2f ConvertCoords(unsigned int x, unsigned int y, const View& view) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Draw a drawable object to the render-target
+    ///
+    /// \param drawable Object to draw
+    /// \param states   Render states to use for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void Draw(const Drawable& drawable, const RenderStates& states = RenderStates::Default);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw primitives defined by an array of vertices
+    ///
+    /// \param vertices      Pointer to the vertices
+    /// \param verticesCount Number of vertices in the array
+    /// \param type          Type of primitives to draw
+    /// \param states        Render states to use for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void Draw(const Vertex* vertices, unsigned int verticesCount,
+              PrimitiveType type, const RenderStates& states = RenderStates::Default);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Return the width of the rendering region of the target
+    ///
+    /// \return Width in pixels
+    ///
+    /// \see GetHeight
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual unsigned int GetWidth() const = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Return the height of the rendering region of the target
+    ///
+    /// \return Height in pixels
+    ///
+    /// \see GetWidth
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual unsigned int GetHeight() const = 0;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Save the current OpenGL render states and matrices
     ///
     /// This function can be used when you mix SFML drawing
-    /// and direct OpenGL rendering. Combined with RestoreGLStates,
+    /// and direct OpenGL rendering. Combined with PopGLStates,
     /// it ensures that:
     /// \li SFML's internal states are not messed up by your OpenGL code
     /// \li your OpenGL states are not modified by a call to a SFML function
@@ -231,34 +231,60 @@ public :
     /// calls Draw functions. Example:
     /// \code
     /// // OpenGL code here...
-    /// window.SaveGLStates();
+    /// window.PushGLStates();
     /// window.Draw(...);
     /// window.Draw(...);
-    /// window.RestoreGLStates();
+    /// window.PopGLStates();
     /// // OpenGL code here...
     /// \endcode
     ///
-    /// Note that this function is quite expensive and should be
-    /// used wisely. It is provided for convenience, and the best
-    /// results will be achieved if you handle OpenGL states
-    /// yourself (because you really know which states have really
-    /// changed, and need to be saved / restored).
+    /// Note that this function is quite expensive: it saves all the
+    /// possible OpenGL states and matrices, even the ones you
+    /// don't care about. Therefore it should be used wisely.
+    /// It is provided for convenience, but the best results will
+    /// be achieved if you handle OpenGL states yourself (because
+    /// you know which states have really changed, and need to be
+    /// saved and restored). Take a look at the ResetGLStates
+    /// function if you do so.
     ///
-    /// \see RestoreGLStates
+    /// \see PopGLStates
     ///
     ////////////////////////////////////////////////////////////
-    void SaveGLStates();
+    void PushGLStates();
 
     ////////////////////////////////////////////////////////////
     /// \brief Restore the previously saved OpenGL render states and matrices
     ///
-    /// See the description of SaveGLStates to get a detailed
+    /// See the description of PushGLStates to get a detailed
     /// description of these functions.
     ///
-    /// \see SaveGLStates
+    /// \see PushGLStates
     ///
     ////////////////////////////////////////////////////////////
-    void RestoreGLStates();
+    void PopGLStates();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Reset the internal OpenGL states so that the target is ready for drawing
+    ///
+    /// This function can be used when you mix SFML drawing
+    /// and direct OpenGL rendering, if you choose not to use
+    /// PushGLStates/PopGLStates. It makes sure that all OpenGL
+    /// states needed by SFML are set, so that subsequent Draw()
+    /// calls will work as expected.
+    ///
+    /// Example:
+    /// \code
+    /// // OpenGL code here...
+    /// glPushAttrib(...);
+    /// window.ResetGLStates();
+    /// window.Draw(...);
+    /// window.Draw(...);
+    /// glPopAttrib(...);
+    /// // OpenGL code here...
+    /// \endcode
+    ///
+    ////////////////////////////////////////////////////////////
+    void ResetGLStates();
 
 protected :
 
@@ -277,6 +303,44 @@ protected :
     ////////////////////////////////////////////////////////////
     void Initialize();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply the current view
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyCurrentView();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a new blending mode
+    ///
+    /// \param mode Blending mode to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyBlendMode(BlendMode mode);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a new transform
+    ///
+    /// \param transform Transform to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyTransform(const Transform& transform);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a new texture
+    ///
+    /// \param texture Texture to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyTexture(const Texture* texture);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a new shader
+    ///
+    /// \param shader Shader to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void ApplyShader(const Shader* shader);
+
 private :
 
     ////////////////////////////////////////////////////////////
@@ -294,13 +358,26 @@ private :
     virtual bool Activate(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Render states cache
+    ///
+    ////////////////////////////////////////////////////////////
+    struct StatesCache
+    {
+        enum {VertexCacheSize = 4};
+
+        bool      ViewChanged;    ///< Has the current view changed since last draw?
+        BlendMode LastBlendMode;  ///< Cached blending mode
+        Uint64    LastTextureId;  ///< Cached texture
+        bool      UseVertexCache; ///< Did we previously use the vertex cache?
+        Vertex    VertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
+    };
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Renderer myRenderer;       ///< Renderer that will process the rendering commands of the window
-    View     myDefaultView;    ///< Default view
-    View     myCurrentView;    ///< Current active view
-    bool     myStatesSaved;    ///< Are we between a SaveGLStates and a RestoreGLStates?
-    bool     myViewHasChanged; ///< Has the current view changed?
+    View        myDefaultView; ///< Default view
+    View        myView;        ///< Current view
+    StatesCache myCache;       ///< Render states cache
 };
 
 } // namespace sf
@@ -328,8 +405,8 @@ private :
 /// On top of that, render targets are still able to render direct
 /// OpenGL stuff. It is even possible to mix together OpenGL calls
 /// and regular SFML drawing commands. When doing so, make sure that
-/// OpenGL states are not messed up by calling the SaveGLStates /
-/// RestoreGLStates functions.
+/// OpenGL states are not messed up by calling the
+/// PushGLStates/PopGLStates functions.
 ///
 /// \see sf::RenderWindow, sf::RenderTexture, sf::View
 ///

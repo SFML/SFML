@@ -25,67 +25,60 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTextureImplDefault.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/Graphics/TextureSaver.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/System/Err.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <cmath>
 
 
 namespace sf
 {
-namespace priv
-{
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::RenderTextureImplDefault() :
-myContext(0),
-myWidth  (0),
-myHeight (0)
+CircleShape::CircleShape(float radius, unsigned int pointsCount) :
+myRadius     (radius),
+myPointsCount(pointsCount)
 {
-
+    Update();
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::~RenderTextureImplDefault()
+void CircleShape::SetRadius(float radius)
 {
-    // Destroy the context
-    delete myContext;
+    myRadius = radius;
+    Update();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
+float CircleShape::GetRadius() const
 {
-    // Store the dimensions
-    myWidth = width;
-    myHeight = height;
-
-    // Create the in-memory OpenGL context
-    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
-
-    return true;
+    return myRadius;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Activate(bool active)
+void CircleShape::SetPointsCount(unsigned int count)
 {
-    return myContext->SetActive(active);
+    myPointsCount = count;
+    Update();
+}
+
+////////////////////////////////////////////////////////////
+unsigned int CircleShape::GetPointsCount() const
+{
+    return myPointsCount;
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
+Vector2f CircleShape::GetPoint(unsigned int index) const
 {
-    // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
+    static const float pi = 3.141592654f;
 
-    // Copy the rendered pixels to the texture
-    GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
+    float angle = index * 2 * pi / myPointsCount - pi / 2;
+    float x = std::cos(angle) * myRadius;
+    float y = std::sin(angle) * myRadius;
+
+    return Vector2f(myRadius + x, myRadius + y);
 }
-
-} // namespace priv
 
 } // namespace sf

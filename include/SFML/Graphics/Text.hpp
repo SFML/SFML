@@ -30,9 +30,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 #include <string>
+#include <vector>
 
 
 namespace sf
@@ -41,7 +44,7 @@ namespace sf
 /// \brief Graphical text that can be drawn to a render target
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Text : public Drawable
+class SFML_API Text : public Drawable, public Transformable
 {
 public :
 
@@ -99,6 +102,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's font
     ///
+    /// The \a font argument refers to a texture that must
+    /// exist as long as the text uses it. Indeed, the text
+    /// doesn't store its own copy of the font, but rather keeps
+    /// a pointer to the one that you passed to this function.
+    /// If the font is destroyed and the text tries to
+    /// use it, the behaviour is undefined.
     /// Texts have a valid font by default, which the built-in
     /// Font::GetDefaultFont().
     ///
@@ -134,6 +143,18 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void SetStyle(Uint32 style);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the global color of the text
+    ///
+    /// By default, the text's color is opaque white.
+    ///
+    /// \param color New color of the text
+    ///
+    /// \see GetColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetColor(const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's string
@@ -188,13 +209,22 @@ public :
     Uint32 GetStyle() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the global color of the text
+    ///
+    /// \return Global color of the text
+    ///
+    /// \see SetColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& GetColor() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Return the position of the \a index-th character
     ///
     /// This function computes the visual position of a character
     /// from its index in the string. The returned position is
-    /// in local coordinates (translation, rotation, scale and
-    /// origin are not applied). You can easily get the corresponding
-    /// global position with the TransformToGlobal function.
+    /// in global coordinates (translation, rotation, scale and
+    /// origin are applied).
     /// If \a index is out of range, the position of the end of
     /// the string is returned.
     ///
@@ -203,46 +233,63 @@ public :
     /// \return Position of the character
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f GetCharacterPos(std::size_t index) const;
+    Vector2f FindCharacterPos(std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the bounding rectangle of the text
+    /// \brief Get the local bounding rectangle of the entity
     ///
-    /// The returned rectangle is in global coordinates.
+    /// The returned rectangle is in local coordinates, which means
+    /// that it ignores the transformations (translation, rotation,
+    /// scale, ...) that are applied to the entity.
+    /// In other words, this function returns the bounds of the
+    /// entity in the entity's coordinate system.
     ///
-    /// \return Bounding rectangle of the text
+    /// \return Local bounding rectangle of the entity
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect GetRect() const;
+    FloatRect GetLocalBounds() const;
 
-protected :
-
     ////////////////////////////////////////////////////////////
-    /// \brief Draw the object to a render target
+    /// \brief Get the global bounding rectangle of the entity
     ///
-    /// \param target   Render target
-    /// \param renderer Renderer providing low-level rendering commands
+    /// The returned rectangle is in global coordinates, which means
+    /// that it takes in account the transformations (translation,
+    /// rotation, scale, ...) that are applied to the entity.
+    /// In other words, this function returns the bounds of the
+    /// sprite in the global 2D world's coordinate system.
+    ///
+    /// \return Global bounding rectangle of the entity
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Render(RenderTarget& target, Renderer& renderer) const;
+    FloatRect GetGlobalBounds() const;
 
 private :
 
     ////////////////////////////////////////////////////////////
-    /// \brief Recompute the bounding rectangle
+    /// \brief Draw the text to a render target
+    ///
+    /// \param target Render target to draw to
+    /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    void UpdateRect() const;
+    virtual void Draw(RenderTarget& target, RenderStates states) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Update the text's geometry
+    ///
+    ////////////////////////////////////////////////////////////
+    void UpdateGeometry();
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    String            myString;        ///< String to display
-    const Font*       myFont;          ///< Font used to display the string
-    unsigned int      myCharacterSize; ///< Base size of characters, in pixels
-    Uint32            myStyle;         ///< Text style (see Style enum)
-    mutable FloatRect myBaseRect;      ///< Bounding rectangle of the text in object coordinates
-    mutable bool      myRectUpdated;   ///< Is the bounding rectangle up-to-date ?
+    String        myString;        ///< String to display
+    const Font*   myFont;          ///< Font used to display the string
+    unsigned int  myCharacterSize; ///< Base size of characters, in pixels
+    Uint32        myStyle;         ///< Text style (see Style enum)
+    Color         myColor;         ///< Text color
+    VertexArray   myVertices;      ///< Vertex array containing the text's geometry
+    FloatRect     myBounds;        ///< Bounding rectangle of the text (in local coordinates)
 };
 
 } // namespace sf
@@ -258,13 +305,13 @@ private :
 /// sf::Text is a drawable class that allows to easily display
 /// some text with custom style and color on a render target.
 ///
-/// It inherits all the functions from sf::Drawable:
-/// position, rotation, scale, origin, global color and blend
-/// mode. It also adds text-specific properties such as the
-/// font to use, the character size, the font style (bold,
-/// italic, underlined), and the text to display of course.
+/// It inherits all the functions from sf::Transformable:
+/// position, rotation, scale, origin. It also adds text-specific
+/// properties such as the font to use, the character size,
+/// the font style (bold, italic, underlined), the global color
+/// and the text to display of course.
 /// It also provides convenience functions to calculate the
-/// graphical size of the text, or to get the visual position
+/// graphical size of the text, or to get the global position
 /// of a given character.
 ///
 /// sf::Text works in combination with the sf::Font class, which
@@ -293,12 +340,17 @@ private :
 /// sf::Text text("hello");
 /// text.SetFont(font);
 /// text.SetCharacterSize(30);
-/// text.SetStyle(sf::Text::Regular);
+/// text.SetStyle(sf::Text::Bold);
+/// text.SetColor(sf::Color::Red);
 ///
-/// // Display it
-/// window.Draw(text); // window is a sf::RenderWindow
+/// // Draw it
+/// window.Draw(text);
 /// \endcode
 ///
-/// \see sf::Font
+/// Note that you don't need to load a font to draw text,
+/// SFML comes with a built-in font that is implicitely used
+/// by default.
+///
+/// \see sf::Font, sf::Transformable
 ///
 ////////////////////////////////////////////////////////////

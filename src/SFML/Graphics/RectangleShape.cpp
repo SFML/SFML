@@ -25,67 +25,52 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTextureImplDefault.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/Graphics/TextureSaver.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/System/Err.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <cmath>
 
 
 namespace sf
 {
-namespace priv
-{
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::RenderTextureImplDefault() :
-myContext(0),
-myWidth  (0),
-myHeight (0)
+RectangleShape::RectangleShape(const Vector2f& size)
 {
-
+    SetSize(size);
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::~RenderTextureImplDefault()
+void RectangleShape::SetSize(const Vector2f& size)
 {
-    // Destroy the context
-    delete myContext;
+    mySize = size;
+    Update();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
+const Vector2f& RectangleShape::GetSize() const
 {
-    // Store the dimensions
-    myWidth = width;
-    myHeight = height;
-
-    // Create the in-memory OpenGL context
-    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
-
-    return true;
+    return mySize;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Activate(bool active)
+unsigned int RectangleShape::GetPointsCount() const
 {
-    return myContext->SetActive(active);
+    return 4;
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
+Vector2f RectangleShape::GetPoint(unsigned int index) const
 {
-    // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
-
-    // Copy the rendered pixels to the texture
-    GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
+    switch (index)
+    {
+        default:
+        case 0: return Vector2f(0, 0);
+        case 1: return Vector2f(mySize.x, 0);
+        case 2: return Vector2f(mySize.x, mySize.y);
+        case 3: return Vector2f(0, mySize.y);
+    }
 }
-
-} // namespace priv
 
 } // namespace sf

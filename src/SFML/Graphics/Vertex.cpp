@@ -25,67 +25,53 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTextureImplDefault.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/Graphics/TextureSaver.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/System/Err.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 
 
 namespace sf
 {
-namespace priv
-{
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::RenderTextureImplDefault() :
-myContext(0),
-myWidth  (0),
-myHeight (0)
+Vertex::Vertex() :
+Position (0, 0),
+Color    (255, 255, 255),
+TexCoords(0, 0)
 {
-
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::~RenderTextureImplDefault()
+Vertex::Vertex(const Vector2f& position) :
+Position (position),
+Color    (255, 255, 255),
+TexCoords(0, 0)
 {
-    // Destroy the context
-    delete myContext;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
+Vertex::Vertex(const Vector2f& position, const sf::Color& color) :
+Position (position),
+Color    (color),
+TexCoords(0, 0)
 {
-    // Store the dimensions
-    myWidth = width;
-    myHeight = height;
-
-    // Create the in-memory OpenGL context
-    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
-
-    return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Activate(bool active)
+Vertex::Vertex(const Vector2f& position, const Vector2f& texCoords) :
+Position (position),
+Color    (255, 255, 255),
+TexCoords(texCoords)
 {
-    return myContext->SetActive(active);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
+Vertex::Vertex(const Vector2f& position, const sf::Color& color, const Vector2f& texCoords) :
+Position (position),
+Color    (color),
+TexCoords(texCoords)
 {
-    // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
-
-    // Copy the rendered pixels to the texture
-    GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
 }
-
-} // namespace priv
 
 } // namespace sf

@@ -154,6 +154,36 @@ public :
     T Height; ///< Height of the rectangle
 };
 
+////////////////////////////////////////////////////////////
+/// \relates Rect
+/// \brief Overload of binary operator ==
+///
+/// This operator compares strict equality between two rectangles.
+///
+/// \param left  Left operand (a rectangle)
+/// \param right Right operand (a rectangle)
+///
+/// \return True if \a left is equal to \a right
+///
+////////////////////////////////////////////////////////////
+template <typename T>
+bool operator ==(const Rect<T>& left, const Rect<T>& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Rect
+/// \brief Overload of binary operator !=
+///
+/// This operator compares strict difference between two rectangles.
+///
+/// \param left  Left operand (a rectangle)
+/// \param right Right operand (a rectangle)
+///
+/// \return True if \a left is not equal to \a right
+///
+////////////////////////////////////////////////////////////
+template <typename T>
+bool operator !=(const Rect<T>& left, const Rect<T>& right);
+
 #include <SFML/Graphics/Rect.inl>
 
 // Create typedefs for the most common types

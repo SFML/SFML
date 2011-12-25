@@ -4,7 +4,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-#include <iostream>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -77,9 +76,9 @@ int main()
         }
 
         // Draw the background
-        window.SaveGLStates();
+        window.PushGLStates();
         window.Draw(background);
-        window.RestoreGLStates();
+        window.PopGLStates();
 
         // Activate the window before using OpenGL commands.
         // This is useless here because we have only one window which is
@@ -138,12 +137,12 @@ int main()
         glEnd();
 
         // Draw some text on top of our OpenGL object
-        window.SaveGLStates();
+        window.PushGLStates();
         sf::Text text("SFML / OpenGL demo");
-        text.SetPosition(250.f, 450.f);
         text.SetColor(sf::Color(255, 255, 255, 170));
+        text.SetPosition(250.f, 450.f);
         window.Draw(text);
-        window.RestoreGLStates();
+        window.PopGLStates();
 
         // Finally, display the rendered frame on screen
         window.Display();

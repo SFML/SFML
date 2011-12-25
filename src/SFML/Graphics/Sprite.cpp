@@ -27,48 +27,44 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Renderer.hpp>
-#include <utility>
+#include <SFML/Graphics/RenderTarget.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 Sprite::Sprite() :
-Drawable    (),
-myTexture   (NULL),
-mySubRect   (0, 0, 1, 1),
-myIsFlippedX(false),
-myIsFlippedY(false)
+myTexture    (NULL),
+myTextureRect(0, 0, 0, 0)
 {
-
 }
 
 
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture) :
-Drawable    (),
-myTexture   (NULL),
-mySubRect   (0, 0, 1, 1),
-myIsFlippedX(false),
-myIsFlippedY(false)
+myTexture    (NULL),
+myTextureRect(0, 0, 0, 0)
 {
     SetTexture(texture);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::SetTexture(const Texture& texture, bool adjustToNewSize)
+Sprite::Sprite(const Texture& texture, const IntRect& rectangle) :
+myTexture    (NULL),
+myTextureRect(0, 0, 0, 0)
 {
-    // If there was no valid texture before, force adjusting to the new texture size
-    if (!myTexture)
-        adjustToNewSize = true;
+    SetTexture(texture);
+    SetTextureRect(rectangle);
+}
 
-    // If we want to adjust the size and the new texture is valid, we adjust the source rectangle
-    if (adjustToNewSize && (texture.GetWidth() > 0) && (texture.GetHeight() > 0))
-    {
-        SetSubRect(IntRect(0, 0, texture.GetWidth(), texture.GetHeight()));
-    }
+
+////////////////////////////////////////////////////////////
+void Sprite::SetTexture(const Texture& texture, bool resetRect)
+{
+    // Recompute the texture area if requested, or if there was no valid texture before
+    if (resetRect || !myTexture)
+        SetTextureRect(IntRect(0, 0, texture.GetWidth(), texture.GetHeight()));
 
     // Assign the new texture
     myTexture = &texture;
@@ -76,38 +72,25 @@ void Sprite::SetTexture(const Texture& texture, bool adjustToNewSize)
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::SetSubRect(const IntRect& rectangle)
+void Sprite::SetTextureRect(const IntRect& rectangle)
 {
-    mySubRect = rectangle;
+    if (rectangle != myTextureRect)
+    {
+        myTextureRect = rectangle;
+        UpdatePositions();
+        UpdateTexCoords();
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::Resize(float width, float height)
+void Sprite::SetColor(const Color& color)
 {
-    if ((mySubRect.Width > 0) && (mySubRect.Height > 0))
-        SetScale(width / mySubRect.Width, height / mySubRect.Height);
-}
-
-
-////////////////////////////////////////////////////////////
-void Sprite::Resize(const Vector2f& size)
-{
-    Resize(size.x, size.y);
-}
-
-
-////////////////////////////////////////////////////////////
-void Sprite::FlipX(bool flipped)
-{
-    myIsFlippedX = flipped;
-}
-
-
-////////////////////////////////////////////////////////////
-void Sprite::FlipY(bool flipped)
-{
-    myIsFlippedY = flipped;
+    // Update the vertices' color
+    myVertices[0].Color = color;
+    myVertices[1].Color = color;
+    myVertices[2].Color = color;
+    myVertices[3].Color = color;
 }
 
 
@@ -119,49 +102,73 @@ const Texture* Sprite::GetTexture() const
 
 
 ////////////////////////////////////////////////////////////
-const IntRect& Sprite::GetSubRect() const
+const IntRect& Sprite::GetTextureRect() const
 {
-    return mySubRect;
+    return myTextureRect;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f Sprite::GetSize() const
+const Color& Sprite::GetColor() const
 {
-    return Vector2f(mySubRect.Width * GetScale().x, mySubRect.Height * GetScale().y);
+    return myVertices[0].Color;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::Render(RenderTarget&, Renderer& renderer) const
+FloatRect Sprite::GetLocalBounds() const
 {
-    // Get the sprite size
-    float width  = static_cast<float>(mySubRect.Width);
-    float height = static_cast<float>(mySubRect.Height);
+    float width = static_cast<float>(myTextureRect.Width);
+    float height = static_cast<float>(myTextureRect.Height);
 
-    // Check if the texture is valid, and calculate the texture coordinates
-    FloatRect coords;
+    return FloatRect(0.f, 0.f, width, height);
+}
+
+
+////////////////////////////////////////////////////////////
+FloatRect Sprite::GetGlobalBounds() const
+{
+    return GetTransform().TransformRect(GetLocalBounds());
+}
+
+
+////////////////////////////////////////////////////////////
+void Sprite::Draw(RenderTarget& target, RenderStates states) const
+{
     if (myTexture)
-        coords = myTexture->GetTexCoords(mySubRect);
+    {
+        states.Transform *= GetTransform();
+        states.Texture = myTexture;
+        target.Draw(myVertices, 4, Quads, states);
+    }
+}
 
-    // Compute the texture coordinates
-    float left   = coords.Left;
-    float top    = coords.Top;
-    float right  = coords.Left + coords.Width;
-    float bottom = coords.Top + coords.Height;
-    if (myIsFlippedX) std::swap(left, right);
-    if (myIsFlippedY) std::swap(top, bottom);
 
-    // Bind the texture
-    renderer.SetTexture(myTexture);
+////////////////////////////////////////////////////////////
+void Sprite::UpdatePositions()
+{
+    float width  = static_cast<float>(myTextureRect.Width);
+    float height = static_cast<float>(myTextureRect.Height);
 
-    // Draw the sprite's geometry
-    renderer.Begin(Renderer::TriangleStrip);
-        renderer.AddVertex(0,     0,      left,  top);
-        renderer.AddVertex(width, 0,      right, top);
-        renderer.AddVertex(0,     height, left,  bottom);
-        renderer.AddVertex(width, height, right, bottom);
-    renderer.End();
+    myVertices[0].Position = Vector2f(0, 0);
+    myVertices[1].Position = Vector2f(0, height);
+    myVertices[2].Position = Vector2f(width, height);
+    myVertices[3].Position = Vector2f(width, 0);
+}
+
+
+////////////////////////////////////////////////////////////
+void Sprite::UpdateTexCoords()
+{
+    float left   = static_cast<float>(myTextureRect.Left);
+    float right  = left + myTextureRect.Width;
+    float top    = static_cast<float>(myTextureRect.Top);
+    float bottom = top + myTextureRect.Height;
+
+    myVertices[0].TexCoords = Vector2f(left, top);
+    myVertices[1].TexCoords = Vector2f(left, bottom);
+    myVertices[2].TexCoords = Vector2f(right, bottom);
+    myVertices[3].TexCoords = Vector2f(right, top);
 }
 
 } // namespace sf

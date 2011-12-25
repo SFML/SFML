@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
@@ -46,30 +47,50 @@ namespace
         GLCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
         return maxUnits;
     }
+
+    // Read the contents of a file into an array of char
+    bool GetFileContents(const std::string& filename, std::vector<char>& buffer)
+    {
+        std::ifstream file(filename.c_str(), std::ios_base::binary);
+        if (file)
+        {
+            file.seekg(0, std::ios_base::end);
+            std::streamsize size = file.tellg();
+            file.seekg(0, std::ios_base::beg);
+            buffer.resize(size);
+            file.read(&buffer[0], size);
+            buffer.push_back('\0');
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    // Read the contents of a stream into an array of char
+    bool GetStreamContents(sf::InputStream& stream, std::vector<char>& buffer)
+    {
+        sf::Int64 size = stream.GetSize();
+        buffer.resize(static_cast<std::size_t>(size));
+        sf::Int64 read = stream.Read(&buffer[0], size);
+        buffer.push_back('\0');
+        return read == size;
+    }
 }
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+Shader::CurrentTextureType Shader::CurrentTexture;
+
+
+////////////////////////////////////////////////////////////
 Shader::Shader() :
 myShaderProgram (0),
 myCurrentTexture(-1)
 {
-
-}
-
-
-////////////////////////////////////////////////////////////
-Shader::Shader(const Shader& copy) :
-myShaderProgram (0),
-myCurrentTexture(copy.myCurrentTexture),
-myTextures      (copy.myTextures),
-myFragmentShader(copy.myFragmentShader)
-{
-    // Create the shaders and the program
-    if (copy.myShaderProgram)
-        CompileProgram();
 }
 
 
@@ -85,48 +106,107 @@ Shader::~Shader()
 
 
 ////////////////////////////////////////////////////////////
-bool Shader::LoadFromFile(const std::string& filename)
+bool Shader::LoadFromFile(const std::string& filename, Type type)
 {
-    // Open the file
-    std::ifstream file(filename.c_str());
-    if (!file)
+    // Read the file
+    std::vector<char> shader;
+    if (!GetFileContents(filename, shader))
     {
         Err() << "Failed to open shader file \"" << filename << "\"" << std::endl;
         return false;
     }
 
-    // Read the shader code from the file
-    myFragmentShader.clear();
-    std::string line;
-    while (std::getline(file, line))
-        myFragmentShader += line + "\n";
-
-    // Create the shaders and the program
-    return CompileProgram();
+    // Compile the shader program
+    if (type == Vertex)
+        return CompileProgram(&shader[0], NULL);
+    else
+        return CompileProgram(NULL, &shader[0]);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Shader::LoadFromMemory(const std::string& shader)
+bool Shader::LoadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
 {
-    // Save the shader code
-    myFragmentShader = shader;
+    // Read the vertex shader file
+    std::vector<char> vertexShader;
+    if (!GetFileContents(vertexShaderFilename, vertexShader))
+    {
+        Err() << "Failed to open vertex shader file \"" << vertexShaderFilename << "\"" << std::endl;
+        return false;
+    }
 
-    // Create the shaders and the program
-    return CompileProgram();
+    // Read the fragment shader file
+    std::vector<char> fragmentShader;
+    if (!GetFileContents(fragmentShaderFilename, fragmentShader))
+    {
+        Err() << "Failed to open fragment shader file \"" << fragmentShaderFilename << "\"" << std::endl;
+        return false;
+    }
+
+    // Compile the shader program
+    return CompileProgram(&vertexShader[0], &fragmentShader[0]);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Shader::LoadFromStream(InputStream& stream)
+bool Shader::LoadFromMemory(const std::string& shader, Type type)
+{
+    // Compile the shader program
+    if (type == Vertex)
+        return CompileProgram(shader.c_str(), NULL);
+    else
+        return CompileProgram(NULL, shader.c_str());
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::LoadFromMemory(const std::string& vertexShader, const std::string& fragmentShader)
+{
+    // Compile the shader program
+    return CompileProgram(vertexShader.c_str(), fragmentShader.c_str());
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::LoadFromStream(InputStream& stream, Type type)
 {
     // Read the shader code from the stream
-    std::vector<char> buffer(static_cast<std::size_t>(stream.GetSize()));
-    Int64 read = stream.Read(&buffer[0], buffer.size());
-    myFragmentShader.assign(&buffer[0], &buffer[0] + read);
+    std::vector<char> shader;
+    if (!GetStreamContents(stream, shader))
+    {
+        Err() << "Failed to read shader from stream" << std::endl;
+        return false;
+    }
 
-    // Create the shaders and the program
-    return CompileProgram();
+    // Compile the shader program
+    if (type == Vertex)
+        return CompileProgram(&shader[0], NULL);
+    else
+        return CompileProgram(NULL, &shader[0]);
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::LoadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream)
+{
+    // Read the vertex shader code from the stream
+    std::vector<char> vertexShader;
+    if (!GetStreamContents(vertexShaderStream, vertexShader))
+    {
+        Err() << "Failed to read vertex shader from stream" << std::endl;
+        return false;
+    }
+
+    // Read the fragment shader code from the stream
+    std::vector<char> fragmentShader;
+    if (!GetStreamContents(fragmentShaderStream, fragmentShader))
+    {
+        Err() << "Failed to read fragment shader from stream" << std::endl;
+        return false;
+    }
+
+    // Compile the shader program
+    return CompileProgram(&vertexShader[0], &fragmentShader[0]);
 }
 
 
@@ -241,7 +321,38 @@ void Shader::SetParameter(const std::string& name, const Vector3f& v)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::SetTexture(const std::string& name, const Texture& texture)
+void Shader::SetParameter(const std::string& name, const Color& color)
+{
+    SetParameter(name, color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::SetParameter(const std::string& name, const sf::Transform& transform)
+{
+    if (myShaderProgram)
+    {
+        EnsureGlContext();
+
+        // Enable program
+        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
+        GLCheck(glUseProgramObjectARB(myShaderProgram));
+
+        // Get parameter location and assign it new values
+        GLint location = glGetUniformLocationARB(myShaderProgram, name.c_str());
+        if (location != -1)
+            GLCheck(glUniformMatrix4fvARB(location, 1, GL_FALSE, transform.GetMatrix()));
+        else
+            Err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+
+        // Disable program
+        GLCheck(glUseProgramObjectARB(program));
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::SetParameter(const std::string& name, const Texture& texture)
 {
     if (myShaderProgram)
     {
@@ -279,7 +390,7 @@ void Shader::SetTexture(const std::string& name, const Texture& texture)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::SetCurrentTexture(const std::string& name)
+void Shader::SetParameter(const std::string& name, CurrentTextureType)
 {
     if (myShaderProgram)
     {
@@ -323,20 +434,6 @@ void Shader::Unbind() const
 
 
 ////////////////////////////////////////////////////////////
-Shader& Shader::operator =(const Shader& right)
-{
-    Shader temp(right);
-
-    std::swap(myShaderProgram,  temp.myShaderProgram);
-    std::swap(myCurrentTexture, temp.myCurrentTexture);
-    std::swap(myTextures,       temp.myTextures);
-    std::swap(myFragmentShader, temp.myFragmentShader);
-
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
 bool Shader::IsAvailable()
 {
     EnsureGlContext();
@@ -352,7 +449,7 @@ bool Shader::IsAvailable()
 
 
 ////////////////////////////////////////////////////////////
-bool Shader::CompileProgram()
+bool Shader::CompileProgram(const char* vertexShaderCode, const char* fragmentShaderCode)
 {
     EnsureGlContext();
 
@@ -368,74 +465,73 @@ bool Shader::CompileProgram()
     if (myShaderProgram)
         GLCheck(glDeleteObjectARB(myShaderProgram));
 
-    // Define the vertex shader source (we provide it directly as it doesn't have to change)
-    static const char* vertexSrc =
-        "void main()"
-        "{"
-        "    gl_TexCoord[0] = gl_MultiTexCoord0;"
-        "    gl_FrontColor = gl_Color;"
-        "    gl_Position = ftransform();"
-        "}";
-
     // Create the program
     myShaderProgram = glCreateProgramObjectARB();
 
-    // Create the shaders
-    GLhandleARB vertexShader   = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    GLhandleARB fragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-    // Compile them
-    const char* fragmentSrc = myFragmentShader.c_str();
-    GLCheck(glShaderSourceARB(vertexShader,   1, &vertexSrc,   NULL));
-    GLCheck(glShaderSourceARB(fragmentShader, 1, &fragmentSrc, NULL));
-    GLCheck(glCompileShaderARB(vertexShader));
-    GLCheck(glCompileShaderARB(fragmentShader));
-
-    // Check the compile logs
-    GLint success;
-    GLCheck(glGetObjectParameterivARB(vertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &success));
-    if (success == GL_FALSE)
+    // Create the vertex shader if needed
+    if (vertexShaderCode)
     {
-        char log[1024];
-        GLCheck(glGetInfoLogARB(vertexShader, sizeof(log), 0, log));
-        Err() << "Failed to compile shader:" << std::endl
-              << log << std::endl;
+        // Create and compile the shader
+        GLhandleARB vertexShader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+        GLCheck(glShaderSourceARB(vertexShader, 1, &vertexShaderCode, NULL));
+        GLCheck(glCompileShaderARB(vertexShader));
+
+        // Check the compile log
+        GLint success;
+        GLCheck(glGetObjectParameterivARB(vertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &success));
+        if (success == GL_FALSE)
+        {
+            char log[1024];
+            GLCheck(glGetInfoLogARB(vertexShader, sizeof(log), 0, log));
+            Err() << "Failed to compile vertex shader:" << std::endl
+                  << log << std::endl;
+            GLCheck(glDeleteObjectARB(vertexShader));
+            GLCheck(glDeleteObjectARB(myShaderProgram));
+            myShaderProgram = 0;
+            return false;
+        }
+
+        // Attach the shader to the program, and delete it (not needed anymore)
+        GLCheck(glAttachObjectARB(myShaderProgram, vertexShader));
         GLCheck(glDeleteObjectARB(vertexShader));
-        GLCheck(glDeleteObjectARB(fragmentShader));
-        GLCheck(glDeleteObjectARB(myShaderProgram));
-        myShaderProgram = 0;
-        return false;
-    }
-    GLCheck(glGetObjectParameterivARB(fragmentShader, GL_OBJECT_COMPILE_STATUS_ARB, &success));
-    if (success == GL_FALSE)
-    {
-        char log[1024];
-        GLCheck(glGetInfoLogARB(fragmentShader, sizeof(log), 0, log));
-        Err() << "Failed to compile shader:" << std::endl
-              << log << std::endl;
-        GLCheck(glDeleteObjectARB(vertexShader));
-        GLCheck(glDeleteObjectARB(fragmentShader));
-        GLCheck(glDeleteObjectARB(myShaderProgram));
-        myShaderProgram = 0;
-        return false;
     }
 
-    // Attach the shaders to the program
-    GLCheck(glAttachObjectARB(myShaderProgram, vertexShader));
-    GLCheck(glAttachObjectARB(myShaderProgram, fragmentShader));
+    // Create the fragment shader if needed
+    if (fragmentShaderCode)
+    {
+        // Create and compile the shader
+        GLhandleARB fragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+        GLCheck(glShaderSourceARB(fragmentShader, 1, &fragmentShaderCode, NULL));
+        GLCheck(glCompileShaderARB(fragmentShader));
 
-    // We can now delete the shaders
-    GLCheck(glDeleteObjectARB(vertexShader));
-    GLCheck(glDeleteObjectARB(fragmentShader));
+        // Check the compile log
+        GLint success;
+        GLCheck(glGetObjectParameterivARB(fragmentShader, GL_OBJECT_COMPILE_STATUS_ARB, &success));
+        if (success == GL_FALSE)
+        {
+            char log[1024];
+            GLCheck(glGetInfoLogARB(fragmentShader, sizeof(log), 0, log));
+            Err() << "Failed to compile fragment shader:" << std::endl
+                  << log << std::endl;
+            GLCheck(glDeleteObjectARB(fragmentShader));
+            GLCheck(glDeleteObjectARB(myShaderProgram));
+            myShaderProgram = 0;
+            return false;
+        }
+
+        // Attach the shader to the program, and delete it (not needed anymore)
+        GLCheck(glAttachObjectARB(myShaderProgram, fragmentShader));
+        GLCheck(glDeleteObjectARB(fragmentShader));
+    }
 
     // Link the program
     GLCheck(glLinkProgramARB(myShaderProgram));
 
-    // Get link log
+    // Check the link log
+    GLint success;
     GLCheck(glGetObjectParameterivARB(myShaderProgram, GL_OBJECT_LINK_STATUS_ARB, &success));
     if (success == GL_FALSE)
     {
-        // Oops... link errors
         char log[1024];
         GLCheck(glGetInfoLogARB(myShaderProgram, sizeof(log), 0, log));
         Err() << "Failed to link shader:" << std::endl
@@ -464,13 +560,6 @@ void Shader::BindTextures() const
 
     // Make sure that the texture unit which is left active is the number 0
     GLCheck(glActiveTextureARB(GL_TEXTURE0_ARB));
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::Use() const
-{
-    BindTextures();
 }
 
 } // namespace sf

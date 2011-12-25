@@ -188,15 +188,14 @@ private :
 /// classes of the graphics module.
 ///
 /// sf::RenderWindow is derived from sf::Window, thus it inherits
-/// all its features: mouse/keyboard/joystick input, events, window
-/// handling, OpenGL rendering, etc. See the documentation of
-/// sf::Window for a more complete description of all these features
-/// and code samples.
+/// all its features: events, window management, OpenGL rendering,
+/// etc. See the documentation of sf::Window for a more complete
+/// description of all these features, as well as code examples.
 ///
 /// On top of that, sf::RenderWindow adds more features related to
 /// 2D drawing with the graphics module (see its base class
 /// sf::RenderTarget for more details).
-/// Here is a typical rendering / event loop with a sf::RenderWindow:
+/// Here is a typical rendering and event loop with a sf::RenderWindow:
 ///
 /// \code
 /// // Declare and create a new render-window
@@ -220,10 +219,10 @@ private :
 ///    // Clear the whole window before rendering a new frame
 ///    window.Clear();
 ///
-///    // Draw some sprites / shapes / texts
-///    window.Draw(sprite);  // sprite is a sf::Sprite
-///    window.Draw(shape);   // shape is a sf::Shape
-///    window.Draw(text);    // text is a sf::Text
+///    // Draw some graphical entities
+///    window.Draw(sprite);
+///    window.Draw(circle);
+///    window.Draw(text);
 ///
 ///    // End the current frame and display its contents on screen
 ///    window.Display();
@@ -232,9 +231,7 @@ private :
 ///
 /// Like sf::Window, sf::RenderWindow is still able to render direct
 /// OpenGL stuff. It is even possible to mix together OpenGL calls
-/// and regular SFML drawing commands. When doing so, make sure that
-/// OpenGL states are not messed up by calling the SaveGLStates /
-/// RestoreGLStates functions.
+/// and regular SFML drawing commands.
 ///
 /// \code
 /// // Create the render window
@@ -256,9 +253,9 @@ private :
 ///     ...
 ///
 ///     // Draw a background sprite
-///     window.SaveGLStates();
+///     window.PushGLStates();
 ///     window.Draw(sprite);
-///     window.RestoreGLStates();
+///     window.PopGLStates();
 ///
 ///     // Draw a 3D object using OpenGL
 ///     glBegin(GL_QUADS);
@@ -267,9 +264,9 @@ private :
 ///     glEnd();
 ///
 ///     // Draw text on top of the 3D object
-///     window.SaveGLStates();
+///     window.PushGLStates();
 ///     window.Draw(text);
-///     window.RestoreGLStates();
+///     window.PopGLStates();
 ///
 ///     // Finally, display the rendered frame on screen
 ///     window.Display();

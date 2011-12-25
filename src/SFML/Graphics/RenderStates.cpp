@@ -25,67 +25,74 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTextureImplDefault.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/Graphics/TextureSaver.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/System/Err.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+#include <cstddef>
 
 
 namespace sf
 {
-namespace priv
-{
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::RenderTextureImplDefault() :
-myContext(0),
-myWidth  (0),
-myHeight (0)
-{
+const RenderStates RenderStates::Default;
 
+
+////////////////////////////////////////////////////////////
+RenderStates::RenderStates() :
+BlendMode(BlendAlpha),
+Transform(),
+Texture  (NULL),
+Shader   (NULL)
+{
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::~RenderTextureImplDefault()
+RenderStates::RenderStates(const sf::Transform& transform) :
+BlendMode(BlendAlpha),
+Transform(transform),
+Texture  (NULL),
+Shader   (NULL)
 {
-    // Destroy the context
-    delete myContext;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
+RenderStates::RenderStates(sf::BlendMode blendMode) :
+BlendMode(blendMode),
+Transform(),
+Texture  (NULL),
+Shader   (NULL)
 {
-    // Store the dimensions
-    myWidth = width;
-    myHeight = height;
-
-    // Create the in-memory OpenGL context
-    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
-
-    return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Activate(bool active)
+RenderStates::RenderStates(const sf::Texture* texture) :
+BlendMode(BlendAlpha),
+Transform(),
+Texture  (texture),
+Shader   (NULL)
 {
-    return myContext->SetActive(active);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
+RenderStates::RenderStates(const sf::Shader* shader) :
+BlendMode(BlendAlpha),
+Transform(),
+Texture  (NULL),
+Shader   (shader)
 {
-    // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
-
-    // Copy the rendered pixels to the texture
-    GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
 }
 
-} // namespace priv
+
+////////////////////////////////////////////////////////////
+RenderStates::RenderStates(sf::BlendMode blendMode, const sf::Transform& transform,
+                           const sf::Texture* texture, const sf::Shader* shader) :
+BlendMode(blendMode),
+Transform(transform),
+Texture  (texture),
+Shader   (shader)
+{
+}
 
 } // namespace sf

@@ -76,7 +76,8 @@ int main()
         while (sound.GetStatus() == sf::Sound::Playing)
         {
             // Display the playing position
-            std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.GetPlayingOffset() << " sec";
+            std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.GetPlayingOffset() / 1000.f << " sec";
+            std::cout << std::flush;
 
             // Leave some CPU time for other threads
             sf::Sleep(100);

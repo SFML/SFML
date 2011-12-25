@@ -25,11 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTextureImplDefault.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/TextureSaver.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -37,53 +33,16 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::RenderTextureImplDefault() :
-myContext(0),
-myWidth  (0),
-myHeight (0)
+TextureSaver::TextureSaver()
 {
-
+    GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &myTextureBinding));
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::~RenderTextureImplDefault()
+TextureSaver::~TextureSaver()
 {
-    // Destroy the context
-    delete myContext;
-}
-
-
-////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
-{
-    // Store the dimensions
-    myWidth = width;
-    myHeight = height;
-
-    // Create the in-memory OpenGL context
-    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Activate(bool active)
-{
-    return myContext->SetActive(active);
-}
-
-
-////////////////////////////////////////////////////////////
-void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
-{
-    // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
-
-    // Copy the rendered pixels to the texture
-    GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
+    GLCheck(glBindTexture(GL_TEXTURE_2D, myTextureBinding));
 }
 
 } // namespace priv
