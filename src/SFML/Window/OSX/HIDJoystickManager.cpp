@@ -75,10 +75,23 @@ HIDJoystickManager::HIDJoystickManager()
 {
     myHIDManager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
     
-    CFDictionaryRef mask = HIDInputManager::CopyDevicesMask(kHIDPage_GenericDesktop,
-                                                            kHIDUsage_GD_Joystick);
-    IOHIDManagerSetDeviceMatching(myHIDManager, mask);
+    CFDictionaryRef mask0 = HIDInputManager::CopyDevicesMask(kHIDPage_GenericDesktop,
+                                                             kHIDUsage_GD_Joystick);
+    
+    CFDictionaryRef mask1 = HIDInputManager::CopyDevicesMask(kHIDPage_GenericDesktop,
+                                                             kHIDUsage_GD_GamePad);
+    
+    CFDictionaryRef maskArray[2];
+    maskArray[0] = mask0;
+    maskArray[1] = mask1;
+    
+    CFArrayRef mask = CFArrayCreate(NULL, (const void**)maskArray, 2, NULL);
+    
+    IOHIDManagerSetDeviceMatchingMultiple(myHIDManager, mask);
     CFRelease(mask);
+    CFRelease(mask1);
+    CFRelease(mask0);
+    
     
     IOHIDManagerRegisterDeviceMatchingCallback(myHIDManager, pluggedIn, this);
     IOHIDManagerRegisterDeviceRemovalCallback(myHIDManager, pluggedOut, this);
