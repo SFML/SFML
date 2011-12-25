@@ -250,7 +250,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Update the whole texture from an array of pixels
     ///
-    /// The \a pixels array is assumed to have the same size as
+    /// The \a pixel array is assumed to have the same size as
     /// the \a area rectangle, and to contain 32-bits RGBA pixels.
     ///
     /// No additional check is performed on the size of the pixel
@@ -268,7 +268,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the texture from an array of pixels
     ///
-    /// The size of the \a pixels array must match the \a width and
+    /// The size of the \a pixel array must match the \a width and
     /// \a height arguments, and it must contain 32-bits RGBA pixels.
     ///
     /// No additional check is performed on the size of the pixel

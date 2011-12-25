@@ -190,12 +190,12 @@ public :
     /// \return Number of points of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetPointsCount() const = 0;
+    virtual unsigned int GetPointCount() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
     ///
-    /// \param index Index of the point to get, in range [0 .. GetPointsCount() - 1]
+    /// \param index Index of the point to get, in range [0 .. GetPointCount() - 1]
     ///
     /// \return Index-th point of the shape
     ///
@@ -243,7 +243,7 @@ protected :
     ///
     /// This function must be called by the derived class everytime
     /// the shape's points change (ie. the result of either
-    /// GetPointsCount or GetPoint is different).
+    /// GetPointCount or GetPoint is different).
     ///
     ////////////////////////////////////////////////////////////
     void Update();
@@ -330,7 +330,7 @@ private :
 ///
 /// You can write your own derived shape class, there are only
 /// two virtual functions to override:
-/// \li GetOutlinePointsCount must return the number of points of the shape
+/// \li GetOutlinePointCount must return the number of points of the shape
 /// \li GetOutlinePoint must return the points of the shape
 ///
 /// \see sf::LineShape, sf::RectangleShape, sf::CircleShape, sf::ConvexShape, sf::Transformable

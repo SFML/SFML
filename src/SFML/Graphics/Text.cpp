@@ -106,7 +106,7 @@ void Text::SetColor(const Color& color)
     if (color != myColor)
     {
         myColor = color;
-        for (unsigned int i = 0; i < myVertices.GetVerticesCount(); ++i)
+        for (unsigned int i = 0; i < myVertices.GetVertexCount(); ++i)
             myVertices[i].Color = myColor;
     }
 }

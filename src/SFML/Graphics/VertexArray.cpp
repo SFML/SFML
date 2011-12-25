@@ -40,15 +40,15 @@ myPrimitiveType(Points)
 
 
 ////////////////////////////////////////////////////////////
-VertexArray::VertexArray(PrimitiveType type, unsigned int verticesCount) :
-myVertices     (verticesCount),
+VertexArray::VertexArray(PrimitiveType type, unsigned int vertexCount) :
+myVertices     (vertexCount),
 myPrimitiveType(type)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int VertexArray::GetVerticesCount() const
+unsigned int VertexArray::GetVertexCount() const
 {
     return myVertices.size();
 }
@@ -76,9 +76,9 @@ void VertexArray::Clear()
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::Resize(unsigned int verticesCount)
+void VertexArray::Resize(unsigned int vertexCount)
 {
-    myVertices.resize(verticesCount);
+    myVertices.resize(vertexCount);
 }
 
 

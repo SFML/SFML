@@ -65,7 +65,7 @@ public :
     /// \return Number of samples
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t GetSamplesCount() const;
+    std::size_t GetSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of channels used by the sound
@@ -73,7 +73,7 @@ public :
     /// \return Number of channels (1 = mono, 2 = stereo)
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetChannelsCount() const;
+    unsigned int GetChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound
@@ -117,19 +117,19 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief a the sound file for writing
     ///
-    /// \param filename      Path of the sound file to write
-    /// \param channelsCount Number of channels in the sound
-    /// \param sampleRate    Sample rate of the sound
+    /// \param filename     Path of the sound file to write
+    /// \param channelCount Number of channels in the sound
+    /// \param sampleRate   Sample rate of the sound
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenWrite(const std::string& filename, unsigned int channelsCount, unsigned int sampleRate);
+    bool OpenWrite(const std::string& filename, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the loaded sound
     ///
-    /// \param data      Pointer to the samples array to fill
+    /// \param data      Pointer to the sample array to fill
     /// \param nbSamples Number of samples to read
     ///
     /// \return Number of samples actually read (may be less than \a nbSamples)
@@ -140,7 +140,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file
     ///
-    /// \param data      Pointer to the samples array to write
+    /// \param data      Pointer to the sample array to write
     /// \param nbSamples Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
@@ -198,11 +198,11 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SNDFILE*     myFile;          ///< File descriptor
-    Memory       myMemory;        ///< Memory reading info
-    std::size_t  myNbSamples;     ///< Total number of samples in the file
-    unsigned int myChannelsCount; ///< Number of channels used by the sound
-    unsigned int mySampleRate;    ///< Number of samples per second
+    SNDFILE*     myFile;         ///< File descriptor
+    Memory       myMemory;       ///< Memory reading info
+    std::size_t  myNbSamples;    ///< Total number of samples in the file
+    unsigned int myChannelCount; ///< Number of channels used by the sound
+    unsigned int mySampleRate;   ///< Number of samples per second
 };
 
 } // namespace priv

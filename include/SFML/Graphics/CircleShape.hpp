@@ -44,11 +44,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// \param radius      Radius of the circle
-    /// \param pointsCount Number of points composing the circle
+    /// \param radius     Radius of the circle
+    /// \param pointCount Number of points composing the circle
     ///
     ////////////////////////////////////////////////////////////
-    explicit CircleShape(float radius = 0, unsigned int pointsCount = 30);
+    explicit CircleShape(float radius = 0, unsigned int pointCount = 30);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the radius of the circle
@@ -75,20 +75,20 @@ public :
     ///
     /// \param count New number of points of the circle
     ///
-    /// \see GetPointsCount
+    /// \see GetPointCount
     ///
     ////////////////////////////////////////////////////////////
-    void SetPointsCount(unsigned int count);
+    void SetPointCount(unsigned int count);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of points of the shape
     ///
     /// \return Number of points of the shape
     ///
-    /// \see SetPointsCount
+    /// \see SetPointCount
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetPointsCount() const;
+    virtual unsigned int GetPointCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
@@ -105,8 +105,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float        myRadius;      ///< Radius of the circle
-    unsigned int myPointsCount; ///< Number of points composing the circle
+    float        myRadius;     ///< Radius of the circle
+    unsigned int myPointCount; ///< Number of points composing the circle
 };
 
 } // namespace sf

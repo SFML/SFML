@@ -127,21 +127,21 @@ void RenderTarget::Draw(const Drawable& drawable, const RenderStates& states)
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::Draw(const Vertex* vertices, unsigned int verticesCount,
+void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
                         PrimitiveType type, const RenderStates& states)
 {
     // Nothing to draw?
-    if (!vertices || (verticesCount == 0))
+    if (!vertices || (vertexCount == 0))
         return;
 
     if (Activate(true))
     {
         // Check if the vertex count is low enough so that we can pre-transform them
-        bool useVertexCache = (verticesCount <= StatesCache::VertexCacheSize);
+        bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
         if (useVertexCache)
         {
             // Pre-transform the vertices and store them into the vertex cache
-            for (unsigned int i = 0; i < verticesCount; ++i)
+            for (unsigned int i = 0; i < vertexCount; ++i)
             {
                 Vertex& vertex = myCache.VertexCache[i];
                 vertex.Position = states.Transform * vertices[i].Position;
@@ -200,7 +200,7 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int verticesCount,
         GLenum mode = modes[type];
 
         // Draw the primitives
-        GLCheck(glDrawArrays(mode, 0, verticesCount));
+        GLCheck(glDrawArrays(mode, 0, vertexCount));
 
         // Unbind the shader, if any
         if (states.Shader)

@@ -103,7 +103,7 @@ private :
     ////////////////////////////////////////////////////////////
     virtual void OnSeek(sf::Uint32 timeOffset)
     {
-        myOffset = timeOffset * GetSampleRate() * GetChannelsCount() / 1000;
+        myOffset = timeOffset * GetSampleRate() * GetChannelCount() / 1000;
     }
 
     ////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ private :
                 const sf::Int16* samples   = reinterpret_cast<const sf::Int16*>(packet.GetData() + 1);
                 std::size_t      nbSamples = (packet.GetDataSize() - 1) / sizeof(sf::Int16);
 
-                // Don't forget that the other thread can access the samples array at any time
+                // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
                 {
                     sf::Lock lock(myMutex);

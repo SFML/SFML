@@ -127,17 +127,17 @@ public :
     /// The assumed format of the audio samples is 16 bits signed integer
     /// (sf::Int16).
     ///
-    /// \param samples       Pointer to the array of samples in memory
-    /// \param samplesCount  Number of samples in the array
-    /// \param channelsCount Number of channels (1 = mono, 2 = stereo, ...)
-    /// \param sampleRate    Sample rate (number of samples to play per second)
+    /// \param samples      Pointer to the array of samples in memory
+    /// \param sampleCount  Number of samples in the array
+    /// \param channelCount Number of channels (1 = mono, 2 = stereo, ...)
+    /// \param sampleRate   Sample rate (number of samples to play per second)
     ///
     /// \return True if loading succeeded, false if it failed
     ///
     /// \see LoadFromFile, LoadFromMemory, SaveToFile
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromSamples(const Int16* samples, std::size_t samplesCount, unsigned int channelsCount, unsigned int sampleRate);
+    bool LoadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
@@ -160,11 +160,11 @@ public :
     ///
     /// The format of the returned samples is 16 bits signed integer
     /// (sf::Int16). The total number of samples in this array
-    /// is given by the GetSamplesCount() function.
+    /// is given by the GetSampleCount() function.
     ///
     /// \return Read-only pointer to the array of sound samples
     ///
-    /// \see GetSamplesCount
+    /// \see GetSampleCount
     ///
     ////////////////////////////////////////////////////////////
     const Int16* GetSamples() const;
@@ -180,7 +180,7 @@ public :
     /// \see GetSamples
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t GetSamplesCount() const;
+    std::size_t GetSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound
@@ -191,7 +191,7 @@ public :
     ///
     /// \return Sample rate (number of samples per second)
     ///
-    /// \see GetChannelsCount, GetDuration
+    /// \see GetChannelCount, GetDuration
     ///
     ////////////////////////////////////////////////////////////
     unsigned int GetSampleRate() const;
@@ -207,14 +207,14 @@ public :
     /// \see GetSampleRate, GetDuration
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetChannelsCount() const;
+    unsigned int GetChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the sound
     ///
     /// \return Sound duration, in milliseconds
     ///
-    /// \see GetSampleRate, GetChannelsCount
+    /// \see GetSampleRate, GetChannelCount
     ///
     ////////////////////////////////////////////////////////////
     Uint32 GetDuration() const;
@@ -246,13 +246,13 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples
     ///
-    /// \param channelsCount Number of channels
-    /// \param sampleRate    Sample rate (number of samples per second)
+    /// \param channelCount Number of channels
+    /// \param sampleRate   Sample rate (number of samples per second)
     ///
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    bool Update(unsigned int channelsCount, unsigned int sampleRate);
+    bool Update(unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a sound to the list of sounds that use this buffer

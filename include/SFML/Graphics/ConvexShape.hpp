@@ -45,30 +45,30 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// \param pointsCount Number of points of the polygon
+    /// \param pointCount Number of points of the polygon
     ///
     ////////////////////////////////////////////////////////////
-    explicit ConvexShape(unsigned int pointsCount = 0);
+    explicit ConvexShape(unsigned int pointCount = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the polygon
     ///
     /// \param count New number of points of the polygon
     ///
-    /// \see GetPointsCount
+    /// \see GetPointCount
     ///
     ////////////////////////////////////////////////////////////
-    void SetPointsCount(unsigned int count);
+    void SetPointCount(unsigned int count);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of points of the polygon
     ///
     /// \return Number of points of the polygon
     ///
-    /// \see SetPointsCount
+    /// \see SetPointCount
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetPointsCount() const;
+    virtual unsigned int GetPointCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the position of a point
@@ -126,7 +126,7 @@ private :
 /// Usage example:
 /// \code
 /// sf::ConvexShape polygon;
-/// polygon.SetPointsCount(3);
+/// polygon.SetPointCount(3);
 /// polygon.SetPoint(0, sf::Vector2f(0, 0));
 /// polygon.SetPoint(1, sf::Vector2f(0, 10));
 /// polygon.SetPoint(2, sf::Vector2f(25, 5));

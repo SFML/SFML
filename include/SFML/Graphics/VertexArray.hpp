@@ -56,11 +56,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vertex array with a type and an initial number of vertices
     ///
-    /// \param type          Type of primitives
-    /// \param verticesCount Initial number of vertices in the array
+    /// \param type        Type of primitives
+    /// \param vertexCount Initial number of vertices in the array
     ///
     ////////////////////////////////////////////////////////////
-    VertexArray(PrimitiveType type, unsigned int verticesCount = 0);
+    VertexArray(PrimitiveType type, unsigned int vertexCount = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the vertices count
@@ -68,19 +68,19 @@ public :
     /// \return Number of vertices in the array
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetVerticesCount() const;
+    unsigned int GetVertexCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-write access to a vertex by its index
     ///
     /// This function doesn't check \a index, it must be in range
-    /// [0, GetVerticesCount() - 1].
+    /// [0, GetVertexCount() - 1].
     ///
     /// \param index Index of the vertex to get
     ///
     /// \return Reference to the index-th vertex
     ///
-    /// \see GetVerticesCount
+    /// \see GetVertexCount
     ///
     ////////////////////////////////////////////////////////////
     Vertex& operator [](unsigned int index);
@@ -89,13 +89,13 @@ public :
     /// \brief Get a read-only access to a vertex by its index
     ///
     /// This function doesn't check \a index, it must be in range
-    /// [0, GetVerticesCount() - 1].
+    /// [0, GetVertexCount() - 1].
     ///
     /// \param index Index of the vertex to get
     ///
     /// \return Const reference to the index-th vertex
     ///
-    /// \see GetVerticesCount
+    /// \see GetVertexCount
     ///
     ////////////////////////////////////////////////////////////
     const Vertex& operator [](unsigned int index) const;
@@ -120,10 +120,10 @@ public :
     /// If \a count is less than the current size, existing vertices
     /// are removed from the array.
     ///
-    /// \param verticesCount New size of the array (number of vertices)
+    /// \param vertexCount New size of the array (number of vertices)
     ///
     ////////////////////////////////////////////////////////////
-    void Resize(unsigned int verticesCount);
+    void Resize(unsigned int vertexCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a vertex to the array

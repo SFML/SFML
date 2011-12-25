@@ -20,9 +20,9 @@ void PlaySound()
 
     // Display sound informations
     std::cout << "canary.wav :" << std::endl;
-    std::cout << " " << buffer.GetDuration() / 1000.f  << " seconds"       << std::endl;
-    std::cout << " " << buffer.GetSampleRate()         << " samples / sec" << std::endl;
-    std::cout << " " << buffer.GetChannelsCount()      << " channels"      << std::endl;
+    std::cout << " " << buffer.GetDuration() / 1000.f << " seconds"       << std::endl;
+    std::cout << " " << buffer.GetSampleRate()        << " samples / sec" << std::endl;
+    std::cout << " " << buffer.GetChannelCount()      << " channels"      << std::endl;
 
     // Create a sound instance and play it
     sf::Sound sound(buffer);
@@ -57,7 +57,7 @@ void PlayMusic()
     std::cout << "orchestral.ogg :" << std::endl;
     std::cout << " " << music.GetDuration() / 1000.f << " seconds"       << std::endl;
     std::cout << " " << music.GetSampleRate()        << " samples / sec" << std::endl;
-    std::cout << " " << music.GetChannelsCount()     << " channels"      << std::endl;
+    std::cout << " " << music.GetChannelCount()      << " channels"      << std::endl;
 
     // Play it
     music.Play();

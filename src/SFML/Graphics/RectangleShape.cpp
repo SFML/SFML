@@ -54,7 +54,7 @@ const Vector2f& RectangleShape::GetSize() const
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RectangleShape::GetPointsCount() const
+unsigned int RectangleShape::GetPointCount() const
 {
     return 4;
 }

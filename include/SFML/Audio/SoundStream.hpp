@@ -104,7 +104,7 @@ public :
     /// \return Number of channels
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetChannelsCount() const;
+    unsigned int GetChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the stream sample rate of the stream
@@ -193,11 +193,11 @@ protected :
     /// It can be called multiple times if the settings of the
     /// audio stream change, but only when the stream is stopped.
     ///
-    /// \param channelsCount Number of channels of the stream
-    /// \param sampleRate    Sample rate, in samples per second
+    /// \param channelCount Number of channels of the stream
+    /// \param sampleRate   Sample rate, in samples per second
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize(unsigned int channelsCount, unsigned int sampleRate);
+    void Initialize(unsigned int channelCount, unsigned int sampleRate);
 
 private :
 
@@ -245,7 +245,7 @@ private :
     /// consumed; it fills it again and inserts it back into the
     /// playing queue.
     ///
-    /// \param buffer Number of the buffer to fill (in [0, BuffersCount])
+    /// \param buffer Number of the buffer to fill (in [0, BufferCount])
     ///
     /// \return True if the stream source has requested to stop, false otherwise
     ///
@@ -273,21 +273,21 @@ private :
 
     enum
     {
-        BuffersCount = 3 ///< Number of audio buffers used by the streaming loop
+        BufferCount = 3 ///< Number of audio buffers used by the streaming loop
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread        myThread;                   ///< Thread running the background tasks
-    bool          myIsStreaming;              ///< Streaming state (true = playing, false = stopped)
-    unsigned int  myBuffers[BuffersCount];    ///< Sound buffers used to store temporary audio data
-    unsigned int  myChannelsCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
-    unsigned int  mySampleRate;               ///< Frequency (samples / second)
-    Uint32        myFormat;                   ///< Format of the internal sound buffers
-    bool          myLoop;                     ///< Loop flag (true to loop, false to play once)
-    Uint64        mySamplesProcessed;         ///< Number of buffers processed since beginning of the stream
-    bool          myEndBuffers[BuffersCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation
+    Thread        myThread;                  ///< Thread running the background tasks
+    bool          myIsStreaming;             ///< Streaming state (true = playing, false = stopped)
+    unsigned int  myBuffers[BufferCount];    ///< Sound buffers used to store temporary audio data
+    unsigned int  myChannelCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
+    unsigned int  mySampleRate;              ///< Frequency (samples / second)
+    Uint32        myFormat;                  ///< Format of the internal sound buffers
+    bool          myLoop;                    ///< Loop flag (true to loop, false to play once)
+    Uint64        mySamplesProcessed;        ///< Number of buffers processed since beginning of the stream
+    bool          myEndBuffers[BufferCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation
 };
 
 } // namespace sf
@@ -338,11 +338,11 @@ private :
 ///     {
 ///         // Open the source and get audio settings
 ///         ...
-///         unsigned int channelsCount = ...;
+///         unsigned int channelCount = ...;
 ///         unsigned int sampleRate = ...;
 ///
 ///         // Initialize the stream -- important!
-///         Initialize(channelsCount, sampleRate);
+///         Initialize(channelCount, sampleRate);
 ///     }
 ///
 /// private :

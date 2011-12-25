@@ -169,7 +169,7 @@ myBounds          ()
 void Shape::Update()
 {
     // Get the total number of points of the shape
-    unsigned int count = GetPointsCount();
+    unsigned int count = GetPointCount();
     if (count < 3)
     {
         myVertices.Resize(0);
@@ -227,7 +227,7 @@ void Shape::Draw(RenderTarget& target, RenderStates states) const
 ////////////////////////////////////////////////////////////
 void Shape::UpdateFillColors()
 {
-    for (unsigned int i = 0; i < myVertices.GetVerticesCount(); ++i)
+    for (unsigned int i = 0; i < myVertices.GetVertexCount(); ++i)
         myVertices[i].Color = myFillColor;
 }
 
@@ -235,7 +235,7 @@ void Shape::UpdateFillColors()
 ////////////////////////////////////////////////////////////
 void Shape::UpdateTexCoords()
 {
-    for (unsigned int i = 0; i < myVertices.GetVerticesCount(); ++i)
+    for (unsigned int i = 0; i < myVertices.GetVertexCount(); ++i)
     {
         float xratio = (myVertices[i].Position.x - myInsideBounds.Left) / myInsideBounds.Width;
         float yratio = (myVertices[i].Position.y - myInsideBounds.Top) / myInsideBounds.Height;
@@ -248,7 +248,7 @@ void Shape::UpdateTexCoords()
 ////////////////////////////////////////////////////////////
 void Shape::UpdateOutline()
 {
-    unsigned int count = myVertices.GetVerticesCount() - 2;
+    unsigned int count = myVertices.GetVertexCount() - 2;
     myOutlineVertices.Resize((count + 1) * 2);
 
     for (unsigned int i = 0; i < count; ++i)
@@ -288,7 +288,7 @@ void Shape::UpdateOutline()
 ////////////////////////////////////////////////////////////
 void Shape::UpdateOutlineColors()
 {
-    for (unsigned int i = 0; i < myOutlineVertices.GetVerticesCount(); ++i)
+    for (unsigned int i = 0; i < myOutlineVertices.GetVertexCount(); ++i)
         myOutlineVertices[i].Color = myOutlineColor;
 }
 

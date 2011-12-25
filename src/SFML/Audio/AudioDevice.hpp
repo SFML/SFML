@@ -75,12 +75,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the OpenAL format that matches the given number of channels
     ///
-    /// \param channelsCount Number of channels
+    /// \param channelCount Number of channels
     ///
     /// \return Corresponding format
     ///
     ////////////////////////////////////////////////////////////
-    static int GetFormatFromChannelsCount(unsigned int channelsCount);
+    static int GetFormatFromChannelCount(unsigned int channelCount);
 };
 
 } // namespace priv

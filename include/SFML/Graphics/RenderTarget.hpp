@@ -189,13 +189,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Draw primitives defined by an array of vertices
     ///
-    /// \param vertices      Pointer to the vertices
-    /// \param verticesCount Number of vertices in the array
-    /// \param type          Type of primitives to draw
-    /// \param states        Render states to use for drawing
+    /// \param vertices    Pointer to the vertices
+    /// \param vertexCount Number of vertices in the array
+    /// \param type        Type of primitives to draw
+    /// \param states      Render states to use for drawing
     ///
     ////////////////////////////////////////////////////////////
-    void Draw(const Vertex* vertices, unsigned int verticesCount,
+    void Draw(const Vertex* vertices, unsigned int vertexCount,
               PrimitiveType type, const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////

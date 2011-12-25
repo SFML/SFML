@@ -31,14 +31,14 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-ConvexShape::ConvexShape(unsigned int pointsCount)
+ConvexShape::ConvexShape(unsigned int pointCount)
 {
-    SetPointsCount(pointsCount);
+    SetPointCount(pointCount);
 }
 
 
 ////////////////////////////////////////////////////////////
-void ConvexShape::SetPointsCount(unsigned int count)
+void ConvexShape::SetPointCount(unsigned int count)
 {
     myPoints.resize(count);
     Update();
@@ -46,7 +46,7 @@ void ConvexShape::SetPointsCount(unsigned int count)
 
 
 ////////////////////////////////////////////////////////////
-unsigned int ConvexShape::GetPointsCount() const
+unsigned int ConvexShape::GetPointCount() const
 {
     return myPoints.size();
 }

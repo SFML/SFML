@@ -99,12 +99,12 @@ bool AudioDevice::IsExtensionSupported(const std::string& extension)
 
 
 ////////////////////////////////////////////////////////////
-int AudioDevice::GetFormatFromChannelsCount(unsigned int channelsCount)
+int AudioDevice::GetFormatFromChannelCount(unsigned int channelCount)
 {
     EnsureALInit();
 
     // Find the good format according to the number of channels
-    switch (channelsCount)
+    switch (channelCount)
     {
         case 1  : return AL_FORMAT_MONO16;
         case 2  : return AL_FORMAT_STEREO16;

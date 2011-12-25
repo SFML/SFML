@@ -55,12 +55,12 @@ private :
     /// /see SoundRecorder::ProcessSamples
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnProcessSamples(const sf::Int16* samples, std::size_t samplesCount)
+    virtual bool OnProcessSamples(const sf::Int16* samples, std::size_t sampleCount)
     {
         // Pack the audio samples into a network packet
         sf::Packet packet;
         packet << audioData;
-        packet.Append(samples, samplesCount * sizeof(sf::Int16));
+        packet.Append(samples, sampleCount * sizeof(sf::Int16));
 
         // Send the audio packet to the server
         return mySocket.Send(packet) == sf::Socket::Done;

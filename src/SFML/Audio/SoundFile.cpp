@@ -53,10 +53,10 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 SoundFile::SoundFile() :
-myFile         (NULL),
-myNbSamples    (0),
-myChannelsCount(0),
-mySampleRate   (0)
+myFile        (NULL),
+myNbSamples   (0),
+myChannelCount(0),
+mySampleRate  (0)
 {
 
 }
@@ -71,16 +71,16 @@ SoundFile::~SoundFile()
 
 
 ////////////////////////////////////////////////////////////
-std::size_t SoundFile::GetSamplesCount() const
+std::size_t SoundFile::GetSampleCount() const
 {
     return myNbSamples;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int SoundFile::GetChannelsCount() const
+unsigned int SoundFile::GetChannelCount() const
 {
-    return myChannelsCount;
+    return myChannelCount;
 }
 
 
@@ -108,9 +108,9 @@ bool SoundFile::OpenRead(const std::string& filename)
     }
 
     // Set the sound parameters
-    myChannelsCount = fileInfos.channels;
-    mySampleRate    = fileInfos.samplerate;
-    myNbSamples     = static_cast<std::size_t>(fileInfos.frames) * myChannelsCount;
+    myChannelCount = fileInfos.channels;
+    mySampleRate   = fileInfos.samplerate;
+    myNbSamples    = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
 
     return true;
 }
@@ -145,9 +145,9 @@ bool SoundFile::OpenRead(const void* data, std::size_t sizeInBytes)
     }
 
     // Set the sound parameters
-    myChannelsCount = fileInfos.channels;
-    mySampleRate    = fileInfos.samplerate;
-    myNbSamples     = static_cast<std::size_t>(fileInfos.frames) * myChannelsCount;
+    myChannelCount = fileInfos.channels;
+    mySampleRate   = fileInfos.samplerate;
+    myNbSamples    = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
 
     return true;
 }
@@ -177,16 +177,16 @@ bool SoundFile::OpenRead(InputStream& stream)
     }
 
     // Set the sound parameters
-    myChannelsCount = fileInfos.channels;
-    mySampleRate    = fileInfos.samplerate;
-    myNbSamples     = static_cast<std::size_t>(fileInfos.frames) * myChannelsCount;
+    myChannelCount = fileInfos.channels;
+    mySampleRate   = fileInfos.samplerate;
+    myNbSamples    = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelsCount, unsigned int sampleRate)
+bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelCount, unsigned int sampleRate)
 {
     // If the file is already opened, first close it
     if (myFile)
@@ -203,7 +203,7 @@ bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelsCoun
 
     // Fill the sound infos with parameters
     SF_INFO fileInfos;
-    fileInfos.channels   = channelsCount;
+    fileInfos.channels   = channelCount;
     fileInfos.samplerate = sampleRate;
     fileInfos.format     = format | (format == SF_FORMAT_OGG ? SF_FORMAT_VORBIS : SF_FORMAT_PCM_16);
 
@@ -216,9 +216,9 @@ bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelsCoun
     }
 
     // Set the sound parameters
-    myChannelsCount = channelsCount;
-    mySampleRate    = sampleRate;
-    myNbSamples     = 0;
+    myChannelCount = channelCount;
+    mySampleRate   = sampleRate;
+    myNbSamples    = 0;
 
     return true;
 }

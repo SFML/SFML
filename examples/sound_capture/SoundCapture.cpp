@@ -46,9 +46,9 @@ int main()
 
     // Display captured sound informations
     std::cout << "Sound information :" << std::endl;
-    std::cout << " " << buffer.GetDuration() / 1000.f  << " seconds"           << std::endl;
-    std::cout << " " << buffer.GetSampleRate()         << " samples / seconds" << std::endl;
-    std::cout << " " << buffer.GetChannelsCount()      << " channels"          << std::endl;
+    std::cout << " " << buffer.GetDuration() / 1000.f << " seconds"           << std::endl;
+    std::cout << " " << buffer.GetSampleRate()        << " samples / seconds" << std::endl;
+    std::cout << " " << buffer.GetChannelCount()      << " channels"          << std::endl;
 
     // Choose what to do with the recorded sound data
     char choice;

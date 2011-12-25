@@ -75,7 +75,7 @@ public :
     /// \return Number of points of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetPointsCount() const;
+    virtual unsigned int GetPointCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
