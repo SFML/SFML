@@ -308,7 +308,7 @@ Socket::Status TcpSocket::Receive(Packet& packet)
     if (myPendingPacket.SizeReceived < sizeof(myPendingPacket.Size))
     {
         // Loop until we've received the entire size of the packet
-        // (even a 4 bytes variable may be received in more than one call)
+        // (even a 4 byte variable may be received in more than one call)
         while (myPendingPacket.SizeReceived < sizeof(myPendingPacket.Size))
         {
             char* data = reinterpret_cast<char*>(&myPendingPacket.Size) + myPendingPacket.SizeReceived;
