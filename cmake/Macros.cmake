@@ -126,19 +126,17 @@ macro(sfml_add_library target)
     set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR})
     set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 
-    # for gcc 4.x on Windows, apply the STATIC_STD_LIBS option if it is enabled
+    # for gcc >= 4.0 on Windows, apply the STATIC_STD_LIBS option if it is enabled
     if(WINDOWS AND COMPILER_GCC AND STATIC_STD_LIBS)
-        if(${GCC_VERSION} MATCHES "4\\..*")
+        if(NOT GCC_VERSION VERSION_LESS "4")
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
         endif()
     endif()
 
-    # on Unix systems with gcc 4.x, we must hide public symbols by default
+    # If using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
     # (exported ones are explicitely marked)
-    if((LINUX OR MACOSX) AND COMPILER_GCC)
-        if(${GCC_VERSION} MATCHES "4\\..*")
-            set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
-        endif()
+    if(NOT WINDOWS AND ((COMPILER_GCC AND NOT GCC_VERSION VERSION_LESS "4") OR (COMPILER_CLANG AND NOT CLANG_VERSION VERSION_LESS "3")))
+        set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
     endif()
 
     # link the target to its SFML dependencies
@@ -205,9 +203,9 @@ macro(sfml_add_example target)
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
 
-    # for gcc 4.x on Windows, apply the STATIC_STD_LIBS option if it is enabled
+    # for gcc >= 4.0 on Windows, apply the STATIC_STD_LIBS option if it is enabled
     if(WINDOWS AND COMPILER_GCC AND STATIC_STD_LIBS)
-        if(${GCC_VERSION} MATCHES "4\\..*")
+        if(NOT GCC_VERSION VERSION_LESS "4")
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
         endif()
     endif()

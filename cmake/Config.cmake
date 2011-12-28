@@ -37,7 +37,15 @@ else()
 endif()
 
 # detect the compiler and its version
-if(CMAKE_COMPILER_IS_GNUCXX)
+# Note: on some platforms (OS X), CMAKE_COMPILER_IS_GNUCXX is true
+# even when CLANG is used, therefore the Clang test is done first
+if(CMAKE_CXX_COMPILER MATCHES ".*clang[+][+]" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+   # CMAKE_CXX_COMPILER_ID is an internal CMake variable subject to change,
+   # but there is no other way to detect CLang at the moment
+   set(COMPILER_CLANG 1)
+   execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "--version" OUTPUT_VARIABLE CLANG_VERSION_OUTPUT)
+   string(REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION "${CLANG_VERSION_OUTPUT}")
+elseif(CMAKE_COMPILER_IS_GNUCXX)
     set(COMPILER_GCC 1)
     execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "-dumpversion" OUTPUT_VARIABLE GCC_VERSION_OUTPUT)
     string(REGEX REPLACE "([0-9]+\\.[0-9]+).*" "\\1" GCC_VERSION "${GCC_VERSION_OUTPUT}")
