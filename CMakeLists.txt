@@ -48,7 +48,7 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 # remove SL security warnings with Visual C++
-if(MSVC)
+if(COMPILER_MSVC)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif()
 

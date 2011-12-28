@@ -33,7 +33,7 @@ macro(sfml_static_add_libraries target)
             if(NOT ${lib} MATCHES ".*\\.lib")
                 set(lib ${lib}.lib)
             endif()
-            if(MSVC_IDE AND COMPILER_MSVC LESS 2010)
+            if(MSVC_IDE AND MSVC_VERSION LESS 2010)
                 # for Visual Studio projects < 2010, we must add double quotes
                 # around paths because they may contain spaces
                 set(LIBRARIES "${LIBRARIES} &quot\\;${lib}&quot\\;")
