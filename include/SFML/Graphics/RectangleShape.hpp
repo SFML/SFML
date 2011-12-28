@@ -80,7 +80,9 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
     ///
-    /// \param index Index of the point to get
+    /// The result is undefined if \a index is out of the valid range.
+    ///
+    /// \param index Index of the point to get, in range [0 .. GetPointCount() - 1]
     ///
     /// \return Index-th point of the shape
     ///

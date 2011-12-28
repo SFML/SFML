@@ -74,7 +74,8 @@ public :
     /// \brief Get a read-write access to a vertex by its index
     ///
     /// This function doesn't check \a index, it must be in range
-    /// [0, GetVertexCount() - 1].
+    /// [0, GetVertexCount() - 1]. The behaviour is undefined
+    /// otherwise.
     ///
     /// \param index Index of the vertex to get
     ///
@@ -89,7 +90,8 @@ public :
     /// \brief Get a read-only access to a vertex by its index
     ///
     /// This function doesn't check \a index, it must be in range
-    /// [0, GetVertexCount() - 1].
+    /// [0, GetVertexCount() - 1]. The behaviour is undefined
+    /// otherwise.
     ///
     /// \param index Index of the vertex to get
     ///

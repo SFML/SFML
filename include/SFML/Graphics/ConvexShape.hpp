@@ -53,6 +53,8 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the polygon
     ///
+    /// \a count must be greater than 2 to define a valid shape.
+    ///
     /// \param count New number of points of the polygon
     ///
     /// \see GetPointCount
@@ -75,8 +77,11 @@ public :
     ///
     /// Don't forget that the polygon must remain convex, and
     /// the points need to stay ordered!
+    /// SetPointCount must be called first in order to set the total
+    /// number of points. The result is undefined if \a index is out
+    /// of the valid range.
     ///
-    /// \param index Index of the point to change
+    /// \param index Index of the point to change, in range [0 .. GetPointCount() - 1]
     /// \param point New position of the point
     ///
     /// \see GetPoint
@@ -87,7 +92,9 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of a point
     ///
-    /// \param index Index of the point to get
+    /// The result is undefined if \a index is out of the valid range.
+    ///
+    /// \param index Index of the point to get, in range [0 .. GetPointCount() - 1]
     ///
     /// \return Position of the index-th point of the polygon
     ///
