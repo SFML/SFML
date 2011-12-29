@@ -37,6 +37,8 @@ endif()
 find_path(SFML_INCLUDE_DIR SFML/Config.hpp
           PATH_SUFFIXES include
           PATHS
+          ${SFMLDIR}
+          $ENV{SFMLDIR}
           ~/Library/Frameworks
           /Library/Frameworks
           /usr/local/
@@ -44,9 +46,7 @@ find_path(SFML_INCLUDE_DIR SFML/Config.hpp
           /sw          # Fink
           /opt/local/  # DarwinPorts
           /opt/csw/    # Blastwave
-          /opt/
-          ${SFMLDIR}
-          $ENV{SFMLDIR})
+          /opt/)
 
 # check the version number
 set(SFML_VERSION_OK TRUE)
@@ -79,16 +79,17 @@ endif()
 
 # find the requested modules
 set(SFML_FOUND TRUE) # will be set to false if one of the required modules is not found
-set(FIND_SFML_LIB_PATHS ~/Library/Frameworks
-                        /Library/Frameworks
-                        /usr/local
-                        /usr
-                        /sw
-                        /opt/local
-                        /opt/csw
-                        /opt
-                        ${SFMLDIR}
-                        $ENV{SFMLDIR})
+set(FIND_SFML_LIB_PATHS
+    ${SFMLDIR}
+    $ENV{SFMLDIR}
+    ~/Library/Frameworks
+    /Library/Frameworks
+    /usr/local
+    /usr
+    /sw
+    /opt/local
+    /opt/csw
+    /opt)
 foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
     string(TOLOWER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_LOWER)
     string(TOUPPER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_UPPER)
