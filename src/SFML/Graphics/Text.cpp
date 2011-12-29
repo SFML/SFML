@@ -39,6 +39,7 @@ myString       (),
 myFont         (&Font::GetDefaultFont()),
 myCharacterSize(30),
 myStyle        (Regular),
+myColor        (255, 255, 255),
 myVertices     (Quads),
 myBounds       ()
 {
@@ -52,6 +53,7 @@ myString       (string),
 myFont         (&font),
 myCharacterSize(characterSize),
 myStyle        (Regular),
+myColor        (255, 255, 255),
 myVertices     (Quads),
 myBounds       ()
 {
