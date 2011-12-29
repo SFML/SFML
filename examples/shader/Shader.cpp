@@ -341,6 +341,9 @@ int main()
                             current++;
                         description.SetString("Current effect: " + effects[current]->GetName());
                         break;
+
+                    default:
+                        break;
                 }
             }
         }
