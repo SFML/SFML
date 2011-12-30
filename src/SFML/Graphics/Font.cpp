@@ -199,7 +199,7 @@ bool Font::LoadFromStream(InputStream& stream)
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
     FT_StreamRec* rec = new FT_StreamRec;
-    std::memset(rec, 0, sizeof(rec));
+    std::memset(rec, 0, sizeof(*rec));
     rec->base               = NULL;
     rec->size               = static_cast<unsigned long>(stream.GetSize());
     rec->pos                = 0;
