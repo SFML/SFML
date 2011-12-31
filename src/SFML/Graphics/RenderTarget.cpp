@@ -270,7 +270,8 @@ void RenderTarget::ResetGLStates()
         ApplyBlendMode(BlendAlpha);
         ApplyTransform(Transform::Identity);
         ApplyTexture(NULL);
-        ApplyShader(NULL);
+        if (Shader::IsAvailable())
+            ApplyShader(NULL);
         myCache.UseVertexCache = false;
 
         // Set the default view
