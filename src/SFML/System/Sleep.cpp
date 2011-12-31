@@ -27,7 +27,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Sleep.hpp>
 
-#if defined(SFML_SYSTEM_WINDOWS)
+#if defined(SFML_CPP11)
+    #include <SFML/System/SleepImpl.hpp>
+#else if defined(SFML_SYSTEM_WINDOWS)
     #include <SFML/System/Win32/SleepImpl.hpp>
 #else
     #include <SFML/System/Unix/SleepImpl.hpp>
