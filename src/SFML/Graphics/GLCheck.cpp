@@ -112,8 +112,15 @@ void EnsureGlewInit()
     static bool initialized = false;
     if (!initialized)
     {
-        glewInit();
-        initialized = true;
+        GLenum status = glewInit();
+        if (status == GLEW_OK)
+        {
+            initialized = true;
+        }
+        else
+        {
+            Err() << "Failed to initialize GLEW, " << glewGetErrorString(status) << std::endl;
+        }
     }
 }
 
