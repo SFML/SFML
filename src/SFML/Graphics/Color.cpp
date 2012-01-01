@@ -95,12 +95,32 @@ Color operator +(const Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
+Color operator -(const Color& left, const Color& right)
+{
+    return Color(static_cast<Uint8>(std::max(left.r - right.r, 0)),
+                 static_cast<Uint8>(std::max(left.g - right.g, 0)),
+                 static_cast<Uint8>(std::max(left.b - right.b, 0)),
+                 static_cast<Uint8>(std::max(left.a - right.a, 0)));
+}
+
+
+////////////////////////////////////////////////////////////
 Color operator *(const Color& left, const Color& right)
 {
     return Color(static_cast<Uint8>(left.r * right.r / 255),
                  static_cast<Uint8>(left.g * right.g / 255),
                  static_cast<Uint8>(left.b * right.b / 255),
                  static_cast<Uint8>(left.a * right.a / 255));
+}
+
+
+////////////////////////////////////////////////////////////
+Color operator /(const Color& left, const Color& right)
+{
+    return Color(static_cast<Uint8>(left.r * 255 / right.r),
+                 static_cast<Uint8>(left.g * 255 / right.g),
+                 static_cast<Uint8>(left.b * 255 / right.b),
+                 static_cast<Uint8>(left.a * 255 / right.a));
 }
 
 
@@ -112,9 +132,23 @@ Color& operator +=(Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
+Color& operator -=(Color& left, const Color& right)
+{
+    return left = left - right;
+}
+
+
+////////////////////////////////////////////////////////////
 Color& operator *=(Color& left, const Color& right)
 {
     return left = left * right;
+}
+
+
+////////////////////////////////////////////////////////////
+Color& operator /=(Color& left, const Color& right)
+{
+    return left = left / right;
 }
 
 } // namespace sf

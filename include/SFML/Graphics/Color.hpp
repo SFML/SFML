@@ -128,6 +128,21 @@ SFML_API Color operator +(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
+/// \brief Overload of the binary - operator
+///
+/// This operator returns the component-wise difference of two colors.
+/// Components that exceed 0 are clamped to 0.
+///
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Result of \a left - \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API Color operator -(const Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Color
 /// \brief Overload of the binary * operator
 ///
 /// This operator returns the component-wise multiplication
@@ -142,6 +157,23 @@ SFML_API Color operator +(const Color& left, const Color& right);
 ///
 ////////////////////////////////////////////////////////////
 SFML_API Color operator *(const Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Color
+/// \brief Overload of the binary / operator
+///
+/// This operator returns the inverse component-wise multiplication
+/// (or "inverse modulation") of two colors.
+/// Components are then multiplied by 255 so that the result is
+/// the inverse of the multiplication operator, which divides by 255.
+///
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Result of \a left / \a right
+///
+////////////////////////////////////////////////////////////
+SFML_API Color operator /(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
@@ -161,6 +193,22 @@ SFML_API Color& operator +=(Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
+/// \brief Overload of the binary -= operator
+///
+/// This operator computes the component-wise difference of two colors,
+/// and assigns the result to the left operand.
+/// Components that exceed 0 are clamped to 0.
+///
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Reference to \a left
+///
+////////////////////////////////////////////////////////////
+SFML_API Color& operator -=(Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Color
 /// \brief Overload of the binary *= operator
 ///
 /// This operator returns the component-wise multiplication
@@ -176,6 +224,24 @@ SFML_API Color& operator +=(Color& left, const Color& right);
 ///
 ////////////////////////////////////////////////////////////
 SFML_API Color& operator *=(Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Color
+/// \brief Overload of the binary /= operator
+///
+/// This operator returns the inverse component-wise multiplication
+/// (or "inverse modulation") of two colors, and assigns
+/// the result to the left operand.
+/// Components are then multiplied by 255 so that the result is
+/// the inverse of the multiplication operator, which divides by 255.
+///
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Reference to \a left
+///
+////////////////////////////////////////////////////////////
+SFML_API Color& operator /=(Color& left, const Color& right);
 
 } // namespace sf
 
@@ -223,6 +289,10 @@ SFML_API Color& operator *=(Color& left, const Color& right);
 /// \endcode
 ///
 /// Colors can also be added and modulated (multiplied) using the
-/// overloaded operators + and *.
+/// overloaded operators + and *. The inverses of these operations,
+/// - and /, are also available.
+/// Note that rounding error may occur, and that, for example, adding
+/// and then subtracting a color may not yield an identical color to
+/// the first.
 ///
 ////////////////////////////////////////////////////////////
