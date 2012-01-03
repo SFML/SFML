@@ -89,13 +89,13 @@ if(MACOSX)
             sfml_set_option(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk"
                             STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value.")
             sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" 
-                            STRING "Minimum OS X version to target for deployment (at runtime); ewer APIs weak linked.")
+                            STRING "Minimum OS X version to target for deployment (at runtime), newer APIs weak linked.")
         elseif(EXISTS /Developer/SDKs/MacOSX10.6.sdk)
             # target 10.6 system
             sfml_set_option(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk"
                             STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value.")
             sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.6" 
-                            STRING "Minimum OS X version to target for deployment (at runtime); newer APIs weak linked.")
+                            STRING "Minimum OS X version to target for deployment (at runtime), newer APIs weak linked.")
         else()
             # use default SDK.
         endif()
