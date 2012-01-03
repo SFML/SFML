@@ -2,6 +2,18 @@
 # detect the OS
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(WINDOWS 1)
+
+    # detect the architecture (note: this test won't work for cross-compilation)
+    include(CheckTypeSize)
+    check_type_size(void* SIZEOF_VOID_PTR)
+    if(${SIZEOF_VOID_PTR} EQUAL "4")
+        set(ARCH_32BITS 1)
+    elseif(${SIZEOF_VOID_PTR} EQUAL "8")
+        set(ARCH_64BITS 1)
+    else()
+        message(FATAL_ERROR "Unsupported architecture")
+        return()
+    endif()
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(LINUX 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
@@ -17,22 +29,8 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         message(FATAL_ERROR "Unsupported version of OS X : ${MACOSX_VERSION_RAW}")
         return()
     endif()
-
 else()
     message(FATAL_ERROR "Unsupported operating system")
-    return()
-endif()
-
-# detect the architecture
-# note: this test won't work for cross-compilation
-include(CheckTypeSize)
-check_type_size(void* SIZEOF_VOID_PTR)
-if(${SIZEOF_VOID_PTR} MATCHES "^4$")
-    set(ARCH_32BITS 1)
-elseif(${SIZEOF_VOID_PTR} MATCHES "^8$")
-    set(ARCH_64BITS 1)
-else()
-    message(FATAL_ERROR "Unsupported architecture")
     return()
 endif()
 
