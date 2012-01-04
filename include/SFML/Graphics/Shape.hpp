@@ -335,6 +335,6 @@ private :
 /// \li GetOutlinePointCount must return the number of points of the shape
 /// \li GetOutlinePoint must return the points of the shape
 ///
-/// \see sf::LineShape, sf::RectangleShape, sf::CircleShape, sf::ConvexShape, sf::Transformable
+/// \see sf::RectangleShape, sf::CircleShape, sf::ConvexShape, sf::Transformable
 ///
 ////////////////////////////////////////////////////////////
