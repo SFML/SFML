@@ -46,7 +46,9 @@ struct SFMLmainWindow
         logo.SetSmooth(true);
         
         sprite.SetTexture(logo, true);
-        sprite.SetOrigin(sprite.GetSize() / 2.f);
+        sf::FloatRect rect = sprite.GetLocalBounds();
+        sf::Vector2f size(rect.Width, rect.Height);
+        sprite.SetOrigin(size / 2.f);
         sprite.Scale(0.3, 0.3);
         
         unsigned int ww = renderWindow.GetWidth();
