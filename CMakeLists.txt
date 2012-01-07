@@ -201,6 +201,6 @@ elseif(MACOSX)
     install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
 
     if(INSTALL_XCODE4_TEMPLATES)
-        install(DIRECTORY xcode/templates/SFML DESTINATION $ENV{HOME}/Library/Developer/Xcode/Templates)
+        install(DIRECTORY tools/xcode/templates/SFML DESTINATION $ENV{HOME}/Library/Developer/Xcode/Templates)
     endif()
 endif()
