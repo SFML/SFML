@@ -127,6 +127,26 @@ if(MACOSX)
     endif()
 endif()
 
+if(LINUX)
+    if(BUILD_SHARED_LIBS)
+        sfml_set_option(INSTALL_PKGCONFIG_FILES TRUE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
+        if(INSTALL_PKGCONFIG_FILES)
+            foreach(sfml_module IN ITEMS all system window graphics audio network)
+                CONFIGURE_FILE(
+                    "tools/pkg-config/sfml-${sfml_module}.pc.in"
+                    "tools/pkg-config/sfml-${sfml_module}.pc"
+                    @ONLY)
+	    INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
+                    DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
+            endforeach()
+        endif()
+    else()
+        if(INSTALL_PKGCONFIG_FILES)
+            message(WARNING "No pkg-config files are provided for the static SFML libraries (INSTALL_PKGCONFIG_FILES will be ignored).")
+        endif()
+    endif()
+endif()
+
 # add the subdirectories
 add_subdirectory(src/SFML)
 if(BUILD_EXAMPLES)
