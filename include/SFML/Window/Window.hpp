@@ -145,7 +145,7 @@ public :
     /// After calling this function, the sf::Window instance remains
     /// valid and you can call Create() to recreate the window.
     /// All other functions such as PollEvent() or Display() will
-    /// still work (i.e. you don't have to test IsOpened() every time),
+    /// still work (i.e. you don't have to test IsOpen() every time),
     /// and will have no effect on closed windows.
     ///
     ////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ public :
     /// \return True if the window is opened, false if it has been closed
     ///
     ////////////////////////////////////////////////////////////
-    bool IsOpened() const;
+    bool IsOpen() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the width of the rendering region of the window
@@ -471,7 +471,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::WindowImpl* myWindow;         ///< Platform-specific implementation of the window
+    priv::WindowImpl* myImpl;           ///< Platform-specific implementation of the window
     priv::GlContext*  myContext;        ///< Platform-specific implementation of the OpenGL context
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
     Uint32            myLastFrameTime;  ///< Time elapsed since last frame
@@ -519,7 +519,7 @@ private :
 /// window.SetFramerateLimit(60);
 ///
 /// // The main loop - ends as soon as the window is closed
-/// while (window.IsOpened())
+/// while (window.IsOpen())
 /// {
 ///    // Event processing
 ///    sf::Event event;

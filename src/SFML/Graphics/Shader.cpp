@@ -118,9 +118,9 @@ bool Shader::LoadFromFile(const std::string& filename, Type type)
 
     // Compile the shader program
     if (type == Vertex)
-        return CompileProgram(&shader[0], NULL);
+        return Compile(&shader[0], NULL);
     else
-        return CompileProgram(NULL, &shader[0]);
+        return Compile(NULL, &shader[0]);
 }
 
 
@@ -144,7 +144,7 @@ bool Shader::LoadFromFile(const std::string& vertexShaderFilename, const std::st
     }
 
     // Compile the shader program
-    return CompileProgram(&vertexShader[0], &fragmentShader[0]);
+    return Compile(&vertexShader[0], &fragmentShader[0]);
 }
 
 
@@ -153,9 +153,9 @@ bool Shader::LoadFromMemory(const std::string& shader, Type type)
 {
     // Compile the shader program
     if (type == Vertex)
-        return CompileProgram(shader.c_str(), NULL);
+        return Compile(shader.c_str(), NULL);
     else
-        return CompileProgram(NULL, shader.c_str());
+        return Compile(NULL, shader.c_str());
 }
 
 
@@ -163,7 +163,7 @@ bool Shader::LoadFromMemory(const std::string& shader, Type type)
 bool Shader::LoadFromMemory(const std::string& vertexShader, const std::string& fragmentShader)
 {
     // Compile the shader program
-    return CompileProgram(vertexShader.c_str(), fragmentShader.c_str());
+    return Compile(vertexShader.c_str(), fragmentShader.c_str());
 }
 
 
@@ -180,9 +180,9 @@ bool Shader::LoadFromStream(InputStream& stream, Type type)
 
     // Compile the shader program
     if (type == Vertex)
-        return CompileProgram(&shader[0], NULL);
+        return Compile(&shader[0], NULL);
     else
-        return CompileProgram(NULL, &shader[0]);
+        return Compile(NULL, &shader[0]);
 }
 
 
@@ -206,7 +206,7 @@ bool Shader::LoadFromStream(InputStream& vertexShaderStream, InputStream& fragme
     }
 
     // Compile the shader program
-    return CompileProgram(&vertexShader[0], &fragmentShader[0]);
+    return Compile(&vertexShader[0], &fragmentShader[0]);
 }
 
 
@@ -449,7 +449,7 @@ bool Shader::IsAvailable()
 
 
 ////////////////////////////////////////////////////////////
-bool Shader::CompileProgram(const char* vertexShaderCode, const char* fragmentShaderCode)
+bool Shader::Compile(const char* vertexShaderCode, const char* fragmentShaderCode)
 {
     EnsureGlContext();
 

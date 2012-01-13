@@ -205,7 +205,7 @@ private :
 /// window.SetFramerateLimit(60);
 ///
 /// // The main loop - ends as soon as the window is closed
-/// while (window.IsOpened())
+/// while (window.IsOpen())
 /// {
 ///    // Event processing
 ///    sf::Event event;
@@ -247,7 +247,7 @@ private :
 /// ...
 ///
 /// // Start the rendering loop
-/// while (window.IsOpened())
+/// while (window.IsOpen())
 /// {
 ///     // Process events
 ///     ...

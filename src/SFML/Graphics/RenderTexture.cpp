@@ -35,7 +35,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 RenderTexture::RenderTexture() :
-myRenderTexture(NULL)
+myImpl(NULL)
 {
 
 }
@@ -44,7 +44,7 @@ myRenderTexture(NULL)
 ////////////////////////////////////////////////////////////
 RenderTexture::~RenderTexture()
 {
-    delete myRenderTexture;
+    delete myImpl;
 }
 
 
@@ -62,20 +62,20 @@ bool RenderTexture::Create(unsigned int width, unsigned int height, bool depthBu
     SetSmooth(false);
 
     // Create the implementation
-    delete myRenderTexture;
+    delete myImpl;
     if (priv::RenderTextureImplFBO::IsAvailable())
     {
         // Use frame-buffer object (FBO)
-        myRenderTexture = new priv::RenderTextureImplFBO;
+        myImpl = new priv::RenderTextureImplFBO;
     }
     else
     {
         // Use default implementation
-        myRenderTexture = new priv::RenderTextureImplDefault;
+        myImpl = new priv::RenderTextureImplDefault;
     }
 
     // Initialize the render texture
-    if (!myRenderTexture->Create(width, height, myTexture.myTexture, depthBuffer))
+    if (!myImpl->Create(width, height, myTexture.myTexture, depthBuffer))
         return false;
 
     // We can now initialize the render target part
@@ -102,7 +102,7 @@ bool RenderTexture::IsSmooth() const
 ////////////////////////////////////////////////////////////
 bool RenderTexture::SetActive(bool active)
 {
-    return myRenderTexture && myRenderTexture->Activate(active);
+    return myImpl && myImpl->Activate(active);
 }
 
 
@@ -112,7 +112,7 @@ void RenderTexture::Display()
     // Update the target texture
     if (SetActive(true))
     {
-        myRenderTexture->UpdateTexture(myTexture.myTexture);
+        myImpl->UpdateTexture(myTexture.myTexture);
         myTexture.myPixelsFlipped = true;
     }
 }

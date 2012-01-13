@@ -66,8 +66,8 @@ struct ThreadMemberFunc : ThreadFunc
 ////////////////////////////////////////////////////////////
 template <typename F>
 Thread::Thread(F functor) :
-myImpl    (NULL),
-myFunction(new priv::ThreadFunctor<F>(functor))
+myImpl      (NULL),
+myEntryPoint(new priv::ThreadFunctor<F>(functor))
 {
 }
 
@@ -75,8 +75,8 @@ myFunction(new priv::ThreadFunctor<F>(functor))
 ////////////////////////////////////////////////////////////
 template <typename F, typename A>
 Thread::Thread(F function, A argument) :
-myImpl    (NULL),
-myFunction(new priv::ThreadFunctorWithArg<F, A>(function, argument))
+myImpl      (NULL),
+myEntryPoint(new priv::ThreadFunctorWithArg<F, A>(function, argument))
 {
 }
 
@@ -84,7 +84,7 @@ myFunction(new priv::ThreadFunctorWithArg<F, A>(function, argument))
 ////////////////////////////////////////////////////////////
 template <typename C>
 Thread::Thread(void(C::*function)(), C* object) :
-myImpl    (NULL),
-myFunction(new priv::ThreadMemberFunc<C>(function, object))
+myImpl      (NULL),
+myEntryPoint(new priv::ThreadMemberFunc<C>(function, object))
 {
 }

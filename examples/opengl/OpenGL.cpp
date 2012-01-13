@@ -57,7 +57,7 @@ int main()
     sf::Clock clock;
 
     // Start game loop
-    while (window.IsOpened())
+    while (window.IsOpen())
     {
         // Process events
         sf::Event event;

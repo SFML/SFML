@@ -41,7 +41,7 @@ namespace sf
 Thread::~Thread()
 {
     Wait();
-    delete myFunction;
+    delete myEntryPoint;
 }
 
 
@@ -80,7 +80,7 @@ void Thread::Terminate()
 ////////////////////////////////////////////////////////////
 void Thread::Run()
 {
-    myFunction->Run();
+    myEntryPoint->Run();
 }
 
 } // namespace sf

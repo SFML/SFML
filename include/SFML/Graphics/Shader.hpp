@@ -503,7 +503,7 @@ private :
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    bool CompileProgram(const char* vertexShaderCode, const char* fragmentShaderCode);
+    bool Compile(const char* vertexShaderCode, const char* fragmentShaderCode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind all the textures used by the shader

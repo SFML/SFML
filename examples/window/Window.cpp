@@ -34,7 +34,7 @@ int main()
     gluPerspective(90.f, 1.f, 1.f, 500.f);
 
     // Start the game loop
-    while (window.IsOpened())
+    while (window.IsOpen())
     {
         // Process events
         sf::Event event;

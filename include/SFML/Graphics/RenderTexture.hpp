@@ -195,8 +195,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Texture                  myTexture;       ///< Target texture to draw on
-    priv::RenderTextureImpl* myRenderTexture; ///< Platform/hardware specific implementation
+    priv::RenderTextureImpl* myImpl;    ///< Platform/hardware specific implementation
+    Texture                  myTexture; ///< Target texture to draw on
 };
 
 } // namespace sf
@@ -233,7 +233,7 @@ private :
 ///     return -1
 ///
 /// // The main loop
-/// while (window.IsOpened())
+/// while (window.IsOpen())
 /// {
 ///    // Event processing
 ///    // ...

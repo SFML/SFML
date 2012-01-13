@@ -82,7 +82,7 @@ int main()
     float ballAngle         = 0.f; // to be changed later
 
     bool isPlaying = false;
-    while (window.IsOpened())
+    while (window.IsOpen())
     {
         // Handle events
         sf::Event event;
