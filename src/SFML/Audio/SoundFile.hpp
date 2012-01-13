@@ -129,22 +129,22 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the loaded sound
     ///
-    /// \param data      Pointer to the sample array to fill
-    /// \param nbSamples Number of samples to read
+    /// \param data        Pointer to the sample array to fill
+    /// \param sampleCount Number of samples to read
     ///
-    /// \return Number of samples actually read (may be less than \a nbSamples)
+    /// \return Number of samples actually read (may be less than \a sampleCount)
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t Read(Int16* data, std::size_t nbSamples);
+    std::size_t Read(Int16* data, std::size_t sampleCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file
     ///
-    /// \param data      Pointer to the sample array to write
-    /// \param nbSamples Number of samples to write
+    /// \param data        Pointer to the sample array to write
+    /// \param sampleCount Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    void Write(const Int16* data, std::size_t nbSamples);
+    void Write(const Int16* data, std::size_t sampleCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position in the file
@@ -200,7 +200,7 @@ private :
     ////////////////////////////////////////////////////////////
     SNDFILE*     myFile;         ///< File descriptor
     Memory       myMemory;       ///< Memory reading info
-    std::size_t  myNbSamples;    ///< Total number of samples in the file
+    std::size_t  mySampleCount;  ///< Total number of samples in the file
     unsigned int myChannelCount; ///< Number of channels used by the sound
     unsigned int mySampleRate;   ///< Number of samples per second
 };

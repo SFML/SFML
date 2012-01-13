@@ -298,7 +298,7 @@ bool SoundStream::FillAndPushBuffer(unsigned int bufferNum)
             OnSeek(0);
 
             // If we previously had no data, try to fill the buffer once again
-            if (!data.Samples || (data.NbSamples == 0))
+            if (!data.Samples || (data.SampleCount == 0))
             {
                 return FillAndPushBuffer(bufferNum);
             }
@@ -311,12 +311,12 @@ bool SoundStream::FillAndPushBuffer(unsigned int bufferNum)
     }
 
     // Fill the buffer if some data was returned
-    if (data.Samples && data.NbSamples)
+    if (data.Samples && data.SampleCount)
     {
         unsigned int buffer = myBuffers[bufferNum];
 
         // Fill the buffer
-        ALsizei size = static_cast<ALsizei>(data.NbSamples) * sizeof(Int16);
+        ALsizei size = static_cast<ALsizei>(data.SampleCount) * sizeof(Int16);
         ALCheck(alBufferData(buffer, myFormat, data.Samples, size, mySampleRate));
 
         // Push it into the sound queue

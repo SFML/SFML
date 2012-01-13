@@ -54,7 +54,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 SoundFile::SoundFile() :
 myFile        (NULL),
-myNbSamples   (0),
+mySampleCount (0),
 myChannelCount(0),
 mySampleRate  (0)
 {
@@ -73,7 +73,7 @@ SoundFile::~SoundFile()
 ////////////////////////////////////////////////////////////
 std::size_t SoundFile::GetSampleCount() const
 {
-    return myNbSamples;
+    return mySampleCount;
 }
 
 
@@ -110,7 +110,7 @@ bool SoundFile::OpenRead(const std::string& filename)
     // Set the sound parameters
     myChannelCount = fileInfos.channels;
     mySampleRate   = fileInfos.samplerate;
-    myNbSamples    = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
+    mySampleCount  = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
 
     return true;
 }
@@ -147,7 +147,7 @@ bool SoundFile::OpenRead(const void* data, std::size_t sizeInBytes)
     // Set the sound parameters
     myChannelCount = fileInfos.channels;
     mySampleRate   = fileInfos.samplerate;
-    myNbSamples    = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
+    mySampleCount  = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
 
     return true;
 }
@@ -179,7 +179,7 @@ bool SoundFile::OpenRead(InputStream& stream)
     // Set the sound parameters
     myChannelCount = fileInfos.channels;
     mySampleRate   = fileInfos.samplerate;
-    myNbSamples    = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
+    mySampleCount  = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
 
     return true;
 }
@@ -218,35 +218,35 @@ bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelCount
     // Set the sound parameters
     myChannelCount = channelCount;
     mySampleRate   = sampleRate;
-    myNbSamples    = 0;
+    mySampleCount  = 0;
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::size_t SoundFile::Read(Int16* data, std::size_t nbSamples)
+std::size_t SoundFile::Read(Int16* data, std::size_t sampleCount)
 {
-    if (myFile && data && nbSamples)
-        return static_cast<std::size_t>(sf_read_short(myFile, data, nbSamples));
+    if (myFile && data && sampleCount)
+        return static_cast<std::size_t>(sf_read_short(myFile, data, sampleCount));
     else
         return 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundFile::Write(const Int16* data, std::size_t nbSamples)
+void SoundFile::Write(const Int16* data, std::size_t sampleCount)
 {
-    if (myFile && data && nbSamples)
+    if (myFile && data && sampleCount)
     {
         // Write small chunks instead of everything at once,
         // to avoid a stack overflow in libsndfile (happens only with OGG format)
-        while (nbSamples > 0)
+        while (sampleCount > 0)
         {
-            std::size_t count = nbSamples > 10000 ? 10000 : nbSamples;
+            std::size_t count = sampleCount > 10000 ? 10000 : sampleCount;
             sf_write_short(myFile, data, count);
             data += count;
-            nbSamples -= count;
+            sampleCount -= count;
         }
     }
 }

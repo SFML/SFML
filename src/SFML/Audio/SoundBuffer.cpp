@@ -213,13 +213,13 @@ SoundBuffer& SoundBuffer::operator =(const SoundBuffer& right)
 bool SoundBuffer::Initialize(priv::SoundFile& file)
 {
     // Retrieve the sound parameters
-    std::size_t  nbSamples    = file.GetSampleCount();
+    std::size_t  sampleCount  = file.GetSampleCount();
     unsigned int channelCount = file.GetChannelCount();
     unsigned int sampleRate   = file.GetSampleRate();
 
     // Read the samples from the provided file
-    mySamples.resize(nbSamples);
-    if (file.Read(&mySamples[0], nbSamples) == nbSamples)
+    mySamples.resize(sampleCount);
+    if (file.Read(&mySamples[0], sampleCount) == sampleCount)
     {
         // Update the internal buffer with the new samples
         return Update(channelCount, sampleRate);

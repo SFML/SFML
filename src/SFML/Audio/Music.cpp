@@ -118,11 +118,11 @@ bool Music::OnGetData(SoundStream::Chunk& data)
     Lock lock(myMutex);
 
     // Fill the chunk parameters
-    data.Samples   = &mySamples[0];
-    data.NbSamples = myFile->Read(&mySamples[0], mySamples.size());
+    data.Samples     = &mySamples[0];
+    data.SampleCount = myFile->Read(&mySamples[0], mySamples.size());
 
     // Check if we have reached the end of the audio file
-    return data.NbSamples == mySamples.size();
+    return data.SampleCount == mySamples.size();
 }
 
 

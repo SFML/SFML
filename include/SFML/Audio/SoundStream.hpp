@@ -49,8 +49,8 @@ public :
     ////////////////////////////////////////////////////////////
     struct Chunk
     {
-        const Int16* Samples;   ///< Pointer to the audio samples
-        std::size_t  NbSamples; ///< Number of samples pointed by Samples
+        const Int16* Samples;     ///< Pointer to the audio samples
+        std::size_t  SampleCount; ///< Number of samples pointed by Samples
     };
 
     ////////////////////////////////////////////////////////////
@@ -351,7 +351,7 @@ private :
 ///     {
 ///         // Fill the chunk with audio data from the stream source
 ///         data.Samples = ...;
-///         data.NbSamples = ...;
+///         data.SampleCount = ...;
 ///
 ///         // Return true to continue playing
 ///         return true;

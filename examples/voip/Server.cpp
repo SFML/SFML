@@ -88,8 +88,8 @@ private :
         }
 
         // Fill audio data to pass to the stream
-        data.Samples   = &myTempBuffer[0];
-        data.NbSamples = myTempBuffer.size();
+        data.Samples     = &myTempBuffer[0];
+        data.SampleCount = myTempBuffer.size();
 
         // Update the playing offset
         myOffset += myTempBuffer.size();
@@ -126,14 +126,14 @@ private :
             if (id == audioData)
             {
                 // Extract audio samples from the packet, and append it to our samples buffer
-                const sf::Int16* samples   = reinterpret_cast<const sf::Int16*>(packet.GetData() + 1);
-                std::size_t      nbSamples = (packet.GetDataSize() - 1) / sizeof(sf::Int16);
+                const sf::Int16* samples     = reinterpret_cast<const sf::Int16*>(packet.GetData() + 1);
+                std::size_t      sampleCount = (packet.GetDataSize() - 1) / sizeof(sf::Int16);
 
                 // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
                 {
                     sf::Lock lock(myMutex);
-                    std::copy(samples, samples + nbSamples, std::back_inserter(mySamples));
+                    std::copy(samples, samples + sampleCount, std::back_inserter(mySamples));
                 }
             }
             else if (id == endOfStream)
