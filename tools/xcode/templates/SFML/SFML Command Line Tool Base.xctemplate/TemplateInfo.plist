@@ -529,7 +529,7 @@ int main (int argc, const char * argv[])
 	    <key>main.cpp:main:event_loop</key>
 	    <string>
 // Start the game loop
-while (window.IsOpened())
+while (window.IsOpen())
 {
 	// Process events
 	sf::Event event;
