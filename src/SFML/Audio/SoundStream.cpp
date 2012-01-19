@@ -97,7 +97,7 @@ void SoundStream::Play()
     }
 
     // Move to the beginning
-    OnSeek(0);
+    OnSeek(Time::Zero);
 
     // Start updating the stream in a separate thread to avoid blocking the application
     mySamplesProcessed = 0;
@@ -150,7 +150,7 @@ SoundStream::Status SoundStream::GetStatus() const
 
 
 ////////////////////////////////////////////////////////////
-void SoundStream::SetPlayingOffset(Uint32 timeOffset)
+void SoundStream::SetPlayingOffset(Time timeOffset)
 {
     // Stop the stream
     Stop();
@@ -159,19 +159,19 @@ void SoundStream::SetPlayingOffset(Uint32 timeOffset)
     OnSeek(timeOffset);
 
     // Restart streaming
-    mySamplesProcessed = static_cast<Uint64>(timeOffset) * mySampleRate * myChannelCount / 1000;
+    mySamplesProcessed = static_cast<Uint64>(timeOffset.AsSeconds() * mySampleRate * myChannelCount);
     myIsStreaming = true;
     myThread.Launch();
 }
 
 
 ////////////////////////////////////////////////////////////
-Uint32 SoundStream::GetPlayingOffset() const
+Time SoundStream::GetPlayingOffset() const
 {
     ALfloat seconds = 0.f;
     ALCheck(alGetSourcef(mySource, AL_SEC_OFFSET, &seconds));
 
-    return static_cast<Uint32>(1000 * seconds + 1000 * mySamplesProcessed / mySampleRate / myChannelCount);
+    return Seconds(seconds + static_cast<float>(mySamplesProcessed) / mySampleRate / myChannelCount);
 }
 
 
@@ -264,7 +264,7 @@ void SoundStream::Stream()
 
         // Leave some time for the other threads if the stream is still playing
         if (SoundSource::GetStatus() != Stopped)
-            Sleep(10);
+            Sleep(Milliseconds(10));
     }
 
     // Stop the playback
@@ -295,7 +295,7 @@ bool SoundStream::FillAndPushBuffer(unsigned int bufferNum)
         if (myLoop)
         {
             // Return to the beginning of the stream source
-            OnSeek(0);
+            OnSeek(Time::Zero);
 
             // If we previously had no data, try to fill the buffer once again
             if (!data.Samples || (data.SampleCount == 0))

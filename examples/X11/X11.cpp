@@ -12,7 +12,7 @@
 ////////////////////////////////////////////////////////////
 /// Initialize OpenGL states into the specified view
 ///
-/// \param Window : Target window to initialize
+/// \param Window Target window to initialize
 ///
 ////////////////////////////////////////////////////////////
 void Initialize(sf::Window& window)
@@ -39,8 +39,8 @@ void Initialize(sf::Window& window)
 /// Draw the OpenGL scene (a rotating cube) into
 /// the specified view
 ///
-/// \param Window :      Target window for rendering
-/// \param ElapsedTime : Time elapsed since the last draw
+/// \param Window      Target window for rendering
+/// \param ElapsedTime Time elapsed since the last draw
 ///
 ////////////////////////////////////////////////////////////
 void Draw(sf::Window& window, float elapsedTime)
@@ -55,9 +55,9 @@ void Draw(sf::Window& window, float elapsedTime)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(0.f, 0.f, -200.f);
-    glRotatef(elapsedTime * 50, 1.f, 0.f, 0.f);
-    glRotatef(elapsedTime * 30, 0.f, 1.f, 0.f);
-    glRotatef(elapsedTime * 90, 0.f, 0.f, 1.f);
+    glRotatef(elapsedTime * 0.05f, 1.f, 0.f, 0.f);
+    glRotatef(elapsedTime * 0.03f, 0.f, 1.f, 0.f);
+    glRotatef(elapsedTime * 0.09f, 0.f, 0.f, 1.f);
 
     // Draw a cube
     glBegin(GL_QUADS);
@@ -184,8 +184,8 @@ int main()
         }
 
         // Draw something into our views
-        Draw(SFMLView1, clock.GetElapsedTime());
-        Draw(SFMLView2, clock.GetElapsedTime() * 0.3f);
+        Draw(SFMLView1, clock.GetElapsedTime().AsSeconds());
+        Draw(SFMLView2, clock.GetElapsedTime().AsSeconds() * 0.3f);
 
         // Display the views on screen
         SFMLView1.Display();

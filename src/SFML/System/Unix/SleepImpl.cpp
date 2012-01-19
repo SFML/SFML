@@ -36,7 +36,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void SleepImpl(Uint32 time)
+void SleepImpl(Time time)
 {
     // usleep is not reliable enough (it might block the
     // whole process instead of just the current thread)
@@ -44,14 +44,16 @@ void SleepImpl(Uint32 time)
 
     // this implementation is inspired from Qt
 
-    // first get the current time
+    Uint64 usecs = time.AsMicroseconds();
+
+    // get the current time
     timeval tv;
     gettimeofday(&tv, NULL);
 
     // construct the time limit (current time + time to wait)
     timespec ti;
-    ti.tv_nsec = (tv.tv_usec + (time % 1000) * 1000) * 1000;
-    ti.tv_sec = tv.tv_sec + (time / 1000) + (ti.tv_nsec / 1000000000);
+    ti.tv_nsec = (tv.tv_usec + (usecs % 1000000)) * 1000;
+    ti.tv_sec = tv.tv_sec + (usecs / 1000000) + (ti.tv_nsec / 1000000000);
     ti.tv_nsec %= 1000000000;
 
     // create a mutex and thread condition

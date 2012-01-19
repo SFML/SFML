@@ -132,7 +132,7 @@ bool WindowImpl::PopEvent(Event& event, bool block)
             {
                 ProcessJoystickEvents();
                 ProcessEvents();
-                Sleep(10);
+                Sleep(Milliseconds(10));
             }
         }
     }

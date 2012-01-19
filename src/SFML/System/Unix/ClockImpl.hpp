@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <SFML/System/Time.hpp>
 
 
 namespace sf
@@ -46,10 +47,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the current time
     ///
-    /// \return Current time, in microseconds
+    /// \return Current time
     ///
     ////////////////////////////////////////////////////////////
-    static Uint64 GetMicroSeconds();
+    static Time GetCurrentTime();
 };
 
 } // namespace priv

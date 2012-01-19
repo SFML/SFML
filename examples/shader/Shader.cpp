@@ -351,7 +351,7 @@ int main()
         // Update the current example
         float x = static_cast<float>(sf::Mouse::GetPosition(window).x) / window.GetWidth();
         float y = static_cast<float>(sf::Mouse::GetPosition(window).y) / window.GetHeight();
-        effects[current]->Update(clock.GetElapsedTime() / 1000.f, x, y);
+        effects[current]->Update(clock.GetElapsedTime().AsSeconds(), x, y);
 
         // Clear the window
         window.Clear(sf::Color(255, 128, 0));

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Time.hpp>
 #include <sndfile.h>
 #include <string>
 
@@ -149,10 +150,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position in the file
     ///
-    /// \param timeOffset New read position, in milliseconds
+    /// \param timeOffset New playing position, from the beginning of the file
     ///
     ////////////////////////////////////////////////////////////
-    void Seek(Uint32 timeOffset);
+    void Seek(Time timeOffset);
 
 private :
 

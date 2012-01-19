@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Time.hpp>
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 #include <map>
@@ -377,16 +378,16 @@ public :
     /// Warning: this function waits for the server's response and may
     /// not return instantly; use a thread if you don't want to block your
     /// application, or use a timeout to limit the time to wait. A value
-    /// of 0 means that the client will use the system defaut timeout
+    /// of Time::Zero means that the client will use the system defaut timeout
     /// (which is usually pretty long).
     ///
     /// \param request Request to send
-    /// \param timeout Maximum time to wait, in milliseconds
+    /// \param timeout Maximum time to wait
     ///
     /// \return Server's response
     ///
     ////////////////////////////////////////////////////////////
-    Response SendRequest(const Request& request, Uint32 timeout = 0);
+    Response SendRequest(const Request& request, Time timeout = Time::Zero);
 
 private :
 

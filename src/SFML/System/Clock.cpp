@@ -37,24 +37,27 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Clock::Clock()
+Clock::Clock() :
+myStartTime(priv::ClockImpl::GetCurrentTime())
 {
-    Reset();
 }
 
 
 ////////////////////////////////////////////////////////////
-Uint32 Clock::GetElapsedTime() const
+Time Clock::GetElapsedTime() const
 {
-    Uint64 microseconds = priv::ClockImpl::GetMicroSeconds() - myStartTime;
-    return static_cast<Uint32>(microseconds / 1000);
+    return priv::ClockImpl::GetCurrentTime() - myStartTime;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Clock::Reset()
+Time Clock::Restart()
 {
-    myStartTime = priv::ClockImpl::GetMicroSeconds();
+    Time now = priv::ClockImpl::GetCurrentTime();
+    Time elapsed = now - myStartTime;
+    myStartTime = now;
+
+    return elapsed;
 }
 
 } // namespace sf

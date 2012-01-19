@@ -100,18 +100,18 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
         }
         else
         {
-            sf::Uint32 time = clock.GetElapsedTime();
+            float time = clock.GetElapsedTime().AsSeconds();
 
             // Clear views
             SFMLView1.Clear();
             SFMLView2.Clear();
 
             // Draw sprite 1 on view 1
-            sprite1.SetRotation(time * 0.1f);
+            sprite1.SetRotation(time * 100);
             SFMLView1.Draw(sprite1);
 
             // Draw sprite 2 on view 2
-            sprite2.SetPosition(std::cos(time * 0.001f) * 100.f, 0.f);
+            sprite2.SetPosition(std::cos(time) * 100.f, 0.f);
             SFMLView2.Draw(sprite2);
 
             // Display each view on screen

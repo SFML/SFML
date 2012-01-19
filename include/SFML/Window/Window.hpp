@@ -388,19 +388,6 @@ public :
     void SetFramerateLimit(unsigned int limit);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the duration of the last frame
-    ///
-    /// This function returns the time elapsed between the last
-    /// two calls to Display().
-    /// This can be useful for calculating the framerate, or for
-    /// updating the application's objects.
-    ///
-    /// \return Time elapsed in last frame, in milliseconds
-    ///
-    ////////////////////////////////////////////////////////////
-    Uint32 GetFrameTime() const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Change the joystick threshold
     ///
     /// The joystick threshold is the value below which
@@ -474,7 +461,6 @@ private :
     priv::WindowImpl* myImpl;           ///< Platform-specific implementation of the window
     priv::GlContext*  myContext;        ///< Platform-specific implementation of the OpenGL context
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
-    Uint32            myLastFrameTime;  ///< Time elapsed since last frame
     unsigned int      myFramerateLimit; ///< Current framerate limit
 };
 

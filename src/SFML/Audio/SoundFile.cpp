@@ -32,9 +32,6 @@
 #include <cctype>
 
 
-////////////////////////////////////////////////////////////
-// Private data
-////////////////////////////////////////////////////////////
 namespace
 {
     // Convert a string to lower case
@@ -253,11 +250,11 @@ void SoundFile::Write(const Int16* data, std::size_t sampleCount)
 
 
 ////////////////////////////////////////////////////////////
-void SoundFile::Seek(Uint32 timeOffset)
+void SoundFile::Seek(Time timeOffset)
 {
     if (myFile)
     {
-        sf_count_t frameOffset = static_cast<sf_count_t>(timeOffset) * mySampleRate / 1000;
+        sf_count_t frameOffset = static_cast<sf_count_t>(timeOffset.AsSeconds() * mySampleRate);
         sf_seek(myFile, frameOffset, SEEK_SET);
     }
 }

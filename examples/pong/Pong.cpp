@@ -75,12 +75,13 @@ int main()
 
     // Define the paddles properties
     sf::Clock AITimer;
-    const sf::Uint32 AITime = 300;
+    const sf::Time AITime   = sf::Seconds(0.1f);
     const float paddleSpeed = 400.f;
     float rightPaddleSpeed  = 0.f;
     const float ballSpeed   = 400.f;
     float ballAngle         = 0.f; // to be changed later
 
+    sf::Clock clock;
     bool isPlaying = false;
     while (window.IsOpen())
     {
@@ -122,7 +123,7 @@ int main()
 
         if (isPlaying)
         {
-            float deltaTime = window.GetFrameTime() / 1000.f;
+            float deltaTime = clock.Restart().AsSeconds();
 
             // Move the player's paddle
             if (sf::Keyboard::IsKeyPressed(sf::Keyboard::Up) &&
@@ -146,7 +147,7 @@ int main()
             // Update the computer's paddle direction according to the ball position
             if (AITimer.GetElapsedTime() > AITime)
             {
-                AITimer.Reset();
+                AITimer.Restart();
                 if (ball.GetPosition().y + ballRadius > rightPaddle.GetPosition().y + paddleSize.y / 2)
                     rightPaddleSpeed = paddleSpeed;
                 else if (ball.GetPosition().y - ballRadius < rightPaddle.GetPosition().y - paddleSize.y / 2)

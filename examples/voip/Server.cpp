@@ -78,7 +78,7 @@ private :
 
         // No new data has arrived since last update : wait until we get some
         while ((myOffset >= mySamples.size()) && !myHasFinished)
-            sf::Sleep(10);
+            sf::Sleep(sf::Milliseconds(10));
 
         // Copy samples into a local buffer to avoid synchronization problems
         // (don't forget that we run in two separate threads)
@@ -101,9 +101,9 @@ private :
     /// /see SoundStream::OnSeek
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnSeek(sf::Uint32 timeOffset)
+    virtual void OnSeek(sf::Time timeOffset)
     {
-        myOffset = timeOffset * GetSampleRate() * GetChannelCount() / 1000;
+        myOffset = timeOffset.AsMilliseconds() * GetSampleRate() * GetChannelCount() / 1000;
     }
 
     ////////////////////////////////////////////////////////////
@@ -179,7 +179,7 @@ void DoServer(unsigned short port)
     while (audioStream.GetStatus() != sf::SoundStream::Stopped)
     {
         // Leave some CPU time for other threads
-        sf::Sleep(100);
+        sf::Sleep(sf::Milliseconds(100));
     }
 
     std::cin.ignore(10000, '\n');
@@ -195,6 +195,6 @@ void DoServer(unsigned short port)
     while (audioStream.GetStatus() != sf::SoundStream::Stopped)
     {
         // Leave some CPU time for other threads
-        sf::Sleep(100);
+        sf::Sleep(sf::Milliseconds(100));
     }
 }

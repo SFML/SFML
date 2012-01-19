@@ -38,7 +38,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-Uint64 ClockImpl::GetMicroSeconds()
+Time ClockImpl::GetCurrentTime()
 {
 #ifdef SFML_SYSTEM_MACOS
 
@@ -47,14 +47,14 @@ Uint64 ClockImpl::GetMicroSeconds()
     if (frequency.denom == 0)
         mach_timebase_info(&frequency);
     Uint64 nanoseconds = mach_absolute_time() * frequency.numer / frequency.denom;
-    return nanoseconds / 1000;
+    return sf::Microseconds(nanoseconds / 1000);
 
 #else
 
     // POSIX implementation
     timespec time;
     clock_gettime(CLOCK_MONOTONIC, &time);
-    return time.tv_sec * 1000000 + time.tv_nsec / 1000;
+    return sf::Microseconds(static_cast<Uint64>(time.tv_sec) * 1000000 + time.tv_nsec / 1000);
 
 #endif
 }

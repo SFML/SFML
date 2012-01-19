@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <SFML/System/Time.hpp>
 
 
 namespace sf
@@ -40,10 +41,10 @@ namespace sf
 /// sf::Sleep is the best way to block a program or one of its
 /// threads, as it doesn't consume any CPU power.
 ///
-/// \param duration Time to sleep, in milliseconds
+/// \param duration Time to sleep
 ///
 ////////////////////////////////////////////////////////////
-void SFML_API Sleep(Uint32 duration);
+void SFML_API Sleep(Time duration);
 
 } // namespace sf
 

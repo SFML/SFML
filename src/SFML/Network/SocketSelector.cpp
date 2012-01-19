@@ -100,18 +100,18 @@ void SocketSelector::Clear()
 
 
 ////////////////////////////////////////////////////////////
-bool SocketSelector::Wait(Uint32 timeout)
+bool SocketSelector::Wait(Time timeout)
 {
     // Setup the timeout
     timeval time;
-    time.tv_sec  = timeout / 1000;
-    time.tv_usec = (timeout - time.tv_sec * 1000) * 1000;
+    time.tv_sec  = static_cast<long>(timeout.AsMicroseconds() / 1000000);
+    time.tv_usec = static_cast<long>(timeout.AsMicroseconds() % 1000000);
 
     // Initialize the set that will contain the sockets that are ready
     myImpl->SocketsReady = myImpl->AllSockets;
 
     // Wait until one of the sockets is ready for reading, or timeout is reached
-    int count = select(myImpl->MaxSocket + 1, &myImpl->SocketsReady, NULL, NULL, timeout != 0 ? &time : NULL);
+    int count = select(myImpl->MaxSocket + 1, &myImpl->SocketsReady, NULL, NULL, timeout != Time::Zero ? &time : NULL);
 
     return count > 0;
 }

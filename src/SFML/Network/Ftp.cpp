@@ -146,7 +146,7 @@ Ftp::~Ftp()
 
 
 ////////////////////////////////////////////////////////////
-Ftp::Response Ftp::Connect(const IpAddress& server, unsigned short port, Uint32 timeout)
+Ftp::Response Ftp::Connect(const IpAddress& server, unsigned short port, Time timeout)
 {
     // Connect to the server
     if (myCommandSocket.Connect(server, port, timeout) != Socket::Done)

@@ -32,9 +32,6 @@
 #include <sstream>
 
 
-////////////////////////////////////////////////////////////
-// Private data
-////////////////////////////////////////////////////////////
 namespace
 {
     // Convert a string to lower case
@@ -310,7 +307,7 @@ void Http::SetHost(const std::string& host, unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-Http::Response Http::SendRequest(const Http::Request& request, Uint32 timeout)
+Http::Response Http::SendRequest(const Http::Request& request, Time timeout)
 {
     // First make sure that the request is valid -- add missing mandatory fields
     Request toSend(request);

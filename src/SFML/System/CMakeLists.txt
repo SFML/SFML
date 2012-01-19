@@ -24,6 +24,8 @@ set(SRC
     ${INCROOT}/ThreadLocal.hpp
     ${INCROOT}/ThreadLocalPtr.hpp
     ${INCROOT}/ThreadLocalPtr.inl
+    ${SRCROOT}/Time.cpp
+    ${INCROOT}/Time.hpp
     ${INCROOT}/Utf.hpp
     ${INCROOT}/Utf.inl
     ${INCROOT}/Vector2.hpp

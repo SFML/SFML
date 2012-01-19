@@ -32,9 +32,6 @@
 #include <SFML/System/Err.hpp>
 
 
-////////////////////////////////////////////////////////////
-// Private data
-////////////////////////////////////////////////////////////
 namespace
 {
     const sf::Window* fullscreenWindow = NULL;
@@ -47,7 +44,6 @@ namespace sf
 Window::Window() :
 myImpl          (NULL),
 myContext       (NULL),
-myLastFrameTime (0),
 myFramerateLimit(0)
 {
 
@@ -58,7 +54,6 @@ myFramerateLimit(0)
 Window::Window(VideoMode mode, const std::string& title, Uint32 style, const ContextSettings& settings) :
 myImpl          (NULL),
 myContext       (NULL),
-myLastFrameTime (0),
 myFramerateLimit(0)
 {
     Create(mode, title, style, settings);
@@ -69,7 +64,6 @@ myFramerateLimit(0)
 Window::Window(WindowHandle handle, const ContextSettings& settings) :
 myImpl          (NULL),
 myContext       (NULL),
-myLastFrameTime (0),
 myFramerateLimit(0)
 {
     Create(handle, settings);
@@ -317,14 +311,9 @@ void Window::Display()
     // Limit the framerate if needed
     if (myFramerateLimit > 0)
     {
-        Int32 remainingTime = 1000 / myFramerateLimit - myClock.GetElapsedTime();
-        if (remainingTime > 0)
-            Sleep(remainingTime);
+        Time remainingTime = Seconds(1.f / myFramerateLimit) - myClock.Restart();
+        Sleep(remainingTime);
     }
-
-    // Measure the time elapsed since last frame
-    myLastFrameTime = myClock.GetElapsedTime();
-    myClock.Reset();
 
     // Display the backbuffer on screen
     if (SetActive())
@@ -336,13 +325,6 @@ void Window::Display()
 void Window::SetFramerateLimit(unsigned int limit)
 {
     myFramerateLimit = limit;
-}
-
-
-////////////////////////////////////////////////////////////
-Uint32 Window::GetFrameTime() const
-{
-    return myLastFrameTime;
 }
 
 
@@ -396,8 +378,7 @@ void Window::Initialize()
     EnableKeyRepeat(true);
 
     // Reset frame time
-    myClock.Reset();
-    myLastFrameTime = 0;
+    myClock.Restart();
 
     // Activate the window
     SetActive();

@@ -36,9 +36,6 @@
 #endif
 
 
-////////////////////////////////////////////////////////////
-// Private data
-////////////////////////////////////////////////////////////
 namespace
 {
     ALCdevice* captureDevice = NULL;
@@ -155,7 +152,7 @@ void SoundRecorder::Record()
         ProcessCapturedSamples();
 
         // Don't bother the CPU while waiting for more captured data
-        Sleep(100);
+        Sleep(Milliseconds(100));
     }
 
     // Capture is finished : clean up everything

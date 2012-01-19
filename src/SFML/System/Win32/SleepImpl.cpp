@@ -34,9 +34,9 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void SleepImpl(Uint32 time)
+void SleepImpl(Time time)
 {
-    ::Sleep(time);
+    ::Sleep(time.AsMilliseconds());
 }
 
 } // namespace priv

@@ -165,7 +165,7 @@ IpAddress IpAddress::GetLocalAddress()
 
 
 ////////////////////////////////////////////////////////////
-IpAddress IpAddress::GetPublicAddress(Uint32 timeout)
+IpAddress IpAddress::GetPublicAddress(Time timeout)
 {
     // The trick here is more complicated, because the only way
     // to get our public IP address is to get it from a distant computer.
