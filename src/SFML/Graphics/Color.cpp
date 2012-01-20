@@ -117,10 +117,11 @@ Color operator *(const Color& left, const Color& right)
 ////////////////////////////////////////////////////////////
 Color operator /(const Color& left, const Color& right)
 {
-    return Color(static_cast<Uint8>(left.r * 255 / right.r),
-                 static_cast<Uint8>(left.g * 255 / right.g),
-                 static_cast<Uint8>(left.b * 255 / right.b),
-                 static_cast<Uint8>(left.a * 255 / right.a));
+    // Add one to denominator to prevent divide-by-zero errors
+    return Color(static_cast<Uint8>(left.r * 256 / (right.r + 1)),
+                 static_cast<Uint8>(left.g * 256 / (right.g + 1)),
+                 static_cast<Uint8>(left.b * 256 / (right.b + 1)),
+                 static_cast<Uint8>(left.a * 256 / (right.a + 1)));
 }
 
 
