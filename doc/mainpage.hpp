@@ -42,7 +42,7 @@
 ///     music.Play();
 /// 
 ///     // Start the game loop
-///     while (window.IsOpened())
+///     while (window.IsOpen())
 ///     {
 ///         // Process events
 ///         sf::Event event;
