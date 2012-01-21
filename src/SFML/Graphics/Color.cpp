@@ -118,10 +118,10 @@ Color operator *(const Color& left, const Color& right)
 Color operator /(const Color& left, const Color& right)
 {
     // Add one to denominator to prevent divide-by-zero errors
-    return Color(static_cast<Uint8>(left.r * 256 / (right.r + 1)),
-                 static_cast<Uint8>(left.g * 256 / (right.g + 1)),
-                 static_cast<Uint8>(left.b * 256 / (right.b + 1)),
-                 static_cast<Uint8>(left.a * 256 / (right.a + 1)));
+    return Color(static_cast<Uint8>(std::min(left.r * 256 / (right.r + 1), 255)),
+                 static_cast<Uint8>(std::min(left.g * 256 / (right.g + 1), 255)),
+                 static_cast<Uint8>(std::min(left.b * 256 / (right.b + 1), 255)),
+                 static_cast<Uint8>(std::min(left.a * 256 / (right.a + 1), 255)));
 }
 
 
