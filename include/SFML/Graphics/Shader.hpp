@@ -322,7 +322,7 @@ public :
     void SetParameter(const std::string& name, const Vector2f& vector);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Change a 2-components vector parameter of the shader
+    /// \brief Change a 3-components vector parameter of the shader
     ///
     /// \a name is the name of the variable to change in the shader.
     /// The corresponding parameter in the shader must be a 3x1 vector

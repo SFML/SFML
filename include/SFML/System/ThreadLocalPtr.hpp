@@ -128,13 +128,13 @@ public :
 /// MyClass object2;
 /// sf::ThreadLocalPtr<MyClass> objectPtr;
 ///
-/// void Thread1(void*)
+/// void Thread1()
 /// {
 ///     objectPtr = &object1; // doesn't impact Thread2
 ///     ...
 /// }
 ///
-/// void Thread1(void*)
+/// void Thread2()
 /// {
 ///     objectPtr = &object2; // doesn't impact Thread1
 ///     ...

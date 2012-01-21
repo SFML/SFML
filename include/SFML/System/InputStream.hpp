@@ -63,7 +63,7 @@ public :
     ///
     /// \param position The position to seek to, from the beginning
     ///
-    /// \return The position actually seeked to, or -1 on error
+    /// \return The position actually sought to, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
     virtual Int64 Seek(Int64 position) = 0;
