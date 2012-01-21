@@ -91,105 +91,105 @@ Time Microseconds(Int64 amount)
 
 
 ////////////////////////////////////////////////////////////
-bool operator ==(const Time& left, const Time& right)
+bool operator ==(Time left, Time right)
 {
     return left.AsMicroseconds() == right.AsMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator !=(const Time& left, const Time& right)
+bool operator !=(Time left, Time right)
 {
     return left.AsMicroseconds() != right.AsMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator <(const Time& left, const Time& right)
+bool operator <(Time left, Time right)
 {
     return left.AsMicroseconds() < right.AsMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator >(const Time& left, const Time& right)
+bool operator >(Time left, Time right)
 {
     return left.AsMicroseconds() > right.AsMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator <=(const Time& left, const Time& right)
+bool operator <=(Time left, Time right)
 {
     return left.AsMicroseconds() <= right.AsMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator >=(const Time& left, const Time& right)
+bool operator >=(Time left, Time right)
 {
     return left.AsMicroseconds() >= right.AsMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
-Time operator -(const Time& right)
+Time operator -(Time right)
 {
     return Microseconds(-right.AsMicroseconds());
 }
 
 
 ////////////////////////////////////////////////////////////
-Time operator +(const Time& left, const Time& right)
+Time operator +(Time left, Time right)
 {
     return Microseconds(left.AsMicroseconds() + right.AsMicroseconds());
 }
 
 
 ////////////////////////////////////////////////////////////
-Time& operator +=(Time& left, const Time& right)
+Time& operator +=(Time& left, Time right)
 {
     return left = left + right;
 }
 
 
 ////////////////////////////////////////////////////////////
-Time operator -(const Time& left, const Time& right)
+Time operator -(Time left, Time right)
 {
     return Microseconds(left.AsMicroseconds() - right.AsMicroseconds());
 }
 
 
 ////////////////////////////////////////////////////////////
-Time& operator -=(Time& left, const Time& right)
+Time& operator -=(Time& left, Time right)
 {
     return left = left - right;
 }
 
 
 ////////////////////////////////////////////////////////////
-Time operator *(const Time& left, float right)
+Time operator *(Time left, float right)
 {
     return Seconds(left.AsSeconds() * right);
 }
 
 
 ////////////////////////////////////////////////////////////
-Time operator *(const Time& left, Int64 right)
+Time operator *(Time left, Int64 right)
 {
     return Microseconds(left.AsMicroseconds() * right);
 }
 
 
 ////////////////////////////////////////////////////////////
-Time operator *(float left, const Time& right)
+Time operator *(float left, Time right)
 {
     return right * left;
 }
 
 
 ////////////////////////////////////////////////////////////
-Time operator *(Int64 left, const Time& right)
+Time operator *(Int64 left, Time right)
 {
     return right * left;
 }
@@ -210,14 +210,14 @@ Time& operator *=(Time& left, Int64 right)
 
 
 ////////////////////////////////////////////////////////////
-Time operator /(const Time& left, float right)
+Time operator /(Time left, float right)
 {
     return Seconds(left.AsSeconds() / right);
 }
 
 
 ////////////////////////////////////////////////////////////
-Time operator /(const Time& left, Int64 right)
+Time operator /(Time left, Int64 right)
 {
     return Microseconds(left.AsMicroseconds() / right);
 }

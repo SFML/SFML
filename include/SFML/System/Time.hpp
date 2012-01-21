@@ -158,7 +158,7 @@ SFML_SYSTEM_API Time Microseconds(Int64 amount);
 /// \return True if both time values are equal
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator ==(const Time& left, const Time& right);
+SFML_SYSTEM_API bool operator ==(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -170,7 +170,7 @@ SFML_SYSTEM_API bool operator ==(const Time& left, const Time& right);
 /// \return True if both time values are different
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator !=(const Time& left, const Time& right);
+SFML_SYSTEM_API bool operator !=(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -182,7 +182,7 @@ SFML_SYSTEM_API bool operator !=(const Time& left, const Time& right);
 /// \return True if \a left is lesser than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator <(const Time& left, const Time& right);
+SFML_SYSTEM_API bool operator <(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -194,7 +194,7 @@ SFML_SYSTEM_API bool operator <(const Time& left, const Time& right);
 /// \return True if \a left is greater than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator >(const Time& left, const Time& right);
+SFML_SYSTEM_API bool operator >(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -206,7 +206,7 @@ SFML_SYSTEM_API bool operator >(const Time& left, const Time& right);
 /// \return True if \a left is lesser or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator <=(const Time& left, const Time& right);
+SFML_SYSTEM_API bool operator <=(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -218,7 +218,7 @@ SFML_SYSTEM_API bool operator <=(const Time& left, const Time& right);
 /// \return True if \a left is greater or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator >=(const Time& left, const Time& right);
+SFML_SYSTEM_API bool operator >=(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -229,7 +229,7 @@ SFML_SYSTEM_API bool operator >=(const Time& left, const Time& right);
 /// \return Opposite of the time value
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time operator -(const Time& right);
+SFML_SYSTEM_API Time operator -(Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -241,7 +241,7 @@ SFML_SYSTEM_API Time operator -(const Time& right);
 /// \return Sum of the two times values
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time operator +(const Time& left, const Time& right);
+SFML_SYSTEM_API Time operator +(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -253,7 +253,7 @@ SFML_SYSTEM_API Time operator +(const Time& left, const Time& right);
 /// \return Sum of the two times values
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time& operator +=(Time& left, const Time& right);
+SFML_SYSTEM_API Time& operator +=(Time& left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -265,7 +265,7 @@ SFML_SYSTEM_API Time& operator +=(Time& left, const Time& right);
 /// \return Difference of the two times values
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time operator -(const Time& left, const Time& right);
+SFML_SYSTEM_API Time operator -(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -277,7 +277,7 @@ SFML_SYSTEM_API Time operator -(const Time& left, const Time& right);
 /// \return Difference of the two times values
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time& operator -=(Time& left, const Time& right);
+SFML_SYSTEM_API Time& operator -=(Time& left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -289,7 +289,7 @@ SFML_SYSTEM_API Time& operator -=(Time& left, const Time& right);
 /// \return \left multiplied by \right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time operator *(const Time& left, float right);
+SFML_SYSTEM_API Time operator *(Time left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -301,7 +301,7 @@ SFML_SYSTEM_API Time operator *(const Time& left, float right);
 /// \return \left multiplied by \right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time operator *(const Time& left, Int64 right);
+SFML_SYSTEM_API Time operator *(Time left, Int64 right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -313,7 +313,7 @@ SFML_SYSTEM_API Time operator *(const Time& left, Int64 right);
 /// \return \left multiplied by \right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time operator *(float left, const Time& right);
+SFML_SYSTEM_API Time operator *(float left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -325,7 +325,7 @@ SFML_SYSTEM_API Time operator *(float left, const Time& right);
 /// \return \left multiplied by \right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time operator *(Int64 left, const Time& right);
+SFML_SYSTEM_API Time operator *(Int64 left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -361,7 +361,7 @@ SFML_SYSTEM_API Time& operator *=(Time& left, Int64 right);
 /// \return \left divided by \right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time operator /(const Time& left, float right);
+SFML_SYSTEM_API Time operator /(Time left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -373,7 +373,7 @@ SFML_SYSTEM_API Time operator /(const Time& left, float right);
 /// \return \left divided by \right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time operator /(const Time& left, Int64 right);
+SFML_SYSTEM_API Time operator /(Time left, Int64 right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
