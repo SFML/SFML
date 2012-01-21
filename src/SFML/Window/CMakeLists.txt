@@ -6,6 +6,7 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Window)
 set(SRC
     ${SRCROOT}/Context.cpp
     ${INCROOT}/Context.hpp
+    ${INCROOT}/Export.hpp
     ${SRCROOT}/GlContext.cpp
     ${SRCROOT}/GlContext.hpp
     ${SRCROOT}/GlResource.cpp

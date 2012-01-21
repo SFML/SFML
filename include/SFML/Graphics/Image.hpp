@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <string>
@@ -42,7 +43,7 @@ class InputStream;
 /// \brief Class for loading, manipulating and saving images
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Image
+class SFML_GRAPHICS_API Image
 {
 public :
 

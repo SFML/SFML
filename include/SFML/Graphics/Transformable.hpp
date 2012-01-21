@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Transform.hpp>
 
 
@@ -37,7 +38,7 @@ namespace sf
 /// \brief Decomposed transform defined by a position, a rotation and a scale
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Transformable
+class SFML_GRAPHICS_API Transformable
 {
 public :
 

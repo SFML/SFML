@@ -8,6 +8,7 @@ set(SRC
     ${INCROOT}/Clock.hpp
     ${SRCROOT}/Err.cpp
     ${INCROOT}/Err.hpp
+    ${INCROOT}/Export.hpp
     ${SRCROOT}/Lock.cpp
     ${INCROOT}/Lock.hpp
     ${SRCROOT}/Mutex.cpp

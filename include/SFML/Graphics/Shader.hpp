@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/GlResource.hpp>
@@ -48,7 +48,7 @@ class Texture;
 /// \brief Shader class (vertex and fragment)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Shader : GlResource, NonCopyable
+class SFML_GRAPHICS_API Shader : GlResource, NonCopyable
 {
 public :
 

@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Export.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
 
@@ -39,7 +40,7 @@ class Mutex;
 /// \brief Automatic wrapper for locking and unlocking mutexes
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Lock : NonCopyable
+class SFML_SYSTEM_API Lock : NonCopyable
 {
 public :
 

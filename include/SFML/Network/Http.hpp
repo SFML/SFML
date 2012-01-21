@@ -28,10 +28,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/Time.hpp>
+#include <SFML/Network/Export.hpp>
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Time.hpp>
 #include <map>
 #include <string>
 
@@ -42,7 +43,7 @@ namespace sf
 /// \brief A HTTP client
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Http : NonCopyable
+class SFML_NETWORK_API Http : NonCopyable
 {
 public :
 
@@ -50,7 +51,7 @@ public :
     /// \brief Define a HTTP request
     ///
     ////////////////////////////////////////////////////////////
-    class SFML_API Request
+    class SFML_NETWORK_API Request
     {
     public :
 
@@ -187,7 +188,7 @@ public :
     /// \brief Define a HTTP response
     ///
     ////////////////////////////////////////////////////////////
-    class SFML_API Response
+    class SFML_NETWORK_API Response
     {
     public :
 

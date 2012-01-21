@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Shape.hpp>
 
 
@@ -37,7 +38,7 @@ namespace sf
 /// \brief Specialized shape representing a circle
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API CircleShape : public Shape
+class SFML_GRAPHICS_API CircleShape : public Shape
 {
 public :
 

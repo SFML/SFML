@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundStream.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Time.hpp>
@@ -48,7 +49,7 @@ class InputStream;
 /// \brief Streamed music played from an audio file
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Music : public SoundStream
+class SFML_AUDIO_API Music : public SoundStream
 {
 public :
 

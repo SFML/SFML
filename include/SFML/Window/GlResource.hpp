@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Window/Export.hpp>
 
 
 namespace sf
@@ -37,7 +37,7 @@ namespace sf
 /// \brief Base class for classes that require an OpenGL context
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API GlResource
+class SFML_WINDOW_API GlResource
 {
 protected :
 

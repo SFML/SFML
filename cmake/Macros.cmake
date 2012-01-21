@@ -102,6 +102,11 @@ macro(sfml_add_library target)
     # create the target
     add_library(${target} ${THIS_SOURCES})
 
+    # define the export symbol of the module
+    string(REPLACE "-" "_" NAME_UPPER "${target}")
+    string(TOUPPER "${NAME_UPPER}" NAME_UPPER)
+    set_target_properties(${target} PROPERTIES DEFINE_SYMBOL ${NAME_UPPER}_EXPORTS)
+
     # adjust the output file prefix/suffix to match our conventions
     if(BUILD_SHARED_LIBS)
         if(WINDOWS)

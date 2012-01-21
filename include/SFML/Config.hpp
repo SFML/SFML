@@ -68,7 +68,7 @@
 
 
 ////////////////////////////////////////////////////////////
-// Identify the endianess
+// Identify the endianness
 ////////////////////////////////////////////////////////////
 #if defined(__m68k__) || defined(mc68000) || defined(_M_M68K) || (defined(__MIPS__) && defined(__MISPEB__)) || \
     defined(__ppc__) || defined(__POWERPC__) || defined(_M_PPC) || defined(__sparc__) || defined(__hppa__)
@@ -95,27 +95,17 @@
 
 
 ////////////////////////////////////////////////////////////
-// Define portable import / export macros
+// Define helpers to create portable import / export macros for each module
 ////////////////////////////////////////////////////////////
 #if !defined(SFML_STATIC)
 
     #if defined(SFML_SYSTEM_WINDOWS)
 
-        #ifdef SFML_EXPORTS
+        // Windows compilers need specific (and different) keywords for export and import
+        #define SFML_API_EXPORT __declspec(dllexport)
+        #define SFML_API_IMPORT __declspec(dllimport)
 
-            // From DLL side, we must export
-            #define SFML_API __declspec(dllexport)
-
-        #else
-
-            // From client application side, we must import
-            #define SFML_API __declspec(dllimport)
-
-        #endif
-
-        // For Visual C++ compilers, we also need to turn off this annoying C4251 warning.
-        // You can read lots ot different things about it, but the point is the code will
-        // just work fine, and so the simplest way to get rid of this warning is to disable it
+        // For Visual C++ compilers, we also need to turn off this annoying C4251 warning
         #ifdef _MSC_VER
 
             #pragma warning(disable : 4251)
@@ -126,13 +116,16 @@
 
         #if __GNUC__ >= 4
 
-            // gcc 4 has special keywords for showing/hidding symbols
-            #define SFML_API __attribute__ ((__visibility__ ("default")))
+            // GCC 4 has special keywords for showing/hidding symbols,
+            // the same keyword is used for both importing and exporting
+            #define SFML_API_EXPORT __attribute__ ((__visibility__ ("default")))
+            #define SFML_API_IMPORT __attribute__ ((__visibility__ ("default")))
 
         #else
 
-            // gcc < 4 has no mechanism to explicitely hide symbols, everything's exported
-            #define SFML_API
+            // GCC < 4 has no mechanism to explicitely hide symbols, everything's exported
+            #define SFML_API_EXPORT
+            #define SFML_API_IMPORT
 
         #endif
 
@@ -140,8 +133,9 @@
 
 #else
 
-    // Static build doesn't need these export macros
-    #define SFML_API
+    // Static build doesn't need import/export macros
+    #define SFML_API_EXPORT
+    #define SFML_API_IMPORT
 
 #endif
 

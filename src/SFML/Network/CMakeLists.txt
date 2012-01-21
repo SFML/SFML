@@ -4,6 +4,7 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Network)
 
 # all source files
 set(SRC
+    ${INCROOT}/Export.hpp
     ${SRCROOT}/Ftp.cpp
     ${INCROOT}/Ftp.hpp
     ${SRCROOT}/Http.cpp

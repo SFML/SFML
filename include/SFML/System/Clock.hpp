@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/System/Export.hpp>
 #include <SFML/System/Time.hpp>
 
 
@@ -38,7 +38,7 @@ namespace sf
 /// \brief Utility class that measures the elapsed time
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Clock
+class SFML_SYSTEM_API Clock
 {
 public :
 

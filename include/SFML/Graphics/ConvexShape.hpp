@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Shape.hpp>
 #include <vector>
 
@@ -38,7 +39,7 @@ namespace sf
 /// \brief Specialized shape representing a convex polygon
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API ConvexShape : public Shape
+class SFML_GRAPHICS_API ConvexShape : public Shape
 {
 public :
 

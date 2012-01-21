@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -40,7 +40,7 @@ namespace sf
 /// \brief 2D camera that defines what region is shown on screen
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API View
+class SFML_GRAPHICS_API View
 {
 public :
 

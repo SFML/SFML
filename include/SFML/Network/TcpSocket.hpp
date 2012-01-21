@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Network/Export.hpp>
 #include <SFML/Network/Socket.hpp>
 #include <SFML/System/Time.hpp>
 
@@ -42,7 +43,7 @@ class Packet;
 /// \brief Specialized socket using the TCP protocol
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API TcpSocket : public Socket
+class SFML_NETWORK_API TcpSocket : public Socket
 {
 public :
 

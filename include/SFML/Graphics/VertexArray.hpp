@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -41,7 +42,7 @@ namespace sf
 /// \brief Define a set of one or more 2D primitives
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API VertexArray : public Drawable
+class SFML_GRAPHICS_API VertexArray : public Drawable
 {
 public :
 

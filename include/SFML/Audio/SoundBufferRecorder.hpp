@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/SoundRecorder.hpp>
 #include <vector>
@@ -40,7 +41,7 @@ namespace sf
 ///        audio data into a sound buffer
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API SoundBufferRecorder : public SoundRecorder
+class SFML_AUDIO_API SoundBufferRecorder : public SoundRecorder
 {
 public :
 

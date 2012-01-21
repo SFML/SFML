@@ -28,9 +28,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Network/Export.hpp>
+#include <SFML/Network/TcpSocket.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
-#include <SFML/Network/TcpSocket.hpp>
 #include <string>
 #include <vector>
 
@@ -43,7 +44,7 @@ class IpAddress;
 /// \brief A FTP client
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Ftp : NonCopyable
+class SFML_NETWORK_API Ftp : NonCopyable
 {
 public :
 
@@ -62,7 +63,7 @@ public :
     /// \brief Define a FTP response
     ///
     ////////////////////////////////////////////////////////////
-    class SFML_API Response
+    class SFML_NETWORK_API Response
     {
     public :
 
@@ -184,7 +185,7 @@ public :
     /// \brief Specialization of FTP response returning a directory
     ///
     ////////////////////////////////////////////////////////////
-    class SFML_API DirectoryResponse : public Response
+    class SFML_NETWORK_API DirectoryResponse : public Response
     {
     public :
 
@@ -217,7 +218,7 @@ public :
     /// \brief Specialization of FTP response returning a
     ///        filename lisiting
     ////////////////////////////////////////////////////////////
-    class SFML_API ListingResponse : public Response
+    class SFML_NETWORK_API ListingResponse : public Response
     {
     public :
 

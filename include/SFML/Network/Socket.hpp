@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Network/Export.hpp>
 #include <SFML/Network/SocketHandle.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <vector>
@@ -41,7 +42,7 @@ class SocketSelector;
 /// \brief Base class for all the socket types
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Socket : NonCopyable
+class SFML_NETWORK_API Socket : NonCopyable
 {
 public :
 

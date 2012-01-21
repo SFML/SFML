@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Shape.hpp>
 
 
@@ -37,7 +38,7 @@ namespace sf
 /// \brief Specialized shape representing a rectangle
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API RectangleShape : public Shape
+class SFML_GRAPHICS_API RectangleShape : public Shape
 {
 public :
 

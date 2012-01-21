@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/Export.hpp>
 #include <SFML/System/Thread.hpp>
 #include <vector>
 
@@ -38,7 +39,7 @@ namespace sf
 /// \brief Abstract base class for capturing sound data
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API SoundRecorder
+class SFML_AUDIO_API SoundRecorder
 {
 public :
 

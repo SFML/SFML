@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Network/Export.hpp>
 #include <SFML/Network/Socket.hpp>
 #include <vector>
 
@@ -41,7 +42,7 @@ class Packet;
 /// \brief Specialized socket using the UDP protocol
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API UdpSocket : public Socket
+class SFML_NETWORK_API UdpSocket : public Socket
 {
 public :
 

@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Window/Export.hpp>
 #include <SFML/System/Vector2.hpp>
 
 
@@ -40,7 +40,7 @@ class Window;
 /// \brief Give access to the real-time state of the mouse
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Mouse
+class SFML_WINDOW_API Mouse
 {
 public :
 

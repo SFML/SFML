@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Network/Export.hpp>
 #include <SFML/Network/Socket.hpp>
 
 
@@ -39,7 +40,7 @@ class TcpSocket;
 /// \brief Socket that listens to new TCP connections
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API TcpListener : public Socket
+class SFML_NETWORK_API TcpListener : public Socket
 {
 public :
 

@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -39,7 +39,7 @@ namespace sf
 /// \brief Define a 3x3 transform matrix
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Transform
+class SFML_GRAPHICS_API Transform
 {
 public :
 
@@ -373,7 +373,7 @@ private:
 /// \return New combined transform
 ///
 ////////////////////////////////////////////////////////////
-SFML_API Transform operator *(const Transform& left, const Transform& right);
+SFML_GRAPHICS_API Transform operator *(const Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -387,7 +387,7 @@ SFML_API Transform operator *(const Transform& left, const Transform& right);
 /// \return The combined transform
 ///
 ////////////////////////////////////////////////////////////
-SFML_API Transform& operator *=(Transform& left, const Transform& right);
+SFML_GRAPHICS_API Transform& operator *=(Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -401,7 +401,7 @@ SFML_API Transform& operator *=(Transform& left, const Transform& right);
 /// \return New transformed point
 ///
 ////////////////////////////////////////////////////////////
-SFML_API Vector2f operator *(const Transform& left, const Vector2f& right);
+SFML_GRAPHICS_API Vector2f operator *(const Transform& left, const Vector2f& right);
 
 } // namespace sf
 

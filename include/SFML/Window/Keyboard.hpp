@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Window/Export.hpp>
 
 
 namespace sf
@@ -37,7 +37,7 @@ namespace sf
 /// \brief Give access to the real-time state of the keyboard
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Keyboard
+class SFML_WINDOW_API Keyboard
 {
 public :
 

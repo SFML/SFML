@@ -9,6 +9,7 @@ set(SRC
     ${SRCROOT}/Color.cpp
     ${INCROOT}/Color.hpp
     ${INCROOT}/Drawable.hpp
+    ${INCROOT}/Export.hpp
     ${SRCROOT}/Font.cpp
     ${INCROOT}/Font.hpp
     ${INCROOT}/Glyph.hpp

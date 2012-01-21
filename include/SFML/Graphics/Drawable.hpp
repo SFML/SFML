@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
 
@@ -41,7 +41,7 @@ class RenderTarget;
 ///        to a render target
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Drawable
+class SFML_GRAPHICS_API Drawable
 {
 public :
 

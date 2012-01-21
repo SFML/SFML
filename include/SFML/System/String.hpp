@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/System/Export.hpp>
 #include <locale>
 #include <string>
 
@@ -40,7 +40,7 @@ namespace sf
 ///        conversions between types and encodings
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API String
+class SFML_SYSTEM_API String
 {
 public :
 
@@ -394,8 +394,8 @@ public :
 
 private :
 
-    friend SFML_API bool operator ==(const String& left, const String& right);
-    friend SFML_API bool operator <(const String& left, const String& right);
+    friend SFML_SYSTEM_API bool operator ==(const String& left, const String& right);
+    friend SFML_SYSTEM_API bool operator <(const String& left, const String& right);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -413,7 +413,7 @@ private :
 /// \return True if both strings are equal
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator ==(const String& left, const String& right);
+SFML_SYSTEM_API bool operator ==(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -425,7 +425,7 @@ SFML_API bool operator ==(const String& left, const String& right);
 /// \return True if both strings are different
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator !=(const String& left, const String& right);
+SFML_SYSTEM_API bool operator !=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -437,7 +437,7 @@ SFML_API bool operator !=(const String& left, const String& right);
 /// \return True if \a left is alphabetically lesser than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator <(const String& left, const String& right);
+SFML_SYSTEM_API bool operator <(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -449,7 +449,7 @@ SFML_API bool operator <(const String& left, const String& right);
 /// \return True if \a left is alphabetically greater than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator >(const String& left, const String& right);
+SFML_SYSTEM_API bool operator >(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -461,7 +461,7 @@ SFML_API bool operator >(const String& left, const String& right);
 /// \return True if \a left is alphabetically lesser or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator <=(const String& left, const String& right);
+SFML_SYSTEM_API bool operator <=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -473,7 +473,7 @@ SFML_API bool operator <=(const String& left, const String& right);
 /// \return True if \a left is alphabetically greater or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator >=(const String& left, const String& right);
+SFML_SYSTEM_API bool operator >=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -485,7 +485,7 @@ SFML_API bool operator >=(const String& left, const String& right);
 /// \return Concatenated string
 ///
 ////////////////////////////////////////////////////////////
-SFML_API String operator +(const String& left, const String& right);
+SFML_SYSTEM_API String operator +(const String& left, const String& right);
 
 } // namespace sf
 

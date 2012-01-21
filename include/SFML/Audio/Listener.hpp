@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Audio/Export.hpp>
 #include <SFML/System/Vector3.hpp>
 
 
@@ -39,7 +39,7 @@ namespace sf
 ///        from where all the sounds are heard
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Listener
+class SFML_AUDIO_API Listener
 {
 public :
 

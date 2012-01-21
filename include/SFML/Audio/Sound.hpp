@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/System/Time.hpp>
 #include <cstdlib>
@@ -41,7 +42,7 @@ class SoundBuffer;
 /// \brief Regular sound that can be played in the audio environment
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Sound : public SoundSource
+class SFML_AUDIO_API Sound : public SoundSource
 {
 public :
 

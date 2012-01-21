@@ -28,8 +28,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Vector2.hpp>
 
 
 namespace sf
@@ -38,7 +39,7 @@ namespace sf
 /// \brief Define a point with color and texture coordinates
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Vertex
+class SFML_GRAPHICS_API Vertex
 {
 public :
 

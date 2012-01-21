@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/System/Export.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
 
@@ -44,7 +44,7 @@ namespace priv
 ///        from multiple threads
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Mutex : NonCopyable
+class SFML_SYSTEM_API Mutex : NonCopyable
 {
 public :
 

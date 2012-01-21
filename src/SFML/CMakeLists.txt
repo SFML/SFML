@@ -33,9 +33,6 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 # set the output directory for SFML libraries
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 
-# define the export symbol
-add_definitions(-DSFML_EXPORTS)
-
 # add the modules subdirectories
 add_subdirectory(System)
 add_subdirectory(Window)

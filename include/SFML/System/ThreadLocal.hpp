@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/System/Export.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <cstdlib>
 
@@ -44,7 +44,7 @@ namespace priv
 /// \brief Defines variables with thread-local storage
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API ThreadLocal : NonCopyable
+class SFML_SYSTEM_API ThreadLocal : NonCopyable
 {
 public :
 

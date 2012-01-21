@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -43,7 +44,7 @@ namespace priv
 /// \brief Target for off-screen 2D rendering into an texture
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API RenderTexture : public RenderTarget
+class SFML_GRAPHICS_API RenderTexture : public RenderTarget
 {
 public :
 

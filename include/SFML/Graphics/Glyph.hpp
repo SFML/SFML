@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
 
@@ -38,7 +38,7 @@ namespace sf
 /// \brief Structure describing a glyph
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Glyph
+class SFML_GRAPHICS_API Glyph
 {
 public :
 

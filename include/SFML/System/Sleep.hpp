@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/System/Export.hpp>
 #include <SFML/System/Time.hpp>
 
 
@@ -44,7 +44,7 @@ namespace sf
 /// \param duration Time to sleep
 ///
 ////////////////////////////////////////////////////////////
-void SFML_API Sleep(Time duration);
+void SFML_SYSTEM_API Sleep(Time duration);
 
 } // namespace sf
 
