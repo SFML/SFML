@@ -30,80 +30,78 @@
 #include <SFML/Network/SocketImpl.hpp>
 
 
+namespace
+{
+    sf::Uint32 Resolve(const std::string& address)
+    {
+        if (address == "255.255.255.255")
+        {
+            // The broadcast address needs to be handled explicitely,
+            // because it is also the value returned by inet_addr on error
+            return INADDR_BROADCAST;
+        }
+        else
+        {
+            // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
+            sf::Uint32 ip = inet_addr(address.c_str());
+            if (ip != INADDR_NONE)
+                return ip;
+
+            // Not a valid address, try to convert it as a host name
+            hostent* host = gethostbyname(address.c_str());
+            if (host)
+                return reinterpret_cast<in_addr*>(host->h_addr)->s_addr;
+
+            // Not a valid address nor a host name
+            return 0;
+        }
+    }
+}
+
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 const IpAddress IpAddress::None;
 const IpAddress IpAddress::LocalHost(127, 0, 0, 1);
+const IpAddress IpAddress::Broadcast(255, 255, 255, 255);
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress() :
-myAddress(INADDR_NONE)
+myAddress(0)
 {
-
+    // We're using 0 (INADDR_ANY) instead of INADDR_NONE to represent the invalid address,
+    // because the latter is also the broadcast address (255.255.255.255); it's ok because
+    // SFML doesn't publicly use INADDR_ANY (it is always used implicitely)
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(const std::string& address)
+IpAddress::IpAddress(const std::string& address) :
+myAddress(Resolve(address))
 {
-    // First try to convert it as a byte representation ("xxx.xxx.xxx.xxx")
-    myAddress = inet_addr(address.c_str());
-
-    // If not successful, try to convert it as a host name
-    if (myAddress == INADDR_NONE)
-    {
-        hostent* host = gethostbyname(address.c_str());
-        if (host)
-        {
-            // Host found, extract its IP address
-            myAddress = reinterpret_cast<in_addr*>(host->h_addr)->s_addr;
-        }
-        else
-        {
-            // Host name not found on the network
-            myAddress = INADDR_NONE;
-        }
-    }
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(const char* address)
+IpAddress::IpAddress(const char* address) :
+myAddress(Resolve(address))
 {
-    // First try to convert it as a byte representation ("xxx.xxx.xxx.xxx")
-    myAddress = inet_addr(address);
-
-    // If not successful, try to convert it as a host name
-    if (myAddress == INADDR_NONE)
-    {
-        hostent* host = gethostbyname(address);
-        if (host)
-        {
-            // Host found, extract its IP address
-            myAddress = reinterpret_cast<in_addr*>(host->h_addr)->s_addr;
-        }
-        else
-        {
-            // Host name not found on the network
-            myAddress = INADDR_NONE;
-        }
-    }
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3)
+IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
+myAddress(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))
 {
-    myAddress = htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3);
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(Uint32 address)
+IpAddress::IpAddress(Uint32 address) :
+myAddress(htonl(address))
 {
-    myAddress = htonl(address);
 }
 
 

@@ -183,6 +183,7 @@ public :
     ////////////////////////////////////////////////////////////
     static const IpAddress None;      ///< Value representing an empty/invalid address
     static const IpAddress LocalHost; ///< The "localhost" address (for connecting a computer to itself locally)
+    static const IpAddress Broadcast; ///< The "broadcast" address (for sending UDP messages to everyone on a local network)
 
 private :
 
@@ -300,7 +301,7 @@ SFML_NETWORK_API std::ostream& operator <<(std::ostream& stream, const IpAddress
 /// sf::IpAddress a0;                                     // an invalid address
 /// sf::IpAddress a1 = sf::IpAddress::None;               // an invalid address (same as a0)
 /// sf::IpAddress a2("127.0.0.1");                        // the local host address
-/// sf::IpAddress a3 = sf::IpAddress::LocalHost;          // the local host address (same as a2)
+/// sf::IpAddress a3 = sf::IpAddress::Broadcast;          // the broadcast address
 /// sf::IpAddress a4(192, 168, 1, 56);                    // a local address
 /// sf::IpAddress a5("my_computer");                      // a local address created from a network name
 /// sf::IpAddress a6("89.54.1.169");                      // a distant address
