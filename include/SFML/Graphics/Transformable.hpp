@@ -304,7 +304,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the inverse of the combined transform of the object
     ///
-    /// \return Inversed of the combined transformations applied to the object
+    /// \return Inverse of the combined transformations applied to the object
     ///
     /// \see GetTransform
     ///

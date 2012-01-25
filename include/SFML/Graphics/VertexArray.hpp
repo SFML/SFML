@@ -64,7 +64,7 @@ public :
     VertexArray(PrimitiveType type, unsigned int vertexCount = 0);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return the vertices count
+    /// \brief Return the vertex count
     ///
     /// \return Number of vertices in the array
     ///
@@ -117,10 +117,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Resize the vertex array
     ///
-    /// If \a count is greater than the current size, the previous
+    /// If \a vertexCount is greater than the current size, the previous
     /// vertices are kept and new (default-constructed) vertices are
     /// added.
-    /// If \a count is less than the current size, existing vertices
+    /// If \a vertexCount is less than the current size, existing vertices
     /// are removed from the array.
     ///
     /// \param vertexCount New size of the array (number of vertices)

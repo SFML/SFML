@@ -66,7 +66,7 @@ public :
     void Create(unsigned int width, unsigned int height, const Color& color = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create the image from an arry of pixels
+    /// \brief Create the image from an array of pixels
     ///
     /// The \a pixel array is assumed to contain 32-bits RGBA pixels,
     /// and have the given \a width and \a height. If not, this is

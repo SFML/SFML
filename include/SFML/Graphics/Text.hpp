@@ -103,7 +103,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's font
     ///
-    /// The \a font argument refers to a texture that must
+    /// The \a font argument refers to a font that must
     /// exist as long as the text uses it. Indeed, the text
     /// doesn't store its own copy of the font, but rather keeps
     /// a pointer to the one that you passed to this function.
