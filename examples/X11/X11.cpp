@@ -39,8 +39,8 @@ void Initialize(sf::Window& window)
 /// Draw the OpenGL scene (a rotating cube) into
 /// the specified view
 ///
-/// \param Window      Target window for rendering
-/// \param ElapsedTime Time elapsed since the last draw
+/// \param window      Target window for rendering
+/// \param elapsedTime Time elapsed since the last draw
 ///
 ////////////////////////////////////////////////////////////
 void Draw(sf::Window& window, float elapsedTime)

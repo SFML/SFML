@@ -97,9 +97,9 @@ int main()
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glTranslatef(x, y, -100.f);
-        glRotatef(clock.GetElapsedTime().AsSeconds() * 0.05f, 1.f, 0.f, 0.f);
-        glRotatef(clock.GetElapsedTime().AsSeconds() * 0.03f, 0.f, 1.f, 0.f);
-        glRotatef(clock.GetElapsedTime().AsSeconds() * 0.09f, 0.f, 0.f, 1.f);
+        glRotatef(clock.GetElapsedTime().AsSeconds() * 50.f, 1.f, 0.f, 0.f);
+        glRotatef(clock.GetElapsedTime().AsSeconds() * 30.f, 0.f, 1.f, 0.f);
+        glRotatef(clock.GetElapsedTime().AsSeconds() * 90.f, 0.f, 0.f, 1.f);
 
         // Draw a cube
         float size = 20.f;
