@@ -72,6 +72,8 @@ struct SFMLmainWindow
 @property (retain) NSTimer          *renderTimer;
 @property (assign) BOOL              visible;
 
+@property (assign) BOOL              initialized;
+
 -(void)renderMainWindow:(NSTimer *)aTimer;
 
 @end
@@ -88,31 +90,46 @@ struct SFMLmainWindow
 @synthesize renderTimer     = _renderTimer;
 @synthesize visible         = _visible;
 
+@synthesize initialized     = _initialized;
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.initialized = NO;
+    }
+    return self;
+}
+
 -(void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Init the 1st SFML render area.
-    self.mainWindow = new SFMLmainWindow(self.sfmlView);
-    self.mainWindow->text.SetString([self.textField.stringValue tostdwstring]);
-    self.visible = YES;
-    
-    // Launch the timer to periodically display our stuff into the Cocoa view.
-    self.renderTimer = [NSTimer timerWithTimeInterval:1.f/60.f
-                                               target:self
-                                             selector:@selector(renderMainWindow:)
-                                             userInfo:nil 
-                                              repeats:YES];
-	[[NSRunLoop mainRunLoop] addTimer:self.renderTimer
-                              forMode:NSDefaultRunLoopMode];
-	[[NSRunLoop mainRunLoop] addTimer:self.renderTimer
-                              forMode:NSEventTrackingRunLoopMode];
-    /*
-     * This is really some ugly code but in order to have the timer fired
-     * periodically we need to add it to the two above runloop mode.
-     *
-     * The default mode allows timer firing while the user doesn't do anything
-     * while the second mode allows timer firing while he is using a slider
-     * or a menu.
-     */
+    if (!self.initialized)
+    {
+        // Init the 1st SFML render area.
+        self.mainWindow = new SFMLmainWindow(self.sfmlView);
+        self.mainWindow->text.SetString([self.textField.stringValue tostdwstring]);
+        self.visible = YES;
+        
+        // Launch the timer to periodically display our stuff into the Cocoa view.
+        self.renderTimer = [NSTimer timerWithTimeInterval:1.f/60.f
+                                                   target:self
+                                                 selector:@selector(renderMainWindow:)
+                                                 userInfo:nil 
+                                                  repeats:YES];
+        [[NSRunLoop mainRunLoop] addTimer:self.renderTimer
+                                  forMode:NSDefaultRunLoopMode];
+        [[NSRunLoop mainRunLoop] addTimer:self.renderTimer
+                                  forMode:NSEventTrackingRunLoopMode];
+        /*
+         * This is really some ugly code but in order to have the timer fired
+         * periodically we need to add it to the two above runloop mode.
+         *
+         * The default mode allows timer firing while the user doesn't do anything
+         * while the second mode allows timer firing while he is using a slider
+         * or a menu.
+         */
+        
+        self.initialized = YES;
+    }
 }
 
 -(void)dealloc
@@ -160,42 +177,59 @@ struct SFMLmainWindow
 
 -(IBAction)colorChanged:(NSPopUpButton *)sender
 {
-    // Convert title to color
-    NSString *color = [[sender selectedItem] title];
-    if ([color isEqualToString:BLUE])
+    if (self.initialized)
     {
-        self.mainWindow->background = sf::Color::Blue;
-    } 
-    else if ([color isEqualToString:GREEN])
-    {
-        self.mainWindow->background = sf::Color::Green;
-    } 
-    else
-    {
-        self.mainWindow->background = sf::Color::Red;
+        // Convert title to color
+        NSString *color = [[sender selectedItem] title];
+        if ([color isEqualToString:BLUE])
+        {
+            self.mainWindow->background = sf::Color::Blue;
+        } 
+        else if ([color isEqualToString:GREEN])
+        {
+            self.mainWindow->background = sf::Color::Green;
+        } 
+        else
+        {
+            self.mainWindow->background = sf::Color::Red;
+        }
     }
 }
 
 -(IBAction)rotationChanged:(NSSlider *)sender
 {
-    float angle = [sender floatValue];
-    self.mainWindow->sprite.SetRotation(angle);
+    if (self.initialized)
+    {
+        float angle = [sender floatValue];
+        self.mainWindow->sprite.SetRotation(angle);
+    }
 }
 
 -(IBAction)visibleChanged:(NSButton *)sender
 {
-    self.visible = [sender state] == NSOnState;
+    if (self.initialized)
+        self.visible = [sender state] == NSOnState;
 }
 
 -(IBAction)textChanged:(NSTextField *)sender
 {
-    self.mainWindow->text.SetString([[sender stringValue] tostdwstring]);
+    if (self.initialized)
+        self.mainWindow->text.SetString([[sender stringValue] tostdwstring]);
 }
 
 - (IBAction)updateText:(NSButton *)sender
 {
     // Simply simulate textChanged :
     [self textChanged:self.textField];
+}
+
+@end
+
+@implementation SilentWindow
+
+-(void)keyDown:(NSEvent *)theEvent
+{
+    // Do nothing except preventing this alert.
 }
 
 @end

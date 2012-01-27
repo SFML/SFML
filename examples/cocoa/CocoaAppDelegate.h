@@ -44,6 +44,7 @@ struct SFMLmainWindow;
     SFMLmainWindow  *_mainWindow;
     NSTimer         *_renderTimer;
     BOOL             _visible;
+    BOOL             _initialized;
 }
 
 @property (retain) IBOutlet NSWindow    *window;
@@ -55,5 +56,15 @@ struct SFMLmainWindow;
 -(IBAction)visibleChanged:(NSButton *)sender;
 -(IBAction)textChanged:(NSTextField *)sender;
 -(IBAction)updateText:(NSButton *)sender;
+
+@end
+
+/*
+ * This interface is used to prevent the system alert produced when the SFML view
+ * has the focus and the user press a key.
+ */
+@interface SilentWindow : NSWindow
+
+-(void)keyDown:(NSEvent *)theEvent;
 
 @end

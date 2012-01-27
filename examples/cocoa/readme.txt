@@ -19,6 +19,9 @@ Features
    OpenGL code too, of course).
  * It also provides tools for converting NSString to and from 
    std::[w]string in an Objective-C Category of NSString.
+ * Moreover, it shows how you can prevent annoying the system alerts
+   produced when the SFML view has focus and the user press a key
+   (see SilentWindow interface in CocoaAppDelegate.[h|mm]).
 
 Special Considerations
 ----------------------
