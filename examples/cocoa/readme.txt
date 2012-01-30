@@ -3,14 +3,6 @@ SFML IN COCOA APPLICATION
 
 This is a small example of the integration of SFML in a Cocoa application.
 
-System Requirements
--------------------
-
-In order to run this example project you need :
- * SFML 2 compiled as shared libs (dylib) 
-   and installed into /usr/local;
- * Xcode 4 (thus you will need Mac OS X 10.6 or greater).
-
 Features
 --------
 
@@ -19,6 +11,9 @@ Features
    OpenGL code too, of course).
  * It also provides tools for converting NSString to and from 
    std::[w]string in an Objective-C Category of NSString.
+ * Moreover, it shows how you can prevent annoying the system alerts
+   produced when the SFML view has focus and the user press a key
+   (see SilentWindow interface in CocoaAppDelegate.[h|mm]).
 
 Special Considerations
 ----------------------

@@ -37,6 +37,7 @@ namespace sf
 namespace priv
 {
 
+
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared)
 : myView(0), myWindow(0)
@@ -68,6 +69,7 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
 }
 
 
+////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings, 
                      unsigned int width, unsigned int height)
 : myView(0), myWindow(0)
@@ -175,7 +177,7 @@ void SFContext::CreateContext(SFContext* shared,
         // Prefer multisampling over supersampling
         attrs.push_back(NSOpenGLPFAMultisample);
         
-        // Only one buffer is currently available.
+        // Only one buffer is currently available
         attrs.push_back(NSOpenGLPFASampleBuffers);
         attrs.push_back((NSOpenGLPixelFormatAttribute)1);
         
@@ -183,8 +185,8 @@ void SFContext::CreateContext(SFContext* shared,
         attrs.push_back(NSOpenGLPFASamples);
         attrs.push_back((NSOpenGLPixelFormatAttribute)settings.AntialiasingLevel);
         
-        // No software renderer
-        attrs.push_back(NSOpenGLPFANoRecovery);
+        // No software renderer - only hardware renderer
+        attrs.push_back(NSOpenGLPFAAccelerated);
     }
     
     attrs.push_back((NSOpenGLPixelFormatAttribute)0); // end of array

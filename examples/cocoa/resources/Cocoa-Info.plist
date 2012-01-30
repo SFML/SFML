@@ -5,15 +5,15 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
+	<string>cocoa</string>
 	<key>CFBundleIconFile</key>
-	<string>logo.png</string>
+	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.sfml-dev.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>org.sfml-dev.cocoa</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>${PRODUCT_NAME}</string>
+	<string>cocoa</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -23,9 +23,9 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
+	<string>10.6</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2007-2011 Marco Antognini and Laurent Gomila. Shared under zlib/libpng License.</string>
+	<string>Copyright © 2007-2012 Marco Antognini and Laurent Gomila. Shared under zlib/libpng License.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

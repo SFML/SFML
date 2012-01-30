@@ -23,6 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
+#import "NSString+stdstring.h"
 #include <SFML/System/Utf.hpp>
 
 @implementation NSString (NSString_stdstring)
