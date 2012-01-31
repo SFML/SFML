@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <errno.h>
 #include <sstream>
 
