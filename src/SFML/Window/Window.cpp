@@ -44,7 +44,7 @@ namespace sf
 Window::Window() :
 myImpl          (NULL),
 myContext       (NULL),
-myFramerateLimit(0)
+myFrameTimeLimit(Time::Zero)
 {
 
 }
@@ -54,7 +54,7 @@ myFramerateLimit(0)
 Window::Window(VideoMode mode, const std::string& title, Uint32 style, const ContextSettings& settings) :
 myImpl          (NULL),
 myContext       (NULL),
-myFramerateLimit(0)
+myFrameTimeLimit(Time::Zero)
 {
     Create(mode, title, style, settings);
 }
@@ -64,7 +64,7 @@ myFramerateLimit(0)
 Window::Window(WindowHandle handle, const ContextSettings& settings) :
 myImpl          (NULL),
 myContext       (NULL),
-myFramerateLimit(0)
+myFrameTimeLimit(Time::Zero)
 {
     Create(handle, settings);
 }
@@ -308,23 +308,26 @@ bool Window::SetActive(bool active) const
 ////////////////////////////////////////////////////////////
 void Window::Display()
 {
-    // Limit the framerate if needed
-    if (myFramerateLimit > 0)
-    {
-        Time remainingTime = Seconds(1.f / myFramerateLimit) - myClock.Restart();
-        Sleep(remainingTime);
-    }
-
     // Display the backbuffer on screen
     if (SetActive())
         myContext->Display();
+
+    // Limit the framerate if needed
+    if (myFrameTimeLimit != Time::Zero)
+    {
+        Sleep(myFrameTimeLimit - myClock.GetElapsedTime());
+        myClock.Restart();
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 void Window::SetFramerateLimit(unsigned int limit)
 {
-    myFramerateLimit = limit;
+    if (limit > 0)
+        myFrameTimeLimit = Seconds(1.f / limit);
+    else
+        myFrameTimeLimit = Time::Zero;
 }
 
 

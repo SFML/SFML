@@ -462,7 +462,7 @@ private :
     priv::WindowImpl* myImpl;           ///< Platform-specific implementation of the window
     priv::GlContext*  myContext;        ///< Platform-specific implementation of the OpenGL context
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
-    unsigned int      myFramerateLimit; ///< Current framerate limit
+    Time              myFrameTimeLimit; ///< Current framerate limit
 };
 
 } // namespace sf
