@@ -382,6 +382,11 @@ public :
     /// If a limit is set, the window will use a small delay after
     /// each call to Display() to ensure that the current frame
     /// lasted long enough to match the framerate limit.
+    /// SFML will try to match the given limit as much as it can,
+    /// but since it internally uses sf::Sleep, whose precision
+    /// depends on the underlying OS, the results may be a little
+    /// unprecise as well (for example, you can get 65 FPS when
+    /// requesting 60).
     ///
     /// \param limit Framerate limit, in frames per seconds (use 0 to disable limit)
     ///
