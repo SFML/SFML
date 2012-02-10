@@ -185,7 +185,7 @@ unsigned int Window::GetHeight() const
 ////////////////////////////////////////////////////////////
 sf::Vector2i Window::GetPosition() const
 {
-	return myImpl ? myImpl->GetPosition() : sf::Vector2i();
+    myImpl ? myImpl->GetPosition() : sf::Vector2i();
 }
 
 

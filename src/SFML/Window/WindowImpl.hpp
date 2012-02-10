@@ -100,14 +100,14 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     unsigned int GetHeight() const;
-	
-	////////////////////////////////////////////////////////////
-    /// \brief Get the client height of the window
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the window on the desktop.
     ///
-    /// \return Height of the window in pixels
+    /// \return Window position
     ///
     ////////////////////////////////////////////////////////////
-	virtual sf::Vector2i GetPosition() const = 0;
+    virtual sf::Vector2i GetPosition() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the joystick threshold, ie. the value below which

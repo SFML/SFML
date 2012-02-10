@@ -278,9 +278,9 @@ WindowImplX11::~WindowImplX11()
 ////////////////////////////////////////////////////////////
 sf::Vector2i WindowImplX11::GetPosition()
 {
-	XWindowAttributes windowAttr;
-	XGetWindowAttributes(myDisplay, myWindow, &windowAttr);
-	return sf::Vector2i(windowAttr.x, windowAttr.y);
+    XWindowAttributes windowAttr;
+    XGetWindowAttributes(myDisplay, myWindow, &windowAttr);
+    return sf::Vector2i(windowAttr.x, windowAttr.y);
 }
 
 

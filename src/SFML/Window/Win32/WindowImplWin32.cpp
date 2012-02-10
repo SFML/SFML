@@ -195,9 +195,9 @@ WindowImplWin32::~WindowImplWin32()
 ////////////////////////////////////////////////////////////
 sf::Vector2i WindowImplWin32::GetPosition() const
 {
-	RECT RectPosition;
-	GetWindowRect(myHandle, &RectPosition);
-	return sf::Vector2i(RectPosition.left, RectPosition.top);
+    RECT RectPosition;
+    GetWindowRect(myHandle, &RectPosition);
+    return sf::Vector2i(RectPosition.left, RectPosition.top);
 }
 
 ////////////////////////////////////////////////////////////

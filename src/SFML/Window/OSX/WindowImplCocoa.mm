@@ -345,7 +345,7 @@ void WindowImplCocoa::ProcessEvents()
 ////////////////////////////////////////////////////////////
 sf::Vector2i WindowImplCocoa::GetPosition() const
 {
-	NSPoint position = [myDelegate getWindowPosition];
+    NSPoint position = [myDelegate getWindowPosition];
     return sf::Vector2i(position.x, position.y);
 }
 
