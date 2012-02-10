@@ -446,6 +446,16 @@
     }
 }
 
+////////////////////////////////////////////////////////
+-(NSPoint)getWindowPosition
+{
+  NSRect windowRect = [myWindow frame];
+  NSPoint point = windowRect.origin;
+  point.y = [self screenHeight] - point.y - windowRect.size.height - [self titlebarHeight];
+  return point;
+}
+
+
 
 #pragma mark
 #pragma mark NSWindowDelegate's methods

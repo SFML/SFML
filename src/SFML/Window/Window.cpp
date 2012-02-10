@@ -183,6 +183,13 @@ unsigned int Window::GetHeight() const
 
 
 ////////////////////////////////////////////////////////////
+sf::Vector2i Window::GetPosition() const
+{
+	return myImpl ? myImpl->GetPosition() : 0;
+}
+
+
+////////////////////////////////////////////////////////////
 const ContextSettings& Window::GetSettings() const
 {
     static const ContextSettings empty(0, 0, 0);

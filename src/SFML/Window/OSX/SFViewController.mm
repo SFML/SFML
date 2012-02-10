@@ -238,4 +238,13 @@
 }
 
 
+////////////////////////////////////////////////////////
+-(NSPoint)getWindowPosition
+{
+    NSRect oglViewRect = [myOGLView frame];
+    NSPoint point = oglViewRect.origin;
+    point.y = [myView frame].size.height - point.y - oglViewRect.size.height;
+    return point;
+}
+
 @end

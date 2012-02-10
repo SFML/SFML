@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
@@ -99,6 +100,14 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     unsigned int GetHeight() const;
+	
+	////////////////////////////////////////////////////////////
+    /// \brief Get the client height of the window
+    ///
+    /// \return Height of the window in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+	virtual sf::Vector2i GetPosition() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the joystick threshold, ie. the value below which
