@@ -684,18 +684,18 @@ require () # $1 is a SFML module like 'system' or 'audio'
         # copy SFML libraries
         if [ $frameworks ]
         then
-            ditto /Library/Frameworks/sfml-$1.framework $dest/sfml-$1.framework
+            ditto "/Library/Frameworks/sfml-$1.framework" "$dest/sfml-$1.framework"
         elif [ $CONFIGURATION = "Debug" ]
         then
-            ditto /usr/local/lib/libsfml-$1-d.2.dylib $dest/libsfml-$1-d.2.dylib
+            ditto "/usr/local/lib/libsfml-$1-d.2.dylib" "$dest/libsfml-$1-d.2.dylib"
         else
-            ditto /usr/local/lib/libsfml-$1.2.dylib $dest/libsfml-$1.2.dylib
+            ditto "/usr/local/lib/libsfml-$1.2.dylib" "$dest/libsfml-$1.2.dylib"
         fi
         
         if [ $1 = "audio" ]
         then
             # copy sndfile framework too
-            ditto /Library/Frameworks/sndfile.framework $dest/sndfile.framework
+            ditto "/Library/Frameworks/sndfile.framework" "$dest/sndfile.framework"
         fi
     fi
 }
