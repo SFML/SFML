@@ -7,8 +7,9 @@
 # - VC++ supports it directly through the static library flags
 # - MinGW/gcc doesn't support it, but as a static library is nothing more than an archive,
 #   we can simply merge the external dependencies to our generated target as a post-build step
-# - we don't do anything for other compilers and OSes; static build is not encouraged on Unix (Linux, Mac OS X)
-#   where shared libraries are properly managed and have many advantages over static libraries
+# - for other compilers and OSes, static build is not encouraged so we don't try to
+#   pre-link dependencies, we just "link" them so that the SFML samples can compile
+#   out-of-the-box (CMake forwards the dependencies automatically)
 macro(sfml_static_add_libraries target)
     if(WINDOWS AND COMPILER_GCC)
         # Windows - gcc
@@ -42,6 +43,9 @@ macro(sfml_static_add_libraries target)
             endif()
         endforeach()
         set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS ${LIBRARIES})
+   else()
+        # All other platforms
+        target_link_libraries(${target} ${ARGN})
     endif()
 endmacro()
 
