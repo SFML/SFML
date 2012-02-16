@@ -326,6 +326,23 @@ void WindowImplX11::SetTitle(const std::string& title)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplX11::SetTitle(const sf::String& title)
+{
+    std::basic_string<unsigned char> UTF8Title;
+    
+    sf::Utf32::ToUtf8(title.GetData(),
+        title.GetData() + title.GetSize(),
+        std::back_inserter(UTF8Title));
+    
+    XChangeProperty(myDisplay, myWindow,
+        XInternAtom(myDisplay, "_NET_WM_NAME", false),
+        XInternAtom(myDisplay, "UTF8_STRING",  false),
+        8, PropModeReplace,
+        UTF8Title.c_str(), UTF8Title.size());
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplX11::Show(bool show)
 {
     if (show)

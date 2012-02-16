@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/String.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
@@ -166,6 +167,14 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetTitle(const std::string& title) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change the title of the window
+    ///
+    /// \param title New title
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void SetTitle(const sf::String& title) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
