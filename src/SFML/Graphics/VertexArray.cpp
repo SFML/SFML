@@ -50,7 +50,7 @@ myPrimitiveType(type)
 ////////////////////////////////////////////////////////////
 unsigned int VertexArray::GetVertexCount() const
 {
-    return myVertices.size();
+    return static_cast<unsigned int>(myVertices.size());
 }
 
 
@@ -144,7 +144,7 @@ FloatRect VertexArray::GetBounds() const
 void VertexArray::Draw(RenderTarget& target, RenderStates states) const
 {
     if (!myVertices.empty())
-        target.Draw(&myVertices[0], myVertices.size(), myPrimitiveType, states);
+        target.Draw(&myVertices[0], static_cast<unsigned int>(myVertices.size()), myPrimitiveType, states);
 }
 
 } // namespace sf

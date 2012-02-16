@@ -48,7 +48,7 @@ void ConvexShape::SetPointCount(unsigned int count)
 ////////////////////////////////////////////////////////////
 unsigned int ConvexShape::GetPointCount() const
 {
-    return myPoints.size();
+    return static_cast<unsigned int>(myPoints.size());
 }
 
 
