@@ -37,6 +37,7 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/String.hpp>
 #include <string>
 
 
@@ -308,6 +309,14 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void SetTitle(const std::string& title);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change the title of the window
+    ///
+    /// \param title New title
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetTitle(const sf::String& title);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window

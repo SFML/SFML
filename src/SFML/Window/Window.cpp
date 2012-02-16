@@ -260,6 +260,14 @@ void Window::SetTitle(const std::string& title)
 
 
 ////////////////////////////////////////////////////////////
+void Window::SetTitle(const sf::String& title)
+{
+    if (myImpl)
+        myImpl->SetTitle(title);
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::Show(bool show)
 {
     if (myImpl)

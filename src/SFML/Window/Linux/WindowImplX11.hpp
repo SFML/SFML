@@ -132,6 +132,14 @@ private :
     virtual void SetTitle(const std::string& title);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Change the title of the window
+    ///
+    /// \param title New title
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void SetTitle(const sf::String& title);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
     ///
     /// \param show True to show, false to hide
