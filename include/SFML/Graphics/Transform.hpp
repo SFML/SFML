@@ -135,18 +135,18 @@ public :
     FloatRect TransformRect(const FloatRect& rectangle) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Combine two transforms
+    /// \brief Combine the current transform with another one
     ///
     /// The result is a transform that is equivalent to applying
     /// *this followed by \a transform. Mathematically, it is
     /// equivalent to a matrix multiplication.
     ///
-    /// \param transform Transform to combine to this transform
+    /// \param transform Transform to combine with this transform
     ///
-    /// \return New combined transform
+    /// \return Reference to *this
     ///
     ////////////////////////////////////////////////////////////
-    Transform Combine(const Transform& transform) const;
+    Transform& Combine(const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a translation
@@ -365,7 +365,7 @@ private:
 /// \relates sf::Transform
 /// \brief Overload of binary operator * to combine two transforms
 ///
-/// This call is equivalent to calling left.Combine(right).
+/// This call is equivalent to calling Transform(left).Combine(right).
 ///
 /// \param left Left operand (the first transform)
 /// \param right Right operand (the second transform)
@@ -379,7 +379,7 @@ SFML_GRAPHICS_API Transform operator *(const Transform& left, const Transform& r
 /// \relates sf::Transform
 /// \brief Overload of binary operator *= to combine two transforms
 ///
-/// This call is equivalent to calling left = left.Combine(right).
+/// This call is equivalent to calling left.Combine(right).
 ///
 /// \param left Left operand (the first transform)
 /// \param right Right operand (the second transform)

@@ -139,20 +139,22 @@ FloatRect Transform::TransformRect(const FloatRect& rectangle) const
 
 
 ////////////////////////////////////////////////////////////
-Transform Transform::Combine(const Transform& transform) const
+Transform& Transform::Combine(const Transform& transform)
 {
     const float* a = myMatrix;
     const float* b = transform.myMatrix;
 
-    return Transform(a[0] * b[0]  + a[4] * b[1]  + a[12] * b[3],
-                     a[0] * b[4]  + a[4] * b[5]  + a[12] * b[7],
-                     a[0] * b[12] + a[4] * b[13] + a[12] * b[15],
-                     a[1] * b[0]  + a[5] * b[1]  + a[13] * b[3],
-                     a[1] * b[4]  + a[5] * b[5]  + a[13] * b[7],
-                     a[1] * b[12] + a[5] * b[13] + a[13] * b[15],
-                     a[3] * b[0]  + a[7] * b[1]  + a[15] * b[3],
-                     a[3] * b[4]  + a[7] * b[5]  + a[15] * b[7],
-                     a[3] * b[12] + a[7] * b[13] + a[15] * b[15]);
+    *this = Transform(a[0] * b[0]  + a[4] * b[1]  + a[12] * b[3],
+                      a[0] * b[4]  + a[4] * b[5]  + a[12] * b[7],
+                      a[0] * b[12] + a[4] * b[13] + a[12] * b[15],
+                      a[1] * b[0]  + a[5] * b[1]  + a[13] * b[3],
+                      a[1] * b[4]  + a[5] * b[5]  + a[13] * b[7],
+                      a[1] * b[12] + a[5] * b[13] + a[13] * b[15],
+                      a[3] * b[0]  + a[7] * b[1]  + a[15] * b[3],
+                      a[3] * b[4]  + a[7] * b[5]  + a[15] * b[7],
+                      a[3] * b[12] + a[7] * b[13] + a[15] * b[15]);
+
+    return *this;
 }
 
 
@@ -163,7 +165,7 @@ Transform& Transform::Translate(float x, float y)
                           0, 1, y,
                           0, 0, 1);
 
-    return *this = Combine(translation);
+    return Combine(translation);
 }
 
 
@@ -185,7 +187,7 @@ Transform& Transform::Rotate(float angle)
                        sin,  cos, 0,
                        0,    0,   1);
 
-    return *this = Combine(rotation);
+    return Combine(rotation);
 }
 
 
@@ -200,7 +202,7 @@ Transform& Transform::Rotate(float angle, float centerX, float centerY)
                        sin,  cos, centerY * (1 - cos) - centerX * sin,
                        0,    0,   1);
 
-    return *this = Combine(rotation);
+    return Combine(rotation);
 }
 
 
@@ -218,7 +220,7 @@ Transform& Transform::Scale(float scaleX, float scaleY)
                       0,      scaleY, 0,
                       0,      0,      1);
 
-    return *this = Combine(scaling);
+    return Combine(scaling);
 }
 
 
@@ -229,7 +231,7 @@ Transform& Transform::Scale(float scaleX, float scaleY, float centerX, float cen
                       0,      scaleY, centerY * (1 - scaleY),
                       0,      0,      1);
 
-    return *this = Combine(scaling);
+    return Combine(scaling);
 }
 
 
@@ -250,14 +252,14 @@ Transform& Transform::Scale(const Vector2f& factors, const Vector2f& center)
 ////////////////////////////////////////////////////////////
 Transform operator *(const Transform& left, const Transform& right)
 {
-    return left.Combine(right);
+    return Transform(left).Combine(right);
 }
 
 
 ////////////////////////////////////////////////////////////
 Transform& operator *=(Transform& left, const Transform& right)
 {
-    return left = left.Combine(right);
+    return left.Combine(right);
 }
 
 
