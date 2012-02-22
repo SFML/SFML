@@ -91,7 +91,6 @@ public :
         myText.SetPosition(30, 20);
 
         // Load the shader
-        //if (!myShader.LoadFromFile("resources/wave.vert", sf::Shader::Vertex))
         if (!myShader.LoadFromFile("resources/wave.vert", "resources/blur.frag"))
             return false;
 
