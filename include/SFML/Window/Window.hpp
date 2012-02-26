@@ -190,6 +190,16 @@ public :
     unsigned int GetHeight() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the window on the desktop.
+    ///
+    /// \return Window position
+    ///
+    /// \see GetWidth
+    ///
+    ////////////////////////////////////////////////////////////
+    sf::Vector2i GetPosition() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the settings of the OpenGL context of the window
     ///
     /// Note that these settings may be different from what was

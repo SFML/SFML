@@ -343,6 +343,13 @@ void WindowImplCocoa::ProcessEvents()
 #pragma mark WindowImplCocoa's private methods
 
 ////////////////////////////////////////////////////////////
+sf::Vector2i WindowImplCocoa::GetPosition() const
+{
+    NSPoint position = [myDelegate getWindowPosition];
+    return sf::Vector2i(position.x, position.y);
+}
+
+////////////////////////////////////////////////////////////
 WindowHandle WindowImplCocoa::GetSystemHandle() const
 {
     return [myDelegate getSystemHandle];
