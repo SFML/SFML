@@ -263,9 +263,9 @@ void Text::UpdateGeometry()
             float bottom = top + underlineThickness;
 
             myVertices.Append(Vertex(Vector2f(0, top),    myColor, Vector2f(1, 1)));
-            myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2f(2, 1)));
-            myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2f(2, 2)));
-            myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2f(1, 2)));
+            myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2f(1, 1)));
+            myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2f(1, 1)));
+            myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2f(1, 1)));
         }
 
         // Handle special characters
@@ -307,9 +307,9 @@ void Text::UpdateGeometry()
         float bottom = top + underlineThickness;
 
         myVertices.Append(Vertex(Vector2f(0, top),    myColor, Vector2f(1, 1)));
-        myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2f(2, 1)));
-        myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2f(2, 2)));
-        myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2f(1, 2)));
+        myVertices.Append(Vertex(Vector2f(x, top),    myColor, Vector2f(1, 1)));
+        myVertices.Append(Vertex(Vector2f(x, bottom), myColor, Vector2f(1, 1)));
+        myVertices.Append(Vertex(Vector2f(0, bottom), myColor, Vector2f(1, 1)));
     }
 
     // Recompute the bounding rectangle
