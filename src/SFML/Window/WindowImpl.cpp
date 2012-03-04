@@ -55,14 +55,14 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::New(VideoMode mode, const std::string& title, Uint32 style)
+WindowImpl* WindowImpl::Create(VideoMode mode, const std::string& title, Uint32 style)
 {
     return new WindowImplType(mode, title, style);
 }
 
 
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::New(WindowHandle handle)
+WindowImpl* WindowImpl::Create(WindowHandle handle)
 {
     return new WindowImplType(handle);
 }

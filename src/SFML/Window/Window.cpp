@@ -111,10 +111,10 @@ void Window::Create(VideoMode mode, const std::string& title, Uint32 style, cons
         style |= Style::Titlebar;
 
     // Recreate the window implementation
-    myImpl = priv::WindowImpl::New(mode, title, style);
+    myImpl = priv::WindowImpl::Create(mode, title, style);
 
     // Recreate the context
-    myContext = priv::GlContext::New(settings, myImpl, mode.BitsPerPixel);
+    myContext = priv::GlContext::Create(settings, myImpl, mode.BitsPerPixel);
 
     // Perform common initializations
     Initialize();
@@ -128,10 +128,10 @@ void Window::Create(WindowHandle handle, const ContextSettings& settings)
     Close();
 
     // Recreate the window implementation
-    myImpl = priv::WindowImpl::New(handle);
+    myImpl = priv::WindowImpl::Create(handle);
 
     // Recreate the context
-    myContext = priv::GlContext::New(settings, myImpl, VideoMode::GetDesktopMode().BitsPerPixel);
+    myContext = priv::GlContext::Create(settings, myImpl, VideoMode::GetDesktopMode().BitsPerPixel);
 
     // Perform common initializations
     Initialize();

@@ -64,7 +64,7 @@ public :
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* New(VideoMode mode, const std::string& title, Uint32 style);
+    static WindowImpl* Create(VideoMode mode, const std::string& title, Uint32 style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS
@@ -74,7 +74,7 @@ public :
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* New(WindowHandle handle);
+    static WindowImpl* Create(WindowHandle handle);
 
 public :
 

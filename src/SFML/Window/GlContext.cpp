@@ -84,7 +84,7 @@ namespace
     {
         if (!HasInternalContext())
         {
-            internalContext = sf::priv::GlContext::New();
+            internalContext = sf::priv::GlContext::Create();
             sf::Lock lock(internalContextsMutex);
             internalContexts.insert(internalContext);
         }
@@ -137,7 +137,7 @@ void GlContext::EnsureContext()
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::New()
+GlContext* GlContext::Create()
 {
     GlContext* context = new ContextType(sharedContext);
     context->Initialize();
@@ -147,7 +147,7 @@ GlContext* GlContext::New()
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::New(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel)
+GlContext* GlContext::Create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     EnsureContext();
@@ -161,7 +161,7 @@ GlContext* GlContext::New(const ContextSettings& settings, const WindowImpl* own
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::New(const ContextSettings& settings, unsigned int width, unsigned int height)
+GlContext* GlContext::Create(const ContextSettings& settings, unsigned int width, unsigned int height)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     EnsureContext();

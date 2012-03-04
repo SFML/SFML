@@ -86,7 +86,7 @@ public :
     /// \return Pointer to the created context (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static GlContext* New();
+    static GlContext* Create();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
@@ -101,7 +101,7 @@ public :
     /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    static GlContext* New(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
+    static GlContext* Create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
@@ -116,7 +116,7 @@ public :
     /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    static GlContext* New(const ContextSettings& settings, unsigned int width, unsigned int height);
+    static GlContext* Create(const ContextSettings& settings, unsigned int width, unsigned int height);
 
 public :
 

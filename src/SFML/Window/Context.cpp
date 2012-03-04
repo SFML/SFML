@@ -34,7 +34,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Context::Context()
 {
-    myContext = priv::GlContext::New();
+    myContext = priv::GlContext::Create();
     SetActive(true);
 }
 
@@ -56,7 +56,7 @@ bool Context::SetActive(bool active)
 ////////////////////////////////////////////////////////////
 Context::Context(const ContextSettings& settings, unsigned int width, unsigned int height)
 {
-    myContext = priv::GlContext::New(settings, width, height);
+    myContext = priv::GlContext::Create(settings, width, height);
     SetActive(true);
 }
 
