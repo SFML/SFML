@@ -80,16 +80,6 @@ myKeyRepeat   (true)
 
     if (myWindow)
     {
-        // Get the window size
-        XWindowAttributes windowAttributes;
-        if (XGetWindowAttributes(myDisplay, myWindow, &windowAttributes) == 0)
-        {
-            Err() << "Failed to get the window attributes" << std::endl;
-            return;
-        }
-        myWidth  = windowAttributes.width;
-        myHeight = windowAttributes.height;
-
         // Make sure the window is listening to all the requiered events
         XSelectInput(myDisplay, myWindow, eventMask & ~ButtonPressMask);
 
@@ -127,8 +117,8 @@ myKeyRepeat   (true)
         left = 0;
         top  = 0;
     }
-    int width  = myWidth  = mode.Width;
-    int height = myHeight = mode.Height;
+    int width  = mode.Width;
+    int height = mode.Height;
 
     // Switch to fullscreen if necessary
     if (fullscreen)
@@ -243,7 +233,7 @@ myKeyRepeat   (true)
 WindowImplX11::~WindowImplX11()
 {
     // Cleanup graphical resources
-    CleanUp();
+    Cleanup();
 
     // Destroy the cursor
     if (myHiddenCursor)
@@ -295,25 +285,35 @@ void WindowImplX11::ProcessEvents()
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::ShowMouseCursor(bool show)
+Vector2i WindowImplX11::GetPosition() const
 {
-    XDefineCursor(myDisplay, myWindow, show ? None : myHiddenCursor);
+    XWindowAttributes attributes;
+    XGetWindowAttributes(myDisplay, myWindow, &attributes);
+    return Vector2i(attributes.x, attributes.y);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::SetPosition(const Vector2i& position)
+{
+    XMoveWindow(myDisplay, myWindow, position.x, position.y);
     XFlush(myDisplay);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetPosition(int x, int y)
+Vector2u WindowImplX11::GetSize() const
 {
-    XMoveWindow(myDisplay, myWindow, x, y);
-    XFlush(myDisplay);
+    XWindowAttributes attributes;
+    XGetWindowAttributes(myDisplay, myWindow, &attributes);
+    return Vector2u(attributes.width, attributes.height);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetSize(unsigned int width, unsigned int height)
+void WindowImplX11::SetSize(const Vector2u& size)
 {
-    XResizeWindow(myDisplay, myWindow, width, height);
+    XResizeWindow(myDisplay, myWindow, size.x, size.y);
     XFlush(myDisplay);
 }
 
@@ -322,25 +322,6 @@ void WindowImplX11::SetSize(unsigned int width, unsigned int height)
 void WindowImplX11::SetTitle(const std::string& title)
 {
     XStoreName(myDisplay, myWindow, title.c_str());
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowImplX11::Show(bool show)
-{
-    if (show)
-        XMapWindow(myDisplay, myWindow);
-    else
-        XUnmapWindow(myDisplay, myWindow);
-
-    XFlush(myDisplay);
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowImplX11::EnableKeyRepeat(bool enabled)
-{
-    myKeyRepeat = enabled;
 }
 
 
@@ -402,6 +383,33 @@ void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8
     XFree(hints);
 
     XFlush(myDisplay);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::SetVisible(bool visible)
+{
+    if (visible)
+        XMapWindow(myDisplay, myWindow);
+    else
+        XUnmapWindow(myDisplay, myWindow);
+
+    XFlush(myDisplay);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::SetMouseCursorVisible(bool visible)
+{
+    XDefineCursor(myDisplay, myWindow, visible ? None : myHiddenCursor);
+    XFlush(myDisplay);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::SetKeyRepeatEnabled(bool enabled)
+{
+    myKeyRepeat = enabled;
 }
 
 
@@ -517,7 +525,7 @@ void WindowImplX11::CreateHiddenCursor()
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::CleanUp()
+void WindowImplX11::Cleanup()
 {
     // Restore the previous video mode (in case we were running in fullscreen)
     if (fullscreenWindow == this)
@@ -542,7 +550,7 @@ void WindowImplX11::CleanUp()
     }
 
     // Unhide the mouse cursor (in case it was hidden)
-    ShowMouseCursor(true);
+    SetMouseCursorVisible(true);
 }
 
 
@@ -595,7 +603,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         case DestroyNotify :
         {
             // The window is about to be destroyed : we must cleanup resources
-            CleanUp();
+            Cleanup();
             break;
         }
 
@@ -628,17 +636,11 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         // Resize event
         case ConfigureNotify :
         {
-            if ((windowEvent.xconfigure.width != static_cast<int>(myWidth)) || (windowEvent.xconfigure.height != static_cast<int>(myHeight)))
-            {
-                myWidth  = windowEvent.xconfigure.width;
-                myHeight = windowEvent.xconfigure.height;
-
-                Event event;
-                event.Type        = Event::Resized;
-                event.Size.Width  = myWidth;
-                event.Size.Height = myHeight;
-                PushEvent(event);
-            }
+            Event event;
+            event.Type        = Event::Resized;
+            event.Size.Width  = windowEvent.xconfigure.width;
+            event.Size.Height = windowEvent.xconfigure.height;
+            PushEvent(event);
             break;
         }
 

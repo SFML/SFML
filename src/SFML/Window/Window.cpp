@@ -169,20 +169,6 @@ bool Window::IsOpen() const
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Window::GetWidth() const
-{
-    return myImpl ? myImpl->GetWidth() : 0;
-}
-
-
-////////////////////////////////////////////////////////////
-unsigned int Window::GetHeight() const
-{
-    return myImpl ? myImpl->GetHeight() : 0;
-}
-
-
-////////////////////////////////////////////////////////////
 const ContextSettings& Window::GetSettings() const
 {
     static const ContextSettings empty(0, 0, 0);
@@ -220,34 +206,32 @@ bool Window::WaitEvent(Event& event)
 
 
 ////////////////////////////////////////////////////////////
-void Window::EnableVerticalSync(bool enabled)
+Vector2i Window::GetPosition() const
 {
-    if (SetActive())
-        myContext->EnableVerticalSync(enabled);
+    return myImpl ? myImpl->GetPosition() : Vector2i();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Window::ShowMouseCursor(bool show)
+void Window::SetPosition(const Vector2i& position)
 {
     if (myImpl)
-        myImpl->ShowMouseCursor(show);
+        myImpl->SetPosition(position);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Window::SetPosition(int x, int y)
+Vector2u Window::GetSize() const
 {
-    if (myImpl)
-        myImpl->SetPosition(x, y);
+    return myImpl ? myImpl->GetSize() : Vector2u();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Window::SetSize(unsigned int width, unsigned int height)
+void Window::SetSize(const Vector2u size)
 {
     if (myImpl)
-        myImpl->SetSize(width, height);
+        myImpl->SetSize(size);
 }
 
 
@@ -260,26 +244,60 @@ void Window::SetTitle(const std::string& title)
 
 
 ////////////////////////////////////////////////////////////
-void Window::Show(bool show)
-{
-    if (myImpl)
-        myImpl->Show(show);
-}
-
-
-////////////////////////////////////////////////////////////
-void Window::EnableKeyRepeat(bool enabled)
-{
-    if (myImpl)
-        myImpl->EnableKeyRepeat(enabled);
-}
-
-
-////////////////////////////////////////////////////////////
 void Window::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     if (myImpl)
         myImpl->SetIcon(width, height, pixels);
+}
+
+
+////////////////////////////////////////////////////////////
+void Window::SetVisible(bool visible)
+{
+    if (myImpl)
+        myImpl->SetVisible(visible);
+}
+
+
+////////////////////////////////////////////////////////////
+void Window::SetVerticalSyncEnabled(bool enabled)
+{
+    if (SetActive())
+        myContext->SetVerticalSyncEnabled(enabled);
+}
+
+
+////////////////////////////////////////////////////////////
+void Window::SetMouseCursorVisible(bool visible)
+{
+    if (myImpl)
+        myImpl->SetMouseCursorVisible(visible);
+}
+
+
+////////////////////////////////////////////////////////////
+void Window::SetKeyRepeatEnabled(bool enabled)
+{
+    if (myImpl)
+        myImpl->SetKeyRepeatEnabled(enabled);
+}
+
+
+////////////////////////////////////////////////////////////
+void Window::SetFramerateLimit(unsigned int limit)
+{
+    if (limit > 0)
+        myFrameTimeLimit = Seconds(1.f / limit);
+    else
+        myFrameTimeLimit = Time::Zero;
+}
+
+
+////////////////////////////////////////////////////////////
+void Window::SetJoystickThreshold(float threshold)
+{
+    if (myImpl)
+        myImpl->SetJoystickThreshold(threshold);
 }
 
 
@@ -322,24 +340,6 @@ void Window::Display()
 
 
 ////////////////////////////////////////////////////////////
-void Window::SetFramerateLimit(unsigned int limit)
-{
-    if (limit > 0)
-        myFrameTimeLimit = Seconds(1.f / limit);
-    else
-        myFrameTimeLimit = Time::Zero;
-}
-
-
-////////////////////////////////////////////////////////////
-void Window::SetJoystickThreshold(float threshold)
-{
-    if (myImpl)
-        myImpl->SetJoystickThreshold(threshold);
-}
-
-
-////////////////////////////////////////////////////////////
 WindowHandle Window::GetSystemHandle() const
 {
     return myImpl ? myImpl->GetSystemHandle() : 0;
@@ -375,10 +375,10 @@ bool Window::FilterEvent(const Event& event)
 void Window::Initialize()
 {
     // Setup default behaviours (to get a consistent behaviour across different implementations)
-    Show(true);
-    ShowMouseCursor(true);
-    EnableVerticalSync(false);
-    EnableKeyRepeat(true);
+    SetVisible(true);
+    SetMouseCursorVisible(true);
+    SetVerticalSyncEnabled(false);
+    SetKeyRepeatEnabled(true);
 
     // Reset frame time
     myClock.Restart();

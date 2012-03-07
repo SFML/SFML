@@ -265,7 +265,7 @@ int main()
 {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Shader");
-    window.EnableVerticalSync(true);
+    window.SetVerticalSyncEnabled(true);
 
     // Create the effects
     std::vector<Effect*> effects;
@@ -348,8 +348,8 @@ int main()
         }
 
         // Update the current example
-        float x = static_cast<float>(sf::Mouse::GetPosition(window).x) / window.GetWidth();
-        float y = static_cast<float>(sf::Mouse::GetPosition(window).y) / window.GetHeight();
+        float x = static_cast<float>(sf::Mouse::GetPosition(window).x) / window.GetSize().x;
+        float y = static_cast<float>(sf::Mouse::GetPosition(window).y) / window.GetSize().y;
         effects[current]->Update(clock.GetElapsedTime().AsSeconds(), x, y);
 
         // Clear the window

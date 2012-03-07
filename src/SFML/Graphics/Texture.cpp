@@ -369,8 +369,8 @@ void Texture::Update(const Window& window)
 ////////////////////////////////////////////////////////////
 void Texture::Update(const Window& window, unsigned int x, unsigned int y)
 {
-    assert(x + window.GetWidth() <= myWidth);
-    assert(y + window.GetHeight() <= myHeight);
+    assert(x + window.GetSize().x <= myWidth);
+    assert(y + window.GetSize().y <= myHeight);
 
     if (myTexture && window.SetActive(true))
     {
@@ -379,7 +379,7 @@ void Texture::Update(const Window& window, unsigned int x, unsigned int y)
 
         // Copy pixels from the back-buffer to the texture
         GLCheck(glBindTexture(GL_TEXTURE_2D, myTexture));
-        GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, x, y, 0, 0, window.GetWidth(), window.GetHeight()));
+        GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, x, y, 0, 0, window.GetSize().x, window.GetSize().y));
         myPixelsFlipped = true;
         myCacheId = GetUniqueId();
     }

@@ -85,22 +85,6 @@ public :
     virtual ~WindowImpl();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the client width of the window
-    ///
-    /// \return Width of the window in pixels
-    ///
-    ////////////////////////////////////////////////////////////
-    unsigned int GetWidth() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the client height of the window
-    ///
-    /// \return Height of the window in pixels
-    ///
-    ////////////////////////////////////////////////////////////
-    unsigned int GetHeight() const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Change the joystick threshold, ie. the value below which
     ///        no move event will be generated
     ///
@@ -134,30 +118,36 @@ public :
     virtual WindowHandle GetSystemHandle() const = 0;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the mouse cursor
+    /// \brief Get the position of the window
     ///
-    /// \param show True to show, false to hide
+    /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ShowMouseCursor(bool show) = 0;
+    virtual Vector2i GetPosition() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///
-    /// \param x Left position
-    /// \param y Top position
+    /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(int x, int y) = 0;
+    virtual void SetPosition(const Vector2i& position) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the client size of the window
+    ///
+    /// \return Size of the window, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2u GetSize() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
     ///
-    /// \param width  New width, in pixels
-    /// \param height New height, in pixels
+    /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(unsigned int width, unsigned int height) = 0;
+    virtual void SetSize(const Vector2u& size) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -168,22 +158,6 @@ public :
     virtual void SetTitle(const std::string& title) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the window
-    ///
-    /// \param show True to show, false to hide
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void Show(bool show) = 0;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable automatic key-repeat
-    ///
-    /// \param enabled True to enable, false to disable
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void EnableKeyRepeat(bool enabled) = 0;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
     ///
     /// \param width  Icon's width, in pixels
@@ -192,6 +166,30 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the window
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void SetVisible(bool visible) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void SetMouseCursorVisible(bool visible) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable automatic key-repeat
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void SetKeyRepeatEnabled(bool enabled) = 0;
 
 protected :
 
@@ -212,12 +210,6 @@ protected :
     ///
     ////////////////////////////////////////////////////////////
     void PushEvent(const Event& event);
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    unsigned int myWidth;  ///< Internal width of the window
-    unsigned int myHeight; ///< Internal height of the window
 
 private :
 

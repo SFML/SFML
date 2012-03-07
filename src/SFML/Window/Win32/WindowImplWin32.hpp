@@ -87,30 +87,36 @@ private :
     virtual void ProcessEvents();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the mouse cursor
+    /// \brief Get the position of the window
     ///
-    /// \param show True to show, false to hide
+    /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ShowMouseCursor(bool show);
+    virtual Vector2i GetPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///
-    /// \param x Left position
-    /// \param y Top position
+    /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(int x, int y);
+    virtual void SetPosition(const Vector2i& position);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the client size of the window
+    ///
+    /// \return Size of the window, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2u GetSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
     ///
-    /// \param width  New width
-    /// \param height New height
+    /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(unsigned int width, unsigned int height);
+    virtual void SetSize(const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -121,22 +127,6 @@ private :
     virtual void SetTitle(const std::string& title);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the window
-    ///
-    /// \param show True to show, false to hide
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void Show(bool show);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable automatic key-repeat
-    ///
-    /// \param enabled True to enable, false to disable
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void EnableKeyRepeat(bool enabled);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
     ///
     /// \param width  Icon's width, in pixels
@@ -145,6 +135,32 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the window
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void SetVisible(bool visible);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void SetMouseCursorVisible(bool visible);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable automatic key-repeat
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void SetKeyRepeatEnabled(bool enabled);
+
+private :
 
     ////////////////////////////////////////////////////////////
     /// Register the window class

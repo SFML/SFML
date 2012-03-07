@@ -136,7 +136,7 @@ void WglContext::Display()
 
 
 ////////////////////////////////////////////////////////////
-void WglContext::EnableVerticalSync(bool enabled)
+void WglContext::SetVerticalSyncEnabled(bool enabled)
 {
     PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
     if (wglSwapIntervalEXT)

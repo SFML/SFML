@@ -137,30 +137,15 @@ public :
     void Display();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return the width of the rendering region of the texture
+    /// \brief Return the size of the rendering region of the texture
     ///
     /// The returned value is the size that you passed to
     /// the Create function.
     ///
-    /// \return Width in pixels
-    ///
-    /// \return GetHeight
+    /// \return Size in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetWidth() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the height of the rendering region of the texture
-    ///
-    /// The returned value is the size that you passed to
-    /// the Create function.
-    ///
-    /// \return Height in pixels
-    ///
-    /// \return GetWidth
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual unsigned int GetHeight() const;
+    virtual Vector2u GetSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only reference to the target texture

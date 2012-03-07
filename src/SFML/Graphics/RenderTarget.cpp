@@ -87,8 +87,8 @@ const View& RenderTarget::GetDefaultView() const
 ////////////////////////////////////////////////////////////
 IntRect RenderTarget::GetViewport(const View& view) const
 {
-    float width  = static_cast<float>(GetWidth());
-    float height = static_cast<float>(GetHeight());
+    float width  = static_cast<float>(GetSize().x);
+    float height = static_cast<float>(GetSize().y);
     const FloatRect& viewport = view.GetViewport();
 
     return IntRect(static_cast<int>(0.5f + width  * viewport.Left),
@@ -284,7 +284,7 @@ void RenderTarget::ResetGLStates()
 void RenderTarget::Initialize()
 {
     // Setup the default and current views
-    myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
+    myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetSize().x), static_cast<float>(GetSize().y)));
     myView = myDefaultView;
 
     // Initialize the default OpenGL render-states
@@ -297,7 +297,7 @@ void RenderTarget::ApplyCurrentView()
 {
     // Set the viewport
     IntRect viewport = GetViewport(myView);
-    int top = GetHeight() - (viewport.Top + viewport.Height);
+    int top = GetSize().y - (viewport.Top + viewport.Height);
     GLCheck(glViewport(viewport.Left, top, viewport.Width, viewport.Height));
 
     // Set the projection matrix

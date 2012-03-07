@@ -28,7 +28,7 @@ int main()
 
     // Create the window of the application
     sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, 32), "SFML Pong");
-    window.EnableVerticalSync(true);
+    window.SetVerticalSyncEnabled(true);
 
     // Load the sounds used in the game
     sf::SoundBuffer ballSoundBuffer;

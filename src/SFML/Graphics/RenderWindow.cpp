@@ -69,16 +69,9 @@ bool RenderWindow::Activate(bool active)
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RenderWindow::GetWidth() const
+Vector2u RenderWindow::GetSize() const
 {
-    return Window::GetWidth();
-}
-
-
-////////////////////////////////////////////////////////////
-unsigned int RenderWindow::GetHeight() const
-{
-    return Window::GetHeight();
+    return Window::GetSize();
 }
 
 
@@ -88,8 +81,8 @@ Image RenderWindow::Capture() const
     Image image;
     if (SetActive())
     {
-        int width = static_cast<int>(GetWidth());
-        int height = static_cast<int>(GetHeight());
+        int width = static_cast<int>(GetSize().x);
+        int height = static_cast<int>(GetSize().y);
 
         // copy rows one by one and flip them (OpenGL's origin is bottom while SFML's origin is top)
         std::vector<Uint8> pixels(width * height * 4);

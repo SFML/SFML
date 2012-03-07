@@ -70,12 +70,6 @@ myIsCursorIn      (false)
 {
     if (myHandle)
     {
-        // Get window client size
-        RECT rectangle;
-        GetClientRect(myHandle, &rectangle);
-        myWidth  = rectangle.right - rectangle.left;
-        myHeight = rectangle.bottom - rectangle.top;
-
         // We change the event procedure of the control (it is important to save the old one)
         SetWindowLongPtr(myHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
         myCallback = SetWindowLongPtr(myHandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowImplWin32::GlobalOnEvent));
@@ -100,8 +94,8 @@ myIsCursorIn      (false)
     HDC screenDC = GetDC(NULL);
     int left   = (GetDeviceCaps(screenDC, HORZRES) - mode.Width)  / 2;
     int top    = (GetDeviceCaps(screenDC, VERTRES) - mode.Height) / 2;
-    int width  = myWidth  = mode.Width;
-    int height = myHeight = mode.Height;
+    int width  = mode.Width;
+    int height = mode.Height;
     ReleaseDC(NULL, screenDC);
 
     // Choose the window style according to the Style parameter
@@ -146,13 +140,6 @@ myIsCursorIn      (false)
 
     // Increment window count
     WindowCount++;
-
-    // Get the actual size of the window, which can be smaller even after the call to AdjustWindowRect
-    // This happens when the window is bigger than the desktop
-    RECT actualRectangle;
-    GetClientRect(myHandle, &actualRectangle);
-    myWidth  = actualRectangle.right - actualRectangle.left;
-    myHeight = actualRectangle.bottom - actualRectangle.top;
 }
 
 
@@ -217,33 +204,41 @@ void WindowImplWin32::ProcessEvents()
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::ShowMouseCursor(bool show)
+Vector2i WindowImplWin32::GetPosition() const
 {
-    if (show)
-        myCursor = LoadCursor(NULL, IDC_ARROW);
-    else
-        myCursor = NULL;
+    RECT rect;
+    GetWindowRect(myHandle, &rect);
 
-    SetCursor(myCursor);
+    return Vector2i(rect.left, rect.top);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::SetPosition(int x, int y)
+void WindowImplWin32::SetPosition(const Vector2i& position)
 {
-    SetWindowPos(myHandle, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    SetWindowPos(myHandle, NULL, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::SetSize(unsigned int width, unsigned int height)
+Vector2u WindowImplWin32::GetSize() const
+{
+    RECT rect;
+    GetClientRect(myHandle, &rect);
+
+    return Vector2u(rect.right - rect.left, rect.bottom - rect.top);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::SetSize(const Vector2u& size)
 {
     // SetWindowPos wants the total size of the window (including title bar and borders),
     // so we have to compute it
-    RECT rectangle = {0, 0, width, height};
+    RECT rectangle = {0, 0, size.x, size.y};
     AdjustWindowRect(&rectangle, GetWindowLong(myHandle, GWL_STYLE), false);
-    width  = rectangle.right - rectangle.left;
-    height = rectangle.bottom - rectangle.top;
+    int width  = rectangle.right - rectangle.left;
+    int height = rectangle.bottom - rectangle.top;
 
     SetWindowPos(myHandle, NULL, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
 }
@@ -257,27 +252,13 @@ void WindowImplWin32::SetTitle(const std::string& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::Show(bool show)
-{
-    ShowWindow(myHandle, show ? SW_SHOW : SW_HIDE);
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowImplWin32::EnableKeyRepeat(bool enabled)
-{
-    myKeyRepeatEnabled = enabled;
-}
-
-
-////////////////////////////////////////////////////////////
 void WindowImplWin32::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     // First destroy the previous one
     if (myIcon)
         DestroyIcon(myIcon);
 
-    // Windows wants BGRA pixels : swap red and blue channels
+    // Windows wants BGRA pixels: swap red and blue channels
     std::vector<Uint8> iconPixels(width * height * 4);
     for (std::size_t i = 0; i < iconPixels.size() / 4; ++i)
     {
@@ -300,6 +281,32 @@ void WindowImplWin32::SetIcon(unsigned int width, unsigned int height, const Uin
     {
         Err() << "Failed to set the window's icon" << std::endl;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::SetVisible(bool visible)
+{
+    ShowWindow(myHandle, visible ? SW_SHOW : SW_HIDE);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::SetMouseCursorVisible(bool visible)
+{
+    if (visible)
+        myCursor = LoadCursor(NULL, IDC_ARROW);
+    else
+        myCursor = NULL;
+
+    SetCursor(myCursor);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::SetKeyRepeatEnabled(bool enabled)
+{
+    myKeyRepeatEnabled = enabled;
 }
 
 
@@ -380,7 +387,7 @@ void WindowImplWin32::Cleanup()
     }
 
     // Unhide the mouse cursor (in case it was hidden)
-    ShowMouseCursor(true);
+    SetMouseCursorVisible(true);
 }
 
 
@@ -426,16 +433,14 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             // Ignore size events triggered by a minimize (size == 0 in this case)
             if (wParam != SIZE_MINIMIZED)
             {
-                // Update window size
+                // Get the new size
                 RECT rectangle;
                 GetClientRect(myHandle, &rectangle);
-                myWidth  = rectangle.right - rectangle.left;
-                myHeight = rectangle.bottom - rectangle.top;
 
                 Event event;
                 event.Type        = Event::Resized;
-                event.Size.Width  = myWidth;
-                event.Size.Height = myHeight;
+                event.Size.Width  = rectangle.right - rectangle.left;
+                event.Size.Height = rectangle.bottom - rectangle.top;
                 PushEvent(event);
                 break;
             }

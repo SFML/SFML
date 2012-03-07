@@ -70,8 +70,6 @@ WindowImpl* WindowImpl::Create(WindowHandle handle)
 
 ////////////////////////////////////////////////////////////
 WindowImpl::WindowImpl() :
-myWidth       (0),
-myHeight      (0),
 myJoyThreshold(0.1f)
 {
     // Get the initial joystick states
@@ -85,20 +83,6 @@ myJoyThreshold(0.1f)
 WindowImpl::~WindowImpl()
 {
     // Nothing to do
-}
-
-
-////////////////////////////////////////////////////////////
-unsigned int WindowImpl::GetWidth() const
-{
-    return myWidth;
-}
-
-
-////////////////////////////////////////////////////////////
-unsigned int WindowImpl::GetHeight() const
-{
-    return myHeight;
 }
 
 

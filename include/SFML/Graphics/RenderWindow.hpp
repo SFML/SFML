@@ -101,30 +101,15 @@ public :
     virtual ~RenderWindow();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the width of the rendering region of the window
+    /// \brief Get the size of the rendering region of the window
     ///
-    /// The width doesn't include the titlebar and borders
+    /// The size doesn't include the titlebar and borders
     /// of the window.
     ///
-    /// \return Width in pixels
-    ///
-    /// \see GetHeight
+    /// \return Size in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetWidth() const;
-
-    ////////////////////////////////////////////////////////////
-    /// Get the height of the rendering region of the window
-    ///
-    /// The height doesn't include the titlebar and borders
-    /// of the window.
-    ///
-    /// \return Height in pixels
-    ///
-    /// \see GetWidth
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual unsigned int GetHeight() const;
+    virtual Vector2u GetSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy the current contents of the window to an image

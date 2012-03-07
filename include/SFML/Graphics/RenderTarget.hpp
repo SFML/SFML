@@ -200,24 +200,14 @@ public :
               PrimitiveType type, const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return the width of the rendering region of the target
+    /// \brief Return the size of the rendering region of the target
     ///
-    /// \return Width in pixels
+    /// \return Size in pixels
     ///
     /// \see GetHeight
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetWidth() const = 0;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the height of the rendering region of the target
-    ///
-    /// \return Height in pixels
-    ///
-    /// \see GetWidth
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual unsigned int GetHeight() const = 0;
+    virtual Vector2u GetSize() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the current OpenGL render states and matrices

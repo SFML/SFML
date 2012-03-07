@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 
+
 ////////////////////////////////////////////////////////////
 /// Entry point of application
 ///
@@ -15,7 +16,7 @@ int main()
 {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL", sf::Style::Default, sf::ContextSettings(32));
-    window.EnableVerticalSync(true);
+    window.SetVerticalSyncEnabled(true);
 
     // Create a sprite for the background
     sf::Texture backgroundTexture;
@@ -90,8 +91,8 @@ int main()
         glClear(GL_DEPTH_BUFFER_BIT);
 
         // We get the position of the mouse cursor, so that we can move the box accordingly
-        float x =  sf::Mouse::GetPosition(window).x * 200.f / window.GetWidth()  - 100.f;
-        float y = -sf::Mouse::GetPosition(window).y * 200.f / window.GetHeight() + 100.f;
+        float x =  sf::Mouse::GetPosition(window).x * 200.f / window.GetSize().x - 100.f;
+        float y = -sf::Mouse::GetPosition(window).y * 200.f / window.GetSize().y + 100.f;
 
         // Apply some transformations
         glMatrixMode(GL_MODELVIEW);

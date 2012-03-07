@@ -124,7 +124,7 @@ void SFContext::Display()
 
 
 ////////////////////////////////////////////////////////////
-void SFContext::EnableVerticalSync(bool enabled)
+void SFContext::SetVerticalSyncEnabled(bool enabled)
 {
     // Make compiler happy
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060

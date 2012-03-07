@@ -153,41 +153,16 @@ public :
     void Close();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Tell whether or not the window is opened
+    /// \brief Tell whether or not the window is open
     ///
     /// This function returns whether or not the window exists.
-    /// Note that a hidden window (Show(false)) will return true.
+    /// Note that a hidden window (SetVisible(false)) is open
+    /// (therefore this function would return true).
     ///
-    /// \return True if the window is opened, false if it has been closed
+    /// \return True if the window is open, false if it has been closed
     ///
     ////////////////////////////////////////////////////////////
     bool IsOpen() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the width of the rendering region of the window
-    ///
-    /// The width doesn't include the titlebar and borders
-    /// of the window.
-    ///
-    /// \return Width in pixels
-    ///
-    /// \see GetHeight
-    ///
-    ////////////////////////////////////////////////////////////
-    unsigned int GetWidth() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the height of the rendering region of the window
-    ///
-    /// The height doesn't include the titlebar and borders
-    /// of the window.
-    ///
-    /// \return Height in pixels
-    ///
-    /// \see GetWidth
-    ///
-    ////////////////////////////////////////////////////////////
-    unsigned int GetHeight() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the settings of the OpenGL context of the window
@@ -255,29 +230,14 @@ public :
     bool WaitEvent(Event& event);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable vertical synchronization
+    /// \brief Get the position of the window
     ///
-    /// Activating vertical synchronization will limit the number
-    /// of frames displayed to the refresh rate of the monitor.
-    /// This can avoid some visual artifacts, and limit the framerate
-    /// to a good value (but not constant across different computers).
+    /// \return Position of the window, in pixels
     ///
-    /// Vertical synchronization is disabled by default.
-    ///
-    /// \param enabled True to enable v-sync, false to deactivate
+    /// \see SetPosition
     ///
     ////////////////////////////////////////////////////////////
-    void EnableVerticalSync(bool enabled);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the mouse cursor
-    ///
-    /// The mouse cursor is shown by default.
-    ///
-    /// \param show True to show, false to hide
-    ///
-    ////////////////////////////////////////////////////////////
-    void ShowMouseCursor(bool show);
+    Vector2i GetPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -286,52 +246,45 @@ public :
     /// (i.e. it will be ignored for windows created from
     /// the handle of a child window/control).
     ///
-    /// \param x Left position
-    /// \param y Top position
+    /// \param position New position, in pixels
+    ///
+    /// \see GetPosition
     ///
     ////////////////////////////////////////////////////////////
-    void SetPosition(int x, int y);
+    void SetPosition(const Vector2i& position);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the size of the rendering region of the window
+    ///
+    /// The size doesn't include the titlebar and borders
+    /// of the window.
+    ///
+    /// \return Size in pixels
+    ///
+    /// \see SetSize
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2u GetSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
     ///
-    /// \param width  New width, in pixels
-    /// \param height New height, in pixels
+    /// \param size New size, in pixels
+    ///
+    /// \see GetSize
     ///
     ////////////////////////////////////////////////////////////
-    void SetSize(unsigned int width, unsigned int height);
+    void SetSize(const Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
     ///
     /// \param title New title
     ///
+    /// \see SetIcon
+    ///
     ////////////////////////////////////////////////////////////
     void SetTitle(const std::string& title);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the window
-    ///
-    /// The window is shown by default.
-    ///
-    /// \param show True to show, false to hide
-    ///
-    ////////////////////////////////////////////////////////////
-    void Show(bool show);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable automatic key-repeat
-    ///
-    /// If key repeat is enabled, you will receive repeated
-    /// KeyPress events while keeping a key pressed. If it is disabled,
-    /// you will only get a single event when the key is pressed.
-    ///
-    /// Key repeat is enabled by default.
-    ///
-    /// \param enabled True to enable, false to disable
-    ///
-    ////////////////////////////////////////////////////////////
-    void EnableKeyRepeat(bool enabled);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
@@ -345,36 +298,59 @@ public :
     /// \param height Icon's height, in pixels
     /// \param pixels Pointer to the array of pixels in memory
     ///
+    /// \see SetTitle
+    ///
     ////////////////////////////////////////////////////////////
     void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate or deactivate the window as the current target
-    ///        for OpenGL rendering
+    /// \brief Show or hide the window
     ///
-    /// A window is active only on the current thread, if you want to
-    /// make it active on another thread you have to deactivate it
-    /// on the previous thread first if it was active.
-    /// Only one window can be active on a thread at a time, thus
-    /// the window previously active (if any) automatically gets deactivated.
+    /// The window is shown by default.
     ///
-    /// \param active True to activate, false to deactivate
-    ///
-    /// \return True if operation was successful, false otherwise
+    /// \param visible True to show the window, false to hide it
     ///
     ////////////////////////////////////////////////////////////
-    bool SetActive(bool active = true) const;
+    void SetVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Display on screen what has been rendered to the
-    ///        window so far
+    /// \brief Enable or disable vertical synchronization
     ///
-    /// This function is typically called after all OpenGL rendering
-    /// has been done for the current frame, in order to show
-    /// it on screen.
+    /// Activating vertical synchronization will limit the number
+    /// of frames displayed to the refresh rate of the monitor.
+    /// This can avoid some visual artifacts, and limit the framerate
+    /// to a good value (but not constant across different computers).
+    ///
+    /// Vertical synchronization is disabled by default.
+    ///
+    /// \param enabled True to enable v-sync, false to deactivate it
     ///
     ////////////////////////////////////////////////////////////
-    void Display();
+    void SetVerticalSyncEnabled(bool enabled);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// The mouse cursor is visible by default.
+    ///
+    /// \param visible True to show the mouse cursor, false to hide it
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetMouseCursorVisible(bool visible);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable automatic key-repeat
+    ///
+    /// If key repeat is enabled, you will receive repeated
+    /// KeyPressed events while keeping a key pressed. If it is disabled,
+    /// you will only get a single event when the key is pressed.
+    ///
+    /// Key repeat is enabled by default.
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetKeyRepeatEnabled(bool enabled);
 
     ////////////////////////////////////////////////////////////
     /// \brief Limit the framerate to a maximum fixed frequency
@@ -405,6 +381,33 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void SetJoystickThreshold(float threshold);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Activate or deactivate the window as the current target
+    ///        for OpenGL rendering
+    ///
+    /// A window is active only on the current thread, if you want to
+    /// make it active on another thread you have to deactivate it
+    /// on the previous thread first if it was active.
+    /// Only one window can be active on a thread at a time, thus
+    /// the window previously active (if any) automatically gets deactivated.
+    ///
+    /// \param active True to activate, false to deactivate
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool SetActive(bool active = true) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Display on screen what has been rendered to the window so far
+    ///
+    /// This function is typically called after all OpenGL rendering
+    /// has been done for the current frame, in order to show
+    /// it on screen.
+    ///
+    ////////////////////////////////////////////////////////////
+    void Display();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window

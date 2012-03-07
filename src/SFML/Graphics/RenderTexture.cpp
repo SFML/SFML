@@ -119,16 +119,9 @@ void RenderTexture::Display()
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RenderTexture::GetWidth() const
+Vector2u RenderTexture::GetSize() const
 {
-    return myTexture.GetWidth();
-}
-
-
-////////////////////////////////////////////////////////////
-unsigned int RenderTexture::GetHeight() const
-{
-    return myTexture.GetHeight();
+    return Vector2u(myTexture.GetWidth(), myTexture.GetHeight());
 }
 
 

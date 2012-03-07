@@ -172,7 +172,7 @@ public :
     /// \param enabled True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void EnableVerticalSync(bool enabled) = 0;
+    virtual void SetVerticalSyncEnabled(bool enabled) = 0;
 
 protected :
 
