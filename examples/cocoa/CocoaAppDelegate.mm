@@ -141,7 +141,7 @@ struct SFMLmainWindow
     self.sfmlView           = nil;
     self.textField          = nil;
     
-    delete self.mainWindow;
+    delete (SFMLmainWindow*) self.mainWindow;
     self.mainWindow         = 0;
     self.renderTimer        = nil;
     
