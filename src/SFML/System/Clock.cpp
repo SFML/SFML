@@ -38,7 +38,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Clock::Clock() :
-myStartTime(priv::ClockImpl::GetCurrentTime())
+m_startTime(priv::ClockImpl::GetCurrentTime())
 {
 }
 
@@ -46,7 +46,7 @@ myStartTime(priv::ClockImpl::GetCurrentTime())
 ////////////////////////////////////////////////////////////
 Time Clock::GetElapsedTime() const
 {
-    return priv::ClockImpl::GetCurrentTime() - myStartTime;
+    return priv::ClockImpl::GetCurrentTime() - m_startTime;
 }
 
 
@@ -54,8 +54,8 @@ Time Clock::GetElapsedTime() const
 Time Clock::Restart()
 {
     Time now = priv::ClockImpl::GetCurrentTime();
-    Time elapsed = now - myStartTime;
-    myStartTime = now;
+    Time elapsed = now - m_startTime;
+    m_startTime = now;
 
     return elapsed;
 }

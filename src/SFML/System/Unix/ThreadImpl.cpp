@@ -37,11 +37,11 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 ThreadImpl::ThreadImpl(Thread* owner) :
-myIsActive(true)
+m_isActive(true)
 {
-    myIsActive = pthread_create(&myThread, NULL, &ThreadImpl::EntryPoint, owner) == 0;
+    m_isActive = pthread_create(&m_thread, NULL, &ThreadImpl::EntryPoint, owner) == 0;
 
-    if (!myIsActive)
+    if (!m_isActive)
         std::cerr << "Failed to create thread" << std::endl;
 }
 
@@ -49,10 +49,10 @@ myIsActive(true)
 ////////////////////////////////////////////////////////////
 void ThreadImpl::Wait()
 {
-    if (myIsActive)
+    if (m_isActive)
     {
-        assert(pthread_equal(pthread_self(), myThread) == 0); // A thread cannot wait for itself!
-        pthread_join(myThread, NULL);
+        assert(pthread_equal(pthread_self(), m_thread) == 0); // A thread cannot wait for itself!
+        pthread_join(m_thread, NULL);
     }
 }
 
@@ -60,8 +60,8 @@ void ThreadImpl::Wait()
 ////////////////////////////////////////////////////////////
 void ThreadImpl::Terminate()
 {
-    if (myIsActive)
-        pthread_cancel(myThread);
+    if (m_isActive)
+        pthread_cancel(m_thread);
 }
 
 

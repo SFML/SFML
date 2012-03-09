@@ -43,14 +43,14 @@ JoystickManager& JoystickManager::GetInstance()
 ////////////////////////////////////////////////////////////
 const JoystickCaps& JoystickManager::GetCapabilities(unsigned int joystick) const
 {
-    return myJoysticks[joystick].Capabilities;
+    return m_joysticks[joystick].Capabilities;
 }
 
 
 ////////////////////////////////////////////////////////////
 const JoystickState& JoystickManager::GetState(unsigned int joystick) const
 {
-    return myJoysticks[joystick].State;
+    return m_joysticks[joystick].State;
 }
 
 
@@ -59,7 +59,7 @@ void JoystickManager::Update()
 {
     for (int i = 0; i < Joystick::Count; ++i)
     {
-        Item& item = myJoysticks[i];
+        Item& item = m_joysticks[i];
 
         if (item.State.Connected)
         {
@@ -101,8 +101,8 @@ JoystickManager::~JoystickManager()
 {
     for (int i = 0; i < Joystick::Count; ++i)
     {
-        if (myJoysticks[i].State.Connected)
-            myJoysticks[i].Joystick.Close();
+        if (m_joysticks[i].State.Connected)
+            m_joysticks[i].Joystick.Close();
     }
 }
 

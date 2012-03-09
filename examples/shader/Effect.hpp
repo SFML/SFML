@@ -21,23 +21,23 @@ public :
 
     const std::string& GetName() const
     {
-        return myName;
+        return m_name;
     }
 
     void Load()
     {
-        myIsLoaded = sf::Shader::IsAvailable() && OnLoad();
+        m_isLoaded = sf::Shader::IsAvailable() && OnLoad();
     }
 
     void Update(float time, float x, float y)
     {
-        if (myIsLoaded)
+        if (m_isLoaded)
             OnUpdate(time, x, y);
     }
 
     void Draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        if (myIsLoaded)
+        if (m_isLoaded)
         {
             OnDraw(target, states);
         }
@@ -53,8 +53,8 @@ public :
 protected :
 
     Effect(const std::string& name) :
-    myName(name),
-    myIsLoaded(false)
+    m_name(name),
+    m_isLoaded(false)
     {
     }
 
@@ -67,8 +67,8 @@ private :
 
 private :
 
-    std::string myName;
-    bool myIsLoaded;
+    std::string m_name;
+    bool m_isLoaded;
 };
 
 #endif // EFFECT_HPP

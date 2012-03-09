@@ -23,34 +23,34 @@ public :
     bool OnLoad()
     {
         // Load the texture and initialize the sprite
-        if (!myTexture.LoadFromFile("resources/background.jpg"))
+        if (!m_texture.LoadFromFile("resources/background.jpg"))
             return false;
-        mySprite.SetTexture(myTexture);
+        m_sprite.SetTexture(m_texture);
 
         // Load the shader
-        if (!myShader.LoadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
+        if (!m_shader.LoadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
             return false;
-        myShader.SetParameter("texture", sf::Shader::CurrentTexture);
+        m_shader.SetParameter("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void OnUpdate(float, float x, float y)
     {
-        myShader.SetParameter("pixel_threshold", (x + y) / 30);
+        m_shader.SetParameter("pixel_threshold", (x + y) / 30);
     }
 
     void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.Shader = &myShader;
-        target.Draw(mySprite, states);
+        states.Shader = &m_shader;
+        target.Draw(m_sprite, states);
     }
 
 private:
 
-    sf::Texture myTexture;
-    sf::Sprite mySprite;
-    sf::Shader myShader;
+    sf::Texture m_texture;
+    sf::Sprite m_sprite;
+    sf::Shader m_shader;
 };
 
 
@@ -69,7 +69,7 @@ public :
     bool OnLoad()
     {
         // Create the text
-        myText.SetString("Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
+        m_text.SetString("Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
                          "Mauris mi odio, bibendum quis fringilla a, laoreet vel orci. Proin vitae vulputate tortor.\n"
                          "Praesent cursus ultrices justo, ut feugiat ante vehicula quis.\n"
                          "Donec fringilla scelerisque mauris et viverra.\n"
@@ -87,11 +87,11 @@ public :
                          "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
                          "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
                          "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
-        myText.SetCharacterSize(22);
-        myText.SetPosition(30, 20);
+        m_text.SetCharacterSize(22);
+        m_text.SetPosition(30, 20);
 
         // Load the shader
-        if (!myShader.LoadFromFile("resources/wave.vert", "resources/blur.frag"))
+        if (!m_shader.LoadFromFile("resources/wave.vert", "resources/blur.frag"))
             return false;
 
         return true;
@@ -99,21 +99,21 @@ public :
 
     void OnUpdate(float time, float x, float y)
     {
-        myShader.SetParameter("wave_phase", time);
-        myShader.SetParameter("wave_amplitude", x * 40, y * 40);
-        myShader.SetParameter("blur_radius", (x + y) * 0.008f);
+        m_shader.SetParameter("wave_phase", time);
+        m_shader.SetParameter("wave_amplitude", x * 40, y * 40);
+        m_shader.SetParameter("blur_radius", (x + y) * 0.008f);
     }
 
     void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.Shader = &myShader;
-        target.Draw(myText, states);
+        states.Shader = &m_shader;
+        target.Draw(m_text, states);
     }
 
 private:
 
-    sf::Text myText;
-    sf::Shader myShader;
+    sf::Text m_text;
+    sf::Shader m_shader;
 };
 
 
@@ -132,7 +132,7 @@ public :
     bool OnLoad()
     {
         // Create the points
-        myPoints.SetPrimitiveType(sf::Points);
+        m_points.SetPrimitiveType(sf::Points);
         for (int i = 0; i < 40000; ++i)
         {
             float x = static_cast<float>(std::rand() % 800);
@@ -140,11 +140,11 @@ public :
             sf::Uint8 r = std::rand() % 255;
             sf::Uint8 g = std::rand() % 255;
             sf::Uint8 b = std::rand() % 255;
-            myPoints.Append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
+            m_points.Append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
         }
 
         // Load the shader
-        if (!myShader.LoadFromFile("resources/storm.vert", "resources/blink.frag"))
+        if (!m_shader.LoadFromFile("resources/storm.vert", "resources/blink.frag"))
             return false;
 
         return true;
@@ -153,22 +153,22 @@ public :
     void OnUpdate(float time, float x, float y)
     {
         float radius = 200 + std::cos(time) * 150;
-        myShader.SetParameter("storm_position", x * 800, y * 600);
-        myShader.SetParameter("storm_inner_radius", radius / 3);
-        myShader.SetParameter("storm_total_radius", radius);
-        myShader.SetParameter("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
+        m_shader.SetParameter("storm_position", x * 800, y * 600);
+        m_shader.SetParameter("storm_inner_radius", radius / 3);
+        m_shader.SetParameter("storm_total_radius", radius);
+        m_shader.SetParameter("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
     }
 
     void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.Shader = &myShader;
-        target.Draw(myPoints, states);
+        states.Shader = &m_shader;
+        target.Draw(m_points, states);
     }
 
 private:
 
-    sf::VertexArray myPoints;
-    sf::Shader myShader;
+    sf::VertexArray m_points;
+    sf::Shader m_shader;
 };
 
 
@@ -187,71 +187,71 @@ public :
     bool OnLoad()
     {
         // Create the off-screen surface
-        if (!mySurface.Create(800, 600))
+        if (!m_surface.Create(800, 600))
             return false;
-        mySurface.SetSmooth(true);
+        m_surface.SetSmooth(true);
 
         // Load the textures
-        if (!myBackgroundTexture.LoadFromFile("resources/sfml.png"))
+        if (!m_backgroundTexture.LoadFromFile("resources/sfml.png"))
             return false;
-        myBackgroundTexture.SetSmooth(true);
-        if (!myEntityTexture.LoadFromFile("resources/devices.png"))
+        m_backgroundTexture.SetSmooth(true);
+        if (!m_entityTexture.LoadFromFile("resources/devices.png"))
             return false;
-        myEntityTexture.SetSmooth(true);
+        m_entityTexture.SetSmooth(true);
 
         // Initialize the background sprite
-        myBackgroundSprite.SetTexture(myBackgroundTexture);
-        myBackgroundSprite.SetPosition(135, 100);
+        m_backgroundSprite.SetTexture(m_backgroundTexture);
+        m_backgroundSprite.SetPosition(135, 100);
 
         // Load the moving entities
         for (int i = 0; i < 6; ++i)
         {
-            sf::Sprite entity(myEntityTexture, sf::IntRect(96 * i, 0, 96, 96));
-            myEntities.push_back(entity);
+            sf::Sprite entity(m_entityTexture, sf::IntRect(96 * i, 0, 96, 96));
+            m_entities.push_back(entity);
         }
 
         // Load the shader
-        if (!myShader.LoadFromFile("resources/edge.frag", sf::Shader::Fragment))
+        if (!m_shader.LoadFromFile("resources/edge.frag", sf::Shader::Fragment))
             return false;
-        myShader.SetParameter("texture", sf::Shader::CurrentTexture);
+        m_shader.SetParameter("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void OnUpdate(float time, float x, float y)
     {
-        myShader.SetParameter("edge_threshold", 1 - (x + y) / 2);
+        m_shader.SetParameter("edge_threshold", 1 - (x + y) / 2);
 
         // Update the position of the moving entities
-        for (std::size_t i = 0; i < myEntities.size(); ++i)
+        for (std::size_t i = 0; i < m_entities.size(); ++i)
         {
-            float x = std::cos(0.25f * (time * i + (myEntities.size() - i))) * 300 + 350;
-            float y = std::sin(0.25f * (time * (myEntities.size() - i) + i)) * 200 + 250;
-            myEntities[i].SetPosition(x, y);
+            float x = std::cos(0.25f * (time * i + (m_entities.size() - i))) * 300 + 350;
+            float y = std::sin(0.25f * (time * (m_entities.size() - i) + i)) * 200 + 250;
+            m_entities[i].SetPosition(x, y);
         }
 
         // Render the updated scene to the off-screen surface
-        mySurface.Clear(sf::Color::White);
-        mySurface.Draw(myBackgroundSprite);
-        for (std::size_t i = 0; i < myEntities.size(); ++i)
-            mySurface.Draw(myEntities[i]);
-        mySurface.Display();
+        m_surface.Clear(sf::Color::White);
+        m_surface.Draw(m_backgroundSprite);
+        for (std::size_t i = 0; i < m_entities.size(); ++i)
+            m_surface.Draw(m_entities[i]);
+        m_surface.Display();
     }
 
     void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.Shader = &myShader;
-        target.Draw(sf::Sprite(mySurface.GetTexture()), states);
+        states.Shader = &m_shader;
+        target.Draw(sf::Sprite(m_surface.GetTexture()), states);
     }
 
 private:
 
-    sf::RenderTexture mySurface;
-    sf::Texture myBackgroundTexture;
-    sf::Texture myEntityTexture;
-    sf::Sprite myBackgroundSprite;
-    std::vector<sf::Sprite> myEntities;
-    sf::Shader myShader;
+    sf::RenderTexture m_surface;
+    sf::Texture m_backgroundTexture;
+    sf::Texture m_entityTexture;
+    sf::Sprite m_backgroundSprite;
+    std::vector<sf::Sprite> m_entities;
+    sf::Shader m_shader;
 };
 
 

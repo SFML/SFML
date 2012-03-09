@@ -35,28 +35,28 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ThreadLocalImpl::ThreadLocalImpl()
 {
-    myIndex = TlsAlloc();
+    m_index = TlsAlloc();
 }
 
 
 ////////////////////////////////////////////////////////////
 ThreadLocalImpl::~ThreadLocalImpl()
 {
-    TlsFree(myIndex);
+    TlsFree(m_index);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ThreadLocalImpl::SetValue(void* value)
 {
-    TlsSetValue(myIndex, value);
+    TlsSetValue(m_index, value);
 }
 
 
 ////////////////////////////////////////////////////////////
 void* ThreadLocalImpl::GetValue() const
 {
-    return TlsGetValue(myIndex);
+    return TlsGetValue(m_index);
 }
 
 } // namespace priv

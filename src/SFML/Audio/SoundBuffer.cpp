@@ -38,25 +38,25 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer() :
-myBuffer  (0),
-myDuration()
+m_buffer  (0),
+m_duration()
 {
     priv::EnsureALInit();
 
     // Create the buffer
-    ALCheck(alGenBuffers(1, &myBuffer));
+    ALCheck(alGenBuffers(1, &m_buffer));
 }
 
 
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
-myBuffer  (0),
-mySamples (copy.mySamples),
-myDuration(copy.myDuration),
-mySounds  () // don't copy the attached sounds
+m_buffer  (0),
+m_samples (copy.m_samples),
+m_duration(copy.m_duration),
+m_sounds  () // don't copy the attached sounds
 {
     // Create the buffer
-    ALCheck(alGenBuffers(1, &myBuffer));
+    ALCheck(alGenBuffers(1, &m_buffer));
 
     // Update the internal buffer with the new samples
     Update(copy.GetChannelCount(), copy.GetSampleRate());
@@ -67,12 +67,12 @@ mySounds  () // don't copy the attached sounds
 SoundBuffer::~SoundBuffer()
 {
     // First detach the buffer from the sounds that use it (to avoid OpenAL errors)
-    for (SoundList::const_iterator it = mySounds.begin(); it != mySounds.end(); ++it)
+    for (SoundList::const_iterator it = m_sounds.begin(); it != m_sounds.end(); ++it)
         (*it)->ResetBuffer();
 
     // Destroy the buffer
-    if (myBuffer)
-        ALCheck(alDeleteBuffers(1, &myBuffer));
+    if (m_buffer)
+        ALCheck(alDeleteBuffers(1, &m_buffer));
 }
 
 
@@ -115,7 +115,7 @@ bool SoundBuffer::LoadFromSamples(const Int16* samples, std::size_t sampleCount,
     if (samples && sampleCount && channelCount && sampleRate)
     {
         // Copy the new audio samples
-        mySamples.assign(samples, samples + sampleCount);
+        m_samples.assign(samples, samples + sampleCount);
 
         // Update the internal buffer with the new samples
         return Update(channelCount, sampleRate);
@@ -143,7 +143,7 @@ bool SoundBuffer::SaveToFile(const std::string& filename) const
     if (file.OpenWrite(filename, GetChannelCount(), GetSampleRate()))
     {
         // Write the samples to the opened file
-        file.Write(&mySamples[0], mySamples.size());
+        file.Write(&m_samples[0], m_samples.size());
 
         return true;
     }
@@ -157,14 +157,14 @@ bool SoundBuffer::SaveToFile(const std::string& filename) const
 ////////////////////////////////////////////////////////////
 const Int16* SoundBuffer::GetSamples() const
 {
-    return mySamples.empty() ? NULL : &mySamples[0];
+    return m_samples.empty() ? NULL : &m_samples[0];
 }
 
 
 ////////////////////////////////////////////////////////////
 std::size_t SoundBuffer::GetSampleCount() const
 {
-    return mySamples.size();
+    return m_samples.size();
 }
 
 
@@ -172,7 +172,7 @@ std::size_t SoundBuffer::GetSampleCount() const
 unsigned int SoundBuffer::GetSampleRate() const
 {
     ALint sampleRate;
-    ALCheck(alGetBufferi(myBuffer, AL_FREQUENCY, &sampleRate));
+    ALCheck(alGetBufferi(m_buffer, AL_FREQUENCY, &sampleRate));
 
     return sampleRate;
 }
@@ -182,7 +182,7 @@ unsigned int SoundBuffer::GetSampleRate() const
 unsigned int SoundBuffer::GetChannelCount() const
 {
     ALint channelCount;
-    ALCheck(alGetBufferi(myBuffer, AL_CHANNELS, &channelCount));
+    ALCheck(alGetBufferi(m_buffer, AL_CHANNELS, &channelCount));
 
     return channelCount;
 }
@@ -191,7 +191,7 @@ unsigned int SoundBuffer::GetChannelCount() const
 ////////////////////////////////////////////////////////////
 Time SoundBuffer::GetDuration() const
 {
-    return myDuration;
+    return m_duration;
 }
 
 
@@ -200,10 +200,10 @@ SoundBuffer& SoundBuffer::operator =(const SoundBuffer& right)
 {
     SoundBuffer temp(right);
 
-    std::swap(mySamples,  temp.mySamples);
-    std::swap(myBuffer,   temp.myBuffer);
-    std::swap(myDuration, temp.myDuration);
-    std::swap(mySounds,   temp.mySounds); // swap sounds too, so that they are detached when temp is destroyed
+    std::swap(m_samples,  temp.m_samples);
+    std::swap(m_buffer,   temp.m_buffer);
+    std::swap(m_duration, temp.m_duration);
+    std::swap(m_sounds,   temp.m_sounds); // swap sounds too, so that they are detached when temp is destroyed
 
     return *this;
 }
@@ -218,8 +218,8 @@ bool SoundBuffer::Initialize(priv::SoundFile& file)
     unsigned int sampleRate   = file.GetSampleRate();
 
     // Read the samples from the provided file
-    mySamples.resize(sampleCount);
-    if (file.Read(&mySamples[0], sampleCount) == sampleCount)
+    m_samples.resize(sampleCount);
+    if (file.Read(&m_samples[0], sampleCount) == sampleCount)
     {
         // Update the internal buffer with the new samples
         return Update(channelCount, sampleRate);
@@ -235,7 +235,7 @@ bool SoundBuffer::Initialize(priv::SoundFile& file)
 bool SoundBuffer::Update(unsigned int channelCount, unsigned int sampleRate)
 {
     // Check parameters
-    if (!channelCount || !sampleRate || mySamples.empty())
+    if (!channelCount || !sampleRate || m_samples.empty())
         return false;
 
     // Find the good format according to the number of channels
@@ -249,11 +249,11 @@ bool SoundBuffer::Update(unsigned int channelCount, unsigned int sampleRate)
     }
 
     // Fill the buffer
-    ALsizei size = static_cast<ALsizei>(mySamples.size()) * sizeof(Int16);
-    ALCheck(alBufferData(myBuffer, format, &mySamples[0], size, sampleRate));
+    ALsizei size = static_cast<ALsizei>(m_samples.size()) * sizeof(Int16);
+    ALCheck(alBufferData(m_buffer, format, &m_samples[0], size, sampleRate));
 
     // Compute the duration
-    myDuration = Milliseconds(1000 * mySamples.size() / sampleRate / channelCount);
+    m_duration = Milliseconds(1000 * m_samples.size() / sampleRate / channelCount);
 
     return true;
 }
@@ -262,14 +262,14 @@ bool SoundBuffer::Update(unsigned int channelCount, unsigned int sampleRate)
 ////////////////////////////////////////////////////////////
 void SoundBuffer::AttachSound(Sound* sound) const
 {
-    mySounds.insert(sound);
+    m_sounds.insert(sound);
 }
 
 
 ////////////////////////////////////////////////////////////
 void SoundBuffer::DetachSound(Sound* sound) const
 {
-    mySounds.erase(sound);
+    m_sounds.erase(sound);
 }
 
 } // namespace sf

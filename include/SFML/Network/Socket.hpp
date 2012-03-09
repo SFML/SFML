@@ -172,9 +172,9 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Type         myType;       ///< Type of the socket (TCP or UDP)
-    SocketHandle mySocket;     ///< Socket descriptor
-    bool         myIsBlocking; ///< Current blocking mode of the socket
+    Type         m_type;       ///< Type of the socket (TCP or UDP)
+    SocketHandle m_socket;     ///< Socket descriptor
+    bool         m_isBlocking; ///< Current blocking mode of the socket
 };
 
 } // namespace sf

@@ -267,9 +267,9 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int       myWidth;  ///< Image width
-    unsigned int       myHeight; ///< Image Height
-    std::vector<Uint8> myPixels; ///< Pixels of the image
+    unsigned int       m_width;  ///< Image width
+    unsigned int       m_height; ///< Image Height
+    std::vector<Uint8> m_pixels; ///< Pixels of the image
 };
 
 } // namespace sf

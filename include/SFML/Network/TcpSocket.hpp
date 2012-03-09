@@ -204,7 +204,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    PendingPacket myPendingPacket; ///< Temporary data of the packet currently being received
+    PendingPacket m_pendingPacket; ///< Temporary data of the packet currently being received
 };
 
 } // namespace sf

@@ -62,26 +62,26 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(WindowHandle handle) :
-myWindow      (0),
-myInputMethod (NULL),
-myInputContext(NULL),
-myIsExternal  (true),
-myAtomClose   (0),
-myOldVideoMode(-1),
-myHiddenCursor(0),
-myKeyRepeat   (true)
+m_window      (0),
+m_inputMethod (NULL),
+m_inputContext(NULL),
+m_isExternal  (true),
+m_atomClose   (0),
+m_oldVideoMode(-1),
+m_hiddenCursor(0),
+m_keyRepeat   (true)
 {
     // Open a connection with the X server
-    myDisplay = XOpenDisplay(NULL);
-    myScreen  = DefaultScreen(myDisplay);
+    m_display = XOpenDisplay(NULL);
+    m_screen  = DefaultScreen(m_display);
 
     // Save the window handle
-    myWindow = handle;
+    m_window = handle;
 
-    if (myWindow)
+    if (m_window)
     {
         // Make sure the window is listening to all the requiered events
-        XSelectInput(myDisplay, myWindow, eventMask & ~ButtonPressMask);
+        XSelectInput(m_display, m_window, eventMask & ~ButtonPressMask);
 
         // Do some common initializations
         Initialize();
@@ -91,26 +91,26 @@ myKeyRepeat   (true)
 
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const std::string& title, unsigned long style) :
-myWindow      (0),
-myInputMethod (NULL),
-myInputContext(NULL),
-myIsExternal  (false),
-myAtomClose   (0),
-myOldVideoMode(-1),
-myHiddenCursor(0),
-myKeyRepeat   (true)
+m_window      (0),
+m_inputMethod (NULL),
+m_inputContext(NULL),
+m_isExternal  (false),
+m_atomClose   (0),
+m_oldVideoMode(-1),
+m_hiddenCursor(0),
+m_keyRepeat   (true)
 {
     // Open a connection with the X server
-    myDisplay = XOpenDisplay(NULL);
-    myScreen  = DefaultScreen(myDisplay);
+    m_display = XOpenDisplay(NULL);
+    m_screen  = DefaultScreen(m_display);
 
     // Compute position and size
     int left, top;
     bool fullscreen = (style & Style::Fullscreen) != 0;
     if (!fullscreen)
     {
-        left = (DisplayWidth(myDisplay, myScreen)  - mode.Width)  / 2;
-        top  = (DisplayHeight(myDisplay, myScreen) - mode.Height) / 2;
+        left = (DisplayWidth(m_display, m_screen)  - mode.Width)  / 2;
+        top  = (DisplayHeight(m_display, m_screen) - mode.Height) / 2;
     }
     else
     {
@@ -130,16 +130,16 @@ myKeyRepeat   (true)
     attributes.override_redirect = fullscreen;
 
     // Create the window
-    myWindow = XCreateWindow(myDisplay,
-                             RootWindow(myDisplay, myScreen),
+    m_window = XCreateWindow(m_display,
+                             RootWindow(m_display, m_screen),
                              left, top,
                              width, height,
                              0,
-                             DefaultDepth(myDisplay, myScreen),
+                             DefaultDepth(m_display, m_screen),
                              InputOutput,
-                             DefaultVisual(myDisplay, myScreen),
+                             DefaultVisual(m_display, m_screen),
                              CWEventMask | CWOverrideRedirect, &attributes);
-    if (!myWindow)
+    if (!m_window)
     {
         Err() << "Failed to create window" << std::endl;
         return;
@@ -151,7 +151,7 @@ myKeyRepeat   (true)
     // Set the window's style (tell the windows manager to change our window's decorations and functions according to the requested style)
     if (!fullscreen)
     {
-        Atom WMHintsAtom = XInternAtom(myDisplay, "_MOTIF_WM_HINTS", false);
+        Atom WMHintsAtom = XInternAtom(m_display, "_MOTIF_WM_HINTS", false);
         if (WMHintsAtom)
         {
             static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
@@ -203,7 +203,7 @@ myKeyRepeat   (true)
             }
 
             const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&hints);
-            XChangeProperty(myDisplay, myWindow, WMHintsAtom, WMHintsAtom, 32, PropModeReplace, ptr, 5);
+            XChangeProperty(m_display, m_window, WMHintsAtom, WMHintsAtom, 32, PropModeReplace, ptr, 5);
         }
 
         // This is a hack to force some windows managers to disable resizing
@@ -213,7 +213,7 @@ myKeyRepeat   (true)
             sizeHints.flags      = PMinSize | PMaxSize;
             sizeHints.min_width  = sizeHints.max_width  = width;
             sizeHints.min_height = sizeHints.max_height = height;
-            XSetWMNormalHints(myDisplay, myWindow, &sizeHints); 
+            XSetWMNormalHints(m_display, m_window, &sizeHints); 
         }
     }
 
@@ -223,8 +223,8 @@ myKeyRepeat   (true)
     // In fullscreen mode, we must grab keyboard and mouse inputs
     if (fullscreen)
     {
-        XGrabPointer(myDisplay, myWindow, true, 0, GrabModeAsync, GrabModeAsync, myWindow, None, CurrentTime);
-        XGrabKeyboard(myDisplay, myWindow, true, GrabModeAsync, GrabModeAsync, CurrentTime);
+        XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+        XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
     }
 }
 
@@ -236,40 +236,40 @@ WindowImplX11::~WindowImplX11()
     Cleanup();
 
     // Destroy the cursor
-    if (myHiddenCursor)
-        XFreeCursor(myDisplay, myHiddenCursor);
+    if (m_hiddenCursor)
+        XFreeCursor(m_display, m_hiddenCursor);
 
     // Destroy the input context
-    if (myInputContext)
-        XDestroyIC(myInputContext);
+    if (m_inputContext)
+        XDestroyIC(m_inputContext);
 
     // Destroy the window
-    if (myWindow && !myIsExternal)
+    if (m_window && !m_isExternal)
     {
-        XDestroyWindow(myDisplay, myWindow);
-        XFlush(myDisplay);
+        XDestroyWindow(m_display, m_window);
+        XFlush(m_display);
     }
 
     // Close the input method
-    if (myInputMethod)
-        XCloseIM(myInputMethod);
+    if (m_inputMethod)
+        XCloseIM(m_inputMethod);
 
     // Close the connection with the X server
-    XCloseDisplay(myDisplay);
+    XCloseDisplay(m_display);
 }
 
 
 ////////////////////////////////////////////////////////////
 ::Display* WindowImplX11::GetDisplay() const
 {
-    return myDisplay;
+    return m_display;
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplX11::GetSystemHandle() const
 {
-    return myWindow;
+    return m_window;
 }
 
 
@@ -277,7 +277,7 @@ WindowHandle WindowImplX11::GetSystemHandle() const
 void WindowImplX11::ProcessEvents()
 {
     XEvent event;
-    while (XCheckIfEvent(myDisplay, &event, &CheckEvent, reinterpret_cast<XPointer>(myWindow)))
+    while (XCheckIfEvent(m_display, &event, &CheckEvent, reinterpret_cast<XPointer>(m_window)))
     {
         ProcessEvent(event);
     }
@@ -288,7 +288,7 @@ void WindowImplX11::ProcessEvents()
 Vector2i WindowImplX11::GetPosition() const
 {
     XWindowAttributes attributes;
-    XGetWindowAttributes(myDisplay, myWindow, &attributes);
+    XGetWindowAttributes(m_display, m_window, &attributes);
     return Vector2i(attributes.x, attributes.y);
 }
 
@@ -296,8 +296,8 @@ Vector2i WindowImplX11::GetPosition() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetPosition(const Vector2i& position)
 {
-    XMoveWindow(myDisplay, myWindow, position.x, position.y);
-    XFlush(myDisplay);
+    XMoveWindow(m_display, m_window, position.x, position.y);
+    XFlush(m_display);
 }
 
 
@@ -305,7 +305,7 @@ void WindowImplX11::SetPosition(const Vector2i& position)
 Vector2u WindowImplX11::GetSize() const
 {
     XWindowAttributes attributes;
-    XGetWindowAttributes(myDisplay, myWindow, &attributes);
+    XGetWindowAttributes(m_display, m_window, &attributes);
     return Vector2u(attributes.width, attributes.height);
 }
 
@@ -313,15 +313,15 @@ Vector2u WindowImplX11::GetSize() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetSize(const Vector2u& size)
 {
-    XResizeWindow(myDisplay, myWindow, size.x, size.y);
-    XFlush(myDisplay);
+    XResizeWindow(m_display, m_window, size.x, size.y);
+    XFlush(m_display);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetTitle(const std::string& title)
 {
-    XStoreName(myDisplay, myWindow, title.c_str());
+    XStoreName(m_display, m_window, title.c_str());
 }
 
 
@@ -340,19 +340,19 @@ void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8
     }
 
     // Create the icon pixmap
-    Visual*      defVisual = DefaultVisual(myDisplay, myScreen);
-    unsigned int defDepth  = DefaultDepth(myDisplay, myScreen);
-    XImage* iconImage = XCreateImage(myDisplay, defVisual, defDepth, ZPixmap, 0, (char*)iconPixels, width, height, 32, 0);
+    Visual*      defVisual = DefaultVisual(m_display, m_screen);
+    unsigned int defDepth  = DefaultDepth(m_display, m_screen);
+    XImage* iconImage = XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, (char*)iconPixels, width, height, 32, 0);
     if (!iconImage)
     {
         Err() << "Failed to set the window's icon" << std::endl;
         return;
     }
-    Pixmap iconPixmap = XCreatePixmap(myDisplay, RootWindow(myDisplay, myScreen), width, height, defDepth);
+    Pixmap iconPixmap = XCreatePixmap(m_display, RootWindow(m_display, m_screen), width, height, defDepth);
     XGCValues values;
-    GC iconGC = XCreateGC(myDisplay, iconPixmap, 0, &values);
-    XPutImage(myDisplay, iconPixmap, iconGC, iconImage, 0, 0, 0, 0, width, height);
-    XFreeGC(myDisplay, iconGC);
+    GC iconGC = XCreateGC(m_display, iconPixmap, 0, &values);
+    XPutImage(m_display, iconPixmap, iconGC, iconImage, 0, 0, 0, 0, width, height);
+    XFreeGC(m_display, iconGC);
     XDestroyImage(iconImage);
 
     // Create the mask pixmap (must have 1 bit depth)
@@ -372,17 +372,17 @@ void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8
             }
         }
     }
-    Pixmap maskPixmap = XCreatePixmapFromBitmapData(myDisplay, myWindow, (char*)&maskPixels[0], width, height, 1, 0, 1);
+    Pixmap maskPixmap = XCreatePixmapFromBitmapData(m_display, m_window, (char*)&maskPixels[0], width, height, 1, 0, 1);
 
     // Send our new icon to the window through the WMHints
     XWMHints* hints = XAllocWMHints();
     hints->flags       = IconPixmapHint | IconMaskHint;
     hints->icon_pixmap = iconPixmap;
     hints->icon_mask   = maskPixmap;
-    XSetWMHints(myDisplay, myWindow, hints);
+    XSetWMHints(m_display, m_window, hints);
     XFree(hints);
 
-    XFlush(myDisplay);
+    XFlush(m_display);
 }
 
 
@@ -390,26 +390,26 @@ void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8
 void WindowImplX11::SetVisible(bool visible)
 {
     if (visible)
-        XMapWindow(myDisplay, myWindow);
+        XMapWindow(m_display, m_window);
     else
-        XUnmapWindow(myDisplay, myWindow);
+        XUnmapWindow(m_display, m_window);
 
-    XFlush(myDisplay);
+    XFlush(m_display);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetMouseCursorVisible(bool visible)
 {
-    XDefineCursor(myDisplay, myWindow, visible ? None : myHiddenCursor);
-    XFlush(myDisplay);
+    XDefineCursor(m_display, m_window, visible ? None : m_hiddenCursor);
+    XFlush(m_display);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::SetKeyRepeatEnabled(bool enabled)
 {
-    myKeyRepeat = enabled;
+    m_keyRepeat = enabled;
 }
 
 
@@ -418,15 +418,15 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
 {
     // Check if the XRandR extension is present
     int version;
-    if (XQueryExtension(myDisplay, "RANDR", &version, &version, &version))
+    if (XQueryExtension(m_display, "RANDR", &version, &version, &version))
     {
         // Get the current configuration
-        XRRScreenConfiguration* config = XRRGetScreenInfo(myDisplay, RootWindow(myDisplay, myScreen));
+        XRRScreenConfiguration* config = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
         if (config)
         {
             // Get the current rotation
             Rotation currentRotation;
-            myOldVideoMode = XRRConfigCurrentConfiguration(config, &currentRotation);
+            m_oldVideoMode = XRRConfigCurrentConfiguration(config, &currentRotation);
 
             // Get the available screen sizes
             int nbSizes;
@@ -439,7 +439,7 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
                     if ((sizes[i].width == static_cast<int>(mode.Width)) && (sizes[i].height == static_cast<int>(mode.Height)))
                     {
                         // Switch to fullscreen mode
-                        XRRSetScreenConfig(myDisplay, config, RootWindow(myDisplay, myScreen), i, currentRotation, CurrentTime);
+                        XRRSetScreenConfig(m_display, config, RootWindow(m_display, m_screen), i, currentRotation, CurrentTime);
 
                         // Set "this" as the current fullscreen window
                         fullscreenWindow = this;
@@ -469,38 +469,38 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
 void WindowImplX11::Initialize()
 {
     // Make sure the "last key release" is initialized with invalid values
-    myLastKeyReleaseEvent.type = -1;
+    m_lastKeyReleaseEvent.type = -1;
 
     // Get the atom defining the close event
-    myAtomClose = XInternAtom(myDisplay, "WM_DELETE_WINDOW", false);
-    XSetWMProtocols(myDisplay, myWindow, &myAtomClose, 1);
+    m_atomClose = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
+    XSetWMProtocols(m_display, m_window, &m_atomClose, 1);
 
     // Create the input context
-    myInputMethod = XOpenIM(myDisplay, NULL, NULL, NULL);
-    if (myInputMethod)
+    m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
+    if (m_inputMethod)
     {
-        myInputContext = XCreateIC(myInputMethod,
-                                   XNClientWindow, myWindow,
-                                   XNFocusWindow,  myWindow,
+        m_inputContext = XCreateIC(m_inputMethod,
+                                   XNClientWindow, m_window,
+                                   XNFocusWindow,  m_window,
                                    XNInputStyle,   XIMPreeditNothing  | XIMStatusNothing,
                                    NULL);
     }
     else
     {
-        myInputContext = NULL;
+        m_inputContext = NULL;
     }
-    if (!myInputContext)
+    if (!m_inputContext)
         Err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
 
     // Show the window
-    XMapWindow(myDisplay, myWindow);
-    XFlush(myDisplay);
+    XMapWindow(m_display, m_window);
+    XFlush(m_display);
 
     // Create the hiden cursor
     CreateHiddenCursor();
 
     // Flush the commands queue
-    XFlush(myDisplay);
+    XFlush(m_display);
 }
 
 
@@ -508,19 +508,19 @@ void WindowImplX11::Initialize()
 void WindowImplX11::CreateHiddenCursor()
 {
     // Create the cursor's pixmap (1x1 pixels)
-    Pixmap cursorPixmap = XCreatePixmap(myDisplay, myWindow, 1, 1, 1);
-    GC graphicsContext = XCreateGC(myDisplay, cursorPixmap, 0, NULL);
-    XDrawPoint(myDisplay, cursorPixmap, graphicsContext, 0, 0);
-    XFreeGC(myDisplay, graphicsContext);
+    Pixmap cursorPixmap = XCreatePixmap(m_display, m_window, 1, 1, 1);
+    GC graphicsContext = XCreateGC(m_display, cursorPixmap, 0, NULL);
+    XDrawPoint(m_display, cursorPixmap, graphicsContext, 0, 0);
+    XFreeGC(m_display, graphicsContext);
 
     // Create the cursor, using the pixmap as both the shape and the mask of the cursor
     XColor color;
     color.flags = DoRed | DoGreen | DoBlue;
     color.red = color.blue = color.green = 0;
-    myHiddenCursor = XCreatePixmapCursor(myDisplay, cursorPixmap, cursorPixmap, &color, &color, 0, 0);
+    m_hiddenCursor = XCreatePixmapCursor(m_display, cursorPixmap, cursorPixmap, &color, &color, 0, 0);
 
     // We don't need the pixmap any longer, free it
-    XFreePixmap(myDisplay, cursorPixmap);
+    XFreePixmap(m_display, cursorPixmap);
 }
 
 
@@ -531,7 +531,7 @@ void WindowImplX11::Cleanup()
     if (fullscreenWindow == this)
     {
         // Get current screen info
-        XRRScreenConfiguration* config = XRRGetScreenInfo(myDisplay, RootWindow(myDisplay, myScreen));
+        XRRScreenConfiguration* config = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
         if (config) 
         {
             // Get the current rotation
@@ -539,7 +539,7 @@ void WindowImplX11::Cleanup()
             XRRConfigCurrentConfiguration(config, &currentRotation);
 
             // Reset the video mode
-            XRRSetScreenConfig(myDisplay, config, RootWindow(myDisplay, myScreen), myOldVideoMode, currentRotation, CurrentTime);
+            XRRSetScreenConfig(m_display, config, RootWindow(m_display, m_screen), m_oldVideoMode, currentRotation, CurrentTime);
 
             // Free the configuration instance
             XRRFreeScreenConfigInfo(config);
@@ -575,20 +575,20 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             // - KeyPress events are a little bit harder to handle: they depend on the EnableKeyRepeat state,
             //   and we need to properly forward the first one.
             char keys[32];
-            XQueryKeymap(myDisplay, keys);
+            XQueryKeymap(m_display, keys);
             if (keys[windowEvent.xkey.keycode / 8] & (1 << (windowEvent.xkey.keycode % 8)))
             {
                 // KeyRelease event + key down = repeated event --> discard
                 if (windowEvent.type == KeyRelease)
                 {
-                    myLastKeyReleaseEvent = windowEvent;
+                    m_lastKeyReleaseEvent = windowEvent;
                     return false;
                 }
 
                 // KeyPress event + key repeat disabled + matching KeyRelease event = repeated event --> discard
-                if ((windowEvent.type == KeyPress) && !myKeyRepeat &&
-                    (myLastKeyReleaseEvent.xkey.keycode == windowEvent.xkey.keycode) &&
-                    (myLastKeyReleaseEvent.xkey.time == windowEvent.xkey.time))
+                if ((windowEvent.type == KeyPress) && !m_keyRepeat &&
+                    (m_lastKeyReleaseEvent.xkey.keycode == windowEvent.xkey.keycode) &&
+                    (m_lastKeyReleaseEvent.xkey.time == windowEvent.xkey.time))
                 {
                     return false;
                 }
@@ -611,8 +611,8 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         case FocusIn :
         {
             // Update the input context
-            if (myInputContext)
-                XSetICFocus(myInputContext);
+            if (m_inputContext)
+                XSetICFocus(m_inputContext);
 
             Event event;
             event.Type = Event::GainedFocus;
@@ -624,8 +624,8 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         case FocusOut :
         {
             // Update the input context
-            if (myInputContext)
-                XUnsetICFocus(myInputContext);
+            if (m_inputContext)
+                XUnsetICFocus(m_inputContext);
 
             Event event;
             event.Type = Event::LostFocus;
@@ -647,7 +647,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         // Close event
         case ClientMessage :
         {
-            if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(myAtomClose))  
+            if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(m_atomClose))  
             {
                 Event event;
                 event.Type = Event::Closed;
@@ -680,11 +680,11 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             if (!XFilterEvent(&windowEvent, None))
             {
                 #ifdef X_HAVE_UTF8_STRING
-                if (myInputContext)
+                if (m_inputContext)
                 {
                     Status status;
                     Uint8  keyBuffer[16];
-                    int length = Xutf8LookupString(myInputContext, &windowEvent.xkey, reinterpret_cast<char*>(keyBuffer), sizeof(keyBuffer), NULL, &status);
+                    int length = Xutf8LookupString(m_inputContext, &windowEvent.xkey, reinterpret_cast<char*>(keyBuffer), sizeof(keyBuffer), NULL, &status);
                     if (length > 0)
                     {
                         Uint32 unicode = 0;

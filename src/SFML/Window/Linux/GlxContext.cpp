@@ -39,23 +39,23 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared) :
-myWindow    (0),
-myContext   (NULL),
-myOwnsWindow(true)
+m_window    (0),
+m_context   (NULL),
+m_ownsWindow(true)
 {
     // Open a connection with the X server
-    myDisplay = XOpenDisplay(NULL);
+    m_display = XOpenDisplay(NULL);
 
     // Create a dummy window (disabled and hidden)
-    int screen = DefaultScreen(myDisplay);
-    myWindow = XCreateWindow(myDisplay,
-                             RootWindow(myDisplay, screen),
+    int screen = DefaultScreen(m_display);
+    m_window = XCreateWindow(m_display,
+                             RootWindow(m_display, screen),
                              0, 0,
                              1, 1,
                              0,
-                             DefaultDepth(myDisplay, screen),
+                             DefaultDepth(m_display, screen),
                              InputOutput,
-                             DefaultVisual(myDisplay, screen),
+                             DefaultVisual(m_display, screen),
                              0, NULL);
 
     // Create the context
@@ -65,41 +65,41 @@ myOwnsWindow(true)
 
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
-myWindow    (0),
-myContext   (NULL),
-myOwnsWindow(false)
+m_window    (0),
+m_context   (NULL),
+m_ownsWindow(false)
 {
     // Use the same display as the owner window (important!)
-    myDisplay = static_cast<const WindowImplX11*>(owner)->GetDisplay();
+    m_display = static_cast<const WindowImplX11*>(owner)->GetDisplay();
 
     // Get the owner window and its device context
-    myWindow = static_cast< ::Window>(owner->GetSystemHandle());
+    m_window = static_cast< ::Window>(owner->GetSystemHandle());
 
     // Create the context
-    if (myWindow)
+    if (m_window)
         CreateContext(shared, bitsPerPixel, settings);
 }
 
 
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
-myWindow    (0),
-myContext   (NULL),
-myOwnsWindow(true)
+m_window    (0),
+m_context   (NULL),
+m_ownsWindow(true)
 {
     // Open a connection with the X server
-    myDisplay = XOpenDisplay(NULL);
+    m_display = XOpenDisplay(NULL);
 
     // Create the hidden window
-    int screen = DefaultScreen(myDisplay);
-    myWindow = XCreateWindow(myDisplay,
-                             RootWindow(myDisplay, screen),
+    int screen = DefaultScreen(m_display);
+    m_window = XCreateWindow(m_display,
+                             RootWindow(m_display, screen),
                              0, 0,
                              width, height,
                              0,
-                             DefaultDepth(myDisplay, screen),
+                             DefaultDepth(m_display, screen),
                              InputOutput,
-                             DefaultVisual(myDisplay, screen),
+                             DefaultVisual(m_display, screen),
                              0, NULL);
 
     // Create the context
@@ -111,38 +111,38 @@ myOwnsWindow(true)
 GlxContext::~GlxContext()
 {
     // Destroy the context
-    if (myContext)
+    if (m_context)
     {
-        if (glXGetCurrentContext() == myContext)
-            glXMakeCurrent(myDisplay, None, NULL);
-        glXDestroyContext(myDisplay, myContext);
+        if (glXGetCurrentContext() == m_context)
+            glXMakeCurrent(m_display, None, NULL);
+        glXDestroyContext(m_display, m_context);
     }
     
     // Destroy the window if we own it
-    if (myWindow && myOwnsWindow)
+    if (m_window && m_ownsWindow)
     {
-        XDestroyWindow(myDisplay, myWindow);
-        XFlush(myDisplay);
+        XDestroyWindow(m_display, m_window);
+        XFlush(m_display);
     }
     
     // Close the connection with the X server
-    if (myOwnsWindow)
-        XCloseDisplay(myDisplay);
+    if (m_ownsWindow)
+        XCloseDisplay(m_display);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool GlxContext::MakeCurrent()
 {
-    return myContext && glXMakeCurrent(myDisplay, myWindow, myContext);
+    return m_context && glXMakeCurrent(m_display, m_window, m_context);
 }
 
 
 ////////////////////////////////////////////////////////////
 void GlxContext::Display()
 {
-    if (myWindow)
-        glXSwapBuffers(myDisplay, myWindow);
+    if (m_window)
+        glXSwapBuffers(m_display, m_window);
 }
 
 
@@ -160,11 +160,11 @@ void GlxContext::SetVerticalSyncEnabled(bool enabled)
 void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
     // Save the creation settings
-    mySettings = settings;
+    m_settings = settings;
 
     // Get the attributes of the target window
     XWindowAttributes windowAttributes;
-    if (XGetWindowAttributes(myDisplay, myWindow, &windowAttributes) == 0)
+    if (XGetWindowAttributes(m_display, m_window, &windowAttributes) == 0)
     {
         Err() << "Failed to get the window attributes" << std::endl;
         return;
@@ -174,11 +174,11 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     XVisualInfo tpl;
     tpl.depth    = windowAttributes.depth;
     tpl.visualid = XVisualIDFromVisual(windowAttributes.visual);
-    tpl.screen   = DefaultScreen(myDisplay);
+    tpl.screen   = DefaultScreen(m_display);
 
     // Get all the visuals matching the template
     int nbVisuals = 0;
-    XVisualInfo* visuals = XGetVisualInfo(myDisplay, VisualDepthMask | VisualIDMask | VisualScreenMask, &tpl, &nbVisuals);
+    XVisualInfo* visuals = XGetVisualInfo(m_display, VisualDepthMask | VisualIDMask | VisualScreenMask, &tpl, &nbVisuals);
     if (!visuals || (nbVisuals == 0))
     {
         if (visuals)
@@ -194,16 +194,16 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     {
         // Get the current visual attributes
         int RGBA, doubleBuffer, red, green, blue, alpha, depth, stencil, multiSampling, samples;
-        glXGetConfig(myDisplay, &visuals[i], GLX_RGBA,               &RGBA);
-        glXGetConfig(myDisplay, &visuals[i], GLX_DOUBLEBUFFER,       &doubleBuffer); 
-        glXGetConfig(myDisplay, &visuals[i], GLX_RED_SIZE,           &red);
-        glXGetConfig(myDisplay, &visuals[i], GLX_GREEN_SIZE,         &green); 
-        glXGetConfig(myDisplay, &visuals[i], GLX_BLUE_SIZE,          &blue); 
-        glXGetConfig(myDisplay, &visuals[i], GLX_ALPHA_SIZE,         &alpha); 
-        glXGetConfig(myDisplay, &visuals[i], GLX_DEPTH_SIZE,         &depth);        
-        glXGetConfig(myDisplay, &visuals[i], GLX_STENCIL_SIZE,       &stencil);
-        glXGetConfig(myDisplay, &visuals[i], GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
-        glXGetConfig(myDisplay, &visuals[i], GLX_SAMPLES_ARB,        &samples);
+        glXGetConfig(m_display, &visuals[i], GLX_RGBA,               &RGBA);
+        glXGetConfig(m_display, &visuals[i], GLX_DOUBLEBUFFER,       &doubleBuffer); 
+        glXGetConfig(m_display, &visuals[i], GLX_RED_SIZE,           &red);
+        glXGetConfig(m_display, &visuals[i], GLX_GREEN_SIZE,         &green); 
+        glXGetConfig(m_display, &visuals[i], GLX_BLUE_SIZE,          &blue); 
+        glXGetConfig(m_display, &visuals[i], GLX_ALPHA_SIZE,         &alpha); 
+        glXGetConfig(m_display, &visuals[i], GLX_DEPTH_SIZE,         &depth);        
+        glXGetConfig(m_display, &visuals[i], GLX_STENCIL_SIZE,       &stencil);
+        glXGetConfig(m_display, &visuals[i], GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
+        glXGetConfig(m_display, &visuals[i], GLX_SAMPLES_ARB,        &samples);
 
         // First check the mandatory parameters
         if ((RGBA == 0) || (doubleBuffer == 0))
@@ -211,7 +211,7 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
 
         // Evaluate the current configuration
         int color = red + green + blue + alpha;
-        int score = EvaluateFormat(bitsPerPixel, mySettings, color, depth, stencil, multiSampling ? samples : 0);
+        int score = EvaluateFormat(bitsPerPixel, m_settings, color, depth, stencil, multiSampling ? samples : 0);
 
         // Keep it if it's better than the current best
         if (score < bestScore)
@@ -229,28 +229,28 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     }
 
     // Get the context to share display lists with
-    GLXContext toShare = shared ? shared->myContext : NULL;
+    GLXContext toShare = shared ? shared->m_context : NULL;
 
     // Create the OpenGL context -- first try context versions >= 3.0 if it is requested (they require special code)
-    while (!myContext && (mySettings.MajorVersion >= 3))
+    while (!m_context && (m_settings.MajorVersion >= 3))
     {
         const GLubyte* name = reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB");
         PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = reinterpret_cast<PFNGLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(name));
         if (glXCreateContextAttribsARB)
         {
             int nbConfigs = 0;
-            GLXFBConfig* configs = glXChooseFBConfig(myDisplay, DefaultScreen(myDisplay), NULL, &nbConfigs);
+            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), NULL, &nbConfigs);
             if (configs && nbConfigs)
             {
                 // Create the context
                 int attributes[] =
                 {
-                    GLX_CONTEXT_MAJOR_VERSION_ARB, mySettings.MajorVersion,
-                    GLX_CONTEXT_MINOR_VERSION_ARB, mySettings.MinorVersion,
+                    GLX_CONTEXT_MAJOR_VERSION_ARB, m_settings.MajorVersion,
+                    GLX_CONTEXT_MINOR_VERSION_ARB, m_settings.MinorVersion,
                     GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
                     0, 0
                 };
-                myContext = glXCreateContextAttribsARB(myDisplay, configs[0], toShare, true, attributes);
+                m_context = glXCreateContextAttribsARB(m_display, configs[0], toShare, true, attributes);
             }
 
             if (configs)
@@ -259,31 +259,31 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
 
         // If we couldn't create the context, lower the version number and try again -- stop at 3.0
         // Invalid version numbers will be generated by this algorithm (like 3.9), but we really don't care
-        if (!myContext)
+        if (!m_context)
         {
-            if (mySettings.MinorVersion > 0)
+            if (m_settings.MinorVersion > 0)
             {
                 // If the minor version is not 0, we decrease it and try again
-                mySettings.MinorVersion--;
+                m_settings.MinorVersion--;
             }
             else
             {
                 // If the minor version is 0, we decrease the major version
-                mySettings.MajorVersion--;
-                mySettings.MinorVersion = 9;
+                m_settings.MajorVersion--;
+                m_settings.MinorVersion = 9;
             }
         }
     }
 
     // If the OpenGL >= 3.0 context failed or if we don't want one, create a regular OpenGL 1.x/2.x context
-    if (!myContext)
+    if (!m_context)
     {
         // set the context version to 2.0 (arbitrary)
-        mySettings.MajorVersion = 2;
-        mySettings.MinorVersion = 0;
+        m_settings.MajorVersion = 2;
+        m_settings.MinorVersion = 0;
 
-        myContext = glXCreateContext(myDisplay, bestVisual, toShare, true);
-        if (!myContext)
+        m_context = glXCreateContext(m_display, bestVisual, toShare, true);
+        if (!m_context)
         {
             Err() << "Failed to create an OpenGL context for this window" << std::endl;
             return;
@@ -292,18 +292,18 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
 
     // Update the creation settings from the chosen format
     int depth, stencil, multiSampling, samples;
-    glXGetConfig(myDisplay, bestVisual, GLX_DEPTH_SIZE,         &depth);
-    glXGetConfig(myDisplay, bestVisual, GLX_STENCIL_SIZE,       &stencil);
-    glXGetConfig(myDisplay, bestVisual, GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
-    glXGetConfig(myDisplay, bestVisual, GLX_SAMPLES_ARB,        &samples);
-    mySettings.DepthBits         = static_cast<unsigned int>(depth);
-    mySettings.StencilBits       = static_cast<unsigned int>(stencil);
-    mySettings.AntialiasingLevel = multiSampling ? samples : 0;
+    glXGetConfig(m_display, bestVisual, GLX_DEPTH_SIZE,         &depth);
+    glXGetConfig(m_display, bestVisual, GLX_STENCIL_SIZE,       &stencil);
+    glXGetConfig(m_display, bestVisual, GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
+    glXGetConfig(m_display, bestVisual, GLX_SAMPLES_ARB,        &samples);
+    m_settings.DepthBits         = static_cast<unsigned int>(depth);
+    m_settings.StencilBits       = static_cast<unsigned int>(stencil);
+    m_settings.AntialiasingLevel = multiSampling ? samples : 0;
 
     // Change the target window's colormap so that it matches the context's one
-    ::Window root = RootWindow(myDisplay, DefaultScreen(myDisplay));
-    Colormap colorMap = XCreateColormap(myDisplay, root, bestVisual->visual, AllocNone);
-    XSetWindowColormap(myDisplay, myWindow, colorMap);
+    ::Window root = RootWindow(m_display, DefaultScreen(m_display));
+    Colormap colorMap = XCreateColormap(m_display, root, bestVisual->visual, AllocNone);
+    XSetWindowColormap(m_display, m_window, colorMap);
 
     // Free the temporary visuals array
     XFree(visuals);

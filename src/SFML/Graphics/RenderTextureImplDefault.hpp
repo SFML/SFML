@@ -94,9 +94,9 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Context*     myContext; ///< P-Buffer based context
-    unsigned int myWidth;   ///< Width of the P-Buffer
-    unsigned int myHeight;  ///< Height of the P-Buffer
+    Context*     m_context; ///< P-Buffer based context
+    unsigned int m_width;   ///< Width of the P-Buffer
+    unsigned int m_height;  ///< Height of the P-Buffer
 };
 
 } // namespace priv

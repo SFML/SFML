@@ -108,8 +108,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float        myRadius;     ///< Radius of the circle
-    unsigned int myPointCount; ///< Number of points composing the circle
+    float        m_radius;     ///< Radius of the circle
+    unsigned int m_pointCount; ///< Number of points composing the circle
 };
 
 } // namespace sf

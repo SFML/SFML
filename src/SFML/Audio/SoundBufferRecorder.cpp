@@ -35,8 +35,8 @@ namespace sf
 ////////////////////////////////////////////////////////////
 bool SoundBufferRecorder::OnStart()
 {
-    mySamples.clear();
-    myBuffer = SoundBuffer();
+    m_samples.clear();
+    m_buffer = SoundBuffer();
 
     return true;
 }
@@ -45,7 +45,7 @@ bool SoundBufferRecorder::OnStart()
 ////////////////////////////////////////////////////////////
 bool SoundBufferRecorder::OnProcessSamples(const Int16* samples, std::size_t sampleCount)
 {
-    std::copy(samples, samples + sampleCount, std::back_inserter(mySamples));
+    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
 
     return true;
 }
@@ -54,15 +54,15 @@ bool SoundBufferRecorder::OnProcessSamples(const Int16* samples, std::size_t sam
 ////////////////////////////////////////////////////////////
 void SoundBufferRecorder::OnStop()
 {
-    if (!mySamples.empty())
-        myBuffer.LoadFromSamples(&mySamples[0], mySamples.size(), 1, GetSampleRate());
+    if (!m_samples.empty())
+        m_buffer.LoadFromSamples(&m_samples[0], m_samples.size(), 1, GetSampleRate());
 }
 
 
 ////////////////////////////////////////////////////////////
 const SoundBuffer& SoundBufferRecorder::GetBuffer() const
 {
-    return myBuffer;
+    return m_buffer;
 }
 
 } // namespace sf

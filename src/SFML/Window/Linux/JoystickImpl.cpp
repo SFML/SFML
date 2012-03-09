@@ -53,17 +53,17 @@ bool JoystickImpl::Open(unsigned int index)
     std::ostringstream oss;
     oss << "/dev/input/js" << index;
 
-    myFile = open(oss.str().c_str(), O_RDONLY);
-    if (myFile > 0)
+    m_file = open(oss.str().c_str(), O_RDONLY);
+    if (m_file > 0)
     {
         // Use non-blocking mode
-        fcntl(myFile, F_SETFL, O_NONBLOCK);
+        fcntl(m_file, F_SETFL, O_NONBLOCK);
 
         // Retrieve the axes mapping
-        ioctl(myFile, JSIOCGAXMAP, myMapping);
+        ioctl(m_file, JSIOCGAXMAP, m_mapping);
 
         // Reset the joystick state
-        myState = JoystickState();
+        m_state = JoystickState();
 
         return true;
     }
@@ -77,7 +77,7 @@ bool JoystickImpl::Open(unsigned int index)
 ////////////////////////////////////////////////////////////
 void JoystickImpl::Close()
 {
-    close(myFile);
+    close(m_file);
 }
 
 
@@ -88,17 +88,17 @@ JoystickCaps JoystickImpl::GetCapabilities() const
 
     // Get the number of buttons
     char buttonCount;
-    ioctl(myFile, JSIOCGBUTTONS, &buttonCount);
+    ioctl(m_file, JSIOCGBUTTONS, &buttonCount);
     caps.ButtonCount = buttonCount;
     if (caps.ButtonCount > Joystick::ButtonCount)
         caps.ButtonCount = Joystick::ButtonCount;
 
     // Get the supported axes
     char axesCount;
-    ioctl(myFile, JSIOCGAXES, &axesCount);
+    ioctl(m_file, JSIOCGAXES, &axesCount);
     for (int i = 0; i < axesCount; ++i)
     {
-        switch (myMapping[i])
+        switch (m_mapping[i])
         {
             case ABS_X :        caps.Axes[Joystick::X]    = true; break;
             case ABS_Y :        caps.Axes[Joystick::Y]    = true; break;
@@ -123,7 +123,7 @@ JoystickState JoystickImpl::JoystickImpl::Update()
 {
     // pop events from the joystick file
     js_event joyState;
-    while (read(myFile, &joyState, sizeof(joyState)) > 0)
+    while (read(m_file, &joyState, sizeof(joyState)) > 0)
     {
         switch (joyState.type & ~JS_EVENT_INIT)
         {
@@ -131,18 +131,18 @@ JoystickState JoystickImpl::JoystickImpl::Update()
             case JS_EVENT_AXIS :
             {
                 float value = joyState.value * 100.f / 32767.f;
-                switch (myMapping[joyState.number])
+                switch (m_mapping[joyState.number])
                 {
-                    case ABS_X :        myState.Axes[Joystick::X]    = value; break;
-                    case ABS_Y :        myState.Axes[Joystick::Y]    = value; break;
+                    case ABS_X :        m_state.Axes[Joystick::X]    = value; break;
+                    case ABS_Y :        m_state.Axes[Joystick::Y]    = value; break;
                     case ABS_Z :
-                    case ABS_THROTTLE : myState.Axes[Joystick::Z]    = value; break;
+                    case ABS_THROTTLE : m_state.Axes[Joystick::Z]    = value; break;
                     case ABS_RZ:
-                    case ABS_RUDDER:    myState.Axes[Joystick::R]    = value; break;
-                    case ABS_RX :       myState.Axes[Joystick::U]    = value; break;
-                    case ABS_RY :       myState.Axes[Joystick::V]    = value; break;
-                    case ABS_HAT0X :    myState.Axes[Joystick::PovX] = value; break;
-                    case ABS_HAT0Y :    myState.Axes[Joystick::PovY] = value; break;
+                    case ABS_RUDDER:    m_state.Axes[Joystick::R]    = value; break;
+                    case ABS_RX :       m_state.Axes[Joystick::U]    = value; break;
+                    case ABS_RY :       m_state.Axes[Joystick::V]    = value; break;
+                    case ABS_HAT0X :    m_state.Axes[Joystick::PovX] = value; break;
+                    case ABS_HAT0Y :    m_state.Axes[Joystick::PovY] = value; break;
                     default : break;
                 }
                 break;
@@ -152,16 +152,16 @@ JoystickState JoystickImpl::JoystickImpl::Update()
             case JS_EVENT_BUTTON :
             {
                 if (joyState.number < Joystick::ButtonCount)
-                    myState.Buttons[joyState.number] = (joyState.value != 0);
+                    m_state.Buttons[joyState.number] = (joyState.value != 0);
                 break;
             }
         }
     }
 
     // Check the connection state of the joystick (read() fails with an error != EGAIN if it's no longer connected)
-    myState.Connected = (errno == EAGAIN);
+    m_state.Connected = (errno == EAGAIN);
 
-    return myState;
+    return m_state;
 }
 
 } // namespace priv

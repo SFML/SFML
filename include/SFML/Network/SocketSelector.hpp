@@ -157,7 +157,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SocketSelectorImpl* myImpl; ///< Opaque pointer to the implementation (which requires OS-specific types)
+    SocketSelectorImpl* m_impl; ///< Opaque pointer to the implementation (which requires OS-specific types)
 };
 
 } // namespace sf

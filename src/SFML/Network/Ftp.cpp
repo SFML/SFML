@@ -57,15 +57,15 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Ftp&      myFtp;        ///< Reference to the owner Ftp instance
-    TcpSocket myDataSocket; ///< Socket used for data transfers
+    Ftp&      m_ftp;        ///< Reference to the owner Ftp instance
+    TcpSocket m_dataSocket; ///< Socket used for data transfers
 };
 
 
 ////////////////////////////////////////////////////////////
 Ftp::Response::Response(Status code, const std::string& message) :
-myStatus (code),
-myMessage(message)
+m_status (code),
+m_message(message)
 {
 
 }
@@ -74,21 +74,21 @@ myMessage(message)
 ////////////////////////////////////////////////////////////
 bool Ftp::Response::IsOk() const
 {
-    return myStatus < 400;
+    return m_status < 400;
 }
 
 
 ////////////////////////////////////////////////////////////
 Ftp::Response::Status Ftp::Response::GetStatus() const
 {
-    return myStatus;
+    return m_status;
 }
 
 
 ////////////////////////////////////////////////////////////
 const std::string& Ftp::Response::GetMessage() const
 {
-    return myMessage;
+    return m_message;
 }
 
 
@@ -101,7 +101,7 @@ Ftp::Response(response)
         // Extract the directory from the server response
         std::string::size_type begin = GetMessage().find('"', 0);
         std::string::size_type end   = GetMessage().find('"', begin + 1);
-        myDirectory = GetMessage().substr(begin + 1, end - begin - 1);
+        m_directory = GetMessage().substr(begin + 1, end - begin - 1);
     }
 }
 
@@ -109,7 +109,7 @@ Ftp::Response(response)
 ////////////////////////////////////////////////////////////
 const std::string& Ftp::DirectoryResponse::GetDirectory() const
 {
-    return myDirectory;
+    return m_directory;
 }
 
 
@@ -124,7 +124,7 @@ Ftp::Response(response)
         std::string::size_type lastPos = 0;
         for (std::string::size_type pos = paths.find("\r\n"); pos != std::string::npos; pos = paths.find("\r\n", lastPos))
         {
-            myFilenames.push_back(paths.substr(lastPos, pos - lastPos));
+            m_filenames.push_back(paths.substr(lastPos, pos - lastPos));
             lastPos = pos + 2;
         }
     }
@@ -134,7 +134,7 @@ Ftp::Response(response)
 ////////////////////////////////////////////////////////////
 const std::vector<std::string>& Ftp::ListingResponse::GetFilenames() const
 {
-    return myFilenames;
+    return m_filenames;
 }
 
 
@@ -149,7 +149,7 @@ Ftp::~Ftp()
 Ftp::Response Ftp::Connect(const IpAddress& server, unsigned short port, Time timeout)
 {
     // Connect to the server
-    if (myCommandSocket.Connect(server, port, timeout) != Socket::Done)
+    if (m_commandSocket.Connect(server, port, timeout) != Socket::Done)
         return Response(Response::ConnectionFailed);
 
     // Get the response to the connection
@@ -181,7 +181,7 @@ Ftp::Response Ftp::Disconnect()
     // Send the exit command
     Response response = SendCommand("QUIT");
     if (response.IsOk())
-        myCommandSocket.Disconnect();
+        m_commandSocket.Disconnect();
 
     return response;
 }
@@ -376,7 +376,7 @@ Ftp::Response Ftp::SendCommand(const std::string& command, const std::string& pa
         commandStr = command + "\r\n";
 
     // Send it to the server
-    if (myCommandSocket.Send(commandStr.c_str(), commandStr.length()) != Socket::Done)
+    if (m_commandSocket.Send(commandStr.c_str(), commandStr.length()) != Socket::Done)
         return Response(Response::ConnectionClosed);
 
     // Get the response
@@ -399,7 +399,7 @@ Ftp::Response Ftp::GetResponse()
         // Receive the response from the server
         char buffer[1024];
         std::size_t length;
-        if (myCommandSocket.Receive(buffer, sizeof(buffer), length) != Socket::Done)
+        if (m_commandSocket.Receive(buffer, sizeof(buffer), length) != Socket::Done)
             return Response(Response::ConnectionClosed);
 
         // There can be several lines inside the received buffer, extract them all
@@ -518,7 +518,7 @@ Ftp::Response Ftp::GetResponse()
 
 ////////////////////////////////////////////////////////////
 Ftp::DataChannel::DataChannel(Ftp& owner) :
-myFtp(owner)
+m_ftp(owner)
 {
 
 }
@@ -528,7 +528,7 @@ myFtp(owner)
 Ftp::Response Ftp::DataChannel::Open(Ftp::TransferMode mode)
 {
     // Open a data connection in active mode (we connect to the server)
-    Ftp::Response response = myFtp.SendCommand("PASV");
+    Ftp::Response response = m_ftp.SendCommand("PASV");
     if (response.IsOk())
     {
         // Extract the connection address and port from the response
@@ -559,7 +559,7 @@ Ftp::Response Ftp::DataChannel::Open(Ftp::TransferMode mode)
                               static_cast<Uint8>(data[3]));
 
             // Connect the data channel to the server
-            if (myDataSocket.Connect(address, port) == Socket::Done)
+            if (m_dataSocket.Connect(address, port) == Socket::Done)
             {
                 // Translate the transfer mode to the corresponding FTP parameter
                 std::string modeStr;
@@ -571,7 +571,7 @@ Ftp::Response Ftp::DataChannel::Open(Ftp::TransferMode mode)
                 }
 
                 // Set the transfer mode
-                response = myFtp.SendCommand("TYPE", modeStr);
+                response = m_ftp.SendCommand("TYPE", modeStr);
             }
             else
             {
@@ -592,13 +592,13 @@ void Ftp::DataChannel::Receive(std::vector<char>& data)
     data.clear();
     char buffer[1024];
     std::size_t received;
-    while (myDataSocket.Receive(buffer, sizeof(buffer), received) == Socket::Done)
+    while (m_dataSocket.Receive(buffer, sizeof(buffer), received) == Socket::Done)
     {
         std::copy(buffer, buffer + received, std::back_inserter(data));
     }
 
     // Close the data socket
-    myDataSocket.Disconnect();
+    m_dataSocket.Disconnect();
 }
 
 
@@ -607,10 +607,10 @@ void Ftp::DataChannel::Send(const std::vector<char>& data)
 {
     // Send data
     if (!data.empty())
-        myDataSocket.Send(&data[0], data.size());
+        m_dataSocket.Send(&data[0], data.size());
 
     // Close the data socket
-    myDataSocket.Disconnect();
+    m_dataSocket.Disconnect();
 }
 
 } // namespace sf

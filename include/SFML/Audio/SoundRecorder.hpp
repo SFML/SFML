@@ -181,10 +181,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread             myThread;      ///< Thread running the background recording task
-    std::vector<Int16> mySamples;     ///< Buffer to store captured samples
-    unsigned int       mySampleRate;  ///< Sample rate
-    bool               myIsCapturing; ///< Capturing state
+    Thread             m_thread;      ///< Thread running the background recording task
+    std::vector<Int16> m_samples;     ///< Buffer to store captured samples
+    unsigned int       m_sampleRate;  ///< Sample rate
+    bool               m_isCapturing; ///< Capturing state
 };
 
 } // namespace sf

@@ -103,11 +103,11 @@ private :
 ///     virtual void Draw(sf::RenderTarget& target, RenderStates states) const
 ///     {
 ///         // You can draw other high-level objects
-///         target.Draw(mySprite, states);
+///         target.Draw(m_sprite, states);
 ///
 ///         // ... or use the low-level API
-///         states.Texture = &myTexture;
-///         target.Draw(myVertices, states);
+///         states.Texture = &m_texture;
+///         target.Draw(m_vertices, states);
 ///
 ///         // ... or draw with OpenGL directly
 ///         glBegin(GL_QUADS);
@@ -115,9 +115,9 @@ private :
 ///         glEnd();
 ///     }
 ///
-///     sf::Sprite mySprite;
-///     sf::Texture myTexture;
-///     sf::VertexArray myVertices;
+///     sf::Sprite m_sprite;
+///     sf::Texture m_texture;
+///     sf::VertexArray m_vertices;
 /// };
 /// \endcode
 ///

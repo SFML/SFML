@@ -34,14 +34,14 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Sound::Sound() :
-myBuffer(NULL)
+m_buffer(NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 Sound::Sound(const SoundBuffer& buffer) :
-myBuffer(NULL)
+m_buffer(NULL)
 {
     SetBuffer(buffer);
 }
@@ -50,10 +50,10 @@ myBuffer(NULL)
 ////////////////////////////////////////////////////////////
 Sound::Sound(const Sound& copy) :
 SoundSource(copy),
-myBuffer   (NULL)
+m_buffer   (NULL)
 {
-    if (copy.myBuffer)
-        SetBuffer(*copy.myBuffer);
+    if (copy.m_buffer)
+        SetBuffer(*copy.m_buffer);
     SetLoop(copy.GetLoop());
 }
 
@@ -62,29 +62,29 @@ myBuffer   (NULL)
 Sound::~Sound()
 {
     Stop();
-    if (myBuffer)
-        myBuffer->DetachSound(this);
+    if (m_buffer)
+        m_buffer->DetachSound(this);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Sound::Play()
 {
-    ALCheck(alSourcePlay(mySource));
+    ALCheck(alSourcePlay(m_source));
 }
 
 
 ////////////////////////////////////////////////////////////
 void Sound::Pause()
 {
-    ALCheck(alSourcePause(mySource));
+    ALCheck(alSourcePause(m_source));
 }
 
 
 ////////////////////////////////////////////////////////////
 void Sound::Stop()
 {
-    ALCheck(alSourceStop(mySource));
+    ALCheck(alSourceStop(m_source));
 }
 
 
@@ -92,37 +92,37 @@ void Sound::Stop()
 void Sound::SetBuffer(const SoundBuffer& buffer)
 {
     // First detach from the previous buffer
-    if (myBuffer)
+    if (m_buffer)
     {
         Stop();
-        myBuffer->DetachSound(this);
+        m_buffer->DetachSound(this);
     }
 
     // Assign and use the new buffer
-    myBuffer = &buffer;
-    myBuffer->AttachSound(this);
-    ALCheck(alSourcei(mySource, AL_BUFFER, myBuffer->myBuffer));
+    m_buffer = &buffer;
+    m_buffer->AttachSound(this);
+    ALCheck(alSourcei(m_source, AL_BUFFER, m_buffer->m_buffer));
 }
 
 
 ////////////////////////////////////////////////////////////
 void Sound::SetLoop(bool Loop)
 {
-    ALCheck(alSourcei(mySource, AL_LOOPING, Loop));
+    ALCheck(alSourcei(m_source, AL_LOOPING, Loop));
 }
 
 
 ////////////////////////////////////////////////////////////
 void Sound::SetPlayingOffset(Time timeOffset)
 {
-    ALCheck(alSourcef(mySource, AL_SEC_OFFSET, timeOffset.AsSeconds()));
+    ALCheck(alSourcef(m_source, AL_SEC_OFFSET, timeOffset.AsSeconds()));
 }
 
 
 ////////////////////////////////////////////////////////////
 const SoundBuffer* Sound::GetBuffer() const
 {
-    return myBuffer;
+    return m_buffer;
 }
 
 
@@ -130,7 +130,7 @@ const SoundBuffer* Sound::GetBuffer() const
 bool Sound::GetLoop() const
 {
     ALint loop;
-    ALCheck(alGetSourcei(mySource, AL_LOOPING, &loop));
+    ALCheck(alGetSourcei(m_source, AL_LOOPING, &loop));
 
     return loop != 0;
 }
@@ -140,7 +140,7 @@ bool Sound::GetLoop() const
 Time Sound::GetPlayingOffset() const
 {
     ALfloat seconds = 0.f;
-    ALCheck(alGetSourcef(mySource, AL_SEC_OFFSET, &seconds));
+    ALCheck(alGetSourcef(m_source, AL_SEC_OFFSET, &seconds));
 
     return Seconds(seconds);
 }
@@ -160,16 +160,16 @@ Sound& Sound::operator =(const Sound& right)
     // the list of sound instances contained in the buffers
 
     // Detach the sound instance from the previous buffer (if any)
-    if (myBuffer)
+    if (m_buffer)
     {
         Stop();
-        myBuffer->DetachSound(this);
-        myBuffer = NULL;
+        m_buffer->DetachSound(this);
+        m_buffer = NULL;
     }
 
     // Copy the sound attributes
-    if (right.myBuffer)
-        SetBuffer(*right.myBuffer);
+    if (right.m_buffer)
+        SetBuffer(*right.m_buffer);
     SetLoop(right.GetLoop());
     SetPitch(right.GetPitch());
     SetVolume(right.GetVolume());
@@ -189,8 +189,8 @@ void Sound::ResetBuffer()
     Stop();
 
     // Detach the buffer
-    ALCheck(alSourcei(mySource, AL_BUFFER, 0));
-    myBuffer = NULL;
+    ALCheck(alSourcei(m_source, AL_BUFFER, 0));
+    m_buffer = NULL;
 }
 
 } // namespace sf

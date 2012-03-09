@@ -272,9 +272,9 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<char> myData;    ///< Data stored in the packet
-    std::size_t       myReadPos; ///< Current reading position in the packet
-    bool              myIsValid; ///< Reading state of the packet
+    std::vector<char> m_data;    ///< Data stored in the packet
+    std::size_t       m_readPos; ///< Current reading position in the packet
+    bool              m_isValid; ///< Reading state of the packet
 };
 
 } // namespace sf

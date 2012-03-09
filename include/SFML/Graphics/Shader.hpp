@@ -522,9 +522,9 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int myShaderProgram;  ///< OpenGL identifier for the program
-    int          myCurrentTexture; ///< Location of the current texture in the shader
-    TextureTable myTextures;       ///< Texture variables in the shader, mapped to their location
+    unsigned int m_shaderProgram;  ///< OpenGL identifier for the program
+    int          m_currentTexture; ///< Location of the current texture in the shader
+    TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
 };
 
 } // namespace sf

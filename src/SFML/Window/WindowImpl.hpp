@@ -228,9 +228,9 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::queue<Event> myEvents;                     ///< Queue of available events
-    JoystickState     myJoyStates[Joystick::Count]; ///< Previous state of the joysticks
-    float             myJoyThreshold;               ///< Joystick threshold (minimum motion for MOVE event to be generated)
+    std::queue<Event> m_events;                     ///< Queue of available events
+    JoystickState     m_joyStates[Joystick::Count]; ///< Previous state of the joysticks
+    float             m_joyThreshold;               ///< Joystick threshold (minimum motion for MOVE event to be generated)
 };
 
 } // namespace priv

@@ -58,25 +58,25 @@ Shape::~Shape()
 void Shape::SetTexture(const Texture* texture, bool resetRect)
 {
     // Recompute the texture area if requested, or if there was no texture before
-    if (texture && (resetRect || !myTexture))
+    if (texture && (resetRect || !m_texture))
         SetTextureRect(IntRect(0, 0, texture->GetWidth(), texture->GetHeight()));
 
     // Assign the new texture
-    myTexture = texture;
+    m_texture = texture;
 }
 
 
 ////////////////////////////////////////////////////////////
 const Texture* Shape::GetTexture() const
 {
-    return myTexture;
+    return m_texture;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shape::SetTextureRect(const IntRect& rect)
 {
-    myTextureRect = rect;
+    m_textureRect = rect;
     UpdateTexCoords();
 }
 
@@ -84,14 +84,14 @@ void Shape::SetTextureRect(const IntRect& rect)
 ////////////////////////////////////////////////////////////
 const IntRect& Shape::GetTextureRect() const
 {
-    return myTextureRect;
+    return m_textureRect;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shape::SetFillColor(const Color& color)
 {
-    myFillColor = color;
+    m_fillColor = color;
     UpdateFillColors();
 }
 
@@ -99,14 +99,14 @@ void Shape::SetFillColor(const Color& color)
 ////////////////////////////////////////////////////////////
 const Color& Shape::GetFillColor() const
 {
-    return myFillColor;
+    return m_fillColor;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shape::SetOutlineColor(const Color& color)
 {
-    myOutlineColor = color;
+    m_outlineColor = color;
     UpdateOutlineColors();
 }
 
@@ -114,14 +114,14 @@ void Shape::SetOutlineColor(const Color& color)
 ////////////////////////////////////////////////////////////
 const Color& Shape::GetOutlineColor() const
 {
-    return myOutlineColor;
+    return m_outlineColor;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shape::SetOutlineThickness(float thickness)
 {
-    myOutlineThickness = thickness;
+    m_outlineThickness = thickness;
     Update(); // recompute everything because the whole shape must be offset
 }
 
@@ -129,14 +129,14 @@ void Shape::SetOutlineThickness(float thickness)
 ////////////////////////////////////////////////////////////
 float Shape::GetOutlineThickness() const
 {
-    return myOutlineThickness;
+    return m_outlineThickness;
 }
 
 
 ////////////////////////////////////////////////////////////
 FloatRect Shape::GetLocalBounds() const
 {
-    return myBounds;
+    return m_bounds;
 }
 
 
@@ -149,15 +149,15 @@ FloatRect Shape::GetGlobalBounds() const
 
 ////////////////////////////////////////////////////////////
 Shape::Shape() :
-myTexture         (NULL),
-myTextureRect     (),
-myFillColor       (255, 255, 255),
-myOutlineColor    (255, 255, 255),
-myOutlineThickness(0),
-myVertices        (TrianglesFan),
-myOutlineVertices (TrianglesStrip),
-myInsideBounds    (),
-myBounds          ()
+m_texture         (NULL),
+m_textureRect     (),
+m_fillColor       (255, 255, 255),
+m_outlineColor    (255, 255, 255),
+m_outlineThickness(0),
+m_vertices        (TrianglesFan),
+m_outlineVertices (TrianglesStrip),
+m_insideBounds    (),
+m_bounds          ()
 {
 }
 
@@ -169,25 +169,25 @@ void Shape::Update()
     unsigned int count = GetPointCount();
     if (count < 3)
     {
-        myVertices.Resize(0);
-        myOutlineVertices.Resize(0);
+        m_vertices.Resize(0);
+        m_outlineVertices.Resize(0);
         return;
     }
 
-    myVertices.Resize(count + 2); // + 2 for center and repeated first point
+    m_vertices.Resize(count + 2); // + 2 for center and repeated first point
 
     // Position
     for (unsigned int i = 0; i < count; ++i)
-        myVertices[i + 1].Position = GetPoint(i);
-    myVertices[count + 1].Position = myVertices[1].Position;
+        m_vertices[i + 1].Position = GetPoint(i);
+    m_vertices[count + 1].Position = m_vertices[1].Position;
 
     // Update the bounding rectangle
-    myVertices[0] = myVertices[1]; // so that the result of GetBounds() is correct
-    myInsideBounds = myVertices.GetBounds();
+    m_vertices[0] = m_vertices[1]; // so that the result of GetBounds() is correct
+    m_insideBounds = m_vertices.GetBounds();
 
     // Compute the center and make it the first vertex
-    myVertices[0].Position.x = myInsideBounds.Left + myInsideBounds.Width / 2;
-    myVertices[0].Position.y = myInsideBounds.Top + myInsideBounds.Height / 2;
+    m_vertices[0].Position.x = m_insideBounds.Left + m_insideBounds.Width / 2;
+    m_vertices[0].Position.y = m_insideBounds.Top + m_insideBounds.Height / 2;
 
     // Color
     UpdateFillColors();
@@ -206,17 +206,17 @@ void Shape::Draw(RenderTarget& target, RenderStates states) const
     states.Transform *= GetTransform();
 
     // Render the inside
-    if (myFillColor.a > 0)
+    if (m_fillColor.a > 0)
     {
-        states.Texture = myTexture;
-        target.Draw(myVertices, states);
+        states.Texture = m_texture;
+        target.Draw(m_vertices, states);
     }
 
     // Render the outline
-    if ((myOutlineColor.a > 0) && (myOutlineThickness > 0))
+    if ((m_outlineColor.a > 0) && (m_outlineThickness > 0))
     {
         states.Texture = NULL;
-        target.Draw(myOutlineVertices, states);
+        target.Draw(m_outlineVertices, states);
     }
 }
 
@@ -224,20 +224,20 @@ void Shape::Draw(RenderTarget& target, RenderStates states) const
 ////////////////////////////////////////////////////////////
 void Shape::UpdateFillColors()
 {
-    for (unsigned int i = 0; i < myVertices.GetVertexCount(); ++i)
-        myVertices[i].Color = myFillColor;
+    for (unsigned int i = 0; i < m_vertices.GetVertexCount(); ++i)
+        m_vertices[i].Color = m_fillColor;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shape::UpdateTexCoords()
 {
-    for (unsigned int i = 0; i < myVertices.GetVertexCount(); ++i)
+    for (unsigned int i = 0; i < m_vertices.GetVertexCount(); ++i)
     {
-        float xratio = (myVertices[i].Position.x - myInsideBounds.Left) / myInsideBounds.Width;
-        float yratio = (myVertices[i].Position.y - myInsideBounds.Top) / myInsideBounds.Height;
-        myVertices[i].TexCoords.x = myTextureRect.Left + myTextureRect.Width * xratio;
-        myVertices[i].TexCoords.y = myTextureRect.Top + myTextureRect.Height * yratio;
+        float xratio = (m_vertices[i].Position.x - m_insideBounds.Left) / m_insideBounds.Width;
+        float yratio = (m_vertices[i].Position.y - m_insideBounds.Top) / m_insideBounds.Height;
+        m_vertices[i].TexCoords.x = m_textureRect.Left + m_textureRect.Width * xratio;
+        m_vertices[i].TexCoords.y = m_textureRect.Top + m_textureRect.Height * yratio;
     }
 }
 
@@ -245,17 +245,17 @@ void Shape::UpdateTexCoords()
 ////////////////////////////////////////////////////////////
 void Shape::UpdateOutline()
 {
-    unsigned int count = myVertices.GetVertexCount() - 2;
-    myOutlineVertices.Resize((count + 1) * 2);
+    unsigned int count = m_vertices.GetVertexCount() - 2;
+    m_outlineVertices.Resize((count + 1) * 2);
 
     for (unsigned int i = 0; i < count; ++i)
     {
         unsigned int index = i + 1;
 
         // Get the two segments shared by the current point
-        Vector2f p0 = (i == 0) ? myVertices[count].Position : myVertices[index - 1].Position;
-        Vector2f p1 = myVertices[index].Position;
-        Vector2f p2 = myVertices[index + 1].Position;
+        Vector2f p0 = (i == 0) ? m_vertices[count].Position : m_vertices[index - 1].Position;
+        Vector2f p1 = m_vertices[index].Position;
+        Vector2f p2 = m_vertices[index + 1].Position;
 
         // Compute their normal
         Vector2f n1 = ComputeNormal(p0, p1);
@@ -266,27 +266,27 @@ void Shape::UpdateOutline()
         Vector2f normal = -(n1 + n2) / factor;
 
         // Update the outline points
-        myOutlineVertices[i * 2 + 0].Position = p1;
-        myOutlineVertices[i * 2 + 1].Position = p1 + normal * myOutlineThickness;
+        m_outlineVertices[i * 2 + 0].Position = p1;
+        m_outlineVertices[i * 2 + 1].Position = p1 + normal * m_outlineThickness;
     }
 
     // Duplicate the first point at the end, to close the outline
-    myOutlineVertices[count * 2 + 0].Position = myOutlineVertices[0].Position;
-    myOutlineVertices[count * 2 + 1].Position = myOutlineVertices[1].Position;
+    m_outlineVertices[count * 2 + 0].Position = m_outlineVertices[0].Position;
+    m_outlineVertices[count * 2 + 1].Position = m_outlineVertices[1].Position;
 
     // Update outline colors
     UpdateOutlineColors();
 
     // Update the shape's bounds
-    myBounds = myOutlineVertices.GetBounds();
+    m_bounds = m_outlineVertices.GetBounds();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shape::UpdateOutlineColors()
 {
-    for (unsigned int i = 0; i < myOutlineVertices.GetVertexCount(); ++i)
-        myOutlineVertices[i].Color = myOutlineColor;
+    for (unsigned int i = 0; i < m_outlineVertices.GetVertexCount(); ++i)
+        m_outlineVertices[i].Color = m_outlineColor;
 }
 
 } // namespace sf

@@ -467,10 +467,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::WindowImpl* myImpl;           ///< Platform-specific implementation of the window
-    priv::GlContext*  myContext;        ///< Platform-specific implementation of the OpenGL context
-    Clock             myClock;          ///< Clock for measuring the elapsed time between frames
-    Time              myFrameTimeLimit; ///< Current framerate limit
+    priv::WindowImpl* m_impl;           ///< Platform-specific implementation of the window
+    priv::GlContext*  m_context;        ///< Platform-specific implementation of the OpenGL context
+    Clock             m_clock;          ///< Clock for measuring the elapsed time between frames
+    Time              m_frameTimeLimit; ///< Current framerate limit
 };
 
 } // namespace sf

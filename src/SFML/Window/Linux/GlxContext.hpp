@@ -124,10 +124,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Display* myDisplay;    ///< Connection to the X server
-    ::Window   myWindow;     ///< Window to which the context is attached
-    GLXContext myContext;    ///< OpenGL context
-    bool       myOwnsWindow; ///< Do we own the window associated to the context?
+    ::Display* m_display;    ///< Connection to the X server
+    ::Window   m_window;     ///< Window to which the context is attached
+    GLXContext m_context;    ///< OpenGL context
+    bool       m_ownsWindow; ///< Do we own the window associated to the context?
 };
 
 } // namespace priv

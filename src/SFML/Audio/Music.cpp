@@ -37,8 +37,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Music::Music() :
-myFile    (new priv::SoundFile),
-myDuration()
+m_file    (new priv::SoundFile),
+m_duration()
 {
 
 }
@@ -50,7 +50,7 @@ Music::~Music()
     // We must stop before destroying the file :)
     Stop();
 
-    delete myFile;
+    delete m_file;
 }
 
 
@@ -61,7 +61,7 @@ bool Music::OpenFromFile(const std::string& filename)
     Stop();
 
     // Open the underlying sound file
-    if (!myFile->OpenRead(filename))
+    if (!m_file->OpenRead(filename))
         return false;
 
     // Perform common initializations
@@ -78,7 +78,7 @@ bool Music::OpenFromMemory(const void* data, std::size_t sizeInBytes)
     Stop();
 
     // Open the underlying sound file
-    if (!myFile->OpenRead(data, sizeInBytes))
+    if (!m_file->OpenRead(data, sizeInBytes))
         return false;
 
     // Perform common initializations
@@ -95,7 +95,7 @@ bool Music::OpenFromStream(InputStream& stream)
     Stop();
 
     // Open the underlying sound file
-    if (!myFile->OpenRead(stream))
+    if (!m_file->OpenRead(stream))
         return false;
 
     // Perform common initializations
@@ -108,30 +108,30 @@ bool Music::OpenFromStream(InputStream& stream)
 ////////////////////////////////////////////////////////////
 Time Music::GetDuration() const
 {
-    return myDuration;
+    return m_duration;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Music::OnGetData(SoundStream::Chunk& data)
 {
-    Lock lock(myMutex);
+    Lock lock(m_mutex);
 
     // Fill the chunk parameters
-    data.Samples     = &mySamples[0];
-    data.SampleCount = myFile->Read(&mySamples[0], mySamples.size());
+    data.Samples     = &m_samples[0];
+    data.SampleCount = m_file->Read(&m_samples[0], m_samples.size());
 
     // Check if we have reached the end of the audio file
-    return data.SampleCount == mySamples.size();
+    return data.SampleCount == m_samples.size();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Music::OnSeek(Time timeOffset)
 {
-    Lock lock(myMutex);
+    Lock lock(m_mutex);
 
-    myFile->Seek(timeOffset);
+    m_file->Seek(timeOffset);
 }
 
 
@@ -139,13 +139,13 @@ void Music::OnSeek(Time timeOffset)
 void Music::Initialize()
 {
     // Compute the music duration
-    myDuration = Seconds(static_cast<float>(myFile->GetSampleCount()) / myFile->GetSampleRate() / myFile->GetChannelCount());
+    m_duration = Seconds(static_cast<float>(m_file->GetSampleCount()) / m_file->GetSampleRate() / m_file->GetChannelCount());
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
-    mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelCount());
+    m_samples.resize(m_file->GetSampleRate() * m_file->GetChannelCount());
 
     // Initialize the stream
-    SoundStream::Initialize(myFile->GetChannelCount(), myFile->GetSampleRate());
+    SoundStream::Initialize(m_file->GetChannelCount(), m_file->GetSampleRate());
 }
 
 } // namespace sf

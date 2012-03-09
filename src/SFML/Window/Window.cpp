@@ -42,9 +42,9 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Window::Window() :
-myImpl          (NULL),
-myContext       (NULL),
-myFrameTimeLimit(Time::Zero)
+m_impl          (NULL),
+m_context       (NULL),
+m_frameTimeLimit(Time::Zero)
 {
 
 }
@@ -52,9 +52,9 @@ myFrameTimeLimit(Time::Zero)
 
 ////////////////////////////////////////////////////////////
 Window::Window(VideoMode mode, const std::string& title, Uint32 style, const ContextSettings& settings) :
-myImpl          (NULL),
-myContext       (NULL),
-myFrameTimeLimit(Time::Zero)
+m_impl          (NULL),
+m_context       (NULL),
+m_frameTimeLimit(Time::Zero)
 {
     Create(mode, title, style, settings);
 }
@@ -62,9 +62,9 @@ myFrameTimeLimit(Time::Zero)
 
 ////////////////////////////////////////////////////////////
 Window::Window(WindowHandle handle, const ContextSettings& settings) :
-myImpl          (NULL),
-myContext       (NULL),
-myFrameTimeLimit(Time::Zero)
+m_impl          (NULL),
+m_context       (NULL),
+m_frameTimeLimit(Time::Zero)
 {
     Create(handle, settings);
 }
@@ -111,10 +111,10 @@ void Window::Create(VideoMode mode, const std::string& title, Uint32 style, cons
         style |= Style::Titlebar;
 
     // Recreate the window implementation
-    myImpl = priv::WindowImpl::Create(mode, title, style);
+    m_impl = priv::WindowImpl::Create(mode, title, style);
 
     // Recreate the context
-    myContext = priv::GlContext::Create(settings, myImpl, mode.BitsPerPixel);
+    m_context = priv::GlContext::Create(settings, m_impl, mode.BitsPerPixel);
 
     // Perform common initializations
     Initialize();
@@ -128,10 +128,10 @@ void Window::Create(WindowHandle handle, const ContextSettings& settings)
     Close();
 
     // Recreate the window implementation
-    myImpl = priv::WindowImpl::Create(handle);
+    m_impl = priv::WindowImpl::Create(handle);
 
     // Recreate the context
-    myContext = priv::GlContext::Create(settings, myImpl, VideoMode::GetDesktopMode().BitsPerPixel);
+    m_context = priv::GlContext::Create(settings, m_impl, VideoMode::GetDesktopMode().BitsPerPixel);
 
     // Perform common initializations
     Initialize();
@@ -141,18 +141,18 @@ void Window::Create(WindowHandle handle, const ContextSettings& settings)
 ////////////////////////////////////////////////////////////
 void Window::Close()
 {
-    if (myContext)
+    if (m_context)
     {
         // Delete the context
-        delete myContext;
-        myContext = NULL;
+        delete m_context;
+        m_context = NULL;
     }
 
-    if (myImpl)
+    if (m_impl)
     {
         // Delete the window implementation
-        delete myImpl;
-        myImpl = NULL;
+        delete m_impl;
+        m_impl = NULL;
     }
 
     // Update the fullscreen window
@@ -164,7 +164,7 @@ void Window::Close()
 ////////////////////////////////////////////////////////////
 bool Window::IsOpen() const
 {
-    return myImpl != NULL;
+    return m_impl != NULL;
 }
 
 
@@ -173,14 +173,14 @@ const ContextSettings& Window::GetSettings() const
 {
     static const ContextSettings empty(0, 0, 0);
 
-    return myContext ? myContext->GetSettings() : empty;
+    return m_context ? m_context->GetSettings() : empty;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Window::PollEvent(Event& event)
 {
-    if (myImpl && myImpl->PopEvent(event, false))
+    if (m_impl && m_impl->PopEvent(event, false))
     {
         return FilterEvent(event);
     }
@@ -194,7 +194,7 @@ bool Window::PollEvent(Event& event)
 ////////////////////////////////////////////////////////////
 bool Window::WaitEvent(Event& event)
 {
-    if (myImpl && myImpl->PopEvent(event, true))
+    if (m_impl && m_impl->PopEvent(event, true))
     {
         return FilterEvent(event);
     }
@@ -208,54 +208,54 @@ bool Window::WaitEvent(Event& event)
 ////////////////////////////////////////////////////////////
 Vector2i Window::GetPosition() const
 {
-    return myImpl ? myImpl->GetPosition() : Vector2i();
+    return m_impl ? m_impl->GetPosition() : Vector2i();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Window::SetPosition(const Vector2i& position)
 {
-    if (myImpl)
-        myImpl->SetPosition(position);
+    if (m_impl)
+        m_impl->SetPosition(position);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2u Window::GetSize() const
 {
-    return myImpl ? myImpl->GetSize() : Vector2u();
+    return m_impl ? m_impl->GetSize() : Vector2u();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Window::SetSize(const Vector2u size)
 {
-    if (myImpl)
-        myImpl->SetSize(size);
+    if (m_impl)
+        m_impl->SetSize(size);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Window::SetTitle(const std::string& title)
 {
-    if (myImpl)
-        myImpl->SetTitle(title);
+    if (m_impl)
+        m_impl->SetTitle(title);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Window::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
-    if (myImpl)
-        myImpl->SetIcon(width, height, pixels);
+    if (m_impl)
+        m_impl->SetIcon(width, height, pixels);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Window::SetVisible(bool visible)
 {
-    if (myImpl)
-        myImpl->SetVisible(visible);
+    if (m_impl)
+        m_impl->SetVisible(visible);
 }
 
 
@@ -263,23 +263,23 @@ void Window::SetVisible(bool visible)
 void Window::SetVerticalSyncEnabled(bool enabled)
 {
     if (SetActive())
-        myContext->SetVerticalSyncEnabled(enabled);
+        m_context->SetVerticalSyncEnabled(enabled);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Window::SetMouseCursorVisible(bool visible)
 {
-    if (myImpl)
-        myImpl->SetMouseCursorVisible(visible);
+    if (m_impl)
+        m_impl->SetMouseCursorVisible(visible);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Window::SetKeyRepeatEnabled(bool enabled)
 {
-    if (myImpl)
-        myImpl->SetKeyRepeatEnabled(enabled);
+    if (m_impl)
+        m_impl->SetKeyRepeatEnabled(enabled);
 }
 
 
@@ -287,26 +287,26 @@ void Window::SetKeyRepeatEnabled(bool enabled)
 void Window::SetFramerateLimit(unsigned int limit)
 {
     if (limit > 0)
-        myFrameTimeLimit = Seconds(1.f / limit);
+        m_frameTimeLimit = Seconds(1.f / limit);
     else
-        myFrameTimeLimit = Time::Zero;
+        m_frameTimeLimit = Time::Zero;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Window::SetJoystickThreshold(float threshold)
 {
-    if (myImpl)
-        myImpl->SetJoystickThreshold(threshold);
+    if (m_impl)
+        m_impl->SetJoystickThreshold(threshold);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Window::SetActive(bool active) const
 {
-    if (myContext)
+    if (m_context)
     {
-        if (myContext->SetActive(active))
+        if (m_context->SetActive(active))
         {
             return true;
         }
@@ -328,13 +328,13 @@ void Window::Display()
 {
     // Display the backbuffer on screen
     if (SetActive())
-        myContext->Display();
+        m_context->Display();
 
     // Limit the framerate if needed
-    if (myFrameTimeLimit != Time::Zero)
+    if (m_frameTimeLimit != Time::Zero)
     {
-        Sleep(myFrameTimeLimit - myClock.GetElapsedTime());
-        myClock.Restart();
+        Sleep(m_frameTimeLimit - m_clock.GetElapsedTime());
+        m_clock.Restart();
     }
 }
 
@@ -342,7 +342,7 @@ void Window::Display()
 ////////////////////////////////////////////////////////////
 WindowHandle Window::GetSystemHandle() const
 {
-    return myImpl ? myImpl->GetSystemHandle() : 0;
+    return m_impl ? m_impl->GetSystemHandle() : 0;
 }
 
 
@@ -381,7 +381,7 @@ void Window::Initialize()
     SetKeyRepeatEnabled(true);
 
     // Reset frame time
-    myClock.Restart();
+    m_clock.Restart();
 
     // Activate the window
     SetActive();

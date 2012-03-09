@@ -83,7 +83,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::ThreadLocalImpl* myImpl; ///< Pointer to the OS specific implementation
+    priv::ThreadLocalImpl* m_impl; ///< Pointer to the OS specific implementation
 };
 
 } // namespace sf

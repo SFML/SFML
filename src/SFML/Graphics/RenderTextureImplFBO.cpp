@@ -37,8 +37,8 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 RenderTextureImplFBO::RenderTextureImplFBO() :
-myFrameBuffer(0),
-myDepthBuffer(0)
+m_frameBuffer(0),
+m_depthBuffer(0)
 {
 
 }
@@ -50,21 +50,21 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
     EnsureGlContext();
 
     // Destroy the depth buffer
-    if (myDepthBuffer)
+    if (m_depthBuffer)
     {
-        GLuint depthBuffer = static_cast<GLuint>(myDepthBuffer);
+        GLuint depthBuffer = static_cast<GLuint>(m_depthBuffer);
         GLCheck(glDeleteFramebuffersEXT(1, &depthBuffer));
     }
 
     // Destroy the frame buffer
-    if (myFrameBuffer)
+    if (m_frameBuffer)
     {
-        GLuint frameBuffer = static_cast<GLuint>(myFrameBuffer);
+        GLuint frameBuffer = static_cast<GLuint>(m_frameBuffer);
         GLCheck(glDeleteFramebuffersEXT(1, &frameBuffer));
     }
 
     // Delete the context
-    delete myContext;
+    delete m_context;
 }
 
 
@@ -84,33 +84,33 @@ bool RenderTextureImplFBO::IsAvailable()
 bool RenderTextureImplFBO::Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
     // Create the context
-    myContext = new Context;
+    m_context = new Context;
 
     // Create the framebuffer object
     GLuint frameBuffer = 0;
     GLCheck(glGenFramebuffersEXT(1, &frameBuffer));
-    myFrameBuffer = static_cast<unsigned int>(frameBuffer);
-    if (!myFrameBuffer)
+    m_frameBuffer = static_cast<unsigned int>(frameBuffer);
+    if (!m_frameBuffer)
     {
         Err() << "Impossible to create render texture (failed to create the frame buffer object)" << std::endl;
         return false;
     }
-    GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, myFrameBuffer));
+    GLCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_frameBuffer));
 
     // Create the depth buffer if requested
     if (depthBuffer)
     {
         GLuint depth = 0;
         GLCheck(glGenRenderbuffersEXT(1, &depth));
-        myDepthBuffer = static_cast<unsigned int>(depth);
-        if (!myDepthBuffer)
+        m_depthBuffer = static_cast<unsigned int>(depth);
+        if (!m_depthBuffer)
         {
             Err() << "Impossible to create render texture (failed to create the attached depth buffer)" << std::endl;
             return false;
         }
-        GLCheck(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, myDepthBuffer));
+        GLCheck(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthBuffer));
         GLCheck(glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height));
-        GLCheck(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, myDepthBuffer));
+        GLCheck(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBuffer));
     }
 
     // Link the texture to the frame buffer
@@ -131,7 +131,7 @@ bool RenderTextureImplFBO::Create(unsigned int width, unsigned int height, unsig
 ////////////////////////////////////////////////////////////
 bool RenderTextureImplFBO::Activate(bool active)
 {
-    return myContext->SetActive(active);
+    return m_context->SetActive(active);
 }
 
 ////////////////////////////////////////////////////////////

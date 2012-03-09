@@ -107,7 +107,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Item myJoysticks[Joystick::Count]; ///< Joysticks information and state
+    Item m_joysticks[Joystick::Count]; ///< Joysticks information and state
 };
 
 } // namespace priv

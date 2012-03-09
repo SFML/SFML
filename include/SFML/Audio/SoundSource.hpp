@@ -260,7 +260,7 @@ protected :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int mySource; ///< OpenAL source identifier
+    unsigned int m_source; ///< OpenAL source identifier
 };
 
 } // namespace sf

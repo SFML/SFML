@@ -27,8 +27,8 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     NetworkRecorder(const sf::IpAddress& host, unsigned short port) :
-    myHost(host),
-    myPort(port)
+    m_host(host),
+    m_port(port)
     {
     }
 
@@ -40,9 +40,9 @@ private :
     ////////////////////////////////////////////////////////////
     virtual bool OnStart()
     {
-        if (mySocket.Connect(myHost, myPort) == sf::Socket::Done)
+        if (m_socket.Connect(m_host, m_port) == sf::Socket::Done)
         {
-            std::cout << "Connected to server " << myHost << std::endl;
+            std::cout << "Connected to server " << m_host << std::endl;
             return true;
         }
         else
@@ -63,7 +63,7 @@ private :
         packet.Append(samples, sampleCount * sizeof(sf::Int16));
 
         // Send the audio packet to the server
-        return mySocket.Send(packet) == sf::Socket::Done;
+        return m_socket.Send(packet) == sf::Socket::Done;
     }
 
     ////////////////////////////////////////////////////////////
@@ -75,18 +75,18 @@ private :
         // Send a "end-of-stream" packet
         sf::Packet packet;
         packet << endOfStream;
-        mySocket.Send(packet);
+        m_socket.Send(packet);
 
         // Close the socket
-        mySocket.Disconnect();
+        m_socket.Disconnect();
     }
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::IpAddress  myHost;   ///< Address of the remote host
-    unsigned short myPort;   ///< Remote port
-    sf::TcpSocket  mySocket; ///< Socket used to communicate with the server
+    sf::IpAddress  m_host;   ///< Address of the remote host
+    unsigned short m_port;   ///< Remote port
+    sf::TcpSocket  m_socket; ///< Socket used to communicate with the server
 };
 
 

@@ -38,9 +38,9 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 RenderTextureImplDefault::RenderTextureImplDefault() :
-myContext(0),
-myWidth  (0),
-myHeight (0)
+m_context(0),
+m_width  (0),
+m_height (0)
 {
 
 }
@@ -50,7 +50,7 @@ myHeight (0)
 RenderTextureImplDefault::~RenderTextureImplDefault()
 {
     // Destroy the context
-    delete myContext;
+    delete m_context;
 }
 
 
@@ -58,11 +58,11 @@ RenderTextureImplDefault::~RenderTextureImplDefault()
 bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
 {
     // Store the dimensions
-    myWidth = width;
-    myHeight = height;
+    m_width = width;
+    m_height = height;
 
     // Create the in-memory OpenGL context
-    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
+    m_context = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
 
     return true;
 }
@@ -71,7 +71,7 @@ bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, u
 ////////////////////////////////////////////////////////////
 bool RenderTextureImplDefault::Activate(bool active)
 {
-    return myContext->SetActive(active);
+    return m_context->SetActive(active);
 }
 
 
@@ -83,7 +83,7 @@ void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
 
     // Copy the rendered pixels to the texture
     GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
+    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_width, m_height));
 }
 
 } // namespace priv

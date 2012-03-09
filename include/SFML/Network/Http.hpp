@@ -176,12 +176,12 @@ public :
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        FieldTable   myFields;       ///< Fields of the header associated to their value
-        Method       myMethod;       ///< Method to use for the request
-        std::string  myURI;          ///< Target URI of the request
-        unsigned int myMajorVersion; ///< Major HTTP version
-        unsigned int myMinorVersion; ///< Minor HTTP version
-        std::string  myBody;         ///< Body of the request
+        FieldTable   m_fields;       ///< Fields of the header associated to their value
+        Method       m_method;       ///< Method to use for the request
+        std::string  m_uRI;          ///< Target URI of the request
+        unsigned int m_majorVersion; ///< Major HTTP version
+        unsigned int m_minorVersion; ///< Minor HTTP version
+        std::string  m_body;         ///< Body of the request
     };
 
     ////////////////////////////////////////////////////////////
@@ -324,11 +324,11 @@ public :
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        FieldTable   myFields;       ///< Fields of the header
-        Status       myStatus;       ///< Status code
-        unsigned int myMajorVersion; ///< Major HTTP version
-        unsigned int myMinorVersion; ///< Minor HTTP version
-        std::string  myBody;         ///< Body of the response
+        FieldTable   m_fields;       ///< Fields of the header
+        Status       m_status;       ///< Status code
+        unsigned int m_majorVersion; ///< Major HTTP version
+        unsigned int m_minorVersion; ///< Minor HTTP version
+        std::string  m_body;         ///< Body of the response
     };
 
     ////////////////////////////////////////////////////////////
@@ -395,10 +395,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    TcpSocket      myConnection; ///< Connection to the host
-    IpAddress      myHost;       ///< Web host address
-    std::string    myHostName;   ///< Web host name
-    unsigned short myPort;       ///< Port used for connection with host
+    TcpSocket      m_connection; ///< Connection to the host
+    IpAddress      m_host;       ///< Web host address
+    std::string    m_hostName;   ///< Web host name
+    unsigned short m_port;       ///< Port used for connection with host
 };
 
 } // namespace sf

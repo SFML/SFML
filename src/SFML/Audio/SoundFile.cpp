@@ -50,10 +50,10 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 SoundFile::SoundFile() :
-myFile        (NULL),
-mySampleCount (0),
-myChannelCount(0),
-mySampleRate  (0)
+m_file        (NULL),
+m_sampleCount (0),
+m_channelCount(0),
+m_sampleRate  (0)
 {
 
 }
@@ -62,29 +62,29 @@ mySampleRate  (0)
 ////////////////////////////////////////////////////////////
 SoundFile::~SoundFile()
 {
-    if (myFile)
-        sf_close(myFile);
+    if (m_file)
+        sf_close(m_file);
 }
 
 
 ////////////////////////////////////////////////////////////
 std::size_t SoundFile::GetSampleCount() const
 {
-    return mySampleCount;
+    return m_sampleCount;
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int SoundFile::GetChannelCount() const
 {
-    return myChannelCount;
+    return m_channelCount;
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int SoundFile::GetSampleRate() const
 {
-    return mySampleRate;
+    return m_sampleRate;
 }
 
 
@@ -92,22 +92,22 @@ unsigned int SoundFile::GetSampleRate() const
 bool SoundFile::OpenRead(const std::string& filename)
 {
     // If the file is already opened, first close it
-    if (myFile)
-        sf_close(myFile);
+    if (m_file)
+        sf_close(m_file);
 
     // Open the sound file
     SF_INFO fileInfos;
-    myFile = sf_open(filename.c_str(), SFM_READ, &fileInfos);
-    if (!myFile)
+    m_file = sf_open(filename.c_str(), SFM_READ, &fileInfos);
+    if (!m_file)
     {
-        Err() << "Failed to open sound file \"" << filename << "\" (" << sf_strerror(myFile) << ")" << std::endl;
+        Err() << "Failed to open sound file \"" << filename << "\" (" << sf_strerror(m_file) << ")" << std::endl;
         return false;
     }
 
     // Set the sound parameters
-    myChannelCount = fileInfos.channels;
-    mySampleRate   = fileInfos.samplerate;
-    mySampleCount  = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
+    m_channelCount = fileInfos.channels;
+    m_sampleRate   = fileInfos.samplerate;
+    m_sampleCount  = static_cast<std::size_t>(fileInfos.frames) * m_channelCount;
 
     return true;
 }
@@ -117,8 +117,8 @@ bool SoundFile::OpenRead(const std::string& filename)
 bool SoundFile::OpenRead(const void* data, std::size_t sizeInBytes)
 {
     // If the file is already opened, first close it
-    if (myFile)
-        sf_close(myFile);
+    if (m_file)
+        sf_close(m_file);
 
     // Prepare the memory I/O structure
     SF_VIRTUAL_IO io;
@@ -128,23 +128,23 @@ bool SoundFile::OpenRead(const void* data, std::size_t sizeInBytes)
     io.tell        = &Memory::Tell;
 
     // Initialize the memory data
-    myMemory.DataStart = static_cast<const char*>(data);
-    myMemory.DataPtr   = myMemory.DataStart;
-    myMemory.TotalSize = sizeInBytes;
+    m_memory.DataStart = static_cast<const char*>(data);
+    m_memory.DataPtr   = m_memory.DataStart;
+    m_memory.TotalSize = sizeInBytes;
 
     // Open the sound file
     SF_INFO fileInfos;
-    myFile = sf_open_virtual(&io, SFM_READ, &fileInfos, &myMemory);
-    if (!myFile)
+    m_file = sf_open_virtual(&io, SFM_READ, &fileInfos, &m_memory);
+    if (!m_file)
     {
-        Err() << "Failed to open sound file from memory (" << sf_strerror(myFile) << ")" << std::endl;
+        Err() << "Failed to open sound file from memory (" << sf_strerror(m_file) << ")" << std::endl;
         return false;
     }
 
     // Set the sound parameters
-    myChannelCount = fileInfos.channels;
-    mySampleRate   = fileInfos.samplerate;
-    mySampleCount  = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
+    m_channelCount = fileInfos.channels;
+    m_sampleRate   = fileInfos.samplerate;
+    m_sampleCount  = static_cast<std::size_t>(fileInfos.frames) * m_channelCount;
 
     return true;
 }
@@ -154,8 +154,8 @@ bool SoundFile::OpenRead(const void* data, std::size_t sizeInBytes)
 bool SoundFile::OpenRead(InputStream& stream)
 {
     // If the file is already opened, first close it
-    if (myFile)
-        sf_close(myFile);
+    if (m_file)
+        sf_close(m_file);
 
     // Prepare the memory I/O structure
     SF_VIRTUAL_IO io;
@@ -166,17 +166,17 @@ bool SoundFile::OpenRead(InputStream& stream)
 
     // Open the sound file
     SF_INFO fileInfos;
-    myFile = sf_open_virtual(&io, SFM_READ, &fileInfos, &stream);
-    if (!myFile)
+    m_file = sf_open_virtual(&io, SFM_READ, &fileInfos, &stream);
+    if (!m_file)
     {
-        Err() << "Failed to open sound file from stream (" << sf_strerror(myFile) << ")" << std::endl;
+        Err() << "Failed to open sound file from stream (" << sf_strerror(m_file) << ")" << std::endl;
         return false;
     }
 
     // Set the sound parameters
-    myChannelCount = fileInfos.channels;
-    mySampleRate   = fileInfos.samplerate;
-    mySampleCount  = static_cast<std::size_t>(fileInfos.frames) * myChannelCount;
+    m_channelCount = fileInfos.channels;
+    m_sampleRate   = fileInfos.samplerate;
+    m_sampleCount  = static_cast<std::size_t>(fileInfos.frames) * m_channelCount;
 
     return true;
 }
@@ -186,8 +186,8 @@ bool SoundFile::OpenRead(InputStream& stream)
 bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelCount, unsigned int sampleRate)
 {
     // If the file is already opened, first close it
-    if (myFile)
-        sf_close(myFile);
+    if (m_file)
+        sf_close(m_file);
 
     // Find the right format according to the file extension
     int format = GetFormatFromFilename(filename);
@@ -205,17 +205,17 @@ bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelCount
     fileInfos.format     = format | (format == SF_FORMAT_OGG ? SF_FORMAT_VORBIS : SF_FORMAT_PCM_16);
 
     // Open the sound file for writing
-    myFile = sf_open(filename.c_str(), SFM_WRITE, &fileInfos);
-    if (!myFile)
+    m_file = sf_open(filename.c_str(), SFM_WRITE, &fileInfos);
+    if (!m_file)
     {
-        Err() << "Failed to create sound file \"" << filename << "\" (" << sf_strerror(myFile) << ")" << std::endl;
+        Err() << "Failed to create sound file \"" << filename << "\" (" << sf_strerror(m_file) << ")" << std::endl;
         return false;
     }
 
     // Set the sound parameters
-    myChannelCount = channelCount;
-    mySampleRate   = sampleRate;
-    mySampleCount  = 0;
+    m_channelCount = channelCount;
+    m_sampleRate   = sampleRate;
+    m_sampleCount  = 0;
 
     return true;
 }
@@ -224,8 +224,8 @@ bool SoundFile::OpenWrite(const std::string& filename, unsigned int channelCount
 ////////////////////////////////////////////////////////////
 std::size_t SoundFile::Read(Int16* data, std::size_t sampleCount)
 {
-    if (myFile && data && sampleCount)
-        return static_cast<std::size_t>(sf_read_short(myFile, data, sampleCount));
+    if (m_file && data && sampleCount)
+        return static_cast<std::size_t>(sf_read_short(m_file, data, sampleCount));
     else
         return 0;
 }
@@ -234,14 +234,14 @@ std::size_t SoundFile::Read(Int16* data, std::size_t sampleCount)
 ////////////////////////////////////////////////////////////
 void SoundFile::Write(const Int16* data, std::size_t sampleCount)
 {
-    if (myFile && data && sampleCount)
+    if (m_file && data && sampleCount)
     {
         // Write small chunks instead of everything at once,
         // to avoid a stack overflow in libsndfile (happens only with OGG format)
         while (sampleCount > 0)
         {
             std::size_t count = sampleCount > 10000 ? 10000 : sampleCount;
-            sf_write_short(myFile, data, count);
+            sf_write_short(m_file, data, count);
             data += count;
             sampleCount -= count;
         }
@@ -252,10 +252,10 @@ void SoundFile::Write(const Int16* data, std::size_t sampleCount)
 ////////////////////////////////////////////////////////////
 void SoundFile::Seek(Time timeOffset)
 {
-    if (myFile)
+    if (m_file)
     {
-        sf_count_t frameOffset = static_cast<sf_count_t>(timeOffset.AsSeconds() * mySampleRate);
-        sf_seek(myFile, frameOffset, SEEK_SET);
+        sf_count_t frameOffset = static_cast<sf_count_t>(timeOffset.AsSeconds() * m_sampleRate);
+        sf_seek(m_file, frameOffset, SEEK_SET);
     }
 }
 

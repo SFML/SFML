@@ -80,8 +80,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    pthread_t myThread;   ///< pthread thread instance
-    bool      myIsActive; ///< Thread state (active or inactive)
+    pthread_t m_thread;   ///< pthread thread instance
+    bool      m_isActive; ///< Thread state (active or inactive)
 };
 
 } // namespace priv

@@ -96,9 +96,9 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int           myFile;                 ///< File descriptor of the joystick
-    char          myMapping[ABS_MAX + 1]; ///< Axes mapping (index to axis id)
-    JoystickState myState;                ///< Current state of the joystick
+    int           m_file;                 ///< File descriptor of the joystick
+    char          m_mapping[ABS_MAX + 1]; ///< Axes mapping (index to axis id)
+    JoystickState m_state;                ///< Current state of the joystick
 };
 
 } // namespace priv

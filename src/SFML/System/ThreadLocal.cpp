@@ -44,7 +44,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 ThreadLocal::ThreadLocal(void* value)
 {
-    myImpl = new priv::ThreadLocalImpl;
+    m_impl = new priv::ThreadLocalImpl;
     SetValue(value);
 }
 
@@ -52,21 +52,21 @@ ThreadLocal::ThreadLocal(void* value)
 ////////////////////////////////////////////////////////////
 ThreadLocal::~ThreadLocal()
 {
-    delete myImpl;
+    delete m_impl;
 }
 
 
 ////////////////////////////////////////////////////////////
 void ThreadLocal::SetValue(void* value)
 {
-    myImpl->SetValue(value);
+    m_impl->SetValue(value);
 }
 
 
 ////////////////////////////////////////////////////////////
 void* ThreadLocal::GetValue() const
 {
-    return myImpl->GetValue();
+    return m_impl->GetValue();
 }
 
 } // namespace sf

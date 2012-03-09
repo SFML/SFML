@@ -72,7 +72,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    pthread_mutex_t myMutex; ///< pthread handle of the mutex
+    pthread_mutex_t m_mutex; ///< pthread handle of the mutex
 };
 
 } // namespace priv

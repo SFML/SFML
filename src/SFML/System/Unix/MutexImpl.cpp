@@ -40,28 +40,28 @@ MutexImpl::MutexImpl()
     pthread_mutexattr_init(&attributes);
     pthread_mutexattr_settype(&attributes, PTHREAD_MUTEX_RECURSIVE);
 
-    pthread_mutex_init(&myMutex, &attributes);
+    pthread_mutex_init(&m_mutex, &attributes);
 }
 
 
 ////////////////////////////////////////////////////////////
 MutexImpl::~MutexImpl()
 {
-    pthread_mutex_destroy(&myMutex);
+    pthread_mutex_destroy(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
 void MutexImpl::Lock()
 {
-    pthread_mutex_lock(&myMutex);
+    pthread_mutex_lock(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
 void MutexImpl::Unlock()
 {
-    pthread_mutex_unlock(&myMutex);
+    pthread_mutex_unlock(&m_mutex);
 }
 
 } // namespace priv

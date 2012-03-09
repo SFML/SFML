@@ -489,15 +489,15 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int myWidth;         ///< Image width
-    unsigned int myHeight;        ///< Image Height
-    unsigned int myTextureWidth;  ///< Actual texture width (can be greater than image width because of padding)
-    unsigned int myTextureHeight; ///< Actual texture height (can be greater than image height because of padding)
-    unsigned int myTexture;       ///< Internal texture identifier
-    bool         myIsSmooth;      ///< Status of the smooth filter
-    bool         myIsRepeated;    ///< Is the texture in repeat mode?
-    mutable bool myPixelsFlipped; ///< To work around the inconsistency in Y orientation
-    Uint64       myCacheId;       ///< Unique number that identifies the texture to the render target's cache
+    unsigned int m_width;         ///< Image width
+    unsigned int m_height;        ///< Image Height
+    unsigned int m_textureWidth;  ///< Actual texture width (can be greater than image width because of padding)
+    unsigned int m_textureHeight; ///< Actual texture height (can be greater than image height because of padding)
+    unsigned int m_texture;       ///< Internal texture identifier
+    bool         m_isSmooth;      ///< Status of the smooth filter
+    bool         m_isRepeated;    ///< Is the texture in repeat mode?
+    mutable bool m_pixelsFlipped; ///< To work around the inconsistency in Y orientation
+    Uint64       m_cacheId;       ///< Unique number that identifies the texture to the render target's cache
 };
 
 } // namespace sf

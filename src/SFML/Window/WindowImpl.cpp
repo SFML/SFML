@@ -70,12 +70,12 @@ WindowImpl* WindowImpl::Create(WindowHandle handle)
 
 ////////////////////////////////////////////////////////////
 WindowImpl::WindowImpl() :
-myJoyThreshold(0.1f)
+m_joyThreshold(0.1f)
 {
     // Get the initial joystick states
     JoystickManager::GetInstance().Update();
     for (unsigned int i = 0; i < Joystick::Count; ++i)
-        myJoyStates[i] = JoystickManager::GetInstance().GetState(i);
+        m_joyStates[i] = JoystickManager::GetInstance().GetState(i);
 }
 
 
@@ -89,7 +89,7 @@ WindowImpl::~WindowImpl()
 ////////////////////////////////////////////////////////////
 void WindowImpl::SetJoystickThreshold(float threshold)
 {
-    myJoyThreshold = threshold;
+    m_joyThreshold = threshold;
 }
 
 
@@ -97,7 +97,7 @@ void WindowImpl::SetJoystickThreshold(float threshold)
 bool WindowImpl::PopEvent(Event& event, bool block)
 {
     // If the event queue is empty, let's first check if new events are available from the OS
-    if (myEvents.empty())
+    if (m_events.empty())
     {
         if (!block)
         {
@@ -112,7 +112,7 @@ bool WindowImpl::PopEvent(Event& event, bool block)
             // Here we use a manual wait loop instead of the optimized
             // wait-event provided by the OS, so that we don't skip joystick
             // events (which require polling)
-            while (myEvents.empty())
+            while (m_events.empty())
             {
                 ProcessJoystickEvents();
                 ProcessEvents();
@@ -122,10 +122,10 @@ bool WindowImpl::PopEvent(Event& event, bool block)
     }
 
     // Pop the first event of the queue, if it is not empty
-    if (!myEvents.empty())
+    if (!m_events.empty())
     {
-        event = myEvents.front();
-        myEvents.pop();
+        event = m_events.front();
+        m_events.pop();
 
         return true;
     }
@@ -137,7 +137,7 @@ bool WindowImpl::PopEvent(Event& event, bool block)
 ////////////////////////////////////////////////////////////
 void WindowImpl::PushEvent(const Event& event)
 {
-    myEvents.push(event);
+    m_events.push(event);
 }
 
 
@@ -150,12 +150,12 @@ void WindowImpl::ProcessJoystickEvents()
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
         // Copy the previous state of the joystick and get the new one
-        JoystickState previousState = myJoyStates[i];
-        myJoyStates[i] = JoystickManager::GetInstance().GetState(i);
+        JoystickState previousState = m_joyStates[i];
+        m_joyStates[i] = JoystickManager::GetInstance().GetState(i);
         JoystickCaps caps = JoystickManager::GetInstance().GetCapabilities(i);
 
         // Connection state
-        bool connected = myJoyStates[i].Connected;
+        bool connected = m_joyStates[i].Connected;
         if (previousState.Connected ^ connected)
         {
             Event event;
@@ -173,8 +173,8 @@ void WindowImpl::ProcessJoystickEvents()
                 {
                     Joystick::Axis axis = static_cast<Joystick::Axis>(j);
                     float prevPos = previousState.Axes[axis];
-                    float currPos = myJoyStates[i].Axes[axis];
-                    if (fabs(currPos - prevPos) >= myJoyThreshold)
+                    float currPos = m_joyStates[i].Axes[axis];
+                    if (fabs(currPos - prevPos) >= m_joyThreshold)
                     {
                         Event event;
                         event.Type = Event::JoystickMoved;
@@ -190,7 +190,7 @@ void WindowImpl::ProcessJoystickEvents()
             for (unsigned int j = 0; j < caps.ButtonCount; ++j)
             {
                 bool prevPressed = previousState.Buttons[j];
-                bool currPressed = myJoyStates[i].Buttons[j];
+                bool currPressed = m_joyStates[i].Buttons[j];
 
                 if (prevPressed ^ currPressed)
                 {

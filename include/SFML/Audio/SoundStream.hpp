@@ -281,15 +281,15 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread        myThread;                  ///< Thread running the background tasks
-    bool          myIsStreaming;             ///< Streaming state (true = playing, false = stopped)
-    unsigned int  myBuffers[BufferCount];    ///< Sound buffers used to store temporary audio data
-    unsigned int  myChannelCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
-    unsigned int  mySampleRate;              ///< Frequency (samples / second)
-    Uint32        myFormat;                  ///< Format of the internal sound buffers
-    bool          myLoop;                    ///< Loop flag (true to loop, false to play once)
-    Uint64        mySamplesProcessed;        ///< Number of buffers processed since beginning of the stream
-    bool          myEndBuffers[BufferCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation
+    Thread        m_thread;                  ///< Thread running the background tasks
+    bool          m_isStreaming;             ///< Streaming state (true = playing, false = stopped)
+    unsigned int  m_buffers[BufferCount];    ///< Sound buffers used to store temporary audio data
+    unsigned int  m_channelCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
+    unsigned int  m_sampleRate;              ///< Frequency (samples / second)
+    Uint32        m_format;                  ///< Format of the internal sound buffers
+    bool          m_loop;                    ///< Loop flag (true to loop, false to play once)
+    Uint64        m_samplesProcessed;        ///< Number of buffers processed since beginning of the stream
+    bool          m_endBuffers[BufferCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation
 };
 
 } // namespace sf

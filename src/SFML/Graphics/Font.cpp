@@ -63,10 +63,10 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Font::Font() :
-myLibrary  (NULL),
-myFace     (NULL),
-myStreamRec(NULL),
-myRefCount (NULL)
+m_library  (NULL),
+m_face     (NULL),
+m_streamRec(NULL),
+m_refCount (NULL)
 {
 
 }
@@ -74,18 +74,18 @@ myRefCount (NULL)
 
 ////////////////////////////////////////////////////////////
 Font::Font(const Font& copy) :
-myLibrary    (copy.myLibrary),
-myFace       (copy.myFace),
-myStreamRec  (copy.myStreamRec),
-myRefCount   (copy.myRefCount),
-myPages      (copy.myPages),
-myPixelBuffer(copy.myPixelBuffer)
+m_library    (copy.m_library),
+m_face       (copy.m_face),
+m_streamRec  (copy.m_streamRec),
+m_refCount   (copy.m_refCount),
+m_pages      (copy.m_pages),
+m_pixelBuffer(copy.m_pixelBuffer)
 {
     // Note: as FreeType doesn't provide functions for copying/cloning,
     // we must share all the FreeType pointers
 
-    if (myRefCount)
-        (*myRefCount)++;
+    if (m_refCount)
+        (*m_refCount)++;
 }
 
 
@@ -101,7 +101,7 @@ bool Font::LoadFromFile(const std::string& filename)
 {
     // Cleanup the previous resources
     Cleanup();
-    myRefCount = new int(1);
+    m_refCount = new int(1);
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -112,11 +112,11 @@ bool Font::LoadFromFile(const std::string& filename)
         Err() << "Failed to load font \"" << filename << "\" (failed to initialize FreeType)" << std::endl;
         return false;
     }
-    myLibrary = library;
+    m_library = library;
 
     // Load the new font face from the specified file
     FT_Face face;
-    if (FT_New_Face(static_cast<FT_Library>(myLibrary), filename.c_str(), 0, &face) != 0)
+    if (FT_New_Face(static_cast<FT_Library>(m_library), filename.c_str(), 0, &face) != 0)
     {
         Err() << "Failed to load font \"" << filename << "\" (failed to create the font face)" << std::endl;
         return false;
@@ -130,7 +130,7 @@ bool Font::LoadFromFile(const std::string& filename)
     }
 
     // Store the loaded font in our ugly void* :)
-    myFace = face;
+    m_face = face;
 
     return true;
 }
@@ -141,7 +141,7 @@ bool Font::LoadFromMemory(const void* data, std::size_t sizeInBytes)
 {
     // Cleanup the previous resources
     Cleanup();
-    myRefCount = new int(1);
+    m_refCount = new int(1);
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -152,11 +152,11 @@ bool Font::LoadFromMemory(const void* data, std::size_t sizeInBytes)
         Err() << "Failed to load font from memory (failed to initialize FreeType)" << std::endl;
         return false;
     }
-    myLibrary = library;
+    m_library = library;
 
     // Load the new font face from the specified file
     FT_Face face;
-    if (FT_New_Memory_Face(static_cast<FT_Library>(myLibrary), reinterpret_cast<const FT_Byte*>(data), static_cast<FT_Long>(sizeInBytes), 0, &face) != 0)
+    if (FT_New_Memory_Face(static_cast<FT_Library>(m_library), reinterpret_cast<const FT_Byte*>(data), static_cast<FT_Long>(sizeInBytes), 0, &face) != 0)
     {
         Err() << "Failed to load font from memory (failed to create the font face)" << std::endl;
         return false;
@@ -170,7 +170,7 @@ bool Font::LoadFromMemory(const void* data, std::size_t sizeInBytes)
     }
 
     // Store the loaded font in our ugly void* :)
-    myFace = face;
+    m_face = face;
 
     return true;
 }
@@ -181,7 +181,7 @@ bool Font::LoadFromStream(InputStream& stream)
 {
     // Cleanup the previous resources
     Cleanup();
-    myRefCount = new int(1);
+    m_refCount = new int(1);
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -192,7 +192,7 @@ bool Font::LoadFromStream(InputStream& stream)
         Err() << "Failed to load font from stream (failed to initialize FreeType)" << std::endl;
         return false;
     }
-    myLibrary = library;
+    m_library = library;
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
     FT_StreamRec* rec = new FT_StreamRec;
@@ -212,7 +212,7 @@ bool Font::LoadFromStream(InputStream& stream)
 
     // Load the new font face from the specified stream
     FT_Face face;
-    if (FT_Open_Face(static_cast<FT_Library>(myLibrary), &args, 0, &face) != 0)
+    if (FT_Open_Face(static_cast<FT_Library>(m_library), &args, 0, &face) != 0)
     {
         Err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
         return false;
@@ -226,8 +226,8 @@ bool Font::LoadFromStream(InputStream& stream)
     }
 
     // Store the loaded font in our ugly void* :)
-    myFace = face;
-    myStreamRec = rec;
+    m_face = face;
+    m_streamRec = rec;
 
     return true;
 }
@@ -237,7 +237,7 @@ bool Font::LoadFromStream(InputStream& stream)
 const Glyph& Font::GetGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const
 {
     // Get the page corresponding to the character size
-    GlyphTable& glyphs = myPages[characterSize].Glyphs;
+    GlyphTable& glyphs = m_pages[characterSize].Glyphs;
 
     // Build the key by combining the code point and the bold flag
     Uint32 key = ((bold ? 1 : 0) << 31) | codePoint;
@@ -265,7 +265,7 @@ int Font::GetKerning(Uint32 first, Uint32 second, unsigned int characterSize) co
     if (first == 0 || second == 0)
         return 0;
 
-    FT_Face face = static_cast<FT_Face>(myFace);
+    FT_Face face = static_cast<FT_Face>(m_face);
 
     if (face && FT_HAS_KERNING(face) && SetCurrentSize(characterSize))
     {
@@ -291,7 +291,7 @@ int Font::GetKerning(Uint32 first, Uint32 second, unsigned int characterSize) co
 ////////////////////////////////////////////////////////////
 int Font::GetLineSpacing(unsigned int characterSize) const
 {
-    FT_Face face = static_cast<FT_Face>(myFace);
+    FT_Face face = static_cast<FT_Face>(m_face);
 
     if (face && SetCurrentSize(characterSize))
     {
@@ -307,7 +307,7 @@ int Font::GetLineSpacing(unsigned int characterSize) const
 ////////////////////////////////////////////////////////////
 const Texture& Font::GetTexture(unsigned int characterSize) const
 {
-    return myPages[characterSize].Texture;
+    return m_pages[characterSize].Texture;
 }
 
 
@@ -316,11 +316,11 @@ Font& Font::operator =(const Font& right)
 {
     Font temp(right);
 
-    std::swap(myLibrary,     temp.myLibrary);
-    std::swap(myFace,        temp.myFace);
-    std::swap(myPages,       temp.myPages);
-    std::swap(myPixelBuffer, temp.myPixelBuffer);
-    std::swap(myRefCount,    temp.myRefCount);
+    std::swap(m_library,     temp.m_library);
+    std::swap(m_face,        temp.m_face);
+    std::swap(m_pages,       temp.m_pages);
+    std::swap(m_pixelBuffer, temp.m_pixelBuffer);
+    std::swap(m_refCount,    temp.m_refCount);
 
     return *this;
 }
@@ -352,38 +352,38 @@ const Font& Font::GetDefaultFont()
 void Font::Cleanup()
 {
     // Check if we must destroy the FreeType pointers
-    if (myRefCount)
+    if (m_refCount)
     {
         // Decrease the reference counter
-        (*myRefCount)--;
+        (*m_refCount)--;
 
         // Free the resources only if we are the last owner
-        if (*myRefCount == 0)
+        if (*m_refCount == 0)
         {
             // Delete the reference counter
-            delete myRefCount;
+            delete m_refCount;
 
             // Destroy the font face
-            if (myFace)
-                FT_Done_Face(static_cast<FT_Face>(myFace));
+            if (m_face)
+                FT_Done_Face(static_cast<FT_Face>(m_face));
 
             // Destroy the stream rec instance, if any (must be done after FT_Done_Face!)
-            if (myStreamRec)
-                delete static_cast<FT_StreamRec*>(myStreamRec);
+            if (m_streamRec)
+                delete static_cast<FT_StreamRec*>(m_streamRec);
 
             // Close the library
-            if (myLibrary)
-                FT_Done_FreeType(static_cast<FT_Library>(myLibrary));
+            if (m_library)
+                FT_Done_FreeType(static_cast<FT_Library>(m_library));
         }
     }
 
     // Reset members
-    myLibrary   = NULL;
-    myFace      = NULL;
-    myStreamRec = NULL;
-    myRefCount  = NULL;
-    myPages.clear();
-    myPixelBuffer.clear();
+    m_library   = NULL;
+    m_face      = NULL;
+    m_streamRec = NULL;
+    m_refCount  = NULL;
+    m_pages.clear();
+    m_pixelBuffer.clear();
 }
 
 
@@ -394,7 +394,7 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
     Glyph glyph;
 
     // First, transform our ugly void* to a FT_Face
-    FT_Face face = static_cast<FT_Face>(myFace);
+    FT_Face face = static_cast<FT_Face>(m_face);
     if (!face)
         return glyph;
 
@@ -428,7 +428,7 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
     // Apply bold if necessary -- fallback technique using bitmap (lower quality)
     if (bold && !outline)
     {
-        FT_Bitmap_Embolden(static_cast<FT_Library>(myLibrary), &bitmap, weight, weight);
+        FT_Bitmap_Embolden(static_cast<FT_Library>(m_library), &bitmap, weight, weight);
     }
 
     // Compute the glyph's advance offset
@@ -445,7 +445,7 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         const unsigned int padding = 1;
 
         // Get the glyphs page corresponding to the character size
-        Page& page = myPages[characterSize];
+        Page& page = m_pages[characterSize];
 
         // Find a good position for the new glyph into the texture
         glyph.TextureRect = FindGlyphRect(page, width + 2 * padding, height + 2 * padding);
@@ -457,7 +457,7 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         glyph.Bounds.Height = height + 2 * padding;
 
         // Extract the glyph's pixels from the bitmap
-        myPixelBuffer.resize(width * height * 4, 255);
+        m_pixelBuffer.resize(width * height * 4, 255);
         const Uint8* pixels = bitmap.buffer;
         if (bitmap.pixel_mode == FT_PIXEL_MODE_MONO)
         {
@@ -468,7 +468,7 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
                 {
                     // The color channels remain white, just fill the alpha channel
                     std::size_t index = (x + y * width) * 4 + 3;
-                    myPixelBuffer[index] = ((pixels[x / 8]) & (1 << (7 - (x % 8)))) ? 255 : 0;
+                    m_pixelBuffer[index] = ((pixels[x / 8]) & (1 << (7 - (x % 8)))) ? 255 : 0;
                 }
                 pixels += bitmap.pitch;
             }
@@ -482,7 +482,7 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
                 {
                     // The color channels remain white, just fill the alpha channel
                     std::size_t index = (x + y * width) * 4 + 3;
-                    myPixelBuffer[index] = pixels[x];
+                    m_pixelBuffer[index] = pixels[x];
                 }
                 pixels += bitmap.pitch;
             }
@@ -493,7 +493,7 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         unsigned int y      = glyph.TextureRect.Top + padding;
         unsigned int width  = glyph.TextureRect.Width - 2 * padding;
         unsigned int height = glyph.TextureRect.Height - 2 * padding;
-        page.Texture.Update(&myPixelBuffer[0], width, height, x, y);
+        page.Texture.Update(&m_pixelBuffer[0], width, height, x, y);
     }
 
     // Delete the FT glyph
@@ -577,7 +577,7 @@ bool Font::SetCurrentSize(unsigned int characterSize) const
     // FT_Set_Pixel_Sizes is an expensive function, so we must call it
     // only when necessary to avoid killing performances
 
-    FT_Face face = static_cast<FT_Face>(myFace);
+    FT_Face face = static_cast<FT_Face>(m_face);
     FT_UShort currentSize = face->size->metrics.x_ppem;
 
     if (currentSize != characterSize)

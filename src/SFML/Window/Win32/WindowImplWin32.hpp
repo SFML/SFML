@@ -230,12 +230,12 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HWND     myHandle;           ///< Win32 handle of the window
-    LONG_PTR myCallback;         ///< Stores the original event callback function of the control
-    HCURSOR  myCursor;           ///< The system cursor to display into the window
-    HICON    myIcon;             ///< Custom icon assigned to the window
-    bool     myKeyRepeatEnabled; ///< Automatic key-repeat state for keydown events
-    bool     myIsCursorIn;       ///< Is the mouse cursor in the window's area ?
+    HWND     m_handle;           ///< Win32 handle of the window
+    LONG_PTR m_callback;         ///< Stores the original event callback function of the control
+    HCURSOR  m_cursor;           ///< The system cursor to display into the window
+    HICON    m_icon;             ///< Custom icon assigned to the window
+    bool     m_keyRepeatEnabled; ///< Automatic key-repeat state for keydown events
+    bool     m_isCursorIn;       ///< Is the mouse cursor in the window's area ?
 };
 
 } // namespace priv

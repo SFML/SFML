@@ -366,9 +366,9 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    View        myDefaultView; ///< Default view
-    View        myView;        ///< Current view
-    StatesCache myCache;       ///< Render states cache
+    View        m_defaultView; ///< Default view
+    View        m_view;        ///< Current view
+    StatesCache m_cache;       ///< Render states cache
 };
 
 } // namespace sf

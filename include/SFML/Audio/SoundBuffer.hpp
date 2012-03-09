@@ -279,10 +279,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int       myBuffer;   ///< OpenAL buffer identifier
-    std::vector<Int16> mySamples;  ///< Samples buffer
-    Time               myDuration; ///< Sound duration
-    mutable SoundList  mySounds;   ///< List of sounds that are using this buffer
+    unsigned int       m_buffer;   ///< OpenAL buffer identifier
+    std::vector<Int16> m_samples;  ///< Samples buffer
+    Time               m_duration; ///< Sound duration
+    mutable SoundList  m_sounds;   ///< List of sounds that are using this buffer
 };
 
 } // namespace sf

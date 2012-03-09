@@ -44,28 +44,28 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Mutex::Mutex()
 {
-    myMutexImpl = new priv::MutexImpl;
+    m_mutexImpl = new priv::MutexImpl;
 }
 
 
 ////////////////////////////////////////////////////////////
 Mutex::~Mutex()
 {
-    delete myMutexImpl;
+    delete m_mutexImpl;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Mutex::Lock()
 {
-    myMutexImpl->Lock();
+    m_mutexImpl->Lock();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Mutex::Unlock()
 {
-    myMutexImpl->Unlock();
+    m_mutexImpl->Unlock();
 }
 
 } // namespace sf

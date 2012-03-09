@@ -95,8 +95,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int myIndex; ///< Index of the joystick
-    JOYCAPS      myCaps;  ///< Joystick capabilities
+    unsigned int m_index; ///< Index of the joystick
+    JOYCAPS      m_caps;  ///< Joystick capabilities
 };
 
 } // namespace priv

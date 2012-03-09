@@ -177,8 +177,8 @@ public :
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        Status      myStatus;  ///< Status code returned from the server
-        std::string myMessage; ///< Last message received from the server
+        Status      m_status;  ///< Status code returned from the server
+        std::string m_message; ///< Last message received from the server
     };
 
     ////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ public :
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        std::string myDirectory; ///< Directory extracted from the response message
+        std::string m_directory; ///< Directory extracted from the response message
     };
 
 
@@ -244,7 +244,7 @@ public :
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        std::vector<std::string> myFilenames; ///< Filenames extracted from the data
+        std::vector<std::string> m_filenames; ///< Filenames extracted from the data
     };
 
 
@@ -517,7 +517,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    TcpSocket myCommandSocket; ///< Socket holding the control connection with the server
+    TcpSocket m_commandSocket; ///< Socket holding the control connection with the server
 };
 
 } // namespace sf

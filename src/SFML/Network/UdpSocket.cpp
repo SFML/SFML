@@ -38,7 +38,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 UdpSocket::UdpSocket() :
 Socket  (Udp),
-myBuffer(MaxDatagramSize)
+m_buffer(MaxDatagramSize)
 {
 
 }
@@ -179,12 +179,12 @@ Socket::Status UdpSocket::Receive(Packet& packet, IpAddress& remoteAddress, unsi
 
     // Receive the datagram
     std::size_t received = 0;
-    Status status = Receive(&myBuffer[0], myBuffer.size(), received, remoteAddress, remotePort);
+    Status status = Receive(&m_buffer[0], m_buffer.size(), received, remoteAddress, remotePort);
 
     // If we received valid data, we can copy it to the user packet
     packet.Clear();
     if ((status == Done) && (received > 0))
-        packet.OnReceive(&myBuffer[0], received);
+        packet.OnReceive(&m_buffer[0], received);
 
     return status;
 }

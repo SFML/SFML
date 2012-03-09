@@ -49,10 +49,10 @@ bool JoystickImpl::IsConnected(unsigned int index)
 bool JoystickImpl::Open(unsigned int index)
 {
     // No explicit "open" action is required
-    myIndex = JOYSTICKID1 + index;
+    m_index = JOYSTICKID1 + index;
 
     // Store the joystick capabilities
-    return joyGetDevCaps(myIndex, &myCaps, sizeof(myCaps)) == JOYERR_NOERROR;
+    return joyGetDevCaps(m_index, &m_caps, sizeof(m_caps)) == JOYERR_NOERROR;
 }
 
 
@@ -68,18 +68,18 @@ JoystickCaps JoystickImpl::GetCapabilities() const
 {
     JoystickCaps caps;
 
-    caps.ButtonCount = myCaps.wNumButtons;
+    caps.ButtonCount = m_caps.wNumButtons;
     if (caps.ButtonCount > Joystick::ButtonCount)
         caps.ButtonCount = Joystick::ButtonCount;
 
     caps.Axes[Joystick::X]    = true;
     caps.Axes[Joystick::Y]    = true;
-    caps.Axes[Joystick::Z]    = (myCaps.wCaps & JOYCAPS_HASZ) != 0;
-    caps.Axes[Joystick::R]    = (myCaps.wCaps & JOYCAPS_HASR) != 0;
-    caps.Axes[Joystick::U]    = (myCaps.wCaps & JOYCAPS_HASU) != 0;
-    caps.Axes[Joystick::V]    = (myCaps.wCaps & JOYCAPS_HASV) != 0;
-    caps.Axes[Joystick::PovX] = (myCaps.wCaps & JOYCAPS_HASPOV) != 0;
-    caps.Axes[Joystick::PovY] = (myCaps.wCaps & JOYCAPS_HASPOV) != 0;
+    caps.Axes[Joystick::Z]    = (m_caps.wCaps & JOYCAPS_HASZ) != 0;
+    caps.Axes[Joystick::R]    = (m_caps.wCaps & JOYCAPS_HASR) != 0;
+    caps.Axes[Joystick::U]    = (m_caps.wCaps & JOYCAPS_HASU) != 0;
+    caps.Axes[Joystick::V]    = (m_caps.wCaps & JOYCAPS_HASV) != 0;
+    caps.Axes[Joystick::PovX] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+    caps.Axes[Joystick::PovY] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
 
     return caps;
 }
@@ -93,20 +93,20 @@ JoystickState JoystickImpl::Update()
     // Get the current joystick state
     JOYINFOEX pos;
     pos.dwFlags  = JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR | JOY_RETURNU | JOY_RETURNV | JOY_RETURNBUTTONS;
-    pos.dwFlags |= (myCaps.wCaps & JOYCAPS_POVCTS) ? JOY_RETURNPOVCTS : JOY_RETURNPOV;
+    pos.dwFlags |= (m_caps.wCaps & JOYCAPS_POVCTS) ? JOY_RETURNPOVCTS : JOY_RETURNPOV;
     pos.dwSize   = sizeof(JOYINFOEX);
-    if (joyGetPosEx(myIndex, &pos) == JOYERR_NOERROR)
+    if (joyGetPosEx(m_index, &pos) == JOYERR_NOERROR)
     {
         // The joystick is connected
         state.Connected = true;
 
         // Axes
-        state.Axes[Joystick::X] = (pos.dwXpos - (myCaps.wXmax + myCaps.wXmin) / 2.f) * 200.f / (myCaps.wXmax - myCaps.wXmin);
-        state.Axes[Joystick::Y] = (pos.dwYpos - (myCaps.wYmax + myCaps.wYmin) / 2.f) * 200.f / (myCaps.wYmax - myCaps.wYmin);
-        state.Axes[Joystick::Z] = (pos.dwZpos - (myCaps.wZmax + myCaps.wZmin) / 2.f) * 200.f / (myCaps.wZmax - myCaps.wZmin);
-        state.Axes[Joystick::R] = (pos.dwRpos - (myCaps.wRmax + myCaps.wRmin) / 2.f) * 200.f / (myCaps.wRmax - myCaps.wRmin);
-        state.Axes[Joystick::U] = (pos.dwUpos - (myCaps.wUmax + myCaps.wUmin) / 2.f) * 200.f / (myCaps.wUmax - myCaps.wUmin);
-        state.Axes[Joystick::V] = (pos.dwVpos - (myCaps.wVmax + myCaps.wVmin) / 2.f) * 200.f / (myCaps.wVmax - myCaps.wVmin);
+        state.Axes[Joystick::X] = (pos.dwXpos - (m_caps.wXmax + m_caps.wXmin) / 2.f) * 200.f / (m_caps.wXmax - m_caps.wXmin);
+        state.Axes[Joystick::Y] = (pos.dwYpos - (m_caps.wYmax + m_caps.wYmin) / 2.f) * 200.f / (m_caps.wYmax - m_caps.wYmin);
+        state.Axes[Joystick::Z] = (pos.dwZpos - (m_caps.wZmax + m_caps.wZmin) / 2.f) * 200.f / (m_caps.wZmax - m_caps.wZmin);
+        state.Axes[Joystick::R] = (pos.dwRpos - (m_caps.wRmax + m_caps.wRmin) / 2.f) * 200.f / (m_caps.wRmax - m_caps.wRmin);
+        state.Axes[Joystick::U] = (pos.dwUpos - (m_caps.wUmax + m_caps.wUmin) / 2.f) * 200.f / (m_caps.wUmax - m_caps.wUmin);
+        state.Axes[Joystick::V] = (pos.dwVpos - (m_caps.wVmax + m_caps.wVmin) / 2.f) * 200.f / (m_caps.wVmax - m_caps.wVmin);
 
         // Special case for POV, it is given as an angle
         if (pos.dwPOV != 0xFFFF)

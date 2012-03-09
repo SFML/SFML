@@ -41,7 +41,7 @@ namespace sf
 Thread::~Thread()
 {
     Wait();
-    delete myEntryPoint;
+    delete m_entryPoint;
 }
 
 
@@ -49,18 +49,18 @@ Thread::~Thread()
 void Thread::Launch()
 {
     Wait();
-    myImpl = new priv::ThreadImpl(this);
+    m_impl = new priv::ThreadImpl(this);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Thread::Wait()
 {
-    if (myImpl)
+    if (m_impl)
     {
-        myImpl->Wait();
-        delete myImpl;
-        myImpl = NULL;
+        m_impl->Wait();
+        delete m_impl;
+        m_impl = NULL;
     }
 }
 
@@ -68,11 +68,11 @@ void Thread::Wait()
 ////////////////////////////////////////////////////////////
 void Thread::Terminate()
 {
-    if (myImpl)
+    if (m_impl)
     {
-        myImpl->Terminate();
-        delete myImpl;
-        myImpl = NULL;
+        m_impl->Terminate();
+        delete m_impl;
+        m_impl = NULL;
     }
 }
 
@@ -80,7 +80,7 @@ void Thread::Terminate()
 ////////////////////////////////////////////////////////////
 void Thread::Run()
 {
-    myEntryPoint->Run();
+    m_entryPoint->Run();
 }
 
 } // namespace sf

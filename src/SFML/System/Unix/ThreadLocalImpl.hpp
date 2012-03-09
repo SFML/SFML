@@ -76,7 +76,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    pthread_key_t myKey; ///< Index of our thread-local storage slot
+    pthread_key_t m_key; ///< Index of our thread-local storage slot
 };
 
 } // namespace priv

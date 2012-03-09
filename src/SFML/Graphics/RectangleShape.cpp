@@ -41,7 +41,7 @@ RectangleShape::RectangleShape(const Vector2f& size)
 ////////////////////////////////////////////////////////////
 void RectangleShape::SetSize(const Vector2f& size)
 {
-    mySize = size;
+    m_size = size;
     Update();
 }
 
@@ -49,7 +49,7 @@ void RectangleShape::SetSize(const Vector2f& size)
 ////////////////////////////////////////////////////////////
 const Vector2f& RectangleShape::GetSize() const
 {
-    return mySize;
+    return m_size;
 }
 
 
@@ -67,9 +67,9 @@ Vector2f RectangleShape::GetPoint(unsigned int index) const
     {
         default:
         case 0: return Vector2f(0, 0);
-        case 1: return Vector2f(mySize.x, 0);
-        case 2: return Vector2f(mySize.x, mySize.y);
-        case 3: return Vector2f(0, mySize.y);
+        case 1: return Vector2f(m_size.x, 0);
+        case 2: return Vector2f(m_size.x, m_size.y);
+        case 3: return Vector2f(0, m_size.y);
     }
 }
 

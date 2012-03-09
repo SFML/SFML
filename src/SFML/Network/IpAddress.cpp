@@ -69,7 +69,7 @@ const IpAddress IpAddress::Broadcast(255, 255, 255, 255);
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress() :
-myAddress(0)
+m_address(0)
 {
     // We're using 0 (INADDR_ANY) instead of INADDR_NONE to represent the invalid address,
     // because the latter is also the broadcast address (255.255.255.255); it's ok because
@@ -79,28 +79,28 @@ myAddress(0)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(const std::string& address) :
-myAddress(Resolve(address))
+m_address(Resolve(address))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(const char* address) :
-myAddress(Resolve(address))
+m_address(Resolve(address))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
-myAddress(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))
+m_address(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint32 address) :
-myAddress(htonl(address))
+m_address(htonl(address))
 {
 }
 
@@ -109,7 +109,7 @@ myAddress(htonl(address))
 std::string IpAddress::ToString() const
 {
     in_addr address;
-    address.s_addr = myAddress;
+    address.s_addr = m_address;
 
     return inet_ntoa(address);
 }
@@ -118,7 +118,7 @@ std::string IpAddress::ToString() const
 ////////////////////////////////////////////////////////////
 Uint32 IpAddress::ToInteger() const
 {
-    return ntohl(myAddress);
+    return ntohl(m_address);
 }
 
 

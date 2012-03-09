@@ -86,8 +86,8 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HANDLE myThread; ///< Win32 thread handle
-    unsigned int myThreadId; ///< Win32 thread identifier
+    HANDLE m_thread; ///< Win32 thread handle
+    unsigned int m_threadId; ///< Win32 thread identifier
 };
 
 } // namespace priv

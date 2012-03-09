@@ -39,9 +39,9 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ThreadImpl::ThreadImpl(Thread* owner)
 {
-    myThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, owner, 0, &myThreadId));
+    m_thread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, owner, 0, &m_threadId));
 
-    if (!myThread)
+    if (!m_thread)
         Err() << "Failed to create thread" << std::endl;
 }
 
@@ -49,18 +49,18 @@ ThreadImpl::ThreadImpl(Thread* owner)
 ////////////////////////////////////////////////////////////
 ThreadImpl::~ThreadImpl()
 {
-    if (myThread)
-        CloseHandle(myThread);
+    if (m_thread)
+        CloseHandle(m_thread);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ThreadImpl::Wait()
 {
-    if (myThread)
+    if (m_thread)
     {
-        assert(myThreadId != GetCurrentThreadId()); // A thread cannot wait for itself!
-        WaitForSingleObject(myThread, INFINITE);
+        assert(m_threadId != GetCurrentThreadId()); // A thread cannot wait for itself!
+        WaitForSingleObject(m_thread, INFINITE);
     }
 }
 
@@ -68,8 +68,8 @@ void ThreadImpl::Wait()
 ////////////////////////////////////////////////////////////
 void ThreadImpl::Terminate()
 {
-    if (myThread)
-        TerminateThread(myThread, 0);
+    if (m_thread)
+        TerminateThread(m_thread, 0);
 }
 
 

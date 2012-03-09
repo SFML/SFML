@@ -216,7 +216,7 @@ protected :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ContextSettings mySettings; ///< Creation settings of the context
+    ContextSettings m_settings; ///< Creation settings of the context
 
 private:
 

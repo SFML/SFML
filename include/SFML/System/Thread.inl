@@ -35,29 +35,29 @@ struct ThreadFunc
 template <typename T>
 struct ThreadFunctor : ThreadFunc
 {
-    ThreadFunctor(T functor) : myFunctor(functor) {}
-    virtual void Run() {myFunctor();}
-    T myFunctor;
+    ThreadFunctor(T functor) : m_functor(functor) {}
+    virtual void Run() {m_functor();}
+    T m_functor;
 };
 
 // Specialization using a functor (including free functions) with one argument
 template <typename F, typename A>
 struct ThreadFunctorWithArg : ThreadFunc
 {
-    ThreadFunctorWithArg(F function, A arg) : myFunction(function), myArg(arg) {}
-    virtual void Run() {myFunction(myArg);}
-    F myFunction;
-    A myArg;
+    ThreadFunctorWithArg(F function, A arg) : m_function(function), m_arg(arg) {}
+    virtual void Run() {m_function(m_arg);}
+    F m_function;
+    A m_arg;
 };
 
 // Specialization using a member function
 template <typename C>
 struct ThreadMemberFunc : ThreadFunc
 {
-    ThreadMemberFunc(void(C::*function)(), C* object) : myFunction(function), myObject(object) {}
-    virtual void Run() {(myObject->*myFunction)();}
-    void(C::*myFunction)();
-    C* myObject;
+    ThreadMemberFunc(void(C::*function)(), C* object) : m_function(function), m_object(object) {}
+    virtual void Run() {(m_object->*m_function)();}
+    void(C::*m_function)();
+    C* m_object;
 };
 
 } // namespace priv
@@ -66,8 +66,8 @@ struct ThreadMemberFunc : ThreadFunc
 ////////////////////////////////////////////////////////////
 template <typename F>
 Thread::Thread(F functor) :
-myImpl      (NULL),
-myEntryPoint(new priv::ThreadFunctor<F>(functor))
+m_impl      (NULL),
+m_entryPoint(new priv::ThreadFunctor<F>(functor))
 {
 }
 
@@ -75,8 +75,8 @@ myEntryPoint(new priv::ThreadFunctor<F>(functor))
 ////////////////////////////////////////////////////////////
 template <typename F, typename A>
 Thread::Thread(F function, A argument) :
-myImpl      (NULL),
-myEntryPoint(new priv::ThreadFunctorWithArg<F, A>(function, argument))
+m_impl      (NULL),
+m_entryPoint(new priv::ThreadFunctorWithArg<F, A>(function, argument))
 {
 }
 
@@ -84,7 +84,7 @@ myEntryPoint(new priv::ThreadFunctorWithArg<F, A>(function, argument))
 ////////////////////////////////////////////////////////////
 template <typename C>
 Thread::Thread(void(C::*function)(), C* object) :
-myImpl      (NULL),
-myEntryPoint(new priv::ThreadMemberFunc<C>(function, object))
+m_impl      (NULL),
+m_entryPoint(new priv::ThreadMemberFunc<C>(function, object))
 {
 }

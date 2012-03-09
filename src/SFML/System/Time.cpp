@@ -36,7 +36,7 @@ const Time Time::Zero;
 
 ////////////////////////////////////////////////////////////
 Time::Time() :
-myMicroseconds(0)
+m_microseconds(0)
 {
 }
 
@@ -44,27 +44,27 @@ myMicroseconds(0)
 ////////////////////////////////////////////////////////////
 float Time::AsSeconds() const
 {
-    return myMicroseconds / 1000000.f;
+    return m_microseconds / 1000000.f;
 }
 
 
 ////////////////////////////////////////////////////////////
 Int32 Time::AsMilliseconds() const
 {
-    return static_cast<Uint32>(myMicroseconds / 1000);
+    return static_cast<Uint32>(m_microseconds / 1000);
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 Time::AsMicroseconds() const
 {
-    return myMicroseconds;
+    return m_microseconds;
 }
 
 
 ////////////////////////////////////////////////////////////
 Time::Time(Int64 microseconds) :
-myMicroseconds(microseconds)
+m_microseconds(microseconds)
 {
 }
 

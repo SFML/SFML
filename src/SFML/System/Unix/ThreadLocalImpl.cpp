@@ -35,28 +35,28 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ThreadLocalImpl::ThreadLocalImpl()
 {
-    pthread_key_create(&myKey, NULL);
+    pthread_key_create(&m_key, NULL);
 }
 
 
 ////////////////////////////////////////////////////////////
 ThreadLocalImpl::~ThreadLocalImpl()
 {
-    pthread_key_delete(myKey);
+    pthread_key_delete(m_key);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ThreadLocalImpl::SetValue(void* value)
 {
-    pthread_setspecific(myKey, value);
+    pthread_setspecific(m_key, value);
 }
 
 
 ////////////////////////////////////////////////////////////
 void* ThreadLocalImpl::GetValue() const
 {
-    return pthread_getspecific(myKey);
+    return pthread_getspecific(m_key);
 }
 
 } // namespace priv

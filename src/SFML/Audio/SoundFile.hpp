@@ -199,11 +199,11 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SNDFILE*     myFile;         ///< File descriptor
-    Memory       myMemory;       ///< Memory reading info
-    std::size_t  mySampleCount;  ///< Total number of samples in the file
-    unsigned int myChannelCount; ///< Number of channels used by the sound
-    unsigned int mySampleRate;   ///< Number of samples per second
+    SNDFILE*     m_file;         ///< File descriptor
+    Memory       m_memory;       ///< Memory reading info
+    std::size_t  m_sampleCount;  ///< Total number of samples in the file
+    unsigned int m_channelCount; ///< Number of channels used by the sound
+    unsigned int m_sampleRate;   ///< Number of samples per second
 };
 
 } // namespace priv

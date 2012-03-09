@@ -162,10 +162,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::SoundFile*   myFile;     ///< Sound file
-    Time               myDuration; ///< Music duration
-    std::vector<Int16> mySamples;  ///< Temporary buffer of samples
-    Mutex              myMutex;    ///< Mutex protecting the data
+    priv::SoundFile*   m_file;     ///< Sound file
+    Time               m_duration; ///< Music duration
+    std::vector<Int16> m_samples;  ///< Temporary buffer of samples
+    Mutex              m_mutex;    ///< Mutex protecting the data
 };
 
 } // namespace sf

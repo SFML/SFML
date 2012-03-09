@@ -35,7 +35,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 RenderTexture::RenderTexture() :
-myImpl(NULL)
+m_impl(NULL)
 {
 
 }
@@ -44,7 +44,7 @@ myImpl(NULL)
 ////////////////////////////////////////////////////////////
 RenderTexture::~RenderTexture()
 {
-    delete myImpl;
+    delete m_impl;
 }
 
 
@@ -52,7 +52,7 @@ RenderTexture::~RenderTexture()
 bool RenderTexture::Create(unsigned int width, unsigned int height, bool depthBuffer)
 {
     // Create the texture
-    if (!myTexture.Create(width, height))
+    if (!m_texture.Create(width, height))
     {
         Err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return false;
@@ -62,20 +62,20 @@ bool RenderTexture::Create(unsigned int width, unsigned int height, bool depthBu
     SetSmooth(false);
 
     // Create the implementation
-    delete myImpl;
+    delete m_impl;
     if (priv::RenderTextureImplFBO::IsAvailable())
     {
         // Use frame-buffer object (FBO)
-        myImpl = new priv::RenderTextureImplFBO;
+        m_impl = new priv::RenderTextureImplFBO;
     }
     else
     {
         // Use default implementation
-        myImpl = new priv::RenderTextureImplDefault;
+        m_impl = new priv::RenderTextureImplDefault;
     }
 
     // Initialize the render texture
-    if (!myImpl->Create(width, height, myTexture.myTexture, depthBuffer))
+    if (!m_impl->Create(width, height, m_texture.m_texture, depthBuffer))
         return false;
 
     // We can now initialize the render target part
@@ -88,21 +88,21 @@ bool RenderTexture::Create(unsigned int width, unsigned int height, bool depthBu
 ////////////////////////////////////////////////////////////
 void RenderTexture::SetSmooth(bool smooth)
 {
-    myTexture.SetSmooth(smooth);
+    m_texture.SetSmooth(smooth);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool RenderTexture::IsSmooth() const
 {
-    return myTexture.IsSmooth();
+    return m_texture.IsSmooth();
 }
 
 
 ////////////////////////////////////////////////////////////
 bool RenderTexture::SetActive(bool active)
 {
-    return myImpl && myImpl->Activate(active);
+    return m_impl && m_impl->Activate(active);
 }
 
 
@@ -112,8 +112,8 @@ void RenderTexture::Display()
     // Update the target texture
     if (SetActive(true))
     {
-        myImpl->UpdateTexture(myTexture.myTexture);
-        myTexture.myPixelsFlipped = true;
+        m_impl->UpdateTexture(m_texture.m_texture);
+        m_texture.m_pixelsFlipped = true;
     }
 }
 
@@ -121,14 +121,14 @@ void RenderTexture::Display()
 ////////////////////////////////////////////////////////////
 Vector2u RenderTexture::GetSize() const
 {
-    return Vector2u(myTexture.GetWidth(), myTexture.GetHeight());
+    return Vector2u(m_texture.GetWidth(), m_texture.GetHeight());
 }
 
 
 ////////////////////////////////////////////////////////////
 const Texture& RenderTexture::GetTexture() const
 {
-    return myTexture;
+    return m_texture;
 }
 
 

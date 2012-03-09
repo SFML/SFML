@@ -35,28 +35,28 @@ namespace priv
 ////////////////////////////////////////////////////////////
 MutexImpl::MutexImpl()
 {
-    InitializeCriticalSection(&myMutex);
+    InitializeCriticalSection(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
 MutexImpl::~MutexImpl()
 {
-    DeleteCriticalSection(&myMutex);
+    DeleteCriticalSection(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
 void MutexImpl::Lock()
 {
-    EnterCriticalSection(&myMutex);
+    EnterCriticalSection(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
 void MutexImpl::Unlock()
 {
-    LeaveCriticalSection(&myMutex);
+    LeaveCriticalSection(&m_mutex);
 }
 
 } // namespace priv

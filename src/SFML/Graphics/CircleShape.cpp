@@ -33,8 +33,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 CircleShape::CircleShape(float radius, unsigned int pointCount) :
-myRadius    (radius),
-myPointCount(pointCount)
+m_radius    (radius),
+m_pointCount(pointCount)
 {
     Update();
 }
@@ -43,7 +43,7 @@ myPointCount(pointCount)
 ////////////////////////////////////////////////////////////
 void CircleShape::SetRadius(float radius)
 {
-    myRadius = radius;
+    m_radius = radius;
     Update();
 }
 
@@ -51,21 +51,21 @@ void CircleShape::SetRadius(float radius)
 ////////////////////////////////////////////////////////////
 float CircleShape::GetRadius() const
 {
-    return myRadius;
+    return m_radius;
 }
 
 
 ////////////////////////////////////////////////////////////
 void CircleShape::SetPointCount(unsigned int count)
 {
-    myPointCount = count;
+    m_pointCount = count;
     Update();
 }
 
 ////////////////////////////////////////////////////////////
 unsigned int CircleShape::GetPointCount() const
 {
-    return myPointCount;
+    return m_pointCount;
 }
 
 
@@ -74,11 +74,11 @@ Vector2f CircleShape::GetPoint(unsigned int index) const
 {
     static const float pi = 3.141592654f;
 
-    float angle = index * 2 * pi / myPointCount - pi / 2;
-    float x = std::cos(angle) * myRadius;
-    float y = std::sin(angle) * myRadius;
+    float angle = index * 2 * pi / m_pointCount - pi / 2;
+    float x = std::cos(angle) * m_radius;
+    float y = std::sin(angle) * m_radius;
 
-    return Vector2f(myRadius + x, myRadius + y);
+    return Vector2f(m_radius + x, m_radius + y);
 }
 
 } // namespace sf

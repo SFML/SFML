@@ -45,9 +45,9 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundRecorder::SoundRecorder() :
-myThread     (&SoundRecorder::Record, this),
-mySampleRate (0),
-myIsCapturing(false)
+m_thread     (&SoundRecorder::Record, this),
+m_sampleRate (0),
+m_isCapturing(false)
 {
     priv::EnsureALInit();
 }
@@ -86,10 +86,10 @@ void SoundRecorder::Start(unsigned int sampleRate)
     }
 
     // Clear the array of samples
-    mySamples.clear();
+    m_samples.clear();
 
     // Store the sample rate
-    mySampleRate = sampleRate;
+    m_sampleRate = sampleRate;
 
     // Notify derived class
     if (OnStart())
@@ -98,8 +98,8 @@ void SoundRecorder::Start(unsigned int sampleRate)
         alcCaptureStart(captureDevice);
 
         // Start the capture in a new thread, to avoid blocking the main thread
-        myIsCapturing = true;
-        myThread.Launch();
+        m_isCapturing = true;
+        m_thread.Launch();
     }
 }
 
@@ -108,15 +108,15 @@ void SoundRecorder::Start(unsigned int sampleRate)
 void SoundRecorder::Stop()
 {
     // Stop the capturing thread
-    myIsCapturing = false;
-    myThread.Wait();
+    m_isCapturing = false;
+    m_thread.Wait();
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int SoundRecorder::GetSampleRate() const
 {
-    return mySampleRate;
+    return m_sampleRate;
 }
 
 
@@ -146,7 +146,7 @@ void SoundRecorder::OnStop()
 ////////////////////////////////////////////////////////////
 void SoundRecorder::Record()
 {
-    while (myIsCapturing)
+    while (m_isCapturing)
     {
         // Process available samples
         ProcessCapturedSamples();
@@ -173,14 +173,14 @@ void SoundRecorder::ProcessCapturedSamples()
     if (samplesAvailable > 0)
     {
         // Get the recorded samples
-        mySamples.resize(samplesAvailable);
-        alcCaptureSamples(captureDevice, &mySamples[0], samplesAvailable);
+        m_samples.resize(samplesAvailable);
+        alcCaptureSamples(captureDevice, &m_samples[0], samplesAvailable);
 
         // Forward them to the derived class
-        if (!OnProcessSamples(&mySamples[0], mySamples.size()))
+        if (!OnProcessSamples(&m_samples[0], m_samples.size()))
         {
             // The user wants to stop the capture
-            myIsCapturing = false;
+            m_isCapturing = false;
         }
     }
 }

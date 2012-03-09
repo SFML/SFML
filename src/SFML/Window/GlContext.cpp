@@ -186,7 +186,7 @@ GlContext::~GlContext()
 ////////////////////////////////////////////////////////////
 const ContextSettings& GlContext::GetSettings() const
 {
-    return mySettings;
+    return m_settings;
 }
 
 
@@ -260,18 +260,18 @@ void GlContext::Initialize()
     if (version)
     {
         // The beginning of the returned string is "major.minor" (this is standard)
-        mySettings.MajorVersion = version[0] - '0';
-        mySettings.MinorVersion = version[2] - '0';
+        m_settings.MajorVersion = version[0] - '0';
+        m_settings.MinorVersion = version[2] - '0';
     }
     else
     {
         // Can't get the version number, assume 2.0
-        mySettings.MajorVersion = 2;
-        mySettings.MinorVersion = 0;
+        m_settings.MajorVersion = 2;
+        m_settings.MinorVersion = 0;
     }
 
     // Enable antialiasing if needed
-    if (mySettings.AntialiasingLevel > 0)
+    if (m_settings.AntialiasingLevel > 0)
         glEnable(GL_MULTISAMPLE_ARB);
 }
 

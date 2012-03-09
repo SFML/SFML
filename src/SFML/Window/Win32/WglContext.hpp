@@ -124,10 +124,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HWND  myWindow;        ///< Window to which the context is attached
-    HDC   myDeviceContext; ///< Device context associated to the context
-    HGLRC myContext;       ///< OpenGL context
-    bool  myOwnsWindow;    ///< Do we own the target window?
+    HWND  m_window;        ///< Window to which the context is attached
+    HDC   m_deviceContext; ///< Device context associated to the context
+    HGLRC m_context;       ///< OpenGL context
+    bool  m_ownsWindow;    ///< Do we own the target window?
 };
 
 } // namespace priv

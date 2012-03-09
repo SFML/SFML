@@ -33,12 +33,12 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 View::View() :
-myCenter             (),
-mySize               (),
-myRotation           (0),
-myViewport           (0, 0, 1, 1),
-myTransformUpdated   (false),
-myInvTransformUpdated(false)
+m_center             (),
+m_size               (),
+m_rotation           (0),
+m_viewport           (0, 0, 1, 1),
+m_transformUpdated   (false),
+m_invTransformUpdated(false)
 {
     Reset(FloatRect(0, 0, 1000, 1000));
 }
@@ -46,12 +46,12 @@ myInvTransformUpdated(false)
 
 ////////////////////////////////////////////////////////////
 View::View(const FloatRect& rectangle) :
-myCenter             (),
-mySize               (),
-myRotation           (0),
-myViewport           (0, 0, 1, 1),
-myTransformUpdated   (false),
-myInvTransformUpdated(false)
+m_center             (),
+m_size               (),
+m_rotation           (0),
+m_viewport           (0, 0, 1, 1),
+m_transformUpdated   (false),
+m_invTransformUpdated(false)
 {
     Reset(rectangle);
 }
@@ -59,12 +59,12 @@ myInvTransformUpdated(false)
 
 ////////////////////////////////////////////////////////////
 View::View(const Vector2f& center, const Vector2f& size) :
-myCenter             (center),
-mySize               (size),
-myRotation           (0),
-myViewport           (0, 0, 1, 1),
-myTransformUpdated   (false),
-myInvTransformUpdated(false)
+m_center             (center),
+m_size               (size),
+m_rotation           (0),
+m_viewport           (0, 0, 1, 1),
+m_transformUpdated   (false),
+m_invTransformUpdated(false)
 {
 
 }
@@ -72,11 +72,11 @@ myInvTransformUpdated(false)
 ////////////////////////////////////////////////////////////
 void View::SetCenter(float x, float y)
 {
-    myCenter.x = x;
-    myCenter.y = y;
+    m_center.x = x;
+    m_center.y = y;
 
-    myTransformUpdated    = false;
-    myInvTransformUpdated = false;
+    m_transformUpdated    = false;
+    m_invTransformUpdated = false;
 }
 
 
@@ -90,11 +90,11 @@ void View::SetCenter(const Vector2f& center)
 ////////////////////////////////////////////////////////////
 void View::SetSize(float width, float height)
 {
-    mySize.x = width;
-    mySize.y = height;
+    m_size.x = width;
+    m_size.y = height;
 
-    myTransformUpdated    = false;
-    myInvTransformUpdated = false;
+    m_transformUpdated    = false;
+    m_invTransformUpdated = false;
 }
 
 
@@ -108,89 +108,89 @@ void View::SetSize(const Vector2f& size)
 ////////////////////////////////////////////////////////////
 void View::SetRotation(float angle)
 {
-    myRotation = static_cast<float>(fmod(angle, 360));
-    if (myRotation < 0)
-        myRotation += 360.f;
+    m_rotation = static_cast<float>(fmod(angle, 360));
+    if (m_rotation < 0)
+        m_rotation += 360.f;
 
-    myTransformUpdated    = false;
-    myInvTransformUpdated = false;
+    m_transformUpdated    = false;
+    m_invTransformUpdated = false;
 }
 
 
 ////////////////////////////////////////////////////////////
 void View::SetViewport(const FloatRect& viewport)
 {
-    myViewport = viewport;
+    m_viewport = viewport;
 }
 
 
 ////////////////////////////////////////////////////////////
 void View::Reset(const FloatRect& rectangle)
 {
-    myCenter.x = rectangle.Left + rectangle.Width / 2.f;
-    myCenter.y = rectangle.Top + rectangle.Height / 2.f;
-    mySize.x   = rectangle.Width;
-    mySize.y   = rectangle.Height;
-    myRotation = 0;
+    m_center.x = rectangle.Left + rectangle.Width / 2.f;
+    m_center.y = rectangle.Top + rectangle.Height / 2.f;
+    m_size.x   = rectangle.Width;
+    m_size.y   = rectangle.Height;
+    m_rotation = 0;
 
-    myTransformUpdated    = false;
-    myInvTransformUpdated = false;
+    m_transformUpdated    = false;
+    m_invTransformUpdated = false;
 }
 
 
 ////////////////////////////////////////////////////////////
 const Vector2f& View::GetCenter() const
 {
-    return myCenter;
+    return m_center;
 }
 
 
 ////////////////////////////////////////////////////////////
 const Vector2f& View::GetSize() const
 {
-    return mySize;
+    return m_size;
 }
 
 
 ////////////////////////////////////////////////////////////
 float View::GetRotation() const
 {
-    return myRotation;
+    return m_rotation;
 }
 
 
 ////////////////////////////////////////////////////////////
 const FloatRect& View::GetViewport() const
 {
-    return myViewport;
+    return m_viewport;
 }
 
 
 ////////////////////////////////////////////////////////////
 void View::Move(float offsetX, float offsetY)
 {
-    SetCenter(myCenter.x + offsetX, myCenter.y + offsetY);
+    SetCenter(m_center.x + offsetX, m_center.y + offsetY);
 }
 
 
 ////////////////////////////////////////////////////////////
 void View::Move(const Vector2f& offset)
 {
-    SetCenter(myCenter + offset);
+    SetCenter(m_center + offset);
 }
 
 
 ////////////////////////////////////////////////////////////
 void View::Rotate(float angle)
 {
-    SetRotation(myRotation + angle);
+    SetRotation(m_rotation + angle);
 }
 
 
 ////////////////////////////////////////////////////////////
 void View::Zoom(float factor)
 {
-    SetSize(mySize.x * factor, mySize.y * factor);
+    SetSize(m_size.x * factor, m_size.y * factor);
 }
 
 
@@ -198,29 +198,29 @@ void View::Zoom(float factor)
 const Transform& View::GetTransform() const
 {
     // Recompute the matrix if needed
-    if (!myTransformUpdated)
+    if (!m_transformUpdated)
     {
         // Rotation components
-        float angle  = myRotation * 3.141592654f / 180.f;
+        float angle  = m_rotation * 3.141592654f / 180.f;
         float cosine = static_cast<float>(std::cos(angle));
         float sine   = static_cast<float>(std::sin(angle));
-        float tx     = -myCenter.x * cosine - myCenter.y * sine + myCenter.x;
-        float ty     =  myCenter.x * sine - myCenter.y * cosine + myCenter.y;
+        float tx     = -m_center.x * cosine - m_center.y * sine + m_center.x;
+        float ty     =  m_center.x * sine - m_center.y * cosine + m_center.y;
 
         // Projection components
-        float a =  2.f / mySize.x;
-        float b = -2.f / mySize.y;
-        float c = -a * myCenter.x;
-        float d = -b * myCenter.y;
+        float a =  2.f / m_size.x;
+        float b = -2.f / m_size.y;
+        float c = -a * m_center.x;
+        float d = -b * m_center.y;
 
         // Rebuild the projection matrix
-        myTransform = Transform( a * cosine, a * sine,   a * tx + c,
+        m_transform = Transform( a * cosine, a * sine,   a * tx + c,
                                 -b * sine,   b * cosine, b * ty + d,
                                  0.f,        0.f,        1.f);
-        myTransformUpdated = true;
+        m_transformUpdated = true;
     }
 
-    return myTransform;
+    return m_transform;
 }
 
 
@@ -228,13 +228,13 @@ const Transform& View::GetTransform() const
 const Transform& View::GetInverseTransform() const
 {
     // Recompute the matrix if needed
-    if (!myInvTransformUpdated)
+    if (!m_invTransformUpdated)
     {
-        myInverseTransform = GetTransform().GetInverse();
-        myInvTransformUpdated = true;
+        m_inverseTransform = GetTransform().GetInverse();
+        m_invTransformUpdated = true;
     }
 
-    return myInverseTransform;
+    return m_inverseTransform;
 }
 
 } // namespace sf

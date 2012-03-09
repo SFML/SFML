@@ -34,9 +34,9 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Socket::Socket(Type type) :
-myType      (type),
-mySocket    (priv::SocketImpl::InvalidSocket()),
-myIsBlocking(true)
+m_type      (type),
+m_socket    (priv::SocketImpl::InvalidSocket()),
+m_isBlocking(true)
 {
 
 }
@@ -54,24 +54,24 @@ Socket::~Socket()
 void Socket::SetBlocking(bool blocking)
 {
     // Apply if the socket is already created
-    if (mySocket != priv::SocketImpl::InvalidSocket())
-        priv::SocketImpl::SetBlocking(mySocket, blocking);
+    if (m_socket != priv::SocketImpl::InvalidSocket())
+        priv::SocketImpl::SetBlocking(m_socket, blocking);
 
-    myIsBlocking = blocking;
+    m_isBlocking = blocking;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Socket::IsBlocking() const
 {
-    return myIsBlocking;
+    return m_isBlocking;
 }
 
 
 ////////////////////////////////////////////////////////////
 SocketHandle Socket::GetHandle() const
 {
-    return mySocket;
+    return m_socket;
 }
 
 
@@ -79,9 +79,9 @@ SocketHandle Socket::GetHandle() const
 void Socket::Create()
 {
     // Don't create the socket if it already exists
-    if (mySocket == priv::SocketImpl::InvalidSocket())
+    if (m_socket == priv::SocketImpl::InvalidSocket())
     {
-        SocketHandle handle = socket(PF_INET, myType == Tcp ? SOCK_STREAM : SOCK_DGRAM, 0);
+        SocketHandle handle = socket(PF_INET, m_type == Tcp ? SOCK_STREAM : SOCK_DGRAM, 0);
         Create(handle);
     }
 }
@@ -91,19 +91,19 @@ void Socket::Create()
 void Socket::Create(SocketHandle handle)
 {
     // Don't create the socket if it already exists
-    if (mySocket == priv::SocketImpl::InvalidSocket())
+    if (m_socket == priv::SocketImpl::InvalidSocket())
     {
         // Assign the new handle
-        mySocket = handle;
+        m_socket = handle;
 
         // Set the current blocking state
-        SetBlocking(myIsBlocking);
+        SetBlocking(m_isBlocking);
 
-        if (myType == Tcp)
+        if (m_type == Tcp)
         {
             // Disable the Nagle algorithm (ie. removes buffering of TCP packets)
             int yes = 1;
-            if (setsockopt(mySocket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
+            if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
             {
                 Err() << "Failed to set socket option \"TCP_NODELAY\" ; "
                       << "all your TCP packets will be buffered" << std::endl;
@@ -113,7 +113,7 @@ void Socket::Create(SocketHandle handle)
         {
             // Enable broadcast by default for UDP sockets
             int yes = 1;
-            if (setsockopt(mySocket, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
+            if (setsockopt(m_socket, SOL_SOCKET, SO_BROADCAST, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
             {
                 Err() << "Failed to enable broadcast on UDP socket" << std::endl;
             }
@@ -126,10 +126,10 @@ void Socket::Create(SocketHandle handle)
 void Socket::Close()
 {
     // Close the socket
-    if (mySocket != priv::SocketImpl::InvalidSocket())
+    if (m_socket != priv::SocketImpl::InvalidSocket())
     {
-        priv::SocketImpl::Close(mySocket);
-        mySocket = priv::SocketImpl::InvalidSocket();
+        priv::SocketImpl::Close(m_socket);
+        m_socket = priv::SocketImpl::InvalidSocket();
     }
 }
 

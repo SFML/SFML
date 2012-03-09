@@ -38,9 +38,9 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 RenderTarget::RenderTarget() :
-myDefaultView(),
-myView       (),
-myCache      ()
+m_defaultView(),
+m_view       (),
+m_cache      ()
 {
 }
 
@@ -65,22 +65,22 @@ void RenderTarget::Clear(const Color& color)
 ////////////////////////////////////////////////////////////
 void RenderTarget::SetView(const View& view)
 {
-    myView = view;
-    myCache.ViewChanged = true;
+    m_view = view;
+    m_cache.ViewChanged = true;
 }
 
 
 ////////////////////////////////////////////////////////////
 const View& RenderTarget::GetView() const
 {
-    return myView;
+    return m_view;
 }
 
 
 ////////////////////////////////////////////////////////////
 const View& RenderTarget::GetDefaultView() const
 {
-    return myDefaultView;
+    return m_defaultView;
 }
 
 
@@ -143,14 +143,14 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
             // Pre-transform the vertices and store them into the vertex cache
             for (unsigned int i = 0; i < vertexCount; ++i)
             {
-                Vertex& vertex = myCache.VertexCache[i];
+                Vertex& vertex = m_cache.VertexCache[i];
                 vertex.Position = states.Transform * vertices[i].Position;
                 vertex.Color = vertices[i].Color;
                 vertex.TexCoords = vertices[i].TexCoords;
             }
 
             // Since vertices are transformed, we must use an identity transform to render them
-            if (!myCache.UseVertexCache)
+            if (!m_cache.UseVertexCache)
                 ApplyTransform(Transform::Identity);
         }
         else
@@ -159,16 +159,16 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
         }
 
         // Apply the view
-        if (myCache.ViewChanged)
+        if (m_cache.ViewChanged)
             ApplyCurrentView();
 
         // Apply the blend mode
-        if (states.BlendMode != myCache.LastBlendMode)
+        if (states.BlendMode != m_cache.LastBlendMode)
             ApplyBlendMode(states.BlendMode);
 
         // Apply the texture
-        Uint64 textureId = states.Texture ? states.Texture->myCacheId : 0;
-        if (textureId != myCache.LastTextureId)
+        Uint64 textureId = states.Texture ? states.Texture->m_cacheId : 0;
+        if (textureId != m_cache.LastTextureId)
             ApplyTexture(states.Texture);
 
         // Apply the shader
@@ -179,8 +179,8 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
         if (useVertexCache)
         {
             // ... and if we already used it previously, we don't need to set the pointers again
-            if (!myCache.UseVertexCache)
-                vertices = myCache.VertexCache;
+            if (!m_cache.UseVertexCache)
+                vertices = m_cache.VertexCache;
             else
                 vertices = NULL;
         }
@@ -207,7 +207,7 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
             ApplyShader(NULL);
 
         // Update the cache
-        myCache.UseVertexCache = useVertexCache;
+        m_cache.UseVertexCache = useVertexCache;
     }
 }
 
@@ -272,7 +272,7 @@ void RenderTarget::ResetGLStates()
         ApplyTexture(NULL);
         if (Shader::IsAvailable())
             ApplyShader(NULL);
-        myCache.UseVertexCache = false;
+        m_cache.UseVertexCache = false;
 
         // Set the default view
         SetView(GetView());
@@ -284,8 +284,8 @@ void RenderTarget::ResetGLStates()
 void RenderTarget::Initialize()
 {
     // Setup the default and current views
-    myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetSize().x), static_cast<float>(GetSize().y)));
-    myView = myDefaultView;
+    m_defaultView.Reset(FloatRect(0, 0, static_cast<float>(GetSize().x), static_cast<float>(GetSize().y)));
+    m_view = m_defaultView;
 
     // Initialize the default OpenGL render-states
     ResetGLStates();
@@ -296,18 +296,18 @@ void RenderTarget::Initialize()
 void RenderTarget::ApplyCurrentView()
 {
     // Set the viewport
-    IntRect viewport = GetViewport(myView);
+    IntRect viewport = GetViewport(m_view);
     int top = GetSize().y - (viewport.Top + viewport.Height);
     GLCheck(glViewport(viewport.Left, top, viewport.Width, viewport.Height));
 
     // Set the projection matrix
     GLCheck(glMatrixMode(GL_PROJECTION));
-    GLCheck(glLoadMatrixf(myView.GetTransform().GetMatrix()));
+    GLCheck(glLoadMatrixf(m_view.GetTransform().GetMatrix()));
 
     // Go back to model-view mode
     GLCheck(glMatrixMode(GL_MODELVIEW));
 
-    myCache.ViewChanged = false;
+    m_cache.ViewChanged = false;
 }
 
 
@@ -343,7 +343,7 @@ void RenderTarget::ApplyBlendMode(BlendMode mode)
             break;
     }
 
-    myCache.LastBlendMode = mode;
+    m_cache.LastBlendMode = mode;
 }
 
 
@@ -364,7 +364,7 @@ void RenderTarget::ApplyTexture(const Texture* texture)
     else
         GLCheck(glBindTexture(GL_TEXTURE_2D, 0));
 
-    myCache.LastTextureId = texture ? texture->myCacheId : 0;
+    m_cache.LastTextureId = texture ? texture->m_cacheId : 0;
 }
 
 

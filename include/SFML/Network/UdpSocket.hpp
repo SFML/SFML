@@ -187,7 +187,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<char> myBuffer; ///< Temporary buffer holding the received data in Receive(Packet)
+    std::vector<char> m_buffer; ///< Temporary buffer holding the received data in Receive(Packet)
 };
 
 } // namespace sf

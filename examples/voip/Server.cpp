@@ -26,8 +26,8 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     NetworkAudioStream() :
-    myOffset     (0),
-    myHasFinished(false)
+    m_offset     (0),
+    m_hasFinished(false)
     {
         // Set the sound parameters
         Initialize(1, 44100);
@@ -39,17 +39,17 @@ public :
     ////////////////////////////////////////////////////////////
     void Start(unsigned short port)
     {
-        if (!myHasFinished)
+        if (!m_hasFinished)
         {
             // Listen to the given port for incoming connections
-            if (myListener.Listen(port) != sf::Socket::Done)
+            if (m_listener.Listen(port) != sf::Socket::Done)
                 return;
             std::cout << "Server is listening to port " << port << ", waiting for connections... " << std::endl;
 
             // Wait for a connection
-            if (myListener.Accept(myClient) != sf::Socket::Done)
+            if (m_listener.Accept(m_client) != sf::Socket::Done)
                 return;
-            std::cout << "Client connected: " << myClient.GetRemoteAddress() << std::endl;
+            std::cout << "Client connected: " << m_client.GetRemoteAddress() << std::endl;
 
             // Start playback
             Play();
@@ -73,26 +73,26 @@ private :
     virtual bool OnGetData(sf::SoundStream::Chunk& data)
     {
         // We have reached the end of the buffer and all audio data have been played : we can stop playback
-        if ((myOffset >= mySamples.size()) && myHasFinished)
+        if ((m_offset >= m_samples.size()) && m_hasFinished)
             return false;
 
         // No new data has arrived since last update : wait until we get some
-        while ((myOffset >= mySamples.size()) && !myHasFinished)
+        while ((m_offset >= m_samples.size()) && !m_hasFinished)
             sf::Sleep(sf::Milliseconds(10));
 
         // Copy samples into a local buffer to avoid synchronization problems
         // (don't forget that we run in two separate threads)
         {
-            sf::Lock lock(myMutex);
-            myTempBuffer.assign(mySamples.begin() + myOffset, mySamples.end());
+            sf::Lock lock(m_mutex);
+            m_tempBuffer.assign(m_samples.begin() + m_offset, m_samples.end());
         }
 
         // Fill audio data to pass to the stream
-        data.Samples     = &myTempBuffer[0];
-        data.SampleCount = myTempBuffer.size();
+        data.Samples     = &m_tempBuffer[0];
+        data.SampleCount = m_tempBuffer.size();
 
         // Update the playing offset
-        myOffset += myTempBuffer.size();
+        m_offset += m_tempBuffer.size();
 
         return true;
     }
@@ -103,7 +103,7 @@ private :
     ////////////////////////////////////////////////////////////
     virtual void OnSeek(sf::Time timeOffset)
     {
-        myOffset = timeOffset.AsMilliseconds() * GetSampleRate() * GetChannelCount() / 1000;
+        m_offset = timeOffset.AsMilliseconds() * GetSampleRate() * GetChannelCount() / 1000;
     }
 
     ////////////////////////////////////////////////////////////
@@ -112,11 +112,11 @@ private :
     ////////////////////////////////////////////////////////////
     void ReceiveLoop()
     {
-        while (!myHasFinished)
+        while (!m_hasFinished)
         {
             // Get waiting audio data from the network
             sf::Packet packet;
-            if (myClient.Receive(packet) != sf::Socket::Done)
+            if (m_client.Receive(packet) != sf::Socket::Done)
                 break;
 
             // Extract the message ID
@@ -132,21 +132,21 @@ private :
                 // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
                 {
-                    sf::Lock lock(myMutex);
-                    std::copy(samples, samples + sampleCount, std::back_inserter(mySamples));
+                    sf::Lock lock(m_mutex);
+                    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
                 }
             }
             else if (id == endOfStream)
             {
                 // End of stream reached : we stop receiving audio data
                 std::cout << "Audio data has been 100% received!" << std::endl;
-                myHasFinished = true;
+                m_hasFinished = true;
             }
             else
             {
                 // Something's wrong...
                 std::cout << "Invalid packet received..." << std::endl;
-                myHasFinished = true;
+                m_hasFinished = true;
             }
         }
     }
@@ -154,13 +154,13 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::TcpListener        myListener;
-    sf::TcpSocket          myClient;
-    sf::Mutex              myMutex;
-    std::vector<sf::Int16> mySamples;
-    std::vector<sf::Int16> myTempBuffer;
-    std::size_t            myOffset;
-    bool                   myHasFinished;
+    sf::TcpListener        m_listener;
+    sf::TcpSocket          m_client;
+    sf::Mutex              m_mutex;
+    std::vector<sf::Int16> m_samples;
+    std::vector<sf::Int16> m_tempBuffer;
+    std::size_t            m_offset;
+    bool                   m_hasFinished;
 };
 
 

@@ -33,16 +33,16 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Lock::Lock(Mutex& mutex) :
-myMutex(mutex)
+m_mutex(mutex)
 {
-    myMutex.Lock();
+    m_mutex.Lock();
 }
 
 
 ////////////////////////////////////////////////////////////
 Lock::~Lock()
 {
-    myMutex.Unlock();
+    m_mutex.Unlock();
 }
 
 } // namespace sf

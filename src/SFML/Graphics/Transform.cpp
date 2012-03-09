@@ -39,10 +39,10 @@ const Transform Transform::Identity;
 Transform::Transform()
 {
     // Identity matrix
-    myMatrix[0] = 1.f; myMatrix[4] = 0.f; myMatrix[8]  = 0.f; myMatrix[12] = 0.f;
-    myMatrix[1] = 0.f; myMatrix[5] = 1.f; myMatrix[9]  = 0.f; myMatrix[13] = 0.f;
-    myMatrix[2] = 0.f; myMatrix[6] = 0.f; myMatrix[10] = 1.f; myMatrix[14] = 0.f;
-    myMatrix[3] = 0.f; myMatrix[7] = 0.f; myMatrix[11] = 0.f; myMatrix[15] = 1.f;
+    m_matrix[0] = 1.f; m_matrix[4] = 0.f; m_matrix[8]  = 0.f; m_matrix[12] = 0.f;
+    m_matrix[1] = 0.f; m_matrix[5] = 1.f; m_matrix[9]  = 0.f; m_matrix[13] = 0.f;
+    m_matrix[2] = 0.f; m_matrix[6] = 0.f; m_matrix[10] = 1.f; m_matrix[14] = 0.f;
+    m_matrix[3] = 0.f; m_matrix[7] = 0.f; m_matrix[11] = 0.f; m_matrix[15] = 1.f;
 }
 
 
@@ -51,17 +51,17 @@ Transform::Transform(float a00, float a01, float a02,
                      float a10, float a11, float a12,
                      float a20, float a21, float a22)
 {
-    myMatrix[0] = a00; myMatrix[4] = a01; myMatrix[8]  = 0.f; myMatrix[12] = a02;
-    myMatrix[1] = a10; myMatrix[5] = a11; myMatrix[9]  = 0.f; myMatrix[13] = a12;
-    myMatrix[2] = 0.f; myMatrix[6] = 0.f; myMatrix[10] = 1.f; myMatrix[14] = 0.f;
-    myMatrix[3] = a20; myMatrix[7] = a21; myMatrix[11] = 0.f; myMatrix[15] = a22;
+    m_matrix[0] = a00; m_matrix[4] = a01; m_matrix[8]  = 0.f; m_matrix[12] = a02;
+    m_matrix[1] = a10; m_matrix[5] = a11; m_matrix[9]  = 0.f; m_matrix[13] = a12;
+    m_matrix[2] = 0.f; m_matrix[6] = 0.f; m_matrix[10] = 1.f; m_matrix[14] = 0.f;
+    m_matrix[3] = a20; m_matrix[7] = a21; m_matrix[11] = 0.f; m_matrix[15] = a22;
 }
 
 
 ////////////////////////////////////////////////////////////
 const float* Transform::GetMatrix() const
 {
-    return myMatrix;
+    return m_matrix;
 }
 
 
@@ -69,23 +69,23 @@ const float* Transform::GetMatrix() const
 Transform Transform::GetInverse() const
 {
     // Compute the determinant
-    float det = myMatrix[0] * (myMatrix[15] * myMatrix[5] - myMatrix[7] * myMatrix[13]) -
-                myMatrix[1] * (myMatrix[15] * myMatrix[4] - myMatrix[7] * myMatrix[12]) +
-                myMatrix[3] * (myMatrix[13] * myMatrix[4] - myMatrix[5] * myMatrix[12]);
+    float det = m_matrix[0] * (m_matrix[15] * m_matrix[5] - m_matrix[7] * m_matrix[13]) -
+                m_matrix[1] * (m_matrix[15] * m_matrix[4] - m_matrix[7] * m_matrix[12]) +
+                m_matrix[3] * (m_matrix[13] * m_matrix[4] - m_matrix[5] * m_matrix[12]);
 
     // Compute the inverse if the determinant is not zero
     // (don't use an epsilon because the determinant may *really* be tiny)
     if (det != 0.f)
     {
-        return Transform( (myMatrix[15] * myMatrix[5] - myMatrix[7] * myMatrix[13]) / det,
-                         -(myMatrix[15] * myMatrix[4] - myMatrix[7] * myMatrix[12]) / det,
-                          (myMatrix[13] * myMatrix[4] - myMatrix[5] * myMatrix[12]) / det,
-                         -(myMatrix[15] * myMatrix[1] - myMatrix[3] * myMatrix[13]) / det,
-                          (myMatrix[15] * myMatrix[0] - myMatrix[3] * myMatrix[12]) / det,
-                         -(myMatrix[13] * myMatrix[0] - myMatrix[1] * myMatrix[12]) / det,
-                          (myMatrix[7]  * myMatrix[1] - myMatrix[3] * myMatrix[5])  / det,
-                         -(myMatrix[7]  * myMatrix[0] - myMatrix[3] * myMatrix[4])  / det,
-                          (myMatrix[5]  * myMatrix[0] - myMatrix[1] * myMatrix[4])  / det);
+        return Transform( (m_matrix[15] * m_matrix[5] - m_matrix[7] * m_matrix[13]) / det,
+                         -(m_matrix[15] * m_matrix[4] - m_matrix[7] * m_matrix[12]) / det,
+                          (m_matrix[13] * m_matrix[4] - m_matrix[5] * m_matrix[12]) / det,
+                         -(m_matrix[15] * m_matrix[1] - m_matrix[3] * m_matrix[13]) / det,
+                          (m_matrix[15] * m_matrix[0] - m_matrix[3] * m_matrix[12]) / det,
+                         -(m_matrix[13] * m_matrix[0] - m_matrix[1] * m_matrix[12]) / det,
+                          (m_matrix[7]  * m_matrix[1] - m_matrix[3] * m_matrix[5])  / det,
+                         -(m_matrix[7]  * m_matrix[0] - m_matrix[3] * m_matrix[4])  / det,
+                          (m_matrix[5]  * m_matrix[0] - m_matrix[1] * m_matrix[4])  / det);
     }
     else
     {
@@ -97,8 +97,8 @@ Transform Transform::GetInverse() const
 ////////////////////////////////////////////////////////////
 Vector2f Transform::TransformPoint(float x, float y) const
 {
-    return Vector2f(myMatrix[0] * x + myMatrix[4] * y + myMatrix[12],
-                    myMatrix[1] * x + myMatrix[5] * y + myMatrix[13]);
+    return Vector2f(m_matrix[0] * x + m_matrix[4] * y + m_matrix[12],
+                    m_matrix[1] * x + m_matrix[5] * y + m_matrix[13]);
 }
 
 
@@ -141,8 +141,8 @@ FloatRect Transform::TransformRect(const FloatRect& rectangle) const
 ////////////////////////////////////////////////////////////
 Transform& Transform::Combine(const Transform& transform)
 {
-    const float* a = myMatrix;
-    const float* b = transform.myMatrix;
+    const float* a = m_matrix;
+    const float* b = transform.m_matrix;
 
     *this = Transform(a[0] * b[0]  + a[4] * b[1]  + a[12] * b[3],
                       a[0] * b[4]  + a[4] * b[5]  + a[12] * b[7],

@@ -61,30 +61,30 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplWin32::WindowImplWin32(WindowHandle handle) :
-myHandle          (handle),
-myCallback        (0),
-myCursor          (NULL),
-myIcon            (NULL),
-myKeyRepeatEnabled(true),
-myIsCursorIn      (false)
+m_handle          (handle),
+m_callback        (0),
+m_cursor          (NULL),
+m_icon            (NULL),
+m_keyRepeatEnabled(true),
+m_isCursorIn      (false)
 {
-    if (myHandle)
+    if (m_handle)
     {
         // We change the event procedure of the control (it is important to save the old one)
-        SetWindowLongPtr(myHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-        myCallback = SetWindowLongPtr(myHandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowImplWin32::GlobalOnEvent));
+        SetWindowLongPtr(m_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+        m_callback = SetWindowLongPtr(m_handle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowImplWin32::GlobalOnEvent));
     }
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplWin32::WindowImplWin32(VideoMode mode, const std::string& title, Uint32 style) :
-myHandle          (NULL),
-myCallback        (0),
-myCursor          (NULL),
-myIcon            (NULL),
-myKeyRepeatEnabled(true),
-myIsCursorIn      (false)
+m_handle          (NULL),
+m_callback        (0),
+m_cursor          (NULL),
+m_icon            (NULL),
+m_keyRepeatEnabled(true),
+m_isCursorIn      (false)
 {
     // Register the window class at first call
     if (WindowCount == 0)
@@ -127,11 +127,11 @@ myIsCursorIn      (false)
         wchar_t wTitle[256];
         int count = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, title.c_str(), static_cast<int>(title.size()), wTitle, sizeof(wTitle) / sizeof(*wTitle));
         wTitle[count] = L'\0';
-        myHandle = CreateWindowW(ClassNameW, wTitle, win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
+        m_handle = CreateWindowW(ClassNameW, wTitle, win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
     }
     else
     {
-        myHandle = CreateWindowA(ClassNameA, title.c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
+        m_handle = CreateWindowA(ClassNameA, title.c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
     }
 
     // Switch to fullscreen if requested
@@ -147,14 +147,14 @@ myIsCursorIn      (false)
 WindowImplWin32::~WindowImplWin32()
 {
     // Destroy the custom icon, if any
-    if (myIcon)
-        DestroyIcon(myIcon);
+    if (m_icon)
+        DestroyIcon(m_icon);
 
-    if (!myCallback)
+    if (!m_callback)
     {
         // Destroy the window
-        if (myHandle)
-            DestroyWindow(myHandle);
+        if (m_handle)
+            DestroyWindow(m_handle);
 
         // Decrement the window count
         WindowCount--;
@@ -175,7 +175,7 @@ WindowImplWin32::~WindowImplWin32()
     else
     {
         // The window is external : remove the hook on its message callback
-        SetWindowLongPtr(myHandle, GWLP_WNDPROC, myCallback);
+        SetWindowLongPtr(m_handle, GWLP_WNDPROC, m_callback);
     }
 }
 
@@ -183,7 +183,7 @@ WindowImplWin32::~WindowImplWin32()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplWin32::GetSystemHandle() const
 {
-    return myHandle;
+    return m_handle;
 }
 
 
@@ -191,10 +191,10 @@ WindowHandle WindowImplWin32::GetSystemHandle() const
 void WindowImplWin32::ProcessEvents()
 {
     // We process the window events only if we own it
-    if (!myCallback)
+    if (!m_callback)
     {
         MSG message;
-        while (PeekMessage(&message, myHandle, 0, 0, PM_REMOVE))
+        while (PeekMessage(&message, m_handle, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&message);
             DispatchMessage(&message);
@@ -207,7 +207,7 @@ void WindowImplWin32::ProcessEvents()
 Vector2i WindowImplWin32::GetPosition() const
 {
     RECT rect;
-    GetWindowRect(myHandle, &rect);
+    GetWindowRect(m_handle, &rect);
 
     return Vector2i(rect.left, rect.top);
 }
@@ -216,7 +216,7 @@ Vector2i WindowImplWin32::GetPosition() const
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::SetPosition(const Vector2i& position)
 {
-    SetWindowPos(myHandle, NULL, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    SetWindowPos(m_handle, NULL, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 
@@ -224,7 +224,7 @@ void WindowImplWin32::SetPosition(const Vector2i& position)
 Vector2u WindowImplWin32::GetSize() const
 {
     RECT rect;
-    GetClientRect(myHandle, &rect);
+    GetClientRect(m_handle, &rect);
 
     return Vector2u(rect.right - rect.left, rect.bottom - rect.top);
 }
@@ -236,18 +236,18 @@ void WindowImplWin32::SetSize(const Vector2u& size)
     // SetWindowPos wants the total size of the window (including title bar and borders),
     // so we have to compute it
     RECT rectangle = {0, 0, size.x, size.y};
-    AdjustWindowRect(&rectangle, GetWindowLong(myHandle, GWL_STYLE), false);
+    AdjustWindowRect(&rectangle, GetWindowLong(m_handle, GWL_STYLE), false);
     int width  = rectangle.right - rectangle.left;
     int height = rectangle.bottom - rectangle.top;
 
-    SetWindowPos(myHandle, NULL, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
+    SetWindowPos(m_handle, NULL, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::SetTitle(const std::string& title)
 {
-    SetWindowText(myHandle, title.c_str());
+    SetWindowText(m_handle, title.c_str());
 }
 
 
@@ -255,8 +255,8 @@ void WindowImplWin32::SetTitle(const std::string& title)
 void WindowImplWin32::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     // First destroy the previous one
-    if (myIcon)
-        DestroyIcon(myIcon);
+    if (m_icon)
+        DestroyIcon(m_icon);
 
     // Windows wants BGRA pixels: swap red and blue channels
     std::vector<Uint8> iconPixels(width * height * 4);
@@ -269,13 +269,13 @@ void WindowImplWin32::SetIcon(unsigned int width, unsigned int height, const Uin
     }
 
     // Create the icon from the pixel array
-    myIcon = CreateIcon(GetModuleHandle(NULL), width, height, 1, 32, NULL, &iconPixels[0]);
+    m_icon = CreateIcon(GetModuleHandle(NULL), width, height, 1, 32, NULL, &iconPixels[0]);
 
     // Set it as both big and small icon of the window
-    if (myIcon)
+    if (m_icon)
     {
-        SendMessage(myHandle, WM_SETICON, ICON_BIG,   (LPARAM)myIcon);
-        SendMessage(myHandle, WM_SETICON, ICON_SMALL, (LPARAM)myIcon);
+        SendMessage(m_handle, WM_SETICON, ICON_BIG,   (LPARAM)m_icon);
+        SendMessage(m_handle, WM_SETICON, ICON_SMALL, (LPARAM)m_icon);
     }
     else
     {
@@ -287,7 +287,7 @@ void WindowImplWin32::SetIcon(unsigned int width, unsigned int height, const Uin
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::SetVisible(bool visible)
 {
-    ShowWindow(myHandle, visible ? SW_SHOW : SW_HIDE);
+    ShowWindow(m_handle, visible ? SW_SHOW : SW_HIDE);
 }
 
 
@@ -295,18 +295,18 @@ void WindowImplWin32::SetVisible(bool visible)
 void WindowImplWin32::SetMouseCursorVisible(bool visible)
 {
     if (visible)
-        myCursor = LoadCursor(NULL, IDC_ARROW);
+        m_cursor = LoadCursor(NULL, IDC_ARROW);
     else
-        myCursor = NULL;
+        m_cursor = NULL;
 
-    SetCursor(myCursor);
+    SetCursor(m_cursor);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::SetKeyRepeatEnabled(bool enabled)
 {
-    myKeyRepeatEnabled = enabled;
+    m_keyRepeatEnabled = enabled;
 }
 
 
@@ -364,12 +364,12 @@ void WindowImplWin32::SwitchToFullscreen(const VideoMode& mode)
     }
 
     // Make the window flags compatible with fullscreen mode
-    SetWindowLong(myHandle, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
-    SetWindowLong(myHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+    SetWindowLong(m_handle, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+    SetWindowLong(m_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
 
     // Resize the window so that it fits the entire screen
-    SetWindowPos(myHandle, HWND_TOP, 0, 0, mode.Width, mode.Height, SWP_FRAMECHANGED);
-    ShowWindow(myHandle, SW_SHOW);
+    SetWindowPos(m_handle, HWND_TOP, 0, 0, mode.Width, mode.Height, SWP_FRAMECHANGED);
+    ShowWindow(m_handle, SW_SHOW);
 
     // Set "this" as the current fullscreen window
     FullscreenWindow = this;
@@ -395,7 +395,7 @@ void WindowImplWin32::Cleanup()
 void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
 {
     // Don't process any message until window is created
-    if (myHandle == NULL)
+    if (m_handle == NULL)
         return;
 
     switch (message)
@@ -413,7 +413,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             // The mouse has moved, if the cursor is in our window we must refresh the cursor
             if (LOWORD(lParam) == HTCLIENT)
-                SetCursor(myCursor);
+                SetCursor(m_cursor);
 
             break;
         }
@@ -435,7 +435,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             {
                 // Get the new size
                 RECT rectangle;
-                GetClientRect(myHandle, &rectangle);
+                GetClientRect(m_handle, &rectangle);
 
                 Event event;
                 event.Type        = Event::Resized;
@@ -467,7 +467,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Text event
         case WM_CHAR :
         {
-            if (myKeyRepeatEnabled || ((lParam & (1 << 30)) == 0))
+            if (m_keyRepeatEnabled || ((lParam & (1 << 30)) == 0))
             {
                 Event event;
                 event.Type = Event::TextEntered;
@@ -481,7 +481,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_KEYDOWN :
         case WM_SYSKEYDOWN :
         {
-            if (myKeyRepeatEnabled || ((HIWORD(lParam) & KF_REPEAT) == 0))
+            if (m_keyRepeatEnabled || ((HIWORD(lParam) & KF_REPEAT) == 0))
             {
                 Event event;
                 event.Type        = Event::KeyPressed;
@@ -517,7 +517,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
             POINT position;
             position.x = static_cast<Int16>(LOWORD(lParam));
             position.y = static_cast<Int16>(HIWORD(lParam));
-            ScreenToClient(myHandle, &position);
+            ScreenToClient(m_handle, &position);
 
             Event event;
             event.Type = Event::MouseWheelMoved;
@@ -628,15 +628,15 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_MOUSEMOVE :
         {
             // Check if we need to generate a MouseEntered event
-            if (!myIsCursorIn)
+            if (!m_isCursorIn)
             {
                 TRACKMOUSEEVENT mouseEvent;
                 mouseEvent.cbSize    = sizeof(TRACKMOUSEEVENT);
-                mouseEvent.hwndTrack = myHandle;
+                mouseEvent.hwndTrack = m_handle;
                 mouseEvent.dwFlags   = TME_LEAVE;
                 TrackMouseEvent(&mouseEvent);
 
-                myIsCursorIn = true;
+                m_isCursorIn = true;
 
                 Event event;
                 event.Type = Event::MouseEntered;
@@ -654,7 +654,7 @@ void WindowImplWin32::ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse leave event
         case WM_MOUSELEAVE :
         {
-            myIsCursorIn = false;
+            m_isCursorIn = false;
 
             Event event;
             event.Type = Event::MouseLeft;
@@ -825,8 +825,8 @@ LRESULT CALLBACK WindowImplWin32::GlobalOnEvent(HWND handle, UINT message, WPARA
     {
         window->ProcessEvent(message, wParam, lParam);
 
-        if (window->myCallback)
-            return CallWindowProc(reinterpret_cast<WNDPROC>(window->myCallback), handle, message, wParam, lParam);
+        if (window->m_callback)
+            return CallWindowProc(reinterpret_cast<WNDPROC>(window->m_callback), handle, message, wParam, lParam);
     }
 
     // We don't forward the WM_CLOSE message to prevent the OS from automatically destroying the window

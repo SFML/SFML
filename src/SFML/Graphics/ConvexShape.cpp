@@ -40,7 +40,7 @@ ConvexShape::ConvexShape(unsigned int pointCount)
 ////////////////////////////////////////////////////////////
 void ConvexShape::SetPointCount(unsigned int count)
 {
-    myPoints.resize(count);
+    m_points.resize(count);
     Update();
 }
 
@@ -48,14 +48,14 @@ void ConvexShape::SetPointCount(unsigned int count)
 ////////////////////////////////////////////////////////////
 unsigned int ConvexShape::GetPointCount() const
 {
-    return static_cast<unsigned int>(myPoints.size());
+    return static_cast<unsigned int>(m_points.size());
 }
 
 
 ////////////////////////////////////////////////////////////
 void ConvexShape::SetPoint(unsigned int index, const Vector2f& point)
 {
-    myPoints[index] = point;
+    m_points[index] = point;
     Update();
 }
 
@@ -63,7 +63,7 @@ void ConvexShape::SetPoint(unsigned int index, const Vector2f& point)
 ////////////////////////////////////////////////////////////
 Vector2f ConvexShape::GetPoint(unsigned int index) const
 {
-    return myPoints[index];
+    return m_points[index];
 }
 
 } // namespace sf

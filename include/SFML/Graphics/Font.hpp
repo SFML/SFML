@@ -293,12 +293,12 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    void*                      myLibrary;     ///< Pointer to the internal library interface (it is typeless to avoid exposing implementation details)
-    void*                      myFace;        ///< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
-    void*                      myStreamRec;   ///< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
-    int*                       myRefCount;    ///< Reference counter used by implicit sharing
-    mutable PageTable          myPages;       ///< Table containing the glyphs pages by character size
-    mutable std::vector<Uint8> myPixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
+    void*                      m_library;     ///< Pointer to the internal library interface (it is typeless to avoid exposing implementation details)
+    void*                      m_face;        ///< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
+    void*                      m_streamRec;   ///< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
+    int*                       m_refCount;    ///< Reference counter used by implicit sharing
+    mutable PageTable          m_pages;       ///< Table containing the glyphs pages by character size
+    mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
 };
 
 } // namespace sf

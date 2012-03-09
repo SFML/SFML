@@ -284,13 +284,13 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    String        myString;        ///< String to display
-    const Font*   myFont;          ///< Font used to display the string
-    unsigned int  myCharacterSize; ///< Base size of characters, in pixels
-    Uint32        myStyle;         ///< Text style (see Style enum)
-    Color         myColor;         ///< Text color
-    VertexArray   myVertices;      ///< Vertex array containing the text's geometry
-    FloatRect     myBounds;        ///< Bounding rectangle of the text (in local coordinates)
+    String        m_string;        ///< String to display
+    const Font*   m_font;          ///< Font used to display the string
+    unsigned int  m_characterSize; ///< Base size of characters, in pixels
+    Uint32        m_style;         ///< Text style (see Style enum)
+    Color         m_color;         ///< Text color
+    VertexArray   m_vertices;      ///< Vertex array containing the text's geometry
+    FloatRect     m_bounds;        ///< Bounding rectangle of the text (in local coordinates)
 };
 
 } // namespace sf
