@@ -51,8 +51,8 @@ struct SFMLmainWindow
         sprite.SetOrigin(size / 2.f);
         sprite.Scale(0.3, 0.3);
         
-        unsigned int ww = renderWindow.GetWidth();
-        unsigned int wh = renderWindow.GetHeight();
+        unsigned int ww = renderWindow.GetSize().x;
+        unsigned int wh = renderWindow.GetSize().y;
         sprite.SetPosition(sf::Vector2f(ww, wh) / 2.f);
         
         text.SetColor(sf::Color::White);
@@ -104,7 +104,7 @@ struct SFMLmainWindow
 {
     if (!self.initialized)
     {
-        // Init the 1st SFML render area.
+        // Init the SFML render area.
         self.mainWindow = new SFMLmainWindow(self.sfmlView);
         self.mainWindow->text.SetString([self.textField.stringValue tostdwstring]);
         self.visible = YES;
@@ -141,7 +141,7 @@ struct SFMLmainWindow
     self.sfmlView           = nil;
     self.textField          = nil;
     
-    delete self.mainWindow;
+    delete (SFMLmainWindow *) self.mainWindow;
     self.mainWindow         = 0;
     self.renderTimer        = nil;
     

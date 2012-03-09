@@ -55,19 +55,11 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
         
         // We have a window.
         myDelegate = [[SFWindowController alloc] initWithWindow:nsHandle];
-        
-        // Don't forget to update our parent (that is, WindowImpl) size :
-        myWidth = [[nsHandle contentView] frame].size.width;
-        myHeight = [[nsHandle contentView] frame].size.height;
     
     } else if ([nsHandle isKindOfClass:[NSView class]]) {
         
         // We have a view.
         myDelegate = [[SFViewController alloc] initWithView:nsHandle];
-        
-        // Don't forget to update our parent (that is, WindowImpl) size :
-        myWidth = [nsHandle frame].size.width;
-        myHeight = [nsHandle frame].size.height;
         
     } else {
         
@@ -99,10 +91,6 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
     
     // Ask for a pool.
     RetainPool();
-    
-    // Don't forget to update our parent (that is, WindowImpl) size :
-    myWidth = mode.Width;
-    myHeight = mode.Height;
     
     myDelegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
     [myDelegate changeTitle:stringToNSString(title)];
@@ -173,14 +161,10 @@ void WindowImplCocoa::WindowClosed(void)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::WindowResized(unsigned int width, unsigned int height)
 {
-    // Don't forget to update our parent (that is, WindowImpl) size :
-    myWidth  = width;
-    myHeight = height;
-    
     Event event;
     event.Type = Event::Resized;
-    event.Size.Width  = myWidth;
-    event.Size.Height = myHeight;
+    event.Size.Width  = width;
+    event.Size.Height = height;
     
     PushEvent(event);
 }
@@ -350,33 +334,32 @@ WindowHandle WindowImplCocoa::GetSystemHandle() const
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::ShowMouseCursor(bool show)
+Vector2i WindowImplCocoa::GetPosition() const
 {
-    myShowCursor = show;
-    
-    if (myShowCursor) {
-        [myDelegate showMouseCursor];
-    } else {
-        [myDelegate hideMouseCursor];
-    }
+    NSPoint pos = [myDelegate position];
+    return Vector2i(pos.x, pos.y);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::SetPosition(const Vector2i& position)
+{
+    [myDelegate setWindowPositionToX:position.x Y:position.y];
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2u WindowImplCocoa::GetSize() const
+{
+    NSSize size = [myDelegate size];
+    return Vector2u(size.width, size.height);
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetPosition(int x, int y)
-{
-    [myDelegate setWindowPositionToX:x Y:y];
-}
-
-    
-////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetSize(unsigned int width, unsigned int height)
-{
-    // Don't forget to update our parent (that is, WindowImpl) size :
-    myWidth = width;
-    myHeight = height;
-    
-    [myDelegate resizeTo:width by:height];
+void WindowImplCocoa::SetSize(const Vector2u& size)
+{    
+    [myDelegate resizeTo:size.x by:size.y];
 }
 
     
@@ -388,9 +371,16 @@ void WindowImplCocoa::SetTitle(const std::string& title)
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::Show(bool show)
+void WindowImplCocoa::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
-    if (show) {
+    [myDelegate setIconTo:width by:height with:pixels];
+}
+
+    
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::SetVisible(bool visible)
+{
+    if (visible) {
         [myDelegate showWindow];
     } else {
         [myDelegate hideWindow];
@@ -399,7 +389,20 @@ void WindowImplCocoa::Show(bool show)
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::EnableKeyRepeat(bool enabled)
+void WindowImplCocoa::SetMouseCursorVisible(bool visible)
+{
+    myShowCursor = visible;
+    
+    if (myShowCursor) {
+        [myDelegate showMouseCursor];
+    } else {
+        [myDelegate hideMouseCursor];
+    }
+}
+
+    
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::SetKeyRepeatEnabled(bool enabled)
 {
     if (enabled) {
         [myDelegate enableKeyRepeat];
@@ -408,12 +411,6 @@ void WindowImplCocoa::EnableKeyRepeat(bool enabled)
     }
 }
 
-    
-////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
-{
-    [myDelegate setIconTo:width by:height with:pixels];
-}
     
 } // namespace priv
     
