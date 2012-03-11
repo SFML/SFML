@@ -88,10 +88,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromMemory, LoadFromStream
+    /// \see loadFromMemory, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& filename);
+    bool loadFromFile(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the font from a file in memory
@@ -107,10 +107,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromStream
+    /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const void* data, std::size_t sizeInBytes);
+    bool loadFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the font from a custom stream
@@ -125,10 +125,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromMemory
+    /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromStream(InputStream& stream);
+    bool loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve a glyph of the font
@@ -140,7 +140,7 @@ public :
     /// \return The glyph corresponding to \a codePoint and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    const Glyph& GetGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
+    const Glyph& getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the kerning offset of two glyphs
@@ -158,7 +158,7 @@ public :
     /// \return Kerning value for \a first and \a second, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    int GetKerning(Uint32 first, Uint32 second, unsigned int characterSize) const;
+    int getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the line spacing
@@ -171,7 +171,7 @@ public :
     /// \return Line spacing, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    int GetLineSpacing(unsigned int characterSize) const;
+    int getLineSpacing(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve the texture containing the loaded glyphs of a certain size
@@ -185,7 +185,7 @@ public :
     /// \return Texture containing the glyphs of the requested size
     ///
     ////////////////////////////////////////////////////////////
-    const Texture& GetTexture(unsigned int characterSize) const;
+    const Texture& getTexture(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -209,7 +209,7 @@ public :
     /// \return Reference to the built-in default font
     ///
     ////////////////////////////////////////////////////////////
-    static const Font& GetDefaultFont();
+    static const Font& getDefaultFont();
 
 private :
 
@@ -219,11 +219,11 @@ private :
     ////////////////////////////////////////////////////////////
     struct Row
     {
-        Row(unsigned int top, unsigned int height) : Width(0), Top(top), Height(height) {}
+        Row(unsigned int top, unsigned int height) : width(0), top(top), height(height) {}
 
-        unsigned int Width;  ///< Current width of the row
-        unsigned int Top;    ///< Y position of the row into the texture
-        unsigned int Height; ///< Height of the row
+        unsigned int width;  ///< Current width of the row
+        unsigned int top;    ///< Y position of the row into the texture
+        unsigned int height; ///< Height of the row
     };
 
     ////////////////////////////////////////////////////////////
@@ -239,17 +239,17 @@ private :
     {
         Page();
 
-        GlyphTable       Glyphs;  ///< Table mapping code points to their corresponding glyph
-        sf::Texture      Texture; ///< Texture containing the pixels of the glyphs
-        unsigned int     NextRow; ///< Y position of the next new row in the texture
-        std::vector<Row> Rows;    ///< List containing the position of all the existing rows
+        GlyphTable       glyphs;  ///< Table mapping code points to their corresponding glyph
+        sf::Texture      texture; ///< Texture containing the pixels of the glyphs
+        unsigned int     nextRow; ///< Y position of the next new row in the texture
+        std::vector<Row> rows;    ///< List containing the position of all the existing rows
     };
 
     ////////////////////////////////////////////////////////////
     /// \brief Free all the internal resources
     ///
     ////////////////////////////////////////////////////////////
-    void Cleanup();
+    void cleanup();
 
     ////////////////////////////////////////////////////////////
     /// \brief Load a new glyph and store it in the cache
@@ -261,7 +261,7 @@ private :
     /// \return The glyph corresponding to \a codePoint and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    Glyph LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
+    Glyph loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Find a suitable rectangle within the texture for a glyph
@@ -273,7 +273,7 @@ private :
     /// \return Found rectangle within the texture
     ///
     ////////////////////////////////////////////////////////////
-    IntRect FindGlyphRect(Page& page, unsigned int width, unsigned int height) const;
+    IntRect findGlyphRect(Page& page, unsigned int width, unsigned int height) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Make sure that the given size is the current one
@@ -283,7 +283,7 @@ private :
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    bool SetCurrentSize(unsigned int characterSize) const;
+    bool setCurrentSize(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     // Types
@@ -313,7 +313,7 @@ private :
 ///
 /// Fonts can be loaded from a file, from memory or from a custom
 /// stream, and supports the most common types of fonts. See
-/// the LoadFromFile function for the complete list of supported formats.
+/// the loadFromFile function for the complete list of supported formats.
 ///
 /// Once it is loaded, a sf::Font instance provides three
 /// types of informations about the font:
@@ -347,22 +347,22 @@ private :
 /// sf::Font font;
 /// 
 /// // Load it from a file
-/// if (!font.LoadFromFile("arial.ttf"))
+/// if (!font.loadFromFile("arial.ttf"))
 /// {
 ///     // error...
 /// }
 /// 
 /// // Create a text which uses our font
 /// sf::Text text1;
-/// text1.SetFont(font);
-/// text1.SetCharacterSize(30);
-/// text1.SetStyle(sf::Text::Regular);
+/// text1.setFont(font);
+/// text1.setCharacterSize(30);
+/// text1.setStyle(sf::Text::Regular);
 /// 
 /// // Create another text using the same font, but with different parameters
 /// sf::Text text2;
-/// text2.SetFont(font);
-/// text2.SetCharacterSize(50);
-/// text1.SetStyle(sf::Text::Italic);
+/// text2.setFont(font);
+/// text2.setCharacterSize(50);
+/// text1.setStyle(sf::Text::Italic);
 /// \endcode
 ///
 /// Apart from loading font files, and passing them to instances

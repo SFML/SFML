@@ -27,15 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/ThreadLocal.hpp>
 
-
 #if defined(SFML_SYSTEM_WINDOWS)
-
     #include <SFML/System/Win32/ThreadLocalImpl.hpp>
-
 #else
-
     #include <SFML/System/Unix/ThreadLocalImpl.hpp>
-
 #endif
 
 
@@ -45,7 +40,7 @@ namespace sf
 ThreadLocal::ThreadLocal(void* value)
 {
     m_impl = new priv::ThreadLocalImpl;
-    SetValue(value);
+    setValue(value);
 }
 
 
@@ -57,16 +52,16 @@ ThreadLocal::~ThreadLocal()
 
 
 ////////////////////////////////////////////////////////////
-void ThreadLocal::SetValue(void* value)
+void ThreadLocal::setValue(void* value)
 {
-    m_impl->SetValue(value);
+    m_impl->setValue(value);
 }
 
 
 ////////////////////////////////////////////////////////////
-void* ThreadLocal::GetValue() const
+void* ThreadLocal::getValue() const
 {
-    return m_impl->GetValue();
+    return m_impl->getValue();
 }
 
 } // namespace sf

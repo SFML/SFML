@@ -66,7 +66,7 @@ public :
     /// \param blendMode Blend mode to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(sf::BlendMode blendMode);
+    RenderStates(BlendMode blendMode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a default set of render states with a custom transform
@@ -74,7 +74,7 @@ public :
     /// \param transform Transform to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(const sf::Transform& transform);
+    RenderStates(const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a default set of render states with a custom texture
@@ -82,7 +82,7 @@ public :
     /// \param texture Texture to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(const sf::Texture* texture);
+    RenderStates(const Texture* texture);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a default set of render states with a custom shader
@@ -90,7 +90,7 @@ public :
     /// \param shader Shader to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(const sf::Shader* shader);
+    RenderStates(const Shader* shader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a set of render states with all its attributes
@@ -101,8 +101,8 @@ public :
     /// \param shader    Shader to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(sf::BlendMode blendMode, const sf::Transform& transform,
-                 const sf::Texture* texture, const sf::Shader* shader);
+    RenderStates(BlendMode blendMode, const Transform& transform,
+                 const Texture* texture, const Shader* shader);
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -112,10 +112,10 @@ public :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::BlendMode      BlendMode; ///< Blending mode
-    sf::Transform      Transform; ///< Transform
-    const sf::Texture* Texture;   ///< Texture
-    const sf::Shader*  Shader;    ///< Shader
+    BlendMode      blendMode; ///< Blending mode
+    Transform      transform; ///< Transform
+    const Texture* texture;   ///< Texture
+    const Shader*  shader;    ///< Shader
 };
 
 } // namespace sf
@@ -158,7 +158,7 @@ public :
 /// function: sf::RenderStates has an implicit one-argument
 /// constructor for each state.
 /// \code
-/// window.Draw(sprite, shader);
+/// window.draw(sprite, shader);
 /// \endcode
 ///
 /// When you're inside the Draw function of a drawable

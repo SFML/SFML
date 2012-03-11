@@ -39,7 +39,7 @@ namespace priv
 ThreadImpl::ThreadImpl(Thread* owner) :
 m_isActive(true)
 {
-    m_isActive = pthread_create(&m_thread, NULL, &ThreadImpl::EntryPoint, owner) == 0;
+    m_isActive = pthread_create(&m_thread, NULL, &ThreadImpl::entryPoint, owner) == 0;
 
     if (!m_isActive)
         std::cerr << "Failed to create thread" << std::endl;
@@ -47,7 +47,7 @@ m_isActive(true)
 
 
 ////////////////////////////////////////////////////////////
-void ThreadImpl::Wait()
+void ThreadImpl::wait()
 {
     if (m_isActive)
     {
@@ -58,7 +58,7 @@ void ThreadImpl::Wait()
 
 
 ////////////////////////////////////////////////////////////
-void ThreadImpl::Terminate()
+void ThreadImpl::terminate()
 {
     if (m_isActive)
         pthread_cancel(m_thread);
@@ -66,7 +66,7 @@ void ThreadImpl::Terminate()
 
 
 ////////////////////////////////////////////////////////////
-void* ThreadImpl::EntryPoint(void* userData)
+void* ThreadImpl::entryPoint(void* userData)
 {
     // The Thread instance is stored in the user data
     Thread* owner = static_cast<Thread*>(userData);
@@ -75,7 +75,7 @@ void* ThreadImpl::EntryPoint(void* userData)
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
     // Forward to the owner
-    owner->Run();
+    owner->run();
 
     return NULL;
 }

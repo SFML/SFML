@@ -82,19 +82,18 @@ public :
     ~GlxContext();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate the context as the current target
-    ///        for rendering
+    /// \brief Activate the context as the current target for rendering
     ///
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent();
+    virtual bool makeCurrent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Display();
+    virtual void display();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -104,10 +103,10 @@ public :
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled : True to enable v-sync, false to deactivate
+    /// \param enabled True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetVerticalSyncEnabled(bool enabled);
+    virtual void setVerticalSyncEnabled(bool enabled);
 
 private :
 
@@ -119,7 +118,7 @@ private :
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void CreateContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
+    void createContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     // Member data

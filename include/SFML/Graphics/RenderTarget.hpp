@@ -67,7 +67,7 @@ public :
     /// \param color Fill color to use to clear the render target
     ///
     ////////////////////////////////////////////////////////////
-    void Clear(const Color& color = Color(0, 0, 0, 255));
+    void clear(const Color& color = Color(0, 0, 0, 255));
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current active view
@@ -81,24 +81,24 @@ public :
     /// so it is not necessary to keep the original one alive
     /// after calling this function.
     /// To restore the original view of the target, you can pass
-    /// the result of GetDefaultView() to this function.
+    /// the result of getDefaultView() to this function.
     ///
     /// \param view New view to use
     ///
-    /// \see GetView, GetDefaultView
+    /// \see getView, getDefaultView
     ///
     ////////////////////////////////////////////////////////////
-    void SetView(const View& view);
+    void setView(const View& view);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the view currently in use in the render target
     ///
     /// \return The view object that is currently used
     ///
-    /// \see SetView, GetDefaultView
+    /// \see setView, getDefaultView
     ///
     ////////////////////////////////////////////////////////////
-    const View& GetView() const;
+    const View& getView() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the default view of the render target
@@ -108,10 +108,10 @@ public :
     ///
     /// \return The default view of the render target
     ///
-    /// \see SetView, GetView
+    /// \see setView, getView
     ///
     ////////////////////////////////////////////////////////////
-    const View& GetDefaultView() const;
+    const View& getDefaultView() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the viewport of a view, applied to this render target
@@ -126,7 +126,7 @@ public :
     /// \return Viewport rectangle, expressed in pixels
     ///
     ////////////////////////////////////////////////////////////
-    IntRect GetViewport(const View& view) const;
+    IntRect getViewport(const View& view) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a point from target coordinates to view coordinates
@@ -150,7 +150,7 @@ public :
     /// \return The converted point, in "world" units
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f ConvertCoords(unsigned int x, unsigned int y) const;
+    Vector2f convertCoords(unsigned int x, unsigned int y) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a point from target coordinates to view coordinates
@@ -176,7 +176,7 @@ public :
     /// \return The converted point, in "world" units
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f ConvertCoords(unsigned int x, unsigned int y, const View& view) const;
+    Vector2f convertCoords(unsigned int x, unsigned int y, const View& view) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw a drawable object to the render-target
@@ -185,7 +185,7 @@ public :
     /// \param states   Render states to use for drawing
     ///
     ////////////////////////////////////////////////////////////
-    void Draw(const Drawable& drawable, const RenderStates& states = RenderStates::Default);
+    void draw(const Drawable& drawable, const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw primitives defined by an array of vertices
@@ -196,7 +196,7 @@ public :
     /// \param states      Render states to use for drawing
     ///
     ////////////////////////////////////////////////////////////
-    void Draw(const Vertex* vertices, unsigned int vertexCount,
+    void draw(const Vertex* vertices, unsigned int vertexCount,
               PrimitiveType type, const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
@@ -204,10 +204,8 @@ public :
     ///
     /// \return Size in pixels
     ///
-    /// \see GetHeight
-    ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u GetSize() const = 0;
+    virtual Vector2u getSize() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the current OpenGL render states and matrices
@@ -222,10 +220,10 @@ public :
     /// calls Draw functions. Example:
     /// \code
     /// // OpenGL code here...
-    /// window.PushGLStates();
-    /// window.Draw(...);
-    /// window.Draw(...);
-    /// window.PopGLStates();
+    /// window.pushGLStates();
+    /// window.draw(...);
+    /// window.draw(...);
+    /// window.popGLStates();
     /// // OpenGL code here...
     /// \endcode
     ///
@@ -238,44 +236,44 @@ public :
     /// saved and restored). Take a look at the ResetGLStates
     /// function if you do so.
     ///
-    /// \see PopGLStates
+    /// \see popGLStates
     ///
     ////////////////////////////////////////////////////////////
-    void PushGLStates();
+    void pushGLStates();
 
     ////////////////////////////////////////////////////////////
     /// \brief Restore the previously saved OpenGL render states and matrices
     ///
-    /// See the description of PushGLStates to get a detailed
+    /// See the description of pushGLStates to get a detailed
     /// description of these functions.
     ///
-    /// \see PushGLStates
+    /// \see pushGLStates
     ///
     ////////////////////////////////////////////////////////////
-    void PopGLStates();
+    void popGLStates();
 
     ////////////////////////////////////////////////////////////
     /// \brief Reset the internal OpenGL states so that the target is ready for drawing
     ///
     /// This function can be used when you mix SFML drawing
     /// and direct OpenGL rendering, if you choose not to use
-    /// PushGLStates/PopGLStates. It makes sure that all OpenGL
-    /// states needed by SFML are set, so that subsequent Draw()
+    /// pushGLStates/popGLStates. It makes sure that all OpenGL
+    /// states needed by SFML are set, so that subsequent draw()
     /// calls will work as expected.
     ///
     /// Example:
     /// \code
     /// // OpenGL code here...
     /// glPushAttrib(...);
-    /// window.ResetGLStates();
-    /// window.Draw(...);
-    /// window.Draw(...);
+    /// window.resetGLStates();
+    /// window.draw(...);
+    /// window.draw(...);
     /// glPopAttrib(...);
     /// // OpenGL code here...
     /// \endcode
     ///
     ////////////////////////////////////////////////////////////
-    void ResetGLStates();
+    void resetGLStates();
 
 protected :
 
@@ -292,13 +290,13 @@ protected :
     /// target is created and ready for drawing.
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize();
+    void initialize();
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply the current view
     ///
     ////////////////////////////////////////////////////////////
-    void ApplyCurrentView();
+    void applyCurrentView();
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new blending mode
@@ -306,7 +304,7 @@ protected :
     /// \param mode Blending mode to apply
     ///
     ////////////////////////////////////////////////////////////
-    void ApplyBlendMode(BlendMode mode);
+    void applyBlendMode(BlendMode mode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new transform
@@ -314,7 +312,7 @@ protected :
     /// \param transform Transform to apply
     ///
     ////////////////////////////////////////////////////////////
-    void ApplyTransform(const Transform& transform);
+    void applyTransform(const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new texture
@@ -322,7 +320,7 @@ protected :
     /// \param texture Texture to apply
     ///
     ////////////////////////////////////////////////////////////
-    void ApplyTexture(const Texture* texture);
+    void applyTexture(const Texture* texture);
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new shader
@@ -330,7 +328,7 @@ protected :
     /// \param shader Shader to apply
     ///
     ////////////////////////////////////////////////////////////
-    void ApplyShader(const Shader* shader);
+    void applyShader(const Shader* shader);
 
 private :
 
@@ -346,7 +344,7 @@ private :
     /// \return True if the function succeeded
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool active) = 0;
+    virtual bool activate(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Render states cache
@@ -356,11 +354,11 @@ private :
     {
         enum {VertexCacheSize = 4};
 
-        bool      ViewChanged;    ///< Has the current view changed since last draw?
-        BlendMode LastBlendMode;  ///< Cached blending mode
-        Uint64    LastTextureId;  ///< Cached texture
-        bool      UseVertexCache; ///< Did we previously use the vertex cache?
-        Vertex    VertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
+        bool      viewChanged;    ///< Has the current view changed since last draw?
+        BlendMode lastBlendMode;  ///< Cached blending mode
+        Uint64    lastTextureId;  ///< Cached texture
+        bool      useVertexCache; ///< Did we previously use the vertex cache?
+        Vertex    vertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
     };
 
     ////////////////////////////////////////////////////////////
@@ -397,7 +395,7 @@ private :
 /// OpenGL stuff. It is even possible to mix together OpenGL calls
 /// and regular SFML drawing commands. When doing so, make sure that
 /// OpenGL states are not messed up by calling the
-/// PushGLStates/PopGLStates functions.
+/// pushGLStates/popGLStates functions.
 ///
 /// \see sf::RenderWindow, sf::RenderTexture, sf::View
 ///

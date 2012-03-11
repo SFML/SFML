@@ -68,7 +68,7 @@ public :
     /// \param value Value of the variable for the current thread
     ///
     ////////////////////////////////////////////////////////////
-    void SetValue(void* value);
+    void setValue(void* value);
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve the thread-specific value of the variable
@@ -76,7 +76,7 @@ public :
     /// \return Value of the variable for the current thread
     ///
     ////////////////////////////////////////////////////////////
-    void* GetValue() const;
+    void* getValue() const;
 
 private :
 

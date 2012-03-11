@@ -73,10 +73,10 @@ public :
     ///
     /// \param socket Reference to the socket to add
     ///
-    /// \see Remove, Clear
+    /// \see remove, clear
     ///
     ////////////////////////////////////////////////////////////
-    void Add(Socket& socket);
+    void add(Socket& socket);
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove a socket from the selector
@@ -86,10 +86,10 @@ public :
     ///
     /// \param socket Reference to the socket to remove
     ///
-    /// \see Add, Clear
+    /// \see add, clear
     ///
     ////////////////////////////////////////////////////////////
-    void Remove(Socket& socket);
+    void remove(Socket& socket);
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove all the sockets stored in the selector
@@ -98,17 +98,17 @@ public :
     /// removes all the references that the selector has to
     /// external sockets.
     ///
-    /// \see Add, Remove
+    /// \see add, remove
     ///
     ////////////////////////////////////////////////////////////
-    void Clear();
+    void clear();
 
     ////////////////////////////////////////////////////////////
     /// \brief Wait until one or more sockets are ready to receive
     ///
     /// This function returns as soon as at least one socket has
     /// some data available to be received. To know which sockets are
-    /// ready, use the IsReady function.
+    /// ready, use the isReady function.
     /// If you use a timeout and no socket is ready before the timeout
     /// is over, the function returns false.
     ///
@@ -116,17 +116,17 @@ public :
     ///
     /// \return True if there are sockets ready, false otherwise
     ///
-    /// \see IsReady
+    /// \see isReady
     ///
     ////////////////////////////////////////////////////////////
-    bool Wait(Time timeout = Time::Zero);
+    bool wait(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Test a socket to know if it is ready to receive data
     ///
     /// This function must be used after a call to Wait, to know
     /// which sockets are ready to receive data. If a socket is
-    /// ready, a call to Receive will never block because we know
+    /// ready, a call to receive will never block because we know
     /// that there is data available to read.
     /// Note that if this function returns true for a TcpListener,
     /// this means that it is ready to accept a new connection.
@@ -135,10 +135,10 @@ public :
     ///
     /// \return True if the socket is ready to read, false otherwise
     ///
-    /// \see IsReady
+    /// \see isReady
     ///
     ////////////////////////////////////////////////////////////
-    bool IsReady(Socket& socket) const;
+    bool isReady(Socket& socket) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -199,7 +199,7 @@ private :
 /// \code
 /// // Create a socket to listen to new connections
 /// sf::TcpListener listener;
-/// listener.Listen(55001);
+/// listener.listen(55001);
 ///
 /// // Create a list to store the future clients
 /// std::list<sf::TcpSocket*> clients;
@@ -208,16 +208,16 @@ private :
 /// sf::SocketSelector selector;
 ///
 /// // Add the listener to the selector
-/// selector.Add(listener);
+/// selector.add(listener);
 ///
 /// // Endless loop that waits for new connections
 /// while (running)
 /// {
 ///     // Make the selector wait for data on any socket
-///     if (selector.Wait())
+///     if (selector.wait())
 ///     {
 ///         // Test the listener
-///         if (selector.IsReady(listener))
+///         if (selector.isReady(listener))
 ///         {
 ///             // The listener is ready: there is a pending connection
 ///             sf::TcpSocket* client = new sf::TcpSocket;
@@ -228,7 +228,7 @@ private :
 ///
 ///                 // Add the new client to the selector so that we will
 ///                 // be notified when he sends something
-///                 selector.Add(*client);
+///                 selector.add(*client);
 ///             }
 ///         }
 ///         else
@@ -237,11 +237,11 @@ private :
 ///             for (std::list<sf::TcpSocket*>::iterator it = clients.begin(); it != clients.end(); ++it)
 ///             {
 ///                 sf::TcpSocket& client = **it;
-///                 if (selector.IsReady(client))
+///                 if (selector.isReady(client))
 ///                 {
 ///                     // The client has sent some data, we can receive it
 ///                     sf::Packet packet;
-///                     if (client.Receive(packet) == sf::Socket::Done)
+///                     if (client.receive(packet) == sf::Socket::Done)
 ///                     {
 ///                         ...
 ///                     }

@@ -42,21 +42,21 @@ m_microseconds(0)
 
 
 ////////////////////////////////////////////////////////////
-float Time::AsSeconds() const
+float Time::asSeconds() const
 {
     return m_microseconds / 1000000.f;
 }
 
 
 ////////////////////////////////////////////////////////////
-Int32 Time::AsMilliseconds() const
+Int32 Time::asMilliseconds() const
 {
     return static_cast<Uint32>(m_microseconds / 1000);
 }
 
 
 ////////////////////////////////////////////////////////////
-Int64 Time::AsMicroseconds() const
+Int64 Time::asMicroseconds() const
 {
     return m_microseconds;
 }
@@ -70,21 +70,21 @@ m_microseconds(microseconds)
 
 
 ////////////////////////////////////////////////////////////
-Time Seconds(float amount)
+Time seconds(float amount)
 {
     return Time(static_cast<Uint64>(amount * 1000000));
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Milliseconds(Int32 amount)
+Time milliseconds(Int32 amount)
 {
     return Time(static_cast<Uint64>(amount) * 1000);
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Microseconds(Int64 amount)
+Time microseconds(Int64 amount)
 {
     return Time(amount);
 }
@@ -93,56 +93,56 @@ Time Microseconds(Int64 amount)
 ////////////////////////////////////////////////////////////
 bool operator ==(Time left, Time right)
 {
-    return left.AsMicroseconds() == right.AsMicroseconds();
+    return left.asMicroseconds() == right.asMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
 bool operator !=(Time left, Time right)
 {
-    return left.AsMicroseconds() != right.AsMicroseconds();
+    return left.asMicroseconds() != right.asMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
 bool operator <(Time left, Time right)
 {
-    return left.AsMicroseconds() < right.AsMicroseconds();
+    return left.asMicroseconds() < right.asMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
 bool operator >(Time left, Time right)
 {
-    return left.AsMicroseconds() > right.AsMicroseconds();
+    return left.asMicroseconds() > right.asMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
 bool operator <=(Time left, Time right)
 {
-    return left.AsMicroseconds() <= right.AsMicroseconds();
+    return left.asMicroseconds() <= right.asMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
 bool operator >=(Time left, Time right)
 {
-    return left.AsMicroseconds() >= right.AsMicroseconds();
+    return left.asMicroseconds() >= right.asMicroseconds();
 }
 
 
 ////////////////////////////////////////////////////////////
 Time operator -(Time right)
 {
-    return Microseconds(-right.AsMicroseconds());
+    return microseconds(-right.asMicroseconds());
 }
 
 
 ////////////////////////////////////////////////////////////
 Time operator +(Time left, Time right)
 {
-    return Microseconds(left.AsMicroseconds() + right.AsMicroseconds());
+    return microseconds(left.asMicroseconds() + right.asMicroseconds());
 }
 
 
@@ -156,7 +156,7 @@ Time& operator +=(Time& left, Time right)
 ////////////////////////////////////////////////////////////
 Time operator -(Time left, Time right)
 {
-    return Microseconds(left.AsMicroseconds() - right.AsMicroseconds());
+    return microseconds(left.asMicroseconds() - right.asMicroseconds());
 }
 
 
@@ -170,14 +170,14 @@ Time& operator -=(Time& left, Time right)
 ////////////////////////////////////////////////////////////
 Time operator *(Time left, float right)
 {
-    return Seconds(left.AsSeconds() * right);
+    return seconds(left.asSeconds() * right);
 }
 
 
 ////////////////////////////////////////////////////////////
 Time operator *(Time left, Int64 right)
 {
-    return Microseconds(left.AsMicroseconds() * right);
+    return microseconds(left.asMicroseconds() * right);
 }
 
 
@@ -212,14 +212,14 @@ Time& operator *=(Time& left, Int64 right)
 ////////////////////////////////////////////////////////////
 Time operator /(Time left, float right)
 {
-    return Seconds(left.AsSeconds() / right);
+    return seconds(left.asSeconds() / right);
 }
 
 
 ////////////////////////////////////////////////////////////
 Time operator /(Time left, Int64 right)
 {
-    return Microseconds(left.AsMicroseconds() / right);
+    return microseconds(left.asMicroseconds() / right);
 }
 
 

@@ -36,7 +36,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Text::Text() :
 m_string       (),
-m_font         (&Font::GetDefaultFont()),
+m_font         (&Font::getDefaultFont()),
 m_characterSize(30),
 m_style        (Regular),
 m_color        (255, 255, 255),
@@ -57,112 +57,112 @@ m_color        (255, 255, 255),
 m_vertices     (Quads),
 m_bounds       ()
 {
-    UpdateGeometry();
+    updateGeometry();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Text::SetString(const String& string)
+void Text::setString(const String& string)
 {
     m_string = string;
-    UpdateGeometry();
+    updateGeometry();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Text::SetFont(const Font& font)
+void Text::setFont(const Font& font)
 {
     if (m_font != &font)
     {
         m_font = &font;
-        UpdateGeometry();
+        updateGeometry();
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Text::SetCharacterSize(unsigned int size)
+void Text::setCharacterSize(unsigned int size)
 {
     if (m_characterSize != size)
     {
         m_characterSize = size;
-        UpdateGeometry();
+        updateGeometry();
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Text::SetStyle(Uint32 style)
+void Text::setStyle(Uint32 style)
 {
     if (m_style != style)
     {
         m_style = style;
-        UpdateGeometry();
+        updateGeometry();
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Text::SetColor(const Color& color)
+void Text::setColor(const Color& color)
 {
     if (color != m_color)
     {
         m_color = color;
-        for (unsigned int i = 0; i < m_vertices.GetVertexCount(); ++i)
-            m_vertices[i].Color = m_color;
+        for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
+            m_vertices[i].color = m_color;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-const String& Text::GetString() const
+const String& Text::getString() const
 {
     return m_string;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Font& Text::GetFont() const
+const Font& Text::getFont() const
 {
-    assert(m_font != NULL); // can never be NULL, always &Font::GetDefaultFont() by default
+    assert(m_font != NULL); // can never be NULL, always &Font::getDefaultFont() by default
     return *m_font;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Text::GetCharacterSize() const
+unsigned int Text::getCharacterSize() const
 {
     return m_characterSize;
 }
 
 
 ////////////////////////////////////////////////////////////
-Uint32 Text::GetStyle() const
+Uint32 Text::getStyle() const
 {
     return m_style;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Color& Text::GetColor() const
+const Color& Text::getColor() const
 {
     return m_color;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f Text::FindCharacterPos(std::size_t index) const
+Vector2f Text::findCharacterPos(std::size_t index) const
 {
     assert(m_font != NULL);
 
     // Adjust the index if it's out of range
-    if (index > m_string.GetSize())
-        index = m_string.GetSize();
+    if (index > m_string.getSize())
+        index = m_string.getSize();
 
     // Precompute the variables needed by the algorithm
     bool  bold   = (m_style & Bold) != 0;
-    float hspace = static_cast<float>(m_font->GetGlyph(L' ', m_characterSize, bold).Advance);
-    float vspace = static_cast<float>(m_font->GetLineSpacing(m_characterSize));
+    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
+    float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
 
     // Compute the position
     Vector2f position;
@@ -172,7 +172,7 @@ Vector2f Text::FindCharacterPos(std::size_t index) const
         Uint32 curChar = m_string[i];
 
         // Apply the kerning offset
-        position.x += static_cast<float>(m_font->GetKerning(prevChar, curChar, m_characterSize));
+        position.x += static_cast<float>(m_font->getKerning(prevChar, curChar, m_characterSize));
         prevChar = curChar;
 
         // Handle special characters
@@ -185,52 +185,52 @@ Vector2f Text::FindCharacterPos(std::size_t index) const
         }
 
         // For regular characters, add the advance offset of the glyph
-        position.x += static_cast<float>(m_font->GetGlyph(curChar, m_characterSize, bold).Advance);
+        position.x += static_cast<float>(m_font->getGlyph(curChar, m_characterSize, bold).advance);
     }
 
     // Transform the position to global coordinates
-    position = GetTransform().TransformPoint(position);
+    position = getTransform().transformPoint(position);
 
     return position;
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect Text::GetLocalBounds() const
+FloatRect Text::getLocalBounds() const
 {
     return m_bounds;
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect Text::GetGlobalBounds() const
+FloatRect Text::getGlobalBounds() const
 {
-    return GetTransform().TransformRect(GetLocalBounds());
+    return getTransform().transformRect(getLocalBounds());
 }
 
 
 ////////////////////////////////////////////////////////////
-void Text::Draw(RenderTarget& target, RenderStates states) const
+void Text::draw(RenderTarget& target, RenderStates states) const
 {
     assert(m_font != NULL);
 
-    states.Transform *= GetTransform();
-    states.BlendMode = BlendAlpha; // alpha blending is mandatory for proper text rendering
-    states.Texture = &m_font->GetTexture(m_characterSize);
-    target.Draw(m_vertices, states);
+    states.transform *= getTransform();
+    states.blendMode = BlendAlpha; // alpha blending is mandatory for proper text rendering
+    states.texture = &m_font->getTexture(m_characterSize);
+    target.draw(m_vertices, states);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Text::UpdateGeometry()
+void Text::updateGeometry()
 {
     assert(m_font != NULL);
 
     // Clear the previous geometry
-    m_vertices.Clear();
+    m_vertices.clear();
 
     // No text: nothing to draw
-    if (m_string.IsEmpty())
+    if (m_string.isEmpty())
         return;
 
     // Compute values related to the text style
@@ -241,19 +241,19 @@ void Text::UpdateGeometry()
     float underlineThickness = m_characterSize * (bold ? 0.1f : 0.07f);
 
     // Precompute the variables needed by the algorithm
-    float hspace = static_cast<float>(m_font->GetGlyph(L' ', m_characterSize, bold).Advance);
-    float vspace = static_cast<float>(m_font->GetLineSpacing(m_characterSize));
+    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
+    float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
     float x      = 0.f;
     float y      = static_cast<float>(m_characterSize);
 
     // Create one quad for each character
     Uint32 prevChar = 0;
-    for (std::size_t i = 0; i < m_string.GetSize(); ++i)
+    for (std::size_t i = 0; i < m_string.getSize(); ++i)
     {
         Uint32 curChar = m_string[i];
 
         // Apply the kerning offset
-        x += static_cast<float>(m_font->GetKerning(prevChar, curChar, m_characterSize));
+        x += static_cast<float>(m_font->getKerning(prevChar, curChar, m_characterSize));
         prevChar = curChar;
 
         // If we're using the underlined style and there's a new line, draw a line
@@ -262,10 +262,10 @@ void Text::UpdateGeometry()
             float top = y + underlineOffset;
             float bottom = top + underlineThickness;
 
-            m_vertices.Append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
-            m_vertices.Append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-            m_vertices.Append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
-            m_vertices.Append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+            m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
+            m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+            m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
+            m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
         }
 
         // Handle special characters
@@ -278,26 +278,26 @@ void Text::UpdateGeometry()
         }
 
         // Extract the current glyph's description
-        const Glyph& glyph = m_font->GetGlyph(curChar, m_characterSize, bold);
+        const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, bold);
 
-        int left   = glyph.Bounds.Left;
-        int top    = glyph.Bounds.Top;
-        int right  = glyph.Bounds.Left + glyph.Bounds.Width;
-        int bottom = glyph.Bounds.Top  + glyph.Bounds.Height;
+        int left   = glyph.bounds.left;
+        int top    = glyph.bounds.top;
+        int right  = glyph.bounds.left + glyph.bounds.width;
+        int bottom = glyph.bounds.top  + glyph.bounds.height;
 
-        float u1 = static_cast<float>(glyph.TextureRect.Left);
-        float v1 = static_cast<float>(glyph.TextureRect.Top);
-        float u2 = static_cast<float>(glyph.TextureRect.Left + glyph.TextureRect.Width);
-        float v2 = static_cast<float>(glyph.TextureRect.Top  + glyph.TextureRect.Height);
+        float u1 = static_cast<float>(glyph.textureRect.left);
+        float v1 = static_cast<float>(glyph.textureRect.top);
+        float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width);
+        float v2 = static_cast<float>(glyph.textureRect.top  + glyph.textureRect.height);
 
         // Add a quad for the current character
-        m_vertices.Append(Vertex(Vector2f(x + left  - italic * top,    y + top),    m_color, Vector2f(u1, v1)));
-        m_vertices.Append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
-        m_vertices.Append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), m_color, Vector2f(u2, v2)));
-        m_vertices.Append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
+        m_vertices.append(Vertex(Vector2f(x + left  - italic * top,    y + top),    m_color, Vector2f(u1, v1)));
+        m_vertices.append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
+        m_vertices.append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), m_color, Vector2f(u2, v2)));
+        m_vertices.append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
 
         // Advance to the next character
-        x += glyph.Advance;
+        x += glyph.advance;
     }
 
     // If we're using the underlined style, add the last line
@@ -306,14 +306,14 @@ void Text::UpdateGeometry()
         float top = y + underlineOffset;
         float bottom = top + underlineThickness;
 
-        m_vertices.Append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
-        m_vertices.Append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-        m_vertices.Append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
-        m_vertices.Append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+        m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
+        m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+        m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
+        m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
     }
 
     // Recompute the bounding rectangle
-    m_bounds = m_vertices.GetBounds();
+    m_bounds = m_vertices.getBounds();
 }
 
 } // namespace sf

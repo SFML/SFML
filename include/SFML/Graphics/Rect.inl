@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////
 template <typename T>
 Rect<T>::Rect() :
-Left  (0),
-Top   (0),
-Width (0),
-Height(0)
+left  (0),
+top   (0),
+width (0),
+height(0)
 {
 
 }
@@ -38,10 +38,10 @@ Height(0)
 ////////////////////////////////////////////////////////////
 template <typename T>
 Rect<T>::Rect(T left, T top, T width, T height) :
-Left  (left),
-Top   (top),
-Width (width),
-Height(height)
+left  (left),
+top   (top),
+width (width),
+height(height)
 {
 
 }
@@ -50,10 +50,10 @@ Height(height)
 ////////////////////////////////////////////////////////////
 template <typename T>
 Rect<T>::Rect(const Vector2<T>& position, const Vector2<T>& size) :
-Left  (position.x),
-Top   (position.y),
-Width (size.x),
-Height(size.y)
+left  (position.x),
+top   (position.y),
+width (size.x),
+height(size.y)
 {
 
 }
@@ -63,53 +63,53 @@ Height(size.y)
 template <typename T>
 template <typename U>
 Rect<T>::Rect(const Rect<U>& rectangle) :
-Left  (static_cast<T>(rectangle.Left)),
-Top   (static_cast<T>(rectangle.Top)),
-Width (static_cast<T>(rectangle.Width)),
-Height(static_cast<T>(rectangle.Height))
+left  (static_cast<T>(rectangle.left)),
+top   (static_cast<T>(rectangle.Top)),
+width (static_cast<T>(rectangle.Width)),
+height(static_cast<T>(rectangle.Height))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool Rect<T>::Contains(T x, T y) const
+bool Rect<T>::contains(T x, T y) const
 {
-    return (x >= Left) && (x < Left + Width) && (y >= Top) && (y < Top + Height);
+    return (x >= left) && (x < left + width) && (y >= top) && (y < top + height);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool Rect<T>::Contains(const Vector2<T>& point) const
+bool Rect<T>::contains(const Vector2<T>& point) const
 {
-    return Contains(point.x, point.y);
+    return contains(point.x, point.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool Rect<T>::Intersects(const Rect<T>& rectangle) const
+bool Rect<T>::intersects(const Rect<T>& rectangle) const
 {
     Rect<T> intersection;
-    return Intersects(rectangle, intersection);
+    return intersects(rectangle, intersection);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool Rect<T>::Intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
+bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
 {
     // Compute the intersection boundaries
-    T left   = std::max(Left,         rectangle.Left);
-    T top    = std::max(Top,          rectangle.Top);
-    T right  = std::min(Left + Width, rectangle.Left + rectangle.Width);
-    T bottom = std::min(Top + Height, rectangle.Top + rectangle.Height);
+    T interLeft   = std::max(left,         rectangle.left);
+    T interTop    = std::max(top,          rectangle.top);
+    T interRight  = std::min(left + width, rectangle.left + rectangle.width);
+    T interBottom = std::min(top + height, rectangle.top + rectangle.height);
 
     // If the intersection is valid (positive non zero area), then there is an intersection
-    if ((left < right) && (top < bottom))
+    if ((interLeft < interRight) && (interTop < interBottom))
     {
-        intersection = Rect<T>(left, top, right - left, bottom - top);
+        intersection = Rect<T>(interLeft, interTop, interRight - interLeft, interBottom - interTop);
         return true;
     }
     else
@@ -124,8 +124,8 @@ bool Rect<T>::Intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
 template <typename T>
 inline bool operator ==(const Rect<T>& left, const Rect<T>& right)
 {
-    return (left.Left == right.Left) && (left.Width == right.Width) &&
-           (left.Top == right.Top) && (left.Height == right.Height);
+    return (left.left == right.left) && (left.width == right.width) &&
+           (left.top == right.top) && (left.height == right.height);
 }
 
 
@@ -133,6 +133,5 @@ inline bool operator ==(const Rect<T>& left, const Rect<T>& right)
 template <typename T>
 inline bool operator !=(const Rect<T>& left, const Rect<T>& right)
 {
-    return (left.Left != right.Left) || (left.Width != right.Width) ||
-           (left.Top != right.Top) || (left.Height != right.Height);
+    return !(left == right);
 }

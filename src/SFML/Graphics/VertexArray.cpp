@@ -48,7 +48,7 @@ m_primitiveType(type)
 
 
 ////////////////////////////////////////////////////////////
-unsigned int VertexArray::GetVertexCount() const
+unsigned int VertexArray::getVertexCount() const
 {
     return static_cast<unsigned int>(m_vertices.size());
 }
@@ -69,53 +69,53 @@ const Vertex& VertexArray::operator [](unsigned int index) const
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::Clear()
+void VertexArray::clear()
 {
     m_vertices.clear();
 }
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::Resize(unsigned int vertexCount)
+void VertexArray::resize(unsigned int vertexCount)
 {
     m_vertices.resize(vertexCount);
 }
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::Append(const Vertex& vertex)
+void VertexArray::append(const Vertex& vertex)
 {
     m_vertices.push_back(vertex);
 }
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::SetPrimitiveType(PrimitiveType type)
+void VertexArray::setPrimitiveType(PrimitiveType type)
 {
     m_primitiveType = type;
 }
 
 
 ////////////////////////////////////////////////////////////
-PrimitiveType VertexArray::GetPrimitiveType() const
+PrimitiveType VertexArray::getPrimitiveType() const
 {
     return m_primitiveType;
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect VertexArray::GetBounds() const
+FloatRect VertexArray::getBounds() const
 {
     if (!m_vertices.empty())
     {
-        float left   = m_vertices[0].Position.x;
-        float top    = m_vertices[0].Position.y;
-        float right  = m_vertices[0].Position.x;
-        float bottom = m_vertices[0].Position.y;
+        float left   = m_vertices[0].position.x;
+        float top    = m_vertices[0].position.y;
+        float right  = m_vertices[0].position.x;
+        float bottom = m_vertices[0].position.y;
 
         for (std::size_t i = 0; i < m_vertices.size(); ++i)
         {
-            Vector2f position = m_vertices[i].Position;
+            Vector2f position = m_vertices[i].position;
 
             // Update left and right
             if (position.x < left)
@@ -141,10 +141,10 @@ FloatRect VertexArray::GetBounds() const
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::Draw(RenderTarget& target, RenderStates states) const
+void VertexArray::draw(RenderTarget& target, RenderStates states) const
 {
     if (!m_vertices.empty())
-        target.Draw(&m_vertices[0], static_cast<unsigned int>(m_vertices.size()), m_primitiveType, states);
+        target.draw(&m_vertices[0], static_cast<unsigned int>(m_vertices.size()), m_primitiveType, states);
 }
 
 } // namespace sf

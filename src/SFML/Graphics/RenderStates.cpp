@@ -37,61 +37,61 @@ const RenderStates RenderStates::Default;
 
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates() :
-BlendMode(BlendAlpha),
-Transform(),
-Texture  (NULL),
-Shader   (NULL)
+blendMode(BlendAlpha),
+transform(),
+texture  (NULL),
+shader   (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const sf::Transform& transform) :
-BlendMode(BlendAlpha),
-Transform(transform),
-Texture  (NULL),
-Shader   (NULL)
+RenderStates::RenderStates(const Transform& transform) :
+blendMode(BlendAlpha),
+transform(transform),
+texture  (NULL),
+shader   (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(sf::BlendMode blendMode) :
-BlendMode(blendMode),
-Transform(),
-Texture  (NULL),
-Shader   (NULL)
+RenderStates::RenderStates(BlendMode blendMode) :
+blendMode(blendMode),
+transform(),
+texture  (NULL),
+shader   (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const sf::Texture* texture) :
-BlendMode(BlendAlpha),
-Transform(),
-Texture  (texture),
-Shader   (NULL)
+RenderStates::RenderStates(const Texture* texture) :
+blendMode(BlendAlpha),
+transform(),
+texture  (texture),
+shader   (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const sf::Shader* shader) :
-BlendMode(BlendAlpha),
-Transform(),
-Texture  (NULL),
-Shader   (shader)
+RenderStates::RenderStates(const Shader* shader) :
+blendMode(BlendAlpha),
+transform(),
+texture  (NULL),
+shader   (shader)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(sf::BlendMode blendMode, const sf::Transform& transform,
-                           const sf::Texture* texture, const sf::Shader* shader) :
-BlendMode(blendMode),
-Transform(transform),
-Texture  (texture),
-Shader   (shader)
+RenderStates::RenderStates(BlendMode blendMode, const Transform& transform,
+                           const Texture* texture, const Shader* shader) :
+blendMode(blendMode),
+transform(transform),
+texture  (texture),
+shader   (shader)
 {
 }
 

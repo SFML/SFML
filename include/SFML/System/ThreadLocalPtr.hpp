@@ -128,25 +128,25 @@ public :
 /// MyClass object2;
 /// sf::ThreadLocalPtr<MyClass> objectPtr;
 ///
-/// void Thread1()
+/// void thread1()
 /// {
-///     objectPtr = &object1; // doesn't impact Thread2
+///     objectPtr = &object1; // doesn't impact thread2
 ///     ...
 /// }
 ///
-/// void Thread2()
+/// void thread2()
 /// {
-///     objectPtr = &object2; // doesn't impact Thread1
+///     objectPtr = &object2; // doesn't impact thread1
 ///     ...
 /// }
 ///
 /// int main()
 /// {
 ///     // Create and launch the two threads
-///     sf::Thread thread1(&Thread1);
-///     sf::Thread thread2(&Thread2);
-///     thread1.Launch();
-///     thread2.Launch();
+///     sf::Thread t1(&thread1);
+///     sf::Thread t2(&thread2);
+///     t1.launch();
+///     t2.launch();
 ///
 ///     return 0;
 /// }

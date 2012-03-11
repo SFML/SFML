@@ -103,7 +103,7 @@ public :
     ///
     /// \param address 4 bytes of the address packed into a 32-bits integer
     ///
-    /// \see ToInteger
+    /// \see toInteger
     ///
     ////////////////////////////////////////////////////////////
     explicit IpAddress(Uint32 address);
@@ -117,10 +117,10 @@ public :
     ///
     /// \return String representation of the address
     ///
-    /// \see ToInteger
+    /// \see toInteger
     ///
     ////////////////////////////////////////////////////////////
-    std::string ToString() const;
+    std::string toString() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get an integer representation of the address
@@ -133,10 +133,10 @@ public :
     ///
     /// \return 32-bits unsigned integer representation of the address
     ///
-    /// \see ToString
+    /// \see toString
     ///
     ////////////////////////////////////////////////////////////
-    Uint32 ToInteger() const;
+    Uint32 toInteger() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the computer's local address
@@ -144,15 +144,15 @@ public :
     /// The local address is the address of the computer from the
     /// LAN point of view, i.e. something like 192.168.1.56. It is
     /// meaningful only for communications over the local network.
-    /// Unlike GetPublicAddress, this function is fast and may be
+    /// Unlike getPublicAddress, this function is fast and may be
     /// used safely anywhere.
     ///
     /// \return Local IP address of the computer
     ///
-    /// \see GetPublicAddress
+    /// \see getPublicAddress
     ///
     ////////////////////////////////////////////////////////////
-    static IpAddress GetLocalAddress();
+    static IpAddress getLocalAddress();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the computer's public address
@@ -173,10 +173,10 @@ public :
     ///
     /// \return Public IP address of the computer
     ///
-    /// \see GetLocalAddress
+    /// \see getLocalAddress
     ///
     ////////////////////////////////////////////////////////////
-    static IpAddress GetPublicAddress(Time timeout = Time::Zero);
+    static IpAddress getPublicAddress(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -306,8 +306,8 @@ SFML_NETWORK_API std::ostream& operator <<(std::ostream& stream, const IpAddress
 /// sf::IpAddress a5("my_computer");                      // a local address created from a network name
 /// sf::IpAddress a6("89.54.1.169");                      // a distant address
 /// sf::IpAddress a7("www.google.com");                   // a distant address created from a network name
-/// sf::IpAddress a8 = sf::IpAddress::GetLocalAddress();  // my address on the local network
-/// sf::IpAddress a9 = sf::IpAddress::GetPublicAddress(); // my address on the internet
+/// sf::IpAddress a8 = sf::IpAddress::getLocalAddress();  // my address on the local network
+/// sf::IpAddress a9 = sf::IpAddress::getPublicAddress(); // my address on the internet
 /// \endcode
 ///
 /// Note that sf::IpAddress currently doesn't support IPv6

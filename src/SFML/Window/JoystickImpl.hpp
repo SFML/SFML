@@ -45,12 +45,12 @@ struct JoystickCaps
 {
     JoystickCaps()
     {
-        ButtonCount = 0;
-        std::fill(Axes, Axes + Joystick::AxisCount, false);
+        buttonCount = 0;
+        std::fill(axes, axes + Joystick::AxisCount, false);
     }
 
-    unsigned int ButtonCount;               ///< Number of buttons supported by the joystick
-    bool         Axes[Joystick::AxisCount]; ///< Support for each axis
+    unsigned int buttonCount;               ///< Number of buttons supported by the joystick
+    bool         axes[Joystick::AxisCount]; ///< Support for each axis
 };
 
 
@@ -62,14 +62,14 @@ struct JoystickState
 {
     JoystickState()
     {
-        Connected = false;
-        std::fill(Axes, Axes + Joystick::AxisCount, 0.f);
-        std::fill(Buttons, Buttons + Joystick::ButtonCount, false);
+        connected = false;
+        std::fill(axes, axes + Joystick::AxisCount, 0.f);
+        std::fill(buttons, buttons + Joystick::ButtonCount, false);
     }
 
-    bool  Connected;                      ///< Is the joystick currently connected?
-    float Axes[Joystick::AxisCount];      ///< Position of each axis, in range [-100, 100]
-    bool  Buttons[Joystick::ButtonCount]; ///< Status of each button (true = pressed)
+    bool  connected;                      ///< Is the joystick currently connected?
+    float axes[Joystick::AxisCount];      ///< Position of each axis, in range [-100, 100]
+    bool  buttons[Joystick::ButtonCount]; ///< Status of each button (true = pressed)
 };
 
 } // namespace priv
@@ -78,17 +78,11 @@ struct JoystickState
 
 
 #if defined(SFML_SYSTEM_WINDOWS)
-
     #include <SFML/Window/Win32/JoystickImpl.hpp>
-
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
-
     #include <SFML/Window/Linux/JoystickImpl.hpp>
-
 #elif defined(SFML_SYSTEM_MACOS)
-
     #include <SFML/Window/OSX/JoystickImpl.hpp>
-
 #endif
 
 

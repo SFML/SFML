@@ -47,14 +47,14 @@ ThreadLocalImpl::~ThreadLocalImpl()
 
 
 ////////////////////////////////////////////////////////////
-void ThreadLocalImpl::SetValue(void* value)
+void ThreadLocalImpl::setValue(void* value)
 {
     pthread_setspecific(m_key, value);
 }
 
 
 ////////////////////////////////////////////////////////////
-void* ThreadLocalImpl::GetValue() const
+void* ThreadLocalImpl::getValue() const
 {
     return pthread_getspecific(m_key);
 }

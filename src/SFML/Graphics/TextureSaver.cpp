@@ -35,14 +35,14 @@ namespace priv
 ////////////////////////////////////////////////////////////
 TextureSaver::TextureSaver()
 {
-    GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &m_textureBinding));
+    glCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &m_textureBinding));
 }
 
 
 ////////////////////////////////////////////////////////////
 TextureSaver::~TextureSaver()
 {
-    GLCheck(glBindTexture(GL_TEXTURE_2D, m_textureBinding));
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_textureBinding));
 }
 
 } // namespace priv

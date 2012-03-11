@@ -56,40 +56,40 @@ public :
     ///
     /// \param radius New radius of the circle
     ///
-    /// \see GetRadius
+    /// \see getRadius
     ///
     ////////////////////////////////////////////////////////////
-    void SetRadius(float radius);
+    void setRadius(float radius);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the radius of the circle
     ///
     /// \return Radius of the circle
     ///
-    /// \see SetRadius
+    /// \see setRadius
     ///
     ////////////////////////////////////////////////////////////
-    float GetRadius() const;
+    float getRadius() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the circle
     ///
     /// \param count New number of points of the circle
     ///
-    /// \see GetPointCount
+    /// \see getPointCount
     ///
     ////////////////////////////////////////////////////////////
-    void SetPointCount(unsigned int count);
+    void setPointCount(unsigned int count);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of points of the shape
     ///
     /// \return Number of points of the shape
     ///
-    /// \see SetPointCount
+    /// \see setPointCount
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetPointCount() const;
+    virtual unsigned int getPointCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
@@ -101,7 +101,7 @@ public :
     /// \return Index-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f GetPoint(unsigned int index) const;
+    virtual Vector2f getPoint(unsigned int index) const;
 
 private :
 
@@ -129,12 +129,12 @@ private :
 /// Usage example:
 /// \code
 /// sf::CircleShape circle;
-/// circle.SetRadius(150);
-/// circle.SetOutlineColor(sf::Color::Red);
-/// circle.SetOutlineThickness(5);
-/// circle.SetPosition(10, 20);
+/// circle.setRadius(150);
+/// circle.setOutlineColor(sf::Color::Red);
+/// circle.setOutlineThickness(5);
+/// circle.setPosition(10, 20);
 /// ...
-/// window.Draw(circle);
+/// window.draw(circle);
 /// \endcode
 ///
 /// Since the graphics card can't draw perfect circles, we have to

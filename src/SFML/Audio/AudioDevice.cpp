@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/ALCheck.hpp>
+#include <SFML/Audio/alCheck.hpp>
 #include <SFML/Audio/Listener.hpp>
 #include <SFML/System/Err.hpp>
 
@@ -59,12 +59,12 @@ AudioDevice::AudioDevice()
         }
         else
         {
-            Err() << "Failed to create the audio context" << std::endl;
+            err() << "Failed to create the audio context" << std::endl;
         }
     }
     else
     {
-        Err() << "Failed to open the audio device" << std::endl;
+        err() << "Failed to open the audio device" << std::endl;
     }
 }
 
@@ -84,9 +84,9 @@ AudioDevice::~AudioDevice()
 
 
 ////////////////////////////////////////////////////////////
-bool AudioDevice::IsExtensionSupported(const std::string& extension)
+bool AudioDevice::isExtensionSupported(const std::string& extension)
 {
-    EnsureALInit();
+    ensureALInit();
 
     if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
         return alcIsExtensionPresent(audioDevice, extension.c_str()) != AL_FALSE;
@@ -96,9 +96,9 @@ bool AudioDevice::IsExtensionSupported(const std::string& extension)
 
 
 ////////////////////////////////////////////////////////////
-int AudioDevice::GetFormatFromChannelCount(unsigned int channelCount)
+int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
 {
-    EnsureALInit();
+    ensureALInit();
 
     // Find the good format according to the number of channels
     switch (channelCount)

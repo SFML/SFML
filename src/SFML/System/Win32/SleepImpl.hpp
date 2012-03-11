@@ -42,7 +42,7 @@ namespace priv
 /// \param time Time to sleep
 ///
 ////////////////////////////////////////////////////////////
-void SleepImpl(Time time);
+void sleepImpl(Time time);
 
 } // namespace priv
 

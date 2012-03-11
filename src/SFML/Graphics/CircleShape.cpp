@@ -36,41 +36,41 @@ CircleShape::CircleShape(float radius, unsigned int pointCount) :
 m_radius    (radius),
 m_pointCount(pointCount)
 {
-    Update();
+    update();
 }
 
 
 ////////////////////////////////////////////////////////////
-void CircleShape::SetRadius(float radius)
+void CircleShape::setRadius(float radius)
 {
     m_radius = radius;
-    Update();
+    update();
 }
 
 
 ////////////////////////////////////////////////////////////
-float CircleShape::GetRadius() const
+float CircleShape::getRadius() const
 {
     return m_radius;
 }
 
 
 ////////////////////////////////////////////////////////////
-void CircleShape::SetPointCount(unsigned int count)
+void CircleShape::setPointCount(unsigned int count)
 {
     m_pointCount = count;
-    Update();
+    update();
 }
 
 ////////////////////////////////////////////////////////////
-unsigned int CircleShape::GetPointCount() const
+unsigned int CircleShape::getPointCount() const
 {
     return m_pointCount;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f CircleShape::GetPoint(unsigned int index) const
+Vector2f CircleShape::getPoint(unsigned int index) const
 {
     static const float pi = 3.141592654f;
 

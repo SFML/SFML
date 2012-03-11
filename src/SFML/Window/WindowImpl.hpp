@@ -64,7 +64,7 @@ public :
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* Create(VideoMode mode, const std::string& title, Uint32 style);
+    static WindowImpl* create(VideoMode mode, const std::string& title, Uint32 style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS
@@ -74,7 +74,7 @@ public :
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* Create(WindowHandle handle);
+    static WindowImpl* create(WindowHandle handle);
 
 public :
 
@@ -91,7 +91,7 @@ public :
     /// \param threshold : New threshold, in range [0, 100]
     ///
     ////////////////////////////////////////////////////////////
-    void SetJoystickThreshold(float threshold);
+    void setJoystickThreshold(float threshold);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the next window event available
@@ -107,7 +107,7 @@ public :
     /// \param block Use true to block the thread until an event arrives
     ///
     ////////////////////////////////////////////////////////////
-    bool PopEvent(Event& event, bool block);
+    bool popEvent(Event& event, bool block);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -115,7 +115,7 @@ public :
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle GetSystemHandle() const = 0;
+    virtual WindowHandle getSystemHandle() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -123,7 +123,7 @@ public :
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2i GetPosition() const = 0;
+    virtual Vector2i getPosition() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -131,7 +131,7 @@ public :
     /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(const Vector2i& position) = 0;
+    virtual void setPosition(const Vector2i& position) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the client size of the window
@@ -139,7 +139,7 @@ public :
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u GetSize() const = 0;
+    virtual Vector2u getSize() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -147,7 +147,7 @@ public :
     /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(const Vector2u& size) = 0;
+    virtual void setSize(const Vector2u& size) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -155,7 +155,7 @@ public :
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetTitle(const std::string& title) = 0;
+    virtual void setTitle(const std::string& title) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
@@ -165,7 +165,7 @@ public :
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels) = 0;
+    virtual void setIcon(unsigned int width, unsigned int height, const Uint8* pixels) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -173,7 +173,7 @@ public :
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetVisible(bool visible) = 0;
+    virtual void setVisible(bool visible) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor
@@ -181,7 +181,7 @@ public :
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetMouseCursorVisible(bool visible) = 0;
+    virtual void setMouseCursorVisible(bool visible) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
@@ -189,7 +189,7 @@ public :
     /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetKeyRepeatEnabled(bool enabled) = 0;
+    virtual void setKeyRepeatEnabled(bool enabled) = 0;
 
 protected :
 
@@ -209,7 +209,7 @@ protected :
     /// \param event Event to push
     ///
     ////////////////////////////////////////////////////////////
-    void PushEvent(const Event& event);
+    void pushEvent(const Event& event);
 
 private :
 
@@ -217,13 +217,13 @@ private :
     /// \brief Read the joysticks state and generate the appropriate events
     ///
     ////////////////////////////////////////////////////////////
-    void ProcessJoystickEvents();
+    void processJoystickEvents();
 
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents() = 0;
+    virtual void processEvents() = 0;
 
     ////////////////////////////////////////////////////////////
     // Member data

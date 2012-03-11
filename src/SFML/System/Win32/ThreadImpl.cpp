@@ -39,10 +39,10 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ThreadImpl::ThreadImpl(Thread* owner)
 {
-    m_thread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, owner, 0, &m_threadId));
+    m_thread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::entryPoint, owner, 0, &m_threadId));
 
     if (!m_thread)
-        Err() << "Failed to create thread" << std::endl;
+        err() << "Failed to create thread" << std::endl;
 }
 
 
@@ -55,7 +55,7 @@ ThreadImpl::~ThreadImpl()
 
 
 ////////////////////////////////////////////////////////////
-void ThreadImpl::Wait()
+void ThreadImpl::wait()
 {
     if (m_thread)
     {
@@ -66,7 +66,7 @@ void ThreadImpl::Wait()
 
 
 ////////////////////////////////////////////////////////////
-void ThreadImpl::Terminate()
+void ThreadImpl::terminate()
 {
     if (m_thread)
         TerminateThread(m_thread, 0);
@@ -74,13 +74,13 @@ void ThreadImpl::Terminate()
 
 
 ////////////////////////////////////////////////////////////
-unsigned int __stdcall ThreadImpl::EntryPoint(void* userData)
+unsigned int __stdcall ThreadImpl::entryPoint(void* userData)
 {
     // The Thread instance is stored in the user data
     Thread* owner = static_cast<Thread*>(userData);
 
     // Forward to the owner
-    owner->Run();
+    owner->run();
 
     // Optional, but it is cleaner
     _endthreadex(0);

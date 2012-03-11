@@ -78,13 +78,13 @@ public :
     ///
     /// \code
     /// sf::Transform transform = ...;
-    /// glLoadMatrixf(transform.GetMatrix());
+    /// glLoadMatrixf(transform.getMatrix());
     /// \endcode
     ///
     /// \return Pointer to a 4x4 matrix
     ///
     ////////////////////////////////////////////////////////////
-    const float* GetMatrix() const;
+    const float* getMatrix() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the inverse of the transform
@@ -95,7 +95,7 @@ public :
     /// \return A new transform which is the inverse of self
     ///
     ////////////////////////////////////////////////////////////
-    Transform GetInverse() const;
+    Transform getInverse() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a 2D point
@@ -106,7 +106,7 @@ public :
     /// \return Transformed point
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f TransformPoint(float x, float y) const;
+    Vector2f transformPoint(float x, float y) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a 2D point
@@ -116,7 +116,7 @@ public :
     /// \return Transformed point
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f TransformPoint(const Vector2f& point) const;
+    Vector2f transformPoint(const Vector2f& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a rectangle
@@ -132,7 +132,7 @@ public :
     /// \return Transformed rectangle
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect TransformRect(const FloatRect& rectangle) const;
+    FloatRect transformRect(const FloatRect& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with another one
@@ -146,7 +146,7 @@ public :
     /// \return Reference to *this
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Combine(const Transform& transform);
+    Transform& combine(const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a translation
@@ -155,7 +155,7 @@ public :
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.Translate(100, 200).Rotate(45);
+    /// transform.translate(100, 200).rotate(45);
     /// \endcode
     ///
     /// \param x Offset to apply on X axis
@@ -163,10 +163,10 @@ public :
     ///
     /// \return Reference to *this
     ///
-    /// \see Rotate, Scale
+    /// \see rotate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Translate(float x, float y);
+    Transform& translate(float x, float y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a translation
@@ -175,17 +175,17 @@ public :
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.Translate(sf::Vector2f(100, 200)).Rotate(45);
+    /// transform.translate(sf::Vector2f(100, 200)).rotate(45);
     /// \endcode
     ///
     /// \param offset Translation offset to apply
     ///
     /// \return Reference to *this
     ///
-    /// \see Rotate, Scale
+    /// \see rotate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Translate(const Vector2f& offset);
+    Transform& translate(const Vector2f& offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
@@ -194,17 +194,17 @@ public :
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.Rotate(90).Translate(50, 20);
+    /// transform.rotate(90).translate(50, 20);
     /// \endcode
     ///
     /// \param angle Rotation angle, in degrees
     ///
     /// \return Reference to *this
     ///
-    /// \see Translate, Scale
+    /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Rotate(float angle);
+    Transform& rotate(float angle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
@@ -212,13 +212,13 @@ public :
     /// The center of rotation is provided for convenience as a second
     /// argument, so that you can build rotations around arbitrary points
     /// more easily (and efficiently) than the usual
-    /// Translate(-center).Rotate(angle).Translate(center).
+    /// translate(-center).rotate(angle).translate(center).
     ///
     /// This function returns a reference to *this, so that calls
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.Rotate(90, 8, 3).Translate(50, 20);
+    /// transform.rotate(90, 8, 3).translate(50, 20);
     /// \endcode
     ///
     /// \param angle Rotation angle, in degrees
@@ -227,10 +227,10 @@ public :
     ///
     /// \return Reference to *this
     ///
-    /// \see Translate, Scale
+    /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Rotate(float angle, float centerX, float centerY);
+    Transform& rotate(float angle, float centerX, float centerY);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
@@ -238,13 +238,13 @@ public :
     /// The center of rotation is provided for convenience as a second
     /// argument, so that you can build rotations around arbitrary points
     /// more easily (and efficiently) than the usual
-    /// Translate(-center).Rotate(angle).Translate(center).
+    /// translate(-center).rotate(angle).translate(center).
     ///
     /// This function returns a reference to *this, so that calls
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.Rotate(90, sf::Vector2f(8, 3)).Translate(sf::Vector2f(50, 20));
+    /// transform.rotate(90, sf::Vector2f(8, 3)).translate(sf::Vector2f(50, 20));
     /// \endcode
     ///
     /// \param angle Rotation angle, in degrees
@@ -252,10 +252,10 @@ public :
     ///
     /// \return Reference to *this
     ///
-    /// \see Translate, Scale
+    /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Rotate(float angle, const Vector2f& center);
+    Transform& rotate(float angle, const Vector2f& center);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -264,7 +264,7 @@ public :
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.Scale(2, 1).Rotate(45);
+    /// transform.scale(2, 1).rotate(45);
     /// \endcode
     ///
     /// \param scaleX Scaling factor on the X axis
@@ -272,10 +272,10 @@ public :
     ///
     /// \return Reference to *this
     ///
-    /// \see Translate, Rotate
+    /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Scale(float scaleX, float scaleY);
+    Transform& scale(float scaleX, float scaleY);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -283,13 +283,13 @@ public :
     /// The center of scaling is provided for convenience as a second
     /// argument, so that you can build scaling around arbitrary points
     /// more easily (and efficiently) than the usual
-    /// Translate(-center).Scale(factors).Translate(center).
+    /// translate(-center).scale(factors).translate(center).
     ///
     /// This function returns a reference to *this, so that calls
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.Scale(2, 1, 8, 3).Rotate(45);
+    /// transform.scale(2, 1, 8, 3).rotate(45);
     /// \endcode
     ///
     /// \param scaleX Scaling factor on X axis
@@ -299,10 +299,10 @@ public :
     ///
     /// \return Reference to *this
     ///
-    /// \see Translate, Rotate
+    /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Scale(float scaleX, float scaleY, float centerX, float centerY);
+    Transform& scale(float scaleX, float scaleY, float centerX, float centerY);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -311,17 +311,17 @@ public :
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.Scale(sf::Vector2f(2, 1)).Rotate(45);
+    /// transform.scale(sf::Vector2f(2, 1)).rotate(45);
     /// \endcode
     ///
     /// \param factors Scaling factors
     ///
     /// \return Reference to *this
     ///
-    /// \see Translate, Rotate
+    /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Scale(const Vector2f& factors);
+    Transform& scale(const Vector2f& factors);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -329,13 +329,13 @@ public :
     /// The center of scaling is provided for convenience as a second
     /// argument, so that you can build scaling around arbitrary points
     /// more easily (and efficiently) than the usual
-    /// Translate(-center).Scale(factors).Translate(center).
+    /// translate(-center).scale(factors).translate(center).
     ///
     /// This function returns a reference to *this, so that calls
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.Scale(sf::Vector2f(2, 1), sf::Vector2f(8, 3)).Rotate(45);
+    /// transform.scale(sf::Vector2f(2, 1), sf::Vector2f(8, 3)).rotate(45);
     /// \endcode
     ///
     /// \param factors Scaling factors
@@ -343,10 +343,10 @@ public :
     ///
     /// \return Reference to *this
     ///
-    /// \see Translate, Rotate
+    /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    Transform& Scale(const Vector2f& factors, const Vector2f& center);
+    Transform& scale(const Vector2f& factors, const Vector2f& center);
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -365,7 +365,7 @@ private:
 /// \relates sf::Transform
 /// \brief Overload of binary operator * to combine two transforms
 ///
-/// This call is equivalent to calling Transform(left).Combine(right).
+/// This call is equivalent to calling Transform(left).combine(right).
 ///
 /// \param left Left operand (the first transform)
 /// \param right Right operand (the second transform)
@@ -379,7 +379,7 @@ SFML_GRAPHICS_API Transform operator *(const Transform& left, const Transform& r
 /// \relates sf::Transform
 /// \brief Overload of binary operator *= to combine two transforms
 ///
-/// This call is equivalent to calling left.Combine(right).
+/// This call is equivalent to calling left.combine(right).
 ///
 /// \param left Left operand (the first transform)
 /// \param right Right operand (the second transform)
@@ -393,7 +393,7 @@ SFML_GRAPHICS_API Transform& operator *=(Transform& left, const Transform& right
 /// \relates sf::Transform
 /// \brief Overload of binary operator * to transform a point
 ///
-/// This call is equivalent to calling left.TransformPoint(right).
+/// This call is equivalent to calling left.transformPoint(right).
 ///
 /// \param left Left operand (the transform)
 /// \param right Right operand (the point to transform)
@@ -431,18 +431,18 @@ SFML_GRAPHICS_API Vector2f operator *(const Transform& left, const Vector2f& rig
 /// \code
 /// // define a translation transform
 /// sf::Transform translation;
-/// translation.Translate(20, 50);
+/// translation.translate(20, 50);
 ///
 /// // define a rotation transform
 /// sf::Transform rotation;
-/// rotation.Rotate(45);
+/// rotation.rotate(45);
 ///
 /// // combine them
 /// sf::Transform transform = translation * rotation;
 ///
 /// // use the result to transform stuff...
-/// sf::Vector2f point = transform.TransformPoint(10, 20);
-/// sf::FloatRect rect = transform.TransformRect(sf::FloatRect(0, 0, 10, 100));
+/// sf::Vector2f point = transform.transformPoint(10, 20);
+/// sf::FloatRect rect = transform.transformRect(sf::FloatRect(0, 0, 10, 100));
 /// \endcode
 ///
 /// \see sf::Transformable, sf::RenderStates

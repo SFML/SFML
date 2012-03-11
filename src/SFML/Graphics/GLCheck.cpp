@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/glCheck.hpp>
 #include <SFML/System/Err.hpp>
 
 
@@ -34,7 +34,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void GLCheckError(const std::string& file, unsigned int line)
+void glCheckError(const std::string& file, unsigned int line)
 {
     // Get the last error
     GLenum errorCode = glGetError();
@@ -98,7 +98,7 @@ void GLCheckError(const std::string& file, unsigned int line)
         }
 
         // Log the error
-        Err() << "An internal OpenGL call failed in "
+        err() << "An internal OpenGL call failed in "
               << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
               << error << ", " << description
               << std::endl;
@@ -107,7 +107,7 @@ void GLCheckError(const std::string& file, unsigned int line)
 
 
 ////////////////////////////////////////////////////////////
-void EnsureGlewInit()
+void ensureGlewInit()
 {
     static bool initialized = false;
     if (!initialized)
@@ -119,7 +119,7 @@ void EnsureGlewInit()
         }
         else
         {
-            Err() << "Failed to initialize GLEW, " << glewGetErrorString(status) << std::endl;
+            err() << "Failed to initialize GLEW, " << glewGetErrorString(status) << std::endl;
         }
     }
 }

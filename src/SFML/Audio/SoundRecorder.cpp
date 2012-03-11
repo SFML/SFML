@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundRecorder.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/ALCheck.hpp>
+#include <SFML/Audio/alCheck.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
 
@@ -45,11 +45,11 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundRecorder::SoundRecorder() :
-m_thread     (&SoundRecorder::Record, this),
+m_thread     (&SoundRecorder::record, this),
 m_sampleRate (0),
 m_isCapturing(false)
 {
-    priv::EnsureALInit();
+    priv::ensureALInit();
 }
 
 
@@ -61,19 +61,19 @@ SoundRecorder::~SoundRecorder()
 
 
 ////////////////////////////////////////////////////////////
-void SoundRecorder::Start(unsigned int sampleRate)
+void SoundRecorder::start(unsigned int sampleRate)
 {
     // Check if the device can do audio capture
-    if (!IsAvailable())
+    if (!isAvailable())
     {
-        Err() << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::IsAvailable to check it)" << std::endl;
+        err() << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::IsAvailable to check it)" << std::endl;
         return;
     }
 
     // Check that another capture is not already running
     if (captureDevice)
     {
-        Err() << "Trying to start audio capture, but another capture is already running" << std::endl;
+        err() << "Trying to start audio capture, but another capture is already running" << std::endl;
         return;
     }
 
@@ -81,7 +81,7 @@ void SoundRecorder::Start(unsigned int sampleRate)
     captureDevice = alcCaptureOpenDevice(NULL, sampleRate, AL_FORMAT_MONO16, sampleRate);
     if (!captureDevice)
     {
-        Err() << "Failed to open the audio capture device" << std::endl;
+        err() << "Failed to open the audio capture device" << std::endl;
         return;
     }
 
@@ -92,44 +92,44 @@ void SoundRecorder::Start(unsigned int sampleRate)
     m_sampleRate = sampleRate;
 
     // Notify derived class
-    if (OnStart())
+    if (onStart())
     {
         // Start the capture
         alcCaptureStart(captureDevice);
 
         // Start the capture in a new thread, to avoid blocking the main thread
         m_isCapturing = true;
-        m_thread.Launch();
+        m_thread.launch();
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundRecorder::Stop()
+void SoundRecorder::stop()
 {
     // Stop the capturing thread
     m_isCapturing = false;
-    m_thread.Wait();
+    m_thread.wait();
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int SoundRecorder::GetSampleRate() const
+unsigned int SoundRecorder::getSampleRate() const
 {
     return m_sampleRate;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SoundRecorder::IsAvailable()
+bool SoundRecorder::isAvailable()
 {
-    return (priv::AudioDevice::IsExtensionSupported("ALC_EXT_CAPTURE") != AL_FALSE) ||
-           (priv::AudioDevice::IsExtensionSupported("ALC_EXT_capture") != AL_FALSE); // "bug" in Mac OS X 10.5 and 10.6
+    return (priv::AudioDevice::isExtensionSupported("ALC_EXT_CAPTURE") != AL_FALSE) ||
+           (priv::AudioDevice::isExtensionSupported("ALC_EXT_capture") != AL_FALSE); // "bug" in Mac OS X 10.5 and 10.6
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SoundRecorder::OnStart()
+bool SoundRecorder::onStart()
 {
     // Nothing to do
     return true;
@@ -137,34 +137,34 @@ bool SoundRecorder::OnStart()
 
 
 ////////////////////////////////////////////////////////////
-void SoundRecorder::OnStop()
+void SoundRecorder::onStop()
 {
     // Nothing to do
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundRecorder::Record()
+void SoundRecorder::record()
 {
     while (m_isCapturing)
     {
         // Process available samples
-        ProcessCapturedSamples();
+        processCapturedSamples();
 
         // Don't bother the CPU while waiting for more captured data
-        Sleep(Milliseconds(100));
+        sleep(milliseconds(100));
     }
 
     // Capture is finished : clean up everything
-    CleanUp();
+    cleanup();
 
     // Notify derived class
-    OnStop();
+    onStop();
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundRecorder::ProcessCapturedSamples()
+void SoundRecorder::processCapturedSamples()
 {
     // Get the number of samples available
     ALCint samplesAvailable;
@@ -177,7 +177,7 @@ void SoundRecorder::ProcessCapturedSamples()
         alcCaptureSamples(captureDevice, &m_samples[0], samplesAvailable);
 
         // Forward them to the derived class
-        if (!OnProcessSamples(&m_samples[0], m_samples.size()))
+        if (!onProcessSamples(&m_samples[0], m_samples.size()))
         {
             // The user wants to stop the capture
             m_isCapturing = false;
@@ -187,13 +187,13 @@ void SoundRecorder::ProcessCapturedSamples()
 
 
 ////////////////////////////////////////////////////////////
-void SoundRecorder::CleanUp()
+void SoundRecorder::cleanup()
 {
     // Stop the capture
     alcCaptureStop(captureDevice);
 
     // Get the samples left in the buffer
-    ProcessCapturedSamples();
+    processCapturedSamples();
 
     // Close the device
     alcCaptureCloseDevice(captureDevice);

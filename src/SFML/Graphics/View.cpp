@@ -40,7 +40,7 @@ m_viewport           (0, 0, 1, 1),
 m_transformUpdated   (false),
 m_invTransformUpdated(false)
 {
-    Reset(FloatRect(0, 0, 1000, 1000));
+    reset(FloatRect(0, 0, 1000, 1000));
 }
 
 
@@ -53,7 +53,7 @@ m_viewport           (0, 0, 1, 1),
 m_transformUpdated   (false),
 m_invTransformUpdated(false)
 {
-    Reset(rectangle);
+    reset(rectangle);
 }
 
 
@@ -70,7 +70,7 @@ m_invTransformUpdated(false)
 }
 
 ////////////////////////////////////////////////////////////
-void View::SetCenter(float x, float y)
+void View::setCenter(float x, float y)
 {
     m_center.x = x;
     m_center.y = y;
@@ -81,14 +81,14 @@ void View::SetCenter(float x, float y)
 
 
 ////////////////////////////////////////////////////////////
-void View::SetCenter(const Vector2f& center)
+void View::setCenter(const Vector2f& center)
 {
-    SetCenter(center.x, center.y);
+    setCenter(center.x, center.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-void View::SetSize(float width, float height)
+void View::setSize(float width, float height)
 {
     m_size.x = width;
     m_size.y = height;
@@ -99,14 +99,14 @@ void View::SetSize(float width, float height)
 
 
 ////////////////////////////////////////////////////////////
-void View::SetSize(const Vector2f& size)
+void View::setSize(const Vector2f& size)
 {
-    SetSize(size.x, size.y);
+    setSize(size.x, size.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-void View::SetRotation(float angle)
+void View::setRotation(float angle)
 {
     m_rotation = static_cast<float>(fmod(angle, 360));
     if (m_rotation < 0)
@@ -118,19 +118,19 @@ void View::SetRotation(float angle)
 
 
 ////////////////////////////////////////////////////////////
-void View::SetViewport(const FloatRect& viewport)
+void View::setViewport(const FloatRect& viewport)
 {
     m_viewport = viewport;
 }
 
 
 ////////////////////////////////////////////////////////////
-void View::Reset(const FloatRect& rectangle)
+void View::reset(const FloatRect& rectangle)
 {
-    m_center.x = rectangle.Left + rectangle.Width / 2.f;
-    m_center.y = rectangle.Top + rectangle.Height / 2.f;
-    m_size.x   = rectangle.Width;
-    m_size.y   = rectangle.Height;
+    m_center.x = rectangle.left + rectangle.width / 2.f;
+    m_center.y = rectangle.top + rectangle.height / 2.f;
+    m_size.x   = rectangle.width;
+    m_size.y   = rectangle.height;
     m_rotation = 0;
 
     m_transformUpdated    = false;
@@ -139,63 +139,63 @@ void View::Reset(const FloatRect& rectangle)
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& View::GetCenter() const
+const Vector2f& View::getCenter() const
 {
     return m_center;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& View::GetSize() const
+const Vector2f& View::getSize() const
 {
     return m_size;
 }
 
 
 ////////////////////////////////////////////////////////////
-float View::GetRotation() const
+float View::getRotation() const
 {
     return m_rotation;
 }
 
 
 ////////////////////////////////////////////////////////////
-const FloatRect& View::GetViewport() const
+const FloatRect& View::getViewport() const
 {
     return m_viewport;
 }
 
 
 ////////////////////////////////////////////////////////////
-void View::Move(float offsetX, float offsetY)
+void View::move(float offsetX, float offsetY)
 {
-    SetCenter(m_center.x + offsetX, m_center.y + offsetY);
+    setCenter(m_center.x + offsetX, m_center.y + offsetY);
 }
 
 
 ////////////////////////////////////////////////////////////
-void View::Move(const Vector2f& offset)
+void View::move(const Vector2f& offset)
 {
-    SetCenter(m_center + offset);
+    setCenter(m_center + offset);
 }
 
 
 ////////////////////////////////////////////////////////////
-void View::Rotate(float angle)
+void View::rotate(float angle)
 {
-    SetRotation(m_rotation + angle);
+    setRotation(m_rotation + angle);
 }
 
 
 ////////////////////////////////////////////////////////////
-void View::Zoom(float factor)
+void View::zoom(float factor)
 {
-    SetSize(m_size.x * factor, m_size.y * factor);
+    setSize(m_size.x * factor, m_size.y * factor);
 }
 
 
 ////////////////////////////////////////////////////////////
-const Transform& View::GetTransform() const
+const Transform& View::getTransform() const
 {
     // Recompute the matrix if needed
     if (!m_transformUpdated)
@@ -225,12 +225,12 @@ const Transform& View::GetTransform() const
 
 
 ////////////////////////////////////////////////////////////
-const Transform& View::GetInverseTransform() const
+const Transform& View::getInverseTransform() const
 {
     // Recompute the matrix if needed
     if (!m_invTransformUpdated)
     {
-        m_inverseTransform = GetTransform().GetInverse();
+        m_inverseTransform = getTransform().getInverse();
         m_invTransformUpdated = true;
     }
 

@@ -68,7 +68,7 @@ public :
     /// \param color    Vertex color
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position, const sf::Color& color);
+    Vertex(const Vector2f& position, const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vertex from its position and texture coordinates
@@ -89,14 +89,14 @@ public :
     /// \param texCoords Vertex texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position, const sf::Color& color, const Vector2f& texCoords);
+    Vertex(const Vector2f& position, const Color& color, const Vector2f& texCoords);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f  Position;  ///< 2D position of the vertex
-    sf::Color Color;     ///< Color of the vertex
-    Vector2f  TexCoords; ///< Coordinates of the texture's pixel to map to the vertex
+    Vector2f  position;  ///< 2D position of the vertex
+    Color     color;     ///< Color of the vertex
+    Vector2f  texCoords; ///< Coordinates of the texture's pixel to map to the vertex
 };
 
 } // namespace sf
@@ -136,7 +136,7 @@ public :
 /// };
 ///
 /// // draw it
-/// window.Draw(vertices, 4, sf::Quads);
+/// window.draw(vertices, 4, sf::Quads);
 /// \endcode
 ///
 /// Note: although texture coordinates are supposed to be an integer

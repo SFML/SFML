@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/glCheck.hpp>
 
 
 namespace sf
@@ -42,7 +42,7 @@ RenderWindow::RenderWindow()
 RenderWindow::RenderWindow(VideoMode mode, const std::string& title, Uint32 style, const ContextSettings& settings)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    Create(mode, title, style, settings);
+    create(mode, title, style, settings);
 }
 
 
@@ -50,7 +50,7 @@ RenderWindow::RenderWindow(VideoMode mode, const std::string& title, Uint32 styl
 RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    Create(handle, settings);
+    create(handle, settings);
 }
 
 
@@ -62,37 +62,37 @@ RenderWindow::~RenderWindow()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderWindow::Activate(bool active)
+bool RenderWindow::activate(bool active)
 {
-    return SetActive(active);
+    return setActive(active);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2u RenderWindow::GetSize() const
+Vector2u RenderWindow::getSize() const
 {
-    return Window::GetSize();
+    return Window::getSize();
 }
 
 
 ////////////////////////////////////////////////////////////
-Image RenderWindow::Capture() const
+Image RenderWindow::capture() const
 {
     Image image;
-    if (SetActive())
+    if (setActive())
     {
-        int width = static_cast<int>(GetSize().x);
-        int height = static_cast<int>(GetSize().y);
+        int width = static_cast<int>(getSize().x);
+        int height = static_cast<int>(getSize().y);
 
         // copy rows one by one and flip them (OpenGL's origin is bottom while SFML's origin is top)
         std::vector<Uint8> pixels(width * height * 4);
         for (int i = 0; i < height; ++i)
         {
             Uint8* ptr = &pixels[i * width * 4];
-            GLCheck(glReadPixels(0, height - i - 1, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
+            glCheck(glReadPixels(0, height - i - 1, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
         }
 
-        image.Create(width, height, &pixels[0]);
+        image.create(width, height, &pixels[0]);
     }
 
     return image;
@@ -100,18 +100,18 @@ Image RenderWindow::Capture() const
 
 
 ////////////////////////////////////////////////////////////
-void RenderWindow::OnCreate()
+void RenderWindow::onCreate()
 {
     // Just initialize the render target part
-    RenderTarget::Initialize();
+    RenderTarget::initialize();
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderWindow::OnResize()
+void RenderWindow::onResize()
 {
     // Update the current view (recompute the viewport, which is stored in relative coordinates)
-    SetView(GetView());
+    setView(getView());
 }
 
 } // namespace sf

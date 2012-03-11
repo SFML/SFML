@@ -159,15 +159,15 @@ public :
     /// \brief Implicit cast operator to std::string (ANSI string)
     ///
     /// The current global locale is used for conversion. If you
-    /// want to explicitely specify a locale, see ToAnsiString.
+    /// want to explicitely specify a locale, see toAnsiString.
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
     /// This operator is defined for convenience, and is equivalent
-    /// to calling ToAnsiString().
+    /// to calling toAnsiString().
     ///
     /// \return Converted ANSI string
     ///
-    /// \see ToAnsiString, operator std::wstring
+    /// \see toAnsiString, operator std::wstring
     ///
     ////////////////////////////////////////////////////////////
     operator std::string() const;
@@ -178,11 +178,11 @@ public :
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
     /// This operator is defined for convenience, and is equivalent
-    /// to calling ToWideString().
+    /// to calling toWideString().
     ///
     /// \return Converted wide string
     ///
-    /// \see ToWideString, operator std::string
+    /// \see toWideString, operator std::string
     ///
     ////////////////////////////////////////////////////////////
     operator std::wstring() const;
@@ -199,10 +199,10 @@ public :
     ///
     /// \return Converted ANSI string
     ///
-    /// \see ToWideString, operator std::string
+    /// \see toWideString, operator std::string
     ///
     ////////////////////////////////////////////////////////////
-    std::string ToAnsiString(const std::locale& locale = std::locale()) const;
+    std::string toAnsiString(const std::locale& locale = std::locale()) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the unicode string to a wide string
@@ -212,10 +212,10 @@ public :
     ///
     /// \return Converted wide string
     ///
-    /// \see ToAnsiString, operator std::wstring
+    /// \see toAnsiString, operator std::wstring
     ///
     ////////////////////////////////////////////////////////////
-    std::wstring ToWideString() const;
+    std::wstring toWideString() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -268,30 +268,30 @@ public :
     ///
     /// This function removes all the characters from the string.
     ///
-    /// \see IsEmpty, Erase
+    /// \see isEmpty, erase
     ///
     ////////////////////////////////////////////////////////////
-    void Clear();
+    void clear();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the string
     ///
     /// \return Number of characters in the string
     ///
-    /// \see IsEmpty
+    /// \see isEmpty
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t GetSize() const;
+    std::size_t getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the string is empty or not
     ///
     /// \return True if the string is empty (i.e. contains no character)
     ///
-    /// \see Clear, GetSize
+    /// \see clear, getSize
     ///
     ////////////////////////////////////////////////////////////
-    bool IsEmpty() const;
+    bool isEmpty() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Erase one or more characters from the string
@@ -303,7 +303,7 @@ public :
     /// \param count    Number of characters to erase
     ///
     ////////////////////////////////////////////////////////////
-    void Erase(std::size_t position, std::size_t count = 1);
+    void erase(std::size_t position, std::size_t count = 1);
 
     ////////////////////////////////////////////////////////////
     /// \brief Insert one or more characters into the string
@@ -315,7 +315,7 @@ public :
     /// \param str      Characters to insert
     ///
     ////////////////////////////////////////////////////////////
-    void Insert(std::size_t position, const String& str);
+    void insert(std::size_t position, const String& str);
 
     ////////////////////////////////////////////////////////////
     /// \brief Find a sequence of one or more characters in the string
@@ -329,7 +329,7 @@ public :
     /// \return Position of \a str in the string, or String::InvalidPos if not found
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t Find(const String& str, std::size_t start = 0) const;
+    std::size_t find(const String& str, std::size_t start = 0) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the C-style array of characters
@@ -342,27 +342,27 @@ public :
     /// \return Read-only pointer to the array of characters
     ///
     ////////////////////////////////////////////////////////////
-    const Uint32* GetData() const;
+    const Uint32* getData() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return an iterator to the beginning of the string
     ///
     /// \return Read-write iterator to the beginning of the string characters
     ///
-    /// \see End
+    /// \see end
     ///
     ////////////////////////////////////////////////////////////
-    Iterator Begin();
+    Iterator begin();
 
     ////////////////////////////////////////////////////////////
     /// \brief Return an iterator to the beginning of the string
     ///
     /// \return Read-only iterator to the beginning of the string characters
     ///
-    /// \see End
+    /// \see end
     ///
     ////////////////////////////////////////////////////////////
-    ConstIterator Begin() const;
+    ConstIterator begin() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return an iterator to the beginning of the string
@@ -373,10 +373,10 @@ public :
     ///
     /// \return Read-write iterator to the end of the string characters
     ///
-    /// \see Begin
+    /// \see begin
     ///
     ////////////////////////////////////////////////////////////
-    Iterator End();
+    Iterator end();
 
     ////////////////////////////////////////////////////////////
     /// \brief Return an iterator to the beginning of the string
@@ -387,10 +387,10 @@ public :
     ///
     /// \return Read-only iterator to the end of the string characters
     ///
-    /// \see Begin
+    /// \see begin
     ///
     ////////////////////////////////////////////////////////////
-    ConstIterator End() const;
+    ConstIterator end() const;
 
 private :
 
@@ -524,7 +524,7 @@ SFML_SYSTEM_API String operator +(const String& left, const String& right);
 /// std::locale locale;
 /// sf::String s;
 /// ...
-/// std::string s1 = s.ToAnsiString(locale);
+/// std::string s1 = s.toAnsiString(locale);
 /// s = sf::String("hello", locale);
 /// \endcode
 ///

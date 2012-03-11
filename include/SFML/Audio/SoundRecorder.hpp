@@ -61,18 +61,18 @@ public :
     ///
     /// \param sampleRate Desired capture rate, in number of samples per second
     ///
-    /// \see Stop
+    /// \see stop
     ///
     ////////////////////////////////////////////////////////////
-    void Start(unsigned int sampleRate = 44100);
+    void start(unsigned int sampleRate = 44100);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop the capture
     ///
-    /// \see Start
+    /// \see start
     ///
     ////////////////////////////////////////////////////////////
-    void Stop();
+    void stop();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate
@@ -84,7 +84,7 @@ public :
     /// \return Sample rate, in samples per second
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetSampleRate() const;
+    unsigned int getSampleRate() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if the system supports audio capture
@@ -97,7 +97,7 @@ public :
     /// \return True if audio capture is supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsAvailable();
+    static bool isAvailable();
 
 protected :
 
@@ -122,7 +122,7 @@ private :
     /// \return True to start the capture, or false to abort it
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnStart();
+    virtual bool onStart();
 
     ////////////////////////////////////////////////////////////
     /// \brief Process a new chunk of recorded samples
@@ -138,7 +138,7 @@ private :
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnProcessSamples(const Int16* samples, std::size_t sampleCount) = 0;
+    virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
@@ -149,7 +149,7 @@ private :
     /// implementation does nothing.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnStop();
+    virtual void onStop();
 
     ////////////////////////////////////////////////////////////
     /// \brief Function called as the entry point of the thread
@@ -158,7 +158,7 @@ private :
     /// only when the capture is stopped.
     ///
     ////////////////////////////////////////////////////////////
-    void Record();
+    void record();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the new available audio samples and process them
@@ -168,7 +168,7 @@ private :
     /// forwards them to the derived class.
     ///
     ////////////////////////////////////////////////////////////
-    void ProcessCapturedSamples();
+    void processCapturedSamples();
 
     ////////////////////////////////////////////////////////////
     /// \brief Clean up the recorder's internal resources
@@ -176,7 +176,7 @@ private :
     /// This function is called when the capture stops.
     ///
     ////////////////////////////////////////////////////////////
-    void CleanUp();
+    void cleanup();
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -220,8 +220,8 @@ private :
 ///
 /// It is important to note that the audio capture happens in a
 /// separate thread, so that it doesn't block the rest of the
-/// program. In particular, the OnProcessSamples and OnStop
-/// virtual functions (but not OnStart) will be called
+/// program. In particular, the onProcessSamples and onStop
+/// virtual functions (but not onStart) will be called
 /// from this separate thread. It is important to keep this in
 /// mind, because you may have to take care of synchronization
 /// issues if you share data between threads. 
@@ -230,7 +230,7 @@ private :
 /// \code
 /// class CustomRecorder : public sf::SoundRecorder
 /// {
-///     virtual bool OnStart() // optional
+///     virtual bool onStart() // optional
 ///     {
 ///         // Initialize whatever has to be done before the capture starts
 ///         ...
@@ -239,7 +239,7 @@ private :
 ///         return true;
 ///     }
 ///
-///     virtual bool OnProcessSamples(const Int16* samples, std::size_t sampleCount)
+///     virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount)
 ///     {
 ///         // Do something with the new chunk of samples (store them, send them, ...)
 ///         ...
@@ -248,7 +248,7 @@ private :
 ///         return true;
 ///     }
 ///
-///     virtual void OnStop() // optional
+///     virtual void onStop() // optional
 ///     {
 ///         // Clean up whatever has to be done after the capture ends
 ///         ...
@@ -256,12 +256,12 @@ private :
 /// }
 ///
 /// // Usage
-/// if (CustomRecorder::IsAvailable())
+/// if (CustomRecorder::isAvailable())
 /// {
 ///     CustomRecorder recorder;
-///     recorder.Start();
+///     recorder.start();
 ///     ...
-///     recorder.Stop();
+///     recorder.stop();
 /// }
 /// \endcode
 ///

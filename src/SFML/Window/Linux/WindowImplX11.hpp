@@ -79,7 +79,7 @@ public :
     /// \return Pointer to the X display of the window
     ///
     ////////////////////////////////////////////////////////////
-    ::Display* GetDisplay() const;
+    ::Display* getDisplay() const;
 
 private :
 
@@ -89,13 +89,13 @@ private :
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle GetSystemHandle() const;
+    virtual WindowHandle getSystemHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents();
+    virtual void processEvents();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -103,7 +103,7 @@ private :
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2i GetPosition() const;
+    virtual Vector2i getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -111,7 +111,7 @@ private :
     /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(const Vector2i& position);
+    virtual void setPosition(const Vector2i& position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the client size of the window
@@ -119,7 +119,7 @@ private :
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u GetSize() const;
+    virtual Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -127,7 +127,7 @@ private :
     /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(const Vector2u& size);
+    virtual void setSize(const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -135,7 +135,7 @@ private :
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetTitle(const std::string& title);
+    virtual void setTitle(const std::string& title);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
@@ -145,7 +145,7 @@ private :
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+    virtual void setIcon(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -153,7 +153,7 @@ private :
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetVisible(bool visible);
+    virtual void setVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor
@@ -161,7 +161,7 @@ private :
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetMouseCursorVisible(bool visible);
+    virtual void setMouseCursorVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
@@ -169,7 +169,7 @@ private :
     /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetKeyRepeatEnabled(bool enabled);
+    virtual void setKeyRepeatEnabled(bool enabled);
 
 private :
 
@@ -179,25 +179,25 @@ private :
     /// \param Mode video mode to switch to
     ///
     ////////////////////////////////////////////////////////////
-    void SwitchToFullscreen(const VideoMode& mode);
+    void switchToFullscreen(const VideoMode& mode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Do some common initializations after the window has been created
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize();
+    void initialize();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a transparent mouse cursor
     ///
     ////////////////////////////////////////////////////////////
-    void CreateHiddenCursor();
+    void createHiddenCursor();
 
     ////////////////////////////////////////////////////////////
     /// \brief Cleanup graphical resources attached to the window
     ///
     ////////////////////////////////////////////////////////////
-    void Cleanup();
+    void cleanup();
 
     ////////////////////////////////////////////////////////////
     /// \brief Process an incoming event from the window
@@ -207,7 +207,7 @@ private :
     /// \return True if the event was processed, false if it was discarded
     ///
     ////////////////////////////////////////////////////////////
-    bool ProcessEvent(XEvent windowEvent);
+    bool processEvent(XEvent windowEvent);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a X11 keysym to SFML key code
@@ -217,7 +217,7 @@ private :
     /// \return Corrsponding SFML key code
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key KeysymToSF(KeySym symbol);
+    static Keyboard::Key keysymToSF(KeySym symbol);
 
     ////////////////////////////////////////////////////////////
     // Member data

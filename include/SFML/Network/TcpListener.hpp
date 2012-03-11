@@ -58,10 +58,10 @@ public :
     ///
     /// \return Port to which the socket is bound
     ///
-    /// \see Listen
+    /// \see listen
     ///
     ////////////////////////////////////////////////////////////
-    unsigned short GetLocalPort() const;
+    unsigned short getLocalPort() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Start listening for connections
@@ -75,10 +75,10 @@ public :
     ///
     /// \return Status code
     ///
-    /// \see Accept, Close
+    /// \see accept, close
     ///
     ////////////////////////////////////////////////////////////
-    Status Listen(unsigned short port);
+    Status listen(unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop listening and close the socket
@@ -86,10 +86,10 @@ public :
     /// This function gracefully stops the listener. If the
     /// socket is not listening, this function has no effect.
     ///
-    /// \see Listen
+    /// \see listen
     ///
     ////////////////////////////////////////////////////////////
-    void Close();
+    void close();
 
     ////////////////////////////////////////////////////////////
     /// \brief Accept a new connection
@@ -101,10 +101,10 @@ public :
     ///
     /// \return Status code
     ///
-    /// \see Listen
+    /// \see listen
     ///
     ////////////////////////////////////////////////////////////
-    Status Accept(TcpSocket& socket);
+    Status accept(TcpSocket& socket);
 };
 
 
@@ -122,7 +122,7 @@ public :
 /// a given port and waits for connections on that port.
 /// This is all it can do.
 ///
-/// When a new connection is received, you must call Accept and
+/// When a new connection is received, you must call accept and
 /// the listener returns a new instance of sf::TcpSocket that
 /// is properly initialized and can be used to communicate with
 /// the new client.
@@ -134,7 +134,7 @@ public :
 ///
 /// A listener is automatically closed on destruction, like all
 /// other types of socket. However if you want to stop listening
-/// before the socket is destroyed, you can call its Close()
+/// before the socket is destroyed, you can call its close()
 /// function.
 ///
 /// Usage example:
@@ -142,17 +142,17 @@ public :
 /// // Create a listener socket and make it wait for new
 /// // connections on port 55001
 /// sf::TcpListener listener;
-/// listener.Listen(55001);
+/// listener.listen(55001);
 ///
 /// // Endless loop that waits for new connections
 /// while (running)
 /// {
 ///     sf::TcpSocket client;
-///     if (listener.Accept(client) == sf::Socket::Done)
+///     if (listener.accept(client) == sf::Socket::Done)
 ///     {
 ///         // A new client just connected!
-///         std::cout << "New connection received from " << client.GetRemoteAddress() << std::endl;
-///         DoSomethingWith(client);
+///         std::cout << "New connection received from " << client.getRemoteAddress() << std::endl;
+///         doSomethingWith(client);
 ///     }
 /// }
 /// \endcode

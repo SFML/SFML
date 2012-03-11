@@ -56,7 +56,7 @@ public :
     /// \return Read-only access to the sound buffer
     ///
     ////////////////////////////////////////////////////////////
-    const SoundBuffer& GetBuffer() const;
+    const SoundBuffer& getBuffer() const;
 
 private :
 
@@ -66,7 +66,7 @@ private :
     /// \return True to start the capture, or false to abort it
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnStart();
+    virtual bool onStart();
 
     ////////////////////////////////////////////////////////////
     /// \brief Process a new chunk of recorded samples
@@ -77,13 +77,13 @@ private :
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnProcessSamples(const Int16* samples, std::size_t sampleCount);
+    virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnStop();
+    virtual void onStop();
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -105,29 +105,29 @@ private :
 /// through a sf::SoundBuffer, so that it can be played, saved
 /// to a file, etc.
 ///
-/// It has the same simple interface as its base class (Start(), Stop())
+/// It has the same simple interface as its base class (start(), stop())
 /// and adds a function to retrieve the recorded sound buffer
-/// (GetBuffer()).
+/// (getBuffer()).
 ///
-/// As usual, don't forget to call the IsAvailable() function
+/// As usual, don't forget to call the isAvailable() function
 /// before using this class (see sf::SoundRecorder for more details
 /// about this).
 ///
 /// Usage example:
 /// \code
-/// if (SoundBufferRecorder::IsAvailable())
+/// if (SoundBufferRecorder::isAvailable())
 /// {
 ///     // Record some audio data
 ///     SoundBufferRecorder recorder;
-///     recorder.Start();
+///     recorder.start();
 ///     ...
-///     recorder.Stop();
+///     recorder.stop();
 ///
 ///     // Get the buffer containing the captured audio data
-///     const sf::SoundBuffer& buffer = recorder.GetBuffer();
+///     const sf::SoundBuffer& buffer = recorder.getBuffer();
 ///
 ///     // Save it to a file (for example...)
-///     buffer.SaveToFile("my_record.ogg");
+///     buffer.saveToFile("my_record.ogg");
 /// }
 /// \endcode
 ///

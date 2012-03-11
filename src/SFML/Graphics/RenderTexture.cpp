@@ -49,21 +49,21 @@ RenderTexture::~RenderTexture()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::Create(unsigned int width, unsigned int height, bool depthBuffer)
+bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer)
 {
     // Create the texture
-    if (!m_texture.Create(width, height))
+    if (!m_texture.create(width, height))
     {
-        Err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
+        err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return false;
     }
 
     // We disable smoothing by default for render textures
-    SetSmooth(false);
+    setSmooth(false);
 
     // Create the implementation
     delete m_impl;
-    if (priv::RenderTextureImplFBO::IsAvailable())
+    if (priv::RenderTextureImplFBO::isAvailable())
     {
         // Use frame-buffer object (FBO)
         m_impl = new priv::RenderTextureImplFBO;
@@ -75,67 +75,67 @@ bool RenderTexture::Create(unsigned int width, unsigned int height, bool depthBu
     }
 
     // Initialize the render texture
-    if (!m_impl->Create(width, height, m_texture.m_texture, depthBuffer))
+    if (!m_impl->create(width, height, m_texture.m_texture, depthBuffer))
         return false;
 
     // We can now initialize the render target part
-    RenderTarget::Initialize();
+    RenderTarget::initialize();
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTexture::SetSmooth(bool smooth)
+void RenderTexture::setSmooth(bool smooth)
 {
-    m_texture.SetSmooth(smooth);
+    m_texture.setSmooth(smooth);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::IsSmooth() const
+bool RenderTexture::isSmooth() const
 {
-    return m_texture.IsSmooth();
+    return m_texture.isSmooth();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::SetActive(bool active)
+bool RenderTexture::setActive(bool active)
 {
-    return m_impl && m_impl->Activate(active);
+    return m_impl && m_impl->activate(active);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTexture::Display()
+void RenderTexture::display()
 {
     // Update the target texture
-    if (SetActive(true))
+    if (setActive(true))
     {
-        m_impl->UpdateTexture(m_texture.m_texture);
+        m_impl->updateTexture(m_texture.m_texture);
         m_texture.m_pixelsFlipped = true;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2u RenderTexture::GetSize() const
+Vector2u RenderTexture::getSize() const
 {
-    return Vector2u(m_texture.GetWidth(), m_texture.GetHeight());
+    return Vector2u(m_texture.getWidth(), m_texture.getHeight());
 }
 
 
 ////////////////////////////////////////////////////////////
-const Texture& RenderTexture::GetTexture() const
+const Texture& RenderTexture::getTexture() const
 {
     return m_texture;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::Activate(bool active)
+bool RenderTexture::activate(bool active)
 {
-    return SetActive(active);
+    return setActive(active);
 }
 
 } // namespace sf

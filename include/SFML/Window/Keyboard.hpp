@@ -160,7 +160,7 @@ public :
     /// \return True if the key is pressed, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsKeyPressed(Key key);
+    static bool isKeyPressed(Key key);
 };
 
 } // namespace sf
@@ -189,15 +189,15 @@ public :
 ///
 /// Usage example:
 /// \code
-/// if (sf::Keyboard::IsKeyPressed(sf::Keyboard::Left))
+/// if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 /// {
 ///     // move left...
 /// }
-/// else if (sf::Keyboard::IsKeyPressed(sf::Keyboard::Right))
+/// else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 /// {
 ///     // move right...
 /// }
-/// else if (sf::Keyboard::IsKeyPressed(sf::Keyboard::Escape))
+/// else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 /// {
 ///     // quit...
 /// }

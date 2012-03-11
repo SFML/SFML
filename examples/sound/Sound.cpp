@@ -11,31 +11,31 @@
 /// Play a sound
 ///
 ////////////////////////////////////////////////////////////
-void PlaySound()
+void playSound()
 {
     // Load a sound buffer from a wav file
     sf::SoundBuffer buffer;
-    if (!buffer.LoadFromFile("resources/canary.wav"))
+    if (!buffer.loadFromFile("resources/canary.wav"))
         return;
 
     // Display sound informations
     std::cout << "canary.wav :" << std::endl;
-    std::cout << " " << buffer.GetDuration().AsSeconds() << " seconds"       << std::endl;
-    std::cout << " " << buffer.GetSampleRate()           << " samples / sec" << std::endl;
-    std::cout << " " << buffer.GetChannelCount()         << " channels"      << std::endl;
+    std::cout << " " << buffer.getDuration().asSeconds() << " seconds"       << std::endl;
+    std::cout << " " << buffer.getSampleRate()           << " samples / sec" << std::endl;
+    std::cout << " " << buffer.getChannelCount()         << " channels"      << std::endl;
 
     // Create a sound instance and play it
     sf::Sound sound(buffer);
-    sound.Play();
+    sound.play();
 
     // Loop while the sound is playing
-    while (sound.GetStatus() == sf::Sound::Playing)
+    while (sound.getStatus() == sf::Sound::Playing)
     {
         // Leave some CPU time for other processes
-        sf::Sleep(sf::Milliseconds(100));
+        sf::sleep(sf::milliseconds(100));
 
         // Display the playing position
-        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.GetPlayingOffset().AsSeconds() << " sec   ";
+        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.getPlayingOffset().asSeconds() << " sec   ";
         std::cout << std::flush;
     }
     std::cout << std::endl << std::endl;
@@ -46,30 +46,30 @@ void PlaySound()
 /// Play a music
 ///
 ////////////////////////////////////////////////////////////
-void PlayMusic()
+void playMusic()
 {
     // Load an ogg music file
     sf::Music music;
-    if (!music.OpenFromFile("resources/orchestral.ogg"))
+    if (!music.openFromFile("resources/orchestral.ogg"))
         return;
 
     // Display music informations
     std::cout << "orchestral.ogg :" << std::endl;
-    std::cout << " " << music.GetDuration().AsSeconds() << " seconds"       << std::endl;
-    std::cout << " " << music.GetSampleRate()           << " samples / sec" << std::endl;
-    std::cout << " " << music.GetChannelCount()         << " channels"      << std::endl;
+    std::cout << " " << music.getDuration().asSeconds() << " seconds"       << std::endl;
+    std::cout << " " << music.getSampleRate()           << " samples / sec" << std::endl;
+    std::cout << " " << music.getChannelCount()         << " channels"      << std::endl;
 
     // Play it
-    music.Play();
+    music.play();
 
     // Loop while the music is playing
-    while (music.GetStatus() == sf::Music::Playing)
+    while (music.getStatus() == sf::Music::Playing)
     {
         // Leave some CPU time for other processes
-        sf::Sleep(sf::Milliseconds(100));
+        sf::sleep(sf::milliseconds(100));
 
         // Display the playing position
-        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << music.GetPlayingOffset().AsSeconds() << " sec   ";
+        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << music.getPlayingOffset().asSeconds() << " sec   ";
         std::cout << std::flush;
     }
     std::cout << std::endl;
@@ -85,10 +85,10 @@ void PlayMusic()
 int main()
 {
     // Play a sound
-    PlaySound();
+    playSound();
 
     // Play a music
-    PlayMusic();
+    playMusic();
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;

@@ -46,22 +46,22 @@ struct ContextSettings
     ///
     ////////////////////////////////////////////////////////////
     explicit ContextSettings(unsigned int depth = 0, unsigned int stencil = 0, unsigned int antialiasing = 0, unsigned int major = 2, unsigned int minor = 0) :
-    DepthBits        (depth),
-    StencilBits      (stencil),
-    AntialiasingLevel(antialiasing),
-    MajorVersion     (major),
-    MinorVersion     (minor)
+    depthBits        (depth),
+    stencilBits      (stencil),
+    antialiasingLevel(antialiasing),
+    majorVersion     (major),
+    minorVersion     (minor)
     {
     }
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int DepthBits;         ///< Bits of the depth buffer
-    unsigned int StencilBits;       ///< Bits of the stencil buffer
-    unsigned int AntialiasingLevel; ///< Level of antialiasing
-    unsigned int MajorVersion;      ///< Major number of the context version to create
-    unsigned int MinorVersion;      ///< Minor number of the context version to create
+    unsigned int depthBits;         ///< Bits of the depth buffer
+    unsigned int stencilBits;       ///< Bits of the stencil buffer
+    unsigned int antialiasingLevel; ///< Level of antialiasing
+    unsigned int majorVersion;      ///< Major number of the context version to create
+    unsigned int minorVersion;      ///< Minor number of the context version to create
 };
 
 } // namespace sf
@@ -81,14 +81,14 @@ struct ContextSettings
 /// you may need to use this structure only if you're using
 /// SFML as a windowing system for custom OpenGL rendering.
 ///
-/// The DepthBits and StencilBits members define the number
+/// The depthBits and stencilBits members define the number
 /// of bits per pixel requested for the (respectively) depth
 /// and stencil buffers.
 ///
-/// AntialiasingLevel represents the requested number of
+/// antialiasingLevel represents the requested number of
 /// multisampling levels for anti-aliasing.
 ///
-/// MajorVersion and MinorVersion define the version of the
+/// majorVersion and minorVersion define the version of the
 /// OpenGL context that you want. Only versions greater or
 /// equal to 3.0 are relevant; versions lesser than 3.0 are
 /// all handled the same way (i.e. you can use any version
@@ -99,6 +99,6 @@ struct ContextSettings
 /// are not supported by the system; instead, SFML will try to
 /// find the closest valid match. You can then retrieve the
 /// settings that the window actually used to create its context,
-/// with Window::GetSettings().
+/// with Window::getSettings().
 ///
 ////////////////////////////////////////////////////////////

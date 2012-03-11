@@ -47,14 +47,14 @@ MutexImpl::~MutexImpl()
 
 
 ////////////////////////////////////////////////////////////
-void MutexImpl::Lock()
+void MutexImpl::lock()
 {
     EnterCriticalSection(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
-void MutexImpl::Unlock()
+void MutexImpl::unlock()
 {
     LeaveCriticalSection(&m_mutex);
 }

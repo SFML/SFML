@@ -68,10 +68,10 @@ public :
     ///
     /// \return Port to which the socket is bound
     ///
-    /// \see Bind
+    /// \see bind
     ///
     ////////////////////////////////////////////////////////////
-    unsigned short GetLocalPort() const;
+    unsigned short getLocalPort() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind the socket to a specific port
@@ -80,16 +80,16 @@ public :
     /// able to receive data on that port.
     /// You can use the special value Socket::AnyPort to tell the
     /// system to automatically pick an available port, and then
-    /// call GetLocalPort to retrieve the chosen port.
+    /// call getLocalPort to retrieve the chosen port.
     ///
     /// \param port Port to bind the socket to
     ///
     /// \return Status code
     ///
-    /// \see Unbind, GetLocalPort
+    /// \see unbind, getLocalPort
     ///
     ////////////////////////////////////////////////////////////
-    Status Bind(unsigned short port);
+    Status bind(unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Unbind the socket from the local port to which it is bound
@@ -98,10 +98,10 @@ public :
     /// available after this function is called. If the
     /// socket is not bound to a port, this function has no effect.
     ///
-    /// \see Bind
+    /// \see bind
     ///
     ////////////////////////////////////////////////////////////
-    void Unbind();
+    void unbind();
 
     ////////////////////////////////////////////////////////////
     /// \brief Send raw data to a remote peer
@@ -117,10 +117,10 @@ public :
     ///
     /// \return Status code
     ///
-    /// \see Receive
+    /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status Send(const char* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort);
+    Status send(const char* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive raw data from a remote peer
@@ -140,10 +140,10 @@ public :
     ///
     /// \return Status code
     ///
-    /// \see Send
+    /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    Status Receive(char* data, std::size_t size, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort);
+    Status receive(char* data, std::size_t size, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to a remote peer
@@ -158,18 +158,16 @@ public :
     ///
     /// \return Status code
     ///
-    /// \see Receive
+    /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status Send(Packet& packet, const IpAddress& remoteAddress, unsigned short remotePort);
+    Status send(Packet& packet, const IpAddress& remoteAddress, unsigned short remotePort);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive a formatted packet of data from a remote peer
     ///
     /// In blocking mode, this function will wait until the whole packet
     /// has been received.
-    /// Warning: this functon doesn't properly handle mixed data
-    /// received from multiple peers.
     ///
     /// \param packet        Packet to fill with the received data
     /// \param remoteAddress Address of the peer that sent the data
@@ -177,10 +175,10 @@ public :
     ///
     /// \return Status code
     ///
-    /// \see Send
+    /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    Status Receive(Packet& packet, IpAddress& remoteAddress, unsigned short& remotePort);
+    Status receive(Packet& packet, IpAddress& remoteAddress, unsigned short& remotePort);
 
 private:
 
@@ -206,8 +204,8 @@ private:
 ///
 /// It is a datagram protocol: bounded blocks of data (datagrams)
 /// are transfered over the network rather than a continuous
-/// stream of data (TCP). Therefore, one call to Send will always
-/// match one call to Receive (if the datagram is not lost),
+/// stream of data (TCP). Therefore, one call to send will always
+/// match one call to receive (if the datagram is not lost),
 /// with the same data that was sent.
 /// 
 /// The UDP protocol is lightweight but unreliable. Unreliable
@@ -247,37 +245,37 @@ private:
 ///
 /// // Create a socket and bind it to the port 55001
 /// sf::UdpSocket socket;
-/// socket.Bind(55001);
+/// socket.bind(55001);
 ///
 /// // Send a message to 192.168.1.50 on port 55002
-/// std::string message = "Hi, I am " + sf::IpAddress::GetLocalAddress().ToString();
-/// socket.Send(message.c_str(), message.size() + 1, "192.168.1.50", 55002);
+/// std::string message = "Hi, I am " + sf::IpAddress::getLocalAddress().toString();
+/// socket.send(message.c_str(), message.size() + 1, "192.168.1.50", 55002);
 ///
 /// // Receive an answer (most likely from 192.168.1.50, but could be anyone else)
 /// char buffer[1024];
 /// std::size_t received = 0;
 /// sf::IpAddress sender;
 /// unsigned short port;
-/// socket.Receive(buffer, sizeof(buffer), received, sender, port);
+/// socket.receive(buffer, sizeof(buffer), received, sender, port);
 /// std::cout << sender.ToString() << " said: " << buffer << std::endl;
 ///
 /// // ----- The server -----
 ///
 /// // Create a socket and bind it to the port 55002
 /// sf::UdpSocket socket;
-/// socket.Bind(55002);
+/// socket.bind(55002);
 ///
 /// // Receive a message from anyone
 /// char buffer[1024];
 /// std::size_t received = 0;
 /// sf::IpAddress sender;
 /// unsigned short port;
-/// socket.Receive(buffer, sizeof(buffer), received, sender, port);
+/// socket.receive(buffer, sizeof(buffer), received, sender, port);
 /// std::cout << sender.ToString() << " said: " << buffer << std::endl;
 ///
 /// // Send an answer
-/// std::string message = "Welcome " + sender.ToString();
-/// socket.Send(message.c_str(), message.size() + 1, sender, port);
+/// std::string message = "Welcome " + sender.toString();
+/// socket.send(message.c_str(), message.size() + 1, sender, port);
 /// \endcode
 ///
 /// \see sf::Socket, sf::TcpSocket, sf::Packet

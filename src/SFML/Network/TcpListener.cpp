@@ -42,14 +42,14 @@ Socket(Tcp)
 
 
 ////////////////////////////////////////////////////////////
-unsigned short TcpListener::GetLocalPort() const
+unsigned short TcpListener::getLocalPort() const
 {
-    if (GetHandle() != priv::SocketImpl::InvalidSocket())
+    if (getHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve informations about the local end of the socket
         sockaddr_in address;
         priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getsockname(GetHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {
             return ntohs(address.sin_port);
         }
@@ -61,25 +61,25 @@ unsigned short TcpListener::GetLocalPort() const
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpListener::Listen(unsigned short port)
+Socket::Status TcpListener::listen(unsigned short port)
 {
     // Create the internal socket if it doesn't exist
-    Create();
+    create();
 
     // Bind the socket to the specified port
-    sockaddr_in address = priv::SocketImpl::CreateAddress(INADDR_ANY, port);
-    if (bind(GetHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
+    sockaddr_in address = priv::SocketImpl::createAddress(INADDR_ANY, port);
+    if (bind(getHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
         // Not likely to happen, but...
-        Err() << "Failed to bind listener socket to port " << port << std::endl;
+        err() << "Failed to bind listener socket to port " << port << std::endl;
         return Error;
     }
 
     // Listen to the bound port
-    if (listen(GetHandle(), 0) == -1)
+    if (::listen(getHandle(), 0) == -1)
     {
         // Oops, socket is deaf
-        Err() << "Failed to listen to port " << port << std::endl;
+        err() << "Failed to listen to port " << port << std::endl;
         return Error;
     }
 
@@ -88,35 +88,35 @@ Socket::Status TcpListener::Listen(unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-void TcpListener::Close()
+void TcpListener::close()
 {
     // Simply close the socket
-    Socket::Close();
+    Socket::close();
 }
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpListener::Accept(TcpSocket& socket)
+Socket::Status TcpListener::accept(TcpSocket& socket)
 {
     // Make sure that we're listening
-    if (GetHandle() == priv::SocketImpl::InvalidSocket())
+    if (getHandle() == priv::SocketImpl::invalidSocket())
     {
-        Err() << "Failed to accept a new connection, the socket is not listening" << std::endl;
+        err() << "Failed to accept a new connection, the socket is not listening" << std::endl;
         return Error;
     }
 
     // Accept a new connection
     sockaddr_in address;
     priv::SocketImpl::AddrLength length = sizeof(address);
-    SocketHandle remote = accept(GetHandle(), reinterpret_cast<sockaddr*>(&address), &length);
+    SocketHandle remote = ::accept(getHandle(), reinterpret_cast<sockaddr*>(&address), &length);
 
     // Check for errors
-    if (remote == priv::SocketImpl::InvalidSocket())
-        return priv::SocketImpl::GetErrorStatus();
+    if (remote == priv::SocketImpl::invalidSocket())
+        return priv::SocketImpl::getErrorStatus();
 
     // Initialize the new connected socket
-    socket.Close();
-    socket.Create(remote);
+    socket.close();
+    socket.create(remote);
 
     return Done;
 }

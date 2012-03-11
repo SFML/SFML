@@ -32,9 +32,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-bool Keyboard::IsKeyPressed(Key key)
+bool Keyboard::isKeyPressed(Key key)
 {
-    return priv::InputImpl::IsKeyPressed(key);
+    return priv::InputImpl::isKeyPressed(key);
 }
 
 } // namespace sf

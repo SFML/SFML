@@ -154,7 +154,7 @@ public :
         /// \return True if the status is a success, false if it is a failure
         ///
         ////////////////////////////////////////////////////////////
-        bool IsOk() const;
+        bool isOk() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the status code of the response
@@ -162,7 +162,7 @@ public :
         /// \return Status code
         ///
         ////////////////////////////////////////////////////////////
-        Status GetStatus() const;
+        Status getStatus() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the full message contained in the response
@@ -170,7 +170,7 @@ public :
         /// \return The response message
         ///
         ////////////////////////////////////////////////////////////
-        const std::string& GetMessage() const;
+        const std::string& getMessage() const;
 
     private :
 
@@ -203,7 +203,7 @@ public :
         /// \return Directory name
         ///
         ////////////////////////////////////////////////////////////
-        const std::string& GetDirectory() const;
+        const std::string& getDirectory() const;
 
     private :
 
@@ -237,7 +237,7 @@ public :
         /// \return Array containing the requested filenames
         ///
         ////////////////////////////////////////////////////////////
-        const std::vector<std::string>& GetFilenames() const;
+        const std::vector<std::string>& getFilenames() const;
 
     private :
 
@@ -275,20 +275,20 @@ public :
     ///
     /// \return Server response to the request
     ///
-    /// \see Disconnect
+    /// \see disconnect
     ///
     ////////////////////////////////////////////////////////////
-    Response Connect(const IpAddress& server, unsigned short port = 21, Time timeout = Time::Zero);
+    Response connect(const IpAddress& server, unsigned short port = 21, Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the connection with the server
     ///
     /// \return Server response to the request
     ///
-    /// \see Connect
+    /// \see connect
     ///
     ////////////////////////////////////////////////////////////
-    Response Disconnect();
+    Response disconnect();
 
     ////////////////////////////////////////////////////////////
     /// \brief Log in using an anonymous account
@@ -299,7 +299,7 @@ public :
     /// \return Server response to the request
     ///
     ////////////////////////////////////////////////////////////
-    Response Login();
+    Response login();
 
     ////////////////////////////////////////////////////////////
     /// \brief Log in using a username and a password
@@ -313,7 +313,7 @@ public :
     /// \return Server response to the request
     ///
     ////////////////////////////////////////////////////////////
-    Response Login(const std::string& name, const std::string& password);
+    Response login(const std::string& name, const std::string& password);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a null command to keep the connection alive
@@ -324,7 +324,7 @@ public :
     /// \return Server response to the request
     ///
     ////////////////////////////////////////////////////////////
-    Response KeepAlive();
+    Response keepAlive();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current working directory
@@ -334,10 +334,10 @@ public :
     ///
     /// \return Server response to the request
     ///
-    /// \see GetDirectoryListing, ChangeDirectory, ParentDirectory
+    /// \see getDirectoryListing, changeDirectory, parentDirectory
     ///
     ////////////////////////////////////////////////////////////
-    DirectoryResponse GetWorkingDirectory();
+    DirectoryResponse getWorkingDirectory();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the contents of the given directory
@@ -351,10 +351,10 @@ public :
     ///
     /// \return Server response to the request
     ///
-    /// \see GetWorkingDirectory, ChangeDirectory, ParentDirectory
+    /// \see getWorkingDirectory, changeDirectory, parentDirectory
     ///
     ////////////////////////////////////////////////////////////
-    ListingResponse GetDirectoryListing(const std::string& directory = "");
+    ListingResponse getDirectoryListing(const std::string& directory = "");
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current working directory
@@ -365,20 +365,20 @@ public :
     ///
     /// \return Server response to the request
     ///
-    /// \see GetWorkingDirectory, GetDirectoryListing, ParentDirectory
+    /// \see getWorkingDirectory, getDirectoryListing, parentDirectory
     ///
     ////////////////////////////////////////////////////////////
-    Response ChangeDirectory(const std::string& directory);
+    Response changeDirectory(const std::string& directory);
 
     ////////////////////////////////////////////////////////////
     /// \brief Go to the parent directory of the current one
     ///
     /// \return Server response to the request
     ///
-    /// \see GetWorkingDirectory, GetDirectoryListing, ChangeDirectory
+    /// \see getWorkingDirectory, getDirectoryListing, changeDirectory
     ///
     ////////////////////////////////////////////////////////////
-    Response ParentDirectory();
+    Response parentDirectory();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new directory
@@ -390,10 +390,10 @@ public :
     ///
     /// \return Server response to the request
     ///
-    /// \see DeleteDirectory
+    /// \see deleteDirectory
     ///
     ////////////////////////////////////////////////////////////
-    Response CreateDirectory(const std::string& name);
+    Response createDirectory(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove an existing directory
@@ -407,10 +407,10 @@ public :
     ///
     /// \return Server response to the request
     ///
-    /// \see CreateDirectory
+    /// \see createDirectory
     ///
     ////////////////////////////////////////////////////////////
-    Response DeleteDirectory(const std::string& name);
+    Response deleteDirectory(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Rename an existing file
@@ -423,10 +423,10 @@ public :
     ///
     /// \return Server response to the request
     ///
-    /// \see DeleteFile
+    /// \see deleteFile
     ///
     ////////////////////////////////////////////////////////////
-    Response RenameFile(const std::string& file, const std::string& newName);
+    Response renameFile(const std::string& file, const std::string& newName);
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove an existing file
@@ -440,10 +440,10 @@ public :
     ///
     /// \return Server response to the request
     ///
-    /// \see RenameFile
+    /// \see renameFile
     ///
     ////////////////////////////////////////////////////////////
-    Response DeleteFile(const std::string& name);
+    Response deleteFile(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Download a file from the server
@@ -459,10 +459,10 @@ public :
     ///
     /// \return Server response to the request
     ///
-    /// \see Upload
+    /// \see upload
     ///
     ////////////////////////////////////////////////////////////
-    Response Download(const std::string& remoteFile, const std::string& localPath, TransferMode mode = Binary);
+    Response download(const std::string& remoteFile, const std::string& localPath, TransferMode mode = Binary);
 
     ////////////////////////////////////////////////////////////
     /// \brief Upload a file to the server
@@ -478,8 +478,10 @@ public :
     ///
     /// \return Server response to the request
     ///
+    /// \see download
+    ///
     ////////////////////////////////////////////////////////////
-    Response Upload(const std::string& localFile, const std::string& remotePath, TransferMode mode = Binary);
+    Response upload(const std::string& localFile, const std::string& remotePath, TransferMode mode = Binary);
 
 private :
 
@@ -492,7 +494,7 @@ private :
     /// \return Server response to the request
     ///
     ////////////////////////////////////////////////////////////
-    Response SendCommand(const std::string& command, const std::string& parameter = "");
+    Response sendCommand(const std::string& command, const std::string& parameter = "");
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive a response from the server
@@ -503,7 +505,7 @@ private :
     /// \return Server response to the request
     ///
     ////////////////////////////////////////////////////////////
-    Response GetResponse();
+    Response getResponse();
 
     ////////////////////////////////////////////////////////////
     /// \brief Utility class for exchanging datas with the server
@@ -543,11 +545,11 @@ private :
 ///
 /// Every command returns a FTP response, which contains the
 /// status code as well as a message from the server. Some
-/// commands such as GetWorkingDirectory and GetDirectoryListing
+/// commands such as getWorkingDirectory and getDirectoryListing
 /// return additional data, and use a class derived from
 /// sf::Ftp::Response to provide this data.
 ///
-/// All commands, especially Upload and Download, may take some
+/// All commands, especially upload and download, may take some
 /// time to complete. This is important to know if you don't want
 /// to block your application while the server is completing
 /// the task.
@@ -558,32 +560,32 @@ private :
 /// sf::Ftp ftp;
 ///
 /// // Connect to the server
-/// sf::Ftp::Response response = ftp.Connect("ftp://ftp.myserver.com");
-/// if (response.IsOk())
+/// sf::Ftp::Response response = ftp.connect("ftp://ftp.myserver.com");
+/// if (response.isOk())
 ///     std::cout << "Connected" << std::endl;
 ///
 /// // Log in
-/// response = ftp.Login("laurent", "dF6Zm89D");
-/// if (response.IsOk())
+/// response = ftp.login("laurent", "dF6Zm89D");
+/// if (response.isOk())
 ///     std::cout << "Logged in" << std::endl;
 ///
 /// // Print the working directory
-/// sf::Ftp::DirectoryResponse directory = ftp.GetWorkingDirectory();
-/// if (directory.IsOk())
-///     std::cout << "Working directory: " << directory.GetDirectory() << std::endl;
+/// sf::Ftp::DirectoryResponse directory = ftp.getWorkingDirectory();
+/// if (directory.isOk())
+///     std::cout << "Working directory: " << directory.getDirectory() << std::endl;
 ///
 /// // Create a new directory
-/// response = ftp.CreateDirectory("files");
-/// if (response.IsOk())
+/// response = ftp.createDirectory("files");
+/// if (response.isOk())
 ///     std::cout << "Created new directory" << std::endl;
 ///
 /// // Upload a file to this new directory
-/// response = ftp.Upload("local-path/file.txt", "files", sf::Ftp::Ascii);
-/// if (response.IsOk())
+/// response = ftp.upload("local-path/file.txt", "files", sf::Ftp::Ascii);
+/// if (response.isOk())
 ///     std::cout << "File uploaded" << std::endl;
 ///
 /// // Disconnect from the server (optional)
-/// ftp.Disconnect();
+/// ftp.disconnect();
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////

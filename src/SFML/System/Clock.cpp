@@ -38,22 +38,22 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Clock::Clock() :
-m_startTime(priv::ClockImpl::GetCurrentTime())
+m_startTime(priv::ClockImpl::getCurrentTime())
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Clock::GetElapsedTime() const
+Time Clock::getElapsedTime() const
 {
-    return priv::ClockImpl::GetCurrentTime() - m_startTime;
+    return priv::ClockImpl::getCurrentTime() - m_startTime;
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Clock::Restart()
+Time Clock::restart()
 {
-    Time now = priv::ClockImpl::GetCurrentTime();
+    Time now = priv::ClockImpl::getCurrentTime();
     Time elapsed = now - m_startTime;
     m_startTime = now;
 

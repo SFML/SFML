@@ -50,14 +50,14 @@ GlResource::GlResource()
 
         // If this is the very first resource, trigger the global context initialization
         if (count == 0)
-            priv::GlContext::GlobalInit();
+            priv::GlContext::globalInit();
 
         // Increment the resources counter
         count++;
     }
 
     // Now make sure that there is an active OpenGL context in the current thread
-    priv::GlContext::EnsureContext();
+    priv::GlContext::ensureContext();
 }
 
 
@@ -72,14 +72,14 @@ GlResource::~GlResource()
 
     // If there's no more resource alive, we can trigger the global context cleanup
     if (count == 0)
-        priv::GlContext::GlobalCleanup();
+        priv::GlContext::globalCleanup();
 }
 
 
 ////////////////////////////////////////////////////////////
-void GlResource::EnsureGlContext()
+void GlResource::ensureGlContext()
 {
-    priv::GlContext::EnsureContext();
+    priv::GlContext::ensureContext();
 }
 
 } // namespace sf

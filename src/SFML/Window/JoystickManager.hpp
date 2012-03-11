@@ -51,7 +51,7 @@ public :
     /// \return Unique instance of the joystick manager
     ///
     ////////////////////////////////////////////////////////////
-    static JoystickManager& GetInstance();
+    static JoystickManager& getInstance();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the capabilities of an open joystick
@@ -61,7 +61,7 @@ public :
     /// \return Capabilities of the joystick
     ///
     ////////////////////////////////////////////////////////////
-    const JoystickCaps& GetCapabilities(unsigned int joystick) const;
+    const JoystickCaps& getCapabilities(unsigned int joystick) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current state of an open joystick
@@ -71,13 +71,13 @@ public :
     /// \return Current state of the joystick
     ///
     ////////////////////////////////////////////////////////////
-    const JoystickState& GetState(unsigned int joystick) const;
+    const JoystickState& getState(unsigned int joystick) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the state of all the joysticks
     ///
     ////////////////////////////////////////////////////////////
-    void Update();
+    void update();
 
 private:
 
@@ -99,9 +99,9 @@ private:
     ////////////////////////////////////////////////////////////
     struct Item
     {
-        JoystickImpl  Joystick;     ///< Joystick implementation
-        JoystickState State;        ///< The current joystick state
-        JoystickCaps  Capabilities; ///< The joystick capabilities
+        JoystickImpl  joystick;     ///< Joystick implementation
+        JoystickState state;        ///< The current joystick state
+        JoystickCaps  capabilities; ///< The joystick capabilities
     };
 
     ////////////////////////////////////////////////////////////

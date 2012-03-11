@@ -73,7 +73,7 @@ public :
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool SetActive(bool active);
+    bool setActive(bool active);
 
 public :
 
@@ -125,7 +125,7 @@ private :
 ///
 /// Usage example:
 /// \code
-/// void ThreadFunction(void*)
+/// void threadFunction(void*)
 /// {
 ///    sf::Context context;
 ///    // from now on, you have a valid context

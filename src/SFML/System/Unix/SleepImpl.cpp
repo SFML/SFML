@@ -36,7 +36,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void SleepImpl(Time time)
+void sleepImpl(Time time)
 {
     // usleep is not reliable enough (it might block the
     // whole process instead of just the current thread)
@@ -44,7 +44,7 @@ void SleepImpl(Time time)
 
     // this implementation is inspired from Qt
 
-    Uint64 usecs = time.AsMicroseconds();
+    Uint64 usecs = time.asMicroseconds();
 
     // get the current time
     timeval tv;

@@ -36,7 +36,7 @@
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-In Utf<8>::Decode(In begin, In end, Uint32& output, Uint32 replacement)
+In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 {
     // Some useful precomputed data
     static const int trailing[256] =
@@ -55,7 +55,7 @@ In Utf<8>::Decode(In begin, In end, Uint32& output, Uint32 replacement)
         0x00000000, 0x00003080, 0x000E2080, 0x03C82080, 0xFA082080, 0x82082080
     };
 
-    // Decode the character
+    // decode the character
     int trailingBytes = trailing[static_cast<Uint8>(*begin)];
     if (begin + trailingBytes < end)
     {
@@ -84,7 +84,7 @@ In Utf<8>::Decode(In begin, In end, Uint32& output, Uint32 replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<8>::Encode(Uint32 input, Out output, Uint8 replacement)
+Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
 {
     // Some useful precomputed data
     static const Uint8 firstBytes[7] =
@@ -92,7 +92,7 @@ Out Utf<8>::Encode(Uint32 input, Out output, Uint8 replacement)
         0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC
     };
 
-    // Encode the character
+    // encode the character
     if ((input > 0x0010FFFF) || ((input >= 0xD800) && (input <= 0xDBFF)))
     {
         // Invalid character
@@ -104,25 +104,25 @@ Out Utf<8>::Encode(Uint32 input, Out output, Uint8 replacement)
         // Valid character
 
         // Get the number of bytes to write
-        int bytesToWrite = 1;
-        if      (input <  0x80)       bytesToWrite = 1;
-        else if (input <  0x800)      bytesToWrite = 2;
-        else if (input <  0x10000)    bytesToWrite = 3;
-        else if (input <= 0x0010FFFF) bytesToWrite = 4;
+        int bytestoWrite = 1;
+        if      (input <  0x80)       bytestoWrite = 1;
+        else if (input <  0x800)      bytestoWrite = 2;
+        else if (input <  0x10000)    bytestoWrite = 3;
+        else if (input <= 0x0010FFFF) bytestoWrite = 4;
 
         // Extract the bytes to write
         Uint8 bytes[4];
-        switch (bytesToWrite)
+        switch (bytestoWrite)
         {
             case 4 : bytes[3] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6;
             case 3 : bytes[2] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6;
             case 2 : bytes[1] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6;
-            case 1 : bytes[0] = static_cast<Uint8> (input | firstBytes[bytesToWrite]);
+            case 1 : bytes[0] = static_cast<Uint8> (input | firstBytes[bytestoWrite]);
         }
 
         // Add them to the output
         const Uint8* currentByte = bytes;
-        switch (bytesToWrite)
+        switch (bytestoWrite)
         {
             case 4 : *output++ = *currentByte++;
             case 3 : *output++ = *currentByte++;
@@ -137,21 +137,21 @@ Out Utf<8>::Encode(Uint32 input, Out output, Uint8 replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-In Utf<8>::Next(In begin, In end)
+In Utf<8>::next(In begin, In end)
 {
     Uint32 codepoint;
-    return Decode(begin, end, codepoint);
+    return decode(begin, end, codepoint);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-std::size_t Utf<8>::Count(In begin, In end)
+std::size_t Utf<8>::count(In begin, In end)
 {
     std::size_t length = 0;
     while (begin < end)
     {
-        begin = Next(begin, end);
+        begin = next(begin, end);
         ++length;
     }
 
@@ -161,12 +161,12 @@ std::size_t Utf<8>::Count(In begin, In end)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::FromAnsi(In begin, In end, Out output, const std::locale& locale)
+Out Utf<8>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
     while (begin < end)
     {
-        Uint32 codepoint = Utf<32>::DecodeAnsi(*begin++, locale);
-        output = Encode(codepoint, output);
+        Uint32 codepoint = Utf<32>::decodeAnsi(*begin++, locale);
+        output = encode(codepoint, output);
     }
 
     return output;
@@ -175,12 +175,12 @@ Out Utf<8>::FromAnsi(In begin, In end, Out output, const std::locale& locale)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::FromWide(In begin, In end, Out output)
+Out Utf<8>::fromWide(In begin, In end, Out output)
 {
     while (begin < end)
     {
-        Uint32 codepoint = Utf<32>::DecodeWide(*begin++);
-        output = Encode(codepoint, output);
+        Uint32 codepoint = Utf<32>::decodeWide(*begin++);
+        output = encode(codepoint, output);
     }
 
     return output;
@@ -189,12 +189,12 @@ Out Utf<8>::FromWide(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::FromLatin1(In begin, In end, Out output)
+Out Utf<8>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
     while (begin < end)
-        output = Encode(*begin++, output);
+        output = encode(*begin++, output);
 
     return output;
 }
@@ -202,13 +202,13 @@ Out Utf<8>::FromLatin1(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::ToAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
+Out Utf<8>::toAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
     while (begin < end)
     {
         Uint32 codepoint;
-        begin = Decode(begin, end, codepoint);
-        output = Utf<32>::EncodeAnsi(codepoint, output, replacement, locale);
+        begin = decode(begin, end, codepoint);
+        output = Utf<32>::encodeAnsi(codepoint, output, replacement, locale);
     }
 
     return output;
@@ -217,13 +217,13 @@ Out Utf<8>::ToAnsi(In begin, In end, Out output, char replacement, const std::lo
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::ToWide(In begin, In end, Out output, wchar_t replacement)
+Out Utf<8>::toWide(In begin, In end, Out output, wchar_t replacement)
 {
     while (begin < end)
     {
         Uint32 codepoint;
-        begin = Decode(begin, end, codepoint);
-        output = Utf<32>::EncodeWide(codepoint, output, replacement);
+        begin = decode(begin, end, codepoint);
+        output = Utf<32>::encodeWide(codepoint, output, replacement);
     }
 
     return output;
@@ -232,14 +232,14 @@ Out Utf<8>::ToWide(In begin, In end, Out output, wchar_t replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::ToLatin1(In begin, In end, Out output, char replacement)
+Out Utf<8>::toLatin1(In begin, In end, Out output, char replacement)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
     while (begin < end)
     {
         Uint32 codepoint;
-        begin = Decode(begin, end, codepoint);
+        begin = decode(begin, end, codepoint);
         *output++ = codepoint < 256 ? static_cast<char>(codepoint) : replacement;
     }
 
@@ -249,7 +249,7 @@ Out Utf<8>::ToLatin1(In begin, In end, Out output, char replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::ToUtf8(In begin, In end, Out output)
+Out Utf<8>::toUtf8(In begin, In end, Out output)
 {
     while (begin < end)
         *output++ = *begin++;
@@ -260,13 +260,13 @@ Out Utf<8>::ToUtf8(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::ToUtf16(In begin, In end, Out output)
+Out Utf<8>::toUtf16(In begin, In end, Out output)
 {
     while (begin < end)
     {
         Uint32 codepoint;
-        begin = Decode(begin, end, codepoint);
-        output = Utf<16>::Encode(codepoint, output);
+        begin = decode(begin, end, codepoint);
+        output = Utf<16>::encode(codepoint, output);
     }
 
     return output;
@@ -275,12 +275,12 @@ Out Utf<8>::ToUtf16(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::ToUtf32(In begin, In end, Out output)
+Out Utf<8>::toUtf32(In begin, In end, Out output)
 {
     while (begin < end)
     {
         Uint32 codepoint;
-        begin = Decode(begin, end, codepoint);
+        begin = decode(begin, end, codepoint);
         *output++ = codepoint;
     }
 
@@ -290,7 +290,7 @@ Out Utf<8>::ToUtf32(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-In Utf<16>::Decode(In begin, In end, Uint32& output, Uint32 replacement)
+In Utf<16>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 {
     Uint16 first = *begin++;
 
@@ -330,7 +330,7 @@ In Utf<16>::Decode(In begin, In end, Uint32& output, Uint32 replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<16>::Encode(Uint32 input, Out output, Uint16 replacement)
+Out Utf<16>::encode(Uint32 input, Out output, Uint16 replacement)
 {
     if (input < 0xFFFF)
     {
@@ -367,21 +367,21 @@ Out Utf<16>::Encode(Uint32 input, Out output, Uint16 replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-In Utf<16>::Next(In begin, In end)
+In Utf<16>::next(In begin, In end)
 {
     Uint32 codepoint;
-    return Decode(begin, end, codepoint);
+    return decode(begin, end, codepoint);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-std::size_t Utf<16>::Count(In begin, In end)
+std::size_t Utf<16>::count(In begin, In end)
 {
     std::size_t length = 0;
     while (begin < end)
     {
-        begin = Next(begin, end);
+        begin = next(begin, end);
         ++length;
     }
 
@@ -391,12 +391,12 @@ std::size_t Utf<16>::Count(In begin, In end)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::FromAnsi(In begin, In end, Out output, const std::locale& locale)
+Out Utf<16>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
     while (begin < end)
     {
-        Uint32 codepoint = Utf<32>::DecodeAnsi(*begin++, locale);
-        output = Encode(codepoint, output);
+        Uint32 codepoint = Utf<32>::decodeAnsi(*begin++, locale);
+        output = encode(codepoint, output);
     }
 
     return output;
@@ -405,12 +405,12 @@ Out Utf<16>::FromAnsi(In begin, In end, Out output, const std::locale& locale)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::FromWide(In begin, In end, Out output)
+Out Utf<16>::fromWide(In begin, In end, Out output)
 {
     while (begin < end)
     {
-        Uint32 codepoint = Utf<32>::DecodeWide(*begin++);
-        output = Encode(codepoint, output);
+        Uint32 codepoint = Utf<32>::decodeWide(*begin++);
+        output = encode(codepoint, output);
     }
 
     return output;
@@ -419,7 +419,7 @@ Out Utf<16>::FromWide(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::FromLatin1(In begin, In end, Out output)
+Out Utf<16>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
@@ -432,13 +432,13 @@ Out Utf<16>::FromLatin1(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::ToAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
+Out Utf<16>::toAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
     while (begin < end)
     {
         Uint32 codepoint;
-        begin = Decode(begin, end, codepoint);
-        output = Utf<32>::EncodeAnsi(codepoint, output, replacement, locale);
+        begin = decode(begin, end, codepoint);
+        output = Utf<32>::encodeAnsi(codepoint, output, replacement, locale);
     }
 
     return output;
@@ -447,13 +447,13 @@ Out Utf<16>::ToAnsi(In begin, In end, Out output, char replacement, const std::l
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::ToWide(In begin, In end, Out output, wchar_t replacement)
+Out Utf<16>::toWide(In begin, In end, Out output, wchar_t replacement)
 {
     while (begin < end)
     {
         Uint32 codepoint;
-        begin = Decode(begin, end, codepoint);
-        output = Utf<32>::EncodeWide(codepoint, output, replacement);
+        begin = decode(begin, end, codepoint);
+        output = Utf<32>::encodeWide(codepoint, output, replacement);
     }
 
     return output;
@@ -462,7 +462,7 @@ Out Utf<16>::ToWide(In begin, In end, Out output, wchar_t replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::ToLatin1(In begin, In end, Out output, char replacement)
+Out Utf<16>::toLatin1(In begin, In end, Out output, char replacement)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
@@ -478,13 +478,13 @@ Out Utf<16>::ToLatin1(In begin, In end, Out output, char replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::ToUtf8(In begin, In end, Out output)
+Out Utf<16>::toUtf8(In begin, In end, Out output)
 {
     while (begin < end)
     {
         Uint32 codepoint;
-        begin = Decode(begin, end, codepoint);
-        output = Utf<8>::Encode(codepoint, output);
+        begin = decode(begin, end, codepoint);
+        output = Utf<8>::encode(codepoint, output);
     }
 
     return output;
@@ -493,7 +493,7 @@ Out Utf<16>::ToUtf8(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::ToUtf16(In begin, In end, Out output)
+Out Utf<16>::toUtf16(In begin, In end, Out output)
 {
     while (begin < end)
         *output++ = *begin++;
@@ -504,12 +504,12 @@ Out Utf<16>::ToUtf16(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::ToUtf32(In begin, In end, Out output)
+Out Utf<16>::toUtf32(In begin, In end, Out output)
 {
     while (begin < end)
     {
         Uint32 codepoint;
-        begin = Decode(begin, end, codepoint);
+        begin = decode(begin, end, codepoint);
         *output++ = codepoint;
     }
 
@@ -519,7 +519,7 @@ Out Utf<16>::ToUtf32(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-In Utf<32>::Decode(In begin, In end, Uint32& output, Uint32)
+In Utf<32>::decode(In begin, In end, Uint32& output, Uint32)
 {
     output = *begin++;
     return begin;
@@ -528,7 +528,7 @@ In Utf<32>::Decode(In begin, In end, Uint32& output, Uint32)
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<32>::Encode(Uint32 input, Out output, Uint32 replacement)
+Out Utf<32>::encode(Uint32 input, Out output, Uint32 replacement)
 {
     *output++ = input;
     return output;
@@ -537,7 +537,7 @@ Out Utf<32>::Encode(Uint32 input, Out output, Uint32 replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-In Utf<32>::Next(In begin, In end)
+In Utf<32>::next(In begin, In end)
 {
     return ++begin;
 }
@@ -545,7 +545,7 @@ In Utf<32>::Next(In begin, In end)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-std::size_t Utf<32>::Count(In begin, In end)
+std::size_t Utf<32>::count(In begin, In end)
 {
     return begin - end;
 }
@@ -553,10 +553,10 @@ std::size_t Utf<32>::Count(In begin, In end)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::FromAnsi(In begin, In end, Out output, const std::locale& locale)
+Out Utf<32>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
     while (begin < end)
-        *output++ = DecodeAnsi(*begin++, locale);
+        *output++ = decodeAnsi(*begin++, locale);
 
     return output;
 }
@@ -564,10 +564,10 @@ Out Utf<32>::FromAnsi(In begin, In end, Out output, const std::locale& locale)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::FromWide(In begin, In end, Out output)
+Out Utf<32>::fromWide(In begin, In end, Out output)
 {
     while (begin < end)
-        *output++ = DecodeWide(*begin++);
+        *output++ = decodeWide(*begin++);
 
     return output;
 }
@@ -575,7 +575,7 @@ Out Utf<32>::FromWide(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::FromLatin1(In begin, In end, Out output)
+Out Utf<32>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
@@ -588,10 +588,10 @@ Out Utf<32>::FromLatin1(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::ToAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
+Out Utf<32>::toAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
     while (begin < end)
-        output = EncodeAnsi(*begin++, output, replacement, locale);
+        output = encodeAnsi(*begin++, output, replacement, locale);
 
     return output;
 }
@@ -599,10 +599,10 @@ Out Utf<32>::ToAnsi(In begin, In end, Out output, char replacement, const std::l
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::ToWide(In begin, In end, Out output, wchar_t replacement)
+Out Utf<32>::toWide(In begin, In end, Out output, wchar_t replacement)
 {
     while (begin < end)
-        output = EncodeWide(*begin++, output, replacement);
+        output = encodeWide(*begin++, output, replacement);
 
     return output;
 }
@@ -610,7 +610,7 @@ Out Utf<32>::ToWide(In begin, In end, Out output, wchar_t replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::ToLatin1(In begin, In end, Out output, char replacement)
+Out Utf<32>::toLatin1(In begin, In end, Out output, char replacement)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
@@ -626,20 +626,20 @@ Out Utf<32>::ToLatin1(In begin, In end, Out output, char replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::ToUtf8(In begin, In end, Out output)
+Out Utf<32>::toUtf8(In begin, In end, Out output)
 {
     while (begin < end)
-        output = Utf<8>::Encode(*begin++, output);
+        output = Utf<8>::encode(*begin++, output);
 
     return output;
 }
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::ToUtf16(In begin, In end, Out output)
+Out Utf<32>::toUtf16(In begin, In end, Out output)
 {
     while (begin < end)
-        output = Utf<16>::Encode(*begin++, output);
+        output = Utf<16>::encode(*begin++, output);
 
     return output;
 }
@@ -647,7 +647,7 @@ Out Utf<32>::ToUtf16(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::ToUtf32(In begin, In end, Out output)
+Out Utf<32>::toUtf32(In begin, In end, Out output)
 {
     while (begin < end)
         *output++ = *begin++;
@@ -658,7 +658,7 @@ Out Utf<32>::ToUtf32(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-Uint32 Utf<32>::DecodeAnsi(In input, const std::locale& locale)
+Uint32 Utf<32>::decodeAnsi(In input, const std::locale& locale)
 {
     // On Windows, gcc's standard library (glibc++) has almost
     // no support for Unicode stuff. As a consequence, in this
@@ -687,7 +687,7 @@ Uint32 Utf<32>::DecodeAnsi(In input, const std::locale& locale)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-Uint32 Utf<32>::DecodeWide(In input)
+Uint32 Utf<32>::decodeWide(In input)
 {
     // The encoding of wide characters is not well defined and is left to the system;
     // however we can safely assume that it is UCS-2 on Windows and
@@ -701,7 +701,7 @@ Uint32 Utf<32>::DecodeWide(In input)
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<32>::EncodeAnsi(Uint32 codepoint, Out output, char replacement, const std::locale& locale)
+Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, const std::locale& locale)
 {
     // On Windows, gcc's standard library (glibc++) has almost
     // no support for Unicode stuff. As a consequence, in this
@@ -736,7 +736,7 @@ Out Utf<32>::EncodeAnsi(Uint32 codepoint, Out output, char replacement, const st
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<32>::EncodeWide(Uint32 codepoint, Out output, wchar_t replacement)
+Out Utf<32>::encodeWide(Uint32 codepoint, Out output, wchar_t replacement)
 {
     // The encoding of wide characters is not well defined and is left to the system;
     // however we can safely assume that it is UCS-2 on Windows and

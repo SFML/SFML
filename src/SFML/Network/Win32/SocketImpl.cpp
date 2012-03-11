@@ -34,7 +34,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-sockaddr_in SocketImpl::CreateAddress(Uint32 address, unsigned short port)
+sockaddr_in SocketImpl::createAddress(Uint32 address, unsigned short port)
 {
     sockaddr_in addr;
     std::memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
@@ -47,21 +47,21 @@ sockaddr_in SocketImpl::CreateAddress(Uint32 address, unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-SocketHandle SocketImpl::InvalidSocket()
+SocketHandle SocketImpl::invalidSocket()
 {
     return INVALID_SOCKET;
 }
 
 
 ////////////////////////////////////////////////////////////
-void SocketImpl::Close(SocketHandle sock)
+void SocketImpl::close(SocketHandle sock)
 {
     closesocket(sock);
 }
 
 
 ////////////////////////////////////////////////////////////
-void SocketImpl::SetBlocking(SocketHandle sock, bool block)
+void SocketImpl::setBlocking(SocketHandle sock, bool block)
 {
     u_long blocking = block ? 0 : 1;
     ioctlsocket(sock, FIONBIO, &blocking);
@@ -69,7 +69,7 @@ void SocketImpl::SetBlocking(SocketHandle sock, bool block)
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status SocketImpl::GetErrorStatus()
+Socket::Status SocketImpl::getErrorStatus()
 {
     switch (WSAGetLastError())
     {

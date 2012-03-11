@@ -46,14 +46,14 @@ String::String()
 ////////////////////////////////////////////////////////////
 String::String(char ansiChar, const std::locale& locale)
 {
-    m_string += Utf32::DecodeAnsi(ansiChar, locale);
+    m_string += Utf32::decodeAnsi(ansiChar, locale);
 }
 
 
 ////////////////////////////////////////////////////////////
 String::String(wchar_t wideChar)
 {
-    m_string += Utf32::DecodeWide(wideChar);
+    m_string += Utf32::decodeWide(wideChar);
 }
 
 
@@ -73,7 +73,7 @@ String::String(const char* ansiString, const std::locale& locale)
         if (length > 0)
         {
             m_string.reserve(length + 1);
-            Utf32::FromAnsi(ansiString, ansiString + length, std::back_inserter(m_string), locale);
+            Utf32::fromAnsi(ansiString, ansiString + length, std::back_inserter(m_string), locale);
         }
     }
 }
@@ -83,7 +83,7 @@ String::String(const char* ansiString, const std::locale& locale)
 String::String(const std::string& ansiString, const std::locale& locale)
 {
     m_string.reserve(ansiString.length() + 1);
-    Utf32::FromAnsi(ansiString.begin(), ansiString.end(), std::back_inserter(m_string), locale);
+    Utf32::fromAnsi(ansiString.begin(), ansiString.end(), std::back_inserter(m_string), locale);
 }
 
 
@@ -96,7 +96,7 @@ String::String(const wchar_t* wideString)
         if (length > 0)
         {
             m_string.reserve(length + 1);
-            Utf32::FromWide(wideString, wideString + length, std::back_inserter(m_string));
+            Utf32::fromWide(wideString, wideString + length, std::back_inserter(m_string));
         }
     }
 }
@@ -106,7 +106,7 @@ String::String(const wchar_t* wideString)
 String::String(const std::wstring& wideString)
 {
     m_string.reserve(wideString.length() + 1);
-    Utf32::FromWide(wideString.begin(), wideString.end(), std::back_inserter(m_string));
+    Utf32::fromWide(wideString.begin(), wideString.end(), std::back_inserter(m_string));
 }
 
 
@@ -135,40 +135,40 @@ m_string(copy.m_string)
 ////////////////////////////////////////////////////////////
 String::operator std::string() const
 {
-    return ToAnsiString();
+    return toAnsiString();
 }
 
 
 ////////////////////////////////////////////////////////////
 String::operator std::wstring() const
 {
-    return ToWideString();
+    return toWideString();
 }
 
 
 ////////////////////////////////////////////////////////////
-std::string String::ToAnsiString(const std::locale& locale) const
+std::string String::toAnsiString(const std::locale& locale) const
 {
     // Prepare the output string
     std::string output;
     output.reserve(m_string.length() + 1);
 
     // Convert
-    Utf32::ToAnsi(m_string.begin(), m_string.end(), std::back_inserter(output), 0, locale);
+    Utf32::toAnsi(m_string.begin(), m_string.end(), std::back_inserter(output), 0, locale);
 
     return output;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::wstring String::ToWideString() const
+std::wstring String::toWideString() const
 {
     // Prepare the output string
     std::wstring output;
     output.reserve(m_string.length() + 1);
 
     // Convert
-    Utf32::ToWide(m_string.begin(), m_string.end(), std::back_inserter(output), 0);
+    Utf32::toWide(m_string.begin(), m_string.end(), std::back_inserter(output), 0);
 
     return output;
 }
@@ -205,77 +205,77 @@ Uint32& String::operator [](std::size_t index)
 
 
 ////////////////////////////////////////////////////////////
-void String::Clear()
+void String::clear()
 {
     m_string.clear();
 }
 
 
 ////////////////////////////////////////////////////////////
-std::size_t String::GetSize() const
+std::size_t String::getSize() const
 {
     return m_string.size();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool String::IsEmpty() const
+bool String::isEmpty() const
 {
     return m_string.empty();
 }
 
 
 ////////////////////////////////////////////////////////////
-void String::Erase(std::size_t position, std::size_t count)
+void String::erase(std::size_t position, std::size_t count)
 {
     m_string.erase(position, count);
 }
 
 
 ////////////////////////////////////////////////////////////
-void String::Insert(std::size_t position, const String& str)
+void String::insert(std::size_t position, const String& str)
 {
     m_string.insert(position, str.m_string);
 }
 
 
 ////////////////////////////////////////////////////////////
-std::size_t String::Find(const String& str, std::size_t start) const
+std::size_t String::find(const String& str, std::size_t start) const
 {
     return m_string.find(str.m_string, start);
 }
 
 
 ////////////////////////////////////////////////////////////
-const Uint32* String::GetData() const
+const Uint32* String::getData() const
 {
     return m_string.c_str();
 }
 
 
 ////////////////////////////////////////////////////////////
-String::Iterator String::Begin()
+String::Iterator String::begin()
 {
     return m_string.begin();
 }
 
 
 ////////////////////////////////////////////////////////////
-String::ConstIterator String::Begin() const
+String::ConstIterator String::begin() const
 {
     return m_string.begin();
 }
 
 
 ////////////////////////////////////////////////////////////
-String::Iterator String::End()
+String::Iterator String::end()
 {
     return m_string.end();
 }
 
 
 ////////////////////////////////////////////////////////////
-String::ConstIterator String::End() const
+String::ConstIterator String::end() const
 {
     return m_string.end();
 }

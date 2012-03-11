@@ -6,10 +6,10 @@
 #include <cstdlib>
 
 
-void RunTcpServer(unsigned short Port);
-void RunTcpClient(unsigned short Port);
-void RunUdpServer(unsigned short Port);
-void RunUdpClient(unsigned short Port);
+void runTcpServer(unsigned short port);
+void runTcpClient(unsigned short port);
+void runUdpServer(unsigned short port);
+void runUdpClient(unsigned short port);
 
 
 ////////////////////////////////////////////////////////////
@@ -37,17 +37,17 @@ int main()
     {
         // Test the TCP protocol
         if (who == 's')
-            RunTcpServer(port);
+            runTcpServer(port);
         else
-            RunTcpClient(port);
+            runTcpClient(port);
     }
     else
     {
         // Test the unconnected UDP protocol
         if (who == 's')
-            RunUdpServer(port);
+            runUdpServer(port);
         else
-            RunUdpClient(port);
+            runUdpClient(port);
     }
 
     // Wait until the user presses 'enter' key

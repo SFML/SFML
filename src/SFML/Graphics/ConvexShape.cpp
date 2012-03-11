@@ -33,35 +33,35 @@ namespace sf
 ////////////////////////////////////////////////////////////
 ConvexShape::ConvexShape(unsigned int pointCount)
 {
-    SetPointCount(pointCount);
+    setPointCount(pointCount);
 }
 
 
 ////////////////////////////////////////////////////////////
-void ConvexShape::SetPointCount(unsigned int count)
+void ConvexShape::setPointCount(unsigned int count)
 {
     m_points.resize(count);
-    Update();
+    update();
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int ConvexShape::GetPointCount() const
+unsigned int ConvexShape::getPointCount() const
 {
     return static_cast<unsigned int>(m_points.size());
 }
 
 
 ////////////////////////////////////////////////////////////
-void ConvexShape::SetPoint(unsigned int index, const Vector2f& point)
+void ConvexShape::setPoint(unsigned int index, const Vector2f& point)
 {
     m_points[index] = point;
-    Update();
+    update();
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f ConvexShape::GetPoint(unsigned int index) const
+Vector2f ConvexShape::getPoint(unsigned int index) const
 {
     return m_points[index];
 }

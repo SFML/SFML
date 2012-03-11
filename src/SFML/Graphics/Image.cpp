@@ -44,7 +44,7 @@ m_height(0)
 
 
 ////////////////////////////////////////////////////////////
-void Image::Create(unsigned int width, unsigned int height, const Color& color)
+void Image::create(unsigned int width, unsigned int height, const Color& color)
 {
     // Assign the new size
     m_width = width;
@@ -67,7 +67,7 @@ void Image::Create(unsigned int width, unsigned int height, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-void Image::Create(unsigned int width, unsigned int height, const Uint8* pixels)
+void Image::create(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     if (pixels)
     {
@@ -91,49 +91,49 @@ void Image::Create(unsigned int width, unsigned int height, const Uint8* pixels)
 
 
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromFile(const std::string& filename)
+bool Image::loadFromFile(const std::string& filename)
 {
-    return priv::ImageLoader::GetInstance().LoadImageFromFile(filename, m_pixels, m_width, m_height);
+    return priv::ImageLoader::getInstance().loadImageFromFile(filename, m_pixels, m_width, m_height);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromMemory(const void* data, std::size_t size)
+bool Image::loadFromMemory(const void* data, std::size_t size)
 {
-    return priv::ImageLoader::GetInstance().LoadImageFromMemory(data, size, m_pixels, m_width, m_height);
+    return priv::ImageLoader::getInstance().loadImageFromMemory(data, size, m_pixels, m_width, m_height);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromStream(InputStream& stream)
+bool Image::loadFromStream(InputStream& stream)
 {
-    return priv::ImageLoader::GetInstance().LoadImageFromStream(stream, m_pixels, m_width, m_height);
+    return priv::ImageLoader::getInstance().loadImageFromStream(stream, m_pixels, m_width, m_height);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::SaveToFile(const std::string& filename) const
+bool Image::saveToFile(const std::string& filename) const
 {
-    return priv::ImageLoader::GetInstance().SaveImageToFile(filename, m_pixels, m_width, m_height);
+    return priv::ImageLoader::getInstance().saveImageToFile(filename, m_pixels, m_width, m_height);
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Image::GetWidth() const
+unsigned int Image::getWidth() const
 {
     return m_width;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Image::GetHeight() const
+unsigned int Image::getHeight() const
 {
     return m_height;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Image::CreateMaskFromColor(const Color& color, Uint8 alpha)
+void Image::createMaskFromColor(const Color& color, Uint8 alpha)
 {
     // Make sure that the image is not empty
     if (!m_pixels.empty())
@@ -152,7 +152,7 @@ void Image::CreateMaskFromColor(const Color& color, Uint8 alpha)
 
 
 ////////////////////////////////////////////////////////////
-void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect, bool applyAlpha)
+void Image::copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect, bool applyAlpha)
 {
     // Make sure that both images are valid
     if ((source.m_width == 0) || (source.m_height == 0) || (m_width == 0) || (m_height == 0))
@@ -160,24 +160,24 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
 
     // Adjust the source rectangle
     IntRect srcRect = sourceRect;
-    if (srcRect.Width == 0 || (srcRect.Height == 0))
+    if (srcRect.width == 0 || (srcRect.height == 0))
     {
-        srcRect.Left   = 0;
-        srcRect.Top    = 0;
-        srcRect.Width  = source.m_width;
-        srcRect.Height = source.m_height;
+        srcRect.left   = 0;
+        srcRect.top    = 0;
+        srcRect.width  = source.m_width;
+        srcRect.height = source.m_height;
     }
     else
     {
-        if (srcRect.Left   < 0) srcRect.Left = 0;
-        if (srcRect.Top    < 0) srcRect.Top  = 0;
-        if (srcRect.Width  > static_cast<int>(source.m_width))  srcRect.Width  = source.m_width;
-        if (srcRect.Height > static_cast<int>(source.m_height)) srcRect.Height = source.m_height;
+        if (srcRect.left   < 0) srcRect.left = 0;
+        if (srcRect.top    < 0) srcRect.top  = 0;
+        if (srcRect.width  > static_cast<int>(source.m_width))  srcRect.width  = source.m_width;
+        if (srcRect.height > static_cast<int>(source.m_height)) srcRect.height = source.m_height;
     }
 
     // Then find the valid bounds of the destination rectangle
-    int width  = srcRect.Width;
-    int height = srcRect.Height;
+    int width  = srcRect.width;
+    int height = srcRect.height;
     if (destX + width  > m_width)  width  = m_width  - destX;
     if (destY + height > m_height) height = m_height - destY;
 
@@ -190,7 +190,7 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
     int          rows      = height;
     int          srcStride = source.m_width * 4;
     int          dstStride = m_width * 4;
-    const Uint8* srcPixels = &source.m_pixels[0] + (srcRect.Left + srcRect.Top * source.m_width) * 4;
+    const Uint8* srcPixels = &source.m_pixels[0] + (srcRect.left + srcRect.top * source.m_width) * 4;
     Uint8*       dstPixels = &m_pixels[0] + (destX + destY * m_width) * 4;
 
     // Copy the pixels
@@ -231,7 +231,7 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
 
 
 ////////////////////////////////////////////////////////////
-void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
+void Image::setPixel(unsigned int x, unsigned int y, const Color& color)
 {
     Uint8* pixel = &m_pixels[(x + y * m_width) * 4];
     *pixel++ = color.r;
@@ -242,7 +242,7 @@ void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-Color Image::GetPixel(unsigned int x, unsigned int y) const
+Color Image::getPixel(unsigned int x, unsigned int y) const
 {
     const Uint8* pixel = &m_pixels[(x + y * m_width) * 4];
     return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
@@ -250,7 +250,7 @@ Color Image::GetPixel(unsigned int x, unsigned int y) const
 
 
 ////////////////////////////////////////////////////////////
-const Uint8* Image::GetPixelsPtr() const
+const Uint8* Image::getPixelsPtr() const
 {
     if (!m_pixels.empty())
     {
@@ -258,14 +258,14 @@ const Uint8* Image::GetPixelsPtr() const
     }
     else
     {
-        Err() << "Trying to access the pixels of an empty image" << std::endl;
+        err() << "Trying to access the pixels of an empty image" << std::endl;
         return NULL;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Image::FlipHorizontally()
+void Image::flipHorizontally()
 {
     if (!m_pixels.empty())
     {
@@ -290,7 +290,7 @@ void Image::FlipHorizontally()
 
 
 ////////////////////////////////////////////////////////////
-void Image::FlipVertically()
+void Image::flipVertically()
 {
     if (!m_pixels.empty())
     {

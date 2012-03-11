@@ -61,7 +61,7 @@ public :
     ///
     /// \param texture Source texture
     ///
-    /// \see SetTexture
+    /// \see setTexture
     ///
     ////////////////////////////////////////////////////////////
     explicit Sprite(const Texture& texture);
@@ -72,7 +72,7 @@ public :
     /// \param texture   Source texture
     /// \param rectangle Sub-rectangle of the texture to assign to the sprite
     ///
-    /// \see SetTexture, SetTextureRect
+    /// \see setTexture, setTextureRect
     ///
     ////////////////////////////////////////////////////////////
     Sprite(const Texture& texture, const IntRect& rectangle);
@@ -93,10 +93,10 @@ public :
     /// \param texture   New texture
     /// \param resetRect Should the texture rect be reset to the size of the new texture?
     ///
-    /// \see GetTexture, SetTextureRect
+    /// \see getTexture, setTextureRect
     ///
     ////////////////////////////////////////////////////////////
-    void SetTexture(const Texture& texture, bool resetRect = false);
+    void setTexture(const Texture& texture, bool resetRect = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the sub-rectangle of the texture that the sprite will display
@@ -107,10 +107,10 @@ public :
     ///
     /// \param rectangle Rectangle defining the region of the texture to display
     ///
-    /// \see GetTextureRect, SetTexture
+    /// \see getTextureRect, setTexture
     ///
     ////////////////////////////////////////////////////////////
-    void SetTextureRect(const IntRect& rectangle);
+    void setTextureRect(const IntRect& rectangle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the global color of the sprite
@@ -122,10 +122,10 @@ public :
     ///
     /// \param color New color of the sprite
     ///
-    /// \see GetColor
+    /// \see getColor
     ///
     ////////////////////////////////////////////////////////////
-    void SetColor(const Color& color);
+    void setColor(const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the source texture of the sprite
@@ -136,30 +136,30 @@ public :
     ///
     /// \return Pointer to the sprite's texture
     ///
-    /// \see SetTexture
+    /// \see setTexture
     ///
     ////////////////////////////////////////////////////////////
-    const Texture* GetTexture() const;
+    const Texture* getTexture() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sub-rectangle of the texture displayed by the sprite
     ///
     /// \return Texture rectangle of the sprite
     ///
-    /// \see SetTextureRect
+    /// \see setTextureRect
     ///
     ////////////////////////////////////////////////////////////
-    const IntRect& GetTextureRect() const;
+    const IntRect& getTextureRect() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the global color of the sprite
     ///
     /// \return Global color of the sprite
     ///
-    /// \see SetColor
+    /// \see setColor
     ///
     ////////////////////////////////////////////////////////////
-    const Color& GetColor() const;
+    const Color& getColor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity
@@ -173,7 +173,7 @@ public :
     /// \return Local bounding rectangle of the entity
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect GetLocalBounds() const;
+    FloatRect getLocalBounds() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the global bounding rectangle of the entity
@@ -187,7 +187,7 @@ public :
     /// \return Global bounding rectangle of the entity
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect GetGlobalBounds() const;
+    FloatRect getGlobalBounds() const;
 
 private :
 
@@ -198,19 +198,19 @@ private :
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw(RenderTarget& target, RenderStates states) const;
+    virtual void draw(RenderTarget& target, RenderStates states) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the vertices' positions
     ///
     ////////////////////////////////////////////////////////////
-    void UpdatePositions();
+    void updatePositions();
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the vertices' texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    void UpdateTexCoords();
+    void updateTexCoords();
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -259,17 +259,17 @@ private :
 /// \code
 /// // Declare and load a texture
 /// sf::Texture texture;
-/// texture.LoadFromFile("texture.png");
+/// texture.loadFromFile("texture.png");
 /// 
 /// // Create a sprite
 /// sf::Sprite sprite;
-/// sprite.SetTexture(texture);
-/// sprite.SetTextureRect(sf::IntRect(10, 10, 50, 30));
-/// sprite.SetColor(sf::Color(255, 255, 255, 200));
-/// sprite.SetPosition(100, 25);
+/// sprite.setTexture(texture);
+/// sprite.setTextureRect(sf::IntRect(10, 10, 50, 30));
+/// sprite.setColor(sf::Color(255, 255, 255, 200));
+/// sprite.setPosition(100, 25);
 ///
 /// // Draw it
-/// window.Draw(sprite);
+/// window.draw(sprite);
 /// \endcode
 ///
 /// \see sf::Texture, sf::Transformable

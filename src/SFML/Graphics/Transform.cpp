@@ -59,14 +59,14 @@ Transform::Transform(float a00, float a01, float a02,
 
 
 ////////////////////////////////////////////////////////////
-const float* Transform::GetMatrix() const
+const float* Transform::getMatrix() const
 {
     return m_matrix;
 }
 
 
 ////////////////////////////////////////////////////////////
-Transform Transform::GetInverse() const
+Transform Transform::getInverse() const
 {
     // Compute the determinant
     float det = m_matrix[0] * (m_matrix[15] * m_matrix[5] - m_matrix[7] * m_matrix[13]) -
@@ -95,7 +95,7 @@ Transform Transform::GetInverse() const
 
 
 ////////////////////////////////////////////////////////////
-Vector2f Transform::TransformPoint(float x, float y) const
+Vector2f Transform::transformPoint(float x, float y) const
 {
     return Vector2f(m_matrix[0] * x + m_matrix[4] * y + m_matrix[12],
                     m_matrix[1] * x + m_matrix[5] * y + m_matrix[13]);
@@ -103,22 +103,22 @@ Vector2f Transform::TransformPoint(float x, float y) const
 
 
 ////////////////////////////////////////////////////////////
-Vector2f Transform::TransformPoint(const Vector2f& point) const
+Vector2f Transform::transformPoint(const Vector2f& point) const
 {
-    return TransformPoint(point.x, point.y);
+    return transformPoint(point.x, point.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect Transform::TransformRect(const FloatRect& rectangle) const
+FloatRect Transform::transformRect(const FloatRect& rectangle) const
 {
     // Transform the 4 corners of the rectangle
     const Vector2f points[] =
     {
-        TransformPoint(rectangle.Left, rectangle.Top),
-        TransformPoint(rectangle.Left, rectangle.Top + rectangle.Height),
-        TransformPoint(rectangle.Left + rectangle.Width, rectangle.Top),
-        TransformPoint(rectangle.Left + rectangle.Width, rectangle.Top + rectangle.Height)
+        transformPoint(rectangle.left, rectangle.top),
+        transformPoint(rectangle.left, rectangle.top + rectangle.height),
+        transformPoint(rectangle.left + rectangle.width, rectangle.top),
+        transformPoint(rectangle.left + rectangle.width, rectangle.top + rectangle.height)
     };
 
     // Compute the bounding rectangle of the transformed points
@@ -139,7 +139,7 @@ FloatRect Transform::TransformRect(const FloatRect& rectangle) const
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Combine(const Transform& transform)
+Transform& Transform::combine(const Transform& transform)
 {
     const float* a = m_matrix;
     const float* b = transform.m_matrix;
@@ -159,25 +159,25 @@ Transform& Transform::Combine(const Transform& transform)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Translate(float x, float y)
+Transform& Transform::translate(float x, float y)
 {
     Transform translation(1, 0, x,
                           0, 1, y,
                           0, 0, 1);
 
-    return Combine(translation);
+    return combine(translation);
 }
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Translate(const Vector2f& offset)
+Transform& Transform::translate(const Vector2f& offset)
 {
-    return Translate(offset.x, offset.y);
+    return translate(offset.x, offset.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Rotate(float angle)
+Transform& Transform::rotate(float angle)
 {
     float rad = angle * 3.141592654f / 180.f;
     float cos = std::cos(rad);
@@ -187,12 +187,12 @@ Transform& Transform::Rotate(float angle)
                        sin,  cos, 0,
                        0,    0,   1);
 
-    return Combine(rotation);
+    return combine(rotation);
 }
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Rotate(float angle, float centerX, float centerY)
+Transform& Transform::rotate(float angle, float centerX, float centerY)
 {
     float rad = angle * 3.141592654f / 180.f;
     float cos = std::cos(rad);
@@ -202,71 +202,71 @@ Transform& Transform::Rotate(float angle, float centerX, float centerY)
                        sin,  cos, centerY * (1 - cos) - centerX * sin,
                        0,    0,   1);
 
-    return Combine(rotation);
+    return combine(rotation);
 }
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Rotate(float angle, const Vector2f& center)
+Transform& Transform::rotate(float angle, const Vector2f& center)
 {
-    return Rotate(angle, center.x, center.y);
+    return rotate(angle, center.x, center.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Scale(float scaleX, float scaleY)
+Transform& Transform::scale(float scaleX, float scaleY)
 {
     Transform scaling(scaleX, 0,      0,
                       0,      scaleY, 0,
                       0,      0,      1);
 
-    return Combine(scaling);
+    return combine(scaling);
 }
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Scale(float scaleX, float scaleY, float centerX, float centerY)
+Transform& Transform::scale(float scaleX, float scaleY, float centerX, float centerY)
 {
     Transform scaling(scaleX, 0,      centerX * (1 - scaleX),
                       0,      scaleY, centerY * (1 - scaleY),
                       0,      0,      1);
 
-    return Combine(scaling);
+    return combine(scaling);
 }
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Scale(const Vector2f& factors)
+Transform& Transform::scale(const Vector2f& factors)
 {
-    return Scale(factors.x, factors.y);
+    return scale(factors.x, factors.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::Scale(const Vector2f& factors, const Vector2f& center)
+Transform& Transform::scale(const Vector2f& factors, const Vector2f& center)
 {
-    return Scale(factors.x, factors.y, center.x, center.y);
+    return scale(factors.x, factors.y, center.x, center.y);
 }
 
 
 ////////////////////////////////////////////////////////////
 Transform operator *(const Transform& left, const Transform& right)
 {
-    return Transform(left).Combine(right);
+    return Transform(left).combine(right);
 }
 
 
 ////////////////////////////////////////////////////////////
 Transform& operator *=(Transform& left, const Transform& right)
 {
-    return left.Combine(right);
+    return left.combine(right);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2f operator *(const Transform& left, const Vector2f& right)
 {
-    return left.TransformPoint(right);
+    return left.transformPoint(right);
 }
 
 } // namespace sf

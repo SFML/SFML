@@ -71,20 +71,20 @@ public :
     /// \param data        Pointer to the sequence of bytes to append
     /// \param sizeInBytes Number of bytes to append
     ///
-    /// \see Clear
+    /// \see clear
     ///
     ////////////////////////////////////////////////////////////
-    void Append(const void* data, std::size_t sizeInBytes);
+    void append(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the packet
     ///
     /// After calling Clear, the packet is empty.
     ///
-    /// \see Append
+    /// \see append
     ///
     ////////////////////////////////////////////////////////////
-    void Clear();
+    void clear();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the data contained in the packet
@@ -96,23 +96,23 @@ public :
     ///
     /// \return Pointer to the data
     ///
-    /// \see GetDataSize
+    /// \see getDataSize
     ///
     ////////////////////////////////////////////////////////////
-    const char* GetData() const;
+    const char* getData() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the data contained in the packet
     ///
     /// This function returns the number of bytes pointed to by
-    /// what GetData returns.
+    /// what getData returns.
     ///
     /// \return Data size, in bytes
     ///
-    /// \see GetData
+    /// \see getData
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t GetDataSize() const;
+    std::size_t getDataSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the reading position has reached the
@@ -126,7 +126,7 @@ public :
     /// \see operator bool
     ///
     ////////////////////////////////////////////////////////////
-    bool EndOfPacket() const;
+    bool endOfPacket() const;
 
 public:
 
@@ -165,7 +165,7 @@ public:
     ///
     /// \return True if last data extraction from packet was successful
     ///
-    /// \see EndOfPacket
+    /// \see endOfPacket
     ///
     ////////////////////////////////////////////////////////////
     operator BoolType() const;
@@ -230,7 +230,7 @@ private :
     /// \return True if \a size bytes can be read from the packet
     ///
     ////////////////////////////////////////////////////////////
-    bool CheckSize(std::size_t size);
+    bool checkSize(std::size_t size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Called before the packet is sent over the network
@@ -247,10 +247,10 @@ private :
     ///
     /// \return Pointer to the array of bytes to send
     ///
-    /// \see OnReceive
+    /// \see onReceive
     ///
     ////////////////////////////////////////////////////////////
-    virtual const char* OnSend(std::size_t& size);
+    virtual const char* onSend(std::size_t& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Called after the packet is received over the network
@@ -266,8 +266,10 @@ private :
     /// \param data Pointer to the received bytes
     /// \param size Number of bytes
     ///
+    /// \see onSend
+    ///
     ////////////////////////////////////////////////////////////
-    virtual void OnReceive(const char* data, std::size_t size);
+    virtual void onReceive(const char* data, std::size_t size);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -316,13 +318,13 @@ private :
 /// packet << x << s << d;
 ///
 /// // Send it over the network (socket is a valid sf::TcpSocket)
-/// socket.Send(packet);
+/// socket.send(packet);
 ///
 /// -----------------------------------------------------------------
 ///
 /// // Receive the packet at the other end
 /// sf::Packet packet;
-/// socket.Receive(packet);
+/// socket.receive(packet);
 ///
 /// // Extract the variables contained in the packet
 /// sf::Uint32 x;
@@ -369,26 +371,26 @@ private :
 /// and after it is received. This is typically used to
 /// handle automatic compression or encryption of the data.
 /// This is achieved by inheriting from sf::Packet, and overriding
-/// the OnSend and OnReceive functions.
+/// the onSend and onReceive functions.
 ///
 /// Here is an example:
 /// \code
 /// class ZipPacket : public sf::Packet
 /// {
-///     virtual const char* OnSend(std::size_t& size)
+///     virtual const char* onSend(std::size_t& size)
 ///     {
-///         const char* srcData = GetData();
-///         std::size_t srcSize = GetDataSize();
+///         const char* srcData = getData();
+///         std::size_t srcSize = getDataSize();
 ///
 ///         return MySuperZipFunction(srcData, srcSize, &size);
 ///     }
 ///
-///     virtual void OnReceive(const char* data, std::size_t size)
+///     virtual void onReceive(const char* data, std::size_t size)
 ///     {
 ///         std::size_t dstSize;
 ///         const char* dstData = MySuperUnzipFunction(data, size, &dstSize);
 ///
-///         Append(dstData, dstSize);
+///         append(dstData, dstSize);
 ///     }
 /// };
 ///

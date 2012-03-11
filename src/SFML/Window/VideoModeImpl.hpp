@@ -49,7 +49,7 @@ public :
     /// \return Array filled with the fullscreen video modes
     ///
     ////////////////////////////////////////////////////////////
-    static std::vector<VideoMode> GetFullscreenModes();
+    static std::vector<VideoMode> getFullscreenModes();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current desktop video mode
@@ -57,7 +57,7 @@ public :
     /// \return Current desktop video mode
     ///
     ////////////////////////////////////////////////////////////
-    static VideoMode GetDesktopMode();
+    static VideoMode getDesktopMode();
 };
 
 } // namespace priv

@@ -32,7 +32,7 @@
 
 namespace
 {
-    sf::Uint32 Resolve(const std::string& address)
+    sf::Uint32 resolve(const std::string& address)
     {
         if (address == "255.255.255.255")
         {
@@ -79,14 +79,14 @@ m_address(0)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(const std::string& address) :
-m_address(Resolve(address))
+m_address(resolve(address))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(const char* address) :
-m_address(Resolve(address))
+m_address(resolve(address))
 {
 }
 
@@ -106,7 +106,7 @@ m_address(htonl(address))
 
 
 ////////////////////////////////////////////////////////////
-std::string IpAddress::ToString() const
+std::string IpAddress::toString() const
 {
     in_addr address;
     address.s_addr = m_address;
@@ -116,14 +116,14 @@ std::string IpAddress::ToString() const
 
 
 ////////////////////////////////////////////////////////////
-Uint32 IpAddress::ToInteger() const
+Uint32 IpAddress::toInteger() const
 {
     return ntohl(m_address);
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress IpAddress::GetLocalAddress()
+IpAddress IpAddress::getLocalAddress()
 {
     // The method here is to connect a UDP socket to anyone (here to localhost),
     // and get the local socket address with the getsockname function.
@@ -133,14 +133,14 @@ IpAddress IpAddress::GetLocalAddress()
 
     // Create the socket
     SocketHandle sock = socket(PF_INET, SOCK_DGRAM, 0);
-    if (sock == priv::SocketImpl::InvalidSocket())
+    if (sock == priv::SocketImpl::invalidSocket())
         return localAddress;
 
     // Connect the socket to localhost on any port
-    sockaddr_in address = priv::SocketImpl::CreateAddress(ntohl(INADDR_LOOPBACK), 0);
+    sockaddr_in address = priv::SocketImpl::createAddress(ntohl(INADDR_LOOPBACK), 0);
     if (connect(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
-        priv::SocketImpl::Close(sock);
+        priv::SocketImpl::close(sock);
         return localAddress;
     }
 
@@ -148,12 +148,12 @@ IpAddress IpAddress::GetLocalAddress()
     priv::SocketImpl::AddrLength size = sizeof(address);
     if (getsockname(sock, reinterpret_cast<sockaddr*>(&address), &size) == -1)
     {
-        priv::SocketImpl::Close(sock);
+        priv::SocketImpl::close(sock);
         return localAddress;
     }
 
     // Close the socket
-    priv::SocketImpl::Close(sock);
+    priv::SocketImpl::close(sock);
 
     // Finally build the IP address
     localAddress = IpAddress(ntohl(address.sin_addr.s_addr));
@@ -163,7 +163,7 @@ IpAddress IpAddress::GetLocalAddress()
 
 
 ////////////////////////////////////////////////////////////
-IpAddress IpAddress::GetPublicAddress(Time timeout)
+IpAddress IpAddress::getPublicAddress(Time timeout)
 {
     // The trick here is more complicated, because the only way
     // to get our public IP address is to get it from a distant computer.
@@ -173,9 +173,9 @@ IpAddress IpAddress::GetPublicAddress(Time timeout)
 
     Http server("www.sfml-dev.org");
     Http::Request request("/ip-provider.php", Http::Request::Get);
-    Http::Response page = server.SendRequest(request, timeout);
-    if (page.GetStatus() == Http::Response::Ok)
-        return IpAddress(page.GetBody());
+    Http::Response page = server.sendRequest(request, timeout);
+    if (page.getStatus() == Http::Response::Ok)
+        return IpAddress(page.getBody());
 
     // Something failed: return an invalid address
     return IpAddress();
@@ -185,7 +185,7 @@ IpAddress IpAddress::GetPublicAddress(Time timeout)
 ////////////////////////////////////////////////////////////
 bool operator ==(const IpAddress& left, const IpAddress& right)
 {
-    return left.ToInteger() == right.ToInteger();
+    return left.toInteger() == right.toInteger();
 }
 
 
@@ -199,7 +199,7 @@ bool operator !=(const IpAddress& left, const IpAddress& right)
 ////////////////////////////////////////////////////////////
 bool operator <(const IpAddress& left, const IpAddress& right)
 {
-    return left.ToInteger() < right.ToInteger();
+    return left.toInteger() < right.toInteger();
 }
 
 
@@ -238,7 +238,7 @@ std::istream& operator >>(std::istream& stream, IpAddress& address)
 ////////////////////////////////////////////////////////////
 std::ostream& operator <<(std::ostream& stream, const IpAddress& address)
 {
-    return stream << address.ToString();
+    return stream << address.toString();
 }
 
 } // namespace sf

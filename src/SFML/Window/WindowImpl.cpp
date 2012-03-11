@@ -55,14 +55,14 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::Create(VideoMode mode, const std::string& title, Uint32 style)
+WindowImpl* WindowImpl::create(VideoMode mode, const std::string& title, Uint32 style)
 {
     return new WindowImplType(mode, title, style);
 }
 
 
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::Create(WindowHandle handle)
+WindowImpl* WindowImpl::create(WindowHandle handle)
 {
     return new WindowImplType(handle);
 }
@@ -73,9 +73,9 @@ WindowImpl::WindowImpl() :
 m_joyThreshold(0.1f)
 {
     // Get the initial joystick states
-    JoystickManager::GetInstance().Update();
+    JoystickManager::getInstance().update();
     for (unsigned int i = 0; i < Joystick::Count; ++i)
-        m_joyStates[i] = JoystickManager::GetInstance().GetState(i);
+        m_joyStates[i] = JoystickManager::getInstance().getState(i);
 }
 
 
@@ -87,14 +87,14 @@ WindowImpl::~WindowImpl()
 
 
 ////////////////////////////////////////////////////////////
-void WindowImpl::SetJoystickThreshold(float threshold)
+void WindowImpl::setJoystickThreshold(float threshold)
 {
     m_joyThreshold = threshold;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImpl::PopEvent(Event& event, bool block)
+bool WindowImpl::popEvent(Event& event, bool block)
 {
     // If the event queue is empty, let's first check if new events are available from the OS
     if (m_events.empty())
@@ -102,8 +102,8 @@ bool WindowImpl::PopEvent(Event& event, bool block)
         if (!block)
         {
             // Non-blocking mode: process events and continue
-            ProcessJoystickEvents();
-            ProcessEvents();
+            processJoystickEvents();
+            processEvents();
         }
         else
         {
@@ -114,9 +114,9 @@ bool WindowImpl::PopEvent(Event& event, bool block)
             // events (which require polling)
             while (m_events.empty())
             {
-                ProcessJoystickEvents();
-                ProcessEvents();
-                Sleep(Milliseconds(10));
+                processJoystickEvents();
+                processEvents();
+                sleep(milliseconds(10));
             }
         }
     }
@@ -135,33 +135,33 @@ bool WindowImpl::PopEvent(Event& event, bool block)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImpl::PushEvent(const Event& event)
+void WindowImpl::pushEvent(const Event& event)
 {
     m_events.push(event);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImpl::ProcessJoystickEvents()
+void WindowImpl::processJoystickEvents()
 {
     // First update the global joystick states
-    JoystickManager::GetInstance().Update();
+    JoystickManager::getInstance().update();
 
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
         // Copy the previous state of the joystick and get the new one
         JoystickState previousState = m_joyStates[i];
-        m_joyStates[i] = JoystickManager::GetInstance().GetState(i);
-        JoystickCaps caps = JoystickManager::GetInstance().GetCapabilities(i);
+        m_joyStates[i] = JoystickManager::getInstance().getState(i);
+        JoystickCaps caps = JoystickManager::getInstance().getCapabilities(i);
 
         // Connection state
-        bool connected = m_joyStates[i].Connected;
-        if (previousState.Connected ^ connected)
+        bool connected = m_joyStates[i].connected;
+        if (previousState.connected ^ connected)
         {
             Event event;
-            event.Type = connected ? Event::JoystickConnected : Event::JoystickDisconnected;
-            event.JoystickButton.JoystickId = i;
-            PushEvent(event);
+            event.type = connected ? Event::JoystickConnected : Event::JoystickDisconnected;
+            event.joystickButton.joystickId = i;
+            pushEvent(event);
         }
 
         if (connected)
@@ -169,36 +169,36 @@ void WindowImpl::ProcessJoystickEvents()
             // Axes
             for (unsigned int j = 0; j < Joystick::AxisCount; ++j)
             {
-                if (caps.Axes[j])
+                if (caps.axes[j])
                 {
                     Joystick::Axis axis = static_cast<Joystick::Axis>(j);
-                    float prevPos = previousState.Axes[axis];
-                    float currPos = m_joyStates[i].Axes[axis];
+                    float prevPos = previousState.axes[axis];
+                    float currPos = m_joyStates[i].axes[axis];
                     if (fabs(currPos - prevPos) >= m_joyThreshold)
                     {
                         Event event;
-                        event.Type = Event::JoystickMoved;
-                        event.JoystickMove.JoystickId = i;
-                        event.JoystickMove.Axis = axis;
-                        event.JoystickMove.Position = currPos;
-                        PushEvent(event);
+                        event.type = Event::JoystickMoved;
+                        event.joystickMove.joystickId = i;
+                        event.joystickMove.axis = axis;
+                        event.joystickMove.position = currPos;
+                        pushEvent(event);
                     }
                 }
             }
 
             // Buttons
-            for (unsigned int j = 0; j < caps.ButtonCount; ++j)
+            for (unsigned int j = 0; j < caps.buttonCount; ++j)
             {
-                bool prevPressed = previousState.Buttons[j];
-                bool currPressed = m_joyStates[i].Buttons[j];
+                bool prevPressed = previousState.buttons[j];
+                bool currPressed = m_joyStates[i].buttons[j];
 
                 if (prevPressed ^ currPressed)
                 {
                     Event event;
-                    event.Type = currPressed ? Event::JoystickButtonPressed : Event::JoystickButtonReleased;
-                    event.JoystickButton.JoystickId = i;
-                    event.JoystickButton.Button = j;
-                    PushEvent(event);
+                    event.type = currPressed ? Event::JoystickButtonPressed : Event::JoystickButtonReleased;
+                    event.joystickButton.joystickId = i;
+                    event.joystickButton.button = j;
+                    pushEvent(event);
                 }
             }
         }

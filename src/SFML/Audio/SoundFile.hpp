@@ -66,7 +66,7 @@ public :
     /// \return Number of samples
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t GetSampleCount() const;
+    std::size_t getSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of channels used by the sound
@@ -74,7 +74,7 @@ public :
     /// \return Number of channels (1 = mono, 2 = stereo)
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetChannelCount() const;
+    unsigned int getChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound
@@ -82,7 +82,7 @@ public :
     /// \return Sample rate, in samples per second
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetSampleRate() const;
+    unsigned int getSampleRate() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file for reading
@@ -92,7 +92,7 @@ public :
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenRead(const std::string& filename);
+    bool openRead(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file in memory for reading
@@ -103,7 +103,7 @@ public :
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenRead(const void* data, std::size_t sizeInBytes);
+    bool openRead(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from a custom stream for reading
@@ -113,7 +113,7 @@ public :
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenRead(InputStream& stream);
+    bool openRead(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief a the sound file for writing
@@ -125,7 +125,7 @@ public :
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool OpenWrite(const std::string& filename, unsigned int channelCount, unsigned int sampleRate);
+    bool openWrite(const std::string& filename, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the loaded sound
@@ -136,7 +136,7 @@ public :
     /// \return Number of samples actually read (may be less than \a sampleCount)
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t Read(Int16* data, std::size_t sampleCount);
+    std::size_t read(Int16* data, std::size_t sampleCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file
@@ -145,7 +145,7 @@ public :
     /// \param sampleCount Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    void Write(const Int16* data, std::size_t sampleCount);
+    void write(const Int16* data, std::size_t sampleCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position in the file
@@ -153,7 +153,7 @@ public :
     /// \param timeOffset New playing position, from the beginning of the file
     ///
     ////////////////////////////////////////////////////////////
-    void Seek(Time timeOffset);
+    void seek(Time timeOffset);
 
 private :
 
@@ -166,7 +166,7 @@ private :
     /// \return Internal format matching the filename (-1 if no match)
     ///
     ////////////////////////////////////////////////////////////
-    static int GetFormatFromFilename(const std::string& filename);
+    static int getFormatFromFilename(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Data and callbacks for opening from memory
@@ -178,10 +178,10 @@ private :
         const char* DataPtr;
         sf_count_t  TotalSize;
 
-        static sf_count_t GetLength(void* user);
-        static sf_count_t Read(void* ptr, sf_count_t count, void* user);
-        static sf_count_t Seek(sf_count_t offset, int whence, void* user);
-        static sf_count_t Tell(void* user);
+        static sf_count_t getLength(void* user);
+        static sf_count_t read(void* ptr, sf_count_t count, void* user);
+        static sf_count_t seek(sf_count_t offset, int whence, void* user);
+        static sf_count_t tell(void* user);
     };
 
     ////////////////////////////////////////////////////////////
@@ -190,10 +190,10 @@ private :
     ////////////////////////////////////////////////////////////
     struct Stream
     {
-        static sf_count_t GetLength(void* user);
-        static sf_count_t Read(void* ptr, sf_count_t count, void* user);
-        static sf_count_t Seek(sf_count_t offset, int whence, void* user);
-        static sf_count_t Tell(void* user);
+        static sf_count_t getLength(void* user);
+        static sf_count_t read(void* ptr, sf_count_t count, void* user);
+        static sf_count_t seek(sf_count_t offset, int whence, void* user);
+        static sf_count_t tell(void* user);
     };
 
     ////////////////////////////////////////////////////////////

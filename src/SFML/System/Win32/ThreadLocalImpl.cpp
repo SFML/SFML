@@ -47,14 +47,14 @@ ThreadLocalImpl::~ThreadLocalImpl()
 
 
 ////////////////////////////////////////////////////////////
-void ThreadLocalImpl::SetValue(void* value)
+void ThreadLocalImpl::setValue(void* value)
 {
     TlsSetValue(m_index, value);
 }
 
 
 ////////////////////////////////////////////////////////////
-void* ThreadLocalImpl::GetValue() const
+void* ThreadLocalImpl::getValue() const
 {
     return TlsGetValue(m_index);
 }

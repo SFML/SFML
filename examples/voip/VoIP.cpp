@@ -11,8 +11,8 @@
 // Function prototypes
 // (I'm too lazy to put them into separate headers...)
 ////////////////////////////////////////////////////////////
-void DoClient(unsigned short port);
-void DoServer(unsigned short port);
+void doClient(unsigned short port);
+void doServer(unsigned short port);
 
 
 ////////////////////////////////////////////////////////////
@@ -34,12 +34,12 @@ int main()
     if (who == 's')
     {
         // Run as a server
-        DoServer(port);
+        doServer(port);
     }
     else
     {
         // Run as a client
-        DoClient(port);
+        doClient(port);
     }
 
     // Wait until the user presses 'enter' key

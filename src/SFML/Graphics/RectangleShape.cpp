@@ -34,34 +34,34 @@ namespace sf
 ////////////////////////////////////////////////////////////
 RectangleShape::RectangleShape(const Vector2f& size)
 {
-    SetSize(size);
+    setSize(size);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RectangleShape::SetSize(const Vector2f& size)
+void RectangleShape::setSize(const Vector2f& size)
 {
     m_size = size;
-    Update();
+    update();
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& RectangleShape::GetSize() const
+const Vector2f& RectangleShape::getSize() const
 {
     return m_size;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RectangleShape::GetPointCount() const
+unsigned int RectangleShape::getPointCount() const
 {
     return 4;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RectangleShape::GetPoint(unsigned int index) const
+Vector2f RectangleShape::getPoint(unsigned int index) const
 {
     switch (index)
     {

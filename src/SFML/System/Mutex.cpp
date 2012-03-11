@@ -27,15 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Mutex.hpp>
 
-
 #if defined(SFML_SYSTEM_WINDOWS)
-
     #include <SFML/System/Win32/MutexImpl.hpp>
-
 #else
-
     #include <SFML/System/Unix/MutexImpl.hpp>
-
 #endif
 
 
@@ -56,16 +51,16 @@ Mutex::~Mutex()
 
 
 ////////////////////////////////////////////////////////////
-void Mutex::Lock()
+void Mutex::lock()
 {
-    m_mutexImpl->Lock();
+    m_mutexImpl->lock();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Mutex::Unlock()
+void Mutex::unlock()
 {
-    m_mutexImpl->Unlock();
+    m_mutexImpl->unlock();
 }
 
 } // namespace sf

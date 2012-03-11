@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/ALCheck.hpp>
+#include <SFML/Audio/alCheck.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/System/Err.hpp>
 
@@ -35,7 +35,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void ALCheckError(const std::string& file, unsigned int line)
+void alCheckError(const std::string& file, unsigned int line)
 {
     // Get the last error
     ALenum errorCode = alGetError();
@@ -84,7 +84,7 @@ void ALCheckError(const std::string& file, unsigned int line)
         }
 
         // Log the error
-        Err() << "An internal OpenAL call failed in "
+        err() << "An internal OpenAL call failed in "
               << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
               << error << ", " << description
               << std::endl;
@@ -95,7 +95,7 @@ void ALCheckError(const std::string& file, unsigned int line)
 ////////////////////////////////////////////////////////////
 /// Make sure that OpenAL is initialized
 ////////////////////////////////////////////////////////////
-void EnsureALInit()
+void ensureALInit()
 {
     // The audio device is instanciated on demand rather than at global startup,
     // which solves a lot of weird crashes and errors.

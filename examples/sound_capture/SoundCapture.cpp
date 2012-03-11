@@ -16,7 +16,7 @@
 int main()
 {
     // Check that the device can capture audio
-    if (sf::SoundRecorder::IsAvailable() == false)
+    if (sf::SoundRecorder::isAvailable() == false)
     {
         std::cout << "Sorry, audio capture is not supported by your system" << std::endl;
         return EXIT_SUCCESS;
@@ -36,19 +36,19 @@ int main()
     sf::SoundBufferRecorder recorder;
 
     // Audio capture is done in a separate thread, so we can block the main thread while it is capturing
-    recorder.Start(sampleRate);
+    recorder.start(sampleRate);
     std::cout << "Recording... press enter to stop";
     std::cin.ignore(10000, '\n');
-    recorder.Stop();
+    recorder.stop();
 
     // Get the buffer containing the captured data
-    const sf::SoundBuffer& buffer = recorder.GetBuffer();
+    const sf::SoundBuffer& buffer = recorder.getBuffer();
 
     // Display captured sound informations
     std::cout << "Sound information :" << std::endl;
-    std::cout << " " << buffer.GetDuration().AsSeconds() << " seconds"           << std::endl;
-    std::cout << " " << buffer.GetSampleRate()           << " samples / seconds" << std::endl;
-    std::cout << " " << buffer.GetChannelCount()         << " channels"          << std::endl;
+    std::cout << " " << buffer.getDuration().asSeconds() << " seconds"           << std::endl;
+    std::cout << " " << buffer.getSampleRate()           << " samples / seconds" << std::endl;
+    std::cout << " " << buffer.getChannelCount()         << " channels"          << std::endl;
 
     // Choose what to do with the recorded sound data
     char choice;
@@ -64,23 +64,23 @@ int main()
         std::getline(std::cin, filename);
 
         // Save the buffer
-        buffer.SaveToFile(filename);
+        buffer.saveToFile(filename);
     }
     else
     {
         // Create a sound instance and play it
         sf::Sound sound(buffer);
-        sound.Play();
+        sound.play();
 
         // Wait until finished
-        while (sound.GetStatus() == sf::Sound::Playing)
+        while (sound.getStatus() == sf::Sound::Playing)
         {
             // Display the playing position
-            std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.GetPlayingOffset().AsSeconds() << " sec";
+            std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.getPlayingOffset().asSeconds() << " sec";
             std::cout << std::flush;
 
             // Leave some CPU time for other threads
-            sf::Sleep(sf::Milliseconds(100));
+            sf::sleep(sf::milliseconds(100));
         }
     }
 

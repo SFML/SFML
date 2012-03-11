@@ -89,20 +89,20 @@ public :
     ///
     /// \param blocking True to set the socket as blocking, false for non-blocking
     ///
-    /// \see IsBlocking
+    /// \see isBlocking
     ///
     ////////////////////////////////////////////////////////////
-    void SetBlocking(bool blocking);
+    void setBlocking(bool blocking);
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether the socket is in blocking or non-blocking mode
     ///
     /// \return True if the socket is blocking, false otherwise
     ///
-    /// \see SetBlocking
+    /// \see setBlocking
     ///
     ////////////////////////////////////////////////////////////
-    bool IsBlocking() const;
+    bool isBlocking() const;
 
 protected :
 
@@ -136,7 +136,7 @@ protected :
     /// \return The internal (OS-specific) handle of the socket
     ///
     ////////////////////////////////////////////////////////////
-    SocketHandle GetHandle() const;
+    SocketHandle getHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the internal representation of the socket
@@ -144,7 +144,7 @@ protected :
     /// This function can only be accessed by derived classes.
     ///
     ////////////////////////////////////////////////////////////
-    void Create();
+    void create();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the internal representation of the socket
@@ -155,7 +155,7 @@ protected :
     /// \param handle OS-specific handle of the socket to wrap
     ///
     ////////////////////////////////////////////////////////////
-    void Create(SocketHandle handle);
+    void create(SocketHandle handle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the socket gracefully
@@ -163,7 +163,7 @@ protected :
     /// This function can only be accessed by derived classes.
     ///
     ////////////////////////////////////////////////////////////
-    void Close();
+    void close();
 
 private :
 

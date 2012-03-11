@@ -63,7 +63,7 @@ public :
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Special type/value that can be passed to SetParameter,
+    /// \brief Special type/value that can be passed to setParameter,
     ///        and that represents the texture of the object being drawn
     ///
     ////////////////////////////////////////////////////////////
@@ -102,10 +102,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromMemory, LoadFromStream
+    /// \see loadFromMemory, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& filename, Type type);
+    bool loadFromFile(const std::string& filename, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from files
@@ -123,10 +123,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromMemory, LoadFromStream
+    /// \see loadFromMemory, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+    bool loadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load either the vertex or fragment shader from a source code in memory
@@ -143,10 +143,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromStream
+    /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const std::string& shader, Type type);
+    bool loadFromMemory(const std::string& shader, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from source codes in memory
@@ -164,10 +164,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromStream
+    /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const std::string& vertexShader, const std::string& fragmentShader);
+    bool loadFromMemory(const std::string& vertexShader, const std::string& fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load either the vertex or fragment shader from a custom stream
@@ -184,10 +184,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromMemory
+    /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromStream(InputStream& stream, Type type);
+    bool loadFromStream(InputStream& stream, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from custom streams
@@ -205,10 +205,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromMemory
+    /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
+    bool loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a float parameter of the shader
@@ -222,14 +222,14 @@ public :
     /// uniform float myparam; // this is the variable in the shader
     /// \endcode
     /// \code
-    /// shader.SetParameter("myparam", 5.2f);
+    /// shader.setParameter("myparam", 5.2f);
     /// \endcode
     ///
     /// \param name Name of the parameter in the shader
     /// \param x    Value to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, float x);
+    void setParameter(const std::string& name, float x);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 2-components vector parameter of the shader
@@ -243,7 +243,7 @@ public :
     /// uniform vec2 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
-    /// shader.SetParameter("myparam", 5.2f, 6.0f);
+    /// shader.setParameter("myparam", 5.2f, 6.0f);
     /// \endcode
     ///
     /// \param name Name of the parameter in the shader
@@ -251,7 +251,7 @@ public :
     /// \param y    Second component of the value to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, float x, float y);
+    void setParameter(const std::string& name, float x, float y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 3-components vector parameter of the shader
@@ -265,7 +265,7 @@ public :
     /// uniform vec3 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
-    /// shader.SetParameter("myparam", 5.2f, 6.0f, -8.1f);
+    /// shader.setParameter("myparam", 5.2f, 6.0f, -8.1f);
     /// \endcode
     ///
     /// \param name Name of the parameter in the shader
@@ -274,7 +274,7 @@ public :
     /// \param z    Third component of the value to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, float x, float y, float z);
+    void setParameter(const std::string& name, float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 4-components vector parameter of the shader
@@ -288,7 +288,7 @@ public :
     /// uniform vec4 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
-    /// shader.SetParameter("myparam", 5.2f, 6.0f, -8.1f, 0.4f);
+    /// shader.setParameter("myparam", 5.2f, 6.0f, -8.1f, 0.4f);
     /// \endcode
     ///
     /// \param name Name of the parameter in the shader
@@ -298,7 +298,7 @@ public :
     /// \param w    Fourth component of the value to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, float x, float y, float z, float w);
+    void setParameter(const std::string& name, float x, float y, float z, float w);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 2-components vector parameter of the shader
@@ -312,14 +312,14 @@ public :
     /// uniform vec2 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
-    /// shader.SetParameter("myparam", sf::Vector2f(5.2f, 6.0f));
+    /// shader.setParameter("myparam", sf::Vector2f(5.2f, 6.0f));
     /// \endcode
     ///
     /// \param name   Name of the parameter in the shader
     /// \param vector Vector to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, const Vector2f& vector);
+    void setParameter(const std::string& name, const Vector2f& vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 3-components vector parameter of the shader
@@ -333,14 +333,14 @@ public :
     /// uniform vec3 myparam; // this is the variable in the shader
     /// \endcode
     /// \code
-    /// shader.SetParameter("myparam", sf::Vector3f(5.2f, 6.0f, -8.1f));
+    /// shader.setParameter("myparam", sf::Vector3f(5.2f, 6.0f, -8.1f));
     /// \endcode
     ///
     /// \param name   Name of the parameter in the shader
     /// \param vector Vector to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, const Vector3f& vector);
+    void setParameter(const std::string& name, const Vector3f& vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a color parameter of the shader
@@ -360,14 +360,14 @@ public :
     /// uniform vec4 color; // this is the variable in the shader
     /// \endcode
     /// \code
-    /// shader.SetParameter("color", sf::Color(255, 128, 0, 255));
+    /// shader.setParameter("color", sf::Color(255, 128, 0, 255));
     /// \endcode
     ///
     /// \param name  Name of the parameter in the shader
     /// \param color Color to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, const Color& color);
+    void setParameter(const std::string& name, const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a matrix parameter of the shader
@@ -383,14 +383,14 @@ public :
     /// \code
     /// sf::Transform transform;
     /// transform.Translate(5, 10);
-    /// shader.SetParameter("matrix", transform);
+    /// shader.setParameter("matrix", transform);
     /// \endcode
     ///
     /// \param name      Name of the parameter in the shader
     /// \param transform Transform to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, const sf::Transform& transform);
+    void setParameter(const std::string& name, const sf::Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a texture parameter of the shader
@@ -406,7 +406,7 @@ public :
     /// \code
     /// sf::Texture texture;
     /// ...
-    /// shader.SetParameter("the_texture", texture);
+    /// shader.setParameter("the_texture", texture);
     /// \endcode
     /// It is important to note that \a texture must remain alive as long
     /// as the shader uses it, no copy is made internally.
@@ -415,14 +415,14 @@ public :
     /// known in advance, you can pass the special value
     /// sf::Shader::CurrentTexture:
     /// \code
-    /// shader.SetParameter("the_texture", sf::Shader::CurrentTexture).
+    /// shader.setParameter("the_texture", sf::Shader::CurrentTexture).
     /// \endcode
     ///
     /// \param name    Name of the texture in the shader
     /// \param texture Texture to assign
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, const Texture& texture);
+    void setParameter(const std::string& name, const Texture& texture);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a texture parameter of the shader
@@ -439,13 +439,13 @@ public :
     /// uniform sampler2D current; // this is the variable in the shader
     /// \endcode
     /// \code
-    /// shader.SetParameter("current", sf::Shader::CurrentTexture);
+    /// shader.setParameter("current", sf::Shader::CurrentTexture);
     /// \endcode
     ///
     /// \param name Name of the texture in the shader
     ///
     ////////////////////////////////////////////////////////////
-    void SetParameter(const std::string& name, CurrentTextureType);
+    void setParameter(const std::string& name, CurrentTextureType);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind the shader for rendering (activate it)
@@ -454,16 +454,16 @@ public :
     /// you want to use the shader with a custom OpenGL rendering
     /// instead of a SFML drawable.
     /// \code
-    /// window.SetActive();
-    /// shader.Bind();
+    /// window.setActive();
+    /// shader.bind();
     /// ... render OpenGL geometry ...
-    /// shader.Unbind();
+    /// shader.unbind();
     /// \endcode
     ///
-    /// \see Unbind
+    /// \see unbind
     ///
     ////////////////////////////////////////////////////////////
-    void Bind() const;
+    void bind() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Unbind the shader (deactivate it)
@@ -472,10 +472,10 @@ public :
     /// you want to use the shader with a custom OpenGL rendering
     /// instead of a SFML drawable.
     ///
-    /// \see Bind
+    /// \see bind
     ///
     ////////////////////////////////////////////////////////////
-    void Unbind() const;
+    void unbind() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the system supports shaders
@@ -487,7 +487,7 @@ public :
     /// \return True if shaders are supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsAvailable();
+    static bool isAvailable();
 
 private :
 
@@ -503,7 +503,7 @@ private :
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    bool Compile(const char* vertexShaderCode, const char* fragmentShaderCode);
+    bool compile(const char* vertexShaderCode, const char* fragmentShaderCode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind all the textures used by the shader
@@ -512,7 +512,7 @@ private :
     /// updates the corresponding variables in the shader accordingly.
     ///
     ////////////////////////////////////////////////////////////
-    void BindTextures() const;
+    void bindTextures() const;
 
     ////////////////////////////////////////////////////////////
     // Types
@@ -563,13 +563,13 @@ private :
 /// \li transforms (matrices)
 ///
 /// The value of the variables can be changed at any time
-/// with either the various overloads of the SetParameter function:
+/// with either the various overloads of the setParameter function:
 /// \code
-/// shader.SetParameter("offset", 2.f);
-/// shader.SetParameter("color", 0.5f, 0.8f, 0.3f);
-/// shader.SetParameter("matrix", transform); // transform is a sf::Transform
-/// shader.SetParameter("overlay", texture); // texture is a sf::Texture
-/// shader.SetParameter("texture", sf::Shader::CurrentTexture);
+/// shader.setParameter("offset", 2.f);
+/// shader.setParameter("color", 0.5f, 0.8f, 0.3f);
+/// shader.setParameter("matrix", transform); // transform is a sf::Transform
+/// shader.setParameter("overlay", texture); // texture is a sf::Texture
+/// shader.setParameter("texture", sf::Shader::CurrentTexture);
 /// \endcode
 ///
 /// The special Shader::CurrentTexture argument maps the
@@ -579,14 +579,14 @@ private :
 /// To apply a shader to a drawable, you must pass it as an
 /// additional parameter to the Draw function:
 /// \code
-/// window.Draw(sprite, shader);
+/// window.draw(sprite, shader);
 /// \endcode
 ///
 /// ... which is in fact just a shortcut for this:
 /// \code
 /// sf::RenderStates states;
-/// states.Shader = shader;
-/// window.Draw(sprite, states);
+/// states.shader = shader;
+/// window.draw(sprite, states);
 /// \endcode
 ///
 /// Shaders can be used on any drawable, but some combinations are
@@ -605,7 +605,7 @@ private :
 /// \li draw everything to a sf::RenderTexture, then draw it to
 ///     the main target using the shader
 /// \li draw everything directly to the main target, then use
-///     sf::Texture::Update(Window&) to copy its contents to a texture
+///     sf::Texture::update(Window&) to copy its contents to a texture
 ///     and draw it to the main target using the shader
 ///
 /// The first technique is more optimized because it doesn't involve
@@ -617,10 +617,10 @@ private :
 /// sf::Shader can also be used directly as a raw shader for
 /// custom OpenGL geometry.
 /// \code
-/// window.SetActive();
-/// shader.Bind();
+/// window.setActive();
+/// shader.bind();
 /// ... render OpenGL geometry ...
-/// shader.Unbind();
+/// shader.unbind();
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////

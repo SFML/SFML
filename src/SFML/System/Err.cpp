@@ -98,7 +98,7 @@ private :
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-std::ostream& Err()
+std::ostream& err()
 {
     static DefaultErrStreamBuf buffer;
     static std::ostream stream(&buffer);

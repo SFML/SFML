@@ -48,7 +48,7 @@ namespace
 
     /// Filter the events received by windows
     /// (only allow those matching a specific window)
-    Bool CheckEvent(::Display*, XEvent* event, XPointer userData)
+    Bool checkEvent(::Display*, XEvent* event, XPointer userData)
     {
         // Just check if the event matches the window
         return event->xany.window == reinterpret_cast< ::Window >(userData);
@@ -84,7 +84,7 @@ m_keyRepeat   (true)
         XSelectInput(m_display, m_window, eventMask & ~ButtonPressMask);
 
         // Do some common initializations
-        Initialize();
+        initialize();
     }
 }
 
@@ -109,20 +109,20 @@ m_keyRepeat   (true)
     bool fullscreen = (style & Style::Fullscreen) != 0;
     if (!fullscreen)
     {
-        left = (DisplayWidth(m_display, m_screen)  - mode.Width)  / 2;
-        top  = (DisplayHeight(m_display, m_screen) - mode.Height) / 2;
+        left = (DisplayWidth(m_display, m_screen)  - mode.width)  / 2;
+        top  = (DisplayHeight(m_display, m_screen) - mode.height) / 2;
     }
     else
     {
         left = 0;
         top  = 0;
     }
-    int width  = mode.Width;
-    int height = mode.Height;
+    int width  = mode.width;
+    int height = mode.height;
 
     // Switch to fullscreen if necessary
     if (fullscreen)
-        SwitchToFullscreen(mode);
+        switchToFullscreen(mode);
 
     // Define the window attributes
     XSetWindowAttributes attributes;
@@ -141,12 +141,12 @@ m_keyRepeat   (true)
                              CWEventMask | CWOverrideRedirect, &attributes);
     if (!m_window)
     {
-        Err() << "Failed to create window" << std::endl;
+        err() << "Failed to create window" << std::endl;
         return;
     }
 
     // Set the window's name
-    SetTitle(title);
+    setTitle(title);
 
     // Set the window's style (tell the windows manager to change our window's decorations and functions according to the requested style)
     if (!fullscreen)
@@ -218,7 +218,7 @@ m_keyRepeat   (true)
     }
 
     // Do some common initializations
-    Initialize();
+    initialize();
 
     // In fullscreen mode, we must grab keyboard and mouse inputs
     if (fullscreen)
@@ -233,7 +233,7 @@ m_keyRepeat   (true)
 WindowImplX11::~WindowImplX11()
 {
     // Cleanup graphical resources
-    Cleanup();
+    cleanup();
 
     // Destroy the cursor
     if (m_hiddenCursor)
@@ -260,32 +260,32 @@ WindowImplX11::~WindowImplX11()
 
 
 ////////////////////////////////////////////////////////////
-::Display* WindowImplX11::GetDisplay() const
+::Display* WindowImplX11::getDisplay() const
 {
     return m_display;
 }
 
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplX11::GetSystemHandle() const
+WindowHandle WindowImplX11::getSystemHandle() const
 {
     return m_window;
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::ProcessEvents()
+void WindowImplX11::processEvents()
 {
     XEvent event;
-    while (XCheckIfEvent(m_display, &event, &CheckEvent, reinterpret_cast<XPointer>(m_window)))
+    while (XCheckIfEvent(m_display, &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
     {
-        ProcessEvent(event);
+        processEvent(event);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i WindowImplX11::GetPosition() const
+Vector2i WindowImplX11::getPosition() const
 {
     XWindowAttributes attributes;
     XGetWindowAttributes(m_display, m_window, &attributes);
@@ -294,7 +294,7 @@ Vector2i WindowImplX11::GetPosition() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetPosition(const Vector2i& position)
+void WindowImplX11::setPosition(const Vector2i& position)
 {
     XMoveWindow(m_display, m_window, position.x, position.y);
     XFlush(m_display);
@@ -302,7 +302,7 @@ void WindowImplX11::SetPosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-Vector2u WindowImplX11::GetSize() const
+Vector2u WindowImplX11::getSize() const
 {
     XWindowAttributes attributes;
     XGetWindowAttributes(m_display, m_window, &attributes);
@@ -311,7 +311,7 @@ Vector2u WindowImplX11::GetSize() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetSize(const Vector2u& size)
+void WindowImplX11::setSize(const Vector2u& size)
 {
     XResizeWindow(m_display, m_window, size.x, size.y);
     XFlush(m_display);
@@ -319,14 +319,14 @@ void WindowImplX11::SetSize(const Vector2u& size)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetTitle(const std::string& title)
+void WindowImplX11::setTitle(const std::string& title)
 {
     XStoreName(m_display, m_window, title.c_str());
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
+void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     // X11 wants BGRA pixels : swap red and blue channels
     // Note : this memory will never be freed, but it seems to cause a bug on exit if I do so
@@ -345,7 +345,7 @@ void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8
     XImage* iconImage = XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, (char*)iconPixels, width, height, 32, 0);
     if (!iconImage)
     {
-        Err() << "Failed to set the window's icon" << std::endl;
+        err() << "Failed to set the window's icon" << std::endl;
         return;
     }
     Pixmap iconPixmap = XCreatePixmap(m_display, RootWindow(m_display, m_screen), width, height, defDepth);
@@ -387,7 +387,7 @@ void WindowImplX11::SetIcon(unsigned int width, unsigned int height, const Uint8
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetVisible(bool visible)
+void WindowImplX11::setVisible(bool visible)
 {
     if (visible)
         XMapWindow(m_display, m_window);
@@ -399,7 +399,7 @@ void WindowImplX11::SetVisible(bool visible)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetMouseCursorVisible(bool visible)
+void WindowImplX11::setMouseCursorVisible(bool visible)
 {
     XDefineCursor(m_display, m_window, visible ? None : m_hiddenCursor);
     XFlush(m_display);
@@ -407,14 +407,14 @@ void WindowImplX11::SetMouseCursorVisible(bool visible)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SetKeyRepeatEnabled(bool enabled)
+void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 {
     m_keyRepeat = enabled;
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
+void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 {
     // Check if the XRandR extension is present
     int version;
@@ -436,7 +436,7 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
                 // Search a matching size
                 for (int i = 0; i < nbSizes; ++i)
                 {
-                    if ((sizes[i].width == static_cast<int>(mode.Width)) && (sizes[i].height == static_cast<int>(mode.Height)))
+                    if ((sizes[i].width == static_cast<int>(mode.width)) && (sizes[i].height == static_cast<int>(mode.height)))
                     {
                         // Switch to fullscreen mode
                         XRRSetScreenConfig(m_display, config, RootWindow(m_display, m_screen), i, currentRotation, CurrentTime);
@@ -454,19 +454,19 @@ void WindowImplX11::SwitchToFullscreen(const VideoMode& mode)
         else
         {
             // Failed to get the screen configuration
-            Err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
+            err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
         }
     }
     else
     {
         // XRandr extension is not supported : we cannot use fullscreen mode
-        Err() << "Fullscreen is not supported, switching to window mode" << std::endl;
+        err() << "Fullscreen is not supported, switching to window mode" << std::endl;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::Initialize()
+void WindowImplX11::initialize()
 {
     // Make sure the "last key release" is initialized with invalid values
     m_lastKeyReleaseEvent.type = -1;
@@ -490,14 +490,14 @@ void WindowImplX11::Initialize()
         m_inputContext = NULL;
     }
     if (!m_inputContext)
-        Err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
+        err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
 
     // Show the window
     XMapWindow(m_display, m_window);
     XFlush(m_display);
 
     // Create the hiden cursor
-    CreateHiddenCursor();
+    createHiddenCursor();
 
     // Flush the commands queue
     XFlush(m_display);
@@ -505,7 +505,7 @@ void WindowImplX11::Initialize()
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::CreateHiddenCursor()
+void WindowImplX11::createHiddenCursor()
 {
     // Create the cursor's pixmap (1x1 pixels)
     Pixmap cursorPixmap = XCreatePixmap(m_display, m_window, 1, 1, 1);
@@ -525,7 +525,7 @@ void WindowImplX11::CreateHiddenCursor()
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::Cleanup()
+void WindowImplX11::cleanup()
 {
     // Restore the previous video mode (in case we were running in fullscreen)
     if (fullscreenWindow == this)
@@ -550,12 +550,12 @@ void WindowImplX11::Cleanup()
     }
 
     // Unhide the mouse cursor (in case it was hidden)
-    SetMouseCursorVisible(true);
+    setMouseCursorVisible(true);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplX11::ProcessEvent(XEvent windowEvent)
+bool WindowImplX11::processEvent(XEvent windowEvent)
 {
     // This function implements a workaround to properly discard
     // repeated key events when necessary. The problem is that the
@@ -603,7 +603,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         case DestroyNotify :
         {
             // The window is about to be destroyed : we must cleanup resources
-            Cleanup();
+            cleanup();
             break;
         }
 
@@ -615,8 +615,8 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                 XSetICFocus(m_inputContext);
 
             Event event;
-            event.Type = Event::GainedFocus;
-            PushEvent(event);
+            event.type = Event::GainedFocus;
+            pushEvent(event);
             break;
         }
 
@@ -628,8 +628,8 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                 XUnsetICFocus(m_inputContext);
 
             Event event;
-            event.Type = Event::LostFocus;
-            PushEvent(event);
+            event.type = Event::LostFocus;
+            pushEvent(event);
             break;
         }
 
@@ -637,10 +637,10 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         case ConfigureNotify :
         {
             Event event;
-            event.Type        = Event::Resized;
-            event.Size.Width  = windowEvent.xconfigure.width;
-            event.Size.Height = windowEvent.xconfigure.height;
-            PushEvent(event);
+            event.type        = Event::Resized;
+            event.size.width  = windowEvent.xconfigure.width;
+            event.size.height = windowEvent.xconfigure.height;
+            pushEvent(event);
             break;
         }
 
@@ -650,8 +650,8 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(m_atomClose))  
             {
                 Event event;
-                event.Type = Event::Closed;
-                PushEvent(event);
+                event.type = Event::Closed;
+                pushEvent(event);
             }
             break;
         }
@@ -668,13 +668,13 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
-            event.Type        = Event::KeyPressed;
-            event.Key.Code    = KeysymToSF(symbol);
-            event.Key.Alt     = windowEvent.xkey.state & Mod1Mask;
-            event.Key.Control = windowEvent.xkey.state & ControlMask;
-            event.Key.Shift   = windowEvent.xkey.state & ShiftMask;
-            event.Key.System  = windowEvent.xkey.state & Mod4Mask;
-            PushEvent(event);
+            event.type        = Event::KeyPressed;
+            event.key.code    = keysymToSF(symbol);
+            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
+            event.key.control = windowEvent.xkey.state & ControlMask;
+            event.key.shift   = windowEvent.xkey.state & ShiftMask;
+            event.key.system  = windowEvent.xkey.state & Mod4Mask;
+            pushEvent(event);
 
             // Generate a TextEntered event
             if (!XFilterEvent(&windowEvent, None))
@@ -688,13 +688,13 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                     if (length > 0)
                     {
                         Uint32 unicode = 0;
-                        Utf8::Decode(keyBuffer, keyBuffer + length, unicode, 0);
+                        Utf8::decode(keyBuffer, keyBuffer + length, unicode, 0);
                         if (unicode != 0)
                         {
                             Event textEvent;
-                            textEvent.Type         = Event::TextEntered;
-                            textEvent.Text.Unicode = unicode;
-                            PushEvent(textEvent);
+                            textEvent.type         = Event::TextEntered;
+                            textEvent.text.unicode = unicode;
+                            pushEvent(textEvent);
                         }
                     }
                 }
@@ -706,9 +706,9 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
                     if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
                     {
                         Event textEvent;
-                        textEvent.Type         = Event::TextEntered;
-                        textEvent.Text.Unicode = static_cast<Uint32>(keyBuffer[0]);
-                        PushEvent(textEvent);
+                        textEvent.type         = Event::TextEntered;
+                        textEvent.text.unicode = static_cast<Uint32>(keyBuffer[0]);
+                        pushEvent(textEvent);
                     }
                 }
             }
@@ -726,13 +726,13 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
 
             // Fill the event parameters
             Event event;
-            event.Type        = Event::KeyReleased;
-            event.Key.Code    = KeysymToSF(symbol);
-            event.Key.Alt     = windowEvent.xkey.state & Mod1Mask;
-            event.Key.Control = windowEvent.xkey.state & ControlMask;
-            event.Key.Shift   = windowEvent.xkey.state & ShiftMask;
-            event.Key.System  = windowEvent.xkey.state & Mod4Mask;
-            PushEvent(event);
+            event.type        = Event::KeyReleased;
+            event.key.code    = keysymToSF(symbol);
+            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
+            event.key.control = windowEvent.xkey.state & ControlMask;
+            event.key.shift   = windowEvent.xkey.state & ShiftMask;
+            event.key.system  = windowEvent.xkey.state & Mod4Mask;
+            pushEvent(event);
 
             break;
         }
@@ -744,18 +744,18 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
                 Event event;
-                event.Type          = Event::MouseButtonPressed;
-                event.MouseButton.X = windowEvent.xbutton.x;
-                event.MouseButton.Y = windowEvent.xbutton.y;
+                event.type          = Event::MouseButtonPressed;
+                event.mouseButton.x = windowEvent.xbutton.x;
+                event.mouseButton.y = windowEvent.xbutton.y;
                 switch (button)
                 {
-                    case Button1 : event.MouseButton.Button = Mouse::Left;     break;
-                    case Button2 : event.MouseButton.Button = Mouse::Middle;   break;
-                    case Button3 : event.MouseButton.Button = Mouse::Right;    break;
-                    case 8 :       event.MouseButton.Button = Mouse::XButton1; break;
-                    case 9 :       event.MouseButton.Button = Mouse::XButton2; break;            
+                    case Button1 : event.mouseButton.button = Mouse::Left;     break;
+                    case Button2 : event.mouseButton.button = Mouse::Middle;   break;
+                    case Button3 : event.mouseButton.button = Mouse::Right;    break;
+                    case 8 :       event.mouseButton.button = Mouse::XButton1; break;
+                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;            
                 }
-                PushEvent(event);
+                pushEvent(event);
             }
             break;
         }
@@ -767,27 +767,27 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
             if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
                 Event event;
-                event.Type          = Event::MouseButtonReleased;
-                event.MouseButton.X = windowEvent.xbutton.x;
-                event.MouseButton.Y = windowEvent.xbutton.y;
+                event.type          = Event::MouseButtonReleased;
+                event.mouseButton.x = windowEvent.xbutton.x;
+                event.mouseButton.y = windowEvent.xbutton.y;
                 switch (button)
                 {
-                    case Button1 : event.MouseButton.Button = Mouse::Left;     break;
-                    case Button2 : event.MouseButton.Button = Mouse::Middle;   break;
-                    case Button3 : event.MouseButton.Button = Mouse::Right;    break;
-                    case 8 :       event.MouseButton.Button = Mouse::XButton1; break;
-                    case 9 :       event.MouseButton.Button = Mouse::XButton2; break;            
+                    case Button1 : event.mouseButton.button = Mouse::Left;     break;
+                    case Button2 : event.mouseButton.button = Mouse::Middle;   break;
+                    case Button3 : event.mouseButton.button = Mouse::Right;    break;
+                    case 8 :       event.mouseButton.button = Mouse::XButton1; break;
+                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;            
                 }
-                PushEvent(event);
+                pushEvent(event);
             }
             else if ((button == Button4) || (button == Button5))
             {
                 Event event;
-                event.Type             = Event::MouseWheelMoved;
-                event.MouseWheel.Delta = windowEvent.xbutton.button == Button4 ? 1 : -1;
-                event.MouseWheel.X     = windowEvent.xbutton.x;
-                event.MouseWheel.Y     = windowEvent.xbutton.y;
-                PushEvent(event);
+                event.type             = Event::MouseWheelMoved;
+                event.mouseWheel.delta = windowEvent.xbutton.button == Button4 ? 1 : -1;
+                event.mouseWheel.x     = windowEvent.xbutton.x;
+                event.mouseWheel.y     = windowEvent.xbutton.y;
+                pushEvent(event);
             }
             break;
         }
@@ -796,10 +796,10 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         case MotionNotify :
         {
             Event event;
-            event.Type        = Event::MouseMoved;
-            event.MouseMove.X = windowEvent.xmotion.x;
-            event.MouseMove.Y = windowEvent.xmotion.y;
-            PushEvent(event);
+            event.type        = Event::MouseMoved;
+            event.mouseMove.x = windowEvent.xmotion.x;
+            event.mouseMove.y = windowEvent.xmotion.y;
+            pushEvent(event);
             break;
         }
 
@@ -807,8 +807,8 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         case EnterNotify :
         {
             Event event;
-            event.Type = Event::MouseEntered;
-            PushEvent(event);
+            event.type = Event::MouseEntered;
+            pushEvent(event);
             break;
         }
 
@@ -816,8 +816,8 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
         case LeaveNotify :
         {
             Event event;
-            event.Type = Event::MouseLeft;
-            PushEvent(event);
+            event.type = Event::MouseLeft;
+            pushEvent(event);
             break;
         }
     }
@@ -827,7 +827,7 @@ bool WindowImplX11::ProcessEvent(XEvent windowEvent)
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Key WindowImplX11::KeysymToSF(KeySym symbol)
+Keyboard::Key WindowImplX11::keysymToSF(KeySym symbol)
 {
     // First convert to uppercase (to avoid dealing with two different keysyms for the same key)
     KeySym lower, key;

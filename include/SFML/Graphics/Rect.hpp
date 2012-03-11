@@ -100,10 +100,10 @@ public :
     ///
     /// \return True if the point is inside, false otherwise
     ///
-    /// \see Intersects
+    /// \see intersects
     ///
     ////////////////////////////////////////////////////////////
-    bool Contains(T x, T y) const;
+    bool contains(T x, T y) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
@@ -112,10 +112,10 @@ public :
     ///
     /// \return True if the point is inside, false otherwise
     ///
-    /// \see Intersects
+    /// \see intersects
     ///
     ////////////////////////////////////////////////////////////
-    bool Contains(const Vector2<T>& point) const;
+    bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -124,10 +124,10 @@ public :
     ///
     /// \return True if rectangles overlap, false otherwise
     ///
-    /// \see Contains
+    /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    bool Intersects(const Rect<T>& rectangle) const;
+    bool intersects(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -140,18 +140,18 @@ public :
     ///
     /// \return True if rectangles overlap, false otherwise
     ///
-    /// \see Contains
+    /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    bool Intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
+    bool intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T Left;   ///< Left coordinate of the rectangle
-    T Top;    ///< Top coordinate of the rectangle
-    T Width;  ///< Width of the rectangle
-    T Height; ///< Height of the rectangle
+    T left;   ///< Left coordinate of the rectangle
+    T top;    ///< Top coordinate of the rectangle
+    T width;  ///< Width of the rectangle
+    T height; ///< Height of the rectangle
 };
 
 ////////////////////////////////////////////////////////////
@@ -202,18 +202,18 @@ typedef Rect<float> FloatRect;
 ///
 /// A rectangle is defined by its top-left corner and its size.
 /// It is a very simple class defined for convenience, so
-/// its member variables (Left, Top, Width and Height) are public
+/// its member variables (left, top, width and height) are public
 /// and can be accessed directly, just like the vector classes
 /// (Vector2 and Vector3).
 ///
 /// To keep things simple, sf::Rect doesn't define
 /// functions to emulate the properties that are not directly
-/// members (such as Right, Bottom, Center, etc.), it rather
+/// members (such as right, bottom, center, etc.), it rather
 /// only provides intersection functions.
 ///
 /// sf::Rect uses the usual rules for its boundaries:
-/// \li The Left and Top edges are included in the rectangle's area
-/// \li The right (Left + Width) and bottom (Top + Height) edges are excluded from the rectangle's area
+/// \li The left and top edges are included in the rectangle's area
+/// \li The right (left + width) and bottom (top + height) edges are excluded from the rectangle's area
 ///
 /// This means that sf::IntRect(0, 0, 1, 1) and sf::IntRect(1, 1, 1, 1)
 /// don't intersect.
@@ -236,12 +236,12 @@ typedef Rect<float> FloatRect;
 /// sf::IntRect r2(position, size);
 ///
 /// // Test intersections with the point (3, 1)
-/// bool b1 = r1.Contains(3, 1); // true
-/// bool b2 = r2.Contains(3, 1); // false
+/// bool b1 = r1.contains(3, 1); // true
+/// bool b2 = r2.contains(3, 1); // false
 ///
 /// // Test the intersection between r1 and r2
 /// sf::IntRect result;
-/// bool b3 = r1.Intersects(r2, result); // true
+/// bool b3 = r1.intersects(r2, result); // true
 /// // result == (4, 2, 16, 3)
 /// \endcode
 ///

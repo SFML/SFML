@@ -93,7 +93,7 @@ public :
     /// \return True if creation was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool Create(unsigned int width, unsigned int height);
+    bool create(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
@@ -101,8 +101,8 @@ public :
     /// This function is a shortcut for the following code:
     /// \code
     /// sf::Image image;
-    /// image.LoadFromFile(filename);
-    /// texture.LoadFromImage(image, area);
+    /// image.loadFromFile(filename);
+    /// texture.loadFromImage(image, area);
     /// \endcode
     ///
     /// The \a area argument can be used to load only a sub-rectangle
@@ -112,7 +112,7 @@ public :
     /// is adjusted to fit the image size. 
     ///
     /// The maximum size for a texture depends on the graphics
-    /// driver and can be retrieved with the GetMaximumSize function.
+    /// driver and can be retrieved with the getMaximumSize function.
     ///
     /// If this function fails, the texture is left unchanged.
     ///
@@ -121,10 +121,10 @@ public :
     ///
     /// \return True if loading was successful
     ///
-    /// \see LoadFromMemory, LoadFromStream, LoadFromImage
+    /// \see loadFromMemory, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& filename, const IntRect& area = IntRect());
+    bool loadFromFile(const std::string& filename, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file in memory
@@ -132,8 +132,8 @@ public :
     /// This function is a shortcut for the following code:
     /// \code
     /// sf::Image image;
-    /// image.LoadFromMemory(data, size);
-    /// texture.LoadFromImage(image, area);
+    /// image.loadFromMemory(data, size);
+    /// texture.loadFromImage(image, area);
     /// \endcode
     ///
     /// The \a area argument can be used to load only a sub-rectangle
@@ -143,7 +143,7 @@ public :
     /// is adjusted to fit the image size. 
     ///
     /// The maximum size for a texture depends on the graphics
-    /// driver and can be retrieved with the GetMaximumSize function.
+    /// driver and can be retrieved with the getMaximumSize function.
     ///
     /// If this function fails, the texture is left unchanged.
     ///
@@ -153,10 +153,10 @@ public :
     ///
     /// \return True if loading was successful
     ///
-    /// \see LoadFromFile, LoadFromStream, LoadFromImage
+    /// \see loadFromFile, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const void* data, std::size_t size, const IntRect& area = IntRect());
+    bool loadFromMemory(const void* data, std::size_t size, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file in memory
@@ -164,8 +164,8 @@ public :
     /// This function is a shortcut for the following code:
     /// \code
     /// sf::Image image;
-    /// image.LoadFromStream(stream);
-    /// texture.LoadFromImage(image, area);
+    /// image.loadFromStream(stream);
+    /// texture.loadFromImage(image, area);
     /// \endcode
     ///
     /// The \a area argument can be used to load only a sub-rectangle
@@ -175,7 +175,7 @@ public :
     /// is adjusted to fit the image size. 
     ///
     /// The maximum size for a texture depends on the graphics
-    /// driver and can be retrieved with the GetMaximumSize function.
+    /// driver and can be retrieved with the getMaximumSize function.
     ///
     /// If this function fails, the texture is left unchanged.
     ///
@@ -184,10 +184,10 @@ public :
     ///
     /// \return True if loading was successful
     ///
-    /// \see LoadFromFile, LoadFromMemory, LoadFromImage
+    /// \see loadFromFile, loadFromMemory, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromStream(sf::InputStream& stream, const IntRect& area = IntRect());
+    bool loadFromStream(sf::InputStream& stream, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from an image
@@ -199,7 +199,7 @@ public :
     /// is adjusted to fit the image size. 
     ///
     /// The maximum size for a texture depends on the graphics
-    /// driver and can be retrieved with the GetMaximumSize function.
+    /// driver and can be retrieved with the getMaximumSize function.
     ///
     /// If this function fails, the texture is left unchanged.
     ///
@@ -208,30 +208,30 @@ public :
     ///
     /// \return True if loading was successful
     ///
-    /// \see LoadFromFile, LoadFromMemory
+    /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromImage(const Image& image, const IntRect& area = IntRect());
+    bool loadFromImage(const Image& image, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the width of the texture
     ///
     /// \return Width in pixels
     ///
-    /// \see GetHeight
+    /// \see getHeight
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetWidth() const;
+    unsigned int getWidth() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the height of the texture
     ///
     /// \return Height in pixels
     ///
-    /// \see GetWidth
+    /// \see getWidth
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetHeight() const;
+    unsigned int getHeight() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy the texture pixels to an image
@@ -243,10 +243,10 @@ public :
     ///
     /// \return Image containing the texture's pixels
     ///
-    /// \see LoadFromImage
+    /// \see loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    Image CopyToImage() const;
+    Image copyToImage() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the whole texture from an array of pixels
@@ -264,7 +264,7 @@ public :
     /// \param pixels Array of pixels to copy to the texture
     ///
     ////////////////////////////////////////////////////////////
-    void Update(const Uint8* pixels);
+    void update(const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the texture from an array of pixels
@@ -286,7 +286,7 @@ public :
     /// \param y      Y offset in the texture where to copy the source pixels
     ///
     ////////////////////////////////////////////////////////////
-    void Update(const Uint8* pixels, unsigned int width, unsigned int height, unsigned int x, unsigned int y);
+    void update(const Uint8* pixels, unsigned int width, unsigned int height, unsigned int x, unsigned int y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the texture from an image
@@ -306,7 +306,7 @@ public :
     /// \param image Image to copy to the texture
     ///
     ////////////////////////////////////////////////////////////
-    void Update(const Image& image);
+    void update(const Image& image);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the texture from an image
@@ -323,7 +323,7 @@ public :
     /// \param y     Y offset in the texture where to copy the source image
     ///
     ////////////////////////////////////////////////////////////
-    void Update(const Image& image, unsigned int x, unsigned int y);
+    void update(const Image& image, unsigned int x, unsigned int y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the texture from the contents of a window
@@ -343,7 +343,7 @@ public :
     /// \param window Window to copy to the texture
     ///
     ////////////////////////////////////////////////////////////
-    void Update(const Window& window);
+    void update(const Window& window);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the texture from the contents of a window
@@ -360,7 +360,7 @@ public :
     /// \param y      Y offset in the texture where to copy the source window
     ///
     ////////////////////////////////////////////////////////////
-    void Update(const Window& window, unsigned int x, unsigned int y);
+    void update(const Window& window, unsigned int x, unsigned int y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the texture for rendering
@@ -382,7 +382,7 @@ public :
     /// \param coordinateType Type of texture coordinates to use
     ///
     ////////////////////////////////////////////////////////////
-    void Bind(CoordinateType coordinateType = Normalized) const;
+    void bind(CoordinateType coordinateType = Normalized) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the smooth filter
@@ -395,20 +395,20 @@ public :
     ///
     /// \param smooth True to enable smoothing, false to disable it
     ///
-    /// \see IsSmooth
+    /// \see isSmooth
     ///
     ////////////////////////////////////////////////////////////
-    void SetSmooth(bool smooth);
+    void setSmooth(bool smooth);
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether the smooth filter is enabled or not
     ///
     /// \return True if smoothing is enabled, false if it is disabled
     ///
-    /// \see SetSmooth
+    /// \see setSmooth
     ///
     ////////////////////////////////////////////////////////////
-    bool IsSmooth() const;
+    bool isSmooth() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable repeating
@@ -429,20 +429,20 @@ public :
     ///
     /// \param repeated True to repeat the texture, false to disable repeating
     ///
-    /// \see IsRepeated
+    /// \see isRepeated
     ///
     ////////////////////////////////////////////////////////////
-    void SetRepeated(bool repeated);
+    void setRepeated(bool repeated);
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether the texture is repeated or not
     ///
     /// \return True if repeat mode is enabled, false if it is disabled
     ///
-    /// \see SetRepeated
+    /// \see setRepeated
     ///
     ////////////////////////////////////////////////////////////
-    bool IsRepeated() const;
+    bool isRepeated() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -464,7 +464,7 @@ public :
     /// \return Maximum size allowed for textures, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int GetMaximumSize();
+    static unsigned int getMaximumSize();
 
 private :
 
@@ -484,7 +484,7 @@ private :
     /// \return Valid nearest size (greater than or equal to specified size)
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int GetValidSize(unsigned int size);
+    static unsigned int getValidSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -518,7 +518,7 @@ private :
 /// Being stored in the graphics card memory has some drawbacks.
 /// A texture cannot be manipulated as freely as a sf::Image,
 /// you need to prepare the pixels first and then upload them
-/// to the texture in a single operation (see Texture::Update).
+/// to the texture in a single operation (see Texture::update).
 ///
 /// sf::Texture makes it easy to convert from/to sf::Image, but
 /// keep in mind that these calls require transfers between
@@ -531,7 +531,7 @@ private :
 /// However, if you want to perform some modifications on the pixels
 /// before creating the final texture, you can load your file to a
 /// sf::Image, do whatever you need with the pixels, and then call
-/// Texture::LoadFromImage.
+/// Texture::loadFromImage.
 /// 
 /// Since they live in the graphics card memory, the pixels of a texture
 /// cannot be accessed without a slow copy first. And they cannot be
@@ -552,15 +552,15 @@ private :
 ///
 /// // Load a texture from a file
 /// sf::Texture texture;
-/// if (!texture.LoadFromFile("texture.png"))
+/// if (!texture.loadFromFile("texture.png"))
 ///     return -1;
 ///
 /// // Assign it to a sprite
 /// sf::Sprite sprite;
-/// sprite.SetTexture(texture);
+/// sprite.setTexture(texture);
 ///
 /// // Draw the textured sprite
-/// window.Draw(sprite);
+/// window.draw(sprite);
 /// \endcode
 ///
 /// \code
@@ -569,7 +569,7 @@ private :
 ///
 /// // Create an empty texture
 /// sf::Texture texture;
-/// if (!texture.Create(640, 480))
+/// if (!texture.create(640, 480))
 ///     return -1;
 ///
 /// // Create a sprite that will display the texture
@@ -581,10 +581,10 @@ private :
 ///
 ///     // update the texture
 ///     sf::Uint8* pixels = ...; // get a fresh chunk of pixels (the next frame of a movie, for example)
-///     texture.Update(pixels);
+///     texture.update(pixels);
 ///
 ///     // draw it
-///     window.Draw(sprite);
+///     window.draw(sprite);
 ///
 ///     ...
 /// }

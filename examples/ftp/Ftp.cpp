@@ -13,7 +13,7 @@
 ////////////////////////////////////////////////////////////
 std::ostream& operator <<(std::ostream& stream, const sf::Ftp::Response& response)
 {
-    return stream << response.GetStatus() << response.GetMessage();
+    return stream << response.getStatus() << response.getMessage();
 }
 
 
@@ -36,9 +36,9 @@ int main()
 
     // Connect to the server
     sf::Ftp server;
-    sf::Ftp::Response connectResponse = server.Connect(address);
+    sf::Ftp::Response connectResponse = server.connect(address);
     std::cout << connectResponse << std::endl;
-    if (!connectResponse.IsOk())
+    if (!connectResponse.isOk())
         return EXIT_FAILURE;
 
     // Ask for user name and password
@@ -49,9 +49,9 @@ int main()
     std::cin  >> password;
 
     // Login to the server
-    sf::Ftp::Response loginResponse = server.Login(user, password);
+    sf::Ftp::Response loginResponse = server.login(user, password);
     std::cout << loginResponse << std::endl;
-    if (!loginResponse.IsOk())
+    if (!loginResponse.isOk())
         return EXIT_FAILURE;
 
     // Main menu
@@ -91,18 +91,18 @@ int main()
             case 1 :
             {
                 // Print the current server directory
-                sf::Ftp::DirectoryResponse response = server.GetWorkingDirectory();
+                sf::Ftp::DirectoryResponse response = server.getWorkingDirectory();
                 std::cout << response << std::endl;
-                std::cout << "Current directory is " << response.GetDirectory() << std::endl;
+                std::cout << "Current directory is " << response.getDirectory() << std::endl;
                 break;
             }
 
             case 2 :
             {
                 // Print the contents of the current server directory
-                sf::Ftp::ListingResponse response = server.GetDirectoryListing();
+                sf::Ftp::ListingResponse response = server.getDirectoryListing();
                 std::cout << response << std::endl;
-                std::vector<std::string> filenames = response.GetFilenames();
+                std::vector<std::string> filenames = response.getFilenames();
                 for (std::vector<std::string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
                     std::cout << *it << std::endl;
                 break;
@@ -114,7 +114,7 @@ int main()
                 std::string directory;
                 std::cout << "Choose a directory: ";
                 std::cin  >> directory;
-                std::cout << server.ChangeDirectory(directory) << std::endl;
+                std::cout << server.changeDirectory(directory) << std::endl;
                 break;
             }
 
@@ -124,7 +124,7 @@ int main()
                 std::string directory;
                 std::cout << "Name of the directory to create: ";
                 std::cin  >> directory;
-                std::cout << server.CreateDirectory(directory) << std::endl;
+                std::cout << server.createDirectory(directory) << std::endl;
                 break;
             }
 
@@ -134,7 +134,7 @@ int main()
                 std::string directory;
                 std::cout << "Name of the directory to remove: ";
                 std::cin  >> directory;
-                std::cout << server.DeleteDirectory(directory) << std::endl;
+                std::cout << server.deleteDirectory(directory) << std::endl;
                 break;
             }
 
@@ -146,7 +146,7 @@ int main()
                 std::cin  >> source;
                 std::cout << "New name: ";
                 std::cin  >> destination;
-                std::cout << server.RenameFile(source, destination) << std::endl;
+                std::cout << server.renameFile(source, destination) << std::endl;
                 break;
             }
 
@@ -156,7 +156,7 @@ int main()
                 std::string filename;
                 std::cout << "Name of the file to remove: ";
                 std::cin  >> filename;
-                std::cout << server.DeleteFile(filename) << std::endl;
+                std::cout << server.deleteFile(filename) << std::endl;
                 break;
             }
 
@@ -168,7 +168,7 @@ int main()
                 std::cin  >> filename;
                 std::cout << "Directory to download the file to: ";
                 std::cin  >> directory;
-                std::cout << server.Download(filename, directory) << std::endl;
+                std::cout << server.download(filename, directory) << std::endl;
                 break;
             }
 
@@ -180,7 +180,7 @@ int main()
                 std::cin  >> filename;
                 std::cout << "Directory to upload the file to (relative to current directory): ";
                 std::cin  >> directory;
-                std::cout << server.Upload(filename, directory) << std::endl;
+                std::cout << server.upload(filename, directory) << std::endl;
                 break;
             }
 
@@ -195,7 +195,7 @@ int main()
 
     // Disconnect from the server
     std::cout << "Disconnecting from server..." << std::endl;
-    std::cout << server.Disconnect() << std::endl;
+    std::cout << server.disconnect() << std::endl;
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;

@@ -64,7 +64,7 @@ public :
     /// \return True if FBO render textures are supported
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsAvailable();
+    static bool isAvailable();
 
 private :
 
@@ -79,7 +79,7 @@ private :
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
+    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
@@ -89,7 +89,7 @@ private :
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool active);
+    virtual bool activate(bool active);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
@@ -97,7 +97,7 @@ private :
     /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
-    virtual void UpdateTexture(unsigned textureId);
+    virtual void updateTexture(unsigned textureId);
 
     ////////////////////////////////////////////////////////////
     // Member data

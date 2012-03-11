@@ -27,12 +27,11 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Win32/ClockImpl.hpp>
 #include <windows.h>
-#undef GetCurrentTime // Windows macros are really evil...
 
 
 namespace
 {
-    LARGE_INTEGER GetFrequency()
+    LARGE_INTEGER getFrequency()
     {
         LARGE_INTEGER frequency;
 	    QueryPerformanceFrequency(&frequency);
@@ -45,7 +44,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-Time ClockImpl::GetCurrentTime()
+Time ClockImpl::getCurrentTime()
 {
     // Force the following code to run on first core
     // (see http://msdn.microsoft.com/en-us/library/windows/desktop/ms644904(v=vs.85).aspx)
@@ -54,7 +53,7 @@ Time ClockImpl::GetCurrentTime()
 
 	// Get the frequency of the performance counter
     // (it is constant across the program lifetime)
-    static LARGE_INTEGER frequency = GetFrequency();
+    static LARGE_INTEGER frequency = getFrequency();
 
     // Get the current time
     LARGE_INTEGER time;
@@ -64,7 +63,7 @@ Time ClockImpl::GetCurrentTime()
     SetThreadAffinityMask(currentThread, previousMask);
 
     // Return the current time as microseconds
-    return sf::Microseconds(1000000 * time.QuadPart / frequency.QuadPart);
+    return sf::microseconds(1000000 * time.QuadPart / frequency.QuadPart);
 }
 
 } // namespace priv

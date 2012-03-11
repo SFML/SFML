@@ -68,7 +68,7 @@ namespace
     sf::Mutex internalContextsMutex;
 
     // Check if the internal context of the current thread is valid
-    bool HasInternalContext()
+    bool hasInternalContext()
     {
         // The internal context can be null...
         if (!internalContext)
@@ -80,11 +80,11 @@ namespace
     }
 
     // Retrieve the internal context for the current thread
-    sf::priv::GlContext* GetInternalContext()
+    sf::priv::GlContext* getInternalContext()
     {
-        if (!HasInternalContext())
+        if (!hasInternalContext())
         {
-            internalContext = sf::priv::GlContext::Create();
+            internalContext = sf::priv::GlContext::create();
             sf::Lock lock(internalContextsMutex);
             internalContexts.insert(internalContext);
         }
@@ -99,21 +99,21 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void GlContext::GlobalInit()
+void GlContext::globalInit()
 {
     // Create the shared context
     sharedContext = new ContextType(NULL);
-    sharedContext->Initialize();
+    sharedContext->initialize();
 
     // This call makes sure that:
     // - the shared context is inactive (it must never be)
     // - another valid context is activated in the current thread
-    sharedContext->SetActive(false);
+    sharedContext->setActive(false);
 }
 
 
 ////////////////////////////////////////////////////////////
-void GlContext::GlobalCleanup()
+void GlContext::globalCleanup()
 {
     // Destroy the shared context
     delete sharedContext;
@@ -128,47 +128,47 @@ void GlContext::GlobalCleanup()
 
 
 ////////////////////////////////////////////////////////////
-void GlContext::EnsureContext()
+void GlContext::ensureContext()
 {
     // If there's no active context on the current thread, activate an internal one
     if (!currentContext)
-        GetInternalContext()->SetActive(true);
+        getInternalContext()->setActive(true);
 }
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::Create()
+GlContext* GlContext::create()
 {
     GlContext* context = new ContextType(sharedContext);
-    context->Initialize();
+    context->initialize();
 
     return context;
 }
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::Create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel)
+GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    EnsureContext();
+    ensureContext();
 
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
-    context->Initialize();
+    context->initialize();
 
     return context;
 }
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::Create(const ContextSettings& settings, unsigned int width, unsigned int height)
+GlContext* GlContext::create(const ContextSettings& settings, unsigned int width, unsigned int height)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    EnsureContext();
+    ensureContext();
 
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, width, height);
-    context->Initialize();
+    context->initialize();
 
     return context;
 }
@@ -179,26 +179,26 @@ GlContext::~GlContext()
 {
     // Deactivate the context before killing it, unless we're inside Cleanup()
     if (sharedContext)
-        SetActive(false);
+        setActive(false);
 }
 
 
 ////////////////////////////////////////////////////////////
-const ContextSettings& GlContext::GetSettings() const
+const ContextSettings& GlContext::getSettings() const
 {
     return m_settings;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool GlContext::SetActive(bool active)
+bool GlContext::setActive(bool active)
 {
     if (active)
     {
         if (this != currentContext)
         {
             // Activate the context
-            if (MakeCurrent())
+            if (makeCurrent())
             {
                 // Set it as the new current context for this thread
                 currentContext = this;
@@ -221,7 +221,7 @@ bool GlContext::SetActive(bool active)
         {
             // To deactivate the context, we actually activate another one so that we make
             // sure that there is always an active context for subsequent graphics operations
-            return GetInternalContext()->SetActive(true);
+            return getInternalContext()->setActive(true);
         }
         else
         {
@@ -240,38 +240,38 @@ GlContext::GlContext()
 
 
 ////////////////////////////////////////////////////////////
-int GlContext::EvaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing)
+int GlContext::evaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing)
 {
     return std::abs(static_cast<int>(bitsPerPixel               - colorBits))   +
-           std::abs(static_cast<int>(settings.DepthBits         - depthBits))   +
-           std::abs(static_cast<int>(settings.StencilBits       - stencilBits)) +
-           std::abs(static_cast<int>(settings.AntialiasingLevel - antialiasing));
+           std::abs(static_cast<int>(settings.depthBits         - depthBits))   +
+           std::abs(static_cast<int>(settings.stencilBits       - stencilBits)) +
+           std::abs(static_cast<int>(settings.antialiasingLevel - antialiasing));
 }
 
 
 ////////////////////////////////////////////////////////////
-void GlContext::Initialize()
+void GlContext::initialize()
 {
     // Activate the context
-    SetActive(true);
+    setActive(true);
 
     // Retrieve the context version number
     const GLubyte* version = glGetString(GL_VERSION);
     if (version)
     {
         // The beginning of the returned string is "major.minor" (this is standard)
-        m_settings.MajorVersion = version[0] - '0';
-        m_settings.MinorVersion = version[2] - '0';
+        m_settings.majorVersion = version[0] - '0';
+        m_settings.minorVersion = version[2] - '0';
     }
     else
     {
         // Can't get the version number, assume 2.0
-        m_settings.MajorVersion = 2;
-        m_settings.MinorVersion = 0;
+        m_settings.majorVersion = 2;
+        m_settings.minorVersion = 0;
     }
 
     // Enable antialiasing if needed
-    if (m_settings.AntialiasingLevel > 0)
+    if (m_settings.antialiasingLevel > 0)
         glEnable(GL_MULTISAMPLE_ARB);
 }
 

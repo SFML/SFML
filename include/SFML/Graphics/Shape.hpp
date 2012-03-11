@@ -68,10 +68,10 @@ public :
     /// \param texture   New texture
     /// \param resetRect Should the texture rect be reset to the size of the new texture?
     ///
-    /// \see GetTexture, SetTextureRect
+    /// \see getTexture, setTextureRect
     ///
     ////////////////////////////////////////////////////////////
-    void SetTexture(const Texture* texture, bool resetRect = false);
+    void setTexture(const Texture* texture, bool resetRect = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the sub-rectangle of the texture that the shape will display
@@ -82,10 +82,10 @@ public :
     ///
     /// \param rect Rectangle defining the region of the texture to display
     ///
-    /// \see GetTextureRect, SetTexture
+    /// \see getTextureRect, setTexture
     ///
     ////////////////////////////////////////////////////////////
-    void SetTextureRect(const IntRect& rect);
+    void setTextureRect(const IntRect& rect);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the fill color of the shape
@@ -99,10 +99,10 @@ public :
     ///
     /// \param color New color of the shape
     ///
-    /// \see GetFillColor, SetOutlineColor
+    /// \see getFillColor, setOutlineColor
     ///
     ////////////////////////////////////////////////////////////
-    void SetFillColor(const Color& color);
+    void setFillColor(const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the outline color of the shape
@@ -112,10 +112,10 @@ public :
     ///
     /// \param color New outline color of the shape
     ///
-    /// \see GetOutlineColor, SetFillColor
+    /// \see getOutlineColor, setFillColor
     ///
     ////////////////////////////////////////////////////////////
-    void SetOutlineColor(const Color& color);
+    void setOutlineColor(const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the thickness of the shape's outline
@@ -126,10 +126,10 @@ public :
     ///
     /// \param thickness New outline thickness
     ///
-    /// \see GetOutlineThickness
+    /// \see getOutlineThickness
     ///
     ////////////////////////////////////////////////////////////
-    void SetOutlineThickness(float thickness);
+    void setOutlineThickness(float thickness);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the source texture of the shape
@@ -140,58 +140,60 @@ public :
     ///
     /// \return Pointer to the shape's texture
     ///
-    /// \see SetTexture
+    /// \see setTexture
     ///
     ////////////////////////////////////////////////////////////
-    const Texture* GetTexture() const;
+    const Texture* getTexture() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sub-rectangle of the texture displayed by the shape
     ///
     /// \return Texture rectangle of the shape
     ///
-    /// \see SetTextureRect
+    /// \see setTextureRect
     ///
     ////////////////////////////////////////////////////////////
-    const IntRect& GetTextureRect() const;
+    const IntRect& getTextureRect() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the fill color of the shape
     ///
     /// \return Fill color of the shape
     ///
-    /// \see SetFillColor
+    /// \see setFillColor
     ///
     ////////////////////////////////////////////////////////////
-    const Color& GetFillColor() const;
+    const Color& getFillColor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the outline color of the shape
     ///
     /// \return Outline color of the shape
     ///
-    /// \see SetOutlineColor
+    /// \see setOutlineColor
     ///
     ////////////////////////////////////////////////////////////
-    const Color& GetOutlineColor() const;
+    const Color& getOutlineColor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the outline thickness of the shape
     ///
     /// \return Outline thickness of the shape
     ///
-    /// \see SetOutlineThickness
+    /// \see setOutlineThickness
     ///
     ////////////////////////////////////////////////////////////
-    float GetOutlineThickness() const;
+    float getOutlineThickness() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total number of points of the shape
     ///
     /// \return Number of points of the shape
     ///
+    /// \see getPoint
+    ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int GetPointCount() const = 0;
+    virtual unsigned int getPointCount() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
@@ -202,8 +204,10 @@ public :
     ///
     /// \return Index-th point of the shape
     ///
+    /// \see getPointCount
+    ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f GetPoint(unsigned int index) const = 0;
+    virtual Vector2f getPoint(unsigned int index) const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity
@@ -217,7 +221,7 @@ public :
     /// \return Local bounding rectangle of the entity
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect GetLocalBounds() const;
+    FloatRect getLocalBounds() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the global bounding rectangle of the entity
@@ -231,7 +235,7 @@ public :
     /// \return Global bounding rectangle of the entity
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect GetGlobalBounds() const;
+    FloatRect getGlobalBounds() const;
 
 protected :
 
@@ -246,10 +250,10 @@ protected :
     ///
     /// This function must be called by the derived class everytime
     /// the shape's points change (ie. the result of either
-    /// GetPointCount or GetPoint is different).
+    /// getPointCount or getPoint is different).
     ///
     ////////////////////////////////////////////////////////////
-    void Update();
+    void update();
 
 private :
 
@@ -260,31 +264,31 @@ private :
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw(RenderTarget& target, RenderStates states) const;
+    virtual void draw(RenderTarget& target, RenderStates states) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the fill vertices' color
     ///
     ////////////////////////////////////////////////////////////
-    void UpdateFillColors();
+    void updateFillColors();
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the fill vertices' texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    void UpdateTexCoords();
+    void updateTexCoords();
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the outline vertices' position
     ///
     ////////////////////////////////////////////////////////////
-    void UpdateOutline();
+    void updateOutline();
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the outline vertices' color
     ///
     ////////////////////////////////////////////////////////////
-    void UpdateOutlineColors();
+    void updateOutlineColors();
 
 private :
 
@@ -333,8 +337,8 @@ private :
 ///
 /// You can write your own derived shape class, there are only
 /// two virtual functions to override:
-/// \li GetOutlinePointCount must return the number of points of the shape
-/// \li GetOutlinePoint must return the points of the shape
+/// \li getPointCount must return the number of points of the shape
+/// \li getPoint must return the points of the shape
 ///
 /// \see sf::RectangleShape, sf::CircleShape, sf::ConvexShape, sf::Transformable
 ///

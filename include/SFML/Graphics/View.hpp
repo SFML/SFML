@@ -75,20 +75,20 @@ public :
     /// \param x X coordinate of the new center
     /// \param y Y coordinate of the new center
     ///
-    /// \see SetSize, GetCenter
+    /// \see setSize, getCenter
     ///
     ////////////////////////////////////////////////////////////
-    void SetCenter(float x, float y);
+    void setCenter(float x, float y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the center of the view
     ///
     /// \param center New center
     ///
-    /// \see SetSize, GetCenter
+    /// \see setSize, getCenter
     ///
     ////////////////////////////////////////////////////////////
-    void SetCenter(const Vector2f& center);
+    void setCenter(const Vector2f& center);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the size of the view
@@ -96,20 +96,20 @@ public :
     /// \param width  New width of the view
     /// \param height New height of the view
     ///
-    /// \see SetCenter, GetCenter
+    /// \see setCenter, getCenter
     ///
     ////////////////////////////////////////////////////////////
-    void SetSize(float width, float height);
+    void setSize(float width, float height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the size of the view
     ///
     /// \param size New size
     ///
-    /// \see SetCenter, GetCenter
+    /// \see setCenter, getCenter
     ///
     ////////////////////////////////////////////////////////////
-    void SetSize(const Vector2f& size);
+    void setSize(const Vector2f& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the orientation of the view
@@ -118,10 +118,10 @@ public :
     ///
     /// \param angle New angle, in degrees
     ///
-    /// \see GetRotation
+    /// \see getRotation
     ///
     ////////////////////////////////////////////////////////////
-    void SetRotation(float angle);
+    void setRotation(float angle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the target viewport
@@ -130,15 +130,15 @@ public :
     /// view are displayed, expressed as a factor (between 0 and 1)
     /// of the size of the RenderTarget to which the view is applied.
     /// For example, a view which takes the left side of the target would
-    /// be defined with View.SetViewport(sf::FloatRect(0, 0, 0.5, 1)).
+    /// be defined with View.setViewport(sf::FloatRect(0, 0, 0.5, 1)).
     /// By default, a view has a viewport which covers the entire target.
     ///
     /// \param viewport New viewport rectangle
     ///
-    /// \see GetViewport
+    /// \see getViewport
     ///
     ////////////////////////////////////////////////////////////
-    void SetViewport(const FloatRect& viewport);
+    void setViewport(const FloatRect& viewport);
 
     ////////////////////////////////////////////////////////////
     /// \brief Reset the view to the given rectangle
@@ -147,50 +147,50 @@ public :
     ///
     /// \param rectangle Rectangle defining the zone to display
     ///
-    /// \see SetCenter, SetSize, SetRotation
+    /// \see setCenter, setSize, setRotation
     ///
     ////////////////////////////////////////////////////////////
-    void Reset(const FloatRect& rectangle);
+    void reset(const FloatRect& rectangle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the center of the view
     ///
     /// \return Center of the view
     ///
-    /// \see GetSize, SetCenter
+    /// \see getSize, setCenter
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& GetCenter() const;
+    const Vector2f& getCenter() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the view
     ///
     /// \return Size of the view
     ///
-    /// \see GetCenter, SetSize
+    /// \see getCenter, setSize
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& GetSize() const;
+    const Vector2f& getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current orientation of the view
     ///
     /// \return Rotation angle of the view, in degrees
     ///
-    /// \see SetRotation
+    /// \see setRotation
     ///
     ////////////////////////////////////////////////////////////
-    float GetRotation() const;
+    float getRotation() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the target viewport rectangle of the view
     ///
     /// \return Viewport rectangle, expressed as a factor of the target size
     ///
-    /// \see SetViewport
+    /// \see setViewport
     ///
     ////////////////////////////////////////////////////////////
-    const FloatRect& GetViewport() const;
+    const FloatRect& getViewport() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the view relatively to its current position
@@ -198,30 +198,30 @@ public :
     /// \param offsetX X coordinate of the move offset
     /// \param offsetY Y coordinate of the move offset
     ///
-    /// \see SetCenter, Rotate, Zoom
+    /// \see setCenter, rotate, zoom
     ///
     ////////////////////////////////////////////////////////////
-    void Move(float offsetX, float offsetY);
+    void move(float offsetX, float offsetY);
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the view relatively to its current position
     ///
     /// \param offset Move offset
     ///
-    /// \see SetCenter, Rotate, Zoom
+    /// \see setCenter, rotate, zoom
     ///
     ////////////////////////////////////////////////////////////
-    void Move(const Vector2f& offset);
+    void move(const Vector2f& offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Rotate the view relatively to its current orientation
     ///
     /// \param angle Angle to rotate, in degrees
     ///
-    /// \see SetRotation, Move, Zoom
+    /// \see setRotation, move, zoom
     ///
     ////////////////////////////////////////////////////////////
-    void Rotate(float angle);
+    void rotate(float angle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Resize the view rectangle relatively to its current size
@@ -235,10 +235,10 @@ public :
     ///
     /// \param factor Zoom factor to apply
     ///
-    /// \see SetSize, Move, Rotate
+    /// \see setSize, move, rotate
     ///
     ////////////////////////////////////////////////////////////
-    void Zoom(float factor);
+    void zoom(float factor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the projection transform of the view
@@ -247,10 +247,10 @@ public :
     ///
     /// \return Projection transform defining the view
     ///
-    /// \see GetInverseTransform
+    /// \see getInverseTransform
     ///
     ////////////////////////////////////////////////////////////
-    const Transform& GetTransform() const;
+    const Transform& getTransform() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the inverse projection transform of the view
@@ -259,10 +259,10 @@ public :
     ///
     /// \return Inverse of the projection transform defining the view
     ///
-    /// \see GetTransform
+    /// \see getTransform
     ///
     ////////////////////////////////////////////////////////////
-    const Transform& GetInverseTransform() const;
+    const Transform& getInverseTransform() const;
 
 private :
 
@@ -315,25 +315,25 @@ private :
 /// sf::View view;
 /// 
 /// // Initialize the view to a rectangle located at (100, 100) and with a size of 400x200
-/// view.Reset(sf::FloatRect(100, 100, 400, 200));
+/// view.reset(sf::FloatRect(100, 100, 400, 200));
 ///
 /// // Rotate it by 45 degrees
-/// view.Rotate(45);
+/// view.rotate(45);
 ///
 /// // Set its target viewport to be half of the window
-/// view.SetViewport(sf::FloatRect(0.f, 0.f, 0.5f, 1.f));
+/// view.setViewport(sf::FloatRect(0.f, 0.f, 0.5f, 1.f));
 ///
 /// // Apply it
-/// window.SetView(view);
+/// window.setView(view);
 ///
 /// // Render stuff
-/// window.Draw(someSprite);
+/// window.draw(someSprite);
 ///
 /// // Set the default view back
-/// window.SetView(window.GetDefaultView());
+/// window.setView(window.getDefaultView());
 ///
 /// // Render stuff not affected by the view
-/// window.Draw(someText);
+/// window.draw(someText);
 /// \endcode
 ///
 /// \see sf::RenderWindow, sf::RenderTexture

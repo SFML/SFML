@@ -40,18 +40,17 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenAL
-/// API calls
+/// Let's define a macro to quickly check every OpenAL API calls
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 
     // If in debug mode, perform a test on every call
-    #define ALCheck(Func) ((Func), priv::ALCheckError(__FILE__, __LINE__))
+    #define alCheck(Func) ((Func), priv::alCheckError(__FILE__, __LINE__))
 
 #else
 
     // Else, we don't add any overhead
-    #define ALCheck(Func) (Func)
+    #define alCheck(Func) (Func)
 
 #endif
 
@@ -63,13 +62,13 @@ namespace priv
 /// \param line Line number of the source file where the call is located
 ///
 ////////////////////////////////////////////////////////////
-void ALCheckError(const std::string& file, unsigned int line);
+void alCheckError(const std::string& file, unsigned int line);
 
 ////////////////////////////////////////////////////////////
 /// Make sure that OpenAL is initialized
 ///
 ////////////////////////////////////////////////////////////
-void EnsureALInit();
+void ensureALInit();
 
 } // namespace priv
 

@@ -52,14 +52,14 @@ MutexImpl::~MutexImpl()
 
 
 ////////////////////////////////////////////////////////////
-void MutexImpl::Lock()
+void MutexImpl::lock()
 {
     pthread_mutex_lock(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
-void MutexImpl::Unlock()
+void MutexImpl::unlock()
 {
     pthread_mutex_unlock(&m_mutex);
 }

@@ -30,37 +30,37 @@ public :
     m_hasFinished(false)
     {
         // Set the sound parameters
-        Initialize(1, 44100);
+        initialize(1, 44100);
     }
 
     ////////////////////////////////////////////////////////////
     /// Run the server, stream audio data from the client
     ///
     ////////////////////////////////////////////////////////////
-    void Start(unsigned short port)
+    void start(unsigned short port)
     {
         if (!m_hasFinished)
         {
             // Listen to the given port for incoming connections
-            if (m_listener.Listen(port) != sf::Socket::Done)
+            if (m_listener.listen(port) != sf::Socket::Done)
                 return;
             std::cout << "Server is listening to port " << port << ", waiting for connections... " << std::endl;
 
             // Wait for a connection
-            if (m_listener.Accept(m_client) != sf::Socket::Done)
+            if (m_listener.accept(m_client) != sf::Socket::Done)
                 return;
-            std::cout << "Client connected: " << m_client.GetRemoteAddress() << std::endl;
+            std::cout << "Client connected: " << m_client.getRemoteAddress() << std::endl;
 
             // Start playback
-            Play();
+            play();
 
             // Start receiving audio data
-            ReceiveLoop();
+            receiveLoop();
         }
         else
         {
             // Start playback
-            Play();
+            play();
         }
     }
 
@@ -70,7 +70,7 @@ private :
     /// /see SoundStream::OnGetData
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnGetData(sf::SoundStream::Chunk& data)
+    virtual bool onGetData(sf::SoundStream::Chunk& data)
     {
         // We have reached the end of the buffer and all audio data have been played : we can stop playback
         if ((m_offset >= m_samples.size()) && m_hasFinished)
@@ -78,7 +78,7 @@ private :
 
         // No new data has arrived since last update : wait until we get some
         while ((m_offset >= m_samples.size()) && !m_hasFinished)
-            sf::Sleep(sf::Milliseconds(10));
+            sf::sleep(sf::milliseconds(10));
 
         // Copy samples into a local buffer to avoid synchronization problems
         // (don't forget that we run in two separate threads)
@@ -88,8 +88,8 @@ private :
         }
 
         // Fill audio data to pass to the stream
-        data.Samples     = &m_tempBuffer[0];
-        data.SampleCount = m_tempBuffer.size();
+        data.samples     = &m_tempBuffer[0];
+        data.sampleCount = m_tempBuffer.size();
 
         // Update the playing offset
         m_offset += m_tempBuffer.size();
@@ -101,22 +101,22 @@ private :
     /// /see SoundStream::OnSeek
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnSeek(sf::Time timeOffset)
+    virtual void onSeek(sf::Time timeOffset)
     {
-        m_offset = timeOffset.AsMilliseconds() * GetSampleRate() * GetChannelCount() / 1000;
+        m_offset = timeOffset.asMilliseconds() * getSampleRate() * getChannelCount() / 1000;
     }
 
     ////////////////////////////////////////////////////////////
     /// Get audio data from the client until playback is stopped
     ///
     ////////////////////////////////////////////////////////////
-    void ReceiveLoop()
+    void receiveLoop()
     {
         while (!m_hasFinished)
         {
             // Get waiting audio data from the network
             sf::Packet packet;
-            if (m_client.Receive(packet) != sf::Socket::Done)
+            if (m_client.receive(packet) != sf::Socket::Done)
                 break;
 
             // Extract the message ID
@@ -126,8 +126,8 @@ private :
             if (id == audioData)
             {
                 // Extract audio samples from the packet, and append it to our samples buffer
-                const sf::Int16* samples     = reinterpret_cast<const sf::Int16*>(packet.GetData() + 1);
-                std::size_t      sampleCount = (packet.GetDataSize() - 1) / sizeof(sf::Int16);
+                const sf::Int16* samples     = reinterpret_cast<const sf::Int16*>(packet.getData() + 1);
+                std::size_t      sampleCount = (packet.getDataSize() - 1) / sizeof(sf::Int16);
 
                 // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
@@ -169,17 +169,17 @@ private :
 /// a connected client
 ///
 ////////////////////////////////////////////////////////////
-void DoServer(unsigned short port)
+void doServer(unsigned short port)
 {
     // Build an audio stream to play sound data as it is received through the network
     NetworkAudioStream audioStream;
-    audioStream.Start(port);
+    audioStream.start(port);
 
     // Loop until the sound playback is finished
-    while (audioStream.GetStatus() != sf::SoundStream::Stopped)
+    while (audioStream.getStatus() != sf::SoundStream::Stopped)
     {
         // Leave some CPU time for other threads
-        sf::Sleep(sf::Milliseconds(100));
+        sf::sleep(sf::milliseconds(100));
     }
 
     std::cin.ignore(10000, '\n');
@@ -189,12 +189,12 @@ void DoServer(unsigned short port)
     std::cin.ignore(10000, '\n');
 
     // Replay the sound (just to make sure replaying the received data is OK)
-    audioStream.Play();
+    audioStream.play();
 
     // Loop until the sound playback is finished
-    while (audioStream.GetStatus() != sf::SoundStream::Stopped)
+    while (audioStream.getStatus() != sf::SoundStream::Stopped)
     {
         // Leave some CPU time for other threads
-        sf::Sleep(sf::Milliseconds(100));
+        sf::sleep(sf::milliseconds(100));
     }
 }

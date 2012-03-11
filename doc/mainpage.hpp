@@ -23,47 +23,47 @@
 /// 
 ///     // Load a sprite to display
 ///     sf::Texture texture;
-///     if (!texture.LoadFromFile("cute_image.jpg"))
+///     if (!texture.loadFromFile("cute_image.jpg"))
 ///         return EXIT_FAILURE;
 ///     sf::Sprite sprite(texture);
 /// 
 ///     // Create a graphical text to display
 ///     sf::Font font;
-///     if (!font.LoadFromFile("arial.ttf"))
+///     if (!font.loadFromFile("arial.ttf"))
 ///         return EXIT_FAILURE;
 ///     sf::Text text("Hello SFML", font, 50);
 /// 
 ///     // Load a music to play
 ///     sf::Music music;
-///     if (!music.OpenFromFile("nice_music.ogg"))
+///     if (!music.openFromFile("nice_music.ogg"))
 ///         return EXIT_FAILURE;
 ///
 ///     // Play the music
-///     music.Play();
+///     music.play();
 /// 
 ///     // Start the game loop
-///     while (window.IsOpen())
+///     while (window.isOpen())
 ///     {
 ///         // Process events
 ///         sf::Event event;
-///         while (window.PollEvent(event))
+///         while (window.pollEvent(event))
 ///         {
 ///             // Close window : exit
-///             if (event.Type == sf::Event::Closed)
-///                 window.Close();
+///             if (event.type == sf::Event::Closed)
+///                 window.close();
 ///         }
 /// 
 ///         // Clear screen
-///         window.Clear();
+///         window.clear();
 /// 
 ///         // Draw the sprite
-///         window.Draw(sprite);
+///         window.draw(sprite);
 /// 
 ///         // Draw the string
-///         window.Draw(text);
+///         window.draw(text);
 /// 
 ///         // Update the window
-///         window.Display();
+///         window.display();
 ///     }
 /// 
 ///     return EXIT_SUCCESS;

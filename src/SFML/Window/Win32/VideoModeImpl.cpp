@@ -35,7 +35,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
+std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
@@ -57,7 +57,7 @@ std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeImpl::GetDesktopMode()
+VideoMode VideoModeImpl::getDesktopMode()
 {
     DEVMODE win32Mode;
     win32Mode.dmSize = sizeof(win32Mode);

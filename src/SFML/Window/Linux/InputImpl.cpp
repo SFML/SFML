@@ -60,7 +60,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool InputImpl::IsKeyPressed(Keyboard::Key key)
+bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
     // Get the corresponding X11 keysym
     KeySym keysym = 0;
@@ -187,7 +187,7 @@ bool InputImpl::IsKeyPressed(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
+bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     // we don't care about these but they are required
     ::Window root, child;
@@ -212,7 +212,7 @@ bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::GetMousePosition()
+Vector2i InputImpl::getMousePosition()
 {
     // we don't care about these but they are required
     ::Window root, child;
@@ -228,9 +228,9 @@ Vector2i InputImpl::GetMousePosition()
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
+Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 {
-    WindowHandle handle = relativeTo.GetSystemHandle();
+    WindowHandle handle = relativeTo.getSystemHandle();
     if (handle)
     {
         // we don't care about these but they are required
@@ -252,7 +252,7 @@ Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::SetMousePosition(const Vector2i& position)
+void InputImpl::setMousePosition(const Vector2i& position)
 {
     XWarpPointer(global.display, None, global.window, 0, 0, 0, 0, position.x, position.y);
     XFlush(global.display);
@@ -260,9 +260,9 @@ void InputImpl::SetMousePosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
+void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
 {
-    WindowHandle handle = relativeTo.GetSystemHandle();
+    WindowHandle handle = relativeTo.getSystemHandle();
     if (handle)
     {
         XWarpPointer(global.display, None, handle, 0, 0, 0, 0, position.x, position.y);

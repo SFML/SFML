@@ -63,13 +63,13 @@ public :
     /// \brief Wait until the thread finishes
     ///
     ////////////////////////////////////////////////////////////
-    void Wait();
+    void wait();
 
     ////////////////////////////////////////////////////////////
     /// \brief Terminate the thread
     ///
     ////////////////////////////////////////////////////////////
-    void Terminate();
+    void terminate();
 
 private :
 
@@ -81,7 +81,7 @@ private :
     /// \return OS specific error code
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int __stdcall EntryPoint(void* userData);
+    static unsigned int __stdcall entryPoint(void* userData);
 
     ////////////////////////////////////////////////////////////
     // Member data

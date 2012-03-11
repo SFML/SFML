@@ -52,20 +52,20 @@ public :
     ///
     /// \param volume New global volume, in the range [0, 100]
     ///
-    /// \see GetGlobalVolume
+    /// \see getGlobalVolume
     ///
     ////////////////////////////////////////////////////////////
-    static void SetGlobalVolume(float volume);
+    static void setGlobalVolume(float volume);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current value of the global volume
     ///
     /// \return Current global volume, in the range [0, 100]
     ///
-    /// \see SetGlobalVolume
+    /// \see setGlobalVolume
     ///
     ////////////////////////////////////////////////////////////
-    static float GetGlobalVolume();
+    static float getGlobalVolume();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the position of the listener in the scene
@@ -76,10 +76,10 @@ public :
     /// \param y Y coordinate of the listener's position
     /// \param z Z coordinate of the listener's position
     ///
-    /// \see GetPosition, SetDirection
+    /// \see getPosition, setDirection
     ///
     ////////////////////////////////////////////////////////////
-    static void SetPosition(float x, float y, float z);
+    static void setPosition(float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the position of the listener in the scene
@@ -88,20 +88,20 @@ public :
     ///
     /// \param position New listener's position
     ///
-    /// \see GetPosition, SetDirection
+    /// \see getPosition, setDirection
     ///
     ////////////////////////////////////////////////////////////
-    static void SetPosition(const Vector3f& position);
+    static void setPosition(const Vector3f& position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current position of the listener in the scene
     ///
     /// \return Listener's position
     ///
-    /// \see SetPosition
+    /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    static Vector3f GetPosition();
+    static Vector3f getPosition();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the orientation of the listener in the scene
@@ -115,10 +115,10 @@ public :
     /// \param y Y coordinate of the listener's orientation
     /// \param z Z coordinate of the listener's orientation
     ///
-    /// \see GetDirection, SetPosition
+    /// \see getDirection, setPosition
     ///
     ////////////////////////////////////////////////////////////
-    static void SetDirection(float x, float y, float z);
+    static void setDirection(float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the orientation of the listener in the scene
@@ -130,20 +130,20 @@ public :
     ///
     /// \param direction New listener's orientation
     ///
-    /// \see GetDirection, SetPosition
+    /// \see getDirection, setPosition
     ///
     ////////////////////////////////////////////////////////////
-    static void SetDirection(const Vector3f& direction);
+    static void setDirection(const Vector3f& direction);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current orientation of the listener in the scene
     ///
     /// \return Listener's orientation
     ///
-    /// \see SetDirection
+    /// \see setDirection
     ///
     ////////////////////////////////////////////////////////////
-    static Vector3f GetDirection();
+    static Vector3f getDirection();
 };
 
 } // namespace sf
@@ -172,7 +172,7 @@ public :
 /// Usage example:
 /// \code
 /// // Move the listener to the position (1, 0, -5)
-/// sf::Listener::SetPosition(1, 0, -5);
+/// sf::Listener::setPosition(1, 0, -5);
 ///
 /// // Make it face the right axis (1, 0, 0)
 /// sf::Listener::SetDirection(1, 0, 0);

@@ -57,25 +57,25 @@ public :
     /// can be called only once.
     ///
     ////////////////////////////////////////////////////////////
-    static void GlobalInit();
+    static void globalInit();
 
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global cleanup
     ///
     /// This function is called after the very last OpenGL resource
     /// is destroyed. It makes sure that everything that was
-    /// created by Initialize() is properly released.
+    /// created by initialize() is properly released.
     /// Note: this function doesn't need to be thread-safe, as it
     /// can be called only once.
     ///
     ////////////////////////////////////////////////////////////
-    static void GlobalCleanup();
+    static void globalCleanup();
 
     ////////////////////////////////////////////////////////////
     /// \brief Ensures that an OpenGL context is active in the current thread
     ///
     ////////////////////////////////////////////////////////////
-    static void EnsureContext();
+    static void ensureContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
@@ -86,7 +86,7 @@ public :
     /// \return Pointer to the created context (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static GlContext* Create();
+    static GlContext* create();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
@@ -101,7 +101,7 @@ public :
     /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    static GlContext* Create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
+    static GlContext* create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
@@ -116,7 +116,7 @@ public :
     /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    static GlContext* Create(const ContextSettings& settings, unsigned int width, unsigned int height);
+    static GlContext* create(const ContextSettings& settings, unsigned int width, unsigned int height);
 
 public :
 
@@ -136,11 +136,10 @@ public :
     /// \return Structure containing the settings
     ///
     ////////////////////////////////////////////////////////////
-    const ContextSettings& GetSettings() const;
+    const ContextSettings& getSettings() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate or deactivate the context as the current target
-    ///        for rendering
+    /// \brief Activate or deactivate the context as the current target for rendering
     ///
     /// A context is active only on the current thread, if you want to
     /// make it active on another thread you have to deactivate it
@@ -153,13 +152,13 @@ public :
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool SetActive(bool active);
+    bool setActive(bool active);
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Display() = 0;
+    virtual void display() = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -172,7 +171,7 @@ public :
     /// \param enabled True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetVerticalSyncEnabled(bool enabled) = 0;
+    virtual void setVerticalSyncEnabled(bool enabled) = 0;
 
 protected :
 
@@ -191,7 +190,7 @@ protected :
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent() = 0;
+    virtual bool makeCurrent() = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Evaluate a pixel format configuration
@@ -211,7 +210,7 @@ protected :
     /// \return Score of the configuration
     ///
     ////////////////////////////////////////////////////////////
-    static int EvaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing);
+    static int evaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -224,7 +223,7 @@ private:
     /// \brief Perform various initializations after the context construction
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize();
+    void initialize();
 };
 
 } // namespace priv

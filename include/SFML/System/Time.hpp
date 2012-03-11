@@ -54,30 +54,30 @@ public :
     ///
     /// \return Time in seconds
     ///
-    /// \see AsMilliseconds, AsMicroseconds
+    /// \see asMilliseconds, asMicroseconds
     ///
     ////////////////////////////////////////////////////////////
-    float AsSeconds() const;
+    float asSeconds() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the time value as a number of milliseconds
     ///
     /// \return Time in milliseconds
     ///
-    /// \see AsSeconds, AsMicroseconds
+    /// \see asSeconds, asMicroseconds
     ///
     ////////////////////////////////////////////////////////////
-    Int32 AsMilliseconds() const;
+    Int32 asMilliseconds() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the time value as a number of microseconds
     ///
     /// \return Time in microseconds
     ///
-    /// \see AsSeconds, AsMilliseconds
+    /// \see asSeconds, asMilliseconds
     ///
     ////////////////////////////////////////////////////////////
-    Int64 AsMicroseconds() const;
+    Int64 asMicroseconds() const;
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -86,15 +86,15 @@ public :
 
 private :
 
-    friend SFML_SYSTEM_API Time Seconds(float);
-    friend SFML_SYSTEM_API Time Milliseconds(Int32);
-    friend SFML_SYSTEM_API Time Microseconds(Int64);
+    friend SFML_SYSTEM_API Time seconds(float);
+    friend SFML_SYSTEM_API Time milliseconds(Int32);
+    friend SFML_SYSTEM_API Time microseconds(Int64);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from a number of microseconds
     ///
     /// This function is internal. To construct time values,
-    /// use sf::Seconds, sf::Milliseconds or sf::Microseconds instead.
+    /// use sf::seconds, sf::milliseconds or sf::microseconds instead.
     ///
     /// \param microseconds Number of microseconds
     ///
@@ -117,10 +117,10 @@ private :
 ///
 /// \return Time value constructed from the amount of seconds
 ///
-/// \see Milliseconds, Microseconds
+/// \see milliseconds, microseconds
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time Seconds(float amount);
+SFML_SYSTEM_API Time seconds(float amount);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -130,10 +130,10 @@ SFML_SYSTEM_API Time Seconds(float amount);
 ///
 /// \return Time value constructed from the amount of milliseconds
 ///
-/// \see Seconds, Microseconds
+/// \see seconds, microseconds
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time Milliseconds(Int32 amount);
+SFML_SYSTEM_API Time milliseconds(Int32 amount);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -143,10 +143,10 @@ SFML_SYSTEM_API Time Milliseconds(Int32 amount);
 ///
 /// \return Time value constructed from the amount of microseconds
 ///
-/// \see Seconds, Milliseconds
+/// \see seconds, milliseconds
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API Time Microseconds(Int64 amount);
+SFML_SYSTEM_API Time microseconds(Int64 amount);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -428,23 +428,23 @@ SFML_SYSTEM_API Time& operator /=(Time& left, Int64 right);
 ///
 /// Usage example:
 /// \code
-/// sf::Time t1 = sf::Seconds(0.1f);
-/// Int32 milli = t1.AsMilliseconds(); // 100
+/// sf::Time t1 = sf::seconds(0.1f);
+/// Int32 milli = t1.asMilliseconds(); // 100
 ///
-/// sf::Time t2 = sf::Milliseconds(30);
-/// Int64 micro = t2.AsMicroseconds(); // 30000
+/// sf::Time t2 = sf::milliseconds(30);
+/// Int64 micro = t2.asMicroseconds(); // 30000
 ///
-/// sf::Time t3 = sf::Microseconds(-800000);
-/// float sec = t3.AsSeconds(); // -0.8
+/// sf::Time t3 = sf::microseconds(-800000);
+/// float sec = t3.asSeconds(); // -0.8
 /// \endcode
 ///
 /// \code
-/// void Update(sf::Time elapsed)
+/// void update(sf::Time elapsed)
 /// {
-///    position += speed * elapsed.AsSeconds();
+///    position += speed * elapsed.asSeconds();
 /// }
 ///
-/// Update(sf::Milliseconds(100));
+/// Update(sf::milliseconds(100));
 /// \endcode
 ///
 /// \see sf::Clock

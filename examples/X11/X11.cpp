@@ -15,10 +15,10 @@
 /// \param Window Target window to initialize
 ///
 ////////////////////////////////////////////////////////////
-void Initialize(sf::Window& window)
+void initialize(sf::Window& window)
 {
     // Activate the window
-    window.SetActive();
+    window.setActive();
 
     // Setup OpenGL states
     // Set color and depth clear value
@@ -43,10 +43,10 @@ void Initialize(sf::Window& window)
 /// \param elapsedTime Time elapsed since the last draw
 ///
 ////////////////////////////////////////////////////////////
-void Draw(sf::Window& window, float elapsedTime)
+void draw(sf::Window& window, float elapsedTime)
 {
     // Activate the window
-    window.SetActive();
+    window.setActive();
 
     // Clear color and depth buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -160,8 +160,8 @@ int main()
     sf::Clock clock;
 
     // Initialize our views
-    Initialize(SFMLView1);
-    Initialize(SFMLView2);
+    initialize(SFMLView1);
+    initialize(SFMLView2);
 
     // Start the event loop
     bool running = true;
@@ -184,12 +184,12 @@ int main()
         }
 
         // Draw something into our views
-        Draw(SFMLView1, clock.GetElapsedTime().AsSeconds());
-        Draw(SFMLView2, clock.GetElapsedTime().AsSeconds() * 0.3f);
+        draw(SFMLView1, clock.getElapsedTime().asSeconds());
+        draw(SFMLView2, clock.getElapsedTime().asSeconds() * 0.3f);
 
         // Display the views on screen
-        SFMLView1.Display();
-        SFMLView2.Display();
+        SFMLView1.display();
+        SFMLView2.display();
     }
 
     // Close the display

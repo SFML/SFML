@@ -67,7 +67,7 @@ public :
     /// \return True if the button is pressed, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsButtonPressed(Button button);
+    static bool isButtonPressed(Button button);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current position of the mouse in desktop coordinates
@@ -78,7 +78,7 @@ public :
     /// \return Current position of the mouse
     ///
     ////////////////////////////////////////////////////////////
-    static Vector2i GetPosition();
+    static Vector2i getPosition();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current position of the mouse in window coordinates
@@ -91,7 +91,7 @@ public :
     /// \return Current position of the mouse
     ///
     ////////////////////////////////////////////////////////////
-    static Vector2i GetPosition(const Window& relativeTo);
+    static Vector2i getPosition(const Window& relativeTo);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current position of the mouse in desktop coordinates
@@ -102,7 +102,7 @@ public :
     /// \param position New position of the mouse
     ///
     ////////////////////////////////////////////////////////////
-    static void SetPosition(const Vector2i& position);
+    static void setPosition(const Vector2i& position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current position of the mouse in window coordinates
@@ -114,7 +114,7 @@ public :
     /// \param relativeTo Reference window
     ///
     ////////////////////////////////////////////////////////////
-    static void SetPosition(const Vector2i& position, const Window& relativeTo);
+    static void setPosition(const Vector2i& position, const Window& relativeTo);
 };
 
 } // namespace sf
@@ -150,16 +150,16 @@ public :
 ///
 /// Usage example:
 /// \code
-/// if (sf::Mouse::IsButtonPressed(sf::Mouse::Left))
+/// if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 /// {
 ///     // left click...
 /// }
 ///
 /// // get global mouse position
-/// sf::Vector2i position = sf::Mouse::GetPosition();
+/// sf::Vector2i position = sf::Mouse::getPosition();
 ///
 /// // set mouse position relative to a window
-/// sf::Mouse::SetPosition(sf::Vector2i(100, 200), window);
+/// sf::Mouse::setPosition(sf::Vector2i(100, 200), window);
 /// \endcode
 ///
 /// \see sf::Joystick, sf::Keyboard

@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundSource.hpp>
-#include <SFML/Audio/ALCheck.hpp>
+#include <SFML/Audio/alCheck.hpp>
 
 
 namespace sf
@@ -34,151 +34,151 @@ namespace sf
 ////////////////////////////////////////////////////////////
 SoundSource::SoundSource()
 {
-    priv::EnsureALInit();
+    priv::ensureALInit();
 
-    ALCheck(alGenSources(1, &m_source));
-    ALCheck(alSourcei(m_source, AL_BUFFER, 0));
+    alCheck(alGenSources(1, &m_source));
+    alCheck(alSourcei(m_source, AL_BUFFER, 0));
 }
 
 
 ////////////////////////////////////////////////////////////
 SoundSource::SoundSource(const SoundSource& copy)
 {
-    priv::EnsureALInit();
+    priv::ensureALInit();
 
-    ALCheck(alGenSources(1, &m_source));
-    ALCheck(alSourcei(m_source, AL_BUFFER, 0));
+    alCheck(alGenSources(1, &m_source));
+    alCheck(alSourcei(m_source, AL_BUFFER, 0));
 
-    SetPitch(copy.GetPitch());
-    SetVolume(copy.GetVolume());
-    SetPosition(copy.GetPosition());
-    SetRelativeToListener(copy.IsRelativeToListener());
-    SetMinDistance(copy.GetMinDistance());
-    SetAttenuation(copy.GetAttenuation());
+    setPitch(copy.getPitch());
+    setVolume(copy.getVolume());
+    setPosition(copy.getPosition());
+    setRelativeToListener(copy.isRelativeToListener());
+    setMinDistance(copy.getMinDistance());
+    setAttenuation(copy.getAttenuation());
 }
 
 
 ////////////////////////////////////////////////////////////
 SoundSource::~SoundSource()
 {
-    ALCheck(alSourcei(m_source, AL_BUFFER, 0));
-    ALCheck(alDeleteSources(1, &m_source));
+    alCheck(alSourcei(m_source, AL_BUFFER, 0));
+    alCheck(alDeleteSources(1, &m_source));
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundSource::SetPitch(float pitch)
+void SoundSource::setPitch(float pitch)
 {
-    ALCheck(alSourcef(m_source, AL_PITCH, pitch));
+    alCheck(alSourcef(m_source, AL_PITCH, pitch));
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundSource::SetVolume(float volume)
+void SoundSource::setVolume(float volume)
 {
-    ALCheck(alSourcef(m_source, AL_GAIN, volume * 0.01f));
+    alCheck(alSourcef(m_source, AL_GAIN, volume * 0.01f));
 }
 
 ////////////////////////////////////////////////////////////
-void SoundSource::SetPosition(float x, float y, float z)
+void SoundSource::setPosition(float x, float y, float z)
 {
-    ALCheck(alSource3f(m_source, AL_POSITION, x, y, z));
+    alCheck(alSource3f(m_source, AL_POSITION, x, y, z));
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundSource::SetPosition(const Vector3f& position)
+void SoundSource::setPosition(const Vector3f& position)
 {
-    SetPosition(position.x, position.y, position.z);
+    setPosition(position.x, position.y, position.z);
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundSource::SetRelativeToListener(bool relative)
+void SoundSource::setRelativeToListener(bool relative)
 {
-    ALCheck(alSourcei(m_source, AL_SOURCE_RELATIVE, relative));
+    alCheck(alSourcei(m_source, AL_SOURCE_RELATIVE, relative));
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundSource::SetMinDistance(float distance)
+void SoundSource::setMinDistance(float distance)
 {
-    ALCheck(alSourcef(m_source, AL_REFERENCE_DISTANCE, distance));
+    alCheck(alSourcef(m_source, AL_REFERENCE_DISTANCE, distance));
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundSource::SetAttenuation(float attenuation)
+void SoundSource::setAttenuation(float attenuation)
 {
-    ALCheck(alSourcef(m_source, AL_ROLLOFF_FACTOR, attenuation));
+    alCheck(alSourcef(m_source, AL_ROLLOFF_FACTOR, attenuation));
 }
 
 
 ////////////////////////////////////////////////////////////
-float SoundSource::GetPitch() const
+float SoundSource::getPitch() const
 {
     ALfloat pitch;
-    ALCheck(alGetSourcef(m_source, AL_PITCH, &pitch));
+    alCheck(alGetSourcef(m_source, AL_PITCH, &pitch));
 
     return pitch;
 }
 
 
 ////////////////////////////////////////////////////////////
-float SoundSource::GetVolume() const
+float SoundSource::getVolume() const
 {
     ALfloat gain;
-    ALCheck(alGetSourcef(m_source, AL_GAIN, &gain));
+    alCheck(alGetSourcef(m_source, AL_GAIN, &gain));
 
     return gain * 100.f;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector3f SoundSource::GetPosition() const
+Vector3f SoundSource::getPosition() const
 {
     Vector3f position;
-    ALCheck(alGetSource3f(m_source, AL_POSITION, &position.x, &position.y, &position.z));
+    alCheck(alGetSource3f(m_source, AL_POSITION, &position.x, &position.y, &position.z));
 
     return position;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SoundSource::IsRelativeToListener() const
+bool SoundSource::isRelativeToListener() const
 {
     ALint relative;
-    ALCheck(alGetSourcei(m_source, AL_SOURCE_RELATIVE, &relative));
+    alCheck(alGetSourcei(m_source, AL_SOURCE_RELATIVE, &relative));
 
     return relative != 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-float SoundSource::GetMinDistance() const
+float SoundSource::getMinDistance() const
 {
     ALfloat distance;
-    ALCheck(alGetSourcef(m_source, AL_REFERENCE_DISTANCE, &distance));
+    alCheck(alGetSourcef(m_source, AL_REFERENCE_DISTANCE, &distance));
 
     return distance;
 }
 
 
 ////////////////////////////////////////////////////////////
-float SoundSource::GetAttenuation() const
+float SoundSource::getAttenuation() const
 {
     ALfloat attenuation;
-    ALCheck(alGetSourcef(m_source, AL_ROLLOFF_FACTOR, &attenuation));
+    alCheck(alGetSourcef(m_source, AL_ROLLOFF_FACTOR, &attenuation));
 
     return attenuation;
 }
 
 
 ////////////////////////////////////////////////////////////
-SoundSource::Status SoundSource::GetStatus() const
+SoundSource::Status SoundSource::getStatus() const
 {
     ALint status;
-    ALCheck(alGetSourcei(m_source, AL_SOURCE_STATE, &status));
+    alCheck(alGetSourcei(m_source, AL_SOURCE_STATE, &status));
 
     switch (status)
     {

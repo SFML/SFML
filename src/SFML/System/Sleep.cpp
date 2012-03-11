@@ -37,10 +37,10 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-void Sleep(Time duration)
+void sleep(Time duration)
 {
     if (duration >= Time::Zero)
-        priv::SleepImpl(duration);
+        priv::sleepImpl(duration);
 }
 
 } // namespace sf

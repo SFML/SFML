@@ -46,14 +46,14 @@ public :
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    Glyph() : Advance(0) {}
+    Glyph() : advance(0) {}
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int     Advance;     ///< Offset to move horizontically to the next character
-    IntRect Bounds;      ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
-    IntRect TextureRect; ///< Texture coordinates of the glyph inside the font's texture
+    int     advance;     ///< Offset to move horizontically to the next character
+    IntRect bounds;      ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
+    IntRect textureRect; ///< Texture coordinates of the glyph inside the font's texture
 };
 
 } // namespace sf

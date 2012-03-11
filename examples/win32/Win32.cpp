@@ -13,7 +13,7 @@ HWND button;
 /// Function called whenever one of our windows receives a message
 ///
 ////////////////////////////////////////////////////////////
-LRESULT CALLBACK OnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK onEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
@@ -52,7 +52,7 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
     // Define a class for our main window
     WNDCLASS windowClass;
     windowClass.style         = 0;
-    windowClass.lpfnWndProc   = &OnEvent;
+    windowClass.lpfnWndProc   = &onEvent;
     windowClass.cbClsExtra    = 0;
     windowClass.cbWndExtra    = 0;
     windowClass.hInstance     = instance;
@@ -77,12 +77,12 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
 
     // Load some textures to display
     sf::Texture texture1, texture2;
-    if (!texture1.LoadFromFile("resources/image1.jpg") || !texture2.LoadFromFile("resources/image2.jpg"))
+    if (!texture1.loadFromFile("resources/image1.jpg") || !texture2.loadFromFile("resources/image2.jpg"))
         return EXIT_FAILURE;
     sf::Sprite sprite1(texture1);
     sf::Sprite sprite2(texture2);
-    sprite1.SetOrigin(texture1.GetWidth() / 2.f, texture1.GetHeight() / 2.f);
-    sprite1.SetPosition(sprite1.GetOrigin());
+    sprite1.setOrigin(texture1.getWidth() / 2.f, texture1.getHeight() / 2.f);
+    sprite1.setPosition(sprite1.getOrigin());
 
     // Create a clock for measuring elapsed time
     sf::Clock clock;
@@ -100,23 +100,23 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
         }
         else
         {
-            float time = clock.GetElapsedTime().AsSeconds();
+            float time = clock.getElapsedTime().asSeconds();
 
             // Clear views
-            SFMLView1.Clear();
-            SFMLView2.Clear();
+            SFMLView1.clear();
+            SFMLView2.clear();
 
             // Draw sprite 1 on view 1
-            sprite1.SetRotation(time * 100);
-            SFMLView1.Draw(sprite1);
+            sprite1.setRotation(time * 100);
+            SFMLView1.draw(sprite1);
 
             // Draw sprite 2 on view 2
-            sprite2.SetPosition(std::cos(time) * 100.f, 0.f);
-            SFMLView2.Draw(sprite2);
+            sprite2.setPosition(std::cos(time) * 100.f, 0.f);
+            SFMLView2.draw(sprite2);
 
             // Display each view on screen
-            SFMLView1.Display();
-            SFMLView2.Display();
+            SFMLView1.display();
+            SFMLView2.display();
         }
     }
 

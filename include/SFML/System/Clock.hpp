@@ -54,13 +54,13 @@ public :
     /// \brief Get the elapsed time
     ///
     /// This function returns the time elapsed since the last call
-    /// to Restart() (or the construction of the instance if Restart()
+    /// to restart() (or the construction of the instance if restart()
     /// has not been called).
     ///
     /// \return Time elapsed
     ///
     ////////////////////////////////////////////////////////////
-    Time GetElapsedTime() const;
+    Time getElapsedTime() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Restart the clock
@@ -71,7 +71,7 @@ public :
     /// \return Time elapsed
     ///
     ////////////////////////////////////////////////////////////
-    Time Restart();
+    Time restart();
 
 private :
 
@@ -103,9 +103,9 @@ private :
 /// \code
 /// sf::Clock clock;
 /// ...
-/// Time time1 = clock.GetElapsedTime();
+/// Time time1 = clock.getElapsedTime();
 /// ...
-/// Time time2 = clock.Restart();
+/// Time time2 = clock.restart();
 /// \endcode
 ///
 /// The sf::Time value returned by the clock can then be

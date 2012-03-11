@@ -92,7 +92,7 @@ public :
         /// \param value Value of the field
         ///
         ////////////////////////////////////////////////////////////
-        void SetField(const std::string& field, const std::string& value);
+        void setField(const std::string& field, const std::string& value);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the request method
@@ -104,7 +104,7 @@ public :
         /// \param method Method to use for the request
         ///
         ////////////////////////////////////////////////////////////
-        void SetMethod(Method method);
+        void setMethod(Method method);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the requested URI
@@ -116,7 +116,7 @@ public :
         /// \param uri URI to request, relative to the host
         ///
         ////////////////////////////////////////////////////////////
-        void SetUri(const std::string& uri);
+        void setUri(const std::string& uri);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the HTTP version for the request
@@ -127,7 +127,7 @@ public :
         /// \param minor Minor HTTP version number
         ///
         ////////////////////////////////////////////////////////////
-        void SetHttpVersion(unsigned int major, unsigned int minor);
+        void setHttpVersion(unsigned int major, unsigned int minor);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the body of the request
@@ -139,7 +139,7 @@ public :
         /// \param body Content of the body
         ///
         ////////////////////////////////////////////////////////////
-        void SetBody(const std::string& body);
+        void setBody(const std::string& body);
 
     private :
 
@@ -154,7 +154,7 @@ public :
         /// \return String containing the request, ready to be sent
         ///
         ////////////////////////////////////////////////////////////
-        std::string Prepare() const;
+        std::string prepare() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Check if the request defines a field
@@ -166,7 +166,7 @@ public :
         /// \return True if the field exists, false otherwise
         ///
         ////////////////////////////////////////////////////////////
-        bool HasField(const std::string& field) const;
+        bool hasField(const std::string& field) const;
 
         ////////////////////////////////////////////////////////////
         // Types
@@ -178,7 +178,7 @@ public :
         ////////////////////////////////////////////////////////////
         FieldTable   m_fields;       ///< Fields of the header associated to their value
         Method       m_method;       ///< Method to use for the request
-        std::string  m_uRI;          ///< Target URI of the request
+        std::string  m_uri;          ///< Target URI of the request
         unsigned int m_majorVersion; ///< Major HTTP version
         unsigned int m_minorVersion; ///< Minor HTTP version
         std::string  m_body;         ///< Body of the request
@@ -252,7 +252,7 @@ public :
         /// \return Value of the field, or empty string if not found
         ///
         ////////////////////////////////////////////////////////////
-        const std::string& GetField(const std::string& field) const;
+        const std::string& getField(const std::string& field) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the response status code
@@ -265,27 +265,27 @@ public :
         /// \return Status code of the response
         ///
         ////////////////////////////////////////////////////////////
-        Status GetStatus() const;
+        Status getStatus() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the major HTTP version number of the response
         ///
         /// \return Major HTTP version number
         ///
-        /// \see GetMinorHttpVersion
+        /// \see getMinorHttpVersion
         ///
         ////////////////////////////////////////////////////////////
-        unsigned int GetMajorHttpVersion() const;
+        unsigned int getMajorHttpVersion() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the minor HTTP version number of the response
         ///
         /// \return Minor HTTP version number
         ///
-        /// \see GetMajorHttpVersion
+        /// \see getMajorHttpVersion
         ///
         ////////////////////////////////////////////////////////////
-        unsigned int GetMinorHttpVersion() const;
+        unsigned int getMinorHttpVersion() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the body of the response
@@ -299,7 +299,7 @@ public :
         /// \return The response body
         ///
         ////////////////////////////////////////////////////////////
-        const std::string& GetBody() const;
+        const std::string& getBody() const;
 
     private :
 
@@ -314,7 +314,7 @@ public :
         /// \param data Content of the response to parse
         ///
         ////////////////////////////////////////////////////////////
-        void Parse(const std::string& data);
+        void parse(const std::string& data);
 
         ////////////////////////////////////////////////////////////
         // Types
@@ -368,7 +368,7 @@ public :
     /// \param port Port to use for connection
     ///
     ////////////////////////////////////////////////////////////
-    void SetHost(const std::string& host, unsigned short port = 0);
+    void setHost(const std::string& host, unsigned short port = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a HTTP request and return the server's response.
@@ -388,7 +388,7 @@ public :
     /// \return Server's response
     ///
     ////////////////////////////////////////////////////////////
-    Response SendRequest(const Request& request, Time timeout = Time::Zero);
+    Response sendRequest(const Request& request, Time timeout = Time::Zero);
 
 private :
 
@@ -444,19 +444,19 @@ private :
 /// sf::Http http;
 ///
 /// // We'll work on http://www.sfml-dev.org
-/// http.SetHost("http://www.sfml-dev.org");
+/// http.setHost("http://www.sfml-dev.org");
 ///
 /// // Prepare a request to get the 'features.php' page
 /// sf::Http::Request request("features.php");
 ///
 /// // Send the request
-/// sf::Http::Response response = http.SendRequest(request);
+/// sf::Http::Response response = http.sendRequest(request);
 ///
 /// // Check the status code and display the result
-/// sf::Http::Response::Status status = response.GetStatus();
+/// sf::Http::Response::Status status = response.getStatus();
 /// if (status == sf::Http::Response::Ok)
 /// {
-///     std::cout << response.GetBody() << std::endl;
+///     std::cout << response.getBody() << std::endl;
 /// }
 /// else
 /// {

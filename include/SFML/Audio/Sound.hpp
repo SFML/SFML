@@ -86,7 +86,7 @@ public :
     /// \see Pause, Stop
     ///
     ////////////////////////////////////////////////////////////
-    void Play();
+    void play();
 
     ////////////////////////////////////////////////////////////
     /// \brief Pause the sound
@@ -97,19 +97,19 @@ public :
     /// \see Play, Stop
     ///
     ////////////////////////////////////////////////////////////
-    void Pause();
+    void pause();
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop playing the sound
     ///
     /// This function stops the sound if it was playing or paused,
     /// and does nothing if it was already stopped.
-    /// It also resets the playing position (unlike Pause()).
+    /// It also resets the playing position (unlike pause()).
     ///
     /// \see Play, Pause
     ///
     ////////////////////////////////////////////////////////////
-    void Stop();
+    void stop();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the source buffer containing the audio data to play
@@ -123,22 +123,22 @@ public :
     /// \see GetBuffer
     ///
     ////////////////////////////////////////////////////////////
-    void SetBuffer(const SoundBuffer& buffer);
+    void setBuffer(const SoundBuffer& buffer);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set whether or not the sound should loop after reaching the end
     ///
     /// If set, the sound will restart from beginning after
     /// reaching the end and so on, until it is stopped or
-    /// SetLoop(false) is called.
+    /// setLoop(false) is called.
     /// The default looping state for sound is false.
     ///
     /// \param loop True to play in loop, false to play once
     ///
-    /// \see GetLoop
+    /// \see getLoop
     ///
     ////////////////////////////////////////////////////////////
-    void SetLoop(bool loop);
+    void setLoop(bool loop);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position of the sound
@@ -148,10 +148,10 @@ public :
     ///
     /// \param timeOffset New playing position, from the beginning of the sound
     ///
-    /// \see GetPlayingOffset
+    /// \see getPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    void SetPlayingOffset(Time timeOffset);
+    void setPlayingOffset(Time timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the audio buffer attached to the sound
@@ -159,27 +159,27 @@ public :
     /// \return Sound buffer attached to the sound (can be NULL)
     ///
     ////////////////////////////////////////////////////////////
-    const SoundBuffer* GetBuffer() const;
+    const SoundBuffer* getBuffer() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the sound is in loop mode
     ///
     /// \return True if the sound is looping, false otherwise
     ///
-    /// \see SetLoop
+    /// \see setLoop
     ///
     ////////////////////////////////////////////////////////////
-    bool GetLoop() const;
+    bool getLoop() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current playing position of the sound
     ///
     /// \return Current playing position, from the beginning of the sound
     ///
-    /// \see SetPlayingOffset
+    /// \see setPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    Time GetPlayingOffset() const;
+    Time getPlayingOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current status of the sound (stopped, paused, playing)
@@ -187,7 +187,7 @@ public :
     /// \return Current status of the sound
     ///
     ////////////////////////////////////////////////////////////
-    Status GetStatus() const;
+    Status getStatus() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -208,7 +208,7 @@ public :
     /// the sound from using a dead buffer.
     ///
     ////////////////////////////////////////////////////////////
-    void ResetBuffer();
+    void resetBuffer();
 
 private :
 
@@ -242,7 +242,7 @@ private :
 ///
 /// In order to work, a sound must be given a buffer of audio
 /// data to play. Audio data (samples) is stored in sf::SoundBuffer,
-/// and attached to a sound with the SetBuffer() function.
+/// and attached to a sound with the setBuffer() function.
 /// The buffer object attached to a sound must remain alive
 /// as long as the sound uses it. Note that multiple sounds
 /// can use the same sound buffer at the same time.
@@ -250,11 +250,11 @@ private :
 /// Usage example:
 /// \code
 /// sf::SoundBuffer buffer;
-/// buffer.LoadFromFile("sound.wav");
+/// buffer.loadFromFile("sound.wav");
 ///
 /// sf::Sound sound;
-/// sound.SetBuffer(buffer);
-/// sound.Play();
+/// sound.setBuffer(buffer);
+/// sound.play();
 /// \endcode
 ///
 /// \see sf::SoundBuffer, sf::Music

@@ -50,7 +50,7 @@ public :
     /// \return Current time
     ///
     ////////////////////////////////////////////////////////////
-    static Time GetCurrentTime();
+    static Time getCurrentTime();
 };
 
 } // namespace priv

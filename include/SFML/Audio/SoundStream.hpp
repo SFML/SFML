@@ -51,8 +51,8 @@ public :
     ////////////////////////////////////////////////////////////
     struct Chunk
     {
-        const Int16* Samples;     ///< Pointer to the audio samples
-        std::size_t  SampleCount; ///< Number of samples pointed by Samples
+        const Int16* samples;     ///< Pointer to the audio samples
+        std::size_t  sampleCount; ///< Number of samples pointed by Samples
     };
 
     ////////////////////////////////////////////////////////////
@@ -70,10 +70,10 @@ public :
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the stream is played.
     ///
-    /// \see Pause, Stop
+    /// \see pause, stop
     ///
     ////////////////////////////////////////////////////////////
-    void Play();
+    void play();
 
     ////////////////////////////////////////////////////////////
     /// \brief Pause the audio stream
@@ -81,22 +81,22 @@ public :
     /// This function pauses the stream if it was playing,
     /// otherwise (stream already paused or stopped) it has no effect.
     ///
-    /// \see Play, Stop
+    /// \see play, stop
     ///
     ////////////////////////////////////////////////////////////
-    void Pause();
+    void pause();
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop playing the audio stream
     ///
     /// This function stops the stream if it was playing or paused,
     /// and does nothing if it was already stopped.
-    /// It also resets the playing position (unlike Pause()).
+    /// It also resets the playing position (unlike pause()).
     ///
-    /// \see Play, Pause
+    /// \see play, pause
     ///
     ////////////////////////////////////////////////////////////
-    void Stop();
+    void stop();
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the number of channels of the stream
@@ -106,7 +106,7 @@ public :
     /// \return Number of channels
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetChannelCount() const;
+    unsigned int getChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the stream sample rate of the stream
@@ -117,7 +117,7 @@ public :
     /// \return Sample rate, in number of samples per second
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetSampleRate() const;
+    unsigned int getSampleRate() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current status of the stream (stopped, paused, playing)
@@ -125,7 +125,7 @@ public :
     /// \return Current status
     ///
     ////////////////////////////////////////////////////////////
-    Status GetStatus() const;
+    Status getStatus() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position of the stream
@@ -135,45 +135,45 @@ public :
     ///
     /// \param timeOffset New playing position, from the beginning of the stream
     ///
-    /// \see GetPlayingOffset
+    /// \see getPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    void SetPlayingOffset(Time timeOffset);
+    void setPlayingOffset(Time timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current playing position of the stream
     ///
     /// \return Current playing position, from the beginning of the stream
     ///
-    /// \see SetPlayingOffset
+    /// \see setPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    Time GetPlayingOffset() const;
+    Time getPlayingOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set whether or not the stream should loop after reaching the end
     ///
     /// If set, the stream will restart from beginning after
     /// reaching the end and so on, until it is stopped or
-    /// SetLoop(false) is called.
+    /// setLoop(false) is called.
     /// The default looping state for streams is false.
     ///
     /// \param loop True to play in loop, false to play once
     ///
-    /// \see GetLoop
+    /// \see getLoop
     ///
     ////////////////////////////////////////////////////////////
-    void SetLoop(bool loop);
+    void setLoop(bool loop);
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the stream is in loop mode
     ///
     /// \return True if the stream is looping, false otherwise
     ///
-    /// \see SetLoop
+    /// \see setLoop
     ///
     ////////////////////////////////////////////////////////////
-    bool GetLoop() const;
+    bool getLoop() const;
 
 protected :
 
@@ -190,7 +190,7 @@ protected :
     ///
     /// This function must be called by derived classes as soon
     /// as they know the audio settings of the stream to play.
-    /// Any attempt to manipulate the stream (Play(), ...) before
+    /// Any attempt to manipulate the stream (play(), ...) before
     /// calling this function will fail.
     /// It can be called multiple times if the settings of the
     /// audio stream change, but only when the stream is stopped.
@@ -199,7 +199,7 @@ protected :
     /// \param sampleRate   Sample rate, in samples per second
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize(unsigned int channelCount, unsigned int sampleRate);
+    void initialize(unsigned int channelCount, unsigned int sampleRate);
 
 private :
 
@@ -210,7 +210,7 @@ private :
     /// only when the sound is stopped.
     ///
     ////////////////////////////////////////////////////////////
-    void Stream();
+    void stream();
 
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source
@@ -226,7 +226,7 @@ private :
     /// \return True to continue playback, false to stop
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnGetData(Chunk& data) = 0;
+    virtual bool onGetData(Chunk& data) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source
@@ -237,7 +237,7 @@ private :
     /// \param timeOffset New playing position, relative to the beginning of the stream
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnSeek(Time timeOffset) = 0;
+    virtual void onSeek(Time timeOffset) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Fill a new buffer with audio samples, and append
@@ -252,7 +252,7 @@ private :
     /// \return True if the stream source has requested to stop, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool FillAndPushBuffer(unsigned int bufferNum);
+    bool fillAndPushBuffer(unsigned int bufferNum);
 
     ////////////////////////////////////////////////////////////
     /// \brief Fill the audio buffers and put them all into the playing queue
@@ -263,7 +263,7 @@ private :
     /// \return True if the derived class has requested to stop, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool FillQueue();
+    bool fillQueue();
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear all the audio buffers and empty the playing queue
@@ -271,7 +271,7 @@ private :
     /// This function is called when the stream is stopped.
     ///
     ////////////////////////////////////////////////////////////
-    void ClearQueue();
+    void clearQueue();
 
     enum
     {
@@ -320,8 +320,8 @@ private :
 /// by combining this class with the network module.
 ///
 /// A derived class has to override two virtual functions:
-/// \li OnGetData fills a new chunk of audio data to be played
-/// \li OnSeek changes the current playing position in the source
+/// \li onGetData fills a new chunk of audio data to be played
+/// \li onSeek changes the current playing position in the source
 ///
 /// It is important to note that each SoundStream is played in its
 /// own separate thread, so that the streaming loop doesn't block the
@@ -336,7 +336,7 @@ private :
 /// {
 /// public :
 ///
-///     bool Open(const std::string& location)
+///     bool open(const std::string& location)
 ///     {
 ///         // Open the source and get audio settings
 ///         ...
@@ -344,22 +344,22 @@ private :
 ///         unsigned int sampleRate = ...;
 ///
 ///         // Initialize the stream -- important!
-///         Initialize(channelCount, sampleRate);
+///         initialize(channelCount, sampleRate);
 ///     }
 ///
 /// private :
 ///
-///     virtual bool OnGetData(Chunk& data)
+///     virtual bool onGetData(Chunk& data)
 ///     {
 ///         // Fill the chunk with audio data from the stream source
-///         data.Samples = ...;
-///         data.SampleCount = ...;
+///         data.samples = ...;
+///         data.sampleCount = ...;
 ///
 ///         // Return true to continue playing
 ///         return true;
 ///     }
 ///
-///     virtual void OnSeek(Uint32 timeOffset)
+///     virtual void onSeek(Uint32 timeOffset)
 ///     {
 ///         // Change the current position in the stream source
 ///         ...
@@ -368,8 +368,8 @@ private :
 ///
 /// // Usage
 /// CustomStream stream;
-/// stream.Open("path/to/stream");
-/// stream.Play();
+/// stream.open("path/to/stream");
+/// stream.play();
 /// \endcode
 ///
 /// \see sf::Music

@@ -35,7 +35,7 @@
 namespace
 {
     // Compute the normal of a segment
-    sf::Vector2f ComputeNormal(const sf::Vector2f& p1, const sf::Vector2f& p2)
+    sf::Vector2f computeNormal(const sf::Vector2f& p1, const sf::Vector2f& p2)
     {
         sf::Vector2f normal(p1.y - p2.y, p2.x - p1.x);
         float length = std::sqrt(normal.x * normal.x + normal.y * normal.y);
@@ -55,11 +55,11 @@ Shape::~Shape()
 
 
 ////////////////////////////////////////////////////////////
-void Shape::SetTexture(const Texture* texture, bool resetRect)
+void Shape::setTexture(const Texture* texture, bool resetRect)
 {
     // Recompute the texture area if requested, or if there was no texture before
     if (texture && (resetRect || !m_texture))
-        SetTextureRect(IntRect(0, 0, texture->GetWidth(), texture->GetHeight()));
+        setTextureRect(IntRect(0, 0, texture->getWidth(), texture->getHeight()));
 
     // Assign the new texture
     m_texture = texture;
@@ -67,83 +67,83 @@ void Shape::SetTexture(const Texture* texture, bool resetRect)
 
 
 ////////////////////////////////////////////////////////////
-const Texture* Shape::GetTexture() const
+const Texture* Shape::getTexture() const
 {
     return m_texture;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::SetTextureRect(const IntRect& rect)
+void Shape::setTextureRect(const IntRect& rect)
 {
     m_textureRect = rect;
-    UpdateTexCoords();
+    updateTexCoords();
 }
 
 
 ////////////////////////////////////////////////////////////
-const IntRect& Shape::GetTextureRect() const
+const IntRect& Shape::getTextureRect() const
 {
     return m_textureRect;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::SetFillColor(const Color& color)
+void Shape::setFillColor(const Color& color)
 {
     m_fillColor = color;
-    UpdateFillColors();
+    updateFillColors();
 }
 
 
 ////////////////////////////////////////////////////////////
-const Color& Shape::GetFillColor() const
+const Color& Shape::getFillColor() const
 {
     return m_fillColor;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::SetOutlineColor(const Color& color)
+void Shape::setOutlineColor(const Color& color)
 {
     m_outlineColor = color;
-    UpdateOutlineColors();
+    updateOutlineColors();
 }
 
 
 ////////////////////////////////////////////////////////////
-const Color& Shape::GetOutlineColor() const
+const Color& Shape::getOutlineColor() const
 {
     return m_outlineColor;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::SetOutlineThickness(float thickness)
+void Shape::setOutlineThickness(float thickness)
 {
     m_outlineThickness = thickness;
-    Update(); // recompute everything because the whole shape must be offset
+    update(); // recompute everything because the whole shape must be offset
 }
 
 
 ////////////////////////////////////////////////////////////
-float Shape::GetOutlineThickness() const
+float Shape::getOutlineThickness() const
 {
     return m_outlineThickness;
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect Shape::GetLocalBounds() const
+FloatRect Shape::getLocalBounds() const
 {
     return m_bounds;
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect Shape::GetGlobalBounds() const
+FloatRect Shape::getGlobalBounds() const
 {
-    return GetTransform().TransformRect(GetLocalBounds());
+    return getTransform().transformRect(getLocalBounds());
 }
 
 
@@ -163,130 +163,130 @@ m_bounds          ()
 
 
 ////////////////////////////////////////////////////////////
-void Shape::Update()
+void Shape::update()
 {
     // Get the total number of points of the shape
-    unsigned int count = GetPointCount();
+    unsigned int count = getPointCount();
     if (count < 3)
     {
-        m_vertices.Resize(0);
-        m_outlineVertices.Resize(0);
+        m_vertices.resize(0);
+        m_outlineVertices.resize(0);
         return;
     }
 
-    m_vertices.Resize(count + 2); // + 2 for center and repeated first point
+    m_vertices.resize(count + 2); // + 2 for center and repeated first point
 
     // Position
     for (unsigned int i = 0; i < count; ++i)
-        m_vertices[i + 1].Position = GetPoint(i);
-    m_vertices[count + 1].Position = m_vertices[1].Position;
+        m_vertices[i + 1].position = getPoint(i);
+    m_vertices[count + 1].position = m_vertices[1].position;
 
     // Update the bounding rectangle
-    m_vertices[0] = m_vertices[1]; // so that the result of GetBounds() is correct
-    m_insideBounds = m_vertices.GetBounds();
+    m_vertices[0] = m_vertices[1]; // so that the result of getBounds() is correct
+    m_insideBounds = m_vertices.getBounds();
 
     // Compute the center and make it the first vertex
-    m_vertices[0].Position.x = m_insideBounds.Left + m_insideBounds.Width / 2;
-    m_vertices[0].Position.y = m_insideBounds.Top + m_insideBounds.Height / 2;
+    m_vertices[0].position.x = m_insideBounds.left + m_insideBounds.width / 2;
+    m_vertices[0].position.y = m_insideBounds.top + m_insideBounds.height / 2;
 
     // Color
-    UpdateFillColors();
+    updateFillColors();
 
     // Texture coordinates
-    UpdateTexCoords();
+    updateTexCoords();
 
     // Outline
-    UpdateOutline();
+    updateOutline();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::Draw(RenderTarget& target, RenderStates states) const
+void Shape::draw(RenderTarget& target, RenderStates states) const
 {
-    states.Transform *= GetTransform();
+    states.transform *= getTransform();
 
     // Render the inside
     if (m_fillColor.a > 0)
     {
-        states.Texture = m_texture;
-        target.Draw(m_vertices, states);
+        states.texture = m_texture;
+        target.draw(m_vertices, states);
     }
 
     // Render the outline
     if ((m_outlineColor.a > 0) && (m_outlineThickness > 0))
     {
-        states.Texture = NULL;
-        target.Draw(m_outlineVertices, states);
+        states.texture = NULL;
+        target.draw(m_outlineVertices, states);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::UpdateFillColors()
+void Shape::updateFillColors()
 {
-    for (unsigned int i = 0; i < m_vertices.GetVertexCount(); ++i)
-        m_vertices[i].Color = m_fillColor;
+    for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
+        m_vertices[i].color = m_fillColor;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::UpdateTexCoords()
+void Shape::updateTexCoords()
 {
-    for (unsigned int i = 0; i < m_vertices.GetVertexCount(); ++i)
+    for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
     {
-        float xratio = (m_vertices[i].Position.x - m_insideBounds.Left) / m_insideBounds.Width;
-        float yratio = (m_vertices[i].Position.y - m_insideBounds.Top) / m_insideBounds.Height;
-        m_vertices[i].TexCoords.x = m_textureRect.Left + m_textureRect.Width * xratio;
-        m_vertices[i].TexCoords.y = m_textureRect.Top + m_textureRect.Height * yratio;
+        float xratio = (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width;
+        float yratio = (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height;
+        m_vertices[i].texCoords.x = m_textureRect.left + m_textureRect.width * xratio;
+        m_vertices[i].texCoords.y = m_textureRect.top + m_textureRect.height * yratio;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::UpdateOutline()
+void Shape::updateOutline()
 {
-    unsigned int count = m_vertices.GetVertexCount() - 2;
-    m_outlineVertices.Resize((count + 1) * 2);
+    unsigned int count = m_vertices.getVertexCount() - 2;
+    m_outlineVertices.resize((count + 1) * 2);
 
     for (unsigned int i = 0; i < count; ++i)
     {
         unsigned int index = i + 1;
 
         // Get the two segments shared by the current point
-        Vector2f p0 = (i == 0) ? m_vertices[count].Position : m_vertices[index - 1].Position;
-        Vector2f p1 = m_vertices[index].Position;
-        Vector2f p2 = m_vertices[index + 1].Position;
+        Vector2f p0 = (i == 0) ? m_vertices[count].position : m_vertices[index - 1].position;
+        Vector2f p1 = m_vertices[index].position;
+        Vector2f p2 = m_vertices[index + 1].position;
 
         // Compute their normal
-        Vector2f n1 = ComputeNormal(p0, p1);
-        Vector2f n2 = ComputeNormal(p1, p2);
+        Vector2f n1 = computeNormal(p0, p1);
+        Vector2f n2 = computeNormal(p1, p2);
 
         // Combine them to get the extrusion direction
         float factor = 1.f + (n1.x * n2.x + n1.y * n2.y);
         Vector2f normal = -(n1 + n2) / factor;
 
         // Update the outline points
-        m_outlineVertices[i * 2 + 0].Position = p1;
-        m_outlineVertices[i * 2 + 1].Position = p1 + normal * m_outlineThickness;
+        m_outlineVertices[i * 2 + 0].position = p1;
+        m_outlineVertices[i * 2 + 1].position = p1 + normal * m_outlineThickness;
     }
 
     // Duplicate the first point at the end, to close the outline
-    m_outlineVertices[count * 2 + 0].Position = m_outlineVertices[0].Position;
-    m_outlineVertices[count * 2 + 1].Position = m_outlineVertices[1].Position;
+    m_outlineVertices[count * 2 + 0].position = m_outlineVertices[0].position;
+    m_outlineVertices[count * 2 + 1].position = m_outlineVertices[1].position;
 
     // Update outline colors
-    UpdateOutlineColors();
+    updateOutlineColors();
 
     // Update the shape's bounds
-    m_bounds = m_outlineVertices.GetBounds();
+    m_bounds = m_outlineVertices.getBounds();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shape::UpdateOutlineColors()
+void Shape::updateOutlineColors()
 {
-    for (unsigned int i = 0; i < m_outlineVertices.GetVertexCount(); ++i)
-        m_outlineVertices[i].Color = m_outlineColor;
+    for (unsigned int i = 0; i < m_outlineVertices.getVertexCount(); ++i)
+        m_outlineVertices[i].color = m_outlineColor;
 }
 
 } // namespace sf

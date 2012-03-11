@@ -35,7 +35,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::IsConnected(unsigned int index)
+bool JoystickImpl::isConnected(unsigned int index)
 {
     JOYINFOEX joyInfo;
     joyInfo.dwSize = sizeof(joyInfo);
@@ -46,7 +46,7 @@ bool JoystickImpl::IsConnected(unsigned int index)
 
 
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::Open(unsigned int index)
+bool JoystickImpl::open(unsigned int index)
 {
     // No explicit "open" action is required
     m_index = JOYSTICKID1 + index;
@@ -57,36 +57,36 @@ bool JoystickImpl::Open(unsigned int index)
 
 
 ////////////////////////////////////////////////////////////
-void JoystickImpl::Close()
+void JoystickImpl::close()
 {
     // Nothing to do
 }
 
 
 ////////////////////////////////////////////////////////////
-JoystickCaps JoystickImpl::GetCapabilities() const
+JoystickCaps JoystickImpl::getCapabilities() const
 {
     JoystickCaps caps;
 
-    caps.ButtonCount = m_caps.wNumButtons;
-    if (caps.ButtonCount > Joystick::ButtonCount)
-        caps.ButtonCount = Joystick::ButtonCount;
+    caps.buttonCount = m_caps.wNumButtons;
+    if (caps.buttonCount > Joystick::ButtonCount)
+        caps.buttonCount = Joystick::ButtonCount;
 
-    caps.Axes[Joystick::X]    = true;
-    caps.Axes[Joystick::Y]    = true;
-    caps.Axes[Joystick::Z]    = (m_caps.wCaps & JOYCAPS_HASZ) != 0;
-    caps.Axes[Joystick::R]    = (m_caps.wCaps & JOYCAPS_HASR) != 0;
-    caps.Axes[Joystick::U]    = (m_caps.wCaps & JOYCAPS_HASU) != 0;
-    caps.Axes[Joystick::V]    = (m_caps.wCaps & JOYCAPS_HASV) != 0;
-    caps.Axes[Joystick::PovX] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
-    caps.Axes[Joystick::PovY] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+    caps.axes[Joystick::X]    = true;
+    caps.axes[Joystick::Y]    = true;
+    caps.axes[Joystick::Z]    = (m_caps.wCaps & JOYCAPS_HASZ) != 0;
+    caps.axes[Joystick::R]    = (m_caps.wCaps & JOYCAPS_HASR) != 0;
+    caps.axes[Joystick::U]    = (m_caps.wCaps & JOYCAPS_HASU) != 0;
+    caps.axes[Joystick::V]    = (m_caps.wCaps & JOYCAPS_HASV) != 0;
+    caps.axes[Joystick::PovX] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+    caps.axes[Joystick::PovY] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
 
     return caps;
 }
 
 
 ////////////////////////////////////////////////////////////
-JoystickState JoystickImpl::Update()
+JoystickState JoystickImpl::update()
 {
     JoystickState state;
 
@@ -98,32 +98,32 @@ JoystickState JoystickImpl::Update()
     if (joyGetPosEx(m_index, &pos) == JOYERR_NOERROR)
     {
         // The joystick is connected
-        state.Connected = true;
+        state.connected = true;
 
         // Axes
-        state.Axes[Joystick::X] = (pos.dwXpos - (m_caps.wXmax + m_caps.wXmin) / 2.f) * 200.f / (m_caps.wXmax - m_caps.wXmin);
-        state.Axes[Joystick::Y] = (pos.dwYpos - (m_caps.wYmax + m_caps.wYmin) / 2.f) * 200.f / (m_caps.wYmax - m_caps.wYmin);
-        state.Axes[Joystick::Z] = (pos.dwZpos - (m_caps.wZmax + m_caps.wZmin) / 2.f) * 200.f / (m_caps.wZmax - m_caps.wZmin);
-        state.Axes[Joystick::R] = (pos.dwRpos - (m_caps.wRmax + m_caps.wRmin) / 2.f) * 200.f / (m_caps.wRmax - m_caps.wRmin);
-        state.Axes[Joystick::U] = (pos.dwUpos - (m_caps.wUmax + m_caps.wUmin) / 2.f) * 200.f / (m_caps.wUmax - m_caps.wUmin);
-        state.Axes[Joystick::V] = (pos.dwVpos - (m_caps.wVmax + m_caps.wVmin) / 2.f) * 200.f / (m_caps.wVmax - m_caps.wVmin);
+        state.axes[Joystick::X] = (pos.dwXpos - (m_caps.wXmax + m_caps.wXmin) / 2.f) * 200.f / (m_caps.wXmax - m_caps.wXmin);
+        state.axes[Joystick::Y] = (pos.dwYpos - (m_caps.wYmax + m_caps.wYmin) / 2.f) * 200.f / (m_caps.wYmax - m_caps.wYmin);
+        state.axes[Joystick::Z] = (pos.dwZpos - (m_caps.wZmax + m_caps.wZmin) / 2.f) * 200.f / (m_caps.wZmax - m_caps.wZmin);
+        state.axes[Joystick::R] = (pos.dwRpos - (m_caps.wRmax + m_caps.wRmin) / 2.f) * 200.f / (m_caps.wRmax - m_caps.wRmin);
+        state.axes[Joystick::U] = (pos.dwUpos - (m_caps.wUmax + m_caps.wUmin) / 2.f) * 200.f / (m_caps.wUmax - m_caps.wUmin);
+        state.axes[Joystick::V] = (pos.dwVpos - (m_caps.wVmax + m_caps.wVmin) / 2.f) * 200.f / (m_caps.wVmax - m_caps.wVmin);
 
         // Special case for POV, it is given as an angle
         if (pos.dwPOV != 0xFFFF)
         {
             float angle = pos.dwPOV / 36000.f * 3.141592654f;
-            state.Axes[Joystick::PovX] = std::cos(angle) * 100;
-            state.Axes[Joystick::PovY] = std::sin(angle) * 100;
+            state.axes[Joystick::PovX] = std::cos(angle) * 100;
+            state.axes[Joystick::PovY] = std::sin(angle) * 100;
         }
         else
         {
-            state.Axes[Joystick::PovX] = 0;
-            state.Axes[Joystick::PovY] = 0;
+            state.axes[Joystick::PovX] = 0;
+            state.axes[Joystick::PovY] = 0;
         }
 
         // Buttons
         for (unsigned int i = 0; i < Joystick::ButtonCount; ++i)
-            state.Buttons[i] = (pos.dwButtons & (1 << i)) != 0;
+            state.buttons[i] = (pos.dwButtons & (1 << i)) != 0;
     }
 
     return state;

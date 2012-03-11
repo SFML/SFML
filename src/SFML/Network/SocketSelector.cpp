@@ -51,7 +51,7 @@ struct SocketSelector::SocketSelectorImpl
 SocketSelector::SocketSelector() :
 m_impl(new SocketSelectorImpl)
 {
-    Clear();
+    clear();
 }
 
 
@@ -71,26 +71,26 @@ SocketSelector::~SocketSelector()
 
 
 ////////////////////////////////////////////////////////////
-void SocketSelector::Add(Socket& socket)
+void SocketSelector::add(Socket& socket)
 {
-    FD_SET(socket.GetHandle(), &m_impl->AllSockets);
+    FD_SET(socket.getHandle(), &m_impl->AllSockets);
 
-    int size = static_cast<int>(socket.GetHandle());
+    int size = static_cast<int>(socket.getHandle());
     if (size > m_impl->MaxSocket)
         m_impl->MaxSocket = size;
 }
 
 
 ////////////////////////////////////////////////////////////
-void SocketSelector::Remove(Socket& socket)
+void SocketSelector::remove(Socket& socket)
 {
-    FD_CLR(socket.GetHandle(), &m_impl->AllSockets);
-    FD_CLR(socket.GetHandle(), &m_impl->SocketsReady);
+    FD_CLR(socket.getHandle(), &m_impl->AllSockets);
+    FD_CLR(socket.getHandle(), &m_impl->SocketsReady);
 }
 
 
 ////////////////////////////////////////////////////////////
-void SocketSelector::Clear()
+void SocketSelector::clear()
 {
     FD_ZERO(&m_impl->AllSockets);
     FD_ZERO(&m_impl->SocketsReady);
@@ -100,12 +100,12 @@ void SocketSelector::Clear()
 
 
 ////////////////////////////////////////////////////////////
-bool SocketSelector::Wait(Time timeout)
+bool SocketSelector::wait(Time timeout)
 {
     // Setup the timeout
     timeval time;
-    time.tv_sec  = static_cast<long>(timeout.AsMicroseconds() / 1000000);
-    time.tv_usec = static_cast<long>(timeout.AsMicroseconds() % 1000000);
+    time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1000000);
+    time.tv_usec = static_cast<long>(timeout.asMicroseconds() % 1000000);
 
     // Initialize the set that will contain the sockets that are ready
     m_impl->SocketsReady = m_impl->AllSockets;
@@ -118,9 +118,9 @@ bool SocketSelector::Wait(Time timeout)
 
 
 ////////////////////////////////////////////////////////////
-bool SocketSelector::IsReady(Socket& socket) const
+bool SocketSelector::isReady(Socket& socket) const
 {
-    return FD_ISSET(socket.GetHandle(), &m_impl->SocketsReady) != 0;
+    return FD_ISSET(socket.getHandle(), &m_impl->SocketsReady) != 0;
 }
 
 

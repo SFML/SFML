@@ -16,11 +16,11 @@ int main()
 {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL", sf::Style::Default, sf::ContextSettings(32));
-    window.SetVerticalSyncEnabled(true);
+    window.setVerticalSyncEnabled(true);
 
     // Create a sprite for the background
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.LoadFromFile("resources/background.jpg"))
+    if (!backgroundTexture.loadFromFile("resources/background.jpg"))
         return EXIT_FAILURE;
     sf::Sprite background(backgroundTexture);
 
@@ -30,11 +30,11 @@ int main()
     GLuint texture = 0;
     {
         sf::Image image;
-        if (!image.LoadFromFile("resources/texture.jpg"))
+        if (!image.loadFromFile("resources/texture.jpg"))
             return EXIT_FAILURE;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
-        gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image.GetWidth(), image.GetHeight(), GL_RGBA, GL_UNSIGNED_BYTE, image.GetPixelsPtr());
+        gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image.getWidth(), image.getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     }
@@ -58,49 +58,49 @@ int main()
     sf::Clock clock;
 
     // Start game loop
-    while (window.IsOpen())
+    while (window.isOpen())
     {
         // Process events
         sf::Event event;
-        while (window.PollEvent(event))
+        while (window.pollEvent(event))
         {
             // Close window : exit
-            if (event.Type == sf::Event::Closed)
-                window.Close();
+            if (event.type == sf::Event::Closed)
+                window.close();
 
             // Escape key : exit
-            if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Keyboard::Escape))
-                window.Close();
+            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+                window.close();
 
             // Adjust the viewport when the window is resized
-            if (event.Type == sf::Event::Resized)
-                glViewport(0, 0, event.Size.Width, event.Size.Height);
+            if (event.type == sf::Event::Resized)
+                glViewport(0, 0, event.size.width, event.size.height);
         }
 
         // Draw the background
-        window.PushGLStates();
-        window.Draw(background);
-        window.PopGLStates();
+        window.pushGLStates();
+        window.draw(background);
+        window.popGLStates();
 
         // Activate the window before using OpenGL commands.
         // This is useless here because we have only one window which is
         // always the active one, but don't forget it if you use multiple windows
-        window.SetActive();
+        window.setActive();
 
         // Clear the depth buffer
         glClear(GL_DEPTH_BUFFER_BIT);
 
         // We get the position of the mouse cursor, so that we can move the box accordingly
-        float x =  sf::Mouse::GetPosition(window).x * 200.f / window.GetSize().x - 100.f;
-        float y = -sf::Mouse::GetPosition(window).y * 200.f / window.GetSize().y + 100.f;
+        float x =  sf::Mouse::getPosition(window).x * 200.f / window.getSize().x - 100.f;
+        float y = -sf::Mouse::getPosition(window).y * 200.f / window.getSize().y + 100.f;
 
         // Apply some transformations
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glTranslatef(x, y, -100.f);
-        glRotatef(clock.GetElapsedTime().AsSeconds() * 50.f, 1.f, 0.f, 0.f);
-        glRotatef(clock.GetElapsedTime().AsSeconds() * 30.f, 0.f, 1.f, 0.f);
-        glRotatef(clock.GetElapsedTime().AsSeconds() * 90.f, 0.f, 0.f, 1.f);
+        glRotatef(clock.getElapsedTime().asSeconds() * 50.f, 1.f, 0.f, 0.f);
+        glRotatef(clock.getElapsedTime().asSeconds() * 30.f, 0.f, 1.f, 0.f);
+        glRotatef(clock.getElapsedTime().asSeconds() * 90.f, 0.f, 0.f, 1.f);
 
         // Draw a cube
         float size = 20.f;
@@ -139,15 +139,15 @@ int main()
         glEnd();
 
         // Draw some text on top of our OpenGL object
-        window.PushGLStates();
+        window.pushGLStates();
         sf::Text text("SFML / OpenGL demo");
-        text.SetColor(sf::Color(255, 255, 255, 170));
-        text.SetPosition(250.f, 450.f);
-        window.Draw(text);
-        window.PopGLStates();
+        text.setColor(sf::Color(255, 255, 255, 170));
+        text.setPosition(250.f, 450.f);
+        window.draw(text);
+        window.popGLStates();
 
         // Finally, display the rendered frame on screen
-        window.Display();
+        window.display();
     }
 
     // Don't forget to destroy our texture

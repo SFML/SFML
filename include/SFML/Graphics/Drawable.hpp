@@ -66,7 +66,7 @@ private :
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw(RenderTarget& target, RenderStates states) const = 0;
+    virtual void draw(RenderTarget& target, RenderStates states) const = 0;
 };
 
 } // namespace sf
@@ -100,14 +100,14 @@ private :
 ///
 /// private :
 ///
-///     virtual void Draw(sf::RenderTarget& target, RenderStates states) const
+///     virtual void draw(sf::RenderTarget& target, RenderStates states) const
 ///     {
 ///         // You can draw other high-level objects
-///         target.Draw(m_sprite, states);
+///         target.draw(m_sprite, states);
 ///
 ///         // ... or use the low-level API
 ///         states.Texture = &m_texture;
-///         target.Draw(m_vertices, states);
+///         target.draw(m_vertices, states);
 ///
 ///         // ... or draw with OpenGL directly
 ///         glBegin(GL_QUADS);

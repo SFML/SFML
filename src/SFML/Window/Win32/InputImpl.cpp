@@ -37,7 +37,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool InputImpl::IsKeyPressed(Keyboard::Key key)
+bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
     int vkey = 0;
     switch (key)
@@ -150,7 +150,7 @@ bool InputImpl::IsKeyPressed(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
+bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     int vkey = 0;
     switch (button)
@@ -167,7 +167,7 @@ bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::GetMousePosition()
+Vector2i InputImpl::getMousePosition()
 {
     POINT point;
     GetCursorPos(&point);
@@ -176,9 +176,9 @@ Vector2i InputImpl::GetMousePosition()
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
+Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 {
-    WindowHandle handle = relativeTo.GetSystemHandle();
+    WindowHandle handle = relativeTo.getSystemHandle();
     if (handle)
     {
         POINT point;
@@ -194,16 +194,16 @@ Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::SetMousePosition(const Vector2i& position)
+void InputImpl::setMousePosition(const Vector2i& position)
 {
     SetCursorPos(position.x, position.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
+void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
 {
-    WindowHandle handle = relativeTo.GetSystemHandle();
+    WindowHandle handle = relativeTo.getSystemHandle();
     if (handle)
     {
         POINT point = {position.x, position.y};

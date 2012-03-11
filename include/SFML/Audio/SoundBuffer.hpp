@@ -84,10 +84,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromMemory, LoadFromStream, LoadFromSamples, SaveToFile
+    /// \see loadFromMemory, loadFromStream, loadFromSamples, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromFile(const std::string& filename);
+    bool loadFromFile(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a file in memory
@@ -101,10 +101,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromStream, LoadFromSamples
+    /// \see loadFromFile, loadFromStream, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromMemory(const void* data, std::size_t sizeInBytes);
+    bool loadFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a custom stream
@@ -117,10 +117,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromMemory, LoadFromSamples
+    /// \see loadFromFile, loadFromMemory, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromStream(InputStream& stream);
+    bool loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from an array of audio samples
@@ -135,10 +135,10 @@ public :
     ///
     /// \return True if loading succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromMemory, SaveToFile
+    /// \see loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate);
+    bool loadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
@@ -151,37 +151,37 @@ public :
     ///
     /// \return True if saving succeeded, false if it failed
     ///
-    /// \see LoadFromFile, LoadFromMemory, LoadFromSamples
+    /// \see loadFromFile, loadFromMemory, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    bool SaveToFile(const std::string& filename) const;
+    bool saveToFile(const std::string& filename) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the array of audio samples stored in the buffer
     ///
     /// The format of the returned samples is 16 bits signed integer
     /// (sf::Int16). The total number of samples in this array
-    /// is given by the GetSampleCount() function.
+    /// is given by the getSampleCount() function.
     ///
     /// \return Read-only pointer to the array of sound samples
     ///
-    /// \see GetSampleCount
+    /// \see getSampleCount
     ///
     ////////////////////////////////////////////////////////////
-    const Int16* GetSamples() const;
+    const Int16* getSamples() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of samples stored in the buffer
     ///
-    /// The array of samples can be accessed with the GetSamples()
+    /// The array of samples can be accessed with the getSamples()
     /// function.
     ///
     /// \return Number of samples
     ///
-    /// \see GetSamples
+    /// \see getSamples
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t GetSampleCount() const;
+    std::size_t getSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound
@@ -192,10 +192,10 @@ public :
     ///
     /// \return Sample rate (number of samples per second)
     ///
-    /// \see GetChannelCount, GetDuration
+    /// \see getChannelCount, getDuration
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetSampleRate() const;
+    unsigned int getSampleRate() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of channels used by the sound
@@ -205,20 +205,20 @@ public :
     ///
     /// \return Number of channels
     ///
-    /// \see GetSampleRate, GetDuration
+    /// \see getSampleRate, getDuration
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetChannelCount() const;
+    unsigned int getChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the sound
     ///
     /// \return Sound duration
     ///
-    /// \see GetSampleRate, GetChannelCount
+    /// \see getSampleRate, getChannelCount
     ///
     ////////////////////////////////////////////////////////////
-    Time GetDuration() const;
+    Time getDuration() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -242,7 +242,7 @@ private :
     /// \return True on succesful initialization, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool Initialize(priv::SoundFile& file);
+    bool initialize(priv::SoundFile& file);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples
@@ -253,7 +253,7 @@ private :
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    bool Update(unsigned int channelCount, unsigned int sampleRate);
+    bool update(unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a sound to the list of sounds that use this buffer
@@ -261,7 +261,7 @@ private :
     /// \param sound Sound instance to attach
     ///
     ////////////////////////////////////////////////////////////
-    void AttachSound(Sound* sound) const;
+    void attachSound(Sound* sound) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove a sound from the list of sounds that use this buffer
@@ -269,7 +269,7 @@ private :
     /// \param sound Sound instance to detach
     ///
     ////////////////////////////////////////////////////////////
-    void DetachSound(Sound* sound) const;
+    void detachSound(Sound* sound) const;
 
     ////////////////////////////////////////////////////////////
     // Types
@@ -304,7 +304,7 @@ private :
 /// are like texture pixels, and a sf::SoundBuffer is similar to
 /// a sf::Texture.
 ///
-/// A sound buffer can be loaded from a file (see LoadFromFile()
+/// A sound buffer can be loaded from a file (see loadFromFile()
 /// for the complete list of supported formats), from memory, from
 /// a custom stream (see sf::InputStream) or directly from an array
 /// of samples. It can also be saved back to a file.
@@ -333,25 +333,25 @@ private :
 /// sf::SoundBuffer buffer;
 /// 
 /// // Load it from a file
-/// if (!buffer.LoadFromFile("sound.wav"))
+/// if (!buffer.loadFromFile("sound.wav"))
 /// {
 ///     // error...
 /// }
 /// 
 /// // Create a sound source and bind it to the buffer
 /// sf::Sound sound1;
-/// sound1.SetBuffer(buffer);
+/// sound1.setBuffer(buffer);
 /// 
 /// // Play the sound
-/// sound1.Play();
+/// sound1.play();
 /// 
 /// // Create another sound source bound to the same buffer
 /// sf::Sound sound2;
-/// sound2.SetBuffer(buffer);
+/// sound2.setBuffer(buffer);
 ///
 /// // Play it with a higher pitch -- the first sound remains unchanged
-/// sound2.SetPitch(2);
-/// sound2.Play();
+/// sound2.setPitch(2);
+/// sound2.play();
 /// \endcode
 ///
 /// \see sf::Sound, sf::SoundBufferRecorder

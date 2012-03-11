@@ -76,7 +76,7 @@ public :
     /// \return True if the joystick is connected, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsConnected(unsigned int joystick);
+    static bool isConnected(unsigned int joystick);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the number of buttons supported by a joystick
@@ -88,7 +88,7 @@ public :
     /// \return Number of buttons supported by the joystick
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int GetButtonCount(unsigned int joystick);
+    static unsigned int getButtonCount(unsigned int joystick);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a joystick supports a given axis
@@ -101,7 +101,7 @@ public :
     /// \return True if the joystick supports the axis, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool HasAxis(unsigned int joystick, Axis axis);
+    static bool hasAxis(unsigned int joystick, Axis axis);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a joystick button is pressed
@@ -114,7 +114,7 @@ public :
     /// \return True if the button is pressed, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsButtonPressed(unsigned int joystick, unsigned int button);
+    static bool isButtonPressed(unsigned int joystick, unsigned int button);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current position of a joystick axis
@@ -127,7 +127,7 @@ public :
     /// \return Current position of the axis, in range [-100 .. 100]
     ///
     ////////////////////////////////////////////////////////////
-    static float GetAxisPosition(unsigned int joystick, Axis axis);
+    static float getAxisPosition(unsigned int joystick, Axis axis);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the states of all joysticks
@@ -138,7 +138,7 @@ public :
     /// in this case the joysticks states are not updated automatically.
     ///
     ////////////////////////////////////////////////////////////
-    static void Update();
+    static void update();
 };
 
 } // namespace sf
@@ -173,29 +173,29 @@ public :
 /// \li 8 axes per joystick (sf::Joystick::AxisCount)
 ///
 /// Unlike the keyboard or mouse, the state of joysticks is sometimes
-/// not directly available (depending on the OS), therefore an Update()
+/// not directly available (depending on the OS), therefore an update()
 /// function must be called in order to update the current state of
 /// joysticks. When you have a window with event handling, this is done
 /// automatically, you don't need to call anything. But if you have no
 /// window, or if you want to check joysticks state before creating one,
-/// you must call sf::Joystick::Update explicitely.
+/// you must call sf::Joystick::update explicitely.
 ///
 /// Usage example:
 /// \code
 /// // Is joystick #0 connected?
-/// bool connected = sf::Joystick::IsConnected(0);
+/// bool connected = sf::Joystick::isConnected(0);
 ///
 /// // How many buttons does joystick #0 support?
-/// unsigned int buttons = sf::Joystick::GetButtonCount(0);
+/// unsigned int buttons = sf::Joystick::getButtonCount(0);
 ///
 /// // Does joystick #0 define a X axis?
-/// bool hasX = sf::Joystick::HasAxis(0, sf::Joystick::X);
+/// bool hasX = sf::Joystick::hasAxis(0, sf::Joystick::X);
 ///
 /// // Is button #2 pressed on joystick #0?
-/// bool pressed = sf::Joystick::IsButtonPressed(0, 2);
+/// bool pressed = sf::Joystick::isButtonPressed(0, 2);
 ///
 /// // What's the current position of the Y axis on joystick #0?
-/// float position = sf::Joystick::GetAxisPosition(0, sf::Joystick::Y);
+/// float position = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
 /// \endcode
 ///
 /// \see sf::Keyboard, sf::Mouse

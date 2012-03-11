@@ -70,7 +70,7 @@ public :
     /// \return True if the extension is supported, false if not
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsExtensionSupported(const std::string& extension);
+    static bool isExtensionSupported(const std::string& extension);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OpenAL format that matches the given number of channels
@@ -80,7 +80,7 @@ public :
     /// \return Corresponding format
     ///
     ////////////////////////////////////////////////////////////
-    static int GetFormatFromChannelCount(unsigned int channelCount);
+    static int getFormatFromChannelCount(unsigned int channelCount);
 };
 
 } // namespace priv

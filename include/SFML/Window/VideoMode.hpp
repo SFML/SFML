@@ -66,7 +66,7 @@ public :
     /// \return Current desktop video mode
     ///
     ////////////////////////////////////////////////////////////
-    static VideoMode GetDesktopMode();
+    static VideoMode getDesktopMode();
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve all the video modes supported in fullscreen mode
@@ -82,7 +82,7 @@ public :
     /// \return Array containing all the supported fullscreen modes
     ///
     ////////////////////////////////////////////////////////////
-    static const std::vector<VideoMode>& GetFullscreenModes();
+    static const std::vector<VideoMode>& getFullscreenModes();
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the video mode is valid
@@ -94,14 +94,14 @@ public :
     /// \return True if the video mode is valid for fullscreen mode
     ///
     ////////////////////////////////////////////////////////////
-    bool IsValid() const;
+    bool isValid() const;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int Width;        ///< Video mode width, in pixels
-    unsigned int Height;       ///< Video mode height, in pixels
-    unsigned int BitsPerPixel; ///< Video mode pixel depth, in bits per pixels
+    unsigned int width;        ///< Video mode width, in pixels
+    unsigned int height;       ///< Video mode height, in pixels
+    unsigned int bitsPerPixel; ///< Video mode pixel depth, in bits per pixels
 };
 
 ////////////////////////////////////////////////////////////
@@ -198,31 +198,31 @@ SFML_WINDOW_API bool operator >=(const VideoMode& left, const VideoMode& right);
 ///
 /// sf::VideoMode provides a static function for retrieving
 /// the list of all the video modes supported by the system:
-/// GetFullscreenModes().
+/// getFullscreenModes().
 ///
 /// A custom video mode can also be checked directly for
 /// fullscreen compatibility with its IsValid() function.
 ///
 /// Additionnally, sf::VideoMode provides a static function
-/// to get the mode currently used by the desktop: GetDesktopMode().
+/// to get the mode currently used by the desktop: getDesktopMode().
 /// This allows to build windows with the same size or pixel
 /// depth as the current resolution.
 ///
 /// Usage example:
 /// \code
 /// // Display the list of all the video modes available for fullscreen
-/// std::vector<sf::VideoMode> modes = sf::VideoMode::GetFullscreenModes();
+/// std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
 /// for (std::size_t i = 0; i < modes.size(); ++i)
 /// {
 ///     sf::VideoMode mode = modes[i];
 ///     std::cout << "Mode #" << i << ": "
-///               << mode.Width << "x" << mode.Height << " - "
-///               << mode.BitsPerPixel << " bpp" << std::endl;
+///               << mode.width << "x" << mode.height << " - "
+///               << mode.bitsPerPixel << " bpp" << std::endl;
 /// }
 ///
 /// // Create a window with the same pixel depth as the desktop
-/// sf::VideoMode desktop = sf::VideoMode::GetDesktopMode();
-/// window.Create(sf::VideoMode(1024, 768, desktop.BitsPerPixel), "SFML window");
+/// sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+/// window.create(sf::VideoMode(1024, 768, desktop.bitsPerPixel), "SFML window");
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////

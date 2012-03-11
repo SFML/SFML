@@ -59,7 +59,7 @@ m_ownsWindow(true)
                              0, NULL);
 
     // Create the context
-    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, ContextSettings());
+    createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
 }
 
 
@@ -70,14 +70,14 @@ m_context   (NULL),
 m_ownsWindow(false)
 {
     // Use the same display as the owner window (important!)
-    m_display = static_cast<const WindowImplX11*>(owner)->GetDisplay();
+    m_display = static_cast<const WindowImplX11*>(owner)->getDisplay();
 
     // Get the owner window and its device context
-    m_window = static_cast< ::Window>(owner->GetSystemHandle());
+    m_window = static_cast< ::Window>(owner->getSystemHandle());
 
     // Create the context
     if (m_window)
-        CreateContext(shared, bitsPerPixel, settings);
+        createContext(shared, bitsPerPixel, settings);
 }
 
 
@@ -103,7 +103,7 @@ m_ownsWindow(true)
                              0, NULL);
 
     // Create the context
-    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, settings);
+    createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
 }
 
 
@@ -132,14 +132,14 @@ GlxContext::~GlxContext()
 
 
 ////////////////////////////////////////////////////////////
-bool GlxContext::MakeCurrent()
+bool GlxContext::makeCurrent()
 {
     return m_context && glXMakeCurrent(m_display, m_window, m_context);
 }
 
 
 ////////////////////////////////////////////////////////////
-void GlxContext::Display()
+void GlxContext::display()
 {
     if (m_window)
         glXSwapBuffers(m_display, m_window);
@@ -147,7 +147,7 @@ void GlxContext::Display()
 
 
 ////////////////////////////////////////////////////////////
-void GlxContext::SetVerticalSyncEnabled(bool enabled)
+void GlxContext::setVerticalSyncEnabled(bool enabled)
 {
     const GLubyte* name = reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI");
     PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress(name));
@@ -157,7 +157,7 @@ void GlxContext::SetVerticalSyncEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
+void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
     // Save the creation settings
     m_settings = settings;
@@ -166,7 +166,7 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     XWindowAttributes windowAttributes;
     if (XGetWindowAttributes(m_display, m_window, &windowAttributes) == 0)
     {
-        Err() << "Failed to get the window attributes" << std::endl;
+        err() << "Failed to get the window attributes" << std::endl;
         return;
     }
 
@@ -183,7 +183,7 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     {
         if (visuals)
             XFree(visuals);
-        Err() << "There is no valid visual for the selected screen" << std::endl;
+        err() << "There is no valid visual for the selected screen" << std::endl;
         return;
     }
 
@@ -211,7 +211,7 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
 
         // Evaluate the current configuration
         int color = red + green + blue + alpha;
-        int score = EvaluateFormat(bitsPerPixel, m_settings, color, depth, stencil, multiSampling ? samples : 0);
+        int score = evaluateFormat(bitsPerPixel, m_settings, color, depth, stencil, multiSampling ? samples : 0);
 
         // Keep it if it's better than the current best
         if (score < bestScore)
@@ -224,7 +224,7 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     // Make sure that we have found a visual
     if (!bestVisual)
     {
-        Err() << "Failed to find a suitable pixel format for the window -- cannot create OpenGL context" << std::endl;
+        err() << "Failed to find a suitable pixel format for the window -- cannot create OpenGL context" << std::endl;
         return;
     }
 
@@ -232,7 +232,7 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     GLXContext toShare = shared ? shared->m_context : NULL;
 
     // Create the OpenGL context -- first try context versions >= 3.0 if it is requested (they require special code)
-    while (!m_context && (m_settings.MajorVersion >= 3))
+    while (!m_context && (m_settings.majorVersion >= 3))
     {
         const GLubyte* name = reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB");
         PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = reinterpret_cast<PFNGLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(name));
@@ -245,8 +245,8 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
                 // Create the context
                 int attributes[] =
                 {
-                    GLX_CONTEXT_MAJOR_VERSION_ARB, m_settings.MajorVersion,
-                    GLX_CONTEXT_MINOR_VERSION_ARB, m_settings.MinorVersion,
+                    GLX_CONTEXT_MAJOR_VERSION_ARB, m_settings.majorVersion,
+                    GLX_CONTEXT_MINOR_VERSION_ARB, m_settings.minorVersion,
                     GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
                     0, 0
                 };
@@ -261,16 +261,16 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
         // Invalid version numbers will be generated by this algorithm (like 3.9), but we really don't care
         if (!m_context)
         {
-            if (m_settings.MinorVersion > 0)
+            if (m_settings.minorVersion > 0)
             {
                 // If the minor version is not 0, we decrease it and try again
-                m_settings.MinorVersion--;
+                m_settings.minorVersion--;
             }
             else
             {
                 // If the minor version is 0, we decrease the major version
-                m_settings.MajorVersion--;
-                m_settings.MinorVersion = 9;
+                m_settings.majorVersion--;
+                m_settings.minorVersion = 9;
             }
         }
     }
@@ -279,13 +279,13 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     if (!m_context)
     {
         // set the context version to 2.0 (arbitrary)
-        m_settings.MajorVersion = 2;
-        m_settings.MinorVersion = 0;
+        m_settings.majorVersion = 2;
+        m_settings.minorVersion = 0;
 
         m_context = glXCreateContext(m_display, bestVisual, toShare, true);
         if (!m_context)
         {
-            Err() << "Failed to create an OpenGL context for this window" << std::endl;
+            err() << "Failed to create an OpenGL context for this window" << std::endl;
             return;
         }
     }
@@ -296,9 +296,9 @@ void GlxContext::CreateContext(GlxContext* shared, unsigned int bitsPerPixel, co
     glXGetConfig(m_display, bestVisual, GLX_STENCIL_SIZE,       &stencil);
     glXGetConfig(m_display, bestVisual, GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
     glXGetConfig(m_display, bestVisual, GLX_SAMPLES_ARB,        &samples);
-    m_settings.DepthBits         = static_cast<unsigned int>(depth);
-    m_settings.StencilBits       = static_cast<unsigned int>(stencil);
-    m_settings.AntialiasingLevel = multiSampling ? samples : 0;
+    m_settings.depthBits         = static_cast<unsigned int>(depth);
+    m_settings.stencilBits       = static_cast<unsigned int>(stencil);
+    m_settings.antialiasingLevel = multiSampling ? samples : 0;
 
     // Change the target window's colormap so that it matches the context's one
     ::Window root = RootWindow(m_display, DefaultScreen(m_display));
