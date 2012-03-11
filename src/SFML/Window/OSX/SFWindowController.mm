@@ -289,6 +289,18 @@
 }
 
 
+////////////////////////////////////////////////////////////
+-(NSPoint)position
+{
+    NSPoint pos = [myOGLView frame].origin;
+    
+    // Flip for SFML window coordinate system.
+    pos.y = [self screenHeight] - pos.y;
+    
+    return pos;
+}
+
+
 ////////////////////////////////////////////////////////.
 -(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
 {
@@ -299,6 +311,13 @@
     
     // Place the window.
     [myWindow setFrameTopLeftPoint:point];
+}
+
+
+////////////////////////////////////////////////////////
+-(NSSize)size
+{
+    return [myOGLView frame].size;
 }
 
 

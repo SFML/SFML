@@ -195,12 +195,30 @@
 }
 
 
+////////////////////////////////////////////////////////////
+-(NSPoint)position
+{
+    NSPoint pos = [myView frame].origin;
+    
+    // Flip screen coodinates
+    float const screenHeight = NSHeight([[[myView window] screen] frame]);
+    pos.y = screenHeight - pos.y;
+    
+    return pos;
+}
+
 ////////////////////////////////////////////////////////.
 -(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
 {
     sf::Err() << "Cannot move the view." << std::endl;
 }
 
+
+////////////////////////////////////////////////////////////
+-(NSSize)size
+{
+    return [myView frame].size;
+}
 
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
