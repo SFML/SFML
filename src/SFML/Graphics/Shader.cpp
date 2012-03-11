@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/glCheck.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>

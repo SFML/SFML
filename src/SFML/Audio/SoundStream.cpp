@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundStream.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/alCheck.hpp>
+#include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
 

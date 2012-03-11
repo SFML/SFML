@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/alCheck.hpp>
+#include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/Listener.hpp>
 #include <SFML/System/Err.hpp>
 

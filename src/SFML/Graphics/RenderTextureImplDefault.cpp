@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTextureImplDefault.hpp>
-#include <SFML/Graphics/glCheck.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/TextureSaver.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>

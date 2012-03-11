@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/glCheck.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 
 
 namespace sf

@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/glCheck.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
 
 

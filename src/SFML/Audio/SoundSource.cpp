@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundSource.hpp>
-#include <SFML/Audio/alCheck.hpp>
+#include <SFML/Audio/ALCheck.hpp>
 
 
 namespace sf

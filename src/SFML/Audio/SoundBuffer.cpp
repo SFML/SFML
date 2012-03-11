@@ -29,7 +29,7 @@
 #include <SFML/Audio/SoundFile.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/alCheck.hpp>
+#include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Err.hpp>
 #include <memory>
 
