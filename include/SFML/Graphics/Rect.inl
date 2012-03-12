@@ -64,9 +64,9 @@ template <typename T>
 template <typename U>
 Rect<T>::Rect(const Rect<U>& rectangle) :
 left  (static_cast<T>(rectangle.left)),
-top   (static_cast<T>(rectangle.Top)),
-width (static_cast<T>(rectangle.Width)),
-height(static_cast<T>(rectangle.Height))
+top   (static_cast<T>(rectangle.top)),
+width (static_cast<T>(rectangle.width)),
+height(static_cast<T>(rectangle.height))
 {
 }
 
