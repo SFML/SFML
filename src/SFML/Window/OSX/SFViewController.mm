@@ -38,14 +38,14 @@
 -(id)initWithView:(NSView *)view
 {
     if ((self = [super init])) {
-        myRequester = 0;
+        m_requester = 0;
         
         // Retain the view for our own use.
-        myView = [view retain];
+        m_view = [view retain];
         
-        if (myView == nil) {
+        if (m_view == nil) {
             
-            sf::Err() 
+            sf::err() 
             << "No view was given to initWithWindow:."
             << std::endl;
             
@@ -53,14 +53,14 @@
         }
         
         // Create the view.
-        NSRect frame = [myView frame];
+        NSRect frame = [m_view frame];
         frame.origin.x = 0;
         frame.origin.y = 0;
-        myOGLView = [[SFOpenGLView alloc] initWithFrame:frame];
+        m_oglView = [[SFOpenGLView alloc] initWithFrame:frame];
         
-        if (myOGLView == nil) {
+        if (m_oglView == nil) {
             
-            sf::Err()
+            sf::err()
             << "Could not create an instance of NSOpenGLView "
             << "in (SFViewController -initWithView:)."
             << std::endl;
@@ -69,7 +69,7 @@
         }
         
         // Set the (OGL) view to the view as its "content" view.
-        [myView addSubview:myOGLView];
+        [m_view addSubview:m_oglView];
     }
     
     return self;
@@ -81,8 +81,8 @@
 {
     [self closeWindow];
     
-    [myView release];
-    [myOGLView release];
+    [m_view release];
+    [m_oglView release];
     
     [super dealloc];
 }
@@ -92,36 +92,36 @@
 -(void)setRequesterTo:(sf::priv::WindowImplCocoa *)requester
 {
     // Forward to the view.
-    [myOGLView setRequesterTo:requester];
-    myRequester = requester;
+    [m_oglView setRequesterTo:requester];
+    m_requester = requester;
 }
 
 
 ////////////////////////////////////////////////////////
 -(sf::WindowHandle)getSystemHandle
 {
-    return myView;
+    return m_view;
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)changeTitle:(NSString *)title
 {
-    sf::Err() << "Cannot change the title of the view." << std::endl;
+    sf::err() << "Cannot change the title of the view." << std::endl;
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)enableKeyRepeat
 {
-    [myOGLView enableKeyRepeat];
+    [m_oglView enableKeyRepeat];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)disableKeyRepeat
 {
-    [myOGLView disableKeyRepeat];
+    [m_oglView disableKeyRepeat];
 }
 
 
@@ -142,21 +142,21 @@
 ////////////////////////////////////////////////////////
 -(void)hideWindow
 {
-    [myView setHidden:YES];
+    [m_view setHidden:YES];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)showWindow
 {
-    [myView setHidden:NO];
+    [m_view setHidden:NO];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)closeWindow
 {
-    sf::Err() << "Cannot close the view." << std::endl;
+    sf::err() << "Cannot close the view." << std::endl;
     [self setRequesterTo:0];
 }
 
@@ -164,25 +164,25 @@
 ////////////////////////////////////////////////////////
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
 {
-    if (myRequester == 0) return;
+    if (m_requester == 0) return;
     
     // Create a SFML event.
-    myRequester->MouseMovedAt(x, y);
+    m_requester->mouseMovedAt(x, y);
     
     // Flip for SFML window coordinate system
-    y = NSHeight([[myView window] frame]) - y;
+    y = NSHeight([[m_view window] frame]) - y;
     
     // Adjust for view reference instead of window
-    y -= NSHeight([[myView window] frame]) - NSHeight([myOGLView frame]);
+    y -= NSHeight([[m_view window] frame]) - NSHeight([m_oglView frame]);
     
     // Convert to screen coordinates
-    NSPoint screenCoord = [[myView window] convertBaseToScreen:NSMakePoint(x, y)];
+    NSPoint screenCoord = [[m_view window] convertBaseToScreen:NSMakePoint(x, y)];
     
     // Flip screen coodinates
-    float const screenHeight = NSHeight([[[myView window] screen] frame]);
+    float const screenHeight = NSHeight([[[m_view window] screen] frame]);
     screenCoord.y = screenHeight - screenCoord.y;
     
-    CGDirectDisplayID screenNumber = (CGDirectDisplayID)[[[[[myView window] screen] deviceDescription] valueForKey:@"NSScreenNumber"] intValue];
+    CGDirectDisplayID screenNumber = (CGDirectDisplayID)[[[[[m_view window] screen] deviceDescription] valueForKey:@"NSScreenNumber"] intValue];
     
     // Place the cursor.
     CGDisplayMoveCursorToPoint(screenNumber, CGPointMake(screenCoord.x, screenCoord.y));
@@ -198,10 +198,10 @@
 ////////////////////////////////////////////////////////////
 -(NSPoint)position
 {
-    NSPoint pos = [myView frame].origin;
+    NSPoint pos = [m_view frame].origin;
     
     // Flip screen coodinates
-    float const screenHeight = NSHeight([[[myView window] screen] frame]);
+    float const screenHeight = NSHeight([[[m_view window] screen] frame]);
     pos.y = screenHeight - pos.y;
     
     return pos;
@@ -210,25 +210,25 @@
 ////////////////////////////////////////////////////////.
 -(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
 {
-    sf::Err() << "Cannot move the view." << std::endl;
+    sf::err() << "Cannot move the view." << std::endl;
 }
 
 
 ////////////////////////////////////////////////////////////
 -(NSSize)size
 {
-    return [myView frame].size;
+    return [m_view frame].size;
 }
 
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
 {
-    NSRect frame = NSMakeRect([myView frame].origin.x,
-                              [myView frame].origin.y,
+    NSRect frame = NSMakeRect([m_view frame].origin.x,
+                              [m_view frame].origin.y,
                               width,
                               height);
     
-    [myView setFrame:frame];
+    [m_view setFrame:frame];
 }
 
 
@@ -237,22 +237,22 @@
               by:(unsigned int)height 
             with:(sf::Uint8 const *)pixels
 {
-    sf::Err() << "Cannot set an icon to the view." << std::endl;
+    sf::err() << "Cannot set an icon to the view." << std::endl;
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)processEvent
 {
-    sf::Err() << "Cannot process event from the view." << std::endl;
+    sf::err() << "Cannot process event from the view." << std::endl;
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)applyContext:(NSOpenGLContext *)context
 {
-    [myOGLView setOpenGLContext:context];
-    [context setView:myOGLView];
+    [m_oglView setOpenGLContext:context];
+    [context setView:m_oglView];
 }
 
 

@@ -54,7 +54,7 @@ public :
     /// \return True if the joystick is connected, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsConnected(unsigned int index);
+    static bool isConnected(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the joystick
@@ -64,13 +64,13 @@ public :
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool Open(unsigned int index);
+    bool open(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the joystick
     ///
     ////////////////////////////////////////////////////////////
-    void Close();
+    void close();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the joystick capabilities
@@ -78,7 +78,7 @@ public :
     /// \return Joystick capabilities
     ///
     ////////////////////////////////////////////////////////////
-    JoystickCaps GetCapabilities() const;
+    JoystickCaps getCapabilities() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state
@@ -86,7 +86,7 @@ public :
     /// \return Joystick state
     ///
     ////////////////////////////////////////////////////////////
-    JoystickState Update();
+    JoystickState update();
 
 private :
 
@@ -97,12 +97,12 @@ private :
     typedef std::map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
     typedef std::vector<IOHIDElementRef>                  ButtonsVector;
     
-    AxisMap       myAxis;    ///< Axis (IOHIDElementRef) connected to the joystick
-    ButtonsVector myButtons; ///< Buttons (IOHIDElementRef) connected to the joystick
-    unsigned int  myIndex;   ///< SFML index
+    AxisMap       m_axis;    ///< Axis (IOHIDElementRef) connected to the joystick
+    ButtonsVector m_buttons; ///< Buttons (IOHIDElementRef) connected to the joystick
+    unsigned int  m_index;   ///< SFML index
     
-    static Location myLocationIDs[sf::Joystick::Count]; ///< Global Joystick register
-    /// For a corresponding SFML index, myLocationIDs is either some usb 
+    static Location m_locationIDs[sf::Joystick::Count]; ///< Global Joystick register
+    /// For a corresponding SFML index, m_locationIDs is either some usb 
     /// location or 0 if there isn't currently a connected joystick device
 };
 

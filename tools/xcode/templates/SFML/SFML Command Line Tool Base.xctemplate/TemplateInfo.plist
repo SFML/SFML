@@ -237,7 +237,7 @@ sf::Sprite sprite(texture);
 </string>
 
 						<key>main.cpp:main:image_load</key>
-						<string>if (!texture.LoadFromFile("cute_image.jpg"))</string>
+						<string>if (!texture.loadFromFile("cute_image.jpg"))</string>
 						
 						<key>main.cpp:main:text_init</key>
 						<string>
@@ -248,22 +248,22 @@ sf::Font font;
 						<key>main.cpp:main:text_finalize</key>
 						<string>	return EXIT_FAILURE;
 sf::Text text("Hello SFML", font, 50);
-text.SetColor(sf::Color::Black);
+text.setColor(sf::Color::Black);
 </string>
 						
 						<key>main.cpp:main:text_load</key>
-						<string>if (!font.LoadFromFile("sansation.ttf"))</string>
+						<string>if (!font.loadFromFile("sansation.ttf"))</string>
 						
 						<key>main.cpp:main:graphics_display</key>
 						<string>
 	// Clear screen
-	window.Clear();
+	window.clear();
 	
 	// Draw the sprite
-	window.Draw(sprite);
+	window.draw(sprite);
 	
 	// Draw the string
-	window.Draw(text);
+	window.draw(text);
 </string>
 						
 						<!-- erase window module content -->
@@ -368,11 +368,11 @@ text.SetColor(sf::Color::Black);
 						<string>
 // Load a music to play
 sf::Music music;
-if (!music.OpenFromFile("nice_music.ogg"))
+if (!music.openFromFile("nice_music.ogg"))
 	return EXIT_FAILURE;
 
 // Play the music
-music.Play();
+music.play();
     </string>
     					<key>nice_music.ogg</key>
 						<dict>
@@ -529,26 +529,26 @@ int main (int argc, const char * argv[])
 	    <key>main.cpp:main:event_loop</key>
 	    <string>
 // Start the game loop
-while (window.IsOpen())
+while (window.isOpen())
 {
 	// Process events
 	sf::Event event;
-	while (window.PollEvent(event))
+	while (window.pollEvent(event))
 	{
 		// Close window : exit
-		if (event.Type == sf::Event::Closed)
-			window.Close();
+		if (event.type == sf::Event::Closed)
+			window.close();
         
 		// Escape pressed : exit
-		if (event.Type == sf::Event::KeyPressed &amp;&amp; event.Key.Code == sf::Keyboard::Escape)
-			window.Close();
+		if (event.type == sf::Event::KeyPressed &amp;&amp; event.key.code == sf::Keyboard::Escape)
+			window.close();
 	}
 </string>
 		
 		<key>main.cpp:main:display</key>
 		<string>
 	// Update the window
-	window.Display();
+	window.display();
 }
 </string>
 		
@@ -569,7 +569,7 @@ while (window.IsOpen())
  </string>
  		
  		<key>main.cpp:main:audio_loop</key>
- 		<string>while (music.GetStatus() == sf::Music::Playing) {
+ 		<string>while (music.getStatus() == sf::Music::Playing) {
 	sf::Sleep(100);
 }</string>
 	</dict>

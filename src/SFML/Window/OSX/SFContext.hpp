@@ -107,7 +107,7 @@ public:
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Display();
+    virtual void display();
     
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -120,7 +120,7 @@ public:
     /// \param enabled : True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetVerticalSyncEnabled(bool enabled);
+    virtual void setVerticalSyncEnabled(bool enabled);
     
 protected:
     ////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ protected:
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent();
+    virtual bool makeCurrent();
     
 private:
     ////////////////////////////////////////////////////////////
@@ -142,16 +142,16 @@ private:
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void CreateContext(SFContext* shared, 
+    void createContext(SFContext* shared, 
                        unsigned int bitsPerPixel, 
                        const ContextSettings& settings);
     
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    NSOpenGLContextRef    myContext;       ///< OpenGL context.
-    NSOpenGLViewRef       myView;          ///< Only for offscreen context.
-    NSWindowRef           myWindow;        ///< Only for offscreen context.
+    NSOpenGLContextRef    m_context;       ///< OpenGL context.
+    NSOpenGLViewRef       m_view;          ///< Only for offscreen context.
+    NSWindowRef           m_window;        ///< Only for offscreen context.
 };
     
 } // namespace priv

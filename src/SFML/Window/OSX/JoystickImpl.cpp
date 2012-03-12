@@ -36,37 +36,37 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-JoystickImpl::Location JoystickImpl::myLocationIDs[sf::Joystick::Count] = { 0 };
+JoystickImpl::Location JoystickImpl::m_locationIDs[sf::Joystick::Count] = { 0 };
 
 
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::IsConnected(unsigned int index)
+bool JoystickImpl::isConnected(unsigned int index)
 {
     bool state = false; // Is the index-th joystick connected ?
     
     // First, let's check if the device was previously detected :
     
-    if (myLocationIDs[index] != 0) {
+    if (m_locationIDs[index] != 0) {
         state = true;
     }
     
     // Otherwise, let's check if it is now connected :
-    else { // i.e., myLocationIDs[index] == 0
+    else { // i.e., m_locationIDs[index] == 0
         
         // if there is more connected joystick to the HID manager than
         // opened joystick devices then we find the new one.
         
         unsigned int openedCount = 0;
         for (unsigned int i(0); i < sf::Joystick::Count; ++i) {
-            if (myLocationIDs[i] != 0) openedCount++;
+            if (m_locationIDs[i] != 0) openedCount++;
         }
         
-        unsigned int connectedCount = HIDJoystickManager::GetInstance().GetJoystickCount();
+        unsigned int connectedCount = HIDJoystickManager::getInstance().getJoystickCount();
         
         if (connectedCount > openedCount) {
         
             // Get all devices
-            CFSetRef devices = HIDJoystickManager::GetInstance().CopyJoysticks();
+            CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
             
             if (devices != NULL) {
                 
@@ -78,15 +78,15 @@ bool JoystickImpl::IsConnected(unsigned int index)
                     CFSetGetValues(devices, array);
                     
                     // If there exists a device d s.t. there is no j s.t.
-                    // myLocationIDs[j] == d's location then we have a new device.
+                    // m_locationIDs[j] == d's location then we have a new device.
                     
                     for (CFIndex didx(0); didx < size; ++didx) {
                         IOHIDDeviceRef d = (IOHIDDeviceRef)array[didx];
-                        Location dloc = HIDInputManager::GetLocationID(d);
+                        Location dloc = HIDInputManager::getLocationID(d);
                         
                         bool foundJ = false;
                         for (unsigned int j(0); j < Joystick::Count; ++j) {
-                            if (myLocationIDs[j] == dloc) {
+                            if (m_locationIDs[j] == dloc) {
                                 foundJ = true;
                                 break; // no need to loop again
                             }
@@ -98,7 +98,7 @@ bool JoystickImpl::IsConnected(unsigned int index)
                         } else {
                             // This is a new device
                             // We set it up for Open(..)
-                            myLocationIDs[index] = dloc;
+                            m_locationIDs[index] = dloc;
                             state = true;
                             break; // We stop looking for a new device
                         }
@@ -116,13 +116,13 @@ bool JoystickImpl::IsConnected(unsigned int index)
 
 
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::Open(unsigned int index)
+bool JoystickImpl::open(unsigned int index)
 {
-    myIndex = index;
-    Location deviceLoc = myLocationIDs[index]; // The device we need to load
+    m_index = index;
+    Location deviceLoc = m_locationIDs[index]; // The device we need to load
     
     // Get all devices
-    CFSetRef devices = HIDJoystickManager::GetInstance().CopyJoysticks();
+    CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
     if (devices == NULL) {
         return false;
     }
@@ -136,7 +136,7 @@ bool JoystickImpl::Open(unsigned int index)
     IOHIDDeviceRef self = 0;
     for (CFIndex i(0); i < joysticksCount; ++i) {
         IOHIDDeviceRef d = (IOHIDDeviceRef)devicesArray[i];
-        if (deviceLoc == HIDInputManager::GetLocationID(d)) {
+        if (deviceLoc == HIDInputManager::getLocationID(d)) {
             self = d;
             break; // We found it so we stop looping.
         }
@@ -178,27 +178,27 @@ bool JoystickImpl::Open(unsigned int index)
                 switch (IOHIDElementGetUsage(element)) {
                         
                     case kHIDUsage_GD_X:
-                        myAxis[Joystick::X] = element;
+                        m_axis[Joystick::X] = element;
                         break;
                         
                     case kHIDUsage_GD_Y:
-                        myAxis[Joystick::Y] = element;
+                        m_axis[Joystick::Y] = element;
                         break;
                         
                     case kHIDUsage_GD_Z:
-                        myAxis[Joystick::Z] = element;
+                        m_axis[Joystick::Z] = element;
                         break;
                         
                     case kHIDUsage_GD_Rx:
-                        myAxis[Joystick::U] = element; 
+                        m_axis[Joystick::U] = element; 
                         break;
                         
                     case kHIDUsage_GD_Ry:
-                        myAxis[Joystick::V] = element; 
+                        m_axis[Joystick::V] = element; 
                         break;
                         
                     case kHIDUsage_GD_Rz:
-                        myAxis[Joystick::R] = element; 
+                        m_axis[Joystick::R] = element; 
                         break;
                         
                         // kHIDUsage_GD_Vx, kHIDUsage_GD_Vy, kHIDUsage_GD_Vz are ignored.
@@ -206,8 +206,8 @@ bool JoystickImpl::Open(unsigned int index)
                 break;
                 
             case kIOHIDElementTypeInput_Button:
-                if (myButtons.size() < Joystick::ButtonCount) { // If we have free slot...
-                    myButtons.push_back(element); // ...we add this element to the list
+                if (m_buttons.size() < Joystick::ButtonCount) { // If we have free slot...
+                    m_buttons.push_back(element); // ...we add this element to the list
                 } else {
                     // Too many buttons. We ignore this one.
                 }
@@ -222,10 +222,10 @@ bool JoystickImpl::Open(unsigned int index)
     // Maybe kIOHIDElementTypeInput_Axis is the corresponding type but I can't test.
     
     // Retain all these objets for personal use
-    for (ButtonsVector::iterator it(myButtons.begin()); it != myButtons.end(); ++it) {
+    for (ButtonsVector::iterator it(m_buttons.begin()); it != m_buttons.end(); ++it) {
         CFRetain(*it);
     }
-    for (AxisMap::iterator it(myAxis.begin()); it != myAxis.end(); ++it) {
+    for (AxisMap::iterator it(m_axis.begin()); it != m_axis.end(); ++it) {
         CFRetain(it->second);
     }
     
@@ -241,34 +241,34 @@ bool JoystickImpl::Open(unsigned int index)
 
 
 ////////////////////////////////////////////////////////////
-void JoystickImpl::Close()
+void JoystickImpl::close()
 {
-    for (ButtonsVector::iterator it(myButtons.begin()); it != myButtons.end(); ++it) {
+    for (ButtonsVector::iterator it(m_buttons.begin()); it != m_buttons.end(); ++it) {
         CFRelease(*it);
     }
-    myButtons.clear();
+    m_buttons.clear();
     
-    for (AxisMap::iterator it(myAxis.begin()); it != myAxis.end(); ++it) {
+    for (AxisMap::iterator it(m_axis.begin()); it != m_axis.end(); ++it) {
         CFRelease(it->second);
     }
-    myAxis.clear();
+    m_axis.clear();
     
     // And we unregister this joystick
-    myLocationIDs[myIndex] = 0;
+    m_locationIDs[m_index] = 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-JoystickCaps JoystickImpl::GetCapabilities() const
+JoystickCaps JoystickImpl::getCapabilities() const
 {
     JoystickCaps caps;
     
     // Buttons :
-    caps.ButtonCount = myButtons.size();
+    caps.buttonCount = m_buttons.size();
     
     // Axis :
-    for (AxisMap::const_iterator it(myAxis.begin()); it != myAxis.end(); ++it) {
-        caps.Axes[it->first] = true;
+    for (AxisMap::const_iterator it(m_axis.begin()); it != m_axis.end(); ++it) {
+        caps.axes[it->first] = true;
     }
     
     return caps;
@@ -276,20 +276,20 @@ JoystickCaps JoystickImpl::GetCapabilities() const
 
 
 ////////////////////////////////////////////////////////////
-JoystickState JoystickImpl::Update()
+JoystickState JoystickImpl::update()
 {
     static const JoystickState disconnectedState; // return this if joystick was disconnected
     JoystickState       state; // otherwise return that
-    state.Connected = true;
+    state.connected = true;
     
-    // Note : free up is done in Close() which is called, if required,
+    // Note : free up is done in close() which is called, if required,
     //        by the joystick manager. So we don't release buttons nor axes here.
     
     // First, let's determine if the joystick is still connected
-    Location selfLoc = myLocationIDs[myIndex];
+    Location selfLoc = m_locationIDs[m_index];
     
     // Get all devices
-    CFSetRef devices = HIDJoystickManager::GetInstance().CopyJoysticks();
+    CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
     if (devices == NULL) {
         return disconnectedState;
     }
@@ -303,7 +303,7 @@ JoystickState JoystickImpl::Update()
     bool found = false;
     for (CFIndex i(0); i < joysticksCount; ++i) {
         IOHIDDeviceRef d = (IOHIDDeviceRef)devicesArray[i];
-        if (selfLoc == HIDInputManager::GetLocationID(d)) {
+        if (selfLoc == HIDInputManager::getLocationID(d)) {
             found = true;
             break; // Stop looping
         }
@@ -322,7 +322,7 @@ JoystickState JoystickImpl::Update()
     
     // Update buttons' state
     unsigned int i = 0;
-    for (ButtonsVector::iterator it(myButtons.begin()); it != myButtons.end(); ++it, ++i) {
+    for (ButtonsVector::iterator it(m_buttons.begin()); it != m_buttons.end(); ++it, ++i) {
         IOHIDValueRef value = 0;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(*it), *it, &value);
         
@@ -333,11 +333,11 @@ JoystickState JoystickImpl::Update()
         }
         
         // 1 means pressed, others mean released
-        state.Buttons[i] = IOHIDValueGetIntegerValue(value) == 1;
+        state.buttons[i] = IOHIDValueGetIntegerValue(value) == 1;
     }
     
     // Update axes' state
-    for (AxisMap::iterator it = myAxis.begin(); it != myAxis.end(); ++it) {
+    for (AxisMap::iterator it = m_axis.begin(); it != m_axis.end(); ++it) {
         IOHIDValueRef value = 0;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(it->second), it->second, &value);
         
@@ -363,7 +363,7 @@ JoystickState JoystickImpl::Update()
         double  scaledMax     =  100;
         double  physicalValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
         float   scaledValue   = ((physicalValue - physicalMin) * (scaledMax - scaledMin) / (physicalMax - physicalMin)) + scaledMin;
-        state.Axes[it->first] = scaledValue;
+        state.axes[it->first] = scaledValue;
     }
     
     

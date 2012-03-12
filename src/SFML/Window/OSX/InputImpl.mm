@@ -55,9 +55,9 @@ namespace priv
 /// \return nil if something went wrong or a SFOpenGLView*.
 ///
 ////////////////////////////////////////////////////////////    
-SFOpenGLView* GetSFOpenGLViewFromSFMLWindow(const Window& window)
+SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
 {
-    id nsHandle = (id)window.GetSystemHandle();
+    id nsHandle = (id)window.getSystemHandle();
     
     // Get our SFOpenGLView from ...
     SFOpenGLView* view = nil;
@@ -68,7 +68,7 @@ SFOpenGLView* GetSFOpenGLViewFromSFMLWindow(const Window& window)
         
         // Subview doesn't match ?
         if (![view isKindOfClass:[SFOpenGLView class]]) {
-            sf::Err() << "The content view is not a valid SFOpenGLView" 
+            sf::err() << "The content view is not a valid SFOpenGLView" 
                       << std::endl;
             view = nil;
         }
@@ -85,13 +85,13 @@ SFOpenGLView* GetSFOpenGLViewFromSFMLWindow(const Window& window)
         
         // No matching subview ?
         if (view == nil) {
-            sf::Err() << "Cannot find a valid SFOpenGLView subview." << std::endl;
+            sf::err() << "Cannot find a valid SFOpenGLView subview." << std::endl;
 
         }
         
     } else {
         if (nsHandle != 0) {
-            sf::Err() << "The system handle is neither a <NSWindow*> nor <NSView*>"
+            sf::err() << "The system handle is neither a <NSWindow*> nor <NSView*>"
                       << "object. This shouldn't happen."
                       << std::endl;
         } else {
@@ -104,34 +104,34 @@ SFOpenGLView* GetSFOpenGLViewFromSFMLWindow(const Window& window)
 }
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::IsKeyPressed(Keyboard::Key key)
+bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    return HIDInputManager::GetInstance().IsKeyPressed(key);
+    return HIDInputManager::getInstance().isKeyPressed(key);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
+bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    return HIDInputManager::GetInstance().IsMouseButtonPressed(button);
+    return HIDInputManager::getInstance().isMouseButtonPressed(button);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::GetMousePosition()
+Vector2i InputImpl::getMousePosition()
 {
     // Reverse Y axis to match SFML coord.
     NSPoint pos = [NSEvent mouseLocation];
-    pos.y = sf::VideoMode::GetDesktopMode().Height - pos.y;
+    pos.y = sf::VideoMode::getDesktopMode().height - pos.y;
 
     return Vector2i(pos.x, pos.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
+Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 {
-    SFOpenGLView* view = GetSFOpenGLViewFromSFMLWindow(relativeTo);
+    SFOpenGLView* view = getSFOpenGLViewFromSFMLWindow(relativeTo);
     
     // No view ?
     if (view == nil) {
@@ -146,7 +146,7 @@ Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::SetMousePosition(const Vector2i& position)
+void InputImpl::setMousePosition(const Vector2i& position)
 {
     // Here we don't need to reverse the coordinates.
     CGPoint pos = CGPointMake(position.x, position.y);
@@ -163,9 +163,9 @@ void InputImpl::SetMousePosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
+void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
 {
-    SFOpenGLView* view = GetSFOpenGLViewFromSFMLWindow(relativeTo);
+    SFOpenGLView* view = getSFOpenGLViewFromSFMLWindow(relativeTo);
     
     // No view ?
     if (view == nil) {

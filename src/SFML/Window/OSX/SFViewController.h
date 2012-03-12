@@ -39,9 +39,9 @@
 ////////////////////////////////////////////////////////////
 
 @interface SFViewController : NSObject <WindowImplDelegateProtocol> {
-    NSView*                     myView;
-    SFOpenGLView*               myOGLView;
-    sf::priv::WindowImplCocoa*  myRequester;
+    NSView*                     m_view;
+    SFOpenGLView*               m_oglView;
+    sf::priv::WindowImplCocoa*  m_requester;
 }
 
 -(id)initWithView:(NSView *)view;

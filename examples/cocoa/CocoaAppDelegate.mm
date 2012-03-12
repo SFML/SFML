@@ -39,23 +39,23 @@ struct SFMLmainWindow
     , background(sf::Color::Blue)
     {
         std::string resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
-        if (!logo.LoadFromFile(resPath + "/logo.png")) {
+        if (!logo.loadFromFile(resPath + "/logo.png")) {
             NSLog(@"Couldn't load the logo image");
         }
         
-        logo.SetSmooth(true);
+        logo.setSmooth(true);
         
-        sprite.SetTexture(logo, true);
-        sf::FloatRect rect = sprite.GetLocalBounds();
-        sf::Vector2f size(rect.Width, rect.Height);
-        sprite.SetOrigin(size / 2.f);
-        sprite.Scale(0.3, 0.3);
+        sprite.setTexture(logo, true);
+        sf::FloatRect rect = sprite.getLocalBounds();
+        sf::Vector2f size(rect.width, rect.height);
+        sprite.setOrigin(size / 2.f);
+        sprite.scale(0.3, 0.3);
         
-        unsigned int ww = renderWindow.GetSize().x;
-        unsigned int wh = renderWindow.GetSize().y;
-        sprite.SetPosition(sf::Vector2f(ww, wh) / 2.f);
+        unsigned int ww = renderWindow.getSize().x;
+        unsigned int wh = renderWindow.getSize().y;
+        sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
         
-        text.SetColor(sf::Color::White);
+        text.setColor(sf::Color::White);
     }
     
     sf::RenderWindow    renderWindow;
@@ -82,15 +82,15 @@ struct SFMLmainWindow
 // Finally, the implementation
 @implementation CocoaAppDelegate
 
-@synthesize window          = _window;
-@synthesize sfmlView        = _sfmlView;
-@synthesize textField       = _textField;
+@synthesize window          = m_window;
+@synthesize sfmlView        = m_sfmlView;
+@synthesize textField       = m_textField;
 
-@synthesize mainWindow      = _mainWindow;
-@synthesize renderTimer     = _renderTimer;
-@synthesize visible         = _visible;
+@synthesize mainWindow      = m_mainWindow;
+@synthesize renderTimer     = m_renderTimer;
+@synthesize visible         = m_visible;
 
-@synthesize initialized     = _initialized;
+@synthesize initialized     = m_initialized;
 
 - (id)init {
     self = [super init];
@@ -106,7 +106,7 @@ struct SFMLmainWindow
     {
         // Init the SFML render area.
         self.mainWindow = new SFMLmainWindow(self.sfmlView);
-        self.mainWindow->text.SetString([self.textField.stringValue tostdwstring]);
+        self.mainWindow->text.setString([self.textField.stringValue tostdwstring]);
         self.visible = YES;
         
         // Launch the timer to periodically display our stuff into the Cocoa view.
@@ -135,7 +135,7 @@ struct SFMLmainWindow
 -(void)dealloc
 {
     [self.renderTimer invalidate];
-    self.mainWindow->renderWindow.Close();
+    self.mainWindow->renderWindow.close();
     
     self.window             = nil;
     self.sfmlView           = nil;
@@ -152,27 +152,27 @@ struct SFMLmainWindow
 {
     // Scaling
     /* /!\ we do this at 60fps so choose low scaling factor! /!\ */
-    if (sf::Keyboard::IsKeyPressed(sf::Keyboard::Up))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
-        self.mainWindow->sprite.Scale(1.01, 1.01);
+        self.mainWindow->sprite.scale(1.01f, 1.01f);
     }
-    if (sf::Keyboard::IsKeyPressed(sf::Keyboard::Down))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
     {
-        self.mainWindow->sprite.Scale(0.99, 0.99);
+        self.mainWindow->sprite.scale(0.99f, 0.99f);
     }
     
     // Clear the window, display some stuff and display it into our view.
     
-    self.mainWindow->renderWindow.Clear(self.mainWindow->background);
+    self.mainWindow->renderWindow.clear(self.mainWindow->background);
     
     if (self.visible)
     {
-        self.mainWindow->renderWindow.Draw(self.mainWindow->sprite);
+        self.mainWindow->renderWindow.draw(self.mainWindow->sprite);
     }
     
-    self.mainWindow->renderWindow.Draw(self.mainWindow->text);
+    self.mainWindow->renderWindow.draw(self.mainWindow->text);
     
-    self.mainWindow->renderWindow.Display();
+    self.mainWindow->renderWindow.display();
 }
 
 -(IBAction)colorChanged:(NSPopUpButton *)sender
@@ -201,7 +201,7 @@ struct SFMLmainWindow
     if (self.initialized)
     {
         float angle = [sender floatValue];
-        self.mainWindow->sprite.SetRotation(angle);
+        self.mainWindow->sprite.setRotation(angle);
     }
 }
 
@@ -214,7 +214,7 @@ struct SFMLmainWindow
 -(IBAction)textChanged:(NSTextField *)sender
 {
     if (self.initialized)
-        self.mainWindow->text.SetString([[sender stringValue] tostdwstring]);
+        self.mainWindow->text.setString([[sender stringValue] tostdwstring]);
 }
 
 - (IBAction)updateText:(NSButton *)sender

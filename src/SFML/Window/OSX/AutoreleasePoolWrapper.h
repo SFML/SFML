@@ -30,7 +30,7 @@
 /// See SPECIAL CONSIDERATION in implementation file.
 ///
 //////////////////////////////////////////////////////////// 
-void RetainPool(void);
+void retainPool(void);
 
 ////////////////////////////////////////////////////////////
 /// \brief Release the pool.
@@ -39,13 +39,13 @@ void RetainPool(void);
 /// See SPECIAL CONSIDERATION in implementation file.
 ///
 //////////////////////////////////////////////////////////// 
-void ReleasePool(void);
+void releasePool(void);
 
 ////////////////////////////////////////////////////////////
 /// \brief Drain the pool.
 ///
-/// ReleasePool must be called at least once before DrainPool.
+/// releasePool must be called at least once before drainPool.
 ///
 //////////////////////////////////////////////////////////// 
-void DrainPool();
+void drainPool();
 

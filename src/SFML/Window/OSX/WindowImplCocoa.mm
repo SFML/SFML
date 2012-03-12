@@ -44,26 +44,26 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
-: myShowCursor(true)
+: m_showCursor(true)
 {
     // Ask for a pool.
-    RetainPool();
+    retainPool();
     
     // Treat the handle as it real type
     id nsHandle = (id)handle;
     if ([nsHandle isKindOfClass:[NSWindow class]]) {
         
         // We have a window.
-        myDelegate = [[SFWindowController alloc] initWithWindow:nsHandle];
+        m_delegate = [[SFWindowController alloc] initWithWindow:nsHandle];
     
     } else if ([nsHandle isKindOfClass:[NSView class]]) {
         
         // We have a view.
-        myDelegate = [[SFViewController alloc] initWithView:nsHandle];
+        m_delegate = [[SFViewController alloc] initWithView:nsHandle];
         
     } else {
         
-        sf::Err()
+        sf::err()
             << "Cannot import this Window Handle because it is neither "
             << "a <NSWindow*> nor <NSView*> object "
             << "(or any of their subclasses). You gave a <" 
@@ -75,7 +75,7 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
     }
      
     // NO :
-    // [myDelegate setRequesterTo:this];
+    // [m_delegate setRequesterTo:this];
     // because we don't handle event.
 }
     
@@ -84,44 +84,44 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
 WindowImplCocoa::WindowImplCocoa(VideoMode mode, 
                                  const std::string& title, 
                                  unsigned long style)
-: myShowCursor(true)
+: m_showCursor(true)
 {
     // Transform the app process.
-    SetUpProcess();
+    setUpProcess();
     
     // Ask for a pool.
-    RetainPool();
+    retainPool();
     
-    myDelegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
-    [myDelegate changeTitle:stringToNSString(title)];
-    [myDelegate setRequesterTo:this];
+    m_delegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
+    [m_delegate changeTitle:stringToNSString(title)];
+    [m_delegate setRequesterTo:this];
 }
 
     
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::~WindowImplCocoa()
 {
-    [myDelegate closeWindow];
+    [m_delegate closeWindow];
     
-    [myDelegate release];
+    [m_delegate release];
     
-    ReleasePool();
+    releasePool();
     
-    DrainPool(); // Make sure everything was freed
+    drainPool(); // Make sure everything was freed
     // This solve some issue when sf::Window::Create is called for the
     // second time (nothing was render until the function was called again)
 }
     
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::ApplyContext(NSOpenGLContextRef context) const
+void WindowImplCocoa::applyContext(NSOpenGLContextRef context) const
 {
-    [myDelegate applyContext:context];
+    [m_delegate applyContext:context];
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetUpProcess(void)
+void WindowImplCocoa::setUpProcess(void)
 {
     static bool isTheProcessSetAsApplication = false;
     
@@ -149,52 +149,52 @@ void WindowImplCocoa::SetUpProcess(void)
     
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::WindowClosed(void)
+void WindowImplCocoa::windowClosed(void)
 {            
     Event event;
-    event.Type = Event::Closed;
+    event.type = Event::Closed;
     
-    PushEvent(event);
+    pushEvent(event);
 }
     
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::WindowResized(unsigned int width, unsigned int height)
+void WindowImplCocoa::windowResized(unsigned int width, unsigned int height)
 {
     Event event;
-    event.Type = Event::Resized;
-    event.Size.Width  = width;
-    event.Size.Height = height;
+    event.type = Event::Resized;
+    event.size.width  = width;
+    event.size.height = height;
     
-    PushEvent(event);
-}
-
-    
-////////////////////////////////////////////////////////////
-void WindowImplCocoa::WindowLostFocus(void)
-{
-    if (!myShowCursor) {
-        [myDelegate showMouseCursor]; // Make sur the cursor is visible
-    }
-    
-    Event event;
-    event.Type = Event::LostFocus;
-    
-    PushEvent(event);
+    pushEvent(event);
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::WindowGainedFocus(void)
+void WindowImplCocoa::windowLostFocus(void)
 {
-    if (!myShowCursor) {
-        [myDelegate hideMouseCursor]; // Restore user's setting
+    if (!m_showCursor) {
+        [m_delegate showMouseCursor]; // Make sur the cursor is visible
     }
     
     Event event;
-    event.Type = Event::GainedFocus;
+    event.type = Event::LostFocus;
     
-    PushEvent(event);
+    pushEvent(event);
+}
+
+    
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::windowGainedFocus(void)
+{
+    if (!m_showCursor) {
+        [m_delegate hideMouseCursor]; // Restore user's setting
+    }
+    
+    Event event;
+    event.type = Event::GainedFocus;
+    
+    pushEvent(event);
 }
     
 #pragma mark
@@ -202,78 +202,78 @@ void WindowImplCocoa::WindowGainedFocus(void)
     
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::MouseDownAt(Mouse::Button button, int x, int y)
+void WindowImplCocoa::mouseDownAt(Mouse::Button button, int x, int y)
 {
     Event event;
-    event.Type = Event::MouseButtonPressed;
-    event.MouseButton.Button = button;
-    event.MouseButton.X = x;
-    event.MouseButton.Y = y;
+    event.type = Event::MouseButtonPressed;
+    event.mouseButton.button = button;
+    event.mouseButton.x = x;
+    event.mouseButton.y = y;
     
-    PushEvent(event);
+    pushEvent(event);
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::MouseUpAt(Mouse::Button button, int x, int y)
+void WindowImplCocoa::mouseUpAt(Mouse::Button button, int x, int y)
 {
     Event event;
-    event.Type = Event::MouseButtonReleased;
-    event.MouseButton.Button = button;
-    event.MouseButton.X = x;
-    event.MouseButton.Y = y;
+    event.type = Event::MouseButtonReleased;
+    event.mouseButton.button = button;
+    event.mouseButton.x = x;
+    event.mouseButton.y = y;
     
-    PushEvent(event);
+    pushEvent(event);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::MouseMovedAt(int x, int y)
+void WindowImplCocoa::mouseMovedAt(int x, int y)
 {
     Event event;
-    event.Type = Event::MouseMoved;
-    event.MouseMove.X = x;
-    event.MouseMove.Y = y;
+    event.type = Event::MouseMoved;
+    event.mouseMove.x = x;
+    event.mouseMove.y = y;
     
-    PushEvent(event);
+    pushEvent(event);
 }
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::MouseWheelScrolledAt(float delta, int x, int y)
+void WindowImplCocoa::mouseWheelScrolledAt(float delta, int x, int y)
 {
     Event event;
-    event.Type = Event::MouseWheelMoved;
-    event.MouseWheel.Delta = delta;
-    event.MouseWheel.X = x;
-    event.MouseWheel.Y = y;
+    event.type = Event::MouseWheelMoved;
+    event.mouseWheel.delta = delta;
+    event.mouseWheel.x = x;
+    event.mouseWheel.y = y;
     
-    PushEvent(event);
+    pushEvent(event);
 }
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::MouseMovedIn(void)
+void WindowImplCocoa::mouseMovedIn(void)
 {
-    if (!myShowCursor) {
-        [myDelegate hideMouseCursor]; // Restore user's setting
+    if (!m_showCursor) {
+        [m_delegate hideMouseCursor]; // Restore user's setting
     }
     
     Event event;
-    event.Type = Event::MouseEntered;
+    event.type = Event::MouseEntered;
     
-    PushEvent(event);
+    pushEvent(event);
 }
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::MouseMovedOut(void)
+void WindowImplCocoa::mouseMovedOut(void)
 {
-    if (!myShowCursor) {
-        [myDelegate showMouseCursor]; // Make sur the cursor is visible
+    if (!m_showCursor) {
+        [m_delegate showMouseCursor]; // Make sur the cursor is visible
     }
     
     Event event;
-    event.Type = Event::MouseLeft;
+    event.type = Event::MouseLeft;
     
-    PushEvent(event);
+    pushEvent(event);
 }
     
     
@@ -282,35 +282,35 @@ void WindowImplCocoa::MouseMovedOut(void)
     
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::KeyDown(Event::KeyEvent key)
+void WindowImplCocoa::keyDown(Event::KeyEvent key)
 {
     Event event;
-    event.Type = Event::KeyPressed;
-    event.Key = key;
+    event.type = Event::KeyPressed;
+    event.key = key;
     
-    PushEvent(event);
+    pushEvent(event);
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::KeyUp(Event::KeyEvent key)
+void WindowImplCocoa::keyUp(Event::KeyEvent key)
 {
     Event event;
-    event.Type = Event::KeyReleased;
-    event.Key = key;
+    event.type = Event::KeyReleased;
+    event.key = key;
     
-    PushEvent(event);
+    pushEvent(event);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::TextEntered(unichar charcode)
+void WindowImplCocoa::textEntered(unichar charcode)
 {
     Event event;
-    event.Type = Event::TextEntered;
-    event.Text.Unicode = charcode;
+    event.type = Event::TextEntered;
+    event.text.unicode = charcode;
     
-    PushEvent(event);
+    pushEvent(event);
 }
 
     
@@ -318,96 +318,96 @@ void WindowImplCocoa::TextEntered(unichar charcode)
 #pragma mark WindowImplCocoa's event-related methods
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::ProcessEvents()
+void WindowImplCocoa::processEvents()
 {
-    [myDelegate processEvent];
+    [m_delegate processEvent];
 }
     
 #pragma mark
 #pragma mark WindowImplCocoa's private methods
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplCocoa::GetSystemHandle() const
+WindowHandle WindowImplCocoa::getSystemHandle() const
 {
-    return [myDelegate getSystemHandle];
+    return [m_delegate getSystemHandle];
 }
 
     
 ////////////////////////////////////////////////////////////
-Vector2i WindowImplCocoa::GetPosition() const
+Vector2i WindowImplCocoa::getPosition() const
 {
-    NSPoint pos = [myDelegate position];
+    NSPoint pos = [m_delegate position];
     return Vector2i(pos.x, pos.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetPosition(const Vector2i& position)
+void WindowImplCocoa::setPosition(const Vector2i& position)
 {
-    [myDelegate setWindowPositionToX:position.x Y:position.y];
+    [m_delegate setWindowPositionToX:position.x Y:position.y];
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2u WindowImplCocoa::GetSize() const
+Vector2u WindowImplCocoa::getSize() const
 {
-    NSSize size = [myDelegate size];
+    NSSize size = [m_delegate size];
     return Vector2u(size.width, size.height);
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetSize(const Vector2u& size)
+void WindowImplCocoa::setSize(const Vector2u& size)
 {    
-    [myDelegate resizeTo:size.x by:size.y];
+    [m_delegate resizeTo:size.x by:size.y];
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetTitle(const std::string& title)
+void WindowImplCocoa::setTitle(const std::string& title)
 {
-    [myDelegate changeTitle:stringToNSString(title)];
+    [m_delegate changeTitle:stringToNSString(title)];
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
+void WindowImplCocoa::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
-    [myDelegate setIconTo:width by:height with:pixels];
+    [m_delegate setIconTo:width by:height with:pixels];
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetVisible(bool visible)
+void WindowImplCocoa::setVisible(bool visible)
 {
     if (visible) {
-        [myDelegate showWindow];
+        [m_delegate showWindow];
     } else {
-        [myDelegate hideWindow];
+        [m_delegate hideWindow];
     }
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetMouseCursorVisible(bool visible)
+void WindowImplCocoa::setMouseCursorVisible(bool visible)
 {
-    myShowCursor = visible;
+    m_showCursor = visible;
     
-    if (myShowCursor) {
-        [myDelegate showMouseCursor];
+    if (m_showCursor) {
+        [m_delegate showMouseCursor];
     } else {
-        [myDelegate hideMouseCursor];
+        [m_delegate hideMouseCursor];
     }
 }
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::SetKeyRepeatEnabled(bool enabled)
+void WindowImplCocoa::setKeyRepeatEnabled(bool enabled)
 {
     if (enabled) {
-        [myDelegate enableKeyRepeat];
+        [m_delegate enableKeyRepeat];
     } else {
-        [myDelegate disableKeyRepeat];
+        [m_delegate disableKeyRepeat];
     }
 }
 

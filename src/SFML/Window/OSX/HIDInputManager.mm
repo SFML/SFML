@@ -35,7 +35,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-HIDInputManager& HIDInputManager::GetInstance()
+HIDInputManager& HIDInputManager::getInstance()
 {
     static HIDInputManager instance;
     return instance;
@@ -43,17 +43,17 @@ HIDInputManager& HIDInputManager::GetInstance()
 
 
 ////////////////////////////////////////////////////////////
-bool HIDInputManager::IsKeyPressed(Keyboard::Key key)
+bool HIDInputManager::isKeyPressed(Keyboard::Key key)
 {
-    if (!amIValid) {
-        sf::Err() << "HIDInputManager is invalid." << std::endl;
+    if (!m_isValid) {
+        sf::err() << "HIDInputManager is invalid." << std::endl;
         return false;
     }
     
     // state = true if at least one corresponding HID key is pressed
     bool state = false;
     
-    for (IOHIDElements::iterator it = myKeys[key].begin(); it != myKeys[key].end(); ++it) {
+    for (IOHIDElements::iterator it = m_keys[key].begin(); it != m_keys[key].end(); ++it) {
         
         IOHIDValueRef value = 0;
         
@@ -66,7 +66,7 @@ bool HIDInputManager::IsKeyPressed(Keyboard::Key key)
             // element from our keys
             
             CFRelease(*it);
-            it = myKeys[key].erase(it);
+            it = m_keys[key].erase(it);
                         
         } else if (IOHIDValueGetIntegerValue(value) == 1) {
             
@@ -85,17 +85,17 @@ bool HIDInputManager::IsKeyPressed(Keyboard::Key key)
 }
 
 ////////////////////////////////////////////////////////////
-bool HIDInputManager::IsMouseButtonPressed(Mouse::Button button)
+bool HIDInputManager::isMouseButtonPressed(Mouse::Button button)
 {
-    if (!amIValid) {
-        sf::Err() << "HIDInputManager is invalid." << std::endl;
+    if (!m_isValid) {
+        sf::err() << "HIDInputManager is invalid." << std::endl;
         return false;
     }
     
     // state = true if at least one corresponding HID button is pressed
     bool state = false;
     
-    for (IOHIDElements::iterator it = myButtons[button].begin(); it != myButtons[button].end(); ++it) {
+    for (IOHIDElements::iterator it = m_buttons[button].begin(); it != m_buttons[button].end(); ++it) {
         
         IOHIDValueRef value = 0;
         
@@ -108,7 +108,7 @@ bool HIDInputManager::IsMouseButtonPressed(Mouse::Button button)
             // element from our buttons
             
             CFRelease(*it);
-            it = myButtons[button].erase(it);
+            it = m_buttons[button].erase(it);
             
         } else if (IOHIDValueGetIntegerValue(value) == 1) {
             
@@ -128,7 +128,7 @@ bool HIDInputManager::IsMouseButtonPressed(Mouse::Button button)
 
 
 ////////////////////////////////////////////////////////////
-long HIDInputManager::GetLocationID(IOHIDDeviceRef device)
+long HIDInputManager::getLocationID(IOHIDDeviceRef device)
 {
     long loc = 0;
     
@@ -150,7 +150,7 @@ long HIDInputManager::GetLocationID(IOHIDDeviceRef device)
 
 
 ////////////////////////////////////////////////////////////
-CFDictionaryRef HIDInputManager::CopyDevicesMask(UInt32 page, UInt32 usage)
+CFDictionaryRef HIDInputManager::copyDevicesMask(UInt32 page, UInt32 usage)
 {
     // Create the dictionary.
     CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 2, 
@@ -173,53 +173,53 @@ CFDictionaryRef HIDInputManager::CopyDevicesMask(UInt32 page, UInt32 usage)
 
 ////////////////////////////////////////////////////////////
 HIDInputManager::HIDInputManager()
-: amIValid(true)
-, myLayoutData(0)
-, myLayout(0)
-, myManager(0)
+: m_isValid(true)
+, m_layoutData(0)
+, m_layout(0)
+, m_manager(0)
 {
     // Get the current keyboard layout
     TISInputSourceRef tis = TISCopyCurrentKeyboardLayoutInputSource(); 
-    myLayoutData = (CFDataRef)TISGetInputSourceProperty(tis, 
+    m_layoutData = (CFDataRef)TISGetInputSourceProperty(tis, 
                                                         kTISPropertyUnicodeKeyLayoutData);
     
-    if (myLayoutData == 0) {
-        sf::Err() << "Cannot get the keyboard layout" << std::endl;
-        FreeUp();
+    if (m_layoutData == 0) {
+        sf::err() << "Cannot get the keyboard layout" << std::endl;
+        freeUp();
         return;
     }
     
     // Keep a reference for ourself
-    CFRetain(myLayoutData);
-    myLayout = (UCKeyboardLayout *)CFDataGetBytePtr(myLayoutData);
+    CFRetain(m_layoutData);
+    m_layout = (UCKeyboardLayout *)CFDataGetBytePtr(m_layoutData);
     
     // The TIS is no more needed
     CFRelease(tis);
     
     // Create an HID Manager reference
-    myManager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
+    m_manager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
 
     // Open the HID Manager reference
-    IOReturn openStatus = IOHIDManagerOpen(myManager, kIOHIDOptionsTypeNone);
+    IOReturn openStatus = IOHIDManagerOpen(m_manager, kIOHIDOptionsTypeNone);
     
     if (openStatus != kIOReturnSuccess) {
-        sf::Err() << "Error when opening the HID manager" << std::endl;
+        sf::err() << "Error when opening the HID manager" << std::endl;
         
-        FreeUp();
+        freeUp();
         return;
     }
     
     // Initialize the keyboard
-    InitializeKeyboard();
+    initializeKeyboard();
     
-    if (!amIValid) {
+    if (!m_isValid) {
         return; // Something went wrong
     }
     
     // Initialize the mouse
-    InitializeMouse();
+    initializeMouse();
     
-    if (!amIValid) {
+    if (!m_isValid) {
         return; // Something went wrong
     }
 }
@@ -228,24 +228,24 @@ HIDInputManager::HIDInputManager()
 ////////////////////////////////////////////////////////////
 HIDInputManager::~HIDInputManager()
 {
-    FreeUp();
+    freeUp();
 }
 
 
-void HIDInputManager::InitializeKeyboard()
+void HIDInputManager::initializeKeyboard()
 {
     ////////////////////////////////////////////////////////////
-    // The purpose of this function is to initalize myKeys so we can get
+    // The purpose of this function is to initalize m_keys so we can get
     // the associate IOHIDElementRef with a sf::Keyboard::Key in ~constant~ time.
     
     // Get only keyboards
-    CFSetRef keyboards = CopyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
+    CFSetRef keyboards = copyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
     if (keyboards == NULL) {
-        FreeUp();
+        freeUp();
         return;
     }
     
-    CFIndex keyboardCount = CFSetGetCount(keyboards); // >= 1 (asserted by CopyDevices)
+    CFIndex keyboardCount = CFSetGetCount(keyboards); // >= 1 (asserted by copyDevices)
     
     // Get an iterable array
     CFTypeRef devicesArray[keyboardCount];
@@ -255,32 +255,32 @@ void HIDInputManager::InitializeKeyboard()
     
         IOHIDDeviceRef keyboard = (IOHIDDeviceRef)devicesArray[i];
         
-        LoadKeyboard(keyboard);
+        loadKeyboard(keyboard);
     }
     
     // Release unused stuff
     CFRelease(keyboards);
     
     ////////////////////////////////////////////////////////////
-    // At this point myKeys is filled with as many IOHIDElementRef as possible
+    // At this point m_keys is filled with as many IOHIDElementRef as possible
 }
 
 
 ////////////////////////////////////////////////////////////
-void HIDInputManager::InitializeMouse()
+void HIDInputManager::initializeMouse()
 {
     ////////////////////////////////////////////////////////////
-    // The purpose of this function is to initalize myButtons so we can get
+    // The purpose of this function is to initalize m_buttons so we can get
     // the associate IOHIDElementRef with a sf::Mouse::Button in ~constant~ time.
     
     // Get only mouses
-    CFSetRef mouses = CopyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse);
+    CFSetRef mouses = copyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse);
     if (mouses == NULL) {
-        FreeUp();
+        freeUp();
         return;
     }
     
-    CFIndex mouseCount = CFSetGetCount(mouses); // >= 1 (asserted by CopyDevices)
+    CFIndex mouseCount = CFSetGetCount(mouses); // >= 1 (asserted by copyDevices)
     
     // Get an iterable array
     CFTypeRef devicesArray[mouseCount];
@@ -290,25 +290,25 @@ void HIDInputManager::InitializeMouse()
         
         IOHIDDeviceRef mouse = (IOHIDDeviceRef)devicesArray[i];
         
-        LoadMouse(mouse);
+        loadMouse(mouse);
     }
     
     // Release unused stuff
     CFRelease(mouses);
     
     ////////////////////////////////////////////////////////////
-    // At this point myButtons is filled with as many IOHIDElementRef as possible
+    // At this point m_buttons is filled with as many IOHIDElementRef as possible
 }
 
 
 ////////////////////////////////////////////////////////////    
-void HIDInputManager::LoadKeyboard(IOHIDDeviceRef keyboard)
+void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
 {
     CFArrayRef keys = IOHIDDeviceCopyMatchingElements(keyboard,
                                                       NULL,
                                                       kIOHIDOptionsTypeNone);
     if (keys == NULL) {
-        sf::Err() << "We got a keyboard without any keys (1)" << std::endl;
+        sf::err() << "We got a keyboard without any keys (1)" << std::endl;
         return;
     }
     
@@ -316,7 +316,7 @@ void HIDInputManager::LoadKeyboard(IOHIDDeviceRef keyboard)
     CFIndex keysCount = CFArrayGetCount(keys);
     
     if (keysCount == 0) {
-        sf::Err() << "We got a keyboard without any keys (2)" << std::endl;
+        sf::err() << "We got a keyboard without any keys (2)" << std::endl;
         CFRelease(keys);
         return;
     }
@@ -331,7 +331,7 @@ void HIDInputManager::LoadKeyboard(IOHIDDeviceRef keyboard)
             continue;
         }
         
-        LoadKey(aKey);
+        loadKey(aKey);
         
     }
     
@@ -341,13 +341,13 @@ void HIDInputManager::LoadKeyboard(IOHIDDeviceRef keyboard)
 
 
 ////////////////////////////////////////////////////////////    
-void HIDInputManager::LoadMouse(IOHIDDeviceRef mouse)
+void HIDInputManager::loadMouse(IOHIDDeviceRef mouse)
 {
     CFArrayRef buttons = IOHIDDeviceCopyMatchingElements(mouse,
                                                          NULL,
                                                          kIOHIDOptionsTypeNone);
     if (buttons == NULL) {
-        sf::Err() << "We got a mouse without any buttons (1)" << std::endl;
+        sf::err() << "We got a mouse without any buttons (1)" << std::endl;
         return;
     }
     
@@ -355,7 +355,7 @@ void HIDInputManager::LoadMouse(IOHIDDeviceRef mouse)
     CFIndex buttonCount = CFArrayGetCount(buttons);
     
     if (buttonCount == 0) {
-        sf::Err() << "We got a mouse without any buttons (2)" << std::endl;
+        sf::err() << "We got a mouse without any buttons (2)" << std::endl;
         CFRelease(buttons);
         return;
     }
@@ -370,7 +370,7 @@ void HIDInputManager::LoadMouse(IOHIDDeviceRef mouse)
             continue;
         }
         
-        LoadButton(aButton);
+        loadButton(aButton);
     }
     
     // Release unused stuff
@@ -379,11 +379,11 @@ void HIDInputManager::LoadMouse(IOHIDDeviceRef mouse)
 
 
 ////////////////////////////////////////////////////////////
-void HIDInputManager::LoadKey(IOHIDElementRef key)
+void HIDInputManager::loadKey(IOHIDElementRef key)
 {
     // Get its virtual code
     UInt32 usageCode   = IOHIDElementGetUsage(key);
-    UInt8  virtualCode = UsageToVirtualCode(usageCode);
+    UInt8  virtualCode = usageToVirtualCode(usageCode);
     
     if (virtualCode == 0xff) {
         return; // no corresponding virtual code -> skip
@@ -393,14 +393,14 @@ void HIDInputManager::LoadKey(IOHIDElementRef key)
     // the current keyboard layout
     
     UInt32       deadKeyState = 0;
-    // unicode string length is usually less or equal to 4
+    // Unicode string length is usually less or equal to 4
     UniCharCount maxStringLength = 4;
     UniCharCount actualStringLength = 0;
     UniChar      unicodeString[maxStringLength];
     
     OSStatus     error;
     
-    error = UCKeyTranslate(myLayout,                    // current layout
+    error = UCKeyTranslate(m_layout,                    // current layout
                            virtualCode,                 // our key
                            kUCKeyActionDown,            // or kUCKeyActionUp ?
                            0x100,                       // no modifiers
@@ -420,13 +420,13 @@ void HIDInputManager::LoadKey(IOHIDElementRef key)
         // First we look if the key down is from a list of characters 
         // that depend on keyboard localization
         if (actualStringLength > 0) {
-            code = LocalizedKeys(unicodeString[0]);
+            code = localizedKeys(unicodeString[0]);
         }
         
         // The key is not a localized one so we try to find a
         // corresponding code through virtual key code
         if (code == Keyboard::KeyCount) {
-            code = NonLocalizedKeys(virtualCode);
+            code = nonLocalizedKeys(virtualCode);
         }
         
         // A code was found, wonderful!
@@ -435,10 +435,10 @@ void HIDInputManager::LoadKey(IOHIDElementRef key)
             // Ok, everything went fine. Now we have a unique 
             // corresponding sf::Keyboard::Key to one IOHIDElementRef
             
-            myKeys[code].push_back(key);
+            m_keys[code].push_back(key);
             
             // And don't forget to keep the reference alive for our usage
-            CFRetain(myKeys[code].back());
+            CFRetain(m_keys[code].back());
             
         }
         
@@ -456,7 +456,7 @@ void HIDInputManager::LoadKey(IOHIDElementRef key)
         //          0x4c       | 0x77 | Select
         
         //if (code == Keyboard::KeyCount) { // The key is unknown.
-        //    sf::Err() << "This is an unknow key. Virtual key code is 0x"
+        //    sf::err() << "This is an unknow key. Virtual key code is 0x"
         //              << std::hex
         //              << (UInt32)virtualCode
         //              << " and HID usage code is 0x"
@@ -469,7 +469,7 @@ void HIDInputManager::LoadKey(IOHIDElementRef key)
     } /* if (error == noErr) */ 
     else {
         
-        sf::Err() << "Cannot translate the virtual key code, error : "
+        sf::err() << "Cannot translate the virtual key code, error : "
                   << error
                   << std::endl;
     }
@@ -477,7 +477,7 @@ void HIDInputManager::LoadKey(IOHIDElementRef key)
 
 
 ////////////////////////////////////////////////////////////
-void HIDInputManager::LoadButton(IOHIDElementRef button)
+void HIDInputManager::loadButton(IOHIDElementRef button)
 {
     // Identify the button
     UInt32 usage = IOHIDElementGetUsage(button);
@@ -498,51 +498,51 @@ void HIDInputManager::LoadButton(IOHIDElementRef button)
     if (dest != Mouse::ButtonCount) {
         // We know what kind of button it is!
         
-        myButtons[dest].push_back(button);
+        m_buttons[dest].push_back(button);
         
         // And don't forget to keep the reference alive for our usage
-        CFRetain(myButtons[dest].back());
+        CFRetain(m_buttons[dest].back());
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void HIDInputManager::FreeUp()
+void HIDInputManager::freeUp()
 {
-    amIValid = false;
+    m_isValid = false;
     
-    if (myLayoutData    != 0)   CFRelease(myLayoutData);
-    // Do not release myLayout ! It is owned by myLayoutData.
-    if (myManager       != 0)   CFRelease(myManager);
+    if (m_layoutData    != 0)   CFRelease(m_layoutData);
+    // Do not release m_layout ! It is owned by m_layoutData.
+    if (m_manager       != 0)   CFRelease(m_manager);
     
     for (unsigned int i = 0; i < Keyboard::KeyCount; ++i) {
-        for (IOHIDElements::iterator it = myKeys[i].begin(); it != myKeys[i].end(); ++it) {
+        for (IOHIDElements::iterator it = m_keys[i].begin(); it != m_keys[i].end(); ++it) {
             CFRelease(*it);
         }
-        myKeys[i].clear();
+        m_keys[i].clear();
     }
     
     for (unsigned int i = 0; i < Mouse::ButtonCount; ++i) {
-        for (IOHIDElements::iterator it = myButtons[i].begin(); it != myButtons[i].end(); ++it) {
+        for (IOHIDElements::iterator it = m_buttons[i].begin(); it != m_buttons[i].end(); ++it) {
             CFRelease(*it);
         }
-        myButtons[i].clear();
+        m_buttons[i].clear();
     }
 }
  
     
 ////////////////////////////////////////////////////////////
-CFSetRef HIDInputManager::CopyDevices(UInt32 page, UInt32 usage)
+CFSetRef HIDInputManager::copyDevices(UInt32 page, UInt32 usage)
 {
     // Filter and keep only the requested devices
-    CFDictionaryRef mask = CopyDevicesMask(page, usage);
+    CFDictionaryRef mask = copyDevicesMask(page, usage);
     
-    IOHIDManagerSetDeviceMatching(myManager, mask);
+    IOHIDManagerSetDeviceMatching(m_manager, mask);
     
     CFRelease(mask);
     mask = 0;
     
-    CFSetRef devices = IOHIDManagerCopyDevices(myManager);
+    CFSetRef devices = IOHIDManagerCopyDevices(m_manager);
     if (devices == NULL) {
         return NULL;
     }
@@ -559,7 +559,7 @@ CFSetRef HIDInputManager::CopyDevices(UInt32 page, UInt32 usage)
 
 
 ////////////////////////////////////////////////////////////
-UInt8 HIDInputManager::UsageToVirtualCode(UInt32 usage)
+UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
 {
     // Some usage key doesn't have any corresponding virtual
     // code or it was not found (return 0xff).
@@ -765,7 +765,7 @@ UInt8 HIDInputManager::UsageToVirtualCode(UInt32 usage)
     
 
 ////////////////////////////////////////////////////////
-Keyboard::Key HIDInputManager::LocalizedKeys(UniChar ch)
+Keyboard::Key HIDInputManager::localizedKeys(UniChar ch)
 {
     switch (ch) {
         case 'a':
@@ -853,7 +853,7 @@ Keyboard::Key HIDInputManager::LocalizedKeys(UniChar ch)
 
 
 ////////////////////////////////////////////////////////
-Keyboard::Key HIDInputManager::NonLocalizedKeys(UniChar virtualKeycode)
+Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 {
     // (Some) 0x code based on http://forums.macrumors.com/showthread.php?t=780577
     // Some sf::Keyboard::Key are present twice.

@@ -40,14 +40,14 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared)
-: myView(0), myWindow(0)
+: m_view(0), m_window(0)
 {
     // Ask for a pool.
-    RetainPool();
+    retainPool();
     
     // Create the context
-    CreateContext(shared,
-                  VideoMode::GetDesktopMode().BitsPerPixel, 
+    createContext(shared,
+                  VideoMode::getDesktopMode().bitsPerPixel, 
                   ContextSettings(0, 0, 0));
 }
 
@@ -55,76 +55,76 @@ SFContext::SFContext(SFContext* shared)
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
                      const WindowImpl* owner, unsigned int bitsPerPixel)
-: myView(0), myWindow(0)
+: m_view(0), m_window(0)
 {
     // Ask for a pool.
-    RetainPool();
+    retainPool();
     
     // Create the context.
-    CreateContext(shared, bitsPerPixel, settings);
+    createContext(shared, bitsPerPixel, settings);
     
     // Apply context.
     WindowImplCocoa const * ownerCocoa = static_cast<WindowImplCocoa const *>(owner);
-    ownerCocoa->ApplyContext(myContext);
+    ownerCocoa->applyContext(m_context);
 }
 
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings, 
                      unsigned int width, unsigned int height)
-: myView(0), myWindow(0)
+: m_view(0), m_window(0)
 {
     // Ensure the process is setup in order to create a valid window.
-    WindowImplCocoa::SetUpProcess();
+    WindowImplCocoa::setUpProcess();
     
     // Ask for a pool.
-    RetainPool();
+    retainPool();
     
     // Create the context.
-    CreateContext(shared, VideoMode::GetDesktopMode().BitsPerPixel, settings);
+    createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
     
     // Create a dummy window/view pair (hidden) and asign it our context.
-    myWindow = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height)
+    m_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height)
                                            styleMask:NSBorderlessWindowMask
                                              backing:NSBackingStoreBuffered
                                                defer:NO]; // Don't defer it!
-    myView = [[NSOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
-    [myWindow setContentView:myView];
-    [myView setOpenGLContext:myContext];
-    [myContext setView:myView];
+    m_view = [[NSOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
+    [m_window setContentView:m_view];
+    [m_view setOpenGLContext:m_context];
+    [m_context setView:m_view];
 }
 
 
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
-    [myContext clearDrawable];
-    [myContext release];
+    [m_context clearDrawable];
+    [m_context release];
     
-    [myView release]; // Might be nil but we don't care.
-    [myWindow release]; // Idem.
+    [m_view release]; // Might be nil but we don't care.
+    [m_window release]; // Idem.
     
-    ReleasePool();
+    releasePool();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SFContext::MakeCurrent()
+bool SFContext::makeCurrent()
 {
-    [myContext makeCurrentContext];
-    return myContext == [NSOpenGLContext currentContext]; // Should be true.
+    [m_context makeCurrentContext];
+    return m_context == [NSOpenGLContext currentContext]; // Should be true.
 }
 
 
 ////////////////////////////////////////////////////////////
-void SFContext::Display()
+void SFContext::display()
 {
-    [myContext flushBuffer];
+    [m_context flushBuffer];
 }
 
 
 ////////////////////////////////////////////////////////////
-void SFContext::SetVerticalSyncEnabled(bool enabled)
+void SFContext::setVerticalSyncEnabled(bool enabled)
 {
     // Make compiler happy
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
@@ -133,12 +133,12 @@ void SFContext::SetVerticalSyncEnabled(bool enabled)
     
     GLint swapInterval = enabled ? 1 : 0;
     
-    [myContext setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
+    [m_context setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
 }
 
 
 ////////////////////////////////////////////////////////////
-void SFContext::CreateContext(SFContext* shared,
+void SFContext::createContext(SFContext* shared,
                               unsigned int bitsPerPixel, 
                               const ContextSettings& settings)
 {
@@ -157,12 +157,12 @@ void SFContext::CreateContext(SFContext* shared,
     }
     
     attrs.push_back(NSOpenGLPFADepthSize);
-    attrs.push_back((NSOpenGLPixelFormatAttribute)settings.DepthBits);
+    attrs.push_back((NSOpenGLPixelFormatAttribute)settings.depthBits);
     
     attrs.push_back(NSOpenGLPFAStencilSize);
-    attrs.push_back((NSOpenGLPixelFormatAttribute)settings.StencilBits);
+    attrs.push_back((NSOpenGLPixelFormatAttribute)settings.stencilBits);
     
-    if (settings.AntialiasingLevel > 0) {
+    if (settings.antialiasingLevel > 0) {
         /* 
          * Antialiasing techniques are described in the 
          * "OpenGL Programming Guide for Mac OS X" document.
@@ -183,7 +183,7 @@ void SFContext::CreateContext(SFContext* shared,
         
         // Antialiasing level
         attrs.push_back(NSOpenGLPFASamples);
-        attrs.push_back((NSOpenGLPixelFormatAttribute)settings.AntialiasingLevel);
+        attrs.push_back((NSOpenGLPixelFormatAttribute)settings.antialiasingLevel);
         
         // No software renderer - only hardware renderer
         attrs.push_back(NSOpenGLPFAAccelerated);
@@ -195,26 +195,26 @@ void SFContext::CreateContext(SFContext* shared,
     NSOpenGLPixelFormat* pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:&attrs[0]];
     
     if (pixFmt == nil) {
-        sf::Err() << "Error. Unable to find a suitable pixel format." << std::endl;
+        sf::err() << "Error. Unable to find a suitable pixel format." << std::endl;
         return;
     }
     
     // Use the shared context if one is given.
-    NSOpenGLContext* sharedContext = shared != NULL ? shared->myContext : nil;
+    NSOpenGLContext* sharedContext = shared != NULL ? shared->m_context : nil;
     
     // Create the context.
-    myContext = [[NSOpenGLContext alloc] initWithFormat:pixFmt
+    m_context = [[NSOpenGLContext alloc] initWithFormat:pixFmt
                                            shareContext:sharedContext];
     
-    if (myContext == nil) {
-        sf::Err() << "Error. Unable to create the context." << std::endl;
+    if (m_context == nil) {
+        sf::err() << "Error. Unable to create the context." << std::endl;
     }
     
     // Free up.
     [pixFmt release];
     
     // Save the settings. (OpenGL version is updated elsewhere.)
-    mySettings = settings;
+    m_settings = settings;
 }
 
 } // namespace priv

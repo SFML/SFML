@@ -60,7 +60,7 @@ public :
     /// \return Reference to the HIDInputManager instance
     ///
     ////////////////////////////////////////////////////////////
-    static HIDInputManager& GetInstance();
+    static HIDInputManager& getInstance();
     
     ////////////////////////////////////////////////////////////
     /// \brief Check if a key is pressed
@@ -70,7 +70,7 @@ public :
     /// \return True if the key is pressed, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool IsKeyPressed(Keyboard::Key key);
+    bool isKeyPressed(Keyboard::Key key);
     
     ////////////////////////////////////////////////////////////
     /// \brief Check if a mouse button is pressed
@@ -80,7 +80,7 @@ public :
     /// \return True if the button is pressed, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool IsMouseButtonPressed(Mouse::Button button);
+    bool isMouseButtonPressed(Mouse::Button button);
 
 public :
     
@@ -93,7 +93,7 @@ public :
     /// \return the device's location ID or 0 if something went wrong
     ///
     ////////////////////////////////////////////////////////////
-    static long GetLocationID(IOHIDDeviceRef device);
+    static long getLocationID(IOHIDDeviceRef device);
     
     ////////////////////////////////////////////////////////////
     /// \brief Create a mask (dictionary) for an IOHIDManager
@@ -103,7 +103,7 @@ public :
     /// \return a retained CFDictionaryRef
     ///
     ////////////////////////////////////////////////////////////
-    static CFDictionaryRef CopyDevicesMask(UInt32 page, UInt32 usage);
+    static CFDictionaryRef copyDevicesMask(UInt32 page, UInt32 usage);
     
     ////////////////////////////////////////////////////////////
     /// Try to convert a character into a SFML key code.
@@ -116,7 +116,7 @@ public :
     /// US keyboard layouts.)
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key LocalizedKeys(UniChar ch);
+    static Keyboard::Key localizedKeys(UniChar ch);
     
     ////////////////////////////////////////////////////////////
     /// Try to convert a virtual keycode into a SFML key code.
@@ -124,7 +124,7 @@ public :
     /// Return sf::Keyboard::KeyCount if the keycode is unknown.
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key NonLocalizedKeys(UniChar virtualKeycode);
+    static Keyboard::Key nonLocalizedKeys(UniChar virtualKeycode);
 
 private :
 
@@ -143,81 +143,81 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the keyboard part of this class
     ///
-    /// If something went wrong FreeUp is called
+    /// If something went wrong freeUp is called
     ///
     ////////////////////////////////////////////////////////////
-    void InitializeKeyboard();
+    void initializeKeyboard();
     
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the mouse part of this class
     ///
-    /// If something went wrong FreeUp is called
+    /// If something went wrong freeUp is called
     ///
     ////////////////////////////////////////////////////////////
-    void InitializeMouse();
+    void initializeMouse();
     
     ////////////////////////////////////////////////////////////
-    /// \brief Load the given keyboard into myKeys
+    /// \brief Load the given keyboard into m_keys
     ///
     /// If the given keyboard has no key this function simply
-    /// returns. FreeUp is _not_ called because this is not fatal.
+    /// returns. freeUp is _not_ called because this is not fatal.
     ///
     /// \param keyboard Keyboard to load
     ///
     ////////////////////////////////////////////////////////////
-    void LoadKeyboard(IOHIDDeviceRef keyboard);
+    void loadKeyboard(IOHIDDeviceRef keyboard);
     
     ////////////////////////////////////////////////////////////
-    /// \brief Load the given mouse into myButtons
+    /// \brief Load the given mouse into m_buttons
     ///
     /// If the given mouse has no button this function simply
-    /// returns. FreeUp is _not_ called because this is not fatal.
+    /// returns. freeUp is _not_ called because this is not fatal.
     ///
     /// \param mouse Mouse to load
     ///
     ////////////////////////////////////////////////////////////
-    void LoadMouse(IOHIDDeviceRef mouse);
+    void loadMouse(IOHIDDeviceRef mouse);
     
     ////////////////////////////////////////////////////////////
-    /// \brief Load the given key into myKeys
+    /// \brief Load the given key into m_keys
     ///
-    /// FreeUp is _not_ called by this function.
+    /// freeUp is _not_ called by this function.
     ///
     /// \param key Key to load
     ///
     ////////////////////////////////////////////////////////////
-    void LoadKey(IOHIDElementRef key);
+    void loadKey(IOHIDElementRef key);
     
     ////////////////////////////////////////////////////////////
-    /// \brief Load the given button into myButtons
+    /// \brief Load the given button into m_buttons
     ///
-    /// FreeUp is _not_ called by this function.
+    /// freeUp is _not_ called by this function.
     ///
     /// \param button Button to load
     ///
     ////////////////////////////////////////////////////////////
-    void LoadButton(IOHIDElementRef button);
+    void loadButton(IOHIDElementRef button);
     
     ////////////////////////////////////////////////////////////
     /// \brief Release all resources
     ///
     /// Close all connections to any devices, if required
-    /// Set amIValid to false
+    /// Set m_isValid to false
     ///
     ////////////////////////////////////////////////////////////
-    void FreeUp();
+    void freeUp();
     
     ////////////////////////////////////////////////////////////
     /// \brief Filter the devices and return them.
     ///
-    /// FreeUp is _not_ called by this function.
+    /// freeUp is _not_ called by this function.
     ///
     /// \param page  HID page like kHIDPage_GenericDesktop
     /// \param usage HID usage page like kHIDUsage_GD_Keyboard or kHIDUsage_GD_Mouse
     /// \return a retained CFSetRef of IOHIDDeviceRef or NULL
     ///
     ////////////////////////////////////////////////////////////
-    CFSetRef CopyDevices(UInt32 page, UInt32 usage);
+    CFSetRef copyDevices(UInt32 page, UInt32 usage);
     
     ////////////////////////////////////////////////////////////
     /// \brief Converte a HID key usage to its corresponding virtual code
@@ -229,30 +229,30 @@ private :
     ///         or 0xff if it is associate with no virtual code
     ///
     ////////////////////////////////////////////////////////////
-    static UInt8 UsageToVirtualCode(UInt32 usage);
+    static UInt8 usageToVirtualCode(UInt32 usage);
 
 private :
     
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool              amIValid;                     ///< If any error occurs this variable is false
-    CFDataRef         myLayoutData;                 ///< CFData containing the layout
-    UCKeyboardLayout* myLayout;                     ///< Current Keyboard Layout
-    IOHIDManagerRef   myManager;                    ///< HID Manager
+    bool              m_isValid;                    ///< If any error occurs this variable is false
+    CFDataRef         m_layoutData;                 ///< CFData containing the layout
+    UCKeyboardLayout* m_layout;                     ///< Current Keyboard Layout
+    IOHIDManagerRef   m_manager;                    ///< HID Manager
     
     typedef std::vector<IOHIDElementRef> IOHIDElements;
-    IOHIDElements     myKeys[Keyboard::KeyCount];   ///< All the keys on any connected keyboard
-    IOHIDElements     myButtons[Mouse::ButtonCount];///< All the buttons on any connected mouse
+    IOHIDElements     m_keys[Keyboard::KeyCount];   ///< All the keys on any connected keyboard
+    IOHIDElements     m_buttons[Mouse::ButtonCount];///< All the buttons on any connected mouse
     
     ////////////////////////////////////////////////////////////
-    /// myKeys' index corresponds to sf::Keyboard::Key enum.
-    /// if no key is assigned with key XYZ then myKeys[XYZ].size() == 0.
+    /// m_keys' index corresponds to sf::Keyboard::Key enum.
+    /// if no key is assigned with key XYZ then m_keys[XYZ].size() == 0.
     /// if there are several keyboards connected and several HID keys associate
-    /// with the same sf::Keyboard::Key then myKeys[XYZ] contains all these
+    /// with the same sf::Keyboard::Key then m_keys[XYZ] contains all these
     /// HID keys.
     ///
-    /// myButtons works the same way.
+    /// m_buttons works the same way.
     ///
     ////////////////////////////////////////////////////////////
 };

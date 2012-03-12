@@ -36,7 +36,7 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-size_t ModeBitsPerPixel(CGDisplayModeRef mode)
+size_t modeBitsPerPixel(CGDisplayModeRef mode)
 {
     size_t bpp = 0; // no match
     
@@ -66,7 +66,7 @@ size_t ModeBitsPerPixel(CGDisplayModeRef mode)
 
 
 ////////////////////////////////////////////////////////////
-size_t DisplayBitsPerPixel(CGDirectDisplayID displayId)
+size_t displayBitsPerPixel(CGDirectDisplayID displayId)
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
     
@@ -78,7 +78,7 @@ size_t DisplayBitsPerPixel(CGDirectDisplayID displayId)
     CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayId);
     
     // Get bpp for the mode.
-    size_t const bpp = ModeBitsPerPixel(mode);
+    size_t const bpp = modeBitsPerPixel(mode);
     
     // Clean up Memory.
     CGDisplayModeRelease(mode);
@@ -92,15 +92,15 @@ size_t DisplayBitsPerPixel(CGDirectDisplayID displayId)
 ////////////////////////////////////////////////////////////
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
 
-VideoMode ConvertCGModeToSFMode(CFDictionaryRef dictionary)
+VideoMode convertCGModeToSFMode(CFDictionaryRef dictionary)
 {
     VideoMode sfmode;
     
     CFNumberRef cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayWidth);
-    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.Width));
+    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.width));
     
     cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayHeight);
-    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.Height));
+    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.height));
     
     cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayBitsPerPixel);
     CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.BitsPerPixel));
@@ -110,11 +110,11 @@ VideoMode ConvertCGModeToSFMode(CFDictionaryRef dictionary)
 
 #else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 
-VideoMode ConvertCGModeToSFMode(CGDisplayModeRef cgmode)
+VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
 {
     return VideoMode(CGDisplayModeGetWidth(cgmode),
                      CGDisplayModeGetHeight(cgmode),
-                     ModeBitsPerPixel(cgmode));
+                     modeBitsPerPixel(cgmode));
 }
 
 #endif
@@ -122,20 +122,20 @@ VideoMode ConvertCGModeToSFMode(CGDisplayModeRef cgmode)
 ////////////////////////////////////////////////////////////
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
 
-CFDictionaryRef ConvertSFModeToCGMode(VideoMode sfmode)
+CFDictionaryRef convertSFModeToCGMode(VideoMode sfmode)
 {
     // If sfmode is in VideoMode::GetFullscreenModes
     // then this should be an exact match (see NULL parameter doc).
     return CGDisplayBestModeForParameters(CGMainDisplayID(),
                                           sfmode.BitsPerPixel,
-                                          sfmode.Width,
-                                          sfmode.Height,
+                                          sfmode.width,
+                                          sfmode.height,
                                           NULL);
 }
 
 #else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 
-CGDisplayModeRef ConvertSFModeToCGMode(VideoMode sfmode)
+CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode)
 {
     // Starting with 10.6 we should query the display all the modes and
     // search for the best one.
@@ -147,7 +147,7 @@ CGDisplayModeRef ConvertSFModeToCGMode(VideoMode sfmode)
     CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
     
     if (cgmodes == NULL) { // Should not happen but anyway...
-        sf::Err() << "Couldn't get VideoMode for main display.";
+        sf::err() << "Couldn't get VideoMode for main display.";
         return NULL;
     }
     
@@ -156,7 +156,7 @@ CGDisplayModeRef ConvertSFModeToCGMode(VideoMode sfmode)
     for (CFIndex i = 0; i < modesCount; i++) {
         CGDisplayModeRef cgmode = (CGDisplayModeRef)CFArrayGetValueAtIndex(cgmodes, i);
         
-        VideoMode mode = ConvertCGModeToSFMode(cgmode);
+        VideoMode mode = convertCGModeToSFMode(cgmode);
         
         if (mode == sfmode) {
             cgbestMode = cgmode;
@@ -167,7 +167,7 @@ CGDisplayModeRef ConvertSFModeToCGMode(VideoMode sfmode)
     CFRelease(cgmodes);
     
     if (cgbestMode == NULL) {
-        sf::Err()
+        sf::err()
         << "Couldn't convert the given sf:VideoMode into a CGDisplayMode."
         << std::endl;
     }

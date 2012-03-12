@@ -41,7 +41,7 @@ namespace priv
 ///     should be used instead of CFDictionaryRef and CGDisplayAvailableModes.
 ///
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
+std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
     
@@ -51,7 +51,7 @@ std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
     CFArrayRef displayModes = CGDisplayAvailableModes(CGMainDisplayID());
     
     if (displayModes == NULL) {
-        sf::Err() << "Couldn't get VideoMode for main display.";
+        sf::err() << "Couldn't get VideoMode for main display.";
         return modes;
     }
     
@@ -60,7 +60,7 @@ std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
     for (CFIndex i = 0; i < modesCount; i++) {
         CFDictionaryRef dictionary = (CFDictionaryRef)CFArrayGetValueAtIndex(displayModes, i);
         
-        VideoMode mode = ConvertCGModeToSFMode(dictionary);
+        VideoMode mode = convertCGModeToSFMode(dictionary);
         
         // If not yet listed we add it to our modes array.
         if (std::find(modes.begin(), modes.end(), mode) == modes.end()) {
@@ -78,7 +78,7 @@ std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
     CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
     
     if (cgmodes == NULL) {
-        sf::Err() << "Couldn't get VideoMode for main display.";
+        sf::err() << "Couldn't get VideoMode for main display.";
         return modes;
     }
     
@@ -87,7 +87,7 @@ std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
     for (CFIndex i = 0; i < modesCount; i++) {
         CGDisplayModeRef cgmode = (CGDisplayModeRef)CFArrayGetValueAtIndex(cgmodes, i);
         
-        VideoMode mode = ConvertCGModeToSFMode(cgmode);
+        VideoMode mode = convertCGModeToSFMode(cgmode);
         
         // If not yet listed we add it to our modes array.
         if (std::find(modes.begin(), modes.end(), mode) == modes.end()) {
@@ -105,12 +105,12 @@ std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeImpl::GetDesktopMode()
+VideoMode VideoModeImpl::getDesktopMode()
 {
     CGDirectDisplayID display = CGMainDisplayID();
     return VideoMode(CGDisplayPixelsWide(display), 
                      CGDisplayPixelsHigh(display), 
-                     DisplayBitsPerPixel(display));
+                     displayBitsPerPixel(display));
 }
 
 } // namespace priv

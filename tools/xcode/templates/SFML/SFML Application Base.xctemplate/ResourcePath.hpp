@@ -38,6 +38,6 @@
 /// with the main bundle or an empty string is there is no bundle.
 ///
 //////////////////////////////////////////////////////////// 
-std::string ResourcePath(void);
+std::string resourcePath(void);
 
 #endif

@@ -49,12 +49,12 @@ namespace sf {
 /// The requester is a WindowImplCocoa. It's used to send back
 /// event via these functions :
 ///
-/// WindowClosed, WindowResized, WindowLostFocus, WindowGainedFocus
+/// windowClosed, windowResized, windowLostFocus, windowGainedFocus
 ///
-/// MouseDownAt, MouseUpAt, MouseMovedAt, MouseWheelScrolledAt,
-/// MouseMovedIn, MouseMovedOut
+/// mouseDownAt, mouseUpAt, mouseMovedAt, mouseWheelScrolledAt,
+/// mouseMovedIn, mouseMovedOut
 ///
-/// KeyDown, KeyUp, TextEntered
+/// keyDown, keyUp, textEntered
 ///
 /// Note : Joystick are not bound to a view or window 
 /// thus they're not managed by a class implementing this protocol.

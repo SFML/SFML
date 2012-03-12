@@ -55,7 +55,7 @@ public:
     /// \return Reference to the HIDJoystickManager instance
     ///
     ////////////////////////////////////////////////////////////
-    static HIDJoystickManager& GetInstance();
+    static HIDJoystickManager& getInstance();
     
 public:
     
@@ -63,7 +63,7 @@ public:
     /// \brief Get the number of currently connected joystick
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetJoystickCount();
+    unsigned int getJoystickCount();
     
     ////////////////////////////////////////////////////////////
     /// \brief Copy the devices assosiated with this HID manager
@@ -71,7 +71,7 @@ public:
     /// \return a retained CFSetRef of IOHIDDeviceRef or NULL
     ///
     ////////////////////////////////////////////////////////////
-    CFSetRef CopyJoysticks();
+    CFSetRef copyJoysticks();
     
 private:
     
@@ -91,7 +91,7 @@ private:
     /// \brief Make sur all event have been processed in the run loop
     ///
     ////////////////////////////////////////////////////////////
-    void Update();
+    void update();
     
 private:
     
@@ -116,8 +116,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    IOHIDManagerRef myHIDManager;   ///< HID Manager
-    unsigned int    myJoystickCount;///< Number of joysticks currently connected
+    IOHIDManagerRef m_manager;      ///< HID Manager
+    unsigned int    m_joystickCount;///< Number of joysticks currently connected
 };
 
 

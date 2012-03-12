@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 
 ////////////////////////////////////////////////////////////
-std::string ResourcePath(void)
+std::string resourcePath(void)
 {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     

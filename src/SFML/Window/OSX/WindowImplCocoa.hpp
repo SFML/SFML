@@ -93,7 +93,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void WindowClosed(void);
+    void windowClosed(void);
     
     ////////////////////////////////////////////////////////////
     /// \brief Window Resized Event – called by the cocoa window object.
@@ -104,7 +104,7 @@ public:
     /// \param height
     ///
     ////////////////////////////////////////////////////////////
-    void WindowResized(unsigned int width, unsigned int height);
+    void windowResized(unsigned int width, unsigned int height);
     
     ////////////////////////////////////////////////////////////
     /// \brief Window Lost Focus Event – called by the cocoa window object.
@@ -112,7 +112,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void WindowLostFocus(void);
+    void windowLostFocus(void);
     
     ////////////////////////////////////////////////////////////
     /// \brief Window Get Focus Event – called by the cocoa window object.
@@ -120,7 +120,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void WindowGainedFocus(void);
+    void windowGainedFocus(void);
     
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Down Event – called by the cocoa view object.
@@ -132,7 +132,7 @@ public:
     /// \param y
     ///
     ////////////////////////////////////////////////////////////
-    void MouseDownAt(Mouse::Button button, int x, int y);
+    void mouseDownAt(Mouse::Button button, int x, int y);
     
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Up Event – called by the cocoa view object.
@@ -144,7 +144,7 @@ public:
     /// \param y
     ///
     ////////////////////////////////////////////////////////////
-    void MouseUpAt(Mouse::Button button, int x, int y);
+    void mouseUpAt(Mouse::Button button, int x, int y);
     
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Moved Event – called by the cocoa view object.
@@ -155,7 +155,7 @@ public:
     /// \param y
     ///
     ////////////////////////////////////////////////////////////
-    void MouseMovedAt(int x, int y);
+    void mouseMovedAt(int x, int y);
     
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Wheel Scrolled Event – called by the cocoa view object.
@@ -167,7 +167,7 @@ public:
     /// \param y
     ///
     ////////////////////////////////////////////////////////////
-    void MouseWheelScrolledAt(float delta, int x, int y);
+    void mouseWheelScrolledAt(float delta, int x, int y);
     
     ////////////////////////////////////////////////////////////
     /// \brief Mouse In Event – called by the cocoa view object.
@@ -175,7 +175,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void MouseMovedIn(void);
+    void mouseMovedIn(void);
     
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Out Event – called by the cocoa view object.
@@ -183,7 +183,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void MouseMovedOut(void);
+    void mouseMovedOut(void);
     
     ////////////////////////////////////////////////////////////
     /// \brief Key Down Event – called by the cocoa view object.
@@ -193,7 +193,7 @@ public:
     /// \param key
     ///
     ////////////////////////////////////////////////////////////
-    void KeyDown(Event::KeyEvent key);
+    void keyDown(Event::KeyEvent key);
     
     ////////////////////////////////////////////////////////////
     /// \brief Key Up Event – called by the cocoa view object.
@@ -203,7 +203,7 @@ public:
     /// \param key
     ///
     ////////////////////////////////////////////////////////////
-    void KeyUp(Event::KeyEvent key);
+    void keyUp(Event::KeyEvent key);
     
     ////////////////////////////////////////////////////////////
     /// \brief Text Entred Event – called by the cocoa view object.
@@ -213,7 +213,7 @@ public:
     /// \param charcode Input unicode
     ///
     ////////////////////////////////////////////////////////////
-    void TextEntered(unichar charcode);
+    void textEntered(unichar charcode);
     
     ////////////////////////////////////////////////////////////
     /// \brief Apply the context to the view.
@@ -223,14 +223,14 @@ public:
     /// \param context The context to bind to the window
     ///
     ////////////////////////////////////////////////////////////
-    void ApplyContext(NSOpenGLContextRef context) const;
+    void applyContext(NSOpenGLContextRef context) const;
     
     ////////////////////////////////////////////////////////////
     /// \brief Change the type of the current process to become a full GUI app.
     ///        Also ensure NSApp is constructed.
     ///
     ////////////////////////////////////////////////////////////
-    static void SetUpProcess(void);
+    static void setUpProcess(void);
     
 private:
 
@@ -238,7 +238,7 @@ private:
     /// \brief Process incoming events from the operating system
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents();
+    virtual void processEvents();
     
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -246,7 +246,7 @@ private:
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle GetSystemHandle() const;
+    virtual WindowHandle getSystemHandle() const;
     
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -254,7 +254,7 @@ private:
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2i GetPosition() const;
+    virtual Vector2i getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -262,7 +262,7 @@ private:
     /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(const Vector2i& position);
+    virtual void setPosition(const Vector2i& position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the client size of the window
@@ -270,7 +270,7 @@ private:
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u GetSize() const;
+    virtual Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -278,7 +278,7 @@ private:
     /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(const Vector2u& size);
+    virtual void setSize(const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -286,7 +286,7 @@ private:
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetTitle(const std::string& title);
+    virtual void setTitle(const std::string& title);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
@@ -296,7 +296,7 @@ private:
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+    virtual void setIcon(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -304,7 +304,7 @@ private:
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetVisible(bool visible);
+    virtual void setVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor
@@ -312,7 +312,7 @@ private:
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetMouseCursorVisible(bool visible);
+    virtual void setMouseCursorVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
@@ -320,15 +320,15 @@ private:
     /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetKeyRepeatEnabled(bool enabled);
+    virtual void setKeyRepeatEnabled(bool enabled);
 
 private :
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    WindowImplDelegateRef myDelegate;   ///< Implementation in Obj-C.
-    bool                  myShowCursor; ///< Is the cursor displayed or hidden ?
+    WindowImplDelegateRef m_delegate;   ///< Implementation in Obj-C.
+    bool                  m_showCursor; ///< Is the cursor displayed or hidden ?
 };
     
 } // namespace priv

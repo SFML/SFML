@@ -44,7 +44,7 @@ namespace priv
 ///
 //////////////////////////////////////////////////////////// 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-size_t ModeBitsPerPixel(CGDisplayModeRef mode);
+size_t modeBitsPerPixel(CGDisplayModeRef mode);
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -54,16 +54,16 @@ size_t ModeBitsPerPixel(CGDisplayModeRef mode);
 /// display bits per pixel information for a given display id.
 ///
 ////////////////////////////////////////////////////////////
-size_t DisplayBitsPerPixel(CGDirectDisplayID displayId);
+size_t displayBitsPerPixel(CGDirectDisplayID displayId);
 
 ////////////////////////////////////////////////////////////
 /// \brief Convert a Quartz video mode into a sf::VideoMode object.
 ///
 ////////////////////////////////////////////////////////////
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
-VideoMode ConvertCGModeToSFMode(CFDictionaryRef dictionary);
+VideoMode convertCGModeToSFMode(CFDictionaryRef dictionary);
 #else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-VideoMode ConvertCGModeToSFMode(CGDisplayModeRef cgmode);
+VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode);
 #endif
     
 ////////////////////////////////////////////////////////////
@@ -71,9 +71,9 @@ VideoMode ConvertCGModeToSFMode(CGDisplayModeRef cgmode);
 ///
 ////////////////////////////////////////////////////////////
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
-CFDictionaryRef ConvertSFModeToCGMode(VideoMode sfmode);
+CFDictionaryRef convertSFModeToCGMode(VideoMode sfmode);
 #else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-CGDisplayModeRef ConvertSFModeToCGMode(VideoMode sfmode);
+CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode);
 #endif
     
 } // namespace priv
