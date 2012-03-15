@@ -257,10 +257,9 @@ void RenderTarget::resetGLStates()
         // Define the default OpenGL states
         glCheck(glDisable(GL_LIGHTING));
         glCheck(glDisable(GL_DEPTH_TEST));
+        glCheck(glDisable(GL_ALPHA_TEST));
         glCheck(glEnable(GL_TEXTURE_2D));
-        glCheck(glEnable(GL_ALPHA_TEST));
         glCheck(glEnable(GL_BLEND));
-        glCheck(glAlphaFunc(GL_GREATER, 0));
         glCheck(glMatrixMode(GL_MODELVIEW));
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
