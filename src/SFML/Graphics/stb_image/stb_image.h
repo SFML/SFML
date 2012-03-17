@@ -1,4 +1,4 @@
-/* stbi-1.31 - public domain JPEG/PNG reader - http://nothings.org/stb_image.c
+/* stbi-1.33 - public domain JPEG/PNG reader - http://nothings.org/stb_image.c
    when you control the images you're loading
                                      no warranty implied; use at your own risk
 
@@ -22,6 +22,8 @@
       - overridable dequantizing-IDCT, YCbCr-to-RGB conversion (define STBI_SIMD)
 
    Latest revisions:
+      1.33 (2011-07-14) minor fixes suggested by Dave Moore
+      1.32 (2011-07-13) info support for all filetypes (SpartanJ)
       1.31 (2011-06-19) a few more leak fixes, bug in PNG handling (SpartanJ)
       1.30 (2011-06-11) added ability to load files via io callbacks (Ben Wenger)
       1.29 (2010-08-16) various warning fixes from Aurelien Pocheville 
@@ -51,9 +53,9 @@
     Jetro Lauha (stbi_info)                      Jonathan Blow              
     James "moose2000" Brown (iPhone PNG)         Laurent Gomila                             
     Ben "Disch" Wenger (io callbacks)            Aruelien Pocheville
-                                                 Ryamond Barbiero
+    Martin "SpartanJ" Golini                     Ryamond Barbiero
                                                  David Woo
-                                                 Martin Golini
+                                                 
 
  If your name should be here but isn't, let Sean know.
 
@@ -250,15 +252,16 @@ extern stbi_uc *stbi_load_from_callbacks  (stbi_io_callbacks const *clbk, void *
 
    extern void   stbi_ldr_to_hdr_gamma(float gamma);
    extern void   stbi_ldr_to_hdr_scale(float scale);
-
-   #ifndef STBI_NO_STDIO
-   extern int      stbi_is_hdr          (char const *filename);
-   extern int      stbi_is_hdr_from_file(FILE *f);
-   #endif // STBI_NO_STDIO
-
-   extern int      stbi_is_hdr_from_callbacks(stbi_io_callbacks const *clbk, void *user);
-   extern int      stbi_is_hdr_from_memory(stbi_uc const *buffer, int len);
 #endif // STBI_NO_HDR
+
+// stbi_is_hdr is always defined
+extern int    stbi_is_hdr_from_callbacks(stbi_io_callbacks const *clbk, void *user);
+extern int    stbi_is_hdr_from_memory(stbi_uc const *buffer, int len);
+#ifndef STBI_NO_STDIO
+extern int      stbi_is_hdr          (char const *filename);
+extern int      stbi_is_hdr_from_file(FILE *f);
+#endif // STBI_NO_STDIO
+
 
 // get a VERY brief reason for failure
 // NOT THREADSAFE
@@ -369,7 +372,7 @@ typedef unsigned char validate_uint32[sizeof(uint32)==4 ? 1 : -1];
 #define STBI_NO_WRITE
 #endif
 
-#define STBI_NOTUSED(v)  v=v
+#define STBI_NOTUSED(v)  (void)sizeof(v)
 
 #ifdef _MSC_VER
 #define STBI_HAS_LROTL
@@ -455,11 +458,7 @@ static void start_file(stbi *s, FILE *f)
    start_callbacks(s, &stbi_stdio_callbacks, (void *) f);
 }
 
-/* -- [Laurent] this function is not used at all and triggers compiler warnings
-static void stop_file(stbi *s)
-{
-}
-*/
+//static void stop_file(stbi *s) { }
 
 #endif // !STBI_NO_STDIO
 
@@ -1925,8 +1924,10 @@ static int stbi_jpeg_test(stbi *s)
 
 static int stbi_jpeg_info_raw(jpeg *j, int *x, int *y, int *comp)
 {
-   if (!decode_jpeg_header(j, SCAN_header))
+   if (!decode_jpeg_header(j, SCAN_header)) {
+      stbi_rewind( j->s );
       return 0;
+   }
    if (x) *x = j->s->img_x;
    if (y) *y = j->s->img_y;
    if (comp) *comp = j->s->img_n;
@@ -2866,8 +2867,10 @@ static int stbi_png_test(stbi *s)
 
 static int stbi_png_info_raw(png *p, int *x, int *y, int *comp)
 {
-   if (!parse_png_file(p, SCAN_header, 0))
+   if (!parse_png_file(p, SCAN_header, 0)) {
+      stbi_rewind( p->s );
       return 0;
+   }
    if (x) *x = p->s->img_x;
    if (y) *y = p->s->img_y;
    if (comp) *comp = p->s->img_n;
@@ -3155,22 +3158,30 @@ static int tga_info(stbi *s, int *x, int *y, int *comp)
     int sz;
     get8u(s);                   // discard Offset
     sz = get8u(s);              // color type
-    if( sz > 1 ) return 0;      // only RGB or indexed allowed
+    if( sz > 1 ) {
+        stbi_rewind(s);
+        return 0;      // only RGB or indexed allowed
+    }
     sz = get8u(s);              // image type
     // only RGB or grey allowed, +/- RLE
     if ((sz != 1) && (sz != 2) && (sz != 3) && (sz != 9) && (sz != 10) && (sz != 11)) return 0;
-    get16le(s);                 // discard palette start
-    get16le(s);                 // discard palette length
-    get8(s);                    // discard bits per palette color entry
-    get16le(s);                 // discard x origin
-    get16le(s);                 // discard y origin
+    skip(s,9);
     tga_w = get16le(s);
-    if( tga_w < 1 ) return 0;   // test width
+    if( tga_w < 1 ) {
+        stbi_rewind(s);
+        return 0;   // test width
+    }
     tga_h = get16le(s);
-    if( tga_h < 1 ) return 0;   // test height
+    if( tga_h < 1 ) {
+        stbi_rewind(s);
+        return 0;   // test height
+    }
     sz = get8(s);               // bits per pixel
     // only RGB or RGBA or grey allowed
-    if ((sz != 8) && (sz != 16) && (sz != 24) && (sz != 32)) return 0;
+    if ((sz != 8) && (sz != 16) && (sz != 24) && (sz != 32)) {
+        stbi_rewind(s);
+        return 0;
+    }
     tga_comp = sz;
     if (x) *x = tga_w;
     if (y) *y = tga_h;
@@ -3922,7 +3933,10 @@ static int stbi_gif_header(stbi *s, stbi_gif *g, int *comp, int is_info)
 static int stbi_gif_info_raw(stbi *s, int *x, int *y, int *comp)
 {
    stbi_gif g;   
-   if (!stbi_gif_header(s, &g, comp, 1)) return 0;
+   if (!stbi_gif_header(s, &g, comp, 1)) {
+      stbi_rewind( s );
+      return 0;
+   }
    if (x) *x = g.w;
    if (y) *y = g.h;
    return 1;
@@ -4364,7 +4378,149 @@ static float *stbi_hdr_load(stbi *s, int *x, int *y, int *comp, int req_comp)
    return hdr_load(s,x,y,comp,req_comp);
 }
 
+static int stbi_hdr_info(stbi *s, int *x, int *y, int *comp)
+{
+   char buffer[HDR_BUFLEN];
+   char *token;
+   int valid = 0;
+
+   if (strcmp(hdr_gettoken(s,buffer), "#?RADIANCE") != 0) {
+       stbi_rewind( s );
+       return 0;
+   }
+
+   for(;;) {
+      token = hdr_gettoken(s,buffer);
+      if (token[0] == 0) break;
+      if (strcmp(token, "FORMAT=32-bit_rle_rgbe") == 0) valid = 1;
+   }
+
+   if (!valid) {
+       stbi_rewind( s );
+       return 0;
+   }
+   token = hdr_gettoken(s,buffer);
+   if (strncmp(token, "-Y ", 3)) {
+       stbi_rewind( s );
+       return 0;
+   }
+   token += 3;
+   *y = strtol(token, &token, 10);
+   while (*token == ' ') ++token;
+   if (strncmp(token, "+X ", 3)) {
+       stbi_rewind( s );
+       return 0;
+   }
+   token += 3;
+   *x = strtol(token, NULL, 10);
+   *comp = 3;
+   return 1;
+}
 #endif // STBI_NO_HDR
+
+static int stbi_bmp_info(stbi *s, int *x, int *y, int *comp)
+{
+   int hsz;
+   if (get8(s) != 'B' || get8(s) != 'M') {
+       stbi_rewind( s );
+       return 0;
+   }
+   skip(s,12);
+   hsz = get32le(s);
+   if (hsz != 12 && hsz != 40 && hsz != 56 && hsz != 108) {
+       stbi_rewind( s );
+       return 0;
+   }
+   if (hsz == 12) {
+      *x = get16le(s);
+      *y = get16le(s);
+   } else {
+      *x = get32le(s);
+      *y = get32le(s);
+   }
+   if (get16le(s) != 1) {
+       stbi_rewind( s );
+       return 0;
+   }
+   *comp = get16le(s) / 8;
+   return 1;
+}
+
+static int stbi_psd_info(stbi *s, int *x, int *y, int *comp)
+{
+   int channelCount;
+   if (get32(s) != 0x38425053) {
+       stbi_rewind( s );
+       return 0;
+   }
+   if (get16(s) != 1) {
+       stbi_rewind( s );
+       return 0;
+   }
+   skip(s, 6);
+   channelCount = get16(s);
+   if (channelCount < 0 || channelCount > 16) {
+       stbi_rewind( s );
+       return 0;
+   }
+   *y = get32(s);
+   *x = get32(s);
+   if (get16(s) != 8) {
+       stbi_rewind( s );
+       return 0;
+   }
+   if (get16(s) != 3) {
+       stbi_rewind( s );
+       return 0;
+   }
+   *comp = 4;
+   return 1;
+}
+
+static int stbi_pic_info(stbi *s, int *x, int *y, int *comp)
+{
+   int act_comp=0,num_packets=0,chained;
+   pic_packet_t packets[10];
+
+   skip(s, 92);
+
+   *x = get16(s);
+   *y = get16(s);
+   if (at_eof(s))  return 0;
+   if ( (*x) != 0 && (1 << 28) / (*x) < (*y)) {
+       stbi_rewind( s );
+       return 0;
+   }
+
+   skip(s, 8);
+
+   do {
+      pic_packet_t *packet;
+
+      if (num_packets==sizeof(packets)/sizeof(packets[0]))
+         return 0;
+
+      packet = &packets[num_packets++];
+      chained = get8(s);
+      packet->size    = get8u(s);
+      packet->type    = get8u(s);
+      packet->channel = get8u(s);
+      act_comp |= packet->channel;
+
+      if (at_eof(s)) {
+          stbi_rewind( s );
+          return 0;
+      }
+      if (packet->size != 8) {
+          stbi_rewind( s );
+          return 0;
+      }
+   } while (chained);
+
+   *comp = (act_comp & 0x10 ? 4 : 3);
+
+   return 1;
+}
 
 static int stbi_info_main(stbi *s, int *x, int *y, int *comp)
 {
@@ -4374,10 +4530,15 @@ static int stbi_info_main(stbi *s, int *x, int *y, int *comp)
        return 1;
    if (stbi_gif_info(s, x, y, comp))
        return 1;
-   // @TODO: stbi_bmp_info
-   // @TODO: stbi_psd_info
+   if (stbi_bmp_info(s, x, y, comp))
+       return 1;
+   if (stbi_psd_info(s, x, y, comp))
+       return 1;
+   if (stbi_pic_info(s, x, y, comp))
+       return 1;
    #ifndef STBI_NO_HDR
-   // @TODO: stbi_hdr_info
+   if (stbi_hdr_info(s, x, y, comp))
+       return 1;
    #endif
    // test tga last because it's a crappy test!
    if (stbi_tga_info(s, x, y, comp))
@@ -4426,7 +4587,11 @@ int stbi_info_from_callbacks(stbi_io_callbacks const *c, void *user, int *x, int
 
 /*
    revision history:
-      1.31 (2011-06-19)
+      1.33 (2011-07-14)
+             make stbi_is_hdr work in STBI_NO_HDR (as specified), minor compiler-friendly improvements
+      1.32 (2011-07-13)
+             support for "info" function for all supported filetypes (SpartanJ)
+      1.31 (2011-06-20)
              a few more leak fixes, bug in PNG handling (SpartanJ)
       1.30 (2011-06-11)
              added ability to load files via callbacks to accomidate custom input streams (Ben Wenger)
