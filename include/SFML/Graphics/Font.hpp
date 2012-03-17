@@ -219,7 +219,7 @@ private :
     ////////////////////////////////////////////////////////////
     struct Row
     {
-        Row(unsigned int top, unsigned int height) : width(0), top(top), height(height) {}
+        Row(unsigned int rowTop, unsigned int rowHeight) : width(0), top(rowTop), height(rowHeight) {}
 
         unsigned int width;  ///< Current width of the row
         unsigned int top;    ///< Y position of the row into the texture

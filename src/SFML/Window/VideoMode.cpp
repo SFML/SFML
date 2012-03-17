@@ -44,10 +44,10 @@ bitsPerPixel(0)
 
 
 ////////////////////////////////////////////////////////////
-VideoMode::VideoMode(unsigned int width, unsigned int height, unsigned int bitsPerPixel) :
-width       (width),
-height      (height),
-bitsPerPixel(bitsPerPixel)
+VideoMode::VideoMode(unsigned int modeWidth, unsigned int modeHeight, unsigned int modeBitsPerPixel) :
+width       (modeWidth),
+height      (modeHeight),
+bitsPerPixel(modeBitsPerPixel)
 {
 
 }

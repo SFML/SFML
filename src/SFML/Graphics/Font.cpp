@@ -489,11 +489,11 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         }
 
         // Write the pixels to the texture
-        unsigned int x      = glyph.textureRect.left + padding;
-        unsigned int y      = glyph.textureRect.top + padding;
-        unsigned int width  = glyph.textureRect.width - 2 * padding;
-        unsigned int height = glyph.textureRect.height - 2 * padding;
-        page.texture.update(&m_pixelBuffer[0], width, height, x, y);
+        unsigned int x = glyph.textureRect.left + padding;
+        unsigned int y = glyph.textureRect.top + padding;
+        unsigned int w = glyph.textureRect.width - 2 * padding;
+        unsigned int h = glyph.textureRect.height - 2 * padding;
+        page.texture.update(&m_pixelBuffer[0], w, h, x, y);
     }
 
     // Delete the FT glyph

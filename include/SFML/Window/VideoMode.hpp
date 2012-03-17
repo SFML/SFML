@@ -53,12 +53,12 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Construct the video mode with its attributes
     ///
-    /// \param width        Width in pixels
-    /// \param height       Height in pixels
-    /// \param bitsPerPixel Pixel depths in bits per pixel
+    /// \param modeWidth        Width in pixels
+    /// \param modeHeight       Height in pixels
+    /// \param modeBitsPerPixel Pixel depths in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    VideoMode(unsigned int width, unsigned int height, unsigned int bitsPerPixel = 32);
+    VideoMode(unsigned int modeWidth, unsigned int modeHeight, unsigned int modeBitsPerPixel = 32);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current desktop video mode

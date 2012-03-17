@@ -40,7 +40,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundStream::SoundStream() :
-m_thread          (&SoundStream::stream, this),
+m_thread          (&SoundStream::streamData, this),
 m_isStreaming     (false),
 m_channelCount    (0),
 m_sampleRate      (0),
@@ -190,7 +190,7 @@ bool SoundStream::getLoop() const
 
 
 ////////////////////////////////////////////////////////////
-void SoundStream::stream()
+void SoundStream::streamData()
 {
     // Create the buffers
     alCheck(alGenBuffers(BufferCount, m_buffers));

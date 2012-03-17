@@ -54,42 +54,42 @@ public :
     ///
     /// The vertex color is white and texture coordinates are (0, 0).
     ///
-    /// \param position Vertex position
+    /// \param thePosition Vertex position
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position);
+    Vertex(const Vector2f& thePosition);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vertex from its position and color
     ///
     /// The texture coordinates are (0, 0).
     ///
-    /// \param position Vertex position
-    /// \param color    Vertex color
+    /// \param thePosition Vertex position
+    /// \param theColor    Vertex color
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position, const Color& color);
+    Vertex(const Vector2f& thePosition, const Color& theColor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vertex from its position and texture coordinates
     ///
     /// The vertex color is white.
     ///
-    /// \param position  Vertex position
-    /// \param texCoords Vertex texture coordinates
+    /// \param thePosition  Vertex position
+    /// \param theTexCoords Vertex texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position, const Vector2f& texCoords);
+    Vertex(const Vector2f& thePosition, const Vector2f& theTexCoords);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vertex from its position, color and texture coordinates
     ///
-    /// \param position  Vertex position
-    /// \param color     Vertex color
-    /// \param texCoords Vertex texture coordinates
+    /// \param thePosition  Vertex position
+    /// \param theColor     Vertex color
+    /// \param theTexCoords Vertex texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    Vertex(const Vector2f& position, const Color& color, const Vector2f& texCoords);
+    Vertex(const Vector2f& thePosition, const Color& theColor, const Vector2f& theTexCoords);
 
     ////////////////////////////////////////////////////////////
     // Member data

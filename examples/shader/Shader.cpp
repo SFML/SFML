@@ -225,9 +225,10 @@ public :
         // Update the position of the moving entities
         for (std::size_t i = 0; i < m_entities.size(); ++i)
         {
-            float x = std::cos(0.25f * (time * i + (m_entities.size() - i))) * 300 + 350;
-            float y = std::sin(0.25f * (time * (m_entities.size() - i) + i)) * 200 + 250;
-            m_entities[i].setPosition(x, y);
+            sf::Vector2f position;
+            position.x = std::cos(0.25f * (time * i + (m_entities.size() - i))) * 300 + 350;
+            position.y = std::sin(0.25f * (time * (m_entities.size() - i) + i)) * 200 + 250;
+            m_entities[i].setPosition(position);
         }
 
         // Render the updated scene to the off-screen surface

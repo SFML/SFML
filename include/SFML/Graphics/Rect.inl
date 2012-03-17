@@ -37,11 +37,11 @@ height(0)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Rect<T>::Rect(T left, T top, T width, T height) :
-left  (left),
-top   (top),
-width (width),
-height(height)
+Rect<T>::Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight) :
+left  (rectLeft),
+top   (rectTop),
+width (rectWidth),
+height(rectHeight)
 {
 
 }

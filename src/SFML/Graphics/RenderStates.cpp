@@ -46,9 +46,9 @@ shader   (NULL)
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const Transform& transform) :
+RenderStates::RenderStates(const Transform& theTransform) :
 blendMode(BlendAlpha),
-transform(transform),
+transform(theTransform),
 texture  (NULL),
 shader   (NULL)
 {
@@ -56,8 +56,8 @@ shader   (NULL)
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(BlendMode blendMode) :
-blendMode(blendMode),
+RenderStates::RenderStates(BlendMode theBlendMode) :
+blendMode(theBlendMode),
 transform(),
 texture  (NULL),
 shader   (NULL)
@@ -66,32 +66,32 @@ shader   (NULL)
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const Texture* texture) :
+RenderStates::RenderStates(const Texture* theTexture) :
 blendMode(BlendAlpha),
 transform(),
-texture  (texture),
+texture  (theTexture),
 shader   (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const Shader* shader) :
+RenderStates::RenderStates(const Shader* theShader) :
 blendMode(BlendAlpha),
 transform(),
 texture  (NULL),
-shader   (shader)
+shader   (theShader)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(BlendMode blendMode, const Transform& transform,
-                           const Texture* texture, const Shader* shader) :
-blendMode(blendMode),
-transform(transform),
-texture  (texture),
-shader   (shader)
+RenderStates::RenderStates(BlendMode theBlendMode, const Transform& theTransform,
+                           const Texture* theTexture, const Shader* theShader) :
+blendMode(theBlendMode),
+transform(theTransform),
+texture  (theTexture),
+shader   (theShader)
 {
 }
 

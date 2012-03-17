@@ -210,7 +210,7 @@ private :
     /// only when the sound is stopped.
     ///
     ////////////////////////////////////////////////////////////
-    void stream();
+    void streamData();
 
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source

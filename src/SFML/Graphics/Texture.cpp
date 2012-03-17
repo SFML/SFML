@@ -95,8 +95,8 @@ Texture::~Texture()
     {
         ensureGlContext();
 
-        GLuint Texture = static_cast<GLuint>(m_texture);
-        glCheck(glDeleteTextures(1, &Texture));
+        GLuint texture = static_cast<GLuint>(m_texture);
+        glCheck(glDeleteTextures(1, &texture));
     }
 }
 

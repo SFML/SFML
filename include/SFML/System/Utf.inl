@@ -519,7 +519,7 @@ Out Utf<16>::toUtf32(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-In Utf<32>::decode(In begin, In end, Uint32& output, Uint32)
+In Utf<32>::decode(In begin, In /*end*/, Uint32& output, Uint32 /*replacement*/)
 {
     output = *begin++;
     return begin;
@@ -528,7 +528,7 @@ In Utf<32>::decode(In begin, In end, Uint32& output, Uint32)
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<32>::encode(Uint32 input, Out output, Uint32 replacement)
+Out Utf<32>::encode(Uint32 input, Out output, Uint32 /*replacement*/)
 {
     *output++ = input;
     return output;
@@ -537,7 +537,7 @@ Out Utf<32>::encode(Uint32 input, Out output, Uint32 replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-In Utf<32>::next(In begin, In end)
+In Utf<32>::next(In begin, In /*end*/)
 {
     return ++begin;
 }
@@ -669,6 +669,8 @@ Uint32 Utf<32>::decodeAnsi(In input, const std::locale& locale)
        (defined(__GLIBCPP__) || defined (__GLIBCXX__)) &&     /* ... and standard library is glibc++ ... */ \
       !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) /* ... and STLPort is not used on top of it */
 
+        (void)locale; // to avoid warnings
+
         wchar_t character = 0;
         mbtowc(&character, &input, 1);
         return static_cast<Uint32>(character);
@@ -711,6 +713,8 @@ Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, const st
     #if defined(SFML_SYSTEM_WINDOWS) &&                       /* if Windows ... */                          \
        (defined(__GLIBCPP__) || defined (__GLIBCXX__)) &&     /* ... and standard library is glibc++ ... */ \
       !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) /* ... and STLPort is not used on top of it */
+
+        (void)locale; // to avoid warnings
 
         char character = 0;
         if (wctomb(&character, static_cast<wchar_t>(codepoint)) >= 0)

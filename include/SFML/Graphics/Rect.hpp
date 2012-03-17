@@ -58,13 +58,13 @@ public :
     /// Be careful, the last two parameters are the width
     /// and height, not the right and bottom coordinates!
     ///
-    /// \param left   Left coordinate of the rectangle
-    /// \param top    Top coordinate of the rectangle
-    /// \param width  Width of the rectangle
-    /// \param height Height of the rectangle
+    /// \param rectLeft   Left coordinate of the rectangle
+    /// \param rectTop    Top coordinate of the rectangle
+    /// \param rectWidth  Width of the rectangle
+    /// \param rectHeight Height of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    Rect(T left, T top, T width, T height);
+    Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from position and size

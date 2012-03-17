@@ -42,6 +42,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
     int vkey = 0;
     switch (key)
     {
+        default:                   vkey = 0;             break;
         case Keyboard::A:          vkey = 'A';           break;
         case Keyboard::B:          vkey = 'B';           break;
         case Keyboard::C:          vkey = 'C';           break;
@@ -155,6 +156,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
     int vkey = 0;
     switch (button)
     {
+        default:              vkey = 0;           break;
         case Mouse::Left:     vkey = VK_LBUTTON;  break;
         case Mouse::Right:    vkey = VK_RBUTTON;  break;
         case Mouse::Middle:   vkey = VK_MBUTTON;  break;
