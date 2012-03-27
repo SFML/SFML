@@ -100,20 +100,20 @@ IntRect RenderTarget::getViewport(const View& view) const
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::convertCoords(unsigned int x, unsigned int y) const
+Vector2f RenderTarget::convertCoords(const Vector2i& point) const
 {
-    return convertCoords(x, y, getView());
+    return convertCoords(point, getView());
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::convertCoords(unsigned int x, unsigned int y, const View& view) const
+Vector2f RenderTarget::convertCoords(const Vector2i& point, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
     Vector2f coords;
     IntRect viewport = getViewport(view);
-    coords.x = -1.f + 2.f * (static_cast<int>(x) - viewport.left) / viewport.width;
-    coords.y = 1.f  - 2.f * (static_cast<int>(y) - viewport.top)  / viewport.height;
+    coords.x = -1.f + 2.f * (point.x - viewport.left) / viewport.width;
+    coords.y = 1.f  - 2.f * (point.y - viewport.top)  / viewport.height;
 
     // Then transform by the inverse of the view matrix
     return view.getInverseTransform().transformPoint(coords);
