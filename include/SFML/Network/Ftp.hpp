@@ -143,7 +143,7 @@ public :
         /// \param message Response message
         ///
         ////////////////////////////////////////////////////////////
-        Response(Status code = InvalidResponse, const std::string& message = "");
+        explicit Response(Status code = InvalidResponse, const std::string& message = "");
 
         ////////////////////////////////////////////////////////////
         /// \brief Check if the status code means a success

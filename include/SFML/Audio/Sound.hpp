@@ -58,7 +58,7 @@ public :
     /// \param buffer Sound buffer containing the audio data to play with the sound
     ///
     ////////////////////////////////////////////////////////////
-    Sound(const SoundBuffer& buffer);
+    explicit Sound(const SoundBuffer& buffer);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor

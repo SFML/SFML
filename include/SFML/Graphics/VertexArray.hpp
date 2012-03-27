@@ -61,7 +61,7 @@ public :
     /// \param vertexCount Initial number of vertices in the array
     ///
     ////////////////////////////////////////////////////////////
-    VertexArray(PrimitiveType type, unsigned int vertexCount = 0);
+    explicit VertexArray(PrimitiveType type, unsigned int vertexCount = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the vertex count
