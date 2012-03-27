@@ -42,6 +42,7 @@ m_defaultView(),
 m_view       (),
 m_cache      ()
 {
+    m_cache.glStatesSet = false;
 }
 
 
@@ -136,6 +137,10 @@ void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
 
     if (activate(true))
     {
+        // First set the persistent OpenGL states if it's the very first call
+        if (!m_cache.glStatesSet)
+            resetGLStates();
+
         // Check if the vertex count is low enough so that we can pre-transform them
         bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
         if (useVertexCache)
@@ -217,6 +222,7 @@ void RenderTarget::pushGLStates()
 {
     if (activate(true))
     {
+        glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
         glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
         glCheck(glMatrixMode(GL_MODELVIEW));
         glCheck(glPushMatrix());
@@ -235,6 +241,7 @@ void RenderTarget::popGLStates()
 {
     if (activate(true))
     {
+        glCheck(glPopClientAttrib());
         glCheck(glPopAttrib());
         glCheck(glMatrixMode(GL_PROJECTION));
         glCheck(glPopMatrix());
@@ -264,6 +271,7 @@ void RenderTarget::resetGLStates()
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+        m_cache.glStatesSet = true;
 
         // Apply the default SFML states
         applyBlendMode(BlendAlpha);
@@ -286,8 +294,8 @@ void RenderTarget::initialize()
     m_defaultView.reset(FloatRect(0, 0, static_cast<float>(getSize().x), static_cast<float>(getSize().y)));
     m_view = m_defaultView;
 
-    // Initialize the default OpenGL render-states
-    resetGLStates();
+    // Set GL states only on first draw, so that we don't pollute user's states
+    m_cache.glStatesSet = false;
 }
 
 
