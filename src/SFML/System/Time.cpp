@@ -51,7 +51,7 @@ float Time::asSeconds() const
 ////////////////////////////////////////////////////////////
 Int32 Time::asMilliseconds() const
 {
-    return static_cast<Uint32>(m_microseconds / 1000);
+    return static_cast<Int32>(m_microseconds / 1000);
 }
 
 
