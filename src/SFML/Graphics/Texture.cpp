@@ -56,10 +56,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Texture::Texture() :
-m_width        (0),
-m_height       (0),
-m_textureWidth (0),
-m_textureHeight(0),
+m_size         (0, 0),
+m_actualSize   (0, 0),
 m_texture      (0),
 m_isSmooth     (false),
 m_isRepeated   (false),
@@ -72,10 +70,8 @@ m_cacheId      (getUniqueId())
 
 ////////////////////////////////////////////////////////////
 Texture::Texture(const Texture& copy) :
-m_width        (0),
-m_height       (0),
-m_textureWidth (0),
-m_textureHeight(0),
+m_size         (0, 0),
+m_actualSize   (0, 0),
 m_texture      (0),
 m_isSmooth     (copy.m_isSmooth),
 m_isRepeated   (copy.m_isRepeated),
@@ -105,32 +101,30 @@ Texture::~Texture()
 bool Texture::create(unsigned int width, unsigned int height)
 {
     // Check if texture parameters are valid before creating it
-    if (!width || !height)
+    if ((m_size.x == 0) || (m_size.y == 0))
     {
-        err() << "Failed to create texture, invalid size (" << width << "x" << height << ")" << std::endl;
+        err() << "Failed to create texture, invalid size (" << m_size.x << "x" << m_size.y << ")" << std::endl;
         return false;
     }
 
     // Compute the internal texture dimensions depending on NPOT textures support
-    unsigned int textureWidth  = getValidSize(width);
-    unsigned int textureHeight = getValidSize(height);
+    Vector2u actualSize(getValidSize(width), getValidSize(height));
 
     // Check the maximum texture size
     unsigned int maxSize = getMaximumSize();
-    if ((textureWidth > maxSize) || (textureHeight > maxSize))
+    if ((actualSize.x > maxSize) || (actualSize.y > maxSize))
     {
         err() << "Failed to create texture, its internal size is too high "
-              << "(" << textureWidth << "x" << textureHeight << ", "
+              << "(" << actualSize.x << "x" << actualSize.y << ", "
               << "maximum is " << maxSize << "x" << maxSize << ")"
               << std::endl;
         return false;
     }
 
     // All the validity checks passed, we can store the new texture settings
-    m_width         = width;
-    m_height        = height;
-    m_textureWidth  = textureWidth;
-    m_textureHeight = textureHeight;
+    m_size.x        = width;
+    m_size.y        = height;
+    m_actualSize    = actualSize;
     m_pixelsFlipped = false;
 
     ensureGlContext();
@@ -148,7 +142,7 @@ bool Texture::create(unsigned int width, unsigned int height)
 
     // Initialize the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_textureWidth, m_textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
+    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_isRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_isRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
@@ -187,15 +181,15 @@ bool Texture::loadFromStream(InputStream& stream, const IntRect& area)
 bool Texture::loadFromImage(const Image& image, const IntRect& area)
 {
     // Retrieve the image size
-    int width = static_cast<int>(image.getWidth());
-    int height = static_cast<int>(image.getHeight());
+    int width = static_cast<int>(image.getSize().x);
+    int height = static_cast<int>(image.getSize().y);
 
     // Load the entire image if the source area is either empty or contains the whole image
     if (area.width == 0 || (area.height == 0) ||
        ((area.left <= 0) && (area.top <= 0) && (area.width >= width) && (area.height >= height)))
     {
         // Load the entire image
-        if (create(image.getWidth(), image.getHeight()))
+        if (create(image.getSize().x, image.getSize().y))
         {
             update(image);
             return true;
@@ -227,7 +221,7 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
             glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
             for (int i = 0; i < rectangle.height; ++i)
             {
-                glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, m_width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+                glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
                 pixels += 4 * width;
             }
 
@@ -242,16 +236,9 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Texture::getWidth() const
+Vector2u Texture::getSize() const
 {
-    return m_width;
-}
-
-
-////////////////////////////////////////////////////////////
-unsigned int Texture::getHeight() const
-{
-    return m_height;
+    return m_size;
 }
 
 
@@ -268,9 +255,9 @@ Image Texture::copyToImage() const
     priv::TextureSaver save;
 
     // Create an array of pixels
-    std::vector<Uint8> pixels(m_width * m_height * 4);
+    std::vector<Uint8> pixels(m_size.x * m_size.y * 4);
 
-    if ((m_width == m_textureWidth) && (m_height == m_textureHeight) && !m_pixelsFlipped)
+    if ((m_size == m_actualSize) && !m_pixelsFlipped)
     {
         // Texture is not padded nor flipped, we can use a direct copy
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
@@ -281,24 +268,24 @@ Image Texture::copyToImage() const
         // Texture is either padded or flipped, we have to use a slower algorithm
 
         // All the pixels will first be copied to a temporary array
-        std::vector<Uint8> allPixels(m_textureWidth * m_textureHeight * 4);
+        std::vector<Uint8> allPixels(m_actualSize.x * m_actualSize.y * 4);
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
         glCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &allPixels[0]));
 
         // Then we copy the useful pixels from the temporary array to the final one
         const Uint8* src = &allPixels[0];
         Uint8* dst = &pixels[0];
-        int srcPitch = m_textureWidth * 4;
-        int dstPitch = m_width * 4;
+        int srcPitch = m_actualSize.x * 4;
+        int dstPitch = m_size.x * 4;
 
         // Handle the case where source pixels are flipped vertically
         if (m_pixelsFlipped)
         {
-            src += srcPitch * (m_height - 1);
+            src += srcPitch * (m_size.y - 1);
             srcPitch = -srcPitch;
         }
 
-        for (unsigned int i = 0; i < m_height; ++i)
+        for (unsigned int i = 0; i < m_size.y; ++i)
         {
             std::memcpy(dst, src, dstPitch);
             src += srcPitch;
@@ -308,7 +295,7 @@ Image Texture::copyToImage() const
 
     // Create the image
     Image image;
-    image.create(m_width, m_height, &pixels[0]);
+    image.create(m_size.x, m_size.y, &pixels[0]);
 
     return image;
 }
@@ -318,15 +305,15 @@ Image Texture::copyToImage() const
 void Texture::update(const Uint8* pixels)
 {
     // Update the whole texture
-    update(pixels, m_width, m_height, 0, 0);
+    update(pixels, m_size.x, m_size.y, 0, 0);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Texture::update(const Uint8* pixels, unsigned int width, unsigned int height, unsigned int x, unsigned int y)
 {
-    assert(x + width <= m_width);
-    assert(y + height <= m_height);
+    assert(x + width <= m_size.x);
+    assert(y + height <= m_size.y);
 
     if (pixels && m_texture)
     {
@@ -348,14 +335,14 @@ void Texture::update(const Uint8* pixels, unsigned int width, unsigned int heigh
 void Texture::update(const Image& image)
 {
     // Update the whole texture
-    update(image.getPixelsPtr(), image.getWidth(), image.getHeight(), 0, 0);
+    update(image.getPixelsPtr(), image.getSize().x, image.getSize().y, 0, 0);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Texture::update(const Image& image, unsigned int x, unsigned int y)
 {
-    update(image.getPixelsPtr(), image.getWidth(), image.getHeight(), x, y);
+    update(image.getPixelsPtr(), image.getSize().x, image.getSize().y, x, y);
 }
 
 
@@ -369,8 +356,8 @@ void Texture::update(const Window& window)
 ////////////////////////////////////////////////////////////
 void Texture::update(const Window& window, unsigned int x, unsigned int y)
 {
-    assert(x + window.getSize().x <= m_width);
-    assert(y + window.getSize().y <= m_height);
+    assert(x + window.getSize().x <= m_size.x);
+    assert(y + window.getSize().y <= m_size.y);
 
     if (m_texture && window.setActive(true))
     {
@@ -404,15 +391,15 @@ void Texture::bind(CoordinateType coordinateType) const
         // setup scale factors that convert the range [0 .. size] to [0 .. 1]
         if (coordinateType == Pixels)
         {
-            matrix[0] = 1.f / m_textureWidth;
-            matrix[5] = 1.f / m_textureHeight;
+            matrix[0] = 1.f / m_actualSize.x;
+            matrix[5] = 1.f / m_actualSize.y;
         }
 
         // If pixels are flipped we must invert the Y axis
         if (m_pixelsFlipped)
         {
             matrix[5] = -matrix[5];
-            matrix[13] = static_cast<float>(m_height / m_textureHeight);
+            matrix[13] = static_cast<float>(m_size.y / m_actualSize.y);
         }
 
         // Load the matrix
@@ -500,10 +487,8 @@ Texture& Texture::operator =(const Texture& right)
 {
     Texture temp(right);
 
-    std::swap(m_width,         temp.m_width);
-    std::swap(m_height,        temp.m_height);
-    std::swap(m_textureWidth,  temp.m_textureWidth);
-    std::swap(m_textureHeight, temp.m_textureHeight);
+    std::swap(m_size,          temp.m_size);
+    std::swap(m_actualSize,    temp.m_actualSize);
     std::swap(m_texture,       temp.m_texture);
     std::swap(m_isSmooth,      temp.m_isSmooth);
     std::swap(m_isRepeated,    temp.m_isRepeated);

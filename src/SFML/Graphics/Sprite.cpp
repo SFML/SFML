@@ -64,7 +64,7 @@ void Sprite::setTexture(const Texture& texture, bool resetRect)
 {
     // Recompute the texture area if requested, or if there was no valid texture before
     if (resetRect || !m_texture)
-        setTextureRect(IntRect(0, 0, texture.getWidth(), texture.getHeight()));
+        setTextureRect(IntRect(0, 0, texture.getSize().x, texture.getSize().y));
 
     // Assign the new texture
     m_texture = &texture;

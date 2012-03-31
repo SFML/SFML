@@ -150,24 +150,12 @@ public :
     bool saveToFile(const std::string& filename) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return the width of the image
+    /// \brief Return the size of the image
     ///
-    /// \return Width in pixels
-    ///
-    /// \see getHeight
+    /// \return Size in pixels
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getWidth() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the height of the image
-    ///
-    /// \return Height in pixels
-    ///
-    /// \see getWidth
-    ///
-    ////////////////////////////////////////////////////////////
-    unsigned int getHeight() const;
+    Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a transparency mask from a specified color-key
@@ -269,8 +257,7 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int       m_width;  ///< Image width
-    unsigned int       m_height; ///< Image Height
+    Vector2u           m_size;   ///< Image size
     std::vector<Uint8> m_pixels; ///< Pixels of the image
 };
 

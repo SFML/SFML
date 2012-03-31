@@ -519,7 +519,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
             continue;
 
         // Check if there's enough horizontal space left in the row
-        if (width > page.texture.getWidth() - it->width)
+        if (width > page.texture.getSize().x - it->width)
             continue;
 
         // Make sure that this new row is the best found so far
@@ -535,11 +535,11 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
     if (!row)
     {
         int rowHeight = height + height / 10;
-        if (page.nextRow + rowHeight >= page.texture.getHeight())
+        if (page.nextRow + rowHeight >= page.texture.getSize().y)
         {
             // Not enough space: resize the texture if possible
-            unsigned int textureWidth  = page.texture.getWidth();
-            unsigned int textureHeight = page.texture.getHeight();
+            unsigned int textureWidth  = page.texture.getSize().x;
+            unsigned int textureHeight = page.texture.getSize().y;
             if ((textureWidth * 2 <= Texture::getMaximumSize()) && (textureHeight * 2 <= Texture::getMaximumSize()))
             {
                 // Make the texture 2 times bigger

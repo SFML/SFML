@@ -121,7 +121,7 @@ void RenderTexture::display()
 ////////////////////////////////////////////////////////////
 Vector2u RenderTexture::getSize() const
 {
-    return Vector2u(m_texture.getWidth(), m_texture.getHeight());
+    return m_texture.getSize();
 }
 
 
