@@ -101,9 +101,9 @@ Texture::~Texture()
 bool Texture::create(unsigned int width, unsigned int height)
 {
     // Check if texture parameters are valid before creating it
-    if ((m_size.x == 0) || (m_size.y == 0))
+    if ((width == 0) || (height == 0))
     {
-        err() << "Failed to create texture, invalid size (" << m_size.x << "x" << m_size.y << ")" << std::endl;
+        err() << "Failed to create texture, invalid size (" << width << "x" << height << ")" << std::endl;
         return false;
     }
 
