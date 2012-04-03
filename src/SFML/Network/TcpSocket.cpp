@@ -206,7 +206,7 @@ void TcpSocket::disconnect()
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpSocket::send(const char* data, std::size_t size)
+Socket::Status TcpSocket::send(const void* data, std::size_t size)
 {
     // Check the parameters
     if (!data || (size == 0))
@@ -221,7 +221,7 @@ Socket::Status TcpSocket::send(const char* data, std::size_t size)
     for (int length = 0; length < sizeToSend; length += sent)
     {
         // Send a chunk of data
-        sent = ::send(getHandle(), data + length, sizeToSend - length, 0);
+        sent = ::send(getHandle(), static_cast<const char*>(data) + length, sizeToSend - length, 0);
 
         // Check for errors
         if (sent < 0)
@@ -233,7 +233,7 @@ Socket::Status TcpSocket::send(const char* data, std::size_t size)
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpSocket::receive(char* data, std::size_t size, std::size_t& received)
+Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& received)
 {
     // First clear the variables to fill
     received = 0;
@@ -246,7 +246,7 @@ Socket::Status TcpSocket::receive(char* data, std::size_t size, std::size_t& rec
     }
 
     // Receive a chunk of bytes
-    int sizeReceived = recv(getHandle(), data, static_cast<int>(size), 0);
+    int sizeReceived = recv(getHandle(), static_cast<char*>(data), static_cast<int>(size), 0);
 
     // Check the number of bytes received
     if (sizeReceived > 0)
@@ -274,7 +274,7 @@ Socket::Status TcpSocket::send(Packet& packet)
 
     // Get the data to send from the packet
     std::size_t size = 0;
-    const char* data = packet.onSend(size);
+    const void* data = packet.onSend(size);
 
     // First send the packet size
     Uint32 packetSize = htonl(static_cast<Uint32>(size));

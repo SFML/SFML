@@ -56,7 +56,7 @@ public :
     /// \return The number of bytes actually read
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 read(char* data, Int64 size) = 0;
+    virtual Int64 read(void* data, Int64 size) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
@@ -117,7 +117,7 @@ public :
 ///
 ///     bool open(std::string filename);
 ///
-///     Int64 read(char* data, Int64 size);
+///     Int64 read(void* data, Int64 size);
 /// 
 ///     Int64 seek(Int64 position);
 ///     

@@ -90,7 +90,7 @@ void UdpSocket::unbind()
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status UdpSocket::send(const char* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort)
+Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort)
 {
     // Create the internal socket if it doesn't exist
     create();
@@ -107,7 +107,7 @@ Socket::Status UdpSocket::send(const char* data, std::size_t size, const IpAddre
     sockaddr_in address = priv::SocketImpl::createAddress(remoteAddress.toInteger(), remotePort);
 
     // Send the data (unlike TCP, all the data is always sent in one call)
-    int sent = sendto(getHandle(), data, static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+    int sent = sendto(getHandle(), static_cast<const char*>(data), static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address), sizeof(address));
 
     // Check for errors
     if (sent < 0)
@@ -118,7 +118,7 @@ Socket::Status UdpSocket::send(const char* data, std::size_t size, const IpAddre
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status UdpSocket::receive(char* data, std::size_t size, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort)
+Socket::Status UdpSocket::receive(void* data, std::size_t size, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort)
 {
     // First clear the variables to fill
     received      = 0;
@@ -137,7 +137,7 @@ Socket::Status UdpSocket::receive(char* data, std::size_t size, std::size_t& rec
 
     // Receive a chunk of bytes
     priv::SocketImpl::AddrLength addressSize = sizeof(address);
-    int sizeReceived = recvfrom(getHandle(), data, static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address), &addressSize);
+    int sizeReceived = recvfrom(getHandle(), static_cast<char*>(data), static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address), &addressSize);
 
     // Check for errors
     if (sizeReceived < 0)
@@ -165,7 +165,7 @@ Socket::Status UdpSocket::send(Packet& packet, const IpAddress& remoteAddress, u
 
     // Get the data to send from the packet
     std::size_t size = 0;
-    const char* data = packet.onSend(size);
+    const void* data = packet.onSend(size);
 
     // Send it
     return send(data, size, remoteAddress, remotePort);

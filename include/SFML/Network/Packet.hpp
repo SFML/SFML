@@ -99,7 +99,7 @@ public :
     /// \see getDataSize
     ///
     ////////////////////////////////////////////////////////////
-    const char* getData() const;
+    const void* getData() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the data contained in the packet
@@ -250,7 +250,7 @@ private :
     /// \see onReceive
     ///
     ////////////////////////////////////////////////////////////
-    virtual const char* onSend(std::size_t& size);
+    virtual const void* onSend(std::size_t& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Called after the packet is received over the network
@@ -269,7 +269,7 @@ private :
     /// \see onSend
     ///
     ////////////////////////////////////////////////////////////
-    virtual void onReceive(const char* data, std::size_t size);
+    virtual void onReceive(const void* data, std::size_t size);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -377,18 +377,18 @@ private :
 /// \code
 /// class ZipPacket : public sf::Packet
 /// {
-///     virtual const char* onSend(std::size_t& size)
+///     virtual const void* onSend(std::size_t& size)
 ///     {
-///         const char* srcData = getData();
+///         const void* srcData = getData();
 ///         std::size_t srcSize = getDataSize();
 ///
 ///         return MySuperZipFunction(srcData, srcSize, &size);
 ///     }
 ///
-///     virtual void onReceive(const char* data, std::size_t size)
+///     virtual void onReceive(const void* data, std::size_t size)
 ///     {
 ///         std::size_t dstSize;
-///         const char* dstData = MySuperUnzipFunction(data, size, &dstSize);
+///         const void* dstData = MySuperUnzipFunction(data, size, &dstSize);
 ///
 ///         append(dstData, dstSize);
 ///     }

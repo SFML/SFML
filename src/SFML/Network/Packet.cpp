@@ -71,7 +71,7 @@ void Packet::clear()
 
 
 ////////////////////////////////////////////////////////////
-const char* Packet::getData() const
+const void* Packet::getData() const
 {
     return !m_data.empty() ? &m_data[0] : NULL;
 }
@@ -114,7 +114,7 @@ Packet& Packet::operator >>(Int8& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const Int8*>(getData() + m_readPos);
+        data = *reinterpret_cast<const Int8*>(&m_data[m_readPos]);
         m_readPos += sizeof(data);
     }
 
@@ -127,7 +127,7 @@ Packet& Packet::operator >>(Uint8& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const Uint8*>(getData() + m_readPos);
+        data = *reinterpret_cast<const Uint8*>(&m_data[m_readPos]);
         m_readPos += sizeof(data);
     }
 
@@ -140,7 +140,7 @@ Packet& Packet::operator >>(Int16& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohs(*reinterpret_cast<const Int16*>(getData() + m_readPos));
+        data = ntohs(*reinterpret_cast<const Int16*>(&m_data[m_readPos]));
         m_readPos += sizeof(data);
     }
 
@@ -153,7 +153,7 @@ Packet& Packet::operator >>(Uint16& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohs(*reinterpret_cast<const Uint16*>(getData() + m_readPos));
+        data = ntohs(*reinterpret_cast<const Uint16*>(&m_data[m_readPos]));
         m_readPos += sizeof(data);
     }
 
@@ -166,7 +166,7 @@ Packet& Packet::operator >>(Int32& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohl(*reinterpret_cast<const Int32*>(getData() + m_readPos));
+        data = ntohl(*reinterpret_cast<const Int32*>(&m_data[m_readPos]));
         m_readPos += sizeof(data);
     }
 
@@ -179,7 +179,7 @@ Packet& Packet::operator >>(Uint32& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohl(*reinterpret_cast<const Uint32*>(getData() + m_readPos));
+        data = ntohl(*reinterpret_cast<const Uint32*>(&m_data[m_readPos]));
         m_readPos += sizeof(data);
     }
 
@@ -192,7 +192,7 @@ Packet& Packet::operator >>(float& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const float*>(getData() + m_readPos);
+        data = *reinterpret_cast<const float*>(&m_data[m_readPos]);
         m_readPos += sizeof(data);
     }
 
@@ -205,7 +205,7 @@ Packet& Packet::operator >>(double& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const double*>(getData() + m_readPos);
+        data = *reinterpret_cast<const double*>(&m_data[m_readPos]);
         m_readPos += sizeof(data);
     }
 
@@ -223,7 +223,7 @@ Packet& Packet::operator >>(char* data)
     if ((length > 0) && checkSize(length))
     {
         // Then extract characters
-        std::memcpy(data, getData() + m_readPos, length);
+        std::memcpy(data, &m_data[m_readPos], length);
         data[length] = '\0';
 
         // Update reading position
@@ -245,7 +245,7 @@ Packet& Packet::operator >>(std::string& data)
     if ((length > 0) && checkSize(length))
     {
         // Then extract characters
-        data.assign(getData() + m_readPos, length);
+        data.assign(&m_data[m_readPos], length);
 
         // Update reading position
         m_readPos += length;
@@ -496,7 +496,7 @@ bool Packet::checkSize(std::size_t size)
 
 
 ////////////////////////////////////////////////////////////
-const char* Packet::onSend(std::size_t& size)
+const void* Packet::onSend(std::size_t& size)
 {
     size = getDataSize();
     return getData();
@@ -504,7 +504,7 @@ const char* Packet::onSend(std::size_t& size)
 
 
 ////////////////////////////////////////////////////////////
-void Packet::onReceive(const char* data, std::size_t size)
+void Packet::onReceive(const void* data, std::size_t size)
 {
     append(data, size);
 }

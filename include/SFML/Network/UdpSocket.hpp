@@ -120,7 +120,7 @@ public :
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status send(const char* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort);
+    Status send(const void* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive raw data from a remote peer
@@ -143,7 +143,7 @@ public :
     /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    Status receive(char* data, std::size_t size, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort);
+    Status receive(void* data, std::size_t size, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to a remote peer

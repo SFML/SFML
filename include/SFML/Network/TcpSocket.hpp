@@ -134,7 +134,7 @@ public :
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status send(const char* data, std::size_t size);
+    Status send(const void* data, std::size_t size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive raw data from the remote peer
@@ -152,7 +152,7 @@ public :
     /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    Status receive(char* data, std::size_t size, std::size_t& received);
+    Status receive(void* data, std::size_t size, std::size_t& received);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to the remote peer
