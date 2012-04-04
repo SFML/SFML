@@ -208,29 +208,10 @@ public:
     Packet& operator <<(const std::wstring& data);
     Packet& operator <<(const String&       data);
 
-private :
+protected:
 
     friend class TcpSocket;
     friend class UdpSocket;
-
-    ////////////////////////////////////////////////////////////
-    /// Disallow comparisons between packets
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator ==(const Packet& right) const;
-    bool operator !=(const Packet& right) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check if the packet can extract a given number of bytes
-    ///
-    /// This function updates accordingly the state of the packet.
-    ///
-    /// \param size Size to check
-    ///
-    /// \return True if \a size bytes can be read from the packet
-    ///
-    ////////////////////////////////////////////////////////////
-    bool checkSize(std::size_t size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Called before the packet is sent over the network
@@ -270,6 +251,27 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     virtual void onReceive(const void* data, std::size_t size);
+
+private :
+
+    ////////////////////////////////////////////////////////////
+    /// Disallow comparisons between packets
+    ///
+    ////////////////////////////////////////////////////////////
+    bool operator ==(const Packet& right) const;
+    bool operator !=(const Packet& right) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if the packet can extract a given number of bytes
+    ///
+    /// This function updates accordingly the state of the packet.
+    ///
+    /// \param size Size to check
+    ///
+    /// \return True if \a size bytes can be read from the packet
+    ///
+    ////////////////////////////////////////////////////////////
+    bool checkSize(std::size_t size);
 
     ////////////////////////////////////////////////////////////
     // Member data

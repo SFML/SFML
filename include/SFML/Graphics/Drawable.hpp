@@ -51,7 +51,7 @@ public :
     ////////////////////////////////////////////////////////////
     virtual ~Drawable() {}
 
-private :
+protected :
 
     friend class RenderTarget;
 

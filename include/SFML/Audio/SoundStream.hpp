@@ -201,17 +201,6 @@ protected :
     ////////////////////////////////////////////////////////////
     void initialize(unsigned int channelCount, unsigned int sampleRate);
 
-private :
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Function called as the entry point of the thread
-    ///
-    /// This function starts the streaming loop, and returns
-    /// only when the sound is stopped.
-    ///
-    ////////////////////////////////////////////////////////////
-    void streamData();
-
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source
     ///
@@ -238,6 +227,17 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     virtual void onSeek(Time timeOffset) = 0;
+
+private :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Function called as the entry point of the thread
+    ///
+    /// This function starts the streaming loop, and returns
+    /// only when the sound is stopped.
+    ///
+    ////////////////////////////////////////////////////////////
+    void streamData();
 
     ////////////////////////////////////////////////////////////
     /// \brief Fill a new buffer with audio samples, and append
