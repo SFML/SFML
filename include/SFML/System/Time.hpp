@@ -444,7 +444,7 @@ SFML_SYSTEM_API Time& operator /=(Time& left, Int64 right);
 ///    position += speed * elapsed.asSeconds();
 /// }
 ///
-/// Update(sf::milliseconds(100));
+/// update(sf::milliseconds(100));
 /// \endcode
 ///
 /// \see sf::Clock
