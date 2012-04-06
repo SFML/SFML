@@ -45,7 +45,7 @@ configure_file(${DOXYGEN_INPUT_DIR}/doc/logo.jpg    ${DOXYGEN_OUTPUT_DIR}/html/l
 configure_file(${DOXYGEN_INPUT_DIR}/doc/logo-bg.jpg ${DOXYGEN_OUTPUT_DIR}/html/logo-bg.jpg COPYONLY)
 
 # target setup
-add_custom_target(doc
+add_custom_target(doc ALL
                   COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
                   COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_CONFIGURED_INPUT}
                   COMMAND ${CMAKE_COMMAND} -E echo "Done."
