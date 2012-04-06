@@ -286,7 +286,7 @@ SFML_SYSTEM_API Time& operator -=(Time& left, Time right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \left multiplied by \right
+/// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time operator *(Time left, float right);
@@ -298,7 +298,7 @@ SFML_SYSTEM_API Time operator *(Time left, float right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \left multiplied by \right
+/// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time operator *(Time left, Int64 right);
@@ -310,7 +310,7 @@ SFML_SYSTEM_API Time operator *(Time left, Int64 right);
 /// \param left  Left operand (a number)
 /// \param right Right operand (a time)
 ///
-/// \return \left multiplied by \right
+/// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time operator *(float left, Time right);
@@ -322,7 +322,7 @@ SFML_SYSTEM_API Time operator *(float left, Time right);
 /// \param left  Left operand (a number)
 /// \param right Right operand (a time)
 ///
-/// \return \left multiplied by \right
+/// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time operator *(Int64 left, Time right);
@@ -334,7 +334,7 @@ SFML_SYSTEM_API Time operator *(Int64 left, Time right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \left multiplied by \right
+/// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time& operator *=(Time& left, float right);
@@ -346,7 +346,7 @@ SFML_SYSTEM_API Time& operator *=(Time& left, float right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \left multiplied by \right
+/// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time& operator *=(Time& left, Int64 right);
@@ -358,7 +358,7 @@ SFML_SYSTEM_API Time& operator *=(Time& left, Int64 right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \left divided by \right
+/// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time operator /(Time left, float right);
@@ -370,7 +370,7 @@ SFML_SYSTEM_API Time operator /(Time left, float right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \left divided by \right
+/// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time operator /(Time left, Int64 right);
@@ -382,7 +382,7 @@ SFML_SYSTEM_API Time operator /(Time left, Int64 right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \left divided by \right
+/// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time& operator /=(Time& left, float right);
@@ -394,7 +394,7 @@ SFML_SYSTEM_API Time& operator /=(Time& left, float right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \left divided by \right
+/// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time& operator /=(Time& left, Int64 right);
