@@ -104,6 +104,7 @@ int main()
                 {
                     // (re)start the game
                     isPlaying = true;
+                    clock.restart();
 
                     // Reset the position of the paddles and ball
                     leftPaddle.setPosition(10 + paddleSize.x / 2, gameHeight / 2);
@@ -166,7 +167,7 @@ int main()
                 isPlaying = false;
                 pauseMessage.setString("You lost !\nPress space to restart or\nescape to exit");
             }
-            if (ball.getPosition().x + ballRadius > 800)
+            if (ball.getPosition().x + ballRadius > gameWidth)
             {
                 isPlaying = false;
                 pauseMessage.setString("You won !\nPress space to restart or\nescape to exit");
