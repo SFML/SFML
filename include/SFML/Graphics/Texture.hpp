@@ -159,7 +159,7 @@ public :
     bool loadFromMemory(const void* data, std::size_t size, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the texture from a file in memory
+    /// \brief Load the texture from a custom stream
     ///
     /// This function is a shortcut for the following code:
     /// \code
