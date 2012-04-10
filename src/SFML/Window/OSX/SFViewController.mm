@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/OSX/SFViewController.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
+#import <SFML/Window/OSX/SFApplication.h>
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 
@@ -107,7 +108,7 @@
 ////////////////////////////////////////////////////////
 -(void)changeTitle:(NSString *)title
 {
-    sf::err() << "Cannot change the title of the view." << std::endl;
+    sf::err() << "Cannot change the title of the SFML area when SFML is integrated in a NSView." << std::endl;
 }
 
 
@@ -156,7 +157,7 @@
 ////////////////////////////////////////////////////////
 -(void)closeWindow
 {
-    sf::err() << "Cannot close the view." << std::endl;
+    sf::err() << "Cannot close SFML area when SFML is integrated in a NSView." << std::endl;
     [self setRequesterTo:0];
 }
 
@@ -198,19 +199,14 @@
 ////////////////////////////////////////////////////////////
 -(NSPoint)position
 {
-    NSPoint pos = [m_view frame].origin;
-    
-    // Flip screen coodinates
-    float const screenHeight = NSHeight([[[m_view window] screen] frame]);
-    pos.y = screenHeight - pos.y;
-    
-    return pos;
+    // Origin is bottom-left corner of the window
+    return [m_view convertPoint:NSMakePoint(0, 0) toView:nil]; // nil means window
 }
 
 ////////////////////////////////////////////////////////.
 -(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
 {
-    sf::err() << "Cannot move the view." << std::endl;
+    sf::err() << "Cannot move SFML area when SFML is integrated in a NSView. Use the view hanlder directly instead." << std::endl;
 }
 
 
@@ -237,14 +233,30 @@
               by:(unsigned int)height 
             with:(sf::Uint8 const *)pixels
 {
-    sf::err() << "Cannot set an icon to the view." << std::endl;
+    sf::err() << "Cannot set an icon when SFML is integrated in a NSView." << std::endl;
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)processEvent
 {
-    sf::err() << "Cannot process event from the view." << std::endl;
+    // If we are not on the main thread we stop here and advice the user.
+    if ([NSThread currentThread] != [NSThread mainThread]) {
+        /*
+         * See http://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
+         * for more information.
+         */
+        sf::err()
+        << "Cannot fetch event from a worker thread. (OS X restriction)"
+        << std::endl;
+        
+        return;
+    }
+    
+    // If we don't have a requester we don't fetch event.
+    if (m_requester != 0) {
+        [SFApplication processEvent];
+    }
 }
 
 

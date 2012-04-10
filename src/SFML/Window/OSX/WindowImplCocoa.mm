@@ -74,9 +74,7 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
         
     }
      
-    // NO :
-    // [m_delegate setRequesterTo:this];
-    // because we don't handle event.
+    [m_delegate setRequesterTo:this];
 }
     
     
