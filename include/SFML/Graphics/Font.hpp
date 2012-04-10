@@ -210,6 +210,19 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static const Font& getDefaultFont();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Destroy the default built-in font
+    ///
+    /// This function should be called before the main() function
+    /// exits if SFML is linked dynamically to prevent a crash on
+    /// global exit (although it does no harm even when SFML is
+    /// linked statically). Make sure that no sf::Text is using
+    /// the default font anymore (see sf::Text::setFont() for a
+    /// full explanation).
+    ///
+    ////////////////////////////////////////////////////////////
+    static void destroyDefaultFont();
 
 private :
 

@@ -39,6 +39,28 @@
 
 namespace
 {
+    struct DefaultFontHolder {
+        sf::Font* defaultFont;
+
+        void free()
+        {
+            delete defaultFont;
+            defaultFont = NULL;
+        }
+
+        DefaultFontHolder()
+        {
+            defaultFont = NULL;
+        }
+
+        ~DefaultFontHolder()
+        {
+            free();
+        }
+
+
+    } defaultFontHolder;
+
     // FreeType callbacks that operate on a sf::InputStream
     unsigned long read(FT_Stream rec, unsigned long offset, unsigned char* buffer, unsigned long count)
     {
@@ -329,24 +351,34 @@ Font& Font::operator =(const Font& right)
 ////////////////////////////////////////////////////////////
 const Font& Font::getDefaultFont()
 {
-    static Font font;
-    static bool loaded = false;
-
-    // Load the default font on first call
-    if (!loaded)
+    // Load the default font on first call and after calls to destroyDefaultFont()
+    if (!defaultFontHolder.defaultFont)
     {
         static const signed char data[] =
         {
             #include <SFML/Graphics/Arial.hpp>
         };
-
-        font.loadFromMemory(data, sizeof(data));
-        loaded = true;
+        try
+        {
+            defaultFontHolder.defaultFont = new sf::Font();
+        }
+        catch (std::bad_alloc& e)
+        {
+            err() << "Could not allocate default font: " << e.what() << std::endl;
+            static sf::Font invalid;
+            return invalid;
+        }
+        defaultFontHolder.defaultFont->loadFromMemory(data, sizeof(data));
     }
 
-    return font;
+    return *defaultFontHolder.defaultFont;
 }
 
+////////////////////////////////////////////////////////////
+void Font::destroyDefaultFont()
+{
+    defaultFontHolder.free();
+}
 
 ////////////////////////////////////////////////////////////
 void Font::cleanup()
