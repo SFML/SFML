@@ -365,7 +365,8 @@ const Font& Font::getDefaultFont()
         catch (std::bad_alloc& e)
         {
             err() << "Could not allocate default font: " << e.what() << std::endl;
-            return sf::Font();
+            static sf::Font invalid;
+            return invalid;
         }
         defaultFontHolder.defaultFont->loadFromMemory(data, sizeof(data));
     }
