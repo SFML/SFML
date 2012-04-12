@@ -70,20 +70,6 @@ AudioDevice::AudioDevice()
 
 
 ////////////////////////////////////////////////////////////
-AudioDevice::~AudioDevice()
-{
-    // Destroy the context
-    alcMakeContextCurrent(NULL);
-    if (audioContext)
-        alcDestroyContext(audioContext);
-
-    // Destroy the device
-    if (audioDevice)
-        alcCloseDevice(audioDevice);
-}
-
-
-////////////////////////////////////////////////////////////
 bool AudioDevice::isExtensionSupported(const std::string& extension)
 {
     ensureALInit();
