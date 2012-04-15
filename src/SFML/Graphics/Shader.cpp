@@ -454,7 +454,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCod
     if (!isAvailable())
     {
         err() << "Failed to create a shader: your system doesn't support shaders "
-              << "(you should test Shader::IsAvailable() before trying to use the Shader class)" << std::endl;
+              << "(you should test Shader::isAvailable() before trying to use the Shader class)" << std::endl;
         return false;
     }
 
