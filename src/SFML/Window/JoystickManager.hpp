@@ -31,6 +31,7 @@
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Clock.hpp>
 
 
 namespace sf
@@ -99,9 +100,10 @@ private:
     ////////////////////////////////////////////////////////////
     struct Item
     {
-        JoystickImpl  joystick;     ///< Joystick implementation
-        JoystickState state;        ///< The current joystick state
-        JoystickCaps  capabilities; ///< The joystick capabilities
+        JoystickImpl  joystick;        ///< Joystick implementation
+        JoystickState state;           ///< The current joystick state
+        JoystickCaps  capabilities;    ///< The joystick capabilities
+        sf::Clock     connectionCheck; ///< Connection check
     };
 
     ////////////////////////////////////////////////////////////
