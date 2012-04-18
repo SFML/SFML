@@ -28,7 +28,7 @@
 # Moreover, keep in mind that SFML frameworks are only available as release libraries unlike dylibs which
 # are available for both release and debug modes.
 #
-# If SFML is not installed in a standard path, you can use the SFMLDIR CMake (or environment) variable
+# If SFML is not installed in a standard path, you can use the SFML_ROOT CMake (or environment) variable
 # to tell CMake where SFML is.
 #
 # Output
@@ -65,8 +65,8 @@ endif()
 find_path(SFML_INCLUDE_DIR SFML/Config.hpp
           PATH_SUFFIXES include
           PATHS
-          ${SFMLDIR}
-          $ENV{SFMLDIR}
+          ${SFML_ROOT}
+          $ENV{SFML_ROOT}
           ~/Library/Frameworks
           /Library/Frameworks
           /usr/local/
@@ -108,8 +108,8 @@ endif()
 # find the requested modules
 set(SFML_FOUND TRUE) # will be set to false if one of the required modules is not found
 set(FIND_SFML_LIB_PATHS
-    ${SFMLDIR}
-    $ENV{SFMLDIR}
+    ${SFML_ROOT}
+    $ENV{SFML_ROOT}
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local
