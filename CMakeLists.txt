@@ -31,21 +31,21 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 
 # add an option for building the examples
-sfml_set_option(BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
+sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
 
 # add an option for building the API documentation
-sfml_set_option(BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
+sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
 # Mac OS X specific options
 if(MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
-    sfml_set_option(BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
+    sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
     
     # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
     sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
 
     # add an option to automatically install Xcode 4 templates
-    sfml_set_option(INSTALL_XCODE4_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode 4 templates, FALSE to do nothing about it")
+    sfml_set_option(SFML_INSTALL_XCODE4_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode 4 templates, FALSE to do nothing about it")
 endif()
 
 # define SFML_STATIC if the build type is not set to 'shared'
@@ -60,10 +60,10 @@ endif()
 
 # define an option for choosing between static and dynamic C runtime (Windows only)
 if(WINDOWS)
-    sfml_set_option(STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
+    sfml_set_option(SFML_USE_STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
     
     # for VC++, we can apply it globally by modifying the compiler flags
-    if(COMPILER_MSVC AND STATIC_STD_LIBS)
+    if(COMPILER_MSVC AND SFML_USE_STATIC_STD_LIBS)
         foreach(flag
                 CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
                 CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
@@ -112,16 +112,16 @@ if(MACOSX)
     # first, it's available only for release
     #    (because cmake currently doesn't allow specifying a custom framework name so XXX-d is not possible)
     # secondly, it works only with BUILD_SHARED_LIBS enabled
-    if(BUILD_FRAMEWORKS)
+    if(SFML_BUILD_FRAMEWORKS)
         # requirement #1
         if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-            message(FATAL_ERROR "CMAKE_BUILD_TYPE should be \"Release\" when BUILD_FRAMEWORKS is TRUE")
+            message(FATAL_ERROR "CMAKE_BUILD_TYPE should be \"Release\" when SFML_BUILD_FRAMEWORKS is TRUE")
             return()
         endif()
 
         # requirement #2
         if(NOT BUILD_SHARED_LIBS)
-            message(FATAL_ERROR "BUILD_SHARED_LIBS should be TRUE when BUILD_FRAMEWORKS is TRUE")
+            message(FATAL_ERROR "BUILD_SHARED_LIBS should be TRUE when SFML_BUILD_FRAMEWORKS is TRUE")
             return()
         endif()
     endif()
@@ -129,8 +129,8 @@ endif()
 
 if(LINUX)
     if(BUILD_SHARED_LIBS)
-        sfml_set_option(INSTALL_PKGCONFIG_FILES TRUE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
-        if(INSTALL_PKGCONFIG_FILES)
+        sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES TRUE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
+        if(SFML_INSTALL_PKGCONFIG_FILES)
             foreach(sfml_module IN ITEMS all system window graphics audio network)
                 CONFIGURE_FILE(
                     "tools/pkg-config/sfml-${sfml_module}.pc.in"
@@ -141,23 +141,23 @@ if(LINUX)
             endforeach()
         endif()
     else()
-        if(INSTALL_PKGCONFIG_FILES)
-            message(WARNING "No pkg-config files are provided for the static SFML libraries (INSTALL_PKGCONFIG_FILES will be ignored).")
+        if(SFML_INSTALL_PKGCONFIG_FILES)
+            message(WARNING "No pkg-config files are provided for the static SFML libraries (SFML_INSTALL_PKGCONFIG_FILES will be ignored).")
         endif()
     endif()
 endif()
 
 # add the subdirectories
 add_subdirectory(src/SFML)
-if(BUILD_EXAMPLES)
+if(SFML_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
-if(BUILD_DOC)
+if(SFML_BUILD_DOC)
     add_subdirectory(doc)
 endif()
 
 # setup the install rules
-if(NOT BUILD_FRAMEWORKS)
+if(NOT SFML_BUILD_FRAMEWORKS)
     install(DIRECTORY include
             DESTINATION .
             COMPONENT devel
@@ -221,7 +221,7 @@ if(WINDOWS)
 elseif(MACOSX)
     install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
 
-    if(INSTALL_XCODE4_TEMPLATES)
+    if(SFML_INSTALL_XCODE4_TEMPLATES)
         install(DIRECTORY tools/xcode/templates/SFML DESTINATION /Library/Developer/Xcode/Templates)
     endif()
 endif()
