@@ -41,6 +41,11 @@ namespace sf {
 /// This protocol defines the interface of the delegate of 
 /// the window implementation.
 ///
+/// We don't create an interface here because Obj-C doesn't allow
+/// multiple inheritance (SFViewController and SFWindowController
+/// don't have the same parent classes). Unfortunately this means
+/// we have to duplicate some code.
+///
 /// Everything is done via a class that implement this protocol.
 /// There are two of these classes : 
 ///
@@ -56,7 +61,7 @@ namespace sf {
 ///
 /// keyDown, keyUp, textEntered
 ///
-/// Note : Joystick are not bound to a view or window 
+/// Note : Joysticks are not bound to a view or window 
 /// thus they're not managed by a class implementing this protocol.
 ///
 ////////////////////////////////////////////////////////////

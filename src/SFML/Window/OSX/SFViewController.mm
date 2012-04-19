@@ -71,6 +71,8 @@
         
         // Set the (OGL) view to the view as its "content" view.
         [m_view addSubview:m_oglView];
+        
+        [m_oglView setAutoresizingMask:[m_view autoresizingMask]];
     }
     
     return self;
@@ -106,27 +108,6 @@
 
 
 ////////////////////////////////////////////////////////
--(void)changeTitle:(NSString *)title
-{
-    sf::err() << "Cannot change the title of the SFML area when SFML is integrated in a NSView." << std::endl;
-}
-
-
-////////////////////////////////////////////////////////
--(void)enableKeyRepeat
-{
-    [m_oglView enableKeyRepeat];
-}
-
-
-////////////////////////////////////////////////////////
--(void)disableKeyRepeat
-{
-    [m_oglView disableKeyRepeat];
-}
-
-
-////////////////////////////////////////////////////////
 -(void)hideMouseCursor
 {
     [NSCursor hide];
@@ -141,30 +122,10 @@
 
 
 ////////////////////////////////////////////////////////
--(void)hideWindow
-{
-    [m_view setHidden:YES];
-}
-
-
-////////////////////////////////////////////////////////
--(void)showWindow
-{
-    [m_view setHidden:NO];
-}
-
-
-////////////////////////////////////////////////////////
--(void)closeWindow
-{
-    sf::err() << "Cannot close SFML area when SFML is integrated in a NSView." << std::endl;
-    [self setRequesterTo:0];
-}
-
-
-////////////////////////////////////////////////////////
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
 {
+    // TODO remove this ? use ogl view selector instead ?
+    
     if (m_requester == 0) return;
     
     // Create a SFML event.
@@ -203,6 +164,7 @@
     return [m_view convertPoint:NSMakePoint(0, 0) toView:nil]; // nil means window
 }
 
+
 ////////////////////////////////////////////////////////.
 -(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
 {
@@ -213,18 +175,65 @@
 ////////////////////////////////////////////////////////////
 -(NSSize)size
 {
-    return [m_view frame].size;
+    // TODO scaleUnitSquareToSize: ?
+    return [m_oglView frame].size;
 }
+
 
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
 {
+    // TODO scaleUnitSquareToSize: ?
+    
     NSRect frame = NSMakeRect([m_view frame].origin.x,
                               [m_view frame].origin.y,
                               width,
                               height);
     
     [m_view setFrame:frame];
+    [m_oglView setFrame:frame];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)changeTitle:(NSString *)title
+{
+    sf::err() << "Cannot change the title of the SFML area when SFML is integrated in a NSView." << std::endl;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)hideWindow
+{
+    [m_view setHidden:YES];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)showWindow
+{
+    [m_view setHidden:NO];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)closeWindow
+{
+    sf::err() << "Cannot close SFML area when SFML is integrated in a NSView." << std::endl;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)enableKeyRepeat
+{
+    [m_oglView enableKeyRepeat];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)disableKeyRepeat
+{
+    [m_oglView disableKeyRepeat];
 }
 
 

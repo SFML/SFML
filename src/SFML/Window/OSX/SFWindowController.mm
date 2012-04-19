@@ -317,6 +317,7 @@
 ////////////////////////////////////////////////////////
 -(NSSize)size
 {
+    // TODO scaleUnitSquareToSize: ?
     return [m_oglView frame].size;
 }
 
@@ -324,6 +325,8 @@
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
 {
+    // TODO scaleUnitSquareToSize: ?
+    
     // Add titlebar height.
     NSRect frame = NSMakeRect([m_window frame].origin.x,
                               [m_window frame].origin.y,
