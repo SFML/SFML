@@ -275,12 +275,12 @@ typedef Vector3<float> Vector3f;
 /// and comparisons (==, !=), for example int or float.
 ///
 /// You generally don't have to care about the templated form (sf::Vector3<T>),
-/// the two most common specializations have special typedefs:
+/// the most common specializations have special typedefs:
 /// \li sf::Vector3<float> is sf::Vector3f
 /// \li sf::Vector3<int> is sf::Vector3i
 ///
 /// The sf::Vector3 class has a small and simple interface, its x and y members
-/// can be accessed directly (there's no accessor like SetX(), GetX()) and it
+/// can be accessed directly (there's no accessor like setX(), getX()) and it
 /// contains no mathematical function like dot product, cross product, length, etc.
 ///
 /// Usage example:
