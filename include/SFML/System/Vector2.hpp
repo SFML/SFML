@@ -277,6 +277,7 @@ typedef Vector2<float>        Vector2f;
 /// the two most common specializations have special typedefs:
 /// \li sf::Vector2<float> is sf::Vector2f
 /// \li sf::Vector2<int> is sf::Vector2i
+/// \li sf::Vector2<unsigned int> is sf::Vector2u
 ///
 /// The sf::Vector2 class has a small and simple interface, its x and y members
 /// can be accessed directly (there's no accessor like SetX(), GetX()) and it

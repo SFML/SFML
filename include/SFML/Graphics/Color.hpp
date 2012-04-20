@@ -199,8 +199,8 @@ SFML_GRAPHICS_API Color& operator *=(Color& left, const Color& right);
 ///
 /// \code
 /// sf::Color color(255, 0, 0); // red
-/// color.red = 0;              // make it black
-/// color.blue = 128;           // make it dark blue
+/// color.r = 0;                // make it black
+/// color.b = 128;              // make it dark blue
 /// \endcode
 ///
 /// The fourth component of colors, named "alpha", represents
