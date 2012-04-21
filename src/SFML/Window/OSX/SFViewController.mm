@@ -124,36 +124,8 @@
 ////////////////////////////////////////////////////////
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
 {
-    // TODO remove this ? use ogl view selector instead ?
-    
-    if (m_requester == 0) return;
-    
-    // Create a SFML event.
-    m_requester->mouseMovedAt(x, y);
-    
-    // Flip for SFML window coordinate system
-    y = NSHeight([[m_view window] frame]) - y;
-    
-    // Adjust for view reference instead of window
-    y -= NSHeight([[m_view window] frame]) - NSHeight([m_oglView frame]);
-    
-    // Convert to screen coordinates
-    NSPoint screenCoord = [[m_view window] convertBaseToScreen:NSMakePoint(x, y)];
-    
-    // Flip screen coodinates
-    float const screenHeight = NSHeight([[[m_view window] screen] frame]);
-    screenCoord.y = screenHeight - screenCoord.y;
-    
-    CGDirectDisplayID screenNumber = (CGDirectDisplayID)[[[[[m_view window] screen] deviceDescription] valueForKey:@"NSScreenNumber"] intValue];
-    
-    // Place the cursor.
-    CGDisplayMoveCursorToPoint(screenNumber, CGPointMake(screenCoord.x, screenCoord.y));
-    /*
-     CGDisplayMoveCursorToPoint -- Discussion :
-     
-     No events are generated as a result of this move. 
-     Points that lie outside the desktop are clipped to the desktop.
-     */
+    // Forward to...
+    [m_oglView setCursorPositionToX:x Y:y];
 }
 
 
@@ -175,7 +147,6 @@
 ////////////////////////////////////////////////////////////
 -(NSSize)size
 {
-    // TODO scaleUnitSquareToSize: ?
     return [m_oglView frame].size;
 }
 
@@ -183,8 +154,6 @@
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
 {
-    // TODO scaleUnitSquareToSize: ?
-    
     NSRect frame = NSMakeRect([m_view frame].origin.x,
                               [m_view frame].origin.y,
                               width,
