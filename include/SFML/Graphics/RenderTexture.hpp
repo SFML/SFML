@@ -41,7 +41,7 @@ namespace priv
 }
 
 ////////////////////////////////////////////////////////////
-/// \brief Target for off-screen 2D rendering into an texture
+/// \brief Target for off-screen 2D rendering into a texture
 ///
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API RenderTexture : public RenderTarget
