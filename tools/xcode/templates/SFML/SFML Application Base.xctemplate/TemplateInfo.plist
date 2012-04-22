@@ -43,9 +43,9 @@ subject to the following restrictions:
 	<key>Options</key>
 	<array>
 			<!-- ****************************************** Framework option -->
-		<dict>
+        <dict>
 			<key>Identifier</key>
-			<string>libraryType</string>
+			<string>useFrameworks</string>
 			<key>Name</key>
 			<string>Use frameworks</string>
 			<key>Description</key>
@@ -55,7 +55,7 @@ subject to the following restrictions:
 			<key>SortOrder</key>
 			<integer>1</integer>
 			<key>Default</key>
-			<string>false</string>
+			<string>true</string>
 			<key>Units</key>
 			<dict>
 				<!-- 													  ON -->
@@ -98,7 +98,59 @@ subject to the following restrictions:
 				</dict>
 				
 			</dict>
-		</dict>
+        </dict>
+
+            <!-- ******************************************* Use debug dylib -->
+        <dict>
+            <key>Identifier</key>
+            <string>useDebug</string>
+            <key>Name</key>
+            <string>Use debug dylibs in debug mode</string>
+            <key>Description</key>
+            <string>Checking this setting requires the use of dylibs instead of frameworks. It will link the project against the debug version of SFML when you build your project for debugging. It is recommended to leave this unchecked.</string>
+            <key>Type</key>
+            <string>checkbox</string>
+            <key>SortOrder</key>
+            <integer>1</integer>
+            <key>Default</key> 
+            <string>false</string>
+            <key>RequiredOptions</key>
+			<dict>
+				<key>useFrameworks</key>
+				<string>false</string>
+			</dict>
+            <key>Units</key>
+            <dict>
+                <!--                                                      ON -->
+                <key>true</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>SFML_LINK_DYLIBS_SUFFIX_DEBUG</key>
+							<string>-d</string>
+						</dict>
+					</dict>
+				</dict>
+
+                <!--                                                     OFF -->
+                <key>false</key>
+				<dict>
+					<!-- compilation options -->
+					<key>Project</key>
+					<dict>
+						<key>SharedSettings</key>
+						<dict>
+							<key>SFML_LINK_DYLIBS_SUFFIX_DEBUG</key>
+							<string></string>
+						</dict>
+					</dict>
+				</dict>
+            </dict>
+
+        </dict>	
 		
 			<!-- ********************************************* Window Module -->
 		<dict>
@@ -619,7 +671,7 @@ while (window.isOpen())
 			<key>Debug</key>
 			<dict>
 				<key>SFML_LINK_DYLIBS_SUFFIX</key>
-				<string>-d</string>
+				<string>$(SFML_LINK_DYLIBS_SUFFIX_DEBUG)</string>
 				
 				<key>OTHER_LDFLAGS</key>
 				<string>$(OTHER_LDFLAGS) $(SFML_SYSTEM) $(SFML_WINDOW) $(SFML_GRAPHICS) $(SFML_AUDIO) $(SFML_NETWORK)</string>
