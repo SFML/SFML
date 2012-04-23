@@ -175,10 +175,10 @@ public :
 /// sf::Listener::setPosition(1, 0, -5);
 ///
 /// // Make it face the right axis (1, 0, 0)
-/// sf::Listener::SetDirection(1, 0, 0);
+/// sf::Listener::setDirection(1, 0, 0);
 ///
 /// // Reduce the global volume
-/// sf::Listener::SetGlobalVolume(50);
+/// sf::Listener::setGlobalVolume(50);
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////
