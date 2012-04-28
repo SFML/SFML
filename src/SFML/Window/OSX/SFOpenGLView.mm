@@ -86,7 +86,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 -(void)initModifiersState;
 
 ////////////////////////////////////////////////////////////
-/// Converte the NSEvent mouse button type to SFML type.
+/// Convert the NSEvent mouse button type to SFML type.
 ///
 /// Returns ButtonCount if the button is unknown
 /// 
@@ -184,7 +184,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
         NSRect r = [self convertRect:NSMakeRect(x, y, 1, 1) toView:self];
         r = [self convertRect:r toView:nil]; // nil means window
         
-        // Converte it to screen coordinates
+        // Convert it to screen coordinates
         r = [[self window] convertRectToScreen:r];
         
         // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.
@@ -203,7 +203,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
         NSPoint p = [self convertPoint:NSMakePoint(x, y) toView:self];
         p = [self convertPoint:p toView:nil]; // nil means window
         
-        // Converte it to screen coordinates
+        // Convert it to screen coordinates
         p = [[self window] convertBaseToScreen:p];
         
         // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.

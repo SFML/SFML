@@ -220,7 +220,7 @@ private :
     CFSetRef copyDevices(UInt32 page, UInt32 usage);
     
     ////////////////////////////////////////////////////////////
-    /// \brief Converte a HID key usage to its corresponding virtual code
+    /// \brief Convert a HID key usage to its corresponding virtual code
     ///
     /// See IOHIDUsageTables.h
     ///
