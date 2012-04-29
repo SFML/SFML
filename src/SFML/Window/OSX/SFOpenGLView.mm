@@ -169,50 +169,25 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     //        but the recommended -[NSWindow convertRectToScreen] is not
     //        available until 10.7.
     //
-    //        So we choose at runtime which code to execute.
+    //        So we stick with the old one for now.
+
     
-#ifndef NSAppKitVersionNumber10_6
-#define NSAppKitVersionNumber10_6 1038
-#endif
+    // Flip SFML coordinates to match window coordinates
+    y = [self frame].size.height - y;
     
-    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_6) {
+    // Get the position of (x, y) in the coordinate system of the window.
+    NSPoint p = [self convertPoint:NSMakePoint(x, y) toView:self];
+    p = [self convertPoint:p toView:nil]; // nil means window
     
-        // Flip SFML coordinates to match window coordinates
-        y = [self frame].size.height - y;
-        
-        // Get the position of (x, y) in the coordinate system of the window.
-        NSRect r = [self convertRect:NSMakeRect(x, y, 1, 1) toView:self];
-        r = [self convertRect:r toView:nil]; // nil means window
-        
-        // Convert it to screen coordinates
-        r = [[self window] convertRectToScreen:r];
-        
-        // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.
-        float const screenHeight = [[[self window] screen] frame].size.height;
-        r.origin.y = screenHeight - r.origin.y;
-        
-        x = r.origin.x;
-        y = r.origin.y;
-        
-    } else { // 10.6 or lower
-        
-        // Flip SFML coordinates to match window coordinates
-        y = [self frame].size.height - y;
-        
-        // Get the position of (x, y) in the coordinate system of the window.
-        NSPoint p = [self convertPoint:NSMakePoint(x, y) toView:self];
-        p = [self convertPoint:p toView:nil]; // nil means window
-        
-        // Convert it to screen coordinates
-        p = [[self window] convertBaseToScreen:p];
-        
-        // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.
-        float const screenHeight = [[[self window] screen] frame].size.height;
-        p.y = screenHeight - p.y;
-        
-        x = p.x;
-        y = p.y;
-    }
+    // Convert it to screen coordinates
+    p = [[self window] convertBaseToScreen:p];
+    
+    // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.
+    float const screenHeight = [[[self window] screen] frame].size.height;
+    p.y = screenHeight - p.y;
+    
+    x = p.x;
+    y = p.y;
 
     
     // Get the id of the screen
