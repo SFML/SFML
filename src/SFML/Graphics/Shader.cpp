@@ -53,9 +53,12 @@ namespace
         {
             file.seekg(0, std::ios_base::end);
             std::streamsize size = file.tellg();
-            file.seekg(0, std::ios_base::beg);
-            buffer.resize(size);
-            file.read(&buffer[0], size);
+            if (size > 0)
+            {
+                file.seekg(0, std::ios_base::beg);
+                buffer.resize(size);
+                file.read(&buffer[0], size);
+            }
             buffer.push_back('\0');
             return true;
         }
@@ -68,11 +71,16 @@ namespace
     // Read the contents of a stream into an array of char
     bool getStreamContents(sf::InputStream& stream, std::vector<char>& buffer)
     {
+        bool success = true;
         sf::Int64 size = stream.getSize();
-        buffer.resize(static_cast<std::size_t>(size));
-        sf::Int64 read = stream.read(&buffer[0], size);
+        if (size > 0)
+        {
+            buffer.resize(static_cast<std::size_t>(size));
+            sf::Int64 read = stream.read(&buffer[0], size);
+            success = (read == size);
+        }
         buffer.push_back('\0');
-        return read == size;
+        return success;
     }
 }
 
