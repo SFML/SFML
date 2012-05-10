@@ -535,7 +535,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
     if (!row)
     {
         int rowHeight = height + height / 10;
-        if (page.nextRow + rowHeight >= page.texture.getSize().y)
+        while (page.nextRow + rowHeight >= page.texture.getSize().y)
         {
             // Not enough space: resize the texture if possible
             unsigned int textureWidth  = page.texture.getSize().x;
