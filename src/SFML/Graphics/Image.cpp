@@ -45,22 +45,32 @@ m_size(0, 0)
 ////////////////////////////////////////////////////////////
 void Image::create(unsigned int width, unsigned int height, const Color& color)
 {
-    // Assign the new size
-    m_size.x = width;
-    m_size.y = height;
-
-    // Resize the pixel buffer
-    m_pixels.resize(width * height * 4);
-
-    // Fill it with the specified color
-    Uint8* ptr = &m_pixels[0];
-    Uint8* end = ptr + m_pixels.size();
-    while (ptr < end)
+    if (width && height)
     {
-        *ptr++ = color.r;
-        *ptr++ = color.g;
-        *ptr++ = color.b;
-        *ptr++ = color.a;
+        // Assign the new size
+        m_size.x = width;
+        m_size.y = height;
+
+        // Resize the pixel buffer
+        m_pixels.resize(width * height * 4);
+
+        // Fill it with the specified color
+        Uint8* ptr = &m_pixels[0];
+        Uint8* end = ptr + m_pixels.size();
+        while (ptr < end)
+        {
+            *ptr++ = color.r;
+            *ptr++ = color.g;
+            *ptr++ = color.b;
+            *ptr++ = color.a;
+        }
+    }
+    else
+    {
+        // Create an empty image
+        m_size.x = 0;
+        m_size.y = 0;
+        m_pixels.clear();
     }
 }
 
@@ -68,7 +78,7 @@ void Image::create(unsigned int width, unsigned int height, const Color& color)
 ////////////////////////////////////////////////////////////
 void Image::create(unsigned int width, unsigned int height, const Uint8* pixels)
 {
-    if (pixels)
+    if (pixels && width && height)
     {
         // Assign the new size
         m_size.x = width;
