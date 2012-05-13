@@ -74,7 +74,7 @@ void JoystickManager::update()
                 item.state = JoystickState();
             }
         }
-        else
+        else if (item.connectionCheck.getElapsedTime().asSeconds() > 1.f)
         {
             // Check if the joystick was connected since last update
             if (JoystickImpl::isConnected(i))
@@ -85,6 +85,7 @@ void JoystickManager::update()
                     item.state = item.joystick.update();
                 }
             }
+            item.connectionCheck.restart();
         }
     }
 }
