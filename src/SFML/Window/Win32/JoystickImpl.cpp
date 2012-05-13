@@ -26,9 +26,23 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/System/Clock.hpp>
 #include <windows.h>
 #include <cmath>
 
+
+namespace
+{
+    struct ConnectionCache
+    {
+        ConnectionCache() : connected(false) {}
+        bool connected;
+        sf::Clock timer;
+    };
+
+    const sf::Time connectionRefreshDelay = sf::milliseconds(500);
+    ConnectionCache connectionCache[sf::Joystick::Count];
+}
 
 namespace sf
 {
@@ -37,11 +51,25 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::isConnected(unsigned int index)
 {
-    JOYINFOEX joyInfo;
-    joyInfo.dwSize = sizeof(joyInfo);
-    joyInfo.dwFlags = 0;
+    // We check the connection state of joysticks only every N milliseconds,
+    // because of a strange (buggy?) behaviour of joyGetPosEx when joysticks
+    // are just plugged/unplugged -- it takes really long and kills the app performances
+    ConnectionCache& cache = connectionCache[index];
+    if (cache.timer.getElapsedTime() > connectionRefreshDelay)
+    {
+        cache.timer.restart();
 
-    return joyGetPosEx(JOYSTICKID1 + index, &joyInfo) == JOYERR_NOERROR;
+        JOYINFOEX joyInfo;
+        joyInfo.dwSize = sizeof(joyInfo);
+        joyInfo.dwFlags = 0;
+
+        cache.connected = joyGetPosEx(JOYSTICKID1 + index, &joyInfo) == JOYERR_NOERROR;
+        return cache.connected;
+    }
+    else
+    {
+        return cache.connected;
+    }
 }
 
 
