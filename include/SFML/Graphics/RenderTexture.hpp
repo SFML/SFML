@@ -216,7 +216,7 @@ private :
 /// // Create a new render-texture
 /// sf::RenderTexture texture;
 /// if (!texture.create(500, 500))
-///     return -1
+///     return -1;
 ///
 /// // The main loop
 /// while (window.isOpen())
