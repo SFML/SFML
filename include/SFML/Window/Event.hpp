@@ -147,24 +147,24 @@ public :
     ////////////////////////////////////////////////////////////
     enum EventType
     {
-        Closed,                 ///< The window requested to be closed
-        Resized,                ///< The window was resized
-        LostFocus,              ///< The window lost the focus
-        GainedFocus,            ///< The window gained the focus
-        TextEntered,            ///< A character was entered
-        KeyPressed,             ///< A key was pressed
-        KeyReleased,            ///< A key was released
-        MouseWheelMoved,        ///< The mouse wheel was scrolled
-        MouseButtonPressed,     ///< A mouse button was pressed
-        MouseButtonReleased,    ///< A mouse button was released
-        MouseMoved,             ///< The mouse cursor moved
-        MouseEntered,           ///< The mouse cursor entered the area of the window
-        MouseLeft,              ///< The mouse cursor left the area of the window
-        JoystickButtonPressed,  ///< A joystick button was pressed
-        JoystickButtonReleased, ///< A joystick button was released
-        JoystickMoved,          ///< The joystick moved along an axis
-        JoystickConnected,      ///< A joystick was connected
-        JoystickDisconnected,   ///< A joystick was disconnected
+        Closed,                 ///< The window requested to be closed (no data)
+        Resized,                ///< The window was resized (data in event.size)
+        LostFocus,              ///< The window lost the focus (no data)
+        GainedFocus,            ///< The window gained the focus (no data)
+        TextEntered,            ///< A character was entered (data in event.text)
+        KeyPressed,             ///< A key was pressed (data in event.key)
+        KeyReleased,            ///< A key was released (data in event.key)
+        MouseWheelMoved,        ///< The mouse wheel was scrolled (data in event.mouseWheel)
+        MouseButtonPressed,     ///< A mouse button was pressed (data in event.mouseButton)
+        MouseButtonReleased,    ///< A mouse button was released (data in event.mouseButton)
+        MouseMoved,             ///< The mouse cursor moved (data in event.mouseMove)
+        MouseEntered,           ///< The mouse cursor entered the area of the window (no data)
+        MouseLeft,              ///< The mouse cursor left the area of the window (no data)
+        JoystickButtonPressed,  ///< A joystick button was pressed (data in event.joystickButton)
+        JoystickButtonReleased, ///< A joystick button was released (data in event.joystickButton)
+        JoystickMoved,          ///< The joystick moved along an axis (data in event.joystickMove)
+        JoystickConnected,      ///< A joystick was connected (data in event.joystickConnect)
+        JoystickDisconnected,   ///< A joystick was disconnected (data in event.joystickConnect)
 
         Count                   ///< Keep last -- the total number of event types
     };
@@ -176,15 +176,15 @@ public :
 
     union
     {
-        SizeEvent            size;            ///< Size event parameters
-        KeyEvent             key;             ///< Key event parameters
-        TextEvent            text;            ///< Text event parameters
-        MouseMoveEvent       mouseMove;       ///< Mouse move event parameters
-        MouseButtonEvent     mouseButton;     ///< Mouse button event parameters
-        MouseWheelEvent      mouseWheel;      ///< Mouse wheel event parameters
-        JoystickMoveEvent    joystickMove;    ///< Joystick move event parameters
-        JoystickButtonEvent  joystickButton;  ///< Joystick button event parameters
-        JoystickConnectEvent joystickConnect; ///< Joystick (dis)connect event parameters
+        SizeEvent            size;            ///< Size event parameters (Event::Resized)
+        KeyEvent             key;             ///< Key event parameters (Event::KeyPressed, Event::KeyReleased)
+        TextEvent            text;            ///< Text event parameters (Event::TextEntered)
+        MouseMoveEvent       mouseMove;       ///< Mouse move event parameters (Event::MouseMoved)
+        MouseButtonEvent     mouseButton;     ///< Mouse button event parameters (Event::MouseButtonPressed, Event::MouseButtonReleased)
+        MouseWheelEvent      mouseWheel;      ///< Mouse wheel event parameters (Event::MouseWheelMoved)
+        JoystickMoveEvent    joystickMove;    ///< Joystick move event parameters (Event::JoystickMoved)
+        JoystickButtonEvent  joystickButton;  ///< Joystick button event parameters (Event::JoystickButtonPressed, Event::JoystickButtonReleased)
+        JoystickConnectEvent joystickConnect; ///< Joystick (dis)connect event parameters (Event::JoystickConnected, Event::JoystickDisconnected)
     };
 };
 
