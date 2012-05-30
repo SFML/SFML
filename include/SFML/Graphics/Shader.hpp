@@ -579,15 +579,18 @@ private :
 /// To apply a shader to a drawable, you must pass it as an
 /// additional parameter to the Draw function:
 /// \code
-/// window.draw(sprite, shader);
+/// window.draw(sprite, &shader);
 /// \endcode
 ///
 /// ... which is in fact just a shortcut for this:
 /// \code
 /// sf::RenderStates states;
-/// states.shader = shader;
+/// states.shader = &shader;
 /// window.draw(sprite, states);
 /// \endcode
+///
+/// In the code above we pass a pointer to the shader, because it may
+/// be null (which means "no shader").
 ///
 /// Shaders can be used on any drawable, but some combinations are
 /// not interesting. For example, using a vertex shader on a sf::Sprite
