@@ -317,7 +317,11 @@
 ////////////////////////////////////////////////////////
 -(NSSize)size
 {
-    return [m_oglView frame].size;
+    if (*m_fullscreenMode == sf::VideoMode()) {
+        return [m_oglView frame].size;
+    } else {
+        return NSMakeSize(m_fullscreenMode->width, m_fullscreenMode->height);
+    }
 }
 
 
