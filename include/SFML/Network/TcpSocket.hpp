@@ -116,7 +116,7 @@ public :
     /// This function gracefully closes the connection. If the
     /// socket is not connected, this function has no effect.
     ///
-    /// \see Connect
+    /// \see connect
     ///
     ////////////////////////////////////////////////////////////
     void disconnect();
