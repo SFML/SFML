@@ -262,6 +262,7 @@ void RenderTarget::resetGLStates()
         priv::ensureGlewInit();
 
         // Define the default OpenGL states
+        glCheck(glDisable(GL_CULL_FACE));
         glCheck(glDisable(GL_LIGHTING));
         glCheck(glDisable(GL_DEPTH_TEST));
         glCheck(glDisable(GL_ALPHA_TEST));
