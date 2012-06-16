@@ -663,6 +663,9 @@ while (window.isOpen())
 			
 			<key>GCC_ENABLE_OBJC_GC</key>
 			<string>unsupported</string>
+
+            <key>FRAMEWORK_SEARCH_PATHS</key>
+            <string>$(FRAMEWORK_SEARCH_PATHS) /Library/Frameworks/**</string>
 		</dict>
 		
 		<key>Configurations</key>
