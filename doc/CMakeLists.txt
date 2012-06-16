@@ -12,6 +12,7 @@ if(MACOSX)
  
     set(CMAKE_PROGRAM_PATH ${CMAKE_PROGRAM_PATH} ${ADDITIONAL_PATHS})
 endif()
+
 find_package(Doxygen REQUIRED)
 
 # set the input and output documentation paths
@@ -33,6 +34,11 @@ if(WINDOWS)
 else()
     set(DOXYGEN_HHC_PROGRAM)
     set(DOXYGEN_GENERATE_HTMLHELP NO)
+endif()
+
+find_path(MSCGEN_PATH mscgen.exe mscgen)
+if(NOT MSCGEN_PATH)
+    set(MSCGEN_PATH "")
 endif()
 
 # configure the source Doxyfile by copying it and replacing all @variables@
