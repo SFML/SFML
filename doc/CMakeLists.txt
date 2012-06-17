@@ -36,11 +36,6 @@ else()
     set(DOXYGEN_GENERATE_HTMLHELP NO)
 endif()
 
-find_path(MSCGEN_PATH NAMES mscgen.exe mscgen)
-if(NOT MSCGEN_PATH)
-    set(MSCGEN_PATH "")
-endif()
-
 # configure the source Doxyfile by copying it and replacing all @variables@
 set(DOXYGEN_CONFIGURED_INPUT ${DOXYGEN_OUTPUT_DIR}/doxyfile)
 configure_file(${DOXYGEN_INPUT_DIR}/doc/doxyfile.in ${DOXYGEN_CONFIGURED_INPUT} @ONLY)
