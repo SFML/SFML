@@ -36,7 +36,7 @@ else()
     set(DOXYGEN_GENERATE_HTMLHELP NO)
 endif()
 
-find_path(MSCGEN_PATH mscgen.exe mscgen)
+find_path(MSCGEN_PATH NAMES mscgen.exe mscgen)
 if(NOT MSCGEN_PATH)
     set(MSCGEN_PATH "")
 endif()
