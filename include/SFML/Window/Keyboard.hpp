@@ -106,7 +106,7 @@ public :
         Dash,         ///< The - key
         Space,        ///< The Space key
         Return,       ///< The Return key
-        Back,         ///< The Backspace key
+        BackSpace,    ///< The Backspace key
         Tab,          ///< The Tabulation key
         PageUp,       ///< The Page up key
         PageDown,     ///< The Page down key

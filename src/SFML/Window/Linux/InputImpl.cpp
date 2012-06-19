@@ -125,7 +125,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::Dash:       keysym = XK_minus;        break;
         case Keyboard::Space:      keysym = XK_space;        break;
         case Keyboard::Return:     keysym = XK_Return;       break;
-        case Keyboard::Back:       keysym = XK_BackSpace;    break;
+        case Keyboard::BackSpace:  keysym = XK_BackSpace;    break;
         case Keyboard::Tab:        keysym = XK_Tab;          break;
         case Keyboard::PageUp:     keysym = XK_Prior;        break;
         case Keyboard::PageDown:   keysym = XK_Next;         break;

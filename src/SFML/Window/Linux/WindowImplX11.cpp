@@ -859,7 +859,7 @@ Keyboard::Key WindowImplX11::keysymToSF(KeySym symbol)
         case XK_space :        return Keyboard::Space;
         case XK_Return :       return Keyboard::Return;
         case XK_KP_Enter :     return Keyboard::Return;
-        case XK_BackSpace :    return Keyboard::Back;
+        case XK_BackSpace :    return Keyboard::BackSpace;
         case XK_Tab :          return Keyboard::Tab;
         case XK_Prior :        return Keyboard::PageUp;
         case XK_Next :         return Keyboard::PageDown;

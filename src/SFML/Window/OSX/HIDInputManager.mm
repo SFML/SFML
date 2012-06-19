@@ -934,7 +934,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
         case 0x31:                      return sf::Keyboard::Space;
 //        case 0x4c: /* keypad         */ return sf::Keyboard::Return;
         case 0x24: /* keyboard       */ return sf::Keyboard::Return;
-        case 0x33:                      return sf::Keyboard::Back;
+        case 0x33:                      return sf::Keyboard::BackSpace;
         case 0x30:                      return sf::Keyboard::Tab;
             
             // Duplicates (see next §).

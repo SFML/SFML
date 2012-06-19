@@ -708,7 +708,7 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
         case VK_ESCAPE :     return Keyboard::Escape;
         case VK_SPACE :      return Keyboard::Space;
         case VK_RETURN :     return Keyboard::Return;
-        case VK_BACK :       return Keyboard::Back;
+        case VK_BACK :       return Keyboard::BackSpace;
         case VK_TAB :        return Keyboard::Tab;
         case VK_PRIOR :      return Keyboard::PageUp;
         case VK_NEXT :       return Keyboard::PageDown;
