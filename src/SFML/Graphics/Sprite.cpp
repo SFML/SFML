@@ -28,6 +28,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <cmath>
 
 
 namespace sf
@@ -118,8 +119,8 @@ const Color& Sprite::getColor() const
 ////////////////////////////////////////////////////////////
 FloatRect Sprite::getLocalBounds() const
 {
-    float width = static_cast<float>(m_textureRect.width);
-    float height = static_cast<float>(m_textureRect.height);
+    float width = static_cast<float>(std::abs(m_textureRect.width));
+    float height = static_cast<float>(std::abs(m_textureRect.height));
 
     return FloatRect(0.f, 0.f, width, height);
 }
@@ -147,13 +148,12 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
 ////////////////////////////////////////////////////////////
 void Sprite::updatePositions()
 {
-    float width  = static_cast<float>(m_textureRect.width);
-    float height = static_cast<float>(m_textureRect.height);
+    FloatRect bounds = getLocalBounds();
 
     m_vertices[0].position = Vector2f(0, 0);
-    m_vertices[1].position = Vector2f(0, height);
-    m_vertices[2].position = Vector2f(width, height);
-    m_vertices[3].position = Vector2f(width, 0);
+    m_vertices[1].position = Vector2f(0, bounds.height);
+    m_vertices[2].position = Vector2f(bounds.width, bounds.height);
+    m_vertices[3].position = Vector2f(bounds.width, 0);
 }
 
 
