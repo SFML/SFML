@@ -70,6 +70,7 @@ public :
     /// This function keeps a weak reference to the socket,
     /// so you have to make sure that the socket is not destroyed
     /// while it is stored in the selector.
+    /// This function does nothing if the socket is not valid.
     ///
     /// \param socket Reference to the socket to add
     ///
@@ -186,7 +187,7 @@ private :
 /// A selector doesn't store its own copies of the sockets
 /// (socket classes are not copyable anyway), it simply keeps
 /// a reference to the original sockets that you pass to the
-/// Add function. Therefore, you can't use the selector as a
+/// "add" function. Therefore, you can't use the selector as a
 /// socket container, you must store them oustide and make sure
 /// that they are alive as long as they are used in the selector.
 ///

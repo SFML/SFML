@@ -73,11 +73,15 @@ SocketSelector::~SocketSelector()
 ////////////////////////////////////////////////////////////
 void SocketSelector::add(Socket& socket)
 {
-    FD_SET(socket.getHandle(), &m_impl->AllSockets);
+    SocketHandle handle = socket.getHandle();
+    if (handle != SocketImpl::invalidSocket())
+    {
+        FD_SET(handle, &m_impl->AllSockets);
 
-    int size = static_cast<int>(socket.getHandle());
-    if (size > m_impl->MaxSocket)
-        m_impl->MaxSocket = size;
+        int size = static_cast<int>(handle);
+        if (size > m_impl->MaxSocket)
+            m_impl->MaxSocket = size;
+    }
 }
 
 
