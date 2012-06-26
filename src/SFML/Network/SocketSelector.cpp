@@ -74,7 +74,7 @@ SocketSelector::~SocketSelector()
 void SocketSelector::add(Socket& socket)
 {
     SocketHandle handle = socket.getHandle();
-    if (handle != SocketImpl::invalidSocket())
+    if (handle != priv::SocketImpl::invalidSocket())
     {
         FD_SET(handle, &m_impl->AllSockets);
 
