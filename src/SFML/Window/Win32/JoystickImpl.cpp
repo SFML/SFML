@@ -139,7 +139,7 @@ JoystickState JoystickImpl::update()
         // Special case for POV, it is given as an angle
         if (pos.dwPOV != 0xFFFF)
         {
-            float angle = pos.dwPOV / 36000.f * 3.141592654f;
+            float angle = pos.dwPOV / 18000.f * 3.141592654f;
             state.axes[Joystick::PovX] = std::cos(angle) * 100;
             state.axes[Joystick::PovY] = std::sin(angle) * 100;
         }
