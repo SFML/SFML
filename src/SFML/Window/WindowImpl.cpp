@@ -139,6 +139,8 @@ void WindowImpl::pushEvent(const Event& event)
 {
     if(event.type != sf::Event::Resized || m_events.empty() || m_events.back().type != sf::Event::Resized)
         m_events.push(event);
+    else
+        m_events.back() = event;
 }
 
 
