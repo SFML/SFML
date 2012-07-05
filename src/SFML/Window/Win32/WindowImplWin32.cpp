@@ -436,8 +436,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Resize event
         case WM_SIZE :
         {
-            // Ignore size events triggered by a minimize (size == 0 in this case)
-            if (wParam != SIZE_MINIMIZED)
+            // Ignore size events triggered by a minimize (size == 0 in this case) or restore
+            if (wParam != SIZE_MINIMIZED && wParam != SIZE_RESTORED)
             {
                 // Get the new size
                 RECT rectangle;
