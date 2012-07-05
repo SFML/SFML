@@ -137,7 +137,10 @@ bool WindowImpl::popEvent(Event& event, bool block)
 ////////////////////////////////////////////////////////////
 void WindowImpl::pushEvent(const Event& event)
 {
-    m_events.push(event);
+    if(event.type != sf::Event::Resized || m_events.empty() || m_events.back().type != sf::Event::Resized)
+        m_events.push(event);
+    else
+        m_events.back() = event;
 }
 
 
