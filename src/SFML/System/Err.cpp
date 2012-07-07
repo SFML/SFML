@@ -33,7 +33,7 @@
 namespace
 {
 // This class will be used as the default streambuf of sf::Err,
-// it outputs to stderr by default (to keep the default beaviour)
+// it outputs to stderr by default (to keep the default behaviour)
 class DefaultErrStreamBuf : public std::streambuf
 {
 public :
