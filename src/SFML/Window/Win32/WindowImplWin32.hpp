@@ -236,6 +236,8 @@ private :
     HICON    m_icon;             ///< Custom icon assigned to the window
     bool     m_keyRepeatEnabled; ///< Automatic key-repeat state for keydown events
     bool     m_isCursorIn;       ///< Is the mouse cursor in the window's area ?
+    Vector2u m_lastSize;         ///< The last handled size of the window
+    bool     m_resizing;         ///< Is the window being resized ?
 };
 
 } // namespace priv

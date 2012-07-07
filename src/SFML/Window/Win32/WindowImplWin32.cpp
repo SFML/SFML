@@ -72,7 +72,9 @@ m_callback        (0),
 m_cursor          (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_isCursorIn      (false)
+m_isCursorIn      (false),
+m_lastSize        (0, 0),
+m_resizing        (false)
 {
     if (m_handle)
     {
@@ -90,7 +92,9 @@ m_callback        (0),
 m_cursor          (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_isCursorIn      (false)
+m_isCursorIn      (false),
+m_lastSize        (mode.width, mode.height),
+m_resizing        (false)
 {
     // Register the window class at first call
     if (windowCount == 0)
@@ -436,20 +440,48 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Resize event
         case WM_SIZE :
         {
-            // Ignore size events triggered by a minimize (size == 0 in this case)
-            if (wParam != SIZE_MINIMIZED)
+            // Consider only events triggered by a maximize or a un-maximize
+            if (wParam != SIZE_MINIMIZED && !m_resizing && m_lastSize != getSize())
             {
-                // Get the new size
-                RECT rectangle;
-                GetClientRect(m_handle, &rectangle);
+                // Update the last handled size
+                m_lastSize = getSize();
 
+                // Push a resize event
                 Event event;
                 event.type        = Event::Resized;
-                event.size.width  = rectangle.right - rectangle.left;
-                event.size.height = rectangle.bottom - rectangle.top;
+                event.size.width  = m_lastSize.x;
+                event.size.height = m_lastSize.y;
                 pushEvent(event);
-                break;
             }
+            break;
+        }
+
+        // Start resizing
+        case WM_ENTERSIZEMOVE:
+        {
+            m_resizing = true;
+            break;
+        }
+
+        // Stop resizing
+        case WM_EXITSIZEMOVE:
+        {
+            m_resizing = false;
+
+            // Ignore cases where the window has only been moved
+            if(m_lastSize != getSize())
+            {
+                // Update the last handled size
+                m_lastSize = getSize();
+
+                // Push a resize event
+                Event event;
+                event.type        = Event::Resized;
+                event.size.width  = m_lastSize.x;
+                event.size.height = m_lastSize.y;
+                pushEvent(event);
+            }
+            break;
         }
 
         // Gain focus event
