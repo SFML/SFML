@@ -380,7 +380,7 @@ void Texture::bind(CoordinateType coordinateType) const
     glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
 
     // Check if we need to define a special texture matrix
-    if ((coordinateType == Pixels) || m_pixelsFlipped)
+    if (m_texture && ((coordinateType == Pixels) || m_pixelsFlipped))
     {
         GLfloat matrix[16] = {1.f, 0.f, 0.f, 0.f,
                               0.f, 1.f, 0.f, 0.f,
