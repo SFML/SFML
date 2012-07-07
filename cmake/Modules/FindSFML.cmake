@@ -7,7 +7,7 @@
 # When you try to locate the SFML libraries, you must specify which modules you want to use (system, window, graphics, network, audio, main).
 # If none is given, the SFML_LIBRARIES variable will be empty and you'll end up linking to nothing.
 # example:
-#   find_package(SFML COMPONENTS system window graphics) // find the system, graphics and window modules
+#   find_package(SFML COMPONENTS graphics window system) // find the graphics, window and system modules
 #
 # You can enforce a specific version, either MAJOR.MINOR or only MAJOR.
 # If nothing is specified, the version won't be checked (ie. any version will be accepted).
@@ -21,7 +21,7 @@
 # In case of static linking, the SFML_STATIC macro will also be defined by this script.
 # example:
 #   set(SFML_STATIC_LIBRARIES TRUE)
-#   find_package(SFML 2 COMPONENTS system network)
+#   find_package(SFML 2 COMPONENTS network system)
 #
 # On Mac OS X if SFML_STATIC_LIBRARIES is not set to TRUE then by default CMake will search for frameworks unless
 # CMAKE_FIND_FRAMEWORK is set to "NEVER" for example. Please refer to CMake documentation for more details.
