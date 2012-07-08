@@ -66,14 +66,8 @@ subject to the following restrictions:
                     <dict>
                         <key>SharedSettings</key>
                         <dict>
-                            <key>SFML_LINK_PREFIX</key>
-                            <string>$(SFML_LINK_FRAMEWORKS_PREFIX)</string>
-                            
-                            <key>SFML_LINK_SUFFIX</key>
-                            <string>$(SFML_LINK_FRAMEWORKS_SUFFIX)</string>
-            
-                            <key>HEADER_SEARCH_PATHS</key>
-                            <string>$(HEADER_SEARCH_PATHS)</string>
+                            <key>SFML_BINARY_TYPE</key>
+                            <string>FRAMEWORKS</string>
                         </dict>
                     </dict>
                 </dict>
@@ -85,14 +79,8 @@ subject to the following restrictions:
                     <dict>
                         <key>SharedSettings</key>
                         <dict>
-                            <key>SFML_LINK_PREFIX</key>
-                            <string>$(SFML_LINK_DYLIBS_PREFIX)</string>
-                            
-                            <key>SFML_LINK_SUFFIX</key>
-                            <string>$(SFML_LINK_DYLIBS_SUFFIX)</string>
-            
-                            <key>HEADER_SEARCH_PATHS</key>
-                            <string>$(HEADER_SEARCH_PATHS) /usr/local/include/</string>
+                            <key>SFML_BINARY_TYPE</key>
+                            <string>DYLIBS</string>
                         </dict>
                     </dict>
                 </dict>
@@ -558,7 +546,7 @@ music.play();
         <string>main.cpp:main:graphics_display</string>
         <string>main.cpp:main:display</string>
         <string>ResourcePath.mm</string>
-           <string>ResourcePath.hpp</string>
+        <string>ResourcePath.hpp</string>
     </array>
     
             
@@ -652,11 +640,17 @@ while (window.isOpen())
             <key>SFML_LINK_FRAMEWORKS_PREFIX</key>
             <string>-framework </string>
             
-               <key>SFML_SYSTEM</key>
+            <key>SFML_SYSTEM</key>
             <string>$(SFML_LINK_PREFIX)sfml-system$(SFML_LINK_SUFFIX)</string>
             
             <key>SFML_LINK_FRAMEWORKS_SUFFIX</key>
             <string></string>
+                            
+            <key>SFML_LINK_PREFIX</key>
+            <string>$(SFML_LINK_$(SFML_BINARY_TYPE)_PREFIX)</string>
+            
+            <key>SFML_LINK_SUFFIX</key>
+            <string>$(SFML_LINK_$(SFML_BINARY_TYPE)_SUFFIX)</string>
             
             <key>CLANG_ENABLE_OBJC_ARC</key>
             <string></string>
