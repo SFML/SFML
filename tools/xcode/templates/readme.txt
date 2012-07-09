@@ -47,13 +47,18 @@ Question & Answer
     2. select your project's target on the main area,
     3. go to the "Build Settings" tab,
     4. go down to the bottom,
-    5. update SFML_LINK_PREFIX and SFML_LINK_SUFFIX as follow :
-      * if you want to use frameworks, then
-        1. set SFML_LINK_PREFIX to "$(SFML_LINK_FRAMEWORKS_PREFIX)",
-        2. set SFML_LINK_SUFFIX to "$(SFML_LINK_FRAMEWORKS_SUFFIX)"
-      * if you want to use dylibs, then
-        1. set SFML_LINK_PREFIX to "$(SFML_LINK_DYLIBS_PREFIX)",
-        2. set SFML_LINK_SUFFIX to "$(SFML_LINK_DYLIBS_SUFFIX)"
+    5. set SFML_BINARY_TYPE either to "DYLIBS" or "FRAMEWORKS".
+
+
+  * How to use/don't use debug dylibs ?
+
+    You can choose to use or not SFML debug binaries when creating a new project. However, if you have already created your project you can do the following :
+
+    1. select your project from the project navigator panel,
+    2. select your project's target on the main area,
+    3. go to the "Build Settings" tab,
+    4. go down to the bottom,
+    5. set SFML_LINK_DYLIBS_SUFFIX_DEBUG to "-d" to use them or to "" (empty string) to use only release binary.
 
 
   * I want to use the static version of SFML. Is it possible ?

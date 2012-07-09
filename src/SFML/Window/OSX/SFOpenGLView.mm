@@ -562,7 +562,25 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
         // Ignore escape key and non text keycode. (See NSEvent.h)
         // They produce a sound alert.
         unichar code = [[ev characters] characterAtIndex:0];
-        if ([ev keyCode] != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
+        unsigned short keycode = [ev keyCode];
+        
+        // Backspace and Delete unicode values are badly handled by Apple.
+        // We do a small workaround here :
+        
+        // Backspace
+        if (keycode == 0x33) {
+            // Send the correct unicode value (i.e. 8) instead of 127 (which is 'delete')
+            m_requester->textEntered(8);
+        } 
+        
+        // Delete
+        else if (keycode == 0x75 || keycode == NSDeleteFunctionKey) {
+            // Instead of the value 63272 we send 127.
+            m_requester->textEntered(127);
+        }
+        
+        // All other unicode values
+        else if (keycode != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
             
             // Let's see if its a valid text.
             NSText* text = [[self window] fieldEditor:YES forObject:self];
