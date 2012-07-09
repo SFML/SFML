@@ -939,7 +939,7 @@ Keyboard::Key WindowImplX11::keysymToSF(KeySym symbol)
         case XK_9 :            return Keyboard::Num9;
     }
 
-    return Keyboard::Key(0);
+    return Keyboard::Unknown;
 }
 
 } // namespace priv

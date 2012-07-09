@@ -1019,7 +1019,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
             // This key is ' on CH-FR, ) on FR and - on US layouts.
             
             // An unknown key.
-        default:                        return sf::Keyboard::KeyCount;
+        default:                        return sf::Keyboard::Unknown;
     }
 }
 

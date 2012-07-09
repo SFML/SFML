@@ -820,7 +820,7 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
         case '9' :           return Keyboard::Num9;
     }
 
-    return Keyboard::Key(0);
+    return Keyboard::Unknown;
 }
 
 
