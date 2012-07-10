@@ -178,11 +178,11 @@ public :
     const ContextSettings& getSettings() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Pop the event on top of events stack, if any, and return it
+    /// \brief Pop the event on top of the event queue, if any, and return it
     ///
     /// This function is not blocking: if there's no pending event then
     /// it will return false and leave \a event unmodified.
-    /// Note that more than one event may be present in the events stack,
+    /// Note that more than one event may be present in the event queue,
     /// thus you should always call this function in a loop
     /// to make sure that you process every pending event.
     /// \code
@@ -195,7 +195,7 @@ public :
     ///
     /// \param event Event to be returned
     ///
-    /// \return True if an event was returned, or false if the events stack was empty
+    /// \return True if an event was returned, or false if the event queue was empty
     ///
     /// \see waitEvent
     ///
