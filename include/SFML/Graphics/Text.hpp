@@ -86,10 +86,10 @@ public :
     /// automatically be constructed from standard string types.
     /// So, the following calls are all valid:
     /// \code
-    /// text.SetString("hello");
-    /// text.SetString(L"hello");
-    /// text.SetString(std::string("hello"));
-    /// text.SetString(std::wstring(L"hello"));
+    /// text.setString("hello");
+    /// text.setString(L"hello");
+    /// text.setString(std::string("hello"));
+    /// text.setString(std::wstring(L"hello"));
     /// \endcode
     /// A text's string is empty by default.
     ///
