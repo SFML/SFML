@@ -58,7 +58,7 @@ public :
     /// \brief set the position of the object
     ///
     /// This function completely overwrites the previous position.
-    /// See Move to apply an offset based on the previous position instead.
+    /// See the move function to apply an offset based on the previous position instead.
     /// The default position of a transformable object is (0, 0).
     ///
     /// \param x X coordinate of the new position
@@ -73,7 +73,7 @@ public :
     /// \brief set the position of the object
     ///
     /// This function completely overwrites the previous position.
-    /// See Move to apply an offset based on the previous position instead.
+    /// See the move function to apply an offset based on the previous position instead.
     /// The default position of a transformable object is (0, 0).
     ///
     /// \param position New position
@@ -87,7 +87,7 @@ public :
     /// \brief set the orientation of the object
     ///
     /// This function completely overwrites the previous rotation.
-    /// See Rotate to add an angle based on the previous rotation instead.
+    /// See the rotate function to add an angle based on the previous rotation instead.
     /// The default rotation of a transformable object is 0.
     ///
     /// \param angle New rotation, in degrees
@@ -101,7 +101,7 @@ public :
     /// \brief set the scale factors of the object
     ///
     /// This function completely overwrites the previous scale.
-    /// See Scale to add a factor based on the previous scale instead.
+    /// See the scale function to add a factor based on the previous scale instead.
     /// The default scale of a transformable object is (1, 1).
     ///
     /// \param factorX New horizontal scale factor
@@ -116,7 +116,7 @@ public :
     /// \brief set the scale factors of the object
     ///
     /// This function completely overwrites the previous scale.
-    /// See Scale to add a factor based on the previous scale instead.
+    /// See the scale function to add a factor based on the previous scale instead.
     /// The default scale of a transformable object is (1, 1).
     ///
     /// \param factors New scale factors
