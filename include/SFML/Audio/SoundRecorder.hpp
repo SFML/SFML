@@ -206,12 +206,12 @@ private :
 /// captured data to a sound buffer (see sf::SoundBufferRecorder).
 ///
 /// A derived class has only one virtual function to override:
-/// \li OnProcessSamples provides the new chunks of audio samples while the capture happens
+/// \li onProcessSamples provides the new chunks of audio samples while the capture happens
 ///
 /// Moreover, two additionnal virtual functions can be overriden
 /// as well if necessary:
-/// \li OnStart is called before the capture happens, to perform custom initializations
-/// \li OnStop is called after the capture ends, to perform custom cleanup
+/// \li onStart is called before the capture happens, to perform custom initializations
+/// \li onStop is called after the capture ends, to perform custom cleanup
 ///
 /// The audio capture feature may not be supported or activated
 /// on every platform, thus it is recommended to check its
