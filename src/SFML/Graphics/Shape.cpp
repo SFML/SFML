@@ -213,7 +213,7 @@ void Shape::draw(RenderTarget& target, RenderStates states) const
     }
 
     // Render the outline
-    if ((m_outlineColor.a > 0) && (m_outlineThickness > 0))
+    if ((m_outlineColor.a > 0) && (m_outlineThickness != 0))
     {
         states.texture = NULL;
         target.draw(m_outlineVertices, states);
