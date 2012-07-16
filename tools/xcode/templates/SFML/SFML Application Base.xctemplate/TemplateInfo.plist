@@ -68,6 +68,9 @@ subject to the following restrictions:
                         <dict>
                             <key>SFML_BINARY_TYPE</key>
                             <string>FRAMEWORKS</string>
+                            
+                            <key>SFML_LINK_DYLIBS_SUFFIX_DEBUG</key>
+                            <string></string>
                         </dict>
                     </dict>
                 </dict>
@@ -616,7 +619,7 @@ while (window.isOpen())
          
          <key>main.cpp:main:audio_loop</key>
          <string>while (music.getStatus() == sf::Music::Playing) {
-    sf::Sleep(100);
+    sf::sleep(sf::microseconds(100));
 }</string>
     </dict>
     
@@ -742,7 +745,7 @@ require () # $1 is a SFML module like 'system' or 'audio'
         if [ "$frameworks" = "true" ]
         then
             ditto "/Library/Frameworks/sfml-$1.framework" "$dest/sfml-$1.framework"
-        elif [ $CONFIGURATION = "Debug" ] && [ $SFML_LINK_DYLIBS_SUFFIX_DEBUG != "" ]
+        elif [ $CONFIGURATION = "Debug" ] &amp;&amp; [ $SFML_LINK_DYLIBS_SUFFIX_DEBUG != "" ]
         then
             ditto "/usr/local/lib/libsfml-$1-d.2.dylib" "$dest/libsfml-$1-d.2.dylib"
         else

@@ -68,6 +68,9 @@ subject to the following restrictions:
                         <dict>
                             <key>SFML_BINARY_TYPE</key>
                             <string>FRAMEWORKS</string>
+                            
+                            <key>SFML_LINK_DYLIBS_SUFFIX_DEBUG</key>
+                            <string></string>
                         </dict>
                     </dict>
                 </dict>
@@ -613,7 +616,7 @@ while (window.isOpen())
          
          <key>main.cpp:main:audio_loop</key>
          <string>while (music.getStatus() == sf::Music::Playing) {
-    sf::Sleep(100);
+    sf::sleep(sf::microseconds(100));
 }</string>
     </dict>
     
