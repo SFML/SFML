@@ -97,7 +97,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 /// Convert a key down/up NSEvent into an SFML key event.
 /// Based on localizedKeys and nonLocalizedKeys function.
 ///
-/// Return sf::Keyboard::KeyCount as Code if the key is unknown.
+/// Return sf::Keyboard::Unknown as Code if the key is unknown.
 ///
 ////////////////////////////////////////////////////////////
 +(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent *)anEvent;
@@ -532,7 +532,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     if (m_useKeyRepeat || ![theEvent isARepeat]) {
         sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
         
-        if (key.code != sf::Keyboard::KeyCount) { // The key is recognized.
+        if (key.code != sf::Keyboard::Unknown) { // The key is recognized.
             m_requester->keyDown(key);
         }
     }
@@ -608,7 +608,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     
     sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
     
-    if (key.code != sf::Keyboard::KeyCount) { // The key is recognized.
+    if (key.code != sf::Keyboard::Unknown) { // The key is recognized.
         m_requester->keyUp(key);
     }
 }
@@ -626,7 +626,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     
     // Setup a potential event key.
     sf::Event::KeyEvent key;
-    key.code    = sf::Keyboard::KeyCount;
+    key.code    = sf::Keyboard::Unknown;
     key.alt     = modifiers & NSAlternateKeyMask;
     key.control = modifiers & NSControlKeyMask;
     key.shift   = modifiers & NSShiftKeyMask;
@@ -1049,7 +1049,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     key.system  = modifierFlags & NSCommandKeyMask;
     
     // Key code.
-    key.code = sf::Keyboard::KeyCount;
+    key.code = sf::Keyboard::Unknown;
     
     // First we look if the key down is from a list of caracter 
     // that depend on keyboard localization.
@@ -1060,12 +1060,12 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     
     // The key is not a localized one, so we try to find a corresponding code
     // through virtual key code.
-    if (key.code == sf::Keyboard::KeyCount) {
+    if (key.code == sf::Keyboard::Unknown) {
         key.code = sf::priv::HIDInputManager::nonLocalizedKeys([anEvent keyCode]);
     }
     
 //#ifdef SFML_DEBUG // Don't bother the final customers with annoying messages.
-//    if (key.code == sf::Keyboard::KeyCount) { // The key is unknown.
+//    if (key.code == sf::Keyboard::Unknown) { // The key is unknown.
 //        sf::err() << "This is an unknow key. Virtual key code is 0x"
 //                  << std::hex
 //                  << [anEvent keyCode]
