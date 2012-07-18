@@ -1,5 +1,29 @@
-#ifndef ROUNDEDRECTANGLESHAPE_H
-#define ROUNDEDRECTANGLESHAPE_H
+////////////////////////////////////////////////////////////
+//
+// SFML - Simple and Fast Multimedia Library
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+////////////////////////////////////////////////////////////
+
+#ifndef ROUNDEDRECTANGLESHAPE_HPP
+#define ROUNDEDRECTANGLESHAPE_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -12,7 +36,7 @@ namespace sf
 /// \brief Specialized shape representing a rectangle
 /// with rounded corners
 ////////////////////////////////////////////////////////////
-class RoundedRectangleShape : public sf::Shape
+class SFML_GRAPHICS_API RoundedRectangleShape : public sf::Shape
 {
     public:
         ////////////////////////////////////////////////////////////
@@ -33,7 +57,7 @@ class RoundedRectangleShape : public sf::Shape
         /// \see GetSize
         ///
         ////////////////////////////////////////////////////////////
-        void SetSize(const Vector2f& size);
+        void setSize(const Vector2f& size);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the size of the rounded rectangle
@@ -43,7 +67,7 @@ class RoundedRectangleShape : public sf::Shape
         /// \see SetSize
         ///
         ////////////////////////////////////////////////////////////
-        const Vector2f& GetSize() const;
+        const Vector2f& getSize() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the radius of the rounded corners
@@ -53,7 +77,7 @@ class RoundedRectangleShape : public sf::Shape
         /// \see GetRadius
         ///
         ////////////////////////////////////////////////////////////
-        void SetRadius(float radius);
+        void setCornersRadius(float radius);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the radius of the rounded corners
@@ -63,7 +87,7 @@ class RoundedRectangleShape : public sf::Shape
         /// \see SetRadius
         ///
         ////////////////////////////////////////////////////////////
-        const float GetRadius() const;
+        const float getCornersRadius() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the number of points of each corner
@@ -73,7 +97,7 @@ class RoundedRectangleShape : public sf::Shape
         /// \see GetPointCount
         ///
         ////////////////////////////////////////////////////////////
-        void SetCornerPointCount(unsigned int count);
+        void setCornerPointCount(unsigned int count);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the number of points defining the rounded rectangle
@@ -81,7 +105,7 @@ class RoundedRectangleShape : public sf::Shape
         /// \return Number of points of the rounded rectangle
         ///
         ////////////////////////////////////////////////////////////
-        virtual unsigned int GetPointCount() const;
+        virtual unsigned int getPointCount() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get a point of the rounded rectangle
@@ -93,7 +117,7 @@ class RoundedRectangleShape : public sf::Shape
         /// \return Index-th point of the shape
         ///
         ////////////////////////////////////////////////////////////
-        virtual sf::Vector2f GetPoint(unsigned int index) const;
+        virtual sf::Vector2f getPoint(unsigned int index) const;
 
     private:
          ////////////////////////////////////////////////////////////
@@ -104,4 +128,27 @@ class RoundedRectangleShape : public sf::Shape
         unsigned int myCornerPointCount;
 };
 }
-#endif // ROUNDEDRECTANGLESHAPE_H
+#endif // ROUNDEDRECTANGLESHAPE_HPP
+
+////////////////////////////////////////////////////////////
+/// \class sf::RoundedRectangleShape
+/// \ingroup graphics
+///
+/// This class inherits all the functions of sf::Transformable
+/// (position, rotation, scale, bounds, ...) as well as the
+/// functions of sf::Shape (outline, color, texture, ...).
+///
+/// Usage example:
+/// \code
+/// sf::RoundedRectangleShape roundedRectangle;
+/// rectangle.setSize(sf::Vector2f(100, 50));
+/// rectangle.setCornersRadius(5);
+/// rectangle.setOutlineThickness(5);
+/// rectangle.setPosition(10, 20);
+/// ...
+/// window.draw(rectangle);
+/// \endcode
+///
+/// \see sf::Shape, sf::CircleShape, sf::ConvexShape
+///
+////////////////////////////////////////////////////////////
