@@ -32,7 +32,6 @@
 #include <SFML/Window/glext/glxext.h>
 #include <SFML/System/Err.hpp>
 
-
 namespace sf
 {
 namespace priv
@@ -243,7 +242,7 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
 			std::vector<int> fbattribs = getFBAttribs(settings);
 
             GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), &fbattribs[0], &nbConfigs);
-            if (configs && nbConfigs)
+			if (configs && nbConfigs)
             {
                 // Create the context
                 int attributes[] =
@@ -327,6 +326,14 @@ std::vector<int> GlxContext::getFBAttribs(const ContextSettings& settings)
 		returnVec.push_back(GLX_STENCIL_SIZE);
 		returnVec.push_back(settings.stencilBits);
 	}
+
+	// All FB configs must support double buffering
+	returnVec.push_back(GLX_DOUBLEBUFFER);
+	returnVec.push_back(1);
+
+	// The FB must have an associated X visual
+	returnVec.push_back(GLX_X_RENDERABLE);
+	returnVec.push_back(1);
 	
 	// The last element in the attribute list is always (0, 0)
 	returnVec.push_back(0);
