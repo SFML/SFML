@@ -239,7 +239,10 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
         if (glXCreateContextAttribsARB)
         {
             int nbConfigs = 0;
-            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), NULL, &nbConfigs);
+
+			std::vector<int> fbattribs = getFBAttribs(settings);
+
+            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), &fbattribs[0], &nbConfigs);
             if (configs && nbConfigs)
             {
                 // Create the context
@@ -309,6 +312,28 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
     XFree(visuals);
 }
 
+std::vector<int> GlxContext::getFBAttribs(const ContextSettings& settings)
+{
+	std::vector<int> returnVec;
+	// Used to compare the requested settings with the default settings
+	ContextSettings refSettings;
+	if(settings.depthBits != refSettings.depthBits)
+	{
+		returnVec.push_back(GLX_DEPTH_SIZE);
+		returnVec.push_back(settings.depthBits);
+	}
+	if(settings.stencilBits != refSettings.stencilBits)
+	{
+		returnVec.push_back(GLX_STENCIL_SIZE);
+		returnVec.push_back(settings.stencilBits);
+	}
+	
+	// The last element in the attribute list is always (0, 0)
+	returnVec.push_back(0);
+	returnVec.push_back(0);
+
+	return returnVec;
+}
 } // namespace priv
 
 } // namespace sf
