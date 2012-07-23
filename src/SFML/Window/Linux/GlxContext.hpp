@@ -121,14 +121,14 @@ private :
     ////////////////////////////////////////////////////////////
     void createContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
 
-	////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     /// \brief Fill a vector with attributes based on ContextSettings
     ///
     /// \param settings     Creation parameters
-	/// \returns			A vector that can be passed to glXChooseFBConfig
+    /// \returns            A vector that can be passed to glXChooseFBConfig
     ///
     ////////////////////////////////////////////////////////////
-	std::vector<int> getFBAttribs(const ContextSettings& settings);
+    std::vector<int> getFBAttribs(const ContextSettings& settings);
 
 
     ////////////////////////////////////////////////////////////

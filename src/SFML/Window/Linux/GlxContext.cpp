@@ -239,10 +239,10 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
         {
             int nbConfigs = 0;
 
-			std::vector<int> fbattribs = getFBAttribs(settings);
+            std::vector<int> fbattribs = getFBAttribs(settings);
 
             GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), &fbattribs[0], &nbConfigs);
-			if (configs && nbConfigs)
+            if (configs && nbConfigs)
             {
                 // Create the context
                 int attributes[] =
@@ -313,33 +313,33 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
 
 std::vector<int> GlxContext::getFBAttribs(const ContextSettings& settings)
 {
-	std::vector<int> returnVec;
-	// Used to compare the requested settings with the default settings
-	ContextSettings refSettings;
-	if(settings.depthBits != refSettings.depthBits)
-	{
-		returnVec.push_back(GLX_DEPTH_SIZE);
-		returnVec.push_back(settings.depthBits);
-	}
-	if(settings.stencilBits != refSettings.stencilBits)
-	{
-		returnVec.push_back(GLX_STENCIL_SIZE);
-		returnVec.push_back(settings.stencilBits);
-	}
+    std::vector<int> returnVec;
+    // Used to compare the requested settings with the default settings
+    ContextSettings refSettings;
+    if(settings.depthBits != refSettings.depthBits)
+    {
+        returnVec.push_back(GLX_DEPTH_SIZE);
+        returnVec.push_back(settings.depthBits);
+    }
+    if(settings.stencilBits != refSettings.stencilBits)
+    {
+        returnVec.push_back(GLX_STENCIL_SIZE);
+        returnVec.push_back(settings.stencilBits);
+    }
 
-	// All FB configs must support double buffering
-	returnVec.push_back(GLX_DOUBLEBUFFER);
-	returnVec.push_back(1);
+    // All FB configs must support double buffering
+    returnVec.push_back(GLX_DOUBLEBUFFER);
+    returnVec.push_back(1);
 
-	// The FB must have an associated X visual
-	returnVec.push_back(GLX_X_RENDERABLE);
-	returnVec.push_back(1);
-	
-	// The last element in the attribute list is always (0, 0)
-	returnVec.push_back(0);
-	returnVec.push_back(0);
+    // The FB must have an associated X visual
+    returnVec.push_back(GLX_X_RENDERABLE);
+    returnVec.push_back(1);
+    
+    // The last element in the attribute list is always (0, 0)
+    returnVec.push_back(0);
+    returnVec.push_back(0);
 
-	return returnVec;
+    return returnVec;
 }
 } // namespace priv
 
