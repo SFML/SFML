@@ -233,6 +233,7 @@ private :
     Cursor     m_hiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
     bool       m_keyRepeat;           ///< Is the KeyRepeat feature enabled ?
     XEvent     m_lastKeyReleaseEvent; ///< Last key release event we received (needed for discarding repeated key events)
+    Vector2u   m_lastWindowSize;
 };
 
 } // namespace priv

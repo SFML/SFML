@@ -35,7 +35,6 @@
 #include <sstream>
 #include <vector>
 
-
 ////////////////////////////////////////////////////////////
 // Private data
 ////////////////////////////////////////////////////////////
@@ -215,6 +214,9 @@ m_keyRepeat   (true)
             sizeHints.min_height = sizeHints.max_height = height;
             XSetWMNormalHints(m_display, m_window, &sizeHints); 
         }
+
+        m_lastWindowSize.x = width;
+        m_lastWindowSize.y = height;
     }
 
     // Do some common initializations
@@ -640,7 +642,14 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             event.type        = Event::Resized;
             event.size.width  = windowEvent.xconfigure.width;
             event.size.height = windowEvent.xconfigure.height;
-            pushEvent(event);
+            if(event.size.width != m_lastWindowSize.x || 
+               event.size.height != m_lastWindowSize.y)
+            {
+                setSize(Vector2u(event.size.width, event.size.height));
+                m_lastWindowSize.x = event.size.width;
+                m_lastWindowSize.y = event.size.height;
+                pushEvent(event);
+            }
             break;
         }
 
