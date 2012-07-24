@@ -97,7 +97,8 @@ m_isExternal  (false),
 m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
-m_keyRepeat   (true)
+m_keyRepeat   (true),
+m_lastWindowSize(mode.width, mode.height)
 {
     // Open a connection with the X server
     m_display = XOpenDisplay(NULL);
@@ -215,8 +216,6 @@ m_keyRepeat   (true)
             XSetWMNormalHints(m_display, m_window, &sizeHints); 
         }
 
-        m_lastWindowSize.x = width;
-        m_lastWindowSize.y = height;
     }
 
     // Do some common initializations
