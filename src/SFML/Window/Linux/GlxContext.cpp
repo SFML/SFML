@@ -238,10 +238,31 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
         if (glXCreateContextAttribsARB)
         {
             int nbConfigs = 0;
-
-            std::vector<int> fbattribs = getFBAttribs(settings);
-
-            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), &fbattribs[0], &nbConfigs);
+            int sampleBuffers = 0;
+            
+            if(settings.antialiasingLevel > 0)
+            {
+                sampleBuffers = 1;
+            }
+            
+            int fbAttributes[] = 
+            {
+                GLX_DEPTH_SIZE, settings.depthBits,
+                GLX_STENCIL_SIZE, settings.stencilBits,
+                GLX_SAMPLE_BUFFERS, sampleBuffers,
+                GLX_SAMPLES, settings.antialiasingLevel,
+                GLX_RED_SIZE, 8,
+                GLX_GREEN_SIZE, 8,
+                GLX_BLUE_SIZE, 8,
+                GLX_ALPHA_SIZE, 8,
+                GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+                GLX_DOUBLEBUFFER, True,
+                GLX_X_RENDERABLE, True,
+                GLX_RENDER_TYPE, GLX_RGBA_BIT,
+                None
+            };
+            
+            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), fbAttributes, &nbConfigs);
             if (configs && nbConfigs)
             {
                 // Create the context
@@ -311,36 +332,6 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
     XFree(visuals);
 }
 
-std::vector<int> GlxContext::getFBAttribs(const ContextSettings& settings)
-{
-    std::vector<int> returnVec;
-    // Used to compare the requested settings with the default settings
-    ContextSettings refSettings;
-    if(settings.depthBits != refSettings.depthBits)
-    {
-        returnVec.push_back(GLX_DEPTH_SIZE);
-        returnVec.push_back(settings.depthBits);
-    }
-    if(settings.stencilBits != refSettings.stencilBits)
-    {
-        returnVec.push_back(GLX_STENCIL_SIZE);
-        returnVec.push_back(settings.stencilBits);
-    }
-
-    // All FB configs must support double buffering
-    returnVec.push_back(GLX_DOUBLEBUFFER);
-    returnVec.push_back(1);
-
-    // The FB must have an associated X visual
-    returnVec.push_back(GLX_X_RENDERABLE);
-    returnVec.push_back(1);
-    
-    // The last element in the attribute list is always (0, 0)
-    returnVec.push_back(0);
-    returnVec.push_back(0);
-
-    return returnVec;
-}
 } // namespace priv
 
 } // namespace sf

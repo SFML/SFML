@@ -31,7 +31,6 @@
 #include <SFML/Window/GlContext.hpp>
 #include <X11/Xlib.h>
 #include <GL/glx.h>
-#include <vector>
 
 
 namespace sf
@@ -120,18 +119,6 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     void createContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Returns a vector with attributes based on ContextSettings
-    ///
-    /// This vector should be used when calling glXChooseFBConfig to
-    //// get a suitable configuration.
-    ///
-    /// \param settings     Creation parameters
-    /// \return             A vector with values to be passed to glXChooseFBConfig
-    ///
-    ////////////////////////////////////////////////////////////
-    std::vector<int> getFBAttribs(const ContextSettings& settings);
 
 
     ////////////////////////////////////////////////////////////
