@@ -314,6 +314,7 @@ Vector2u WindowImplX11::getSize() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setSize(const Vector2u& size)
 {
+    m_lastWindowSize = size;
     XResizeWindow(m_display, m_window, size.x, size.y);
     XFlush(m_display);
 }
@@ -645,8 +646,6 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                event.size.height != m_lastWindowSize.y)
             {
                 setSize(Vector2u(event.size.width, event.size.height));
-                m_lastWindowSize.x = event.size.width;
-                m_lastWindowSize.y = event.size.height;
                 pushEvent(event);
             }
             break;
