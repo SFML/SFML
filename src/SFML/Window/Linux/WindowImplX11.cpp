@@ -68,7 +68,8 @@ m_isExternal  (true),
 m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
-m_keyRepeat   (true)
+m_keyRepeat   (true),
+m_lastWindowSize(0,0)
 {
     // Open a connection with the X server
     m_display = XOpenDisplay(NULL);
