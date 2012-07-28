@@ -230,7 +230,7 @@ public :
     ///
     /// The returned value points to an array of RGBA pixels made of
     /// 8 bits integers components. The size of the array is
-    /// GetWidth() * GetHeight() * 4.
+    /// width * height * 4 (getSize().x * getSize().y * 4).
     /// Warning: the returned pointer may become invalid if you
     /// modify the image, so you should never store it for too long.
     /// If the image is empty, a null pointer is returned.
