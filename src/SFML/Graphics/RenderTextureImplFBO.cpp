@@ -53,7 +53,7 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
     if (m_depthBuffer)
     {
         GLuint depthBuffer = static_cast<GLuint>(m_depthBuffer);
-        glCheck(glDeleteFramebuffersEXT(1, &depthBuffer));
+        glCheck(glDeleteRenderbuffersEXT(1, &depthBuffer));
     }
 
     // Destroy the frame buffer
