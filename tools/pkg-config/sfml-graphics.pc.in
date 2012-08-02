@@ -7,5 +7,6 @@ Name: SFML-graphics
 Description: The Simple and Fast Multimedia Library, graphics module.
 URL: http://www.sfml-dev.org
 Version: @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
+Requires: sfml-window
 Libs: -L${libdir} -lsfml-graphics
 Cflags: -I${includedir}
