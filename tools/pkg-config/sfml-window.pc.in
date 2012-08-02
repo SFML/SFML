@@ -7,5 +7,6 @@ Name: SFML-window
 Description: The Simple and Fast Multimedia Library, window module.
 URL: http://www.sfml-dev.org
 Version: @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
+Requires: sfml-system
 Libs: -L${libdir} -lsfml-window
 Cflags: -I${includedir}
