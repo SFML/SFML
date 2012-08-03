@@ -8,6 +8,8 @@
 #include <cmath>
 
 
+const sf::Font* Effect::s_font = NULL;
+
 ////////////////////////////////////////////////////////////
 // "Pixelate" fragment shader
 ////////////////////////////////////////////////////////////
@@ -87,6 +89,7 @@ public :
                          "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
                          "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
                          "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
+        m_text.setFont(getFont());
         m_text.setCharacterSize(22);
         m_text.setPosition(30, 20);
 
@@ -268,6 +271,12 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Shader");
     window.setVerticalSyncEnabled(true);
 
+    // Load the application font and pass it to the Effect class
+    sf::Font font;
+    if (!font.loadFromFile("resources/sansation.ttf"))
+        return EXIT_FAILURE;
+    Effect::setFont(font);
+
     // Create the effects
     std::vector<Effect*> effects;
     effects.push_back(new Pixelate);
@@ -287,11 +296,6 @@ int main()
     sf::Sprite textBackground(textBackgroundTexture);
     textBackground.setPosition(0, 520);
     textBackground.setColor(sf::Color(255, 255, 255, 200));
-
-    // Load the messages font
-    sf::Font font;
-    if (!font.loadFromFile("resources/sansation.ttf"))
-        return EXIT_FAILURE;
 
     // Create the description text
     sf::Text description("Current effect: " + effects[current]->getName(), font, 20);

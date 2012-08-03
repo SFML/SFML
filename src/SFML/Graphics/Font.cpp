@@ -327,28 +327,6 @@ Font& Font::operator =(const Font& right)
 
 
 ////////////////////////////////////////////////////////////
-const Font& Font::getDefaultFont()
-{
-    static Font font;
-    static bool loaded = false;
-
-    // Load the default font on first call
-    if (!loaded)
-    {
-        static const signed char data[] =
-        {
-            #include <SFML/Graphics/Arial.hpp>
-        };
-
-        font.loadFromMemory(data, sizeof(data));
-        loaded = true;
-    }
-
-    return font;
-}
-
-
-////////////////////////////////////////////////////////////
 void Font::cleanup()
 {
     // Check if we must destroy the FreeType pointers

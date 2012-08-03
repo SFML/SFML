@@ -70,14 +70,14 @@ public :
     Text();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the string from a string, font and size
+    /// \brief Construct the text from a string, font and size
     ///
     /// \param string         Text assigned to the string
     /// \param font           Font used to draw the string
     /// \param characterSize  Base size of characters, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    explicit Text(const String& string, const Font& font = Font::getDefaultFont(), unsigned int characterSize = 30);
+    explicit Text(const String& string, const Font& font, unsigned int characterSize = 30);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's string
@@ -109,8 +109,6 @@ public :
     /// a pointer to the one that you passed to this function.
     /// If the font is destroyed and the text tries to
     /// use it, the behaviour is undefined.
-    /// Texts have a valid font by default, which the built-in
-    /// Font::getDefaultFont().
     ///
     /// \param font New font
     ///
@@ -179,15 +177,16 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's font
     ///
+    /// If the text has no font attached, a NULL pointer is returned.
     /// The returned reference is const, which means that you
     /// cannot modify the font when you get it from this function.
     ///
-    /// \return Text's font
+    /// \return Pointer to the text's font
     ///
     /// \see setFont
     ///
     ////////////////////////////////////////////////////////////
-    const Font& getFont() const;
+    const Font* getFont() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the character size
@@ -347,10 +346,6 @@ private :
 /// // Draw it
 /// window.draw(text);
 /// \endcode
-///
-/// Note that you don't need to load a font to draw text,
-/// SFML comes with a built-in font that is implicitely used
-/// by default.
 ///
 /// \see sf::Font, sf::Transformable
 ///

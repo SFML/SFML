@@ -36,7 +36,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Text::Text() :
 m_string       (),
-m_font         (&Font::getDefaultFont()),
+m_font         (NULL),
 m_characterSize(30),
 m_style        (Regular),
 m_color        (255, 255, 255),
@@ -122,10 +122,9 @@ const String& Text::getString() const
 
 
 ////////////////////////////////////////////////////////////
-const Font& Text::getFont() const
+const Font* Text::getFont() const
 {
-    assert(m_font != NULL); // can never be NULL, always &Font::getDefaultFont() by default
-    return *m_font;
+    return m_font;
 }
 
 
@@ -153,7 +152,9 @@ const Color& Text::getColor() const
 ////////////////////////////////////////////////////////////
 Vector2f Text::findCharacterPos(std::size_t index) const
 {
-    assert(m_font != NULL);
+    // Make sure that we have a valid font
+    if (!m_font)
+        return Vector2f();
 
     // Adjust the index if it's out of range
     if (index > m_string.getSize())
@@ -212,22 +213,25 @@ FloatRect Text::getGlobalBounds() const
 ////////////////////////////////////////////////////////////
 void Text::draw(RenderTarget& target, RenderStates states) const
 {
-    assert(m_font != NULL);
-
-    states.transform *= getTransform();
-    states.blendMode = BlendAlpha; // alpha blending is mandatory for proper text rendering
-    states.texture = &m_font->getTexture(m_characterSize);
-    target.draw(m_vertices, states);
+    if (m_font)
+    {
+        states.transform *= getTransform();
+        states.blendMode = BlendAlpha; // alpha blending is mandatory for proper text rendering
+        states.texture = &m_font->getTexture(m_characterSize);
+        target.draw(m_vertices, states);
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 void Text::updateGeometry()
 {
-    assert(m_font != NULL);
-
     // Clear the previous geometry
     m_vertices.clear();
+
+    // No font: nothing to draw
+    if (!m_font)
+        return;
 
     // No text: nothing to draw
     if (m_string.isEmpty())

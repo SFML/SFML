@@ -18,6 +18,11 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL", sf::Style::Default, sf::ContextSettings(32));
     window.setVerticalSyncEnabled(true);
 
+    // Load a font for drawing some text
+    sf::Font font;
+    if (!font.loadFromFile("resources/sansation.ttf"))
+        return EXIT_FAILURE;
+
     // Create a sprite for the background
     sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("resources/background.jpg"))
@@ -140,7 +145,7 @@ int main()
 
         // Draw some text on top of our OpenGL object
         window.pushGLStates();
-        sf::Text text("SFML / OpenGL demo");
+        sf::Text text("SFML / OpenGL demo", font);
         text.setColor(sf::Color(255, 255, 255, 170));
         text.setPosition(250.f, 450.f);
         window.draw(text);

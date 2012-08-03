@@ -5,6 +5,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
+#include <cassert>
 #include <string>
 
 
@@ -17,6 +18,11 @@ public :
 
     virtual ~Effect()
     {
+    }
+
+    static void setFont(const sf::Font& font)
+    {
+        s_font = &font;
     }
 
     const std::string& getName() const
@@ -43,7 +49,7 @@ public :
         }
         else
         {
-            sf::Text error("Shader not\nsupported");
+            sf::Text error("Shader not\nsupported", getFont());
             error.setPosition(320.f, 200.f);
             error.setCharacterSize(36);
             target.draw(error, states);
@@ -58,6 +64,12 @@ protected :
     {
     }
 
+    static const sf::Font& getFont()
+    {
+        assert(s_font != NULL);
+        return *s_font;
+    }
+
 private :
 
     // Virtual functions to be implemented in derived effects
@@ -69,6 +81,8 @@ private :
 
     std::string m_name;
     bool m_isLoaded;
+
+    static const sf::Font* s_font;
 };
 
 #endif // EFFECT_HPP

@@ -197,20 +197,6 @@ public :
     ////////////////////////////////////////////////////////////
     Font& operator =(const Font& right);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the default built-in font
-    ///
-    /// This font is provided for convenience, it is used by
-    /// sf::Text instances by default. It is provided so that
-    /// users don't have to provide and load a font file in order
-    /// to display text on screen.
-    /// The font used is Arial.
-    ///
-    /// \return Reference to the built-in default font
-    ///
-    ////////////////////////////////////////////////////////////
-    static const Font& getDefaultFont();
-
 private :
 
     ////////////////////////////////////////////////////////////
@@ -316,7 +302,7 @@ private :
 /// the loadFromFile function for the complete list of supported formats.
 ///
 /// Once it is loaded, a sf::Font instance provides three
-/// types of informations about the font:
+/// types of information about the font:
 /// \li Global metrics, such as the line spacing
 /// \li Per-glyph metrics, such as bounding box or kerning
 /// \li Pixel representation of glyphs
