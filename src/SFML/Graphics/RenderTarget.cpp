@@ -241,14 +241,14 @@ void RenderTarget::popGLStates()
 {
     if (activate(true))
     {
-        glCheck(glPopClientAttrib());
-        glCheck(glPopAttrib());
         glCheck(glMatrixMode(GL_PROJECTION));
         glCheck(glPopMatrix());
         glCheck(glMatrixMode(GL_MODELVIEW));
         glCheck(glPopMatrix());
         glCheck(glMatrixMode(GL_TEXTURE));
         glCheck(glPopMatrix());
+        glCheck(glPopClientAttrib());
+        glCheck(glPopAttrib());
     }
 }
 
