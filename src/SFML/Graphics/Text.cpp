@@ -216,7 +216,6 @@ void Text::draw(RenderTarget& target, RenderStates states) const
     if (m_font)
     {
         states.transform *= getTransform();
-        states.blendMode = BlendAlpha; // alpha blending is mandatory for proper text rendering
         states.texture = &m_font->getTexture(m_characterSize);
         target.draw(m_vertices, states);
     }
