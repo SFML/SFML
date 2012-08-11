@@ -192,8 +192,8 @@ Vector2<T>& operator *=(Vector2<T>& left, T right);
 /// \relates Vector2
 /// \brief Overload of binary operator /
 ///
-/// \param left  Left operand (a scalar value)
-/// \param right Right operand (a vector)
+/// \param left  Left operand (a vector)
+/// \param right Right operand (a scalar value)
 ///
 /// \return Memberwise division by \a right
 ///
