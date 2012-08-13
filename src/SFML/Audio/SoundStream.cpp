@@ -168,10 +168,17 @@ void SoundStream::setPlayingOffset(Time timeOffset)
 ////////////////////////////////////////////////////////////
 Time SoundStream::getPlayingOffset() const
 {
-    ALfloat secs = 0.f;
-    alCheck(alGetSourcef(m_source, AL_SEC_OFFSET, &secs));
+    if (m_sampleRate && m_channelCount)
+    {
+        ALfloat secs = 0.f;
+        alCheck(alGetSourcef(m_source, AL_SEC_OFFSET, &secs));
 
-    return seconds(secs + static_cast<float>(m_samplesProcessed) / m_sampleRate / m_channelCount);
+        return seconds(secs + static_cast<float>(m_samplesProcessed) / m_sampleRate / m_channelCount);
+    }
+    else
+    {
+        return Time::Zero;
+    }
 }
 
 
