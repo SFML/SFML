@@ -148,14 +148,17 @@ public :
     String(const std::basic_string<Uint32>& utf32String);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from a range o unicode characters given by two iterators
+    /// \brief Construct from a range of unicode characters.
+    ///
+    /// The range <tt>[begin, end)</tt> is given using two input iterators.
+    /// The values pointed by the iterators should be UTF-32 characters.
     ///
     /// \param begin the beginning of the range
     /// \param end the ending of the range
     ///
     ////////////////////////////////////////////////////////////
-    template<typename Iter>
-    String(const Iter& begin, const Iter& end);
+    template<typename InputIterator>
+    String(const InputIterator& begin, const InputIterator& end);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor

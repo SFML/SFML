@@ -24,11 +24,8 @@
 
 
 ////////////////////////////////////////////////////////////
-template<typename Iter>
-String::String(const Iter& begin, const Iter& end)
+template<typename InputIterator>
+String::String(const InputIterator& begin, const InputIterator& end) :
+m_string(begin, end)
 {
-    for(Iter iterator=begin; iterator!=end; ++iterator)
-    {
-      m_string.push_back(*iterator);
-    }
 }
