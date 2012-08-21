@@ -148,6 +148,16 @@ public :
     String(const std::basic_string<Uint32>& utf32String);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct from a range o unicode characters given by two iterators
+    ///
+    /// \param begin the beginning of the range
+    /// \param end the ending of the range
+    ///
+    ////////////////////////////////////////////////////////////
+    template<typename Iter>
+    String(const Iter& begin, const Iter& end);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
     ///
     /// \param copy Instance to copy
@@ -486,6 +496,8 @@ SFML_SYSTEM_API bool operator >=(const String& left, const String& right);
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API String operator +(const String& left, const String& right);
+
+#include <SFML/System/String.inl>
 
 } // namespace sf
 
