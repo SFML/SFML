@@ -117,10 +117,10 @@ private :
 ///
 /// Usage example:
 /// \code
-/// if (SoundBufferRecorder::isAvailable())
+/// if (sf::SoundBufferRecorder::isAvailable())
 /// {
 ///     // Record some audio data
-///     SoundBufferRecorder recorder;
+///     sf::SoundBufferRecorder recorder;
 ///     recorder.start();
 ///     ...
 ///     recorder.stop();

@@ -201,7 +201,7 @@ SFML_WINDOW_API bool operator >=(const VideoMode& left, const VideoMode& right);
 /// getFullscreenModes().
 ///
 /// A custom video mode can also be checked directly for
-/// fullscreen compatibility with its IsValid() function.
+/// fullscreen compatibility with its isValid() function.
 ///
 /// Additionnally, sf::VideoMode provides a static function
 /// to get the mode currently used by the desktop: getDesktopMode().

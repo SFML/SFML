@@ -83,7 +83,7 @@ public :
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the sound is played.
     ///
-    /// \see Pause, Stop
+    /// \see pause, stop
     ///
     ////////////////////////////////////////////////////////////
     void play();
@@ -94,19 +94,19 @@ public :
     /// This function pauses the sound if it was playing,
     /// otherwise (sound already paused or stopped) it has no effect.
     ///
-    /// \see Play, Stop
+    /// \see play, stop
     ///
     ////////////////////////////////////////////////////////////
     void pause();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Stop playing the sound
+    /// \brief stop playing the sound
     ///
     /// This function stops the sound if it was playing or paused,
     /// and does nothing if it was already stopped.
     /// It also resets the playing position (unlike pause()).
     ///
-    /// \see Play, Pause
+    /// \see play, pause
     ///
     ////////////////////////////////////////////////////////////
     void stop();
@@ -120,7 +120,7 @@ public :
     ///
     /// \param buffer Sound buffer to attach to the sound
     ///
-    /// \see GetBuffer
+    /// \see getBuffer
     ///
     ////////////////////////////////////////////////////////////
     void setBuffer(const SoundBuffer& buffer);

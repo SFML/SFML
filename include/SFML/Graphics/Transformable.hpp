@@ -397,18 +397,18 @@ private :
 /// class MyEntity
 /// {
 /// public :
-///     void SetPosition(const MyVector& v)
+///     void setPosition(const MyVector& v)
 ///     {
-///         myTransform.setPosition(v.x(), v.y());
+///         m_transform.setPosition(v.x(), v.y());
 ///     }
 ///
-///     void Draw(sf::RenderTarget& target) const
+///     void draw(sf::RenderTarget& target) const
 ///     {
-///         target.draw(..., myTransform.getTransform());
+///         target.draw(..., m_transform.getTransform());
 ///     }
 ///
 /// private :
-///     sf::Transformable myTransform;
+///     sf::Transformable m_transform;
 /// };
 /// \endcode
 ///

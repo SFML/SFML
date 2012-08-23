@@ -67,7 +67,7 @@ public :
     /// this call will block the execution until the mutex
     /// is released.
     ///
-    /// \see Unlock
+    /// \see unlock
     ///
     ////////////////////////////////////////////////////////////
     void lock();
@@ -75,7 +75,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Unlock the mutex
     ///
-    /// \see Lock
+    /// \see lock
     ///
     ////////////////////////////////////////////////////////////
     void unlock();

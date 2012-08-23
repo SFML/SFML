@@ -215,7 +215,7 @@ private :
 ///
 /// The audio capture feature may not be supported or activated
 /// on every platform, thus it is recommended to check its
-/// availability with the IsAvailable() function. If it returns
+/// availability with the isAvailable() function. If it returns
 /// false, then any attempt to use an audio recorder will fail.
 ///
 /// It is important to note that the audio capture happens in a
