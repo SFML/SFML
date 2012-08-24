@@ -36,7 +36,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Sprite::Sprite() :
 m_texture    (NULL),
-m_textureRect(0, 0, 0, 0)
+m_textureRect()
 {
 }
 
@@ -44,7 +44,7 @@ m_textureRect(0, 0, 0, 0)
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture) :
 m_texture    (NULL),
-m_textureRect(0, 0, 0, 0)
+m_textureRect()
 {
     setTexture(texture);
 }
@@ -53,7 +53,7 @@ m_textureRect(0, 0, 0, 0)
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture, const IntRect& rectangle) :
 m_texture    (NULL),
-m_textureRect(0, 0, 0, 0)
+m_textureRect()
 {
     setTexture(texture);
     setTextureRect(rectangle);
@@ -63,8 +63,8 @@ m_textureRect(0, 0, 0, 0)
 ////////////////////////////////////////////////////////////
 void Sprite::setTexture(const Texture& texture, bool resetRect)
 {
-    // Recompute the texture area if requested, or if there was no valid texture before
-    if (resetRect || !m_texture)
+    // Recompute the texture area if requested, or if there was no valid texture & rect before
+    if (resetRect || (!m_texture && (m_textureRect == sf::IntRect())))
         setTextureRect(IntRect(0, 0, texture.getSize().x, texture.getSize().y));
 
     // Assign the new texture
