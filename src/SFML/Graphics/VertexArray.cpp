@@ -113,7 +113,7 @@ FloatRect VertexArray::getBounds() const
         float right  = m_vertices[0].position.x;
         float bottom = m_vertices[0].position.y;
 
-        for (std::size_t i = 0; i < m_vertices.size(); ++i)
+        for (std::size_t i = 1; i < m_vertices.size(); ++i)
         {
             Vector2f position = m_vertices[i].position;
 
