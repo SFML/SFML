@@ -29,7 +29,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
-#include <sstream>
+#include <cstdio>
 
 
 namespace sf
@@ -39,21 +39,21 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::isConnected(unsigned int index)
 {
-    std::ostringstream oss;
-    oss << "/dev/input/js" << index;
+    char name[32];
+    std::sprintf(name, "/dev/input/js%u", index);
 
     struct stat info; 
-    return stat(oss.str().c_str(), &info) == 0; 
+    return stat(name, &info) == 0; 
 }
 
 
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
 {
-    std::ostringstream oss;
-    oss << "/dev/input/js" << index;
+    char name[32];
+    std::sprintf(name, "/dev/input/js%u", index);
 
-    m_file = ::open(oss.str().c_str(), O_RDONLY);
+    m_file = ::open(name, O_RDONLY);
     if (m_file > 0)
     {
         // Use non-blocking mode
