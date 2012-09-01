@@ -141,7 +141,7 @@ public :
         F6,           ///< The F6 key
         F7,           ///< The F7 key
         F8,           ///< The F8 key
-        F9,           ///< The F8 key
+        F9,           ///< The F9 key
         F10,          ///< The F10 key
         F11,          ///< The F11 key
         F12,          ///< The F12 key
