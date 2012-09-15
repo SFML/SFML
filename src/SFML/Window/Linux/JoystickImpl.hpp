@@ -31,6 +31,7 @@
 #if defined(SFML_SYSTEM_LINUX)
     #include <linux/joystick.h>
     #include <fcntl.h>
+    #include "XDisplay.hpp"
 #elif defined(SFML_SYSTEM_FREEBSD)
     // #include <sys/joystick.h> ?
     #define ABS_MAX 1

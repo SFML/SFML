@@ -44,7 +44,7 @@ m_context   (NULL),
 m_ownsWindow(true)
 {
     // Open a connection with the X server
-    m_display = XOpenDisplay(NULL);
+    m_display = SXOpenDisplay();
 
     // Create a dummy window (disabled and hidden)
     int screen = DefaultScreen(m_display);
@@ -88,7 +88,7 @@ m_context   (NULL),
 m_ownsWindow(true)
 {
     // Open a connection with the X server
-    m_display = XOpenDisplay(NULL);
+    m_display = SXOpenDisplay();
 
     // Create the hidden window
     int screen = DefaultScreen(m_display);
@@ -127,7 +127,7 @@ GlxContext::~GlxContext()
     
     // Close the connection with the X server
     if (m_ownsWindow)
-        XCloseDisplay(m_display);
+        SXCloseDisplay();
 }
 
 

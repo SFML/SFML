@@ -31,7 +31,7 @@
 #include <SFML/Window/GlContext.hpp>
 #include <X11/Xlib.h>
 #include <GL/glx.h>
-
+#include "XDisplay.hpp"
 
 namespace sf
 {

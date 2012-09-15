@@ -31,7 +31,6 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 
-
 namespace sf
 {
 namespace priv

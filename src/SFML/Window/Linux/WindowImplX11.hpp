@@ -33,7 +33,7 @@
 #include <X11/Xlib.h>
 #include <set>
 #include <string>
-
+#include "XDisplay.hpp"
 
 namespace sf
 {
