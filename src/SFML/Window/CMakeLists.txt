@@ -60,6 +60,8 @@ elseif(LINUX)
         ${SRCROOT}/Linux/VideoModeImpl.cpp
         ${SRCROOT}/Linux/WindowImplX11.cpp
         ${SRCROOT}/Linux/WindowImplX11.hpp
+		${SRCROOT}/Linux/XDisplay.cpp
+		${SRCROOT}/Linux/XDisplay.hpp
     )
 else() # MACOSX
     set(SRC

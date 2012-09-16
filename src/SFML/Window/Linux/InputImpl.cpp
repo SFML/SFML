@@ -29,7 +29,7 @@
 #include <SFML/Window/Window.hpp>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-
+#include "XDisplay.hpp"
 
 namespace
 {
@@ -38,13 +38,13 @@ namespace
     {
         GlobalDisplay() 
         {
-            display = XOpenDisplay(NULL);
+            display = SXOpenDisplay();
             window = DefaultRootWindow(display);
         }
 
         ~GlobalDisplay()
         {
-            XCloseDisplay(display);
+            SXCloseDisplay();
         }
 
         ::Display* display;

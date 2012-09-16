@@ -30,7 +30,7 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 #include <algorithm>
-
+#include "XDisplay.hpp"
 
 namespace sf
 {
@@ -42,7 +42,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     std::vector<VideoMode> modes;
 
     // Open a connection with the X server
-    Display* disp = XOpenDisplay(NULL);
+    Display* disp = SXOpenDisplay();
     if (disp)
     {
         // Retrieve the default screen number
@@ -101,7 +101,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         }
 
         // Close the connection with the X server
-        XCloseDisplay(disp);
+        SXCloseDisplay();
     }
     else
     {
@@ -119,7 +119,7 @@ VideoMode VideoModeImpl::getDesktopMode()
     VideoMode desktopMode;
 
     // Open a connection with the X server
-    Display* disp = XOpenDisplay(NULL);
+    Display* disp = SXOpenDisplay();
     if (disp)
     {
         // Retrieve the default screen number
@@ -159,7 +159,7 @@ VideoMode VideoModeImpl::getDesktopMode()
         }
 
         // Close the connection with the X server
-        XCloseDisplay(disp);
+        SXCloseDisplay();
     }
     else
     {
