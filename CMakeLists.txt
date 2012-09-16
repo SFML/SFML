@@ -61,7 +61,12 @@ endif()
 # define an option for choosing between static and dynamic C runtime (Windows only)
 if(WINDOWS)
     sfml_set_option(SFML_USE_STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
-    
+
+    # the following combination of flags is not valid
+    if (BUILD_SHARED_LIBS AND SFML_USE_STATIC_STD_LIBS)
+        message(FATAL_ERROR "BUILD_SHARED_LIBS and SFML_USE_STATIC_STD_LIBS cannot be used together")
+    endif()
+
     # for VC++, we can apply it globally by modifying the compiler flags
     if(COMPILER_MSVC AND SFML_USE_STATIC_STD_LIBS)
         foreach(flag
