@@ -219,7 +219,7 @@ private :
 /// The function argument, if any, is copied in the sf::Thread
 /// instance, as well as the functor (if the corresponding
 /// constructor is used). Class instances, however, are passed
-/// by pointer to you must make sure that the object won't be
+/// by pointer so you must make sure that the object won't be
 /// destroyed while the thread is still using it.
 ///
 /// The thread ends when its function is terminated. If the
