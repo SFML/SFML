@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/Linux/Display.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
@@ -42,18 +43,18 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     std::vector<VideoMode> modes;
 
     // Open a connection with the X server
-    Display* disp = XOpenDisplay(NULL);
-    if (disp)
+    Display* display = OpenDisplay();
+    if (display)
     {
         // Retrieve the default screen number
-        int screen = DefaultScreen(disp);
+        int screen = DefaultScreen(display);
 
         // Check if the XRandR extension is present
         int version;
-        if (XQueryExtension(disp, "RANDR", &version, &version, &version))
+        if (XQueryExtension(display, "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            XRRScreenConfiguration* config = XRRGetScreenInfo(disp, RootWindow(disp, screen));
+            XRRScreenConfiguration* config = XRRGetScreenInfo(display, RootWindow(display, screen));
             if (config)
             {
                 // Get the available screen sizes
@@ -63,7 +64,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
                 {
                     // Get the list of supported depths
                     int nbDepths = 0;
-                    int* depths = XListDepths(disp, screen, &nbDepths);
+                    int* depths = XListDepths(display, screen, &nbDepths);
                     if (depths && (nbDepths > 0))
                     {
                         // Combine depths and sizes to fill the array of supported modes
@@ -101,7 +102,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         }
 
         // Close the connection with the X server
-        XCloseDisplay(disp);
+        CloseDisplay(display);
     }
     else
     {
@@ -119,18 +120,18 @@ VideoMode VideoModeImpl::getDesktopMode()
     VideoMode desktopMode;
 
     // Open a connection with the X server
-    Display* disp = XOpenDisplay(NULL);
-    if (disp)
+    Display* display = OpenDisplay();
+    if (display)
     {
         // Retrieve the default screen number
-        int screen = DefaultScreen(disp);
+        int screen = DefaultScreen(display);
 
         // Check if the XRandR extension is present
         int version;
-        if (XQueryExtension(disp, "RANDR", &version, &version, &version))
+        if (XQueryExtension(display, "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            XRRScreenConfiguration* config = XRRGetScreenInfo(disp, RootWindow(disp, screen));
+            XRRScreenConfiguration* config = XRRGetScreenInfo(display, RootWindow(display, screen));
             if (config)
             {
                 // Get the current video mode
@@ -141,7 +142,7 @@ VideoMode VideoModeImpl::getDesktopMode()
                 int nbSizes;
                 XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
                 if (sizes && (nbSizes > 0))
-                    desktopMode = VideoMode(sizes[currentMode].width, sizes[currentMode].height, DefaultDepth(disp, screen));
+                    desktopMode = VideoMode(sizes[currentMode].width, sizes[currentMode].height, DefaultDepth(display, screen));
 
                 // Free the configuration instance
                 XRRFreeScreenConfigInfo(config);
@@ -159,7 +160,7 @@ VideoMode VideoModeImpl::getDesktopMode()
         }
 
         // Close the connection with the X server
-        XCloseDisplay(disp);
+        CloseDisplay(display);
     }
     else
     {

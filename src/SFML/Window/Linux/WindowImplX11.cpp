@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Linux/WindowImplX11.hpp>
+#include <SFML/Window/Linux/Display.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xutil.h>
@@ -72,7 +73,7 @@ m_hiddenCursor(0),
 m_keyRepeat   (true)
 {
     // Open a connection with the X server
-    m_display = XOpenDisplay(NULL);
+    m_display = OpenDisplay();
     m_screen  = DefaultScreen(m_display);
 
     // Save the window handle
@@ -101,7 +102,7 @@ m_hiddenCursor(0),
 m_keyRepeat   (true)
 {
     // Open a connection with the X server
-    m_display = XOpenDisplay(NULL);
+    m_display = OpenDisplay();
     m_screen  = DefaultScreen(m_display);
 
     // Compute position and size
@@ -255,14 +256,7 @@ WindowImplX11::~WindowImplX11()
         XCloseIM(m_inputMethod);
 
     // Close the connection with the X server
-    XCloseDisplay(m_display);
-}
-
-
-////////////////////////////////////////////////////////////
-::Display* WindowImplX11::getDisplay() const
-{
-    return m_display;
+    CloseDisplay(m_display);
 }
 
 

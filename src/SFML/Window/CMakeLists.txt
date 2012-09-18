@@ -51,6 +51,8 @@ if(WINDOWS)
 elseif(LINUX)
     set(SRC
         ${SRC}
+        ${SRCROOT}/Linux/Display.cpp
+        ${SRCROOT}/Linux/Display.hpp
         ${SRCROOT}/Linux/GlxContext.cpp
         ${SRCROOT}/Linux/GlxContext.hpp
         ${SRCROOT}/Linux/InputImpl.cpp

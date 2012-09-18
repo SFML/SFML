@@ -28,6 +28,7 @@
 #define GLX_GLXEXT_LEGACY // so that our local glxext.h is used instead of the system one
 #include <SFML/Window/Linux/GlxContext.hpp>
 #include <SFML/Window/Linux/WindowImplX11.hpp>
+#include <SFML/Window/Linux/Display.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/glext/glxext.h>
 #include <SFML/System/Err.hpp>
@@ -39,12 +40,11 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared) :
-m_window    (0),
-m_context   (NULL),
-m_ownsWindow(true)
+m_window (0),
+m_context(NULL)
 {
     // Open a connection with the X server
-    m_display = XOpenDisplay(NULL);
+    m_display = OpenDisplay();
 
     // Create a dummy window (disabled and hidden)
     int screen = DefaultScreen(m_display);
@@ -65,12 +65,12 @@ m_ownsWindow(true)
 
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
-m_window    (0),
-m_context   (NULL),
-m_ownsWindow(false)
+m_window (0),
+m_context(NULL)
 {
-    // Use the same display as the owner window (important!)
-    m_display = static_cast<const WindowImplX11*>(owner)->getDisplay();
+    // Open a connection with the X server
+    // (important: must be the same display as the owner window)
+    m_display = OpenDisplay();
 
     // Get the owner window and its device context
     m_window = static_cast< ::Window>(owner->getSystemHandle());
@@ -83,12 +83,11 @@ m_ownsWindow(false)
 
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
-m_window    (0),
-m_context   (NULL),
-m_ownsWindow(true)
+m_window (0),
+m_context(NULL)
 {
     // Open a connection with the X server
-    m_display = XOpenDisplay(NULL);
+    m_display = OpenDisplay();
 
     // Create the hidden window
     int screen = DefaultScreen(m_display);
@@ -119,15 +118,14 @@ GlxContext::~GlxContext()
     }
     
     // Destroy the window if we own it
-    if (m_window && m_ownsWindow)
+    if (m_window)
     {
         XDestroyWindow(m_display, m_window);
         XFlush(m_display);
     }
-    
+
     // Close the connection with the X server
-    if (m_ownsWindow)
-        XCloseDisplay(m_display);
+    CloseDisplay(m_display);
 }
 
 

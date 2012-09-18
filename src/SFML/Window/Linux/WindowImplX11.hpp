@@ -72,16 +72,6 @@ public :
     ~WindowImplX11();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the display used by the window
-    ///
-    /// This functions is meant to be used internally by ContextGLX.
-    ///
-    /// \return Pointer to the X display of the window
-    ///
-    ////////////////////////////////////////////////////////////
-    ::Display* getDisplay() const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
     ///
     /// \return Handle of the window
