@@ -40,8 +40,9 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared) :
-m_window (0),
-m_context(NULL)
+m_window    (0),
+m_context   (NULL),
+m_ownsWindow(true)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -65,8 +66,9 @@ m_context(NULL)
 
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
-m_window (0),
-m_context(NULL)
+m_window    (0),
+m_context   (NULL),
+m_ownsWindow(false)
 {
     // Open a connection with the X server
     // (important: must be the same display as the owner window)
@@ -83,8 +85,9 @@ m_context(NULL)
 
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
-m_window (0),
-m_context(NULL)
+m_window    (0),
+m_context   (NULL),
+m_ownsWindow(true)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -118,7 +121,7 @@ GlxContext::~GlxContext()
     }
     
     // Destroy the window if we own it
-    if (m_window)
+    if (m_window && m_ownsWindow)
     {
         XDestroyWindow(m_display, m_window);
         XFlush(m_display);
