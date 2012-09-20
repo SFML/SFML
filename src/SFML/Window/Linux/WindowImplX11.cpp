@@ -477,7 +477,7 @@ void WindowImplX11::initialize()
                                    XNClientWindow, m_window,
                                    XNFocusWindow,  m_window,
                                    XNInputStyle,   XIMPreeditNothing  | XIMStatusNothing,
-                                   NULL);
+                                   (char*) NULL);
     }
     else
     {
