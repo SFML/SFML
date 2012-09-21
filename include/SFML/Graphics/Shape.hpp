@@ -107,7 +107,6 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the outline color of the shape
     ///
-    /// You can use sf::Color::Transparent to disable the outline.
     /// By default, the shape's outline color is opaque white.
     ///
     /// \param color New outline color of the shape

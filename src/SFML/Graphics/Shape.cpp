@@ -206,14 +206,11 @@ void Shape::draw(RenderTarget& target, RenderStates states) const
     states.transform *= getTransform();
 
     // Render the inside
-    if (m_fillColor.a > 0)
-    {
-        states.texture = m_texture;
-        target.draw(m_vertices, states);
-    }
+    states.texture = m_texture;
+    target.draw(m_vertices, states);
 
     // Render the outline
-    if ((m_outlineColor.a > 0) && (m_outlineThickness != 0))
+    if (m_outlineThickness != 0)
     {
         states.texture = NULL;
         target.draw(m_outlineVertices, states);
