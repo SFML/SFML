@@ -158,6 +158,16 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
+    /// \brief Initialize the internal state of the sound file
+    ///
+    /// This function is called by all the openRead functions.
+    ///
+    /// \param fileInfo Information about the loaded sound file
+    ///
+    ////////////////////////////////////////////////////////////
+    void initialize(SF_INFO fileInfo);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the internal format of an audio file according to
     ///        its filename extension
     ///

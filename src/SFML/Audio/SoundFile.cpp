@@ -96,18 +96,16 @@ bool SoundFile::openRead(const std::string& filename)
         sf_close(m_file);
 
     // Open the sound file
-    SF_INFO fileInfos;
-    m_file = sf_open(filename.c_str(), SFM_READ, &fileInfos);
+    SF_INFO fileInfo;
+    m_file = sf_open(filename.c_str(), SFM_READ, &fileInfo);
     if (!m_file)
     {
         err() << "Failed to open sound file \"" << filename << "\" (" << sf_strerror(m_file) << ")" << std::endl;
         return false;
     }
 
-    // Set the sound parameters
-    m_channelCount = fileInfos.channels;
-    m_sampleRate   = fileInfos.samplerate;
-    m_sampleCount  = static_cast<std::size_t>(fileInfos.frames) * m_channelCount;
+    // Initialize the internal state from the loaded information
+    initialize(fileInfo);
 
     return true;
 }
@@ -133,18 +131,16 @@ bool SoundFile::openRead(const void* data, std::size_t sizeInBytes)
     m_memory.TotalSize = sizeInBytes;
 
     // Open the sound file
-    SF_INFO fileInfos;
-    m_file = sf_open_virtual(&io, SFM_READ, &fileInfos, &m_memory);
+    SF_INFO fileInfo;
+    m_file = sf_open_virtual(&io, SFM_READ, &fileInfo, &m_memory);
     if (!m_file)
     {
         err() << "Failed to open sound file from memory (" << sf_strerror(m_file) << ")" << std::endl;
         return false;
     }
 
-    // Set the sound parameters
-    m_channelCount = fileInfos.channels;
-    m_sampleRate   = fileInfos.samplerate;
-    m_sampleCount  = static_cast<std::size_t>(fileInfos.frames) * m_channelCount;
+    // Initialize the internal state from the loaded information
+    initialize(fileInfo);
 
     return true;
 }
@@ -165,18 +161,16 @@ bool SoundFile::openRead(InputStream& stream)
     io.tell        = &Stream::tell;
 
     // Open the sound file
-    SF_INFO fileInfos;
-    m_file = sf_open_virtual(&io, SFM_READ, &fileInfos, &stream);
+    SF_INFO fileInfo;
+    m_file = sf_open_virtual(&io, SFM_READ, &fileInfo, &stream);
     if (!m_file)
     {
         err() << "Failed to open sound file from stream (" << sf_strerror(m_file) << ")" << std::endl;
         return false;
     }
 
-    // Set the sound parameters
-    m_channelCount = fileInfos.channels;
-    m_sampleRate   = fileInfos.samplerate;
-    m_sampleCount  = static_cast<std::size_t>(fileInfos.frames) * m_channelCount;
+    // Initialize the internal state from the loaded information
+    initialize(fileInfo);
 
     return true;
 }
@@ -257,6 +251,20 @@ void SoundFile::seek(Time timeOffset)
         sf_count_t frameOffset = static_cast<sf_count_t>(timeOffset.asSeconds() * m_sampleRate);
         sf_seek(m_file, frameOffset, SEEK_SET);
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundFile::initialize(SF_INFO fileInfo)
+{
+    // Save the sound properties
+    m_channelCount = fileInfo.channels;
+    m_sampleRate   = fileInfo.samplerate;
+    m_sampleCount  = static_cast<std::size_t>(fileInfo.frames) * fileInfo.channels;
+
+    // Enable scaling for Vorbis files (float samples)
+    if (fileInfo.format & SF_FORMAT_VORBIS)
+        sf_command(m_file, SFC_SET_SCALE_FLOAT_INT_READ, NULL, SF_TRUE);
 }
 
 
