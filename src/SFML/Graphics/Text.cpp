@@ -227,7 +227,7 @@ void Text::updateGeometry()
 {
     // Clear the previous geometry
     m_vertices.clear();
-    m_bounds = sf::FloatRect();
+    m_bounds = FloatRect();
 
     // No font: nothing to draw
     if (!m_font)
