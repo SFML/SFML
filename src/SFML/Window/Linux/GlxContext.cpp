@@ -246,8 +246,8 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
                 // Create the context
                 int attributes[] =
                 {
-                    GLX_CONTEXT_MAJOR_VERSION_ARB, m_settings.majorVersion,
-                    GLX_CONTEXT_MINOR_VERSION_ARB, m_settings.minorVersion,
+                    GLX_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
+                    GLX_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
                     GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
                     0, 0
                 };
