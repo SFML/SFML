@@ -292,25 +292,34 @@
 ////////////////////////////////////////////////////////////
 -(NSPoint)position
 {
-    NSPoint pos = [m_oglView frame].origin;
+    NSRect frame = m_window.frame;
+    NSPoint pos = frame.origin;
+    NSRect screenFrame = m_window.screen.frame;
     
     // Flip for SFML window coordinate system.
-    pos.y = [self screenHeight] - pos.y;
+    pos.y += frame.size.height;
+    pos.y = screenFrame.size.height - pos.y;
     
     return pos;
 }
 
 
 ////////////////////////////////////////////////////////.
--(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
+-(void)setWindowPositionToX:(int)x Y:(int)y
 {
     NSPoint point = NSMakePoint(x, y);
+    NSScreen *screen = m_window.screen;
     
     // Flip for SFML window coordinate system.
-    point.y = [self screenHeight] - point.y;
+    point.y = m_window.screen.frame.size.height - point.y;
     
     // Place the window.
     [m_window setFrameTopLeftPoint:point];
+    
+    if (screen != [m_window screen]) {
+        // Oops.  Coordinates were for a different screen.  Do-over.
+        [self setWindowPositionToX:x Y:y];
+    }
 }
 
 
