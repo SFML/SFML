@@ -104,7 +104,7 @@ namespace sf {
 /// Move the window (not the view if we handle not a window) (SFML Coordinates).
 ///
 ////////////////////////////////////////////////////////////
--(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y;
+-(void)setWindowPositionToX:(int)x Y:(int)y;
 
 ////////////////////////////////////////////////////////////
 /// Get window's size.

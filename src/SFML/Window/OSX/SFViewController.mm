@@ -138,7 +138,7 @@
 
 
 ////////////////////////////////////////////////////////.
--(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
+-(void)setWindowPositionToX:(int)x Y:(int)y
 {
     sf::err() << "Cannot move SFML area when SFML is integrated in a NSView. Use the view hanlder directly instead." << std::endl;
 }
