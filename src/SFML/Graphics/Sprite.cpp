@@ -28,7 +28,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <cmath>
+#include <cstdlib>
 
 
 namespace sf
