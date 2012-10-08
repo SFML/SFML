@@ -30,6 +30,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+#include <SFML/Window/OSX/DisplayImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -70,6 +71,8 @@
     if ((self = [super init])) {
         m_requester = 0;
         m_fullscreenMode = new sf::VideoMode();
+        m_desktopMode = NULL;
+        m_display = NULL;
         
         // Retain the window for our own use.
         m_window = [window retain];
@@ -123,18 +126,26 @@
     if ((self = [super init])) {
         m_requester = 0;
         m_fullscreenMode = new sf::VideoMode();
+        m_desktopMode = new sf::VideoMode();
+        m_display = NULL;
         
         // Create our window size.
         NSRect rect = NSZeroRect;
         if (style & sf::Style::Fullscreen && mode != sf::VideoMode::getDesktopMode()) {
-            // We use desktop mode to size the window
-            // but we set the back buffer size to 'mode' in applyContext method.
-            
-            *m_fullscreenMode = mode;
-            
-            sf::VideoMode dm = sf::VideoMode::getDesktopMode();
-            rect = NSMakeRect(0, 0, dm.width, dm.height);
-            
+            // Retain desktop mode so we can switch back when window closes.
+            m_desktopMode = new sf::VideoMode();
+            *m_desktopMode = sf::VideoMode::getDesktopMode();
+
+            if (mode.isValid()) {
+                *m_fullscreenMode = mode;
+                
+                m_display = new sf::priv::DisplayImpl(CGMainDisplayID());
+                m_display->setMode(mode);
+
+                rect = NSMakeRect(0, 0, m_fullscreenMode->width, m_fullscreenMode->height);
+            } else {
+                rect = NSMakeRect(0, 0, m_desktopMode->width, m_desktopMode->height);
+            }
         } else { // no fullscreen requested.
             rect = NSMakeRect(0, 0, mode.width, mode.height);
         }
@@ -242,6 +253,13 @@
     [m_oglView release];
     
     delete m_fullscreenMode;
+    
+    if (NULL != m_desktopMode && NULL != m_display) {
+        m_display->setMode(*m_desktopMode);
+    }
+    
+    delete m_desktopMode;
+    delete m_display;
     
     [super dealloc];
 }

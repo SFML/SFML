@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/OSX/DisplayImpl.hpp>
 
 ////////////////////////////////////////////////////////////
 /// Predefine some classes
@@ -62,6 +63,8 @@ namespace sf {
     SFOpenGLView*               m_oglView;
     sf::priv::WindowImplCocoa*  m_requester;
     sf::VideoMode*              m_fullscreenMode; // Note : C++ ctor/dtor are not called for Obj-C fields.
+    sf::VideoMode*              m_desktopMode;    // Note : C++ ctor/dtor are not called for Obj-C fields.
+    sf::priv::DisplayImpl*      m_display;
 }
 
 ////////////////////////////////////////////////////////////
