@@ -290,6 +290,8 @@ private :
     Color         m_color;         ///< Text color
     VertexArray   m_vertices;      ///< Vertex array containing the text's geometry
     FloatRect     m_bounds;        ///< Bounding rectangle of the text (in local coordinates)
+
+	std::vector<unsigned int> m_emptyIndices; ///< Indices for characters that should be transparent
 };
 
 } // namespace sf

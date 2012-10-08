@@ -108,8 +108,25 @@ void Text::setColor(const Color& color)
     if (color != m_color)
     {
         m_color = color;
+
         for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
-            m_vertices[i].color = m_color;
+		{
+			//Might be relatively slow but it's a simple comparison loop so shouldn't be TOO bad....
+			bool Found = false;
+
+			for(unsigned int j = 0; j < m_emptyIndices.size(); j++)
+			{
+				if(m_emptyIndices[j] == i)
+				{
+					Found = true;
+
+					break;
+				}
+			}
+
+			if(!Found)
+	            m_vertices[i].color = m_color;
+		}
     }
 }
 
@@ -227,6 +244,7 @@ void Text::updateGeometry()
 {
     // Clear the previous geometry
     m_vertices.clear();
+	m_emptyIndices.clear();
     m_bounds = FloatRect();
 
     // No font: nothing to draw
@@ -275,8 +293,49 @@ void Text::updateGeometry()
         // Handle special characters
         switch (curChar)
         {
-            case L' ' :  x += hspace;        continue;
-            case L'\t' : x += hspace * 4;    continue;
+            case L' ' :
+				if(prevChar == 0 || prevChar == ' ' || prevChar == '\t' || i == m_string.getSize() - 1)
+				{
+					//Get Size and add the empty indices there
+					unsigned int Size = m_vertices.getVertexCount();
+
+					m_emptyIndices.push_back(Size);
+					m_emptyIndices.push_back(Size + 1);
+					m_emptyIndices.push_back(Size + 2);
+					m_emptyIndices.push_back(Size + 3);
+
+					//Add the geometry, that will in the end be considered transparent
+					m_vertices.append(Vertex(Vector2f(x, y), Color::Transparent, Vector2f(1, 1)));
+					m_vertices.append(Vertex(Vector2f(x + hspace, y), Color::Transparent, Vector2f(1, 1)));
+					m_vertices.append(Vertex(Vector2f(x + hspace, y + hspace), Color::Transparent, Vector2f(1, 1)));
+					m_vertices.append(Vertex(Vector2f(x, y + hspace), Color::Transparent, Vector2f(1, 1)));
+				}
+
+				x += hspace;
+				
+				continue;
+
+            case L'\t' :
+				if(prevChar == 0 || prevChar == ' ' || prevChar == '\t' || i == m_string.getSize() - 1)
+				{
+					//Get Size and add the empty indices there
+					unsigned int Size = m_vertices.getVertexCount();
+
+					m_emptyIndices.push_back(Size);
+					m_emptyIndices.push_back(Size + 1);
+					m_emptyIndices.push_back(Size + 2);
+					m_emptyIndices.push_back(Size + 3);
+
+					//Add the geometry, that will in the end be considered transparent
+					m_vertices.append(Vertex(Vector2f(x, y), Color::Transparent, Vector2f(1, 1)));
+					m_vertices.append(Vertex(Vector2f(x + hspace * 4, y), Color::Transparent, Vector2f(1, 1)));
+					m_vertices.append(Vertex(Vector2f(x + hspace * 4, y + hspace * 4), Color::Transparent, Vector2f(1, 1)));
+					m_vertices.append(Vertex(Vector2f(x, y + hspace * 4), Color::Transparent, Vector2f(1, 1)));
+				}
+
+				x += hspace * 4;
+				
+				continue;
             case L'\n' : y += vspace; x = 0; continue;
             case L'\v' : y += vspace * 4;    continue;
         }
