@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/OSX/DisplayImpl.hpp>
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/System/Err.hpp>
 #include <algorithm>
@@ -43,64 +44,9 @@ namespace priv
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
+    DisplayImpl display(CGMainDisplayID());
     
-    std::vector<VideoMode> modes;
-    
-    // Retrieve array of dictionaries representing display modes.
-    CFArrayRef displayModes = CGDisplayAvailableModes(CGMainDisplayID());
-    
-    if (displayModes == NULL) {
-        sf::err() << "Couldn't get VideoMode for main display.";
-        return modes;
-    }
-    
-    // Loop on each mode and convert it into a sf::VideoMode object.
-    CFIndex const modesCount = CFArrayGetCount(displayModes);
-    for (CFIndex i = 0; i < modesCount; i++) {
-        CFDictionaryRef dictionary = (CFDictionaryRef)CFArrayGetValueAtIndex(displayModes, i);
-        
-        VideoMode mode = convertCGModeToSFMode(dictionary);
-        
-        // If not yet listed we add it to our modes array.
-        if (std::find(modes.begin(), modes.end(), mode) == modes.end()) {
-            modes.push_back(mode);
-        }
-    }
-    
-    return modes;
-    
-#else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-    
-    std::vector<VideoMode> modes;
-    
-    // Retrieve all modes available for main screen only.
-    CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
-    
-    if (cgmodes == NULL) {
-        sf::err() << "Couldn't get VideoMode for main display.";
-        return modes;
-    }
-    
-    // Loop on each mode and convert it into a sf::VideoMode object.
-    CFIndex const modesCount = CFArrayGetCount(cgmodes);
-    for (CFIndex i = 0; i < modesCount; i++) {
-        CGDisplayModeRef cgmode = (CGDisplayModeRef)CFArrayGetValueAtIndex(cgmodes, i);
-        
-        VideoMode mode = convertCGModeToSFMode(cgmode);
-        
-        // If not yet listed we add it to our modes array.
-        if (std::find(modes.begin(), modes.end(), mode) == modes.end()) {
-            modes.push_back(mode);
-        }
-    }
-    
-    // Clean up memory.
-    CFRelease(cgmodes);
-    
-    return modes;
-    
-#endif
+    return display.getModes();
 }
 
 

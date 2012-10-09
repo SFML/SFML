@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/OSX/DisplayImpl.hpp>
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/System/Err.hpp>
@@ -38,10 +39,8 @@
 namespace
 {
 
-using namespace sf::priv;
-    
 struct find_NativeDisplayMode
-: public std::unary_function<DisplayImpl::NativeDisplayMode, bool>
+: public std::unary_function<sf::priv::DisplayImpl::NativeDisplayMode, bool>
 {
     sf::VideoMode mode;
     
@@ -138,6 +137,21 @@ DisplayImpl::~DisplayImpl()
         CGDisplayModeRelease(it->ref);
         it->ref = NULL;
     }
+}
+
+////////////////////////////////////////////////////////////
+std::vector<VideoMode> DisplayImpl::getModes() {
+    std::vector<VideoMode> modes;
+    std::vector<NativeDisplayMode>::iterator it;
+
+    for ( it = m_modes.begin();
+         it != m_modes.end();
+         it++)
+    {
+        modes.push_back(it->mode);
+    }
+    
+    return modes;
 }
 
 ////////////////////////////////////////////////////////////
