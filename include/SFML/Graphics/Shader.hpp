@@ -457,25 +457,10 @@ public :
     /// window.setActive();
     /// shader.bind();
     /// ... render OpenGL geometry ...
-    /// shader.unbind();
     /// \endcode
-    ///
-    /// \see unbind
     ///
     ////////////////////////////////////////////////////////////
     void bind() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Unbind the shader (deactivate it)
-    ///
-    /// This function is normally for internal use only, unless
-    /// you want to use the shader with a custom OpenGL rendering
-    /// instead of a SFML drawable.
-    ///
-    /// \see bind
-    ///
-    ////////////////////////////////////////////////////////////
-    void unbind() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the system supports shaders

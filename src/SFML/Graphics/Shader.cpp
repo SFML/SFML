@@ -430,15 +430,6 @@ void Shader::bind() const
 
 
 ////////////////////////////////////////////////////////////
-void Shader::unbind() const
-{
-    ensureGlContext();
-
-    glCheck(glUseProgramObjectARB(0));
-}
-
-
-////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
     ensureGlContext();
