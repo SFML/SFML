@@ -257,7 +257,7 @@ void WindowImplWin32::setSize(const Vector2u& size)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setTitle(const std::string& title)
 {
-    SetWindowText(m_handle, title.c_str());
+    SetWindowTextA(m_handle, title.c_str());
 }
 
 
