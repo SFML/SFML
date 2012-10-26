@@ -523,6 +523,13 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
                 // Make the texture 2 times bigger
                 sf::Image pixels = page.texture.copyToImage();
                 page.texture.create(textureWidth * 2, textureHeight * 2);
+                
+                // Make sure to clear the new texture
+                sf::Image whiteImage;
+                whiteImage.create(textureWidth * 2, textureHeight * 2, Color(255, 255, 255, 0));
+                page.texture.loadFromImage(whiteImage);
+                
+                // Copy the pixels back in
                 page.texture.update(pixels);
             }
             else
