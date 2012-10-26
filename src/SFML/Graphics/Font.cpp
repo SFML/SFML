@@ -521,9 +521,10 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
             if ((textureWidth * 2 <= Texture::getMaximumSize()) && (textureHeight * 2 <= Texture::getMaximumSize()))
             {
                 // Make the texture 2 times bigger
-                sf::Image pixels = page.texture.copyToImage();
-                page.texture.create(textureWidth * 2, textureHeight * 2);
-                page.texture.update(pixels);
+                Image newImage;
+                newImage.create(textureWidth * 2, textureHeight * 2, Color(255, 255, 255, 0));
+                newImage.copy(page.texture.copyToImage(), 0, 0);
+                page.texture.loadFromImage(newImage);
             }
             else
             {
