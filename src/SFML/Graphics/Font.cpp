@@ -525,9 +525,9 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
                 page.texture.create(textureWidth * 2, textureHeight * 2);
                 
                 // Make sure to clear the new texture
-                sf::Image white_image;
-                white_image.create(textureWidth * 2, textureHeight * 2, Color(255, 255, 255, 0));
-                page.texture.loadFromImage(white_image);
+                sf::Image whiteImage;
+                whiteImage.create(textureWidth * 2, textureHeight * 2, Color(255, 255, 255, 0));
+                page.texture.loadFromImage(whiteImage);
                 
                 // Copy the pixels back in
                 page.texture.update(pixels);
