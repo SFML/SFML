@@ -102,8 +102,8 @@ int main()
                 // Print the contents of the current server directory
                 sf::Ftp::ListingResponse response = server.getDirectoryListing();
                 std::cout << response << std::endl;
-                std::vector<std::string> filenames = response.getFilenames();
-                for (std::vector<std::string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
+                const std::vector<std::string>& names = response.getListing();
+                for (std::vector<std::string>::const_iterator it = names.begin(); it != names.end(); ++it)
                     std::cout << *it << std::endl;
                 break;
             }

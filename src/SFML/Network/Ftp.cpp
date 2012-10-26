@@ -124,7 +124,7 @@ Ftp::Response(response)
         std::string::size_type lastPos = 0;
         for (std::string::size_type pos = paths.find("\r\n"); pos != std::string::npos; pos = paths.find("\r\n", lastPos))
         {
-            m_filenames.push_back(paths.substr(lastPos, pos - lastPos));
+            m_listing.push_back(paths.substr(lastPos, pos - lastPos));
             lastPos = pos + 2;
         }
     }
@@ -132,9 +132,9 @@ Ftp::Response(response)
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<std::string>& Ftp::ListingResponse::getFilenames() const
+const std::vector<std::string>& Ftp::ListingResponse::getListing() const
 {
-    return m_filenames;
+    return m_listing;
 }
 
 
