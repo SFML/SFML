@@ -115,10 +115,10 @@ public :
         Home,         ///< The Home key
         Insert,       ///< The Insert key
         Delete,       ///< The Delete key
-        Add,          ///< +
-        Subtract,     ///< -
-        Multiply,     ///< *
-        Divide,       ///< /
+        Add,          ///< The + key
+        Subtract,     ///< The - key
+        Multiply,     ///< The * key
+        Divide,       ///< The / key
         Left,         ///< Left arrow
         Right,        ///< Right arrow
         Up,           ///< Up arrow
