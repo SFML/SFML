@@ -323,8 +323,8 @@ void WindowImplX11::setTitle(const std::string& title)
 void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     // X11 wants BGRA pixels : swap red and blue channels
-    // Note : this memory will never be freed, but it seems to cause a bug on exit if I do so
-    Uint8* iconPixels = new Uint8[width * height * 4];
+    // Note: this memory will be freed by XDestroyImage
+    Uint8* iconPixels = static_cast<Uint8*>(std::malloc(width * height * 4));
     for (std::size_t i = 0; i < width * height; ++i)
     {
         iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
@@ -464,6 +464,8 @@ void WindowImplX11::initialize()
 {
     // Make sure the "last key release" is initialized with invalid values
     m_lastKeyReleaseEvent.type = -1;
+    m_lastKeyReleaseEvent.xkey.keycode = 0;
+    m_lastKeyReleaseEvent.xkey.time = 0;
 
     // Get the atom defining the close event
     m_atomClose = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
