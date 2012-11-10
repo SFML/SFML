@@ -129,52 +129,102 @@ public :
     IntRect getViewport(const View& view) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert a point from target coordinates to view coordinates
+    /// \brief Convert a point from target coordinates to world
+    ///        coordinates, using the current view
     ///
-    /// Initially, a unit of the 2D world matches a pixel of the
-    /// render target. But if you define a custom view, this
-    /// assertion is not true anymore, ie. a point located at
-    /// (10, 50) in your render target (for example a window) may
-    /// map to the point (150, 75) in your 2D world -- for example
-    /// if the view is translated by (140, 25).
+    /// This function is an overload of the mapPixelToCoords
+    /// function that implicitely uses the current view.
+    /// It is equivalent to:
+    /// \code
+    /// target.mapPixelToCoords(point, target.getView());
+    /// \endcode
     ///
-    /// For render windows, this function is typically used to find
-    /// which point (or object) is located below the mouse cursor.
+    /// \param point Pixel to convert
     ///
-    /// This version uses the current view of the render target.
-    /// See the other overload to specify a custom view.
+    /// \return The converted point, in "world" coordinates
     ///
-    /// \param point Point to convert, relative to the render target
-    ///
-    /// \return The converted point, in "world" units
+    /// \see mapCoordsToPixel
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f convertCoords(const Vector2i& point) const;
+    Vector2f mapPixelToCoords(const Vector2i& point) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert a point from target coordinates to view coordinates
+    /// \brief Convert a point from target coordinates to world coordinates
     ///
-    /// Initially, a unit of the 2D world matches a pixel of the
-    /// render target. But if you define a custom view, this
-    /// assertion is not true anymore, ie. a point located at
-    /// (10, 50) in your render target (for example a window) may
-    /// map to the point (150, 75) in your 2D world -- for example
-    /// if the view is translated by (140, 25).
+    /// This function finds the 2D position that matches the
+    /// given pixel of the render-target. In other words, it does
+    /// the inverse of what the graphics card does, to find the
+    /// initial position of a rendered pixel.
     ///
-    /// For render windows, this function is typically used to find
+    /// Initially, both coordinate systems (world units and target pixels)
+    /// match perfectly. But if you define a custom view or resize your
+    /// render-target, this assertion is not true anymore, ie. a point
+    /// located at (10, 50) in your render-target may map to the point
+    /// (150, 75) in your 2D world -- if the view is translated by (140, 25).
+    ///
+    /// For render-windows, this function is typically used to find
     /// which point (or object) is located below the mouse cursor.
     ///
     /// This version uses a custom view for calculations, see the other
-    /// overload of the function to use the current view of the render
-    /// target.
+    /// overload of the function if you want to use the current view of the
+    /// render-target.
     ///
-    /// \param point Point to convert, relative to the render target
-    /// \param view  The view to use for converting the point
+    /// \param point Pixel to convert
+    /// \param view The view to use for converting the point
     ///
     /// \return The converted point, in "world" units
     ///
+    /// \see mapCoordsToPixel
+    ///
     ////////////////////////////////////////////////////////////
-    Vector2f convertCoords(const Vector2i& point, const View& view) const;
+    Vector2f mapPixelToCoords(const Vector2i& point, const View& view) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert a point from world coordinates to target
+    ///        coordinates, using the current view
+    ///
+    /// This function is an overload of the mapCoordsToPixel
+    /// function that implicitely uses the current view.
+    /// It is equivalent to:
+    /// \code
+    /// target.mapCoordsToPixel(point, target.getView());
+    /// \endcode
+    ///
+    /// \param point Point to convert
+    ///
+    /// \return The converted point, in target coordinates (pixels)
+    ///
+    /// \see mapPixelToCoords
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2i mapCoordsToPixel(const Vector2f& point) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert a point from world coordinates to target coordinates
+    ///
+    /// This function finds the pixel of the render-target that matches
+    /// the given 2D point. In other words, it goes through the same process
+    /// as the graphics card, to compute the final position of a rendered point.
+    ///
+    /// Initially, both coordinate systems (world units and target pixels)
+    /// match perfectly. But if you define a custom view or resize your
+    /// render-target, this assertion is not true anymore, ie. a point
+    /// located at (150, 75) in your 2D world may map to the pixel
+    /// (10, 50) of your render-target -- if the view is translated by (140, 25).
+    ///
+    /// This version uses a custom view for calculations, see the other
+    /// overload of the function if you want to use the current view of the
+    /// render-target.
+    ///
+    /// \param point Point to convert
+    /// \param view The view to use for converting the point
+    ///
+    /// \return The converted point, in target coordinates (pixels)
+    ///
+    /// \see mapPixelToCoords
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2i mapCoordsToPixel(const Vector2f& point, const View& view) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw a drawable object to the render-target

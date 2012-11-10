@@ -100,25 +100,45 @@ IntRect RenderTarget::getViewport(const View& view) const
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::convertCoords(const Vector2i& point) const
+Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point) const
 {
-    return convertCoords(point, getView());
+    return mapPixelToCoords(point, getView());
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::convertCoords(const Vector2i& point, const View& view) const
+Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
-    Vector2f coords;
+    Vector2f normalized;
     IntRect viewport = getViewport(view);
-    coords.x = -1.f + 2.f * (point.x - viewport.left) / viewport.width;
-    coords.y = 1.f  - 2.f * (point.y - viewport.top)  / viewport.height;
+    normalized.x = -1.f + 2.f * (point.x - viewport.left) / viewport.width;
+    normalized.y =  1.f - 2.f * (point.y - viewport.top)  / viewport.height;
 
     // Then transform by the inverse of the view matrix
-    return view.getInverseTransform().transformPoint(coords);
+    return view.getInverseTransform().transformPoint(normalized);
 }
 
+////////////////////////////////////////////////////////////
+Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point) const
+{
+    return mapCoordsToPixel(point, getView());
+}
+
+////////////////////////////////////////////////////////////
+Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view) const
+{
+    // First, transform the point by the view matrix
+    Vector2f normalized = view.getTransform().transformPoint(point);
+
+    // Then convert to viewport coordinates
+    Vector2i pixel;
+    IntRect viewport = getViewport(view);
+    pixel.x = static_cast<int>(( normalized.x + 1.f) / 2.f * viewport.width  + viewport.left);
+    pixel.y = static_cast<int>((-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
+
+    return pixel;
+}
 
 ////////////////////////////////////////////////////////////
 void RenderTarget::draw(const Drawable& drawable, const RenderStates& states)
