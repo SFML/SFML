@@ -37,11 +37,11 @@
 
 namespace
 {
-    // Retrieve the maximum number of texture units available
-    GLint getMaxTextureUnits()
+    // Retrieve the maximum number of texture image units available
+    GLint getMaxTextureImageUnits()
     {
         GLint maxUnits;
-        glCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
+        glCheck(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &maxUnits));
         return maxUnits;
     }
 
@@ -376,10 +376,10 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
         if (it == m_textures.end())
         {
             // New entry, make sure there are enough texture units
-            static const GLint maxUnits = getMaxTextureUnits();
+            static const GLint maxUnits = getMaxTextureImageUnits();
             if (m_textures.size() + 1 >= static_cast<std::size_t>(maxUnits))
             {
-                err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
+                err() << "Impossible to use texture \"" << name << "\" for shader: all available texture image units are used" << std::endl;
                 return;
             }
 
