@@ -70,6 +70,46 @@ public :
     struct CurrentTextureType {};
     static CurrentTextureType CurrentTexture;
 
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Parameter class, for avoiding overhead of name lookup in setParameter calls
+    ///
+    ////////////////////////////////////////////////////////////
+    class Parameter
+    {
+    public :
+        ////////////////////////////////////////////////////////////
+        /// \brief Default constructor
+        ///
+        /// This constructor creates an invalid parameter.
+        ///
+        ////////////////////////////////////////////////////////////
+        Parameter();
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Find a named parameter's location in a shader
+        ///
+        /// This function looks up a parameter's location in a
+        /// shader using its textual name. It is only valid for
+        /// the given shader; other shaders with parameters of
+        /// the same name will need their own Parameter objects.
+        /// Note that this does not survive a subsequent
+        /// Shader::compile of the associated shader object.
+        ///
+        /// \param shader   Shader to look up parameter location from
+        /// \param name     Name of the parameter in the shader
+        ///
+        /// \return True if lookup succeeded, false if it failed
+        ///
+        ////////////////////////////////////////////////////////////
+        bool find(const Shader& shader, const std::string& name);
+
+    private :
+        friend class Shader;
+
+        int m_location;
+    };
+
 public :
 
     ////////////////////////////////////////////////////////////
@@ -209,6 +249,253 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a float parameter of the shader
+    ///
+    /// \a param is a Parameter for the variable to change in the
+    /// shader. The corresponding parameter in the shader must be a
+    /// float (float GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform float myparam; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// Parameter myparam = shader.getParameter("myparam");
+    /// shader.setParameter(myparam, 5.2f);
+    /// \endcode
+    ///
+    /// \param name Name of the parameter in the shader
+    /// \param x    Value to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, float x);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a 2-components vector parameter of the shader
+    ///
+    /// \a name is the name of the variable to change in the shader.
+    /// The corresponding parameter in the shader must be a 2x1 vector
+    /// (vec2 GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform vec2 myparam; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// shader.setParameter("myparam", 5.2f, 6.0f);
+    /// \endcode
+    ///
+    /// \param name Name of the parameter in the shader
+    /// \param x    First component of the value to assign
+    /// \param y    Second component of the value to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, float x, float y);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a 3-components vector parameter of the shader
+    ///
+    /// \a param is a Parameter for the variable to change in the
+    /// shader. The corresponding parameter in the shader must be a
+    /// 3x1 vector (vec3 GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform vec3 myparam; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// Parameter myparam = shader.getParameter("myparam");
+    /// shader.setParameter(myparam, 5.2f, 6.0f, -8.1f);
+    /// \endcode
+    ///
+    /// \param name Name of the parameter in the shader
+    /// \param x    First component of the value to assign
+    /// \param y    Second component of the value to assign
+    /// \param z    Third component of the value to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, float x, float y, float z);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a 4-components vector parameter of the shader
+    ///
+    /// \a param is a Parameter for the variable to change in the
+    /// shader. The corresponding parameter in the shader must be a
+    /// 4x1 vector (vec4 GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform vec4 myparam; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// Parameter myparam = shader.getParameter("myparam");
+    /// shader.setParameter(myparam, 5.2f, 6.0f, -8.1f, 0.4f);
+    /// \endcode
+    ///
+    /// \param name Name of the parameter in the shader
+    /// \param x    First component of the value to assign
+    /// \param y    Second component of the value to assign
+    /// \param z    Third component of the value to assign
+    /// \param w    Fourth component of the value to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, float x, float y, float z, float w);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a 2-components vector parameter of the shader
+    ///
+    /// \a param is a Parameter for the variable to change in the
+    /// shader. The corresponding parameter in the shader must be a
+    /// 2x1 vector (vec2 GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform vec2 myparam; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// Parameter myparam = shader.getParameter("myparam");
+    /// shader.setParameter(myparam, sf::Vector2f(5.2f, 6.0f));
+    /// \endcode
+    ///
+    /// \param name   Name of the parameter in the shader
+    /// \param vector Vector to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, const Vector2f& vector);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a 3-components vector parameter of the shader
+    ///
+    /// \a param is a Parameter for the variable to change in the
+    /// shader. The corresponding parameter in the shader must be a
+    /// 3x1 vector (vec3 GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform vec3 myparam; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// Parameter myparam = shader.getParameter("myparam");
+    /// shader.setParameter(myparam, sf::Vector3f(5.2f, 6.0f, -8.1f));
+    /// \endcode
+    ///
+    /// \param name   Name of the parameter in the shader
+    /// \param vector Vector to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, const Vector3f& vector);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a color parameter of the shader
+    ///
+    /// \a param is a Parameter for the variable to change in the
+    /// shader. The corresponding parameter in the shader must be a
+    /// 4x1 vector (vec4 GLSL type).
+    ///
+    /// It is important to note that the components of the color are
+    /// normalized before being passed to the shader. Therefore,
+    /// they are converted from range [0 .. 255] to range [0 .. 1].
+    /// For example, a sf::Color(255, 125, 0, 255) will be transformed
+    /// to a vec4(1.0, 0.5, 0.0, 1.0) in the shader.
+    ///
+    /// Example:
+    /// \code
+    /// uniform vec4 color; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// Parameter color = shader.getParameter("color");
+    /// shader.setParameter(color, sf::Color(255, 128, 0, 255));
+    /// \endcode
+    ///
+    /// \param name  Name of the parameter in the shader
+    /// \param color Color to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a matrix parameter of the shader
+    ///
+    /// \a param is a Parameter for the variable to change in the
+    /// shader. The corresponding parameter in the shader must be a
+    /// 4x4 matrix (mat4 GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform mat4 matrix; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// sf::Transform transform;
+    /// transform.Translate(5, 10);
+    /// Parameter matrix = shader.getParameter("matrix");
+    /// shader.setParameter(matrix, transform);
+    /// \endcode
+    ///
+    /// \param name      Name of the parameter in the shader
+    /// \param transform Transform to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, const sf::Transform& transform);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a texture parameter of the shader
+    ///
+    /// \a param is a Parameter for the variable to change in the
+    /// shader. The corresponding parameter in the shader must be a
+    /// 2D texture (sampler2D GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform sampler2D the_texture; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// sf::Texture texture;
+    /// ...
+    /// Parameter the_texture = shader.getParameter("the_texture");
+    /// shader.setParameter(the_texture, texture);
+    /// \endcode
+    /// It is important to note that \a texture must remain alive as long
+    /// as the shader uses it, no copy is made internally.
+    ///
+    /// To use the texture of the object being draw, which cannot be
+    /// known in advance, you can pass the special value
+    /// sf::Shader::CurrentTexture:
+    /// \code
+    /// Parameter the_texture = shader.getParameter("the_texture");
+    /// shader.setParameter(the_texture, sf::Shader::CurrentTexture).
+    /// \endcode
+    ///
+    /// \param name    Name of the texture in the shader
+    /// \param texture Texture to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, const Texture& texture);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a texture parameter of the shader
+    ///
+    /// This overload maps a shader texture variable to the
+    /// texture of the object being drawn, which cannot be
+    /// known in advance. The second argument must be
+    /// sf::Shader::CurrentTexture.
+    /// The corresponding parameter in the shader must be a 2D texture
+    /// (sampler2D GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform sampler2D current; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// Parameter current = shader.getParameter("current");
+    /// shader.setParameter(current, sf::Shader::CurrentTexture);
+    /// \endcode
+    ///
+    /// \param name Name of the texture in the shader
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const Parameter &param, CurrentTextureType);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a float parameter of the shader
@@ -474,7 +761,10 @@ public :
     ////////////////////////////////////////////////////////////
     static bool isAvailable();
 
+
 private :
+
+    friend class Parameter;
 
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
@@ -612,5 +902,17 @@ private :
 /// ... render OpenGL geometry ...
 /// shader.unbind();
 /// \endcode
+///
+/// Performance Note:
+///
+/// If you're making enough setParameter calls that you're noticing
+/// it show up as a CPU bottleneck for your GL driver, then you may
+/// want to consider using the setParameter calls that take a Parameter
+/// object instead of a string. By saving and reusing the Parameter
+/// object, you can avoid a hash lookup in the GL driver for each call.
+/// \code
+/// sf::Shader::Parameter param;
+/// param.find("location");
+/// shader.setParameter(location, matrix);
 ///
 ////////////////////////////////////////////////////////////
