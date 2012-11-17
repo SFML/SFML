@@ -34,13 +34,14 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void glCheckError(const std::string& file, unsigned int line)
+void glCheckError(const char* file, unsigned int line)
 {
     // Get the last error
     GLenum errorCode = glGetError();
 
     if (errorCode != GL_NO_ERROR)
     {
+        std::string fileString(file);
         std::string error = "unknown error";
         std::string description  = "no description";
 
@@ -99,7 +100,7 @@ void glCheckError(const std::string& file, unsigned int line)
 
         // Log the error
         err() << "An internal OpenGL call failed in "
-              << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
+              << fileString.substr(fileString.find_last_of("\\/") + 1) << " (" << line << ") : "
               << error << ", " << description
               << std::endl;
     }
