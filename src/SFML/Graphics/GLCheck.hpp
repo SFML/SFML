@@ -59,7 +59,7 @@ namespace priv
 /// \param line Line number of the source file where the call is located
 ///
 ////////////////////////////////////////////////////////////
-void glCheckError(const std::string& file, unsigned int line);
+void glCheckError(const char* file, unsigned int line);
 
 ////////////////////////////////////////////////////////////
 /// \brief Make sure that GLEW is initialized
