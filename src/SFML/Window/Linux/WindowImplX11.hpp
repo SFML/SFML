@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
-#include <X11/Xlib.h>
+#include <X11/Xlib-xcb.h>
 #include <set>
 #include <string>
 
@@ -197,7 +197,7 @@ private :
     /// \return True if the event was processed, false if it was discarded
     ///
     ////////////////////////////////////////////////////////////
-    bool processEvent(XEvent windowEvent);
+    bool processEvent(xcb_generic_event_t *windowEvent);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a X11 keysym to SFML key code
@@ -207,22 +207,23 @@ private :
     /// \return Corrsponding SFML key code
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key keysymToSF(KeySym symbol);
+    static Keyboard::Key keysymToSF(xcb_keysym_t symbol);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Window   m_window;              ///< X11 structure defining our window
-    ::Display* m_display;             ///< Pointer to the display
-    int        m_screen;              ///< Screen identifier
-    XIM        m_inputMethod;         ///< Input method linked to the X display
-    XIC        m_inputContext;        ///< Input context used to get unicode input in our window
-    bool       m_isExternal;          ///< Tell whether the window has been created externally or by SFML
-    Atom       m_atomClose;           ///< Atom used to identify the close event
-    int        m_oldVideoMode;        ///< Video mode in use before we switch to fullscreen
-    Cursor     m_hiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
-    bool       m_keyRepeat;           ///< Is the KeyRepeat feature enabled ?
-    XEvent     m_lastKeyReleaseEvent; ///< Last key release event we received (needed for discarding repeated key events)
+    ::Window                m_window;              ///< X11 structure defining our window
+    ::Display*              m_display;             ///< Pointer to the display
+    xcb_connection_t*       m_connection;          ///< Pointer to the xcb connection
+    int                     m_screen;              ///< Screen identifier
+    XIM                     m_inputMethod;         ///< Input method linked to the X display
+    XIC                     m_inputContext;        ///< Input context used to get unicode input in our window
+    bool                    m_isExternal;          ///< Tell whether the window has been created externally or by SFML
+    xcb_atom_t              m_atomClose;           ///< Atom used to identify the close event
+    Uint16                  m_oldVideoMode;        ///< Video mode in use before we switch to fullscreen
+    xcb_cursor_t            m_hiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
+    bool                    m_keyRepeat;           ///< Is the KeyRepeat feature enabled ?
+    xcb_key_release_event_t m_lastKeyReleaseEvent; ///< Last key release event we received (needed for discarding repeated key events)
 };
 
 } // namespace priv

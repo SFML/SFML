@@ -53,6 +53,8 @@ elseif(LINUX)
         ${SRC}
         ${SRCROOT}/Linux/Display.cpp
         ${SRCROOT}/Linux/Display.hpp
+        ${SRCROOT}/Linux/AutoPointer.cpp
+        ${SRCROOT}/Linux/AutoPointer.hpp
         ${SRCROOT}/Linux/GlxContext.cpp
         ${SRCROOT}/Linux/GlxContext.hpp
         ${SRCROOT}/Linux/InputImpl.cpp
@@ -108,6 +110,12 @@ if(LINUX)
         message(FATAL_ERROR "Xrandr library not found")
     endif()
     include_directories(${X11_INCLUDE_DIR})
+
+    find_package(XCB COMPONENTS xlib_xcb atom icccm image randr REQUIRED)
+    if(NOT LIBXCB_FOUND)
+        message(FATAL_ERROR "Xcb library not found")
+    endif()
+    include_directories(${LIBXCB_INCLUDE_DIRS})
 endif()
 
 # build the list of external libraries to link
@@ -115,7 +123,7 @@ set(WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})
 if(WINDOWS)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} winmm gdi32)
 elseif(LINUX)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB})
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB} ${LIBXCB_LIBRARIES})
 elseif(MACOSX)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 endif()
