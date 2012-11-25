@@ -28,11 +28,15 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Linux/WindowImplX11.hpp>
 #include <SFML/Window/Linux/Display.hpp>
+#include <SFML/Window/Linux/AutoPointer.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
-#include <X11/Xutil.h>
 #include <X11/keysym.h>
-#include <X11/extensions/Xrandr.h>
+#include <X11/Xutil.h>
+#include <xcb/xcb_atom.h>
+#include <xcb/xcb_icccm.h>
+#include <xcb/xcb_image.h>
+#include <xcb/randr.h>
 #include <sstream>
 #include <vector>
 
@@ -74,6 +78,7 @@ m_keyRepeat   (true)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
+    XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
     m_screen  = DefaultScreen(m_display);
 
     // Save the window handle
@@ -103,6 +108,13 @@ m_keyRepeat   (true)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
+    XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
+    m_connection = XGetXCBConnection(m_display);
+    if (! m_connection)
+    {
+        err() << "Failed cast Display object to an XCB connection object" << std::endl;
+        return;
+    }
     m_screen  = DefaultScreen(m_display);
 
     // Compute position and size
@@ -126,21 +138,26 @@ m_keyRepeat   (true)
         switchToFullscreen(mode);
 
     // Define the window attributes
-    XSetWindowAttributes attributes;
-    attributes.event_mask        = eventMask;
-    attributes.override_redirect = fullscreen;
+    const uint32_t value_list[] = {fullscreen, eventMask};
 
     // Create the window
-    m_window = XCreateWindow(m_display,
-                             RootWindow(m_display, m_screen),
-                             left, top,
-                             width, height,
-                             0,
-                             DefaultDepth(m_display, m_screen),
-                             InputOutput,
-                             DefaultVisual(m_display, m_screen),
-                             CWEventMask | CWOverrideRedirect, &attributes);
-    if (!m_window)
+    m_window = xcb_generate_id(m_connection);
+
+    xcb_void_cookie_t cookie = xcb_create_window_checked(
+                m_connection,
+                XCB_COPY_FROM_PARENT,
+                m_window,
+                RootWindow(m_display, m_screen),
+                left, top,
+                width, height,
+                0,
+                XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                XCB_COPY_FROM_PARENT,
+                XCB_CW_EVENT_MASK | XCB_CW_OVERRIDE_REDIRECT,
+                value_list);
+
+    ErrorPointer errptr(m_connection, cookie);
+    if(! errptr.isNull())
     {
         err() << "Failed to create window" << std::endl;
         return;
@@ -152,7 +169,7 @@ m_keyRepeat   (true)
     // Set the window's style (tell the windows manager to change our window's decorations and functions according to the requested style)
     if (!fullscreen)
     {
-        Atom WMHintsAtom = XInternAtom(m_display, "_MOTIF_WM_HINTS", false);
+        xcb_atom_t WMHintsAtom = xcb_atom_get(m_connection, "_MOTIF_WM_HINTS");
         if (WMHintsAtom)
         {
             static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
@@ -172,16 +189,16 @@ m_keyRepeat   (true)
             static const unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
             static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
             static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
-    
+
             struct WMHints
             {
-                unsigned long Flags;
-                unsigned long Functions;
-                unsigned long Decorations;
-                long          InputMode;
-                unsigned long State;
+                uint32_t Flags;
+                uint32_t Functions;
+                uint32_t Decorations;
+                int32_t  InputMode;
+                uint32_t State;
             };
-    
+
             WMHints hints;
             hints.Flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
             hints.Decorations = 0;
@@ -204,17 +221,18 @@ m_keyRepeat   (true)
             }
 
             const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&hints);
-            XChangeProperty(m_display, m_window, WMHintsAtom, WMHintsAtom, 32, PropModeReplace, ptr, 5);
+            xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window,
+                                WMHintsAtom, WM_HINTS, 32, 5, ptr);
         }
 
         // This is a hack to force some windows managers to disable resizing
         if (!(style & Style::Resize))
         {
-            XSizeHints sizeHints;
-            sizeHints.flags      = PMinSize | PMaxSize;
+            xcb_size_hints_t sizeHints;
+            sizeHints.flags      = XCB_SIZE_HINT_P_MIN_SIZE | XCB_SIZE_HINT_P_MAX_SIZE;
             sizeHints.min_width  = sizeHints.max_width  = width;
             sizeHints.min_height = sizeHints.max_height = height;
-            XSetWMNormalHints(m_display, m_window, &sizeHints); 
+            xcb_set_wm_normal_hints(m_connection, m_window, &sizeHints);
         }
     }
 
@@ -224,8 +242,8 @@ m_keyRepeat   (true)
     // In fullscreen mode, we must grab keyboard and mouse inputs
     if (fullscreen)
     {
-        XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
-        XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
+        xcb_grab_pointer(m_connection, True, m_window, 0, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC, m_window, XCB_NONE, XCB_CURRENT_TIME);
+        xcb_grab_keyboard(m_connection, True, m_window, XCB_CURRENT_TIME, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
     }
 }
 
@@ -238,7 +256,7 @@ WindowImplX11::~WindowImplX11()
 
     // Destroy the cursor
     if (m_hiddenCursor)
-        XFreeCursor(m_display, m_hiddenCursor);
+        xcb_free_cursor(m_connection, m_hiddenCursor);
 
     // Destroy the input context
     if (m_inputContext)
@@ -247,8 +265,8 @@ WindowImplX11::~WindowImplX11()
     // Destroy the window
     if (m_window && !m_isExternal)
     {
-        XDestroyWindow(m_display, m_window);
-        XFlush(m_display);
+        xcb_destroy_window(m_connection, m_window);
+        xcb_flush(m_connection);
     }
 
     // Close the input method
@@ -270,10 +288,10 @@ WindowHandle WindowImplX11::getSystemHandle() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::processEvents()
 {
-    XEvent event;
-    while (XCheckIfEvent(m_display, &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
+    while(xcb_generic_event_t* event = xcb_poll_for_event(m_connection))
     {
         processEvent(event);
+        free(event);
     }
 }
 
@@ -281,41 +299,51 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    XWindowAttributes attributes;
-    XGetWindowAttributes(m_display, m_window, &attributes);
-    return Vector2i(attributes.x, attributes.y);
+    AutoPointer<xcb_get_geometry_reply_t> reply =
+            xcb_get_geometry_reply(m_connection, xcb_get_geometry(m_connection, m_window), NULL);
+    return Vector2i(reply->x, reply->y);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setPosition(const Vector2i& position)
 {
-    XMoveWindow(m_display, m_window, position.x, position.y);
-    XFlush(m_display);
+    uint32_t values[] = {position.x, position.y};
+    xcb_configure_window(m_connection, m_window,
+                         XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y,
+                         values);
+    xcb_flush(m_connection);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplX11::getSize() const
 {
-    XWindowAttributes attributes;
-    XGetWindowAttributes(m_display, m_window, &attributes);
-    return Vector2u(attributes.width, attributes.height);
+    AutoPointer<xcb_get_geometry_reply_t> reply =
+            xcb_get_geometry_reply(m_connection, xcb_get_geometry(m_connection, m_window), NULL);
+    return Vector2u(reply->width, reply->height);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setSize(const Vector2u& size)
 {
-    XResizeWindow(m_display, m_window, size.x, size.y);
-    XFlush(m_display);
+    uint32_t values[] = {size.x, size.y};
+    xcb_configure_window(m_connection, m_window,
+                         XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
+                         values);
+    xcb_flush(m_connection);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setTitle(const std::string& title)
 {
-    XStoreName(m_display, m_window, title.c_str());
+    const char* c_title = title.c_str();
+    xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window,
+                        WM_NAME, STRING,
+                        8, title.length(), c_title);
+    xcb_flush(m_connection);
 }
 
 
@@ -323,8 +351,7 @@ void WindowImplX11::setTitle(const std::string& title)
 void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     // X11 wants BGRA pixels : swap red and blue channels
-    // Note: this memory will be freed by XDestroyImage
-    Uint8* iconPixels = static_cast<Uint8*>(std::malloc(width * height * 4));
+    Uint8 iconPixels[width * height * 4];
     for (std::size_t i = 0; i < width * height; ++i)
     {
         iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
@@ -334,20 +361,25 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     }
 
     // Create the icon pixmap
-    Visual*      defVisual = DefaultVisual(m_display, m_screen);
-    unsigned int defDepth  = DefaultDepth(m_display, m_screen);
-    XImage* iconImage = XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, (char*)iconPixels, width, height, 32, 0);
-    if (!iconImage)
+    uint8_t defDepth  = DefaultDepth(m_display, m_screen);
+
+    xcb_pixmap_t iconPixmap = xcb_generate_id(m_connection);
+    xcb_create_pixmap(m_connection, defDepth, iconPixmap, RootWindow(m_display, m_screen),
+                      width, height);
+
+    xcb_gcontext_t iconGC = xcb_generate_id(m_connection);
+    xcb_create_gc(m_connection, iconGC, iconPixmap, 0, NULL);
+    xcb_void_cookie_t cookie = xcb_put_image_checked(
+                m_connection, XCB_IMAGE_FORMAT_Z_PIXMAP, iconPixmap, iconGC,
+                width, height, 0, 0, 0, defDepth, sizeof(iconPixels), iconPixels);
+    xcb_free_gc(m_connection, iconGC);
+
+    ErrorPointer errptr(m_connection, cookie);
+    if (! errptr.isNull())
     {
-        err() << "Failed to set the window's icon" << std::endl;
+        err() << "Failed to set the window's icon: Error code " << (int)errptr->error_code << std::endl;
         return;
     }
-    Pixmap iconPixmap = XCreatePixmap(m_display, RootWindow(m_display, m_screen), width, height, defDepth);
-    XGCValues values;
-    GC iconGC = XCreateGC(m_display, iconPixmap, 0, &values);
-    XPutImage(m_display, iconPixmap, iconGC, iconImage, 0, 0, 0, 0, width, height);
-    XFreeGC(m_display, iconGC);
-    XDestroyImage(iconImage);
 
     // Create the mask pixmap (must have 1 bit depth)
     std::size_t pitch = (width + 7) / 8;
@@ -361,22 +393,21 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
                 if (i * 8 + k < width)
                 {
                     Uint8 opacity = (pixels[(i * 8 + k + j * width) * 4 + 3] > 0) ? 1 : 0;
-                    maskPixels[i + j * pitch] |= (opacity << k);                    
+                    maskPixels[i + j * pitch] |= (opacity << k);
                 }
             }
         }
     }
-    Pixmap maskPixmap = XCreatePixmapFromBitmapData(m_display, m_window, (char*)&maskPixels[0], width, height, 1, 0, 1);
+    xcb_pixmap_t maskPixmap = xcb_create_pixmap_from_bitmap_data(m_connection, m_window, (Uint8*)&maskPixels[0], width, height, 1, 0, 1, NULL);
 
     // Send our new icon to the window through the WMHints
-    XWMHints* hints = XAllocWMHints();
-    hints->flags       = IconPixmapHint | IconMaskHint;
-    hints->icon_pixmap = iconPixmap;
-    hints->icon_mask   = maskPixmap;
-    XSetWMHints(m_display, m_window, hints);
-    XFree(hints);
+    xcb_wm_hints_t hints;
+    hints.flags       = XCB_WM_HINT_ICON_PIXMAP | XCB_WM_HINT_ICON_MASK;
+    hints.icon_pixmap = iconPixmap;
+    hints.icon_mask   = maskPixmap;
+    xcb_set_wm_hints(m_connection, m_window, &hints);
 
-    XFlush(m_display);
+    xcb_flush(m_connection);
 }
 
 
@@ -384,19 +415,20 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 void WindowImplX11::setVisible(bool visible)
 {
     if (visible)
-        XMapWindow(m_display, m_window);
+        xcb_map_window(m_connection, m_window);
     else
-        XUnmapWindow(m_display, m_window);
+        xcb_unmap_window(m_connection, m_window);
 
-    XFlush(m_display);
+    xcb_flush(m_connection);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursorVisible(bool visible)
 {
-    XDefineCursor(m_display, m_window, visible ? None : m_hiddenCursor);
-    XFlush(m_display);
+    const uint32_t values = visible ? XCB_NONE : m_hiddenCursor;
+    xcb_change_window_attributes(m_connection, m_window, XCB_CW_CURSOR, &values);
+    xcb_flush(m_connection);
 }
 
 
@@ -411,29 +443,37 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 {
     // Check if the XRandR extension is present
-    int version;
-    if (XQueryExtension(m_display, "RANDR", &version, &version, &version))
+    xcb_query_extension_reply_t* randr_ext =
+            xcb_query_extension_reply(m_connection, xcb_query_extension(m_connection, 5, "RANDR"), NULL);
+    if (randr_ext->present)
     {
+        xcb_screen_t* screen = XCBScreenOfDisplay(m_connection, m_screen);
         // Get the current configuration
-        XRRScreenConfiguration* config = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
-        if (config)
+        xcb_generic_error_t* errors;
+        xcb_randr_get_screen_info_reply_t* config =
+                xcb_randr_get_screen_info_reply(m_connection,
+                                                xcb_randr_get_screen_info(m_connection, screen->root),
+                                                &errors);
+        if (! errors)
         {
-            // Get the current rotation
-            Rotation currentRotation;
-            m_oldVideoMode = XRRConfigCurrentConfiguration(config, &currentRotation);
+            // Save the current video mode before we switch to fullscreen
+            m_oldVideoMode = config->sizeID;
 
             // Get the available screen sizes
-            int nbSizes;
-            XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
-            if (sizes && (nbSizes > 0))
+            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config);
+            if (sizes && (config->nSizes > 0))
             {
                 // Search a matching size
-                for (int i = 0; i < nbSizes; ++i)
+                for (int i = 0; i < config->nSizes; ++i)
                 {
                     if ((sizes[i].width == static_cast<int>(mode.width)) && (sizes[i].height == static_cast<int>(mode.height)))
                     {
                         // Switch to fullscreen mode
-                        XRRSetScreenConfig(m_display, config, RootWindow(m_display, m_screen), i, currentRotation, CurrentTime);
+                        xcb_randr_set_screen_config(m_connection,
+                                                    screen->root,
+                                                    config->timestamp,
+                                                    config->config_timestamp,
+                                                    i, config->rotation, config->rate);
 
                         // Set "this" as the current fullscreen window
                         fullscreenWindow = this;
@@ -441,21 +481,21 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
                     }
                 }
             }
-
-            // Free the configuration instance
-            XRRFreeScreenConfigInfo(config);
         }
         else
         {
             // Failed to get the screen configuration
             err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
         }
+        free(errors);
+        free(config);
     }
     else
     {
         // XRandr extension is not supported : we cannot use fullscreen mode
         err() << "Fullscreen is not supported, switching to window mode" << std::endl;
     }
+    free(randr_ext);
 }
 
 
@@ -463,13 +503,14 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 void WindowImplX11::initialize()
 {
     // Make sure the "last key release" is initialized with invalid values
-    m_lastKeyReleaseEvent.type = -1;
-    m_lastKeyReleaseEvent.xkey.keycode = 0;
-    m_lastKeyReleaseEvent.xkey.time = 0;
+    m_lastKeyReleaseEvent.response_type = -1;
+    m_lastKeyReleaseEvent.detail = 0;
+    m_lastKeyReleaseEvent.time = 0;
 
     // Get the atom defining the close event
-    m_atomClose = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
-    XSetWMProtocols(m_display, m_window, &m_atomClose, 1);
+    m_atomClose = xcb_atom_get(m_connection, "WM_DELETE_WINDOW");
+    xcb_atom_t wmprotocolsAtom = xcb_atom_get(m_connection, "WM_PROTOCOLS");
+    xcb_set_wm_protocols(m_connection, wmprotocolsAtom, m_window, 1, &m_atomClose);
 
     // Create the input context
     m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
@@ -489,34 +530,33 @@ void WindowImplX11::initialize()
         err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
 
     // Show the window
-    XMapWindow(m_display, m_window);
-    XFlush(m_display);
+    xcb_map_window(m_connection, m_window);
+    xcb_flush(m_connection);
 
     // Create the hiden cursor
     createHiddenCursor();
 
     // Flush the commands queue
-    XFlush(m_display);
+    xcb_flush(m_connection);
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::createHiddenCursor()
 {
+    xcb_pixmap_t cursorPixmap = xcb_generate_id(m_connection);
+    m_hiddenCursor = xcb_generate_id(m_connection);
     // Create the cursor's pixmap (1x1 pixels)
-    Pixmap cursorPixmap = XCreatePixmap(m_display, m_window, 1, 1, 1);
-    GC graphicsContext = XCreateGC(m_display, cursorPixmap, 0, NULL);
-    XDrawPoint(m_display, cursorPixmap, graphicsContext, 0, 0);
-    XFreeGC(m_display, graphicsContext);
+    xcb_create_pixmap(m_connection, 1, cursorPixmap, m_window, 1, 1);
 
     // Create the cursor, using the pixmap as both the shape and the mask of the cursor
-    XColor color;
-    color.flags = DoRed | DoGreen | DoBlue;
-    color.red = color.blue = color.green = 0;
-    m_hiddenCursor = XCreatePixmapCursor(m_display, cursorPixmap, cursorPixmap, &color, &color, 0, 0);
+    xcb_create_cursor(m_connection, m_hiddenCursor, cursorPixmap, cursorPixmap,
+                      0, 0, 0,  // Fore color
+                      0, 0, 0,  // Back color
+                      0, 0);
 
     // We don't need the pixmap any longer, free it
-    XFreePixmap(m_display, cursorPixmap);
+    xcb_free_pixmap(m_connection, cursorPixmap);
 }
 
 
@@ -526,20 +566,27 @@ void WindowImplX11::cleanup()
     // Restore the previous video mode (in case we were running in fullscreen)
     if (fullscreenWindow == this)
     {
-        // Get current screen info
-        XRRScreenConfiguration* config = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
-        if (config) 
-        {
-            // Get the current rotation
-            Rotation currentRotation;
-            XRRConfigCurrentConfiguration(config, &currentRotation);
+        // Retrieve the default screen
+        xcb_screen_t* screen = XCBScreenOfDisplay(m_connection, m_screen);
 
+        // Get current screen info
+        xcb_generic_error_t* errors;
+        xcb_randr_get_screen_info_reply_t* config = xcb_randr_get_screen_info_reply(
+                    m_connection, xcb_randr_get_screen_info(m_connection, screen->root), &errors);
+        if (! errors)
+        {
             // Reset the video mode
-            XRRSetScreenConfig(m_display, config, RootWindow(m_display, m_screen), m_oldVideoMode, currentRotation, CurrentTime);
+            xcb_randr_set_screen_config(m_connection,
+                                        screen->root,
+                                        CurrentTime,
+                                        config->config_timestamp,
+                                        m_oldVideoMode,
+                                        config->rotation, config->rate);
 
             // Free the configuration instance
-            XRRFreeScreenConfigInfo(config);
-        } 
+            free(config);
+        }
+        free(errors);
 
         // Reset the fullscreen window
         fullscreenWindow = NULL;
@@ -551,7 +598,7 @@ void WindowImplX11::cleanup()
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplX11::processEvent(XEvent windowEvent)
+bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 {
     // This function implements a workaround to properly discard
     // repeated key events when necessary. The problem is that the
@@ -562,29 +609,33 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
     // - Discard both duplicated KeyPress and KeyRelease events when EnableKeyRepeat is false
 
     // Detect repeated key events
-    if ((windowEvent.type == KeyPress) || (windowEvent.type == KeyRelease))
+    if ((windowEvent->response_type == XCB_KEY_PRESS) ||
+            (windowEvent->response_type == XCB_KEY_RELEASE))
     {
-        if (windowEvent.xkey.keycode < 256)
+        xcb_key_press_event_t* press = reinterpret_cast<xcb_key_press_event_t*>(windowEvent);
+        if (press->detail < 256)
         {
             // To detect if it is a repeated key event, we check the current state of the key.
             // - If the state is "down", KeyReleased events must obviously be discarded.
             // - KeyPress events are a little bit harder to handle: they depend on the EnableKeyRepeat state,
             //   and we need to properly forward the first one.
-            char keys[32];
-            XQueryKeymap(m_display, keys);
-            if (keys[windowEvent.xkey.keycode / 8] & (1 << (windowEvent.xkey.keycode % 8)))
+            xcb_query_keymap_cookie_t cookie = xcb_query_keymap(m_connection);
+            AutoPointer<xcb_query_keymap_reply_t> keymap = xcb_query_keymap_reply(m_connection,
+                                                                    cookie, NULL);
+
+            if (keymap->keys[press->detail / 8] & (1 << (press->detail % 8)))
             {
                 // KeyRelease event + key down = repeated event --> discard
-                if (windowEvent.type == KeyRelease)
+                if (windowEvent->response_type == XCB_KEY_RELEASE)
                 {
-                    m_lastKeyReleaseEvent = windowEvent;
+                    m_lastKeyReleaseEvent = *press;
                     return false;
                 }
 
                 // KeyPress event + key repeat disabled + matching KeyRelease event = repeated event --> discard
-                if ((windowEvent.type == KeyPress) && !m_keyRepeat &&
-                    (m_lastKeyReleaseEvent.xkey.keycode == windowEvent.xkey.keycode) &&
-                    (m_lastKeyReleaseEvent.xkey.time == windowEvent.xkey.time))
+                if ((windowEvent->response_type == XCB_KEY_PRESS) && !m_keyRepeat &&
+                    (m_lastKeyReleaseEvent.detail == press->detail) &&
+                    (m_lastKeyReleaseEvent.time == press->time))
                 {
                     return false;
                 }
@@ -593,10 +644,10 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
     }
 
     // Convert the X11 event to a sf::Event
-    switch (windowEvent.type)
+    switch (windowEvent->response_type & ~0x80)
     {
         // Destroy event
-        case DestroyNotify :
+        case XCB_DESTROY_NOTIFY:
         {
             // The window is about to be destroyed : we must cleanup resources
             cleanup();
@@ -604,7 +655,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         }
 
         // Gain focus event
-        case FocusIn :
+        case XCB_FOCUS_IN:
         {
             // Update the input context
             if (m_inputContext)
@@ -617,7 +668,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         }
 
         // Lost focus event
-        case FocusOut :
+        case XCB_FOCUS_OUT:
         {
             // Update the input context
             if (m_inputContext)
@@ -630,20 +681,22 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         }
 
         // Resize event
-        case ConfigureNotify :
+        case XCB_CONFIGURE_NOTIFY:
         {
+            xcb_configure_notify_event_t* e = reinterpret_cast<xcb_configure_notify_event_t*>(windowEvent);
             Event event;
             event.type        = Event::Resized;
-            event.size.width  = windowEvent.xconfigure.width;
-            event.size.height = windowEvent.xconfigure.height;
+            event.size.width  = e->width;
+            event.size.height = e->height;
             pushEvent(event);
             break;
         }
 
         // Close event
-        case ClientMessage :
+        case XCB_CLIENT_MESSAGE:
         {
-            if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(m_atomClose))  
+            xcb_client_message_event_t* e = reinterpret_cast<xcb_client_message_event_t*>(windowEvent);
+            if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_atomClose))
             {
                 Event event;
                 event.type = Event::Closed;
@@ -653,34 +706,45 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         }
 
         // Key down event
-        case KeyPress :
+        case XCB_KEY_PRESS:
         {
+            xcb_key_press_event_t* e = reinterpret_cast<xcb_key_press_event_t*>(windowEvent);
             // Get the keysym of the key that has been pressed
             static XComposeStatus keyboard;
             char buffer[32];
             KeySym symbol;
-            XLookupString(&windowEvent.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
+
+            // There is no xcb equivalent of XLookupString, so the xcb event
+            // has to be converted to an XEvent
+            XEvent fake_event;
+            fake_event.type = KeyPress;
+            fake_event.xany.display = m_display;
+            fake_event.xany.window = e->event;
+            fake_event.xkey.state = e->state;
+            fake_event.xkey.keycode = e->detail;
+
+            XLookupString(&fake_event.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
 
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
             event.type        = Event::KeyPressed;
             event.key.code    = keysymToSF(symbol);
-            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
-            event.key.control = windowEvent.xkey.state & ControlMask;
-            event.key.shift   = windowEvent.xkey.state & ShiftMask;
-            event.key.system  = windowEvent.xkey.state & Mod4Mask;
+            event.key.alt     = e->state & XCB_MOD_MASK_1;
+            event.key.control = e->state & XCB_MOD_MASK_CONTROL;
+            event.key.shift   = e->state & XCB_MOD_MASK_SHIFT;
+            event.key.system  = e->state & XCB_MOD_MASK_4;
             pushEvent(event);
 
             // Generate a TextEntered event
-            if (!XFilterEvent(&windowEvent, None))
+            if (!XFilterEvent(&fake_event, None))
             {
                 #ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
                 {
                     Status status;
                     Uint8  keyBuffer[16];
-                    int length = Xutf8LookupString(m_inputContext, &windowEvent.xkey, reinterpret_cast<char*>(keyBuffer), sizeof(keyBuffer), NULL, &status);
+                    int length = Xutf8LookupString(m_inputContext, &fake_event.xkey, reinterpret_cast<char*>(keyBuffer), sizeof(keyBuffer), NULL, &status);
                     if (length > 0)
                     {
                         Uint32 unicode = 0;
@@ -699,7 +763,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                 {
                     static XComposeStatus status;
                     char keyBuffer[16];
-                    if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
+                    if (XLookupString(&fake_event.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
                     {
                         Event textEvent;
                         textEvent.type         = Event::TextEntered;
@@ -713,43 +777,55 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         }
 
         // Key up event
-        case KeyRelease :
+        case KeyRelease:
         {
+            xcb_key_release_event_t* e = reinterpret_cast<xcb_key_release_event_t*>(windowEvent);
             // Get the keysym of the key that has been pressed
             char buffer[32];
             KeySym symbol;
-            XLookupString(&windowEvent.xkey, buffer, 32, &symbol, NULL);
+
+            // There is no xcb equivalent of XLookupString, so the xcb event
+            // has to be converted to an XEvent
+            XKeyEvent fake_event;
+            fake_event.display = m_display;
+            fake_event.state = e->state;
+            fake_event.keycode = e->detail;
+            XLookupString(&fake_event, buffer, 32, &symbol, NULL);
 
             // Fill the event parameters
             Event event;
             event.type        = Event::KeyReleased;
             event.key.code    = keysymToSF(symbol);
-            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
-            event.key.control = windowEvent.xkey.state & ControlMask;
-            event.key.shift   = windowEvent.xkey.state & ShiftMask;
-            event.key.system  = windowEvent.xkey.state & Mod4Mask;
+            event.key.alt     = e->state & XCB_MOD_MASK_1;
+            event.key.control = e->state & XCB_MOD_MASK_CONTROL;
+            event.key.shift   = e->state & XCB_MOD_MASK_SHIFT;
+            event.key.system  = e->state & XCB_MOD_MASK_4;
             pushEvent(event);
 
             break;
         }
 
         // Mouse button pressed
-        case ButtonPress :
+        case XCB_BUTTON_PRESS:
         {
-            unsigned int button = windowEvent.xbutton.button;
-            if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
+            xcb_button_press_event_t* e = reinterpret_cast<xcb_button_press_event_t*>(windowEvent);
+
+            // XXX: Why button 8 and 9?
+            xcb_button_t button = e->detail;
+            if ((button == XCB_BUTTON_INDEX_1) || (button == XCB_BUTTON_INDEX_2)
+                    || (button == XCB_BUTTON_INDEX_3) || (button == 8) || (button == 9))
             {
                 Event event;
                 event.type          = Event::MouseButtonPressed;
-                event.mouseButton.x = windowEvent.xbutton.x;
-                event.mouseButton.y = windowEvent.xbutton.y;
-                switch (button)
+                event.mouseButton.x = e->event_x;
+                event.mouseButton.y = e->event_y;
+                switch(button)
                 {
-                    case Button1 : event.mouseButton.button = Mouse::Left;     break;
-                    case Button2 : event.mouseButton.button = Mouse::Middle;   break;
-                    case Button3 : event.mouseButton.button = Mouse::Right;    break;
-                    case 8 :       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;            
+                case XCB_BUTTON_INDEX_1 : event.mouseButton.button = Mouse::Left;     break;
+                case XCB_BUTTON_INDEX_2 : event.mouseButton.button = Mouse::Middle;   break;
+                case XCB_BUTTON_INDEX_3 : event.mouseButton.button = Mouse::Right;    break;
+                case 8 :                  event.mouseButton.button = Mouse::XButton1; break;
+                case 9 :                  event.mouseButton.button = Mouse::XButton2; break;
                 }
                 pushEvent(event);
             }
@@ -757,50 +833,54 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         }
 
         // Mouse button released
-        case ButtonRelease :
+        case XCB_BUTTON_RELEASE:
         {
-            unsigned int button = windowEvent.xbutton.button;
-            if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
+            xcb_button_release_event_t* e = reinterpret_cast<xcb_button_press_event_t*>(windowEvent);
+
+            xcb_button_t button = e->detail;
+            if ((button == XCB_BUTTON_INDEX_1) || (button == XCB_BUTTON_INDEX_2)
+                    || (button == XCB_BUTTON_INDEX_3) || (button == 8) || (button == 9))
             {
                 Event event;
-                event.type          = Event::MouseButtonReleased;
-                event.mouseButton.x = windowEvent.xbutton.x;
-                event.mouseButton.y = windowEvent.xbutton.y;
-                switch (button)
+                event.type          = Event::MouseButtonPressed;
+                event.mouseButton.x = e->event_x;
+                event.mouseButton.y = e->event_y;
+                switch(button)
                 {
-                    case Button1 : event.mouseButton.button = Mouse::Left;     break;
-                    case Button2 : event.mouseButton.button = Mouse::Middle;   break;
-                    case Button3 : event.mouseButton.button = Mouse::Right;    break;
-                    case 8 :       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;            
+                case XCB_BUTTON_INDEX_1 : event.mouseButton.button = Mouse::Left;     break;
+                case XCB_BUTTON_INDEX_2 : event.mouseButton.button = Mouse::Middle;   break;
+                case XCB_BUTTON_INDEX_3 : event.mouseButton.button = Mouse::Right;    break;
+                case 8 :                  event.mouseButton.button = Mouse::XButton1; break;
+                case 9 :                  event.mouseButton.button = Mouse::XButton2; break;
                 }
                 pushEvent(event);
             }
-            else if ((button == Button4) || (button == Button5))
+            else if ((button == XCB_BUTTON_INDEX_4) || (button == XCB_BUTTON_INDEX_5))
             {
                 Event event;
                 event.type             = Event::MouseWheelMoved;
-                event.mouseWheel.delta = windowEvent.xbutton.button == Button4 ? 1 : -1;
-                event.mouseWheel.x     = windowEvent.xbutton.x;
-                event.mouseWheel.y     = windowEvent.xbutton.y;
+                event.mouseWheel.delta = button == XCB_BUTTON_INDEX_4 ? 1 : -1;
+                event.mouseWheel.x     = e->event_x;
+                event.mouseWheel.y     = e->event_y;
                 pushEvent(event);
             }
             break;
         }
 
         // Mouse moved
-        case MotionNotify :
+        case XCB_MOTION_NOTIFY:
         {
+            xcb_motion_notify_event_t* e = reinterpret_cast<xcb_motion_notify_event_t*>(windowEvent);
             Event event;
             event.type        = Event::MouseMoved;
-            event.mouseMove.x = windowEvent.xmotion.x;
-            event.mouseMove.y = windowEvent.xmotion.y;
+            event.mouseMove.x = e->event_x;
+            event.mouseMove.y = e->event_y;
             pushEvent(event);
             break;
         }
 
         // Mouse entered
-        case EnterNotify :
+        case XCB_ENTER_NOTIFY:
         {
             Event event;
             event.type = Event::MouseEntered;
@@ -809,7 +889,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         }
 
         // Mouse left
-        case LeaveNotify :
+        case XCB_LEAVE_NOTIFY:
         {
             Event event;
             event.type = Event::MouseLeft;
@@ -823,7 +903,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Key WindowImplX11::keysymToSF(KeySym symbol)
+Keyboard::Key WindowImplX11::keysymToSF(xcb_keysym_t symbol)
 {
     // First convert to uppercase (to avoid dealing with two different keysyms for the same key)
     KeySym lower, key;

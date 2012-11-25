@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <X11/Xlib.h>
+#include <X11/Xlib-xcb.h>
 
 
 namespace sf
@@ -47,12 +47,41 @@ namespace priv
 Display* OpenDisplay();
 
 ////////////////////////////////////////////////////////////
-/// \brief Release a reference to the shared
+/// \brief Get the xcb connection of the shared Display
 ///
-/// \param display Display to release
+/// This function increments the reference count of the display,
+/// it must be matched with a call to CloseDisplay.
+///
+/// \return Pointer to the shared connection
+///
+////////////////////////////////////////////////////////////
+xcb_connection_t* OpenConnection();
+
+////////////////////////////////////////////////////////////
+/// \brief Release a reference to the shared display
+///
+/// \param Display to release
 ///
 ////////////////////////////////////////////////////////////
 void CloseDisplay(Display* display);
+
+////////////////////////////////////////////////////////////
+/// \brief Release a reference to the shared display
+///
+/// \param Connection of display to release
+///
+////////////////////////////////////////////////////////////
+void CloseConnection(xcb_connection_t* connection);
+
+////////////////////////////////////////////////////////////
+/// \brief Get screen of a display by index (equivalent to XScreenOfDisplay)
+///
+/// \param The index of the screen
+///
+/// \return Pointer to the screen
+///
+////////////////////////////////////////////////////////////
+xcb_screen_t* XCBScreenOfDisplay(xcb_connection_t* connection, int screen_nbr);
 
 } // namespace priv
 

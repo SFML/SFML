@@ -46,18 +46,20 @@ m_ownsWindow(true)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
+    m_connection = XGetXCBConnection(m_display);
 
     // Create a dummy window (disabled and hidden)
-    int screen = DefaultScreen(m_display);
-    m_window = XCreateWindow(m_display,
-                             RootWindow(m_display, screen),
-                             0, 0,
-                             1, 1,
-                             0,
-                             DefaultDepth(m_display, screen),
-                             InputOutput,
-                             DefaultVisual(m_display, screen),
-                             0, NULL);
+    xcb_screen_t* screen = XCBScreenOfDisplay(m_connection, DefaultScreen(m_display));
+    m_window = xcb_generate_id(m_connection);
+    xcb_create_window(m_connection,
+                      screen->root_depth,
+                      m_window, screen->root,
+                      0, 0,
+                      1, 1,
+                      0,
+                      XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                      screen->root_visual,
+                      0, NULL);
 
     // Create the context
     createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
@@ -73,6 +75,7 @@ m_ownsWindow(false)
     // Open a connection with the X server
     // (important: must be the same display as the owner window)
     m_display = OpenDisplay();
+    m_connection = XGetXCBConnection(m_display);
 
     // Get the owner window and its device context
     m_window = static_cast< ::Window>(owner->getSystemHandle());
@@ -91,18 +94,20 @@ m_ownsWindow(true)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
+    m_connection = XGetXCBConnection(m_display);
 
     // Create the hidden window
-    int screen = DefaultScreen(m_display);
-    m_window = XCreateWindow(m_display,
-                             RootWindow(m_display, screen),
-                             0, 0,
-                             width, height,
-                             0,
-                             DefaultDepth(m_display, screen),
-                             InputOutput,
-                             DefaultVisual(m_display, screen),
-                             0, NULL);
+    xcb_screen_t* screen = XCBScreenOfDisplay(m_connection, DefaultScreen(m_display));
+    m_window = xcb_generate_id(m_connection);
+    xcb_create_window(m_connection,
+                      screen->root_depth,
+                      m_window, screen->root,
+                      0, 0,
+                      width, height,
+                      0,
+                      XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                      screen->root_visual,
+                      0, NULL);
 
     // Create the context
     createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
@@ -123,8 +128,8 @@ GlxContext::~GlxContext()
     // Destroy the window if we own it
     if (m_window && m_ownsWindow)
     {
-        XDestroyWindow(m_display, m_window);
-        XFlush(m_display);
+        xcb_destroy_window(m_connection, m_window);
+        xcb_flush(m_connection);
     }
 
     // Close the connection with the X server
