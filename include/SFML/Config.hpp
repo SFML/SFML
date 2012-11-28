@@ -68,23 +68,6 @@
 
 
 ////////////////////////////////////////////////////////////
-// Identify the endianness
-////////////////////////////////////////////////////////////
-#if defined(__m68k__) || defined(mc68000) || defined(_M_M68K) || (defined(__MIPS__) && defined(__MISPEB__)) || \
-    defined(__ppc__) || defined(__POWERPC__) || defined(_M_PPC) || defined(__sparc__) || defined(__hppa__)
-
-    // Big endian
-    #define SFML_ENDIAN_BIG
-
-#else
-
-    // Little endian
-    #define SFML_ENDIAN_LITTLE
-
-#endif
-
-
-////////////////////////////////////////////////////////////
 // Define a portable debug macro
 ////////////////////////////////////////////////////////////
 #if !defined(NDEBUG)
