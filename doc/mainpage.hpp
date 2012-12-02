@@ -3,10 +3,9 @@
 ///
 /// \section welcome Welcome
 /// Welcome to the official SFML documentation. Here you will find a detailed
-/// view of all the SFML <a href="./annotated.php">classes</a>, as well as source
-/// <a href="./files.php">files</a>. <br>
+/// view of all the SFML <a href="./annotated.php">classes</a> and functions. <br/>
 /// If you are looking for tutorials, you can visit the official website
-/// at <a href="http://www.sfml-dev.org/tutorials/">www.sfml-dev.org</a>.
+/// at <a href="http://www.sfml-dev.org/">www.sfml-dev.org</a>.
 ///
 /// \section example Short example
 /// Here is a short example, to show you how simple it is to use SFML :
