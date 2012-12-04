@@ -610,7 +610,6 @@ private :
 /// window.setActive();
 /// shader.bind();
 /// ... render OpenGL geometry ...
-/// shader.unbind();
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////
