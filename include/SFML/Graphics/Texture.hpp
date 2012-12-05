@@ -574,7 +574,7 @@ private :
 ///
 ///     ...
 /// }
-// 
+///
 /// \endcode
 ///
 /// \see sf::Sprite, sf::Image, sf::RenderTexture
