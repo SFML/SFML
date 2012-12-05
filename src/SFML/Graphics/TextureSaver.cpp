@@ -35,7 +35,8 @@ namespace priv
 ////////////////////////////////////////////////////////////
 TextureSaver::TextureSaver()
 {
-    glCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &m_textureBinding));
+    //glGet is extremely slow
+    //glCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &m_textureBinding));
 }
 
 

@@ -227,11 +227,28 @@ void Shader::setParameter(const std::string& name, float x)
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
-        if (location != -1)
-            glCheck(glUniform1fARB(location, x));
+        GLint location = -1;
+        UniformTable::iterator tm = m_uniformmap.find(name);
+        if (tm == m_uniformmap.end())
+        {
+            location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+            if (location == -1)
+            {
+                err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+                return;
+            }
+            else
+            {
+                m_uniformmap[name] = location;
+            }
+        }
         else
-            err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+        {
+            location = tm->second;
+        }
+
+        // Set parameter
+        glCheck(glUniform1fARB(location, x));
 
         // Disable program
         glCheck(glUseProgramObjectARB(program));
@@ -251,11 +268,28 @@ void Shader::setParameter(const std::string& name, float x, float y)
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
-        if (location != -1)
-            glCheck(glUniform2fARB(location, x, y));
+        GLint location = -1;
+        UniformTable::iterator tm = m_uniformmap.find(name);
+        if (tm == m_uniformmap.end())
+        {
+            location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+            if (location == -1)
+            {
+                err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+                return;
+            }
+            else
+            {
+                m_uniformmap[name] = location;
+            }
+        }
         else
-            err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+        {
+            location = tm->second;
+        }
+
+        // Set parameter
+        glCheck(glUniform2fARB(location, x, y));
 
         // Disable program
         glCheck(glUseProgramObjectARB(program));
@@ -275,11 +309,28 @@ void Shader::setParameter(const std::string& name, float x, float y, float z)
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
-        if (location != -1)
-            glCheck(glUniform3fARB(location, x, y, z));
+        GLint location = -1;
+        UniformTable::iterator tm = m_uniformmap.find(name);
+        if (tm == m_uniformmap.end())
+        {
+            location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+            if (location == -1)
+            {
+                err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+                return;
+            }
+            else
+            {
+                m_uniformmap[name] = location;
+            }
+        }
         else
-            err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+        {
+            location = tm->second;
+        }
+
+        // Set parameter
+        glCheck(glUniform3fARB(location, x, y, z));
 
         // Disable program
         glCheck(glUseProgramObjectARB(program));
@@ -299,11 +350,28 @@ void Shader::setParameter(const std::string& name, float x, float y, float z, fl
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
-        if (location != -1)
-            glCheck(glUniform4fARB(location, x, y, z, w));
+        GLint location = -1;
+        UniformTable::iterator tm = m_uniformmap.find(name);
+        if (tm == m_uniformmap.end())
+        {
+            location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+            if (location == -1)
+            {
+                err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+                return;
+            }
+            else
+            {
+                m_uniformmap[name] = location;
+            }
+        }
         else
-            err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+        {
+            location = tm->second;
+        }
+
+        // Set parameter
+        glCheck(glUniform4fARB(location, x, y, z, w));
 
         // Disable program
         glCheck(glUseProgramObjectARB(program));
@@ -344,11 +412,28 @@ void Shader::setParameter(const std::string& name, const sf::Transform& transfor
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
-        if (location != -1)
-            glCheck(glUniformMatrix4fvARB(location, 1, GL_FALSE, transform.getMatrix()));
+        GLint location = -1;
+        UniformTable::iterator tm = m_uniformmap.find(name);
+        if (tm == m_uniformmap.end())
+        {
+            location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+            if (location == -1)
+            {
+                err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+                return;
+            }
+            else
+            {
+                m_uniformmap[name] = location;
+            }
+        }
         else
-            err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+        {
+            location = tm->second;
+        }
+
+        // Set parameter
+        glCheck(glUniformMatrix4fvARB(location, 1, GL_FALSE, transform.getMatrix()));
 
         // Disable program
         glCheck(glUseProgramObjectARB(program));
@@ -364,11 +449,24 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        int location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
-        if (location == -1)
+        GLint location = -1;
+        UniformTable::iterator tm = m_uniformmap.find(name);
+        if (tm == m_uniformmap.end())
         {
-            err() << "Texture \"" << name << "\" not found in shader" << std::endl;
-            return;
+            location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+            if (location == -1)
+            {
+                err() << "Texture \"" << name << "\" not found in shader" << std::endl;
+                return;
+            }
+            else
+            {
+                m_uniformmap[name] = location;
+            }
+        }
+        else
+        {
+            location = tm->second;
         }
 
         // Store the location -> texture mapping
@@ -376,7 +474,9 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
         if (it == m_textures.end())
         {
             // New entry, make sure there are enough texture units
-            static const GLint maxUnits = getMaxTextureUnits();
+            //http://en.sfml-dev.org/forums/index.php?topic=9858.0
+            static const GLint maxUnits = 8;
+            //static const GLint maxUnits = getMaxTextureUnits();
             if (m_textures.size() + 1 >= static_cast<std::size_t>(maxUnits))
             {
                 err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
@@ -402,9 +502,25 @@ void Shader::setParameter(const std::string& name, CurrentTextureType)
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        m_currentTexture = glGetUniformLocationARB(m_shaderProgram, name.c_str());
-        if (m_currentTexture == -1)
-            err() << "Texture \"" << name << "\" not found in shader" << std::endl;
+        GLint m_currentTexture = -1;
+        UniformTable::iterator tm = m_uniformmap.find(name);
+        if (tm == m_uniformmap.end())
+        {
+            m_currentTexture = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+            if (m_currentTexture == -1)
+            {
+                err() << "Texture \"" << name << "\" not found in shader" << std::endl;
+                return;
+            }
+            else
+            {
+                m_uniformmap[name] = m_currentTexture;
+            }
+        }
+        else
+        {
+            m_currentTexture = tm->second;
+        }
     }
 }
 
