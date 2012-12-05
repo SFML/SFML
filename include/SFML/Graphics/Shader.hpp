@@ -503,6 +503,7 @@ private :
     // Types
     ////////////////////////////////////////////////////////////
     typedef std::map<int, const Texture*> TextureTable;
+    typedef std::map<std::string, int>    UniformTable;
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -510,6 +511,8 @@ private :
     unsigned int m_shaderProgram;  ///< OpenGL identifier for the program
     int          m_currentTexture; ///< Location of the current texture in the shader
     TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
+    UniformTable m_uniformmap;     ///< Cache for uniform locations
+    //todo: somehow negatiate the high cost of glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
 };
 
 } // namespace sf
