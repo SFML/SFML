@@ -41,6 +41,12 @@ namespace
             *i = static_cast<char>(std::tolower(*i));
         return str;
     }
+
+    template<class InputIterator, class Size, class OutputIterator> OutputIterator copy_n(InputIterator in, Size n, OutputIterator out)
+    {
+        for (int i = 0; i < n; *out = *in, i++, ++out, ++in);
+        return out;
+    }
 }
 
 
@@ -252,9 +258,54 @@ void Http::Response::parse(const std::string& data)
         }
     }
 
-    // Finally extract the body
     m_body.clear();
-    std::copy(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>(), std::back_inserter(m_body));
+
+    // Determine whether the transfer is chunked
+    if (getField("transfer-encoding").compare("chunked"))
+    {
+        // Not chunked - everything at once
+        std::copy(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>(), std::back_inserter(m_body));
+    }
+    else
+    {
+        // Chunked - have to read chunk by chunk
+        unsigned long length;
+        std::string dummy;
+
+        // Read all chunks, identified by a chunk-size not being 0
+        while (in >> std::hex >> length) {
+            if (in.peek() == '\r') // nothing behind chunk-size (i.e. no chunk-extension)
+                in.seekg(2, std::ios_base::cur); // eat the \r\n...
+            else
+                in >> dummy; // ...or the whole rest of the line (chunk-extension)
+            // copy the actual content data
+            ::copy_n(std::istreambuf_iterator<char>(in), length, std::back_inserter(m_body));
+        }    
+
+        if (in.peek() == '\r') // nothing behind chunk-size (i.e. no chunk-extension)
+            in.seekg(2, std::ios_base::cur); // eat the \r\n...
+        else
+            in >> dummy; // ...or the whole rest of the line (chunk-extension)
+
+        // Read all trailers (if present)
+        while (std::getline(in, line) && (line.size() > 2))
+        {
+            std::string::size_type pos = line.find(": ");
+            if (pos != std::string::npos)
+            {
+                // Extract the field name and its value
+                std::string field = line.substr(0, pos);
+                std::string value = line.substr(pos + 2);
+
+                // Remove any trailing \r
+                if (!value.empty() && (*value.rbegin() == '\r'))
+                    value.erase(value.size() - 1);
+
+                // Add the field
+                m_fields[toLower(field)] = value;
+            }
+        }
+    }
 }
 
 
@@ -374,3 +425,4 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
 }
 
 } // namespace sf
+
