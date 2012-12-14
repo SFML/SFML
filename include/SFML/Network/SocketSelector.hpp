@@ -231,6 +231,11 @@ private :
 ///                 // be notified when he sends something
 ///                 selector.add(*client);
 ///             }
+///             else
+///             {
+///                 // Error, we won't get a new connection, delete the socket
+///                 delete client;
+///             }
 ///         }
 ///         else
 ///         {
