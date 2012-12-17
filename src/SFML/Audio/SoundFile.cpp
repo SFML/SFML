@@ -263,8 +263,9 @@ void SoundFile::initialize(SF_INFO fileInfo)
     m_sampleCount  = static_cast<std::size_t>(fileInfo.frames) * fileInfo.channels;
 
     // Enable scaling for Vorbis files (float samples)
-    if (fileInfo.format & SF_FORMAT_VORBIS)
-        sf_command(m_file, SFC_SET_SCALE_FLOAT_INT_READ, NULL, SF_TRUE);
+    // @todo enable when it's faster (it currently has to iterate over the *whole* music)
+    //if (fileInfo.format & SF_FORMAT_VORBIS)
+    //    sf_command(m_file, SFC_SET_SCALE_FLOAT_INT_READ, NULL, SF_TRUE);
 }
 
 
