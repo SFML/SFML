@@ -285,7 +285,7 @@ void Http::setHost(const std::string& host, unsigned short port)
         m_hostName = host.substr(7);
         m_port     = (port != 0 ? port : 80);
     }
-    else if (protocol == "https://")
+    else if (protocol.substr(0, 8) == "https://")
     {
         // HTTPS protocol
         m_hostName = host.substr(8);
