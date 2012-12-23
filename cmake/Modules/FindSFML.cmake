@@ -205,5 +205,5 @@ endif()
 
 # handle success
 if(SFML_FOUND)
-    message("Found SFML: ${SFML_INCLUDE_DIR}")
+    message(STATUS "Found SFML ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR} in ${SFML_INCLUDE_DIR}")
 endif()
