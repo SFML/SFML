@@ -558,38 +558,37 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
     // system's key events policy doesn't match SFML's one: X server will generate
     // both repeated KeyPress and KeyRelease events when maintaining a key down, while
     // SFML only wants repeated KeyPress events. Thus, we have to:
-    // - Discard duplicated KeyRelease events when EnableKeyRepeat is true
-    // - Discard both duplicated KeyPress and KeyRelease events when EnableKeyRepeat is false
+    // - Discard duplicated KeyRelease events when KeyRepeatEnabled is true
+    // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
 
     // Detect repeated key events
-    if ((windowEvent.type == KeyPress) || (windowEvent.type == KeyRelease))
+    if (((windowEvent.type == KeyPress) || (windowEvent.type == KeyRelease)) && (windowEvent.xkey.keycode < 256))
     {
-        if (windowEvent.xkey.keycode < 256)
-        {
-            // To detect if it is a repeated key event, we check the current state of the key.
-            // - If the state is "down", KeyReleased events must obviously be discarded.
-            // - KeyPress events are a little bit harder to handle: they depend on the EnableKeyRepeat state,
-            //   and we need to properly forward the first one.
-            char keys[32];
-            XQueryKeymap(m_display, keys);
-            if (keys[windowEvent.xkey.keycode / 8] & (1 << (windowEvent.xkey.keycode % 8)))
-            {
-                // KeyRelease event + key down = repeated event --> discard
-                if (windowEvent.type == KeyRelease)
-                {
-                    m_lastKeyReleaseEvent = windowEvent;
-                    return false;
-                }
+        // To detect if it is a repeated key event, we check the current state of the key:
+        // - If the state is "down", KeyReleased events must obviously be discarded
+        // - KeyPress events are a little bit harder to handle: they depend on the KeyRepeatEnabled state,
+        //   and we need to properly forward the first one
+        
+        // Check if the key is currently down
+        char keys[32];
+        XQueryKeymap(m_display, keys);
+        bool isDown = keys[windowEvent.xkey.keycode / 8] & (1 << (windowEvent.xkey.keycode % 8));
 
-                // KeyPress event + key repeat disabled + matching KeyRelease event = repeated event --> discard
-                if ((windowEvent.type == KeyPress) && !m_keyRepeat &&
-                    (m_lastKeyReleaseEvent.xkey.keycode == windowEvent.xkey.keycode) &&
-                    (m_lastKeyReleaseEvent.xkey.time == windowEvent.xkey.time))
-                {
-                    return false;
-                }
-            }
-        }
+        // Check if it's a duplicate event
+        bool isDuplicate = (windowEvent.xkey.keycode == m_lastKeyReleaseEvent.xkey.keycode) &&
+                           (windowEvent.xkey.time - m_lastKeyReleaseEvent.xkey.time <= 5);
+
+        // Keep track of the last KeyRelease event
+        if (windowEvent.type == KeyRelease)
+            m_lastKeyReleaseEvent = windowEvent;
+
+        // KeyRelease event + key down or duplicate event = repeated event --> discard
+        if ((windowEvent.type == KeyRelease) && (isDown || isDuplicate))
+            return false;
+
+        // KeyPress event + matching KeyRelease event = repeated event --> discard if key repeat is disabled
+        if ((windowEvent.type == KeyPress) && isDuplicate && !m_keyRepeat)
+            return false;
     }
 
     // Convert the X11 event to a sf::Event
