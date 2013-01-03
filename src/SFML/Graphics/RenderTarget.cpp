@@ -344,9 +344,10 @@ void RenderTarget::applyBlendMode(BlendMode mode)
 {
     switch (mode)
     {
-        // Alpha blending
         // glBlendFuncSeparateEXT is used when available to avoid an incorrect alpha value when the target
         // is a RenderTexture -- in this case the alpha value must be written directly to the target buffer
+
+        // Alpha blending
         default :
         case BlendAlpha :
             if (GLEW_EXT_blend_func_separate)
@@ -357,7 +358,10 @@ void RenderTarget::applyBlendMode(BlendMode mode)
 
         // Additive blending
         case BlendAdd :
-            glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
+            if (GLEW_EXT_blend_func_separate)
+                glCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE));
+            else
+                glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
             break;
 
         // Multiplicative blending
