@@ -28,7 +28,14 @@ set(VERSION_PATCH 0)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
-sfml_set_option(SFML_BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
+if( BUILD_SHARED_LIBS )
+	message( STATUS "BUILD_SHARED_LIBS is set to ${BUILD_SHARED_LIBS}, SFML_BUILD_SHARED_LIBS will be set to this value by default." )
+	set( SFML_BUILD_SHARED ${BUILD_SHARED_LIBS} ) #if BUILD_SHARED_LIBS is set, just use it's value.
+else()
+	set( SFML_BUILD_SHARED TRUE ) #by default, shared linking.
+endif()
+
+sfml_set_option(SFML_BUILD_SHARED_LIBS ${SFML_BUILD_SHARED} BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 
 # add an option for building the examples
 sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
