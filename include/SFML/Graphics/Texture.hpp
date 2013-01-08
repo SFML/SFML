@@ -351,28 +351,6 @@ public :
     void update(const Window& window, unsigned int x, unsigned int y);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate the texture for rendering
-    ///
-    /// This function is mainly used internally by the SFML
-    /// rendering system. However it can be useful when
-    /// using sf::Texture together with OpenGL code (this function
-    /// is equivalent to glBindTexture).
-    ///
-    /// The \a coordinateType argument controls how texture
-    /// coordinates will be interpreted. If Normalized (the default), they
-    /// must be in range [0 .. 1], which is the default way of handling
-    /// texture coordinates with OpenGL. If Pixels, they must be given
-    /// in pixels (range [0 .. size]). This mode is used internally by
-    /// the graphics classes of SFML, it makes the definition of texture
-    /// coordinates more intuitive for the high-level API, users don't need
-    /// to compute normalized values.
-    ///
-    /// \param coordinateType Type of texture coordinates to use
-    ///
-    ////////////////////////////////////////////////////////////
-    void bind(CoordinateType coordinateType = Normalized) const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the smooth filter
     ///
     /// When the filter is activated, the texture appears smoother
@@ -441,6 +419,39 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     Texture& operator =(const Texture& right);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Bind a texture for rendering
+    ///
+    /// This function is not part of the graphics API, it mustn't be
+    /// used when drawing SFML entities. It must be used only if you
+    /// mix sf::Texture with OpenGL code.
+    ///
+    /// \code
+    /// sf::Texture t1, t2;
+    /// ...
+    /// sf::Texture::bind(&t1);
+    /// // draw OpenGL stuff that use t1...
+    /// sf::Texture::bind(&t2);
+    /// // draw OpenGL stuff that use t2...
+    /// sf::Texture::bind(NULL);
+    /// // draw OpenGL stuff that use no texture...
+    /// \endcode
+    ///
+    /// The \a coordinateType argument controls how texture
+    /// coordinates will be interpreted. If Normalized (the default), they
+    /// must be in range [0 .. 1], which is the default way of handling
+    /// texture coordinates with OpenGL. If Pixels, they must be given
+    /// in pixels (range [0 .. size]). This mode is used internally by
+    /// the graphics classes of SFML, it makes the definition of texture
+    /// coordinates more intuitive for the high-level API, users don't need
+    /// to compute normalized values.
+    ///
+    /// \param texture Pointer to the texture to bind, can be null to use no texture
+    /// \param coordinateType Type of texture coordinates to use
+    ///
+    ////////////////////////////////////////////////////////////
+    static void bind(const Texture* texture, CoordinateType coordinateType = Normalized);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum texture size allowed
@@ -575,6 +586,15 @@ private :
 ///     ...
 /// }
 ///
+/// \endcode
+///
+/// Like sf::Shader that can be used as a raw OpenGL shader,
+/// sf::Texture can also be used directly as a raw texture for
+/// custom OpenGL geometry.
+/// \code
+/// sf::Texture::bind(&texture);
+/// ... render OpenGL geometry ...
+/// sf::Texture::bind(NULL);
 /// \endcode
 ///
 /// \see sf::Sprite, sf::Image, sf::RenderTexture

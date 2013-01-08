@@ -374,45 +374,6 @@ void Texture::update(const Window& window, unsigned int x, unsigned int y)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::bind(CoordinateType coordinateType) const
-{
-    // Bind the texture
-    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-
-    // Check if we need to define a special texture matrix
-    if (m_texture && ((coordinateType == Pixels) || m_pixelsFlipped))
-    {
-        GLfloat matrix[16] = {1.f, 0.f, 0.f, 0.f,
-                              0.f, 1.f, 0.f, 0.f,
-                              0.f, 0.f, 1.f, 0.f,
-                              0.f, 0.f, 0.f, 1.f};
-
-        // If non-normalized coordinates (= pixels) are requested, we need to
-        // setup scale factors that convert the range [0 .. size] to [0 .. 1]
-        if (coordinateType == Pixels)
-        {
-            matrix[0] = 1.f / m_actualSize.x;
-            matrix[5] = 1.f / m_actualSize.y;
-        }
-
-        // If pixels are flipped we must invert the Y axis
-        if (m_pixelsFlipped)
-        {
-            matrix[5] = -matrix[5];
-            matrix[13] = static_cast<float>(m_size.y / m_actualSize.y);
-        }
-
-        // Load the matrix
-        glCheck(glMatrixMode(GL_TEXTURE));
-        glCheck(glLoadMatrixf(matrix));
-
-        // Go back to model-view mode (sf::RenderTarget relies on it)
-        glCheck(glMatrixMode(GL_MODELVIEW));
-    }
-}
-
-
-////////////////////////////////////////////////////////////
 void Texture::setSmooth(bool smooth)
 {
     if (smooth != m_isSmooth)
@@ -467,6 +428,55 @@ void Texture::setRepeated(bool repeated)
 bool Texture::isRepeated() const
 {
     return m_isRepeated;
+}
+
+
+////////////////////////////////////////////////////////////
+void Texture::bind(const Texture* texture, CoordinateType coordinateType)
+{
+    ensureGlContext();
+
+    if (texture && texture->m_texture)
+    {
+        // Bind the texture
+        glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
+
+        // Check if we need to define a special texture matrix
+        if ((coordinateType == Pixels) || texture->m_pixelsFlipped)
+        {
+            GLfloat matrix[16] = {1.f, 0.f, 0.f, 0.f,
+                                  0.f, 1.f, 0.f, 0.f,
+                                  0.f, 0.f, 1.f, 0.f,
+                                  0.f, 0.f, 0.f, 1.f};
+
+            // If non-normalized coordinates (= pixels) are requested, we need to
+            // setup scale factors that convert the range [0 .. size] to [0 .. 1]
+            if (coordinateType == Pixels)
+            {
+                matrix[0] = 1.f / texture->m_actualSize.x;
+                matrix[5] = 1.f / texture->m_actualSize.y;
+            }
+
+            // If pixels are flipped we must invert the Y axis
+            if (texture->m_pixelsFlipped)
+            {
+                matrix[5] = -matrix[5];
+                matrix[13] = static_cast<float>(texture->m_size.y / texture->m_actualSize.y);
+            }
+
+            // Load the matrix
+            glCheck(glMatrixMode(GL_TEXTURE));
+            glCheck(glLoadMatrixf(matrix));
+
+            // Go back to model-view mode (sf::RenderTarget relies on it)
+            glCheck(glMatrixMode(GL_MODELVIEW));
+        }
+    }
+    else
+    {
+        // Bind no texture
+        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+    }
 }
 
 

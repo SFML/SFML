@@ -391,10 +391,7 @@ void RenderTarget::applyTransform(const Transform& transform)
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyTexture(const Texture* texture)
 {
-    if (texture)
-        texture->bind(Texture::Pixels);
-    else
-        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+    Texture::bind(texture, Texture::Pixels);
 
     m_cache.lastTextureId = texture ? texture->m_cacheId : 0;
 }
@@ -403,10 +400,7 @@ void RenderTarget::applyTexture(const Texture* texture)
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyShader(const Shader* shader)
 {
-    if (shader)
-        shader->bind();
-    else
-        glCheck(glUseProgramObjectARB(0));
+    Shader::bind(shader);
 }
 
 } // namespace sf
