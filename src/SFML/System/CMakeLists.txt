@@ -74,6 +74,9 @@ endif()
 if(LINUX)
     set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} rt)
 endif()
+if(WINDOWS)
+    set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} winmm)
+endif()
 
 # define the sfml-system target
 sfml_add_library(sfml-system

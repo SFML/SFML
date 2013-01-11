@@ -26,9 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Unix/SleepImpl.hpp>
-#include <pthread.h>
-#include <unistd.h>
-#include <sys/time.h>
+#include <errno.h>
+#include <time.h>
 
 
 namespace sf
@@ -38,38 +37,17 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void sleepImpl(Time time)
 {
-    // usleep is not reliable enough (it might block the
-    // whole process instead of just the current thread)
-    // so we must use pthread_cond_timedwait instead
-
-    // this implementation is inspired from Qt
-
     Uint64 usecs = time.asMicroseconds();
 
-    // get the current time
-    timeval tv;
-    gettimeofday(&tv, NULL);
-
-    // construct the time limit (current time + time to wait)
+    // construct the time to wait
     timespec ti;
-    ti.tv_nsec = (tv.tv_usec + (usecs % 1000000)) * 1000;
-    ti.tv_sec = tv.tv_sec + (usecs / 1000000) + (ti.tv_nsec / 1000000000);
-    ti.tv_nsec %= 1000000000;
-
-    // create a mutex and thread condition
-    pthread_mutex_t mutex;
-    pthread_mutex_init(&mutex, 0);
-    pthread_cond_t condition;
-    pthread_cond_init(&condition, 0);
+    ti.tv_nsec = (usecs % 1000000) * 1000;
+    ti.tv_sec = usecs / 1000000;
 
     // wait...
-    pthread_mutex_lock(&mutex);
-    pthread_cond_timedwait(&condition, &mutex, &ti);
-    pthread_mutex_unlock(&mutex);
-
-    // destroy the mutex and condition
-    pthread_cond_destroy(&condition);
-    pthread_mutex_destroy(&mutex);
+    while ((nanosleep(&ti, &ti) == -1) && (errno == EINTR))
+    {
+    }
 }
 
 } // namespace priv
