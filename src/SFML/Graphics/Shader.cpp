@@ -56,7 +56,7 @@ namespace
             if (size > 0)
             {
                 file.seekg(0, std::ios_base::beg);
-                buffer.resize(size);
+                buffer.resize(static_cast<std::size_t>(size));
                 file.read(&buffer[0], size);
             }
             buffer.push_back('\0');
