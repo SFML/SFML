@@ -68,9 +68,17 @@ set(SRC
 )
 
 # let CMake know about our additional graphics libraries paths (on Windows and OSX)
-if (WINDOWS OR MACOSX)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype")
+if(WINDOWS OR MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
+endif()
+
+if(WINDOWS)
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows/freetype")
+elseif(MACOSX)
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx/freetype2")
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
 endif()
 
 # find external libraries
@@ -80,9 +88,6 @@ find_package(GLEW REQUIRED)
 find_package(JPEG REQUIRED)
 if(LINUX)
     find_package(X11 REQUIRED)
-endif()
-if(MACOSX)
-    find_package(ZLIB REQUIRED)
 endif()
 
 # add include paths of external libraries
@@ -95,9 +100,6 @@ if(BUILD_SHARED_LIBS)
     set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${OPENGL_gl_LIBRARY})
     if(LINUX)
         set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
-    elseif(MACOSX)
-        # We use static version of freetype so we need to link against zlib.
-        set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${ZLIB_LIBRARIES})
     endif()
 endif()
 
