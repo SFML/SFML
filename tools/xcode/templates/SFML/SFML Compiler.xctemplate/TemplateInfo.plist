@@ -70,7 +70,7 @@ subject to the following restrictions:
                 <key>Units</key>
                 <dict>
                     <!-- Use GCC and libstdc++ -->
-                    <key>C++98 with GCC and libstdc++</key>
+                    <key>C++98 with GCC and libstdc++ and target 10.5</key>
                     <dict>
                         <key>Project</key>
                         <dict>
@@ -78,8 +78,21 @@ subject to the following restrictions:
                             <dict>
                                 <key>GCC_VERSION</key>
                                 <string>com.apple.compilers.llvmgcc42</string>
+
+                                <key>MACOSX_DEPLOYMENT_TARGET</key>
+                                <string>10.5</string>
                             </dict>
                         </dict>
+
+                        <key>Targets</key>
+                        <array>
+                            <dict>
+                                <key>Frameworks</key>
+                                <array>
+                                    <string>Foundation</string>
+                                </array>
+                            </dict>
+                        </array>
                     </dict>
                     
                     <!-- Use Clang and libstdc++ -->
@@ -230,9 +243,9 @@ subject to the following restrictions:
                     <key>GCC_PREPROCESSOR_DEFINITIONS</key>
                     <string>DEBUG=1 $(inherited)</string>
                     
-                    <!-- Don't compile all arch in debug -->
+                    <!-- ALWAYS compile for all arch. --> 
                     <key>ONLY_ACTIVE_ARCH</key>
-                    <string>YES</string>
+                    <string>NO</string>
                 </dict>
 
                 <key>Release</key>
@@ -240,7 +253,7 @@ subject to the following restrictions:
                     <key>COPY_PHASE_STRIP</key>
                     <string>YES</string>
 
-                    <!-- Compile all arch in release -->
+                    <!-- ALWAYS compile for all arch. -->
                     <key>ONLY_ACTIVE_ARCH</key>
                     <string>NO</string>
                 </dict>
