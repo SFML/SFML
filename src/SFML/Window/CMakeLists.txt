@@ -96,6 +96,8 @@ else() # MACOSX
         ${SRCROOT}/OSX/WindowImplDelegateProtocol.h
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.h
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.mm
+        ${SRCROOT}/OSX/DisplayImpl.hpp
+        ${SRCROOT}/OSX/DisplayImpl.cpp
     )
 endif()
 
