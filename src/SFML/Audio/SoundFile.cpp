@@ -53,7 +53,9 @@ SoundFile::SoundFile() :
 m_file        (NULL),
 m_sampleCount (0),
 m_channelCount(0),
-m_sampleRate  (0)
+m_sampleRate  (0),
+m_oggmax      (1.0),
+m_floatformat (false)
 {
 
 }
@@ -219,11 +221,33 @@ bool SoundFile::openWrite(const std::string& filename, unsigned int channelCount
 std::size_t SoundFile::read(Int16* data, std::size_t sampleCount)
 {
     if (m_file && data && sampleCount)
-        return static_cast<std::size_t>(sf_read_short(m_file, data, sampleCount));
+    {
+        if (m_floatformat)
+        {
+            Int16* d = data;
+
+            for(std::size_t i=0; i<sampleCount; i+=m_channelCount)
+            {
+                float raw[16];
+                if (sf_read_float(m_file, raw, m_channelCount) != m_channelCount)
+                    return i;
+
+                for (Int8 j=0; j< m_channelCount; j++)
+                {
+                    if (raw[j] > m_oggmax)
+                        m_oggmax = raw[j];
+
+                    *d  = (float)(raw[j] / m_oggmax) * 32767.0f;
+                    d++;
+                }
+            }
+        }
+        else
+            return static_cast<std::size_t>(sf_read_short(m_file, data, sampleCount));
+    }
     else
         return 0;
 }
-
 
 ////////////////////////////////////////////////////////////
 void SoundFile::write(const Int16* data, std::size_t sampleCount)
@@ -264,8 +288,8 @@ void SoundFile::initialize(SF_INFO fileInfo)
 
     // Enable scaling for Vorbis files (float samples)
     // @todo enable when it's faster (it currently has to iterate over the *whole* music)
-    //if (fileInfo.format & SF_FORMAT_VORBIS)
-    //    sf_command(m_file, SFC_SET_SCALE_FLOAT_INT_READ, NULL, SF_TRUE);
+    if (fileInfo.format & SF_FORMAT_VORBIS)
+        m_floatformat = true;
 }
 
 

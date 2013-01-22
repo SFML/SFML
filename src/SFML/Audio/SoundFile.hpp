@@ -214,6 +214,8 @@ private :
     std::size_t  m_sampleCount;  ///< Total number of samples in the file
     unsigned int m_channelCount; ///< Number of channels used by the sound
     unsigned int m_sampleRate;   ///< Number of samples per second
+    bool         m_floatformat;  ///< Float point sound format
+    float        m_oggmax;       ///< Dynamic ogg max level
 };
 
 } // namespace priv
