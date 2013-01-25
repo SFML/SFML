@@ -36,8 +36,6 @@
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <GL/gl.h>
-#include <SFML/Window/glext/wglext.h>
-#include <SFML/Window/glext/glext.h>
 #include <SFML/System/Err.hpp>
 #include <vector>
 
