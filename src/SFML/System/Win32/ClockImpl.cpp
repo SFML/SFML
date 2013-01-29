@@ -51,7 +51,7 @@ Time ClockImpl::getCurrentTime()
     HANDLE currentThread = GetCurrentThread();
     DWORD_PTR previousMask = SetThreadAffinityMask(currentThread, 1);
 
-	// Get the frequency of the performance counter
+    // Get the frequency of the performance counter
     // (it is constant across the program lifetime)
     static LARGE_INTEGER frequency = getFrequency();
 
