@@ -33,9 +33,9 @@
 #if defined(__GNUC__) && defined(__GLIBC__)
 # include <byteswap.h>
 #elif defined(_MSC_VER)
-# define bswap_64(n) _byteswap_uint64((uint64_t)n)
+# define bswap_64(n) _byteswap_uint64((sf::Uint64)n)
 #else
-# define bswap_64(n) (((uint64_t)ntohl(n)) << 32) + ntohl(n >> 32)
+# define bswap_64(n) (((sf::Uint64)ntohl(n)) << 32) + ntohl(n >> 32)
 #endif
 
 #if defined WINVER && WINVER >= 0x0602
