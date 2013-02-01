@@ -31,7 +31,7 @@
 #include <cstring>
 
 #ifndef htonll
-#ifdef _BIG_ENDIAN
+#if defined(_BIG_ENDIAN) || (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 #define htonll(x)   (x)
 #define ntohll(x)   (x)
 #else
