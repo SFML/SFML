@@ -44,8 +44,8 @@
 
 inline sf::Uint64 ntohll(sf::Uint64 x)
 {
-    static const int test = 1;
-    static const char sig = *(char*)&test;
+    static const sf::Uint16 test = 1;
+    static const sf::Uint8 sig = *(sf::Uint8*)&test;
 
     if (sig == 0) // Machine is big endian
         return x;
