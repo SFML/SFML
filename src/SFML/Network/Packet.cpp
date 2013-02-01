@@ -30,9 +30,15 @@
 #include <SFML/System/String.hpp>
 #include <cstring>
 
+#ifndef htonll
+#ifdef _BIG_ENDIAN
+#define htonll(x)   (x)
+#define ntohll(x)   (x)
+#else
 #define ntohll(x) (((Int64)(ntohl((Uint32)((x << 32) >> 32))) << 32) | ntohl(((Uint32)(x >> 32))))
 #define htonll(x) ntohll(x)
-
+#endif
+#endif
 
 namespace sf
 {
