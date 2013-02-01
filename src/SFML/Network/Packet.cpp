@@ -30,14 +30,31 @@
 #include <SFML/System/String.hpp>
 #include <cstring>
 
-#ifndef htonll
-#if defined(_BIG_ENDIAN) || (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-#define htonll(x)   (x)
-#define ntohll(x)   (x)
+#if defined(__GNUC__) && defined(__GLIBC__)
+# include <byteswap.h>
+#elif defined(_MSC_VER)
+# define bswap_64(n) _byteswap_uint64((uint64_t)n)
 #else
-#define ntohll(x) (((Int64)(ntohl((Uint32)((x << 32) >> 32))) << 32) | ntohl(((Uint32)(x >> 32))))
-#define htonll(x) ntohll(x)
+# define bswap_64(n) (((uint64_t)ntohl(n)) << 32) + ntohl(n >> 32)
 #endif
+
+#if defined WINVER && WINVER >= 0x0602
+# include <Winsock2.h>
+#else
+
+inline sf::Uint64 ntohll(sf::Uint64 x)
+{
+    static const int test = 1;
+    static const char sig = *(char*)&test;
+
+    if (sig == 0) // Machine is big endian
+        return x;
+    else
+        return bswap_64(x);
+}
+
+inline sf::Uint64 htonll(sf::Uint64 x) { return ntohll(x); }
+
 #endif
 
 namespace sf
