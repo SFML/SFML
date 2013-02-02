@@ -35,9 +35,10 @@ namespace
 {
     struct ConnectionCache
     {
-        ConnectionCache() : connected(false) {}
+        ConnectionCache() : connected(false), firstTime(true) {}
         bool connected;
         sf::Clock timer;
+        bool firstTime;
     };
 
     const sf::Time connectionRefreshDelay = sf::milliseconds(500);
@@ -55,9 +56,10 @@ bool JoystickImpl::isConnected(unsigned int index)
     // because of a strange (buggy?) behaviour of joyGetPosEx when joysticks
     // are just plugged/unplugged -- it takes really long and kills the app performances
     ConnectionCache& cache = connectionCache[index];
-    if (cache.timer.getElapsedTime() > connectionRefreshDelay)
+    if (cache.firstTime || (cache.timer.getElapsedTime() > connectionRefreshDelay))
     {
         cache.timer.restart();
+        cache.firstTime = false;
 
         JOYINFOEX joyInfo;
         joyInfo.dwSize = sizeof(joyInfo);
