@@ -53,7 +53,7 @@ public :
     /// \param data Buffer where to copy the read data
     /// \param size Desired number of bytes to read
     ///
-    /// \return The number of bytes actually read
+    /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
     virtual Int64 read(void* data, Int64 size) = 0;
