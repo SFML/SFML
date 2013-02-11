@@ -40,3 +40,12 @@ NSString* stringToNSString(std::string const& string)
     return str;
 }
 
+////////////////////////////////////////////////////////////
+NSString* sfStringToNSString(sf::String const& string)
+{
+    sf::Uint32 length = string.getSize() * sizeof(sf::Uint32);
+    const void* data = reinterpret_cast<const void*>(string.getData());
+    NSString* str = [[NSString alloc] initWithBytes:data length:length encoding:NSUTF32LittleEndianStringEncoding];
+
+    return str;
+}

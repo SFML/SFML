@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/String.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
@@ -37,8 +38,6 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <queue>
 #include <set>
-#include <string>
-
 
 namespace sf
 {
@@ -64,7 +63,7 @@ public :
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* create(VideoMode mode, const std::string& title, Uint32 style);
+    static WindowImpl* create(VideoMode mode, const String& title, Uint32 style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS
@@ -155,7 +154,7 @@ public :
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setTitle(const std::string& title) = 0;
+    virtual void setTitle(const String& title) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon

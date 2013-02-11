@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <string>
+#include <SFML/System/String.hpp>
 
 #import <Foundation/Foundation.h>
 
@@ -35,4 +36,4 @@
 ///
 ////////////////////////////////////////////////////////////
 NSString* stringToNSString(std::string const& string);
-
+NSString* sfStringToNSString(sf::String const& string);
