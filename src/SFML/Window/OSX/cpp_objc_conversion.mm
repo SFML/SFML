@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Utf.hpp>
 
+#import <Foundation/Foundation.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
 
 ////////////////////////////////////////////////////////////
@@ -45,7 +46,17 @@ NSString* sfStringToNSString(sf::String const& string)
 {
     sf::Uint32 length = string.getSize() * sizeof(sf::Uint32);
     const void* data = reinterpret_cast<const void*>(string.getData());
-    NSString* str = [[NSString alloc] initWithBytes:data length:length encoding:NSUTF32LittleEndianStringEncoding];
 
+    NSStringEncoding sfEncoding;
+    if (NSHostByteOrder() == NS_LittleEndian)
+    {
+        sfEncoding = NSUTF32LittleEndianStringEncoding;
+    }
+    else
+    {
+        sfEncoding = NSUTF32BigEndianStringEncoding;
+    }
+
+    NSString* str = [[NSString alloc] initWithBytes:data length:length encoding:sfEncoding];
     return str;
 }

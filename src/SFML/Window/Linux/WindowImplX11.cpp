@@ -322,9 +322,9 @@ void WindowImplX11::setTitle(const String& title)
     
     // Convert to UTF-8 encoding.
     std::basic_string<sf::Uint8> utf8Title;
-    std::wstring wideTitle = title.toWideString();    
-    sf::Utf8::fromWide(wideTitle.begin(), wideTitle.end(), std::back_inserter(utf8Title));
+    sf::Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
     
+    // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
     Atom wmName = XInternAtom(m_display, "_NET_WM_NAME", False);
     Atom useUtf8 = XInternAtom(m_display, "UTF8_STRING", False);
     XChangeProperty(m_display, m_window, wmName, useUtf8, 8,
