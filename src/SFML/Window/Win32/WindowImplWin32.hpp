@@ -30,8 +30,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+#include <SFML/System/String.hpp>
 #include <windows.h>
-#include <string>
 
 
 namespace sf
@@ -62,7 +62,7 @@ public :
     /// \param style Window style
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplWin32(VideoMode mode, const std::string& title, Uint32 style);
+    WindowImplWin32(VideoMode mode, const String& title, Uint32 style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -116,7 +116,7 @@ public :
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setTitle(const std::string& title);
+    virtual void setTitle(const String& title);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
