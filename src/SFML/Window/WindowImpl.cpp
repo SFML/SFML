@@ -55,7 +55,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::create(VideoMode mode, const std::string& title, Uint32 style)
+WindowImpl* WindowImpl::create(VideoMode mode, const String& title, Uint32 style)
 {
     return new WindowImplType(mode, title, style);
 }

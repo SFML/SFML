@@ -30,9 +30,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+#include <SFML/System/String.hpp>
 #include <X11/Xlib.h>
 #include <set>
-#include <string>
 
 
 namespace sf
@@ -63,7 +63,7 @@ public :
     /// \param style Window style (resizable, fixed, or fullscren)
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplX11(VideoMode mode, const std::string& title, unsigned long style);
+    WindowImplX11(VideoMode mode, const String& title, unsigned long style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -117,7 +117,7 @@ public :
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setTitle(const std::string& title);
+    virtual void setTitle(const String& title);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon

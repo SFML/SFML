@@ -35,6 +35,8 @@
 #include <X11/extensions/Xrandr.h>
 #include <sstream>
 #include <vector>
+#include <string>
+#include <iterator>
 
 
 ////////////////////////////////////////////////////////////
@@ -91,7 +93,7 @@ m_keyRepeat   (true)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(VideoMode mode, const std::string& title, unsigned long style) :
+WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style) :
 m_window      (0),
 m_inputMethod (NULL),
 m_inputContext(NULL),
@@ -313,9 +315,23 @@ void WindowImplX11::setSize(const Vector2u& size)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::setTitle(const std::string& title)
+void WindowImplX11::setTitle(const String& title)
 {
-    XStoreName(m_display, m_window, title.c_str());
+    // Bare X11 has no Unicode window title support.
+    // There is however an option to tell the window manager your unicode title via hints.
+    
+    // Convert to UTF-8 encoding.
+    std::basic_string<sf::Uint8> utf8Title;
+    sf::Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
+    
+    // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
+    Atom wmName = XInternAtom(m_display, "_NET_WM_NAME", False);
+    Atom useUtf8 = XInternAtom(m_display, "UTF8_STRING", False);
+    XChangeProperty(m_display, m_window, wmName, useUtf8, 8,
+                    PropModeReplace, utf8Title.c_str(), utf8Title.size());
+    
+    // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
+    XStoreName(m_display, m_window, title.toAnsiString().c_str());
 }
 
 
