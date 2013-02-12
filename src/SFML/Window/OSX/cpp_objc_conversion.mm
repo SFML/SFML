@@ -47,16 +47,12 @@ NSString* sfStringToNSString(sf::String const& string)
     sf::Uint32 length = string.getSize() * sizeof(sf::Uint32);
     const void* data = reinterpret_cast<const void*>(string.getData());
 
-    NSStringEncoding sfEncoding;
+    NSStringEncoding encoding;
     if (NSHostByteOrder() == NS_LittleEndian)
-    {
-        sfEncoding = NSUTF32LittleEndianStringEncoding;
-    }
+        encoding = NSUTF32LittleEndianStringEncoding;
     else
-    {
-        sfEncoding = NSUTF32BigEndianStringEncoding;
-    }
+        encoding = NSUTF32BigEndianStringEncoding;
 
-    NSString* str = [[NSString alloc] initWithBytes:data length:length encoding:sfEncoding];
+    NSString* str = [[NSString alloc] initWithBytes:data length:length encoding:encoding];
     return str;
 }
