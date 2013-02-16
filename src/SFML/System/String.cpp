@@ -247,6 +247,13 @@ std::size_t String::find(const String& str, std::size_t start) const
 
 
 ////////////////////////////////////////////////////////////
+String String::substr(std::size_t pos, std::size_t len) const
+{
+    return String(m_string.substr(pos, len));
+}
+
+
+////////////////////////////////////////////////////////////
 const Uint32* String::getData() const
 {
     return m_string.c_str();
