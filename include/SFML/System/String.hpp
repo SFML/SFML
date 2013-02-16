@@ -332,6 +332,22 @@ public :
     std::size_t find(const String& str, std::size_t start = 0) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Generate a substring
+    ///
+    /// This function returns a portion of the string that starts at character
+    /// position \a pos and spans \a len characters.
+    ///
+    /// \param pos Position of the first character to be copied as a substring
+    /// \param len Number of characters to include in the substring
+    /// (if the string is shorter, as many characters as possible are used).
+    /// A value of InvalidPos indicates all characters until the end of the string.
+    ///
+    /// \return A String object with a substring of this object
+    ///
+    ////////////////////////////////////////////////////////////
+    String substr(std::size_t pos = 0, std::size_t len = InvalidPos) const;
+    
+    ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the C-style array of characters
     ///
     /// This functions provides a read-only access to a
