@@ -1,4 +1,3 @@
-
 # some of these macros are inspired from the boost/cmake macros
 
 # this macro adds external dependencies to a static target,
@@ -16,7 +15,11 @@ macro(sfml_static_add_libraries target)
         foreach(lib ${ARGN})
             if(NOT ${lib} MATCHES ".*/.*")
                 string(REGEX REPLACE "(.*)/bin/.*\\.exe" "\\1" STANDARD_LIBS_PATH "${CMAKE_CXX_COMPILER}")
-                set(lib "${STANDARD_LIBS_PATH}/lib/lib${lib}.a")
+                if(COMPILER_GCC_W64)
+                    set(lib "${STANDARD_LIBS_PATH}/${GCC_MACHINE}/lib/lib${lib}.a")
+                else()
+                    set(lib "${STANDARD_LIBS_PATH}/lib/lib${lib}.a")
+                endif()
             endif()
             string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
             get_target_property(TARGET_FILENAME ${target} ${BUILD_TYPE}_LOCATION)
@@ -43,7 +46,7 @@ macro(sfml_static_add_libraries target)
             endif()
         endforeach()
         set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS ${LIBRARIES})
-   else()
+    else()
         # All other platforms
         target_link_libraries(${target} ${ARGN})
     endif()
