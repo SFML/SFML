@@ -30,6 +30,32 @@
 #include <SFML/System/String.hpp>
 #include <cstring>
 
+#if defined(__GNUC__) && defined(__GLIBC__)
+# include <byteswap.h>
+#elif defined(_MSC_VER)
+# define bswap_64(n) _byteswap_uint64((sf::Uint64)n)
+#else
+# define bswap_64(n) (((sf::Uint64)ntohl(n)) << 32) + ntohl(n >> 32)
+#endif
+
+#if defined WINVER && WINVER >= 0x0602
+# include <Winsock2.h>
+#else
+
+inline sf::Uint64 ntohll(sf::Uint64 x)
+{
+    static const sf::Uint16 test = 1;
+    static const sf::Uint8 sig = *(sf::Uint8*)&test;
+
+    if (sig == 0) // Machine is big endian
+        return x;
+    else
+        return bswap_64(x);
+}
+
+inline sf::Uint64 htonll(sf::Uint64 x) { return ntohll(x); }
+
+#endif
 
 namespace sf
 {
@@ -180,6 +206,32 @@ Packet& Packet::operator >>(Uint32& data)
     if (checkSize(sizeof(data)))
     {
         data = ntohl(*reinterpret_cast<const Uint32*>(&m_data[m_readPos]));
+        m_readPos += sizeof(data);
+    }
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Packet& Packet::operator >>(Int64& data)
+{
+    if (checkSize(sizeof(data)))
+    {
+        data = ntohll(*reinterpret_cast<const Int64*>(&m_data[m_readPos]));
+        m_readPos += sizeof(data);
+    }
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Packet& Packet::operator >>(Uint64& data)
+{
+    if (checkSize(sizeof(data)))
+    {
+        data = ntohll(*reinterpret_cast<const Uint64*>(&m_data[m_readPos]));
         m_readPos += sizeof(data);
     }
 
@@ -379,6 +431,24 @@ Packet& Packet::operator <<(Int32 data)
 Packet& Packet::operator <<(Uint32 data)
 {
     Uint32 toWrite = htonl(data);
+    append(&toWrite, sizeof(toWrite));
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Packet& Packet::operator <<(Int64 data)
+{
+    Int64 toWrite = htonll(data);
+    append(&toWrite, sizeof(toWrite));
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Packet& Packet::operator <<(Uint64 data)
+{
+    Uint64 toWrite = htonll(data);
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
