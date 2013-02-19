@@ -58,6 +58,11 @@ if(COMPILER_MSVC)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif()
 
+# define SFML_BIGENDIAN if running on a big endian system
+if(BIGENDIAN)
+    add_definitions(-DSFML_BIGENDIAN)
+endif()
+
 # define an option for choosing between static and dynamic C runtime (Windows only)
 if(WINDOWS)
     sfml_set_option(SFML_USE_STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")

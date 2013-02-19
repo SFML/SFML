@@ -33,6 +33,15 @@ else()
     return()
 endif()
 
+if(NOT WINDOWS)
+    # test endianness of the system
+    include(TestBigEndian)
+    test_big_endian(ENDIAN)
+    if(${ENDIAN})
+        set(BIGENDIAN 1)
+    endif()
+endif()
+
 # detect the compiler and its version
 # Note: on some platforms (OS X), CMAKE_COMPILER_IS_GNUCXX is true
 # even when CLANG is used, therefore the Clang test is done first
