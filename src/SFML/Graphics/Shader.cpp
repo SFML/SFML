@@ -465,6 +465,8 @@ bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCod
     if (m_shaderProgram)
         glCheck(glDeleteObjectARB(m_shaderProgram));
 
+    m_params.clear();
+
     // Create the program
     m_shaderProgram = glCreateProgramObjectARB();
 
@@ -566,15 +568,15 @@ void Shader::bindTextures() const
 ////////////////////////////////////////////////////////////
 GLint Shader::getParamLocation(const std::string& name)
 {
-    if(params.find(name) != params.end())
+    if(m_params.find(name) != m_params.end())
     {
-        return params[name];
+        return m_params[name];
     }
     else
     {
         GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
         if (location != -1)
-            params.insert(std::make_pair(name, location));
+            m_params.insert(std::make_pair(name, location));
 
         return location;
     }

@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <GL/glew.h>
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -484,8 +483,7 @@ public :
     static bool isAvailable();
 
 private :
-    std::map<std::string, GLint> params;
-    GLint getParamLocation(const std::string& name);
+    int getParamLocation(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
@@ -514,13 +512,15 @@ private :
     // Types
     ////////////////////////////////////////////////////////////
     typedef std::map<int, const Texture*> TextureTable;
+    typedef std::map<std::string, int> ParameterCache;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_shaderProgram;  ///< OpenGL identifier for the program
-    int          m_currentTexture; ///< Location of the current texture in the shader
-    TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
+    unsigned int   m_shaderProgram;  ///< OpenGL identifier for the program
+    int            m_currentTexture; ///< Location of the current texture in the shader
+    TextureTable   m_textures;       ///< Texture variables in the shader, mapped to their location
+    ParameterCache m_params;         ///< Uniforms in the shader, mapped to their location
 };
 
 } // namespace sf
