@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <GL/glew.h>
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -483,6 +484,8 @@ public :
     static bool isAvailable();
 
 private :
+    std::map<std::string, GLint> params;
+    GLint getParamLocation(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program

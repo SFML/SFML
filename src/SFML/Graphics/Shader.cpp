@@ -227,7 +227,7 @@ void Shader::setParameter(const std::string& name, float x)
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = getParamLocation(name);
         if (location != -1)
             glCheck(glUniform1fARB(location, x));
         else
@@ -251,7 +251,7 @@ void Shader::setParameter(const std::string& name, float x, float y)
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = getParamLocation(name);
         if (location != -1)
             glCheck(glUniform2fARB(location, x, y));
         else
@@ -275,7 +275,7 @@ void Shader::setParameter(const std::string& name, float x, float y, float z)
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = getParamLocation(name);
         if (location != -1)
             glCheck(glUniform3fARB(location, x, y, z));
         else
@@ -285,7 +285,6 @@ void Shader::setParameter(const std::string& name, float x, float y, float z)
         glCheck(glUseProgramObjectARB(program));
     }
 }
-
 
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, float x, float y, float z, float w)
@@ -299,7 +298,7 @@ void Shader::setParameter(const std::string& name, float x, float y, float z, fl
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = getParamLocation(name);
         if (location != -1)
             glCheck(glUniform4fARB(location, x, y, z, w));
         else
@@ -344,7 +343,7 @@ void Shader::setParameter(const std::string& name, const sf::Transform& transfor
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = getParamLocation(name);
         if (location != -1)
             glCheck(glUniformMatrix4fvARB(location, 1, GL_FALSE, transform.getMatrix()));
         else
@@ -364,7 +363,7 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        int location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        int location = getParamLocation(name);
         if (location == -1)
         {
             err() << "Texture \"" << name << "\" not found in shader" << std::endl;
@@ -402,7 +401,7 @@ void Shader::setParameter(const std::string& name, CurrentTextureType)
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        m_currentTexture = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        m_currentTexture = getParamLocation(name);
         if (m_currentTexture == -1)
             err() << "Texture \"" << name << "\" not found in shader" << std::endl;
     }
@@ -561,6 +560,24 @@ void Shader::bindTextures() const
 
     // Make sure that the texture unit which is left active is the number 0
     glCheck(glActiveTextureARB(GL_TEXTURE0_ARB));
+}
+
+
+////////////////////////////////////////////////////////////
+GLint Shader::getParamLocation(const std::string& name)
+{
+    if(params.find(name) != params.end())
+    {
+        return params[name];
+    }
+    else
+    {
+        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        if (location != -1)
+            params.insert(std::make_pair(name, location));
+
+        return location;
+    }
 }
 
 } // namespace sf
