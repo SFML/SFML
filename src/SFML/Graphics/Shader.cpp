@@ -227,7 +227,7 @@ void Shader::setParameter(const std::string& name, float x)
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniform1fARB(location, x));
         else
@@ -251,7 +251,7 @@ void Shader::setParameter(const std::string& name, float x, float y)
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniform2fARB(location, x, y));
         else
@@ -275,7 +275,7 @@ void Shader::setParameter(const std::string& name, float x, float y, float z)
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniform3fARB(location, x, y, z));
         else
@@ -298,7 +298,7 @@ void Shader::setParameter(const std::string& name, float x, float y, float z, fl
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniform4fARB(location, x, y, z, w));
         else
@@ -343,7 +343,7 @@ void Shader::setParameter(const std::string& name, const sf::Transform& transfor
         glCheck(glUseProgramObjectARB(m_shaderProgram));
 
         // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniformMatrix4fvARB(location, 1, GL_FALSE, transform.getMatrix()));
         else
@@ -363,7 +363,7 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        int location = getParamLocation(name);
+        int location = static_cast<GLint>(getParamLocation(name));
         if (location == -1)
         {
             err() << "Texture \"" << name << "\" not found in shader" << std::endl;
@@ -401,7 +401,7 @@ void Shader::setParameter(const std::string& name, CurrentTextureType)
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        m_currentTexture = getParamLocation(name);
+        m_currentTexture = static_cast<GLint>(getParamLocation(name));
         if (m_currentTexture == -1)
             err() << "Texture \"" << name << "\" not found in shader" << std::endl;
     }
@@ -566,15 +566,17 @@ void Shader::bindTextures() const
 
 
 ////////////////////////////////////////////////////////////
-GLint Shader::getParamLocation(const std::string& name)
+int Shader::getParamLocation(const std::string& name)
 {
-    if(m_params.find(name) != m_params.end())
+    std::map<std::string, int>::iterator it;
+
+    if((it = m_params.find(name)) != m_params.end())
     {
-        return m_params[name];
+        return it->second;
     }
     else
     {
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        int location = static_cast<int>(glGetUniformLocationARB(m_shaderProgram, name.c_str()));
         if (location != -1)
             m_params.insert(std::make_pair(name, location));
 
