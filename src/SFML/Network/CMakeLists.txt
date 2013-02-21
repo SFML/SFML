@@ -42,6 +42,8 @@ else()
     )
 endif()
 
+source_group("" FILES ${SRC})
+
 # build the list of external libraries to link
 set(NETWORK_EXT_LIBS)
 if(WINDOWS)

@@ -28,6 +28,7 @@ set(SRC
     ${SRCROOT}/SoundStream.cpp
     ${INCROOT}/SoundStream.hpp
 )
+source_group("" FILES ${SRC})
 
 # let CMake know about our additional audio libraries paths (on Windows and OSX)
 if(WINDOWS)

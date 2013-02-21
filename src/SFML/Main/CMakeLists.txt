@@ -1,6 +1,12 @@
 
+# sources
+set(SRC
+    ${PROJECT_SOURCE_DIR}/src/SFML/Main/SFML_Main.cpp
+)
+source_group("" FILES ${SRC})
+
 # define the sfml-main target
-add_library(sfml-main STATIC ${PROJECT_SOURCE_DIR}/src/SFML/Main/SFML_Main.cpp)
+add_library(sfml-main STATIC ${SRC})
 
 # set the debug suffix
 set_target_properties(sfml-main PROPERTIES DEBUG_POSTFIX -d)
