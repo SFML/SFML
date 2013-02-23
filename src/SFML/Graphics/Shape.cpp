@@ -43,6 +43,12 @@ namespace
             normal /= length;
         return normal;
     }
+
+    // Compute the dot product of two vectors
+    float dotProduct(const sf::Vector2f& p1, const sf::Vector2f& p2)
+    {
+        return p1.x * p2.x + p1.y * p2.y;
+    }
 }
 
 
@@ -258,9 +264,16 @@ void Shape::updateOutline()
         Vector2f n1 = computeNormal(p0, p1);
         Vector2f n2 = computeNormal(p1, p2);
 
+        // Make sure that the normals point towards the outside of the shape
+        // (this depends on the order in which the points were defined)
+        if (dotProduct(n1, m_vertices[0].position - p1) > 0)
+            n1 = -n1;
+        if (dotProduct(n2, m_vertices[0].position - p1) > 0)
+            n2 = -n2;
+
         // Combine them to get the extrusion direction
         float factor = 1.f + (n1.x * n2.x + n1.y * n2.y);
-        Vector2f normal = -(n1 + n2) / factor;
+        Vector2f normal = (n1 + n2) / factor;
 
         // Update the outline points
         m_outlineVertices[i * 2 + 0].position = p1;
