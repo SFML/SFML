@@ -205,6 +205,9 @@ macro(sfml_add_example target)
     # parse the arguments
     sfml_parse_arguments(THIS "SOURCES;DEPENDS" "GUI_APP" ${ARGN})
 
+    # set a source group for the source files
+    source_group("" FILES ${THIS_SOURCES})
+
     # create the target
     if(THIS_GUI_APP AND WINDOWS)
         add_executable(${target} WIN32 ${THIS_SOURCES})
