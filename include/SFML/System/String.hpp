@@ -346,7 +346,36 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     String substr(std::size_t pos = 0, std::size_t len = InvalidPos) const;
-    
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Replace a portion of the string
+    ///
+    /// This function replaces the portion of the string that starts at character
+    /// position \a pos and spans \a len characters by new content \a string.
+    ///
+    /// \param pos Position of the first character to be replaced
+    /// \param len Number of characters to replace
+    /// (if the string is shorter, as many characters as possible are replaced).
+    /// A value of InvalidPos indicates all characters until the end of the string.
+    /// \param str String whose value is copied
+    ///
+    ////////////////////////////////////////////////////////////
+    void replace(std::size_t pos, std::size_t len, const String& str);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Replace all occurrences of a substring with a replacement string
+    ///
+    /// This function returns a new string with all occurences of \a search
+    /// replaced with the given \a replacement value.
+    ///
+    /// \param search      The value being search for
+    /// \param replacement The replacement value that replaces found \a search values
+    ///
+    /// \return A string object with all occurences of \a search replaced
+    ///
+    ////////////////////////////////////////////////////////////
+    String replace(const String& search, const String& replacement) const;
+
     ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the C-style array of characters
     ///
