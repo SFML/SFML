@@ -254,6 +254,31 @@ String String::substr(std::size_t pos, std::size_t len) const
 
 
 ////////////////////////////////////////////////////////////
+void String::replace(std::size_t pos, std::size_t len, const String& str)
+{
+    m_string.replace(pos, len, str.m_string);
+}
+
+
+////////////////////////////////////////////////////////////
+String String::replace(const String& search, const String& replacement) const
+{
+    String str(*this);
+    std::size_t step = replacement.getSize();
+    std::size_t len  = search.getSize();
+    std::size_t pos  = str.find(search);
+    
+    // Replace each occurence of search
+    while (pos != InvalidPos)
+    {
+        str.replace(pos, len, replacement);
+        pos = str.find(search, pos + step);
+    }
+    return str;
+}
+
+
+////////////////////////////////////////////////////////////
 const Uint32* String::getData() const
 {
     return m_string.c_str();
