@@ -82,7 +82,7 @@ endif()
 # disable the rpath stuff
 set(CMAKE_SKIP_BUILD_RPATH TRUE)
 
-# Setup Mac OS X stuff
+# setup Mac OS X stuff
 if(MACOSX)
     # SFML_BUILD_FRAMEWORKS needs two things :
     # first, it's available only for release
@@ -122,6 +122,10 @@ if(LINUX)
         endif()
     endif()
 endif()
+
+# enable project folders
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
 # add the subdirectories
 add_subdirectory(src/SFML)

@@ -14,5 +14,8 @@ set_target_properties(sfml-main PROPERTIES DEBUG_POSTFIX -d)
 # insert the major version number in the output filename
 set_target_properties(sfml-main PROPERTIES OUTPUT_NAME "sfml-main")
 
+# set the target's folder (for IDEs that support it, e.g. Visual Studio)
+set_target_properties(sfml-main PROPERTIES FOLDER "SFML")
+
 # setup the install rule
 install(TARGETS sfml-main ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel)

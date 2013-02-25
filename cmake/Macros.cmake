@@ -139,6 +139,9 @@ macro(sfml_add_library target)
     set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR})
     set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 
+    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
+    set_target_properties(${target} PROPERTIES FOLDER "SFML")
+
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
     if(WINDOWS AND COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
         if(NOT GCC_VERSION VERSION_LESS "4")
@@ -146,7 +149,7 @@ macro(sfml_add_library target)
         endif()
     endif()
 
-    # If using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
+    # if using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
     # (exported ones are explicitely marked)
     if(NOT WINDOWS AND ((COMPILER_GCC AND NOT GCC_VERSION VERSION_LESS "4") OR (COMPILER_CLANG AND NOT CLANG_VERSION VERSION_LESS "3")))
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
@@ -218,6 +221,9 @@ macro(sfml_add_example target)
 
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
+
+    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
+    set_target_properties(${target} PROPERTIES FOLDER "Examples")
 
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
     if(WINDOWS AND COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
