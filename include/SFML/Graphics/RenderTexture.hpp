@@ -109,6 +109,29 @@ public :
     bool isSmooth() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable texture repeating
+    ///
+    /// This function is similar to Texture::setRepeated.
+    /// This parameter is disabled by default.
+    ///
+    /// \param repeated True to enable repeating, false to disable it
+    ///
+    /// \see isRepeated
+    ///
+    ////////////////////////////////////////////////////////////
+    void setRepeated(bool repeated);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether the texture is repeated or not
+    ///
+    /// \return True if texture is repeated
+    ///
+    /// \see setRepeated
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isRepeated() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Activate of deactivate the render-texture for rendering
     ///
     /// This function makes the render-texture's context current for
