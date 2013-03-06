@@ -55,10 +55,11 @@ public :
     ////////////////////////////////////////////////////////////
     enum Style
     {
-        Regular    = 0,      ///< Regular characters, no style
-        Bold       = 1 << 0, ///< Bold characters
-        Italic     = 1 << 1, ///< Italic characters
-        Underlined = 1 << 2  ///< Underlined characters
+        Regular       = 0,      ///< Regular characters, no style
+        Bold          = 1 << 0, ///< Bold characters
+        Italic        = 1 << 1, ///< Italic characters
+        Underlined    = 1 << 2, ///< Underlined characters
+        StrikeThrough = 1 << 3  ///< strike through characters
     };
 
     ////////////////////////////////////////////////////////////
@@ -308,8 +309,8 @@ private :
 /// It inherits all the functions from sf::Transformable:
 /// position, rotation, scale, origin. It also adds text-specific
 /// properties such as the font to use, the character size,
-/// the font style (bold, italic, underlined), the global color
-/// and the text to display of course.
+/// the font style (bold, italic, underlined or strike through), the
+/// global color and the text to display of course.
 /// It also provides convenience functions to calculate the
 /// graphical size of the text, or to get the global position
 /// of a given character.
@@ -335,7 +336,7 @@ private :
 /// // Declare and load a font
 /// sf::Font font;
 /// font.loadFromFile("arial.ttf");
-/// 
+///
 /// // Create a text
 /// sf::Text text("hello");
 /// text.setFont(font);
