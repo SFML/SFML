@@ -100,6 +100,20 @@ bool RenderTexture::isSmooth() const
 
 
 ////////////////////////////////////////////////////////////
+void RenderTexture::setRepeated(bool repeated)
+{
+    m_texture.setRepeated(repeated);
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderTexture::isRepeated() const
+{
+    return m_texture.isRepeated();
+}
+
+
+////////////////////////////////////////////////////////////
 bool RenderTexture::setActive(bool active)
 {
     return m_impl && m_impl->activate(active);
