@@ -817,18 +817,24 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Mouse entered
         case EnterNotify :
         {
-            Event event;
-            event.type = Event::MouseEntered;
-            pushEvent(event);
+            if (windowEvent.xcrossing.mode == NotifyNormal)
+            {
+                Event event;
+                event.type = Event::MouseEntered;
+                pushEvent(event);
+            }
             break;
         }
 
         // Mouse left
         case LeaveNotify :
         {
-            Event event;
-            event.type = Event::MouseLeft;
-            pushEvent(event);
+            if (windowEvent.xcrossing.mode == NotifyNormal)
+            {
+                Event event;
+                event.type = Event::MouseLeft;
+                pushEvent(event);
+            }
             break;
         }
     }
