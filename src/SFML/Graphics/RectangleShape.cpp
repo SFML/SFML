@@ -39,10 +39,23 @@ RectangleShape::RectangleShape(const Vector2f& size)
 
 
 ////////////////////////////////////////////////////////////
+RectangleShape::RectangleShape(const float width, const float height)
+{
+    this->setSize(Vector2f(width, height));
+}
+
+
+////////////////////////////////////////////////////////////
 void RectangleShape::setSize(const Vector2f& size)
 {
     m_size = size;
     update();
+}
+
+////////////////////////////////////////////////////////////
+void RectangleShape::setSize(const float width, const float height)
+{
+    this->setSize(Vector2f(width, height));
 }
 
 

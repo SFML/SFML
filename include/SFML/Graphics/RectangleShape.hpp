@@ -51,6 +51,15 @@ public :
     explicit RectangleShape(const Vector2f& size = Vector2f(0, 0));
 
     ////////////////////////////////////////////////////////////
+    /// \brief Alertnate constructor
+    ///
+    /// \param width  Width of the rectangle
+    /// \param height Height of the rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    RectangleShape(const float width, const float height);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the size of the rectangle
     ///
     /// \param size New size of the rectangle
@@ -59,6 +68,15 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void setSize(const Vector2f& size);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Alternate Way to set the size of the rectangle
+    ///
+    /// \param width  New width of the rectangle
+    /// \param height New height of the rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    void setSize(const float width, const float height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rectangle
