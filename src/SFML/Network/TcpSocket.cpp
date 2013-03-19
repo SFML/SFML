@@ -221,7 +221,7 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size)
     for (int length = 0; length < sizeToSend; length += sent)
     {
         // Send a chunk of data
-        sent = ::send(getHandle(), static_cast<const char*>(data) + length, sizeToSend - length, 0);
+        sent = ::send(getHandle(), static_cast<const char*>(data) + length, sizeToSend - length, MSG_NOSIGNAL);
 
         // Check for errors
         if (sent < 0)
