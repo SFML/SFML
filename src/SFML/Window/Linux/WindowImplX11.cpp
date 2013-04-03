@@ -283,7 +283,8 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    ::Window activeWin, root;
+    ::Window activeWin = m_window;
+    ::Window root = ::Window();
     int xCoordinate, yCoordinate;
     uint width, height, border_width, depth;
     ::Window *children;
@@ -291,8 +292,6 @@ Vector2i WindowImplX11::getPosition() const
     
     int x = 0;
     int y = 0;
-
-    activeWin = m_window;
     
     while (activeWin != root)
     {
