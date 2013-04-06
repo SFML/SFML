@@ -270,6 +270,7 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
                 WGL_CONTEXT_MAJOR_VERSION_ARB, m_settings.majorVersion,
                 WGL_CONTEXT_MINOR_VERSION_ARB, m_settings.minorVersion,
                 WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
+                WGL_CONTEXT_FLAGS_ARB, (m_settings.debug ? WGL_CONTEXT_DEBUG_BIT_ARB : 0),
                 0, 0
             };
             m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, attributes);

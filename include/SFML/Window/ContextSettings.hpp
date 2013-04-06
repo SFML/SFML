@@ -43,14 +43,16 @@ struct ContextSettings
     /// \param antialiasing Antialiasing level
     /// \param major        Major number of the context version
     /// \param minor        Minor number of the context version
+    /// \param debug        Context debug flag
     ///
     ////////////////////////////////////////////////////////////
-    explicit ContextSettings(unsigned int depth = 0, unsigned int stencil = 0, unsigned int antialiasing = 0, unsigned int major = 2, unsigned int minor = 0) :
+    explicit ContextSettings(unsigned int depth = 0, unsigned int stencil = 0, unsigned int antialiasing = 0, unsigned int major = 2, unsigned int minor = 0, bool debug = false) :
     depthBits        (depth),
     stencilBits      (stencil),
     antialiasingLevel(antialiasing),
     majorVersion     (major),
-    minorVersion     (minor)
+    minorVersion     (minor),
+    debug            (debug)
     {
     }
 
@@ -62,6 +64,7 @@ struct ContextSettings
     unsigned int antialiasingLevel; ///< Level of antialiasing
     unsigned int majorVersion;      ///< Major number of the context version to create
     unsigned int minorVersion;      ///< Minor number of the context version to create
+    bool debug;                     ///< Debug context flag
 };
 
 } // namespace sf
