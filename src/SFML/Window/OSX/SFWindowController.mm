@@ -292,17 +292,30 @@
 ////////////////////////////////////////////////////////////
 -(NSPoint)position
 {
-    NSPoint pos = [m_oglView frame].origin;
+    // First, get the top left corner of the view in its own base system
+    NSPoint const origin = [m_oglView frame].origin;
+    NSSize  const size = [m_oglView frame].size;
+    NSPoint const topLeftCornerOfView = NSMakePoint(origin.x, origin.y + size.height);
+    NSPoint const positionInView = [m_oglView convertPointToBase:topLeftCornerOfView];
+
+    // Then, convert it to window base system
+    NSPoint const positionInWindow = [m_oglView convertPoint:positionInView toView:nil];
+    // here nil denotes the window containing the view
+
+    // Next, convert it to the screen base system
+    NSPoint const positionInScreen = [[m_oglView window] convertBaseToScreen:positionInWindow];
     
-    // Flip for SFML window coordinate system.
-    pos.y = [self screenHeight] - pos.y;
+    // Finally, flip for SFML window coordinate system
+    // Don't forget to discard the title bar !
+    NSPoint const positionInSFML = NSMakePoint(positionInScreen.x,
+                                               ([self screenHeight] - [self titlebarHeight]) - positionInScreen.y);
     
-    return pos;
+    return positionInSFML;
 }
 
 
 ////////////////////////////////////////////////////////.
--(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
+-(void)setWindowPositionToX:(int)x Y:(int)y
 {
     NSPoint point = NSMakePoint(x, y);
     

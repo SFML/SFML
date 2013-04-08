@@ -89,38 +89,9 @@ endif()
 # disable the rpath stuff
 set(CMAKE_SKIP_BUILD_RPATH TRUE)
 
-# Setup Mac OS X stuff
+# setup Mac OS X stuff
 if(MACOSX)
-    # multi arch support - by default : i386 and x86_64
-    sfml_set_option(CMAKE_OSX_ARCHITECTURES "i386;x86_64" STRING "Build architectures for OSX")
-
-    # multi SDK support - by default we choose the older SDK available starting by 10.5 SDK
-    if(NOT OSX_CONFIG_HAS_BEEN_RUN_BEFORE)
-        if(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
-            # target 10.5 system
-            sfml_set_option(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk"
-                            STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value.")
-            sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" 
-                            STRING "Minimum OS X version to target for deployment (at runtime), newer APIs weak linked.")
-        elseif(EXISTS /Developer/SDKs/MacOSX10.6.sdk)
-            # target 10.6 system
-            sfml_set_option(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk"
-                            STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value.")
-            sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.6" 
-                            STRING "Minimum OS X version to target for deployment (at runtime), newer APIs weak linked.")
-        else()
-            # use default SDK.
-        endif()
-
-        # note : we use OSX_CONFIG_HAS_BEEN_RUN_BEFORE to be able to let the user set his/her custom settings
-        #        so we don't always have to FORCE the value of CMAKE_OSX_DEPLOYMENT_TARGET and CMAKE_OSX_SYSROOT
-        set(OSX_CONFIG_HAS_BEEN_RUN_BEFORE TRUE
-            CACHE BOOL "Don't edit this value; you should instead empty your cache."
-            FORCE)
-        mark_as_advanced(OSX_CONFIG_HAS_BEEN_RUN_BEFORE)
-    endif()
-
-    # BUILD_FRAMEWORKS needs two things :
+    # SFML_BUILD_FRAMEWORKS needs two things :
     # first, it's available only for release
     #    (because cmake currently doesn't allow specifying a custom framework name so XXX-d is not possible)
     # secondly, it works only with SFML_BUILD_SHARED_LIBS enabled
@@ -158,6 +129,10 @@ if(LINUX)
         endif()
     endif()
 endif()
+
+# enable project folders
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
 # add the subdirectories
 add_subdirectory(src/SFML)
@@ -204,7 +179,7 @@ else()
     # add the remaining headers
     add_custom_command(TARGET SFML 
                        POST_BUILD
-                       COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* SFML.framework/Versions/2.0.0/Headers)
+                       COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* SFML.framework/Versions/${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}/Headers)
 
     # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
     # NOTE : it's not required to link agains SFML.framework
@@ -232,6 +207,7 @@ if(WINDOWS)
     endif()
 elseif(MACOSX)
     install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
 
     if(SFML_INSTALL_XCODE4_TEMPLATES)
         install(DIRECTORY tools/xcode/templates/SFML DESTINATION /Library/Developer/Xcode/Templates)

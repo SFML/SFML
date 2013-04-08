@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -31,6 +31,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+#include <SFML/System/String.hpp>
 
 ////////////////////////////////////////////////////////////
 /// Predefine OBJC classes
@@ -79,7 +80,7 @@ public :
     /// \param style Window style (resizable, fixed, or fullscren)
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplCocoa(VideoMode mode, const std::string& title, unsigned long style);
+    WindowImplCocoa(VideoMode mode, const String& title, unsigned long style);
     
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -280,7 +281,7 @@ public :
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setTitle(const std::string& title);
+    virtual void setTitle(const String& title);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon

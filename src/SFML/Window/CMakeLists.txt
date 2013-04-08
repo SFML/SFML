@@ -33,11 +33,11 @@ set(SRC
     ${SRCROOT}/WindowImpl.hpp
     ${INCROOT}/WindowStyle.hpp
 )
+source_group("" FILES ${SRC})
 
 # add platform specific sources
 if(WINDOWS)
-    set(SRC
-        ${SRC}
+    set(PLATFORM_SRC
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
         ${SRCROOT}/Win32/InputImpl.cpp
@@ -48,9 +48,9 @@ if(WINDOWS)
         ${SRCROOT}/Win32/WindowImplWin32.cpp
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
+    source_group("windows" FILES ${PLATFORM_SRC})
 elseif(LINUX)
-    set(SRC
-        ${SRC}
+    set(PLATFORM_SRC
         ${SRCROOT}/Linux/Display.cpp
         ${SRCROOT}/Linux/Display.hpp
         ${SRCROOT}/Linux/GlxContext.cpp
@@ -63,9 +63,9 @@ elseif(LINUX)
         ${SRCROOT}/Linux/WindowImplX11.cpp
         ${SRCROOT}/Linux/WindowImplX11.hpp
     )
+    source_group("linux" FILES ${PLATFORM_SRC})
 else() # MACOSX
-    set(SRC
-        ${SRC}
+    set(PLATFORM_SRC
         ${SRCROOT}/OSX/cpp_objc_conversion.h
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
         ${SRCROOT}/OSX/cg_sf_conversion.hpp
@@ -97,6 +97,7 @@ else() # MACOSX
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.h
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.mm
     )
+    source_group("mac" FILES ${PLATFORM_SRC})
 endif()
 
 # find external libraries
@@ -122,6 +123,6 @@ endif()
 
 # define the sfml-window target
 sfml_add_library(sfml-window
-                 SOURCES ${SRC}
+                 SOURCES ${SRC} ${PLATFORM_SRC}
                  DEPENDS sfml-system
                  EXTERNAL_LIBS ${WINDOW_EXT_LIBS})

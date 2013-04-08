@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -30,6 +30,14 @@
 #include <SFML/Window/OSX/HIDInputManager.hpp>
 #include <SFML/Window/OSX/HIDJoystickManager.hpp>
 
+// Translation unit namespace
+namespace {
+    ////////////////////////////////////////////////////////////
+    bool JoystickButtonSortPredicate(IOHIDElementRef b1, IOHIDElementRef b2)
+    {
+        return IOHIDElementGetUsage(b1) < IOHIDElementGetUsage(b2);
+    }
+}
 
 namespace sf
 {
@@ -217,6 +225,10 @@ bool JoystickImpl::open(unsigned int index)
                 break;
         }
     }
+    
+    // Ensure that the buttons will be indexed in the same order as their
+    // HID Usage (assigned by manufacturer and/or a driver).
+    std::sort(m_buttons.begin(), m_buttons.end(), JoystickButtonSortPredicate);
     
     // Note : Joy::AxisPovX/Y are not supported (yet).
     // Maybe kIOHIDElementTypeInput_Axis is the corresponding type but I can't test.

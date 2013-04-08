@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -103,7 +103,7 @@ VideoMode convertCGModeToSFMode(CFDictionaryRef dictionary)
     CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.height));
     
     cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayBitsPerPixel);
-    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.BitsPerPixel));
+    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.bitsPerPixel));
     
     return sfmode;
 }
@@ -127,7 +127,7 @@ CFDictionaryRef convertSFModeToCGMode(VideoMode sfmode)
     // If sfmode is in VideoMode::GetFullscreenModes
     // then this should be an exact match (see NULL parameter doc).
     return CGDisplayBestModeForParameters(CGMainDisplayID(),
-                                          sfmode.BitsPerPixel,
+                                          sfmode.bitsPerPixel,
                                           sfmode.width,
                                           sfmode.height,
                                           NULL);

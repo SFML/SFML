@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -51,7 +51,7 @@ m_frameTimeLimit(Time::Zero)
 
 
 ////////////////////////////////////////////////////////////
-Window::Window(VideoMode mode, const std::string& title, Uint32 style, const ContextSettings& settings) :
+Window::Window(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
 m_impl          (NULL),
 m_context       (NULL),
 m_frameTimeLimit(Time::Zero)
@@ -78,7 +78,7 @@ Window::~Window()
 
 
 ////////////////////////////////////////////////////////////
-void Window::create(VideoMode mode, const std::string& title, Uint32 style, const ContextSettings& settings)
+void Window::create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings)
 {
     // Destroy the previous window implementation
     close();
@@ -236,7 +236,7 @@ void Window::setSize(const Vector2u size)
 
 
 ////////////////////////////////////////////////////////////
-void Window::setTitle(const std::string& title)
+void Window::setTitle(const String& title)
 {
     if (m_impl)
         m_impl->setTitle(title);

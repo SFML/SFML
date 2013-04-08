@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
 
 #import <SFML/Window/OSX/SFWindowController.h>
 #import <SFML/Window/OSX/SFViewController.h>
@@ -80,7 +81,7 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
     
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::WindowImplCocoa(VideoMode mode, 
-                                 const std::string& title, 
+                                 const String& title, 
                                  unsigned long style)
 : m_showCursor(true)
 {
@@ -91,7 +92,7 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
     retainPool();
     
     m_delegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
-    [m_delegate changeTitle:stringToNSString(title)];
+    [m_delegate changeTitle:sfStringToNSString(title)];
     [m_delegate setRequesterTo:this];
 }
 
@@ -362,9 +363,9 @@ void WindowImplCocoa::setSize(const Vector2u& size)
 
     
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::setTitle(const std::string& title)
+void WindowImplCocoa::setTitle(const String& title)
 {
-    [m_delegate changeTitle:stringToNSString(title)];
+    [m_delegate changeTitle:sfStringToNSString(title)];
 }
 
     

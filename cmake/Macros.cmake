@@ -1,4 +1,3 @@
-
 # some of these macros are inspired from the boost/cmake macros
 
 # this macro adds external dependencies to a static target,
@@ -16,7 +15,11 @@ macro(sfml_static_add_libraries target)
         foreach(lib ${ARGN})
             if(NOT ${lib} MATCHES ".*/.*")
                 string(REGEX REPLACE "(.*)/bin/.*\\.exe" "\\1" STANDARD_LIBS_PATH "${CMAKE_CXX_COMPILER}")
-                set(lib "${STANDARD_LIBS_PATH}/lib/lib${lib}.a")
+                if(COMPILER_GCC_W64)
+                    set(lib "${STANDARD_LIBS_PATH}/${GCC_MACHINE}/lib/lib${lib}.a")
+                else()
+                    set(lib "${STANDARD_LIBS_PATH}/lib/lib${lib}.a")
+                endif()
             endif()
             string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
             get_target_property(TARGET_FILENAME ${target} ${BUILD_TYPE}_LOCATION)
@@ -43,7 +46,7 @@ macro(sfml_static_add_libraries target)
             endif()
         endforeach()
         set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS ${LIBRARIES})
-   else()
+    else()
         # All other platforms
         target_link_libraries(${target} ${ARGN})
     endif()
@@ -136,6 +139,9 @@ macro(sfml_add_library target)
     set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR})
     set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 
+    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
+    set_target_properties(${target} PROPERTIES FOLDER "SFML")
+
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
     if(WINDOWS AND COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
         if(NOT GCC_VERSION VERSION_LESS "4")
@@ -143,7 +149,7 @@ macro(sfml_add_library target)
         endif()
     endif()
 
-    # If using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
+    # if using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
     # (exported ones are explicitely marked)
     if(NOT WINDOWS AND ((COMPILER_GCC AND NOT GCC_VERSION VERSION_LESS "4") OR (COMPILER_CLANG AND NOT CLANG_VERSION VERSION_LESS "3")))
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
@@ -202,6 +208,9 @@ macro(sfml_add_example target)
     # parse the arguments
     sfml_parse_arguments(THIS "SOURCES;DEPENDS" "GUI_APP" ${ARGN})
 
+    # set a source group for the source files
+    source_group("" FILES ${THIS_SOURCES})
+
     # create the target
     if(THIS_GUI_APP AND WINDOWS)
         add_executable(${target} WIN32 ${THIS_SOURCES})
@@ -212,6 +221,9 @@ macro(sfml_add_example target)
 
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
+
+    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
+    set_target_properties(${target} PROPERTIES FOLDER "Examples")
 
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
     if(WINDOWS AND COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
@@ -229,12 +241,16 @@ macro(sfml_add_example target)
     install(TARGETS ${target}
             RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
 
+    # install the example's source code
+    install(FILES ${THIS_SOURCES}
+            DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
+            COMPONENT examples)
+
     # install the example's resources as well
     set(EXAMPLE_RESOURCES "${CMAKE_SOURCE_DIR}/examples/${target}/resources")
     if(EXISTS ${EXAMPLE_RESOURCES})
         install(DIRECTORY ${EXAMPLE_RESOURCES}
                 DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
-                COMPONENT examples
-                PATTERN ".svn" EXCLUDE)
+                COMPONENT examples)
     endif()
 endmacro()

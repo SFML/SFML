@@ -34,11 +34,11 @@ set(SRC
     ${INCROOT}/Vector3.hpp
     ${INCROOT}/Vector3.inl
 )
+source_group("" FILES ${SRC})
 
 # add platform specific sources
 if(WINDOWS)
-    set(SRC
-        ${SRC}
+    set(PLATFORM_SRC
         ${SRCROOT}/Win32/ClockImpl.cpp
         ${SRCROOT}/Win32/ClockImpl.hpp
         ${SRCROOT}/Win32/MutexImpl.cpp
@@ -50,9 +50,9 @@ if(WINDOWS)
         ${SRCROOT}/Win32/ThreadLocalImpl.cpp
         ${SRCROOT}/Win32/ThreadLocalImpl.hpp
     )
+    source_group("windows" FILES ${PLATFORM_SRC})
 else()
-    set(SRC
-        ${SRC}
+    set(PLATFORM_SRC
         ${SRCROOT}/Unix/ClockImpl.cpp
         ${SRCROOT}/Unix/ClockImpl.hpp
         ${SRCROOT}/Unix/MutexImpl.cpp
@@ -64,6 +64,7 @@ else()
         ${SRCROOT}/Unix/ThreadLocalImpl.cpp
         ${SRCROOT}/Unix/ThreadLocalImpl.hpp
     )
+    source_group("unix" FILES ${PLATFORM_SRC})
 endif()
 
 # build the list of external libraries to link
@@ -77,5 +78,5 @@ endif()
 
 # define the sfml-system target
 sfml_add_library(sfml-system
-                 SOURCES ${SRC}
+                 SOURCES ${SRC} ${PLATFORM_SRC}
                  EXTERNAL_LIBS ${SYSTEM_EXT_LIBS})

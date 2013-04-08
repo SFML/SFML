@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -391,10 +391,7 @@ void RenderTarget::applyTransform(const Transform& transform)
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyTexture(const Texture* texture)
 {
-    if (texture)
-        texture->bind(Texture::Pixels);
-    else
-        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+    Texture::bind(texture, Texture::Pixels);
 
     m_cache.lastTextureId = texture ? texture->m_cacheId : 0;
 }
@@ -403,10 +400,7 @@ void RenderTarget::applyTexture(const Texture* texture)
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyShader(const Shader* shader)
 {
-    if (shader)
-        shader->bind();
-    else
-        glCheck(glUseProgramObjectARB(0));
+    Shader::bind(shader);
 }
 
 } // namespace sf

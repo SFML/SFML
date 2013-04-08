@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -107,6 +107,29 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool isSmooth() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable texture repeating
+    ///
+    /// This function is similar to Texture::setRepeated.
+    /// This parameter is disabled by default.
+    ///
+    /// \param repeated True to enable repeating, false to disable it
+    ///
+    /// \see isRepeated
+    ///
+    ////////////////////////////////////////////////////////////
+    void setRepeated(bool repeated);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether the texture is repeated or not
+    ///
+    /// \return True if texture is repeated
+    ///
+    /// \see setRepeated
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isRepeated() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate of deactivate the render-texture for rendering

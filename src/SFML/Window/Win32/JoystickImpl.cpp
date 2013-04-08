@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,9 +35,10 @@ namespace
 {
     struct ConnectionCache
     {
-        ConnectionCache() : connected(false) {}
+        ConnectionCache() : connected(false), firstTime(true) {}
         bool connected;
         sf::Clock timer;
+        bool firstTime;
     };
 
     const sf::Time connectionRefreshDelay = sf::milliseconds(500);
@@ -55,9 +56,10 @@ bool JoystickImpl::isConnected(unsigned int index)
     // because of a strange (buggy?) behaviour of joyGetPosEx when joysticks
     // are just plugged/unplugged -- it takes really long and kills the app performances
     ConnectionCache& cache = connectionCache[index];
-    if (cache.timer.getElapsedTime() > connectionRefreshDelay)
+    if (cache.firstTime || (cache.timer.getElapsedTime() > connectionRefreshDelay))
     {
         cache.timer.restart();
+        cache.firstTime = false;
 
         JOYINFOEX joyInfo;
         joyInfo.dwSize = sizeof(joyInfo);

@@ -1,4 +1,3 @@
-
 # detect the OS
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(WINDOWS 1)
@@ -47,6 +46,11 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
     set(COMPILER_GCC 1)
     execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "-dumpversion" OUTPUT_VARIABLE GCC_VERSION_OUTPUT)
     string(REGEX REPLACE "([0-9]+\\.[0-9]+).*" "\\1" GCC_VERSION "${GCC_VERSION_OUTPUT}")
+    execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "-dumpmachine" OUTPUT_VARIABLE GCC_MACHINE)
+    string(STRIP "${GCC_MACHINE}" GCC_MACHINE)
+    if(${GCC_MACHINE} MATCHES ".*w64.*")
+        set(COMPILER_GCC_W64 1)
+    endif()
 elseif(MSVC)
     set(COMPILER_MSVC 1)
     if(MSVC_VERSION EQUAL 1400)

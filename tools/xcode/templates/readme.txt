@@ -1,15 +1,49 @@
-XCODE 4 TEMPLATES
-=================
 
-These are templates to create easily a new SFML project in Xcode 4.
+XCODE 4 TEMPLATES FOR SFML 2
+============================
+
+These templates help you to easily create a new SFML 2 project for Xcode 4.
+
+
+
+Web Site
+--------
+
+You can find more resources and information on the official web site : http://www.sfml-dev.org/
+
+
+
+Author & License
+----------------
+
+The templates were written by Marco Antognini <antognini.marco@gmail.com> and are provided under the terms of the zlib/png license : http://opensource.org/licenses/zlib-license.php
+
+
 
 Features
 --------
 
- * You can choose between command line tool or bundle application.
+ * You can choose between command line tool or bundle application, the latter will contains all SFML dependancies so you can run your app on another computer without manually installing SFML.
  * You can choose between using SFML libraries as dylibs or frameworks.
- * You can add independently each SFML module you'll use into your project.
- * A basic example is included automatically into your project's code.
+ * You can choose your compiler and C++ standard library / dialect.
+ * You can choose with SFML module you want to use into your project.
+ * You automatically get a basic example to test SFML right away.
+
+
+
+Prerequisites
+-------------
+
+Before installing the template, make sure you have installed :
+
+ - Xcode 4 (the templates were tested with Xcode 4.5.2)
+ - SFML 2, either as framework or dylibs binaries
+
+There is one constraint on the installation of SFML : the frameworks needs to be installed in /Library/Frameworks and the dylibs into /usr/local/lib. You don't need both but make sure they are in the correct folder.
+
+You should also be familiar with Xcode 4. If needed checkout this document : http://developer.apple.com/library/ios/#documentation/ToolsLanguages/Conceptual/Xcode4UserGuide/000-About_Xcode/about.html
+
+
 
 Install
 -------
@@ -17,6 +51,9 @@ Install
 If you are building SFML from sources you can set CMake's INSTALL_XCODE4_TEMPLATES variable to TRUE to install the templates automatically. Otherwise proceed as follow :
   1. Make sure "~/Library/Developer/Xcode/Templates/" folder exists;
   2. Copy "SFML" folder into the above folder.
+The 'install.sh' script in the same directory as this readme does that for you.
+
+
 
 Usage
 -----
@@ -25,29 +62,47 @@ To use these templates follow these steps :
 
  1. open Xcode 4, 
  2. select "create a new Xcode project" from the "Welcome to Xcode" window or select menus File > New > New Project, 
- 3. select "SFML" subsection under "Mac OS X",
- 4. then select either "SFML Application" or "SFML Command Line Tool",
- 5. fill in the requested information and you're done.
+ 3. select "SFML" subsection under "Mac OS X" on the left,
+ 4. then select either "SFML App", if you want an application bundle, or "SFML CLT", if you prefer a classic Unix executable,
+ 5. fill in the requested information and you're ready to go !
+
+Note : some settings are marked as "[ADVANCED]" in the wizard. If you're not sure what they are, simply keep the default settings. If you get errors later you would probably want to explore their meaning.
+
+
 
 Question & Answer
 -----------------
 
-  * I would like to add/remove a module of SFML from my current project without creating a new one. How can I do that ?
+  * I want to use Xcode 3. Can I use these templates anyway ?
 
-    1. select your project from the project navigator panel,
+    No, Xcode 3 and 4 don't have the same template system. Therefore these templates won't work with a older version of Xcode.
+
+
+
+  * I'm still using SFML 1.6. Can I use these templates anyway ?
+
+    No, these templates were made for SFML 2 only.
+
+
+
+  * I would like to add/remove a module of SFML from my current project without creating a new project. How can I do that ?
+
+    1. select your project in the project navigator panel,
     2. select your project's target on the main area,
     3. go to the "Build Settings" tab,
     4. go down to the bottom,
-    5. set SFML_XXX variable, where XXX is the name of the module to add/remove to "$(SFML_LINK_PREFIX)sfml-XXX$(SFML_LINK_SUFFIX)" to add it or to "" (nothing) to remove it.
+    5. set SFML_XXX variable, where XXX is the name of the module to add/remove, to "$(SFML_LINK_PREFIX)sfml-XXX$(SFML_LINK_SUFFIX)" to add it or to "" (nothing) to remove it.
+
 
 
   * I changed my mind and would like to switch from dylibs to frameworks or vice versa. How can I do that ?
 
-    1. select your project from the project navigator panel,
+    1. select your project in the project navigator panel,
     2. select your project's target on the main area,
     3. go to the "Build Settings" tab,
     4. go down to the bottom,
-    5. set SFML_BINARY_TYPE either to "DYLIBS" or "FRAMEWORKS".
+    5. set SFML_BINARY_TYPE to either "DYLIBS" or "FRAMEWORKS".
+
 
 
   * How to use/don't use debug dylibs ?
@@ -58,7 +113,8 @@ Question & Answer
     2. select your project's target on the main area,
     3. go to the "Build Settings" tab,
     4. go down to the bottom,
-    5. set SFML_LINK_DYLIBS_SUFFIX_DEBUG to "-d" to use them or to "" (empty string) to use only release binary.
+    5. set SFML_LINK_DYLIBS_SUFFIX_DEBUG to "-d" to use them or to "" (empty string) to use only release binaries.
+
 
 
   * I want to use the static version of SFML. Is it possible ?
@@ -67,5 +123,12 @@ Question & Answer
 
     We strongly recommend you to use either dylibs or frameworks on Mac OS X. Please refer to Apple documentation for information about static vs shared libraries debate.
 
-    If you really need/want to use static libraries proceed as follow. First, set your project to use dylibs (see above Q & A). Then set SFML_LINK_DYLIBS_SUFFIX to "-s-d" in debug mode and to "-s" in release mode. Finally, remove the script automatically generated by the application template (see Build Phases tab).
+    If you really need/want to use static libraries proceed as follow. First, set your project to use dylibs (see above Q & A). Then set SFML_LINK_DYLIBS_SUFFIX to "-s-d" in debug mode and to "-s" in release mode. Finally, remove the script automatically generated by the template (see Build Phases tab).
+
+
+
+  * I get strange linker error about std::string and other STL types. What shall I do ?
+
+    This probably means you're compiling your project against a different implementation of the STL than SFML. When you created the project, you might have chosen the wrong C++ compiler & standard library. You can update your project's build settings; more specifically the Compiler for C/C++/Objective-C, the C++ language Dialect and the C++ Standard Library. You can find more information in the getting started tutorial for Mac OS X on the official web site.
+
 

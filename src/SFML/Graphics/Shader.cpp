@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -56,7 +56,7 @@ namespace
             if (size > 0)
             {
                 file.seekg(0, std::ios_base::beg);
-                buffer.resize(size);
+                buffer.resize(static_cast<std::size_t>(size));
                 file.read(&buffer[0], size);
             }
             buffer.push_back('\0');
@@ -410,21 +410,26 @@ void Shader::setParameter(const std::string& name, CurrentTextureType)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::bind() const
+void Shader::bind(const Shader* shader)
 {
-    if (m_shaderProgram)
-    {
-        ensureGlContext();
+    ensureGlContext();
 
+    if (shader && shader->m_shaderProgram)
+    {
         // Enable the program
-        glCheck(glUseProgramObjectARB(m_shaderProgram));
+        glCheck(glUseProgramObjectARB(shader->m_shaderProgram));
 
         // Bind the textures
-        bindTextures();
+        shader->bindTextures();
 
         // Bind the current texture
-        if (m_currentTexture != -1)
-            glCheck(glUniform1iARB(m_currentTexture, 0));
+        if (shader->m_currentTexture != -1)
+            glCheck(glUniform1iARB(shader->m_currentTexture, 0));
+    }
+    else
+    {
+        // Bind no shader
+        glCheck(glUseProgramObjectARB(0));
     }
 }
 
@@ -550,7 +555,7 @@ void Shader::bindTextures() const
         GLint index = static_cast<GLsizei>(i + 1);
         glCheck(glUniform1iARB(it->first, index));
         glCheck(glActiveTextureARB(GL_TEXTURE0_ARB + index));
-        it->second->bind();
+        Texture::bind(it->second);
         ++it;
     }
 

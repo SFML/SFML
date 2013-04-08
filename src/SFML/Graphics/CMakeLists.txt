@@ -7,7 +7,6 @@ set(SRC
     ${INCROOT}/BlendMode.hpp
     ${SRCROOT}/Color.cpp
     ${INCROOT}/Color.hpp
-    ${INCROOT}/Drawable.hpp
     ${INCROOT}/Export.hpp
     ${SRCROOT}/Font.cpp
     ${INCROOT}/Font.hpp
@@ -25,30 +24,12 @@ set(SRC
     ${INCROOT}/RenderStates.hpp
     ${SRCROOT}/RenderTexture.cpp
     ${INCROOT}/RenderTexture.hpp
-    ${SRCROOT}/RenderTextureImpl.cpp
-    ${SRCROOT}/RenderTextureImpl.hpp
-    ${SRCROOT}/RenderTextureImplFBO.cpp
-    ${SRCROOT}/RenderTextureImplFBO.hpp
-    ${SRCROOT}/RenderTextureImplDefault.cpp
-    ${SRCROOT}/RenderTextureImplDefault.hpp
     ${SRCROOT}/RenderTarget.cpp
     ${INCROOT}/RenderTarget.hpp
     ${SRCROOT}/RenderWindow.cpp
     ${INCROOT}/RenderWindow.hpp
     ${SRCROOT}/Shader.cpp
     ${INCROOT}/Shader.hpp
-    ${SRCROOT}/Shape.cpp
-    ${INCROOT}/Shape.hpp
-    ${SRCROOT}/CircleShape.cpp
-    ${INCROOT}/CircleShape.hpp
-    ${SRCROOT}/RectangleShape.cpp
-    ${INCROOT}/RectangleShape.hpp
-    ${SRCROOT}/ConvexShape.cpp
-    ${INCROOT}/ConvexShape.hpp
-    ${SRCROOT}/Sprite.cpp
-    ${INCROOT}/Sprite.hpp
-    ${SRCROOT}/Text.cpp
-    ${INCROOT}/Text.hpp
     ${SRCROOT}/Texture.cpp
     ${INCROOT}/Texture.hpp
     ${SRCROOT}/TextureSaver.cpp
@@ -61,16 +42,59 @@ set(SRC
     ${INCROOT}/View.hpp
     ${SRCROOT}/Vertex.cpp
     ${INCROOT}/Vertex.hpp
+)
+source_group("" FILES ${SRC})
+
+# drawables sources
+set(DRAWABLES_SRC
+    ${INCROOT}/Drawable.hpp
+    ${SRCROOT}/Shape.cpp
+    ${INCROOT}/Shape.hpp
+    ${SRCROOT}/CircleShape.cpp
+    ${INCROOT}/CircleShape.hpp
+    ${SRCROOT}/RectangleShape.cpp
+    ${INCROOT}/RectangleShape.hpp
+    ${SRCROOT}/ConvexShape.cpp
+    ${INCROOT}/ConvexShape.hpp
+    ${SRCROOT}/Sprite.cpp
+    ${INCROOT}/Sprite.hpp
+    ${SRCROOT}/Text.cpp
+    ${INCROOT}/Text.hpp
     ${SRCROOT}/VertexArray.cpp
     ${INCROOT}/VertexArray.hpp
+)
+source_group("drawables" FILES ${DRAWABLES_SRC})
+
+# render-texture sources
+set(RENDER_TEXTURE_SRC
+    ${SRCROOT}/RenderTextureImpl.cpp
+    ${SRCROOT}/RenderTextureImpl.hpp
+    ${SRCROOT}/RenderTextureImplFBO.cpp
+    ${SRCROOT}/RenderTextureImplFBO.hpp
+    ${SRCROOT}/RenderTextureImplDefault.cpp
+    ${SRCROOT}/RenderTextureImplDefault.hpp
+)
+source_group("render texture" FILES ${RENDER_TEXTURE_SRC})
+
+# stb_image sources
+set(STB_SRC
     ${SRCROOT}/stb_image/stb_image.h
     ${SRCROOT}/stb_image/stb_image_write.h
 )
+source_group("stb_image" FILES ${STB_SRC})
 
 # let CMake know about our additional graphics libraries paths (on Windows and OSX)
-if (WINDOWS OR MACOSX)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype")
+if(WINDOWS OR MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
+endif()
+
+if(WINDOWS)
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows/freetype")
+elseif(MACOSX)
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx/freetype2")
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
 endif()
 
 # find external libraries
@@ -80,9 +104,6 @@ find_package(GLEW REQUIRED)
 find_package(JPEG REQUIRED)
 if(LINUX)
     find_package(X11 REQUIRED)
-endif()
-if(MACOSX)
-    find_package(ZLIB REQUIRED)
 endif()
 
 # add include paths of external libraries
@@ -95,9 +116,6 @@ if(SFML_BUILD_SHARED_LIBS)
     set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${OPENGL_gl_LIBRARY})
     if(LINUX)
         set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
-    elseif(MACOSX)
-        # We use static version of freetype so we need to link against zlib.
-        set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${ZLIB_LIBRARIES})
     endif()
 endif()
 
@@ -112,6 +130,6 @@ endif()
 
 # define the sfml-graphics target
 sfml_add_library(sfml-graphics
-                 SOURCES ${SRC}
+                 SOURCES ${SRC} ${DRAWABLES_SRC} ${RENDER_TEXTURE_SRC} ${STB_SRC}
                  DEPENDS sfml-window sfml-system
                  EXTERNAL_LIBS ${GRAPHICS_EXT_LIBS})

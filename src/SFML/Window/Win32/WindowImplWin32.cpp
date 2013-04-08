@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -36,9 +36,8 @@
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <GL/gl.h>
-#include <SFML/Window/glext/wglext.h>
-#include <SFML/Window/glext/glext.h>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Utf.hpp>
 #include <vector>
 
 // MinGW lacks the definition of some Win32 constants
@@ -86,7 +85,7 @@ m_resizing        (false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode mode, const std::string& title, Uint32 style) :
+WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style) :
 m_handle          (NULL),
 m_callback        (0),
 m_cursor          (NULL),
@@ -134,14 +133,11 @@ m_resizing        (false)
     // Create the window
     if (hasUnicodeSupport())
     {
-        wchar_t wTitle[256];
-        int count = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, title.c_str(), static_cast<int>(title.size()), wTitle, sizeof(wTitle) / sizeof(*wTitle));
-        wTitle[count] = L'\0';
-        m_handle = CreateWindowW(classNameW, wTitle, win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
+        m_handle = CreateWindowW(classNameW, title.toWideString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
     }
     else
     {
-        m_handle = CreateWindowA(classNameA, title.c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
+        m_handle = CreateWindowA(classNameA, title.toAnsiString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
     }
 
     // Switch to fullscreen if requested
@@ -255,9 +251,16 @@ void WindowImplWin32::setSize(const Vector2u& size)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::setTitle(const std::string& title)
+void WindowImplWin32::setTitle(const String& title)
 {
-    SetWindowTextA(m_handle, title.c_str());
+    if (hasUnicodeSupport())
+    {
+        SetWindowTextW(m_handle, title.toWideString().c_str());
+    }
+    else
+    {
+        SetWindowTextA(m_handle, title.toAnsiString().c_str());
+    }
 }
 
 
@@ -879,3 +882,4 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
 } // namespace priv
 
 } // namespace sf
+

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/String.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
@@ -37,8 +38,6 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <queue>
 #include <set>
-#include <string>
-
 
 namespace sf
 {
@@ -64,7 +63,7 @@ public :
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* create(VideoMode mode, const std::string& title, Uint32 style);
+    static WindowImpl* create(VideoMode mode, const String& title, Uint32 style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS
@@ -155,7 +154,7 @@ public :
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setTitle(const std::string& title) = 0;
+    virtual void setTitle(const String& title) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
