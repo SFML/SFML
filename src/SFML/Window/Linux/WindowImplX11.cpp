@@ -159,7 +159,7 @@ m_keyRepeat   (true)
         {
             static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
             static const unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
-    
+
             //static const unsigned long MWM_DECOR_ALL         = 1 << 0;
             static const unsigned long MWM_DECOR_BORDER      = 1 << 1;
             static const unsigned long MWM_DECOR_RESIZEH     = 1 << 2;
@@ -174,7 +174,7 @@ m_keyRepeat   (true)
             static const unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
             static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
             static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
-    
+
             struct WMHints
             {
                 unsigned long Flags;
@@ -183,7 +183,7 @@ m_keyRepeat   (true)
                 long          InputMode;
                 unsigned long State;
             };
-    
+
             WMHints hints;
             hints.Flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
             hints.Decorations = 0;
@@ -319,17 +319,17 @@ void WindowImplX11::setTitle(const String& title)
 {
     // Bare X11 has no Unicode window title support.
     // There is however an option to tell the window manager your unicode title via hints.
-    
+
     // Convert to UTF-8 encoding.
     std::basic_string<sf::Uint8> utf8Title;
     sf::Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
-    
+
     // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
     Atom wmName = XInternAtom(m_display, "_NET_WM_NAME", False);
     Atom useUtf8 = XInternAtom(m_display, "UTF8_STRING", False);
     XChangeProperty(m_display, m_window, wmName, useUtf8, 8,
                     PropModeReplace, utf8Title.c_str(), utf8Title.size());
-    
+
     // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
     XStoreName(m_display, m_window, title.toAnsiString().c_str());
 }
@@ -584,7 +584,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // - If the state is "down", KeyReleased events must obviously be discarded
         // - KeyPress events are a little bit harder to handle: they depend on the KeyRepeatEnabled state,
         //   and we need to properly forward the first one
-        
+
         // Check if the key is currently down
         char keys[32];
         XQueryKeymap(m_display, keys);

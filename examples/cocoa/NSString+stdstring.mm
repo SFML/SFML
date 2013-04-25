@@ -32,9 +32,9 @@
 {
     std::string utf8;
     utf8.reserve(string.size() + 1);
-    
+
     sf::Utf8::fromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
-    
+
     NSString *str = [NSString stringWithCString:utf8.c_str() 
                                        encoding:NSUTF8StringEncoding];
     return str;
@@ -45,7 +45,7 @@
     // Not sure about the encoding to use. Using [self UTF8String] doesn't
     // work for characters like é or à.
     const char *cstr = [self cStringUsingEncoding:NSISOLatin1StringEncoding];
-    
+
     if (cstr != NULL)
     {
         std::string str(cstr);
@@ -61,7 +61,7 @@
 {
     char* data = (char *)string.data();
     unsigned size = string.size() * sizeof(wchar_t);
-    
+
     NSString *str = [[[NSString alloc] initWithBytes:data length:size
                                             encoding:NSUTF32LittleEndianStringEncoding] autorelease];
     return str;

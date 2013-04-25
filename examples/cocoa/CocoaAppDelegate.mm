@@ -42,15 +42,15 @@ struct SFMLmainWindow
         if (!logo.loadFromFile(resPath + "/logo.png")) {
             NSLog(@"Couldn't load the logo image");
         }
-        
+
         logo.setSmooth(true);
-        
+
         sprite.setTexture(logo, true);
         sf::FloatRect rect = sprite.getLocalBounds();
         sf::Vector2f size(rect.width, rect.height);
         sprite.setOrigin(size / 2.f);
         sprite.scale(0.3, 0.3);
-        
+
         unsigned int ww = renderWindow.getSize().x;
         unsigned int wh = renderWindow.getSize().y;
         sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
@@ -58,11 +58,11 @@ struct SFMLmainWindow
         if (!font.loadFromFile(resPath + "/sansation.ttf")) {
             NSLog(@"Couldn't load the font");
         }
-        
+
         text.setColor(sf::Color::White);
         text.setFont(font);
     }
-    
+
     sf::RenderWindow    renderWindow;
     sf::Font            font;
     sf::Text            text;
@@ -114,7 +114,7 @@ struct SFMLmainWindow
         self.mainWindow = new SFMLmainWindow(self.sfmlView);
         self.mainWindow->text.setString([self.textField.stringValue tostdwstring]);
         self.visible = YES;
-        
+
         // Launch the timer to periodically display our stuff into the Cocoa view.
         self.renderTimer = [NSTimer timerWithTimeInterval:1.f/60.f
                                                    target:self
@@ -133,7 +133,7 @@ struct SFMLmainWindow
          * while the second mode allows timer firing while he is using a slider
          * or a menu.
          */
-        
+
         self.initialized = YES;
     }
 }
@@ -142,15 +142,15 @@ struct SFMLmainWindow
 {
     [self.renderTimer invalidate];
     self.mainWindow->renderWindow.close();
-    
+
     self.window             = nil;
     self.sfmlView           = nil;
     self.textField          = nil;
-    
+
     delete (SFMLmainWindow *) self.mainWindow;
     self.mainWindow         = 0;
     self.renderTimer        = nil;
-    
+
     [super dealloc];
 }
 
@@ -166,18 +166,18 @@ struct SFMLmainWindow
     {
         self.mainWindow->sprite.scale(0.99f, 0.99f);
     }
-    
+
     // Clear the window, display some stuff and display it into our view.
-    
+
     self.mainWindow->renderWindow.clear(self.mainWindow->background);
-    
+
     if (self.visible)
     {
         self.mainWindow->renderWindow.draw(self.mainWindow->sprite);
     }
-    
+
     self.mainWindow->renderWindow.draw(self.mainWindow->text);
-    
+
     self.mainWindow->renderWindow.display();
 }
 

@@ -516,12 +516,12 @@ dl.reflist dd {
         font-weight: bold;
         vertical-align: top;
 }
-        
+
 .params .paramtype {
         font-style: italic;
         vertical-align: top;
 }       
-        
+
 .params .paramdir {
         font-family: "courier new",courier,monospace;
         vertical-align: top;
@@ -905,19 +905,19 @@ dl.section dd {
 	vertical-align: bottom;
 	border-collapse: separate;
 }
- 
+
 #projectlogo img
 { 
 	border: 0px none;
 }
- 
+
 #projectname
 {
 	font: 300% Tahoma, Arial,sans-serif;
 	margin: 0px;
 	padding: 2px 0px;
 }
-    
+
 #projectbrief
 {
 	font: 120% Tahoma, Arial,sans-serif;

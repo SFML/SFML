@@ -5,7 +5,7 @@
 SFML - Simple and Fast Multimedia Library
 Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
                         Laurent Gomila (laurent.gom@gmail.com), 
-                        
+
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
 
@@ -17,10 +17,10 @@ subject to the following restrictions:
    you must not claim that you wrote the original software.
    If you use this software in a product, an acknowledgment
    in the product documentation would be appreciated but is not required.
-   
+
 2. Altered source versions must be plainly marked as such,
    and must not be misrepresented as being the original software.
-   
+
 3. This notice may not be removed or altered from any source distribution.
 -->
 
@@ -75,7 +75,7 @@ subject to the following restrictions:
                 <key>Path</key>
                 <string>main.cpp</string>
             </dict>
-            
+
             <!-- RESOURCES -->
             <key>cute_image.jpg</key>
             <dict>
@@ -109,7 +109,7 @@ subject to the following restrictions:
                 <string>Resources</string>
             </dict>
         </dict>
-        
+
         <!--
              TARGET
          -->

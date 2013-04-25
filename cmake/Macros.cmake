@@ -171,7 +171,7 @@ macro(sfml_add_library target)
                                   MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
                                   MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
         endif()
-        
+
         # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
         set_target_properties(${target} PROPERTIES 
                               BUILD_WITH_INSTALL_RPATH 1 

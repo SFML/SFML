@@ -59,39 +59,39 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class PoolWrapper : NonCopyable {
 public :
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
     PoolWrapper();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Default destructor
     ///
     ////////////////////////////////////////////////////////////
     ~PoolWrapper();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Increment retain count and allocate memory if needed
     ///
     ////////////////////////////////////////////////////////////
     void retain();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Decrement retain count and releasing memory if needed
     ///
     ////////////////////////////////////////////////////////////
     void release();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Drain the pool
     ///
     ////////////////////////////////////////////////////////////
     void Drain();
-    
+
 private:
-    
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -133,12 +133,12 @@ void PoolWrapper::retain()
 {
     // Increase counter.
     ++m_count;
-    
+
     // Allocate pool if required.
     if (m_pool == 0) {
         m_pool = [[NSAutoreleasePool alloc] init];
     }
-    
+
 #ifdef SFML_DEBUG
     if (m_count <= 0) {
         sf::err() << "PoolWrapper::retain : m_count <= 0! " << std::endl;
@@ -152,12 +152,12 @@ void PoolWrapper::release()
 {
     // Decrease counter.
     --m_count;
-    
+
     // Drain pool if required.
     if (m_count == 0) {
         Drain();
     }
-    
+
 #ifdef SFML_DEBUG
     if (m_count < 0) {
         sf::err() << "PoolWrapper::release : m_count < 0! " << std::endl;
@@ -169,15 +169,15 @@ void PoolWrapper::Drain()
 {
     [m_pool drain];
     m_pool = 0;
-    
+
     if (m_count != 0) {
         m_pool = [[NSAutoreleasePool alloc] init];
     }
 }
 
-    
+
 } // namespace priv
-    
+
 } // namespace sf
 
 ////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ void retainPool(void)
     if (localPool == NULL) {
         localPool = new sf::priv::PoolWrapper();
     }
-    
+
     // Then retains!
     localPool->retain();
 }
@@ -213,10 +213,10 @@ void releasePool(void)
                   << std::endl;
     } else {
 #endif
-    
+
     // Releases, that's all.
     localPool->release();
-    
+
 #ifdef SFML_DEBUG
     }
 #endif

@@ -119,7 +119,7 @@ GlxContext::~GlxContext()
             glXMakeCurrent(m_display, None, NULL);
         glXDestroyContext(m_display, m_context);
     }
-    
+
     // Destroy the window if we own it
     if (m_window && m_ownsWindow)
     {

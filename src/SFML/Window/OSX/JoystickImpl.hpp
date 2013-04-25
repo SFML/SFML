@@ -96,11 +96,11 @@ private :
     typedef long                                          Location;
     typedef std::map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
     typedef std::vector<IOHIDElementRef>                  ButtonsVector;
-    
+
     AxisMap       m_axis;    ///< Axis (IOHIDElementRef) connected to the joystick
     ButtonsVector m_buttons; ///< Buttons (IOHIDElementRef) connected to the joystick
     unsigned int  m_index;   ///< SFML index
-    
+
     static Location m_locationIDs[sf::Joystick::Count]; ///< Global Joystick register
     /// For a corresponding SFML index, m_locationIDs is either some usb 
     /// location or 0 if there isn't currently a connected joystick device

@@ -74,7 +74,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
                             {
                                 // Convert to VideoMode
                                 VideoMode mode(sizes[j].width, sizes[j].height, depths[i]);
-            
+
                                 // Add it only if it is not already in the array
                                 if (std::find(modes.begin(), modes.end(), mode) == modes.end())
                                     modes.push_back(mode);
