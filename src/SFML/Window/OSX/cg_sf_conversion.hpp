@@ -65,7 +65,7 @@ VideoMode convertCGModeToSFMode(CFDictionaryRef dictionary);
 #else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode);
 #endif
-    
+
 ////////////////////////////////////////////////////////////
 /// \brief Convert a sf::VideoMode object into a Quartz video mode.
 ///
@@ -75,7 +75,7 @@ CFDictionaryRef convertSFModeToCGMode(VideoMode sfmode);
 #else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode);
 #endif
-    
+
 } // namespace priv
 } // namespace sf
 

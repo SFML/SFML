@@ -5,7 +5,7 @@
 SFML - Simple and Fast Multimedia Library
 Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
                         Laurent Gomila (laurent.gom@gmail.com), 
-                        
+
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
 
@@ -17,10 +17,10 @@ subject to the following restrictions:
    you must not claim that you wrote the original software.
    If you use this software in a product, an acknowledgment
    in the product documentation would be appreciated but is not required.
-   
+
 2. Altered source versions must be plainly marked as such,
    and must not be misrepresented as being the original software.
-   
+
 3. This notice may not be removed or altered from any source distribution.
 -->
 
@@ -41,7 +41,7 @@ subject to the following restrictions:
 
         <key>Kind</key>
         <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
-        
+
         <!--
              OPTIONS
          -->
@@ -84,7 +84,7 @@ subject to the following restrictions:
                             </dict>
                         </dict>
                     </dict>
-                    
+
                     <!-- Use dylibs -->
                     <key>Dylibs</key>
                     <dict>
@@ -100,7 +100,7 @@ subject to the following restrictions:
                             </dict>
                         </dict>
                     </dict>
-                    
+
                     <!-- Use dylibs (debug) -->
                     <key>Dylibs (debug)</key>
                     <dict>
@@ -130,7 +130,7 @@ subject to the following restrictions:
                     </dict>
                 </dict>
             </dict>
-            
+
             <!-- WINDOW MODULE -->
             <dict>
                 <key>Identifier</key>
@@ -162,7 +162,7 @@ subject to the following restrictions:
                             </dict>
                         </dict>
                     </dict>
-                    
+
                     <!-- WINDOW MODULE : NO -->
                     <key>false</key>
                     <dict>
@@ -215,7 +215,7 @@ subject to the following restrictions:
                             </dict>
                         </dict>
                     </dict>
-                    
+
                     <!-- GRAPHICS MODULE : NO -->
                     <key>false</key>
                     <dict>
@@ -262,7 +262,7 @@ subject to the following restrictions:
                             </dict>
                         </dict>
                     </dict>
-                    
+
                     <!-- AUDIO MODULE : NO -->
                     <key>false</key>
                     <dict>
@@ -309,7 +309,7 @@ subject to the following restrictions:
                             </dict>
                         </dict>
                     </dict>
-                    
+
                     <!-- NETWORK MODULE : NO -->
                     <key>false</key>
                     <dict>
@@ -325,7 +325,7 @@ subject to the following restrictions:
                 </dict>
             </dict>
         </array>
-        
+
         <!--
              SETTINGS
          -->
@@ -348,11 +348,11 @@ subject to the following restrictions:
 
                 <key>SFML_LINK_SUFFIX</key>
                 <string>$(SFML_LINK_$(SFML_BINARY_TYPE)_SUFFIX)</string>
-                    
+
                 <!-- SFML SYSTEM : always used -->
                 <key>SFML_SYSTEM</key>
                 <string>$(SFML_LINK_PREFIX)sfml-system$(SFML_LINK_SUFFIX)</string>
-                    
+
                 <!-- LINKER FLAGS -->
                 <key>OTHER_LDFLAGS</key>
                 <string>$(inherited) $(SFML_SYSTEM) $(SFML_WINDOW) $(SFML_GRAPHICS) $(SFML_AUDIO) $(SFML_NETWORK)</string>

@@ -44,14 +44,14 @@ SFContext::SFContext(SFContext* shared)
 {
     // Ask for a pool.
     retainPool();
-    
+
     // Create the context
     createContext(shared,
                   VideoMode::getDesktopMode().bitsPerPixel, 
                   ContextSettings(0, 0, 0));
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
                      const WindowImpl* owner, unsigned int bitsPerPixel)
@@ -59,10 +59,10 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
 {
     // Ask for a pool.
     retainPool();
-    
+
     // Create the context.
     createContext(shared, bitsPerPixel, settings);
-    
+
     // Apply context.
     WindowImplCocoa const * ownerCocoa = static_cast<WindowImplCocoa const *>(owner);
     ownerCocoa->applyContext(m_context);
@@ -76,13 +76,13 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
 {
     // Ensure the process is setup in order to create a valid window.
     WindowImplCocoa::setUpProcess();
-    
+
     // Ask for a pool.
     retainPool();
-    
+
     // Create the context.
     createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
-    
+
     // Create a dummy window/view pair (hidden) and asign it our context.
     m_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height)
                                            styleMask:NSBorderlessWindowMask
@@ -100,10 +100,10 @@ SFContext::~SFContext()
 {
     [m_context clearDrawable];
     [m_context release];
-    
+
     [m_view release]; // Might be nil but we don't care.
     [m_window release]; // Idem.
-    
+
     releasePool();
 }
 
@@ -130,9 +130,9 @@ void SFContext::setVerticalSyncEnabled(bool enabled)
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
     typedef int GLint;
 #endif
-    
+
     GLint swapInterval = enabled ? 1 : 0;
-    
+
     [m_context setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
 }
 
@@ -145,23 +145,23 @@ void SFContext::createContext(SFContext* shared,
     // Choose the attributs of OGL context.
     std::vector<NSOpenGLPixelFormatAttribute> attrs;
     attrs.reserve(20); // max attributs (estimation).
-    
+
     // These casts are safe. C++ is much more strict than Obj-C.
-    
+
     attrs.push_back(NSOpenGLPFAClosestPolicy);
     attrs.push_back(NSOpenGLPFADoubleBuffer);
-    
+
     if (bitsPerPixel > 24) {
         attrs.push_back(NSOpenGLPFAAlphaSize);
         attrs.push_back((NSOpenGLPixelFormatAttribute)8);
     }
-    
+
     attrs.push_back(NSOpenGLPFADepthSize);
     attrs.push_back((NSOpenGLPixelFormatAttribute)settings.depthBits);
-    
+
     attrs.push_back(NSOpenGLPFAStencilSize);
     attrs.push_back((NSOpenGLPixelFormatAttribute)settings.stencilBits);
-    
+
     if (settings.antialiasingLevel > 0) {
         /* 
          * Antialiasing techniques are described in the 
@@ -173,46 +173,46 @@ void SFContext::createContext(SFContext* shared,
          * The document also states that software renderers should be avoided
          * because antialisaing techniques are very slow with them.
          */
-        
+
         // Prefer multisampling over supersampling
         attrs.push_back(NSOpenGLPFAMultisample);
-        
+
         // Only one buffer is currently available
         attrs.push_back(NSOpenGLPFASampleBuffers);
         attrs.push_back((NSOpenGLPixelFormatAttribute)1);
-        
+
         // Antialiasing level
         attrs.push_back(NSOpenGLPFASamples);
         attrs.push_back((NSOpenGLPixelFormatAttribute)settings.antialiasingLevel);
-        
+
         // No software renderer - only hardware renderer
         attrs.push_back(NSOpenGLPFAAccelerated);
     }
-    
+
     attrs.push_back((NSOpenGLPixelFormatAttribute)0); // end of array
-    
+
     // Create the pixel pormat.
     NSOpenGLPixelFormat* pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:&attrs[0]];
-    
+
     if (pixFmt == nil) {
         sf::err() << "Error. Unable to find a suitable pixel format." << std::endl;
         return;
     }
-    
+
     // Use the shared context if one is given.
     NSOpenGLContext* sharedContext = shared != NULL ? shared->m_context : nil;
-    
+
     // Create the context.
     m_context = [[NSOpenGLContext alloc] initWithFormat:pixFmt
                                            shareContext:sharedContext];
-    
+
     if (m_context == nil) {
         sf::err() << "Error. Unable to create the context." << std::endl;
     }
-    
+
     // Free up.
     [pixFmt release];
-    
+
     // Save the settings. (OpenGL version is updated elsewhere.)
     m_settings = settings;
 }

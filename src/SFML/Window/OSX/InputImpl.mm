@@ -58,21 +58,21 @@ namespace priv
 SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
 {
     id nsHandle = (id)window.getSystemHandle();
-    
+
     // Get our SFOpenGLView from ...
     SFOpenGLView* view = nil;
-    
+
     if ([nsHandle isKindOfClass:[NSWindow class]]) {
         // If system handle is a window then from its content view.
         view = [nsHandle contentView];
-        
+
         // Subview doesn't match ?
         if (![view isKindOfClass:[SFOpenGLView class]]) {
             sf::err() << "The content view is not a valid SFOpenGLView" 
                       << std::endl;
             view = nil;
         }
-        
+
     } else if ([nsHandle isKindOfClass:[NSView class]]) {
         // If system handle is a view then from a subview of kind SFOpenGLView.
         NSArray* subviews = [nsHandle subviews];
@@ -82,13 +82,13 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
                 break;
             }
         }
-        
+
         // No matching subview ?
         if (view == nil) {
             sf::err() << "Cannot find a valid SFOpenGLView subview." << std::endl;
 
         }
-        
+
     } else {
         if (nsHandle != 0) {
             sf::err() << "The system handle is neither a <NSWindow*> nor <NSView*>"
@@ -99,7 +99,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
         }
 
     }
-    
+
     return view;
 }
 
@@ -132,15 +132,15 @@ Vector2i InputImpl::getMousePosition()
 Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 {
     SFOpenGLView* view = getSFOpenGLViewFromSFMLWindow(relativeTo);
-    
+
     // No view ?
     if (view == nil) {
         return Vector2i();
     }
-    
+
     // Use -cursorPositionFromEvent: with nil.
     NSPoint pos = [view cursorPositionFromEvent:nil];
-    
+
     return Vector2i(pos.x, pos.y);
 }
 
@@ -150,7 +150,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
 {
     // Here we don't need to reverse the coordinates.
     CGPoint pos = CGPointMake(position.x, position.y);
-    
+
     // Place the cursor.
     CGEventRef event = CGEventCreateMouseEvent(NULL, 
                                                kCGEventMouseMoved, 
@@ -166,12 +166,12 @@ void InputImpl::setMousePosition(const Vector2i& position)
 void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
 {
     SFOpenGLView* view = getSFOpenGLViewFromSFMLWindow(relativeTo);
-    
+
     // No view ?
     if (view == nil) {
         return;
     }
-    
+
     // Use -setCursorPositionToX:Y:.
     [view setCursorPositionToX:position.x Y:position.y];
 }

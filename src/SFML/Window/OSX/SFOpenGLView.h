@@ -55,7 +55,7 @@ namespace sf {
     NSTrackingRectTag             m_trackingTag;
     BOOL                          m_mouseIsIn;
     NSSize                        m_realSize;
-    
+
     /// 'modifiers' state
     BOOL m_rightShiftWasDown;
     BOOL m_leftShiftWasDown;

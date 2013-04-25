@@ -39,7 +39,7 @@
 {
     [NSApplication sharedApplication]; // Make sure NSApp exists
     NSEvent* event = nil;
-    
+
     while ((event = [NSApp nextEventMatchingMask:NSAnyEventMask
                                        untilDate:[NSDate distantPast]
                                           inMode:NSDefaultRunLoopMode
