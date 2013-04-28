@@ -44,20 +44,30 @@
         #define NOMINMAX
     #endif
 
-#elif defined(linux) || defined(__linux)
+#elif defined(__linux__)
 
     // Linux
     #define SFML_SYSTEM_LINUX
 
-#elif defined(__APPLE__) || defined(MACOSX) || defined(macintosh) || defined(Macintosh)
+#elif defined(__APPLE__) && defined(__MACH__)
 
     // MacOS
     #define SFML_SYSTEM_MACOS
 
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+#elif defined(__unix__)
 
-    // FreeBSD
-    #define SFML_SYSTEM_FREEBSD
+    #include <sys/param.h>
+
+    #if defined(BSD)
+
+        // BSD-based
+        #define SFML_SYSTEM_BSD
+
+    #else
+
+         #error This UNIX operating system is not supported by SFML library
+
+    #endif
 
 #else
 
@@ -65,7 +75,6 @@
     #error This operating system is not supported by SFML library
 
 #endif
-
 
 ////////////////////////////////////////////////////////////
 // Define a portable debug macro
