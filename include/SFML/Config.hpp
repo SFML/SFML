@@ -36,18 +36,14 @@
 ////////////////////////////////////////////////////////////
 // Identify the operating system
 ////////////////////////////////////////////////////////////
-#if defined(_WIN32) || defined(__WIN32__)
+#if defined(_WIN32)
 
     // Windows
     #define SFML_SYSTEM_WINDOWS
+    
     #ifndef NOMINMAX
         #define NOMINMAX
     #endif
-
-#elif defined(__linux__)
-
-    // Linux
-    #define SFML_SYSTEM_LINUX
 
 #elif defined(__APPLE__) && defined(__MACH__)
 
@@ -56,24 +52,26 @@
 
 #elif defined(__unix__)
 
-    #include <sys/param.h>
-
-    #if defined(BSD)
-
-        // BSD-based
-        #define SFML_SYSTEM_BSD
-
+    #if defined(__linux__)
+    
+        // Linux
+        #define SFML_SYSTEM_LINUX
+        
+    #elif defined(__FreeBSD__)
+    
+        // FreeBSD
+        #define SFML_SYSTEM_FREEBSD
+        
     #else
-
+    
          #error This UNIX operating system is not supported by SFML library
-
+         
     #endif
-
 #else
 
     // Unsupported system
     #error This operating system is not supported by SFML library
-
+    
 #endif
 
 ////////////////////////////////////////////////////////////
