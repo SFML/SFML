@@ -63,9 +63,12 @@ Shape::~Shape()
 ////////////////////////////////////////////////////////////
 void Shape::setTexture(const Texture* texture, bool resetRect)
 {
-    // Recompute the texture area if requested, or if there was no texture before
-    if (texture && (resetRect || !m_texture))
-        setTextureRect(IntRect(0, 0, texture->getSize().x, texture->getSize().y));
+    if (texture)
+    {
+        // Recompute the texture area if requested, or if there was no texture & rect before
+        if (resetRect || (!m_texture && (m_textureRect == sf::IntRect())))
+            setTextureRect(IntRect(0, 0, texture->getSize().x, texture->getSize().y));
+    }
 
     // Assign the new texture
     m_texture = texture;
