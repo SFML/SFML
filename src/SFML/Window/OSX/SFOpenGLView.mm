@@ -131,6 +131,9 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
                    selector:@selector(frameDidChange:)
                        name:NSViewFrameDidChangeNotification
                      object:self];
+
+        // Request high resolution on high DPI displays
+        [self  setWantsBestResolutionOpenGLSurface:YES];
     }
 
     return self;
