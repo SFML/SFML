@@ -181,6 +181,9 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
     // Clear the array (just in case)
     pixels.clear();
 
+    // Make sure that the stream's reading position is at the beginning
+    stream.seek(0);
+
     // Setup the stb_image callbacks
     stbi_io_callbacks callbacks;
     callbacks.read = &read;

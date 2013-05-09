@@ -194,6 +194,9 @@ bool Font::loadFromStream(InputStream& stream)
     }
     m_library = library;
 
+    // Make sure that the stream's reading position is at the beginning
+    stream.seek(0);
+
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
     FT_StreamRec* rec = new FT_StreamRec;
     std::memset(rec, 0, sizeof(*rec));

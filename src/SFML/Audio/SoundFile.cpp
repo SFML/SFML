@@ -164,6 +164,9 @@ bool SoundFile::openRead(InputStream& stream)
     m_stream.source = &stream;
     m_stream.size = stream.getSize();
 
+    // Make sure that the stream's reading position is at the beginning
+    stream.seek(0);
+
     // Open the sound file
     SF_INFO fileInfo;
     m_file = sf_open_virtual(&io, SFM_READ, &fileInfo, &m_stream);
