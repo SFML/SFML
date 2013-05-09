@@ -46,9 +46,12 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     virtual ~InputStream() {}
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream
+    ///
+    /// After reading, the stream's reading position must be
+    /// advanced by the amount of bytes read.
     ///
     /// \param data Buffer where to copy the read data
     /// \param size Desired number of bytes to read

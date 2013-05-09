@@ -76,6 +76,7 @@ namespace
         if (size > 0)
         {
             buffer.resize(static_cast<std::size_t>(size));
+            stream.seek(0);
             sf::Int64 read = stream.read(&buffer[0], size);
             success = (read == size);
         }
