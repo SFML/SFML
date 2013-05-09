@@ -184,9 +184,9 @@ private :
     ////////////////////////////////////////////////////////////
     struct Memory
     {
-        const char* DataStart;
-        const char* DataPtr;
-        sf_count_t  TotalSize;
+        const char* begin;
+        const char* current;
+        sf_count_t  size;
 
         static sf_count_t getLength(void* user);
         static sf_count_t read(void* ptr, sf_count_t count, void* user);
@@ -195,11 +195,14 @@ private :
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Callbacks for opening from stream
+    /// \brief Data and callbacks for opening from stream
     ///
     ////////////////////////////////////////////////////////////
     struct Stream
     {
+        InputStream* source;
+        Int64 size;
+
         static sf_count_t getLength(void* user);
         static sf_count_t read(void* ptr, sf_count_t count, void* user);
         static sf_count_t seek(sf_count_t offset, int whence, void* user);
@@ -211,6 +214,7 @@ private :
     ////////////////////////////////////////////////////////////
     SNDFILE*     m_file;         ///< File descriptor
     Memory       m_memory;       ///< Memory reading info
+    Stream       m_stream;       ///< Stream reading info
     std::size_t  m_sampleCount;  ///< Total number of samples in the file
     unsigned int m_channelCount; ///< Number of channels used by the sound
     unsigned int m_sampleRate;   ///< Number of samples per second
