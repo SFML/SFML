@@ -245,6 +245,14 @@ private :
     bool initialize(priv::SoundFile& file);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Reinitialize the internal buffer and sample vector
+    ///
+    /// \return Void
+    ///
+    ////////////////////////////////////////////////////////////
+    void unload();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples
     ///
     /// \param channelCount Number of channels
@@ -331,20 +339,20 @@ private :
 /// \code
 /// // Declare a new sound buffer
 /// sf::SoundBuffer buffer;
-/// 
+///
 /// // Load it from a file
 /// if (!buffer.loadFromFile("sound.wav"))
 /// {
 ///     // error...
 /// }
-/// 
+///
 /// // Create a sound source and bind it to the buffer
 /// sf::Sound sound1;
 /// sound1.setBuffer(buffer);
-/// 
+///
 /// // Play the sound
 /// sound1.play();
-/// 
+///
 /// // Create another sound source bound to the same buffer
 /// sf::Sound sound2;
 /// sound2.setBuffer(buffer);
