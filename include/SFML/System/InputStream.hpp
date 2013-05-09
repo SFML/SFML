@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -46,9 +46,12 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     virtual ~InputStream() {}
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream
+    ///
+    /// After reading, the stream's reading position must be
+    /// advanced by the amount of bytes read.
     ///
     /// \param data Buffer where to copy the read data
     /// \param size Desired number of bytes to read
