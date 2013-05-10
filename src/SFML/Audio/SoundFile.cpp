@@ -385,7 +385,8 @@ sf_count_t SoundFile::Stream::read(void* ptr, sf_count_t count, void* userData)
     Int64 position = stream->source->tell();
     if (position != -1)
     {
-        count = std::min(count, stream->size - position);
+        if (count > stream->size - position)
+            count = stream->size - position;
         return stream->source->read(reinterpret_cast<char*>(ptr), count);
     }
     else
