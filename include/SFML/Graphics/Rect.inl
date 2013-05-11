@@ -101,10 +101,10 @@ template <typename T>
 bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
 {
     // Compute the intersection boundaries
-    T interLeft   = std::max(left,         rectangle.left);
-    T interTop    = std::max(top,          rectangle.top);
-    T interRight  = std::min(left + width, rectangle.left + rectangle.width);
-    T interBottom = std::min(top + height, rectangle.top + rectangle.height);
+    T interLeft   = std::max(std::min(left, left + width), std::min(rectangle.left, rectangle.left + rectangle.width));
+    T interTop    = std::max(std::min(top,  top + height), std::min(rectangle.top,  rectangle.top + rectangle.height));
+    T interRight  = std::min(std::max(left, left + width), std::max(rectangle.left, rectangle.left + rectangle.width));
+    T interBottom = std::min(std::max(top,  top + height), std::max(rectangle.top,  rectangle.top + rectangle.height));
 
     // If the intersection is valid (positive non zero area), then there is an intersection
     if ((interLeft < interRight) && (interTop < interBottom))
