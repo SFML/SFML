@@ -283,27 +283,20 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
+	
     ::Window activeWin = m_window;
     ::Window root = ::Window();
     int xCoordinate, yCoordinate;
     uint width, height, border_width, depth;
     ::Window *children;
-    uint childcount;
     
     int x = 0;
     int y = 0;
     
-    while (activeWin != root)
-    {
-        if (XGetGeometry(m_display, activeWin, &root, &xCoordinate, &yCoordinate, &width, &height, &border_width, &depth))
-        {
-            x += xCoordinate;
-            y += yCoordinate;
-        }
-   
-        XQueryTree(m_display, activeWin, &root, &activeWin, &children, &childcount);
-    }
-    
+
+    XGetGeometry(m_display, activeWin, &root, &xCoordinate, &yCoordinate, &width, &height, &border_width, &depth);
+    XTranslateCoordinates(m_display, m_window, root, 0, 0, &x, &y, &activeWin);
+
     return Vector2i(x, y);
 }
 
