@@ -79,8 +79,8 @@ SoundBuffer::~SoundBuffer()
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::loadFromFile(const std::string& filename)
 {
-    if (m_buffer)
-        alCheck(alGenBuffers(1, &m_buffer));
+    for (SoundList::const_iterator it = m_sounds.begin(); it != m_sounds.end(); ++it)
+        (*it)->resetBuffer();
 
     priv::SoundFile file;
     if (file.openRead(filename))
@@ -93,9 +93,6 @@ bool SoundBuffer::loadFromFile(const std::string& filename)
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
-    if (m_buffer)
-        alCheck(alGenBuffers(1, &m_buffer));
-
     priv::SoundFile file;
     if (file.openRead(data, sizeInBytes))
         return initialize(file);
@@ -107,9 +104,6 @@ bool SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::loadFromStream(InputStream& stream)
 {
-    if (m_buffer)
-        alCheck(alGenBuffers(1, &m_buffer));
-
     priv::SoundFile file;
     if (file.openRead(stream))
         return initialize(file);
@@ -121,9 +115,6 @@ bool SoundBuffer::loadFromStream(InputStream& stream)
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::loadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate)
 {
-    if (m_buffer)
-        alCheck(alGenBuffers(1, &m_buffer));
-
     if (samples && sampleCount && channelCount && sampleRate)
     {
         // Copy the new audio samples
