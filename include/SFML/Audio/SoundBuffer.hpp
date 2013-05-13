@@ -159,13 +159,24 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Detach the buffer from the sounds that use it
     ///
-    /// Warning, this funstion should never be called when playing
+    /// Warning, this function should never be called when playing
     /// audio from this buffer.
     ///
     /// \see ~SoundBuffer
     ///
     ////////////////////////////////////////////////////////////
     void detachConnectedSounds() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Reatach the buffer to the sounds in m_sounds
+    ///
+    /// Warning, this function should never be called when playing
+    /// audio from this buffer.
+    ///
+    /// \see ~SoundBuffer
+    ///
+    ////////////////////////////////////////////////////////////
+    void reatachConnectedSounds() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the array of audio samples stored in the buffer

@@ -82,7 +82,11 @@ bool SoundBuffer::loadFromFile(const std::string& filename)
 
     priv::SoundFile file;
     if (file.openRead(filename))
-        return initialize(file);
+    {
+        int r = initialize(file);
+        reatachConnectedSounds();
+        return r;
+    }
     else
         return false;
 }
@@ -106,7 +110,11 @@ bool SoundBuffer::loadFromStream(InputStream& stream)
 
     priv::SoundFile file;
     if (file.openRead(stream))
-        return initialize(file);
+    {
+        int r = initialize(file);
+        reatachConnectedSounds();
+        return r;
+    }
     else
         return false;
 }
@@ -162,6 +170,14 @@ void SoundBuffer::detachConnectedSounds() const
 {
     for (SoundList::const_iterator it = m_sounds.begin(); it != m_sounds.end(); ++it)
         (*it)->resetBuffer();
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundBuffer::reatachConnectedSounds() const
+{
+    for (SoundList::const_iterator it = m_sounds.begin(); it != m_sounds.end(); ++it)
+        (*it)->setBuffer(*this);
 }
 
 
