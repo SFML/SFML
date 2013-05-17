@@ -73,7 +73,8 @@ m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_isCursorIn      (false),
 m_lastSize        (0, 0),
-m_resizing        (false)
+m_resizing        (false),
+m_surrogate       (0)
 {
     if (m_handle)
     {
@@ -93,7 +94,8 @@ m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_isCursorIn      (false),
 m_lastSize        (mode.width, mode.height),
-m_resizing        (false)
+m_resizing        (false),
+m_surrogate       (0)
 {
     // Register the window class at first call
     if (windowCount == 0)
@@ -510,10 +512,33 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             if (m_keyRepeatEnabled || ((lParam & (1 << 30)) == 0))
             {
-                Event event;
-                event.type = Event::TextEntered;
-                event.text.unicode = static_cast<Uint32>(wParam);
-                pushEvent(event);
+                // Get the code of the typed character
+                Uint32 character = static_cast<Uint32>(wParam);
+
+                // Check if it is the first part of a surrogate pair, or a regular character
+                if ((character >= 0xD800) && (character <= 0xDBFF))
+                {
+                    // First part of a surrogate pair: store it and wait for the second one
+                    m_surrogate = static_cast<Uint16>(character);
+                }
+                else
+                {
+
+                    // Check if it is the second part of a surrogate pair, or a regular character
+                    if ((character >= 0xDC00) && (character <= 0xDFFF))
+                    {
+                        // Convert the UTF-16 surrogate pair to a single UTF-32 value
+                        Uint16 utf16[] = {m_surrogate, static_cast<Uint16>(character)};
+                        sf::Utf16::toUtf32(utf16, utf16 + 2, &character);
+                        m_surrogate = 0;
+                    }
+
+                    // Send a TextEntered event
+                    Event event;
+                    event.type = Event::TextEntered;
+                    event.text.unicode = character;
+                    pushEvent(event);
+                }
             }
             break;
         }
