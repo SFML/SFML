@@ -285,9 +285,14 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    XWindowAttributes attributes;
-    XGetWindowAttributes(m_display, m_window, &attributes);
-    return Vector2i(attributes.x, attributes.y);
+    ::Window root, child;
+    int localX, localY, x, y;
+    unsigned int width, height, border, depth;
+
+    XGetGeometry(m_display, m_window, &root, &localX, &localY, &width, &height, &border, &depth);
+    XTranslateCoordinates(m_display, m_window, root, localX, localY, &x, &y, &child);
+
+    return Vector2i(x, y);
 }
 
 
