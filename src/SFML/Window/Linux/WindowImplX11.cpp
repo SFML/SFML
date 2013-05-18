@@ -72,7 +72,8 @@ m_isExternal  (true),
 m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
-m_keyRepeat   (true)
+m_keyRepeat   (true),
+m_previousSize(-1, -1)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -101,7 +102,8 @@ m_isExternal  (false),
 m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
-m_keyRepeat   (true)
+m_keyRepeat   (true),
+m_previousSize(-1, -1)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -647,11 +649,18 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Resize event
         case ConfigureNotify :
         {
-            Event event;
-            event.type        = Event::Resized;
-            event.size.width  = windowEvent.xconfigure.width;
-            event.size.height = windowEvent.xconfigure.height;
-            pushEvent(event);
+            // ConfigureNotify can be triggered for other reasons, check if the size has acutally changed
+            if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
+            {
+                Event event;
+                event.type        = Event::Resized;
+                event.size.width  = windowEvent.xconfigure.width;
+                event.size.height = windowEvent.xconfigure.height;
+                pushEvent(event);
+
+                m_previousSize.x = windowEvent.xconfigure.width;
+                m_previousSize.y = windowEvent.xconfigure.height;
+            }
             break;
         }
 
