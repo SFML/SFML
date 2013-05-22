@@ -610,9 +610,9 @@ void Shader::bindTextures() const
 ////////////////////////////////////////////////////////////
 int Shader::getParamLocation(const std::string& name)
 {
-    std::map<std::string, int>::iterator it;
+    ParameterCache::iterator it = m_params.lower_bound(name);
 
-    if((it = m_params.find(name)) != m_params.end())
+    if((it != m_params.end() && !(m_params.key_compare()(name, it->first)))
     {
         return it->second;
     }
@@ -620,7 +620,7 @@ int Shader::getParamLocation(const std::string& name)
     {
         int location = static_cast<int>(glGetUniformLocationARB(m_shaderProgram, name.c_str()));
         if (location != -1)
-            m_params.insert(std::make_pair(name, location));
+            m_params.insert(it, ParameterCache::value_type(name, location));
 
         return location;
     }
