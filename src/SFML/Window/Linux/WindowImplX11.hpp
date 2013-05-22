@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -223,6 +223,7 @@ private :
     Cursor     m_hiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
     bool       m_keyRepeat;           ///< Is the KeyRepeat feature enabled ?
     XEvent     m_lastKeyReleaseEvent; ///< Last key release event we received (needed for discarding repeated key events)
+    Vector2i   m_previousSize;        ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
 };
 
 } // namespace priv

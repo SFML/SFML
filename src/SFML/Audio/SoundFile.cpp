@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -126,9 +126,9 @@ bool SoundFile::openRead(const void* data, std::size_t sizeInBytes)
     io.tell        = &Memory::tell;
 
     // Initialize the memory data
-    m_memory.DataStart = static_cast<const char*>(data);
-    m_memory.DataPtr   = m_memory.DataStart;
-    m_memory.TotalSize = sizeInBytes;
+    m_memory.begin   = static_cast<const char*>(data);
+    m_memory.current = m_memory.begin;
+    m_memory.size    = sizeInBytes;
 
     // Open the sound file
     SF_INFO fileInfo;
@@ -160,9 +160,16 @@ bool SoundFile::openRead(InputStream& stream)
     io.seek        = &Stream::seek;
     io.tell        = &Stream::tell;
 
+    // Initialize the stream data
+    m_stream.source = &stream;
+    m_stream.size = stream.getSize();
+
+    // Make sure that the stream's reading position is at the beginning
+    stream.seek(0);
+
     // Open the sound file
     SF_INFO fileInfo;
-    m_file = sf_open_virtual(&io, SFM_READ, &fileInfo, &stream);
+    m_file = sf_open_virtual(&io, SFM_READ, &fileInfo, &m_stream);
     if (!m_file)
     {
         err() << "Failed to open sound file from stream (" << sf_strerror(m_file) << ")" << std::endl;
@@ -313,7 +320,7 @@ int SoundFile::getFormatFromFilename(const std::string& filename)
 sf_count_t SoundFile::Memory::getLength(void* user)
 {
     Memory* memory = static_cast<Memory*>(user);
-    return memory->TotalSize;
+    return memory->size;
 }
 
 
@@ -322,12 +329,12 @@ sf_count_t SoundFile::Memory::read(void* ptr, sf_count_t count, void* user)
 {
     Memory* memory = static_cast<Memory*>(user);
 
-    sf_count_t position = memory->DataPtr - memory->DataStart;
-    if (position + count >= memory->TotalSize)
-        count = memory->TotalSize - position;
+    sf_count_t position = tell(user);
+    if (position + count >= memory->size)
+        count = memory->size - position;
 
-    std::memcpy(ptr, memory->DataPtr, static_cast<std::size_t>(count));
-    memory->DataPtr += count;
+    std::memcpy(ptr, memory->current, static_cast<std::size_t>(count));
+    memory->current += count;
     return count;
 }
 
@@ -339,18 +346,18 @@ sf_count_t SoundFile::Memory::seek(sf_count_t offset, int whence, void* user)
     sf_count_t position = 0;
     switch (whence)
     {
-        case SEEK_SET : position = offset;                                       break;
-        case SEEK_CUR : position = memory->DataPtr - memory->DataStart + offset; break;
-        case SEEK_END : position = memory->TotalSize - offset;                   break;
-        default       : position = 0;                                            break;
+        case SEEK_SET : position = offset;                                   break;
+        case SEEK_CUR : position = memory->current - memory->begin + offset; break;
+        case SEEK_END : position = memory->size - offset;                    break;
+        default       : position = 0;                                        break;
     }
 
-    if (position >= memory->TotalSize)
-        position = memory->TotalSize - 1;
+    if (position >= memory->size)
+        position = memory->size - 1;
     else if (position < 0)
         position = 0;
 
-    memory->DataPtr = memory->DataStart + position;
+    memory->current = memory->begin + position;
     return position;
 }
 
@@ -359,36 +366,46 @@ sf_count_t SoundFile::Memory::seek(sf_count_t offset, int whence, void* user)
 sf_count_t SoundFile::Memory::tell(void* user)
 {
     Memory* memory = static_cast<Memory*>(user);
-    return memory->DataPtr - memory->DataStart;
+    return memory->current - memory->begin;
 }
 
 
 ////////////////////////////////////////////////////////////
 sf_count_t SoundFile::Stream::getLength(void* userData)
 {
-    sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
-    return stream->getSize();
+    Stream* stream = static_cast<Stream*>(userData);
+    return stream->size;
 }
 
 
 ////////////////////////////////////////////////////////////
 sf_count_t SoundFile::Stream::read(void* ptr, sf_count_t count, void* userData)
 {
-    sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
-    return stream->read(reinterpret_cast<char*>(ptr), count);
+    Stream* stream = static_cast<Stream*>(userData);
+    Int64 position = stream->source->tell();
+    if (position != -1)
+    {
+        if (count > stream->size - position)
+            count = stream->size - position;
+        return stream->source->read(reinterpret_cast<char*>(ptr), count);
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 sf_count_t SoundFile::Stream::seek(sf_count_t offset, int whence, void* userData)
 {
-    sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
+    Stream* stream = static_cast<Stream*>(userData);
     switch (whence)
     {
-        case SEEK_SET : return stream->seek(offset);
-        case SEEK_CUR : return stream->seek(stream->tell() + offset);
-        case SEEK_END : return stream->seek(stream->getSize() - offset);
-        default       : return stream->seek(0);
+        case SEEK_SET : return stream->source->seek(offset);
+        case SEEK_CUR : return stream->source->seek(stream->source->tell() + offset);
+        case SEEK_END : return stream->source->seek(stream->size - offset);
+        default       : return stream->source->seek(0);
     }
 }
 
@@ -396,8 +413,8 @@ sf_count_t SoundFile::Stream::seek(sf_count_t offset, int whence, void* userData
 ////////////////////////////////////////////////////////////
 sf_count_t SoundFile::Stream::tell(void* userData)
 {
-    sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
-    return stream->tell();
+    Stream* stream = static_cast<Stream*>(userData);
+    return stream->source->tell();
 }
 
 } // namespace priv

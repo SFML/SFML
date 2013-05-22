@@ -20,14 +20,14 @@ You can also get the current development version from the git repository (https:
 Install
 -------
 
-Follow the instructions of the tutorials (http://www.sfml-dev.org/tutorials/), there is one for each platform/compiler that SFML supports.
+Follow the instructions of the tutorials (http://www.sfml-dev.org/tutorials.php), there is one for each platform/compiler that SFML supports.
 
 Learn
 -----
 
 There are several places to learn SFML:
-* The official tutorials (http://www.sfml-dev.org/tutorials/)
-* The online API documentation (http://www.sfml-dev.org/documentation/)
+* The official tutorials (http://www.sfml-dev.org/tutorials.php)
+* The online API documentation (http://www.sfml-dev.org/documentation.php)
 * The community wiki (https://github.com/LaurentGomila/SFML/wiki/)
 * The community forum (http://en.sfml-dev.org/forums/) (or http://fr.sfml-dev.org/forums/ for french people)
 

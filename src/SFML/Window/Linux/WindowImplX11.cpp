@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -72,7 +72,8 @@ m_isExternal  (true),
 m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
-m_keyRepeat   (true)
+m_keyRepeat   (true),
+m_previousSize(-1, -1)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -101,7 +102,8 @@ m_isExternal  (false),
 m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
-m_keyRepeat   (true)
+m_keyRepeat   (true),
+m_previousSize(-1, -1)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -283,9 +285,14 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    XWindowAttributes attributes;
-    XGetWindowAttributes(m_display, m_window, &attributes);
-    return Vector2i(attributes.x, attributes.y);
+    ::Window root, child;
+    int localX, localY, x, y;
+    unsigned int width, height, border, depth;
+
+    XGetGeometry(m_display, m_window, &root, &localX, &localY, &width, &height, &border, &depth);
+    XTranslateCoordinates(m_display, m_window, root, localX, localY, &x, &y, &child);
+
+    return Vector2i(x, y);
 }
 
 
@@ -647,11 +654,18 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Resize event
         case ConfigureNotify :
         {
-            Event event;
-            event.type        = Event::Resized;
-            event.size.width  = windowEvent.xconfigure.width;
-            event.size.height = windowEvent.xconfigure.height;
-            pushEvent(event);
+            // ConfigureNotify can be triggered for other reasons, check if the size has acutally changed
+            if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
+            {
+                Event event;
+                event.type        = Event::Resized;
+                event.size.width  = windowEvent.xconfigure.width;
+                event.size.height = windowEvent.xconfigure.height;
+                pushEvent(event);
+
+                m_previousSize.x = windowEvent.xconfigure.width;
+                m_previousSize.y = windowEvent.xconfigure.height;
+            }
             break;
         }
 
@@ -817,18 +831,24 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Mouse entered
         case EnterNotify :
         {
-            Event event;
-            event.type = Event::MouseEntered;
-            pushEvent(event);
+            if (windowEvent.xcrossing.mode == NotifyNormal)
+            {
+                Event event;
+                event.type = Event::MouseEntered;
+                pushEvent(event);
+            }
             break;
         }
 
         // Mouse left
         case LeaveNotify :
         {
-            Event event;
-            event.type = Event::MouseLeft;
-            pushEvent(event);
+            if (windowEvent.xcrossing.mode == NotifyNormal)
+            {
+                Event event;
+                event.type = Event::MouseLeft;
+                pushEvent(event);
+            }
             break;
         }
     }

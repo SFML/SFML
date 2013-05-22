@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -77,7 +77,7 @@ public :
     /// \param characterSize  Base size of characters, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    explicit Text(const String& string, const Font& font, unsigned int characterSize = 30);
+    Text(const String& string, const Font& font, unsigned int characterSize = 30);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's string
@@ -337,8 +337,7 @@ private :
 /// font.loadFromFile("arial.ttf");
 /// 
 /// // Create a text
-/// sf::Text text("hello");
-/// text.setFont(font);
+/// sf::Text text("hello", font);
 /// text.setCharacterSize(30);
 /// text.setStyle(sf::Text::Bold);
 /// text.setColor(sf::Color::Red);

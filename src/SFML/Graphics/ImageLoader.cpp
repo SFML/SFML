@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -180,6 +180,9 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
 {
     // Clear the array (just in case)
     pixels.clear();
+
+    // Make sure that the stream's reading position is at the beginning
+    stream.seek(0);
 
     // Setup the stb_image callbacks
     stbi_io_callbacks callbacks;

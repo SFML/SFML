@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -76,6 +76,7 @@ namespace
         if (size > 0)
         {
             buffer.resize(static_cast<std::size_t>(size));
+            stream.seek(0);
             sf::Int64 read = stream.read(&buffer[0], size);
             success = (read == size);
         }
