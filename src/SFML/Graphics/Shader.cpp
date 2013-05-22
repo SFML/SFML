@@ -610,7 +610,7 @@ void Shader::bindTextures() const
 ////////////////////////////////////////////////////////////
 int Shader::getParamLocation(const std::string& name)
 {
-    ParameterCache::iterator it = m_params.lower_bound(name);
+    ParameterCache::const_iterator it = m_params.lower_bound(name);
 
     if((it != m_params.end() && !(m_params.key_compare()(name, it->first)))
     {
