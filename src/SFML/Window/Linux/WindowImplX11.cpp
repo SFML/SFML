@@ -33,6 +33,8 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
+#include <unistd.h>
+#include <cstring>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -49,12 +51,29 @@ namespace
                                                 PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
                                                 EnterWindowMask | LeaveWindowMask;
 
-    /// Filter the events received by windows
-    /// (only allow those matching a specific window)
+    // Filter the events received by windows (only allow those matching a specific window)
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
     {
         // Just check if the event matches the window
         return event->xany.window == reinterpret_cast< ::Window >(userData);
+    }
+
+    // Find the name of the current executable
+    const char* findExecutableName()
+    {
+        char buffer[512];
+        std::size_t length = readlink("/proc/self/exe", buffer, sizeof(buffer));
+        if ((length > 0) && (length < sizeof(buffer)))
+        {
+            // Remove the path to keep the executable name only
+            buffer[length] = '\0';
+            return basename(buffer);
+        }
+        else
+        {
+            // Fallback name
+            return "sfml";
+        }
     }
 }
 
@@ -179,32 +198,32 @@ m_previousSize(-1, -1)
     
             struct WMHints
             {
-                unsigned long Flags;
-                unsigned long Functions;
-                unsigned long Decorations;
-                long          InputMode;
-                unsigned long State;
+                unsigned long flags;
+                unsigned long functions;
+                unsigned long decorations;
+                long          inputMode;
+                unsigned long state;
             };
     
             WMHints hints;
-            hints.Flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-            hints.Decorations = 0;
-            hints.Functions   = 0;
+            hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+            hints.decorations = 0;
+            hints.functions   = 0;
 
             if (style & Style::Titlebar)
             {
-                hints.Decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
-                hints.Functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
+                hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
+                hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
             }
             if (style & Style::Resize)
             {
-                hints.Decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
-                hints.Functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
+                hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
+                hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
             }
             if (style & Style::Close)
             {
-                hints.Decorations |= 0;
-                hints.Functions   |= MWM_FUNC_CLOSE;
+                hints.decorations |= 0;
+                hints.functions   |= MWM_FUNC_CLOSE;
             }
 
             const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&hints);
@@ -214,13 +233,22 @@ m_previousSize(-1, -1)
         // This is a hack to force some windows managers to disable resizing
         if (!(style & Style::Resize))
         {
-            XSizeHints sizeHints;
-            sizeHints.flags      = PMinSize | PMaxSize;
-            sizeHints.min_width  = sizeHints.max_width  = width;
-            sizeHints.min_height = sizeHints.max_height = height;
-            XSetWMNormalHints(m_display, m_window, &sizeHints); 
+            XSizeHints* sizeHints = XAllocSizeHints();
+            sizeHints->flags = PMinSize | PMaxSize;
+            sizeHints->min_width = sizeHints->max_width  = width;
+            sizeHints->min_height = sizeHints->max_height = height;
+            XSetWMNormalHints(m_display, m_window, sizeHints); 
+            XFree(sizeHints);
         }
     }
+ 
+    // Set the window's WM class (this can be used by window managers)
+    const char* windowClass = findExecutableName();
+    XClassHint* classHint = XAllocClassHint();
+    classHint->res_name = const_cast<char*>(windowClass);
+    classHint->res_class = const_cast<char*>(windowClass);
+    XSetClassHint(m_display, m_window, classHint);
+    XFree(classHint);
 
     // Do some common initializations
     initialize();
