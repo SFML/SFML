@@ -63,7 +63,9 @@ namespace sf {
     BOOL m_leftCommandWasDown;
     BOOL m_rightAlternateWasDown;
     BOOL m_leftAlternateWasDown;
-    BOOL m_controlWasDown;
+    BOOL m_rightControlWasDown;
+    BOOL m_leftControlWasDown;
+    
 }
 
 ////////////////////////////////////////////////////////////

@@ -30,6 +30,8 @@
 #include <SFML/Window/OSX/HIDInputManager.hpp> // For localizedKeys and nonLocalizedKeys
 #include <SFML/System/Err.hpp>
 
+#include <cstdio>
+
 #import <SFML/Window/OSX/SFOpenGLView.h>
 
 ////////////////////////////////////////////////////////////
@@ -38,8 +40,8 @@
 /// As I don't have the right control keycode I cannot implement left-right
 /// recognition for this key.
 #warning Missing keycode for right control key.
-/// #define NSRightControlKeyMask       0x...
-/// #define NSLeftControlKeyMask        0x40101
+#define NSRightControlKeyMask       0x42000
+#define NSLeftControlKeyMask        0x40001
 ///
 ////////////////////////////////////////////////////////////
 #define NSRightShiftKeyMask         0x020004
@@ -639,7 +641,8 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     BOOL leftCommandIsDown      = NO;
     BOOL rightAlternateIsDown   = NO;
     BOOL leftAlternateIsDown    = NO;
-    BOOL controlIsDown          = NO;
+    BOOL rightControlIsDown   = NO;
+    BOOL leftControlIsDown    = NO;
     
     // Shift keys.
     if (modifiers & NSShiftKeyMask) { // At least one shift key is down.
@@ -901,11 +904,100 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
             m_requester->keyUp(key);
         }
     }
-    
+
+    // Control keys.
+    if (modifiers & NSControlKeyMask) { // At least one control key is down.
+        // Clean up modifiers to keep only 'Control' bits.
+        NSUInteger control = keepOnlyMaskFromData(modifiers, NSRightControlKeyMask | NSLeftControlKeyMask);
+        
+        // Only right Control is down ?
+        if (control == NSRightControlKeyMask) {
+            
+            rightControlIsDown = YES;
+            
+            if (m_leftControlWasDown) {
+                // left control released
+                leftControlIsDown  = NO;
+                
+                key.code = sf::Keyboard::LControl;
+                m_requester->keyUp(key);
+            }
+            
+            if (!m_rightControlWasDown) {
+                // right control pressed
+                
+                key.code = sf::Keyboard::RControl;
+                m_requester->keyDown(key);
+            }
+        }
+        
+        // Only left Control is down ?
+        if (control == NSLeftControlKeyMask) {
+            
+            leftControlIsDown = YES;
+            
+            if (m_rightControlWasDown) {
+                // right control released
+                rightControlIsDown = NO;
+                
+                key.code = sf::Keyboard::RControl;
+                m_requester->keyUp(key);
+            }
+            
+            if (!m_leftControlWasDown) {
+                // left control pressed
+                
+                key.code = sf::Keyboard::LControl;
+                m_requester->keyDown(key);
+            }
+        }
+        
+        // Or are they both down ?
+        if (control == (NSRightControlKeyMask | NSLeftControlKeyMask)) {
+            
+            rightControlIsDown = YES;
+            leftControlIsDown = YES;
+            
+            if (!m_rightControlWasDown) {
+                // right control pressed
+                
+                key.code = sf::Keyboard::RControl;
+                m_requester->keyDown(key);
+            }
+            
+            if (!m_leftControlWasDown) {
+                // left control pressed
+                
+                key.code = sf::Keyboard::LControl;
+                m_requester->keyDown(key);
+            }
+        }
+    } else { // No Control key down.
+        
+        rightControlIsDown = NO;
+        leftControlIsDown  = NO;
+        
+        if (m_rightControlWasDown) {
+            // right control released
+            
+            key.code = sf::Keyboard::RControl;
+            m_requester->keyUp(key);
+        }
+        
+        if (m_leftControlWasDown) {
+            // left control released
+            
+            key.code = sf::Keyboard::LControl;
+            m_requester->keyUp(key);
+        }
+    }
+/*    
     // Control keys.
     if (modifiers & NSControlKeyMask) {
-        // Currently only the left control key will be used in SFML (see note above).
+        if (modifiers & NSLeftControlKeyMask)
+        {
         
+        }
         controlIsDown = YES;
         
         if (!m_controlWasDown) {
@@ -914,7 +1006,11 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
             key.code = sf::Keyboard::LControl;
             m_requester->keyDown(key);
         }
-    } else { // No control key down.
+    }
+    
+    
+    
+     else { // No control key down.
         controlIsDown = NO;
         
         if (m_controlWasDown) {
@@ -924,7 +1020,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
             m_requester->keyUp(key);
         }
     }
-    
+    */
     // Update the state
     m_rightShiftWasDown     = rightShiftIsDown;
     m_leftShiftWasDown      = leftShiftIsDown;
@@ -932,7 +1028,8 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     m_leftCommandWasDown    = leftCommandIsDown;
     m_rightAlternateWasDown = rightAlternateIsDown;
     m_leftAlternateWasDown  = leftAlternateIsDown;
-    m_controlWasDown        = controlIsDown;
+    m_rightControlWasDown = rightControlIsDown;
+    m_leftControlWasDown  = leftControlIsDown;
 }
 
 
@@ -946,7 +1043,8 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     m_leftCommandWasDown      = NO;
     m_rightAlternateWasDown   = NO;
     m_leftAlternateWasDown    = NO;
-    m_controlWasDown          = NO;
+    m_rightControlWasDown   = NO;
+    m_leftControlWasDown    = NO;
     
     NSUInteger modifiers = [[NSApp currentEvent] modifierFlags];
     modifiers = eraseMaskFromData(modifiers, 0x100); // We erase something useless that might be present.
@@ -1028,10 +1126,29 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     }
     
     // Control keys.
-    if (modifiers & NSControlKeyMask) {
-        // Currently only the left control key will be used in SFML (see note above).
+    if (modifiers & NSControlKeyMask) { // At least one Control key is down.
+        // Clean up modifiers to keep only 'Control' bits.
+        NSUInteger control = keepOnlyMaskFromData(modifiers, NSRightControlKeyMask | NSLeftControlKeyMask);
         
-        m_controlWasDown = YES;
+        // Only right Control is down ?
+        if (control == NSRightControlKeyMask) {
+            
+            m_rightControlWasDown = YES;
+        }
+        
+        // Only left Control is down ?
+        if (control == NSLeftControlKeyMask) {
+            
+            m_leftControlWasDown = YES;
+        }
+        
+        // Or are they both down ?
+        if (control == (NSRightControlKeyMask | NSLeftControlKeyMask)) {
+            
+            m_rightControlWasDown = YES;
+            m_leftControlWasDown = YES;
+        }
+
     }
 }
 
