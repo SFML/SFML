@@ -30,8 +30,6 @@
 #include <SFML/Window/OSX/HIDInputManager.hpp> // For localizedKeys and nonLocalizedKeys
 #include <SFML/System/Err.hpp>
 
-#include <cstdio>
-
 #import <SFML/Window/OSX/SFOpenGLView.h>
 
 ////////////////////////////////////////////////////////////
@@ -991,36 +989,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
             m_requester->keyUp(key);
         }
     }
-/*    
-    // Control keys.
-    if (modifiers & NSControlKeyMask) {
-        if (modifiers & NSLeftControlKeyMask)
-        {
-        
-        }
-        controlIsDown = YES;
-        
-        if (!m_controlWasDown) {
-            // ctrl pressed
-            
-            key.code = sf::Keyboard::LControl;
-            m_requester->keyDown(key);
-        }
-    }
-    
-    
-    
-     else { // No control key down.
-        controlIsDown = NO;
-        
-        if (m_controlWasDown) {
-            // ctrl released
-            
-            key.code = sf::Keyboard::LControl;
-            m_requester->keyUp(key);
-        }
-    }
-    */
+
     // Update the state
     m_rightShiftWasDown     = rightShiftIsDown;
     m_leftShiftWasDown      = leftShiftIsDown;

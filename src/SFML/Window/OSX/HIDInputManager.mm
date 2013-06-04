@@ -450,7 +450,6 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
         //          0x47       | 0x53 | NumLock
         //          0x6e       | 0x65 | Application
         //          0x4c       | 0x77 | Select
-        //          0x32       | 0x35 | 
         
         //if (code == Keyboard::Unknown) { // The key is unknown.
         //    sf::err() << "This is an unknow key. Virtual key code is 0x"
