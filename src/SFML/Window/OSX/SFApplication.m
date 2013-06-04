@@ -37,7 +37,7 @@
 ////////////////////////////////////////////////////////////
 +(void)processEvent
 {
-    [NSApplication sharedApplication]; // Make sure NSApp exists
+    [SFApplication sharedApplication]; // Make sure NSApp exists
     NSEvent* event = nil;
     
     while ((event = [NSApp nextEventMatchingMask:NSAnyEventMask
@@ -47,6 +47,20 @@
     {
         [NSApp sendEvent:event];
     }
+}
+
+- (void)sendEvent:(NSEvent *)anEvent
+{
+    if ([anEvent type] == NSKeyUp) {
+        // should it be the keyWindow?
+        [[[self mainWindow] firstResponder]
+tryToPerform:@selector(keyUp:) with:anEvent ];
+
+        // might as well return, it would get discarded anyway..
+        return;
+    }
+
+    [super sendEvent:anEvent];
 }
 
 
