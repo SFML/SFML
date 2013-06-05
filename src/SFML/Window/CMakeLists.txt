@@ -82,6 +82,8 @@ else() # MACOSX
         ${SRCROOT}/OSX/SFApplication.m
         ${SRCROOT}/OSX/SFContext.hpp
         ${SRCROOT}/OSX/SFContext.mm
+        ${SRCROOT}/OSX/SilentResponder.h
+        ${SRCROOT}/OSX/SilentResponder.mm
         ${SRCROOT}/OSX/SFOpenGLView.h
         ${SRCROOT}/OSX/SFOpenGLView.mm
         ${SRCROOT}/OSX/SFWindow.h

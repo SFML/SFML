@@ -31,6 +31,7 @@
 #include <SFML/System/Err.hpp>
 
 #import <SFML/Window/OSX/SFOpenGLView.h>
+#import <SFML/Window/OSX/SilentResponder.h>
 
 ////////////////////////////////////////////////////////////
 /// Here are define the mask value for the 'modifiers' keys (cmd, ctrl, alt, shift)
@@ -130,6 +131,9 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
                    selector:@selector(frameDidChange:)
                        name:NSViewFrameDidChangeNotification
                      object:self];
+        
+        m_silent = [[SilentResponder alloc] init];
+        m_events = [[NSMutableArray alloc] initWithCapacity:2];
     }
 
     return self;
@@ -274,6 +278,9 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     // Unregister
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self removeTrackingRect:m_trackingTag];
+    
+    [m_silent dealloc];
+    [m_events dealloc];
     
     [super dealloc];
 }
@@ -538,30 +545,10 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 
 
     // Handle text entred event
-    // We create a new event without command/ctrl modifiers 
-    // to prevent the OS from sending an alert
-    NSUInteger modifiers = [theEvent modifierFlags];
     
-    if (modifiers & NSCommandKeyMask) modifiers = modifiers & ~NSCommandKeyMask;
-    if (modifiers & NSControlKeyMask) modifiers = modifiers & ~NSControlKeyMask;
+    if (m_useKeyRepeat || ![theEvent isARepeat]) {
     
-    NSEvent* ev = [NSEvent keyEventWithType:NSKeyDown
-                                   location:[theEvent locationInWindow]
-                              modifierFlags:modifiers
-                                  timestamp:[theEvent timestamp]
-                               windowNumber:[theEvent windowNumber]
-                                    context:[theEvent context]
-                                 characters:[theEvent characters]
-                charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers]
-                                  isARepeat:[theEvent isARepeat]
-                                    keyCode:[theEvent keyCode]];
-    
-    if ((m_useKeyRepeat || ![ev isARepeat]) && [[ev characters] length] > 0) {
-        
-        // Ignore escape key and non text keycode. (See NSEvent.h)
-        // They produce a sound alert.
-        unichar code = [[ev characters] characterAtIndex:0];
-        unsigned short keycode = [ev keyCode];
+        unsigned short keycode = [theEvent keyCode];
         
         // Backspace and Delete unicode values are badly handled by Apple.
         // We do a small workaround here :
@@ -579,18 +566,26 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
         }
         
         // All other unicode values
-        else if (keycode != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
+        else if (keycode != 0x35) {
             
             // Let's see if its a valid text.
+            [m_events addObject:theEvent];
             NSText* text = [[self window] fieldEditor:YES forObject:self];
-            [text interpretKeyEvents:[NSArray arrayWithObject:ev]];
+            [text setNextResponder:m_silent];
+            [text interpretKeyEvents:m_events];
             
             NSString* string = [text string];
             if ([string length] > 0) {
                 // It's a valid TextEntered event.
+                [m_events removeAllObjects];
                 m_requester->textEntered([string characterAtIndex:0]);
                 
                 [text setString:@""];
+            }
+            // Arbitrary limit to prevent monkeys from destroying the world
+            else if ([m_events count] > 10)
+            {
+                [m_events removeAllObjects];
             }
         }
     }
