@@ -27,7 +27,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/OSX/SFApplication.h>
-#import <AppKit/AppKit.h>
 
 
 ////////////////////////////////////////////////////////////
@@ -52,15 +51,11 @@
 - (void)sendEvent:(NSEvent *)anEvent
 {
     if ([anEvent type] == NSKeyUp) {
-        // should it be the keyWindow?
-        [[[self mainWindow] firstResponder]
-tryToPerform:@selector(keyUp:) with:anEvent ];
-
-        // might as well return, it would get discarded anyway..
-        return;
+        [[[self mainWindow] firstResponder] tryToPerform:@selector(keyUp:)
+                                                    with:anEvent ];
     }
-
-    [super sendEvent:anEvent];
+    else
+        [super sendEvent:anEvent];
 }
 
 

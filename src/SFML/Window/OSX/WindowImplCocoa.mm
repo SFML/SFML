@@ -34,7 +34,6 @@
 #import <SFML/Window/OSX/SFViewController.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
 #import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
-
 #import <SFML/Window/OSX/SFApplication.h>
 
 namespace sf
