@@ -37,7 +37,6 @@
 ///
 /// As I don't have the right control keycode I cannot implement left-right
 /// recognition for this key.
-#warning Missing keycode for right control key.
 #define NSRightControlKeyMask       0x42000
 #define NSLeftControlKeyMask        0x40001
 ///
