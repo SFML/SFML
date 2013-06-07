@@ -284,7 +284,11 @@ Socket::Status TcpSocket::send(Packet& packet)
 
     // Copy the packet size and data into the send block
     std::memcpy(&dataBlock[0], &packetSize, sizeof(packetSize));
-    std::memcpy(&dataBlock[0] + sizeof(packetSize), data, size);
+
+    if(size)
+    {
+        std::memcpy(&dataBlock[0] + sizeof(packetSize), data, size);
+    }
 
     // Send the packet data
     return send(&dataBlock[0], sizeof(packetSize) + size);
