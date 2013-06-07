@@ -280,19 +280,14 @@ Socket::Status TcpSocket::send(Packet& packet)
     Uint32 packetSize = htonl(static_cast<Uint32>(size));
 
     // Allocate memory for the data block to send
-    char* dataBlock = new char[sizeof(packetSize) + size];
+    std::vector<char> dataBlock(sizeof(packetSize) + size);
 
     // Copy the packet size and data into the send block
-    std::memcpy(dataBlock, &packetSize, sizeof(packetSize));
-    std::memcpy(dataBlock + sizeof(packetSize), data, size);
+    std::memcpy(&dataBlock[0], &packetSize, sizeof(packetSize));
+    std::memcpy(&dataBlock[0] + sizeof(packetSize), data, size);
 
     // Send the packet data
-    Status status = send(dataBlock, sizeof(packetSize) + size);
-
-    // Free the data block memory
-    delete[] dataBlock;
-
-    return status;
+    return send(&dataBlock[0], sizeof(packetSize) + size);
 }
 
 
