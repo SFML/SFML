@@ -49,7 +49,7 @@ namespace sf {
 /// recognition for this key. (See SFOpenGLView.mm for more info.)
 ///
 ////////////////////////////////////////////////////////////
-@interface SFOpenGLView : NSOpenGLView {
+@interface SFOpenGLView : NSOpenGLView <NSTextInputClient> {
     sf::priv::WindowImplCocoa*    m_requester;
     BOOL                          m_useKeyRepeat;
     NSTrackingRectTag             m_trackingTag;
@@ -65,6 +65,8 @@ namespace sf {
     BOOL m_leftAlternateWasDown;
     BOOL m_rightControlWasDown;
     BOOL m_leftControlWasDown;
+    
+    NSRange m_markedRange;
     
 }
 

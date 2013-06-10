@@ -35,12 +35,9 @@
 ////////////////////////////////////////////////////////////
 /// Here are define the mask value for the 'modifiers' keys (cmd, ctrl, alt, shift)
 ///
-/// As I don't have the right control keycode I cannot implement left-right
-/// recognition for this key.
+////////////////////////////////////////////////////////////
 #define NSRightControlKeyMask       0x42000
 #define NSLeftControlKeyMask        0x40001
-///
-////////////////////////////////////////////////////////////
 #define NSRightShiftKeyMask         0x020004
 #define NSLeftShiftKeyMask          0x020002
 #define NSRightCommandKeyMask       0x100010
@@ -116,6 +113,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
         [self enableKeyRepeat];
         m_realSize = NSZeroSize;
         [self initModifiersState];
+        m_markedRange = NSMakeRange(NSNotFound, 0);
         
         // Register for mouse-move event
         m_mouseIsIn = [self isMouseInside];
@@ -518,6 +516,64 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 #pragma mark
 #pragma mark Key-event methods
 
+- (void)doCommandBySelector:(SEL)aSelector
+{
+    
+}
+
+- (NSAttributedString *)attributedSubstringForProposedRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange
+{
+    return nil;
+}
+
+- (NSUInteger)characterIndexForPoint:(NSPoint)aPoint
+{
+    return 0;
+}
+
+- (NSRect)firstRectForCharacterRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange
+{
+    return NSMakeRect(0, 0, 0, 0);
+}
+
+- (BOOL)hasMarkedText
+{
+    return m_markedRange.location != NSNotFound;
+}
+
+- (void)insertText:(id)aString replacementRange:(NSRange)replacementRange
+{
+    for (unsigned i = 0; i < [aString length]; ++i)
+    {
+        m_requester->textEntered([aString characterAtIndex:i]);
+    }
+    [self unmarkText];
+}
+
+- (NSRange)markedRange
+{
+    return m_markedRange;
+}
+
+- (NSRange)selectedRange
+{
+    return NSMakeRange(NSNotFound, 0);
+}
+
+- (void)setMarkedText:(id)aString selectedRange:(NSRange)selectedRange replacementRange:(NSRange)replacementRange
+{
+    m_markedRange = NSMakeRange(0, [aString length]);
+}
+
+- (void)unmarkText
+{
+    m_markedRange = NSMakeRange(NSNotFound, 0);
+}
+
+- (NSArray *)validAttributesForMarkedText
+{
+    return [NSArray arrayWithObjects:NSMarkedClauseSegmentAttributeName, NSGlyphInfoAttributeName, nil];
+}
 
 ////////////////////////////////////////////////////////
 -(void)keyDown:(NSEvent *)theEvent
@@ -535,64 +591,9 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
             m_requester->keyDown(key);
         }
     }
-
-
-    // Handle text entred event
-    // We create a new event without command/ctrl modifiers 
-    // to prevent the OS from sending an alert
-    NSUInteger modifiers = [theEvent modifierFlags];
     
-    if (modifiers & NSCommandKeyMask) modifiers = modifiers & ~NSCommandKeyMask;
-    if (modifiers & NSControlKeyMask) modifiers = modifiers & ~NSControlKeyMask;
-    
-    NSEvent* ev = [NSEvent keyEventWithType:NSKeyDown
-                                   location:[theEvent locationInWindow]
-                              modifierFlags:modifiers
-                                  timestamp:[theEvent timestamp]
-                               windowNumber:[theEvent windowNumber]
-                                    context:[theEvent context]
-                                 characters:[theEvent characters]
-                charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers]
-                                  isARepeat:[theEvent isARepeat]
-                                    keyCode:[theEvent keyCode]];
-    
-    if ((m_useKeyRepeat || ![ev isARepeat]) && [[ev characters] length] > 0) {
-        
-        // Ignore escape key and non text keycode. (See NSEvent.h)
-        // They produce a sound alert.
-        unichar code = [[ev characters] characterAtIndex:0];
-        unsigned short keycode = [ev keyCode];
-        
-        // Backspace and Delete unicode values are badly handled by Apple.
-        // We do a small workaround here :
-        
-        // Backspace
-        if (keycode == 0x33) {
-            // Send the correct unicode value (i.e. 8) instead of 127 (which is 'delete')
-            m_requester->textEntered(8);
-        } 
-        
-        // Delete
-        else if (keycode == 0x75 || keycode == NSDeleteFunctionKey) {
-            // Instead of the value 63272 we send 127.
-            m_requester->textEntered(127);
-        }
-        
-        // All other unicode values
-        else if (keycode != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
-            
-            // Let's see if its a valid text.
-            NSText* text = [[self window] fieldEditor:YES forObject:self];
-            [text interpretKeyEvents:[NSArray arrayWithObject:ev]];
-            
-            NSString* string = [text string];
-            if ([string length] > 0) {
-                // It's a valid TextEntered event.
-                m_requester->textEntered([string characterAtIndex:0]);
-                
-                [text setString:@""];
-            }
-        }
+    if (m_useKeyRepeat || ![theEvent isARepeat]) {
+        [[self inputContext] handleEvent:theEvent];
     }
 }
 
