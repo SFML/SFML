@@ -27,7 +27,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #import <AppKit/AppKit.h>
-#import <SFML/Window/OSX/SilentResponder.h>
 
 namespace sf {
     namespace priv {
@@ -67,8 +66,6 @@ namespace sf {
     BOOL m_rightControlWasDown;
     BOOL m_leftControlWasDown;
     
-    SilentResponder *m_silent;
-    NSMutableArray  *m_events;
 }
 
 ////////////////////////////////////////////////////////////
