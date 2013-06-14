@@ -38,6 +38,16 @@
 #endif
 
 
+namespace
+{
+    // Define the low-level send/receive flags, which depend on the OS
+    #ifdef SFML_SYSTEM_LINUX
+        const int flags = MSG_NOSIGNAL;
+    #else
+        const int flags = 0;
+    #endif
+}
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -221,7 +231,7 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size)
     for (int length = 0; length < sizeToSend; length += sent)
     {
         // Send a chunk of data
-        sent = ::send(getHandle(), static_cast<const char*>(data) + length, sizeToSend - length, 0);
+        sent = ::send(getHandle(), static_cast<const char*>(data) + length, sizeToSend - length, flags);
 
         // Check for errors
         if (sent < 0)
@@ -246,7 +256,7 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
     }
 
     // Receive a chunk of bytes
-    int sizeReceived = recv(getHandle(), static_cast<char*>(data), static_cast<int>(size), 0);
+    int sizeReceived = recv(getHandle(), static_cast<char*>(data), static_cast<int>(size), flags);
 
     // Check the number of bytes received
     if (sizeReceived > 0)
