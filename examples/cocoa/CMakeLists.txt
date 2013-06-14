@@ -29,6 +29,9 @@ set_target_properties(cocoa PROPERTIES
 target_link_libraries(cocoa "-framework Cocoa -framework Foundation" 
                             sfml-system sfml-window sfml-graphics)
 
+# set the target's folder (for IDEs that support it, e.g. Visual Studio)
+set_target_properties(cocoa PROPERTIES FOLDER "Examples")
+
 # compile XIB files
 find_program(IBTOOL ibtool HINTS "/usr/bin" "${OSX_DEVELOPER_ROOT}/usr/bin")
 if(${IBTOOL} STREQUAL "IBTOOL-NOTFOUND")
