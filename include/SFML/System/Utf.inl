@@ -33,6 +33,36 @@
 //
 ////////////////////////////////////////////////////////////
 
+namespace priv {
+
+template <typename In>
+std::vector<wchar_t> ansiToWide(In begin, In end, const std::locale& locale)
+{
+    typedef std::codecvt<wchar_t, char, std::mbstate_t> cvt_t;
+    const cvt_t& codecvt = std::use_facet<cvt_t>(locale);
+    std::mbstate_t mb = std::mbstate_t();
+
+    // The string can contain at most the same number of wchar_t values as
+    // char values, so allocate just this size.
+    std::vector<wchar_t> wide(end - begin);
+    const char* inConvertedEnd;
+    // Not sure if initialization is necessary here, so better do it:
+    wchar_t* outConvertedEnd = &wide[0];
+
+    // No error semantics are defined for fromAnsi, so just ignore the
+    // return value.
+    codecvt.in(
+        mb,
+        &*begin, &*end, inConvertedEnd,
+        &wide[0], &wide[0] + wide.size(), outConvertedEnd);
+    std::size_t utf16Length = outConvertedEnd - &wide[0];
+    wide.resize(utf16Length);
+    return wide;
+}
+
+} // namespace priv
+
+
 
 ////////////////////////////////////////////////////////////
 template <typename In>
@@ -163,13 +193,8 @@ std::size_t Utf<8>::count(In begin, In end)
 template <typename In, typename Out>
 Out Utf<8>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
-    while (begin < end)
-    {
-        Uint32 codepoint = Utf<32>::decodeAnsi(*begin++, locale);
-        output = encode(codepoint, output);
-    }
-
-    return output;
+    const std::vector<wchar_t> wide = priv::ansiToWide(begin, end, locale);
+    return Utf<8>::fromWide(wide.begin(), wide.end(), output);
 }
 
 
@@ -177,12 +202,16 @@ Out Utf<8>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 template <typename In, typename Out>
 Out Utf<8>::fromWide(In begin, In end, Out output)
 {
-    while (begin < end)
-    {
-        Uint32 codepoint = Utf<32>::decodeWide(*begin++);
-        output = encode(codepoint, output);
+    switch(sizeof(wchar_t)) {
+        case 1:
+            return std::copy(begin, end, ouput);
+        case 4:
+            return Utf<32>::toUtf8(begin, end, output);
+        case 2:
+            return Utf<16>::toUtf8(begin, end, output);
+        default:
+            assert(!"Unsupported sizeof(wchar_t)!");
     }
-
     return output;
 }
 
@@ -393,13 +422,8 @@ std::size_t Utf<16>::count(In begin, In end)
 template <typename In, typename Out>
 Out Utf<16>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
-    while (begin < end)
-    {
-        Uint32 codepoint = Utf<32>::decodeAnsi(*begin++, locale);
-        output = encode(codepoint, output);
-    }
-
-    return output;
+    const std::vector<wchar_t> wide = priv::ansiToWide(begin, end, locale);
+    return Utf<16>::fromWide(wide.begin(), wide.end(), output);
 }
 
 
@@ -407,12 +431,16 @@ Out Utf<16>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 template <typename In, typename Out>
 Out Utf<16>::fromWide(In begin, In end, Out output)
 {
-    while (begin < end)
-    {
-        Uint32 codepoint = Utf<32>::decodeWide(*begin++);
-        output = encode(codepoint, output);
+    switch(sizeof(wchar_t)) {
+        case 2:
+            return std::copy(begin, end, ouput);
+        case 4:
+            return Utf<32>::toUtf16(begin, end, output);
+        case 1:
+            return Utf<8>::toUtf16(begin, end, output);
+        default:
+            assert(!"Unsupported sizeof(wchar_t)!");
     }
-
     return output;
 }
 
@@ -555,10 +583,8 @@ std::size_t Utf<32>::count(In begin, In end)
 template <typename In, typename Out>
 Out Utf<32>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
-    while (begin < end)
-        *output++ = decodeAnsi(*begin++, locale);
-
-    return output;
+    const std::vector<wchar_t> wide = priv::ansiToWide(begin, end, locale);
+    return Utf<32>::fromWide(wide.begin(), wide.end(), output);
 }
 
 
@@ -566,9 +592,16 @@ Out Utf<32>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 template <typename In, typename Out>
 Out Utf<32>::fromWide(In begin, In end, Out output)
 {
-    while (begin < end)
-        *output++ = decodeWide(*begin++);
-
+    switch(sizeof(wchar_t)) {
+        case 4:
+            return std::copy(begin, end, output);
+        case 2:
+            return Utf<16>::toUtf32(begin, end, output);
+        case 1:
+            return Utf<8>::toUtf32(begin, end, output);
+        default:
+            assert(!"Unsupported sizeof(wchar_t)!");
+    }
     return output;
 }
 
