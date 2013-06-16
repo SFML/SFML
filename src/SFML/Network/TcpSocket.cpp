@@ -286,23 +286,22 @@ Socket::Status TcpSocket::send(Packet& packet)
     std::size_t size = 0;
     const void* data = packet.onSend(size);
 
-    // First send the packet size
+    // First convert the packet size to network byte order
     Uint32 packetSize = htonl(static_cast<Uint32>(size));
-    Status status = send(reinterpret_cast<const char*>(&packetSize), sizeof(packetSize));
 
-    // Make sure that the size was properly sent
-    if (status != Done)
-        return status;
+    // Allocate memory for the data block to send
+    std::vector<char> dataBlock(sizeof(packetSize) + size);
+
+    // Copy the packet size and data into the send block
+    std::memcpy(&dataBlock[0], &packetSize, sizeof(packetSize));
+
+    if(size)
+    {
+        std::memcpy(&dataBlock[0] + sizeof(packetSize), data, size);
+    }
 
     // Send the packet data
-    if (packetSize > 0)
-    {
-        return send(data, size);
-    }
-    else
-    {
-        return Done;
-    }
+    return send(&dataBlock[0], sizeof(packetSize) + size);
 }
 
 
