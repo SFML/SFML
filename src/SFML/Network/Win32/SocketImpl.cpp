@@ -74,11 +74,13 @@ Socket::Status SocketImpl::getErrorStatus()
     switch (WSAGetLastError())
     {
         case WSAEWOULDBLOCK :  return Socket::NotReady;
+        case WSAEALREADY :     return Socket::NotReady;
         case WSAECONNABORTED : return Socket::Disconnected;
         case WSAECONNRESET :   return Socket::Disconnected;
         case WSAETIMEDOUT :    return Socket::Disconnected;
         case WSAENETRESET :    return Socket::Disconnected;
         case WSAENOTCONN :     return Socket::Disconnected;
+        case WSAEISCONN :      return Socket::Done; // when connecting a non-blocking socket
         default :              return Socket::Error;
     }
 }
