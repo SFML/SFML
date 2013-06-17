@@ -202,7 +202,7 @@ void WindowImplWin32::processEvents()
     if (!m_callback)
     {
         MSG message;
-        while (PeekMessage(&message, m_handle, 0, 0, PM_REMOVE))
+        while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&message);
             DispatchMessage(&message);
@@ -884,7 +884,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     }
 
     // Get the WindowImpl instance corresponding to the window handle
-    WindowImplWin32* window = reinterpret_cast<WindowImplWin32*>(GetWindowLongPtr(handle, GWLP_USERDATA));
+    WindowImplWin32* window = handle ? reinterpret_cast<WindowImplWin32*>(GetWindowLongPtr(handle, GWLP_USERDATA)) : NULL;
 
     // Forward the event to the appropriate function
     if (window)
