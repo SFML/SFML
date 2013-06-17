@@ -75,7 +75,7 @@ int main()
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    // Define a 3D cube (8 faces made of 2 triangles composed by 3 vertices)
+    // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
     GLfloat cube[] =
     {
         // positions    // texture coordinates

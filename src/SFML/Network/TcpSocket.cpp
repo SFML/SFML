@@ -38,6 +38,16 @@
 #endif
 
 
+namespace
+{
+    // Define the low-level send/receive flags, which depend on the OS
+    #ifdef SFML_SYSTEM_LINUX
+        const int flags = MSG_NOSIGNAL;
+    #else
+        const int flags = 0;
+    #endif
+}
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -221,7 +231,7 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size)
     for (int length = 0; length < sizeToSend; length += sent)
     {
         // Send a chunk of data
-        sent = ::send(getHandle(), static_cast<const char*>(data) + length, sizeToSend - length, 0);
+        sent = ::send(getHandle(), static_cast<const char*>(data) + length, sizeToSend - length, flags);
 
         // Check for errors
         if (sent < 0)
@@ -246,7 +256,7 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
     }
 
     // Receive a chunk of bytes
-    int sizeReceived = recv(getHandle(), static_cast<char*>(data), static_cast<int>(size), 0);
+    int sizeReceived = recv(getHandle(), static_cast<char*>(data), static_cast<int>(size), flags);
 
     // Check the number of bytes received
     if (sizeReceived > 0)
@@ -272,27 +282,28 @@ Socket::Status TcpSocket::send(Packet& packet)
     // This means that we have to send the packet size first, so that the
     // receiver knows the actual end of the packet in the data stream.
 
+    // We allocate an extra memory block so that the size can be sent
+    // together with the data in a single call. This may seem inefficient,
+    // but it is actually required to avoid partial send, which could cause
+    // data corruption on the receiving end.
+
     // Get the data to send from the packet
     std::size_t size = 0;
     const void* data = packet.onSend(size);
 
-    // First send the packet size
+    // First convert the packet size to network byte order
     Uint32 packetSize = htonl(static_cast<Uint32>(size));
-    Status status = send(reinterpret_cast<const char*>(&packetSize), sizeof(packetSize));
+ 
+    // Allocate memory for the data block to send
+    std::vector<char> blockToSend(sizeof(packetSize) + size);
+ 
+    // Copy the packet size and data into the block to send
+    std::memcpy(&blockToSend[0], &packetSize, sizeof(packetSize));
+    if (size > 0)
+        std::memcpy(&blockToSend[0] + sizeof(packetSize), data, size);
 
-    // Make sure that the size was properly sent
-    if (status != Done)
-        return status;
-
-    // Send the packet data
-    if (packetSize > 0)
-    {
-        return send(data, size);
-    }
-    else
-    {
-        return Done;
-    }
+    // Send the data block
+    return send(&blockToSend[0], blockToSend.size());
 }
 
 

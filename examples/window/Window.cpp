@@ -44,7 +44,7 @@ int main()
     GLfloat ratio = static_cast<float>(window.getSize().x) / window.getSize().y;
     glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
 
-    // Define a 3D cube (8 faces made of 2 triangles composed by 3 vertices)
+    // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
     GLfloat cube[] =
     {
         // positions    // colors (r, g, b, a)

@@ -108,6 +108,14 @@ void Socket::create(SocketHandle handle)
                 err() << "Failed to set socket option \"TCP_NODELAY\" ; "
                       << "all your TCP packets will be buffered" << std::endl;
             }
+
+            // On Mac OS X, disable the SIGPIPE signal on disconnection
+            #ifdef SFML_SYSTEM_MACOS
+                if (setsockopt(m_socket, SOL_SOCKET, SO_NOSIGPIPE, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
+                {
+                    err() << "Failed to set socket option \"SO_NOSIGPIPE\"" << std::endl;
+                }
+            #endif
         }
         else
         {
