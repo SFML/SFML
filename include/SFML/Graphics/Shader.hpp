@@ -508,9 +508,20 @@ private :
     void bindTextures() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the location ID of a shader parameter
+    ///
+    /// \param name Name of the parameter to search
+    ///
+    /// \return Location ID of the parameter, or -1 if not found
+    ///
+    ////////////////////////////////////////////////////////////
+    int getParamLocation(const std::string& name);
+
+    ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
     typedef std::map<int, const Texture*> TextureTable;
+    typedef std::map<std::string, int> ParamTable;
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -518,6 +529,7 @@ private :
     unsigned int m_shaderProgram;  ///< OpenGL identifier for the program
     int          m_currentTexture; ///< Location of the current texture in the shader
     TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
+    ParamTable   m_params;         ///< Parameters location cache
 };
 
 } // namespace sf
