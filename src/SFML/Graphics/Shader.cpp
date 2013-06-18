@@ -217,6 +217,32 @@ bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& fragme
 
 
 ////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, int x)
+{
+    if (m_shaderProgram)
+    {
+        ensureGlContext();
+
+        // Enable program
+        GLint program;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+        bool notActiveProgram = (static_cast<unsigned int>(program) != m_shaderProgram);
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(m_shaderProgram)));
+
+        // Get parameter location and assign it new values
+        GLint location = static_cast<GLint>(getParamLocation(name));
+        if (location != -1)
+            glCheck(glUniform1iARB(location, x));
+        else
+            err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+
+        // Disable program
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(program)));
+    }
+}
+
+////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, float x)
 {
     if (m_shaderProgram)
@@ -224,18 +250,21 @@ void Shader::setParameter(const std::string& name, float x)
         ensureGlContext();
 
         // Enable program
-        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
-        glCheck(glUseProgramObjectARB(m_shaderProgram));
+        GLint program;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+        bool notActiveProgram = (static_cast<unsigned int>(program) != m_shaderProgram);
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(m_shaderProgram)));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniform1fARB(location, x));
         else
             err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
-        glCheck(glUseProgramObjectARB(program));
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(program)));
     }
 }
 
@@ -248,18 +277,21 @@ void Shader::setParameter(const std::string& name, float x, float y)
         ensureGlContext();
 
         // Enable program
-        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
-        glCheck(glUseProgramObjectARB(m_shaderProgram));
+        GLint program;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+        bool notActiveProgram = (static_cast<unsigned int>(program) != m_shaderProgram);
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(m_shaderProgram)));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniform2fARB(location, x, y));
         else
             err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
-        glCheck(glUseProgramObjectARB(program));
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(program)));
     }
 }
 
@@ -272,21 +304,23 @@ void Shader::setParameter(const std::string& name, float x, float y, float z)
         ensureGlContext();
 
         // Enable program
-        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
-        glCheck(glUseProgramObjectARB(m_shaderProgram));
+        GLint program;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+        bool notActiveProgram = (static_cast<unsigned int>(program) != m_shaderProgram);
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(m_shaderProgram)));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniform3fARB(location, x, y, z));
         else
             err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
-        glCheck(glUseProgramObjectARB(program));
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(program)));
     }
 }
-
 
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, float x, float y, float z, float w)
@@ -296,18 +330,21 @@ void Shader::setParameter(const std::string& name, float x, float y, float z, fl
         ensureGlContext();
 
         // Enable program
-        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
-        glCheck(glUseProgramObjectARB(m_shaderProgram));
+        GLint program;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+        bool notActiveProgram = (static_cast<unsigned int>(program) != m_shaderProgram);
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(m_shaderProgram)));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniform4fARB(location, x, y, z, w));
         else
             err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
-        glCheck(glUseProgramObjectARB(program));
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(program)));
     }
 }
 
@@ -341,18 +378,21 @@ void Shader::setParameter(const std::string& name, const sf::Transform& transfor
         ensureGlContext();
 
         // Enable program
-        GLhandleARB program = glGetHandleARB(GL_PROGRAM_OBJECT_ARB);
-        glCheck(glUseProgramObjectARB(m_shaderProgram));
+        GLint program;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+        bool notActiveProgram = (static_cast<unsigned int>(program) != m_shaderProgram);
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(m_shaderProgram)));
 
         // Get parameter location and assign it new values
-        GLint location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        GLint location = static_cast<GLint>(getParamLocation(name));
         if (location != -1)
             glCheck(glUniformMatrix4fvARB(location, 1, GL_FALSE, transform.getMatrix()));
         else
             err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 
         // Disable program
-        glCheck(glUseProgramObjectARB(program));
+        if(notActiveProgram) glCheck(glUseProgram(static_cast<GLuint>(program)));
     }
 }
 
@@ -365,7 +405,7 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        int location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        int location = static_cast<GLint>(getParamLocation(name));
         if (location == -1)
         {
             err() << "Texture \"" << name << "\" not found in shader" << std::endl;
@@ -403,7 +443,7 @@ void Shader::setParameter(const std::string& name, CurrentTextureType)
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        m_currentTexture = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        m_currentTexture = static_cast<GLint>(getParamLocation(name));
         if (m_currentTexture == -1)
             err() << "Texture \"" << name << "\" not found in shader" << std::endl;
     }
@@ -418,7 +458,7 @@ void Shader::bind(const Shader* shader)
     if (shader && shader->m_shaderProgram)
     {
         // Enable the program
-        glCheck(glUseProgramObjectARB(shader->m_shaderProgram));
+        glCheck(glUseProgram(static_cast<GLuint>(shader->m_shaderProgram)));
 
         // Bind the textures
         shader->bindTextures();
@@ -430,7 +470,7 @@ void Shader::bind(const Shader* shader)
     else
     {
         // Bind no shader
-        glCheck(glUseProgramObjectARB(0));
+        glCheck(glUseProgram(0));
     }
 }
 
@@ -466,6 +506,8 @@ bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCod
     // Destroy the shader if it was already created
     if (m_shaderProgram)
         glCheck(glDeleteObjectARB(m_shaderProgram));
+
+    m_params.clear();
 
     // Create the program
     m_shaderProgram = glCreateProgramObjectARB();
@@ -562,6 +604,26 @@ void Shader::bindTextures() const
 
     // Make sure that the texture unit which is left active is the number 0
     glCheck(glActiveTextureARB(GL_TEXTURE0_ARB));
+}
+
+
+////////////////////////////////////////////////////////////
+int Shader::getParamLocation(const std::string& name)
+{
+    ParameterCache::const_iterator it = m_params.lower_bound(name);
+
+    if((it != m_params.end() && !(m_params.key_compare()(name, it->first)))
+    {
+        return it->second;
+    }
+    else
+    {
+        int location = static_cast<int>(glGetUniformLocationARB(m_shaderProgram, name.c_str()));
+        if (location != -1)
+            m_params.insert(it, ParameterCache::value_type(name, location));
+
+        return location;
+    }
 }
 
 } // namespace sf

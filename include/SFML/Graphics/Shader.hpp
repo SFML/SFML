@@ -211,6 +211,27 @@ public :
     bool loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Change an integer parameter of the shader
+    ///
+    /// \a name is the name of the variable to change in the shader.
+    /// The corresponding parameter in the shader must be an integer
+    /// (intt GLSL type).
+    ///
+    /// Example:
+    /// \code
+    /// uniform int myparam; // this is the variable in the shader
+    /// \endcode
+    /// \code
+    /// shader.setParameter("myparam", 5);
+    /// \endcode
+    ///
+    /// \param name Name of the parameter in the shader
+    /// \param x    Value to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(const std::string& name, int x);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change a float parameter of the shader
     ///
     /// \a name is the name of the variable to change in the shader.
@@ -483,6 +504,7 @@ public :
     static bool isAvailable();
 
 private :
+    int getParamLocation(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
@@ -511,13 +533,15 @@ private :
     // Types
     ////////////////////////////////////////////////////////////
     typedef std::map<int, const Texture*> TextureTable;
+    typedef std::map<std::string, int> ParameterCache;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_shaderProgram;  ///< OpenGL identifier for the program
-    int          m_currentTexture; ///< Location of the current texture in the shader
-    TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
+    unsigned int   m_shaderProgram;  ///< OpenGL identifier for the program
+    int            m_currentTexture; ///< Location of the current texture in the shader
+    TextureTable   m_textures;       ///< Texture variables in the shader, mapped to their location
+    ParameterCache m_params;         ///< Uniforms in the shader, mapped to their location
 };
 
 } // namespace sf
