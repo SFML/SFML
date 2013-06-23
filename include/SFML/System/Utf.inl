@@ -36,73 +36,197 @@
 
 namespace priv
 {
-
-// Note: ansiToWide() and wideToAnsi() need the begin and end arguments to
-// point to one continuous storage area. This is not guaranted for
-// std::(w)string until C++11, but I doubt there are standard library
-// implementations which do implement strings this way and others doubt this
-// too: http://stackoverflow.com/q/2256160/2128694
-
 typedef std::codecvt<wchar_t, char, std::mbstate_t> cvt_t;
+
+////////////////////////////////////////////////////////////
+inline std::size_t cvtMaxOutLen(const cvt_t& cvt, char)
+{
+    return static_cast<std::size_t>(std::max(1, cvt.max_length() + 1));
+}
 
 
 ////////////////////////////////////////////////////////////
-template <typename In>
-std::vector<wchar_t> ansiToWide(In begin, In end, const std::locale& locale)
+inline std::size_t cvtMaxOutLen(const cvt_t&, wchar_t)
 {
-    if (begin >= end)
-        return std::vector<wchar_t>();
+    return sizeof(sf::Uint32) / sizeof(wchar_t) + 1;
+}
 
-    const cvt_t& codecvt = std::use_facet<cvt_t>(locale);
-    std::mbstate_t mb = std::mbstate_t();
 
-    // The string can contain at most the same number of wchar_t values as
-    // char values, so allocate just this size.
-    const std::size_t inLength = end - begin;
-    std::vector<wchar_t> wide(inLength);
-    const char* inConvertedEnd;
-    // Not sure if initialization is necessary here, so better do it:
-    wchar_t* outConvertedEnd = &wide[0];
-
-    // No error semantics are defined for fromAnsi, so just ignore the
-    // return value.
-    codecvt.in(
+////////////////////////////////////////////////////////////
+inline std::codecvt_base::result cvtConvert(
+    std::mbstate_t& mb,
+    const cvt_t& codecvt,
+    const std::vector<wchar_t>& in, const wchar_t*& inConvertedEnd,
+    std::vector<char>& out, char*& outConvertedEnd)
+{
+    return codecvt.out(
         mb,
-        &*begin, &*begin + inLength, inConvertedEnd,
-        &wide[0], &wide[0] + wide.size(), outConvertedEnd);
-    std::size_t utf16Length = outConvertedEnd - &wide[0];
-    wide.resize(utf16Length);
-    return wide;
+        &in[0], &in[0] + in.size(), inConvertedEnd,
+        &out[0], &out[0] + out.size(), outConvertedEnd);
+}
+
+
+////////////////////////////////////////////////////////////
+inline std::codecvt_base::result cvtConvert(
+    std::mbstate_t& mb,
+    const cvt_t& codecvt,
+    const std::vector<char>& in, const char*& inConvertedEnd,
+    std::vector<wchar_t>& out, wchar_t*& outConvertedEnd)
+{
+    return codecvt.in(
+        mb,
+        &in[0], &in[0] + in.size(), inConvertedEnd,
+        &out[0], &out[0] + out.size(), outConvertedEnd);
+}
+
+
+////////////////////////////////////////////////////////////
+template<typename Out>
+Out cvtFinalize(
+    Out output, std::vector<char>& out,
+    std::mbstate_t mb, const cvt_t& codecvt,
+    char replacement)
+{
+    char* outConvertedEnd = &out[0];
+    const std::codecvt_base::result r = codecvt.unshift(
+        mb, &out[0], &out[0] + out.size(), outConvertedEnd);
+    output = std::copy(&out[0], outConvertedEnd, output);
+    if (r != std::codecvt_base::ok)
+        *output++ = replacement;
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+template<typename Out>
+Out cvtFinalize(
+    Out output, std::vector<wchar_t>&,
+    std::mbstate_t, const cvt_t&,
+    wchar_t)
+{
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+template<typename To> struct CvtFromType;
+template<> struct CvtFromType<char> { typedef wchar_t type; };
+template<> struct CvtFromType<wchar_t> { typedef char type; };
+
+
+////////////////////////////////////////////////////////////
+template <typename To, typename In, typename Out>
+Out cvtWideAnsi(
+    In begin, In end, Out output,
+    To replacement = To(), const std::locale& locale = std::locale())
+{
+    typedef CvtFromType<To>::type From;
+    const cvt_t& codecvt = std::use_facet<cvt_t>(locale);
+
+    std::mbstate_t mb = std::mbstate_t();
+    std::vector<From> in;
+    std::vector<To> out(cvtMaxOutLen(codecvt, To()));
+    while (begin != end)
+    {
+        in.push_back(*begin++);
+        const From* inConvertedEnd = &in[0];
+        To* outConvertedEnd = &out[0];
+        const std::codecvt_base::result r = cvtConvert(
+            mb, codecvt, in, inConvertedEnd, out, outConvertedEnd);
+        switch (r)
+        {
+            case std::codecvt_base::error:
+            {
+                *output++ = replacement;
+                mb = std::mbstate_t();
+                break;
+            }
+            case std::codecvt_base::noconv:
+            case std::codecvt_base::partial:
+            case std::codecvt_base::ok:
+            {
+                const std::size_t nConverted = inConvertedEnd - &in[0];
+                in.erase(in.begin(), in.begin() + nConverted);
+                output = std::copy(&out[0], outConvertedEnd, output);
+                break;
+            }
+            default:
+                assert(!"Unexpected error from priv::convert()");
+        }
+    }
+    return cvtFinalize(output, out, mb, codecvt, replacement);
+}
+
+
+////////////////////////////////////////////////////////////
+template <unsigned int N, typename In, typename Out>
+Out toAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
+{
+    std::vector<char> ansi;
+    switch (sizeof(wchar_t))
+    {
+        case N / 8:
+        {
+            return priv::cvtWideAnsi<char>(
+                begin, end, output, replacement, locale);
+        }
+        default:
+        {
+            std::vector<wchar_t> wide;
+            wide.reserve(end - begin);
+            Utf<N>::toWide(
+                begin, end, std::back_inserter(wide), replacement);
+            return priv::cvtWideAnsi<char>(
+                wide.begin(), wide.end(), output, replacement, locale);
+        }
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+template <unsigned int NFrom, unsigned int NTo,
+          typename In, typename Out>
+Out utfToUtf(In begin, In end, Out output)
+{
+    switch (NTo)
+    {
+        case 8:
+            return Utf<NFrom>::toUtf8(begin, end, output);
+        case 16:
+            return Utf<NFrom>::toUtf16(begin, end, output);
+        case 32:
+            return Utf<NFrom>::toUtf32(begin, end, output);
+    }
+    assert(!"Invalid NTo (only 8, 16 and 32 are valid).");
+    return output;
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-std::vector<char> wideToAnsi(In begin, In end, const std::locale& locale)
+std::size_t wideReserveSize(In, In, std::input_iterator_tag)
 {
-    if (begin >= end)
-        return std::vector<char>();
+    return 0;
+}
 
-    const cvt_t& codecvt = std::use_facet<cvt_t>(locale);
-    std::mbstate_t mb = std::mbstate_t();
 
-    // The string can contain at most twice the number of char values as
-    // wchar_t values, so allocate just this size.
-    const std::size_t inLength = end - begin;
-    std::vector<char> ansi(inLength * 2);
-    const wchar_t* inConvertedEnd;
-    // Not sure if initialization is necessary here, so better do it:
-    char* outConvertedEnd = &ansi[0];
+////////////////////////////////////////////////////////////
+template <typename In>
+std::size_t wideReserveSize(In begin, In end, std::forward_iterator_tag)
+{
+    return std::distance(begin, end);
+}
 
-    // No error semantics are defined for fromAnsi, so just ignore the
-    // return value.
-    codecvt.out(
-        mb,
-        &*begin, &*begin + inLength, inConvertedEnd,
-        &ansi[0], &ansi[0] + ansi.size(), outConvertedEnd);
-    std::size_t ansiLength = outConvertedEnd - &ansi[0];
-    ansi.resize(ansiLength);
-    return ansi;
+
+////////////////////////////////////////////////////////////
+template <unsigned int N, typename In, typename Out>
+Out fromAnsi(In begin, In end, Out output, const std::locale& locale)
+{
+    std::vector<wchar_t> wide;
+    wide.reserve(wideReserveSize(
+        begin, end, std::iterator_traits<In>::iterator_category()));
+    priv::cvtWideAnsi<wchar_t>(begin, end, std::back_inserter(wide));
+    return Utf<N>::fromWide(wide.begin(), wide.end(), output);
 }
 
 } // namespace priv
@@ -238,8 +362,7 @@ std::size_t Utf<8>::count(In begin, In end)
 template <typename In, typename Out>
 Out Utf<8>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
-    const std::vector<wchar_t> wide = priv::ansiToWide(begin, end, locale);
-    return Utf<8>::fromWide(wide.begin(), wide.end(), output);
+    return priv::fromAnsi<8>(begin, end, output, locale);
 }
 
 
@@ -247,13 +370,7 @@ Out Utf<8>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 template <typename In, typename Out>
 Out Utf<8>::fromWide(In begin, In end, Out output)
 {
-    switch(sizeof(wchar_t)) {
-        case 1:
-            return std::copy(begin, end, ouput);
-        default:
-            return Utf<8 * sizeof(wchar_t)>::toUtf8(begin, end, output);
-    }
-    return output;
+    return priv::utfToUtf<8, sizeof(wchar_t) * 8>(begin, end, output);
 }
 
 
@@ -274,23 +391,7 @@ Out Utf<8>::fromLatin1(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<8>::toAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
-    std::vector<char> ansi;
-    switch (sizeof(wchar_t)) {
-        case 1:
-            ansi = priv::wideToAnsi(
-                reinterpret_cast<const wchar_t*>(&*begin),
-                reinterpret_cast<const wchar_t*>(&*end),
-                locale);
-        default:
-        {
-            std::vector<wchar_t> wide;
-            wide.reserve(end - begin);
-            Utf<8 * sizeof(wchar_t)>::toWide(
-                begin, end, std::back_inserter(wide), replacement);
-            ansi = priv::wideToAnsi(wide.begin(), wide.end(), locale);
-        }
-    }
-    return std::copy(ansi.begin(), ansi.end(), output);
+    return priv::toAnsi<8>(begin, end, output, replacement, locale);
 }
 
 
@@ -298,17 +399,7 @@ Out Utf<8>::toAnsi(In begin, In end, Out output, char replacement, const std::lo
 template <typename In, typename Out>
 Out Utf<8>::toWide(In begin, In end, Out output, wchar_t replacement)
 {
-    switch(sizeof(wchar_t)) {
-        case 1:
-            return std::copy(begin, end, output);
-        case 2:
-            return Utf<8>::toUtf16(begin, end, output);
-        case 4:
-            return Utf<8>::toUtf32(begin, end, output);
-        default:
-             assert(!"Unsupported sizeof(wchar_t)!");
-    }
-    return output;
+    return priv::utfToUtf<8 * sizeof(wchar_t), 8>(begin, end, output);
 }
 
 
@@ -475,8 +566,7 @@ std::size_t Utf<16>::count(In begin, In end)
 template <typename In, typename Out>
 Out Utf<16>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
-    const std::vector<wchar_t> wide = priv::ansiToWide(begin, end, locale);
-    return Utf<16>::fromWide(wide.begin(), wide.end(), output);
+    return priv::fromAnsi<16>(begin, end, output, locale);
 }
 
 
@@ -484,17 +574,7 @@ Out Utf<16>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 template <typename In, typename Out>
 Out Utf<16>::fromWide(In begin, In end, Out output)
 {
-    switch(sizeof(wchar_t)) {
-        case 2:
-            return std::copy(begin, end, ouput);
-        case 4:
-            return Utf<32>::toUtf16(begin, end, output);
-        case 1:
-            return Utf<8>::toUtf16(begin, end, output);
-        default:
-            assert(!"Unsupported sizeof(wchar_t)!");
-    }
-    return output;
+    return priv::utfToUtf<16, sizeof(wchar_t) * 8>(begin, end, output);
 }
 
 
@@ -515,23 +595,7 @@ Out Utf<16>::fromLatin1(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<16>::toAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
-    std::vector<char> ansi;
-    switch (sizeof(wchar_t)) {
-        case 2:
-            ansi = priv::wideToAnsi(
-                reinterpret_cast<const wchar_t*>(&*begin),
-                reinterpret_cast<const wchar_t*>(&*end),
-                locale);
-        default:
-        {
-            std::vector<wchar_t> wide;
-            wide.reserve(end - begin);
-            Utf<8 * sizeof(wchar_t)>::toWide(
-                begin, end, std::back_inserter(wide), replacement);
-            ansi = priv::wideToAnsi(wide.begin(), wide.end(), locale);
-        }
-    }
-    return std::copy(ansi.begin(), ansi.end(), output);
+    return priv::toAnsi<16>(begin, end, output, replacement, locale);
 }
 
 
@@ -539,17 +603,7 @@ Out Utf<16>::toAnsi(In begin, In end, Out output, char replacement, const std::l
 template <typename In, typename Out>
 Out Utf<16>::toWide(In begin, In end, Out output, wchar_t replacement)
 {
-    switch(sizeof(wchar_t)) {
-        case 2:
-            return std::copy(begin, end, output);
-        case 1:
-            return Utf<16>::toUtf8(begin, end, output);
-        case 4:
-            return Utf<16>::toUtf32(begin, end, output);
-        default:
-             assert(!"Unsupported sizeof(wchar_t)!");
-    }
-    return output;
+    return priv::utfToUtf<8 * sizeof(wchar_t), 16>(begin, end, output);
 }
 
 
@@ -648,8 +702,7 @@ std::size_t Utf<32>::count(In begin, In end)
 template <typename In, typename Out>
 Out Utf<32>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
-    const std::vector<wchar_t> wide = priv::ansiToWide(begin, end, locale);
-    return Utf<32>::fromWide(wide.begin(), wide.end(), output);
+    return priv::fromAnsi<32>(begin, end, output, locale);
 }
 
 
@@ -657,17 +710,7 @@ Out Utf<32>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 template <typename In, typename Out>
 Out Utf<32>::fromWide(In begin, In end, Out output)
 {
-    switch(sizeof(wchar_t)) {
-        case 4:
-            return std::copy(begin, end, output);
-        case 2:
-            return Utf<16>::toUtf32(begin, end, output);
-        case 1:
-            return Utf<8>::toUtf32(begin, end, output);
-        default:
-            assert(!"Unsupported sizeof(wchar_t)!");
-    }
-    return output;
+    return priv::utfToUtf<32, sizeof(wchar_t) * 8>(begin, end, output);
 }
 
 
@@ -688,23 +731,7 @@ Out Utf<32>::fromLatin1(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<32>::toAnsi(In begin, In end, Out output, char replacement, const std::locale& locale)
 {
-    std::vector<char> ansi;
-    switch (sizeof(wchar_t)) {
-        case 4:
-            ansi = priv::wideToAnsi(
-                reinterpret_cast<const wchar_t*>(&*begin),
-                reinterpret_cast<const wchar_t*>(&*end),
-                locale);
-        default:
-        {
-            std::vector<wchar_t> wide;
-            wide.reserve(end - begin);
-            Utf<8 * sizeof(wchar_t)>::toWide(
-                begin, end, std::back_inserter(wide), replacement);
-            ansi = priv::wideToAnsi(wide.begin(), wide.end(), locale);
-        }
-    }
-    return std::copy(ansi.begin(), ansi.end(), output);
+    return priv::toAnsi<32>(begin, end, output, replacement, locale);
 }
 
 
@@ -712,18 +739,7 @@ Out Utf<32>::toAnsi(In begin, In end, Out output, char replacement, const std::l
 template <typename In, typename Out>
 Out Utf<32>::toWide(In begin, In end, Out output, wchar_t replacement)
 {
-    switch(sizeof(wchar_t)) {
-        case 4:
-            return std::copy(begin, end, output);
-        case 1:
-            return Utf<8>::toUtf16(begin, end, output);
-        case 2:
-            return Utf<8>::toUtf32(begin, end, output);
-        default:
-             assert(!"Unsupported sizeof(wchar_t)!");
-    }
-    return output;
-
+    return priv::utfToUtf<8 * sizeof(wchar_t), 32>(begin, end, output);
 }
 
 
