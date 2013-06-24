@@ -899,6 +899,10 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     if (message == WM_CLOSE)
         return 0;
 
+    // Don't forward the menu system command, so that pressing ALT or F10 doesn't steal the focus
+    if ((message == WM_SYSCOMMAND) && (wParam == SC_KEYMENU))
+        return 0;
+
     static const bool hasUnicode = hasUnicodeSupport();
     return hasUnicode ? DefWindowProcW(handle, message, wParam, lParam) :
                         DefWindowProcA(handle, message, wParam, lParam);
