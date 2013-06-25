@@ -223,6 +223,7 @@ private :
     Cursor     m_hiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
     bool       m_keyRepeat;           ///< Is the KeyRepeat feature enabled ?
     XEvent     m_lastKeyReleaseEvent; ///< Last key release event we received (needed for discarding repeated key events)
+    Vector2i   m_previousSize;        ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
 };
 
 } // namespace priv

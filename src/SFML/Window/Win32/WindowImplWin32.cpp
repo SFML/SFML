@@ -73,7 +73,8 @@ m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_isCursorIn      (false),
 m_lastSize        (0, 0),
-m_resizing        (false)
+m_resizing        (false),
+m_surrogate       (0)
 {
     if (m_handle)
     {
@@ -93,7 +94,8 @@ m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_isCursorIn      (false),
 m_lastSize        (mode.width, mode.height),
-m_resizing        (false)
+m_resizing        (false),
+m_surrogate       (0)
 {
     // Register the window class at first call
     if (windowCount == 0)
@@ -200,7 +202,7 @@ void WindowImplWin32::processEvents()
     if (!m_callback)
     {
         MSG message;
-        while (PeekMessage(&message, m_handle, 0, 0, PM_REMOVE))
+        while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&message);
             DispatchMessage(&message);
@@ -241,7 +243,7 @@ void WindowImplWin32::setSize(const Vector2u& size)
 {
     // SetWindowPos wants the total size of the window (including title bar and borders),
     // so we have to compute it
-    RECT rectangle = {0, 0, size.x, size.y};
+    RECT rectangle = {0, 0, static_cast<long>(size.x), static_cast<long>(size.y)};
     AdjustWindowRect(&rectangle, GetWindowLong(m_handle, GWL_STYLE), false);
     int width  = rectangle.right - rectangle.left;
     int height = rectangle.bottom - rectangle.top;
@@ -510,10 +512,33 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             if (m_keyRepeatEnabled || ((lParam & (1 << 30)) == 0))
             {
-                Event event;
-                event.type = Event::TextEntered;
-                event.text.unicode = static_cast<Uint32>(wParam);
-                pushEvent(event);
+                // Get the code of the typed character
+                Uint32 character = static_cast<Uint32>(wParam);
+
+                // Check if it is the first part of a surrogate pair, or a regular character
+                if ((character >= 0xD800) && (character <= 0xDBFF))
+                {
+                    // First part of a surrogate pair: store it and wait for the second one
+                    m_surrogate = static_cast<Uint16>(character);
+                }
+                else
+                {
+
+                    // Check if it is the second part of a surrogate pair, or a regular character
+                    if ((character >= 0xDC00) && (character <= 0xDFFF))
+                    {
+                        // Convert the UTF-16 surrogate pair to a single UTF-32 value
+                        Uint16 utf16[] = {m_surrogate, static_cast<Uint16>(character)};
+                        sf::Utf16::toUtf32(utf16, utf16 + 2, &character);
+                        m_surrogate = 0;
+                    }
+
+                    // Send a TextEntered event
+                    Event event;
+                    event.type = Event::TextEntered;
+                    event.text.unicode = character;
+                    pushEvent(event);
+                }
             }
             break;
         }
@@ -859,7 +884,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     }
 
     // Get the WindowImpl instance corresponding to the window handle
-    WindowImplWin32* window = reinterpret_cast<WindowImplWin32*>(GetWindowLongPtr(handle, GWLP_USERDATA));
+    WindowImplWin32* window = handle ? reinterpret_cast<WindowImplWin32*>(GetWindowLongPtr(handle, GWLP_USERDATA)) : NULL;
 
     // Forward the event to the appropriate function
     if (window)
@@ -872,6 +897,10 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
 
     // We don't forward the WM_CLOSE message to prevent the OS from automatically destroying the window
     if (message == WM_CLOSE)
+        return 0;
+
+    // Don't forward the menu system command, so that pressing ALT or F10 doesn't steal the focus
+    if ((message == WM_SYSCOMMAND) && (wParam == SC_KEYMENU))
         return 0;
 
     static const bool hasUnicode = hasUnicodeSupport();
