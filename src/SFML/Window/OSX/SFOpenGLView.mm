@@ -35,13 +35,9 @@
 ////////////////////////////////////////////////////////////
 /// Here are define the mask value for the 'modifiers' keys (cmd, ctrl, alt, shift)
 ///
-/// As I don't have the right control keycode I cannot implement left-right
-/// recognition for this key.
-#warning Missing keycode for right control key.
-/// #define NSRightControlKeyMask       0x...
-/// #define NSLeftControlKeyMask        0x40101
-///
 ////////////////////////////////////////////////////////////
+#define NSRightControlKeyMask       0x42000
+#define NSLeftControlKeyMask        0x40001
 #define NSRightShiftKeyMask         0x020004
 #define NSLeftShiftKeyMask          0x020002
 #define NSRightCommandKeyMask       0x100010
@@ -117,6 +113,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
         [self enableKeyRepeat];
         m_realSize = NSZeroSize;
         [self initModifiersState];
+        m_markedRange = NSMakeRange(NSNotFound, 0);
         
         // Register for mouse-move event
         m_mouseIsIn = [self isMouseInside];
@@ -519,6 +516,64 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 #pragma mark
 #pragma mark Key-event methods
 
+- (void)doCommandBySelector:(SEL)aSelector
+{
+    
+}
+
+- (NSAttributedString *)attributedSubstringForProposedRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange
+{
+    return nil;
+}
+
+- (NSUInteger)characterIndexForPoint:(NSPoint)aPoint
+{
+    return 0;
+}
+
+- (NSRect)firstRectForCharacterRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange
+{
+    return NSMakeRect(0, 0, 0, 0);
+}
+
+- (BOOL)hasMarkedText
+{
+    return m_markedRange.location != NSNotFound;
+}
+
+- (void)insertText:(id)aString replacementRange:(NSRange)replacementRange
+{
+    for (unsigned i = 0; i < [aString length]; ++i)
+    {
+        m_requester->textEntered([aString characterAtIndex:i]);
+    }
+    [self unmarkText];
+}
+
+- (NSRange)markedRange
+{
+    return m_markedRange;
+}
+
+- (NSRange)selectedRange
+{
+    return NSMakeRange(NSNotFound, 0);
+}
+
+- (void)setMarkedText:(id)aString selectedRange:(NSRange)selectedRange replacementRange:(NSRange)replacementRange
+{
+    m_markedRange = NSMakeRange(0, [aString length]);
+}
+
+- (void)unmarkText
+{
+    m_markedRange = NSMakeRange(NSNotFound, 0);
+}
+
+- (NSArray *)validAttributesForMarkedText
+{
+    return [NSArray arrayWithObjects:NSMarkedClauseSegmentAttributeName, NSGlyphInfoAttributeName, nil];
+}
 
 ////////////////////////////////////////////////////////
 -(void)keyDown:(NSEvent *)theEvent
@@ -536,64 +591,9 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
             m_requester->keyDown(key);
         }
     }
-
-
-    // Handle text entred event
-    // We create a new event without command/ctrl modifiers 
-    // to prevent the OS from sending an alert
-    NSUInteger modifiers = [theEvent modifierFlags];
     
-    if (modifiers & NSCommandKeyMask) modifiers = modifiers & ~NSCommandKeyMask;
-    if (modifiers & NSControlKeyMask) modifiers = modifiers & ~NSControlKeyMask;
-    
-    NSEvent* ev = [NSEvent keyEventWithType:NSKeyDown
-                                   location:[theEvent locationInWindow]
-                              modifierFlags:modifiers
-                                  timestamp:[theEvent timestamp]
-                               windowNumber:[theEvent windowNumber]
-                                    context:[theEvent context]
-                                 characters:[theEvent characters]
-                charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers]
-                                  isARepeat:[theEvent isARepeat]
-                                    keyCode:[theEvent keyCode]];
-    
-    if ((m_useKeyRepeat || ![ev isARepeat]) && [[ev characters] length] > 0) {
-        
-        // Ignore escape key and non text keycode. (See NSEvent.h)
-        // They produce a sound alert.
-        unichar code = [[ev characters] characterAtIndex:0];
-        unsigned short keycode = [ev keyCode];
-        
-        // Backspace and Delete unicode values are badly handled by Apple.
-        // We do a small workaround here :
-        
-        // Backspace
-        if (keycode == 0x33) {
-            // Send the correct unicode value (i.e. 8) instead of 127 (which is 'delete')
-            m_requester->textEntered(8);
-        } 
-        
-        // Delete
-        else if (keycode == 0x75 || keycode == NSDeleteFunctionKey) {
-            // Instead of the value 63272 we send 127.
-            m_requester->textEntered(127);
-        }
-        
-        // All other unicode values
-        else if (keycode != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
-            
-            // Let's see if its a valid text.
-            NSText* text = [[self window] fieldEditor:YES forObject:self];
-            [text interpretKeyEvents:[NSArray arrayWithObject:ev]];
-            
-            NSString* string = [text string];
-            if ([string length] > 0) {
-                // It's a valid TextEntered event.
-                m_requester->textEntered([string characterAtIndex:0]);
-                
-                [text setString:@""];
-            }
-        }
+    if (m_useKeyRepeat || ![theEvent isARepeat]) {
+        [[self inputContext] handleEvent:theEvent];
     }
 }
 
@@ -639,7 +639,8 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     BOOL leftCommandIsDown      = NO;
     BOOL rightAlternateIsDown   = NO;
     BOOL leftAlternateIsDown    = NO;
-    BOOL controlIsDown          = NO;
+    BOOL rightControlIsDown   = NO;
+    BOOL leftControlIsDown    = NO;
     
     // Shift keys.
     if (modifiers & NSShiftKeyMask) { // At least one shift key is down.
@@ -901,30 +902,94 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
             m_requester->keyUp(key);
         }
     }
-    
+
     // Control keys.
-    if (modifiers & NSControlKeyMask) {
-        // Currently only the left control key will be used in SFML (see note above).
+    if (modifiers & NSControlKeyMask) { // At least one control key is down.
+        // Clean up modifiers to keep only 'Control' bits.
+        NSUInteger control = keepOnlyMaskFromData(modifiers, NSRightControlKeyMask | NSLeftControlKeyMask);
         
-        controlIsDown = YES;
-        
-        if (!m_controlWasDown) {
-            // ctrl pressed
+        // Only right Control is down ?
+        if (control == NSRightControlKeyMask) {
             
-            key.code = sf::Keyboard::LControl;
-            m_requester->keyDown(key);
+            rightControlIsDown = YES;
+            
+            if (m_leftControlWasDown) {
+                // left control released
+                leftControlIsDown  = NO;
+                
+                key.code = sf::Keyboard::LControl;
+                m_requester->keyUp(key);
+            }
+            
+            if (!m_rightControlWasDown) {
+                // right control pressed
+                
+                key.code = sf::Keyboard::RControl;
+                m_requester->keyDown(key);
+            }
         }
-    } else { // No control key down.
-        controlIsDown = NO;
         
-        if (m_controlWasDown) {
-            // ctrl released
+        // Only left Control is down ?
+        if (control == NSLeftControlKeyMask) {
+            
+            leftControlIsDown = YES;
+            
+            if (m_rightControlWasDown) {
+                // right control released
+                rightControlIsDown = NO;
+                
+                key.code = sf::Keyboard::RControl;
+                m_requester->keyUp(key);
+            }
+            
+            if (!m_leftControlWasDown) {
+                // left control pressed
+                
+                key.code = sf::Keyboard::LControl;
+                m_requester->keyDown(key);
+            }
+        }
+        
+        // Or are they both down ?
+        if (control == (NSRightControlKeyMask | NSLeftControlKeyMask)) {
+            
+            rightControlIsDown = YES;
+            leftControlIsDown = YES;
+            
+            if (!m_rightControlWasDown) {
+                // right control pressed
+                
+                key.code = sf::Keyboard::RControl;
+                m_requester->keyDown(key);
+            }
+            
+            if (!m_leftControlWasDown) {
+                // left control pressed
+                
+                key.code = sf::Keyboard::LControl;
+                m_requester->keyDown(key);
+            }
+        }
+    } else { // No Control key down.
+        
+        rightControlIsDown = NO;
+        leftControlIsDown  = NO;
+        
+        if (m_rightControlWasDown) {
+            // right control released
+            
+            key.code = sf::Keyboard::RControl;
+            m_requester->keyUp(key);
+        }
+        
+        if (m_leftControlWasDown) {
+            // left control released
             
             key.code = sf::Keyboard::LControl;
             m_requester->keyUp(key);
         }
     }
-    
+
     // Update the state
     m_rightShiftWasDown     = rightShiftIsDown;
     m_leftShiftWasDown      = leftShiftIsDown;
@@ -932,7 +997,8 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     m_leftCommandWasDown    = leftCommandIsDown;
     m_rightAlternateWasDown = rightAlternateIsDown;
     m_leftAlternateWasDown  = leftAlternateIsDown;
-    m_controlWasDown        = controlIsDown;
+    m_rightControlWasDown = rightControlIsDown;
+    m_leftControlWasDown  = leftControlIsDown;
 }
 
 
@@ -946,7 +1012,8 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     m_leftCommandWasDown      = NO;
     m_rightAlternateWasDown   = NO;
     m_leftAlternateWasDown    = NO;
-    m_controlWasDown          = NO;
+    m_rightControlWasDown   = NO;
+    m_leftControlWasDown    = NO;
     
     NSUInteger modifiers = [[NSApp currentEvent] modifierFlags];
     modifiers = eraseMaskFromData(modifiers, 0x100); // We erase something useless that might be present.
@@ -1028,10 +1095,29 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     }
     
     // Control keys.
-    if (modifiers & NSControlKeyMask) {
-        // Currently only the left control key will be used in SFML (see note above).
+    if (modifiers & NSControlKeyMask) { // At least one Control key is down.
+        // Clean up modifiers to keep only 'Control' bits.
+        NSUInteger control = keepOnlyMaskFromData(modifiers, NSRightControlKeyMask | NSLeftControlKeyMask);
         
-        m_controlWasDown = YES;
+        // Only right Control is down ?
+        if (control == NSRightControlKeyMask) {
+            
+            m_rightControlWasDown = YES;
+        }
+        
+        // Only left Control is down ?
+        if (control == NSLeftControlKeyMask) {
+            
+            m_leftControlWasDown = YES;
+        }
+        
+        // Or are they both down ?
+        if (control == (NSRightControlKeyMask | NSLeftControlKeyMask)) {
+            
+            m_rightControlWasDown = YES;
+            m_leftControlWasDown = YES;
+        }
+
     }
 }
 
