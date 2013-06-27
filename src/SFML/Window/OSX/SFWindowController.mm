@@ -432,7 +432,7 @@
     [icon addRepresentation:bitmap];
     
     // Set app icon.
-    [[NSApplication sharedApplication] setApplicationIconImage:icon];
+    [[SFApplication sharedApplication] setApplicationIconImage:icon];
     
     // Free up.
     [icon release];
