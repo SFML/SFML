@@ -34,8 +34,10 @@ namespace sf {
     }
 }
 
+@class SFSilentResponder;
+
 ////////////////////////////////////////////////////////////
-/// \brief Spesialized NSOpenGLView
+/// \brief Specialized NSOpenGLView
 ///
 /// Handle event and send them back to the requester.
 ///
@@ -64,6 +66,11 @@ namespace sf {
     BOOL m_rightAlternateWasDown;
     BOOL m_leftAlternateWasDown;
     BOOL m_controlWasDown;
+
+    // Hidden text view use to convert key event to actual chars.
+    // To prevent sound alert we use a silent responder.
+    SFSilentResponder*  m_silentResponder;
+    NSTextView*         m_hiddenTextView;
 }
 
 ////////////////////////////////////////////////////////////

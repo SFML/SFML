@@ -31,6 +31,7 @@
 #include <SFML/System/Err.hpp>
 
 #import <SFML/Window/OSX/SFOpenGLView.h>
+#import <SFML/Window/OSX/SFSilentResponder.h>
 
 ////////////////////////////////////////////////////////////
 /// Here are define the mask value for the 'modifiers' keys (cmd, ctrl, alt, shift)
@@ -60,6 +61,15 @@ NSUInteger eraseMaskFromData(NSUInteger data, NSUInteger mask);
 ///
 ////////////////////////////////////////////////////////////
 NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
+
+////////////////////////////////////////////////////////////
+/// Returns true if `event` represents a representable character.
+///
+/// The event is assumed to be a key down event.
+/// False is returned if the event is either escape or a non text unicode.
+///
+////////////////////////////////////////////////////////////
+BOOL isValidTextUnicode(NSEvent* event);
 
 ////////////////////////////////////////////////////////////
 /// SFOpenGLView class : Privates Methods Declaration
@@ -131,6 +141,11 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
                    selector:@selector(frameDidChange:)
                        name:NSViewFrameDidChangeNotification
                      object:self];
+
+        // Create a hidden text view for parsing key down event properly
+        m_silentResponder = [[SFSilentResponder alloc] init];
+        m_hiddenTextView = [[NSTextView alloc] initWithFrame:NSZeroRect];
+        [m_hiddenTextView setNextResponder:m_silentResponder];
     }
 
     return self;
@@ -272,6 +287,10 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 ////////////////////////////////////////////////////////
 -(void)dealloc
 {
+    // Release attributes
+    [m_hiddenTextView release];
+    [m_silentResponder release];
+
     // Unregister
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self removeTrackingRect:m_trackingTag];
@@ -538,61 +557,46 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     }
 
 
-    // Handle text entred event
-    // We create a new event without command/ctrl modifiers 
-    // to prevent the OS from sending an alert
-    NSUInteger modifiers = [theEvent modifierFlags];
-    
-    if (modifiers & NSCommandKeyMask) modifiers = modifiers & ~NSCommandKeyMask;
-    if (modifiers & NSControlKeyMask) modifiers = modifiers & ~NSControlKeyMask;
-    
-    NSEvent* ev = [NSEvent keyEventWithType:NSKeyDown
-                                   location:[theEvent locationInWindow]
-                              modifierFlags:modifiers
-                                  timestamp:[theEvent timestamp]
-                               windowNumber:[theEvent windowNumber]
-                                    context:[theEvent context]
-                                 characters:[theEvent characters]
-                charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers]
-                                  isARepeat:[theEvent isARepeat]
-                                    keyCode:[theEvent keyCode]];
-    
-    if ((m_useKeyRepeat || ![ev isARepeat]) && [[ev characters] length] > 0) {
-        
-        // Ignore escape key and non text keycode. (See NSEvent.h)
-        // They produce a sound alert.
-        unichar code = [[ev characters] characterAtIndex:0];
-        unsigned short keycode = [ev keyCode];
-        
-        // Backspace and Delete unicode values are badly handled by Apple.
-        // We do a small workaround here :
-        
+    // Handle text entred event:
+    // Ignore event if we don't want repeated keystrokes
+    if (m_useKeyRepeat || ![theEvent isARepeat]) {
+        // Ignore escape key and other non text keycode (See NSEvent.h)
+        // because they produce a sound alert.
+        if (isValidTextUnicode(theEvent)) {
+            // Send the event to the hidden text view for processing
+            [m_hiddenTextView interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+        }
+
+        // Carefully handle backspace and delete..
+        // Note: the event is intentionally sent to the hidden view
+        //       even if we do something more specific below. This way
+        //       key combination are correctly interpreted.
+
+        unsigned short keycode = [theEvent keyCode];
+
         // Backspace
         if (keycode == 0x33) {
             // Send the correct unicode value (i.e. 8) instead of 127 (which is 'delete')
             m_requester->textEntered(8);
-        } 
-        
+        }
+
         // Delete
         else if (keycode == 0x75 || keycode == NSDeleteFunctionKey) {
             // Instead of the value 63272 we send 127.
             m_requester->textEntered(127);
         }
-        
-        // All other unicode values
-        else if (keycode != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
-            
-            // Let's see if its a valid text.
-            NSText* text = [[self window] fieldEditor:YES forObject:self];
-            [text interpretKeyEvents:[NSArray arrayWithObject:ev]];
-            
-            NSString* string = [text string];
-            if ([string length] > 0) {
-                // It's a valid TextEntered event.
-                m_requester->textEntered([string characterAtIndex:0]);
-                
-                [text setString:@""];
+
+        // Otherwise, let's see what our hidden field has computed
+        else {
+            NSString* string = [m_hiddenTextView string];
+
+            // Send each character to SFML event requester
+            for (NSUInteger index = 0; index < [string length]; ++index) {
+                m_requester->textEntered([string characterAtIndex:index]);
             }
+
+            // Empty our hidden cache
+            [m_hiddenTextView setString:@""];
         }
     }
 }
@@ -1097,4 +1101,15 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask)
     return eraseMaskFromData(data, negative);
 }
 
+BOOL isValidTextUnicode(NSEvent* event)
+{
+    if ([event keyCode] == 0x35) { // Escape
+        return false;
+    } else if ([[event characters] length] > 0) {
+        unichar code = [[event characters] characterAtIndex:0];
+        return code < 0xF700 || code > 0xF8FF;
+    } else {
+        return true;
+    }
+}
 
