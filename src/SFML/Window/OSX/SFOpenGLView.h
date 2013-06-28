@@ -47,8 +47,8 @@ namespace sf {
 /// bound to its default value we don't recompute the mouse position
 /// and assume it's correct.
 ///
-/// As I don't have the right control keycode I cannot implement left-right
-/// recognition for this key. (See SFOpenGLView.mm for more info.)
+/// Modifiers keys (cmd, ctrl, alt, shift) are handled by this class
+/// but the actual logic is done in SFKeyboardModifiersHelper.(h|mm).
 ///
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView : NSOpenGLView {
@@ -57,18 +57,9 @@ namespace sf {
     NSTrackingRectTag             m_trackingTag;
     BOOL                          m_mouseIsIn;
     NSSize                        m_realSize;
-    
-    /// 'modifiers' state
-    BOOL m_rightShiftWasDown;
-    BOOL m_leftShiftWasDown;
-    BOOL m_rightCommandWasDown;
-    BOOL m_leftCommandWasDown;
-    BOOL m_rightAlternateWasDown;
-    BOOL m_leftAlternateWasDown;
-    BOOL m_controlWasDown;
 
-    // Hidden text view use to convert key event to actual chars.
-    // To prevent sound alert we use a silent responder.
+    // Hidden text view used to convert key event to actual chars.
+    // We use a silent responder to prevent sound alerts.
     SFSilentResponder*  m_silentResponder;
     NSTextView*         m_hiddenTextView;
 }
