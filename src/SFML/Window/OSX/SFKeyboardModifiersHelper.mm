@@ -32,13 +32,8 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Here are define the mask value for the 'modifiers' keys (cmd, ctrl, alt, shift)
-///
-/// As I don't have the right control keycode I cannot implement left-right
-/// recognition for this key.
-#warning Missing keycode for right control key.
-/// #define NSRightControlKeyMask       0x...
-/// #define NSLeftControlKeyMask        0x40101
+/// Here are define the mask value for the 'modifiers'
+/// keys (cmd, ctrl, alt, shift)
 ///
 ////////////////////////////////////////////////////////////
 #define NSRightShiftKeyMask         0x020004
@@ -47,6 +42,8 @@
 #define NSLeftCommandKeyMask        0x100008
 #define NSRightAlternateKeyMask     0x080040
 #define NSLeftAlternateKeyMask      0x080020
+#define NSRightControlKeyMask       0x042000
+#define NSLeftControlKeyMask        0x040001
 
 
 ////////////////////////////////////////////////////////////
@@ -62,8 +59,8 @@ struct ModifiersState
     BOOL leftCommandWasDown;
     BOOL rightAlternateWasDown;
     BOOL leftAlternateWasDown;
-    BOOL controlWasDown;
-    // Left & right control keys not yet supported. See the note above.
+    BOOL leftControlWasDown;
+    BOOL rightControlWasDown;
 };
 
 
@@ -167,10 +164,11 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
     );
 
     // Handle control
-    // Currently only the left control key will be used in SFML (see note above).
-    processOneModifier(
-        modifiers, NSControlKeyMask,
-        state.controlWasDown, sf::Keyboard::LControl,
+    processLeftRightModifiers(
+        modifiers,
+        NSLeftControlKeyMask, NSRightControlKeyMask,
+        state.leftControlWasDown, state.rightControlWasDown,
+        sf::Keyboard::LControl, sf::Keyboard::RControl,
         requester
     );
 }
@@ -200,8 +198,8 @@ void ensureModifiersStateIsInitilized()
     state.rightCommandWasDown     = isKeyMaskActive(modifiers, NSRightCommandKeyMask);
     state.leftAlternateWasDown    = isKeyMaskActive(modifiers, NSLeftAlternateKeyMask);
     state.rightAlternateWasDown   = isKeyMaskActive(modifiers, NSRightAlternateKeyMask);
-    state.controlWasDown          = isKeyMaskActive(modifiers, NSControlKeyMask);
-    // Currently only the left control key will be used in SFML (see note above).
+    state.leftControlWasDown      = isKeyMaskActive(modifiers, NSLeftControlKeyMask);
+    state.rightControlWasDown     = isKeyMaskActive(modifiers, NSRightControlKeyMask);
 
     isStateInitialized = YES;
 }

@@ -37,12 +37,8 @@ namespace sf {
 ////////////////////////////////////////////////////////////
 /// Keyboard Modifiers Helper
 ///
-/// Handle modifiers (cmd, ctrl, alt, shift) events and send
-/// them back to the requester.
-///
-/// As I don't have the right control keycode I cannot
-/// implement left-right recognition for this key.
-/// (See SFKeyboardModifiersHelper.mm for more info.)
+/// Handle left & right modifiers (cmd, ctrl, alt, shift)
+/// events and send them back to the requester.
 ///
 ////////////////////////////////////////////////////////////
 
