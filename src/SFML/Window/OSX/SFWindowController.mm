@@ -281,14 +281,6 @@
 }
 
 
-////////////////////////////////////////////////////////
--(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
-{
-    // Forward to...
-    [m_oglView setCursorPositionToX:x Y:y];
-}
-
-
 ////////////////////////////////////////////////////////////
 -(NSPoint)position
 {
