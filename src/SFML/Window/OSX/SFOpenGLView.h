@@ -86,10 +86,11 @@ namespace sf {
 -(void)setRealSize:(NSSize)newSize;
 
 ////////////////////////////////////////////////////////////
-/// Move the mouse cursor to (x,y) (SFML Coordinates).
+/// Compute the position in global coordinate
+/// of the given point in SFML coordinate.
 /// 
 ////////////////////////////////////////////////////////////
--(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y;
+-(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point;
 
 ////////////////////////////////////////////////////////////
 /// Adjust key repeat configuration.

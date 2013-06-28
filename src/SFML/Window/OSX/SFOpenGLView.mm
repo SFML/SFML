@@ -141,17 +141,12 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
-{
-    if (m_requester == 0) return;
-    
-    // Create a SFML event.
-    m_requester->mouseMovedAt(x, y);
-    
+-(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point
+{   
     // Recompute the mouse pos if required.
     if (!NSEqualSizes(m_realSize, NSZeroSize)) {
-        x = x / m_realSize.width  * [self frame].size.width;
-        y = y / m_realSize.height * [self frame].size.height;
+        point.x = point.x / m_realSize.width  * [self frame].size.width;
+        point.y = point.y / m_realSize.height * [self frame].size.height;
     }
 
     // Note : -[NSWindow convertBaseToScreen:] is deprecated on 10.7
@@ -162,34 +157,20 @@ BOOL isValidTextUnicode(NSEvent* event);
 
     
     // Flip SFML coordinates to match window coordinates
-    y = [self frame].size.height - y;
+    point.y = [self frame].size.height - point.y;
     
     // Get the position of (x, y) in the coordinate system of the window.
-    NSPoint p = [self convertPoint:NSMakePoint(x, y) toView:self];
-    p = [self convertPoint:p toView:nil]; // nil means window
+    point = [self convertPoint:point toView:self];
+    point = [self convertPoint:point toView:nil]; // nil means window
     
     // Convert it to screen coordinates
-    p = [[self window] convertBaseToScreen:p];
+    point = [[self window] convertBaseToScreen:point];
     
     // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.
     float const screenHeight = [[[self window] screen] frame].size.height;
-    p.y = screenHeight - p.y;
-    
-    x = p.x;
-    y = p.y;
+    point.y = screenHeight - point.y;
 
-    
-    // Get the id of the screen
-    CGDirectDisplayID screenNumber = (CGDirectDisplayID)[[[[[self window] screen] deviceDescription] valueForKey:@"NSScreenNumber"] intValue];
-    
-    // Place the cursor.
-    CGDisplayMoveCursorToPoint(screenNumber, CGPointMake(x, y));
-    /*
-     * CGDisplayMoveCursorToPoint -- Discussion :
-     *
-     * No events are generated as a result of this move. 
-     * Points that lie outside the desktop are clipped to the desktop.
-     */
+    return point;
 }
 
 

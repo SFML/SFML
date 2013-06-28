@@ -172,8 +172,10 @@ void InputImpl::setMousePosition(const Vector2i& position, const Window& relativ
         return;
     }
     
-    // Use -setCursorPositionToX:Y:.
-    [view setCursorPositionToX:position.x Y:position.y];
+    // Let SFOpenGLView compute the position in global coordinate
+    NSPoint p = NSMakePoint(position.x, position.y);
+    p = [view computeGlobalPositionOfRelativePoint:p];
+    setMousePosition(sf::Vector2i(p.x, p.y));
 }
 
 } // namespace priv
