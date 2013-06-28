@@ -64,6 +64,13 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(BOOL)isMouseInside;
 
 ////////////////////////////////////////////////////////////
+/// Update the mouse state (in or out) and fire an event
+/// if its state has changed.
+/// 
+////////////////////////////////////////////////////////////
+-(void)updateMouseState;
+
+////////////////////////////////////////////////////////////
 /// Convert the NSEvent mouse button type to SFML type.
 ///
 /// Returns ButtonCount if the button is unknown
@@ -204,15 +211,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)frameDidChange:(NSNotification *)notification
 {
     // Update mouse internal state.
-    BOOL mouseWasIn = m_mouseIsIn;
-    m_mouseIsIn = [self isMouseInside];
-    
-    // Send event if needed.
-    if (mouseWasIn && !m_mouseIsIn) {
-        [self mouseExited:nil];
-    } else if (!mouseWasIn && m_mouseIsIn) {
-        [self mouseEntered:nil];
-    }
+    [self updateMouseState];
     
     // Adapt tracking area for mouse mouse event.
     [self removeTrackingRect:m_trackingTag];
@@ -244,6 +243,21 @@ BOOL isValidTextUnicode(NSEvent* event);
     }
     
     return NO;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)updateMouseState
+{
+    BOOL mouseWasIn = m_mouseIsIn;
+    m_mouseIsIn = [self isMouseInside];
+    
+    // Send event if needed.
+    if (mouseWasIn && !m_mouseIsIn) {
+        [self mouseExited:nil];
+    } else if (!mouseWasIn && m_mouseIsIn) {
+        [self mouseEntered:nil];
+    }
 }
 
 
@@ -336,22 +350,39 @@ BOOL isValidTextUnicode(NSEvent* event);
 ////////////////////////////////////////////////////////
 -(void)mouseEntered:(NSEvent *)theEvent
 {
+    // There are two cases when we need to fire an event:
+    // a) the event is nil, meaning that the method was
+    //    called from our code (e.g. updateMouseState)
+    // b) the mouse was outside the view.
+    BOOL shouldFire = (theEvent == nil || m_mouseIsIn == NO);
+
+    // Update status
     m_mouseIsIn = YES;
-    
+
     if (m_requester == 0) return;
-    
-    m_requester->mouseMovedIn();
+
+    // Fire (or not) an event
+    if (shouldFire) {
+        m_requester->mouseMovedIn();
+    }
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)mouseExited:(NSEvent *)theEvent
 {
+    // Similarly to mouseEntered:
+    BOOL shouldFire = (theEvent == nil || m_mouseIsIn == YES);
+
+    // Update status
     m_mouseIsIn = NO;
-    
+
     if (m_requester == 0) return;
-    
-    m_requester->mouseMovedOut();
+
+    // Fire (or not) an event
+    if (shouldFire) {
+        m_requester->mouseMovedOut();
+    }
 }
 
 
@@ -445,12 +476,15 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)otherMouseDragged:(NSEvent *)theEvent
 {
     if (m_requester != 0) {
-        // If the event is not useful.
-        if (!m_mouseIsIn) return;
-        
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
-        
-        m_requester->mouseMovedAt(loc.x, loc.y);
+
+        // Make sure the point is inside the view.
+        // (mouseEntered: and mouseExited: are not immediately called
+        //  when the mouse is dragged. That would be too easy!)
+        [self updateMouseState];
+        if (m_mouseIsIn) {
+            m_requester->mouseMovedAt(loc.x, loc.y);
+        }
     }
     
     // If the event is not forwarded by mouseDragged or rightMouseDragged...
