@@ -41,7 +41,10 @@ namespace sf {
 ///
 /// Handle event and send them back to the requester.
 ///
-/// NSTrackingArea is used to keep track of mouse events.
+/// NSTrackingArea is used to keep track of mouse events. We also
+/// need to be able to ignore mouse event when exiting fullscreen.
+/// The SFWindowController should call -[SFOpenGLView exitFullscreen]
+/// and -[SFOpenGLView enterFullscreen] when appropriate.
 ///
 /// In order to send correct mouse coordonate to the requester when
 /// the window is in fullscreen we use m_realSize to represent the
@@ -71,6 +74,13 @@ namespace sf {
 /// 
 ////////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect;
+
+////////////////////////////////////////////////////////////
+/// Handle going in and out of fullscreen mode.
+/// 
+////////////////////////////////////////////////////////////
+-(void)enterFullscreen;
+-(void)exitFullscreen;
 
 ////////////////////////////////////////////////////////////
 /// Apply the given resquester to the view.

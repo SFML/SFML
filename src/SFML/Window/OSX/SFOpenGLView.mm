@@ -129,6 +129,39 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
+-(void)enterFullscreen
+{
+    // Remove the tracking area first,
+    // just to be sure we don't add it twice!
+    [self removeTrackingArea:m_trackingArea];
+    [self addTrackingArea:m_trackingArea];
+
+    // Fire an mouse entered event if needed
+    if (!m_mouseIsIn && m_requester != 0) {
+        m_requester->mouseMovedIn();
+    }
+
+    // Update status
+    m_mouseIsIn = YES;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)exitFullscreen
+{
+    [self removeTrackingArea:m_trackingArea];
+
+    // Fire an mouse left event if needed
+    if (m_mouseIsIn && m_requester != 0) {
+        m_requester->mouseMovedOut();
+    }
+
+    // Update status
+    m_mouseIsIn = NO;
+}
+
+
+////////////////////////////////////////////////////////
 -(void)setRequesterTo:(sf::priv::WindowImplCocoa *)requester
 {
     m_requester = requester;
