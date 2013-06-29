@@ -102,12 +102,14 @@ BOOL isValidTextUnicode(NSEvent* event);
         [self enableKeyRepeat];
         m_realSize = NSZeroSize;
         
-        // Register for mouse-move event
+        // Register for mouse move event
         m_mouseIsIn = [self isMouseInside];
-        m_trackingTag = [self addTrackingRect:[self frame]
-                                        owner:self
-                                     userData:nil
-                                 assumeInside:m_mouseIsIn];
+        NSUInteger opts = (NSTrackingActiveAlways | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingEnabledDuringMouseDrag);
+        m_trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+                                                      options:opts
+                                                        owner:self
+                                                     userInfo:nil];
+        [self addTrackingArea:m_trackingArea];
         
         // Register for resize event
         NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
@@ -194,13 +196,6 @@ BOOL isValidTextUnicode(NSEvent* event);
     // Update mouse internal state.
     [self updateMouseState];
     
-    // Adapt tracking area for mouse mouse event.
-    [self removeTrackingRect:m_trackingTag];
-    m_trackingTag = [self addTrackingRect:[self frame]
-                                    owner:self
-                                 userData:nil
-                             assumeInside:m_mouseIsIn];
-    
     // Update the OGL view to fit the new size.
     [self update];
     
@@ -249,14 +244,17 @@ BOOL isValidTextUnicode(NSEvent* event);
 ////////////////////////////////////////////////////////
 -(void)dealloc
 {
+    // Unregister
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self removeTrackingArea:m_trackingArea];
+
     // Release attributes
     [m_hiddenTextView release];
     [m_silentResponder release];
+    [m_trackingArea release];
 
-    // Unregister
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self removeTrackingRect:m_trackingTag];
-    
+    [self setRequesterTo:0];
+
     [super dealloc];
 }
 

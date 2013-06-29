@@ -41,6 +41,8 @@ namespace sf {
 ///
 /// Handle event and send them back to the requester.
 ///
+/// NSTrackingArea is used to keep track of mouse events.
+///
 /// In order to send correct mouse coordonate to the requester when
 /// the window is in fullscreen we use m_realSize to represent the
 /// back buffer size (see SFWindowController). If 'm_realSize' is
@@ -54,8 +56,8 @@ namespace sf {
 @interface SFOpenGLView : NSOpenGLView {
     sf::priv::WindowImplCocoa*    m_requester;
     BOOL                          m_useKeyRepeat;
-    NSTrackingRectTag             m_trackingTag;
     BOOL                          m_mouseIsIn;
+    NSTrackingArea*               m_trackingArea;
     NSSize                        m_realSize;
 
     // Hidden text view used to convert key event to actual chars.
