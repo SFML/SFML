@@ -189,7 +189,7 @@
              * | Note for future version |
              * ---------------------------
              *
-             * starting with OS 10.5 NSView provides
+             * starting with OS 10.6 NSView provides
              * a new method -enterFullScreenMode:withOptions: 
              * which could be a good alternative.
              */
@@ -212,7 +212,7 @@
         
         // If a fullscreen window was requested...
         if (style & sf::Style::Fullscreen && mode != sf::VideoMode::getDesktopMode()) {
-            /// ... we set the "read size" of the view (that is the back buffer size).
+            /// ... we set the "real size" of the view (that is the back buffer size).
             [m_oglView setRealSize:NSMakeSize(m_fullscreenMode->width, m_fullscreenMode->height)];
         }
         
