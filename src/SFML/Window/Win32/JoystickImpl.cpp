@@ -35,10 +35,9 @@ namespace
 {
     struct ConnectionCache
     {
-        ConnectionCache() : connected(false), firstTime(true) {}
+        ConnectionCache() : connected(false) {}
         bool connected;
         sf::Clock timer;
-        bool firstTime;
     };
 
     const sf::Time connectionRefreshDelay = sf::milliseconds(500);
@@ -50,16 +49,42 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
+void JoystickImpl::initialize()
+{
+    // Perform the initial scan and populate the connection cache
+    for (unsigned int i = 0; i < Joystick::Count; ++i)
+    {
+        ConnectionCache& cache = connectionCache[i];
+
+        // Check if the joystick is connected
+        JOYINFOEX joyInfo;
+        joyInfo.dwSize = sizeof(joyInfo);
+        joyInfo.dwFlags = 0;
+        cache.connected = joyGetPosEx(JOYSTICKID1 + i, &joyInfo) == JOYERR_NOERROR;
+
+        // start the timeout
+        cache.timer.restart();
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void JoystickImpl::cleanup()
+{
+    // Nothing to do
+}
+
+
+////////////////////////////////////////////////////////////
 bool JoystickImpl::isConnected(unsigned int index)
 {
     // We check the connection state of joysticks only every N milliseconds,
     // because of a strange (buggy?) behaviour of joyGetPosEx when joysticks
     // are just plugged/unplugged -- it takes really long and kills the app performances
     ConnectionCache& cache = connectionCache[index];
-    if (cache.firstTime || (cache.timer.getElapsedTime() > connectionRefreshDelay))
+    if (cache.timer.getElapsedTime() > connectionRefreshDelay)
     {
         cache.timer.restart();
-        cache.firstTime = false;
 
         JOYINFOEX joyInfo;
         joyInfo.dwSize = sizeof(joyInfo);

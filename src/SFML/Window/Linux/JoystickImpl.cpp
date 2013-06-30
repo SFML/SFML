@@ -26,10 +26,41 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/System/Err.hpp>
+#include <sys/inotify.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
 #include <cstdio>
+
+
+namespace
+{
+    int notifyFd = -1;
+    int inputFd = -1;
+    bool plugged[sf::Joystick::Count];
+
+    void updatePluggedList()
+    {
+        for (unsigned int i = 0; i < sf::Joystick::Count; ++i)
+        {
+            char name[32];
+            std::snprintf(name, sizeof(name), "/dev/input/js%u", i);
+            struct stat info;
+            plugged[i] = (stat(name, &info) == 0);
+        }
+    }
+
+    bool canRead(int descriptor)
+    {
+	    fd_set set;
+	    FD_ZERO(&set);
+	    FD_SET(descriptor, &set);
+        timeval timeout = {0, 0};
+        return select(descriptor + 1, &set, NULL, NULL, &timeout) > 0 &&
+               FD_ISSET(notifyFd, &set);
+    }
+}
 
 
 namespace sf
@@ -37,35 +68,91 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
+void JoystickImpl::initialize()
+{
+    // Reset the array of plugged joysticks
+    std::fill(plugged, plugged + Joystick::Count, false);
+
+    // Create the inotify instance
+    notifyFd = inotify_init();
+    if (notifyFd < 0)
+    {
+        err() << "Failed to initialize inotify, joystick connections and disconnections won't be notified" << std::endl;
+        return;
+    }
+
+    // Watch nodes created and deleted in the /dev/input directory
+    inputFd = inotify_add_watch(notifyFd, "/dev/input", IN_CREATE | IN_DELETE);
+    if (inputFd < 0)
+    {
+        err() << "Failed to initialize inotify, joystick connections and disconnections won't be notified" << std::endl;
+        return;
+    }
+
+    // Do an initial scan
+    updatePluggedList();
+}
+
+
+////////////////////////////////////////////////////////////
+void JoystickImpl::cleanup()
+{
+    // Stop watching the /dev/input directory
+    if (inputFd >= 0)
+        inotify_rm_watch(notifyFd, inputFd);
+
+    // Close the inotify file descriptor
+    if (inputFd >= 0)
+        ::close(notifyFd);
+}
+
+
+////////////////////////////////////////////////////////////
 bool JoystickImpl::isConnected(unsigned int index)
 {
-    char name[32];
-    std::sprintf(name, "/dev/input/js%u", index);
+    // First check if new joysticks were added/removed since last update
+    if (canRead(notifyFd))
+    {
+        // Don't bother decomposing and interpreting the filename, just do a full scan
+        updatePluggedList();
 
-    struct stat info; 
-    return stat(name, &info) == 0; 
+        // Flush all the pending events
+        while (canRead(notifyFd))
+        {
+            char buffer[128];
+            read(notifyFd, buffer, sizeof(buffer));
+        }
+	}
+
+    // Then check if the joystick is connected
+    return plugged[index];
 }
 
 
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
 {
-    char name[32];
-    std::sprintf(name, "/dev/input/js%u", index);
-
-    m_file = ::open(name, O_RDONLY);
-    if (m_file > 0)
+    if (plugged[index])
     {
-        // Use non-blocking mode
-        fcntl(m_file, F_SETFL, O_NONBLOCK);
+        char name[32];
+        std::snprintf(name, sizeof(name), "/dev/input/js%u", index);
 
-        // Retrieve the axes mapping
-        ioctl(m_file, JSIOCGAXMAP, m_mapping);
+        // Open the joystick's file descriptor (read-only and non-blocking)
+        m_file = ::open(name, O_RDONLY | O_NONBLOCK);
+        if (m_file >= 0)
+        {
+            // Retrieve the axes mapping
+            ioctl(m_file, JSIOCGAXMAP, m_mapping);
 
-        // Reset the joystick state
-        m_state = JoystickState();
+            // Reset the joystick state
+            m_state = JoystickState();
 
-        return true;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {

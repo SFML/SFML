@@ -93,6 +93,7 @@ void JoystickManager::update()
 ////////////////////////////////////////////////////////////
 JoystickManager::JoystickManager()
 {
+    JoystickImpl::initialize();
 }
 
 
@@ -104,6 +105,8 @@ JoystickManager::~JoystickManager()
         if (m_joysticks[i].state.connected)
             m_joysticks[i].joystick.close();
     }
+
+    JoystickImpl::cleanup();
 }
 
 } // namespace priv
