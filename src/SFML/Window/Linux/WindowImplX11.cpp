@@ -356,8 +356,8 @@ void WindowImplX11::setTitle(const String& title)
     // There is however an option to tell the window manager your unicode title via hints.
     
     // Convert to UTF-8 encoding.
-    std::basic_string<sf::Uint8> utf8Title;
-    sf::Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
+    std::basic_string<Uint8> utf8Title;
+    Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
     
     // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
     Atom wmName = XInternAtom(m_display, "_NET_WM_NAME", False);
@@ -513,11 +513,6 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()
 {
-    // Make sure the "last key release" is initialized with invalid values
-    m_lastKeyReleaseEvent.type = -1;
-    m_lastKeyReleaseEvent.xkey.keycode = 0;
-    m_lastKeyReleaseEvent.xkey.time = 0;
-
     // Get the atom defining the close event
     m_atomClose = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
     XSetWMProtocols(m_display, m_window, &m_atomClose, 1);
@@ -613,33 +608,30 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
     // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
 
     // Detect repeated key events
-    if (((windowEvent.type == KeyPress) || (windowEvent.type == KeyRelease)) && (windowEvent.xkey.keycode < 256))
+    // (code shamelessly taken from SDL)
+    if (windowEvent.type == KeyRelease)
     {
-        // To detect if it is a repeated key event, we check the current state of the key:
-        // - If the state is "down", KeyReleased events must obviously be discarded
-        // - KeyPress events are a little bit harder to handle: they depend on the KeyRepeatEnabled state,
-        //   and we need to properly forward the first one
-        
-        // Check if the key is currently down
-        char keys[32];
-        XQueryKeymap(m_display, keys);
-        bool isDown = keys[windowEvent.xkey.keycode / 8] & (1 << (windowEvent.xkey.keycode % 8));
+        // Check if there's a matching KeyPress event in the queue
+        XEvent nextEvent;
+        if (XPending(m_display))
+        {
+            // Grab it but don't remove it from the queue, it still needs to be processed :)
+            XPeekEvent(m_display, &nextEvent);
+            if (nextEvent.type == KeyPress)
+            {
+                // Check if it is a duplicated event (same timestamp as the KeyRelease event)
+                if ((nextEvent.xkey.keycode == windowEvent.xkey.keycode) &&
+                    (nextEvent.xkey.time - windowEvent.xkey.time < 2))
+                {
+                    // If we don't want repeated events, remove the next KeyPress from the queue
+                    if (!m_keyRepeat)
+                        XNextEvent(m_display, &nextEvent);
 
-        // Check if it's a duplicate event
-        bool isDuplicate = (windowEvent.xkey.keycode == m_lastKeyReleaseEvent.xkey.keycode) &&
-                           (windowEvent.xkey.time - m_lastKeyReleaseEvent.xkey.time <= 5);
-
-        // Keep track of the last KeyRelease event
-        if (windowEvent.type == KeyRelease)
-            m_lastKeyReleaseEvent = windowEvent;
-
-        // KeyRelease event + key down or duplicate event = repeated event --> discard
-        if ((windowEvent.type == KeyRelease) && (isDown || isDuplicate))
-            return false;
-
-        // KeyPress event + matching KeyRelease event = repeated event --> discard if key repeat is disabled
-        if ((windowEvent.type == KeyPress) && isDuplicate && !m_keyRepeat)
-            return false;
+                    // This KeyRelease is a repeated event and we don't want it
+                    return false;
+                }
+            }
+        }
     }
 
     // Convert the X11 event to a sf::Event
