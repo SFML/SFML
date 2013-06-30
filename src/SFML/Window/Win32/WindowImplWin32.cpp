@@ -103,8 +103,8 @@ m_surrogate       (0)
 
     // Compute position and size
     HDC screenDC = GetDC(NULL);
-    int left   = (GetDeviceCaps(screenDC, HORZRES) - mode.width)  / 2;
-    int top    = (GetDeviceCaps(screenDC, VERTRES) - mode.height) / 2;
+    int left   = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.width))  / 2;
+    int top    = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.height)) / 2;
     int width  = mode.width;
     int height = mode.height;
     ReleaseDC(NULL, screenDC);
@@ -141,6 +141,10 @@ m_surrogate       (0)
     {
         m_handle = CreateWindowA(classNameA, title.toAnsiString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
     }
+
+    // By default, the OS limits the size of the window the the desktop size,
+    // we have to resize it after creation to apply the real size
+    setSize(Vector2u(mode.width, mode.height));
 
     // Switch to fullscreen if requested
     if (fullscreen)
@@ -486,6 +490,21 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 event.size.height = m_lastSize.y;
                 pushEvent(event);
             }
+            break;
+        }
+
+        // The system request the min/max window size and position
+        case WM_GETMINMAXINFO :
+        {
+            // We override the returned information to remove the default limit
+            // (the OS doesn't allow windows bigger than the desktop by default)
+            MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
+            info->ptMaxPosition.x = 50000;
+            info->ptMaxPosition.y = 50000;
+            info->ptMaxSize.x = 50000;
+            info->ptMaxSize.y = 50000;
+            info->ptMaxTrackSize.x = 50000;
+            info->ptMaxTrackSize.y = 50000;
             break;
         }
 
