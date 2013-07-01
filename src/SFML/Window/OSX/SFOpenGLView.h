@@ -34,10 +34,17 @@ namespace sf {
     }
 }
 
+@class SFSilentResponder;
+
 ////////////////////////////////////////////////////////////
-/// \brief Spesialized NSOpenGLView
+/// \brief Specialized NSOpenGLView
 ///
 /// Handle event and send them back to the requester.
+///
+/// NSTrackingArea is used to keep track of mouse events. We also
+/// need to be able to ignore mouse event when exiting fullscreen.
+/// The SFWindowController should call -[SFOpenGLView exitFullscreen]
+/// and -[SFOpenGLView enterFullscreen] when appropriate.
 ///
 /// In order to send correct mouse coordonate to the requester when
 /// the window is in fullscreen we use m_realSize to represent the
@@ -45,25 +52,21 @@ namespace sf {
 /// bound to its default value we don't recompute the mouse position
 /// and assume it's correct.
 ///
-/// As I don't have the right control keycode I cannot implement left-right
-/// recognition for this key. (See SFOpenGLView.mm for more info.)
+/// Modifiers keys (cmd, ctrl, alt, shift) are handled by this class
+/// but the actual logic is done in SFKeyboardModifiersHelper.(h|mm).
 ///
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView : NSOpenGLView {
     sf::priv::WindowImplCocoa*    m_requester;
     BOOL                          m_useKeyRepeat;
-    NSTrackingRectTag             m_trackingTag;
     BOOL                          m_mouseIsIn;
+    NSTrackingArea*               m_trackingArea;
     NSSize                        m_realSize;
-    
-    /// 'modifiers' state
-    BOOL m_rightShiftWasDown;
-    BOOL m_leftShiftWasDown;
-    BOOL m_rightCommandWasDown;
-    BOOL m_leftCommandWasDown;
-    BOOL m_rightAlternateWasDown;
-    BOOL m_leftAlternateWasDown;
-    BOOL m_controlWasDown;
+
+    // Hidden text view used to convert key event to actual chars.
+    // We use a silent responder to prevent sound alerts.
+    SFSilentResponder*  m_silentResponder;
+    NSTextView*         m_hiddenTextView;
 }
 
 ////////////////////////////////////////////////////////////
@@ -71,6 +74,13 @@ namespace sf {
 /// 
 ////////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect;
+
+////////////////////////////////////////////////////////////
+/// Handle going in and out of fullscreen mode.
+/// 
+////////////////////////////////////////////////////////////
+-(void)enterFullscreen;
+-(void)exitFullscreen;
 
 ////////////////////////////////////////////////////////////
 /// Apply the given resquester to the view.
@@ -88,10 +98,11 @@ namespace sf {
 -(void)setRealSize:(NSSize)newSize;
 
 ////////////////////////////////////////////////////////////
-/// Move the mouse cursor to (x,y) (SFML Coordinates).
+/// Compute the position in global coordinate
+/// of the given point in SFML coordinate.
 /// 
 ////////////////////////////////////////////////////////////
--(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y;
+-(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point;
 
 ////////////////////////////////////////////////////////////
 /// Adjust key repeat configuration.

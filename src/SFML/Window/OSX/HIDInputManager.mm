@@ -449,10 +449,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
         //          0x1b       | 0x2d | Hyphen
         //          0x39       | 0x39 | CapsLock
         //          0x47       | 0x53 | NumLock
-        //          0x4c       | 0x58 | Keypad Enter
-        //          0x41       | 0x63 | Keypad Period
         //          0x6e       | 0x65 | Application
-        //          0x51       | 0x67 | Keypad Equal
         //          0x4c       | 0x77 | Select
         
         //if (code == Keyboard::Unknown) { // The key is unknown.
@@ -917,7 +914,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
         case 0x1e:                      return sf::Keyboard::RBracket;
         case 0x29:                      return sf::Keyboard::SemiColon;
         case 0x2b:                      return sf::Keyboard::Comma;
-//        case 0x41: /* keypad         */ return sf::Keyboard::Period;
+        case 0x41: /* keypad         */ return sf::Keyboard::Period;
         case 0x2f: /* keyboard       */ return sf::Keyboard::Period;
         case 0x27:                      return sf::Keyboard::Quote;
         case 0x2c:                      return sf::Keyboard::Slash;
@@ -927,12 +924,12 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
             // 0x0a is for "Non-US Backslash" according to HID Calibrator,
             // a sample provided by Apple.
         case 0x0a:                      return sf::Keyboard::Tilde;
-            
-//        case 0x51: /* keypad         */ return sf::Keyboard::Equal;
+
+        case 0x51: /* keypad         */ return sf::Keyboard::Equal;
         case 0x18: /* keyboard       */ return sf::Keyboard::Equal;
         case 0x32:                      return sf::Keyboard::Dash;
         case 0x31:                      return sf::Keyboard::Space;
-//        case 0x4c: /* keypad         */ return sf::Keyboard::Return;
+        case 0x4c: /* keypad         */ return sf::Keyboard::Return;
         case 0x24: /* keyboard       */ return sf::Keyboard::Return;
         case 0x33:                      return sf::Keyboard::BackSpace;
         case 0x30:                      return sf::Keyboard::Tab;

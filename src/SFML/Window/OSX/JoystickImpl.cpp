@@ -30,14 +30,15 @@
 #include <SFML/Window/OSX/HIDInputManager.hpp>
 #include <SFML/Window/OSX/HIDJoystickManager.hpp>
 
-// Translation unit namespace
-namespace {
-    ////////////////////////////////////////////////////////////
+
+namespace
+{
     bool JoystickButtonSortPredicate(IOHIDElementRef b1, IOHIDElementRef b2)
     {
         return IOHIDElementGetUsage(b1) < IOHIDElementGetUsage(b2);
     }
 }
+
 
 namespace sf
 {
@@ -45,6 +46,20 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 JoystickImpl::Location JoystickImpl::m_locationIDs[sf::Joystick::Count] = { 0 };
+
+
+////////////////////////////////////////////////////////////
+void JoystickImpl::initialize()
+{
+    // Nothing to do
+}
+
+
+////////////////////////////////////////////////////////////
+void JoystickImpl::cleanup()
+{
+    // Nothing to do
+}
 
 
 ////////////////////////////////////////////////////////////

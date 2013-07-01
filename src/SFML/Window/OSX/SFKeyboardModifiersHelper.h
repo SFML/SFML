@@ -26,30 +26,36 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+namespace sf {
+    namespace priv {
+        class WindowImplCocoa;
+    }
+}
+
 ////////////////////////////////////////////////////////////
-/// \brief Event processing
+/// Keyboard Modifiers Helper
+///
+/// Handle left & right modifiers (cmd, ctrl, alt, shift)
+/// events and send them back to the requester.
 ///
 ////////////////////////////////////////////////////////////
-@interface SFApplication : NSApplication
 
 
 ////////////////////////////////////////////////////////////
-/// \brief Event processing
-///
+/// Set up a SFML key event based on the given modifiers
+/// flags and key code.
+/// 
 ////////////////////////////////////////////////////////////
-+(void)processEvent;
+sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key);
 
 
 ////////////////////////////////////////////////////////////
-/// \brief Dispatch events
-///
-/// This overload of -[NSApplication sendEvent:] is used to
-/// fix KeyRelease events when the command key is down.
+/// Handle the state of modifiers keys and send key
+/// release & pressed events to the requester.
+/// 
 ////////////////////////////////////////////////////////////
--(void)sendEvent:(NSEvent *)anEvent;
+void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& requester);
 
 
-@end

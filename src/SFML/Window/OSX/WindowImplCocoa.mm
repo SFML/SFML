@@ -34,6 +34,7 @@
 #import <SFML/Window/OSX/SFViewController.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
 #import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
+#import <SFML/Window/OSX/SFApplication.h>
 
 namespace sf
 {
@@ -136,7 +137,7 @@ void WindowImplCocoa::setUpProcess(void)
         }
         
         // Tell the application to stop bouncing in the Dock.
-        [[NSApplication sharedApplication] finishLaunching];
+        [[SFApplication sharedApplication] finishLaunching];
         // NOTE : This last call won't harm anything even if SFML window was
         // created with an external handle.
     }
