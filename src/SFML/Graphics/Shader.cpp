@@ -535,6 +535,10 @@ bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCod
         return false;
     }
 
+    // Force an OpenGL flush, so that the shader will appear updated
+    // in all contexts immediately (solves problems in multi-threaded apps)
+    glCheck(glFlush());
+
     return true;
 }
 
