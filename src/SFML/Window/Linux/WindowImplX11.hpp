@@ -61,9 +61,10 @@ public :
     /// \param mode  Video mode to use
     /// \param title Title of the window
     /// \param style Window style (resizable, fixed, or fullscren)
+    /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplX11(VideoMode mode, const String& title, unsigned long style);
+    WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

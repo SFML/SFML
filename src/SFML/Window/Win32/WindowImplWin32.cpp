@@ -86,7 +86,7 @@ m_surrogate       (0)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style) :
+WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& /*settings*/) :
 m_handle          (NULL),
 m_callback        (0),
 m_cursor          (NULL),

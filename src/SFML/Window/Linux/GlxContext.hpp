@@ -108,6 +108,18 @@ public :
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Select the best GLX visual for a given set of settings
+    ///
+    /// \param display      X display
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
+    /// \param settings     Requested context settings
+    ///
+    /// \return The best visual
+    ///
+    ////////////////////////////////////////////////////////////
+    static XVisualInfo selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings);
+
 private :
 
     ////////////////////////////////////////////////////////////
