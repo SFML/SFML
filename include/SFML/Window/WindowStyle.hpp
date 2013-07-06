@@ -37,11 +37,12 @@ namespace Style
     ////////////////////////////////////////////////////////////
     enum
     {
-        None       = 0,      ///< No border / title bar (this flag and all others are mutually exclusive)
-        Titlebar   = 1 << 0, ///< Title bar + fixed border
-        Resize     = 1 << 1, ///< Titlebar + resizable border + maximize button
-        Close      = 1 << 2, ///< Titlebar + close button
-        Fullscreen = 1 << 3, ///< Fullscreen mode (this flag and all others are mutually exclusive)
+        None         = 0,      ///< No border / title bar (this flag and all others are mutually exclusive)
+        Titlebar     = 1 << 0, ///< Title bar + fixed border
+        Resize       = 1 << 1, ///< Titlebar + resizable border + maximize button
+        Close        = 1 << 2, ///< Titlebar + close button
+        Fullscreen   = 1 << 3, ///< Fullscreen mode (this flag and all others are mutually exclusive, except FullscreenWM)
+        FullscreenWM = 1 << 4, ///< Fullscreen mode, handled by the window manager under X11 (Linux). This allows alt-tabing, volume hot keys and other. This flag should be used with the Fullscreen flag, and has no effect on non-Linux platforms.
 
         Default = Titlebar | Resize | Close ///< Default window style
     };

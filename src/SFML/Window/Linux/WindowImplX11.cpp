@@ -33,6 +33,7 @@
 #include <SFML/System/Err.hpp>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
+#include <X11/Xatom.h>
 #include <X11/extensions/Xrandr.h>
 #include <unistd.h>
 #include <cstring>
@@ -133,6 +134,8 @@ m_previousSize(-1, -1)
     // Compute position and size
     int left, top;
     bool fullscreen = (style & Style::Fullscreen) != 0;
+    bool fullscreenWM = ((style & Style::Fullscreen) && (style & Style::FullscreenWM)) != 0;
+    
     if (!fullscreen)
     {
         left = (DisplayWidth(m_display, m_screen)  - mode.width)  / 2;
@@ -146,16 +149,16 @@ m_previousSize(-1, -1)
     int width  = mode.width;
     int height = mode.height;
 
-    // Switch to fullscreen if necessary
-    if (fullscreen)
-        switchToFullscreen(mode);
+    // Switch resolution if necessary
+    if (fullscreen && mode != VideoMode::getDesktopMode())
+        changeScreenResolution(mode);
 
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = GlxContext::selectBestVisual(m_display, mode.bitsPerPixel, settings);
 
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.override_redirect = fullscreen;
+    attributes.override_redirect = fullscreen && !fullscreenWM;
     attributes.event_mask = eventMask;
     attributes.colormap = XCreateColormap(m_display, root, visualInfo.visual, AllocNone);
 
@@ -260,10 +263,35 @@ m_previousSize(-1, -1)
     initialize();
 
     // In fullscreen mode, we must grab keyboard and mouse inputs
-    if (fullscreen)
+    if(fullscreen)
     {
-        XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
-        XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
+		if(fullscreenWM) // Set the fullscreen mode via the window manager. This allows alt-tabing, volume hot keys & others.
+		{
+			// Get the needed atom from there freedesktop names
+			Atom WMStateAtom = XInternAtom(m_display, "_NET_WM_STATE", true);
+			Atom WMFullscreenAtom = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", true);
+			
+			// Set the fullscreen propriety
+			XChangeProperty(m_display, m_window, WMStateAtom, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(& WMFullscreenAtom), 1);
+			
+			// Notify the root window
+			XEvent xev;
+			for(size_t i = 0; i < sizeof(XEvent); i++) // The event should be filled with zeros before setting its attributes
+				reinterpret_cast<unsigned char*>(&xev)[i] = 0;
+				
+			xev.type                 = ClientMessage;
+			xev.xclient.window       = m_window;
+			xev.xclient.message_type = WMStateAtom;
+			xev.xclient.format       = 32;
+			xev.xclient.data.l[0]    = 1;
+			xev.xclient.data.l[1]    = WMFullscreenAtom;
+			XSendEvent(m_display, DefaultRootWindow(m_display), false, SubstructureNotifyMask, &xev);
+		}
+		else
+        {
+			XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+			XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
+		}
     }
 }
 
@@ -465,7 +493,7 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::switchToFullscreen(const VideoMode& mode)
+void WindowImplX11::changeScreenResolution(const VideoMode& mode)
 {
     // Check if the XRandR extension is present
     int version;
