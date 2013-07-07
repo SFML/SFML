@@ -250,14 +250,6 @@ m_previousSize(-1, -1)
         }
     }
  
-    // Set the window's WM class (this can be used by window managers)
-    const char* windowClass = findExecutableName();
-    XClassHint* classHint = XAllocClassHint();
-    classHint->res_name = const_cast<char*>(windowClass);
-    classHint->res_class = const_cast<char*>(windowClass);
-    XSetClassHint(m_display, m_window, classHint);
-    XFree(classHint);
-
     // Do some common initializations
     initialize();
 
@@ -394,6 +386,14 @@ void WindowImplX11::setTitle(const String& title)
     
     // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
     XStoreName(m_display, m_window, title.toAnsiString().c_str());
+    
+    // Set the window's WM class (this can be used by window managers)
+    const char* windowClassName = findExecutableName();
+    XClassHint* classHint = XAllocClassHint();
+    classHint->res_name = const_cast<char*>(windowClassName);
+    classHint->res_class = reinterpret_cast<char*>(const_cast<unsigned char*>(utf8Title.c_str()));
+    XSetClassHint(m_display, m_window, classHint);
+    XFree(classHint);
 }
 
 
