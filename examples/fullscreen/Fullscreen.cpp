@@ -28,7 +28,6 @@ sf::RenderWindow *createRenderWindw(bool isFullscreen, sf::VideoMode mode, const
     sf::RenderWindow *window = new sf::RenderWindow(mode, "SFML Fullscreen", flag);
     window->setVerticalSyncEnabled(false);
     window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-    window->setTitle("AAAAA");
     
     return window;
 }
