@@ -33,7 +33,6 @@
 #include <SFML/Window/glext/glxext.h>
 #include <SFML/System/Err.hpp>
 
-
 namespace sf
 {
 namespace priv
@@ -246,7 +245,31 @@ void GlxContext::createContext(GlxContext* shared, unsigned int /*bitsPerPixel*/
         if (glXCreateContextAttribsARB)
         {
             int nbConfigs = 0;
-            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), NULL, &nbConfigs);
+            int sampleBuffers = 0;
+            
+            if(settings.antialiasingLevel > 0)
+            {
+                sampleBuffers = 1;
+            }
+            
+            int fbAttributes[] = 
+            {
+                GLX_DEPTH_SIZE, settings.depthBits,
+                GLX_STENCIL_SIZE, settings.stencilBits,
+                GLX_SAMPLE_BUFFERS, sampleBuffers,
+                GLX_SAMPLES, settings.antialiasingLevel,
+                GLX_RED_SIZE, 8,
+                GLX_GREEN_SIZE, 8,
+                GLX_BLUE_SIZE, 8,
+                GLX_ALPHA_SIZE, 8,
+                GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+                GLX_DOUBLEBUFFER, True,
+                GLX_X_RENDERABLE, True,
+                GLX_RENDER_TYPE, GLX_RGBA_BIT,
+                None
+            };
+            
+            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), fbAttributes, &nbConfigs);
             if (configs && nbConfigs)
             {
                 // Create the context
