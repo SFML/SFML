@@ -1,0 +1,10 @@
+language: cpp
+compiler:
+  - gcc
+before_script:
+  - sudo apt-get install libpthread-stubs0-dev libgl1-mesa-dev libx11-dev
+  - sudo apt-get install libxrandr-dev libfreetype6-dev libglew1.5-dev
+  - sudo apt-get install libjpeg8-dev libgpgme11-dev libsndfile1-dev libopenal-dev
+  - cmake .
+script:
+  - make -j4
