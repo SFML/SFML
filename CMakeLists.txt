@@ -36,13 +36,13 @@ sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples,
 # add an option for building the API documentation
 sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
+# add an option to use system libraries rather than bundled extlibs
+sfml_set_option(SFML_USE_EXTLIBS TRUE BOOL "TRUE to use versions of freetype, sndfile, GLEW and libjpeg bundled with SFML (and install them), FALSE to find versions already installed on the system")
+
 # Mac OS X specific options
 if(MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
-
-    # add an option to use system libraries rather than bundled extlibs
-    sfml_set_option(SFML_USE_EXTLIBS TRUE BOOL "TRUE to use versions of freetype, sndfile, GLEW and libjpeg bundled with SFML (and install them), FALSE to find versions already installed on the system")
     
     # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
     sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
