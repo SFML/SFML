@@ -60,9 +60,10 @@ public :
     /// \param mode  Video mode to use
     /// \param title Title of the window
     /// \param style Window style
+    /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplWin32(VideoMode mode, const String& title, Uint32 style);
+    WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

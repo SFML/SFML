@@ -31,6 +31,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/System/Err.hpp>
 #include <iostream>
 
 
@@ -242,6 +243,17 @@ void RenderTarget::pushGLStates()
 {
     if (activate(true))
     {
+#ifdef SFML_DEBUG
+        // make sure that the user didn't leave an unchecked OpenGL error
+        GLenum error = glGetError();
+        if (error != GL_NO_ERROR)
+        {
+            err() << "OpenGL error (" << error << ") detected in user code, "
+                  << "you should check for errors with glGetError()"
+                  << std::endl;
+        }
+#endif
+
         glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
         glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
         glCheck(glMatrixMode(GL_MODELVIEW));

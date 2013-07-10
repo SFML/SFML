@@ -36,6 +36,7 @@
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 #include <queue>
 #include <set>
 
@@ -59,11 +60,12 @@ public :
     /// \param mode  Video mode to use
     /// \param title Title of the window
     /// \param style Window style
+    /// \param settings Additional settings for the underlying OpenGL context
     ///
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* create(VideoMode mode, const String& title, Uint32 style);
+    static WindowImpl* create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS

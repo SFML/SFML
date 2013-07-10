@@ -114,7 +114,7 @@ void Window::create(VideoMode mode, const String& title, Uint32 style, const Con
         style |= Style::Titlebar;
 
     // Recreate the window implementation
-    m_impl = priv::WindowImpl::create(mode, title, style);
+    m_impl = priv::WindowImpl::create(mode, title, style, settings);
 
     // Recreate the context
     m_context = priv::GlContext::create(settings, m_impl, mode.bitsPerPixel);

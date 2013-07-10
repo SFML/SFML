@@ -158,120 +158,137 @@ void GlxContext::setVerticalSyncEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
+XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings)
+{
+    // Retrieve all the visuals
+    int count;
+    XVisualInfo* visuals = XGetVisualInfo(display, 0, NULL, &count);
+    if (visuals)
+    {
+        // Evaluate all the returned visuals, and pick the best one1
+        int bestScore = 0xFFFF;
+        XVisualInfo bestVisual;
+        for (int i = 0; i < count; ++i)
+        {
+            // Check mandatory attributes
+            int doubleBuffer;
+            glXGetConfig(display, &visuals[i], GLX_DOUBLEBUFFER, &doubleBuffer);
+            if (!doubleBuffer)
+                continue;
+
+            // Extract the components of the current visual
+            int red, green, blue, alpha, depth, stencil, multiSampling, samples;
+            glXGetConfig(display, &visuals[i], GLX_RED_SIZE,           &red);
+            glXGetConfig(display, &visuals[i], GLX_GREEN_SIZE,         &green);
+            glXGetConfig(display, &visuals[i], GLX_BLUE_SIZE,          &blue);
+            glXGetConfig(display, &visuals[i], GLX_ALPHA_SIZE,         &alpha);
+            glXGetConfig(display, &visuals[i], GLX_DEPTH_SIZE,         &depth);
+            glXGetConfig(display, &visuals[i], GLX_STENCIL_SIZE,       &stencil);
+            glXGetConfig(display, &visuals[i], GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
+            glXGetConfig(display, &visuals[i], GLX_SAMPLES_ARB,        &samples);
+
+            // Evaluate the visual
+            int color = red + green + blue + alpha;
+            int score = evaluateFormat(bitsPerPixel, settings, color, depth, stencil, multiSampling ? samples : 0);
+
+            // If it's better than the current best, make it the new best
+            if (score < bestScore)
+            {
+                bestScore = score;
+                bestVisual = visuals[i];
+            }
+        }
+
+        // Free the array of visuals
+        XFree(visuals);
+
+        return bestVisual;
+    }
+    else
+    {
+        // Should never happen...
+        err() << "No GLX visual found. You should check your graphics driver" << std::endl;
+
+        return XVisualInfo();
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
+    XVisualInfo* visualInfo = NULL;
+
     // Save the creation settings
     m_settings = settings;
-
-    // Get the attributes of the target window
-    XWindowAttributes windowAttributes;
-    if (XGetWindowAttributes(m_display, m_window, &windowAttributes) == 0)
-    {
-        err() << "Failed to get the window attributes" << std::endl;
-        return;
-    }
-
-    // Setup the visual infos to match
-    XVisualInfo tpl;
-    tpl.depth    = windowAttributes.depth;
-    tpl.visualid = XVisualIDFromVisual(windowAttributes.visual);
-    tpl.screen   = DefaultScreen(m_display);
-
-    // Get all the visuals matching the template
-    int nbVisuals = 0;
-    XVisualInfo* visuals = XGetVisualInfo(m_display, VisualDepthMask | VisualIDMask | VisualScreenMask, &tpl, &nbVisuals);
-    if (!visuals || (nbVisuals == 0))
-    {
-        if (visuals)
-            XFree(visuals);
-        err() << "There is no valid visual for the selected screen" << std::endl;
-        return;
-    }
-
-    // Find the best visual
-    int          bestScore  = 0xFFFF;
-    XVisualInfo* bestVisual = NULL;
-    for (int i = 0; i < nbVisuals; ++i)
-    {
-        // Get the current visual attributes
-        int RGBA, doubleBuffer, red, green, blue, alpha, depth, stencil, multiSampling, samples;
-        glXGetConfig(m_display, &visuals[i], GLX_RGBA,               &RGBA);
-        glXGetConfig(m_display, &visuals[i], GLX_DOUBLEBUFFER,       &doubleBuffer); 
-        glXGetConfig(m_display, &visuals[i], GLX_RED_SIZE,           &red);
-        glXGetConfig(m_display, &visuals[i], GLX_GREEN_SIZE,         &green); 
-        glXGetConfig(m_display, &visuals[i], GLX_BLUE_SIZE,          &blue); 
-        glXGetConfig(m_display, &visuals[i], GLX_ALPHA_SIZE,         &alpha); 
-        glXGetConfig(m_display, &visuals[i], GLX_DEPTH_SIZE,         &depth);        
-        glXGetConfig(m_display, &visuals[i], GLX_STENCIL_SIZE,       &stencil);
-        glXGetConfig(m_display, &visuals[i], GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
-        glXGetConfig(m_display, &visuals[i], GLX_SAMPLES_ARB,        &samples);
-
-        // First check the mandatory parameters
-        if ((RGBA == 0) || (doubleBuffer == 0))
-            continue;
-
-        // Evaluate the current configuration
-        int color = red + green + blue + alpha;
-        int score = evaluateFormat(bitsPerPixel, m_settings, color, depth, stencil, multiSampling ? samples : 0);
-
-        // Keep it if it's better than the current best
-        if (score < bestScore)
-        {
-            bestScore  = score;
-            bestVisual = &visuals[i];
-        }
-    }
-
-    // Make sure that we have found a visual
-    if (!bestVisual)
-    {
-        err() << "Failed to find a suitable pixel format for the window -- cannot create OpenGL context" << std::endl;
-        return;
-    }
 
     // Get the context to share display lists with
     GLXContext toShare = shared ? shared->m_context : NULL;
 
     // Create the OpenGL context -- first try context versions >= 3.0 if it is requested (they require special code)
-    while (!m_context && (m_settings.majorVersion >= 3))
+    if (m_settings.majorVersion >= 3)
     {
         const GLubyte* name = reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB");
         PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = reinterpret_cast<PFNGLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(name));
         if (glXCreateContextAttribsARB)
         {
+            // Select a GLXFB config that matches the requested context settings
             int nbConfigs = 0;
-            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), NULL, &nbConfigs);
+            int fbAttributes[] = 
+            {
+                GLX_DEPTH_SIZE, settings.depthBits,
+                GLX_STENCIL_SIZE, settings.stencilBits,
+                GLX_SAMPLE_BUFFERS, settings.antialiasingLevel > 0,
+                GLX_SAMPLES, settings.antialiasingLevel,
+                GLX_RED_SIZE, 8,
+                GLX_GREEN_SIZE, 8,
+                GLX_BLUE_SIZE, 8,
+                GLX_ALPHA_SIZE, bitsPerPixel == 32 ? 8 : 0,
+                GLX_DOUBLEBUFFER, True,
+                GLX_X_RENDERABLE, True,
+                GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+                GLX_RENDER_TYPE, GLX_RGBA_BIT,
+                GLX_CONFIG_CAVEAT, GLX_NONE,
+                None
+            };
+            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), fbAttributes, &nbConfigs);
             if (configs && nbConfigs)
             {
-                // Create the context
-                int attributes[] =
+                while (!m_context && (m_settings.majorVersion >= 3))
                 {
-                    GLX_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
-                    GLX_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
-                    GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
-                    0, 0
-                };
-                m_context = glXCreateContextAttribsARB(m_display, configs[0], toShare, true, attributes);
-            }
+                    // Create the context
+                    int attributes[] =
+                    {
+                        GLX_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
+                        GLX_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
+                        GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
+                        0, 0
+                    };
+                    m_context = glXCreateContextAttribsARB(m_display, configs[0], toShare, true, attributes);
 
-            if (configs)
+                    if (m_context)
+                    {
+                        // Ok: retrieve the config's visual
+                        visualInfo = glXGetVisualFromFBConfig(m_display, configs[0]);
+                    }
+                    else
+                    {
+                        // If we couldn't create the context, lower the version number and try again -- stop at 3.0
+                        // Invalid version numbers will be generated by this algorithm (like 3.9), but we really don't care
+                        if (m_settings.minorVersion > 0)
+                        {
+                            // If the minor version is not 0, we decrease it and try again
+                            m_settings.minorVersion--;
+                        }
+                        else
+                        {
+                            // If the minor version is 0, we decrease the major version
+                            m_settings.majorVersion--;
+                            m_settings.minorVersion = 9;
+                        }
+                    }
+                }
                 XFree(configs);
-        }
-
-        // If we couldn't create the context, lower the version number and try again -- stop at 3.0
-        // Invalid version numbers will be generated by this algorithm (like 3.9), but we really don't care
-        if (!m_context)
-        {
-            if (m_settings.minorVersion > 0)
-            {
-                // If the minor version is not 0, we decrease it and try again
-                m_settings.minorVersion--;
-            }
-            else
-            {
-                // If the minor version is 0, we decrease the major version
-                m_settings.majorVersion--;
-                m_settings.minorVersion = 9;
             }
         }
     }
@@ -283,7 +300,23 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
         m_settings.majorVersion = 2;
         m_settings.minorVersion = 0;
 
-        m_context = glXCreateContext(m_display, bestVisual, toShare, true);
+        // Retrieve the attributes of the target window
+        XWindowAttributes windowAttributes;
+        if (XGetWindowAttributes(m_display, m_window, &windowAttributes) == 0)
+        {
+            err() << "Failed to get the window attributes" << std::endl;
+            return;
+        }
+
+        // Get its visual
+        XVisualInfo tpl;
+        tpl.screen   = DefaultScreen(m_display);
+        tpl.visualid = XVisualIDFromVisual(windowAttributes.visual);
+        int nbVisuals = 0;
+        visualInfo = XGetVisualInfo(m_display, VisualIDMask | VisualScreenMask, &tpl, &nbVisuals);
+
+        // Create the context, using the target window's visual
+        m_context = glXCreateContext(m_display, visualInfo, toShare, true);
         if (!m_context)
         {
             err() << "Failed to create an OpenGL context for this window" << std::endl;
@@ -293,21 +326,16 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
 
     // Update the creation settings from the chosen format
     int depth, stencil, multiSampling, samples;
-    glXGetConfig(m_display, bestVisual, GLX_DEPTH_SIZE,         &depth);
-    glXGetConfig(m_display, bestVisual, GLX_STENCIL_SIZE,       &stencil);
-    glXGetConfig(m_display, bestVisual, GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
-    glXGetConfig(m_display, bestVisual, GLX_SAMPLES_ARB,        &samples);
+    glXGetConfig(m_display, visualInfo, GLX_DEPTH_SIZE,         &depth);
+    glXGetConfig(m_display, visualInfo, GLX_STENCIL_SIZE,       &stencil);
+    glXGetConfig(m_display, visualInfo, GLX_SAMPLE_BUFFERS_ARB, &multiSampling);        
+    glXGetConfig(m_display, visualInfo, GLX_SAMPLES_ARB,        &samples);
     m_settings.depthBits         = static_cast<unsigned int>(depth);
     m_settings.stencilBits       = static_cast<unsigned int>(stencil);
     m_settings.antialiasingLevel = multiSampling ? samples : 0;
 
-    // Change the target window's colormap so that it matches the context's one
-    ::Window root = RootWindow(m_display, DefaultScreen(m_display));
-    Colormap colorMap = XCreateColormap(m_display, root, bestVisual->visual, AllocNone);
-    XSetWindowColormap(m_display, m_window, colorMap);
-
-    // Free the temporary visuals array
-    XFree(visuals);
+    // Free the visual info
+    XFree(visualInfo);
 }
 
 } // namespace priv
