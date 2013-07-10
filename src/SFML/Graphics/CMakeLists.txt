@@ -84,14 +84,14 @@ set(STB_SRC
 source_group("stb_image" FILES ${STB_SRC})
 
 # let CMake know about our additional graphics libraries paths (on Windows and OSX)
-if(WINDOWS OR MACOSX)
+if(WINDOWS OR MACOSX AND SFML_USE_EXTLIBS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
 endif()
 
-if(WINDOWS)
+if(WINDOWS AND SFML_USE_EXTLIBS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows/freetype")
-elseif(MACOSX)
+elseif(MACOSX AND SFML_USE_EXTLIBS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx/freetype2")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")

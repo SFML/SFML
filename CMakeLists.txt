@@ -40,6 +40,9 @@ sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentatio
 if(MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
+
+    # add an option to use system libraries rather than bundled extlibs
+    sfml_set_option(SFML_USE_EXTLIBS TRUE BOOL "TRUE to use versions of freetype, sndfile, GLEW and libjpeg bundled with SFML (and install them), FALSE to find versions already installed on the system")
     
     # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
     sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
@@ -199,9 +202,10 @@ if(WINDOWS)
         install(FILES extlibs/bin/x64/openal32.dll DESTINATION bin)
     endif()
 elseif(MACOSX)
-    install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
-    install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
-
+    if (SFML_USE_EXTLIBS)
+        install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+        install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif ()
     if(SFML_INSTALL_XCODE4_TEMPLATES)
         install(DIRECTORY tools/xcode/templates/SFML DESTINATION /Library/Developer/Xcode/Templates)
     endif()
