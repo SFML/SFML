@@ -497,10 +497,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             // We override the returned information to remove the default limit
             // (the OS doesn't allow windows bigger than the desktop by default)
             MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
-            info->ptMaxPosition.x = 50000;
-            info->ptMaxPosition.y = 50000;
-            info->ptMaxSize.x = 50000;
-            info->ptMaxSize.y = 50000;
             info->ptMaxTrackSize.x = 50000;
             info->ptMaxTrackSize.y = 50000;
             break;
