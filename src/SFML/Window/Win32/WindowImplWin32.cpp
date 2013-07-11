@@ -71,7 +71,6 @@ m_callback        (0),
 m_cursor          (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_isCursorIn      (false),
 m_lastSize        (0, 0),
 m_resizing        (false),
 m_surrogate       (0)
@@ -92,7 +91,6 @@ m_callback        (0),
 m_cursor          (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_isCursorIn      (false),
 m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
 m_surrogate       (0)
@@ -712,39 +710,51 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse move event
         case WM_MOUSEMOVE :
         {
-            // Check if we need to generate a MouseEntered event
-            if (!m_isCursorIn)
+            // Extract the mouse local coordinates
+            int x = static_cast<Int16>(LOWORD(lParam));
+            int y = static_cast<Int16>(HIWORD(lParam));
+
+            // Get the client area of the window
+            RECT area;
+            GetClientRect(m_handle, &area);
+
+            // Check the mouse position against the window
+            if ((x < area.left) || (x > area.right) || (y < area.top) || (y > area.bottom))
             {
-                TRACKMOUSEEVENT mouseEvent;
-                mouseEvent.cbSize    = sizeof(TRACKMOUSEEVENT);
-                mouseEvent.hwndTrack = m_handle;
-                mouseEvent.dwFlags   = TME_LEAVE;
-                TrackMouseEvent(&mouseEvent);
+                // Mouse is outside
 
-                m_isCursorIn = true;
+                // Release the mouse capture
+                ReleaseCapture();
 
+                // Generate a MouseLeft event
                 Event event;
-                event.type = Event::MouseEntered;
+                event.type = Event::MouseLeft;
                 pushEvent(event);
             }
+            else
+            {
+                // Mouse is inside
+                if (GetCapture() != m_handle)
+                {
+                    // Mouse was previously outside the window
 
-            Event event;
-            event.type        = Event::MouseMoved;
-            event.mouseMove.x = static_cast<Int16>(LOWORD(lParam));
-            event.mouseMove.y = static_cast<Int16>(HIWORD(lParam));
-            pushEvent(event);
-            break;
-        }
+                    // Capture the mouse
+                    SetCapture(m_handle);
 
-        // Mouse leave event
-        case WM_MOUSELEAVE :
-        {
-            m_isCursorIn = false;
+                    // Generate a MouseEntered event
+                    Event event;
+                    event.type = Event::MouseEntered;
+                    pushEvent(event);
+                }
 
-            Event event;
-            event.type = Event::MouseLeft;
-            pushEvent(event);
-            break;
+                // Generate a MouseMove event
+                Event event;
+                event.type        = Event::MouseMoved;
+                event.mouseMove.x = x;
+                event.mouseMove.y = y;
+                pushEvent(event);
+                break;
+            }
         }
     }
 }
