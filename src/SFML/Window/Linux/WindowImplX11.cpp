@@ -33,6 +33,7 @@
 #include <SFML/System/Err.hpp>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
+#include <X11/Xatom.h>
 #include <X11/extensions/Xrandr.h>
 #include <unistd.h>
 #include <cstring>
@@ -133,6 +134,7 @@ m_previousSize(-1, -1)
     // Compute position and size
     int left, top;
     bool fullscreen = (style & Style::Fullscreen) != 0;
+    
     if (!fullscreen)
     {
         left = (DisplayWidth(m_display, m_screen)  - mode.width)  / 2;
@@ -146,16 +148,16 @@ m_previousSize(-1, -1)
     int width  = mode.width;
     int height = mode.height;
 
-    // Switch to fullscreen if necessary
+    // Switch resolution if necessary
     if (fullscreen)
-        switchToFullscreen(mode);
+        changeScreenResolution(mode);
 
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = GlxContext::selectBestVisual(m_display, mode.bitsPerPixel, settings);
 
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.override_redirect = fullscreen;
+    attributes.override_redirect = false;
     attributes.event_mask = eventMask;
     attributes.colormap = XCreateColormap(m_display, root, visualInfo.visual, AllocNone);
 
@@ -248,22 +250,33 @@ m_previousSize(-1, -1)
         }
     }
  
-    // Set the window's WM class (this can be used by window managers)
-    const char* windowClass = findExecutableName();
-    XClassHint* classHint = XAllocClassHint();
-    classHint->res_name = const_cast<char*>(windowClass);
-    classHint->res_class = const_cast<char*>(windowClass);
-    XSetClassHint(m_display, m_window, classHint);
-    XFree(classHint);
-
     // Do some common initializations
     initialize();
 
     // In fullscreen mode, we must grab keyboard and mouse inputs
-    if (fullscreen)
+    if(fullscreen)
     {
-        XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
-        XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
+        // Set the fullscreen mode via the window manager. This allows alt-tabing, volume hot keys & others.
+        // Get the needed atom from there freedesktop names
+        Atom WMStateAtom = XInternAtom(m_display, "_NET_WM_STATE", true);
+        Atom WMFullscreenAtom = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", true);
+        
+        if(WMStateAtom && WMFullscreenAtom)
+        {
+            // Set the fullscreen propriety
+            XChangeProperty(m_display, m_window, WMStateAtom, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(& WMFullscreenAtom), 1);
+            
+            // Notify the root window
+            XEvent xev = {0}; // The event should be filled with zeros before setting its attributes
+                
+            xev.type                 = ClientMessage;
+            xev.xclient.window       = m_window;
+            xev.xclient.message_type = WMStateAtom;
+            xev.xclient.format       = 32;
+            xev.xclient.data.l[0]    = 1;
+            xev.xclient.data.l[1]    = WMFullscreenAtom;
+            XSendEvent(m_display, DefaultRootWindow(m_display), false, SubstructureNotifyMask, &xev);
+        }
     }
 }
 
@@ -373,6 +386,14 @@ void WindowImplX11::setTitle(const String& title)
     
     // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
     XStoreName(m_display, m_window, title.toAnsiString().c_str());
+    
+    // Set the window's WM class (this can be used by window managers)
+    const char* windowClassName = findExecutableName();
+    XClassHint* classHint = XAllocClassHint();
+    classHint->res_name = const_cast<char*>(windowClassName);
+    classHint->res_class = reinterpret_cast<char*>(const_cast<unsigned char*>(utf8Title.c_str()));
+    XSetClassHint(m_display, m_window, classHint);
+    XFree(classHint);
 }
 
 
@@ -465,8 +486,11 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::switchToFullscreen(const VideoMode& mode)
+void WindowImplX11::changeScreenResolution(const VideoMode& mode)
 {
+    if(mode == VideoMode::getDesktopMode()) // Prevent unuseful flickering if we are already using the good mode
+        return;
+    
     // Check if the XRandR extension is present
     int version;
     if (XQueryExtension(m_display, "RANDR", &version, &version, &version))
@@ -575,8 +599,8 @@ void WindowImplX11::createHiddenCursor()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::cleanup()
 {
-    // Restore the previous video mode (in case we were running in fullscreen)
-    if (fullscreenWindow == this)
+    // Restore the previous video mode (in case we were running in fullscreen and the video mode was actually changed)
+    if (fullscreenWindow == this && m_oldVideoMode == -1)
     {
         // Get current screen info
         XRRScreenConfiguration* config = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));

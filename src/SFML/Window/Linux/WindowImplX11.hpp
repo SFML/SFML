@@ -170,7 +170,7 @@ private :
     /// \param Mode video mode to switch to
     ///
     ////////////////////////////////////////////////////////////
-    void switchToFullscreen(const VideoMode& mode);
+    void changeScreenResolution(const VideoMode& mode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Do some common initializations after the window has been created

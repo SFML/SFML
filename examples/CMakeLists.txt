@@ -3,6 +3,7 @@
 add_subdirectory(ftp)
 add_subdirectory(opengl)
 add_subdirectory(pong)
+add_subdirectory(fullscreen)
 add_subdirectory(shader)
 add_subdirectory(sockets)
 add_subdirectory(sound)
