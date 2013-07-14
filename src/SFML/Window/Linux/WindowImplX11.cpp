@@ -150,7 +150,7 @@ m_previousSize(-1, -1)
     int height = mode.height;
 
     // Switch resolution if necessary
-    if (fullscreen && mode != VideoMode::getDesktopMode())
+    if (fullscreen)
         changeScreenResolution(mode);
 
     // Choose the visual according to the context settings
@@ -275,9 +275,7 @@ m_previousSize(-1, -1)
 			XChangeProperty(m_display, m_window, WMStateAtom, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(& WMFullscreenAtom), 1);
 			
 			// Notify the root window
-			XEvent xev;
-			for(size_t i = 0; i < sizeof(XEvent); i++) // The event should be filled with zeros before setting its attributes
-				reinterpret_cast<unsigned char*>(&xev)[i] = 0;
+			XEvent xev = {0}; // The event should be filled with zeros before setting its attributes
 				
 			xev.type                 = ClientMessage;
 			xev.xclient.window       = m_window;
@@ -495,6 +493,9 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::changeScreenResolution(const VideoMode& mode)
 {
+	if(mode == VideoMode::getDesktopMode()) // Prevent unuseful flickering if we are already using the good mode
+		return;
+	
     // Check if the XRandR extension is present
     int version;
     if (XQueryExtension(m_display, "RANDR", &version, &version, &version))
@@ -603,8 +604,8 @@ void WindowImplX11::createHiddenCursor()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::cleanup()
 {
-    // Restore the previous video mode (in case we were running in fullscreen)
-    if (fullscreenWindow == this)
+    // Restore the previous video mode (in case we were running in fullscreen and the video mode was actually changed)
+    if (fullscreenWindow == this && m_oldVideoMode == -1)
     {
         // Get current screen info
         XRRScreenConfiguration* config = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
