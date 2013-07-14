@@ -264,27 +264,27 @@ m_previousSize(-1, -1)
     // In fullscreen mode, we must grab keyboard and mouse inputs
     if(fullscreen)
     {
-		// Set the fullscreen mode via the window manager. This allows alt-tabing, volume hot keys & others.
-		// Get the needed atom from there freedesktop names
-		Atom WMStateAtom = XInternAtom(m_display, "_NET_WM_STATE", true);
-		Atom WMFullscreenAtom = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", true);
-		
-		if(WMStateAtom && WMFullscreenAtom)
-		{
-			// Set the fullscreen propriety
-			XChangeProperty(m_display, m_window, WMStateAtom, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(& WMFullscreenAtom), 1);
-			
-			// Notify the root window
-			XEvent xev = {0}; // The event should be filled with zeros before setting its attributes
-				
-			xev.type                 = ClientMessage;
-			xev.xclient.window       = m_window;
-			xev.xclient.message_type = WMStateAtom;
-			xev.xclient.format       = 32;
-			xev.xclient.data.l[0]    = 1;
-			xev.xclient.data.l[1]    = WMFullscreenAtom;
-			XSendEvent(m_display, DefaultRootWindow(m_display), false, SubstructureNotifyMask, &xev);
-		}
+        // Set the fullscreen mode via the window manager. This allows alt-tabing, volume hot keys & others.
+        // Get the needed atom from there freedesktop names
+        Atom WMStateAtom = XInternAtom(m_display, "_NET_WM_STATE", true);
+        Atom WMFullscreenAtom = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", true);
+        
+        if(WMStateAtom && WMFullscreenAtom)
+        {
+            // Set the fullscreen propriety
+            XChangeProperty(m_display, m_window, WMStateAtom, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(& WMFullscreenAtom), 1);
+            
+            // Notify the root window
+            XEvent xev = {0}; // The event should be filled with zeros before setting its attributes
+                
+            xev.type                 = ClientMessage;
+            xev.xclient.window       = m_window;
+            xev.xclient.message_type = WMStateAtom;
+            xev.xclient.format       = 32;
+            xev.xclient.data.l[0]    = 1;
+            xev.xclient.data.l[1]    = WMFullscreenAtom;
+            XSendEvent(m_display, DefaultRootWindow(m_display), false, SubstructureNotifyMask, &xev);
+        }
     }
 }
 
@@ -488,9 +488,9 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::changeScreenResolution(const VideoMode& mode)
 {
-	if(mode == VideoMode::getDesktopMode()) // Prevent unuseful flickering if we are already using the good mode
-		return;
-	
+    if(mode == VideoMode::getDesktopMode()) // Prevent unuseful flickering if we are already using the good mode
+        return;
+    
     // Check if the XRandR extension is present
     int version;
     if (XQueryExtension(m_display, "RANDR", &version, &version, &version))
