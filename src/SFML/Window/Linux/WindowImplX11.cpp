@@ -134,7 +134,6 @@ m_previousSize(-1, -1)
     // Compute position and size
     int left, top;
     bool fullscreen = (style & Style::Fullscreen) != 0;
-    bool fullscreenWM = ((style & Style::Fullscreen) && (style & Style::FullscreenWM)) != 0;
     
     if (!fullscreen)
     {
@@ -158,7 +157,7 @@ m_previousSize(-1, -1)
 
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.override_redirect = fullscreen && !fullscreenWM;
+    attributes.override_redirect = false;
     attributes.event_mask = eventMask;
     attributes.colormap = XCreateColormap(m_display, root, visualInfo.visual, AllocNone);
 
@@ -265,12 +264,13 @@ m_previousSize(-1, -1)
     // In fullscreen mode, we must grab keyboard and mouse inputs
     if(fullscreen)
     {
-		if(fullscreenWM) // Set the fullscreen mode via the window manager. This allows alt-tabing, volume hot keys & others.
+		// Set the fullscreen mode via the window manager. This allows alt-tabing, volume hot keys & others.
+		// Get the needed atom from there freedesktop names
+		Atom WMStateAtom = XInternAtom(m_display, "_NET_WM_STATE", true);
+		Atom WMFullscreenAtom = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", true);
+		
+		if(WMStateAtom && WMFullscreenAtom)
 		{
-			// Get the needed atom from there freedesktop names
-			Atom WMStateAtom = XInternAtom(m_display, "_NET_WM_STATE", true);
-			Atom WMFullscreenAtom = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", true);
-			
 			// Set the fullscreen propriety
 			XChangeProperty(m_display, m_window, WMStateAtom, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(& WMFullscreenAtom), 1);
 			
@@ -284,11 +284,6 @@ m_previousSize(-1, -1)
 			xev.xclient.data.l[0]    = 1;
 			xev.xclient.data.l[1]    = WMFullscreenAtom;
 			XSendEvent(m_display, DefaultRootWindow(m_display), false, SubstructureNotifyMask, &xev);
-		}
-		else
-        {
-			XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
-			XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
 		}
     }
 }
