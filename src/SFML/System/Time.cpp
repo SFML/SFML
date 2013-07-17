@@ -236,4 +236,16 @@ Time& operator /=(Time& left, Int64 right)
     return left = left / right;
 }
 
+////////////////////////////////////////////////////////////
+Time operator %(Time left, Time right)
+{
+    return microseconds(left.asMicroseconds() % right.asMicroseconds());
+}
+
+////////////////////////////////////////////////////////////
+Time& operator %=(Time& left, Time right)
+{
+    return left = left % right;
+}
+
 } // namespace sf
