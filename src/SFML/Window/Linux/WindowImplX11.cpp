@@ -62,19 +62,19 @@ namespace
     // Find the name of the current executable
     const char* findExecutableName()
     {
-        char buffer[512];
+        //Default fallback name
+        const char* executableName = "sfml";
+        static char buffer[512];
         std::size_t length = readlink("/proc/self/exe", buffer, sizeof(buffer));
+
         if ((length > 0) && (length < sizeof(buffer)))
         {
             // Remove the path to keep the executable name only
             buffer[length] = '\0';
-            return basename(buffer);
+            executableName = basename(buffer);
         }
-        else
-        {
-            // Fallback name
-            return "sfml";
-        }
+        std::memcpy(buffer, executableName, std::strlen(executableName) + 1);
+        return buffer;
     }
 }
 
