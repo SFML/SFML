@@ -132,38 +132,6 @@ Shader::~Shader()
 
 
 ////////////////////////////////////////////////////////////
-bool Shader::loadFromFile(const std::string& filename, Type type)
-{
-    // Read the file
-    std::vector<char> shader;
-    if (!getFileContents(filename, shader))
-    {
-        err() << "Failed to open shader file \"" << filename << "\"" << std::endl;
-        return false;
-    }
-
-    // Compile the shader program
-    bool result = false;
-    switch(type)
-    {
-    case Vertex:
-        result = compile(&shader[0], NULL, NULL);
-        break;
-        
-    case Geometry:
-        result = compile(NULL, &shader[0], NULL);
-        break;
-        
-    case Fragment:
-        result = compile(NULL, NULL, &shader[0]);
-        break;
-    }
-    
-    return result;
-}
-
-
-////////////////////////////////////////////////////////////
 bool Shader::loadFromFile(const std::string& vertexShaderFilename, const std::string& geometryShaderFilename, const std::string& fragmentShaderFilename)
 {
     // Read the vertex shader file if given
@@ -210,30 +178,6 @@ bool Shader::loadFromFile(const std::string& vertexShaderFilename, const std::st
 
 
 ////////////////////////////////////////////////////////////
-bool Shader::loadFromMemory(const std::string& shader, Type type)
-{
-    // Compile the shader program
-    bool result = false;
-    switch(type)
-    {
-    case Vertex:
-        result = compile(shader.c_str(), NULL, NULL);
-        break;
-        
-    case Geometry:
-        result = compile(NULL, shader.c_str(), NULL);
-        break;
-        
-    case Fragment:
-        result = compile(NULL, NULL, shader.c_str());
-        break;
-    }
-    
-    return result;
-}
-
-
-////////////////////////////////////////////////////////////
 bool Shader::loadFromMemory(const std::string& vertexShader, const std::string& geometryShader, const std::string& fragmentShader)
 {
     // Check which shaders are given
@@ -245,38 +189,6 @@ bool Shader::loadFromMemory(const std::string& vertexShader, const std::string& 
     return compile(useVertexShader ? vertexShader.c_str() : NULL,
                    useGeometryShader ? geometryShader.c_str() : NULL,
                    useFragmentShader ? fragmentShader.c_str() : NULL);
-}
-
-
-////////////////////////////////////////////////////////////
-bool Shader::loadFromStream(InputStream& stream, Type type)
-{
-    // Read the shader code from the stream
-    std::vector<char> shader;
-    if (!getStreamContents(stream, shader))
-    {
-        err() << "Failed to read shader from stream" << std::endl;
-        return false;
-    }
-
-    // Compile the shader program
-    bool result = false;
-    switch(type)
-    {
-    case Vertex:
-        result = compile(&shader[0], NULL, NULL);
-        break;
-        
-    case Geometry:
-        result = compile(NULL, &shader[0], NULL);
-        break;
-        
-    case Fragment:
-        result = compile(NULL, NULL, &shader[0]);
-        break;
-    }
-    
-    return result;
 }
 
 
@@ -560,7 +472,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
     ensureGlContext();
 
     // First make sure that we can use shaders
-    int shadersToUse =     (vertexShaderCode ? Vertex : 0)      |
+    int shadersToUse =  (vertexShaderCode ? Vertex : 0)      |
                         (geometryShaderCode ? Geometry : 0)  |
                         (fragmentShaderCode ? Fragment : 0);
     if (!isAvailable(shadersToUse))

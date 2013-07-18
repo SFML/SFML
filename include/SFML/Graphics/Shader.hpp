@@ -88,27 +88,6 @@ public :
     ~Shader();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load either the vertex, geometry or fragment shader from a file
-    ///
-    /// This function loads a single shader, either vertex, geometry
-    /// or fragment, identified by the second argument.
-    /// The source must be a text file containing a valid
-    /// shader in GLSL language. GLSL is a C-like language
-    /// dedicated to OpenGL shaders; you'll probably need to
-    /// read a good documentation for it before writing your
-    /// own shaders.
-    ///
-    /// \param filename Path of the vertex, geometry or fragment shader file to load
-    /// \param type     Type of shader (vertex, geometry or fragment)
-    ///
-    /// \return True if loading succeeded, false if it failed
-    ///
-    /// \see loadFromMemory, loadFromStream
-    ///
-    ////////////////////////////////////////////////////////////
-    bool loadFromFile(const std::string& filename, Type type);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Load chosen vertex, geometry and/or fragment shaders from files
     ///
     /// This function loads chosen vertex, geometry and/or the fragment
@@ -132,26 +111,6 @@ public :
     bool loadFromFile(const std::string& vertexShaderFilename, const std::string& geometryShaderFilename, const std::string& fragmentShaderFilename);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load either the vertex, geometry or fragment shader from a source code in memory
-    ///
-    /// This function loads a single shader, either vertex, geometry
-    /// or fragment, identified by the second argument.
-    /// The source code must be a valid shader in GLSL language.
-    /// GLSL is a C-like language dedicated to OpenGL shaders;
-    /// you'll probably need to read a good documentation for
-    /// it before writing your own shaders.
-    ///
-    /// \param shader String containing the source code of the shader
-    /// \param type   Type of shader (vertex, geometry or fragment)
-    ///
-    /// \return True if loading succeeded, false if it failed
-    ///
-    /// \see loadFromFile, loadFromStream
-    ///
-    ////////////////////////////////////////////////////////////
-    bool loadFromMemory(const std::string& shader, Type type);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Load chosen vertex, geometry and/or fragment shaders from source codes in memory
     ///
     /// This function loads chosen vertex, geometry and/or the fragment
@@ -173,26 +132,6 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool loadFromMemory(const std::string& vertexShader, const std::string& geometryShader, const std::string& fragmentShader);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Load either the vertex, geometry or fragment shader from a custom stream
-    ///
-    /// This function loads a single shader, either vertex, geometry
-    /// or fragment, identified by the second argument.
-    /// The source code must be a valid shader in GLSL language.
-    /// GLSL is a C-like language dedicated to OpenGL shaders;
-    /// you'll probably need to read a good documentation for it
-    /// before writing your own shaders.
-    ///
-    /// \param stream Source stream to read from
-    /// \param type   Type of shader (vertex, geometry or fragment)
-    ///
-    /// \return True if loading succeeded, false if it failed
-    ///
-    /// \see loadFromFile, loadFromMemory
-    ///
-    ////////////////////////////////////////////////////////////
-    bool loadFromStream(InputStream& stream, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load chosen vertex, geometry and/or fragment shaders from custom streams
