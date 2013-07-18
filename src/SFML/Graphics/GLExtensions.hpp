@@ -228,6 +228,10 @@
     #define GLEXT_GL_FRAMEBUFFER_BINDING              GL_FRAMEBUFFER_BINDING_EXT
     #define GLEXT_GL_INVALID_FRAMEBUFFER_OPERATION    GL_INVALID_FRAMEBUFFER_OPERATION_EXT
 
+    // Core since 3.2 - ARB_geometry_shader4
+    #define GLEXT_geometry_shader4                    sfogl_ext_ARB_geometry_shader4
+    #define GLEXT_GL_GEOMETRY_SHADER                  GL_GEOMETRY_SHADER_ARB
+
 #endif
 
 namespace sf
