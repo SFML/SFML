@@ -60,21 +60,18 @@ namespace
     }
 
     // Find the name of the current executable
-    const char* findExecutableName()
+    void findExecutableName(char* buffer, std::size_t bufferSize)
     {
         //Default fallback name
         const char* executableName = "sfml";
-        static char buffer[512];
-        std::size_t length = readlink("/proc/self/exe", buffer, sizeof(buffer));
-
-        if ((length > 0) && (length < sizeof(buffer)))
+        std::size_t length = readlink("/proc/self/exe", buffer, bufferSize);
+        if ((length > 0) && (length < bufferSize))
         {
             // Remove the path to keep the executable name only
             buffer[length] = '\0';
             executableName = basename(buffer);
         }
-        std::memcpy(buffer, executableName, std::strlen(executableName) + 1);
-        return buffer;
+        std::memmove(buffer, executableName, std::strlen(executableName) + 1);
     }
 }
 
@@ -249,10 +246,11 @@ m_previousSize(-1, -1)
     }
  
     // Set the window's WM class (this can be used by window managers)
-    const char* windowClass = findExecutableName();
+    char windowClass[512];
+    findExecutableName(windowClass, sizeof(windowClass));
     XClassHint* classHint = XAllocClassHint();
-    classHint->res_name = const_cast<char*>(windowClass);
-    classHint->res_class = const_cast<char*>(windowClass);
+    classHint->res_name = windowClass;
+    classHint->res_class = windowClass;
     XSetClassHint(m_display, m_window, classHint);
     XFree(classHint);
 
