@@ -33,7 +33,7 @@
 #include <SFML/System/Err.hpp>
 #include <fstream>
 #include <vector>
-
+#include <new>
 
 namespace
 {
