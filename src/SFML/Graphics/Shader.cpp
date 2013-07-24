@@ -56,7 +56,15 @@ namespace
             if (size > 0)
             {
                 file.seekg(0, std::ios_base::beg);
-                buffer.resize(static_cast<std::size_t>(size));
+                try
+                {
+                    buffer.resize(static_cast<std::size_t>(size));
+                }
+                catch (std::bad_alloc& e)
+                {
+                    err() << "Failed to get file contents, std::bad_alloc caught: " << e.what() << std::endl;
+                    return false;
+                }
                 file.read(&buffer[0], size);
             }
             buffer.push_back('\0');
@@ -75,7 +83,15 @@ namespace
         sf::Int64 size = stream.getSize();
         if (size > 0)
         {
-            buffer.resize(static_cast<std::size_t>(size));
+            try
+            {
+                buffer.resize(static_cast<std::size_t>(size));
+            }
+            catch (std::bad_alloc& e)
+            {
+                err() << "Failed to get stream contents, std::bad_alloc caught: " << e.what() << std::endl;
+                return false;
+            }
             stream.seek(0);
             sf::Int64 read = stream.read(&buffer[0], size);
             success = (read == size);
