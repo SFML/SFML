@@ -35,6 +35,7 @@
 #include <vector>
 #include <new>
 
+
 namespace
 {
     // Retrieve the maximum number of texture units available
