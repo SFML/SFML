@@ -282,6 +282,15 @@ private :
     void updateGeometry();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Append a line to the text's vertex array (used
+    /// used for the underlined and strikethrough text style)
+    ///
+    /// \param bounds Dimensions of the line
+    ///
+    ////////////////////////////////////////////////////////////
+    void appendLine(sf::FloatRect bounds);
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     String        m_string;        ///< String to display
