@@ -241,12 +241,16 @@ macro(sfml_add_example target)
     install(TARGETS ${target}
             RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
 
+    # install the example's source code
+    install(FILES ${THIS_SOURCES}
+            DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
+            COMPONENT examples)
+
     # install the example's resources as well
     set(EXAMPLE_RESOURCES "${CMAKE_SOURCE_DIR}/examples/${target}/resources")
     if(EXISTS ${EXAMPLE_RESOURCES})
         install(DIRECTORY ${EXAMPLE_RESOURCES}
                 DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
-                COMPONENT examples
-                PATTERN ".svn" EXCLUDE)
+                COMPONENT examples)
     endif()
 endmacro()

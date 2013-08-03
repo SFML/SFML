@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -166,7 +166,7 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
 		        WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
 		        WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
                 WGL_SAMPLE_BUFFERS_ARB, (m_settings.antialiasingLevel ? GL_TRUE : GL_FALSE),
-		        WGL_SAMPLES_ARB,        m_settings.antialiasingLevel,
+		        WGL_SAMPLES_ARB,        static_cast<int>(m_settings.antialiasingLevel),
 		        0,                      0
             };
 
@@ -267,8 +267,8 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
         {
             int attributes[] =
             {
-                WGL_CONTEXT_MAJOR_VERSION_ARB, m_settings.majorVersion,
-                WGL_CONTEXT_MINOR_VERSION_ARB, m_settings.minorVersion,
+                WGL_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
+                WGL_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
                 WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
                 0, 0
             };

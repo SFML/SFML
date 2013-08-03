@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -71,9 +71,9 @@ m_callback        (0),
 m_cursor          (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_isCursorIn      (false),
 m_lastSize        (0, 0),
-m_resizing        (false)
+m_resizing        (false),
+m_surrogate       (0)
 {
     if (m_handle)
     {
@@ -85,15 +85,15 @@ m_resizing        (false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style) :
+WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& /*settings*/) :
 m_handle          (NULL),
 m_callback        (0),
 m_cursor          (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_isCursorIn      (false),
 m_lastSize        (mode.width, mode.height),
-m_resizing        (false)
+m_resizing        (false),
+m_surrogate       (0)
 {
     // Register the window class at first call
     if (windowCount == 0)
@@ -101,8 +101,8 @@ m_resizing        (false)
 
     // Compute position and size
     HDC screenDC = GetDC(NULL);
-    int left   = (GetDeviceCaps(screenDC, HORZRES) - mode.width)  / 2;
-    int top    = (GetDeviceCaps(screenDC, VERTRES) - mode.height) / 2;
+    int left   = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.width))  / 2;
+    int top    = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.height)) / 2;
     int width  = mode.width;
     int height = mode.height;
     ReleaseDC(NULL, screenDC);
@@ -139,6 +139,10 @@ m_resizing        (false)
     {
         m_handle = CreateWindowA(classNameA, title.toAnsiString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
     }
+
+    // By default, the OS limits the size of the window the the desktop size,
+    // we have to resize it after creation to apply the real size
+    setSize(Vector2u(mode.width, mode.height));
 
     // Switch to fullscreen if requested
     if (fullscreen)
@@ -200,7 +204,7 @@ void WindowImplWin32::processEvents()
     if (!m_callback)
     {
         MSG message;
-        while (PeekMessage(&message, m_handle, 0, 0, PM_REMOVE))
+        while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&message);
             DispatchMessage(&message);
@@ -241,7 +245,7 @@ void WindowImplWin32::setSize(const Vector2u& size)
 {
     // SetWindowPos wants the total size of the window (including title bar and borders),
     // so we have to compute it
-    RECT rectangle = {0, 0, size.x, size.y};
+    RECT rectangle = {0, 0, static_cast<long>(size.x), static_cast<long>(size.y)};
     AdjustWindowRect(&rectangle, GetWindowLong(m_handle, GWL_STYLE), false);
     int width  = rectangle.right - rectangle.left;
     int height = rectangle.bottom - rectangle.top;
@@ -487,6 +491,17 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
+        // The system request the min/max window size and position
+        case WM_GETMINMAXINFO :
+        {
+            // We override the returned information to remove the default limit
+            // (the OS doesn't allow windows bigger than the desktop by default)
+            MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
+            info->ptMaxTrackSize.x = 50000;
+            info->ptMaxTrackSize.y = 50000;
+            break;
+        }
+
         // Gain focus event
         case WM_SETFOCUS :
         {
@@ -510,10 +525,33 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             if (m_keyRepeatEnabled || ((lParam & (1 << 30)) == 0))
             {
-                Event event;
-                event.type = Event::TextEntered;
-                event.text.unicode = static_cast<Uint32>(wParam);
-                pushEvent(event);
+                // Get the code of the typed character
+                Uint32 character = static_cast<Uint32>(wParam);
+
+                // Check if it is the first part of a surrogate pair, or a regular character
+                if ((character >= 0xD800) && (character <= 0xDBFF))
+                {
+                    // First part of a surrogate pair: store it and wait for the second one
+                    m_surrogate = static_cast<Uint16>(character);
+                }
+                else
+                {
+
+                    // Check if it is the second part of a surrogate pair, or a regular character
+                    if ((character >= 0xDC00) && (character <= 0xDFFF))
+                    {
+                        // Convert the UTF-16 surrogate pair to a single UTF-32 value
+                        Uint16 utf16[] = {m_surrogate, static_cast<Uint16>(character)};
+                        sf::Utf16::toUtf32(utf16, utf16 + 2, &character);
+                        m_surrogate = 0;
+                    }
+
+                    // Send a TextEntered event
+                    Event event;
+                    event.type = Event::TextEntered;
+                    event.text.unicode = character;
+                    pushEvent(event);
+                }
             }
             break;
         }
@@ -668,39 +706,51 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse move event
         case WM_MOUSEMOVE :
         {
-            // Check if we need to generate a MouseEntered event
-            if (!m_isCursorIn)
+            // Extract the mouse local coordinates
+            int x = static_cast<Int16>(LOWORD(lParam));
+            int y = static_cast<Int16>(HIWORD(lParam));
+
+            // Get the client area of the window
+            RECT area;
+            GetClientRect(m_handle, &area);
+
+            // Check the mouse position against the window
+            if ((x < area.left) || (x > area.right) || (y < area.top) || (y > area.bottom))
             {
-                TRACKMOUSEEVENT mouseEvent;
-                mouseEvent.cbSize    = sizeof(TRACKMOUSEEVENT);
-                mouseEvent.hwndTrack = m_handle;
-                mouseEvent.dwFlags   = TME_LEAVE;
-                TrackMouseEvent(&mouseEvent);
+                // Mouse is outside
 
-                m_isCursorIn = true;
+                // Release the mouse capture
+                ReleaseCapture();
 
+                // Generate a MouseLeft event
                 Event event;
-                event.type = Event::MouseEntered;
+                event.type = Event::MouseLeft;
                 pushEvent(event);
             }
+            else
+            {
+                // Mouse is inside
+                if (GetCapture() != m_handle)
+                {
+                    // Mouse was previously outside the window
 
-            Event event;
-            event.type        = Event::MouseMoved;
-            event.mouseMove.x = static_cast<Int16>(LOWORD(lParam));
-            event.mouseMove.y = static_cast<Int16>(HIWORD(lParam));
-            pushEvent(event);
-            break;
-        }
+                    // Capture the mouse
+                    SetCapture(m_handle);
 
-        // Mouse leave event
-        case WM_MOUSELEAVE :
-        {
-            m_isCursorIn = false;
+                    // Generate a MouseEntered event
+                    Event event;
+                    event.type = Event::MouseEntered;
+                    pushEvent(event);
+                }
 
-            Event event;
-            event.type = Event::MouseLeft;
-            pushEvent(event);
-            break;
+                // Generate a MouseMove event
+                Event event;
+                event.type        = Event::MouseMoved;
+                event.mouseMove.x = x;
+                event.mouseMove.y = y;
+                pushEvent(event);
+                break;
+            }
         }
     }
 }
@@ -859,7 +909,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     }
 
     // Get the WindowImpl instance corresponding to the window handle
-    WindowImplWin32* window = reinterpret_cast<WindowImplWin32*>(GetWindowLongPtr(handle, GWLP_USERDATA));
+    WindowImplWin32* window = handle ? reinterpret_cast<WindowImplWin32*>(GetWindowLongPtr(handle, GWLP_USERDATA)) : NULL;
 
     // Forward the event to the appropriate function
     if (window)
@@ -872,6 +922,10 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
 
     // We don't forward the WM_CLOSE message to prevent the OS from automatically destroying the window
     if (message == WM_CLOSE)
+        return 0;
+
+    // Don't forward the menu system command, so that pressing ALT or F10 doesn't steal the focus
+    if ((message == WM_SYSCOMMAND) && (wParam == SC_KEYMENU))
         return 0;
 
     static const bool hasUnicode = hasUnicodeSupport();

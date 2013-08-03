@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -108,6 +108,14 @@ void Socket::create(SocketHandle handle)
                 err() << "Failed to set socket option \"TCP_NODELAY\" ; "
                       << "all your TCP packets will be buffered" << std::endl;
             }
+
+            // On Mac OS X, disable the SIGPIPE signal on disconnection
+            #ifdef SFML_SYSTEM_MACOS
+                if (setsockopt(m_socket, SOL_SOCKET, SO_NOSIGPIPE, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
+                {
+                    err() << "Failed to set socket option \"SO_NOSIGPIPE\"" << std::endl;
+                }
+            #endif
         }
         else
         {

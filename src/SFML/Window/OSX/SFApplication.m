@@ -27,7 +27,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/OSX/SFApplication.h>
-#import <AppKit/AppKit.h>
 
 
 ////////////////////////////////////////////////////////////
@@ -37,7 +36,7 @@
 ////////////////////////////////////////////////////////////
 +(void)processEvent
 {
-    [NSApplication sharedApplication]; // Make sure NSApp exists
+    [SFApplication sharedApplication]; // Make sure NSApp exists
     NSEvent* event = nil;
     
     while ((event = [NSApp nextEventMatchingMask:NSAnyEventMask
@@ -46,6 +45,16 @@
                                          dequeue:YES])) // Remove the event from the dequeue
     {
         [NSApp sendEvent:event];
+    }
+}
+
+- (void)sendEvent:(NSEvent *)anEvent
+{
+    if ([anEvent type] == NSKeyUp) {
+        [[[self mainWindow] firstResponder] tryToPerform:@selector(keyUp:)
+                                                    with:anEvent];
+    } else {
+        [super sendEvent:anEvent];
     }
 }
 

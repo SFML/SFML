@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -96,6 +96,20 @@ void RenderTexture::setSmooth(bool smooth)
 bool RenderTexture::isSmooth() const
 {
     return m_texture.isSmooth();
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTexture::setRepeated(bool repeated)
+{
+    m_texture.setRepeated(repeated);
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderTexture::isRepeated() const
+{
+    return m_texture.isRepeated();
 }
 
 

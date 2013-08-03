@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -254,6 +254,7 @@ void Text::updateGeometry()
     float lineStartingXCoordiate = 0.f;
 
     // Create one quad for each character
+    float minY = static_cast<float>(m_characterSize);
     Uint32 prevChar = 0;
     for (std::size_t i = 0; i < m_string.getSize(); ++i)
     {
@@ -266,8 +267,14 @@ void Text::updateGeometry()
         // Handle special characters
         switch (curChar)
         {
-            case L' '  : x += hspace;     continue;
-            case L'\t' : x += hspace * 4; continue;
+            case L' ' :
+                x += hspace;
+                continue;
+
+            case L'\t' :
+                x += hspace * 4;
+                continue;
+
             case L'\n' :
                 // If we're using the underlined style and there's a new line, draw a line
                 if(underlined)
@@ -277,6 +284,8 @@ void Text::updateGeometry()
                 if (strikeThrough)
                     appendLine(sf::FloatRect(lineStartingXCoordiate, y - strikeThroughOffset, x, lineThickness));
 
+                if (x > m_bounds.width)
+                    m_bounds.width = x;
                 y += vspace;
                 x = 0.f;
                 continue;
@@ -316,6 +325,10 @@ void Text::updateGeometry()
 
         // Advance to the next character
         x += glyph.advance;
+
+        // Update the minimum Y coordinate
+        if (y + top < minY)
+            minY = y + top;
     }
 
     // If we're using the underlined style, add the last line
@@ -326,8 +339,12 @@ void Text::updateGeometry()
     if (strikeThrough)
         appendLine(sf::FloatRect(lineStartingXCoordiate, y - strikeThroughOffset, x, lineThickness));
 
-    // Recompute the bounding rectangle
-    m_bounds = m_vertices.getBounds();
+    // Update the bounding rectangle
+    m_bounds.left = 0;
+    m_bounds.top = minY;
+    if (x > m_bounds.width)
+        m_bounds.width = x;
+    m_bounds.height = y - minY;
 }
 
 void Text::appendLine(sf::FloatRect bounds)

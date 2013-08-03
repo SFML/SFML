@@ -189,7 +189,7 @@
              * | Note for future version |
              * ---------------------------
              *
-             * starting with OS 10.5 NSView provides
+             * starting with OS 10.6 NSView provides
              * a new method -enterFullScreenMode:withOptions: 
              * which could be a good alternative.
              */
@@ -211,9 +211,15 @@
         }
         
         // If a fullscreen window was requested...
-        if (style & sf::Style::Fullscreen && mode != sf::VideoMode::getDesktopMode()) {
-            /// ... we set the "read size" of the view (that is the back buffer size).
-            [m_oglView setRealSize:NSMakeSize(m_fullscreenMode->width, m_fullscreenMode->height)];
+        if (style & sf::Style::Fullscreen) {
+            /// ... we tell the OpenGL view
+            [m_oglView enterFullscreen];
+
+            // ... and if the resolution is not the default one...
+            if (mode != sf::VideoMode::getDesktopMode()) {
+                // ... we set the "real size" of the view (that is the back buffer size).
+                [m_oglView setRealSize:NSMakeSize(m_fullscreenMode->width, m_fullscreenMode->height)];
+            }
         }
         
         // Set the view to the window as its content view.
@@ -278,14 +284,6 @@
 -(void)showMouseCursor
 {
     [NSCursor unhide];
-}
-
-
-////////////////////////////////////////////////////////
--(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
-{
-    // Forward to...
-    [m_oglView setCursorPositionToX:x Y:y];
 }
 
 
@@ -432,7 +430,7 @@
     [icon addRepresentation:bitmap];
     
     // Set app icon.
-    [[NSApplication sharedApplication] setApplicationIconImage:icon];
+    [[SFApplication sharedApplication] setApplicationIconImage:icon];
     
     // Free up.
     [icon release];
@@ -504,6 +502,10 @@
     if (m_requester == 0) return;
     
     m_requester->windowGainedFocus();
+
+    if (*m_fullscreenMode != sf::VideoMode()) {
+        [m_oglView enterFullscreen];
+    }
 }
 
 
@@ -514,6 +516,10 @@
     if (m_requester == 0) return;
     
     m_requester->windowLostFocus();
+
+    if (*m_fullscreenMode != sf::VideoMode()) {
+        [m_oglView exitFullscreen];
+    }
 }
 
 

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,12 +27,15 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Linux/WindowImplX11.hpp>
+#include <SFML/Window/Linux/GlxContext.hpp>
 #include <SFML/Window/Linux/Display.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
+#include <unistd.h>
+#include <cstring>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -49,12 +52,26 @@ namespace
                                                 PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
                                                 EnterWindowMask | LeaveWindowMask;
 
-    /// Filter the events received by windows
-    /// (only allow those matching a specific window)
+    // Filter the events received by windows (only allow those matching a specific window)
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
     {
         // Just check if the event matches the window
         return event->xany.window == reinterpret_cast< ::Window >(userData);
+    }
+
+    // Find the name of the current executable
+    void findExecutableName(char* buffer, std::size_t bufferSize)
+    {
+        //Default fallback name
+        const char* executableName = "sfml";
+        std::size_t length = readlink("/proc/self/exe", buffer, bufferSize);
+        if ((length > 0) && (length < bufferSize))
+        {
+            // Remove the path to keep the executable name only
+            buffer[length] = '\0';
+            executableName = basename(buffer);
+        }
+        std::memmove(buffer, executableName, std::strlen(executableName) + 1);
     }
 }
 
@@ -72,11 +89,12 @@ m_isExternal  (true),
 m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
-m_keyRepeat   (true)
+m_keyRepeat   (true),
+m_previousSize(-1, -1)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
-    m_screen  = DefaultScreen(m_display);
+    m_screen = DefaultScreen(m_display);
 
     // Save the window handle
     m_window = handle;
@@ -93,7 +111,7 @@ m_keyRepeat   (true)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style) :
+WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
 m_window      (0),
 m_inputMethod (NULL),
 m_inputContext(NULL),
@@ -101,11 +119,13 @@ m_isExternal  (false),
 m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
-m_keyRepeat   (true)
+m_keyRepeat   (true),
+m_previousSize(-1, -1)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
-    m_screen  = DefaultScreen(m_display);
+    m_screen = DefaultScreen(m_display);
+    ::Window root = RootWindow(m_display, m_screen);
 
     // Compute position and size
     int left, top;
@@ -127,21 +147,25 @@ m_keyRepeat   (true)
     if (fullscreen)
         switchToFullscreen(mode);
 
+    // Choose the visual according to the context settings
+    XVisualInfo visualInfo = GlxContext::selectBestVisual(m_display, mode.bitsPerPixel, settings);
+
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.event_mask        = eventMask;
     attributes.override_redirect = fullscreen;
+    attributes.event_mask = eventMask;
+    attributes.colormap = XCreateColormap(m_display, root, visualInfo.visual, AllocNone);
 
     // Create the window
     m_window = XCreateWindow(m_display,
-                             RootWindow(m_display, m_screen),
+                             root,
                              left, top,
                              width, height,
                              0,
-                             DefaultDepth(m_display, m_screen),
+                             visualInfo.depth,
                              InputOutput,
-                             DefaultVisual(m_display, m_screen),
-                             CWEventMask | CWOverrideRedirect, &attributes);
+                             visualInfo.visual,
+                             CWEventMask | CWOverrideRedirect | CWColormap, &attributes);
     if (!m_window)
     {
         err() << "Failed to create window" << std::endl;
@@ -177,32 +201,32 @@ m_keyRepeat   (true)
     
             struct WMHints
             {
-                unsigned long Flags;
-                unsigned long Functions;
-                unsigned long Decorations;
-                long          InputMode;
-                unsigned long State;
+                unsigned long flags;
+                unsigned long functions;
+                unsigned long decorations;
+                long          inputMode;
+                unsigned long state;
             };
     
             WMHints hints;
-            hints.Flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-            hints.Decorations = 0;
-            hints.Functions   = 0;
+            hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+            hints.decorations = 0;
+            hints.functions   = 0;
 
             if (style & Style::Titlebar)
             {
-                hints.Decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
-                hints.Functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
+                hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
+                hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
             }
             if (style & Style::Resize)
             {
-                hints.Decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
-                hints.Functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
+                hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
+                hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
             }
             if (style & Style::Close)
             {
-                hints.Decorations |= 0;
-                hints.Functions   |= MWM_FUNC_CLOSE;
+                hints.decorations |= 0;
+                hints.functions   |= MWM_FUNC_CLOSE;
             }
 
             const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&hints);
@@ -212,13 +236,23 @@ m_keyRepeat   (true)
         // This is a hack to force some windows managers to disable resizing
         if (!(style & Style::Resize))
         {
-            XSizeHints sizeHints;
-            sizeHints.flags      = PMinSize | PMaxSize;
-            sizeHints.min_width  = sizeHints.max_width  = width;
-            sizeHints.min_height = sizeHints.max_height = height;
-            XSetWMNormalHints(m_display, m_window, &sizeHints); 
+            XSizeHints* sizeHints = XAllocSizeHints();
+            sizeHints->flags = PMinSize | PMaxSize;
+            sizeHints->min_width = sizeHints->max_width  = width;
+            sizeHints->min_height = sizeHints->max_height = height;
+            XSetWMNormalHints(m_display, m_window, sizeHints); 
+            XFree(sizeHints);
         }
     }
+ 
+    // Set the window's WM class (this can be used by window managers)
+    char windowClass[512];
+    findExecutableName(windowClass, sizeof(windowClass));
+    XClassHint* classHint = XAllocClassHint();
+    classHint->res_name = windowClass;
+    classHint->res_class = windowClass;
+    XSetClassHint(m_display, m_window, classHint);
+    XFree(classHint);
 
     // Do some common initializations
     initialize();
@@ -283,9 +317,14 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    XWindowAttributes attributes;
-    XGetWindowAttributes(m_display, m_window, &attributes);
-    return Vector2i(attributes.x, attributes.y);
+    ::Window root, child;
+    int localX, localY, x, y;
+    unsigned int width, height, border, depth;
+
+    XGetGeometry(m_display, m_window, &root, &localX, &localY, &width, &height, &border, &depth);
+    XTranslateCoordinates(m_display, m_window, root, localX, localY, &x, &y, &child);
+
+    return Vector2i(x, y);
 }
 
 
@@ -321,8 +360,8 @@ void WindowImplX11::setTitle(const String& title)
     // There is however an option to tell the window manager your unicode title via hints.
     
     // Convert to UTF-8 encoding.
-    std::basic_string<sf::Uint8> utf8Title;
-    sf::Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
+    std::basic_string<Uint8> utf8Title;
+    Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
     
     // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
     Atom wmName = XInternAtom(m_display, "_NET_WM_NAME", False);
@@ -478,11 +517,6 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()
 {
-    // Make sure the "last key release" is initialized with invalid values
-    m_lastKeyReleaseEvent.type = -1;
-    m_lastKeyReleaseEvent.xkey.keycode = 0;
-    m_lastKeyReleaseEvent.xkey.time = 0;
-
     // Get the atom defining the close event
     m_atomClose = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
     XSetWMProtocols(m_display, m_window, &m_atomClose, 1);
@@ -578,33 +612,30 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
     // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
 
     // Detect repeated key events
-    if (((windowEvent.type == KeyPress) || (windowEvent.type == KeyRelease)) && (windowEvent.xkey.keycode < 256))
+    // (code shamelessly taken from SDL)
+    if (windowEvent.type == KeyRelease)
     {
-        // To detect if it is a repeated key event, we check the current state of the key:
-        // - If the state is "down", KeyReleased events must obviously be discarded
-        // - KeyPress events are a little bit harder to handle: they depend on the KeyRepeatEnabled state,
-        //   and we need to properly forward the first one
-        
-        // Check if the key is currently down
-        char keys[32];
-        XQueryKeymap(m_display, keys);
-        bool isDown = keys[windowEvent.xkey.keycode / 8] & (1 << (windowEvent.xkey.keycode % 8));
+        // Check if there's a matching KeyPress event in the queue
+        XEvent nextEvent;
+        if (XPending(m_display))
+        {
+            // Grab it but don't remove it from the queue, it still needs to be processed :)
+            XPeekEvent(m_display, &nextEvent);
+            if (nextEvent.type == KeyPress)
+            {
+                // Check if it is a duplicated event (same timestamp as the KeyRelease event)
+                if ((nextEvent.xkey.keycode == windowEvent.xkey.keycode) &&
+                    (nextEvent.xkey.time - windowEvent.xkey.time < 2))
+                {
+                    // If we don't want repeated events, remove the next KeyPress from the queue
+                    if (!m_keyRepeat)
+                        XNextEvent(m_display, &nextEvent);
 
-        // Check if it's a duplicate event
-        bool isDuplicate = (windowEvent.xkey.keycode == m_lastKeyReleaseEvent.xkey.keycode) &&
-                           (windowEvent.xkey.time - m_lastKeyReleaseEvent.xkey.time <= 5);
-
-        // Keep track of the last KeyRelease event
-        if (windowEvent.type == KeyRelease)
-            m_lastKeyReleaseEvent = windowEvent;
-
-        // KeyRelease event + key down or duplicate event = repeated event --> discard
-        if ((windowEvent.type == KeyRelease) && (isDown || isDuplicate))
-            return false;
-
-        // KeyPress event + matching KeyRelease event = repeated event --> discard if key repeat is disabled
-        if ((windowEvent.type == KeyPress) && isDuplicate && !m_keyRepeat)
-            return false;
+                    // This KeyRelease is a repeated event and we don't want it
+                    return false;
+                }
+            }
+        }
     }
 
     // Convert the X11 event to a sf::Event
@@ -647,11 +678,18 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Resize event
         case ConfigureNotify :
         {
-            Event event;
-            event.type        = Event::Resized;
-            event.size.width  = windowEvent.xconfigure.width;
-            event.size.height = windowEvent.xconfigure.height;
-            pushEvent(event);
+            // ConfigureNotify can be triggered for other reasons, check if the size has acutally changed
+            if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
+            {
+                Event event;
+                event.type        = Event::Resized;
+                event.size.width  = windowEvent.xconfigure.width;
+                event.size.height = windowEvent.xconfigure.height;
+                pushEvent(event);
+
+                m_previousSize.x = windowEvent.xconfigure.width;
+                m_previousSize.y = windowEvent.xconfigure.height;
+            }
             break;
         }
 
@@ -817,18 +855,24 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Mouse entered
         case EnterNotify :
         {
-            Event event;
-            event.type = Event::MouseEntered;
-            pushEvent(event);
+            if (windowEvent.xcrossing.mode == NotifyNormal)
+            {
+                Event event;
+                event.type = Event::MouseEntered;
+                pushEvent(event);
+            }
             break;
         }
 
         // Mouse left
         case LeaveNotify :
         {
-            Event event;
-            event.type = Event::MouseLeft;
-            pushEvent(event);
+            if (windowEvent.xcrossing.mode == NotifyNormal)
+            {
+                Event event;
+                event.type = Event::MouseLeft;
+                pushEvent(event);
+            }
             break;
         }
     }

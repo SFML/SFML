@@ -82,8 +82,12 @@ else() # MACOSX
         ${SRCROOT}/OSX/SFApplication.m
         ${SRCROOT}/OSX/SFContext.hpp
         ${SRCROOT}/OSX/SFContext.mm
+        ${SRCROOT}/OSX/SFKeyboardModifiersHelper.h
+        ${SRCROOT}/OSX/SFKeyboardModifiersHelper.mm
         ${SRCROOT}/OSX/SFOpenGLView.h
         ${SRCROOT}/OSX/SFOpenGLView.mm
+        ${SRCROOT}/OSX/SFSilentResponder.h
+        ${SRCROOT}/OSX/SFSilentResponder.m
         ${SRCROOT}/OSX/SFWindow.h
         ${SRCROOT}/OSX/SFWindow.m
         ${SRCROOT}/OSX/SFWindowController.h

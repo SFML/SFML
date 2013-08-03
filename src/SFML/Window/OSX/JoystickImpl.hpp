@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -45,6 +45,18 @@ namespace priv
 class JoystickImpl
 {
 public :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Perform the global initialization of the joystick module
+    ///
+    ////////////////////////////////////////////////////////////
+    static void initialize();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Perform the global cleanup of the joystick module
+    ///
+    ////////////////////////////////////////////////////////////
+    static void cleanup();
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a joystick is currently connected

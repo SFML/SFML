@@ -75,7 +75,15 @@ height(static_cast<T>(rectangle.height))
 template <typename T>
 bool Rect<T>::contains(T x, T y) const
 {
-    return (x >= left) && (x < left + width) && (y >= top) && (y < top + height);
+    // Rectangles with negative dimensions are allowed, so we must handle them correctly
+
+    // Compute the real min and max of the rectangle on both axes
+    T minX = std::min(left, left + width);
+    T maxX = std::max(left, left + width);
+    T minY = std::min(top, top + height);
+    T maxY = std::max(top, top + height);
+
+    return (x >= minX) && (x < maxX) && (y >= minY) && (y < maxY);
 }
 
 
@@ -100,11 +108,25 @@ bool Rect<T>::intersects(const Rect<T>& rectangle) const
 template <typename T>
 bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
 {
+    // Rectangles with negative dimensions are allowed, so we must handle them correctly
+
+    // Compute the min and max of the first rectangle on both axes
+    T r1MinX = std::min(left, left + width);
+    T r1MaxX = std::max(left, left + width);
+    T r1MinY = std::min(top, top + height);
+    T r1MaxY = std::max(top, top + height);
+
+    // Compute the min and max of the second rectangle on both axes
+    T r2MinX = std::min(rectangle.left, rectangle.left + rectangle.width);
+    T r2MaxX = std::max(rectangle.left, rectangle.left + rectangle.width);
+    T r2MinY = std::min(rectangle.top, rectangle.top + rectangle.height);
+    T r2MaxY = std::max(rectangle.top, rectangle.top + rectangle.height);
+
     // Compute the intersection boundaries
-    T interLeft   = std::max(left,         rectangle.left);
-    T interTop    = std::max(top,          rectangle.top);
-    T interRight  = std::min(left + width, rectangle.left + rectangle.width);
-    T interBottom = std::min(top + height, rectangle.top + rectangle.height);
+    T interLeft   = std::max(r1MinX, r2MinX);
+    T interTop    = std::max(r1MinY, r2MinY);
+    T interRight  = std::min(r1MaxX, r2MaxX);
+    T interBottom = std::min(r1MaxY, r2MaxY);
 
     // If the intersection is valid (positive non zero area), then there is an intersection
     if ((interLeft < interRight) && (interTop < interBottom))

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -107,6 +107,18 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Select the best GLX visual for a given set of settings
+    ///
+    /// \param display      X display
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
+    /// \param settings     Requested context settings
+    ///
+    /// \return The best visual
+    ///
+    ////////////////////////////////////////////////////////////
+    static XVisualInfo selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings);
 
 private :
 

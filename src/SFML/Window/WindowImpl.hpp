@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -36,6 +36,7 @@
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 #include <queue>
 #include <set>
 
@@ -59,11 +60,12 @@ public :
     /// \param mode  Video mode to use
     /// \param title Title of the window
     /// \param style Window style
+    /// \param settings Additional settings for the underlying OpenGL context
     ///
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* create(VideoMode mode, const String& title, Uint32 style);
+    static WindowImpl* create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS

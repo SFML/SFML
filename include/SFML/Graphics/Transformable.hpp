@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -359,10 +359,10 @@ private :
 /// In addition to the position, rotation and scale, sf::Transformable
 /// provides an "origin" component, which represents the local origin
 /// of the three other components. Let's take an example with a 10x10
-/// pixels sprite. By default, the sprite is positionned/rotated/scaled
+/// pixels sprite. By default, the sprite is positioned/rotated/scaled
 /// relatively to its top-left corner, because it is the local point
 /// (0, 0). But if we change the origin to be (5, 5), the sprite will
-/// be positionned/rotated/scaled around its center instead. And if
+/// be positioned/rotated/scaled around its center instead. And if
 /// we set the origin to (10, 10), it will be transformed around its
 /// bottom-right corner.
 ///

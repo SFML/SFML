@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -101,16 +101,23 @@ int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
     ensureALInit();
 
     // Find the good format according to the number of channels
+    int format = 0;
     switch (channelCount)
     {
-        case 1  : return AL_FORMAT_MONO16;
-        case 2  : return AL_FORMAT_STEREO16;
-        case 4  : return alGetEnumValue("AL_FORMAT_QUAD16");
-        case 6  : return alGetEnumValue("AL_FORMAT_51CHN16");
-        case 7  : return alGetEnumValue("AL_FORMAT_61CHN16");
-        case 8  : return alGetEnumValue("AL_FORMAT_71CHN16");
-        default : return 0;
+        case 1  : format = AL_FORMAT_MONO16;                    break;
+        case 2  : format = AL_FORMAT_STEREO16;                  break;
+        case 4  : format = alGetEnumValue("AL_FORMAT_QUAD16");  break;
+        case 6  : format = alGetEnumValue("AL_FORMAT_51CHN16"); break;
+        case 7  : format = alGetEnumValue("AL_FORMAT_61CHN16"); break;
+        case 8  : format = alGetEnumValue("AL_FORMAT_71CHN16"); break;
+        default : format = 0;                                   break;
     }
+
+    // Fixes a bug on OS X
+    if (format == -1)
+        format = 0;
+
+    return format;
 }
 
 } // namespace priv

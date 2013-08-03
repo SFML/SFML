@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -192,6 +192,11 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
         if (create(image.getSize().x, image.getSize().y))
         {
             update(image);
+
+            // Force an OpenGL flush, so that the texture will appear updated
+            // in all contexts immediately (solves problems in multi-threaded apps)
+            glCheck(glFlush());
+
             return true;
         }
         else
@@ -224,6 +229,10 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
                 glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
                 pixels += 4 * width;
             }
+
+            // Force an OpenGL flush, so that the texture will appear updated
+            // in all contexts immediately (solves problems in multi-threaded apps)
+            glCheck(glFlush());
 
             return true;
         }

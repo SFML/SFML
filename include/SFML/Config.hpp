@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,7 +30,7 @@
 // Define the SFML version
 ////////////////////////////////////////////////////////////
 #define SFML_VERSION_MAJOR 2
-#define SFML_VERSION_MINOR 0
+#define SFML_VERSION_MINOR 1
 
 
 ////////////////////////////////////////////////////////////

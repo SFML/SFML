@@ -23,7 +23,7 @@ The templates were written by Marco Antognini <antognini.marco@gmail.com> and ar
 Features
 --------
 
- * You can choose between command line tool or bundle application, the latter will contains all SFML dependancies so you can run your app on another computer without manually installing SFML.
+ * You can choose between command line tool or bundle application, the latter will contains all SFML dependencies so you can run your app on another computer without manually installing SFML.
  * You can choose between using SFML libraries as dylibs or frameworks.
  * You can choose your compiler and C++ standard library / dialect.
  * You can choose with SFML module you want to use into your project.

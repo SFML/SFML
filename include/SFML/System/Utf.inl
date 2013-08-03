@@ -104,7 +104,7 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
         // Valid character
 
         // Get the number of bytes to write
-        int bytestoWrite = 1;
+        std::size_t bytestoWrite = 1;
         if      (input <  0x80)       bytestoWrite = 1;
         else if (input <  0x800)      bytestoWrite = 2;
         else if (input <  0x10000)    bytestoWrite = 3;
@@ -121,14 +121,7 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
         }
 
         // Add them to the output
-        const Uint8* currentByte = bytes;
-        switch (bytestoWrite)
-        {
-            case 4 : *output++ = *currentByte++;
-            case 3 : *output++ = *currentByte++;
-            case 2 : *output++ = *currentByte++;
-            case 1 : *output++ = *currentByte++;
-        }
+        output = std::copy(bytes, bytes + bytestoWrite, output);
     }
 
     return output;
@@ -251,10 +244,7 @@ Out Utf<8>::toLatin1(In begin, In end, Out output, char replacement)
 template <typename In, typename Out>
 Out Utf<8>::toUtf8(In begin, In end, Out output)
 {
-    while (begin < end)
-        *output++ = *begin++;
-
-    return output;
+    return std::copy(begin, end, output);
 }
 
 
@@ -423,10 +413,7 @@ Out Utf<16>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
-    while (begin < end)
-        *output++ = *begin++;
-
-    return output;
+    return std::copy(begin, end, output);
 }
 
 
@@ -495,10 +482,7 @@ Out Utf<16>::toUtf8(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<16>::toUtf16(In begin, In end, Out output)
 {
-    while (begin < end)
-        *output++ = *begin++;
-
-    return output;
+    return std::copy(begin, end, output);
 }
 
 
@@ -579,10 +563,7 @@ Out Utf<32>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
-    while (begin < end)
-        *output++ = *begin++;
-
-    return output;
+    return std::copy(begin, end, output);
 }
 
 
@@ -649,10 +630,7 @@ Out Utf<32>::toUtf16(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<32>::toUtf32(In begin, In end, Out output)
 {
-    while (begin < end)
-        *output++ = *begin++;
-
-    return output;
+    return std::copy(begin, end, output);
 }
 
 

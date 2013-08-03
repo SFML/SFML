@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,8 +28,17 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#ifdef _WIN32_WINDOWS
+    #undef _WIN32_WINDOWS
+#endif
+#ifdef _WIN32_WINNT
+    #undef _WIN32_WINNT
+#endif
+#define _WIN32_WINDOWS 0x0501
+#define _WIN32_WINNT   0x0501
 #include <SFML/Network/Socket.hpp>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 
 
 namespace sf
