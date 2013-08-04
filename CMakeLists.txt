@@ -105,7 +105,7 @@ endif()
 
 if(LINUX)
     if(BUILD_SHARED_LIBS)
-        sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES TRUE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
+        sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES FALSE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
         if(SFML_INSTALL_PKGCONFIG_FILES)
             foreach(sfml_module IN ITEMS all system window graphics audio network)
                 CONFIGURE_FILE(
