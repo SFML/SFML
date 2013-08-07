@@ -1,4 +1,4 @@
-# some of these macros are inspired from the boost/cmake macros
+include(CMakeParseArguments)
 
 # this macro adds external dependencies to a static target,
 # compensating for the lack of a link step when building a static library.
@@ -52,50 +52,6 @@ macro(sfml_static_add_libraries target)
     endif()
 endmacro()
 
-# check if a value is contained in a list
-# sets ${var} to TRUE if the value is found
-macro(sfml_list_contains var value)
-    set(${var})
-    foreach(value2 ${ARGN})
-        if(${value} STREQUAL ${value2})
-            set(${var} TRUE)
-        endif()
-    endforeach()
-endmacro()
-
-# parse a list of arguments and options
-# ex: sfml_parse_arguments(THIS "SOURCES;DEPENDS" "FLAG" FLAG SOURCES s1 s2 s3 DEPENDS d1 d2)
-# will define the following variables:
-# - THIS_SOURCES (s1 s2 s3)
-# - THIS_DEPENDS (d1 d2)
-# - THIS_FLAG TRUE
-macro(sfml_parse_arguments prefix arg_names option_names)
-    foreach(arg_name ${arg_names})
-        set(${prefix}_${arg_name})
-    endforeach()
-    foreach(option_name ${option_names})
-        set(${prefix}_${option_name} FALSE)
-    endforeach()
-    set(current_arg_name)
-    set(current_arg_list)
-    foreach(arg ${ARGN})
-        sfml_list_contains(is_arg_name ${arg} ${arg_names})
-        if(is_arg_name)
-            set(${prefix}_${current_arg_name} ${current_arg_list})
-            set(current_arg_name ${arg})
-            set(current_arg_list)
-        else()
-            sfml_list_contains(is_option ${arg} ${option_names})
-            if(is_option)
-                set(${prefix}_${arg} TRUE)
-            else()
-                set(current_arg_list ${current_arg_list} ${arg})
-            endif()
-        endif()
-    endforeach()
-    set(${prefix}_${current_arg_name} ${current_arg_list})
-endmacro()
-
 # add a new target which is a SFML library
 # ex: sfml_add_library(sfml-graphics
 #                      SOURCES sprite.cpp image.cpp ...
@@ -104,7 +60,7 @@ endmacro()
 macro(sfml_add_library target)
 
     # parse the arguments
-    sfml_parse_arguments(THIS "SOURCES;DEPENDS;EXTERNAL_LIBS" "" ${ARGN})
+    cmake_parse_arguments(THIS "" "" "SOURCES;DEPENDS;EXTERNAL_LIBS" ${ARGN})
 
     # create the target
     add_library(${target} ${THIS_SOURCES})
@@ -206,7 +162,7 @@ endmacro()
 macro(sfml_add_example target)
 
     # parse the arguments
-    sfml_parse_arguments(THIS "SOURCES;DEPENDS" "GUI_APP" ${ARGN})
+    cmake_parse_arguments(THIS "GUI_APP" "" "SOURCES;DEPENDS" ${ARGN})
 
     # set a source group for the source files
     source_group("" FILES ${THIS_SOURCES})
@@ -253,4 +209,5 @@ macro(sfml_add_example target)
                 DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
                 COMPONENT examples)
     endif()
+
 endmacro()
