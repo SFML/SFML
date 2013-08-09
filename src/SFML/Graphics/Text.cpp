@@ -276,18 +276,19 @@ void Text::updateGeometry()
             case L'\n' :
                 // If we're using the underlined style and there's a new line, draw a line
                 if(underlined)
-                    appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x, underlineThickness));
+                    appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x - lineStartingXCoordinate, underlineThickness));
 
                 if (x > m_bounds.width)
                     m_bounds.width = x;
                 y += vspace;
                 x = 0.f;
+                lineStartingXCoordinate = 0.f;
                 continue;
 
             case L'\v' :
                 // If we're using the underlined style and there's a vertical tab, draw a line
                 if(underlined)
-                    appendLine(sf::FloatRect(0.f, y + underlineOffset, x, underlineThickness));
+                    appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x - lineStartingXCoordinate, underlineThickness));
 
                 y += vspace * 4;
                 lineStartingXCoordinate = x;
@@ -323,7 +324,7 @@ void Text::updateGeometry()
 
     // If we're using the underlined style, add the last line
     if (underlined)
-        appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x, underlineThickness));
+        appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x - lineStartingXCoordinate, underlineThickness));
 
     // Update the bounding rectangle
     m_bounds.left = 0;
@@ -336,10 +337,10 @@ void Text::updateGeometry()
 
 void Text::appendLine(sf::FloatRect bounds)
 {
-    m_vertices.append(Vertex(Vector2f(bounds.left, bounds.top), m_color , Vector2f(1, 1)));
-    m_vertices.append(Vertex(Vector2f(bounds.width, bounds.top), m_color, Vector2f(1, 1)));
-    m_vertices.append(Vertex(Vector2f(bounds.width, bounds.top + bounds.height), m_color, Vector2f(1, 1)));
-    m_vertices.append(Vertex(Vector2f(bounds.left, bounds.top + bounds.height), m_color, Vector2f(1, 1)));
+    m_vertices.append(Vertex(Vector2f(bounds.left,  bounds.top),                               m_color , Vector2f(1, 1)));
+    m_vertices.append(Vertex(Vector2f(bounds.left + bounds.width, bounds.top),                 m_color, Vector2f(1, 1)));
+    m_vertices.append(Vertex(Vector2f(bounds.left + bounds.width, bounds.top + bounds.height), m_color, Vector2f(1, 1)));
+    m_vertices.append(Vertex(Vector2f(bounds.left,  bounds.top + bounds.height),               m_color, Vector2f(1, 1)));
 }
 
 } // namespace sf
