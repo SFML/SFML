@@ -245,11 +245,11 @@ void Text::updateGeometry()
     float underlineThickness = m_characterSize * (bold ? 0.1f : 0.07f);
 
     // Precompute the variables needed by the algorithm
-    float hspace                 = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
-    float vspace                 = static_cast<float>(m_font->getLineSpacing(m_characterSize));
-    float x                      = 0.f;
-    float y                      = static_cast<float>(m_characterSize);
-    float lineStartingXCoordiate = 0.f;
+    float hspace                  = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
+    float vspace                  = static_cast<float>(m_font->getLineSpacing(m_characterSize));
+    float x                       = 0.f;
+    float y                       = static_cast<float>(m_characterSize);
+    float lineStartingXCoordinate = 0.f;
 
     // Create one quad for each character
     float minY = static_cast<float>(m_characterSize);
@@ -276,7 +276,7 @@ void Text::updateGeometry()
             case L'\n' :
                 // If we're using the underlined style and there's a new line, draw a line
                 if(underlined)
-                    appendLine(sf::FloatRect(lineStartingXCoordiate, y + underlineOffset, x, underlineThickness));
+                    appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x, underlineThickness));
 
                 if (x > m_bounds.width)
                     m_bounds.width = x;
@@ -290,7 +290,7 @@ void Text::updateGeometry()
                     appendLine(sf::FloatRect(0.f, y + underlineOffset, x, underlineThickness));
 
                 y += vspace * 4;
-                lineStartingXCoordiate = x;
+                lineStartingXCoordinate = x;
                 continue;
         }
 
@@ -323,7 +323,7 @@ void Text::updateGeometry()
 
     // If we're using the underlined style, add the last line
     if (underlined)
-        appendLine(sf::FloatRect(lineStartingXCoordiate, y + underlineOffset, x, underlineThickness));
+        appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x, underlineThickness));
 
     // Update the bounding rectangle
     m_bounds.left = 0;
