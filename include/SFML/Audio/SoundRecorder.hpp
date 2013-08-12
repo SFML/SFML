@@ -114,19 +114,19 @@ protected :
     /// \brief Set the processing interval
     ///
     /// The processing interval controls the period
-	/// between calls to the onProcessSamples function. You may
-	/// want to use a small interval if you want to process the
-	/// recorded data in real time, for example.
-	///
-	/// Note: this is only a hint, the actual period may vary.
-	/// So don't rely on this parameter to implement precise timing.
+    /// between calls to the onProcessSamples function. You may
+    /// want to use a small interval if you want to process the
+    /// recorded data in real time, for example.
     ///
-	/// The default processing interval is 100 ms.
-	///
+    /// Note: this is only a hint, the actual period may vary.
+    /// So don't rely on this parameter to implement precise timing.
+    ///
+    /// The default processing interval is 100 ms.
+    ///
     /// \param interval Processing interval
     ///
     ////////////////////////////////////////////////////////////
-	void setProcessingInterval(sf::Time interval);
+    void setProcessingInterval(sf::Time interval);
 
     ////////////////////////////////////////////////////////////
     /// \brief Start capturing audio data
