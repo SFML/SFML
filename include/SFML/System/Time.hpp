@@ -82,7 +82,7 @@ public :
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const Time Zero; ///< Predefined "zero" time value 
+    static const Time Zero; ///< Predefined "zero" time value
 
 private :
 
@@ -398,6 +398,30 @@ SFML_SYSTEM_API Time& operator /=(Time& left, float right);
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time& operator /=(Time& left, Int64 right);
+
+////////////////////////////////////////////////////////////
+/// \relates Time
+/// \brief Overload of binary % operator to compute remainder of a time value
+///
+/// \param left  Left operand (a time)
+/// \param right Right operand (a time)
+///
+/// \return \a left modulo \a right
+///
+////////////////////////////////////////////////////////////
+SFML_SYSTEM_API Time operator %(Time left, Time right);
+
+////////////////////////////////////////////////////////////
+/// \relates Time
+/// \brief Overload of binary %= operator to compute/assign remainder of a time value
+///
+/// \param left  Left operand (a time)
+/// \param right Right operand (a time)
+///
+/// \return \a left modulo \a right
+///
+////////////////////////////////////////////////////////////
+SFML_SYSTEM_API Time& operator %=(Time& left, Time right);
 
 } // namespace sf
 
