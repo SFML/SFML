@@ -53,12 +53,19 @@ namespace
 
     bool canRead(int descriptor)
     {
-	    fd_set set;
-	    FD_ZERO(&set);
-	    FD_SET(descriptor, &set);
-        timeval timeout = {0, 0};
-        return select(descriptor + 1, &set, NULL, NULL, &timeout) > 0 &&
-               FD_ISSET(notifyFd, &set);
+        if (descriptor >= 0)
+        {
+            fd_set set;
+            FD_ZERO(&set);
+            FD_SET(descriptor, &set);
+            timeval timeout = {0, 0};
+            return select(descriptor + 1, &set, NULL, NULL, &timeout) > 0 &&
+                   FD_ISSET(notifyFd, &set);
+        }
+        else
+        {
+            return false;
+        }
     }
 }
 
@@ -102,7 +109,7 @@ void JoystickImpl::cleanup()
         inotify_rm_watch(notifyFd, inputFd);
 
     // Close the inotify file descriptor
-    if (inputFd >= 0)
+    if (notifyFd >= 0)
         ::close(notifyFd);
 }
 
@@ -120,7 +127,7 @@ bool JoystickImpl::isConnected(unsigned int index)
         while (canRead(notifyFd))
         {
             char buffer[128];
-            read(notifyFd, buffer, sizeof(buffer));
+            (void)read(notifyFd, buffer, sizeof(buffer));
         }
 	}
 
