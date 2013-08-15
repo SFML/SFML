@@ -106,9 +106,9 @@ void Sound::setBuffer(const SoundBuffer& buffer)
 
 
 ////////////////////////////////////////////////////////////
-void Sound::setLoop(bool Loop)
+void Sound::setLoop(bool loop)
 {
-    alCheck(alSourcei(m_source, AL_LOOPING, Loop));
+    alCheck(alSourcei(m_source, AL_LOOPING, loop));
 }
 
 

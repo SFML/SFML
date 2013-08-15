@@ -250,7 +250,7 @@ private :
 /// virtual functions (but not onStart) will be called
 /// from this separate thread. It is important to keep this in
 /// mind, because you may have to take care of synchronization
-/// issues if you share data between threads. 
+/// issues if you share data between threads.
 ///
 /// Usage example:
 /// \code
