@@ -43,7 +43,7 @@ namespace priv
 #ifdef SFML_DEBUG
 
     // In debug mode, perform a test on every OpenGL call
-    #define glCheck(call) ((call), sf::priv::glCheckError(__FILE__, __LINE__))
+    #define glCheck(x) x; sf::priv::glCheckError(__FILE__, __LINE__);
 
 #else
 
