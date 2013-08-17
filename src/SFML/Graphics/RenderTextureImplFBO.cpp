@@ -117,7 +117,8 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
     glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0));
 
     // A final check, just to be sure...
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    GLenum status = glCheck(glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    if (status != GL_FRAMEBUFFER_COMPLETE)
     {
         glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
         err() << "Impossible to create render texture (failed to link the target texture to the frame buffer)" << std::endl;
@@ -138,7 +139,7 @@ bool RenderTextureImplFBO::activate(bool active)
 ////////////////////////////////////////////////////////////
 void RenderTextureImplFBO::updateTexture(unsigned int)
 {
-    glFlush();
+    glCheck(glFlush());
 }
 
 } // namespace priv
