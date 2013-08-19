@@ -142,7 +142,7 @@ bool Texture::create(unsigned int width, unsigned int height)
 
     // Initialize the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
+    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_isRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_isRepeated ? GL_REPEAT : GL_CLAMP_TO_EDGE));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
@@ -266,6 +266,22 @@ Image Texture::copyToImage() const
     // Create an array of pixels
     std::vector<Uint8> pixels(m_size.x * m_size.y * 4);
 
+#ifdef SFML_OPENGL_ES
+    
+    // OpenGL ES doesn't have the glGetTexImage function, the only way to read
+    // from a texture is to bind it to a FBO and use glReadPixels
+    GLuint frameBuffer = 0;
+    glCheck(glGenFramebuffers(1, &frameBuffer));
+    if (frameBuffer)
+    {
+        glCheck(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
+        glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
+        glCheck(glReadPixels(0, 0, m_size.x, m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]));
+        glCheck(glDeleteFramebuffers(1, &frameBuffer));
+    }
+
+#else
+
     if ((m_size == m_actualSize) && !m_pixelsFlipped)
     {
         // Texture is not padded nor flipped, we can use a direct copy
@@ -301,6 +317,8 @@ Image Texture::copyToImage() const
             dst += dstPitch;
         }
     }
+
+#endif // SFML_OPENGL_ES
 
     // Create the image
     Image image;
@@ -530,10 +548,10 @@ unsigned int Texture::getValidSize(unsigned int size)
 {
     ensureGlContext();
 
-    // Make sure that GLEW is initialized
-    priv::ensureGlewInit();
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
 
-    if (GLEW_ARB_texture_non_power_of_two)
+    if (GL_texture_non_power_of_two)
     {
         // If hardware supports NPOT textures, then just return the unmodified size
         return size;

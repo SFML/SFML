@@ -30,11 +30,14 @@
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/OpenGL.hpp>
-#include <SFML/Window/glext/glext.h>
 #include <set>
 #include <cstdlib>
 #include <cassert>
-
+#ifdef SFML_SYSTEM_IOS
+    #include <OpenGLES/ES1/gl.h>
+#else
+    #include <SFML/Window/glext/glext.h>
+#endif
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
@@ -50,6 +53,11 @@
 
     #include <SFML/Window/OSX/SFContext.hpp>
     typedef sf::priv::SFContext ContextType;
+
+#elif defined(SFML_SYSTEM_IOS)
+
+    #include <SFML/Window/iOS/EaglContext.hpp>
+    typedef sf::priv::EaglContext ContextType;
 
 #endif
 
@@ -272,7 +280,7 @@ void GlContext::initialize()
 
     // Enable antialiasing if needed
     if (m_settings.antialiasingLevel > 0)
-        glEnable(GL_MULTISAMPLE_ARB);
+        glEnable(GL_MULTISAMPLE);
 }
 
 } // namespace priv

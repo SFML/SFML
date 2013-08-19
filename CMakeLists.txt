@@ -28,7 +28,12 @@ set(VERSION_PATCH 0)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
-sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
+if(IOS)
+    set(BUILD_SHARED_LIBS_DEFAULT FALSE)
+else()
+    set(BUILD_SHARED_LIBS_DEFAULT TRUE)
+endif()
+sfml_set_option(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_DEFAULT} BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 
 # add an option for building the examples
 sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
@@ -41,6 +46,9 @@ sfml_set_option(CMAKE_OSX_ARCHITECTURES "x86_64" STRING "Build architectures for
 
 # set default CMAKE_OSX_DEPLOYMENT_TARGET value to 10.7
 sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" STRING "Minimum OS version to target for deployment (at runtime)")
+
+# add an option for choosing the OpenGL implementation
+sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES implementation, FALSE to use a desktop OpenGL implementation")
 
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
@@ -62,6 +70,11 @@ endif()
 # remove SL security warnings with Visual C++
 if(SFML_COMPILER_MSVC)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+endif()
+
+# define SFML_OPENGL_ES if needed
+if(SFML_OPENGL_ES)
+    add_definitions(-DSFML_OPENGL_ES)
 endif()
 
 # define an option for choosing between static and dynamic C runtime (Windows only)
@@ -131,7 +144,7 @@ if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
                     "tools/pkg-config/sfml-${sfml_module}.pc"
                     @ONLY)
                 INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
-                        DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
+                DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
             endforeach()
         endif()
     else()
@@ -238,4 +251,7 @@ elseif(SFML_OS_MACOSX)
                     "/Library/Developer/Xcode/Templates/SFML/SFML Compiler.xctemplate/TemplateInfo.plist"
                     @ONLY)
     endif()
+elseif(IOS)
+    install(FILES cmake/toolchains/iOS.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/toolchains)
+    install(FILES extlibs/libs-ios/libfreetype.a extlibs/libs-ios/libjpeg.a DESTINATION lib)
 endif()

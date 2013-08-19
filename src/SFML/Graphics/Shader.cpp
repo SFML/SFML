@@ -35,12 +35,14 @@
 #include <vector>
 
 
+#ifndef SFML_OPENGL_ES
+
 namespace
 {
     // Retrieve the maximum number of texture units available
     GLint getMaxTextureUnits()
     {
-        GLint maxUnits;
+        GLint maxUnits = 0;
         glCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
         return maxUnits;
     }
@@ -427,8 +429,8 @@ bool Shader::isAvailable()
 {
     ensureGlContext();
 
-    // Make sure that GLEW is initialized
-    priv::ensureGlewInit();
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
 
     return GLEW_ARB_shading_language_100 &&
            GLEW_ARB_shader_objects       &&
@@ -591,3 +593,158 @@ int Shader::getParamLocation(const std::string& name)
 }
 
 } // namespace sf
+
+#else // SFML_OPENGL_ES
+
+// OpenGL ES 1 does't support GLSL shaders at all, we have to provide an empty implementation
+
+namespace sf
+{
+////////////////////////////////////////////////////////////
+Shader::CurrentTextureType Shader::CurrentTexture;
+
+
+////////////////////////////////////////////////////////////
+Shader::Shader() :
+m_shaderProgram (0),
+m_currentTexture(-1)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Shader::~Shader()
+{
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromFile(const std::string& filename, Type type)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromMemory(const std::string& shader, Type type)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromMemory(const std::string& vertexShader, const std::string& fragmentShader)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromStream(InputStream& stream, Type type)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, float x)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, float x, float y)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, float x, float y, float z)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, float x, float y, float z, float w)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const Vector2f& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const Vector3f& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const Color& color)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const sf::Transform& transform)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const Texture& texture)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, CurrentTextureType)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::bind(const Shader* shader)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::isAvailable()
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCode)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::bindTextures() const
+{
+}
+
+} // namespace sf
+
+#endif // SFML_OPENGL_ES
