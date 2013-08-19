@@ -90,10 +90,10 @@ void glCheckError(const char* file, unsigned int line)
                 break;
             }
 
-            case GL_INVALID_FRAMEBUFFER_OPERATION_EXT :
+            case GL_INVALID_FRAMEBUFFER_OPERATION :
             {
-                error = "GL_INVALID_FRAMEBUFFER_OPERATION_EXT";
-                description = "the object bound to FRAMEBUFFER_BINDING_EXT is not \"framebuffer complete\"";
+                error = "GL_INVALID_FRAMEBUFFER_OPERATION";
+                description = "the object bound to FRAMEBUFFER_BINDING is not \"framebuffer complete\"";
                 break;
             }
         }
@@ -106,24 +106,6 @@ void glCheckError(const char* file, unsigned int line)
     }
 }
 
-
-////////////////////////////////////////////////////////////
-void ensureGlewInit()
-{
-    static bool initialized = false;
-    if (!initialized)
-    {
-        GLenum status = glewInit();
-        if (status == GLEW_OK)
-        {
-            initialized = true;
-        }
-        else
-        {
-            err() << "Failed to initialize GLEW, " << glewGetErrorString(status) << std::endl;
-        }
-    }
-}
 
 } // namespace priv
 

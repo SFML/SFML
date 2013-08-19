@@ -56,6 +56,11 @@ namespace sf
     // Window handle is NSWindow (void*) on Mac OS X - Cocoa
     typedef void* WindowHandle;
 
+#elif defined(SFML_SYSTEM_IOS)
+
+    // Window handle is UIWindow (void*) on iOS - UIKit
+    typedef void* WindowHandle;
+
 #endif
 
 } // namespace sf

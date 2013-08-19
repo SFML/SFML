@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Unix/ClockImpl.hpp>
-#ifdef SFML_SYSTEM_MACOS
+#if defined(SFML_SYSTEM_MACOS) || defined(SFML_SYSTEM_IOS)
     #include <mach/mach_time.h>
 #else
     #include <time.h>
@@ -40,7 +40,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 Time ClockImpl::getCurrentTime()
 {
-#ifdef SFML_SYSTEM_MACOS
+#if defined(SFML_SYSTEM_MACOS) || defined(SFML_SYSTEM_IOS)
 
     // Mac OS X specific implementation (it doesn't support clock_gettime)
     static mach_timebase_info_data_t frequency = {0, 0};

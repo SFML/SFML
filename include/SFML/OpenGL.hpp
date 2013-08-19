@@ -56,6 +56,11 @@
     #include <OpenGL/gl.h>
     #include <OpenGL/glu.h>
 
+#elif defined (SFML_SYSTEM_IOS)
+
+    #include <OpenGLES/ES1/gl.h>
+    #include <OpenGLES/ES1/glext.h>
+ 
 #endif
 
 

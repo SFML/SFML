@@ -47,6 +47,11 @@
     #include <SFML/Window/OSX/WindowImplCocoa.hpp>
     typedef sf::priv::WindowImplCocoa WindowImplType;
 
+#elif defined(SFML_SYSTEM_IOS)
+
+    #include <SFML/Window/iOS/WindowImplUIKit.hpp>
+    typedef sf::priv::WindowImplUIKit WindowImplType;
+
 #endif
 
 

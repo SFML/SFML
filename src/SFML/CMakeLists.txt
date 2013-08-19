@@ -2,7 +2,7 @@
 # include the SFML specific macros
 include(${PROJECT_SOURCE_DIR}/cmake/Macros.cmake)
 
-# let CMake know about our additional libraries paths (on Windows and OS X)
+# let CMake know about our additional libraries paths
 if (SFML_OS_WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers")
     if(SFML_COMPILER_GCC)
@@ -23,6 +23,9 @@ if (SFML_OS_WINDOWS)
 elseif(SFML_OS_MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/lib/")
+elseif(IOS)
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers")
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-ios/")
 endif()
 
 # add the SFML sources path
@@ -39,7 +42,9 @@ add_subdirectory(System)
 add_subdirectory(Window)
 add_subdirectory(Network)
 add_subdirectory(Graphics)
-add_subdirectory(Audio)
+if(NOT SFML_OS_IOS)
+    add_subdirectory(Audio)
+endif()
 if(SFML_OS_WINDOWS)
     add_subdirectory(Main)
 endif()

@@ -13,6 +13,8 @@ set(SRC
     ${INCROOT}/Glyph.hpp
     ${SRCROOT}/GLCheck.cpp
     ${SRCROOT}/GLCheck.hpp
+    ${SRCROOT}/GLExtensions.hpp
+    ${SRCROOT}/GLExtensions.cpp
     ${SRCROOT}/Image.cpp
     ${INCROOT}/Image.hpp
     ${SRCROOT}/ImageLoader.cpp
@@ -88,6 +90,7 @@ if(SFML_OS_WINDOWS OR SFML_OS_MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
 endif()
 
+# let CMake know about our additional graphics libraries paths
 if(SFML_OS_WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows/freetype")
@@ -95,25 +98,38 @@ elseif(SFML_OS_MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx/freetype2")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
+elseif(SFML_OS_IOS)
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/ios")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/ios/freetype2")
 endif()
 
 # find external libraries
-find_package(OpenGL REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(GLEW REQUIRED)
-find_package(JPEG REQUIRED)
-if(SFML_OS_LINUX)
-    find_package(X11 REQUIRED)
+if(NOT IOS)
+    find_package(OpenGL REQUIRED)
+    find_package(Freetype REQUIRED)
+    find_package(GLEW REQUIRED)
+    find_package(JPEG REQUIRED)
+    if(SFML_OS_LINUX)
+        find_package(X11 REQUIRED)
+    endif()
+    set(GRAPHICS_EXT_INCLUDE_PATHS ${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+    set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY})
+
+    # build the list of libraries to link
+    set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY} ${OPENGL_gl_LIBRARY})
+    if(SFML_OS_LINUX)
+        set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
+    endif()
+else()
+    find_host_package(JPEG REQUIRED)
+    find_host_package(Freetype REQUIRED)
+    set(GRAPHICS_EXT_INCLUDE_PATHS ${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
+    set(GRAPHICS_EXT_LIBS -framework OpenGLES ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
 endif()
 
 # add include paths of external libraries
-include_directories(${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
-
-# build the list of libraries to link
-set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY} ${OPENGL_gl_LIBRARY})
-if(SFML_OS_LINUX)
-    set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
-endif()
+include_directories(${GRAPHICS_EXT_INCLUDE_PATHS})
 
 # add preprocessor symbols
 add_definitions(-DGLEW_STATIC -DSTBI_FAILURE_USERMSG)
