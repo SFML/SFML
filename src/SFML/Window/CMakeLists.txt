@@ -21,6 +21,7 @@ set(SRC
     ${SRCROOT}/JoystickManager.hpp
     ${INCROOT}/Keyboard.hpp
     ${SRCROOT}/Keyboard.cpp
+    ${INCROOT}/Main.hpp
     ${INCROOT}/Mouse.hpp
     ${SRCROOT}/Mouse.cpp
     ${SRCROOT}/VideoMode.cpp
@@ -63,7 +64,6 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
         ${SRCROOT}/Unix/VideoModeImpl.cpp
         ${SRCROOT}/Unix/WindowImplX11.cpp
         ${SRCROOT}/Unix/WindowImplX11.hpp
-    )
     if(SFML_OS_LINUX)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
@@ -118,15 +118,41 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.mm
     )
     source_group("mac" FILES ${PLATFORM_SRC})
+elseif(IOS)
+    set(PLATFORM_SRC
+        ${SRCROOT}/iOS/EaglContext.mm
+        ${SRCROOT}/iOS/EaglContext.hpp
+        ${SRCROOT}/iOS/InputImpl.mm
+        ${SRCROOT}/iOS/InputImpl.hpp
+        ${SRCROOT}/iOS/JoystickImpl.mm
+        ${SRCROOT}/iOS/JoystickImpl.hpp
+        ${SRCROOT}/iOS/VideoModeImpl.mm
+        ${SRCROOT}/iOS/WindowImplUIKit.hpp
+        ${SRCROOT}/iOS/WindowImplUIKit.mm
+        ${SRCROOT}/iOS/Main.mm
+        ${SRCROOT}/iOS/ObjCType.hpp
+        ${SRCROOT}/iOS/SFAppDelegate.hpp
+        ${SRCROOT}/iOS/SFAppDelegate.mm
+        ${SRCROOT}/iOS/SFView.hpp
+        ${SRCROOT}/iOS/SFView.mm
+        ${SRCROOT}/iOS/SFViewController.hpp
+        ${SRCROOT}/iOS/SFViewController.mm
+        ${SRCROOT}/iOS/SFMain.hpp
+        ${SRCROOT}/iOS/SFMain.mm
+    )
+    source_group("ios" FILES ${PLATFORM_SRC})
 endif()
 
 # find external libraries
-find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIR})
-if(SFML_OS_LINUX)
-    find_package(X11 REQUIRED)
-    if(NOT X11_Xrandr_FOUND)
-        message(FATAL_ERROR "Xrandr library not found")
+if(NOT SFML_OS_IOS)
+    find_package(OpenGL REQUIRED)
+    include_directories(${OPENGL_INCLUDE_DIR})
+    if(SFML_OS_LINUX)
+        find_package(X11 REQUIRED)
+        if(NOT X11_Xrandr_FOUND)
+            message(FATAL_ERROR "Xrandr library not found")
+        endif()
+            include_directories(${X11_INCLUDE_DIR})
     endif()
     include_directories(${X11_INCLUDE_DIR})
 
@@ -138,16 +164,17 @@ if(SFML_OS_LINUX)
 endif()
 
 # build the list of external libraries to link
-set(WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})
 if(SFML_OS_WINDOWS)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} winmm gdi32)
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${OPENGL_gl_LIBRARY} winmm gdi32)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB} ${UDEV_LIBRARIES})
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${OPENGL_gl_LIBRARY} ${X11_X11_LIB} ${X11_Xrandr_LIB} ${UDEV_LIBRARIES})
     if(SFML_OS_FREEBSD)
         set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} usbhid)
     endif()
 elseif(SFML_OS_MACOSX)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${OPENGL_gl_LIBRARY} "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
+elseif(SFML_OS_IOS)
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework OpenGLES -framework Foundation -framework UIKit -framework CoreGraphics")
 endif()
 
 # define the sfml-window target

@@ -37,4 +37,11 @@ bool Keyboard::isKeyPressed(Key key)
     return priv::InputImpl::isKeyPressed(key);
 }
 
+
+////////////////////////////////////////////////////////////
+void Keyboard::setVirtualKeyboardVisible(bool visible)
+{
+    return priv::InputImpl::setVirtualKeyboardVisible(visible);
+}
+    
 } // namespace sf
