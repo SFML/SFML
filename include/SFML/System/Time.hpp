@@ -401,6 +401,18 @@ SFML_SYSTEM_API Time& operator /=(Time& left, Int64 right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
+/// \brief Overload of binary / operator to compute the ratio of two time values
+///
+/// \param left  Left operand (a time)
+/// \param right Right operand (a time)
+///
+/// \return \a left divided by \a right
+///
+////////////////////////////////////////////////////////////
+SFML_SYSTEM_API float operator /(Time left, Time right);
+
+////////////////////////////////////////////////////////////
+/// \relates Time
 /// \brief Overload of binary % operator to compute remainder of a time value
 ///
 /// \param left  Left operand (a time)

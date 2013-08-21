@@ -238,6 +238,13 @@ Time& operator /=(Time& left, Int64 right)
 
 
 ////////////////////////////////////////////////////////////
+float operator /(Time left, Time right)
+{
+    return left.asSeconds() / right.asSeconds();
+}
+
+
+////////////////////////////////////////////////////////////
 Time operator %(Time left, Time right)
 {
     return microseconds(left.asMicroseconds() % right.asMicroseconds());
