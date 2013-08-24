@@ -68,7 +68,6 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     
     // Create the view
     m_view = [[SFView alloc] initWithFrame:frame];
-    [m_window addSubview:m_view];
     [m_view resignFirstResponder];
 
     // Create the view controller
@@ -91,7 +90,7 @@ WindowImplUIKit::~WindowImplUIKit()
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::processEvents()
 {
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.0001, TRUE) == kCFRunLoopRunHandledSource)
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.0001, true) == kCFRunLoopRunHandledSource)
         ;
 }
 

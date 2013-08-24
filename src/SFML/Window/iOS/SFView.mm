@@ -34,6 +34,8 @@
 
 @implementation SFView
 
+@synthesize context;
+
 
 ////////////////////////////////////////////////////////////
 -(BOOL)canBecomeFirstResponder
@@ -112,6 +114,15 @@
 
 
 ////////////////////////////////////////////////////////////
+- (void)layoutSubviews
+{
+    // update the attached context's buffers
+    if (self.context)
+        self.context->recreateRenderBuffers(self);
+}
+
+
+////////////////////////////////////////////////////////////
 +(Class)layerClass
 {
 	return [CAEAGLLayer class];
@@ -124,32 +135,21 @@
 	self = [super initWithFrame:frame];
 	if (self)
     {
-		if (![self initialize])
-        {
-            [self release];
-            self = nil;
-        }
+        self.context = NULL;
+
+        // Configure the EAGL layer
+        CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
+        eaglLayer.opaque = YES;
+        eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking,
+                                        kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat,
+                                        nil];
+
+        // Enable user interactions on the view (touch events)
+        self.userInteractionEnabled = true;
     }
 
 	return self;
-}
-
-
-////////////////////////////////////////////////////////////
--(bool)initialize
-{
-    // Configure the EAGL layer
-	CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
-	eaglLayer.opaque = YES;
-	eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking,
-                                    kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat,
-                                    nil];
-
-    // Enable user interactions on the view (touch events)
-    self.userInteractionEnabled = true;
-
-	return true;
 }
 
 
