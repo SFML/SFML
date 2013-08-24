@@ -62,7 +62,7 @@ m_depthbuffer(0)
 {
     const WindowImplUIKit* window = static_cast<const WindowImplUIKit*>(owner);
 
-    createContext(shared, window, window->getSize(), bitsPerPixel, settings);
+    createContext(shared, window, bitsPerPixel, settings);
 }
 
 
@@ -106,6 +106,57 @@ EaglContext::~EaglContext()
 
 
 ////////////////////////////////////////////////////////////
+void EaglContext::recreateRenderBuffers(SFView* glView)
+{
+    // Activate the context
+    EAGLContext* previousContext = [EAGLContext currentContext];
+    [EAGLContext setCurrentContext:m_context];
+
+    // Bind the frame buffer
+    glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_framebuffer);
+
+    // Destroy previous render-buffers
+    if (m_colorbuffer)
+        glDeleteRenderbuffersOES(1, &m_colorbuffer);
+    if (m_depthbuffer)
+        glDeleteRenderbuffersOES(1, &m_depthbuffer);
+
+    // Create the color buffer
+    glGenRenderbuffersOES(1, &m_colorbuffer);
+    glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_colorbuffer);
+    if (glView)
+        [m_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:glView.layer];
+	glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, m_colorbuffer);
+
+    // Create a depth buffer if requested
+    if (m_settings.depthBits > 0)
+    {
+        // Find the best internal format
+        GLenum format = m_settings.depthBits > 16 ? GL_DEPTH_COMPONENT24_OES : GL_DEPTH_COMPONENT16_OES;
+
+        // Get the size of the color-buffer (which fits the current size of the GL view)
+        GLint width, height;
+        glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &width);
+        glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &height);
+
+        // Create the depth buffer
+        glGenRenderbuffersOES(1, &m_depthbuffer);
+        glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_depthbuffer);
+        glRenderbufferStorageOES(GL_RENDERBUFFER_OES, format, width, height);
+        glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, m_depthbuffer);
+    }
+
+    // Make sure that everything's ok
+    GLenum status = glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES);
+    if (status != GL_FRAMEBUFFER_COMPLETE_OES)
+        err() << "Failed to create a valid frame buffer (error code: " << status << ")" << std::endl;
+
+    // Restore the previous context
+    [EAGLContext setCurrentContext:previousContext];
+}
+
+    
+////////////////////////////////////////////////////////////
 bool EaglContext::makeCurrent()
 {
     return [EAGLContext setCurrentContext:m_context];
@@ -125,17 +176,22 @@ void EaglContext::setVerticalSyncEnabled(bool enabled)
 {
 }
 
-
+    
 ////////////////////////////////////////////////////////////
 void EaglContext::createContext(EaglContext* shared,
                                 const WindowImplUIKit* window,
-                                Vector2u size,
                                 unsigned int bitsPerPixel, 
                                 const ContextSettings& settings)
 {
     // Save the settings
     m_settings = settings;
-    
+
+    // Adjust the depth buffer format to those available
+    if (m_settings.depthBits > 16)
+        m_settings.depthBits = 24;
+    else if (m_settings.depthBits > 0)
+        m_settings.depthBits = 16;
+
     // Create the context
     if (shared)
         m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1 sharegroup:[shared->m_context sharegroup]];
@@ -147,42 +203,12 @@ void EaglContext::createContext(EaglContext* shared,
 
     // Create the framebuffer (this is the only allowed drawable on iOS)
     glGenFramebuffersOES(1, &m_framebuffer);
-    glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_framebuffer);
 
-    // Create the color buffer
-    glGenRenderbuffersOES(1, &m_colorbuffer);
-    glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_colorbuffer);
-    if (window)
-        [m_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:window->getGlView().layer];
-	glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, m_colorbuffer);
+    // Create the render buffers
+    recreateRenderBuffers(window->getGlView());
 
-    // Create a depth buffer if requested
-    if (settings.depthBits > 0)
-    {
-        // Find the best internal format
-        GLenum format;
-        if (settings.depthBits > 16)
-        {
-            format = GL_DEPTH_COMPONENT24_OES;
-            m_settings.depthBits = 24;
-        }
-        else
-        {
-            format = GL_DEPTH_COMPONENT16_OES;
-            m_settings.depthBits = 16;
-        }
-
-        // Create the depth buffer
-        glGenRenderbuffersOES(1, &m_depthbuffer);
-        glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_depthbuffer);
-        glRenderbufferStorageOES(GL_RENDERBUFFER_OES, GL_DEPTH_COMPONENT16_OES, size.x, size.y);
-        glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, m_depthbuffer);
-    }
-
-    // Make sure that everything's ok
-    GLenum status = glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES);
-    if (status != GL_FRAMEBUFFER_COMPLETE_OES)
-        err() << "Failed to create a valid frame buffer (error code: " << status << ")" << std::endl;
+    // Attach the context to the GL view for future updates
+    window->getGlView().context = this;
 }
 
 } // namespace priv
