@@ -30,7 +30,9 @@
 #include <SFML/Window/iOS/SFView.hpp>
 #include <SFML/System/Err.hpp>
 #include <OpenGLES/EAGL.h>
+#include <OpenGLES/EAGLDrawable.h>
 #include <OpenGLES/ES1/glext.h>
+#include <QuartzCore/CAEAGLLayer.h>
 
 
 namespace sf
@@ -98,9 +100,6 @@ EaglContext::~EaglContext()
 
         // Restore the previous context
         [EAGLContext setCurrentContext:previousContext];
-
-        // Release the context
-        [m_context release];
     }
 }
 
@@ -125,7 +124,7 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
     glGenRenderbuffersOES(1, &m_colorbuffer);
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_colorbuffer);
     if (glView)
-        [m_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:glView.layer];
+        [m_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(CAEAGLLayer*)glView.layer];
 	glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, m_colorbuffer);
 
     // Create a depth buffer if requested

@@ -98,7 +98,7 @@ void WindowImplUIKit::processEvents()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplUIKit::getSystemHandle() const
 {
-    return m_window;
+    return (__bridge WindowHandle)m_window;
 }
 
     
