@@ -26,7 +26,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoModeImpl.hpp>
-#include <SFML/System/Err.hpp>
 #include <UIKit/UIKit.h>
 
 

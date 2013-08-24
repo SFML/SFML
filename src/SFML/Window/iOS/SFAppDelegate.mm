@@ -103,14 +103,10 @@ namespace
 ////////////////////////////////////////////////////////////
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-}
+    // Called when:
+    // - the application is sent to background
+    // - the application is interrupted by a call or message
 
-
-////////////////////////////////////////////////////////////
-- (void)applicationDidEnterBackground:(UIApplication *)application
-{
     // Generate a LostFocus event
     if (self.sfWindow)
     {
@@ -122,8 +118,19 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-- (void)applicationWillEnterForeground:(UIApplication *)application
+- (void)applicationDidEnterBackground:(UIApplication *)application
 {
+    // Called when the application is sent to background (home button pressed)
+}
+
+
+////////////////////////////////////////////////////////////
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+    // Called when:
+    // - the application is sent to foreground
+    // - the application was interrupted by a call or message
+
     // Generate a GainedFocus event
     if (self.sfWindow)
     {
@@ -135,16 +142,22 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-- (void)applicationDidBecomeActive:(UIApplication *)application
+- (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    // Called when the application is sent to foreground (app icon pressed)
 }
 
 
 ////////////////////////////////////////////////////////////
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    // Generate a Closed event
+    if (self.sfWindow)
+    {
+        sf::Event event;
+        event.type = sf::Event::Closed;
+        sfWindow->pushEvent(event);
+    }
 }
 
 
@@ -162,19 +175,16 @@ namespace
             (orientation == UIDeviceOrientationPortrait) ||
             (orientation == UIDeviceOrientationPortraitUpsideDown))
         {
+            // Get the new size
+            CGSize size = [UIScreen mainScreen].bounds.size;
+            if (UIDeviceOrientationIsLandscape(orientation))
+                std::swap(size.width, size.height);
+
             // Send a Resized event to the current window
             sf::Event event;
             event.type = sf::Event::Resized;
-            if (UIDeviceOrientationIsLandscape(orientation))
-            {
-                event.size.width = 480;
-                event.size.height = 320;
-            }
-            else
-            {
-                event.size.width = 320;
-                event.size.height = 480;
-            }
+            event.size.width = size.width;
+            event.size.height = size.height;
             sfWindow->pushEvent(event);
         }
     }
