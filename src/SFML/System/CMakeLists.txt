@@ -19,6 +19,7 @@ set(SRC
     ${INCROOT}/Sleep.hpp
     ${SRCROOT}/String.cpp
     ${INCROOT}/String.hpp
+    ${INCROOT}/String.inl
     ${SRCROOT}/Thread.cpp
     ${INCROOT}/Thread.hpp
     ${INCROOT}/Thread.inl
