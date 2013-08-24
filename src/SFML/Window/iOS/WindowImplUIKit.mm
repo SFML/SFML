@@ -45,7 +45,7 @@ WindowImplUIKit::WindowImplUIKit(WindowHandle handle)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplUIKit::WindowImplUIKit(VideoMode mode, 
+WindowImplUIKit::WindowImplUIKit(VideoMode mode,
                                  const String& title, 
                                  unsigned long style,
                                  const ContextSettings& /*settings*/)
@@ -60,7 +60,7 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
 
     // Create the window
-    CGRect frame = {{0, 0}, {mode.width, mode.height}}; // @todo keep user mode or force to device resolution?? (-> test)
+    CGRect frame = [UIScreen mainScreen].bounds; // Ignore user size, it wouldn't make sense to use something else
     m_window = [[UIWindow alloc] initWithFrame:frame];
 
     // Assign it to the application delegate
