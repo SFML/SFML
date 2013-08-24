@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
+#include <SFML/System/Utf.hpp>
 #include <locale>
 #include <string>
 
