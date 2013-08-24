@@ -84,6 +84,11 @@ macro(sfml_add_library target)
                               INSTALL_NAME_DIR "@executable_path/../Frameworks")
     endif()
 
+    # enable automatic reference counting on iOS
+    if (IOS)
+        set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES)
+    endif()
+
     # link the target to its external dependencies
     if(THIS_EXTERNAL_LIBS)
         target_link_libraries(${target} ${THIS_EXTERNAL_LIBS})
@@ -136,6 +141,11 @@ macro(sfml_add_example target)
     # link the target to its SFML dependencies
     if(THIS_DEPENDS)
         target_link_libraries(${target} ${THIS_DEPENDS})
+    endif()
+
+    # enable automatic reference counting on iOS
+    if (IOS)
+        set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES)
     endif()
 
     # add the install rule
