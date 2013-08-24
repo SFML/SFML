@@ -35,6 +35,7 @@
 
 
 SFML_DECLARE_OBJC_CLASS(EAGLContext);
+SFML_DECLARE_OBJC_CLASS(SFView);
 
 namespace sf
 {
@@ -87,7 +88,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~EaglContext();
-    
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Recreate the render buffers of the context
+    ///
+    /// This function must be called whenever the containing view
+    /// changes (typically after an orientation change)
+    ///
+    /// \param glView : Container of the context
+    ///
+    ////////////////////////////////////////////////////////////
+    void recreateRenderBuffers(SFView* glView);
+
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
@@ -125,14 +137,12 @@ private:
     ///
     /// \param shared       Context to share the new one with (can be NULL)
     /// \param window       Window to attach the context to (can be NULL)
-    /// \param size         Size of the context's drawable
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
     void createContext(EaglContext* shared,
                        const WindowImplUIKit* window,
-                       Vector2u size,
                        unsigned int bitsPerPixel, 
                        const ContextSettings& settings);
     
