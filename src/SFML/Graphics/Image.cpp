@@ -28,6 +28,10 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/ImageLoader.hpp>
 #include <SFML/System/Err.hpp>
+#ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/System/Lock.hpp>
+    #include <SFML/Main/activity.hpp>
+#endif
 #include <algorithm>
 #include <cstring>
 
@@ -102,7 +106,47 @@ void Image::create(unsigned int width, unsigned int height, const Uint8* pixels)
 ////////////////////////////////////////////////////////////
 bool Image::loadFromFile(const std::string& filename)
 {
+    #ifndef SFML_SYSTEM_ANDROID
+
     return priv::ImageLoader::getInstance().loadImageFromFile(filename, m_pixels, m_size);
+
+    #else
+
+    priv::ActivityStates* states = priv::getActivityStates(NULL);
+    Lock lock(states->mutex);
+
+    // Open the file
+    AAsset* file = NULL;
+    file = AAssetManager_open(states->activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
+
+    if (!file)
+    {
+        // File not found, abording...
+        err() << "Failed to load image \"" << filename << "\" (couldn't find it)" << std::endl;
+        return false;
+    }
+
+    // Copy into memory
+    off_t size = AAsset_getLength(file);
+    void* data = malloc(size);
+    int status = AAsset_read(file, data, size);
+
+    if (status <= 0)
+    {
+        // Something went wrong while we were copying, reading error...
+        err() << "Failed to load image \"" << filename << "\" (couldn't read it)" << std::endl;
+        return false;
+    }
+
+    // Load from our fresh memory
+    bool ret = loadFromMemory(data, size);
+
+    // Close the file
+    AAsset_close(file);
+
+    return ret;
+
+    #endif
 }
 
 

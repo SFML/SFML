@@ -139,10 +139,23 @@ elseif(IOS)
         ${SRCROOT}/iOS/SFMain.mm
     )
     source_group("ios" FILES ${PLATFORM_SRC})
+elseif(ANDROID)
+    set(PLATFORM_SRC
+        ${SRCROOT}/Android/WindowImplAndroid.hpp
+        ${SRCROOT}/Android/WindowImplAndroid.cpp
+        ${SRCROOT}/Android/EGLContext.hpp
+        ${SRCROOT}/Android/EGLContext.cpp
+        ${SRCROOT}/Android/VideoModeImpl.hpp
+        ${SRCROOT}/Android/VideoModeImpl.cpp
+        ${SRCROOT}/Android/InputImpl.hpp
+        ${SRCROOT}/Android/InputImpl.cpp
+        ${SRCROOT}/Android/JoystickImpl.hpp
+        ${SRCROOT}/Android/JoystickImpl.cpp)
+    source_group("android" FILES ${PLATFORM_SRC})
 endif()
 
 # find external libraries
-if(NOT SFML_OS_IOS)
+if(NOT OPENGL_ES)
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})
     if(SFML_OS_LINUX)

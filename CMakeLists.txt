@@ -205,8 +205,8 @@ else()
                        POST_BUILD
                        COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* SFML.framework/Versions/${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}/Headers)
 
-    # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
-    # NOTE : it's not required to link against SFML.framework
+    # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
+    # NOTE : it's not required to link agains SFML.framework
     set_target_properties(SFML PROPERTIES
                           BUILD_WITH_INSTALL_RPATH 1
                           INSTALL_NAME_DIR "@executable_path/../Frameworks")
@@ -217,9 +217,9 @@ else()
             COMPONENT devel)
 endif()
 
-install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
 install(FILES license.txt DESTINATION ${INSTALL_MISC_DIR})
 install(FILES readme.txt DESTINATION ${INSTALL_MISC_DIR})
+install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
 
 # install 3rd-party libraries and tools on Windows and OS X
 if(SFML_OS_WINDOWS)
@@ -254,4 +254,7 @@ elseif(SFML_OS_MACOSX)
 elseif(IOS)
     install(FILES cmake/toolchains/iOS.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/toolchains)
     install(FILES extlibs/libs-ios/libfreetype.a extlibs/libs-ios/libjpeg.a DESTINATION lib)
+elseif(ANDROID)
+    install(DIRECTORY extlibs/android/extlibs DESTINATION .)
+    install(FILES src/SFML/Android.mk DESTINATION .)
 endif()

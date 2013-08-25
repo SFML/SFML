@@ -37,6 +37,11 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
             return()
         endif()
     endif()
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Android")
+	set(SFML_OS_ANDROID 1)
+
+    # use the OpenGL ES implementation on Android
+    set(OPENGL_ES 1)
 else()
     message(FATAL_ERROR "Unsupported operating system")
     return()
@@ -81,7 +86,7 @@ else()
 endif()
 
 # define the install directory for miscellaneous files
-if(SFML_OS_WINDOWS)
+if(SFML_OS_WINDOWS OR SFML_OS_ANDROID)
     set(INSTALL_MISC_DIR .)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
     set(INSTALL_MISC_DIR share/SFML)

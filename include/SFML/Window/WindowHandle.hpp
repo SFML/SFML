@@ -61,6 +61,11 @@ namespace sf
     // Window handle is UIWindow (void*) on iOS - UIKit
     typedef void* WindowHandle;
 
+#elif defined(SFML_SYSTEM_ANDROID)
+
+    // Window handle doesn't exist on Android
+    typedef void* WindowHandle;
+
 #endif
 
 } // namespace sf

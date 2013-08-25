@@ -1,0 +1,53 @@
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := freetype
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libfreetype.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := jpeg
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libjpeg.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := ogg
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libogg.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := vorbis
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libvorbis.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := vorbisenc
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libvorbisenc.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := flac
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libFLAC.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := sndfile
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsndfile.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := openal
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libopenal.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+include $(PREBUILT_STATIC_LIBRARY)
