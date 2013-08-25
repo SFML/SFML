@@ -70,9 +70,14 @@
 #elif defined(__unix__)
 
     // UNIX system, see which one it is
-    #if defined(__linux__)
+    #if defined(__ANDROID__)
 
-        // Linux
+        // Android
+        #define SFML_SYSTEM_ANDROID
+
+    #elif defined(__linux__)
+
+         // Linux
         #define SFML_SYSTEM_LINUX
 
     #elif defined(__FreeBSD__)

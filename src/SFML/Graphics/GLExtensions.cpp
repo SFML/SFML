@@ -35,7 +35,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void ensureExtensionsInit()
 {
-#ifndef SFML_SYSTEM_IOS
+#if !(defined SFML_SYSTEM_IOS || defined SFML_SYSTEM_ANDROID)
     static bool initialized = false;
     if (!initialized)
     {

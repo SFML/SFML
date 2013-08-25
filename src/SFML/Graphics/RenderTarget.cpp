@@ -166,6 +166,7 @@ void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
             err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
             return;
         }
+        #define GL_QUADS 0
     #endif
 
     if (activate(true))
@@ -234,7 +235,7 @@ void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
 
         // Find the OpenGL primitive type
         static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-                                       GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
+                                       GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
         GLenum mode = modes[type];
 
         // Draw the primitives
@@ -468,5 +469,5 @@ void RenderTarget::applyShader(const Shader* shader)
 //   like matrices or textures. The only optimization that we
 //   do is that we avoid setting a null shader if there was
 //   already none for the previous draw.
-// 
+//
 ////////////////////////////////////////////////////////////

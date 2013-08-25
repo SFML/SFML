@@ -60,7 +60,12 @@
 
     #include <OpenGLES/ES1/gl.h>
     #include <OpenGLES/ES1/glext.h>
- 
+
+#elif defined (SFML_SYSTEM_ANDROID)
+
+    #include <GLES/gl.h>
+    #include <GLES/glext.h>
+
 #endif
 
 

@@ -52,6 +52,11 @@
     #include <SFML/Window/iOS/WindowImplUIKit.hpp>
     typedef sf::priv::WindowImplUIKit WindowImplType;
 
+#elif defined(SFML_SYSTEM_ANDROID)
+
+    #include <SFML/Window/Android/WindowImplAndroid.hpp>
+    typedef sf::priv::WindowImplAndroid WindowImplType;
+
 #endif
 
 

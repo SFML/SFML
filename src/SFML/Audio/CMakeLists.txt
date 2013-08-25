@@ -29,7 +29,7 @@ set(SRC
     ${INCROOT}/SoundStream.hpp
 )
 source_group("" FILES ${SRC})
-
+if(NOT ANDROID)
 # let CMake know about our additional audio libraries paths (on Windows and OSX)
 if(SFML_OS_WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/AL")
@@ -45,7 +45,7 @@ find_package(Sndfile REQUIRED)
 
 # add include paths of external libraries
 include_directories(${OPENAL_INCLUDE_DIR} ${SNDFILE_INCLUDE_DIR})
-
+endif()
 # define the sfml-audio target
 sfml_add_library(sfml-audio
                  SOURCES ${SRC}
