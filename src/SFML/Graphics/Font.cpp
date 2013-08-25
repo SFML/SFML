@@ -29,6 +29,10 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
+#ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/System/Lock.hpp>
+    #include <SFML/Main/activity.hpp>
+#endif
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -102,6 +106,8 @@ Font::~Font()
 ////////////////////////////////////////////////////////////
 bool Font::loadFromFile(const std::string& filename)
 {
+    #ifndef SFML_SYSTEM_ANDROID
+
     // Cleanup the previous resources
     cleanup();
     m_refCount = new int(1);
@@ -140,6 +146,44 @@ bool Font::loadFromFile(const std::string& filename)
     m_info.family = face->family_name ? face->family_name : std::string();
 
     return true;
+
+    #else
+
+    priv::ActivityStates* states = priv::getActivityStates(NULL);
+    Lock lock(states->mutex);
+
+    // Open the file
+    AAsset* file = NULL;
+    file = AAssetManager_open(states->activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
+
+    if (!file)
+    {
+        // File not found, abording...
+        err() << "Failed to load font \"" << filename << "\" (couldn't find it)" << std::endl;
+        return false;
+    }
+
+    // Copy into memory
+    off_t size = AAsset_getLength(file);
+    void* data = malloc(size);
+    int status = AAsset_read(file, data, size);
+
+    if (status <= 0)
+    {
+        // Something went wrong while we were copying, reading error...
+        err() << "Failed to load font \"" << filename << "\" (couldn't read it)" << std::endl;
+        return false;
+    }
+
+    // Load from our fresh memory
+    bool ret = loadFromMemory(data, size);
+
+    // Close the file
+    AAsset_close(file);
+
+    return ret;
+
+    #endif
 }
 
 

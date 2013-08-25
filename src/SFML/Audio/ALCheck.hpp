@@ -31,8 +31,13 @@
 #include <SFML/Config.hpp>
 #include <iostream>
 #include <string>
-#include <al.h>
-#include <alc.h>
+#ifndef SFML_SYSTEM_ANDROID
+    #include <al.h>
+    #include <alc.h>
+#else
+    #include <AL/al.h>
+    #include <AL/alc.h>
+#endif
 
 
 namespace sf

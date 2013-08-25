@@ -48,7 +48,7 @@ sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES imple
 if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
-    
+
     # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
     sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
 
@@ -174,7 +174,7 @@ else()
     add_library(SFML ${SFML_SOURCES})
 
     # edit target properties
-    set_target_properties(SFML PROPERTIES 
+    set_target_properties(SFML PROPERTIES
                           FRAMEWORK TRUE
                           FRAMEWORK_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
                           MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.SFML
@@ -183,14 +183,14 @@ else()
                           PUBLIC_HEADER "${SFML_HEADERS}")
 
     # add the remaining headers
-    add_custom_command(TARGET SFML 
+    add_custom_command(TARGET SFML
                        POST_BUILD
                        COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* SFML.framework/Versions/${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}/Headers)
 
     # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
     # NOTE : it's not required to link agains SFML.framework
-    set_target_properties(SFML PROPERTIES 
-                          BUILD_WITH_INSTALL_RPATH 1 
+    set_target_properties(SFML PROPERTIES
+                          BUILD_WITH_INSTALL_RPATH 1
                           INSTALL_NAME_DIR "@executable_path/../Frameworks")
 
     # install rule
@@ -199,9 +199,9 @@ else()
             COMPONENT devel)
 endif()
 
-install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
 install(FILES license.txt DESTINATION ${INSTALL_MISC_DIR})
 install(FILES readme.txt DESTINATION ${INSTALL_MISC_DIR})
+install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
 
 # install 3rd-party libraries and tools on Windows and OS X
 if(SFML_OS_WINDOWS)
@@ -230,4 +230,7 @@ elseif(SFML_OS_MACOSX)
 elseif(IOS)
     install(FILES cmake/toolchains/iOS.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/toolchains)
     install(FILES extlibs/libs-ios/libfreetype.a extlibs/libs-ios/libjpeg.a DESTINATION lib)
+elseif(ANDROID)
+    install(DIRECTORY extlibs/android/extlibs DESTINATION .)
+    install(FILES src/SFML/Android.mk DESTINATION .)
 endif()

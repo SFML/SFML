@@ -28,6 +28,10 @@
 #include <SFML/Audio/SoundFile.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
+#ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/System/Lock.hpp>
+    #include <SFML/Main/activity.hpp>
+#endif
 #include <cstring>
 #include <cctype>
 
@@ -91,6 +95,8 @@ unsigned int SoundFile::getSampleRate() const
 ////////////////////////////////////////////////////////////
 bool SoundFile::openRead(const std::string& filename)
 {
+    #ifndef SFML_SYSTEM_ANDROID
+
     // If the file is already opened, first close it
     if (m_file)
         sf_close(m_file);
@@ -109,6 +115,44 @@ bool SoundFile::openRead(const std::string& filename)
     initialize(fileInfo);
 
     return true;
+
+    #else
+
+    priv::ActivityStates* states = priv::getActivityStates(NULL);
+    Lock lock(states->mutex);
+
+    // Open the file
+    AAsset* file = NULL;
+    file = AAssetManager_open(states->activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
+
+    if (!file)
+    {
+        // File not found, abording...
+        err() << "Failed to load sound \"" << filename << "\" (couldn't find it)" << std::endl;
+        return false;
+    }
+
+    // Copy into memory
+    off_t size = AAsset_getLength(file);
+    void* data = malloc(size);
+    int status = AAsset_read(file, data, size);
+
+    if (status <= 0)
+    {
+        // Something went wrong while we were copying, reading error...
+        err() << "Failed to load sound \"" << filename << "\" (couldn't read it)" << std::endl;
+        return false;
+    }
+
+    // Load from our fresh memory
+    bool ret = openRead(data, size);
+
+    // Close the file
+    AAsset_close(file);
+
+    return ret;
+
+    #endif
 }
 
 
