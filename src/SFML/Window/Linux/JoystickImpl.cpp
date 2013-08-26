@@ -46,8 +46,17 @@ namespace
         {
             char name[32];
             std::snprintf(name, sizeof(name), "/dev/input/js%u", i);
-            struct stat info;
-            plugged[i] = (stat(name, &info) == 0);
+
+            int file = ::open(name, O_RDONLY);
+            if (file >= 0)
+            {
+                plugged[i] = true;
+                ::close(file);
+            }
+            else
+            {
+                plugged[i] = false;
+            }
         }
     }
 
