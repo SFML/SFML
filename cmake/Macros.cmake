@@ -263,6 +263,8 @@ macro(sfml_add_example target)
     if(THIS_GUI_APP AND SFML_OS_WINDOWS)
         add_executable(${target} WIN32 ${THIS_SOURCES})
         target_link_libraries(${target} sfml-main)
+    elseif(IOS)
+        add_executable(${target} MACOSX_BUNDLE ${THIS_SOURCES})
     else()
         add_executable(${target} ${THIS_SOURCES})
     endif()
@@ -294,7 +296,8 @@ macro(sfml_add_example target)
 
     # add the install rule
     install(TARGETS ${target}
-            RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
+            RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples
+            BUNDLE DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
 
     # install the example's source code
     install(FILES ${THIS_SOURCES}
