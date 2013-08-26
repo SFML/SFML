@@ -5,6 +5,15 @@
 #include <SFML/OpenGL.hpp>
 
 
+// Some platform-specific stuff
+#ifdef SFML_OPENGL_ES
+
+    #define glClearDepth glClearDepthf
+    #define glFrustum glFrustumf
+
+#endif
+
+
 ////////////////////////////////////////////////////////////
 /// Entry point of application
 ///
