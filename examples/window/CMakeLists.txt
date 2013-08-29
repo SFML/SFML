@@ -9,8 +9,6 @@ if(NOT IOS)
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})
     set(ADDITIONAL_LIBRARIES ${OPENGL_LIBRARIES})
-else()
-    set(ADDITIONAL_LIBRARIES -framework OpenGLES)
 endif()
 
 # define the window target
