@@ -185,7 +185,7 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
 elseif(SFML_OS_MACOSX)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${OPENGL_gl_LIBRARY} "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 elseif(SFML_OS_IOS)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework OpenGLES -framework Foundation -framework UIKit -framework CoreGraphics")
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework OpenGLES -framework Foundation -framework UIKit -framework CoreGraphics -framework QuartzCore -framework CoreMotion")
 endif()
 
 # define the sfml-window target

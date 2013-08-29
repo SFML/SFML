@@ -299,6 +299,15 @@ macro(sfml_add_example target)
         set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES)
     endif()
 
+    # set mandatory bundle settings on iOS
+    if(IOS)
+        set_target_properties(${target} PROPERTIES
+            MACOSX_BUNDLE_GUI_IDENTIFIER "com.sfml.${target}"
+            MACOSX_BUNDLE_BUNDLE_NAME "${target}"
+            MACOSX_BUNDLE_BUNDLE_EXECUTABLE_NAME "${target}"
+        )
+    endif()
+
     # add the install rule
     install(TARGETS ${target}
             RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples
