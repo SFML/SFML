@@ -127,7 +127,7 @@ if(IOS)
     find_package(JPEG REQUIRED)
     find_package(Freetype REQUIRED)
     set(GRAPHICS_EXT_INCLUDE_PATHS ${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
-    set(GRAPHICS_EXT_LIBS -framework OpenGLES ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
+    set(GRAPHICS_EXT_LIBS "-framework OpenGLES ${FREETYPE_LIBRARY} ${JPEG_LIBRARY}")
 endif()
 
 # add include paths of external libraries
