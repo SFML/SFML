@@ -47,7 +47,7 @@ m_duration()
 ////////////////////////////////////////////////////////////
 Music::~Music()
 {
-    // We must stop before destroying the file :)
+    // We must stop before destroying the file
     stop();
 
     delete m_file;

@@ -45,9 +45,10 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundRecorder::SoundRecorder() :
-m_thread     (&SoundRecorder::record, this),
-m_sampleRate (0),
-m_isCapturing(false)
+m_thread            (&SoundRecorder::record, this),
+m_sampleRate        (0),
+m_isCapturing       (false),
+m_processingInterval(milliseconds(100))
 {
     priv::ensureALInit();
 }
@@ -66,7 +67,7 @@ void SoundRecorder::start(unsigned int sampleRate)
     // Check if the device can do audio capture
     if (!isAvailable())
     {
-        err() << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::IsAvailable to check it)" << std::endl;
+        err() << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::isAvailable to check it)" << std::endl;
         return;
     }
 
@@ -129,6 +130,13 @@ bool SoundRecorder::isAvailable()
 
 
 ////////////////////////////////////////////////////////////
+void SoundRecorder::setProcessingInterval(sf::Time interval)
+{
+    m_processingInterval = interval;
+}
+
+
+////////////////////////////////////////////////////////////
 bool SoundRecorder::onStart()
 {
     // Nothing to do
@@ -152,7 +160,7 @@ void SoundRecorder::record()
         processCapturedSamples();
 
         // Don't bother the CPU while waiting for more captured data
-        sleep(milliseconds(100));
+        sleep(m_processingInterval);
     }
 
     // Capture is finished : clean up everything

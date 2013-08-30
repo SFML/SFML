@@ -46,19 +46,35 @@ namespace
         {
             char name[32];
             std::snprintf(name, sizeof(name), "/dev/input/js%u", i);
-            struct stat info;
-            plugged[i] = (stat(name, &info) == 0);
+
+            int file = ::open(name, O_RDONLY);
+            if (file >= 0)
+            {
+                plugged[i] = true;
+                ::close(file);
+            }
+            else
+            {
+                plugged[i] = false;
+            }
         }
     }
 
     bool canRead(int descriptor)
     {
-	    fd_set set;
-	    FD_ZERO(&set);
-	    FD_SET(descriptor, &set);
-        timeval timeout = {0, 0};
-        return select(descriptor + 1, &set, NULL, NULL, &timeout) > 0 &&
-               FD_ISSET(notifyFd, &set);
+        if (descriptor >= 0)
+        {
+            fd_set set;
+            FD_ZERO(&set);
+            FD_SET(descriptor, &set);
+            timeval timeout = {0, 0};
+            return select(descriptor + 1, &set, NULL, NULL, &timeout) > 0 &&
+                   FD_ISSET(notifyFd, &set);
+        }
+        else
+        {
+            return false;
+        }
     }
 }
 
@@ -102,7 +118,7 @@ void JoystickImpl::cleanup()
         inotify_rm_watch(notifyFd, inputFd);
 
     // Close the inotify file descriptor
-    if (inputFd >= 0)
+    if (notifyFd >= 0)
         ::close(notifyFd);
 }
 
@@ -120,7 +136,7 @@ bool JoystickImpl::isConnected(unsigned int index)
         while (canRead(notifyFd))
         {
             char buffer[128];
-            read(notifyFd, buffer, sizeof(buffer));
+            (void)read(notifyFd, buffer, sizeof(buffer));
         }
 	}
 

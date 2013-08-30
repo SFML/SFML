@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
+#include <SFML/System/Utf.hpp>
 #include <locale>
 #include <string>
 
@@ -154,6 +155,52 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     String(const String& copy);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new sf::String from a UTF-8 encoded string
+    ///
+    /// \param begin Forward iterator to the begining of the UTF-8 sequence
+    /// \param end   Forward iterator to the end of the UTF-8 sequence
+    ///
+    /// \return A sf::String containing the source string
+    ///
+    /// \see fromUtf16, fromUtf32
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename T>
+    static String fromUtf8(T begin, T end);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new sf::String from a UTF-16 encoded string
+    ///
+    /// \param begin Forward iterator to the begining of the UTF-16 sequence
+    /// \param end   Forward iterator to the end of the UTF-16 sequence
+    ///
+    /// \return A sf::String containing the source string
+    ///
+    /// \see fromUtf8, fromUtf32
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename T>
+    static String fromUtf16(T begin, T end);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new sf::String from a UTF-32 encoded string
+    ///
+    /// This function is provided for consistency, it is equivalent to
+    /// using the constructors that takes a const sf::Uint32* or
+    /// a std::basic_string<sf::Uint32>.
+    ///
+    /// \param begin Forward iterator to the begining of the UTF-32 sequence
+    /// \param end   Forward iterator to the end of the UTF-32 sequence
+    ///
+    /// \return A sf::String containing the source string
+    ///
+    /// \see fromUtf8, fromUtf16
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename T>
+    static String fromUtf32(T begin, T end);
 
     ////////////////////////////////////////////////////////////
     /// \brief Implicit cast operator to std::string (ANSI string)
@@ -486,6 +533,8 @@ SFML_SYSTEM_API bool operator >=(const String& left, const String& right);
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API String operator +(const String& left, const String& right);
+
+#include <SFML/System/String.inl>
 
 } // namespace sf
 

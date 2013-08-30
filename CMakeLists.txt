@@ -21,37 +21,14 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
 
 # setup version numbers
 set(VERSION_MAJOR 2)
-set(VERSION_MINOR 0)
+set(VERSION_MINOR 1)
 set(VERSION_PATCH 0)
 
 # add the SFML header path
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
-if( DEFINED BUILD_SHARED_LIBS )
-	# if BUILD_SHARED_LIBS is set, just use it's value.
-	message( STATUS "BUILD_SHARED_LIBS is set to ${BUILD_SHARED_LIBS}, SFML_BUILD_SHARED_LIBS will be set to this value." )
-	set( SFML_BUILD_SHARED ${BUILD_SHARED_LIBS} ) 
-	unset( SFML_BUILD_SHARED_LIBS CACHE ) 
-else()
-	# if not just use the value manually set or the default value if none set yet.
-	if( DEFINED SFML_BUILD_SHARED_LIBS )
-		message( STATUS "Using SFML_BUILD_SHARED_LIBS manually set value: ${SFML_BUILD_SHARED_LIBS}" )
-		set( SFML_BUILD_SHARED ${SFML_BUILD_SHARED_LIBS} )
-	else()
-		message( STATUS "BUILD_SHARED_LIBS is not defined: SFML_BUILD_SHARED_LIBS will be set to 'TRUE' by default." )
-		set( SFML_BUILD_SHARED TRUE ) #by default, shared linking.
-	endif()
-endif()
-
-sfml_set_option(SFML_BUILD_SHARED_LIBS ${SFML_BUILD_SHARED} BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
-
-if( SFML_BUILD_SHARED_LIBS )
-	message( STATUS "SFML Libraries will be linked dynamically." )
-else()
-	message( STATUS "SFML Libraries will be linked statically." )
-endif()
-
+sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 
 # add an option for building the examples
 sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
@@ -62,7 +39,7 @@ sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentatio
 # Mac OS X specific options
 if(MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
-    sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to SFML_BUILD_SHARED_LIBS")
+    sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
     
     # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
     sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
@@ -72,7 +49,7 @@ if(MACOSX)
 endif()
 
 # define SFML_STATIC if the build type is not set to 'shared'
-if(NOT SFML_BUILD_SHARED_LIBS)
+if(NOT BUILD_SHARED_LIBS)
     add_definitions(-DSFML_STATIC)
 endif()
 
@@ -86,8 +63,8 @@ if(WINDOWS)
     sfml_set_option(SFML_USE_STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
 
     # the following combination of flags is not valid
-    if (SFML_BUILD_SHARED_LIBS AND SFML_USE_STATIC_STD_LIBS)
-        message(FATAL_ERROR "SFML_BUILD_SHARED_LIBS and SFML_USE_STATIC_STD_LIBS cannot be used together")
+    if (BUILD_SHARED_LIBS AND SFML_USE_STATIC_STD_LIBS)
+        message(FATAL_ERROR "BUILD_SHARED_LIBS and SFML_USE_STATIC_STD_LIBS cannot be used together")
     endif()
 
     # for VC++, we can apply it globally by modifying the compiler flags
@@ -110,7 +87,7 @@ if(MACOSX)
     # SFML_BUILD_FRAMEWORKS needs two things :
     # first, it's available only for release
     #    (because cmake currently doesn't allow specifying a custom framework name so XXX-d is not possible)
-    # secondly, it works only with SFML_BUILD_SHARED_LIBS enabled
+    # secondly, it works only with BUILD_SHARED_LIBS enabled
     if(SFML_BUILD_FRAMEWORKS)
         # requirement #1
         if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -119,16 +96,16 @@ if(MACOSX)
         endif()
 
         # requirement #2
-        if(NOT SFML_BUILD_SHARED_LIBS)
-            message(FATAL_ERROR "SFML_BUILD_SHARED_LIBS should be TRUE when SFML_BUILD_FRAMEWORKS is TRUE")
+        if(NOT BUILD_SHARED_LIBS)
+            message(FATAL_ERROR "BUILD_SHARED_LIBS should be TRUE when SFML_BUILD_FRAMEWORKS is TRUE")
             return()
         endif()
     endif()
 endif()
 
 if(LINUX)
-    if(SFML_BUILD_SHARED_LIBS)
-        sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES TRUE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
+    if(BUILD_SHARED_LIBS)
+        sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES FALSE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
         if(SFML_INSTALL_PKGCONFIG_FILES)
             foreach(sfml_module IN ITEMS all system window graphics audio network)
                 CONFIGURE_FILE(

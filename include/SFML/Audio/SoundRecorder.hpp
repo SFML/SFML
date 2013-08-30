@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 #include <SFML/System/Thread.hpp>
+#include <SFML/System/Time.hpp>
 #include <vector>
 
 
@@ -110,6 +111,24 @@ protected :
     SoundRecorder();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the processing interval
+    ///
+    /// The processing interval controls the period
+    /// between calls to the onProcessSamples function. You may
+    /// want to use a small interval if you want to process the
+    /// recorded data in real time, for example.
+    ///
+    /// Note: this is only a hint, the actual period may vary.
+    /// So don't rely on this parameter to implement precise timing.
+    ///
+    /// The default processing interval is 100 ms.
+    ///
+    /// \param interval Processing interval
+    ///
+    ////////////////////////////////////////////////////////////
+    void setProcessingInterval(sf::Time interval);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Start capturing audio data
     ///
     /// This virtual function may be overriden by a derived class
@@ -181,10 +200,11 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread             m_thread;      ///< Thread running the background recording task
-    std::vector<Int16> m_samples;     ///< Buffer to store captured samples
-    unsigned int       m_sampleRate;  ///< Sample rate
-    bool               m_isCapturing; ///< Capturing state
+    Thread             m_thread;             ///< Thread running the background recording task
+    std::vector<Int16> m_samples;            ///< Buffer to store captured samples
+    unsigned int       m_sampleRate;         ///< Sample rate
+	sf::Time           m_processingInterval; ///< Time period between calls to onProcessSamples
+    bool               m_isCapturing;        ///< Capturing state
 };
 
 } // namespace sf
@@ -213,6 +233,12 @@ private :
 /// \li onStart is called before the capture happens, to perform custom initializations
 /// \li onStop is called after the capture ends, to perform custom cleanup
 ///
+/// A derived class can also control the frequency of the onProcessSamples
+/// calls, with the setProcessingInterval protected function. The default
+/// interval is chosen so that recording thread doesn't consume too much
+/// CPU, but it can be changed to a smaller value if you need to process
+/// the recorded data in real time, for example.
+///
 /// The audio capture feature may not be supported or activated
 /// on every platform, thus it is recommended to check its
 /// availability with the isAvailable() function. If it returns
@@ -224,7 +250,7 @@ private :
 /// virtual functions (but not onStart) will be called
 /// from this separate thread. It is important to keep this in
 /// mind, because you may have to take care of synchronization
-/// issues if you share data between threads. 
+/// issues if you share data between threads.
 ///
 /// Usage example:
 /// \code
