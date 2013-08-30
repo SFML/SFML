@@ -118,6 +118,18 @@ public :
     bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Check if another rectangle is inside the rectangle's area
+    ///
+    /// \param rect Rectangle to test
+    ///
+    /// \return True if the rectangle is inside, false otherwise
+    ///
+    /// \see contains
+    ///
+    ////////////////////////////////////////////////////////////
+    bool contains(const Rect<T>& rect) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
     ///
     /// \param rectangle Rectangle to test
