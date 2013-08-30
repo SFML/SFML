@@ -78,10 +78,10 @@ bool Rect<T>::contains(T x, T y) const
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
     // Compute the real min and max of the rectangle on both axes
-    T minX = std::min(left, left + width);
-    T maxX = std::max(left, left + width);
-    T minY = std::min(top, top + height);
-    T maxY = std::max(top, top + height);
+    T minX = std::min(left, T(left + width));
+    T maxX = std::max(left, T(left + width));
+    T minY = std::min(top, T(top + height));
+    T maxY = std::max(top, T(top + height));
 
     return (x >= minX) && (x < maxX) && (y >= minY) && (y < maxY);
 }
