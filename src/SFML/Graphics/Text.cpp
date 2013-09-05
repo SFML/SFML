@@ -240,15 +240,16 @@ void Text::updateGeometry()
     // Compute values related to the text style
     bool  bold               = (m_style & Bold) != 0;
     bool  underlined         = (m_style & Underlined) != 0;
-    float italic             = (m_style & Italic) ? 0.208f : 0.f; // 12 degrees
+    float italic             = (m_style & Italic) ? 0.209f : 0.f; // 12 degrees
     float underlineOffset    = m_characterSize * 0.1f;
     float underlineThickness = m_characterSize * (bold ? 0.1f : 0.07f);
 
     // Precompute the variables needed by the algorithm
-    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
-    float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
-    float x      = 0.f;
-    float y      = static_cast<float>(m_characterSize);
+    float hspace                  = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
+    float vspace                  = static_cast<float>(m_font->getLineSpacing(m_characterSize));
+    float x                       = 0.f;
+    float y                       = static_cast<float>(m_characterSize);
+    float lineStartingXCoordinate = 0.f;
 
     // Create one quad for each character
     float minX = m_characterSize, minY = m_characterSize, maxX = 0, maxY = 0;
@@ -261,18 +262,6 @@ void Text::updateGeometry()
         x += static_cast<float>(m_font->getKerning(prevChar, curChar, m_characterSize));
         prevChar = curChar;
 
-        // If we're using the underlined style and there's a new line, draw a line
-        if (underlined && (curChar == L'\n'))
-        {
-            float top = y + underlineOffset;
-            float bottom = top + underlineThickness;
-
-            m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-        }
-
         // Handle special characters
         if ((curChar == ' ') || (curChar == '\t') || (curChar == '\n') || (curChar == '\v'))
         {
@@ -282,10 +271,25 @@ void Text::updateGeometry()
 
             switch (curChar)
             {
-                case ' ' :  x += hspace;        break;
-                case '\t' : x += hspace * 4;    break;
-                case '\n' : y += vspace; x = 0; break;
-                case '\v' : y += vspace * 4;    break;
+                case ' '  : x += hspace;          break;
+                case '\t' : x += hspace * 4.f;    break;
+                case '\n' :
+                    // If we're using the underlined style and there's a new line, draw a line
+                    if(underlined)
+                        appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x - lineStartingXCoordinate, underlineThickness));
+
+                    lineStartingXCoordinate = 0.f;
+                    y += vspace;
+                    x = 0.f;
+                    break;
+                case '\v' :
+                    // If we're using the underlined style and there's a vertical tab, draw a line
+                    if(underlined)
+                        appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x - lineStartingXCoordinate, underlineThickness));
+
+                    lineStartingXCoordinate = x;
+                    y += vspace * 4.f;
+                    break;
             }
 
             // Update the current bounds (max coordinates)
@@ -327,21 +331,22 @@ void Text::updateGeometry()
 
     // If we're using the underlined style, add the last line
     if (underlined)
-    {
-        float top = y + underlineOffset;
-        float bottom = top + underlineThickness;
-
-        m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-    }
+        appendLine(sf::FloatRect(lineStartingXCoordinate, y + underlineOffset, x - lineStartingXCoordinate, underlineThickness));
 
     // Update the bounding rectangle
     m_bounds.left = minX;
     m_bounds.top = minY;
     m_bounds.width = maxX - minX;
     m_bounds.height = maxY - minY;
+}
+
+
+void Text::appendLine(sf::FloatRect bounds)
+{
+    m_vertices.append(Vertex(Vector2f(bounds.left, bounds.top),                                m_color, Vector2f(1, 1)));
+    m_vertices.append(Vertex(Vector2f(bounds.left + bounds.width, bounds.top),                 m_color, Vector2f(1, 1)));
+    m_vertices.append(Vertex(Vector2f(bounds.left + bounds.width, bounds.top + bounds.height), m_color, Vector2f(1, 1)));
+    m_vertices.append(Vertex(Vector2f(bounds.left, bounds.top + bounds.height),                m_color, Vector2f(1, 1)));
 }
 
 } // namespace sf
