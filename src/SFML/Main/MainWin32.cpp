@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,32 +23,32 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFML_WINDOW_HPP
-#define SFML_SFML_WINDOW_HPP
+
+////////////////////////////////////////////////////////////
+// Windows specific: we define the WinMain entry point,
+// so that developers can use the standard main function
+// even in a Win32 Application project, and thus keep a
+// portable code
+////////////////////////////////////////////////////////////
+
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Config.hpp>
 
-#include <SFML/System.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/Window/ContextSettings.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Joystick.hpp>
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/Window.hpp>
-#include <SFML/Window/WindowStyle.hpp>
+#ifdef SFML_SYSTEM_WINDOWS
+
+#include <windows.h>
 
 
-
-#endif // SFML_SFML_WINDOW_HPP
+extern int main(int argc, char* argv[]);
 
 ////////////////////////////////////////////////////////////
-/// \defgroup window Window module
-///
-/// Provides OpenGL-based windows, and abstractions for
-/// events and input handling.
-///
-////////////////////////////////////////////////////////////
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
+{
+    return main(__argc, __argv);
+}
+
+#endif // SFML_SYSTEM_WINDOWS
+

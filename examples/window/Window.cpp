@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
+#include <SFML/Main.hpp>
 
 
 // Some platform-specific stuff
