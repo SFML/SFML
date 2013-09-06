@@ -2,6 +2,7 @@
 //
 // SFML - Simple and Fast Multimedia Library
 // Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,32 +23,41 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFML_WINDOW_HPP
-#define SFML_SFML_WINDOW_HPP
+
+////////////////////////////////////////////////////////////
+// iOS specific: SFML needs to hook the main function, to
+// launch the iOS application (event loop), and then call the
+// user main from inside it.
+//
+// Our strategy is to rename the user main to 'sfmlMain' with
+// a macro (see Main.hpp), and call this modified main ourselves.
+//
+// Note that half of this trick (the sfmlMain placeholders and
+// the application delegate) is defined sfml-window; see there
+// for the full implementation.
+////////////////////////////////////////////////////////////
+
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Config.hpp>
 
-#include <SFML/System.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/Window/ContextSettings.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Joystick.hpp>
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/Window.hpp>
-#include <SFML/Window/WindowStyle.hpp>
+#ifdef SFML_SYSTEM_IOS
 
+#include <UIKit/UIKit.h>
 
-
-#endif // SFML_SFML_WINDOW_HPP
 
 ////////////////////////////////////////////////////////////
-/// \defgroup window Window module
-///
-/// Provides OpenGL-based windows, and abstractions for
-/// events and input handling.
-///
-////////////////////////////////////////////////////////////
+int main(int argc, char** argv)
+{
+    // Note: we intentionally drop command line arguments,
+    // there's no such thing as a command line on an iOS device :)
+
+    // Important: "SFAppDelegate" must always match the name of the
+    // application delegate class defined in sfml-window
+
+    return UIApplicationMain(argc, argv, nil, @"SFAppDelegate");
+}
+
+#endif // SFML_SYSTEM_IOS
