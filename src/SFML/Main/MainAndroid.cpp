@@ -23,48 +23,9 @@
 ////////////////////////////////////////////////////////////
 
 
-////////////////////////////////////////////////////////////
-// Windows specific : defines the WinMain entry function,
-// so that developers can use the standard main function
-// even in a Win32 Application project, and keep a portable code
-////////////////////////////////////////////////////////////
+#include <SFML/Config.hpp>
 
-
-#if defined(_WIN32)
-
-    #include <windows.h>
-
-    extern int main(int argc, char* argv[]);
-
-    int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
-    {
-        return main(__argc, __argv);
-    }
-
-#endif // _WIN32
-
-
-
-
-
-#if defined(_WIN32)
-////////////////////////////////////////////////////////////////////////////////
-// Windows specific : defines the WinMain entry function,
-// so that developers can use the standard main function
-// even in a Win32 Application project, and keep a portable code
-////////////////////////////////////////////////////////////////////////////////
-
-#include <windows.h>
-
-extern int main(int argc, char* argv[]);
-
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
-{
-    return main(__argc, __argv);
-}
-
-
-#elif defined(__ANDROID__)
+#ifdef SFML_SYSTEM_ANDROID
 
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/System/Sleep.hpp>
@@ -700,4 +661,4 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     activity->instance = states;
 }
 
-#endif
+#endif // SFML_SYSTEM_ANDROID

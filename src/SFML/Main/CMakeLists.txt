@@ -1,8 +1,17 @@
 
+set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Main)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Main)
+
 # sources
-set(SRC
-    ${PROJECT_SOURCE_DIR}/src/SFML/Main/SFML_Main.cpp
-)
+if(WINDOWS)
+    set(SRC ${SRC} ${SRCROOT}/MainWin32.cpp)
+elseif(IOS)
+    set(SRC ${SRC} ${SRCROOT}/MainiOS.mm)
+elseif(ANDROID)
+    set(SRC ${SRC} ${SRCROOT}/MainAndroid.cpp)
+else()
+    return()
+endif()
 source_group("" FILES ${SRC})
 
 if(NOT ANDROID)

@@ -31,10 +31,6 @@
 
 namespace
 {
-    // Save the main's arguments, to pass them back to the user's main
-    int mainArgc;
-    char** mainArgv;
-
     // Save the global instance of the delegate
     SFAppDelegate* delegateInstance = NULL;
 }
@@ -54,15 +50,6 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-+(int)main:(int)argc argv:(char**)argv
-{
-    mainArgc = argc;
-    mainArgv = argv;
-    return UIApplicationMain(argc, argv, nil, NSStringFromClass([SFAppDelegate class]));
-}
-
-
-////////////////////////////////////////////////////////////
 +(SFAppDelegate*)getInstance
 {
     return delegateInstance;
@@ -72,7 +59,8 @@ namespace
 ////////////////////////////////////////////////////////////
 -(void)runUserMain
 {
-    sfmlMain(mainArgc, mainArgv);
+    // Arguments intentionally dropped, see comments in main in sfml-main
+    sfmlMain(0, NULL);
 }
 
 

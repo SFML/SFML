@@ -218,6 +218,9 @@ macro(sfml_add_example target)
         target_link_libraries(${target} sfml-main)
     elseif(IOS)
         add_executable(${target} MACOSX_BUNDLE ${THIS_SOURCES})
+        if(THIS_GUI_APP)
+            target_link_libraries(${target} sfml-main)
+        endif()
     else()
         add_executable(${target} ${THIS_SOURCES})
     endif()
@@ -260,6 +263,13 @@ macro(sfml_add_example target)
     install(TARGETS ${target}
             RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples
             BUNDLE DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
+
+   # fix install rules broken in CMake (see http://public.kitware.com/Bug/view.php?id=12506)
+   if(IOS)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/\$ENV{CONFIGURATION}\$ENV{EFFECTIVE_PLATFORM_NAME}/${target}.app
+                DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
+                COMPONENT examples)
+    endif()
 
     # install the example's source code
     install(FILES ${THIS_SOURCES}

@@ -21,7 +21,6 @@ set(SRC
     ${SRCROOT}/JoystickManager.hpp
     ${INCROOT}/Keyboard.hpp
     ${SRCROOT}/Keyboard.cpp
-    ${INCROOT}/Main.hpp
     ${INCROOT}/Mouse.hpp
     ${SRCROOT}/Mouse.cpp
     ${SRCROOT}/VideoMode.cpp
@@ -127,7 +126,6 @@ elseif(IOS)
         ${SRCROOT}/iOS/VideoModeImpl.mm
         ${SRCROOT}/iOS/WindowImplUIKit.hpp
         ${SRCROOT}/iOS/WindowImplUIKit.mm
-        ${SRCROOT}/iOS/Main.mm
         ${SRCROOT}/iOS/ObjCType.hpp
         ${SRCROOT}/iOS/SFAppDelegate.hpp
         ${SRCROOT}/iOS/SFAppDelegate.mm
