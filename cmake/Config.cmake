@@ -22,7 +22,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         set(SFML_OS_IOS 1)
 
         # set the target framework and platforms
-        set(CMAKE_OSX_SYSROOT "iphoneos6.1") # todo set by user variable? auto-detected?
+        set(CMAKE_OSX_SYSROOT "iphoneos")
         set(CMAKE_OSX_ARCHITECTURES "armv6;armv7;i386")
         set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphoneos;-iphonesimulator")
 
