@@ -4,19 +4,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-#include <SFML/Main.hpp>
-
-
-// Some platform-specific stuff
-#ifdef SFML_OPENGL_ES
-
-    #define glClearDepth glClearDepthf
-    #define glFrustum glFrustumf
-    #define gluBuild2DMipmaps(target, internalFormat, width, height, format, type, pixels) \
-        glTexImage2D(target, 0, internalFormat, width, height, 0, format, type, pixels); \
-        glGenerateMipmapOES(GL_TEXTURE_2D);
-
-#endif
 
 
 ////////////////////////////////////////////////////////////

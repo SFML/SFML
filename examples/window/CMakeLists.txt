@@ -5,11 +5,9 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/window)
 set(SRC ${SRCROOT}/Window.cpp)
 
 # find OpenGL and GLU
-if(NOT IOS)
-    find_package(OpenGL REQUIRED)
-    include_directories(${OPENGL_INCLUDE_DIR})
-    set(ADDITIONAL_LIBRARIES ${OPENGL_LIBRARIES})
-endif()
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+set(ADDITIONAL_LIBRARIES ${OPENGL_LIBRARIES})
 
 # define the window target
 sfml_add_example(window GUI_APP

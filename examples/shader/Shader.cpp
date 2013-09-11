@@ -3,8 +3,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "Effect.hpp"
-#include <SFML/Graphics.hpp>
-#include <SFML/Main.hpp>
 #include <vector>
 #include <cmath>
 
