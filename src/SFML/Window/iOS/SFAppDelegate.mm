@@ -79,7 +79,10 @@ namespace
     // Register orientation changes notifications
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object: nil];
-    
+
+    // Change the working directory to the resources directory
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath: [[NSBundle mainBundle] resourcePath]];
+
     // Schedule an indirect call to the user main, so that this call (and the whole
     // init sequence) can end, and the default splashscreen can be destroyed
     [self performSelector:@selector(runUserMain) withObject:nil afterDelay:0.0];
