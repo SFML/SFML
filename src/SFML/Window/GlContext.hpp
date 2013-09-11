@@ -48,6 +48,16 @@ class GlContext : NonCopyable
 public :
 
     ////////////////////////////////////////////////////////////
+    /// \brief Perform a thread-local context cleaning
+    ///
+    /// This function should be called at the end of
+    /// each thread with an active context in order to
+    /// delete the rendering contexts.
+    ///
+    ////////////////////////////////////////////////////////////
+    static void clean();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Perform the global initialization
     ///
     /// This function is called once, before the very first OpenGL

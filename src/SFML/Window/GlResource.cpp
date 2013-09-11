@@ -82,4 +82,10 @@ void GlResource::ensureGlContext()
     priv::GlContext::ensureContext();
 }
 
+////////////////////////////////////////////////////////////
+void releaseThreadResource()
+{
+    GlContext::clean();
+}
+
 } // namespace sf

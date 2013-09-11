@@ -99,6 +99,16 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
+void GlContext::clean()
+{
+    sf::Lock lock(internalContextsMutex);
+
+    GlContext *ptr = getInternalContext();
+    delete ptr;
+    internalContexts.erase(ptr);
+}
+
+////////////////////////////////////////////////////////////
 void GlContext::globalInit()
 {
     // Create the shared context
