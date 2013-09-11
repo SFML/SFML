@@ -3,16 +3,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
-#include <SFML/Main.hpp>
-
-
-// Some platform-specific stuff
-#ifdef SFML_OPENGL_ES
-
-    #define glClearDepth glClearDepthf
-    #define glFrustum glFrustumf
-
-#endif
 
 
 ////////////////////////////////////////////////////////////

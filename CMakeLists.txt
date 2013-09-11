@@ -28,15 +28,18 @@ set(VERSION_PATCH 0)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
-if(IOS)
-    set(BUILD_SHARED_LIBS_DEFAULT FALSE)
+if(NOT IOS)
+    sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 else()
-    set(BUILD_SHARED_LIBS_DEFAULT TRUE)
+    set(BUILD_SHARED_LIBS FALSE)
 endif()
-sfml_set_option(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_DEFAULT} BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 
 # add an option for building the examples
-sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
+if(NOT IOS)
+    sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
+else()
+    set(SFML_BUILD_EXAMPLES FALSE)
+endif()
 
 # add an option for building the API documentation
 sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
