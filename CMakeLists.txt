@@ -175,7 +175,7 @@ if(NOT SFML_BUILD_FRAMEWORKS)
     install(DIRECTORY include
             DESTINATION .
             COMPONENT devel
-            PATTERN ".svn" EXCLUDE)
+            FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 else()
     # find only "root" headers
     file(GLOB SFML_HEADERS RELATIVE ${PROJECT_SOURCE_DIR} "include/SFML/*")
@@ -224,8 +224,10 @@ install(FILES license.txt DESTINATION ${INSTALL_MISC_DIR})
 install(FILES readme.txt DESTINATION ${INSTALL_MISC_DIR})
 install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
 
-# install 3rd-party libraries and tools on Windows and OS X
+# install 3rd-party libraries and tools
 if(SFML_OS_WINDOWS)
+
+    # install the binaries of SFML dependencies
     if(ARCH_32BITS)
         install(DIRECTORY extlibs/bin/x86/ DESTINATION bin)
         if(SFML_COMPILER_MSVC)
@@ -241,10 +243,14 @@ if(SFML_OS_WINDOWS)
             install(DIRECTORY extlibs/libs-mingw/x64/ DESTINATION lib)
         endif()
     endif()
+
 elseif(SFML_OS_MACOSX)
+
+    # install the non-standard frameworks SFML depends on
     install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
     install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
 
+    # install the Xcode templates if requested
     if(SFML_INSTALL_XCODE4_TEMPLATES)
         install(DIRECTORY tools/xcode/templates/SFML
                 DESTINATION /Library/Developer/Xcode/Templates
@@ -254,9 +260,21 @@ elseif(SFML_OS_MACOSX)
                     "/Library/Developer/Xcode/Templates/SFML/SFML Compiler.xctemplate/TemplateInfo.plist"
                     @ONLY)
     endif()
-elseif(IOS)
+
+elseif(SFML_OS_IOS)
+
+    # fix CMake install rules broken for iOS (see http://public.kitware.com/Bug/view.php?id=12506)
+    if(SFML_OS_IOS)
+        install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION lib${LIB_SUFFIX})
+    endif()
+
+    # since the iOS libraries are built as static, we must install the SFML dependencies
+    # too so that the end user can easily link them to its final application
     install(FILES extlibs/libs-ios/libfreetype.a extlibs/libs-ios/libjpeg.a DESTINATION lib)
-elseif(ANDROID)
+
+elseif(SFML_OS_ANDROID)
+
     install(DIRECTORY extlibs/android/extlibs DESTINATION .)
     install(FILES src/SFML/Android.mk DESTINATION .)
+
 endif()
