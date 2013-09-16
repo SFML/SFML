@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Http.hpp>
+#include <SFML/System/Err.hpp>
 #include <cctype>
 #include <algorithm>
 #include <iterator>
@@ -277,19 +278,19 @@ Http::Http(const std::string& host, unsigned short port)
 ////////////////////////////////////////////////////////////
 void Http::setHost(const std::string& host, unsigned short port)
 {
-    // Detect the protocol used
-    std::string protocol = toLower(host.substr(0, 8));
-    if (protocol.substr(0, 7) == "http://")
+    // Check the protocol
+    if (toLower(host.substr(0, 7)) == "http://")
     {
         // HTTP protocol
         m_hostName = host.substr(7);
         m_port     = (port != 0 ? port : 80);
     }
-    else if (protocol == "https://")
+    else if (toLower(host.substr(0, 8)) == "https://")
     {
-        // HTTPS protocol
-        m_hostName = host.substr(8);
-        m_port     = (port != 0 ? port : 443);
+        // HTTPS protocol -- unsupported (requires encryption and certificates and stuff...)
+        err() << "HTTPS protocol is not supported by sf::Http" << std::endl;
+        m_hostName = "";
+        m_port     = 0;
     }
     else
     {
