@@ -485,6 +485,13 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
     {
         // Bind no texture
         glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+
+        // Reset the texture matrix
+        glCheck(glMatrixMode(GL_TEXTURE));
+        glCheck(glLoadIdentity());
+
+        // Go back to model-view mode (sf::RenderTarget relies on it)
+        glCheck(glMatrixMode(GL_MODELVIEW));
     }
 }
 
