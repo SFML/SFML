@@ -32,6 +32,7 @@
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Time.hpp>
 #include <vector>
+#include <string>
 
 
 namespace sf
@@ -59,13 +60,20 @@ public :
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the capture runs.
     /// Please note that only one capture can happen at the same time.
+    /// You can select which capture device will be used, by passing
+    /// the name to the setDevice() method. If none was selected
+    /// before, the default capture device will be used. You can get a
+    /// list of the names of all available capture devices by calling
+    /// getAvailableDevices().
     ///
     /// \param sampleRate Desired capture rate, in number of samples per second
     ///
-    /// \see stop
+    /// \return True, if start of capture was successful
+    ///
+    /// \see stop, getAvailableDevices
     ///
     ////////////////////////////////////////////////////////////
-    void start(unsigned int sampleRate = 44100);
+    bool start(unsigned int sampleRate = 44100);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop the capture
@@ -86,6 +94,54 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     unsigned int getSampleRate() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get a list of the names of all availabe audio capture devices
+    ///
+    /// This function returns a vector of strings, containing
+    /// the names of all availabe audio capture devices.
+    ///
+    /// \return A vector of strings containing the names
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::vector<std::string> getAvailableDevices();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the name of the default audio capture device
+    ///
+    /// This function returns the name of the default audio
+    /// capture device. If none is available, an empty string
+    /// is returned.
+    ///
+    /// \return The name of the default audio capture device
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::string getDefaultDevice();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the audio capture device
+    ///
+    /// This function sets the audio capture device to the device
+    /// with the given \a name. It can be called on the fly (i.e:
+    /// while recording). If you do so while recording and
+    /// opening the device fails, it stops the recording.
+    ///
+    /// \param The name of the audio capture device
+    ///
+    /// \return True, if it was able to set the requested device
+    ///
+    /// \see getAvailableDevices, getDefaultDevice
+    ///
+    ////////////////////////////////////////////////////////////
+    bool setDevice(const std::string& name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the name of the current audio capture device
+    ///
+    /// \return The name of the current audio capture device
+    ///
+    ////////////////////////////////////////////////////////////
+    const std::string& getDevice() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if the system supports audio capture
@@ -203,8 +259,9 @@ private :
     Thread             m_thread;             ///< Thread running the background recording task
     std::vector<Int16> m_samples;            ///< Buffer to store captured samples
     unsigned int       m_sampleRate;         ///< Sample rate
-	sf::Time           m_processingInterval; ///< Time period between calls to onProcessSamples
+    sf::Time           m_processingInterval; ///< Time period between calls to onProcessSamples
     bool               m_isCapturing;        ///< Capturing state
+    std::string        m_deviceName;         ///< Name of the audio capture device
 };
 
 } // namespace sf
@@ -244,10 +301,17 @@ private :
 /// availability with the isAvailable() function. If it returns
 /// false, then any attempt to use an audio recorder will fail.
 ///
+/// If you have multiple sound input devices connected to your
+/// computer (for example: microphone, external soundcard, webcam mic, ...)
+/// you can get a list of all available devices throught the
+/// getAvailableDevices() function. You can then select a device
+/// by calling setDevice() with the appropiate device. Otherwise
+/// the default capturing device will be used.
+///
 /// It is important to note that the audio capture happens in a
 /// separate thread, so that it doesn't block the rest of the
-/// program. In particular, the onProcessSamples and onStop
-/// virtual functions (but not onStart) will be called
+/// program. In particular, the onProcessSamples virtual function
+/// (but not onStart and not onStop) will be called
 /// from this separate thread. It is important to keep this in
 /// mind, because you may have to take care of synchronization
 /// issues if you share data between threads.
@@ -285,7 +349,10 @@ private :
 /// if (CustomRecorder::isAvailable())
 /// {
 ///     CustomRecorder recorder;
-///     recorder.start();
+///
+///     if (!recorder.start())
+///         return -1;
+///
 ///     ...
 ///     recorder.stop();
 /// }
