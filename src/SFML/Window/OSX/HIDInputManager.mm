@@ -53,7 +53,7 @@ bool HIDInputManager::isKeyPressed(Keyboard::Key key)
     // state = true if at least one corresponding HID key is pressed
     bool state = false;
 
-    for (IOHIDElements::iterator it = m_keys[key].begin(); it != m_keys[key].end(); ++it) {
+    for (IOHIDElements::iterator it = m_keys[key].begin(); it != m_keys[key].end();) {
 
         IOHIDValueRef value = 0;
 
@@ -77,6 +77,7 @@ bool HIDInputManager::isKeyPressed(Keyboard::Key key)
         } else {
 
             // This means the key is released
+            ++it;
         }
 
     }
@@ -95,7 +96,7 @@ bool HIDInputManager::isMouseButtonPressed(Mouse::Button button)
     // state = true if at least one corresponding HID button is pressed
     bool state = false;
 
-    for (IOHIDElements::iterator it = m_buttons[button].begin(); it != m_buttons[button].end(); ++it) {
+    for (IOHIDElements::iterator it = m_buttons[button].begin(); it != m_buttons[button].end();) {
 
         IOHIDValueRef value = 0;
 
@@ -119,6 +120,7 @@ bool HIDInputManager::isMouseButtonPressed(Mouse::Button button)
         } else {
 
             // This means the button is released
+            ++it
         }
 
     }
