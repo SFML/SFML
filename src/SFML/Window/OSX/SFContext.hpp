@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -72,7 +72,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     SFContext(SFContext* shared);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
     ///
@@ -84,7 +84,7 @@ public:
     ////////////////////////////////////////////////////////////
     SFContext(SFContext* shared, const ContextSettings& settings,
               const WindowImpl* owner, unsigned int bitsPerPixel);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
     ///
@@ -94,21 +94,21 @@ public:
     /// \param height   Back buffer height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    SFContext(SFContext* shared, const ContextSettings& settings, 
+    SFContext(SFContext* shared, const ContextSettings& settings,
               unsigned int width, unsigned int height);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~SFContext();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
     virtual void display();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
     ///
@@ -121,7 +121,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled);
-    
+
 protected:
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target
@@ -131,7 +131,7 @@ protected:
     ///
     ////////////////////////////////////////////////////////////
     virtual bool makeCurrent();
-    
+
 private:
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
@@ -142,10 +142,10 @@ private:
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void createContext(SFContext* shared, 
-                       unsigned int bitsPerPixel, 
+    void createContext(SFContext* shared,
+                       unsigned int bitsPerPixel,
                        const ContextSettings& settings);
-    
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -153,9 +153,9 @@ private:
     NSOpenGLViewRef       m_view;          ///< Only for offscreen context.
     NSWindowRef           m_window;        ///< Only for offscreen context.
 };
-    
+
 } // namespace priv
-    
+
 } // namespace sf
 
 #endif // SFML_SFCONTEXT_HPP

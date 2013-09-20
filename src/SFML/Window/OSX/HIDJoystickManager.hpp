@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -46,7 +46,7 @@ namespace priv
 class HIDJoystickManager : NonCopyable
 {
 public :
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Get the unique instance of the class
     ///
@@ -56,45 +56,45 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static HIDJoystickManager& getInstance();
-    
+
 public :
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of currently connected joystick
     ///
     ////////////////////////////////////////////////////////////
     unsigned int getJoystickCount();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Copy the devices assosiated with this HID manager
-    /// 
+    ///
     /// \return a retained CFSetRef of IOHIDDeviceRef or NULL
     ///
     ////////////////////////////////////////////////////////////
     CFSetRef copyJoysticks();
-    
+
 private :
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
     HIDJoystickManager();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~HIDJoystickManager();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Make sur all event have been processed in the run loop
     ///
     ////////////////////////////////////////////////////////////
     void update();
-    
+
 private :
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Private "plug-in" callback
     /// \note Only 'context' parametre is used.
@@ -102,7 +102,7 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     static void pluggedIn(void * context, IOReturn, void *, IOHIDDeviceRef);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Private "plug-out" callback
     /// \note Only 'context' parametre is used.
@@ -110,9 +110,9 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     static void pluggedOut(void * context, IOReturn, void *, IOHIDDeviceRef);
-    
+
 private :
-    
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ private :
 
 
 } // namespace priv
-    
+
 } // namespace sf
 
 #endif

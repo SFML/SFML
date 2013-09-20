@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -71,7 +71,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     WindowImplCocoa(WindowHandle handle);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Create the window implementation
     ///
@@ -82,13 +82,13 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     WindowImplCocoa(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     ~WindowImplCocoa();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Window Closed Event – called by the cocoa window object.
     ///
@@ -96,7 +96,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void windowClosed(void);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Window Resized Event – called by the cocoa window object.
     ///
@@ -107,7 +107,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void windowResized(unsigned int width, unsigned int height);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Window Lost Focus Event – called by the cocoa window object.
     ///
@@ -115,7 +115,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void windowLostFocus(void);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Window Get Focus Event – called by the cocoa window object.
     ///
@@ -123,7 +123,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void windowGainedFocus(void);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Down Event – called by the cocoa view object.
     ///
@@ -135,7 +135,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void mouseDownAt(Mouse::Button button, int x, int y);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Up Event – called by the cocoa view object.
     ///
@@ -147,7 +147,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void mouseUpAt(Mouse::Button button, int x, int y);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Moved Event – called by the cocoa view object.
     ///
@@ -158,7 +158,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void mouseMovedAt(int x, int y);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Wheel Scrolled Event – called by the cocoa view object.
     ///
@@ -170,7 +170,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void mouseWheelScrolledAt(float delta, int x, int y);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Mouse In Event – called by the cocoa view object.
     ///
@@ -178,7 +178,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void mouseMovedIn(void);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Out Event – called by the cocoa view object.
     ///
@@ -186,7 +186,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void mouseMovedOut(void);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Key Down Event – called by the cocoa view object.
     ///
@@ -196,7 +196,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void keyDown(Event::KeyEvent key);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Key Up Event – called by the cocoa view object.
     ///
@@ -206,7 +206,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void keyUp(Event::KeyEvent key);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Text Entred Event – called by the cocoa view object.
     ///
@@ -216,7 +216,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void textEntered(unichar charcode);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Apply the context to the view.
     ///
@@ -226,16 +226,16 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void applyContext(NSOpenGLContextRef context) const;
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Change the type of the current process to become a full GUI app.
     ///        Also ensure NSApp is constructed.
     ///
     ////////////////////////////////////////////////////////////
     static void setUpProcess(void);
-    
+
 public :
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
     ///
@@ -243,7 +243,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     virtual WindowHandle getSystemHandle() const;
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
     ///
@@ -334,9 +334,9 @@ private :
     WindowImplDelegateRef m_delegate;   ///< Implementation in Obj-C.
     bool                  m_showCursor; ///< Is the cursor displayed or hidden ?
 };
-    
+
 } // namespace priv
-    
+
 } // namespace sf
 
 
