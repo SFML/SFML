@@ -619,8 +619,15 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)keyUp:(NSEvent *)theEvent
+-(void)sfKeyUp:(NSEvent *)theEvent
 {
+    // For some mystic reasons, key released events don't work the same way
+    // as key pressed events... We somewhat hijack the event chain of response
+    // in -[SFApplication sendEvent:] and resume this chain with the next
+    // responder.
+    // This is workaround to make sure key released events are fired in
+    // fullscreen window too.
+
     // Transmit to non-SFML responder
     [[self nextResponder] keyUp:theEvent];
 

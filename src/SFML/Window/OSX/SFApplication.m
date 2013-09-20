@@ -42,7 +42,7 @@
     while ((event = [NSApp nextEventMatchingMask:NSAnyEventMask
                                        untilDate:[NSDate distantPast]
                                           inMode:NSDefaultRunLoopMode
-                                         dequeue:YES])) // Remove the event from the dequeue
+                                         dequeue:YES])) // Remove the event from the queue
     {
         [NSApp sendEvent:event];
     }
@@ -50,9 +50,13 @@
 
 -(void)sendEvent:(NSEvent *)anEvent
 {
-    if ([anEvent type] == NSKeyUp) {
-        [[[self mainWindow] firstResponder] tryToPerform:@selector(keyUp:)
-                                                    with:anEvent];
+    // Fullscreen windows have a strange behaviour with key up. To make
+    // sure the user gets an event we call (if possible) sfKeyUp on our
+    // custom OpenGL view. See -[SFOpenGLView sfKeyUp:] for more details.
+
+    id firstResponder = [[anEvent window] firstResponder];
+    if ([anEvent type] == NSKeyUp && [firstResponder respondsToSelector:@selector(sfKeyUp:)]) {
+        [firstResponder sfKeyUp:anEvent];
     } else {
         [super sendEvent:anEvent];
     }
