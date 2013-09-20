@@ -42,6 +42,9 @@ namespace sf
 {
 namespace priv
 {
+
+typedef std::vector<IOHIDElementRef> IOHIDElements;
+
 ////////////////////////////////////////////////////////////
 /// \brief This class manage as a singleton instance the
 /// keyboard and mouse states. It's only purpose is
@@ -220,6 +223,18 @@ private :
     CFSetRef copyDevices(UInt32 page, UInt32 usage);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Check if a key / mouse button is pressed
+    ///
+    /// \param elements HID elements mapping to this key / mouse button
+    ///
+    /// \return True if the key / button is pressed, false otherwise
+    ///
+    /// \see isKeyPressed, isMouseButtonPressed
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isPressed(IOHIDElements& elements);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Convert a HID key usage to its corresponding virtual code
     ///
     /// See IOHIDUsageTables.h
@@ -241,7 +256,6 @@ private :
     UCKeyboardLayout* m_layout;                     ///< Current Keyboard Layout
     IOHIDManagerRef   m_manager;                    ///< HID Manager
 
-    typedef std::vector<IOHIDElementRef> IOHIDElements;
     IOHIDElements     m_keys[Keyboard::KeyCount];   ///< All the keys on any connected keyboard
     IOHIDElements     m_buttons[Mouse::ButtonCount];///< All the buttons on any connected mouse
 

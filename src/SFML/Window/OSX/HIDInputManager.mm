@@ -45,87 +45,13 @@ HIDInputManager& HIDInputManager::getInstance()
 ////////////////////////////////////////////////////////////
 bool HIDInputManager::isKeyPressed(Keyboard::Key key)
 {
-    if (!m_isValid) {
-        sf::err() << "HIDInputManager is invalid." << std::endl;
-        return false;
-    }
-
-    // state = true if at least one corresponding HID key is pressed
-    bool state = false;
-
-    for (IOHIDElements::iterator it = m_keys[key].begin(); it != m_keys[key].end();) {
-
-        IOHIDValueRef value = 0;
-
-        IOHIDDeviceRef device = IOHIDElementGetDevice(*it);
-        IOHIDDeviceGetValue(device, *it, &value);
-
-        if (!value) {
-
-            // This means some kind of error / deconnection so we remove this
-            // element from our keys
-
-            CFRelease(*it);
-            it = m_keys[key].erase(it);
-
-        } else if (IOHIDValueGetIntegerValue(value) == 1) {
-
-            // This means the key is pressed
-            state = true;
-            break; // Stop here
-
-        } else {
-
-            // This means the key is released
-            ++it;
-        }
-
-    }
-
-    return state;
+    return isPressed(m_keys[key]);
 }
 
 ////////////////////////////////////////////////////////////
 bool HIDInputManager::isMouseButtonPressed(Mouse::Button button)
 {
-    if (!m_isValid) {
-        sf::err() << "HIDInputManager is invalid." << std::endl;
-        return false;
-    }
-
-    // state = true if at least one corresponding HID button is pressed
-    bool state = false;
-
-    for (IOHIDElements::iterator it = m_buttons[button].begin(); it != m_buttons[button].end();) {
-
-        IOHIDValueRef value = 0;
-
-        IOHIDDeviceRef device = IOHIDElementGetDevice(*it);
-        IOHIDDeviceGetValue(device, *it, &value);
-
-        if (!value) {
-
-            // This means some kind of error / deconnection so we remove this
-            // element from our buttons
-
-            CFRelease(*it);
-            it = m_buttons[button].erase(it);
-
-        } else if (IOHIDValueGetIntegerValue(value) == 1) {
-
-            // This means the button is pressed
-            state = true;
-            break; // Stop here
-
-        } else {
-
-            // This means the button is released
-            ++it
-        }
-
-    }
-
-    return state;
+    return isPressed(m_buttons[button]);
 }
 
 
@@ -237,7 +163,7 @@ HIDInputManager::~HIDInputManager()
 void HIDInputManager::initializeKeyboard()
 {
     ////////////////////////////////////////////////////////////
-    // The purpose of this function is to initalize m_keys so we can get
+    // The purpose of this function is to initialize m_keys so we can get
     // the associate IOHIDElementRef with a sf::Keyboard::Key in ~constant~ time.
 
     // Get only keyboards
@@ -272,7 +198,7 @@ void HIDInputManager::initializeKeyboard()
 void HIDInputManager::initializeMouse()
 {
     ////////////////////////////////////////////////////////////
-    // The purpose of this function is to initalize m_buttons so we can get
+    // The purpose of this function is to initialize m_buttons so we can get
     // the associate IOHIDElementRef with a sf::Mouse::Button in ~constant~ time.
 
     // Get only mouses
@@ -554,6 +480,48 @@ CFSetRef HIDInputManager::copyDevices(UInt32 page, UInt32 usage)
     }
 
     return devices;
+}
+
+bool HIDInputManager::isPressed(IOHIDElements& elements)
+{
+    if (!m_isValid) {
+        sf::err() << "HIDInputManager is invalid." << std::endl;
+        return false;
+    }
+
+    // state = true if at least one corresponding HID button is pressed
+    bool state = false;
+
+    for (IOHIDElements::iterator it = elements.begin(); it != elements.end();) {
+
+        IOHIDValueRef value = 0;
+
+        IOHIDDeviceRef device = IOHIDElementGetDevice(*it);
+        IOHIDDeviceGetValue(device, *it, &value);
+
+        if (!value) {
+
+            // This means some kind of error / disconnection so we remove this
+            // element from our buttons
+
+            CFRelease(*it);
+            it = elements.erase(it);
+
+        } else if (IOHIDValueGetIntegerValue(value) == 1) {
+
+            // This means the button is pressed
+            state = true;
+            break; // Stop here
+
+        } else {
+
+            // This means the button is released
+            ++it;
+        }
+
+    }
+
+    return state;
 }
 
 
