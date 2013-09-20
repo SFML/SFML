@@ -55,7 +55,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 /// Handle view resized event.
 /// 
 ////////////////////////////////////////////////////////////
--(void)frameDidChange:(NSNotification *)notification;
+-(void)viewDidEndLiveResize;
 
 ////////////////////////////////////////////////////////////
 /// Establish if the mouse is inside or outside the OpenGL view.
@@ -110,13 +110,6 @@ BOOL isValidTextUnicode(NSEvent* event);
                                                         owner:self
                                                      userInfo:nil];
         [self addTrackingArea:m_trackingArea];
-        
-        // Register for resize event
-        NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self
-                   selector:@selector(frameDidChange:)
-                       name:NSViewFrameDidChangeNotification
-                     object:self];
 
         // Create a hidden text view for parsing key down event properly
         m_silentResponder = [[SFSilentResponder alloc] init];
@@ -224,8 +217,19 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)frameDidChange:(NSNotification *)notification
+-(void)viewDidEndLiveResize
 {
+    // We use viewDidEndLiveResize to notify the user ONCE
+    // only, when the resizing is finished.
+    // In a perfect world we would like to notify the user
+    // in live that the window is being resized. However,
+    // it seems impossible to forward to the user
+    // NSViewFrameDidChangeNotification before the resizing
+    // is done. Several notifications are emitted but they
+    // are all delivered after when the work is done.
+
+    [super viewDidEndLiveResize];
+
     // Update mouse internal state.
     [self updateMouseState];
     
@@ -278,7 +282,6 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)dealloc
 {
     // Unregister
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self removeTrackingArea:m_trackingArea];
 
     // Release attributes
