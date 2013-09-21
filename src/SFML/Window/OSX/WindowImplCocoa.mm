@@ -36,6 +36,7 @@
 #import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFApplicationDelegate.h>
+#import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
 
 namespace sf
 {
@@ -78,6 +79,9 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
     }
 
     [m_delegate setRequesterTo:this];
+
+    // Finally, set up keyboard helper
+    initialiseKeyboardHelper();
 }
 
 
@@ -97,6 +101,9 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
     m_delegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
     [m_delegate changeTitle:sfStringToNSString(title)];
     [m_delegate setRequesterTo:this];
+
+    // Finally, set up keyboard helper
+    initialiseKeyboardHelper();
 }
 
 
