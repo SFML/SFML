@@ -80,6 +80,8 @@ else() # MACOSX
         ${SRCROOT}/OSX/JoystickImpl.hpp
         ${SRCROOT}/OSX/SFApplication.h
         ${SRCROOT}/OSX/SFApplication.m
+        ${SRCROOT}/OSX/SFApplicationDelegate.h
+        ${SRCROOT}/OSX/SFApplicationDelegate.m
         ${SRCROOT}/OSX/SFContext.hpp
         ${SRCROOT}/OSX/SFContext.mm
         ${SRCROOT}/OSX/SFKeyboardModifiersHelper.h

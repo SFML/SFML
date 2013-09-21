@@ -26,37 +26,27 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
+#import <SFML/Window/OSX/SFApplicationDelegate.h>
 
 ////////////////////////////////////////////////////////////
-/// \brief Event processing & Menu bar initialisation
-///
-////////////////////////////////////////////////////////////
-@interface SFApplication : NSApplication
+@implementation SFApplicationDelegate
 
 
 ////////////////////////////////////////////////////////////
-/// \brief Event processing
-///
-////////////////////////////////////////////////////////////
-+(void)processEvent;
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+    // TODO generate close event for each SFML window
+    [NSApp makeWindowsPerform:@selector(sfClose) inOrder:NO];
+    return NSTerminateCancel;
+}
 
 
 ////////////////////////////////////////////////////////////
-/// \brief Set up the menu bar and its items
-///
-////////////////////////////////////////////////////////////
-+(void)setUpMenuBar;
-
-
-////////////////////////////////////////////////////////////
-/// \brief Dispatch events
-///
-/// This overload of -[NSApplication sendEvent:] is used to
-/// fix KeyRelease events when the command key is down.
-////////////////////////////////////////////////////////////
--(void)sendEvent:(NSEvent *)anEvent;
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
+{
+    return YES;
+}
 
 
 @end
+

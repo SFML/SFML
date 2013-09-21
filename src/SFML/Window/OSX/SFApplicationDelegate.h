@@ -29,34 +29,14 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+
 ////////////////////////////////////////////////////////////
-/// \brief Event processing & Menu bar initialisation
+/// \brief Process some application specific events
 ///
 ////////////////////////////////////////////////////////////
-@interface SFApplication : NSApplication
+@interface SFApplicationDelegate : NSObject <NSApplicationDelegate>
 
-
-////////////////////////////////////////////////////////////
-/// \brief Event processing
-///
-////////////////////////////////////////////////////////////
-+(void)processEvent;
-
-
-////////////////////////////////////////////////////////////
-/// \brief Set up the menu bar and its items
-///
-////////////////////////////////////////////////////////////
-+(void)setUpMenuBar;
-
-
-////////////////////////////////////////////////////////////
-/// \brief Dispatch events
-///
-/// This overload of -[NSApplication sendEvent:] is used to
-/// fix KeyRelease events when the command key is down.
-////////////////////////////////////////////////////////////
--(void)sendEvent:(NSEvent *)anEvent;
-
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication;
 
 @end

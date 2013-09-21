@@ -35,6 +35,7 @@
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
 #import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/SFApplication.h>
+#import <SFML/Window/OSX/SFApplicationDelegate.h>
 
 namespace sf
 {
@@ -136,6 +137,14 @@ void WindowImplCocoa::setUpProcess(void)
             TransformProcessType(&psn, kProcessTransformToForegroundApplication);
             SetFrontProcess(&psn);
         }
+
+        // Register an application delegate if there is none
+        if (![[SFApplication sharedApplication] delegate]) {
+            [NSApp setDelegate:[[SFApplicationDelegate alloc] init]];
+        }
+
+        // Create menus for the application (before finishing launching!)
+        [SFApplication setUpMenuBar];
 
         // Tell the application to stop bouncing in the Dock.
         [[SFApplication sharedApplication] finishLaunching];

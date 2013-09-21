@@ -88,7 +88,7 @@ public :
     /// \brief Drain the pool
     ///
     ////////////////////////////////////////////////////////////
-    void Drain();
+    void drain();
 
 private:
 
@@ -155,7 +155,7 @@ void PoolWrapper::release()
 
     // Drain pool if required.
     if (m_count == 0) {
-        Drain();
+        drain();
     }
 
 #ifdef SFML_DEBUG
@@ -165,7 +165,7 @@ void PoolWrapper::release()
 #endif
 }
 
-void PoolWrapper::Drain()
+void PoolWrapper::drain()
 {
     [m_pool drain];
     m_pool = 0;
@@ -227,7 +227,7 @@ void releasePool(void)
 void drainPool()
 {
     if (localPool != NULL) {
-        localPool->Drain();
+        localPool->drain();
     }
 #ifdef SFML_DEBUG
     else {
