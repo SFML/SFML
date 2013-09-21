@@ -107,6 +107,12 @@ WindowImplCocoa::~WindowImplCocoa()
 
     [m_delegate release];
 
+    // Put the next window in front, if any.
+    NSArray* windows = [NSApp orderedWindows];
+    if ([windows count] > 0) {
+        [[windows objectAtIndex:0] makeKeyAndOrderFront:nil];
+    }
+
     releasePool();
 
     drainPool(); // Make sure everything was freed
