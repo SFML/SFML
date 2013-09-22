@@ -28,3 +28,10 @@ set_target_properties(sfml-main PROPERTIES FOLDER "SFML")
 
 # setup the install rule
 install(TARGETS sfml-main ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel)
+
+# because of a current limitation on Android (which prevents one library
+# from depending on shared libraries), we need a boostrap activity which
+# will load our shared libraries manually
+if(ANDROID)
+	sfml_add_library(sfml-activity SOURCES ${PROJECT_SOURCE_DIR}/src/SFML/Main/SFMLActivity.cpp)
+endif()

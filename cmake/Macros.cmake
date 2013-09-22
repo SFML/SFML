@@ -97,6 +97,18 @@ macro(sfml_add_library target)
         set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES)
     endif()
 
+    # sfml-activity library is our bootstrap activity and must not depend on stlport_shared
+    # (otherwise Android will fail to load it)
+    if (ANDROID)
+        if (${target} MATCHES "sfml-activity")
+            set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fpermissive)
+            set_target_properties(${target} PROPERTIES LINK_FLAGS "-landroid -llog")
+            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STLPORT})
+        else()
+            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STLPORT})
+        endif()
+    endif()
+
     # link the target to its external dependencies
     if(THIS_EXTERNAL_LIBS)
         target_link_libraries(${target} ${THIS_EXTERNAL_LIBS})
