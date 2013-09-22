@@ -22,55 +22,57 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_ACTIVITY_HPP
+#define SFML_ACTIVITY_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoModeImpl.hpp>
-#include <SFML/Window/Android/Activity.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/Lock.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <android/native_activity.h>
+#include <android/configuration.h>
+#include <android/sensor.h>
+#include <vector>
+#include <EGL/egl.h>
 
 namespace sf
 {
 namespace priv
 {
-////////////////////////////////////////////////////////////
-std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
+struct ActivityStates
 {
-    VideoMode desktop = getDesktopMode();
+    ANativeActivity* activity;
+    ANativeWindow* window;
 
-    // Return both protrait and landscape resolutions
-    std::vector<VideoMode> modes;
-    modes.push_back(desktop);
-    modes.push_back(VideoMode(desktop.height, desktop.width, desktop.bitsPerPixel));
-    return modes;
-}
+    ALooper*        looper;
+    AInputQueue*    inputQueue;
+    AConfiguration* config;
 
+    ASensorManager* sensorManager;
+    const ASensor* accelerometerSensor;
+    ASensorEventQueue* sensorEventQueue;
 
-////////////////////////////////////////////////////////////
-VideoMode VideoModeImpl::getDesktopMode()
-{
-    // Get the activity states
-    priv::ActivityStates* states = priv::getActivity(NULL);
-    Lock lock(states->mutex);
+    EGLDisplay display;
 
-    // Wait for a window if there's none
-    while (!states->window)
-    {
-        states->mutex.unlock();
-        sleep(milliseconds(10));
-        states->mutex.lock();
-    }
+    void* savedState;
+    size_t savedStateSize;
 
-    // Get size from the window
-    sf::Vector2i size;
-    size.x = ANativeWindow_getWidth(states->window);
-    size.y = ANativeWindow_getHeight(states->window);
+    sf::Mutex mutex;
 
-    return VideoMode(size.x, size.y);
-}
+    std::vector<sf::Event> pendingEvents;
 
+    bool mainOver;
+
+    bool initialized;
+    bool terminated;
+
+    bool updated;
+};
+
+SFML_WINDOW_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL);
 } // namespace priv
-
 } // namespace sf
+
+
+#endif // SFML_ACTIVITY_HPP

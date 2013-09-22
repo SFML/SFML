@@ -27,11 +27,11 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/ImageLoader.hpp>
-#include <SFML/System/Err.hpp>
 #ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/Window/Android/Activity.hpp>
     #include <SFML/System/Lock.hpp>
-    #include <SFML/Main/activity.hpp>
 #endif
+#include <SFML/System/Err.hpp>
 #include <algorithm>
 #include <cstring>
 
@@ -112,7 +112,7 @@ bool Image::loadFromFile(const std::string& filename)
 
     #else
 
-    priv::ActivityStates* states = priv::getActivityStates(NULL);
+    priv::ActivityStates* states = priv::getActivity(NULL);
     Lock lock(states->mutex);
 
     // Open the file

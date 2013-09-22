@@ -27,12 +27,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Android/EglContext.hpp>
+#include <SFML/Window/Android/Activity.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
-#include <SFML/Main/activity.hpp>
 
 #include <android/native_window.h>
 
@@ -47,7 +47,7 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE)
 {
     // Get the activity states and protect it from concurent access
-    ActivityStates* states = getActivityStates(NULL);
+    ActivityStates* states = getActivity(NULL);
     sf::Lock lock(states->mutex);
 
     // Get the intialized EGL display
@@ -84,7 +84,7 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE)
 {
     // Get the activity states and protect it from concurent access
-    ActivityStates* states = getActivityStates(NULL);
+    ActivityStates* states = getActivity(NULL);
     sf::Lock lock(states->mutex);
 
     // Get the intialized EGL display
