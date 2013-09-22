@@ -56,10 +56,10 @@ subject to the following restrictions:
                 <string>[ADVANCED] C++ Compiler and Standard Library</string>
 
                 <key>Description</key>
-                <string>If you don't know what is it about, use the default value. Note that you'll need a version of SFML compiled with Clang and libc++ to use C++11 !</string>
+                <string>If you don't know what is it about, use the default value. Note that you'll need a version of SFML compiled with Clang and libc++ to use C++11!</string>
 
                 <key>Default</key>
-                <string>C++98 with Clang and libstdc++</string>
+                <string>C++11 with Clang and libc++</string>
 
                 <key>NotPersisted</key>
                 <true />
