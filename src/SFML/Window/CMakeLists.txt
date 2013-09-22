@@ -143,14 +143,16 @@ elseif(ANDROID)
     set(PLATFORM_SRC
         ${SRCROOT}/Android/WindowImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.cpp
-        ${SRCROOT}/Android/EGLContext.hpp
-        ${SRCROOT}/Android/EGLContext.cpp
-        ${SRCROOT}/Android/VideoModeImpl.hpp
+        ${SRCROOT}/Android/EglContext.hpp
+        ${SRCROOT}/Android/EglContext.cpp
+        #${SRCROOT}/Android/VideoModeImpl.hpp
         ${SRCROOT}/Android/VideoModeImpl.cpp
         ${SRCROOT}/Android/InputImpl.hpp
         ${SRCROOT}/Android/InputImpl.cpp
         ${SRCROOT}/Android/JoystickImpl.hpp
-        ${SRCROOT}/Android/JoystickImpl.cpp)
+        ${SRCROOT}/Android/JoystickImpl.cpp
+        ${SRCROOT}/Android/Activity.hpp
+        ${SRCROOT}/Android/Activity.cpp)
     source_group("android" FILES ${PLATFORM_SRC})
 endif()
 
@@ -158,7 +160,7 @@ endif()
 if(NOT OPENGL_ES)
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})
-    if(SFML_OS_LINUX)
+    if(SFML_OS_LINUX AND NOT SFML_OS_ANDROID)
         find_package(X11 REQUIRED)
         if(NOT X11_Xrandr_FOUND)
             message(FATAL_ERROR "Xrandr library not found")
@@ -179,6 +181,8 @@ elseif(SFML_OS_MACOSX)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${OPENGL_gl_LIBRARY} "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 elseif(SFML_OS_IOS)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework OpenGLES -framework Foundation -framework UIKit -framework CoreGraphics -framework QuartzCore -framework CoreMotion")
+elseif(SFML_OS_ANDROID)
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-landroid -llog -lEGL -lGLESv1_CM")
 endif()
 
 # define the sfml-window target

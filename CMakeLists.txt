@@ -28,14 +28,18 @@ set(VERSION_PATCH 0)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
-if(NOT IOS)
+if(NOT (IOS OR ANDROID))
     sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 else()
-    set(BUILD_SHARED_LIBS FALSE)
+    if(IOS)
+        set(BUILD_SHARED_LIBS FALSE)
+    elseif(ANDROID)
+        set(BUILD_SHARED_LIBS TRUE)
+    endif()
 endif()
 
 # add an option for building the examples
-if(NOT IOS)
+if(NOT (IOS OR ANDROID))
     sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
 else()
     set(SFML_BUILD_EXAMPLES FALSE)
@@ -57,6 +61,27 @@ if(SFML_OS_MACOSX)
 
     # add an option to automatically install Xcode 4 templates
     sfml_set_option(SFML_INSTALL_XCODE4_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode 4 templates, FALSE to do nothing about it")
+endif()
+
+# Android options
+if(ANDROID)
+    # force usage of the STL port
+    set(ANDROID_USE_STLPORT TRUE)
+
+    # make sure there's an EGL implementation available
+    if (${ANDROID_ABI} MATCHES "armeabi" AND ${ANDROID_NATIVE_API_LEVEL} LESS 3)
+        message(FATAL_ERROR "API level must be equal or greater than 3 for ARM arches")
+    endif()
+
+    if ((${ANDROID_ABI} MATCHES "x86" OR ${ANDROID_ABI} MATCHES "mips") AND ${ANDROID_NATIVE_API_LEVEL} LESS 9)
+        message(FATAL_ERROR "API level must be equal or greater than 9 for x86 and MIPS arches")
+    endif()
+
+    # install everything in $NDK/sources/ because this path is appended by the NDK (convenient)
+    set(CMAKE_INSTALL_PREFIX ${ANDROID_NDK}/sources/sfml)
+
+    # we install libs in a subdirectory named after the ABI (lib/mips/*.so)
+    set(LIB_SUFFIX "/${ANDROID_ABI}")
 endif()
 
 # define SFML_STATIC if the build type is not set to 'shared'
@@ -204,7 +229,9 @@ endif()
 
 install(FILES license.txt DESTINATION ${INSTALL_MISC_DIR})
 install(FILES readme.txt DESTINATION ${INSTALL_MISC_DIR})
-install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
+if(NOT SFML_OS_ANDROID)
+    install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
+endif()
 
 # install 3rd-party libraries and tools
 if(SFML_OS_WINDOWS)
@@ -250,7 +277,8 @@ elseif(SFML_OS_IOS)
 
 elseif(SFML_OS_ANDROID)
 
-    install(DIRECTORY extlibs/android/extlibs DESTINATION .)
+    install(DIRECTORY extlibs/android/extlibs/lib/${ANDROID_ABI} DESTINATION extlibs/lib)
+    install(FILES extlibs/android/extlibs/Android.mk DESTINATION extlibs)
     install(FILES src/SFML/Android.mk DESTINATION .)
 
 endif()

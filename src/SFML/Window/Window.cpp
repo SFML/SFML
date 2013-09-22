@@ -35,6 +35,7 @@
     #include <SFML/Window/Android/EglContext.hpp>
 #endif
 
+
 namespace
 {
     const sf::Window* fullscreenWindow = NULL;

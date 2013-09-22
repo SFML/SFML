@@ -26,12 +26,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFile.hpp>
+#ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/Window/Android/Activity.hpp>
+    #include <SFML/System/Lock.hpp>
+#endif
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
-#ifdef SFML_SYSTEM_ANDROID
-    #include <SFML/System/Lock.hpp>
-    #include <SFML/Main/activity.hpp>
-#endif
 #include <cstring>
 #include <cctype>
 
@@ -118,7 +118,7 @@ bool SoundFile::openRead(const std::string& filename)
 
     #else
 
-    priv::ActivityStates* states = priv::getActivityStates(NULL);
+    priv::ActivityStates* states = priv::getActivity(NULL);
     Lock lock(states->mutex);
 
     // Open the file
