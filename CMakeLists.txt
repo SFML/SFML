@@ -82,6 +82,11 @@ if(ANDROID)
 
     # we install libs in a subdirectory named after the ABI (lib/mips/*.so)
     set(LIB_SUFFIX "/${ANDROID_ABI}")
+
+    # this is a workaround to compile sfml-activity without stlport_shared as dependency
+    # we save the original compilation command line to restore it later in Macro.cmake
+    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STLPORT ${CMAKE_CXX_CREATE_SHARED_LIBRARY})
+    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STLPORT "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
 endif()
 
 # define SFML_STATIC if the build type is not set to 'shared'

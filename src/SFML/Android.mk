@@ -55,4 +55,11 @@ LOCAL_SHARED_LIBRARIES := sfml-system sfml-window
 
 include $(PREBUILT_STATIC_LIBRARY)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := sfml-activity
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-activity.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+
+include $(PREBUILT_SHARED_LIBRARY)
+
 $(call import-module,sfml/extlibs)
