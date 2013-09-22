@@ -128,6 +128,12 @@ if(IOS)
     find_package(Freetype REQUIRED)
     set(GRAPHICS_EXT_INCLUDE_PATHS ${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
     set(GRAPHICS_EXT_LIBS "-framework OpenGLES ${FREETYPE_LIBRARY} ${JPEG_LIBRARY}")
+elseif(ANDROID)
+    find_host_package(JPEG REQUIRED)
+    find_host_package(Freetype REQUIRED)
+    set(GRAPHICS_EXT_INCLUDE_PATHS ${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
+    set(GRAPHICS_EXT_LIBS -lz ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
+    add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif()
 
 # add include paths of external libraries

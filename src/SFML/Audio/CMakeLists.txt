@@ -29,7 +29,7 @@ set(SRC
     ${INCROOT}/SoundStream.hpp
 )
 source_group("" FILES ${SRC})
-if(NOT ANDROID)
+
 # let CMake know about our additional audio libraries paths (on Windows and OSX)
 if(SFML_OS_WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/AL")
@@ -40,14 +40,37 @@ elseif(SFML_OS_MACOSX)
 endif()
 
 # find external libraries
-find_package(OpenAL REQUIRED)
-find_package(Sndfile REQUIRED)
+if(NOT ANDROID)
+    find_package(OpenAL REQUIRED)
+    find_package(Sndfile REQUIRED)
+    set(AUDIO_EXT_LIBS ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
+else()
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/android/extlibs/include/AL")
+    find_host_package(OpenAL REQUIRED)
+    find_host_package(Sndfile REQUIRED)
+    set(AUDIO_EXT_INCLUDE_PATHS ${OPENAL_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIR})
+    set(AUDIO_EXT_LIBS -landroid
+                       -lOpenSLES
+                       ${OPENAL_LIBRARY}
+                       ${SNDFILE_LIBRARY}
+                       ${PROJECT_SOURCE_DIR}/extlibs/android/extlibs/lib/${ANDROID_ABI}/libvorbisenc.so
+                       ${PROJECT_SOURCE_DIR}/extlibs/android/extlibs/lib/${ANDROID_ABI}/libvorbis.so
+                       ${PROJECT_SOURCE_DIR}/extlibs/android/extlibs/lib/${ANDROID_ABI}/libFLAC.so
+                       ${PROJECT_SOURCE_DIR}/extlibs/android/extlibs/lib/${ANDROID_ABI}/libogg.so)
+endif()
 
 # add include paths of external libraries
 include_directories(${OPENAL_INCLUDE_DIR} ${SNDFILE_INCLUDE_DIR})
-endif()
+
 # define the sfml-audio target
+if(NOT ANDROID)
 sfml_add_library(sfml-audio
                  SOURCES ${SRC}
                  DEPENDS sfml-system
                  EXTERNAL_LIBS ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
+else()
+sfml_add_library(sfml-audio
+                 SOURCES ${SRC}
+                 DEPENDS sfml-system sfml-window
+                 EXTERNAL_LIBS ${AUDIO_EXT_LIBS})
+endif()

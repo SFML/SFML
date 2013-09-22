@@ -29,12 +29,10 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Android/WindowImplAndroid.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Android/Activity.hpp>
 #include <SFML/System/Lock.hpp>
-#include <SFML/Main/activity.hpp>
 
 
-#include <android/log.h>
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml_app", __VA_ARGS__))
 ////////////////////////////////////////////////////////////
 // Private data
 ////////////////////////////////////////////////////////////
@@ -72,7 +70,7 @@ WindowHandle WindowImplAndroid::getSystemHandle() const
 ////////////////////////////////////////////////////////////
 void WindowImplAndroid::processEvents()
 {
-    ActivityStates* states = getActivityStates(NULL);
+    ActivityStates* states = getActivity(NULL);
     sf::Lock lock(states->mutex);
 
     int ident, events;

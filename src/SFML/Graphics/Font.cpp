@@ -27,12 +27,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/Window/Android/Activity.hpp>
+    #include <SFML/System/Lock.hpp>
+#endif
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
-#ifdef SFML_SYSTEM_ANDROID
-    #include <SFML/System/Lock.hpp>
-    #include <SFML/Main/activity.hpp>
-#endif
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -149,7 +149,7 @@ bool Font::loadFromFile(const std::string& filename)
 
     #else
 
-    priv::ActivityStates* states = priv::getActivityStates(NULL);
+    priv::ActivityStates* states = priv::getActivity(NULL);
     Lock lock(states->mutex);
 
     // Open the file

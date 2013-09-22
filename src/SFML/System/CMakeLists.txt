@@ -81,6 +81,11 @@ if(SFML_OS_WINDOWS)
     set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} winmm)
 endif()
 
+# pthread is implicitly linked by the NDK
+if(ANDROID)
+    set(SYSTEM_EXT_LIBS "")
+endif()
+
 # define the sfml-system target
 sfml_add_library(sfml-system
                  SOURCES ${SRC} ${PLATFORM_SRC}

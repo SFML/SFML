@@ -27,15 +27,15 @@
 
 #ifdef SFML_SYSTEM_ANDROID
 
+#include <SFML/Window/Android/Activity.hpp>
+#include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Lock.hpp>
-#include <SFML/Main/activity.hpp>
+
 
 extern int main(int argc, char *argv[]);
-JavaVM* javaVM;
-
 
 namespace sf
 {
@@ -290,16 +290,6 @@ void processSensorEvents(ActivityStates* states)
         event.mouseWheel.y     = static_cast<int>(_event.acceleration.z*1000);
         states->pendingEvents.push_back(event);
     }
-}
-
-ActivityStates* getActivityStates(ActivityStates* initializedStates)
-{
-    static ActivityStates* states = NULL;
-
-    if (!states)
-        states = initializedStates;
-
-    return states;
 }
 
 ActivityStates* retrieveStates(ANativeActivity* activity)
@@ -578,9 +568,6 @@ static void onLowMemory(ANativeActivity* activity)
 
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
-    // Feed OpenAL-Soft's javaVM to make so he can function
-    javaVM = activity->vm;
-
     // Create an activity states (will keep us in the know, about events we care)
     sf::priv::ActivityStates* states = NULL;
     states = new sf::priv::ActivityStates;
@@ -610,7 +597,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     states->terminated = false;
 
     // Share it across the SFML modules
-    sf::priv::getActivityStates(states);
+    sf::priv::getActivity(states);
 
     // These functions will update the activity states and therefore, will allow
     // SFML to be kept in the know

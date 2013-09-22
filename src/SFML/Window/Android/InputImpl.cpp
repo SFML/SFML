@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Android/InputImpl.hpp>
+#include <SFML/Window/Android/Activity.hpp>
 #include <SFML/System/Lock.hpp>
-#include <SFML/Main/activity.hpp>
 #include <jni.h>
 
 
@@ -47,7 +47,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
 {
     // TODO: Check if the window is active
 
-    ActivityStates* states = getActivityStates(NULL);
+    ActivityStates* states = getActivity(NULL);
     sf::Lock lock(states->mutex);
 
     jint lResult;
