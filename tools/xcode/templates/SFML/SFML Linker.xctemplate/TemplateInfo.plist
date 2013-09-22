@@ -158,7 +158,7 @@ subject to the following restrictions:
                             <key>SharedSettings</key>
                             <dict>
                                 <key>SFML_WINDOW</key>
-                                <string>$(SFML_LINK_PREFIX)sfml-window$(SFML_LINK_SUFFIX)</string>
+                                <string>$(SFML_LINK_PREFIX) sfml-window$(SFML_LINK_SUFFIX)</string>
                             </dict>
                         </dict>
                     </dict>
@@ -211,7 +211,7 @@ subject to the following restrictions:
                             <key>SharedSettings</key>
                             <dict>
                                 <key>SFML_GRAPHICS</key>
-                                <string>$(SFML_LINK_PREFIX)sfml-graphics$(SFML_LINK_SUFFIX)</string>
+                                <string>$(SFML_LINK_PREFIX) sfml-graphics$(SFML_LINK_SUFFIX)</string>
                             </dict>
                         </dict>
                     </dict>
@@ -258,7 +258,7 @@ subject to the following restrictions:
                             <key>SharedSettings</key>
                             <dict>
                                 <key>SFML_AUDIO</key>
-                                <string>$(SFML_LINK_PREFIX)sfml-audio$(SFML_LINK_SUFFIX)</string>
+                                <string>$(SFML_LINK_PREFIX) sfml-audio$(SFML_LINK_SUFFIX)</string>
                             </dict>
                         </dict>
                     </dict>
@@ -305,7 +305,7 @@ subject to the following restrictions:
                             <key>SharedSettings</key>
                             <dict>
                                 <key>SFML_NETWORK</key>
-                                <string>$(SFML_LINK_PREFIX)sfml-network$(SFML_LINK_SUFFIX)</string>
+                                <string>$(SFML_LINK_PREFIX) sfml-network$(SFML_LINK_SUFFIX)</string>
                             </dict>
                         </dict>
                     </dict>
@@ -338,7 +338,7 @@ subject to the following restrictions:
                 <string>-l</string>
 
                 <key>SFML_LINK_FRAMEWORKS_PREFIX</key>
-                <string>-framework </string>
+                <string>-framework</string>
 
                 <key>SFML_LINK_FRAMEWORKS_SUFFIX</key>
                 <string></string>
@@ -351,7 +351,7 @@ subject to the following restrictions:
 
                 <!-- SFML SYSTEM : always used -->
                 <key>SFML_SYSTEM</key>
-                <string>$(SFML_LINK_PREFIX)sfml-system$(SFML_LINK_SUFFIX)</string>
+                <string>$(SFML_LINK_PREFIX) sfml-system$(SFML_LINK_SUFFIX)</string>
 
                 <!-- LINKER FLAGS -->
                 <key>OTHER_LDFLAGS</key>
