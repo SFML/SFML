@@ -28,7 +28,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #ifdef SFML_SYSTEM_ANDROID
-    #include <SFML/Window/Android/Activity.hpp>
+    #include <SFML/System/Android/Activity.hpp>
     #include <SFML/System/Lock.hpp>
 #endif
 #include <SFML/System/InputStream.hpp>

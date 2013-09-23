@@ -64,6 +64,6 @@ sfml_add_library(sfml-audio
 else()
 sfml_add_library(sfml-audio
                  SOURCES ${SRC}
-                 DEPENDS sfml-system sfml-window
+                 DEPENDS sfml-system
                  EXTERNAL_LIBS ${AUDIO_EXT_LIBS})
 endif()

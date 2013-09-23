@@ -22,20 +22,58 @@
 //
 ////////////////////////////////////////////////////////////
 
-#include <SFML/Window/Android/Activity.hpp>
+#ifndef SFML_ACTIVITY_HPP
+#define SFML_ACTIVITY_HPP
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/Window/Event.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <android/native_activity.h>
+#include <android/configuration.h>
+#include <android/sensor.h>
+#include <vector>
+#include <EGL/egl.h>
 
 namespace sf
 {
-namespace priv 
+namespace priv
 {
-    ActivityStates* getActivity(ActivityStates* initializedStates)
-    {
-        static ActivityStates* states = NULL;
+struct ActivityStates
+{
+    ANativeActivity* activity;
+    ANativeWindow* window;
 
-        if (!states)
-            states = initializedStates;
+    ALooper*        looper;
+    AInputQueue*    inputQueue;
+    AConfiguration* config;
 
-        return states;
-    }
-}
-}
+    ASensorManager* sensorManager;
+    const ASensor* accelerometerSensor;
+    ASensorEventQueue* sensorEventQueue;
+
+    EGLDisplay display;
+
+    void* savedState;
+    size_t savedStateSize;
+
+    sf::Mutex mutex;
+
+    std::vector<sf::Event> pendingEvents;
+
+    bool mainOver;
+
+    bool initialized;
+    bool terminated;
+
+    bool updated;
+};
+
+SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL);
+
+} // namespace priv
+} // namespace sf
+
+
+#endif // SFML_ACTIVITY_HPP

@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 // Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -22,57 +23,24 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_ACTIVITY_HPP
-#define SFML_ACTIVITY_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Event.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <android/native_activity.h>
-#include <android/configuration.h>
-#include <android/sensor.h>
-#include <vector>
-#include <EGL/egl.h>
+#include <SFML/System/Android/Activity.hpp>
 
 namespace sf
 {
 namespace priv
 {
-struct ActivityStates
+ActivityStates* getActivity(ActivityStates* initializedStates)
 {
-    ANativeActivity* activity;
-    ANativeWindow* window;
+    static ActivityStates* states = NULL;
 
-    ALooper*        looper;
-    AInputQueue*    inputQueue;
-    AConfiguration* config;
+    if (!states)
+        states = initializedStates;
 
-    ASensorManager* sensorManager;
-    const ASensor* accelerometerSensor;
-    ASensorEventQueue* sensorEventQueue;
-
-    EGLDisplay display;
-
-    void* savedState;
-    size_t savedStateSize;
-
-    sf::Mutex mutex;
-
-    std::vector<sf::Event> pendingEvents;
-
-    bool mainOver;
-
-    bool initialized;
-    bool terminated;
-
-    bool updated;
-};
-
-SFML_WINDOW_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL);
-} // namespace priv
-} // namespace sf
-
-
-#endif // SFML_ACTIVITY_HPP
+    return states;
+}
+}
+}

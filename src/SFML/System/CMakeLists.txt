@@ -66,6 +66,14 @@ else()
         ${SRCROOT}/Unix/ThreadLocalImpl.cpp
         ${SRCROOT}/Unix/ThreadLocalImpl.hpp
     )
+
+    if(ANDROID)
+        set(PLATFORM_SRC ${PLATFORM_SRC}
+            ${SRCROOT}/Android/Activity.hpp
+            ${SRCROOT}/Android/Activity.cpp
+        )
+    endif()
+
     source_group("unix" FILES ${PLATFORM_SRC})
 endif()
 

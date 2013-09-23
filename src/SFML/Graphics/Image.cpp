@@ -28,7 +28,7 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/ImageLoader.hpp>
 #ifdef SFML_SYSTEM_ANDROID
-    #include <SFML/Window/Android/Activity.hpp>
+    #include <SFML/System/Android/Activity.hpp>
     #include <SFML/System/Lock.hpp>
 #endif
 #include <SFML/System/Err.hpp>

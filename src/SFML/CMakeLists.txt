@@ -42,10 +42,10 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 
 # add the modules subdirectories
 add_subdirectory(System)
-add_subdirectory(Window)
 if(SFML_OS_WINDOWS OR SFML_OS_ANDROID OR SFML_OS_IOS)
     add_subdirectory(Main)
 endif()
+add_subdirectory(Window)
 add_subdirectory(Network)
 add_subdirectory(Graphics)
 if(NOT SFML_OS_IOS OR NOT (SFML_OS_ANDROID AND ${ANDROID_ABI} MATCHES "mips"))
