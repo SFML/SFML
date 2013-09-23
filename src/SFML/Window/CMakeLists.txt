@@ -148,9 +148,7 @@ elseif(ANDROID)
         ${SRCROOT}/Android/InputImpl.hpp
         ${SRCROOT}/Android/InputImpl.cpp
         ${SRCROOT}/Android/JoystickImpl.hpp
-        ${SRCROOT}/Android/JoystickImpl.cpp
-        ${SRCROOT}/Android/Activity.hpp
-        ${SRCROOT}/Android/Activity.cpp)
+        ${SRCROOT}/Android/JoystickImpl.cpp)
     source_group("android" FILES ${PLATFORM_SRC})
 endif()
 
