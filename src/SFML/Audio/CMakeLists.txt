@@ -49,14 +49,7 @@ else()
     find_host_package(OpenAL REQUIRED)
     find_host_package(Sndfile REQUIRED)
     set(AUDIO_EXT_INCLUDE_PATHS ${OPENAL_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIR})
-    set(AUDIO_EXT_LIBS -landroid
-                       -lOpenSLES
-                       ${OPENAL_LIBRARY}
-                       ${SNDFILE_LIBRARY}
-                       ${PROJECT_SOURCE_DIR}/extlibs/android/extlibs/lib/${ANDROID_ABI}/libvorbisenc.so
-                       ${PROJECT_SOURCE_DIR}/extlibs/android/extlibs/lib/${ANDROID_ABI}/libvorbis.so
-                       ${PROJECT_SOURCE_DIR}/extlibs/android/extlibs/lib/${ANDROID_ABI}/libFLAC.so
-                       ${PROJECT_SOURCE_DIR}/extlibs/android/extlibs/lib/${ANDROID_ABI}/libogg.so)
+    set(AUDIO_EXT_LIBS -landroid -lOpenSLES ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
 endif()
 
 # add include paths of external libraries

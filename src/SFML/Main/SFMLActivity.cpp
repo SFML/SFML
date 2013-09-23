@@ -67,7 +67,7 @@ void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActiv
     }
 
     // Release the Java string
-    lJNIEnv->ReleaseStringUTFChars(THESTRING, pathStr);
+    lJNIEnv->ReleaseStringUTFChars(javaLibraryPath, libraryPath);
 
     return handle;
 }
@@ -103,7 +103,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
     if (lResult == JNI_ERR) {
-        LOG("Couldn't attach the current thread to the Java virtual machine");
+        LOGE("Couldn't attach the current thread to the Java virtual machine");
         exit(1);
     }
 
@@ -137,13 +137,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     loadLibrary("stlport_shared", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-system", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-window", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("jpeg", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("freetype", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-graphics", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("ogg", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("FLAC", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("vorbis", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("vorbisenc", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sndfile", lJNIEnv, ObjectActivityInfo);
     loadLibrary("openal", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-audio", lJNIEnv, ObjectActivityInfo);
