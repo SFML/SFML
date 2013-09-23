@@ -27,7 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Android/EglContext.hpp>
-#include <SFML/Window/Android/Activity.hpp>
+#include <SFML/System/Android/Activity.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>

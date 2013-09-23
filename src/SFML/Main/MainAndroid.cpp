@@ -23,13 +23,24 @@
 ////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////////////////////////
+// Android specific: we define the ANativeActivity_onCreate
+// entry point, handling all the native activity stuff, then
+// we call the user defined (and poratble) main function in
+// an external thread so developers can keep a portable code
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
 #ifdef SFML_SYSTEM_ANDROID
 
-#include <SFML/Window/Android/Activity.hpp>
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Lock.hpp>
@@ -41,7 +52,6 @@ namespace sf
 {
 namespace priv
 {
-
 Keyboard::Key mapAndroidKeyToSFMLKey(int32_t key)
 {
     switch (key)

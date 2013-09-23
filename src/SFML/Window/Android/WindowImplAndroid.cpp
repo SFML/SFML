@@ -29,7 +29,7 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Android/WindowImplAndroid.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Window/Android/Activity.hpp>
+#include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Lock.hpp>
 
 
