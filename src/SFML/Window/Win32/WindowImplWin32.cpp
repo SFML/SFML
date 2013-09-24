@@ -73,7 +73,8 @@ m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (0, 0),
 m_resizing        (false),
-m_surrogate       (0)
+m_surrogate       (0),
+m_mouseInside     (false)
 {
     if (m_handle)
     {
@@ -93,7 +94,8 @@ m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
-m_surrogate       (0)
+m_surrogate       (0),
+m_mouseInside     (false)
 {
     // Register the window class at first call
     if (windowCount == 0)
@@ -405,6 +407,24 @@ void WindowImplWin32::cleanup()
 
     // Unhide the mouse cursor (in case it was hidden)
     setMouseCursorVisible(true);
+
+    // No longer track the cursor
+    setTracking(false);
+
+    // No longer capture the cursor
+    ReleaseCapture();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setTracking(bool track)
+{
+    TRACKMOUSEEVENT mouseEvent;
+    mouseEvent.cbSize = sizeof(TRACKMOUSEEVENT);
+    mouseEvent.dwFlags = track ? TME_LEAVE : TME_CANCEL;
+    mouseEvent.hwndTrack = m_handle;
+    mouseEvent.dwHoverTime = HOVER_DEFAULT;
+    TrackMouseEvent(&mouseEvent);
 }
 
 
@@ -464,14 +484,14 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         }
 
         // Start resizing
-        case WM_ENTERSIZEMOVE:
+        case WM_ENTERSIZEMOVE :
         {
             m_resizing = true;
             break;
         }
 
         // Stop resizing
-        case WM_EXITSIZEMOVE:
+        case WM_EXITSIZEMOVE :
         {
             m_resizing = false;
 
@@ -536,7 +556,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 else
                 {
-
                     // Check if it is the second part of a surrogate pair, or a regular character
                     if ((character >= 0xDC00) && (character <= 0xDFFF))
                     {
@@ -703,6 +722,22 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
+        // Mouse leave event
+        case WM_MOUSELEAVE :
+        {
+            // Avoid this firing a second time in case the cursor is dragged outside
+            if (m_mouseInside)
+            {
+                m_mouseInside = false;
+
+                // Generate a MouseLeft event
+                Event event;
+                event.type = Event::MouseLeft;
+                pushEvent(event);
+            }
+            break;
+        }
+
         // Mouse move event
         case WM_MOUSEMOVE :
         {
@@ -714,43 +749,60 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             RECT area;
             GetClientRect(m_handle, &area);
 
-            // Check the mouse position against the window
+            // Capture the mouse in case the user wants to drag it outside
+            if ((wParam & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2)) == 0)
+            {
+                // Only release the capture if we really have it
+                if (GetCapture() == m_handle)
+                    ReleaseCapture();
+            }
+            else if (GetCapture() != m_handle)
+            {
+                // Set the capture to continue receiving mouse events
+                SetCapture(m_handle);
+            }
+
+            // If the cursor is outside the client area...
             if ((x < area.left) || (x > area.right) || (y < area.top) || (y > area.bottom))
             {
-                // Mouse is outside
+                // and it used to be inside, the mouse left it.
+                if (m_mouseInside)
+                {
+                    m_mouseInside = false;
 
-                // Release the mouse capture
-                ReleaseCapture();
+                    // No longer care for the mouse leaving the window
+                    setTracking(false);
 
-                // Generate a MouseLeft event
-                Event event;
-                event.type = Event::MouseLeft;
-                pushEvent(event);
+                    // Generate a MouseLeft event
+                    Event event;
+                    event.type = Event::MouseLeft;
+                    pushEvent(event);
+                }
             }
             else
             {
-                // Mouse is inside
-                if (GetCapture() != m_handle)
+                // and vice-versa
+                if (!m_mouseInside)
                 {
-                    // Mouse was previously outside the window
+                    m_mouseInside = true;
 
-                    // Capture the mouse
-                    SetCapture(m_handle);
+                    // Look for the mouse leaving the window
+                    setTracking(true);
 
                     // Generate a MouseEntered event
                     Event event;
                     event.type = Event::MouseEntered;
                     pushEvent(event);
                 }
-
-                // Generate a MouseMove event
-                Event event;
-                event.type        = Event::MouseMoved;
-                event.mouseMove.x = x;
-                event.mouseMove.y = y;
-                pushEvent(event);
-                break;
             }
+
+            // Generate a MouseMove event
+            Event event;
+            event.type        = Event::MouseMoved;
+            event.mouseMove.x = x;
+            event.mouseMove.y = y;
+            pushEvent(event);
+            break;
         }
     }
 }
