@@ -55,8 +55,7 @@
 namespace
 {
     unsigned int               windowCount      = 0;
-    const char*                classNameA       = "SFML_Window";
-    const wchar_t*             classNameW       = L"SFML_Window";
+    const wchar_t*             className        = L"SFML_Window";
     sf::priv::WindowImplWin32* fullscreenWindow = NULL;
 }
 
@@ -133,14 +132,7 @@ m_mouseInside     (false)
     }
 
     // Create the window
-    if (hasUnicodeSupport())
-    {
-        m_handle = CreateWindowW(classNameW, title.toWideString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
-    }
-    else
-    {
-        m_handle = CreateWindowA(classNameA, title.toAnsiString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
-    }
+    m_handle = CreateWindow(className, title.toWideString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
 
     // By default, the OS limits the size of the window the the desktop size,
     // we have to resize it after creation to apply the real size
@@ -173,16 +165,7 @@ WindowImplWin32::~WindowImplWin32()
 
         // Unregister window class if we were the last window
         if (windowCount == 0)
-        {
-            if (hasUnicodeSupport())
-            {
-                UnregisterClassW(classNameW, GetModuleHandle(NULL));
-            }
-            else
-            {
-                UnregisterClassA(classNameA, GetModuleHandle(NULL));
-            }
-        }
+            UnregisterClass(className, GetModuleHandle(NULL));
     }
     else
     {
@@ -259,14 +242,7 @@ void WindowImplWin32::setSize(const Vector2u& size)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setTitle(const String& title)
 {
-    if (hasUnicodeSupport())
-    {
-        SetWindowTextW(m_handle, title.toWideString().c_str());
-    }
-    else
-    {
-        SetWindowTextA(m_handle, title.toAnsiString().c_str());
-    }
+    SetWindowText(m_handle, title.toWideString().c_str());
 }
 
 
@@ -332,36 +308,18 @@ void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::registerWindowClass()
 {
-    if (hasUnicodeSupport())
-    {
-        WNDCLASSW windowClass;
-        windowClass.style         = 0;
-        windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
-        windowClass.cbClsExtra    = 0;
-        windowClass.cbWndExtra    = 0;
-        windowClass.hInstance     = GetModuleHandle(NULL);
-        windowClass.hIcon         = NULL;
-        windowClass.hCursor       = 0;
-        windowClass.hbrBackground = 0;
-        windowClass.lpszMenuName  = NULL;
-        windowClass.lpszClassName = classNameW;
-        RegisterClassW(&windowClass);
-    }
-    else
-    {
-        WNDCLASSA windowClass;
-        windowClass.style         = 0;
-        windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
-        windowClass.cbClsExtra    = 0;
-        windowClass.cbWndExtra    = 0;
-        windowClass.hInstance     = GetModuleHandle(NULL);
-        windowClass.hIcon         = NULL;
-        windowClass.hCursor       = 0;
-        windowClass.hbrBackground = 0;
-        windowClass.lpszMenuName  = NULL;
-        windowClass.lpszClassName = classNameA;
-        RegisterClassA(&windowClass);
-    }
+    WNDCLASSW windowClass;
+    windowClass.style         = 0;
+    windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
+    windowClass.cbClsExtra    = 0;
+    windowClass.cbWndExtra    = 0;
+    windowClass.hInstance     = GetModuleHandle(NULL);
+    windowClass.hIcon         = NULL;
+    windowClass.hCursor       = 0;
+    windowClass.hbrBackground = 0;
+    windowClass.lpszMenuName  = NULL;
+    windowClass.lpszClassName = className;
+    RegisterClass(&windowClass);
 }
 
 
@@ -930,24 +888,6 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplWin32::hasUnicodeSupport()
-{
-    OSVERSIONINFO version;
-    ZeroMemory(&version, sizeof(version));
-    version.dwOSVersionInfoSize = sizeof(version);
-
-    if (GetVersionEx(&version))
-    {
-        return version.dwPlatformId == VER_PLATFORM_WIN32_NT;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-
-////////////////////////////////////////////////////////////
 LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
 {
     // Associate handle and Window instance when the creation message is received
@@ -980,9 +920,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     if ((message == WM_SYSCOMMAND) && (wParam == SC_KEYMENU))
         return 0;
 
-    static const bool hasUnicode = hasUnicodeSupport();
-    return hasUnicode ? DefWindowProcW(handle, message, wParam, lParam) :
-                        DefWindowProcA(handle, message, wParam, lParam);
+    return DefWindowProc(handle, message, wParam, lParam);
 }
 
 } // namespace priv

@@ -213,17 +213,6 @@ private :
     static Keyboard::Key virtualKeyCodeToSF(WPARAM key, LPARAM flags);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if the current version of the OS supports
-    ///        unicode messages and functions ; Windows 95/98/Me
-    ///        may not support it, whereas Windows NT/2000/XP/Vista
-    ///        will
-    ///
-    /// \return True if the OS supports unicode
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool hasUnicodeSupport();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Function called whenever one of our windows receives a message
     ///
     /// \param handle  Win32 handle of the window

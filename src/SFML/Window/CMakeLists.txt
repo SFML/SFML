@@ -49,6 +49,9 @@ if(WINDOWS)
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
     source_group("windows" FILES ${PLATFORM_SRC})
+    
+    # make sure that we use the Unicode version of the Win API functions
+    add_definitions(-DUNICODE)
 elseif(LINUX)
     set(PLATFORM_SRC
         ${SRCROOT}/Linux/Display.cpp
