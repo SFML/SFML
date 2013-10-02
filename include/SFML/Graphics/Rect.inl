@@ -97,6 +97,14 @@ bool Rect<T>::contains(const Vector2<T>& point) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+bool Rect<T>::contains(const Rect<T>& rect) const
+{
+    return contains(rect.left, rect.top) && contains(rect.left + rect.width, rect.top + rect.height);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 bool Rect<T>::intersects(const Rect<T>& rectangle) const
 {
     Rect<T> intersection;
