@@ -162,6 +162,6 @@ public :
 /// sf::Mouse::setPosition(sf::Vector2i(100, 200), window);
 /// \endcode
 ///
-/// \see sf::Joystick, sf::Keyboard
+/// \see sf::Joystick, sf::Keyboard, sf::Touch
 ///
 ////////////////////////////////////////////////////////////

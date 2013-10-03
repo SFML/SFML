@@ -178,6 +178,30 @@ void InputImpl::setMousePosition(const Vector2i& position, const Window& relativ
     setMousePosition(sf::Vector2i(p.x, p.y));
 }
 
+
+////////////////////////////////////////////////////////////
+bool InputImpl::isTouchDown(unsigned int /*finger*/)
+{
+    // Not applicable
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
+{
+    // Not applicable
+    return Vector2i();
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const Window& /*relativeTo*/)
+{
+    // Not applicable
+    return Vector2i();
+}
+
 } // namespace priv
 
 } // namespace sf
