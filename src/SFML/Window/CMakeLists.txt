@@ -23,6 +23,8 @@ set(SRC
     ${SRCROOT}/Keyboard.cpp
     ${INCROOT}/Mouse.hpp
     ${SRCROOT}/Mouse.cpp
+    ${INCROOT}/Touch.hpp
+    ${SRCROOT}/Touch.cpp
     ${SRCROOT}/VideoMode.cpp
     ${INCROOT}/VideoMode.hpp
     ${SRCROOT}/VideoModeImpl.hpp
