@@ -54,21 +54,15 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    switch (button)
-    {
-        case Mouse::Left:
-            return getMousePosition() != Vector2i(-1, -1);
-
-        default:
-            return false;
-    }
+    // Not applicable
+    return false;
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition()
 {
-    return [[SFAppDelegate getInstance] getTouchPosition];
+    return Vector2i(0, 0);
 }
 
 
@@ -92,6 +86,29 @@ void InputImpl::setMousePosition(const Vector2i& position)
 void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
 {
     // Not applicable
+}
+
+
+////////////////////////////////////////////////////////////
+bool InputImpl::isTouchDown(unsigned int finger)
+{
+    return [[SFAppDelegate getInstance] getTouchPosition:finger] != Vector2i(-1, -1);
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int finger)
+{
+    return [[SFAppDelegate getInstance] getTouchPosition:finger];
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int finger, const Window& relativeTo)
+{
+    (void)relativeTo;
+
+    return getTouchPosition(finger);
 }
 
 } // namespace priv

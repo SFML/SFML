@@ -219,6 +219,6 @@ public :
 /// }
 /// \endcode
 ///
-/// \see sf::Joystick, sf::Mouse
+/// \see sf::Joystick, sf::Mouse, sf::Touch
 ///
 ////////////////////////////////////////////////////////////

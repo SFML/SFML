@@ -32,6 +32,13 @@
 #include <cstring>
 
 
+@interface SFView()
+
+@property (nonatomic) NSMutableArray* touches;
+
+@end
+
+
 @implementation SFView
 
 @synthesize context;
@@ -78,30 +85,70 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    UITouch* touch = [touches anyObject];
-    CGPoint position = [touch locationInView:self];
+    for (UITouch* touch in touches)
+    {
+        // find an empty slot for the new touch
+        NSUInteger index = [self.touches indexOfObject:[NSNull null]];
+        if (index != NSNotFound)
+        {
+            [self.touches replaceObjectAtIndex:index withObject:touch];
+        }
+        else
+        {
+            [self.touches addObject:touch];
+            index = [self.touches count] - 1;
+        }
 
-    [[SFAppDelegate getInstance] notifyTouchBeginAt:position];
+        // get the touch position
+        CGPoint point = [touch locationInView:self];
+        sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
+
+        // notify the application delegate
+        [[SFAppDelegate getInstance] notifyTouchBegin:index atPosition:position];
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    UITouch* touch = [touches anyObject];
-    CGPoint position = [touch locationInView:self];
+    for (UITouch* touch in touches)
+    {
+        // find the touch
+        NSUInteger index = [self.touches indexOfObject:touch];
+        if (index != NSNotFound)
+        {
+            // get the touch position
+            CGPoint point = [touch locationInView:self];
+            sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
-    [[SFAppDelegate getInstance] notifyTouchMoveAt:position];
+            // notify the application delegate
+            [[SFAppDelegate getInstance] notifyTouchMove:index atPosition:position];
+        }
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    UITouch* touch = [touches anyObject];
-    CGPoint position = [touch locationInView:self];
+    for (UITouch* touch in touches)
+    {
+        // find the touch
+        NSUInteger index = [self.touches indexOfObject:touch];
+        if (index != NSNotFound)
+        {
+            // get the touch position
+            CGPoint point = [touch locationInView:self];
+            sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
-    [[SFAppDelegate getInstance] notifyTouchEndAt:position];
+            // notify the application delegate
+            [[SFAppDelegate getInstance] notifyTouchEnd:index atPosition:position];
+
+            // remove the touch
+            [self.touches replaceObjectAtIndex:index withObject:[NSNull null]];
+        }
+    }
 }
 
 
@@ -136,6 +183,7 @@
 	if (self)
     {
         self.context = NULL;
+        self.touches = [NSMutableArray array];
 
         // Configure the EAGL layer
         CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
@@ -145,8 +193,9 @@
                                         kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat,
                                         nil];
 
-        // Enable user interactions on the view (touch events)
+        // Enable user interactions on the view (multi-touch events)
         self.userInteractionEnabled = true;
+        self.multipleTouchEnabled = true;
     }
 
 	return self;

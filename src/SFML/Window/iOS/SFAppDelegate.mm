@@ -27,19 +27,22 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
 #include <SFML/Window/iOS/SFMain.hpp>
+#include <vector>
 
 
 namespace
 {
     // Save the global instance of the delegate
     SFAppDelegate* delegateInstance = NULL;
+
+    // Current touches positions
+    std::vector<sf::Vector2i> touchPositions;
 }
 
 
 @interface SFAppDelegate()
 
 @property (nonatomic) CMMotionManager* motionManager;
-@property (nonatomic) sf::Vector2i touchPosition;
 
 @end
 
@@ -72,9 +75,6 @@ namespace
 
     // Instanciate the motion manager
     self.motionManager = [[CMMotionManager alloc] init];
-
-    // Initialize the touch position
-    self.touchPosition = sf::Vector2i(-1, -1);
 
     // Register orientation changes notifications
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -167,15 +167,15 @@ namespace
             (orientation == UIDeviceOrientationPortraitUpsideDown))
         {
             // Get the new size
-            CGSize size = [UIScreen mainScreen].bounds.size;
+            sf::Vector2u size = self.sfWindow->getSize();
             if (UIDeviceOrientationIsLandscape(orientation))
-                std::swap(size.width, size.height);
+                std::swap(size.x, size.y);
 
             // Send a Resized event to the current window
             sf::Event event;
             event.type = sf::Event::Resized;
-            event.size.width = size.width;
-            event.size.height = size.height;
+            event.size.width = size.x;
+            event.size.height = size.y;
             sfWindow->pushEvent(event);
         }
     }
@@ -190,57 +190,72 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-- (sf::Vector2i)getTouchPosition
+- (sf::Vector2i)getTouchPosition:(unsigned int)index
 {
-    return self.touchPosition;
+    if (index < touchPositions.size())
+        return touchPositions[index];
+    else
+        return sf::Vector2i(-1, -1);
 }
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchBeginAt:(CGPoint)position
+- (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position;
 {
-    self.touchPosition = sf::Vector2i(static_cast<int>(position.x), static_cast<int>(position.y));
+    // save the touch position
+    if (index >= touchPositions.size())
+        touchPositions.resize(index + 1, sf::Vector2i(-1, -1));
+    touchPositions[index] = position;
 
+    // notify the event to the application window
     if (self.sfWindow)
     {
         sf::Event event;
-        event.type = sf::Event::MouseButtonPressed;
-        event.mouseButton.x = position.x;
-        event.mouseButton.y = position.y;
-        event.mouseButton.button = sf::Mouse::Left;
+        event.type = sf::Event::TouchBegan;
+        event.touch.finger = index;
+        event.touch.x = position.x;
+        event.touch.y = position.y;
         sfWindow->pushEvent(event);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchMoveAt:(CGPoint)position
+- (void)notifyTouchMove:(unsigned int)index atPosition:(sf::Vector2i)position;
 {
-    self.touchPosition = sf::Vector2i(static_cast<int>(position.x), static_cast<int>(position.y));
+    // save the touch position
+    if (index >= touchPositions.size())
+        touchPositions.resize(index + 1, sf::Vector2i(-1, -1));
+    touchPositions[index] = position;
 
+    // notify the event to the application window
     if (self.sfWindow)
     {
         sf::Event event;
-        event.type = sf::Event::MouseMoved;
-        event.mouseMove.x = position.x;
-        event.mouseMove.y = position.y;
+        event.type = sf::Event::TouchMoved;
+        event.touch.finger = index;
+        event.touch.x = position.x;
+        event.touch.y = position.y;
         sfWindow->pushEvent(event);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchEndAt:(CGPoint)position
+- (void)notifyTouchEnd:(unsigned int)index atPosition:(sf::Vector2i)position;
 {
-    self.touchPosition = sf::Vector2i(-1, -1);
+    // clear the touch position
+    if (index < touchPositions.size())
+        touchPositions[index] = sf::Vector2i(-1, -1);
 
+    // notify the event to the application window
     if (self.sfWindow)
     {
         sf::Event event;
-        event.type = sf::Event::MouseButtonReleased;
-        event.mouseButton.x = position.x;
-        event.mouseButton.y = position.y;
-        event.mouseButton.button = sf::Mouse::Left;
+        event.type = sf::Event::TouchEnded;
+        event.touch.finger = index;
+        event.touch.x = position.x;
+        event.touch.y = position.y;
         sfWindow->pushEvent(event);
     }
 }

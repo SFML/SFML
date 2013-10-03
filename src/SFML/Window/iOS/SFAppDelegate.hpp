@@ -56,36 +56,41 @@
 - (void)setVirtualKeyboardVisible:(bool)visible;
 
 ////////////////////////////////////////////////////////////
-/// \brief Get the current touch position
+/// \brief Get the current touch position for a given finger
+///
+/// \param index Finger index
 ///
 /// \return Current touch position, or (-1, -1) if no touch
 ///
 ////////////////////////////////////////////////////////////
-- (sf::Vector2i)getTouchPosition;
+- (sf::Vector2i)getTouchPosition:(unsigned int)index;
 
 ////////////////////////////////////////////////////////////
 /// \brief Receive an external touch begin notification
 ///
+/// \param index    Finger index
 /// \param position Position of the touch
 ///
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchBeginAt:(CGPoint)position;
+- (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position;
 
 ////////////////////////////////////////////////////////////
 /// \brief Receive an external touch move notification
 ///
+/// \param index    Finger index
 /// \param position Position of the touch
 ///
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchMoveAt:(CGPoint)position;
+- (void)notifyTouchMove:(unsigned int)index atPosition:(sf::Vector2i)position;
 
 ////////////////////////////////////////////////////////////
 /// \brief Receive an external touch end notification
 ///
+/// \param index    Finger index
 /// \param position Position of the touch
 ///
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchEndAt:(CGPoint)position;
+- (void)notifyTouchEnd:(unsigned int)index atPosition:(sf::Vector2i)position;
 
 ////////////////////////////////////////////////////////////
 /// \brief Receive an external character notification
