@@ -1,15 +1,15 @@
 
-XCODE 4 TEMPLATES FOR SFML 2
-============================
+XCODE 4 & 5 TEMPLATES FOR SFML 2
+================================
 
-These templates help you to easily create a new SFML 2 project for Xcode 4.
+These templates help you to easily create a new SFML 2 project for Xcode 4 or Xcode 5.
 
 
 
 Web Site
 --------
 
-You can find more resources and information on the official web site : http://www.sfml-dev.org/
+You can find more resources and information on the official web site: http://www.sfml-dev.org/
 
 
 
@@ -34,14 +34,15 @@ Features
 Prerequisites
 -------------
 
-Before installing the template, make sure you have installed :
+Before installing the template, make sure you have installed:
 
- - Xcode 4 (the templates were tested with Xcode 4.5.2)
+ - Xcode 4 or Xcode 5, up to date
+ - Installed Xcode's Command Line Tools
  - SFML 2, either as framework or dylibs binaries
 
-There is one constraint on the installation of SFML : the frameworks needs to be installed in /Library/Frameworks and the dylibs into /usr/local/lib. You don't need both but make sure they are in the correct folder.
+There is one constraint on the installation of SFML: the frameworks needs to be installed in /Library/Frameworks and the dylibs into /usr/local/lib. You don't need both but make sure they are in the correct folder.
 
-You should also be familiar with Xcode 4. If needed checkout this document : http://developer.apple.com/library/ios/#documentation/ToolsLanguages/Conceptual/Xcode4UserGuide/000-About_Xcode/about.html
+You should also be familiar with Xcode. If needed checkout this document: http://developer.apple.com/library/ios/#documentation/ToolsLanguages/Conceptual/Xcode4UserGuide/000-About_Xcode/about.html
 
 
 
@@ -49,7 +50,7 @@ Install
 -------
 
 If you are building SFML from sources you can set CMake's INSTALL_XCODE4_TEMPLATES variable to TRUE to install the templates automatically. Otherwise proceed as follow :
-  1. Make sure "~/Library/Developer/Xcode/Templates/" folder exists;
+  1. Make sure "/Library/Developer/Xcode/Templates/" folder exists;
   2. Copy "SFML" folder into the above folder.
 The 'install.sh' script in the same directory as this readme does that for you.
 
@@ -60,7 +61,7 @@ Usage
 
 To use these templates follow these steps :
 
- 1. open Xcode 4, 
+ 1. open Xcode, 
  2. select "create a new Xcode project" from the "Welcome to Xcode" window or select menus File > New > New Project, 
  3. select "SFML" subsection under "Mac OS X" on the left,
  4. then select either "SFML App", if you want an application bundle, or "SFML CLT", if you prefer a classic Unix executable,
@@ -73,29 +74,29 @@ Note : some settings are marked as "[ADVANCED]" in the wizard. If you're not sur
 Question & Answer
 -----------------
 
-  * I want to use Xcode 3. Can I use these templates anyway ?
+  * I want to use Xcode 3. Can I use these templates anyway?
 
     No, Xcode 3 and 4 don't have the same template system. Therefore these templates won't work with a older version of Xcode.
 
 
 
-  * I'm still using SFML 1.6. Can I use these templates anyway ?
+  * I'm still using SFML 1.6. Can I use these templates anyway?
 
     No, these templates were made for SFML 2 only.
 
 
 
-  * I would like to add/remove a module of SFML from my current project without creating a new project. How can I do that ?
+  * I would like to add/remove a module of SFML from my current project without creating a new project. How can I do that?
 
     1. select your project in the project navigator panel,
     2. select your project's target on the main area,
     3. go to the "Build Settings" tab,
     4. go down to the bottom,
-    5. set SFML_XXX variable, where XXX is the name of the module to add/remove, to "$(SFML_LINK_PREFIX)sfml-XXX$(SFML_LINK_SUFFIX)" to add it or to "" (nothing) to remove it.
+    5. set SFML_XXX variable, where XXX is the name of the module to add/remove, to "$(SFML_LINK_PREFIX) sfml-XXX$(SFML_LINK_SUFFIX)" to add it or to "" (nothing) to remove it.
 
 
 
-  * I changed my mind and would like to switch from dylibs to frameworks or vice versa. How can I do that ?
+  * I changed my mind and would like to switch from dylibs to frameworks or vice versa. How can I do that?
 
     1. select your project in the project navigator panel,
     2. select your project's target on the main area,
@@ -105,21 +106,21 @@ Question & Answer
 
 
 
-  * How to use/don't use debug dylibs ?
+  * How to use/don't use debug dylibs?
 
-    You can choose to use or not SFML debug binaries when creating a new project. However, if you have already created your project you can do the following :
+    You can choose to use or not SFML debug binaries when creating a new project. However, if you have already created your project you can do the following:
 
     1. select your project from the project navigator panel,
     2. select your project's target on the main area,
     3. go to the "Build Settings" tab,
     4. go down to the bottom,
-    5. set SFML_LINK_DYLIBS_SUFFIX_DEBUG to "-d" to use them or to "" (empty string) to use only release binaries.
+    5. set SFML_LINK_DYLIBS_SUFFIX to "-d" to use them or to "" (empty string) to use only release binaries.
 
 
 
-  * I want to use the static version of SFML. Is it possible ?
+  * I want to use the static version of SFML. Is it possible?
 
-    Short answer : Don't do that!
+    Short answer: Don't do that!
 
     We strongly recommend you to use either dylibs or frameworks on Mac OS X. Please refer to Apple documentation for information about static vs shared libraries debate.
 
@@ -127,7 +128,7 @@ Question & Answer
 
 
 
-  * I get strange linker error about std::string and other STL types. What shall I do ?
+  * I get strange linker error about std::string and other STL types. What shall I do?
 
     This probably means you're compiling your project against a different implementation of the STL than SFML. When you created the project, you might have chosen the wrong C++ compiler & standard library. You can update your project's build settings; more specifically the Compiler for C/C++/Objective-C, the C++ language Dialect and the C++ Standard Library. You can find more information in the getting started tutorial for Mac OS X on the official web site.
 
