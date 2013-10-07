@@ -36,17 +36,17 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void sleepImpl(Time time)
 {
-    // get the supported timer resolutions on this system
+    // Get the supported timer resolutions on this system
     TIMECAPS tc;
     timeGetDevCaps(&tc, sizeof(TIMECAPS));
 
-    // set the timer resolution to the minimum for the Sleep call
+    // Set the timer resolution to the minimum for the Sleep call
     timeBeginPeriod(tc.wPeriodMin);
 
-    // wait...
+    // Wait...
     ::Sleep(time.asMilliseconds());
 
-    // reset the timer resolution back to the system default
+    // Reset the timer resolution back to the system default
     timeEndPeriod(tc.wPeriodMin);
 }
 
