@@ -52,22 +52,33 @@ if(WINDOWS)
     
     # make sure that we use the Unicode version of the Win API functions
     add_definitions(-DUNICODE)
-elseif(LINUX)
+elseif(UNIX)
     set(PLATFORM_SRC
-        ${SRCROOT}/Linux/Display.cpp
-        ${SRCROOT}/Linux/Display.hpp
-        ${SRCROOT}/Linux/GlxContext.cpp
-        ${SRCROOT}/Linux/GlxContext.hpp
-        ${SRCROOT}/Linux/InputImpl.cpp
-        ${SRCROOT}/Linux/InputImpl.hpp
-        ${SRCROOT}/Linux/JoystickImpl.cpp
-        ${SRCROOT}/Linux/JoystickImpl.hpp
-        ${SRCROOT}/Linux/VideoModeImpl.cpp
-        ${SRCROOT}/Linux/WindowImplX11.cpp
-        ${SRCROOT}/Linux/WindowImplX11.hpp
+        ${SRCROOT}/Unix/Display.cpp
+        ${SRCROOT}/Unix/Display.hpp
+        ${SRCROOT}/Unix/GlxContext.cpp
+        ${SRCROOT}/Unix/GlxContext.hpp
+        ${SRCROOT}/Unix/InputImpl.cpp
+        ${SRCROOT}/Unix/InputImpl.hpp
+        ${SRCROOT}/Unix/VideoModeImpl.cpp
+        ${SRCROOT}/Unix/WindowImplX11.cpp
+        ${SRCROOT}/Unix/WindowImplX11.hpp
     )
-    source_group("linux" FILES ${PLATFORM_SRC})
-else() # MACOSX
+    if(LINUX)
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${SRCROOT}/Unix/JoystickImpl.cpp
+            ${SRCROOT}/Unix/JoystickImpl.hpp
+        )
+    elseif(FREEBSD)
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${SRCROOT}/FreeBSD/JoystickImpl.cpp
+            ${SRCROOT}/FreeBSD/JoystickImpl.hpp
+        )
+    endif()
+    source_group("unix" FILES ${PLATFORM_SRC})
+elseif(MACOSX)
     set(PLATFORM_SRC
         ${SRCROOT}/OSX/cpp_objc_conversion.h
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
@@ -126,6 +137,9 @@ if(WINDOWS)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} winmm gdi32)
 elseif(LINUX)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB})
+    if(FREEBSD)
+        set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} usbhid)
+    endif()
 elseif(MACOSX)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 endif()

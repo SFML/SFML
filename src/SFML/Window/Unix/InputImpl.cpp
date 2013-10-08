@@ -25,9 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Linux/InputImpl.hpp>
+#include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Window.hpp>
-#include <SFML/Window/Linux/Display.hpp>
+#include <SFML/Window/Unix/Display.hpp>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 

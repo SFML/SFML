@@ -43,7 +43,7 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-    #include <SFML/Window/Linux/GlxContext.hpp>
+    #include <SFML/Window/Unix/GlxContext.hpp>
     typedef sf::priv::GlxContext ContextType;
 
 #elif defined(SFML_SYSTEM_MACOS)

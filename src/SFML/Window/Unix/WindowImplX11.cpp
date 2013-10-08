@@ -26,14 +26,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
-#include <SFML/Window/Linux/WindowImplX11.hpp>
-#include <SFML/Window/Linux/GlxContext.hpp>
-#include <SFML/Window/Linux/Display.hpp>
+#include <SFML/Window/Unix/WindowImplX11.hpp>
+#include <SFML/Window/Unix/GlxContext.hpp>
+#include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
+#include <libgen.h>
 #include <unistd.h>
 #include <cstring>
 #include <sstream>
