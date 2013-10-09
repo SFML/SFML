@@ -339,6 +339,12 @@
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
 {
+    // Before resizing, remove resizeable mask to be able to resize
+    // beyond the desktop boundaries.
+    NSUInteger styleMask = [m_window styleMask];
+
+    [m_window setStyleMask:styleMask ^ NSResizableWindowMask];
+
     // Add titlebar height.
     NSRect frame = NSMakeRect([m_window frame].origin.x,
                               [m_window frame].origin.y,
@@ -346,6 +352,9 @@
                               height + [self titlebarHeight]);
 
     [m_window setFrame:frame display:YES];
+
+    // And restore the mask
+    [m_window setStyleMask:styleMask];
 }
 
 
