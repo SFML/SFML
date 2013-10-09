@@ -10,12 +10,12 @@ include(CMakeParseArguments)
 #   pre-link dependencies, we just "link" them so that the SFML samples can compile
 #   out-of-the-box (CMake forwards the dependencies automatically)
 macro(sfml_static_add_libraries target)
-    if(WINDOWS AND COMPILER_GCC)
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC)
         # Windows - gcc
         foreach(lib ${ARGN})
             if(NOT ${lib} MATCHES ".*/.*")
                 string(REGEX REPLACE "(.*)/bin/.*\\.exe" "\\1" STANDARD_LIBS_PATH "${CMAKE_CXX_COMPILER}")
-                if(COMPILER_GCC_W64)
+                if(SFML_COMPILER_GCC_W64)
                     set(lib "${STANDARD_LIBS_PATH}/${GCC_MACHINE}/lib/lib${lib}.a")
                 else()
                     set(lib "${STANDARD_LIBS_PATH}/lib/lib${lib}.a")
@@ -30,14 +30,14 @@ macro(sfml_static_add_libraries target)
                                COMMAND del *.o /f /q
                                VERBATIM)
         endforeach()
-    elseif(MSVC)
+    elseif(SFML_COMPILER_MSVC)
         # Visual C++
         set(LIBRARIES "")
         foreach(lib ${ARGN})
             if(NOT ${lib} MATCHES ".*\\.lib")
                 set(lib ${lib}.lib)
             endif()
-            if(MSVC_IDE AND MSVC_VERSION LESS 2010)
+            if(MSVC_IDE AND SFML_MSVC_VERSION LESS 2010)
                 # for Visual Studio projects < 2010, we must add double quotes
                 # around paths because they may contain spaces
                 set(LIBRARIES "${LIBRARIES} &quot\\;${lib}&quot\\;")
@@ -72,14 +72,14 @@ macro(sfml_add_library target)
 
     # adjust the output file prefix/suffix to match our conventions
     if(BUILD_SHARED_LIBS)
-        if(WINDOWS)
+        if(SFML_OS_WINDOWS)
             # include the major version number in Windows shared library names (but not import library names)
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
             set_target_properties(${target} PROPERTIES SUFFIX "-${VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
         else()
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
         endif()
-        if (WINDOWS AND COMPILER_GCC)
+        if (SFML_OS_WINDOWS AND SFML_COMPILER_GCC)
             # on Windows/gcc get rid of "lib" prefix for shared libraries,
             # and transform the ".dll.a" suffix into ".a" for import libraries
             set_target_properties(${target} PROPERTIES PREFIX "")
@@ -99,15 +99,15 @@ macro(sfml_add_library target)
     set_target_properties(${target} PROPERTIES FOLDER "SFML")
 
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(WINDOWS AND COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
-        if(NOT GCC_VERSION VERSION_LESS "4")
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
+        if(NOT SFML_GCC_VERSION VERSION_LESS "4")
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
         endif()
     endif()
 
     # if using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
     # (exported ones are explicitely marked)
-    if(NOT WINDOWS AND ((COMPILER_GCC AND NOT GCC_VERSION VERSION_LESS "4") OR (COMPILER_CLANG AND NOT CLANG_VERSION VERSION_LESS "3")))
+    if(NOT SFML_OS_WINDOWS AND ((SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4") OR (SFML_COMPILER_CLANG AND NOT SFML_CLANG_VERSION VERSION_LESS "3")))
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
     endif()
 
@@ -117,7 +117,7 @@ macro(sfml_add_library target)
     endif()
 
     # build frameworks or dylibs
-    if(MACOSX AND BUILD_SHARED_LIBS)
+    if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS)
         if(SFML_BUILD_FRAMEWORKS)
             # adapt target to build frameworks instead of dylibs
             set_target_properties(${target} PROPERTIES 
@@ -168,7 +168,7 @@ macro(sfml_add_example target)
     source_group("" FILES ${THIS_SOURCES})
 
     # create the target
-    if(THIS_GUI_APP AND WINDOWS)
+    if(THIS_GUI_APP AND SFML_OS_WINDOWS)
         add_executable(${target} WIN32 ${THIS_SOURCES})
         target_link_libraries(${target} sfml-main)
     else()
@@ -182,8 +182,8 @@ macro(sfml_add_example target)
     set_target_properties(${target} PROPERTIES FOLDER "Examples")
 
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(WINDOWS AND COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
-        if(NOT GCC_VERSION VERSION_LESS "4")
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
+        if(NOT SFML_GCC_VERSION VERSION_LESS "4")
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
         endif()
     endif()

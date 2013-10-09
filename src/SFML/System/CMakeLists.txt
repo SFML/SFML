@@ -39,7 +39,7 @@ set(SRC
 source_group("" FILES ${SRC})
 
 # add platform specific sources
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
         ${SRCROOT}/Win32/ClockImpl.cpp
         ${SRCROOT}/Win32/ClockImpl.hpp
@@ -71,13 +71,13 @@ endif()
 
 # build the list of external libraries to link
 set(SYSTEM_EXT_LIBS)
-if(UNIX)
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
     set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} pthread)
 endif()
-if(LINUX)
+if(SFML_OS_LINUX)
     set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} rt)
 endif()
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} winmm)
 endif()
 

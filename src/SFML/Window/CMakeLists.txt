@@ -36,7 +36,7 @@ set(SRC
 source_group("" FILES ${SRC})
 
 # add platform specific sources
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
@@ -52,7 +52,7 @@ if(WINDOWS)
     
     # make sure that we use the Unicode version of the Win API functions
     add_definitions(-DUNICODE)
-elseif(UNIX)
+elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     set(PLATFORM_SRC
         ${SRCROOT}/Unix/Display.cpp
         ${SRCROOT}/Unix/Display.hpp
@@ -64,13 +64,13 @@ elseif(UNIX)
         ${SRCROOT}/Unix/WindowImplX11.cpp
         ${SRCROOT}/Unix/WindowImplX11.hpp
     )
-    if(LINUX)
+    if(SFML_OS_LINUX)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
             ${SRCROOT}/Unix/JoystickImpl.cpp
             ${SRCROOT}/Unix/JoystickImpl.hpp
         )
-    elseif(FREEBSD)
+    elseif(SFML_OS_FREEBSD)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
             ${SRCROOT}/FreeBSD/JoystickImpl.cpp
@@ -78,7 +78,7 @@ elseif(UNIX)
         )
     endif()
     source_group("unix" FILES ${PLATFORM_SRC})
-elseif(MACOSX)
+elseif(SFML_OS_MACOSX)
     set(PLATFORM_SRC
         ${SRCROOT}/OSX/cpp_objc_conversion.h
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
@@ -123,7 +123,7 @@ endif()
 # find external libraries
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
-if(LINUX)
+if(SFML_OS_LINUX)
     find_package(X11 REQUIRED)
     if(NOT X11_Xrandr_FOUND)
         message(FATAL_ERROR "Xrandr library not found")
@@ -133,14 +133,14 @@ endif()
 
 # build the list of external libraries to link
 set(WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} winmm gdi32)
-elseif(LINUX)
+elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB})
-    if(FREEBSD)
+    if(SFML_OS_FREEBSD)
         set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} usbhid)
     endif()
-elseif(MACOSX)
+elseif(SFML_OS_MACOSX)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 endif()
 

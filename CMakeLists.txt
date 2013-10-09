@@ -37,7 +37,7 @@ sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples,
 sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
 # Mac OS X specific options
-if(MACOSX)
+if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
     
@@ -54,12 +54,12 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 # remove SL security warnings with Visual C++
-if(COMPILER_MSVC)
+if(SFML_COMPILER_MSVC)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif()
 
 # define an option for choosing between static and dynamic C runtime (Windows only)
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     sfml_set_option(SFML_USE_STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
 
     # the following combination of flags is not valid
@@ -68,7 +68,7 @@ if(WINDOWS)
     endif()
 
     # for VC++, we can apply it globally by modifying the compiler flags
-    if(COMPILER_MSVC AND SFML_USE_STATIC_STD_LIBS)
+    if(SFML_COMPILER_MSVC AND SFML_USE_STATIC_STD_LIBS)
         foreach(flag
                 CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
                 CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
@@ -83,7 +83,7 @@ endif()
 set(CMAKE_SKIP_BUILD_RPATH TRUE)
 
 # setup Mac OS X stuff
-if(MACOSX)
+if(SFML_OS_MACOSX)
     # SFML_BUILD_FRAMEWORKS needs two things :
     # first, it's available only for release
     #    (because cmake currently doesn't allow specifying a custom framework name so XXX-d is not possible)
@@ -103,7 +103,7 @@ if(MACOSX)
     endif()
 endif()
 
-if(LINUX)
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     if(BUILD_SHARED_LIBS)
         sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES FALSE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
         if(SFML_INSTALL_PKGCONFIG_FILES)
@@ -190,7 +190,7 @@ install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake
 install(FILES license.txt DESTINATION ${INSTALL_MISC_DIR})
 install(FILES readme.txt DESTINATION ${INSTALL_MISC_DIR})
 
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     if(ARCH_32BITS)
         install(FILES extlibs/bin/x86/libsndfile-1.dll DESTINATION bin)
         install(FILES extlibs/bin/x86/openal32.dll DESTINATION bin)
@@ -198,7 +198,7 @@ if(WINDOWS)
         install(FILES extlibs/bin/x64/libsndfile-1.dll DESTINATION bin)
         install(FILES extlibs/bin/x64/openal32.dll DESTINATION bin)
     endif()
-elseif(MACOSX)
+elseif(SFML_OS_MACOSX)
     install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
     install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
 
