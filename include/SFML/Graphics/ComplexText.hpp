@@ -47,6 +47,16 @@ public:
     ComplexText();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the text from a string, font and size
+    ///
+    /// \param string         Text assigned to the string
+    /// \param font           Font used to draw the string
+    /// \param characterSize  Base size of characters, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    ComplexText(const String& string, const Font& font, unsigned int characterSize = 30);
+    
+    ////////////////////////////////////////////////////////////
     /// \brief Set the direction of the language to be rendered
     ///
     /// Latin languages render left to right (LTR) languages

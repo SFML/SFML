@@ -46,6 +46,15 @@ m_script  (HB_SCRIPT_INVALID)
 void ComplexText::SetDirection(hb_direction_t dir)
 {
     m_dir = dir;
+    updateGeometry();
+}
+
+
+////////////////////////////////////////////////////////////
+ComplexText::ComplexText(const String& string, const Font& font, unsigned int characterSize) : 
+Text(string, font, characterSize)
+{
+    updateGeometry();
 }
 
 
@@ -53,6 +62,7 @@ void ComplexText::SetDirection(hb_direction_t dir)
 void ComplexText::SetScript(hb_script_t script)
 {
     m_script = script;
+    updateGeometry();
 }
 
 ////////////////////////////////////////////////////////////
