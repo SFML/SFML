@@ -160,6 +160,18 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     const Glyph& getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Retrieve a glyph of the font by its index
+    ///
+    /// \param index         Index of the glyph in the font
+    /// \param characterSize Reference character size
+    /// \param bold          Retrieve the bold version or the regular one?
+    ///
+    /// \return The glyph corresponding to \a index and \a characterSize
+    ///
+    ////////////////////////////////////////////////////////////
+    const Glyph& getGlyphByIndex(Uint32 index, unsigned int characterSize, bool bold) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the kerning offset of two glyphs
@@ -217,6 +229,7 @@ public :
     Font& operator =(const Font& right);
 
 private :
+    friend class ComplexText;
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a row of glyphs
@@ -302,8 +315,8 @@ private :
     void*                      m_face;        ///< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
     void*                      m_streamRec;   ///< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
     int*                       m_refCount;    ///< Reference counter used by implicit sharing
-    Info					   m_info;		  ///< Information about the font
-	mutable PageTable          m_pages;       ///< Table containing the glyphs pages by character size
+    Info                       m_info;        ///< Information about the font
+    mutable PageTable          m_pages;       ///< Table containing the glyphs pages by character size
     mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
 };
 
