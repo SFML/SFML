@@ -28,18 +28,18 @@ set(VERSION_PATCH 0)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
-if(NOT (IOS OR ANDROID))
+if(NOT (SFML_OS_IOS OR SFML_OS_ANDROID))
     sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 else()
-    if(IOS)
+    if(SFML_OS_IOS)
         set(BUILD_SHARED_LIBS FALSE)
-    elseif(ANDROID)
+    elseif(SFML_OS_ANDROID)
         set(BUILD_SHARED_LIBS TRUE)
     endif()
 endif()
 
 # add an option for building the examples
-if(NOT (IOS OR ANDROID))
+if(NOT (SFML_OS_IOS OR SFML_OS_ANDROID))
     sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
 else()
     set(SFML_BUILD_EXAMPLES FALSE)
@@ -64,7 +64,7 @@ if(SFML_OS_MACOSX)
 endif()
 
 # Android options
-if(ANDROID)
+if(SFML_OS_ANDROID)
     # force usage of the STL port
     set(ANDROID_USE_STLPORT TRUE)
 

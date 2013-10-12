@@ -40,7 +40,7 @@ elseif(SFML_OS_MACOSX)
 endif()
 
 # find external libraries
-if(NOT ANDROID)
+if(NOT SFML_OS_ANDROID)
     find_package(OpenAL REQUIRED)
     find_package(Sndfile REQUIRED)
     set(AUDIO_EXT_LIBS ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
@@ -56,7 +56,7 @@ endif()
 include_directories(${OPENAL_INCLUDE_DIR} ${SNDFILE_INCLUDE_DIR})
 
 # define the sfml-audio target
-if(NOT ANDROID)
+if(NOT SFML_OS_ANDROID)
 sfml_add_library(sfml-audio
                  SOURCES ${SRC}
                  DEPENDS sfml-system

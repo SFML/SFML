@@ -41,7 +41,7 @@ macro(sfml_add_library target)
 
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
     # except for Android which strips soversion suffixes
-    if(NOT ANDROID)
+    if(NOT SFML_OS_ANDROID)
         set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR})
         set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
     endif()
@@ -88,13 +88,13 @@ macro(sfml_add_library target)
     endif()
 
     # enable automatic reference counting on iOS
-    if (IOS)
+    if (SFML_OS_IOS)
         set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES)
     endif()
 
     # sfml-activity library is our bootstrap activity and must not depend on stlport_shared
     # (otherwise Android will fail to load it)
-    if (ANDROID)
+    if (SFML_OS_ANDROID)
         if (${target} MATCHES "sfml-activity")
             set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fpermissive)
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-landroid -llog")
