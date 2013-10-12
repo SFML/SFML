@@ -67,7 +67,7 @@ else()
         ${SRCROOT}/Unix/ThreadLocalImpl.hpp
     )
 
-    if(ANDROID)
+    if(SFML_OS_ANDROID)
         set(PLATFORM_SRC ${PLATFORM_SRC}
             ${SRCROOT}/Android/Activity.hpp
             ${SRCROOT}/Android/Activity.cpp
@@ -90,7 +90,7 @@ if(SFML_OS_WINDOWS)
 endif()
 
 # pthread is implicitly linked by the NDK
-if(ANDROID)
+if(SFML_OS_ANDROID)
     set(SYSTEM_EXT_LIBS "")
 endif()
 

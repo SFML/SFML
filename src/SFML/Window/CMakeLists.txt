@@ -65,6 +65,7 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
         ${SRCROOT}/Unix/VideoModeImpl.cpp
         ${SRCROOT}/Unix/WindowImplX11.cpp
         ${SRCROOT}/Unix/WindowImplX11.hpp
+    )
     if(SFML_OS_LINUX)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
@@ -117,7 +118,7 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/WindowImplDelegateProtocol.h
     )
     source_group("mac" FILES ${PLATFORM_SRC})
-elseif(IOS)
+elseif(SFML_OS_IOS)
     set(PLATFORM_SRC
         ${SRCROOT}/iOS/EaglContext.mm
         ${SRCROOT}/iOS/EaglContext.hpp
@@ -139,7 +140,7 @@ elseif(IOS)
         ${SRCROOT}/iOS/SFMain.mm
     )
     source_group("ios" FILES ${PLATFORM_SRC})
-elseif(ANDROID)
+elseif(SFML_OS_ANDROID)
     set(PLATFORM_SRC
         ${SRCROOT}/Android/WindowImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.cpp
