@@ -304,6 +304,7 @@ void RenderTarget::resetGLStates()
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+        glCheck(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
         m_cache.glStatesSet = true;
 
         // Apply the default SFML states
