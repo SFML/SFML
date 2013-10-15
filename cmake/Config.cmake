@@ -36,15 +36,17 @@ endif()
 # Note: on some platforms (OS X), CMAKE_COMPILER_IS_GNUCXX is true
 # even when CLANG is used, therefore the Clang test is done first
 if(CMAKE_CXX_COMPILER MATCHES ".*clang[+][+]" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-   # CMAKE_CXX_COMPILER_ID is an internal CMake variable subject to change,
-   # but there is no other way to detect CLang at the moment
-   set(SFML_COMPILER_CLANG 1)
-   execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "--version" OUTPUT_VARIABLE CLANG_VERSION_OUTPUT)
-   string(REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" SFML_CLANG_VERSION "${CLANG_VERSION_OUTPUT}")
+    # CMAKE_CXX_COMPILER_ID is an internal CMake variable subject to change,
+    # but there is no other way to detect CLang at the moment
+    set(SFML_COMPILER_CLANG 1)
+    execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "--version" OUTPUT_VARIABLE CLANG_VERSION_OUTPUT)
+    string(REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" SFML_CLANG_VERSION "${CLANG_VERSION_OUTPUT}")
 elseif(CMAKE_COMPILER_IS_GNUCXX)
     set(SFML_COMPILER_GCC 1)
     execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "-dumpversion" OUTPUT_VARIABLE GCC_VERSION_OUTPUT)
     string(REGEX REPLACE "([0-9]+\\.[0-9]+).*" "\\1" SFML_GCC_VERSION "${GCC_VERSION_OUTPUT}")
+    execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "--version" OUTPUT_VARIABLE GCC_COMPILER_VERSION)
+    string(REGEX MATCHALL ".*(tdm[64]*-[1-9]).*" SFML_COMPILER_GCC_TDM "${GCC_COMPILER_VERSION}")
     execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "-dumpmachine" OUTPUT_VARIABLE GCC_MACHINE)
     string(STRIP "${GCC_MACHINE}" GCC_MACHINE)
     if(${GCC_MACHINE} MATCHES ".*w64.*")
@@ -60,6 +62,8 @@ elseif(MSVC)
         set(SFML_MSVC_VERSION 2010)
     elseif(MSVC_VERSION EQUAL 1700)
         set(SFML_MSVC_VERSION 2011)
+    elseif(MSVC_VERSION EQUAL 1800)
+        set(SFML_MSVC_VERSION 2012)
     endif()
 else()
     message(FATAL_ERROR "Unsupported compiler")
