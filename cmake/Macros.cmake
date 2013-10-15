@@ -37,8 +37,8 @@ macro(sfml_static_add_libraries target)
             if(NOT ${lib} MATCHES ".*\\.lib")
                 set(lib ${lib}.lib)
             endif()
-            if(MSVC_IDE AND SFML_MSVC_VERSION LESS 2010)
-                # for Visual Studio projects < 2010, we must add double quotes
+            if(MSVC_IDE AND SFML_MSVC_VERSION LESS 10)
+                # for Visual Studio projects < 10, we must add double quotes
                 # around paths because they may contain spaces
                 set(LIBRARIES "${LIBRARIES} &quot\\;${lib}&quot\\;")
             else()
@@ -99,9 +99,11 @@ macro(sfml_add_library target)
     set_target_properties(${target} PROPERTIES FOLDER "SFML")
 
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
-        if(NOT SFML_GCC_VERSION VERSION_LESS "4")
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4")
+        if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
+        elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
+            set_target_properties(${target} PROPERTIES LINK_FLAGS "-shared-libgcc -shared-libstdc++")
         endif()
     endif()
 
@@ -182,9 +184,11 @@ macro(sfml_add_example target)
     set_target_properties(${target} PROPERTIES FOLDER "Examples")
 
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
-        if(NOT SFML_GCC_VERSION VERSION_LESS "4")
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4")
+        if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
+        elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
+            set_target_properties(${target} PROPERTIES LINK_FLAGS "-shared-libgcc -shared-libstdc++")
         endif()
     endif()
 
