@@ -110,13 +110,9 @@ endif()
 include_directories(${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
 
 # build the list of libraries to link
-# GL and X11 are only needed for shared build, as they are already linked by sfml-window
-set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY})
-if(BUILD_SHARED_LIBS)
-    set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${OPENGL_gl_LIBRARY})
-    if(SFML_OS_LINUX)
-        set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
-    endif()
+set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY} ${OPENGL_gl_LIBRARY})
+if(SFML_OS_LINUX)
+    set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
 endif()
 
 # add preprocessor symbols

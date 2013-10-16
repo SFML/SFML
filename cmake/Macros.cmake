@@ -1,57 +1,5 @@
 include(CMakeParseArguments)
 
-# this macro adds external dependencies to a static target,
-# compensating for the lack of a link step when building a static library.
-# every compiler has its own way of doing it:
-# - VC++ supports it directly through the static library flags
-# - MinGW/gcc doesn't support it, but as a static library is nothing more than an archive,
-#   we can simply merge the external dependencies to our generated target as a post-build step
-# - for other compilers and OSes, static build is not encouraged so we don't try to
-#   pre-link dependencies, we just "link" them so that the SFML samples can compile
-#   out-of-the-box (CMake forwards the dependencies automatically)
-macro(sfml_static_add_libraries target)
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC)
-        # Windows - gcc
-        foreach(lib ${ARGN})
-            if(NOT ${lib} MATCHES ".*/.*")
-                string(REGEX REPLACE "(.*)/bin/.*\\.exe" "\\1" STANDARD_LIBS_PATH "${CMAKE_CXX_COMPILER}")
-                if(SFML_COMPILER_GCC_W64)
-                    set(lib "${STANDARD_LIBS_PATH}/${GCC_MACHINE}/lib/lib${lib}.a")
-                else()
-                    set(lib "${STANDARD_LIBS_PATH}/lib/lib${lib}.a")
-                endif()
-            endif()
-            string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-            get_target_property(TARGET_FILENAME ${target} ${BUILD_TYPE}_LOCATION)
-            add_custom_command(TARGET ${target}
-                               POST_BUILD
-                               COMMAND ${CMAKE_AR} x ${lib}
-                               COMMAND ${CMAKE_AR} rcs ${TARGET_FILENAME} *.o
-                               COMMAND del *.o /f /q
-                               VERBATIM)
-        endforeach()
-    elseif(SFML_COMPILER_MSVC)
-        # Visual C++
-        set(LIBRARIES "")
-        foreach(lib ${ARGN})
-            if(NOT ${lib} MATCHES ".*\\.lib")
-                set(lib ${lib}.lib)
-            endif()
-            if(MSVC_IDE AND SFML_MSVC_VERSION LESS 10)
-                # for Visual Studio projects < 10, we must add double quotes
-                # around paths because they may contain spaces
-                set(LIBRARIES "${LIBRARIES} &quot\\;${lib}&quot\\;")
-            else()
-                set(LIBRARIES "${LIBRARIES} \"${lib}\"")
-            endif()
-        endforeach()
-        set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS ${LIBRARIES})
-    else()
-        # All other platforms
-        target_link_libraries(${target} ${ARGN})
-    endif()
-endmacro()
-
 # add a new target which is a SFML library
 # ex: sfml_add_library(sfml-graphics
 #                      SOURCES sprite.cpp image.cpp ...
@@ -138,14 +86,7 @@ macro(sfml_add_library target)
 
     # link the target to its external dependencies
     if(THIS_EXTERNAL_LIBS)
-        if(BUILD_SHARED_LIBS)
-            # in shared build, we use the regular linker commands
-            target_link_libraries(${target} ${THIS_EXTERNAL_LIBS})
-        else()
-            # in static build there's no link stage, but with some compilers it is possible to force
-            # the generated static library to directly contain the symbols from its dependencies
-            sfml_static_add_libraries(${target} ${THIS_EXTERNAL_LIBS})
-        endif()
+        target_link_libraries(${target} ${THIS_EXTERNAL_LIBS})
     endif()
 
     # add the install rule
