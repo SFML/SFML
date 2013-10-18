@@ -87,6 +87,8 @@ m_surface (EGL_NO_SURFACE)
     ActivityStates* states = getActivity(NULL);
     sf::Lock lock(states->mutex);
 
+    states->context = this;
+
     // Get the intialized EGL display
     m_display = states->display;
 
