@@ -3,9 +3,9 @@
 #  Requires cmake 2.6.3 or newer (2.8.5 or newer is recommended).
 #  See home page: http://code.google.com/p/android-cmake/
 #
-#  The file was forked from the OpenCV project. This version is maintained by 
+#  The file was forked from the OpenCV project. This version is maintained by
 #  the SFML project and can be found at http://github.com/LaurentGomila/SFML
-#  (cmake/toolchains/android.toolchain.cmake). It brings support for the 
+#  (cmake/toolchains/android.toolchain.cmake). It brings support for the
 #  latest NDK versions.
 #
 #  Usage Linux:
@@ -62,7 +62,7 @@
 #        "mips" - matches to the NDK ABI with the same name
 #            (not testes on real devices)
 #
-#    ANDROID_NATIVE_API_LEVEL=android-8 - level of Android API compile for.
+#    ANDROID_NATIVE_API_LEVEL=android-9 - level of Android API compile for.
 #      Option is read-only when standalone toolchain used.
 #
 #    ANDROID_FORCE_ARM_BUILD=OFF - set true to generate 32-bit ARM instructions
@@ -232,7 +232,7 @@ set( ANDROID_SUPPORTED_ABIS_arm "armeabi-v7a;armeabi;armeabi-v7a with NEON;armea
 set( ANDROID_SUPPORTED_ABIS_x86 "x86" )
 set( ANDROID_SUPPORTED_ABIS_mipsel "mips" )
 
-set( ANDROID_DEFAULT_NDK_API_LEVEL 8 )
+set( ANDROID_DEFAULT_NDK_API_LEVEL 9 )
 set( ANDROID_DEFAULT_NDK_API_LEVEL_x86 9 )
 set( ANDROID_DEFAULT_NDK_API_LEVEL_mips 9 )
 
@@ -1081,6 +1081,8 @@ if( ANDROID_SET_OBSOLETE_VARIABLES )
  set( ARMEABI_NDK_NAME "${ANDROID_NDK_ABI_NAME}" )
 endif()
 
+# don't leave libs/ directories in source directory
+set(LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_LIBRARY_DIR})
 
 # Variables controlling behavior or set by cmake toolchain:
 #   ANDROID_ABI : "armeabi-v7a" (default), "armeabi", "armeabi-v7a with NEON", "armeabi-v7a with VFPV3", "armeabi-v6 with VFP", "x86", "mips"
