@@ -66,10 +66,10 @@ void Thread::wait()
 
 
 ////////////////////////////////////////////////////////////
-bool Thread::poll()
+bool Thread::isRunning()
 {
     if (m_impl)
-        return m_impl->poll();
+        return m_impl->isRunning();
     else
         return false;
 }

@@ -164,11 +164,9 @@ public :
     /// This function will check if the thread is running.
     /// If it is, it returns true, if it is not,
     /// it returns false.
-    /// There is no need to call wait() if this function
-    /// returns false.
     ///
     ////////////////////////////////////////////////////////////
-    bool poll();
+    bool isRunning();
 
     ////////////////////////////////////////////////////////////
     /// \brief Terminate the thread

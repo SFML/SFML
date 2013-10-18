@@ -65,7 +65,7 @@ void ThreadImpl::wait()
 }
 
 ////////////////////////////////////////////////////////////
-bool ThreadImpl::poll()
+bool ThreadImpl::isRunning()
 {
     if (m_thread)
     {

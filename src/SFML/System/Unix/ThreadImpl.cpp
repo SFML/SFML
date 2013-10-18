@@ -38,18 +38,16 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 ThreadImpl::ThreadImpl(Thread* owner) :
-m_isCreated(false),
-m_isRunning(false)
+m_isCreated(true),
+m_isRunning(true)
 {
-    // We must take the lock early, or we could set m_isRunning to true, after the function has died instantly.
-    Lock theLock(m_mutex);
-
     m_isCreated = pthread_create(&m_thread, NULL, &ThreadImpl::entryPoint, owner) == 0;
 
     if (!m_isCreated)
+    {
         std::cerr << "Failed to create thread" << std::endl;
-    else
-        m_isRunning = true;
+        m_isRunning = false;
+    }
 }
 
 
@@ -64,7 +62,7 @@ void ThreadImpl::wait()
 }
 
 ////////////////////////////////////////////////////////////
-bool ThreadImpl::poll()
+bool ThreadImpl::isRunning()
 {
     bool ret;
     {
