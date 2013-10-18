@@ -41,15 +41,13 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplAndroid::WindowImplAndroid(WindowHandle handle) :
-m_context (NULL)
+WindowImplAndroid::WindowImplAndroid(WindowHandle handle)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-WindowImplAndroid::WindowImplAndroid(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings) :
-m_context (NULL)
+WindowImplAndroid::WindowImplAndroid(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings)
 {
 }
 
@@ -93,12 +91,12 @@ void WindowImplAndroid::processEvents()
         }
         else if (tempEvent.type == Event::GainedFocus)
         {
-            m_context->createSurface(states->window);
+            states->context->createSurface(states->window);
             states->updated = true;
         }
         else if (tempEvent.type == Event::LostFocus)
         {
-            m_context->destroySurface();
+            states->context->destroySurface();
             states->updated = true;
         }
 
