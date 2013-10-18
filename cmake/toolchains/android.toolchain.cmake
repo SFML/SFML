@@ -365,23 +365,26 @@ if( ANDROID_FORBID_SYGWIN )
 endif()
 
 # detect current host platform
-
+set( ANDROID_NDK_HOST_SYSTEM_ARCH "x86" )
 set( TOOL_OS_SUFFIX "" )
 if( CMAKE_HOST_APPLE )
  set( ANDROID_NDK_HOST_SYSTEM_NAME "darwin-x86" )
  if(NOT EXISTS "${ANDROID_NDK}/toolchains/arm-linux-androideabi-4.6/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}")
   set( ANDROID_NDK_HOST_SYSTEM_NAME "darwin-x86_64" )
+  set( ANDROID_NDK_HOST_SYSTEM_ARCH "x64" )
  endif()
 elseif( CMAKE_HOST_WIN32 )
  set( ANDROID_NDK_HOST_SYSTEM_NAME "windows" )
  set( TOOL_OS_SUFFIX ".exe" )
  if(NOT EXISTS "${ANDROID_NDK}/toolchains/arm-linux-androideabi-4.6/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}")
   set( ANDROID_NDK_HOST_SYSTEM_NAME "windows-x86_64" )
+  set( ANDROID_NDK_HOST_SYSTEM_ARCH "x64" )
  endif()
 elseif( CMAKE_HOST_UNIX )
  set( ANDROID_NDK_HOST_SYSTEM_NAME "linux-x86" )
  if(NOT EXISTS "${ANDROID_NDK}/toolchains/arm-linux-androideabi-4.6/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}")
   set( ANDROID_NDK_HOST_SYSTEM_NAME "linux-x86_64" )
+  set( ANDROID_NDK_HOST_SYSTEM_ARCH "x64" )
  endif()
 else()
  message( FATAL_ERROR "Cross-compilation on your platform is not supported by this cmake toolchain" )
@@ -975,9 +978,13 @@ set( ANDROID_LINKER_FLAGS "${ANDROID_LINKER_FLAGS}" CACHE INTERNAL "Extra Androi
 set( CMAKE_CXX_FLAGS           "${ANDROID_CXX_FLAGS} ${CMAKE_CXX_FLAGS}" )
 set( CMAKE_C_FLAGS             "${ANDROID_CXX_FLAGS} ${CMAKE_C_FLAGS}" )
 if( MIPS AND BUILD_WITH_ANDROID_NDK )
- set( CMAKE_SHARED_LINKER_FLAGS "-Wl,-T,${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/mipself.xsc ${ANDROID_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS}" )
- set( CMAKE_MODULE_LINKER_FLAGS "-Wl,-T,${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/mipself.xsc ${ANDROID_LINKER_FLAGS} ${CMAKE_MODULE_LINKER_FLAGS}" )
- set( CMAKE_EXE_LINKER_FLAGS    "-Wl,-T,${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/mipself.x ${ANDROID_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}" )
+ set( CMAKE_SHARED_LINKER_FLAGS "-Wl,-T,${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}/mipsel-linux-android/lib/ldscripts/elf32btsmip.xsc ${ANDROID_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS}" )
+ set( CMAKE_MODULE_LINKER_FLAGS "-Wl,-T,${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}/mipsel-linux-android/lib/ldscripts/elf32btsmip.xsc ${ANDROID_LINKER_FLAGS} ${CMAKE_MODULE_LINKER_FLAGS}" )
+ set( CMAKE_EXE_LINKER_FLAGS    "-Wl,-T,${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}/mipsel-linux-android/lib/ldscripts/elf32btsmip.x ${ANDROID_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}" )
+ # todo: should we use elf64btsmip.xsc on x64 host platforms ?
+ #set( CMAKE_SHARED_LINKER_FLAGS "-Wl,-T,${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}/mipsel-linux-android/lib/ldscripts/elf64btsmip.xsc ${ANDROID_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS}" )
+ #set( CMAKE_MODULE_LINKER_FLAGS "-Wl,-T,${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}/mipsel-linux-android/lib/ldscripts/elf64btsmip.xsc ${ANDROID_LINKER_FLAGS} ${CMAKE_MODULE_LINKER_FLAGS}" )
+ #set( CMAKE_EXE_LINKER_FLAGS    "-Wl,-T,${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}/mipsel-linux-android/lib/ldscripts/elf64btsmip.x ${ANDROID_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}" )
 else()
  set( CMAKE_SHARED_LINKER_FLAGS "${ANDROID_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS}" )
  set( CMAKE_MODULE_LINKER_FLAGS "${ANDROID_LINKER_FLAGS} ${CMAKE_MODULE_LINKER_FLAGS}" )
@@ -1119,6 +1126,7 @@ set(LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_LIBRARY_DIR})
 #   BUILD_WITH_ANDROID_NDK : TRUE if NDK is used
 #   BUILD_WITH_STANDALONE_TOOLCHAIN : TRUE if standalone toolchain is used
 #   ANDROID_NDK_HOST_SYSTEM_NAME : "windows", "linux-x86" or "darwin-x86" depending on host platform
+#   ANDROID_NDK_HOST_SYSTEM_ARCH : "x86", "x64" depending on host platform
 #   ANDROID_NDK_ABI_NAME : "armeabi", "armeabi-v7a" or "x86" depending on ANDROID_ABI
 #   ANDROID_ARCH_NAME : "arm" or "x86" or "mips" depending on ANDROID_ABI
 #   TOOL_OS_SUFFIX : "" or ".exe" depending on host platform
