@@ -159,6 +159,18 @@ public :
     void wait();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Test if the thread is running without blocking
+    ///
+    /// This function will check if the thread is running.
+    /// If it is, it returns true, if it is not,
+    /// it returns false.
+    /// There is no need to call wait() if this function
+    /// returns false.
+    ///
+    ////////////////////////////////////////////////////////////
+    bool poll();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Terminate the thread
     ///
     /// This function immediately stops the thread, without waiting

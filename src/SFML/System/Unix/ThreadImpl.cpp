@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Unix/ThreadImpl.hpp>
 #include <SFML/System/Thread.hpp>
+#include <SFML/System/Lock.hpp>
 #include <iostream>
 #include <cassert>
 
@@ -37,31 +38,56 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 ThreadImpl::ThreadImpl(Thread* owner) :
-m_isActive(true)
+m_isCreated(false),
+m_isRunning(false)
 {
-    m_isActive = pthread_create(&m_thread, NULL, &ThreadImpl::entryPoint, owner) == 0;
+    // We must take the lock early, or we could set m_isRunning to true, after the function has died instantly.
+    Lock theLock(m_mutex);
 
-    if (!m_isActive)
+    m_isCreated = pthread_create(&m_thread, NULL, &ThreadImpl::entryPoint, owner) == 0;
+
+    if (!m_isCreated)
         std::cerr << "Failed to create thread" << std::endl;
+    else
+        m_isRunning = true;
 }
 
 
 ////////////////////////////////////////////////////////////
 void ThreadImpl::wait()
 {
-    if (m_isActive)
+    if (m_isCreated)
     {
         assert(pthread_equal(pthread_self(), m_thread) == 0); // A thread cannot wait for itself!
         pthread_join(m_thread, NULL);
     }
 }
 
+////////////////////////////////////////////////////////////
+bool ThreadImpl::poll()
+{
+    bool ret;
+    {
+        Lock theLock(m_mutex);
+        ret = m_isRunning;
+    }
+
+    if (!ret)
+        wait();
+
+    return ret;        
+}
+
 
 ////////////////////////////////////////////////////////////
 void ThreadImpl::terminate()
 {
-    if (m_isActive)
+    if (m_isCreated)
+    {
         pthread_cancel(m_thread);
+        // No lock needed here, the thread is dead.
+        m_isRunning = false;
+    }
 }
 
 
@@ -76,6 +102,10 @@ void* ThreadImpl::entryPoint(void* userData)
 
     // Forward to the owner
     owner->run();
+
+    // Note that we have finished.
+    Lock theLock(owner->m_impl->m_mutex);
+    owner->m_impl->m_isRunning = false;
 
     return NULL;
 }

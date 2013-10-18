@@ -66,6 +66,16 @@ void Thread::wait()
 
 
 ////////////////////////////////////////////////////////////
+bool Thread::poll()
+{
+    if (m_impl)
+        return m_impl->poll();
+    else
+        return false;
+}
+
+
+////////////////////////////////////////////////////////////
 void Thread::terminate()
 {
     if (m_impl)

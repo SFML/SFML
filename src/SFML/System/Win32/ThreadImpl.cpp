@@ -64,6 +64,19 @@ void ThreadImpl::wait()
     }
 }
 
+////////////////////////////////////////////////////////////
+bool ThreadImpl::poll()
+{
+    if (m_thread)
+    {
+        assert(m_threadId != GetCurrentThreadId()); // A thread cannot wait for itself!
+        if(WaitForSingleObject(m_thread, 0))
+            return true;
+    }
+
+    return false;
+}
+
 
 ////////////////////////////////////////////////////////////
 void ThreadImpl::terminate()
