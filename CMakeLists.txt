@@ -68,13 +68,9 @@ if(SFML_OS_ANDROID)
     # force usage of the STL port
     set(ANDROID_USE_STLPORT TRUE)
 
-    # make sure there's an EGL implementation available
-    if (${ANDROID_ABI} MATCHES "armeabi" AND ${ANDROID_NATIVE_API_LEVEL} LESS 3)
-        message(FATAL_ERROR "API level must be equal or greater than 3 for ARM arches")
-    endif()
-
-    if ((${ANDROID_ABI} MATCHES "x86" OR ${ANDROID_ABI} MATCHES "mips") AND ${ANDROID_NATIVE_API_LEVEL} LESS 9)
-        message(FATAL_ERROR "API level must be equal or greater than 9 for x86 and MIPS arches")
+    # make sure there's the android library available
+    if (${ANDROID_NATIVE_API_LEVEL} LESS 9)
+        message(FATAL_ERROR "API level must be equal or greater than 9")
     endif()
 
     # install everything in $NDK/sources/ because this path is appended by the NDK (convenient)
@@ -282,8 +278,11 @@ elseif(SFML_OS_IOS)
 
 elseif(SFML_OS_ANDROID)
 
-    install(DIRECTORY extlibs/android/extlibs/lib/${ANDROID_ABI} DESTINATION extlibs/lib)
-    install(FILES extlibs/android/extlibs/Android.mk DESTINATION extlibs)
+    # install extlibs
+    install(DIRECTORY extlibs/libs-android/${ANDROID_ABI} DESTINATION extlibs/lib)
+    install(FILES extlibs/Android.mk DESTINATION extlibs)
+
+    # install Android.mk so the NDK knows how to set up SFML
     install(FILES src/SFML/Android.mk DESTINATION .)
 
 endif()
