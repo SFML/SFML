@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Mutex.hpp>
 #include <pthread.h>
 
 
@@ -60,6 +61,12 @@ public :
     void wait();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Test if the thread is running without blocking
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isRunning();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Terminate the thread
     ///
     ////////////////////////////////////////////////////////////
@@ -80,8 +87,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    pthread_t m_thread;   ///< pthread thread instance
-    bool      m_isActive; ///< Thread state (active or inactive)
+    pthread_t m_thread;    ///< pthread thread instance
+    bool      m_isCreated; ///< Has the thread started succesfully
+    Mutex     m_mutex;     ///< Mutex to control access to m_isRunning
+    bool      m_isRunning; ///< Is the thread currently running
 };
 
 } // namespace priv

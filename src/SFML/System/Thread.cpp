@@ -66,6 +66,16 @@ void Thread::wait()
 
 
 ////////////////////////////////////////////////////////////
+bool Thread::isRunning()
+{
+    if (m_impl)
+        return m_impl->isRunning();
+    else
+        return false;
+}
+
+
+////////////////////////////////////////////////////////////
 void Thread::terminate()
 {
     if (m_impl)
