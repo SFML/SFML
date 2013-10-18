@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Android/EglContext.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <android/native_activity.h>
 #include <android/configuration.h>
@@ -54,6 +55,7 @@ struct ActivityStates
     ASensorEventQueue* sensorEventQueue;
 
     EGLDisplay display;
+    EglContext* context;
 
     void* savedState;
     size_t savedStateSize;
