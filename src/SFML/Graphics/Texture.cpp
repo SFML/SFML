@@ -267,17 +267,22 @@ Image Texture::copyToImage() const
     std::vector<Uint8> pixels(m_size.x * m_size.y * 4);
 
 #ifdef SFML_OPENGL_ES
-    
+
     // OpenGL ES doesn't have the glGetTexImage function, the only way to read
     // from a texture is to bind it to a FBO and use glReadPixels
     GLuint frameBuffer = 0;
     glCheck(glGenFramebuffers(1, &frameBuffer));
     if (frameBuffer)
     {
+        GLint previousFrameBuffer;
+        glCheck(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFrameBuffer));
+
         glCheck(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
         glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
         glCheck(glReadPixels(0, 0, m_size.x, m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]));
         glCheck(glDeleteFramebuffers(1, &frameBuffer));
+
+        glCheck(glBindFramebuffer(GL_FRAMEBUFFER, previousFrameBuffer));
     }
 
 #else

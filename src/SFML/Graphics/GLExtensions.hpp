@@ -48,6 +48,7 @@
     #define glFramebufferTexture2D           glFramebufferTexture2DOES
     #define glCheckFramebufferStatus         glCheckFramebufferStatusOES
     #define GL_FRAMEBUFFER                   GL_FRAMEBUFFER_OES
+    #define GL_FRAMEBUFFER_BINDING           GL_FRAMEBUFFER_BINDING_OES
     #define GL_RENDERBUFFER                  GL_RENDERBUFFER_OES
     #define GL_COLOR_ATTACHMENT0             GL_COLOR_ATTACHMENT0_OES
     #define GL_DEPTH_ATTACHMENT              GL_DEPTH_ATTACHMENT_OES
@@ -75,6 +76,7 @@
     #define glFramebufferTexture2D           glFramebufferTexture2DEXT
     #define glCheckFramebufferStatus         glCheckFramebufferStatusEXT
     #define GL_FRAMEBUFFER                   GL_FRAMEBUFFER_EXT
+    #define GL_FRAMEBUFFER_BINDING           GL_FRAMEBUFFER_BINDING_EXT
     #define GL_RENDERBUFFER                  GL_RENDERBUFFER_EXT
     #define GL_COLOR_ATTACHMENT0             GL_COLOR_ATTACHMENT0_EXT
     #define GL_DEPTH_ATTACHMENT              GL_DEPTH_ATTACHMENT_EXT
