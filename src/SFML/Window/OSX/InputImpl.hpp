@@ -56,6 +56,14 @@ public :
     static bool isKeyPressed(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the virtual keyboard
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setVirtualKeyboardVisible(bool visible);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Check if a mouse button is pressed
     ///
     /// \param button Button to check

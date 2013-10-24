@@ -157,6 +157,13 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
+void InputImpl::setVirtualKeyboardVisible(bool visible)
+{
+    // Not applicable
+}
+
+
+////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     int vkey = 0;
