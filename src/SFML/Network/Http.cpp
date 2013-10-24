@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <iterator>
 #include <sstream>
+#include <limits>
 
 
 namespace
@@ -231,9 +232,48 @@ void Http::Response::parse(const std::string& data)
     }
 
     // Ignore the end of the first line
-    in.ignore(10000, '\n');
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     // Parse the other lines, which contain fields, one by one
+    parseFields(in);
+
+    m_body.clear();
+
+    // Determine whether the transfer is chunked
+    if (toLower(getField("transfer-encoding")) != "chunked")
+    {
+        // Not chunked - just read everything at once
+        std::copy(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>(), std::back_inserter(m_body));
+    }
+    else
+    {
+        // Chunked - have to read chunk by chunk
+        std::size_t length;
+
+        // Read all chunks, identified by a chunk-size not being 0
+        while (in >> std::hex >> length)
+        {
+            // Drop the rest of the line (chunk-extension)
+            in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            // Copy the actual content data
+            std::istreambuf_iterator<char> it(in);
+            for (std::size_t i = 0; i < length; i++)
+                m_body.push_back(*it++);
+        }
+
+        // Drop the rest of the line (chunk-extension)
+        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        // Read all trailers (if present)
+        parseFields(in);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Http::Response::parseFields(std::istream &in)
+{
     std::string line;
     while (std::getline(in, line) && (line.size() > 2))
     {
@@ -252,10 +292,6 @@ void Http::Response::parse(const std::string& data)
             m_fields[toLower(field)] = value;
         }
     }
-
-    // Finally extract the body
-    m_body.clear();
-    std::copy(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>(), std::back_inserter(m_body));
 }
 
 
