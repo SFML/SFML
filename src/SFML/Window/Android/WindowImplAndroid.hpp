@@ -162,6 +162,28 @@ protected :
 private:
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert a Android key to SFML key code
+    ///
+    /// \param symbol Android key to convert
+    ///
+    /// \return Corrsponding SFML key code
+    ///
+    ////////////////////////////////////////////////////////////
+    static Keyboard::Key androidKeyToSF(int32_t key);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Process messages from the looper associated with the main thread
+    ///
+    /// \param fd     File descriptor
+    /// \param events Bitmask of the poll events that were triggered
+    /// \param data   Data pointer supplied
+    ///
+    /// \return Whether it should continue (1) or unregister the callback (0)
+    ///
+    ////////////////////////////////////////////////////////////
+    static int processEvent(int fd, int events, void* data);
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     // Cache the width and height, as calls to ANativeWindow_getWidth/Height can be slow
