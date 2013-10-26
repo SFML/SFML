@@ -33,9 +33,10 @@
 #include <SFML/System/Mutex.hpp>
 #include <android/native_activity.h>
 #include <android/configuration.h>
-#include <android/sensor.h>
-#include <vector>
 #include <EGL/egl.h>
+#include <vector>
+#include <map>
+
 
 namespace sf
 {
@@ -60,9 +61,12 @@ struct ActivityStates
     void* savedState;
     size_t savedStateSize;
 
-    sf::Mutex mutex;
+    Mutex mutex;
 
-    std::vector<sf::Event> pendingEvents;
+    std::vector<Event> pendingEvents;
+    int (*processEvent)(int fd, int events, void* data);
+
+    std::map<int, Vector2i> touchEvents;
 
     bool mainOver;
 

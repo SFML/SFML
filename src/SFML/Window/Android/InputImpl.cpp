@@ -141,7 +141,7 @@ Vector2i InputImpl::getMousePosition()
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 {
-    return Vector2i(0, 0);
+    return getMousePosition();
 }
 
 
@@ -162,24 +162,31 @@ void InputImpl::setMousePosition(const Vector2i& position, const Window& relativ
 ////////////////////////////////////////////////////////////
 bool InputImpl::isTouchDown(unsigned int finger)
 {
-    // To implement
-    return false;
+    ALooper_pollAll(0, NULL, NULL, NULL);
+
+    priv::ActivityStates* states = priv::getActivity(NULL);
+    Lock lock(states->mutex);
+
+    return states->touchEvents.find(finger) != states->touchEvents.end();
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getTouchPosition(unsigned int finger)
 {
-    // To implement
-    return Vector2i();
+    ALooper_pollAll(0, NULL, NULL, NULL);
+
+    priv::ActivityStates* states = priv::getActivity(NULL);
+    Lock lock(states->mutex);
+
+    return states->touchEvents.find(finger)->second;
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getTouchPosition(unsigned int finger, const Window& relativeTo)
 {
-    // To implement
-    return Vector2i();
+    return getTouchPosition(finger);
 }
 
 } // namespace priv
