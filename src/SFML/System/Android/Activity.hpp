@@ -51,10 +51,6 @@ struct ActivityStates
     AInputQueue*    inputQueue;
     AConfiguration* config;
 
-    ASensorManager* sensorManager;
-    const ASensor* accelerometerSensor;
-    ASensorEventQueue* sensorEventQueue;
-
     EGLDisplay display;
     EglContext* context;
 
@@ -65,6 +61,9 @@ struct ActivityStates
 
     std::vector<Event> pendingEvents;
     int (*processEvent)(int fd, int events, void* data);
+
+    void (*enableSensors)();
+    void (*disableSensors)();
 
     std::map<int, Vector2i> touchEvents;
 
