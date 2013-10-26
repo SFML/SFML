@@ -63,7 +63,7 @@ namespace sf
 
 #elif defined(SFML_SYSTEM_ANDROID)
 
-    // Window handle doesn't exist on Android
+    // Window handle is ANativeWindow (void*) on Android
     typedef void* WindowHandle;
 
 #endif
