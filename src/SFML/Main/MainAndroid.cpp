@@ -67,13 +67,9 @@ static void initializeMain(ActivityStates* states)
     ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
     states->looper = looper;
 
-    // Prepare the sensor event queue
-    states->sensorEventQueue = ASensorManager_createEventQueue(states->sensorManager, states->looper, 2, NULL, (void*)&sf::priv::processSensorEvents);
-
     // Get the default configuration
     states->config = AConfiguration_new();
     AConfiguration_fromAssetManager(states->config, states->activity->assetManager);
-
 }
 
 static void terminateMain(ActivityStates* states)
@@ -277,23 +273,9 @@ static void onWindowFocusChanged(ANativeActivity* activity, int focused)
     // Retrieve our activity states from the activity instance
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
 
-    if (focused)
-    {
-        // We start monitoring the accelerometer with 60 events per second
-        if (states->accelerometerSensor != NULL)
-        {
-            ASensorEventQueue_enableSensor(states->sensorEventQueue, states->accelerometerSensor);
-            ASensorEventQueue_setEventRate(states->sensorEventQueue, states->accelerometerSensor, (1000L/60)*1000);
-        }
-    }
-    else
-    {
-        // We stop monitoring the accelerometer (it avoids consuming battery)
-        if (states->accelerometerSensor != NULL)
-        {
-            ASensorEventQueue_disableSensor(states->sensorEventQueue, states->accelerometerSensor);
-        }
-    }
+    // Disable or enable sensors according the window focused state
+    if (states->enableSensors && states->disableSensors)
+        focused ? states->enableSensors() : states->disableSensors();
 }
 
 static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
@@ -344,10 +326,6 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     states->looper     = NULL;
     states->inputQueue = NULL;
     states->config     = NULL;
-
-    states->sensorManager = ASensorManager_getInstance();
-    states->accelerometerSensor = ASensorManager_getDefaultSensor(states->sensorManager, ASENSOR_TYPE_ACCELEROMETER);
-    states->sensorEventQueue = NULL;
 
     states->display = eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 
