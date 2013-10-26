@@ -61,7 +61,10 @@ WindowImplAndroid::~WindowImplAndroid()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplAndroid::getSystemHandle() const
 {
-    return NULL;
+    ActivityStates* states = getActivity(NULL);
+    sf::Lock lock(states->mutex);
+
+    return states->window;
 }
 
 
