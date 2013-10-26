@@ -30,10 +30,6 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
-#ifdef SFML_SYSTEM_ANDROID
-    #include <SFML/Window/Android/WindowImplAndroid.hpp>
-    #include <SFML/Window/Android/EglContext.hpp>
-#endif
 
 
 namespace
