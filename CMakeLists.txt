@@ -112,7 +112,7 @@ if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
                     "tools/pkg-config/sfml-${sfml_module}.pc.in"
                     "tools/pkg-config/sfml-${sfml_module}.pc"
                     @ONLY)
-	    INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
+                INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
                     DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
             endforeach()
         endif()
