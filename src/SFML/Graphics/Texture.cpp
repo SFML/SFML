@@ -470,7 +470,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
             if (texture->m_pixelsFlipped)
             {
                 matrix[5] = -matrix[5];
-                matrix[13] = static_cast<float>(texture->m_size.y / texture->m_actualSize.y);
+                matrix[13] = static_cast<float>(texture->m_size.y) / texture->m_actualSize.y;
             }
 
             // Load the matrix
