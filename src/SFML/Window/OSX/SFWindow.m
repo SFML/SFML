@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -44,6 +44,7 @@
     return YES;
 }
 
+
 ////////////////////////////////////////////////////////
 -(void)keyDown:(NSEvent *)theEvent
 {
@@ -54,6 +55,19 @@
     // Consider overriding NSResponder -keyDown: message in a Cocoa view/window
     // that contains a SFML rendering area. Doing so will prevent a system
     // alert to be thrown everytime the user presses a key.
+}
+
+
+@end
+
+
+@implementation NSWindow (SFML)
+
+////////////////////////////////////////////////////////////
+-(id)sfClose
+{
+    [self performClose:nil];
+    return nil;
 }
 
 @end

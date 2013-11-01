@@ -26,24 +26,17 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
+
 
 ////////////////////////////////////////////////////////////
-/// Predefine some classes
-////////////////////////////////////////////////////////////
-@class SFOpenGLView;
-
-////////////////////////////////////////////////////////////
-/// Implementation of WindowImplDelegateProtocol for view managment.
+/// \brief Process some application specific events
 ///
 ////////////////////////////////////////////////////////////
+@interface SFApplicationDelegate : NSObject <NSApplicationDelegate>
 
-@interface SFViewController : NSObject <WindowImplDelegateProtocol> {
-    NSView*                     m_view;
-    SFOpenGLView*               m_oglView;
-    sf::priv::WindowImplCocoa*  m_requester;
-}
-
--(id)initWithView:(NSView *)view;
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication;
 
 @end

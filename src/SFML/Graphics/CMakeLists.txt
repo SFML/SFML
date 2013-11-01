@@ -84,14 +84,14 @@ set(STB_SRC
 source_group("stb_image" FILES ${STB_SRC})
 
 # let CMake know about our additional graphics libraries paths (on Windows and OSX)
-if(WINDOWS OR MACOSX)
+if(SFML_OS_WINDOWS OR SFML_OS_MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
 endif()
 
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows/freetype")
-elseif(MACOSX)
+elseif(SFML_OS_MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx/freetype2")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
@@ -102,7 +102,7 @@ find_package(OpenGL REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(JPEG REQUIRED)
-if(LINUX)
+if(SFML_OS_LINUX)
     find_package(X11 REQUIRED)
 endif()
 
@@ -110,11 +110,13 @@ endif()
 include_directories(${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
 
 # build the list of libraries to link
-# GL and X11 are only needed for shared build, as they are already linked by sfml-window
-set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY})
+set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY} ${OPENGL_gl_LIBRARY})
+if(SFML_OS_LINUX)
 if(SFML_BUILD_SHARED_LIBS)
+    set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
+endif()
     set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${OPENGL_gl_LIBRARY})
-    if(LINUX)
+    if(SFML_OS_LINUX)
         set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
     endif()
 endif()
@@ -124,7 +126,7 @@ add_definitions(-DGLEW_STATIC -DSTBI_FAILURE_USERMSG)
 
 # ImageLoader.cpp must be compiled with the -fno-strict-aliasing
 # when gcc is used; otherwise saving PNGs may crash in stb_image_write
-if(COMPILER_GCC)
+if(SFML_OS_COMPILER_GCC)
     set_source_files_properties(${SRCROOT}/ImageLoader.cpp PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
 endif()
 

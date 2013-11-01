@@ -56,11 +56,11 @@ subject to the following restrictions:
                 <string>[ADVANCED] C++ Compiler and Standard Library</string>
 
                 <key>Description</key>
-                <string>If you don't know what is it about, use the default value. Note that you'll need a version of SFML compiled with Clang and libc++ to use C++11 !</string>
+                <string>If you don't know what is it about, use the default value. Note that you'll need a version of SFML compiled with Clang and libc++ to use C++11!</string>
 
                 <key>Default</key>
-                <string>C++98 with Clang and libstdc++</string>
-                
+                <string>C++11 with Clang and libc++</string>
+
                 <key>NotPersisted</key>
                 <true />
 
@@ -94,7 +94,7 @@ subject to the following restrictions:
                             </dict>
                         </array>
                     </dict>
-                    
+
                     <!-- Use Clang and libstdc++ -->
                     <key>C++98 with Clang and libstdc++</key>
                     <dict>
@@ -104,16 +104,16 @@ subject to the following restrictions:
                             <dict>
                                 <key>GCC_VERSION</key>
                                 <string>com.apple.compilers.llvm.clang.1_0</string>
-                                
+
                                 <key>CLANG_CXX_LANGUAGE_STANDARD</key>
                                 <string>c++98</string>
-                                
+
                                 <key>CLANG_CXX_LIBRARY</key>
                                 <string>libstdc++</string>
                             </dict>
                         </dict>
                     </dict>
-                    
+
                     <!-- Use Clang and libc++ -->
                     <key>C++11 with Clang and libc++</key>
                     <dict>
@@ -123,10 +123,10 @@ subject to the following restrictions:
                             <dict>
                                 <key>GCC_VERSION</key>
                                 <string>com.apple.compilers.llvm.clang.1_0</string>
-                                
+
                                 <key>CLANG_CXX_LANGUAGE_STANDARD</key>
                                 <string>c++0x</string>
-                                
+
                                 <key>CLANG_CXX_LIBRARY</key>
                                 <string>libc++</string>
                             </dict>
@@ -147,7 +147,7 @@ subject to the following restrictions:
 
                 <key>Default</key>
                 <string>Universal</string>
-                
+
                 <key>NotPersisted</key>
                 <true />
 
@@ -168,7 +168,7 @@ subject to the following restrictions:
                             </dict>
                         </dict>
                     </dict>
-                    
+
                     <!-- Support 64 bits -->
                     <key>64 bits</key>
                     <dict>
@@ -208,7 +208,7 @@ subject to the following restrictions:
                 <!-- PLATFORM -->
                 <key>SUPPORTED_PLATFORMS</key>
                 <string>macosx</string>
-                
+
                 <!-- WARNINGS -->
                 <!-- TODO add more warnings -->
                 <key>GCC_WARN_ABOUT_RETURN_TYPE</key>
@@ -242,8 +242,8 @@ subject to the following restrictions:
 
                     <key>GCC_PREPROCESSOR_DEFINITIONS</key>
                     <string>DEBUG=1 $(inherited)</string>
-                    
-                    <!-- ALWAYS compile for all arch. --> 
+
+                    <!-- ALWAYS compile for all arch. -->
                     <key>ONLY_ACTIVE_ARCH</key>
                     <string>NO</string>
                 </dict>
@@ -261,7 +261,7 @@ subject to the following restrictions:
         </dict>
 
         <!--
-             TARGET 
+             TARGET
          -->
         <key>Targets</key>
         <array>

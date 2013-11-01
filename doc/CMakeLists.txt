@@ -1,6 +1,6 @@
 
 # find doxygen
-if(MACOSX)
+if(SFML_OS_MACOSX)
     # Add some path to search doxygen in more directories.
     set(ADDITIONAL_PATHS 
         /Developer/Applications/Doxygen.app/Contents/Resources 
@@ -20,7 +20,7 @@ set(DOXYGEN_INPUT_DIR ${PROJECT_SOURCE_DIR})
 set(DOXYGEN_OUTPUT_DIR ${PROJECT_BINARY_DIR}/doc)
 
 # see if we can generate the CHM documentation
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     # if HHC is found, we can generate the CHM (compressed HTML) output
     find_program(DOXYGEN_HHC_PROGRAM
                  NAMES hhc.exe

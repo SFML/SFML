@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,9 +32,7 @@
 /// \brief Here we redefine some methods to allow grabing fullscreen events.
 ///
 ////////////////////////////////////////////////////////////
-@interface SFWindow : NSWindow {
-
-}
+@interface SFWindow : NSWindow
 
 ////////////////////////////////////////////////////////////
 /// These two methods must return YES to grab fullscreen events.
@@ -44,5 +42,25 @@
 ////////////////////////////////////////////////////////////
 -(BOOL)acceptsFirstResponder;
 -(BOOL)canBecomeKeyWindow;
+
+////////////////////////////////////////////////////////////
+/// Override default implementation of keyDown: to prevent
+/// system alert
+///
+////////////////////////////////////////////////////////////
+-(void)keyDown:(NSEvent *)theEvent;
+
+@end
+
+
+@interface NSWindow (SFML)
+
+////////////////////////////////////////////////////////////
+/// Proxy for performClose: for the app delegate
+///
+/// Always return nil
+///
+////////////////////////////////////////////////////////////
+-(id)sfClose;
 
 @end

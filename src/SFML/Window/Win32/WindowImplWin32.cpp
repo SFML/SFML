@@ -55,8 +55,7 @@
 namespace
 {
     unsigned int               windowCount      = 0;
-    const char*                classNameA       = "SFML_Window";
-    const wchar_t*             classNameW       = L"SFML_Window";
+    const wchar_t*             className        = L"SFML_Window";
     sf::priv::WindowImplWin32* fullscreenWindow = NULL;
 }
 
@@ -73,7 +72,8 @@ m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (0, 0),
 m_resizing        (false),
-m_surrogate       (0)
+m_surrogate       (0),
+m_mouseInside     (false)
 {
     if (m_handle)
     {
@@ -93,7 +93,8 @@ m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
-m_surrogate       (0)
+m_surrogate       (0),
+m_mouseInside     (false)
 {
     // Register the window class at first call
     if (windowCount == 0)
@@ -131,14 +132,7 @@ m_surrogate       (0)
     }
 
     // Create the window
-    if (hasUnicodeSupport())
-    {
-        m_handle = CreateWindowW(classNameW, title.toWideString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
-    }
-    else
-    {
-        m_handle = CreateWindowA(classNameA, title.toAnsiString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
-    }
+    m_handle = CreateWindow(className, title.toWideString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
 
     // By default, the OS limits the size of the window the the desktop size,
     // we have to resize it after creation to apply the real size
@@ -171,16 +165,7 @@ WindowImplWin32::~WindowImplWin32()
 
         // Unregister window class if we were the last window
         if (windowCount == 0)
-        {
-            if (hasUnicodeSupport())
-            {
-                UnregisterClassW(classNameW, GetModuleHandle(NULL));
-            }
-            else
-            {
-                UnregisterClassA(classNameA, GetModuleHandle(NULL));
-            }
-        }
+            UnregisterClass(className, GetModuleHandle(NULL));
     }
     else
     {
@@ -257,14 +242,7 @@ void WindowImplWin32::setSize(const Vector2u& size)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setTitle(const String& title)
 {
-    if (hasUnicodeSupport())
-    {
-        SetWindowTextW(m_handle, title.toWideString().c_str());
-    }
-    else
-    {
-        SetWindowTextA(m_handle, title.toAnsiString().c_str());
-    }
+    SetWindowText(m_handle, title.toWideString().c_str());
 }
 
 
@@ -330,36 +308,18 @@ void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::registerWindowClass()
 {
-    if (hasUnicodeSupport())
-    {
-        WNDCLASSW windowClass;
-        windowClass.style         = 0;
-        windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
-        windowClass.cbClsExtra    = 0;
-        windowClass.cbWndExtra    = 0;
-        windowClass.hInstance     = GetModuleHandle(NULL);
-        windowClass.hIcon         = NULL;
-        windowClass.hCursor       = 0;
-        windowClass.hbrBackground = 0;
-        windowClass.lpszMenuName  = NULL;
-        windowClass.lpszClassName = classNameW;
-        RegisterClassW(&windowClass);
-    }
-    else
-    {
-        WNDCLASSA windowClass;
-        windowClass.style         = 0;
-        windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
-        windowClass.cbClsExtra    = 0;
-        windowClass.cbWndExtra    = 0;
-        windowClass.hInstance     = GetModuleHandle(NULL);
-        windowClass.hIcon         = NULL;
-        windowClass.hCursor       = 0;
-        windowClass.hbrBackground = 0;
-        windowClass.lpszMenuName  = NULL;
-        windowClass.lpszClassName = classNameA;
-        RegisterClassA(&windowClass);
-    }
+    WNDCLASSW windowClass;
+    windowClass.style         = 0;
+    windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
+    windowClass.cbClsExtra    = 0;
+    windowClass.cbWndExtra    = 0;
+    windowClass.hInstance     = GetModuleHandle(NULL);
+    windowClass.hIcon         = NULL;
+    windowClass.hCursor       = 0;
+    windowClass.hbrBackground = 0;
+    windowClass.lpszMenuName  = NULL;
+    windowClass.lpszClassName = className;
+    RegisterClass(&windowClass);
 }
 
 
@@ -405,6 +365,24 @@ void WindowImplWin32::cleanup()
 
     // Unhide the mouse cursor (in case it was hidden)
     setMouseCursorVisible(true);
+
+    // No longer track the cursor
+    setTracking(false);
+
+    // No longer capture the cursor
+    ReleaseCapture();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setTracking(bool track)
+{
+    TRACKMOUSEEVENT mouseEvent;
+    mouseEvent.cbSize = sizeof(TRACKMOUSEEVENT);
+    mouseEvent.dwFlags = track ? TME_LEAVE : TME_CANCEL;
+    mouseEvent.hwndTrack = m_handle;
+    mouseEvent.dwHoverTime = HOVER_DEFAULT;
+    TrackMouseEvent(&mouseEvent);
 }
 
 
@@ -464,14 +442,14 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         }
 
         // Start resizing
-        case WM_ENTERSIZEMOVE:
+        case WM_ENTERSIZEMOVE :
         {
             m_resizing = true;
             break;
         }
 
         // Stop resizing
-        case WM_EXITSIZEMOVE:
+        case WM_EXITSIZEMOVE :
         {
             m_resizing = false;
 
@@ -536,7 +514,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 else
                 {
-
                     // Check if it is the second part of a surrogate pair, or a regular character
                     if ((character >= 0xDC00) && (character <= 0xDFFF))
                     {
@@ -703,6 +680,22 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
+        // Mouse leave event
+        case WM_MOUSELEAVE :
+        {
+            // Avoid this firing a second time in case the cursor is dragged outside
+            if (m_mouseInside)
+            {
+                m_mouseInside = false;
+
+                // Generate a MouseLeft event
+                Event event;
+                event.type = Event::MouseLeft;
+                pushEvent(event);
+            }
+            break;
+        }
+
         // Mouse move event
         case WM_MOUSEMOVE :
         {
@@ -714,43 +707,60 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             RECT area;
             GetClientRect(m_handle, &area);
 
-            // Check the mouse position against the window
+            // Capture the mouse in case the user wants to drag it outside
+            if ((wParam & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2)) == 0)
+            {
+                // Only release the capture if we really have it
+                if (GetCapture() == m_handle)
+                    ReleaseCapture();
+            }
+            else if (GetCapture() != m_handle)
+            {
+                // Set the capture to continue receiving mouse events
+                SetCapture(m_handle);
+            }
+
+            // If the cursor is outside the client area...
             if ((x < area.left) || (x > area.right) || (y < area.top) || (y > area.bottom))
             {
-                // Mouse is outside
+                // and it used to be inside, the mouse left it.
+                if (m_mouseInside)
+                {
+                    m_mouseInside = false;
 
-                // Release the mouse capture
-                ReleaseCapture();
+                    // No longer care for the mouse leaving the window
+                    setTracking(false);
 
-                // Generate a MouseLeft event
-                Event event;
-                event.type = Event::MouseLeft;
-                pushEvent(event);
+                    // Generate a MouseLeft event
+                    Event event;
+                    event.type = Event::MouseLeft;
+                    pushEvent(event);
+                }
             }
             else
             {
-                // Mouse is inside
-                if (GetCapture() != m_handle)
+                // and vice-versa
+                if (!m_mouseInside)
                 {
-                    // Mouse was previously outside the window
+                    m_mouseInside = true;
 
-                    // Capture the mouse
-                    SetCapture(m_handle);
+                    // Look for the mouse leaving the window
+                    setTracking(true);
 
                     // Generate a MouseEntered event
                     Event event;
                     event.type = Event::MouseEntered;
                     pushEvent(event);
                 }
-
-                // Generate a MouseMove event
-                Event event;
-                event.type        = Event::MouseMoved;
-                event.mouseMove.x = x;
-                event.mouseMove.y = y;
-                pushEvent(event);
-                break;
             }
+
+            // Generate a MouseMove event
+            Event event;
+            event.type        = Event::MouseMoved;
+            event.mouseMove.x = x;
+            event.mouseMove.y = y;
+            pushEvent(event);
+            break;
         }
     }
 }
@@ -878,24 +888,6 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplWin32::hasUnicodeSupport()
-{
-    OSVERSIONINFO version;
-    ZeroMemory(&version, sizeof(version));
-    version.dwOSVersionInfoSize = sizeof(version);
-
-    if (GetVersionEx(&version))
-    {
-        return version.dwPlatformId == VER_PLATFORM_WIN32_NT;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-
-////////////////////////////////////////////////////////////
 LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
 {
     // Associate handle and Window instance when the creation message is received
@@ -928,9 +920,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     if ((message == WM_SYSCOMMAND) && (wParam == SC_KEYMENU))
         return 0;
 
-    static const bool hasUnicode = hasUnicodeSupport();
-    return hasUnicode ? DefWindowProcW(handle, message, wParam, lParam) :
-                        DefWindowProcA(handle, message, wParam, lParam);
+    return DefWindowProc(handle, message, wParam, lParam);
 }
 
 } // namespace priv

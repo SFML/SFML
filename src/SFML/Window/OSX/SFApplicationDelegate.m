@@ -26,24 +26,27 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
+#import <SFML/Window/OSX/SFApplicationDelegate.h>
 
 ////////////////////////////////////////////////////////////
-/// Predefine some classes
-////////////////////////////////////////////////////////////
-@class SFOpenGLView;
+@implementation SFApplicationDelegate
+
 
 ////////////////////////////////////////////////////////////
-/// Implementation of WindowImplDelegateProtocol for view managment.
-///
-////////////////////////////////////////////////////////////
-
-@interface SFViewController : NSObject <WindowImplDelegateProtocol> {
-    NSView*                     m_view;
-    SFOpenGLView*               m_oglView;
-    sf::priv::WindowImplCocoa*  m_requester;
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+    // TODO generate close event for each SFML window
+    [NSApp makeWindowsPerform:@selector(sfClose) inOrder:NO];
+    return NSTerminateCancel;
 }
 
--(id)initWithView:(NSView *)view;
+
+////////////////////////////////////////////////////////////
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
+{
+    return YES;
+}
+
 
 @end
+

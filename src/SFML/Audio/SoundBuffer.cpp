@@ -253,7 +253,7 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
     alCheck(alBufferData(m_buffer, format, &m_samples[0], size, sampleRate));
 
     // Compute the duration
-    m_duration = milliseconds(1000 * m_samples.size() / sampleRate / channelCount);
+    m_duration = seconds(static_cast<float>(m_samples.size()) / sampleRate / channelCount);
 
     return true;
 }

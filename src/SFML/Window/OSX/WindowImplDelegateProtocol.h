@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -38,7 +38,7 @@ namespace sf {
 }
 
 ////////////////////////////////////////////////////////////
-/// This protocol defines the interface of the delegate of 
+/// This protocol defines the interface of the delegate of
 /// the window implementation.
 ///
 /// We don't create an interface here because Obj-C doesn't allow
@@ -47,7 +47,7 @@ namespace sf {
 /// we have to duplicate some code.
 ///
 /// Everything is done via a class that implement this protocol.
-/// There are two of these classes : 
+/// There are two of these classes :
 ///
 /// SFViewController and SFWindowController
 ///
@@ -61,7 +61,7 @@ namespace sf {
 ///
 /// keyDown, keyUp, textEntered
 ///
-/// Note : Joysticks are not bound to a view or window 
+/// Note : Joysticks are not bound to a view or window
 /// thus they're not managed by a class implementing this protocol.
 ///
 ////////////////////////////////////////////////////////////

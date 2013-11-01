@@ -55,7 +55,7 @@ subject to the following restrictions:
             <string>___PACKAGENAME___-Info.plist:Content</string>
         </array>
 
-        <!-- 
+        <!--
              DEFINITIONS
          -->
         <key>Definitions</key>

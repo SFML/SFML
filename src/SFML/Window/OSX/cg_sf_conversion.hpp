@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -38,18 +38,18 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Get bpp of a video mode for OS 10.6 or later.
-/// 
+///
 /// With OS 10.6 and later, Quartz doesn't use anymore dictionaries
 /// to represent video mode. Instead it uses a CGDisplayMode opaque type.
 ///
-//////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 size_t modeBitsPerPixel(CGDisplayModeRef mode);
 #endif
 
 ////////////////////////////////////////////////////////////
 /// \brief Get bpp for all OS X version.
-/// 
+///
 /// This function use only non-deprecated way to get the
 /// display bits per pixel information for a given display id.
 ///
@@ -65,7 +65,7 @@ VideoMode convertCGModeToSFMode(CFDictionaryRef dictionary);
 #else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode);
 #endif
-    
+
 ////////////////////////////////////////////////////////////
 /// \brief Convert a sf::VideoMode object into a Quartz video mode.
 ///
@@ -75,7 +75,7 @@ CFDictionaryRef convertSFModeToCGMode(VideoMode sfmode);
 #else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode);
 #endif
-    
+
 } // namespace priv
 } // namespace sf
 

@@ -26,14 +26,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
-#include <SFML/Window/Linux/WindowImplX11.hpp>
-#include <SFML/Window/Linux/GlxContext.hpp>
-#include <SFML/Window/Linux/Display.hpp>
+#include <SFML/Window/Unix/WindowImplX11.hpp>
+#include <SFML/Window/Unix/GlxContext.hpp>
+#include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
+#include <libgen.h>
 #include <unistd.h>
 #include <cstring>
 #include <sstream>
@@ -90,7 +91,8 @@ m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
 m_keyRepeat   (true),
-m_previousSize(-1, -1)
+m_previousSize(-1, -1),
+m_useSizeHints(false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -120,7 +122,8 @@ m_atomClose   (0),
 m_oldVideoMode(-1),
 m_hiddenCursor(0),
 m_keyRepeat   (true),
-m_previousSize(-1, -1)
+m_previousSize(-1, -1),
+m_useSizeHints(false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -236,9 +239,10 @@ m_previousSize(-1, -1)
         // This is a hack to force some windows managers to disable resizing
         if (!(style & Style::Resize))
         {
+            m_useSizeHints = true;
             XSizeHints* sizeHints = XAllocSizeHints();
             sizeHints->flags = PMinSize | PMaxSize;
-            sizeHints->min_width = sizeHints->max_width  = width;
+            sizeHints->min_width = sizeHints->max_width = width;
             sizeHints->min_height = sizeHints->max_height = height;
             XSetWMNormalHints(m_display, m_window, sizeHints); 
             XFree(sizeHints);
@@ -348,6 +352,17 @@ Vector2u WindowImplX11::getSize() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setSize(const Vector2u& size)
 {
+    // If we used size hint to fix the size of the window, we must update them
+    if (m_useSizeHints)
+    {
+        XSizeHints* sizeHints = XAllocSizeHints();
+        sizeHints->flags = PMinSize | PMaxSize;
+        sizeHints->min_width = sizeHints->max_width = size.x;
+        sizeHints->min_height = sizeHints->max_height = size.y;
+        XSetWMNormalHints(m_display, m_window, sizeHints); 
+        XFree(sizeHints);
+    }
+
     XResizeWindow(m_display, m_window, size.x, size.y);
     XFlush(m_display);
 }

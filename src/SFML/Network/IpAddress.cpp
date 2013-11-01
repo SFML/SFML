@@ -148,7 +148,7 @@ IpAddress IpAddress::getLocalAddress()
         return localAddress;
 
     // Connect the socket to localhost on any port
-    sockaddr_in address = priv::SocketImpl::createAddress(ntohl(INADDR_LOOPBACK), 0);
+    sockaddr_in address = priv::SocketImpl::createAddress(ntohl(INADDR_LOOPBACK), 9);
     if (connect(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
         priv::SocketImpl::close(sock);

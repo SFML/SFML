@@ -251,7 +251,10 @@ void Text::updateGeometry()
     float y      = static_cast<float>(m_characterSize);
 
     // Create one quad for each character
-    float minX = m_characterSize, minY = m_characterSize, maxX = 0, maxY = 0;
+    float minX = static_cast<float>(m_characterSize);
+    float minY = static_cast<float>(m_characterSize);
+    float maxX = 0.f;
+    float maxY = 0.f;
     Uint32 prevChar = 0;
     for (std::size_t i = 0; i < m_string.getSize(); ++i)
     {

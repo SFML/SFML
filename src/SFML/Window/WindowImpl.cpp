@@ -39,7 +39,7 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-    #include <SFML/Window/Linux/WindowImplX11.hpp>
+    #include <SFML/Window/Unix/WindowImplX11.hpp>
     typedef sf::priv::WindowImplX11 WindowImplType;
 
 #elif defined(SFML_SYSTEM_MACOS)

@@ -231,10 +231,19 @@ Vector2u Window::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-void Window::setSize(const Vector2u size)
+void Window::setSize(const Vector2u& size)
 {
     if (m_impl)
+    {
         m_impl->setSize(size);
+
+        // Cache the new size
+        m_size.x = size.x;
+        m_size.y = size.y;
+
+        // Notify the derived class
+        onResize();
+    }
 }
 
 

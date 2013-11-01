@@ -1,8 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
-//                         Laurent Gomila (laurent.gom@gmail.com),
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -23,35 +22,15 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFCONTEXT_HPP
-#define SFML_SFCONTEXT_HPP
+#ifndef SFML_GLXCONTEXT_HPP
+#define SFML_GLXCONTEXT_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
-
-////////////////////////////////////////////////////////////
-/// Predefine OBJC classes
-////////////////////////////////////////////////////////////
-#ifdef __OBJC__
-
-@class NSOpenGLContext;
-typedef NSOpenGLContext* NSOpenGLContextRef;
-
-@class NSOpenGLView;
-typedef NSOpenGLView* NSOpenGLViewRef;
-
-@class NSWindow;
-typedef NSWindow* NSWindowRef;
-
-#else // If C++
-
-typedef void* NSOpenGLContextRef;
-typedef void* NSOpenGLViewRef;
-typedef void* NSWindowRef;
-
-#endif
+#include <X11/Xlib.h>
+#include <GL/glx.h>
 
 
 namespace sf
@@ -59,19 +38,20 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief OSX (Cocoa) implementation of OpenGL contexts
+/// \brief Linux (GLX) implementation of OpenGL contexts
 ///
 ////////////////////////////////////////////////////////////
-class SFContext : public GlContext
+class GlxContext : public GlContext
 {
-public:
+public :
+
     ////////////////////////////////////////////////////////////
-    /// \brief Create a new context, not associated to a window
+    /// \brief Create a new default context
     ///
     /// \param shared Context to share the new one with (can be NULL)
     ///
     ////////////////////////////////////////////////////////////
-    SFContext(SFContext* shared);
+    GlxContext(GlxContext* shared);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
@@ -82,8 +62,7 @@ public:
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    SFContext(SFContext* shared, const ContextSettings& settings,
-              const WindowImpl* owner, unsigned int bitsPerPixel);
+    GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
@@ -94,14 +73,21 @@ public:
     /// \param height   Back buffer height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    SFContext(SFContext* shared, const ContextSettings& settings,
-              unsigned int width, unsigned int height);
+    GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~SFContext();
+    ~GlxContext();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Activate the context as the current target for rendering
+    ///
+    /// \return True on success, false if any error happened
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool makeCurrent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
@@ -117,45 +103,46 @@ public:
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled : True to enable v-sync, false to deactivate
+    /// \param enabled True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled);
 
-protected:
     ////////////////////////////////////////////////////////////
-    /// \brief Activate the context as the current target
-    ///        for rendering
+    /// \brief Select the best GLX visual for a given set of settings
     ///
-    /// \return True on success, false if any error happened
+    /// \param display      X display
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
+    /// \param settings     Requested context settings
+    ///
+    /// \return The best visual
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool makeCurrent();
+    static XVisualInfo selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings);
 
-private:
+private :
+
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
-    /// \note Must only be called from Ctor.
     ///
     /// \param shared       Context to share the new one with (can be NULL)
-    /// \param bitsPerPixel bpp
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void createContext(SFContext* shared,
-                       unsigned int bitsPerPixel,
-                       const ContextSettings& settings);
+    void createContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    NSOpenGLContextRef    m_context;       ///< OpenGL context.
-    NSOpenGLViewRef       m_view;          ///< Only for offscreen context.
-    NSWindowRef           m_window;        ///< Only for offscreen context.
+    ::Display* m_display;    ///< Connection to the X server
+    ::Window   m_window;     ///< Window to which the context is attached
+    GLXContext m_context;    ///< OpenGL context
+    bool       m_ownsWindow; ///< Do we own the window associated to the context?
 };
 
 } // namespace priv
 
 } // namespace sf
 
-#endif // SFML_SFCONTEXT_HPP
+#endif // SFML_GLXCONTEXT_HPP

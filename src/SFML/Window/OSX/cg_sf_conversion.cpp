@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -39,26 +39,26 @@ namespace priv
 size_t modeBitsPerPixel(CGDisplayModeRef mode)
 {
     size_t bpp = 0; // no match
-    
+
     // Compare encoding.
     CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(mode);
     if(CFStringCompare(pixEnc, CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
-        
+
         bpp = 32;
-        
+
     } else if(CFStringCompare(pixEnc, CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
-        
+
         bpp = 16;
-        
+
     } else if(CFStringCompare(pixEnc, CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
-        
+
         bpp = 8;
-        
+
     }
-    
+
     // Clean up memory.
     CFRelease(pixEnc);
-    
+
     return bpp;
 }
 #endif
@@ -69,22 +69,22 @@ size_t modeBitsPerPixel(CGDisplayModeRef mode)
 size_t displayBitsPerPixel(CGDirectDisplayID displayId)
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
-    
+
     return CGDisplayBitsPerPixel(displayId);
-    
+
 #else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-    
+
     // Get the display mode.
     CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayId);
-    
+
     // Get bpp for the mode.
     size_t const bpp = modeBitsPerPixel(mode);
-    
+
     // Clean up Memory.
     CGDisplayModeRelease(mode);
-    
+
     return bpp;
-    
+
 #endif
 }
 
@@ -95,16 +95,16 @@ size_t displayBitsPerPixel(CGDirectDisplayID displayId)
 VideoMode convertCGModeToSFMode(CFDictionaryRef dictionary)
 {
     VideoMode sfmode;
-    
+
     CFNumberRef cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayWidth);
     CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.width));
-    
+
     cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayHeight);
     CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.height));
-    
+
     cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayBitsPerPixel);
     CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.bitsPerPixel));
-    
+
     return sfmode;
 }
 
@@ -118,7 +118,7 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
 }
 
 #endif
-    
+
 ////////////////////////////////////////////////////////////
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
 
@@ -139,39 +139,39 @@ CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode)
 {
     // Starting with 10.6 we should query the display all the modes and
     // search for the best one.
-    
+
     // Will return NULL if sfmode is not in VideoMode::GetFullscreenModes.
     CGDisplayModeRef cgbestMode = NULL;
-    
+
     // Retrieve all modes available for main screen only.
     CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
-    
+
     if (cgmodes == NULL) { // Should not happen but anyway...
         sf::err() << "Couldn't get VideoMode for main display.";
         return NULL;
     }
-    
+
     // Loop on each mode and convert it into a sf::VideoMode object.
     CFIndex const modesCount = CFArrayGetCount(cgmodes);
     for (CFIndex i = 0; i < modesCount; i++) {
         CGDisplayModeRef cgmode = (CGDisplayModeRef)CFArrayGetValueAtIndex(cgmodes, i);
-        
+
         VideoMode mode = convertCGModeToSFMode(cgmode);
-        
+
         if (mode == sfmode) {
             cgbestMode = cgmode;
         }
     }
-    
+
     // Clean up memory.
     CFRelease(cgmodes);
-    
+
     if (cgbestMode == NULL) {
         sf::err()
         << "Couldn't convert the given sf:VideoMode into a CGDisplayMode."
         << std::endl;
     }
-    
+
     return cgbestMode;
 }
 

@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -71,20 +71,20 @@ namespace sf {
 
 ////////////////////////////////////////////////////////////
 /// Create the SFML opengl view to fit the given area.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect;
 
 ////////////////////////////////////////////////////////////
 /// Handle going in and out of fullscreen mode.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(void)enterFullscreen;
 -(void)exitFullscreen;
 
 ////////////////////////////////////////////////////////////
 /// Apply the given resquester to the view.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(void)setRequesterTo:(sf::priv::WindowImplCocoa *)requester;
 
@@ -93,27 +93,27 @@ namespace sf {
 /// If not set, or set to its default value NSZeroSize, the view
 /// won't recompute the mouse coordinates before sending them
 /// to the requester.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(void)setRealSize:(NSSize)newSize;
 
 ////////////////////////////////////////////////////////////
 /// Compute the position in global coordinate
 /// of the given point in SFML coordinate.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point;
 
 ////////////////////////////////////////////////////////////
 /// Adjust key repeat configuration.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(void)enableKeyRepeat;
 -(void)disableKeyRepeat;
 
 ////////////////////////////////////////////////////////////
 /// Compute the position of the cursor.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(NSPoint)cursorPositionFromEvent:(NSEvent *)eventOrNil;
 

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -78,10 +78,10 @@ bool Rect<T>::contains(T x, T y) const
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
     // Compute the real min and max of the rectangle on both axes
-    T minX = std::min(left, left + width);
-    T maxX = std::max(left, left + width);
-    T minY = std::min(top, top + height);
-    T maxY = std::max(top, top + height);
+    T minX = std::min(left, static_cast<T>(left + width));
+    T maxX = std::max(left, static_cast<T>(left + width));
+    T minY = std::min(top, static_cast<T>(top + height));
+    T maxY = std::max(top, static_cast<T>(top + height));
 
     return (x >= minX) && (x < maxX) && (y >= minY) && (y < maxY);
 }
@@ -111,16 +111,16 @@ bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
     // Compute the min and max of the first rectangle on both axes
-    T r1MinX = std::min(left, left + width);
-    T r1MaxX = std::max(left, left + width);
-    T r1MinY = std::min(top, top + height);
-    T r1MaxY = std::max(top, top + height);
+    T r1MinX = std::min(left, static_cast<T>(left + width));
+    T r1MaxX = std::max(left, static_cast<T>(left + width));
+    T r1MinY = std::min(top, static_cast<T>(top + height));
+    T r1MaxY = std::max(top, static_cast<T>(top + height));
 
     // Compute the min and max of the second rectangle on both axes
-    T r2MinX = std::min(rectangle.left, rectangle.left + rectangle.width);
-    T r2MaxX = std::max(rectangle.left, rectangle.left + rectangle.width);
-    T r2MinY = std::min(rectangle.top, rectangle.top + rectangle.height);
-    T r2MaxY = std::max(rectangle.top, rectangle.top + rectangle.height);
+    T r2MinX = std::min(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
+    T r2MaxX = std::max(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
+    T r2MinY = std::min(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
+    T r2MaxY = std::max(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
 
     // Compute the intersection boundaries
     T interLeft   = std::max(r1MinX, r2MinX);

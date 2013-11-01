@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -53,20 +53,20 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 ////////////////////////////////////////////////////////////
 /// Handle view resized event.
-/// 
+///
 ////////////////////////////////////////////////////////////
--(void)frameDidChange:(NSNotification *)notification;
+-(void)viewDidEndLiveResize;
 
 ////////////////////////////////////////////////////////////
 /// Establish if the mouse is inside or outside the OpenGL view.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(BOOL)isMouseInside;
 
 ////////////////////////////////////////////////////////////
 /// Update the mouse state (in or out) and fire an event
 /// if its state has changed.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(void)updateMouseState;
 
@@ -74,7 +74,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 /// Convert the NSEvent mouse button type to SFML type.
 ///
 /// Returns ButtonCount if the button is unknown
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event;
 
@@ -101,7 +101,7 @@ BOOL isValidTextUnicode(NSEvent* event);
         [self setRequesterTo:0];
         [self enableKeyRepeat];
         m_realSize = NSZeroSize;
-        
+
         // Register for mouse move event
         m_mouseIsIn = [self isMouseInside];
         NSUInteger opts = (NSTrackingActiveAlways | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingEnabledDuringMouseDrag);
@@ -110,13 +110,6 @@ BOOL isValidTextUnicode(NSEvent* event);
                                                         owner:self
                                                      userInfo:nil];
         [self addTrackingArea:m_trackingArea];
-        
-        // Register for resize event
-        NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self
-                   selector:@selector(frameDidChange:)
-                       name:NSViewFrameDidChangeNotification
-                     object:self];
 
         // Create a hidden text view for parsing key down event properly
         m_silentResponder = [[SFSilentResponder alloc] init];
@@ -177,7 +170,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 ////////////////////////////////////////////////////////
 -(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point
-{   
+{
     // Recompute the mouse pos if required.
     if (!NSEqualSizes(m_realSize, NSZeroSize)) {
         point.x = point.x / m_realSize.width  * [self frame].size.width;
@@ -190,17 +183,17 @@ BOOL isValidTextUnicode(NSEvent* event);
     //
     //        So we stick with the old one for now.
 
-    
+
     // Flip SFML coordinates to match window coordinates
     point.y = [self frame].size.height - point.y;
-    
+
     // Get the position of (x, y) in the coordinate system of the window.
     point = [self convertPoint:point toView:self];
     point = [self convertPoint:point toView:nil]; // nil means window
-    
+
     // Convert it to screen coordinates
     point = [[self window] convertBaseToScreen:point];
-    
+
     // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.
     float const screenHeight = [[[self window] screen] frame].size.height;
     point.y = screenHeight - point.y;
@@ -224,17 +217,28 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)frameDidChange:(NSNotification *)notification
+-(void)viewDidEndLiveResize
 {
+    // We use viewDidEndLiveResize to notify the user ONCE
+    // only, when the resizing is finished.
+    // In a perfect world we would like to notify the user
+    // in live that the window is being resized. However,
+    // it seems impossible to forward to the user
+    // NSViewFrameDidChangeNotification before the resizing
+    // is done. Several notifications are emitted but they
+    // are all delivered after when the work is done.
+
+    [super viewDidEndLiveResize];
+
     // Update mouse internal state.
     [self updateMouseState];
-    
+
     // Update the OGL view to fit the new size.
     [self update];
-    
+
     // Send an event
     if (m_requester == 0) return;
-    
+
     // The new size
     NSSize newSize = [self frame].size;
     m_requester->windowResized(newSize.width, newSize.height);
@@ -246,11 +250,11 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     NSPoint relativeToWindow = [[self window] mouseLocationOutsideOfEventStream];
     NSPoint relativeToView = [self convertPoint:relativeToWindow fromView:nil];
-    
+
     if (NSPointInRect(relativeToView, [self frame])) {
         return YES;
     }
-    
+
     return NO;
 }
 
@@ -260,7 +264,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     BOOL mouseWasIn = m_mouseIsIn;
     m_mouseIsIn = [self isMouseInside];
-    
+
     // Send event if needed.
     if (mouseWasIn && !m_mouseIsIn) {
         [self mouseExited:nil];
@@ -278,7 +282,6 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)dealloc
 {
     // Unregister
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self removeTrackingArea:m_trackingArea];
 
     // Release attributes
@@ -293,8 +296,8 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(BOOL)acceptsFirstResponder 
-{ 
+-(BOOL)acceptsFirstResponder
+{
     // Accepts key event.
     return YES;
 }
@@ -313,11 +316,11 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)mouseDown:(NSEvent *)theEvent 
+-(void)mouseDown:(NSEvent *)theEvent
 {
     // Forward to...
     [self otherMouseDown:theEvent];
-    
+
     // Transmit to non-SFML responder
     [[self nextResponder] mouseDown:theEvent];
 }
@@ -328,7 +331,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     // Forward to...
     [self otherMouseUp:theEvent];
-    
+
     // Transmit to non-SFML responder
     [[self nextResponder] mouseUp:theEvent];
 }
@@ -339,7 +342,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     // Forward to...
     [self otherMouseDragged:theEvent];
-    
+
     // Transmit to non-SFML responder
     [[self nextResponder] mouseMoved:theEvent];
 }
@@ -350,10 +353,10 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     if (m_requester != 0) {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
-        
+
         m_requester->mouseWheelScrolledAt([theEvent deltaY], loc.x, loc.y);
     }
-    
+
     // Transmit to non-SFML responder
     [[self nextResponder] scrollWheel:theEvent];
 }
@@ -403,7 +406,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     // Forward to...
     [self otherMouseDown:theEvent];
-    
+
     // Transmit to non-SFML responder
     [[self nextResponder] rightMouseDown:theEvent];
 }
@@ -414,7 +417,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     // Forward to...
     [self otherMouseUp:theEvent];
-    
+
     // Transmit to non-SFML responder
     [[self nextResponder] rightMouseUp:theEvent];
 }
@@ -424,15 +427,15 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)otherMouseDown:(NSEvent *)theEvent
 {
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
-    
+
     if (m_requester != 0) {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
-        
+
         if (button != sf::Mouse::ButtonCount) {
             m_requester->mouseDownAt(button, loc.x, loc.y);
         }
     }
-    
+
     // If the event is not forwarded by mouseDown or rightMouseDown...
     if (button != sf::Mouse::Left && button != sf::Mouse::Right) {
         // ... transmit to non-SFML responder
@@ -445,15 +448,15 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)otherMouseUp:(NSEvent *)theEvent
 {
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
-    
+
     if (m_requester != 0) {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
-        
+
         if (button != sf::Mouse::ButtonCount) {
             m_requester->mouseUpAt(button, loc.x, loc.y);
         }
     }
-    
+
     // If the event is not forwarded by mouseUp or rightMouseUp...
     if (button != sf::Mouse::Left && button != sf::Mouse::Right) {
         // ... transmit to non-SFML responder
@@ -467,7 +470,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     // Forward to...
     [self otherMouseDragged:theEvent];
-    
+
     // Transmit to non-SFML responder
     [[self nextResponder] rightMouseDragged:theEvent];
 }
@@ -478,7 +481,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     // Forward to...
     [self otherMouseDragged:theEvent];
-    
+
     // Transmit to non-SFML responder
     [[self nextResponder] mouseDragged:theEvent];
 }
@@ -498,7 +501,7 @@ BOOL isValidTextUnicode(NSEvent* event);
             m_requester->mouseMovedAt(loc.x, loc.y);
         }
     }
-    
+
     // If the event is not forwarded by mouseDragged or rightMouseDragged...
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
     if (button != sf::Mouse::Left && button != sf::Mouse::Right) {
@@ -519,17 +522,17 @@ BOOL isValidTextUnicode(NSEvent* event);
     } else {
         loc = [self convertPoint:[eventOrNil locationInWindow] fromView:nil];
     }
-    
+
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
     loc.y = h - loc.y;
-    
+
     // Recompute the mouse pos if required.
     if (!NSEqualSizes(m_realSize, NSZeroSize)) {
         loc.x = loc.x * m_realSize.width  / [self frame].size.width;
         loc.y = loc.y * m_realSize.height / [self frame].size.height;
     }
-    
+
     return loc;
 }
 
@@ -557,13 +560,13 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     // Transmit to non-SFML responder
     [[self nextResponder] keyDown:theEvent];
-    
+
     if (m_requester == 0) return;
-    
+
     // Handle key down event
     if (m_useKeyRepeat || ![theEvent isARepeat]) {
         sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
-        
+
         if (key.code != sf::Keyboard::Unknown) { // The key is recognized.
             m_requester->keyDown(key);
         }
@@ -616,15 +619,22 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)keyUp:(NSEvent *)theEvent
+-(void)sfKeyUp:(NSEvent *)theEvent
 {
+    // For some mystic reasons, key released events don't work the same way
+    // as key pressed events... We somewhat hijack the event chain of response
+    // in -[SFApplication sendEvent:] and resume this chain with the next
+    // responder.
+    // This is workaround to make sure key released events are fired in
+    // fullscreen window too.
+
     // Transmit to non-SFML responder
     [[self nextResponder] keyUp:theEvent];
- 
+
     if (m_requester == 0) return;
-    
+
     sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
-    
+
     if (key.code != sf::Keyboard::Unknown) { // The key is recognized.
         m_requester->keyUp(key);
     }
@@ -636,9 +646,9 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     // Transmit to non-SFML responder
     [[self nextResponder] flagsChanged:theEvent];
- 
+
     if (m_requester == 0) return;
-    
+
     NSUInteger modifiers = [theEvent modifierFlags];
     handleModifiersChanged(modifiers, *m_requester);
 }
@@ -649,20 +659,20 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     // Key code
     sf::Keyboard::Key key = sf::Keyboard::Unknown;
-    
+
     // First we look if the key down is from a list of characters
     // that depend on keyboard localization.
     NSString* string = [anEvent charactersIgnoringModifiers];
     if ([string length] > 0) {
         key = sf::priv::HIDInputManager::localizedKeys([string characterAtIndex:0]);
     }
-    
+
     // If the key is not a localized one, we try to find a corresponding code
     // through virtual key code.
     if (key == sf::Keyboard::Unknown) {
         key = sf::priv::HIDInputManager::nonLocalizedKeys([anEvent keyCode]);
     }
-    
+
 //#ifdef SFML_DEBUG // Don't bother the final customers with annoying messages.
 //    if (key.code == sf::Keyboard::Unknown) { // The key is unknown.
 //        sf::err() << "This is an unknow key. Virtual key code is 0x"
@@ -672,7 +682,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 //                  << std::endl;
 //    }
 //#endif
-    
+
     return keyEventWithModifiers([anEvent modifierFlags], key);
 }
 

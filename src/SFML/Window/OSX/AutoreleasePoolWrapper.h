@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,7 @@
 /// Increment a retain count.
 /// See SPECIAL CONSIDERATION in implementation file.
 ///
-//////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////
 void retainPool(void);
 
 ////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ void retainPool(void);
 /// Drain the pool if it is no more needed (retain count is zero).
 /// See SPECIAL CONSIDERATION in implementation file.
 ///
-//////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////
 void releasePool(void);
 
 ////////////////////////////////////////////////////////////
@@ -46,6 +46,6 @@ void releasePool(void);
 ///
 /// releasePool must be called at least once before drainPool.
 ///
-//////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////
 void drainPool();
 

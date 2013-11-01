@@ -28,7 +28,7 @@ set(SRC
 )
 
 # add platform specific sources
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     set(SRC
         ${SRC}
         ${SRCROOT}/Win32/SocketImpl.cpp
@@ -46,7 +46,7 @@ source_group("" FILES ${SRC})
 
 # build the list of external libraries to link
 set(NETWORK_EXT_LIBS)
-if(WINDOWS)
+if(SFML_OS_WINDOWS)
     set(NETWORK_EXT_LIBS ${NETWORK_EXT_LIBS} ws2_32)
 endif()
 

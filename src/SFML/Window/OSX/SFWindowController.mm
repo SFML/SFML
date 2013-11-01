@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -47,13 +47,13 @@
 
 ////////////////////////////////////////////////////////////
 /// Retrieves the screen height.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(float)screenHeight;
 
 ////////////////////////////////////////////////////////////
 /// Retrives the title bar height.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(float)titlebarHeight;
 
@@ -70,36 +70,36 @@
     if ((self = [super init])) {
         m_requester = 0;
         m_fullscreenMode = new sf::VideoMode();
-        
+
         // Retain the window for our own use.
         m_window = [window retain];
-        
+
         if (m_window == nil) {
-            
-            sf::err() 
+
+            sf::err()
             << "No window was given to initWithWindow:."
             << std::endl;
-            
+
             return self;
         }
-        
+
         // Create the view.
         m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame]];
-        
+
         if (m_oglView == nil) {
-            
+
             sf::err()
             << "Could not create an instance of NSOpenGLView "
             << "in (SFWindowController -initWithWindow:)."
             << std::endl;
-            
+
             return self;
         }
-        
+
         // Set the view to the window as its content view.
         [m_window setContentView:m_oglView];
     }
-    
+
     return self;
 }
 
@@ -116,100 +116,100 @@
         sf::err()
         << "Cannot create a window from a worker thread. (OS X limitation)"
         << std::endl;
-        
+
         return nil;
     }
 
     if ((self = [super init])) {
         m_requester = 0;
         m_fullscreenMode = new sf::VideoMode();
-        
+
         // Create our window size.
         NSRect rect = NSZeroRect;
         if (style & sf::Style::Fullscreen && mode != sf::VideoMode::getDesktopMode()) {
             // We use desktop mode to size the window
             // but we set the back buffer size to 'mode' in applyContext method.
-            
+
             *m_fullscreenMode = mode;
-            
+
             sf::VideoMode dm = sf::VideoMode::getDesktopMode();
             rect = NSMakeRect(0, 0, dm.width, dm.height);
-            
+
         } else { // no fullscreen requested.
             rect = NSMakeRect(0, 0, mode.width, mode.height);
         }
-        
+
         // Convert the SFML window style to Cocoa window style.
         unsigned int nsStyle = NSBorderlessWindowMask;
         if (!(style & sf::Style::Fullscreen)) { // if fullscrean we keep our NSBorderlessWindowMask.
-            
+
             if (style & sf::Style::Titlebar) nsStyle |= NSTitledWindowMask | NSMiniaturizableWindowMask;
-            
+
             if (style & sf::Style::Resize)   nsStyle |= NSResizableWindowMask;
-            
+
             if (style & sf::Style::Close)    nsStyle |= NSClosableWindowMask;
-            
+
         }
-        
+
         // Create the window.
         m_window = [[SFWindow alloc] initWithContentRect:rect
-                                               styleMask:nsStyle 
-                                                 backing:NSBackingStoreBuffered 
+                                               styleMask:nsStyle
+                                                 backing:NSBackingStoreBuffered
                                                    defer:NO]; // Don't defer it!
         /*
          "YES" produces some "invalid drawable".
          See http://www.cocoabuilder.com/archive/cocoa/152482-nsviews-and-nsopenglcontext-invalid-drawable-error.html
-         
+
          [...]
          As best as I can figure, this is happening because the NSWindow (and
          hence my view) are not visible onscreen yet, and the system doesn't like that.
          [...]
          */
-        
+
         if (m_window == nil) {
-            sf::err() 
+            sf::err()
             << "Could not create an instance of NSWindow "
             << "in (SFWindowController -initWithMode:andStyle:)."
             << std::endl;
-            
+
             return self;
         }
-        
+
         // Apply special feature for fullscreen window.
         if (style & sf::Style::Fullscreen) {
             // We place the window above everything else.
             [m_window setOpaque:YES];
             [m_window setHidesOnDeactivate:YES];
             [m_window setLevel:NSMainMenuWindowLevel+1];
-            
+
             // And hide the menu bar
             [NSMenu setMenuBarVisible:NO];
-            
+
             /* ---------------------------
              * | Note for future version |
              * ---------------------------
              *
              * starting with OS 10.6 NSView provides
-             * a new method -enterFullScreenMode:withOptions: 
+             * a new method -enterFullScreenMode:withOptions:
              * which could be a good alternative.
              */
         }
 
         // Center the window to be cool =)
         [m_window center];
-        
+
         // Create the view.
         m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame]];
-        
+
         if (m_oglView == nil) {
             sf::err()
             << "Could not create an instance of NSOpenGLView "
             << "in (SFWindowController -initWithMode:andStyle:)."
             << std::endl;
-            
+
             return self;
         }
-        
+
         // If a fullscreen window was requested...
         if (style & sf::Style::Fullscreen) {
             /// ... we tell the OpenGL view
@@ -221,20 +221,20 @@
                 [m_oglView setRealSize:NSMakeSize(m_fullscreenMode->width, m_fullscreenMode->height)];
             }
         }
-        
+
         // Set the view to the window as its content view.
         [m_window setContentView:m_oglView];
-        
+
         // Register for event.
         [m_window setDelegate:self];
         [m_window setAcceptsMouseMovedEvents:YES];
         [m_window setIgnoresMouseEvents:NO];
-        
+
         // And some other things...
         [m_window setAutodisplay:YES];
         [m_window setReleasedWhenClosed:NO];
     } // if super init ok
-    
+
     return self;
 }
 
@@ -243,12 +243,12 @@
 {
     [self closeWindow];
     [NSMenu setMenuBarVisible:YES];
-    
+
     [m_window release];
     [m_oglView release];
-    
+
     delete m_fullscreenMode;
-    
+
     [super dealloc];
 }
 
@@ -302,12 +302,12 @@
 
     // Next, convert it to the screen base system
     NSPoint const positionInScreen = [[m_oglView window] convertBaseToScreen:positionInWindow];
-    
+
     // Finally, flip for SFML window coordinate system
     // Don't forget to discard the title bar !
     NSPoint const positionInSFML = NSMakePoint(positionInScreen.x,
                                                ([self screenHeight] - [self titlebarHeight]) - positionInScreen.y);
-    
+
     return positionInSFML;
 }
 
@@ -316,10 +316,10 @@
 -(void)setWindowPositionToX:(int)x Y:(int)y
 {
     NSPoint point = NSMakePoint(x, y);
-    
+
     // Flip for SFML window coordinate system.
     point.y = [self screenHeight] - point.y;
-    
+
     // Place the window.
     [m_window setFrameTopLeftPoint:point];
 }
@@ -339,13 +339,22 @@
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
 {
+    // Before resizing, remove resizeable mask to be able to resize
+    // beyond the desktop boundaries.
+    NSUInteger styleMask = [m_window styleMask];
+
+    [m_window setStyleMask:styleMask ^ NSResizableWindowMask];
+
     // Add titlebar height.
     NSRect frame = NSMakeRect([m_window frame].origin.x,
                               [m_window frame].origin.y,
                               width,
                               height + [self titlebarHeight]);
-    
+
     [m_window setFrame:frame display:YES];
+
+    // And restore the mask
+    [m_window setStyleMask:styleMask];
 }
 
 
@@ -395,15 +404,15 @@
 
 ////////////////////////////////////////////////////////
 -(void)setIconTo:(unsigned int)width
-              by:(unsigned int)height 
+              by:(unsigned int)height
             with:(sf::Uint8 const *)pixels
 {
     // Create an empty image representation.
-    NSBitmapImageRep* bitmap = 
+    NSBitmapImageRep* bitmap =
     [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:0 // if 0 : only allocate memory
                                             pixelsWide:width
                                             pixelsHigh:height
-                                         bitsPerSample:8 // The number of bits used to specify 
+                                         bitsPerSample:8 // The number of bits used to specify
                                                          // one pixel in a single component of the data.
                                        samplesPerPixel:4 // 3 if no alpha, 4 with it
                                               hasAlpha:YES
@@ -411,12 +420,12 @@
                                         colorSpaceName:NSCalibratedRGBColorSpace
                                            bytesPerRow:0    // 0 == determine automatically
                                           bitsPerPixel:0];  // 0 == determine automatically
-    
+
     // Load data pixels.
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1050 // We may need to define NSUInteger.
 #define NSUInteger unsigned int
 #endif
-    for (unsigned int y = 0; y < height; ++y) { 
+    for (unsigned int y = 0; y < height; ++y) {
         for (unsigned int x = 0; x < width; ++x, pixels+=4) {
             NSUInteger pixel[4] = { pixels[0], pixels[1], pixels[2], pixels[3] };
             [bitmap setPixel:pixel
@@ -424,14 +433,14 @@
                            y:y];
         }
     }
-    
+
     // Create an image from the representation.
     NSImage* icon = [[NSImage alloc] initWithSize:NSMakeSize(width, height)];
     [icon addRepresentation:bitmap];
-    
+
     // Set app icon.
     [[SFApplication sharedApplication] setApplicationIconImage:icon];
-    
+
     // Free up.
     [icon release];
     [bitmap release];
@@ -450,10 +459,10 @@
         sf::err()
         << "Cannot fetch event from a worker thread. (OS X restriction)"
         << std::endl;
-        
+
         return;
     }
-    
+
     // If we don't have a requester we don't fetch event.
     if (m_requester != 0) {
         [SFApplication processEvent];
@@ -466,15 +475,15 @@
 {
     [m_oglView setOpenGLContext:context];
     [context setView:m_oglView];
-    
+
     // If fullscreen was requested and the mode used to create the window
     // was not the desktop mode, we change the back buffer size of the
     // context.
     if (*m_fullscreenMode != sf::VideoMode()) {
         CGLContextObj cgcontext = (CGLContextObj)[context CGLContextObj];
-        
+
         GLint dim[2] = {m_fullscreenMode->width, m_fullscreenMode->height};
-        
+
         CGLSetParameter(cgcontext, kCGLCPSurfaceBackingSize, dim);
         CGLEnable(cgcontext, kCGLCESurfaceBackingSize);
     }
@@ -489,7 +498,7 @@
 -(BOOL)windowShouldClose:(id)sender
 {
     if (m_requester == 0) return YES;
-    
+
     m_requester->windowClosed();
     return NO;
 }
@@ -500,7 +509,7 @@
 {
     // Send event.
     if (m_requester == 0) return;
-    
+
     m_requester->windowGainedFocus();
 
     if (*m_fullscreenMode != sf::VideoMode()) {
@@ -514,7 +523,7 @@
 {
     // Send event.
     if (m_requester == 0) return;
-    
+
     m_requester->windowLostFocus();
 
     if (*m_fullscreenMode != sf::VideoMode()) {

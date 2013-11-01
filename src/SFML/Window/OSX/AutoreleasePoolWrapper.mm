@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,7 +35,7 @@
 
 
 ////////////////////////////////////////////////////////////
-/// Here we manage one and only one pool by thread. This prevents draining one 
+/// Here we manage one and only one pool by thread. This prevents draining one
 /// pool and making other pools invalid which can lead to a crash on 10.5 and an
 /// annoying message on 10.6 (*** attempt to pop an unknown autorelease pool).
 ///
@@ -59,39 +59,39 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class PoolWrapper : NonCopyable {
 public :
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
     PoolWrapper();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Default destructor
     ///
     ////////////////////////////////////////////////////////////
     ~PoolWrapper();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Increment retain count and allocate memory if needed
     ///
     ////////////////////////////////////////////////////////////
     void retain();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Decrement retain count and releasing memory if needed
     ///
     ////////////////////////////////////////////////////////////
     void release();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Drain the pool
     ///
     ////////////////////////////////////////////////////////////
-    void Drain();
-    
+    void drain();
+
 private:
-    
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ private:
 ////////////////////////////////////////////////////////////
 PoolWrapper::PoolWrapper()
 : m_count(0)
-, m_pool(0) 
+, m_pool(0)
 {
     /* Nothing else */
 }
@@ -133,12 +133,12 @@ void PoolWrapper::retain()
 {
     // Increase counter.
     ++m_count;
-    
+
     // Allocate pool if required.
     if (m_pool == 0) {
         m_pool = [[NSAutoreleasePool alloc] init];
     }
-    
+
 #ifdef SFML_DEBUG
     if (m_count <= 0) {
         sf::err() << "PoolWrapper::retain : m_count <= 0! " << std::endl;
@@ -152,12 +152,12 @@ void PoolWrapper::release()
 {
     // Decrease counter.
     --m_count;
-    
+
     // Drain pool if required.
     if (m_count == 0) {
-        Drain();
+        drain();
     }
-    
+
 #ifdef SFML_DEBUG
     if (m_count < 0) {
         sf::err() << "PoolWrapper::release : m_count < 0! " << std::endl;
@@ -165,19 +165,19 @@ void PoolWrapper::release()
 #endif
 }
 
-void PoolWrapper::Drain()
+void PoolWrapper::drain()
 {
     [m_pool drain];
     m_pool = 0;
-    
+
     if (m_count != 0) {
         m_pool = [[NSAutoreleasePool alloc] init];
     }
 }
 
-    
+
 } // namespace priv
-    
+
 } // namespace sf
 
 ////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ void retainPool(void)
     if (localPool == NULL) {
         localPool = new sf::priv::PoolWrapper();
     }
-    
+
     // Then retains!
     localPool->retain();
 }
@@ -213,10 +213,10 @@ void releasePool(void)
                   << std::endl;
     } else {
 #endif
-    
+
     // Releases, that's all.
     localPool->release();
-    
+
 #ifdef SFML_DEBUG
     }
 #endif
@@ -227,7 +227,7 @@ void releasePool(void)
 void drainPool()
 {
     if (localPool != NULL) {
-        localPool->Drain();
+        localPool->drain();
     }
 #ifdef SFML_DEBUG
     else {

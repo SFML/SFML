@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
-//                         Laurent Gomila (laurent.gom@gmail.com), 
+// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -42,7 +42,7 @@ namespace sf {
 
 ////////////////////////////////////////////////////////////
 /// Implementation of WindowImplDelegateProtocol for window managment.
-/// 
+///
 /// Key and mouse events are delegated to its view.
 /// Window events are managed by this class.
 ///
@@ -66,13 +66,13 @@ namespace sf {
 
 ////////////////////////////////////////////////////////////
 /// Create the SFML window with an external Cocoa window.
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(id)initWithWindow:(NSWindow *)window;
 
 ////////////////////////////////////////////////////////////
 /// Create the SFML window "from scratch" (full SFML handling).
-/// 
+///
 ////////////////////////////////////////////////////////////
 -(id)initWithMode:(sf::VideoMode const &)mode andStyle:(unsigned long)style;
 
