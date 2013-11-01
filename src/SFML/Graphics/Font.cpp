@@ -80,7 +80,7 @@ m_library    (copy.m_library),
 m_face       (copy.m_face),
 m_streamRec  (copy.m_streamRec),
 m_refCount   (copy.m_refCount),
-m_info		 (copy.m_info),
+m_info       (copy.m_info),
 m_pages      (copy.m_pages),
 m_pixelBuffer(copy.m_pixelBuffer)
 {
@@ -125,7 +125,7 @@ bool Font::loadFromFile(const std::string& filename)
         return false;
     }
 
-	// Select the unicode character map
+    // Select the unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font \"" << filename << "\" (failed to set the Unicode character set)" << std::endl;
@@ -135,8 +135,8 @@ bool Font::loadFromFile(const std::string& filename)
     // Store the loaded font in our ugly void* :)
     m_face = face;
 
-	// Store the font information
-	m_info.family = face->family_name ? face->family_name : std::string();
+    // Store the font information
+    m_info.family = face->family_name ? face->family_name : std::string();
 
     return true;
 }
@@ -178,8 +178,8 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     // Store the loaded font in our ugly void* :)
     m_face = face;
 
-	// Store the font information
-	m_info.family = face->family_name ? face->family_name : std::string();
+    // Store the font information
+    m_info.family = face->family_name ? face->family_name : std::string();
 
     return true;
 }
@@ -241,8 +241,8 @@ bool Font::loadFromStream(InputStream& stream)
     m_face = face;
     m_streamRec = rec;
 
-	// Store the font information
-	m_info.family = face->family_name ? face->family_name : std::string();
+    // Store the font information
+    m_info.family = face->family_name ? face->family_name : std::string();
 
     return true;
 }
@@ -251,7 +251,7 @@ bool Font::loadFromStream(InputStream& stream)
 ////////////////////////////////////////////////////////////
 const Font::Info& Font::getInfo() const
 {
-	return m_info;
+    return m_info;
 }
 
 
