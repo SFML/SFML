@@ -18,6 +18,9 @@
 #
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
 # you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
+# Since you have to link yourself all the SFML dependencies when you link it statically, the following
+# additional variables are defined: SFML_XXX_DEPENDENCIES and SFML_DEPENDENCIES (see their detailed
+# description below).
 # In case of static linking, the SFML_STATIC macro will also be defined by this script.
 # example:
 #   set(SFML_STATIC_LIBRARIES TRUE)
@@ -40,9 +43,11 @@
 #   - SFML_XXX_LIBRARY_RELEASE: the name of the release library of the xxx module (set to SFML_XXX_LIBRARY_DEBUG is no release version is found)
 #   - SFML_XXX_LIBRARY:         the name of the library to link to for the xxx module (includes both debug and optimized names if necessary)
 #   - SFML_XXX_FOUND:           true if either the debug or release library of the xxx module is found
-# - SFML_LIBRARIES:   the list of all libraries corresponding to the required modules
-# - SFML_FOUND:       true if all the required modules are found
-# - SFML_INCLUDE_DIR: the path where SFML headers are located (the directory containing the SFML/Config.hpp file)
+#   - SFML_XXX_DEPENDENCIES:    the list of libraries the module depends on, in case of static linking
+# - SFML_LIBRARIES:    the list of all libraries corresponding to the required modules
+# - SFML_FOUND:        true if all the required modules are found
+# - SFML_INCLUDE_DIR:  the path where SFML headers are located (the directory containing the SFML/Config.hpp file)
+# - SFML_DEPENDENCIES: the list of libraries SFML depends on, in case of static linking
 #
 # example:
 #   find_package(SFML 2 COMPONENTS system window graphics audio REQUIRED)
@@ -61,20 +66,23 @@ if(SFML_STATIC_LIBRARIES)
     set(FIND_SFML_LIB_SUFFIX "${FIND_SFML_LIB_SUFFIX}-s")
 endif()
 
+# define the list of search paths for headers and libraries
+set(FIND_SFML_PATHS
+    ${SFML_ROOT}
+    $ENV{SFML_ROOT}
+    ~/Library/Frameworks
+    /Library/Frameworks
+    /usr/local
+    /usr
+    /sw
+    /opt/local
+    /opt/csw
+    /opt)
+
 # find the SFML include directory
 find_path(SFML_INCLUDE_DIR SFML/Config.hpp
           PATH_SUFFIXES include
-          PATHS
-          ${SFML_ROOT}
-          $ENV{SFML_ROOT}
-          ~/Library/Frameworks
-          /Library/Frameworks
-          /usr/local/
-          /usr/
-          /sw          # Fink
-          /opt/local/  # DarwinPorts
-          /opt/csw/    # Blastwave
-          /opt/)
+          PATHS ${FIND_SFML_PATHS})
 
 # check the version number
 set(SFML_VERSION_OK TRUE)
@@ -113,17 +121,6 @@ endif()
 
 # find the requested modules
 set(SFML_FOUND TRUE) # will be set to false if one of the required modules is not found
-set(FIND_SFML_LIB_PATHS
-    ${SFML_ROOT}
-    $ENV{SFML_ROOT}
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /usr/local
-    /usr
-    /sw
-    /opt/local
-    /opt/csw
-    /opt)
 foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
     string(TOLOWER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_LOWER)
     string(TOUPPER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_UPPER)
@@ -138,13 +135,13 @@ foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
     find_library(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG
                  NAMES ${FIND_SFML_COMPONENT_NAME}-d
                  PATH_SUFFIXES lib64 lib
-                 PATHS ${FIND_SFML_LIB_PATHS})
+                 PATHS ${FIND_SFML_PATHS})
 
     # release library
     find_library(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE
                  NAMES ${FIND_SFML_COMPONENT_NAME}
                  PATH_SUFFIXES lib64 lib
-                 PATHS ${FIND_SFML_LIB_PATHS})
+                 PATHS ${FIND_SFML_PATHS})
 
     if (SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG OR SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE)
         # library found
@@ -184,10 +181,121 @@ foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
     set(SFML_LIBRARIES ${SFML_LIBRARIES} "${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY}")
 endforeach()
 
+# in case of static linking, we must also define the list of all the dependencies of SFML libraries
+if(SFML_STATIC_LIBRARIES)
+
+    # detect the OS
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+        set(FIND_SFML_OS_WINDOWS 1)
+    elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        set(FIND_SFML_OS_LINUX 1)
+    elseif(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+        set(FIND_SFML_OS_FREEBSD 1)
+    elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        set(FIND_SFML_OS_MACOSX 1)
+    endif()
+
+    # start with an empty list
+    set(SFML_DEPENDENCIES)
+    set(FIND_SFML_DEPENDENCIES_NOTFOUND)
+
+    # macro that searches for a 3rd-party library
+    macro(find_sfml_dependency output friendlyname)
+        find_library(${output} NAMES ${ARGN} PATHS ${FIND_SFML_PATHS} PATH_SUFFIXES lib)
+        if(${${output}} STREQUAL "${output}-NOTFOUND")
+            unset(output)
+            set(FIND_SFML_DEPENDENCIES_NOTFOUND "${FIND_SFML_DEPENDENCIES_NOTFOUND} ${friendlyname}")
+        endif()
+    endmacro()
+
+    # sfml-system
+    list(FIND SFML_FIND_COMPONENTS "system" FIND_SFML_SYSTEM_COMPONENT)
+    if(NOT ${FIND_SFML_SYSTEM_COMPONENT} EQUAL -1)
+
+        # update the list -- these are only system libraries, no need to find them
+        if(FIND_SFML_OS_LINUX OR FIND_SFML_OS_FREEBSD OR FIND_SFML_OS_MACOSX)
+            set(SFML_SYSTEM_DEPENDENCIES "pthread")
+        endif()
+        if(FIND_SFML_OS_LINUX)
+            set(SFML_SYSTEM_DEPENDENCIES "rt")
+        endif()
+        if(FIND_SFML_OS_WINDOWS)
+            set(SFML_SYSTEM_DEPENDENCIES "winmm")
+        endif()
+        set(SFML_DEPENDENCIES ${SFML_DEPENDENCIES} ${SFML_SYSTEM_DEPENDENCIES})
+    endif()
+
+    # sfml-network
+    list(FIND SFML_FIND_COMPONENTS "network" FIND_SFML_NETWORK_COMPONENT)
+    if(NOT ${FIND_SFML_NETWORK_COMPONENT} EQUAL -1)
+
+        # update the list -- these are only system libraries, no need to find them
+        if(FIND_SFML_OS_WINDOWS)
+            set(SFML_NETWORK_DEPENDENCIES "ws2_32")
+        endif()
+        set(SFML_DEPENDENCIES ${SFML_DEPENDENCIES} ${SFML_NETWORK_DEPENDENCIES})
+    endif()
+
+    # sfml-window
+    list(FIND SFML_FIND_COMPONENTS "window" FIND_SFML_WINDOW_COMPONENT)
+    if(NOT ${FIND_SFML_WINDOW_COMPONENT} EQUAL -1)
+
+        # find libraries
+        if(FIND_SFML_OS_LINUX)
+            find_sfml_dependency(X11_LIBRARY "X11" X11)
+            find_sfml_dependency(XRANDR_LIBRARY "Xrandr" Xrandr)
+        endif()
+
+        # update the list
+        if(FIND_SFML_OS_WINDOWS)
+            set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "opengl32" "winmm" "gdi32")
+        elseif(FIND_SFML_OS_LINUX OR FIND_SFML_OS_FREEBSD)
+            set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "GL" ${X11_LIBRARY} ${XRANDR_LIBRARY})
+            if(FIND_SFML_OS_FREEBSD)
+                set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "usbhid")
+            endif()
+        elseif(FIND_SFML_OS_MACOSX)
+            set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "GL" "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
+        endif()
+        set(SFML_DEPENDENCIES ${SFML_DEPENDENCIES} ${SFML_WINDOW_DEPENDENCIES})
+    endif()
+
+    # sfml-graphics
+    list(FIND SFML_FIND_COMPONENTS "graphics" FIND_SFML_GRAPHICS_COMPONENT)
+    if(NOT ${FIND_SFML_GRAPHICS_COMPONENT} EQUAL -1)
+    
+        # find libraries
+        find_sfml_dependency(FREETYPE_LIBRARY "FreeType" freetype)
+        find_sfml_dependency(GLEW_LIBRARY "GLEW" glew GLEW glew32 glew32s glew64 glew64s)
+        find_sfml_dependency(JPEG_LIBRARY "libjpeg" jpeg)
+
+        # update the list
+        set(SFML_GRAPHICS_DEPENDENCIES ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY})
+        set(SFML_DEPENDENCIES ${SFML_DEPENDENCIES} ${SFML_GRAPHICS_DEPENDENCIES})
+    endif()
+
+    # sfml-audio
+    list(FIND SFML_FIND_COMPONENTS "audio" FIND_SFML_AUDIO_COMPONENT)
+    if(NOT ${FIND_SFML_AUDIO_COMPONENT} EQUAL -1)
+
+        # find libraries
+        find_sfml_dependency(OPENAL_LIBRARY "OpenAL" openal openal32)
+        find_sfml_dependency(SNDFILE_LIBRARY "libsndfile" sndfile)
+
+        # update the list
+        set(SFML_AUDIO_DEPENDENCIES ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
+        set(SFML_DEPENDENCIES ${SFML_DEPENDENCIES} ${SFML_AUDIO_DEPENDENCIES})
+    endif()
+
+endif()
+
 # handle errors
 if(NOT SFML_VERSION_OK)
     # SFML version not ok
     set(FIND_SFML_ERROR "SFML found but version too low (requested: ${SFML_FIND_VERSION}, found: ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR})")
+    set(SFML_FOUND FALSE)
+elseif(SFML_STATIC_LIBRARIES AND FIND_SFML_DEPENDENCIES_NOTFOUND)
+    set(FIND_SFML_ERROR "SFML found but some of its dependencies are missing (${FIND_SFML_DEPENDENCIES_NOTFOUND})")
     set(SFML_FOUND FALSE)
 elseif(NOT SFML_FOUND)
     # include directory or library not found
