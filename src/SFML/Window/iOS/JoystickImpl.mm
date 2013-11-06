@@ -48,36 +48,14 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
-    static const NSTimeInterval updateInterval = 1. / 60.;
-
-    [SFAppDelegate getInstance].motionManager.accelerometerUpdateInterval = updateInterval;
-    [[SFAppDelegate getInstance].motionManager startAccelerometerUpdates];
-
-    [SFAppDelegate getInstance].motionManager.gyroUpdateInterval = updateInterval;
-    [[SFAppDelegate getInstance].motionManager startGyroUpdates];
-
-    [SFAppDelegate getInstance].motionManager.magnetometerUpdateInterval = updateInterval;
-    [[SFAppDelegate getInstance].motionManager startMagnetometerUpdates];
-
-    [SFAppDelegate getInstance].motionManager.deviceMotionUpdateInterval = updateInterval;
-    [[SFAppDelegate getInstance].motionManager startDeviceMotionUpdates];
+    // Nothing to do
 }
 
 
 ////////////////////////////////////////////////////////////
 void JoystickImpl::cleanup()
 {
-    if ([SFAppDelegate getInstance].motionManager.accelerometerActive)
-        [[SFAppDelegate getInstance].motionManager stopAccelerometerUpdates];
-
-    if ([SFAppDelegate getInstance].motionManager.gyroActive)
-        [[SFAppDelegate getInstance].motionManager stopGyroUpdates];
-
-    if ([SFAppDelegate getInstance].motionManager.magnetometerActive)
-        [[SFAppDelegate getInstance].motionManager stopMagnetometerUpdates];
-
-    if ([SFAppDelegate getInstance].motionManager.deviceMotionActive)
-        [[SFAppDelegate getInstance].motionManager stopDeviceMotionUpdates];
+    // Nothing to do
 }
 
 
@@ -108,6 +86,38 @@ bool JoystickImpl::isConnected(unsigned int index)
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
 {
+    // Enable the corresponding sensor
+    static const NSTimeInterval updateInterval = 1. / 60.;
+    switch (index)
+    {
+        case Accelerometer:
+            [SFAppDelegate getInstance].motionManager.accelerometerUpdateInterval = updateInterval;
+            [[SFAppDelegate getInstance].motionManager startAccelerometerUpdates];
+            break;
+
+        case Gyroscope:
+            [SFAppDelegate getInstance].motionManager.gyroUpdateInterval = updateInterval;
+            [[SFAppDelegate getInstance].motionManager startGyroUpdates];
+            break;
+
+        case Magnetometer:
+            [SFAppDelegate getInstance].motionManager.magnetometerUpdateInterval = updateInterval;
+            [[SFAppDelegate getInstance].motionManager startMagnetometerUpdates];
+            break;
+
+        case UserAcceleration:
+        case AbsoluteOrientation:
+            if (![SFAppDelegate getInstance].motionManager.deviceMotionActive)
+            {
+                [SFAppDelegate getInstance].motionManager.deviceMotionUpdateInterval = updateInterval;
+                [[SFAppDelegate getInstance].motionManager startDeviceMotionUpdates];
+            }
+            break;
+
+        default:
+            break;
+    }
+
     // Save the index
     m_index = index;
 
@@ -118,7 +128,33 @@ bool JoystickImpl::open(unsigned int index)
 ////////////////////////////////////////////////////////////
 void JoystickImpl::close()
 {
-    // Nothing to do
+    // Disable the corresponding sensor
+    switch (m_index)
+    {
+        case Accelerometer:
+            if ([SFAppDelegate getInstance].motionManager.accelerometerActive)
+                [[SFAppDelegate getInstance].motionManager stopAccelerometerUpdates];
+            break;
+
+        case Gyroscope:
+            if ([SFAppDelegate getInstance].motionManager.gyroActive)
+                [[SFAppDelegate getInstance].motionManager stopGyroUpdates];
+            break;
+
+        case Magnetometer:
+            if ([SFAppDelegate getInstance].motionManager.magnetometerActive)
+                [[SFAppDelegate getInstance].motionManager stopMagnetometerUpdates];
+            break;
+
+        case UserAcceleration:
+        case AbsoluteOrientation:
+            if ([SFAppDelegate getInstance].motionManager.deviceMotionActive)
+                [[SFAppDelegate getInstance].motionManager stopDeviceMotionUpdates];
+            break;
+
+        default:
+            break;
+    }
 }
 
 
