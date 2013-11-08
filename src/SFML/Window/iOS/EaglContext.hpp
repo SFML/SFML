@@ -31,6 +31,7 @@
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/iOS/ObjCType.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/System/Clock.hpp>
 #include <OpenGLES/ES1/gl.h>
 
 
@@ -153,6 +154,8 @@ private:
     GLuint m_framebuffer;   ///< Frame buffer associated to the context
     GLuint m_colorbuffer;   ///< Color render buffer
     GLuint m_depthbuffer;   ///< Depth render buffer
+    bool m_vsyncEnabled;    ///< Vertical sync activation flag
+    Clock m_clock;          ///< Measures the elapsed time for the fake v-sync implementation
 };
     
 } // namespace priv
