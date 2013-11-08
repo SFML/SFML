@@ -29,6 +29,7 @@
 #include <SFML/Window/iOS/WindowImplUIKit.hpp>
 #include <SFML/Window/iOS/SFView.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Sleep.hpp>
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/EAGLDrawable.h>
 #include <OpenGLES/ES1/glext.h>
@@ -41,10 +42,12 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared) :
-m_context    (nil),
-m_framebuffer(0),
-m_colorbuffer(0),
-m_depthbuffer(0)
+m_context     (nil),
+m_framebuffer (0),
+m_colorbuffer (0),
+m_depthbuffer (0),
+m_vsyncEnabled(false),
+m_clock       ()
 {
     // Create the context
     if (shared)
@@ -57,10 +60,12 @@ m_depthbuffer(0)
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings,
                          const WindowImpl* owner, unsigned int bitsPerPixel) :
-m_context    (nil),
-m_framebuffer(0),
-m_colorbuffer(0),
-m_depthbuffer(0)
+m_context     (nil),
+m_framebuffer (0),
+m_colorbuffer (0),
+m_depthbuffer (0),
+m_vsyncEnabled(false),
+m_clock       ()
 {
     const WindowImplUIKit* window = static_cast<const WindowImplUIKit*>(owner);
 
@@ -71,10 +76,12 @@ m_depthbuffer(0)
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings, 
                          unsigned int width, unsigned int height) :
-m_context    (nil),
-m_framebuffer(0),
-m_colorbuffer(0),
-m_depthbuffer(0)
+m_context     (nil),
+m_framebuffer (0),
+m_colorbuffer (0),
+m_depthbuffer (0),
+m_vsyncEnabled(false),
+m_clock       ()
 {
     // This constructor shoult never be used by implementation
     err() << "Calling bad EaglContext constructor, please contact your developer :)" << std::endl;
@@ -167,12 +174,23 @@ void EaglContext::display()
 {
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_colorbuffer);
     [m_context presentRenderbuffer:GL_RENDERBUFFER_OES];
+
+    // The proper way of doing v-sync on iOS would be to use CADisplayLink
+    // notifications, but it is not compatible with the way SFML is designed;
+    // therefore we fake it with a manual framerate limit
+    if (m_vsyncEnabled)
+    {
+        static const Time frameDuration = seconds(1.f / 60.f);
+        sleep(frameDuration - m_clock.getElapsedTime());
+        m_clock.restart();
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 void EaglContext::setVerticalSyncEnabled(bool enabled)
 {
+    m_vsyncEnabled = enabled;
 }
 
     
