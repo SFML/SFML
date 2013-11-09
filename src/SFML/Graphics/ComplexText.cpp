@@ -101,34 +101,35 @@ void ComplexText::updateGeometry()
     Uint32 prevChar = 0;
     
     // prepare harfbuzz buffer and font face to shape the complex text
-    hb_font_t *hb_ft_font = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
+    hb_font_t *hbFtFont = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
     hb_buffer_t *buf = hb_buffer_create();
     
     // divide the string into lines
-    const Uint32* line_start = m_string.getData();
-    while(true) {
+    const Uint32* lineStart = m_string.getData();
+    while(true) 
+    {
         //find the end of the line
-        const Uint32 *line_end;
-        for(line_end = line_start; *line_end != '\n' && *line_end != '\v' && *line_end != '\0'; ++line_end);
+        const Uint32 *lineEnd;
+        for(lineEnd = lineStart; *lineEnd != '\n' && *lineEnd != '\v' && *lineEnd != '\0'; ++lineEnd);
         
         hb_buffer_set_direction(buf, m_dir);
         hb_buffer_set_script(buf, m_script);
-        hb_buffer_add_utf32(buf, line_start, line_end - line_start, 0, line_end - line_start);
+        hb_buffer_add_utf32(buf, lineStart, lineEnd - lineStart, 0, lineEnd - lineStart);
         
         // if the script or direction aren't set, try to guess them before shaping
         hb_buffer_guess_segment_properties(buf);
-        hb_shape(hb_ft_font, buf, NULL, 0);
+        hb_shape(hbFtFont, buf, NULL, 0);
 
         // from the shaped text we get the glyphs and positions
-        unsigned int         glyph_count;
-        hb_glyph_info_t     *glyph_info = hb_buffer_get_glyph_infos(buf, &glyph_count);
-        hb_glyph_position_t *glyph_pos  = hb_buffer_get_glyph_positions(buf, &glyph_count);
+        unsigned int         glyphCount;
+        hb_glyph_info_t     *glyphInfo = hb_buffer_get_glyph_infos(buf, &glyphCount);
+        hb_glyph_position_t *glyphPos  = hb_buffer_get_glyph_positions(buf, &glyphCount);
 
         // convert this data into geometry for us to render it
-        for (std::size_t i = 0; i < glyph_count; ++i)
+        for (std::size_t i = 0; i < glyphCount; ++i)
         {
-            hb_glyph_info_t curGlyph = glyph_info[i];
-            hb_glyph_position_t curGlyphPos = glyph_pos[i];
+            hb_glyph_info_t curGlyph        = glyphInfo[i];
+            hb_glyph_position_t curGlyphPos = glyphPos[i];
 
             // Extract the current glyph's description
             const Glyph& glyph = m_font->getGlyphByIndex(curGlyph.codepoint, m_characterSize, bold);
@@ -181,22 +182,22 @@ void ComplexText::updateGeometry()
         m_bounds.width = maxX - minX;
         m_bounds.height = maxY - minY;
         
-        if (*line_end == '\0')
+        if (*lineEnd == '\0')
           break;
           
-        if (*line_end == '\n') {
+        if (*lineEnd == '\n') {
             y += vspace;
-        } else if (*line_end == '\v') {
-          y += vspace * 4;
+        } else if (*lineEnd == '\v') {
+            y += vspace * 4;
         }
         
         x = 0;
-        line_start = line_end + 1;
+        lineStart = lineEnd + 1;
         hb_buffer_reset(buf);
     }
     
     hb_buffer_destroy(buf);
-    hb_font_destroy(hb_ft_font);
+    hb_font_destroy(hbFtFont);
 }
 
 ////////////////////////////////////////////////////////////
@@ -234,7 +235,7 @@ Vector2f ComplexText::findCharacterPos(std::size_t index) const
     }
     
     //shape only the relevant line
-    hb_font_t *hb_ft_font = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
+    hb_font_t *hbFtFont = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
     hb_buffer_t *buf = hb_buffer_create();
     
     hb_buffer_set_direction(buf, m_dir);
@@ -243,17 +244,16 @@ Vector2f ComplexText::findCharacterPos(std::size_t index) const
     
     // if the script or direction aren't set, try to guess them before shaping
     hb_buffer_guess_segment_properties(buf);
-    hb_shape(hb_ft_font, buf, NULL, 0);
+    hb_shape(hbFtFont, buf, NULL, 0);
     
     // from the shaped text we get the glyphs and positions
-    unsigned int         glyph_count;
-    hb_glyph_info_t     *glyph_info = hb_buffer_get_glyph_infos(buf, &glyph_count);
-    hb_glyph_position_t *glyph_pos  = hb_buffer_get_glyph_positions(buf, &glyph_count);
+    unsigned int         glyphCount;
+    hb_glyph_position_t *glyphPos  = hb_buffer_get_glyph_positions(buf, &glyphCount);
     
 
     //calculate the glyph index
     size_t glyphIndex = index - lastLineStart - skippedGlyphs;
-    if (glyphIndex > glyph_count) 
+    if (glyphIndex > glyphCount) 
     {
       glyphIndex = index - lastLineStart - skippedGlyphs;
     }
@@ -262,8 +262,7 @@ Vector2f ComplexText::findCharacterPos(std::size_t index) const
     Vector2f position;
     for (std::size_t i = 0; i < glyphIndex; ++i)
     {
-        hb_glyph_info_t curGlyph = glyph_info[i];
-        hb_glyph_position_t curGlyphPos = glyph_pos[i];
+        hb_glyph_position_t curGlyphPos = glyphPos[i];
         Uint32 curChar = m_string[i];
 
 
@@ -272,13 +271,16 @@ Vector2f ComplexText::findCharacterPos(std::size_t index) const
     }
     
     //add the final (non cumulative) offsets
-    hb_glyph_position_t curGlyphPos = glyph_pos[glyphIndex - 1];
+    hb_glyph_position_t curGlyphPos = glyphPos[glyphIndex - 1];
     position.x += (curGlyphPos.x_offset >> 6);
     position.y += (curGlyphPos.y_offset >> 6);
 
     // Transform the position to global coordinates
     position = getTransform().transformPoint(position);
 
+    hb_buffer_destroy(buf);
+    hb_font_destroy(hbFtFont);
+    
     return position;
 }
 
