@@ -80,6 +80,23 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void SetScript(hb_script_t script);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Return the position of the \a index-th character
+    ///
+    /// This function computes the visual position of a character
+    /// from its index in the string. The returned position is
+    /// in global coordinates (translation, rotation, scale and
+    /// origin are applied).
+    /// If \a index is out of range, the position of the end of
+    /// the string is returned.
+    ///
+    /// \param index Index of the character
+    ///
+    /// \return Position of the character
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2f findCharacterPos(std::size_t index) const;
 
 protected :
 

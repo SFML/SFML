@@ -233,7 +233,7 @@ public :
     /// \return Position of the character
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f findCharacterPos(std::size_t index) const;
+    virtual Vector2f findCharacterPos(std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity

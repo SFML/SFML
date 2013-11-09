@@ -199,4 +199,87 @@ void ComplexText::updateGeometry()
     hb_font_destroy(hb_ft_font);
 }
 
+////////////////////////////////////////////////////////////
+Vector2f ComplexText::findCharacterPos(std::size_t index) const
+{
+    // Make sure that we have a valid font
+    if (!m_font)
+        return Vector2f();
+
+    // Adjust the index if it's out of range
+    if (index > m_string.getSize())
+        index = m_string.getSize();
+
+    // Precompute the variables needed by the algorithm
+    bool  bold   = (m_style & Bold) != 0;
+    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
+    float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
+
+    // unfortunately the index does not match what harfbuzz thinks it is
+    // because spaces and tabs aren't returned in the position
+    size_t lastLineStart = 0;
+    size_t skippedGlyphs = 0;
+    for (std::size_t i = 0; i < index; ++i) 
+    {
+        Uint32 curChar = m_string[i];
+        if (curChar == ' '  || curChar == '\t') 
+        {
+          ++skippedGlyphs;
+        }
+        else if(curChar == '\n' || curChar == '\v') 
+        {
+          lastLineStart = i+1;
+          skippedGlyphs = 0;
+        }
+    }
+    
+    //shape only the relevant line
+    hb_font_t *hb_ft_font = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
+    hb_buffer_t *buf = hb_buffer_create();
+    
+    hb_buffer_set_direction(buf, m_dir);
+    hb_buffer_set_script(buf, m_script);
+    hb_buffer_add_utf32(buf, m_string.getData() + lastLineStart, index - lastLineStart, 0, index - lastLineStart);
+    
+    // if the script or direction aren't set, try to guess them before shaping
+    hb_buffer_guess_segment_properties(buf);
+    hb_shape(hb_ft_font, buf, NULL, 0);
+    
+    // from the shaped text we get the glyphs and positions
+    unsigned int         glyph_count;
+    hb_glyph_info_t     *glyph_info = hb_buffer_get_glyph_infos(buf, &glyph_count);
+    hb_glyph_position_t *glyph_pos  = hb_buffer_get_glyph_positions(buf, &glyph_count);
+    
+
+    //calculate the glyph index
+    size_t glyphIndex = index - lastLineStart - skippedGlyphs;
+    if (glyphIndex > glyph_count) 
+    {
+      glyphIndex = index - lastLineStart - skippedGlyphs;
+    }
+      
+    // Compute the position
+    Vector2f position;
+    for (std::size_t i = 0; i < glyphIndex; ++i)
+    {
+        hb_glyph_info_t curGlyph = glyph_info[i];
+        hb_glyph_position_t curGlyphPos = glyph_pos[i];
+        Uint32 curChar = m_string[i];
+
+
+        position.x += curGlyphPos.x_advance >> 6;
+        position.y += curGlyphPos.y_advance >> 6;
+    }
+    
+    //add the final (non cumulative) offsets
+    hb_glyph_position_t curGlyphPos = glyph_pos[glyphIndex - 1];
+    position.x += (curGlyphPos.x_offset >> 6);
+    position.y += (curGlyphPos.y_offset >> 6);
+
+    // Transform the position to global coordinates
+    position = getTransform().transformPoint(position);
+
+    return position;
 }
+
+} // namespace sf
