@@ -336,6 +336,16 @@ bool Window::setActive(bool active) const
 
 
 ////////////////////////////////////////////////////////////
+void Window::setTopmost(bool topmost) const
+{
+    if (m_impl)
+    {
+        m_impl->setTopmost(topmost);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::display()
 {
     // Display the backbuffer on screen

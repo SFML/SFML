@@ -385,6 +385,10 @@ void WindowImplWin32::setTracking(bool track)
     TrackMouseEvent(&mouseEvent);
 }
 
+void WindowImplWin32::setTopmost(bool topmost)
+{
+    SetWindowPos(m_handle, topmost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)

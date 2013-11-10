@@ -476,6 +476,25 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
     m_keyRepeat = enabled;
 }
 
+////////////////////////////////////////////////////////////
+void WindowImplX11::setTopmost(bool topmost)
+{
+    static Atom wmStateAbove = XInternAtom(m_display, "_NET_WM_STATE_ABOVE", 1);
+    static Atom wmNetWmState = XInternAtom(m_display, "_NET_WM_STATE", 1);
+
+    if (wmStateAbove)
+    {
+        XClientMessageEvent emsg;
+        memset(&emsg, 0, sizeof(emsg));
+        emsg.type = ClientMessage;
+        emsg.window = m_window;
+        emsg.message_type = wmNetWmState;
+        emsg.format = 32;
+        emsg.data.l[0] = topmost;
+        emsg.data.l[1] = wmStateAbove;
+        XSendEvent(m_display, RootWindow(m_display, m_screen), false, SubstructureRedirectMask | SubstructureNotifyMask, (XEvent*)&emsg);
+    }
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::switchToFullscreen(const VideoMode& mode)

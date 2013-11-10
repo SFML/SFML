@@ -400,6 +400,18 @@ public :
     bool setActive(bool active = true) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Makes a window a topmost window or reverts this
+    ///
+    /// A topmost window always overlaps other windows that aren't
+    /// set to be topmost as well. Note that other windows might
+    /// still overlap it, if they're topmost as well.
+    ///
+    /// \param topmost True to set, false to reset
+    ///
+    ////////////////////////////////////////////////////////////
+    void setTopmost(bool topmost = true) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Display on screen what has been rendered to the window so far
     ///
     /// This function is typically called after all OpenGL rendering
