@@ -51,7 +51,7 @@ WindowImplAndroid::WindowImplAndroid(WindowHandle handle)
 WindowImplAndroid::WindowImplAndroid(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings)
 {
     ActivityStates* states = getActivity(NULL);
-    sf::Lock lock(states->mutex);
+    Lock lock(states->mutex);
 
     // Replace our dummy process event function with the actual one
     AInputQueue_detachLooper(states->inputQueue);
@@ -72,7 +72,7 @@ WindowImplAndroid::~WindowImplAndroid()
 WindowHandle WindowImplAndroid::getSystemHandle() const
 {
     ActivityStates* states = getActivity(NULL);
-    sf::Lock lock(states->mutex);
+    Lock lock(states->mutex);
 
     return states->window;
 }
@@ -82,7 +82,7 @@ WindowHandle WindowImplAndroid::getSystemHandle() const
 void WindowImplAndroid::processEvents()
 {
     ActivityStates* states = getActivity(NULL);
-    sf::Lock lock(states->mutex);
+    Lock lock(states->mutex);
 
     // Process incoming OS events
     ALooper_pollAll(0, NULL, NULL, NULL);
@@ -92,7 +92,7 @@ void WindowImplAndroid::processEvents()
         Event tempEvent = states->pendingEvents.back();
         states->pendingEvents.pop_back();
 
-        if (tempEvent.type == sf::Event::Resized)
+        if (tempEvent.type == Event::Resized)
         {
             m_width = tempEvent.size.width;
             m_height = tempEvent.size.height;
@@ -315,7 +315,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
                 int32_t key = AKeyEvent_getKeyCode(_event);
                 int32_t metakey = AKeyEvent_getMetaState(_event);
 
-                sf::Event event;
+                Event event;
                 event.type = (action == AKEY_EVENT_ACTION_DOWN) ? Event::KeyPressed : Event::KeyReleased;
                 event.key.code    = androidKeyToSF(key);
                 event.key.alt     = metakey & AMETA_ALT_ON;

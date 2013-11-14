@@ -49,7 +49,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
     // todo: Check if the window is active
 
     ActivityStates* states = getActivity(NULL);
-    sf::Lock lock(states->mutex);
+    Lock lock(states->mutex);
 
     // Initializes JNI
     jint lResult;

@@ -64,7 +64,7 @@ VideoMode VideoModeImpl::getDesktopMode()
     }
 
     // Get size from the window
-    sf::Vector2i size;
+    Vector2i size;
     size.x = ANativeWindow_getWidth(states->window);
     size.y = ANativeWindow_getHeight(states->window);
 
