@@ -48,7 +48,7 @@ m_surface (EGL_NO_SURFACE)
 {
     // Get the activity states and protect it from concurent access
     ActivityStates* states = getActivity(NULL);
-    sf::Lock lock(states->mutex);
+    Lock lock(states->mutex);
 
     // Get the intialized EGL display
     m_display = states->display;
@@ -85,7 +85,7 @@ m_surface (EGL_NO_SURFACE)
 {
     // Get the activity states and protect it from concurent access
     ActivityStates* states = getActivity(NULL);
-    sf::Lock lock(states->mutex);
+    Lock lock(states->mutex);
 
     states->context = this;
 
