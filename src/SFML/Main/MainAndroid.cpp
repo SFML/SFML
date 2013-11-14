@@ -55,13 +55,13 @@ namespace priv
 ActivityStates* retrieveStates(ANativeActivity* activity)
 {
     // Hide the ugly cast we find in each callback function
-    return (sf::priv::ActivityStates*)activity->instance;
+    return (ActivityStates*)activity->instance;
 }
 
 static void initializeMain(ActivityStates* states)
 {
     // Protect from concurent access
-    sf::Lock lock(states->mutex);
+    Lock lock(states->mutex);
 
     // Prepare and share the looper to be read later
     ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
@@ -75,9 +75,9 @@ static void initializeMain(ActivityStates* states)
 static void terminateMain(ActivityStates* states)
 {
     // Protect from concurent access
-    sf::Lock lock(states->mutex);
+    Lock lock(states->mutex);
 
-    // The main thread is over, we must explicitly ask the activity to finish
+    // The main thread has finished, we must explicitly ask the activity to finish
     states->mainOver = true;
     ANativeActivity_finish(states->activity);
 }
@@ -88,19 +88,19 @@ void* main(ActivityStates* states)
     initializeMain(states);
 
     {
-        sf::Lock lock(states->mutex);
+        Lock lock(states->mutex);
 
         states->initialized = true;
     }
 
-    sf::sleep(sf::seconds(0.5));
+    sleep(seconds(0.5));
     ::main(0, NULL);
 
-    // Terminate properly the thread and Wait until it's done
+    // Terminate properly the main thread and wait until it's done
     terminateMain(states);
 
     {
-        sf::Lock lock(states->mutex);
+        Lock lock(states->mutex);
 
         states->terminated = true;
     }
