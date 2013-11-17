@@ -31,6 +31,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/Window/Android/EglContext.hpp>
+#include <android/input.h>
+
 
 namespace sf
 {
@@ -182,6 +184,16 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     static int processEvent(int fd, int events, void* data);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get unicode decoded from the input event
+    ///
+    /// \param Event Input event
+    ///
+    /// \return The unicode value
+    ///
+    ////////////////////////////////////////////////////////////
+    static int getUnicode(AInputEvent* event);
 
     ////////////////////////////////////////////////////////////
     // Member data

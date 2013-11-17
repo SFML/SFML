@@ -323,6 +323,14 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
                 event.key.shift   = metakey & AMETA_SHIFT_ON;
 
                 states->pendingEvents.push_back(event);
+
+                if (int unicode = getUnicode(_event))
+                {
+                    Event event;
+                    event.type = Event::TextEntered;
+                    event.text.unicode = unicode;
+                    states->pendingEvents.push_back(event);
+                }
             }
         }
         else if (type == AINPUT_EVENT_TYPE_MOTION)
@@ -410,5 +418,54 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
 
     return 1;
 }
+
+int WindowImplAndroid::getUnicode(AInputEvent* event)
+{
+    // Retrieve activity states
+    ActivityStates* states = getActivity(NULL);
+    Lock lock(states->mutex);
+
+    // Initializes JNI
+    jint lResult;
+    jint lFlags = 0;
+
+    JavaVM* lJavaVM = states->activity->vm;
+    JNIEnv* lJNIEnv = states->activity->env;
+
+    JavaVMAttachArgs lJavaVMAttachArgs;
+    lJavaVMAttachArgs.version = JNI_VERSION_1_6;
+    lJavaVMAttachArgs.name = "NativeThread";
+    lJavaVMAttachArgs.group = NULL;
+
+    lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
+
+    if (lResult == JNI_ERR)
+        err() << "Failed to initialize JNI, couldn't get the unicode value" << std::endl;
+
+    // Retrieve key data from the input event
+    jlong downTime = AKeyEvent_getDownTime(event);
+    jlong eventTime = AKeyEvent_getEventTime(event);
+    jint action = AKeyEvent_getAction(event);
+    jint code = AKeyEvent_getKeyCode(event);
+    jint repeat = AKeyEvent_getRepeatCount(event); // not sure!
+    jint metaState = AKeyEvent_getMetaState(event);
+    jint deviceId = AInputEvent_getDeviceId(event);
+    jint scancode = AKeyEvent_getScanCode(event);
+    jint flags = AKeyEvent_getFlags(event);
+    jint source = AInputEvent_getSource(event);
+
+    // Construct a KeyEvent object from the event data
+    jclass ClassKeyEvent = lJNIEnv->FindClass("android/view/KeyEvent");
+    jmethodID KeyEventConstructor = lJNIEnv->GetMethodID(ClassKeyEvent, "<init>", "(JJIIIIIIII)V");
+    jobject ObjectKeyEvent = lJNIEnv->NewObject(ClassKeyEvent, KeyEventConstructor, (jvalue*)downTime, (jvalue*)eventTime, (jvalue*)action, (jvalue*)code, (jvalue*)repeat, (jvalue*)metaState, (jvalue*)deviceId, (jvalue*)scancode, (jvalue*)flags, (jvalue*)source);
+
+    // Call its getUnicodeChar() method to get the unicode value
+    jmethodID MethodGetUnicode = lJNIEnv->GetMethodID(ClassKeyEvent, "getUnicodeChar", "(I)I");
+    int unicode = lJNIEnv->CallIntMethod(ObjectKeyEvent, MethodGetUnicode, metaState);
+
+    return unicode;
+}
+
+
 } // namespace priv
 } // namespace sf
