@@ -71,6 +71,8 @@ else()
         set(PLATFORM_SRC ${PLATFORM_SRC}
             ${SRCROOT}/Android/Activity.hpp
             ${SRCROOT}/Android/Activity.cpp
+            ${SRCROOT}/Android/ResourceStream.cpp
+            ${SRCROOT}/Android/ResourceStream.cpp
         )
     endif()
 
@@ -91,7 +93,7 @@ endif()
 
 # pthread is implicitly linked by the NDK
 if(SFML_OS_ANDROID)
-    set(SYSTEM_EXT_LIBS "")
+    set(SYSTEM_EXT_LIBS android)
 endif()
 
 # define the sfml-system target

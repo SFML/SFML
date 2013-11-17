@@ -27,11 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/ImageLoader.hpp>
-#ifdef SFML_SYSTEM_ANDROID
-    #include <SFML/System/Android/Activity.hpp>
-    #include <SFML/System/Lock.hpp>
-#endif
 #include <SFML/System/Err.hpp>
+#ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/System/Android/ResourceStream.hpp>
+#endif
 #include <algorithm>
 #include <cstring>
 
@@ -42,7 +41,23 @@ namespace sf
 Image::Image() :
 m_size(0, 0)
 {
+    #ifdef SFML_SYSTEM_ANDROID
 
+    m_stream = NULL;
+
+    #endif
+}
+
+
+////////////////////////////////////////////////////////////
+Image::~Image()
+{
+    #ifdef SFML_SYSTEM_ANDROID
+
+        if (m_stream)
+            delete (priv::ResourceStream*)m_stream;
+
+    #endif
 }
 
 
@@ -108,43 +123,15 @@ bool Image::loadFromFile(const std::string& filename)
 {
     #ifndef SFML_SYSTEM_ANDROID
 
-    return priv::ImageLoader::getInstance().loadImageFromFile(filename, m_pixels, m_size);
+        return priv::ImageLoader::getInstance().loadImageFromFile(filename, m_pixels, m_size);
 
     #else
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
-    Lock lock(states->mutex);
+        if (m_stream)
+            delete (priv::ResourceStream*)m_stream;
 
-    // Open the file
-    AAsset* file = NULL;
-    file = AAssetManager_open(states->activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
-
-    if (!file)
-    {
-        // File not found, abording...
-        err() << "Failed to load image \"" << filename << "\" (couldn't find it)" << std::endl;
-        return false;
-    }
-
-    // Copy into memory
-    off_t size = AAsset_getLength(file);
-    void* data = malloc(size);
-    int status = AAsset_read(file, data, size);
-
-    if (status <= 0)
-    {
-        // Something went wrong while we were copying, reading error...
-        err() << "Failed to load image \"" << filename << "\" (couldn't read it)" << std::endl;
-        return false;
-    }
-
-    // Load from our fresh memory
-    bool ret = loadFromMemory(data, size);
-
-    // Close the file
-    AAsset_close(file);
-
-    return ret;
+        m_stream = new priv::ResourceStream(filename);
+        return loadFromStream(*(priv::ResourceStream*)m_stream);
 
     #endif
 }

@@ -218,6 +218,9 @@ private :
     std::size_t  m_sampleCount;  ///< Total number of samples in the file
     unsigned int m_channelCount; ///< Number of channels used by the sound
     unsigned int m_sampleRate;   ///< Number of samples per second
+    #ifdef SFML_SYSTEM_ANDROID
+    void*        m_resourceStream; ///< Asset file streamer (if loaded from file)
+    #endif
 };
 
 } // namespace priv

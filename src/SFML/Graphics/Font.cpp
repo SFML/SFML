@@ -28,8 +28,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #ifdef SFML_SYSTEM_ANDROID
-    #include <SFML/System/Android/Activity.hpp>
-    #include <SFML/System/Lock.hpp>
+    #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
@@ -72,7 +71,7 @@ m_library  (NULL),
 m_face     (NULL),
 m_streamRec(NULL),
 m_refCount (NULL),
-m_info	   ()
+m_info     ()
 {
 
 }
@@ -88,6 +87,10 @@ m_info       (copy.m_info),
 m_pages      (copy.m_pages),
 m_pixelBuffer(copy.m_pixelBuffer)
 {
+    #ifdef SFML_SYSTEM_ANDROID
+        m_stream = NULL;
+    #endif
+
     // Note: as FreeType doesn't provide functions for copying/cloning,
     // we must share all the FreeType pointers
 
@@ -100,6 +103,13 @@ m_pixelBuffer(copy.m_pixelBuffer)
 Font::~Font()
 {
     cleanup();
+
+    #ifdef SFML_SYSTEM_ANDROID
+
+    if (m_stream)
+        delete (priv::ResourceStream*)m_stream;
+
+    #endif
 }
 
 
@@ -148,39 +158,11 @@ bool Font::loadFromFile(const std::string& filename)
 
     #else
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
-    Lock lock(states->mutex);
+    if (m_stream)
+        delete (priv::ResourceStream*)m_stream;
 
-    // Open the file
-    AAsset* file = NULL;
-    file = AAssetManager_open(states->activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
-
-    if (!file)
-    {
-        // File not found, abording...
-        err() << "Failed to load font \"" << filename << "\" (couldn't find it)" << std::endl;
-        return false;
-    }
-
-    // Copy into memory
-    off_t size = AAsset_getLength(file);
-    void* data = malloc(size);
-    int status = AAsset_read(file, data, size);
-
-    if (status <= 0)
-    {
-        // Something went wrong while we were copying, reading error...
-        err() << "Failed to load font \"" << filename << "\" (couldn't read it)" << std::endl;
-        return false;
-    }
-
-    // Load from our fresh memory
-    bool ret = loadFromMemory(data, size);
-
-    // Close the file
-    AAsset_close(file);
-
-    return ret;
+    m_stream = new priv::ResourceStream(filename);
+    return loadFromStream(*(priv::ResourceStream*)m_stream);
 
     #endif
 }

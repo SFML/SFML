@@ -56,6 +56,12 @@ public :
     Image();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Destructor
+    ///
+    ////////////////////////////////////////////////////////////
+    ~Image();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create the image and fill it with a unique color
     ///
     /// \param width  Width of the image
@@ -259,6 +265,9 @@ private :
     ////////////////////////////////////////////////////////////
     Vector2u           m_size;   ///< Image size
     std::vector<Uint8> m_pixels; ///< Pixels of the image
+    #ifdef SFML_SYSTEM_ANDROID
+    void*              m_stream; ///< Asset file streamer (if loaded from file)
+    #endif
 };
 
 } // namespace sf
