@@ -27,8 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFile.hpp>
 #ifdef SFML_SYSTEM_ANDROID
-    #include <SFML/System/Android/Activity.hpp>
-    #include <SFML/System/Lock.hpp>
+    #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
@@ -59,7 +58,11 @@ m_sampleCount (0),
 m_channelCount(0),
 m_sampleRate  (0)
 {
+    #ifdef SFML_SYSTEM_ANDROID
 
+    m_resourceStream = NULL;
+
+    #endif
 }
 
 
@@ -68,6 +71,13 @@ SoundFile::~SoundFile()
 {
     if (m_file)
         sf_close(m_file);
+
+    #ifdef SFML_SYSTEM_ANDROID
+
+        if (m_resourceStream)
+            delete (priv::ResourceStream*)m_resourceStream;
+
+    #endif
 }
 
 
@@ -118,39 +128,11 @@ bool SoundFile::openRead(const std::string& filename)
 
     #else
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
-    Lock lock(states->mutex);
+    if (m_resourceStream)
+        delete (priv::ResourceStream*)m_resourceStream;
 
-    // Open the file
-    AAsset* file = NULL;
-    file = AAssetManager_open(states->activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
-
-    if (!file)
-    {
-        // File not found, abording...
-        err() << "Failed to load sound \"" << filename << "\" (couldn't find it)" << std::endl;
-        return false;
-    }
-
-    // Copy into memory
-    off_t size = AAsset_getLength(file);
-    void* data = malloc(size);
-    int status = AAsset_read(file, data, size);
-
-    if (status <= 0)
-    {
-        // Something went wrong while we were copying, reading error...
-        err() << "Failed to load sound \"" << filename << "\" (couldn't read it)" << std::endl;
-        return false;
-    }
-
-    // Load from our fresh memory
-    bool ret = openRead(data, size);
-
-    // Close the file
-    AAsset_close(file);
-
-    return ret;
+    m_resourceStream = new priv::ResourceStream(filename);
+    return openRead(*(priv::ResourceStream*)m_resourceStream);
 
     #endif
 }
