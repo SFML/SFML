@@ -305,6 +305,9 @@ private :
     Info                       m_info;        ///< Information about the font
     mutable PageTable          m_pages;       ///< Table containing the glyphs pages by character size
     mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
+    #ifdef SFML_SYSTEM_ANDROID
+    void*                      m_stream; ///< Asset file streamer (if loaded from file)
+    #endif
 };
 
 } // namespace sf
@@ -351,19 +354,19 @@ private :
 /// \code
 /// // Declare a new font
 /// sf::Font font;
-/// 
+///
 /// // Load it from a file
 /// if (!font.loadFromFile("arial.ttf"))
 /// {
 ///     // error...
 /// }
-/// 
+///
 /// // Create a text which uses our font
 /// sf::Text text1;
 /// text1.setFont(font);
 /// text1.setCharacterSize(30);
 /// text1.setStyle(sf::Text::Regular);
-/// 
+///
 /// // Create another text using the same font, but with different parameters
 /// sf::Text text2;
 /// text2.setFont(font);
