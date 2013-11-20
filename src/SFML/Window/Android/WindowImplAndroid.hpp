@@ -31,6 +31,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/Window/Android/EglContext.hpp>
+#include <SFML/System/Android/Activity.hpp>
 #include <android/input.h>
 
 
@@ -164,16 +165,6 @@ protected :
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert a Android key to SFML key code
-    ///
-    /// \param symbol Android key to convert
-    ///
-    /// \return Corrsponding SFML key code
-    ///
-    ////////////////////////////////////////////////////////////
-    static Keyboard::Key androidKeyToSF(int32_t key);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Process messages from the looper associated with the main thread
     ///
     /// \param fd     File descriptor
@@ -185,6 +176,21 @@ private:
     ////////////////////////////////////////////////////////////
     static int processEvent(int fd, int events, void* data);
 
+    static void processScrollEvent(AInputEvent* _event, ActivityStates* states);
+    static void processKeyEvent(AInputEvent* _event, ActivityStates* states);
+    static void processMotionEvent(AInputEvent* _event, ActivityStates* states);
+    static void processPointerEvent(bool isDown, AInputEvent* event, ActivityStates* states);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert a Android key to SFML key code
+    ///
+    /// \param symbol Android key to convert
+    ///
+    /// \return Corrsponding SFML key code
+    ///
+    ////////////////////////////////////////////////////////////
+    static Keyboard::Key androidKeyToSF(int32_t key);
+   
     ////////////////////////////////////////////////////////////
     /// \brief Get unicode decoded from the input event
     ///
