@@ -66,6 +66,8 @@ struct ActivityStates
     void (*disableSensors)();
 
     std::map<int, Vector2i> touchEvents;
+    Vector2i mousePosition;
+    bool isButtonPressed[Mouse::ButtonCount];
 
     bool mainOver;
 

@@ -127,14 +127,24 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    return false;
+    ALooper_pollAll(0, NULL, NULL, NULL);
+
+    priv::ActivityStates* states = priv::getActivity(NULL);
+    Lock lock(states->mutex);
+
+    return states->isButtonPressed[button];
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition()
 {
-    return Vector2i(0, 0);
+    ALooper_pollAll(0, NULL, NULL, NULL);
+
+    priv::ActivityStates* states = priv::getActivity(NULL);
+    Lock lock(states->mutex);
+
+    return states->mousePosition;
 }
 
 
@@ -148,14 +158,14 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 ////////////////////////////////////////////////////////////
 void InputImpl::setMousePosition(const Vector2i& position)
 {
-    // Not applicable
+    // Injecting events is impossible on Android
 }
 
 
 ////////////////////////////////////////////////////////////
 void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
 {
-    // Not applicable
+    setMousePosition(position);
 }
 
 

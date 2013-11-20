@@ -328,6 +328,9 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     states->inputQueue = NULL;
     states->config     = NULL;
 
+    for (unsigned int i = 0; i < sf::Mouse::ButtonCount; i++)
+        states->isButtonPressed[i] = false;
+        
     states->display = eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 
     // As the input queue will be created before the SFML window, we need to use
