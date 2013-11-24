@@ -109,7 +109,7 @@ public :
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty IntRect).
     /// If the \a area rectangle crosses the bounds of the image, it
-    /// is adjusted to fit the image size. 
+    /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
     /// driver and can be retrieved with the getMaximumSize function.
@@ -140,7 +140,7 @@ public :
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty IntRect).
     /// If the \a area rectangle crosses the bounds of the image, it
-    /// is adjusted to fit the image size. 
+    /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
     /// driver and can be retrieved with the getMaximumSize function.
@@ -172,7 +172,7 @@ public :
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty IntRect).
     /// If the \a area rectangle crosses the bounds of the image, it
-    /// is adjusted to fit the image size. 
+    /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
     /// driver and can be retrieved with the getMaximumSize function.
@@ -196,7 +196,7 @@ public :
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty IntRect).
     /// If the \a area rectangle crosses the bounds of the image, it
-    /// is adjusted to fit the image size. 
+    /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
     /// driver and can be retrieved with the getMaximumSize function.
@@ -377,6 +377,80 @@ public :
     bool isSmooth() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable creation and use of mipmaps or disable mipmap filtering
+    ///
+    /// When the mipmap filter is activated, the texture appears with
+    /// less artifacts like moire patterns or popping in pixels on a
+    /// minified texture that gets moved or rotated.
+    /// It does not affect a texture when it is magnified.
+    /// You would activate mipmaps before the last time you are calling
+    /// a create, update or load method, because on some old computers
+    /// they can not be generated without changing the pixel values. This
+    /// depends on available OpenGL version and extensions.
+    /// When setting this to 1 each time a texel would be read a single
+    /// mipmap would be chosen; when setting this to 2 the two nearest
+    /// mipmaps will be read and a linear interpolation happens.
+    /// The smooth filter determines how the filtering is done within a mipmap.
+    /// Even if you don't activate smoothing the mipmaping will improve
+    /// the quality of a largely minified texture, while at same time
+    /// keeping the original appearance on magnification.
+    /// If you never resize the texture and never have a shape in
+    /// a different size than the texture mipmaping is not needed
+    /// and would result in a higher amount of used memory.
+    /// When activating it once for a texture you would usually keep it
+    /// active as long as you dont change the pixels, as the mipmaps are
+    /// already generated and will not be deleted from the texture.
+    /// The mipmap filtering is disabled by default.
+    ///
+    /// \param mipmaps 0 to disable it, 1 or 2 to choose number of mipmap reads
+    ///
+    /// \see getUsedMipmaps, getRequestedMipmaps, hasMipmaps
+    ///
+    ////////////////////////////////////////////////////////////
+    void setUsedMipmaps(unsigned int mipmaps);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell how many mipmaps are used currently
+    ///
+    /// This method lets you find out if mipmaps are activated.
+    /// It combines checking that both hasMipmaps is true and
+    /// getRequestedMipmaps is greater than 0.
+    ///
+    /// \return 0 if disabled, 1 or 2 if that many mipmaps should be used
+    ///
+    /// \see setUsedMipmaps, getRequestedMipmaps, hasMipmaps
+    ///
+    ////////////////////////////////////////////////////////////
+    Uint8 getUsedMipmaps() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell how many mipmaps should be used
+    ///
+    /// This method does only tell if mipmaps were requested and OpenGL
+    /// functionality is available. To find out if they are activated
+    /// check getUsedMipmaps.
+    ///
+    /// \return 0 if disabled, 1 or 2 if that many mipmaps should be used
+    ///
+    /// \see setUsedMipmaps, getUsedMipmaps, hasMipmaps
+    ///
+    ////////////////////////////////////////////////////////////
+    Uint8 getRequestedMipmaps() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether mipmaps are both generated and updated or not
+    ///
+    /// This method is not sufficient to tell if the mipmaps are
+    /// activated currently. For that please check getUsedMipmaps.
+    ///
+    /// \return True if up to date mipmaps are available, false if not
+    ///
+    /// \see setUsedMipmaps, getUsedMipmaps, getRequestedMipmaps
+    ///
+    ////////////////////////////////////////////////////////////
+    bool hasMipmaps() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable repeating
     ///
     /// Repeating is involved when using texture coordinates
@@ -491,6 +565,8 @@ private :
     Vector2u     m_size;          ///< Public texture size
     Vector2u     m_actualSize;    ///< Actual texture size (can be greater than public size because of padding)
     unsigned int m_texture;       ///< Internal texture identifier
+    Int8         m_statusMipmaps; ///< Status of the mipmap generation
+    Uint8        m_needsMipmaps;  ///< User wants mipmap filtering using this many mipmap reads
     bool         m_isSmooth;      ///< Status of the smooth filter
     bool         m_isRepeated;    ///< Is the texture in repeat mode?
     mutable bool m_pixelsFlipped; ///< To work around the inconsistency in Y orientation
@@ -529,7 +605,7 @@ private :
 /// before creating the final texture, you can load your file to a
 /// sf::Image, do whatever you need with the pixels, and then call
 /// Texture::loadFromImage.
-/// 
+///
 /// Since they live in the graphics card memory, the pixels of a texture
 /// cannot be accessed without a slow copy first. And they cannot be
 /// accessed individually. Therefore, if you need to read the texture's
