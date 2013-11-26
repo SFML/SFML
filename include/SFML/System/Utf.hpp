@@ -752,7 +752,7 @@ typedef Utf<32> Utf32;
 /// to handle ANSI, wide, latin-1, UTF-8, UTF-16 and UTF-32 encodings.
 ///
 /// sf::Utf<X> functions are all static, these classes are not meant to
-/// be instanciated. All the functions are template, so that you
+/// be instantiated. All the functions are template, so that you
 /// can use any character / string type for a given encoding.
 ///
 /// It has 3 specializations:

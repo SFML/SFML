@@ -129,7 +129,7 @@ public :
 ///
 /// sf::Mouse provides an interface to the state of the
 /// mouse. It only contains static functions (a single
-/// mouse is assumed), so it's not meant to be instanciated.
+/// mouse is assumed), so it's not meant to be instantiated.
 ///
 /// This class allows users to query the mouse state at any
 /// time and directly, without having to deal with a window and
