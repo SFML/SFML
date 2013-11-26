@@ -40,6 +40,8 @@
 #include <SFML/System/Utf.hpp>
 #include <vector>
 
+#include <iostream>
+
 // MinGW lacks the definition of some Win32 constants
 #ifndef XBUTTON1
     #define XBUTTON1 0x0001
@@ -769,6 +771,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 ////////////////////////////////////////////////////////////
 Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
 {
+    std::cout << "VM = " << std::hex << key << std::endl;
+
     switch (key)
     {
         // Check the scancode to distinguish between left and right shift
