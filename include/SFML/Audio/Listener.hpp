@@ -167,7 +167,7 @@ public :
 /// and to adjust the global volume.
 ///
 /// Because the listener is unique in the scene, sf::Listener only
-/// contains static functions and doesn't have to be instanciated.
+/// contains static functions and doesn't have to be instantiated.
 ///
 /// Usage example:
 /// \code
