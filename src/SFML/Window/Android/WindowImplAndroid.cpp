@@ -95,12 +95,7 @@ void WindowImplAndroid::processEvents()
         Event tempEvent = states->pendingEvents.back();
         states->pendingEvents.pop_back();
 
-        if (tempEvent.type == Event::Resized)
-        {
-            m_width = tempEvent.size.width;
-            m_height = tempEvent.size.height;
-        }
-        else if (tempEvent.type == Event::GainedFocus)
+        if (tempEvent.type == Event::GainedFocus)
         {
             states->context->createSurface(states->window);
             states->updated = true;
@@ -134,7 +129,13 @@ void WindowImplAndroid::setPosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplAndroid::getSize() const
 {
-    return Vector2u(static_cast<unsigned int>(m_width), static_cast<unsigned int>(m_height));
+    ActivityStates* states = getActivity(NULL);
+    Lock lock(states->mutex);
+    
+    int32_t width = ANativeWindow_getWidth(states->window);
+    int32_t height = ANativeWindow_getHeight(states->window);
+    
+    return Vector2u(static_cast<unsigned int>(width), static_cast<unsigned int>(height));
 }
 
 
@@ -161,12 +162,14 @@ void WindowImplAndroid::setIcon(unsigned int width, unsigned int height, const U
 ////////////////////////////////////////////////////////////
 void WindowImplAndroid::setVisible(bool visible)
 {
+    // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplAndroid::setMouseCursorVisible(bool visible)
 {
+    // Not applicable
 }
 
 
