@@ -103,7 +103,7 @@ m_useSizeHints(false)
 
     if (m_window)
     {
-        // Make sure the window is listening to all the requiered events
+        // Make sure the window is listening to all the required events
         XSelectInput(m_display, m_window, eventMask & ~ButtonPressMask);
 
         // Do some common initializations
@@ -557,7 +557,7 @@ void WindowImplX11::initialize()
     XMapWindow(m_display, m_window);
     XFlush(m_display);
 
-    // Create the hiden cursor
+    // Create the hidden cursor
     createHiddenCursor();
 
     // Flush the commands queue
@@ -693,7 +693,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Resize event
         case ConfigureNotify :
         {
-            // ConfigureNotify can be triggered for other reasons, check if the size has acutally changed
+            // ConfigureNotify can be triggered for other reasons, check if the size has actually changed
             if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
             {
                 Event event;
