@@ -90,7 +90,7 @@ void glCheckError(const char* file, unsigned int line)
                 break;
             }
 
-            case GL_INVALID_FRAMEBUFFER_OPERATION :
+            case GLEXT_GL_INVALID_FRAMEBUFFER_OPERATION :
             {
                 error = "GL_INVALID_FRAMEBUFFER_OPERATION";
                 description = "the object bound to FRAMEBUFFER_BINDING is not \"framebuffer complete\"";
