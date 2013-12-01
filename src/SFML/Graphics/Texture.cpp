@@ -271,18 +271,18 @@ Image Texture::copyToImage() const
     // OpenGL ES doesn't have the glGetTexImage function, the only way to read
     // from a texture is to bind it to a FBO and use glReadPixels
     GLuint frameBuffer = 0;
-    glCheck(glGenFramebuffers(1, &frameBuffer));
+    glCheck(GLEXT_glGenFramebuffers(1, &frameBuffer));
     if (frameBuffer)
     {
         GLint previousFrameBuffer;
-        glCheck(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFrameBuffer));
+        glCheck(glGetIntegerv(GLEXT_GL_FRAMEBUFFER_BINDING, &previousFrameBuffer));
 
-        glCheck(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
-        glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, frameBuffer));
+        glCheck(GLEXT_glFramebufferTexture2D(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
         glCheck(glReadPixels(0, 0, m_size.x, m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]));
-        glCheck(glDeleteFramebuffers(1, &frameBuffer));
+        glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
 
-        glCheck(glBindFramebuffer(GL_FRAMEBUFFER, previousFrameBuffer));
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, previousFrameBuffer));
     }
 
 #else
@@ -556,7 +556,7 @@ unsigned int Texture::getValidSize(unsigned int size)
     // Make sure that extensions are initialized
     priv::ensureExtensionsInit();
 
-    if (GL_texture_non_power_of_two)
+    if (GLEXT_texture_non_power_of_two)
     {
         // If hardware supports NPOT textures, then just return the unmodified size
         return size;
