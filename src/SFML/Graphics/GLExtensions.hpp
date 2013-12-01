@@ -34,56 +34,56 @@
 
     #include <SFML/OpenGL.hpp>
 
-    #define GL_blend_func_separate           GL_OES_blend_func_separate
-    #define glBlendFuncSeparate              glBlendFuncSeparateOES
-    #define GL_framebuffer_object            GL_OES_framebuffer_object
-    #define glGenFramebuffers                glGenFramebuffersOES
-    #define glGenRenderbuffers               glGenRenderbuffersOES
-    #define glBindFramebuffer                glBindFramebufferOES
-    #define glBindRenderbuffer               glBindRenderbufferOES
-    #define glDeleteFramebuffers             glDeleteFramebuffersOES
-    #define glDeleteRenderbuffers            glDeleteRenderbuffersOES
-    #define glRenderbufferStorage            glRenderbufferStorageOES
-    #define glFramebufferRenderbuffer        glFramebufferRenderbufferOES
-    #define glFramebufferTexture2D           glFramebufferTexture2DOES
-    #define glCheckFramebufferStatus         glCheckFramebufferStatusOES
-    #define GL_FRAMEBUFFER                   GL_FRAMEBUFFER_OES
-    #define GL_FRAMEBUFFER_BINDING           GL_FRAMEBUFFER_BINDING_OES
-    #define GL_RENDERBUFFER                  GL_RENDERBUFFER_OES
-    #define GL_COLOR_ATTACHMENT0             GL_COLOR_ATTACHMENT0_OES
-    #define GL_DEPTH_ATTACHMENT              GL_DEPTH_ATTACHMENT_OES
-    #define GL_FRAMEBUFFER_COMPLETE          GL_FRAMEBUFFER_COMPLETE_OES
-    #define GL_DEPTH_COMPONENT               GL_DEPTH_COMPONENT16_OES
-    #define GL_INVALID_FRAMEBUFFER_OPERATION GL_INVALID_FRAMEBUFFER_OPERATION_OES
-    #define GL_texture_non_power_of_two      false
+    #define GLEXT_blend_func_separate              GL_OES_blend_func_separate
+    #define GLEXT_glBlendFuncSeparate              glBlendFuncSeparateOES
+    #define GLEXT_framebuffer_object               GL_OES_framebuffer_object
+    #define GLEXT_glGenFramebuffers                glGenFramebuffersOES
+    #define GLEXT_glGenRenderbuffers               glGenRenderbuffersOES
+    #define GLEXT_glBindFramebuffer                glBindFramebufferOES
+    #define GLEXT_glBindRenderbuffer               glBindRenderbufferOES
+    #define GLEXT_glDeleteFramebuffers             glDeleteFramebuffersOES
+    #define GLEXT_glDeleteRenderbuffers            glDeleteRenderbuffersOES
+    #define GLEXT_glRenderbufferStorage            glRenderbufferStorageOES
+    #define GLEXT_glFramebufferRenderbuffer        glFramebufferRenderbufferOES
+    #define GLEXT_glFramebufferTexture2D           glFramebufferTexture2DOES
+    #define GLEXT_glCheckFramebufferStatus         glCheckFramebufferStatusOES
+    #define GLEXT_GL_FRAMEBUFFER                   GL_FRAMEBUFFER_OES
+    #define GLEXT_GL_FRAMEBUFFER_BINDING           GL_FRAMEBUFFER_BINDING_OES
+    #define GLEXT_GL_RENDERBUFFER                  GL_RENDERBUFFER_OES
+    #define GLEXT_GL_COLOR_ATTACHMENT0             GL_COLOR_ATTACHMENT0_OES
+    #define GLEXT_GL_DEPTH_ATTACHMENT              GL_DEPTH_ATTACHMENT_OES
+    #define GLEXT_GL_FRAMEBUFFER_COMPLETE          GL_FRAMEBUFFER_COMPLETE_OES
+    #define GLEXT_GL_DEPTH_COMPONENT               GL_DEPTH_COMPONENT16_OES
+    #define GLEXT_GL_INVALID_FRAMEBUFFER_OPERATION GL_INVALID_FRAMEBUFFER_OPERATION_OES
+    #define GLEXT_texture_non_power_of_two         false
 
 #else
 
     #include <GL/glew.h>
     #include <SFML/OpenGL.hpp>
 
-    #define GL_blend_func_separate           GLEW_EXT_blend_func_separate
-    #define glBlendFuncSeparate              glBlendFuncSeparateEXT
-    #define GL_framebuffer_object            GLEW_EXT_framebuffer_object
-    #define glGenFramebuffers                glGenFramebuffersEXT
-    #define glGenRenderbuffers               glGenRenderbuffersEXT
-    #define glBindFramebuffer                glBindFramebufferEXT
-    #define glBindRenderbuffer               glBindRenderbufferEXT
-    #define glDeleteFramebuffers             glDeleteFramebuffersEXT
-    #define glDeleteRenderbuffers            glDeleteRenderbuffersEXT
-    #define glRenderbufferStorage            glRenderbufferStorageEXT
-    #define glFramebufferRenderbuffer        glRenderbufferStorageEXT
-    #define glFramebufferTexture2D           glFramebufferTexture2DEXT
-    #define glCheckFramebufferStatus         glCheckFramebufferStatusEXT
-    #define GL_FRAMEBUFFER                   GL_FRAMEBUFFER_EXT
-    #define GL_FRAMEBUFFER_BINDING           GL_FRAMEBUFFER_BINDING_EXT
-    #define GL_RENDERBUFFER                  GL_RENDERBUFFER_EXT
-    #define GL_COLOR_ATTACHMENT0             GL_COLOR_ATTACHMENT0_EXT
-    #define GL_DEPTH_ATTACHMENT              GL_DEPTH_ATTACHMENT_EXT
-    #define GL_FRAMEBUFFER_COMPLETE          GL_FRAMEBUFFER_COMPLETE_EXT
-    //#define GL_DEPTH_COMPONENT               GL_DEPTH_COMPONENT
-    #define GL_INVALID_FRAMEBUFFER_OPERATION GL_INVALID_FRAMEBUFFER_OPERATION_EXT
-    #define GL_texture_non_power_of_two      GLEW_ARB_texture_non_power_of_two
+    #define GLEXT_blend_func_separate              GLEW_EXT_blend_func_separate
+    #define GLEXT_glBlendFuncSeparate              glBlendFuncSeparateEXT
+    #define GLEXT_framebuffer_object               GLEW_EXT_framebuffer_object
+    #define GLEXT_glGenFramebuffers                glGenFramebuffersEXT
+    #define GLEXT_glGenRenderbuffers               glGenRenderbuffersEXT
+    #define GLEXT_glBindFramebuffer                glBindFramebufferEXT
+    #define GLEXT_glBindRenderbuffer               glBindRenderbufferEXT
+    #define GLEXT_glDeleteFramebuffers             glDeleteFramebuffersEXT
+    #define GLEXT_glDeleteRenderbuffers            glDeleteRenderbuffersEXT
+    #define GLEXT_glRenderbufferStorage            glRenderbufferStorageEXT
+    #define GLEXT_glFramebufferRenderbuffer        glFramebufferRenderbufferEXT
+    #define GLEXT_glFramebufferTexture2D           glFramebufferTexture2DEXT
+    #define GLEXT_glCheckFramebufferStatus         glCheckFramebufferStatusEXT
+    #define GLEXT_GL_FRAMEBUFFER                   GL_FRAMEBUFFER_EXT
+    #define GLEXT_GL_FRAMEBUFFER_BINDING           GL_FRAMEBUFFER_BINDING_EXT
+    #define GLEXT_GL_RENDERBUFFER                  GL_RENDERBUFFER_EXT
+    #define GLEXT_GL_COLOR_ATTACHMENT0             GL_COLOR_ATTACHMENT0_EXT
+    #define GLEXT_GL_DEPTH_ATTACHMENT              GL_DEPTH_ATTACHMENT_EXT
+    #define GLEXT_GL_FRAMEBUFFER_COMPLETE          GL_FRAMEBUFFER_COMPLETE_EXT
+    #define GLEXT_GL_DEPTH_COMPONENT               GL_DEPTH_COMPONENT
+    #define GLEXT_GL_INVALID_FRAMEBUFFER_OPERATION GL_INVALID_FRAMEBUFFER_OPERATION_EXT
+    #define GLEXT_texture_non_power_of_two         GLEW_ARB_texture_non_power_of_two
 
 #endif
 

@@ -53,14 +53,14 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
     if (m_depthBuffer)
     {
         GLuint depthBuffer = static_cast<GLuint>(m_depthBuffer);
-        glCheck(glDeleteRenderbuffers(1, &depthBuffer));
+        glCheck(GLEXT_glDeleteRenderbuffers(1, &depthBuffer));
     }
 
     // Destroy the frame buffer
     if (m_frameBuffer)
     {
         GLuint frameBuffer = static_cast<GLuint>(m_frameBuffer);
-        glCheck(glDeleteFramebuffers(1, &frameBuffer));
+        glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
     }
 
     // Delete the context
@@ -76,7 +76,7 @@ bool RenderTextureImplFBO::isAvailable()
     // Make sure that extensions are initialized
     priv::ensureExtensionsInit();
 
-    return GL_framebuffer_object != 0;
+    return GLEXT_framebuffer_object != 0;
 }
 
 
@@ -88,39 +88,39 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
 
     // Create the framebuffer object
     GLuint frameBuffer = 0;
-    glCheck(glGenFramebuffers(1, &frameBuffer));
+    glCheck(GLEXT_glGenFramebuffers(1, &frameBuffer));
     m_frameBuffer = static_cast<unsigned int>(frameBuffer);
     if (!m_frameBuffer)
     {
         err() << "Impossible to create render texture (failed to create the frame buffer object)" << std::endl;
         return false;
     }
-    glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer));
+    glCheck(GLEXT_glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer));
 
     // Create the depth buffer if requested
     if (depthBuffer)
     {
         GLuint depth = 0;
-        glCheck(glGenRenderbuffers(1, &depth));
+        glCheck(GLEXT_glGenRenderbuffers(1, &depth));
         m_depthBuffer = static_cast<unsigned int>(depth);
         if (!m_depthBuffer)
         {
             err() << "Impossible to create render texture (failed to create the attached depth buffer)" << std::endl;
             return false;
         }
-        glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
-        glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height));
-        glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
+        glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_depthBuffer));
+        glCheck(GLEXT_glRenderbufferStorage(GLEXT_GL_RENDERBUFFER, GLEXT_GL_DEPTH_COMPONENT, width, height));
+        glCheck(GLEXT_glFramebufferRenderbuffer(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_DEPTH_ATTACHMENT, GLEXT_GL_RENDERBUFFER, m_depthBuffer));
     }
 
     // Link the texture to the frame buffer
-    glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0));
+    glCheck(GLEXT_glFramebufferTexture2D(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0));
 
     // A final check, just to be sure...
-    GLenum status = glCheck(glCheckFramebufferStatus(GL_FRAMEBUFFER));
-    if (status != GL_FRAMEBUFFER_COMPLETE)
+    GLenum status = glCheck(GLEXT_glCheckFramebufferStatus(GLEXT_GL_FRAMEBUFFER));
+    if (status != GLEXT_GL_FRAMEBUFFER_COMPLETE)
     {
-        glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, 0));
         err() << "Impossible to create render texture (failed to link the target texture to the frame buffer)" << std::endl;
         return false;
     }
