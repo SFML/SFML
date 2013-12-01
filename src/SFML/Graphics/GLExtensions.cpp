@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLExtensions.hpp>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
