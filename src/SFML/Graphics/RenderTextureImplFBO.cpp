@@ -95,7 +95,7 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
         err() << "Impossible to create render texture (failed to create the frame buffer object)" << std::endl;
         return false;
     }
-    glCheck(GLEXT_glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer));
+    glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, m_frameBuffer));
 
     // Create the depth buffer if requested
     if (depthBuffer)
