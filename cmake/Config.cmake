@@ -108,7 +108,7 @@ else()
 endif()
 
 # define the install directory for miscellaneous files
-if(SFML_OS_WINDOWS)
+if(SFML_OS_WINDOWS OR SFML_OS_IOS)
     set(INSTALL_MISC_DIR .)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
     set(INSTALL_MISC_DIR share/SFML)
