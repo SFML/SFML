@@ -63,7 +63,7 @@ namespace
 -(void)runUserMain
 {
     // Arguments intentionally dropped, see comments in main in sfml-main
-    sfmlMain(0, NULL);
+    sfmlMain(0, static_cast<char**>(NULL));
 }
 
 
