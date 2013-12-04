@@ -175,6 +175,41 @@ std::wstring String::toWideString() const
 
 
 ////////////////////////////////////////////////////////////
+std::basic_string<Uint8> String::toUtf8() const
+{
+    // Prepare the output string
+    std::basic_string<Uint8> output;
+    output.reserve(m_string.length());
+
+    // Convert
+    Utf32::toUtf8(m_string.begin(), m_string.end(), std::back_inserter(output));
+
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+std::basic_string<Uint16> String::toUtf16() const
+{
+    // Prepare the output string
+    std::basic_string<Uint16> output;
+    output.reserve(m_string.length());
+
+    // Convert
+    Utf32::toUtf16(m_string.begin(), m_string.end(), std::back_inserter(output));
+
+    return output;
+}
+
+
+////////////////////////////////////////////////////////////
+std::basic_string<Uint32> String::toUtf32() const
+{
+    return m_string;
+}
+
+
+////////////////////////////////////////////////////////////
 String& String::operator =(const String& right)
 {
     m_string = right.m_string;
