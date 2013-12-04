@@ -265,6 +265,36 @@ public :
     std::wstring toWideString() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert the unicode string to a UTF-8 string
+    ///
+    /// \return Converted UTF-8 string
+    ///
+    /// \see toAnsiString, toWideString
+    ///
+    ////////////////////////////////////////////////////////////
+    std::basic_string<Uint8> toUtf8String() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert the unicode string to a UTF-16 string
+    ///
+    /// \return Converted UTF-16 string
+    ///
+    /// \see toAnsiString, toWideString
+    ///
+    ////////////////////////////////////////////////////////////
+    std::basic_string<Uint16> toUtf16String() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Return a copy of the internal UTF-32 string
+    ///
+    /// \return UTF-32 string
+    ///
+    /// \see toAnsiString, toWideString
+    ///
+    ////////////////////////////////////////////////////////////
+    std::basic_string<Uint32> toUtf32String() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
     ///
     /// \param right Instance to assign
