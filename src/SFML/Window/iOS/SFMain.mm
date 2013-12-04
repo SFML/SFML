@@ -48,7 +48,14 @@
 
 
 ////////////////////////////////////////////////////////////
-__attribute__((weak)) int sfmlMain(int, char**)
+__attribute__((weak)) int sfmlMain(int c, char** v)
+{
+    return sfmlMain(c, const_cast<const char**>(v));
+}
+
+
+////////////////////////////////////////////////////////////
+__attribute__((weak)) int sfmlMain(int, const char**)
 {
     return sfmlMain();
 }

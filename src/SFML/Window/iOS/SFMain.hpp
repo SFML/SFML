@@ -28,6 +28,8 @@
 
 int sfmlMain(int argc, char** argv);
 
+int sfmlMain(int argc, const char** argv);
+
 int sfmlMain();
 
 
