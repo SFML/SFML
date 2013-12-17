@@ -48,12 +48,12 @@ m_bounds       ()
 
 
 ////////////////////////////////////////////////////////////
-Text::Text(const String& string, const Font& font, unsigned int characterSize) :
+Text::Text(const String& string, const Font& font, unsigned int characterSize, const Color& color) :
 m_string       (string),
 m_font         (&font),
 m_characterSize(characterSize),
 m_style        (Regular),
-m_color        (255, 255, 255),
+m_color        (color),
 m_vertices     (Quads),
 m_bounds       ()
 {

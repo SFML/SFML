@@ -75,9 +75,10 @@ public :
     /// \param string         Text assigned to the string
     /// \param font           Font used to draw the string
     /// \param characterSize  Base size of characters, in pixels
+    /// \param color          Color of the text (defaults to sf::Color::White)
     ///
     ////////////////////////////////////////////////////////////
-    Text(const String& string, const Font& font, unsigned int characterSize = 30);
+    Text(const String& string, const Font& font, unsigned int characterSize = 30, const Color& color = Color::White);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's string
