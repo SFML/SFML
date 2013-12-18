@@ -80,20 +80,17 @@ else()
 endif()
 
 # build the list of external libraries to link
-set(SYSTEM_EXT_LIBS)
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
-    set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} pthread)
+    list(APPEND SYSTEM_EXT_LIBS pthread)
 endif()
 if(SFML_OS_LINUX)
-    set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} rt)
+    list(APPEND SYSTEM_EXT_LIBS rt)
 endif()
 if(SFML_OS_WINDOWS)
-    set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} winmm)
+    list(APPEND SYSTEM_EXT_LIBS winmm)
 endif()
-
-# pthread is implicitly linked by the NDK
 if(SFML_OS_ANDROID)
-    set(SYSTEM_EXT_LIBS android)
+    list(APPEND SYSTEM_EXT_LIBS android)
 endif()
 
 # define the sfml-system target

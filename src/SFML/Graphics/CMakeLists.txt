@@ -109,42 +109,42 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # find external libraries
-if(NOT OPENGL_ES)
+if(NOT SFML_OPENGL_ES)
     find_package(OpenGL REQUIRED)
-    find_package(Freetype REQUIRED)
     find_package(GLEW REQUIRED)
-    find_package(JPEG REQUIRED)
     if(SFML_OS_LINUX)
         find_package(X11 REQUIRED)
     endif()
-    set(GRAPHICS_EXT_INCLUDE_PATHS ${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
-    set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY})
-
-    # build the list of libraries to link
-    set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY} ${OPENGL_gl_LIBRARY})
-    if(SFML_OS_LINUX)
-        set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${X11_LIBRARIES})
-    endif()
+    include_directories(${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
 endif()
-
-if(SFML_OS_IOS)
-    find_package(JPEG REQUIRED)
-    find_package(Freetype REQUIRED)
-    set(GRAPHICS_EXT_INCLUDE_PATHS ${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
-    set(GRAPHICS_EXT_LIBS "-framework OpenGLES ${FREETYPE_LIBRARY} ${JPEG_LIBRARY}")
-elseif(SFML_OS_ANDROID)
+if(SFML_OS_ANDROID)
     find_host_package(JPEG REQUIRED)
     find_host_package(Freetype REQUIRED)
-    set(GRAPHICS_EXT_INCLUDE_PATHS ${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
-    set(GRAPHICS_EXT_LIBS -lz ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
-    add_definitions(-DGL_GLEXT_PROTOTYPES)
+else()
+    find_package(JPEG REQUIRED)
+    find_package(Freetype REQUIRED)
 endif()
+include_directories(${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
 
-# add include paths of external libraries
-include_directories(${GRAPHICS_EXT_INCLUDE_PATHS})
+# build the list of external libraries to link
+if(NOT SFML_OPENGL_ES)
+    list(APPEND GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY} ${OPENGL_gl_LIBRARY})
+    if(SFML_OS_LINUX)
+        list(APPEND GRAPHICS_EXT_LIBS ${X11_LIBRARIES})
+    endif()
+endif()
+if(SFML_OS_IOS)
+    list(APPEND GRAPHICS_EXT_LIBS "-framework OpenGLES")
+elseif(SFML_OS_ANDROID)
+    list(APPEND GRAPHICS_EXT_LIBS -lz)
+endif()
+list(APPEND GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
 
 # add preprocessor symbols
-add_definitions(-DGLEW_STATIC -DSTBI_FAILURE_USERMSG)
+if(NOT SFML_OPENGL_ES)
+    add_definitions(-DGLEW_STATIC)
+endif()
+add_definitions(-DSTBI_FAILURE_USERMSG)
 
 # ImageLoader.cpp must be compiled with the -fno-strict-aliasing
 # when gcc is used; otherwise saving PNGs may crash in stb_image_write

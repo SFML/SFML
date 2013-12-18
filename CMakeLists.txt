@@ -104,6 +104,7 @@ endif()
 # define SFML_OPENGL_ES if needed
 if(SFML_OPENGL_ES)
     add_definitions(-DSFML_OPENGL_ES)
+    add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif()
 
 # define an option for choosing between static and dynamic C runtime (Windows only)
