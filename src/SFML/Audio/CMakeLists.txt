@@ -46,26 +46,20 @@ endif()
 if(NOT SFML_OS_ANDROID)
     find_package(OpenAL REQUIRED)
     find_package(Sndfile REQUIRED)
-    set(AUDIO_EXT_LIBS ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
 else()
     find_host_package(OpenAL REQUIRED)
     find_host_package(Sndfile REQUIRED)
-    set(AUDIO_EXT_INCLUDE_PATHS ${OPENAL_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIR})
-    set(AUDIO_EXT_LIBS -landroid -lOpenSLES ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
 endif()
-
-# add include paths of external libraries
 include_directories(${OPENAL_INCLUDE_DIR} ${SNDFILE_INCLUDE_DIR})
 
+# build the list of external libraries to link
+if(SFML_OS_ANDROID)
+    list(APPEND AUDIO_EXT_LIBS -landroid -lOpenSLES)
+endif()
+list(APPEND AUDIO_EXT_LIBS ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
+
 # define the sfml-audio target
-if(NOT SFML_OS_ANDROID)
-sfml_add_library(sfml-audio
-                 SOURCES ${SRC}
-                 DEPENDS sfml-system
-                 EXTERNAL_LIBS ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
-else()
 sfml_add_library(sfml-audio
                  SOURCES ${SRC}
                  DEPENDS sfml-system
                  EXTERNAL_LIBS ${AUDIO_EXT_LIBS})
-endif()
