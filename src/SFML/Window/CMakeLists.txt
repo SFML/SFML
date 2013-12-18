@@ -148,7 +148,6 @@ elseif(SFML_OS_ANDROID)
         ${SRCROOT}/Android/WindowImplAndroid.cpp
         ${SRCROOT}/Android/EglContext.hpp
         ${SRCROOT}/Android/EglContext.cpp
-        #${SRCROOT}/Android/VideoModeImpl.hpp
         ${SRCROOT}/Android/VideoModeImpl.cpp
         ${SRCROOT}/Android/InputImpl.hpp
         ${SRCROOT}/Android/InputImpl.cpp
@@ -158,39 +157,46 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # find external libraries
-if(NOT OPENGL_ES)
+if(NOT SFML_OPENGL_ES)
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})
-    if(SFML_OS_LINUX AND NOT SFML_OS_ANDROID)
+    if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
         find_package(X11 REQUIRED)
         if(NOT X11_Xrandr_FOUND)
             message(FATAL_ERROR "Xrandr library not found")
         endif()
-            include_directories(${X11_INCLUDE_DIR})
+        include_directories(${X11_INCLUDE_DIR})
+        find_package(UDev REQUIRED)
+        if(NOT UDEV_FOUND)
+            message(FATAL_ERROR "udev library not found")
+        endif()
+        include_directories(${UDEV_INCLUDE_DIR})
     endif()
-    include_directories(${X11_INCLUDE_DIR})
-
-    find_package(UDev REQUIRED)
-    if(NOT UDEV_FOUND)
-        message(FATAL_ERROR "udev library not found")
-    endif()
-    include_directories(${UDEV_INCLUDE_DIR})
 endif()
 
 # build the list of external libraries to link
 if(SFML_OS_WINDOWS)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${OPENGL_gl_LIBRARY} winmm gdi32)
+    list(APPEND WINDOW_EXT_LIBS winmm gdi32)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${OPENGL_gl_LIBRARY} ${X11_X11_LIB} ${X11_Xrandr_LIB} ${UDEV_LIBRARIES})
+    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${X11_Xrandr_LIB} ${UDEV_LIBRARIES})
     if(SFML_OS_FREEBSD)
-        set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} usbhid)
+        list(APPEND WINDOW_EXT_LIBS usbhid)
     endif()
 elseif(SFML_OS_MACOSX)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${OPENGL_gl_LIBRARY} "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
+    list(APPEND WINDOW_EXT_LIBS "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 elseif(SFML_OS_IOS)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-framework OpenGLES -framework Foundation -framework UIKit -framework CoreGraphics -framework QuartzCore -framework CoreMotion")
+    list(APPEND WINDOW_EXT_LIBS "-framework Foundation -framework UIKit -framework CoreGraphics -framework QuartzCore -framework CoreMotion")
 elseif(SFML_OS_ANDROID)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} "-landroid -llog -lEGL -lGLESv1_CM")
+    list(APPEND WINDOW_EXT_LIBS "-landroid")
+endif()
+if(SFML_OPENGL_ES)
+    if(SFML_OS_IOS)
+        list(APPEND WINDOW_EXT_LIBS "-framework OpenGLES")
+    elseif(SFML_OS_ANDROID)
+        list(APPEND WINDOW_EXT_LIBS "-lEGL -lGLESv1_CM")
+    endif()
+else()
+    list(APPEND WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})
 endif()
 
 # define the sfml-window target
