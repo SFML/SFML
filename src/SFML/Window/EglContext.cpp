@@ -26,15 +26,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Android/EglContext.hpp>
-#include <SFML/System/Android/Activity.hpp>
+#include <SFML/Window/EglContext.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
-
-#include <android/native_window.h>
+#ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/System/Android/Activity.hpp>
+#endif
 
 namespace sf
 {
@@ -46,12 +46,8 @@ m_display (EGL_NO_DISPLAY),
 m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE)
 {
-    // Get the activity states and protect it from concurent access
-    ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
-
     // Get the intialized EGL display
-    m_display = states->display;
+    m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
     // Create the EGL surface
     const EGLint attribs[] = {
@@ -83,14 +79,18 @@ m_display (EGL_NO_DISPLAY),
 m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE)
 {
-    // Get the activity states and protect it from concurent access
+#ifdef SFML_SYSTEM_ANDROID
+
+    // On Android, we must save the created context
     ActivityStates* states = getActivity(NULL);
     Lock lock(states->mutex);
 
     states->context = this;
 
+#endif
+
     // Get the intialized EGL display
-    m_display = states->display;
+    m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
     // Create the EGL surface
     const EGLint attribs[] = {
@@ -108,6 +108,10 @@ m_surface (EGL_NO_SURFACE)
 
     // Create the context
     createContext(shared, 0, config[0]);
+    
+#ifdef SFML_OS_LINUX
+    createSurface((EGLNativeWindowType)owner->getSystemHandle());
+#endif
 }
 
 
@@ -148,8 +152,7 @@ EglContext::~EglContext()
 ////////////////////////////////////////////////////////////
 bool EglContext::makeCurrent()
 {
-    bool success = m_surface != EGL_NO_SURFACE && eglCheck(eglMakeCurrent(m_display, m_surface, m_surface, m_context));
-    return success;
+    return m_surface != EGL_NO_SURFACE && eglCheck(eglMakeCurrent(m_display, m_surface, m_surface, m_context));
 }
 
 
@@ -166,6 +169,8 @@ void EglContext::setVerticalSyncEnabled(bool enabled)
     eglCheck(eglSwapInterval(m_display, enabled ? 1 : 0));
 }
 
+
+////////////////////////////////////////////////////////////
 void EglContext::createContext(EglContext* shared, unsigned int bitsPerPixel, const EGLConfig settings)
 {
     EGLint contextVersion[] = { EGL_CONTEXT_CLIENT_VERSION, 1, EGL_NONE };
@@ -182,7 +187,8 @@ void EglContext::createContext(EglContext* shared, unsigned int bitsPerPixel, co
 }
 
 
-void EglContext::createSurface(ANativeWindow* window)
+////////////////////////////////////////////////////////////
+void EglContext::createSurface(EGLNativeWindowType window)
 {
     // Create the EGL surface
     const EGLint attribs[] = {
@@ -201,6 +207,8 @@ void EglContext::createSurface(ANativeWindow* window)
     m_surface = eglCheck(eglCreateWindowSurface(m_display, config[0], window, NULL));
 }
 
+
+////////////////////////////////////////////////////////////
 void EglContext::destroySurface()
 {
     eglCheck(eglDestroySurface(m_display, m_surface));
@@ -209,6 +217,15 @@ void EglContext::destroySurface()
     // Ensure that this context is no longer active since our surface is now destroyed
     setActive(false);
 }
+
+
+#ifdef SFML_SYSTEM_LINUX
+////////////////////////////////////////////////////////////
+XVisualInfo EglContext::selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings)
+{
+    return XVisualInfo();
+}
+#endif
 
 } // namespace priv
 
