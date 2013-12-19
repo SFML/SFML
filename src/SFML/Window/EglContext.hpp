@@ -123,10 +123,10 @@ public :
     /// This function must be called when the activity (re)start, or
     /// when the orientation change.
     ///
-    /// \param window : The Android window
+    /// \param window : The native window type
     ///
     ////////////////////////////////////////////////////////////
-    void createSurface(ANativeWindow* window);
+    void createSurface(EGLNativeWindowType window);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destroy the EGL surface
@@ -136,6 +136,20 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void destroySurface();
+
+#ifdef SFML_SYSTEM_LINUX
+    ////////////////////////////////////////////////////////////
+    /// \brief Select the best EGL visual for a given set of settings
+    ///
+    /// \param display      X display
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
+    /// \param settings     Requested context settings
+    ///
+    /// \return The best visual
+    ///
+    ////////////////////////////////////////////////////////////
+    static XVisualInfo selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings);
+#endif
 
 private :
 

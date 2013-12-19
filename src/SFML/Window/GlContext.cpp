@@ -39,30 +39,38 @@
     #include <SFML/Window/glext/glext.h>
 #endif
 
-#if defined(SFML_SYSTEM_WINDOWS)
+#if !defined(SFML_OPENGL_ES)
 
-    #include <SFML/Window/Win32/WglContext.hpp>
-    typedef sf::priv::WglContext ContextType;
+    #if defined(SFML_SYSTEM_WINDOWS)
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+        #include <SFML/Window/Win32/WglContext.hpp>
+        typedef sf::priv::WglContext ContextType;
 
-    #include <SFML/Window/Unix/GlxContext.hpp>
-    typedef sf::priv::GlxContext ContextType;
+    #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-#elif defined(SFML_SYSTEM_MACOS)
+        #include <SFML/Window/Unix/GlxContext.hpp>
+        typedef sf::priv::GlxContext ContextType;
 
-    #include <SFML/Window/OSX/SFContext.hpp>
-    typedef sf::priv::SFContext ContextType;
+    #elif defined(SFML_SYSTEM_MACOS)
 
-#elif defined(SFML_SYSTEM_IOS)
+        #include <SFML/Window/OSX/SFContext.hpp>
+        typedef sf::priv::SFContext ContextType;
 
-    #include <SFML/Window/iOS/EaglContext.hpp>
-    typedef sf::priv::EaglContext ContextType;
+    #endif
 
-#elif defined(SFML_SYSTEM_ANDROID)
+#else
 
-    #include <SFML/Window/Android/EglContext.hpp>
-    typedef sf::priv::EglContext ContextType;
+    #if defined(SFML_SYSTEM_IOS)
+
+        #include <SFML/Window/iOS/EaglContext.hpp>
+        typedef sf::priv::EaglContext ContextType;
+
+    #else
+
+        #include <SFML/Window/EglContext.hpp>
+        typedef sf::priv::EglContext ContextType;
+
+    #endif
 
 #endif
 

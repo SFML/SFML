@@ -35,6 +35,10 @@ set(SRC
     ${SRCROOT}/WindowImpl.hpp
     ${INCROOT}/WindowStyle.hpp
 )
+if(SFML_OPENGL_ES)
+    list(APPEND SRC ${SRCROOT}/EglContext.cpp)
+    list(APPEND SRC ${SRCROOT}/EglContext.hpp)
+endif()
 source_group("" FILES ${SRC})
 
 # add platform specific sources
@@ -58,14 +62,19 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     set(PLATFORM_SRC
         ${SRCROOT}/Unix/Display.cpp
         ${SRCROOT}/Unix/Display.hpp
-        ${SRCROOT}/Unix/GlxContext.cpp
-        ${SRCROOT}/Unix/GlxContext.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
         ${SRCROOT}/Unix/InputImpl.hpp
         ${SRCROOT}/Unix/VideoModeImpl.cpp
         ${SRCROOT}/Unix/WindowImplX11.cpp
         ${SRCROOT}/Unix/WindowImplX11.hpp
     )
+    if(NOT SFML_OPENGL_ES)
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${SRCROOT}/Unix/GlxContext.cpp
+            ${SRCROOT}/Unix/GlxContext.hpp
+        )
+    endif()
     if(SFML_OS_LINUX)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
@@ -144,8 +153,6 @@ elseif(SFML_OS_ANDROID)
     set(PLATFORM_SRC
         ${SRCROOT}/Android/WindowImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.cpp
-        ${SRCROOT}/Android/EglContext.hpp
-        ${SRCROOT}/Android/EglContext.cpp
         ${SRCROOT}/Android/VideoModeImpl.cpp
         ${SRCROOT}/Android/InputImpl.hpp
         ${SRCROOT}/Android/InputImpl.cpp
@@ -171,6 +178,11 @@ if(NOT SFML_OPENGL_ES)
         include_directories(${UDEV_INCLUDE_DIR})
     endif()
 endif()
+if(SFML_OPENGL_ES AND SFML_OS_LINUX)
+    find_package(EGL REQUIRED)
+    find_package(GLES REQUIRED)
+    include_directories(${EGL_INCLUDE_DIR} ${GLES_INCLUDE_DIR})
+endif()
 
 # build the list of external libraries to link
 if(SFML_OS_WINDOWS)
@@ -188,7 +200,9 @@ elseif(SFML_OS_ANDROID)
     list(APPEND WINDOW_EXT_LIBS "-landroid")
 endif()
 if(SFML_OPENGL_ES)
-    if(SFML_OS_IOS)
+    if(SFML_OS_LINUX)
+        list(APPEND WINDOW_EXT_LIBS ${EGL_LIBRARY} ${GLES_LIBRARY})
+    elseif(SFML_OS_IOS)
         list(APPEND WINDOW_EXT_LIBS "-framework OpenGLES")
     elseif(SFML_OS_ANDROID)
         list(APPEND WINDOW_EXT_LIBS "-lEGL -lGLESv1_CM")
