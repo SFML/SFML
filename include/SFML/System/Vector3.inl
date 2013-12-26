@@ -55,6 +55,13 @@ z(static_cast<T>(vector.z))
 {
 }
 
+////////////////////////////////////////////////////////////
+template <typename T>
+template <typename U>
+inline Vector3<T>::operator Vector3<U>()
+{
+	return Vector3<U>(x, y, z);
+}
 
 ////////////////////////////////////////////////////////////
 template <typename T>
