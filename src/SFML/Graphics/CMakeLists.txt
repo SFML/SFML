@@ -133,7 +133,7 @@ include_directories(${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
 
 # build the list of external libraries to link
 if(NOT SFML_OPENGL_ES)
-    list(APPEND GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY} ${OPENGL_gl_LIBRARY})
+    list(APPEND GRAPHICS_EXT_LIBS ${GLEW_LIBRARY} ${OPENGL_gl_LIBRARY})
     if(SFML_OS_LINUX)
         list(APPEND GRAPHICS_EXT_LIBS ${X11_LIBRARIES})
     endif()
