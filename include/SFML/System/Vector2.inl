@@ -52,6 +52,13 @@ y(static_cast<T>(vector.y))
 {
 }
 
+////////////////////////////////////////////////////////////
+template <typename T>
+template <typename U>
+inline Vector2<T>::operator Vector2<U>()
+{
+	return Vector2<U>(x, y);
+}
 
 ////////////////////////////////////////////////////////////
 template <typename T>
