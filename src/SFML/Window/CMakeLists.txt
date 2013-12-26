@@ -164,6 +164,13 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # find external libraries
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
+    find_package(X11 REQUIRED)
+    if(NOT X11_Xrandr_FOUND)
+        message(FATAL_ERROR "Xrandr library not found")
+    endif()
+    include_directories(${X11_INCLUDE_DIR})
+endif()
 if(NOT SFML_OPENGL_ES)
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})
