@@ -83,7 +83,7 @@ m_depthbuffer (0),
 m_vsyncEnabled(false),
 m_clock       ()
 {
-    // This constructor shoult never be used by implementation
+    // This constructor should never be used by implementation
     err() << "Calling bad EaglContext constructor, please contact your developer :)" << std::endl;
 }
 
