@@ -73,32 +73,23 @@ namespace priv
 EglContext::EglContext(EglContext* shared) :
 m_display (EGL_NO_DISPLAY),
 m_context (EGL_NO_CONTEXT),
-m_surface (EGL_NO_SURFACE)
+m_surface (EGL_NO_SURFACE),
+m_config  (NULL)
 {
     // Get the intialized EGL display
     m_display = getInitializedDisplay();
 
-    // Create the EGL surface
-    const EGLint attribs[] = {
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
-            EGL_BLUE_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_RED_SIZE, 8,
-            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-            EGL_NONE
-    };
-
-    EGLint numConfigs;
-    EGLConfig config[1];
-    eglCheck(eglChooseConfig(m_display, attribs, &config[0], 1, &numConfigs));
-
+    // Get the best EGL config matching the default video settings
+    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
+    
     // Note: The EGL specs say that attrib_list can be NULL when passed to eglCreatePbufferSurface,
     // but this is resulting in a segfault. Bug in Android?
     EGLint attrib_list[] = { EGL_NONE };
-    m_surface = eglCheck(eglCreatePbufferSurface(m_display, config[0], attrib_list));
+    
+    m_surface = eglCheck(eglCreatePbufferSurface(m_display, m_config, attrib_list));
 
     // Create the context
-    createContext(shared, 0, config[0]);
+    createContext(shared);
 }
 
 
@@ -106,7 +97,8 @@ m_surface (EGL_NO_SURFACE)
 EglContext::EglContext(EglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
 m_display (EGL_NO_DISPLAY),
 m_context (EGL_NO_CONTEXT),
-m_surface (EGL_NO_SURFACE)
+m_surface (EGL_NO_SURFACE),
+m_config  (NULL)
 {
 #ifdef SFML_SYSTEM_ANDROID
 
@@ -120,23 +112,12 @@ m_surface (EGL_NO_SURFACE)
 
     // Get the intialized EGL display
     m_display = getInitializedDisplay();
-
-    // Create the EGL surface
-    const EGLint attribs[] = {
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
-            EGL_BLUE_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_RED_SIZE, 8,
-            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-            EGL_NONE
-    };
-
-    EGLint numConfigs;
-    EGLConfig config[1];
-    eglCheck(eglChooseConfig(m_display, attribs, &config[0], 1, &numConfigs));
-
+    
+    // Get the best EGL config matching the requested video settings
+    m_config = getBestConfig(m_display, bitsPerPixel, settings);
+    
     // Create the context
-    createContext(shared, 0, config[0]);
+    createContext(shared);
     
 #ifdef SFML_OS_LINUX
     createSurface((EGLNativeWindowType)owner->getSystemHandle());
@@ -148,7 +129,8 @@ m_surface (EGL_NO_SURFACE)
 EglContext::EglContext(EglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
 m_display (EGL_NO_DISPLAY),
 m_context (EGL_NO_CONTEXT),
-m_surface (EGL_NO_SURFACE)
+m_surface (EGL_NO_SURFACE),
+m_config  (NULL)
 {
 }
 
@@ -200,10 +182,13 @@ void EglContext::setVerticalSyncEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-void EglContext::createContext(EglContext* shared, unsigned int bitsPerPixel, const EGLConfig settings)
+void EglContext::createContext(EglContext* shared)
 {
-    EGLint contextVersion[] = { EGL_CONTEXT_CLIENT_VERSION, 1, EGL_NONE };
-
+    const EGLint contextVersion[] = {
+        EGL_CONTEXT_CLIENT_VERSION, 1,
+        EGL_NONE
+    };
+    
     EGLContext toShared;
 
     if (shared)
@@ -212,28 +197,14 @@ void EglContext::createContext(EglContext* shared, unsigned int bitsPerPixel, co
         toShared = EGL_NO_CONTEXT;
 
     // Create the EGL context
-    m_context = eglCheck(eglCreateContext(m_display, settings, toShared, contextVersion));
+    m_context = eglCheck(eglCreateContext(m_display, m_config, toShared, contextVersion));
 }
 
 
 ////////////////////////////////////////////////////////////
 void EglContext::createSurface(EGLNativeWindowType window)
 {
-    // Create the EGL surface
-    const EGLint attribs[] = {
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
-            EGL_BLUE_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_RED_SIZE, 8,
-            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-            EGL_NONE
-    };
-
-    EGLint numConfigs;
-    EGLConfig config[1];
-    eglCheck(eglChooseConfig(m_display, attribs, &config[0], 1, &numConfigs));
-
-    m_surface = eglCheck(eglCreateWindowSurface(m_display, config[0], window, NULL));
+    m_surface = eglCheck(eglCreateWindowSurface(m_display, m_config, window, NULL));
 }
 
 
@@ -245,6 +216,30 @@ void EglContext::destroySurface()
 
     // Ensure that this context is no longer active since our surface is now destroyed
     setActive(false);
+}
+
+
+////////////////////////////////////////////////////////////
+EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings)
+{
+    // Set our video settings constraint
+    const EGLint attributes[] = {
+        EGL_BUFFER_SIZE, bitsPerPixel,
+        EGL_DEPTH_SIZE, settings.depthBits,
+        EGL_STENCIL_SIZE, settings.stencilBits,
+        EGL_SAMPLE_BUFFERS, settings.antialiasingLevel,
+        EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+        EGL_NONE
+    };
+    
+    EGLint configCount;
+    EGLConfig configs[1];
+    
+    // Ask EGL for the best config matching our video settings
+    eglCheck(eglChooseConfig(display, attributes, configs, 1, &configCount));
+    
+    return configs[0];
 }
 
 
