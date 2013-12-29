@@ -88,7 +88,7 @@ m_config  (NULL)
     
     m_surface = eglCheck(eglCreatePbufferSurface(m_display, m_config, attrib_list));
 
-    // Create the context
+    // Create EGL context
     createContext(shared);
 }
 
@@ -116,10 +116,12 @@ m_config  (NULL)
     // Get the best EGL config matching the requested video settings
     m_config = getBestConfig(m_display, bitsPerPixel, settings);
     
-    // Create the context
+    // Create EGL context
     createContext(shared);
     
-#ifdef SFML_OS_LINUX
+#if !defined(SFML_SYSTEM_ANDROID)
+    // Create EGL surface (except on Android because the window is created 
+    // asynchronously, its activity manager will call it for us)
     createSurface((EGLNativeWindowType)owner->getSystemHandle());
 #endif
 }
@@ -196,7 +198,7 @@ void EglContext::createContext(EglContext* shared)
     else
         toShared = EGL_NO_CONTEXT;
 
-    // Create the EGL context
+    // Create EGL context
     m_context = eglCheck(eglCreateContext(m_display, m_config, toShared, contextVersion));
 }
 
@@ -245,9 +247,49 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 
 #ifdef SFML_SYSTEM_LINUX
 ////////////////////////////////////////////////////////////
-XVisualInfo EglContext::selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings)
+XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    return XVisualInfo();
+    // Get the intialized EGL display
+    EGLDisplay display = getInitializedDisplay();
+    
+    // Get the best EGL config matching the default video settings
+    EGLConfig config = getBestConfig(display, bitsPerPixel, settings);
+    
+    // Retrieve the visual id associated with this EGL config
+    EGLint nativeVisualId, nativeVisualType;
+    
+    eglCheck(eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &nativeVisualId));
+    eglCheck(eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_TYPE, &nativeVisualType));
+    
+    if (nativeVisualId = 0 && nativeVisualType == EGL_NONE)
+    {
+        // Should never happen...
+        err() << "No EGL visual found. You should check your graphics driver" << std::endl;
+        
+        return XVisualInfo();
+    }
+    
+    VisualID visualId = static_cast<VisualID>(nativeVisualId);
+
+    // Get X11 visuals compatible with this EGL config
+    XVisualInfo *availableVisuals, bestVisual;
+    int visualCount = 0;
+    
+    availableVisuals = XGetVisualInfo(XDisplayy, VisualIDMask, &visualId, &visualCount);
+    
+    if (visualCount == 0)
+    {
+        // Can't happen...
+        err() << "No X11 visual found. Bug in your EGL implementation ?" << std::endl;
+        
+        return XVisualInfo();
+    }
+    
+    // Pick up the best one
+    bestVisual = availableVisuals[0]
+    XFree(chosenVisualInfo);
+    
+    return bestVisual;
 }
 #endif
 
