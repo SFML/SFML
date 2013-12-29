@@ -115,7 +115,7 @@ public :
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void createContext(EglContext* shared, unsigned int bitsPerPixel, const EGLConfig settings);
+    void createContext(EglContext* shared);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the EGL surface
@@ -137,6 +137,18 @@ public :
     ////////////////////////////////////////////////////////////
     void destroySurface();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the best EGL visual for a given set of video settings
+    ///
+    /// \param display      EGL display
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
+    /// \param settings     Requested context settings
+    ///
+    /// \return The best EGL config
+    ///
+    ////////////////////////////////////////////////////////////
+    static EGLConfig getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings);
+    
 #ifdef SFML_SYSTEM_LINUX
     ////////////////////////////////////////////////////////////
     /// \brief Select the best EGL visual for a given set of settings
@@ -159,6 +171,7 @@ private :
     EGLDisplay  m_display; ///< The internal EGL display
     EGLContext  m_context; ///< The internal EGL context
     EGLSurface  m_surface; ///< The internal EGL surface
+    EGLConfig   m_config;  ///< The internal EGL config
 
 };
 
