@@ -165,7 +165,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     XVisualInfo* visuals = XGetVisualInfo(display, 0, NULL, &count);
     if (visuals)
     {
-        // Evaluate all the returned visuals, and pick the best one1
+        // Evaluate all the returned visuals, and pick the best one
         int bestScore = 0xFFFF;
         XVisualInfo bestVisual;
         for (int i = 0; i < count; ++i)
