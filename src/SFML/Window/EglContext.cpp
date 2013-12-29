@@ -36,6 +36,35 @@
     #include <SFML/System/Android/Activity.hpp>
 #endif
 
+namespace
+{
+    EGLDisplay getInitializedDisplay()
+    {
+#if defined(SFML_SYSTEM_LINUX)
+
+        static EGLDisplay display = EGL_NO_DISPLAY;
+        
+        if (display == EGL_NO_DISPLAY)
+        {
+            eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
+            eglCheck(eglInitialize(display, NULL, NULL));
+        }
+        
+        return display;
+    
+#elif defined(SFML_SYSTEM_ANDROID)
+
+    // On Android, its native activity handles this for us
+    sf::priv::ActivityStates* states = sf::priv::getActivity(NULL);
+    sf::Lock lock(states->mutex);
+
+    return states->display;
+    
+#endif
+    }
+}
+
+
 namespace sf
 {
 namespace priv
@@ -47,7 +76,7 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE)
 {
     // Get the intialized EGL display
-    m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    m_display = getInitializedDisplay();
 
     // Create the EGL surface
     const EGLint attribs[] = {
@@ -90,7 +119,7 @@ m_surface (EGL_NO_SURFACE)
 #endif
 
     // Get the intialized EGL display
-    m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    m_display = getInitializedDisplay();
 
     // Create the EGL surface
     const EGLint attribs[] = {
