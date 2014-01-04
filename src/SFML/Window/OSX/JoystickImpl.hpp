@@ -30,7 +30,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/System/String.hpp>
+#include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/hid/IOHIDDevice.h>
+#include <IOKit/hid/IOHIDKeys.h>
 #include <map>
 #include <vector>
 
@@ -93,6 +96,14 @@ public :
     JoystickCaps getCapabilities() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the joystick identification
+    ///
+    /// \return Joystick identification
+    ///
+    ////////////////////////////////////////////////////////////
+    Joystick::Identification getIdentification() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state
     ///
     /// \return Joystick state
@@ -103,15 +114,47 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
+    /// Get HID device property key as a string
+    ///
+    /// \param ref HID device
+    /// \param prop Property to retrieve from the device
+    ///
+    /// \return Value for the property as a string
+    ///
+    ////////////////////////////////////////////////////////////
+    std::string getDeviceString(IOHIDDeviceRef ref, CFStringRef prop);
+
+    ////////////////////////////////////////////////////////////
+    /// Get HID device property key as an unsigned int
+    ///
+    /// \param ref HID device
+    /// \param prop Property to retrieve from the device
+    ///
+    /// \return Value for the propery as an unsigned int
+    ///
+    ////////////////////////////////////////////////////////////
+    unsigned int getDeviceUint(IOHIDDeviceRef ref, CFStringRef prop);
+
+    ////////////////////////////////////////////////////////////
+    /// Convert a CFStringRef to std::string
+    ///
+    /// \param cfString CFStringRef to convert
+    ///
+    /// \return std::string
+    ////////////////////////////////////////////////////////////
+    std::string stringFromCFString(CFStringRef cfString);
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     typedef long                                          Location;
     typedef std::map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
     typedef std::vector<IOHIDElementRef>                  ButtonsVector;
 
-    AxisMap       m_axis;    ///< Axis (IOHIDElementRef) connected to the joystick
-    ButtonsVector m_buttons; ///< Buttons (IOHIDElementRef) connected to the joystick
-    unsigned int  m_index;   ///< SFML index
+    AxisMap       m_axis;                      ///< Axis (IOHIDElementRef) connected to the joystick
+    ButtonsVector m_buttons;                   ///< Buttons (IOHIDElementRef) connected to the joystick
+    unsigned int  m_index;                     ///< SFML index
+    Joystick::Identification m_identification; ///< Joystick identification
 
     static Location m_locationIDs[sf::Joystick::Count]; ///< Global Joystick register
     /// For a corresponding SFML index, m_locationIDs is either some usb

@@ -320,6 +320,13 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
 
 ////////////////////////////////////////////////////////////
+Identifcation JoystickImpl::getIdentification() const
+{
+    return m_identification;
+}
+
+
+////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::JoystickImpl::update()
 {
     while (read(m_file, m_buffer, m_length) == m_length) {

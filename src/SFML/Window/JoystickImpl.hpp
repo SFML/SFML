@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/Window/Joystick.hpp>
+#include <SFML/System/String.hpp>
 #include <algorithm>
 
 
@@ -38,7 +39,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Structure holding a joystick's capabilities
+/// \brief Structure holding a joystick's information
 ///
 ////////////////////////////////////////////////////////////
 struct JoystickCaps
