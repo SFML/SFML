@@ -293,11 +293,9 @@ void RenderTarget::resetGLStates()
         // Make sure that GLEW is initialized
         priv::ensureGlewInit();
 
-        // Explicitly reset texture unit 0
-        glClientActiveTexture(GL_TEXTURE0);
-        glActiveTexture(GL_TEXTURE0);
-
         // Define the default OpenGL states
+        glCheck(glClientActiveTexture(GL_TEXTURE0));
+        glCheck(glActiveTexture(GL_TEXTURE0));
         glCheck(glDisable(GL_CULL_FACE));
         glCheck(glDisable(GL_LIGHTING));
         glCheck(glDisable(GL_DEPTH_TEST));
