@@ -32,6 +32,7 @@
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <SFML/Window/Sensor.hpp>
 
 
 namespace sf
@@ -151,6 +152,16 @@ public :
         int x;               ///< X position of the touch, relative to the left of the owner window
         int y;               ///< Y position of the touch, relative to the top of the owner window
     };
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Sensor events parameters (SensorEnabled, SensorData, SensorDisabled)
+    ///
+    ////////////////////////////////////////////////////////////
+    struct SensorEvent
+    {
+		Sensor::Type type;
+		Sensor::Data data;
+    };
 
     ////////////////////////////////////////////////////////////
     /// \brief Enumeration of the different types of events
@@ -179,6 +190,9 @@ public :
         TouchBegan,             ///< A touch event began (data in event.touch)
         TouchMoved,             ///< A touch moved (data in event.touch)
         TouchEnded,             ///< A touch event ended (data in event.touch)
+        SensorEnabled,          ///< A sensor was enabled (data in event.sensor)
+        SensorData,             ///< A new sensor data arrived (data in event.sensor)
+        SensorDisabled,         ///< A sensor was disabled (data in event.sensor)
 
         Count                   ///< Keep last -- the total number of event types
     };
@@ -200,6 +214,7 @@ public :
         JoystickButtonEvent  joystickButton;  ///< Joystick button event parameters (Event::JoystickButtonPressed, Event::JoystickButtonReleased)
         JoystickConnectEvent joystickConnect; ///< Joystick (dis)connect event parameters (Event::JoystickConnected, Event::JoystickDisconnected)
         TouchEvent           touch;           ///< Touch events parameters (Event::TouchBegan, Event::TouchMoved, Event::TouchEnded)
+        SensorEvent          sensor;          ///< Sensor events parameters (Event::SensorEnabled, Event::SensorData, Event::SensorDisabled)
     };
 };
 
