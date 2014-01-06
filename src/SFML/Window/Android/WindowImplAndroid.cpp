@@ -189,7 +189,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
     {
         if (AInputQueue_preDispatchEvent(states->inputQueue, _event))
             return 1;
-
+		
         int32_t handled = 0;
 
         int32_t type = AInputEvent_getType(_event);
