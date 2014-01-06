@@ -62,9 +62,6 @@ struct ActivityStates
     std::vector<Event> pendingEvents;
     int (*processEvent)(int fd, int events, void* data);
 
-    void (*enableSensors)();
-    void (*disableSensors)();
-
     std::map<int, Vector2i> touchEvents;
     Vector2i mousePosition;
     bool isButtonPressed[Mouse::ButtonCount];

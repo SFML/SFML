@@ -53,12 +53,15 @@ namespace sf
 {
 namespace priv
 {
+////////////////////////////////////////////////////////////
 ActivityStates* retrieveStates(ANativeActivity* activity)
 {
     // Hide the ugly cast we find in each callback function
     return (ActivityStates*)activity->instance;
 }
 
+
+////////////////////////////////////////////////////////////
 static void initializeMain(ActivityStates* states)
 {
     // Protect from concurent access
@@ -73,6 +76,8 @@ static void initializeMain(ActivityStates* states)
     AConfiguration_fromAssetManager(states->config, states->activity->assetManager);
 }
 
+
+////////////////////////////////////////////////////////////
 static void terminateMain(ActivityStates* states)
 {
     // Protect from concurent access
@@ -83,6 +88,8 @@ static void terminateMain(ActivityStates* states)
     ANativeActivity_finish(states->activity);
 }
 
+
+////////////////////////////////////////////////////////////
 void* main(ActivityStates* states)
 {
     // Initialize the thread before giving the hand
@@ -112,10 +119,14 @@ void* main(ActivityStates* states)
 } // namespace priv
 } // namespace sf
 
+
+////////////////////////////////////////////////////////////
 static void onStart(ANativeActivity* activity)
 {
 }
 
+
+////////////////////////////////////////////////////////////
 static void onResume(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
@@ -129,6 +140,8 @@ static void onResume(ANativeActivity* activity)
     states->pendingEvents.push_back(event);
 }
 
+
+////////////////////////////////////////////////////////////
 static void onPause(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
@@ -142,10 +155,14 @@ static void onPause(ANativeActivity* activity)
     states->pendingEvents.push_back(event);
 }
 
+
+////////////////////////////////////////////////////////////
 static void onStop(ANativeActivity* activity)
 {
 }
 
+
+////////////////////////////////////////////////////////////
 static void onDestroy(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
@@ -187,6 +204,8 @@ static void onDestroy(ANativeActivity* activity)
     // The application should now terminate
 }
 
+
+////////////////////////////////////////////////////////////
 static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
 {
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
@@ -210,6 +229,8 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
     }
 }
 
+
+////////////////////////////////////////////////////////////
 static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window)
 {
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
@@ -233,14 +254,20 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
     }
 }
 
+
+////////////////////////////////////////////////////////////
 static void onNativeWindowRedrawNeeded(ANativeActivity* activity, ANativeWindow* window)
 {
 }
 
+
+////////////////////////////////////////////////////////////
 static void onNativeWindowResized(ANativeActivity* activity, ANativeWindow* window)
 {
 }
 
+
+////////////////////////////////////////////////////////////
 static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
 {
     // Retrieve our activity states from the activity instance
@@ -255,6 +282,8 @@ static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
     }
 }
 
+
+////////////////////////////////////////////////////////////
 static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
 {
     // Retrieve our activity states from the activity instance
@@ -269,16 +298,14 @@ static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
     }
 }
 
+
+////////////////////////////////////////////////////////////
 static void onWindowFocusChanged(ANativeActivity* activity, int focused)
 {
-    // Retrieve our activity states from the activity instance
-    sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-
-    // Disable or enable sensors according the window focused state
-    if (states->enableSensors && states->disableSensors)
-        focused ? states->enableSensors() : states->disableSensors();
 }
 
+
+////////////////////////////////////////////////////////////
 static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
 {
     // Retrieve our activity states from the activity instance
@@ -294,10 +321,14 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
     states->pendingEvents.push_back(event);
 }
 
+
+////////////////////////////////////////////////////////////
 static void onConfigurationChanged(ANativeActivity* activity)
 {
 }
 
+
+////////////////////////////////////////////////////////////
 static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen)
 {
     *outLen = 0;
@@ -305,16 +336,22 @@ static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen)
     return NULL;
 }
 
+
+////////////////////////////////////////////////////////////
 static void onLowMemory(ANativeActivity* activity)
 {
 }
 
+
+////////////////////////////////////////////////////////////
 int dummyProcessEvent(int fd, int events, void* data)
 {
     // Do nothing
     return 0;
 }
 
+
+////////////////////////////////////////////////////////////
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
     // Create an activity states (will keep us in the know, about events we care)
