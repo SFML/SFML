@@ -25,6 +25,11 @@ set(SRC
     ${SRCROOT}/Mouse.cpp
     ${INCROOT}/Touch.hpp
     ${SRCROOT}/Touch.cpp
+    ${INCROOT}/Sensor.hpp
+    ${SRCROOT}/Sensor.cpp
+    ${SRCROOT}/SensorImpl.hpp
+    ${SRCROOT}/SensorManager.cpp
+    ${SRCROOT}/SensorManager.hpp
     ${SRCROOT}/VideoMode.cpp
     ${INCROOT}/VideoMode.hpp
     ${SRCROOT}/VideoModeImpl.hpp
@@ -64,6 +69,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
         ${SRCROOT}/Unix/InputImpl.hpp
+        ${SRCROOT}/Unix/SensorImpl.cpp
+        ${SRCROOT}/Unix/SensorImpl.hpp
         ${SRCROOT}/Unix/VideoModeImpl.cpp
         ${SRCROOT}/Unix/WindowImplX11.cpp
         ${SRCROOT}/Unix/WindowImplX11.hpp
@@ -103,6 +110,8 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/HIDJoystickManager.cpp
         ${SRCROOT}/OSX/JoystickImpl.cpp
         ${SRCROOT}/OSX/JoystickImpl.hpp
+        ${SRCROOT}/OSX/SensorImpl.cpp
+        ${SRCROOT}/OSX/SensorImpl.hpp
         ${SRCROOT}/OSX/SFApplication.h
         ${SRCROOT}/OSX/SFApplication.m
         ${SRCROOT}/OSX/SFApplicationDelegate.h
@@ -137,6 +146,8 @@ elseif(SFML_OS_IOS)
         ${SRCROOT}/iOS/InputImpl.hpp
         ${SRCROOT}/iOS/JoystickImpl.mm
         ${SRCROOT}/iOS/JoystickImpl.hpp
+        ${SRCROOT}/iOS/SensorImpl.mm
+        ${SRCROOT}/iOS/SensorImpl.hpp
         ${SRCROOT}/iOS/VideoModeImpl.mm
         ${SRCROOT}/iOS/WindowImplUIKit.hpp
         ${SRCROOT}/iOS/WindowImplUIKit.mm
@@ -159,7 +170,9 @@ elseif(SFML_OS_ANDROID)
         ${SRCROOT}/Android/InputImpl.hpp
         ${SRCROOT}/Android/InputImpl.cpp
         ${SRCROOT}/Android/JoystickImpl.hpp
-        ${SRCROOT}/Android/JoystickImpl.cpp)
+        ${SRCROOT}/Android/JoystickImpl.cpp
+        ${SRCROOT}/Android/SensorImpl.hpp
+        ${SRCROOT}/Android/SensorImpl.cpp)
     source_group("android" FILES ${PLATFORM_SRC})
 endif()
 

@@ -28,6 +28,7 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/JoystickManager.hpp>
+#include <SFML/Window/SensorManager.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <algorithm>
 #include <cmath>
@@ -86,6 +87,11 @@ m_joyThreshold(0.1f)
     JoystickManager::getInstance().update();
     for (unsigned int i = 0; i < Joystick::Count; ++i)
         m_joyStates[i] = JoystickManager::getInstance().getState(i);
+
+    // Get the initial sensor states
+    SensorManager::getInstance().update();
+    for (unsigned int i = 0; i < Sensor::Count; ++i)
+        m_senStates[i] = SensorManager::getInstance().getState(i);
 }
 
 
@@ -111,6 +117,7 @@ bool WindowImpl::popEvent(Event& event, bool block)
     {
         // Get events from the system
         processJoystickEvents();
+        processSensorEvents();
         processEvents();
 
         // In blocking mode, we must process events until one is triggered
@@ -123,6 +130,7 @@ bool WindowImpl::popEvent(Event& event, bool block)
             {
                 sleep(milliseconds(10));
                 processJoystickEvents();
+                processSensorEvents();
                 processEvents();
             }
         }
@@ -212,6 +220,52 @@ void WindowImpl::processJoystickEvents()
     }
 }
 
+
+////////////////////////////////////////////////////////////
+void WindowImpl::processSensorEvents()
+{
+    // First update sensor states
+    SensorManager::getInstance().update();
+
+    for (unsigned int i = 0; i < Sensor::Count; ++i)
+    {
+        // Copy the previous state of the sensor and get the new one
+        SensorState previousState = m_senStates[i];
+        m_senStates[i] = SensorManager::getInstance().getState(i);
+
+        // Check whether it's still enabled
+        bool enabled = m_senStates[i].enabled;
+        if (previousState.enabled ^ enabled)
+        {
+            Event event;
+            event.type = enabled ? Event::SensorEnabled : Event::SensorDisabled;
+            event.sensor.type = static_cast<Sensor::Type>(i);
+            pushEvent(event);
+            
+            // This sensor has been disabled, we don't want these pending data
+            if (!enabled)
+            {
+                while (!m_senStates[i].pendingData->empty())
+                    m_senStates[i].pendingData->pop();
+            }
+        }
+
+        if (enabled)
+        {
+            // Send pending sensor data events
+            while (!m_senStates[i].pendingData->empty())
+            {
+                Event event;
+                event.type = Event::SensorData;
+                event.sensor.type = static_cast<Sensor::Type>(i);
+                event.sensor.data = m_senStates[i].pendingData->front();
+                pushEvent(event);
+                
+                m_senStates[i].pendingData->pop();
+            }
+        }
+    }
+}
 
 } // namespace priv
 
