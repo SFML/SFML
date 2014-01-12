@@ -48,9 +48,7 @@ void SensorImpl::cleanup()
 SensorCaps& SensorImpl::initialize(unsigned int type)
 {
     // Not applicable
-    SensorCaps capabilities;
-    capabilities.available = false;
-    
+    static SensorCaps capabilities;
     return capabilities;
 }
 
