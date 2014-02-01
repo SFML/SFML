@@ -141,6 +141,74 @@ public :
     bool loadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Fills the sound buffer with a generated sawtooth wave
+    ///
+    /// \param amplitude    The amplitude (volume) of the generated wave
+    /// \param frequency    The frequency of the generated wave
+    /// \param sampleRate   Sample rate (number of samples to play per second)
+    /// \param length       The length of the generated sound
+    /// \param fadeIn       The length of the fade in
+    /// \param fadeOut      The length of the fade out
+    ///
+    /// \return True if creation succeeded, false if it failed
+    ///
+    /// \see createSine, createSquare, createTriangle
+    ///
+    ////////////////////////////////////////////////////////////
+    bool createSawtooth(Int16 amplitude, float frequency, unsigned int sampleRate = 44100, sf::Time length = sf::seconds(1), sf::Time fadeIn = sf::Time::Zero, sf::Time fadeOut = sf::Time::Zero);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Fills the sound buffer with a generated sine wave
+    ///
+    /// \param amplitude    The amplitude (volume) of the generated wave
+    /// \param frequency    The frequency of the generated wave
+    /// \param sampleRate   Sample rate (number of samples to play per second)
+    /// \param length       The length of the generated sound
+    /// \param fadeIn       The length of the fade in
+    /// \param fadeOut      The length of the fade out
+    ///
+    /// \return True if creation succeeded, false if it failed
+    ///
+    /// \see createSawtooth, createSquare, createTriangle
+    ///
+    ////////////////////////////////////////////////////////////
+    bool createSine(Int16 amplitude, float frequency, unsigned int sampleRate = 44100, sf::Time length = sf::seconds(1), sf::Time fadeIn = sf::Time::Zero, sf::Time fadeOut = sf::Time::Zero);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Fills the sound buffer with a generated square wave
+    ///
+    /// \param amplitude    The amplitude (volume) of the generated wave
+    /// \param frequency    The frequency of the generated wave
+    /// \param sampleRate   Sample rate (number of samples to play per second)
+    /// \param length       The length of the generated sound
+    /// \param fadeIn       The length of the fade in
+    /// \param fadeOut      The length of the fade out
+    ///
+    /// \return True if creation succeeded, false if it failed
+    ///
+    /// \see createSawtooth, createSine, createTriangle
+    ///
+    ////////////////////////////////////////////////////////////
+    bool createSquare(Int16 amplitude, float frequency, unsigned int sampleRate = 44100, sf::Time length = sf::seconds(1), sf::Time fadeIn = sf::Time::Zero, sf::Time fadeOut = sf::Time::Zero);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Fills the sound buffer with a generated triangle wave
+    ///
+    /// \param amplitude    The amplitude (volume) of the generated wave
+    /// \param frequency    The frequency of the generated wave
+    /// \param sampleRate   Sample rate (number of samples to play per second)
+    /// \param length       The length of the generated sound
+    /// \param fadeIn       The length of the fade in
+    /// \param fadeOut      The length of the fade out
+    ///
+    /// \return True if creation succeeded, false if it failed
+    ///
+    /// \see createSawtooth, createSine, createSquare
+    ///
+    ////////////////////////////////////////////////////////////
+    bool createTriangle(Int16 amplitude, float frequency, unsigned int sampleRate = 44100, sf::Time length = sf::seconds(1), sf::Time fadeIn = sf::Time::Zero, sf::Time fadeOut = sf::Time::Zero);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
     ///
     /// Here is a complete list of all the supported audio formats:
