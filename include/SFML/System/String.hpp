@@ -412,6 +412,32 @@ public :
     std::size_t find(const String& str, std::size_t start = 0) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Replace a substring with another string
+    ///
+    /// This function replaces the substring that starts at index \a position
+    /// and spans \a length characters with the string \a replaceWith.
+    ///
+    /// \param position    Index of the first character to be replaced
+    /// \param length      Number of characters to replace. You can pass InvalidPos to 
+    ///                    replace all characters until the end of the string.
+    /// \param replaceWith String that replaces the given substring.
+    ///
+    ////////////////////////////////////////////////////////////
+    void replace(std::size_t position, std::size_t length, const String& replaceWith);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Replace all occurrences of a substring with a replacement string
+    ///
+    /// This function replaces all occurences of \a searchFor in this string
+    /// with the string \a replaceWith.
+    ///
+    /// \param searchFor   The value being searched for
+    /// \param replaceWith The value that replaces found \a searchFor values
+    ///
+    ////////////////////////////////////////////////////////////
+    void replace(const String& searchFor, const String& replaceWith);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the C-style array of characters
     ///
     /// This functions provides a read-only access to a

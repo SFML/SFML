@@ -282,6 +282,29 @@ std::size_t String::find(const String& str, std::size_t start) const
 
 
 ////////////////////////////////////////////////////////////
+void String::replace(std::size_t position, std::size_t length, const String& replaceWith)
+{
+    m_string.replace(position, length, replaceWith.m_string);
+}
+
+
+////////////////////////////////////////////////////////////
+void String::replace(const String& searchFor, const String& replaceWith)
+{
+    std::size_t step = replaceWith.getSize();
+    std::size_t len = searchFor.getSize();
+    std::size_t pos = find(searchFor);
+
+    // Replace each occurence of search
+    while (pos != InvalidPos)
+    {
+        replace(pos, len, replaceWith);
+        pos = find(searchFor, pos + step);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 const Uint32* String::getData() const
 {
     return m_string.c_str();
