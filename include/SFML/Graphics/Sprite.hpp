@@ -255,6 +255,8 @@ private :
 /// used by a sf::Sprite (i.e. never write a function that
 /// uses a local sf::Texture instance for creating a sprite).
 ///
+/// See also the note on coordinates and undistorted rendering in sf::Transformable.
+///
 /// Usage example:
 /// \code
 /// // Declare and load a texture

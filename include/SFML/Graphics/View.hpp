@@ -336,6 +336,8 @@ private :
 /// window.draw(someText);
 /// \endcode
 ///
+/// See also the note on coordinates and undistorted rendering in sf::Transformable.
+///
 /// \see sf::RenderWindow, sf::RenderTexture
 ///
 ////////////////////////////////////////////////////////////

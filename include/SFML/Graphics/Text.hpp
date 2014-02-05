@@ -330,6 +330,8 @@ private :
 /// used by a sf::Text (i.e. never write a function that
 /// uses a local sf::Font instance for creating a text).
 ///
+/// See also the note on coordinates and undistorted rendering in sf::Transformable.
+///
 /// Usage example:
 /// \code
 /// // Declare and load a font
