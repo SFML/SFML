@@ -148,7 +148,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::F12:        vkey = VK_F12;        break;
         case Keyboard::F13:        vkey = VK_F13;        break;
         case Keyboard::F14:        vkey = VK_F14;        break;
-        case Keyboard::F15:        vkey = VK_F16;        break;
+        case Keyboard::F15:        vkey = VK_F15;        break;
         case Keyboard::Pause:      vkey = VK_PAUSE;      break;
     }
 
