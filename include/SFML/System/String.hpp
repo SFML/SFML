@@ -438,6 +438,23 @@ public :
     void replace(const String& searchFor, const String& replaceWith);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Return a part of the string
+    ///
+    /// This function returns the substring that starts at index \a position 
+    /// and spans \a length characters.
+    ///
+    /// \param position Index of the first character 
+    /// \param length   Number of characters to include in the substring (if
+    ///                 the string is shorter, as many characters as possible
+    ///                 are included). \ref InvalidPos can be used to include all 
+    ///                 characters until the end of the string.
+    ///
+    /// \return String object containing a substring of this object
+    ///
+    ////////////////////////////////////////////////////////////
+    String substring(std::size_t position, std::size_t length = InvalidPos) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the C-style array of characters
     ///
     /// This functions provides a read-only access to a

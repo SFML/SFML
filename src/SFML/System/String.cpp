@@ -305,6 +305,13 @@ void String::replace(const String& searchFor, const String& replaceWith)
 
 
 ////////////////////////////////////////////////////////////
+String String::substring(std::size_t position, std::size_t length) const
+{
+    return m_string.substr(position, length);
+}
+
+
+////////////////////////////////////////////////////////////
 const Uint32* String::getData() const
 {
     return m_string.c_str();
