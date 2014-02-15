@@ -345,9 +345,11 @@ Font& Font::operator =(const Font& right)
 
     std::swap(m_library,     temp.m_library);
     std::swap(m_face,        temp.m_face);
+    std::swap(m_streamRec,   temp.m_streamRec);
+    std::swap(m_refCount,    temp.m_refCount);
+    std::swap(m_info,        temp.m_info);
     std::swap(m_pages,       temp.m_pages);
     std::swap(m_pixelBuffer, temp.m_pixelBuffer);
-    std::swap(m_refCount,    temp.m_refCount);
 
     return *this;
 }
