@@ -144,19 +144,13 @@ void Window::create(WindowHandle handle, const ContextSettings& settings)
 ////////////////////////////////////////////////////////////
 void Window::close()
 {
-    if (m_context)
-    {
-        // Delete the context
-        delete m_context;
-        m_context = NULL;
-    }
+    // Delete the context
+    delete m_context;
+    m_context = NULL;
 
-    if (m_impl)
-    {
-        // Delete the window implementation
-        delete m_impl;
-        m_impl = NULL;
-    }
+    // Delete the window implementation
+    delete m_impl;
+    m_impl = NULL;
 
     // Update the fullscreen window
     if (this == fullscreenWindow)
