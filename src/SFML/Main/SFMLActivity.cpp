@@ -22,6 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
+#include <string>
 #include <android/native_activity.h>
 #include <android/log.h>
 #include <dlfcn.h>
@@ -30,6 +31,42 @@
 #include <jni.h>
 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-activity", __VA_ARGS__))
+
+std::string getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
+{
+    // This function reads the value of meta-data "sfml.app.lib_name" 
+    // found in the Android Manifest file and returns it. It performs the 
+    // following java code using the JNI interface:
+    //
+    // ai.metaData.getString("sfml.app.lib_name");
+    
+    // Get metaData instance from the ActivityInfo object
+    jclass classActivityInfo = lJNIEnv->FindClass("android/content/pm/ActivityInfo");
+    jfieldID fieldMetaData = lJNIEnv->GetFieldID(classActivityInfo, "metaData", "Landroid/os/Bundle;");
+    jobject objectMetaData = lJNIEnv->GetObjectField(objectActivityInfo, fieldMetaData);
+
+    // Create a java string object containing "sfml.app.lib_name"
+    jobject objectName = lJNIEnv->NewStringUTF("sfml.app.lib_name");
+    
+    // Get the value of meta-data named "sfml.app.lib_name"
+    jclass classBundle = lJNIEnv->FindClass("android/os/Bundle");
+    jmethodID methodGetString = lJNIEnv->GetMethodID(classBundle, "getString", "(Ljava/lang/String;)Ljava/lang/String;");
+    jobject objectValue = lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
+    
+    // No meta-data "sfml.app.lib_name" was found so we abord and inform the user
+    if (objectValue == NULL)
+    {
+        LOGE("No meta-data 'sfml.app.lib_name' found in AndroidManifest.xml file");
+        exit(1);
+    }
+        
+    // Convert the application name to a C++ string and return it
+    const char* applicationName = lJNIEnv->GetStringUTFChars(objectValue, NULL);
+    std::string ret(applicationName);
+    lJNIEnv->ReleaseStringUTFChars(objectValue, applicationName);
+    
+    return ret;
+}
 
 void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActivityInfo)
 {
@@ -142,7 +179,9 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     loadLibrary("openal", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-audio", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-network", lJNIEnv, ObjectActivityInfo);
-    void* handle = loadLibrary("sfml-example", lJNIEnv, ObjectActivityInfo);
+    
+    std::string libName = getLibraryName(lJNIEnv, ObjectActivityInfo);
+    void* handle = loadLibrary(libName.c_str(), lJNIEnv, ObjectActivityInfo);
 
     // todo: should we detach the current thread ? because if we do, it
     // crashes (lJavaVM->DetachCurrentThread();)
