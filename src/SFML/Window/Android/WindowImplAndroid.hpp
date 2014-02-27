@@ -64,7 +64,7 @@ public :
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplAndroid(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings);
+    WindowImplAndroid(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
