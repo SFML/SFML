@@ -176,8 +176,11 @@ void WindowImplAndroid::setMouseCursorVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplAndroid::setKeyRepeatEnabled(bool enabled)
 {
+    // Not applicable
 }
 
+
+////////////////////////////////////////////////////////////
 int WindowImplAndroid::processEvent(int fd, int events, void* data)
 {
     ActivityStates* states = getActivity(NULL);
@@ -189,7 +192,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
     {
         if (AInputQueue_preDispatchEvent(states->inputQueue, _event))
             return 1;
-		
+        
         int32_t handled = 0;
 
         int32_t type = AInputEvent_getType(_event);
@@ -248,6 +251,8 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
     return 1;
 }
 
+
+////////////////////////////////////////////////////////////
 void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* states)
 {
     // Prepare the java virtual machine
@@ -300,6 +305,8 @@ void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* 
     states->pendingEvents.push_back(event);
 }
 
+
+////////////////////////////////////////////////////////////
 void WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* states)
 {
     int32_t device = AInputEvent_getSource(_event);
@@ -326,6 +333,8 @@ void WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* sta
     }
 }
 
+
+////////////////////////////////////////////////////////////
 void WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* states)
 {
     int32_t device = AInputEvent_getSource(_event);
@@ -369,6 +378,8 @@ void WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* 
      }
 }
 
+
+////////////////////////////////////////////////////////////
 void WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, ActivityStates* states)
 {
     int32_t device = AInputEvent_getSource(_event);
@@ -429,6 +440,7 @@ void WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Ac
     
     states->pendingEvents.push_back(event);
 }
+
 
 ////////////////////////////////////////////////////////////
 Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
@@ -549,6 +561,8 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
     }
 }
 
+
+////////////////////////////////////////////////////////////
 int WindowImplAndroid::getUnicode(AInputEvent* event)
 {
     // Retrieve activity states
@@ -595,7 +609,6 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
 
     return unicode;
 }
-
 
 } // namespace priv
 } // namespace sf
