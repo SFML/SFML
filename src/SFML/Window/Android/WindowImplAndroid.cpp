@@ -51,7 +51,7 @@ WindowImplAndroid::WindowImplAndroid(WindowHandle handle)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplAndroid::WindowImplAndroid(VideoMode mode, const std::string& title, unsigned long style, const ContextSettings& settings)
+WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings)
 {
     ActivityStates* states = getActivity(NULL);
     Lock lock(states->mutex);

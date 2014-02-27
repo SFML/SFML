@@ -171,7 +171,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     jobject ObjectActivityInfo = lJNIEnv->CallObjectMethod(ObjectPackageManager, MethodGetActivityInfo, ObjectComponentName, (jint)128);
 
     // Load our libraries in reverse order
-    loadLibrary("stlport_shared", lJNIEnv, ObjectActivityInfo);
+    loadLibrary("c++_shared", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-system", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-window", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-graphics", lJNIEnv, ObjectActivityInfo);
