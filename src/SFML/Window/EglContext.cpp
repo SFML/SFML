@@ -84,8 +84,12 @@ m_config  (NULL)
     
     // Note: The EGL specs say that attrib_list can be NULL when passed to eglCreatePbufferSurface,
     // but this is resulting in a segfault. Bug in Android?
-    EGLint attrib_list[] = { EGL_NONE };
-    
+    EGLint attrib_list[] = { 
+        EGL_WIDTH, 1,
+        EGL_HEIGHT,1,
+        EGL_NONE
+    };
+
     m_surface = eglCheck(eglCreatePbufferSurface(m_display, m_config, attrib_list));
 
     // Create EGL context
