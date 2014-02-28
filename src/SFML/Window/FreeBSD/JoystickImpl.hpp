@@ -104,15 +104,15 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int			m_file;                 ///< File descriptor of the joystick
+    int         m_file;                 ///< File descriptor of the joystick
 
-    report_desc_t	m_desc;			///< USB report descriptor
-    int			m_id;			///< USB id
+    report_desc_t   m_desc;         ///< USB report descriptor
+    int         m_id;           ///< USB id
 
-    void		*m_buffer;		///< USB HID buffer
-    int			m_length;		///< Buffer length
+    void        *m_buffer;      ///< USB HID buffer
+    int         m_length;       ///< Buffer length
 
-    JoystickState	m_state;                ///< Current state of the joystick
+    JoystickState   m_state;                ///< Current state of the joystick
 };
 
 } // namespace priv

@@ -138,7 +138,7 @@ bool JoystickImpl::isConnected(unsigned int index)
             char buffer[128];
             (void)read(notifyFd, buffer, sizeof(buffer));
         }
-	}
+    }
 
     // Then check if the joystick is connected
     return plugged[index];

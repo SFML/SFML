@@ -150,7 +150,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
         if (::connect(getHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) >= 0)
         {
             // We got instantly connected! (it may no happen a lot...)
-			setBlocking(blocking);
+            setBlocking(blocking);
             return Done;
         }
 

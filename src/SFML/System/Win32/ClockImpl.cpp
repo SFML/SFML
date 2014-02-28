@@ -34,7 +34,7 @@ namespace
     LARGE_INTEGER getFrequency()
     {
         LARGE_INTEGER frequency;
-	    QueryPerformanceFrequency(&frequency);
+        QueryPerformanceFrequency(&frequency);
         return frequency;
     }
 }
