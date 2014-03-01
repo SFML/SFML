@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -412,6 +412,18 @@ private :
 /// };
 /// \endcode
 ///
+/// A note on coordinates and undistorted rendering: \n
+/// By default, SFML (or more exactly, OpenGL) may interpolate drawable objects  
+/// such as sprites or texts when rendering. While this allows transitions
+/// like slow movements or rotations to appear smoothly, it can lead to
+/// unwanted results in some cases, for example blurred or distorted objects.
+/// In order to render a sf::Drawable object pixel-perfectly, make sure
+/// the involved coordinates allow a 1:1 mapping of pixels in the window
+/// to texels (pixels in the texture). More specifically, this means:
+/// * The object's position, origin and scale have no fractional part
+/// * The object's and the view's rotation are a multiple of 90 degrees
+/// * The view's center and size have no fractional part
+/// 
 /// \see sf::Transform
 ///
 ////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -153,7 +153,7 @@ public :
 ///
 /// sf::Joystick provides an interface to the state of the
 /// joysticks. It only contains static functions, so it's not
-/// meant to be instanciated. Instead, each joystick is identified
+/// meant to be instantiated. Instead, each joystick is identified
 /// by an index that is passed to the functions of this class.
 ///
 /// This class allows users to query the state of joysticks at any

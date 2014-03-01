@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -68,7 +68,7 @@ m_library  (NULL),
 m_face     (NULL),
 m_streamRec(NULL),
 m_refCount (NULL),
-m_info	   ()
+m_info     ()
 {
 
 }
@@ -129,6 +129,7 @@ bool Font::loadFromFile(const std::string& filename)
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font \"" << filename << "\" (failed to set the Unicode character set)" << std::endl;
+        FT_Done_Face(face);
         return false;
     }
 
@@ -172,6 +173,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
+        FT_Done_Face(face);
         return false;
     }
 
@@ -227,6 +229,7 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Open_Face(static_cast<FT_Library>(m_library), &args, 0, &face) != 0)
     {
         err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
+        delete rec;
         return false;
     }
 
@@ -234,6 +237,8 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
+        FT_Done_Face(face);
+        delete rec;
         return false;
     }
 
@@ -340,9 +345,11 @@ Font& Font::operator =(const Font& right)
 
     std::swap(m_library,     temp.m_library);
     std::swap(m_face,        temp.m_face);
+    std::swap(m_streamRec,   temp.m_streamRec);
+    std::swap(m_refCount,    temp.m_refCount);
+    std::swap(m_info,        temp.m_info);
     std::swap(m_pages,       temp.m_pages);
     std::swap(m_pixelBuffer, temp.m_pixelBuffer);
-    std::swap(m_refCount,    temp.m_refCount);
 
     return *this;
 }

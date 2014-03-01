@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -99,24 +99,21 @@ bool WindowImpl::popEvent(Event& event, bool block)
     // If the event queue is empty, let's first check if new events are available from the OS
     if (m_events.empty())
     {
-        if (!block)
-        {
-            // Non-blocking mode: process events and continue
-            processJoystickEvents();
-            processEvents();
-        }
-        else
-        {
-            // Blocking mode: process events until one is triggered
+        // Get events from the system
+        processJoystickEvents();
+        processEvents();
 
+        // In blocking mode, we must process events until one is triggered
+        if (block)
+        {
             // Here we use a manual wait loop instead of the optimized
             // wait-event provided by the OS, so that we don't skip joystick
             // events (which require polling)
             while (m_events.empty())
             {
+                sleep(milliseconds(10));
                 processJoystickEvents();
                 processEvents();
-                sleep(milliseconds(10));
             }
         }
     }

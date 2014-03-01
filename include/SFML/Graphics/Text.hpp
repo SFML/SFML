@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -329,6 +329,8 @@ private :
 /// Thus, a sf::Font must not be destructed while it is
 /// used by a sf::Text (i.e. never write a function that
 /// uses a local sf::Font instance for creating a text).
+///
+/// See also the note on coordinates and undistorted rendering in sf::Transformable.
 ///
 /// Usage example:
 /// \code

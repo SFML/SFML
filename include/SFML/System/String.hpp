@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -265,6 +265,39 @@ public :
     std::wstring toWideString() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert the unicode string to a UTF-8 string
+    ///
+    /// \return Converted UTF-8 string
+    ///
+    /// \see toUtf16, toUtf32
+    ///
+    ////////////////////////////////////////////////////////////
+    std::basic_string<Uint8> toUtf8() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert the unicode string to a UTF-16 string
+    ///
+    /// \return Converted UTF-16 string
+    ///
+    /// \see toUtf8, toUtf32
+    ///
+    ////////////////////////////////////////////////////////////
+    std::basic_string<Uint16> toUtf16() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert the unicode string to a UTF-32 string
+    ///
+    /// This function doesn't perform any conversion, since the
+    /// string is already stored as UTF-32 internally.
+    ///
+    /// \return Converted UTF-32 string
+    ///
+    /// \see toUtf8, toUtf16
+    ///
+    ////////////////////////////////////////////////////////////
+    std::basic_string<Uint32> toUtf32() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
     ///
     /// \param right Instance to assign
@@ -377,6 +410,49 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     std::size_t find(const String& str, std::size_t start = 0) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Replace a substring with another string
+    ///
+    /// This function replaces the substring that starts at index \a position
+    /// and spans \a length characters with the string \a replaceWith.
+    ///
+    /// \param position    Index of the first character to be replaced
+    /// \param length      Number of characters to replace. You can pass InvalidPos to 
+    ///                    replace all characters until the end of the string.
+    /// \param replaceWith String that replaces the given substring.
+    ///
+    ////////////////////////////////////////////////////////////
+    void replace(std::size_t position, std::size_t length, const String& replaceWith);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Replace all occurrences of a substring with a replacement string
+    ///
+    /// This function replaces all occurences of \a searchFor in this string
+    /// with the string \a replaceWith.
+    ///
+    /// \param searchFor   The value being searched for
+    /// \param replaceWith The value that replaces found \a searchFor values
+    ///
+    ////////////////////////////////////////////////////////////
+    void replace(const String& searchFor, const String& replaceWith);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Return a part of the string
+    ///
+    /// This function returns the substring that starts at index \a position 
+    /// and spans \a length characters.
+    ///
+    /// \param position Index of the first character 
+    /// \param length   Number of characters to include in the substring (if
+    ///                 the string is shorter, as many characters as possible
+    ///                 are included). \ref InvalidPos can be used to include all 
+    ///                 characters until the end of the string.
+    ///
+    /// \return String object containing a substring of this object
+    ///
+    ////////////////////////////////////////////////////////////
+    String substring(std::size_t position, std::size_t length = InvalidPos) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the C-style array of characters

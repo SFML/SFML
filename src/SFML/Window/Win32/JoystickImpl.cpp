@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -167,8 +167,8 @@ JoystickState JoystickImpl::update()
         if (pos.dwPOV != 0xFFFF)
         {
             float angle = pos.dwPOV / 18000.f * 3.141592654f;
-            state.axes[Joystick::PovX] = std::cos(angle) * 100;
-            state.axes[Joystick::PovY] = std::sin(angle) * 100;
+            state.axes[Joystick::PovX] = std::sin(angle) * 100;
+            state.axes[Joystick::PovY] = std::cos(angle) * 100;
         }
         else
         {

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -148,7 +148,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::F12:        vkey = VK_F12;        break;
         case Keyboard::F13:        vkey = VK_F13;        break;
         case Keyboard::F14:        vkey = VK_F14;        break;
-        case Keyboard::F15:        vkey = VK_F16;        break;
+        case Keyboard::F15:        vkey = VK_F15;        break;
         case Keyboard::Pause:      vkey = VK_PAUSE;      break;
     }
 
