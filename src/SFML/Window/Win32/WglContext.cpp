@@ -162,19 +162,19 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
             int intAttributes[] =
             {
                 WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-		        WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-		        WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
-		        WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
+                WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+                WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
+                WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
                 WGL_SAMPLE_BUFFERS_ARB, (m_settings.antialiasingLevel ? GL_TRUE : GL_FALSE),
-		        WGL_SAMPLES_ARB,        static_cast<int>(m_settings.antialiasingLevel),
-		        0,                      0
+                WGL_SAMPLES_ARB,        static_cast<int>(m_settings.antialiasingLevel),
+                0,                      0
             };
 
             // Let's check how many formats are supporting our requirements
             int   formats[128];
-	        UINT  nbFormats;
-	        float floatAttributes[] = {0, 0};
-	        bool  isValid = wglChoosePixelFormatARB(m_deviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
+            UINT  nbFormats;
+            float floatAttributes[] = {0, 0};
+            bool  isValid = wglChoosePixelFormatARB(m_deviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
             while ((!isValid || (nbFormats == 0)) && m_settings.antialiasingLevel > 0)
             {
                 // Decrease the antialiasing level until we find a valid one

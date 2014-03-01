@@ -68,7 +68,7 @@ m_library  (NULL),
 m_face     (NULL),
 m_streamRec(NULL),
 m_refCount (NULL),
-m_info	   ()
+m_info     ()
 {
 
 }
