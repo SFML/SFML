@@ -28,7 +28,11 @@ set(VERSION_PATCH 0)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
-sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
+if(SFML_COMPILER_GCC_TDM)
+    sfml_set_option(BUILD_SHARED_LIBS FALSE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
+else()
+    sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
+endif()
 
 # add an option for building the examples
 sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
@@ -60,7 +64,11 @@ endif()
 
 # define an option for choosing between static and dynamic C runtime (Windows only)
 if(SFML_OS_WINDOWS)
-    sfml_set_option(SFML_USE_STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
+    if(SFML_COMPILER_GCC_TDM)
+        sfml_set_option(SFML_USE_STATIC_STD_LIBS TRUE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
+    else()
+        sfml_set_option(SFML_USE_STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
+    endif()
 
     # the following combination of flags is not valid
     if (BUILD_SHARED_LIBS AND SFML_USE_STATIC_STD_LIBS)
@@ -112,7 +120,7 @@ if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
                     "tools/pkg-config/sfml-${sfml_module}.pc.in"
                     "tools/pkg-config/sfml-${sfml_module}.pc"
                     @ONLY)
-	    INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
+                INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
                     DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
             endforeach()
         endif()
