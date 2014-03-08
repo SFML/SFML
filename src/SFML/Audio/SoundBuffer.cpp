@@ -137,11 +137,11 @@ bool SoundBuffer::loadFromSamples(const Int16* samples, std::size_t sampleCount,
 }
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::createSawtooth(Int16 amplitude, float frequency, unsigned int sampleRate, sf::Time length, sf::Time fadeIn, sf::Time fadeOut)
+bool SoundBuffer::create(Waveform waveform, Int16 amplitude, float frequency, Time length, Time fadeIn, Time fadeOut, unsigned int sampleRate)
 {
-    const unsigned int numSamples = sampleRate * length.asSeconds();
-    const unsigned int fadeInRange = sampleRate * fadeIn.asSeconds();
-    const unsigned int fadeOutRange = sampleRate * fadeOut.asSeconds();
+    const unsigned int numSamples = (const unsigned int) (sampleRate * length.asSeconds());
+    const unsigned int fadeInRange = (const unsigned int) (sampleRate * fadeIn.asSeconds());
+    const unsigned int fadeOutRange = (const unsigned int) (sampleRate * fadeOut.asSeconds());
 
     if (frequency && numSamples)
     {
@@ -149,7 +149,33 @@ bool SoundBuffer::createSawtooth(Int16 amplitude, float frequency, unsigned int 
         m_samples.resize(numSamples);
         for (unsigned int n = 0; n < numSamples; n++)
         {
-            m_samples[n] = (Int16) ((amplitude / PI * phase) - amplitude);
+            switch (waveform)
+            {
+                case Sawtooth :
+                {
+                    m_samples[n] = (Int16) ((amplitude / PI * phase) - amplitude);
+                    break;
+                }
+
+                case Sine :
+                {
+                    m_samples[n] = (Int16) (amplitude * sin(phase));
+                    break;
+                }
+
+                case Square :
+                {
+                    m_samples[n] = phase < PI ? amplitude : -amplitude;
+                    break;
+                }
+
+                case Triangle :
+                {
+                    m_samples[n] = (Int16) ((phase < PI ? -amplitude + (2 * amplitude / PI) * phase : 3 * amplitude - (2 * amplitude / PI) * phase));
+                    break;
+                }
+            }
+            
 
             phase += (2 * PI * frequency) / sampleRate;
             if (phase > 2 * PI)
@@ -158,12 +184,12 @@ bool SoundBuffer::createSawtooth(Int16 amplitude, float frequency, unsigned int 
             if (n < fadeInRange)
             {
                 const float f = (float) n / fadeInRange;
-                m_samples[n] *= f * (2 - f);
+                m_samples[n] = (Int16) (m_samples[n] * f * (2 - f));
             }
             else if (n > numSamples - fadeOutRange)
             {
                 const float f = (float) (numSamples - n) / fadeOutRange;
-                m_samples[n] *= f * (2 - f);
+                m_samples[n] = (Int16) (m_samples[n] * f * (2 - f));
             }
         }
         return update(1, sampleRate);
@@ -171,7 +197,7 @@ bool SoundBuffer::createSawtooth(Int16 amplitude, float frequency, unsigned int 
     else
     {
         // Error...
-        err() << "Failed creating a sawtooth wave ("
+        err() << "Failed creating a standard wave ("
             << "amplitude: "  << amplitude  << ", "
             << "frequency: "  << frequency  << ", "
             << "samplerate: " << sampleRate << ", "
@@ -182,143 +208,6 @@ bool SoundBuffer::createSawtooth(Int16 amplitude, float frequency, unsigned int 
     }
 }
 
-////////////////////////////////////////////////////////////
-bool SoundBuffer::createSine(Int16 amplitude, float frequency, unsigned int sampleRate, sf::Time length, sf::Time fadeIn, sf::Time fadeOut)
-{
-    const unsigned int numSamples = sampleRate * length.asSeconds();
-    const unsigned int fadeInRange = sampleRate * fadeIn.asSeconds();
-    const unsigned int fadeOutRange = sampleRate * fadeOut.asSeconds();
-
-    if (frequency && numSamples)
-    {
-        float phase = 0;
-        m_samples.resize(numSamples);
-        for (unsigned int n = 0; n < numSamples; n++)
-        {
-            m_samples[n] = (Int16) (amplitude * sin(phase));
-
-            phase += (2 * PI * frequency) / sampleRate;
-            if (phase > 2 * PI)
-                phase -= 2 * PI;
-
-            if (n < fadeInRange)
-            {
-                const float f = (float) n / fadeInRange;
-                m_samples[n] *= f * (2 - f);
-            }
-            else if (n > numSamples - fadeOutRange)
-            {
-                const float f = (float) (numSamples - n) / fadeOutRange;
-                m_samples[n] *= f * (2 - f);
-            }
-        }
-        return update(1, sampleRate);
-    }
-    else
-    {
-        // Error...
-        err() << "Failed creating a sawtooth wave ("
-            << "amplitude: " << amplitude << ", "
-            << "frequency: " << frequency << ", "
-            << "samplerate: " << sampleRate << ", "
-            << "length: " << length.asSeconds() << "s)"
-            << std::endl;
-
-        return false;
-    }
-}
-
-////////////////////////////////////////////////////////////
-bool SoundBuffer::createSquare(Int16 amplitude, float frequency, unsigned int sampleRate, sf::Time length, sf::Time fadeIn, sf::Time fadeOut)
-{
-    const unsigned int numSamples = sampleRate * length.asSeconds();
-    const unsigned int fadeInRange = sampleRate * fadeIn.asSeconds();
-    const unsigned int fadeOutRange = sampleRate * fadeOut.asSeconds();
-
-    if (frequency && numSamples)
-    {
-        float phase = 0;
-        m_samples.resize(numSamples);
-        for (unsigned int n = 0; n < numSamples; n++)
-        {
-            m_samples[n] = phase < PI ? amplitude : -amplitude;
-
-            phase += (2 * PI * frequency) / sampleRate;
-            if (phase > 2 * PI)
-                phase -= 2 * PI;
-
-            if (n < fadeInRange)
-            {
-                const float f = (float) n / fadeInRange;
-                m_samples[n] *= f * (2 - f);
-            }
-            else if (n > numSamples - fadeOutRange)
-            {
-                const float f = (float) (numSamples - n) / fadeOutRange;
-                m_samples[n] *= f * (2 - f);
-            }
-        }
-        return update(1, sampleRate);
-    }
-    else
-    {
-        // Error...
-        err() << "Failed creating a sawtooth wave ("
-            << "amplitude: " << amplitude << ", "
-            << "frequency: " << frequency << ", "
-            << "samplerate: " << sampleRate << ", "
-            << "length: " << length.asSeconds() << "s)"
-            << std::endl;
-
-        return false;
-    }
-}
-
-////////////////////////////////////////////////////////////
-bool SoundBuffer::createTriangle(Int16 amplitude, float frequency, unsigned int sampleRate, sf::Time length, sf::Time fadeIn, sf::Time fadeOut)
-{
-    const unsigned int numSamples = sampleRate * length.asSeconds();
-    const unsigned int fadeInRange = sampleRate * fadeIn.asSeconds();
-    const unsigned int fadeOutRange = sampleRate * fadeOut.asSeconds();
-
-    if (frequency && numSamples)
-    {
-        float phase = 0;
-        m_samples.resize(numSamples);
-        for (unsigned int n = 0; n < numSamples; n++)
-        {
-            m_samples[n] = (Int16) ((phase < PI ? -amplitude + (2 * amplitude / PI) * phase : 3 * amplitude - (2 * amplitude / PI) * phase));
-
-            phase += (2 * PI * frequency) / sampleRate;
-            if (phase > 2 * PI)
-                phase -= 2 * PI;
-
-            if (n < fadeInRange)
-            {
-                const float f = (float) n / fadeInRange;
-                m_samples[n] *= f * (2 - f);
-            }
-            else if (n > numSamples - fadeOutRange)
-            {
-                const float f = (float) (numSamples - n) / fadeOutRange;
-                m_samples[n] *= f * (2 - f);
-            }
-        }
-        return update(1, sampleRate);
-    }
-    else
-    {
-        // Error...
-        err() << "Failed creating a sawtooth wave ("
-            << "amplitude: " << amplitude << ", "
-            << "frequency: " << frequency << ", "
-            << "samplerate: " << sampleRate << ", "
-            << "length: " << length.asSeconds() << "s)"
-            << std::endl;
-
-        return false;
-    }
-}
 
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::saveToFile(const std::string& filename) const
