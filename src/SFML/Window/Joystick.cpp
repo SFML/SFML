@@ -67,9 +67,26 @@ float Joystick::getAxisPosition(unsigned int joystick, Axis axis)
 
 
 ////////////////////////////////////////////////////////////
+Joystick::Identification Joystick::getIdentification(unsigned int joystick)
+{
+    return priv::JoystickManager::getInstance().getIdentification(joystick);
+}
+
+
+////////////////////////////////////////////////////////////
 void Joystick::update()
 {
     return priv::JoystickManager::getInstance().update();
+}
+
+
+////////////////////////////////////////////////////////////
+Joystick::Identification::Identification() :
+name     ("No Joystick"),
+vendorId (0),
+productId(0)
+{
+
 }
 
 } // namespace sf

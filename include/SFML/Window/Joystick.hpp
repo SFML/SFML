@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
+#include <SFML/System/String.hpp>
 
 
 namespace sf
@@ -66,6 +67,19 @@ public :
         V,    ///< The V axis
         PovX, ///< The X axis of the point-of-view hat
         PovY  ///< The Y axis of the point-of-view hat
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Structure holding a joystick's identification
+    ///
+    ////////////////////////////////////////////////////////////
+    struct Identification
+    {
+        Identification();
+
+        sf::String   name;      ///< Name of the joystick
+        unsigned int vendorId;  ///< Manufacturer identifier
+        unsigned int productId; ///< Product identifier
     };
 
     ////////////////////////////////////////////////////////////
@@ -128,6 +142,16 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static float getAxisPosition(unsigned int joystick, Axis axis);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the joystick information
+    ///
+    /// \param joystick Index of the joystick
+    ///
+    /// \return Structure containing joystick information.
+    ///
+    ////////////////////////////////////////////////////////////
+    static Identification getIdentification(unsigned int joystick);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the states of all joysticks

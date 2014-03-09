@@ -29,6 +29,7 @@
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp>
 #include <SFML/Window/OSX/HIDJoystickManager.hpp>
+#include <SFML/System/Err.hpp>
 
 
 namespace
@@ -171,6 +172,10 @@ bool JoystickImpl::open(unsigned int index)
         return false;
     }
 
+    m_identification.name = getDeviceString(self, CFSTR(kIOHIDProductKey));
+    m_identification.vendorId = getDeviceUint(self, CFSTR(kIOHIDVendorIDKey));
+    m_identification.productId = getDeviceUint(self, CFSTR(kIOHIDProductIDKey));
+
     // Get a list of all elements attached to the device.
     CFArrayRef elements = IOHIDDeviceCopyMatchingElements(self,
                                                           NULL,
@@ -303,6 +308,13 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
 
 ////////////////////////////////////////////////////////////
+Joystick::Identification JoystickImpl::getIdentification() const
+{
+    return m_identification;
+}
+
+
+////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::update()
 {
     static const JoystickState disconnectedState; // return this if joystick was disconnected
@@ -395,6 +407,48 @@ JoystickState JoystickImpl::update()
 
 
     return state;
+}
+
+
+////////////////////////////////////////////////////////////
+std::string JoystickImpl::getDeviceString(IOHIDDeviceRef ref, CFStringRef prop)
+{
+    CFTypeRef typeRef = IOHIDDeviceGetProperty(ref, prop);
+    if (ref && CFGetTypeID(typeRef) == CFStringGetTypeID())
+    {
+        CFStringRef str = static_cast<CFStringRef>(typeRef);
+        return stringFromCFString(str);
+    }
+
+    err() << "Unable to read string value for property '" << stringFromCFString(prop) << "' for joystick at index " << m_index << std::endl;
+    return "Unknown Joystick";
+}
+
+
+////////////////////////////////////////////////////////////
+unsigned int JoystickImpl::getDeviceUint(IOHIDDeviceRef ref, CFStringRef prop)
+{
+    CFTypeRef typeRef = IOHIDDeviceGetProperty(ref, prop);
+    if (ref && CFGetTypeID(typeRef) == CFNumberGetTypeID())
+    {
+        SInt32 value;
+        CFNumberGetValue((CFNumberRef)typeRef, kCFNumberSInt32Type, &value);
+        return value;
+    }
+
+    err() << "Unable to read uint value for property '" << stringFromCFString(prop) << "' for joystick at index " << m_index << std::endl;
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
+std::string JoystickImpl::stringFromCFString(CFStringRef cfString)
+{
+    CFIndex length = CFStringGetLength(cfString);
+    std::vector<char> str(length);
+    CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
+    CFStringGetCString(cfString, &str[0], maxSize, kCFStringEncodingUTF8);
+    return &str[0];
 }
 
 } // namespace priv

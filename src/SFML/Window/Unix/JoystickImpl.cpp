@@ -28,11 +28,13 @@
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <sys/inotify.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
 #include <cstdio>
-
+#include <libudev.h>
+#include <sstream>
 
 namespace
 {
@@ -144,7 +146,6 @@ bool JoystickImpl::isConnected(unsigned int index)
     return plugged[index];
 }
 
-
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
 {
@@ -159,6 +160,11 @@ bool JoystickImpl::open(unsigned int index)
         {
             // Retrieve the axes mapping
             ioctl(m_file, JSIOCGAXMAP, m_mapping);
+
+            // Get info
+            m_identification.name = getJoystickName(index);
+            m_identification.vendorId = getUdevAttributeUint(index, "idVendor");
+            m_identification.productId = getUdevAttributeUint(index, "idProduct");
 
             // Reset the joystick state
             m_state = JoystickState();
@@ -222,6 +228,13 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
 
 ////////////////////////////////////////////////////////////
+Joystick::Identification JoystickImpl::getIdentification() const
+{
+    return m_identification;
+}
+
+
+////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::JoystickImpl::update()
 {
     // pop events from the joystick file
@@ -265,6 +278,57 @@ JoystickState JoystickImpl::JoystickImpl::update()
     m_state.connected = (errno == EAGAIN);
 
     return m_state;
+}
+
+
+////////////////////////////////////////////////////////////
+std::string JoystickImpl::getJoystickName(unsigned int index)
+{
+    // Get the name
+    char joyname[128];
+    if (ioctl(m_file, JSIOCGNAME(sizeof(joyname)), joyname) >= 0)
+    {
+        return std::string(joyname);
+    }
+
+    err() << "Unable to get name for joystick at index " << index << std::endl;
+    return std::string("Unknown Joystick");
+}
+
+
+////////////////////////////////////////////////////////////
+unsigned int JoystickImpl::getUdevAttributeUint(unsigned int index, std::string attributeName)
+{
+    unsigned int attr = 0;
+    udev* udevContext = udev_new();
+    if (udevContext)
+    {
+        char sysname[32];
+        std::snprintf(sysname, sizeof(sysname), "js%u", index);
+        udev_device* dev = udev_device_new_from_subsystem_sysname(udevContext, "input", sysname);
+
+        dev = udev_device_get_parent_with_subsystem_devtype(dev, "usb", "usb_device");
+        if (dev)
+        {
+            std::stringstream ss;
+            ss << std::hex << udev_device_get_sysattr_value(dev, attributeName.c_str());
+
+            ss >> attr;
+        }
+        else
+        {
+            err() << "Unable to get attribute '" << attributeName << "'. Could not find parent USB device for joystick at index " << index << std::endl;
+        }
+
+        udev_device_unref(dev);
+        udev_unref(udevContext);
+    }
+    else
+    {
+        err() << "Unable to get attribute '" << attributeName << "'. Cannot create udev for reading info for joystick at index " << index << std::endl;
+    }
+
+    return attr;
 }
 
 } // namespace priv

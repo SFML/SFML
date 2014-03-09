@@ -55,6 +55,13 @@ const JoystickState& JoystickManager::getState(unsigned int joystick) const
 
 
 ////////////////////////////////////////////////////////////
+const Joystick::Identification& JoystickManager::getIdentification(unsigned int joystick) const
+{
+    return m_joysticks[joystick].identification;
+}
+
+
+////////////////////////////////////////////////////////////
 void JoystickManager::update()
 {
     for (int i = 0; i < Joystick::Count; ++i)
@@ -72,6 +79,7 @@ void JoystickManager::update()
                 item.joystick.close();
                 item.capabilities = JoystickCaps();
                 item.state = JoystickState();
+                item.identification = Joystick::Identification();
             }
         }
         else
@@ -83,6 +91,7 @@ void JoystickManager::update()
                 {
                     item.capabilities = item.joystick.getCapabilities();
                     item.state = item.joystick.update();
+                    item.identification = item.joystick.getIdentification();
                 }
             }
         }

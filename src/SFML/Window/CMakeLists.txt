@@ -49,9 +49,9 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
     source_group("windows" FILES ${PLATFORM_SRC})
-    
+
     # make sure that we use the Unicode version of the Win API functions
-    add_definitions(-DUNICODE)
+    add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     set(PLATFORM_SRC
         ${SRCROOT}/Unix/Display.cpp
@@ -136,7 +136,7 @@ set(WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})
 if(SFML_OS_WINDOWS)
     set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} winmm gdi32)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB})
+    set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} ${X11_X11_LIB} ${X11_Xrandr_LIB} udev)
     if(SFML_OS_FREEBSD)
         set(WINDOW_EXT_LIBS ${WINDOW_EXT_LIBS} usbhid)
     endif()
