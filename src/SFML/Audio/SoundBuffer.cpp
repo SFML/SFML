@@ -31,8 +31,10 @@
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Err.hpp>
+#include <cmath>
 #include <memory>
 
+static const float PI = (float)(std::atan(1) * 4);
 
 namespace sf
 {
@@ -129,6 +131,78 @@ bool SoundBuffer::loadFromSamples(const Int16* samples, std::size_t sampleCount,
               << "channels: "   << channelCount << ", "
               << "samplerate: " << sampleRate   << ")"
               << std::endl;
+
+        return false;
+    }
+}
+
+////////////////////////////////////////////////////////////
+bool SoundBuffer::create(Waveform waveform, Int16 amplitude, float frequency, Time length, Time fadeIn, Time fadeOut, unsigned int sampleRate)
+{
+    const unsigned int numSamples = (const unsigned int) (sampleRate * length.asSeconds());
+    const unsigned int fadeInRange = (const unsigned int) (sampleRate * fadeIn.asSeconds());
+    const unsigned int fadeOutRange = (const unsigned int) (sampleRate * fadeOut.asSeconds());
+
+    if (frequency && numSamples)
+    {
+        float phase = 0;
+        m_samples.resize(numSamples);
+        for (unsigned int n = 0; n < numSamples; n++)
+        {
+            switch (waveform)
+            {
+                case Sawtooth :
+                {
+                    m_samples[n] = (Int16) ((amplitude / PI * phase) - amplitude);
+                    break;
+                }
+
+                case Sine :
+                {
+                    m_samples[n] = (Int16) (amplitude * sin(phase));
+                    break;
+                }
+
+                case Square :
+                {
+                    m_samples[n] = phase < PI ? amplitude : -amplitude;
+                    break;
+                }
+
+                case Triangle :
+                {
+                    m_samples[n] = (Int16) ((phase < PI ? -amplitude + (2 * amplitude / PI) * phase : 3 * amplitude - (2 * amplitude / PI) * phase));
+                    break;
+                }
+            }
+            
+
+            phase += (2 * PI * frequency) / sampleRate;
+            if (phase > 2 * PI)
+                phase -= 2 * PI;
+
+            if (n < fadeInRange)
+            {
+                const float f = (float) n / fadeInRange;
+                m_samples[n] = (Int16) (m_samples[n] * f * (2 - f));
+            }
+            else if (n > numSamples - fadeOutRange)
+            {
+                const float f = (float) (numSamples - n) / fadeOutRange;
+                m_samples[n] = (Int16) (m_samples[n] * f * (2 - f));
+            }
+        }
+        return update(1, sampleRate);
+    }
+    else
+    {
+        // Error...
+        err() << "Failed creating a standard wave ("
+            << "amplitude: "  << amplitude  << ", "
+            << "frequency: "  << frequency  << ", "
+            << "samplerate: " << sampleRate << ", "
+            << "length: "     << length.asSeconds() << "s)"
+            << std::endl;
 
         return false;
     }

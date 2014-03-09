@@ -52,6 +52,17 @@ class InputStream;
 class SFML_AUDIO_API SoundBuffer
 {
 public :
+    ////////////////////////////////////////////////////////////
+    /// \brief Enumeration of the available waveforms
+    ///
+    ////////////////////////////////////////////////////////////
+    enum Waveform
+    {
+        Sine = 0, ///< A sinusoidal wave sound
+        Sawtooth, ///< A sawtooth wave sound
+        Square,   ///< A square wave sound
+        Triangle  ///< A triangle wave sound
+    };
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -139,6 +150,28 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool loadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Fills the sound buffer with a generated standard wave
+    ///
+    /// The length of the generated sound will match the given
+    /// length. Keep in mind that this might make it impossible
+    /// to loop the generated samples without audible distortions.
+    ///
+    /// \param waveform     The waveform of the generated wave
+    /// \param amplitude    The amplitude (volume) of the generated wave
+    /// \param frequency    The frequency of the generated wave
+    /// \param length       The length of the generated sound
+    /// \param fadeIn       The length of the fade in
+    /// \param fadeOut      The length of the fade out
+    /// \param sampleRate   Sample rate (number of samples to play per second)
+    ///
+    /// \return True if creation succeeded, false if it failed
+    ///
+    /// \see Waveform, saveToFile
+    ///
+    ////////////////////////////////////////////////////////////
+    bool create(Waveform waveform, Int16 amplitude, float frequency, Time length = seconds(1), Time fadeIn = Time::Zero, Time fadeOut = Time::Zero, unsigned int sampleRate = 44100);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
