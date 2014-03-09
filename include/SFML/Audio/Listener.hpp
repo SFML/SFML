@@ -128,12 +128,48 @@ public :
     /// doesn't have to be normalized.
     /// The default listener's orientation is (0, 0, -1).
     ///
+    /// \param fx X coordinate of the listener's orientation
+    /// \param fy Y coordinate of the listener's orientation
+    /// \param fz Z coordinate of the listener's orientation
+    /// \param ux X coordinate of the listener's up-vector
+    /// \param uy Y coordinate of the listener's up-vector
+    /// \param uz Z coordinate of the listener's up-vector
+    ///
+    /// \see getDirection, setPosition
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setDirection(float fx, float fy, float fz, float ux, float uy, float uz);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the orientation of the listener in the scene
+    ///
+    /// The orientation defines the 3D axes of the listener
+    /// (left, up, front) in the scene. The orientation vector
+    /// doesn't have to be normalized.
+    /// The default listener's orientation is (0, 0, -1).
+    ///
     /// \param direction New listener's orientation
     ///
     /// \see getDirection, setPosition
     ///
     ////////////////////////////////////////////////////////////
     static void setDirection(const Vector3f& direction);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the orientation of the listener in the scene
+    ///
+    /// The orientation defines the 3D axes of the listener
+    /// (left, up, front) in the scene. The orientation vector
+    /// doesn't have to be normalized.
+    /// The default listener's orientation is (0, 0, -1).
+    ///
+    /// \param direction New listener's orientation
+    /// \param upVector New listener's up-vector
+    ///
+    /// \see getDirection, setPosition
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setDirection(const Vector3f& direction, const Vector3f& upVector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current orientation of the listener in the scene
@@ -144,6 +180,17 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static Vector3f getDirection();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current orientation of the listener in the scene
+    ///
+    /// \param upVector Set to listener's up-vector
+    /// \return Listener's orientation
+    ///
+    /// \see setDirection
+    ///
+    ////////////////////////////////////////////////////////////
+    static Vector3f getDirection(Vector3f& upVector);
 };
 
 } // namespace sf

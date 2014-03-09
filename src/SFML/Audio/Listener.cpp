@@ -91,9 +91,27 @@ void Listener::setDirection(float x, float y, float z)
 
 
 ////////////////////////////////////////////////////////////
+void Listener::setDirection(float fx, float fy, float fz, float ux, float uy, float uz)
+{
+    priv::ensureALInit();
+
+    float orientation[] = {fx, fy, fz, ux, uy, uz};
+    alCheck(alListenerfv(AL_ORIENTATION, orientation));
+}
+
+
+////////////////////////////////////////////////////////////
 void Listener::setDirection(const Vector3f& direction)
 {
     setDirection(direction.x, direction.y, direction.z);
+}
+
+
+////////////////////////////////////////////////////////////
+void Listener::setDirection(const Vector3f& direction, const Vector3f& upVector)
+{
+    setDirection(direction.x, direction.y, direction.z,
+                 upVector.x, upVector.y, upVector.z);
 }
 
 
@@ -104,6 +122,22 @@ Vector3f Listener::getDirection()
 
     float orientation[6];
     alCheck(alGetListenerfv(AL_ORIENTATION, orientation));
+
+    return Vector3f(orientation[0], orientation[1], orientation[2]);
+}
+
+
+////////////////////////////////////////////////////////////
+Vector3f Listener::getDirection(Vector3f& upVector)
+{
+    priv::ensureALInit();
+
+    float orientation[6];
+    alCheck(alGetListenerfv(AL_ORIENTATION, orientation));
+
+    upVector.x = orientation[3];
+    upVector.y = orientation[4];
+    upVector.z = orientation[5];
 
     return Vector3f(orientation[0], orientation[1], orientation[2]);
 }
