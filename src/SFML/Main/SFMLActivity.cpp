@@ -32,6 +32,10 @@
 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-activity", __VA_ARGS__))
 
+namespace {
+    typedef void (*activityOnCreatePointer)(ANativeActivity*, void*, size_t);
+}
+
 std::string getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
 {
     // This function reads the value of meta-data "sfml.app.lib_name" 
@@ -51,19 +55,20 @@ std::string getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     // Get the value of meta-data named "sfml.app.lib_name"
     jclass classBundle = lJNIEnv->FindClass("android/os/Bundle");
     jmethodID methodGetString = lJNIEnv->GetMethodID(classBundle, "getString", "(Ljava/lang/String;)Ljava/lang/String;");
-    jobject objectValue = lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
+    jstring valueString = (jstring)lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
     
     // No meta-data "sfml.app.lib_name" was found so we abord and inform the user
-    if (objectValue == NULL)
+    if (valueString == NULL)
     {
         LOGE("No meta-data 'sfml.app.lib_name' found in AndroidManifest.xml file");
         exit(1);
     }
         
     // Convert the application name to a C++ string and return it
-    const char* applicationName = lJNIEnv->GetStringUTFChars(objectValue, NULL);
-    std::string ret(applicationName);
-    lJNIEnv->ReleaseStringUTFChars(objectValue, applicationName);
+    const jsize applicationNameLength = lJNIEnv->GetStringUTFLength(valueString);
+    const char* applicationName = lJNIEnv->GetStringUTFChars(valueString, NULL);
+    std::string ret(applicationName, applicationNameLength);
+    lJNIEnv->ReleaseStringUTFChars(valueString, applicationName);
     
     return ret;
 }
@@ -187,7 +192,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     // crashes (lJavaVM->DetachCurrentThread();)
 
     // Call the original ANativeActivity_onCreate function
-    void (*ANativeActivity_onCreate)(ANativeActivity*, void*, size_t) = dlsym(handle, "ANativeActivity_onCreate");
+    activityOnCreatePointer ANativeActivity_onCreate = (activityOnCreatePointer)dlsym(handle, "ANativeActivity_onCreate");
 
     if (!ANativeActivity_onCreate)
     {
