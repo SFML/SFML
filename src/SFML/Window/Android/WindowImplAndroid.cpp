@@ -604,7 +604,7 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     // Construct a KeyEvent object from the event data
     jclass ClassKeyEvent = lJNIEnv->FindClass("android/view/KeyEvent");
     jmethodID KeyEventConstructor = lJNIEnv->GetMethodID(ClassKeyEvent, "<init>", "(JJIIIIIIII)V");
-    jobject ObjectKeyEvent = lJNIEnv->NewObject(ClassKeyEvent, KeyEventConstructor, (jvalue*)downTime, (jvalue*)eventTime, (jvalue*)action, (jvalue*)code, (jvalue*)repeat, (jvalue*)metaState, (jvalue*)deviceId, (jvalue*)scancode, (jvalue*)flags, (jvalue*)source);
+    jobject ObjectKeyEvent = lJNIEnv->NewObject(ClassKeyEvent, KeyEventConstructor, downTime, eventTime, action, code, repeat, metaState, deviceId, scancode, flags, source);
 
     // Call its getUnicodeChar() method to get the unicode value
     jmethodID MethodGetUnicode = lJNIEnv->GetMethodID(ClassKeyEvent, "getUnicodeChar", "(I)I");
