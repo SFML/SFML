@@ -303,6 +303,9 @@ void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* 
     event.mouseWheel.y = AMotionEvent_getY(_event, 0);
     
     states->pendingEvents.push_back(event);
+
+    // Dettach this thread from the JVM
+    lJavaVM->DetachCurrentThread();
 }
 
 
@@ -606,6 +609,9 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     // Call its getUnicodeChar() method to get the unicode value
     jmethodID MethodGetUnicode = lJNIEnv->GetMethodID(ClassKeyEvent, "getUnicodeChar", "(I)I");
     int unicode = lJNIEnv->CallIntMethod(ObjectKeyEvent, MethodGetUnicode, metaState);
+
+    // Dettach this thread from the JVM
+    lJavaVM->DetachCurrentThread();
 
     return unicode;
 }
