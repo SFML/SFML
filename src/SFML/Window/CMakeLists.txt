@@ -41,6 +41,8 @@ set(SRC
     ${INCROOT}/WindowStyle.hpp
 )
 if(SFML_OPENGL_ES)
+    list(APPEND SRC ${SRCROOT}/EGLCheck.cpp)
+    list(APPEND SRC ${SRCROOT}/EGLCheck.hpp)
     list(APPEND SRC ${SRCROOT}/EglContext.cpp)
     list(APPEND SRC ${SRCROOT}/EglContext.hpp)
 endif()
