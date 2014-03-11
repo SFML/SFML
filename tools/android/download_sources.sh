@@ -17,7 +17,6 @@ JPEG=jpeg-$JPEG_VERSION
 FREETYPE_VERSION=2.4.0
 FREETYPE=freetype-$FREETYPE_VERSION
 
-
 mkdir build
 
 wget -nc -P src http://downloads.xiph.org/releases/flac/$FLAC.tar.gz
