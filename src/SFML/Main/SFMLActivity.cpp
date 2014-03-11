@@ -129,25 +129,9 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     //
     // With libname being the library name such as "jpeg".
 
-    // Initialize JNI
-    jint lResult;
-    jint lFlags = 0;
-
+    // Retrieve JNI environment and JVM instance
     JavaVM* lJavaVM = activity->vm;
     JNIEnv* lJNIEnv = activity->env;
-
-    JavaVMAttachArgs lJavaVMAttachArgs;
-    lJavaVMAttachArgs.version = JNI_VERSION_1_6;
-    lJavaVMAttachArgs.name = "NativeThread";
-    lJavaVMAttachArgs.group = NULL;
-
-    // Attach the current thread to the JAva virtual machine
-    lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
-
-    if (lResult == JNI_ERR) {
-        LOGE("Couldn't attach the current thread to the Java virtual machine");
-        exit(1);
-    }
 
     // Retrieve the NativeActivity
     jobject ObjectNativeActivity = activity->clazz;
@@ -187,9 +171,6 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     
     std::string libName = getLibraryName(lJNIEnv, ObjectActivityInfo);
     void* handle = loadLibrary(libName.c_str(), lJNIEnv, ObjectActivityInfo);
-
-    // todo: should we detach the current thread ? because if we do, it
-    // crashes (lJavaVM->DetachCurrentThread();)
 
     // Call the original ANativeActivity_onCreate function
     activityOnCreatePointer ANativeActivity_onCreate = (activityOnCreatePointer)dlsym(handle, "ANativeActivity_onCreate");
