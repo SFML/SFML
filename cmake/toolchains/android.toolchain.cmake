@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-#  Android CMake toolchain file, for use with the Android NDK r5-r9
+#  Android CMake toolchain file, for use with the Android NDK r9d
 #  Requires cmake 2.6.3 or newer (2.8.5 or newer is recommended).
 #  See home page: http://code.google.com/p/android-cmake/
 #
@@ -195,6 +195,9 @@
 #   - modified September 2013
 #     [+] updated for NDK r9
 #     [+] support 64-bits toolchains
+#   - modified March 2014
+#     [+] updated for NDK r9d and dropped earlier versions
+#     [+] replaced stlport with libc++ 
 # ------------------------------------------------------------------------------
 
 cmake_minimum_required( VERSION 2.6.3 )
@@ -214,7 +217,7 @@ set( CMAKE_SYSTEM_NAME Linux )
 # this one not so much
 set( CMAKE_SYSTEM_VERSION 1 )
 
-set( ANDROID_SUPPORTED_NDK_VERSIONS ${ANDROID_EXTRA_NDK_VERSIONS} -r9 -r8b -r8 -r7c -r7b -r7 -r6b -r6 -r5c -r5b -r5 "" )
+set( ANDROID_SUPPORTED_NDK_VERSIONS ${ANDROID_EXTRA_NDK_VERSIONS} -r9d "" )
 if(NOT DEFINED ANDROID_NDK_SEARCH_PATHS)
  if( CMAKE_HOST_WIN32 )
   file( TO_CMAKE_PATH "$ENV{PROGRAMFILES}" ANDROID_NDK_SEARCH_PATHS )
@@ -344,7 +347,7 @@ endmacro()
 
 
 # stl version: by default gnustl_static will be used
-set( ANDROID_USE_STLPORT FALSE CACHE BOOL "Experimental: use stlport_static instead of gnustl_static")
+set( ANDROID_USE_STLPORT TRUE CACHE BOOL "Experimental: use stlport_static instead of gnustl_static")
 mark_as_advanced( ANDROID_USE_STLPORT )
 
 # fight against cygwin
@@ -694,8 +697,9 @@ if( BUILD_WITH_ANDROID_NDK )
  set( ANDROID_TOOLCHAIN_ROOT "${ANDROID_NDK}/toolchains/${ANDROID_TOOLCHAIN_NAME}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}" )
  set( ANDROID_SYSROOT "${ANDROID_NDK}/platforms/android-${ANDROID_NATIVE_API_LEVEL}/arch-${ANDROID_ARCH_NAME}" )
  if( ANDROID_USE_STLPORT )
-  set( __stlIncludePath "${ANDROID_NDK}/sources/cxx-stl/stlport/stlport" )
-  set( __stlLibPath "${ANDROID_NDK}/sources/cxx-stl/stlport/libs/${ANDROID_NDK_ABI_NAME}" )
+  list( APPEND __stlIncludePath "${ANDROID_NDK}/sources/android/support/include" )
+  list( APPEND __stlIncludePath "${ANDROID_NDK}/sources/cxx-stl/llvm-libc++/libcxx/include" )
+  set( __stlLibPath "${ANDROID_NDK}/sources/cxx-stl/llvm-libc++/libs/${ANDROID_NDK_ABI_NAME}" )
  else()
   if( EXISTS "${ANDROID_NDK}/sources/cxx-stl/gnu-libstdc++/${ANDROID_COMPILER_VERSION}" )
    set( __stlIncludePath "${ANDROID_NDK}/sources/cxx-stl/gnu-libstdc++/${ANDROID_COMPILER_VERSION}/include" )
@@ -749,8 +753,7 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
 endif()
 
 # includes
-list( APPEND ANDROID_SYSTEM_INCLUDE_DIRS "${ANDROID_SYSROOT}/usr/include" )
-if( __stlIncludePath AND EXISTS "${__stlIncludePath}" )
+if( __stlIncludePath )
  list( APPEND ANDROID_SYSTEM_INCLUDE_DIRS "${__stlIncludePath}" )
 endif()
 
@@ -889,9 +892,9 @@ set( ANDROID_LINKER_FLAGS "" )
 
 # STL
 if( ANDROID_USE_STLPORT )
- if( EXISTS "${__stlLibPath}/libstlport_shared.so" )
-  set( CMAKE_CXX_CREATE_SHARED_LIBRARY "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> \"${__stlLibPath}/libstlport_shared.so\"")
-  set( CMAKE_CXX_CREATE_SHARED_MODULE  "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> \"${__stlLibPath}/libstlport_shared.so\"")
+ if( EXISTS "${__stlLibPath}/libc++_shared.so" )
+  set( CMAKE_CXX_CREATE_SHARED_LIBRARY "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> \"${__stlLibPath}/libc++_shared.so\" -latomic")
+  set( CMAKE_CXX_CREATE_SHARED_MODULE  "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> \"${__stlLibPath}/libc++_shared.so\" -latomic")
  endif()
 else( ANDROID_USE_STLPORT )
  if( EXISTS "${__stlLibPath}/libgnustl_static.a" )
