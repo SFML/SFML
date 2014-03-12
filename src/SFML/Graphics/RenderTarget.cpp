@@ -388,22 +388,32 @@ void RenderTarget::applyCurrentView()
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::applyBlendMode(BlendMode mode)
+void RenderTarget::applyBlendMode(const BlendMode& mode)
 {
     // Apply the blend mode, falling back to the non-separate versions if necessary
     if (GLEW_EXT_blend_func_separate)
-        glCheck(glBlendFuncSeparateEXT(factorToGlConstant(mode.colorSrcFactor),
-            factorToGlConstant(mode.colorDstFactor), factorToGlConstant(mode.alphaSrcFactor),
-            factorToGlConstant(mode.alphaDstFactor)));
+    {
+        glCheck(glBlendFuncSeparateEXT(
+            factorToGlConstant(mode.colorSrcFactor), factorToGlConstant(mode.colorDstFactor),
+            factorToGlConstant(mode.alphaSrcFactor), factorToGlConstant(mode.alphaDstFactor)));
+    }
     else
-        glCheck(glBlendFunc(factorToGlConstant(mode.colorSrcFactor),
+    {
+        glCheck(glBlendFunc(
+            factorToGlConstant(mode.colorSrcFactor),
             factorToGlConstant(mode.colorDstFactor)));
+    }
 
     if (GLEW_EXT_blend_equation_separate)
-        glCheck(glBlendEquationSeparateEXT(equationToGlConstant(mode.colorEquation),
+    {
+        glCheck(glBlendEquationSeparateEXT(
+            equationToGlConstant(mode.colorEquation),
             equationToGlConstant(mode.alphaEquation)));
+    }
     else
+    {
         glCheck(glBlendEquation(equationToGlConstant(mode.colorEquation)));
+    }
 
     m_cache.lastBlendMode = mode;
 }

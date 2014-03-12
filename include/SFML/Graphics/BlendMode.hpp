@@ -57,7 +57,7 @@ struct SFML_GRAPHICS_API BlendMode
         SrcAlpha,         ///< (src.a,src.a,src.a,src.a)
         OneMinusSrcAlpha, ///< (1,1,1,1) - (src.a,src.a,src.a,src.a)
         DstAlpha,         ///< (dst.a,dst.a,dst.a,dst.a)
-        OneMinusDstAlpha, ///< (1,1,1,1) - (dst.a,dst.a,dst.a,dst.a)
+        OneMinusDstAlpha  ///< (1,1,1,1) - (dst.a,dst.a,dst.a,dst.a)
     };
 
     ////////////////////////////////////////////////////////
@@ -67,8 +67,8 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////
     enum BlendEquation
     {
-        Add,             ///< Pixel = Source * SourceFactor + Dst * DstFactor
-        Subtract,        ///< Pixel = Source * SourceFactor - Dst * DstFactor
+        Add,             ///< Pixel = Src * SrcFactor + Dst * DstFactor
+        Subtract         ///< Pixel = Src * SrcFactor - Dst * DstFactor
     };
 
     ////////////////////////////////////////////////////////////
@@ -82,18 +82,17 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////////
     /// \brief Construct the blend mode given the factors and equation.
     ///
-    /// \param colorSourceFactor  Specifies how to compute the source factor for the color channels.
-    /// \param colorDstFactor    Specifies how to compute the destination factor for the color channels.
-    /// \param colorBlendEquation Specifies how to combine the source and destination colors.
-    /// \param alphaSourceFactor  Specifies how to compute the source factor.
-    /// \param alphaDstFactor    Specifies how to compute the destination factor.
-    /// \param alphaBlendEquation Specifies how to combine the source and destination alphas.
-    /// 
+    /// \param colorSourceFactor      Specifies how to compute the source factor for the color channels.
+    /// \param colorDestinationFactor Specifies how to compute the destination factor for the color channels.
+    /// \param colorBlendEquation     Specifies how to combine the source and destination colors.
+    /// \param alphaSourceFactor      Specifies how to compute the source factor.
+    /// \param alphaDestinationFactor Specifies how to compute the destination factor.
+    /// \param alphaBlendEquation     Specifies how to combine the source and destination alphas.
     ///
     ////////////////////////////////////////////////////////////
-    BlendMode(BlendFactor colorSourceFactor, BlendFactor colorDstFactor,
+    BlendMode(BlendFactor colorSourceFactor, BlendFactor colorDestinationFactor,
         BlendEquation colorBlendEquation, BlendFactor alphaSourceFactor,
-        BlendFactor alphaDstFactor, BlendEquation alphaBlendEquation);
+        BlendFactor alphaDestinationFactor, BlendEquation alphaBlendEquation);
 
     ////////////////////////////////////////////////////////////
     // Member Data
@@ -110,8 +109,6 @@ struct SFML_GRAPHICS_API BlendMode
 /// \relates BlendMode
 /// \brief Overload of the == operator
 ///
-/// This operator compares two blending modes and checks if they are equal.
-///
 /// \param left  Left operand
 /// \param right Right operand
 ///
@@ -123,8 +120,6 @@ SFML_GRAPHICS_API bool operator ==(const BlendMode& left, const BlendMode& right
 ////////////////////////////////////////////////////////////
 /// \relates BlendMode
 /// \brief Overload of the != operator
-///
-/// This operator compares two blending modes and checks if they are different.
 ///
 /// \param left  Left operand
 /// \param right Right operand
@@ -162,7 +157,7 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;
 /// \li Alpha Destination Factor (alphaDstFactor)
 /// \li Alpha Blend Equation (alphaEquation)
 ///
-/// Each component has its own setter function. These make
+/// Each component has its own public member variable. These make
 /// modifying a blending mode rather easy:
 ///
 /// \code
@@ -171,9 +166,9 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;
 /// blendMode.colorEquation = sf::BlendMode::Subtract; // An exotic subtraction blending mode
 /// \endcode
 ///
-/// The most common blending modes are defined as const
-/// variables for convenience and compatibility with older
-/// code:
+/// The most common blending modes are defined as constants
+/// in the sf namespace, for convenience and compatibility with
+/// older code:
 ///
 /// \code
 /// sf::BlendMode alphaBlending          = sf::BlendAlpha;
