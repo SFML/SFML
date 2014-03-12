@@ -57,9 +57,9 @@ alphaEquation (BlendMode::Add)
 
 
 ////////////////////////////////////////////////////////////
-BlendMode::BlendMode(BlendFactor colorSourceFactor, BlendFactor colorDestinationFactor,
-    BlendEquation colorBlendEquation, BlendFactor alphaSourceFactor,
-    BlendFactor alphaDestinationFactor, BlendEquation alphaBlendEquation) :
+BlendMode::BlendMode(Factor colorSourceFactor, Factor colorDestinationFactor,
+    Equation colorBlendEquation, Factor alphaSourceFactor,
+    Factor alphaDestinationFactor, Equation alphaBlendEquation) :
 colorSrcFactor(colorSourceFactor),
 colorDstFactor(colorDestinationFactor),
 colorEquation (colorBlendEquation),

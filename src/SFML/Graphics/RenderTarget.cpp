@@ -37,8 +37,8 @@
 
 namespace
 {
-    // Convert an sf::BlendMode::BlendFactor constant to the corresponding OpenGL constant.
-    sf::Uint32 factorToGlConstant(sf::BlendMode::BlendFactor blendFactor)
+    // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
+    sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
     {
         switch (blendFactor)
         {
@@ -58,7 +58,7 @@ namespace
 
 
     // Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
-    sf::Uint32 equationToGlConstant(sf::BlendMode::BlendEquation blendEquation)
+    sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
     {
         switch (blendEquation)
         {
