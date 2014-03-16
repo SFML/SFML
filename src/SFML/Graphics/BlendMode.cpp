@@ -34,13 +34,13 @@ namespace sf
 // Commonly used blending modes
 ////////////////////////////////////////////////////////////
 const BlendMode BlendAlpha(BlendMode::SrcAlpha, BlendMode::OneMinusSrcAlpha, BlendMode::Add,
-    BlendMode::One, BlendMode::OneMinusSrcAlpha, BlendMode::Add);
+                           BlendMode::One, BlendMode::OneMinusSrcAlpha, BlendMode::Add);
 const BlendMode BlendAdd(BlendMode::SrcAlpha, BlendMode::One, BlendMode::Add,
-    BlendMode::One, BlendMode::One, BlendMode::Add);
+                         BlendMode::One, BlendMode::One, BlendMode::Add);
 const BlendMode BlendMultiply(BlendMode::DstColor, BlendMode::Zero, BlendMode::Add,
-    BlendMode::DstColor, BlendMode::Zero, BlendMode::Add);
+                              BlendMode::DstColor, BlendMode::Zero, BlendMode::Add);
 const BlendMode BlendNone(BlendMode::One, BlendMode::Zero, BlendMode::Add,
-    BlendMode::One, BlendMode::Zero, BlendMode::Add);
+                          BlendMode::One, BlendMode::Zero, BlendMode::Add);
 
 
 ////////////////////////////////////////////////////////////
@@ -58,8 +58,8 @@ alphaEquation (BlendMode::Add)
 
 ////////////////////////////////////////////////////////////
 BlendMode::BlendMode(Factor colorSourceFactor, Factor colorDestinationFactor,
-    Equation colorBlendEquation, Factor alphaSourceFactor,
-    Factor alphaDestinationFactor, Equation alphaBlendEquation) :
+                     Equation colorBlendEquation, Factor alphaSourceFactor,
+                     Factor alphaDestinationFactor, Equation alphaBlendEquation) :
 colorSrcFactor(colorSourceFactor),
 colorDstFactor(colorDestinationFactor),
 colorEquation (colorBlendEquation),

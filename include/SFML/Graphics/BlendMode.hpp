@@ -48,16 +48,16 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////
     enum Factor
     {
-        Zero,             ///< (0,0,0,0)
-        One,              ///< (1,1,1,1)
-        SrcColor,         ///< (src.r,src.g,src.b,src.a)
-        OneMinusSrcColor, ///< (1,1,1,1) - (src.r,src.g,src.b,src.a)
-        DstColor,         ///< (dst.r,dst.g,dst.b,dst.a)
-        OneMinusDstColor, ///< (1,1,1,1) - (dst.r,dst.g,dst.b,dst.a)
-        SrcAlpha,         ///< (src.a,src.a,src.a,src.a)
-        OneMinusSrcAlpha, ///< (1,1,1,1) - (src.a,src.a,src.a,src.a)
-        DstAlpha,         ///< (dst.a,dst.a,dst.a,dst.a)
-        OneMinusDstAlpha  ///< (1,1,1,1) - (dst.a,dst.a,dst.a,dst.a)
+        Zero,             ///< (0, 0, 0, 0)
+        One,              ///< (1, 1, 1, 1)
+        SrcColor,         ///< (src.r, src.g, src.b, src.a)
+        OneMinusSrcColor, ///< (1, 1, 1, 1) - (src.r, src.g, src.b, src.a)
+        DstColor,         ///< (dst.r, dst.g, dst.b, dst.a)
+        OneMinusDstColor, ///< (1, 1, 1, 1) - (dst.r, dst.g, dst.b, dst.a)
+        SrcAlpha,         ///< (src.a, src.a, src.a, src.a)
+        OneMinusSrcAlpha, ///< (1, 1, 1, 1) - (src.a, src.a, src.a, src.a)
+        DstAlpha,         ///< (dst.a, dst.a, dst.a, dst.a)
+        OneMinusDstAlpha  ///< (1, 1, 1, 1) - (dst.a, dst.a, dst.a, dst.a)
     };
 
     ////////////////////////////////////////////////////////
@@ -67,8 +67,8 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////
     enum Equation
     {
-        Add,             ///< Pixel = Src * SrcFactor + Dst * DstFactor
-        Subtract         ///< Pixel = Src * SrcFactor - Dst * DstFactor
+        Add,     ///< Pixel = Src * SrcFactor + Dst * DstFactor
+        Subtract ///< Pixel = Src * SrcFactor - Dst * DstFactor
     };
 
     ////////////////////////////////////////////////////////////
@@ -91,18 +91,18 @@ struct SFML_GRAPHICS_API BlendMode
     ///
     ////////////////////////////////////////////////////////////
     BlendMode(Factor colorSourceFactor, Factor colorDestinationFactor,
-        Equation colorBlendEquation, Factor alphaSourceFactor,
-        Factor alphaDestinationFactor, Equation alphaBlendEquation);
+              Equation colorBlendEquation, Factor alphaSourceFactor,
+              Factor alphaDestinationFactor, Equation alphaBlendEquation);
 
     ////////////////////////////////////////////////////////////
     // Member Data
     ////////////////////////////////////////////////////////////
-    Factor   colorSrcFactor;  ///< Source blending factor for the color channels
-    Factor   colorDstFactor;  ///< Destination blending factor for the color channels
-    Equation colorEquation;   ///< Blending equation for the color channels
-    Factor   alphaSrcFactor;  ///< Source blending factor for the alpha channel
-    Factor   alphaDstFactor;  ///< Destination blending factor for the alpha channel
-    Equation alphaEquation;   ///< Blending equation for the alpha channel
+    Factor   colorSrcFactor; ///< Source blending factor for the color channels
+    Factor   colorDstFactor; ///< Destination blending factor for the color channels
+    Equation colorEquation;  ///< Blending equation for the color channels
+    Factor   alphaSrcFactor; ///< Source blending factor for the alpha channel
+    Factor   alphaDstFactor; ///< Destination blending factor for the alpha channel
+    Equation alphaEquation;  ///< Blending equation for the alpha channel
 };
 
 ////////////////////////////////////////////////////////////
