@@ -45,6 +45,8 @@ struct SFML_GRAPHICS_API BlendMode
     /// \ingroup graphics
     /// \brief Enumeration of the blending factors
     ///
+    /// The factors are mapped directly to their OpenGL equivalents,
+    /// specified by glBlendFunc() or glBlendFuncSeparate().
     ////////////////////////////////////////////////////////
     enum Factor
     {
@@ -64,6 +66,8 @@ struct SFML_GRAPHICS_API BlendMode
     /// \ingroup graphics
     /// \brief Enumeration of the blending equations
     ///
+    /// The equations are mapped directly to their OpenGL equivalents,
+    /// specified by glBlendEquation() or glBlendEquationSeparate().
     ////////////////////////////////////////////////////////
     enum Equation
     {
@@ -148,27 +152,42 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;
 /// \class sf::BlendMode
 /// \ingroup graphics
 ///
-/// sf::BlendMode is a class that represents a blend mode. A
-/// blend mode is composed of 6 components:
-/// \li %Color Source Factor (colorSrcFactor)
-/// \li %Color Destination Factor (colorDstFactor)
-/// \li %Color Blend Equation (colorEquation)
-/// \li Alpha Source Factor (alphaSrcFactor)
-/// \li Alpha Destination Factor (alphaDstFactor)
-/// \li Alpha Blend Equation (alphaEquation)
+/// sf::BlendMode is a class that represents a blend mode. A blend
+/// mode determines how the colors of an object you draw are
+/// mixed with the colors that are already in the buffer.
+/// 
+/// The class is composed of 6 components, each of which has its
+/// own public member variable:
+/// \li %Color Source Factor (@ref colorSrcFactor)
+/// \li %Color Destination Factor (@ref colorDstFactor)
+/// \li %Color Blend Equation (@ref colorEquation)
+/// \li Alpha Source Factor (@ref alphaSrcFactor)
+/// \li Alpha Destination Factor (@ref alphaDstFactor)
+/// \li Alpha Blend Equation (@ref alphaEquation)
+/// 
+/// The source factor specifies how the pixel you are drawing contributes
+/// to the final color. The destination factor specifies how the pixel
+/// already drawn in the buffer contributes to the final color.
 ///
-/// Each component has its own public member variable. These make
-/// modifying a blending mode rather easy:
+/// The color channels RGB (red, green, blue; simply referred to as
+/// color) and A (alpha; the transparency) can be treated separately. This
+/// separation can be useful for specific blend modes, but most often you
+/// won't need it and will simply treat the color as a single unit.
 ///
+/// The blend factors and equations correspond to their OpenGL equivalents.
+/// In general, the color of the resulting pixel is calculated according
+/// to the following formula (\a src is the color of the source pixel, \a dst
+/// the color of the destination pixel, the other variables correspond to the
+/// public members, with the equations being + or - operators):
 /// \code
-/// sf::BlendMode blendMode;                           // Standard alpha blending
-/// blendMode.colorSrcFactor = sf::BlendMode::One;     // Pre-multiplied alpha blending
-/// blendMode.colorEquation = sf::BlendMode::Subtract; // An exotic subtraction blending mode
+/// dst.rgb = colorSrcFactor * src.rgb (colorEquation) colorDstFactor * dst.rgb
+/// dst.a   = alphaSrcFactor * src.a   (alphaEquation) alphaDstFactor * dst.a
 /// \endcode
+/// All factors and colors are represented as floating point numbers between
+/// 0 and 1. Where necessary, the result is clamped to fit in that range.
 ///
 /// The most common blending modes are defined as constants
-/// in the sf namespace, for convenience and compatibility with
-/// older code:
+/// in the sf namespace:
 ///
 /// \code
 /// sf::BlendMode alphaBlending          = sf::BlendAlpha;
@@ -176,5 +195,11 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;
 /// sf::BlendMode multiplicativeBlending = sf::BlendMultipy;
 /// sf::BlendMode noBlending             = sf::BlendNone;
 /// \endcode
+///
+/// In SFML, a blend mode can be specified every time you draw a sf::Drawable
+/// object to a render target. It is part of the sf::RenderStates compound
+/// that is passed to the member function sf::RenderTarget::draw().
+///
+/// \see sf::RenderStates, sf::RenderTarget
 ///
 ////////////////////////////////////////////////////////////
