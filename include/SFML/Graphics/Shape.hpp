@@ -41,7 +41,7 @@ namespace sf
 /// \brief Base class for textured shapes with outline
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Shape : public Drawable, public Transformable
+class SFML_GRAPHICS_API Shape : virtual public Drawable, virtual public Transformable
 {
 public :
 
