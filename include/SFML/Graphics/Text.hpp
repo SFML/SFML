@@ -45,7 +45,7 @@ namespace sf
 /// \brief Graphical text that can be drawn to a render target
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Text : public Drawable, public Transformable
+class SFML_GRAPHICS_API Text : virtual public Drawable, virtual public Transformable
 {
 public :
 
