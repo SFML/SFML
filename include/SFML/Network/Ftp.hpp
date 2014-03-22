@@ -454,7 +454,7 @@ public :
     /// of your application.
     ///
     /// \param remoteFile Filename of the distant file to download
-    /// \param localPath  Where to put to file on the local computer
+    /// \param localPath  The directory in which to put the file on the local computer
     /// \param mode       Transfer mode
     ///
     /// \return Server response to the request
@@ -473,7 +473,7 @@ public :
     /// FTP server.
     ///
     /// \param localFile  Path of the local file to upload
-    /// \param remotePath Where to put to file on the server
+    /// \param remotePath The directory in which to put the file on the server
     /// \param mode       Transfer mode
     ///
     /// \return Server response to the request
