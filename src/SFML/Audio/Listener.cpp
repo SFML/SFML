@@ -32,8 +32,9 @@
 namespace
 {
     float        listenerVolume = 100.f;
-    sf::Vector3f listenerPosition(0.f, 0.f, 0.f);
+    sf::Vector3f listenerPosition (0.f, 0.f, 0.f);
     sf::Vector3f listenerDirection(0.f, 0.f, -1.f);
+    sf::Vector3f listenerUpVector (0.f, 1.f, 0.f);
 }
 
 
@@ -100,7 +101,7 @@ void Listener::setDirection(const Vector3f& direction)
     {
         priv::ensureALInit();
 
-        float orientation[] = {direction.x, direction.y, direction.z, 0.f, 1.f, 0.f};
+        float orientation[] = {direction.x, direction.y, direction.z, listenerUpVector.x, listenerUpVector.y, listenerUpVector.z};
         alCheck(alListenerfv(AL_ORIENTATION, orientation));
         listenerDirection = direction;
     }
@@ -111,6 +112,34 @@ void Listener::setDirection(const Vector3f& direction)
 Vector3f Listener::getDirection()
 {
     return listenerDirection;
+}
+
+
+////////////////////////////////////////////////////////////
+void Listener::setUpVector(float x, float y, float z)
+{
+    setUpVector(sf::Vector3f(x, y, z));
+}
+
+
+////////////////////////////////////////////////////////////
+void Listener::setUpVector(const Vector3f& upVector)
+{
+    if (upVector != listenerUpVector)
+    {
+        priv::ensureALInit();
+
+        float orientation[] = {listenerDirection.x, listenerDirection.y, listenerDirection.z, upVector.x, upVector.y, upVector.z};
+        alCheck(alListenerfv(AL_ORIENTATION, orientation));
+        listenerUpVector = upVector;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+Vector3f Listener::getUpVector()
+{
+    return listenerUpVector;
 }
 
 } // namespace sf
