@@ -29,83 +29,88 @@
 #include <SFML/Audio/ALCheck.hpp>
 
 
+namespace
+{
+    float        listenerVolume = 100.f;
+    sf::Vector3f listenerPosition(0.f, 0.f, 0.f);
+    sf::Vector3f listenerDirection(0.f, 0.f, -1.f);
+}
+
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 void Listener::setGlobalVolume(float volume)
 {
-    priv::ensureALInit();
+    if (listenerVolume != volume)
+    {
+        priv::ensureALInit();
 
-    alCheck(alListenerf(AL_GAIN, volume * 0.01f));
+        alCheck(alListenerf(AL_GAIN, volume * 0.01f));
+        listenerVolume = volume;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 float Listener::getGlobalVolume()
 {
-    priv::ensureALInit();
-
-    float volume = 0.f;
-    alCheck(alGetListenerf(AL_GAIN, &volume));
-
-    return volume * 100;
+    return listenerVolume;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Listener::setPosition(float x, float y, float z)
 {
-    priv::ensureALInit();
-
-    alCheck(alListener3f(AL_POSITION, x, y, z));
+    setPosition(sf::Vector3f(x, y, z));
 }
 
 
 ////////////////////////////////////////////////////////////
 void Listener::setPosition(const Vector3f& position)
 {
-    setPosition(position.x, position.y, position.z);
+    if (position != listenerPosition)
+    {
+        priv::ensureALInit();
+
+        alCheck(alListener3f(AL_POSITION, position.x, position.y, position.z));
+        listenerPosition = position;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f Listener::getPosition()
 {
-    priv::ensureALInit();
-
-    Vector3f position;
-    alCheck(alGetListener3f(AL_POSITION, &position.x, &position.y, &position.z));
-
-    return position;
+    return listenerPosition;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Listener::setDirection(float x, float y, float z)
 {
-    priv::ensureALInit();
-
-    float orientation[] = {x, y, z, 0.f, 1.f, 0.f};
-    alCheck(alListenerfv(AL_ORIENTATION, orientation));
+    setDirection(sf::Vector3f(x, y, z));
 }
 
 
 ////////////////////////////////////////////////////////////
 void Listener::setDirection(const Vector3f& direction)
 {
-    setDirection(direction.x, direction.y, direction.z);
+    if (direction != listenerDirection)
+    {
+        priv::ensureALInit();
+
+        float orientation[] = {direction.x, direction.y, direction.z, 0.f, 1.f, 0.f};
+        alCheck(alListenerfv(AL_ORIENTATION, orientation));
+        listenerDirection = direction;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f Listener::getDirection()
 {
-    priv::ensureALInit();
-
-    float orientation[6];
-    alCheck(alGetListenerfv(AL_ORIENTATION, orientation));
-
-    return Vector3f(orientation[0], orientation[1], orientation[2]);
+    return listenerDirection;
 }
 
 } // namespace sf
