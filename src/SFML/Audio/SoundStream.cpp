@@ -85,7 +85,7 @@ void SoundStream::play()
     // Check if the sound parameters have been set
     if (m_format == 0)
     {
-        err() << "Failed to play audio stream: sound parameters have not been initialized (call Initialize first)" << std::endl;
+        err() << "Failed to play audio stream: sound parameters have not been initialized (call initialize() first)" << std::endl;
         return;
     }
 
@@ -258,7 +258,22 @@ void SoundStream::streamData()
                 ALint size, bits;
                 alCheck(alGetBufferi(buffer, AL_SIZE, &size));
                 alCheck(alGetBufferi(buffer, AL_BITS, &bits));
-                m_samplesProcessed += size / (bits / 8);
+
+                // Bits can be 0 if the format or parameters are corrupt, avoid division by zero
+                if (bits == 0)
+                {
+                    err() << "Bits in sound stream are 0: make sure that the audio format is not corrupt "
+                          << "and initialize() has been called correctly" << std::endl;
+
+                    // Abort streaming (exit main loop)
+                    m_isStreaming = false;
+                    requestStop = true;
+                    break;
+                }
+                else
+                {
+                    m_samplesProcessed += size / (bits / 8);
+                }
             }
 
             // Fill it and push it back into the playing queue
