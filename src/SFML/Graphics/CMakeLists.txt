@@ -60,6 +60,8 @@ set(DRAWABLES_SRC
     ${INCROOT}/Sprite.hpp
     ${SRCROOT}/Text.cpp
     ${INCROOT}/Text.hpp
+    ${SRCROOT}/ComplexText.cpp
+    ${INCROOT}/ComplexText.hpp
     ${SRCROOT}/VertexArray.cpp
     ${INCROOT}/VertexArray.hpp
 )

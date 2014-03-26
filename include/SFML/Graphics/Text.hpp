@@ -233,7 +233,7 @@ public :
     /// \return Position of the character
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f findCharacterPos(std::size_t index) const;
+    virtual Vector2f findCharacterPos(std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity
@@ -263,7 +263,7 @@ public :
     ////////////////////////////////////////////////////////////
     FloatRect getGlobalBounds() const;
 
-private :
+protected :
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw the text to a render target
@@ -278,7 +278,7 @@ private :
     /// \brief Update the text's geometry
     ///
     ////////////////////////////////////////////////////////////
-    void updateGeometry();
+    virtual void updateGeometry();
 
     ////////////////////////////////////////////////////////////
     // Member data
