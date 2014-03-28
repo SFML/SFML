@@ -43,7 +43,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void Listener::setGlobalVolume(float volume)
 {
-    if (listenerVolume != volume)
+	if (volume != listenerVolume)
     {
         priv::ensureALInit();
 
@@ -63,7 +63,7 @@ float Listener::getGlobalVolume()
 ////////////////////////////////////////////////////////////
 void Listener::setPosition(float x, float y, float z)
 {
-    setPosition(sf::Vector3f(x, y, z));
+    setPosition(Vector3f(x, y, z));
 }
 
 
@@ -90,7 +90,7 @@ Vector3f Listener::getPosition()
 ////////////////////////////////////////////////////////////
 void Listener::setDirection(float x, float y, float z)
 {
-    setDirection(sf::Vector3f(x, y, z));
+    setDirection(Vector3f(x, y, z));
 }
 
 
@@ -118,7 +118,7 @@ Vector3f Listener::getDirection()
 ////////////////////////////////////////////////////////////
 void Listener::setUpVector(float x, float y, float z)
 {
-    setUpVector(sf::Vector3f(x, y, z));
+    setUpVector(Vector3f(x, y, z));
 }
 
 
