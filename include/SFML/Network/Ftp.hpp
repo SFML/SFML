@@ -483,8 +483,6 @@ public :
     ////////////////////////////////////////////////////////////
     Response upload(const std::string& localFile, const std::string& remotePath, TransferMode mode = Binary);
 
-private :
-
     ////////////////////////////////////////////////////////////
     /// \brief Send a command to the FTP server
     ///
@@ -495,6 +493,8 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     Response sendCommand(const std::string& command, const std::string& parameter = "");
+
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive a response from the server
