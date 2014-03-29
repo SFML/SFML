@@ -58,7 +58,7 @@ SFML_SYSTEM_API std::ostream& err();
 /// insertion operations defined by the STL
 /// (operator <<, manipulators, etc.).
 ///
-/// sf::err() can be redirected to write to another output, independantly
+/// sf::err() can be redirected to write to another output, independently
 /// of std::cerr, by using the rdbuf() function provided by the
 /// std::ostream class.
 ///
@@ -74,5 +74,7 @@ SFML_SYSTEM_API std::ostream& err();
 /// // Restore the original output
 /// sf::err().rdbuf(previous);
 /// \endcode
+///
+/// \return Reference to std::ostream representing the SFML error stream
 ///
 ////////////////////////////////////////////////////////////

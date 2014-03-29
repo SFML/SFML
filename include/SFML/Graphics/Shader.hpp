@@ -63,11 +63,20 @@ public :
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Special type/value that can be passed to setParameter,
+    /// \brief Special type that can be passed to setParameter,
     ///        and that represents the texture of the object being drawn
+    ///
+    /// \see setParameter(const std::string&, CurrentTextureType)
     ///
     ////////////////////////////////////////////////////////////
     struct CurrentTextureType {};
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Represents the texture of the object being drawn
+    ///
+    /// \see setParameter(const std::string&, CurrentTextureType)
+    ///
+    ////////////////////////////////////////////////////////////
     static CurrentTextureType CurrentTexture;
 
 public :

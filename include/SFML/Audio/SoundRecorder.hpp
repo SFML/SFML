@@ -126,7 +126,7 @@ public :
     /// while recording). If you do so while recording and
     /// opening the device fails, it stops the recording.
     ///
-    /// \param The name of the audio capture device
+    /// \param name The name of the audio capture device
     ///
     /// \return True, if it was able to set the requested device
     ///
