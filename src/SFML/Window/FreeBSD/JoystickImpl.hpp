@@ -97,7 +97,7 @@ public :
     /// \return Joystick identification
     ///
     ////////////////////////////////////////////////////////////
-    Identification getIdentification() const;
+    Joystick::Identification getIdentification() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state
@@ -119,7 +119,7 @@ private :
 
     void           *m_buffer;       ///< USB HID buffer
     int            m_length;        ///< Buffer length
-    Identification m_identificaion; ///< Joystick identification
+    Joystick::Identification m_identification; ///< Joystick identification
 
     JoystickState  m_state;         ///< Current state of the joystick
 };
