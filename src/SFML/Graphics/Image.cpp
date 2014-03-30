@@ -271,20 +271,19 @@ void Image::flipHorizontally()
 {
     if (!m_pixels.empty())
     {
-        std::vector<Uint8> before = m_pixels;
-        for (unsigned int y = 0; y < m_size.y; ++y)
-        {
-            const Uint8* source = &before[y * m_size.x * 4];
-            Uint8* dest = &m_pixels[(y + 1) * m_size.x * 4 - 4];
-            for (unsigned int x = 0; x < m_size.x; ++x)
-            {
-                dest[0] = source[0];
-                dest[1] = source[1];
-                dest[2] = source[2];
-                dest[3] = source[3];
+        std::size_t rowSize = m_size.x * 4;
 
-                source += 4;
-                dest -= 4;
+        for (std::size_t y = 0; y < m_size.y; ++y)
+        {
+            std::vector<Uint8>::iterator left = m_pixels.begin() + y * rowSize;
+            std::vector<Uint8>::iterator right = m_pixels.begin() + (y + 1) * rowSize - 4;
+
+            for (std::size_t x = 0; x < m_size.x / 2; ++x)
+            {
+                std::swap_ranges(left, left + 4, right);
+
+                left += 4;
+                right -= 4;
             }
         }
     }
@@ -296,16 +295,17 @@ void Image::flipVertically()
 {
     if (!m_pixels.empty())
     {
-        std::vector<Uint8> before = m_pixels;
-        const Uint8* source = &before[m_size.x * (m_size.y - 1) * 4];
-        Uint8* dest = &m_pixels[0];
         std::size_t rowSize = m_size.x * 4;
 
-        for (unsigned int y = 0; y < m_size.y; ++y)
+        std::vector<Uint8>::iterator top = m_pixels.begin();
+        std::vector<Uint8>::iterator bottom = m_pixels.end() - rowSize;
+
+        for (std::size_t y = 0; y < m_size.y / 2; ++y)
         {
-            std::memcpy(dest, source, rowSize);
-            source -= rowSize;
-            dest += rowSize;
+            std::swap_ranges(top, top + rowSize, bottom);
+
+            top += rowSize;
+            bottom -= rowSize;
         }
     }
 }
