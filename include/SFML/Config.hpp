@@ -36,36 +36,43 @@
 ////////////////////////////////////////////////////////////
 // Identify the operating system
 ////////////////////////////////////////////////////////////
-#if defined(_WIN32) || defined(__WIN32__)
+#if defined(_WIN32)
 
     // Windows
     #define SFML_SYSTEM_WINDOWS
+    
     #ifndef NOMINMAX
         #define NOMINMAX
     #endif
 
-#elif defined(linux) || defined(__linux)
-
-    // Linux
-    #define SFML_SYSTEM_LINUX
-
-#elif defined(__APPLE__) || defined(MACOSX) || defined(macintosh) || defined(Macintosh)
+#elif defined(__APPLE__) && defined(__MACH__)
 
     // MacOS
     #define SFML_SYSTEM_MACOS
 
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+#elif defined(__unix__)
 
-    // FreeBSD
-    #define SFML_SYSTEM_FREEBSD
-
+    #if defined(__linux__)
+    
+        // Linux
+        #define SFML_SYSTEM_LINUX
+        
+    #elif defined(__FreeBSD__)
+    
+        // FreeBSD
+        #define SFML_SYSTEM_FREEBSD
+        
+    #else
+    
+         #error This UNIX operating system is not supported by SFML library
+         
+    #endif
 #else
 
     // Unsupported system
     #error This operating system is not supported by SFML library
-
+    
 #endif
-
 
 ////////////////////////////////////////////////////////////
 // Define a portable debug macro
