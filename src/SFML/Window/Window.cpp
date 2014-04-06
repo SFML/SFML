@@ -392,6 +392,7 @@ void Window::initialize()
     setMouseCursorVisible(true);
     setVerticalSyncEnabled(false);
     setKeyRepeatEnabled(true);
+    setFramerateLimit(0);
 
     // Get and cache the initial size of the window
     m_size = m_impl->getSize();
