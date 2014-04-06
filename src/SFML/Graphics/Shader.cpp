@@ -601,17 +601,11 @@ int Shader::getParamLocation(const std::string& name)
     else
     {
         // Not in cache, request the location from OpenGL
-        int location = glCheck(glGetUniformLocationARB(m_shaderProgram, name.c_str()));
-        if (location != -1)
-        {
-            // Location found: add it to the cache
-            m_params.insert(std::make_pair(name, location));
-        }
-        else
-        {
-            // Error: location not found
+        int location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
+        m_params.insert(std::make_pair(name, location));
+        
+        if (location == -1)
             err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
-        }
 
         return location;
     }
