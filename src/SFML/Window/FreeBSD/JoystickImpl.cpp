@@ -320,7 +320,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
 
 ////////////////////////////////////////////////////////////
-Identifcation JoystickImpl::getIdentification() const
+Joystick::Identification JoystickImpl::getIdentification() const
 {
     return m_identification;
 }
