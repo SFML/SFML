@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SENSORIMPLLINUX_HPP
-#define SFML_SENSORIMPLLINUX_HPP
+#ifndef SFML_SENSORIMPLUNIX_HPP
+#define SFML_SENSORIMPLUNIX_HPP
 
 
 namespace sf
@@ -31,7 +31,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Linux implementation of sensors
+/// \brief Unix implementation of sensors
 ///
 ////////////////////////////////////////////////////////////
 class SensorImpl
@@ -51,53 +51,46 @@ public :
     static void cleanup();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Initialize the sensor
+    /// \brief Check if a sensor is available
     ///
-    /// \param type Index assigned to the sensor
+    /// \param sensor Sensor to check
     ///
-    /// \return The sensor capabilities
+    /// \return True if the sensor is available, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    SensorCaps& initialize(unsigned int type);
+    static bool isAvailable(Sensor::Type sensor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Open the sensor
+    ///
+    /// \param sensor Type of the sensor
+    ///
+    /// \return True on success, false on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    bool open(Sensor::Type sensor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the sensor
     ///
     ////////////////////////////////////////////////////////////
-    void terminate();
+    void close();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Update the sensor and get its new state
+    /// \brief Update the sensor and get its new value
     ///
-    /// \return Sensor state
-    ///
-    ////////////////////////////////////////////////////////////
-    SensorState& update();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check if the sensor is enabled
-    ///
-    /// \return True if the sensor is enabled, false otherwise
+    /// \return Sensor value
     ///
     ////////////////////////////////////////////////////////////
-    bool isEnable();
+    Vector3f update();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the sensor
     ///
-    /// \param enable True to enable, false to disable
+    /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    void setEnable(bool enable);
-    
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the refresh rate of the sensor
-    ///
-    /// \param rate Delay between each refresh
-    ///
-    ////////////////////////////////////////////////////////////
-    void setRefreshRate(const Time& rate);
-
+    void setEnabled(bool enabled);
 };
 
 } // namespace priv
@@ -105,4 +98,4 @@ public :
 } // namespace sf
 
 
-#endif // SFML_SENSORIMPLLINUX_HPP
+#endif // SFML_SENSORIMPLUNIX_HPP

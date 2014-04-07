@@ -35,56 +35,52 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void SensorImpl::initialize()
 {
-    // Not applicable
+    // To be implemented
 }
+
 
 ////////////////////////////////////////////////////////////
 void SensorImpl::cleanup()
 {
-    // Not applicable
+    // To be implemented
 }
 
-////////////////////////////////////////////////////////////
-SensorCaps& SensorImpl::initialize(unsigned int type)
-{
-    // Not applicable
-    SensorCaps capabilities;
-    capabilities.available = false;
-    
-    return capabilities;
-}
 
 ////////////////////////////////////////////////////////////
-void SensorImpl::terminate()
+bool SensorImpl::isAvailable(Sensor::Type /*sensor*/)
 {
-    // Not applicable
-}
-
-////////////////////////////////////////////////////////////
-SensorState& SensorImpl::update()
-{
-    // Not applicable
-    static SensorState state;
-    return state;
-}
-
-////////////////////////////////////////////////////////////
-bool SensorImpl::isEnable()
-{
-    // Not applicable
+    // To be implemented
     return false;
 }
 
-////////////////////////////////////////////////////////////
-void SensorImpl::setEnable(bool enable)
-{
-    // Not applicable
-}
 
 ////////////////////////////////////////////////////////////
-void SensorImpl::setRefreshRate(const Time& rate)
+bool SensorImpl::open(Sensor::Type /*sensor*/)
 {
-    // Not applicable
+    // To be implemented
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+void SensorImpl::close()
+{
+    // To be implemented
+}
+
+
+////////////////////////////////////////////////////////////
+Vector3f SensorImpl::update()
+{
+    // To be implemented
+    return Vector3f(0, 0, 0);
+}
+
+
+////////////////////////////////////////////////////////////
+void SensorImpl::setEnabled(bool /*enabled*/)
+{
+    // To be implemented
 }
 
 } // namespace priv

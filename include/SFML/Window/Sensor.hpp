@@ -29,17 +29,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <SFML/System/Time.hpp>
 
 
 namespace sf
 {
-class Window;
-
 ////////////////////////////////////////////////////////////
-/// \brief Give access to the real-time state of the sensor
+/// \brief Give access to the real-time state of the sensors
 ///
 ////////////////////////////////////////////////////////////
 class SFML_WINDOW_API Sensor
@@ -52,44 +49,16 @@ public :
     ////////////////////////////////////////////////////////////
     enum Type
     {
-        Accelerometer,      ///< The acceleration sensor measures the acceleration force
-        Gyroscope,          ///< The gyroscope sensor measures the rate of rotation
-        Magnetometer,       ///< The magnetic sensor measures the ambient magnetic field
-        Temperature,        ///< The temperature sensor measures the ambient room temperature
-        Proximity,          ///< The proximity sensor measures how close an object is
-        Gravity,            ///< The gravity sensor measures the force of gravity
-        Light,              ///< The light sensor measures the amount of ambient light or illumination
-        LinearAcceleration, ///< The linear acceleration sensor that measures acceleration
-        Orientation,        ///< The orientation sensor that measures the degrees of orientation
-        Pressure,           ///< The pressure sensor give air pressure readings
-        Altimeter,          ///< The altimeter measures the altitude by using air pressure measurements
-        Compass,            ///< The compass sensor give compass heading readings
-        
-        Count               ///< Keep last -- the total number of sensor type
+        Accelerometer,    ///< Measures the raw acceleration (m/s²)
+        Gyroscope,        ///< Measures the raw rotation rates (degrees/s)
+        Magnetometer,     ///< Measures the ambient magnetic field (micro-teslas)
+        Gravity,          ///< Measures the direction and intensity of gravity, independent of device acceleration (m/s²)
+        UserAcceleration, ///< Measures the direction and intensity of device acceleration, independent of the gravity (m/s²)
+        Orientation,      ///< Measures the absolute 3D orientation (degrees)
+
+        Count             ///< Keep last -- the total number of sensor types
     };
-    
-    ////////////////////////////////////////////////////////////
-    /// \brief Sensor data
-    ///
-    ////////////////////////////////////////////////////////////
-    union Data
-    {
-        struct
-        {
-            float x; ///< X-axis data
-            float y; ///< Y-axis data
-            float z; ///< Z-axis data
-        }
-        acceleration,      ///< Acceleration in m/s^2 (Sensor::Accelerometer, Sensor::Gravity, Sensor::LinearAcceleration)
-        magnetic,          ///< Magnetic in uT (Sensor::Magnetometer)
-        vector,            ///< Vector representing angle in degrees (Sensor::Orientation, Sensor::Compass)
-        gyroscope;         ///< Gyroscope data in rad/s (Sensor::Gyroscope)
-        float temperature; ///< Temperature in degrees Celsius (Sensor::Temperature)
-        float distance;    ///< Distance in meter (Sensor::Proximity, Sensor::Altimeter)
-        float light;       ///< Illumination in lx (Sensor::Light)
-        float pressure;    ///< Pressure in hPa (Sensor::Pressure)
-    };
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Check if a sensor is available on the underlying platform
     ///
@@ -99,98 +68,83 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static bool isAvailable(Type sensor);
-    
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the resolution of a sensor
-    ///
-    /// The resolution represents the sensitivity of a sensor. The 
-    /// resolution of a sensor is the smallest change it can detect in 
-    /// the quantity that it is measuring
-    /// 
-    /// \param sensor Sensor to check
-    ///
-    /// \return The sensor's resolution in the sensor's unit.
-    ///
-    ////////////////////////////////////////////////////////////
-    static float getResolution(Type sensor);
-    
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the maximum range of a sensor
-    ///
-    /// The resolution represents the sensitivity of a sensor. The 
-    /// value returned is in the sensor's unit.
-    /// 
-    /// \param sensor Sensor to check
-    ///
-    /// \return The sensor's resolution in the sensor's unit.
-    ///
-    ////////////////////////////////////////////////////////////
-    static Vector2f getMaximumRange(Type sensor);
-        
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the minimum delay allowed between two events
-    ///
-    /// When setting the refresh rate of a sensor, you'll need to 
-    /// make sure the value is a superior to the minimum delay 
-    /// allowable
-    ///
-    /// \param sensor Sensor to check
-    ///
-    /// \return The minimum delay allowed between two events
-    ///
-    ////////////////////////////////////////////////////////////
-    Time getMinimumDelay(Type sensor);
-    
-    ////////////////////////////////////////////////////////////
-    /// \brief Check if a sensor is enabled
-    ///
-    /// \param sensor Sensor to check
-    ///
-    /// \return True if the sensor is enabled, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool isEnable(Type sensor);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable a sensor
     ///
-    /// A sensor is disabled by default otherwise it would consume too 
-    /// much battery power. Once a sensor enabled, it will start sending 
-    /// sensor events of that type (if available).
+    /// All sensors are disabled by default, to avoid consuming too 
+    /// much battery power. Once a sensor is enabled, it starts
+    /// sending events of the corresponding type.
     ///
-    /// \param sensor Sensor to enable
-    /// \param enable True to enable, false to disable
+    /// This function does nothing if the sensor is unavailable.
     ///
-    ////////////////////////////////////////////////////////////
-    static void setEnable(Type sensor, bool enable = true);
-   
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the refresh rate of a sensor
-    ///
-    /// This is the delay you want between each measure report
-    ///
-    /// \param sensor Sensor to modify
-    /// \param rate Delay between each event
+    /// \param sensor  Sensor to enable
+    /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    static void setRefreshRate(Type sensor, const Time& rate);
-   
+    static void setEnabled(Type sensor, bool enabled);
+
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current sensor data
+    /// \brief Get the current sensor value
     ///
-    /// If the sensor support real-time retrieval, you'll get 
-    /// the current sensor data otherwise this is likely the
-    /// latest data of this sensor type.
+    /// \param sensor Sensor to read
     ///
-    /// \param sensor Sensor to check
-    ///
-    /// \return The current sensor data
+    /// \return The current sensor value
     ///
     ////////////////////////////////////////////////////////////
-    static Data getData(Type sensor);
+    static Vector3f getValue(Type sensor);
 };
 
 } // namespace sf
 
 
 #endif // SFML_SENSOR_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Sensor
+/// \ingroup window
+///
+/// sf::Sensor provides an interface to the state of the
+/// various sensors that a device provides. It only contains static
+/// functions, so it's not meant to be instanciated.
+///
+/// This class allows users to query the sensors values at any
+/// time and directly, without having to deal with a window and
+/// its events. Compared to the SensorChanged event, sf::Sensor
+/// can retrieve the state of a sensor at any time (you don't need to
+/// store and update its current value on your side).
+///
+/// Depending on the OS and hardware of the device (phone, tablet, ...),
+/// some sensor types may not be available. You should always check
+/// the availability of a sensor before trying to read it, with the
+/// sf::Sensor::isAvailable function.
+///
+/// You may wonder why some sensor types look so similar, for example
+/// Accelerometer and Gravity / UserAcceleration. The first one
+/// is the raw measurement of the acceleration, and takes in account
+/// both the earth gravity and the user movement. The others are
+/// more precise: they provide these components separately, which is
+/// usually more useful. In fact they are not direct sensors, they
+/// are computed internally based on the raw acceleration and other sensors.
+/// This is exactly the same for Gyroscope vs Orientation.
+///
+/// Because sensors consume a non-negligible amount of current, they are
+/// all disabled by default. You must call sf::Sensor::setEnabled for each
+/// sensor in which you are interested.
+///
+/// Usage example:
+/// \code
+/// if (sf::Sensor::isAvailable(sf::Sensor::Gravity))
+/// {
+///     // gravity sensor is available
+/// }
+///
+/// // enable the gravity sensor
+/// sf::Sensor::setEnabled(sf::Sensor::Gravity, true);
+///
+/// // get the current value of gravity
+/// sf::Vector3f gravity = sf::Sensor::getValue(sf::Sensor::Gravity);
+/// \endcode
+///
+////////////////////////////////////////////////////////////

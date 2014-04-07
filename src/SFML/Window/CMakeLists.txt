@@ -57,6 +57,8 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/InputImpl.hpp
         ${SRCROOT}/Win32/JoystickImpl.cpp
         ${SRCROOT}/Win32/JoystickImpl.hpp
+        ${SRCROOT}/Win32/SensorImpl.hpp
+        ${SRCROOT}/Win32/SensorImpl.cpp
         ${SRCROOT}/Win32/VideoModeImpl.cpp
         ${SRCROOT}/Win32/WindowImplWin32.cpp
         ${SRCROOT}/Win32/WindowImplWin32.hpp
@@ -174,7 +176,8 @@ elseif(SFML_OS_ANDROID)
         ${SRCROOT}/Android/JoystickImpl.hpp
         ${SRCROOT}/Android/JoystickImpl.cpp
         ${SRCROOT}/Android/SensorImpl.hpp
-        ${SRCROOT}/Android/SensorImpl.cpp)
+        ${SRCROOT}/Android/SensorImpl.cpp
+    )
     source_group("android" FILES ${PLATFORM_SRC})
 endif()
 

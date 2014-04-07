@@ -35,49 +35,19 @@ namespace sf
 ////////////////////////////////////////////////////////////
 bool Sensor::isAvailable(Type sensor)
 {
-    return priv::SensorManager::getInstance().getCapabilities(sensor).available;
+    return priv::SensorManager::getInstance().isAvailable(sensor);
 }
 
 ////////////////////////////////////////////////////////////
-float Sensor::getResolution(Type sensor)
+void Sensor::setEnabled(Type sensor, bool enabled)
 {
-    return priv::SensorManager::getInstance().getCapabilities(sensor).resolution;
+    return priv::SensorManager::getInstance().setEnabled(sensor, enabled);
 }
 
 ////////////////////////////////////////////////////////////
-Vector2f Sensor::getMaximumRange(Type sensor)
+Vector3f Sensor::getValue(Type sensor)
 {
-    return priv::SensorManager::getInstance().getCapabilities(sensor).maximumRange;
-}
-
-////////////////////////////////////////////////////////////
-Time Sensor::getMinimumDelay(Type sensor)
-{
-    return priv::SensorManager::getInstance().getCapabilities(sensor).minimumDelay;
-}
-
-////////////////////////////////////////////////////////////
-bool Sensor::isEnable(Type sensor)
-{
-    return priv::SensorManager::getInstance().isEnable(sensor);
-}
-
-////////////////////////////////////////////////////////////
-void Sensor::setEnable(Type sensor, bool enable)
-{
-    return priv::SensorManager::getInstance().setEnable(sensor, enable);
-}
-
-////////////////////////////////////////////////////////////
-void Sensor::setRefreshRate(Type sensor, const Time& rate)
-{
-    priv::SensorManager::getInstance().setRefreshRate(sensor, rate);
-}
-
-////////////////////////////////////////////////////////////
-Sensor::Data Sensor::getData(Type sensor)
-{
-    return priv::SensorManager::getInstance().getState(sensor).pendingData->back();
+    return priv::SensorManager::getInstance().getValue(sensor);
 }
 
 } // namespace sf

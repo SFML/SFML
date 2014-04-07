@@ -42,16 +42,38 @@ SensorManager& SensorManager::getInstance()
 
 
 ////////////////////////////////////////////////////////////
-const SensorCaps& SensorManager::getCapabilities(unsigned int sensor) const
+bool SensorManager::isAvailable(Sensor::Type sensor)
 {
-    return m_sensors[sensor].capabilities;
+    return m_sensors[sensor].available;
 }
 
 
 ////////////////////////////////////////////////////////////
-const SensorState& SensorManager::getState(unsigned int sensor) const
+void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
 {
-    return m_sensors[sensor].state;
+    if (m_sensors[sensor].available)
+    {
+        m_sensors[sensor].enabled = enabled;
+        m_sensors[sensor].sensor.setEnabled(enabled);
+    }
+    else
+    {
+        err() << "Warning: trying to enable a sensor that is not available (call Sensor::isAvailable to check it)" << std::endl;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+bool SensorManager::isEnabled(Sensor::Type sensor) const
+{
+    return m_sensors[sensor].enabled;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector3f SensorManager::getValue(Sensor::Type sensor) const
+{
+    return m_sensors[sensor].value;
 }
 
 
@@ -60,68 +82,31 @@ void SensorManager::update()
 {
     for (int i = 0; i < Sensor::Count; ++i)
     {
-        Item& item = m_sensors[i];
-
-        // Skip unavailable sensors
-        if (!item.capabilities.available)
-            continue;
-        
-        // Get the current state of the sensor
-        item.state = item.sensor.update();
+        // Only process available sensors
+        if (m_sensors[i].available)
+            m_sensors[i].value = m_sensors[i].sensor.update();
     }
 }
 
-////////////////////////////////////////////////////////////
-bool SensorManager::isEnable(unsigned int sensor)
-{
-    if (!m_sensors[sensor].capabilities.available)
-    {
-        err() << "This sensor isn't available on your system (call Sensor::isAvailable to check it)" << std::endl;
-        return false;
-    }
-    
-    return m_sensors[sensor].sensor.isEnable();
-}
 
-////////////////////////////////////////////////////////////
-void SensorManager::setEnable(unsigned int sensor, bool enable)
-{
-    if (!m_sensors[sensor].capabilities.available)
-    {
-        err() << "This sensor isn't available on your system (call Sensor::isAvailable to check it)" << std::endl;
-        return;
-    }
-    
-    m_sensors[sensor].sensor.setEnable(enable);
-}
-
-////////////////////////////////////////////////////////////
-void SensorManager::setRefreshRate(unsigned int sensor, const Time& rate)
-{
-    if (!m_sensors[sensor].capabilities.available)
-    {
-        err() << "This sensor isn't available on your system (call Sensor::isAvailable to check it)" << std::endl;
-        return;
-    }
-    
-    m_sensors[sensor].sensor.setRefreshRate(rate);
-}
-    
 ////////////////////////////////////////////////////////////
 SensorManager::SensorManager()
 {
     // Global sensor initialization
     SensorImpl::initialize();
-    
+
     // Per sensor initialization
     for (int i = 0; i < Sensor::Count; ++i)
     {
-        // Initialize the sensor and get its capabilities
-        m_sensors[i].capabilities = m_sensors[i].sensor.initialize(i);
+        // Check which sensors are available
+        m_sensors[i].available = SensorImpl::isAvailable(static_cast<Sensor::Type>(i));
 
-        // Available sensors are disabled by default
-        if (m_sensors[i].capabilities.available)
-            m_sensors[i].sensor.setEnable(false);
+        // Open the available sensors
+        if (m_sensors[i].available)
+        {
+            m_sensors[i].sensor.open(static_cast<Sensor::Type>(i));
+            m_sensors[i].sensor.setEnabled(false);
+        }
     }
 }
 
@@ -131,14 +116,8 @@ SensorManager::~SensorManager()
     // Per sensor cleanup
     for (int i = 0; i < Sensor::Count; ++i)
     {
-        if (m_sensors[i].capabilities.available)
-        {
-            // Disable the sensor
-            m_sensors[i].sensor.setEnable(false);
-            
-            // Terminate the sensor
-            m_sensors[i].sensor.terminate();
-        }
+        if (m_sensors[i].available)
+            m_sensors[i].sensor.close();
     }
 
     // Global sensor cleanup
