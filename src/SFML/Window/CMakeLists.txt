@@ -40,7 +40,7 @@ set(SRC
     ${SRCROOT}/WindowImpl.hpp
     ${INCROOT}/WindowStyle.hpp
 )
-if(SFML_OPENGL_ES)
+if(SFML_OPENGL_ES AND NOT SFML_OS_IOS)
     list(APPEND SRC ${SRCROOT}/EGLCheck.cpp)
     list(APPEND SRC ${SRCROOT}/EGLCheck.hpp)
     list(APPEND SRC ${SRCROOT}/EglContext.cpp)

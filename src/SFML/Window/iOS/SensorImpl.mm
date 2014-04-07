@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/SensorImpl.hpp>
+#include <SFML/Window/iOS/SFAppDelegate.hpp>
 
 
 namespace
@@ -186,7 +187,7 @@ void SensorImpl::setEnabled(bool enabled)
     if (enabled == m_enabled)
         return;
 
-    switch (index)
+    switch (m_sensor)
     {
         case Sensor::Accelerometer:
             if (enabled)
