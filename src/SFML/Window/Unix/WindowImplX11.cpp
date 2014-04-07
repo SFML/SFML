@@ -890,6 +890,13 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             }
             break;
         }
+
+        // Parent window changed
+        case ReparentNotify :
+        {
+            XSync(m_display, True); // Discard remaining events
+            break;
+        }
     }
 
     return true;
