@@ -154,13 +154,15 @@ public :
     };
     
     ////////////////////////////////////////////////////////////
-    /// \brief Sensor events parameters (SensorEnabled, SensorData, SensorDisabled)
+    /// \brief Sensor event parameters (SensorChanged)
     ///
     ////////////////////////////////////////////////////////////
     struct SensorEvent
     {
-		Sensor::Type type;
-		Sensor::Data data;
+		Sensor::Type type; ///< Type of the sensor
+		float x;           ///< Current value of the sensor on X axis
+		float y;           ///< Current value of the sensor on Y axis
+		float z;           ///< Current value of the sensor on Z axis
     };
 
     ////////////////////////////////////////////////////////////
@@ -190,9 +192,7 @@ public :
         TouchBegan,             ///< A touch event began (data in event.touch)
         TouchMoved,             ///< A touch moved (data in event.touch)
         TouchEnded,             ///< A touch event ended (data in event.touch)
-        SensorEnabled,          ///< A sensor was enabled (data in event.sensor)
-        SensorData,             ///< A new sensor data arrived (data in event.sensor)
-        SensorDisabled,         ///< A sensor was disabled (data in event.sensor)
+        SensorChanged,          ///< A sensor value changed (data in event.sensor)
 
         Count                   ///< Keep last -- the total number of event types
     };
@@ -214,7 +214,7 @@ public :
         JoystickButtonEvent  joystickButton;  ///< Joystick button event parameters (Event::JoystickButtonPressed, Event::JoystickButtonReleased)
         JoystickConnectEvent joystickConnect; ///< Joystick (dis)connect event parameters (Event::JoystickConnected, Event::JoystickDisconnected)
         TouchEvent           touch;           ///< Touch events parameters (Event::TouchBegan, Event::TouchMoved, Event::TouchEnded)
-        SensorEvent          sensor;          ///< Sensor events parameters (Event::SensorEnabled, Event::SensorData, Event::SensorDisabled)
+        SensorEvent          sensor;          ///< Sensor event parameters (Event::SensorChanged)
     };
 };
 

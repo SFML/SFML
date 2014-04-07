@@ -28,9 +28,7 @@
 #include <SFML/Network/Ftp.hpp>
 #include <SFML/Network/IpAddress.hpp>
 #include <algorithm>
-#ifdef SFML_SYSTEM_ANDROID
-    #include <cctype>
-#endif
+#include <cctype>
 #include <fstream>
 #include <iterator>
 #include <sstream>

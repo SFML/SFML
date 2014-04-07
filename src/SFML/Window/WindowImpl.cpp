@@ -81,17 +81,16 @@ WindowImpl* WindowImpl::create(WindowHandle handle)
 
 ////////////////////////////////////////////////////////////
 WindowImpl::WindowImpl() :
-m_joyThreshold(0.1f)
+m_joystickThreshold(0.1f)
 {
     // Get the initial joystick states
     JoystickManager::getInstance().update();
     for (unsigned int i = 0; i < Joystick::Count; ++i)
-        m_joyStates[i] = JoystickManager::getInstance().getState(i);
+        m_joystickStates[i] = JoystickManager::getInstance().getState(i);
 
     // Get the initial sensor states
-    SensorManager::getInstance().update();
     for (unsigned int i = 0; i < Sensor::Count; ++i)
-        m_senStates[i] = SensorManager::getInstance().getState(i);
+        m_sensorValue[i] = Vector3f(0, 0, 0);
 }
 
 
@@ -105,7 +104,7 @@ WindowImpl::~WindowImpl()
 ////////////////////////////////////////////////////////////
 void WindowImpl::setJoystickThreshold(float threshold)
 {
-    m_joyThreshold = threshold;
+    m_joystickThreshold = threshold;
 }
 
 
@@ -165,12 +164,12 @@ void WindowImpl::processJoystickEvents()
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
         // Copy the previous state of the joystick and get the new one
-        JoystickState previousState = m_joyStates[i];
-        m_joyStates[i] = JoystickManager::getInstance().getState(i);
+        JoystickState previousState = m_joystickStates[i];
+        m_joystickStates[i] = JoystickManager::getInstance().getState(i);
         JoystickCaps caps = JoystickManager::getInstance().getCapabilities(i);
 
         // Connection state
-        bool connected = m_joyStates[i].connected;
+        bool connected = m_joystickStates[i].connected;
         if (previousState.connected ^ connected)
         {
             Event event;
@@ -188,8 +187,8 @@ void WindowImpl::processJoystickEvents()
                 {
                     Joystick::Axis axis = static_cast<Joystick::Axis>(j);
                     float prevPos = previousState.axes[axis];
-                    float currPos = m_joyStates[i].axes[axis];
-                    if (fabs(currPos - prevPos) >= m_joyThreshold)
+                    float currPos = m_joystickStates[i].axes[axis];
+                    if (fabs(currPos - prevPos) >= m_joystickThreshold)
                     {
                         Event event;
                         event.type = Event::JoystickMoved;
@@ -205,7 +204,7 @@ void WindowImpl::processJoystickEvents()
             for (unsigned int j = 0; j < caps.buttonCount; ++j)
             {
                 bool prevPressed = previousState.buttons[j];
-                bool currPressed = m_joyStates[i].buttons[j];
+                bool currPressed = m_joystickStates[i].buttons[j];
 
                 if (prevPressed ^ currPressed)
                 {
@@ -224,44 +223,30 @@ void WindowImpl::processJoystickEvents()
 ////////////////////////////////////////////////////////////
 void WindowImpl::processSensorEvents()
 {
-    // First update sensor states
+    // First update the sensor states
     SensorManager::getInstance().update();
 
     for (unsigned int i = 0; i < Sensor::Count; ++i)
     {
-        // Copy the previous state of the sensor and get the new one
-        SensorState previousState = m_senStates[i];
-        m_senStates[i] = SensorManager::getInstance().getState(i);
+        Sensor::Type sensor = static_cast<Sensor::Type>(i);
 
-        // Check whether it's still enabled
-        bool enabled = m_senStates[i].enabled;
-        if (previousState.enabled ^ enabled)
+        // Only process enabled sensors
+        if (SensorManager::getInstance().isEnabled(sensor))
         {
-            Event event;
-            event.type = enabled ? Event::SensorEnabled : Event::SensorDisabled;
-            event.sensor.type = static_cast<Sensor::Type>(i);
-            pushEvent(event);
-            
-            // This sensor has been disabled, we don't want these pending data
-            if (!enabled)
-            {
-                while (!m_senStates[i].pendingData->empty())
-                    m_senStates[i].pendingData->pop();
-            }
-        }
+            // Copy the previous value of the sensor and get the new one
+            Vector3f previousValue = m_sensorValue[i];
+            m_sensorValue[i] = SensorManager::getInstance().getValue(sensor);
 
-        if (enabled)
-        {
-            // Send pending sensor data events
-            while (!m_senStates[i].pendingData->empty())
+            // If the value has changed, trigger an event
+            if (m_sensorValue[i] != previousValue) // @todo use a threshold?
             {
                 Event event;
-                event.type = Event::SensorData;
-                event.sensor.type = static_cast<Sensor::Type>(i);
-                event.sensor.data = m_senStates[i].pendingData->front();
+                event.type = Event::SensorChanged;
+                event.sensor.type = sensor;
+                event.sensor.x = m_sensorValue[i].x;
+                event.sensor.y = m_sensorValue[i].y;
+                event.sensor.z = m_sensorValue[i].z;
                 pushEvent(event);
-                
-                m_senStates[i].pendingData->pop();
             }
         }
     }

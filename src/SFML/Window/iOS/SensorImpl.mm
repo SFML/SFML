@@ -28,6 +28,17 @@
 #include <SFML/Window/SensorImpl.hpp>
 
 
+namespace
+{
+    unsigned int deviceMotionEnabledCount = 0;
+
+    float toDegrees(float radians)
+    {
+        return radians * 180.f / 3.141592654f;
+    }
+}
+
+
 namespace sf
 {
 namespace priv
@@ -35,56 +46,194 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void SensorImpl::initialize()
 {
-    // To implement
+    // Nothing to do
 }
+
 
 ////////////////////////////////////////////////////////////
 void SensorImpl::cleanup()
 {
-    // To implement
+    // Nothing to do
 }
 
-////////////////////////////////////////////////////////////
-SensorCaps& SensorImpl::initialize(unsigned int type)
-{
-    // To implement
-    SensorCaps capabilities;
-    capabilities.available = false;
-    
-    return capabilities;
-}
 
 ////////////////////////////////////////////////////////////
-void SensorImpl::terminate()
+bool SensorImpl::isAvailable(Sensor::Type sensor)
 {
-    // To implement
+    switch (sensor)
+    {
+        case Sensor::Accelerometer:
+            return [SFAppDelegate getInstance].motionManager.accelerometerAvailable;
+
+        case Sensor::Gyroscope:
+            return [SFAppDelegate getInstance].motionManager.gyroAvailable;
+
+        case Sensor::Magnetometer:
+            return [SFAppDelegate getInstance].motionManager.magnetometerAvailable;
+
+        case Sensor::Gravity:
+        case Sensor::UserAcceleration:
+        case Sensor::Orientation:
+            return [SFAppDelegate getInstance].motionManager.deviceMotionAvailable;
+
+        default:
+            return false;
+    }
 }
 
-////////////////////////////////////////////////////////////
-SensorState& SensorImpl::update()
-{
-    // To implement
-    static SensorState state;
-    return state;
-}
 
 ////////////////////////////////////////////////////////////
-bool SensorImpl::isEnable()
+bool SensorImpl::open(Sensor::Type sensor)
 {
-    // To implement
-    return false;
+    // Store the sensor type
+    m_sensor = sensor;
+
+    // The sensor is disabled by default
+    m_enabled = false;
+
+    // Set the refresh rate (use the maximum allowed)
+    static const NSTimeInterval updateInterval = 1. / 60.;
+    switch (sensor)
+    {
+        case Sensor::Accelerometer:
+            [SFAppDelegate getInstance].motionManager.accelerometerUpdateInterval = updateInterval;
+            break;
+
+        case Sensor::Gyroscope:
+            [SFAppDelegate getInstance].motionManager.gyroUpdateInterval = updateInterval;
+            break;
+
+        case Sensor::Magnetometer:
+            [SFAppDelegate getInstance].motionManager.magnetometerUpdateInterval = updateInterval;
+            break;
+
+        case Sensor::Gravity:
+        case Sensor::UserAcceleration:
+        case Sensor::Orientation:
+            [SFAppDelegate getInstance].motionManager.deviceMotionUpdateInterval = updateInterval;
+            break;
+
+        default:
+            break;
+    }
+
+    return true;
 }
 
-////////////////////////////////////////////////////////////
-void SensorImpl::setEnable(bool enable)
-{
-    // To implement
-}
 
 ////////////////////////////////////////////////////////////
-void SensorImpl::setRefreshRate(const Time& rate)
+void SensorImpl::close()
 {
-    // To implement
+    // Nothing to do
+}
+
+
+////////////////////////////////////////////////////////////
+Vector3f SensorImpl::update()
+{
+    Vector3f value;
+    CMMotionManager* manager = [SFAppDelegate getInstance].motionManager;
+
+    switch (m_sensor)
+    {
+        case Sensor::Accelerometer:
+            // Acceleration is given in G, convert to m/s²
+            value.x = manager.accelerometerData.acceleration.x * 9.81f;
+            value.y = manager.accelerometerData.acceleration.y * 9.81f;
+            value.z = manager.accelerometerData.acceleration.z * 9.81f;
+            break;
+
+        case Sensor::Gyroscope:
+            // Rotation rates are given in rad/s, convert to deg/s
+            value.x = toDegrees(manager.gyroData.rotationRate.x);
+            value.y = toDegrees(manager.gyroData.rotationRate.y);
+            value.z = toDegrees(manager.gyroData.rotationRate.z);
+            break;
+
+        case Sensor::Magnetometer:
+            // Magnetic field is given in microteslas
+            value.x = manager.magnetometerData.magneticField.x;
+            value.y = manager.magnetometerData.magneticField.y;
+            value.z = manager.magnetometerData.magneticField.z;
+            break;
+
+        case Sensor::UserAcceleration:
+            // User acceleration is given in G, convert to m/s²
+            value.x = manager.deviceMotion.userAcceleration.x * 9.81f;
+            value.y = manager.deviceMotion.userAcceleration.y * 9.81f;
+            value.z = manager.deviceMotion.userAcceleration.z * 9.81f;
+            break;
+
+        case Sensor::Orientation:
+            // Absolute rotation (Euler) angles are given in radians, convert to degrees
+            value.x = toDegrees(manager.deviceMotion.attitude.yaw);
+            value.y = toDegrees(manager.deviceMotion.attitude.pitch);
+            value.z = toDegrees(manager.deviceMotion.attitude.roll);
+            break;
+
+        default:
+            break;
+    }
+
+    return value;
+}
+
+
+////////////////////////////////////////////////////////////
+void SensorImpl::setEnabled(bool enabled)
+{
+    // Don't do anything if the state is the same
+    if (enabled == m_enabled)
+        return;
+
+    switch (index)
+    {
+        case Sensor::Accelerometer:
+            if (enabled)
+                [[SFAppDelegate getInstance].motionManager startAccelerometerUpdates];
+            else
+                [[SFAppDelegate getInstance].motionManager stopAccelerometerUpdates];
+            break;
+
+        case Sensor::Gyroscope:
+            if (enabled)
+                [[SFAppDelegate getInstance].motionManager startGyroUpdates];
+            else
+                [[SFAppDelegate getInstance].motionManager stopGyroUpdates];
+            break;
+
+        case Sensor::Magnetometer:
+            if (enabled)
+                [[SFAppDelegate getInstance].motionManager startMagnetometerUpdates];
+            else
+                [[SFAppDelegate getInstance].motionManager stopMagnetometerUpdates];
+            break;
+
+        case Sensor::Gravity:
+        case Sensor::UserAcceleration:
+        case Sensor::Orientation:
+            // these 3 sensors all share the same implementation, so we must disable
+            // it only if the three sensors are disabled
+            if (enabled)
+            {
+                if (deviceMotionEnabledCount == 0)
+                    [[SFAppDelegate getInstance].motionManager startDeviceMotionUpdates];
+                deviceMotionEnabledCount++;
+            }
+            else
+            {
+                deviceMotionEnabledCount--;
+                if (deviceMotionEnabledCount == 0)
+                    [[SFAppDelegate getInstance].motionManager stopDeviceMotionUpdates];
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    // Update the enable state
+    m_enabled = enabled;
 }
 
 } // namespace priv

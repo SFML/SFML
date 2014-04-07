@@ -54,58 +54,49 @@ public :
     static SensorManager& getInstance();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the capabilities of a sensor
+    /// \brief Check if a sensor is available on the underlying platform
     ///
-    /// \param sensor Index of the sensor
+    /// \param sensor Sensor to check
     ///
-    /// \return Capabilities of the sensor
+    /// \return True if the sensor is available, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    const SensorCaps& getCapabilities(unsigned int sensor) const;
+    bool isAvailable(Sensor::Type sensor);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current state of a sensor
+    /// \brief Enable or disable a sensor
     ///
-    /// \param sensor Index of the sensor
-    ///
-    /// \return Current state of the sensor
+    /// \param sensor  Sensor to modify
+    /// \param enabled Whether it should be enabled or not
     ///
     ////////////////////////////////////////////////////////////
-    const SensorState& getState(unsigned int sensor) const;
+    void setEnabled(Sensor::Type sensor, bool enabled);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if a sensor is enabled
+    ///
+    /// \param sensor Sensor to check
+    ///
+    /// \return True if the sensor is enabled, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isEnabled(Sensor::Type sensor) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current value of a sensor
+    ///
+    /// \param sensor Sensor to read
+    ///
+    /// \return Current value of the sensor
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector3f getValue(Sensor::Type sensor) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the state of all the sensors
     ///
     ////////////////////////////////////////////////////////////
     void update();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the current status of a sensor
-    ///
-    /// \param sensor Index of the sensor
-    ///
-    /// \return True if the sensor is enabled, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    bool isEnable(unsigned int sensor);
-    
-    ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable a sensor
-    ///
-    /// \param sensor Index of the sensor
-    /// \param enable Whether it should be enabled or not
-    ///
-    ////////////////////////////////////////////////////////////
-    void setEnable(unsigned int sensor, bool enable);
-    
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the refresh rate of a sensor
-    ///
-    /// \param sensor Index of the sensor
-    /// \param rate Delay between each event
-    ///
-    ////////////////////////////////////////////////////////////
-    void setRefreshRate(unsigned int sensor, const Time& rate);
     
 private:
 
@@ -127,9 +118,10 @@ private:
     ////////////////////////////////////////////////////////////
     struct Item
     {
-        SensorImpl  sensor;       ///< Sensor implementation
-        SensorState state;        ///< The current sensor state
-        SensorCaps  capabilities; ///< The sensor capabilities
+        bool available;    ///< Is the sensor available on this device?
+        bool enabled;      ///< Current enable state of the sensor
+        SensorImpl sensor; ///< Sensor implementation
+        Vector3f value;    ///< The current sensor value
     };
 
     ////////////////////////////////////////////////////////////
