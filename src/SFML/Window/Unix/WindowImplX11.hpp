@@ -204,11 +204,12 @@ private :
     /// \brief Convert a X11 keysym to SFML key code
     ///
     /// \param symbol Key symbol to convert
+    /// \param scancode Scancode associated to the key
     ///
     /// \return Corresponding SFML key code
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key keysymToSF(KeySym symbol);
+    static Keyboard::Key keysymToSF(KeySym symbol, Keyboard::ScanCode scancode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a X11 keycode to SFML scancode

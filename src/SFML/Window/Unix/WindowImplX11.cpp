@@ -794,8 +794,8 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
             event.type         = Event::KeyPressed;
-            event.key.code     = keysymToSF(symbol);
             event.key.scancode = keycodeToSF(windowEvent.xkey.keycode);
+            event.key.code     = keysymToSF(symbol, event.key.scancode);
             event.key.alt      = windowEvent.xkey.state & Mod1Mask;
             event.key.control  = windowEvent.xkey.state & ControlMask;
             event.key.shift    = windowEvent.xkey.state & ShiftMask;
@@ -853,8 +853,8 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             // Fill the event parameters
             Event event;
             event.type         = Event::KeyReleased;
-            event.key.code     = keysymToSF(symbol);
             event.key.scancode = keycodeToSF(windowEvent.xkey.keycode);
+            event.key.code     = keysymToSF(symbol, event.key.scancode);
             event.key.alt      = windowEvent.xkey.state & Mod1Mask;
             event.key.control  = windowEvent.xkey.state & ControlMask;
             event.key.shift    = windowEvent.xkey.state & ShiftMask;
@@ -967,8 +967,24 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Key WindowImplX11::keysymToSF(KeySym symbol)
+Keyboard::Key WindowImplX11::keysymToSF(KeySym symbol, Keyboard::ScanCode scancode)
 {
+    // Is it one of the numeric keys (not on the numpad) ?
+    switch(scancode)
+    {
+        case Keyboard::Scan0:  return Keyboard::Num0;
+        case Keyboard::Scan1:  return Keyboard::Num1;
+        case Keyboard::Scan2:  return Keyboard::Num2;
+        case Keyboard::Scan3:  return Keyboard::Num3;
+        case Keyboard::Scan4:  return Keyboard::Num4;
+        case Keyboard::Scan5:  return Keyboard::Num5;
+        case Keyboard::Scan6:  return Keyboard::Num6;
+        case Keyboard::Scan7:  return Keyboard::Num7;
+        case Keyboard::Scan8:  return Keyboard::Num8;
+        case Keyboard::Scan9:  return Keyboard::Num9;
+        default:               break;
+    }
+
     // First convert to uppercase (to avoid dealing with two different keysyms for the same key)
     KeySym lower, key;
     XConvertCase(symbol, &lower, &key);
