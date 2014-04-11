@@ -34,6 +34,7 @@
 #define _WIN32_WINDOWS 0x0501
 #define _WIN32_WINNT   0x0501
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
+#include <SFML/Window/Win32Scancodes.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <GL/gl.h>
 #include <SFML/System/Err.hpp>
@@ -540,12 +541,13 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if (m_keyRepeatEnabled || ((HIWORD(lParam) & KF_REPEAT) == 0))
             {
                 Event event;
-                event.type        = Event::KeyPressed;
-                event.key.alt     = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
-                event.key.control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
-                event.key.shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
-                event.key.system  = HIWORD(GetAsyncKeyState(VK_LWIN)) || HIWORD(GetAsyncKeyState(VK_RWIN));
-                event.key.code    = virtualKeyCodeToSF(wParam, lParam);
+                event.type         = Event::KeyPressed;
+                event.key.alt      = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
+                event.key.control  = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
+                event.key.shift    = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
+                event.key.system   = HIWORD(GetAsyncKeyState(VK_LWIN)) || HIWORD(GetAsyncKeyState(VK_RWIN));
+                event.key.code     = virtualKeyCodeToSF(wParam, lParam);
+                event.key.scancode = scanCodeToSF(wParam, lParam);
                 pushEvent(event);
             }
             break;
@@ -556,12 +558,13 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_SYSKEYUP :
         {
             Event event;
-            event.type        = Event::KeyReleased;
-            event.key.alt     = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
-            event.key.control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
-            event.key.shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
-            event.key.system  = HIWORD(GetAsyncKeyState(VK_LWIN)) || HIWORD(GetAsyncKeyState(VK_RWIN));
-            event.key.code    = virtualKeyCodeToSF(wParam, lParam);
+            event.type         = Event::KeyReleased;
+            event.key.alt      = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
+            event.key.control  = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
+            event.key.shift    = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
+            event.key.system   = HIWORD(GetAsyncKeyState(VK_LWIN)) || HIWORD(GetAsyncKeyState(VK_RWIN));
+            event.key.code     = virtualKeyCodeToSF(wParam, lParam);
+            event.key.scancode = scanCodeToSF(wParam, lParam);
             pushEvent(event);
             break;
         }
@@ -884,6 +887,147 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
     }
 
     return Keyboard::Unknown;
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::ScanCode WindowImplWin32::scanCodeToSF(WPARAM key, LPARAM flags)
+{
+    unsigned int scancode = (flags >> 16) & 0xFF;
+    // Unfortunately, a scan code does not always represent a single key. For instance, NumLock is 69, and Pause is 69 as well.
+    // I think many other keys generate 0, but I don't have these keys on my keyboard so I'll trust the SDL implementation
+    if(scancode == 0 || scancode == 69)
+    {
+        // Use the virtual key code to know which key it is
+        switch(key)
+        {
+            case VK_CLEAR:
+                return Keyboard::ScanClear;
+            case VK_MODECHANGE:
+                return Keyboard::ScanMode;
+            case VK_SELECT:
+                return Keyboard::ScanSelect;
+            case VK_EXECUTE:
+                return Keyboard::ScanExecute;
+            case VK_HELP:
+                return Keyboard::ScanHelp;
+            case VK_PAUSE:
+                return Keyboard::ScanPause;
+            case VK_NUMLOCK:
+                return Keyboard::ScanNumLockClear;
+            case VK_F13:
+                return Keyboard::ScanF13;
+            case VK_F14:
+                return Keyboard::ScanF14;
+            case VK_F15:
+                return Keyboard::ScanF15;
+            case VK_F16:
+                return Keyboard::ScanF16;
+            case VK_F17:
+                return Keyboard::ScanF17;
+            case VK_F18:
+                return Keyboard::ScanF18;
+            case VK_F19:
+                return Keyboard::ScanF19;
+            case VK_F20:
+                return Keyboard::ScanF20;
+            case VK_F21:
+                return Keyboard::ScanF21;
+            case VK_F22:
+                return Keyboard::ScanF22;
+            case VK_F23:
+                return Keyboard::ScanF23;
+            case VK_F24:
+                return Keyboard::ScanF24;
+            case VK_OEM_NEC_EQUAL:
+                return Keyboard::ScanNumpadEquals;
+            case VK_BROWSER_BACK:
+                return Keyboard::ScanAcBack;
+            case VK_BROWSER_FORWARD:
+                return Keyboard::ScanAcForward;
+            case VK_BROWSER_REFRESH:
+                return Keyboard::ScanAcRefresh;
+            case VK_BROWSER_STOP:
+                return Keyboard::ScanAcStop;
+            case VK_BROWSER_SEARCH:
+                return Keyboard::ScanAcSearch;
+            case VK_BROWSER_FAVORITES:
+                return Keyboard::ScanAcBookmarks;
+            case VK_BROWSER_HOME:
+                return Keyboard::ScanAcHome;
+            case VK_VOLUME_MUTE:
+                return Keyboard::ScanAudioMute;
+            case VK_VOLUME_DOWN:
+                return Keyboard::ScanVolumeDown;
+            case VK_VOLUME_UP:
+                return Keyboard::ScanVolumeUp;
+            case VK_MEDIA_NEXT_TRACK:
+                return Keyboard::ScanAudioNext;
+            case VK_MEDIA_PREV_TRACK:
+                return Keyboard::ScanAudioPrev;
+            case VK_MEDIA_STOP:
+                return Keyboard::ScanAudioStop;
+            case VK_MEDIA_PLAY_PAUSE:
+                return Keyboard::ScanAudioPlay;
+            case VK_LAUNCH_MAIL:
+                return Keyboard::ScanMail;
+            case VK_LAUNCH_MEDIA_SELECT:
+                return Keyboard::ScanMediaSelect;
+            case VK_OEM_102:
+                return Keyboard::ScanNonUSBackSlash;
+            case VK_ATTN:
+                return Keyboard::ScanSysreq;
+            case VK_CRSEL:
+                return Keyboard::ScanCrSel;
+            case VK_EXSEL:
+                return Keyboard::ScanExSel;
+            case VK_OEM_CLEAR:
+                return Keyboard::ScanClear;
+            case VK_LAUNCH_APP1:
+                return Keyboard::ScanApp1;
+            case VK_LAUNCH_APP2:
+                return Keyboard::ScanApp2;
+            default:
+                return Keyboard::ScanUnknown;
+        }
+    }
+    if(scancode >= win32scancodescount)
+        return Keyboard::ScanUnknown;
+    // Get the sf scancode from the table
+    Keyboard::ScanCode code = win32scancodes[scancode];
+    // Is it an extended key ? (bit 24 is set) (see http://msdn.microsoft.com/en-us/library/windows/desktop/ms646280%28v=vs.85%29.aspx)
+    // If it isn't, replace it with a normal key
+    if((flags & (1 << 24)) == 0)
+    {
+        switch(code)
+        {
+            case Keyboard::ScanHome:
+                return Keyboard::ScanNumpad7;
+            case Keyboard::ScanUp:
+                return Keyboard::ScanNumpad8;
+            case Keyboard::ScanPageUp:
+                return Keyboard::ScanNumpad9;
+            case Keyboard::ScanLeft:
+                return Keyboard::ScanNumpad4;
+            case Keyboard::ScanRight:
+                return Keyboard::ScanNumpad6;
+            case Keyboard::ScanEnd:
+                return Keyboard::ScanNumpad1;
+            case Keyboard::ScanDown:
+                return Keyboard::ScanNumpad2;
+            case Keyboard::ScanPageDown:
+                return Keyboard::ScanNumpad3;
+            case Keyboard::ScanInsert:
+                return Keyboard::ScanNumpad0;
+            case Keyboard::ScanDelete:
+                return Keyboard::ScanNumpadPeriod;
+            case Keyboard::ScanPrintScreen:
+                return Keyboard::ScanNumpadMultiply;
+            default:
+                break;
+        }
+    }
+    return code;
 }
 
 

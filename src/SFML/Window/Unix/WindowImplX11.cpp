@@ -31,6 +31,8 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Window/OSXScancodes.hpp>
+#include <SFML/Window/X11Scancodes.hpp>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
@@ -186,7 +188,7 @@ m_useSizeHints(false)
         {
             static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
             static const unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
-    
+
             //static const unsigned long MWM_DECOR_ALL         = 1 << 0;
             static const unsigned long MWM_DECOR_BORDER      = 1 << 1;
             static const unsigned long MWM_DECOR_RESIZEH     = 1 << 2;
@@ -201,7 +203,7 @@ m_useSizeHints(false)
             static const unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
             static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
             static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
-    
+
             struct WMHints
             {
                 unsigned long flags;
@@ -210,7 +212,7 @@ m_useSizeHints(false)
                 long          inputMode;
                 unsigned long state;
             };
-    
+
             WMHints hints;
             hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
             hints.decorations = 0;
@@ -244,11 +246,11 @@ m_useSizeHints(false)
             sizeHints->flags = PMinSize | PMaxSize;
             sizeHints->min_width = sizeHints->max_width = width;
             sizeHints->min_height = sizeHints->max_height = height;
-            XSetWMNormalHints(m_display, m_window, sizeHints); 
+            XSetWMNormalHints(m_display, m_window, sizeHints);
             XFree(sizeHints);
         }
     }
- 
+
     // Set the window's WM class (this can be used by window managers)
     char windowClass[512];
     findExecutableName(windowClass, sizeof(windowClass));
@@ -359,7 +361,7 @@ void WindowImplX11::setSize(const Vector2u& size)
         sizeHints->flags = PMinSize | PMaxSize;
         sizeHints->min_width = sizeHints->max_width = size.x;
         sizeHints->min_height = sizeHints->max_height = size.y;
-        XSetWMNormalHints(m_display, m_window, sizeHints); 
+        XSetWMNormalHints(m_display, m_window, sizeHints);
         XFree(sizeHints);
     }
 
@@ -373,17 +375,17 @@ void WindowImplX11::setTitle(const String& title)
 {
     // Bare X11 has no Unicode window title support.
     // There is however an option to tell the window manager your unicode title via hints.
-    
+
     // Convert to UTF-8 encoding.
     std::basic_string<Uint8> utf8Title;
     Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
-    
+
     // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
     Atom wmName = XInternAtom(m_display, "_NET_WM_NAME", False);
     Atom useUtf8 = XInternAtom(m_display, "UTF8_STRING", False);
     XChangeProperty(m_display, m_window, wmName, useUtf8, 8,
                     PropModeReplace, utf8Title.c_str(), utf8Title.size());
-    
+
     // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
     XStoreName(m_display, m_window, title.toAnsiString().c_str());
 }
@@ -431,7 +433,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
                 if (i * 8 + k < width)
                 {
                     Uint8 opacity = (pixels[(i * 8 + k + j * width) * 4 + 3] > 0) ? 1 : 0;
-                    maskPixels[i + j * pitch] |= (opacity << k);                    
+                    maskPixels[i + j * pitch] |= (opacity << k);
                 }
             }
         }
@@ -532,6 +534,8 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()
 {
+    int i;
+
     // Get the atom defining the close event
     m_atomClose = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
     XSetWMProtocols(m_display, m_window, &m_atomClose, 1);
@@ -552,6 +556,63 @@ void WindowImplX11::initialize()
     }
     if (!m_inputContext)
         err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
+
+    //Get the min/max scancodes
+    XDisplayKeycodes(m_display, &m_mincode, &m_maxcode);
+
+    const int keycount = 3;
+    //Keys to be used to test the layout
+    struct
+    {
+        Keyboard::ScanCode sfscancode;
+        KeySym keysym;
+        int scancode;
+    } testkeys[keycount] =
+    {
+        {Keyboard::ScanHome, XK_Home},
+        {Keyboard::ScanPageUp, XK_Prior},
+        {Keyboard::ScanPageDown, XK_Next}
+    };
+
+    //Get the X11 scancodes associated to each test key
+    for(i = 0; i < keycount; i++)
+        testkeys[i].scancode = XKeysymToKeycode(m_display, testkeys[i].keysym) - m_mincode;
+
+    const int setcount = 3;
+
+    //Array of possible scancode sets
+    Keyboard::ScanCode *sets[setcount] = {osxscancodes, x11scancodes0, x11scancodes1};
+    int setssize[setcount] = {osxscancodescount, x11scancodes0count, x11scancodes1count};
+
+    //Find the matching scancode set
+    for(i = 0; i < setcount; i++)
+    {
+        //Does it contain too many keys ?
+        if(setssize[i] > m_maxcode - m_mincode)
+            continue;
+        //Does each key match the corresponding scan code
+        int match = 0;
+        for(int j = 0; j < keycount; j++)
+        {
+            if(testkeys[j].scancode >= setssize[i])
+                break;
+            if(sets[i][testkeys[j].scancode] == testkeys[j].sfscancode)
+                match++;
+            else
+                break;
+        }
+        if(match == keycount)
+            break;
+    }
+
+    //Was it found ?
+    if(i < setcount)
+        m_scancodes = sets[i];
+    else
+    {
+        m_scancodes = NULL;
+        err() << "Scancode set not recognized. Scancodes will not be available." << std::endl;
+    }
 
     // Show the window
     XMapWindow(m_display, m_window);
@@ -593,7 +654,7 @@ void WindowImplX11::cleanup()
     {
         // Get current screen info
         XRRScreenConfiguration* config = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
-        if (config) 
+        if (config)
         {
             // Get the current rotation
             Rotation currentRotation;
@@ -604,7 +665,7 @@ void WindowImplX11::cleanup()
 
             // Free the configuration instance
             XRRFreeScreenConfigInfo(config);
-        } 
+        }
 
         // Reset the fullscreen window
         fullscreenWindow = NULL;
@@ -711,7 +772,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Close event
         case ClientMessage :
         {
-            if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(m_atomClose))  
+            if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(m_atomClose))
             {
                 Event event;
                 event.type = Event::Closed;
@@ -732,12 +793,13 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
-            event.type        = Event::KeyPressed;
-            event.key.code    = keysymToSF(symbol);
-            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
-            event.key.control = windowEvent.xkey.state & ControlMask;
-            event.key.shift   = windowEvent.xkey.state & ShiftMask;
-            event.key.system  = windowEvent.xkey.state & Mod4Mask;
+            event.type         = Event::KeyPressed;
+            event.key.code     = keysymToSF(symbol);
+            event.key.scancode = keycodeToSF(windowEvent.xkey.keycode);
+            event.key.alt      = windowEvent.xkey.state & Mod1Mask;
+            event.key.control  = windowEvent.xkey.state & ControlMask;
+            event.key.shift    = windowEvent.xkey.state & ShiftMask;
+            event.key.system   = windowEvent.xkey.state & Mod4Mask;
             pushEvent(event);
 
             // Generate a TextEntered event
@@ -790,12 +852,13 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
 
             // Fill the event parameters
             Event event;
-            event.type        = Event::KeyReleased;
-            event.key.code    = keysymToSF(symbol);
-            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
-            event.key.control = windowEvent.xkey.state & ControlMask;
-            event.key.shift   = windowEvent.xkey.state & ShiftMask;
-            event.key.system  = windowEvent.xkey.state & Mod4Mask;
+            event.type         = Event::KeyReleased;
+            event.key.code     = keysymToSF(symbol);
+            event.key.scancode = keycodeToSF(windowEvent.xkey.keycode);
+            event.key.alt      = windowEvent.xkey.state & Mod1Mask;
+            event.key.control  = windowEvent.xkey.state & ControlMask;
+            event.key.shift    = windowEvent.xkey.state & ShiftMask;
+            event.key.system   = windowEvent.xkey.state & Mod4Mask;
             pushEvent(event);
 
             break;
@@ -817,7 +880,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                     case Button2 : event.mouseButton.button = Mouse::Middle;   break;
                     case Button3 : event.mouseButton.button = Mouse::Right;    break;
                     case 8 :       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;            
+                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;
                 }
                 pushEvent(event);
             }
@@ -840,7 +903,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                     case Button2 : event.mouseButton.button = Mouse::Middle;   break;
                     case Button3 : event.mouseButton.button = Mouse::Right;    break;
                     case 8 :       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;            
+                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;
                 }
                 pushEvent(event);
             }
@@ -1018,6 +1081,18 @@ Keyboard::Key WindowImplX11::keysymToSF(KeySym symbol)
 
     return Keyboard::Unknown;
 }
+
+
+////////////////////////////////////////////////////////////
+Keyboard::ScanCode WindowImplX11::keycodeToSF(unsigned int keycode)
+{
+    // Is the key in the array ?
+    if(keycode < m_mincode || keycode > m_maxcode || m_scancodes == NULL)
+        return Keyboard::ScanUnknown;
+    //Return the key
+    return m_scancodes[keycode - m_mincode];
+}
+
 
 } // namespace priv
 
