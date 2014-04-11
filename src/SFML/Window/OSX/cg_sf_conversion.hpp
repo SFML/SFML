@@ -37,7 +37,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Get bpp of a video mode for OS 10.6 or later.
+/// \brief Get bpp of a video mode for OS 10.6 or later
 ///
 /// With OS 10.6 and later, Quartz doesn't use anymore dictionaries
 /// to represent video mode. Instead it uses a CGDisplayMode opaque type.
@@ -48,7 +48,7 @@ size_t modeBitsPerPixel(CGDisplayModeRef mode);
 #endif
 
 ////////////////////////////////////////////////////////////
-/// \brief Get bpp for all OS X version.
+/// \brief Get bpp for all OS X version
 ///
 /// This function use only non-deprecated way to get the
 /// display bits per pixel information for a given display id.
@@ -57,7 +57,7 @@ size_t modeBitsPerPixel(CGDisplayModeRef mode);
 size_t displayBitsPerPixel(CGDirectDisplayID displayId);
 
 ////////////////////////////////////////////////////////////
-/// \brief Convert a Quartz video mode into a sf::VideoMode object.
+/// \brief Convert a Quartz video mode into a sf::VideoMode object
 ///
 ////////////////////////////////////////////////////////////
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
@@ -67,7 +67,7 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode);
 #endif
 
 ////////////////////////////////////////////////////////////
-/// \brief Convert a sf::VideoMode object into a Quartz video mode.
+/// \brief Convert a sf::VideoMode object into a Quartz video mode
 ///
 ////////////////////////////////////////////////////////////
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060

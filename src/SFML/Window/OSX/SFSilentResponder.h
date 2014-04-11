@@ -32,6 +32,7 @@
 /// \brief Silent Responder used to prevent sound alert with key event
 ///
 /// Mainly used by SFOpenGLView and its hidden text view.
+///
 ////////////////////////////////////////////////////////////
 @interface SFSilentResponder : NSResponder
 

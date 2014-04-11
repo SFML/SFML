@@ -33,7 +33,7 @@
 
 
 ////////////////////////////////////////////////////////////
--(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
     // TODO generate close event for each SFML window
     [NSApp makeWindowsPerform:@selector(sfClose) inOrder:NO];
@@ -42,7 +42,7 @@
 
 
 ////////////////////////////////////////////////////////////
--(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication
 {
     return YES;
 }

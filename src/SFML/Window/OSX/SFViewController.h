@@ -34,16 +34,25 @@
 @class SFOpenGLView;
 
 ////////////////////////////////////////////////////////////
-/// Implementation of WindowImplDelegateProtocol for view managment.
+/// \brief Implementation of WindowImplDelegateProtocol for view management
 ///
 ////////////////////////////////////////////////////////////
 
-@interface SFViewController : NSObject <WindowImplDelegateProtocol> {
-    NSView*                     m_view;
-    SFOpenGLView*               m_oglView;
-    sf::priv::WindowImplCocoa*  m_requester;
+@interface SFViewController : NSObject <WindowImplDelegateProtocol>
+{
+    NSView*                     m_view;         ///< Underlying Cocoa view
+    SFOpenGLView*               m_oglView;      ///< OpenGL view
+    sf::priv::WindowImplCocoa*  m_requester;    ///< View's requester
 }
 
--(id)initWithView:(NSView *)view;
+////////////////////////////////////////////////////////////
+/// \brief Initialize the view controller
+///
+/// \param view view to be controlled
+///
+/// \return an initialized view controller
+///
+////////////////////////////////////////////////////////////
+-(id)initWithView:(NSView*)view;
 
 @end

@@ -39,8 +39,9 @@ namespace priv
 
 
 ////////////////////////////////////////////////////////////
-SFContext::SFContext(SFContext* shared)
-: m_view(0), m_window(0)
+SFContext::SFContext(SFContext* shared) :
+m_view(0),
+m_window(0)
 {
     // Ask for a pool.
     retainPool();
@@ -54,8 +55,9 @@ SFContext::SFContext(SFContext* shared)
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
-                     const WindowImpl* owner, unsigned int bitsPerPixel)
-: m_view(0), m_window(0)
+                     const WindowImpl* owner, unsigned int bitsPerPixel) :
+m_view(0),
+m_window(0)
 {
     // Ask for a pool.
     retainPool();
@@ -64,15 +66,16 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
     createContext(shared, bitsPerPixel, settings);
 
     // Apply context.
-    WindowImplCocoa const * ownerCocoa = static_cast<WindowImplCocoa const *>(owner);
+    const WindowImplCocoa* ownerCocoa = static_cast<const WindowImplCocoa*>(owner);
     ownerCocoa->applyContext(m_context);
 }
 
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
-                     unsigned int width, unsigned int height)
-: m_view(0), m_window(0)
+                     unsigned int width, unsigned int height) :
+m_view(0),
+m_window(0)
 {
     // Ensure the process is setup in order to create a valid window.
     WindowImplCocoa::setUpProcess();
@@ -142,16 +145,17 @@ void SFContext::createContext(SFContext* shared,
                               unsigned int bitsPerPixel,
                               const ContextSettings& settings)
 {
-    // Choose the attributs of OGL context.
+    // Choose the attributes of OGL context.
     std::vector<NSOpenGLPixelFormatAttribute> attrs;
-    attrs.reserve(20); // max attributs (estimation).
+    attrs.reserve(20); // max attributes (estimation).
 
     // These casts are safe. C++ is much more strict than Obj-C.
 
     attrs.push_back(NSOpenGLPFAClosestPolicy);
     attrs.push_back(NSOpenGLPFADoubleBuffer);
 
-    if (bitsPerPixel > 24) {
+    if (bitsPerPixel > 24)
+    {
         attrs.push_back(NSOpenGLPFAAlphaSize);
         attrs.push_back((NSOpenGLPixelFormatAttribute)8);
     }
@@ -162,7 +166,8 @@ void SFContext::createContext(SFContext* shared,
     attrs.push_back(NSOpenGLPFAStencilSize);
     attrs.push_back((NSOpenGLPixelFormatAttribute)settings.stencilBits);
 
-    if (settings.antialiasingLevel > 0) {
+    if (settings.antialiasingLevel > 0)
+    {
         /*
          * Antialiasing techniques are described in the
          * "OpenGL Programming Guide for Mac OS X" document.
@@ -191,10 +196,11 @@ void SFContext::createContext(SFContext* shared,
 
     attrs.push_back((NSOpenGLPixelFormatAttribute)0); // end of array
 
-    // Create the pixel pormat.
+    // Create the pixel format.
     NSOpenGLPixelFormat* pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:&attrs[0]];
 
-    if (pixFmt == nil) {
+    if (pixFmt == nil)
+    {
         sf::err() << "Error. Unable to find a suitable pixel format." << std::endl;
         return;
     }
@@ -206,9 +212,8 @@ void SFContext::createContext(SFContext* shared,
     m_context = [[NSOpenGLContext alloc] initWithFormat:pixFmt
                                            shareContext:sharedContext];
 
-    if (m_context == nil) {
+    if (m_context == nil)
         sf::err() << "Error. Unable to create the context." << std::endl;
-    }
 
     // Free up.
     [pixFmt release];

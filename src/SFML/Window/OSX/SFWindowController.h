@@ -26,8 +26,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
 #include <SFML/Window/VideoMode.hpp>
+
+#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
 
 ////////////////////////////////////////////////////////////
 /// Predefine some classes
@@ -41,7 +42,7 @@ namespace sf {
 @class SFOpenGLView;
 
 ////////////////////////////////////////////////////////////
-/// Implementation of WindowImplDelegateProtocol for window managment.
+/// \brief Implementation of WindowImplDelegateProtocol for window management
 ///
 /// Key and mouse events are delegated to its view.
 /// Window events are managed by this class.
@@ -54,26 +55,38 @@ namespace sf {
 ////////////////////////////////////////////////////////////
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1060 // NSWindowDelegate is only define since 10.6
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol> {
+@interface SFWindowController : NSResponder <WindowImplDelegateProtocol>
 #else
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate> {
+@interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate>
 #endif
-    NSWindow*                   m_window;
-    SFOpenGLView*               m_oglView;
-    sf::priv::WindowImplCocoa*  m_requester;
-    sf::VideoMode*              m_fullscreenMode; // Note : C++ ctor/dtor are not called for Obj-C fields.
+{
+    NSWindow*                   m_window;           ///< Underlying Cocoa window to be controlled
+    SFOpenGLView*               m_oglView;          ///< OpenGL view for rendering
+    sf::priv::WindowImplCocoa*  m_requester;        ///< Requester
+    sf::VideoMode*              m_fullscreenMode;   ///< Fullscreen mode
+
+    /// Note: C++ ctor/dtor are not called for Obj-C fields! Use manual allocation instead.
 }
 
 ////////////////////////////////////////////////////////////
-/// Create the SFML window with an external Cocoa window.
+/// \brief Create the SFML window with an external Cocoa window
+///
+/// \param window Cocoa window to be controlled
+///
+/// \return an initialized controller
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithWindow:(NSWindow *)window;
+-(id)initWithWindow:(NSWindow*)window;
 
 ////////////////////////////////////////////////////////////
-/// Create the SFML window "from scratch" (full SFML handling).
+/// \brief Create the SFML window "from scratch" (SFML handle everything)
+///
+/// \param mode Video mode
+/// \param style Window's style, as described by sf::Style
+///
+/// \return an initialized controller
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithMode:(sf::VideoMode const &)mode andStyle:(unsigned long)style;
+-(id)initWithMode:(const sf::VideoMode&)mode andStyle:(unsigned long)style;
 
 @end

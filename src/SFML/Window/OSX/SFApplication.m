@@ -56,7 +56,8 @@
 
     // Set the main menu bar
     NSMenu* mainMenu = [NSApp mainMenu];
-    if (mainMenu != nil) return;
+    if (mainMenu != nil)
+        return;
     mainMenu = [[NSMenu alloc] initWithTitle:@""];
     [NSApp setMainMenu:mainMenu];
 
@@ -79,7 +80,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu *)createAppleMenu
++(NSMenu*)createAppleMenu
 {
     // Apple menu is as follow:
     //
@@ -158,7 +159,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu *)createFileMenu
++(NSMenu*)createFileMenu
 {
     // The File menu is as follow:
     //
@@ -180,7 +181,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu *)createWindowMenu
++(NSMenu*)createWindowMenu
 {
     // The Window menu is as follow:
     //
@@ -218,20 +219,18 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSString *)applicationName
++(NSString*)applicationName
 {
     // First, try localized name
     NSString* appName = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey:@"CFBundleDisplayName"];
 
     // Then, try non-localized name
-    if (appName == nil || [appName length] == 0) {
+    if ((appName == nil) || ([appName length] == 0))
         appName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
-    }
 
     // Finally, fallback to the process info
-    if (appName == nil || [appName length] == 0) {
+    if ((appName == nil) || ([appName length] == 0))
         appName = [[NSProcessInfo processInfo] processName];
-    }
 
     return appName;
 }
@@ -252,8 +251,7 @@
     // custom OpenGL view. See -[SFOpenGLView sfKeyUp:] for more details.
 
     id firstResponder = [[anEvent window] firstResponder];
-    if ([anEvent type] != NSKeyUp
-        || ![firstResponder tryToPerform:@selector(sfKeyUp:) with:anEvent]) {
+    if (([anEvent type] != NSKeyUp) || (![firstResponder tryToPerform:@selector(sfKeyUp:) with:anEvent])) {
         // It's either not a key up event or no responder has a sfKeyUp
         // message implemented.
         [super sendEvent:anEvent];

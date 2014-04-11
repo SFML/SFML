@@ -26,11 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/SFViewController.h>
-#import <SFML/Window/OSX/SFOpenGLView.h>
-#import <SFML/Window/OSX/SFApplication.h>
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+
+#import <SFML/Window/OSX/SFApplication.h>
+#import <SFML/Window/OSX/SFOpenGLView.h>
+#import <SFML/Window/OSX/SFViewController.h>
 
 @implementation SFViewController
 
@@ -38,18 +39,16 @@
 ////////////////////////////////////////////////////////
 -(id)initWithView:(NSView *)view
 {
-    if ((self = [super init])) {
+    if ((self = [super init]))
+    {
         m_requester = 0;
 
         // Retain the view for our own use.
         m_view = [view retain];
 
-        if (m_view == nil) {
-
-            sf::err()
-            << "No view was given to initWithWindow:."
-            << std::endl;
-
+        if (m_view == nil)
+        {
+            sf::err() << "No view was given to initWithWindow:." << std::endl;
             return self;
         }
 
@@ -59,12 +58,11 @@
         frame.origin.y = 0;
         m_oglView = [[SFOpenGLView alloc] initWithFrame:frame];
 
-        if (m_oglView == nil) {
-
-            sf::err()
-            << "Could not create an instance of NSOpenGLView "
-            << "in (SFViewController -initWithView:)."
-            << std::endl;
+        if (m_oglView == nil)
+        {
+            sf::err() << "Could not create an instance of NSOpenGLView "
+                     << "in (SFViewController -initWithView:)."
+                     << std::endl;
 
             return self;
         }
@@ -92,7 +90,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)setRequesterTo:(sf::priv::WindowImplCocoa *)requester
+-(void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester
 {
     // Forward to the view.
     [m_oglView setRequesterTo:requester];
@@ -132,7 +130,7 @@
 ////////////////////////////////////////////////////////.
 -(void)setWindowPositionToX:(int)x Y:(int)y
 {
-    sf::err() << "Cannot move SFML area when SFML is integrated in a NSView. Use the view hanlder directly instead." << std::endl;
+    sf::err() << "Cannot move SFML area when SFML is integrated in a NSView. Use the view handler directly instead." << std::endl;
 }
 
 
@@ -157,7 +155,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)changeTitle:(NSString *)title
+-(void)changeTitle:(NSString*)title
 {
     sf::err() << "Cannot change the title of the SFML area when SFML is integrated in a NSView." << std::endl;
 }
@@ -201,7 +199,7 @@
 ////////////////////////////////////////////////////////
 -(void)setIconTo:(unsigned int)width
               by:(unsigned int)height
-            with:(sf::Uint8 const *)pixels
+            with:(const sf::Uint8*)pixels
 {
     sf::err() << "Cannot set an icon when SFML is integrated in a NSView." << std::endl;
 }
@@ -211,27 +209,25 @@
 -(void)processEvent
 {
     // If we are not on the main thread we stop here and advice the user.
-    if ([NSThread currentThread] != [NSThread mainThread]) {
+    if ([NSThread currentThread] != [NSThread mainThread])
+    {
         /*
          * See http://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
          * for more information.
          */
-        sf::err()
-        << "Cannot fetch event from a worker thread. (OS X restriction)"
-        << std::endl;
+        sf::err() << "Cannot fetch event from a worker thread. (OS X restriction)" << std::endl;
 
         return;
     }
 
     // If we don't have a requester we don't fetch event.
-    if (m_requester != 0) {
+    if (m_requester != 0)
         [SFApplication processEvent];
-    }
 }
 
 
 ////////////////////////////////////////////////////////
--(void)applyContext:(NSOpenGLContext *)context
+-(void)applyContext:(NSOpenGLContext*)context
 {
     [m_oglView setOpenGLContext:context];
     [context setView:m_oglView];

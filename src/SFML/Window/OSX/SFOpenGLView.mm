@@ -30,62 +30,74 @@
 #include <SFML/Window/OSX/HIDInputManager.hpp> // For localizedKeys and nonLocalizedKeys
 #include <SFML/System/Err.hpp>
 
+#import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFSilentResponder.h>
-#import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
 
 
 ////////////////////////////////////////////////////////////
-/// Returns true if `event` represents a representable character.
+/// \brief Check if the event represent some Unicode text
 ///
 /// The event is assumed to be a key down event.
-/// False is returned if the event is either escape or a non text unicode.
+/// False is returned if the event is either escape or a non text Unicode.
+///
+/// \param event a key down event
+///
+/// \return true if event represents a Unicode character, false otherwise
 ///
 ////////////////////////////////////////////////////////////
 BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////////
-/// SFOpenGLView class : Privates Methods Declaration
+/// SFOpenGLView class: Privates Methods Declaration
 ///
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView ()
 
 ////////////////////////////////////////////////////////////
-/// Handle view resized event.
+/// \brief Handle view resized event
 ///
 ////////////////////////////////////////////////////////////
 -(void)viewDidEndLiveResize;
 
 ////////////////////////////////////////////////////////////
-/// Establish if the mouse is inside or outside the OpenGL view.
+/// \brief Determine where the mouse is
+///
+/// \return true when the mouse is inside the OpenGL view, false otherwise
 ///
 ////////////////////////////////////////////////////////////
 -(BOOL)isMouseInside;
 
 ////////////////////////////////////////////////////////////
-/// Update the mouse state (in or out) and fire an event
-/// if its state has changed.
+/// \brief Update the mouse state (in or out)
+///
+/// Fire an event if its state has changed.
 ///
 ////////////////////////////////////////////////////////////
 -(void)updateMouseState;
 
 ////////////////////////////////////////////////////////////
-/// Convert the NSEvent mouse button type to SFML type.
+/// \brief Convert the NSEvent mouse button type to SFML type
 ///
-/// Returns ButtonCount if the button is unknown
+/// \param event a mouse button event
+///
+/// \return Left, Right, ..., or ButtonCount if the button is unknown
 ///
 ////////////////////////////////////////////////////////////
--(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event;
+-(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent*)event;
 
 ////////////////////////////////////////////////////////////
-/// Convert a key down/up NSEvent into an SFML key event.
-/// Based on localizedKeys and nonLocalizedKeys function.
+/// \brief Convert a key down/up NSEvent into an SFML key event
 ///
-/// Return sf::Keyboard::Unknown as Code if the key is unknown.
+/// The conversion is based on localizedKeys and nonLocalizedKeys functions.
+///
+/// \param event a key event
+///
+/// \return sf::Keyboard::Unknown as Code if the key is unknown
 ///
 ////////////////////////////////////////////////////////////
-+(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent *)anEvent;
++(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event;
 
 @end
 
@@ -97,7 +109,8 @@ BOOL isValidTextUnicode(NSEvent* event);
 ////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect
 {
-    if ((self = [super initWithFrame:frameRect])) {
+    if ((self = [super initWithFrame:frameRect]))
+    {
         [self setRequesterTo:0];
         [self enableKeyRepeat];
         m_realSize = NSZeroSize;
@@ -130,9 +143,8 @@ BOOL isValidTextUnicode(NSEvent* event);
     [self addTrackingArea:m_trackingArea];
 
     // Fire an mouse entered event if needed
-    if (!m_mouseIsIn && m_requester != 0) {
+    if (!m_mouseIsIn && (m_requester != 0))
         m_requester->mouseMovedIn();
-    }
 
     // Update status
     m_mouseIsIn = YES;
@@ -145,9 +157,8 @@ BOOL isValidTextUnicode(NSEvent* event);
     [self removeTrackingArea:m_trackingArea];
 
     // Fire an mouse left event if needed
-    if (m_mouseIsIn && m_requester != 0) {
+    if (m_mouseIsIn && (m_requester != 0))
         m_requester->mouseMovedOut();
-    }
 
     // Update status
     m_mouseIsIn = NO;
@@ -155,7 +166,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)setRequesterTo:(sf::priv::WindowImplCocoa *)requester
+-(void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester
 {
     m_requester = requester;
 }
@@ -172,9 +183,10 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point
 {
     // Recompute the mouse pos if required.
-    if (!NSEqualSizes(m_realSize, NSZeroSize)) {
-        point.x = point.x / m_realSize.width  * [self frame].size.width;
-        point.y = point.y / m_realSize.height * [self frame].size.height;
+    if (!NSEqualSizes(m_realSize, NSZeroSize))
+    {
+        point.x = (point.x / m_realSize.width)  * [self frame].size.width;
+        point.y = (point.y / m_realSize.height) * [self frame].size.height;
     }
 
     // Note : -[NSWindow convertBaseToScreen:] is deprecated on 10.7
@@ -194,8 +206,8 @@ BOOL isValidTextUnicode(NSEvent* event);
     // Convert it to screen coordinates
     point = [[self window] convertBaseToScreen:point];
 
-    // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.
-    float const screenHeight = [[[self window] screen] frame].size.height;
+    // Flip screen coordinates to match CGDisplayMoveCursorToPoint referential.
+    const float screenHeight = [[[self window] screen] frame].size.height;
     point.y = screenHeight - point.y;
 
     return point;
@@ -237,7 +249,8 @@ BOOL isValidTextUnicode(NSEvent* event);
     [self update];
 
     // Send an event
-    if (m_requester == 0) return;
+    if (m_requester == 0)
+        return;
 
     // The new size
     NSSize newSize = [self frame].size;
@@ -251,11 +264,7 @@ BOOL isValidTextUnicode(NSEvent* event);
     NSPoint relativeToWindow = [[self window] mouseLocationOutsideOfEventStream];
     NSPoint relativeToView = [self convertPoint:relativeToWindow fromView:nil];
 
-    if (NSPointInRect(relativeToView, [self frame])) {
-        return YES;
-    }
-
-    return NO;
+    return NSPointInRect(relativeToView, [self frame]);
 }
 
 
@@ -266,11 +275,10 @@ BOOL isValidTextUnicode(NSEvent* event);
     m_mouseIsIn = [self isMouseInside];
 
     // Send event if needed.
-    if (mouseWasIn && !m_mouseIsIn) {
+    if (mouseWasIn && !m_mouseIsIn)
         [self mouseExited:nil];
-    } else if (!mouseWasIn && m_mouseIsIn) {
+    else if (!mouseWasIn && m_mouseIsIn)
         [self mouseEntered:nil];
-    }
 }
 
 
@@ -316,7 +324,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)mouseDown:(NSEvent *)theEvent
+-(void)mouseDown:(NSEvent*)theEvent
 {
     // Forward to...
     [self otherMouseDown:theEvent];
@@ -327,7 +335,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)mouseUp:(NSEvent *)theEvent
+-(void)mouseUp:(NSEvent*)theEvent
 {
     // Forward to...
     [self otherMouseUp:theEvent];
@@ -338,7 +346,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)mouseMoved:(NSEvent *)theEvent
+-(void)mouseMoved:(NSEvent*)theEvent
 {
     // Forward to...
     [self otherMouseDragged:theEvent];
@@ -349,11 +357,11 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)scrollWheel:(NSEvent *)theEvent
+-(void)scrollWheel:(NSEvent*)theEvent
 {
-    if (m_requester != 0) {
+    if (m_requester != 0)
+    {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
-
         m_requester->mouseWheelScrolledAt([theEvent deltaY], loc.x, loc.y);
     }
 
@@ -363,46 +371,46 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)mouseEntered:(NSEvent *)theEvent
+-(void)mouseEntered:(NSEvent*)theEvent
 {
     // There are two cases when we need to fire an event:
     // a) the event is nil, meaning that the method was
     //    called from our code (e.g. updateMouseState)
     // b) the mouse was outside the view.
-    BOOL shouldFire = (theEvent == nil || m_mouseIsIn == NO);
+    BOOL shouldFire = ((theEvent == nil) || (m_mouseIsIn == NO));
 
     // Update status
     m_mouseIsIn = YES;
 
-    if (m_requester == 0) return;
+    if (m_requester == 0)
+        return;
 
     // Fire (or not) an event
-    if (shouldFire) {
+    if (shouldFire)
         m_requester->mouseMovedIn();
-    }
 }
 
 
 ////////////////////////////////////////////////////////
--(void)mouseExited:(NSEvent *)theEvent
+-(void)mouseExited:(NSEvent*)theEvent
 {
     // Similarly to mouseEntered:
-    BOOL shouldFire = (theEvent == nil || m_mouseIsIn == YES);
+    BOOL shouldFire = ((theEvent == nil) || (m_mouseIsIn == YES));
 
     // Update status
     m_mouseIsIn = NO;
 
-    if (m_requester == 0) return;
+    if (m_requester == 0)
+        return;
 
     // Fire (or not) an event
-    if (shouldFire) {
+    if (shouldFire)
         m_requester->mouseMovedOut();
-    }
 }
 
 
 ////////////////////////////////////////////////////////
--(void)rightMouseDown:(NSEvent *)theEvent
+-(void)rightMouseDown:(NSEvent*)theEvent
 {
     // Forward to...
     [self otherMouseDown:theEvent];
@@ -413,7 +421,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)rightMouseUp:(NSEvent *)theEvent
+-(void)rightMouseUp:(NSEvent*)theEvent
 {
     // Forward to...
     [self otherMouseUp:theEvent];
@@ -424,20 +432,21 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)otherMouseDown:(NSEvent *)theEvent
+-(void)otherMouseDown:(NSEvent*)theEvent
 {
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
 
-    if (m_requester != 0) {
+    if (m_requester != 0)
+    {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
-        if (button != sf::Mouse::ButtonCount) {
+        if (button != sf::Mouse::ButtonCount)
             m_requester->mouseDownAt(button, loc.x, loc.y);
-        }
     }
 
     // If the event is not forwarded by mouseDown or rightMouseDown...
-    if (button != sf::Mouse::Left && button != sf::Mouse::Right) {
+    if ((button != sf::Mouse::Left) && (button != sf::Mouse::Right))
+    {
         // ... transmit to non-SFML responder
         [[self nextResponder] otherMouseDown:theEvent];
     }
@@ -445,20 +454,21 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)otherMouseUp:(NSEvent *)theEvent
+-(void)otherMouseUp:(NSEvent*)theEvent
 {
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
 
-    if (m_requester != 0) {
+    if (m_requester != 0)
+    {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
-        if (button != sf::Mouse::ButtonCount) {
+        if (button != sf::Mouse::ButtonCount)
             m_requester->mouseUpAt(button, loc.x, loc.y);
-        }
     }
 
     // If the event is not forwarded by mouseUp or rightMouseUp...
-    if (button != sf::Mouse::Left && button != sf::Mouse::Right) {
+    if ((button != sf::Mouse::Left) && (button != sf::Mouse::Right))
+    {
         // ... transmit to non-SFML responder
         [[self nextResponder] otherMouseUp:theEvent];
     }
@@ -466,7 +476,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)rightMouseDragged:(NSEvent *)theEvent
+-(void)rightMouseDragged:(NSEvent*)theEvent
 {
     // Forward to...
     [self otherMouseDragged:theEvent];
@@ -477,7 +487,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)mouseDragged:(NSEvent *)theEvent
+-(void)mouseDragged:(NSEvent*)theEvent
 {
     // Forward to...
     [self otherMouseDragged:theEvent];
@@ -488,23 +498,24 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)otherMouseDragged:(NSEvent *)theEvent
+-(void)otherMouseDragged:(NSEvent*)theEvent
 {
-    if (m_requester != 0) {
+    if (m_requester != 0)
+    {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
         // Make sure the point is inside the view.
         // (mouseEntered: and mouseExited: are not immediately called
         //  when the mouse is dragged. That would be too easy!)
         [self updateMouseState];
-        if (m_mouseIsIn) {
+        if (m_mouseIsIn)
             m_requester->mouseMovedAt(loc.x, loc.y);
-        }
     }
 
     // If the event is not forwarded by mouseDragged or rightMouseDragged...
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
-    if (button != sf::Mouse::Left && button != sf::Mouse::Right) {
+    if ((button != sf::Mouse::Left) && (button != sf::Mouse::Right))
+    {
         // ... transmit to non-SFML responder
         [[self nextResponder] otherMouseUp:theEvent];
     }
@@ -512,14 +523,17 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(NSPoint)cursorPositionFromEvent:(NSEvent *)eventOrNil
+-(NSPoint)cursorPositionFromEvent:(NSEvent*)eventOrNil
 {
     NSPoint loc;
     // If no event given then get current mouse pos.
-    if (eventOrNil == nil) {
+    if (eventOrNil == nil)
+    {
         NSPoint rawPos = [[self window] mouseLocationOutsideOfEventStream];
         loc = [self convertPoint:rawPos fromView:nil];
-    } else {
+    }
+    else
+    {
         loc = [self convertPoint:[eventOrNil locationInWindow] fromView:nil];
     }
 
@@ -528,9 +542,10 @@ BOOL isValidTextUnicode(NSEvent* event);
     loc.y = h - loc.y;
 
     // Recompute the mouse pos if required.
-    if (!NSEqualSizes(m_realSize, NSZeroSize)) {
-        loc.x = loc.x * m_realSize.width  / [self frame].size.width;
-        loc.y = loc.y * m_realSize.height / [self frame].size.height;
+    if (!NSEqualSizes(m_realSize, NSZeroSize))
+    {
+        loc.x = (loc.x * m_realSize.width)  / [self frame].size.width;
+        loc.y = (loc.y * m_realSize.height) / [self frame].size.height;
     }
 
     return loc;
@@ -538,9 +553,10 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent *)event
+-(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent*)event
 {
-    switch ([event buttonNumber]) {
+    switch ([event buttonNumber])
+    {
         case 0:     return sf::Mouse::Left;
         case 1:     return sf::Mouse::Right;
         case 2:     return sf::Mouse::Middle;
@@ -556,29 +572,32 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)keyDown:(NSEvent *)theEvent
+-(void)keyDown:(NSEvent*)theEvent
 {
     // Transmit to non-SFML responder
     [[self nextResponder] keyDown:theEvent];
 
-    if (m_requester == 0) return;
+    if (m_requester == 0)
+        return;
 
     // Handle key down event
-    if (m_useKeyRepeat || ![theEvent isARepeat]) {
+    if (m_useKeyRepeat || ![theEvent isARepeat])
+    {
         sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
 
-        if (key.code != sf::Keyboard::Unknown) { // The key is recognized.
+        if (key.code != sf::Keyboard::Unknown) // The key is recognized.
             m_requester->keyDown(key);
-        }
     }
 
 
     // Handle text entred event:
     // Ignore event if we don't want repeated keystrokes
-    if (m_useKeyRepeat || ![theEvent isARepeat]) {
+    if (m_useKeyRepeat || ![theEvent isARepeat])
+    {
         // Ignore escape key and other non text keycode (See NSEvent.h)
         // because they produce a sound alert.
-        if (isValidTextUnicode(theEvent)) {
+        if (isValidTextUnicode(theEvent))
+        {
             // Send the event to the hidden text view for processing
             [m_hiddenTextView interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
         }
@@ -591,25 +610,27 @@ BOOL isValidTextUnicode(NSEvent* event);
         unsigned short keycode = [theEvent keyCode];
 
         // Backspace
-        if (keycode == 0x33) {
+        if (keycode == 0x33)
+        {
             // Send the correct unicode value (i.e. 8) instead of 127 (which is 'delete')
             m_requester->textEntered(8);
         }
 
         // Delete
-        else if (keycode == 0x75 || keycode == NSDeleteFunctionKey) {
+        else if ((keycode == 0x75) || (keycode == NSDeleteFunctionKey))
+        {
             // Instead of the value 63272 we send 127.
             m_requester->textEntered(127);
         }
 
         // Otherwise, let's see what our hidden field has computed
-        else {
+        else
+        {
             NSString* string = [m_hiddenTextView string];
 
             // Send each character to SFML event requester
-            for (NSUInteger index = 0; index < [string length]; ++index) {
+            for (NSUInteger index = 0; index < [string length]; ++index)
                 m_requester->textEntered([string characterAtIndex:index]);
-            }
 
             // Empty our hidden cache
             [m_hiddenTextView setString:@""];
@@ -619,7 +640,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)sfKeyUp:(NSEvent *)theEvent
+-(void)sfKeyUp:(NSEvent*)theEvent
 {
     // For some mystic reasons, key released events don't work the same way
     // as key pressed events... We somewhat hijack the event chain of response
@@ -631,23 +652,24 @@ BOOL isValidTextUnicode(NSEvent* event);
     // Transmit to non-SFML responder
     [[self nextResponder] keyUp:theEvent];
 
-    if (m_requester == 0) return;
+    if (m_requester == 0)
+        return;
 
     sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
 
-    if (key.code != sf::Keyboard::Unknown) { // The key is recognized.
+    if (key.code != sf::Keyboard::Unknown) // The key is recognized.
         m_requester->keyUp(key);
-    }
 }
 
 
 ////////////////////////////////////////////////////////
--(void)flagsChanged:(NSEvent *)theEvent
+-(void)flagsChanged:(NSEvent*)theEvent
 {
     // Transmit to non-SFML responder
     [[self nextResponder] flagsChanged:theEvent];
 
-    if (m_requester == 0) return;
+    if (m_requester == 0)
+        return;
 
     NSUInteger modifiers = [theEvent modifierFlags];
     handleModifiersChanged(modifiers, *m_requester);
@@ -655,35 +677,33 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
-+(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent *)anEvent
++(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event
 {
     // Key code
     sf::Keyboard::Key key = sf::Keyboard::Unknown;
 
     // First we look if the key down is from a list of characters
     // that depend on keyboard localization.
-    NSString* string = [anEvent charactersIgnoringModifiers];
-    if ([string length] > 0) {
+    NSString* string = [event charactersIgnoringModifiers];
+    if ([string length] > 0)
         key = sf::priv::HIDInputManager::localizedKeys([string characterAtIndex:0]);
-    }
 
     // If the key is not a localized one, we try to find a corresponding code
     // through virtual key code.
-    if (key == sf::Keyboard::Unknown) {
-        key = sf::priv::HIDInputManager::nonLocalizedKeys([anEvent keyCode]);
-    }
+    if (key == sf::Keyboard::Unknown)
+        key = sf::priv::HIDInputManager::nonLocalizedKeys([event keyCode]);
 
 //#ifdef SFML_DEBUG // Don't bother the final customers with annoying messages.
 //    if (key.code == sf::Keyboard::Unknown) { // The key is unknown.
 //        sf::err() << "This is an unknow key. Virtual key code is 0x"
 //                  << std::hex
-//                  << [anEvent keyCode]
+//                  << [event keyCode]
 //                  << "."
 //                  << std::endl;
 //    }
 //#endif
 
-    return keyEventWithModifiers([anEvent modifierFlags], key);
+    return keyEventWithModifiers([event modifierFlags], key);
 }
 
 @end
@@ -693,12 +713,17 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 BOOL isValidTextUnicode(NSEvent* event)
 {
-    if ([event keyCode] == 0x35) { // Escape
+    if ([event keyCode] == 0x35) // Escape
+    {
         return false;
-    } else if ([[event characters] length] > 0) {
+    }
+    else if ([[event characters] length] > 0)
+    {
         unichar code = [[event characters] characterAtIndex:0];
-        return code < 0xF700 || code > 0xF8FF;
-    } else {
+        return ((code < 0xF700) || (code > 0xF8FF));
+    }
+    else
+    {
         return true;
     }
 }
