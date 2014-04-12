@@ -431,9 +431,6 @@
                                           bitsPerPixel:0];  // 0 == determine automatically
 
     // Load data pixels.
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1050 // We may need to define NSUInteger.
-#define NSUInteger unsigned int
-#endif
     for (unsigned int y = 0; y < height; ++y)
     {
         for (unsigned int x = 0; x < width; ++x, pixels+=4)

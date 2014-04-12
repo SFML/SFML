@@ -53,12 +53,7 @@ namespace sf {
 /// m_fullscreenMode is bind to default video mode if we don't need to change screen size.
 ///
 ////////////////////////////////////////////////////////////
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060 // NSWindowDelegate is only define since 10.6
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol>
-#else
 @interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate>
-#endif
 {
     NSWindow*                   m_window;           ///< Underlying Cocoa window to be controlled
     SFOpenGLView*               m_oglView;          ///< OpenGL view for rendering

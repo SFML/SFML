@@ -36,11 +36,7 @@
 
 struct SFMLmainWindow;
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 @interface CocoaAppDelegate : NSObject <NSApplicationDelegate> {
-#else
-@interface CocoaAppDelegate : NSObject {
-#endif
 @private
     NSWindow        *m_window;
     NSView          *m_sfmlView;

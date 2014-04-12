@@ -129,11 +129,6 @@ void SFContext::display()
 ////////////////////////////////////////////////////////////
 void SFContext::setVerticalSyncEnabled(bool enabled)
 {
-    // Make compiler happy
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
-    typedef int GLint;
-#endif
-
     GLint swapInterval = enabled ? 1 : 0;
 
     [m_context setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];

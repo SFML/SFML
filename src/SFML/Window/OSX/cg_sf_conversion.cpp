@@ -35,7 +35,6 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 size_t modeBitsPerPixel(CGDisplayModeRef mode)
 {
     size_t bpp = 0; // no match
@@ -54,19 +53,11 @@ size_t modeBitsPerPixel(CGDisplayModeRef mode)
 
     return bpp;
 }
-#endif
-
 
 
 ////////////////////////////////////////////////////////////
 size_t displayBitsPerPixel(CGDirectDisplayID displayId)
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
-
-    return CGDisplayBitsPerPixel(displayId);
-
-#else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-
     // Get the display mode.
     CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayId);
 
@@ -77,32 +68,10 @@ size_t displayBitsPerPixel(CGDirectDisplayID displayId)
     CGDisplayModeRelease(mode);
 
     return bpp;
-
-#endif
 }
 
 
 ////////////////////////////////////////////////////////////
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
-
-VideoMode convertCGModeToSFMode(CFDictionaryRef dictionary)
-{
-    VideoMode sfmode;
-
-    CFNumberRef cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayWidth);
-    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.width));
-
-    cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayHeight);
-    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.height));
-
-    cfnumber = (CFNumberRef)CFDictionaryGetValue(dictionary, kCGDisplayBitsPerPixel);
-    CFNumberGetValue(cfnumber, kCFNumberIntType, &(sfmode.bitsPerPixel));
-
-    return sfmode;
-}
-
-#else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-
 VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
 {
     return VideoMode(CGDisplayModeGetWidth(cgmode),
@@ -110,24 +79,8 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
                      modeBitsPerPixel(cgmode));
 }
 
-#endif
 
 ////////////////////////////////////////////////////////////
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
-
-CFDictionaryRef convertSFModeToCGMode(VideoMode sfmode)
-{
-    // If sfmode is in VideoMode::GetFullscreenModes
-    // then this should be an exact match (see NULL parameter doc).
-    return CGDisplayBestModeForParameters(CGMainDisplayID(),
-                                          sfmode.bitsPerPixel,
-                                          sfmode.width,
-                                          sfmode.height,
-                                          NULL);
-}
-
-#else // MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
-
 CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode)
 {
     // Starting with 10.6 we should query the display all the modes and
@@ -166,8 +119,6 @@ CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode)
 
     return cgbestMode;
 }
-
-#endif
 
 } // namespace priv
 } // namespace sf
