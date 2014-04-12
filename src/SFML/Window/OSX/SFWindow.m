@@ -55,6 +55,7 @@
     // Consider overriding NSResponder -keyDown: message in a Cocoa view/window
     // that contains a SFML rendering area. Doing so will prevent a system
     // alert to be thrown every time the user presses a key.
+    (void)theEvent;
 }
 
 

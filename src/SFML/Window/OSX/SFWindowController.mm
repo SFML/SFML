@@ -505,6 +505,8 @@
 ////////////////////////////////////////////////////////
 -(BOOL)windowShouldClose:(id)sender
 {
+    (void)sender;
+
     if (m_requester == 0)
         return YES;
 
@@ -516,6 +518,8 @@
 ////////////////////////////////////////////////////////
 -(void)windowDidBecomeKey:(NSNotification*)notification
 {
+    (void)notification;
+
     // Send event.
     if (m_requester == 0)
         return;
@@ -530,6 +534,8 @@
 ////////////////////////////////////////////////////////
 -(void)windowDidResignKey:(NSNotification*)notification
 {
+    (void)notification;
+
     // Send event.
     if (m_requester == 0)
         return;

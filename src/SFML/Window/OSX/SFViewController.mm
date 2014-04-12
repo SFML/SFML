@@ -130,6 +130,8 @@
 ////////////////////////////////////////////////////////.
 -(void)setWindowPositionToX:(int)x Y:(int)y
 {
+    (void)x;
+    (void)y;
     sf::err() << "Cannot move SFML area when SFML is integrated in a NSView. Use the view handler directly instead." << std::endl;
 }
 
@@ -157,6 +159,7 @@
 ////////////////////////////////////////////////////////
 -(void)changeTitle:(NSString*)title
 {
+    (void)title;
     sf::err() << "Cannot change the title of the SFML area when SFML is integrated in a NSView." << std::endl;
 }
 
@@ -201,6 +204,9 @@
               by:(unsigned int)height
             with:(const sf::Uint8*)pixels
 {
+    (void)width;
+    (void)height;
+    (void)pixels;
     sf::err() << "Cannot set an icon when SFML is integrated in a NSView." << std::endl;
 }
 

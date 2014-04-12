@@ -239,6 +239,7 @@
 ////////////////////////////////////////////////////////
 -(void)bringAllToFront:(id)sender
 {
+    (void)sender;
     [[NSApp windows] makeObjectsPerformSelector:@selector(orderFrontRegardless)];
 }
 
