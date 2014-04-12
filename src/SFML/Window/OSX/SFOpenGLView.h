@@ -137,7 +137,7 @@ namespace sf {
 ////////////////////////////////////////////////////////////
 /// \brief Compute the position of the cursor
 ///
-/// \param eventOrNil
+/// \param eventOrNil if nil the cursor position is the current one
 ///
 ////////////////////////////////////////////////////////////
 -(NSPoint)cursorPositionFromEvent:(NSEvent*)eventOrNil;

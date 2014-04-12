@@ -94,7 +94,7 @@ public :
     bool loadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, Vector2u& size);
 
     ////////////////////////////////////////////////////////////
-    /// \bref Save an array of pixels as an image file
+    /// \brief Save an array of pixels as an image file
     ///
     /// \param filename Path of image file to save
     /// \param pixels   Array of pixels to save to image
