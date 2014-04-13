@@ -90,7 +90,8 @@ m_window(0)
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
-@autoreleasepool {
+@autoreleasepool
+{
     [m_context clearDrawable];
 
     m_context = nil;
@@ -180,6 +181,26 @@ void SFContext::createContext(SFContext* shared,
         attrs.push_back(NSOpenGLPFAAccelerated);
     }
 
+    // Support for OpenGL 3.2 on Mac OS X Lion and later:
+    // SFML 2 Graphics module uses some OpenGL features that are deprecated
+    // in OpenGL 3.2 and that are no more available with core context.
+    // Therefore the Graphics module won't work as expected.
+
+    // 2.x are mapped to 2.1 since Apple only support that legacy version.
+    // >=3.0 are mapped to a 3.2 core profile.
+    bool legacy = settings.majorVersion < 3;
+
+    if (legacy)
+    {
+        attrs.push_back(NSOpenGLPFAOpenGLProfile);
+        attrs.push_back(NSOpenGLProfileVersionLegacy);
+    }
+    else
+    {
+        attrs.push_back(NSOpenGLPFAOpenGLProfile);
+        attrs.push_back(NSOpenGLProfileVersion3_2Core);
+    }
+
     attrs.push_back((NSOpenGLPixelFormatAttribute)0); // end of array
 
     // Create the pixel format.
@@ -199,7 +220,16 @@ void SFContext::createContext(SFContext* shared,
                                            shareContext:sharedContext];
 
     if (m_context == nil)
-        sf::err() << "Error. Unable to create the context." << std::endl;
+    {
+        sf::err() << "Error. Unable to create the context. Retrying without shared context." << std::endl;
+        m_context = [[NSOpenGLContext alloc] initWithFormat:pixFmt
+                                             shareContext:nil];
+
+        if (m_context == nil)
+            sf::err() << "Error. Unable to create the context." << std::endl;
+        else
+            sf::err() << "Warning. New context created without shared context." << std::endl;
+    }
 
     // Save the settings. (OpenGL version is updated elsewhere.)
     m_settings = settings;
