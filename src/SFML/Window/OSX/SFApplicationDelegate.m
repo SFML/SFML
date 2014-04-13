@@ -49,6 +49,14 @@
     return YES;
 }
 
+////////////////////////////////////////////////////////////
++(id)instance
+{
+    static SFApplicationDelegate* singleton = nil;
+    if (singleton == nil)
+        singleton = [[SFApplicationDelegate alloc] init];
+    return singleton;
+}
 
 @end
 
