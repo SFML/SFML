@@ -63,17 +63,17 @@
 
     // Application Menu (aka Apple Menu)
     NSMenuItem* appleItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* appleMenu = [[SFApplication createAppleMenu] autorelease];
+    NSMenu* appleMenu = [SFApplication createAppleMenu];
     [appleItem setSubmenu:appleMenu];
 
     // File Menu
     NSMenuItem* fileItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* fileMenu = [[SFApplication createFileMenu] autorelease];
+    NSMenu* fileMenu = [SFApplication createFileMenu];
     [fileItem setSubmenu:fileMenu];
 
     // Window menu
     NSMenuItem* windowItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* windowMenu = [[SFApplication createWindowMenu] autorelease];
+    NSMenu* windowMenu = [SFApplication createWindowMenu];
     [windowItem setSubmenu:windowMenu];
     [NSApp setWindowsMenu:windowMenu];
 }
@@ -120,7 +120,7 @@
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
     // SERVICES
-    NSMenu* serviceMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
+    NSMenu* serviceMenu = [[NSMenu alloc] initWithTitle:@""];
     NSMenuItem* serviceItem = [appleMenu addItemWithTitle:@"Services"
                                                   action:nil
                                            keyEquivalent:@""];
@@ -174,7 +174,6 @@
                                                        action:@selector(performClose:)
                                                 keyEquivalent:@"w"];
     [fileMenu addItem:closeItem];
-    [closeItem release];
 
     return fileMenu;
 }
@@ -199,7 +198,6 @@
                                                           action:@selector(performMiniaturize:)
                                                    keyEquivalent:@"m"];
     [windowMenu addItem:minimizeItem];
-    [minimizeItem release];
 
     // ZOOM
     [windowMenu addItemWithTitle:@"Zoom"

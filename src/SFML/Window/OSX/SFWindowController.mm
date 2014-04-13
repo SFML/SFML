@@ -77,7 +77,7 @@
         m_fullscreenMode = new sf::VideoMode();
 
         // Retain the window for our own use.
-        m_window = [window retain];
+        m_window = window;
 
         if (m_window == nil)
         {
@@ -254,12 +254,7 @@
     [self closeWindow];
     [NSMenu setMenuBarVisible:YES];
 
-    [m_window release];
-    [m_oglView release];
-
     delete m_fullscreenMode;
-
-    [super dealloc];
 }
 
 
@@ -279,7 +274,7 @@
 ////////////////////////////////////////////////////////
 -(sf::WindowHandle)getSystemHandle
 {
-    return m_window;
+    return (__bridge sf::WindowHandle)m_window;
 }
 
 
@@ -446,10 +441,6 @@
 
     // Set app icon.
     [[SFApplication sharedApplication] setApplicationIconImage:icon];
-
-    // Free up.
-    [icon release];
-    [bitmap release];
 }
 
 

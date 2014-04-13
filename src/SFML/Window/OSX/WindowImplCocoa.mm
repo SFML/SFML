@@ -30,7 +30,6 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
 
-#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFApplicationDelegate.h>
@@ -50,11 +49,8 @@ namespace priv
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle) :
 m_showCursor(true)
 {
-    // Ask for a pool.
-    retainPool();
-
     // Treat the handle as it real type
-    id nsHandle = (id)handle;
+    id nsHandle = (__bridge id)handle;
     if ([nsHandle isKindOfClass:[NSWindow class]])
     {
         // We have a window.
@@ -95,9 +91,6 @@ m_showCursor(true)
     // Transform the app process.
     setUpProcess();
 
-    // Ask for a pool.
-    retainPool();
-
     m_delegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
     [m_delegate changeTitle:sfStringToNSString(title)];
     [m_delegate setRequesterTo:this];
@@ -112,18 +105,10 @@ WindowImplCocoa::~WindowImplCocoa()
 {
     [m_delegate closeWindow];
 
-    [m_delegate release];
-
     // Put the next window in front, if any.
     NSArray* windows = [NSApp orderedWindows];
     if ([windows count] > 0)
         [[windows objectAtIndex:0] makeKeyAndOrderFront:nil];
-
-    releasePool();
-
-    drainPool(); // Make sure everything was freed
-    // This solve some issue when sf::Window::Create is called for the
-    // second time (nothing was render until the function was called again)
 }
 
 

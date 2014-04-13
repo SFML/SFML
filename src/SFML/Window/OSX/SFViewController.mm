@@ -44,7 +44,7 @@
         m_requester = 0;
 
         // Retain the view for our own use.
-        m_view = [view retain];
+        m_view = view;
 
         if (m_view == nil)
         {
@@ -81,11 +81,6 @@
 -(void)dealloc
 {
     [self closeWindow];
-
-    [m_view release];
-    [m_oglView release];
-
-    [super dealloc];
 }
 
 
@@ -101,7 +96,7 @@
 ////////////////////////////////////////////////////////
 -(sf::WindowHandle)getSystemHandle
 {
-    return m_view;
+    return (__bridge sf::WindowHandle)m_view;
 }
 
 
