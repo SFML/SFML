@@ -90,7 +90,13 @@ m_window(0)
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
+@autoreleasepool {
     [m_context clearDrawable];
+
+    m_context = nil;
+    m_view = nil;
+    m_window = nil;
+} // pool
 }
 
 
@@ -122,6 +128,8 @@ void SFContext::setVerticalSyncEnabled(bool enabled)
 void SFContext::createContext(SFContext* shared,
                               unsigned int bitsPerPixel,
                               const ContextSettings& settings)
+{
+@autoreleasepool
 {
     // Choose the attributes of OGL context.
     std::vector<NSOpenGLPixelFormatAttribute> attrs;
@@ -195,6 +203,7 @@ void SFContext::createContext(SFContext* shared,
 
     // Save the settings. (OpenGL version is updated elsewhere.)
     m_settings = settings;
+} // pool
 }
 
 } // namespace priv

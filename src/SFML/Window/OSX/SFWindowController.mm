@@ -254,6 +254,8 @@
     [self closeWindow];
     [NSMenu setMenuBarVisible:YES];
 
+    m_window = nil;
+    m_oglView = nil;
     delete m_fullscreenMode;
 }
 

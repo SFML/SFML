@@ -49,6 +49,8 @@ namespace priv
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle) :
 m_showCursor(true)
 {
+@autoreleasepool
+{
     // Treat the handle as it real type
     id nsHandle = (__bridge id)handle;
     if ([nsHandle isKindOfClass:[NSWindow class]])
@@ -78,6 +80,7 @@ m_showCursor(true)
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
+} // pool
 }
 
 
@@ -88,6 +91,8 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
                                  const ContextSettings& /*settings*/) :
 m_showCursor(true)
 {
+@autoreleasepool
+{
     // Transform the app process.
     setUpProcess();
 
@@ -97,18 +102,23 @@ m_showCursor(true)
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
+} // pool
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::~WindowImplCocoa()
 {
+@autoreleasepool
+{
     [m_delegate closeWindow];
+    m_delegate = nil;
 
     // Put the next window in front, if any.
     NSArray* windows = [NSApp orderedWindows];
     if ([windows count] > 0)
         [[windows objectAtIndex:0] makeKeyAndOrderFront:nil];
+} // pool
 }
 
 

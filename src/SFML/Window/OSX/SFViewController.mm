@@ -81,6 +81,9 @@
 -(void)dealloc
 {
     [self closeWindow];
+
+    m_view = nil;
+    m_oglView = nil;
 }
 
 

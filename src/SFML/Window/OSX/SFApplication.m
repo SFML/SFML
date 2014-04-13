@@ -36,6 +36,8 @@
 ////////////////////////////////////////////////////////////
 +(void)processEvent
 {
+@autoreleasepool
+{
     [SFApplication sharedApplication]; // Make sure NSApp exists
     NSEvent* event = nil;
 
@@ -46,6 +48,7 @@
     {
         [NSApp sendEvent:event];
     }
+} // pool
 }
 
 
