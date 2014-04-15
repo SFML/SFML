@@ -79,6 +79,13 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
 
 ////////////////////////////////////////////////////////////
+Joystick::Identification JoystickImpl::getIdentification() const
+{
+    return m_identification;
+}
+
+
+////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::update()
 {
     // To implement
