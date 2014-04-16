@@ -75,7 +75,7 @@ m_window(0)
     // Create the context.
     createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
 
-    // Create a dummy window/view pair (hidden) and asign it our context.
+    // Create a dummy window/view pair (hidden) and assign it our context.
     m_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height)
                                            styleMask:NSBorderlessWindowMask
                                              backing:NSBackingStoreBuffered

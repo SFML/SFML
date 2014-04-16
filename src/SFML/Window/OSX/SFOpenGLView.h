@@ -62,7 +62,6 @@ namespace sf {
     BOOL                          m_useKeyRepeat;   ///< Key repeat setting
     BOOL                          m_mouseIsIn;      ///< Mouse positional state
     NSTrackingArea*               m_trackingArea;   ///< Mouse tracking area
-    NSSize                        m_realSize;       ///< Actual size of the view
 
     // Hidden text view used to convert key event to actual chars.
     // We use a silent responder to prevent sound alerts.
@@ -99,18 +98,6 @@ namespace sf {
 ///
 ////////////////////////////////////////////////////////////
 -(void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester;
-
-////////////////////////////////////////////////////////////
-/// \brief Set the real size of view (it should be the back buffer size)
-///
-/// If not set, or set to its default value NSZeroSize, the view
-/// won't recompute the mouse coordinates before sending them
-/// to the requester.
-///
-/// \param newSize actual size of the view
-///
-////////////////////////////////////////////////////////////
--(void)setRealSize:(NSSize)newSize;
 
 ////////////////////////////////////////////////////////////
 /// \brief Compute the position in global coordinate

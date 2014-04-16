@@ -113,7 +113,6 @@ BOOL isValidTextUnicode(NSEvent* event);
     {
         [self setRequesterTo:0];
         [self enableKeyRepeat];
-        m_realSize = NSZeroSize;
 
         // Register for mouse move event
         m_mouseIsIn = [self isMouseInside];
@@ -173,22 +172,8 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)setRealSize:(NSSize)newSize
-{
-    m_realSize = newSize;
-}
-
-
-////////////////////////////////////////////////////////
 -(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point
 {
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(m_realSize, NSZeroSize))
-    {
-        point.x = (point.x / m_realSize.width)  * [self frame].size.width;
-        point.y = (point.y / m_realSize.height) * [self frame].size.height;
-    }
-
     // Note : -[NSWindow convertBaseToScreen:] is deprecated on 10.7
     //        but the recommended -[NSWindow convertRectToScreen] is not
     //        available until 10.7.
@@ -537,13 +522,6 @@ BOOL isValidTextUnicode(NSEvent* event);
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
     loc.y = h - loc.y;
-
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(m_realSize, NSZeroSize))
-    {
-        loc.x = (loc.x * m_realSize.width)  / [self frame].size.width;
-        loc.y = (loc.y * m_realSize.height) / [self frame].size.height;
-    }
 
     return loc;
 }
