@@ -61,6 +61,11 @@ macro(sfml_add_library target)
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
     endif()
 
+    # On OS X, use Objective-C ARC
+    if(SFML_OS_MACOSX)
+        set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fobjc-arc)
+    endif()
+
     # link the target to its SFML dependencies
     if(THIS_DEPENDS)
         target_link_libraries(${target} ${THIS_DEPENDS})
@@ -70,17 +75,17 @@ macro(sfml_add_library target)
     if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS)
         if(SFML_BUILD_FRAMEWORKS)
             # adapt target to build frameworks instead of dylibs
-            set_target_properties(${target} PROPERTIES 
+            set_target_properties(${target} PROPERTIES
                                   FRAMEWORK TRUE
                                   FRAMEWORK_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
                                   MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.${target}
                                   MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
                                   MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
         endif()
-        
+
         # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
-        set_target_properties(${target} PROPERTIES 
-                              BUILD_WITH_INSTALL_RPATH 1 
+        set_target_properties(${target} PROPERTIES
+                              BUILD_WITH_INSTALL_RPATH 1
                               INSTALL_NAME_DIR "@executable_path/../Frameworks")
     endif()
 
@@ -92,7 +97,7 @@ macro(sfml_add_library target)
     # add the install rule
     install(TARGETS ${target}
             RUNTIME DESTINATION bin COMPONENT bin
-            LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT bin 
+            LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT bin
             ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel
             FRAMEWORK DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX} COMPONENT bin)
 

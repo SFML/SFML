@@ -30,13 +30,12 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
 
-#import <SFML/Window/OSX/SFWindowController.h>
-#import <SFML/Window/OSX/SFViewController.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
-#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFApplicationDelegate.h>
 #import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
+#import <SFML/Window/OSX/SFViewController.h>
+#import <SFML/Window/OSX/SFWindowController.h>
 
 namespace sf
 {
@@ -47,33 +46,32 @@ namespace priv
 #pragma mark WindowImplCocoa's ctor/dtor
 
 ////////////////////////////////////////////////////////////
-WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
-: m_showCursor(true)
+WindowImplCocoa::WindowImplCocoa(WindowHandle handle) :
+m_showCursor(true)
 {
-    // Ask for a pool.
-    retainPool();
-
+@autoreleasepool
+{
     // Treat the handle as it real type
-    id nsHandle = (id)handle;
-    if ([nsHandle isKindOfClass:[NSWindow class]]) {
-
+    id nsHandle = (__bridge id)handle;
+    if ([nsHandle isKindOfClass:[NSWindow class]])
+    {
         // We have a window.
         m_delegate = [[SFWindowController alloc] initWithWindow:nsHandle];
-
-    } else if ([nsHandle isKindOfClass:[NSView class]]) {
-
+    }
+    else if ([nsHandle isKindOfClass:[NSView class]])
+    {
         // We have a view.
         m_delegate = [[SFViewController alloc] initWithView:nsHandle];
+    }
+    else
+    {
 
-    } else {
-
-        sf::err()
-            << "Cannot import this Window Handle because it is neither "
-            << "a <NSWindow*> nor <NSView*> object "
-            << "(or any of their subclasses). You gave a <"
-            << [[nsHandle className] UTF8String]
-            << "> object."
-            << std::endl;
+        sf::err() << "Cannot import this Window Handle because it is neither "
+                  << "a <NSWindow*> nor <NSView*> object "
+                  << "(or any of their subclasses). You gave a <"
+                  << [[nsHandle className] UTF8String]
+                  << "> object."
+                  << std::endl;
         return;
 
     }
@@ -82,6 +80,7 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
+} // pool
 }
 
 
@@ -89,14 +88,13 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
 WindowImplCocoa::WindowImplCocoa(VideoMode mode,
                                  const String& title,
                                  unsigned long style,
-                                 const ContextSettings& /*settings*/)
-: m_showCursor(true)
+                                 const ContextSettings& /*settings*/) :
+m_showCursor(true)
+{
+@autoreleasepool
 {
     // Transform the app process.
     setUpProcess();
-
-    // Ask for a pool.
-    retainPool();
 
     m_delegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
     [m_delegate changeTitle:sfStringToNSString(title)];
@@ -104,27 +102,23 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
+} // pool
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::~WindowImplCocoa()
 {
+@autoreleasepool
+{
     [m_delegate closeWindow];
-
-    [m_delegate release];
+    m_delegate = nil;
 
     // Put the next window in front, if any.
     NSArray* windows = [NSApp orderedWindows];
-    if ([windows count] > 0) {
+    if ([windows count] > 0)
         [[windows objectAtIndex:0] makeKeyAndOrderFront:nil];
-    }
-
-    releasePool();
-
-    drainPool(); // Make sure everything was freed
-    // This solve some issue when sf::Window::Create is called for the
-    // second time (nothing was render until the function was called again)
+} // pool
 }
 
 
@@ -140,21 +134,22 @@ void WindowImplCocoa::setUpProcess(void)
 {
     static bool isTheProcessSetAsApplication = false;
 
-    if (!isTheProcessSetAsApplication) {
+    if (!isTheProcessSetAsApplication)
+    {
         // Do it only once !
         isTheProcessSetAsApplication = true;
 
         // Set the process as a normal application so it can get focus.
         ProcessSerialNumber psn;
-        if (!GetCurrentProcess(&psn)) {
+        if (!GetCurrentProcess(&psn))
+        {
             TransformProcessType(&psn, kProcessTransformToForegroundApplication);
             SetFrontProcess(&psn);
         }
 
         // Register an application delegate if there is none
-        if (![[SFApplication sharedApplication] delegate]) {
-            [NSApp setDelegate:[[SFApplicationDelegate alloc] init]];
-        }
+        if (![[SFApplication sharedApplication] delegate])
+            [NSApp setDelegate:[SFApplicationDelegate instance]];
 
         // Create menus for the application (before finishing launching!)
         [SFApplication setUpMenuBar];
@@ -196,9 +191,8 @@ void WindowImplCocoa::windowResized(unsigned int width, unsigned int height)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::windowLostFocus(void)
 {
-    if (!m_showCursor) {
-        [m_delegate showMouseCursor]; // Make sur the cursor is visible
-    }
+    if (!m_showCursor)
+        [m_delegate showMouseCursor]; // Make sure the cursor is visible
 
     Event event;
     event.type = Event::LostFocus;
@@ -210,9 +204,8 @@ void WindowImplCocoa::windowLostFocus(void)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::windowGainedFocus(void)
 {
-    if (!m_showCursor) {
+    if (!m_showCursor)
         [m_delegate hideMouseCursor]; // Restore user's setting
-    }
 
     Event event;
     event.type = Event::GainedFocus;
@@ -276,9 +269,8 @@ void WindowImplCocoa::mouseWheelScrolledAt(float delta, int x, int y)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::mouseMovedIn(void)
 {
-    if (!m_showCursor) {
+    if (!m_showCursor)
         [m_delegate hideMouseCursor]; // Restore user's setting
-    }
 
     Event event;
     event.type = Event::MouseEntered;
@@ -289,9 +281,8 @@ void WindowImplCocoa::mouseMovedIn(void)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::mouseMovedOut(void)
 {
-    if (!m_showCursor) {
-        [m_delegate showMouseCursor]; // Make sur the cursor is visible
-    }
+    if (!m_showCursor)
+        [m_delegate showMouseCursor]; // Make sure the cursor is visible
 
     Event event;
     event.type = Event::MouseLeft;
@@ -403,11 +394,10 @@ void WindowImplCocoa::setIcon(unsigned int width, unsigned int height, const Uin
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setVisible(bool visible)
 {
-    if (visible) {
+    if (visible)
         [m_delegate showWindow];
-    } else {
+    else
         [m_delegate hideWindow];
-    }
 }
 
 
@@ -416,22 +406,20 @@ void WindowImplCocoa::setMouseCursorVisible(bool visible)
 {
     m_showCursor = visible;
 
-    if (m_showCursor) {
+    if (m_showCursor)
         [m_delegate showMouseCursor];
-    } else {
+    else
         [m_delegate hideMouseCursor];
-    }
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setKeyRepeatEnabled(bool enabled)
 {
-    if (enabled) {
+    if (enabled)
         [m_delegate enableKeyRepeat];
-    } else {
+    else
         [m_delegate disableKeyRepeat];
-    }
 }
 
 

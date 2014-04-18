@@ -109,7 +109,7 @@ public :
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty IntRect).
     /// If the \a area rectangle crosses the bounds of the image, it
-    /// is adjusted to fit the image size. 
+    /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
     /// driver and can be retrieved with the getMaximumSize function.
@@ -140,7 +140,7 @@ public :
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty IntRect).
     /// If the \a area rectangle crosses the bounds of the image, it
-    /// is adjusted to fit the image size. 
+    /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
     /// driver and can be retrieved with the getMaximumSize function.
@@ -172,7 +172,7 @@ public :
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty IntRect).
     /// If the \a area rectangle crosses the bounds of the image, it
-    /// is adjusted to fit the image size. 
+    /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
     /// driver and can be retrieved with the getMaximumSize function.
@@ -196,7 +196,7 @@ public :
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty IntRect).
     /// If the \a area rectangle crosses the bounds of the image, it
-    /// is adjusted to fit the image size. 
+    /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
     /// driver and can be retrieved with the getMaximumSize function.
@@ -478,7 +478,7 @@ private :
     /// accordingly.
     /// The returned size is greater than or equal to the original size.
     ///
-    /// \param Size size to convert
+    /// \param size size to convert
     ///
     /// \return Valid nearest size (greater than or equal to specified size)
     ///
@@ -529,7 +529,7 @@ private :
 /// before creating the final texture, you can load your file to a
 /// sf::Image, do whatever you need with the pixels, and then call
 /// Texture::loadFromImage.
-/// 
+///
 /// Since they live in the graphics card memory, the pixels of a texture
 /// cannot be accessed without a slow copy first. And they cannot be
 /// accessed individually. Therefore, if you need to read the texture's

@@ -44,24 +44,25 @@ namespace sf {
 
 
 ////////////////////////////////////////////////////////////
-/// Init the global state (only if needed). It needs to be
-/// Called before any event, e.g. in the window constructor.
+/// \brief Initialize the global state (only if needed)
+///
+/// It needs to be called before any event, e.g. in the window constructor.
 ///
 ////////////////////////////////////////////////////////////
-void initialiseKeyboardHelper();
+void initialiseKeyboardHelper(void);
 
 
 ////////////////////////////////////////////////////////////
-/// Set up a SFML key event based on the given modifiers
-/// flags and key code.
+/// \brief Set up a SFML key event based on the given modifiers flags and key code
 ///
 ////////////////////////////////////////////////////////////
 sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key);
 
 
 ////////////////////////////////////////////////////////////
-/// Handle the state of modifiers keys and send key
-/// release & pressed events to the requester.
+/// \brief Handle the state of modifiers keys
+///
+/// Send key released & pressed events to the requester.
 ///
 ////////////////////////////////////////////////////////////
 void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& requester);

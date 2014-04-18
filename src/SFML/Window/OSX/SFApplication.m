@@ -36,6 +36,8 @@
 ////////////////////////////////////////////////////////////
 +(void)processEvent
 {
+@autoreleasepool
+{
     [SFApplication sharedApplication]; // Make sure NSApp exists
     NSEvent* event = nil;
 
@@ -46,6 +48,7 @@
     {
         [NSApp sendEvent:event];
     }
+} // pool
 }
 
 
@@ -56,30 +59,31 @@
 
     // Set the main menu bar
     NSMenu* mainMenu = [NSApp mainMenu];
-    if (mainMenu != nil) return;
+    if (mainMenu != nil)
+        return;
     mainMenu = [[NSMenu alloc] initWithTitle:@""];
     [NSApp setMainMenu:mainMenu];
 
     // Application Menu (aka Apple Menu)
     NSMenuItem* appleItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* appleMenu = [[SFApplication createAppleMenu] autorelease];
+    NSMenu* appleMenu = [SFApplication createAppleMenu];
     [appleItem setSubmenu:appleMenu];
 
     // File Menu
     NSMenuItem* fileItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* fileMenu = [[SFApplication createFileMenu] autorelease];
+    NSMenu* fileMenu = [SFApplication createFileMenu];
     [fileItem setSubmenu:fileMenu];
 
     // Window menu
     NSMenuItem* windowItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* windowMenu = [[SFApplication createWindowMenu] autorelease];
+    NSMenu* windowMenu = [SFApplication createWindowMenu];
     [windowItem setSubmenu:windowMenu];
     [NSApp setWindowsMenu:windowMenu];
 }
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu *)createAppleMenu
++(NSMenu*)createAppleMenu
 {
     // Apple menu is as follow:
     //
@@ -119,7 +123,7 @@
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
     // SERVICES
-    NSMenu* serviceMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
+    NSMenu* serviceMenu = [[NSMenu alloc] initWithTitle:@""];
     NSMenuItem* serviceItem = [appleMenu addItemWithTitle:@"Services"
                                                   action:nil
                                            keyEquivalent:@""];
@@ -158,7 +162,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu *)createFileMenu
++(NSMenu*)createFileMenu
 {
     // The File menu is as follow:
     //
@@ -173,14 +177,13 @@
                                                        action:@selector(performClose:)
                                                 keyEquivalent:@"w"];
     [fileMenu addItem:closeItem];
-    [closeItem release];
 
     return fileMenu;
 }
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu *)createWindowMenu
++(NSMenu*)createWindowMenu
 {
     // The Window menu is as follow:
     //
@@ -198,7 +201,6 @@
                                                           action:@selector(performMiniaturize:)
                                                    keyEquivalent:@"m"];
     [windowMenu addItem:minimizeItem];
-    [minimizeItem release];
 
     // ZOOM
     [windowMenu addItemWithTitle:@"Zoom"
@@ -218,20 +220,18 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSString *)applicationName
++(NSString*)applicationName
 {
     // First, try localized name
     NSString* appName = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey:@"CFBundleDisplayName"];
 
     // Then, try non-localized name
-    if (appName == nil || [appName length] == 0) {
+    if ((appName == nil) || ([appName length] == 0))
         appName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
-    }
 
     // Finally, fallback to the process info
-    if (appName == nil || [appName length] == 0) {
+    if ((appName == nil) || ([appName length] == 0))
         appName = [[NSProcessInfo processInfo] processName];
-    }
 
     return appName;
 }
@@ -240,6 +240,7 @@
 ////////////////////////////////////////////////////////
 -(void)bringAllToFront:(id)sender
 {
+    (void)sender;
     [[NSApp windows] makeObjectsPerformSelector:@selector(orderFrontRegardless)];
 }
 
@@ -252,8 +253,7 @@
     // custom OpenGL view. See -[SFOpenGLView sfKeyUp:] for more details.
 
     id firstResponder = [[anEvent window] firstResponder];
-    if ([anEvent type] != NSKeyUp
-        || ![firstResponder tryToPerform:@selector(sfKeyUp:) with:anEvent]) {
+    if (([anEvent type] != NSKeyUp) || (![firstResponder tryToPerform:@selector(sfKeyUp:) with:anEvent])) {
         // It's either not a key up event or no responder has a sfKeyUp
         // message implemented.
         [super sendEvent:anEvent];

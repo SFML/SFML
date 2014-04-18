@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import "SFWindow.h"
+#import <SFML/Window/OSX/SFWindow.h>
 
 
 @implementation SFWindow
@@ -46,7 +46,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)keyDown:(NSEvent *)theEvent
+-(void)keyDown:(NSEvent*)theEvent
 {
     // Do nothing except preventing a system alert each time a key is pressed
     //
@@ -54,7 +54,8 @@
     // -----------------------
     // Consider overriding NSResponder -keyDown: message in a Cocoa view/window
     // that contains a SFML rendering area. Doing so will prevent a system
-    // alert to be thrown everytime the user presses a key.
+    // alert to be thrown every time the user presses a key.
+    (void)theEvent;
 }
 
 

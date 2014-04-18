@@ -26,8 +26,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/OSX/HIDJoystickManager.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp>
+#include <SFML/Window/OSX/HIDJoystickManager.hpp>
 
 ////////////////////////////////////////////////////////////
 // Private data
@@ -36,7 +36,7 @@ namespace
 {
     // Using a custom run loop mode solve some issues that appears when SFML
     // is used with Cocoa.
-    CFStringRef const RunLoopMode = CFSTR("SFML_RUN_LOOP_MODE");
+    const CFStringRef RunLoopMode = CFSTR("SFML_RUN_LOOP_MODE");
 }
 
 
@@ -69,9 +69,9 @@ CFSetRef HIDJoystickManager::copyJoysticks()
 
 
 ////////////////////////////////////////////////////////////
-HIDJoystickManager::HIDJoystickManager()
-: m_manager(0)
-, m_joystickCount(0)
+HIDJoystickManager::HIDJoystickManager() :
+m_manager(0),
+m_joystickCount(0)
 {
     m_manager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
 
@@ -123,14 +123,15 @@ void HIDJoystickManager::update()
 {
     SInt32 status = kCFRunLoopRunHandledSource;
 
-    while (status == kCFRunLoopRunHandledSource) {
+    while (status == kCFRunLoopRunHandledSource)
+    {
         status = CFRunLoopRunInMode(RunLoopMode, 0, true);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void HIDJoystickManager::pluggedIn(void * context, IOReturn, void *, IOHIDDeviceRef)
+void HIDJoystickManager::pluggedIn(void* context, IOReturn, void*, IOHIDDeviceRef)
 {
     HIDJoystickManager* manager = (HIDJoystickManager*)context;
     manager->m_joystickCount++;
@@ -138,7 +139,7 @@ void HIDJoystickManager::pluggedIn(void * context, IOReturn, void *, IOHIDDevice
 
 
 ////////////////////////////////////////////////////////////
-void HIDJoystickManager::pluggedOut(void * context, IOReturn, void *, IOHIDDeviceRef)
+void HIDJoystickManager::pluggedOut(void* context, IOReturn, void*, IOHIDDeviceRef)
 {
     HIDJoystickManager* manager = (HIDJoystickManager*)context;
     manager->m_joystickCount--;

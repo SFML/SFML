@@ -33,20 +33,30 @@
 
 
 ////////////////////////////////////////////////////////////
--(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
-    // TODO generate close event for each SFML window
+    (void)sender;
+    // Generate close event for each SFML window
     [NSApp makeWindowsPerform:@selector(sfClose) inOrder:NO];
     return NSTerminateCancel;
 }
 
 
 ////////////////////////////////////////////////////////////
--(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication
 {
+    (void)theApplication;
     return YES;
 }
 
+////////////////////////////////////////////////////////////
++(id)instance
+{
+    static SFApplicationDelegate* singleton = nil;
+    if (singleton == nil)
+        singleton = [[SFApplicationDelegate alloc] init];
+    return singleton;
+}
 
 @end
 

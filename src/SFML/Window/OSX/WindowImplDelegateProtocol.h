@@ -26,8 +26,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Config.hpp> // for sf::Uint8
+#include <SFML/Window/WindowHandle.hpp>
 
 #import <AppKit/AppKit.h>
 
@@ -38,8 +38,7 @@ namespace sf {
 }
 
 ////////////////////////////////////////////////////////////
-/// This protocol defines the interface of the delegate of
-/// the window implementation.
+/// \brief Interface of the delegate of the window implementation
 ///
 /// We don't create an interface here because Obj-C doesn't allow
 /// multiple inheritance (SFViewController and SFWindowController
@@ -47,12 +46,12 @@ namespace sf {
 /// we have to duplicate some code.
 ///
 /// Everything is done via a class that implement this protocol.
-/// There are two of these classes :
+/// There are two of these classes:
 ///
 /// SFViewController and SFWindowController
 ///
 /// The requester is a WindowImplCocoa. It's used to send back
-/// event via these functions :
+/// event via these functions:
 ///
 /// windowClosed, windowResized, windowLostFocus, windowGainedFocus
 ///
@@ -61,99 +60,142 @@ namespace sf {
 ///
 /// keyDown, keyUp, textEntered
 ///
-/// Note : Joysticks are not bound to a view or window
+/// Note: Joysticks are not bound to a view or window
 /// thus they're not managed by a class implementing this protocol.
 ///
 ////////////////////////////////////////////////////////////
 @protocol WindowImplDelegateProtocol
 
 ////////////////////////////////////////////////////////////
-/// Set the WindowImpl who requested this delegate
-/// (This would be a ctor in C++ or Java where we can prohibit the
-/// construction of an object.)
+/// \brief Set the WindowImpl who requested this delegate
 ///
 ////////////////////////////////////////////////////////////
--(void)setRequesterTo:(sf::priv::WindowImplCocoa *)requester;
+-(void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester;
 
 ////////////////////////////////////////////////////////////
-/// Return the main view or window.
+/// \brief Get the underlying OS specific handle
+///
+/// \return Return the main view or window.
 ///
 ////////////////////////////////////////////////////////////
 -(sf::WindowHandle)getSystemHandle;
 
 ////////////////////////////////////////////////////////////
-/// Hide or show the mouse cursor.
+/// \brief Hide the mouse cursor
 ///
 ////////////////////////////////////////////////////////////
 -(void)hideMouseCursor;
+
+////////////////////////////////////////////////////////////
+/// \brief Show the mouse cursor
+///
+////////////////////////////////////////////////////////////
 -(void)showMouseCursor;
 
 ////////////////////////////////////////////////////////////
-/// Get window's position.
+/// \brief Get window position
+///
+/// \return Top left corner of the window or view
 ///
 ////////////////////////////////////////////////////////////
 -(NSPoint)position;
 
 ////////////////////////////////////////////////////////////
-/// Move the window (not the view if we handle not a window) (SFML Coordinates).
+/// \brief Move the window
+///
+/// Doesn't apply if the implementation is 'only' a view.
+///
+/// \param x x position in SFML coordinates
+/// \param y y position in SFML coordinates
 ///
 ////////////////////////////////////////////////////////////
 -(void)setWindowPositionToX:(int)x Y:(int)y;
 
 ////////////////////////////////////////////////////////////
-/// Get window's size.
+/// \brief Get window/view's size
+///
+/// \return the size of the rendering area
 ///
 ////////////////////////////////////////////////////////////
 -(NSSize)size;
 
 ////////////////////////////////////////////////////////////
-/// Resize the window/view.
+/// \brief Resize the window/view
+///
+/// \param width new width
+/// \param height new height
 ///
 ////////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height;
 
 ////////////////////////////////////////////////////////////
-/// Set the title (does nothing if we manage a view).
+/// \brief Set the window's title
+///
+/// Doesn't apply if the implementation is 'only' a view.
+///
+/// \param title new title
 ///
 ////////////////////////////////////////////////////////////
--(void)changeTitle:(NSString *)title;
+-(void)changeTitle:(NSString*)title;
 
 ////////////////////////////////////////////////////////////
-/// Hide or show the window (does nothing if we manage a view).
+/// \brief Hide the window
+///
+/// Doesn't apply if the implementation is 'only' a view.
 ///
 ////////////////////////////////////////////////////////////
 -(void)hideWindow;
+
+////////////////////////////////////////////////////////////
+/// \brief Show the window
+///
+/// Doesn't apply if the implementation is 'only' a view.
+///
+////////////////////////////////////////////////////////////
 -(void)showWindow;
 
 ////////////////////////////////////////////////////////////
-/// Close the window (does nothing if we manage a view).
+/// \brief Close the window
+///
+/// Doesn't apply if the implementation is 'only' a view.
 ///
 ////////////////////////////////////////////////////////////
 -(void)closeWindow;
 
 ////////////////////////////////////////////////////////////
-/// Enable or disable key repeat.
+/// \brief Enable key repeat
 ///
 ////////////////////////////////////////////////////////////
 -(void)enableKeyRepeat;
+
+////////////////////////////////////////////////////////////
+/// \brief Disable key repeat
+///
+////////////////////////////////////////////////////////////
 -(void)disableKeyRepeat;
 
 ////////////////////////////////////////////////////////////
-/// Set an icon to the application.
+/// \brief Set an icon to the application
+///
+/// \param width icon's width
+/// \param height icon's height
+/// \param pixels icon's data
 ///
 ////////////////////////////////////////////////////////////
--(void)setIconTo:(unsigned int)width by:(unsigned int)height with:(sf::Uint8 const*)pixels;
+-(void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const sf::Uint8*)pixels;
 
 ////////////////////////////////////////////////////////////
-/// Fetch new event
+/// \brief Fetch new event
 ///
 ////////////////////////////////////////////////////////////
 -(void)processEvent;
 
 ////////////////////////////////////////////////////////////
-/// Apply a given context to an OpenGL view.
+/// \brief Apply a given context to an OpenGL view
+///
+/// \param context OpenGL context to attach to the OpenGL view
 ///
 ////////////////////////////////////////////////////////////
--(void)applyContext:(NSOpenGLContext *)context;
+-(void)applyContext:(NSOpenGLContext*)context;
 
 @end

@@ -29,36 +29,57 @@
 #import <AppKit/AppKit.h>
 
 ////////////////////////////////////////////////////////////
-/// \brief Here we redefine some methods to allow grabing fullscreen events.
+/// \brief Here we redefine some methods to allow grabbing fullscreen events
 ///
 ////////////////////////////////////////////////////////////
 @interface SFWindow : NSWindow
 
 ////////////////////////////////////////////////////////////
-/// These two methods must return YES to grab fullscreen events.
+/// \brief Allow to grab fullscreen events
+///
+/// acceptsFirstResponder and canBecomeKeyWindow messages must
+/// return YES to grab fullscreen events.
+///
 /// See http://stackoverflow.com/questions/999464/fullscreen-key-down-actions
-/// for more informations
+///
+/// \return YES
 ///
 ////////////////////////////////////////////////////////////
 -(BOOL)acceptsFirstResponder;
+
+////////////////////////////////////////////////////////////
+/// \brief Allow to grab fullscreen events
+///
+/// See acceptsFirstResponder documentation above.
+///
+/// \return YES
+///
+////////////////////////////////////////////////////////////
 -(BOOL)canBecomeKeyWindow;
 
 ////////////////////////////////////////////////////////////
-/// Override default implementation of keyDown: to prevent
-/// system alert
+/// \brief Prevent system alert
+///
+/// \param theEvent a Cocoa event
 ///
 ////////////////////////////////////////////////////////////
--(void)keyDown:(NSEvent *)theEvent;
+-(void)keyDown:(NSEvent*)theEvent;
 
 @end
 
 
+////////////////////////////////////////////////////////////
+/// \brief Extension of NSWindow
+///
+/// Add some extra messages for SFML internal usage.
+///
+////////////////////////////////////////////////////////////
 @interface NSWindow (SFML)
 
 ////////////////////////////////////////////////////////////
 /// Proxy for performClose: for the app delegate
 ///
-/// Always return nil
+/// \return nil
 ///
 ////////////////////////////////////////////////////////////
 -(id)sfClose;

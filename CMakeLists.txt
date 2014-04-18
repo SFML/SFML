@@ -36,11 +36,17 @@ sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples,
 # add an option for building the API documentation
 sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
+# set default CMAKE_OSX_ARCHITECTURES value to x86_64
+sfml_set_option(CMAKE_OSX_ARCHITECTURES "x86_64" STRING "Build architectures for OS X")
+
+# set default CMAKE_OSX_DEPLOYMENT_TARGET value to 10.7
+sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" STRING "Minimum OS version to target for deployment (at runtime)")
+
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
-    
+
     # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
     sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
 
@@ -101,6 +107,18 @@ if(SFML_OS_MACOSX)
             return()
         endif()
     endif()
+
+    # Objective-C ARC requires a 64 bit runtime.
+    if(NOT CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+        message(FATAL_ERROR "CMAKE_OSX_ARCHITECTURES should be 'x86_64' to support ARC")
+        return()
+    endif()
+
+    # make sure CMAKE_OSX_DEPLOYMENT_TARGET is >= 10.7
+    if (CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS "10.7")
+        message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET (${CMAKE_OSX_DEPLOYMENT_TARGET}) should be 10.7 or better")
+        return()
+    endif()
 endif()
 
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
@@ -112,8 +130,8 @@ if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
                     "tools/pkg-config/sfml-${sfml_module}.pc.in"
                     "tools/pkg-config/sfml-${sfml_module}.pc"
                     @ONLY)
-	    INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
-                    DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
+                INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
+                        DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
             endforeach()
         endif()
     else()
@@ -161,7 +179,7 @@ else()
     add_library(SFML ${SFML_SOURCES})
 
     # edit target properties
-    set_target_properties(SFML PROPERTIES 
+    set_target_properties(SFML PROPERTIES
                           FRAMEWORK TRUE
                           FRAMEWORK_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
                           MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.SFML
@@ -170,14 +188,14 @@ else()
                           PUBLIC_HEADER "${SFML_HEADERS}")
 
     # add the remaining headers
-    add_custom_command(TARGET SFML 
+    add_custom_command(TARGET SFML
                        POST_BUILD
                        COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* SFML.framework/Versions/${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}/Headers)
 
-    # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
-    # NOTE : it's not required to link agains SFML.framework
-    set_target_properties(SFML PROPERTIES 
-                          BUILD_WITH_INSTALL_RPATH 1 
+    # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
+    # NOTE : it's not required to link against SFML.framework
+    set_target_properties(SFML PROPERTIES
+                          BUILD_WITH_INSTALL_RPATH 1
                           INSTALL_NAME_DIR "@executable_path/../Frameworks")
 
     # install rule
@@ -212,6 +230,12 @@ elseif(SFML_OS_MACOSX)
     install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
 
     if(SFML_INSTALL_XCODE4_TEMPLATES)
-        install(DIRECTORY tools/xcode/templates/SFML DESTINATION /Library/Developer/Xcode/Templates)
+        install(DIRECTORY tools/xcode/templates/SFML
+                DESTINATION /Library/Developer/Xcode/Templates
+                PATTERN "*.in" EXCLUDE)
+        configure_file(
+                    "tools/xcode/templates/SFML/SFML Compiler.xctemplate/TemplateInfo.plist.in"
+                    "/Library/Developer/Xcode/Templates/SFML/SFML Compiler.xctemplate/TemplateInfo.plist"
+                    @ONLY)
     endif()
 endif()

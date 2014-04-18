@@ -119,7 +119,7 @@ private :
     /// \param ref HID device
     /// \param prop Property to retrieve from the device
     ///
-    /// \return Value for the property as a string
+    /// \return Value of the property
     ///
     ////////////////////////////////////////////////////////////
     std::string getDeviceString(IOHIDDeviceRef ref, CFStringRef prop);
@@ -130,7 +130,7 @@ private :
     /// \param ref HID device
     /// \param prop Property to retrieve from the device
     ///
-    /// \return Value for the propery as an unsigned int
+    /// \return Value of the property
     ///
     ////////////////////////////////////////////////////////////
     unsigned int getDeviceUint(IOHIDDeviceRef ref, CFStringRef prop);
@@ -141,6 +141,7 @@ private :
     /// \param cfString CFStringRef to convert
     ///
     /// \return std::string
+    ///
     ////////////////////////////////////////////////////////////
     std::string stringFromCFString(CFStringRef cfString);
 

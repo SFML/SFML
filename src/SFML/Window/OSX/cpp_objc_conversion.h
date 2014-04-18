@@ -26,14 +26,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <string>
 #include <SFML/System/String.hpp>
+#include <string>
 
 #import <Foundation/Foundation.h>
 
 ////////////////////////////////////////////////////////////
-/// \brief Returns a NSString construct with +stringWithCString:encoding:.
+/// \brief Returns a NSString construct with +stringWithCString:encoding:
 ///
 ////////////////////////////////////////////////////////////
-NSString* stringToNSString(std::string const& string);
-NSString* sfStringToNSString(sf::String const& string);
+NSString* stringToNSString(const std::string& string);
+
+////////////////////////////////////////////////////////////
+/// \brief Returns a NSString construct with +stringWithCString:encoding:
+///
+////////////////////////////////////////////////////////////
+NSString* sfStringToNSString(const sf::String& string);

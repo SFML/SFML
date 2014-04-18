@@ -26,12 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/ThreadLocalPtr.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/ThreadLocalPtr.hpp>
 
-#import <Foundation/Foundation.h>
 #import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
+#import <Foundation/Foundation.h>
 
 
 ////////////////////////////////////////////////////////////
@@ -42,8 +42,8 @@
 /// Because NSAutoreleasePool cannot be retain we have to do it ourself.
 /// We use an sf::ThreadLocalPtr to have one PoolWrapper in each thread.
 ///
-/// SPECIAL CONSIDERATION :
-/// =======================
+/// SPECIAL CONSIDERATION:
+/// ======================
 /// This implies that if retainPool is called X times in a thread Y then
 /// releasePool must be called X times too in the same thread Y.
 ///
@@ -54,10 +54,11 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief C++ Wrapper of Obj-C Autorelease Pool.
+/// \brief C++ Wrapper of Obj-C Autorelease Pool
 ///
 ////////////////////////////////////////////////////////////
-class PoolWrapper : NonCopyable {
+class PoolWrapper : NonCopyable
+{
 public :
 
     ////////////////////////////////////////////////////////////
@@ -95,15 +96,15 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int m_count;                  ///< How many times was the pool retained ?
+    int m_count;                  ///< How many times was the pool retained?
     NSAutoreleasePool* m_pool;    ///< Our dedicated pool
 };
 
 
 ////////////////////////////////////////////////////////////
-PoolWrapper::PoolWrapper()
-: m_count(0)
-, m_pool(0)
+PoolWrapper::PoolWrapper() :
+m_count(0),
+m_pool(0)
 {
     /* Nothing else */
 }
@@ -113,17 +114,16 @@ PoolWrapper::PoolWrapper()
 PoolWrapper::~PoolWrapper()
 {
 #ifdef SFML_DEBUG
-    if (m_count < 0) {
+    if (m_count < 0)
         sf::err() << "~PoolWrapper : m_count is less than zero! "
                      "You called releasePool from a thread too many times."
                   << std::endl;
-    } else if (m_count > 0) {
+    else if (m_count > 0)
         sf::err() << "~PoolWrapper : m_count is greater than zero! "
                      "You called releasePool from a thread to few times."
                   << std::endl;
-    } else { // m_count == 0
+    else // m_count == 0
         sf::err() << "~PoolWrapper is HAPPY!" << std::endl;
-    }
 #endif
 }
 
@@ -135,14 +135,12 @@ void PoolWrapper::retain()
     ++m_count;
 
     // Allocate pool if required.
-    if (m_pool == 0) {
+    if (m_pool == 0)
         m_pool = [[NSAutoreleasePool alloc] init];
-    }
 
 #ifdef SFML_DEBUG
-    if (m_count <= 0) {
+    if (m_count <= 0)
         sf::err() << "PoolWrapper::retain : m_count <= 0! " << std::endl;
-    }
 #endif
 }
 
@@ -154,14 +152,12 @@ void PoolWrapper::release()
     --m_count;
 
     // Drain pool if required.
-    if (m_count == 0) {
+    if (m_count == 0)
         drain();
-    }
 
 #ifdef SFML_DEBUG
-    if (m_count < 0) {
+    if (m_count < 0)
         sf::err() << "PoolWrapper::release : m_count < 0! " << std::endl;
-    }
 #endif
 }
 
@@ -170,9 +166,8 @@ void PoolWrapper::drain()
     [m_pool drain];
     m_pool = 0;
 
-    if (m_count != 0) {
+    if (m_count != 0)
         m_pool = [[NSAutoreleasePool alloc] init];
-    }
 }
 
 
@@ -194,9 +189,8 @@ namespace
 void retainPool(void)
 {
     // First, Check that we have a valid PoolWrapper object in our local pool.
-    if (localPool == NULL) {
+    if (localPool == NULL)
         localPool = new sf::priv::PoolWrapper();
-    }
 
     // Then retains!
     localPool->retain();
@@ -206,19 +200,13 @@ void retainPool(void)
 ////////////////////////////////////////////////////////////
 void releasePool(void)
 {
+    if (localPool != NULL)
+        localPool->release();
 #ifdef SFML_DEBUG
-    if (localPool == NULL) {
+    else
         sf::err() << "releasePool : You must call retainPool at least once "
                      "in this thread before calling releasePool."
                   << std::endl;
-    } else {
-#endif
-
-    // Releases, that's all.
-    localPool->release();
-
-#ifdef SFML_DEBUG
-    }
 #endif
 }
 
@@ -226,14 +214,12 @@ void releasePool(void)
 ////////////////////////////////////////////////////////////
 void drainPool()
 {
-    if (localPool != NULL) {
+    if (localPool != NULL)
         localPool->drain();
-    }
 #ifdef SFML_DEBUG
-    else {
+    else
         sf::err() << "releasePool must be called at least one before drainPool"
                   << std::endl;
-    }
 #endif
 }
 

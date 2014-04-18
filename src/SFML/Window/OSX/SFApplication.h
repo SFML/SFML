@@ -26,8 +26,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
 
 ////////////////////////////////////////////////////////////
 /// \brief Event processing & Menu bar initialisation
@@ -55,8 +55,9 @@
 ///
 /// This overload of -[NSApplication sendEvent:] is used to
 /// fix KeyRelease events when the command key is down.
+///
 ////////////////////////////////////////////////////////////
--(void)sendEvent:(NSEvent *)anEvent;
+-(void)sendEvent:(NSEvent*)anEvent;
 
 
 @end
