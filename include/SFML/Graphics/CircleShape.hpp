@@ -82,9 +82,9 @@ public :
     void setPointCount(unsigned int count);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the number of points of the shape
+    /// \brief Get the number of points of the circle
     ///
-    /// \return Number of points of the shape
+    /// \return Number of points of the circle
     ///
     /// \see setPointCount
     ///
@@ -92,13 +92,16 @@ public :
     virtual unsigned int getPointCount() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get a point of the shape
+    /// \brief Get a point of the circle
     ///
+    /// The returned point is in local coordinates, that is,
+    /// the shape's transforms (position, rotation, scale) are
+    /// not taken into account.
     /// The result is undefined if \a index is out of the valid range.
     ///
     /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
     ///
-    /// \return Index-th point of the shape
+    /// \return index-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
     virtual Vector2f getPoint(unsigned int index) const;

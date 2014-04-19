@@ -93,6 +93,9 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of a point
     ///
+    /// The returned point is in local coordinates, that is,
+    /// the shape's transforms (position, rotation, scale) are
+    /// not taken into account.
     /// The result is undefined if \a index is out of the valid range.
     ///
     /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
