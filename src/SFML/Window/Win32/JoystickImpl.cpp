@@ -291,7 +291,7 @@ sf::String JoystickImpl::getDeviceName(unsigned int index, JOYCAPS caps)
 
 
 ////////////////////////////////////////////////////////////
-sf::String JoystickImpl::getErrorString(DWORD errorCode)
+sf::String JoystickImpl::getErrorString(DWORD /*errorCode*/)
 {
     std::basic_ostringstream<TCHAR, std::char_traits<TCHAR> > ss;
     TCHAR errBuff[256];
