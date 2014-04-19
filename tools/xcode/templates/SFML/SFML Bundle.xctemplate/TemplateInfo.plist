@@ -81,6 +81,8 @@ subject to the following restrictions:
     &lt;string&gt;APPL&lt;/string&gt;
     &lt;key&gt;CFBundleSignature&lt;/key&gt;
     &lt;string&gt;????&lt;/string&gt;
+    &lt;key&gt;NSHighResolutionCapable&lt;/key&gt;
+    &lt;true/&gt;
 &lt;/dict&gt;
 &lt;/plist&gt;
 </string>

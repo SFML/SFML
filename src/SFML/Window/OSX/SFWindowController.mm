@@ -101,7 +101,7 @@
 
         if (m_window == nil)
         {
-            sf::err() << "No window was given to -[SFWindowController -initWithWindow:]." << std::endl;
+            sf::err() << "No window was given to -[SFWindowController initWithWindow:]." << std::endl;
             return self;
         }
 
@@ -111,7 +111,7 @@
         if (m_oglView == nil)
         {
             sf::err() << "Could not create an instance of NSOpenGLView "
-                      << "in -[SFWindowController -initWithWindow:]."
+                      << "in -[SFWindowController initWithWindow:]."
                       << std::endl;
             return self;
         }

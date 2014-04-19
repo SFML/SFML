@@ -42,6 +42,66 @@ namespace sf
 namespace priv
 {
 
+////////////////////////////////////////////////////////////
+/// \brief Scale SFML coordinates to backing coordinates
+///
+/// Use -[NSScreen backingScaleFactor] to find out if the user
+/// has a retina display or not.
+///
+/// \param in SFML coordinates to be converted
+///
+////////////////////////////////////////////////////////////
+template <class T>
+void scaleIn(T& in)
+{
+    CGFloat scale = [[NSScreen mainScreen] backingScaleFactor];
+    in /= scale;
+}
+
+template <class T>
+void scaleInWidthHeight(T& in)
+{
+    scaleIn(in.width);
+    scaleIn(in.height);
+}
+
+template <class T>
+void scaleInXY(T& in)
+{
+    scaleIn(in.x);
+    scaleIn(in.y);
+}
+
+////////////////////////////////////////////////////////////
+/// \brief Scale backing coordinates to SFML coordinates
+///
+/// Use -[NSScreen backingScaleFactor] to find out if the user
+/// has a retina display or not.
+///
+/// \param out backing coordinates to be converted
+///
+////////////////////////////////////////////////////////////
+template <class T>
+void scaleOut(T& out)
+{
+    CGFloat scale = [[NSScreen mainScreen] backingScaleFactor];
+    out *= scale;
+}
+
+template <class T>
+void scaleOutWidthHeight(T& out)
+{
+    scaleOut(out.width);
+    scaleOut(out.height);
+}
+
+template <class T>
+void scaleOutXY(T& out)
+{
+    scaleOut(out.x);
+    scaleOut(out.y);
+}
+
 #pragma mark
 #pragma mark WindowImplCocoa's ctor/dtor
 
@@ -95,6 +155,9 @@ m_showCursor(true)
 {
     // Transform the app process.
     setUpProcess();
+
+    // Use backing size
+    scaleInWidthHeight(mode);
 
     m_delegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
     [m_delegate changeTitle:sfStringToNSString(title)];
@@ -183,6 +246,7 @@ void WindowImplCocoa::windowResized(unsigned int width, unsigned int height)
     event.type = Event::Resized;
     event.size.width  = width;
     event.size.height = height;
+    scaleOutWidthHeight(event.size);
 
     pushEvent(event);
 }
@@ -225,6 +289,7 @@ void WindowImplCocoa::mouseDownAt(Mouse::Button button, int x, int y)
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
+    scaleOutXY(event.mouseButton);
 
     pushEvent(event);
 }
@@ -238,6 +303,7 @@ void WindowImplCocoa::mouseUpAt(Mouse::Button button, int x, int y)
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
+    scaleOutXY(event.mouseButton);
 
     pushEvent(event);
 }
@@ -250,6 +316,7 @@ void WindowImplCocoa::mouseMovedAt(int x, int y)
     event.type = Event::MouseMoved;
     event.mouseMove.x = x;
     event.mouseMove.y = y;
+    scaleOutXY(event.mouseMove);
 
     pushEvent(event);
 }
@@ -262,6 +329,7 @@ void WindowImplCocoa::mouseWheelScrolledAt(float delta, int x, int y)
     event.mouseWheel.delta = delta;
     event.mouseWheel.x = x;
     event.mouseWheel.y = y;
+    scaleOutXY(event.mouseWheel);
 
     pushEvent(event);
 }
@@ -351,14 +419,18 @@ WindowHandle WindowImplCocoa::getSystemHandle() const
 Vector2i WindowImplCocoa::getPosition() const
 {
     NSPoint pos = [m_delegate position];
-    return Vector2i(pos.x, pos.y);
+    sf::Vector2i ret(pos.x, pos.y);
+    scaleOutXY(ret);
+    return ret;
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setPosition(const Vector2i& position)
 {
-    [m_delegate setWindowPositionToX:position.x Y:position.y];
+    sf::Vector2i backingPosition = position;
+    scaleInXY(backingPosition);
+    [m_delegate setWindowPositionToX:backingPosition.x Y:backingPosition.y];
 }
 
 
@@ -366,14 +438,18 @@ void WindowImplCocoa::setPosition(const Vector2i& position)
 Vector2u WindowImplCocoa::getSize() const
 {
     NSSize size = [m_delegate size];
-    return Vector2u(size.width, size.height);
+    Vector2u ret(size.width, size.height);
+    scaleOutXY(ret);
+    return ret;
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setSize(const Vector2u& size)
 {
-    [m_delegate resizeTo:size.x by:size.y];
+    sf::Vector2u backingSize = size;
+    scaleInXY(backingSize);
+    [m_delegate resizeTo:backingSize.x by:backingSize.y];
 }
 
 

@@ -127,6 +127,9 @@ BOOL isValidTextUnicode(NSEvent* event);
         m_silentResponder = [[SFSilentResponder alloc] init];
         m_hiddenTextView = [[NSTextView alloc] initWithFrame:NSZeroRect];
         [m_hiddenTextView setNextResponder:m_silentResponder];
+
+        // Request high resolution on high DPI displays
+        [self setWantsBestResolutionOpenGLSurface:YES];
     }
 
     return self;
