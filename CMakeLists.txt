@@ -48,17 +48,17 @@ endif()
 # add an option for building the API documentation
 sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
-# set default CMAKE_OSX_ARCHITECTURES value to x86_64
-sfml_set_option(CMAKE_OSX_ARCHITECTURES "x86_64" STRING "Build architectures for OS X")
-
-# set default CMAKE_OSX_DEPLOYMENT_TARGET value to 10.7
-sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" STRING "Minimum OS version to target for deployment (at runtime)")
-
 # add an option for choosing the OpenGL implementation
 sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES implementation, FALSE to use a desktop OpenGL implementation")
 
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
+    # set default CMAKE_OSX_ARCHITECTURES value to x86_64
+    sfml_set_option(CMAKE_OSX_ARCHITECTURES "x86_64" STRING "Build architectures for OS X")
+
+    # set default CMAKE_OSX_DEPLOYMENT_TARGET value to 10.7
+    sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" STRING "Minimum OS version to target for deployment (at runtime)")
+
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
 
