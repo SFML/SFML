@@ -113,7 +113,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setVirtualKeyboardVisible(bool visible)
+void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 {
     // Not applicable
 }
