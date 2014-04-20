@@ -73,7 +73,9 @@ m_streamRec(NULL),
 m_refCount (NULL),
 m_info     ()
 {
-
+    #ifdef SFML_SYSTEM_ANDROID
+        m_stream = NULL;
+    #endif
 }
 
 
