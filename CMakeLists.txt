@@ -153,7 +153,7 @@ if(SFML_OS_MACOSX)
 
     # Objective-C ARC requires a 64 bit runtime.
     if(NOT CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
-        message(FATAL_ERROR "CMAKE_OSX_ARCHITECTURES should be 'x86_64' to support ARC")
+        message(FATAL_ERROR "CMAKE_OSX_ARCHITECTURES should be 'x86_64'; SFML doesn't support 32 bit on Mac OS X.")
         return()
     endif()
 
