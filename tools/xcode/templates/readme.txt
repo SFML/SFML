@@ -49,10 +49,7 @@ You should also be familiar with Xcode. If needed checkout this document: http:/
 Install
 -------
 
-If you are building SFML from sources you can set CMake's INSTALL_XCODE4_TEMPLATES variable to TRUE to install the templates automatically. Otherwise proceed as follow :
-  1. Make sure "/Library/Developer/Xcode/Templates/" folder exists;
-  2. Copy "SFML" folder into the above folder.
-The 'install.sh' script in the same directory as this readme does that for you.
+If you are building SFML from sources you can set CMake's INSTALL_XCODE4_TEMPLATES variable to TRUE to install the templates automatically.
 
 
 
@@ -61,8 +58,8 @@ Usage
 
 To use these templates follow these steps :
 
- 1. open Xcode, 
- 2. select "create a new Xcode project" from the "Welcome to Xcode" window or select menus File > New > New Project, 
+ 1. open Xcode,
+ 2. select "create a new Xcode project" from the "Welcome to Xcode" window or select menus File > New > New Project,
  3. select "SFML" subsection under "Mac OS X" on the left,
  4. then select either "SFML App", if you want an application bundle, or "SFML CLT", if you prefer a classic Unix executable,
  5. fill in the requested information and you're ready to go !
