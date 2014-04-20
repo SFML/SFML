@@ -25,6 +25,12 @@
 #ifndef SFML_SENSORIMPLANDROID_HPP
 #define SFML_SENSORIMPLANDROID_HPP
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/System/Vector3.hpp>
+#include <android/sensor.h>
+
 
 namespace sf
 {
@@ -91,6 +97,36 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     void setEnabled(bool enabled);
+
+private :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the default Android sensor matching the sensor type
+    ///
+    /// \param type Type of the sensor
+    ///
+    /// \return The default Android sensor, NULL otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    static ASensor const* getDefaultSensor(Sensor::Type sensor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Process the pending sensor data available and add them to our lists
+    ///
+    /// \param fd     File descriptor
+    /// \param events Bitmask of the poll events that were triggered
+    /// \param data   Data pointer supplied
+    ///
+    /// \return Whether it should continue (1) or unregister the callback (0)
+    ///
+    ////////////////////////////////////////////////////////////
+    static int processSensorEvents(int fd, int events, void* data);
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    const ASensor* m_sensor; ///< Android sensor structure
+    unsigned int   m_index;  ///< Index of the sensor
 };
 
 } // namespace priv

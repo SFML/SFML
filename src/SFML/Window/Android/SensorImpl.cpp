@@ -26,6 +26,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/SensorImpl.hpp>
+#include <SFML/System/Time.hpp>
+#include <android/looper.h>
+
+namespace
+{
+    ALooper* looper;
+    ASensorManager*    sensorManager;
+    ASensorEventQueue* sensorEventQueue;
+    sf::Vector3f       sensorData[sf::Sensor::Count];
+}
 
 
 namespace sf
@@ -35,52 +45,150 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void SensorImpl::initialize()
 {
-    // To be implemented
+    // Get the looper associated with this thread
+    looper = ALooper_forThread();
+
+    // Get the unique sensor manager
+    sensorManager = ASensorManager_getInstance();
+
+    // Create the sensor events queue and attach it to the looper
+    sensorEventQueue = ASensorManager_createEventQueue(sensorManager, looper,
+        1, &processSensorEvents, NULL);
 }
 
 
 ////////////////////////////////////////////////////////////
 void SensorImpl::cleanup()
 {
-    // To be implemented
+    // Detach the sensor events queue from the looper and destroy it
+    ASensorManager_destroyEventQueue(sensorManager, sensorEventQueue);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SensorImpl::isAvailable(Sensor::Type /*sensor*/)
+bool SensorImpl::isAvailable(Sensor::Type sensor)
 {
-    // To be implemented
-    return false;
+    const ASensor* available = getDefaultSensor(sensor);
+
+    return available? true : false;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SensorImpl::open(Sensor::Type /*sensor*/)
+bool SensorImpl::open(Sensor::Type sensor)
 {
-    // To be implemented
-    return false;
+    // Get the default sensor matching the type
+    m_sensor = getDefaultSensor(sensor);
+
+    // Sensor not available, stop here
+    if (!m_sensor)
+        return false;
+
+    // Get the minimum delay allowed between events
+    Time minimumDelay = microseconds(ASensor_getMinDelay(m_sensor));
+
+    // Set the event rate (not to consume too much battery)
+    ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, minimumDelay.asMicroseconds());
+
+    // Disable the sensor by default
+    setEnabled(true);
+
+    // Save the index of the sensor
+    m_index = static_cast<unsigned int>(sensor);
+
+    return true;
 }
 
 
 ////////////////////////////////////////////////////////////
 void SensorImpl::close()
 {
-    // To be implemented
+    // Nothing to do
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f SensorImpl::update()
 {
-    // To be implemented
-    return Vector3f(0, 0, 0);
+    // Update our sensor data list
+    ALooper_pollAll(0, NULL, NULL, NULL);
+
+    return sensorData[m_index];
 }
 
 
 ////////////////////////////////////////////////////////////
-void SensorImpl::setEnabled(bool /*enabled*/)
+void SensorImpl::setEnabled(bool enabled)
 {
-    // To be implemented
+    if (enabled)
+        ASensorEventQueue_enableSensor(sensorEventQueue, m_sensor);
+    else
+        ASensorEventQueue_disableSensor(sensorEventQueue, m_sensor);
+}
+
+
+////////////////////////////////////////////////////////////
+ASensor const* SensorImpl::getDefaultSensor(Sensor::Type sensor)
+{
+    // These sensors are unavailable from the Android C API
+    if ((sensor == Sensor::Gravity) ||
+        (sensor == Sensor::UserAcceleration) ||
+        (sensor == Sensor::Orientation))
+        return NULL;
+
+    // Find the Android sensor type
+    static int types[] = {ASENSOR_TYPE_ACCELEROMETER,
+        ASENSOR_TYPE_GYROSCOPE, ASENSOR_TYPE_MAGNETIC_FIELD};
+
+    int type = types[sensor];
+
+    // Retrive the default sensor matching this type
+    return ASensorManager_getDefaultSensor(sensorManager, type);
+}
+
+
+////////////////////////////////////////////////////////////
+int SensorImpl::processSensorEvents(int fd, int events, void* data)
+{
+    ASensorEvent event;
+
+    while (ASensorEventQueue_getEvents(sensorEventQueue, &event, 1) > 0)
+    {
+        unsigned int type = Sensor::Count;
+        Vector3f data;
+
+        switch (event.type)
+        {
+            case ASENSOR_TYPE_ACCELEROMETER:
+                type = Sensor::Accelerometer;
+                data.x = event.acceleration.x;
+                data.y = event.acceleration.y;
+                data.z = event.acceleration.z;
+                break;
+
+            case ASENSOR_TYPE_GYROSCOPE:
+                type = Sensor::Gyroscope;
+                data.x = event.vector.x;
+                data.y = event.vector.y;
+                data.z = event.vector.z;
+                break;
+
+            case ASENSOR_TYPE_MAGNETIC_FIELD:
+                type = Sensor::Magnetometer;
+                data.x = event.magnetic.x;
+                data.y = event.magnetic.y;
+                data.z = event.magnetic.z;
+                break;
+        }
+
+        // An unknown sensor event has been detected, we don't know how to process it
+        if (type == Sensor::Count)
+            continue;
+
+        sensorData[type] = data;
+    }
+
+    return 1;
 }
 
 } // namespace priv
