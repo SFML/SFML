@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/EglContext.hpp>
+#include <SFML/Window/WindowImpl.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
@@ -34,6 +35,9 @@
 #include <SFML/System/Lock.hpp>
 #ifdef SFML_SYSTEM_ANDROID
     #include <SFML/System/Android/Activity.hpp>
+#endif
+#ifdef SFML_SYSTEM_LINUX
+    #include <X11/Xlib.h>
 #endif
 
 namespace
@@ -46,7 +50,7 @@ namespace
         
         if (display == EGL_NO_DISPLAY)
         {
-            eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
+            display = eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
             eglCheck(eglInitialize(display, NULL, NULL));
         }
         
@@ -260,12 +264,11 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
     EGLConfig config = getBestConfig(display, bitsPerPixel, settings);
     
     // Retrieve the visual id associated with this EGL config
-    EGLint nativeVisualId, nativeVisualType;
+    EGLint nativeVisualId;
     
     eglCheck(eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &nativeVisualId));
-    eglCheck(eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_TYPE, &nativeVisualType));
     
-    if (nativeVisualId = 0 && nativeVisualType == EGL_NONE)
+    if (nativeVisualId == 0)
     {
         // Should never happen...
         err() << "No EGL visual found. You should check your graphics driver" << std::endl;
@@ -273,13 +276,14 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
         return XVisualInfo();
     }
     
-    VisualID visualId = static_cast<VisualID>(nativeVisualId);
+    XVisualInfo vTemplate;
+    vTemplate.visualid = static_cast<VisualID>(nativeVisualId);
 
     // Get X11 visuals compatible with this EGL config
     XVisualInfo *availableVisuals, bestVisual;
     int visualCount = 0;
     
-    availableVisuals = XGetVisualInfo(XDisplayy, VisualIDMask, &visualId, &visualCount);
+    availableVisuals = XGetVisualInfo(XDisplay, VisualIDMask, &vTemplate, &visualCount);
     
     if (visualCount == 0)
     {
@@ -290,8 +294,8 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
     }
     
     // Pick up the best one
-    bestVisual = availableVisuals[0]
-    XFree(chosenVisualInfo);
+    bestVisual = availableVisuals[0];
+    XFree(availableVisuals);
     
     return bestVisual;
 }
