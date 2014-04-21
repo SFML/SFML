@@ -254,7 +254,6 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     NSPoint relativeToWindow = [[self window] mouseLocationOutsideOfEventStream];
     NSPoint relativeToView = [self convertPoint:relativeToWindow fromView:nil];
-    NSLog(@"relativeToWindow %@\trelativeToView %@\trect %@", NSStringFromPoint(relativeToWindow), NSStringFromPoint(relativeToView), NSStringFromRect([self frame]));
 
     return NSPointInRect(relativeToView, [self bounds]);
 }
