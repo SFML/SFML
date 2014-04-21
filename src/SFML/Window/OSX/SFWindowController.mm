@@ -343,7 +343,7 @@
     const NSPoint origin = [m_oglView frame].origin;
     const NSSize  size = [m_oglView frame].size;
     const NSPoint topLeftCornerOfView = NSMakePoint(origin.x, origin.y + size.height);
-    const NSPoint positionInView = [m_oglView convertPointToBase:topLeftCornerOfView];
+    const NSPoint positionInView = [m_oglView convertPointToBacking:topLeftCornerOfView];
 
     // Then, convert it to window base system
     const NSPoint positionInWindow = [m_oglView convertPoint:positionInView toView:nil];

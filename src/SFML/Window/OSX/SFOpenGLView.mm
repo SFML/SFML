@@ -175,15 +175,18 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
+-(NSPoint)convertPointToScreen:(NSPoint)point
+{
+    NSRect rect = NSZeroRect;
+    rect.origin = point;
+    rect = [[self window] convertRectToScreen:rect];
+    return rect.origin;
+}
+
+
+////////////////////////////////////////////////////////
 -(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point
 {
-    // Note : -[NSWindow convertBaseToScreen:] is deprecated on 10.7
-    //        but the recommended -[NSWindow convertRectToScreen] is not
-    //        available until 10.7.
-    //
-    //        So we stick with the old one for now.
-
-
     // Flip SFML coordinates to match window coordinates
     point.y = [self frame].size.height - point.y;
 
@@ -192,7 +195,7 @@ BOOL isValidTextUnicode(NSEvent* event);
     point = [self convertPoint:point toView:nil]; // nil means window
 
     // Convert it to screen coordinates
-    point = [[self window] convertBaseToScreen:point];
+    point = [self convertPointToScreen:point];
 
     // Flip screen coordinates to match CGDisplayMoveCursorToPoint referential.
     const float screenHeight = [[[self window] screen] frame].size.height;
