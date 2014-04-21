@@ -254,8 +254,9 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     NSPoint relativeToWindow = [[self window] mouseLocationOutsideOfEventStream];
     NSPoint relativeToView = [self convertPoint:relativeToWindow fromView:nil];
+    NSLog(@"relativeToWindow %@\trelativeToView %@\trect %@", NSStringFromPoint(relativeToWindow), NSStringFromPoint(relativeToView), NSStringFromRect([self frame]));
 
-    return NSPointInRect(relativeToView, [self frame]);
+    return NSPointInRect(relativeToView, [self bounds]);
 }
 
 
@@ -265,11 +266,14 @@ BOOL isValidTextUnicode(NSEvent* event);
     BOOL mouseWasIn = m_mouseIsIn;
     m_mouseIsIn = [self isMouseInside];
 
+    if (m_requester == 0)
+        return;
+
     // Send event if needed.
     if (mouseWasIn && !m_mouseIsIn)
-        [self mouseExited:nil];
+        m_requester->mouseMovedOut();
     else if (!mouseWasIn && m_mouseIsIn)
-        [self mouseEntered:nil];
+        m_requester->mouseMovedIn();
 }
 
 
@@ -361,39 +365,16 @@ BOOL isValidTextUnicode(NSEvent* event);
 ////////////////////////////////////////////////////////
 -(void)mouseEntered:(NSEvent*)theEvent
 {
-    // There are two cases when we need to fire an event:
-    // a) the event is nil, meaning that the method was
-    //    called from our code (e.g. updateMouseState)
-    // b) the mouse was outside the view.
-    BOOL shouldFire = ((theEvent == nil) || (m_mouseIsIn == NO));
-
-    // Update status
-    m_mouseIsIn = YES;
-
-    if (m_requester == 0)
-        return;
-
-    // Fire (or not) an event
-    if (shouldFire)
-        m_requester->mouseMovedIn();
+    (void)theEvent;
+    [self updateMouseState];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)mouseExited:(NSEvent*)theEvent
 {
-    // Similarly to mouseEntered:
-    BOOL shouldFire = ((theEvent == nil) || (m_mouseIsIn == YES));
-
-    // Update status
-    m_mouseIsIn = NO;
-
-    if (m_requester == 0)
-        return;
-
-    // Fire (or not) an event
-    if (shouldFire)
-        m_requester->mouseMovedOut();
+    (void)theEvent;
+    [self updateMouseState];
 }
 
 
