@@ -37,10 +37,8 @@ const BlendMode BlendAlpha(BlendMode::SrcAlpha, BlendMode::OneMinusSrcAlpha, Ble
                            BlendMode::One, BlendMode::OneMinusSrcAlpha, BlendMode::Add);
 const BlendMode BlendAdd(BlendMode::SrcAlpha, BlendMode::One, BlendMode::Add,
                          BlendMode::One, BlendMode::One, BlendMode::Add);
-const BlendMode BlendMultiply(BlendMode::DstColor, BlendMode::Zero, BlendMode::Add,
-                              BlendMode::DstColor, BlendMode::Zero, BlendMode::Add);
-const BlendMode BlendNone(BlendMode::One, BlendMode::Zero, BlendMode::Add,
-                          BlendMode::One, BlendMode::Zero, BlendMode::Add);
+const BlendMode BlendMultiply(BlendMode::DstColor, BlendMode::Zero);
+const BlendMode BlendNone(BlendMode::One, BlendMode::Zero);
 
 
 ////////////////////////////////////////////////////////////
@@ -51,6 +49,19 @@ colorEquation (BlendMode::Add),
 alphaSrcFactor(BlendMode::One),
 alphaDstFactor(BlendMode::OneMinusSrcAlpha),
 alphaEquation (BlendMode::Add)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+BlendMode::BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation) :
+colorSrcFactor(sourceFactor),
+colorDstFactor(destinationFactor),
+colorEquation (blendEquation),
+alphaSrcFactor(sourceFactor),
+alphaDstFactor(destinationFactor),
+alphaEquation (blendEquation)
 {
 
 }

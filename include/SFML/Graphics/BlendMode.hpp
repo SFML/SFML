@@ -35,14 +35,12 @@ namespace sf
 {
 
 ////////////////////////////////////////////////////////////
-/// \ingroup graphics
 /// \brief Blending modes for drawing
 ///
 ////////////////////////////////////////////////////////////
 struct SFML_GRAPHICS_API BlendMode
 {
     ////////////////////////////////////////////////////////
-    /// \ingroup graphics
     /// \brief Enumeration of the blending factors
     ///
     /// The factors are mapped directly to their OpenGL equivalents,
@@ -63,7 +61,6 @@ struct SFML_GRAPHICS_API BlendMode
     };
 
     ////////////////////////////////////////////////////////
-    /// \ingroup graphics
     /// \brief Enumeration of the blending equations
     ///
     /// The equations are mapped directly to their OpenGL equivalents,
@@ -82,6 +79,19 @@ struct SFML_GRAPHICS_API BlendMode
     ///
     ////////////////////////////////////////////////////////////
     BlendMode();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the blend mode given the factors and equation.
+    ///
+    /// This constructor uses the same factors and equation for both
+    /// color and alpha components. It also defaults to the Add equation.
+    ///
+    /// \param sourceFactor      Specifies how to compute the source factor for the color and alpha channels.
+    /// \param destinationFactor Specifies how to compute the destination factor for the color and alpha channels.
+    /// \param blendEquation     Specifies how to combine the source and destination colors and alpha.
+    ///
+    ////////////////////////////////////////////////////////////
+    BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation = Add);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the blend mode given the factors and equation.
@@ -133,14 +143,13 @@ SFML_GRAPHICS_API bool operator ==(const BlendMode& left, const BlendMode& right
 ////////////////////////////////////////////////////////////
 SFML_GRAPHICS_API bool operator !=(const BlendMode& left, const BlendMode& right);
 
-
 ////////////////////////////////////////////////////////////
 // Commonly used blending modes
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API extern const BlendMode BlendAlpha;
-SFML_GRAPHICS_API extern const BlendMode BlendAdd;
-SFML_GRAPHICS_API extern const BlendMode BlendMultiply;
-SFML_GRAPHICS_API extern const BlendMode BlendNone;
+SFML_GRAPHICS_API extern const BlendMode BlendAlpha;    ///< Blend source and dest according to dest alpha 
+SFML_GRAPHICS_API extern const BlendMode BlendAdd;      ///< Add source to dest
+SFML_GRAPHICS_API extern const BlendMode BlendMultiply; ///< Multiply source and dest
+SFML_GRAPHICS_API extern const BlendMode BlendNone;     ///< Overwrite dest with source
 
 } // namespace sf
 
