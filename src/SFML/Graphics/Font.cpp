@@ -445,6 +445,11 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
 
     int width  = bitmap.width;
     int height = bitmap.rows;
+    int ascender = face->size->metrics.ascender >> 6;
+
+    // Offset to make up for empty space between ascender and virtual top of the typeface
+    int offset = characterSize - ascender;
+
     if ((width > 0) && (height > 0))
     {
         // Leave a small padding around characters, so that filtering doesn't
@@ -459,7 +464,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
 
         // Compute the glyph's bounding box
         glyph.bounds.left   = bitmapGlyph->left - padding;
-        glyph.bounds.top    = -bitmapGlyph->top - padding;
+        glyph.bounds.top    = -bitmapGlyph->top - padding - offset;
         glyph.bounds.width  = width + 2 * padding;
         glyph.bounds.height = height + 2 * padding;
 
