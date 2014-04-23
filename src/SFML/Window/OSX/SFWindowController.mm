@@ -449,6 +449,21 @@
 
 
 ////////////////////////////////////////////////////////
+-(BOOL)requestFocus
+{
+    [m_window makeKeyAndOrderFront:nil];
+    return [self hasFocus];
+}
+
+
+////////////////////////////////////////////////////////////
+-(BOOL)hasFocus
+{
+    return [NSApp keyWindow] == m_window;
+}
+
+
+////////////////////////////////////////////////////////
 -(void)enableKeyRepeat
 {
     [m_oglView enableKeyRepeat];

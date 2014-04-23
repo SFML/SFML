@@ -184,6 +184,24 @@
 
 
 ////////////////////////////////////////////////////////
+-(BOOL)requestFocus
+{
+    // Note: this doesn't imply that the view will get any event.
+    // The user has to make sure events are forwarded to the view
+    // with the usual responder chain.
+    [[m_view window] makeKeyAndOrderFront:nil];
+    return [self hasFocus];
+}
+
+
+////////////////////////////////////////////////////////////
+-(BOOL)hasFocus
+{
+    return [NSApp keyWindow] == [m_view window];
+}
+
+
+////////////////////////////////////////////////////////
 -(void)enableKeyRepeat
 {
     [m_oglView enableKeyRepeat];
