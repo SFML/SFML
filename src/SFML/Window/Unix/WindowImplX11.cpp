@@ -28,20 +28,25 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Linux/AutoPointer.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/keysym.h>
 #include <X11/Xutil.h>
+#include <X11/Xatom.h>
 #include <xcb/xcb_atom.h>
 #include <xcb/xcb_icccm.h>
 #include <xcb/xcb_image.h>
+#include <xcb/xcb_util.h>
 #include <xcb/randr.h>
+#include <unistd.h>
+#include <libgen.h>
+#include <cstring>
 #include <sstream>
 #include <vector>
 #include <string>
 #include <iterator>
 #include <algorithm>
+#include <iostream>
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -106,6 +111,14 @@ m_useSizeHints(false)
     // Open a connection with the X server
     m_display = OpenDisplay();
     XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
+    m_connection = XGetXCBConnection(m_display);
+
+    if (!m_connection)
+    {
+        err() << "Failed cast Display object to an XCB connection object" << std::endl;
+        return;
+    }
+
     m_screen = DefaultScreen(m_display);
 
     // Save the window handle
@@ -114,7 +127,12 @@ m_useSizeHints(false)
     if (m_window)
     {
         // Make sure the window is listening to all the required events
-        XSelectInput(m_display, m_window, eventMask & ~ButtonPressMask);
+        const uint32_t value_list[] = {eventMask};
+
+        xcb_change_window_attributes(m_connection,
+                                     m_window,
+                                     XCB_CW_EVENT_MASK,
+                                     value_list);
 
         // Do some common initializations
         initialize();
@@ -188,8 +206,11 @@ m_useSizeHints(false)
                 XCB_CW_EVENT_MASK | XCB_CW_OVERRIDE_REDIRECT,
                 value_list);
 
-    ErrorPointer errptr(m_connection, cookie);
-    if(! errptr.isNull())
+    xcb_generic_error_t* errptr = xcb_request_check(m_connection, cookie);
+    bool createWindowFailed = (errptr != NULL);
+    free(errptr);
+
+    if (createWindowFailed)
     {
         err() << "Failed to create window" << std::endl;
         return;
@@ -201,8 +222,20 @@ m_useSizeHints(false)
     // Set the window's style (tell the windows manager to change our window's decorations and functions according to the requested style)
     if (!fullscreen)
     {
-        xcb_atom_t WMHintsAtom = xcb_atom_get(m_connection, "_MOTIF_WM_HINTS");
-        if (WMHintsAtom)
+        static const std::string MOTIF_WM_HINTS = "_MOTIF_WM_HINTS";
+        xcb_intern_atom_cookie_t hintsAtomRequest = xcb_intern_atom(
+            m_connection,
+            0,
+            MOTIF_WM_HINTS.size(),
+            MOTIF_WM_HINTS.c_str()
+        );
+        xcb_intern_atom_reply_t* hintsAtomReply = xcb_intern_atom_reply(
+            m_connection,
+            hintsAtomRequest,
+            NULL
+        );
+
+        if (hintsAtomReply)
         {
             static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
             static const unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
@@ -254,17 +287,18 @@ m_useSizeHints(false)
 
             const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&hints);
             xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window,
-                                WMHintsAtom, WM_HINTS, 32, 5, ptr);
+                                    hintsAtomReply->atom, XA_WM_HINTS, 32, 5, ptr);
         }
 
         // This is a hack to force some windows managers to disable resizing
         if (!(style & Style::Resize))
         {
+            m_useSizeHints = true;
             xcb_size_hints_t sizeHints;
-            sizeHints.flags      = XCB_SIZE_HINT_P_MIN_SIZE | XCB_SIZE_HINT_P_MAX_SIZE;
+            sizeHints.flags      = XCB_ICCCM_SIZE_HINT_P_MIN_SIZE | XCB_ICCCM_SIZE_HINT_P_MAX_SIZE;
             sizeHints.min_width  = sizeHints.max_width  = width;
             sizeHints.min_height = sizeHints.max_height = height;
-            xcb_set_wm_normal_hints(m_connection, m_window, &sizeHints);
+            xcb_icccm_set_wm_normal_hints(m_connection, m_window, &sizeHints);
         }
     }
 
@@ -332,10 +366,61 @@ WindowHandle WindowImplX11::getSystemHandle() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::processEvents()
 {
-    while(xcb_generic_event_t* event = xcb_poll_for_event(m_connection))
+    // Key repeat workaround: If key repeat is enabled, XCB will spawn two
+    // events for each repeat interval: key release and key press. Both have
+    // the same timestamp and key code. We are holding back the release event
+    // to check for the matching key press event and if so, discard the release
+    // event.
+
+    xcb_generic_event_t* event = NULL;
+    xcb_key_release_event_t* lastKeyReleaseEvent = NULL;
+    uint8_t eventType = 0;
+
+    while(event = xcb_poll_for_event(m_connection))
     {
-        processEvent(event);
-        free(event);
+        eventType = event->response_type & ~0x80;
+
+        // Key was pressed and one has been released prior to that.
+        if (eventType == XCB_KEY_PRESS && lastKeyReleaseEvent)
+        {
+            // If the key press event matches the held back key release event,
+            // then we have a key repeat and discard the held back release
+            // event.
+            if (lastKeyReleaseEvent->time == reinterpret_cast<xcb_key_press_event_t*>(event)->time &&
+                lastKeyReleaseEvent->detail == reinterpret_cast<xcb_key_press_event_t*>(event)->detail)
+            {
+                free(lastKeyReleaseEvent);
+                lastKeyReleaseEvent = NULL;
+            }
+        }
+
+        // If there's still a key release event held back, process it now.
+        if (lastKeyReleaseEvent)
+        {
+            processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent));
+            free(lastKeyReleaseEvent);
+            lastKeyReleaseEvent = NULL;
+        }
+
+        if (eventType == XCB_KEY_RELEASE)
+        {
+            // Remember this key release event.
+            lastKeyReleaseEvent = reinterpret_cast<xcb_key_release_event_t*>(event);
+            event = NULL; // For safety reasons.
+        }
+        else
+        {
+            processEvent(event);
+            free(event);
+        }
+    }
+
+    // Process any held back release event.
+    if (lastKeyReleaseEvent)
+    {
+        processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent));
+        free(lastKeyReleaseEvent);
+        lastKeyReleaseEvent = NULL;
     }
 }
 
@@ -343,9 +428,11 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    AutoPointer<xcb_get_geometry_reply_t> reply =
-            xcb_get_geometry_reply(m_connection, xcb_get_geometry(m_connection, m_window), NULL);
-    return Vector2i(reply->x, reply->y);
+    xcb_get_geometry_reply_t* reply = xcb_get_geometry_reply(m_connection, xcb_get_geometry(m_connection, m_window), NULL);
+    Vector2i result(reply->x, reply->y);
+    free(reply);
+
+    return result;
 }
 
 
@@ -363,15 +450,26 @@ void WindowImplX11::setPosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplX11::getSize() const
 {
-    AutoPointer<xcb_get_geometry_reply_t> reply =
-            xcb_get_geometry_reply(m_connection, xcb_get_geometry(m_connection, m_window), NULL);
-    return Vector2u(reply->width, reply->height);
+    xcb_get_geometry_reply_t* reply = xcb_get_geometry_reply(m_connection, xcb_get_geometry(m_connection, m_window), NULL);
+    Vector2u result(reply->width, reply->height);
+    free(reply);
+
+    return result;
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setSize(const Vector2u& size)
 {
+    // If resizing is disable for the window we have to update the size hints (required by some window managers).
+    if( m_useSizeHints ) {
+        xcb_size_hints_t sizeHints;
+        sizeHints.flags      = XCB_ICCCM_SIZE_HINT_P_MIN_SIZE | XCB_ICCCM_SIZE_HINT_P_MAX_SIZE;
+        sizeHints.min_width  = sizeHints.max_width  = size.x;
+        sizeHints.min_height = sizeHints.max_height = size.y;
+        xcb_icccm_set_wm_normal_hints(m_connection, m_window, &sizeHints);
+    }
+
     uint32_t values[] = {size.x, size.y};
     xcb_configure_window(m_connection, m_window,
                          XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
@@ -383,10 +481,16 @@ void WindowImplX11::setSize(const Vector2u& size)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setTitle(const String& title)
 {
-    const char* c_title = title.c_str();
+    // XCB takes UTF-8-encoded strings.
+    std::basic_string<sf::Uint8> utf8String;
+    sf::Utf<32>::toUtf8(
+        title.begin(), title.end(),
+        std::back_inserter( utf8String )
+    );
+
     xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window,
-                        WM_NAME, STRING,
-                        8, title.length(), c_title);
+                        XA_WM_NAME, XA_STRING,
+                        8, utf8String.length(), utf8String.c_str());
     xcb_flush(m_connection);
 }
 
@@ -418,8 +522,11 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
                 width, height, 0, 0, 0, defDepth, sizeof(iconPixels), iconPixels);
     xcb_free_gc(m_connection, iconGC);
 
-    ErrorPointer errptr(m_connection, cookie);
-    if (! errptr.isNull())
+    xcb_generic_error_t* errptr = xcb_request_check(m_connection, cookie);
+    bool setWindowIconFailed = (errptr != NULL);
+    free(errptr);
+
+    if (setWindowIconFailed)
     {
         err() << "Failed to set the window's icon: Error code " << (int)errptr->error_code << std::endl;
         return;
@@ -445,11 +552,11 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     xcb_pixmap_t maskPixmap = xcb_create_pixmap_from_bitmap_data(m_connection, m_window, (Uint8*)&maskPixels[0], width, height, 1, 0, 1, NULL);
 
     // Send our new icon to the window through the WMHints
-    xcb_wm_hints_t hints;
-    hints.flags       = XCB_WM_HINT_ICON_PIXMAP | XCB_WM_HINT_ICON_MASK;
+    xcb_icccm_wm_hints_t hints;
+    hints.flags       = XCB_ICCCM_WM_HINT_ICON_PIXMAP | XCB_ICCCM_WM_HINT_ICON_MASK;
     hints.icon_pixmap = iconPixmap;
     hints.icon_mask   = maskPixmap;
-    xcb_set_wm_hints(m_connection, m_window, &hints);
+    xcb_icccm_set_wm_hints(m_connection, m_window, &hints);
 
     xcb_flush(m_connection);
 }
@@ -607,15 +714,52 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()
 {
-    // Make sure the "last key release" is initialized with invalid values
-    m_lastKeyReleaseEvent.response_type = -1;
-    m_lastKeyReleaseEvent.detail = 0;
-    m_lastKeyReleaseEvent.time = 0;
+    // Get the atoms for registering the close event
+    static const std::string WM_DELETE_WINDOW_NAME = "WM_DELETE_WINDOW";
 
-    // Get the atom defining the close event
-    m_atomClose = xcb_atom_get(m_connection, "WM_DELETE_WINDOW");
-    xcb_atom_t wmprotocolsAtom = xcb_atom_get(m_connection, "WM_PROTOCOLS");
-    xcb_set_wm_protocols(m_connection, wmprotocolsAtom, m_window, 1, &m_atomClose);
+    xcb_intern_atom_cookie_t deleteWindowAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        WM_DELETE_WINDOW_NAME.size(),
+        WM_DELETE_WINDOW_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* deleteWindowAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        deleteWindowAtomRequest,
+        NULL
+    );
+
+    static const std::string WM_PROTOCOLS_NAME = "WM_PROTOCOLS";
+
+    xcb_intern_atom_cookie_t protocolsAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        WM_PROTOCOLS_NAME.size(),
+        WM_PROTOCOLS_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* protocolsAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        protocolsAtomRequest,
+        NULL
+    );
+
+    if (protocolsAtomReply && deleteWindowAtomReply)
+    {
+        xcb_icccm_set_wm_protocols(
+            m_connection,
+            m_window,
+            protocolsAtomReply->atom,
+            1,
+            &deleteWindowAtomReply->atom
+        );
+
+        m_atomClose = deleteWindowAtomReply->atom;
+    }
+    else
+    {
+        // Should not happen, but better safe than sorry.
+        std::cerr << "Failed to request WM_PROTOCOLS/WM_DELETE_WINDOW_NAME atoms." << std::endl;
+    }
 
     // Create the input context
     m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
@@ -708,49 +852,6 @@ void WindowImplX11::cleanup()
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 {
-    // This function implements a workaround to properly discard
-    // repeated key events when necessary. The problem is that the
-    // system's key events policy doesn't match SFML's one: X server will generate
-    // both repeated KeyPress and KeyRelease events when maintaining a key down, while
-    // SFML only wants repeated KeyPress events. Thus, we have to:
-    // - Discard duplicated KeyRelease events when KeyRepeatEnabled is true
-    // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
-
-    // Detect repeated key events
-    if ((windowEvent->response_type == XCB_KEY_PRESS) ||
-            (windowEvent->response_type == XCB_KEY_RELEASE))
-    {
-        xcb_key_press_event_t* press = reinterpret_cast<xcb_key_press_event_t*>(windowEvent);
-        if (press->detail < 256)
-        {
-            // To detect if it is a repeated key event, we check the current state of the key.
-            // - If the state is "down", KeyReleased events must obviously be discarded.
-            // - KeyPress events are a little bit harder to handle: they depend on the EnableKeyRepeat state,
-            //   and we need to properly forward the first one.
-            xcb_query_keymap_cookie_t cookie = xcb_query_keymap(m_connection);
-            AutoPointer<xcb_query_keymap_reply_t> keymap = xcb_query_keymap_reply(m_connection,
-                                                                    cookie, NULL);
-
-            if (keymap->keys[press->detail / 8] & (1 << (press->detail % 8)))
-            {
-                // KeyRelease event + key down = repeated event --> discard
-                if (windowEvent->response_type == XCB_KEY_RELEASE)
-                {
-                    m_lastKeyReleaseEvent = *press;
-                    return false;
-                }
-
-                // KeyPress event + key repeat disabled + matching KeyRelease event = repeated event --> discard
-                if ((windowEvent->response_type == XCB_KEY_PRESS) && !m_keyRepeat &&
-                    (m_lastKeyReleaseEvent.detail == press->detail) &&
-                    (m_lastKeyReleaseEvent.time == press->time))
-                {
-                    return false;
-                }
-            }
-        }
-    }
-
     // Convert the X11 event to a sf::Event
     switch (windowEvent->response_type & ~0x80)
     {
@@ -827,6 +928,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         case XCB_KEY_PRESS:
         {
             xcb_key_press_event_t* e = reinterpret_cast<xcb_key_press_event_t*>(windowEvent);
+
             // Get the keysym of the key that has been pressed
             static XComposeStatus keyboard;
             char buffer[32];
@@ -895,9 +997,10 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         }
 
         // Key up event
-        case KeyRelease:
+        case XCB_KEY_RELEASE:
         {
             xcb_key_release_event_t* e = reinterpret_cast<xcb_key_release_event_t*>(windowEvent);
+
             // Get the keysym of the key that has been pressed
             char buffer[32];
             KeySym symbol;
@@ -1000,7 +1103,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Mouse entered
         case XCB_ENTER_NOTIFY:
         {
-            if (windowEvent.xcrossing.mode == NotifyNormal)
+            xcb_enter_notify_event_t* enterNotifyEvent = reinterpret_cast<xcb_enter_notify_event_t*>(windowEvent);
+
+            if (enterNotifyEvent->mode == NotifyNormal)
             {
                 Event event;
                 event.type = Event::MouseEntered;
@@ -1012,7 +1117,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Mouse left
         case XCB_LEAVE_NOTIFY:
         {
-            if (windowEvent.xcrossing.mode == NotifyNormal)
+            xcb_leave_notify_event_t* leaveNotifyEvent = reinterpret_cast<xcb_leave_notify_event_t*>(windowEvent);
+
+            if (leaveNotifyEvent->mode == NotifyNormal)
             {
                 Event event;
                 event.type = Event::MouseLeft;

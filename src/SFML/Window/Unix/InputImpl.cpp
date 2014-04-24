@@ -28,7 +28,6 @@
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Linux/AutoPointer.hpp>
 #include <X11/Xlib-xcb.h>
 #include <X11/keysym.h>
 #include <cstdlib>
@@ -158,13 +157,16 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
     if (keycode != 0)
     {
         // Get the whole keyboard state
-        AutoPointer<xcb_query_keymap_reply_t> keymap = xcb_query_keymap_reply(connection, xcb_query_keymap(connection), NULL);
+        xcb_query_keymap_reply_t* keymap = xcb_query_keymap_reply(connection, xcb_query_keymap(connection), NULL);
 
         // Close the connection with the X server
         CloseDisplay(display);
 
         // Check our keycode
-        return (keymap->keys[keycode / 8] & (1 << (keycode % 8))) != 0;
+        bool isPressed = (keymap->keys[keycode / 8] & (1 << (keycode % 8))) != 0;
+
+        free(keymap);
+        return isPressed;
     }
     else
     {
@@ -191,21 +193,25 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
     xcb_connection_t* connection = XGetXCBConnection(display);
 
     // Get pointer mask
-    AutoPointer<xcb_query_pointer_reply_t> pointer =
-        xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XDefaultRootWindow(display)), NULL);
+    xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XDefaultRootWindow(display)), NULL);
 
     // Close the connection with the X server
     CloseDisplay(display);
 
+    bool result = false;
+
     switch (button)
     {
-        case Mouse::Left:     return pointer->mask & XCB_BUTTON_MASK_1;
-        case Mouse::Right:    return pointer->mask & XCB_BUTTON_MASK_3;
-        case Mouse::Middle:   return pointer->mask & XCB_BUTTON_MASK_2;
+        case Mouse::Left:     result = pointer->mask & XCB_BUTTON_MASK_1;
+        case Mouse::Right:    result = pointer->mask & XCB_BUTTON_MASK_3;
+        case Mouse::Middle:   result = pointer->mask & XCB_BUTTON_MASK_2;
         case Mouse::XButton1: // not supported by X
         case Mouse::XButton2: // not supported by X
-        default:              return false;
+        default:              result = false;
     }
+
+    free(pointer);
+    return result;
 }
 
 
@@ -216,13 +222,16 @@ Vector2i InputImpl::getMousePosition()
     Display* display = OpenDisplay();
     xcb_connection_t* connection = XGetXCBConnection(display);
 
-    AutoPointer<xcb_query_pointer_reply_t> pointer =
-            xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XDefaultRootWindow(display)), NULL);
+    xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XDefaultRootWindow(display)), NULL);
 
     // Close the connection with the X server
     CloseDisplay(display);
 
-    return Vector2i(pointer->root_x, pointer->root_y);
+    // Prepare result.
+    Vector2i result(pointer->root_x, pointer->root_y);
+    free(pointer);
+
+    return result;
 }
 
 
@@ -235,13 +244,16 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
         // Open a connection with the X server
         xcb_connection_t* connection = OpenConnection();
 
-        AutoPointer<xcb_query_pointer_reply_t> pointer =
-                xcb_query_pointer_reply(connection, xcb_query_pointer(connection, handle), NULL);
+        xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, handle), NULL);
 
         // Close the connection with the X server
         CloseConnection(connection);
 
-        return Vector2i(pointer->win_x, pointer->win_y);
+        // Prepare result.
+        Vector2i result(pointer->win_x, pointer->win_y);
+        free(pointer);
+
+        return result;
     }
     else
     {

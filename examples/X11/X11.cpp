@@ -3,7 +3,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
-#include <X11/Xlib.h>
+#include <SFML/System/Err.hpp>
+#include <X11/Xlib-xcb.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <iostream>
@@ -55,9 +56,9 @@ void draw(sf::Window& window, float elapsedTime)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(0.f, 0.f, -200.f);
-    glRotatef(elapsedTime * 0.05f, 1.f, 0.f, 0.f);
-    glRotatef(elapsedTime * 0.03f, 0.f, 1.f, 0.f);
-    glRotatef(elapsedTime * 0.09f, 0.f, 0.f, 1.f);
+    glRotatef(elapsedTime * 10.f, 1.f, 0.f, 0.f);
+    glRotatef(elapsedTime * 6.f, 0.f, 1.f, 0.f);
+    glRotatef(elapsedTime * 18.f, 0.f, 0.f, 1.f);
 
     // Draw a cube
     glBegin(GL_QUADS);
@@ -115,85 +116,104 @@ int main()
     if (!display)
         return EXIT_FAILURE;
 
-    // Get the default screen
-    int screen = DefaultScreen(display);
+    // Get the XCB connection for the opened display.
+    xcb_connection_t* xcbConnection = XGetXCBConnection(display);
 
-    // Let's create the main window
-    XSetWindowAttributes attributes;
-    attributes.background_pixel = BlackPixel(display, screen);
-    attributes.event_mask       = KeyPressMask;
-    Window window = XCreateWindow(display, RootWindow(display, screen),
-                               0, 0, 650, 330, 0,
-                               DefaultDepth(display, screen),
-                               InputOutput,
-                               DefaultVisual(display, screen),
-                               CWBackPixel | CWEventMask, &attributes);
-    if (!window)
+    if (!xcbConnection)
+    {
+        sf::err() << "Failed to get the XCB connection for opened display." << std::endl;
         return EXIT_FAILURE;
+    }
 
-    // Set the window's name
-    XStoreName(display, window , "SFML Window");
+    // Get XCB screen.
+    const xcb_setup_t* xcbSetup = xcb_get_setup(xcbConnection);
+    xcb_screen_iterator_t xcbScreenIter = xcb_setup_roots_iterator(xcbSetup);
+    xcb_screen_t* screen = xcbScreenIter.data;
 
-    // Let's create the windows which will serve as containers for our SFML views
-    Window view1 = XCreateWindow(display, window,
-                                 10, 10, 310, 310, 0,
-                                 DefaultDepth(display, screen),
-                                 InputOutput,
-                                 DefaultVisual(display, screen),
-                                 0, NULL);
-    Window view2 = XCreateWindow(display, window,
-                                 330, 10, 310, 310, 0,
-                                 DefaultDepth(display, screen),
-                                 InputOutput,
-                                 DefaultVisual(display, screen),
-                                 0, NULL);
+    if (!screen)
+    {
+        sf::err() << "Failed to get the XCB screen." << std::endl;
+        return EXIT_FAILURE;
+    }
 
-    // Show our windows
-    XMapWindow(display, window);
-    XFlush(display);
+    // Generate the XCB window IDs.
+    xcb_window_t rootWindowId = xcb_generate_id(xcbConnection);
+    xcb_window_t view1WindowId = xcb_generate_id(xcbConnection);
+    xcb_window_t view2WindowId = xcb_generate_id(xcbConnection);
+
+    // Create the root window with a black background.
+    uint32_t mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+    uint32_t attributes[2] = {screen->black_pixel, XCB_EVENT_MASK_KEY_PRESS};
+
+    xcb_create_window(xcbConnection,
+                      XCB_COPY_FROM_PARENT,
+                      rootWindowId,
+                      screen->root,
+                      0, 0, 650, 330,
+                      0,
+                      XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                      screen->root_visual,
+                      mask, attributes);
+
+    // Create windows for the SFML views.
+    xcb_create_window(xcbConnection,
+                      XCB_COPY_FROM_PARENT,
+                      view1WindowId,
+                      rootWindowId,
+                      10, 10, 310, 310,
+                      0,
+                      XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                      screen->root_visual,
+                      mask, attributes);
+
+    xcb_create_window(xcbConnection,
+                      XCB_COPY_FROM_PARENT,
+                      view2WindowId,
+                      rootWindowId,
+                      330, 10, 310, 310,
+                      0,
+                      XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                      screen->root_visual,
+                      mask, attributes);
+
+    // Map windows to screen.
+    xcb_map_window(xcbConnection, rootWindowId);
+    xcb_map_window(xcbConnection, view1WindowId);
+    xcb_map_window(xcbConnection, view2WindowId);
+
+    // Flush commands.
+    xcb_flush(xcbConnection);
 
     // Create our SFML views
-    sf::Window SFMLView1(view1);
-    sf::Window SFMLView2(view2);
+    sf::Window sfmlView1(view1WindowId);
+    sf::Window sfmlView2(view2WindowId);
 
     // Create a clock for measuring elapsed time
     sf::Clock clock;
 
     // Initialize our views
-    initialize(SFMLView1);
-    initialize(SFMLView2);
+    initialize(sfmlView1);
+    initialize(sfmlView2);
 
     // Start the event loop
     bool running = true;
+    xcb_generic_event_t* event = NULL;
+
     while (running)
     {
-        while (XPending(display))
+        while (event = xcb_poll_for_event(xcbConnection))
         {
-            // Get the next pending event
-            XEvent event;
-            XNextEvent(display, &event);
-
-            // Process it
-            switch (event.type)
-            {
-                // Any key is pressed: quit
-                case KeyPress:
-                    running = false;
-                    break;
-            }
+            running = false;
         }
 
         // Draw something into our views
-        draw(SFMLView1, clock.getElapsedTime().asSeconds());
-        draw(SFMLView2, clock.getElapsedTime().asSeconds() * 0.3f);
+        draw(sfmlView1, clock.getElapsedTime().asSeconds());
+        draw(sfmlView2, clock.getElapsedTime().asSeconds() * 0.3f);
 
         // Display the views on screen
-        SFMLView1.display();
-        SFMLView2.display();
+        sfmlView1.display();
+        sfmlView2.display();
     }
-
-    // Close the display
-    XCloseDisplay(display);
 
     return EXIT_SUCCESS;
 }
