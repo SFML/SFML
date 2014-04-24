@@ -69,8 +69,6 @@ if(SFML_OS_WINDOWS)
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     set(PLATFORM_SRC
-        ${SRCROOT}/Linux/AutoPointer.cpp
-        ${SRCROOT}/Linux/AutoPointer.hpp
         ${SRCROOT}/Unix/Display.cpp
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
@@ -195,7 +193,7 @@ if(NOT SFML_OPENGL_ES)
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})
     if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-        find_package(XCB COMPONENTS xlib_xcb atom icccm image randr REQUIRED)
+        find_package(XCB COMPONENTS xlib_xcb icccm image randr util REQUIRED)
         if(NOT LIBXCB_FOUND)
             message(FATAL_ERROR "Xcb library not found")
         endif()
