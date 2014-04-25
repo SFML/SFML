@@ -35,7 +35,7 @@
 
     #include <SFML/Window/Win32/SensorImpl.hpp>
 
-#elif defined(SFML_SYSTEM_LINUX)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
     #include <SFML/Window/Unix/SensorImpl.hpp>
 
