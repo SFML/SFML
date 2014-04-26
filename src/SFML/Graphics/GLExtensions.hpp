@@ -35,7 +35,9 @@
     #include <SFML/OpenGL.hpp>
 
     #define GLEXT_blend_func_separate              GL_OES_blend_func_separate
+    #define GLEXT_blend_equation_separate          GL_OES_blend_equation_separate
     #define GLEXT_glBlendFuncSeparate              glBlendFuncSeparateOES
+    #define GLEXT_glBlendEquationSeparate          glBlendEquationSeparateOES
     #define GLEXT_framebuffer_object               GL_OES_framebuffer_object
     #define GLEXT_glGenFramebuffers                glGenFramebuffersOES
     #define GLEXT_glGenRenderbuffers               glGenRenderbuffersOES
@@ -63,7 +65,9 @@
     #include <SFML/OpenGL.hpp>
 
     #define GLEXT_blend_func_separate              GLEW_EXT_blend_func_separate
+    #define GLEXT_blend_equation_separate          GLEW_EXT_blend_equation_separate
     #define GLEXT_glBlendFuncSeparate              glBlendFuncSeparateEXT
+    #define GLEXT_glBlendEquationSeparate          glBlendEquationSeparateEXT
     #define GLEXT_framebuffer_object               GLEW_EXT_framebuffer_object
     #define GLEXT_glGenFramebuffers                glGenFramebuffersEXT
     #define GLEXT_glGenRenderbuffers               glGenRenderbuffersEXT

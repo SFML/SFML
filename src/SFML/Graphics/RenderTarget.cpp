@@ -35,6 +35,41 @@
 #include <iostream>
 
 
+namespace
+{
+    // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
+    sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
+    {
+        switch (blendFactor)
+        {
+            default:
+            case sf::BlendMode::Zero:             return GL_ZERO;
+            case sf::BlendMode::One:              return GL_ONE;
+            case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
+            case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
+            case sf::BlendMode::DstColor:         return GL_DST_COLOR;
+            case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
+            case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
+            case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+            case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
+            case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+        }
+    }
+
+
+    // Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
+    sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
+    {
+        switch (blendEquation)
+        {
+            default:
+            case sf::BlendMode::Add:             return GL_FUNC_ADD;
+            case sf::BlendMode::Subtract:        return GL_FUNC_SUBTRACT;
+        }
+    }
+}
+
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -369,49 +404,31 @@ void RenderTarget::applyCurrentView()
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::applyBlendMode(BlendMode mode)
+void RenderTarget::applyBlendMode(const BlendMode& mode)
 {
-    switch (mode)
+    // Apply the blend mode, falling back to the non-separate versions if necessary
+    if (GLEXT_blend_func_separate)
     {
-        // glBlendFuncSeparate is used when available to avoid an incorrect alpha value when the target
-        // is a RenderTexture -- in this case the alpha value must be written directly to the target buffer
+        glCheck(GLEXT_glBlendFuncSeparate(
+            factorToGlConstant(mode.colorSrcFactor), factorToGlConstant(mode.colorDstFactor),
+            factorToGlConstant(mode.alphaSrcFactor), factorToGlConstant(mode.alphaDstFactor)));
+    }
+    else
+    {
+        glCheck(glBlendFunc(
+            factorToGlConstant(mode.colorSrcFactor),
+            factorToGlConstant(mode.colorDstFactor)));
+    }
 
-        // Alpha blending
-        default :
-        case BlendAlpha :
-            if (GLEXT_blend_func_separate)
-            {
-                glCheck(GLEXT_glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
-            }
-            else
-            {
-                glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-            }
-
-            break;
-
-        // Additive blending
-        case BlendAdd :
-            if (GLEXT_blend_func_separate)
-            {
-                glCheck(GLEXT_glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE));
-            }
-            else
-            {
-                glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
-            }
-
-            break;
-
-        // Multiplicative blending
-        case BlendMultiply :
-            glCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));
-            break;
-
-        // No blending
-        case BlendNone :
-            glCheck(glBlendFunc(GL_ONE, GL_ZERO));
-            break;
+    if (GLEXT_blend_equation_separate)
+    {
+        glCheck(GLEXT_glBlendEquationSeparate(
+            equationToGlConstant(mode.colorEquation),
+            equationToGlConstant(mode.alphaEquation)));
+    }
+    else
+    {
+        glCheck(glBlendEquation(equationToGlConstant(mode.colorEquation)));
     }
 
     m_cache.lastBlendMode = mode;
@@ -462,8 +479,9 @@ void RenderTarget::applyShader(const Shader* shader)
 //   to render them.
 //
 // * Blending mode
-//   It's a simple integral value, so we can easily check
-//   whether the value to apply is the same as before or not.
+//   Since it overloads the == operator, we can easily check
+//   whether any of the 6 blending components changed and,
+//   thus, whether we need to update the blend mode.
 //
 // * Texture
 //   Storing the pointer or OpenGL ID of the last used texture

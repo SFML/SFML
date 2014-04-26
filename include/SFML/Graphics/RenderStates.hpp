@@ -66,7 +66,7 @@ public :
     /// \param theBlendMode Blend mode to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(BlendMode theBlendMode);
+    RenderStates(const BlendMode& theBlendMode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a default set of render states with a custom transform
@@ -101,7 +101,7 @@ public :
     /// \param theShader    Shader to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(BlendMode theBlendMode, const Transform& theTransform,
+    RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
                  const Texture* theTexture, const Shader* theShader);
 
     ////////////////////////////////////////////////////////////

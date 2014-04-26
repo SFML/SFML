@@ -4,6 +4,7 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Graphics)
 
 # all source files
 set(SRC
+    ${SRCROOT}/BlendMode.cpp
     ${INCROOT}/BlendMode.hpp
     ${SRCROOT}/Color.cpp
     ${INCROOT}/Color.hpp
