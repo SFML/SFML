@@ -270,11 +270,11 @@ m_useSizeHints(false)
     initialize();
 
     // In fullscreen mode, we must grab keyboard and mouse inputs
-    /*if (fullscreen)
+    if (fullscreen)
     {
         XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
         XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
-    }*/
+    }
 }
 
 
