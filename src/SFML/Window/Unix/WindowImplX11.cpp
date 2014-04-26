@@ -156,7 +156,7 @@ m_useSizeHints(false)
     attributes.colormap = XCreateColormap(m_display, root, visualInfo.visual, AllocNone);
 
     // Create the window
-    m_window = XCreateWindow(m_display,
+    /*m_window = XCreateWindow(m_display,
                              root,
                              left, top,
                              width, height,
@@ -165,6 +165,14 @@ m_useSizeHints(false)
                              InputOutput,
                              visualInfo.visual,
                              CWEventMask | CWOverrideRedirect | CWColormap, &attributes);
+    */
+    m_window = XCreateSimpleWindow( m_display,
+                                    RootWindow(m_display, 0),
+                                    left, top, width, height.
+                                    0,
+                                    BlackPixel(display, 0), 
+                                    BlackPixel(display, 0));
+    
     if (!m_window)
     {
         err() << "Failed to create window" << std::endl;
@@ -262,11 +270,11 @@ m_useSizeHints(false)
     initialize();
 
     // In fullscreen mode, we must grab keyboard and mouse inputs
-    if (fullscreen)
+    /*if (fullscreen)
     {
         XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
         XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
-    }
+    }*/
 }
 
 
