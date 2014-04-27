@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -78,15 +78,16 @@ static BOOL isStateInitialized = NO;
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-/// Carefully observe if the key mask is on in the modifiers
+/// \brief Carefully observe if the key mask is on in the modifiers
 ///
 ////////////////////////////////////////////////////////////
 BOOL isKeyMaskActive(NSUInteger modifiers, NSUInteger mask);
 
 
 ////////////////////////////////////////////////////////////
-/// Handle one modifier key mask, update the key state and
-/// send events to the requester
+/// \brief Handle one modifier key mask
+///
+/// Update the key state and send events to the requester
 ///
 ////////////////////////////////////////////////////////////
 void processOneModifier(NSUInteger modifiers, NSUInteger mask,
@@ -95,8 +96,9 @@ void processOneModifier(NSUInteger modifiers, NSUInteger mask,
 
 
 ////////////////////////////////////////////////////////////
-/// Handle left & right modifier keys, update the keys state and
-/// send events to the requester
+/// \brief Handle left & right modifier keys
+///
+/// Update the keys state and send events to the requester
 ///
 ////////////////////////////////////////////////////////////
 void processLeftRightModifiers(NSUInteger modifiers,
@@ -113,7 +115,7 @@ void processLeftRightModifiers(NSUInteger modifiers,
 
 
 ////////////////////////////////////////////////////////
-void initialiseKeyboardHelper()
+void initialiseKeyboardHelper(void)
 {
     if (isStateInitialized) return;
 
@@ -210,13 +212,13 @@ void processOneModifier(NSUInteger modifiers, NSUInteger mask,
     BOOL isDown = isKeyMaskActive(modifiers, mask);
 
     // Check for key pressed event
-    if (isDown && !wasDown) {
+    if (isDown && !wasDown)
         requester.keyDown(event);
-    }
+
     // And check for key released event
-    else if (!isDown && wasDown) {
+    else if (!isDown && wasDown)
         requester.keyUp(event);
-    }
+
     // else isDown == wasDown, so no change
 
     // Update state

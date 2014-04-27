@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -229,27 +229,27 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
         if (filename.size() > 3)
         {
             // Extract the extension
-            std::string extension = filename.substr(filename.size() - 3);
+            std::string extension = toLower(filename.substr(filename.size() - 3));
 
-            if (toLower(extension) == "bmp")
+            if (extension == "bmp")
             {
                 // BMP format
                 if (stbi_write_bmp(filename.c_str(), size.x, size.y, 4, &pixels[0]))
                     return true;
             }
-            else if (toLower(extension) == "tga")
+            else if (extension == "tga")
             {
                 // TGA format
                 if (stbi_write_tga(filename.c_str(), size.x, size.y, 4, &pixels[0]))
                     return true;
             }
-            else if(toLower(extension) == "png")
+            else if (extension == "png")
             {
                 // PNG format
                 if (stbi_write_png(filename.c_str(), size.x, size.y, 4, &pixels[0], 0))
                     return true;
             }
-            else if (toLower(extension) == "jpg")
+            else if (extension == "jpg")
             {
                 // JPG format
                 if (writeJpg(filename, pixels, size.x, size.y))

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <linux/joystick.h>
 #include <fcntl.h>
+#include <string>
 
 
 namespace sf
@@ -91,6 +92,14 @@ public :
     JoystickCaps getCapabilities() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the joystick identification
+    ///
+    /// \return Joystick identification
+    ///
+    ////////////////////////////////////////////////////////////
+    Joystick::Identification getIdentification() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state
     ///
     /// \return Joystick state
@@ -101,11 +110,33 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
+    /// Get the joystick name
+    ///
+    /// \param index Index of the joystick
+    ///
+    /// \return Joystick name
+    ///
+    ////////////////////////////////////////////////////////////
+    std::string getJoystickName(unsigned int index);
+
+    ////////////////////////////////////////////////////////////
+    /// Get a system attribute from udev as an unsigned int
+    ///
+    /// \param index Index of the joystick
+    /// \param attributeName Name of the attribute to retrieve
+    ///
+    /// \return Attribute value as unsigned int
+    ///
+    ////////////////////////////////////////////////////////////
+    unsigned int getUdevAttributeUint(unsigned int index, std::string attributeName);
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int           m_file;                 ///< File descriptor of the joystick
-    char          m_mapping[ABS_MAX + 1]; ///< Axes mapping (index to axis id)
-    JoystickState m_state;                ///< Current state of the joystick
+    int           m_file;                          ///< File descriptor of the joystick
+    char          m_mapping[ABS_MAX + 1];          ///< Axes mapping (index to axis id)
+    JoystickState m_state;                         ///< Current state of the joystick
+    sf::Joystick::Identification m_identification; ///< Identification of the joystick
 };
 
 } // namespace priv

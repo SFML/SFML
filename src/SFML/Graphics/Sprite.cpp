@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -140,7 +140,7 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
     {
         states.transform *= getTransform();
         states.texture = m_texture;
-        target.draw(m_vertices, 4, Quads, states);
+        target.draw(m_vertices, 4, TrianglesStrip, states);
     }
 }
 
@@ -152,8 +152,8 @@ void Sprite::updatePositions()
 
     m_vertices[0].position = Vector2f(0, 0);
     m_vertices[1].position = Vector2f(0, bounds.height);
-    m_vertices[2].position = Vector2f(bounds.width, bounds.height);
-    m_vertices[3].position = Vector2f(bounds.width, 0);
+    m_vertices[2].position = Vector2f(bounds.width, 0);
+    m_vertices[3].position = Vector2f(bounds.width, bounds.height);
 }
 
 
@@ -167,8 +167,8 @@ void Sprite::updateTexCoords()
 
     m_vertices[0].texCoords = Vector2f(left, top);
     m_vertices[1].texCoords = Vector2f(left, bottom);
-    m_vertices[2].texCoords = Vector2f(right, bottom);
-    m_vertices[3].texCoords = Vector2f(right, top);
+    m_vertices[2].texCoords = Vector2f(right, top);
+    m_vertices[3].texCoords = Vector2f(right, bottom);
 }
 
 } // namespace sf

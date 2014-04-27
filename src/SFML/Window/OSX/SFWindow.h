@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -29,36 +29,77 @@
 #import <AppKit/AppKit.h>
 
 ////////////////////////////////////////////////////////////
-/// \brief Here we redefine some methods to allow grabing fullscreen events.
+/// \brief Here we redefine some methods to allow grabbing fullscreen events
 ///
 ////////////////////////////////////////////////////////////
 @interface SFWindow : NSWindow
 
 ////////////////////////////////////////////////////////////
-/// These two methods must return YES to grab fullscreen events.
+/// \brief Allow to grab fullscreen events
+///
+/// acceptsFirstResponder and canBecomeKeyWindow messages must
+/// return YES to grab fullscreen events.
+///
 /// See http://stackoverflow.com/questions/999464/fullscreen-key-down-actions
-/// for more informations
+///
+/// \return YES
 ///
 ////////////////////////////////////////////////////////////
 -(BOOL)acceptsFirstResponder;
+
+////////////////////////////////////////////////////////////
+/// \brief Allow to grab fullscreen events
+///
+/// See acceptsFirstResponder documentation above.
+///
+/// \return YES
+///
+////////////////////////////////////////////////////////////
 -(BOOL)canBecomeKeyWindow;
 
 ////////////////////////////////////////////////////////////
-/// Override default implementation of keyDown: to prevent
-/// system alert
+/// \brief Prevent system alert
+///
+/// \param theEvent a Cocoa event
 ///
 ////////////////////////////////////////////////////////////
--(void)keyDown:(NSEvent *)theEvent;
+-(void)keyDown:(NSEvent*)theEvent;
+
+////////////////////////////////////////////////////////////
+/// \brief This action method simulates the user clicking the close button
+///
+/// Override NSWindow implementation, see implementation for details
+///
+/// \param sender The message’s sender
+///
+////////////////////////////////////////////////////////////
+-(void)performClose:(id)sender;
+
+////////////////////////////////////////////////////////////
+/// \brief Enabling or disabling a specific menu item
+///
+/// \param menuItem An NSMenuItem object that represents the menu item
+///
+/// \return YES to enable menuItem, NO to disable it.
+///
+////////////////////////////////////////////////////////////
+-(BOOL)validateMenuItem:(NSMenuItem*)menuItem;
 
 @end
 
 
+////////////////////////////////////////////////////////////
+/// \brief Extension of NSWindow
+///
+/// Add some extra messages for SFML internal usage.
+///
+////////////////////////////////////////////////////////////
 @interface NSWindow (SFML)
 
 ////////////////////////////////////////////////////////////
 /// Proxy for performClose: for the app delegate
 ///
-/// Always return nil
+/// \return nil
 ///
 ////////////////////////////////////////////////////////////
 -(id)sfClose;

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,26 +30,47 @@
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/OpenGL.hpp>
-#include <SFML/Window/glext/glext.h>
 #include <set>
 #include <cstdlib>
 #include <cassert>
+#ifdef SFML_SYSTEM_IOS
+    #include <OpenGLES/ES1/gl.h>
+#else
+    #include <SFML/Window/glext/glext.h>
+#endif
 
+#if !defined(SFML_OPENGL_ES)
 
-#if defined(SFML_SYSTEM_WINDOWS)
+    #if defined(SFML_SYSTEM_WINDOWS)
 
-    #include <SFML/Window/Win32/WglContext.hpp>
-    typedef sf::priv::WglContext ContextType;
+        #include <SFML/Window/Win32/WglContext.hpp>
+        typedef sf::priv::WglContext ContextType;
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+    #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-    #include <SFML/Window/Unix/GlxContext.hpp>
-    typedef sf::priv::GlxContext ContextType;
+        #include <SFML/Window/Unix/GlxContext.hpp>
+        typedef sf::priv::GlxContext ContextType;
 
-#elif defined(SFML_SYSTEM_MACOS)
+    #elif defined(SFML_SYSTEM_MACOS)
 
-    #include <SFML/Window/OSX/SFContext.hpp>
-    typedef sf::priv::SFContext ContextType;
+        #include <SFML/Window/OSX/SFContext.hpp>
+        typedef sf::priv::SFContext ContextType;
+
+    #endif
+
+#else
+
+    #if defined(SFML_SYSTEM_IOS)
+
+        #include <SFML/Window/iOS/EaglContext.hpp>
+        typedef sf::priv::EaglContext ContextType;
+
+    #else
+
+        #include <SFML/Window/EglContext.hpp>
+        typedef sf::priv::EglContext ContextType;
+
+    #endif
 
 #endif
 
@@ -272,7 +293,7 @@ void GlContext::initialize()
 
     // Enable antialiasing if needed
     if (m_settings.antialiasingLevel > 0)
-        glEnable(GL_MULTISAMPLE_ARB);
+        glEnable(GL_MULTISAMPLE);
 }
 
 } // namespace priv

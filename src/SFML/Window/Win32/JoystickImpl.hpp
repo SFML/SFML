@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -36,7 +36,9 @@
 #endif
 #define _WIN32_WINDOWS 0x0501
 #define _WIN32_WINNT   0x0501
+#include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/System/String.hpp>
 #include <windows.h>
 #include <mmsystem.h>
 #include <cmath>
@@ -101,6 +103,14 @@ public :
     JoystickCaps getCapabilities() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the joystick identification
+    ///
+    /// \return Joystick identification
+    ///
+    ////////////////////////////////////////////////////////////
+    Joystick::Identification getIdentification() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state
     ///
     /// \return Joystick state
@@ -111,10 +121,32 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
+    /// Get the joystick's name
+    ///
+    /// \param index Index of the joystick
+    /// \param caps JOYCAPS
+    ///
+    /// \return Joystick name
+    ///
+    ////////////////////////////////////////////////////////////
+    sf::String getDeviceName(unsigned int index, JOYCAPS caps);
+
+    ////////////////////////////////////////////////////////////
+    /// Get a system error string from an error code
+    ///
+    /// \param errorCode Error code
+    ///
+    /// \return Error message string
+    ///
+    ////////////////////////////////////////////////////////////
+    sf::String getErrorString(DWORD errorCode);
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_index; ///< Index of the joystick
-    JOYCAPS      m_caps;  ///< Joystick capabilities
+    unsigned int m_index;                      ///< Index of the joystick
+    JOYCAPS      m_caps;                       ///< Joystick capabilities
+    Joystick::Identification m_identification; ///< Joystick identification
 };
 
 } // namespace priv

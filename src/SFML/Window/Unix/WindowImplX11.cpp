@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/WindowImplX11.hpp>
-#include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
@@ -42,6 +41,13 @@
 #include <string>
 #include <iterator>
 
+#ifdef SFML_OPENGL_ES
+    #include <SFML/Window/EglContext.hpp>
+    typedef sf::priv::EglContext ContextType;
+#else
+    #include <SFML/Window/Unix/GlxContext.hpp>
+    typedef sf::priv::GlxContext ContextType;
+#endif
 
 ////////////////////////////////////////////////////////////
 // Private data
@@ -151,7 +157,7 @@ m_useSizeHints(false)
         switchToFullscreen(mode);
 
     // Choose the visual according to the context settings
-    XVisualInfo visualInfo = GlxContext::selectBestVisual(m_display, mode.bitsPerPixel, settings);
+    XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
 
     // Define the window attributes
     XSetWindowAttributes attributes;
@@ -908,6 +914,13 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                 event.type = Event::MouseLeft;
                 pushEvent(event);
             }
+            break;
+        }
+
+        // Parent window changed
+        case ReparentNotify :
+        {
+            XSync(m_display, True); // Discard remaining events
             break;
         }
     }

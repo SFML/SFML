@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -94,7 +94,7 @@ public :
     bool loadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, Vector2u& size);
 
     ////////////////////////////////////////////////////////////
-    /// \bref Save an array of pixels as an image file
+    /// \brief Save an array of pixels as an image file
     ///
     /// \param filename Path of image file to save
     /// \param pixels   Array of pixels to save to image

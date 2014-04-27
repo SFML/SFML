@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -62,7 +62,7 @@ public :
     /// \brief Default constructor
     ///
     /// This constructor doesn't actually create the window,
-    /// use the other constructors or call "create" to do so.
+    /// use the other constructors or call create() to do so.
     ///
     ////////////////////////////////////////////////////////////
     Window();
@@ -82,7 +82,7 @@ public :
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
-    /// \param style    Window style
+    /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
@@ -98,7 +98,8 @@ public :
     /// advanced OpenGL context settings such as antialiasing,
     /// depth-buffer bits, etc.
     ///
-    /// \param handle   Platform-specific handle of the control
+    /// \param handle   Platform-specific handle of the control (\a HWND on
+    ///                 Windows, \a %Window on Linux/FreeBSD, \a NSWindow on OS X)
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
@@ -107,7 +108,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
-    /// Closes the window and free all the resources attached to it.
+    /// Closes the window and frees all the resources attached to it.
     ///
     ////////////////////////////////////////////////////////////
     virtual ~Window();
@@ -119,9 +120,13 @@ public :
     /// If \a style contains Style::Fullscreen, then \a mode
     /// must be a valid video mode.
     ///
+    /// The fourth parameter is an optional structure specifying
+    /// advanced OpenGL context settings such as antialiasing,
+    /// depth-buffer bits, etc.
+    ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
-    /// \param style    Window style
+    /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
@@ -134,7 +139,12 @@ public :
     /// rendering area into an already existing control.
     /// If the window was already created, it closes it first.
     ///
-    /// \param handle   Platform-specific handle of the control
+    /// The second parameter is an optional structure specifying
+    /// advanced OpenGL context settings such as antialiasing,
+    /// depth-buffer bits, etc.
+    ///
+    /// \param handle   Platform-specific handle of the control (\a HWND on
+    ///                 Windows, \a %Window on Linux/FreeBSD, \a NSWindow on OS X)
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
@@ -449,6 +459,8 @@ public :
     /// You shouldn't need to use this function, unless you have
     /// very specific stuff to implement that SFML doesn't support,
     /// or implement a temporary workaround until a bug is fixed.
+    /// The type is \a HWND on Windows, \a %Window on Linux/FreeBSD
+    /// and \a NSWindow on OS X.
     ///
     /// \return System handle of the window
     ///

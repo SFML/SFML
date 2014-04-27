@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -32,6 +32,7 @@
 /// \brief Silent Responder used to prevent sound alert with key event
 ///
 /// Mainly used by SFOpenGLView and its hidden text view.
+///
 ////////////////////////////////////////////////////////////
 @interface SFSilentResponder : NSResponder
 

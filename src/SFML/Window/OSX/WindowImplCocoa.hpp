@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -34,7 +34,7 @@
 #include <SFML/System/String.hpp>
 
 ////////////////////////////////////////////////////////////
-/// Predefine OBJC classes
+/// Predefine OBJ-C classes
 ////////////////////////////////////////////////////////////
 #ifdef __OBJC__
 
@@ -77,7 +77,7 @@ public :
     ///
     /// \param mode  Video mode to use
     /// \param title Title of the window
-    /// \param style Window style (resizable, fixed, or fullscren)
+    /// \param style Window style (resizeable, fixed, or fullscren)
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ public :
     ~WindowImplCocoa();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Window Closed Event – called by the cocoa window object.
+    /// \brief Window Closed Event – called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -98,18 +98,18 @@ public :
     void windowClosed(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Window Resized Event – called by the cocoa window object.
+    /// \brief Window Resized Event – called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param width
-    /// \param height
+    /// \param width new width
+    /// \param height new height
     ///
     ////////////////////////////////////////////////////////////
     void windowResized(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Window Lost Focus Event – called by the cocoa window object.
+    /// \brief Window Lost Focus Event – called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -117,7 +117,7 @@ public :
     void windowLostFocus(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Window Get Focus Event – called by the cocoa window object.
+    /// \brief Window Get Focus Event – called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -125,54 +125,54 @@ public :
     void windowGainedFocus(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Down Event – called by the cocoa view object.
+    /// \brief Mouse Down Event – called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param button
-    /// \param x
-    /// \param y
+    /// \param button active button
+    /// \param x mouse x position
+    /// \param y mouse y position
     ///
     ////////////////////////////////////////////////////////////
     void mouseDownAt(Mouse::Button button, int x, int y);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Up Event – called by the cocoa view object.
+    /// \brief Mouse Up Event – called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param button
-    /// \param x
-    /// \param y
+    /// \param button active button
+    /// \param x mouse x position
+    /// \param y mouse y position
     ///
     ////////////////////////////////////////////////////////////
     void mouseUpAt(Mouse::Button button, int x, int y);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Moved Event – called by the cocoa view object.
+    /// \brief Mouse Moved Event – called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param x
-    /// \param y
+    /// \param x mouse x position
+    /// \param y mouse y position
     ///
     ////////////////////////////////////////////////////////////
     void mouseMovedAt(int x, int y);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Wheel Scrolled Event – called by the cocoa view object.
+    /// \brief Mouse Wheel Scrolled Event – called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param delta
-    /// \param x
-    /// \param y
+    /// \param delta scrolling delta
+    /// \param x mouse x position
+    /// \param y mouse y position
     ///
     ////////////////////////////////////////////////////////////
     void mouseWheelScrolledAt(float delta, int x, int y);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse In Event – called by the cocoa view object.
+    /// \brief Mouse In Event – called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -180,7 +180,7 @@ public :
     void mouseMovedIn(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Out Event – called by the cocoa view object.
+    /// \brief Mouse Out Event – called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -188,37 +188,37 @@ public :
     void mouseMovedOut(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Key Down Event – called by the cocoa view object.
+    /// \brief Key Down Event – called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param key
+    /// \param key active key
     ///
     ////////////////////////////////////////////////////////////
     void keyDown(Event::KeyEvent key);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Key Up Event – called by the cocoa view object.
+    /// \brief Key Up Event – called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param key
+    /// \param key active key
     ///
     ////////////////////////////////////////////////////////////
     void keyUp(Event::KeyEvent key);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Text Entred Event – called by the cocoa view object.
+    /// \brief Text Entred Event – called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param charcode Input unicode
+    /// \param charcode Unicode input
     ///
     ////////////////////////////////////////////////////////////
     void textEntered(unichar charcode);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Apply the context to the view.
+    /// \brief Apply the context to the view
     ///
     /// Called by the SFML context object to finalize its creation.
     ///
@@ -228,8 +228,10 @@ public :
     void applyContext(NSOpenGLContextRef context) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Change the type of the current process to become a full GUI app.
-    ///        Also ensure NSApp is constructed.
+    /// \brief Change the type of the current process
+    ///
+    /// The type of the process is changed to become a full GUI app.
+    /// Also ensure NSApp is constructed.
     ///
     ////////////////////////////////////////////////////////////
     static void setUpProcess(void);
@@ -332,7 +334,7 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     WindowImplDelegateRef m_delegate;   ///< Implementation in Obj-C.
-    bool                  m_showCursor; ///< Is the cursor displayed or hidden ?
+    bool                  m_showCursor; ///< Is the cursor displayed or hidden?
 };
 
 } // namespace priv

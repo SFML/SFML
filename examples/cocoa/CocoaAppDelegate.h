@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -36,11 +36,7 @@
 
 struct SFMLmainWindow;
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 @interface CocoaAppDelegate : NSObject <NSApplicationDelegate> {
-#else
-@interface CocoaAppDelegate : NSObject {
-#endif
 @private
     NSWindow        *m_window;
     NSView          *m_sfmlView;

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -61,7 +61,14 @@ void ThreadImpl::wait()
 void ThreadImpl::terminate()
 {
     if (m_isActive)
-        pthread_cancel(m_thread);
+    {
+        #ifndef SFML_SYSTEM_ANDROID
+            pthread_cancel(m_thread);
+        #else
+            // See http://stackoverflow.com/questions/4610086/pthread-cancel-al
+            pthread_kill(m_thread, SIGUSR1);
+        #endif
+    }
 }
 
 
@@ -71,8 +78,10 @@ void* ThreadImpl::entryPoint(void* userData)
     // The Thread instance is stored in the user data
     Thread* owner = static_cast<Thread*>(userData);
 
-    // Tell the thread to handle cancel requests immediatly
-    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+    #ifndef SFML_SYSTEM_ANDROID
+        // Tell the thread to handle cancel requests immediatly
+        pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+    #endif
 
     // Forward to the owner
     owner->run();

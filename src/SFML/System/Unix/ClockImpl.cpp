@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Unix/ClockImpl.hpp>
-#ifdef SFML_SYSTEM_MACOS
+#if defined(SFML_SYSTEM_MACOS) || defined(SFML_SYSTEM_IOS)
     #include <mach/mach_time.h>
 #else
     #include <time.h>
@@ -40,7 +40,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 Time ClockImpl::getCurrentTime()
 {
-#ifdef SFML_SYSTEM_MACOS
+#if defined(SFML_SYSTEM_MACOS) || defined(SFML_SYSTEM_IOS)
 
     // Mac OS X specific implementation (it doesn't support clock_gettime)
     static mach_timebase_info_data_t frequency = {0, 0};

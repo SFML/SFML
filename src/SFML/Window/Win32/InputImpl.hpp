@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -53,6 +53,14 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static bool isKeyPressed(Keyboard::Key key);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the virtual keyboard
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setVirtualKeyboardVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a mouse button is pressed
@@ -113,6 +121,43 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static void setMousePosition(const Vector2i& position, const Window& relativeTo);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if a touch event is currently down
+    ///
+    /// \param finger Finger index
+    ///
+    /// \return True if \a finger is currently touching the screen, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool isTouchDown(unsigned int finger);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current position of a touch in desktop coordinates
+    ///
+    /// This function returns the current touch position
+    /// in global (desktop) coordinates.
+    ///
+    /// \param finger Finger index
+    ///
+    /// \return Current position of \a finger, or undefined if it's not down
+    ///
+    ////////////////////////////////////////////////////////////
+    static Vector2i getTouchPosition(unsigned int finger);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current position of a touch in window coordinates
+    ///
+    /// This function returns the current touch position
+    /// in global (desktop) coordinates.
+    ///
+    /// \param finger Finger index
+    /// \param relativeTo Reference window
+    ///
+    /// \return Current position of \a finger, or undefined if it's not down
+    ///
+    ////////////////////////////////////////////////////////////
+    static Vector2i getTouchPosition(unsigned int finger, const Window& relativeTo);
 };
 
 } // namespace priv

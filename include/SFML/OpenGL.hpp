@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -48,13 +48,28 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-    #include <GL/gl.h>
-    #include <GL/glu.h>
+    #if defined(SFML_OPENGL_ES)
+        #include <GLES/gl.h>
+        #include <GLES/glext.h>
+    #else
+        #include <GL/gl.h>
+        #include <GL/glu.h>
+    #endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 
     #include <OpenGL/gl.h>
     #include <OpenGL/glu.h>
+
+#elif defined (SFML_SYSTEM_IOS)
+
+    #include <OpenGLES/ES1/gl.h>
+    #include <OpenGLES/ES1/glext.h>
+
+#elif defined (SFML_SYSTEM_ANDROID)
+
+    #include <GLES/gl.h>
+    #include <GLES/glext.h>
 
 #endif
 

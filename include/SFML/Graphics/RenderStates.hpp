@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -66,7 +66,7 @@ public :
     /// \param theBlendMode Blend mode to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(BlendMode theBlendMode);
+    RenderStates(const BlendMode& theBlendMode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a default set of render states with a custom transform
@@ -101,7 +101,7 @@ public :
     /// \param theShader    Shader to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(BlendMode theBlendMode, const Transform& theTransform,
+    RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
                  const Texture* theTexture, const Shader* theShader);
 
     ////////////////////////////////////////////////////////////

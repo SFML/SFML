@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -247,7 +247,7 @@ private :
     /// consumed; it fills it again and inserts it back into the
     /// playing queue.
     ///
-    /// \param buffer Number of the buffer to fill (in [0, BufferCount])
+    /// \param bufferNum Number of the buffer to fill (in [0, BufferCount])
     ///
     /// \return True if the stream source has requested to stop, false otherwise
     ///
@@ -328,7 +328,7 @@ private :
 /// rest of the program. In particular, the OnGetData and OnSeek
 /// virtual functions may sometimes be called from this separate thread.
 /// It is important to keep this in mind, because you may have to take
-/// care of synchronization issues if you share data between threads. 
+/// care of synchronization issues if you share data between threads.
 ///
 /// Usage example:
 /// \code

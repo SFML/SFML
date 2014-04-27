@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -33,20 +33,30 @@
 
 
 ////////////////////////////////////////////////////////////
--(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
-    // TODO generate close event for each SFML window
+    (void)sender;
+    // Generate close event for each SFML window
     [NSApp makeWindowsPerform:@selector(sfClose) inOrder:NO];
     return NSTerminateCancel;
 }
 
 
 ////////////////////////////////////////////////////////////
--(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication
 {
+    (void)theApplication;
     return YES;
 }
 
+////////////////////////////////////////////////////////////
++(id)instance
+{
+    static SFApplicationDelegate* singleton = nil;
+    if (singleton == nil)
+        singleton = [[SFApplicationDelegate alloc] init];
+    return singleton;
+}
 
 @end
 

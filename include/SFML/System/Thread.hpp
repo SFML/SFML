@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -212,7 +212,7 @@ private :
 /// that you can use several types of entry points:
 /// \li non-member functions with no argument
 /// \li non-member functions with one argument of any type
-/// \li functors with no argument (this one is particularly useful for compatibility with boost/std::bind)
+/// \li functors with no argument (this one is particularly useful for compatibility with boost/std::%bind)
 /// \li functors with one argument of any type
 /// \li member functions from any class with no argument
 ///

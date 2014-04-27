@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -26,8 +26,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
 
 
 ////////////////////////////////////////////////////////////
@@ -36,7 +36,24 @@
 ////////////////////////////////////////////////////////////
 @interface SFApplicationDelegate : NSObject <NSApplicationDelegate>
 
--(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
--(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication;
+////////////////////////////////////////////////////////////
+/// \brief React to a termination notification
+///
+/// Send a close message to all windows and cancel the termination.
+///
+////////////////////////////////////////////////////////////
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
+
+////////////////////////////////////////////////////////////
+/// \brief Exit the app when all windows are closed
+///
+////////////////////////////////////////////////////////////
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication;
+
+////////////////////////////////////////////////////////////
+/// \brief Return a singleton instance of this class
+///
+////////////////////////////////////////////////////////////
++(id)instance;
 
 @end

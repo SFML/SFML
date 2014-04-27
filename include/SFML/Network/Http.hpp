@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -355,9 +355,9 @@ public :
     /// This is equivalent to calling setHost(host, port).
     /// The port has a default value of 0, which means that the
     /// HTTP client will use the right port according to the
-    /// protocol used (80 for HTTP, 443 for HTTPS). You should
-    /// leave it like this unless you really need a port other
-    /// than the standard one, or use an unknown protocol.
+    /// protocol used (80 for HTTP). You should leave it like
+    /// this unless you really need a port other than the
+    /// standard one, or use an unknown protocol.
     ///
     /// \param host Web server to connect to
     /// \param port Port to use for connection
@@ -372,9 +372,9 @@ public :
     /// doesn't actually connect to it until you send a request.
     /// The port has a default value of 0, which means that the
     /// HTTP client will use the right port according to the
-    /// protocol used (80 for HTTP, 443 for HTTPS). You should
-    /// leave it like this unless you really need a port other
-    /// than the standard one, or use an unknown protocol.
+    /// protocol used (80 for HTTP). You should leave it like
+    /// this unless you really need a port other than the
+    /// standard one, or use an unknown protocol.
     ///
     /// \param host Web server to connect to
     /// \param port Port to use for connection
@@ -426,7 +426,8 @@ private :
 /// sf::Http is a very simple HTTP client that allows you
 /// to communicate with a web server. You can retrieve
 /// web pages, send data to an interactive resource,
-/// download a remote file, etc.
+/// download a remote file, etc. The HTTPS protocol is
+/// not supported.
 ///
 /// The HTTP client is split into 3 classes:
 /// \li sf::Http::Request

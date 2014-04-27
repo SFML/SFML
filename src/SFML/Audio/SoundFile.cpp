@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,6 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFile.hpp>
+#ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/System/Android/ResourceStream.hpp>
+#endif
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <cstring>
@@ -55,7 +58,11 @@ m_sampleCount (0),
 m_channelCount(0),
 m_sampleRate  (0)
 {
+    #ifdef SFML_SYSTEM_ANDROID
 
+    m_resourceStream = NULL;
+
+    #endif
 }
 
 
@@ -64,6 +71,13 @@ SoundFile::~SoundFile()
 {
     if (m_file)
         sf_close(m_file);
+
+    #ifdef SFML_SYSTEM_ANDROID
+
+        if (m_resourceStream)
+            delete (priv::ResourceStream*)m_resourceStream;
+
+    #endif
 }
 
 
@@ -91,6 +105,8 @@ unsigned int SoundFile::getSampleRate() const
 ////////////////////////////////////////////////////////////
 bool SoundFile::openRead(const std::string& filename)
 {
+    #ifndef SFML_SYSTEM_ANDROID
+
     // If the file is already opened, first close it
     if (m_file)
         sf_close(m_file);
@@ -109,6 +125,16 @@ bool SoundFile::openRead(const std::string& filename)
     initialize(fileInfo);
 
     return true;
+
+    #else
+
+    if (m_resourceStream)
+        delete (priv::ResourceStream*)m_resourceStream;
+
+    m_resourceStream = new priv::ResourceStream(filename);
+    return openRead(*(priv::ResourceStream*)m_resourceStream);
+
+    #endif
 }
 
 
@@ -286,34 +312,34 @@ int SoundFile::getFormatFromFilename(const std::string& filename)
     std::string ext = "wav";
     std::string::size_type pos = filename.find_last_of(".");
     if (pos != std::string::npos)
-        ext = filename.substr(pos + 1);
+        ext = toLower(filename.substr(pos + 1));
 
     // Match every supported extension with its format constant
-    if (toLower(ext) == "wav"  ) return SF_FORMAT_WAV;
-    if (toLower(ext) == "aif"  ) return SF_FORMAT_AIFF;
-    if (toLower(ext) == "aiff" ) return SF_FORMAT_AIFF;
-    if (toLower(ext) == "au"   ) return SF_FORMAT_AU;
-    if (toLower(ext) == "raw"  ) return SF_FORMAT_RAW;
-    if (toLower(ext) == "paf"  ) return SF_FORMAT_PAF;
-    if (toLower(ext) == "svx"  ) return SF_FORMAT_SVX;
-    if (toLower(ext) == "nist" ) return SF_FORMAT_NIST;
-    if (toLower(ext) == "voc"  ) return SF_FORMAT_VOC;
-    if (toLower(ext) == "sf"   ) return SF_FORMAT_IRCAM;
-    if (toLower(ext) == "w64"  ) return SF_FORMAT_W64;
-    if (toLower(ext) == "mat4" ) return SF_FORMAT_MAT4;
-    if (toLower(ext) == "mat5" ) return SF_FORMAT_MAT5;
-    if (toLower(ext) == "pvf"  ) return SF_FORMAT_PVF;
-    if (toLower(ext) == "xi"   ) return SF_FORMAT_XI;
-    if (toLower(ext) == "htk"  ) return SF_FORMAT_HTK;
-    if (toLower(ext) == "sds"  ) return SF_FORMAT_SDS;
-    if (toLower(ext) == "avr"  ) return SF_FORMAT_AVR;
-    if (toLower(ext) == "sd2"  ) return SF_FORMAT_SD2;
-    if (toLower(ext) == "flac" ) return SF_FORMAT_FLAC;
-    if (toLower(ext) == "caf"  ) return SF_FORMAT_CAF;
-    if (toLower(ext) == "wve"  ) return SF_FORMAT_WVE;
-    if (toLower(ext) == "ogg"  ) return SF_FORMAT_OGG;
-    if (toLower(ext) == "mpc2k") return SF_FORMAT_MPC2K;
-    if (toLower(ext) == "rf64" ) return SF_FORMAT_RF64;
+    if (ext == "wav"  ) return SF_FORMAT_WAV;
+    if (ext == "aif"  ) return SF_FORMAT_AIFF;
+    if (ext == "aiff" ) return SF_FORMAT_AIFF;
+    if (ext == "au"   ) return SF_FORMAT_AU;
+    if (ext == "raw"  ) return SF_FORMAT_RAW;
+    if (ext == "paf"  ) return SF_FORMAT_PAF;
+    if (ext == "svx"  ) return SF_FORMAT_SVX;
+    if (ext == "nist" ) return SF_FORMAT_NIST;
+    if (ext == "voc"  ) return SF_FORMAT_VOC;
+    if (ext == "sf"   ) return SF_FORMAT_IRCAM;
+    if (ext == "w64"  ) return SF_FORMAT_W64;
+    if (ext == "mat4" ) return SF_FORMAT_MAT4;
+    if (ext == "mat5" ) return SF_FORMAT_MAT5;
+    if (ext == "pvf"  ) return SF_FORMAT_PVF;
+    if (ext == "xi"   ) return SF_FORMAT_XI;
+    if (ext == "htk"  ) return SF_FORMAT_HTK;
+    if (ext == "sds"  ) return SF_FORMAT_SDS;
+    if (ext == "avr"  ) return SF_FORMAT_AVR;
+    if (ext == "sd2"  ) return SF_FORMAT_SD2;
+    if (ext == "flac" ) return SF_FORMAT_FLAC;
+    if (ext == "caf"  ) return SF_FORMAT_CAF;
+    if (ext == "wve"  ) return SF_FORMAT_WVE;
+    if (ext == "ogg"  ) return SF_FORMAT_OGG;
+    if (ext == "mpc2k") return SF_FORMAT_MPC2K;
+    if (ext == "rf64" ) return SF_FORMAT_RF64;
 
     return -1;
 }

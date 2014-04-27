@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -165,7 +165,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     XVisualInfo* visuals = XGetVisualInfo(display, 0, NULL, &count);
     if (visuals)
     {
-        // Evaluate all the returned visuals, and pick the best one1
+        // Evaluate all the returned visuals, and pick the best one
         int bestScore = 0xFFFF;
         XVisualInfo bestVisual;
         for (int i = 0; i < count; ++i)

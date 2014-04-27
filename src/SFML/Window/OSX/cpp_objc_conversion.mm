@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -28,11 +28,11 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Utf.hpp>
 
-#import <Foundation/Foundation.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
+#import <Foundation/Foundation.h>
 
 ////////////////////////////////////////////////////////////
-NSString* stringToNSString(std::string const& string)
+NSString* stringToNSString(const std::string& string)
 {
     std::string utf8; utf8.reserve(string.size() + 1);
     sf::Utf8::fromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
@@ -42,7 +42,7 @@ NSString* stringToNSString(std::string const& string)
 }
 
 ////////////////////////////////////////////////////////////
-NSString* sfStringToNSString(sf::String const& string)
+NSString* sfStringToNSString(const sf::String& string)
 {
     sf::Uint32 length = string.getSize() * sizeof(sf::Uint32);
     const void* data = reinterpret_cast<const void*>(string.getData());

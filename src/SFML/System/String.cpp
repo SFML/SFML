@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -278,6 +278,36 @@ void String::insert(std::size_t position, const String& str)
 std::size_t String::find(const String& str, std::size_t start) const
 {
     return m_string.find(str.m_string, start);
+}
+
+
+////////////////////////////////////////////////////////////
+void String::replace(std::size_t position, std::size_t length, const String& replaceWith)
+{
+    m_string.replace(position, length, replaceWith.m_string);
+}
+
+
+////////////////////////////////////////////////////////////
+void String::replace(const String& searchFor, const String& replaceWith)
+{
+    std::size_t step = replaceWith.getSize();
+    std::size_t len = searchFor.getSize();
+    std::size_t pos = find(searchFor);
+
+    // Replace each occurence of search
+    while (pos != InvalidPos)
+    {
+        replace(pos, len, replaceWith);
+        pos = find(searchFor, pos + step);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+String String::substring(std::size_t position, std::size_t length) const
+{
+    return m_string.substr(position, length);
 }
 
 

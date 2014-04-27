@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent.gom@gmail.com),
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -29,13 +29,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <SFML/System/NonCopyable.hpp>
 #include <Carbon/Carbon.h>
-#include <IOKit/hid/IOHIDManager.h>
 #include <IOKit/hid/IOHIDDevice.h>
+#include <IOKit/hid/IOHIDManager.h>
 #include <vector>
 
 namespace sf
@@ -46,9 +46,10 @@ namespace priv
 typedef std::vector<IOHIDElementRef> IOHIDElements;
 
 ////////////////////////////////////////////////////////////
-/// \brief This class manage as a singleton instance the
-/// keyboard and mouse states. It's only purpose is
-/// to help sf::priv::InputImpl class.
+/// \brief sf::priv::InputImpl helper
+///
+/// This class manage as a singleton instance the keyboard and mouse states.
+/// It's only purpose is to help sf::priv::InputImpl class.
 ///
 ////////////////////////////////////////////////////////////
 class HIDInputManager : NonCopyable
@@ -211,7 +212,7 @@ private :
     void freeUp();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Filter the devices and return them.
+    /// \brief Filter the devices and return them
     ///
     /// freeUp is _not_ called by this function.
     ///

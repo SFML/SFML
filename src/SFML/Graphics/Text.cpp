@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,13 +35,14 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Text::Text() :
-m_string       (),
-m_font         (NULL),
-m_characterSize(30),
-m_style        (Regular),
-m_color        (255, 255, 255),
-m_vertices     (Quads),
-m_bounds       ()
+m_string            (),
+m_font              (NULL),
+m_characterSize     (30),
+m_style             (Regular),
+m_color             (255, 255, 255),
+m_vertices          (Triangles),
+m_bounds            (),
+m_geometryNeedUpdate(false)
 {
 
 }
@@ -49,23 +50,27 @@ m_bounds       ()
 
 ////////////////////////////////////////////////////////////
 Text::Text(const String& string, const Font& font, unsigned int characterSize) :
-m_string       (string),
-m_font         (&font),
-m_characterSize(characterSize),
-m_style        (Regular),
-m_color        (255, 255, 255),
-m_vertices     (Quads),
-m_bounds       ()
+m_string            (string),
+m_font              (&font),
+m_characterSize     (characterSize),
+m_style             (Regular),
+m_color             (255, 255, 255),
+m_vertices          (Triangles),
+m_bounds            (),
+m_geometryNeedUpdate(true)
 {
-    updateGeometry();
+
 }
 
 
 ////////////////////////////////////////////////////////////
 void Text::setString(const String& string)
 {
-    m_string = string;
-    updateGeometry();
+    if (m_string != string)
+    {
+        m_string = string;
+        m_geometryNeedUpdate = true;
+    }
 }
 
 
@@ -75,7 +80,7 @@ void Text::setFont(const Font& font)
     if (m_font != &font)
     {
         m_font = &font;
-        updateGeometry();
+        m_geometryNeedUpdate = true;
     }
 }
 
@@ -86,7 +91,7 @@ void Text::setCharacterSize(unsigned int size)
     if (m_characterSize != size)
     {
         m_characterSize = size;
-        updateGeometry();
+        m_geometryNeedUpdate = true;
     }
 }
 
@@ -97,7 +102,7 @@ void Text::setStyle(Uint32 style)
     if (m_style != style)
     {
         m_style = style;
-        updateGeometry();
+        m_geometryNeedUpdate = true;
     }
 }
 
@@ -108,8 +113,14 @@ void Text::setColor(const Color& color)
     if (color != m_color)
     {
         m_color = color;
-        for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
-            m_vertices[i].color = m_color;
+
+        // Change vertex colors directly, no need to update whole geometry
+        // (if geometry is updated anyway, we can skip this step)
+        if (!m_geometryNeedUpdate)
+        {
+            for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
+                m_vertices[i].color = m_color;
+        }
     }
 }
 
@@ -199,6 +210,8 @@ Vector2f Text::findCharacterPos(std::size_t index) const
 ////////////////////////////////////////////////////////////
 FloatRect Text::getLocalBounds() const
 {
+    ensureGeometryUpdate();
+
     return m_bounds;
 }
 
@@ -215,6 +228,8 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 {
     if (m_font)
     {
+        ensureGeometryUpdate();
+
         states.transform *= getTransform();
         states.texture = &m_font->getTexture(m_characterSize);
         target.draw(m_vertices, states);
@@ -223,8 +238,15 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 
 
 ////////////////////////////////////////////////////////////
-void Text::updateGeometry()
+void Text::ensureGeometryUpdate() const
 {
+    // Do nothing, if geometry has not changed
+    if (!m_geometryNeedUpdate)
+        return;
+
+    // Mark geometry as updated
+    m_geometryNeedUpdate = false;
+
     // Clear the previous geometry
     m_vertices.clear();
     m_bounds = FloatRect();
@@ -272,8 +294,10 @@ void Text::updateGeometry()
 
             m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
             m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
             m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+            m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+            m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+            m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
         }
 
         // Handle special characters
@@ -315,8 +339,10 @@ void Text::updateGeometry()
         // Add a quad for the current character
         m_vertices.append(Vertex(Vector2f(x + left  - italic * top,    y + top),    m_color, Vector2f(u1, v1)));
         m_vertices.append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
-        m_vertices.append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), m_color, Vector2f(u2, v2)));
         m_vertices.append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
+        m_vertices.append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
+        m_vertices.append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
+        m_vertices.append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), m_color, Vector2f(u2, v2)));
 
         // Update the current bounds
         minX = std::min(minX, x + left - italic * bottom);
@@ -336,8 +362,10 @@ void Text::updateGeometry()
 
         m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
         m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
         m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+        m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+        m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+        m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
     }
 
     // Update the bounding rectangle

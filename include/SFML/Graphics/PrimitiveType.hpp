@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -44,7 +44,7 @@ enum PrimitiveType
     Triangles,      ///< List of individual triangles
     TrianglesStrip, ///< List of connected triangles, a point uses the two previous points to form a triangle
     TrianglesFan,   ///< List of connected triangles, a point uses the common center and the previous point to form a triangle
-    Quads           ///< List of individual quads
+    Quads           ///< List of individual quads (deprecated, don't work with OpenGL ES)
 };
 
 } // namespace sf

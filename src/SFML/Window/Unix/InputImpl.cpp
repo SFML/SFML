@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -175,6 +175,13 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
+void InputImpl::setVirtualKeyboardVisible(bool visible)
+{
+    // Not applicable
+}
+
+
+////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     // Open a connection with the X server
@@ -286,6 +293,30 @@ void InputImpl::setMousePosition(const Vector2i& position, const Window& relativ
 
     // Close the connection with the X server
     CloseDisplay(display);
+}
+
+
+////////////////////////////////////////////////////////////
+bool InputImpl::isTouchDown(unsigned int /*finger*/)
+{
+    // Not applicable
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
+{
+    // Not applicable
+    return Vector2i();
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const Window& /*relativeTo*/)
+{
+    // Not applicable
+    return Vector2i();
 }
 
 } // namespace priv

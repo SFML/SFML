@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/Window/Joystick.hpp>
+#include <SFML/System/String.hpp>
 #include <algorithm>
 
 
@@ -38,7 +39,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Structure holding a joystick's capabilities
+/// \brief Structure holding a joystick's information
 ///
 ////////////////////////////////////////////////////////////
 struct JoystickCaps
@@ -78,13 +79,29 @@ struct JoystickState
 
 
 #if defined(SFML_SYSTEM_WINDOWS)
+
     #include <SFML/Window/Win32/JoystickImpl.hpp>
+
 #elif defined(SFML_SYSTEM_LINUX)
+
     #include <SFML/Window/Unix/JoystickImpl.hpp>
+
 #elif defined(SFML_SYSTEM_FREEBSD)
+
     #include <SFML/Window/FreeBSD/JoystickImpl.hpp>
+
 #elif defined(SFML_SYSTEM_MACOS)
+
     #include <SFML/Window/OSX/JoystickImpl.hpp>
+
+#elif defined(SFML_SYSTEM_IOS)
+
+    #include <SFML/Window/iOS/JoystickImpl.hpp>
+
+#elif defined(SFML_SYSTEM_ANDROID)
+
+    #include <SFML/Window/Android/JoystickImpl.hpp>
+
 #endif
 
 

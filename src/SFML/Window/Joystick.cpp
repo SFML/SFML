@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -67,9 +67,26 @@ float Joystick::getAxisPosition(unsigned int joystick, Axis axis)
 
 
 ////////////////////////////////////////////////////////////
+Joystick::Identification Joystick::getIdentification(unsigned int joystick)
+{
+    return priv::JoystickManager::getInstance().getIdentification(joystick);
+}
+
+
+////////////////////////////////////////////////////////////
 void Joystick::update()
 {
     return priv::JoystickManager::getInstance().update();
+}
+
+
+////////////////////////////////////////////////////////////
+Joystick::Identification::Identification() :
+name     ("No Joystick"),
+vendorId (0),
+productId(0)
+{
+
 }
 
 } // namespace sf

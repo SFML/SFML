@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -162,6 +162,21 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static bool isKeyPressed(Key key);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the virtual keyboard
+    ///
+    /// Warning: the virtual keyboard is not supported on all
+    /// systems. It will typically be implemented on mobile OSes
+    /// (Android, iOS) but not on desktop OSes (Windows, Linux, ...).
+    ///
+    /// If the virtual keyboard is not available, this function does
+    /// nothing.
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setVirtualKeyboardVisible(bool visible);
 };
 
 } // namespace sf
@@ -204,6 +219,6 @@ public :
 /// }
 /// \endcode
 ///
-/// \see sf::Joystick, sf::Mouse
+/// \see sf::Joystick, sf::Mouse, sf::Touch
 ///
 ////////////////////////////////////////////////////////////

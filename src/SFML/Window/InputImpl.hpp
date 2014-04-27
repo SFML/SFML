@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -36,6 +36,10 @@
     #include <SFML/Window/Unix/InputImpl.hpp>
 #elif defined(SFML_SYSTEM_MACOS)
     #include <SFML/Window/OSX/InputImpl.hpp>
+#elif defined(SFML_SYSTEM_IOS)
+    #include <SFML/Window/iOS/InputImpl.hpp>
+#elif defined(SFML_SYSTEM_ANDROID)
+    #include <SFML/Window/Android/InputImpl.hpp>
 #endif
 
 

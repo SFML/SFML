@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -54,7 +54,7 @@ public :
     static JoystickManager& getInstance();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the capabilities of an open joystick
+    /// \brief Get the capabilities for an open joystick
     ///
     /// \param joystick Index of the joystick
     ///
@@ -72,6 +72,16 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     const JoystickState& getState(unsigned int joystick) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the identification for an open joystick
+    ///
+    /// \param joystick Index of the joystick
+    ///
+    /// \return Identification for the joystick
+    ///
+    ////////////////////////////////////////////////////////////
+    const Joystick::Identification& getIdentification(unsigned int joystick) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the state of all the joysticks
@@ -99,9 +109,10 @@ private:
     ////////////////////////////////////////////////////////////
     struct Item
     {
-        JoystickImpl  joystick;     ///< Joystick implementation
-        JoystickState state;        ///< The current joystick state
-        JoystickCaps  capabilities; ///< The joystick capabilities
+        JoystickImpl  joystick;                  ///< Joystick implementation
+        JoystickState state;                     ///< The current joystick state
+        JoystickCaps  capabilities;              ///< The joystick capabilities
+        Joystick::Identification identification; ///< The joystick identification
     };
 
     ////////////////////////////////////////////////////////////

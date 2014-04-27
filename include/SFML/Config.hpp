@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,8 +35,9 @@
 
 ////////////////////////////////////////////////////////////
 // Identify the operating system
+// see http://nadeausoftware.com/articles/2012/01/c_c_tip_how_use_compiler_predefined_macros_detect_operating_system
 ////////////////////////////////////////////////////////////
-#if defined(_WIN32) || defined(__WIN32__)
+#if defined(_WIN32)
 
     // Windows
     #define SFML_SYSTEM_WINDOWS
@@ -44,20 +45,52 @@
         #define NOMINMAX
     #endif
 
-#elif defined(linux) || defined(__linux)
+#elif defined(__APPLE__) && defined(__MACH__)
 
-    // Linux
-    #define SFML_SYSTEM_LINUX
+    // Apple platform, see which one it is
+    #include "TargetConditionals.h"
 
-#elif defined(__APPLE__) || defined(MACOSX) || defined(macintosh) || defined(Macintosh)
+    #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 
-    // MacOS
-    #define SFML_SYSTEM_MACOS
+        // iOS
+        #define SFML_SYSTEM_IOS
 
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+    #elif TARGET_OS_MAC
 
-    // FreeBSD
-    #define SFML_SYSTEM_FREEBSD
+        // MacOS
+        #define SFML_SYSTEM_MACOS
+
+    #else
+
+        // Unsupported Apple system
+        #error This Apple operating system is not supported by SFML library
+
+    #endif
+
+#elif defined(__unix__)
+
+    // UNIX system, see which one it is
+    #if defined(__ANDROID__)
+
+        // Android
+        #define SFML_SYSTEM_ANDROID
+
+    #elif defined(__linux__)
+
+         // Linux
+        #define SFML_SYSTEM_LINUX
+
+    #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+
+        // FreeBSD
+        #define SFML_SYSTEM_FREEBSD
+
+    #else
+
+        // Unsupported UNIX system
+        #error This UNIX operating system is not supported by SFML library
+
+    #endif
 
 #else
 
