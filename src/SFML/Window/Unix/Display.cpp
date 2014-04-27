@@ -25,8 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Err.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <cassert>
+#include <cstdlib>
 
 
 namespace
@@ -44,7 +46,18 @@ namespace priv
 Display* OpenDisplay()
 {
     if (referenceCount == 0)
+    {
         sharedDisplay = XOpenDisplay(NULL);
+
+        // Opening display failed: The best we can do at the moment is to output a meaningful error message
+        // and cause an abnormal program termination
+        if (!sharedDisplay)
+        {
+            err() << "Failed to open X11 display; make sure the DISPLAY environment variable is set correctly" << std::endl;
+            std::abort();
+        }
+    }
+
     referenceCount++;
     return sharedDisplay;
 }
