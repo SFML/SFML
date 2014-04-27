@@ -401,7 +401,7 @@ public :
     /// on the previous thread first if it was active.
     /// Only one window can be active on a thread at a time, thus
     /// the window previously active (if any) automatically gets deactivated.
-    /// This is not to be confused with \a requestFocus().
+    /// This is not to be confused with requestFocus().
     ///
     /// \param active True to activate, false to deactivate
     ///
@@ -422,12 +422,12 @@ public :
     /// is free to deny the request. For example under Windows OS
     /// windows are not allowed to steal focus. But the user
     /// will be notified through a flashing taskbar button.
-    /// This is not to be confused with \a setActive().
+    /// This is not to be confused with setActive().
     ///
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool requestFocus() const;
+    bool requestFocus();
 
     ////////////////////////////////////////////////////////////
     /// \brief Determine whether the window has the input focus

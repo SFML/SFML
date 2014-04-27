@@ -201,7 +201,7 @@ public :
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool requestFocus() const = 0;
+    virtual bool requestFocus() = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Determine whether the window has the input focus

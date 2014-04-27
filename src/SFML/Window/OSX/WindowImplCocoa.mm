@@ -500,7 +500,7 @@ void WindowImplCocoa::setKeyRepeatEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplCocoa::requestFocus() const
+bool WindowImplCocoa::requestFocus()
 {
     return [m_delegate requestFocus];
 }

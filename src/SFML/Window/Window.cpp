@@ -330,7 +330,7 @@ bool Window::setActive(bool active) const
 
 
 ////////////////////////////////////////////////////////////
-bool Window::requestFocus() const
+bool Window::requestFocus()
 {
     if (m_impl)
         return m_impl->requestFocus();

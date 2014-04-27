@@ -160,7 +160,7 @@ public :
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool requestFocus() const;
+    virtual bool requestFocus();
 
     ////////////////////////////////////////////////////////////
     /// \brief Determine whether the window has the input focus
