@@ -58,6 +58,10 @@
     #define GLEXT_GL_DEPTH_COMPONENT               GL_DEPTH_COMPONENT16_OES
     #define GLEXT_GL_INVALID_FRAMEBUFFER_OPERATION GL_INVALID_FRAMEBUFFER_OPERATION_OES
     #define GLEXT_texture_non_power_of_two         false
+    #define GLEXT_multitexture                     true
+    #define GLEXT_glClientActiveTexture            glClientActiveTexture
+    #define GLEXT_glActiveTexture                  glActiveTexture
+    #define GLEXT_GL_TEXTURE0                      GL_TEXTURE0
 
 #else
 
@@ -88,6 +92,10 @@
     #define GLEXT_GL_DEPTH_COMPONENT               GL_DEPTH_COMPONENT
     #define GLEXT_GL_INVALID_FRAMEBUFFER_OPERATION GL_INVALID_FRAMEBUFFER_OPERATION_EXT
     #define GLEXT_texture_non_power_of_two         GLEW_ARB_texture_non_power_of_two
+    #define GLEXT_multitexture                     GLEW_ARB_multitexture
+    #define GLEXT_glClientActiveTexture            glClientActiveTextureARB
+    #define GLEXT_glActiveTexture                  glActiveTextureARB
+    #define GLEXT_GL_TEXTURE0                      GL_TEXTURE0_ARB
 
 #endif
 
