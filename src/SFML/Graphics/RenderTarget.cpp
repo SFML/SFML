@@ -93,6 +93,9 @@ void RenderTarget::clear(const Color& color)
 {
     if (activate(true))
     {
+        // Unbind texture to fix RenderTexture preventing clear
+        applyTexture(NULL);
+
         glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         glCheck(glClear(GL_COLOR_BUFFER_BIT));
     }
@@ -364,6 +367,14 @@ void RenderTarget::resetGLStates()
         applyTexture(NULL);
         if (Shader::isAvailable())
             applyShader(NULL);
+
+        // Make sure that the texture unit which is active is the number 0
+        if (GLEXT_multitexture)
+        {
+            glCheck(GLEXT_glClientActiveTexture(GLEXT_GL_TEXTURE0));
+            glCheck(GLEXT_glActiveTexture(GLEXT_GL_TEXTURE0));
+        }
+
         m_cache.useVertexCache = false;
 
         // Set the default view
