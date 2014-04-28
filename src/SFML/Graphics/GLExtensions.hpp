@@ -62,6 +62,9 @@
     #define GLEXT_glClientActiveTexture            glClientActiveTexture
     #define GLEXT_glActiveTexture                  glActiveTexture
     #define GLEXT_GL_TEXTURE0                      GL_TEXTURE0
+    #define GLEXT_glBlendEquation                  glBlendEquationOES
+    #define GLEXT_GL_FUNC_ADD                      GL_FUNC_ADD_OES
+    #define GLEXT_GL_FUNC_SUBTRACT                 GL_FUNC_SUBTRACT_OES
 
 #else
 
@@ -96,6 +99,9 @@
     #define GLEXT_glClientActiveTexture            glClientActiveTextureARB
     #define GLEXT_glActiveTexture                  glActiveTextureARB
     #define GLEXT_GL_TEXTURE0                      GL_TEXTURE0_ARB
+    #define GLEXT_glBlendEquation                  glBlendEquation
+    #define GLEXT_GL_FUNC_ADD                      GL_FUNC_ADD
+    #define GLEXT_GL_FUNC_SUBTRACT                 GL_FUNC_SUBTRACT
 
 #endif
 

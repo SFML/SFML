@@ -63,8 +63,8 @@ namespace
         switch (blendEquation)
         {
             default:
-            case sf::BlendMode::Add:             return GL_FUNC_ADD;
-            case sf::BlendMode::Subtract:        return GL_FUNC_SUBTRACT;
+            case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
+            case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
         }
     }
 }
@@ -442,7 +442,7 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
     }
     else
     {
-        glCheck(glBlendEquation(equationToGlConstant(mode.colorEquation)));
+        glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
     }
 
     m_cache.lastBlendMode = mode;
