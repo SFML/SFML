@@ -229,7 +229,7 @@ public :
         /// \param data      Data containing the raw listing
         ///
         ////////////////////////////////////////////////////////////
-        ListingResponse(const Response& response, const std::vector<char>& data);
+        ListingResponse(const Response& response, const std::string& data);
 
         ////////////////////////////////////////////////////////////
         /// \brief Return the array of directory/file names
@@ -452,6 +452,9 @@ public :
     /// current working directory of the server, and the local
     /// destination path is relative to the current directory
     /// of your application.
+    /// If a file with the same filename as the distant file
+    /// already exists in the local destination path, it will
+    /// be overwritten.
     ///
     /// \param remoteFile Filename of the distant file to download
     /// \param localPath  The directory in which to put the file on the local computer
