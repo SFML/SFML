@@ -332,6 +332,10 @@ int Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize) co
         FT_Vector kerning;
         FT_Get_Kerning(face, index1, index2, FT_KERNING_DEFAULT, &kerning);
 
+        // X advance is already in pixels for bitmap fonts
+        if (!FT_IS_SCALABLE(face))
+            return kerning.x;
+
         // Return the X advance
         return kerning.x >> 6;
     }
@@ -476,7 +480,8 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
     int ascender = face->size->metrics.ascender >> 6;
 
     // Offset to make up for empty space between ascender and virtual top of the typeface
-    int offset = characterSize - ascender;
+    // Only applied to scalable fonts i.e. not to bitmap fonts
+    int offset = FT_IS_SCALABLE(face) ? (characterSize - ascender) : 0;
 
     if ((width > 0) && (height > 0))
     {
@@ -627,7 +632,23 @@ bool Font::setCurrentSize(unsigned int characterSize) const
 
     if (currentSize != characterSize)
     {
-        return FT_Set_Pixel_Sizes(face, 0, characterSize) == 0;
+        FT_Error result = FT_Set_Pixel_Sizes(face, 0, characterSize);
+
+        if (result == FT_Err_Invalid_Pixel_Size)
+        {
+            // In the case of bitmap fonts, resizing can
+            // fail if the requested size is not available
+            if (!FT_IS_SCALABLE(face))
+            {
+                err() << "Failed to set bitmap font size to " << characterSize << std::endl;
+                err() << "Available sizes are: ";
+                for (int i = 0; i < face->num_fixed_sizes; ++i)
+                    err() << face->available_sizes[i].height << " ";
+                err() << std::endl;
+            }
+        }
+
+        return result == FT_Err_Ok;
     }
     else
     {

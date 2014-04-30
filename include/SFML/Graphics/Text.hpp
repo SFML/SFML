@@ -72,6 +72,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Construct the text from a string, font and size
     ///
+    /// Note that if the used font is a bitmap font, it is not
+    /// scalable, thus not all requested sizes will be available
+    /// to use. This needs to be taken into consideration when
+    /// setting the character size. If you need to display text
+    /// of a certain size, make sure the corresponding bitmap
+    /// font that supports that size is used.
+    ///
     /// \param string         Text assigned to the string
     /// \param font           Font used to draw the string
     /// \param characterSize  Base size of characters, in pixels
@@ -121,6 +128,13 @@ public :
     /// \brief Set the character size
     ///
     /// The default size is 30.
+    ///
+    /// Note that if the used font is a bitmap font, it is not
+    /// scalable, thus not all requested sizes will be available
+    /// to use. This needs to be taken into consideration when
+    /// setting the character size. If you need to display text
+    /// of a certain size, make sure the corresponding bitmap
+    /// font that supports that size is used.
     ///
     /// \param size New character size, in pixels
     ///
