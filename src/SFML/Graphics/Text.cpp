@@ -262,8 +262,8 @@ void Text::ensureGeometryUpdate() const
     bool  bold               = (m_style & Bold) != 0;
     bool  underlined         = (m_style & Underlined) != 0;
     float italic             = (m_style & Italic) ? 0.208f : 0.f; // 12 degrees
-    float underlineOffset    = m_characterSize * 0.1f;
-    float underlineThickness = m_characterSize * (bold ? 0.1f : 0.07f);
+    float underlineOffset    = static_cast<float>(m_font->getUnderlinePosition(m_characterSize));
+    float underlineThickness = static_cast<float>(m_font->getUnderlineThickness(m_characterSize));
 
     // Precompute the variables needed by the algorithm
     float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
