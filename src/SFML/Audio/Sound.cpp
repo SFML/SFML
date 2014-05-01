@@ -189,8 +189,12 @@ void Sound::resetBuffer()
     stop();
 
     // Detach the buffer
-    alCheck(alSourcei(m_source, AL_BUFFER, 0));
-    m_buffer = NULL;
+    if (m_buffer)
+    {
+        alCheck(alSourcei(m_source, AL_BUFFER, 0));
+        m_buffer->detachSound(this);
+        m_buffer = NULL;
+    }
 }
 
 } // namespace sf
