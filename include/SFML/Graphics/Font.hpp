@@ -197,6 +197,35 @@ public :
     int getLineSpacing(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the underline
+    ///
+    /// Underline position is the vertical offset to apply between the
+    /// baseline and the underline.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Underline position, in pixels
+    ///
+    /// \see getUnderlineThickness
+    ///
+    ////////////////////////////////////////////////////////////
+    int getUnderlinePosition(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the thickness of the underline
+    ///
+    /// Underline thickness is the vertical size of the underline.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Underline thickness, in pixels
+    ///
+    /// \see getUnderlinePosition
+    ///
+    ////////////////////////////////////////////////////////////
+    int getUnderlineThickness(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Retrieve the texture containing the loaded glyphs of a certain size
     ///
     /// The contents of the returned texture changes as more glyphs
