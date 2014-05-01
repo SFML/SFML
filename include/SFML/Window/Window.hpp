@@ -435,6 +435,21 @@ public :
     ////////////////////////////////////////////////////////////
     WindowHandle getSystemHandle() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Clips or releases the mouse cursor
+    ///
+    /// If set, clips the mouse cursor inside this window's client
+    /// area so it may no longer be moved outside its bounds.
+    /// Note that clipping is only active while the window has
+    /// focus and calling this function for fullscreen windows
+    /// won't have any effect (fullscreen windows always clip the
+    /// cursor.
+    ///
+    /// \param clipped True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    void setCursorClipped(bool clipped);
+
 protected :
 
     ////////////////////////////////////////////////////////////

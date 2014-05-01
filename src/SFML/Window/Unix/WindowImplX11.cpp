@@ -98,7 +98,9 @@ m_oldVideoMode(-1),
 m_hiddenCursor(0),
 m_keyRepeat   (true),
 m_previousSize(-1, -1),
-m_useSizeHints(false)
+m_useSizeHints(false),
+m_isCursorClipped(false),
+m_isFullscreen   (false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -129,7 +131,9 @@ m_oldVideoMode(-1),
 m_hiddenCursor(0),
 m_keyRepeat   (true),
 m_previousSize(-1, -1),
-m_useSizeHints(false)
+m_useSizeHints(false),
+m_isCursorClipped((style & Style::Fullscreen) != 0),
+m_isFullscreen   (m_isCursorClipped)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -138,8 +142,7 @@ m_useSizeHints(false)
 
     // Compute position and size
     int left, top;
-    bool fullscreen = (style & Style::Fullscreen) != 0;
-    if (!fullscreen)
+    if (!m_isFullscreen)
     {
         left = (DisplayWidth(m_display, m_screen)  - mode.width)  / 2;
         top  = (DisplayHeight(m_display, m_screen) - mode.height) / 2;
@@ -153,7 +156,7 @@ m_useSizeHints(false)
     int height = mode.height;
 
     // Switch to fullscreen if necessary
-    if (fullscreen)
+    if (m_isFullscreen)
         switchToFullscreen(mode);
 
     // Choose the visual according to the context settings
@@ -161,8 +164,8 @@ m_useSizeHints(false)
 
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.override_redirect = fullscreen;
-    attributes.event_mask = eventMask;
+    attributes.event_mask        = eventMask;
+    attributes.override_redirect = m_isFullscreen;
     attributes.colormap = XCreateColormap(m_display, root, visualInfo.visual, AllocNone);
 
     // Create the window
@@ -185,7 +188,7 @@ m_useSizeHints(false)
     setTitle(title);
 
     // Set the window's style (tell the windows manager to change our window's decorations and functions according to the requested style)
-    if (!fullscreen)
+    if (!m_isFullscreen)
     {
         Atom WMHintsAtom = XInternAtom(m_display, "_MOTIF_WM_HINTS", false);
         if (WMHintsAtom)
@@ -268,7 +271,7 @@ m_useSizeHints(false)
     initialize();
 
     // In fullscreen mode, we must grab keyboard and mouse inputs
-    if (fullscreen)
+    if (m_isFullscreen)
     {
         XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
         XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
@@ -677,6 +680,10 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             if (m_inputContext)
                 XSetICFocus(m_inputContext);
 
+            // Clip cursor
+            if (m_isCursorClipped)
+                XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+
             Event event;
             event.type = Event::GainedFocus;
             pushEvent(event);
@@ -689,6 +696,10 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             // Update the input context
             if (m_inputContext)
                 XUnsetICFocus(m_inputContext);
+
+            // Release cursor
+            if (m_isCursorClipped)
+                XUngrabPointer(m_display, CurrentTime);
 
             Event event;
             event.type = Event::LostFocus;
@@ -1023,6 +1034,27 @@ Keyboard::Key WindowImplX11::keysymToSF(KeySym symbol)
     }
 
     return Keyboard::Unknown;
+}
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setCursorClipped(bool clipped)
+{
+    // This has no effect in fullscreen mode
+    if (m_isFullscreen)
+        return;
+    if (clipped)
+    {
+        if (!m_isCursorClipped)
+        {
+            XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+            m_isCursorClipped = true;
+        }
+    }
+    else if (m_isCursorClipped)
+    {
+        XUngrabPointer(m_display, CurrentTime);
+        m_isCursorClipped = false;
+    }
 }
 
 } // namespace priv

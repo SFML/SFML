@@ -499,6 +499,12 @@ void WindowImplCocoa::setKeyRepeatEnabled(bool enabled)
 }
 
 
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::setCursorClipped(bool clipped)
+{
+
+}
+
 } // namespace priv
 
 } // namespace sf
