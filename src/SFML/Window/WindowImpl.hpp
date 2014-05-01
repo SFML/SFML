@@ -187,6 +187,14 @@ public:
     virtual void setMouseCursorVisible(bool visible) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Grab or release the mouse cursor and keeps it from leaving
+    ///
+    /// \param grabbed True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursorGrabbed(bool grabbed) = 0;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// \param enabled True to enable, false to disable

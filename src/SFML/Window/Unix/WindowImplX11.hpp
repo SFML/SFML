@@ -148,6 +148,14 @@ public:
     virtual void setMouseCursorVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Grab or release the mouse cursor
+    ///
+    /// \param grabbed True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursorGrabbed(bool grabbed);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// \param enabled True to enable, false to disable
@@ -318,7 +326,8 @@ private:
     bool                              m_keyRepeat;       ///< Is the KeyRepeat feature enabled?
     Vector2i                          m_previousSize;    ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
     bool                              m_useSizeHints;    ///< Is the size of the window fixed with size hints?
-    bool                              m_fullscreen;      ///< Is window in fullscreen?
+    bool                              m_fullscreen;      ///< Is the window in fullscreen?
+    bool                              m_cursorGrabbed;   ///< Is the mouse cursor trapped?
 };
 
 } // namespace priv
