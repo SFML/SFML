@@ -349,6 +349,21 @@ public:
     void setMouseCursorVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Grab or release the mouse cursor
+    ///
+    /// If set, grabs the mouse cursor inside this window's client
+    /// area so it may no longer be moved outside its bounds.
+    /// Note that grabbing is only active while the window has
+    /// focus and calling this function for fullscreen windows
+    /// won't have any effect (fullscreen windows always grab the
+    /// cursor).
+    ///
+    /// \param grabbed True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMouseCursorGrabbed(bool grabbed);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// If key repeat is enabled, you will receive repeated
