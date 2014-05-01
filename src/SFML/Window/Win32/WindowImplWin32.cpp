@@ -128,7 +128,9 @@ m_keyRepeatEnabled(true),
 m_lastSize        (0, 0),
 m_resizing        (false),
 m_surrogate       (0),
-m_mouseInside     (false)
+m_mouseInside     (false),
+m_fullscreen      (false),
+m_cursorGrabbed   (false)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -152,7 +154,9 @@ m_keyRepeatEnabled(true),
 m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
 m_surrogate       (0),
-m_mouseInside     (false)
+m_mouseInside     (false),
+m_fullscreen      (style & Style::Fullscreen),
+m_cursorGrabbed   (m_fullscreen)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -183,8 +187,7 @@ m_mouseInside     (false)
     }
 
     // In windowed mode, adjust width and height so that window will have the requested client area
-    bool fullscreen = (style & Style::Fullscreen) != 0;
-    if (!fullscreen)
+    if (!m_fullscreen)
     {
         RECT rectangle = {0, 0, width, height};
         AdjustWindowRect(&rectangle, win32Style, false);
@@ -200,7 +203,7 @@ m_mouseInside     (false)
     setSize(Vector2u(mode.width, mode.height));
 
     // Switch to fullscreen if requested
-    if (fullscreen)
+    if (m_fullscreen)
         switchToFullscreen(mode);
 
     // Increment window count
@@ -360,6 +363,14 @@ void WindowImplWin32::setMouseCursorVisible(bool visible)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplWin32::setMouseCursorGrabbed(bool grabbed)
+{
+    m_cursorGrabbed = grabbed;
+    grabCursor(m_cursorGrabbed);
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 {
     m_keyRepeatEnabled = enabled;
@@ -448,6 +459,27 @@ void WindowImplWin32::setTracking(bool track)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplWin32::grabCursor(bool grabbed)
+{
+    // No effect for fullscreen windows
+    if (m_fullscreen)
+        return;
+
+    if (grabbed)
+    {
+        RECT rect;
+        GetClientRect(m_handle, &rect);
+        MapWindowPoints(m_handle, NULL, reinterpret_cast<LPPOINT>(&rect), 2);
+        grabCursor(&rect);
+    }
+    else
+    {
+        grabCursor(NULL);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 {
     // Don't process any message until window is created
@@ -498,6 +530,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 event.size.width  = m_lastSize.x;
                 event.size.height = m_lastSize.y;
                 pushEvent(event);
+
+                // Restore/update cursor grabbing
+                grabCursor(m_cursorGrabbed);
             }
             break;
         }
@@ -506,6 +541,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_ENTERSIZEMOVE :
         {
             m_resizing = true;
+            grabCursor(false);
             break;
         }
 
@@ -527,6 +563,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 event.size.height = m_lastSize.y;
                 pushEvent(event);
             }
+
+            // Restore/update cursor grabbing
+            grabCursor(m_cursorGrabbed);
             break;
         }
 
@@ -544,6 +583,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Gain focus event
         case WM_SETFOCUS :
         {
+            // Restore cursor grabbing
+            grabCursor(m_cursorGrabbed);
+
             Event event;
             event.type = Event::GainedFocus;
             pushEvent(event);
@@ -553,6 +595,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Lost focus event
         case WM_KILLFOCUS :
         {
+            // Ungrab the cursor
+            grabCursor(false);
+
             Event event;
             event.type = Event::LostFocus;
             pushEvent(event);
