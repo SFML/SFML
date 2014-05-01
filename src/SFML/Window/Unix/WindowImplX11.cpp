@@ -366,7 +366,8 @@ m_hiddenCursor   (0),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
-m_fullscreen     (false)
+m_fullscreen     (false),
+m_cursorGrabbed  (false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -420,7 +421,8 @@ m_hiddenCursor   (0),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
-m_fullscreen     ((style & Style::Fullscreen) != 0)
+m_fullscreen     ((style & Style::Fullscreen) != 0),
+m_cursorGrabbed  (m_fullscreen)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -949,6 +951,26 @@ void WindowImplX11::setMouseCursorVisible(bool visible)
         err() << "Failed to change mouse cursor visibility" << std::endl;
 
     xcb_flush(m_connection);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
+{
+    // This has no effect in fullscreen mode
+    if (m_fullscreen || (m_cursorGrabbed == grabbed))
+        return;
+
+    if (grabbed)
+    {
+        // TODO XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+        m_cursorGrabbed = true;
+    }
+    else
+    {
+        // TODO XUngrabPointer(m_display, CurrentTime);
+        m_cursorGrabbed = false;
+    }
 }
 
 
@@ -1661,6 +1683,10 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             if (m_inputContext)
                 XSetICFocus(m_inputContext);
 
+            // Grab cursor
+            if (m_cursorGrabbed)
+                ;// TODO XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+
             Event event;
             event.type = Event::GainedFocus;
             pushEvent(event);
@@ -1702,6 +1728,10 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // Update the input context
             if (m_inputContext)
                 XUnsetICFocus(m_inputContext);
+
+            // Release cursor
+            if (m_cursorGrabbed)
+                ;// TODO XUngrabPointer(m_display, CurrentTime);
 
             Event event;
             event.type = Event::LostFocus;
