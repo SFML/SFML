@@ -163,7 +163,7 @@ public:
     virtual bool requestFocus();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Determine whether the window has the input focus
+    /// \brief Check whether the window has the input focus
     ///
     /// \return True if window has focus, false otherwise
     ///

@@ -417,28 +417,27 @@ public:
     ///        foreground window
     ///
     /// At any given time, only one window may have the input focus
-    /// to receive input events such as keystrokes or mouse
-    /// events.
+    /// to receive input events such as keystrokes or mouse events.
     /// If a window requests focus, it only hints to the operating
     /// system, that it would like to be focused. The operating system
-    /// is free to deny the request. For example under Windows OS
-    /// windows are not allowed to steal focus. But the user
-    /// will be notified through a flashing taskbar button.
+    /// is free to deny the request.
     /// This is not to be confused with setActive().
     ///
     /// \return True if operation was successful, false otherwise
+    /// \see hasFocus
     ///
     ////////////////////////////////////////////////////////////
     bool requestFocus();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Determine whether the window has the input focus
+    /// \brief Check whether the window has the input focus
     ///
     /// At any given time, only one window may have the input focus
     /// to receive input events such as keystrokes or most mouse
     /// events.
     ///
     /// \return True if window has focus, false otherwise
+    /// \see requestFocus
     ///
     ////////////////////////////////////////////////////////////
     bool hasFocus() const;
