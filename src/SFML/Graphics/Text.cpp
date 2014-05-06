@@ -193,7 +193,6 @@ Vector2f Text::findCharacterPos(std::size_t index) const
             case ' ' :  position.x += hspace;                 continue;
             case '\t' : position.x += hspace * 4;             continue;
             case '\n' : position.y += vspace; position.x = 0; continue;
-            case '\v' : position.y += vspace * 4;             continue;
         }
 
         // For regular characters, add the advance offset of the glyph
@@ -301,7 +300,7 @@ void Text::ensureGeometryUpdate() const
         }
 
         // Handle special characters
-        if ((curChar == ' ') || (curChar == '\t') || (curChar == '\n') || (curChar == '\v'))
+        if ((curChar == ' ') || (curChar == '\t') || (curChar == '\n'))
         {
             // Update the current bounds (min coordinates)
             minX = std::min(minX, x);
@@ -312,7 +311,6 @@ void Text::ensureGeometryUpdate() const
                 case ' ' :  x += hspace;        break;
                 case '\t' : x += hspace * 4;    break;
                 case '\n' : y += vspace; x = 0; break;
-                case '\v' : y += vspace * 4;    break;
             }
 
             // Update the current bounds (max coordinates)
