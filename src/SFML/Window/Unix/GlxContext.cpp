@@ -25,12 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#define GLX_GLXEXT_LEGACY // so that our local glxext.h is used instead of the system one
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/OpenGL.hpp>
-#include <SFML/Window/glext/glxext.h>
 #include <SFML/System/Err.hpp>
 
 
