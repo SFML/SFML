@@ -32,9 +32,13 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RectangleShape::RectangleShape(const Vector2f& size)
+RectangleShape::RectangleShape(const Vector2f& size, const Vector2f& pos, const Color& color, float outline, const Color& outlineColor)
 {
     setSize(size);
+    setPosition(pos);
+    setFillColor(color);
+    setOutlineThickness(outline);
+    setOutlineColor(outlineColor);
 }
 
 
