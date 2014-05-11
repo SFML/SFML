@@ -49,7 +49,7 @@ public :
     /// \param pointCount Number of points composing the circle
     ///
     ////////////////////////////////////////////////////////////
-    explicit CircleShape(float radius = 0, unsigned int pointCount = 30);
+    explicit CircleShape(float radius = 0, unsigned int pointCount = 30, const Vector2f& pos = Vector2f(0, 0), const Color& color = Color(), float outline = 0.0f, const Color& outlineColor = Color());
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the radius of the circle

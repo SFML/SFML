@@ -32,10 +32,14 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-CircleShape::CircleShape(float radius, unsigned int pointCount) :
+CircleShape::CircleShape(float radius, unsigned int pointCount, const Vector2f& pos, const Color& color, float outline, const Color& outlineColor) :
 m_radius    (radius),
 m_pointCount(pointCount)
 {
+    setPosition(pos);
+    setFillColor(color);
+    setOutlineThickness(outline);
+    setOutlineColor(outlineColor);
     update();
 }
 
