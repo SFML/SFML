@@ -169,6 +169,21 @@ void WindowImplUIKit::setKeyRepeatEnabled(bool enabled)
     // Not applicable
 }
 
+
+////////////////////////////////////////////////////////////
+void WindowImplUIKit::requestFocus()
+{
+    // Not applicable
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImplUIKit::hasFocus() const
+{
+    // Not applicable
+    return false;
+}
+
     
 ////////////////////////////////////////////////////////////
 SFView* WindowImplUIKit::getGlView() const
