@@ -73,7 +73,9 @@ m_keyRepeatEnabled(true),
 m_lastSize        (0, 0),
 m_resizing        (false),
 m_surrogate       (0),
-m_mouseInside     (false)
+m_mouseInside     (false),
+m_isCursorClipped (false),
+m_isFullscreen    (false)
 {
     if (m_handle)
     {
@@ -94,7 +96,9 @@ m_keyRepeatEnabled(true),
 m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
 m_surrogate       (0),
-m_mouseInside     (false)
+m_mouseInside     (false),
+m_isCursorClipped ((style & Style::Fullscreen) != 0),
+m_isFullscreen    (m_isCursorClipped)
 {
     // Register the window class at first call
     if (windowCount == 0)
@@ -122,8 +126,7 @@ m_mouseInside     (false)
     }
 
     // In windowed mode, adjust width and height so that window will have the requested client area
-    bool fullscreen = (style & Style::Fullscreen) != 0;
-    if (!fullscreen)
+    if (!m_isFullscreen)
     {
         RECT rectangle = {0, 0, width, height};
         AdjustWindowRect(&rectangle, win32Style, false);
@@ -139,7 +142,7 @@ m_mouseInside     (false)
     setSize(Vector2u(mode.width, mode.height));
 
     // Switch to fullscreen if requested
-    if (fullscreen)
+    if (m_isFullscreen)
         switchToFullscreen(mode);
 
     // Increment window count
@@ -437,6 +440,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 event.size.width  = m_lastSize.x;
                 event.size.height = m_lastSize.y;
                 pushEvent(event);
+
+                // Restore/update cursor clipping
+                clipCursor(m_isCursorClipped);
             }
             break;
         }
@@ -445,6 +451,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_ENTERSIZEMOVE :
         {
             m_resizing = true;
+            clipCursor(false);
             break;
         }
 
@@ -466,6 +473,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 event.size.height = m_lastSize.y;
                 pushEvent(event);
             }
+            // Restore/update cursor clipping
+            clipCursor(m_isCursorClipped);
             break;
         }
 
@@ -483,6 +492,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Gain focus event
         case WM_SETFOCUS :
         {
+            // Restore cursor clipping
+            clipCursor(m_isCursorClipped);
+
             Event event;
             event.type = Event::GainedFocus;
             pushEvent(event);
@@ -492,6 +504,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Lost focus event
         case WM_KILLFOCUS :
         {
+            // Unclip the cursor
+            clipCursor(false);
+
             Event event;
             event.type = Event::LostFocus;
             pushEvent(event);
@@ -921,6 +936,32 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
         return 0;
 
     return DefWindowProc(handle, message, wParam, lParam);
+}
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setCursorClipped(bool clipped)
+{
+    m_isCursorClipped = clipped;
+    clipCursor(m_isCursorClipped);
+}
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::clipCursor(bool clipped)
+{
+    // No effect for fullscreen windows
+    if (m_isFullscreen)
+        return;
+    if (clipped)
+    {
+        RECT rect;
+        GetClientRect(m_handle, &rect);
+        MapWindowPoints(m_handle, 0, (LPPOINT)&rect, (sizeof(RECT) / sizeof(POINT)));
+        ClipCursor(&rect);
+    }
+    else
+    {
+        ClipCursor(NULL);
+    }
 }
 
 } // namespace priv

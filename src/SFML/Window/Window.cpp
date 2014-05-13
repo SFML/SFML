@@ -407,4 +407,11 @@ void Window::initialize()
     onCreate();
 }
 
+////////////////////////////////////////////////////////////
+void Window::setCursorClipped(bool clipped)
+{
+    if (m_impl)
+        m_impl->setCursorClipped(clipped);
+}
+
 } // namespace sf
