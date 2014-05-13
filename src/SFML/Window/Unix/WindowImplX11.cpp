@@ -486,6 +486,16 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::requestFocus()
 {
+    // Check if window is viewable (not on other desktop, minimized, ...)
+    XWindowAttributes attributes;
+    if (XGetWindowAttributes(m_display, m_window, &attributes) == 0)
+        return; // error getting attribute
+
+    // Not viewable: Can't set focus
+    if (attributes.map_state != IsViewable)
+        return;
+
+    // Bring window to the front and give it input focus
     XRaiseWindow(m_display, m_window);
     XSetInputFocus(m_display, m_window, RevertToPointerRoot, CurrentTime);
 }
