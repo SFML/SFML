@@ -130,8 +130,8 @@ IntRect RenderTarget::getViewport(const View& view) const
 
     return IntRect(static_cast<int>(0.5f + width  * viewport.left),
                    static_cast<int>(0.5f + height * viewport.top),
-                   static_cast<int>(width  * viewport.width),
-                   static_cast<int>(height * viewport.height));
+                   static_cast<int>(0.5f + width  * viewport.width),
+                   static_cast<int>(0.5f + height * viewport.height));
 }
 
 
