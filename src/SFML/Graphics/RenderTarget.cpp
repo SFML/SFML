@@ -362,7 +362,7 @@ void RenderTarget::resetGLStates()
         applyBlendMode(BlendAlpha);
         applyTransform(Transform::Identity);
         applyTexture(NULL);
-        if (Shader::isAvailable(0))
+        if (Shader::isAvailable())
             applyShader(NULL);
         m_cache.useVertexCache = false;
 
