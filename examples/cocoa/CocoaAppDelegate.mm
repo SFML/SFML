@@ -108,6 +108,8 @@ struct SFMLmainWindow
 
 -(void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    (void)aNotification;
+
     if (!self.initialized)
     {
         // Init the SFML render area.
@@ -156,6 +158,8 @@ struct SFMLmainWindow
 
 -(void)renderMainWindow:(NSTimer *)aTimer
 {
+    (void)aTimer;
+
     // Scaling
     /* /!\ we do this at 60fps so choose low scaling factor! /!\ */
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -225,6 +229,8 @@ struct SFMLmainWindow
 
 - (IBAction)updateText:(NSButton *)sender
 {
+    (void)sender;
+
     // Simply simulate textChanged :
     [self textChanged:self.textField];
 }
@@ -235,6 +241,7 @@ struct SFMLmainWindow
 
 -(void)keyDown:(NSEvent *)theEvent
 {
+    (void)theEvent;
     // Do nothing except preventing this alert.
 }
 
