@@ -47,6 +47,16 @@ namespace sf {
 /// Modifiers keys (cmd, ctrl, alt, shift) are handled by this class
 /// but the actual logic is done in SFKeyboardModifiersHelper.(h|mm).
 ///
+/// For some (mystic) reason, a window can receive a
+/// NSWindowDidBecomeKeyNotification after having received a
+/// NSWindowWillCloseNotification. m_willClose is there to
+/// make sure no invalid actions are taken after the window
+/// is known to closing.
+///
+/// The mouse is trapped if the window is active (key) and:
+///   + the window is fullscreen or
+///   + the user requested it (sf::Window::setCursorGrabbed)
+///
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView : NSOpenGLView
 {
@@ -56,6 +66,8 @@ namespace sf {
     NSTrackingArea*               m_trackingArea;   ///< Mouse tracking area
     BOOL                          m_fullscreen;     ///< Indicate whether the window is fullscreen or not
     CGFloat                       m_scaleFactor;    ///< Display scale factor (e.g. 1x for classic display, 2x for retina)
+    BOOL                          m_cursorGrabbed;  ///< Is the mouse cursor trapped?
+    BOOL                          m_willClose;      ///< When set to YES, the window is about to close
 
     // Hidden text view used to convert key event to actual chars.
     // We use a silent responder to prevent sound alerts.
@@ -86,6 +98,16 @@ namespace sf {
 ///
 ////////////////////////////////////////////////////////////
 -(void)finishInit;
+
+////////////////////////////////////////////////////////////
+/// Clips or releases the mouse cursor
+///
+/// Generate a MouseEntered event when it makes sense.
+///
+/// \param grabbed YES to grab, NO to release
+///
+////////////////////////////////////////////////////////////
+-(void)setCursorGrabbed:(BOOL)grabbed;
 
 ////////////////////////////////////////////////////////////
 /// \brief Apply the given requester to the view
@@ -129,6 +151,8 @@ namespace sf {
 /// \brief Compute the position of the cursor
 ///
 /// \param eventOrNil if nil the cursor position is the current one
+///
+/// \return the mouse position in SFML coord system
 ///
 ////////////////////////////////////////////////////////////
 -(NSPoint)cursorPositionFromEvent:(NSEvent*)eventOrNil;

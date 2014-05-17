@@ -29,6 +29,7 @@
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp> // For localizedKeys and nonLocalizedKeys
 #include <SFML/System/Err.hpp>
+#include <algorithm>
 
 #import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
@@ -76,6 +77,14 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)updateMouseState;
 
 ////////////////////////////////////////////////////////////
+/// \brief Check if the window has focus
+///
+/// \return YES when the window is key
+///
+////////////////////////////////////////////////////////////
+-(BOOL)hasFocus;
+
+////////////////////////////////////////////////////////////
 /// \brief Callback for focus event
 ///
 ////////////////////////////////////////////////////////////
@@ -88,6 +97,12 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)windowDidResignKey:(NSNotification*)notification;
 
 ////////////////////////////////////////////////////////////
+/// \brief Callback for close event
+///
+////////////////////////////////////////////////////////////
+-(void)windowWillClose:(NSNotification*)notification;
+
+////////////////////////////////////////////////////////////
 /// \brief Handle going in fullscreen mode
 ///
 ////////////////////////////////////////////////////////////
@@ -98,6 +113,52 @@ BOOL isValidTextUnicode(NSEvent* event);
 ///
 ////////////////////////////////////////////////////////////
 -(void)exitFullscreen;
+
+////////////////////////////////////////////////////////////
+/// \brief Check if the cursor is grabbed
+///
+/// The cursor is grabbed if the window is active (key) and
+/// it is in fullscreen mode, or the user wants to grab it.
+///
+/// \return YES if the mouse is captured
+///
+////////////////////////////////////////////////////////////
+-(BOOL)isCursorGrabbed;
+
+////////////////////////////////////////////////////////////
+/// \brief Move the cursor to a new position
+///
+/// \param destination new position in SFML coord system
+///
+////////////////////////////////////////////////////////////
+-(void)moveCursor:(NSPoint)destination;
+
+////////////////////////////////////////////////////////////
+/// \brief Move the cursor into the view
+///
+/// \return the (new) cursor position in SFML coord system
+///
+////////////////////////////////////////////////////////////
+-(NSPoint)projectCursorIntoView;
+
+////////////////////////////////////////////////////////////
+/// \brief Compute the projection of a point into the view
+///
+/// Both input and output are in SFML coord system.
+///
+/// \param point a point to project
+/// \return the corresponding projected point
+///
+////////////////////////////////////////////////////////////
+-(NSPoint)projectPointIntoView:(NSPoint)point;
+
+////////////////////////////////////////////////////////////
+/// \brief Get the display identifier on which the view is
+///
+/// \return the current display identifier
+///
+////////////////////////////////////////////////////////////
+-(CGDirectDisplayID)displayId;
 
 ////////////////////////////////////////////////////////////
 /// \brief Convert the NSEvent mouse button type to SFML type
@@ -153,6 +214,8 @@ BOOL isValidTextUnicode(NSEvent* event);
 
         m_fullscreen = isFullscreen;
         m_scaleFactor = 1.0; // Default value; it will be updated in finishInit
+        m_cursorGrabbed = NO;
+        m_willClose = NO;
 
         // Create a hidden text view for parsing key down event properly
         m_silentResponder = [[SFSilentResponder alloc] init];
@@ -199,6 +262,28 @@ BOOL isValidTextUnicode(NSEvent* event);
 
     // Now that we have a window, set up correctly the scale factor
     [self updateScaleFactor];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)setCursorGrabbed:(BOOL)grabbed
+{
+    // Fullscreen window are not authorized to release the cursor
+    if (m_fullscreen)
+        return;
+
+    m_cursorGrabbed = grabbed;
+
+    // This check if we have focus too!
+    if ([self isCursorGrabbed])
+    {
+        NSPoint oldPos = [self cursorPositionFromEvent:nil];
+        NSPoint newPos = [self projectCursorIntoView];
+
+        // If the cursor is moved we notify the user the mouse went in
+        if (!NSEqualPoints(oldPos, newPos) && (m_requester != 0))
+            m_requester->mouseMovedIn();
+    }
 }
 
 
@@ -319,11 +404,23 @@ BOOL isValidTextUnicode(NSEvent* event);
     if (m_requester == 0)
         return;
 
-    // Send event if needed.
+    // Special case: when the cursor is grabbed,
+    // it cannot leave and thus enter the view
+    if ([self isCursorGrabbed])
+        return;
+
+    // Send an event if the state has changed
     if (mouseWasIn && !m_mouseIsIn)
         m_requester->mouseMovedOut();
     else if (!mouseWasIn && m_mouseIsIn)
         m_requester->mouseMovedIn();
+}
+
+
+////////////////////////////////////////////////////////
+-(BOOL)hasFocus
+{
+    return [[self window] isKeyWindow];
 }
 
 
@@ -337,6 +434,9 @@ BOOL isValidTextUnicode(NSEvent* event);
 
     if (m_fullscreen)
         [self enterFullscreen];
+
+    if ([self isCursorGrabbed])
+        [self projectCursorIntoView];
 }
 
 
@@ -350,6 +450,16 @@ BOOL isValidTextUnicode(NSEvent* event);
 
     if (m_fullscreen)
         [self exitFullscreen];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)windowWillClose:(NSNotification*)notification
+{
+    m_willClose = YES;
+
+    // Simulate focus loss
+    [self windowDidResignKey:notification];
 }
 
 
@@ -381,6 +491,55 @@ BOOL isValidTextUnicode(NSEvent* event);
 
     // Update status
     m_mouseIsIn = NO;
+}
+
+
+////////////////////////////////////////////////////////
+-(BOOL)isCursorGrabbed
+{
+    return [self hasFocus] && (m_cursorGrabbed || m_fullscreen);
+}
+
+
+////////////////////////////////////////////////////////
+-(void)moveCursor:(NSPoint)destination
+{
+    // Convert the point from SFML coord system to screen coord system
+    CGPoint screenLocation = [self computeGlobalPositionOfRelativePoint:destination];
+
+    // Move the cursor without generating any event
+    CGAssociateMouseAndMouseCursorPosition(NO);
+    CGDisplayMoveCursorToPoint([self displayId], screenLocation);
+    CGAssociateMouseAndMouseCursorPosition(YES);
+}
+
+
+////////////////////////////////////////////////////////
+-(NSPoint)projectCursorIntoView
+{
+    NSPoint cursor = [self cursorPositionFromEvent:nil];
+    cursor = [self projectPointIntoView:cursor];
+    [self moveCursor:cursor];
+    return cursor;
+}
+
+
+////////////////////////////////////////////////////////
+-(NSPoint)projectPointIntoView:(NSPoint)point
+{
+    NSSize size = [self frame].size;
+    point.x = std::min(std::max(1.0, point.x), size.width - 1);
+    point.y = std::min(std::max(1.0, point.y), size.height - 1);
+    return point;
+}
+
+
+////////////////////////////////////////////////////////
+-(CGDirectDisplayID)displayId
+{
+    NSScreen* screen = [[self window] screen];
+    NSNumber* displayId = [[screen deviceDescription] objectForKey:@"NSScreenNumber"];
+    return [displayId intValue];
 }
 
 
@@ -582,17 +741,19 @@ BOOL isValidTextUnicode(NSEvent* event);
 ////////////////////////////////////////////////////////
 -(void)otherMouseDragged:(NSEvent*)theEvent
 {
-    if (m_requester != 0)
-    {
-        NSPoint loc = [self cursorPositionFromEvent:theEvent];
+    NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
-        // Make sure the point is inside the view.
-        // (mouseEntered: and mouseExited: are not immediately called
-        //  when the mouse is dragged. That would be too easy!)
-        [self updateMouseState];
-        if (m_mouseIsIn)
-            m_requester->mouseMovedAt(loc.x, loc.y);
-    }
+    // If the cursor is grabbed, we need to make sure the cursor doesn't
+    // go outside the view.
+    if ([self isCursorGrabbed])
+        loc = [self projectCursorIntoView];
+
+    // Make sure the point is inside the view.
+    // (mouseEntered: and mouseExited: are not immediately called
+    //  when the mouse is dragged. That would be too easy!)
+    [self updateMouseState];
+    if (m_mouseIsIn && (m_requester != 0))
+        m_requester->mouseMovedAt(loc.x, loc.y);
 
     // If the event is not forwarded by mouseDragged or rightMouseDragged...
     sf::Mouse::Button button = [self mouseButtonFromEvent:theEvent];
@@ -612,6 +773,16 @@ BOOL isValidTextUnicode(NSEvent* event);
     if (eventOrNil == nil)
     {
         NSPoint rawPos = [[self window] mouseLocationOutsideOfEventStream];
+        loc = [self convertPoint:rawPos fromView:nil];
+    }
+    else if ([self isCursorGrabbed])
+    {
+        // Special case when the mouse is grabbed:
+        // we need to take into account the delta since the cursor
+        // is dissociated from its position.
+        NSPoint rawPos = [eventOrNil locationInWindow];
+        rawPos.x += [eventOrNil deltaX];
+        rawPos.y -= [eventOrNil deltaY];
         loc = [self convertPoint:rawPos fromView:nil];
     }
     else
