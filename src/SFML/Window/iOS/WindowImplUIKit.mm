@@ -164,6 +164,13 @@ void WindowImplUIKit::setMouseCursorVisible(bool visible)
 
     
 ////////////////////////////////////////////////////////////
+void WindowImplUIKit::setMouseCursorGrabbed(bool grabbed)
+{
+    // Not applicable
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplUIKit::setKeyRepeatEnabled(bool enabled)
 {
     // Not applicable
