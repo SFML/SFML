@@ -24,35 +24,28 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-// Headers
+/// \brief Ensure at least one autorelease pool is available on this thread
+///
+/// Increment a retain count.
+/// See SPECIAL CONSIDERATION in implementation file.
+///
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Utf.hpp>
-
-#import <SFML/Window/OSX/cpp_objc_conversion.h>
-#import <Foundation/Foundation.h>
-
-////////////////////////////////////////////////////////////
-NSString* stringToNSString(const std::string& string)
-{
-    std::string utf8; utf8.reserve(string.size() + 1);
-    sf::Utf8::fromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
-    NSString* str = [NSString stringWithCString:utf8.c_str() encoding:NSUTF8StringEncoding];
-
-    return str;
-}
+void retainPool(void);
 
 ////////////////////////////////////////////////////////////
-NSString* sfStringToNSString(const sf::String& string)
-{
-    sf::Uint32 length = string.getSize() * sizeof(sf::Uint32);
-    const void* data = reinterpret_cast<const void*>(string.getData());
+/// \brief Release the pool.
+///
+/// Drain the pool if it is no more needed (retain count is zero)
+/// See SPECIAL CONSIDERATION in implementation file.
+///
+////////////////////////////////////////////////////////////
+void releasePool(void);
 
-    NSStringEncoding encoding;
-    if (NSHostByteOrder() == NS_LittleEndian)
-        encoding = NSUTF32LittleEndianStringEncoding;
-    else
-        encoding = NSUTF32BigEndianStringEncoding;
+////////////////////////////////////////////////////////////
+/// \brief Drain the pool
+///
+/// releasePool must be called at least once before drainPool.
+///
+////////////////////////////////////////////////////////////
+void drainPool();
 
-    NSString* str = [[NSString alloc] initWithBytes:data length:length encoding:encoding];
-    return [str autorelease];
-}

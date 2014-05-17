@@ -30,6 +30,8 @@
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
 
+#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
+
 namespace sf
 {
 namespace priv
@@ -41,6 +43,9 @@ SFContext::SFContext(SFContext* shared) :
 m_view(0),
 m_window(0)
 {
+    // Ask for a pool.
+    retainPool();
+
     // Create the context
     createContext(shared,
                   VideoMode::getDesktopMode().bitsPerPixel,
@@ -54,6 +59,9 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
 m_view(0),
 m_window(0)
 {
+    // Ask for a pool.
+    retainPool();
+
     // Create the context.
     createContext(shared, bitsPerPixel, settings);
 
@@ -71,6 +79,9 @@ m_window(0)
 {
     // Ensure the process is setup in order to create a valid window.
     WindowImplCocoa::setUpProcess();
+
+    // Ask for a pool.
+    retainPool();
 
     // Create the context.
     createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
@@ -90,14 +101,13 @@ m_window(0)
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
-@autoreleasepool
-{
     [m_context clearDrawable];
+    [m_context release];
 
-    m_context = nil;
-    m_view = nil;
-    m_window = nil;
-} // pool
+    [m_view release]; // Might be nil but we don't care.
+    [m_window release]; // Idem.
+
+    releasePool();
 }
 
 
@@ -129,8 +139,6 @@ void SFContext::setVerticalSyncEnabled(bool enabled)
 void SFContext::createContext(SFContext* shared,
                               unsigned int bitsPerPixel,
                               const ContextSettings& settings)
-{
-@autoreleasepool
 {
     // Choose the attributes of OGL context.
     std::vector<NSOpenGLPixelFormatAttribute> attrs;
@@ -231,9 +239,11 @@ void SFContext::createContext(SFContext* shared,
             sf::err() << "Warning. New context created without shared context." << std::endl;
     }
 
+    // Free up.
+    [pixFmt release];
+
     // Save the settings. (OpenGL version is updated elsewhere.)
     m_settings = settings;
-} // pool
 }
 
 } // namespace priv

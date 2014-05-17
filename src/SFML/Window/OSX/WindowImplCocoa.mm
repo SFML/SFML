@@ -30,6 +30,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
 
+#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFApplicationDelegate.h>
@@ -109,10 +110,11 @@ void scaleOutXY(T& out)
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle) :
 m_showCursor(true)
 {
-@autoreleasepool
-{
+    // Ask for a pool.
+    retainPool();
+
     // Treat the handle as it real type
-    id nsHandle = (__bridge id)handle;
+    id nsHandle = (id)handle;
     if ([nsHandle isKindOfClass:[NSWindow class]])
     {
         // We have a window.
@@ -140,7 +142,6 @@ m_showCursor(true)
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
-} // pool
 }
 
 
@@ -151,10 +152,11 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
                                  const ContextSettings& /*settings*/) :
 m_showCursor(true)
 {
-@autoreleasepool
-{
     // Transform the app process.
     setUpProcess();
+
+    // Ask for a pool.
+    retainPool();
 
     // Use backing size
     scaleInWidthHeight(mode);
@@ -165,23 +167,26 @@ m_showCursor(true)
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
-} // pool
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::~WindowImplCocoa()
 {
-@autoreleasepool
-{
     [m_delegate closeWindow];
-    m_delegate = nil;
+
+    [m_delegate release];
 
     // Put the next window in front, if any.
     NSArray* windows = [NSApp orderedWindows];
     if ([windows count] > 0)
         [[windows objectAtIndex:0] makeKeyAndOrderFront:nil];
-} // pool
+
+    releasePool();
+
+    drainPool(); // Make sure everything was freed
+    // This solve some issue when sf::Window::Create is called for the
+    // second time (nothing was render until the function was called again)
 }
 
 
@@ -212,7 +217,7 @@ void WindowImplCocoa::setUpProcess(void)
 
         // Register an application delegate if there is none
         if (![[SFApplication sharedApplication] delegate])
-            [NSApp setDelegate:[SFApplicationDelegate instance]];
+            [NSApp setDelegate:[[SFApplicationDelegate alloc] init]];
 
         // Create menus for the application (before finishing launching!)
         [SFApplication setUpMenuBar];

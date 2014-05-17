@@ -53,9 +53,6 @@ sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES imple
 
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
-    # set default CMAKE_OSX_ARCHITECTURES value to x86_64
-    sfml_set_option(CMAKE_OSX_ARCHITECTURES "x86_64" STRING "Build architectures for OS X")
-
     # set default CMAKE_OSX_DEPLOYMENT_TARGET value to 10.7
     sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" STRING "Minimum OS version to target for deployment (at runtime)")
 
@@ -149,12 +146,6 @@ if(SFML_OS_MACOSX)
             message(FATAL_ERROR "BUILD_SHARED_LIBS should be TRUE when SFML_BUILD_FRAMEWORKS is TRUE")
             return()
         endif()
-    endif()
-
-    # Objective-C ARC requires a 64 bit runtime.
-    if(NOT CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
-        message(FATAL_ERROR "CMAKE_OSX_ARCHITECTURES should be 'x86_64'; SFML doesn't support 32 bit on Mac OS X.")
-        return()
     endif()
 
     # make sure CMAKE_OSX_DEPLOYMENT_TARGET is >= 10.7

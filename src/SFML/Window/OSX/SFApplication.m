@@ -36,8 +36,6 @@
 ////////////////////////////////////////////////////////////
 +(void)processEvent
 {
-@autoreleasepool
-{
     [SFApplication sharedApplication]; // Make sure NSApp exists
     NSEvent* event = nil;
 
@@ -48,7 +46,6 @@
     {
         [NSApp sendEvent:event];
     }
-} // pool
 }
 
 
@@ -66,17 +63,17 @@
 
     // Application Menu (aka Apple Menu)
     NSMenuItem* appleItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* appleMenu = [SFApplication createAppleMenu];
+    NSMenu* appleMenu = [[SFApplication createAppleMenu] autorelease];
     [appleItem setSubmenu:appleMenu];
 
     // File Menu
     NSMenuItem* fileItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* fileMenu = [SFApplication createFileMenu];
+    NSMenu* fileMenu = [[SFApplication createFileMenu] autorelease];
     [fileItem setSubmenu:fileMenu];
 
     // Window menu
     NSMenuItem* windowItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* windowMenu = [SFApplication createWindowMenu];
+    NSMenu* windowMenu = [[SFApplication createWindowMenu] autorelease];
     [windowItem setSubmenu:windowMenu];
     [NSApp setWindowsMenu:windowMenu];
 }
@@ -123,7 +120,7 @@
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
     // SERVICES
-    NSMenu* serviceMenu = [[NSMenu alloc] initWithTitle:@""];
+    NSMenu* serviceMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
     NSMenuItem* serviceItem = [appleMenu addItemWithTitle:@"Services"
                                                   action:nil
                                            keyEquivalent:@""];
@@ -177,6 +174,7 @@
                                                        action:@selector(performClose:)
                                                 keyEquivalent:@"w"];
     [fileMenu addItem:closeItem];
+    [closeItem release];
 
     return fileMenu;
 }
@@ -201,6 +199,7 @@
                                                           action:@selector(performMiniaturize:)
                                                    keyEquivalent:@"m"];
     [windowMenu addItem:minimizeItem];
+    [minimizeItem release];
 
     // ZOOM
     [windowMenu addItemWithTitle:@"Zoom"

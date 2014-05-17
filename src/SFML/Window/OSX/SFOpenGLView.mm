@@ -286,11 +286,14 @@ BOOL isValidTextUnicode(NSEvent* event);
     // Unregister
     [self removeTrackingArea:m_trackingArea];
 
+    // Release attributes
+    [m_hiddenTextView release];
+    [m_silentResponder release];
+    [m_trackingArea release];
+
     [self setRequesterTo:0];
 
-    m_hiddenTextView = nil;
-    m_silentResponder = nil;
-    m_trackingArea = nil;
+    [super dealloc];
 }
 
 

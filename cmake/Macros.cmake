@@ -64,11 +64,6 @@ macro(sfml_add_library target)
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
     endif()
 
-    # On OS X, use Objective-C ARC
-    if(SFML_OS_MACOSX)
-        set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fobjc-arc)
-    endif()
-
     # link the target to its SFML dependencies
     if(THIS_DEPENDS)
         target_link_libraries(${target} ${THIS_DEPENDS})

@@ -97,7 +97,7 @@
         m_fullscreen = NO;
 
         // Retain the window for our own use.
-        m_window = window;
+        m_window = [window retain];
 
         if (m_window == nil)
         {
@@ -181,7 +181,7 @@
     [m_window setOpaque:YES];
     [m_window setHidesOnDeactivate:YES];
     [m_window setAutodisplay:YES];
-    [m_window setReleasedWhenClosed:YES];
+    [m_window setReleasedWhenClosed:NO]; // We own the class, not AppKit
 
     // Register for event
     [m_window setDelegate:self];
@@ -287,7 +287,7 @@
     // And some other things...
     [m_window center];
     [m_window setAutodisplay:YES];
-    [m_window setReleasedWhenClosed:YES];
+    [m_window setReleasedWhenClosed:NO]; // We own the class, not AppKit
 }
 
 
@@ -297,8 +297,10 @@
     [self closeWindow];
     [NSMenu setMenuBarVisible:YES];
 
-    m_window = nil;
-    m_oglView = nil;
+    [m_window release];
+    [m_oglView release];
+
+    [super dealloc];
 }
 
 
@@ -318,7 +320,7 @@
 ////////////////////////////////////////////////////////
 -(sf::WindowHandle)getSystemHandle
 {
-    return (__bridge sf::WindowHandle)m_window;
+    return m_window;
 }
 
 
@@ -442,6 +444,7 @@
 ////////////////////////////////////////////////////////
 -(void)closeWindow
 {
+    [self applyContext:nil];
     [m_window close];
     [m_window setDelegate:nil];
     [self setRequesterTo:0];
@@ -497,6 +500,10 @@
 
     // Set app icon.
     [[SFApplication sharedApplication] setApplicationIconImage:icon];
+
+    // Free up.
+    [icon release];
+    [bitmap release];
 }
 
 

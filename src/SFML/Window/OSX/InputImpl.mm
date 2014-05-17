@@ -57,7 +57,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
 {
-    id nsHandle = (__bridge id)window.getSystemHandle();
+    id nsHandle = (id)window.getSystemHandle();
 
     // Get our SFOpenGLView from ...
     SFOpenGLView* view = nil;
