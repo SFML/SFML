@@ -59,8 +59,8 @@ if(SFML_OS_MACOSX)
     # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
     sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
 
-    # add an option to automatically install Xcode 4 templates
-    sfml_set_option(SFML_INSTALL_XCODE4_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode 4 templates, FALSE to do nothing about it")
+    # add an option to automatically install Xcode templates
+    sfml_set_option(SFML_INSTALL_XCODE_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode templates, FALSE to do nothing about it. The templates are compatible with Xcode 4 and 5.")
 endif()
 
 # Android options
@@ -266,7 +266,7 @@ elseif(SFML_OS_MACOSX)
     install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
 
     # install the Xcode templates if requested
-    if(SFML_INSTALL_XCODE4_TEMPLATES)
+    if(SFML_INSTALL_XCODE_TEMPLATES)
         install(DIRECTORY tools/xcode/templates/SFML
                 DESTINATION /Library/Developer/Xcode/Templates
                 PATTERN "*.in" EXCLUDE)

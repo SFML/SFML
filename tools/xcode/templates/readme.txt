@@ -49,7 +49,7 @@ You should also be familiar with Xcode. If needed checkout this document: http:/
 Install
 -------
 
-If you are building SFML from sources you can set CMake's INSTALL_XCODE4_TEMPLATES variable to TRUE to install the templates automatically.
+If you are building SFML from sources you can set CMake's INSTALL_XCODE_TEMPLATES variable to TRUE to install the templates automatically.
 
 
 
