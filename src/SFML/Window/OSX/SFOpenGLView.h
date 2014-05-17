@@ -52,6 +52,19 @@ namespace sf {
 /// implementation. However, all attributes are defined in the main
 /// interface declaration right below.
 ///
+/// Note about deltaXBuffer and deltaYBuffer: when grabbing the cursor
+/// for the first time, either by entering fullscreen or through
+/// setCursorGrabbed:, the cursor might be projected into the view.
+/// Doing this will result in a big delta (relative movement) in the
+/// next move event (cursorPositionFromEvent:), because no move event
+/// is generated, which in turn will give the impression that the user
+/// want to move the cursor by the same distance it was projected. To
+/// prevent the cursor to fly twice the distance we keep track of how
+/// much the cursor was projected in deltaXBuffer and deltaYBuffer. In
+/// cursorPositionFromEvent: we can then reduce/augment those buffers
+/// to determine when a move event should result in an actual move of
+/// the cursor (that was disconnected from the system).
+///
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView : NSOpenGLView
 {
@@ -61,6 +74,9 @@ namespace sf {
     NSTrackingArea*               m_trackingArea;   ///< Mouse tracking area
     BOOL                          m_fullscreen;     ///< Indicate whether the window is fullscreen or not
     CGFloat                       m_scaleFactor;    ///< Display scale factor (e.g. 1x for classic display, 2x for retina)
+    BOOL                          m_cursorGrabbed;  ///< Is the mouse cursor trapped?
+    CGFloat                       m_deltaXBuffer;   ///< See note about cursor grabbing above
+    CGFloat                       m_deltaYBuffer;   ///< See note about cursor grabbing above
 
     // Hidden text view used to convert key event to actual chars.
     // We use a silent responder to prevent sound alerts.
@@ -143,6 +159,8 @@ namespace sf {
 ///
 /// \param eventOrNil if nil the cursor position is the current one
 ///
+/// \return the mouse position in SFML coord system
+///
 ////////////////////////////////////////////////////////////
 -(NSPoint)cursorPositionFromEvent:(NSEvent*)eventOrNil;
 
@@ -153,5 +171,23 @@ namespace sf {
 ///
 ////////////////////////////////////////////////////////////
 -(BOOL)isMouseInside;
+
+////////////////////////////////////////////////////////////
+/// Clips or releases the mouse cursor
+///
+/// Generate a MouseEntered event when it makes sense.
+///
+/// \param grabbed YES to grab, NO to release
+///
+////////////////////////////////////////////////////////////
+-(void)setCursorGrabbed:(BOOL)grabbed;
+
+////////////////////////////////////////////////////////////
+/// Update the cursor position according to the grabbing behaviour
+///
+/// This function has to be called when the window's state change
+///
+////////////////////////////////////////////////////////////
+-(void)updateCursorGrabbed;
 
 @end
