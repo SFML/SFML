@@ -207,13 +207,12 @@ void WindowImplCocoa::setUpProcess(void)
         // Do it only once !
         isTheProcessSetAsApplication = true;
 
-        // Set the process as a normal application so it can get focus.
-        ProcessSerialNumber psn;
-        if (!GetCurrentProcess(&psn))
-        {
-            TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-            SetFrontProcess(&psn);
-        }
+        // Make sure NSApp is properly initialized
+        [SFApplication sharedApplication];
+
+        // Set the process as a normal application so it can get focus
+        [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+        [NSApp activateIgnoringOtherApps:YES];
 
         // Register an application delegate if there is none
         if (![[SFApplication sharedApplication] delegate])
