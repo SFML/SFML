@@ -316,7 +316,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Grab or release the mouse cursor
     ///
-    /// \param grabbed True to enable, false to disable
+    /// \param grabbed True to grab, false to release
     ///
     ////////////////////////////////////////////////////////////
     virtual void setMouseCursorGrabbed(bool grabbed);
