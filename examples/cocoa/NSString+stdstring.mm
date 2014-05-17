@@ -28,15 +28,25 @@
 
 @implementation NSString (NSString_stdstring)
 
-+(id)stringWithstdstring:(std::string const &)string
++(id)stringWithstdstring:(const std::string&)string
 {
     std::string utf8;
     utf8.reserve(string.size() + 1);
 
     sf::Utf8::fromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
 
-    NSString *str = [NSString stringWithCString:utf8.c_str()
+    NSString* str = [NSString stringWithCString:utf8.c_str()
                                        encoding:NSUTF8StringEncoding];
+    return str;
+}
+
++(id)stringWithstdwstring:(const std::wstring&)string
+{
+    char* data = (char*)string.data();
+    unsigned size = string.size() * sizeof(wchar_t);
+
+    NSString* str = [[[NSString alloc] initWithBytes:data length:size
+                                            encoding:NSUTF32LittleEndianStringEncoding] autorelease];
     return str;
 }
 
@@ -47,24 +57,9 @@
     const char *cstr = [self cStringUsingEncoding:NSISOLatin1StringEncoding];
 
     if (cstr != NULL)
-    {
-        std::string str(cstr);
-        return str;
-    }
+        return std::string(cstr);
     else
-    {
         return "";
-    }
-}
-
-+(id)stringWithstdwstring:(std::wstring const &)string
-{
-    char* data = (char *)string.data();
-    unsigned size = string.size() * sizeof(wchar_t);
-
-    NSString *str = [[[NSString alloc] initWithBytes:data length:size
-                                            encoding:NSUTF32LittleEndianStringEncoding] autorelease];
-    return str;
 }
 
 -(std::wstring)tostdwstring
@@ -72,7 +67,7 @@
     // According to wikipedia, Mac OS X is Little Endian on x86 and x86-64
     // http://en.wikipedia.org/wiki/Endianness
     NSData* asData = [self dataUsingEncoding:NSUTF32LittleEndianStringEncoding];
-    return std::wstring((wchar_t *)[asData bytes], [asData length] / sizeof(wchar_t));
+    return std::wstring((wchar_t*)[asData bytes], [asData length] / sizeof(wchar_t));
 }
 
 @end

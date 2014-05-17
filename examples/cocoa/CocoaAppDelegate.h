@@ -28,7 +28,7 @@
 
 /*
  * NB : We need pointers for C++ objects fields in Obj-C interface !
- *      The recomanded way is to use PIMP idiom.
+ *      The recommended way is to use PIMP idiom.
  *
  *      It's elegant. Moreover, we do no constrain
  *      other file including this one to be Obj-C++.
@@ -36,26 +36,27 @@
 
 struct SFMLmainWindow;
 
-@interface CocoaAppDelegate : NSObject <NSApplicationDelegate> {
+@interface CocoaAppDelegate : NSObject <NSApplicationDelegate>
+{
 @private
-    NSWindow        *m_window;
-    NSView          *m_sfmlView;
-    NSTextField     *m_textField;
-    SFMLmainWindow  *m_mainWindow;
-    NSTimer         *m_renderTimer;
-    BOOL             m_visible;
-    BOOL             m_initialized;
+    NSWindow*       m_window;
+    NSView*         m_sfmlView;
+    NSTextField*    m_textField;
+    SFMLmainWindow* m_mainWindow;
+    NSTimer*        m_renderTimer;
+    BOOL            m_visible;
+    BOOL            m_initialized;
 }
 
-@property (retain) IBOutlet NSWindow    *window;
-@property (assign) IBOutlet NSView      *sfmlView;
-@property (assign) IBOutlet NSTextField *textField;
+@property (retain) IBOutlet NSWindow*       window;
+@property (assign) IBOutlet NSView*         sfmlView;
+@property (assign) IBOutlet NSTextField*    textField;
 
--(IBAction)colorChanged:(NSPopUpButton *)sender;
--(IBAction)rotationChanged:(NSSlider *)sender;
--(IBAction)visibleChanged:(NSButton *)sender;
--(IBAction)textChanged:(NSTextField *)sender;
--(IBAction)updateText:(NSButton *)sender;
+-(IBAction)colorChanged:(NSPopUpButton*)sender;
+-(IBAction)rotationChanged:(NSSlider*)sender;
+-(IBAction)visibleChanged:(NSButton*)sender;
+-(IBAction)textChanged:(NSTextField*)sender;
+-(IBAction)updateText:(NSButton*)sender;
 
 @end
 
@@ -65,6 +66,6 @@ struct SFMLmainWindow;
  */
 @interface SilentWindow : NSWindow
 
--(void)keyDown:(NSEvent *)theEvent;
+-(void)keyDown:(NSEvent*)theEvent;
 
 @end

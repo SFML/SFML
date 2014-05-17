@@ -28,9 +28,9 @@
 
 @interface NSString (NSString_stdstring)
 
-+(id)stringWithstdstring:(std::string const &)string;
++(id)stringWithstdstring:(const std::string&)string;
 
-+(id)stringWithstdwstring:(std::wstring const &)string;
++(id)stringWithstdwstring:(const std::wstring&)string;
 
 -(std::string)tostdstring;
 

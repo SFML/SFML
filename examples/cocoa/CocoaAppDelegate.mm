@@ -34,14 +34,13 @@
 // Our PIMPL
 struct SFMLmainWindow
 {
-    SFMLmainWindow(sf::WindowHandle win)
-    : renderWindow(win)
-    , background(sf::Color::Blue)
+    SFMLmainWindow(sf::WindowHandle win) :
+    renderWindow(win),
+    background(sf::Color::Blue)
     {
         std::string resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
-        if (!logo.loadFromFile(resPath + "/logo.png")) {
+        if (!logo.loadFromFile(resPath + "/logo.png"))
             NSLog(@"Couldn't load the logo image");
-        }
 
         logo.setSmooth(true);
 
@@ -55,9 +54,8 @@ struct SFMLmainWindow
         unsigned int wh = renderWindow.getSize().y;
         sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
 
-        if (!font.loadFromFile(resPath + "/sansation.ttf")) {
+        if (!font.loadFromFile(resPath + "/sansation.ttf"))
             NSLog(@"Couldn't load the font");
-        }
 
         text.setColor(sf::Color::White);
         text.setFont(font);
@@ -74,13 +72,13 @@ struct SFMLmainWindow
 // Private stuff
 @interface CocoaAppDelegate ()
 
-@property (assign) SFMLmainWindow   *mainWindow;
-@property (retain) NSTimer          *renderTimer;
-@property (assign) BOOL              visible;
+@property (assign) SFMLmainWindow*  mainWindow;
+@property (retain) NSTimer*         renderTimer;
+@property (assign) BOOL             visible;
 
-@property (assign) BOOL              initialized;
+@property (assign) BOOL             initialized;
 
--(void)renderMainWindow:(NSTimer *)aTimer;
+-(void)renderMainWindow:(NSTimer*)aTimer;
 
 @end
 
@@ -98,15 +96,16 @@ struct SFMLmainWindow
 
 @synthesize initialized     = m_initialized;
 
-- (id)init {
+- (id)init
+{
     self = [super init];
-    if (self) {
+    if (self)
         self.initialized = NO;
-    }
+
     return self;
 }
 
--(void)applicationDidFinishLaunching:(NSNotification *)aNotification
+-(void)applicationDidFinishLaunching:(NSNotification*)aNotification
 {
     (void)aNotification;
 
@@ -149,64 +148,53 @@ struct SFMLmainWindow
     self.sfmlView           = nil;
     self.textField          = nil;
 
-    delete (SFMLmainWindow *) self.mainWindow;
+    delete (SFMLmainWindow*) self.mainWindow;
     self.mainWindow         = 0;
     self.renderTimer        = nil;
 
     [super dealloc];
 }
 
--(void)renderMainWindow:(NSTimer *)aTimer
+-(void)renderMainWindow:(NSTimer*)aTimer
 {
     (void)aTimer;
 
     // Scaling
     /* /!\ we do this at 60fps so choose low scaling factor! /!\ */
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-    {
         self.mainWindow->sprite.scale(1.01f, 1.01f);
-    }
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    {
         self.mainWindow->sprite.scale(0.99f, 0.99f);
-    }
 
     // Clear the window, display some stuff and display it into our view.
 
     self.mainWindow->renderWindow.clear(self.mainWindow->background);
 
     if (self.visible)
-    {
         self.mainWindow->renderWindow.draw(self.mainWindow->sprite);
-    }
 
     self.mainWindow->renderWindow.draw(self.mainWindow->text);
 
     self.mainWindow->renderWindow.display();
 }
 
--(IBAction)colorChanged:(NSPopUpButton *)sender
+-(IBAction)colorChanged:(NSPopUpButton*)sender
 {
     if (self.initialized)
     {
         // Convert title to color
-        NSString *color = [[sender selectedItem] title];
+        NSString* color = [[sender selectedItem] title];
         if ([color isEqualToString:BLUE])
-        {
             self.mainWindow->background = sf::Color::Blue;
-        }
         else if ([color isEqualToString:GREEN])
-        {
             self.mainWindow->background = sf::Color::Green;
-        }
         else
-        {
             self.mainWindow->background = sf::Color::Red;
-        }
     }
 }
 
--(IBAction)rotationChanged:(NSSlider *)sender
+-(IBAction)rotationChanged:(NSSlider*)sender
 {
     if (self.initialized)
     {
@@ -215,23 +203,23 @@ struct SFMLmainWindow
     }
 }
 
--(IBAction)visibleChanged:(NSButton *)sender
+-(IBAction)visibleChanged:(NSButton*)sender
 {
     if (self.initialized)
         self.visible = [sender state] == NSOnState;
 }
 
--(IBAction)textChanged:(NSTextField *)sender
+-(IBAction)textChanged:(NSTextField*)sender
 {
     if (self.initialized)
         self.mainWindow->text.setString([[sender stringValue] tostdwstring]);
 }
 
-- (IBAction)updateText:(NSButton *)sender
+- (IBAction)updateText:(NSButton*)sender
 {
     (void)sender;
 
-    // Simply simulate textChanged :
+    // Simply simulate textChanged:
     [self textChanged:self.textField];
 }
 
@@ -239,7 +227,7 @@ struct SFMLmainWindow
 
 @implementation SilentWindow
 
--(void)keyDown:(NSEvent *)theEvent
+-(void)keyDown:(NSEvent*)theEvent
 {
     (void)theEvent;
     // Do nothing except preventing this alert.
