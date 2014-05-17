@@ -53,9 +53,6 @@ sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES imple
 
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
-    # set default CMAKE_OSX_DEPLOYMENT_TARGET value to 10.7
-    sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" STRING "Minimum OS version to target for deployment (at runtime)")
-
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
 
@@ -146,12 +143,6 @@ if(SFML_OS_MACOSX)
             message(FATAL_ERROR "BUILD_SHARED_LIBS should be TRUE when SFML_BUILD_FRAMEWORKS is TRUE")
             return()
         endif()
-    endif()
-
-    # make sure CMAKE_OSX_DEPLOYMENT_TARGET is >= 10.7
-    if (CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS "10.7")
-        message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET (${CMAKE_OSX_DEPLOYMENT_TARGET}) should be 10.7 or better")
-        return()
     endif()
 endif()
 
