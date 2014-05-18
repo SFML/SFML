@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <SFML/Audio/AlResource.hpp>
 #include <SFML/System/Time.hpp>
 #include <string>
 #include <vector>
@@ -49,7 +50,7 @@ class InputStream;
 /// \brief Storage for audio samples defining a sound
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API SoundBuffer
+class SFML_AUDIO_API SoundBuffer : AlResource
 {
 public:
 

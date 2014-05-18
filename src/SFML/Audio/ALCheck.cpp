@@ -91,19 +91,6 @@ void alCheckError(const std::string& file, unsigned int line)
     }
 }
 
-
-////////////////////////////////////////////////////////////
-/// Make sure that OpenAL is initialized
-////////////////////////////////////////////////////////////
-void ensureALInit()
-{
-    // The audio device is instantiated on demand rather than at global startup,
-    // which solves a lot of weird crashes and errors.
-    // It is destroyed at global exit which is fine.
-
-    static AudioDevice globalDevice;
-}
-
 } // namespace priv
 
 } // namespace sf

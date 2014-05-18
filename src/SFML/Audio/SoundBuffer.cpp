@@ -41,8 +41,6 @@ SoundBuffer::SoundBuffer() :
 m_buffer  (0),
 m_duration()
 {
-    priv::ensureALInit();
-
     // Create the buffer
     alCheck(alGenBuffers(1, &m_buffer));
 }
