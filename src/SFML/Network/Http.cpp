@@ -111,6 +111,8 @@ std::string Http::Request::prepare() const
         case Get :  method = "GET";  break;
         case Post : method = "POST"; break;
         case Head : method = "HEAD"; break;
+        case Put :	method = "PUT"; break;
+        case Delete : method = "DELETE"; break;
     }
 
     // Write the first line containing the request type
