@@ -144,6 +144,16 @@ if(SFML_OS_MACOSX)
             return()
         endif()
     endif()
+
+    # configure Xcode templates
+    if(CMAKE_OSX_ARCHITECTURES)
+        # maybe multiple arches are present in CMAKE_OSX_ARCHITECTURES
+        # we simply need to replace ';' by ' ' (space) and store the result in XCODE_TEMPLATES_ARCH
+        string(REPLACE ";" " " XCODE_TEMPLATES_ARCH "${CMAKE_OSX_ARCHITECTURES}")
+    else()
+        # no arch was provided to cmake, so we use the default one
+        set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
+    endif()
 endif()
 
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
