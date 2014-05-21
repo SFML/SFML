@@ -46,12 +46,6 @@ namespace sf {
 /// The SFWindowController should call -[SFOpenGLView exitFullscreen]
 /// and -[SFOpenGLView enterFullscreen] when appropriate.
 ///
-/// In order to send correct mouse coordinate to the requester when
-/// the window is in fullscreen we use m_realSize to represent the
-/// back buffer size (see SFWindowController). If 'm_realSize' is
-/// bound to its default value we don't recompute the mouse position
-/// and assume it's correct.
-///
 /// Modifiers keys (cmd, ctrl, alt, shift) are handled by this class
 /// but the actual logic is done in SFKeyboardModifiersHelper.(h|mm).
 ///
