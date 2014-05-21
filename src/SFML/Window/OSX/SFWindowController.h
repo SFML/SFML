@@ -44,13 +44,10 @@ namespace sf {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of WindowImplDelegateProtocol for window management
 ///
-/// Key and mouse events are delegated to its view.
-/// Window events are managed by this class.
+/// Key, mouse and Window focus events are delegated to its view, SFOpenGLView.
 ///
 /// Used when SFML handle everything and when a NSWindow* is given
 /// as handle to WindowImpl.
-///
-/// m_fullscreenMode is bind to default video mode if we don't need to change screen size.
 ///
 ////////////////////////////////////////////////////////////
 @interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate>
@@ -58,7 +55,6 @@ namespace sf {
     NSWindow*                   m_window;           ///< Underlying Cocoa window to be controlled
     SFOpenGLView*               m_oglView;          ///< OpenGL view for rendering
     sf::priv::WindowImplCocoa*  m_requester;        ///< Requester
-    BOOL                        m_fullscreen;       ///< Indicate whether the window is fullscreen or not
 }
 
 ////////////////////////////////////////////////////////////

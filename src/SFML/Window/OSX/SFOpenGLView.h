@@ -43,8 +43,6 @@ namespace sf {
 ///
 /// NSTrackingArea is used to keep track of mouse events. We also
 /// need to be able to ignore mouse event when exiting fullscreen.
-/// The SFWindowController should call -[SFOpenGLView exitFullscreen]
-/// and -[SFOpenGLView enterFullscreen] when appropriate.
 ///
 /// Modifiers keys (cmd, ctrl, alt, shift) are handled by this class
 /// but the actual logic is done in SFKeyboardModifiersHelper.(h|mm).
@@ -56,6 +54,7 @@ namespace sf {
     BOOL                          m_useKeyRepeat;   ///< Key repeat setting
     BOOL                          m_mouseIsIn;      ///< Mouse positional state
     NSTrackingArea*               m_trackingArea;   ///< Mouse tracking area
+    BOOL                          m_fullscreen;     ///< Indicate whether the window is fullscreen or not
 
     // Hidden text view used to convert key event to actual chars.
     // We use a silent responder to prevent sound alerts.
@@ -66,24 +65,16 @@ namespace sf {
 ////////////////////////////////////////////////////////////
 /// \brief Create the SFML OpenGL view
 ///
+/// NB: -initWithFrame: is also implemented to default isFullscreen to NO
+/// in case SFOpenGLView is created with the standard message.
+///
 /// \param frameRect dimension of the view
+/// \param isFullscreen fullscreen flag
 ///
 /// \return an initialized view
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithFrame:(NSRect)frameRect;
-
-////////////////////////////////////////////////////////////
-/// \brief Handle going in fullscreen mode
-///
-////////////////////////////////////////////////////////////
--(void)enterFullscreen;
-
-////////////////////////////////////////////////////////////
-/// \brief Handle exiting fullscreen mode
-///
-////////////////////////////////////////////////////////////
--(void)exitFullscreen;
+-(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen;
 
 ////////////////////////////////////////////////////////////
 /// \brief Apply the given requester to the view
