@@ -129,55 +129,6 @@ endmacro()
 macro(sfml_add_example target)
 
     # parse the arguments
-    sfml_parse_arguments(THIS "SOURCES;DEPENDS" "GUI_APP" ${ARGN})
-
-    # set a source group for the source files
-    source_group("" FILES ${THIS_SOURCES})
-
-    # create the target
-    if(THIS_GUI_APP AND WINDOWS)
-        add_executable(${target} WIN32 ${THIS_SOURCES})
-        target_link_libraries(${target} sfml-main)
-    else()
-        add_executable(${target} ${THIS_SOURCES})
-    endif()
-
-    # set the debug suffix
-    set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
-
-    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
-    set_target_properties(${target} PROPERTIES FOLDER "Examples")
-
-    # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(WINDOWS AND COMPILER_GCC AND SFML_USE_STATIC_STD_LIBS)
-        if(NOT GCC_VERSION VERSION_LESS "4")
-            set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
-        endif()
-    endif()
-
-    # link the target to its SFML dependencies
-    if(THIS_DEPENDS)
-        target_link_libraries(${target} ${THIS_DEPENDS})
-    endif()
-
-    # add the install rule
-    install(TARGETS ${target}
-            RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
-
-    # install the example's source code
-    install(FILES ${THIS_SOURCES}
-            DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
-            COMPONENT examples)
-
-endmacro()
-
-# add a new target which is a SFML example
-# ex: sfml_add_example(ftp
-#                      SOURCES ftp.cpp ...
-#                      DEPENDS sfml-network sfml-system)
-macro(sfml_add_example target)
-
-    # parse the arguments
     cmake_parse_arguments(THIS "GUI_APP" "" "SOURCES;DEPENDS" ${ARGN})
 
     # set a source group for the source files
