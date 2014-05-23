@@ -58,29 +58,29 @@
     NSMenu* mainMenu = [NSApp mainMenu];
     if (mainMenu != nil)
         return;
-    mainMenu = [[NSMenu alloc] initWithTitle:@""];
+    mainMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
     [NSApp setMainMenu:mainMenu];
 
     // Application Menu (aka Apple Menu)
     NSMenuItem* appleItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* appleMenu = [[SFApplication createAppleMenu] autorelease];
+    NSMenu* appleMenu = [[SFApplication newAppleMenu] autorelease];
     [appleItem setSubmenu:appleMenu];
 
     // File Menu
     NSMenuItem* fileItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* fileMenu = [[SFApplication createFileMenu] autorelease];
+    NSMenu* fileMenu = [[SFApplication newFileMenu] autorelease];
     [fileItem setSubmenu:fileMenu];
 
     // Window menu
     NSMenuItem* windowItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* windowMenu = [[SFApplication createWindowMenu] autorelease];
+    NSMenu* windowMenu = [[SFApplication newWindowMenu] autorelease];
     [windowItem setSubmenu:windowMenu];
     [NSApp setWindowsMenu:windowMenu];
 }
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu*)createAppleMenu
++(NSMenu*)newAppleMenu
 {
     // Apple menu is as follow:
     //
@@ -159,7 +159,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu*)createFileMenu
++(NSMenu*)newFileMenu
 {
     // The File menu is as follow:
     //
@@ -181,7 +181,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu*)createWindowMenu
++(NSMenu*)newWindowMenu
 {
     // The Window menu is as follow:
     //
