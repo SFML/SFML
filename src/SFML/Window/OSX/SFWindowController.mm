@@ -188,7 +188,7 @@
     [m_window setIgnoresMouseEvents:NO];
 
     // Create a master view containing our OpenGL view
-    NSView* masterView = [[SFBlackView alloc] initWithFrame:windowRect];
+    NSView* masterView = [[[SFBlackView alloc] initWithFrame:windowRect] autorelease];
 
     if (masterView == nil)
     {
