@@ -401,6 +401,7 @@ public :
     /// on the previous thread first if it was active.
     /// Only one window can be active on a thread at a time, thus
     /// the window previously active (if any) automatically gets deactivated.
+    /// This is not to be confused with requestFocus().
     ///
     /// \param active True to activate, false to deactivate
     ///
@@ -408,6 +409,37 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     bool setActive(bool active = true) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Request the current window to be made the active
+    ///        foreground window
+    ///
+    /// At any given time, only one window may have the input focus
+    /// to receive input events such as keystrokes or mouse
+    /// events.
+    /// If a window requests focus, it only hints to the operating
+    /// system, that it would like to be focused. The operating system
+    /// is free to deny the request. For example under Windows OS
+    /// windows are not allowed to steal focus. But the user
+    /// will be notified through a flashing taskbar button.
+    /// This is not to be confused with setActive().
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool requestFocus();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Determine whether the window has the input focus
+    ///
+    /// At any given time, only one window may have the input focus
+    /// to receive input events such as keystrokes or most mouse
+    /// events.
+    ///
+    /// \return True if window has focus, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool hasFocus() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Display on screen what has been rendered to the window so far

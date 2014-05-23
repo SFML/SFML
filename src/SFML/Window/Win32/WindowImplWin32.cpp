@@ -306,6 +306,20 @@ void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
+bool WindowImplWin32::requestFocus()
+{
+    return SetForegroundWindow(m_handle);
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImplWin32::hasFocus() const
+{
+    return m_handle == GetForegroundWindow();
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::registerWindowClass()
 {
     WNDCLASSW windowClass;
