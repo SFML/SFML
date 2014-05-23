@@ -340,6 +340,9 @@ void RenderTarget::popGLStates()
 ////////////////////////////////////////////////////////////
 void RenderTarget::resetGLStates()
 {
+    // Check here to make sure a context change does not happen after activate(true)
+    bool shaderAvailable = Shader::isAvailable();
+
     if (activate(true))
     {
         // Make sure that extensions are initialized
@@ -362,7 +365,7 @@ void RenderTarget::resetGLStates()
         applyBlendMode(BlendAlpha);
         applyTransform(Transform::Identity);
         applyTexture(NULL);
-        if (Shader::isAvailable())
+        if (shaderAvailable)
             applyShader(NULL);
         m_cache.useVertexCache = false;
 
