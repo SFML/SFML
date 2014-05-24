@@ -28,7 +28,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp> // For localizedKeys and nonLocalizedKeys
+#include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Time.hpp>
 #include <algorithm>
 
 #import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
@@ -48,6 +50,37 @@
 ///
 ////////////////////////////////////////////////////////////
 BOOL isValidTextUnicode(NSEvent* event);
+
+
+
+////////////////////////////////////////////////////////////
+/// \brief Restart the timer handling last focus events
+///
+////////////////////////////////////////////////////////////
+void resetTimeSinceLastLostFocus();
+
+////////////////////////////////////////////////////////////
+/// \brief Check if the «last focus» timer was reset recently
+///
+/// \return YES if the corresponding timer was reset less than 'duration' ago
+///
+////////////////////////////////////////////////////////////
+BOOL isTimeSinceLastLostFocusLessThan(sf::Time duration);
+
+////////////////////////////////////////////////////////////
+/// \brief Restart the timer handling mouse down events outside the window
+///
+////////////////////////////////////////////////////////////
+void resetTimeSinceLastMouseDownOutside();
+
+////////////////////////////////////////////////////////////
+/// \brief Check if the «mouse down outside the window» timer was reset recently
+///
+/// \return YES if the corresponding timer was reset less than 'duration' ago
+///
+////////////////////////////////////////////////////////////
+BOOL isTimeSinceLastMouseDownOutsideLessThan(sf::Time duration);
+
 
 
 ////////////////////////////////////////////////////////////
@@ -153,6 +186,31 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(NSPoint)projectPointIntoView:(NSPoint)point;
 
 ////////////////////////////////////////////////////////////
+/// \brief Create or destroy the current monitor
+///
+/// To be called when losing or gaining focus.
+///
+////////////////////////////////////////////////////////////
+-(void)updateMonitor;
+
+////////////////////////////////////////////////////////////
+/// \brief Callback for mouse down event outside the window
+///
+/// Used to restore focus when the cursor is grabbed but the
+/// user click outside the window.
+///
+/// \param event a mouse down event outside the window
+///
+////////////////////////////////////////////////////////////
+-(void)mouseDownOutsideApp:(NSEvent*)event;
+
+////////////////////////////////////////////////////////////
+/// \brief Make the app active and set our window as key
+///
+////////////////////////////////////////////////////////////
+-(void)refocus;
+
+////////////////////////////////////////////////////////////
 /// \brief Get the display identifier on which the view is
 ///
 /// \return the current display identifier
@@ -215,6 +273,7 @@ BOOL isValidTextUnicode(NSEvent* event);
         m_fullscreen = isFullscreen;
         m_scaleFactor = 1.0; // Default value; it will be updated in finishInit
         m_cursorGrabbed = NO;
+        m_monitor = nil;
         m_willClose = NO;
 
         // Create a hidden text view for parsing key down event properly
@@ -273,6 +332,7 @@ BOOL isValidTextUnicode(NSEvent* event);
         return;
 
     m_cursorGrabbed = grabbed;
+    [self updateMonitor];
 
     // This check if we have focus too!
     if ([self isCursorGrabbed])
@@ -437,6 +497,8 @@ BOOL isValidTextUnicode(NSEvent* event);
 
     if ([self isCursorGrabbed])
         [self projectCursorIntoView];
+
+    [self updateMonitor];
 }
 
 
@@ -445,11 +507,25 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     (void)notification;
 
+    resetTimeSinceLastLostFocus();
+
+    // Refocus the application when the user click
+    // outside the window and the cursor is grabbed.
+    // See -mouseDownOutsideApp: for more details.
+    if (isTimeSinceLastMouseDownOutsideLessThan(sf::milliseconds(100)))
+    {
+        [self refocus];
+        [self projectCursorIntoView];
+        return; // ignore this notification
+    }
+
     if (m_requester)
         m_requester->windowLostFocus();
 
     if (m_fullscreen)
         [self exitFullscreen];
+
+    [self updateMonitor];
 }
 
 
@@ -531,6 +607,64 @@ BOOL isValidTextUnicode(NSEvent* event);
     point.x = std::min(std::max(1.0, point.x), size.width - 1);
     point.y = std::min(std::max(1.0, point.y), size.height - 1);
     return point;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)updateMonitor
+{
+    // If the cursor is grabbed, create a monitor
+    if (m_cursorGrabbed && m_monitor == nil)
+    {
+        NSEventMask mouseDownMask = NSLeftMouseDown | NSRightMouseDown | NSOtherMouseDown;
+        m_monitor = [NSEvent addGlobalMonitorForEventsMatchingMask:mouseDownMask
+                                                           handler:^(NSEvent* event)
+        {
+            [self mouseDownOutsideApp:event];
+        }];
+    }
+
+    // If the cursor is not grabbed, remove the monitor
+    if (!m_cursorGrabbed && m_monitor != nil)
+    {
+        [NSEvent removeMonitor:m_monitor];
+        m_monitor = nil;
+    }
+}
+
+
+////////////////////////////////////////////////////////
+-(void)mouseDownOutsideApp:(NSEvent*)event
+{
+    resetTimeSinceLastMouseDownOutside();
+
+    // Refocus the application when the user click
+    // outside the window and the cursor is grabbed.
+    // But only if it was a very recent lost focus
+    // otherwise it means the user is actually using
+    // another app and he doesn't want to be annoyed
+    // by the SFML window popping in front of everything else.
+    if (isTimeSinceLastLostFocusLessThan(sf::milliseconds(100)))
+    {
+        [self refocus];
+        [self projectCursorIntoView];
+
+        // Send a mouse down event
+        if (m_requester)
+        {
+            NSPoint loc = [self cursorPositionFromEvent:nil];
+            m_requester->mouseDownAt([self mouseButtonFromEvent:event], loc.x, loc.y);
+        }
+        // BUT NO CORRESPONDING MOUSE UP IS CAUGHT! :-/
+    }
+}
+
+
+////////////////////////////////////////////////////////
+-(void)refocus
+{
+    [NSApp activateIgnoringOtherApps:YES];
+    [[self window] makeKeyAndOrderFront:nil];
 }
 
 
@@ -957,6 +1091,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 #pragma mark - C-like functions
 
+////////////////////////////////////////////////////////
 BOOL isValidTextUnicode(NSEvent* event)
 {
     if ([event keyCode] == 0x35) // Escape
@@ -974,3 +1109,39 @@ BOOL isValidTextUnicode(NSEvent* event)
     }
 }
 
+////////////////////////////////////////////////////////
+namespace
+{
+    // Data for resetTimeSinceLastLostFocus and isTimeSinceLastLostFocusGreaterThan
+    sf::Clock timeSinceLastLostFocus;
+    // Data for resetTimeSinceLastMouseDownOutside and isTimeSinceLastMouseDownOutsideGreaterThan
+    sf::Clock timeSinceLastMouseDownOutside;
+}
+
+
+////////////////////////////////////////////////////////
+void resetTimeSinceLastLostFocus()
+{
+    timeSinceLastLostFocus.restart();
+}
+
+
+////////////////////////////////////////////////////////
+BOOL isTimeSinceLastLostFocusLessThan(sf::Time duration)
+{
+    return timeSinceLastLostFocus.getElapsedTime() < duration;
+}
+
+
+////////////////////////////////////////////////////////
+void resetTimeSinceLastMouseDownOutside()
+{
+    timeSinceLastMouseDownOutside.restart();
+}
+
+
+////////////////////////////////////////////////////////
+BOOL isTimeSinceLastMouseDownOutsideLessThan(sf::Time duration)
+{
+    return timeSinceLastMouseDownOutside.getElapsedTime() < duration;
+}
