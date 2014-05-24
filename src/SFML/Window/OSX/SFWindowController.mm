@@ -307,6 +307,13 @@
 
 
 ////////////////////////////////////////////////////////
+-(CGFloat)displayScaleFactor
+{
+    return [m_oglView displayScaleFactor];
+}
+
+
+////////////////////////////////////////////////////////
 -(void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester
 {
     // Forward to the view.

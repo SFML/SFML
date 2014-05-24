@@ -55,6 +55,7 @@ namespace sf {
     BOOL                          m_mouseIsIn;      ///< Mouse positional state
     NSTrackingArea*               m_trackingArea;   ///< Mouse tracking area
     BOOL                          m_fullscreen;     ///< Indicate whether the window is fullscreen or not
+    CGFloat                       m_scaleFactor;    ///< Display scale factor (e.g. 1x for classic display, 2x for retina)
 
     // Hidden text view used to convert key event to actual chars.
     // We use a silent responder to prevent sound alerts.
@@ -105,6 +106,14 @@ namespace sf {
 ///
 ////////////////////////////////////////////////////////////
 -(void)disableKeyRepeat;
+
+////////////////////////////////////////////////////////////
+/// \brief Get the display scale factor
+///
+/// \return e.g. 1.0 for classic display, 2.0 for retina display
+///
+////////////////////////////////////////////////////////////
+-(CGFloat)displayScaleFactor;
 
 ////////////////////////////////////////////////////////////
 /// \brief Compute the position of the cursor

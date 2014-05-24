@@ -56,6 +56,12 @@ BOOL isValidTextUnicode(NSEvent* event);
 @interface SFOpenGLView ()
 
 ////////////////////////////////////////////////////////////
+/// \brief Handle screen changed event
+///
+////////////////////////////////////////////////////////////
+-(void)updateScaleFactor;
+
+////////////////////////////////////////////////////////////
 /// \brief Handle view resized event
 ///
 ////////////////////////////////////////////////////////////
@@ -154,6 +160,7 @@ BOOL isValidTextUnicode(NSEvent* event);
         [self addTrackingArea:m_trackingArea];
 
         m_fullscreen = isFullscreen;
+        [self updateScaleFactor];
 
         // Register for window focus events
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -167,6 +174,16 @@ BOOL isValidTextUnicode(NSEvent* event);
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(windowDidResignKey:)
                                                      name:NSWindowWillCloseNotification
+                                                   object:[self window]];
+
+        // Register for changed screen and changed screen's profile events
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(updateScaleFactor)
+                                                     name:NSWindowDidChangeScreenNotification
+                                                   object:[self window]];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(updateScaleFactor)
+                                                     name:NSWindowDidChangeScreenProfileNotification
                                                    object:[self window]];
 
         // Create a hidden text view for parsing key down event properly
@@ -231,6 +248,22 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)disableKeyRepeat
 {
     m_useKeyRepeat = NO;
+}
+
+
+////////////////////////////////////////////////////////
+-(CGFloat)displayScaleFactor
+{
+    return m_scaleFactor;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)updateScaleFactor
+{
+    NSWindow* window = [self window];
+    NSScreen* screen = window ? [window screen] : [NSScreen mainScreen];
+    m_scaleFactor = [screen backingScaleFactor];
 }
 
 
