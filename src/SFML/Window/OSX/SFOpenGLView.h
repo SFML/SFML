@@ -69,6 +69,8 @@ namespace sf {
 /// NB: -initWithFrame: is also implemented to default isFullscreen to NO
 /// in case SFOpenGLView is created with the standard message.
 ///
+/// To finish the initialization -finishInit should be called too.
+///
 /// \param frameRect dimension of the view
 /// \param isFullscreen fullscreen flag
 ///
@@ -76,6 +78,14 @@ namespace sf {
 ///
 ////////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen;
+
+////////////////////////////////////////////////////////////
+/// \brief Finish the creation of the SFML OpenGL view
+///
+/// This method should be called after the view was added to a window
+///
+////////////////////////////////////////////////////////////
+-(void)finishInit;
 
 ////////////////////////////////////////////////////////////
 /// \brief Apply the given requester to the view

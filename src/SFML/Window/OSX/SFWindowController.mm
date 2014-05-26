@@ -149,6 +149,8 @@
             [self setupFullscreenViewWithMode:mode];
         else
             [self setupWindowWithMode:mode andStyle:style];
+
+        [m_oglView finishInit];
     }
     return self;
 }

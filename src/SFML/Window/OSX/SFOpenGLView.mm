@@ -160,31 +160,7 @@ BOOL isValidTextUnicode(NSEvent* event);
         [self addTrackingArea:m_trackingArea];
 
         m_fullscreen = isFullscreen;
-        [self updateScaleFactor];
-
-        // Register for window focus events
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(windowDidBecomeKey:)
-                                                     name:NSWindowDidBecomeKeyNotification
-                                                   object:[self window]];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(windowDidResignKey:)
-                                                     name:NSWindowDidResignKeyNotification
-                                                   object:[self window]];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(windowDidResignKey:)
-                                                     name:NSWindowWillCloseNotification
-                                                   object:[self window]];
-
-        // Register for changed screen and changed screen's profile events
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(updateScaleFactor)
-                                                     name:NSWindowDidChangeScreenNotification
-                                                   object:[self window]];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(updateScaleFactor)
-                                                     name:NSWindowDidChangeScreenProfileNotification
-                                                   object:[self window]];
+        m_scaleFactor = 1.0; // Default value; it will be updated in finishInit
 
         // Create a hidden text view for parsing key down event properly
         m_silentResponder = [[SFSilentResponder alloc] init];
@@ -193,9 +169,44 @@ BOOL isValidTextUnicode(NSEvent* event);
 
         // Request high resolution on high DPI displays
         [self setWantsBestResolutionOpenGLSurface:YES];
+
+        // At that point, the view isn't attached to a window. We defer the rest of
+        // the initialization process to later.
     }
 
     return self;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)finishInit
+{
+    // Register for window focus events
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowDidBecomeKey:)
+                                                 name:NSWindowDidBecomeKeyNotification
+                                               object:[self window]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowDidResignKey:)
+                                                 name:NSWindowDidResignKeyNotification
+                                               object:[self window]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowDidResignKey:)
+                                                 name:NSWindowWillCloseNotification
+                                               object:[self window]];
+
+    // Register for changed screen and changed screen's profile events
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateScaleFactor)
+                                                 name:NSWindowDidChangeScreenNotification
+                                               object:[self window]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateScaleFactor)
+                                                 name:NSWindowDidChangeScreenProfileNotification
+                                               object:[self window]];
+
+    // Now that we have a window, set up correctly the scale factor
+    [self updateScaleFactor];
 }
 
 
