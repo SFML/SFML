@@ -157,6 +157,28 @@ public :
     bool saveToFile(const std::string& filename) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Detach the buffer from the sounds that use it
+    ///
+    /// Warning, this function should never be called when playing
+    /// audio from this buffer.
+    ///
+    /// \see ~SoundBuffer
+    ///
+    ////////////////////////////////////////////////////////////
+    void detachConnectedSounds() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Reatach the buffer to the sounds in m_sounds
+    ///
+    /// Warning, this function should never be called when playing
+    /// audio from this buffer.
+    ///
+    /// \see ~SoundBuffer
+    ///
+    ////////////////////////////////////////////////////////////
+    void reatachConnectedSounds() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the array of audio samples stored in the buffer
     ///
     /// The format of the returned samples is 16 bits signed integer
@@ -331,20 +353,20 @@ private :
 /// \code
 /// // Declare a new sound buffer
 /// sf::SoundBuffer buffer;
-/// 
+///
 /// // Load it from a file
 /// if (!buffer.loadFromFile("sound.wav"))
 /// {
 ///     // error...
 /// }
-/// 
+///
 /// // Create a sound source and bind it to the buffer
 /// sf::Sound sound1;
 /// sound1.setBuffer(buffer);
-/// 
+///
 /// // Play the sound
 /// sound1.play();
-/// 
+///
 /// // Create another sound source bound to the same buffer
 /// sf::Sound sound2;
 /// sound2.setBuffer(buffer);

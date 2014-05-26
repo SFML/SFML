@@ -67,8 +67,7 @@ m_sounds  () // don't copy the attached sounds
 SoundBuffer::~SoundBuffer()
 {
     // First detach the buffer from the sounds that use it (to avoid OpenAL errors)
-    for (SoundList::const_iterator it = m_sounds.begin(); it != m_sounds.end(); ++it)
-        (*it)->resetBuffer();
+    detachConnectedSounds();
 
     // Destroy the buffer
     if (m_buffer)
@@ -79,9 +78,15 @@ SoundBuffer::~SoundBuffer()
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::loadFromFile(const std::string& filename)
 {
+    detachConnectedSounds();
+
     priv::SoundFile file;
     if (file.openRead(filename))
-        return initialize(file);
+    {
+        int r = initialize(file);
+        reatachConnectedSounds();
+        return r;
+    }
     else
         return false;
 }
@@ -101,9 +106,15 @@ bool SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::loadFromStream(InputStream& stream)
 {
+    detachConnectedSounds();
+
     priv::SoundFile file;
     if (file.openRead(stream))
-        return initialize(file);
+    {
+        int r = initialize(file);
+        reatachConnectedSounds();
+        return r;
+    }
     else
         return false;
 }
@@ -151,6 +162,22 @@ bool SoundBuffer::saveToFile(const std::string& filename) const
     {
         return false;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundBuffer::detachConnectedSounds() const
+{
+    for (SoundList::const_iterator it = m_sounds.begin(); it != m_sounds.end(); ++it)
+        (*it)->resetBuffer();
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundBuffer::reatachConnectedSounds() const
+{
+    for (SoundList::const_iterator it = m_sounds.begin(); it != m_sounds.end(); ++it)
+        (*it)->setBuffer(*this);
 }
 
 
