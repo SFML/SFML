@@ -470,11 +470,11 @@ void WindowImplWin32::grabCursor(bool grabbed)
         RECT rect;
         GetClientRect(m_handle, &rect);
         MapWindowPoints(m_handle, NULL, reinterpret_cast<LPPOINT>(&rect), 2);
-        grabCursor(&rect);
+        ClipCursor(&rect);
     }
     else
     {
-        grabCursor(NULL);
+        ClipCursor(NULL);
     }
 }
 
