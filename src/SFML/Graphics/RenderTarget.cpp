@@ -359,6 +359,8 @@ void RenderTarget::resetGLStates()
         }
 
         // Define the default OpenGL states
+        glCheck(glClientActiveTexture(GL_TEXTURE0));
+        glCheck(glActiveTexture(GL_TEXTURE0));
         glCheck(glDisable(GL_CULL_FACE));
         glCheck(glDisable(GL_LIGHTING));
         glCheck(glDisable(GL_DEPTH_TEST));
