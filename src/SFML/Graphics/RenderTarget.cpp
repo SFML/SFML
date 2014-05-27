@@ -351,6 +351,13 @@ void RenderTarget::resetGLStates()
         // Make sure that extensions are initialized
         priv::ensureExtensionsInit();
 
+        // Make sure that the texture unit which is active is the number 0
+        if (GLEXT_multitexture)
+        {
+            glCheck(GLEXT_glClientActiveTexture(GLEXT_GL_TEXTURE0));
+            glCheck(GLEXT_glActiveTexture(GLEXT_GL_TEXTURE0));
+        }
+
         // Define the default OpenGL states
         glCheck(glDisable(GL_CULL_FACE));
         glCheck(glDisable(GL_LIGHTING));
@@ -370,13 +377,6 @@ void RenderTarget::resetGLStates()
         applyTexture(NULL);
         if (shaderAvailable)
             applyShader(NULL);
-
-        // Make sure that the texture unit which is active is the number 0
-        if (GLEXT_multitexture)
-        {
-            glCheck(GLEXT_glClientActiveTexture(GLEXT_GL_TEXTURE0));
-            glCheck(GLEXT_glActiveTexture(GLEXT_GL_TEXTURE0));
-        }
 
         m_cache.useVertexCache = false;
 
