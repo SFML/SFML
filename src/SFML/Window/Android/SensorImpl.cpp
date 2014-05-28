@@ -91,7 +91,7 @@ bool SensorImpl::open(Sensor::Type sensor)
     ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, minimumDelay.asMicroseconds());
 
     // Disable the sensor by default
-    setEnabled(true);
+    setEnabled(false);
 
     // Save the index of the sensor
     m_index = static_cast<unsigned int>(sensor);
@@ -142,7 +142,7 @@ ASensor const* SensorImpl::getDefaultSensor(Sensor::Type sensor)
 
     int type = types[sensor];
 
-    // Retrive the default sensor matching this type
+    // Retrieve the default sensor matching this type
     return ASensorManager_getDefaultSensor(sensorManager, type);
 }
 
