@@ -484,11 +484,10 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplX11::requestFocus()
+void WindowImplX11::requestFocus()
 {
     XRaiseWindow(m_display, m_window);
     XSetInputFocus(m_display, m_window, RevertToPointerRoot, CurrentTime);
-    return true;
 }
 
 

@@ -188,7 +188,7 @@
 
 
 ////////////////////////////////////////////////////////
--(BOOL)requestFocus
+-(void)requestFocus
 {
     // Note: this doesn't imply that the view will get any event.
     // The user has to make sure events are forwarded to the view
@@ -197,8 +197,6 @@
 
     // In case the app is not active, make its dock icon bounce for one sec
     [NSApp requestUserAttention:NSInformationalRequest];
-
-    return [self hasFocus];
 }
 
 

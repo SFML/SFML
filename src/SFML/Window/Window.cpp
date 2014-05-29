@@ -337,20 +337,17 @@ bool Window::setActive(bool active) const
 
 
 ////////////////////////////////////////////////////////////
-bool Window::requestFocus()
+void Window::requestFocus()
 {
     if (m_impl)
-        return m_impl->requestFocus();
-    return false;
+        m_impl->requestFocus();
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Window::hasFocus() const
 {
-    if (m_impl)
-        return m_impl->hasFocus();
-    return false;
+    return m_impl && m_impl->hasFocus();
 }
 
 

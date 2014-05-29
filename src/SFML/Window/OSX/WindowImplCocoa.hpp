@@ -324,10 +324,8 @@ public:
     /// \brief Request the current window to be made the active
     ///        foreground window
     ///
-    /// \return True if operation was successful, false otherwise
-    ///
     ////////////////////////////////////////////////////////////
-    virtual bool requestFocus();
+    virtual void requestFocus();
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the window has the input focus

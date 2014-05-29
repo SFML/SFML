@@ -367,9 +367,9 @@ void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplWin32::requestFocus()
+void WindowImplWin32::requestFocus()
 {
-    return SetForegroundWindow(m_handle);
+    SetForegroundWindow(m_handle);
 }
 
 

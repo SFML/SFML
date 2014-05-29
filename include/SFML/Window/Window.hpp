@@ -423,11 +423,10 @@ public:
     /// is free to deny the request.
     /// This is not to be confused with setActive().
     ///
-    /// \return True if operation was successful, false otherwise
     /// \see hasFocus
     ///
     ////////////////////////////////////////////////////////////
-    bool requestFocus();
+    void requestFocus();
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the window has the input focus

@@ -170,10 +170,8 @@ namespace sf {
 /// \brief Request the current window to be made the active
 ///        foreground window
 ///
-/// \return True if operation was successful, false otherwise
-///
 ////////////////////////////////////////////////////////////
--(BOOL)requestFocus;
+-(void)requestFocus;
 
 ////////////////////////////////////////////////////////////
 /// \brief Check whether the window has the input focus
