@@ -291,11 +291,20 @@ const Font::Info& Font::getInfo() const
 ////////////////////////////////////////////////////////////
 const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const
 {
+    FT_Face face = static_cast<FT_Face>(m_face);
+    Uint32 index = FT_Get_Char_Index(face, codePoint);
+    getGlyphByIndex(index, characterSize, bold);
+}
+
+
+////////////////////////////////////////////////////////////
+const Glyph& Font::getGlyphByIndex(Uint32 index, unsigned int characterSize, bool bold) const
+{
     // Get the page corresponding to the character size
     GlyphTable& glyphs = m_pages[characterSize].glyphs;
 
-    // Build the key by combining the code point and the bold flag
-    Uint32 key = ((bold ? 1 : 0) << 31) | codePoint;
+    // Build the key by combining the glyph's index and the bold flag
+    Uint32 key = ((bold ? 1 : 0) << 31) | index;
 
     // Search the glyph into the cache
     GlyphTable::const_iterator it = glyphs.find(key);
@@ -307,7 +316,7 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
     else
     {
         // Not found: we have to load it
-        Glyph glyph = loadGlyph(codePoint, characterSize, bold);
+        Glyph glyph = loadGlyph(index, characterSize, bold);
         return glyphs.insert(std::make_pair(key, glyph)).first->second;
     }
 }
@@ -423,7 +432,7 @@ void Font::cleanup()
 
 
 ////////////////////////////////////////////////////////////
-Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const
+Glyph Font::loadGlyph(Uint32 index, unsigned int characterSize, bool bold) const
 {
     // The glyph to return
     Glyph glyph;
@@ -438,7 +447,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         return glyph;
 
     // Load the glyph corresponding to the code point
-    if (FT_Load_Char(face, codePoint, FT_LOAD_TARGET_NORMAL | FT_LOAD_FORCE_AUTOHINT) != 0)
+    if (FT_Load_Glyph(face, index, FT_LOAD_TARGET_NORMAL | FT_LOAD_FORCE_AUTOHINT) != 0)
         return glyph;
 
     // Retrieve the glyph

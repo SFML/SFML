@@ -30,6 +30,36 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <cassert>
 
+#include <harfbuzz/hb.h>
+#include <harfbuzz/hb-ft.h>
+
+namespace
+{
+    // helper class that divides the string into lines.
+    class LineView {
+    public:
+        LineView(const sf::Uint32* start, std::size_t length) : m_lineBegin(start), m_end(start+length) {
+            findNextEnd();
+        }
+
+        const sf::Uint32 * getLineStart() const { return m_lineBegin; }
+        std::size_t        getLineLen()   const { return m_lineLen;   }
+        bool hasNext() const { return m_lineBegin < m_end; }
+        void next() { m_lineBegin += m_lineLen+1; findNextEnd(); }
+        
+    private:
+        void findNextEnd() {
+            std::size_t lineLen = 0;
+            const sf::Uint32 delimiter = static_cast<sf::Uint32>('\n');
+            for(const sf::Uint32* it = m_lineBegin; *it != delimiter && it < m_end; ++it, ++lineLen);
+            m_lineLen = lineLen;
+        }
+
+        const sf::Uint32 * m_lineBegin;
+        const sf::Uint32 * m_end;
+        std::size_t        m_lineLen;
+    };
+}
 
 namespace sf
 {
@@ -171,38 +201,104 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     if (index > m_string.getSize())
         index = m_string.getSize();
 
+    //Algorithm:
+    // 1. Find out in which line the character is
+    // 2. Shape that line
+    // 3. travel over the shaped glyphs until you find the one with the correct cluster
+    // Note: Cluster always contains the *lowest* glyph index that went into the glyph
+    //       So for example "differ" with "ff" replaced by a ligature would return cluster 
+    //       values 0,1,2,4,5, but for RTL languages for example الله with the لله replaced 
+    //       by a ligature would return 1,0 (monotonic descending whereas LTR is monotonic ascending)
+    
     // Precompute the variables needed by the algorithm
     bool  bold   = (m_style & Bold) != 0;
     float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
     float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
 
-    // Compute the position
-    Vector2f position;
-    Uint32 prevChar = 0;
-    for (std::size_t i = 0; i < index; ++i)
-    {
-        Uint32 curChar = m_string[i];
-
-        // Apply the kerning offset
-        position.x += static_cast<float>(m_font->getKerning(prevChar, curChar, m_characterSize));
-        prevChar = curChar;
-
-        // Handle special characters
-        switch (curChar)
-        {
-            case ' ' :  position.x += hspace;                 continue;
-            case '\t' : position.x += hspace * 4;             continue;
-            case '\n' : position.y += vspace; position.x = 0; continue;
+    std::size_t lineNumber = 0;
+    std::size_t lineStart = 0;
+    LineView lineView(m_string.getData(), m_string.getSize());
+    for(std::size_t i = 0; i < index; ++i) {
+        if (m_string[i] == '\n') {
+            lineNumber++;
+            lineStart = i + 1;
+            lineView.next();
         }
-
-        // For regular characters, add the advance offset of the glyph
-        position.x += static_cast<float>(m_font->getGlyph(curChar, m_characterSize, bold).advance);
     }
-
+    
+    float y;
+    if (m_string[index] == '\n') //user requested the position of a newline character, return the beginning of the new line
+        return getTransform().transformPoint(Vector2f(0.0f, vspace * (lineNumber + 1)));
+    else
+        y = vspace * lineNumber;
+    
+    
+    // prepare harfbuzz buffer and font face to shape the complex text
+    hb_font_t *hbFtFont = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
+    hb_buffer_t *hbBuffer = hb_buffer_create();
+    
+    // setup the Harfbuzz structures to get the position
+    hb_buffer_add_utf32(hbBuffer, lineView.getLineStart(), lineView.getLineLen(), 0, lineView.getLineLen());
+        
+    // if the script or direction aren't set, try to guess them before shaping
+    hb_buffer_guess_segment_properties(hbBuffer);
+    hb_shape(hbFtFont, hbBuffer, NULL, 0);
+    
+    // check if the text is rendered right to left        
+    hb_segment_properties_t props;
+    hb_buffer_get_segment_properties (hbBuffer, &props);
+    const bool isRTL = (props.direction == HB_DIRECTION_RTL);
+    
+    // from the shaped text we get the glyphs and positions
+    unsigned int         glyphCount;
+    hb_glyph_info_t     *glyphInfo = hb_buffer_get_glyph_infos(hbBuffer, &glyphCount);
+    hb_glyph_position_t *glyphPos  = hb_buffer_get_glyph_positions(hbBuffer, &glyphCount);
+    
+    // index of the character in the line
+    const std::size_t clusterIndex = index - lineStart; 
+    
+    // We have all the data, now compute the position
+    Vector2f position(0.0f, y);
+    Vector2f prevPosition = position;
+    for ( std::size_t i = 0; i < glyphCount; ++i) {
+        hb_glyph_info_t     curGlyph    = glyphInfo[i];
+        hb_glyph_position_t curGlyphPos = glyphPos[i];
+        
+        const int xOffset = (curGlyphPos.x_offset >> 6);
+        const int yOffset = (curGlyphPos.y_offset >> 6);
+        // Three cases:
+        //   1. A glyph matches the letter
+        //   2. In RTL mode we found a glyph that corresponds to a letter the preceeds our index
+        //   3. In LTR mode we found a glyph that corresponds to a letter the proceeds our index
+        //   4. In LTR we got to the last glyph in and still didn't find the index (in RTL the last glyph should always have cluster==0)
+        // In cases 2 and 3 we're dealing with a ligature that swallowed up our index.
+        if ((curGlyph.cluster == clusterIndex) || (isRTL && curGlyph.cluster < clusterIndex)) {
+            // Cases 1 and 2
+            position.x += xOffset;
+            position.y += yOffset;
+            break;
+        } else if (!isRTL && curGlyph.cluster > clusterIndex) {
+            // Case 3 current position is *after* our index, we need the previous one
+            position = prevPosition;
+            position.x += xOffset;
+            position.y += yOffset;
+            break;
+        } else if (!isRTL && i == glyphCount - 1) {
+            position.x += xOffset;
+            position.y += yOffset;
+            break;
+        }
+        
+        prevPosition = position;
+        prevPosition.x += xOffset;
+        prevPosition.y += yOffset;
+        
+        position.x += curGlyphPos.x_advance >> 6;
+        position.y += curGlyphPos.y_advance >> 6;
+    }
+    
     // Transform the position to global coordinates
-    position = getTransform().transformPoint(position);
-
-    return position;
+    return getTransform().transformPoint(position);
 }
 
 
@@ -276,17 +372,65 @@ void Text::ensureGeometryUpdate() const
     float minY = static_cast<float>(m_characterSize);
     float maxX = 0.f;
     float maxY = 0.f;
-    Uint32 prevChar = 0;
-    for (std::size_t i = 0; i < m_string.getSize(); ++i)
+    
+    hb_font_t *hbFtFont = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
+    hb_buffer_t *hbBuffer = hb_buffer_create();
+    
+    LineView lineView(m_string.getData(), m_string.getSize());
+    while(lineView.hasNext())
     {
-        Uint32 curChar = m_string[i];
+        hb_buffer_add_utf32(hbBuffer, lineView.getLineStart(), lineView.getLineLen(), 0, lineView.getLineLen());
+        
+        // if the script or direction aren't set, try to guess them before shaping
+        hb_buffer_guess_segment_properties(hbBuffer);
+        hb_shape(hbFtFont, hbBuffer, NULL, 0);
+        
+        // from the shaped text we get the glyphs and positions
+        unsigned int         glyphCount;
+        hb_glyph_info_t     *glyphInfo = hb_buffer_get_glyph_infos(hbBuffer, &glyphCount);
+        hb_glyph_position_t *glyphPos  = hb_buffer_get_glyph_positions(hbBuffer, &glyphCount);
+        
+        for (std::size_t i = 0; i < glyphCount; ++i)
+        {
+            hb_glyph_info_t     curGlyph    = glyphInfo[i];
+            hb_glyph_position_t curGlyphPos = glyphPos[i];
 
-        // Apply the kerning offset
-        x += static_cast<float>(m_font->getKerning(prevChar, curChar, m_characterSize));
-        prevChar = curChar;
+            // Extract the current glyph's description
+            const Glyph& glyph = m_font->getGlyphByIndex(curGlyph.codepoint, m_characterSize, bold);
 
+            int left   = glyph.bounds.left;
+            int top    = glyph.bounds.top;
+            int right  = glyph.bounds.left + glyph.bounds.width;
+            int bottom = glyph.bounds.top  + glyph.bounds.height;
+
+            float u1 = static_cast<float>(glyph.textureRect.left);
+            float v1 = static_cast<float>(glyph.textureRect.top);
+            float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width);
+            float v2 = static_cast<float>(glyph.textureRect.top  + glyph.textureRect.height);
+
+            int currentX = x + (curGlyphPos.x_offset >> 6);
+            int currentY = y + (curGlyphPos.y_offset >> 6);
+
+            // Add a quad for the current character
+            m_vertices.append(Vertex(Vector2f(currentX + left  - italic * top,    currentY + top),    m_color, Vector2f(u1, v1)));
+            m_vertices.append(Vertex(Vector2f(currentX + right - italic * top,    currentY + top),    m_color, Vector2f(u2, v1)));
+            m_vertices.append(Vertex(Vector2f(currentX + left  - italic * bottom, currentY + bottom), m_color, Vector2f(u1, v2)));
+            m_vertices.append(Vertex(Vector2f(currentX + left  - italic * bottom, currentY + bottom), m_color, Vector2f(u1, v2)));
+            m_vertices.append(Vertex(Vector2f(currentX + right - italic * top,    currentY + top),    m_color, Vector2f(u2, v1)));
+            m_vertices.append(Vertex(Vector2f(currentX + right - italic * bottom, currentY + bottom), m_color, Vector2f(u2, v2)));
+
+            // Update the current bounds
+            minX = std::min(minX, (float)currentX + left - italic * bottom);
+            maxX = std::max(maxX, (float)currentX + right - italic * top);
+            minY = std::min(minY, (float)currentY + top);
+            maxY = std::max(maxY, (float)currentY + bottom);
+
+            // Advance to the next character
+            x += curGlyphPos.x_advance >> 6;
+            y += curGlyphPos.y_advance >> 6;
+        }
         // If we're using the underlined style and there's a new line, draw a line
-        if (underlined && (curChar == L'\n'))
+        if (underlined)
         {
             float top = y + underlineOffset;
             float bottom = top + underlineThickness;
@@ -299,71 +443,9 @@ void Text::ensureGeometryUpdate() const
             m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
         }
 
-        // Handle special characters
-        if ((curChar == ' ') || (curChar == '\t') || (curChar == '\n'))
-        {
-            // Update the current bounds (min coordinates)
-            minX = std::min(minX, x);
-            minY = std::min(minY, y);
-
-            switch (curChar)
-            {
-                case ' ' :  x += hspace;        break;
-                case '\t' : x += hspace * 4;    break;
-                case '\n' : y += vspace; x = 0; break;
-            }
-
-            // Update the current bounds (max coordinates)
-            maxX = std::max(maxX, x);
-            maxY = std::max(maxY, y);
-
-            // Next glyph, no need to create a quad for whitespace
-            continue;
-        }
-
-        // Extract the current glyph's description
-        const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, bold);
-
-        int left   = glyph.bounds.left;
-        int top    = glyph.bounds.top;
-        int right  = glyph.bounds.left + glyph.bounds.width;
-        int bottom = glyph.bounds.top  + glyph.bounds.height;
-
-        float u1 = static_cast<float>(glyph.textureRect.left);
-        float v1 = static_cast<float>(glyph.textureRect.top);
-        float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width);
-        float v2 = static_cast<float>(glyph.textureRect.top  + glyph.textureRect.height);
-
-        // Add a quad for the current character
-        m_vertices.append(Vertex(Vector2f(x + left  - italic * top,    y + top),    m_color, Vector2f(u1, v1)));
-        m_vertices.append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
-        m_vertices.append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
-        m_vertices.append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
-        m_vertices.append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
-        m_vertices.append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), m_color, Vector2f(u2, v2)));
-
-        // Update the current bounds
-        minX = std::min(minX, x + left - italic * bottom);
-        maxX = std::max(maxX, x + right - italic * top);
-        minY = std::min(minY, y + top);
-        maxY = std::max(maxY, y + bottom);
-
-        // Advance to the next character
-        x += glyph.advance;
-    }
-
-    // If we're using the underlined style, add the last line
-    if (underlined)
-    {
-        float top = y + underlineOffset;
-        float bottom = top + underlineThickness;
-
-        m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
+        //next line
+        y += vspace; x = 0;
+        lineView.next();
     }
 
     // Update the bounding rectangle
@@ -371,6 +453,9 @@ void Text::ensureGeometryUpdate() const
     m_bounds.top = minY;
     m_bounds.width = maxX - minX;
     m_bounds.height = maxY - minY;
+    
+    hb_buffer_destroy(hbBuffer);
+    hb_font_destroy(hbFtFont);
 }
 
 } // namespace sf

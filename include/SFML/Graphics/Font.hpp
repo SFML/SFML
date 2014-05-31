@@ -162,6 +162,18 @@ public :
     const Glyph& getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Retrieve a glyph of the font
+    ///
+    /// \param codePoint     Index of the character inside the font
+    /// \param characterSize Reference character size
+    /// \param bold          Retrieve the bold version or the regular one?
+    ///
+    /// \return The glyph corresponding to \a codePoint and \a characterSize
+    ///
+    ////////////////////////////////////////////////////////////
+    const Glyph& getGlyphByIndex(Uint32 index, unsigned int characterSize, bool bold) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the kerning offset of two glyphs
     ///
     /// The kerning is an extra offset (negative) to apply between two
@@ -216,6 +228,7 @@ public :
     ////////////////////////////////////////////////////////////
     Font& operator =(const Font& right);
 
+    friend class Text;
 private :
 
     ////////////////////////////////////////////////////////////
