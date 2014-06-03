@@ -38,25 +38,29 @@ namespace
     // helper class that divides the string into lines.
     class LineView {
     public:
-        LineView(const sf::Uint32* start, std::size_t length) : m_lineBegin(start), m_end(start+length) {
+        LineView(const sf::Uint32* start, std::size_t length) : 
+        m_lineBegin(start), 
+        m_end(start+length) 
+        {
             findNextEnd();
         }
 
-        const sf::Uint32 * getLineStart() const { return m_lineBegin; }
-        std::size_t        getLineLen()   const { return m_lineLen;   }
+        const sf::Uint32* getLineStart() const { return m_lineBegin; }
+        std::size_t       getLineLen()   const { return m_lineLen;   }
         bool hasNext() const { return m_lineBegin < m_end; }
-        void next() { m_lineBegin += m_lineLen+1; findNextEnd(); }
+        void next() { m_lineBegin += m_lineLen + 1; findNextEnd(); }
         
     private:
-        void findNextEnd() {
+        void findNextEnd() 
+        {
             std::size_t lineLen = 0;
             const sf::Uint32 delimiter = static_cast<sf::Uint32>('\n');
             for(const sf::Uint32* it = m_lineBegin; *it != delimiter && it < m_end; ++it, ++lineLen);
             m_lineLen = lineLen;
         }
 
-        const sf::Uint32 * m_lineBegin;
-        const sf::Uint32 * m_end;
+        const sf::Uint32* m_lineBegin;
+        const sf::Uint32* m_end;
         std::size_t        m_lineLen;
     };
 }
@@ -218,24 +222,24 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     std::size_t lineNumber = 0;
     std::size_t lineStart = 0;
     LineView lineView(m_string.getData(), m_string.getSize());
-    for(std::size_t i = 0; i < index; ++i) {
-        if (m_string[i] == '\n') {
+    for(std::size_t i = 0; i < index; ++i) 
+    {
+        if (m_string[i] == '\n') 
+        {
             lineNumber++;
             lineStart = i + 1;
             lineView.next();
         }
     }
     
-    float y;
     if (m_string[index] == '\n') //user requested the position of a newline character, return the beginning of the new line
         return getTransform().transformPoint(Vector2f(0.0f, vspace * (lineNumber + 1)));
-    else
-        y = vspace * lineNumber;
     
+    const float y = vspace * lineNumber; 
     
     // prepare harfbuzz buffer and font face to shape the complex text
-    hb_font_t *hbFtFont = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
-    hb_buffer_t *hbBuffer = hb_buffer_create();
+    hb_font_t*   hbFtFont = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
+    hb_buffer_t* hbBuffer = hb_buffer_create();
     
     // setup the Harfbuzz structures to get the position
     hb_buffer_add_utf32(hbBuffer, lineView.getLineStart(), lineView.getLineLen(), 0, lineView.getLineLen());
@@ -251,8 +255,8 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     
     // from the shaped text we get the glyphs and positions
     unsigned int         glyphCount;
-    hb_glyph_info_t     *glyphInfo = hb_buffer_get_glyph_infos(hbBuffer, &glyphCount);
-    hb_glyph_position_t *glyphPos  = hb_buffer_get_glyph_positions(hbBuffer, &glyphCount);
+    hb_glyph_info_t*     glyphInfo = hb_buffer_get_glyph_infos(hbBuffer, &glyphCount);
+    hb_glyph_position_t* glyphPos  = hb_buffer_get_glyph_positions(hbBuffer, &glyphCount);
     
     // index of the character in the line
     const std::size_t clusterIndex = index - lineStart; 
@@ -260,7 +264,8 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     // We have all the data, now compute the position
     Vector2f position(0.0f, y);
     Vector2f prevPosition = position;
-    for ( std::size_t i = 0; i < glyphCount; ++i) {
+    for ( std::size_t i = 0; i < glyphCount; ++i) 
+    {
         hb_glyph_info_t     curGlyph    = glyphInfo[i];
         hb_glyph_position_t curGlyphPos = glyphPos[i];
         
@@ -272,18 +277,23 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         //   3. In LTR mode we found a glyph that corresponds to a letter the proceeds our index
         //   4. In LTR we got to the last glyph in and still didn't find the index (in RTL the last glyph should always have cluster==0)
         // In cases 2 and 3 we're dealing with a ligature that swallowed up our index.
-        if ((curGlyph.cluster == clusterIndex) || (isRTL && curGlyph.cluster < clusterIndex)) {
+        if ((curGlyph.cluster == clusterIndex) || (isRTL && curGlyph.cluster < clusterIndex)) 
+        {
             // Cases 1 and 2
             position.x += xOffset;
             position.y += yOffset;
             break;
-        } else if (!isRTL && curGlyph.cluster > clusterIndex) {
+        } 
+        else if (!isRTL && curGlyph.cluster > clusterIndex) 
+        {
             // Case 3 current position is *after* our index, we need the previous one
             position = prevPosition;
             position.x += xOffset;
             position.y += yOffset;
             break;
-        } else if (!isRTL && i == glyphCount - 1) {
+        } 
+        else if (!isRTL && i == glyphCount - 1) 
+        {
             position.x += xOffset;
             position.y += yOffset;
             break;
@@ -373,8 +383,8 @@ void Text::ensureGeometryUpdate() const
     float maxX = 0.f;
     float maxY = 0.f;
     
-    hb_font_t *hbFtFont = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
-    hb_buffer_t *hbBuffer = hb_buffer_create();
+    hb_font_t*   hbFtFont = hb_ft_font_create(static_cast<FT_Face>(m_font->m_face), NULL);
+    hb_buffer_t* hbBuffer = hb_buffer_create();
     
     LineView lineView(m_string.getData(), m_string.getSize());
     while(lineView.hasNext())
@@ -387,8 +397,8 @@ void Text::ensureGeometryUpdate() const
         
         // from the shaped text we get the glyphs and positions
         unsigned int         glyphCount;
-        hb_glyph_info_t     *glyphInfo = hb_buffer_get_glyph_infos(hbBuffer, &glyphCount);
-        hb_glyph_position_t *glyphPos  = hb_buffer_get_glyph_positions(hbBuffer, &glyphCount);
+        hb_glyph_info_t*     glyphInfo = hb_buffer_get_glyph_infos(hbBuffer, &glyphCount);
+        hb_glyph_position_t* glyphPos  = hb_buffer_get_glyph_positions(hbBuffer, &glyphCount);
         
         for (std::size_t i = 0; i < glyphCount; ++i)
         {

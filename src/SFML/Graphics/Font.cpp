@@ -293,7 +293,7 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
 {
     FT_Face face = static_cast<FT_Face>(m_face);
     Uint32 index = FT_Get_Char_Index(face, codePoint);
-    getGlyphByIndex(index, characterSize, bold);
+    return getGlyphByIndex(index, characterSize, bold);
 }
 
 
