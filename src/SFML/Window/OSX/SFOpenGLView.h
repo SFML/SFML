@@ -55,6 +55,7 @@ namespace sf {
     BOOL                          m_mouseIsIn;      ///< Mouse positional state
     NSTrackingArea*               m_trackingArea;   ///< Mouse tracking area
     BOOL                          m_fullscreen;     ///< Indicate whether the window is fullscreen or not
+    CGFloat                       m_scaleFactor;    ///< Display scale factor (e.g. 1x for classic display, 2x for retina)
 
     // Hidden text view used to convert key event to actual chars.
     // We use a silent responder to prevent sound alerts.
@@ -68,6 +69,8 @@ namespace sf {
 /// NB: -initWithFrame: is also implemented to default isFullscreen to NO
 /// in case SFOpenGLView is created with the standard message.
 ///
+/// To finish the initialization -finishInit should be called too.
+///
 /// \param frameRect dimension of the view
 /// \param isFullscreen fullscreen flag
 ///
@@ -75,6 +78,14 @@ namespace sf {
 ///
 ////////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen;
+
+////////////////////////////////////////////////////////////
+/// \brief Finish the creation of the SFML OpenGL view
+///
+/// This method should be called after the view was added to a window
+///
+////////////////////////////////////////////////////////////
+-(void)finishInit;
 
 ////////////////////////////////////////////////////////////
 /// \brief Apply the given requester to the view
@@ -105,6 +116,14 @@ namespace sf {
 ///
 ////////////////////////////////////////////////////////////
 -(void)disableKeyRepeat;
+
+////////////////////////////////////////////////////////////
+/// \brief Get the display scale factor
+///
+/// \return e.g. 1.0 for classic display, 2.0 for retina display
+///
+////////////////////////////////////////////////////////////
+-(CGFloat)displayScaleFactor;
 
 ////////////////////////////////////////////////////////////
 /// \brief Compute the position of the cursor

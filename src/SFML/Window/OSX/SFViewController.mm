@@ -71,6 +71,8 @@
         [m_view addSubview:m_oglView];
 
         [m_oglView setAutoresizingMask:[m_view autoresizingMask]];
+
+        [m_oglView finishInit];
     }
 
     return self;
@@ -86,6 +88,13 @@
     [m_oglView release];
 
     [super dealloc];
+}
+
+
+////////////////////////////////////////////////////////
+-(CGFloat)displayScaleFactor
+{
+    return [m_oglView displayScaleFactor];
 }
 
 

@@ -149,6 +149,8 @@
             [self setupFullscreenViewWithMode:mode];
         else
             [self setupWindowWithMode:mode andStyle:style];
+
+        [m_oglView finishInit];
     }
     return self;
 }
@@ -304,6 +306,13 @@
 
 #pragma mark
 #pragma mark WindowImplDelegateProtocol's methods
+
+
+////////////////////////////////////////////////////////
+-(CGFloat)displayScaleFactor
+{
+    return [m_oglView displayScaleFactor];
+}
 
 
 ////////////////////////////////////////////////////////

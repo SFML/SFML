@@ -44,33 +44,42 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
+/// \brief Get the scale factor of the main screen
+///
+////////////////////////////////////////////////////////////
+CGFloat getDefaultScaleFactor()
+{
+    return [[NSScreen mainScreen] backingScaleFactor];
+}
+
+////////////////////////////////////////////////////////////
 /// \brief Scale SFML coordinates to backing coordinates
 ///
 /// Use -[NSScreen backingScaleFactor] to find out if the user
 /// has a retina display or not.
 ///
 /// \param in SFML coordinates to be converted
+/// \param delegate a object implementing WindowImplDelegateProtocol, or nil for default scale
 ///
 ////////////////////////////////////////////////////////////
 template <class T>
-void scaleIn(T& in)
+void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
 {
-    CGFloat scale = [[NSScreen mainScreen] backingScaleFactor];
-    in /= scale;
+    in /= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
 }
 
 template <class T>
-void scaleInWidthHeight(T& in)
+void scaleInWidthHeight(T& in, id<WindowImplDelegateProtocol> delegate)
 {
-    scaleIn(in.width);
-    scaleIn(in.height);
+    scaleIn(in.width, delegate);
+    scaleIn(in.height, delegate);
 }
 
 template <class T>
-void scaleInXY(T& in)
+void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
 {
-    scaleIn(in.x);
-    scaleIn(in.y);
+    scaleIn(in.x, delegate);
+    scaleIn(in.y, delegate);
 }
 
 ////////////////////////////////////////////////////////////
@@ -80,27 +89,27 @@ void scaleInXY(T& in)
 /// has a retina display or not.
 ///
 /// \param out backing coordinates to be converted
+/// \param delegate a object implementing WindowImplDelegateProtocol, or nil for default scale
 ///
 ////////////////////////////////////////////////////////////
 template <class T>
-void scaleOut(T& out)
+void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
 {
-    CGFloat scale = [[NSScreen mainScreen] backingScaleFactor];
-    out *= scale;
+    out *= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
 }
 
 template <class T>
-void scaleOutWidthHeight(T& out)
+void scaleOutWidthHeight(T& out, id<WindowImplDelegateProtocol> delegate)
 {
-    scaleOut(out.width);
-    scaleOut(out.height);
+    scaleOut(out.width, delegate);
+    scaleOut(out.height, delegate);
 }
 
 template <class T>
-void scaleOutXY(T& out)
+void scaleOutXY(T& out, id<WindowImplDelegateProtocol> delegate)
 {
-    scaleOut(out.x);
-    scaleOut(out.y);
+    scaleOut(out.x, delegate);
+    scaleOut(out.y, delegate);
 }
 
 #pragma mark
@@ -159,7 +168,7 @@ m_showCursor(true)
     retainPool();
 
     // Use backing size
-    scaleInWidthHeight(mode);
+    scaleInWidthHeight(mode, nil);
 
     m_delegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
     [m_delegate changeTitle:sfStringToNSString(title)];
@@ -250,7 +259,7 @@ void WindowImplCocoa::windowResized(unsigned int width, unsigned int height)
     event.type = Event::Resized;
     event.size.width  = width;
     event.size.height = height;
-    scaleOutWidthHeight(event.size);
+    scaleOutWidthHeight(event.size, m_delegate);
 
     pushEvent(event);
 }
@@ -293,7 +302,7 @@ void WindowImplCocoa::mouseDownAt(Mouse::Button button, int x, int y)
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
-    scaleOutXY(event.mouseButton);
+    scaleOutXY(event.mouseButton, m_delegate);
 
     pushEvent(event);
 }
@@ -307,7 +316,7 @@ void WindowImplCocoa::mouseUpAt(Mouse::Button button, int x, int y)
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
-    scaleOutXY(event.mouseButton);
+    scaleOutXY(event.mouseButton, m_delegate);
 
     pushEvent(event);
 }
@@ -320,7 +329,7 @@ void WindowImplCocoa::mouseMovedAt(int x, int y)
     event.type = Event::MouseMoved;
     event.mouseMove.x = x;
     event.mouseMove.y = y;
-    scaleOutXY(event.mouseMove);
+    scaleOutXY(event.mouseMove, m_delegate);
 
     pushEvent(event);
 }
@@ -333,7 +342,7 @@ void WindowImplCocoa::mouseWheelScrolledAt(float delta, int x, int y)
     event.mouseWheel.delta = delta;
     event.mouseWheel.x = x;
     event.mouseWheel.y = y;
-    scaleOutXY(event.mouseWheel);
+    scaleOutXY(event.mouseWheel, m_delegate);
 
     pushEvent(event);
 }
@@ -424,7 +433,7 @@ Vector2i WindowImplCocoa::getPosition() const
 {
     NSPoint pos = [m_delegate position];
     sf::Vector2i ret(pos.x, pos.y);
-    scaleOutXY(ret);
+    scaleOutXY(ret, m_delegate);
     return ret;
 }
 
@@ -433,7 +442,7 @@ Vector2i WindowImplCocoa::getPosition() const
 void WindowImplCocoa::setPosition(const Vector2i& position)
 {
     sf::Vector2i backingPosition = position;
-    scaleInXY(backingPosition);
+    scaleInXY(backingPosition, m_delegate);
     [m_delegate setWindowPositionToX:backingPosition.x Y:backingPosition.y];
 }
 
@@ -443,7 +452,7 @@ Vector2u WindowImplCocoa::getSize() const
 {
     NSSize size = [m_delegate size];
     Vector2u ret(size.width, size.height);
-    scaleOutXY(ret);
+    scaleOutXY(ret, m_delegate);
     return ret;
 }
 
@@ -452,7 +461,7 @@ Vector2u WindowImplCocoa::getSize() const
 void WindowImplCocoa::setSize(const Vector2u& size)
 {
     sf::Vector2u backingSize = size;
-    scaleInXY(backingSize);
+    scaleInXY(backingSize, m_delegate);
     [m_delegate resizeTo:backingSize.x by:backingSize.y];
 }
 
