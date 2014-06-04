@@ -55,13 +55,13 @@ namespace
         {
             std::size_t lineLen = 0;
             const sf::Uint32 delimiter = static_cast<sf::Uint32>('\n');
-            for(const sf::Uint32* it = m_lineBegin; *it != delimiter && it < m_end; ++it, ++lineLen);
+            for (const sf::Uint32* it = m_lineBegin; *it != delimiter && it < m_end; ++it, ++lineLen);
             m_lineLen = lineLen;
         }
 
         const sf::Uint32* m_lineBegin;
         const sf::Uint32* m_end;
-        std::size_t        m_lineLen;
+        std::size_t       m_lineLen;
     };
 }
 
@@ -222,7 +222,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     std::size_t lineNumber = 0;
     std::size_t lineStart = 0;
     LineView lineView(m_string.getData(), m_string.getSize());
-    for(std::size_t i = 0; i < index; ++i) 
+    for (std::size_t i = 0; i < index; ++i) 
     {
         if (m_string[i] == '\n') 
         {

@@ -164,11 +164,11 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve a glyph of the font
     ///
-    /// \param codePoint     Index of the character inside the font
+    /// \param index         Index of the character inside the font
     /// \param characterSize Reference character size
     /// \param bold          Retrieve the bold version or the regular one?
     ///
-    /// \return The glyph corresponding to \a codePoint and \a characterSize
+    /// \return The glyph corresponding to \a index and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
     const Glyph& getGlyphByIndex(Uint32 index, unsigned int characterSize, bool bold) const;
@@ -272,14 +272,14 @@ private :
     ////////////////////////////////////////////////////////////
     /// \brief Load a new glyph and store it in the cache
     ///
-    /// \param codePoint     Unicode code point of the character to load
+    /// \param index         Index of the glyph within the font
     /// \param characterSize Reference character size
     /// \param bold          Retrieve the bold version or the regular one?
     ///
-    /// \return The glyph corresponding to \a codePoint and \a characterSize
+    /// \return The glyph corresponding to \a index and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    Glyph loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
+    Glyph loadGlyph(Uint32 index, unsigned int characterSize, bool bold) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Find a suitable rectangle within the texture for a glyph
