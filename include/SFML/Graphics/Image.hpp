@@ -291,7 +291,7 @@ private :
 /// channels -- just like a sf::Color.
 /// All the functions that return an array of pixels follow
 /// this rule, and all parameters that you pass to sf::Image
-/// functions (such as loadFromPixels) must use this
+/// functions (such as loadFromMemory) must use this
 /// representation as well.
 ///
 /// A sf::Image can be copied, but it is a heavy resource and
