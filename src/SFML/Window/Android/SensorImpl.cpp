@@ -90,9 +90,6 @@ bool SensorImpl::open(Sensor::Type sensor)
     // Set the event rate (not to consume too much battery)
     ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, minimumDelay.asMicroseconds());
 
-    // Disable the sensor by default
-    setEnabled(true);
-
     // Save the index of the sensor
     m_index = static_cast<unsigned int>(sensor);
 
