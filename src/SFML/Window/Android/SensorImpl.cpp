@@ -29,6 +29,11 @@
 #include <SFML/System/Time.hpp>
 #include <android/looper.h>
 
+// Define missing constants
+#define ASENSOR_TYPE_GRAVITY             0x00000009
+#define ASENSOR_TYPE_LINEAR_ACCELERATION 0x0000000a
+#define ASENSOR_TYPE_ORIENTATION         0x00000003
+
 namespace
 {
     ALooper* looper;
@@ -127,15 +132,10 @@ void SensorImpl::setEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 ASensor const* SensorImpl::getDefaultSensor(Sensor::Type sensor)
 {
-    // These sensors are unavailable from the Android C API
-    if ((sensor == Sensor::Gravity) ||
-        (sensor == Sensor::UserAcceleration) ||
-        (sensor == Sensor::Orientation))
-        return NULL;
-
     // Find the Android sensor type
-    static int types[] = {ASENSOR_TYPE_ACCELEROMETER,
-        ASENSOR_TYPE_GYROSCOPE, ASENSOR_TYPE_MAGNETIC_FIELD};
+    static int types[] = {ASENSOR_TYPE_ACCELEROMETER, ASENSOR_TYPE_GYROSCOPE,
+        ASENSOR_TYPE_MAGNETIC_FIELD, ASENSOR_TYPE_GRAVITY, ASENSOR_TYPE_LINEAR_ACCELERATION,
+        ASENSOR_TYPE_ORIENTATION};
 
     int type = types[sensor];
 
