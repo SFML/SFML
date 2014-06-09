@@ -376,8 +376,6 @@ void WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* 
         }
         
         states->pendingEvents.push_back(event);
-
-        states->touchEvents[id] = Vector2i(event.touch.x, event.touch.y);
      }
 }
 
@@ -391,8 +389,8 @@ void WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Ac
     int index = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
     int id = AMotionEvent_getPointerId(_event, index);
 
-    float x = AMotionEvent_getX(_event, 0);
-    float y = AMotionEvent_getY(_event, 0);
+    float x = AMotionEvent_getX(_event, index);
+    float y = AMotionEvent_getY(_event, index);
     
     Event event;
 
