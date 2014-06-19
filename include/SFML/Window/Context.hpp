@@ -90,6 +90,15 @@ public :
     ////////////////////////////////////////////////////////////
     Context(const ContextSettings& settings, unsigned int width, unsigned int height);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Destroys the hidden internal context of the current thread
+    ///
+    /// If you use multiple threads for loading SFML resources you
+    /// need to ensure this is the last call your thread makes.
+    ///
+    ////////////////////////////////////////////////////////////
+    static void releaseThreadContext();
+
 private :
 
     ////////////////////////////////////////////////////////////

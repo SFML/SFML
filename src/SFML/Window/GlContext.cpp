@@ -196,6 +196,21 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
 
 
 ////////////////////////////////////////////////////////////
+void GlContext::releaseInternalThreadContext()
+{
+    if (hasInternalContext())
+    {
+        // Delete the context before removing it from the internal list
+        // If we don't, another internal context will be created in the dtor
+        delete internalContext;
+        sf::Lock lock(internalContextsMutex);
+        internalContexts.erase(internalContexts.find(internalContext));
+        internalContext = NULL;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 GlContext::~GlContext()
 {
     // Deactivate the context before killing it, unless we're inside Cleanup()
