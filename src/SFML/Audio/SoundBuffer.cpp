@@ -248,12 +248,23 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
         return false;
     }
 
+    // First make a copy of the list of sounds so we can reattach later
+    SoundList sounds(m_sounds);
+
+    // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
+    for (SoundList::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
+        (*it)->resetBuffer();
+
     // Fill the buffer
     ALsizei size = static_cast<ALsizei>(m_samples.size()) * sizeof(Int16);
     alCheck(alBufferData(m_buffer, format, &m_samples[0], size, sampleRate));
 
     // Compute the duration
     m_duration = seconds(static_cast<float>(m_samples.size()) / sampleRate / channelCount);
+
+    // Now reattach the buffer to the sounds that use it
+    for (SoundList::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
+        (*it)->setBuffer(*this);
 
     return true;
 }

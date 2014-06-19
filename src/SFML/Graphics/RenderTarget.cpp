@@ -35,6 +35,41 @@
 #include <iostream>
 
 
+namespace
+{
+    // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
+    sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
+    {
+        switch (blendFactor)
+        {
+            default:
+            case sf::BlendMode::Zero:             return GL_ZERO;
+            case sf::BlendMode::One:              return GL_ONE;
+            case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
+            case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
+            case sf::BlendMode::DstColor:         return GL_DST_COLOR;
+            case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
+            case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
+            case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+            case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
+            case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+        }
+    }
+
+
+    // Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
+    sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
+    {
+        switch (blendEquation)
+        {
+            default:
+            case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
+            case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
+        }
+    }
+}
+
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -58,6 +93,9 @@ void RenderTarget::clear(const Color& color)
 {
     if (activate(true))
     {
+        // Unbind texture to fix RenderTexture preventing clear
+        applyTexture(NULL);
+
         glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         glCheck(glClear(GL_COLOR_BUFFER_BIT));
     }
@@ -95,8 +133,8 @@ IntRect RenderTarget::getViewport(const View& view) const
 
     return IntRect(static_cast<int>(0.5f + width  * viewport.left),
                    static_cast<int>(0.5f + height * viewport.top),
-                   static_cast<int>(width  * viewport.width),
-                   static_cast<int>(height * viewport.height));
+                   static_cast<int>(0.5f + width  * viewport.width),
+                   static_cast<int>(0.5f + height * viewport.height));
 }
 
 
@@ -120,11 +158,13 @@ Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point, const View& view)
     return view.getInverseTransform().transformPoint(normalized);
 }
 
+
 ////////////////////////////////////////////////////////////
 Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point) const
 {
     return mapCoordsToPixel(point, getView());
 }
+
 
 ////////////////////////////////////////////////////////////
 Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view) const
@@ -141,6 +181,7 @@ Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view)
     return pixel;
 }
 
+
 ////////////////////////////////////////////////////////////
 void RenderTarget::draw(const Drawable& drawable, const RenderStates& states)
 {
@@ -155,6 +196,16 @@ void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
     // Nothing to draw?
     if (!vertices || (vertexCount == 0))
         return;
+
+    // GL_QUADS is unavailable on OpenGL ES
+    #ifdef SFML_OPENGL_ES
+        if (type == Quads)
+        {
+            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
+            return;
+        }
+        #define GL_QUADS 0
+    #endif
 
     if (activate(true))
     {
@@ -243,19 +294,21 @@ void RenderTarget::pushGLStates()
 {
     if (activate(true))
     {
-#ifdef SFML_DEBUG
-        // make sure that the user didn't leave an unchecked OpenGL error
-        GLenum error = glGetError();
-        if (error != GL_NO_ERROR)
-        {
-            err() << "OpenGL error (" << error << ") detected in user code, "
-                  << "you should check for errors with glGetError()"
-                  << std::endl;
-        }
-#endif
+        #ifdef SFML_DEBUG
+            // make sure that the user didn't leave an unchecked OpenGL error
+            GLenum error = glGetError();
+            if (error != GL_NO_ERROR)
+            {
+                err() << "OpenGL error (" << error << ") detected in user code, "
+                      << "you should check for errors with glGetError()"
+                      << std::endl;
+            }
+        #endif
 
-        glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
-        glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
+        #ifndef SFML_OPENGL_ES
+            glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
+            glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
+        #endif
         glCheck(glMatrixMode(GL_MODELVIEW));
         glCheck(glPushMatrix());
         glCheck(glMatrixMode(GL_PROJECTION));
@@ -279,8 +332,10 @@ void RenderTarget::popGLStates()
         glCheck(glPopMatrix());
         glCheck(glMatrixMode(GL_TEXTURE));
         glCheck(glPopMatrix());
-        glCheck(glPopClientAttrib());
-        glCheck(glPopAttrib());
+        #ifndef SFML_OPENGL_ES
+            glCheck(glPopClientAttrib());
+            glCheck(glPopAttrib());
+        #endif
     }
 }
 
@@ -288,10 +343,20 @@ void RenderTarget::popGLStates()
 ////////////////////////////////////////////////////////////
 void RenderTarget::resetGLStates()
 {
+    // Check here to make sure a context change does not happen after activate(true)
+    bool shaderAvailable = Shader::isAvailable();
+
     if (activate(true))
     {
-        // Make sure that GLEW is initialized
-        priv::ensureGlewInit();
+        // Make sure that extensions are initialized
+        priv::ensureExtensionsInit();
+
+        // Make sure that the texture unit which is active is the number 0
+        if (GLEXT_multitexture)
+        {
+            glCheck(GLEXT_glClientActiveTexture(GLEXT_GL_TEXTURE0));
+            glCheck(GLEXT_glActiveTexture(GLEXT_GL_TEXTURE0));
+        }
 
         // Define the default OpenGL states
         glCheck(glDisable(GL_CULL_FACE));
@@ -304,15 +369,15 @@ void RenderTarget::resetGLStates()
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-        glCheck(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
         m_cache.glStatesSet = true;
 
         // Apply the default SFML states
         applyBlendMode(BlendAlpha);
         applyTransform(Transform::Identity);
         applyTexture(NULL);
-        if (Shader::isAvailable())
+        if (shaderAvailable)
             applyShader(NULL);
+
         m_cache.useVertexCache = false;
 
         // Set the default view
@@ -353,39 +418,31 @@ void RenderTarget::applyCurrentView()
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::applyBlendMode(BlendMode mode)
+void RenderTarget::applyBlendMode(const BlendMode& mode)
 {
-    switch (mode)
+    // Apply the blend mode, falling back to the non-separate versions if necessary
+    if (GLEXT_blend_func_separate)
     {
-        // glBlendFuncSeparateEXT is used when available to avoid an incorrect alpha value when the target
-        // is a RenderTexture -- in this case the alpha value must be written directly to the target buffer
+        glCheck(GLEXT_glBlendFuncSeparate(
+            factorToGlConstant(mode.colorSrcFactor), factorToGlConstant(mode.colorDstFactor),
+            factorToGlConstant(mode.alphaSrcFactor), factorToGlConstant(mode.alphaDstFactor)));
+    }
+    else
+    {
+        glCheck(glBlendFunc(
+            factorToGlConstant(mode.colorSrcFactor),
+            factorToGlConstant(mode.colorDstFactor)));
+    }
 
-        // Alpha blending
-        default :
-        case BlendAlpha :
-            if (GLEW_EXT_blend_func_separate)
-                glCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
-            else
-                glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-            break;
-
-        // Additive blending
-        case BlendAdd :
-            if (GLEW_EXT_blend_func_separate)
-                glCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE));
-            else
-                glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
-            break;
-
-        // Multiplicative blending
-        case BlendMultiply :
-            glCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));
-            break;
-
-        // No blending
-        case BlendNone :
-            glCheck(glBlendFunc(GL_ONE, GL_ZERO));
-            break;
+    if (GLEXT_blend_equation_separate)
+    {
+        glCheck(GLEXT_glBlendEquationSeparate(
+            equationToGlConstant(mode.colorEquation),
+            equationToGlConstant(mode.alphaEquation)));
+    }
+    else
+    {
+        glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
     }
 
     m_cache.lastBlendMode = mode;
@@ -436,8 +493,9 @@ void RenderTarget::applyShader(const Shader* shader)
 //   to render them.
 //
 // * Blending mode
-//   It's a simple integral value, so we can easily check
-//   whether the value to apply is the same as before or not.
+//   Since it overloads the == operator, we can easily check
+//   whether any of the 6 blending components changed and,
+//   thus, whether we need to update the blend mode.
 //
 // * Texture
 //   Storing the pointer or OpenGL ID of the last used texture
@@ -452,5 +510,5 @@ void RenderTarget::applyShader(const Shader* shader)
 //   like matrices or textures. The only optimization that we
 //   do is that we avoid setting a null shader if there was
 //   already none for the previous draw.
-// 
+//
 ////////////////////////////////////////////////////////////

@@ -76,11 +76,20 @@ void SocketSelector::add(Socket& socket)
     SocketHandle handle = socket.getHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
-        FD_SET(handle, &m_impl->AllSockets);
+        if (handle < FD_SETSIZE)
+        {
+            FD_SET(handle, &m_impl->AllSockets);
 
-        int size = static_cast<int>(handle);
-        if (size > m_impl->MaxSocket)
-            m_impl->MaxSocket = size;
+            int size = static_cast<int>(handle);
+            if (size > m_impl->MaxSocket)
+                m_impl->MaxSocket = size;
+        }
+        else
+        {
+            err() << "The socket can't be added to the selector because its "
+                  << "ID is too high. This is a limitation of your operating "
+                  << "system's FD_SETSIZE setting.";
+        }
     }
 }
 

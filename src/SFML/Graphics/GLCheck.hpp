@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <GL/glew.h>
+#include <SFML/Graphics/GLExtensions.hpp>
 #include <string>
 
 
@@ -43,7 +43,7 @@ namespace priv
 #ifdef SFML_DEBUG
 
     // In debug mode, perform a test on every OpenGL call
-    #define glCheck(call) ((call), sf::priv::glCheckError(__FILE__, __LINE__))
+    #define glCheck(x) x; sf::priv::glCheckError(__FILE__, __LINE__);
 
 #else
 
@@ -60,12 +60,6 @@ namespace priv
 ///
 ////////////////////////////////////////////////////////////
 void glCheckError(const char* file, unsigned int line);
-
-////////////////////////////////////////////////////////////
-/// \brief Make sure that GLEW is initialized
-///
-////////////////////////////////////////////////////////////
-void ensureGlewInit();
 
 } // namespace priv
 

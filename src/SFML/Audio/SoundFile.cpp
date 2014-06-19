@@ -26,6 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFile.hpp>
+#ifdef SFML_SYSTEM_ANDROID
+    #include <SFML/System/Android/ResourceStream.hpp>
+#endif
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <cstring>
@@ -55,7 +58,11 @@ m_sampleCount (0),
 m_channelCount(0),
 m_sampleRate  (0)
 {
+    #ifdef SFML_SYSTEM_ANDROID
 
+    m_resourceStream = NULL;
+
+    #endif
 }
 
 
@@ -64,6 +71,13 @@ SoundFile::~SoundFile()
 {
     if (m_file)
         sf_close(m_file);
+
+    #ifdef SFML_SYSTEM_ANDROID
+
+        if (m_resourceStream)
+            delete (priv::ResourceStream*)m_resourceStream;
+
+    #endif
 }
 
 
@@ -91,6 +105,8 @@ unsigned int SoundFile::getSampleRate() const
 ////////////////////////////////////////////////////////////
 bool SoundFile::openRead(const std::string& filename)
 {
+    #ifndef SFML_SYSTEM_ANDROID
+
     // If the file is already opened, first close it
     if (m_file)
         sf_close(m_file);
@@ -109,6 +125,16 @@ bool SoundFile::openRead(const std::string& filename)
     initialize(fileInfo);
 
     return true;
+
+    #else
+
+    if (m_resourceStream)
+        delete (priv::ResourceStream*)m_resourceStream;
+
+    m_resourceStream = new priv::ResourceStream(filename);
+    return openRead(*(priv::ResourceStream*)m_resourceStream);
+
+    #endif
 }
 
 

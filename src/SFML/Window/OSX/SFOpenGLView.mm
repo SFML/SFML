@@ -56,6 +56,12 @@ BOOL isValidTextUnicode(NSEvent* event);
 @interface SFOpenGLView ()
 
 ////////////////////////////////////////////////////////////
+/// \brief Handle screen changed event
+///
+////////////////////////////////////////////////////////////
+-(void)updateScaleFactor;
+
+////////////////////////////////////////////////////////////
 /// \brief Handle view resized event
 ///
 ////////////////////////////////////////////////////////////
@@ -76,6 +82,30 @@ BOOL isValidTextUnicode(NSEvent* event);
 ///
 ////////////////////////////////////////////////////////////
 -(void)updateMouseState;
+
+////////////////////////////////////////////////////////////
+/// \brief Callback for focus event
+///
+////////////////////////////////////////////////////////////
+-(void)windowDidBecomeKey:(NSNotification*)notification;
+
+////////////////////////////////////////////////////////////
+/// \brief Callback for unfocus event
+///
+////////////////////////////////////////////////////////////
+-(void)windowDidResignKey:(NSNotification*)notification;
+
+////////////////////////////////////////////////////////////
+/// \brief Handle going in fullscreen mode
+///
+////////////////////////////////////////////////////////////
+-(void)enterFullscreen;
+
+////////////////////////////////////////////////////////////
+/// \brief Handle exiting fullscreen mode
+///
+////////////////////////////////////////////////////////////
+-(void)exitFullscreen;
 
 ////////////////////////////////////////////////////////////
 /// \brief Convert the NSEvent mouse button type to SFML type
@@ -109,11 +139,16 @@ BOOL isValidTextUnicode(NSEvent* event);
 ////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect
 {
+    return [self initWithFrame:frameRect fullscreen:NO];
+}
+
+////////////////////////////////////////////////////////
+-(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen
+{
     if ((self = [super initWithFrame:frameRect]))
     {
         [self setRequesterTo:0];
         [self enableKeyRepeat];
-        m_realSize = NSZeroSize;
 
         // Register for mouse move event
         m_mouseIsIn = [self isMouseInside];
@@ -124,10 +159,19 @@ BOOL isValidTextUnicode(NSEvent* event);
                                                      userInfo:nil];
         [self addTrackingArea:m_trackingArea];
 
+        m_fullscreen = isFullscreen;
+        m_scaleFactor = 1.0; // Default value; it will be updated in finishInit
+
         // Create a hidden text view for parsing key down event properly
         m_silentResponder = [[SFSilentResponder alloc] init];
         m_hiddenTextView = [[NSTextView alloc] initWithFrame:NSZeroRect];
         [m_hiddenTextView setNextResponder:m_silentResponder];
+
+        // Request high resolution on high DPI displays
+        [self setWantsBestResolutionOpenGLSurface:YES];
+
+        // At that point, the view isn't attached to a window. We defer the rest of
+        // the initialization process to later.
     }
 
     return self;
@@ -135,33 +179,34 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)enterFullscreen
+-(void)finishInit
 {
-    // Remove the tracking area first,
-    // just to be sure we don't add it twice!
-    [self removeTrackingArea:m_trackingArea];
-    [self addTrackingArea:m_trackingArea];
+    // Register for window focus events
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowDidBecomeKey:)
+                                                 name:NSWindowDidBecomeKeyNotification
+                                               object:[self window]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowDidResignKey:)
+                                                 name:NSWindowDidResignKeyNotification
+                                               object:[self window]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowDidResignKey:)
+                                                 name:NSWindowWillCloseNotification
+                                               object:[self window]];
 
-    // Fire an mouse entered event if needed
-    if (!m_mouseIsIn && (m_requester != 0))
-        m_requester->mouseMovedIn();
+    // Register for changed screen and changed screen's profile events
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateScaleFactor)
+                                                 name:NSWindowDidChangeScreenNotification
+                                               object:[self window]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateScaleFactor)
+                                                 name:NSWindowDidChangeScreenProfileNotification
+                                               object:[self window]];
 
-    // Update status
-    m_mouseIsIn = YES;
-}
-
-
-////////////////////////////////////////////////////////
--(void)exitFullscreen
-{
-    [self removeTrackingArea:m_trackingArea];
-
-    // Fire an mouse left event if needed
-    if (m_mouseIsIn && (m_requester != 0))
-        m_requester->mouseMovedOut();
-
-    // Update status
-    m_mouseIsIn = NO;
+    // Now that we have a window, set up correctly the scale factor
+    [self updateScaleFactor];
 }
 
 
@@ -173,29 +218,18 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
--(void)setRealSize:(NSSize)newSize
+-(NSPoint)convertPointToScreen:(NSPoint)point
 {
-    m_realSize = newSize;
+    NSRect rect = NSZeroRect;
+    rect.origin = point;
+    rect = [[self window] convertRectToScreen:rect];
+    return rect.origin;
 }
 
 
 ////////////////////////////////////////////////////////
 -(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point
 {
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(m_realSize, NSZeroSize))
-    {
-        point.x = (point.x / m_realSize.width)  * [self frame].size.width;
-        point.y = (point.y / m_realSize.height) * [self frame].size.height;
-    }
-
-    // Note : -[NSWindow convertBaseToScreen:] is deprecated on 10.7
-    //        but the recommended -[NSWindow convertRectToScreen] is not
-    //        available until 10.7.
-    //
-    //        So we stick with the old one for now.
-
-
     // Flip SFML coordinates to match window coordinates
     point.y = [self frame].size.height - point.y;
 
@@ -204,7 +238,7 @@ BOOL isValidTextUnicode(NSEvent* event);
     point = [self convertPoint:point toView:nil]; // nil means window
 
     // Convert it to screen coordinates
-    point = [[self window] convertBaseToScreen:point];
+    point = [self convertPointToScreen:point];
 
     // Flip screen coordinates to match CGDisplayMoveCursorToPoint referential.
     const float screenHeight = [[[self window] screen] frame].size.height;
@@ -225,6 +259,22 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)disableKeyRepeat
 {
     m_useKeyRepeat = NO;
+}
+
+
+////////////////////////////////////////////////////////
+-(CGFloat)displayScaleFactor
+{
+    return m_scaleFactor;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)updateScaleFactor
+{
+    NSWindow* window = [self window];
+    NSScreen* screen = window ? [window screen] : [NSScreen mainScreen];
+    m_scaleFactor = [screen backingScaleFactor];
 }
 
 
@@ -264,7 +314,7 @@ BOOL isValidTextUnicode(NSEvent* event);
     NSPoint relativeToWindow = [[self window] mouseLocationOutsideOfEventStream];
     NSPoint relativeToView = [self convertPoint:relativeToWindow fromView:nil];
 
-    return NSPointInRect(relativeToView, [self frame]);
+    return NSPointInRect(relativeToView, [self bounds]);
 }
 
 
@@ -274,11 +324,71 @@ BOOL isValidTextUnicode(NSEvent* event);
     BOOL mouseWasIn = m_mouseIsIn;
     m_mouseIsIn = [self isMouseInside];
 
+    if (m_requester == 0)
+        return;
+
     // Send event if needed.
     if (mouseWasIn && !m_mouseIsIn)
-        [self mouseExited:nil];
+        m_requester->mouseMovedOut();
     else if (!mouseWasIn && m_mouseIsIn)
-        [self mouseEntered:nil];
+        m_requester->mouseMovedIn();
+}
+
+
+////////////////////////////////////////////////////////
+-(void)windowDidBecomeKey:(NSNotification*)notification
+{
+    (void)notification;
+
+    if (m_requester)
+        m_requester->windowGainedFocus();
+
+    if (m_fullscreen)
+        [self enterFullscreen];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)windowDidResignKey:(NSNotification*)notification
+{
+    (void)notification;
+
+    if (m_requester)
+        m_requester->windowLostFocus();
+
+    if (m_fullscreen)
+        [self exitFullscreen];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)enterFullscreen
+{
+    // Remove the tracking area first,
+    // just to be sure we don't add it twice!
+    [self removeTrackingArea:m_trackingArea];
+    [self addTrackingArea:m_trackingArea];
+
+    // Fire an mouse entered event if needed
+    if (!m_mouseIsIn && (m_requester != 0))
+        m_requester->mouseMovedIn();
+
+    // Update status
+    m_mouseIsIn = YES;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)exitFullscreen
+{
+    [self removeTrackingArea:m_trackingArea];
+
+    // Fire an mouse left event if needed
+    if (m_mouseIsIn && (m_requester != 0))
+        m_requester->mouseMovedOut();
+
+    // Update status
+    m_mouseIsIn = NO;
 }
 
 
@@ -289,14 +399,20 @@ BOOL isValidTextUnicode(NSEvent* event);
 ////////////////////////////////////////////////////////
 -(void)dealloc
 {
+    // Unregister for window focus events
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     // Unregister
     [self removeTrackingArea:m_trackingArea];
 
+    // Release attributes
+    [m_hiddenTextView release];
+    [m_silentResponder release];
+    [m_trackingArea release];
+
     [self setRequesterTo:0];
 
-    m_hiddenTextView = nil;
-    m_silentResponder = nil;
-    m_trackingArea = nil;
+    [super dealloc];
 }
 
 
@@ -370,39 +486,16 @@ BOOL isValidTextUnicode(NSEvent* event);
 ////////////////////////////////////////////////////////
 -(void)mouseEntered:(NSEvent*)theEvent
 {
-    // There are two cases when we need to fire an event:
-    // a) the event is nil, meaning that the method was
-    //    called from our code (e.g. updateMouseState)
-    // b) the mouse was outside the view.
-    BOOL shouldFire = ((theEvent == nil) || (m_mouseIsIn == NO));
-
-    // Update status
-    m_mouseIsIn = YES;
-
-    if (m_requester == 0)
-        return;
-
-    // Fire (or not) an event
-    if (shouldFire)
-        m_requester->mouseMovedIn();
+    (void)theEvent;
+    [self updateMouseState];
 }
 
 
 ////////////////////////////////////////////////////////
 -(void)mouseExited:(NSEvent*)theEvent
 {
-    // Similarly to mouseEntered:
-    BOOL shouldFire = ((theEvent == nil) || (m_mouseIsIn == YES));
-
-    // Update status
-    m_mouseIsIn = NO;
-
-    if (m_requester == 0)
-        return;
-
-    // Fire (or not) an event
-    if (shouldFire)
-        m_requester->mouseMovedOut();
+    (void)theEvent;
+    [self updateMouseState];
 }
 
 
@@ -537,13 +630,6 @@ BOOL isValidTextUnicode(NSEvent* event);
     // Don't forget to change to SFML coord system.
     float h = [self frame].size.height;
     loc.y = h - loc.y;
-
-    // Recompute the mouse pos if required.
-    if (!NSEqualSizes(m_realSize, NSZeroSize))
-    {
-        loc.x = (loc.x * m_realSize.width)  / [self frame].size.width;
-        loc.y = (loc.y * m_realSize.height) / [self frame].size.height;
-    }
 
     return loc;
 }

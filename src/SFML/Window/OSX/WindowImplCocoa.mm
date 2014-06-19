@@ -30,6 +30,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
 
+#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFApplicationDelegate.h>
@@ -42,6 +43,75 @@ namespace sf
 namespace priv
 {
 
+////////////////////////////////////////////////////////////
+/// \brief Get the scale factor of the main screen
+///
+////////////////////////////////////////////////////////////
+CGFloat getDefaultScaleFactor()
+{
+    return [[NSScreen mainScreen] backingScaleFactor];
+}
+
+////////////////////////////////////////////////////////////
+/// \brief Scale SFML coordinates to backing coordinates
+///
+/// Use -[NSScreen backingScaleFactor] to find out if the user
+/// has a retina display or not.
+///
+/// \param in SFML coordinates to be converted
+/// \param delegate a object implementing WindowImplDelegateProtocol, or nil for default scale
+///
+////////////////////////////////////////////////////////////
+template <class T>
+void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
+{
+    in /= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
+}
+
+template <class T>
+void scaleInWidthHeight(T& in, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleIn(in.width, delegate);
+    scaleIn(in.height, delegate);
+}
+
+template <class T>
+void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleIn(in.x, delegate);
+    scaleIn(in.y, delegate);
+}
+
+////////////////////////////////////////////////////////////
+/// \brief Scale backing coordinates to SFML coordinates
+///
+/// Use -[NSScreen backingScaleFactor] to find out if the user
+/// has a retina display or not.
+///
+/// \param out backing coordinates to be converted
+/// \param delegate a object implementing WindowImplDelegateProtocol, or nil for default scale
+///
+////////////////////////////////////////////////////////////
+template <class T>
+void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
+{
+    out *= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
+}
+
+template <class T>
+void scaleOutWidthHeight(T& out, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleOut(out.width, delegate);
+    scaleOut(out.height, delegate);
+}
+
+template <class T>
+void scaleOutXY(T& out, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleOut(out.x, delegate);
+    scaleOut(out.y, delegate);
+}
+
 #pragma mark
 #pragma mark WindowImplCocoa's ctor/dtor
 
@@ -49,10 +119,11 @@ namespace priv
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle) :
 m_showCursor(true)
 {
-@autoreleasepool
-{
+    // Ask for a pool.
+    retainPool();
+
     // Treat the handle as it real type
-    id nsHandle = (__bridge id)handle;
+    id nsHandle = (id)handle;
     if ([nsHandle isKindOfClass:[NSWindow class]])
     {
         // We have a window.
@@ -80,7 +151,6 @@ m_showCursor(true)
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
-} // pool
 }
 
 
@@ -91,10 +161,14 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
                                  const ContextSettings& /*settings*/) :
 m_showCursor(true)
 {
-@autoreleasepool
-{
     // Transform the app process.
     setUpProcess();
+
+    // Ask for a pool.
+    retainPool();
+
+    // Use backing size
+    scaleInWidthHeight(mode, nil);
 
     m_delegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
     [m_delegate changeTitle:sfStringToNSString(title)];
@@ -102,23 +176,26 @@ m_showCursor(true)
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
-} // pool
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::~WindowImplCocoa()
 {
-@autoreleasepool
-{
     [m_delegate closeWindow];
-    m_delegate = nil;
+
+    [m_delegate release];
 
     // Put the next window in front, if any.
     NSArray* windows = [NSApp orderedWindows];
     if ([windows count] > 0)
         [[windows objectAtIndex:0] makeKeyAndOrderFront:nil];
-} // pool
+
+    releasePool();
+
+    drainPool(); // Make sure everything was freed
+    // This solve some issue when sf::Window::Create is called for the
+    // second time (nothing was render until the function was called again)
 }
 
 
@@ -139,17 +216,16 @@ void WindowImplCocoa::setUpProcess(void)
         // Do it only once !
         isTheProcessSetAsApplication = true;
 
-        // Set the process as a normal application so it can get focus.
-        ProcessSerialNumber psn;
-        if (!GetCurrentProcess(&psn))
-        {
-            TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-            SetFrontProcess(&psn);
-        }
+        // Make sure NSApp is properly initialized
+        [SFApplication sharedApplication];
+
+        // Set the process as a normal application so it can get focus
+        [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+        [NSApp activateIgnoringOtherApps:YES];
 
         // Register an application delegate if there is none
         if (![[SFApplication sharedApplication] delegate])
-            [NSApp setDelegate:[SFApplicationDelegate instance]];
+            [NSApp setDelegate:[[[SFApplicationDelegate alloc] init] autorelease]];
 
         // Create menus for the application (before finishing launching!)
         [SFApplication setUpMenuBar];
@@ -183,6 +259,7 @@ void WindowImplCocoa::windowResized(unsigned int width, unsigned int height)
     event.type = Event::Resized;
     event.size.width  = width;
     event.size.height = height;
+    scaleOutWidthHeight(event.size, m_delegate);
 
     pushEvent(event);
 }
@@ -225,6 +302,7 @@ void WindowImplCocoa::mouseDownAt(Mouse::Button button, int x, int y)
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
+    scaleOutXY(event.mouseButton, m_delegate);
 
     pushEvent(event);
 }
@@ -238,6 +316,7 @@ void WindowImplCocoa::mouseUpAt(Mouse::Button button, int x, int y)
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
+    scaleOutXY(event.mouseButton, m_delegate);
 
     pushEvent(event);
 }
@@ -250,6 +329,7 @@ void WindowImplCocoa::mouseMovedAt(int x, int y)
     event.type = Event::MouseMoved;
     event.mouseMove.x = x;
     event.mouseMove.y = y;
+    scaleOutXY(event.mouseMove, m_delegate);
 
     pushEvent(event);
 }
@@ -262,6 +342,7 @@ void WindowImplCocoa::mouseWheelScrolledAt(float delta, int x, int y)
     event.mouseWheel.delta = delta;
     event.mouseWheel.x = x;
     event.mouseWheel.y = y;
+    scaleOutXY(event.mouseWheel, m_delegate);
 
     pushEvent(event);
 }
@@ -351,14 +432,18 @@ WindowHandle WindowImplCocoa::getSystemHandle() const
 Vector2i WindowImplCocoa::getPosition() const
 {
     NSPoint pos = [m_delegate position];
-    return Vector2i(pos.x, pos.y);
+    sf::Vector2i ret(pos.x, pos.y);
+    scaleOutXY(ret, m_delegate);
+    return ret;
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setPosition(const Vector2i& position)
 {
-    [m_delegate setWindowPositionToX:position.x Y:position.y];
+    sf::Vector2i backingPosition = position;
+    scaleInXY(backingPosition, m_delegate);
+    [m_delegate setWindowPositionToX:backingPosition.x Y:backingPosition.y];
 }
 
 
@@ -366,14 +451,18 @@ void WindowImplCocoa::setPosition(const Vector2i& position)
 Vector2u WindowImplCocoa::getSize() const
 {
     NSSize size = [m_delegate size];
-    return Vector2u(size.width, size.height);
+    Vector2u ret(size.width, size.height);
+    scaleOutXY(ret, m_delegate);
+    return ret;
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setSize(const Vector2u& size)
 {
-    [m_delegate resizeTo:size.x by:size.y];
+    sf::Vector2u backingSize = size;
+    scaleInXY(backingSize, m_delegate);
+    [m_delegate resizeTo:backingSize.x by:backingSize.y];
 }
 
 

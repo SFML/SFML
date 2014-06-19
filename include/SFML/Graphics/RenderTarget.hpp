@@ -354,7 +354,7 @@ private:
     /// \param mode Blending mode to apply
     ///
     ////////////////////////////////////////////////////////////
-    void applyBlendMode(BlendMode mode);
+    void applyBlendMode(const BlendMode& mode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new transform

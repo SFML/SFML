@@ -32,6 +32,7 @@
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <SFML/Window/Sensor.hpp>
 
 
 namespace sf
@@ -143,6 +144,29 @@ public :
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Touch events parameters (TouchBegan, TouchMoved, TouchEnded)
+    ///
+    ////////////////////////////////////////////////////////////
+    struct TouchEvent
+    {
+        unsigned int finger; ///< Index of the finger in case of multi-touch events
+        int x;               ///< X position of the touch, relative to the left of the owner window
+        int y;               ///< Y position of the touch, relative to the top of the owner window
+    };
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Sensor event parameters (SensorChanged)
+    ///
+    ////////////////////////////////////////////////////////////
+    struct SensorEvent
+    {
+		Sensor::Type type; ///< Type of the sensor
+		float x;           ///< Current value of the sensor on X axis
+		float y;           ///< Current value of the sensor on Y axis
+		float z;           ///< Current value of the sensor on Z axis
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enumeration of the different types of events
     ///
     ////////////////////////////////////////////////////////////
@@ -166,6 +190,10 @@ public :
         JoystickMoved,          ///< The joystick moved along an axis (data in event.joystickMove)
         JoystickConnected,      ///< A joystick was connected (data in event.joystickConnect)
         JoystickDisconnected,   ///< A joystick was disconnected (data in event.joystickConnect)
+        TouchBegan,             ///< A touch event began (data in event.touch)
+        TouchMoved,             ///< A touch moved (data in event.touch)
+        TouchEnded,             ///< A touch event ended (data in event.touch)
+        SensorChanged,          ///< A sensor value changed (data in event.sensor)
 
         Count                   ///< Keep last -- the total number of event types
     };
@@ -186,6 +214,8 @@ public :
         JoystickMoveEvent    joystickMove;    ///< Joystick move event parameters (Event::JoystickMoved)
         JoystickButtonEvent  joystickButton;  ///< Joystick button event parameters (Event::JoystickButtonPressed, Event::JoystickButtonReleased)
         JoystickConnectEvent joystickConnect; ///< Joystick (dis)connect event parameters (Event::JoystickConnected, Event::JoystickDisconnected)
+        TouchEvent           touch;           ///< Touch events parameters (Event::TouchBegan, Event::TouchMoved, Event::TouchEnded)
+        SensorEvent          sensor;          ///< Sensor event parameters (Event::SensorChanged)
     };
 };
 

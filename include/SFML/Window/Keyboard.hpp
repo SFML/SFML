@@ -412,6 +412,21 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     static bool isKeyPressed(Key key);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the virtual keyboard
+    ///
+    /// Warning: the virtual keyboard is not supported on all
+    /// systems. It will typically be implemented on mobile OSes
+    /// (Android, iOS) but not on desktop OSes (Windows, Linux, ...).
+    ///
+    /// If the virtual keyboard is not available, this function does
+    /// nothing.
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setVirtualKeyboardVisible(bool visible);
 };
 
 } // namespace sf
@@ -454,6 +469,6 @@ public :
 /// }
 /// \endcode
 ///
-/// \see sf::Joystick, sf::Mouse
+/// \see sf::Joystick, sf::Mouse, sf::Touch
 ///
 ////////////////////////////////////////////////////////////

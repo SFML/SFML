@@ -45,7 +45,7 @@ namespace priv
 #ifdef SFML_DEBUG
 
     // If in debug mode, perform a test on every call
-    #define alCheck(Func) ((Func), priv::alCheckError(__FILE__, __LINE__))
+    #define alCheck(x) x; sf::priv::alCheckError(__FILE__, __LINE__);
 
 #else
 

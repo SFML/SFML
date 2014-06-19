@@ -36,8 +36,6 @@
 ////////////////////////////////////////////////////////////
 +(void)processEvent
 {
-@autoreleasepool
-{
     [SFApplication sharedApplication]; // Make sure NSApp exists
     NSEvent* event = nil;
 
@@ -48,7 +46,6 @@
     {
         [NSApp sendEvent:event];
     }
-} // pool
 }
 
 
@@ -61,29 +58,29 @@
     NSMenu* mainMenu = [NSApp mainMenu];
     if (mainMenu != nil)
         return;
-    mainMenu = [[NSMenu alloc] initWithTitle:@""];
+    mainMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
     [NSApp setMainMenu:mainMenu];
 
     // Application Menu (aka Apple Menu)
     NSMenuItem* appleItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* appleMenu = [SFApplication createAppleMenu];
+    NSMenu* appleMenu = [[SFApplication newAppleMenu] autorelease];
     [appleItem setSubmenu:appleMenu];
 
     // File Menu
     NSMenuItem* fileItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* fileMenu = [SFApplication createFileMenu];
+    NSMenu* fileMenu = [[SFApplication newFileMenu] autorelease];
     [fileItem setSubmenu:fileMenu];
 
     // Window menu
     NSMenuItem* windowItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* windowMenu = [SFApplication createWindowMenu];
+    NSMenu* windowMenu = [[SFApplication newWindowMenu] autorelease];
     [windowItem setSubmenu:windowMenu];
     [NSApp setWindowsMenu:windowMenu];
 }
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu*)createAppleMenu
++(NSMenu*)newAppleMenu
 {
     // Apple menu is as follow:
     //
@@ -123,7 +120,7 @@
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
     // SERVICES
-    NSMenu* serviceMenu = [[NSMenu alloc] initWithTitle:@""];
+    NSMenu* serviceMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
     NSMenuItem* serviceItem = [appleMenu addItemWithTitle:@"Services"
                                                   action:nil
                                            keyEquivalent:@""];
@@ -162,7 +159,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu*)createFileMenu
++(NSMenu*)newFileMenu
 {
     // The File menu is as follow:
     //
@@ -177,13 +174,14 @@
                                                        action:@selector(performClose:)
                                                 keyEquivalent:@"w"];
     [fileMenu addItem:closeItem];
+    [closeItem release];
 
     return fileMenu;
 }
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu*)createWindowMenu
++(NSMenu*)newWindowMenu
 {
     // The Window menu is as follow:
     //
@@ -201,6 +199,7 @@
                                                           action:@selector(performMiniaturize:)
                                                    keyEquivalent:@"m"];
     [windowMenu addItem:minimizeItem];
+    [minimizeItem release];
 
     // ZOOM
     [windowMenu addItemWithTitle:@"Zoom"
@@ -253,7 +252,8 @@
     // custom OpenGL view. See -[SFOpenGLView sfKeyUp:] for more details.
 
     id firstResponder = [[anEvent window] firstResponder];
-    if (([anEvent type] != NSKeyUp) || (![firstResponder tryToPerform:@selector(sfKeyUp:) with:anEvent])) {
+    if (([anEvent type] != NSKeyUp) || (![firstResponder tryToPerform:@selector(sfKeyUp:) with:anEvent]))
+    {
         // It's either not a key up event or no responder has a sfKeyUp
         // message implemented.
         [super sendEvent:anEvent];

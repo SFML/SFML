@@ -123,9 +123,9 @@ subject to the following restrictions:
                 <key>SUPPORTED_PLATFORMS</key>
                 <string>macosx</string>
 
-                <!-- ARCHITECTURES: only 64 bit -->
+                <!-- ARCHITECTURES -->
                 <key>ARCHS</key>
-                <string>$(ARCHS_STANDARD_64_BIT)</string>
+                <string>@XCODE_TEMPLATES_ARCH@</string>
 
                 <!-- DEPLOYMENT -->
                 <key>MACOSX_DEPLOYMENT_TARGET</key>

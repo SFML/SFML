@@ -54,5 +54,5 @@ NSString* sfStringToNSString(const sf::String& string)
         encoding = NSUTF32BigEndianStringEncoding;
 
     NSString* str = [[NSString alloc] initWithBytes:data length:length encoding:encoding];
-    return str;
+    return [str autorelease];
 }

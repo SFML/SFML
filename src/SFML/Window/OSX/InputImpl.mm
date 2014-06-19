@@ -57,7 +57,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
 {
-    id nsHandle = (__bridge id)window.getSystemHandle();
+    id nsHandle = (id)window.getSystemHandle();
 
     // Get our SFOpenGLView from ...
     SFOpenGLView* view = nil;
@@ -113,6 +113,13 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
+void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
+{
+    // Not applicable
+}
+
+
+////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     return HIDInputManager::getInstance().isMouseButtonPressed(button);
@@ -126,7 +133,8 @@ Vector2i InputImpl::getMousePosition()
     NSPoint pos = [NSEvent mouseLocation];
     pos.y = sf::VideoMode::getDesktopMode().height - pos.y;
 
-    return Vector2i(pos.x, pos.y);
+    int scale = [[NSScreen mainScreen] backingScaleFactor];
+    return Vector2i(pos.x, pos.y) * scale;
 }
 
 
@@ -142,7 +150,8 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
     // Use -cursorPositionFromEvent: with nil.
     NSPoint pos = [view cursorPositionFromEvent:nil];
 
-    return Vector2i(pos.x, pos.y);
+    int scale = [view displayScaleFactor];
+    return Vector2i(pos.x, pos.y) * scale;
 }
 
 
@@ -150,7 +159,8 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 void InputImpl::setMousePosition(const Vector2i& position)
 {
     // Here we don't need to reverse the coordinates.
-    CGPoint pos = CGPointMake(position.x, position.y);
+    int scale = [[NSScreen mainScreen] backingScaleFactor];
+    CGPoint pos = CGPointMake(position.x / scale, position.y / scale);
 
     // Place the cursor.
     CGEventRef event = CGEventCreateMouseEvent(NULL,
@@ -173,9 +183,34 @@ void InputImpl::setMousePosition(const Vector2i& position, const Window& relativ
         return;
 
     // Let SFOpenGLView compute the position in global coordinate
-    NSPoint p = NSMakePoint(position.x, position.y);
+    int scale = [view displayScaleFactor];
+    NSPoint p = NSMakePoint(position.x / scale, position.y / scale);
     p = [view computeGlobalPositionOfRelativePoint:p];
-    setMousePosition(sf::Vector2i(p.x, p.y));
+    setMousePosition(sf::Vector2i(p.x, p.y) * scale);
+}
+
+
+////////////////////////////////////////////////////////////
+bool InputImpl::isTouchDown(unsigned int /*finger*/)
+{
+    // Not applicable
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
+{
+    // Not applicable
+    return Vector2i();
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const Window& /*relativeTo*/)
+{
+    // Not applicable
+    return Vector2i();
 }
 
 } // namespace priv

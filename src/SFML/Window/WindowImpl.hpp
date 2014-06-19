@@ -34,6 +34,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/Window/Sensor.hpp>
+#include <SFML/Window/SensorImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/ContextSettings.hpp>
@@ -225,13 +227,20 @@ private :
     ///
     ////////////////////////////////////////////////////////////
     void processJoystickEvents();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Read the sensors state and generate the appropriate events
+    ///
+    ////////////////////////////////////////////////////////////
+    void processSensorEvents();
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::queue<Event> m_events;                     ///< Queue of available events
-    JoystickState     m_joyStates[Joystick::Count]; ///< Previous state of the joysticks
-    float             m_joyThreshold;               ///< Joystick threshold (minimum motion for MOVE event to be generated)
+    std::queue<Event> m_events;                          ///< Queue of available events
+    JoystickState     m_joystickStates[Joystick::Count]; ///< Previous state of the joysticks
+    Vector3f          m_sensorValue[Sensor::Count];      ///< Previous value of the sensors
+    float             m_joystickThreshold;               ///< Joystick threshold (minimum motion for "move" event to be generated)
 };
 
 } // namespace priv

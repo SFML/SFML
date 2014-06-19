@@ -152,6 +152,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve a glyph of the font
     ///
+    /// If the font is a bitmap font, not all character sizes
+    /// might be available. If the glyph is not available at the
+    /// requested size, an empty glyph is returned.
+    ///
     /// \param codePoint     Unicode code point of the character to get
     /// \param characterSize Reference character size
     /// \param bold          Retrieve the bold version or the regular one?
@@ -191,6 +195,35 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     int getLineSpacing(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the underline
+    ///
+    /// Underline position is the vertical offset to apply between the
+    /// baseline and the underline.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Underline position, in pixels
+    ///
+    /// \see getUnderlineThickness
+    ///
+    ////////////////////////////////////////////////////////////
+    int getUnderlinePosition(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the thickness of the underline
+    ///
+    /// Underline thickness is the vertical size of the underline.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Underline thickness, in pixels
+    ///
+    /// \see getUnderlinePosition
+    ///
+    ////////////////////////////////////////////////////////////
+    int getUnderlineThickness(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve the texture containing the loaded glyphs of a certain size
@@ -305,6 +338,9 @@ private :
     Info                       m_info;        ///< Information about the font
     mutable PageTable          m_pages;       ///< Table containing the glyphs pages by character size
     mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
+    #ifdef SFML_SYSTEM_ANDROID
+    void*                      m_stream; ///< Asset file streamer (if loaded from file)
+    #endif
 };
 
 } // namespace sf
@@ -351,19 +387,19 @@ private :
 /// \code
 /// // Declare a new font
 /// sf::Font font;
-/// 
+///
 /// // Load it from a file
 /// if (!font.loadFromFile("arial.ttf"))
 /// {
 ///     // error...
 /// }
-/// 
+///
 /// // Create a text which uses our font
 /// sf::Text text1;
 /// text1.setFont(font);
 /// text1.setCharacterSize(30);
 /// text1.setStyle(sf::Text::Regular);
-/// 
+///
 /// // Create another text using the same font, but with different parameters
 /// sf::Text text2;
 /// text2.setFont(font);
@@ -375,6 +411,12 @@ private :
 /// of sf::Text, you should normally not have to deal directly
 /// with this class. However, it may be useful to access the
 /// font metrics or rasterized glyphs for advanced usage.
+///
+/// Note that if the font is a bitmap font, it is not scalable,
+/// thus not all requested sizes will be available to use. This
+/// needs to be taken into consideration when using sf::Text.
+/// If you need to display text of a certain size, make sure the
+/// corresponding bitmap font that supports that size is used.
 ///
 /// \see sf::Text
 ///

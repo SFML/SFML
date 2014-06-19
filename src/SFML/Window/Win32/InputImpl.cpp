@@ -157,6 +157,13 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
+void InputImpl::setVirtualKeyboardVisible(bool visible)
+{
+    // Not applicable
+}
+
+
+////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     int vkey = 0;
@@ -218,6 +225,30 @@ void InputImpl::setMousePosition(const Vector2i& position, const Window& relativ
         ClientToScreen(handle, &point);
         SetCursorPos(point.x, point.y);
     }
+}
+
+
+////////////////////////////////////////////////////////////
+bool InputImpl::isTouchDown(unsigned int /*finger*/)
+{
+    // Not applicable
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
+{
+    // Not applicable
+    return Vector2i();
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const Window& /*relativeTo*/)
+{
+    // Not applicable
+    return Vector2i();
 }
 
 } // namespace priv

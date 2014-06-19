@@ -44,7 +44,7 @@
         m_requester = 0;
 
         // Retain the view for our own use.
-        m_view = view;
+        m_view = [view retain];
 
         if (m_view == nil)
         {
@@ -71,6 +71,8 @@
         [m_view addSubview:m_oglView];
 
         [m_oglView setAutoresizingMask:[m_view autoresizingMask]];
+
+        [m_oglView finishInit];
     }
 
     return self;
@@ -82,8 +84,17 @@
 {
     [self closeWindow];
 
-    m_view = nil;
-    m_oglView = nil;
+    [m_view release];
+    [m_oglView release];
+
+    [super dealloc];
+}
+
+
+////////////////////////////////////////////////////////
+-(CGFloat)displayScaleFactor
+{
+    return [m_oglView displayScaleFactor];
 }
 
 
@@ -99,7 +110,7 @@
 ////////////////////////////////////////////////////////
 -(sf::WindowHandle)getSystemHandle
 {
-    return (__bridge sf::WindowHandle)m_view;
+    return m_view;
 }
 
 

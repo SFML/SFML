@@ -25,12 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#define GLX_GLXEXT_LEGACY // so that our local glxext.h is used instead of the system one
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/OpenGL.hpp>
-#include <SFML/Window/glext/glxext.h>
 #include <SFML/System/Err.hpp>
 
 
@@ -165,7 +163,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     XVisualInfo* visuals = XGetVisualInfo(display, 0, NULL, &count);
     if (visuals)
     {
-        // Evaluate all the returned visuals, and pick the best one1
+        // Evaluate all the returned visuals, and pick the best one
         int bestScore = 0xFFFF;
         XVisualInfo bestVisual;
         for (int i = 0; i < count; ++i)

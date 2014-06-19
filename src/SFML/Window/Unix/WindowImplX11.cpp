@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/WindowImplX11.hpp>
-#include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
@@ -44,6 +43,13 @@
 #include <string>
 #include <iterator>
 
+#ifdef SFML_OPENGL_ES
+    #include <SFML/Window/EglContext.hpp>
+    typedef sf::priv::EglContext ContextType;
+#else
+    #include <SFML/Window/Unix/GlxContext.hpp>
+    typedef sf::priv::GlxContext ContextType;
+#endif
 
 ////////////////////////////////////////////////////////////
 // Private data
@@ -153,7 +159,7 @@ m_useSizeHints(false)
         switchToFullscreen(mode);
 
     // Choose the visual according to the context settings
-    XVisualInfo visualInfo = GlxContext::selectBestVisual(m_display, mode.bitsPerPixel, settings);
+    XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
 
     // Define the window attributes
     XSetWindowAttributes attributes;

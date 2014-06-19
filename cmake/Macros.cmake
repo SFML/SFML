@@ -40,8 +40,11 @@ macro(sfml_add_library target)
     endif()
 
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
-    set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR})
-    set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+    # except for Android which strips soversion suffixes
+    if(NOT SFML_OS_ANDROID)
+        set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR})
+        set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+    endif()
 
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "SFML")
@@ -59,11 +62,6 @@ macro(sfml_add_library target)
     # (exported ones are explicitely marked)
     if(NOT SFML_OS_WINDOWS AND ((SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4") OR (SFML_COMPILER_CLANG AND NOT SFML_CLANG_VERSION VERSION_LESS "3")))
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
-    endif()
-
-    # On OS X, use Objective-C ARC
-    if(SFML_OS_MACOSX)
-        set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fobjc-arc)
     endif()
 
     # link the target to its SFML dependencies
@@ -89,6 +87,23 @@ macro(sfml_add_library target)
                               INSTALL_NAME_DIR "@executable_path/../Frameworks")
     endif()
 
+    # enable automatic reference counting on iOS
+    if (SFML_OS_IOS)
+        set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES)
+    endif()
+
+    # sfml-activity library is our bootstrap activity and must not depend on stlport_shared
+    # (otherwise Android will fail to load it)
+    if (SFML_OS_ANDROID)
+        if (${target} MATCHES "sfml-activity")
+            set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fpermissive)
+            set_target_properties(${target} PROPERTIES LINK_FLAGS "-landroid -llog")
+            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STLPORT})
+        else()
+            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STLPORT})
+        endif()
+    endif()
+
     # link the target to its external dependencies
     if(THIS_EXTERNAL_LIBS)
         target_link_libraries(${target} ${THIS_EXTERNAL_LIBS})
@@ -100,7 +115,6 @@ macro(sfml_add_library target)
             LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT bin
             ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel
             FRAMEWORK DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX} COMPONENT bin)
-
 endmacro()
 
 # add a new target which is a SFML example
@@ -145,7 +159,8 @@ macro(sfml_add_example target)
 
     # add the install rule
     install(TARGETS ${target}
-            RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
+            RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples
+            BUNDLE DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
 
     # install the example's source code
     install(FILES ${THIS_SOURCES}
