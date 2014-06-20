@@ -417,6 +417,10 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     // Share this activity with the callback functions
     states->activity = activity;
 
+    // Keep the screen turned on and bright
+    ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_KEEP_SCREEN_ON,
+        AWINDOW_FLAG_KEEP_SCREEN_ON);
+
     // Hide the status bar
     ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_FULLSCREEN,
         AWINDOW_FLAG_FULLSCREEN);
