@@ -200,6 +200,9 @@ static void onDestroy(ANativeActivity* activity)
     // Delete our allocated states
     delete states;
 
+    // Reset the activity pointer for all modules
+    sf::priv::getActivity(NULL, true);
+
     // The application should now terminate
 }
 
@@ -386,7 +389,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     states->terminated = false;
 
     // Share it across the SFML modules
-    sf::priv::getActivity(states);
+    sf::priv::getActivity(states, true);
 
     // These functions will update the activity states and therefore, will allow
     // SFML to be kept in the know

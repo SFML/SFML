@@ -33,11 +33,11 @@ namespace sf
 {
 namespace priv
 {
-ActivityStates* getActivity(ActivityStates* initializedStates)
+ActivityStates* getActivity(ActivityStates* initializedStates, bool reset)
 {
     static ActivityStates* states = NULL;
 
-    if (!states)
+    if (!states || reset)
         states = initializedStates;
 
     return states;
