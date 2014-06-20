@@ -421,6 +421,24 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_FULLSCREEN,
         AWINDOW_FLAG_FULLSCREEN);
 
+    // Hide the navigation bar
+    JavaVM* lJavaVM = activity->vm;
+    JNIEnv* lJNIEnv = activity->env;
+
+    jobject objectActivity = activity->clazz;
+    jclass classActivity = lJNIEnv->GetObjectClass(objectActivity);
+
+    jmethodID methodGetWindow = lJNIEnv->GetMethodID(classActivity, "getWindow", "()Landroid/view/Window;");
+    jobject objectWindow = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindow);
+
+    jclass classWindow = lJNIEnv->FindClass("android/view/Window");
+    jmethodID methodGetDecorView = lJNIEnv->GetMethodID(classWindow, "getDecorView", "()Landroid/view/View;");
+    jobject objectDecorView = lJNIEnv->CallObjectMethod(objectWindow, methodGetDecorView);
+
+    jclass classView = lJNIEnv->FindClass("android/view/View");
+    jmethodID methodsetSystemUiVisibility = lJNIEnv->GetMethodID(classView, "setSystemUiVisibility", "(I)V");
+    lJNIEnv->CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, (jint)(2 | 4));
+
     // Initialize the display
     eglInitialize(states->display, NULL, NULL);
 
