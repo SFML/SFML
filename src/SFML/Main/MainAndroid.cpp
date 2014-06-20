@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Android specific: we define the ANativeActivity_onCreate
 // entry point, handling all the native activity stuff, then
-// we call the user defined (and poratble) main function in
+// we call the user defined (and portable) main function in
 // an external thread so developers can keep a portable code
 ////////////////////////////////////////////////////////////
 
@@ -42,6 +42,8 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Lock.hpp>
+#include <android/window.h>
+#include <android/native_activity.h>
 
 
 extern int main(int argc, char *argv[]);
@@ -414,6 +416,10 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
     // Share this activity with the callback functions
     states->activity = activity;
+
+    // Hide the status bar
+    ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_FULLSCREEN,
+        AWINDOW_FLAG_FULLSCREEN);
 
     // Initialize the display
     eglInitialize(states->display, NULL, NULL);
