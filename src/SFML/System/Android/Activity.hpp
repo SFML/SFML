@@ -74,7 +74,7 @@ struct ActivityStates
     bool updated;
 };
 
-SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL);
+SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL, bool reset=false);
 
 } // namespace priv
 } // namespace sf
