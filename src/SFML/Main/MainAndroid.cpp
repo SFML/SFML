@@ -38,8 +38,6 @@
 
 #ifdef SFML_SYSTEM_ANDROID
 
-#include <SFML/Window/EGLCheck.hpp>
-#include <SFML/Window/Keyboard.hpp>
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Thread.hpp>
@@ -195,7 +193,7 @@ static void onDestroy(ANativeActivity* activity)
     states->mutex.unlock();
 
     // Terminate EGL display
-    eglCheck(eglTerminate(states->display));
+    eglTerminate(states->display);
 
     // Delete our allocated states
     delete states;
@@ -369,8 +367,8 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
     for (unsigned int i = 0; i < sf::Mouse::ButtonCount; i++)
         states->isButtonPressed[i] = false;
-        
-    states->display = eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
+
+    states->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
     // As the input queue will be created before the SFML window, we need to use
     // this dummy function that will be replaced later by the first created
@@ -418,7 +416,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     states->activity = activity;
 
     // Initialize the display
-    eglCheck(eglInitialize(states->display, NULL, NULL));
+    eglInitialize(states->display, NULL, NULL);
 
     // Launch the main thread
     sf::Thread* thread = new sf::Thread(sf::priv::main, states);
