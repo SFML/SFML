@@ -55,4 +55,60 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
 
 include $(PREBUILT_SHARED_LIBRARY)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := sfml-system-d
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-system-d.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := sfml-window-d
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-window-d.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+LOCAL_EXPORT_LDLIBS := -lEGL -llog -landroid
+LOCAL_SHARED_LIBRARIES := sfml-system-d
+
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := sfml-graphics-d
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-graphics-d.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+LOCAL_SHARED_LIBRARIES += sfml-system-d sfml-window-d
+
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := sfml-audio-d
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-audio-d.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+LOCAL_SHARED_LIBRARIES := sfml-window-d sfml-system-d openal sndfile
+
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := sfml-network-d
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-network-d.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+LOCAL_SHARED_LIBRARIES := sfml-system-d
+
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := sfml-main-d
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-main-d.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+LOCAL_SHARED_LIBRARIES := sfml-window-d sfml-system-d
+
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := sfml-activity-d
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-activity-d.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
+
+include $(PREBUILT_SHARED_LIBRARY)
+
 $(call import-module,sfml/extlibs)
+
