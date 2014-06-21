@@ -368,6 +368,9 @@ void WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* 
         }
         else if (device == AINPUT_SOURCE_TOUCHSCREEN)
         {
+            if (states->touchEvents[id].x == x && states->touchEvents[id].y == y)
+                continue;
+
             event.touch.finger = id;
             event.touch.x = x;
             event.touch.y = y;
