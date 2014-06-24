@@ -440,8 +440,15 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     jobject objectDecorView = lJNIEnv->CallObjectMethod(objectWindow, methodGetDecorView);
 
     jclass classView = lJNIEnv->FindClass("android/view/View");
+
+    jfieldID FieldSYSTEM_UI_FLAG_HIDE_NAVIGATION = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_HIDE_NAVIGATION", "I");
+    jint SYSTEM_UI_FLAG_HIDE_NAVIGATION = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+    jfieldID FieldSYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
+    jint SYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_FULLSCREEN);
+
     jmethodID methodsetSystemUiVisibility = lJNIEnv->GetMethodID(classView, "setSystemUiVisibility", "(I)V");
-    lJNIEnv->CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, (jint)(2 | 4));
+    lJNIEnv->CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, SYSTEM_UI_FLAG_HIDE_NAVIGATION | SYSTEM_UI_FLAG_FULLSCREEN);
 
     // Initialize the display
     eglInitialize(states->display, NULL, NULL);

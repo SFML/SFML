@@ -152,13 +152,11 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
     jclass ClassPackageManager = lJNIEnv->FindClass("android/content/pm/PackageManager");
 
-    //jfieldID FieldGET_META_DATA = lJNIEnv->GetStaticFieldID(ClassPackageManager, "GET_META_DATA", "L");
-    //jobject GET_META_DATA = lJNIEnv->GetStaticObjectField(ClassPackageManager, FieldGET_META_DATA);
-    // getActivityInfo(getIntent().getComponent(), PackageManager.GET_META_DATA) -> ActivityInfo object
-    jmethodID MethodGetActivityInfo = lJNIEnv->GetMethodID(ClassPackageManager, "getActivityInfo", "(Landroid/content/ComponentName;I)Landroid/content/pm/ActivityInfo;");
+    jfieldID FieldGET_META_DATA = lJNIEnv->GetStaticFieldID(ClassPackageManager, "GET_META_DATA", "I");
+    jint GET_META_DATA = lJNIEnv->GetStaticIntField(ClassPackageManager, FieldGET_META_DATA);
 
-    // todo: do not hardcode the GET_META_DATA integer value but retrieve it instead
-    jobject ObjectActivityInfo = lJNIEnv->CallObjectMethod(ObjectPackageManager, MethodGetActivityInfo, ObjectComponentName, (jint)128);
+    jmethodID MethodGetActivityInfo = lJNIEnv->GetMethodID(ClassPackageManager, "getActivityInfo", "(Landroid/content/ComponentName;I)Landroid/content/pm/ActivityInfo;");
+    jobject ObjectActivityInfo = lJNIEnv->CallObjectMethod(ObjectPackageManager, MethodGetActivityInfo, ObjectComponentName, GET_META_DATA);
 
     // Load our libraries in reverse order
     loadLibrary("c++_shared", lJNIEnv, ObjectActivityInfo);
