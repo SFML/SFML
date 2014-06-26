@@ -50,6 +50,14 @@ public :
     ////////////////////////////////////////////////////////////
     typedef std::basic_string<Uint32>::iterator       Iterator;      ///< Iterator type
     typedef std::basic_string<Uint32>::const_iterator ConstIterator; ///< Constant iterator type
+    typedef std::basic_string<Uint32>::value_type     ValueType;     ///< Internal character type
+    
+    ////////////////////////////////////////////////////////////
+    // Types for standard library compatibility
+    ////////////////////////////////////////////////////////////
+    typedef Iterator                                  iterator;       ///< Iterator type
+    typedef ConstIterator                             const_iterator; ///< Constant iterator type
+    typedef ValueType                                 value_type;     ///< Internal character type
 
     ////////////////////////////////////////////////////////////
     // Static member data
