@@ -73,6 +73,8 @@ struct ActivityStates
     bool initialized;
     bool terminated;
 
+    bool fullscreen;
+
     bool updated;
 };
 

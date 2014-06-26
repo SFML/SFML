@@ -114,6 +114,42 @@ void* main(ActivityStates* states)
 
 
 ////////////////////////////////////////////////////////////
+void goToFullscreenMode(ANativeActivity* activity)
+{
+    // Hide the status bar
+    ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_FULLSCREEN,
+        AWINDOW_FLAG_FULLSCREEN);
+
+    // Hide the navigation bar
+    JavaVM* lJavaVM = activity->vm;
+    JNIEnv* lJNIEnv = activity->env;
+
+    jobject objectActivity = activity->clazz;
+    jclass classActivity = lJNIEnv->GetObjectClass(objectActivity);
+
+    jmethodID methodGetWindow = lJNIEnv->GetMethodID(classActivity, "getWindow", "()Landroid/view/Window;");
+    jobject objectWindow = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindow);
+
+    jclass classWindow = lJNIEnv->FindClass("android/view/Window");
+    jmethodID methodGetDecorView = lJNIEnv->GetMethodID(classWindow, "getDecorView", "()Landroid/view/View;");
+    jobject objectDecorView = lJNIEnv->CallObjectMethod(objectWindow, methodGetDecorView);
+
+    jclass classView = lJNIEnv->FindClass("android/view/View");
+
+    jfieldID FieldSYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_LOW_PROFILE", "I");
+    jint SYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_LOW_PROFILE);
+
+    jfieldID FieldSYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
+    jint SYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_FULLSCREEN);
+
+    //jfieldID FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY  = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_IMMERSIVE_STICKY", "I");
+    //jint SYSTEM_UI_FLAG_IMMERSIVE_STICKY = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+    jmethodID methodsetSystemUiVisibility = lJNIEnv->GetMethodID(classView, "setSystemUiVisibility", "(I)V");
+    lJNIEnv->CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, SYSTEM_UI_FLAG_LOW_PROFILE | SYSTEM_UI_FLAG_FULLSCREEN | 0x00001000);
+}
+
+////////////////////////////////////////////////////////////
 
 void getScreenSizeInPixels(ANativeActivity* activity, int* width, int* height)
 {
@@ -163,6 +199,9 @@ static void onResume(ANativeActivity* activity)
     // Retrieve our activity states from the activity instance
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
     sf::Lock lock(states->mutex);
+
+    if (states->fullscreen)
+        goToFullscreenMode(activity);
 
     // Send an event to warn people the activity has been resumed
     sf::Event event;
@@ -440,35 +479,6 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     // Keep the screen turned on and bright
     ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_KEEP_SCREEN_ON,
         AWINDOW_FLAG_KEEP_SCREEN_ON);
-
-    // Hide the status bar
-    ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_FULLSCREEN,
-        AWINDOW_FLAG_FULLSCREEN);
-
-    // Hide the navigation bar
-    JavaVM* lJavaVM = activity->vm;
-    JNIEnv* lJNIEnv = activity->env;
-
-    jobject objectActivity = activity->clazz;
-    jclass classActivity = lJNIEnv->GetObjectClass(objectActivity);
-
-    jmethodID methodGetWindow = lJNIEnv->GetMethodID(classActivity, "getWindow", "()Landroid/view/Window;");
-    jobject objectWindow = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindow);
-
-    jclass classWindow = lJNIEnv->FindClass("android/view/Window");
-    jmethodID methodGetDecorView = lJNIEnv->GetMethodID(classWindow, "getDecorView", "()Landroid/view/View;");
-    jobject objectDecorView = lJNIEnv->CallObjectMethod(objectWindow, methodGetDecorView);
-
-    jclass classView = lJNIEnv->FindClass("android/view/View");
-
-    jfieldID FieldSYSTEM_UI_FLAG_HIDE_NAVIGATION = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_HIDE_NAVIGATION", "I");
-    jint SYSTEM_UI_FLAG_HIDE_NAVIGATION = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
-    jfieldID FieldSYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
-    jint SYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_FULLSCREEN);
-
-    jmethodID methodsetSystemUiVisibility = lJNIEnv->GetMethodID(classView, "setSystemUiVisibility", "(I)V");
-    lJNIEnv->CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, SYSTEM_UI_FLAG_HIDE_NAVIGATION | SYSTEM_UI_FLAG_FULLSCREEN);
 
     // Initialize the display
     eglInitialize(states->display, NULL, NULL);
