@@ -120,6 +120,44 @@ void* main(ActivityStates* states)
 
 
 ////////////////////////////////////////////////////////////
+
+void getScreenSizeInPixels(ANativeActivity* activity, int* width, int* height)
+{
+    // Perform the following java code:
+    //
+    // DisplayMetrics dm = new DisplayMetrics();
+    // getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+    JavaVM* lJavaVM = activity->vm;
+    JNIEnv* lJNIEnv = activity->env;
+
+    jobject objectActivity = activity->clazz;
+    jclass classActivity = lJNIEnv->GetObjectClass(objectActivity);
+
+    jclass classDisplayMetrics = lJNIEnv->FindClass("android/util/DisplayMetrics");
+    jmethodID initDisplayMetrics = lJNIEnv->GetMethodID(classDisplayMetrics, "<init>", "()V");
+    jobject objectDisplayMetrics = lJNIEnv->NewObject(classDisplayMetrics, initDisplayMetrics);
+
+    jmethodID methodGetWindowManager = lJNIEnv->GetMethodID(classActivity, "getWindowManager", "()Landroid/view/WindowManager;");
+    jobject objectWindowManager = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindowManager);
+
+    jclass classWindowManager = lJNIEnv->FindClass("android/view/WindowManager");
+    jmethodID methodGetDefaultDisplay = lJNIEnv->GetMethodID(classWindowManager, "getDefaultDisplay", "()Landroid/view/Display;");
+    jobject objectDisplay = lJNIEnv->CallObjectMethod(objectWindowManager, methodGetDefaultDisplay);
+
+    jclass classDisplay = lJNIEnv->FindClass("android/view/Display");
+    jmethodID methodGetMetrics = lJNIEnv->GetMethodID(classDisplay, "getMetrics", "(Landroid/util/DisplayMetrics;)V");
+    lJNIEnv->CallVoidMethod(objectDisplay, methodGetMetrics, objectDisplayMetrics);
+
+    jfieldID fieldWidthPixels = lJNIEnv->GetFieldID(classDisplayMetrics, "widthPixels", "I");
+    jfieldID fieldHeightPixels = lJNIEnv->GetFieldID(classDisplayMetrics, "heightPixels", "I");
+
+    *width = lJNIEnv->GetIntField(objectDisplayMetrics, fieldWidthPixels);
+    *height = lJNIEnv->GetIntField(objectDisplayMetrics, fieldHeightPixels);
+}
+
+
+////////////////////////////////////////////////////////////
 static void onStart(ANativeActivity* activity)
 {
 }
@@ -452,6 +490,8 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
     // Initialize the display
     eglInitialize(states->display, NULL, NULL);
+
+    getScreenSizeInPixels(activity, &states->screenSize.x, &states->screenSize.y);
 
     // Launch the main thread
     sf::Thread* thread = new sf::Thread(sf::priv::main, states);
