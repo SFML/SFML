@@ -63,6 +63,9 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsign
     if (style& Style::Fullscreen)
         states->fullscreen = true;
 
+    WindowImplAndroid::singleInstance = this;
+    states->forwardEvent = forwardEvent;
+
     // Register process event callback
     states->processEvent = processEvent;
 
