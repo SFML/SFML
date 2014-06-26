@@ -59,7 +59,7 @@ struct ActivityStates
 
     Mutex mutex;
 
-    std::vector<Event> pendingEvents;
+    void (*forwardEvent)(const Event& event);
     int (*processEvent)(int fd, int events, void* data);
 
     std::map<int, Vector2i> touchEvents;

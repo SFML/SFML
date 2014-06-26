@@ -154,6 +154,9 @@ public :
     ////////////////////////////////////////////////////////////
     virtual void setKeyRepeatEnabled(bool enabled);
 
+    static void forwardEvent(const Event& event);
+    static WindowImplAndroid* singleInstance;
+
 protected :
 
     ////////////////////////////////////////////////////////////

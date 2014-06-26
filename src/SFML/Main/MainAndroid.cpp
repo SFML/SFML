@@ -207,7 +207,7 @@ static void onResume(ANativeActivity* activity)
     sf::Event event;
     event.type = sf::Event::MouseEntered;
 
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 }
 
 
@@ -222,7 +222,7 @@ static void onPause(ANativeActivity* activity)
     sf::Event event;
     event.type = sf::Event::MouseLeft;
 
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 }
 
 
@@ -249,7 +249,7 @@ static void onDestroy(ANativeActivity* activity)
             sf::Event event;
             event.type = sf::Event::Closed;
 
-            states->pendingEvents.push_back(event);
+            states->forwardEvent(event);
         }
     }
 
@@ -288,12 +288,12 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
     states->window = window;
 
     // Notify SFML mechanism
+    states->updated = false;
     sf::Event event;
     event.type = sf::Event::GainedFocus;
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 
     // Wait for the event to be taken into account by SFML
-    states->updated = false;
     while(!states->updated)
     {
         states->mutex.unlock();
@@ -313,12 +313,12 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
     states->window = NULL;
 
     // Notify SFML mechanism
+    states->updated = false;
     sf::Event event;
     event.type = sf::Event::LostFocus;
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 
     // Wait for the event to be taken into account by SFML
-    states->updated = false;
     while(!states->updated)
     {
         states->mutex.unlock();
@@ -391,7 +391,7 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
     event.size.width = ANativeWindow_getWidth(states->window);
     event.size.height = ANativeWindow_getHeight(states->window);
 
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 }
 
 
