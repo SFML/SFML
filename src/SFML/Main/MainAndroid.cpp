@@ -94,12 +94,6 @@ void* main(ActivityStates* states)
     // Initialize the thread before giving the hand
     initializeMain(states);
 
-    {
-        Lock lock(states->mutex);
-
-        states->initialized = true;
-    }
-
     sleep(seconds(0.5));
     ::main(0, NULL);
 
@@ -384,14 +378,6 @@ static void onLowMemory(ANativeActivity* activity)
 
 
 ////////////////////////////////////////////////////////////
-int dummyProcessEvent(int fd, int events, void* data)
-{
-    // Do nothing
-    return 0;
-}
-
-
-////////////////////////////////////////////////////////////
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
     // Create an activity states (will keep us in the know, about events we care)
@@ -410,12 +396,8 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
     states->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-    // As the input queue will be created before the SFML window, we need to use
-    // this dummy function that will be replaced later by the first created
-    // SFML window
-    states->processEvent = dummyProcessEvent;
-
-    if (savedState != NULL) {
+    if (savedState != NULL)
+    {
         states->savedState = malloc(savedStateSize);
         states->savedStateSize = savedStateSize;
         memcpy(states->savedState, savedState, savedStateSize);

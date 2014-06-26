@@ -46,22 +46,22 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplAndroid::WindowImplAndroid(WindowHandle handle)
+: m_size(0, 0)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings)
+: m_size(mode.width, mode.height)
 {
     ActivityStates* states = getActivity(NULL);
     Lock lock(states->mutex);
 
-    // Replace our dummy process event function with the actual one
-    AInputQueue_detachLooper(states->inputQueue);
-    AInputQueue_attachLooper(states->inputQueue, states->looper, 1, processEvent, NULL);
-
-    // Register the actual process event function so it can be set automatically later by the OS
+    // Register process event callback
     states->processEvent = processEvent;
+
+    states->initialized = true;
 }
 
 
@@ -98,6 +98,10 @@ void WindowImplAndroid::processEvents()
         if (tempEvent.type == Event::GainedFocus)
         {
             states->context->createSurface(states->window);
+
+            m_size.x = ANativeWindow_getWidth(states->window);
+            m_size.y = ANativeWindow_getHeight(states->window);
+
             states->updated = true;
         }
         else if (tempEvent.type == Event::LostFocus)
@@ -129,13 +133,7 @@ void WindowImplAndroid::setPosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplAndroid::getSize() const
 {
-    ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
-    
-    int32_t width = ANativeWindow_getWidth(states->window);
-    int32_t height = ANativeWindow_getHeight(states->window);
-    
-    return Vector2u(static_cast<unsigned int>(width), static_cast<unsigned int>(height));
+    return m_size;
 }
 
 

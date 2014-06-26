@@ -200,6 +200,8 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     static int getUnicode(AInputEvent* event);
+
+    Vector2u m_size;
 };
 
 } // namespace priv
