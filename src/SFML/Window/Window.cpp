@@ -109,9 +109,13 @@ void Window::create(VideoMode mode, const String& title, Uint32 style, const Con
         }
     }
 
-    // Check validity of style
-    if ((style & Style::Close) || (style & Style::Resize))
-        style |= Style::Titlebar;
+    // Check validity of style according to the underlying platform
+    #if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
+        style& Style::Fullscreen ? style &= ~Style::Titlebar : style |= Style::Titlebar;
+    #else
+        if ((style & Style::Close) || (style & Style::Resize))
+            style |= Style::Titlebar;
+    #endif
 
     // Recreate the window implementation
     m_impl = priv::WindowImpl::create(mode, title, style, settings);
