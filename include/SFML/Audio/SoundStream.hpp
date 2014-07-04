@@ -132,7 +132,9 @@ public :
     /// \brief Change the current playing position of the stream
     ///
     /// The playing position can be changed when the stream is
-    /// either paused or playing.
+    /// either paused or playing. Changing the playing position
+    /// when the stream is stopped has no effect, since playing
+    /// the stream would reset its position.
     ///
     /// \param timeOffset New playing position, from the beginning of the stream
     ///

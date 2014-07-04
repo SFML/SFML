@@ -92,17 +92,29 @@ void SoundStream::play()
         return;
     }
 
+    bool isStreaming = false;
+    Status threadStartState = Stopped;
+
     {
         Lock lock(m_threadMutex);
 
-        // If the sound is already playing (probably paused), just resume it
-        if (m_isStreaming)
-        {
-            alCheck(alSourcePlay(m_source));
-            return;
-        }
+        isStreaming = m_isStreaming;
+        threadStartState = m_threadStartState;
+    }
 
-        m_isStreaming = true;
+
+    if (isStreaming && (threadStartState == Paused))
+    {
+        // If the sound is paused, resume it
+        Lock lock(m_threadMutex);
+        m_threadStartState = Playing;
+        alCheck(alSourcePlay(m_source));
+        return;
+    }
+    else if (isStreaming && (threadStartState == Playing))
+    {
+        // If the sound is playing, stop it and continue as if it was stopped
+        stop();
     }
 
     // Move to the beginning
@@ -110,6 +122,7 @@ void SoundStream::play()
 
     // Start updating the stream in a separate thread to avoid blocking the application
     m_samplesProcessed = 0;
+    m_isStreaming = true;
     m_threadStartState = Playing;
     m_thread.launch();
 }
@@ -121,6 +134,10 @@ void SoundStream::pause()
     // Handle pause() being called before the thread has started
     {
         Lock lock(m_threadMutex);
+
+        if (!m_isStreaming)
+            return;
+
         m_threadStartState = Paused;
     }
 
@@ -139,6 +156,12 @@ void SoundStream::stop()
 
     // Wait for the thread to terminate
     m_thread.wait();
+
+    // Move to the beginning
+    onSeek(Time::Zero);
+
+    // Reset the playing position
+    m_samplesProcessed = 0;
 }
 
 
