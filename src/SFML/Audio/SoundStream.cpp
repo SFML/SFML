@@ -59,7 +59,15 @@ m_samplesProcessed(0)
 SoundStream::~SoundStream()
 {
     // Stop the sound if it was playing
-    stop();
+
+    // Request the thread to terminate
+    {
+        Lock lock(m_threadMutex);
+        m_isStreaming = false;
+    }
+
+    // Wait for the thread to terminate
+    m_thread.wait();
 }
 
 
