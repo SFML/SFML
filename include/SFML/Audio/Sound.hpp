@@ -144,7 +144,9 @@ public :
     /// \brief Change the current playing position of the sound
     ///
     /// The playing position can be changed when the sound is
-    /// either paused or playing.
+    /// either paused or playing. Changing the playing position
+    /// when the sound is stopped has no effect, since playing
+    /// the sound would reset its position.
     ///
     /// \param timeOffset New playing position, from the beginning of the sound
     ///
