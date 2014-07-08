@@ -36,7 +36,19 @@
 #include <EGL/egl.h>
 #include <vector>
 #include <map>
+#include <string>
+#include <fstream>
 
+class SFML_SYSTEM_API LogcatStream : public std::streambuf
+{
+public:
+    LogcatStream();
+
+    std::streambuf::int_type overflow (std::streambuf::int_type c);
+
+private:
+    std::string m_message;
+};
 
 namespace sf
 {
@@ -76,6 +88,8 @@ struct ActivityStates
     bool fullscreen;
 
     bool updated;
+
+    LogcatStream logcat;
 };
 
 SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL, bool reset=false);

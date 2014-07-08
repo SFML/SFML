@@ -42,6 +42,7 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Lock.hpp>
+#include <SFML/System/Err.hpp>
 #include <android/window.h>
 #include <android/native_activity.h>
 
@@ -484,6 +485,9 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     eglInitialize(states->display, NULL, NULL);
 
     getScreenSizeInPixels(activity, &states->screenSize.x, &states->screenSize.y);
+
+    // Redirect error messages to logcat
+    sf::err().rdbuf(&states->logcat);
 
     // Launch the main thread
     sf::Thread* thread = new sf::Thread(sf::priv::main, states);

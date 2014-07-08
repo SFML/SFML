@@ -28,6 +28,29 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Android/Activity.hpp>
+#include <android/log.h>
+
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-error", __VA_ARGS__))
+
+LogcatStream::LogcatStream() :
+std::streambuf()
+{
+    // Nothing to do
+}
+
+std::streambuf::int_type LogcatStream::overflow (std::streambuf::int_type c)
+{
+    if (c == "\n"[0])
+    {
+        m_message.push_back(c);
+        LOGE(m_message.c_str());
+        m_message.clear();
+    }
+
+    m_message.push_back(c);
+
+    return traits_type::not_eof(c);
+}
 
 namespace sf
 {
