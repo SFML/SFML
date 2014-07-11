@@ -32,6 +32,7 @@
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Mutex.hpp>
 #include <cstdlib>
 
 
@@ -65,8 +66,8 @@ public :
     /// \brief Start or resume playing the audio stream
     ///
     /// This function starts the stream if it was stopped, resumes
-    /// it if it was paused, and restarts it from beginning if it
-    /// was it already playing.
+    /// it if it was paused, and restarts it from the beginning if
+    /// it was already playing.
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the stream is played.
     ///
@@ -131,7 +132,9 @@ public :
     /// \brief Change the current playing position of the stream
     ///
     /// The playing position can be changed when the stream is
-    /// either paused or playing.
+    /// either paused or playing. Changing the playing position
+    /// when the stream is stopped has no effect, since playing
+    /// the stream would reset its position.
     ///
     /// \param timeOffset New playing position, from the beginning of the stream
     ///
@@ -285,6 +288,8 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     Thread        m_thread;                  ///< Thread running the background tasks
+    mutable Mutex m_threadMutex;             ///< Thread mutex
+    Status        m_threadStartState;        ///< State the thread starts in (Playing, Paused, Stopped)
     bool          m_isStreaming;             ///< Streaming state (true = playing, false = stopped)
     unsigned int  m_buffers[BufferCount];    ///< Sound buffers used to store temporary audio data
     unsigned int  m_channelCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)

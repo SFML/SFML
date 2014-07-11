@@ -180,7 +180,8 @@ bool EglContext::makeCurrent()
 ////////////////////////////////////////////////////////////
 void EglContext::display()
 {
-    eglCheck(eglSwapBuffers(m_display, m_surface));
+    if (m_surface != EGL_NO_SURFACE)
+        eglCheck(eglSwapBuffers(m_display, m_surface));
 }
 
 

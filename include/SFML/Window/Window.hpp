@@ -306,7 +306,9 @@ public :
     ///
     /// \param width  Icon's width, in pixels
     /// \param height Icon's height, in pixels
-    /// \param pixels Pointer to the array of pixels in memory
+    /// \param pixels Pointer to the array of pixels in memory. The
+    ///               pixels are copied, so you need not keep the
+    ///               source alive after calling this function.
     ///
     /// \see setTitle
     ///
