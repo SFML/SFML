@@ -209,6 +209,9 @@ protected :
     /// streaming loop, in a separate thread.
     /// The source can choose to stop the streaming loop at any time, by
     /// returning false to the caller.
+    /// If you return true (i.e. continue streaming) it is important that
+    /// the returned array of samples is not empty; this would stop the stream
+    /// due to an internal limitation.
     ///
     /// \param data Chunk of data to fill
     ///
@@ -352,6 +355,7 @@ private :
 ///     virtual bool onGetData(Chunk& data)
 ///     {
 ///         // Fill the chunk with audio data from the stream source
+///         // (note: must not be empty if you want to continue playing)
 ///         data.samples = ...;
 ///         data.sampleCount = ...;
 ///
