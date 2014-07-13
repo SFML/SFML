@@ -31,6 +31,17 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <windows.h>
 
+// Fix for unaligned stack with clang and GCC on Windows XP 32-bit
+#if defined(SFML_SYSTEM_WINDOWS) && (defined(__clang__) || defined(__GNUC__))
+
+    #define ALIGN_STACK __attribute__((__force_align_arg_pointer__))
+
+#else
+
+    #define ALIGN_STACK
+
+#endif
+
 
 namespace sf
 {
@@ -81,7 +92,7 @@ private :
     /// \return OS specific error code
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int __stdcall entryPoint(void* userData);
+    ALIGN_STACK static unsigned int __stdcall entryPoint(void* userData);
 
     ////////////////////////////////////////////////////////////
     // Member data
