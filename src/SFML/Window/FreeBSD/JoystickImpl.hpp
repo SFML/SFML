@@ -28,9 +28,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
 #include <dev/usb/usbhid.h>
 #include <usbhid.h>
+#include <vector>
 
 namespace sf
 {
@@ -112,16 +112,13 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int            m_file;          ///< File descriptor of the joystick
-
-    report_desc_t  m_desc;          ///< USB report descriptor
-    int            m_id;            ///< USB id
-
-    void           *m_buffer;       ///< USB HID buffer
-    int            m_length;        ///< Buffer length
+    int                      m_file;           ///< File descriptor of the joystick
+    report_desc_t            m_desc;           ///< USB report descriptor
+    int                      m_id;             ///< USB id
+    std::vector<char>        m_buffer;         ///< USB HID buffer
+    int                      m_length;         ///< Buffer length
     Joystick::Identification m_identification; ///< Joystick identification
-
-    JoystickState  m_state;         ///< Current state of the joystick
+    JoystickState            m_state;          ///< Current state of the joystick
 };
 
 } // namespace priv

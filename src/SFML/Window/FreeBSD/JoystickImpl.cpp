@@ -28,16 +28,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/System/Err.hpp>
-
 #include <sys/stat.h>
-
 #include <dirent.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
-
-#include <cerrno>
-#include <cstdio>
 #include <cstring>
 #include <map>
 #include <string>
@@ -57,123 +51,107 @@
 namespace
 {
     std::map<unsigned int, std::string> plugged;
-    std::map<int, std::pair<int, int> > hatmap;
+    std::map<int, std::pair<int, int> > hatValueMap;
 
     bool isJoystick(const char *name)
     {
-        int fd, id;
-        bool ret;
-        report_desc_t desc = NULL;
-        hid_data_t data = NULL;
+        int file = ::open(name, O_RDONLY | O_NONBLOCK);
+
+        if (file < 0)
+            return false;
+
+        report_desc_t desc = hid_get_report_desc(file);
+
+        if (!desc)
+        {
+            ::close(file);
+            return false;
+        }
+
+        int id = hid_get_report_id(file);
+        hid_data_t data = hid_start_parse(desc, 1 << hid_input, id);
+
+        if (!data)
+        {
+            hid_dispose_report_desc(desc);
+            ::close(file);
+            return false;
+        }
+
         hid_item_t item;
 
         // Assume it isn't
-        ret = false;
+        bool result = false;
 
-        if ((fd = ::open(name, O_RDONLY | O_NONBLOCK)) < 0)
-            return false;
-
-        if ((desc = hid_get_report_desc(fd)) == NULL)
-            goto end;
-
-        id = hid_get_report_id(fd);
-        if ((data = hid_start_parse(desc, 1 << hid_input, id)) == NULL)
-            goto end;
-
-        while (hid_get_item(data, &item) > 0) {
-            switch (item.kind) {
-            case hid_collection:
-                switch (HID_PAGE(item.usage)) {
-                case HUP_GENERIC_DESKTOP:
-                    switch (HID_USAGE(item.usage)) {
-                    case HUG_JOYSTICK:
-                    case HUG_GAME_PAD:
-                        ret = true;
-                        break;
-                    default:
-                        break;
-                    }
-                default:
-                    break;
+        while (hid_get_item(data, &item) > 0)
+        {
+            if ((item.kind == hid_collection) && (HID_PAGE(item.usage) == HUP_GENERIC_DESKTOP))
+            {
+                if ((HID_USAGE(item.usage) == HUG_JOYSTICK) || (HID_USAGE(item.usage) == HUG_GAME_PAD))
+                {
+                    result = true;
                 }
-            default:
-                break;
             }
         }
 
-end:
-        if (desc != NULL)
-            hid_dispose_report_desc(desc);
-        if (data != NULL)
-            hid_end_parse(data);
-        close(fd);
+        hid_end_parse(data);
+        hid_dispose_report_desc(desc);
+        ::close(file);
 
-        return ret;
+        return result;
     }
 
     void updatePluggedList()
     {
-        DIR *dp;
-        struct dirent *entry;
-
         /*
          * Devices /dev/uhid<x> are shared between joystick and any other
          * human interface device. We need to iterate over all found devices
          * and check if they are joysticks. The index of JoystickImpl::open
          * does not match the /dev/uhid<index> device!
          */
-        if ((dp = opendir("/dev")) != NULL) {
-            char name[FILENAME_MAX];
-            int jc = 0;
+        DIR* directory = opendir("/dev");
 
-            while ((entry = readdir(dp)) != NULL && jc < sf::Joystick::Count) {
-                if (strncmp(entry->d_name, "uhid", 4) == 0) {
-                    std::sprintf(name, "/dev/%s", entry->d_name);
+        if (directory)
+        {
+            int joystickCount = 0;
+            struct dirent* directoryEntry = readdir(directory);
 
-                    if (isJoystick(name))
-                        plugged[jc++] = std::string(name);
+            while (directoryEntry && joystickCount < sf::Joystick::Count)
+            {
+                if (!std::strncmp(directoryEntry->d_name, "uhid", 4))
+                {
+                    std::string name("/dev/");
+                    name += directoryEntry->d_name;
+
+                    if (isJoystick(name.c_str()))
+                        plugged[joystickCount++] = name;
                 }
+
+                directoryEntry = readdir(directory);
             }
 
-            closedir(dp);
+            closedir(directory);
         }
     }
 
     int usageToAxis(int usage)
     {
-        int axis;
-
-        switch (usage) {
-        case HUG_X:
-            axis = sf::Joystick::X;
-            break;
-        case HUG_Y:
-            axis = sf::Joystick::Y;
-            break;
-        case HUG_Z:
-            axis = sf::Joystick::Z;
-            break;
-        case HUG_RZ:
-            axis = sf::Joystick::R;
-            break;
-        case HUG_RX:
-            axis = sf::Joystick::U;
-            break;
-        case HUG_RY:
-            axis = sf::Joystick::V;
-            break;
-        default:
-            axis = -1;
-            break;
+        switch (usage)
+        {
+            case HUG_X:  return sf::Joystick::X;
+            case HUG_Y:  return sf::Joystick::Y;
+            case HUG_Z:  return sf::Joystick::Z;
+            case HUG_RZ: return sf::Joystick::R;
+            case HUG_RX: return sf::Joystick::U;
+            case HUG_RY: return sf::Joystick::V;
+            default:     return -1;
         }
-
-        return axis;
     }
 
-    void hatvalToSFML(int value, sf::priv::JoystickState &state)
+    void hatValueToSfml(int value, sf::priv::JoystickState& state)
     {
-        state.axes[sf::Joystick::PovX] = hatmap[value].first;
-        state.axes[sf::Joystick::PovY] = hatmap[value].second;
+        state.axes[sf::Joystick::PovX] = hatValueMap[value].first;
+        state.axes[sf::Joystick::PovY] = hatValueMap[value].second;
     }
 }
 
@@ -191,17 +169,17 @@ void JoystickImpl::initialize()
     updatePluggedList();
 
     // Map of hat values
-    hatmap[0] = std::make_pair<int, int>(0, 0);         // center
+    hatValueMap[0] = std::make_pair<int, int>(0, 0);         // center
 
-    hatmap[1] = std::make_pair<int, int>(0, -100);      // top
-    hatmap[3] = std::make_pair<int, int>(100, 0);       // right
-    hatmap[5] = std::make_pair<int, int>(0, 100);       // bottom
-    hatmap[7] = std::make_pair<int, int>(-100, 0);      // left
+    hatValueMap[1] = std::make_pair<int, int>(0, -100);      // top
+    hatValueMap[3] = std::make_pair<int, int>(100, 0);       // right
+    hatValueMap[5] = std::make_pair<int, int>(0, 100);       // bottom
+    hatValueMap[7] = std::make_pair<int, int>(-100, 0);      // left
 
-    hatmap[2] = std::make_pair<int, int>(100, -100);    // top-right
-    hatmap[4] = std::make_pair<int, int>(100, 100);     // bottom-right
-    hatmap[6] = std::make_pair<int, int>(-100, 100);    // bottom-left
-    hatmap[8] = std::make_pair<int, int>(-100, -100);   // top-left
+    hatValueMap[2] = std::make_pair<int, int>(100, -100);    // top-right
+    hatValueMap[4] = std::make_pair<int, int>(100, 100);     // bottom-right
+    hatValueMap[6] = std::make_pair<int, int>(-100, 100);    // bottom-left
+    hatValueMap[8] = std::make_pair<int, int>(-100, -100);   // top-left
 }
 
 
@@ -232,7 +210,8 @@ bool JoystickImpl::open(unsigned int index)
 
             // Get the report descriptor
             m_desc = hid_get_report_desc(m_file);
-            if (m_desc == NULL) {
+            if (!m_desc)
+            {
                 ::close(m_file);
                 return false;
             }
@@ -242,26 +221,15 @@ bool JoystickImpl::open(unsigned int index)
 
             // Then allocate a buffer for data retrievement
             m_length = hid_report_size(m_desc, hid_input, m_id);
-            m_buffer = std::calloc(1, m_length);
+            m_buffer.resize(m_length);
 
-            if (m_buffer == NULL) {
-                ::close(m_file);
-                ::hid_dispose_report_desc(m_desc);
+            m_state.connected = true;
 
-                return false;
-            }
-
-            return m_state.connected = true;
-        }
-        else
-        {
-            return false;
+            return true;
         }
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 
@@ -269,8 +237,7 @@ bool JoystickImpl::open(unsigned int index)
 void JoystickImpl::close()
 {
     ::close(m_file);
-    ::hid_dispose_report_desc(m_desc);
-    ::free(m_buffer);
+    hid_dispose_report_desc(m_desc);
 }
 
 
@@ -278,38 +245,35 @@ void JoystickImpl::close()
 JoystickCaps JoystickImpl::getCapabilities() const
 {
     JoystickCaps caps;
-    hid_data_t data;
     hid_item_t item;
 
-    data = hid_start_parse(m_desc, 1 << hid_input, m_id);
+    hid_data_t data = hid_start_parse(m_desc, 1 << hid_input, m_id);
 
-    while (hid_get_item(data, &item)) {
-        switch (item.kind) {
-        case hid_input:
-            switch (HID_PAGE(item.usage)) {
-                case HUP_BUTTON:
-                    caps.buttonCount ++;
-                    break;
-                case HUP_GENERIC_DESKTOP:
-                {
-                    int usage = HID_USAGE(item.usage);
-                    int axis;
+    while (hid_get_item(data, &item))
+    {
+        if (item.kind == hid_input)
+        {
+            int usage = HID_USAGE(item.usage);
 
-                    if (usage == HUG_HAT_SWITCH) {
-                        caps.axes[Joystick::PovX] = true;
-                        caps.axes[Joystick::PovY] = true;
-                    }
-                    else if ((axis = usageToAxis(usage)) != -1)
-                    {
-                            caps.axes[axis] = true;
-                    }
-                    break;
-                }
-                default:
-                    break;
+            if (usage == HUP_BUTTON)
+            {
+                caps.buttonCount++;
+                break;
             }
-        default:
-            break;
+            else if (usage == HUP_GENERIC_DESKTOP)
+            {
+                int axis = usageToAxis(usage);
+
+                if (usage == HUG_HAT_SWITCH)
+                {
+                    caps.axes[Joystick::PovX] = true;
+                    caps.axes[Joystick::PovY] = true;
+                }
+                else if (axis != -1)
+                {
+                    caps.axes[axis] = true;
+                }
+            }
         }
     }
 
@@ -329,48 +293,45 @@ Joystick::Identification JoystickImpl::getIdentification() const
 ////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::JoystickImpl::update()
 {
-    while (read(m_file, m_buffer, m_length) == m_length) {
-        hid_data_t data;
-        hid_item_t item;
-
-        data = hid_start_parse(m_desc, 1 << hid_input, m_id);
+    while (read(m_file, &m_buffer[0], m_length) == m_length)
+    {
+        hid_data_t data = hid_start_parse(m_desc, 1 << hid_input, m_id);
 
         // No memory?
-        if (data == NULL)
+        if (!data)
             continue;
 
-        int but = 0;
-        while (hid_get_item(data, &item)) {
-            switch (item.kind) {
-            case hid_input:
-                switch (HID_PAGE(item.usage)) {
-                    case HUP_BUTTON:
-                        m_state.buttons[but++] = hid_get_data(m_buffer, &item);
-                        break;
-                    case HUP_GENERIC_DESKTOP:
-                    {
-                        int usage = HID_USAGE(item.usage);
-                        int v = hid_get_data(m_buffer, &item);
-                        int axis;
+        int buttonIndex = 0;
+        hid_item_t item;
 
-                        if (usage == HUG_HAT_SWITCH)
-                            hatvalToSFML(v, m_state);
-                        else if ((axis = usageToAxis(usage)) != -1)
-                        {
-                            int &min = item.logical_minimum;
-                            int &max = item.logical_maximum;
+        while (hid_get_item(data, &item))
+        {
+            if (item.kind == hid_input)
+            {
+                int usage = HID_USAGE(item.usage);
 
-                            v = (v - min) * (200) / (max - min) -100;
-                            m_state.axes[axis] = v;
-                        }
-
-                        break;
-                    }
-                    default:
-                         break;
+                if (usage == HUP_BUTTON)
+                {
+                    m_state.buttons[buttonIndex++] = hid_get_data(&m_buffer[0], &item);
                 }
-            default:
-                break;
+                else if (usage == HUP_GENERIC_DESKTOP)
+                {
+                    int value = hid_get_data(&m_buffer[0], &item);
+                    int axis = usageToAxis(usage);
+
+                    if (usage == HUG_HAT_SWITCH)
+                    {
+                        hatValueToSfml(value, m_state);
+                    }
+                    else if (axis != -1)
+                    {
+                        int minimum = item.logical_minimum;
+                        int maximum = item.logical_maximum;
+
+                        value = (value - minimum) * 200 / (maximum - minimum) - 100;
+                        m_state.axes[axis] = value;
+                    }
+                }
             }
         }
 
@@ -383,5 +344,3 @@ JoystickState JoystickImpl::JoystickImpl::update()
 } // namespace priv
 
 } // namespace sf
-
-// vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4:

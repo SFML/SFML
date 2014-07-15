@@ -77,8 +77,8 @@ void JoystickManager::update()
             if (!item.state.connected)
             {
                 item.joystick.close();
-                item.capabilities = JoystickCaps();
-                item.state = JoystickState();
+                item.capabilities   = JoystickCaps();
+                item.state          = JoystickState();
                 item.identification = Joystick::Identification();
             }
         }
@@ -89,8 +89,8 @@ void JoystickManager::update()
             {
                 if (item.joystick.open(i))
                 {
-                    item.capabilities = item.joystick.getCapabilities();
-                    item.state = item.joystick.update();
+                    item.capabilities   = item.joystick.getCapabilities();
+                    item.state          = item.joystick.update();
                     item.identification = item.joystick.getIdentification();
                 }
             }
