@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_HTTP_RESPONSE_HPP
-#define SFML_HTTP_RESPONSE_HPP
+#ifndef SFML_RESPONSE_HPP
+#define SFML_RESPONSE_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -191,3 +191,15 @@ namespace sf
         std::string  m_body;         ///< Body of the response
     };
 }
+
+////////////////////////////////////////////////////////////
+/// \class sf::Http::Response
+/// \ingroup network
+///
+/// sf::Http::Response parse the response from the web server
+/// and provides getters to read them. The response contains:
+/// \li a status code
+/// \li header fields (that may be answers to the ones that you requested)
+/// \li a body, which contains the contents of the requested resource
+///
+////////////////////////////////////////////////////////////
