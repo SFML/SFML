@@ -145,19 +145,6 @@ private :
 /// \li sf::Http::Response
 /// \li sf::Http
 ///
-/// sf::Http::Request builds the request that will be
-/// sent to the server. A request is made of:
-/// \li a method (what you want to do)
-/// \li a target URI (usually the name of the web page or file)
-/// \li one or more header fields (options that you can pass to the server)
-/// \li an optional body (for POST requests)
-///
-/// sf::Http::Response parse the response from the web server
-/// and provides getters to read them. The response contains:
-/// \li a status code
-/// \li header fields (that may be answers to the ones that you requested)
-/// \li a body, which contains the contents of the requested resource
-///
 /// sf::Http provides a simple function, SendRequest, to send a
 /// sf::Http::Request and return the corresponding sf::Http::Response
 /// from the server.
