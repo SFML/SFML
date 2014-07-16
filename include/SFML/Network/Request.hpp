@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_HTTP_REQUEST_HPP
-#define SFML_HTTP_REQUEST_HPP
+#ifndef SFML_REQUEST_HPP
+#define SFML_REQUEST_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -171,3 +171,16 @@ namespace sf
         std::string  m_body;         ///< Body of the request
     };
 }
+
+////////////////////////////////////////////////////////////
+/// \class sf::Http::Request
+/// \ingroup network
+///
+/// sf::Http::Request builds the request that will be
+/// sent to the server. A request is made of:
+/// \li a method (what you want to do)
+/// \li a target URI (usually the name of the web page or file)
+/// \li one or more header fields (options that you can pass to the server)
+/// \li an optional body (for POST requests)
+///
+////////////////////////////////////////////////////////////
