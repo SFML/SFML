@@ -101,47 +101,65 @@ namespace
             udev_unref(udevContext);
     }
 
-    bool canRead(int descriptor)
+    bool hasInotifyEvent()
     {
-        if (descriptor >= 0)
-        {
-            fd_set descriptorSet;
-            FD_ZERO(&descriptorSet);
-            FD_SET(descriptor, &descriptorSet);
-            timeval timeout = {0, 0};
+        fd_set descriptorSet;
+        FD_ZERO(&descriptorSet);
+        FD_SET(notifyFd, &descriptorSet);
+        timeval timeout = {0, 0};
 
-            return (select(descriptor + 1, &descriptorSet, NULL, NULL, &timeout) > 0) &&
-                   FD_ISSET(notifyFd, &descriptorSet);
-        }
-
-        return false;
+        return (select(notifyFd + 1, &descriptorSet, NULL, NULL, &timeout) > 0) &&
+               FD_ISSET(notifyFd, &descriptorSet);
     }
 
     // Get the joystick name
     std::string getJoystickName(int file, unsigned int index)
     {
         // Get the name
-        char joyname[128];
+        char name[128];
 
-        if (ioctl(file, JSIOCGNAME(sizeof(joyname)), joyname) >= 0)
-            return std::string(joyname);
+        if (ioctl(file, JSIOCGNAME(sizeof(name)), name) >= 0)
+            return std::string(name);
 
         sf::err() << "Unable to get name for joystick at index " << index << std::endl;
 
         return std::string("Unknown Joystick");
     }
 
-
-    // Get a system attribute from udev as an unsigned int
-    unsigned int getUdevAttributeUint(unsigned int index, std::string attributeName)
+    // Get a system attribute from a udev device as an unsigned int
+    unsigned int getUdevAttributeUint(udev_device* device, unsigned int index, const std::string& attributeName)
     {
-        unsigned int attribute = 0;
+        udev_device* udevDeviceParent = udev_device_get_parent_with_subsystem_devtype(device, "usb", "usb_device");
+
+        if (!udevDeviceParent)
+        {
+            sf::err() << "Unable to get joystick attribute. "
+                      << "Could not find parent USB device for joystick at index " << index << "." << std::endl;
+            return 0;
+        }
+
+        const char* attributeString = udev_device_get_sysattr_value(udevDeviceParent, attributeName.c_str());
+
+        if (!attributeString)
+        {
+            sf::err() << "Unable to get joystick attribute '" << attributeName << "'. "
+                      << "Attribute does not exist for joystick at index " << index << "." << std::endl;
+            return 0;
+        }
+
+        return static_cast<unsigned int>(std::strtoul(attributeString, NULL, 16));
+    }
+
+    // Get a system attribute for a joystick at index as an unsigned int
+    unsigned int getAttributeUint(unsigned int index, const std::string& attributeName)
+    {
         udev* udevContext = udev_new();
 
         if (!udevContext)
         {
-            sf::err() << "Unable to get attribute '" << attributeName << "'. Cannot create udev for reading info for joystick at index " << index << std::endl;
-            return attribute;
+            sf::err() << "Unable to get joystick attribute. "
+                      << "Could not create udev context." << std::endl;
+            return 0;
         }
 
         std::ostringstream sysname("js");
@@ -151,21 +169,13 @@ namespace
 
         if (!udevDevice)
         {
-            sf::err() << "Unable to get attribute '" << attributeName << "'. Could not find USB device for joystick at index " << index << std::endl;
+            sf::err() << "Unable to get joystick attribute. "
+                      << "Could not find USB device for joystick at index " << index << "." << std::endl;
             udev_unref(udevContext);
-            return attribute;
+            return 0;
         }
 
-        udev_device* udevDeviceParent = udev_device_get_parent_with_subsystem_devtype(udevDevice, "usb", "usb_device");
-
-        if (!udevDeviceParent)
-        {
-            sf::err() << "Unable to get attribute '" << attributeName << "'. Could not find parent USB device for joystick at index " << index << std::endl;
-        }
-        else
-        {
-            attribute = static_cast<unsigned int>(strtoul(udev_device_get_sysattr_value(udevDeviceParent, attributeName.c_str()), NULL, 16));
-        }
+        unsigned int attribute = getUdevAttributeUint(udevDevice, index, attributeName);
 
         udev_device_unref(udevDevice);
         udev_unref(udevContext);
@@ -184,6 +194,9 @@ void JoystickImpl::initialize()
     // Reset the array of plugged joysticks
     std::fill(plugged, plugged + Joystick::Count, false);
 
+    // Do an initial scan
+    updatePluggedList();
+
     // Create the inotify instance
     notifyFd = inotify_init();
     if (notifyFd < 0)
@@ -197,11 +210,11 @@ void JoystickImpl::initialize()
     if (inputFd < 0)
     {
         err() << "Failed to initialize inotify, joystick connections and disconnections won't be notified" << std::endl;
-        return;
-    }
 
-    // Do an initial scan
-    updatePluggedList();
+        // No need to hang on to the inotify handle in this case
+        ::close(notifyFd);
+        notifyFd = -1;
+    }
 }
 
 
@@ -221,18 +234,21 @@ void JoystickImpl::cleanup()
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::isConnected(unsigned int index)
 {
-    // First check if new joysticks were added/removed since last update
-    if (canRead(notifyFd))
+    // See if we can skip scanning if inotify is available
+    if (notifyFd < 0)
     {
+        // inotify is not available, perform a scan every query
+        updatePluggedList();
+    }
+    else if (hasInotifyEvent())
+    {
+        // Check if new joysticks were added/removed since last update
         // Don't bother decomposing and interpreting the filename, just do a full scan
         updatePluggedList();
 
         // Flush all the pending events
-        while (canRead(notifyFd))
-        {
-            char buffer[128];
-            (void)read(notifyFd, buffer, sizeof(buffer));
-        }
+        if (lseek(notifyFd, 0, SEEK_END) < 0)
+            err() << "Failed to flush inotify of all pending joystick events." << std::endl;
     }
 
     // Then check if the joystick is connected
@@ -256,8 +272,8 @@ bool JoystickImpl::open(unsigned int index)
 
             // Get info
             m_identification.name      = getJoystickName(m_file, index);
-            m_identification.vendorId  = getUdevAttributeUint(index, "idVendor");
-            m_identification.productId = getUdevAttributeUint(index, "idProduct");
+            m_identification.vendorId  = getAttributeUint(index, "idVendor");
+            m_identification.productId = getAttributeUint(index, "idProduct");
 
             // Reset the joystick state
             m_state = JoystickState();
