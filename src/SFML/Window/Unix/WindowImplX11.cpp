@@ -152,16 +152,12 @@ m_useSizeHints(false)
     int width  = mode.width;
     int height = mode.height;
 
-    // Switch to fullscreen if necessary
-    if (fullscreen)
-        switchToFullscreen(mode);
-
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
 
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.override_redirect = fullscreen;
+    attributes.override_redirect = fullscreen && !useWMFullscreen();
     attributes.event_mask = eventMask;
     attributes.colormap = XCreateColormap(m_display, root, visualInfo.visual, AllocNone);
 
@@ -267,11 +263,33 @@ m_useSizeHints(false)
     // Do some common initializations
     initialize();
 
-    // In fullscreen mode, we must grab keyboard and mouse inputs
+    // Switch to fullscreen if necessary
     if (fullscreen)
+        switchToFullscreen(mode);
+
+    // In non-wm fullscreen mode we have to grab input
+    if (fullscreen && !useWMFullscreen())
     {
         XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
         XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
+    }
+    else if (fullscreen && useWMFullscreen())
+    {
+        // Tell the window manager to make our window fullscreen.
+        XEvent xe;
+
+        xe.xclient.type = ClientMessage;
+        xe.xclient.serial = 0;
+        xe.xclient.send_event = True;
+        xe.xclient.window = m_window;
+        xe.xclient.message_type = XInternAtom(m_display, "_NET_WM_STATE", False);
+        xe.xclient.format = 32;
+        xe.xclient.data.l[0] = 1; //. _NET_WM_STATE_ADD
+        xe.xclient.data.l[1] = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
+        xe.xclient.data.l[2] = 0;
+
+        XSendEvent( m_display, RootWindow(m_display, m_screen), False,
+        SubstructureNotifyMask | SubstructureRedirectMask, &xe);
     }
 }
 
@@ -482,6 +500,11 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
     m_keyRepeat = enabled;
 }
 
+////////////////////////////////////////////////////////////
+bool WindowImplX11::useWMFullscreen() const
+{
+    return true;
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::switchToFullscreen(const VideoMode& mode)
@@ -533,7 +556,6 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
         err() << "Fullscreen is not supported, switching to window mode" << std::endl;
     }
 }
-
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()

@@ -164,6 +164,8 @@ protected :
 
 private :
 
+    bool useWMFullscreen() const;
+
     ////////////////////////////////////////////////////////////
     /// \brief Switch to fullscreen mode
     ///
