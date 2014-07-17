@@ -29,6 +29,7 @@
 #include <SFML/Network/Socket.hpp>
 #include <SFML/Network/SocketImpl.hpp>
 #include <SFML/System/Err.hpp>
+#include <algorithm>
 #include <utility>
 
 #ifdef _MSC_VER
@@ -44,6 +45,7 @@ struct SocketSelector::SocketSelectorImpl
     fd_set AllSockets;   ///< Set containing all the sockets handles
     fd_set SocketsReady; ///< Set containing handles of the sockets that are ready
     int    MaxSocket;    ///< Maximum socket handle
+    int    SocketCount;  ///< Number of socket handles
 };
 
 
@@ -76,20 +78,41 @@ void SocketSelector::add(Socket& socket)
     SocketHandle handle = socket.getHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
-        if (handle < FD_SETSIZE)
-        {
-            FD_SET(handle, &m_impl->AllSockets);
 
-            int size = static_cast<int>(handle);
-            if (size > m_impl->MaxSocket)
-                m_impl->MaxSocket = size;
+#if defined(SFML_SYSTEM_WINDOWS)
+
+        if (m_impl->SocketCount >= FD_SETSIZE)
+        {
+            err() << "The socket can't be added to the selector because the "
+                  << "selector is full. This is a limitation of your operating "
+                  << "system's FD_SETSIZE setting.";
+            return;
         }
-        else
+
+        if (FD_ISSET(handle, &m_impl->AllSockets))
+            return;
+
+        m_impl->SocketCount++;
+
+#else
+
+        if (handle >= FD_SETSIZE)
         {
             err() << "The socket can't be added to the selector because its "
                   << "ID is too high. This is a limitation of your operating "
                   << "system's FD_SETSIZE setting.";
+            return;
         }
+
+        if (FD_ISSET(handle, &m_impl->AllSockets))
+            return;
+
+        // SocketHandle is an int in POSIX
+        m_impl->MaxSocket = std::max(m_impl->MaxSocket, handle);
+
+#endif
+
+        FD_SET(handle, &m_impl->AllSockets);
     }
 }
 
@@ -97,8 +120,30 @@ void SocketSelector::add(Socket& socket)
 ////////////////////////////////////////////////////////////
 void SocketSelector::remove(Socket& socket)
 {
-    FD_CLR(socket.getHandle(), &m_impl->AllSockets);
-    FD_CLR(socket.getHandle(), &m_impl->SocketsReady);
+    SocketHandle handle = socket.getHandle();
+    if (handle != priv::SocketImpl::invalidSocket())
+    {
+
+#if defined(SFML_SYSTEM_WINDOWS)
+
+        if (!FD_ISSET(handle, &m_impl->AllSockets))
+            return;
+
+        m_impl->SocketCount--;
+
+#else
+
+        if (handle >= FD_SETSIZE)
+            return;
+
+        if (!FD_ISSET(handle, &m_impl->AllSockets))
+            return;
+
+#endif
+
+        FD_CLR(handle, &m_impl->AllSockets);
+        FD_CLR(handle, &m_impl->SocketsReady);
+    }
 }
 
 
@@ -109,6 +154,7 @@ void SocketSelector::clear()
     FD_ZERO(&m_impl->SocketsReady);
 
     m_impl->MaxSocket = 0;
+    m_impl->SocketCount = 0;
 }
 
 
@@ -124,6 +170,7 @@ bool SocketSelector::wait(Time timeout)
     m_impl->SocketsReady = m_impl->AllSockets;
 
     // Wait until one of the sockets is ready for reading, or timeout is reached
+    // The first parameter is ignored on Windows
     int count = select(m_impl->MaxSocket + 1, &m_impl->SocketsReady, NULL, NULL, timeout != Time::Zero ? &time : NULL);
 
     return count > 0;
@@ -133,7 +180,21 @@ bool SocketSelector::wait(Time timeout)
 ////////////////////////////////////////////////////////////
 bool SocketSelector::isReady(Socket& socket) const
 {
-    return FD_ISSET(socket.getHandle(), &m_impl->SocketsReady) != 0;
+    SocketHandle handle = socket.getHandle();
+    if (handle != priv::SocketImpl::invalidSocket())
+    {
+
+#if !defined(SFML_SYSTEM_WINDOWS)
+
+        if (handle >= FD_SETSIZE)
+            return false;
+
+#endif
+
+        return FD_ISSET(handle, &m_impl->SocketsReady) != 0;
+    }
+
+    return false;
 }
 
 
