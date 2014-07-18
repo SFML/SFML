@@ -42,10 +42,10 @@ namespace sf
 ////////////////////////////////////////////////////////////
 struct SocketSelector::SocketSelectorImpl
 {
-    fd_set AllSockets;   ///< Set containing all the sockets handles
-    fd_set SocketsReady; ///< Set containing handles of the sockets that are ready
-    int    MaxSocket;    ///< Maximum socket handle
-    int    SocketCount;  ///< Number of socket handles
+    fd_set allSockets;   ///< Set containing all the sockets handles
+    fd_set socketsReady; ///< Set containing handles of the sockets that are ready
+    int    maxSocket;    ///< Maximum socket handle
+    int    socketCount;  ///< Number of socket handles
 };
 
 
@@ -81,7 +81,7 @@ void SocketSelector::add(Socket& socket)
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-        if (m_impl->SocketCount >= FD_SETSIZE)
+        if (m_impl->socketCount >= FD_SETSIZE)
         {
             err() << "The socket can't be added to the selector because the "
                   << "selector is full. This is a limitation of your operating "
@@ -89,10 +89,10 @@ void SocketSelector::add(Socket& socket)
             return;
         }
 
-        if (FD_ISSET(handle, &m_impl->AllSockets))
+        if (FD_ISSET(handle, &m_impl->allSockets))
             return;
 
-        m_impl->SocketCount++;
+        m_impl->socketCount++;
 
 #else
 
@@ -104,15 +104,12 @@ void SocketSelector::add(Socket& socket)
             return;
         }
 
-        if (FD_ISSET(handle, &m_impl->AllSockets))
-            return;
-
         // SocketHandle is an int in POSIX
-        m_impl->MaxSocket = std::max(m_impl->MaxSocket, handle);
+        m_impl->maxSocket = std::max(m_impl->maxSocket, handle);
 
 #endif
 
-        FD_SET(handle, &m_impl->AllSockets);
+        FD_SET(handle, &m_impl->allSockets);
     }
 }
 
@@ -126,23 +123,20 @@ void SocketSelector::remove(Socket& socket)
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-        if (!FD_ISSET(handle, &m_impl->AllSockets))
+        if (!FD_ISSET(handle, &m_impl->allSockets))
             return;
 
-        m_impl->SocketCount--;
+        m_impl->socketCount--;
 
 #else
 
         if (handle >= FD_SETSIZE)
             return;
 
-        if (!FD_ISSET(handle, &m_impl->AllSockets))
-            return;
-
 #endif
 
-        FD_CLR(handle, &m_impl->AllSockets);
-        FD_CLR(handle, &m_impl->SocketsReady);
+        FD_CLR(handle, &m_impl->allSockets);
+        FD_CLR(handle, &m_impl->socketsReady);
     }
 }
 
@@ -150,11 +144,11 @@ void SocketSelector::remove(Socket& socket)
 ////////////////////////////////////////////////////////////
 void SocketSelector::clear()
 {
-    FD_ZERO(&m_impl->AllSockets);
-    FD_ZERO(&m_impl->SocketsReady);
+    FD_ZERO(&m_impl->allSockets);
+    FD_ZERO(&m_impl->socketsReady);
 
-    m_impl->MaxSocket = 0;
-    m_impl->SocketCount = 0;
+    m_impl->maxSocket = 0;
+    m_impl->socketCount = 0;
 }
 
 
@@ -167,11 +161,11 @@ bool SocketSelector::wait(Time timeout)
     time.tv_usec = static_cast<long>(timeout.asMicroseconds() % 1000000);
 
     // Initialize the set that will contain the sockets that are ready
-    m_impl->SocketsReady = m_impl->AllSockets;
+    m_impl->socketsReady = m_impl->allSockets;
 
     // Wait until one of the sockets is ready for reading, or timeout is reached
     // The first parameter is ignored on Windows
-    int count = select(m_impl->MaxSocket + 1, &m_impl->SocketsReady, NULL, NULL, timeout != Time::Zero ? &time : NULL);
+    int count = select(m_impl->maxSocket + 1, &m_impl->socketsReady, NULL, NULL, timeout != Time::Zero ? &time : NULL);
 
     return count > 0;
 }
@@ -191,7 +185,7 @@ bool SocketSelector::isReady(Socket& socket) const
 
 #endif
 
-        return FD_ISSET(handle, &m_impl->SocketsReady) != 0;
+        return FD_ISSET(handle, &m_impl->socketsReady) != 0;
     }
 
     return false;
