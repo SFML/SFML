@@ -29,6 +29,7 @@
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
+#include <cassert>
 
 
 namespace
@@ -79,6 +80,9 @@ GlResource::~GlResource()
 ////////////////////////////////////////////////////////////
 void GlResource::ensureGlContext()
 {
+    // Make sure the shared context exists before creating an internal context
+    assert((Lock(mutex), count));
+
     priv::GlContext::ensureContext();
 }
 

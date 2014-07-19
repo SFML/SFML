@@ -32,7 +32,6 @@
 #include <SFML/OpenGL.hpp>
 #include <set>
 #include <cstdlib>
-#include <cassert>
 #ifdef SFML_SYSTEM_IOS
     #include <OpenGLES/ES1/gl.h>
 #else
